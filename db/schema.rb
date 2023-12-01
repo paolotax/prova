@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_30_133705) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_01_191743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,5 +46,23 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_30_133705) do
      FROM imports
     GROUP BY imports.fornitore, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
     ORDER BY imports.fornitore, imports.data_documento, imports.numero_documento, imports.tipo_documento;
+  SQL
+  create_view "view_carico_scarichi", sql_definition: <<-SQL
+      SELECT imports.codice_articolo,
+      imports.descrizione,
+      (- sum(imports.quantita)) AS quantita_totale,
+      (- sum(imports.importo_netto)) AS importo_netto_totale
+     FROM imports
+    WHERE ((imports.tipo_documento)::text = 'Nota di accredito'::text)
+    GROUP BY imports.codice_articolo, imports.descrizione
+  UNION ALL
+   SELECT imports.codice_articolo,
+      imports.descrizione,
+      sum(imports.quantita) AS quantita_totale,
+      sum(imports.importo_netto) AS importo_netto_totale
+     FROM imports
+    WHERE ((imports.tipo_documento)::text <> 'Nota di accredito'::text)
+    GROUP BY imports.codice_articolo, imports.descrizione
+    ORDER BY 1;
   SQL
 end
