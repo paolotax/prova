@@ -1,0 +1,18 @@
+<div class="mx-auto md:w-2/3 w-full">
+  
+  <div class="mb-4 sm:ml-0 sm:mt-0 sm:flex-none">
+    <h1 class="font-bold text-4xl">Documenti</h1>
+  </div>
+
+  <ul role="list" class="divide-y divide-gray-100">    
+    
+    <!--non funziona con - render @documenti-->
+    <% @documenti.each do |documento| %>      
+      <%=  render partial: "documenti/documento", locals: { documento: documento } %>
+    <% end %>
+  </ul>
+
+</div>
+
+
+
