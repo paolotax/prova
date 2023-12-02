@@ -32,20 +32,20 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_01_191743) do
 
 
   create_view "view_documenti", sql_definition: <<-SQL
-      SELECT DISTINCT concat(imports.fornitore, '-', imports.data_documento, '-', imports.numero_documento) AS id,
-      imports.fornitore,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
-      sum(imports.quantita) AS quantita_totale,
+      SELECT DISTINCT concat(fornitore, '-', data_documento, '-', numero_documento) AS id,
+      fornitore,
+      tipo_documento,
+      numero_documento,
+      data_documento,
+      sum(quantita) AS quantita_totale,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.totale_documento)
-              ELSE imports.totale_documento
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- totale_documento)
+              ELSE totale_documento
           END AS totale_documento,
-      (imports.totale_documento - sum(imports.importo_netto)) AS "check"
+      (totale_documento - sum(importo_netto)) AS "check"
      FROM imports
-    GROUP BY imports.fornitore, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
-    ORDER BY imports.fornitore, imports.data_documento, imports.numero_documento, imports.tipo_documento;
+    GROUP BY fornitore, tipo_documento, numero_documento, data_documento, totale_documento
+    ORDER BY fornitore, data_documento, numero_documento, tipo_documento;
   SQL
   create_view "view_carico_scarichi", sql_definition: <<-SQL
       SELECT imports.codice_articolo,
