@@ -18,7 +18,7 @@
       </p>
     </div>
   </div>
-  <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+  <div class="shrink-0 text-right sm:flex sm:flex-col sm:items-end">
     <% if not  documento.totale_documento.nil? %>
     
       <% if documento.totale_documento > 0 %>
@@ -28,7 +28,7 @@
       <% end %>
     <% end %>
     
-      <%= number_to_currency documento.totale_documento, locale: :it %>
+    <%= number_to_currency documento.totale_documento, locale: :it %>
     </p>
     
     <p class="text-sm leading-6 text-gray-900">
