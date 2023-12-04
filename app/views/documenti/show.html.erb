@@ -7,14 +7,12 @@
     <!--non funziona con - render @documenti-->    
     <%=  render partial: "documenti/documento", locals: { documento: @documento } %>
 
-    
     <ul role="list" class="divide-y divide-gray-100">    
   
       <% @documento.righe.each do |riga| %> 
-
-        <%=  render partial: "righe/riga", locals: { riga: riga } %>
-     
+        <%=  render partial: "righe/riga", locals: { riga: riga } %>    
       <% end %>
+
     </ul>
 
 </div>
