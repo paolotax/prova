@@ -1,4 +1,20 @@
-<div>
-  <h1 class="font-bold text-4xl">Documenti#show</h1>
-  <p>Find me in app/views/documenti/show.html.erb</p>
+<div class="mx-auto md:w-2/3 w-full">
+  
+  <div class="mb-4 sm:ml-0 sm:mt-0 sm:flex-none">
+    <h1 class="font-bold text-4xl">Document0</h1>
+  </div>
+
+    <!--non funziona con - render @documenti-->    
+    <%=  render partial: "documenti/documento", locals: { documento: @documento } %>
+
+    
+    <ul role="list" class="divide-y divide-gray-100">    
+  
+      <% @documento.righe.each do |riga| %> 
+
+        <%=  render partial: "righe/riga", locals: { riga: riga } %>
+     
+      <% end %>
+    </ul>
+
 </div>

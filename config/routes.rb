@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
-  get 'documenti',  to: 'documenti#index'
+  get 'documenti',     to: 'documenti#index'
+  get 'documenti/:id', to: 'documenti#show', as: 'documento'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
