@@ -1,8 +1,16 @@
 <div class="mx-auto md:w-2/3 w-full">
   
   <div class="mb-4 sm:ml-0 sm:mt-0 sm:flex-none">
-    <h1 class="font-bold text-4xl">Document0</h1>
+    
+    <div>
+      <h1 class="font-bold text-4xl">Document0</h1>
+
+      <%= link_to 'back', documenti_path, class:"mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 justify-end"%>
+    
+    </div>
   </div>
+
+  <div class="mb-4 sm:ml-0 sm:mt-0 sm:flex-none">  
 
     <!--non funziona con - render @documenti-->    
     <%=  render partial: "documenti/documento", locals: { documento: @documento } %>
