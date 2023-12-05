@@ -5,7 +5,7 @@ namespace :import do
 
     desc "import righe from csv"
    
-    task righe: :environment do
+    task gaia: :environment do
         
         puts 'wait....'
 
