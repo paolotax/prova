@@ -1,289 +1,306 @@
 [
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota debito giac.inizio anno",
-    numero_documento: "55/F",
-    data_documento: "2022-01-03",
-    totale_documento: 6246.62
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "249/F",
-    data_documento: "2022-02-28",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "361/F",
-    data_documento: "2022-03-31",
-    totale_documento: 2132.88
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "471/F",
-    data_documento: "2022-04-29",
-    totale_documento: 2501.68
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "583/F",
-    data_documento: "2022-05-31",
-    totale_documento: 8238.44
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "213/N",
-    data_documento: "2022-06-30",
-    totale_documento: -14.23
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "347/N",
-    data_documento: "2022-06-30",
-    totale_documento: -18126.2
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "702/F",
-    data_documento: "2022-06-30",
-    totale_documento: 1331.26
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "123/N",
-    data_documento: "2022-07-01",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "844/F",
-    data_documento: "2022-08-31",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "943/F",
-    data_documento: "2022-09-30",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "1.046/F",
-    data_documento: "2022-10-28",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "412/N",
-    data_documento: "2022-10-28",
-    totale_documento: -595.48
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di debito",
-    numero_documento: "1232/F",
-    data_documento: "2022-12-30",
-    totale_documento: 32.16
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "557/N",
-    data_documento: "2022-12-30",
-    totale_documento: -7413.77
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "615/N",
-    data_documento: "2022-12-30",
-    totale_documento: -568.5
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota debito giac.inizio anno",
-    numero_documento: "83/F",
-    data_documento: "2023-01-02",
-    totale_documento: 7389.11
-  },
-  {
-    fornitore: "Gaia",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "44/N",
-    data_documento: "2023-10-25",
-    totale_documento: -6057.99
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota debito giac.inizio anno",
-    numero_documento: "97/G",
-    data_documento: "2022-06-30",
-    totale_documento: 18126.2
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "69/F",
-    data_documento: "2022-07-29",
-    totale_documento: 29.37
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "174/F",
-    data_documento: "2022-08-31",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "376/F",
-    data_documento: "2022-09-30",
-    totale_documento: 1619.92
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "574/F",
-    data_documento: "2022-10-28",
-    totale_documento: 1263.52
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "729/F",
-    data_documento: "2022-11-30",
-    totale_documento: 240.42
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "819/F",
-    data_documento: "2022-12-29",
-    totale_documento: 811.9
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito",
-    numero_documento: "1022/F",
-    data_documento: "2022-12-30",
-    totale_documento: 203.07
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "336/N",
-    data_documento: "2022-12-30",
-    totale_documento: -423.06
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "337/N",
-    data_documento: "2022-12-30",
-    totale_documento: -19045.21
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di accredito",
-    numero_documento: "338/N",
-    data_documento: "2022-12-30",
-    totale_documento: -2549.05
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito",
-    numero_documento: "963/F",
-    data_documento: "2022-12-30",
-    totale_documento: 36.71
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "155/F",
-    data_documento: "2023-01-31",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "155/F",
-    data_documento: "2023-02-01",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota debito giac.inizio anno",
-    numero_documento: "25/F",
-    data_documento: "2023-02-01",
-    totale_documento: 19045.21
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "155/F",
-    data_documento: "2023-02-02",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "351/F",
-    data_documento: "2023-03-31",
-    totale_documento: 8285.84
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "456/F",
-    data_documento: "2023-04-28",
-    totale_documento: 984.4
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "550/F",
-    data_documento: "2023-05-31",
-    totale_documento: 4524.39
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "655/F",
-    data_documento: "2023-06-30",
-    totale_documento: 634.63
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "951/F",
-    data_documento: "2023-08-31",
-    totale_documento: 0
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "1092/F",
-    data_documento: "2023-09-30",
-    totale_documento: 6390.22
-  },
-  {
-    fornitore: "Gaia Scuola",
-    tipo_documento: "Nota di debito differita",
-    numero_documento: "1.318/F",
-    data_documento: "2023-10-31",
-    totale_documento: 177.14
-  }
+    {
+        "tipo_documento": null,
+        "numero_documento": "55/F",
+        "data_documento": "2022-01-03"
+    },
+    {
+        "numero_documento": "55/F",
+        "data_documento": "2022-01-03",
+        "totale_documento": 6246.62
+    },
+    {
+        "tipo_documento": "Nota debito giac.inizio anno",
+        "numero_documento": "55/F",
+        "data_documento": "2022-01-03"
+    },
+    {
+        "numero_documento": "55/F",
+        "data_documento": "2022-01-03",
+        "totale_documento": 6246.62
+    },
+    {
+        "data_documento": "2022-01-03",
+        "totale_documento": 6246.62
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "249/F",
+        "data_documento": "2022-02-28",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "361/F",
+        "data_documento": "2022-03-31",
+        "totale_documento": 2132.88
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "471/F",
+        "data_documento": "2022-04-29",
+        "totale_documento": 2501.68
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "583/F",
+        "data_documento": "2022-05-31",
+        "totale_documento": 8238.44
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "213/N",
+        "data_documento": "2022-06-30",
+        "totale_documento": -14.23
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "347/N",
+        "data_documento": "2022-06-30",
+        "totale_documento": -18126.2
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "702/F",
+        "data_documento": "2022-06-30",
+        "totale_documento": 1331.26
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "123/N",
+        "data_documento": "2022-07-01",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "844/F",
+        "data_documento": "2022-08-31",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "943/F",
+        "data_documento": "2022-09-30",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "1.046/F",
+        "data_documento": "2022-10-28",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "412/N",
+        "data_documento": "2022-10-28",
+        "totale_documento": -595.48
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di debito",
+        "numero_documento": "1232/F",
+        "data_documento": "2022-12-30",
+        "totale_documento": 32.16
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "557/N",
+        "data_documento": "2022-12-30",
+        "totale_documento": -7413.77
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "615/N",
+        "data_documento": "2022-12-30",
+        "totale_documento": -568.5
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota debito giac.inizio anno",
+        "numero_documento": "83/F",
+        "data_documento": "2023-01-02",
+        "totale_documento": 7389.11
+    },
+    {
+        "fornitore": "Gaia",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "44/N",
+        "data_documento": "2023-10-25",
+        "totale_documento": -6057.99
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota debito giac.inizio anno",
+        "numero_documento": "97/G",
+        "data_documento": "2022-06-30",
+        "totale_documento": 18126.2
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "69/F",
+        "data_documento": "2022-07-29",
+        "totale_documento": 29.37
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "174/F",
+        "data_documento": "2022-08-31",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "376/F",
+        "data_documento": "2022-09-30",
+        "totale_documento": 1619.92
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "574/F",
+        "data_documento": "2022-10-28",
+        "totale_documento": 1263.52
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "729/F",
+        "data_documento": "2022-11-30",
+        "totale_documento": 240.42
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "819/F",
+        "data_documento": "2022-12-29",
+        "totale_documento": 811.9
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito",
+        "numero_documento": "1022/F",
+        "data_documento": "2022-12-30",
+        "totale_documento": 203.07
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "336/N",
+        "data_documento": "2022-12-30",
+        "totale_documento": -423.06
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "337/N",
+        "data_documento": "2022-12-30",
+        "totale_documento": -19045.21
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di accredito",
+        "numero_documento": "338/N",
+        "data_documento": "2022-12-30",
+        "totale_documento": -2549.05
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito",
+        "numero_documento": "963/F",
+        "data_documento": "2022-12-30",
+        "totale_documento": 36.71
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "155/F",
+        "data_documento": "2023-01-31",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "155/F",
+        "data_documento": "2023-02-01",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota debito giac.inizio anno",
+        "numero_documento": "25/F",
+        "data_documento": "2023-02-01",
+        "totale_documento": 19045.21
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "155/F",
+        "data_documento": "2023-02-02",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "351/F",
+        "data_documento": "2023-03-31",
+        "totale_documento": 8285.84
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "456/F",
+        "data_documento": "2023-04-28",
+        "totale_documento": 984.4
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "550/F",
+        "data_documento": "2023-05-31",
+        "totale_documento": 4524.39
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "655/F",
+        "data_documento": "2023-06-30",
+        "totale_documento": 634.63
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "951/F",
+        "data_documento": "2023-08-31",
+        "totale_documento": 0
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "1092/F",
+        "data_documento": "2023-09-30",
+        "totale_documento": 6390.22
+    },
+    {
+        "fornitore": "Gaia Scuola",
+        "tipo_documento": "Nota di debito differita",
+        "numero_documento": "1.318/F",
+        "data_documento": "2023-10-31",
+        "totale_documento": 177.14
+    }
 ]
