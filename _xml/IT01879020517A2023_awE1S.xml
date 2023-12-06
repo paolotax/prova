@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<q1:FatturaElettronica versione="FPR12" xmlns:q1="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2">
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01879020517</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>3</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>M5UXCR1</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>04155820378</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>TSSPLA65L31A944U</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Paolo Tassinari</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF07</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Vestri, 4</Indirizzo>
+        <CAP>40128</CAP>
+        <Comune>Bologna</Comune>
+        <Provincia>BO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <Contatti>
+        <Email>paolo.tassinari@gmail.com</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>00445650344</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>00445650344</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>ISTITUTO MARIA AUSILIATRICE</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA E. MONTI</Indirizzo>
+        <NumeroCivico>3</NumeroCivico>
+        <CAP>42021</CAP>
+        <Comune>Bibbiano</Comune>
+        <Provincia>RE</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2023-02-07</Data>
+        <Numero>FPR 3/23</Numero>
+        <ImportoTotaleDocumento>585.00</ImportoTotaleDocumento>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809959866</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>Più INVALSI - Inglese 5</Descrizione>
+        <Quantita>48.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>3.40</PrezzoUnitario>
+        <PrezzoTotale>163.20</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>66175V</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MIO TUTTO VACANZE 2017 ITA 4</Descrizione>
+        <Quantita>37.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.00</PrezzoUnitario>
+        <PrezzoTotale>148.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>3</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>66180Z</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MIO TUTTO VACANZE 2017 MATE 4</Descrizione>
+        <Quantita>37.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.00</PrezzoUnitario>
+        <PrezzoTotale>148.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>4</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809959866</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>Più INVALSI - Inglese 5</Descrizione>
+        <Quantita>37.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>3.40</PrezzoUnitario>
+        <PrezzoTotale>125.80</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+        <ImponibileImporto>585.00</ImponibileImporto>
+        <Imposta>0.00</Imposta>
+        <RiferimentoNormativo>Non soggette - altri casi</RiferimentoNormativo>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2023-02-07</DataScadenzaPagamento>
+        <ImportoPagamento>585.00</ImportoPagamento>
+        <IstitutoFinanziario>Banca Popolare dell'Emilia Romagna</IstitutoFinanziario>
+        <IBAN>IT74S0538702414000002135390</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</q1:FatturaElettronica>

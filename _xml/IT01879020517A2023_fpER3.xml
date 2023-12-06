@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FatturaElettronica versione="FPR12" xmlns="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2">
+  <FatturaElettronicaHeader xmlns="">
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01879020517</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>56</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>KRRH6B9</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>04155820378</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>TSSPLA65L31A944U</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Paolo Tassinari</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF07</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Vestri, 4</Indirizzo>
+        <CAP>40128</CAP>
+        <Comune>Bologna</Comune>
+        <Provincia>BO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <Contatti>
+        <Email>paolo.tassinari@gmail.com</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>02233060355</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>02233060355</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>RE.SEARCH SOC. COOP. SOCIALE</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA AMOS TRAGNI, 67/2</Indirizzo>
+        <CAP>42043</CAP>
+        <Comune>GATTATICO</Comune>
+        <Provincia>RE</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody xmlns="">
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2023-10-27</Data>
+        <Numero>FPR 56/23</Numero>
+        <ImportoTotaleDocumento>503.60</ImportoTotaleDocumento>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>Gaia ISBN</CodiceTipo>
+          <CodiceValore>9788873343394</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MISSIONE INVALSI CL.5 - Italiano (2021)</Descrizione>
+        <Quantita>16.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>3.90</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>49.92</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>Gaia ISBN</CodiceTipo>
+          <CodiceValore>9788873343400</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MISSIONE INVALSI CL.5 - Matematica(2021)</Descrizione>
+        <Quantita>16.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>3.90</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>49.92</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>3</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788873343349</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>KIT VACANZE PIU' CL. 2</Descrizione>
+        <Quantita>3.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>11.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>27.60</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>4</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>66172P</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MIO TUTTO VACANZE 2017 ITA 1</Descrizione>
+        <Quantita>19.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>68.40</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>5</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>66177F</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MIO TUTTO VACANZE 2017 MATE 1</Descrizione>
+        <Quantita>19.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>68.40</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>6</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788873343103</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>PASS SCUOLA SECONDARIA</Descrizione>
+        <Quantita>6.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>8.20</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>39.36</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>7</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>75892X</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>PRONTISSIMI COMPITI VACANZE 5</Descrizione>
+        <Quantita>25.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>10.00</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>200.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+        <ImponibileImporto>503.60</ImponibileImporto>
+        <Imposta>0.00</Imposta>
+        <RiferimentoNormativo>Non soggette - altri casi</RiferimentoNormativo>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2023-10-27</DataScadenzaPagamento>
+        <ImportoPagamento>503.60</ImportoPagamento>
+        <IstitutoFinanziario>Banca Popolare dell'Emilia Romagna</IstitutoFinanziario>
+        <IBAN>IT74S0538702414000002135390</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</FatturaElettronica>
