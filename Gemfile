@@ -70,3 +70,4 @@ group :test do
 end
 
 gem "scenic", "~> 1.7"
+gem "highline", "~> 2.0.3"

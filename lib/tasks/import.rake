@@ -1,24 +1,28 @@
 require 'csv'
 require 'date'
 
+
 namespace :import do
   
   desc "import righe from csv gaia"  
   task gaia: :environment do
+        
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     
-    puts 'wait....'
-    
-    Import.destroy_all 
-    
-    options = {  }
+    if answer == true
+      puts 'wait....'
+      Import.destroy_all
+    end
+
+    puts 'wait........'
+
     counter = 0
     file_counter = 0
+    
     csv_dir = File.join(Rails.root, '_csv/*.csv')
     
     Dir.glob(csv_dir).each do |file|
       
-      puts 'wait....'
-
       CSV.foreach(file, "r:ISO-8859-1", headers: true, col_sep: ';') do |row|
         
         if row["Data"].nil?
@@ -68,20 +72,29 @@ namespace :import do
 
   "import righe from xml aruba"  
   task aruba: :environment do
-    
-    # Specifica la directory contenente i file XML
-    xml_dir = File.join('_xml/*.xml')
-    
+     
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    if answer == true
+      puts 'wait....'
+      Import.destroy_all
+    end
+    puts 'wait........'
+
     # # Specifica il percorso in cui salvare il file CSV risultante
     # csv_file_path = 'import_aruba/output.csv'
-    
     # Inizializza un array per contenere tutti i dati XML
-    all_xml_data = []
+    # all_xml_data = []
+
+    counter = 0
+    file_counter = 0
+    
+    # Specifica la directory contenente i file XML
+    xml_dir = File.join('_xml/*.xml') 
     
     # Loop attraverso i file XML nella directory
-    Dir.glob(xml_dir).each do |xml_file_path|
+    Dir.glob(xml_dir).each do |file|
       
-      doc = Nokogiri::XML(File.open(xml_file_path))
+      doc = Nokogiri::XML(File.open(file))
       
       # Specifica il percorso agli elementi XML che vuoi estrarre
       righe_path = '//DettaglioLinee'
@@ -116,39 +129,43 @@ namespace :import do
           iva:              74
         )
 
-        item = {
+        counter += 1 if import.persisted?
+
+        # item = {
         
-          'tipo_documento' => doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text,
-          'data_documento'          => doc.xpath('//DatiGeneraliDocumento/Data').text,
-          'numero_documento'        => doc.xpath('//DatiGeneraliDocumento/Numero').text,
-          'totale_documento' => doc.xpath('//DatiGeneraliDocumento/ImportoTotaleDocumento').text,
+        #   'tipo_documento' => doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text,
+        #   'data_documento'          => doc.xpath('//DatiGeneraliDocumento/Data').text,
+        #   'numero_documento'        => doc.xpath('//DatiGeneraliDocumento/Numero').text,
+        #   'totale_documento' => doc.xpath('//DatiGeneraliDocumento/ImportoTotaleDocumento').text,
           
-          # 'Cliente' =>    doc.xpath('//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione').text,
-          # 'Comune'  =>    doc.xpath('//CessionarioCommittente/Sede/Comune').text,
-          # 'Provincia'  => doc.xpath('//CessionarioCommittente/Sede/Provincia').text,
-          # 'IvaCliente' => doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
+        #   'Cliente' =>    doc.xpath('//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione').text,
+        #   'Comune'  =>    doc.xpath('//CessionarioCommittente/Sede/Comune').text,
+        #   'Provincia'  => doc.xpath('//CessionarioCommittente/Sede/Provincia').text,
+        #   'IvaCliente' => doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
           
-          'riga'  => element.xpath("./NumeroLinea").text,
-          # 'CodiceTipo'   => element.xpath("./CodiceArticolo/CodiceTipo").text,
-          'codice_articolo' => element.xpath("./CodiceArticolo/CodiceValore").text,
+        #   'riga'  => element.xpath("./NumeroLinea").text,
+        #   'CodiceTipo'   => element.xpath("./CodiceArticolo/CodiceTipo").text,
+        #   'codice_articolo' => element.xpath("./CodiceArticolo/CodiceValore").text,
           
-          'descrizione' => element.xpath("./Descrizione").text,
-          'quantita'    => quantita,
+        #   'descrizione' => element.xpath("./Descrizione").text,
+        #   'quantita'    => quantita,
           
-          # 'UnitaMisura'    => element.xpath("./UnitaMisura").text,
-          'prezzo_unitario' => element.xpath("./PrezzoUnitario").text,
-          'sconto'         => element.xpath("./ScontoMaggiorazione/Percentuale").text,
-          'importo_netto'   => element.xpath("./PrezzoTotale").text,
-          'fornitore' =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text
-          # ,      
-          # 'iva_fornitore'  =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice').text
+        #   'UnitaMisura'    => element.xpath("./UnitaMisura").text,
+        #   'prezzo_unitario' => element.xpath("./PrezzoUnitario").text,
+        #   'sconto'         => element.xpath("./ScontoMaggiorazione/Percentuale").text,
+        #   'importo_netto'   => element.xpath("./PrezzoTotale").text,
+        #   'fornitore' =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text,      
+        #   'iva_fornitore'  =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice').text
           
-        }
-        
-        
-        all_xml_data << item
+        # }
+        # all_xml_data << item
       end
+
+      file_counter += 1
     end
+
+    puts "righe inserite #{counter} da #{file_counter} file/s"
+
     
     # # Apri un file CSV in modalità scrittura
     # CSV.open(csv_file_path, 'w') do |csv|
@@ -160,8 +177,7 @@ namespace :import do
     #     csv << item.values
     #   end
     # end
-    
-    puts "Conversione di tutti i file XML in un unico file CSV completata. #{all_xml_data.count} righe #{all_xml_data}" 
+    # puts "Conversione di tutti i file XML in un unico file CSV completata. #{all_xml_data.count} righe #{all_xml_data}" 
   end
   
   
