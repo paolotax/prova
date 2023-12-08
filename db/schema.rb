@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_02_073600) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,32 +47,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_02_073600) do
     GROUP BY fornitore, tipo_documento, numero_documento, data_documento, totale_documento
     ORDER BY fornitore, data_documento, numero_documento, tipo_documento;
   SQL
-  create_view "view_name", sql_definition: <<-SQL
-      SELECT id,
-      fornitore,
-      tipo_documento,
-      numero_documento,
-      data_documento,
-          CASE
-              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- totale_documento)
-              ELSE totale_documento
-          END AS totale_documento,
-      riga,
-      codice_articolo,
-      descrizione,
-      prezzo_unitario,
-          CASE
-              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- quantita)
-              ELSE quantita
-          END AS quantita,
-          CASE
-              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- importo_netto)
-              ELSE importo_netto
-          END AS importo_netto,
-      sconto,
-      iva
-     FROM imports;
-  SQL
   create_view "view_righe", sql_definition: <<-SQL
       SELECT id,
       fornitore,
@@ -98,5 +72,16 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_02_073600) do
       sconto,
       iva
      FROM imports;
+  SQL
+  create_view "view_articoli", sql_definition: <<-SQL
+      SELECT DISTINCT codice_articolo,
+      descrizione,
+      fornitore,
+      sum(quantita) AS quantita,
+      sum(importo_netto) AS importo
+     FROM view_righe
+    WHERE (codice_articolo IS NOT NULL)
+    GROUP BY codice_articolo, descrizione, fornitore
+    ORDER BY codice_articolo;
   SQL
 end
