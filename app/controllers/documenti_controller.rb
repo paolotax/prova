@@ -1,8 +1,7 @@
 class DocumentiController < ApplicationController
   
   before_action :set_documento, only: %i[ show ]
-
-
+ 
   def index
     @documenti = Views::Documento.all
   end

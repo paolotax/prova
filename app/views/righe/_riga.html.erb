@@ -5,7 +5,7 @@
       <%= riga.descrizione %>
     </div>
     <div class="mt-1 truncate text-gray-500">
-      <%= riga.codice_articolo %>
+      <%= link_to riga.codice_articolo, articolo_path(riga.codice_articolo) %>
     </div>
   </td>
   <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
