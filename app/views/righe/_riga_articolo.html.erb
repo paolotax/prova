@@ -2,16 +2,12 @@
 
   <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
     <div class="font-medium text-gray-900">
-      <%= riga.descrizione %>
+      <%= riga.fornitore %>
     </div>
     <div class="mt-1 truncate text-gray-500">
-      <%= 
-          if riga.codice_articolo.nil? then
-            ''
-          else
-            link_to riga.codice_articolo, articolo_path(riga.codice_articolo)
-          end
-      %>
+      <%= riga.tipo_documento %>
+      <%= riga.numero_documento %>
+      <%= riga.data_documento %>
     </div>
   </td>
   <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
@@ -39,3 +35,4 @@
   </td>
 
 </tr>
+

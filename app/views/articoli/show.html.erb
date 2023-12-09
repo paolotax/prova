@@ -1,4 +1,67 @@
-<div>
-  <h1 class="font-bold text-4xl">Articoli#show</h1>
-  <p>Find me in app/views/articoli/show.html.erb</p>
+<div class="mx-auto md:w-2/3 w-full">
+
+  <div class="sm:flex sm:items-center">
+    
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">
+          <%= @articolo.descrizione %></h1>
+      <p class="mt-2 text-sm text-gray-700">
+          <%= @articolo.codice_articolo %> 
+      </p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <button class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <%= link_to 'Back', documenti_path %>
+      </button>
+    </div>
+  </div>
+
+  <div class="-mx-4 mt-8 flow-root sm:mx-0">
+    <table class="min-w-full">
+      <colgroup>
+        <col class="w-full sm:w-1/2">
+        <col class="sm:w-1/8">
+        <col class="sm:w-1/8">
+        <col class="sm:w-1/8">
+        <col class="sm:w-1/6">
+      </colgroup>
+      
+      <thead class="border-b border-gray-300 text-gray-900">
+        <tr>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Titolo</th>
+          <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">Prezzo</th>
+          <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Quantita</th>
+          <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">Sconto</th>
+          <th scope="col" class="py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">Importo</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+
+        <% @articolo.righe.each do |riga| %> 
+          <%=  render partial: "righe/riga_articolo", locals: { riga: riga } %>    
+        <% end %>
+      
+      </tbody>
+      
+      <tfoot>
+        <tr>
+          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
+          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Giacenza</th>
+          <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
+            <%= @articolo.giacenza %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
+          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Valore</th>
+          <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
+            <%= number_to_currency @articolo.valore, locale: :it %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
+
+
