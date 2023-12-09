@@ -2,7 +2,7 @@ class ArticoliController < ApplicationController
   before_action :set_articolo, only: %i[ show ]
 
   def index
-    @articoli = Views::Articolo.all
+    @articoli = Views::Articolo.order(:descrizione).all
   end
 
   def show
