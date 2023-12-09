@@ -1,9 +1,8 @@
 SELECT DISTINCT codice_articolo,
                 descrizione,
-                fornitore,
-                sum(quantita)      AS quantita,
-                sum(importo_netto) AS importo
+                sum(quantita)      AS giacenza,
+                sum(importo_netto) AS valore
 FROM view_righe
 WHERE codice_articolo IS NOT NULL
-GROUP BY codice_articolo, descrizione, fornitore
+GROUP BY codice_articolo, descrizione
 ORDER BY codice_articolo;
