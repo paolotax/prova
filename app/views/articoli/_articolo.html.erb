@@ -1,0 +1,28 @@
+<tr class="border-b border-gray-200">
+
+  <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
+    <div class="font-medium text-gray-900">
+      <%= articolo.descrizione %>
+    </div>
+    <div class="mt-1 truncate text-gray-500 hover:text-indigo-500">
+        <%= if articolo.codice_articolo.nil? or articolo.codice_articolo.blank? then
+             articolo.codice_articolo
+            else
+              link_to articolo.codice_articolo, articolo_path(articolo) 
+            end
+        %>
+    </div>
+  </td>
+
+  <td class="px-3 py-5 text-right text-sm text-gray-500">
+    <%= articolo.giacenza %>
+  </td>
+
+
+  <td class="py-5 pl-3 pr-4 text-right text-sm font-medium text-gray-900 sm:pr-0">   
+    <%= number_to_currency articolo.valore, locale: :it %>      
+  </td>
+
+</tr>
+
+
