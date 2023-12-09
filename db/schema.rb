@@ -77,9 +77,9 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
       SELECT DISTINCT codice_articolo,
       descrizione,
       sum(quantita) AS giacenza,
-      sum(importo_netto) AS valore
+      sum(round((importo_netto * (100)::double precision))) AS valore
      FROM view_righe
-    WHERE (codice_articolo IS NOT NULL)
+    WHERE ((codice_articolo IS NOT NULL) AND ((codice_articolo)::text <> ''::text))
     GROUP BY codice_articolo, descrizione
     ORDER BY codice_articolo;
   SQL

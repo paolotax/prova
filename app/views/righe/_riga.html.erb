@@ -6,10 +6,10 @@
     </div>
     <div class="mt-1 truncate text-gray-500">
       <%= 
-          if riga.codice_articolo.nil? then
+          if riga.codice_articolo.nil? or riga.codice_articolo.blank? then
             ''
           else
-            link_to riga.codice_articolo, articolo_path(riga.codice_articolo)
+            link_to riga.codice_articolo, articolo_path(riga.codice_articolo), class:"hover:text-indigo-500 hover:font-semibold"
           end
       %>
     </div>

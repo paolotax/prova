@@ -6,7 +6,7 @@
     </div>
     <div class="mt-1 truncate text-gray-500">
       <%= riga.tipo_documento %>
-      <%= riga.numero_documento %>
+      <%= link_to riga.numero_documento, documento_path(riga.documento), class:"hover:text-indigo-500 hover:font-semibold"  %>
       <%= riga.data_documento %>
     </div>
   </td>
@@ -29,7 +29,7 @@
     <%= if riga.importo_netto == 0 then
           ''
         else
-          number_to_currency riga.importo_netto, locale: :it
+          number_to_currency riga.importo_netto
         end
       %>
   </td>
