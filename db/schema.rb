@@ -76,12 +76,11 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
   create_view "view_articoli", sql_definition: <<-SQL
       SELECT DISTINCT codice_articolo,
       descrizione,
-      fornitore,
-      sum(quantita) AS quantita,
-      sum(importo_netto) AS importo
+      sum(quantita) AS giacenza,
+      sum(importo_netto) AS valore
      FROM view_righe
     WHERE (codice_articolo IS NOT NULL)
-    GROUP BY codice_articolo, descrizione, fornitore
+    GROUP BY codice_articolo, descrizione
     ORDER BY codice_articolo;
   SQL
 end
