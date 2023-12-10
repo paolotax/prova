@@ -1,4 +1,4 @@
-<tr>
+<tr class="border-b border-gray-200">
   <td class="relative py-5 pr-6">
     
     <div class="flex gap-x-6">
@@ -13,21 +13,13 @@
           del <%= documento.data_documento.strftime('%d-%m-%Y') %>
         </div>
       </div>
-    </div>
-    
-    <div class="absolute bottom-0 right-full h-px w-screen bg-indigo-500"></div>
-    <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-500"></div>
-  
+    </div>  
   </td>
   
   <td class="hidden py-5 pr-6 sm:table-cell">
     <div class="text-sm leading-6 text-gray-900">
       <%= documento.fornitore %>
-    </div>
-    
-    <div class="absolute bottom-0 right-full h-px w-screen bg-indigo-500"></div>
-    <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-500"></div>
- 
+    </div> 
   </td>
 
   <td class="py-5 text-right">
@@ -42,10 +34,6 @@
         <%= documento.quantita_totale %>
       </span>
     </div>
-    
-    <div class="absolute bottom-0 right-full h-px w-screen bg-indigo-500"></div>
-    <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-500"></div>
- 
   </td>
 
 

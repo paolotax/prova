@@ -28,13 +28,11 @@
       </thead>
       
       <tbody>
-    
-    <% @documenti.each do |documento| %>      
-      <%=  render partial: "documenti/documento_table", locals: { documento: documento } %>
-    <% end %>   
-
+        <% @documenti.each do |documento| %>      
+          <%=  render partial: "documenti/documento_table", locals: { documento: documento } %>
+        <% end %>  
       </tbody>
-      
+
       <tfoot>
         <tr>
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
