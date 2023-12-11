@@ -10,7 +10,7 @@
         </div>
         <div class="mt-1 text-xs leading-5 text-gray-500">
           <%= link_to documento_path(documento), class:"hover:text-indigo-500 hover:font-semibold" do %>
-            <%= "#{documento.numero_documento} del #{documento.data_documento.strftime('%d-%m-%Y')}" %>
+            <%= "#{documento.numero_documento} del #{documento.data_documento.strftime('%d-%m-%y')}" %>
           <% end %>
         </div>
       </div>
