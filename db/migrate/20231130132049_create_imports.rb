@@ -3,6 +3,9 @@ class CreateImports < ActiveRecord::Migration[7.1]
     create_table :imports do |t|
 
       t.string :fornitore
+      t.string :iva_fornitore
+      t.string :cliente
+      t.string :iva_cliente
       t.string :tipo_documento
       t.string :numero_documento
       t.date   :data_documento

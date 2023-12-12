@@ -1,10 +1,14 @@
 class DocumentiController < ApplicationController
   
   before_action :set_documento, only: %i[ show ]
-
-
+ 
   def index
-    @documenti = Views::Documento.all
+
+    if params[:search].present?
+      @documenti = Views::Documento.trova(params[:search]).order(:data_documento)
+    else
+      @documenti = Views::Documento.all
+    end
   end
 
   def show

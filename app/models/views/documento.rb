@@ -8,4 +8,7 @@ class Views::Documento < ApplicationRecord
                           fornitore: self.fornitore).order(:riga)
     end
 
+    scope :trova, -> (query) { where("fornitore ILIKE ? OR numero_documento ILIKE ?", "%#{query}%", "%#{query}%") }
+
+
 end

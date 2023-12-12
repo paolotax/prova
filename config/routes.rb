@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  
+  
+  get 'articoli',     to: 'articoli#index'
+  get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
   get 'documenti',     to: 'documenti#index'
   get 'documenti/:id', to: 'documenti#show', as: 'documento'

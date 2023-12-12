@@ -2,16 +2,13 @@
 
   <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
     <div class="font-medium text-gray-900">
-      <%= riga.descrizione %>
+      <%= riga.fornitore %>
     </div>
     <div class="mt-1 truncate text-gray-500">
-      <%= 
-          if riga.codice_articolo.nil? or riga.codice_articolo.blank? then
-            ''
-          else
-            link_to riga.codice_articolo, articolo_path(riga.codice_articolo), class:"hover:text-indigo-500 hover:font-semibold"
-          end
-      %>
+      <%= riga.tipo_documento %>
+      <%= link_to  documento_path(riga.documento), class:"hover:text-indigo-500 hover:font-semibold" do %>
+          <%= "#{riga.numero_documento} del #{riga.data_documento.strftime('%d-%m-%y')}" %>
+          <% end %>
     </div>
   </td>
   <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
@@ -33,9 +30,10 @@
     <%= if riga.importo_netto == 0 then
           ''
         else
-          number_to_currency riga.importo_netto, locale: :it
+          number_to_currency riga.importo_netto
         end
       %>
   </td>
 
 </tr>
+

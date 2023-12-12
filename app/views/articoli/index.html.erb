@@ -1,38 +1,38 @@
 <div class="mx-auto md:w-2/3 w-full">
-  
+
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900 sm:text-xl"> 
-          Documenti
+          Articoli
       </h1>
     </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <%= link_to 'Articoli', articoli_path, class:"block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"%>
+    <div class="mt-4 sm:ml-16 sm:mt-0 flex-none">
+      <%= link_to 'Documenti', documenti_path, class:"block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"%>
     </div>  
   </div>
 
   <div class="-mx-4 mt-8 flow-root sm:mx-0">
     <table class="min-w-full">
       <colgroup>
-        <col class="w-full sm:w-1/3">
-        <col class="w-full sm:w-1/3">
-        <col class="w-full sm:w-1/3">
+        <col class="w-full sm:w-1/2">
+        <col class="sm:w-1/4">
+        <col class="sm:w-1/4">
       </colgroup>
       
       <thead class="border-b border-gray-300 text-gray-900">
         <tr>
-          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Documento</th>
-          <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell">Fornitore</th>
-          <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">...</th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Descrizione</th>
+          <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">giacenza</th>
+          <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Valore</th>
         </tr>
       </thead>
       
       <tbody>
-        <% @documenti.each do |documento| %>      
-          <%=  render partial: "documenti/documento_table", locals: { documento: documento } %>
-        <% end %>  
+        <% @articoli.each do |articolo| %> 
+          <%=  render partial: "articoli/articolo", locals: { articolo: articolo } %>    
+        <% end %>     
       </tbody>
-
+      
       <tfoot>
         <tr>
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
@@ -52,10 +52,4 @@
     </table>
   </div>
 </div>
-
-
-
-
-
-
 
