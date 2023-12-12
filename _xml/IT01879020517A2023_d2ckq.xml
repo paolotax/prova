@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FatturaElettronica versione="FPR12" xmlns="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2">
+  <FatturaElettronicaHeader xmlns="">
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01879020517</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>14</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>66OZKV1</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>04155820378</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>TSSPLA65L31A944U</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Paolo Tassinari</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF07</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Vestri, 4</Indirizzo>
+        <CAP>40128</CAP>
+        <Comune>Bologna</Comune>
+        <Provincia>BO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <Contatti>
+        <Email>paolo.tassinari@gmail.com</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>01544920356</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>BNOGPP62R21G337E</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>BONI GIUSEPPE</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA DEI MARTIRI, 32</Indirizzo>
+        <CAP>42010</CAP>
+        <Comune>RIO SALICETO</Comune>
+        <Provincia>RE</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody xmlns="">
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2023-07-19</Data>
+        <Numero>FPR 14/23</Numero>
+        <ImportoTotaleDocumento>479.44</ImportoTotaleDocumento>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>CM</CodiceTipo>
+          <CodiceValore>66180Z</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>MIO TUTTO VACANZE 2017 MATE 4</Descrizione>
+        <Quantita>60.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>216.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809903685</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>VACANZE VERDI 1 + Biglie e Conchiglie</Descrizione>
+        <Quantita>37.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>8.90</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>263.44</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+        <ImponibileImporto>479.44</ImponibileImporto>
+        <Imposta>0.00</Imposta>
+        <RiferimentoNormativo>Non soggette - altri casi</RiferimentoNormativo>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2023-07-19</DataScadenzaPagamento>
+        <ImportoPagamento>479.44</ImportoPagamento>
+        <IstitutoFinanziario>Banca Popolare dell'Emilia Romagna</IstitutoFinanziario>
+        <IBAN>IT74S0538702414000002135390</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</FatturaElettronica>

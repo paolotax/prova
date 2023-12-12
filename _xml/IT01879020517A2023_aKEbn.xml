@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<q1:FatturaElettronica versione="FPR12" xmlns:q1="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2">
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01879020517</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>4</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>P62QHVQ</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>04155820378</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>TSSPLA65L31A944U</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Paolo Tassinari</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF07</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Vestri, 4</Indirizzo>
+        <CAP>40128</CAP>
+        <Comune>Bologna</Comune>
+        <Provincia>BO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <Contatti>
+        <Email>paolo.tassinari@gmail.com</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>01300530357</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>01300530357</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>"IL BUCANEVE DI VILLANI GRAZIA E PIGNAGNOLI ANGELA S.N.C."</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA CAMILLO BENSO DI CAVOUR, 68</Indirizzo>
+        <CAP>42017</CAP>
+        <Comune>NOVELLARA</Comune>
+        <Provincia>RE</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2023-03-01</Data>
+        <Numero>FPR 4/23</Numero>
+        <ImportoTotaleDocumento>720.00</ImportoTotaleDocumento>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809959781</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>Più INVALSI - Italiano 2</Descrizione>
+        <Quantita>100.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>360.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809959804</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>Più INVALSI - Matematica 2</Descrizione>
+        <Quantita>100.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.50</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>360.00</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+        <ImponibileImporto>720.00</ImponibileImporto>
+        <Imposta>0.00</Imposta>
+        <RiferimentoNormativo>Non soggette - altri casi</RiferimentoNormativo>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2023-03-01</DataScadenzaPagamento>
+        <ImportoPagamento>720.00</ImportoPagamento>
+        <IstitutoFinanziario>Banca Popolare dell'Emilia Romagna</IstitutoFinanziario>
+        <IBAN>IT74S0538702414000002135390</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</q1:FatturaElettronica>

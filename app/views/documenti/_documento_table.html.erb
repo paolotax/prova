@@ -26,7 +26,7 @@
   <td class="py-5 text-right">
     <div class="flex justify-end">
       
-      <%= number_to_currency documento.totale_documento %>
+      <%= Money.from_cents( documento.totale_documento, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
     
     </div>
     <div class="mt-1 text-xs leading-5 text-gray-500">

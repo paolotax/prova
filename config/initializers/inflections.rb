@@ -7,6 +7,7 @@ ActiveSupport::Inflector.inflections do |inflect|
 #   inflect.plural /^(ox)$/i, '\1en'
 #   inflect.singular /^(ox)en/i, '\1'
   inflect.irregular 'cliente', 'clienti'
+  inflect.irregular 'fornitore', 'fornitori'
   inflect.irregular 'scuola', 'scuole'
   inflect.irregular 'appunto', 'appunti'
   inflect.irregular 'persona', 'persone'

@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FatturaElettronica versione="FPR12" xmlns="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2">
+  <FatturaElettronicaHeader xmlns="">
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01879020517</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>47</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>P62QHVQ</CodiceDestinatario>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>04155820378</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>TSSPLA65L31A944U</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Paolo Tassinari</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF07</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>Via Vestri, 4</Indirizzo>
+        <CAP>40128</CAP>
+        <Comune>Bologna</Comune>
+        <Provincia>BO</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      <Contatti>
+        <Email>paolo.tassinari@gmail.com</Email>
+      </Contatti>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>00749110359</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>00749110359</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>IDEA PIU' - S.N.C. DI FOCHI BARBARA E LIGABUE GLORIA</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA VITTORIO EMANUELE, 1</Indirizzo>
+        <CAP>42028</CAP>
+        <Comune>POVIGLIO</Comune>
+        <Provincia>RE</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody xmlns="">
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2023-10-09</Data>
+        <Numero>FPR 47/23</Numero>
+        <ImportoTotaleDocumento>282.54</ImportoTotaleDocumento>
+      </DatiGeneraliDocumento>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809930087</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>UN CIELO A COLORI 123 - confezione</Descrizione>
+        <Quantita>39.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>7.87</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>16.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>257.8212</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809976184</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>W IL TUTTO ESERCIZI 4 - ITALIANO</Descrizione>
+        <Quantita>1.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>4.90</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>3.92</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>3</NumeroLinea>
+        <CodiceArticolo>
+          <CodiceTipo>ISBN</CodiceTipo>
+          <CodiceValore>9788809970618</CodiceValore>
+        </CodiceArticolo>
+        <Descrizione>GUIDA MIA 4 - ITALIANO</Descrizione>
+        <Quantita>1.00</Quantita>
+        <UnitaMisura>CP</UnitaMisura>
+        <PrezzoUnitario>26.00</PrezzoUnitario>
+        <ScontoMaggiorazione>
+          <Tipo>SC</Tipo>
+          <Percentuale>20.00</Percentuale>
+        </ScontoMaggiorazione>
+        <PrezzoTotale>20.80</PrezzoTotale>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2.2</Natura>
+        <ImponibileImporto>282.54</ImponibileImporto>
+        <Imposta>0.00</Imposta>
+        <RiferimentoNormativo>Non soggette - altri casi</RiferimentoNormativo>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2023-10-09</DataScadenzaPagamento>
+        <ImportoPagamento>282.54</ImportoPagamento>
+        <IstitutoFinanziario>Banca Popolare dell'Emilia Romagna</IstitutoFinanziario>
+        <IBAN>IT74S0538702414000002135390</IBAN>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</FatturaElettronica>

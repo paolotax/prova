@@ -58,7 +58,7 @@
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
           <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
-            <%= number_to_currency @documento.totale_documento, locale: :it %>
+            <%= Money.from_cents(@documento.totale_documento, :eur).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
           </td>
         </tr>
       </tfoot>

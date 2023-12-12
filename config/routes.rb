@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get 'clienti',      to: 'clienti#index'
+  get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
+ 
+  get 'fornitori',      to: 'fornitori#index'
+  get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'
   
   
   get 'articoli',     to: 'articoli#index'
