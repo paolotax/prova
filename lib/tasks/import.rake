@@ -93,15 +93,24 @@ namespace :import do
 
   desc "import righe from xml aruba"  
   task aruba: :environment do
-    
-    # Specifica la directory contenente i file XML
-    xml_dir = File.join('_xml/*.xml')
-    
+     
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    if answer == true
+      puts 'wait....'
+      Import.destroy_all
+    end
+    puts 'wait........'
+
     # # Specifica il percorso in cui salvare il file CSV risultante
     # csv_file_path = 'import_aruba/output.csv'
-    
     # Inizializza un array per contenere tutti i dati XML
-    all_xml_data = []
+    # all_xml_data = []
+
+    counter = 0
+    file_counter = 0
+    
+    # Specifica la directory contenente i file XML
+    xml_dir = File.join('_xml/*.xml') 
     
     # Loop attraverso i file XML nella directory
     Dir.glob(xml_dir).each do |file|
@@ -147,52 +156,14 @@ namespace :import do
           iva:              element.xpath("./AliquotaIVA").text
         )
 
-        item = {
-        
-        #   'tipo_documento' => doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text,
-        #   'data_documento'          => doc.xpath('//DatiGeneraliDocumento/Data').text,
-        #   'numero_documento'        => doc.xpath('//DatiGeneraliDocumento/Numero').text,
-        #   'totale_documento' => doc.xpath('//DatiGeneraliDocumento/ImportoTotaleDocumento').text,
-          
-          # 'Cliente' =>    doc.xpath('//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione').text,
-          # 'Comune'  =>    doc.xpath('//CessionarioCommittente/Sede/Comune').text,
-          # 'Provincia'  => doc.xpath('//CessionarioCommittente/Sede/Provincia').text,
-          # 'IvaCliente' => doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
-          
-          'riga'  => element.xpath("./NumeroLinea").text,
-          # 'CodiceTipo'   => element.xpath("./CodiceArticolo/CodiceTipo").text,
-          'codice_articolo' => element.xpath("./CodiceArticolo/CodiceValore").text,
-          
-        #   'descrizione' => element.xpath("./Descrizione").text,
-        #   'quantita'    => quantita,
-          
-          # 'UnitaMisura'    => element.xpath("./UnitaMisura").text,
-          'prezzo_unitario' => element.xpath("./PrezzoUnitario").text,
-          'sconto'         => element.xpath("./ScontoMaggiorazione/Percentuale").text,
-          'importo_netto'   => element.xpath("./PrezzoTotale").text,
-          'fornitore' =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text
-          # ,      
-          # 'iva_fornitore'  =>    doc.xpath('//CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice').text
-          
-        }
-        
-        
-        all_xml_data << item
+        counter += 1 if import.persisted?
       end
+
+      file_counter += 1
     end
-    
-    # # Apri un file CSV in modalità scrittura
-    # CSV.open(csv_file_path, 'w') do |csv|
-    #   # Scrivi l'intestazione del CSV
-    #   csv << ['NomeFornitore', 'IvaFornitore', 'TipoDocumento', 'Data', 'Numero', 'ImportoTotaleDocumento', 'Cliente', 'Comune', 'Provincia', 'IvaCliente', 'NumeroLinea', 'CodiceTipo', 'CodiceValore','Descrizione', 'Quantita', 'UnitaMisura', 'PrezzoUnitario', 'Sconto', 'PrezzoTotale'] 
-      
-    #   # Scrivi i dati XML convertiti come righe CSV
-    #   all_xml_data.each do |item|
-    #     csv << item.values
-    #   end
-    # end
-    
-    puts "Conversione di tutti i file XML in un unico file CSV completata. #{all_xml_data.count} righe #{all_xml_data}" 
+
+    puts "righe inserite #{counter} da #{file_counter} file/s"
+
   end
   
   
