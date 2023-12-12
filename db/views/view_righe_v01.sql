@@ -1,5 +1,8 @@
 SELECT id,
        fornitore,
+       iva_fornitore,
+       cliente,
+       iva_cliente,
        tipo_documento,
        numero_documento,
        data_documento,
@@ -20,5 +23,9 @@ SELECT id,
            ELSE importo_netto
            END AS importo_netto,
        sconto,
-       iva
-FROM imports;
+       iva,
+        CASE
+          WHEN iva_fornitore = (SELECT partita_iva from users LIMIT 1) THEN 'c.vendita'
+          ELSE 'c.acquisti'
+          END AS conto
+    FROM imports;

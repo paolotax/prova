@@ -1,4 +1,4 @@
--- Active: 1701850155359@@127.0.0.1@5432@prova_development@public
+-- Active: 1701850155359@@127.0.0.1@5432@prova_development
 SELECT DISTINCT codice_articolo,
                 descrizione,
                 sum(quantita)      AS giacenza,

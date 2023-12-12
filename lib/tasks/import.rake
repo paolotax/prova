@@ -4,6 +4,18 @@ require 'date'
 
 namespace :import do
   
+  desc "init user"
+  task init: :environment do  
+
+    nome = 'Paolo Tassinari'
+    partita_iva = '04155820378'
+
+    user = User.create(name: nome, partita_iva: partita_iva)
+    
+    puts "user #{user.name} created"
+  end 
+
+
   desc "import righe from csv gaia"  
   task gaia: :environment do
         
@@ -31,6 +43,12 @@ namespace :import do
         else
           my_date = Date.strptime(row["Data"], "%d/%m/%y")
         end
+
+        if row["Fornitore"] == "Gaia" then
+          iva_fornitore = '01899780181'
+        else
+          iva_fornitore = '12472610968'
+        end
         
         if row["Prezzo Unit."].nil?
           prezzo = row["PrezzoCopertina"]
@@ -40,13 +58,16 @@ namespace :import do
         
         import = Import.create(
           fornitore:        row["Fornitore"],
+          iva_fornitore:    iva_fornitore,
+          cliente:          'Paolo Tassinari',
+          iva_cliente:      '04155820378',
+
           tipo_documento:   row["TipoDocumento"],
           numero_documento: row["NumeroDocumento"],  
           data_documento:   my_date,
           
           totale_documento:   row["ImportoTotale"],
-          
-          
+                   
           riga:             row["Riga"],
           codice_articolo:  row["Cod.articolo"],
           descrizione:      row["Descrizione"],
@@ -70,7 +91,7 @@ namespace :import do
   end
 
 
-  "import righe from xml aruba"  
+  desc "import righe from xml aruba"  
   task aruba: :environment do
      
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
@@ -108,8 +129,13 @@ namespace :import do
         end
         
         import = Import.create(
-          fornitore:        doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text,
           
+          fornitore:        doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text,
+          iva_fornitore:    doc.xpath('//CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
+
+          cliente:          doc.xpath('//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione').text,
+          iva_cliente:      doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
+
           tipo_documento:   doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text,
           numero_documento: doc.xpath('//DatiGeneraliDocumento/Numero').text,  
           data_documento:   doc.xpath('//DatiGeneraliDocumento/Data').text,
@@ -117,7 +143,7 @@ namespace :import do
           totale_documento:   doc.xpath('//DatiGeneraliDocumento/ImportoTotaleDocumento').text,
           
           
-          riga:             element.xpath("./NumeroLinea"),
+          riga:             element.xpath("./NumeroLinea").text,
           codice_articolo:  element.xpath("./CodiceArticolo/CodiceValore").text,
           descrizione:      element.xpath("./Descrizione").text,
           
@@ -126,7 +152,8 @@ namespace :import do
           
           importo_netto:    element.xpath("./PrezzoTotale").text,
           sconto:           element.xpath("./ScontoMaggiorazione/Percentuale").text,
-          iva:              74
+          
+          iva:              element.xpath("./AliquotaIVA").text
         )
 
         counter += 1 if import.persisted?

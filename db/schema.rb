@@ -16,6 +16,9 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
 
   create_table "imports", force: :cascade do |t|
     t.string "fornitore"
+    t.string "iva_fornitore"
+    t.string "cliente"
+    t.string "iva_cliente"
     t.string "tipo_documento"
     t.string "numero_documento"
     t.date "data_documento"
@@ -30,26 +33,51 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
     t.integer "iva"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "partita_iva"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
 
   create_view "view_documenti", sql_definition: <<-SQL
-      SELECT DISTINCT concat(fornitore, '-', data_documento, '-', numero_documento) AS id,
+      SELECT DISTINCT concat(fornitore, '-', numero_documento, '-', data_documento) AS id,
       fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
       tipo_documento,
       numero_documento,
       data_documento,
-      sum(quantita) AS quantita_totale,
           CASE
-              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- totale_documento)
-              ELSE totale_documento
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- sum(quantita))
+              ELSE sum(quantita)
+          END AS quantita_totale,
+          CASE
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round(sum((importo_netto * (100)::double precision))))
+              ELSE round(sum((importo_netto * (100)::double precision)))
+          END AS importo_netto_totale,
+          CASE
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round((totale_documento * (100)::double precision)))
+              ELSE round((totale_documento * (100)::double precision))
           END AS totale_documento,
-      (totale_documento - sum(importo_netto)) AS "check"
+          CASE
+              WHEN ((iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
+              ELSE 'c.acquisti'::text
+          END AS conto,
+      (round((totale_documento * (100)::double precision)) - round((sum(importo_netto) * (100)::double precision))) AS "check"
      FROM imports
-    GROUP BY fornitore, tipo_documento, numero_documento, data_documento, totale_documento
-    ORDER BY fornitore, data_documento, numero_documento, tipo_documento;
+    GROUP BY fornitore, iva_fornitore, cliente, iva_cliente, tipo_documento, numero_documento, data_documento, totale_documento
+    ORDER BY fornitore, data_documento DESC, numero_documento, tipo_documento;
   SQL
   create_view "view_righe", sql_definition: <<-SQL
       SELECT id,
       fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
       tipo_documento,
       numero_documento,
       data_documento,
@@ -70,7 +98,13 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_145400) do
               ELSE importo_netto
           END AS importo_netto,
       sconto,
-      iva
+      iva,
+          CASE
+              WHEN ((iva_fornitore)::text = (( SELECT users.partita_iva
+                 FROM users
+               LIMIT 1))::text) THEN 'c.vendita'::text
+              ELSE 'c.acquisti'::text
+          END AS conto
      FROM imports;
   SQL
   create_view "view_articoli", sql_definition: <<-SQL
