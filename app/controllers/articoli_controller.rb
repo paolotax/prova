@@ -1,6 +1,8 @@
 class ArticoliController < ApplicationController
+  
   before_action :set_articolo, only: %i[ show ]
-
+  before_action :remember_page, only: [:index, :show]
+  
   def index
     
     if params[:search].present?

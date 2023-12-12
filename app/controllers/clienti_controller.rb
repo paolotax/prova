@@ -1,5 +1,7 @@
 class ClientiController < ApplicationController
+
   before_action :set_cliente, only: %i[ show ]
+  before_action :remember_page, only: [:index, :show]
   
   def index
     if params[:search].present?
