@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:FatturaElettronica versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>05262890014</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>D0231030</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>07516911000</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>AUTOSTRADE PER L'ITALIA S.P.A.</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>VIA A.BERGAMINI,50</Indirizzo>
+<CAP>00159</CAP>
+<Comune>ROMA</Comune>
+<Nazione>IT</Nazione>
+</Sede>
+<IscrizioneREA>
+<Ufficio>RM</Ufficio>
+<NumeroREA>1037417</NumeroREA>
+<CapitaleSociale>622027000.00</CapitaleSociale>
+<StatoLiquidazione>LN</StatoLiquidazione>
+</IscrizioneREA>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>04155820378</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>PAOLO TASSINARI</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>VIA LUIGI VESTRI   4</Indirizzo>
+<CAP>40128</CAP>
+<Comune>BOLOGNA</Comune>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2023-10-30</Data>
+<Numero>000000025418547D</Numero>
+<ImportoTotaleDocumento>95.30</ImportoTotaleDocumento>
+<Causale>Codice cliente: 216777986</Causale>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>PEDAGGI AUTOSTRADALI</Descrizione>
+<PrezzoUnitario>78.11</PrezzoUnitario>
+<PrezzoTotale>78.11</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>78.11</ImponibileImporto>
+<Imposta>17.19</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+<DatiPagamento>
+<CondizioniPagamento>TP02</CondizioniPagamento>
+<DettaglioPagamento>
+<Beneficiario>TELEPASS</Beneficiario>
+<ModalitaPagamento>MP19</ModalitaPagamento>
+<DataScadenzaPagamento>2023-10-30</DataScadenzaPagamento>
+<ImportoPagamento>95.30</ImportoPagamento>
+</DettaglioPagamento>
+</DatiPagamento>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>

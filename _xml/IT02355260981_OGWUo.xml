@@ -6,7 +6,7 @@
 <IdPaese>IT</IdPaese>
 <IdCodice>02355260981</IdCodice>
 </IdTrasmittente>
-<ProgressivoInvio>Nm4Ej</ProgressivoInvio>
+<ProgressivoInvio>OGWUo</ProgressivoInvio>
 <FormatoTrasmissione>FPR12</FormatoTrasmissione>
 <CodiceDestinatario>KRRH6B9</CodiceDestinatario>
 <ContattiTrasmittente>
@@ -18,26 +18,26 @@
 <DatiAnagrafici>
 <IdFiscaleIVA>
 <IdPaese>IT</IdPaese>
-<IdCodice>03314600481</IdCodice>
+<IdCodice>05492160485</IdCodice>
 </IdFiscaleIVA>
-<CodiceFiscale>80009810484</CodiceFiscale>
+<CodiceFiscale>05492160485</CodiceFiscale>
 <Anagrafica>
-<Denominazione>GIUNTI EDITORE SPA</Denominazione>
+<Denominazione>GIUNTI SCUOLA SRL</Denominazione>
 </Anagrafica>
 <RegimeFiscale>RF01</RegimeFiscale>
 </DatiAnagrafici>
 <Sede>
-<Indirizzo>VIA G.B. PIRELLI</Indirizzo>
-<NumeroCivico>30</NumeroCivico>
-<CAP>20124</CAP>
-<Comune>MILANO</Comune>
-<Provincia>MI</Provincia>
+<Indirizzo>VIA BOLOGNESE</Indirizzo>
+<NumeroCivico>165</NumeroCivico>
+<CAP>50139</CAP>
+<Comune>FIRENZE</Comune>
+<Provincia>FI</Provincia>
 <Nazione>IT</Nazione>
 </Sede>
 <IscrizioneREA>
-<Ufficio>MI</Ufficio>
-<NumeroREA>1327444</NumeroREA>
-<CapitaleSociale>8000000.00</CapitaleSociale>
+<Ufficio>FI</Ufficio>
+<NumeroREA>550692</NumeroREA>
+<CapitaleSociale>810000.00</CapitaleSociale>
 <SocioUnico>SM</SocioUnico>
 <StatoLiquidazione>LN</StatoLiquidazione>
 </IscrizioneREA>
@@ -71,17 +71,17 @@
 <DatiGeneraliDocumento>
 <TipoDocumento>TD24</TipoDocumento>
 <Divisa>EUR</Divisa>
-<Data>2023-10-31</Data>
-<Numero>2023150616</Numero>
-<ImportoTotaleDocumento>169.36</ImportoTotaleDocumento>
+<Data>2023-11-30</Data>
+<Numero>2023402382</Numero>
+<ImportoTotaleDocumento>169.98</ImportoTotaleDocumento>
 </DatiGeneraliDocumento>
 <DatiOrdineAcquisto>
 <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
-<IdDocumento>45065</IdDocumento>
+<IdDocumento>46377</IdDocumento>
 </DatiOrdineAcquisto>
 <DatiDDT>
-<NumeroDDT>3023208886</NumeroDDT>
-<DataDDT>2023-10-09</DataDDT>
+<NumeroDDT>4023123141</NumeroDDT>
+<DataDDT>2023-11-20</DataDDT>
 <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
 </DatiDDT>
 </DatiGenerali>
@@ -90,18 +90,18 @@
 <NumeroLinea>1</NumeroLinea>
 <CodiceArticolo>
 <CodiceTipo>EAN</CodiceTipo>
-<CodiceValore>9788809898059</CodiceValore>
+<CodiceValore>9788809959880</CodiceValore>
 </CodiceArticolo>
-<Descrizione>MIO PRIMO DIZIONARIO MIOT (IL) NE 2021 B</Descrizione>
+<Descrizione>PIU' INVALSI ITA - MAT - ING  5</Descrizione>
 <Quantita>30.00</Quantita>
 <UnitaMisura>PZ</UnitaMisura>
 <PrezzoUnitario>9.90000000</PrezzoUnitario>
 <ScontoMaggiorazione>
 <Tipo>SC</Tipo>
 <Percentuale>45.00</Percentuale>
-<Importo>4.30433334</Importo>
+<Importo>4.28366667</Importo>
 </ScontoMaggiorazione>
-<PrezzoTotale>167.87</PrezzoTotale>
+<PrezzoTotale>168.49</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
 <Natura>N2.2</Natura>
 <AltriDatiGestionali>
@@ -110,7 +110,7 @@
 </AltriDatiGestionali>
 <AltriDatiGestionali>
 <TipoDato>AltriDati</TipoDato>
-<RiferimentoTesto>Pr.Def. 9.52 Riaccr. 0.02</RiferimentoTesto>
+<RiferimentoTesto>Pr.Def. 9.52</RiferimentoTesto>
 </AltriDatiGestionali>
 </DettaglioLinee>
 <DettaglioLinee>
@@ -126,7 +126,7 @@
 <AliquotaIVA>0.00</AliquotaIVA>
 <Natura>N2.2</Natura>
 <Arrotondamento>0.00</Arrotondamento>
-<ImponibileImporto>169.36</ImponibileImporto>
+<ImponibileImporto>169.98</ImponibileImporto>
 <Imposta>0.00</Imposta>
 <EsigibilitaIVA>I</EsigibilitaIVA>
 <RiferimentoNormativo>V.IVA ass.edit.art.74.1.C</RiferimentoNormativo>
@@ -136,11 +136,11 @@
 <CondizioniPagamento>TP02</CondizioniPagamento>
 <DettaglioPagamento>
 <ModalitaPagamento>MP12</ModalitaPagamento>
-<DataRiferimentoTerminiPagamento>2023-10-31</DataRiferimentoTerminiPagamento>
-<GiorniTerminiPagamento>92</GiorniTerminiPagamento>
-<DataScadenzaPagamento>2024-01-31</DataScadenzaPagamento>
-<ImportoPagamento>169.36</ImportoPagamento>
-<IBAN>IT43I0100502802000000002650</IBAN>
+<DataRiferimentoTerminiPagamento>2023-11-30</DataRiferimentoTerminiPagamento>
+<GiorniTerminiPagamento>91</GiorniTerminiPagamento>
+<DataScadenzaPagamento>2024-02-29</DataScadenzaPagamento>
+<ImportoPagamento>169.98</ImportoPagamento>
+<IBAN>IT73S0100502802000000000017</IBAN>
 </DettaglioPagamento>
 </DatiPagamento>
 </FatturaElettronicaBody>

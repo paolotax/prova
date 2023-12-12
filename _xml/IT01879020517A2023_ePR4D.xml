@@ -1,0 +1,82 @@
+<ns3:FatturaElettronica versione="FPR12" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"><FatturaElettronicaHeader>
+        <DatiTrasmissione>
+            <IdTrasmittente>
+                <IdPaese>IT</IdPaese>
+                <IdCodice>01879020517</IdCodice>
+            </IdTrasmittente>
+            <ProgressivoInvio>2318254</ProgressivoInvio>
+            <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+            <CodiceDestinatario>KRRHSB9</CodiceDestinatario>
+            <ContattiTrasmittente>
+                <Telefono>05750505</Telefono>
+                <Email>info@arubapec.it</Email>
+            </ContattiTrasmittente>
+        </DatiTrasmissione>
+        <CedentePrestatore>
+            <DatiAnagrafici>
+                <IdFiscaleIVA>
+                    <IdPaese>IT</IdPaese>
+                    <IdCodice>05403151003</IdCodice>
+                </IdFiscaleIVA>
+                <Anagrafica>
+                    <Denominazione>Trenitalia S.p.A.</Denominazione>
+                </Anagrafica>
+                <RegimeFiscale>RF01</RegimeFiscale>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>Piazza della Croce Rossa, 1</Indirizzo>
+                <CAP>00161</CAP>
+                <Comune>Roma</Comune>
+                <Nazione>IT</Nazione>
+            </Sede>
+        </CedentePrestatore>
+        <CessionarioCommittente>
+            <DatiAnagrafici>
+                <IdFiscaleIVA>
+                    <IdPaese>IT</IdPaese>
+                    <IdCodice>04155820378</IdCodice>
+                </IdFiscaleIVA>
+                <Anagrafica>
+                    <Denominazione>PAOLO TASSINARI</Denominazione>
+                </Anagrafica>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>Via Vestri, 4</Indirizzo>
+                <CAP>40128</CAP>
+                <Comune>BOLOGNA</Comune>
+                <Provincia>BO</Provincia>
+                <Nazione>IT</Nazione>
+            </Sede>
+        </CessionarioCommittente>
+    </FatturaElettronicaHeader>
+    <FatturaElettronicaBody>
+        <DatiGenerali>
+            <DatiGeneraliDocumento>
+                <TipoDocumento>TD01</TipoDocumento>
+                <Divisa>EUR</Divisa>
+                <Data>2023-10-05</Data>
+                <Numero>2023/9002318254</Numero>
+                <ImportoTotaleDocumento>59.00</ImportoTotaleDocumento>
+            </DatiGeneraliDocumento>
+        </DatiGenerali>
+        <DatiBeniServizi>
+            <DettaglioLinee>
+                <NumeroLinea>1</NumeroLinea>
+                <Descrizione>BOLOGNA CENTRALE - REGGIO EMILIA AV</Descrizione>
+                <Quantita>1.00</Quantita>
+                <PrezzoUnitario>53.64</PrezzoUnitario>
+                <PrezzoTotale>53.64</PrezzoTotale>
+                <AliquotaIVA>10.00</AliquotaIVA>
+                <AltriDatiGestionali>
+                    <TipoDato>Tit. n.1</TipoDato>
+                    <RiferimentoTesto>2026134252</RiferimentoTesto>
+                </AltriDatiGestionali>
+            </DettaglioLinee>
+            <DatiRiepilogo>
+                <AliquotaIVA>10.00</AliquotaIVA>
+                <ImponibileImporto>53.64</ImponibileImporto>
+                <Imposta>5.36</Imposta>
+            </DatiRiepilogo>
+        </DatiBeniServizi>
+    </FatturaElettronicaBody>
+</ns3:FatturaElettronica>
