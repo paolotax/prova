@@ -75,3 +75,5 @@ gem "highline", "~> 2.0.3"
 gem "money-rails", "~> 1.15"
 
 gem "prawn", "~> 2.4"
+
+gem "pg_search", "~> 2.3"
