@@ -6,7 +6,8 @@ export default class extends Controller {
   
   static targets = ["sidebarMenu"];
   
-  toggleSidebarMenu() {
+  toggleSidebarMenu(e) {
+    e.preventDefault();
     toggle(this.sidebarMenuTarget);
   }
 

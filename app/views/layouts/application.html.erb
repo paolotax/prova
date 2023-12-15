@@ -35,15 +35,7 @@
           From: "opacity-100"
           To: "opacity-0"
       -->
-      <div class="hidden fixed inset-0 bg-gray-900/80"
-        
-        data-sidebar-target="element"
-        data-transition-enter="transition ease-in-out duration-300 transform"
-        data-transition-enter-start="-translate-x-full"
-        data-transition-enter-end="translate-x-0"
-        data-transition-leave="transition ease-in-out duration-300 transform"
-        data-transition-leave-start="translate-x-0"
-        data-transition-leave-end="-translate-x-full"></div>
+      <div class="fixed inset-0 bg-gray-900/80" ></div>
   
       <div class="hidden fixed inset-0 flex"
          
@@ -67,10 +59,10 @@
         <div class="hidden relative mr-16 flex w-full max-w-xs flex-1"
           
           data-sidebar-target="element"
-          data-transition-enter="transition ease-in-out duration-300"
+          data-transition-enter="ease-in-out duration-300"
           data-transition-enter-start="opacity-0"
           data-transition-enter-end="opacity-100"
-          data-transition-leave="transition ease-in-out duration-300"
+          data-transition-leave="ease-in-out duration-300"
           data-transition-leave-start="opacity-100"
           data-transition-leave-end="opacity-0">          
           <!--
@@ -405,7 +397,7 @@
   
       <main class="py-10">
         <div class="px-4 sm:px-6 lg:px-8">
-            <!-- Your content -->
+          <!-- Your content -->
           <%= yield %>
         </div>
       </main>
