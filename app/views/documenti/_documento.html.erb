@@ -13,7 +13,7 @@
       </p>
       <p class="mt-1 truncate text-xs leading-5 text-gray-500">  
         <span class="text-gray-900 font-semibold">
-          <%= link_to documento.numero_documento, documento_path(documento) %>
+          <%= link_to documento.numero_documento, documento_path(documento), data: { turbo_frame: "_top" } %>
         </span>
         del <%= documento.data_documento.strftime('%d-%m-%Y') %>  
       </p>

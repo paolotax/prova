@@ -1,4 +1,4 @@
-<tr class="border-b border-gray-200">
+<tr id="<%= dom_id(articolo) %>" class="border-b border-gray-200">
 
   <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
     <div class="font-medium text-gray-900">
@@ -8,7 +8,7 @@
         <%= if articolo.codice_articolo.nil? or articolo.codice_articolo.blank? then
              articolo.codice_articolo
             else
-              link_to articolo.codice_articolo, articolo_path(articolo), class:"hover:text-indigo-500 hover:font-semibold" 
+              link_to articolo.codice_articolo, articolo_path(articolo), data: { turbo_frame: "_top" }, class:"hover:text-indigo-500 hover:font-semibold" 
             end
         %>
     </div>

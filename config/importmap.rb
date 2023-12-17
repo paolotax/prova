@@ -9,3 +9,4 @@ pin "slim-select", to: "https://ga.jspm.io/npm:slim-select@2.7.1/dist/slimselect
 
 pin_all_from "app/javascript/controllers", under: "controllers"
 
+pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/index.js"
