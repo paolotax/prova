@@ -7,49 +7,53 @@
       </h1>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
-      <%= link_to_previous_page("<- indietro") %>
+      <%= link_to("<- indietro", :back, class:"btn") %>
     </div>   
   </div>
 
-  <div class="-mx-4 mt-8 flow-root sm:mx-0">
-    <table class="min-w-full">
-      <colgroup>
-        <col class="w-full sm:w-1/2">
-        <col class="sm:w-1/4">
-        <col class="sm:w-1/4">
-      </colgroup>
-      
-      <thead class="border-b border-gray-300 text-gray-900">
-        <tr>
-          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Descrizione</th>
-          <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">giacenza</th>
-          <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Valore</th>
-        </tr>
-      </thead>
-      
-      <tbody>
-        <% @articoli.each do |articolo| %> 
-          <%=  render partial: "articoli/articolo", locals: { articolo: articolo } %>    
-        <% end %>     
-      </tbody>
-      
-      <tfoot>
-        <tr>
-          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
-          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
-          <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
+  <!--<turbo-frame id="search_results">-->
+    <div class="-mx-4 mt-8 flow-root sm:mx-0">
+      <table class="min-w-full">
+        <colgroup>
+          <col class="w-full sm:w-1/2">
+          <col class="sm:w-1/4">
+          <col class="sm:w-1/4">
+        </colgroup>
+        
+        <thead class="border-b border-gray-300 text-gray-900">
+          <tr>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Descrizione</th>
+            <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">giacenza</th>
+            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Valore</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <% @articoli.each do |articolo| %> 
+            <%=  render partial: "articoli/articolo", locals: { articolo: articolo } %>    
+          <% end %>     
+        </tbody>
+        
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
+            <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
+            <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
 
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
-          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
-          <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
+            <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
+            <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
 
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  <!--</turbo-frame>-->
+
+
 </div>
 

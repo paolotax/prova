@@ -2,12 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
+
 
 @layer components {
-  .btn-primary {
-    @apply py-2 px-4 bg-blue-200;
+
+  /* Buttons */
+  
+  /* "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" */
+  .btn {
+    @apply block py-2 px-3 text-sm  text-white text-center font-semibold rounded-md bg-indigo-600 transition duration-150 ease-in-out shadow-md cursor-pointer;
   }
+  
+  .btn:focus {
+    @apply outline outline-2 outline-offset-2 outline-indigo-600;
+  }
+  
+  .btn:active {
+    @apply bg-indigo-700;
+  }
+  
+  .btn:hover {
+    @apply bg-indigo-500;
+  }
+
 }
 
-*/
+

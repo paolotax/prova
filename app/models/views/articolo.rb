@@ -1,5 +1,13 @@
 class Views::Articolo < ApplicationRecord
+
+    include PgSearch::Model
     
+    pg_search_scope :search_any_word,
+                  against: [ :descrizione, :codice_articolo ],
+                  using: {
+                    tsearch: { any_word: true, prefix: true }
+                  }
+
     self.primary_key = "codice_articolo"
 
     def righe
