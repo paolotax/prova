@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
-  <head>
-    <title>Prova</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    
-    <%= javascript_importmap_tags %>
-  </head>
+
+<html>
+	<head>
+		<title>Prova</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<%= csrf_meta_tags %>
+		<%= csp_meta_tag %>
+		
+		<%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+		<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+		
+		<%= javascript_importmap_tags %>
+	</head>
 
 
-  <body>
+	<body>
 
-    <div data-controller="sidebar" class="h-full bg-slate-100" >
+		<div data-controller="sidebar" class="h-full bg-slate-100" >
 
-      <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
-      <%= render "layouts/sidebar_mobile" %>
-      
-      <!-- Static sidebar for desktop -->
-      <%= render "layouts/sidebar" %>
+			<%= render "layouts/sidebar_mobile" %>
+			
+			<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+				<%= render "layouts/sidebar" %>
+			</div>
 
-      <div class="lg:pl-72">
+			<div class="lg:pl-72">
 
-        <%= render "layouts/main_menu"%>
-    
-        <main class="py-10">
-          <div class="px-4 sm:px-6 lg:px-8">
-            <!-- Your content -->
-            <%= yield %>
-          </div>
-        </main>
+				<%= render "layouts/main_menu" %>
+		
+				<main class="py-10">
+					<div class="px-4 sm:px-6 lg:px-8">
+						<!-- Your content -->
+						<%= yield %>
+					</div>
+				</main>
  
-      </div>  
-    </div>
-  
-  </body>
+			</div>  
+		</div>
+	
+	</body>
 
 </html>
