@@ -6,7 +6,7 @@ export default class extends Controller {
   
   static targets = ["element"];
 
-  openSidebar(event) {   
+  openSidebar() {   
     console.log("open sidebar")
     this.elementTargets.forEach((element) => { 
       enter(element);
@@ -14,14 +14,23 @@ export default class extends Controller {
   }
  
   closeSidebar(event) {
+    // event.preventDefault();  
+    
     console.log("close sidebar");
+    
     this.elementTargets.forEach((element) => {      
       leave(element);
     });
+
+    // setTimeout(() => {
+    //   // this.redirect(event.target.href);
+    //   window.location.href = event.target.href;
+    // }, 300);
+
   }
 
-  toggleSidebar(event) {    
-    console.log(element.classList.contains("toggle"));
+  toggleSidebar() {  
+    console.log("toggle");
     this.elementTargets.forEach((element) => {
       toggle(element);
     });
