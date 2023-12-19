@@ -6,7 +6,7 @@ class ArticoliController < ApplicationController
   def index
     
     if params[:search].present?
-      @articoli = Views::Articolo.trova(params[:search]).order(:descrizione)
+      @articoli = Views::Articolo.search_any_word(params[:search]).order(:descrizione)
     else
       @articoli = Views::Articolo.order(:descrizione).all
     end

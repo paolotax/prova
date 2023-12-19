@@ -5,7 +5,7 @@ class Views::Articolo < ApplicationRecord
     pg_search_scope :search_any_word,
                   against: [ :descrizione, :codice_articolo ],
                   using: {
-                    tsearch: { any_word: true, prefix: true }
+                    tsearch: { any_word: false, prefix: true }
                   }
 
     self.primary_key = "codice_articolo"
