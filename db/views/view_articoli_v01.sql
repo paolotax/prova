@@ -4,6 +4,5 @@ SELECT DISTINCT codice_articolo,
                 sum(quantita)      AS giacenza,
                 sum(ROUND(importo_netto * 100))  AS valore
 FROM view_righe
-WHERE codice_articolo IS NOT NULL AND codice_articolo <> ''
 GROUP BY codice_articolo, descrizione
 ORDER BY codice_articolo;

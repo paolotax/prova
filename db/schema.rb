@@ -42,95 +42,65 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_12_112141) do
   end
 
 
-  create_view "prova", sql_definition: <<-SQL
-      SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- sum(imports.quantita))
-              ELSE sum(imports.quantita)
-          END AS quantita_totale,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round(sum((imports.importo_netto * (100)::double precision))))
-              ELSE round(sum((imports.importo_netto * (100)::double precision)))
-          END AS importo_netto_totale,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round((imports.totale_documento * (100)::double precision)))
-              ELSE round((imports.totale_documento * (100)::double precision))
-          END AS totale_documento,
-          CASE
-              WHEN ((imports.iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
-              ELSE 'c.acquisti'::text
-          END AS conto,
-      (round((imports.totale_documento * (100)::double precision)) - round((sum(imports.importo_netto) * (100)::double precision))) AS "check"
-     FROM imports
-    GROUP BY imports.fornitore, imports.iva_fornitore, imports.cliente, imports.iva_cliente, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
-    ORDER BY imports.fornitore, imports.data_documento DESC, imports.numero_documento, imports.tipo_documento;
-  SQL
   create_view "view_documenti", sql_definition: <<-SQL
-      SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
+      SELECT DISTINCT concat(fornitore, '-', numero_documento, '-', data_documento) AS id,
+      fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
+      tipo_documento,
+      numero_documento,
+      data_documento,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- sum(imports.quantita))
-              ELSE sum(imports.quantita)
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- sum(quantita))
+              ELSE sum(quantita)
           END AS quantita_totale,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round(sum((imports.importo_netto * (100)::double precision))))
-              ELSE round(sum((imports.importo_netto * (100)::double precision)))
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round(sum((importo_netto * (100)::double precision))))
+              ELSE round(sum((importo_netto * (100)::double precision)))
           END AS importo_netto_totale,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round((imports.totale_documento * (100)::double precision)))
-              ELSE round((imports.totale_documento * (100)::double precision))
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round((totale_documento * (100)::double precision)))
+              ELSE round((totale_documento * (100)::double precision))
           END AS totale_documento,
           CASE
-              WHEN ((imports.iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
+              WHEN ((iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
               ELSE 'c.acquisti'::text
           END AS conto,
-      (round((imports.totale_documento * (100)::double precision)) - round((sum(imports.importo_netto) * (100)::double precision))) AS "check"
+      (round((totale_documento * (100)::double precision)) - round((sum(importo_netto) * (100)::double precision))) AS "check"
      FROM imports
-    GROUP BY imports.fornitore, imports.iva_fornitore, imports.cliente, imports.iva_cliente, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
-    ORDER BY imports.fornitore, imports.data_documento DESC, imports.numero_documento, imports.tipo_documento;
+    GROUP BY fornitore, iva_fornitore, cliente, iva_cliente, tipo_documento, numero_documento, data_documento, totale_documento
+    ORDER BY fornitore, data_documento DESC, numero_documento, tipo_documento;
   SQL
   create_view "view_righe", sql_definition: <<-SQL
-      SELECT imports.id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
+      SELECT id,
+      fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
+      tipo_documento,
+      numero_documento,
+      data_documento,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.totale_documento)
-              ELSE imports.totale_documento
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- totale_documento)
+              ELSE totale_documento
           END AS totale_documento,
-      imports.riga,
-      imports.codice_articolo,
-      imports.descrizione,
-      imports.prezzo_unitario,
+      riga,
+      codice_articolo,
+      descrizione,
+      prezzo_unitario,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.quantita)
-              ELSE imports.quantita
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- quantita)
+              ELSE quantita
           END AS quantita,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.importo_netto)
-              ELSE imports.importo_netto
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- importo_netto)
+              ELSE importo_netto
           END AS importo_netto,
-      imports.sconto,
-      imports.iva,
+      sconto,
+      iva,
           CASE
-              WHEN ((imports.iva_fornitore)::text = (( SELECT users.partita_iva
+              WHEN ((iva_fornitore)::text = (( SELECT users.partita_iva
                  FROM users
                LIMIT 1))::text) THEN 'c.vendita'::text
               ELSE 'c.acquisti'::text
@@ -138,33 +108,32 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_12_112141) do
      FROM imports;
   SQL
   create_view "view_articoli", sql_definition: <<-SQL
-      SELECT DISTINCT view_righe.codice_articolo,
-      view_righe.descrizione,
-      sum(view_righe.quantita) AS giacenza,
-      sum(round((view_righe.importo_netto * (100)::double precision))) AS valore
+      SELECT DISTINCT codice_articolo,
+      descrizione,
+      sum(quantita) AS giacenza,
+      sum(round((importo_netto * (100)::double precision))) AS valore
      FROM view_righe
-    WHERE ((view_righe.codice_articolo IS NOT NULL) AND ((view_righe.codice_articolo)::text <> ''::text))
-    GROUP BY view_righe.codice_articolo, view_righe.descrizione
-    ORDER BY view_righe.codice_articolo;
+    GROUP BY codice_articolo, descrizione
+    ORDER BY codice_articolo;
   SQL
   create_view "view_fornitori", sql_definition: <<-SQL
       SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.fornitore,
-      view_documenti.iva_fornitore
+      fornitore,
+      iva_fornitore
      FROM view_documenti
-    WHERE ((view_documenti.iva_cliente)::text = (( SELECT users.partita_iva
+    WHERE ((iva_cliente)::text = (( SELECT users.partita_iva
              FROM users
            LIMIT 1))::text)
-    GROUP BY view_documenti.fornitore, view_documenti.iva_fornitore;
+    GROUP BY fornitore, iva_fornitore;
   SQL
   create_view "view_clienti", sql_definition: <<-SQL
       SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.cliente,
-      view_documenti.iva_cliente
+      cliente,
+      iva_cliente
      FROM view_documenti
-    WHERE ((view_documenti.iva_fornitore)::text = (( SELECT users.partita_iva
+    WHERE ((iva_fornitore)::text = (( SELECT users.partita_iva
              FROM users
            LIMIT 1))::text)
-    GROUP BY view_documenti.cliente, view_documenti.iva_cliente;
+    GROUP BY cliente, iva_cliente;
   SQL
 end
