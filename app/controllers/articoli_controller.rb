@@ -6,9 +6,9 @@ class ArticoliController < ApplicationController
   def index
     
     if params[:search].present?
-      @articoli = Views::Articolo.search_any_word(params[:search]).order(:descrizione)
+      @articoli = Views::Articolo.where.not(codice_articolo: '').search_any_word(params[:search]).order(:descrizione)
     else
-      @articoli = Views::Articolo.order(:descrizione).all
+      @articoli = Views::Articolo.where.not(codice_articolo: '').order(:descrizione)
     end
     
   end
@@ -18,7 +18,7 @@ class ArticoliController < ApplicationController
   end
 
   def duplicates 
-    @duplicates = Views::Articolo.duplicates.group_by(&:codice_articolo)
+    @duplicates = Views::Articolo.duplicates.where.not(codice_articolo: '').group_by(&:codice_articolo)
   end
 
   def update_descrizione
