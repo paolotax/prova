@@ -5,7 +5,12 @@ Rails.application.routes.draw do
   get 'fornitori',      to: 'fornitori#index'
   get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'
   
+
+  get 'duplicates',   to: 'articoli#duplicates'
   
+  get "duplicates/:codice_articolo", to: "articoli#update_descrizione", as: "update_descrizione"
+
+
   get 'articoli',     to: 'articoli#index'
   get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 

@@ -1,0 +1,50 @@
+<div class="mx-auto md:w-2/3 w-full">
+
+   <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+            <h1 class="text-base font-semibold leading-6 text-gray-900 sm:text-xl"> 
+                Articoli duplicati
+            </h1>
+            <p>clicca su 'tieni' per mantenere la descrizione desiderata.</p>
+        </div>
+        
+        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
+             <%= link_to("<- indietro", :back, class:"btn") %>
+        </div>   
+    </div>
+
+    <turbo-frame id="search_results">
+        <div class="-mx-4 mt-8 width-full sm:mx-0">
+            <ul>
+                <% @duplicates.each do |key, values| %>
+
+                    
+                    <li>
+                        <div >
+                            <%= key %>
+                        </div>
+
+                        <% values.each do |duplicate| %>
+                            <div>
+                                <%= duplicate.descrizione %>    
+                            </div>
+                            <div>
+                                <%= link_to "tieni",  update_descrizione_path(duplicate.codice_articolo, descrizione: duplicate.descrizione) %>
+                            </div>
+                        <% end %>
+
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+    </turbo-frame>
+
+</div>
+
+
+
+
+
+
+
+
