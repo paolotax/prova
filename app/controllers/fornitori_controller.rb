@@ -5,7 +5,7 @@ class FornitoriController < ApplicationController
   
   def index
     if params[:search].present?
-      @fornitori = Views::Fornitore.trova(params[:search]).order(:fornitore)
+      @fornitori = Views::Fornitore.search_any_word(params[:search]).order(:fornitore)
     else
       @fornitori = Views::Fornitore.order(:fornitore).all
     end

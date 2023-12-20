@@ -1,4 +1,13 @@
-class Views::Fornitore < ApplicationRecord
+class Views::Fornitore < ApplicationRecord 
+
+  include PgSearch::Model
+    
+  pg_search_scope :search_any_word,
+                against: [ :fornitore ],
+                using: {
+                  tsearch: { any_word: false, prefix: true }
+                }
+
 
   self.primary_key = "id"
 
