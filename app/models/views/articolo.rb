@@ -26,6 +26,10 @@ class Views::Articolo < ApplicationRecord
       Views::Articolo.where("codice_articolo IN (SELECT codice_articolo FROM view_articoli GROUP BY codice_articolo HAVING COUNT(*) > 1)")
     end
 
+    def self.codice_non_isbn
+      Views::Articolo.where("length(codice_articolo) <> 13")
+    end
+    
     def self.duplicates_count
       Views::Articolo.where("codice_articolo IN (SELECT codice_articolo FROM view_articoli GROUP BY codice_articolo HAVING COUNT(*) > 1)").count
     end
