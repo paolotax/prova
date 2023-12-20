@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: view_clienti
+#
+#  id          :integer          primary key
+#  cliente     :string
+#  iva_cliente :string
+#
 class Views::Cliente < ApplicationRecord
 
   include PgSearch::Model

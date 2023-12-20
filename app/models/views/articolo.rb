@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: view_articoli
+#
+#  codice_articolo :string           primary key
+#  descrizione     :string
+#  giacenza        :bigint
+#  valore          :float
+#
 class Views::Articolo < ApplicationRecord
 
     include PgSearch::Model

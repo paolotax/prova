@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: view_fornitori
+#
+#  id            :integer          primary key
+#  fornitore     :string
+#  iva_fornitore :string
+#
 class Views::Fornitore < ApplicationRecord 
 
   include PgSearch::Model
