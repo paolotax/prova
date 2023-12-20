@@ -19,7 +19,7 @@ namespace :import do
   task miur_adozioni: :environment do
         
     start = Time.now
-    puts 'wait........'
+    puts "#{start} - started reading.  wait........"
 
     counter = 0
     file_counter = 0
@@ -29,22 +29,22 @@ namespace :import do
     items = []
 
     Dir.glob(csv_dir).each do |file|
-      
       CSV.foreach(file, "r:ISO-8859-1", headers: true, col_sep: ',') do |row|
         items << row.to_h
         counter += 1 
-      end
-      
-      ImportAdozione.import items
-      
+      end      
       file_counter += 1
     end
+
+    puts "#{Time.now} - started importing.  wait........"
+
+    ImportAdozione.import items, validate: false, on_duplicate_key_update: true
     
-
-
-    puts "righe inserite #{items.size} da #{file_counter} file/s"
     fine = Time.now
+    
+    puts "lavoro completato"
     puts "#{fine} - #{start}  =  #{fine - start}"
+    puts "righe inserite #{items.size} da #{file_counter} file/s"
 
   end
 
