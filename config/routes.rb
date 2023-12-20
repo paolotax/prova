@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :import_adozioni
   get 'clienti',      to: 'clienti#index'
   get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  

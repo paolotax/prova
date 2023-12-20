@@ -1,0 +1,2 @@
+class ImportAdozione < ApplicationRecord
+end

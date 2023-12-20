@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  CODICESCUOLA: MyString
+  ANNOCORSO: MyString
+  SEZIONEANNO: MyString
+  TIPOGRADOSCUOLA: MyString
+  COMBINAZIONE: MyString
+  DISCIPLINA: MyString
+  CODICEISBN: MyString
+  AUTORI: MyString
+  TITOLO: MyString
+  SOTTOTITOLO: MyString
+  VOLUME: MyString
+  EDITORE: MyString
+  PREZZO: MyString
+  NUOVAADOZ: MyString
+  DAACQUIST: MyString
+  CONSIGLIATO: MyString
+
+two:
+  CODICESCUOLA: MyString
+  ANNOCORSO: MyString
+  SEZIONEANNO: MyString
+  TIPOGRADOSCUOLA: MyString
+  COMBINAZIONE: MyString
+  DISCIPLINA: MyString
+  CODICEISBN: MyString
+  AUTORI: MyString
+  TITOLO: MyString
+  SOTTOTITOLO: MyString
+  VOLUME: MyString
+  EDITORE: MyString
+  PREZZO: MyString
+  NUOVAADOZ: MyString
+  DAACQUIST: MyString
+  CONSIGLIATO: MyString
