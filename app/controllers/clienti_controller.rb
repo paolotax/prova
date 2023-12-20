@@ -4,8 +4,9 @@ class ClientiController < ApplicationController
   before_action :remember_page, only: [:index, :show]
   
   def index
+
     if params[:search].present?
-      @clienti = Views::Cliente.trova(params[:search]).order(:cliente)
+      @clienti = Views::Cliente.search_any_word(params[:search]).order(:cliente)
     else
       @clienti = Views::Cliente.order(:cliente).all
     end

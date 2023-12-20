@@ -1,5 +1,15 @@
 class Views::Cliente < ApplicationRecord
 
+  include PgSearch::Model
+    
+  pg_search_scope :search_any_word,
+                against: [ :cliente ],
+                using: {
+                  tsearch: { any_word: false, prefix: true }
+                }
+
+
+
   self.primary_key = "id"
 
   def righe

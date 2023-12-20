@@ -1,7 +1,12 @@
-<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-    <% @clienti.each do |cliente| %>
-      <%= render partial: "clienti/cliente", locals: { cliente: cliente }%>
-    <% end %>
-  <!-- More people... -->
-</ul>
+<%= turbo_frame_tag "search_results" do %>
+
+  <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+      <% @clienti.each do |cliente| %>
+        <%= render partial: "clienti/cliente", locals: { cliente: cliente }%>
+      <% end %>
+    <!-- More people... -->
+  </ul>
+
+<% end %>
