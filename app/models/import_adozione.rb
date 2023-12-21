@@ -27,9 +27,13 @@ class ImportAdozione < ApplicationRecord
   include PgSearch::Model
     
   pg_search_scope :search_any_word,
-                against: [ :descrizione, :codice_articolo ],
+                against: [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA ],
                 using: {
                   tsearch: { any_word: false, prefix: true }
                 }
+  
+  scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }
+
+  scope :di_reggio,  -> { where(CODICESCUOLA: 'RE'..'REZZ') }
 
 end

@@ -8,7 +8,9 @@
     <%= link_to "New import adozione", new_import_adozione_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div id="import_adozioni" class="min-w-full">
-    <%= render @import_adozioni %>
-  </div>
+  <%= turbo_frame_tag "search_results" do %>
+    <div id="import_adozioni" class="min-w-full">
+      <%= render @import_adozioni %>
+    </div>
+  <% end %>
 </div>

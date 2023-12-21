@@ -1,9 +1,14 @@
 class ImportAdozioniController < ApplicationController
+  
   before_action :set_import_adozione, only: %i[ show edit update destroy ]
 
   # GET /import_adozioni or /import_adozioni.json
   def index
-    @import_adozioni = ImportAdozione.limit(100)
+    if params[:search].present?
+      @import_adozioni = ImportAdozione.elementari.di_reggio.search_any_word(params[:search]).limit(100)
+    else
+      @import_adozioni = ImportAdozione.elementari.di_reggio.limit(100)
+    end
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json
