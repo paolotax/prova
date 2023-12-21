@@ -9,6 +9,11 @@
   </div>
 
   <%= turbo_frame_tag "search_results" do %>
+
+    <div class="block mb-4">
+      <%= @conteggio_adozioni %>
+    </div>
+    
     <div id="import_adozioni" class="min-w-full columns-2">
       <%= render @import_adozioni %>
     </div>

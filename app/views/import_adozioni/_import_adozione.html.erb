@@ -1,45 +1,48 @@
 <div id="<%= dom_id import_adozione %>" class="flex width-1/2">
   
-  <div class="flex">
-    <p class="my-5">
-      <strong class="block font-medium mb-1">CodiceScuola:</strong>
-      <%= import_adozione.CODICESCUOLA %>
-    </p>
-  </div>
 
-  <div class="flex">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Classe:</strong>
-    <%= import_adozione.ANNOCORSO %>
-    <%= import_adozione.SEZIONEANNO %>
-    <%= import_adozione.COMBINAZIONE %>
-  </p>
-  </div>
+    <div class="my-5">
+      	<p>
+			<%= import_adozione.CODICESCUOLA %>
+		</p>
+		<p>
+			<%= import_adozione.ANNOCORSO %>
+			<%= import_adozione.SEZIONEANNO %>
+			<span class="text-xs">
+				<%= import_adozione.COMBINAZIONE %>
+			</span>
+		</p>
+	</div>
 
 
+	<div class="my-5">
+		<p>
+			<%= import_adozione.AUTORI.titleize %>
+		</p>
+		<p class="font-semibold" >
+			<%= import_adozione.TITOLO %>
+		</p>
+		<p>
+	    	<span class="text-xs">
+				vol. <%= import_adozione.VOLUME %>
+				<%= import_adozione.SOTTOTITOLO.downcase %>
+			</span>
 
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Codiceisbn:</strong>
-    <%= import_adozione.CODICEISBN %>
-    <%= import_adozione.AUTORI.capitalize %>
-  </p>
-
-  <p class="my-5">
-    <%= import_adozione.TITOLO %>
-    -
-    <%= import_adozione.SOTTOTITOLO %>
-    -
-    vol.<%= import_adozione.VOLUME %>
-    -
-    <%= import_adozione.EDITORE %>
-  </p>
+		</p>
+		<p>
+			<%= import_adozione.EDITORE %>
+			isbn <%= import_adozione.CODICEISBN %>		
+			€ <%= import_adozione.PREZZO %>
+		</p>
+	</div>
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Prezzo:</strong>
-    <%= import_adozione.PREZZO %>
+
     <%= import_adozione.DISCIPLINA %>
   </p>
+
+
 
 
   <p class="my-5">

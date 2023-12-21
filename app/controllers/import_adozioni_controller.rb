@@ -5,10 +5,14 @@ class ImportAdozioniController < ApplicationController
   # GET /import_adozioni or /import_adozioni.json
   def index
     if params[:search].present?
-      @import_adozioni = ImportAdozione.elementari.di_reggio.search_any_word(params[:search]).limit(100)
+      @import_adozioni = ImportAdozione.elementari.di_reggio.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
+      @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
+      
     else
-      @import_adozioni = ImportAdozione.elementari.di_reggio.limit(100)
+      @import_adozioni = ImportAdozione.elementari.di_reggio.per_scuola_classe_sezione_disciplina.limit(100)
     end
+
+    @conteggio_adozioni = @import_adozioni.count;
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json
