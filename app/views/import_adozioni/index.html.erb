@@ -9,11 +9,11 @@
     <h1 class="font-bold text-4xl">Adozioni</h1>
     
 
-    <div data-controller='toggle' class="flex  items-center">
+    <div data-controller='toggletax' class="flex  items-center">
       <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
       <button 
-        data-action='click->toggle#toggle touch->toggle#toggle' 
-        data-toggle-target='toggleable' data-toggle-class='"toggle_true"'
+        data-toggletax-target="button"
+        data-action="click->toggletax#toggle"
 
         type="button" 
         class="bg-indigo-600 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
@@ -22,8 +22,7 @@
         aria-labelledby="annual-billing-label">
         <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
         <span 
-            data-toggle-target='toggleable' 
-            data-toggle-class='toggle_true' 
+            data-toggletax-target="button"  
             aria-hidden="true" 
             class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
       </button>
@@ -32,12 +31,19 @@
       </span>
     </div>
 
-    <div class="flex  items-center">
+    <div 
+      data-controller="toggletax" class="flex  items-center">
       <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
-      <button type="button" class="bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
+      <button 
+        data-toggletax-target="button"
+        data-action="click->toggletax#toggle"
+
+        type="button" class="bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
               role="switch" aria-checked="true" aria-labelledby="annual-billing-label">
         <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-        <span aria-hidden="false" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+        <span
+          data-toggletax-target="button" 
+          aria-hidden="false" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
       </button>
       <span class="ml-3 text-sm" id="annual-billing-label">
         <span class="font-medium text-gray-900">cerca tutte le parole</span>

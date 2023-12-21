@@ -31,6 +31,12 @@ class ImportAdozione < ApplicationRecord
   pg_search_scope :search_all_word,
                 against: search_fields,
                 using: {
+                  tsearch: { any_word: false, prefix: true }
+                }
+  
+  pg_search_scope :search_any_word,
+                against: search_fields,
+                using: {
                   tsearch: { any_word: true, prefix: true }
                 }
   
@@ -41,5 +47,7 @@ class ImportAdozione < ApplicationRecord
   scope :per_scuola_classe_sezione_disciplina, -> { order( :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
+
+  scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
 end

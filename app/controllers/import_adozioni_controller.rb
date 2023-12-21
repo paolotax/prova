@@ -5,7 +5,8 @@ class ImportAdozioniController < ApplicationController
   # GET /import_adozioni or /import_adozioni.json
   def index
     if params[:search].present?
-      @import_adozioni = ImportAdozione.elementari.di_reggio.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
+      
+      @import_adozioni = ImportAdozione.elementari.di_reggio.da_acquistare.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
       @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
       
     else
