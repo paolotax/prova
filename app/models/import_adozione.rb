@@ -25,11 +25,13 @@
 class ImportAdozione < ApplicationRecord
 
   include PgSearch::Model
-    
+  
+  search_fields =  [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
+
   pg_search_scope :search_all_word,
-                against: [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA, :PREZZO ],
+                against: search_fields,
                 using: {
-                  tsearch: { any_word: false, prefix: true }
+                  tsearch: { any_word: true, prefix: true }
                 }
   
   scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }

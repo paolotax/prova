@@ -25,6 +25,11 @@
     @apply bg-indigo-500;
   }
 
+  .toggle-true {
+    @apply translate-x-5 bg-gray-200;
+  }
+
+
 }
 
 

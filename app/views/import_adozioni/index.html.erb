@@ -3,9 +3,50 @@
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
 
+
+
   <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Import adozioni</h1>
-    <%= link_to "New import adozione", new_import_adozione_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+    <h1 class="font-bold text-4xl">Adozioni</h1>
+    
+
+    <div data-controller='toggle' class="flex  items-center">
+      <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+      <button 
+        data-action='click->toggle#toggle touch->toggle#toggle' 
+        data-toggle-target='toggleable' data-toggle-class='"toggle_true"'
+
+        type="button" 
+        class="bg-indigo-600 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
+        role="switch" 
+        aria-checked="true" 
+        aria-labelledby="annual-billing-label">
+        <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+        <span 
+            data-toggle-target='toggleable' 
+            data-toggle-class='toggle_true' 
+            aria-hidden="true" 
+            class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+      </button>
+      <span class="ml-3 text-sm" id="annual-billing-label">
+        <span class="font-medium text-gray-900">da acquistare</span>
+      </span>
+    </div>
+
+    <div class="flex  items-center">
+      <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+      <button type="button" class="bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
+              role="switch" aria-checked="true" aria-labelledby="annual-billing-label">
+        <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+        <span aria-hidden="false" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+      </button>
+      <span class="ml-3 text-sm" id="annual-billing-label">
+        <span class="font-medium text-gray-900">cerca tutte le parole</span>
+      </span>
+    </div>
+
+
+
+
   </div>
 
   <%= turbo_frame_tag "search_results" do %>

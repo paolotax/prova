@@ -4,4 +4,3 @@ import "controllers"
 
 Turbo.setProgressBarDelay(1)
 
-
