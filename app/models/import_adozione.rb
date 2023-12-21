@@ -27,7 +27,7 @@ class ImportAdozione < ApplicationRecord
   include PgSearch::Model
     
   pg_search_scope :search_any_word,
-                against: [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA ],
+                against: [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA, :PREZZO ],
                 using: {
                   tsearch: { any_word: false, prefix: true }
                 }

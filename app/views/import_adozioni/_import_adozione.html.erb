@@ -1,87 +1,56 @@
-<div id="<%= dom_id import_adozione %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Codicescuola:</strong>
-    <%= import_adozione.CODICESCUOLA %>
-  </p>
+<div id="<%= dom_id import_adozione %>" class="flex width-1/2">
+  
+  <div class="flex">
+    <p class="my-5">
+      <strong class="block font-medium mb-1">CodiceScuola:</strong>
+      <%= import_adozione.CODICESCUOLA %>
+    </p>
+  </div>
 
+  <div class="flex">
   <p class="my-5">
-    <strong class="block font-medium mb-1">Annocorso:</strong>
+    <strong class="block font-medium mb-1">Classe:</strong>
     <%= import_adozione.ANNOCORSO %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Sezioneanno:</strong>
     <%= import_adozione.SEZIONEANNO %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Tipogradoscuola:</strong>
-    <%= import_adozione.TIPOGRADOSCUOLA %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Combinazione:</strong>
     <%= import_adozione.COMBINAZIONE %>
   </p>
+  </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Disciplina:</strong>
-    <%= import_adozione.DISCIPLINA %>
-  </p>
+
+
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Codiceisbn:</strong>
     <%= import_adozione.CODICEISBN %>
+    <%= import_adozione.AUTORI.capitalize %>
   </p>
 
   <p class="my-5">
-    <strong class="block font-medium mb-1">Autori:</strong>
-    <%= import_adozione.AUTORI %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Titolo:</strong>
     <%= import_adozione.TITOLO %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Sottotitolo:</strong>
+    -
     <%= import_adozione.SOTTOTITOLO %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Volume:</strong>
-    <%= import_adozione.VOLUME %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Editore:</strong>
+    -
+    vol.<%= import_adozione.VOLUME %>
+    -
     <%= import_adozione.EDITORE %>
   </p>
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Prezzo:</strong>
     <%= import_adozione.PREZZO %>
+    <%= import_adozione.DISCIPLINA %>
   </p>
 
+
   <p class="my-5">
-    <strong class="block font-medium mb-1">Nuovaadoz:</strong>
+    <strong class="block font-medium mb-1">N.A.C.:</strong>
     <%= import_adozione.NUOVAADOZ %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Daacquist:</strong>
     <%= import_adozione.DAACQUIST %>
+        <%= import_adozione.CONSIGLIATO %>
   </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Consigliato:</strong>
-    <%= import_adozione.CONSIGLIATO %>
-  </p>
 
   <% if action_name != "show" %>
-    <%= link_to "Show this import adozione", import_adozione, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this import adozione", edit_import_adozione_path(import_adozione), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
+
   <% end %>
 </div>
