@@ -1,7 +1,6 @@
-<div id="<%= dom_id import_adozione %>" class="flex width-1/2">
+<div id="<%= dom_id import_adozione %>" class="rounded-xl border border-gray-200 my-4">
   
-
-    <div class="my-5">
+    <div class="my-5 px-3">
       	<p>
 			<%= import_adozione.CODICESCUOLA %>
 		</p>
@@ -11,14 +10,10 @@
 			<span class="text-xs">
 				<%= import_adozione.COMBINAZIONE %>
 			</span>
-
-
 		</p>
 	</div>
 
-
-
-	<div class="my-5">
+	<div class="my-5 px-3">
 		<p>
 			<%= import_adozione.AUTORI.titleize %>
 		</p>
@@ -30,33 +25,27 @@
 				vol. <%= import_adozione.VOLUME %>
 				<%= import_adozione.SOTTOTITOLO.downcase %>
 			</span>
-
 		</p>
+	</div>
+
+  	<div class="my-5 px-3">
+    	<%= import_adozione.DISCIPLINA %>
 		<p>
 			<%= import_adozione.EDITORE %>
 			isbn <%= import_adozione.CODICEISBN %>		
 			€ <%= import_adozione.PREZZO %>
 		</p>
-	</div>
+  	</div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Prezzo:</strong>
-
-    <%= import_adozione.DISCIPLINA %>
-  </p>
-
-
-
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">N.A.C.:</strong>
-    <%= import_adozione.NUOVAADOZ %>
-    <%= import_adozione.DAACQUIST %>
+  	<div class="my-5 px-3">
+    	<strong class="block font-medium mb-1">N.A.C.:</strong>
+    	<%= import_adozione.NUOVAADOZ %>
+    	<%= import_adozione.DAACQUIST %>
         <%= import_adozione.CONSIGLIATO %>
-  </p>
+  	</div>
 
 
-  <% if action_name != "show" %>
+ 	 <% if action_name != "show" %>
 
-  <% end %>
+  	<% end %>
 </div>
