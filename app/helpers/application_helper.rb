@@ -40,4 +40,23 @@ module ApplicationHelper
 #   end
 
 
+
+
+def toggle_button_tag( checked = true, label = "" ) 
+  
+  # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+  # span_css    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+
+  if checked
+    button_css = "bg-indigo-600"
+    span_css   = "translate-x-5"
+  else
+    button_css = "bg-gray-200"
+    span_css   = "translate-x-0"
+  end
+    
+  render partial: "layouts/toggle_button", locals: { checked: checked, label: label, button_css: button_css, span_css: span_css }
+
+end
+
 end

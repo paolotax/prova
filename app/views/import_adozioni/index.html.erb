@@ -1,68 +1,23 @@
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<div class="w-full p-3">
+  
+  	<% if notice.present? %>
+    	<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  	<% end %>
 
+  	<div class="flex justify-between items-center bg-yellow-500">
+    	<h2 class="font-bold text-2xl">Adozioni</h1>
+		<%= toggle_button_tag( true, "da acquistare" )%>
+		<%= toggle_button_tag( false, "cerca tutte le parole" ) %>
+    </div>
 
-
-  <div class="flex justify-between items-center">
-    <h2 class="font-bold text-2xl">Adozioni</h1>
+  	<%= turbo_frame_tag "search_results" do %>
+		<div class="block mb-4 bg-green-500">
+      		<%= @conteggio_adozioni %>
+    	</div>
     
+    	<ul id="import_adozioni" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+     		<%= render @import_adozioni %>
+    	</ul>
+  	<% end %>
 
-    <div data-controller='toggletax' class="flex  items-center">
-      <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
-      <button 
-        data-toggletax-target="button"
-        data-action="click->toggletax#toggle"
-
-        type="button" 
-        class="bg-indigo-600 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
-        role="switch" 
-        aria-checked="true" 
-        aria-labelledby="annual-billing-label">
-        <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-        <span 
-            data-toggletax-target="button"  
-            aria-hidden="true" 
-            class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-      </button>
-      <span class="ml-3 text-sm" id="annual-billing-label">
-        <span class="font-medium text-gray-900">da acquistare</span>
-      </span>
-    </div>
-
-    <div 
-      data-controller="toggletax" class="flex  items-center">
-      <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
-      <button 
-        data-toggletax-target="button"
-        data-action="click->toggletax#toggle"
-
-        type="button" class="bg-gray-200 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" 
-              role="switch" aria-checked="true" aria-labelledby="annual-billing-label">
-        <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-        <span
-          data-toggletax-target="button" 
-          aria-hidden="false" class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
-      </button>
-      <span class="ml-3 text-sm" id="annual-billing-label">
-        <span class="font-medium text-gray-900">cerca tutte le parole</span>
-      </span>
-    </div>
-
-
-
-
-  </div>
-
-  <%= turbo_frame_tag "search_results" do %>
-
-    <div class="block mb-4">
-      <%= @conteggio_adozioni %>
-    </div>
-    
-    <div id="import_adozioni" class="min-w-full columns-2">
-      <%= render @import_adozioni %>
-    </div>
-  <% end %>
 </div>
