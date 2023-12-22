@@ -26,20 +26,19 @@ class ImportAdozione < ApplicationRecord
 
   include PgSearch::Model
   
-  search_fields =  [ :DISCIPLINA, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :AUTORI, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
+  search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
 
-  pg_search_scope :search_all_word,
-                against: search_fields,
-                using: {
-                  tsearch: { any_word: false, prefix: true }
-                }
+  pg_search_scope :search_all_word,  against: search_fields,
+                                        using: {
+                                          tsearch: { any_word: true, prefix: true }
+                                        }
   
   pg_search_scope :search_any_word,
                 against: search_fields,
                 using: {
                   tsearch: { any_word: true, prefix: true }
                 }
-  
+                
   scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }
 
   scope :di_reggio,  -> { where(CODICESCUOLA: 'RE'..'REZZ') }
@@ -49,5 +48,10 @@ class ImportAdozione < ApplicationRecord
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
 
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
+
+
+  def to_s 
+
+  end
 
 end

@@ -14,6 +14,8 @@ class ImportAdozioniController < ApplicationController
     end
 
     @conteggio_adozioni = @import_adozioni.count;
+    @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
+    @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json

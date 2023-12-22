@@ -5,12 +5,13 @@
 			<%= import_adozione.CODICESCUOLA %>
 		</p>
 		<p>
-			<%= import_adozione.ANNOCORSO %>
+			<%= import_adozione.ANNOCORSO[0] %>
 			<%= import_adozione.SEZIONEANNO %>
 			<span class="text-xs">
-				<%= import_adozione.COMBINAZIONE %>
+				<%= import_adozione.COMBINAZIONE.downcase %>
 			</span>
 		</p>
+		    	<%= import_adozione.DISCIPLINA.titleize %>
 	</div>
 
 	<div class="my-5 px-3">
@@ -29,9 +30,10 @@
 	</div>
 
   	<div class="my-5 px-3">
-    	<%= import_adozione.DISCIPLINA %>
 		<p>
 			<%= import_adozione.EDITORE %>
+		</p>
+		<p>
 			isbn <%= import_adozione.CODICEISBN %>		
 			€ <%= import_adozione.PREZZO %>
 		</p>

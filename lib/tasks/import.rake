@@ -1,8 +1,30 @@
 require 'csv'
 require 'date'
 
-
 namespace :import do
+
+
+  desc "cammbia materia nei sussidiari di seconda e terza elementare"
+
+  task cambia_sussidiari: :environment do
+
+
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
+    
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
+    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
+    
+  
+  
+  
+  end
+
+
+
+
   
   desc "init user"
   task init: :environment do  

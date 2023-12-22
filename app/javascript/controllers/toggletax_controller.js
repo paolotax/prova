@@ -5,7 +5,11 @@ export default class extends Controller {
 
   static targets = ["button"];
   
-  toggle() {
+  toggle(event) {
+
+    let searchParams = new URL(window.location.href).searchParams;
+
+    console.log(searchParams);
 
     this.buttonTargets.forEach((el) => {      
 
