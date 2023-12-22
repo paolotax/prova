@@ -44,6 +44,7 @@ module ApplicationHelper
 
 def toggle_button_tag( checked = true, label = "" ) 
   
+  #             TailwindUI
   # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
   # span_css    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
 
