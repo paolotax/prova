@@ -86,7 +86,7 @@ def toggle_button_tag( checked = true, label = "" )
   # span_css    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
 
   if checked
-    button_css = "bg-indigo-600"
+    button_css = "bg-gray-900"
     span_css   = "translate-x-5"
   else
     button_css = "bg-gray-200"

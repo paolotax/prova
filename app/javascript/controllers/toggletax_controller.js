@@ -13,12 +13,12 @@ export default class extends Controller {
 
     this.buttonTargets.forEach((el) => {      
 
-      if (el.classList.contains("bg-indigo-600")) {
-        el.classList.remove("bg-indigo-600");
+      if (el.classList.contains("bg-gray-900")) {
+        el.classList.remove("bg-gray-900");
         el.classList.add("bg-gray-200");
       } else if (el.classList.contains("bg-gray-200")) {
         el.classList.remove("bg-gray-200");
-        el.classList.add("bg-indigo-600");
+        el.classList.add("bg-gray-900");
       } else if (el.classList.contains("translate-x-0")) {
         el.classList.remove("translate-x-0")
         el.classList.add("translate-x-5");
