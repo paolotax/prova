@@ -4,7 +4,7 @@
     	<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   	<% end %>
 
-  	<div class="flex justify-between items-center bg-yellow-500">
+  	<div class="flex justify-between items-center mb-3">
     	<h2 class="font-bold text-2xl">Adozioni</h1>
 		<%= toggle_button_tag( true, "da acquistare" )%>
 		<%= toggle_button_tag( false, "cerca tutte le parole" ) %>
@@ -12,16 +12,9 @@
 
   	<%= turbo_frame_tag "search_results" do %>
 		
-		<%= render partial: "import_adozioni/stats", locals: {} %>
-
-
-<!--		<div class="block mb-4 bg-green-500">-->
-	  		<%#= @conteggio_adozioni %> sezioni adottate in <%= @conteggio_scuole %> Scuole con <%= @conteggio_titoli %> titoli.
-<!--		<div class="block mb-4 bg-green-500">-->
-      		<%#= @conteggio_adozioni %> sezioni adottate in <%= @conteggio_scuole %> Scuole con <%= @conteggio_titoli %> titoli.
-<!--    	</div>-->
+		<%= render partial: "stats" %>
     
-    	<ul id="import_adozioni" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+    	<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
      		<%= render @import_adozioni %>
     	</ul>
   	<% end %>
