@@ -1,7 +1,7 @@
-<li id="<%= dom_id import_adozione %>" class="overflow-hidden rounded-xl border border-gray-200">
+<li id="<%= dom_id import_adozione %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200">
 
-    <div class="my-5 px-3">
-      	<p>
+    <div class="my-3 px-3">
+      	<p class="text-xs">
 			<%= import_adozione.CODICESCUOLA %>
 		</p>
 		<p>
@@ -12,39 +12,46 @@
 			</span>
 		</p>
 		    	<%= import_adozione.DISCIPLINA.titleize %>
-	</div>
+		<p>
+    		<strong class="block font-medium mb-1">N.A.C.:</strong>
+			<%= import_adozione.NUOVAADOZ %>
+			<%= import_adozione.DAACQUIST %>
+			<%= import_adozione.CONSIGLIATO %>
+		</p>
+  	</div>
 
-	<div class="my-5 px-3">
-		<p>
+	<div class="my-3 px-3">
+		<div class=text-xs >
 			<%= import_adozione.AUTORI.titleize %>
-		</p>
-		<p class="font-semibold" >
+		</div>
+		
+		<div class="font-semibold" >
 			<%= import_adozione.TITOLO %>
-		</p>
-		<p>
+		</div>
+		
+		<div>
 	    	<span class="text-xs">
 				vol. <%= import_adozione.VOLUME %>
 				<%= import_adozione.SOTTOTITOLO.downcase %>
 			</span>
-		</p>
+		</div>
+		
+		<div>
+			<%= import_adozione.EDITORE %>
+		</div>
+		
+		<div class="grid grid-cols-2">
+			<div class="shrink-0"> 
+				<%= import_adozione.CODICEISBN %>	
+			</div>
+			<div class="shrink-0 text-right">	
+				€ <%= import_adozione.PREZZO %>
+			</div>
+		</div>
+  	
 	</div>
 
-  	<div class="my-5 px-3">
-		<p>
-			<%= import_adozione.EDITORE %>
-		</p>
-		<p>
-			isbn <%= import_adozione.CODICEISBN %>		
-			€ <%= import_adozione.PREZZO %>
-		</p>
-  	</div>
 
-  	<div class="my-5 px-3">
-    	<strong class="block font-medium mb-1">N.A.C.:</strong>
-    	<%= import_adozione.NUOVAADOZ %>
-    	<%= import_adozione.DAACQUIST %>
-        <%= import_adozione.CONSIGLIATO %>
-  	</div>
 
 
  	 <% if action_name != "show" %>

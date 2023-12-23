@@ -1,6 +1,43 @@
 module ApplicationHelper
 
+  def tempo_trascorso( data_inizio, data_fine = Time.now )
 
+    data_inizio = Time.parse(data_inizio) if data_inizio.is_a? String
+    data_fine   = Time.parse(data_fine)   if data_fine.is_a? String
+
+    data_inizio = data_inizio.to_time if data_inizio.is_a? Date
+    data_fine   = data_fine.to_time   if data_fine.is_a? Date
+
+    seconds = (data_fine - data_inizio).to_i
+    
+    minutes = seconds / 60
+    hours   = minutes / 60
+    days    = hours / 24
+    months  = days / 30
+    years   = months / 12
+
+    resto_seconds = seconds % 60
+    resto_minutes = minutes % 60
+
+    if years > 0
+      "#{years} anni"
+    elsif months > 0
+      "#{months} mesi"
+    elsif days > 0
+      "#{days} giorni"
+    elsif hours > 0
+      "#{hours} ore"
+    elsif minutes > 0
+      "#{minutes}min:#{resto_seconds}sec"
+    else
+      "#{seconds} secondi"
+    end
+  
+  end
+
+
+  
+  
   def link_to_previous_page(link_title)
 
     return unless session[:previous_pages].present?

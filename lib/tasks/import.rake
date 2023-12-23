@@ -4,27 +4,21 @@ require 'date'
 namespace :import do
 
 
-  desc "cammbia materia nei sussidiari di seconda e terza elementare"
+  desc "cammbia classi e religione da acquistare"
+  task cambia_classi_e_religione: :environment do
 
-  task cambia_sussidiari: :environment do
+    start = Time.now
+    righe_count = ImportAdozione.elementari.di_reggio.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
+    puts "adozioni di religione aggiornate in #{(Time.now - start).to_i} secondi"
 
-
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
-    
+    start = Time.now
     ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
     ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
     ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
     ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
     ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
-    
-  
-  
-  
+    puts "classi aggiornate in #{(Time.now - start).to_i} secondi"
   end
-
-
-
-
   
   desc "init user"
   task init: :environment do  
@@ -39,9 +33,22 @@ namespace :import do
 
   desc "import adozioni from miur" 
   task miur_adozioni: :environment do
-        
+    
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    
+    if answer == true
+      start_destroy = Time.now
+      puts 'wait....'
+      ImportAdozione.delete_all
+      puts "#{ tempo_trascorso(start_destroy) } - end destroy_all"
+    end
+    
     start = Time.now
-    puts "#{start} - started reading.  wait........"
+    start_reading = Time.now
+    puts "- start reading.  wait........"
 
     counter = 0
     file_counter = 0
@@ -50,22 +57,23 @@ namespace :import do
     
     items = []
 
+    #    , "r:ISO-8859-1"
     Dir.glob(csv_dir).each do |file|
-      CSV.foreach(file, "r:ISO-8859-1", headers: true, col_sep: ',') do |row|
+      CSV.foreach(file, headers: true, col_sep: ',') do |row|
         items << row.to_h
         counter += 1 
       end      
       file_counter += 1
     end
 
-    puts "#{Time.now} - started importing.  wait........"
+    puts "#{ tempo_trascorso(start_reading) } - started importing.  wait........"
 
     ImportAdozione.import items, validate: false, on_duplicate_key_update: true
     
     fine = Time.now
     
-    puts "lavoro completato"
-    puts "#{fine} - #{start}  =  #{fine - start}"
+    puts "#{ tempo_trascorso(start)} - end importing"
+    puts "tempo totale #{ tempo_trascorso(start, fine) }"
     puts "righe inserite #{items.size} da #{file_counter} file/s"
 
   end
@@ -78,7 +86,7 @@ namespace :import do
     
     if answer == true
       puts 'wait....'
-      Import.destroy_all
+      Import.delete_all
     end
 
     puts 'wait........'
