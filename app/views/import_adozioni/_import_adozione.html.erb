@@ -1,17 +1,20 @@
 <li id="<%= dom_id import_adozione %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200">
 
     <div class="my-3 px-3">
-      	<p class="text-xs">
+      	<p class="text-xs text-gray-400">
 			<%= import_adozione.CODICESCUOLA %>
 		</p>
 		<p>
 			<%= import_adozione.ANNOCORSO[0] %>
 			<%= import_adozione.SEZIONEANNO %>
-			<span class="text-xs">
+			<span class="text-xs text-gray-400">
 				<%= import_adozione.COMBINAZIONE.downcase %>
 			</span>
 		</p>
-		    	<%= import_adozione.DISCIPLINA.titleize %>
+		
+		<span class="text-gray-400"> 
+		 	<%= import_adozione.DISCIPLINA.titleize %> 
+		</span>
 		<p>
     		<strong class="block font-medium mb-1">N.A.C.:</strong>
 			<%= import_adozione.NUOVAADOZ %>
@@ -20,7 +23,7 @@
 		</p>
   	</div>
 
-	<div class="my-3 px-3">
+	<div class="p-3 bg-gray-200">
 		<div class=text-xs >
 			<%= import_adozione.AUTORI.titleize %>
 		</div>

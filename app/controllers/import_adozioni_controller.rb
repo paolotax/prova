@@ -6,7 +6,14 @@ class ImportAdozioniController < ApplicationController
   def index
     if params[:search].present?
       
-      @import_adozioni = ImportAdozione.elementari.di_reggio.da_acquistare.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
+      @import_adozioni = ImportAdozione.elementari.di_reggio.da_acquistare
+      
+      if params[:search_query] == "all"
+        @import_adozioni = @import_adozioni.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
+      else
+        @import_adozioni = @import_adozioni.search_any_word(params[:search]).per_scuola_classe_disciplina_sezione
+      end
+
       @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
       
     else
