@@ -4,21 +4,31 @@ class ImportAdozioniController < ApplicationController
 
   # GET /import_adozioni or /import_adozioni.json
   def index
-    if params[:search].present?
+
+    if params[:search].present?      
+      @import_adozioni = ImportAdozione.elementari.di_reggio
       
-      @import_adozioni = ImportAdozione.elementari.di_reggio.da_acquistare
-      
+      if params[:da_acquistare] == "si"
+        @import_adozioni = @import_adozioni.da_acquistare
+      end   
+
+      if params[:raggruppa_per].present?
+        #@import_adozioni = @import_adozioni.raggruppa_per(params[:raggruppa_per])
+      end
+
       if params[:search_query] == "all"
-        @import_adozioni = @import_adozioni.search_all_word(params[:search]).per_scuola_classe_disciplina_sezione
+        @import_adozioni = @import_adozioni.search_all_word(params[:search])
       else
-        @import_adozioni = @import_adozioni.search_any_word(params[:search]).per_scuola_classe_disciplina_sezione
+        @import_adozioni = @import_adozioni.search_any_word(params[:search])
       end
 
       @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
       
     else
-      @import_adozioni = ImportAdozione.elementari.di_reggio.per_scuola_classe_sezione_disciplina.limit(100)
+      @import_adozioni = ImportAdozione.elementari.di_reggio.limit(100)
     end
+
+    @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
     @conteggio_adozioni = @import_adozioni.count;
     @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
