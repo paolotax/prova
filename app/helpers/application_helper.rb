@@ -79,7 +79,7 @@ module ApplicationHelper
 
 
 
-def toggle_button_tag( checked = true, label = "", html_class = nil ) 
+def toggle_button_tag( checked = true, label = "", html_id = nil ) 
   
   #             TailwindUI
   # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
@@ -93,7 +93,7 @@ def toggle_button_tag( checked = true, label = "", html_class = nil )
     span_css   = "translate-x-0"
   end
     
-  render partial: "layouts/toggle_button", locals: { html_class: html_class, checked: checked, label: label, button_css: button_css, span_css: span_css }
+  render partial: "layouts/toggle_button", locals: { html_id: html_id, checked: checked, label: label, button_css: button_css, span_css: span_css }
 
 end
 
