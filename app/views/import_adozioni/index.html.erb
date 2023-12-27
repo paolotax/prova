@@ -22,10 +22,20 @@
   	<%= turbo_frame_tag "search_results" do %>
 
 		<%= render partial: "stats" %>
-    
-    	<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-     		<%= render @import_adozioni %>
-    	</ul>
-  	<% end %>
+
+		<%= turbo_frame_tag "adozioni_page#{@pagy.page}" do %>
+			<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+				<%= render @import_adozioni %>
+			</ul>
+			<% if @pagy.next %>
+      			<%= turbo_frame_tag "adozioni_page#{@pagy.next}",
+                          src: import_adozioni_path(page: @pagy.next),
+                          loading: :lazy do %>
+       				<div class="loader">Loading...</div>
+     			<% end %>
+    		<% end %>
+		<% end %>
+	<% end %>
 
 </div>
+

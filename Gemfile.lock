@@ -160,6 +160,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
+    pagy (6.2.0)
     pdf-core (0.9.0)
     pg (1.5.4)
     pg_search (2.3.6)
@@ -283,6 +284,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   money-rails (~> 1.15)
+  pagy
   pg (~> 1.1)
   pg_search (~> 2.3)
   prawn (~> 2.4)

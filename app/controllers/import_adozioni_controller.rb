@@ -1,5 +1,7 @@
 class ImportAdozioniController < ApplicationController
   
+  include Pagy::Backend
+
   before_action :set_import_adozione, only: %i[ show edit update destroy ]
 
   # GET /import_adozioni or /import_adozioni.json
@@ -36,7 +38,7 @@ class ImportAdozioniController < ApplicationController
     @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
 
 
-    @import_adozioni =  @import_adozioni.limit(10)
+    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20)
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json
