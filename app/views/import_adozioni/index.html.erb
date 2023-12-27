@@ -8,6 +8,9 @@
     	<div class="flex-1">
 			<h2 class="font-bold text-2xl">Adozioni</h1>
 		</div>
+		
+		<%= button_tag "#", "data-action": "click->queryopt#submit", class: "btn"%>
+
 		<div class="flex grid-cols-2">
 			<div class="flex-1">
 				<%= toggle_button_tag( true, "da acquistare" )%>
@@ -19,7 +22,7 @@
     </div>
 
   	<%= turbo_frame_tag "search_results" do %>
-		
+
 		<%= render partial: "stats" %>
     
     	<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">

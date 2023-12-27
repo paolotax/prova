@@ -42,7 +42,7 @@ class ImportAdozione < ApplicationRecord
                 
   scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }
 
-  scope :di_reggio,  -> { where(CODICESCUOLA: 'RE'..'REZZ') }
+  scope :di_reggio,  -> { where(CODICESCUOLA: 'BO'..'BOZZ') }
 
   scope :per_scuola_classe_sezione_disciplina, -> { order( :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 

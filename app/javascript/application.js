@@ -2,12 +2,12 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-Turbo.setProgressBarDelay(1)
+// Turbo.setProgressBarDelay(1)
 
-window.addEventListener("turbo:frame-render", (e) => {
-    console.log("turbo:frame-render", e)
-})
+// window.addEventListener("turbo:frame-render", (e) => {
+//     console.log("turbo:frame-render", e)
+// })
   
-window.addEventListener("turbo:frame-load", (e) => {
-    console.log("turbo:frame-load", e)
-})
+// window.addEventListener("turbo:frame-load", (e) => {
+//     console.log("turbo:frame-load", e)
+// })
