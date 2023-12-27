@@ -35,14 +35,14 @@ class ImportAdozione < ApplicationRecord
                         }
   
   pg_search_scope :search_any_word,
-                        against: search_fields,
-                        using: {
-                          tsearch: { any_word: true, prefix: true }
-                        }
+                          against: search_fields,
+                          using: {
+                            tsearch: { any_word: true, prefix: true }
+                          }
                 
   scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }
 
-  scope :di_reggio,  -> { where(CODICESCUOLA: 'BO'..'BOZZ') }
+  scope :di_reggio,  -> { where(CODICESCUOLA: 'RE'..'REZZ') }
 
   scope :per_scuola_classe_sezione_disciplina, -> { order( :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 

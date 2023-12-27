@@ -3,30 +3,21 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="queryopt"
 export default class extends Controller {
   
-  static targets = ["aquistare", "parole"]
+  static targets = ["button", "acquistare", "parole"]
 
-  connect() {
-    console.log("connect");
+  submit() {
+    let search_form  = document.getElementById("search_form")
+    search_form.requestSubmit();
   }
 
-  submit(event) {
-    console.log("submit")
-    // event.preventDefault()
-    // let searchParams = new URL(window.location.href).searchParams
-    // searchParams.set("da_acquistare", this.acquistareTarget.value)
-    // searchParams.set("search_query", this.paroleTarget.value)
-    // Turbolinks.visit(window.location.pathname + "?" + searchParams.toString())
+  updateAcquistare() {
+    this.acquistareTarget.value === "si" ? this.acquistareTarget.value = "" : this.acquistareTarget.value = "si";
+    this.submit();
   }
 
-  updateQuery(event) {
-
-
-    
-    // let searchParams = new URL(event.detail.url).searchParams
-
-    // this.acquistareTarget.value = searchParams.get("da_acquistare")
-    // this.paroleTarget.value = searchParams.get("search_query")
-
-    console.log(this.element)
+  updateParole() {
+    this.paroleTarget.value === "any" ? this.paroleTarget.value = "all" : this.paroleTarget.value = "any";
+    this.submit();
   }
+
 }
