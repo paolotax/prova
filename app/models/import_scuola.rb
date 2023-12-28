@@ -32,7 +32,7 @@ class ImportScuola < ApplicationRecord
   
   include PgSearch::Model
 
-  search_fields =  [ :DENOMINAZIONESCUOLA, :INDIRIZZOSCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :INDICAZIONESEDEDIRETTIVO, :INDICAZIONESEDEOMNICOMPRENSIVO, :SEDESCOLASTICA, :SITOWEBSCUOLA, :INDIRIZZOEMAILSCUOLA, :INDIRIZZOPECSCUOLA ]
+  search_fields =  [ :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA ]
 
   pg_search_scope :search_all_word, 
                         against: search_fields,
@@ -50,13 +50,16 @@ class ImportScuola < ApplicationRecord
   scope :di_reggio,  -> { where(PROVINCIA: "REGGIO EMILIA") }
 
   scope :elementari, -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE"]) }
+  scope :medie,     -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE"]) }
+  scope :superiori, -> { where.not(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE", "SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE", "SCUOLA INFANZIA NON STATALE", "SCUOLA INFANZIA", "ISTITUTO COMPRENSIVO"]) }
+  
 
   def adozioni 
     import_adozioni
   end
   
   def adozioni_count
-    adozioni.count
+    adozioni.size
   end
 
   def classi 
@@ -67,6 +70,12 @@ class ImportScuola < ApplicationRecord
     classi.count
   end
 
+  def marchi
+    import_adozioni.pluck(:EDITORE).uniq
+  end
 
+  def marchi_count
+    marchi.count
+  end
 
 end
