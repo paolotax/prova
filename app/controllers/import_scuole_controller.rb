@@ -4,7 +4,7 @@ class ImportScuoleController < ApplicationController
 
   # GET /import_scuole or /import_scuole.json
   def index
-    @import_scuole = ImportScuola.includes(:import_adozioni).elementari.di_bologna 
+    @import_scuole = ImportScuola.includes(:import_adozioni).elementari.di_reggio 
 
     if params[:search].present?
       if params[:search_query] == "all"
