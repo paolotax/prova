@@ -24,6 +24,8 @@
 #
 class ImportAdozione < ApplicationRecord
 
+  belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
+
   include PgSearch::Model
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]

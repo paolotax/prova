@@ -3,7 +3,21 @@ class ImportScuoleController < ApplicationController
 
   # GET /import_scuole or /import_scuole.json
   def index
-    @import_scuole = ImportScuola.all
+    @import_scuole = ImportScuola.elementari.di_reggio
+
+    if params[:search].present?
+      if params[:search_query] == "all"
+        @import_scuole = @import_scuole.search_all_word(params[:search])
+      else
+        @import_scuole = @import_scuole.search_any_word(params[:search])
+      end
+    end
+
+    @import_scuole = @import_scuole.order(:CODICESCUOLA)
+
+    @pagy, @import_scuole = pagy(@import_scuole.all, items: 20, link_extra: 'data-turbo-action="advance"')
+
+
   end
 
   # GET /import_scuole/1 or /import_scuole/1.json

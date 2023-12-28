@@ -1,7 +1,26 @@
-<div id="<%= dom_id import_scuola %>">
-  <% if action_name != "show" %>
-    <%= link_to "Show this import scuola", import_scuola, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this import scuola", edit_import_scuola_path(import_scuola), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
-</div>
+<li id="<%= dom_id import_scuola %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200">
+
+    <div class="my-3 px-3">
+      	<p class="text-xs text-gray-400">
+			<%= import_scuola.CODICESCUOLA %>
+		</p>
+		<p>
+			<%= import_scuola.DENOMINAZIONESCUOLA%>
+		</p>
+		
+		<p class="text-xs text-gray-400"> 
+			<%= import_scuola.INDIRIZZOSCUOLA %>
+		</p>
+		
+		<p>		
+			<span class="text-xs text-gray-400">
+				<%= import_scuola.CAPSCUOLA %>
+			</span>
+			<%= import_scuola.DESCRIZIONECOMUNE %>
+		</p>
+  	</div>
+	
+ 	 <% if action_name != "show" %>
+
+  	<% end %>
+</li>
