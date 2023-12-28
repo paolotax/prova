@@ -51,4 +51,22 @@ class ImportScuola < ApplicationRecord
 
   scope :elementari, -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE"]) }
 
+  def adozioni 
+    import_adozioni
+  end
+  
+  def adozioni_count
+    adozioni.count
+  end
+
+  def classi 
+    import_adozioni.pluck(:ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE ).uniq
+  end
+
+  def classi_count
+    classi.count
+  end
+
+
+
 end

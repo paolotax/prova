@@ -1,9 +1,10 @@
 class ImportScuoleController < ApplicationController
+  
   before_action :set_import_scuola, only: %i[ show edit update destroy ]
 
   # GET /import_scuole or /import_scuole.json
   def index
-    @import_scuole = ImportScuola.elementari.di_reggio
+    @import_scuole = ImportScuola.includes(:import_adozioni).elementari.di_reggio
 
     if params[:search].present?
       if params[:search_query] == "all"
