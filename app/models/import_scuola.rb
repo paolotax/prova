@@ -46,12 +46,24 @@ class ImportScuola < ApplicationRecord
                             tsearch: { any_word: true, prefix: true }
                           } 
 
+  scope :dell_emilia_romagna , -> { where(REGIONE: "EMILIA ROMAGNA") }
+  scope :di_parma,    -> { where(PROVINCIA: "PARMA") }
+  scope :di_modena,   -> { where(PROVINCIA: "MODENA") }
+  scope :di_bologna,  -> { where(PROVINCIA: "BOLOGNA") }
+  scope :di_ferrara,  -> { where(PROVINCIA: "FERRARA") }
+  scope :di_ravenna,  -> { where(PROVINCIA: "RAVENNA") }
+  scope :di_forli_cesena,    -> { where(PROVINCIA: "FORLI' - CESENA") }
+  scope :di_rimini,   -> { where(PROVINCIA: "RIMINI") }
+  scope :di_piacenza, -> { where(PROVINCIA: "PIACENZA") }
+  scope :di_fidenza,  -> { where(PROVINCIA: "PARMA").where("DESCRIZIONECOMUNE LIKE ?", "%FIDENZA%") }
+  scope :di_cesena,   -> { where(PROVINCIA: "FORLI' - CESENA").where("DESCRIZIONECOMUNE LIKE ?", "%CESENA%") }
+  scope :di_forli,    -> { where(PROVINCIA: "FORLI' - CESENA").where("DESCRIZIONECOMUNE LIKE ?", "%FORLI'%") }
 
   scope :di_reggio,  -> { where(PROVINCIA: "REGGIO EMILIA") }
 
   scope :elementari, -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE"]) }
-  scope :medie,     -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE"]) }
-  scope :superiori, -> { where.not(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE", "SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE", "SCUOLA INFANZIA NON STATALE", "SCUOLA INFANZIA", "ISTITUTO COMPRENSIVO"]) }
+  scope :medie,      -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE"]) }
+  scope :superiori,  -> { where.not(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE", "SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE", "SCUOLA INFANZIA NON STATALE", "SCUOLA INFANZIA", "ISTITUTO COMPRENSIVO"]) }
   
 
   def adozioni 
