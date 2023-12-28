@@ -23,13 +23,14 @@
 
 		<%= render partial: "stats" %>
 
-		<%= turbo_frame_tag "adozioni_page#{@pagy.page}" do %>
+		<%= turbo_frame_tag "adozioni_page_#{@pagy.page}" do %> 
+			
 			<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 				<%= render @import_adozioni %>
 			</ul>
 			<% if @pagy.next %>
-      			<%= turbo_frame_tag "adozioni_page#{@pagy.next}",
-                          src: import_adozioni_path(page: @pagy.next),
+      			<%= turbo_frame_tag "adozioni_page_#{@pagy.next}",
+                          src: import_adozioni_path(search: params[:search], page: @pagy.next, da_acquistare: params[:da_acquistare], search_query: params[:search_query]),
                           loading: :lazy do %>
        				
 					<div role="status">
@@ -46,16 +47,6 @@
 
 </div>
 
-<div class="back-to-top-container back-to-top-container--intersecting" 
-	data-controller="viewport-entrance-toggle" 
-	data-viewport-entrance-toggle-class="back-to-top-container--intersecting">
-    <button
-		class="back-to-top__button button" 
-  		onclick="window.scrollTo({ top: 0, behavior: 'smooth' })>
-		Back to top
-	</button>
-		
-</div>
   
 
 
