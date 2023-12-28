@@ -31,6 +31,22 @@
 				<main class="py-10">
 					<div class="px-4 sm:px-6 lg:px-8">
 						<!-- Your content -->
+
+						<!--   Back-To-Top di Jason Zimdars -->
+						<div 
+							class="back-to-top-container back-to-top-container--intersecting" 
+							data-controller="viewport-entrance-toggle" 
+							data-viewport-entrance-toggle-class="back-to-top-container--intersecting">
+  							
+							<button class="back-to-top__button block text-center align-middle cursor-pointer bg-white/90 p-4 border-2 border-gray-400 rounded-full shadow-lg"
+								onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+								</svg>
+							</button>
+						</div>
+
+
 						<%= yield %>
 					</div>
 				</main>
