@@ -11,3 +11,5 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 
 pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/index.js"
 pin "tailwindcss-stimulus-components", to: "https://ga.jspm.io/npm:tailwindcss-stimulus-components@4.0.4/dist/tailwindcss-stimulus-components.module.js"
+pin "flowbite", to: "https://ga.jspm.io/npm:flowbite@2.2.1/lib/esm/index.js"
+pin "@popperjs/core", to: "https://ga.jspm.io/npm:@popperjs/core@2.11.8/lib/index.js"

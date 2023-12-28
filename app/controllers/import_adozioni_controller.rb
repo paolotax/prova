@@ -38,7 +38,7 @@ class ImportAdozioniController < ApplicationController
     @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
 
 
-    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20)
+    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="advance"')
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json
