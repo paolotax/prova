@@ -78,6 +78,69 @@ namespace :import do
 
   end
 
+  desc "import scuole from miur"
+  task miur_scuole: :environment do
+
+    include ActionView::Helpers
+    include ApplicationHelper
+      
+      answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+      
+      if answer == true
+        start_destroy = Time.now
+        puts 'wait....'
+        ImportScuola.delete_all
+        puts "#{ tempo_trascorso(start_destroy) } - end destroy_all"
+      end
+      
+      start = Time.now
+      start_reading = Time.now
+      puts "- start reading.  wait........"
+
+      counter = 0
+      file_counter = 0
+      
+      csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
+      
+      items = []
+
+      #    , "r:ISO-8859-1"
+      Dir.glob(csv_dir).each do |file|
+        CSV.foreach(file, headers: true, col_sep: ',') do |row|
+ 
+          # campi mancanti da aggiungere
+          # ["SEDESCOLASTICA", "CODICEISTITUTORIFERIMENTO", "DENOMINAZIONEISTITUTORIFERIMENTO", 
+          #  "DESCRIZIONECARATTERISTICASCUOLA", "INDICAZIONESEDEDIRETTIVO", "INDICAZIONESEDEOMNICOMPRENSIVO"]
+
+          row.push({"CODICEISTITUTORIFERIMENTO" => ""}) if !row["CODICEISTITUTORIFERIMENTO"].present?
+          row.push({"DENOMINAZIONEISTITUTORIFERIMENTO" => ""}) if !row["DENOMINAZIONEISTITUTORIFERIMENTO"].present?
+          row.push({"DESCRIZIONECARATTERISTICASCUOLA" => ""}) if !row["DESCRIZIONECARATTERISTICASCUOLA"].present?
+          row.push({"INDICAZIONESEDEDIRETTIVO" => ""}) if !row["INDICAZIONESEDEDIRETTIVO"].present?
+          row.push({"INDICAZIONESEDEOMNICOMPRENSIVO" => ""} )if !row["INDICAZIONESEDEOMNICOMPRENSIVO"].present?
+          
+          
+          if !row["SEDESCOLASTICA"].present?
+            row.push({"SEDESCOLASTICA" => ""})
+            puts row.to_h
+          end
+          
+          items << row.to_h
+          counter += 1 
+        end      
+        file_counter += 1
+      end
+
+      puts "#{ tempo_trascorso(start_reading) } - started importing.  wait........"
+
+      ImportScuola.import items, validate: false, on_duplicate_key_update: true
+      
+      fine = Time.now
+      
+      puts "#{ tempo_trascorso(start)} - end importing"
+      puts "tempo totale #{ tempo_trascorso(start, fine) }"
+      puts "righe inserite #{items.size} da #{file_counter} file/s"
+    
+  end
 
   desc "import righe from csv gaia"  
   task gaia: :environment do
