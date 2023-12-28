@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_20_170700) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_28_132228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,33 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_20_170700) do
     t.string "NUOVAADOZ"
     t.string "DAACQUIST"
     t.string "CONSIGLIATO"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+
+    t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
+  end
+
+  create_table "import_scuole", force: :cascade do |t|
+    t.string "ANNOSCOLASTICO"
+    t.string "AREAGEOGRAFICA"
+    t.string "REGIONE"
+    t.string "PROVINCIA"
+    t.string "CODICEISTITUTORIFERIMENTO"
+    t.string "DENOMINAZIONEISTITUTORIFERIMENTO"
+    t.string "CODICESCUOLA"
+    t.string "DENOMINAZIONESCUOLA"
+    t.string "INDIRIZZOSCUOLA"
+    t.string "CAPSCUOLA"
+    t.string "CODICECOMUNESCUOLA"
+    t.string "DESCRIZIONECOMUNE"
+    t.string "DESCRIZIONECARATTERISTICASCUOLA"
+    t.string "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"
+    t.string "INDICAZIONESEDEDIRETTIVO"
+    t.string "INDICAZIONESEDEOMNICOMPRENSIVO"
+    t.string "INDIRIZZOEMAILSCUOLA"
+    t.string "INDIRIZZOPECSCUOLA"
+    t.string "SITOWEBSCUOLA"
+    t.string "SEDESCOLASTICA"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
