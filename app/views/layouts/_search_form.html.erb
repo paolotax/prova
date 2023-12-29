@@ -1,13 +1,20 @@
-<div class="relative flex flex-1">
-    <form
-		id="search_form"       
-        data-turbo-frame="search_results"   
-        data-turbo-action="advance"
-        
-		data-controller="form"
-        data-action="input->form#submit"
 
-        class="relative flex flex-1" action="#" method="GET">
+<%#= f.search_field :name, placeholder: 'Name...', value: params[:name] %>
+
+
+<div class="relative flex flex-1">
+    
+    <%= form_with( url: url_for(controller: params[:controller], action: :index),
+					id: "search_form",
+                    class: "relative flex flex-1", 
+                    method: "get",
+                    data: {
+                      turbo_frame: "search_results",
+                      turbo_action: "advance",
+                      controller: "form",
+                      action: "input->form#submit"
+                    }) do |f| %>
+
         
         <label for="search-field" class="sr-only">Search</label>
         <svg class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -20,5 +27,5 @@
 
 		<%= hidden_field_tag :search_query, params[:search_query] || "all", data: { queryopt_target: "parole" } %>
 
-    </form>
+    <% end %>
 </div>
