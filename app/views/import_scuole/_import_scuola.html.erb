@@ -5,20 +5,18 @@
 			<%= import_scuola.CODICESCUOLA %>
 		</p>
 		<p>
-			<%= import_scuola.DENOMINAZIONESCUOLA%>
-		</p>
-		
+			<%= link_to import_scuola.DENOMINAZIONESCUOLA, import_scuola_path(import_scuola),
+				data: { turbo_frame: "_top"} %>
+		</p>		
 		<p class="text-xs text-gray-400"> 
-			<%= import_scuola.INDIRIZZOSCUOLA %>
+			<%= import_scuola.INDIRIZZOSCUOLA%>
 		</p>
-		
 		<p>		
 			<span class="text-xs text-gray-400">
 				<%= import_scuola.CAPSCUOLA %>
 			</span>
 			<%= import_scuola.DESCRIZIONECOMUNE %>
 		</p>
-
 		<p>		
 			<span class="text-xs text-gray-400">
 				<%= import_scuola.INDIRIZZOEMAILSCUOLA %>
@@ -32,7 +30,6 @@
       	<p class="text-xs text-gray-400">
 			<%= import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA %>
 			<%= import_scuola.DESCRIZIONECARATTERISTICASCUOLA %>
-			
 		</p>
 		<p>
 			<%= import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO%>
@@ -44,8 +41,4 @@
 			<%= import_scuola.adozioni_count %>
 		</p>		
   	</div>
-
- 	 <% if action_name != "show" %>
-
-  	<% end %>
 </li>

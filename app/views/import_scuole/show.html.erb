@@ -6,10 +6,20 @@
 
     <%= render @import_scuola %>
 
-    <%= link_to "Edit this import_scuola", edit_import_scuola_path(@import_scuola), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Destroy this import_scuola", import_scuola_path(@import_scuola), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-    </div>
-    <%= link_to "Back to import_scuole", import_scuole_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
+
+      <div class="my-3 px-3">
+        
+        <p >
+          <%= classe.to_s %>
+        </p>
+
+        <% adozioni.map do |adozione| %>
+            <p class="text-xs text-gray-400">
+              <%= adozione[:titoli].join %>
+            </p>         
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>

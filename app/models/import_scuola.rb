@@ -91,17 +91,14 @@ class ImportScuola < ApplicationRecord
   end
 
   def adozioni_grouped_classe 
-    temp_group = import_adozioni.group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
-    group = []
-    temp_group.map do |k, v|
-      sezioni = []
-      v.each do |adozione|
-        sezioni << adozione.SEZIONEANNO
-      end    
-      group << { anno: k[0][0], sezioni: sezioni.sort.join, combinazione: k[1], adozioni: v }
+    grouped = import_adozioni.group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
+    temp = []
+    grouped.each do |k, v| 
+      sezioni = v.map { |a| a.SEZIONEANNO }.sort.join
+      titoli  = v.map { |a| a.TITOLO }.uniq
+      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1]}", titoli: titoli }
     end
-    elenco = []
-    elenco = group.group_by {|k| [k[:anno], k[:sezioni], k[:combinazione]]}
+    elenco = temp.group_by {|k| k[:sezioni]}
   end
 
   def self.prova 
@@ -109,17 +106,13 @@ class ImportScuola < ApplicationRecord
                   .find_by_CODICESCUOLA("REEE81101E")
                   .import_adozioni
                   .group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN]}
-    group = []
-    grouped.map do |k, v| 
-      sezioni = []
-      v.each do |adozione|
-        sezioni << adozione.SEZIONEANNO
-      end
-      group << { anno: k[0][0], sezioni: sezioni.sort.join, combinazione: k[1], adozioni: v }
+    temp = []
+    grouped.each do |k, v| 
+      sezioni = v.map { |a| a.SEZIONEANNO }.sort.join
+      titoli  = v.map { |a| a.TITOLO }.uniq
+      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1]}", titoli: titoli }
     end
-    elenco = group.group_by {|k| [k[:anno], k[:sezioni], k[:combinazione]]}
-    elenco
-
+    elenco = temp.group_by {|k| k[:sezioni]}
   end
 
 end

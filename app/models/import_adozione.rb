@@ -53,7 +53,9 @@ class ImportAdozione < ApplicationRecord
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
 
-  def to_s 
+  def to_s
+
+    "#{self.TITOLO} - #{self.AUTORI} - #{self.EDITORE} - #{self.CODICEISBN}"
 
   end
 
