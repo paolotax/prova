@@ -90,4 +90,36 @@ class ImportScuola < ApplicationRecord
     marchi.count
   end
 
+  def adozioni_grouped_classe 
+    temp_group = import_adozioni.group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
+    group = []
+    temp_group.map do |k, v|
+      sezioni = []
+      v.each do |adozione|
+        sezioni << adozione.SEZIONEANNO
+      end    
+      group << { anno: k[0][0], sezioni: sezioni.sort.join, combinazione: k[1], adozioni: v }
+    end
+    elenco = []
+    elenco = group.group_by {|k| [k[:anno], k[:sezioni], k[:combinazione]]}
+  end
+
+  def self.prova 
+    grouped = ImportScuola
+                  .find_by_CODICESCUOLA("REEE81101E")
+                  .import_adozioni
+                  .group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN]}
+    group = []
+    grouped.map do |k, v| 
+      sezioni = []
+      v.each do |adozione|
+        sezioni << adozione.SEZIONEANNO
+      end
+      group << { anno: k[0][0], sezioni: sezioni.sort.join, combinazione: k[1], adozioni: v }
+    end
+    elenco = group.group_by {|k| [k[:anno], k[:sezioni], k[:combinazione]]}
+    elenco
+
+  end
+
 end
