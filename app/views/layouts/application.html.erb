@@ -18,15 +18,15 @@
 
 		<%= render partial: "import_scuole/dialog" %>
 
-		<div data-controller="sidebar" class="h-full bg-slate-100" >
-	
-			<%= render "layouts/sidebar_mobile" %>
-			
+		<div class="h-full bg-slate-100" >
+				
+			<%= render "layouts/slide_over" %>
+
 			<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
 				<%= render "layouts/sidebar" %>
 			</div>
 
-			<div class="lg:pl-72"  data-controller="queryopt">
+			<div class="lg:pl-72" data-controller="queryopt">
 
 				<%= render "layouts/main_menu" %>
 		
