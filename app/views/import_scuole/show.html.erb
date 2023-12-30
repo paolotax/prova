@@ -8,10 +8,6 @@
 
 		<%= render @import_scuola %>
 
-		<div data-controller="openmodal" data-openmodal-modal-outlet="#taxmodal" >
-			<a data-action="click->openmodal#open" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded">Open Modal</a>
-		</div>
-
 		<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
 			<div class="my-3 px-3">				
 				<p >

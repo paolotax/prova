@@ -23,9 +23,6 @@
 
 		<%= render partial: "stats" %>
 
-		<!--sarebbe bello ma non funzionanano i link nella prima pagina -- CORREGGERE-->
-		<%= render partial: "layouts/back_to_top" %>
-
 		<%= turbo_frame_tag "adozioni_page_#{@pagy.page}" do %> 
 			
 			<ul id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
