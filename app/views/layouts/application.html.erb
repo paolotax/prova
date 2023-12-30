@@ -16,14 +16,13 @@
 
 	<body>
 
-		 <!--sarebbe bello ma non funzionanano i link nella prima pagina -- CORREGGERE-->
-		<%#= render partial: "layouts/back_to_top" %>
+		<%= render partial: "import_scuole/dialog" %>
 
 		<div data-controller="sidebar" class="h-full bg-slate-100" >
-
+	
 			<%= render "layouts/sidebar_mobile" %>
 			
-			<div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+			<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
 				<%= render "layouts/sidebar" %>
 			</div>
 
@@ -31,10 +30,12 @@
 
 				<%= render "layouts/main_menu" %>
 		
-				<main class="py-10">
+				<main class="py-10">		
 					<div class="px-4 sm:px-6 lg:px-8">
+						
 						<!-- Your content -->
 						<%= yield %>
+					
 					</div>
 				</main>
  

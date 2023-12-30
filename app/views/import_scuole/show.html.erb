@@ -1,25 +1,29 @@
 <div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto">
-    <% if notice.present? %>
-      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-    <% end %>
+	
+	<div class="mx-auto">
+		
+		<% if notice.present? %>
+			<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+		<% end %>
 
-    <%= render @import_scuola %>
+		<%= render @import_scuola %>
 
-    <% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
+		<div data-controller="openmodal" data-openmodal-modal-outlet="#taxmodal" >
+			<a href="#" data-action="click->openmodal#open" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded">Open Modal</a>
+		</div>
 
-      <div class="my-3 px-3">
-        
-        <p >
-          <%= classe.to_s %>
-        </p>
-
-        <% adozioni.map do |adozione| %>
-            <p class="text-xs text-gray-400">
-              <%= adozione[:titoli].join %>
-            </p>         
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+		<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
+			<div class="my-3 px-3">				
+				<p >
+					<%= classe.to_s %>
+				</p>
+				<% adozioni.map do |adozione| %>
+						<p class="text-xs text-gray-400">
+							<%= adozione[:titoli].join %>
+						</p>         
+				<% end %>
+			</div>
+		<% end %>
+	</div>
 </div>
+
