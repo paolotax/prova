@@ -79,7 +79,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def classi_count
-    classi.count
+    classi.size
   end
 
   def marchi
@@ -87,7 +87,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def marchi_count
-    marchi.count
+    marchi.size
   end
 
   def adozioni_grouped_classe 
