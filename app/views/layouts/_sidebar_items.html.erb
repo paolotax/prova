@@ -6,43 +6,43 @@
 	</a>
 </li>
 <li>
-	<%= link_to articoli_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to articoli_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-bookopen') %>
 		Articoli                        
 	<% end %>
 </li>
 <li>
-	<%= link_to documenti_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to documenti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-documenti') %>
 		Documenti
 	<% end %>  
 </li>
 <li>
-	<%= link_to fornitori_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to fornitori_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-truck') %>
 		Fornitori
 	<% end %>
 </li>
 <li>
-	<%= link_to clienti_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to clienti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-cash') %>                
 		Clienti
 	<% end %>
 </li>
 <li>
-	<%= link_to import_scuole_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-building-library') %>                
 		Scuole (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to import_adozioni_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to import_adozioni_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-currency-euro') %>                
 		Adozioni (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to duplicates_path, data: { action: "click->sidebar#closeSidebar"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to duplicates_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= embedded_svg('icon-reports') %>                
 		Duplicati...
 	<% end %>
