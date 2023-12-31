@@ -20,7 +20,7 @@ class ImportScuoleController < ApplicationController
     @conteggio_scuole   = @import_scuole.count
     @conteggio_classi   = @import_scuole.sum(&:classi_count) 
     @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
-    @conteggio_marchi   = @import_scuole.sum(&:marchi_count)
+    @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
     
     @pagy, @import_scuole = pagy(@import_scuole.all, items: 20, link_extra: 'data-turbo-action="advance"')
 
