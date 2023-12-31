@@ -14,14 +14,14 @@
 	</head>
 
 
-	<body>
-	
+	<body class="antialiased">
+		
 		<%= render partial: "import_scuole/dialog" %>
 		
 		<!--sarebbe bello ma non funzionanano i link nella prima pagina -- CORREGGERE-->
 		<%#= render partial: "layouts/back_to_top" %>
 
-		<div class="h-full bg-slate-100" >
+		<div class="h-full" >
 				
 			<%= render "layouts/slide_over" %>
 
@@ -33,13 +33,11 @@
 
 				<%= render "layouts/main_menu" %>
 		
-				<main class="py-10">		
-					<div class="px-4 sm:px-6 lg:px-8">
+				<main class="px-2 py-4 sm:px-6 lg:px-8">		
 						
 						<!-- Your content -->
 						<%= yield %>
 					
-					</div>
 				</main>
  
 			</div>  
