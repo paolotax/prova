@@ -24,8 +24,7 @@
   top: 0;
   right: 0;
   height: 100vh;
-  width: 100vw;
-  box-shadow: inset 0 0 0 1rem #cfc;
+  width: 1;
 }
 
 .back-to-top__button {
