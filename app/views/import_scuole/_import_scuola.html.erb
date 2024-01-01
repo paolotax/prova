@@ -1,50 +1,64 @@
-<li id="<%= dom_id import_scuola %>" class="bg-white rounded-xl border border-gray-200 shadow-lg" >
+<div id="<%= dom_id import_scuola %>" class="bg-white rounded-xl border border-gray-200 shadow-lg" >
 
-    <div class="my-3 px-3">
-      	<p class="text-xs text-gray-400">
-			<%= import_scuola.CODICESCUOLA %>
-		</p>
-		<p>
-			<%= link_to import_scuola.DENOMINAZIONESCUOLA, import_scuola_path(import_scuola),
-				data: { turbo_frame: "_top"}, class: "hover:text-indigo-500" %>
-		</p>		
-		<p class="text-xs text-gray-400"> 
-			<%= import_scuola.INDIRIZZOSCUOLA%>
-		</p>
-		<p>		
-			<span class="text-xs text-gray-400">
-				<%= import_scuola.CAPSCUOLA %>
-			</span>
-			<%= link_to import_scuola.DESCRIZIONECOMUNE, import_scuole_path(search: import_scuola.DESCRIZIONECOMUNE),
-				data: { turbo_frame: "_top"}, class: "hover:text-indigo-500" %>
-	
-	
+    <div class="flex flex-col my-3 px-3">
+      	<div class="text-xs text-gray-400">
+			<%= import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize %>
+			<%= import_scuola.DESCRIZIONECARATTERISTICASCUOLA.downcase.delete_prefix("normale") %>
+		</div>
 
-		</p>
-		<p>		
+		<div class="hover:text-indigo-500" >
+			<%= link_to import_scuola.DENOMINAZIONESCUOLA, 
+					import_scuola_path(import_scuola),
+					data: { turbo_frame: "_top"}
+			%>
+		</div>	
+
+		<div>
+			<div class="text-xs text-gray-400"> 
+				<%= import_scuola.INDIRIZZOSCUOLA%>
+			</div>
+			<div>		
+				<span class="text-xs text-gray-400">
+					<%= import_scuola.CAPSCUOLA %>
+				</span>
+				<%= link_to import_scuola.DESCRIZIONECOMUNE, 
+						import_scuole_path(search: import_scuola.DESCRIZIONECOMUNE),
+						data: { turbo_frame: "_top"}, class: "hover:text-indigo-500"
+				%>
+			</div>
+		</div>	
+		
+
+
+		
+		<div class="hover:text-indigo-500 text-right">
 			<span class="text-xs text-gray-400">
-				<%= import_scuola.INDIRIZZOEMAILSCUOLA %>
-				<br/>
-				pec. <%= import_scuola.INDIRIZZOPECSCUOLA.downcase %>
-			</span>
-		</p>
+				dipende da:
+			</span> 
+			<%= link_to import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO, 
+					import_scuole_path(search: import_scuola.CODICEISTITUTORIFERIMENTO),
+					data: { turbo_frame: "_top"}
+			%>
+		</div>
+
+
+		<div class="text-xs text-gray-400">
+			cod.min <%= import_scuola.CODICESCUOLA %>
+		</div>		
+	
+		<div class="text-xs text-gray-400">
+			email: <%= import_scuola.INDIRIZZOEMAILSCUOLA.downcase %>
+		</div>
+
+		<div class="text-xs text-gray-400">
+			pec: <%= import_scuola.INDIRIZZOPECSCUOLA.downcase %>
+		</div>
+
+
+
+		
+
+
   	</div>
 
-	<div class="my-3 px-3">
-      	<p class="text-xs text-gray-400">
-			<%= import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA %>
-			<%= import_scuola.DESCRIZIONECARATTERISTICASCUOLA %>
-		</p>
-		<p>
-			<%= link_to import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO, import_scuole_path(search: import_scuola.CODICEISTITUTORIFERIMENTO),
-				data: { turbo_frame: "_top"}, class: "hover:text-indigo-500" %>
-	
-		</p>
-		<p>
-			<%= import_scuola.classi_count%>
-		</p>
-		<p>
-			<%= import_scuola.adozioni_count %>
-		</p>		
-  	</div>
-</li>
+</div>
