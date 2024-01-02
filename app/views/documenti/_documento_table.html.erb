@@ -1,50 +1,48 @@
 <tr class="border-b border-gray-200">
-  <td class="relative py-5 pr-6">
-    
-    <div class="flex gap-x-6">
-      <div class="flex-auto">
-        <div class="flex items-start gap-x-3">
-          <div class="text-sm font-medium leading-6 text-gray-900">
-            <%= documento.tipo_documento %>
-          </div>
-        </div>
-        <div class="mt-1 text-xs leading-5 text-gray-500">
-          <%= link_to documento_path(documento), 
-                class:"hover:text-indigo-500 hover:font-semibold", 
-                data: { turbo_frame: "_top" } do %>
-            
-              <%= "#{documento.numero_documento} del #{documento.data_documento.strftime('%d-%m-%y')}" %>
-          <% end %>
-        </div>
-      </div>
-    </div>  
-  </td>
-  
-  <td class="hidden py-5 pr-6 sm:table-cell">
-    <div class="text-sm leading-6 text-gray-900">
-      <%= documento.fornitore %>
-    </div> 
-    <div>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-      </svg>
-      <%= documento.cliente %>
-    </div>
+	<td class="relative py-5 pr-6">
+		
+		<div class="flex gap-x-6">
+			<div class="flex-auto">
+				<div class="flex items-start gap-x-3">
+					<div class="text-sm font-medium leading-6 text-gray-900">
+						<%= documento.tipo_documento %>
+					</div>
+				</div>
+				<div class="mt-1 text-xs leading-5 text-gray-500">
+					<%= link_to documento_path(documento), 
+								class:"hover:text-indigo-500 hover:font-semibold", 
+								data: { turbo_frame: "_top" } do %>
+						
+							<%= "#{documento.numero_documento} del #{documento.data_documento.strftime('%d-%m-%y')}" %>
+					<% end %>
+				</div>
+			</div>
+		</div>  
+	</td>
+	
+	<td class="hidden py-5 pr-6 sm:table-cell">
+		<div class="text-sm leading-6 text-gray-900">
+			<%= documento.fornitore %>
+		</div> 
+		<div class="flex">
+			<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+			</svg>
+			<%= documento.cliente %>
+		</div>
+	</td>
 
-
-  </td>
-
-  <td class="py-5 text-right">
-    <div class="flex justify-end">      
-      <%= Money.from_cents( documento.totale_documento, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
-    </div>
-    <div class="mt-1 text-xs leading-5 text-gray-500">
-      copie 
-      <span class="text-gray-900">
-        <%= documento.quantita_totale %>
-      </span>
-    </div>
-  </td>
+	<td class="py-5 text-right">
+		<div class="flex justify-end">      
+			<%= Money.from_cents( documento.totale_documento, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
+		</div>
+		<div class="mt-1 text-xs leading-5 text-gray-500">
+			copie 
+			<span class="text-gray-900">
+				<%= documento.quantita_totale %>
+			</span>
+		</div>
+	</td>
 
 
 </tr>
