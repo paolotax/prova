@@ -30,14 +30,20 @@ class ImportAdozione < ApplicationRecord
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
 
-  pg_search_scope :search_all_word,  
+  pg_search_scope :search_all_word, 
                         against: search_fields,
+                        associated_against: {
+                          import_scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
+                        },
                         using: {
                           tsearch: { any_word: false, prefix: true }
                         }
   
   pg_search_scope :search_any_word,
                           against: search_fields,
+                          associated_against: {
+                            import_scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
+                          },
                           using: {
                             tsearch: { any_word: true, prefix: true }
                           }
@@ -53,6 +59,14 @@ class ImportAdozione < ApplicationRecord
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
 
+  def scuola
+    self.import_scuola.DENOMINAZIONESCUOLA
+  end
+
+  def citta 
+    self.import_scuola.DESCRIZIONECOMUNE
+  end
+ 
   def to_s
 
     "#{self.TITOLO} - #{self.AUTORI} - #{self.EDITORE} - #{self.CODICEISBN}"

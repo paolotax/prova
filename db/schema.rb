@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_28_132228) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_06_104325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_28_132228) do
     t.string "SEDESCOLASTICA"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["CODICESCUOLA"], name: "index_import_scuole_on_CODICESCUOLA", unique: true
   end
 
   create_table "imports", force: :cascade do |t|
