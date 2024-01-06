@@ -28,6 +28,9 @@
 #
 class ImportScuola < ApplicationRecord
 
+
+  self.primary_key = "CODICESCUOLA"
+  
   has_many :import_adozioni, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
   
   include PgSearch::Model

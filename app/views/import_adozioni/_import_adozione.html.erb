@@ -1,39 +1,41 @@
-<li id="<%= dom_id import_adozione %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200">
+<div id="<%= dom_id import_adozione %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200 text-gray-400 text-xs">
 
-    <div class="my-3 px-3">
-      	<p class="text-xs text-gray-400">
-			<%= import_adozione.scuola %>
+    <div class="my-3 px-3 font-semibold">
+
+		<div class="hover:text-indigo-500" >
+			<%= link_to import_adozione.import_scuola.DENOMINAZIONESCUOLA, 
+					import_scuola_path(import_adozione.CODICESCUOLA),
+					data: { turbo_frame: "_top"}
+			%>
+		</div>	
+
+		<p class="">
+			<%= import_adozione.citta %>
 		</p>
-		<p>
+		<p class="mt-2 text-gray-900">
 			<%= import_adozione.ANNOCORSO[0] %>
 			<%= import_adozione.SEZIONEANNO %>
-			<span class="text-xs text-gray-400">
+			<span class="text-xs font-normal text-gray-400">
 				<%= import_adozione.COMBINAZIONE.downcase %>
 			</span>
 		</p>
 		
-		<span class="text-gray-400"> 
+		<span class="mt-2 text-gray-400"> 
 		 	<%= import_adozione.DISCIPLINA.titleize %> 
 		</span>
-		<p class="h-full" >
-    		<strong class="block font-medium mb-1">N.A.C.:</strong>
-			<%= import_adozione.NUOVAADOZ %>
-			<%= import_adozione.DAACQUIST %>
-			<%= import_adozione.CONSIGLIATO %>
-		</p>
-  	</div>
+	</div>
 
 	<div class="p-3 bg-gray-200">
-		<div class=text-xs >
+		<div>
 			<%= import_adozione.AUTORI.titleize %>
 		</div>
 		
-		<div class="font-semibold" >
+		<div class="font-semibold text-base text-gray-900" >
 			<%= import_adozione.TITOLO %>
 		</div>
 		
 		<div>
-	    	<span class="text-xs">
+	    	<span>
 				vol. <%= import_adozione.VOLUME %>
 				<%= import_adozione.SOTTOTITOLO.downcase %>
 			</span>
@@ -41,23 +43,45 @@
 		
 		<div>
 			<%= import_adozione.EDITORE %>
-		</div>
-		
-		<div class="flex justify-between">
-			<div class="flex-1 text-xs sm:text-base"> 
-				<%= import_adozione.CODICEISBN %>	
-			</div>
-			<div class="flex-1 sm:flex-none text-right">	
-				€ <%= import_adozione.PREZZO %>
-			</div>
-		</div>
-  	
+		</div>  	
 	</div>
 
 
 
+	<div class="px-3 py-2 text-xs">
+		<div class="flex justify-between text-center" >
+			<div class="">
+				new
+			</div>
+			<div class="">
+				da acq.
+			</div>
+			<div class="">
+				cons.
+			</div>
+		</div>
 
- 	 <% if action_name != "show" %>
+		<div class="flex justify-between text-center" >
+			<div>
+				<%= import_adozione.NUOVAADOZ %>
+			</div>
+			<div>
+				<%= import_adozione.DAACQUIST %>
+			</div>
+			<div>
+				<%= import_adozione.CONSIGLIATO %>
+			</div>
+		</div>
+	</div>
 
-  	<% end %>
-</li>
+	<div class="pt-5 px-3 bg-gray-200 flex justify-between">
+		<div class=""> 
+			<%= import_adozione.CODICEISBN %>	
+		</div>
+		<div class="text-right">	
+			€ <%= import_adozione.PREZZO %>
+		</div>
+	</div>
+
+
+</div>

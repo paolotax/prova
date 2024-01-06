@@ -28,8 +28,8 @@ class ImportScuoleController < ApplicationController
 
   # GET /import_scuole/1 or /import_scuole/1.json
   def show
-  end
-
+  end 
+  
   # GET /import_scuole/new
   def new
     @import_scuola = ImportScuola.new
@@ -80,7 +80,7 @@ class ImportScuoleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_import_scuola
-      @import_scuola = ImportScuola.find(params[:id])
+      @import_scuola = ImportScuola.find(params[:CODICESCUOLA])
     end
 
     # Only allow a list of trusted parameters through.

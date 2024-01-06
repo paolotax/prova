@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  resources :import_scuole
+  
+  resources :import_scuole, except: :show
+  get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
+  
+  
   resources :import_adozioni
   get 'clienti',      to: 'clienti#index'
   get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
