@@ -37,7 +37,13 @@ module ApplicationHelper
   
   end
 
-
+  def params_split(params)
+    if params.present?
+      params.split
+    else
+      ""
+    end
+  end
   
   
   def link_to_previous_page(link_title)

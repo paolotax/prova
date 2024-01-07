@@ -2,12 +2,12 @@
 
     <div class="flex flex-col my-3 px-3">
       	<div class="text-xs text-gray-400">
-			<%= import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize %>
+			<%= highlight(import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize, params_split(params[:search])) %>
 			<%= import_scuola.DESCRIZIONECARATTERISTICASCUOLA.downcase.delete_prefix("normale") %>
 		</div>
 
 		<div class="hover:text-indigo-500" >
-			<%= link_to import_scuola.DENOMINAZIONESCUOLA, 
+			<%= link_to highlight(import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])), 
 					import_scuola_path(import_scuola),
 					data: { turbo_frame: "_top"}
 			%>
@@ -21,7 +21,7 @@
 				<span class="text-xs text-gray-400">
 					<%= import_scuola.CAPSCUOLA %>
 				</span>
-				<%= link_to import_scuola.DESCRIZIONECOMUNE, 
+				<%= link_to highlight(import_scuola.DESCRIZIONECOMUNE, params_split(params[:search])), 
 						import_scuole_path(search: import_scuola.DESCRIZIONECOMUNE),
 						data: { turbo_frame: "_top"}, class: "hover:text-indigo-500"
 				%>
@@ -35,7 +35,7 @@
 			<span class="text-xs text-gray-400">
 				dipende da:
 			</span> 
-			<%= link_to import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO, 
+			<%= link_to highlight(import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO, params_split(params[:search])), 
 					import_scuole_path(search: import_scuola.CODICEISTITUTORIFERIMENTO),
 					data: { turbo_frame: "_top"}
 			%>
@@ -43,7 +43,7 @@
 
 
 		<div class="text-xs text-gray-400">
-			cod.min <%= import_scuola.CODICESCUOLA %>
+			cod.min <%= highlight import_scuola.CODICESCUOLA, params_split(params[:search]) %>
 		</div>		
 	
 		<div class="text-xs text-gray-400">

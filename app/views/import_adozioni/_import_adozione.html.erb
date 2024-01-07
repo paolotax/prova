@@ -3,14 +3,15 @@
     <div class="my-3 px-3 font-semibold">
 
 		<div class="hover:text-indigo-500" >
-			<%= link_to import_adozione.import_scuola.DENOMINAZIONESCUOLA, 
+			<%= link_to( 
+					highlight( import_adozione.import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])),
 					import_scuola_path(import_adozione.CODICESCUOLA),
-					data: { turbo_frame: "_top"}
+					data: { turbo_frame: "_top"})
 			%>
 		</div>	
 
 		<p class="">
-			<%= import_adozione.citta %>
+			<%= highlight import_adozione.citta, params_split(params[:search]) %>
 		</p>
 		<p class="mt-2 text-gray-900">
 			<%= import_adozione.ANNOCORSO[0] %>
@@ -31,7 +32,7 @@
 		</div>
 		
 		<div class="font-semibold text-base text-gray-900" >
-			<%= import_adozione.TITOLO %>
+			<%= highlight import_adozione.TITOLO, params_split(params[:search]) %>
 		</div>
 		
 		<div>
