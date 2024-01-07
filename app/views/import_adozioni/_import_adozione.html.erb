@@ -2,7 +2,7 @@
 
     <div class="my-3 px-3 font-semibold">
 
-		<div class="hover:text-indigo-500" >
+		<div class="text-sm text-gray-900 hover:text-indigo-500" >
 			<%= link_to( 
 					highlight( import_adozione.import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])),
 					import_scuola_path(import_adozione.CODICESCUOLA),
@@ -27,18 +27,18 @@
 	</div>
 
 	<div class="p-3 bg-gray-200">
-		<div>
+		<div class="truncate">
 			<%= import_adozione.AUTORI.titleize %>
 		</div>
 		
-		<div class="font-semibold text-base text-gray-900" >
+		<div class="text-sm font-semibold text-gray-900" >
 			<%= highlight import_adozione.TITOLO, params_split(params[:search]) %>
 		</div>
 		
 		<div>
 	    	<span>
 				vol. <%= import_adozione.VOLUME %>
-				<%= import_adozione.SOTTOTITOLO.downcase %>
+				<%= import_adozione.SOTTOTITOLO.downcase.delete_prefix("nd") %>
 			</span>
 		</div>
 		
