@@ -1,12 +1,13 @@
 <div id="<%= dom_id import_adozione %>" class="bg-white grid grid-cols-2 overflow-hidden rounded-xl border border-gray-200 text-gray-400 text-xs">
 
     <div class="my-3 px-3 font-semibold">
-
+		
 		<div class="text-sm text-gray-900 hover:text-indigo-500" >
 			<%= link_to( 
-					highlight( import_adozione.import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])),
+					highlight(import_adozione.import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])),
 					import_scuola_path(import_adozione.CODICESCUOLA),
-					data: { turbo_frame: "_top"})
+					data: { turbo_frame: "_top"}
+				)
 			%>
 		</div>	
 
@@ -28,7 +29,7 @@
 
 	<div class="p-3 bg-gray-200">
 		<div class="truncate">
-			<%= import_adozione.AUTORI.titleize %>
+			<%= highlight import_adozione.AUTORI.titleize, params_split(params[:search]) %>
 		</div>
 		
 		<div class="text-sm font-semibold text-gray-900" >
