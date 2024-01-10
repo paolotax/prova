@@ -121,7 +121,7 @@ namespace :import do
           
           if !row["SEDESCOLASTICA"].present?
             row.push({"SEDESCOLASTICA" => ""})
-            puts row.to_h
+            # puts row.to_h
           end
           
           items << row.to_h
