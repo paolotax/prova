@@ -7,9 +7,9 @@ class DocumentiController < ApplicationController
   def index
 
     if params[:search].present?
-      @documenti = Views::Documento.search_any_word(params[:search]).order(:data_documento)
+      @documenti = Views::Documento.search_any_word(params[:search]).order(data_documento: :desc)
     else
-      @documenti = Views::Documento.all
+      @documenti = Views::Documento.order(data_documento: :desc)
     end
   end
 
