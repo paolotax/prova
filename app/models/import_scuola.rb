@@ -68,6 +68,10 @@ class ImportScuola < ApplicationRecord
   scope :medie,      -> { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE"]) }
   scope :superiori,  -> { where.not(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ["SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE", "SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE", "SCUOLA INFANZIA NON STATALE", "SCUOLA INFANZIA", "ISTITUTO COMPRENSIVO"]) }
   
+  scope :della_regione, -> (regione) { where(REGIONE: regione) }
+  scope :della_provincia, -> (provincia) { where(PROVINCIA: provincia) }
+  scope :dell_area_geografica, -> (area) { where(AREAGEOGRAFICA: area) }
+  scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
   def adozioni 
     import_adozioni
@@ -117,5 +121,31 @@ class ImportScuola < ApplicationRecord
     end
     elenco = temp.group_by {|k| k[:sezioni]}
   end
+
+
+
+  def self.zone
+    self.pluck([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA])
+                .uniq
+                .sort_by{|k| [k[0], k[1], k[2]]}
+  end
+
+  def self.di_zona(area: nil, regione: nil, provincia: nil)
+    scoped = self
+    scoped = scoped.della_regione(regione) if !regione.nil?
+    scoped = scoped.della_provincia(provincia) if !provincia.nil?
+    scoped = scoped.dell_area_geografica(area) if !area.nil?
+    scoped
+  end
+
+
+  def self.tipi_scuole 
+    self.pluck([:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :DESCRIZIONECARATTERISTICASCUOLA])
+                .uniq
+                .sort_by{|k| [k[0], k[1]]}
+  end
+
+  scope :del_tipo_scuola, -> (tipo_scuola) { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipo_scuola)}
+
 
 end
