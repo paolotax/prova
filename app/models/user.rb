@@ -10,4 +10,8 @@
 #  updated_at  :datetime         not null
 #
 class User < ApplicationRecord
+
+  has_many :user_scuole
+  has_many :import_scuole, through: :user_scuole
+
 end

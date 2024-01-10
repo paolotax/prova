@@ -29,10 +29,11 @@
 class ImportScuola < ApplicationRecord
 
 
-  self.primary_key = "CODICESCUOLA"
+  #self.primary_key = "CODICESCUOLA"
   
   has_many :import_adozioni, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
-  
+  has_many :user_scuole
+  has_many :users, through: :user_scuole
   include PgSearch::Model
 
   search_fields =  [ :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO ]
