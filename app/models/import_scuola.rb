@@ -123,8 +123,6 @@ class ImportScuola < ApplicationRecord
     elenco = temp.group_by {|k| k[:sezioni]}
   end
 
-
-
   def self.zone
     self.pluck([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA])
                 .uniq
@@ -138,7 +136,6 @@ class ImportScuola < ApplicationRecord
     scoped = scoped.dell_area_geografica(area) if !area.nil?
     scoped
   end
-
 
   def self.tipi_scuole 
     self.pluck([:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :DESCRIZIONECARATTERISTICASCUOLA])
