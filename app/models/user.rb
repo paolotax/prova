@@ -11,7 +11,14 @@
 #
 class User < ApplicationRecord
 
-  has_many :user_scuole
+  has_secure_password
+
+  validates :name,  presence: true, uniqueness: { case_sensitive: false }
+  validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
+  validates :partita_iva, format: { with: /\A\d{11}\z/ }
+  validates :password, length: { minimum: 6, allow_blank: true }
+
+  has_many :user_scuole, dependent: :destroy  
   has_many :import_scuole, through: :user_scuole
 
 end

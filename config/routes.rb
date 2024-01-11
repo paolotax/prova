@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  
+  resources :users
+  get "signup" => "users#new"
+
+  resource :session, only: [:new, :create, :destroy]
+  get "signin" => "sessions#new"
+  
   resources :user_scuole
   
   resources :import_scuole, except: :show
@@ -31,5 +38,5 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  root "articoli#index"
+  root "import_scuole#index"
 end

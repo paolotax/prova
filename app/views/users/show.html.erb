@@ -1,0 +1,16 @@
+<section>
+   <h1><%= @user.name %></h1>
+   <h2><%= mail_to(@user.email) %></h2>
+   <h2><%= @user.partita_iva %></h2>
+
+    <h3>Member Since</h3>
+    <p>
+        <%= @user.created_at.strftime("%B %Y") %>
+    </p> 
+</section>
+
+<div class="actions">
+   <%= link_to "Modifica Utente", edit_user_path(@user), class: "button edit" %>
+   <%= link_to 'Elimina Utente', @user, class: "button delete",
+              data: { turbo_method: :delete, turbo_confirm: "Vuoi eliminare questo Utente definitivamente!?" } %>
+</div>

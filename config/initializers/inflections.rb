@@ -51,6 +51,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'consegna', 'consegne'
 
   inflect.irregular 'articolo', 'articoli'
+  inflect.irregular 'utente',   'utenti'
 
 
 

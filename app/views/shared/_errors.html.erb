@@ -1,0 +1,14 @@
+<% if object.errors.any? %>
+  <section id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+    <h2>
+      Oops! Non posso salvare la scheda.
+      Per favore correggi 
+      <%= pluralize(object.errors.size, "errore", "errori") %>:
+    </h2>
+    <ul>
+      <% object.errors.full_messages.each do |message| %>
+        <li>- il campo <%= message %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

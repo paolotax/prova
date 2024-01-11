@@ -1,0 +1,23 @@
+<div class="grid grid-cols">
+	<div>
+		Accedi
+	</div>
+
+	<p>
+  		Non sei ancora registrato? <%= link_to "Sign up!", signup_path %>
+	</p>
+
+	<%= form_with(url: session_path) do |f| %>
+
+		<%= f.label :email_or_username %>
+		<%= f.text_field :email_or_username, autofocus: true, required: true %>
+
+		<%= f.label :password %>
+		<%= f.password_field :password, required: true %>
+
+		<%= f.submit "Sign In" %>
+	<% end %>
+
+</div>
+
+
