@@ -21,8 +21,7 @@ class ImportAdozioniController < ApplicationController
       if params[:raggruppa_per].present?
         #@import_adozioni = @import_adozioni.raggruppa_per(params[:raggruppa_per])
         @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
-      end
-      
+      end      
     end
     
     #@import_adozioni =  @import_adozioni.limit(200)

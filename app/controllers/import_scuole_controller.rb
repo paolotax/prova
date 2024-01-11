@@ -80,7 +80,7 @@ class ImportScuoleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_import_scuola
-      @import_scuola = ImportScuola.find(params[:CODICESCUOLA])
+      @import_scuola = ImportScuola.find_by_CODICESCUOLA(params[:CODICESCUOLA])
     end
 
     # Only allow a list of trusted parameters through.
