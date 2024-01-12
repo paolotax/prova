@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html class="h-full">
 	<head>
 		<title>Prova</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
@@ -14,38 +14,38 @@
 	</head>
 
 
-	<body class="antialiased">
+	<body class="antialiased min-h-screen bg-slate-100">
 		
 		<%= render partial: "import_scuole/dialog" %>
 		
 		<!-- back-to-top di jason... -->
 		<%= render partial: "layouts/back_to_top" %>
 
-		<div class="h-full" >
+
 				
-			<%= render "layouts/slide_over" %>
+		<%= render "layouts/slide_over" %>
 
-			<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
-				<%= render "layouts/sidebar" %>
-			</div>
-
-			<div class="lg:pl-72 bg-slate-100" data-controller="queryopt">
-
-				<%= render "layouts/main_menu" %>
-		
-				<main class="px-2 py-4 sm:px-6 lg:px-8">		
-						
-						<% if notice.present? %>
-							<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-						<% end %>
-						
-						<!-- Your content -->
-						<%= yield %>
-					
-				</main>
- 
-			</div>  
+		<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
+			<%= render "layouts/sidebar" %>
 		</div>
+
+		<div class="lg:pl-72" data-controller="queryopt">
+
+			<%= render "layouts/main_menu" %>
+	
+			<main class="px-2 py-4 sm:px-6 lg:px-8">		
+					
+					<% if notice.present? %>
+						<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+					<% end %>
+					
+					<!-- Your content -->
+					<%= yield %>
+				
+			</main>
+
+		</div>  
+
 	
 	</body>
 

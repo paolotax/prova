@@ -1,6 +1,6 @@
 <%# da correggere mel login non deve comparire la search %>
 
-<% if params[:controller] != "sessions" %>
+<% if params[:controller] != "sessions" && (params[:action] != 'edit' && params[:action] != 'new')  %>
 	
 	<%= form_with( url: url_for(controller: params[:controller], action: :index),
 					id: "search_form",

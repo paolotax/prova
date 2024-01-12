@@ -1,63 +1,52 @@
-<%= form_with model: user, class: "grid grid-col" do |f| %>
-    
-	<%= render "shared/errors", object: user %>
-
-	<div class="mt-2">
-		<%= f.label :name, "Nome", class: "block text-sm font-medium leading-6 text-gray-900" %>
-		<%= f.text_field :name,
-			class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-		%>
-	</div>
-
-	<%# <div>
-	  	<label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
-		<div class="relative mt-2 rounded-md shadow-sm">
-			<input type="email" name="email" id="email" class="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6" placeholder="you@example.com" value="adamwathan" aria-invalid="true" aria-describedby="email-error">
-			<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-			<svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-				<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-			</svg>
-			</div>
-		</div>
-		<p class="mt-2 text-sm text-red-600" id="email-error">Not a valid email address.</p>
-	</div> %>
-
+<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 	
-	<div class="mt-2">
-		<%= f.label :email, class: "block text-sm font-medium leading-6 text-gray-900" %>
+	<%= form_with model: user, class: "space-y-6" do |f| %>
+		
+		<%= render "shared/errors", object: user %>
+
 		<div class="mt-2">
-			<%= f.email_field :email, 
-				class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-				placeholder: "you@example.com" 
+			<%= f.label :name, "Nome", class: "block text-sm font-medium leading-6 text-gray-900" %>
+			<%= f.text_field :name, autofocus: true,
+				class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"	
 			%>
 		</div>
-	</div>
+		
+		<div class="mt-2">
+			<%= f.label :email, class: "block text-sm font-medium leading-6 text-gray-900" %>
+			<div class="mt-2">
+				<%= f.email_field :email, 
+					class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6",
+					placeholder: "you@example.com" 
+				%>
+			</div>
+		</div>
 
-	<div class="mt-2">
-		<%= f.label :partita_iva, class: "block text-sm font-medium leading-6 text-gray-900" %>
-		<%= f.text_field :partita_iva,
-			class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-		%>
-	</div>
-	<div class="mt-2">
-		<%= f.label :password, class: "block text-sm font-medium leading-6 text-gray-900" %>
-		<%= f.password_field :password,				
-			class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-		%>
-	</div>
-	<div class="mt-2">
-		<%= f.label :password_confirmation, "Conferma Password", class: "block text-sm font-medium leading-6 text-gray-900" %>
-		<%= f.password_field :password_confirmation, 				
-			class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-		%>
-	</div>
+		<div class="mt-2">
+			<%= f.label :partita_iva, class: "block text-sm font-medium leading-6 text-gray-900" %>
+			<%= f.text_field :partita_iva,
+				class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+			%>
+		</div>
+		<div class="mt-2">
+			<%= f.label :password, class: "block text-sm font-medium leading-6 text-gray-900" %>
+			<%= f.password_field :password,				
+				class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+			%>
+		</div>
+		<div class="mt-2">
+			<%= f.label :password_confirmation, "Conferma Password", class: "block text-sm font-medium leading-6 text-gray-900" %>
+			<%= f.password_field :password_confirmation, 				
+				class:"block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+			%>
+		</div>
 
-	
-	<% if user.new_record? %>
-  		<%= f.submit "Crea Utente", class: 'button mt-4' %>
-	<% else %>
-		<%= f.submit "Modifica Utente", class: 'button mt-4 ml-4' %>
+		
+		<% if user.new_record? %>
+			<%= f.submit "Crea Utente", class: "flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
+		<% else %>
+			<%= f.submit "Modifica Utente", class: "flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
+		<% end %>
+
+
 	<% end %>
-
-
-<% end %>
+</div>

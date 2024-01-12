@@ -18,7 +18,7 @@
     <!-- Separator -->
     <div class="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true"></div>
 
-    <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+    <div class="flex flex-1 gap-x-4  items-center lg:gap-x-6">
 
         <% if current_user %>         
  
@@ -93,7 +93,10 @@
                 </div>
             </div>
         <% else %>
-            <%#= link_to "Accedi o registrati", signin_path, class: "flex px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1" %>
+            <div class="flex flex-1 justify-between">
+                <div></div>
+                <%= link_to "Accedi o registrati", signin_path, class: "px-3 py-1 text-sm font-semibold leading-6 text-gray-900 hover:text-gray-500" %>
+            </div>
         <% end %>
 
     </div>
