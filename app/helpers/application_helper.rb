@@ -3,7 +3,7 @@ module ApplicationHelper
   include Pagy::Frontend
 
   def current_user 
-    User.find(session[:user_id]) if session[:user_id]
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
 
   def tempo_trascorso( data_inizio, data_fine = Time.now )
