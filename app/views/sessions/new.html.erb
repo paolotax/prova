@@ -1,37 +1,32 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Accedi al tuo account</h2>
-    </div>
+<div class="px-6 py-12 lg:px-8 sm:mx-auto sm:w-full sm:max-w-sm">
 
+    <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Accedi al tuo account</h2>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div class="mt-10">
 
         <% if alert.present? %>
-						<p class="block text-center py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg border border-red-400" id="notice"><%= alert %></p>
+						<p class="block text-center py-2 px-3 bg-red-50 mb-5 text-red-500 text-sm font-medium rounded-lg border border-red-400" id="notice"><%= alert %></p>
 				<% end %>
  
         <%= form_with(url: session_path, class:"space-y-6") do |f| %>
             <div>
-                <%= f.label :email_or_username, "email o nome utente", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                <%= f.label :email_or_username, "Email o nome utente", class: "label" %>
                 <div class= "mt-2">
-                    <%= f.text_field :email_or_username, autofocus: true, required: true,
-                        class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"    
-                    %>
+                    <%= f.text_field :email_or_username, autofocus: true, required: true, class: "field" %>
                 </div> 
             </div>
 
             <div>
                 <div class="flex items-center justify-between">
-                    <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                    <label for="password" class="label">Password</label>
                     <div class="text-sm">
                         <a href="#" class="font-semibold text-gray-800 hover:text-gray-500", tabindex="-1" >
                             Password dimenticata?
                         </a>
                     </div>
-              </div>
+                  </div>
               <div class="mt-2">
-                  <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6">
+                  <input id="password" name="password" type="password" autocomplete="current-password" required class="field">
               </div>
             </div>
 
