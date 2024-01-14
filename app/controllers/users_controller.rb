@@ -7,10 +7,17 @@ class UsersController < ApplicationController
   end
 
   def show
-    @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
-    @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
-    @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
+
+    # devo testare queste query per vedere la più veloce
     
+    # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
+    # @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
+    # @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
+    
+    @provincia_items = ImportScuola.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq.map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+
     @grado_items = ImportAdozione.order(:TIPOGRADOSCUOLA).pluck(:TIPOGRADOSCUOLA).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
@@ -18,12 +25,7 @@ class UsersController < ApplicationController
     @tipo_items = ImportScuola.order(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).pluck(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).uniq
     .map do |item|
       FancySelect::Item.new(item, item, nil)
-    end
-
-    @provincia_items = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq.map do |item|
-      FancySelect::Item.new(item, item, nil)
-    end
-    
+    end    
   end
 
   def new
@@ -67,8 +69,8 @@ class UsersController < ApplicationController
   def assegna_scuole
     #fail
     @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
-    # raise @scuole_da_assegnare.inspect
-    @user.import_scuole << @scuole_da_assegnare.all
+    
+    @user.import_scuole << @scuole_da_assegnare
     redirect_to @user, notice: "Scuole assegnate!"  
   end
 

@@ -4,7 +4,7 @@ class ImportScuoleController < ApplicationController
 
   # GET /import_scuole or /import_scuole.json
   def index
-    @import_scuole = ImportScuola.includes(:import_adozioni).elementari.di_reggio 
+    @import_scuole = User.find(2).import_scuole.includes(:import_adozioni)
 
     if params[:search].present?
       if params[:search_query] == "all"
@@ -15,7 +15,6 @@ class ImportScuoleController < ApplicationController
     end
 
     @import_scuole = @import_scuole.order(:CODICESCUOLA)
-
 
     @conteggio_scuole   = @import_scuole.count
     @conteggio_classi   = @import_scuole.sum(&:classi_count) 
@@ -80,7 +79,8 @@ class ImportScuoleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_import_scuola
-      @import_scuola = ImportScuola.find_by_CODICESCUOLA(params[:CODICESCUOLA])
+      @import_scuola = ImportScuola.find(params[:id])
+      #@import_scuola = ImportScuola.find_by_CODICESCUOLA(params[:CODICESCUOLA])
     end
 
     # Only allow a list of trusted parameters through.

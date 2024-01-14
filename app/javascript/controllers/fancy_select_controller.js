@@ -1,9 +1,14 @@
+
+
+
+// copiato d FancyTailwind e tailwind-components ma da migliorare
+
 import { Controller } from "@hotwired/stimulus";
 
 // Connects to data-controller="fancy-select"
 export default class extends Controller {
 
-  static targets = ['menu', 'button', 'menuItem', 'selected']
+  static targets = ['menu', 'button', 'menuItem', 'selected', 'input']
   static values  = { open: Boolean, default: false }
 
   connect() {
@@ -28,8 +33,6 @@ export default class extends Controller {
     
     // transition(this.menuTarget, this.openValue)
     //this.menuTarget.classList.toggle("hidden");
-
-
     if (this.openValue === true && this.hasMenuItemTarget) {
       this.menuItemTargets[0].focus()
     }
@@ -73,6 +76,7 @@ export default class extends Controller {
     console.log( e.currentTarget );
 
     this.selectedTarget.value = id;
+    this.inputTarget.value = id;
 
     // // Copy the label HTML and place it into the outer form element]
     // this.selectedTarget.innerHTML =
