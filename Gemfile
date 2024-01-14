@@ -83,3 +83,6 @@ gem "pg_search", "~> 2.3"
 gem 'activerecord-import'
 
 gem "pagy"
+
+gem "view_component"
+

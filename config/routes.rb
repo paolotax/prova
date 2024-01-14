@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   
-  resources :users
+  resources :users do 
+    member do 
+      post 'assegna_scuole'
+    end
+  end
+
   get "signup" => "users#new"
 
   resource :session, only: [:new, :create, :destroy]

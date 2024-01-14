@@ -1,16 +1,34 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_user, only: %i[ show edit update destroy assegna_scuole ]
    
   def index
     @users = User.all
   end
 
   def show
+    @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
+    @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
+    @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
+    
+    @grado_items = ImportAdozione.order(:TIPOGRADOSCUOLA).pluck(:TIPOGRADOSCUOLA).uniq.map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+   
+    @tipo_items = ImportScuola.order(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).pluck(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).uniq
+    .map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+
+    @provincia_items = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq.map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+    
   end
 
   def new
     @user = User.new
+
   end
 
   def edit
@@ -45,11 +63,20 @@ class UsersController < ApplicationController
       alert: "Utente eliminato!"
   end
 
+
+  def assegna_scuole
+    #fail
+    @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
+    # raise @scuole_da_assegnare.inspect
+    @user.import_scuole << @scuole_da_assegnare.all
+    redirect_to @user, notice: "Scuole assegnate!"  
+  end
+
   private
   
     def user_params
       params.require(:user).
-        permit(:name, :email, :partita_iva, :password, :password_confirmation)
+        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado)
     end
   
     def set_user
