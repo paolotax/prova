@@ -1,5 +1,6 @@
 class ImportAdozioniController < ApplicationController
   
+  before_action :require_signin
   before_action :set_import_adozione, only: %i[ show edit update destroy ]
 
   # GET /import_adozioni or /import_adozioni.json

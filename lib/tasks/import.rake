@@ -60,7 +60,7 @@ namespace :import do
     #    , "r:ISO-8859-1"
     Dir.glob(csv_dir).each do |file|
       CSV.foreach(file, headers: true, col_sep: ',') do |row|
-        items << row.to_h if row["TIPOGRADOSCUOLA"] == "EE"
+        items << row.to_h if row["TIPOGRADOSCUOLA"] == "MM"
         counter += 1 
       end      
       file_counter += 1
