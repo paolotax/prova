@@ -2,10 +2,6 @@ module ApplicationHelper
 
   include Pagy::Frontend
 
-  def current_user 
-    @current_user ||= User.find(session[:user_id]) if session[:user_id]
-  end
-
   def tempo_trascorso( data_inizio, data_fine = Time.now )
 
     data_inizio = Time.parse(data_inizio) if data_inizio.is_a? String
