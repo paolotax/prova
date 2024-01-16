@@ -1,5 +1,6 @@
 require 'csv'
 require 'date'
+require 'benchmark'
 
 namespace :import do
 
@@ -8,17 +9,27 @@ namespace :import do
   task cambia_classi_e_religione: :environment do
 
     start = Time.now
-    righe_count = ImportAdozione.elementari.di_reggio.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
+    righe_count = ImportAdozione.elementari.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
     puts "adozioni di religione aggiornate in #{(Time.now - start).to_i} secondi"
 
     start = Time.now
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
-    ImportAdozione.elementari.di_reggio.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
+    ImportAdozione.elementari.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
+    ImportAdozione.elementari.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
+    ImportAdozione.elementari.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
+    ImportAdozione.elementari.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
+    ImportAdozione.elementari.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
     puts "classi aggiornate in #{(Time.now - start).to_i} secondi"
   end
+
+  desc "popola tabella editori da adozioni"
+  task editori: :environment do  
+
+    Benchmark.bm do |x|
+      x.report('A') { @editori = ImportAdozione.order(:EDITORE).pluck(:EDITORE).uniq.map {|e| { editore: e } } }
+      x.report('B') { Editore.import @editori, batch_size: 50 }
+    end
+    
+  end 
   
   desc "init user"
   task init: :environment do  

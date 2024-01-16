@@ -24,7 +24,11 @@
 #
 class ImportAdozione < ApplicationRecord
 
-  belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
+  belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
+  belongs_to :editore,       foreign_key: "EDITORE",      primary_key: "EDITORE"
+
+  has_many :user_scuole, through: :import_scuola
+  has_many :users, through: :user_scuole
 
   include PgSearch::Model
   
@@ -58,6 +62,9 @@ class ImportAdozione < ApplicationRecord
 
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
+  def mia_adozione?(user_editori) 
+    user_editori.include?(self.EDITORE)
+  end
 
   def scuola
     self.import_scuola.DENOMINAZIONESCUOLA

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :editori
   
   resources :users do 
     member do 

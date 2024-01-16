@@ -6,6 +6,8 @@ class ImportAdozioniController < ApplicationController
   # GET /import_adozioni or /import_adozioni.json
   def index
 
+    @miei_editori = current_user.editori.collect{|e| e.editore}
+
     @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
     
     @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"

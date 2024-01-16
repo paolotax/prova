@@ -26,8 +26,12 @@
 		 	<%= import_adozione.DISCIPLINA.titleize %> 
 		</span>
 	</div>
-
-	<div class="p-3 bg-gray-200">
+	<%= tag.div class: [
+			"p-3": true,
+			"bg-gray-200":   !import_adozione.mia_adozione?(@miei_editori),
+			"bg-yellow-200": import_adozione.mia_adozione?(@miei_editori)
+		] do
+	%>
 		<div class="truncate">
 			<%= highlight import_adozione.AUTORI.titleize, params_split(params[:search]) %>
 		</div>
@@ -46,7 +50,7 @@
 		<div>
 			<%= import_adozione.EDITORE %>
 		</div>  	
-	</div>
+	<% end %>
 
 
 
@@ -75,15 +79,21 @@
 			</div>
 		</div>
 	</div>
+	<%= tag.div class: [
+			"pt-5 px-3 flex justify-between": true,
+			"bg-gray-200": !import_adozione.mia_adozione?(@miei_editori),
+			"bg-yellow-200": import_adozione.mia_adozione?(@miei_editori)
+		] do
+	%>
 
-	<div class="pt-5 px-3 bg-gray-200 flex justify-between">
 		<div class=""> 
 			<%= import_adozione.CODICEISBN %>	
 		</div>
 		<div class="text-right">	
 			€ <%= import_adozione.PREZZO %>
 		</div>
-	</div>
 
+	<% end %>
 
 </div>
+

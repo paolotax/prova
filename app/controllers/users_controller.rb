@@ -13,7 +13,10 @@ class UsersController < ApplicationController
     # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
     # @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
     # @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
-    
+    @editore_items = Editore.pluck(:editore).map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+
     @provincia_items = ImportScuola.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end

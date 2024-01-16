@@ -33,27 +33,53 @@
             </div>
 
             <%= f.submit "aggiungi scuole", class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
-        <% end %>   
+        <% end %>
+
+    </section>   
+
+    <section>
+
+        <%= form_with url: "#", class: "mt-8 flex flex-row space-x-3 items-baseline" do |f| %>
+            <div>
+                <%= f.label :editore, class: "label" %>
+                <div>    
+                    <%= f.select :editore, @editore_items.map{|t| t.label}, {include_blank: true}, class: "field" %>
+                </div>
+            </div>
+
+            <%= f.submit "aggiungi editore", class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
+        <% end %>  
     </section>   
 
 </div>
-
-<div>
-    <%= form_with url: assegna_scuole_user_path(@user) do |f| %>
-        <div class="flex space-x-4 mt-10 max-w-4xl mx-auto">
-            <%= render(FancySelect.new( form_name: :provincia, items: @provincia_items, label: "Scegli la provincia" ))  %>
-            <%= render(FancySelect.new( form_name: :grado, items: @grado_items, label: "Scegli il grado scolastico" ))  %>     
-            <%= render(FancySelect.new( form_name: :tipo, items: @tipo_items, label: "Scegli il tipo scuola" ))  %>     
-            <%= f.submit "aggiungi scuole", class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
-        </div>
-    <% end %>
-</div>  
-
 
 <div class="mt-12 sm:mt-4 sm:flex sm:flex-row-reverse">
     <%= link_to 'Elimina Utente', @user, class: "inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto",
                 data: { turbo_method: :delete, turbo_confirm: "Vuoi eliminare questo Utente definitivamente!?" } %>
 
     <%= link_to "Modifica Utente", edit_user_path(@user), class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
+</div>
+
+<div class="mt-20 sm:mx-auto sm:w-full sm:max-w-2xl">
+
+    <div>
+        <%= form_with url: assegna_scuole_user_path(@user) do |f| %>
+            <div class="flex space-x-4 mt-10 max-w-4xl mx-auto">
+                <%= render(FancySelect.new( form_name: :provincia, items: @provincia_items, label: "Scegli la provincia" ))  %>
+                <%= render(FancySelect.new( form_name: :grado, items: @grado_items, label: "Scegli il grado scolastico" ))  %>     
+                <%= render(FancySelect.new( form_name: :tipo, items: @tipo_items, label: "Scegli il tipo scuola" ))  %>     
+                <%= f.submit "aggiungi scuole", class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
+            </div>
+        <% end %>
+    </div>  
+
+    <div>
+        <%= form_with url: "#" do |f| %>
+            <div class="flex space-x-4 mt-10 max-w-4xl mx-auto">
+                <%= render(FancySelect.new( form_name: :editore, items: @editore_items, label: "Scegli l'editore" ))  %>
+                <%= f.submit "aggiungi editore ", class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
+            </div>
+        <% end %>
+    </div> 
 </div>
 

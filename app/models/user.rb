@@ -20,6 +20,16 @@ class User < ApplicationRecord
 
   has_many :user_scuole, dependent: :destroy  
   has_many :import_scuole, through: :user_scuole
-  has_many :import_adozioni, through: :import_scuole
+  has_many :import_adozioni, through: :import_scuole 
+  
+  has_many :editori_users, dependent: :destroy
+  has_many :editori, through: :editori_users
+
+  has_many :adozioni, through: :editori_users
+
+  def mie_adozioni
+    import_adozioni.where(editore: editori.collect{|e| e.editore})
+  end
+
 
 end
