@@ -20,5 +20,6 @@ class User < ApplicationRecord
 
   has_many :user_scuole, dependent: :destroy  
   has_many :import_scuole, through: :user_scuole
+  has_many :import_adozioni, through: :import_scuole
 
 end

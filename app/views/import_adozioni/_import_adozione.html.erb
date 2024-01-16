@@ -5,7 +5,7 @@
 		<div class="text-sm text-gray-900 hover:text-indigo-500" >
 			<%= link_to( 
 					highlight(import_adozione.import_scuola.DENOMINAZIONESCUOLA, params_split(params[:search])),
-					import_scuola_path(import_adozione.CODICESCUOLA),
+					import_scuola_path(import_adozione.import_scuola),
 					data: { turbo_frame: "_top"}
 				)
 			%>

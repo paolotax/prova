@@ -1,49 +1,49 @@
 <li>
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
 	<a href="#" class="bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
-		<%#= embedded_svg('icon-home') %>                     
+		<%= inline_svg_tag('icon-home.svg') %>                     
 		didattitax
 	</a>
 </li>
 <li>
 	<%= link_to articoli_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-bookopen') %>
+		<%= inline_svg_tag('icon-bookopen.svg') %>
 		Articoli                        
 	<% end %>
 </li>
 <li>
 	<%= link_to documenti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-documenti') %>
+		<%= inline_svg_tag('icon-documenti.svg') %>
 		Documenti
 	<% end %>  
 </li>
 <li>
 	<%= link_to fornitori_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-truck') %>
+		<%= inline_svg_tag('icon-truck.svg') %>
 		Fornitori
 	<% end %>
 </li>
 <li>
 	<%= link_to clienti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%# embedded_svg('icon-cash') %>                
+		<%= inline_svg_tag('icon-cash.svg') %>                
 		Clienti
 	<% end %>
 </li>
 <li>
 	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-building-library') %>                
+		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole (beta)
 	<% end %>
 </li>
 <li>
 	<%= link_to import_adozioni_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-currency-euro') %>                
+		<%= inline_svg_tag('icon-currency-euro.svg') %>                
 		Adozioni (beta)
 	<% end %>
 </li>
 <li>
 	<%= link_to duplicates_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%#= embedded_svg('icon-reports') %>                
+		<%= inline_svg_tag('icon-reports.svg') %>                
 		Duplicati...
 	<% end %>
 </li>
