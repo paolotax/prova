@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :users do 
     member do 
       post 'assegna_scuole'
+      post 'assegna_editore'
     end
   end
 

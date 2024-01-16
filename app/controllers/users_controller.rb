@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: %i[ show edit update destroy assegna_scuole ]
+  before_action :set_user, only: %i[ show edit update destroy assegna_scuole assegna_editore]
    
   def index
     @users = User.all
@@ -77,11 +77,19 @@ class UsersController < ApplicationController
     redirect_to @user, notice: "Scuole assegnate!"  
   end
 
+  def assegna_editore
+    #fail
+    editore = Editore.find_by_editore(params[:editore])
+    current_user.editori << editore if editore
+
+    redirect_to @user, notice: "Scuole assegnate!"  
+  end
+
   private
   
     def user_params
       params.require(:user).
-        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado)
+        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado, :editore)
     end
   
     def set_user
