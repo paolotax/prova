@@ -98,7 +98,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def adozioni_grouped_classe 
-    grouped = import_adozioni.group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
+    grouped = import_adozioni.order([:ANNOCORSO, :COMBINAZIONE, :CODICEISBN]).group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
     temp = []
     grouped.each do |k, v| 
       sezioni = v.map { |a| a.SEZIONEANNO.titleize }.sort.join
@@ -109,6 +109,19 @@ class ImportScuola < ApplicationRecord
     elenco = temp.group_by {|k| k[:sezioni]}
   end
 
+  def adozioni_grouped_titolo 
+    grouped = import_adozioni.order([:ANNOCORSO, :COMBINAZIONE, :CODICEISBN]).group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, :CODICEISBN ] }
+    temp = []
+    grouped.each do |k, v| 
+      sezioni = v.map { |a| a.SEZIONEANNO.titleize }.sort.join(" ")
+      titolo  = v.map { |a| a.TITOLO }.uniq
+      editore = v.map { |a| a.EDITORE }.uniq
+      disciplina = v.map { |a| a.DISCIPLINA }.uniq
+      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1].downcase}", titolo: titolo, editore: editore, disciplina: disciplina}
+    end
+    elenco = temp.group_by {|k| k[:sezioni]}
+  end
+  
   def self.prova 
     grouped = ImportScuola
                   .find_by_CODICESCUOLA("REEE81101E")

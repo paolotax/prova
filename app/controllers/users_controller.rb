@@ -13,6 +13,7 @@ class UsersController < ApplicationController
     # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
     # @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
     # @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
+    
     @editore_items = Editore.pluck(:editore).map do |item|
       FancySelect::Item.new(item, item, nil)
     end
@@ -25,10 +26,13 @@ class UsersController < ApplicationController
       FancySelect::Item.new(item, item, nil)
     end
    
-    @tipo_items = ImportScuola.order(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).pluck(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).uniq
-    .map do |item|
+    @tipo_items = ImportScuola.order(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).pluck(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end    
+
+    @mia_zona = current_user.import_scuole.group([:REGIONE, :PROVINCIA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]).count(:id)
+    @miei_editori = current_user.editori.collect{|e| e.editore}
+    #raise @miei_editori.inspect
   end
 
   def new
