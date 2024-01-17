@@ -101,9 +101,10 @@ class ImportScuola < ApplicationRecord
     grouped = import_adozioni.group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
     temp = []
     grouped.each do |k, v| 
-      sezioni = v.map { |a| a.SEZIONEANNO }.sort.join
-      titoli  = v.map { |a| a.TITOLO }.uniq
-      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1]}", titoli: titoli }
+      sezioni = v.map { |a| a.SEZIONEANNO.titleize }.sort.join
+      titolo  = v.map { |a| a.TITOLO }.uniq
+      editore = v.map { |a| a.EDITORE }.uniq
+      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1].downcase}", titolo: titolo, editore: editore}
     end
     elenco = temp.group_by {|k| k[:sezioni]}
   end
@@ -117,7 +118,8 @@ class ImportScuola < ApplicationRecord
     grouped.each do |k, v| 
       sezioni = v.map { |a| a.SEZIONEANNO }.sort.join
       titoli  = v.map { |a| a.TITOLO }.uniq
-      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1]}", titoli: titoli }
+      
+      temp << { sezioni: "#{ k[0][0]} #{sezioni} - #{k[1]}", titoli: titoli}
     end
     elenco = temp.group_by {|k| k[:sezioni]}
   end

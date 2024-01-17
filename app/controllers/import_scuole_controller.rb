@@ -31,6 +31,8 @@ class ImportScuoleController < ApplicationController
 
   # GET /import_scuole/1 or /import_scuole/1.json
   def show
+    @miei_editori = current_user.editori.collect{|e| e.editore}
+    #raise @miei_editori.inspect
   end 
   
   # GET /import_scuole/new

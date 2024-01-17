@@ -1,4 +1,4 @@
-<div class="mx-auto md:w-2/3 w-full flex">
+<div class="flex">
 	
 	<div class="mx-auto">
 		
@@ -9,17 +9,26 @@
 		<%= render @import_scuola %>
 
 		<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
-			<div class="my-3 px-3">				
-				<p >
-					<%= classe.to_s %>
-				</p>
-				<% adozioni.map do |adozione| %>
-						<p class="text-xs text-gray-400">
-							<%= adozione[:titoli].join %>
-						</p>         
+			
+			<p class="my-3 px-3">
+				<%= classe.to_s %>
+			</p>
+			<% adozioni.map do |adozione| %>
+				<%= tag.div class: [
+							"px-3 py-1": true,
+							"bg-yellow-100 font-semibold": @miei_editori.include?(adozione[:editore].join),
+							"bg-white": !@miei_editori.include?(adozione[:editore].join)
+						] do 
+				%>	
+					<p class="text-xs text-gray-400">
+						<%= adozione[:titolo].join.titleize %>
+						- 
+						<%= adozione[:editore].join %>
+					</p>  
 				<% end %>
-			</div>
+			<% end %>
+
 		<% end %>
-	</div>
+	</div>	
 </div>
 
