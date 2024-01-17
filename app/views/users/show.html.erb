@@ -12,15 +12,16 @@
     
     <section class="mt-8">
 
-        <div class="">
-            <div class="flex justify-between">
+        <div class="py-2">
+            <div class="flex justify-between border-b-2 border-gray-300">
                 <h2 class="font-semibold">La mia zona </h2>
                 <%= @user.import_scuole.count %>
             </div>
 
 
             <% @mia_zona.each do |zona, count|%>
-                <div class="flex justify-between">
+                
+                <div class="bg-white py-4 flex justify-between align-center border-b border-gray-300">
                     <div class="text-sm">
                         <span><%= zona.join " -> " %></span>
                     </div>
@@ -29,7 +30,7 @@
                     </div>
         
                     <%= button_to "-", rimuovi_scuole_user_path(provincia: zona[1], tipo: zona[2]), method: :delete, 
-                        class: "ml-2 h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
+                        class: "mx-3 h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
                     %>
                 </div>
             <% end %>
@@ -37,17 +38,19 @@
         </div>
 
 
-        <%= form_with url: assegna_scuole_user_path(@user), class: "mt-8 flex flex-row gap-x-3 items-baseline" do |f| %>
-            <div class="">
-                <%= f.label :provincia, class: "label" %>
-                <div>    
-                    <%= f.select :provincia, @provincia_items.map{|t| t.label}, {include_blank: true}, class: "field" %>
+        <%= form_with url: assegna_scuole_user_path(@user), class: "mt-8 flex flex-col" do |f| %>
+            <div class="flex flex-row" >
+                <div class="">
+                    <%= f.label :provincia, class: "label" %>
+                    <div>    
+                        <%= f.select :provincia, @provincia_items.map{|t| t.label}, {include_blank: true}, class: "field" %>
+                    </div>
                 </div>
-            </div>
-            <div class=""> 
-                <%= f.label :grado, class: "label" %>    
-                <div>
-                    <%= f.select :grado, @grado_items.map{|t| t.label}, {include_blank: true}, class: "field" %>
+                <div class=""> 
+                    <%= f.label :grado, class: "label" %>    
+                    <div>
+                        <%= f.select :grado, @grado_items.map{|t| t.label}, {include_blank: true}, class: "field" %>
+                    </div>
                 </div>
             </div>
             <div class="">
