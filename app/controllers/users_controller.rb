@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: %i[ show edit update destroy assegna_scuole assegna_editore]
+  before_action :set_user, only: %i[ show edit update destroy assegna_scuole assegna_editore rimuovi_scuole rimuovi_editore]
    
   def index
     @users = User.all
@@ -8,13 +8,17 @@ class UsersController < ApplicationController
 
   def show
 
+    @mia_zona = current_user.import_scuole.group([:REGIONE, :PROVINCIA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]).count(:id)
+    
+    @miei_editori = current_user.editori.collect{|e| e.editore}
+
     # devo testare queste query per vedere la più veloce
     
     # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
     # @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
     # @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
     
-    @editore_items = Editore.pluck(:editore).map do |item|
+    @editore_items = current_user.import_adozioni.order(:EDITORE).pluck(:EDITORE).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
 
@@ -30,8 +34,7 @@ class UsersController < ApplicationController
       FancySelect::Item.new(item, item, nil)
     end    
 
-    @mia_zona = current_user.import_scuole.group([:REGIONE, :PROVINCIA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]).count(:id)
-    @miei_editori = current_user.editori.collect{|e| e.editore}
+
     #raise @miei_editori.inspect
   end
 
@@ -74,7 +77,7 @@ class UsersController < ApplicationController
 
 
   def assegna_scuole
-    #fail
+    
     @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
     
     @user.import_scuole << @scuole_da_assegnare
@@ -86,7 +89,24 @@ class UsersController < ApplicationController
     editore = Editore.find_by_editore(params[:editore])
     current_user.editori << editore if editore
 
-    redirect_to @user, notice: "Scuole assegnate!"  
+    redirect_to @user, notice: "Editore assegnato!"  
+  end
+
+  def rimuovi_scuole
+    #fail
+    @scuole_da_rimuovere = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
+    #raise @scuole_da_rimuovere.inspect
+    @scuole_da_rimuovere.each {|s| @user.import_scuole.delete(s)}
+
+    redirect_to @user, notice: "Scuole rimosse!"  
+  end
+
+  def rimuovi_editore
+    #fail
+    editore = Editore.find_by_editore(params[:editore])
+    @user.editori.delete(editore)
+
+    redirect_to @user, notice: "Editore rimosso!"  
   end
 
   private

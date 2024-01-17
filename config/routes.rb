@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     member do 
       post 'assegna_scuole'
       post 'assegna_editore'
+      delete 'rimuovi_scuole'
+      delete 'rimuovi_editore'
     end
   end
 
