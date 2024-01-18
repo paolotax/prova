@@ -30,6 +30,19 @@ namespace :import do
     end
     
   end 
+
+  desc "popola tabella editori da adozioni"
+  task tipi_scuole: :environment do  
+
+    Benchmark.bm do |x|
+      x.report('A') do 
+        @grado_tipo_scuole = ImportScuola.joins(:import_adozioni).select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).distinct.map do |ts|
+          { grado: ts.TIPOGRADOSCUOLA, tipo: ts.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA }
+        end
+      end
+      x.report('B') { GradoTipoScuola.import @grado_tipo_scuole, grado_tipo_scuole: 50 }
+    end
+  end 
   
   desc "init user"
   task init: :environment do  
