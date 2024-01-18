@@ -57,36 +57,29 @@ namespace :import do
       puts "#{ tempo_trascorso(start_destroy) } - end destroy_all"
     end
     
-    start = Time.now
-    start_reading = Time.now
-    puts "- start reading.  wait........"
-
     counter = 0
     file_counter = 0
     
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
     
-    items = []
+   
 
-    #    , "r:ISO-8859-1"
+    #, "r:ISO-8859-1"
     Dir.glob(csv_dir).each do |file|
-      CSV.foreach(file, headers: true, col_sep: ',') do |row|
-        items << row.to_h if row["TIPOGRADOSCUOLA"] == "MM"
-        counter += 1 
+      items = []
+      Benchmark.bm do |x|      
+        x.report("leggo file #{file_counter}") do
+          CSV.foreach(file, headers: true, col_sep: ',') do |row|
+            items << row.to_h
+            counter += 1
+          end
+        end  
+        x.report("scrivo file #{file_counter}") do 
+          ImportAdozione.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
+          file_counter += 1
+        end
       end      
-      file_counter += 1
     end
-
-    puts "#{ tempo_trascorso(start_reading) } - started importing.  wait........"
-
-    ImportAdozione.import items, validate: false, on_duplicate_key_update: true
-    
-    fine = Time.now
-    
-    puts "#{ tempo_trascorso(start)} - end importing"
-    puts "tempo totale #{ tempo_trascorso(start, fine) }"
-    puts "righe inserite #{items.size} da #{file_counter} file/s"
-
   end
 
   desc "import scuole from miur"
