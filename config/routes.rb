@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :grado_tipo_scuole
   resources :editori
   
   resources :users do 

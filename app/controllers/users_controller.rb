@@ -77,11 +77,16 @@ class UsersController < ApplicationController
 
 
   def assegna_scuole
+    if !params[:provincia].blank?
+      
+      @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia])
+      @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo]) if !params[:tipo].blank?
+      @scuole_da_assegnare = @scuole_da_assegnare.joins(:import_adozioni).where("import_adozioni.TIPOGRADOSCUOLA = ?", params[:grado]) if !params[:grado].blank?
     
-    @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
-    
-    @user.import_scuole << @scuole_da_assegnare
-    redirect_to @user, notice: "Scuole assegnate!"  
+      @user.import_scuole << @scuole_da_assegnare
+      redirect_to @user, notice: "Scuole assegnate!"  
+
+    end
   end
 
   def assegna_editore

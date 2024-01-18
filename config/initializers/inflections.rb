@@ -53,6 +53,8 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'articolo', 'articoli'
   inflect.irregular 'utente',   'utenti'
 
+  inflect.irregular 'tipogrado_tipo_scuola', 'gradi_tipi_scuole'
+
 
 
   # inflect.irregular 'documento_riga', 'documenti_righe'
