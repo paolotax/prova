@@ -22,8 +22,8 @@ class User < ApplicationRecord
   has_many :import_scuole, through: :user_scuole
   has_many :import_adozioni, through: :import_scuole 
   
-  has_many :editori_users, dependent: :destroy
-  has_many :editori, through: :editori_users
+  has_many :user_editori, dependent: :destroy
+  has_many :editori, through: :user_editori
 
   has_many :adozioni, through: :editori_users
 

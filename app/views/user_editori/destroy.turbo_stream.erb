@@ -1,0 +1,5 @@
+<%= turbo_stream.update "#{dom_id(current_user)}-nr-editori" do %>
+  <%= current_user.editori.count %>
+<% end %>
+
+<%= turbo_stream.remove "user-editore-#{ @user_editore.editore.editore.downcase.gsub(" ", "-")}" %>

@@ -12,6 +12,8 @@ class UsersController < ApplicationController
     
     @miei_editori = current_user.editori.collect{|e| e.editore}
 
+    @user_editore = current_user.user_editori.new
+    
     # devo testare queste query per vedere la più veloce
     
     # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct

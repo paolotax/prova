@@ -1,0 +1,9 @@
+
+
+<%= turbo_stream.update "#{dom_id(current_user)}-nr-editori" do %>
+  <%= current_user.editori.count %>
+<% end %>
+
+<%= turbo_stream.prepend "user-editori" do %>
+    <%= render partial: "user_editori/user_editore", locals: { user_editore: @user_editore } %>
+<% end %>
