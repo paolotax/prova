@@ -78,13 +78,25 @@ class UsersController < ApplicationController
 
   def assegna_scuole
     if !params[:provincia].blank?
+
+      @provincia = params[:provincia]
+      @tipo      = params[:tipo]
+      @grado     = params[:grado]
       
-      @scuole_da_assegnare = ImportScuola.where(PROVINCIA: params[:provincia])
-      @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo]) if !params[:tipo].blank?
-      @scuole_da_assegnare = @scuole_da_assegnare.joins(:import_adozioni).where("import_adozioni.TIPOGRADOSCUOLA = ?", params[:grado]) if !params[:grado].blank?
+      @provincia_tipo = (@provincia + "-" + @tipo).downcase.gsub(" ", "-")
+      
+      @scuole_da_assegnare = ImportScuola.where(PROVINCIA: @provincia)
+      @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo) if @tipo
+      #@scuole_da_assegnare = @scuole_da_assegnare.joins(:import_adozioni).where("import_adozioni.TIPOGRADOSCUOLA = ?", @grado) if @grado
     
-      @user.import_scuole << @scuole_da_assegnare
-      redirect_to @user, notice: "Scuole assegnate!"  
+      @scuole_da_assegnare.each do |s|
+        @user.import_scuole << s unless @user.import_scuole.include?(s)
+      end
+      
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @user, notice: "Scuole assegnate!"  }
+      end
 
     end
   end
@@ -99,11 +111,19 @@ class UsersController < ApplicationController
 
   def rimuovi_scuole
     #fail
+    
+    @provincia_tipo = "#{params[:provincia]}-#{params[:tipo]}".downcase.gsub(" ", "-")
+    
     @scuole_da_rimuovere = ImportScuola.where(PROVINCIA: params[:provincia]).where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: params[:tipo])
     #raise @scuole_da_rimuovere.inspect
     @scuole_da_rimuovere.each {|s| @user.import_scuole.delete(s)}
 
-    redirect_to @user, notice: "Scuole rimosse!"  
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @user, notice: "Scuole assegnate!"  }
+    end
+
   end
 
   def rimuovi_editore

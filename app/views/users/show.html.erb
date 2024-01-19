@@ -14,15 +14,18 @@
 
         <div class="py-2">
             
+            
             <div class="flex justify-between border-b-2 border-gray-300">
-                <h2 class="font-semibold">La mia zona </h2>
-                <%= @user.import_scuole.count %>
+                <h2 class="font-semibold">La mia ZONA </h2>
+                <%= tag.div id:"#{dom_id(@user)}-nr-scuole-assegnate" do %>
+                    <%= @user.import_scuole.count %>
+                <% end %>    
             </div>
 
-            <div class="max-h-96 overflow-scroll">
+            <div id="user-scuole" class="max-h-96 overflow-scroll">
                 <% @mia_zona.each do |zona, count|%>
                     
-                    <div class="bg-white py-4 flex justify-between align-center border-b border-gray-300">
+                    <div id="<%= (zona[1] + "-" + zona[2]).downcase.gsub(" ", "-") %>" class="bg-white py-4 flex justify-between align-center border-b border-gray-300">
                         <div class="text-sm">
                             <span><%= zona.join " -> " %></span>
                         </div>
