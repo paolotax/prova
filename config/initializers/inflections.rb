@@ -54,8 +54,11 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'utente',   'utenti'
 
   inflect.irregular 'user_editore',   'user_editori'
+  inflect.irregular 'mandato',   'mandati'
+  
 
-  inflect.irregular 'tipogrado_tipo_scuola', 'gradi_tipi_scuole'
+  inflect.irregular 'tipo_scuola', 'tipi_scuole'
+  inflect.irregular 'zona', 'zone'
 
 
 

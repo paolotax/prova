@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: %i[ show edit update destroy assegna_scuole assegna_editore rimuovi_scuole rimuovi_editore]
+  before_action :set_user, only: %i[ show edit update destroy assegna_scuole rimuovi_scuole]
    
   def index
     @users = User.all
@@ -12,13 +12,9 @@ class UsersController < ApplicationController
     
     @miei_editori = current_user.editori.collect{|e| e.editore}
 
-    @user_editore = current_user.user_editori.new
+   
     
-    # devo testare queste query per vedere la più veloce
-    
-    # @province     = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).select(:PROVINCIA).distinct
-    # @province_bis = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq
-    # @province_ter = ImportScuola.elementari.joins(:import_adozioni).order(:PROVINCIA).group(:PROVINCIA).count
+
     
     @editore_items = current_user.import_adozioni.order(:EDITORE).pluck(:EDITORE).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
@@ -103,14 +99,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def assegna_editore
-    #fail
-    editore = Editore.find_by_editore(params[:editore])
-    current_user.editori << editore if editore
-
-    redirect_to @user, notice: "Editore assegnato!"  
-  end
-
   def rimuovi_scuole
     #fail
     
@@ -128,19 +116,11 @@ class UsersController < ApplicationController
 
   end
 
-  def rimuovi_editore
-    #fail
-    editore = Editore.find_by_editore(params[:editore])
-    @user.editori.delete(editore)
-
-    redirect_to @user, notice: "Editore rimosso!"  
-  end
-
   private
   
     def user_params
       params.require(:user).
-        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado, :editore)
+        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado)
     end
   
     def set_user

@@ -2,4 +2,4 @@
   <%= current_user.editori.count %>
 <% end %>
 
-<%= turbo_stream.remove "user-editore-#{ @user_editore.editore.editore.downcase.gsub(" ", "-")}" %>
+<%= turbo_stream.remove dom_id(@mandato) %>

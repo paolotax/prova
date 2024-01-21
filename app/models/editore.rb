@@ -1,7 +1,8 @@
 class Editore < ApplicationRecord
     validates :editore, uniqueness: true
 
-    has_many :users, through: :editori_users
+    has_many :mandati, dependent: :destroy
+    has_many :users, through: :mandati
 
     has_many :import_adozioni, foreign_key: "EDITORE", primary_key: "editore"
     has_many :import_scuole, through: :import_adozioni

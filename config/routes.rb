@@ -1,16 +1,13 @@
 Rails.application.routes.draw do
   
-  resources :grado_tipo_scuole
   resources :editori
   
-  resources :users do
-    resources :user_editori
+  resources :mandati
 
+  resources :users do
     member do 
       post 'assegna_scuole'
-      post 'assegna_editore'
       delete 'rimuovi_scuole'
-      delete 'rimuovi_editore'
     end
   end
 

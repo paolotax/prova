@@ -81,32 +81,24 @@
                 <div class="flex justify-between border-b-2 border-gray-300">
                     <h2 class="font-semibold">I miei editori </h2>
                     <div id="<%= dom_id(current_user) %>-nr-editori">
-                        <%= @user.editori.count %>
+                        <%= current_user.editori.count %>
                     </div>
                 </div>  
 
-                <div id="user-editori" class="max-h-96 overflow-scroll">                 
-                    <% current_user.editori.each do |editore| %>
-                        <div id="" class="bg-white py-4 flex justify-between align-center border-b border-gray-300">
-
-                            <div class="">
-                                <span><%= editore.editore %></span>
-                            </div>
-                            <%= button_to "-", rimuovi_editore_user_path(editore: editore.editore), method: :delete, 
-                                class: "h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
-                            %>
-
-                        </div>
+                <div id="user-editori" class="">                 
+                    <% current_user.mandati.each do |mandato| %>
+                       <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
                     <% end %>
                 </div>
             </div>
 
 
-            <%= form_with url: user_user_editori_path(current_user.id), method: :post, class: "mt-8 mb-4 mx-2 p-4 flex flex-row justify-between align-baseline bg-gray-300 border rounded" do |f| %>
+            <%= form_with url: mandati_path, method: :post, class: "mt-8 mb-4 mx-2 p-4 flex flex-row justify-between align-baseline bg-gray-300 border rounded" do |f| %>
+                <%= f.hidden_field :user_id,    value: current_user.id %>                        
                 <div class="w-3/4">
                     <%= f.label :editore, class: "label" %>
                     <div>    
-                        <%= f.select :editore_id, options_for_select(Editore.all.map { |t| [t.editore, t.id]}), {include_blank: true}, class: "field" %>
+                        <%= f.select :editore_id, options_for_select(Editore.all.map { |t| [t.editore, t.id]}), {include_blank: false}, class: "field" %>
                     </div>
                 </div>
                 <div class="flex flex-col justify-end pb-1">
