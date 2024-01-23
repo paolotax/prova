@@ -5,46 +5,98 @@ require 'benchmark'
 namespace :import do
 
 
-  desc "cammbia classi e religione da acquistare"
-  task cambia_classi_e_religione: :environment do
+  desc "cambia RELIGIONE elementari"
+  task cambia_religione: :environment do
 
-    start = Time.now
-    righe_count = ImportAdozione.elementari.where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No").count
-    puts "adozioni di religione aggiornate in #{(Time.now - start).to_i} secondi"
-
-    start = Time.now
-    ImportAdozione.elementari.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
-    ImportAdozione.elementari.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
-    ImportAdozione.elementari.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
-    ImportAdozione.elementari.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
-    ImportAdozione.elementari.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
-    puts "classi aggiornate in #{(Time.now - start).to_i} secondi"
+    Benchmark.bm do |x|
+      x.report('agg. RELIGIONE') {
+        ImportAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No")
+      }
+    end
+    # start = Time.now
+    # ImportAdozione.elementari.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
+    # ImportAdozione.elementari.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
+    # ImportAdozione.elementari.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
+    # ImportAdozione.elementari.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
+    # ImportAdozione.elementari.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
+    # puts "classi aggiornate in #{(Time.now - start).to_i} secondi"
   end
 
-  desc "popola tabella editori da adozioni"
+  desc "cambia SUPERIORI No-Nt"
+  task cambia_superiori: :environment do
+
+    Benchmark.bm do |x|
+      x.report('agg. SUPERIORI') {
+        ImportAdozione.where(TIPOGRADOSCUOLA: ["NO", "NT"]).update(TIPOGRADOSCUOLA: "SU")
+      }
+    end
+  end
+
+  desc "EDITORI da adozioni"
   task editori: :environment do  
+    
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    if answer == true
+      Editore.delete_all
+    end
 
     Benchmark.bm do |x|
       x.report('A') { @editori = ImportAdozione.order(:EDITORE).pluck(:EDITORE).uniq.map {|e| { editore: e } } }
       x.report('B') { Editore.import @editori, batch_size: 50 }
-    end
-    
+    end  
   end 
 
-  desc "popola tabella editori da adozioni"
+  desc "TIPI SCUOLE da adozioni"
   task tipi_scuole: :environment do  
+
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    if answer == true
+      TipoScuola.delete_all
+    end
 
     Benchmark.bm do |x|
       x.report('A') do 
-        @grado_tipo_scuole = ImportScuola.joins(:import_adozioni).select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).distinct.map do |ts|
+        @tipi_scuole = ImportScuola.joins(:import_adozioni)
+                  .order([:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA])
+                  .select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
+                  .distinct.map do |ts|
           { grado: ts.TIPOGRADOSCUOLA, tipo: ts.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA }
         end
       end
-      x.report('B') { GradoTipoScuola.import @grado_tipo_scuole, grado_tipo_scuole: 50 }
+      x.report('B') { TipoScuola.import @tipi_scuole, batch_size: 50 }
+    end
+  end 
+
+  desc "ZONE"
+  task zone: :environment do  
+
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
+    if answer == true
+      Zona.delete_all
+    end
+
+    Benchmark.bm do |x|
+      x.report('A') do 
+        @zona = ImportScuola.order([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA, :DESCRIZIONECOMUNE])
+                            .select(:AREAGEOGRAFICA, :REGIONE, :PROVINCIA, :DESCRIZIONECOMUNE, :CODICECOMUNESCUOLA)
+                            .distinct.map do |z|
+          { area_geografica: z.AREAGEOGRAFICA, regione: z.REGIONE, provincia: z.PROVINCIA, comune: z.DESCRIZIONECOMUNE, codice_comune: z.CODICECOMUNESCUOLA }
+        end
+      end
+      x.report('B') { Zona.import @zona, batch_size: 50 }
     end
   end 
   
-  desc "init user"
+  desc "USER"
   task init: :environment do  
 
     nome = 'Paolo Tassinari'
@@ -55,7 +107,7 @@ namespace :import do
     puts "user #{user.name} created"
   end 
 
-  desc "import adozioni from miur" 
+  desc "ADOZIONI" 
   task miur_adozioni: :environment do
     
     include ActionView::Helpers
@@ -75,19 +127,17 @@ namespace :import do
     
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
     
-   
-
     #, "r:ISO-8859-1"
     Dir.glob(csv_dir).each do |file|
       items = []
       Benchmark.bm do |x|      
-        x.report("leggo file #{file_counter}") do
+        x.report("leggo  file #{file} #{file_counter}") do
           CSV.foreach(file, headers: true, col_sep: ',') do |row|
             items << row.to_h
             counter += 1
           end
         end  
-        x.report("scrivo file #{file_counter}") do 
+        x.report("scrivo file #{file} #{file_counter}") do 
           ImportAdozione.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
           file_counter += 1
         end
@@ -95,7 +145,7 @@ namespace :import do
     end
   end
 
-  desc "import scuole from miur"
+  desc "SCUOLE"
   task miur_scuole: :environment do
 
     include ActionView::Helpers
@@ -105,61 +155,33 @@ namespace :import do
       
       if answer == true
         start_destroy = Time.now
-        puts 'wait....'
         ImportScuola.delete_all
-        puts "#{ tempo_trascorso(start_destroy) } - end destroy_all"
       end
-      
-      start = Time.now
-      start_reading = Time.now
-      puts "- start reading.  wait........"
 
       counter = 0
       file_counter = 0
       
       csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
       
-      items = []
-
-      #    , "r:ISO-8859-1"
       Dir.glob(csv_dir).each do |file|
-        CSV.foreach(file, headers: true, col_sep: ',') do |row|
- 
-          # campi mancanti da aggiungere
-          # ["SEDESCOLASTICA", "CODICEISTITUTORIFERIMENTO", "DENOMINAZIONEISTITUTORIFERIMENTO", 
-          #  "DESCRIZIONECARATTERISTICASCUOLA", "INDICAZIONESEDEDIRETTIVO", "INDICAZIONESEDEOMNICOMPRENSIVO"]
-
-          row.push({"CODICEISTITUTORIFERIMENTO" => ""}) if !row["CODICEISTITUTORIFERIMENTO"].present?
-          row.push({"DENOMINAZIONEISTITUTORIFERIMENTO" => ""}) if !row["DENOMINAZIONEISTITUTORIFERIMENTO"].present?
-          row.push({"DESCRIZIONECARATTERISTICASCUOLA" => ""}) if !row["DESCRIZIONECARATTERISTICASCUOLA"].present?
-          row.push({"INDICAZIONESEDEDIRETTIVO" => ""}) if !row["INDICAZIONESEDEDIRETTIVO"].present?
-          row.push({"INDICAZIONESEDEOMNICOMPRENSIVO" => ""} )if !row["INDICAZIONESEDEOMNICOMPRENSIVO"].present?
-          
-          
-          if !row["SEDESCOLASTICA"].present?
-            row.push({"SEDESCOLASTICA" => ""})
-            # puts row.to_h
+        items = []
+        Benchmark.bm do |x|      
+          x.report("leggo  file scuole #{file} - #{file_counter}") do
+            CSV.foreach(file, headers: true, col_sep: ',') do |row|
+              items << row.to_h
+              counter += 1
+            end
+          end  
+          x.report("scrivo file scuole  #{file} - #{file_counter}") do 
+            ImportScuola.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
+            file_counter += 1
           end
-          
-          items << row.to_h
-          counter += 1 
         end      
-        file_counter += 1
       end
-
-      puts "#{ tempo_trascorso(start_reading) } - started importing.  wait........"
-
-      ImportScuola.import items, validate: false, on_duplicate_key_update: true
-      
-      fine = Time.now
-      
-      puts "#{ tempo_trascorso(start)} - end importing"
-      puts "tempo totale #{ tempo_trascorso(start, fine) }"
-      puts "righe inserite #{items.size} da #{file_counter} file/s"
     
   end
 
-  desc "import righe from csv gaia"  
+  desc "csv GAIA"  
   task gaia: :environment do
         
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
@@ -234,7 +256,7 @@ namespace :import do
   end
 
 
-  desc "import righe from xml aruba"  
+  desc "xml ARUBA"  
   task aruba: :environment do
      
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")

@@ -4,17 +4,18 @@
 
 <%= turbo_stream.prepend "user-scuole" do %>
 	
-	<div id="<%= @provincia_tipo %>" class="bg-white py-4 flex justify-between align-center border-b border-gray-300">
-		<div class="text-sm">
-				<span><%= @provincia + " -> " + @tipo %></span>
+	<div id="<%= @provincia_tipo %>" class="bg-white px-2 py-4 grid grid-cols-6 justify-between align-center border-b border-gray-300">
+		<div class="text-sm col-span-4">
+			<span><%= @provincia + " -> " + @tipo %></span>
 		</div>
-		<div class="pl-2 text-right">
-				<span><%= @scuole_da_assegnare.count %></span>
+		<div class="text-right">
+			<span><%= @scuole_da_assegnare.count %></span>
 		</div>
-
-		<%= button_to "-", rimuovi_scuole_user_path(provincia: @provincia, tipo: @tipo), method: :delete, 
-				class: "mx-3 h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
-		%>
+		<div class="flex justify-end">
+			<%= button_to "-", rimuovi_scuole_user_path(provincia: @provincia, tipo: @tipo), method: :delete, 
+					class: "mr-2 h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
+			%>
+		</div>
 	</div>
 
 <% end %>

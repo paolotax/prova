@@ -16,24 +16,22 @@ class UsersController < ApplicationController
     
 
     
-    @editore_items = current_user.import_adozioni.order(:EDITORE).pluck(:EDITORE).uniq.map do |item|
+    @editore_items = Editore.order(:editore).pluck(:editore).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
 
-    @provincia_items = ImportScuola.joins(:import_adozioni).order(:PROVINCIA).pluck(:PROVINCIA).uniq.map do |item|
+    @provincia_items = Zona.order([:area_geografica, :regione, :provincia]).pluck(:provincia).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
 
-    @grado_items = ImportAdozione.order(:TIPOGRADOSCUOLA).pluck(:TIPOGRADOSCUOLA).uniq.map do |item|
+    @grado_items = TipoScuola.pluck(:grado).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
    
-    @tipo_items = ImportScuola.order(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).pluck(:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).uniq.map do |item|
+    @tipo_items = TipoScuola.pluck(:tipo).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end    
 
-
-    #raise @miei_editori.inspect
   end
 
   def new
