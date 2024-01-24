@@ -28,6 +28,13 @@
 #
 class ImportScuola < ApplicationRecord
 
+  has_many :plessi, class_name: "ImportScuola",
+                          primary_key: "CODICESCUOLA",   
+                          foreign_key: "CODICEISTITUTORIFERIMENTO"
+                           
+  belongs_to :direzione, class_name: "ImportScuola", optional: true
+  
+  
   has_many :import_adozioni, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
   
   has_many :user_scuole

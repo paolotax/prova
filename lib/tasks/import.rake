@@ -40,7 +40,7 @@ namespace :import do
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
-      Editore.delete_all
+      Editore.destroy_all
     end
 
     Benchmark.bm do |x|
@@ -57,18 +57,30 @@ namespace :import do
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
-      TipoScuola.delete_all
+      TipoScuola.destroy_all
     end
 
+    sql = 'SELECT DISTINCT import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" as tipo,
+                     SUBSTR(import_adozioni."TIPOGRADOSCUOLA", 1, 1) as grado
+            FROM import_scuole
+            INNER JOIN import_adozioni on import_scuole."CODICESCUOLA" = import_adozioni."CODICESCUOLA"
+            GROUP BY tipo, grado
+            ORDER BY grado, tipo'
+   
     Benchmark.bm do |x|
-      x.report('A') do 
-        @tipi_scuole = ImportScuola.joins(:import_adozioni)
-                  .order([:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA])
-                  .select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
-                  .distinct.map do |ts|
-          { grado: ts.TIPOGRADOSCUOLA, tipo: ts.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA }
+      x.report("sql") do 
+        @tipi_scuole = ActiveRecord::Base.connection.execute(sql).map do |ts|
+          { grado: ts['grado'], tipo: ts['tipo'] }
         end
       end
+      # x.report('A') do 
+      #   @tipi_scuole = ImportScuola.joins(:import_adozioni)
+      #             .order([:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA])
+      #             .select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
+      #             .distinct.map do |ts|
+      #     { grado: ts.TIPOGRADOSCUOLA, tipo: ts.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA }
+      #   end
+      # end
       x.report('B') { TipoScuola.import @tipi_scuole, batch_size: 50 }
     end
   end 
@@ -81,7 +93,7 @@ namespace :import do
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
-      Zona.delete_all
+      Zona.destroy_all
     end
 
     Benchmark.bm do |x|
@@ -96,30 +108,15 @@ namespace :import do
     end
   end 
   
-  desc "USER"
-  task init: :environment do  
-
-    nome = 'Paolo Tassinari'
-    partita_iva = '04155820378'
-
-    user = User.create(name: nome, partita_iva: partita_iva)
-    
-    puts "user #{user.name} created"
-  end 
-
   desc "ADOZIONI" 
   task miur_adozioni: :environment do
     
     include ActionView::Helpers
     include ApplicationHelper
 
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
-    
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")   
     if answer == true
-      start_destroy = Time.now
-      puts 'wait....'
-      ImportAdozione.delete_all
-      puts "#{ tempo_trascorso(start_destroy) } - end destroy_all"
+      ImportAdozione.destroy_all
     end
     
     counter = 0
@@ -151,33 +148,31 @@ namespace :import do
     include ActionView::Helpers
     include ApplicationHelper
       
-      answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
-      
-      if answer == true
-        start_destroy = Time.now
-        ImportScuola.delete_all
-      end
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")      
+    if answer == true
+      ImportScuola.destroy_all
+    end
 
-      counter = 0
-      file_counter = 0
-      
-      csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
-      
-      Dir.glob(csv_dir).each do |file|
-        items = []
-        Benchmark.bm do |x|      
-          x.report("leggo  file scuole #{file} - #{file_counter}") do
-            CSV.foreach(file, headers: true, col_sep: ',') do |row|
-              items << row.to_h
-              counter += 1
-            end
-          end  
-          x.report("scrivo file scuole  #{file} - #{file_counter}") do 
-            ImportScuola.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
-            file_counter += 1
+    counter = 0
+    file_counter = 0
+    
+    csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
+    
+    Dir.glob(csv_dir).each do |file|
+      items = []
+      Benchmark.bm do |x|      
+        x.report("leggo  file scuole #{file} - #{file_counter}") do
+          CSV.foreach(file, headers: true, col_sep: ',') do |row|
+            items << row.to_h
+            counter += 1
           end
-        end      
-      end
+        end  
+        x.report("scrivo file scuole  #{file} - #{file_counter}") do 
+          ImportScuola.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
+          file_counter += 1
+        end
+      end      
+    end
     
   end
 
