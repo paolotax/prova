@@ -12,15 +12,19 @@ class UsersController < ApplicationController
     
     @miei_editori = current_user.editori.collect{|e| e.editore}
 
-   
+    @regioni = Zona.order(:regione).select(:regione).distinct || []
+    @gradi = TipoScuola.order(:grado).select(:grado).distinct || []
+    @tipi  = TipoScuola.order(:tipo).select(:tipo).distinct || []
     
-
-    
-    @editore_items = Editore.order(:editore).pluck(:editore).uniq.map do |item|
+    @regioni_items = Zona.order(:regione).pluck(:regione).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
 
     @provincia_items = Zona.order([:area_geografica, :regione, :provincia]).pluck(:provincia).uniq.map do |item|
+      FancySelect::Item.new(item, item, nil)
+    end
+
+    @editore_items = Editore.order(:editore).pluck(:editore).uniq.map do |item|
       FancySelect::Item.new(item, item, nil)
     end
 
@@ -73,16 +77,25 @@ class UsersController < ApplicationController
 
 
   def assegna_scuole
-    if !params[:provincia].blank?
+    
+    if !params[:hprovincia].blank?
 
-      @provincia = params[:provincia]
-      @tipo      = params[:tipo]
-      @grado     = params[:grado]
+      @provincia = params[:hprovincia]
+      @tipo      = params[:htipo]
+      @grado     = params[:hgrado]
       
       @provincia_tipo = (@provincia + "-" + @tipo).downcase.gsub(" ", "-")
       
       @scuole_da_assegnare = ImportScuola.where(PROVINCIA: @provincia)
-      @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo) if @tipo
+
+      if @grado != "tutti"
+        tipi = TipoScuola.where(grado: @grado).pluck(:tipo)
+        @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipi)
+      end
+      
+      if @tipo != "tutti"
+        @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo)
+      end
       #@scuole_da_assegnare = @scuole_da_assegnare.joins(:import_adozioni).where("import_adozioni.TIPOGRADOSCUOLA = ?", @grado) if @grado
     
       @scuole_da_assegnare.each do |s|

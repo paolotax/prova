@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   
+  
+  get "zone", to: 'zone#index'
+  
   resources :editori
   
   resources :mandati
