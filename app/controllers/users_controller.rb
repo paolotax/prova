@@ -78,15 +78,20 @@ class UsersController < ApplicationController
 
   def assegna_scuole
     
-    if !params[:hprovincia].blank?
-
+    if !params[:hregione].blank?
+      
+      @regione   = params[:hregione]
       @provincia = params[:hprovincia]
       @tipo      = params[:htipo]
       @grado     = params[:hgrado]
       
       @provincia_tipo = (@provincia + "-" + @tipo).downcase.gsub(" ", "-")
       
-      @scuole_da_assegnare = ImportScuola.where(PROVINCIA: @provincia)
+      @scuole_da_assegnare = ImportScuola.where(REGIONE: @regione)
+
+      if @provincia != "tutte"
+        @scuole_da_assegnare = @scuole_da_assegnare.where(PROVINCIA: @provincia)
+      end
 
       if @grado != "tutti"
         tipi = TipoScuola.where(grado: @grado).pluck(:tipo)

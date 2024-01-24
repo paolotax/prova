@@ -17,7 +17,7 @@
                 <%= f.label :provincia, class: "label" %>
                 <div>    
                     <%= f.select :provincia, options_from_collection_for_select(province, "provincia", "provincia", @provincia&.provincia), 
-                                    { prompt: "scegli la provincia" }, 
+                                    { prompt: "tutte" }, 
                                     { class: "field", data: { tax_dropdown_target: "provincia" } } %>
                 </div>
             </div>
