@@ -3,7 +3,7 @@ class UserScuoleController < ApplicationController
 
   # GET /user_scuole or /user_scuole.json
   def index
-    @user_scuole = UserScuola.all
+    @user_scuole = current_user.user_scuole.includes(:import_scuola)
   end
 
   # GET /user_scuole/1 or /user_scuole/1.json

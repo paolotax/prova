@@ -1,6 +1,5 @@
-<div id="<%= dom_id user_scuola %>">
+<div id="<%= dom_id user_scuola %>" class="flex flex-row">
   <p class="my-5">
-    <strong class="block font-medium mb-1">Import scuola:</strong>
     <%= user_scuola.import_scuola_id %>
   </p>
 
@@ -9,9 +8,4 @@
     <%= user_scuola.user_id %>
   </p>
 
-  <% if action_name != "show" %>
-    <%= link_to "Show this user scuola", user_scuola, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this user scuola", edit_user_scuola_path(user_scuola), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
 </div>
