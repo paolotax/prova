@@ -1,5 +1,7 @@
-<div class="w-full">
-  <div id="user_scuole" class="min-w-full">
-    <%= render @user_scuole %>
+<%= turbo_frame_tag :user_scuole do %>
+  <div class="w-full">
+    <div class="min-w-full">
+      <%= render @user_scuole %>
+    </div>
   </div>
-</div>
+<% end %>

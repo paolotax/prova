@@ -80,6 +80,10 @@ class ImportScuola < ApplicationRecord
   scope :dell_area_geografica, -> (area) { where(AREAGEOGRAFICA: area) }
   scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
+  def to_s  
+    self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE.titleize
+  end
+
   def adozioni 
     import_adozioni
   end

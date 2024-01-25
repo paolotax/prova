@@ -2,14 +2,29 @@ class MandatiController < ApplicationController
     
     before_action :require_signin
     
-    # non funziona la form destroy passa il params[:id] e non params[:editore_id] 
     #before_action :set_mandato, only: %i[    destroy ]
+    before_action :find_editore
 
-       
+    def index
+      @gruppi = Editore.order(:gruppo)
+                     .select(:gruppo).distinct || []
+      
+      @editori = Editore.where(gruppo: @gruppo&.gruppo)
+                      .order(:editore)
+                      .select(:id, :editore).distinct || []  
+      #fail
+    end
+        
     def create     
       begin
-        @mandato = Mandato.new(user_id: params[:user_id], editore_id: params[:editore_id])        
-        @mandato.save!
+
+        if !params[:heditore].blank?
+          editore_id = params[:heditore].to_i         
+        end
+
+        @mandato = current_user.mandati.new(editore_id: editore_id)  
+        @mandato.save!        
+        raise @mandato.errors.full_messages unless @mandato.errors.empty?
       rescue ActiveRecord::RecordNotUnique
         flash[:error] = "Violazione chiave!!"
         @mandato.reload
@@ -43,6 +58,12 @@ class MandatiController < ApplicationController
   
       def mandato_params
         params.require(:mandato).permit(:editore_id, :user_id)
+      end
+
+  
+      def find_editore
+        @gruppo   = Editore.where(gruppo: params[:gruppo].presence).first
+        @editore  = Editore.where(id: params[:id].presence).first
       end
   
   end

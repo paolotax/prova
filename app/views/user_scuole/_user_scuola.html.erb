@@ -1,11 +1,5 @@
-<div id="<%= dom_id user_scuola %>" class="flex flex-row">
-  <p class="my-5">
-    <%= user_scuola.import_scuola_id %>
+<div id="<%= dom_id user_scuola %>" class="flex">
+  <p class="my-2">
+    <%= user_scuola.import_scuola.to_s %>
   </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= user_scuola.user_id %>
-  </p>
-
 </div>

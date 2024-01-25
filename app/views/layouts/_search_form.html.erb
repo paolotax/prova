@@ -19,15 +19,16 @@
 		</svg>
 		
 		<input id="search-field" class="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm" 
-			placeholder="Cerca..." type="search" name="search" value="<%= params[:search] %>" autofocus onfocus="let value = this.value; this.value = null; this.value=value">
+			placeholder="<%= params[:controller] %>" type="search" name="search" value="<%= params[:search] %>" autofocus onfocus="let value = this.value; this.value = null; this.value=value">
 
-		<%= hidden_field_tag :da_acquistare, params[:da_acquistare] || "", data: { queryopt_target: "acquistare" } %>
-
-		<%= hidden_field_tag :search_query, params[:search_query] || "all", data: { queryopt_target: "parole" } %>
-
-		<%= hidden_field_tag :mie_adozioni, params[:mie_adozioni] || "", data: { queryopt_target: "adozioni" } %>
 		
+		<%= hidden_field_tag :search_query, params[:search_query] || "all", data: { queryopt_target: "parole" }    if ['import_adozioni', 'import_scuole'].include? params[:controller] %>
+
+		<%= hidden_field_tag :mie_adozioni,  params[:mie_adozioni]  || "", data: { queryopt_target: "adozioni" }   if params[:controller] = :import_adozioni %>
+		<%= hidden_field_tag :da_acquistare, params[:da_acquistare] || "", data: { queryopt_target: "acquistare" } if params[:controller] = :import_adozioni %>
+
 	<% end %>
+
 <% else %>
 	<div class="block h-full w-full">
 	</div>

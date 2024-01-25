@@ -1,0 +1,26 @@
+<%= turbo_frame_tag :mandati_select do %> 
+    <%= form_with url: mandati_path, method: :get, data: { controller: "tax-dropdown", 
+                                                            action: "change->tax-dropdown#submit" 
+                                                        
+                                                        } do |f| %>
+
+        <div class="flex flex-row justify-between" >
+            <div class="">
+                <%= f.label :gruppo, class: "label" %>
+                <div>    
+                    <%= f.select :gruppo, options_from_collection_for_select(gruppi, "gruppo", "gruppo", @gruppo&.gruppo), 
+                                        { prompt: "scegli il gruppo editoriale" }, 
+                                        { class: "field", data: { tax_dropdown_target: "gruppo" } } %>
+                </div>
+            </div>
+            <div class="">
+                <%= f.label :editore, class: "label" %>
+                <div>    
+                    <%= f.select :id, options_from_collection_for_select(editori, "id", "editore", @editore&.id), 
+                                    { prompt: "scegli l'editore" }, 
+                                    { class: "field", data: { tax_dropdown_target: "editore" } } %>
+                </div>
+            </div>
+        </div>
+    <% end %>
+<% end %>
