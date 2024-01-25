@@ -12,6 +12,8 @@ class ImportAdozioniController < ApplicationController
     
     @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"
 
+    @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
+
 
     if params[:search].present?      
  
@@ -38,7 +40,7 @@ class ImportAdozioniController < ApplicationController
     @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
 
 
-    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="advance"')
+    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="top"')
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json

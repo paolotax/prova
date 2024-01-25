@@ -62,6 +62,8 @@ class ImportAdozione < ApplicationRecord
 
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
+  scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
+
   def mia_adozione?(user_editori) 
     user_editori.include?(self.EDITORE)
   end

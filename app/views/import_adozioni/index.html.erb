@@ -9,6 +9,9 @@
 	
 	<div class="py-2 flex justify-between items-center">
 		<div class="">
+			<%= toggle_button_tag( false, "mie adozioni", "adozioni" )%>
+		</div>
+		<div class="">
 			<%= toggle_button_tag( false, "da acquistare", "acquistare" )%>
 		</div>
 		<div class="sm:pl-4">
@@ -29,7 +32,7 @@
 
 		<% if @pagy.next %>
 			<%= turbo_frame_tag "adozioni_page_#{@pagy.next}",
-						src: import_adozioni_path(search: params[:search], page: @pagy.next, da_acquistare: params[:da_acquistare], search_query: params[:search_query]),
+						src: import_adozioni_path(search: params[:search], page: @pagy.next, da_acquistare: params[:da_acquistare], search_query: params[:search_query], mie_adozioni: params[:mie_adozioni]),
 						loading: :lazy do %>
 				
 				<div role="status">

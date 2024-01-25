@@ -49,6 +49,40 @@ namespace :import do
     end  
   end 
 
+  desc "EDITORI CSV" 
+  task editori_csv: :environment do
+    
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")   
+    if answer == true
+      Editore.destroy_all
+    end
+    
+    counter = 0
+    file_counter = 0
+    
+    csv_dir = File.join(Rails.root, '_miur/gruppi_editoriali.csv')
+    
+    #, "r:ISO-8859-1"
+    Dir.glob(csv_dir).each do |file|
+      items = []
+      Benchmark.bm do |x|      
+        x.report("leggo  file #{file} #{file_counter}") do
+          CSV.foreach(file, headers: true, col_sep: ',') do |row|
+            items << row.to_h
+            counter += 1
+          end
+        end  
+        x.report("scrivo file #{file} #{file_counter}") do 
+          Editore.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
+          file_counter += 1
+        end
+      end      
+    end
+  end
+
   desc "TIPI SCUOLE da adozioni"
   task tipi_scuole: :environment do  
 

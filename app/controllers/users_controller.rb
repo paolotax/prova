@@ -101,8 +101,7 @@ class UsersController < ApplicationController
       if @tipo != "tutti"
         @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo)
       end
-      #@scuole_da_assegnare = @scuole_da_assegnare.joins(:import_adozioni).where("import_adozioni.TIPOGRADOSCUOLA = ?", @grado) if @grado
-    
+       
       @scuole_da_assegnare.each do |s|
         @user.import_scuole << s unless @user.import_scuole.include?(s)
       end
