@@ -54,6 +54,10 @@
 			pec: <%= import_scuola.INDIRIZZOPECSCUOLA.downcase %>
 		</div>
 
+		<div class="text-xs text-gray-400">
+			<%= link_to "+", new_appunto_path(import_scuola_id: import_scuola.id), data: { turbo_frame: "_top"}%>
+		</div>
+
 
 
 		

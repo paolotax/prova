@@ -11,20 +11,15 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :import_scuola_id %>
-    <%= form.text_field :import_scuola_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <%= form.hidden_field :user_id, value: current_user.id %>
+  <%= form.hidden_field :import_scuola_id, value: @scuola.id %>
+  
+  <div class="mt-8 text-2xl font-semibold " >
+     
+     <%= @scuola.DENOMINAZIONESCUOLA %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :user_id %>
-    <%= form.text_field :user_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
-  <div class="my-5">
-    <%= form.label :import_adozione_id %>
-    <%= form.text_field :import_adozione_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
   <div class="my-5">
     <%= form.label :nome %>
@@ -32,11 +27,22 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :appunto %>
-    <%= form.text_field :appunto, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.label "Appunto:" %>
+    <%= form.text_area :body, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+
   </div>
 
   <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit class: "mt-8 w-full rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
+
+<div class="flex flex-col">
+  
+  <%= link_to "<- appunti", appunti_path, class: "w-full rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium text-center mt-8" %>
+
+  <% if action_name != "new" %>
+      <%= button_to "Elimina appunto", appunto_path(appunto), method: :delete, class: "w-full rounded-lg py-3 px-5 bg-red-600 text-white inline-block font-medium cursor-pointer" %>
+  <% end %>
+</div>
+      

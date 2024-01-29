@@ -1,9 +1,12 @@
 class AppuntiController < ApplicationController
+  
+  before_action :require_signin
+
   before_action :set_appunto, only: %i[ show edit update destroy ]
 
   # GET /appunti or /appunti.json
   def index
-    @appunti = Appunto.all
+    @appunti = current_user.appunti.order(updated_at: :desc)
   end
 
   # GET /appunti/1 or /appunti/1.json
@@ -12,7 +15,11 @@ class AppuntiController < ApplicationController
 
   # GET /appunti/new
   def new
-    @appunto = Appunto.new
+    if !params[:import_scuola_id].nil?
+      @scuola = ImportScuola.find(params[:import_scuola_id])
+      @appunto = current_user.appunti.new(import_scuola_id: params[:import_scuola_id])
+    end
+    
   end
 
   # GET /appunti/1/edit
@@ -25,7 +32,7 @@ class AppuntiController < ApplicationController
 
     respond_to do |format|
       if @appunto.save
-        format.html { redirect_to appunto_url(@appunto), notice: "Appunto was successfully created." }
+        format.html { redirect_to appunti_url, notice: "Appunto was successfully created." }
         format.json { render :show, status: :created, location: @appunto }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +45,7 @@ class AppuntiController < ApplicationController
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
-        format.html { redirect_to appunto_url(@appunto), notice: "Appunto was successfully updated." }
+        format.html { redirect_to appunti_url, notice: "Appunto was successfully updated." }
         format.json { render :show, status: :ok, location: @appunto }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -61,10 +68,11 @@ class AppuntiController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_appunto
       @appunto = Appunto.find(params[:id])
+      @scuola = @appunto.import_scuola
     end
 
     # Only allow a list of trusted parameters through.
     def appunto_params
-      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :appunto)
+      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body)
     end
 end

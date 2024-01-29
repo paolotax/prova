@@ -39,6 +39,8 @@ class ImportScuola < ApplicationRecord
   
   has_many :user_scuole
   has_many :users, through: :user_scuole
+
+  has_many :appunti
   
   include PgSearch::Model
 

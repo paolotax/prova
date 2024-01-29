@@ -1,32 +1,21 @@
-<div id="<%= dom_id appunto %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Import scuola:</strong>
-    <%= appunto.import_scuola_id %>
-  </p>
+<div id="<%= dom_id appunto %>" class="flex flex-row justify-between items-center bg-white align-end border-b border-slate-200">
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= appunto.user_id %>
-  </p>
+  <div class="pl-4 py-4">
+    <p class="font-medium text-gray-900">
+      <%= appunto.import_scuola.DENOMINAZIONESCUOLA %>
+    </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Import adozione:</strong>
-    <%= appunto.import_adozione_id %>
-  </p>
+    <p class="font-normal text-gray-700">
+      <%= appunto.nome %>
+    </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Nome:</strong>
-    <%= appunto.nome %>
-  </p>
+    <p class="font-normal text-gray-500">
+      <%= appunto.body %>
+    </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Appunto:</strong>
-    <%= appunto.appunto %>
-  </p>
+  </div>
 
   <% if action_name != "show" %>
-    <%= link_to "Show this appunto", appunto, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this appunto", edit_appunto_path(appunto), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
+    <%= link_to ">", edit_appunto_path(appunto), class: "rounded-lg py-3 px-5 inline-block font-2xl " %>
   <% end %>
 </div>

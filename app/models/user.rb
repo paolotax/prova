@@ -28,6 +28,9 @@ class User < ApplicationRecord
 
   has_many :adozioni, through: :editori_users
 
+  has_many :appunti, dependent: :destroy
+
+  
   def mie_adozioni
     import_adozioni.where(editore: editori.collect{|e| e.editore})
   end
