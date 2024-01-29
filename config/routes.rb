@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :appunti
   
   
   get "zone", to: 'zone#index'

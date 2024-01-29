@@ -1,0 +1,32 @@
+<div id="<%= dom_id appunto %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Import scuola:</strong>
+    <%= appunto.import_scuola_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">User:</strong>
+    <%= appunto.user_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Import adozione:</strong>
+    <%= appunto.import_adozione_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Nome:</strong>
+    <%= appunto.nome %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Appunto:</strong>
+    <%= appunto.appunto %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this appunto", appunto, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Edit this appunto", edit_appunto_path(appunto), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

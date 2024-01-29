@@ -14,12 +14,16 @@
 		data-transition-leave-to="bg-opacity-0">
 
 		<!-- Modal Container -->
-		<div data-modal-target="container" class="max-h-screen w-full max-w-lg relative">
+		<div data-modal-target="container"
+			 data-action="keydown.esc->modal#close"	
+			 class="max-h-screen w-full max-w-lg relative">
 			<!-- Modal Card -->
 			<div class="m-1 bg-white rounded shadow">
 				<div class="p-8">
 					<h2 class="text-xl mb-4">Bella Daialog</h2>
 					<p class="mb-4">paolo.tassinari@hey.com</p>
+					
+					<%= text_field_tag :input_name, nil, autofocus: true, class: "field" %>
 
 					<div class="flex justify-end items-center flex-wrap mt-6">
 						<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-action="click->modal#close:prevent">Close</button>

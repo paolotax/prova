@@ -4,8 +4,8 @@
                                                         
                                                         } do |f| %>
 
-        <div class="flex flex-row justify-between" >
-            <div class="">
+        <div class="flex flex-col sm:flex-row sm:justify-between" >
+            <div class="mt-2">
                 <%= f.label :regione, class: "label" %>
                 <div>    
                     <%= f.select :regione, options_from_collection_for_select(regioni, "regione", "regione", @regione&.regione), 
@@ -13,7 +13,7 @@
                                         { class: "field", data: { tax_dropdown_target: "regione" } } %>
                 </div>
             </div>
-            <div class="">
+            <div class="mt-2">
                 <%= f.label :provincia, class: "label" %>
                 <div>    
                     <%= f.select :provincia, options_from_collection_for_select(province, "provincia", "provincia", @provincia&.provincia), 
@@ -22,8 +22,8 @@
                 </div>
             </div>
         </div> 
-        <div class="flex flex-row items-end justify-between">
-            <div class=""> 
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between">
+            <div class="mt-2"> 
                 <%= f.label :grado, class: "label" %>    
                 <div>
                     <%= f.select :grado, options_from_collection_for_select(gradi, "grado", "grado", @grado&.grado), 

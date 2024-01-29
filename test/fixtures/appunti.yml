@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  import_scuola: one
+  user: one
+  import_adozione: one
+  nome: MyString
+  appunto: MyString
+
+two:
+  import_scuola: two
+  user: two
+  import_adozione: two
+  nome: MyString
+  appunto: MyString

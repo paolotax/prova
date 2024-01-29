@@ -1,0 +1,2 @@
+module AppuntiHelper
+end
