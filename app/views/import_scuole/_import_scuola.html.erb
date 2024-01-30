@@ -23,7 +23,7 @@
 				</span>
 				<%= link_to highlight(import_scuola.DESCRIZIONECOMUNE, params_split(params[:search])), 
 						import_scuole_path(search: import_scuola.DESCRIZIONECOMUNE),
-						data: { turbo_frame: "_top"}, class: "hover:text-indigo-500"
+						data: { turbo_frame: "_top" }, class: "hover:text-indigo-500"
 				%>
 			</div>
 		</div>	
@@ -55,7 +55,9 @@
 		</div>
 
 		<div class="text-xs text-gray-400">
-			<%= link_to "+", new_appunto_path(import_scuola_id: import_scuola.id), data: { turbo_frame: "_top"}%>
+			<%= link_to "+", new_appunto_path(import_scuola_id: import_scuola.id),
+												 data: { 
+													turbo_frame: "modal"} %>
 		</div>
 
 
