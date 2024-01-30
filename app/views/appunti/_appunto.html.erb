@@ -16,6 +16,6 @@
   </div>
 
   <% if action_name != "show" %>
-    <%= link_to ">", edit_appunto_path(appunto), class: "rounded-lg py-3 px-5 inline-block font-2xl " %>
+    <%= link_to ">", edit_appunto_path(appunto), data: { turbo_frame: :modal }, class: "rounded-lg py-3 px-5 inline-block font-2xl " %>
   <% end %>
 </div>

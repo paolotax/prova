@@ -32,8 +32,20 @@ class AppuntiController < ApplicationController
 
     respond_to do |format|
       if @appunto.save
-        format.html { redirect_to appunti_url, notice: "Appunto was successfully created." }
+        format.html { redirect_to :back, notice: "Appunto inserito." }
         format.json { render :show, status: :created, location: @appunto }
+        format.turbo_stream do
+          # render turbo_stream: turbo_stream.prepend(
+          #   'comments',
+          #   partial: "comments/comment",
+          #   locals: { comment: @comment }
+          # )
+          # render turbo_stream: helpers.autoredirect(comments_path)
+          # render turbo_stream: helpers.autoredirect(comment_path(@comment))
+          # render turbo_stream: turbo_stream.action(:redirect, comments_path)
+          # render turbo_stream: turbo_stream.advanced_redirect(comment_path(@comment))
+          # render turbo_stream: turbo_stream.advanced_redirect(appunti_path)
+        end
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @appunto.errors, status: :unprocessable_entity }
@@ -47,6 +59,13 @@ class AppuntiController < ApplicationController
       if @appunto.update(appunto_params)
         format.html { redirect_to appunti_url, notice: "Appunto was successfully updated." }
         format.json { render :show, status: :ok, location: @appunto }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            @appunto,
+            partial: "appunti/appunto",
+            locals: { appunto: @appunto }
+          ) 
+        end
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @appunto.errors, status: :unprocessable_entity }
@@ -61,6 +80,11 @@ class AppuntiController < ApplicationController
     respond_to do |format|
       format.html { redirect_to appunti_url, notice: "Appunto was successfully destroyed." }
       format.json { head :no_content }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove(
+          @appunto
+        )
+      end
     end
   end
 

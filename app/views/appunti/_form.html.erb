@@ -20,8 +20,8 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :nome %>
-    <%= form.text_field :nome, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.label :nome, class: "label" %>
+    <%= form.text_field :nome, class: "field" %>
   </div>
 
   <div class="my-5">
@@ -31,13 +31,13 @@
   </div>
 
   <div class="inline">
-    <%= form.submit class: "mt-8 w-full rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit "Salva", class: "mt-8 w-full rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
 
 <div class="flex flex-col">
   
-  <%= link_to "<- appunti", appunti_path, class: "w-full rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium text-center mt-8" %>
+  <%= link_to "<- appunti", appunti_path, data: { action: "dialog#close" }, class: "w-full rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium text-center mt-8" %>
 
   <% if action_name != "new" %>
       <%= button_to "Elimina appunto", appunto_path(appunto), method: :delete, class: "w-full rounded-lg py-3 px-5 bg-red-600 text-white inline-block font-medium cursor-pointer" %>
