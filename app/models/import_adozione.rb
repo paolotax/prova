@@ -76,10 +76,59 @@ class ImportAdozione < ApplicationRecord
     self.import_scuola.DESCRIZIONECOMUNE
   end
  
-  def to_s
-
-    "#{self.TITOLO} - #{self.AUTORI} - #{self.EDITORE} - #{self.CODICEISBN}"
-
+  def anno
+    self.ANNOCORSO
   end
+
+  def classe_e_sezione 
+    "#{self.ANNOCORSO} #{sezione}"
+  end
+
+  def classe_e_combinazione
+    "#{self.ANNOCORSO} #{sezione} #{self.COMBINAZIONE.downcase}"
+  end
+
+  def sezione
+    self.SEZIONEANNO.titleize
+  end
+
+
+  def disciplina
+    self.DISCIPLINA.titleize
+  end
+
+  def titolo
+    self.TITOLO
+  end
+
+  def autori
+    self.AUTORI.titleize
+  end
+
+  def editore
+    self.EDITORE
+  end
+
+  def codice_isbn
+    self.CODICEISBN
+  end
+
+  def prezzo
+    self.PREZZO
+  end
+
+  def nuova_adozione
+    self.NUOVAADOZ
+  end
+
+  def da_acquistare
+    self.DAACQUIST
+  end
+
+  def consigliato
+    self.CONSIGLIATO
+  end
+
+
 
 end

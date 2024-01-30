@@ -17,7 +17,8 @@ class AppuntiController < ApplicationController
   def new
     if !params[:import_scuola_id].nil?
       @scuola = ImportScuola.find(params[:import_scuola_id])
-      @appunto = current_user.appunti.new(import_scuola_id: params[:import_scuola_id])
+      @appunto = current_user.appunti.new(import_scuola_id: params[:import_scuola_id], import_adozione_id: params[:import_adozione_id])
+      @adozione = @appunto.import_adozione
     end
     
   end
@@ -93,6 +94,7 @@ class AppuntiController < ApplicationController
     def set_appunto
       @appunto = Appunto.find(params[:id])
       @scuola = @appunto.import_scuola
+      @adozione = @appunto.import_adozione
     end
 
     # Only allow a list of trusted parameters through.

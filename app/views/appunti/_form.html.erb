@@ -13,10 +13,12 @@
 
   <%= form.hidden_field :user_id, value: current_user.id %>
   <%= form.hidden_field :import_scuola_id, value: @scuola.id %>
+  <%= form.hidden_field :import_adozione_id, value: @adozione.id %>
   
   <div class="mt-8 text-2xl font-semibold " >
      
      <%= @scuola.DENOMINAZIONESCUOLA %>
+     <%= @adozione.classe_e_sezione %>
   </div>
 
   <div class="my-5">
