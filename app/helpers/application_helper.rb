@@ -45,7 +45,17 @@ module ApplicationHelper
     end
   end
   
-  
+  def go_to_scuola_path(scuola, provider = 'waze')
+    if provider == 'waze'
+      "https://waze.com/ul?q=#{u scuola.indirizzo}"
+    elsif provider == 'google'
+      "https://www.google.com/maps/search/?api=1&query=#{u scuola.indirizzo}"
+    elsif provider == 'apple'
+      "https://maps.apple.com/?q=#{u scuola.indirizzo}"
+    end
+  end
+
+
   def link_to_previous_page(link_title)
 
     return unless session[:previous_pages].present?

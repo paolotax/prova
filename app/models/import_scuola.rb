@@ -172,5 +172,20 @@ class ImportScuola < ApplicationRecord
 
   scope :del_tipo_scuola, -> (tipo_scuola) { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipo_scuola)}
 
+  def latitudine 
+    44.70511452961794
+  end
 
+  def longitudine 
+    10.643349039039835
+  end
+
+  def indirizzo
+    "https://www.google.com/maps/search/?api=1&query=#{self.INDIRIZZOSCUOLA}+#{self.CAPSCUOLA}+#{self.DESCRIZIONECOMUNE}+#{self.PROVINCIA}"
+     
+    "https://waze.com/ul?q=66%20Acacia%20Avenue"
+  
+    [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(" ")
+  
+  end
 end
