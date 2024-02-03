@@ -32,17 +32,19 @@
 
   </div>
 
-  <div class="inline">
-    <%= form.submit "Salva", class: "mt-8 w-full rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  <div class="inline flex justify-end">
+    <%= form.submit "Salva", 
+        class: "inline-flex w-full justify-center rounded-md bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+    %>
   </div>
 <% end %>
 
-<div class="flex flex-col">
+<div class="flex flex-col sm:flex-row-reverse sm:justify-between mt-8">
   
-  <%= link_to "<- appunti", appunti_path, data: { action: "dialog#close" }, class: "w-full rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium text-center mt-8" %>
+  <%= link_to "<- appunti", appunti_path, data: { action: "dialog#close" }, class: "w-full sm:w-auto rounded-lg px-3 py-2  bg-gray-100 inline-block text-sm  font-medium text-center" %>
 
   <% if action_name != "new" %>
-      <%= button_to "Elimina appunto", appunto_path(appunto), method: :delete, class: "w-full rounded-lg py-3 px-5 bg-red-600 text-white inline-block font-medium cursor-pointer" %>
+      <%= button_to "Elimina appunto", appunto_path(appunto), method: :delete, class: "w-full sm:w-auto mt-5 sm:mt-0 rounded-lg py-3 px-5 bg-gray-100 text-red-400 inline-block text-sm font-medium" %>
   <% end %>
 </div>
       

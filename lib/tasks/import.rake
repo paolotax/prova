@@ -50,7 +50,7 @@ namespace :import do
   end 
 
   desc "EDITORI CSV" 
-  task editori_csv: :environment do
+  task gruppi_editoriali: :environment do
     
     include ActionView::Helpers
     include ApplicationHelper
