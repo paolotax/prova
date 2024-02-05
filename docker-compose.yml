@@ -15,7 +15,7 @@ services:
       - "5432:5432"
   demo-web:
     build: .
-    command: "./bin/dev"
+    command: "./bin/rails s "
     environment:
       - RAILS_ENV=${RAILS_ENV}
       - POSTGRES_HOST=${POSTGRES_HOST}
