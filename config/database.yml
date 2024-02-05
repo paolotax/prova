@@ -1,4 +1,3 @@
-
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -14,19 +13,17 @@ production:
   password: <%= ENV["POSTGRES_PASSWORD"] %>
   host: <%= ENV["DB_HOST"] %>
 
+development:
+  <<: *default
+  database: prova_development
+  username: paolotax
+  password: ptaxptax
 
-
-# development:
-#   <<: *default
-#   database: prova_development
-#   username: <%= ENV['POSTGRES_USER'] %>
-#   password: <%= ENV['POSTGRES_PASSWORD'] %>
-
-# test:
-#   <<: *default
-#   database: prova_test
-#   username: <%= ENV['POSTGRES_USER'] %>
-#   password: <%= ENV['POSTGRES_PASSWORD'] %>
+test:
+  <<: *default
+  database: prova_test
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
 
 
 # production:
