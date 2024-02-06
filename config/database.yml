@@ -10,14 +10,14 @@ production:
   <<: *default
   database: prova_production
   username: prova
-  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  password: ptaxptax
   host: <%= ENV["DB_HOST"] %>
 
 development:
   <<: *default
   database: prova_development
   username: paolotax
-  password: ptaxptax
+  password:  <%= ENV["POSTGRES_PASSWORD"] %>
 
 test:
   <<: *default

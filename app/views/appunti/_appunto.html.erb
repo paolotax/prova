@@ -1,40 +1,59 @@
-<div id="<%= dom_id appunto %>" class="pl-3 pr-2 flex flex-row justify-between items-center bg-white align-end border-b border-slate-200">
+<div id="<%= dom_id appunto %>" class="relative pl-3 pr-2 flex flex-row justify-between items-center bg-white align-end border-b border-slate-200">
 
-  <div class="pl-4 py-4">
+	<div class="pl-4 py-4">
 
-    <p class="font-semibold text-gray-900">
-      <%= appunto.nome %>      
-    </p>
+		<p class="font-semibold text-gray-900">
+			<%= appunto.nome %>      
+		</p>
 
+		<div class="flex items-center gap-3 mt-2">
+			<%= tag.div class: [
+					"inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset": true,
+					"bg-gray-50   text-gray-600   ring-gray-500/10":   appunto.import_adozione&.anno == "8",
+					"bg-yellow-50 text-yellow-800 ring-yellow-600/20": appunto.import_adozione&.anno == "2",
+					"bg-green-50  text-green-700  ring-green-600/20":  appunto.import_adozione&.anno == "6",
+					"bg-blue-50   text-blue-700   ring-blue-700/10":   appunto.import_adozione&.anno == "1",
+					"bg-red-50    text-red-700    ring-red-600/10":    appunto.import_adozione&.anno == "3",
+					"bg-indigo-50 text-indigo-700 ring-indigo-700/10": appunto.import_adozione&.anno == "4",
+					"bg-purple-50 text-purple-700 ring-purple-700/10": appunto.import_adozione&.anno == "7",
+					"bg-pink-50   text-pink-700   ring-pink-700/10":   appunto.import_adozione&.anno == "5"
 
-    <div class="flex items-center gap-3 mt-2">
-      <%= tag.div class: [
-          "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset": true,
-          "bg-gray-50   text-gray-600   ring-gray-500/10":   appunto.import_adozione&.anno == "8",
-          "bg-yellow-50 text-yellow-800 ring-yellow-600/20": appunto.import_adozione&.anno == "2",
-          "bg-green-50  text-green-700  ring-green-600/20":  appunto.import_adozione&.anno == "6",
-          "bg-blue-50   text-blue-700   ring-blue-700/10":   appunto.import_adozione&.anno == "1",
-          "bg-red-50    text-red-700    ring-red-600/10":    appunto.import_adozione&.anno == "3",
-          "bg-indigo-50 text-indigo-700 ring-indigo-700/10": appunto.import_adozione&.anno == "4",
-          "bg-purple-50 text-purple-700 ring-purple-700/10": appunto.import_adozione&.anno == "7",
-          "bg-pink-50   text-pink-700   ring-pink-700/10":   appunto.import_adozione&.anno == "5"
+				] do %>
+				<%= appunto.import_adozione&.classe_e_sezione %>
+			<% end %>
+			<div class="flex flex-col">
+				<p class="font-medium text-sm italic text-gray-600">  
+						<%= appunto.import_scuola.DENOMINAZIONESCUOLA.titleize %>
+				</p>
+				<p class="font-medium text-xs italic text-gray-400">  
+						<%= appunto.import_adozione&.TITOLO&.titleize %>
+				</p>			
+			</div>
+		</div>
 
-        ] do %>
-        <%= appunto.import_adozione&.classe_e_sezione %>
-      <% end %>
-      
-      <p class="font-medium text-sm italic text-gray-600">  
-          <%= appunto.import_scuola.DENOMINAZIONESCUOLA.titleize %>
-      </p>
-    </div>
+		<p class="font-medium text-sm italic mt-2 text-gray-400">
+			<%= appunto.body %>
+		</p>
 
-    <p class="font-medium text-sm italic mt-2 text-gray-400">
-      <%= appunto.body %>
-    </p>
+	</div>
 
-  </div>
-
-  <% if action_name != "show" %>
-    <%= link_to ">", edit_appunto_path(appunto), data: { turbo_frame: :modal }, class: "rounded-lg py-3 px-5 inline-block font-2xl " %>
-  <% end %>
+	<% if action_name != "show" %>
+			<%= link_to edit_appunto_path(appunto),
+				data: { turbo_frame: :modal, action: "click->dialog#open"},
+				class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+				</svg>
+			<% end %>
+			
+			<%= link_to go_to_scuola_path(appunto.import_scuola, "apple"),
+						data: { turbo_frame: :modal, action: "click->dialog#open"},
+						class: "absolute right-2 top-11 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+					</svg>
+			<% end %>
+	<% end %>
 </div>
+
