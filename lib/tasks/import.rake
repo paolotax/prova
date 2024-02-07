@@ -157,44 +157,73 @@ namespace :import do
     file_counter = 0
     
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
-    
+    tmp_dir = File.join(Rails.root, '_miur/adozioni/tmp_csv') 
     #, "r:ISO-8859-1"
 
 
     Dir.glob(csv_dir).each do |file|
       file_size = File.size(file)
       if file_size > 30 * 1024 * 1024 # 30MB in bytes
-        FileUtils.mkdir_p('temp_csv') unless File.directory?('temp_csv')
+
+        FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
         split_files = []
         split_counter = 0
-        CSV.foreach(file, headers: true, col_sep: ',') do |row|
-          split_files[split_counter] ||= []
-          split_files[split_counter] << row.to_h
-          if split_files[split_counter].size >= 10000 # Split every 10,000 rows
-            split_counter += 1
+
+        Benchmark.bm do |x|
+          x.report("Splitto #{file.split('/').last}\n") do
+            CSV.foreach(file, headers: true, col_sep: ',') do |row|
+              split_files[split_counter] ||= []
+              split_files[split_counter] << row.headers if split_files[split_counter].empty?
+              split_files[split_counter] << row.to_h
+              if split_files[split_counter].size >= 10000 # Split every 10,000 rows
+                split_counter += 1
+              end
+            end
           end
         end
 
-        split_files.each_with_index do |split_data, index|
-          split_file_path = "temp_csv/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
-          CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
-            split_data.each do |row|
-              csv << row
+        # Senza salvataggio su file
+        # Benchmark.bm do |x|
+        #   x.report("importing split hash\n") do
+        #     split_files.each_with_index do |split_data, index|
+        #       puts split_data
+        #       #ImportAdozione.import split_data[index], validate: false, on_duplicate_key_ignore: true
+        #     end
+        #   end
+        # end
+        
+        # con salvataggio su file
+        Benchmark.bm do |x|
+          x.report("saving csv split files\n") do
+            split_files.each_with_index do |split_data, index|
+              split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
+
+              CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
+                split_data.each do |row|
+                  csv << row
+                end
+              end
+
+              data = []
+              CSV.foreach(split_file_path, headers: true, col_sep: ',') do |row|
+                data << row.to_h
+              end
+              ImportAdozione.import data, validate: false, on_duplicate_key_ignore: true
+              FileUtils.rm(split_file_path)
             end
           end
-          ImportAdozione.import_from_csv(split_file_path, validate: false, on_duplicate_key_ignore: true)
         end
       else
         items = []
         Benchmark.bm do |x|
-          x.report("leggo file #{file} #{file_counter}") do
+          x.report("leggo #{file.split('/').last} #{file_counter}\n") do
             CSV.foreach(file, headers: true, col_sep: ',') do |row|
               items << row.to_h
               counter += 1
             end
           end
-          x.report("scrivo file #{file} #{file_counter}") do
-            ImportAdozione.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
+          x.report("scrivo #{file.split('/').last} #{file_counter}\n") do
+            ImportAdozione.import items, validate: false, on_duplicate_key_ignore: true
             file_counter += 1
           end
         end
@@ -221,13 +250,13 @@ namespace :import do
     Dir.glob(csv_dir).each do |file|
       items = []
       Benchmark.bm do |x|      
-        x.report("leggo  file scuole #{file} - #{file_counter}") do
+        x.report("leggo  file scuole #{file.split('/').last} - #{file_counter}") do
           CSV.foreach(file, headers: true, col_sep: ',') do |row|
             items << row.to_h
             counter += 1
           end
         end  
-        x.report("scrivo file scuole  #{file} - #{file_counter}") do 
+        x.report("scrivo file scuole  #{file.split('/').last} - #{file_counter}") do 
           ImportScuola.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
           file_counter += 1
         end

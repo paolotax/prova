@@ -1,0 +1,37 @@
+<div id="<%= dom_id stat %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Descrizione:</strong>
+    <%= stat.descrizione %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Seleziona campi:</strong>
+    <%= stat.seleziona_campi %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Raggruppa per:</strong>
+    <%= stat.raggruppa_per %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Ordina per:</strong>
+    <%= stat.ordina_per %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Condizioni:</strong>
+    <%= stat.condizioni %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Testo:</strong>
+    <%= stat.testo %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this stat", stat, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Edit this stat", edit_stat_path(stat), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

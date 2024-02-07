@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  descrizione: MyString
+  seleziona_campi: MyString
+  raggruppa_per: MyString
+  ordina_per: MyString
+  condizioni: MyString
+  testo: MyString
+
+two:
+  descrizione: MyString
+  seleziona_campi: MyString
+  raggruppa_per: MyString
+  ordina_per: MyString
+  condizioni: MyString
+  testo: MyString
