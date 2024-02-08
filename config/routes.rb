@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
-  resources :stats
+  
+  
+  
+  resources :stats do
+    member do
+      get 'execute'
+    end
+  end
+  
   resources :appunti
   
   

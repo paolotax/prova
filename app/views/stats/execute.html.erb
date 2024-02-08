@@ -1,0 +1,30 @@
+
+<div class="sm:flex sm:items-end sm:justify-between my-4">
+    <h2 class="font-bold text-2xl"><%= @stat.descrizione %></h1>
+    <%= link_to "stats", stats_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+
+    <%#= link_to "Export CSV", export_csv_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+</div>
+
+<%= turbo_frame_tag "search_results", loading: :lazy do %>
+    
+    
+    <table class="table-auto">
+        <thead>
+            <tr>
+                <% @result.first.keys.each do |header| %>
+                    <th class="px-4 py-2"><%= header %></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% @result.each do |r| %>
+                <tr>
+                    <% r.values.each do |value| %>
+                        <td class="border px-4 py-2"><%= value %></td>
+                    <% end %>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>

@@ -157,7 +157,7 @@ namespace :import do
     file_counter = 0
     
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
-    tmp_dir = File.join(Rails.root, '_miur/adozioni/tmp_csv') 
+    tmp_dir = File.join(Rails.root, 'storage/tmp') 
     #, "r:ISO-8859-1"
 
 
@@ -170,7 +170,7 @@ namespace :import do
         split_counter = 0
 
         Benchmark.bm do |x|
-          x.report("Splitto #{file.split('/').last}\n") do
+          x.report("splitto #{file.split('/').last}\n") do
             CSV.foreach(file, headers: true, col_sep: ',') do |row|
               split_files[split_counter] ||= []
               split_files[split_counter] << row.headers if split_files[split_counter].empty?

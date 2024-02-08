@@ -1,5 +1,7 @@
 class StatsController < ApplicationController
-  before_action :set_stat, only: %i[ show edit update destroy ]
+  
+  before_action :require_signin
+  before_action :set_stat, only: %i[ show edit update destroy execute ]
 
   # GET /stats or /stats.json
   def index
@@ -18,6 +20,11 @@ class StatsController < ApplicationController
   # GET /stats/1/edit
   def edit
   end
+
+  def execute
+    @result = @stat.execute current_user
+  end
+
 
   # POST /stats or /stats.json
   def create
