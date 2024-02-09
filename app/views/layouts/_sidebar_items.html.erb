@@ -2,7 +2,7 @@
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
 	<a href="#" class="bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
 		<%= inline_svg_tag('icon-home.svg') %>                     
-		didattitax
+		scagnozz
 	</a>
 </li>
 <li>
@@ -11,24 +11,28 @@
 		Appunti                        
 	<% end %>
 </li>
-<li>
-	<%= link_to documenti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%= inline_svg_tag('icon-documenti.svg') %>
-		Documenti
-	<% end %>  
-</li>
-<li>
-	<%= link_to fornitori_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%= inline_svg_tag('icon-truck.svg') %>
-		Fornitori
-	<% end %>
-</li>
-<li>
-	<%= link_to clienti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
-		<%= inline_svg_tag('icon-cash.svg') %>                
-		Clienti
-	<% end %>
-</li>
+<% if current_user && current_user.name == "paolotax"%>
+	<li>
+		<%= link_to documenti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+			<%= inline_svg_tag('icon-documenti.svg') %>
+			Documenti
+		<% end %>  
+	</li>
+
+	<li>
+		<%= link_to fornitori_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+			<%= inline_svg_tag('icon-truck.svg') %>
+			Fornitori
+		<% end %>
+	</li>
+	<li>
+		<%= link_to clienti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+			<%= inline_svg_tag('icon-cash.svg') %>                
+			Clienti
+		<% end %>
+	</li>
+<% end %>
+
 <li>
 	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
@@ -42,8 +46,8 @@
 	<% end %>
 </li>
 <li>
-	<%= link_to duplicates_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to stats_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
-		Duplicati...
+		Stats...
 	<% end %>
 </li>

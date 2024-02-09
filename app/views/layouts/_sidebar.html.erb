@@ -14,31 +14,33 @@
 			
 				</ul>
 			</li>
-			<li>
-				<div class="text-xs font-semibold leading-6 text-gray-200">
-					Utility
-				</div>
-				<ul role="list" class="-mx-2 mt-2 space-y-1">
-					<li>
-						<a href="https://heroicons.com" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
-							<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">H</span>
-							<span class="truncate">Heroicons</span>
-						</a>
-					</li>
-					<li>
-						<a href="https://tailwindcss.com/docs/installation" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
-							<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">T</span>
-							<span class="truncate">Tailwind Docs</span>
-						</a>
-					</li>
-					<li>
-						<a href="https://tailwindui.com/components" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
-							<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">W</span>
-							<span class="truncate">Tailwind Ui</span>
-						</a>
-					</li>
-				</ul>
-			</li>
+			<% if current_user && current_user.name == "paolotax"%>
+				<li>
+					<div class="text-xs font-semibold leading-6 text-gray-200">
+						Utility
+					</div>
+					<ul role="list" class="-mx-2 mt-2 space-y-1">
+						<li>
+							<a href="https://heroicons.com" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">H</span>
+								<span class="truncate">Heroicons</span>
+							</a>
+						</li>
+						<li>
+							<a href="https://tailwindcss.com/docs/installation" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">T</span>
+								<span class="truncate">Tailwind Docs</span>
+							</a>
+						</li>
+						<li>
+							<a href="https://tailwindui.com/components" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">W</span>
+								<span class="truncate">Tailwind Ui</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+			<% end %>
 			<li class="mt-auto">
 				<a href="#" class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-200 hover:bg-gray-700 hover:text-white">
 				<svg class="h-6 w-6 shrink-0 text-gray-200 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
