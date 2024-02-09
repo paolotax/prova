@@ -1,15 +1,11 @@
 class StatsController < ApplicationController
   
   before_action :require_signin
-  before_action :set_stat, only: %i[ show edit update destroy execute ]
+  before_action :set_stat, only: %i[ edit update destroy execute ]
 
   # GET /stats or /stats.json
   def index
     @stats = Stat.all
-  end
-
-  # GET /stats/1 or /stats/1.json
-  def show
   end
 
   # GET /stats/new
@@ -32,7 +28,7 @@ class StatsController < ApplicationController
 
     respond_to do |format|
       if @stat.save
-        format.html { redirect_to stat_url(@stat), notice: "Stat was successfully created." }
+        format.html { redirect_to stats_url, notice: "Stat was successfully created." }
         format.json { render :show, status: :created, location: @stat }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -45,7 +41,7 @@ class StatsController < ApplicationController
   def update
     respond_to do |format|
       if @stat.update(stat_params)
-        format.html { redirect_to stat_url(@stat), notice: "Stat was successfully updated." }
+        format.html { redirect_to stats_url, notice: "Stat was successfully updated." }
         format.json { render :show, status: :ok, location: @stat }
       else
         format.html { render :edit, status: :unprocessable_entity }

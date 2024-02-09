@@ -17,9 +17,9 @@
 
   <td>
     <% if action_name != "show" %>
-      <%= link_to "Show this stat", stat, data: { turbo_frame: "_top" }, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      <%= link_to "Edit this stat", edit_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-      <%= link_to "Execute this stat", execute_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+
+      <%= link_to "modifica", edit_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+      <%= link_to "ESEGUI", execute_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
       
       <hr class="mt-6">
     <% end %>
