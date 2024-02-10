@@ -7,4 +7,12 @@ class Stat < ApplicationRecord
         ActiveRecord::Base.connection.execute(sql)
     end
 
+    def raggruppa
+        if self.raggruppa_per.blank?
+            return []
+        else
+            self.raggruppa_per.split(",")
+        end
+    end
+
 end

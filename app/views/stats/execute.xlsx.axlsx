@@ -1,0 +1,9 @@
+wb = xlsx_package.workbook
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+  sheet.add_row  @result.first.keys.map {|r| r }
+  
+  @result.each do |row|   
+    sheet.add_row row.keys.map {|r| row[r] }
+  end
+end

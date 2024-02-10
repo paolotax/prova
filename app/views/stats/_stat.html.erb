@@ -1,27 +1,25 @@
-<tr id="<%= dom_id stat %>">
-  <td class="my-5">
+<tr id="<%= dom_id stat %>"
+    class="bg-white">
+  <td class="my-5 flex align-center">
+      <%= link_to stat_path(stat), data: { turbo_frame: "_top" }, class: "ml-2 mr-4 rounded-full py-2 px-2 bg-yellow-200 text-yellow-500 border border-yellow-500 inline-block font-sm" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+        </svg>
+      <% end %>
+  </td>
+  <td>
     <%= stat.descrizione %>
   </td>
 
-  <td class="my-5">
-    <%= stat.seleziona_campi %>
-  </td>
-
-  <td class="my-5">
+  <td class="hidden md:table-cell	 my-5">
     <%= stat.raggruppa_per %>
   </td>
 
-  <td class="my-5">
-    <%= stat.ordina_per %>
-  </td>
-
-  <td>
+  <td class="text-center">
     <% if action_name != "show" %>
 
-      <%= link_to "modifica", edit_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-      <%= link_to "ESEGUI", execute_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-      
-      <hr class="mt-6">
+      <%= link_to "modifica", edit_stat_path(stat), data: { turbo_frame: "_top" }, class: "rounded-full py-2 px-5 bg-gray-200 inline-block font-medium" %>
+
     <% end %>
   </td>
 </tr>

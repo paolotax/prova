@@ -1,11 +1,15 @@
 class StatsController < ApplicationController
   
   before_action :require_signin
-  before_action :set_stat, only: %i[ edit update destroy execute ]
+  before_action :set_stat, only: %i[ show edit update destroy execute ]
 
   # GET /stats or /stats.json
   def index
-    @stats = Stat.all
+    @stats = Stat.all.order(:descrizione)
+  end
+
+  # GET /stats/1/show
+  def show
   end
 
   # GET /stats/new
@@ -19,6 +23,10 @@ class StatsController < ApplicationController
 
   def execute
     @result = @stat.execute current_user
+    respond_to do |format|
+      format.html
+      format.xlsx
+    end
   end
 
 

@@ -1,0 +1,28 @@
+
+<div class="sm:flex sm:items-end sm:justify-between my-4">
+    <h2 class="font-bold text-2xl"><%= @stat.descrizione %></h1>
+    <%= link_to "stats", stats_path, class: "rounded-lg py-2 px-2 bg-blue-600 text-white block font-medium" %>
+
+    <%= link_to "Excel", execute_stat_path(@stat, format: :xlsx), class: "rounded-lg py-2 px-2 bg-yellow-200 text-yellow-600 block font-medium" %>
+</div>
+
+
+<%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
+  <div class="flex flex-col space-y-6 mt-10">
+    <% 10.times do %>
+      <div class="animate-pulse flex space-x-4">
+        <%# <!-- Avatar -->
+        <div class="rounded-full bg-gray-300 h-12 w-12"></div> %>
+
+        <!-- Details -->
+        <div class="flex-1 space-y-4 py-1">
+          <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+          <div class="space-y-2">
+            <div class="h-4 bg-gray-300 rounded"></div>
+            <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

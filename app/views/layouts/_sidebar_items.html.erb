@@ -1,9 +1,10 @@
 <li>
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
-	<a href="#" class="bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
-		<%= inline_svg_tag('icon-home.svg') %>                     
-		scagnozz
-	</a>
+	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+		<%= inline_svg_tag('icon-home.svg') %>
+		scagnoz                        
+	<% end %>
+	
 </li>
 <li>
 	<%= link_to appunti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>

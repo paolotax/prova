@@ -1,30 +1,38 @@
-
-<div class="sm:flex sm:items-end sm:justify-between my-4">
-    <h2 class="font-bold text-2xl"><%= @stat.descrizione %></h1>
-    <%= link_to "stats", stats_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
-
-    <%#= link_to "Export CSV", export_csv_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
-</div>
-
-<%= turbo_frame_tag "search_results", loading: :lazy do %>
+<%= turbo_frame_tag "stat_results", loading: :lazy do %>
     
-    
-    <table class="table-auto">
-        <thead>
-            <tr>
-                <% @result.first.keys.each do |header| %>
-                    <th class="px-4 py-2"><%= header %></th>
-                <% end %>
-            </tr>
-        </thead>
-        <tbody>
-            <% @result.each do |r| %>
-                <tr>
-                    <% r.values.each do |value| %>
-                        <td class="border px-4 py-2"><%= value %></td>
+    <div class="w-full h-full overflow-scroll">        
+        <table class="divide-y divide-gray-300">
+            <tbody>                            
+                
+                <% @result.group_by do |c| 
+                        fields = @stat.raggruppa
+                        fields.map { |f| c[f] }
+                    end.each do |group, group_result| %>  
+                    
+                    <tr class="bg-gray-900 text-2xl font-bold text-white ">
+                        <td class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
+                            <%= group.join(" <-> ") %>
+                        </td>
+                    </tr>                              
+
+                    <% group_result.first.keys.each do |header| %>
+                        <% unless @stat.raggruppa.include? header %>
+                            <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"><%= header.humanize %></th>
+                        <% end %> 
+                    <% end %>   
+                    
+                    <% group_result.each do |r| %>
+                        <tr>
+                            <% r.values.each_with_index do |value, index| %>
+                                <% unless @stat.raggruppa.include? r.keys[index] %>                 
+                                    <td class="cell-<%= r.keys[index]%> border px-4 py-2"><%= value %></td>
+                                <% end %>
+                            <% end %>
+                        </tr>
                     <% end %>
-                </tr>
-            <% end %>
-        </tbody>
-    </table>
+                <% end %>
+            
+            </tbody>
+        </table>
+    </div>   
 <% end %>

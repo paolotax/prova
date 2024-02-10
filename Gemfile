@@ -87,3 +87,6 @@ gem "pagy"
 gem "view_component"
 
 gem "inline_svg"
+
+gem 'caxlsx'
+gem 'caxlsx_rails'
