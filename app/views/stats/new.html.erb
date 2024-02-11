@@ -1,7 +1,17 @@
 <div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New stat</h1>
+  <h1 class="font-bold text-3xl">Nuova stat</h1>
 
   <%= render "form", stat: @stat %>
-
-  <%= link_to "Back to stats", stats_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  
+  <div class="inline-block" >
+    <%= link_to stats_path, 
+          class: "ml-6 btn btn-white" do %>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+          </svg>
+          <span class="">Stats...</span>
+      <% end %>
+    </div>
 </div>

@@ -22,13 +22,18 @@
                     <% end %>   
                     
                     <% group_result.each do |r| %>
-                        <tr>
+                        <%= tag.tr class: [
+                                "p-3": true,
+                                "bg-white":   !@miei_editori.include?(r["editore"]),
+                                "bg-yellow-200": @miei_editori.include?(r["editore"])
+                            ] do
+                        %>
                             <% r.values.each_with_index do |value, index| %>
                                 <% unless @stat.raggruppa.include? r.keys[index] %>                 
                                     <td class="cell-<%= r.keys[index]%> border px-4 py-2"><%= value %></td>
                                 <% end %>
                             <% end %>
-                        </tr>
+                        <% end %>
                     <% end %>
                 <% end %>
             
