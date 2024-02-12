@@ -96,6 +96,6 @@ class AppuntiController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def appunto_params
-      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body)
+      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :image)
     end
 end

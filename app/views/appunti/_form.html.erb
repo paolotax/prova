@@ -18,12 +18,17 @@
   <div class="mt-8 text-2xl font-semibold flex flex-col" >
      <p><%= @scuola.DENOMINAZIONESCUOLA %></p>
      <span class="text-sm text-gray-500" ><%= @adozione&.classe_e_sezione %></span>
-     <span class="text-xs font-bold text-yellow-300"><%= @adozione&.titolo %></span>
+     <span class="text-xs text-gray-400"><%= @adozione&.titolo %></span>
   </div>
 
   <div class="my-5">
     <%= form.label :nome, class: "label" %>
     <%= form.text_field :nome, class: "field", autofocus: :true %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :image, class: "label" %>    
+    <%= form.file_field :image, class: "field" %>
   </div>
 
   <div class="my-5">
