@@ -15,7 +15,8 @@
                        
             <div class="flex justify-between border-b-2 border-gray-300">
                 <h2 class="font-semibold">La mia ZONA </h2>
-                <%= tag.div id:"#{dom_id(@user)}-nr-scuole-assegnate" do %>
+                <%= tag.div id:"#{dom_id(@user)}-nr-scuole-assegnate",
+                    class: "text-sm font-semibold pr-4" do %>
                     <%= @user.import_scuole.count %>
                 <% end %>    
             </div>
@@ -68,7 +69,7 @@
         <div class="py-2">
             <div class="flex justify-between border-b-2 border-gray-300">
                 <h2 class="font-semibold">I miei editori </h2>
-                <div id="<%= dom_id(current_user) %>-nr-editori">
+                <div id="<%= dom_id(current_user) %>-nr-editori" class="text-sm font-semibold pr-4">
                     <%= current_user.editori.count %>
                 </div>
             </div>  
@@ -101,8 +102,6 @@
     
     <section class="mt-10">
 
-
-
             <%= turbo_frame_tag :user_scuole, src: user_scuole_path(current_user), loading: :lazy do %>
                 <div class="flex flex-col space-y-6 mt-10">
                     <% 10.times do %>
@@ -122,8 +121,6 @@
                     <% end %>
                 </div>   
             <% end%>
-
-        </div>
 
 
     </section>

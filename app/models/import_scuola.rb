@@ -186,6 +186,19 @@ class ImportScuola < ApplicationRecord
     "https://waze.com/ul?q=66%20Acacia%20Avenue"
   
     [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(" ")
-  
   end
+
+
+  def scuola 
+    self.DENOMINAZIONESCUOLA
+  end
+
+  def citta
+    self.DESCRIZIONECOMUNE
+  end
+
+  def tipo_scuola
+    self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
+  end
+  
 end

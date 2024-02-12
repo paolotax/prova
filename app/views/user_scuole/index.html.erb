@@ -2,8 +2,9 @@
 
         <div class="py-2">
             <div class="flex justify-between border-b-2 border-gray-300">
-                <h2 class="font-semibold">La mie SCUOLE </h2>
-                <%= tag.div id:"#{dom_id(current_user)}-user-scuole" do %>
+                <h2 class="font-semibold">Le mie SCUOLE </h2>
+                <%= tag.div id:"#{dom_id(current_user)}-user-scuole", 
+                    class: "text-sm font-semibold pr-4" do %>
                     <%= current_user.import_scuole.count %>
                 <% end %>    
             </div>
