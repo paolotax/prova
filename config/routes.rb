@@ -29,9 +29,9 @@ Rails.application.routes.draw do
   resource :session, only: [:new, :create, :destroy]
   get "signin" => "sessions#new"
   
-  #resources :user_scuole
-
-  get "users/:id/scuole" => "user_scuole#index", as: "user_scuole"
+  resources :user_scuole, only: [:index, :destroy]
+  #get "users/:id/scuole" => "user_scuole#index", as: "user_scuole"  
+  #delete  "user_scuole/:id", to: "user_scuole#destroy"
   
   resources :import_scuole
   # resources :import_scuole, except: :show

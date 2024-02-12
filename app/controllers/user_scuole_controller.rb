@@ -3,7 +3,7 @@ class UserScuoleController < ApplicationController
 
   # GET /user_scuole or /user_scuole.json
   def index
-    @user_scuole = current_user.user_scuole.includes(:import_scuola)
+    @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
   end
 
   # GET /user_scuole/1 or /user_scuole/1.json
@@ -52,8 +52,9 @@ class UserScuoleController < ApplicationController
     @user_scuola.destroy!
 
     respond_to do |format|
-      format.html { redirect_to user_scuole_url, notice: "User scuola was successfully destroyed." }
+      #format.html { redirect_to appunti_url, notice: "Appunto was successfully destroyed." }
       format.json { head :no_content }
+      format.turbo_stream
     end
   end
 
@@ -65,6 +66,6 @@ class UserScuoleController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_scuola_params
-      params.require(:user_scuola).permit(:import_scuola_id, :user_id)
+      params.require(:user_scuola).permit(:import_scuola_id, :user_id )
     end
 end

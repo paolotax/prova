@@ -1,0 +1,9 @@
+<%= turbo_stream.update "#{dom_id(current_user)}-user-scuole" do %>
+  <%= current_user.import_scuole.count %>
+<% end %>
+
+<%= turbo_stream.update "#{dom_id(current_user)}-nr-scuole-assegnate" do %>
+  <%= current_user.import_scuole.count %>
+<% end %>
+
+<%= turbo_stream.remove @user_scuola %>
