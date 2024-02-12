@@ -1,9 +1,9 @@
 
-<div class="sm:flex sm:items-end sm:justify-between">
+<div class="flex flex-col sm:flex sm:items-end sm:justify-between">
     
-    <h2 class="font-bold text-4xl mt-4 mb-4"><%= @stat.descrizione %></h2>
+    <h2 class="font-bold text-2xl mt-4 mb-4"><%= @stat.descrizione %></h2>
     
-    <div class="flex items-center gap-x-4 pl-4 px-2 my-4">
+    <div class="flex items-end gap-x-4 sm:pl-4 px-2 my-4">
 
         <%= link_to stats_path, 
             class: "btn btn-white" do %>
