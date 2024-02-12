@@ -498,9 +498,8 @@ SELECT DISTINCT
 
     COUNT(1) OVER (PARTITION BY "import_scuole"."REGIONE", "import_adozioni"."EDITORE") dell_editore_in_regione,
     ROUND(((COUNT(1) OVER (PARTITION BY "import_scuole"."REGIONE", "import_adozioni"."EDITORE"))::float
-        / (COUNT(1) OVER (PARTITION BY "import_scuole"."REGIONE")::float) * 100)::numeric, 2) percentuale_editore_in_regione,
-
-RANK() OVER (PARTITION BY "import_scuole"."REGIONE", "import_scuole"."PROVINCIA" ORDER BY "import_scuole"."PROVINCIA", "import_adozioni"."EDITORE")
+        / (COUNT(1) OVER (PARTITION BY "import_scuole"."REGIONE")::float) * 100)::numeric, 2)
+ percentuale_editore_in_regione
 
 FROM "import_scuole"
     INNER JOIN "import_adozioni" ON "import_adozioni"."CODICESCUOLA" = "import_scuole"."CODICESCUOLA"
@@ -518,3 +517,27 @@ ORDER BY
 
 
 
+SELECT DISTINCT regione,
+                provincia,
+                editore,
+                RANK() OVER (PARTITION BY provincia ORDER BY dell_editore_in_provincia DESC),
+                dell_editore_in_provincia,
+                percentuale_editore_in_provincia,
+                percentuale_editore_in_italia,
+                differenza_media_nazionale
+
+FROM view_adozioni144ant_editori
+ORDER BY
+    regione, provincia, RANK() OVER (PARTITION BY provincia ORDER BY dell_editore_in_provincia DESC);
+
+
+
+
+
+
+
+SELECT DISTINCT regione, provincia, editore, in_provincia
+
+FROM view_adozioni144ant_editori
+ORDER BY
+    regione, provincia, in_provincia DESC
