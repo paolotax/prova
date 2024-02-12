@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_07_181830) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_12_065036) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -277,4 +277,136 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_07_181830) do
     WHERE ((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = ANY ((ARRAY['SCUOLA PRIMARIA'::character varying, 'SCUOLA PRIMARIA NON STATALE'::character varying, 'ISTITUTO COMPRENSIVO'::character varying])::text[]))
     ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO"))::double precision) * (100)::double precision))::numeric, 2)) DESC;
   SQL
+  create_view "aggrega_adozioni", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
+      import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      substr((import_adozioni."TIPOGRADOSCUOLA")::text, 1, 1) AS grado,
+      import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" AS tipo,
+      import_adozioni."ANNOCORSO" AS classe,
+      import_adozioni."DISCIPLINA" AS disciplina,
+      import_adozioni."CODICEISBN" AS isbn,
+      import_adozioni."TITOLO" AS titolo,
+      import_adozioni."EDITORE" AS editore,
+      import_adozioni."PREZZO" AS prezzo,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA") AS titolo_in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."REGIONE") AS titolo_in_regione,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN") AS titolo_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA") AS mercato_in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."REGIONE") AS mercato_in_regione,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA") AS mercato_in_italia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA"))::double precision / (count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_provincia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN"))::double precision / (count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_italia
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."TITOLO";
+  SQL
+  create_view "prima_quarta_quarta_scientifico", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
+      import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      substr((import_adozioni."TIPOGRADOSCUOLA")::text, 1, 1) AS grado,
+      import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" AS tipo,
+      import_adozioni."ANNOCORSO" AS classe,
+      import_adozioni."DISCIPLINA" AS disciplina,
+      import_adozioni."CODICEISBN" AS isbn,
+      import_adozioni."TITOLO" AS titolo,
+      import_adozioni."EDITORE" AS editore,
+      import_adozioni."PREZZO" AS prezzo,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA") AS titolo_in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."REGIONE") AS titolo_in_regione,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN") AS titolo_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA") AS mercato_in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."REGIONE") AS mercato_in_regione,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA") AS mercato_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE", import_scuole."PROVINCIA") AS editore_in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE", import_scuole."REGIONE") AS editore_in_regione,
+      count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE") AS editore_in_italia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA"))::double precision / (count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_provincia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN"))::double precision / (count(1) OVER (PARTITION BY import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_italia
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    WHERE (((import_adozioni."TIPOGRADOSCUOLA")::text = 'EE'::text) AND ((import_adozioni."ANNOCORSO")::text = ANY ((ARRAY['1'::character varying, '4'::character varying])::text[])) AND ((import_adozioni."DISCIPLINA")::text = ANY ((ARRAY['IL LIBRO DELLA PRIMA CLASSE'::character varying, 'SUSSIDIARIO DEI LINGUAGGI'::character varying, 'SUSSIDIARIO DELLE DISCIPLINE'::character varying, 'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)'::character varying])::text[])))
+    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."TITOLO";
+  SQL
+  create_view "classi_2023", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
+      import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_scuole."CODICESCUOLA" AS codice_ministeriale,
+      import_adozioni."ANNOCORSO" AS classe,
+      import_adozioni."SEZIONEANNO" AS sezione,
+      import_adozioni."COMBINAZIONE" AS combinazione,
+      '2023'::text AS anno
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE";
+  SQL
+  add_index "classi_2023", ["codice_ministeriale", "classe", "sezione", "combinazione"], name: "classi_2023_primary_index", unique: true
+  add_index "classi_2023", ["codice_ministeriale"], name: "classi_2023_codice_ministeriale_index"
+  add_index "classi_2023", ["provincia"], name: "classi_2023_provincia_index"
+
+  create_view "ant_144_editori", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_adozioni."EDITORE" AS editore,
+      '144 antropologico'::text AS mercato,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA") AS in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE") AS dell_editore_in_provincia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_provincia,
+      (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) - round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2)) AS differenza_media_nazionale,
+      count(1) OVER (PARTITION BY import_adozioni."EDITORE") AS dell_editore_in_italia,
+      round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE") AS dell_editore_in_regione,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_regione
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    WHERE (((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = ANY ((ARRAY['SCUOLA PRIMARIA'::character varying, 'SCUOLA PRIMARIA NON STATALE'::character varying, 'ISTITUTO COMPRENSIVO'::character varying])::text[])) AND ((import_adozioni."ANNOCORSO")::text = ANY ((ARRAY['1'::character varying, '4'::character varying])::text[])) AND ((import_adozioni."DISCIPLINA")::text = ANY ((ARRAY['IL LIBRO DELLA PRIMA CLASSE'::character varying, 'SUSSIDIARIO DEI LINGUAGGI'::character varying, 'SUSSIDIARIO DELLE DISCIPLINE'::character varying, 'SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)'::character varying])::text[])))
+    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2)) DESC;
+  SQL
+  add_index "ant_144_editori", ["editore"], name: "index_ant_144_editori_on_editore"
+  add_index "ant_144_editori", ["provincia"], name: "index_ant_144_editori_on_provincia"
+
+  create_view "view_adozioni_144ant_editori", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_adozioni."EDITORE" AS editore,
+      '144 antropologico'::text AS mercato,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA") AS in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE") AS dell_editore_in_provincia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_provincia,
+      (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) - round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2)) AS differenza_media_nazionale,
+      count(1) OVER (PARTITION BY import_adozioni."EDITORE") AS dell_editore_in_italia,
+      round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE") AS dell_editore_in_regione,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_regione
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    WHERE (((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = ANY (ARRAY[('SCUOLA PRIMARIA'::character varying)::text, ('SCUOLA PRIMARIA NON STATALE'::character varying)::text, ('ISTITUTO COMPRENSIVO'::character varying)::text])) AND ((import_adozioni."ANNOCORSO")::text = ANY (ARRAY[('1'::character varying)::text, ('4'::character varying)::text])) AND ((import_adozioni."DISCIPLINA")::text = ANY (ARRAY[('IL LIBRO DELLA PRIMA CLASSE'::character varying)::text, ('SUSSIDIARIO DEI LINGUAGGI'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)'::character varying)::text])))
+    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2)) DESC;
+  SQL
+  add_index "view_adozioni_144ant_editori", ["editore"], name: "index_view_adozioni_144ant_editori_on_editore"
+  add_index "view_adozioni_144ant_editori", ["provincia", "editore"], name: "index_view_adozioni_144ant_editori_on_provincia_and_editore", unique: true
+
+  create_view "view_adozioni144ant_editori", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_adozioni."EDITORE" AS editore,
+      '144 antropologico'::text AS mercato,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA") AS in_provincia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE") AS dell_editore_in_provincia,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_provincia,
+      (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) - round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2)) AS differenza_media_nazionale,
+      count(1) OVER (PARTITION BY import_adozioni."EDITORE") AS dell_editore_in_italia,
+      round(((((count(1) OVER (PARTITION BY import_adozioni."EDITORE"))::double precision / (count(1) OVER ())::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_italia,
+      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE") AS dell_editore_in_regione,
+      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_editore_in_regione
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    WHERE (((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = ANY (ARRAY[('SCUOLA PRIMARIA'::character varying)::text, ('SCUOLA PRIMARIA NON STATALE'::character varying)::text, ('ISTITUTO COMPRENSIVO'::character varying)::text])) AND ((import_adozioni."ANNOCORSO")::text = ANY (ARRAY[('1'::character varying)::text, ('4'::character varying)::text])) AND ((import_adozioni."DISCIPLINA")::text = ANY (ARRAY[('IL LIBRO DELLA PRIMA CLASSE'::character varying)::text, ('SUSSIDIARIO DEI LINGUAGGI'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)'::character varying)::text])))
+    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2)) DESC;
+  SQL
+  add_index "view_adozioni144ant_editori", ["editore"], name: "index_view_adozioni144ant_editori_on_editore"
+  add_index "view_adozioni144ant_editori", ["provincia", "editore"], name: "index_view_adozioni144ant_editori_on_provincia_and_editore", unique: true
+
 end
