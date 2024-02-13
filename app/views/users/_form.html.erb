@@ -31,6 +31,14 @@
 				%>
 			</div>
 		</div>
+
+		<div>
+			<%= f.label :navigator, class: "label" %>
+			<div class="mt-2">
+				<%= f.select :navigator, ["apple", "google", "waze"], {}, {class: "field"} %>
+			</div>
+		</div>
+
 		<div>
 			<%= f.label :password, class: "label" %>
 			<div class="mt-2">					

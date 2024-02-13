@@ -139,7 +139,7 @@ class UsersController < ApplicationController
   
     def user_params
       params.require(:user).
-        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado)
+        permit(:name, :email, :partita_iva, :password, :password_confirmation, :provincia, :tipo, :grado, :navigator)
     end
   
     def set_user

@@ -8,7 +8,7 @@
 		</svg>
 	<% end %>
 	
-	<%= link_to go_to_scuola_path(import_scuola, "apple"),
+	<%= link_to go_to_scuola_path(import_scuola, current_user.navigator),
 				target: "_blank",
 				data: { turbo_frame: :modal, action: "click->dialog#open"},
 				class: "absolute right-2 top-11 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
