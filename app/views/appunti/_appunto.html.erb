@@ -34,8 +34,10 @@
 		<p class="font-medium text-sm italic mt-2 text-gray-400">
 			<%= appunto.body %>
 		</p>
-
-		<%= image_tag( appunto.image, style: "width: 200px height: auto" )%>
+		
+		<% if appunto.image.persisted? %>
+			<%= image_tag( appunto.image, style: "width: 200px height: auto" )%>
+		<% end %>
 
 	</div>
 
