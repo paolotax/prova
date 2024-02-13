@@ -1,42 +1,54 @@
 <%= turbo_frame_tag "stat_results", loading: :lazy do %>
-    
+
+    <% raggruppamento = @result.group_by do |c| 
+                            fields = @stat.raggruppa
+                            fields.map { |f| c[f] } %>
+                        <% end %>
+
     <div class="w-full h-full overflow-scroll" 
         data-controller="indice-tabella">        
-        
+
+        <div class="bg-gray-900 text-2xl font-bold text-white ">
+            <div class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
+                <%= select_tag "group_index_select", options_for_select(raggruppamento.keys.map { |r| [r.join(" -> "), r.join.gsub(" ", "-").downcase] }), 
+                    data: { action: "change->indice-tabella#changeGroup" },
+                    class: "field" %>
+            </div>
+        </div> 
+
         <table class="divide-y divide-gray-300">
             <tbody>                            
                 
-                <% raggruppamento = @result.group_by do |c| 
-                                        fields = @stat.raggruppa
-                                        fields.map { |f| c[f] } %>
-                                    <% end %>
 
-                <tr class="bg-gray-900 text-2xl font-bold text-white ">
-                    <td class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
-                        <%= select_tag "group_index_select", options_for_select(raggruppamento.keys.map { |r| [r.join(" <-> "), r.join("-")] }), class: "field" %>
-                    </td>
-                </tr> 
+
+
 
                 <% raggruppamento.each do |group, group_result| %>  
 
-                    <tr name="<%= group.join.gsub(" ", "").downcase %>" class="bg-gray-900 text-2xl font-bold text-white ">
+                    <%# titolo del gruppo %>
+                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>" 
+                        class="bg-gray-900 text-2xl font-bold text-white ">
                         <td  class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
-                            <%= group.join(" <-> ") %>
+                            <%= group.join(" -> ") %>
                         </td>
                     </tr>                              
-
-                    <% group_result.first.keys.each do |header| %>
-                        <% unless @stat.raggruppa.include? header %>
-                            <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"><%= header.humanize %></th>
-                        <% end %> 
-                    <% end %>   
+                        
+                    <%# header del gruppo %>
+                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>">
+                        <% group_result.first.keys.each do |header| %>
+                            <% unless @stat.raggruppa.include? header %>
+                                <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"><%= header.humanize %></th>
+                            <% end %> 
+                        <% end %>   
+                    </tr>
                     
+                    <%# righe del gruppo  %>
                     <% group_result.each do |r| %>
                         <%= tag.tr class: [
                                 "p-3": true,
                                 "bg-white":   !@miei_editori.include?(r["editore"]),
                                 "bg-yellow-200": @miei_editori.include?(r["editore"])
-                            ] do
+                            ], data: {group:  group.join.gsub(" ", "-").downcase } do
                         %>
                             <% r.values.each_with_index do |value, index| %>
                                 <% unless @stat.raggruppa.include? r.keys[index] %>                 
@@ -45,8 +57,7 @@
                             <% end %>
                         <% end %>
                     <% end %>
-                <% end %>
-            
+                <% end %>              
             </tbody>
         </table>
     </div>   
