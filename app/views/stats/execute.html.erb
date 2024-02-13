@@ -1,16 +1,26 @@
 <%= turbo_frame_tag "stat_results", loading: :lazy do %>
     
-    <div class="w-full h-full overflow-scroll">        
+    <div class="w-full h-full overflow-scroll" 
+        data-controller="indice-tabella">        
+        
         <table class="divide-y divide-gray-300">
             <tbody>                            
                 
-                <% @result.group_by do |c| 
-                        fields = @stat.raggruppa
-                        fields.map { |f| c[f] }
-                    end.each do |group, group_result| %>  
-                    
-                    <tr class="bg-gray-900 text-2xl font-bold text-white ">
-                        <td class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
+                <% raggruppamento = @result.group_by do |c| 
+                                        fields = @stat.raggruppa
+                                        fields.map { |f| c[f] } %>
+                                    <% end %>
+
+                <tr class="bg-gray-900 text-2xl font-bold text-white ">
+                    <td class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
+                        <%= select_tag "group_index_select", options_for_select(raggruppamento.keys.map { |r| [r.join(" <-> "), r.join("-")] }), class: "field" %>
+                    </td>
+                </tr> 
+
+                <% raggruppamento.each do |group, group_result| %>  
+
+                    <tr name="<%= group.join.gsub(" ", "").downcase %>" class="bg-gray-900 text-2xl font-bold text-white ">
+                        <td  class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
                             <%= group.join(" <-> ") %>
                         </td>
                     </tr>                              
