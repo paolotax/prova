@@ -5,12 +5,14 @@
     
 	<h1 class="font-bold text-4xl">Stats</h1>
     
-	<%= link_to new_stat_path, class: "w-16 btn btn-indigo" do %>
-		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-		</svg>
+	<% if current_user.admin? %>
+		<%= link_to new_stat_path, class: "w-16 btn btn-indigo" do %>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+			</svg>
 
-	 	 <span>Stats</span>
+			<span>Stats</span>
+		<% end %>
 	<% end %>
   </div>
 </div>
@@ -32,11 +34,10 @@
 				<tr>
 					<th scope="col" class=""></th>
 					<th scope="col" class="">descrizione</th>
-
-					<th scope="col" class="hidden md:table-cell">raggruppa per</th>
-
-          			<th scope="col" class="text-center">...</th>
-          
+					<th scope="col" class="hidden md:table-cell">raggruppa per...</th>
+					<% if current_user.admin? %>
+          				<th scope="col" class="text-center"></th>
+					<% end %>
 				</tr>
 			</thead>
 			

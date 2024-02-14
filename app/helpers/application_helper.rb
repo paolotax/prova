@@ -80,39 +80,36 @@ module ApplicationHelper
     raw doc
   end
 
-# stack overflow 70960161 examle
+  # stack overflow 70960161 examle
 
-#   # in the contracts_controller.rb
-#   def destroy
-#     @contract = Contract.find(params[:id]).destroy
-  
-#     if session[:previous_pages].present? && request.original_url == session[:previous_pages][1]
-#       session[:previous_pages] = session[:previous_pages].first(1)
-#     end
-#     flash[:notice] = 'Contract was successfully deleted.'
-  
-#     redirect_to action: 'index'
-#   end
-
-
-
-
-def toggle_button_tag( checked = true, label = "", html_id = nil ) 
-  
-  #             TailwindUI
-  # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
-  # span_css    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-
-  if checked
-    button_css = "bg-gray-900"
-    span_css   = "translate-x-5"
-  else
-    button_css = "bg-gray-200"
-    span_css   = "translate-x-0"
-  end
+  #   # in the contracts_controller.rb
+  #   def destroy
+  #     @contract = Contract.find(params[:id]).destroy
     
-  render partial: "layouts/toggle_button", locals: { html_id: html_id, checked: checked, label: label, button_css: button_css, span_css: span_css }
+  #     if session[:previous_pages].present? && request.original_url == session[:previous_pages][1]
+  #       session[:previous_pages] = session[:previous_pages].first(1)
+  #     end
+  #     flash[:notice] = 'Contract was successfully deleted.'
+    
+  #     redirect_to action: 'index'
+  #   end
 
-end
+  def toggle_button_tag( checked = true, label = "", html_id = nil ) 
+    
+    #             TailwindUI
+    # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
+    # span_css    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+
+    if checked
+      button_css = "bg-gray-900"
+      span_css   = "translate-x-5"
+    else
+      button_css = "bg-gray-200"
+      span_css   = "translate-x-0"
+    end
+      
+    render partial: "layouts/toggle_button", locals: { html_id: html_id, checked: checked, label: label, button_css: button_css, span_css: span_css }
+
+  end
 
 end

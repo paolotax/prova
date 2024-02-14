@@ -35,5 +35,8 @@ class User < ApplicationRecord
     import_adozioni.where(editore: editori.collect{|e| e.editore})
   end
 
+  def admin?
+    self.name == "paolotax"
+  end
 
 end
