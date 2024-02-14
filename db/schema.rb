@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_13_054648) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_14_155443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,7 +84,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_13_054648) do
     t.string "CONSIGLIATO"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-
+    t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
+    t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
+    t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
     t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
   end
 
