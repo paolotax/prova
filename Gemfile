@@ -90,3 +90,5 @@ gem "inline_svg"
 
 gem 'caxlsx'
 gem 'caxlsx_rails'
+
+gem "aws-sdk-s3", require: false
