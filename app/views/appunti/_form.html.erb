@@ -1,74 +1,93 @@
 <%= form_with(model: appunto, class: "max-h-screen w-full max-w-lg relative") do |form| %>
-  <% if appunto.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(appunto.errors.count, "error") %> prohibited this appunto from being saved:</h2>
+	<% if appunto.errors.any? %>
+		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+			<h2><%= pluralize(appunto.errors.count, "error") %> prohibited this appunto from being saved:</h2>
 
-      <ul>
-        <% appunto.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+			<ul>
+				<% appunto.errors.each do |error| %>
+					<li><%= error.full_message %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
 
-  <%= form.hidden_field :user_id, value: current_user.id %>
-  <%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
-  <%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
-  
-  <div class="mt-8 text-2xl font-semibold flex flex-col" >
-     <p><%= @scuola.DENOMINAZIONESCUOLA %></p>
-     <span class="text-sm text-gray-500" ><%= @adozione&.classe_e_sezione %></span>
-     <span class="text-xs text-gray-400"><%= @adozione&.titolo %></span>
-  </div>
+	<%= form.hidden_field :user_id, value: current_user.id %>
+	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
+	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
+	
+	<div class="mt-8 text-2xl font-semibold flex flex-col" >
+		 <p><%= @scuola.DENOMINAZIONESCUOLA %></p>
+		 <span class="text-sm text-gray-500" ><%= @adozione&.classe_e_sezione %></span>
+		 <span class="text-xs text-gray-400"><%= @adozione&.titolo %></span>
+	</div>
 
-  <div class="my-5">
-    <%= form.label :nome, class: "label" %>
-    <%= form.text_field :nome, class: "field", autofocus: :true %>
-  </div>
+	<div class="my-5">
+		<%= form.label :nome, class: "label" %>
+		<%= form.text_field :nome, class: "field", autofocus: :true %>
+	</div>
 
-  <div class="my-5">
+	<div class="my-5">
 
-    <%= form.text_area :body, rows: 5, class: "field" %>
+		<%= form.text_area :body, rows: 5, class: "field" %>
 
-  </div>  
-    
-
-
-    <div class="col-span-full">
-          <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-            <div class="text-center">
-              <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
-              </svg>
-              <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                <label for="appunto_image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                  <span>Carica un file</span>
-                  <input id="appunto_image" type="file" name="appunto[image]"  class="sr-only">
-                  <%= form.file_field :image, class: "field", class: "hidden" %>
-                </label>
-                <p class="pl-1">oppure trascinalo qui</p>
-              </div>
-              <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF fino a 10MB</p>
-            </div>
-          </div>
-        </div>
+	</div>  
+		
 
 
+	<div class="col-span-full">
+		<div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+			<div class="text-center">
+				<svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+				</svg>
+				<div class="mt-4 flex text-sm leading-6 text-gray-600">
+					<label for="appunto_image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+						<span>Carica un file</span>
+						<input id="appunto_image" type="file" name="appunto[image]"  class="sr-only">
+						<%= form.file_field :image, class: "field", class: "hidden" %>
+					</label>
+					<p class="pl-1">oppure trascinalo qui</p>
+				</div>
+				<p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF fino a 10MB</p>
+			</div>
+		</div>
+	</div>
 
-  <div class="inline flex justify-end">
-    <%= form.submit "Salva", 
-        class: "inline-flex w-full justify-center rounded-md bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-    %>
-  </div>
+	<div class="mt-5 flex">
+		<%= button_to  do %>
+			<div class="btn btn-indigo">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+				</svg>
+				<span class="">Salva</span>
+			</div>
+		<% end %>
+
+		<div class="flex justify-between">
+			<div class="ml-6 inline-block">
+				<%= link_to appunti_path, data: { action: "dialog#close" }, class: "btn btn-white" do  %>
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+					</svg>
+					<span class="">Appunti</span>
+				<% end %>
+			</div>
+
+			<% if action_name != "new" %>
+				<div class="ml-6 inline-block">
+					<%= link_to appunto_path(@appunto), 
+								data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
+								class: "btn btn-red" do %> 
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> 
+							<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /> 
+						</svg> 
+						<span class="">Elimina</span> 
+					<% end %>
+				</div> 
+			<% end %>
+		</div>
+	</div>
+
 <% end %>
 
-<div class="flex flex-col sm:flex-row-reverse sm:justify-between mt-8">
-  
-  <%= link_to "<- appunti", appunti_path, data: { action: "dialog#close" }, class: "w-full sm:w-auto rounded-lg px-3 py-2  bg-gray-100 inline-block text-sm  font-medium text-center" %>
-
-  <% if action_name != "new" %>
-      <%= button_to "Elimina appunto", appunto_path(appunto), method: :delete, class: "w-full sm:w-auto mt-5 sm:mt-0 rounded-lg py-3 px-5 bg-gray-100 text-red-400 inline-block text-sm font-medium" %>
-  <% end %>
-
-</div>
-      
+			
