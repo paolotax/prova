@@ -116,12 +116,16 @@ GEM
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
+    ffi (1.16.3)
     globalid (1.2.1)
       activesupport (>= 6.1)
     highline (2.0.3)
     htmlentities (4.3.4)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    image_processing (1.12.2)
+      mini_magick (>= 4.9.5, < 5)
+      ruby-vips (>= 2.0.17, < 3)
     importmap-rails (1.2.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -147,6 +151,7 @@ GEM
     marcel (1.0.2)
     matrix (0.4.2)
     method_source (1.0.0)
+    mini_magick (4.12.0)
     mini_mime (1.1.5)
     minitest (5.20.0)
     monetize (1.12.0)
@@ -241,6 +246,8 @@ GEM
     reline (0.4.1)
       io-console (~> 0.5)
     rexml (3.2.6)
+    ruby-vips (2.2.0)
+      ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     scenic (1.7.0)
@@ -312,6 +319,7 @@ DEPENDENCIES
   caxlsx_rails
   debug
   highline (~> 2.0.3)
+  image_processing (~> 1.2)
   importmap-rails
   inline_svg
   jbuilder

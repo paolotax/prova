@@ -11,3 +11,6 @@ import "controllers"
 // window.addEventListener("turbo:frame-load", (e) => {
 //     console.log("turbo:frame-load", e)
 // })
+
+import "trix"
+import "@rails/actiontext"
