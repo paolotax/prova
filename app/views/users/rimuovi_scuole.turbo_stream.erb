@@ -1,5 +1,11 @@
 <%= turbo_stream.update "#{dom_id(current_user)}-nr-scuole-assegnate" do %>
-  <%= current_user.import_scuole.count %>
+    <%= current_user.import_scuole.count %>
 <% end %>
 
 <%= turbo_stream.remove @provincia_tipo %>
+
+<%= turbo_stream.replace "user_scuole" do %>
+    <%= turbo_frame_tag :user_scuole, src: user_scuole_path(current_user), loading: :lazy do %>
+        <%= render 'shared/lazy_loading' %> 
+    <% end%>
+<% end %>
