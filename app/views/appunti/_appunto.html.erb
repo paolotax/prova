@@ -6,39 +6,31 @@
 			<%= appunto.nome %>      
 		</p>
 
-		<div class="flex items-center gap-3 mt-2">
-			<%= tag.div class: [
-					"inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset": true,
-					"bg-gray-50   text-gray-600   ring-gray-500/10":   appunto.import_adozione&.anno == "8",
-					"bg-yellow-50 text-yellow-800 ring-yellow-600/20": appunto.import_adozione&.anno == "2",
-					"bg-green-50  text-green-700  ring-green-600/20":  appunto.import_adozione&.anno == "6",
-					"bg-blue-50   text-blue-700   ring-blue-700/10":   appunto.import_adozione&.anno == "1",
-					"bg-red-50    text-red-700    ring-red-600/10":    appunto.import_adozione&.anno == "3",
-					"bg-indigo-50 text-indigo-700 ring-indigo-700/10": appunto.import_adozione&.anno == "4",
-					"bg-purple-50 text-purple-700 ring-purple-700/10": appunto.import_adozione&.anno == "7",
-					"bg-pink-50   text-pink-700   ring-pink-700/10":   appunto.import_adozione&.anno == "5"
-
-				] do %>
-				<%= appunto.import_adozione&.classe_e_sezione %>
-			<% end %>
-			<div class="flex flex-col">
-				<p class="font-medium text-sm italic text-gray-600">  
-						<%= appunto.import_scuola.DENOMINAZIONESCUOLA.titleize %>
-				</p>
-				<p class="font-medium text-xs italic text-gray-400">  
-						<%= appunto.import_adozione&.TITOLO&.titleize %>
-				</p>			
-			</div>
-		</div>
+		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
 
 		<p class="font-medium text-sm italic mt-2 text-gray-400">
 			<%= appunto.body %>
 		</p>
-		
+
+		<%=  appunto.content %>
+
 		<% if appunto.image.persisted? %>
-			<%= image_tag( appunto.image, style: "width: 200px height: auto" )%>
+			<%= link_to image_tag(appunto.image_as_thumbnail), appunto.image %>
 		<% end %>
 
+		<% if appunto.attachments.attached? %>
+			<% appunto.attachments.each_with_index do |attachment, index| %>
+				<% if attachment.image? %>
+					<%= image_tag(appunto.appunto_attachment(index)) %>
+				<% elsif attachment.video? %>
+					<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
+				<% elsif attachment.audio? %>
+					<%= audio_tag(url_for(attachment), controls: '') %>
+				<% else %>
+					<%= link_to attachment.filename, url_for(attachment), style:"text-decoration: none; color: #fff" %>
+				<% end %>
+			<% end %>
+		<% end %>		
 	</div>
 
 	<% if action_name != "show" %>

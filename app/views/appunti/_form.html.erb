@@ -15,38 +15,38 @@
 	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 	
-	<div class="mt-8 text-2xl font-semibold flex flex-col" >
-		 <p><%= @scuola.DENOMINAZIONESCUOLA %></p>
-		 <span class="text-sm text-gray-500" ><%= @adozione&.classe_e_sezione %></span>
-		 <span class="text-xs text-gray-400"><%= @adozione&.titolo %></span>
-	</div>
 
 	<div class="my-5">
-		<%= form.label :nome, class: "label" %>
+		<%= form.label :nome, "Titolo", class: "label" %>
 		<%= form.text_field :nome, class: "field", autofocus: :true %>
 	</div>
 
+	<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+
 	<div class="my-5">
-		<%= form.rich_text_area :content, rows: 5, class: "field" %>
+		<% unless appunto.body.blank? %>
+			<%= form.text_area :body, rows: 5, class: "field" %>
+		<% else %>
+			<%= form.rich_text_area :content, class: "field" %>
+		<% end %>
 	</div>  
 		
 
 
-	<div class="col-span-full">
-		<div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-			<div class="text-center">
+	<div class="">
+		<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
+			<div class="text-center flex justify-left gap-x-4 items-center">
 				<svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
 				</svg>
-				<div class="mt-4 flex text-sm leading-6 text-gray-600">
+				<div class="flex text-sm  text-gray-600">
 					<label for="appunto_image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
 						<span>Carica un file</span>
 						<input id="appunto_image" type="file" name="appunto[image]"  class="sr-only">
 						<%= form.file_field :image, class: "field", class: "hidden" %>
 					</label>
-					<p class="pl-1">oppure trascinalo qui</p>
 				</div>
-				<p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF fino a 10MB</p>
+				<p class="text-xs  text-gray-600">PNG, JPG, GIF fino a 10MB</p>
 			</div>
 		</div>
 	</div>

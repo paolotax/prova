@@ -11,6 +11,9 @@
 #
 class User < ApplicationRecord
 
+  has_one_attached :avatar
+  has_rich_text :card
+
   has_secure_password
 
   validates :name,  presence: true, uniqueness: { case_sensitive: false }
