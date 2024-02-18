@@ -8,7 +8,12 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :appunti
+  resources :appunti do
+    member do
+      delete 'remove_attachment'
+      delete 'remove_image'
+    end
+  end
   
   
   get "zone", to: 'zone#index'

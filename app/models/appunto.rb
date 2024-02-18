@@ -8,7 +8,7 @@ class Appunto < ApplicationRecord
   has_rich_text :content
 
   def image_as_thumbnail
-    return unless image.content_type.in?(%w[image/jpeg image/png])
+    return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed
   end
 
@@ -17,9 +17,9 @@ class Appunto < ApplicationRecord
     return unless attachments.attached?
 
     if target.image?
-      target.variant(resize_to_limit: [150, 150]).processed
+      target.variant(resize_to_limit: [200, 200]).processed
     elsif target.video?
-      target.variant(resize_to_limit: [150, 150]).processed
+      target.variant(resize_to_limit: [200, 200]).processed
     end
   end
 

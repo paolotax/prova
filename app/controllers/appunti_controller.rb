@@ -86,6 +86,19 @@ class AppuntiController < ApplicationController
     end
   end
 
+
+  def remove_attachment
+    @attachment = ActiveStorage::Attachment.find(params[:id])
+    @attachment.purge_later
+    redirect_back(fallback_location: request.referer)
+  end
+
+  def remove_image
+    @appunto = Appunto.find(params[:id])
+    @appunto.image.purge_later
+    redirect_back(fallback_location: request.referer)
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_appunto
@@ -96,6 +109,6 @@ class AppuntiController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def appunto_params
-      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :image, :content, files: [])
+      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :image, :content, attachments: [])
     end
 end

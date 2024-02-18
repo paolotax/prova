@@ -1,4 +1,4 @@
-<div id="<%= dom_id appunto %>" class="relative pl-3 pr-2 flex flex-row justify-between items-center bg-white align-end border-b border-slate-200">
+<div id="<%= dom_id appunto %>" class="relative pl-3 pr-2 flex flex-col bg-white align-end border-b border-slate-200">
 
 	<div class="pl-4 py-4">
 
@@ -15,7 +15,10 @@
 		<%=  appunto.content %>
 
 		<% if appunto.image.persisted? %>
-			<%= link_to image_tag(appunto.image_as_thumbnail), appunto.image %>
+			<div class="flex -ml-5">
+				<%= link_to image_tag(appunto.image_as_thumbnail), appunto.image, class: "m-auto" %>
+				<%= link_to "Remove", remove_image_appunto_path(appunto.id), data: { turbo_method: :delete } %>
+			</div>
 		<% end %>
 
 		<% if appunto.attachments.attached? %>
@@ -29,6 +32,7 @@
 				<% else %>
 					<%= link_to attachment.filename, url_for(attachment), style:"text-decoration: none; color: #fff" %>
 				<% end %>
+				<%= link_to "elimina", remove_attachment_appunto_path(attachment), data: { turbo_method: :delete } %>
 			<% end %>
 		<% end %>		
 	</div>

@@ -34,7 +34,7 @@ export default class extends Controller {
       element.src = reader.result;
       element.setAttribute("href", reader.result);
       element.setAttribute("target", "_blank");
-      element.classList.add("attachment-preview");
+      element.classList.add("appunto-preview");
 
       document.getElementById("attachment-previews").appendChild(element);
     };
@@ -58,6 +58,8 @@ export default class extends Controller {
     let cancelFunction = (e) => this.removePreview(e);
     switch (file.type) {
       case "image/jpeg":
+      case "image/jpg":
+      case "image/webp":
       case "image/png":
       case "image/gif":
         element = this.createImageElement(cancelFunction, reader);
@@ -188,9 +190,9 @@ export default class extends Controller {
    * @param {Event} e - The event object
    */
   removePreview(event) {
-    const target = event.target.parentNode.closest(".attachment-preview");
+    const target = event.target.parentNode.closest(".appunto-preview");
     const dataTransfer = new DataTransfer();
-    let fileInput = document.getElementById("message_attachments");
+    let fileInput = document.getElementById("appunto_attachments");
     let files = fileInput.files;
     let filesArray = Array.from(files);
 
