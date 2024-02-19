@@ -5,14 +5,19 @@
         <h2 class="mt-2 text-indigo-900 hover:text-indigo-600"><%= mail_to(@user.email) %></h2>
         <p class="mt-2 text-sm mb-2"><%= @user.partita_iva %></p>
         
-        <%= form_with url: modifica_navigatore_user_path(current_user) do|f| %>
+        <%= form_with url: modifica_navigatore_user_path(current_user), 
+                data: { controller: "tax-dropdown", 
+                action: "change->tax-dropdown#submit" }  do|f| %>
             <hr/> 
             <div class="flex items-center justify-start gap-x-4 py-2">
                 <%= f.label :navigator, "Navigatore preferito", class: "label" %>
                 <div>
-                    <%= f.select :navigator, options_for_select(["apple", "google", "waze"], @user.navigator), {prompt: "scegli il navigatore"}, class: "field" %>
+                    <%= f.select :navigator, 
+                            options_for_select(["apple", "google", "waze"], @user.navigator), 
+                            { prompt: "scegli il navigatore" }, 
+                            { class: "field", data: { tax_dropdown_target: "navigator" } } %>
                 </div>
-                <%= f.submit "Modifica" %>
+                <%= f.submit "Modifica", class:"hidden" %>
             </div>
             <hr/> 
         <% end %>   

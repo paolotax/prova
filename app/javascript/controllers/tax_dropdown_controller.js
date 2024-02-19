@@ -3,11 +3,17 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="tax-dropdown"
 export default class extends Controller {
 
-  static targets = ["provincia", "regione", "grado", "tipo", "gruppo", "editore"];
+  static targets = ["provincia", "regione", "grado", "tipo", "gruppo", "editore", "navigator"];
 
   submit() {
     
     this.element.requestSubmit();
+
+    // if (this.hasNavigatorTarget) {
+    //   let hregione     = document.getElementById("hregione");
+    //   let regione = this.regioneTarget.options[this.regioneTarget.selectedIndex].text;
+    //   hregione.value = regione;
+    // }
     
     if (this.hasRegioneTarget) {
       let hregione     = document.getElementById("hregione");
