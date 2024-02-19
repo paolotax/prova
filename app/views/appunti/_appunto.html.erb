@@ -14,12 +14,23 @@
 
 		<%=  appunto.content %>
 
-		<% if appunto.image.persisted? %>
+		<hr/>
+		
+		<% if appunto.image.attached? %>
 			<div class="flex -ml-5">
-				<%= link_to image_tag(appunto.image_as_thumbnail), appunto.image, class: "m-auto" %>
-				<%= link_to "Remove", remove_image_appunto_path(appunto.id), data: { turbo_method: :delete } %>
+				<% if appunto.image.representable? %>
+					<%= image_tag appunto.image.representation(resize_to_limit: [300, 300]), class: "m-auto" %>
+				<% else %>
+					<%= link_to rails_blob_path(appunto.image, disposition: "attachment") do %>
+						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "m-auto" %>
+						<%= appunto.image.filename %>
+					<% end %>
+				<% end %>
 			</div>
+			<%= link_to "Remove", remove_image_appunto_path(appunto.id), data: { turbo_method: :delete } %>
 		<% end %>
+		
+
 
 		<% if appunto.attachments.attached? %>
 			<% appunto.attachments.each_with_index do |attachment, index| %>
@@ -30,7 +41,10 @@
 				<% elsif attachment.audio? %>
 					<%= audio_tag(url_for(attachment), controls: '') %>
 				<% else %>
-					<%= link_to attachment.filename, url_for(attachment), style:"text-decoration: none; color: #fff" %>
+					<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
+						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "m-auto" %>
+						<%= attachment.filename %>
+					<% end %>
 				<% end %>
 				<%= link_to "elimina", remove_attachment_appunto_path(attachment), data: { turbo_method: :delete } %>
 			<% end %>

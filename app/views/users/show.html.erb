@@ -3,13 +3,21 @@
     <section class="mt-8">
         <h1 class="text-2xl font-semibold"><%= @user.name %></h1>
         <h2 class="mt-2 text-indigo-900 hover:text-indigo-600"><%= mail_to(@user.email) %></h2>
-        <p class="mt-2 text-sm"><%= @user.partita_iva %></p>
-        <p class="mt-2 text-sm forn-semibold"><%= @user.navigator %></p>
-        <span class="mt-5 text-xs ">Member Since <%= @user.created_at.strftime("%B %Y") %></span>
+        <p class="mt-2 text-sm mb-2"><%= @user.partita_iva %></p>
+        
+        <%= form_with url: modifica_navigatore_user_path(current_user) do|f| %>
+            <hr/> 
+            <div class="flex items-center justify-start gap-x-4 py-2">
+                <%= f.label :navigator, "Navigatore preferito", class: "label" %>
+                <div>
+                    <%= f.select :navigator, options_for_select(["apple", "google", "waze"], @user.navigator), {prompt: "scegli il navigatore"}, class: "field" %>
+                </div>
+                <%= f.submit "Modifica" %>
+            </div>
+            <hr/> 
+        <% end %>   
+        <span class="block mt-5 text-xs text-right">Member Since <%= @user.created_at.strftime("%B %Y") %></span>
     
-    
-        <%= link_to "Modifica Utente", edit_user_path(@user), class: "mt-8 mb-8 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
-
     </section>
 
     <!-- sezione La mia Zona -->

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: %i[ show edit update destroy assegna_scuole rimuovi_scuole]
+  before_action :set_user, only: %i[ show edit update destroy assegna_scuole rimuovi_scuole modifica_navigatore]
    
   def index
     @users = User.all
@@ -24,27 +24,10 @@ class UsersController < ApplicationController
     #   FancySelect::Item.new(item, item, nil)
     # end
 
-    # @provincia_items = Zona.order([:area_geografica, :regione, :provincia]).pluck(:provincia).uniq.map do |item|
-    #   FancySelect::Item.new(item, item, nil)
-    # end
-
-    # @editore_items = Editore.order(:editore).pluck(:editore).uniq.map do |item|
-    #   FancySelect::Item.new(item, item, nil)
-    # end
-
-    # @grado_items = TipoScuola.pluck(:grado).uniq.map do |item|
-    #   FancySelect::Item.new(item, item, nil)
-    # end
-   
-    # @tipo_items = TipoScuola.pluck(:tipo).uniq.map do |item|
-    #   FancySelect::Item.new(item, item, nil)
-    # end    
-
   end
 
   def new
     @user = User.new
-
   end
 
   def edit
@@ -79,6 +62,10 @@ class UsersController < ApplicationController
       alert: "Utente eliminato!"
   end
 
+  def modifica_navigatore
+    @user.update(navigator: params[:navigator])
+    redirect_to @user, notice: "Navigatore modificato!"
+  end
 
   def assegna_scuole
     

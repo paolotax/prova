@@ -23,7 +23,8 @@ Rails.application.routes.draw do
   resources :mandati
 
   resources :users do
-    member do 
+    member do
+      post  'modifica_navigatore' 
       post 'assegna_scuole'
       delete 'rimuovi_scuole'
     end
