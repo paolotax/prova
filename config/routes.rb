@@ -1,4 +1,12 @@
+# first, setup dashboard authentication
+require "sidekiq/web"
+Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+  username == "admin" && password == "password"
+end
+
+# then mount it
 Rails.application.routes.draw do
+  mount Sidekiq::Web => "/sidekiq"
   
   
   devise_for :users

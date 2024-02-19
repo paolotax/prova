@@ -24,7 +24,20 @@ module Prova
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.i18n.default_locale = :it
+    
+    # [RailsNotes UI Addition]
+    # Default mailer hostname for Pay gem and your app
+    #
+    config.action_mailer.default_url_options = { host: "scagnozz.com" }
+
+    # [RailsNotes UI Addition]
+    # Use Sidekiq for jobs
+    #
+    config.active_job.queue_adapter = :sidekiq
+
+    # Tax Addition]
+    # Set the default locale to something other than :en
+    config.i18n.default_locale = :en
 
   end
 end

@@ -301,9 +301,9 @@ GEM
     rake (13.1.0)
     rdoc (6.6.0)
       psych (>= 4.0.0)
-    redis (5.0.8)
+    redis (5.1.0)
       redis-client (>= 0.17.0)
-    redis-client (0.18.0)
+    redis-client (0.20.0)
       connection_pool
     regexp_parser (2.8.2)
     reline (0.4.1)
@@ -323,6 +323,11 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sidekiq (7.2.2)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.19.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -408,9 +413,10 @@ DEPENDENCIES
   prawn (~> 2.4)
   puma (>= 5.0)
   rails (~> 7.1.2)
-  redis (>= 4.0.1)
+  redis (~> 5.1)
   scenic (~> 1.7)
   selenium-webdriver
+  sidekiq (~> 7.2)
   sprockets-rails
   stimulus-rails
   tailwindcss-rails
