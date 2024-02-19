@@ -27,13 +27,13 @@
 		<% unless appunto.body.blank? %>
 			<%= form.text_area :body, rows: 5, class: "field" %>
 		<% else %>
-			<%= form.rich_text_area :content, class: "field" %>
+			<%= form.rich_text_area :content, rows: 5, class: "field" %>
 		<% end %>
 	</div>  
 		
 
 
-	<div class="">
+	<%# <div class="">
 		<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
 			<div class="text-center flex justify-left gap-x-4 items-center">
 				<svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -42,40 +42,38 @@
 				<div class="flex text-sm  text-gray-600">
 					<label for="appunto_image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
 						<span>Carica un file</span>
-						<input id="appunto_image" type="file" name="appunto[image]"  class="sr-only">
-						<%= form.file_field :image, class: "field hidden" %>
-					</label>
+						<input id="appunto_image" type="file" name="appunto[image]"  class="sr-only"> %>
+						<%#= form.file_field :image, class: "field hidden" %>
+					<%# </label>
 				</div>
 				<p class="text-xs  text-gray-600">PNG, JPG, GIF fino a 10MB</p>
 			</div>
 		</div>
-	</div>
+	</div> %>
 	
-
-	<%= form.label :attachments, "Upload Images" %> <br />
     <% if appunto.attachments.attached? %>
       <% appunto.attachments.each do |image| %>
         <%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
-        <%= image_tag(image, height: 100) %>
-        <br />
       <% end %>
+	  <%= appunto.attachments.size %> files allegati
+	  <br/>
     <% end %>
     <%= form.file_field :attachments, multiple: true %>
 
 
-    <div class="image-upload">
+    <%# <div class="image-upload">
         <label for="appunto_attachments">
            <i class="bi bi-plus-circle upload-button text-black">+</i>
-        </label>
-		<% appunto.attachments.each do |file| %>
- 			 <%= form.hidden_field :attachments, multiple: true, value: file.signed_id %>
-		<% end %>
-		<%= form.file_field(:attachments, multiple: true) %>
-    </div>
+        </label> %>
+		<%# appunto.attachments.each do |file| %>
+ 			 <%#= form.hidden_field :attachments, multiple: true, value: file.signed_id %>
+		<%# end %>
+		<%#= form.file_field(:attachments, multiple: true) %>
+    <%# </div>
 	<div id="attachment-previews" 
 		data-controller="appunto-preview"
       	data-action="appunto-preview#preview">
-    </div>
+    </div> %>
 
 	<div class="mt-5 flex">
 		<%= button_to  do %>

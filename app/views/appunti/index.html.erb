@@ -9,14 +9,14 @@
 	</div>
 
 	<div class="py-2">
-		<%= link_to("< indietro", :back, class:"btn") %>
+		<%= link_to("< indietro", :back, class:"btn btn-blue") %>
 	</div>
 </header>
 
 
 <%= turbo_frame_tag "search_results" do %>
 	<div class="-mx-4 mt-8 flow-root sm:mx-0">
-    <%= render @appunti %>
+    	<%= render @appunti %>
 	</div>
 <% end %>
 
