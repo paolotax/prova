@@ -1,6 +1,6 @@
 class AppuntiController < ApplicationController
   
-  before_action :require_signin
+  before_action :authenticate_user!
 
   before_action :set_appunto, only: %i[ show edit update destroy ]
 

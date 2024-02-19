@@ -86,7 +86,7 @@
                             Il mio profilo
                         <% end %>
                                       
-                        <%= link_to "Esci", session_path, data: { turbo_method: :delete },
+                        <%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
                                 class: "block px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"
                         %>
 
@@ -96,7 +96,7 @@
         <% else %>
             <div class="flex flex-1 justify-between">
                 <div></div>
-                <%= link_to "Accedi o registrati", signin_path, class: "px-3 py-1 text-sm font-semibold leading-6 text-gray-900 hover:text-gray-500" %>
+                <%= link_to "Accedi o registrati", new_user_session_path, class: "px-3 py-1 text-sm font-semibold leading-6 text-gray-900 hover:text-gray-500" %>
             </div>
         <% end %>
 

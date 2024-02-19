@@ -1,6 +1,6 @@
 class ImportScuoleController < ApplicationController
   
-  before_action :require_signin
+  before_action :authenticate_user!
   before_action :set_import_scuola, only: %i[ show edit update destroy ]
 
   # GET /import_scuole or /import_scuole.json
