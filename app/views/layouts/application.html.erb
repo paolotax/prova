@@ -40,12 +40,15 @@
 	
 			<main class="px-2 py-4 sm:px-6 lg:px-8">		
 					
-					<% if notice.present? %>
-						<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-					<% end %>
-					
-					<!-- Your content -->
-					<%= yield %>
+				<% if notice.present? %>
+					<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+				<% end %>
+				<% if alert.present? %>
+					<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= alert %></p>
+				<% end %>
+
+				<!-- Your content -->
+				<%= yield %>
 				
 			</main>
 

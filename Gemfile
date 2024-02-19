@@ -93,4 +93,7 @@ gem 'caxlsx_rails'
 
 gem "aws-sdk-s3", require: false
 
-gem "devise", "~> 4.8"
+gem "devise", "~> 4.9"
+gem "omniauth-rails_csrf_protection", "~> 1.0"
+gem "omniauth-google-oauth2", "~> 1.1"
+gem "omniauth-github", "~> 2.0"

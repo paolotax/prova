@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   
   
   
@@ -30,10 +31,10 @@ Rails.application.routes.draw do
     end
   end
 
-  get "signup" => "users#new"
-
-  resource :session, only: [:new, :create, :destroy]
-  get "signin" => "sessions#new"
+  # TOLTE PER DEVISE
+  # get "signup" => "users#new"
+  # resource :session, only: [:new, :create, :destroy]
+  # get "signin" => "sessions#new"
   
   resources :user_scuole, only: [:index, :destroy]
   #get "users/:id/scuole" => "user_scuole#index", as: "user_scuole"  
