@@ -7,6 +7,12 @@
 		<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 			<div class="space-y-6">
 				<div>
+                	<%= f.label :email_or_username, "Email o nome utente", class: "label" %>
+                	<div class= "mt-2">
+                    	<%= f.text_field :email_or_username, autofocus: true, required: true, class: "field" %>
+                	</div> 
+            	</div>
+				<div>
 					<%= f.label :email, "Email", class: "label" %>
 					<div class= "mt-2">
 						<%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "field" %>

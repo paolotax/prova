@@ -2,12 +2,18 @@
 #
 # Table name: users
 #
-#  id          :bigint           not null, primary key
-#  name        :string
-#  email       :string
-#  partita_iva :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id                     :bigint           not null, primary key
+#  name                   :string
+#  email                  :string
+#  partita_iva            :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  password_digest        :string
+#  navigator              :string
+#  encrypted_password     :string           default(""), not null
+#  reset_password_token   :string
+#  reset_password_sent_at :datetime
+#  remember_created_at    :datetime
 #
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
@@ -42,6 +48,14 @@ class User < ApplicationRecord
 
   def admin?
     self.name == "paolotax"
+  end
+
+  def avatar_thumbnail
+    if avatar.attached?
+      avatar.variant(resize: "150x150!").processed
+    else
+      "/default_avatar.jpg"
+    end
   end
 
 end
