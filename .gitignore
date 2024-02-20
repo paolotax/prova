@@ -38,6 +38,7 @@
 !/app/assets/builds/.keep
 
 
+dump.rdb
 
 .DS_Store
 .idea/

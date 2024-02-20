@@ -1,0 +1,53 @@
+<div class="px-6 py-12 lg:px-8 sm:mx-auto sm:w-full sm:max-w-sm">
+
+	<h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Accedi al tuo account</h2>
+
+	<div class="mt-10">
+
+		<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+			<div class="space-y-6">
+				<div>
+					<%= f.label :email, "Email", class: "label" %>
+					<div class= "mt-2">
+						<%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "field" %>
+					</div> 
+				</div>
+
+				<div>
+					<div class="flex items-center justify-between">
+						<label for="password" class="label">Password</label>
+						<div class="text-sm">
+							<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+  								<%= link_to "Password dimenticata?", new_password_path(resource_name), 
+									tabindex: "-1", class: "font-semibold text-gray-800 hover:text-gray-500" %>
+							<% end %>
+						</div>
+					</div>
+					
+					<div class="mt-2">
+						<%= f.password_field :password, required: true, class: "field" %>
+					</div>
+
+					<% if devise_mapping.rememberable? %>
+						<div class="flex items-center gap-x-2 mt-2">
+							<%= f.check_box :remember_me %>
+							<%= f.label :remember_me, "Ricordati di me", class: "label" %>
+						</div>
+					<% end %>
+				</div>
+
+				<div>
+					<%= f.submit "Accedi", class: "flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
+				</div>
+			</div>
+		<% end %>
+
+		<% if devise_mapping.registerable? && controller_name != 'registrations' %>
+			<p class="mt-10 text-center text-sm text-gray-500">
+            	Non sei ancora registrato?
+				<%= link_to "Registrati qui!", new_registration_path(resource_name), class: "font-semibold leading-6 text-gray-800 hover:text-gray-500" %>
+        	</p>
+		<% end %>
+
+	</div>
+</div>

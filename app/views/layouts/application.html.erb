@@ -39,12 +39,13 @@
 			<%= render "layouts/main_menu" %>
 	
 			<main class="px-2 py-4 sm:px-6 lg:px-8">		
-					
+
+
 				<% if notice.present? %>
-					<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+					<div class="flex mx-auto py-2 px-3 text-center bg-green-50 mb-5 text-green-500 font-medium rounded-lg" id="notice"><%= notice %></div>
 				<% end %>
 				<% if alert.present? %>
-					<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= alert %></p>
+					<div class="flex mx-auto py-2 px-3 text-center bg-yellow-50 mb-5 text-yellow-500 font-medium rounded-lg" id="notice"><%= alert %></div>
 				<% end %>
 
 				<!-- Your content -->

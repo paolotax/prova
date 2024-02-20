@@ -37,7 +37,7 @@ module Prova
 
     # Tax Addition]
     # Set the default locale to something other than :en
-    config.i18n.default_locale = :en
+    config.i18n.default_locale = :it
 
   end
 end

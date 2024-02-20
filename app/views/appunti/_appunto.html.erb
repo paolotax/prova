@@ -17,10 +17,10 @@
 		<% if appunto.image.attached? %>
 			<div class="flex -ml-5">
 				<% if appunto.image.representable? %>
-					<%= image_tag appunto.image.representation(resize_to_limit: [300, 300]), class: "m-auto" %>
+					<%= image_tag appunto.image.representation(resize_to_limit: [300, 300]), class: "mx-auto" %>
 				<% else %>
 					<%= link_to rails_blob_path(appunto.image, disposition: "attachment") do %>
-						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "m-auto" %>
+						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
 						<%= appunto.image.filename %>
 					<% end %>
 				<% end %>
@@ -35,17 +35,17 @@
 			<% appunto.attachments.each_with_index do |attachment, index| %>
 				<hr/>
 				<% if attachment.image? %>
-					<%= image_tag(attachment.representation(resize_to_limit: [300, 300]), class: "m-auto") %>
+					<%= image_tag(attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto") %>
 				<% elsif attachment.video? %>
 					<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
 				<% elsif attachment.audio? %>
 					<%= audio_tag(url_for(attachment), controls: '') %>
 				<% else %>
 					<% if attachment.representable? %>
-						<%= image_tag attachment.representation(resize_to_limit: [300, 300]), class: "m-auto" %>
+						<%= image_tag attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto" %>
 					<% else %>
 						<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
-							<%= image_tag "icons8-document-64.png", alt: "Download file", class: "m-auto" %>
+							<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
 						<% end%>
 					<% end %>
 				<% end %>

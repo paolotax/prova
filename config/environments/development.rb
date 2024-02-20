@@ -1,11 +1,12 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  
-  
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-  
   # Settings specified here will take precedence over those in config/application.rb.
+  #
+  # [RailsNotes UI Addition]
+  # Add your tunnel hostname here to allow it to connect to your app.
+  # For example, if you're using ngrok, you might have this —
+  #config.hosts << "enabled-vulture-notably.ngrok-free.app"
 
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
@@ -77,4 +78,8 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.delivery_method = :letter_opener
 end

@@ -1,5 +1,6 @@
 class ImportAdozioniController < ApplicationController
   
+  before_action :authenticate_user!
   before_action :set_import_adozione, only: %i[ show edit update destroy ]
 
   # GET /import_adozioni or /import_adozioni.json
@@ -29,8 +30,7 @@ class ImportAdozioniController < ApplicationController
     end
     
     #@import_adozioni =  @import_adozioni.limit(200)
-
-
+    
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
     @conteggio_adozioni = @import_adozioni.count;

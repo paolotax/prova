@@ -136,6 +136,8 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise-i18n (1.12.0)
+      devise (>= 4.9.0)
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
@@ -171,6 +173,10 @@ GEM
     jmespath (1.6.2)
     jwt (2.8.0)
       base64
+    launchy (2.5.2)
+      addressable (~> 2.8)
+    letter_opener (1.9.0)
+      launchy (>= 2.2, < 3)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -398,11 +404,13 @@ DEPENDENCIES
   caxlsx_rails
   debug
   devise (~> 4.9)
+  devise-i18n
   highline (~> 2.0.3)
   image_processing (~> 1.2)
   importmap-rails
   inline_svg
   jbuilder
+  letter_opener
   money-rails (~> 1.15)
   omniauth-github (~> 2.0)
   omniauth-google-oauth2 (~> 1.1)
