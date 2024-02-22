@@ -12,7 +12,15 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
   
   
-  devise_for :users
+
+  resources :users, only: [:index, :show] do
+    member do
+      post  'modifica_navigatore' 
+      post 'assegna_scuole'
+      delete 'rimuovi_scuole'
+    end
+  end
+  devise_for :users, controllers: { confirmations: 'confirmations' }
   
   
   
@@ -36,13 +44,7 @@ Rails.application.routes.draw do
   
   resources :mandati
 
-  resources :users do
-    member do
-      post  'modifica_navigatore' 
-      post 'assegna_scuole'
-      delete 'rimuovi_scuole'
-    end
-  end
+
 
   # TOLTE PER DEVISE
   # get "signup" => "users#new"
