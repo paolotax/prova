@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
   
   
+  devise_for :users, controllers: { confirmations: 'confirmations' }
 
   resources :users, only: [:index, :show] do
     member do
@@ -20,7 +21,6 @@ Rails.application.routes.draw do
       delete 'rimuovi_scuole'
     end
   end
-  devise_for :users, controllers: { confirmations: 'confirmations' }
   
   
   

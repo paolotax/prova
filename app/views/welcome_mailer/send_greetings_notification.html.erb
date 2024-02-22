@@ -1,14 +1,16 @@
 <%= render Email::Bg::Container.new do |email| %>
   <% email.with_masthead_text(text: "ScagnoZZ", href: "http://ScagnoZZ.com") %>
   <%= render Email::Heading.new(
-    text: "Benvenuto!",
+    text: "Grazie per esserti registrato!",
     size: "30px",
     align: "center",
     margin: "20px auto 30px auto"
   ) %>
   <%= render Email::Divider.new(color: Email::Colors::RED_500, thickness: "4px") %>
-  <%= render Email::Text.new(text: "Grazie per esserti registrato!") %>
-  <%= render Email::Text.new(text: " Two key updates this month — I released two new sets of templates, and updated a few components to fix bugs, and add new parameters.") %>
+  <%= render Email::Text.new do %>
+      Grazie <b><%= @user.name %></b> per esserti registrato a ScagnoZZ! Siamo entusiasti di averti a bordo.
+  <% end %>
+  <%= render Email::Text.new(text: "ScagnoZZ stà muovendo i suoi primi passi. ") %>
   <%# Section 1 %>
   <%= render Email::Heading.new(text: "New templates", margin: "48px auto 16px auto") %>
   <%# By passing a block to ::Text, we can use the HTML <b> tag for bold text %>

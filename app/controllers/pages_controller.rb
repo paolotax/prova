@@ -1,7 +1,7 @@
 class PagesController < ApplicationController
 
     def index 
-        redis = Redis.new(host: "redis", port: 6379)
+        redis = Redis.new(host: "localhost", port: 6379)
         redis.incr "page_hits"
         @page_hits = redis.get "page_hits"
         #@page_hits = 2345
