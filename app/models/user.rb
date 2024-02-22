@@ -36,6 +36,14 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_rich_text :card
 
+  enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
+  after_initialize :set_default_role, :if => :new_record?
+  
+    def set_default_role
+      self.role ||= :scagnozzo
+    end
+
+
   #validates :name,  presence: true, uniqueness: { case_sensitive: false }
   #validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
   #validates :partita_iva, format: { with: /\A\d{11}\z/ }
@@ -56,10 +64,6 @@ class User < ApplicationRecord
   
   def mie_adozioni
     import_adozioni.where(editore: editori.collect{|e| e.editore})
-  end
-
-  def admin?
-    self.name == "paolotax"
   end
 
   def avatar_thumbnail
