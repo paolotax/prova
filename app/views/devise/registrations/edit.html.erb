@@ -1,58 +1,78 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="px-6 py-12 lg:px-8 sm:mx-auto sm:w-full sm:max-w-sm">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-	<%= render "devise/shared/error_messages", resource: resource %>
+	<h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+		Modifica Utente
+	</h2>
 
-	<div class="space-y-6">
-		<div>
-			<%= f.label :email, "Email", class: "label" %>
-			<div class= "mt-2">
-				<%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "field" %>
-			</div> 
-		</div>
+	<div class="mt-10">
 
-		<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-			<div>In attesa di conferma: <%= resource.unconfirmed_email %></div>
+		<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+			<%= render "devise/shared/error_messages", resource: resource %>
+
+			<div class="space-y-6">
+				<div>
+					<%= f.label :name, "Nome utente", class: "label" %>
+					<div class= "mt-2">
+						<%= f.text_field :name, autofocus: true, required: true, class: "field" %>
+					</div> 
+				</div>
+
+				<div>
+					<%= f.label :email, "Email", class: "label" %>
+					<div class= "mt-2">
+						<%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "field" %>
+					</div> 
+				</div>
+
+				<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+					<div>In attesa di conferma: <%= resource.unconfirmed_email %></div>
+				<% end %>
+
+				<div>
+					<div class="flex items-center justify-between">
+						<label for="password" class="label">Nuova password</label>
+						<% if @minimum_password_length %>
+							<em class="text-xs">(minimo <%= @minimum_password_length %> caratteri)</em>
+						<% end %>
+					</div>
+					
+					<div class="mt-2">
+						<%= f.password_field :password, class: "field" %>
+					</div>
+				</div>
+
+
+
+				<div>
+					<%= f.label :password_confirmation, "Conferma nuova password", class: "label" %>
+					<div class= "mt-2">
+						<%= f.password_field :password_confirmation, autocomplete: "new-password", class: "field" %>
+					</div>
+				</div>
+
+				<div>
+					<%= f.label :current_password, "Password corrente", class: "label" %> 
+					<i class="text-xs">(inserisci la solita password per salvare le modifiche)</i>
+					<div class= "mt-2">
+						<%= f.password_field :current_password, autocomplete: "current-password", class: "field" %>
+					</div>
+				</div>
+
+				<div>
+					<%= f.submit "Salva modifiche", class: "flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
+				</div>
+
+			</div>
 		<% end %>
 
-		<div>
-			<div class="flex items-center justify-between">
-				<label for="password" class="label">Password</label>
-				<% if @minimum_password_length %>
-					<em class="text-xs">(minimo <%= @minimum_password_length %> caratteri)</em>
-				<% end %>
-			</div>
-			
-			<div class="mt-2">
-				<%= f.password_field :password, required: true, class: "field" %>
-			</div>
+		<div class="mt-10  flex items-center space-x-4">
+			<p class="text-right text-sm text-gray-500">
+            	ScagnoZZ non ti piace? 
+			</p>
+			<%= button_to "Elimina account", registration_path(resource_name), 
+					data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
+					class: "text-sm font-semibold leading-6 text-gray-800 hover:text-gray-500" 
+			%>
 		</div>
-
-
-
-		<div>
-			<%= f.label :password_confirmation, "Conferma la password", class: "label" %>
-			<div class= "mt-2">
-				<%= f.password_field :password_confirmation, required: true, autocomplete: "new-password", class: "field" %>
-			</div>
-		</div>
-
-		<div>
-			<%= f.label :current_password %> <i>(devi inserire la password corrente per poterla modificare)</i>
-			<div class= "mt-2">
-				<%= f.password_field :current_password, autocomplete: "current-password", class: "field" %>
-			</div>
-		</div>
-
-		<div>
-			<%= f.submit "Salva modifiche", class: "flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
-		</div>
-
 	</div>
-<% end %>
-
-<h3>Elimina questo accountt</h3>
-
-<div>ScagnoZZ non ti piace? <%= button_to "Elimina questo account", registration_path(resource_name), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete %></div>
-
-<%= link_to "Indietro", :back %>
+</div>

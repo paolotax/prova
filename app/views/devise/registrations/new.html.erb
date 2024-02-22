@@ -10,9 +10,16 @@
 			<%= render "devise/shared/error_messages", resource: resource %>
 			<div class="space-y-6">
 				<div>
+					<%= f.label :name, "Nome utente", class: "label" %>
+					<div class= "mt-2">
+						<%= f.text_field :name, autofocus: true, required: true, class: "field" %>
+					</div> 
+				</div>
+				
+				<div>
 					<%= f.label :email, "Email", class: "label" %>
 					<div class= "mt-2">
-						<%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "field" %>
+						<%= f.email_field :email, required: true, autocomplete: "email", class: "field" %>
 					</div> 
 				</div>
 
@@ -23,7 +30,7 @@
 							<em class="text-xs">(minimo <%= @minimum_password_length %> caratteri)</em>
 						<% end %>
 					</div>
-					
+
 					<div class="mt-2">
 						<%= f.password_field :password, required: true, class: "field" %>
 					</div>
@@ -41,7 +48,6 @@
 				</div>
 			</div>
 		<% end %>
-
 		<%- if controller_name != 'sessions' %>
 			<p class="mt-10 text-center text-sm text-gray-500">
             	Sei già registrato?
