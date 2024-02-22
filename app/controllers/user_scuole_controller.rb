@@ -3,7 +3,9 @@ class UserScuoleController < ApplicationController
 
   # GET /user_scuole or /user_scuole.json
   def index
-    @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
+   # @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
+    @user_scuole = current_user.user_scuole.search params[:q]
+
   end
 
   # GET /user_scuole/1 or /user_scuole/1.json
@@ -66,6 +68,6 @@ class UserScuoleController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_scuola_params
-      params.require(:user_scuola).permit(:import_scuola_id, :user_id )
+      params.require(:user_scuola).permit(:import_scuola_id, :user_id, :q )
     end
 end

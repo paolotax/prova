@@ -7,6 +7,7 @@ class AppuntiController < ApplicationController
   # GET /appunti or /appunti.json
   def index
     @appunti = current_user.appunti.order(updated_at: :desc)
+    @appunti.search params[:q]
   end
 
   # GET /appunti/1 or /appunti/1.json

@@ -23,6 +23,12 @@ class Appunto < ApplicationRecord
   has_many_attached :attachments
   has_rich_text :content
 
+  scope :search, ->(q) do 
+     includes(:import_scuola)
+     .where("nome ILIKE ? or import_scuole.DENOMINAZIONESCUOLA ILIKE ? or import_scuole.DESCRIZIONECOMUNE ILIKE ? ", 
+     "%#{q}%", "%#{q}%", "%#{q}%") 
+  end
+
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed

@@ -150,6 +150,10 @@ GEM
       activesupport (>= 6.1)
     hashie (5.0.0)
     highline (2.0.3)
+    hotwire_combobox (0.1.32)
+      rails (>= 7.0.7.2)
+      stimulus-rails (>= 1.2)
+      turbo-rails (>= 1.2)
     htmlentities (4.3.4)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
@@ -406,6 +410,7 @@ DEPENDENCIES
   devise (~> 4.9)
   devise-i18n
   highline (~> 2.0.3)
+  hotwire_combobox
   image_processing (~> 1.2)
   importmap-rails
   inline_svg
