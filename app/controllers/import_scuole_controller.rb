@@ -29,6 +29,10 @@ class ImportScuoleController < ApplicationController
 
   end
 
+  def search_scuole
+    @scuole = current_user.import_scuole.search params[:q]
+  end
+
   # GET /import_scuole/1 or /import_scuole/1.json
   def show
     @miei_editori = current_user.editori.collect{|e| e.editore}

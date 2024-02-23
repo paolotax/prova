@@ -22,6 +22,33 @@
 
 @layer components {
 
+  .youtube {
+    .hw-combobox {
+      @apply sm:block sm:w-full z-10;
+    }
+    .hw-combobox__input {
+      @apply  sm:block sm:w-full rounded-full w-80;
+    }
+    .hw-combobox__handle {
+      @apply right-3;
+    }
+    .hw-combobox__listbox {
+      @apply rounded-2xl;
+    }
+    .hw-combobox__option {
+      @apply px-4 py-2;
+    }
+    /* Optionally... */
+    --hw-handle-image: url("data:image/svg+xml;charset=utf-8,/* encoded magnifying glass svg */");
+  }
+
+  .label {
+    @apply block text-sm font-medium leading-6 text-gray-900;
+  }
+
+  .field {
+    @apply block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6;
+  }
   .btn {
     @apply flex flex-col items-center py-2 px-3 text-sm text-center font-semibold rounded-md transition duration-150 ease-in-out shadow-md cursor-pointer;
   }
@@ -194,13 +221,7 @@
     @apply border-blue-600 text-blue-600;
   }
 
-  .label {
-    @apply block text-sm font-medium leading-6 text-gray-900;
-  }
 
-  .field {
-    @apply block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6;
-  }
 }
 
 

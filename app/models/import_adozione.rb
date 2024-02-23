@@ -34,6 +34,15 @@ class ImportAdozione < ApplicationRecord
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
 
+  pg_search_scope :search_combobox,
+                        against: [:ANNOCORSO, :SEZIONEANNO, :TITOLO, :EDITORE, :DISCIPLINA],
+                        associated_against: {
+                          import_scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
+                        },
+                        using: {
+                          tsearch: { any_word: false, prefix: true }
+                        }
+
   pg_search_scope :search_all_word, 
                         against: search_fields,
                         associated_against: {
@@ -69,11 +78,11 @@ class ImportAdozione < ApplicationRecord
   end
 
   def scuola
-    self.import_scuola.DENOMINAZIONESCUOLA
+    self.import_scuola.DENOMINAZIONESCUOLA.titleize
   end
 
   def citta 
-    self.import_scuola.DESCRIZIONECOMUNE
+    ApplicationController.helpers.titleize_con_apostrofi( self.import_scuola.DESCRIZIONECOMUNE )
   end
  
   def anno
@@ -129,6 +138,9 @@ class ImportAdozione < ApplicationRecord
     self.CONSIGLIATO
   end
 
-
+  def to_combobox_display
+    
+    "#{self.scuola} #{self.citta} - #{self.classe_e_sezione} - #{self.TITOLO.titleize} #{self.EDITORE}"
+  end
 
 end

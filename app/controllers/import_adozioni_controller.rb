@@ -6,40 +6,35 @@ class ImportAdozioniController < ApplicationController
   # GET /import_adozioni or /import_adozioni.json
   def index
 
-    @miei_editori = current_user.editori.collect{|e| e.editore}
-
-    @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
+    if params[:q].present?
+      @import_adozioni = current_user.import_adozioni.includes(:import_scuola).search_combobox params[:q]    
     
-    @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"
+    else
 
-    @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
+      @miei_editori = current_user.editori.collect{|e| e.editore}
+      @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
+      @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"
+      @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
 
-
-    if params[:search].present?      
- 
-      if params[:search_query] == "all"
-        @import_adozioni = @import_adozioni.search_all_word(params[:search])
-      else
-        @import_adozioni = @import_adozioni.search_any_word(params[:search])
+      if params[:search].present?      
+  
+        if params[:search_query] == "all"
+          @import_adozioni = @import_adozioni.search_all_word(params[:search])
+        else
+          @import_adozioni = @import_adozioni.search_any_word(params[:search])
+        end
       end
+      
+      
+      @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
-      if params[:raggruppa_per].present?
-        #@import_adozioni = @import_adozioni.raggruppa_per(params[:raggruppa_per])
-        @grouped = @import_adozioni.group_by { |g| [g.CODICESCUOLA, g.CODICEISBN, g.ANNOCORSO, g.COMBINAZIONE] }
-      end      
+      @conteggio_adozioni = @import_adozioni.count;
+      @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
+      @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
+      @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
+
+      @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="top"')
     end
-    
-    #@import_adozioni =  @import_adozioni.limit(200)
-    
-    @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
-
-    @conteggio_adozioni = @import_adozioni.count;
-    @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
-    @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
-    @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
-
-
-    @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="top"')
   end
 
   # GET /import_adozioni/1 or /import_adozioni/1.json

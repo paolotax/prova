@@ -83,7 +83,7 @@ class ImportScuola < ApplicationRecord
   scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
   def to_s  
-    self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE.titleize
+    titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
 
   def adozioni 
@@ -199,6 +199,12 @@ class ImportScuola < ApplicationRecord
 
   def tipo_scuola
     self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
+  end
+
+  def to_combobox_display
+    ApplicationController.helpers.titleize_con_apostrofi(
+      self.DENOMINAZIONESCUOLA + " -> " + self.DESCRIZIONECOMUNE
+    )
   end
   
 end

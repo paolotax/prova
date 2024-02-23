@@ -6,8 +6,6 @@ const application = Application.start()
 application.debug = false
 window.Stimulus   = application
 
-//  Modal, 
-
 // Import and register all TailwindCSS Components or just the ones you need
 import { Alert, Autosave, ColorPreview, Dropdown, Tabs, Popover, Toggle, Slideover } from "tailwindcss-stimulus-components"
 application.register('alert', Alert)
