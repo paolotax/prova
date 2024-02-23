@@ -44,6 +44,10 @@ module ApplicationHelper
       ""
     end
   end
+
+  def titleize_con_apostrofi(stringa)
+    stringa.titleize.gsub("'e", "'E").gsub("'i", "'I").gsub("'a", "'A").gsub("'o", "'O").gsub("'u", "'U")
+  end
   
   def go_to_scuola_path(scuola, provider = 'waze')
     if provider == 'waze'
