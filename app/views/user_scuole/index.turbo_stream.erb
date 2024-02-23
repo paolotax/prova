@@ -1,7 +1,0 @@
-<%#= async_combobox_options @user_scuole,
-      for_id: "search", for_id: "user-scuole-container",
-      render_in: { partial: "user_scuole/_scuola" } %>
-
-
-<%= async_combobox_options  @user_scuole, for_id: "user-scuole-container" %>
-<%= turbo_stream.update "user-scuole-container", partial: "user_scuole/user_scuola", collection: @user_scuole %>
