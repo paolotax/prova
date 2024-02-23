@@ -3,9 +3,7 @@ class UserScuoleController < ApplicationController
 
   # GET /user_scuole or /user_scuole.json
   def index
-   # @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
-    @user_scuole = current_user.user_scuole.search params[:q]
-
+    @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
   end
 
   # GET /user_scuole/1 or /user_scuole/1.json

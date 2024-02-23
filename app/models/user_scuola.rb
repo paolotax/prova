@@ -11,17 +11,4 @@
 class UserScuola < ApplicationRecord
   belongs_to :import_scuola
   belongs_to :user
-
-  scope :search, ->(q) do 
-    includes(:import_scuola).joins(:import_scuola)
-    .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? or import_scuole."DESCRIZIONECOMUNE" ILIKE ? ', 
-    "%#{q}%", "%#{q}%") 
-  end
-  
-
-  def to_combobox_display
-    "#{import_scuola.DENOMINAZIONESCUOLA} - #{import_scuola.DESCRIZIONECOMUNE}"
-  end
-
-
 end
