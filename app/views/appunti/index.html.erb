@@ -8,14 +8,6 @@
 	</div>
 </header>
 
-<%= turbo_frame_tag "Combobox" do %>
-  <div class="youtube">
-    <%= form_with url: user_scuole_path(user: current_user)  do |form| %>
-      <%= form.combobox :search, user_scuole_path(user: current_user),
-            id: "user-scuole-container", mobile_at: "0px" %>
-    <% end %>
-  </div>
-<% end %>
 
 <%= turbo_frame_tag "search_results" do %>
 	<div class="-mx-4 mt-8 flow-root sm:mx-0">

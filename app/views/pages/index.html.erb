@@ -23,16 +23,33 @@
 				
 				Tutte le scuole <%= @totale_scuole %> scuole e
 				le <%= @totale_adozioni %> adozioni.
-
 			</p>
-			<div class="mt-10 flex items-center justify-center gap-x-6">
-				<a href="<%= new_user_registration_path %>" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-					Registrati
-				</a>
-				<a href="<%= new_user_session_path %>" class="text-sm font-semibold leading-6 text-gray-900">
-					Accedi <span aria-hidden="true">→</span>
-				</a>
-			</div>
+			<% if current_user && current_user.admin?  %>
+				<%= turbo_frame_tag "Combobox" do %>
+					<div class="youtube">
+						<%= form_with url: user_scuole_path(user: current_user), data: { controller: "combobox", combobox_target: "form" }  do |form| %>
+						<%= form.combobox :search, user_scuole_path(user: current_user),
+							name_when_new: :search, id: "user-scuole-container", mobile_at: "0px", class: "width: 300px" %>
+						<% end %>
+					</div>
+				<% end %>
+			<% end %>
+
+			<% if current_user %>
+				<%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
+                    class: "block px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"
+                %>
+
+			<% else %>
+				<div class="mt-10 flex items-center justify-center gap-x-6">
+					<a href="<%= new_user_registration_path %>" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+						Registrati
+					</a>
+					<a href="<%= new_user_session_path %>" class="text-sm font-semibold leading-6 text-gray-900">
+						Accedi <span aria-hidden="true">→</span>
+					</a>
+				</div>
+			<% end %>
 		</div>
 	</div>
 	<div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">

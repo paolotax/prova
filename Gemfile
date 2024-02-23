@@ -78,7 +78,7 @@ gem "omniauth-github", "~> 2.0"
 gem "devise-i18n"
 gem "letter_opener"
 
-gem "hotwire_combobox"
+gem "hotwire_combobox", github: "Deanout/hotwire_combobox"
 
 
 

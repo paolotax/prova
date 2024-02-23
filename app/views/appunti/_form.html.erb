@@ -21,9 +21,11 @@
 		<%= form.text_field :nome, class: "field", autofocus: :true %>
 	</div>
 
+
+
 	<div class="my-5">
 		<%= form.label :nome, "Scuola", class: "label" %>
-		<%= form.combobox :import_scuola_id, current_user.user_scuole.all %>
+		<%= form.combobox :import_scuola_id, current_user.user_scuole.all, class: "field z-50" %>
 	</div>
 
 	<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
