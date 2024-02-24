@@ -1,8 +1,8 @@
-<div id="<%= dom_id appunto %>" class="relative flex flex-col bg-white align-end border-b border-slate-200">
+<div id="<%= dom_id appunto %>" 
+	class="p-4 relative flex flex-col bg-white align-end border-b-2 border-slate-200">
 
-	<div class="py-4">
 
-		<p class="pl-4 font-semibold text-gray-900">
+		<p class="font-semibold text-gray-900">
 			<%= appunto.nome %>      
 		</p>	
 
@@ -10,12 +10,16 @@
 			<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
 		<% end %>
 		
-		<p class="pl-4 font-medium text-sm italic mt-2 text-gray-400">
-			<%= appunto.body %>
-		</p>
 
-		<%=  appunto.content %>
-		
+		<%= emphasis do %>
+			<%= appunto.body %>
+		<% end %>
+
+		<%= emphasis do %>
+			<%= appunto.content %>
+		<% end %>
+
+
 		<% if appunto.image.attached? %>
 			<div class="flex">
 				<% if appunto.image.representable? %>
@@ -35,50 +39,60 @@
 		<% if appunto.attachments.attached? %>
 
 			<% appunto.attachments.each_with_index do |attachment, index| %>
-				<hr/>
 				<% if attachment.image? %>
-					<div class="py-2 bg-gray-600">
+					<div class="py-2 bg-gray-600 -mx-4 ">
 						<%= link_to image_tag( attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"), attachment %>
 					</div>
+				
 				<% elsif attachment.video? %>
 					<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
+				
 				<% elsif attachment.audio? %>
 					<%= audio_tag(url_for(attachment), controls: '') %>
+				
 				<% else %>
+				
 					<% if attachment.representable? %>
-						<%= image_tag attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto" %>
+						<div class="py-2 bg-gray-600 -mx-4 ">
+							<%= link_to image_tag(attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"),
+												rails_blob_path(attachment, disposition: "attachment") %>
+						</div>
 					<% else %>
 						<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
 							<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
 						<% end%>
 					<% end %>
 				<% end %>
-				<div class="flex items-center justify-between">
+				
+				<div class="flex items-center justify-between text-xs bg-gray-200 -mx-4 px-4">
 					<%= attachment.filename.to_s.titleize %>
 					<%= link_to "elimina", remove_attachment_appunto_path(attachment),
 						data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
 				</div>
 			<% end %>
 		<% end %>		
-	</div>
 
-	<% if action_name != "show" %>
-			<%= link_to edit_appunto_path(appunto),
-				data: { turbo_frame: :modal, action: "click->dialog#open"},
-				class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+		<%= tag.div class: "text-xs text-right italic -mb-2 mt-2" do %>
+			creato da
+			<%= time_ago_in_words appunto.created_at%>
+		<% end %>
+
+		<%= link_to edit_appunto_path(appunto),
+			data: { turbo_frame: :modal, action: "click->dialog#open"},
+			class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+			</svg>
+		<% end %>
+		
+		<%= link_to go_to_scuola_path(appunto.import_scuola, current_user.navigator),
+					data: { turbo_frame: :modal, action: "click->dialog#open"},
+					class: "absolute right-2 top-11 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-					<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+				<path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+				<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
 				</svg>
-			<% end %>
-			
-			<%= link_to go_to_scuola_path(appunto.import_scuola, current_user.navigator),
-						data: { turbo_frame: :modal, action: "click->dialog#open"},
-						class: "absolute right-2 top-11 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-					<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-					</svg>
-			<% end %>
-	<% end %>
+		<% end %>
+
 </div>
 
