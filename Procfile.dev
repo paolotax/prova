@@ -4,7 +4,7 @@ css: bin/rails tailwindcss:watch
 # [RailsNotes UI Addition]
 # Run Sidekiq and Redis for background jobs.
 #
-redis: /usr/local/opt/redis/bin/redis-server
+redis: redis-server
 sidekiq: bundle exec sidekiq
 
 # Optional: run Stripe CLI or ngrok for payments webhooks.
