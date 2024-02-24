@@ -19,8 +19,8 @@ module LayoutHelper
       tag.header class: "p-4 mb-2 flex justify-between items-center", &block
     end
 
-    def h1(text)
-      tag.h1 text, class: "text-4xl font-bold"
+    def h1(&block)
+      tag.h1 class: "text-4xl font-bold", &block
     end
 
     def h2(text)
