@@ -78,11 +78,11 @@ class ImportAdozione < ApplicationRecord
   end
 
   def scuola
-    self.import_scuola.DENOMINAZIONESCUOLA.titleize
+    self.import_scuola.scuola
   end
 
   def citta 
-    ApplicationController.helpers.titleize_con_apostrofi( self.import_scuola.DESCRIZIONECOMUNE )
+    self.import_scuola.citta
   end
  
   def anno
@@ -107,15 +107,15 @@ class ImportAdozione < ApplicationRecord
   end
 
   def titolo
-    self.TITOLO
+    ApplicationController.helpers.titleize_con_apostrofi self.TITOLO
   end
 
   def autori
-    self.AUTORI.titleize
+    ApplicationController.helpers.titleize_con_apostrofi self.AUTORI
   end
 
   def editore
-    self.EDITORE
+    ApplicationController.helpers.titleize_con_apostrofi self.EDITORE
   end
 
   def codice_isbn
@@ -139,8 +139,7 @@ class ImportAdozione < ApplicationRecord
   end
 
   def to_combobox_display
-    
-    "#{self.scuola} #{self.citta} - #{self.classe_e_sezione} - #{self.TITOLO.titleize} #{self.EDITORE}"
+    "#{self.scuola} #{self.citta} - #{self.classe_e_sezione} - #{self.titolo} #{self.editore}"
   end
 
 end

@@ -190,21 +190,19 @@ class ImportScuola < ApplicationRecord
 
 
   def scuola 
-    self.DENOMINAZIONESCUOLA
+    ApplicationController.helpers.titleize_con_apostrofi self.DENOMINAZIONESCUOLA
   end
 
   def citta
-    self.DESCRIZIONECOMUNE
+    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
   end
 
   def tipo_scuola
-    self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
+    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
   end
 
   def to_combobox_display
-    ApplicationController.helpers.titleize_con_apostrofi(
-      self.DENOMINAZIONESCUOLA + " -> " + self.DESCRIZIONECOMUNE
-    )
+      self.scuola + " -> " + self.citta
   end
   
 end

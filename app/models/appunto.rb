@@ -15,7 +15,7 @@
 #  updated_at         :datetime         not null
 #
 class Appunto < ApplicationRecord
-  belongs_to :import_scuola
+  belongs_to :import_scuola, required: false
   belongs_to :user
   belongs_to :import_adozione, required: false
 
