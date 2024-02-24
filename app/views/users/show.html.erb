@@ -16,8 +16,8 @@
     <%= link_to "Modifica Utente", edit_user_registration_path(@user), class: "mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" %>
 </div>
         <%= form_with url: modifica_navigatore_user_path(current_user), 
-                data: { controller: "tax-dropdown", 
-                action: "change->tax-dropdown#submit" }  do|f| %>
+                data: { controller: "tax-select", 
+                action: "change->tax-select#submit" }  do|f| %>
             <hr/> 
             <div class="flex items-center justify-start gap-x-4 py-2">
                 <%= f.label :navigator, "Navigatore preferito", class: "label" %>
