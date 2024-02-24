@@ -1,12 +1,12 @@
-<header class="mb-2 flex justify-between items-center">	
-	<div class="py-2">
-		<h2 class="font-bold text-4xl">Documenti</h2>
-	</div>
+<%= heading do %>	
+
+	<%= h1 "Documenti" %>
 
 	<div class="py-2">
 		<%= link_to("< indietro", :back, class:"btn") %>
 	</div>
-</header>
+
+<% end %>
 
 
 <%= turbo_frame_tag "search_results" do %>

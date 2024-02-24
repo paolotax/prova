@@ -4,10 +4,12 @@
 
 		<p class="pl-4 font-semibold text-gray-900">
 			<%= appunto.nome %>      
-		</p>
+		</p>	
 
-		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
-
+		<% if appunto.import_scuola %>
+			<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+		<% end %>
+		
 		<p class="pl-4 font-medium text-sm italic mt-2 text-gray-400">
 			<%= appunto.body %>
 		</p>
@@ -15,7 +17,7 @@
 		<%=  appunto.content %>
 		
 		<% if appunto.image.attached? %>
-			<div class="flex -ml-5">
+			<div class="flex">
 				<% if appunto.image.representable? %>
 					
 				<% else %>

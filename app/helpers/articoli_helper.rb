@@ -1,2 +1,0 @@
-module ArticoliHelper
-end

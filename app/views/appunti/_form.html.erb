@@ -15,17 +15,19 @@
 	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 
+	<% if appunto.import_scuola %>
+		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+	<% else %>
+		<div class="my-5 youtube">
+			<%= form.label :nome, "Scuola", class: "label" %>
+			<%= form.combobox :import_scuola_id, current_user.import_scuole.all %>
+		</div>
+	<% end %>
+
 	<div class="my-5">
 		<%= form.label :nome, "Titolo", class: "label" %>
 		<%= form.text_field :nome, class: "field", autofocus: :true %>
 	</div>
-
-	<div class="my-5 youtube">
-		<%= form.label :nome, "Scuola", class: "label" %>
-		<%= form.combobox :import_scuola_id, current_user.import_scuole.all %>
-	</div>
-
-	<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
 
 	<div class="my-5">
 		<% unless appunto.body.blank? %>
