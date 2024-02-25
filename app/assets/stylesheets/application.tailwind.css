@@ -20,6 +20,10 @@
 }
 
 
+
+
+
+
 @layer components {
 
   .youtube {
@@ -50,6 +54,14 @@
     .hw-combobox {
       @apply mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all;
     }
+  }
+
+  .sidebar-item {
+    @apply text-gray-200 flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold;
+  }
+  
+  .sidebar-item:hover {
+    @apply bg-gray-700 text-white;
   }
 
   .label {

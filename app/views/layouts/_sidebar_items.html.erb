@@ -7,27 +7,27 @@
 	
 </li>
 <li>
-	<%= link_to appunti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to appunti_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-bookopen.svg') %>
 		Appunti                        
 	<% end %>
 </li>
 <% if current_user && current_user.name == "paolotax"%>
 	<li>
-		<%= link_to documenti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+		<%= link_to documenti_path, class:"sidebar-item" do %>
 			<%= inline_svg_tag('icon-documenti.svg') %>
 			Documenti
 		<% end %>  
 	</li>
 
 	<li>
-		<%= link_to fornitori_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+		<%= link_to fornitori_path, class:"sidebar-item" do %>
 			<%= inline_svg_tag('icon-truck.svg') %>
 			Fornitori
 		<% end %>
 	</li>
 	<li>
-		<%= link_to clienti_path, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+		<%= link_to clienti_path, class:"sidebar-item" do %>
 			<%= inline_svg_tag('icon-cash.svg') %>                
 			Clienti
 		<% end %>
@@ -35,19 +35,19 @@
 <% end %>
 
 <li>
-	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to import_adozioni_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to import_adozioni_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-currency-euro.svg') %>                
 		Adozioni (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to stats_path, data: { action: "click->modal#close"}, class:"text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to stats_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
 		Stats...
 	<% end %>
