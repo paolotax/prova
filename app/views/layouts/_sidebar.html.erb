@@ -2,7 +2,7 @@
 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
 	
 	<div class="flex h-16 shrink-0 items-center">
-		<img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="didattitax">
+		<img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="ScagnoZZ">
 	</div>
 	
 	<nav class="flex flex-1 flex-col">
@@ -21,19 +21,19 @@
 					</div>
 					<ul role="list" class="-mx-2 mt-2 space-y-1">
 						<li>
-							<a href="https://heroicons.com" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+							<a href="https://heroicons.com" target="_blank" class="sidebar-item">
 								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">H</span>
 								<span class="truncate">Heroicons</span>
 							</a>
 						</li>
 						<li>
-							<a href="https://tailwindcss.com/docs/installation" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+							<a href="https://tailwindcss.com/docs/installation" target="_blank" class="sidebar-item">
 								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">T</span>
 								<span class="truncate">Tailwind Docs</span>
 							</a>
 						</li>
 						<li>
-							<a href="https://tailwindui.com/components" target="_blank" class="text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+							<a href="https://tailwindui.com/components" target="_blank" class="sidebar-item">
 								<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-400 bg-gray-500 text-[0.625rem] font-medium text-white">W</span>
 								<span class="truncate">Tailwind Ui</span>
 							</a>
@@ -45,7 +45,7 @@
 
 				<li class="mt-auto">
 					<%= link_to destroy_user_session_path, data: { turbo_method: :delete },
-							class: "text-gray-200 hover:text-white hover:bg-gray-700 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+							class: "sidebar-item" do %>
 						<%= inline_svg_tag('icon-exit.svg') %>
 						Esci                        
 					<% end %>
