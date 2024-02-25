@@ -1,91 +1,82 @@
 <div id="<%= dom_id appunto %>" 
 	class="p-4 relative flex flex-col bg-white align-end border-b-2 border-slate-200">
 
+	<p class="font-semibold text-gray-900">
+		<%= appunto.nome %>      
+	</p>	
 
-		<p class="font-semibold text-gray-900">
-			<%= appunto.nome %>      
-		</p>	
+	<% if appunto.import_scuola %>
+		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+	<% end %>
+	
+	<%= emphasis do %>
+		<%= appunto.body %>
+	<% end %>
 
-		<% if appunto.import_scuola %>
-			<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
-		<% end %>
-		
+	<%= emphasis do %>
+		<%= appunto.content %>
+	<% end %>
 
-		<%= emphasis do %>
-			<%= appunto.body %>
-		<% end %>
-
-		<%= emphasis do %>
-			<%= appunto.content %>
-		<% end %>
-
-
-		<% if appunto.image.attached? %>
-			<div class="flex">
-				<% if appunto.image.representable? %>
-					
-				<% else %>
-					<%= link_to rails_blob_path(appunto.image, disposition: "attachment") do %>
-						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
-						<%= appunto.image.filename %>
-					<% end %>
+	<% if appunto.image.attached? %>
+		<div class="flex">
+			<% if appunto.image.representable? %>
+				
+			<% else %>
+				<%= link_to rails_blob_path(appunto.image, disposition: "attachment") do %>
+					<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
+					<%= appunto.image.filename %>
 				<% end %>
-			</div>
-			<%= link_to "Remove", remove_image_appunto_path(appunto.id), data: { turbo_method: :delete } %>
-		<% end %>
-		
-
-
-		<% if appunto.attachments.attached? %>
-
-			<% appunto.attachments.each_with_index do |attachment, index| %>
-				<% if attachment.image? %>
-					<div class="py-2 bg-gray-600 -mx-4 ">
-						<%= link_to image_tag( attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"), attachment %>
-					</div>
-				
-				<% elsif attachment.video? %>
-					<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
-				
-				<% elsif attachment.audio? %>
-					<%= audio_tag(url_for(attachment), controls: '') %>
-				
-				<% else %>
-				
-					<% if attachment.representable? %>
-						<div class="py-2 bg-gray-600 -mx-4 ">
-							<%= link_to image_tag(attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"),
-												rails_blob_path(attachment, disposition: "attachment") %>
-						</div>
-					<% else %>
-						<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
-							<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
-						<% end%>
-					<% end %>
-				<% end %>
-				
-				<div class="flex items-center justify-between text-xs bg-gray-200 -mx-4 px-4">
-					<%= attachment.filename.to_s.titleize %>
-					<%= link_to "elimina", remove_attachment_appunto_path(attachment),
-						data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
-				</div>
 			<% end %>
-		<% end %>		
+		</div>
+		<%= link_to "Remove", remove_image_appunto_path(appunto.id), data: { turbo_method: :delete } %>
+	<% end %>
+	
+	<% if appunto.attachments.attached? %>
 
-		<%= tag.div class: "mt-auto pt-2 text-xs text-right italic -mb-2 " do %>
-			creato da
-			<%= time_ago_in_words appunto.created_at%>
+		<% appunto.attachments.each_with_index do |attachment, index| %>
+			<% if attachment.image? %>
+				<div class="py-2 bg-gray-600 -mx-4 ">
+					<%= link_to image_tag( attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"), attachment %>
+				</div>
+			
+			<% elsif attachment.video? %>
+				<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
+			
+			<% elsif attachment.audio? %>
+				<%= audio_tag(url_for(attachment), controls: '') %>
+			
+			<% else %>
+			
+				<% if attachment.representable? %>
+					<div class="py-2 bg-gray-600 -mx-4 ">
+						<%= link_to image_tag(attachment.representation(resize_to_limit: [300, 300]), class: "mx-auto"),
+											rails_blob_path(attachment, disposition: "attachment") %>
+					</div>
+				<% else %>
+					<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
+						<%= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
+					<% end%>
+				<% end %>
+			<% end %>
+			
+			<div class="flex items-center justify-between text-xs bg-gray-200 -mx-4 px-4">
+				<%= attachment.filename.to_s.titleize %>
+				<%= link_to "elimina", remove_attachment_appunto_path(attachment),
+					data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
+			</div>
 		<% end %>
+	<% end %>		
 
-		<%= link_to edit_appunto_path(appunto),
-			data: { turbo_frame: :modal, action: "click->dialog#open"},
-			class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
-			<%= inline_svg_tag "icon-appunto.svg" %>
-		<% end %>
-		
-		<% if appunto.import_scuola %>
+	<%= tag.div class: "mt-auto pt-2 text-xs text-right italic -mb-2 " do %>
+		creato da
+		<%= time_ago_in_words appunto.created_at%>
+	<% end %>
 
-		<% end %>
-
+	<%= link_to edit_appunto_path(appunto),
+		data: { turbo_frame: :modal, action: "click->dialog#open"},
+		class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+		<%= inline_svg_tag "icon-appunto.svg" %>
+	<% end %>
+	
 </div>
 
