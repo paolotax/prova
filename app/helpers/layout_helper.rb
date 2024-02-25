@@ -36,7 +36,7 @@ module LayoutHelper
     end
   
     def emphasis(&block)
-      tag.div class: "italic text-gray-700 my-2 pl-2 text-lg border-l-2 border-gray-400", &block
+      tag.div class: "italic text-gray-800 my-2 pl-2 text-lg border-l-4 border-gray-300", &block
     end
 end
 
