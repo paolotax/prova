@@ -23,6 +23,23 @@ class Appunto < ApplicationRecord
   has_many_attached :attachments
   has_rich_text :content
 
+
+  include PgSearch::Model
+
+  search_fields =  [ :nome, :body, :email, :telefono]
+
+  pg_search_scope :search_all_word, 
+                      against: search_fields,
+                      associated_against: {
+                        import_scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE],
+                        import_adozione: [:CODICESCUOLA, :CODICEISBN, :EDITORE],
+                        rich_text_content: [:body],
+                        attachments_blobs: [:filename]
+                      },
+                      using: {
+                        tsearch: { any_word: false, prefix: true }
+                  }
+
   scope :search, ->(q) do 
      includes(:import_scuola)
      .where("nome ILIKE ? or import_scuole.DENOMINAZIONESCUOLA ILIKE ? or import_scuole.DESCRIZIONECOMUNE ILIKE ? ", 
