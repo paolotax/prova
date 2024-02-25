@@ -42,7 +42,7 @@
 				</li>
 			<% end %>
 
-
+			<% if current_user%>
 				<li class="mt-auto">
 					<%= link_to destroy_user_session_path, data: { turbo_method: :delete },
 							class: "sidebar-item" do %>
@@ -50,7 +50,7 @@
 						Esci                        
 					<% end %>
 				</li>
-
+			<% end %>
 		</ul>
 	</nav>
 </div>
