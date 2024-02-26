@@ -96,7 +96,14 @@ class AppuntiController < ApplicationController
   def remove_attachment
     @attachment = ActiveStorage::Attachment.find(params[:id])
     @attachment.purge_later
-    redirect_back(fallback_location: request.referer)
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove(
+          @attachment
+        )
+      end
+    end
+    #redirect_back(fallback_location: request.referer)
   end
 
   def remove_image
