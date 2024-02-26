@@ -1,6 +1,6 @@
 <%# da correggere mel login non deve comparire la search %>
 
-<% if params[:controller] != "sessions" && (params[:action] != 'edit' && params[:action] != 'new')  %>
+<% if  ['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti'].any?(params[:controller]) && (params[:action] != 'edit' && params[:action] != 'new')  %>
 	
 	<%= form_with( url: url_for(controller: params[:controller], action: :index),
 					id: "search_form",
@@ -32,7 +32,7 @@
 	<% end %>
 
 <% else %>
-	<div class="block h-full">
+	<div class="relative flex flex-1">
 	</div>
 <% end %>
 

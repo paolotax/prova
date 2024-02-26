@@ -1,4 +1,26 @@
+# == Route Map
+#
+
+# first, setup dashboard authentication
+require "sidekiq/web"
+Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+  username == "admin" && password == "password"
+end
+
+# then mount it
 Rails.application.routes.draw do
+  mount Sidekiq::Web => "/sidekiq"
+  
+  
+  devise_for :users, controllers: { confirmations: 'confirmations' }
+
+  resources :users, only: [:index, :show] do
+    member do
+      post  'modifica_navigatore' 
+      post 'assegna_scuole'
+      delete 'rimuovi_scuole'
+    end
+  end
   
   
   
@@ -22,18 +44,12 @@ Rails.application.routes.draw do
   
   resources :mandati
 
-  resources :users do
-    member do
-      post  'modifica_navigatore' 
-      post 'assegna_scuole'
-      delete 'rimuovi_scuole'
-    end
-  end
 
-  get "signup" => "users#new"
 
-  resource :session, only: [:new, :create, :destroy]
-  get "signin" => "sessions#new"
+  # TOLTE PER DEVISE
+  # get "signup" => "users#new"
+  # resource :session, only: [:new, :create, :destroy]
+  # get "signin" => "sessions#new"
   
   resources :user_scuole, only: [:index, :destroy]
   #get "users/:id/scuole" => "user_scuole#index", as: "user_scuole"  

@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :zone_select do %> 
-    <%= form_with url: zone_path, method: :get, data: { controller: "tax-dropdown", 
-                                                            action: "change->tax-dropdown#submit" 
+    <%= form_with url: zone_path, method: :get, data: { controller: "tax-select", 
+                                                            action: "change->tax-select#submit" 
                                                         
                                                         } do |f| %>
 
@@ -10,7 +10,7 @@
                 <div>    
                     <%= f.select :regione, options_from_collection_for_select(regioni, "regione", "regione", @regione&.regione), 
                                         { prompt: "scegli la regione" }, 
-                                        { class: "field", data: { tax_dropdown_target: "regione" } } %>
+                                        { class: "field", data: { tax_select_target: "regione" } } %>
                 </div>
             </div>
             <div class="mt-2 sm:w-96">
@@ -18,7 +18,7 @@
                 <div>    
                     <%= f.select :provincia, options_from_collection_for_select(province, "provincia", "provincia", @provincia&.provincia), 
                                     { prompt: "tutte" }, 
-                                    { class: "field", data: { tax_dropdown_target: "provincia" } } %>
+                                    { class: "field", data: { tax_select_target: "provincia" } } %>
                 </div>
             </div>
         </div> 
@@ -28,7 +28,7 @@
                 <div>
                     <%= f.select :grado, options_from_collection_for_select(gradi, "grado", "grado", @grado&.grado), 
                                     { prompt: "tutti" }, 
-                                    { class: "field", data: { tax_dropdown_target: "grado" } } %>
+                                    { class: "field", data: { tax_select_target: "grado" } } %>
 
                 </div>
             </div>
@@ -37,7 +37,7 @@
                 <div>  
                     <%= f.select :tipo, options_from_collection_for_select(tipi, "tipo", "tipo", @tipo&.tipo), 
                                     { prompt: "tutti" }, 
-                                    { class: "field", data: { tax_dropdown_target: "tipo" } } %>
+                                    { class: "field", data: { tax_select_target: "tipo" } } %>
                 </div>
             </div>
         </div>

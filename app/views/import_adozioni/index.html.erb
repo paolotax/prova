@@ -1,24 +1,21 @@
-<% if notice.present? %>
-	<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-<% end %>
+<%= heading do %>	
 
-<header class="mb-2 flex flex-col sm:flex-row sm:justify-between sm:items-center">	
-	<div class="py-2">
-		<h2 class="font-bold text-4xl">Adozioni</h2>
-	</div>
-	
-	<div class="py-2 flex justify-between items-center">
+	<%= h1 {"Adozioni"} %>
+
+	<div class="pl-4 flex flex-col justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
 		<div class="">
 			<%= toggle_button_tag( false, "mie adozioni", "adozioni" )%>
 		</div>
 		<div class="">
 			<%= toggle_button_tag( false, "da acquistare", "acquistare" )%>
 		</div>
-		<div class="sm:pl-4">
+		<div class="">
 			<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
 		</div>
 	</div>
-</header>
+
+<% end %>
+
 
 <%= turbo_frame_tag "search_results" do %>
 

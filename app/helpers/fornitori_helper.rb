@@ -1,2 +1,0 @@
-module FornitoriHelper
-end
