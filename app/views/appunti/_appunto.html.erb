@@ -1,5 +1,5 @@
 <div id="<%= dom_id appunto %>" 
-	class="p-4 relative flex flex-col bg-white shadow-2xl align-end border-b-2 border-slate-200">
+	class="p-4 flex flex-col bg-white shadow-2xl align-end border-b-2 border-slate-200">
 
 	<p class="font-semibold text-gray-900">
 		<%= appunto.nome %>      
@@ -10,11 +10,13 @@
 	<% end %>
 	
 	<%= emphasis do %>
-		<%= appunto.body %>
+		<div class="w-[360px] mx-auto pw-2">
+			<%= appunto.content %>
+		</div>
 	<% end %>
 
 	<%= emphasis do %>
-		<%= appunto.content %>
+		<%= appunto.body %>
 	<% end %>
 
 	<% if appunto.attachments.attached? %>
