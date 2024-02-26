@@ -6,7 +6,7 @@ class AppuntiController < ApplicationController
 
   # GET /appunti or /appunti.json
   def index
-    @appunti = current_user.appunti.order(created_at: :desc)
+      @appunti = current_user.appunti.order(created_at: :desc)
        
       @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
 

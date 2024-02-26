@@ -1,107 +1,31 @@
 <div id="<%= dom_id appunto %>" 
-	class="p-4 flex flex-col bg-white shadow-2xl align-end border-b-2 border-slate-200">
+	class="py-4 relative flex flex-col bg-white rounded-2xl shadow-xl align-end border-b-2 border-slate-200">
 
-	<p class="font-semibold text-gray-900">
+	<p class="px-4 font-semibold text-gray-900">
 		<%= appunto.nome %>      
 	</p>	
 
 	<% if appunto.import_scuola %>
-		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+		<div class="px-4">
+			<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+		</div>
 	<% end %>
 	
-	<%= emphasis do %>
-		<div class="w-[360px] mx-auto pw-2">
+	<div class="px-4">
+		<%= emphasis do %>
 			<%= appunto.content %>
-		</div>
-	<% end %>
+		<% end %>
+	</div>
 
-	<%= emphasis do %>
-		<%= appunto.body %>
-	<% end %>
+	<div class="px-4">
+		<%= emphasis do %>
+			<%= appunto.body %>
+		<% end %>
+	</div>
 
-	<% if appunto.attachments.attached? %>
+	<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
 
-		<div class="-mx-4 mt-4">
-			<div class="relative rounded-xl overflow-hidden w-[360px] mx-auto">
-				
-				<div id="appunto-gallery" class="relative w-full flex gap-8 snap-x snap-mandatory overflow-x-auto pb-8">
-					
-					<% appunto.attachments.each_with_index do |attachment, index| %>
-							
-						<% if attachment.representable? %>
-							<div id="<%= dom_id attachment %>" class="snap-center shrink-0 first:pl-5 last:pr-5 ">
-
-								<div class="shrink-0 w-80 h-120 rounded-lg shadow-xl flex flex-col  my-auto bg-gray-200">
-									<% if attachment.image? %>
-										<div class="pt-4 pb-2 w-full">
-											<%= link_to image_tag( attachment.representation(resize_to_limit: [300, 300]), class:"mx-auto"), attachment %>
-										</div>
-									<% elsif attachment.video? %>
-										<%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
-									<% elsif attachment.audio? %>
-										<%= audio_tag(url_for(attachment), controls: '') %>
-									<% else %>
-										<div class="pt-4 pb-2 mx-auto">
-											<%= link_to image_tag(attachment.representation(resize_to_limit: [300, 300])),
-																rails_blob_path(attachment, disposition: "attachment") %>
-										</div>
-									<% end %>
-									
-									<div class="flex items-center justify-between rounded-lg text-xs bg-gray-200 px-4 pb-1 text-gray-700">
-										<%= attachment.filename.to_s.titleize %>
-										<%= link_to "elimina", remove_attachment_appunto_path(attachment),
-											data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
-									</div>
-								</div>
-							</div>
-						<% end %>
-					<% end %>
-				</div>
-			</div>
-		</div>
-
-		<div class="-mx-4 mt-4">
-			<div class="relative rounded-xl overflow-hidden w-[360px] mx-auto">
-				
-				<div id="file-gallery" class="shadow-xl relative w-full flex gap-8 snap-x snap-mandatory overflow-x-auto pb-8">
-
-					<% appunto.attachments.each_with_index do |attachment, index| %>
-						
-						<% if !attachment.representable? %>
-							<div id="<%= dom_id attachment %>" class="w-30 m-2 p-2 flex flex-col items-center">
-								<%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
-																
-									<div class="w-10 h-15">
-										<%= attachment_icon_tag(attachment) %>
-									</div>
-										<%#= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
-								<% end%>
-								<div class="text-xs text-center">
-									<%= attachment.filename.to_s.humanize %>
-								</div>
-								<div class="text-xs bg-gray-200">
-									<%= link_to "elimina", remove_attachment_appunto_path(attachment),
-										data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
-								</div>
-							</div>
-						<% end %>
-					<% end %>
-				</div>
-			</div>
-		</div>
-	<% end %>	
-
-
-
-
-
-
-
-
-
-
-
-	<%= tag.div class: "mt-auto pt-2 text-xs text-right italic -mb-2 " do %>
+	<%= tag.div class: "mt-auto pt-2 text-xs text-right italic  pr-2 -mb-2" do %>
 		creato da
 		<%= time_ago_in_words appunto.created_at%>
 	<% end %>

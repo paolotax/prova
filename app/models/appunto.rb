@@ -62,4 +62,28 @@ class Appunto < ApplicationRecord
     end
   end
 
+  def representables_attachments
+    representables_attachments = []
+    if self.attachments.attached?
+      self.attachments.each do |att|
+        if att.representable?
+          representables_attachments << att
+        end   
+      end
+    end
+    representables_attachments
+  end
+
+  def file_attachments
+    file_attachments = []
+    if self.attachments.attached?
+      self.attachments.each do |att|
+        if !att.representable?
+          file_attachments << att
+        end   
+      end
+    end
+    file_attachments
+  end
+
 end
