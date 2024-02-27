@@ -1,12 +1,14 @@
-<header class="mb-2 flex justify-between items-center">	
-	<div class="py-2">
-		<h2 class="font-bold text-4xl">Scuole</h2>
-	</div>
-	
+<%= heading do %>	
+
+	<%= h1 {"Scuole"} %>
+
 	<div class="py-2">
 		<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
 	</div>
-</header>
+
+<% end %>
+
+
 
 <%= turbo_frame_tag "search_results" do %>
 

@@ -1,6 +1,6 @@
 class MandatiController < ApplicationController
     
-    before_action :require_signin
+    before_action :authenticate_user!
     
     #before_action :set_mandato, only: %i[    destroy ]
     before_action :find_editore

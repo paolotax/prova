@@ -1,6 +1,6 @@
 class StatsController < ApplicationController
   
-  before_action :require_signin
+  before_action :authenticate_user!
   before_action :set_stat, only: %i[ show edit update destroy execute ]
 
   # GET /stats or /stats.json

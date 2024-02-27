@@ -1,6 +1,6 @@
 class ImportScuoleController < ApplicationController
   
-  before_action :require_signin
+  before_action :authenticate_user!
   before_action :set_import_scuola, only: %i[ show edit update destroy ]
 
   # GET /import_scuole or /import_scuole.json
@@ -27,6 +27,10 @@ class ImportScuoleController < ApplicationController
       @pagy, @import_scuole = pagy(@import_scuole.all, items: 20, link_extra: 'data-turbo-action="advance"')
 
 
+  end
+
+  def search_scuole
+    @scuole = current_user.import_scuole.search params[:q]
   end
 
   # GET /import_scuole/1 or /import_scuole/1.json

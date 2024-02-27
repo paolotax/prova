@@ -1,41 +1,21 @@
 class ApplicationController < ActionController::Base
 
+  before_action :congigure_permitted_parameters, if: :devise_controller?
+  
   include Pagy::Backend
 
+  protected
+
+    def congigure_permitted_parameters
+
+      added_attrs = [:name, :email, :password, :password_confirmation, :remember_me, :avatar]
+      devise_parameter_sanitizer.permit(:sign_in, keys: added_attrs)
+
+      devise_parameter_sanitizer.permit(:sign_up, keys: added_attrs)
+      devise_parameter_sanitizer.permit(:account_update, keys: added_attrs)
+    end
+
   private
-
-    def require_signin
-      unless current_user
-        session[:intended_url] = request.url
-        redirect_to new_session_url, alert: "Please sign in first!"
-      end
-    end
-
-    # def require_admin
-    #   unless current_user_admin?
-    #     redirect_to root_url, alert: "Unauthorized access!"
-    #   end
-    # end
-
-    # def is_admin?
-    #   current_user_admin?
-    # end
-
-    # def current_user_admin?
-    #   current_user && current_user.admin?
-    # end
-
-    def current_user
-      @current_user ||= User.find(session[:user_id]) if session[:user_id]
-    end
-
-    helper_method :current_user
-
-    def current_user?(user)
-      current_user == user
-    end
-
-    helper_method :current_user?
 
     def remember_page
         session[:previous_pages] ||= []

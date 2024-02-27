@@ -1,0 +1,15 @@
+kamal app exec -i 'bin/rails console'
+
+u = User.find_by_name("enrico")
+u.confirm 
+
+
+kamal details
+
+kamal app exec -i --reuse bash
+
+root@116.203.224.90 
+
+docker ps
+
+docker logs -ft container

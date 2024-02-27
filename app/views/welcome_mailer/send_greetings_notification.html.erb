@@ -1,0 +1,38 @@
+<%= render Email::Bg::Container.new do |email| %>
+  <% email.with_masthead_text(text: "ScagnoZZ", href: "http://ScagnoZZ.com") %>
+  <%= render Email::Heading.new(
+    text: "Grazie per esserti registrato!",
+    size: "30px",
+    align: "center",
+    margin: "20px auto 30px auto"
+  ) %>
+  <%= render Email::Divider.new(color: Email::Colors::RED_500, thickness: "4px") %>
+  <%= render Email::Text.new do %>
+      Grazie <b><%= @user.name %></b> per esserti registrato a ScagnoZZ! Siamo entusiasti di averti a bordo.
+  <% end %>
+  <%= render Email::Text.new(text: "ScagnoZZ stà muovendo i suoi primi passi. ") %>
+  <%# Section 1 %>
+  
+  <%= render Email::Text.new(text: "Intanto imposta le scuole e gli tuoi editori nella pagina del tuo profilo. Poi si vedrà") %>
+  <%#= render Email::Text.new(text: "Intanto imposta le scuole e gli tuoi editori nella pagina del tuo profilo. Poi si vedrà") %>
+  
+  <%# Section 1 %>
+    
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::RED_50,
+    border_width: "0",
+    border_radius: "12px",
+    margin: "64px auto auto auto",
+    padding: "16px 24px",
+  ) do %>
+    <%= render Email::Text.new(text: "ScagnoZZ", bold: true, letter_spacing: "-0.0375rem", margin: "8px auto", color: Email::Colors::GRAY_700) %>
+    <%= render Email::Text.new(size: "12px", margin: "4px auto", color: Email::Colors::GRAY_600) do %>
+      Visita <%= link_to "ScagnoZZ", "http://scagnozz.com" %> per saperne di più.
+    <% end %>
+    <%= render Email::Text.new(text: "© #{Time.now.year} ScagnoZZ", margin: "4px auto", size: "12px", color: Email::Colors::GRAY_600) %>
+  <% end %>
+<% end %>
+
+
+
+        

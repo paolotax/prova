@@ -1,12 +1,16 @@
 class AppuntiController < ApplicationController
   
-  before_action :require_signin
+  before_action :authenticate_user!
 
   before_action :set_appunto, only: %i[ show edit update destroy ]
 
   # GET /appunti or /appunti.json
   def index
-    @appunti = current_user.appunti.order(updated_at: :desc)
+      @appunti = current_user.appunti.order(created_at: :desc)
+       
+      @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
+
+      @appunti = @appunti.searc(params[:q]) if params[:q]
   end
 
   # GET /appunti/1 or /appunti/1.json
@@ -15,9 +19,7 @@ class AppuntiController < ApplicationController
 
   # GET /appunti/new
   def new
-      @scuola   = ImportScuola.find(params[:import_scuola_id]) if !params[:import_scuola_id].nil?
-      @adozione = ImportAdozione.find(params[:import_adozione_id]) if !params[:import_adozione_id].nil?
-      @appunto  = current_user.appunti.new(import_scuola_id: params[:import_scuola_id], import_adozione_id: params[:import_adozione_id])
+    @appunto  = current_user.appunti.new
   end
 
   # GET /appunti/1/edit
@@ -33,16 +35,11 @@ class AppuntiController < ApplicationController
         format.html { redirect_to :back, notice: "Appunto inserito." }
         format.json { render :show, status: :created, location: @appunto }
         format.turbo_stream do
-          # render turbo_stream: turbo_stream.prepend(
-          #   'comments',
-          #   partial: "comments/comment",
-          #   locals: { comment: @comment }
-          # )
-          # render turbo_stream: helpers.autoredirect(comments_path)
-          # render turbo_stream: helpers.autoredirect(comment_path(@comment))
-          # render turbo_stream: turbo_stream.action(:redirect, comments_path)
-          # render turbo_stream: turbo_stream.advanced_redirect(comment_path(@comment))
-          # render turbo_stream: turbo_stream.advanced_redirect(appunti_path)
+          render turbo_stream: turbo_stream.prepend(
+            "appunti-lista",
+            partial: "appunti/appunto",
+            locals: { appunto: @appunto }
+          )
         end
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -90,7 +87,14 @@ class AppuntiController < ApplicationController
   def remove_attachment
     @attachment = ActiveStorage::Attachment.find(params[:id])
     @attachment.purge_later
-    redirect_back(fallback_location: request.referer)
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove(
+          @attachment
+        )
+      end
+    end
+    #redirect_back(fallback_location: request.referer)
   end
 
   def remove_image

@@ -62,8 +62,14 @@ accessories:
     image: redis:7.0
     host: 116.203.224.90
     port: 6379
-    directories:
-      - data:/data
+    roles:
+      - web
+      - job
+    cmd: redis-server
+    volumes:
+      - /var/lib/redis:/data
+    options:
+      network: "private"
 
 # Configure custom arguments for Traefik
 # traefik:

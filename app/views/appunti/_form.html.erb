@@ -1,4 +1,5 @@
 <%= form_with(model: appunto, class: "max-h-screen w-full max-w-lg relative") do |form| %>
+	
 	<% if appunto.errors.any? %>
 		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
 			<h2><%= pluralize(appunto.errors.count, "error") %> prohibited this appunto from being saved:</h2>
@@ -14,25 +15,34 @@
 	<%= form.hidden_field :user_id, value: current_user.id %>
 	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
-	
 
-	<div class="my-5">
-		<%= form.label :nome, "Titolo", class: "label" %>
-		<%= form.text_field :nome, class: "field", autofocus: :true %>
+	<% if appunto.import_scuola %>
+		<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
+	<% else %>
+		<div class="my-5 youtube">
+			<%= form.label :nome, "Scuola", class: "label" %>
+			<%= form.combobox :import_scuola_id, current_user.import_scuole.all %>
+		</div>
+	<% end %>
+
+	<div class="relative mt-5">
+		<%= form.text_field :nome, 
+				class: " peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6", 
+				placeholder: "oggetto",
+				autofocus: :true  %>
+		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 	</div>
-
-	<%= render partial: "appunto_scuola", locals: {appunto: appunto} %>
 
 	<div class="my-5">
 		<% unless appunto.body.blank? %>
 			<%= form.text_area :body, rows: 5, class: "field" %>
 		<% else %>
-			<%= form.rich_text_area :content, rows: 5, class: "field" %>
+			<%= form.rich_text_area :content, 
+				class: "block w-full resize-none bg-gray-50 border-0 border-b-2 p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6",
+				placeholder: "inserisci il tuo appunto..." %>
 		<% end %>
 	</div>  
 		
-
-
 	<%# <div class="">
 		<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
 			<div class="text-center flex justify-left gap-x-4 items-center">

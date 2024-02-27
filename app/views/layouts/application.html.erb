@@ -1,59 +1,64 @@
 <!DOCTYPE html>
 
-<html>
+<html class="h-full bg-gray-50 antialiased">
 	<head>
-		<title>Prova</title>
+		<title>Scagnozz</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<%= csrf_meta_tags %>
 		<%= csp_meta_tag %>
 		
 		<%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+		<%= combobox_style_tag "data-turbo-track": "reload" %>
 		<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 		
 		<%= javascript_importmap_tags %>
 	</head>
 
 
-	<body class="antialiased min-h-screen bg-slate-100">
+	<body class="flex h-full flex-col">
 		
-		<%#= render partial: "import_scuole/dialog" %>
-
-
-		<%= turbo_frame_tag :modal %>
-  
-
-
-		<!-- back-to-top di jason... -->
-		<%= render partial: "layouts/back_to_top" %>
-
-
-				
-		<%= render "layouts/slide_over" %>
-
-		<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
-			<%= render "layouts/sidebar" %>
-		</div>
-
-		<div class="lg:pl-72" data-controller="queryopt">
-
-			<%= render "layouts/main_menu" %>
+		<div class="flex min-h-full flex-col">
+			<%= turbo_frame_tag :modal %>
 	
-			<main class="px-2 py-4 sm:px-6 lg:px-8">		
+			<!-- back-to-top di jason... -->
+			<%= render partial: "layouts/back_to_top" %>
 					
+			<%= render "layouts/sidebar_slide_over" %>
+			
+			<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
+				<%= render "layouts/sidebar" %>
+			</div>
+
+			<div class="lg:pl-72" data-controller="queryopt">
+
+				<%= render "layouts/main_menu" %>
+		
+				<main class="py-4 sm:px-6 lg:px-8">		
+
+					<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+						<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+					</div>
+
 					<% if notice.present? %>
-						<p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+						<div class="block mx-auto py-2 px-3 text-center bg-green-50 mb-5 text-green-500 font-medium rounded-lg" id="notice"><%= notice %></div>
 					<% end %>
-					
+					<% if alert.present? %>
+						<div class="block mx-auto py-2 px-3 text-center bg-yellow-50 mb-5 text-yellow-500 font-medium rounded-lg" id="notice"><%= alert %></div>
+					<% end %>
+
 					<!-- Your content -->
 					<%= yield %>
+
+
+					<%= render "layouts/footer" %>
+					
+				</main>
+
+			</div>  
+
+		
 				
-			</main>
-
-		</div>  
-
-	
 	</body>
 
-	<%#= render "layouts/footer" %>
 
 </html>

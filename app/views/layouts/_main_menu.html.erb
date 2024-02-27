@@ -1,12 +1,9 @@
 <div class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
     
-    <div tabindex="-1"
-        data-controller="slide-sidebar"
-        data-slide-sidebar-slideover-outlet="#sidebar-tax"
-        data-action="keydown.esc->slide-sidebar#close"
-        >
+    <div tabindex="-1">
         <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-            data-action="click->slide-sidebar#toggle"    
+            data-tax-sidebar-target="element"
+            data-action="click->tax-sidebar#toggle"
             >
             <span class="sr-only">Apri sidebar</span>
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -27,13 +24,9 @@
             
             <div class="flex items-center gap-x-4 lg:gap-x-6">
                 
-                <!-- Openmodal button -->
-                <div 
-                    data-controller="openmodal" 
-                    data-openmodal-modal-outlet="#taxmodal" >
-                    <button
-                        data-action="click->openmodal#open" 
-                        type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                <!-- Notification button -->
+                <div class="hidden lg:block">
+                    <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
                         <span class="sr-only">View notifications</span>
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -47,14 +40,14 @@
                 <!-- Profile dropdown -->
        
                 <div 
-                    data-controller="dropdown" 
-                    data-action="click->dropdown#toggle click@window->dropdown#hide"
+                    data-controller="tax-dropdown" 
+                    data-action="click->tax-dropdown#toggle"
 
                     class="relative">
             
                     <button 
-                        type="button" class="-m-1.5 flex 
-                        items-center p-1.5" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                        type="button" class="-m-1.5 flex items-center p-1.5" 
+                        id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="sr-only">Open user menu</span>
                         <img class="h-8 w-8 rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
                         
@@ -69,7 +62,8 @@
                     </button>
 
                     <div 
-                        data-dropdown-target="menu"
+                        data-tax-dropdown-target="menu"
+
                         data-transition-enter="transition ease-out duration-200"
                         data-transition-enter-from="opacity-0"
                         data-transition-enter-to="opacity-95"
@@ -86,7 +80,7 @@
                             Il mio profilo
                         <% end %>
                                       
-                        <%= link_to "Esci", session_path, data: { turbo_method: :delete },
+                        <%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
                                 class: "block px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"
                         %>
 
@@ -96,7 +90,7 @@
         <% else %>
             <div class="flex flex-1 justify-between">
                 <div></div>
-                <%= link_to "Accedi o registrati", signin_path, class: "px-3 py-1 text-sm font-semibold leading-6 text-gray-900 hover:text-gray-500" %>
+                <%= link_to "Accedi o registrati", new_user_session_path, class: "px-3 py-1 text-sm font-semibold leading-6 text-gray-900 hover:text-gray-500" %>
             </div>
         <% end %>
 
