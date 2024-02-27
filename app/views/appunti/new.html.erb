@@ -1,5 +1,5 @@
 <%= render "shared/turbo_dialog" do %>
-    <div data-action="turbo:submit-end->dialog#submitEnd">
+    <div data-action="turbo:submit-end->dialog#submitEnd" class="w-full">
 
         <h2 class="font-bold text-2xl">Nuovo appunto</h1>
         <%= render "form", appunto: @appunto %>
