@@ -1,4 +1,6 @@
 import { Application } from "@hotwired/stimulus"
+import Clipboard from 'stimulus-clipboard'
+
 
 const application = Application.start()
 
@@ -18,5 +20,7 @@ window.Stimulus   = application
 // application.register('tabs', Tabs)
 // application.register('toggle', Toggle)
 
+
+application.register('clipboard', Clipboard)
 
 export { application }

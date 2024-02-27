@@ -16,11 +16,17 @@
 			<%= appunto.content %>
 		<% end %>
 	</div>
-
 	<div class="px-4">
-		<%= emphasis do %>
-			<%= appunto.body %>
-		<% end %>
+		
+			<%= emphasis do %>
+				<%= appunto.body %>
+			<% end %>
+		
+		<div data-controller=-clipboard" data-clipboard-success-content-value="Copied!">
+  			<input type="text" value="Click the button to copy me!" data-clipboard-target="source" />
+			<button type="button" data-action="txx-clipboard#copy" data-clipboard-target="button">Copy to clipboard</button>
+		</div>
+
 	</div>
 
 	<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
