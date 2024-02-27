@@ -80,5 +80,7 @@ gem "letter_opener"
 
 gem "hotwire_combobox", github: "Deanout/hotwire_combobox"
 
+gem 'resend', '~> 0.10.0'
+
 
 

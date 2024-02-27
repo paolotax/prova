@@ -12,40 +12,27 @@
   <% end %>
   <%= render Email::Text.new(text: "ScagnoZZ stà muovendo i suoi primi passi. ") %>
   <%# Section 1 %>
-  <%= render Email::Heading.new(text: "New templates", margin: "48px auto 16px auto") %>
-  <%# By passing a block to ::Text, we can use the HTML <b> tag for bold text %>
-  <%= render Email::Text.new do %>
-    This month I released <b>two new templates!</b>
-  <% end %>
-  <%= render Email::Text.new(text: "The Square templates make great alternatives to the basic ones. The Dark templates are more unique, for an opinionated / chic look (and are just cool!).") %>
-  <%= render Email::Text.new(text: "Both templates have interesting techniques you can grab from them, so they're both worth checking out.") %>
-  <%= render Email::Image.new(
-    src: "https://images.unsplash.com/photo-1534082753658-1dcb40af5719?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=400&q=80",
-    alt_text: "Markus Spiske on Unsplash",
-    border_radius: "16px"
-  ) %>
-  <%# Section 2 %>
-  <%= render Email::Heading.new(text: "Bug fixes and new parameters", margin: "48px auto 16px auto") %>
-  <%= render Email::Text.new(text: "A few creepy-crawly bugs managed to slip into the v1.0 release. This update fixed them all up.") %>
-  <%= render Email::Text.new do %>
-    I've also added a few extra parameters to a couple of components. You can now set the padding on a ::Container, and adjust the width and height of a ::Button.
-    For more info, you can read the <%= link_to "changelog.", "https://railsnotesui.xyz/changelog" %>
-  <% end %>
-  <%= render Email::Image.new(
-    src: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=400&q=80",
-    alt_text: "Markus Spiske on Unsplash",
-    border_radius: "16px"
-  ) %>
-  <%# You can render an optional ::Footer at the end of your emails. %>
-  <%= render Email::Footer.new(font: :trebuchet_ms, padding: "8px") do %>
-    © RailsNotes 2023
-    <%= render Email::SocialIcons.new(
-      x_url: "https://x.com/hrrsnbbnt",
-      instagram_url: "https://example.com",
-      facebook_url: "https://example.com",
-      icon_size: "24px"
-    ) %>
+  
+  <%= render Email::Text.new(text: "Intanto imposta le scuole e gli tuoi editori nella pagina del tuo profilo. Poi si vedrà") %>
+  <%#= render Email::Text.new(text: "Intanto imposta le scuole e gli tuoi editori nella pagina del tuo profilo. Poi si vedrà") %>
+  
+  <%# Section 1 %>
+    
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::RED_50,
+    border_width: "0",
+    border_radius: "12px",
+    margin: "64px auto auto auto",
+    padding: "16px 24px",
+  ) do %>
+    <%= render Email::Text.new(text: "ScagnoZZ", bold: true, letter_spacing: "-0.0375rem", margin: "8px auto", color: Email::Colors::GRAY_700) %>
+    <%= render Email::Text.new(size: "12px", margin: "4px auto", color: Email::Colors::GRAY_600) do %>
+      Visita <%= link_to "ScagnoZZ", "http://scagnozz.com" %> per saperne di più.
+    <% end %>
+    <%= render Email::Text.new(text: "© #{Time.now.year} ScagnoZZ", margin: "4px auto", size: "12px", color: Email::Colors::GRAY_600) %>
   <% end %>
 <% end %>
+
+
 
         

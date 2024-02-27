@@ -25,7 +25,7 @@
       ) do %>
     <%= render Email::Text.new(text: "ScagnoZZ", bold: true, letter_spacing: "-0.0375rem", margin: "8px auto", color: Email::Colors::GRAY_700) %>
     <%= render Email::Text.new(size: "12px", margin: "4px auto", color: Email::Colors::GRAY_600) do %>
-      Visita <%= link_to "ScagnoZZ", "https://scagnozz.com" %> per saperne di più.
+      Visita <%= link_to "ScagnoZZ", "http://scagnozz.com" %> per saperne di più.
     <% end %>
     <%= render Email::Text.new(text: "© #{Time.now.year} ScagnoZZ", margin: "4px auto", size: "12px", color: Email::Colors::GRAY_600) %>
   <% end %>
