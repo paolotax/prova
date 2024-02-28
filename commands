@@ -8,8 +8,28 @@ kamal details
 
 kamal app exec -i --reuse bash
 
-root@116.203.224.90 
+ssh root@116.203.224.90 
 
 docker ps
 
 docker logs -ft container
+
+
+$ ssh root@<SERVER_IP>
+mkdir -p /letsencrypt && touch /letsencrypt/acme.json && chmod 600 /letsencrypt/acme.json
+docker network create -d bridge private
+
+kamal env push
+
+kamal accessory boot db
+
+kamal deploy
+
+kamal setup
+
+kamal deploy
+
+kamal traefik restart
+
+kamal traefik logs
+kamal app logs
