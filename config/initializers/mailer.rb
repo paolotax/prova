@@ -1,1 +1,1 @@
-Resend.api_key = "re_Pso4XN9k_8d4THkMdDR7AtUowwR2rYHAv"
+Resend.api_key = ENV["RESEND_API_KEY"]

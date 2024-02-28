@@ -34,12 +34,7 @@ group :development do
   gem "web-console"
   
   gem "annotate", "~> 3.2"
-  
-  # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
-  # gem "rack-mini-profiler"
-
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
+  gem "letter_opener"
 end
 
 group :test do
@@ -56,9 +51,7 @@ gem "money-rails", "~> 1.15"
 gem "prawn", "~> 2.4"
 
 gem "pg_search", "~> 2.3"
-
 gem 'activerecord-import'
-
 gem "pagy"
 
 gem "view_component"
@@ -76,9 +69,9 @@ gem "omniauth-google-oauth2", "~> 1.1"
 gem "omniauth-github", "~> 2.0"
 
 gem "devise-i18n"
-gem "letter_opener"
 
-gem "hotwire_combobox", github: "Deanout/hotwire_combobox"
+
+gem "hotwire_combobox", "~> 0.1.33"
 
 gem 'resend', '~> 0.10.0'
 

@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/Deanout/hotwire_combobox.git
-  revision: 29723b908327ba926dc11000a7d9932665674b02
-  specs:
-    hotwire_combobox (0.1.32)
-      rails (>= 7.0.7.2)
-      stimulus-rails (>= 1.2)
-      turbo-rails (>= 1.2)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -158,6 +149,10 @@ GEM
       activesupport (>= 6.1)
     hashie (5.0.0)
     highline (2.0.3)
+    hotwire_combobox (0.1.33)
+      rails (>= 7.0.7.2)
+      stimulus-rails (>= 1.2)
+      turbo-rails (>= 1.2)
     htmlentities (4.3.4)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
@@ -420,7 +415,7 @@ DEPENDENCIES
   devise (~> 4.9)
   devise-i18n
   highline (~> 2.0.3)
-  hotwire_combobox!
+  hotwire_combobox (~> 0.1.33)
   image_processing (~> 1.2)
   importmap-rails
   inline_svg

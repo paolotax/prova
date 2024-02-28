@@ -5,16 +5,17 @@
         data-controller="dialog"
         data-action="click->dialog#clickOutside"
         class="z-10 backdrop:bg-black backdrop:bg-opacity-80 
-                 backdrop:w-screen backdrop:h-screen
-                transform overflow-scroll rounded-lg bg-white
-                text-left shadow-xl transition-all sm:my-8 
-                sm:w-full sm:max-w-lg sm:p-6
-                modal:w-screen
-                border-0 mt-8 flex" >
-
-        <div class="absolute left-4 top-0 sm:block">
+            transform overflow-scroll rounded-lg bg-white
+            text-left shadow-xl transition-all 
+            max-w-screen-sm 
+            border-0 mt-12 flex sm:my-8 
+            sm:w-full px-4 pl-4 sm:p-6" 
+        >
+        <div class="absolute left-4 top-4 sm:block">
             <button type="button" tabindex="-1" data-action="dialog#close" 
-                class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                class="rounded-md bg-white text-gray-400 hover:text-gray-500 
+                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
                 <span class="sr-only">Close</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

@@ -71,9 +71,9 @@
   }
 }
 
-dialog:modal {
+/* dialog:modal {
   max-width: 100vw;
-}
+} */
 
 
 .tx-combobox__dialog {

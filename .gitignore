@@ -46,3 +46,5 @@ _miur/scuole/*
 _csv/*
 _xml/*
 
+
+/config/credentials/production.key

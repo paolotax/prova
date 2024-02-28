@@ -2,6 +2,13 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
+import "trix"
+import "@rails/actiontext"
+
+console.log("Hello from application.js")
+
+
+
 // Turbo.setProgressBarDelay(1)
 
 // window.addEventListener("turbo:frame-render", (e) => {
@@ -11,6 +18,3 @@ import "controllers"
 // window.addEventListener("turbo:frame-load", (e) => {
 //     console.log("turbo:frame-load", e)
 // })
-
-import "trix"
-import "@rails/actiontext"
