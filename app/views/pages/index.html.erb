@@ -10,9 +10,8 @@
 
 		<% if current_user %>
 
-		</div>
 			<%= turbo_frame_tag "Combobox" do %>
-				<div class="youtube">
+				<div class="youtube my-10 mx-auto">
 					<%= form_with url: import_adozioni_path do |form| %>
 						<%= form.combobox :search, import_adozioni_path, placeholder: "cerca...",
 							id: "adozioni-search", mobile_at: "0px" %>
