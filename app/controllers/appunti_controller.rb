@@ -11,6 +11,8 @@ class AppuntiController < ApplicationController
       @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
 
       @appunti = @appunti.searc(params[:q]) if params[:q]
+
+      @pagy, @appunti =  pagy(@appunti.all, items: 30)
   end
 
   # GET /appunti/1 or /appunti/1.json

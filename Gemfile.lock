@@ -140,6 +140,8 @@ GEM
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
+    faker (3.2.3)
+      i18n (>= 1.8.11, < 2)
     faraday (2.9.0)
       faraday-net_http (>= 2.0, < 3.2)
     faraday-net_http (3.1.0)
@@ -414,6 +416,7 @@ DEPENDENCIES
   debug
   devise (~> 4.9)
   devise-i18n
+  faker
   highline (~> 2.0.3)
   hotwire_combobox (~> 0.1.33)
   image_processing (~> 1.2)
