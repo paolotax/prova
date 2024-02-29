@@ -14,7 +14,8 @@ export default class extends Clipboard {
   
   copy(e) {
     e.preventDefault();
-    const s = this.sourceTarget.querySelector("div").innerHTML || "niente da fare non funziona";
+    console.log(this.sourceTarget.querySelector("#trix-content"));
+    const s = this.sourceTarget.querySelector(".trix-content").textContent || this.sourceTarget.value;
     console.log(s);
     navigator.clipboard
       .writeText(s)

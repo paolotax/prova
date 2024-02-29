@@ -10,11 +10,15 @@ servers:
     hosts:
       - 116.203.224.90
     labels:
-      traefik.http.routers.prova.rule: Host(`scagnozz.com`)
-      traefik.http.routers.prova_secure.entrypoints: websecure
-      traefik.http.routers.prova_secure.rule: Host(`scagnozz.com`)
-      traefik.http.routers.prova_secure.tls: true
-      traefik.http.routers.prova_secure.tls.certresolver: letsencrypt
+      traefik.http.routers.prova.entrypoints: websecure
+      traefik.http.routers.prova.rule: Host("scagnozz.com")
+      traefik.http.routers.prova.tls.certresolver: letsencrypt
+    options:
+      network: "private"
+  job:
+    hosts:
+      - 116.203.224.90
+    cmd: bundle exec sidekiq -q default -q mailers
     options:
       network: "private"
 
@@ -32,8 +36,10 @@ registry:
 # Remember to run `kamal env push` after making changes!
 env:
   clear:
-    HOSTNAME: scagnozz.com
     DB_HOST: 116.203.224.90
+    RAILS_SERVE_STATIC_FILES: true
+    RAILS_LOG_TO_STDOUT: true
+    REDIS_URL: "redis://prova-redis:6379/0"
   secret:
     - RAILS_MASTER_KEY
     - POSTGRES_PASSWORD
@@ -49,8 +55,11 @@ traefik:
   args:
     entryPoints.web.address: ":80"
     entryPoints.websecure.address: ":443"
+    entryPoints.web.http.redirections.entryPoint.to: websecure # We want to force https
+    entryPoints.web.http.redirections.entryPoint.scheme: https
+    entryPoints.web.http.redirections.entrypoint.permanent: true
     certificatesResolvers.letsencrypt.acme.email: "paolo.tassinari@hey.com"
-    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json"
+    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json" # Must match the path in `volume`
     certificatesResolvers.letsencrypt.acme.httpchallenge: true
     certificatesResolvers.letsencrypt.acme.httpchallenge.entrypoint: web
 
@@ -85,12 +94,15 @@ accessories:
       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
       - data:/var/lib/postgresql/data
+    options:
+      network: "private"
   redis:
-    image: redis:7.0
+    image: redis:latest
     host: 116.203.224.90
-    port: 6379
     directories:
       - data:/data
+    options:
+      network: "private"
 
 # Configure custom arguments for Traefik
 # traefik:

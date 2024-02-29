@@ -76,7 +76,7 @@ Rails.application.configure do
   # Aggiunto per RESEND
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { host: "scagnozz.com", protocol:"http" }
+  config.action_mailer.default_url_options = { host: "scagnozz.com", protocol:"https" }
   config.action_mailer.delivery_method = :resend
 
   # Ignore bad email addresses and do not raise email delivery errors.
