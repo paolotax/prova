@@ -5,9 +5,7 @@ export default class extends Clipboard {
   connect() {
     super.connect()
     if (window.isSecureContext) {
-      console.log('The context is secure, can use navigator.clipboard');
-    } else {
-      console.log('The context is NOT secure BARBUN');
+    } else {    
       this.buttonTarget.classList.add("hidden");
     }
   }
@@ -16,7 +14,6 @@ export default class extends Clipboard {
     e.preventDefault();
     console.log(this.sourceTarget.querySelector("#trix-content"));
     const s = this.sourceTarget.querySelector(".trix-content").textContent || this.sourceTarget.value;
-    console.log(s);
     navigator.clipboard
       .writeText(s)
       .then((() => this.copied()))
