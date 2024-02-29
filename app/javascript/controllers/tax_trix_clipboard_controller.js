@@ -12,8 +12,7 @@ export default class extends Clipboard {
   
   copy(e) {
     e.preventDefault();
-    console.log(this.sourceTarget.querySelector("#trix-content"));
-    const s = this.sourceTarget.querySelector(".trix-content").textContent || this.sourceTarget.value;
+    const s = this.sourceTarget.querySelector("div").textContent || this.sourceTarget.value;
     navigator.clipboard
       .writeText(s)
       .then((() => this.copied()))
@@ -24,16 +23,24 @@ export default class extends Clipboard {
   copied() {
     this.hasButtonTarget && (this.timeout && clearTimeout(this.timeout),
     this.buttonTarget.innerHTML = this.successContentValue,
+    
     this.buttonTarget.classList.remove("bg-yellow-300"),
     this.buttonTarget.classList.add("bg-cyan-500"),
     this.buttonTarget.classList.remove("text-yellow-800"),
     this.buttonTarget.classList.add("text-white"),
+    this.buttonTarget.classList.remove("ring-yellow-300"),
+    this.buttonTarget.classList.add("ring-cyan-500"),
+    
     this.timeout = setTimeout((()=>{
+        
         this.buttonTarget.innerHTML = this.originalContent
+        
         this.buttonTarget.classList.add("bg-yellow-300"),
         this.buttonTarget.classList.remove("bg-cyan-500"),
         this.buttonTarget.classList.add("text-yellow-800"),
-        this.buttonTarget.classList.remove("text-white")
+        this.buttonTarget.classList.remove("text-white"),
+        this.buttonTarget.classList.add("ring-yellow-300"),
+        this.buttonTarget.classList.remove("ring-cyan-500")
     }
     ), this.successDurationValue))
   }
