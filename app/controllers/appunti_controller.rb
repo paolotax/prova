@@ -19,7 +19,9 @@ class AppuntiController < ApplicationController
 
   # GET /appunti/new
   def new
-    @appunto  = current_user.appunti.new
+    # @scuola   = ImportScuola.find(params[:import_scuola_id]) if !params[:import_scuola_id].nil?
+    # @adozione = ImportAdozione.find(params[:import_adozione_id]) if !params[:import_adozione_id].nil?
+    @appunto  = current_user.appunti.new(import_scuola_id: params[:import_scuola_id], import_adozione_id: params[:import_adozione_id])
   end
 
   # GET /appunti/1/edit
