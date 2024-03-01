@@ -19,48 +19,33 @@
 #  unconfirmed_email      :string
 #
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable,
-         authentication_keys: [:login]
 
-  validates :name, presence: true, uniqueness: true
+  # tutti i metodi di Devise
+  include Authenticable
   
-  attr_accessor :login
-
-  def login
-    @login || self.name || self.email
-  end
-  
-  has_one_attached :avatar
-  has_rich_text :card
-
-  enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
-  after_initialize :set_default_role, :if => :new_record?
-  
-    def set_default_role
-      self.role ||= :scagnozzo
-    end
-
-
   #validates :name,  presence: true, uniqueness: { case_sensitive: false }
   #validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
   #validates :partita_iva, format: { with: /\A\d{11}\z/ }
   #validates :password, length: { minimum: 6, allow_blank: true }
 
+  has_one_attached :avatar
+  has_rich_text :card
+
   has_many :user_scuole, dependent: :destroy  
   has_many :import_scuole, through: :user_scuole
   has_many :import_adozioni, through: :import_scuole 
-  
-  has_many :mandati, dependent: :destroy
-  
+  has_many :mandati, dependent: :destroy  
   has_many :editori, through: :mandati
-
   has_many :adozioni, through: :editori_users
-
   has_many :appunti, dependent: :destroy
+ 
+  
+  enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
 
+  after_initialize :set_default_role, :if => :new_record?
+  def set_default_role
+    self.role ||= :scagnozzo
+  end
   
   def mie_adozioni
     import_adozioni.where(editore: editori.collect{|e| e.editore})
@@ -74,21 +59,5 @@ class User < ApplicationRecord
     end
   end
 
-
-  private
-
-    def after_confirmation
-      WelcomeMailer.send_greetings_notification(self)
-                  .deliver_now
-    end
-
-    def self.find_for_database_authentication(warden_condition)
-      conditions = warden_condition.dup
-      if(login = conditions.delete(:login))
-        where(conditions.to_h).where(["lower(name) = :value OR lower(email) = :value", { value: login.downcase }]).first
-      elsif conditions.has_key?(:name) || conditions.has_key?(:email)
-        where(conditions.to_h).first
-      end
-    end
-
+  
 end
