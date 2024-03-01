@@ -3,6 +3,8 @@ class AppuntiController < ApplicationController
   before_action :authenticate_user!
 
   before_action :set_appunto, only: %i[ show edit update destroy ]
+  before_action :ensure_frame_response, only: %i[ new edit show ]
+
 
   # GET /appunti or /appunti.json
   def index
@@ -108,6 +110,11 @@ class AppuntiController < ApplicationController
   end
 
   private
+
+    def ensure_frame_response
+      redirect_to root_path unless turbo_frame_request?
+    end
+    
     # Use callbacks to share common setup or constraints between actions.
     def set_appunto
       @appunto = Appunto.find(params[:id])

@@ -1,3 +1,5 @@
+// tutorial https://github.com/corsego/151-dialog-turbo-modals/blob/main/app/controllers/comments_controller.rb
+
 // app/javascript/controllers/dialog_controller.js
 import { Controller } from "@hotwired/stimulus"
 
@@ -29,13 +31,17 @@ export default class extends Controller {
   close() {
     this.element.close()
     // clean up modal content
-    const frame = document.getElementById('modal')
-    frame.removeAttribute("src")
-    frame.innerHTML = ""
+    // const frame = document.getElementById('modal')
+    // frame.removeAttribute("src")
+    // frame.innerHTML = ""
   }
 
   enableBodyScroll() {
-    console.log("enableBodyScroll")
+    const frame = document.getElementById('modal')
+
+    frame.removeAttribute("src")
+    frame.innerHTML = ""
+
     document.body.classList.remove('overflow-hidden')
   }
 
