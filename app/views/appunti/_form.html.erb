@@ -32,23 +32,17 @@
 				autofocus: :true  %>
 		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 	</div>
-
 	<div class="my-5">
 		<% unless appunto.body.blank? %>
-			<%= form.text_area :body, rows: 5, class: "field" %>
+			<%= form.text_area :body, rows: 5, 
+			class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6" %>
 		<% else %>
 			<%= form.rich_text_area :content, 
-				class: "block w-full resize-none bg-gray-50 border-0 border-b-2 p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6",
+				class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6",
 				placeholder: "scrivi..." %>
 		<% end %>
 	</div>  
 		
-	<%# <div class="">
-
-	</div> %>
-	
-
-
 	<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
 		<div class="text-center flex justify-left gap-x-4 items-center">
 			<%# <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -67,7 +61,7 @@
 					<% appunto.attachments.each do |image| %>
 						<%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
 					<% end %>
-					<%= pluralize appunto.attachments.size, "file allegato" , plural: "file allegati" %>
+						<span class="text-sm italic text-gray-600"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
 					<br/>
 				<% end %>
 		</div>
