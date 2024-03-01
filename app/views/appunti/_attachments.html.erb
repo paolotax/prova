@@ -9,7 +9,7 @@
                 <% appunto.representables_attachments.each_with_index do |attachment, index| %>
                         
 
-                    <div id="<%= dom_id attachment %>" class="snap-center min-w-full ">
+                    <div id="<%= dom_id attachment %>" class="group snap-center min-w-full ">
 
                         <div class="">
                             <% if attachment.image? %>
@@ -29,7 +29,7 @@
                             <div class="flex items-center justify-between text-xs px-4 pb-1 text-gray-700">
                                 <%= attachment.filename.to_s.titleize %>
                                 <%= link_to "elimina", remove_attachment_appunto_path(attachment),
-                                    data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
+                                    data: { turbo_method: :delete }, class: "hidden group-hover:block text-red-500 text-sm font-semibold" %>
                             </div>
                         </div>
                     </div>
