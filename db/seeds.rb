@@ -21,6 +21,10 @@ u = User.find_by_name("paolotax")
 
 if u
   50.times do |i|
-    u.appunti.create!(nome: Faker::Cannabis.strain, body: Faker::Cannabis.buzzword )
+    text = ""
+    5.times do |t|
+      text = text + "#{t+1}. " + Faker::Cannabis.terpene + "\n"
+    end
+    u.appunti.create!(nome: "#{Faker::Cannabis.strain} di #{Faker::Cannabis.brand}", body: text )
   end
 end
