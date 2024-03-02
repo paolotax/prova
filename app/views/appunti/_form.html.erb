@@ -16,6 +16,7 @@
 	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 
+	<%# scuola o combobox %>	
 	<% if appunto.import_scuola %>
 		<%= render partial: "appunto_scuola", locals: {appunto: appunto, with_navigation: false } %>
 	<% else %>
@@ -25,6 +26,7 @@
 		</div>
 	<% end %>
 
+	<%# oggetto anziche nome %>
 	<div class="relative mt-5">
 		<%= form.text_field :nome, 
 				class: " peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6", 
@@ -32,6 +34,8 @@
 				autofocus: :true  %>
 		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 	</div>
+
+	<%# text area o trix  %>
 	<div class="my-5">
 		<% unless appunto.body.blank? %>
 			<%= form.text_area :body, rows: 5, 
@@ -42,7 +46,8 @@
 				placeholder: "scrivi..." %>
 		<% end %>
 	</div>  
-		
+
+	<%# attachments %>
 	<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
 		<div class="text-center flex justify-left gap-x-4 items-center">
 			<%# <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -67,6 +72,12 @@
 		</div>
 	</div>
 
+	<%# stato %>
+	<div class="relative mt-5">
+		<%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s},  include_blank: "", class: "field"   %>
+	</div>
+
+	<%# actions %>
 	<div class="mt-5 flex">
 		<%= button_to  do %>
 			<div class="btn btn-indigo">

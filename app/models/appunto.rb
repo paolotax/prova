@@ -46,6 +46,15 @@ class Appunto < ApplicationRecord
      "%#{q}%", "%#{q}%", "%#{q}%") 
   end
 
+  STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "da pagare", "completato", "archiviato"]
+  
+  after_initialize :set_default_stato, :if => :new_record?
+  
+  def set_default_stato
+    self.stato ||= "da fare"
+  end
+
+  
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed
