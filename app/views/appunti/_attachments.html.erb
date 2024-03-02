@@ -9,19 +9,19 @@
                 <% appunto.representables_attachments.each_with_index do |attachment, index| %>
                         
 
-                    <div id="<%= dom_id attachment %>" class="group snap-center min-w-full h-[360px]">
+                    <div id="<%= dom_id attachment %>" class="group snap-center min-w-full">
 
                         <div class="">
                             <% if attachment.image? %>
-                                <%= link_to image_tag( attachment.representation(resize_to_limit: [300, 300]), 
-                                    class:"w-full"), attachment %>
+                                <%= link_to image_tag( attachment.representation(resize_to_limit: [360, 360]), 
+                                    class:"w-full aspect-[1/1] object-cover"), attachment %>
                             <% elsif attachment.video? %>
-                                <%= video_tag(url_for(attachment), style:'height:auto; width:100%', controls:'') %>
+                                <%= video_tag(url_for(attachment), class:'aspect-video', controls:'') %>
                             <% elsif attachment.audio? %>
                                 <%= audio_tag(url_for(attachment), controls: '') %>
                             <% else %>
                                 <div class="w-full">
-                                    <%= link_to image_tag(attachment.representation(resize_to_limit: [360, 360]), class: "max-w-[300px] mx-auto border-2 border-gray-200 rounded-lg"),
+                                    <%= link_to image_tag(attachment.representation(resize_to_limit: [360, 360]), class: "aspect-auto mx-auto border-2 border-gray-200 rounded-lg"),
                                                         rails_blob_path(attachment, disposition: "attachment") %>
                                 </div>
                             <% end %>
