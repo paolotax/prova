@@ -5,11 +5,14 @@ export default class extends Controller {
   connect() {
     const node = this.element;
 
-    this.animateCSS("rubberBand").then(() => {
-      this.animateCSS("zoomOut").then(() => {
-        node.style.visibility = "hidden";
-      });
+    this.animateCSS("tada").then(() => {
+      setTimeout(() => {
+        this.animateCSS("zoomOut").then(() => {
+          node.style.visibility = "hidden";
+        });
+      }, 3000); // 3-second delay
     });
+  
   }
 
   animateCSS(animation) {
