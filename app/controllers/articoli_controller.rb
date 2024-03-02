@@ -1,5 +1,6 @@
 class ArticoliController < ApplicationController
   
+  before_action :authenticate_user!  
   before_action :set_articolo, only: [ :show, :update_descrizione ]
   before_action :remember_page, only: [:index, :show]
   
@@ -9,8 +10,7 @@ class ArticoliController < ApplicationController
       @articoli = Views::Articolo.where.not(codice_articolo: '').search_any_word(params[:search]).order(:descrizione)
     else
       @articoli = Views::Articolo.where.not(codice_articolo: '').order(:descrizione)
-    end
-    
+    end   
   end
 
   def show
@@ -26,7 +26,6 @@ class ArticoliController < ApplicationController
     if params[:descrizione].present?
       @articolo.update_descrizione params[:descrizione]
     end
-
     redirect_to duplicates_path
   end
 

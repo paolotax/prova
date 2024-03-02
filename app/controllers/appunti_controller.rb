@@ -1,12 +1,9 @@
 class AppuntiController < ApplicationController
   
   before_action :authenticate_user!
-
   before_action :set_appunto, only: %i[ show edit update destroy ]
   before_action :ensure_frame_response, only: %i[ new edit show ]
 
-
-  # GET /appunti or /appunti.json
   def index
       @appunti = current_user.appunti.order(created_at: :desc)
        
@@ -17,22 +14,18 @@ class AppuntiController < ApplicationController
       @pagy, @appunti =  pagy(@appunti.all, items: 30)
   end
 
-  # GET /appunti/1 or /appunti/1.json
   def show
   end
 
-  # GET /appunti/new
   def new
     @scuola   = ImportScuola.find(params[:import_scuola_id]) if !params[:import_scuola_id].nil?
     @adozione = ImportAdozione.find(params[:import_adozione_id]) if !params[:import_adozione_id].nil?
     @appunto  = current_user.appunti.new(import_scuola_id: params[:import_scuola_id], import_adozione_id: params[:import_adozione_id])
   end
 
-  # GET /appunti/1/edit
   def edit
   end
 
-  # POST /appunti or /appunti.json
   def create
     @appunto = current_user.appunti.build(appunto_params)
 
@@ -48,7 +41,6 @@ class AppuntiController < ApplicationController
     end
   end
 
-  # PATCH/PUT /appunti/1 or /appunti/1.json
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
@@ -62,7 +54,6 @@ class AppuntiController < ApplicationController
     end
   end
 
-  # DELETE /appunti/1 or /appunti/1.json
   def destroy
     @appunto.destroy!
 
@@ -97,14 +88,12 @@ class AppuntiController < ApplicationController
       redirect_to root_path unless turbo_frame_request?
     end
     
-    # Use callbacks to share common setup or constraints between actions.
     def set_appunto
       @appunto = Appunto.find(params[:id])
       @scuola = @appunto.import_scuola
       @adozione = @appunto.import_adozione
     end
 
-    # Only allow a list of trusted parameters through.
     def appunto_params
       params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :image, :content, attachments: [])
     end

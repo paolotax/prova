@@ -3,51 +3,43 @@ class ImportScuoleController < ApplicationController
   before_action :authenticate_user!
   before_action :set_import_scuola, only: %i[ show edit update destroy ]
 
-  # GET /import_scuole or /import_scuole.json
   def index
 
-    
-      @import_scuole = current_user.import_scuole.includes(:import_adozioni)
+    @import_scuole = current_user.import_scuole.includes(:import_adozioni)
 
-      if params[:search].present?
-        if params[:search_query] == "all"
-          @import_scuole = @import_scuole.search_all_word(params[:search])
-        else
-          @import_scuole = @import_scuole.search_any_word(params[:search])
-        end
+    if params[:search].present?
+      if params[:search_query] == "all"
+        @import_scuole = @import_scuole.search_all_word(params[:search])
+      else
+        @import_scuole = @import_scuole.search_any_word(params[:search])
       end
+    end
 
-      @import_scuole = @import_scuole.order(:CODICESCUOLA)
+    @import_scuole = @import_scuole.order(:CODICESCUOLA)
 
-      @conteggio_scuole   = @import_scuole.count
-      @conteggio_classi   = @import_scuole.sum(&:classi_count) 
-      @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
-      @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
-      
-      @pagy, @import_scuole = pagy(@import_scuole.all, items: 20, link_extra: 'data-turbo-action="advance"')
-
-
+    @conteggio_scuole   = @import_scuole.count
+    @conteggio_classi   = @import_scuole.sum(&:classi_count) 
+    @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
+    @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
+    
+    @pagy, @import_scuole = pagy(@import_scuole.all, items: 20, link_extra: 'data-turbo-action="advance"')
   end
 
   def search_scuole
     @scuole = current_user.import_scuole.search params[:q]
   end
 
-  # GET /import_scuole/1 or /import_scuole/1.json
   def show
     @miei_editori = current_user.editori.collect{|e| e.editore}
   end 
   
-  # GET /import_scuole/new
   def new
     @import_scuola = ImportScuola.new
   end
 
-  # GET /import_scuole/1/edit
   def edit
   end
 
-  # POST /import_scuole or /import_scuole.json
   def create
     @import_scuola = ImportScuola.new(import_scuola_params)
 
@@ -62,7 +54,6 @@ class ImportScuoleController < ApplicationController
     end
   end
 
-  # PATCH/PUT /import_scuole/1 or /import_scuole/1.json
   def update
     respond_to do |format|
       if @import_scuola.update(import_scuola_params)
@@ -75,7 +66,6 @@ class ImportScuoleController < ApplicationController
     end
   end
 
-  # DELETE /import_scuole/1 or /import_scuole/1.json
   def destroy
     @import_scuola.destroy!
 
@@ -86,13 +76,11 @@ class ImportScuoleController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_import_scuola
       @import_scuola = ImportScuola.find(params[:id])
-      #@import_scuola = ImportScuola.find_by_CODICESCUOLA(params[:CODICESCUOLA])
     end
 
-    # Only allow a list of trusted parameters through.
     def import_scuola_params
       params.fetch(:import_scuola, {})
     end

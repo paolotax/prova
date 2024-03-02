@@ -1,31 +1,28 @@
 class UserScuoleController < ApplicationController
+  
+  before_action :authenticate_user!
   before_action :set_user_scuola, only: %i[ show edit update destroy ]
 
-  # GET /user_scuole or /user_scuole.json
   def index
     @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
   end
 
-  # GET /user_scuole/1 or /user_scuole/1.json
   def show
   end
 
-  # GET /user_scuole/new
   def new
     @user_scuola = UserScuola.new
   end
 
-  # GET /user_scuole/1/edit
   def edit
   end
 
-  # POST /user_scuole or /user_scuole.json
   def create
     @user_scuola = UserScuola.new(user_scuola_params)
 
     respond_to do |format|
       if @user_scuola.save
-        format.html { redirect_to user_scuola_url(@user_scuola), notice: "User scuola was successfully created." }
+        format.html { redirect_to user_scuola_url(@user_scuola), notice: "Scuola assegnata all'utente." }
         format.json { render :show, status: :created, location: @user_scuola }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,11 +31,10 @@ class UserScuoleController < ApplicationController
     end
   end
 
-  # PATCH/PUT /user_scuole/1 or /user_scuole/1.json
   def update
     respond_to do |format|
       if @user_scuola.update(user_scuola_params)
-        format.html { redirect_to user_scuola_url(@user_scuola), notice: "User scuola was successfully updated." }
+        format.html { redirect_to user_scuola_url(@user_scuola), notice: "Scuola modificata." }
         format.json { render :show, status: :ok, location: @user_scuola }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -47,7 +43,6 @@ class UserScuoleController < ApplicationController
     end
   end
 
-  # DELETE /user_scuole/1 or /user_scuole/1.json
   def destroy
     @user_scuola.destroy!
 
@@ -59,12 +54,11 @@ class UserScuoleController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_user_scuola
       @user_scuola = UserScuola.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def user_scuola_params
       params.require(:user_scuola).permit(:import_scuola_id, :user_id, :q )
     end

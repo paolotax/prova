@@ -3,7 +3,6 @@ class ImportAdozioniController < ApplicationController
   before_action :authenticate_user!
   before_action :set_import_adozione, only: %i[ show edit update destroy ]
 
-  # GET /import_adozioni or /import_adozioni.json
   def index
 
     if params[:q].present?
@@ -37,20 +36,16 @@ class ImportAdozioniController < ApplicationController
     end
   end
 
-  # GET /import_adozioni/1 or /import_adozioni/1.json
   def show
   end
 
-  # GET /import_adozioni/new
   def new
     @import_adozione = ImportAdozione.new
   end
 
-  # GET /import_adozioni/1/edit
   def edit
   end
 
-  # POST /import_adozioni or /import_adozioni.json
   def create
     @import_adozione = ImportAdozione.new(import_adozione_params)
 
@@ -65,7 +60,6 @@ class ImportAdozioniController < ApplicationController
     end
   end
 
-  # PATCH/PUT /import_adozioni/1 or /import_adozioni/1.json
   def update
     respond_to do |format|
       if @import_adozione.update(import_adozione_params)
@@ -78,7 +72,6 @@ class ImportAdozioniController < ApplicationController
     end
   end
 
-  # DELETE /import_adozioni/1 or /import_adozioni/1.json
   def destroy
     @import_adozione.destroy!
 
@@ -89,12 +82,11 @@ class ImportAdozioniController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_import_adozione
       @import_adozione = ImportAdozione.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def import_adozione_params
       params.require(:import_adozione).permit(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :TIPOGRADOSCUOLA, :COMBINAZIONE, :DISCIPLINA, :CODICEISBN, :AUTORI, :TITOLO, :SOTTOTITOLO, :VOLUME, :EDITORE, :PREZZO, :NUOVAADOZ, :DAACQUIST, :CONSIGLIATO)
     end

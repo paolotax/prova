@@ -1,5 +1,6 @@
 class DocumentiController < ApplicationController
   
+  before_action :authenticate_user!
   before_action :set_documento, only: %i[ show ]
   before_action :remember_page, only: [:index, :show]
 

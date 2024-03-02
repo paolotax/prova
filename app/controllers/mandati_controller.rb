@@ -1,8 +1,6 @@
 class MandatiController < ApplicationController
     
     before_action :authenticate_user!
-    
-    #before_action :set_mandato, only: %i[    destroy ]
     before_action :find_editore
 
     def index
@@ -12,7 +10,6 @@ class MandatiController < ApplicationController
       @editori = Editore.where(gruppo: @gruppo&.gruppo)
                       .order(:editore)
                       .select(:id, :editore).distinct || []  
-      #fail
     end
         
     def create     

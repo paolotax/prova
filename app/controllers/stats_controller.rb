@@ -3,26 +3,21 @@ class StatsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_stat, only: %i[ show edit update destroy execute ]
 
-  # GET /stats or /stats.json
   def index
     @stats = Stat.all.order(:descrizione)
   end
 
-  # GET /stats/1/show
   def show
   end
 
-  # GET /stats/new
   def new
     @stat = Stat.new
   end
 
-  # GET /stats/1/edit
   def edit
   end
 
-  def execute
-    
+  def execute    
     @miei_editori = current_user.editori.collect{|e| e.editore}
     
     @result = @stat.execute current_user
@@ -32,14 +27,12 @@ class StatsController < ApplicationController
     end
   end
 
-
-  # POST /stats or /stats.json
   def create
     @stat = Stat.new(stat_params)
 
     respond_to do |format|
       if @stat.save
-        format.html { redirect_to stats_url, notice: "Stat was successfully created." }
+        format.html { redirect_to stats_url, notice: "Stat creata." }
         format.json { render :show, status: :created, location: @stat }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -48,11 +41,10 @@ class StatsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /stats/1 or /stats/1.json
   def update
     respond_to do |format|
       if @stat.update(stat_params)
-        format.html { redirect_to stats_url, notice: "Stat was successfully updated." }
+        format.html { redirect_to stats_url, notice: "Stat aggiornata!" }
         format.json { render :show, status: :ok, location: @stat }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -61,23 +53,21 @@ class StatsController < ApplicationController
     end
   end
 
-  # DELETE /stats/1 or /stats/1.json
   def destroy
     @stat.destroy!
 
     respond_to do |format|
-      format.html { redirect_to stats_url, notice: "Stat was successfully destroyed." }
+      format.html { redirect_to stats_url, alert: "Stat eliminata!" }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_stat
       @stat = Stat.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def stat_params
       params.require(:stat).permit(:descrizione, :seleziona_campi, :raggruppa_per, :ordina_per, :condizioni, :testo)
     end

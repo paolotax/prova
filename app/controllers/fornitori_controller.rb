@@ -1,5 +1,6 @@
 class FornitoriController < ApplicationController
   
+  before_action :authenticate_user!
   before_action :set_fornitore, only: %i[ show ]
   before_action :remember_page, only: [:index, :show]
   

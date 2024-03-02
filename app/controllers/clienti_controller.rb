@@ -1,5 +1,6 @@
 class ClientiController < ApplicationController
 
+  before_action :authenticate_user!
   before_action :set_cliente, only: %i[ show ]
   before_action :remember_page, only: [:index, :show]
   
