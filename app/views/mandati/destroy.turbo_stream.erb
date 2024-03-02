@@ -3,3 +3,5 @@
 <% end %>
 
 <%= turbo_stream.remove dom_id(@mandato) %>
+
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

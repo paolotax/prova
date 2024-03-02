@@ -7,3 +7,5 @@
 <% end %>
 
 <%= turbo_stream.remove @user_scuola %>
+
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

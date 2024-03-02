@@ -34,19 +34,13 @@ class AppuntiController < ApplicationController
 
   # POST /appunti or /appunti.json
   def create
-    @appunto = Appunto.new(appunto_params)
+    @appunto = current_user.appunti.build(appunto_params)
 
     respond_to do |format|
       if @appunto.save
         format.html { redirect_to :back, notice: "Appunto inserito." }
         format.json { render :show, status: :created, location: @appunto }
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.prepend(
-            "appunti-lista",
-            partial: "appunti/appunto",
-            locals: { appunto: @appunto }
-          )
-        end
+        format.turbo_stream { flash.now[:notice] = "Appunto inserito." }
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @appunto.errors, status: :unprocessable_entity }
@@ -58,15 +52,9 @@ class AppuntiController < ApplicationController
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
-        format.html { redirect_to appunti_url, notice: "Appunto was successfully updated." }
+        format.html { redirect_to appunti_url, notice: "Appunto modificato." }
         format.json { render :show, status: :ok, location: @appunto }
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            @appunto,
-            partial: "appunti/appunto",
-            locals: { appunto: @appunto }
-          ) 
-        end
+        format.turbo_stream { flash.now[:notice] = "Appunto modificato." }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @appunto.errors, status: :unprocessable_entity }
@@ -79,13 +67,9 @@ class AppuntiController < ApplicationController
     @appunto.destroy!
 
     respond_to do |format|
-      format.html { redirect_to appunti_url, notice: "Appunto was successfully destroyed." }
+      format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
       format.json { head :no_content }
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.remove(
-          @appunto
-        )
-      end
+      format.turbo_stream { flash.now[:alert] = "Appunto eliminato." }
     end
   end
 
@@ -95,9 +79,7 @@ class AppuntiController < ApplicationController
     @attachment.purge_later
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.remove(
-          @attachment
-        )
+        flash.now[:alert] = "Allegato eliminato."
       end
     end
     #redirect_back(fallback_location: request.referer)
