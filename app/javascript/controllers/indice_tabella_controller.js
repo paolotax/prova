@@ -2,9 +2,6 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="indice-tabella"
 export default class extends Controller {
-  connect() {
-    console.log("Connected to indice-tabella")
-  }
 
   changeGroup(event) {
     
@@ -13,7 +10,6 @@ export default class extends Controller {
 
     // Get the table rows
     const rows = this.element.querySelectorAll("tbody tr")
-    console.log(rows.length)
 
     rows.forEach(row => {
       // Get the group value from the row
