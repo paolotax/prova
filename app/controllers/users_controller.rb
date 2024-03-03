@@ -26,7 +26,6 @@ class UsersController < ApplicationController
 
   end
 
-
   def modifica_navigatore
     @user.update(navigator: params[:navigator])
     redirect_to @user, notice: "Navigatore modificato!"

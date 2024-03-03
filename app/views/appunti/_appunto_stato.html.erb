@@ -1,0 +1,11 @@
+<%= button_to appunto, method: "put" do |f| %>
+    <%= hidden_field_tag "appunto[stato]", "#{appunto.stato == 'archiviato' ? 'da fare' : 'archiviato'}" %>       
+    <div class= "mr-2 rounded-lg p-2 bg-gray-100 inline-block">
+        <% if appunto.stato == "archiviato" %>
+            <%= inline_svg_tag "icon-da-fare.svg", class: "h-6 w-6 text-gray-400 hover:text-gray-500" %>
+        <% else %>
+            <%= inline_svg_tag "icon-archivia.svg", class: "h-6 w-6 text-gray-400 hover:text-gray-500" %>
+        <% end %>
+    </div>
+<% end %>
+

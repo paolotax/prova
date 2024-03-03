@@ -1,6 +1,14 @@
-<div id="<%= dom_id appunto %>" 
-	class="py-4 relative flex flex-col bg-white rounded-2xl shadow-xl align-end border-b-2 border-slate-200">
+<%= tag.div id: dom_id(appunto), class: [
+		"group pt-4 relative flex flex-col bg-white rounded-2xl shadow-xl align-end border-b-2 border-slate-200": true,
+		"bg-red-200  text-gray-600":  appunto.stato == "archiviato"
+    ] do %>
 
+	<%= link_to edit_appunto_path(appunto),
+		data: { turbo_frame: :modal, action: "click->dialog#open"},
+		class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
+		<%= inline_svg_tag "icon-appunto.svg" %>
+	<% end %>
+	
 	<p class="px-4 font-semibold text-gray-900">
 		<%= appunto.nome %>      
 	</p>	
@@ -46,20 +54,19 @@
 			</div>
 		</div>
 	<% end %>
-
 	
 	<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
 
-	<%= tag.div class: "mt-auto pt-2 text-xs text-right italic  pr-2 -mb-2" do %>
-		creato da
-		<%= time_ago_in_words appunto.created_at%>
-	<% end %>
-
-	<%= link_to edit_appunto_path(appunto),
-		data: { turbo_frame: :modal, action: "click->dialog#open"},
-		class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
-		<%= inline_svg_tag "icon-appunto.svg" %>
-	<% end %>
+	<div class="flex mt-auto justify-between items-center">
 	
-</div>
+		<%= tag.div class: "pt-2 text-xs italic  pl-2" do %>
+			creato da
+			<%= time_ago_in_words appunto.created_at%>
+		<% end %>
+		<div><%= appunto.stato %></div>
+		
+		<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
 
+	</div>	
+
+<% end %>

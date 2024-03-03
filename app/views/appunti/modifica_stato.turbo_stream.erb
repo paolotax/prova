@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "#{dom_id @appunto}_stato" do %>
+    <%= render partial: "appunti/appunto_stato", locals: { appunto: @appunto } %>
+<% end %>
+
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

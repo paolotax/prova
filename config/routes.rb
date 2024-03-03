@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   
   resources :appunti do
     member do
+      put 'modifica_stato'
       delete 'remove_attachment'
       delete 'remove_image'
     end

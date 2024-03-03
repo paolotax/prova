@@ -26,7 +26,7 @@ class Appunto < ApplicationRecord
 
   include PgSearch::Model
 
-  search_fields =  [ :nome, :body, :email, :telefono]
+  search_fields =  [ :nome, :body, :email, :telefono, :stato]
 
   pg_search_scope :search_all_word, 
                       against: search_fields,

@@ -1,7 +1,7 @@
 class AppuntiController < ApplicationController
   
   before_action :authenticate_user!
-  before_action :set_appunto, only: %i[ show edit update destroy ]
+  before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
   before_action :ensure_frame_response, only: %i[ new edit show ]
 
   def index
@@ -64,6 +64,14 @@ class AppuntiController < ApplicationController
     end
   end
 
+  def modifica_stato
+    @appunto.update(stato: params[:stato])
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:notice] = "Stato modificato."
+      end
+    end
+  end
 
   def remove_attachment
     @attachment = ActiveStorage::Attachment.find(params[:id])
