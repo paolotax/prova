@@ -56,7 +56,12 @@ Rails.application.routes.draw do
   #get "users/:id/scuole" => "user_scuole#index", as: "user_scuole"  
   #delete  "user_scuole/:id", to: "user_scuole#destroy"
   
-  resources :import_scuole
+  resources :import_scuole do
+    collection do
+      get 'appunti'
+    end
+  end
+  
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
   

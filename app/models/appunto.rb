@@ -46,7 +46,7 @@ class Appunto < ApplicationRecord
      "%#{q}%", "%#{q}%", "%#{q}%") 
   end
 
-  STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "da pagare", "completato", "archiviato"]
+  STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "da pagare", "completato", "archiviato"]  
   
   after_initialize :set_default_stato, :if => :new_record?
   
@@ -54,7 +54,15 @@ class Appunto < ApplicationRecord
     self.stato ||= "da fare"
   end
 
-  
+  scope :da_fare, -> { where(stato: "da fare") }
+  scope :in_evidenza, -> { where(stato: "in evidenza") }
+  scope :in_settimana, -> { where(stato: "in settimana") }
+  scope :da_pagare, -> { where(stato: "da pagare") }
+  scope :completati, -> { where(stato: "completato") }
+  scope :archiviati, -> { where(stato: "archiviato") }
+  scope :non_archiviati, -> { where.not(stato: "archiviato") }
+
+
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed

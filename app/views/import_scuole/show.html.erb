@@ -29,7 +29,9 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 						Adozioni
 						<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">52</span>
+						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+							<%= @import_scuola.adozioni.size %>
+						</span>
 						</a>
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
@@ -39,15 +41,18 @@
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
 						In evidenza
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">4</span>
+						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+							<%= @import_scuola.appunti.non_archiviati.size %>
+						</span>
 						</a>
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Archiviati 
-							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">6</span>
+							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+								<%= @import_scuola.appunti.archiviati.size %>
+							</span>
 						</a>
 					</nav>
-
 				</div>
 			</div>
 
@@ -78,11 +83,13 @@
 			</div>
 
 			<div class="hidden" data-tax-tabs-target="panel">
-				Panel 3
+				<p class="only:block hidden">Whoops! Non ci sono appunti da fare</p>
+				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
 			</div>
 
 			<div class="hidden" data-tax-tabs-target="panel">
-				Panel 4
+				<p class="only:block hidden my-8 mx-auto">Whoops! Non ci sono appunti archiviati</p>				
+				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati %>
 			</div>
 		</div>
 	</div>	
