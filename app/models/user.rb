@@ -46,6 +46,10 @@ class User < ApplicationRecord
   def set_default_role
     self.role ||= :scagnozzo
   end
+
+  def miei_editori
+    editori.collect{|e| e.editore}
+  end
   
   def mie_adozioni
     import_adozioni.where(editore: editori.collect{|e| e.editore})

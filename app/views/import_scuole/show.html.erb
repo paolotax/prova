@@ -1,22 +1,21 @@
 <div class="flex">
 	
-	<div class="mx-auto">
+	<div class="w-full mx-auto">
 
 		<%= render @import_scuola %>
-
 
 		<div data-controller="tax-tabs" 
 				data-tax-tabs-active-tab-class="border-indigo-500 text-indigo-600"
 				data-tax-tabs-inactive-tab-class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700"
 				>
 			
-			<div class="sm:hidden">
+			<div class="sm:hidden my-4">
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+					<option>Appunti</option>
 					<option>Adozioni</option>
 					<option>Classi</option>
-					<option>In evidenza</option>
 					<option>Archiviati</option>
 				</select>
 			</div>
@@ -25,26 +24,32 @@
 
 				<div class="border-b border-gray-200">
 					<nav class="-mb-px flex space-x-8" aria-label="Tabs">
+
+						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
+						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
+						Appunti
+						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+							<%= @import_scuola.appunti.non_archiviati.size %>
+						</span>
+						</a>
+
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 						Adozioni
 						<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
 						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-							<%= @import_scuola.adozioni.size %>
+							<%= @import_scuola.mie_adozioni(current_user.miei_editori).size %> su <%= @import_scuola.adozioni_count %>
 						</span>
 						</a>
+
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 						Classi
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">6</span>
-						</a>
-						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
-						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
-						In evidenza
 						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-							<%= @import_scuola.appunti.non_archiviati.size %>
+							<%= @import_scuola.classi_count %>
 						</span>
 						</a>
+
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Archiviati 
@@ -56,7 +61,14 @@
 				</div>
 			</div>
 
-			<div class="hidden" data-tax-tabs-target="panel">
+			<div class="hidden mt-4" data-tax-tabs-target="panel">
+				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono appunti</p>
+				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
+			</div>
+
+
+			<div class="hidden mt-4" data-tax-tabs-target="panel">
+				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
 				<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
 					<p class="my-3 px-3">
 						<%= classe.to_s %>
@@ -78,17 +90,14 @@
 				<% end %>
 			</div>
 
-			<div class="hidden" data-tax-tabs-target="panel">
-				Panel 2
+			<div class="hidden mt-4" data-tax-tabs-target="panel">
+				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono classi in questa scuola</p>
+			    <!-- da fare @classi -->
+				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
 
-			<div class="hidden" data-tax-tabs-target="panel">
-				<p class="only:block hidden">Whoops! Non ci sono appunti da fare</p>
-				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
-			</div>
-
-			<div class="hidden" data-tax-tabs-target="panel">
-				<p class="only:block hidden my-8 mx-auto">Whoops! Non ci sono appunti archiviati</p>				
+			<div class="hidden mt-4" data-tax-tabs-target="panel">
+				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono appunti archiviati</p>				
 				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati %>
 			</div>
 		</div>

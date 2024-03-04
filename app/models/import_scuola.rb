@@ -110,6 +110,11 @@ class ImportScuola < ApplicationRecord
     marchi.size
   end
 
+  def mie_adozioni(user_editori = [])
+    import_adozioni.mie_adozioni(user_editori)
+  end
+
+
   def adozioni_grouped_classe 
     grouped = import_adozioni.order([:ANNOCORSO, :COMBINAZIONE, :CODICEISBN]).group_by {|k| [k.ANNOCORSO, k.COMBINAZIONE, k.CODICEISBN] }
     temp = []
