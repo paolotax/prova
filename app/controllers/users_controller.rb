@@ -28,7 +28,15 @@ class UsersController < ApplicationController
 
   def modifica_navigatore
     @user.update(navigator: params[:navigator])
-    redirect_to @user, notice: "Navigatore modificato!"
+    
+    respond_to do |format|
+      # format.turbo_stream do 
+      #   flash.now[:notice] = "Navigatore modificato!"
+      #   turbo_stream.replace "notice", partial: "layouts/flash"
+      #   redirect_to @user
+      # end
+      format.html { redirect_to @user, notice: "Navigatore modificato!"}
+    end
   end
 
   def assegna_scuole

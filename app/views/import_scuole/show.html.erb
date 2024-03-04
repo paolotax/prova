@@ -9,7 +9,7 @@
 				data-tax-tabs-inactive-tab-class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700"
 				>
 			
-			<div class="sm:hidden my-4">
+			<div class="sm:hidden mx-2 mt-4">
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
@@ -62,8 +62,10 @@
 			</div>
 
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono appunti</p>
-				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
+				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+					<p class="only:block hidden py-8 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
+					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
+				</div>
 			</div>
 
 
@@ -96,9 +98,11 @@
 				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
 
-			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono appunti archiviati</p>				
-				<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati %>
+			<div class="hidden mt-4 " data-tax-tabs-target="panel">
+				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+				<p class="only:block hidden py-8  lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
+					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati %>
+				</div>
 			</div>
 		</div>
 	</div>	
