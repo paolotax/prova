@@ -1,7 +1,7 @@
 <%= tag.div id: dom_id(appunto), class: [
-		"group pt-4 relative flex flex-col rounded-2xl shadow-xl align-end border-b-2 border-slate-200": true,
-		"bg-red-200  text-gray-600":  appunto.stato == "archiviato",
-		"bg-white": !(appunto.stato == "archiviato"),
+		"group pt-4 relative flex flex-col rounded-2xl shadow-xl align-end border-b-2": true,
+		"bg-red-200  text-gray-600 border-red-300":  appunto.stato == "archiviato",
+		"bg-white border-slate-200": !(appunto.stato == "archiviato"),
     ] do %>
 
 	<%= link_to edit_appunto_path(appunto),
