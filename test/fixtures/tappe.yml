@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  titolo: MyString
+  giro: MyString
+  data_tappa: MyString
+  entro_il: MyString
+  tappable: one
+  tappable_type: Tappable
+
+two:
+  titolo: MyString
+  giro: MyString
+  data_tappa: MyString
+  entro_il: MyString
+  tappable: two
+  tappable_type: Tappable

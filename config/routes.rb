@@ -9,6 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  
   mount Sidekiq::Web => "/sidekiq"
   
   
@@ -31,6 +32,7 @@ Rails.application.routes.draw do
   end
   
   resources :appunti do
+    resources :tappe
     member do
       put 'modifica_stato'
       delete 'remove_attachment'
@@ -57,16 +59,21 @@ Rails.application.routes.draw do
   #delete  "user_scuole/:id", to: "user_scuole#destroy"
   
   resources :import_scuole do
+    resources :tappe
     collection do
       get 'appunti'
     end
   end
+
+  get 'tappe', to: 'tappe#index', as: 'tappa'
   
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
   
-  
-  resources :import_adozioni
+  resources :import_adozioni do 
+    resources :tappe
+  end
+
   get 'clienti',      to: 'clienti#index'
   get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  

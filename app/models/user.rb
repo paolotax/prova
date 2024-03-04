@@ -38,6 +38,7 @@ class User < ApplicationRecord
   has_many :editori, through: :mandati
   has_many :adozioni, through: :editori_users
   has_many :appunti, dependent: :destroy
+  has_many :tappe, dependent: :destroy
  
   
   enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]

@@ -23,6 +23,8 @@ class Appunto < ApplicationRecord
   has_many_attached :attachments
   has_rich_text :content
 
+  has_many :tappe, as: :tappable
+
 
   include PgSearch::Model
 

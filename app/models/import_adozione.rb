@@ -30,6 +30,8 @@ class ImportAdozione < ApplicationRecord
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
 
+  has_many :tappe, as: :tappable
+
   include PgSearch::Model
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]

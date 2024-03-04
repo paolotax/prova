@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_24_121929) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_04_152634) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -168,6 +168,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_121929) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tappe", force: :cascade do |t|
+    t.string "titolo"
+    t.string "giro"
+    t.integer "ordine"
+    t.datetime "data_tappa"
+    t.datetime "entro_il"
+    t.bigint "user_id", null: false
+    t.string "tappable_type", null: false
+    t.bigint "tappable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tappable_type", "tappable_id"], name: "index_tappe_on_tappable"
+    t.index ["user_id"], name: "index_tappe_on_user_id"
+  end
+
   create_table "tipi_scuole", force: :cascade do |t|
     t.string "tipo"
     t.string "grado"
@@ -220,6 +235,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_121929) do
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
+  add_foreign_key "tappe", "users"
   add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
 

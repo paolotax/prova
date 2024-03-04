@@ -41,6 +41,7 @@ class ImportScuola < ApplicationRecord
   has_many :users, through: :user_scuole
 
   has_many :appunti
+  has_many :tappe, as: :tappable
   
   include PgSearch::Model
 
@@ -83,7 +84,7 @@ class ImportScuola < ApplicationRecord
   scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
   def to_s  
-    titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
+    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
 
   def adozioni 
