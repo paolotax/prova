@@ -38,6 +38,7 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, partial: "tappe/tappa", locals: { tappa: @tappa }) }
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
         format.json { render :show, status: :ok, location: @tappa }
       else
@@ -72,6 +73,6 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :user_id, :titolo)
+      params.permit(:tappable, :titolo, :data_tappa)
     end
 end

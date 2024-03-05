@@ -1,10 +1,23 @@
-<div id="<%= dom_id tappa %>">
-  <%= tappa.titolo %>
-  <%= tappa.giro %>
-  <%= tappa.created_at %>
-  <%= tappa.tappable %>
+<div id="<%= dom_id tappa %>" class= "px-2 py-1.5 flex space-x-4 justify-between items-center bg-white">
+    <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true } %>
+    <%#= link_to "modifica", edit_tappa_path(tappa), class: "btn btn-pink my-auto", 
+        data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+   
+    <% if tappa.data_tappa.nil? %>
+
+      <%= form_with url: tappa_path(tappa),  method: :patch, class: "btn btn-yellow" do |f| %>
+        <%= f.hidden_field :data_tappa, value: Time.now + 1.day %>
+        <%= f.submit "domani" %>
+      <% end %>
+    <% else %>
+
+      <%= tag.div class: "flex items-center space-x-4 text-right text-xs" do %> 
+          <%= tag.div tappa.data_tappa.strftime("%d/%m") %>         
+          <%= form_with url: tappa_path(tappa),  method: :patch, class: "btn btn-white" do |f| %>
+            <%= f.hidden_field :data_tappa, value: nil %>
+            <%= f.submit "cancella" %>
+          <% end %>
+        <% end %>
+    <% end %>
+
 </div>
-<%= button_to tappa_path(tappa) , method: :delete ,
-    class: "sidebar-item" do %>
-  <%= inline_svg_tag('icon-trash.svg') %>                
-<% end %>

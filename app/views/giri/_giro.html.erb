@@ -23,6 +23,6 @@
     <%= giro.finito_il %>
   </div>
 
-  <%= link_to "modifica", edit_giro_path(giro), class: "btn btn-pink my-auto", 
-          data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+  <%= link_to "apri", giro_path(giro), class: "btn btn-pink my-auto", 
+          data: { turbo_frame: "_top" } %>
 </div>

@@ -11,30 +11,24 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :user_id %>
-    <%= form.text_field :user_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+
+
+	<div class="relative mt-5">
+		<%= form.text_field :titolo, 
+				class: " peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6", 
+				placeholder: "titolo",
+				autofocus: :true  %>
+		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
+	</div>
 
   <div class="my-5">
-    <%= form.label :iniziato_il %>
-    <%= form.datetime_field :iniziato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
-  <div class="my-5">
-    <%= form.label :finito_il %>
-    <%= form.datetime_field :finito_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+    <%= form.text_area :descrizione, rows: 5,
+      placeholder: "descrizion...", 
+      class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6" %>
 
-  <div class="my-5">
-    <%= form.label :titolo %>
-    <%= form.text_field :titolo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+	</div>  
 
-  <div class="my-5">
-    <%= form.label :descrizione %>
-    <%= form.text_field :descrizione, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
   <div class="inline">
     <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

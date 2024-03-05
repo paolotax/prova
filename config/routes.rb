@@ -9,7 +9,12 @@ end
 
 # then mount it
 Rails.application.routes.draw do
-  resources :giri
+  
+  resources :giri do 
+    member do 
+      get 'crea_tappe'
+    end
+  end
   
   mount Sidekiq::Web => "/sidekiq"
   

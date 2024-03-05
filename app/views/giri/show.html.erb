@@ -1,15 +1,65 @@
-<div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto">
-    <% if notice.present? %>
-      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-    <% end %>
 
-    <%= render @giro %>
+<div id="<%= dom_id @giro %>" class="mx-auto md:w-2/3 w-full flex flex-col">
+  
+    <div class="bg-yellow-300 rounded-t-xl px-4 py-3">
+    
+        <div class="text-2xl font-semibold hover:text-indigo-600">
+            <%= @giro.titolo %>
+        </div>
 
-    <%= link_to "Edit this giro", edit_giro_path(@giro), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Destroy this giro", giro_path(@giro), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+        <div class=" text-gray-500 font-semibold">
+            <%= @giro.descrizione %>
+        </div>
     </div>
-    <%= link_to "Back to giri", giri_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  </div>
+
+    <div class="my-auto">
+        tappe:
+        <%= @giro.tappe_count %>
+    </div>
+
+    <div class="my-auto">
+        programmate:
+        <%= @giro.tappe_programmate_count %>
+    </div>
+
+    <div class="my-auto">
+        completate:
+        <%= @giro.tappe_completate_count %>
+    </div>
+
+    <div class="my-auto">
+        start:
+        <%= @giro.iniziato_il %>
+    </div>
+
+    <div class="my-auto">
+        end:
+        <%= @giro.finito_il %>
+    </div>
+
+    <div class="flex items-center justify-between my-4">
+
+        <%= button_to "elimina giro", giro_path(@giro), method: :delete, class: "btn btn-red" %>
+
+        <div class="flex flex-row space-x-4">
+            <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
+
+             <%= link_to "Crea Tappe!", crea_tappe_giro_path(@giro), class: "btn btn-green" %>
+
+            <%= link_to "modifica", edit_giro_path(@giro), class: "btn btn-indigo my-auto", 
+                data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+        </div>
+
+
+    </div>
+
+    <div class="flex flex-col">
+
+        <%= render @tappe.order(:ordine) %>
+    </div
+    >
+   
+    
+
+
 </div>
