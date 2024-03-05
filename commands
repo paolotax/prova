@@ -33,3 +33,7 @@ kamal traefik restart
 
 kamal traefik logs
 kamal app logs
+
+rm /opt/homebrew/var/postgresql@14/postmaster.pid
+
+brew services restart postgresql@14
