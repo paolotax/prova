@@ -3,7 +3,7 @@
 # Table name: appunti
 #
 #  id                 :bigint           not null, primary key
-#  import_scuola_id   :bigint           not null
+#  import_scuola_id   :bigint
 #  user_id            :bigint           not null
 #  import_adozione_id :bigint
 #  nome               :string

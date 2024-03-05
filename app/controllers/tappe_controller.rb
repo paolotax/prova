@@ -1,25 +1,20 @@
 class TappeController < ApplicationController
   before_action :set_tappa, only: %i[ show edit update destroy ]
 
-  # GET /tappe or /tappe.json
   def index
     @tappe = Tappa.all
   end
 
-  # GET /tappe/1 or /tappe/1.json
   def show
   end
 
-  # GET /tappe/new
   def new
     @tappa = Tappa.new
   end
 
-  # GET /tappe/1/edit
   def edit
   end
 
-  # POST /tappe or /tappe.json
   def create
     @tappable = find_tappable
 
@@ -40,7 +35,6 @@ class TappeController < ApplicationController
     #redirect_back(fallback_location: request.referer)
   end
 
-  # PATCH/PUT /tappe/1 or /tappe/1.json
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
@@ -53,7 +47,6 @@ class TappeController < ApplicationController
     end
   end
 
-  # DELETE /tappe/1 or /tappe/1.json
   def destroy
     @tappa.destroy!
 
@@ -64,7 +57,6 @@ class TappeController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_tappa
       @tappa = Tappa.find(params[:id])
     end
@@ -79,7 +71,6 @@ class TappeController < ApplicationController
       end
     end
 
-    # Only allow a list of trusted parameters through.
     def tappa_params
       params.require(:tappa).permit(:tappable, :user_id, :titolo)
     end

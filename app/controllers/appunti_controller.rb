@@ -5,12 +5,9 @@ class AppuntiController < ApplicationController
   before_action :ensure_frame_response, only: %i[ new edit show ]
 
   def index
-      @appunti = current_user.appunti.order(created_at: :desc)
-       
-      @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
-
-      @appunti = @appunti.searc(params[:q]) if params[:q]
-
+      @appunti = current_user.appunti.order(created_at: :desc)       
+      @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?     
+      @appunti = @appunti.search(params[:q]) if params[:q]
       @pagy, @appunti =  pagy(@appunti.all, items: 30)
   end
 

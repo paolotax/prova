@@ -9,6 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  resources :giri
   
   mount Sidekiq::Web => "/sidekiq"
   

@@ -1,0 +1,28 @@
+<div id="<%= dom_id giro %>" class="grid grid-cols-6">
+  
+  <div class="col-span-3 bg-yellow-300">
+    
+    <div class="text-2xl hover:text-indigo-600">
+      <%= link_to giro_path(giro), data: { turbo_frame: "_top"} do %>
+        <%= giro.titolo %>
+      <% end %>
+    </div>
+
+    <div class="">
+      <%= giro.descrizione %>
+    </div>
+  </div>
+
+  <div class="my-auto">
+    start:
+    <%= giro.iniziato_il %>
+  </div>
+
+  <div class="my-auto">
+    end:
+    <%= giro.finito_il %>
+  </div>
+
+  <%= link_to "modifica", edit_giro_path(giro), class: "btn btn-pink my-auto", 
+          data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+</div>

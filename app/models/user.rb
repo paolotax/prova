@@ -17,6 +17,7 @@
 #  confirmed_at           :datetime
 #  confirmation_sent_at   :datetime
 #  unconfirmed_email      :string
+#  role                   :integer          default("scagnozzo")
 #
 class User < ApplicationRecord
 
@@ -38,7 +39,7 @@ class User < ApplicationRecord
   has_many :editori, through: :mandati
   has_many :adozioni, through: :editori_users
   has_many :appunti, dependent: :destroy
-  has_many :tappe, dependent: :destroy
+  has_many :giri, dependent: :destroy
  
   
   enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
