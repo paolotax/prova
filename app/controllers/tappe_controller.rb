@@ -26,10 +26,18 @@ class TappeController < ApplicationController
     @tappa = @tappable.tappe.build(tappa_params)
     
     if @tappa.save
-      redirect_to @tappable, notice: 'Comment was successfully created.'
+      respond_to do |format|
+        format.html { redirect_to @tappable, notice: 'Tappa creata.'  }
+        format.turbo_stream do 
+          flash.now[:notice] = 'Tappa creata!!.'
+          #render partial: "layouts/flash", locals: { notice: "Tappa creata." }
+          #render turbo_stream: turbo_stream.replace(@tappable, partial: "tappe/tappa", locals: { tappa: @tappa })
+        end
+      end
     else
       redirect_to @tappable, alert: 'Error: Comment could not be created.'
     end
+    #redirect_back(fallback_location: request.referer)
   end
 
   # PATCH/PUT /tappe/1 or /tappe/1.json
