@@ -65,7 +65,8 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'tappe', to: 'tappe#index', as: 'tappa'
+  resources :tappe
+  #get 'tappe', to: 'tappe#index', as: 'tappa'
   
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'

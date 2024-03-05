@@ -4,3 +4,7 @@
   <%= tappa.created_at %>
   <%= tappa.tappable %>
 </div>
+<%= button_to tappa_path(tappa) , method: :delete ,
+    class: "sidebar-item" do %>
+  <%= inline_svg_tag('icon-trash.svg') %>                
+<% end %>
