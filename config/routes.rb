@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   
   resources :giri do 
     member do 
-      get 'crea_tappe'
+      post 'crea_tappe'
     end
   end
   

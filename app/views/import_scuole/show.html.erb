@@ -1,14 +1,15 @@
 <div class="flex">
-	
 	<div class="w-full mx-auto">
-
-		<%= render @import_scuola %>
+		
+		<div class="lg:w-1/2">
+			<%= render @import_scuola %>
+		</div>
 
 		<div data-controller="tax-tabs" 
 				data-tax-tabs-active-tab-class="border-indigo-500 text-indigo-600"
 				data-tax-tabs-inactive-tab-class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700"
 				>
-			
+			<!-- select mobile -->
 			<div class="sm:hidden mx-2 mt-4">
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
@@ -19,9 +20,9 @@
 					<option>Archiviati</option>
 				</select>
 			</div>
-
+			
+			<!-- menu -->
 			<div class="hidden sm:block">
-
 				<div class="border-b border-gray-200">
 					<nav class="-mb-px flex space-x-8" aria-label="Tabs">
 
@@ -60,15 +61,16 @@
 					</nav>
 				</div>
 			</div>
-
+			
+			<!-- appunti non archiviati-->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
 					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati %>
 				</div>
 			</div>
-
-
+			
+			<!-- adozioni -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
 				<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
@@ -91,13 +93,15 @@
 					<% end %>
 				<% end %>
 			</div>
-
+			
+			<!-- classi -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 text-center">Whoops! Non ci sono classi in questa scuola</p>
 			    <!-- da fare @classi -->
 				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
-
+			
+			<!-- appunti archiviati -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 				<p class="only:block hidden py-8  lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				

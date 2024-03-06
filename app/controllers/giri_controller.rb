@@ -14,9 +14,11 @@ class GiriController < ApplicationController
 
   def crea_tappe
     @scuole = current_user.import_scuole.per_comune_e_direzione
-  
+    scuole_ids = @scuole.pluck(:id)
     @scuole.each_with_index do |s, i|
-      Tappa.create!(tappable: s, ordine: i+1, giro: @giro)
+      unless scuole_ids.include?(s.id)
+        Tappa.create!(tappable: s, ordine: i+1, giro: @giro)
+      end
     end
     redirect_to giro_url(@giro), notice: "Tappe create."
   end
@@ -68,6 +70,7 @@ class GiriController < ApplicationController
       format.turbo_stream do 
         flash.now[:alert] = "Giro eliminato."
         turbo_stream.remove(@giro)
+        redirect_to giri_url
       end
       format.html { redirect_to giri_url, alert: "Giro eliminato." }
       format.json { head :no_content }
