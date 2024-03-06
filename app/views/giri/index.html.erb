@@ -1,5 +1,5 @@
 <%= heading do %>	
-	<%= h1 {"Giro"} %>
+	<%= h1 {"Giri"} %>
 
 	<%= link_to new_giro_path(@giro), 
 				data: { turbo_frame: :modal, action: "click->dialog#open"}, class: "w-16 btn btn-indigo" do %>
@@ -13,12 +13,13 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-	
+
 
 	<%= turbo_frame_tag "giri_page_#{@pagy.page}" do %> 
 
 		<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 xl:gap-x-8">
-      <%= render @giri %>
+			<p class="only:block hidden py-8 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono giri organizzati.</p>									
+      		<%= render @giri %>
 		</div>
 
 		<% if @pagy.next %>
