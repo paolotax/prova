@@ -1,5 +1,5 @@
 
-<div id="<%= dom_id @giro %>" class="mx-auto md:w-2/3 w-full flex flex-col">
+<div id="<%= dom_id @giro %>" class="mx-auto md:w-4/5 w-full flex flex-col">
   
     <div class="bg-yellow-300 rounded-t-xl px-4 py-3">
     
@@ -14,17 +14,44 @@
 
     <div class="my-auto">
         tappe:
-        <%= @giro.tappe_count %>
+        <%= link_to giro_tappe_path(giro_id: @giro.id) do %>
+            <%= @giro.tappe_count %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        di oggi:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "oggi") do %>
+            <%= @giro.tappe_completate_count %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        di domani:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "domani") do %>
+            <%= @giro.tappe_completate_count %>
+        <% end %>
     </div>
 
     <div class="my-auto">
         programmate:
-        <%= @giro.tappe_programmate_count %>
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmate") do %>
+            <%= @giro.tappe_programmate_count %>
+        <% end %>
     </div>
 
     <div class="my-auto">
         completate:
-        <%= @giro.tappe_completate_count %>
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "completate") do %>
+            <%= @giro.tappe_completate_count %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        da programmare:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmare") do %>
+            <%= @giro.tappe_completate_count %>
+        <% end %>
     </div>
 
     <div class="my-auto">
@@ -55,11 +82,11 @@
 
     </div>
 
-    <div class="flex flex-col">
 
-        <%= render @tappe.order(:ordine) %>
-    </div
-    >
+    <%= turbo_frame_tag :giro_tappe, src: giro_tappe_path(@giro), loading: :lazy do %>
+        <%= render 'shared/lazy_loading' %>
+    <% end%>
+
    
     
 

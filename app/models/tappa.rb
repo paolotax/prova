@@ -17,4 +17,23 @@
 class Tappa < ApplicationRecord
   belongs_to :giro
   belongs_to :tappable, polymorphic: true
+
+  scope :di_oggi,   -> { where(data_tappa: Time.now.all_day) }
+  scope :di_domani, -> { where(data_tappa: Time.now.tomorrow.all_day) }
+
+  scope :programmate, -> { where("data_tappa > ?", Time.now) }  
+  scope :completate, -> { where.not(data_tappa: nil).where("data_tappa < ?", Time.now) }
+
+  scope :da_programmare, -> { where(data_tappa: nil) }
+
+
+  def self.search(search)
+    if search
+      where('titolo LIKE ?', "%#{search}%")
+    else
+      all
+    end
+  end
+
+
 end

@@ -11,8 +11,9 @@ end
 Rails.application.routes.draw do
   
   resources :giri do 
+    resources :tappe, only: :index, to: 'giri#tappe', as: 'tappe'
     member do 
-      post 'crea_tappe'
+      get 'crea_tappe'
     end
   end
   

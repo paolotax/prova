@@ -10,7 +10,7 @@
 
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
             class: ["ml-auto h-8 w-8 rounded-full font-semibold": true,
-                    "text-white bg-pink-500":  tappa.data_tappa.day > Time.now.day,
+                    "text-white bg-pink-500":  tappa.data_tappa.day > Time.now.day + 1,
                     "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
                     "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
                     "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? %> 

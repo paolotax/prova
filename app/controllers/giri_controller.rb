@@ -12,6 +12,24 @@ class GiriController < ApplicationController
     @tappe = @giro.tappe.includes(:tappable)
   end
 
+  def tappe
+    @giro = Giro.find(params[:giro_id])
+    @tappe = @giro.tappe.includes(:tappable)
+
+    if params[:filter]  == 'programmate'
+      @tappe = @tappe.programmate
+    elsif params[:filter]  == 'oggi'
+      @tappe = @tappe.di_oggi
+    elsif params[:filter]  == 'domani'
+      @tappe = @tappe.di_domani
+    elsif params[:filter]  == 'completate'
+      @tappe = @tappe.completate
+    elsif params[:filter]  == 'programmare'
+      @tappe = @tappe.da_programmare
+    end
+    @pagy, @tappe = pagy(@tappe.order(:ordine), items: 10)
+  end
+
   def crea_tappe
     empty_tappe = @giro.tappe.empty?
     @scuole = current_user.import_scuole.per_comune_e_direzione
@@ -84,6 +102,6 @@ class GiriController < ApplicationController
     end
 
     def giro_params
-      params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione)
+      params.require(:giro).permit(:user_id, :giro_id, :iniziato_il, :finito_il, :titolo, :descrizione)
     end
 end
