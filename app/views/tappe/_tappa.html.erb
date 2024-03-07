@@ -1,23 +1,47 @@
 <div id="<%= dom_id tappa %>" class= "px-2 py-1.5 flex space-x-4 justify-between items-center bg-white">
-    <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true } %>
-    <%#= link_to "modifica", edit_tappa_path(tappa), class: "btn btn-pink my-auto", 
-        data: { turbo_frame: :modal, action: "click->dialog#open"} %>
-   
-    <% if tappa.data_tappa.nil? %>
 
-      <%= form_with url: tappa_path(tappa),  method: :patch, class: "btn btn-yellow" do |f| %>
-        <%= f.hidden_field :data_tappa, value: Time.now + 1.day %>
-        <%= f.submit "domani" %>
+    <%= tag.div class: "flex flex-row space-x-4" do %>
+        <%= link_to "edit", edit_tappa_path(tappa), 
+                class: "btn btn-pink my-auto", 
+                data: { turbo_frame: :modal, action: "click->dialog#open"} %>    
+        
+        <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true } %>
+    <% end %>
+
+    <%= tag.div tappa.titolo, class: "text-sm font-semibold text-gray-600" %> 
+          
+    <% if tappa.data_tappa.nil? %>    
+      <%= tag.div class: "flex items-center space-x-4 text-right text-xs" do %>
+
+        <%= form_with model: tappa,  method: :patch, class: "btn btn-green" do |f| %>
+          <%= f.hidden_field :data_tappa, value: Time.now%>
+          <%= f.submit "oggi" %>
+        <% end %>
+        
+        <%= form_with model: tappa, method: :patch, class: "btn btn-yellow" do |f| %>
+          <%= f.hidden_field :data_tappa, value: Time.now + 1.day %>
+          <%= f.submit "domani" %>
+        <% end %>
+      
       <% end %>
+    
     <% else %>
 
       <%= tag.div class: "flex items-center space-x-4 text-right text-xs" do %> 
-          <%= tag.div tappa.data_tappa.strftime("%d/%m") %>         
-          <%= form_with url: tappa_path(tappa),  method: :patch, class: "btn btn-white" do |f| %>
+          
+          <%= tag.div tappa.data_tappa.strftime("%d"), 
+                class: ["ml-auto flex h-6 w-6 items-center justify-center rounded-full font-semibold": true,
+                        "text-white bg-blue-500":  tappa.data_tappa.day > Time.now.day,
+                        "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
+                        "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
+                        "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1] %>         
+    
+          <%= form_with model: tappa,  method: :patch, class: "btn btn-white" do |f| %>
             <%= f.hidden_field :data_tappa, value: nil %>
             <%= f.submit "cancella" %>
           <% end %>
         <% end %>
+    
     <% end %>
 
 </div>

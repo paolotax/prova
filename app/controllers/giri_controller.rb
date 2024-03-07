@@ -13,12 +13,12 @@ class GiriController < ApplicationController
   end
 
   def crea_tappe
+    empty_tappe = @giro.tappe.empty?
     @scuole = current_user.import_scuole.per_comune_e_direzione
-    scuole_ids = @scuole.pluck(:id)
     @scuole.each_with_index do |s, i|
-      unless scuole_ids.include?(s.id)
-        Tappa.create!(tappable: s, ordine: i+1, giro: @giro)
-      end
+      if empty_tappe || !@giro.tappe.where(tappable: s).exists?
+        Tappa.create!(tappable: s, ordine: i+1, giro: @giro)      
+      end  
     end
     redirect_to giro_url(@giro), notice: "Tappe create."
   end
