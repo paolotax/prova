@@ -5,18 +5,21 @@ class GiriController < ApplicationController
 
   def index
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)
+    
+    
+    
     @pagy, @giri =  pagy(@giri.all, items: 10)
   end
 
   def show
-    @tappe = @giro.tappe.includes(:tappable)
-    @tappe.paginate(page: params[:page], per_page: 10)
+    @tappe = @giro.tappe.includes(:tappable).order(:ordine)
+    @pagy, @tappe = pagy(@tappe, items: 10) 
   end
 
   def tappe
-    @giro = Giro.find(params[:giro_id])
-    @tappe = @giro.tappe.includes(:tappable)
-
+    @giro  = Giro.find(params[:giro_id])
+    @tappe = Tappa.includes(:tappable).where(giro_id: @giro).order(:ordine)
+    
     if params[:filter]  == 'programmate'
       @tappe = @tappe.programmate
     elsif params[:filter]  == 'oggi'
@@ -29,7 +32,8 @@ class GiriController < ApplicationController
       @tappe = @tappe.da_programmare
     end
 
-    @tappe.paginate(page: params[:page], per_page: 10)
+    set_page_and_extract_portion_from @tappe
+
   end
 
   def crea_tappe
@@ -104,6 +108,6 @@ class GiriController < ApplicationController
     end
 
     def giro_params
-      params.require(:giro).permit(:user_id, :giro_id, :iniziato_il, :finito_il, :titolo, :descrizione)
+      params.require(:giro).permit(:user_id, :giro_id, :iniziato_il, :finito_il, :titolo, :descrizione, :filter)
     end
 end

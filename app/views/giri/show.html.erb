@@ -22,35 +22,35 @@
     <div class="my-auto">
         di oggi:
         <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "oggi") do %>
-            <%= @giro.tappe_completate_count %>
+            <%= @giro.tappe.di_oggi.size %>
         <% end %>
     </div>
 
     <div class="my-auto">
         di domani:
         <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "domani") do %>
-            <%= @giro.tappe_completate_count %>
+            <%= @giro.tappe.di_domani.size %>
         <% end %>
     </div>
 
     <div class="my-auto">
         programmate:
         <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmate") do %>
-            <%= @giro.tappe_programmate_count %>
+            <%= @giro.tappe.programmate.size %>
         <% end %>
     </div>
 
     <div class="my-auto">
         completate:
         <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "completate") do %>
-            <%= @giro.tappe_completate_count %>
+            <%= @giro.tappe.completate.size %>
         <% end %>
     </div>
 
     <div class="my-auto">
         da programmare:
         <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmare") do %>
-            <%= @giro.tappe_completate_count %>
+            <%= @giro.tappe.da_programmare.size %>
         <% end %>
     </div>
 
@@ -84,8 +84,8 @@
         <%#= render 'shared/lazy_loading' %>
     <% end%>
 
-    <% if @tappe.next_page %>
-        <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, page: @tappe.next_page, format: :turbo_stream), loading: :lazy do %>
+    <% if @pagy.next %>
+        <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, page: @pagy.next, format: :turbo_stream), loading: :lazy do %>
             <%#= render 'shared/lazy_loading' %>
         <% end %>
     <% end%>

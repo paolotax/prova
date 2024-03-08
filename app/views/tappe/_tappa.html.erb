@@ -1,4 +1,4 @@
-<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-6 sm:grid-cols-9 space-x-2 bg-white">
+<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-6 sm:grid-cols-9 space-x-2 bg-white border-b">
 
     <%= tag.div class: "col-span-3" do %>    
         <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: false } %>

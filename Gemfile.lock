@@ -146,6 +146,9 @@ GEM
     faraday-net_http (3.1.0)
       net-http
     ffi (1.16.3)
+    geared_pagination (1.2.0)
+      activesupport (>= 5.0)
+      addressable (>= 2.5.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
@@ -416,6 +419,7 @@ DEPENDENCIES
   devise (~> 4.9)
   devise-i18n
   faker
+  geared_pagination (~> 1.2)
   highline (~> 2.0.3)
   hotwire_combobox (~> 0.1.33)
   image_processing (~> 1.2)

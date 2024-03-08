@@ -1,11 +1,109 @@
-<%= turbo_frame_tag :giro_tappe do %>
 
-    <div class="py-2">
-        <div class="w-full">
-  <div id="tappe" class="min-w-full">
-    <%= render @tappe %>
-  </div>
+<div id="<%= dom_id @giro %>" class="mx-auto md:w-4/5 w-full flex flex-col">
+  
+    <div class="bg-yellow-300 rounded-t-xl px-4 py-3">
+    
+        <div class="text-2xl font-semibold hover:text-indigo-600">
+            <%= @giro.titolo %>
+        </div>
+
+        <div class=" text-gray-500 font-semibold">
+            <%= @giro.descrizione %>
         </div>
     </div>
+
+    <div class="my-auto">
+        tappe:
+        <%= link_to giro_tappe_path(giro_id: @giro.id) do %>
+            <%= @giro.tappe_count %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        di oggi:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "oggi") do %>
+            <%= @giro.tappe_completate_count %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        di domani:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "domani") do %>
+            <%= @giro.tappe.di_domani.size %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        programmate:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmate") do %>
+            <%= @giro.tappe.programmate.size %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        completate:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "completate") do %>
+            <%= @giro.tappe.completate.size %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        da programmare:
+        <%= link_to giro_tappe_path(giro_id: @giro.id, filter: "programmare") do %>
+            <%= @giro.tappe.da_programmare.size %>
+        <% end %>
+    </div>
+
+    <div class="my-auto">
+        start:
+        <%= @giro.iniziato_il %>
+    </div>
+
+    <div class="my-auto">
+        end:
+        <%= @giro.finito_il %>
+    </div>
+
+    <div class="flex items-center justify-between my-4">
+
+        <%= button_to "elimina giro", giro_path(@giro), 
+            method: :delete, confirm: "Sei sicuro?",
+			class: "btn btn-red" %>
+
+        <div class="flex flex-row space-x-4">
+            <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
+
+            <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro), method: :post, class: "btn btn-green" %>
+
+            <%= link_to "modifica", edit_giro_path(@giro), class: "btn btn-indigo my-auto", 
+                data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+        </div>
+    </div>
+
+    <%#= turbo_frame_tag "giro_tappe", src: giro_tappe_path(@giro, format: :turbo_stream), loading: :lazy do %>
+        <%#= render 'shared/lazy_loading' %>
+    <%# end%>
+<!---->
+    <%# if @pagy.next %>
+        <%#= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, page: @pagy.next, format: :turbo_stream), loading: :lazy do %>
+            <%#= render 'shared/lazy_loading' %>
+        <%# end %>
+    <%# end%>
     
-<% end %>
+
+    Showing page <%= @page.number %> of <%= @page.recordset.page_count %> (<%= @page.recordset.records_count %> total messages):
+
+    <%= render @page.records %>
+
+    <% if @page.last? %>
+        No more pages!
+    <% else %>
+        <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, filter: params[:filter], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+            <%= render 'shared/lazy_loading' %>
+        <% end %>
+        <%#= link_to "Next page", giro_tappe_path(@giro, page: @page.next_param) %>
+    <% end %>
+
+
+
+</div>
