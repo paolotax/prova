@@ -7,7 +7,6 @@
     <%= tag.div tappa.titolo, class: "hidden sm:block col-span-3 text-sm font-semibold text-gray-600" %> 
           
     <%= tag.div class: "col-span-1 my-auto text-center" do %>
-
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
             class: ["ml-auto h-8 w-8 rounded-full font-semibold": true,
                     "text-white bg-pink-500":  tappa.data_tappa.day > Time.now.day + 1,
@@ -15,9 +14,7 @@
                     "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
                     "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? %> 
     <% end %>
-    
-
-    
+        
     <% if tappa.data_tappa.nil? %>    
         
         <%= tag.div class: "col-span-2 flex justify-center space-x-2 text-xs" do %>

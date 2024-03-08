@@ -10,6 +10,7 @@ class GiriController < ApplicationController
 
   def show
     @tappe = @giro.tappe.includes(:tappable)
+    @tappe.paginate(page: params[:page], per_page: 10)
   end
 
   def tappe
@@ -27,7 +28,8 @@ class GiriController < ApplicationController
     elsif params[:filter]  == 'programmare'
       @tappe = @tappe.da_programmare
     end
-    @pagy, @tappe = pagy(@tappe.order(:ordine), items: 10)
+
+    @tappe.paginate(page: params[:page], per_page: 10)
   end
 
   def crea_tappe

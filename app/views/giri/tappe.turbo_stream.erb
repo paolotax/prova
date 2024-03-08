@@ -1,0 +1,12 @@
+<%= turbo_stream.append "giro_tappe" do %>
+    <%= render partial: "tappe/tappa", collection: @tappe %>
+<% end %>
+
+
+<% if @pagy.next %>
+    <%= turbo_stream.replace "load_more" do %>
+        <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, page: @pagy.next, format: :turbo_stream), loading: :lazy do %>
+            <%= render 'shared/lazy_loading' %>
+        <% end%>
+    <% end%>
+<% end %>

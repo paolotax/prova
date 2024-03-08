@@ -78,3 +78,5 @@ gem 'resend', '~> 0.10.0'
 
 
 
+
+gem "will_paginate", "~> 4.0"

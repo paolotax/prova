@@ -73,22 +73,21 @@
         <div class="flex flex-row space-x-4">
             <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
 
-             <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro), method: :post, class: "btn btn-green" %>
+            <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro), method: :post, class: "btn btn-green" %>
 
             <%= link_to "modifica", edit_giro_path(@giro), class: "btn btn-indigo my-auto", 
                 data: { turbo_frame: :modal, action: "click->dialog#open"} %>
         </div>
-
-
     </div>
 
-
-    <%= turbo_frame_tag :giro_tappe, src: giro_tappe_path(@giro), loading: :lazy do %>
-        <%= render 'shared/lazy_loading' %>
+    <%= turbo_frame_tag "giro_tappe", src: giro_tappe_path(@giro, format: :turbo_stream), loading: :lazy do %>
+        <%#= render 'shared/lazy_loading' %>
     <% end%>
 
-   
-    
-
+    <% if @tappe.next_page %>
+        <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, page: @tappe.next_page, format: :turbo_stream), loading: :lazy do %>
+            <%#= render 'shared/lazy_loading' %>
+        <% end %>
+    <% end%>
 
 </div>
