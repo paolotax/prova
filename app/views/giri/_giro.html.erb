@@ -17,7 +17,7 @@
   <%= link_to "modifica", edit_giro_path(giro), class: "text-xs my-auto col-span-1", 
                     data: { turbo_frame: :modal, action: "click->dialog#open"} %>
 
-  <%= button_to "elimina", giro_path(giro), method: :delete, confirm: "Sei sicuro?",
+  <%= button_to "elimina", giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
                 class: "text-xs my-auto col-span-1" %>
 
   <%= link_to "apri", tappe_giro_path(giro), class: "text-xs my-auto col-span-1", 
