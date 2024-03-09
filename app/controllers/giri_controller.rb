@@ -70,10 +70,7 @@ class GiriController < ApplicationController
   def update
     respond_to do |format|
       if @giro.update(giro_params)
-        format.turbo_stream do
-          flash.now[:notice] = "Giro modificato."
-          turbo_stream.replace(@giro, partial: "giri/giro", locals: { giro: @giro })
-        end
+        format.turbo_stream { flash.now[:notice] = "Giro modificato." }
         format.html { redirect_to giri_url, notice: "Giro modificato." }
         format.json { render :show, status: :ok, location: @giro }
       else
