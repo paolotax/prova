@@ -3,7 +3,8 @@
     <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
                       multiple: true,
                       form: :bulk_update_tappe_form,
-                      checked: false
+                      checked: false,
+                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-4 my-auto"
                     } %>
     
     <%= tag.div class: "col-span-3" do %>    
