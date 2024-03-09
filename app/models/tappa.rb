@@ -15,6 +15,7 @@
 #  giro_id       :bigint
 #
 class Tappa < ApplicationRecord
+  
   belongs_to :giro
   belongs_to :tappable, polymorphic: true
 

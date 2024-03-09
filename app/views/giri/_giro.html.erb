@@ -3,7 +3,7 @@
   <div class="col-span-3 bg-yellow-300">
     
     <div class="text-2xl hover:text-indigo-600">
-      <%= link_to giro_path(giro), data: { turbo_frame: "_top"} do %>
+      <%= link_to tappe_giro_path(giro), data: { turbo_frame: "_top"} do %>
         <%= giro.titolo %>
       <% end %>
     </div>
@@ -13,16 +13,13 @@
     </div>
   </div>
 
-  <div class="my-auto">
-    start:
-    <%= giro.iniziato_il %>
-  </div>
 
-  <div class="my-auto">
-    end:
-    <%= giro.finito_il %>
-  </div>
+  <%= link_to "modifica", edit_giro_path(giro), class: "text-xs my-auto col-span-1", 
+                    data: { turbo_frame: :modal, action: "click->dialog#open"} %>
 
-  <%= link_to "apri", tappe_giro_path(giro), class: "btn btn-pink my-auto", 
+  <%= button_to "elimina", giro_path(giro), method: :delete, confirm: "Sei sicuro?",
+                class: "text-xs my-auto col-span-1" %>
+
+  <%= link_to "apri", tappe_giro_path(giro), class: "text-xs my-auto col-span-1", 
           data: { turbo_frame: "_top" } %>
 </div>

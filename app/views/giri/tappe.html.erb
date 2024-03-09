@@ -14,21 +14,10 @@
 
 
     <div class="p-2 flex flex-col bg-yellow-300">
-        <%# menu da spostare %>
-        <div class="flex items-center justify-between my-4">
 
-            <%= button_to "elimina giro", giro_path(@giro), 
-                method: :delete, confirm: "Sei sicuro?",
-                class: "btn btn-red" %>
-
-            <div class="flex flex-row space-x-4">
-                <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
-
-                <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro), method: :post, class: "btn btn-green" %>
-
-                <%= link_to "modifica", edit_giro_path(@giro), class: "btn btn-indigo my-auto", 
-                    data: { turbo_frame: :modal, action: "click->dialog#open"} %>
-            </div>
+        <div class="flex items-center justify-between">
+            <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
+            <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro), method: :post, class: "btn btn-green" %>
         </div>
         <div class="flex">
             <div class="my-auto">
@@ -47,10 +36,11 @@
     <%# link per filtrare il giro %>
     <%= render "giro_filter" %>
     
-    Showing page <%= @page.number %> of <%= @page.recordset.page_count %> (<%= @page.recordset.records_count %> total messages):
-
+    
     <%= render "form_tappe" %>
 
+    <%= pluralize @page.recordset.records_count, "tappa", "tappe" %> di <%= params[:filter] %>
+    
     <%= render @page.records %>
 
     <% if @page.last? %>

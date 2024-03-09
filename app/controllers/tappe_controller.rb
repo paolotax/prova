@@ -37,7 +37,6 @@ class TappeController < ApplicationController
 
   def update
     respond_to do |format|
-      #fail
       if @tappa.update(tappa_params)
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, partial: "tappe/tappa", locals: { tappa: @tappa }) }
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
@@ -55,10 +54,10 @@ class TappeController < ApplicationController
     @selected_tappe.update_all(data_tappa: Time.now) if mass_oggi?
     @selected_tappe.update_all(data_tappa: Time.now + 1.day) if mass_domani?    
     @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
+    @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
     #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
-    # redirect
-    flash[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
-
+    flash.now[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
+    
     respond_to do |format|
         format.turbo_stream
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
@@ -113,6 +112,11 @@ class TappeController < ApplicationController
   
     def mass_elimina_tappa?
       params[:button] == 'elimina_tappa'
+      # params[:commit] == "disabled"
+    end
+
+    def mass_data_tappa?
+      params[:button] == 'data'
       # params[:commit] == "disabled"
     end
 end

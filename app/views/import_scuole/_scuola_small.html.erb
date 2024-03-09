@@ -1,17 +1,24 @@
 <%= tag.div id: dom_id(import_scuola), class: "flex space-x-4" do %>
     
-    <%= tag.div class: "my-auto rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-600 ring-1 ring-red-500/60" do %>
-        <%= import_scuola.scuola.titleize[0..1] %>
+    <% if with_logo == true %>
+        <%= tag.div class: "my-auto rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-600 ring-1 ring-red-500/60" do %>
+            <%= import_scuola.scuola.titleize[0..1] %>
+        <% end %>
     <% end %>
+
 
     <div class="pr-8 flex justify-between items-center">
         <div class="flex flex-col">
             
             <div class="font-medium text-sm italic text-gray-600">  
-                <%= link_to import_scuola.scuola, 
-                            import_scuola_path(import_scuola), 
-                            data: { turbo_frame: "_top" } 
-                %>
+                <% if with_link == true %>              
+                    <%= link_to import_scuola.scuola, 
+                                import_scuola_path(import_scuola), 
+                                data: { turbo_frame: "_top" } 
+                    %>
+                <% else %>
+                    <%= import_scuola.scuola %>
+                <% end %>
             </div>
 
             <div class="font-medium text-sm italic text-gray-600">  

@@ -2,16 +2,29 @@
     <%= tag.div class: "bg-red-200 max-w-96  mx-auto" do %>
 
         <%= form_with(url: bulk_update_tappe_path, id: :bulk_update_tappe_form, method: :patch, data: {controller: "form-reset"},
-                        class: "mx-auto flex space-x-3 bg-indigo-600  shadow-lg  p-2 border-2 rounded rounded-lg border-indigo-300 z-50") do |f| %>
-            <%= f.button type: :submit, value: 'cancella', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-4  rounded-lg shadow-lg" do %>
-                Cancella
+                        class: "mx-auto flex flex-col space-x-3 bg-indigo-600  shadow-lg  p-2 border-2 rounded rounded-lg border-indigo-300 z-50") do |f| %>
+
+            <%= tag.div class: "flex flex-col space-y-2 py-2" do %>  
+                <%= f.text_field :titolo, placeholder: "note...",
+                        class: "" %>
+                <%= tag.div class: "flex justify-between items-center" do %>
+                    <%= f.date_field :data_tappa, class: "" %>
+                    <%= f.button type: :submit, value: 'data', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
+                        Modifica
+                    <% end %>  
+                <% end %>
+            <% end %>          
+            <%= tag.div class: "flex space-x-2 items-center" do %>
+                <%= f.button type: :submit, value: 'cancella', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
+                    Cancella
+                <% end %>
+                <%= f.button type: :submit, value: 'oggi', class: " text-center text-gray-800 align-middle cursor-pointer bg-green-500 p-3  rounded-lg shadow-lg" do %>
+                    Oggi
+                <% end %>
+                <%= f.button type: :submit, value: 'domani', class: " text-center text-gray-800 align-middle cursor-pointer bg-yellow-300 p-3  rounded-lg shadow-lg" do %>
+                    Domani
+                <% end %>
             <% end %>
-            <%= f.button type: :submit, value: 'oggi', class: " text-center text-gray-800 align-middle cursor-pointer bg-green-500 p-4  rounded-lg shadow-lg" do %>
-                Oggi
-            <% end %>
-            <%= f.button type: :submit, value: 'domani', class: " text-center text-gray-800 align-middle cursor-pointer bg-yellow-300 p-4  rounded-lg shadow-lg" do %>
-                Domani
-            <% end %> 
         <% end %>   
     <% end %>         
 

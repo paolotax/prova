@@ -1,27 +1,25 @@
-<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-6 sm:grid-cols-9 space-x-2 bg-white border-b">
+<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-7 sm:grid-cols-9 bg-white border-b">
 
     <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-4 my-auto"
+                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto"
                     } %>
-    
-    <%= tag.div class: "col-span-3" do %>    
-        <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: false } %>
-    <% end %>    
-    
-    <%= tag.div tappa.titolo, class: "hidden sm:block col-span-3 text-sm font-semibold text-gray-600" %> 
-          
     <%= tag.div class: "col-span-1 my-auto text-center" do %>
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
-            class: ["ml-auto h-8 w-8 rounded-full font-semibold": true,
+            class: ["mx-auto h-8 w-8 rounded-full font-semibold": true,
                     "text-white bg-pink-500":  tappa.data_tappa.day > Time.now.day + 1,
                     "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
                     "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
                     "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? %> 
-    <% end %>
-        
-
-
+    <% end %>   
+    
+    <%= tag.div class: "col-span-5" do %>  
+        <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true, with_logo: false, with_link: true } %>
+        <%= tag.div tappa.titolo, class: "sm:hidden pt-2 text-xs italic font-semibold text-gray-400" %>  
+    <% end %>    
+    
+    <%= tag.div tappa.titolo, class: "hidden sm:block col-span-3 text-sm font-semibold text-gray-600" %> 
+    
 </div>
