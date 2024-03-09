@@ -38,8 +38,14 @@ class GiriController < ApplicationController
         Tappa.create!(tappable: s, ordine: i+1, giro: @giro)      
       end  
     end
-    fail
-    redirect_to tappe_giro_url(@giro), notice: "Tappe create."
+
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:notice] = "Tappe create."
+        turbo_stream.replace(@giro, partial: "giri/giro", locals: { giro: @giro })
+      end
+      format.html { redirect_to tappe_giro_url(@giro), notice: "Tappe create." }  
+    end
   end
 
   def new
@@ -55,7 +61,7 @@ class GiriController < ApplicationController
     respond_to do |format|
       if @giro.save
         format.turbo_stream { flash.now[:notice] = "Giro creato." }
-        format.html { redirect_to giro_url(@giro), notice: "Giro creato." }
+        format.html { redirect_to giri_url, notice: "Giro creato." }
       else      
         format.turbo_stream do 
           flash.now[:alert] = "Impossibile creare il giro."   
@@ -73,7 +79,7 @@ class GiriController < ApplicationController
           flash.now[:notice] = "Giro modificato."
           turbo_stream.replace(@giro, partial: "giri/giro", locals: { giro: @giro })
         end
-        format.html { redirect_to giro_url(@giro), notice: "Giro modificato." }
+        format.html { redirect_to giri_url, notice: "Giro modificato." }
         format.json { render :show, status: :ok, location: @giro }
       else
         format.html { render :edit, status: :unprocessable_entity }
