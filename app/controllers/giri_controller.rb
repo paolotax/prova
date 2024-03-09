@@ -39,13 +39,8 @@ class GiriController < ApplicationController
       end  
     end
 
-    respond_to do |format|
-      format.turbo_stream do
-        flash.now[:notice] = "Tappe create."
-        turbo_stream.replace(@giro, partial: "giri/giro", locals: { giro: @giro })
-      end
-      format.html { redirect_to tappe_giro_url(@giro), notice: "Tappe create." }  
-    end
+    redirect_to tappe_giro_url(@giro), notice: "Tappe create."
+
   end
 
   def new
