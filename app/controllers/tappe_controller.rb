@@ -49,6 +49,25 @@ class TappeController < ApplicationController
     end
   end
 
+  def bulk_update
+    @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
+    # update
+    @selected_tappe.update_all(data_tappa: Time.now) if mass_oggi?
+    @selected_tappe.update_all(data_tappa: Time.now + 1.day) if mass_domani?    
+    @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
+    #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
+    # redirect
+    flash[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
+
+    respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
+        format.json { render :show, status: :ok, location: @tappa }
+    end    
+
+    #redirect_back(fallback_location: request.referer)
+  end
+
   def destroy
     @tappa.destroy!
 
@@ -75,5 +94,25 @@ class TappeController < ApplicationController
 
     def tappa_params
       params.require(:tappa).permit(:giro, :tappable, :titolo, :data_tappa)
+    end
+
+    def mass_oggi?
+      params[:button] == 'oggi'
+      # params[:commit] == "active"
+    end
+  
+    def mass_domani?
+      params[:button] == 'domani'
+      # params[:commit] == "disabled"
+    end
+
+    def mass_cancella?
+      params[:button] == 'cancella'
+      # params[:commit] == "active"
+    end
+  
+    def mass_elimina_tappa?
+      params[:button] == 'elimina_tappa'
+      # params[:commit] == "disabled"
     end
 end

@@ -1,24 +1,18 @@
 class GiriController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[ show edit update destroy crea_tappe ]
+  before_action :set_giro, only: %i[ show edit update destroy crea_tappe tappe]
 
   def index
-    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)
-    
-    
-    
+    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)   
     @pagy, @giri =  pagy(@giri.all, items: 10)
   end
 
   def show
-    @tappe = @giro.tappe.includes(:tappable).order(:ordine)
-    @pagy, @tappe = pagy(@tappe, items: 10) 
   end
 
   def tappe
-    @giro  = Giro.find(params[:giro_id])
-    @tappe = Tappa.includes(:tappable).where(giro_id: @giro).order(:ordine)
+    @tappe = @giro.tappe.includes(:tappable).order(:ordine)
     
     if params[:filter]  == 'programmate'
       @tappe = @tappe.programmate
@@ -108,6 +102,6 @@ class GiriController < ApplicationController
     end
 
     def giro_params
-      params.require(:giro).permit(:user_id, :giro_id, :iniziato_il, :finito_il, :titolo, :descrizione, :filter)
+      params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione, :filter)
     end
 end

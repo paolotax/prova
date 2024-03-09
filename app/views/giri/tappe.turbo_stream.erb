@@ -1,14 +1,11 @@
+<%= turbo_stream.replace "load_more" do %>
+    <%= render @page.records %>
 
-
-
-    <%= turbo_stream.replace "load_more" do %>
-        <%= render @page.records %>
-
-        <% if @page.last? %>
-            No more pages!
-        <% else %>
-            <%= turbo_frame_tag "load_more", src: giro_tappe_path(@giro, filter: params[:filter], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
-                <%= render 'shared/lazy_loading' %>
-            <% end %>
+    <% if @page.last? %>
+        Fine delle tappe!
+    <% else %>
+        <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+            <%= render 'shared/lazy_loading' %>
         <% end %>
     <% end %>
+<% end %>

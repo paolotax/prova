@@ -1,0 +1,32 @@
+<% if tappa.data_tappa.nil? %>    
+    
+    <%= tag.div class: "col-span-2 flex justify-center space-x-2 text-xs" do %>
+
+        <%= form_with model: tappa,  method: :patch, class: "hidden group-hover:block btn btn-green my-auto " do |f| %>
+            <%= f.hidden_field :data_tappa, value: Time.now %>
+            <%= f.submit "oggi" %>
+        <% end %>
+    
+        <%= form_with model: tappa, method: :patch, class: "hidden group-hover:block btn btn-yellow my-auto " do |f| %>
+            <%= f.hidden_field :data_tappa, value: Time.now + 1.day %>
+            <%= f.submit "domani" %>
+        <% end %>
+    
+    <% end %>
+
+<% else %>
+
+    <%= tag.div class: "col-span-2 flex justify-center space-x-2 text-xs" do %> 
+
+        <%= form_with model: tappa,  method: :patch, class: "hidden group-hover:block btn btn-white my-auto" do |f| %>
+            <%= f.hidden_field :data_tappa, value: nil %>
+            <%= f.submit "canc" %>
+        <% end %>
+
+        <%= link_to "edit", edit_tappa_path(tappa), 
+                class: "hidden group-hover:block btn btn-indigo my-auto text-center", 
+                data: { turbo_frame: :modal, action: "click->dialog#open"} %>    
+    
+    <% end %>
+
+<% end %>

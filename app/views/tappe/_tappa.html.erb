@@ -1,5 +1,11 @@
 <div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-6 sm:grid-cols-9 space-x-2 bg-white border-b">
 
+    <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
+                      multiple: true,
+                      form: :bulk_update_tappe_form,
+                      checked: false
+                    } %>
+    
     <%= tag.div class: "col-span-3" do %>    
         <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: false } %>
     <% end %>    
@@ -15,37 +21,6 @@
                     "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? %> 
     <% end %>
         
-    <% if tappa.data_tappa.nil? %>    
-        
-        <%= tag.div class: "col-span-2 flex justify-center space-x-2 text-xs" do %>
 
-            <%= form_with model: tappa,  method: :patch, class: "hidden group-hover:block btn btn-green my-auto " do |f| %>
-                <%= f.hidden_field :data_tappa, value: Time.now %>
-                <%= f.submit "oggi" %>
-            <% end %>
-        
-            <%= form_with model: tappa, method: :patch, class: "hidden group-hover:block btn btn-yellow my-auto " do |f| %>
-                <%= f.hidden_field :data_tappa, value: Time.now + 1.day %>
-                <%= f.submit "domani" %>
-            <% end %>
-      
-         <% end %>
-    
-    <% else %>
-
-        <%= tag.div class: "col-span-2 flex justify-center space-x-2 text-xs" do %> 
-
-            <%= form_with model: tappa,  method: :patch, class: "my-auto hidden group-hover:block btn btn-white" do |f| %>
-                <%= f.hidden_field :data_tappa, value: nil %>
-                <%= f.submit "canc" %>
-            <% end %>
-
-            <%= link_to "edit", edit_tappa_path(tappa), 
-                    class: "hidden group-hover:block btn btn-indigo my-auto text-center", 
-                    data: { turbo_frame: :modal, action: "click->dialog#open"} %>    
-        
-        <% end %>
-    
-    <% end %>
 
 </div>

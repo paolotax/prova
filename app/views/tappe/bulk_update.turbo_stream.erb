@@ -1,0 +1,4 @@
+
+<% @selected_tappe.each do |tappa| %>
+    <%= turbo_stream.replace "tappa_#{tappa.id}", partial: "tappa", locals: { tappa: tappa } %>
+<% end %>

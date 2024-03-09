@@ -10,18 +10,23 @@ end
 # then mount it
 Rails.application.routes.draw do
   
+  mount Sidekiq::Web => "/sidekiq"
+
+  devise_for :users, controllers: { confirmations: 'confirmations' }
+
   resources :giri do 
-    resources :tappe, only: :index, to: 'giri#tappe', as: 'tappe'
     member do 
+      get "tappe"
       post 'crea_tappe'
     end
   end
-  
-  mount Sidekiq::Web => "/sidekiq"
-  
-  
-  devise_for :users, controllers: { confirmations: 'confirmations' }
 
+  resources :tappe do
+    collection do
+      patch 'bulk_update'
+    end
+  end
+  
   resources :users, only: [:index, :show] do
     member do
       post  'modifica_navigatore' 
@@ -72,9 +77,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :tappe
-  #get 'tappe', to: 'tappe#index', as: 'tappa'
-  
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
   
