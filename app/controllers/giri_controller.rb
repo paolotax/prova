@@ -38,7 +38,7 @@ class GiriController < ApplicationController
         Tappa.create!(tappable: s, ordine: i+1, giro: @giro)      
       end  
     end
-    redirect_to giro_url(@giro), notice: "Tappe create."
+    redirect_to tappe_giro_url(@giro), notice: "Tappe create."
   end
 
   def new

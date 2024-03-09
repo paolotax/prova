@@ -46,23 +46,10 @@
     
     <%# link per filtrare il giro %>
     <%= render "giro_filter" %>
-
     
     Showing page <%= @page.number %> of <%= @page.recordset.page_count %> (<%= @page.recordset.records_count %> total messages):
 
-     
-    <%= form_with(url: bulk_update_tappe_path, id: :bulk_update_tappe_form, method: :patch, data: {controller: "form-reset"},
-                    class: "fixed flex space-x-3 bg-black/70  shadow-lg bottom-20 left-[50%] p-4 border-2 rounded rounded-lg border-indigo-900 z-50") do |f| %>
-        <%= f.button type: :submit, value: 'cancella', class: "block text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-4  rounded-lg shadow-lg" do %>
-            Cancella
-        <% end %>
-        <%= f.button type: :submit, value: 'oggi', class: "block text-center text-gray-800 align-middle cursor-pointer bg-green-500 p-4  rounded-lg shadow-lg" do %>
-            Oggi
-        <% end %>
-        <%= f.button type: :submit, value: 'domani', class: "block text-center text-gray-800 align-middle cursor-pointer bg-yellow-300 p-4  rounded-lg shadow-lg" do %>
-            Domani
-        <% end %> 
-    <% end %>        
+    <%= render "form_tappe" %>
 
     <%= render @page.records %>
 
