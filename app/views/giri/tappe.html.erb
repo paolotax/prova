@@ -3,7 +3,7 @@
   
     <div class="bg-yellow-300 rounded-t-xl px-4 py-3">
     
-        <div class="text-2xl font-semibold hover:text-indigo-600">
+        <div class="text-2xl font-semibold">
             <%= @giro.titolo %>
         </div>
 
@@ -32,24 +32,22 @@
         </div>
     </div>
     
-    
     <%# link per filtrare il giro %>
     <%= render "giro_filter" %>
-    
-    
+        
     <%= render "form_tappe" %>
 
-    <%= pluralize @page.recordset.records_count, "tappa", "tappe" %> di <%= params[:filter] %>
-    
-    <%= render @page.records %>
+    <%= turbo_frame_tag :search_results do %>
+        <%= pluralize @page.recordset.records_count, "tappa", "tappe" %> di <%= params[:filter] %>
+        
+        <%= render @page.records %>
 
-    <% if @page.last? %>
-        No more pages!
-    <% else %>
-        <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
-            <%= render 'shared/lazy_loading' %>
+        <% unless @page.last? %>
+            <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= render 'shared/lazy_loading' %>
+            <% end %>
+            <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
         <% end %>
-        <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
     <% end %>
 
         

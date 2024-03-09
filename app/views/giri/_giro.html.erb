@@ -14,12 +14,21 @@
   </div>
 
 
-  <%= link_to "modifica", edit_giro_path(giro), class: "text-xs my-auto col-span-1", 
+  <div class="col-span-1">
+
+    <%= link_to "mod", edit_giro_path(giro), class: "text-xs", 
                     data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+  </div>
 
-  <%= button_to "elimina", giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
-                class: "text-xs my-auto col-span-1" %>
-
-  <%= link_to "apri", tappe_giro_path(giro), class: "text-xs my-auto col-span-1", 
-          data: { turbo_frame: "_top" } %>
+  <div class="col-span-1">
+    <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
+                  class: "text-xs text-white text-center h-6 w-6 m-auto rounded-full bg-red-500" do %>
+      <%= inline_svg_tag "icon-trash-mini.svg" %>
+    <% end %>
+  </div>
+  <div class="col-span-1">
+    <%= link_to "apr", tappe_giro_path(giro), class: "text-xs", 
+            data: { turbo_frame: "_top" } %>
+  </div>
+    
 </div>

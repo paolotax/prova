@@ -15,7 +15,24 @@
 #  giro_id       :bigint
 #
 class Tappa < ApplicationRecord
+
+
+  include PgSearch::Model
   
+  pg_search_scope :search,
+                        against: [:titolo, :data_tappa, :entro_il],
+                        associated_against: {
+                          tappable: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
+                        },
+                        using: {
+                          tsearch: { any_word: false, prefix: true }
+                      }
+                        
+
+
+
+
+
   belongs_to :giro
   belongs_to :tappable, polymorphic: true
 
@@ -27,14 +44,13 @@ class Tappa < ApplicationRecord
 
   scope :da_programmare, -> { where(data_tappa: nil) }
 
+  #scope :per_comune_e_direzione, -> { joins(:tappable).order('scuole.comune, scuole.direzione') }
 
-  def self.search(search)
-    if search
-      where('titolo LIKE ?', "%#{search}%")
-    else
-      all
-    end
-  end
-
+  scope :search, ->(search) { 
+        joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'")
+        .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? OR import_scuole."DESCRIZIONECOMUNE" ILIKE ?', 
+        "%#{search}%", "%#{search}%") 
+  }
+  
 
 end

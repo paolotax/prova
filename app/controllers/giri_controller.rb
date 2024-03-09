@@ -26,6 +26,10 @@ class GiriController < ApplicationController
       @tappe = @tappe.da_programmare
     end
 
+    if params[:search].present?      
+        @tappe = @tappe.search(params[:search])
+    end
+
     set_page_and_extract_portion_from @tappe
 
   end
