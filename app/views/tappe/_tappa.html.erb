@@ -1,4 +1,4 @@
-<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-7 sm:grid-cols-9 bg-white border-b">
+<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-8 bg-white border-b shadow-md items-center">
 
     <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
                       multiple: true,
@@ -6,7 +6,7 @@
                       checked: false,
                       class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1"
                     } %>
-    <%= tag.div class: "col-span-1 my-auto text-center" do %>
+    <%= tag.div class: "col-span-1 my-auto text-center pr-2" do %>
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
             class: ["mx-auto h-8 w-8 rounded-full font-semibold": true,
                     "text-white bg-pink-500":  tappa.data_tappa.day > Time.now.day + 1,
@@ -19,7 +19,7 @@
         <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true, with_logo: false, with_link: true } %>
         <%= tag.div tappa.titolo, class: "sm:hidden pt-2 text-xs italic font-semibold text-gray-400" %>  
     <% end %>    
-    
-    <%= tag.div tappa.titolo, class: "hidden sm:block col-span-3 text-sm font-semibold text-gray-600" %> 
+
+    <%= tag.div tappa.tappable&.combinazioni, class: "col-span-2 text-xs text-gray-600" %> 
     
 </div>

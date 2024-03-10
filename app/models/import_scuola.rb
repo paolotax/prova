@@ -212,5 +212,11 @@ class ImportScuola < ApplicationRecord
   def to_combobox_display
       self.scuola + " -> " + self.citta
   end
+
+  def combinazioni
+    self.import_adozioni.pluck(:COMBINAZIONE).uniq
+      .sort.map { |c| c.gsub(/TEMPO PIENO/, 'T.P.').gsub(/ A /, ' ').gsub(/ A /, ' ').gsub(/SETTIMANALI/, ' ').downcase }.join(" - ")
+
+  end
   
 end

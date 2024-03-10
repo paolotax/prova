@@ -34,13 +34,15 @@
             <%= pluralize @page.recordset.records_count, "tappa", "tappe" %>
         <% end %>
 
-        <%= render @page.records %>
+        <%= tag.div class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2 " do %>
+            <%= render @page.records %>
 
-        <% unless @page.last? %>
-            <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
-                <%= render 'shared/lazy_loading' %>
+            <% unless @page.last? %>
+                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                    <%= render 'shared/lazy_loading' %>
+                <% end %>
+                <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
             <% end %>
-            <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
         <% end %>
     <% end %>
 
