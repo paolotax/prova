@@ -13,11 +13,11 @@
     </div>
 
 
-    <div class="p-2 flex flex-col bg-gray-200">
+    <div class="p-2 flex flex-col border-y">
 
         <div class="flex items-center justify-between">
             <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
-            <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro, format: :turbo_stream), method: :post, class: "btn btn-green" %>
+            <%= button_to "Crea Tappe!", crea_tappe_giro_path(@giro, format: :turbo_stream), method: :post, class: "btn btn-white" %>
         </div>
 
     </div>

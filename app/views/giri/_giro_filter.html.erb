@@ -1,33 +1,34 @@
-<%= tag.div id: "giro_tappe_filter_#{dom_id @giro}", class: "m-4 flex justify-evenly" do %>
-       
-    <%= link_to tappe_giro_path(@giro), class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-white bg-indigo-400" do %>
-        tappe:
-        <%= @giro.tappe.size %>
-    <% end %>
+<%= tag.div id: "giro_tappe_filter_#{dom_id @giro}", class: "m-2 relative overflow-hidden" do %>
+     <%= tag.div class: "relative mt-2 w-full flex items-start gap-2 snap-x snap-mandatory overflow-x-auto" do %>  
+        <%= link_to tappe_giro_path(@giro), class: "rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
+            tappe:
+            <%= @giro.tappe.size %>
+        <% end %>
 
-    <%= link_to tappe_giro_path(@giro, filter: "oggi"), class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-white bg-green-500" do %>
-        <span class="hidden sm:inline-block">di</span>oggi:
-        <%= @giro.tappe.di_oggi.size %>
-    <% end %>
+        <%= link_to tappe_giro_path(@giro, filter: "oggi"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-green-500" do %>
+            oggi:
+            <%= @giro.tappe.di_oggi.size %>
+        <% end %>
 
-    <%= link_to tappe_giro_path(@giro, filter: "domani"),class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-white bg-yellow-500" do %>
-        <span class="hidden sm:inline-block">di</span>domani:
-        <%= @giro.tappe.di_domani.size %>
-    <% end %>
+        <%= link_to tappe_giro_path(@giro, filter: "domani"),class: "rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
+            domani:
+            <%= @giro.tappe.di_domani.size %>
+        <% end %>
 
-    <%= link_to tappe_giro_path(@giro, filter: "programmate"), class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-white bg-pink-500" do %>
-        <span class="hidden sm:inline-block">programmate:</span>
-        <%= @giro.tappe.programmate.size %>
-    <% end %>
+        <%= link_to tappe_giro_path(@giro, filter: "completate"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
+            <span class="">fatto!!</span>
+            <%= @giro.tappe.completate.size %>
+        <% end %>
 
-    <%= link_to tappe_giro_path(@giro, filter: "completate"), class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-white bg-gray-400" do %>
-        <span class="hidden sm:inline-block">completate:</span>
-        <%= @giro.tappe.completate.size %>
-    <% end %>
+        <%= link_to tappe_giro_path(@giro, filter: "programmare"), class: "rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
+            <span class="">quando?</span>
+            <%= @giro.tappe.da_programmare.size %>
+        <% end %>
 
-    <%= link_to tappe_giro_path(@giro, filter: "programmare"), class: "my-auto rounded-lg text-xs font-semibold px-2 py-1.5 text-gray-600 bg-gray-200 border-gray-400" do %>
-        <span class="hidden sm:block">da programmare:</span>
-        <%= @giro.tappe.da_programmare.size %>
+        <%= link_to tappe_giro_path(@giro, filter: "programmate"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
+            <span class="">programmate:</span>
+            <%= @giro.tappe.programmate.size %>
+        <% end %>
     <% end %>
 
 <% end %>
