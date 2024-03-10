@@ -17,6 +17,10 @@
 	<%= turbo_frame_tag "scuole_page_#{@pagy.page}" do %> 
 		
 		<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+			<p class="only:block hidden py-8 text-center">
+				Whoops! Non ci sono scuole. Devi impostare la 
+				<%= link_to "Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" %>
+			</p>
 			<%= render @import_scuole %>
 		</div>
 		

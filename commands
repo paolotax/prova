@@ -14,6 +14,10 @@ docker ps
 
 docker logs -ft container
 
+User.all.select { |u| u.confirmed? }
+
+User.all.each { |u| u.confirm unless u.confirmed? }
+
 
 $ ssh root@<SERVER_IP>
 mkdir -p /letsencrypt && touch /letsencrypt/acme.json && chmod 600 /letsencrypt/acme.json
