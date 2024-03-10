@@ -215,8 +215,16 @@ class ImportScuola < ApplicationRecord
 
   def combinazioni
     self.import_adozioni.pluck(:COMBINAZIONE).uniq
-      .sort.map { |c| c.gsub(/TEMPO PIENO/, 'T.P.').gsub(/ A /, ' ').gsub(/ A /, ' ').gsub(/SETTIMANALI/, ' ').downcase }.join(" - ")
+      .sort.map { |c| c.gsub(/TEMPO PIENO/, 'T.P.').gsub(/ A /, ' ').gsub(/ A /, ' ').gsub(/SETTIMANALI/, ' ').downcase }
 
+  end
+
+  def terze_e_quinte
+    self.import_adozioni.where(ANNOCORSO: [ 3, 5 ])
+                        .select(:ANNOCORSO, :SEZIONEANNO)
+                        .distinct
+                        .order(:ANNOCORSO, :SEZIONEANNO)
+                        .map { |a| "#{a.ANNOCORSO}#{a.SEZIONEANNO}" }
   end
   
 end
