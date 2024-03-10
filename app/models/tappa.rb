@@ -34,6 +34,8 @@ class Tappa < ApplicationRecord
         .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? OR import_scuole."DESCRIZIONECOMUNE" ILIKE ? OR import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ILIKE ? OR tappe."titolo" ILIKE ?', 
         "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%") 
   }
+
+  scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
   
 
 end

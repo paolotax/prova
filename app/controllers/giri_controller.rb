@@ -26,6 +26,8 @@ class GiriController < ApplicationController
       @tappe = @tappe.da_programmare
     end
 
+    @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
+
     if params[:search].present?      
         @tappe = @tappe.search(params[:search])
     end

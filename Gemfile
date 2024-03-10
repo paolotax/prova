@@ -53,7 +53,7 @@ gem "prawn", "~> 2.4"
 
 gem "pg_search", "~> 2.3"
 gem 'activerecord-import'
-gem "pagy"
+
 
 gem "view_component"
 
@@ -76,9 +76,9 @@ gem "hotwire_combobox", "~> 0.1.33"
 
 gem 'resend', '~> 0.10.0'
 
-
-
-
-gem "will_paginate", "~> 4.0"
+# da eliminare
+gem "pagy"
 
 gem "geared_pagination", "~> 1.2"
+
+gem "groupdate", "~> 6.4"

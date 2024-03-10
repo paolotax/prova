@@ -8,7 +8,7 @@
                 <%= f.text_field :titolo, placeholder: "note...",
                         class: "field" %>
                 <%= tag.div class: "flex justify-between items-center space-x-4" do %>
-                    <%= f.date_field :data_tappa, class: "field w-full" %>
+                    <%= f.date_field :data_tappa, value: Time.now, class: "field w-full" %>
                     <%= f.button type: :submit, value: 'data', class: " text-center text-white align-middle cursor-pointer bg-indigo-500 p-3 rounded-lg shadow-lg" do %>
                         Modifica
                     <% end %>  

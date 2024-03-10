@@ -50,6 +50,8 @@ class TappeController < ApplicationController
 
   def bulk_update
     @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
+
+    @giro = @selected_tappe.first.giro if @selected_tappe.any?
     # update
     @selected_tappe.update_all(data_tappa: Time.now) if mass_oggi?
     @selected_tappe.update_all(data_tappa: Time.now + 1.day) if mass_domani?    
