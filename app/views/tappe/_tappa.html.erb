@@ -4,7 +4,7 @@
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto"
+                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1"
                     } %>
     <%= tag.div class: "col-span-1 my-auto text-center" do %>
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
@@ -15,7 +15,7 @@
                     "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? %> 
     <% end %>   
     
-    <%= tag.div class: "col-span-5" do %>  
+    <%= tag.div class: "col-span-4" do %>  
         <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true, with_logo: false, with_link: true } %>
         <%= tag.div tappa.titolo, class: "sm:hidden pt-2 text-xs italic font-semibold text-gray-400" %>  
     <% end %>    

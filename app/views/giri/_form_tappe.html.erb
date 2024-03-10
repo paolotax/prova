@@ -1,20 +1,20 @@
 <%= tag.div class: "fixed bottom-0 inset-x-0 mx-auto" do %>
-    <%= tag.div class: "bg-red-200 max-w-96  mx-auto" do %>
+    <%= tag.div class: "max-w-96  mx-auto" do %>
 
         <%= form_with(url: bulk_update_tappe_path, id: :bulk_update_tappe_form, method: :patch, data: {controller: "form-reset"},
-                        class: "mx-auto flex flex-col space-x-3 bg-indigo-600  shadow-lg  p-2 border-2 rounded rounded-lg border-indigo-300 z-50") do |f| %>
+                        class: "mx-auto flex flex-col space-x-3 bg-gray-300  shadow-lg  p-2 border-2 rounded rounded-lg border-indigo-300 z-50") do |f| %>
 
             <%= tag.div class: "flex flex-col space-y-2 py-2" do %>  
                 <%= f.text_field :titolo, placeholder: "note...",
-                        class: "" %>
-                <%= tag.div class: "flex justify-between items-center" do %>
-                    <%= f.date_field :data_tappa, class: "" %>
-                    <%= f.button type: :submit, value: 'data', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
+                        class: "field" %>
+                <%= tag.div class: "flex justify-between items-center space-x-4" do %>
+                    <%= f.date_field :data_tappa, class: "field w-full" %>
+                    <%= f.button type: :submit, value: 'data', class: " text-center text-white align-middle cursor-pointer bg-indigo-500 p-3 rounded-lg shadow-lg" do %>
                         Modifica
                     <% end %>  
                 <% end %>
             <% end %>          
-            <%= tag.div class: "flex space-x-2 items-center" do %>
+            <%= tag.div class: "flex space-x-2 items-center mb-8" do %>
                 <%= f.button type: :submit, value: 'cancella', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
                     Cancella
                 <% end %>

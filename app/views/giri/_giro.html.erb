@@ -1,33 +1,42 @@
-<div id="<%= dom_id giro %>" class="grid grid-cols-6">
+<div id="<%= dom_id giro %>" class="grid grid-cols-6 sm:grid-cols-7 bg-white border-b items-center px-4 py-2.5 rounded-lg shadow-lg">
   
-  <div class="col-span-3 bg-yellow-300">
-    
-    <div class="text-2xl hover:text-indigo-600">
+  <div class="col-span-4">
+    <div class="text-xl hover:text-indigo-600">
       <%= link_to tappe_giro_path(giro), data: { turbo_frame: "_top"} do %>
         <%= giro.titolo %>
       <% end %>
     </div>
-
     <div class="">
       <%= giro.descrizione %>
     </div>
   </div>
 
-
-  <div class="col-span-1">
-
-    <%= link_to "mod", edit_giro_path(giro), class: "text-xs", 
-                    data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+  <div class="col-span-1 hidden sm:block">
+    <%= giro.tappe.completate.size %> di 
+    <%= pluralize giro.tappe.size, "tappa", "tappe" %>
   </div>
 
-  <div class="col-span-1">
-    <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
-                  class: "text-xs text-white text-center h-6 w-6 m-auto rounded-full bg-red-500" do %>
-      <%= inline_svg_tag "icon-trash-mini.svg" %>
-    <% end %>
-  </div>
-  <div class="col-span-1">
-    <%= link_to "apr", tappe_giro_path(giro), class: "text-xs", 
+  
+
+  <div class="col-span-2 flex items-center justify-around ">
+
+    <div class="flex items-center">
+        <%= link_to edit_giro_path(giro), class: "text-gray-400 hover:text-gray-500", 
+                    data: { turbo_frame: :modal, action: "click->dialog#open"} do %>
+          <%= inline_svg_tag "icon-pencil.svg" %>
+        <% end %>
+    </div>
+
+    <div class="flex items-center bg-red-400 p-2 rounded-full h-8 w-8 align-center items-center">
+
+      <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
+                    class: "text-white " do %>
+        <%= inline_svg_tag "icon-trash-mini.svg" %>
+      <% end %>
+
+    </div>
+
+    <%#= link_to "apr", tappe_giro_path(giro), class: "text-xs h-6 w-6", 
             data: { turbo_frame: "_top" } %>
   </div>
     

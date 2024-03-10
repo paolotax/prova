@@ -16,23 +16,6 @@
 #
 class Tappa < ApplicationRecord
 
-
-  include PgSearch::Model
-  
-  pg_search_scope :search,
-                        against: [:titolo, :data_tappa, :entro_il],
-                        associated_against: {
-                          tappable: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
-                        },
-                        using: {
-                          tsearch: { any_word: false, prefix: true }
-                      }
-                        
-
-
-
-
-
   belongs_to :giro
   belongs_to :tappable, polymorphic: true
 
@@ -48,8 +31,8 @@ class Tappa < ApplicationRecord
 
   scope :search, ->(search) { 
         joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'")
-        .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? OR import_scuole."DESCRIZIONECOMUNE" ILIKE ?', 
-        "%#{search}%", "%#{search}%") 
+        .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? OR import_scuole."DESCRIZIONECOMUNE" ILIKE ? OR import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ILIKE ? OR tappe."titolo" ILIKE ?', 
+        "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%") 
   }
   
 
