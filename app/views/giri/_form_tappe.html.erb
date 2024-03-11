@@ -2,7 +2,7 @@
     <%= tag.div class: "max-w-96  mx-auto" do %>
 
         <%= form_with(url: bulk_update_tappe_path, id: :bulk_update_tappe_form, method: :patch, data: {controller: "form-reset"},
-                        class: "mx-auto flex flex-col space-x-3 bg-gray-300  shadow-lg  p-2 border-1 rounded rounded-lg border-gray-500 z-50") do |f| %>
+                        class: "hidden mx-auto flex flex-col space-x-3 bg-gray-300  shadow-lg  p-2 border-1 rounded rounded-lg border-gray-500 z-50") do |f| %>
 
             <%= tag.div class: "flex flex-col space-y-2 py-2" do %>  
                 <%= f.text_field :titolo, placeholder: "note...",

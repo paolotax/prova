@@ -5,7 +5,6 @@ export default class extends Controller {
     static targets = ["parent", "child"]
     connect() {
       // set all to false on page refresh
-      console.log("connected")
       this.childTargets.map(x => x.checked = false)
       this.parentTarget.checked = false
     }
@@ -19,6 +18,7 @@ export default class extends Controller {
       } else {
         this.childTargets.map(x => x.checked = false)
       }
+      this.toggleForm()
     }
   
     toggleParent() {
@@ -26,6 +26,15 @@ export default class extends Controller {
         this.parentTarget.checked = false
       } else {
         this.parentTarget.checked = true
+      }
+      this.toggleForm()
+    }
+
+    toggleForm() {
+      if (this.childTargets.map(x => x.checked).includes(true)) {
+        document.getElementById("bulk_update_tappe_form").style.display = "block";
+      } else {
+        document.getElementById("bulk_update_tappe_form").style.display = "none";
       }
     }
   }
