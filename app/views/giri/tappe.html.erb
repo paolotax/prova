@@ -28,9 +28,12 @@
 
     <%= turbo_frame_tag :search_results, data: { controller: "tax-select-all" } do %>
         
-        <%= tag.div class: "text-right ht text-xs font-semibold m-2" do %>
-            <%= check_box_tag "select_all", nil, false, data: { tax_select_all_target: "parent", action: "click->tax-select-all#toggleChildren" } %>
-            <%= pluralize @page.recordset.records_count, "tappa", "tappe" %>
+        <%= tag.div class: "text-right ht text-xs font-semibold m-2 flex justify-between" do %>
+            <label for="select_all" >
+                <%= check_box_tag "select_all", nil, false, data: { tax_select_all_target: "parent", action: "click->tax-select-all#toggleChildren" } %>
+                <%= "seleziona tutto" %>
+            </label>
+            <%= tag.div pluralize @page.recordset.records_count, "tappa", "tappe" %>
         <% end %>
 
         <%= tag.div class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>

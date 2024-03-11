@@ -1,32 +1,32 @@
 <%= tag.div id: "giro_tappe_filter_#{dom_id @giro}", class: "m-2 relative overflow-hidden" do %>
      <%= tag.div class: "relative mt-2 w-full flex items-start gap-2 snap-x snap-mandatory overflow-x-auto" do %>  
         
-        <%= link_to tappe_giro_path(@giro), class: "rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
+        <%= link_to tappe_giro_path(@giro), class: " max-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
             tappe:
             <%= @giro.tappe.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "oggi"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-green-500" do %>
+        <%= link_to tappe_giro_path(@giro, filter: "oggi"), class: " max-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-green-500" do %>
             oggi:
             <%= @giro.tappe.di_oggi.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "domani"),class: "rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
+        <%= link_to tappe_giro_path(@giro, filter: "domani"),class: " max-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
             domani:
             <%= @giro.tappe.di_domani.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "completate"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
+        <%= link_to tappe_giro_path(@giro, filter: "completate"), class: " max-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
             <span class="">fatto!!</span>
             <%= @giro.tappe.completate.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "programmare"), class: "rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
+        <%= link_to tappe_giro_path(@giro, filter: "programmare"), class: " max-h-14 text-center rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
             <span class="">quando?</span>
             <%= @giro.tappe.da_programmare.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "programmate"), class: "rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
+        <%= link_to tappe_giro_path(@giro, filter: "programmate"), class: " max-h-14 text-center rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
             <span class="">programmate:</span>
             <%= @giro.tappe.programmate.size %>
         <% end %>
@@ -34,7 +34,7 @@
         <% @giro.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
             <% if ((tappa[1] > 0) || (tappa[0] >= Time.now.beginning_of_day)) && !tappa[0].sunday? %>
                 <%= link_to tappe_giro_path(@giro, giorno: tappa[0]), data: { fomat: :turbo_stream }, 
-                            class: ["rounded-lg flex flex-col text-xs font-semibold pl-2 pr-2 py-3 max-h-14 min-w-16": true, 
+                            class: ["text-center rounded-lg flex flex-col text-xs font-semibold text-center pl-2 pr-2 py-3 max-h-14 min-w-16": true, 
                                         "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
                                         "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,
                                         "bg-yellow-500 text-white ": tappa[0].tomorrow? && tappa[1] > 0,
