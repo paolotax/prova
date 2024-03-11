@@ -1,10 +1,12 @@
-<div id="<%= dom_id tappa %>" class= "group px-2 py-1.5  grid grid-cols-8 bg-white border-b rounded-md shadow-md items-center">
+<%= tag.div id: dom_id(tappa),
+        class: "group px-2 py-1.5  grid grid-cols-8 bg-white border-b rounded-md shadow-md items-center" do %>
 
     <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1"
+                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
+        data: { tax_select_all_target: "child", action: "change->tax-select-all#toggleParent"}
                     } %>
     <%= tag.div class: "col-span-1 my-auto text-center pr-2" do %>
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
@@ -25,4 +27,4 @@
        <%=  tag.div tappa.tappable&.combinazioni.join(" - "), class: "italic text-gray-600"  %>
     <% end %> 
     
-</div>
+<% end %>
