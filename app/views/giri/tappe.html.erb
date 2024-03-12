@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div class="p-2 flex flex-col border-y">
+    <div class="px-4 pb-3 flex flex-col">
 
         <div class="flex items-center justify-between">
             <%= link_to "<- giri", giri_path, class: "btn btn-white" %>
@@ -22,7 +22,9 @@
     </div>
     
     <%# link per filtrare il giro %>
-    <%= render "giro_filter" %>
+    <%= tag.div class:"sticky top-16 bg-gray-200 border-2 rounded-lg" do%>
+        <%= render "giro_filter" %>
+    <% end %>
         
     <%= render "form_tappe" %>
 
