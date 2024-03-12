@@ -1,4 +1,3 @@
-
 <div id="<%= dom_id @giro %>" class="mx-auto md:w-4/5 w-full flex flex-col">
   
     <div class="bg-grey-300 rounded-t-xl px-4 py-3">
@@ -22,24 +21,25 @@
     </div>
     
     <%# link per filtrare il giro %>
-    <%= tag.div class:"sticky top-16 bg-gray-200 border-2 rounded-lg" do%>
+    <%= tag.div class:"sticky top-16 bg-gray-200 border-2 rounded-t-lg pb-2" do%>
         <%= render "giro_filter" %>
     <% end %>
         
     <%= render "form_tappe" %>
 
     <%= turbo_frame_tag :search_results, data: { controller: "tax-select-all" } do %>
-        
-        <%= tag.div class: "text-right ht text-xs font-semibold m-2 flex justify-between" do %>
-            <label for="select_all" >
-                <%= check_box_tag "select_all", nil, false, data: { tax_select_all_target: "parent", action: "click->tax-select-all#toggleChildren" } %>
-                <%= "seleziona tutto" %>
-            </label>
-            <%= tag.div pluralize @page.recordset.records_count, "tappa", "tappe" %>
-        <% end %>
 
+            <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg p-2 text-right ht text-xs font-semibold flex justify-between" do %>
+                <label for="select_all" >
+                    <%= check_box_tag "select_all", nil, false, data: { tax_select_all_target: "parent", action: "click->tax-select-all#toggleChildren" } %>
+                    <%= "seleziona tutto" %>
+                </label>
+                <%= tag.div pluralize @page.recordset.records_count, "tappa", "tappe" %>
+            <% end %>
+ 
         <%= tag.div class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
-            <p class="only:block hidden py-8 text-center">Whoops! Non ci sono tappe </p>
+            <p class="only:block hidden py-8 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
+   
             <%= render @page.records %>
 
             <% unless @page.last? %>
@@ -50,10 +50,4 @@
             <% end %>
         <% end %>
     <% end %>
-
-        
-
-
-
-
 </div>
