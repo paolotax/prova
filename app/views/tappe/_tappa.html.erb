@@ -6,7 +6,7 @@
                       form: :bulk_update_tappe_form,
                       checked: false,
                       class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
-        data: { tax_select_all_target: "child", action: "change->tax-select-all#toggleParent"}
+                      data: { tax_checkbox_select_all_target: 'checkbox' }
                     } %>
     <%= tag.div class: "col-span-1 my-auto text-center pr-2" do %>
         <%= tag.div(tappa.data_tappa.strftime("%d"), 
