@@ -36,13 +36,13 @@
             <% if ((tappa[1] > 0) || (tappa[0] >= Time.now.beginning_of_day)) && !tappa[0].sunday? %>
                 <%= link_to tappe_giro_path(@giro, giorno: tappa[0]), data: { fomat: :turbo_stream }, 
                             class: ["text-center rounded-lg flex flex-col text-xs font-semibold text-center pl-2 pr-2 py-3 min-h-14 min-w-16": true, 
-                                        "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
-                                        "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,
-                                        "bg-yellow-500 text-white ": tappa[0].tomorrow? && tappa[1] > 0,
-                                        "bg-gray-400 text-white ":   tappa[0] < Time.now - 1.day && tappa[1] > 0,
-                                        "bg-white border-2 border-green-500  text-green-500": tappa[0].today? && tappa[1] == 0,
-                                        "bg-white border-2 border-yellow-500 text-yellow-500": tappa[1] == 0 && tappa[0].tomorrow?,
-                                        "bg-white border-2 border-pink-500 text-pink-500": tappa[1] == 0 && tappa[0] > Time.now + 1.day
+                                    "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
+                                    "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,
+                                    "bg-yellow-500 text-white ": tappa[0].tomorrow? && tappa[1] > 0,
+                                    "bg-gray-400 text-white ":   tappa[0] < Time.now - 1.day && tappa[1] > 0,
+                                    "bg-white border-2 border-green-500  text-green-500": tappa[0].today? && tappa[1] == 0,
+                                    "bg-white border-2 border-yellow-500 text-yellow-500": tappa[1] == 0 && tappa[0].tomorrow?,
+                                    "bg-white border-2 border-pink-500 text-pink-500": tappa[1] == 0 && tappa[0] > Time.now + 1.day
                                     ] do %>
                     <%= tag.div tappa[0].to_fs(:short), class: "flex grow" %>
                     <%= tag.div tappa[1] %>

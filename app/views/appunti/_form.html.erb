@@ -20,7 +20,7 @@
 	<% if appunto.import_scuola %>
 		<%= render partial: "appunto_scuola", locals: {appunto: appunto, with_navigation: false } %>
 	<% else %>
-		<div class="my-5 youtube">
+		<div class="my-5 youtubes w-full">
 			<%= form.label :import_scuola_id, "Scuola", class: "label" %>
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.all %>
 		</div>

@@ -6,8 +6,9 @@
 <% else %>
 
       <%= turbo_stream.replace "load_more" do %>
-            
-            <%= render @page.records %>
+            <%= tag.div class: "py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8" do %>
+                  <%= render @page.records %>
+            <% end %>
 
             <% if @page.last? %>
                   Fine delle adozioni!
