@@ -26,15 +26,13 @@ class ImportAdozioniController < ApplicationController
         end
       end
             
-      @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
-
       @conteggio_adozioni = @import_adozioni.count;
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
       @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
       @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
-
-      @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="top"')
     end
+
+    @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
     set_page_and_extract_portion_from @import_adozioni
   end

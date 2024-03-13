@@ -1,8 +1,31 @@
-<%#= async_combobox_options @import_adozioni, for_id: "adozioni-search",
-      render_in: { partial: "import_adozioni/import_adozione" } %>
+<% if params[:q].present? %>
+      <%= async_combobox_options @page.records, for_id: "adozioni-search",
+            render_in: { partial: "import_adozioni/import_adozione" },
+            next_page: @page.last? ? nil : @page.next_param %>
 
+<% else %>
 
-<%= async_combobox_options @page.records, for_id: "adozioni-search",
-      render_in: { partial: "import_adozioni/import_adozione" },
-      next_page: @page.last? ? nil : @page.next_param %>
+      <%= turbo_stream.replace "load_more" do %>
+            
+            <%= render @page.records %>
+
+            <% if @page.last? %>
+                  Fine delle adozioni!
+            <% else %>
+                  <%= turbo_frame_tag "load_more",
+                        src: import_adozioni_path(                              
+                                    search: params[:search], 
+                                    page: @page.next_param, 
+                                    da_acquistare: params[:da_acquistare], 
+                                    search_query: params[:search_query], 
+                                    mie_adozioni: params[:mie_adozioni],
+                                    format: :turbo_stream
+                              ),
+                        loading: :lazy do %>
+                        <%= render 'shared/lazy_loading' %>
+                  <% end %>
+            <% end %>
+      <% end %>
+
+<% end %>
 

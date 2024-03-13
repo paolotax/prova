@@ -21,22 +21,27 @@
 
 	<%= render partial: "stats" %>
 
-	<%= turbo_frame_tag "adozioni_page_#{@pagy.page}" do %> 
-
+	<%= turbo_frame_tag "adozioni_page_#{@page.records}" do %> 
 
 		<div id="import_adozioni" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 			<p class="only:block hidden py-8 text-center lg:col-span-2 2xl:col-span-3">
 				Whoops! Non ci sono adozioni. 
 				<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] || !current_user.import_scuole.empty? %>
 			</p>
-			<%= render @import_adozioni %>
+			<%= render @page.records %>
 		</div>
 
-		<% if @pagy.next %>
-			<%= turbo_frame_tag "adozioni_page_#{@pagy.next}",
-						src: import_adozioni_path(search: params[:search], page: @pagy.next, da_acquistare: params[:da_acquistare], search_query: params[:search_query], mie_adozioni: params[:mie_adozioni]),
+		<% unless @page.last? %>
+			<%= turbo_frame_tag "load_more",
+						src: import_adozioni_path(
+								search: params[:search], 
+								page: @page.next_param, 
+								da_acquistare: params[:da_acquistare], 
+								search_query: params[:search_query], 
+								mie_adozioni: params[:mie_adozioni],
+								format: :turbo_stream
+						),
 						loading: :lazy do %>
-				
 				<div role="status">
 					<div class="flex justify-center">
 						<svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
