@@ -5,14 +5,16 @@ class ImportAdozioniController < ApplicationController
 
   def index
 
+    @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
+
     if params[:q].present?
-      @import_adozioni = current_user.import_adozioni.includes(:import_scuola).search_combobox params[:q]    
-    
+      @import_adozioni = @import_adozioni.search_combobox params[:q]    
+
     else
 
-      @miei_editori = current_user.editori.collect{|e| e.editore}
-      @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
       @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"
+      
+      @miei_editori = current_user.editori.collect{|e| e.editore}
       @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
 
       if params[:search].present?      
@@ -23,8 +25,7 @@ class ImportAdozioniController < ApplicationController
           @import_adozioni = @import_adozioni.search_any_word(params[:search])
         end
       end
-      
-      
+            
       @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
       @conteggio_adozioni = @import_adozioni.count;
@@ -34,6 +35,8 @@ class ImportAdozioniController < ApplicationController
 
       @pagy, @import_adozioni =  pagy(@import_adozioni.all, items: 20, link_extra: 'data-turbo-action="top"')
     end
+
+    set_page_and_extract_portion_from @import_adozioni
   end
 
   def show

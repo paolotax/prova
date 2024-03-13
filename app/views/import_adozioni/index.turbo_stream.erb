@@ -1,6 +1,8 @@
-<%= async_combobox_options @import_adozioni, for_id: "adozioni-search",
+<%#= async_combobox_options @import_adozioni, for_id: "adozioni-search",
       render_in: { partial: "import_adozioni/import_adozione" } %>
 
 
-
+<%= async_combobox_options @page.records, for_id: "adozioni-search",
+      render_in: { partial: "import_adozioni/import_adozione" },
+      next_page: @page.last? ? nil : @page.next_param %>
 
