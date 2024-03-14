@@ -41,19 +41,19 @@
 <% end %>
 
 <li>
-	<%= link_to import_scuole_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
+	<%= link_to import_scuole_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to import_adozioni_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
+	<%= link_to import_adozioni_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-currency-euro.svg') %>                
 		Adozioni (beta)
 	<% end %>
 </li>
 <li>
-	<%= link_to stats_path, data: { action: "click->modal#close"}, class:"sidebar-item" do %>
+	<%= link_to stats_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
 		Stats...
 	<% end %>
