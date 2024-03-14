@@ -1,6 +1,6 @@
 <% if params[:q].present? %>
       <%= async_combobox_options @page.records, for_id: "adozioni-search",
-            render_in: { partial: "import_adozioni/import_adozione" },
+            
             next_page: @page.last? ? nil : @page.next_param %>
 
 <% else %>
