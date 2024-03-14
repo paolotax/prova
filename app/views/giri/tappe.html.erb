@@ -38,8 +38,8 @@
             <%= tag.div pluralize @page.recordset.records_count, "tappa", "tappe" %>
         <% end %>
 
-        <%= tag.div class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
-            <p class="only:block hidden py-8 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
+        <%= tag.div id: "tappe-list", class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
+            <p class="only:block hidden py-8 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
             <%= render @page.records %>
 
             <% unless @page.last? %>
@@ -50,10 +50,5 @@
             <% end %>
         <% end %>
     <% end %>
-
-        
-
-
-
 
 </div>

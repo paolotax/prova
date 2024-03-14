@@ -16,7 +16,7 @@
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
 		<div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-			<p class="only:block hidden py-8 text-center lg:col-span-2 2xl:col-span-3">
+			<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3">
 				Whoops! Non ci sono appunti. 
 				
 				<% if current_user.import_scuole.blank? %>

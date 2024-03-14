@@ -1,13 +1,33 @@
-<%= turbo_stream.replace "load_more" do %>
-    <%= render @page.records %>
+<% if @page.first? %> 
+    
+    <%= turbo_stream.replace "tappe-list" do %>
+        <%= tag.div id: "tappe-list", class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
+            <p class="only:block hidden py-8 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
+            <%= render @page.records %>
 
-    <% if @page.last? %>
-        Fine delle tappe!
-    <% else %>
-        <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
-            <%= render 'shared/lazy_loading' %>
+            <% unless @page.last? %>
+                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                    <%= render 'shared/lazy_loading' %>
+                <% end %>
+                <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
+            <% end %>
         <% end %>
     <% end %>
+
+<% else %>
+
+    <%= turbo_stream.replace "load_more" do %>
+        <%= render @page.records %>
+
+        <% if @page.last? %>
+            Fine delle tappe!
+        <% else %>
+            <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= render 'shared/lazy_loading' %>
+            <% end %>
+        <% end %>
+    <% end %>
+
 <% end %>
 
 
