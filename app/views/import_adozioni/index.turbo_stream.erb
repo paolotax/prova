@@ -11,7 +11,7 @@
             <% end %>
 
             <% if @page.last? %>
-                  Fine delle adozioni!
+                 <%= tag.div "Fine delle adozioni!", class: "py-8 px-4 text-center" %>
             <% else %>
                   <%= turbo_frame_tag "load_more",
                         src: import_adozioni_path(                              

@@ -35,7 +35,7 @@
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona tutte" %></span>
             </label>
-            <%= tag.div pluralize @page.recordset.records_count, "tappa", "tappe" %>
+            <%= tag.div pluralize(@page.recordset.records_count, "tappa", "tappe"), id: "nr-tappe" %>
         <% end %>
 
         <%= tag.div id: "tappe-list", class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
