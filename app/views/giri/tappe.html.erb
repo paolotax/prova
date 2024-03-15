@@ -30,7 +30,7 @@
 
         <%= render "form_tappe" %>
         
-        <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg p-2 text-right ht text-xs font-semibold flex justify-between" do %>
+        <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg px-4 py-2 text-right ht text-xs font-semibold flex justify-between" do %>
             <label for="select_all" id="select_all">
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona tutte" %></span>
