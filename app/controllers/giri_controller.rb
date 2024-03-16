@@ -29,7 +29,7 @@ class GiriController < ApplicationController
     @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
 
     if params[:search].present?      
-        @tappe = @tappe.search(params[:search])
+      @tappe = @tappe.search(params[:search])
     end
 
     set_page_and_extract_portion_from @tappe
@@ -46,7 +46,6 @@ class GiriController < ApplicationController
     end
 
     redirect_to tappe_giro_url(@giro), notice: "Tappe create."
-
   end
 
   def new

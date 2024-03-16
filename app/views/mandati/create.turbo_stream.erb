@@ -3,8 +3,12 @@
   <%= current_user.editori.count %>
 <% end %>
 
-<%= turbo_stream.append "user-editori" do %>    
-    <%= render partial: "mandati/mandato", locals: { mandato: @mandato } %>
+<%= turbo_stream.replace "user-editori" do %>    
+              <div id="user-editori" class="">
+    <% current_user.mandati.each do |mandato| %>
+        <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
+    <% end %>
+</div>
 <% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>

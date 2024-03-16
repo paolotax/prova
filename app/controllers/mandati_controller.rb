@@ -15,13 +15,25 @@ class MandatiController < ApplicationController
     def create     
       begin
 
-        if !params[:heditore].blank?
-          editore_id = params[:heditore].to_i         
-        end
+        unless params[:hgruppo].blank?
+          
+          unless params[:heditore].blank?
+            editore_id = params[:heditore].to_i 
+            @mandato = current_user.mandati.build(editore_id: editore_id)  
+            @mandato.save!  
+            raise @mandato.errors.full_messages unless @mandato.errors.empty?
 
-        @mandato = current_user.mandati.new(editore_id: editore_id)  
-        @mandato.save!        
-        raise @mandato.errors.full_messages unless @mandato.errors.empty?
+          else
+            editore_ids = Editore.where(gruppo: params[:hgruppo]).pluck(:id)
+
+            editore_ids.each do |editore_id|
+              if current_user.mandati.where(editore_id: editore_id).empty?
+                @mandato = current_user.mandati.build(editore_id: editore_id)
+                @mandato.save!
+              end
+            end
+          end
+        end
       rescue ActiveRecord::RecordNotUnique
         flash[:error] = "Violazione chiave!!"
         @mandato.reload
