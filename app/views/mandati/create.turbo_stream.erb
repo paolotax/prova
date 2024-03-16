@@ -1,14 +1,13 @@
-
 <%= turbo_stream.update "#{dom_id(current_user)}-nr-editori" do %>
   <%= current_user.editori.count %>
 <% end %>
 
 <%= turbo_stream.replace "user-editori" do %>    
-              <div id="user-editori" class="">
-    <% current_user.mandati.each do |mandato| %>
-        <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
-    <% end %>
-</div>
+    <div id="user-editori" class="">
+    	<% current_user.mandati.each do |mandato| %>
+        	<%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
+    	<% end %>
+	</div>
 <% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>
