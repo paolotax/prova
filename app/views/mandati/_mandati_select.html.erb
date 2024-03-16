@@ -1,0 +1,26 @@
+<%= turbo_frame_tag :mandati_select do %> 
+    <%= form_with url: select_editori_mandati_path, method: :get, data: { controller: "tax-select", 
+                                                            action: "change->tax-select#submit" 
+                                                        
+                                                        } do |f| %>
+
+        <div class="flex flex-col sm:flex-row sm:gap-x-4" >
+            <div class="mt-2 sm:w-56">
+                <%= f.label :gruppo, class: "label" %>
+                <div>    
+                    <%= f.select :gruppo, options_from_collection_for_select(gruppi, "gruppo", "gruppo", @gruppo&.gruppo), 
+                                        { prompt: "scegli il gruppo editoriale" }, 
+                                        { class: "field", data: { tax_select_target: "gruppo" } } %>
+                </div>
+            </div>
+            <div class="mt-2 sm:w-96">
+                <%= f.label :editore, class: "label" %>
+                <div>    
+                    <%= f.select :id, options_from_collection_for_select(editori, "id", "editore", @editore&.id), 
+                                    { prompt: "scegli l'editore" }, 
+                                    { class: "field", data: { tax_select_target: "editore" } } %>
+                </div>
+            </div>
+        </div>
+    <% end %>
+<% end %>

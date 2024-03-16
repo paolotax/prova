@@ -3,14 +3,18 @@ class MandatiController < ApplicationController
     before_action :authenticate_user!
     before_action :find_editore
 
-    def index
-      @gruppi = Editore.order(:gruppo)
-                     .select(:gruppo).distinct || []
-      
-      @editori = Editore.where(gruppo: @gruppo&.gruppo)
-                      .order(:editore)
-                      .select(:id, :editore).distinct || []  
+    def index 
     end
+
+    def select_editori
+      @gruppi = Editore.order(:gruppo)
+      .select(:gruppo).distinct || []
+
+      @editori = Editore.where(gruppo: @gruppo&.gruppo)
+            .order(:editore)
+            .select(:id, :editore).distinct || [] 
+    end
+
         
     def create     
       begin
