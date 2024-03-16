@@ -1,22 +1,19 @@
 <%= turbo_frame_tag :mandati_list do %>
-    <div class="py-2">
-        <div class="flex justify-between border-b-2 border-gray-300">
-            <h2 class="font-semibold pl-2 sm:pl-0 ">I miei EDITORI </h2>
-            <div id="<%= dom_id(current_user) %>-nr-editori" class="text-sm font-semibold pr-4">
-                <%= current_user.editori.size %>
-            </div>
-        </div>  
 
-        <div id="user-editori" class=""> 
-            <p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3">
-				Whoops! Non ci sono editori. 
-			</p>                
-            <% current_user.mandati.each do |mandato| %>
-                <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
-            <% end %>
+    <div class="sticky top-16 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
+        <h2 class="font-semibold">I miei EDITORI </h2>
+        <div id="<%= dom_id(current_user) %>-nr-editori" class="text-sm font-semibold pr-4">
+            <%= current_user.editori.size %>
         </div>
+    </div>  
+
+    <div id="user-editori" class=""> 
+        <p class="only:block hidden py-8 px-4 text-center">
+            Whoops! Non ci sono editori. 
+        </p>                
+        <% current_user.mandati.each do |mandato| %>
+            <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
+        <% end %>
     </div>
+
 <% end %>
-
-
-

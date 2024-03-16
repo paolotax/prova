@@ -1,18 +1,17 @@
 <%= turbo_frame_tag :user_scuole do %>
 
-    <div class="py-2">
-        <div class="flex justify-between border-b-2 border-gray-300">
-            <h2 class="font-semibold">Le mie SCUOLE </h2>
-            <%= tag.div id:"#{dom_id(current_user)}-user-scuole", 
-                class: "text-sm font-semibold pr-4" do %>
-                <%= current_user.import_scuole.count %>
-            <% end %>    
-        </div>
-        <div class="w-full">
-            <div class="min-w-full">
-            <%= render @user_scuole %>
-            </div>
-        </div>
+    <div class="sticky top-16 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
+        <h2 class="font-semibold">Le mie SCUOLE </h2>
+        <%= tag.div id:"#{dom_id(current_user)}-user-scuole", 
+            class: "text-sm font-semibold pr-4" do %>
+            <%= current_user.import_scuole.count %>
+        <% end %>    
     </div>
-    
+    <div id="user-scuole" class=""> 
+        <p class="only:block hidden py-8 px-4 text-center">
+            Whoops! Non ci sono scuole. 
+        </p>                
+        <%= render @user_scuole %>
+    </div>
+
 <% end %>
