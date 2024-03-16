@@ -1,16 +1,18 @@
-<div class="mt-8 mb-4 mx-2 p-4 flex flex-col bg-gray-300 border rounded">
+<%= turbo_frame_tag :mandati_form do %>
+    <div class="mt-8 mb-4 mx-2 p-4 flex flex-col bg-gray-300 border rounded">
 
-    <%= render partial: "mandati/mandati_select", locals: { gruppi: @gruppi, editori: @editori } %>
+        <%= render partial: "mandati/mandati_select", locals: { gruppi: @gruppi, editori: @editori } %>
 
-    <%= form_with url: mandati_path, method: :post, class: "flex flex-row-reverse mt-4" do |f| %>
-        <%= hidden_field_tag :user_id, value: current_user.id %>
-        <%= hidden_field_tag "hgruppo" %>
-        <%= hidden_field_tag "heditore" %>
+        <%= form_with url: mandati_path, method: :post, class: "flex flex-row-reverse mt-4" do |f| %>
+            <%= hidden_field_tag :user_id, value: current_user.id %>
+            <%= hidden_field_tag "hgruppo" %>
+            <%= hidden_field_tag "heditore" %>
 
-        <%= f.button type: "submit", class: "h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-            </svg>            
-        <% end%>     
-    <% end %>  
-</div>
+            <%= f.button type: "submit", class: "h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>            
+            <% end%>     
+        <% end %>  
+    </div>
+<% end %>

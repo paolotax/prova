@@ -1,7 +1,12 @@
-<div id="<%= dom_id(mandato) %>" class="px-2 bg-white py-4 flex justify-between align-center border-b border-gray-300">
-
-    <div class="">
-        <span><%= mandato.editore.editore %></span>
+<div id="<%= dom_id(mandato) %>" class="px-2 bg-white py-4 flex justify-between items-center align-center border-b border-gray-300">
+    
+    <div class="flex flex-row items-baseline justify-between w-full pr-4">
+        <div>
+            <%= mandato.editore.editore %>
+        </div>    
+        <div class="text-right text-sm">
+            <%= mandato.editore.gruppo.titleize %>
+        </div>
     </div>
 
     <%= form_with model: mandato, method: "delete" do |f| %>

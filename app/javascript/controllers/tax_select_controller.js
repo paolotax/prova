@@ -36,12 +36,14 @@ export default class extends Controller {
     if (this.hasGruppoTarget) {
       let hgruppo = document.getElementById("hgruppo");
       let gruppo = this.gruppoTarget.options[this.gruppoTarget.selectedIndex].text;
+      console.log("gruppo: " + gruppo);
       hgruppo.value = gruppo;
     }
 
     if (this.hasEditoreTarget) {
       let heditore = document.getElementById("heditore");
-      let editore = this.editoreTarget.options[this.editoreTarget.selectedIndex].value;
+      let editore = this.editoreTarget.options[this.editoreTarget.selectedIndex].value
+      console.log("editore: " + editore);
       heditore.value = editore;
     }
   }
