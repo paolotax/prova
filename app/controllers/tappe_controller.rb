@@ -70,8 +70,18 @@ class TappeController < ApplicationController
   end
 
   def destroy
+    @giro = @tappa.giro
     @tappa.destroy!
-    redirect_back(fallback_location: request.referer)
+
+    respond_to do |format|
+      format.turbo_stream do 
+        flash.now[:alert] = "Tappa eliminata."
+      end
+      format.html { redirect_to tappe_url, notice: "Tappa eliminata!" }
+      format.json { head :no_content }
+    end
+
+    #redirect_back(fallback_location: request.referer)
   end
 
   private

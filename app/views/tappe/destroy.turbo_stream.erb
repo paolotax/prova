@@ -1,0 +1,12 @@
+<%= turbo_stream.remove @tappa %>
+
+<%= turbo_stream.replace "nr-tappe" do %>
+    <%= tag.div pluralize(@giro.tappe.size, "tappa", "tappe"), id: "nr-tappe" %>
+<% end %>
+
+<%= turbo_stream.replace "giro_tappe_filter_#{dom_id @giro}" do %>
+    <%= render "giri/giro_filter" %>
+<% end %>
+
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+
