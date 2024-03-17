@@ -1,7 +1,7 @@
 <% if @page.first? %> 
     
     <%= turbo_stream.replace "tappe-list" do %>
-        <%= tag.div id: "tappe-list", class: "grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
+        <%= tag.div id: "tappe-list", class: "mt-2 grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
             <p class="only:block hidden py-8 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
             <%= render @page.records %>
 
@@ -20,7 +20,7 @@
         <%= render @page.records %>
 
         <% if @page.last? %>
-            <%= tag.div "Fine delle tappe!", class: "py-8 px-4 text-center" %>
+            <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>
         <% else %>
             <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
                 <%= render 'shared/lazy_loading' %>
