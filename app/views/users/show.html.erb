@@ -65,55 +65,14 @@
     </section>  
 
     <!-- sezione La mia Zona -->
-    <section class="mt-8">
+    <section class="mt-10">
+
+        <%= turbo_frame_tag :zone_list, src: zone_path, loading: :lazy do %>
+            <%= render 'shared/lazy_loading' %>
+        <% end%>
                        
-        <div class="sticky top-16 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
-            <h2 class="font-semibold">La mia ZONA </h2>
-            <%= tag.div id:"#{dom_id(@user)}-nr-scuole-assegnate",
-                class: "text-sm font-semibold pr-4" do %>
-                <%= @user.import_scuole.size %>
-            <% end %>    
-        </div>
-
-        <div id="user-scuole" class="max-h-96 overflow-scroll">
-            <% @mia_zona.each do |zona, count|%>
-                
-                <div id="<%= (zona[1] + "-" + zona[2]).downcase.gsub(" ", "-") %>" class="bg-white px-2 py-4 grid grid-cols-6 justify-between align-center border-b border-gray-300">
-                    <div class="text-sm col-span-4">
-                        <span><%= zona.join " -> " %></span>
-                    </div>
-                    <div class="text-right">
-                        <span><%= count %></span>
-                    </div>
-                    <div class="flex justify-end">
-                        <%= button_to "-", rimuovi_scuole_user_path(provincia: zona[1], tipo: zona[2]), method: :delete, 
-                            class: "mr-2 h-7 w-7 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" 
-                        %>
-                    </div>
-                </div>
-            
-            <% end %>
-        </div>
-
-        <div class="mt-8 mb-4 mx-2 p-4 flex flex-col bg-gray-300 border rounded">
-            
-            <%= render partial: "zone/form", locals: { regioni: @regioni, province: [], gradi: @gradi, tipi: @tipi }%>
-
-            <%= form_with url: assegna_scuole_user_path(@user), class: "flex flex-row-reverse mt-4" do |f| %>
-                
-                <%= hidden_field_tag "hregione" %>
-                <%= hidden_field_tag "hprovincia" %>
-                <%= hidden_field_tag "hgrado" %>
-                <%= hidden_field_tag "htipo" %>
-
-                <%= f.button type: "submit", class: "flex flex-row-reverse ml-4 h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                    </svg>            
-                <% end%>  
-            <% end %>
-        </div>
-
+        <%= render partial: "zone/form", locals: { regioni: @regioni, province: [], gradi: @gradi, tipi: @tipi } %>
+    
     </section>   
 
     <!-- sezione Le mie scuole -->
@@ -124,36 +83,4 @@
     </section>
 
 </div>
-
-
-<div class="mt-12 sm:mx-auto sm:w-full sm:max-w-2xl">       
-
-</div>
-
-
-
-<% if current_user.name == "CAMBIARE SUBITO" %>
-    <div class="mt-20 sm:mx-auto sm:w-full sm:max-w-2xl">
-
-        <div>
-            <%= form_with url: assegna_scuole_user_path(@user) do |f| %>
-                <div class="flex flex-col mt-10 max-w-4xl mx-auto">
-                    <%= render(FancySelect.new( form_name: :provincia, items: @provincia_items, label: "Scegli la provincia" ))  %>
-                    <%= render(FancySelect.new( form_name: :grado, items: @grado_items, label: "Scegli il grado scolastico" ))  %>     
-                    <%= render(FancySelect.new( form_name: :tipo, items: @tipo_items, label: "Scegli il tipo scuola" ))  %>     
-
-                </div>
-            <% end %>
-        </div>  
-
-        <div>
-            <%= form_with url: "#" do |f| %>
-                <div class="flex flex-col mt-10 max-w-4xl mx-auto">
-                    <%= render(FancySelect.new( form_name: :editore, items: @editore_items, label: "Scegli l'editore" ))  %>
-              
-                </div>
-            <% end %>
-        </div> 
-    </div>
-<% end %>
 

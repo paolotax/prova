@@ -30,8 +30,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show] do
     member do
       post  'modifica_navigatore' 
-      post 'assegna_scuole'
-      delete 'rimuovi_scuole'
     end
   end
     
@@ -49,8 +47,14 @@ Rails.application.routes.draw do
       delete 'remove_image'
     end
   end
-    
-  get "zone", to: 'zone#index'
+  
+  resources :zone, only: [:index] do
+    collection do
+      get 'select_zone'
+      post 'assegna_scuole'
+      delete 'rimuovi_scuole'
+    end
+  end
   
   resources :editori
   

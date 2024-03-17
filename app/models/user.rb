@@ -65,5 +65,8 @@ class User < ApplicationRecord
     end
   end
 
+  def zone
+    import_scuole.joins(:tipo_scuola).group(:REGIONE, :PROVINCIA, :grado).count
+  end
   
 end

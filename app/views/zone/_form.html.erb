@@ -1,46 +1,20 @@
-<%= turbo_frame_tag :zone_select do %> 
-    <%= form_with url: zone_path, method: :get, data: { controller: "tax-select", 
-                                                            action: "change->tax-select#submit" 
-                                                        
-                                                        } do |f| %>
+<%= turbo_frame_tag :zone_form do %>
+    <div class="mt-8 mb-4 mx-2 p-4 flex flex-col bg-gray-300 border rounded">
+        
+        <%= render partial: "zone/zone_select", locals: { regioni: @regioni, province: @province, gradi: @gradi, tipi: @tipi }%>
 
-        <div class="flex flex-col sm:flex-row sm:justify-left sm:gap-x-4" >
-            <div class="mt-2 sm:w-56">
-                <%= f.label :regione, class: "label" %>
-                <div>    
-                    <%= f.select :regione, options_from_collection_for_select(regioni, "regione", "regione", @regione&.regione), 
-                                        { prompt: "scegli la regione" }, 
-                                        { class: "field", data: { tax_select_target: "regione" } } %>
-                </div>
-            </div>
-            <div class="mt-2 sm:w-96">
-                <%= f.label :provincia, class: "label" %>
-                <div>    
-                    <%= f.select :provincia, options_from_collection_for_select(province, "provincia", "provincia", @provincia&.provincia), 
-                                    { prompt: "tutte" }, 
-                                    { class: "field", data: { tax_select_target: "provincia" } } %>
-                </div>
-            </div>
-        </div> 
-        <div class="flex flex-col sm:flex-row sm:justify-left sm:gap-x-4">
-            <div class="mt-2 sm:w-56"> 
-                <%= f.label :grado, class: "label" %>    
-                <div>
-                    <%= f.select :grado, options_from_collection_for_select(gradi, "grado", "grado", @grado&.grado), 
-                                    { prompt: "tutti" }, 
-                                    { class: "field", data: { tax_select_target: "grado" } } %>
+        <%= form_with url: assegna_scuole_zone_path, class: "flex flex-row-reverse mt-4" do |f| %>
+            
+            <%= hidden_field_tag "hregione" %>
+            <%= hidden_field_tag "hprovincia" %>
+            <%= hidden_field_tag "hgrado" %>
+            <%= hidden_field_tag "htipo" %>
 
-                </div>
-            </div>
-            <div class= "mt-2 sm:w-96">
-                <%= f.label :tipo, class: "label" %> 
-                <div>  
-                    <%= f.select :tipo, options_from_collection_for_select(tipi, "tipo", "tipo", @tipo&.tipo), 
-                                    { prompt: "tutti" }, 
-                                    { class: "field", data: { tax_select_target: "tipo" } } %>
-                </div>
-            </div>
-        </div>
-
-    <% end %>
+            <%= f.button type: "submit", class: "flex flex-row-reverse ml-4 h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>            
+            <% end%>  
+        <% end %>
+    </div>
 <% end %>

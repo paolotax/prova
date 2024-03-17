@@ -1,9 +1,13 @@
 <%= turbo_stream.update "#{dom_id(current_user)}-user-scuole" do %>
-  <%= current_user.import_scuole.count %>
+  <%= current_user.import_scuole.size %>
 <% end %>
 
 <%= turbo_stream.update "#{dom_id(current_user)}-nr-scuole-assegnate" do %>
-  <%= current_user.import_scuole.count %>
+  <%= current_user.import_scuole.size %>
+<% end %>
+
+<%= turbo_stream.replace "user-scuole" do %>    
+	<%= render partial: "zone/zone_list" %>
 <% end %>
 
 <%= turbo_stream.remove @user_scuola %>

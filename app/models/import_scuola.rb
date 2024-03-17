@@ -42,6 +42,8 @@ class ImportScuola < ApplicationRecord
 
   has_many :appunti
   has_many :tappe, as: :tappable
+
+  has_one :tipo_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
   
   include PgSearch::Model
 

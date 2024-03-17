@@ -1,1 +1,14 @@
-<%= render partial: "form", locals: { regioni: @regioni, province: @province, gradi: @gradi, tipi: @tipi }%>
+<%= turbo_frame_tag :zone_list do %>
+
+    <div class="sticky top-16 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
+        <h2 class="font-semibold">Le mia ZONA </h2>
+        <div id="<%= dom_id(current_user) %>-nr-scuole-assegnate" class="text-sm font-semibold pr-4">
+            <%= current_user.import_scuole.size %>
+        </div>
+    </div>  
+
+    <%= render partial: "zone/zone_list" %>
+
+<% end %>
+
+<%#= render partial: "form", locals: { regioni: @regioni, province: @province, gradi: @gradi, tipi: @tipi }%>

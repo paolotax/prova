@@ -1,0 +1,3 @@
+<%= turbo_frame_tag :zone_form do %>
+    <%= render partial: "zone/form", locals: { regioni: @regioni, province: @province, gradi: @gradi, tipi: @tipi } %>
+<% end %>
