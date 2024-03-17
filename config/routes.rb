@@ -10,6 +10,8 @@ end
 # then mount it
 Rails.application.routes.draw do
   
+  resources :tipi_scuole, only: [:index, :edit, :update]
+  
   mount Sidekiq::Web => "/sidekiq"
 
   devise_for :users, controllers: { confirmations: 'confirmations' }

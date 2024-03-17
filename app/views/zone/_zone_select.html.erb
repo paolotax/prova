@@ -27,7 +27,7 @@
             <div class="mt-2 sm:w-56"> 
                 <%= f.label :grado, class: "label" %>    
                 <div>
-                    <%= f.select :grado, options_from_collection_for_select(gradi, "grado", "grado", @grado&.grado), 
+                    <%= f.select :grado, options_for_select(TipoScuola::TIPISCUOLE, @grado&.grado), 
                                     { prompt: "tutti" }, 
                                     { class: "field", data: { tax_select_target: "grado" } } %>
 

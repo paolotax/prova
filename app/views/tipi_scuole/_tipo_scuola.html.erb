@@ -1,0 +1,15 @@
+<%= tag.div id: dom_id(tipo_scuola), class: "grid grid-cols-6 gap-x-4 px-4 py-3 align-center" do %>
+    
+    <%= tag.div tipo_scuola.tipo, class: "col-span-3"  %>
+
+    <% if current_user.admin? == true %>
+        <%= form_with model: tipo_scuola, class: "col-span-3 space-x-3 flex items-center justify-between" do |form| %>
+            <%= form.text_field :grado %>
+            <%= form.submit "Aggiorna" %>
+        <% end %>
+    <% else %>
+        <%= tipo_scuola.grado_label %>
+    <% end %>
+    
+
+<% end %>    

@@ -3,6 +3,7 @@ kamal app exec -i 'bin/rails console'
 u = User.find_by_name("enrico")
 u.confirm 
 
+User.all.collect {|u| { name: u.name, adozioni: u.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size } }
 
 kamal details
 

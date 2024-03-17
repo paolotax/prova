@@ -1,0 +1,12 @@
+<%= heading do %>	
+
+	<%= h1 {"Tipi scuola"} %>
+
+<% end %>
+
+
+<%= turbo_frame_tag "search_results" do %>
+
+		<%=  render @tipi_scuole %>
+
+<% end %>

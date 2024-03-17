@@ -23,7 +23,7 @@ export default class extends Controller {
 
     if (this.hasGradoTarget) {
       let hgrado = document.getElementById("hgrado");
-      let grado = this.gradoTarget.options[this.gradoTarget.selectedIndex].text;
+      let grado = this.gradoTarget.options[this.gradoTarget.selectedIndex].value;
       hgrado.value = grado;
     }    
 
@@ -36,14 +36,12 @@ export default class extends Controller {
     if (this.hasGruppoTarget) {
       let hgruppo = document.getElementById("hgruppo");
       let gruppo = this.gruppoTarget.options[this.gruppoTarget.selectedIndex].text;
-      console.log("gruppo: " + gruppo);
       hgruppo.value = gruppo;
     }
 
     if (this.hasEditoreTarget) {
       let heditore = document.getElementById("heditore");
       let editore = this.editoreTarget.options[this.editoreTarget.selectedIndex].value
-      console.log("editore: " + editore);
       heditore.value = editore;
     }
   }
