@@ -62,7 +62,7 @@ class TappeController < ApplicationController
     
     respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
+        format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata!" }
         format.json { render :show, status: :ok, location: @tappa }
     end    
 
@@ -71,11 +71,7 @@ class TappeController < ApplicationController
 
   def destroy
     @tappa.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to tappe_url, notice: "Tappa was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_back(fallback_location: request.referer)
   end
 
   private

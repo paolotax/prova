@@ -35,8 +35,27 @@
         %>
     </div>  
     
-    <div>
-        <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+    <div class="my-5 flex justify-between">
+        		<%= button_to  do %>
+			<div class="btn btn-indigo">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+				</svg>
+				<span class="">Salva</span>
+			</div>
+		<% end %>
 
+        <% if action_name != "new" %>
+            <div class="ml-6 inline-block">
+                <%= link_to tappa_path(tappa), 
+                            data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
+                            class: "btn btn-red" do %> 
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> 
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /> 
+                    </svg> 
+                    <span class="">Elimina</span> 
+                <% end %>
+            </div>
+        <% end %>
+	</div>
 <% end %>
