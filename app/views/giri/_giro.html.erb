@@ -1,4 +1,4 @@
-<div id="<%= dom_id giro %>" class="grid grid-cols-6 sm:grid-cols-7 bg-white border-b items-center px-4 py-2.5 rounded-lg shadow-lg">
+<div id="<%= dom_id giro %>" class="grid grid-cols-6 sm:grid-cols-7 bg-white border-b items-center align-center px-4 py-2.5 rounded-lg shadow-lg">
   
   <div class="col-span-4">
     <div class="text-xl hover:text-indigo-600">
@@ -18,26 +18,25 @@
 
   
 
-  <div class="col-span-2 flex items-center justify-around ">
+  	<div class="col-span-2 flex items-center align-center justify-around ">
 
-    <div class="flex items-center">
-        <%= link_to edit_giro_path(giro), class: "text-gray-400 hover:text-gray-500", 
-                    data: { turbo_frame: :modal, action: "click->dialog#open"} do %>
-          <%= inline_svg_tag "icon-pencil.svg" %>
-        <% end %>
-    </div>
 
-    <div class="flex items-center bg-red-400 p-2 rounded-full h-8 w-8 align-center items-center">
-
-      <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
-                    class: "text-white " do %>
-        <%= inline_svg_tag "icon-trash-mini.svg" %>
-      <% end %>
-
-    </div>
-
-    <%#= link_to "apr", tappe_giro_path(giro), class: "text-xs h-6 w-6", 
+    	<%= link_to "apri", tappe_giro_path(giro), class: "text-xs h-6 w-6 text-center", 
             data: { turbo_frame: "_top" } %>
+
+		<%= link_to edit_giro_path(giro), class: "text-gray-400 hover:text-gray-500", 
+						data: { turbo_frame: :modal, action: "click->dialog#open"},
+				class: "mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
+			<%= inline_svg_tag "icon-pencil.svg" %>
+		<% end %>
+    
+
+        <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
+        	    class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
+            <%= inline_svg_tag "icon-trash.svg" %>
+        <% end %>   
+    </div>
+
   </div>
     
 </div>

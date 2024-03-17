@@ -8,10 +8,8 @@ class UsersController < ApplicationController
 
   def show
 
-    @mia_zona = current_user.import_scuole.group([:REGIONE, :PROVINCIA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]).count(:id)  
-    @miei_editori = current_user.editori.collect{|e| e.editore}
-
-    @user_scuole = current_user.user_scuole
+    #@miei_editori = current_user.editori.collect{|e| e.editore}
+    #@user_scuole = current_user.user_scuole
 
     @regioni = Zona.order(:regione).select(:regione).distinct || []
     @province = Zona.order(:provincia).select(:provincia).distinct || []
@@ -20,24 +18,11 @@ class UsersController < ApplicationController
 
     @gruppi = Editore.order(:gruppo).select(:gruppo).distinct || []
     @editori = Editore.order(:editore).select(:id, :editore).distinct || []
-    
-    # @regioni_items = Zona.order(:regione).pluck(:regione).uniq.map do |item|
-    #   FancySelect::Item.new(item, item, nil)
-    # end
 
   end
 
   def modifica_navigatore
     @user.update(navigator: params[:navigator])
-    
-    respond_to do |format|
-      # format.turbo_stream do 
-      #   flash.now[:notice] = "Navigatore modificato!"
-      #   turbo_stream.replace "notice", partial: "layouts/flash"
-      #   redirect_to @user
-      # end
-      format.html { redirect_to @user, notice: "Navigatore modificato!"}
-    end
   end
 
   private

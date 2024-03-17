@@ -10,7 +10,7 @@ export default class extends Controller {
         this.animateCSS("zoomOut").then(() => {
           node.style.visibility = "hidden";
         });
-      }, 3000); // 3-second delay
+      }, 2000); // 2-second delay
     });
   
   }

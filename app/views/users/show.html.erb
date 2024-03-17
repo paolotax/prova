@@ -36,7 +36,7 @@
                 data: { controller: "tax-select", 
                 action: "change->tax-select#submit" }  do|f| %>
             <hr/> 
-            <div class="flex items-center justify-start gap-x-4 py-2">
+            <div class="flex items-center justify-between gap-x-4 py-2">
                 <%= f.label :navigator, "Navigatore preferito", class: "label" %>
                 <div>
                     <%= f.select :navigator, 
@@ -64,6 +64,7 @@
 
     </section>  
 
+
     <!-- sezione La mia Zona -->
     <section class="mt-10">
 
@@ -74,6 +75,7 @@
         <%= render partial: "zone/form", locals: { regioni: @regioni, province: [], gradi: @gradi, tipi: @tipi } %>
     
     </section>   
+
 
     <!-- sezione Le mie scuole -->
     <section class="mt-10">
