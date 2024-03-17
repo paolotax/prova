@@ -40,6 +40,7 @@ class User < ApplicationRecord
   has_many :adozioni, through: :editori_users
   has_many :appunti, dependent: :destroy
   has_many :giri, dependent: :destroy
+  has_many :tappe, dependent: :destroy, through: :giri
  
   
   enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
@@ -67,6 +68,10 @@ class User < ApplicationRecord
 
   def zone
     import_scuole.joins(:tipo_scuola).group(:REGIONE, :PROVINCIA, :grado).count
+  end
+
+  def self.stats
+    User.all.collect {|u| { name: u.name, adozioni: u.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
   end
   
 end
