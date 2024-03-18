@@ -12,24 +12,7 @@ class TipoScuola < ApplicationRecord
   belongs_to :import_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
 
 
-  TIPISCUOLE = [["infanzia", "I"], ["primaria", "E"], ["secondaria I grado", "M"], ["secondaria II grado", "N"], ["altro", "altro"]]
-
-  def grado_label
-    case grado
-    when 'I'
-      'infanzia'
-    when 'E'
-      'primaria'
-    when 'M'
-      'secondaria I grado'
-    when 'N'
-      'secondaria II grado'
-    when 'altro'
-      'altro'
-    else
-      grado
-    end
-  end
+  GRADI = [["infanzia", "I"], ["primaria", "E"], ["secondaria I grado", "M"], ["secondaria II grado", "N"], ["altro", "altro"]]
 
   # Metodo per popolare la tabella tipi_scuole con i tipi di scuola presenti che non hanno un grado associato
   def self.orfani
