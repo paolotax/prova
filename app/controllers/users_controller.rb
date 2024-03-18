@@ -8,17 +8,16 @@ class UsersController < ApplicationController
 
   def show
 
-    #@miei_editori = current_user.editori.collect{|e| e.editore}
-    #@user_scuole = current_user.user_scuole
-
-    @regioni = Zona.order(:regione).select(:regione).distinct || []
+    # per popolare le select box
+    @regioni =  Zona.order(:regione).select(:regione).distinct || []
     @province = Zona.order(:provincia).select(:provincia).distinct || []
+    
     @gradi = TipoScuola.order(:grado).select(:grado).distinct || []
     @tipi  = TipoScuola.order(:tipo).select(:tipo).distinct || []
 
     @gruppi = Editore.order(:gruppo).select(:gruppo).distinct || []
     @editori = Editore.order(:editore).select(:id, :editore).distinct || []
-
+  
   end
 
   def modifica_navigatore

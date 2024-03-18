@@ -8,6 +8,7 @@ class ZoneController < ApplicationController
   end
 
   def select_zone
+    # il controller Zona si riferisce all'utente non alla tabella Zone (che sono tutte le province e comuni italiani e non quelle assegnate all'utente)
     @regioni = Zona.order(:regione)
                    .select(:regione).distinct || []
     
@@ -52,8 +53,6 @@ class ZoneController < ApplicationController
       @scuole_da_assegnare.each do |s|
         current_user.import_scuole << s unless current_user.import_scuole.include?(s)
       end
-      
-
 
     end
   end
