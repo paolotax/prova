@@ -10,6 +10,6 @@
 	<%= render partial: "zone/zone_list" %>
 <% end %>
 
-<%= turbo_stream.remove @user_scuola %>
+<%= turbo_stream.remove @user_scuola.import_scuola %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>
