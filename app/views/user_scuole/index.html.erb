@@ -25,14 +25,14 @@
 
        
 
-            <div class="flex flex-col">
-                <h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">
-                    Scuole private...
-                </h3> 
-                <% current_user.import_scuole.where(CODICEISTITUTORIFERIMENTO: nil).order(:DESCRIZIONECOMUNE).each do |scuola| %>
-                    <%= render partial: "user_scuole/user_scuola", locals: { user_scuola: scuola } %>  
-                <% end %>
-            </div>
+        <div class="flex flex-col">
+            <h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">
+                Scuole private...
+            </h3> 
+            <% current_user.import_scuole.where(CODICEISTITUTORIFERIMENTO: nil).order(:DESCRIZIONECOMUNE).each do |scuola| %>
+                <%= render partial: "user_scuole/user_scuola", locals: { user_scuola: scuola } %>  
+            <% end %>
+        </div>
 
            
         
