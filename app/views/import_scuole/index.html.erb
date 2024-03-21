@@ -21,7 +21,21 @@
 				Whoops! Non ci sono scuole. 
 				<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] %>
 			</p>
-			<%= render @import_scuole %>
+
+			<% @import_scuole.group_by(&:direzione).each do |direzione, scuole| %>
+
+				<div class="flex flex-col">
+					<h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">
+						<%= direzione.nil? ? "<private>" : direzione.to_s %>
+					</h3>
+					<%= render partial: "import_scuole/scuola_long", collection: scuole, as: :import_scuola %>  
+				</div>
+
+			<% end %>    
+
+
+
+			<%#= render @import_scuole %>
 		</div>
 		
 		<% if @pagy.next %>
