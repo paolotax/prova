@@ -21,6 +21,7 @@ class Tappa < ApplicationRecord
 
   scope :di_oggi,   -> { where(data_tappa: Time.now.all_day) }
   scope :di_domani, -> { where(data_tappa: Time.now.tomorrow.all_day) }
+  scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
 
   scope :programmate, -> { where("data_tappa > ?", Time.now) }  
   scope :completate,  -> { where.not(data_tappa: nil).where("data_tappa < ?", Time.now) }
@@ -35,7 +36,7 @@ class Tappa < ApplicationRecord
         "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%") 
   }
 
-  scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
+  
   
 
 end

@@ -105,4 +105,13 @@ class Appunto < ApplicationRecord
     file_attachments
   end
 
+  def self.prova
+    Appunto.with( scuole_di_oggi: Appunto.where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)), 
+                 adozioni_di_oggi: Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id)) 
+    ).select(*)
+    
+
+
+  end
+
 end
