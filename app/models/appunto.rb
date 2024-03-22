@@ -108,7 +108,7 @@ class Appunto < ApplicationRecord
   def self.prova
     Appunto.with( scuole_di_oggi: Appunto.where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)), 
                  adozioni_di_oggi: Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id)) 
-    ).select(*)
+    ).joins("inner join scuole_di_oggi on scuole_di_oggi.id = appunti.id").joins("inner join adozioni_di_oggi on adozioni_di_oggi.id = appunti.id")
     
 
 
