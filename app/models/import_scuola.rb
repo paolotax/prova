@@ -41,6 +41,8 @@ class ImportScuola < ApplicationRecord
   has_many :user_scuole
   has_many :users, through: :user_scuole
 
+  has_many :classi, class_name: "Views::Classe", foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
+
   has_many :appunti
   has_many :tappe, as: :tappable
 
@@ -100,9 +102,9 @@ class ImportScuola < ApplicationRecord
     adozioni.size
   end
 
-  def classi 
-    import_adozioni.pluck(:ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE ).uniq
-  end
+  # def classi 
+  #   import_adozioni.pluck(:ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE ).uniq
+  # end
 
   def classi_count
     classi.size

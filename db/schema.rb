@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_05_103324) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_23_111334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -425,5 +425,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_05_103324) do
   SQL
   add_index "view_adozioni144ant_editori", ["editore"], name: "index_view_adozioni144ant_editori_on_editore"
   add_index "view_adozioni144ant_editori", ["provincia", "editore"], name: "index_view_adozioni144ant_editori_on_provincia_and_editore", unique: true
+
+  create_view "view_classi", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
+      import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_scuole."CODICESCUOLA" AS codice_ministeriale,
+      import_adozioni."ANNOCORSO" AS classe,
+      import_adozioni."SEZIONEANNO" AS sezione,
+      import_adozioni."COMBINAZIONE" AS combinazione,
+      '2023'::text AS anno
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE";
+  SQL
+  add_index "view_classi", ["codice_ministeriale", "classe", "sezione", "combinazione"], name: "idx_on_codice_ministeriale_classe_sezione_combinazi_79414f61ec", unique: true
+  add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
+  add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
 
 end

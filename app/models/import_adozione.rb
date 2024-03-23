@@ -27,6 +27,8 @@ class ImportAdozione < ApplicationRecord
   belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
   belongs_to :editore,       foreign_key: "EDITORE",      primary_key: "EDITORE"
 
+  belongs_to :classe, class_name: "Views::Classe", query_constraints: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA]
+
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
 
