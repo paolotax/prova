@@ -62,8 +62,10 @@ class Appunto < ApplicationRecord
   scope :da_pagare, -> { where(stato: "da pagare") }
   scope :completati, -> { where(stato: "completato") }
   scope :archiviati, -> { where(stato: "archiviato") }
-  scope :non_archiviati, -> { where.not(stato: "archiviato") }
+  scope :non_archiviati, -> { where.not(stato: "archiviato").where.not(stato: "completato") }
 
+  scope :nel_baule_di_oggi, -> { where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
+  scope :nel_baule_di_domani, -> { where(import_scuola_id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
 
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
@@ -105,13 +107,11 @@ class Appunto < ApplicationRecord
     file_attachments
   end
 
-  def self.prova
-    Appunto.with( scuole_di_oggi: Appunto.where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)), 
-                 adozioni_di_oggi: Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id)) 
-    ).joins("inner join scuole_di_oggi on scuole_di_oggi.id = appunti.id").joins("inner join adozioni_di_oggi on adozioni_di_oggi.id = appunti.id")
+  def self.nel_baule
+    appunti_scuole_di_oggi =  Appunto.where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))
+    #appunti_adozioni_di_oggi = Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id)) 
     
-
-
+    #appunti_scuole_di_oggi.or(appunti_adozioni_di_oggi)
   end
 
 end
