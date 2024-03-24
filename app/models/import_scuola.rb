@@ -28,6 +28,10 @@
 #
 class ImportScuola < ApplicationRecord
 
+  include Searchable
+
+  search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO
+
   has_many :plessi, class_name: "ImportScuola",
                     primary_key: "CODICESCUOLA",   
                     foreign_key: "CODICEISTITUTORIFERIMENTO"

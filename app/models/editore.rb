@@ -9,6 +9,12 @@
 #  updated_at :datetime         not null
 #
 class Editore < ApplicationRecord
+
+    include Searchable
+
+    search_on :editore, :gruppo
+
+    validates :editore, presence: true
     validates :editore, uniqueness: true
 
     has_many :mandati, dependent: :destroy

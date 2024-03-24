@@ -24,6 +24,11 @@
 #
 class ImportAdozione < ApplicationRecord
 
+  include Searchable
+
+  search_on :TITOLO, :EDITORE, :DISCIPLINA, import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
+
+
   belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
   belongs_to :editore,       foreign_key: "EDITORE",      primary_key: "EDITORE"
 

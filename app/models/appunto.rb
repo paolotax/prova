@@ -40,13 +40,16 @@ class Appunto < ApplicationRecord
                       },
                       using: {
                         tsearch: { any_word: false, prefix: true }
-                  }
+                      }
 
-  scope :search, ->(q) do 
-     includes(:import_scuola)
-     .where("nome ILIKE ? or import_scuole.DENOMINAZIONESCUOLA ILIKE ? or import_scuole.DESCRIZIONECOMUNE ILIKE ? ", 
-     "%#{q}%", "%#{q}%", "%#{q}%") 
-  end
+  include Searchable
+
+  search_on :nome, :body, :email, :telefono, :stato, 
+            import_adozione: [:CODICESCUOLA, :CODICEISBN, :EDITORE],
+            rich_text_content: [:body],
+            attachments_blobs: [:filename], 
+            import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
+                              
 
   STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "da pagare", "completato", "archiviato"]  
   
