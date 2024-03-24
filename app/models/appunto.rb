@@ -56,6 +56,8 @@ class Appunto < ApplicationRecord
     self.stato ||= "da fare"
   end
 
+  scope :dell_utente, ->(user) { where(user_id: user.id) }
+
   scope :da_fare, -> { where(stato: "da fare") }
   scope :in_evidenza, -> { where(stato: "in evidenza") }
   scope :in_settimana, -> { where(stato: "in settimana") }

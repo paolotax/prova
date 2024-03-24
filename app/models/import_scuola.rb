@@ -91,7 +91,7 @@ class ImportScuola < ApplicationRecord
   scope :per_comune_e_direzione, -> { order([:DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
 
   def to_s  
-    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA.titleize + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
+    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
 
   def adozioni 

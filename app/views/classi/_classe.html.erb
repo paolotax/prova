@@ -1,0 +1,23 @@
+<%= tag.div dom_id classe do %>
+    <%= tag.div class: "flex items-center justify-between" do %>
+        <%= tag.div class: "flex items-center" do %>
+            <%= tag.div class: "flex-shrink-0" do %>
+                <%#= image_tag "https://via.placeholder.com/150", class: "h-12 w-12 rounded-full" %>
+            <% end %>
+            <%= tag.div class: "ml-4 flex flex-row text-md font-medium text-gray-900 items-baseline" do %>
+                <%= tag.div class: "" do %>
+                    <%= classe.classe %>
+                <% end %>
+                <%= tag.div class: "" do %>
+                    <%= classe.sezione %>
+                <% end %>
+                <%= tag.div class: "pl-2 text-xs text-gray-500" do %>
+                    (<%= classe.combinazione.downcase %>)
+                <% end %>
+            <% end %>
+        <% end %>
+        <%= tag.div class: "ml-4 flex-shrink-0" do %>
+            <%#= link_to "Vai", classe, class: "font-medium text-indigo-600 hover:text-indigo-500" %>
+        <% end %>
+    <% end %>
+<% end %>
