@@ -60,6 +60,8 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'tipo_scuola', 'tipi_scuole'
   inflect.irregular 'zona', 'zone'
 
+  inflect.irregular 'adozione_elementare', 'adozioni_elementari'
+
 
 
 
