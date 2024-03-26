@@ -98,6 +98,10 @@ class ImportAdozione < ApplicationRecord
     self.ANNOCORSO
   end
 
+  def classe
+    self.ANNOCORSO
+  end
+
   def classe_e_sezione 
     "#{self.ANNOCORSO} #{sezione}"
   end
@@ -110,9 +114,12 @@ class ImportAdozione < ApplicationRecord
     self.SEZIONEANNO.titleize
   end
 
-
   def disciplina
     self.DISCIPLINA.titleize
+  end
+
+  def combinazione
+    self.COMBINAZIONE.downcase
   end
 
   def titolo
