@@ -57,6 +57,15 @@ class TappeController < ApplicationController
     @selected_tappe.update_all(data_tappa: Time.now + 1.day) if mass_domani?    
     @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
     @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
+    
+    if mass_duplica?
+      @selected_tappe.each do |tappa|
+        t = tappa.dup
+        t.data_tappa = params[:data_tappa]
+        t.save
+      end
+    end
+    
     #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
     flash.now[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
     
@@ -125,6 +134,11 @@ class TappeController < ApplicationController
 
     def mass_data_tappa?
       params[:button] == 'data'
+      # params[:commit] == "disabled"
+    end
+
+    def mass_duplica?
+      params[:button] == 'duplica'
       # params[:commit] == "disabled"
     end
 end

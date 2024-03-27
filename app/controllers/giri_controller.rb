@@ -12,7 +12,7 @@ class GiriController < ApplicationController
   end
 
   def tappe
-    @tappe = @giro.tappe.includes(:tappable).order(:ordine)
+    @tappe = @giro.tappe.includes(:tappable)
     
     if params[:filter]  == 'programmate'
       @tappe = @tappe.programmate
@@ -31,6 +31,8 @@ class GiriController < ApplicationController
     if params[:search].present?      
       @tappe = @tappe.search(params[:search])
     end
+
+    @tappe = @tappe.per_data
 
     set_page_and_extract_portion_from @tappe
 
