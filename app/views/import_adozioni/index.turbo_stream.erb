@@ -7,7 +7,9 @@
 
       <%= turbo_stream.replace "load_more" do %>
             <%= tag.div class: "py-5 grid grid-cols-1 gap-x-6 gap-y-8 zlg:grid-cols-2 z2xl:grid-cols-3 xl:gap-x-8" do %>
-                  <%= render partial: "import_adozioni/import_adozione_small", collection: @page.records, as: :import_adozione %>
+                  <% @page.records.each do |adozione| %>
+                        <%= render partial: "import_adozioni/import_adozione_small", locals: { import_adozione: adozione } %>
+                  <% end %>
             <% end %>
 
             <% if @page.last? %>

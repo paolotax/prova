@@ -50,3 +50,6 @@ module Searchable
     end
   end
 end
+
+#ado.group_by{|a| [codice_scuola: a.CODICESCUOLA], [classe: a.ANNOCORSO], [disciplina: a.DISCIPLINA], [codice_isbn: a.CODICEISBN] }
+#ado.group_by{|a| [a.CODICESCUOLA, a.ANNOCORSO, a.DISCIPLINA, a.CODICEISBN] }
