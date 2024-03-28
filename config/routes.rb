@@ -27,6 +27,9 @@ Rails.application.routes.draw do
     collection do
       patch 'bulk_update'
     end
+    member do
+      post 'duplica'
+    end
   end
   
   resources :users, only: [:index, :show] do

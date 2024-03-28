@@ -80,6 +80,16 @@ class TappeController < ApplicationController
     #redirect_back(fallback_location: request.referer)
   end
 
+  def duplica
+    @tappa = Tappa.find(params[:id])
+    @giro = @tappa.giro
+    @nuova_tappa = @tappa.dup
+    @nuova_tappa.save
+    respond_to do |format|
+      format.turbo_stream
+    end  
+  end
+
   def destroy
     @giro = @tappa.giro
     @tappa.destroy!

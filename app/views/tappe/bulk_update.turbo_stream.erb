@@ -4,6 +4,6 @@
 
 <% if @giro %>
     <%= turbo_stream.replace "giro_tappe_filter_#{dom_id @giro }" do %>
-        <%= render "giri/giro_filter" %>
+        <%= render partial: "giri/giro_filter", locals: { giro: @giro } %>
     <% end %>
 <% end %>

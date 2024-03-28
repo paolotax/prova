@@ -1,40 +1,40 @@
-<%= tag.div id: "giro_tappe_filter_#{dom_id @giro}", data: {turbo_permanenttttttt: true }, class: "m-2 overflow-hidden" do %>
+<%= tag.div id: "giro_tappe_filter_#{dom_id(giro)}", data: {turbo_permanenttttttt: true }, class: "m-2 overflow-hidden" do %>
      <%= tag.div class: "relative m-2 w-full flex items-start gap-2 overflow-x-auto" do %>  
         
-        <%= link_to tappe_giro_path(@giro), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
+        <%= link_to tappe_giro_path(giro), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
             tappe:
-            <%= @giro.tappe.size %>
+            <%= giro.tappe.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "oggi"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-green-500" do %>
+        <%= link_to tappe_giro_path(giro, filter: "oggi"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-green-500" do %>
             oggi:
             <br/>
-            <%= @giro.tappe.di_oggi.size %>
+            <%= giro.tappe.di_oggi.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "domani"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
+        <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
             domani:
-            <%= @giro.tappe.di_domani.size %>
+            <%= giro.tappe.di_domani.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "completate"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
+        <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
             <span class="">fatto!!</span>
-            <%= @giro.tappe.completate.size %>
+            <%= giro.tappe.completate.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "programmare"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
+        <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
             <span class="">quando?</span>
-            <%= @giro.tappe.da_programmare.size %>
+            <%= giro.tappe.da_programmare.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(@giro, filter: "programmate"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
+        <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
             <span class="">programmate:</span>
-            <%= @giro.tappe.programmate.size %>
+            <%= giro.tappe.programmate.size %>
         <% end %>
    
-        <% @giro.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
+        <% giro.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
             <% if (tappa[1] > 0) %>
-                <%= link_to tappe_giro_path(@giro, giorno: tappa[0]), data: {turbo_action: "advance"}, 
+                <%= link_to tappe_giro_path(giro, giorno: tappa[0]), data: {turbo_action: "advance"}, 
                             class: ["text-center rounded-lg flex flex-col text-xs font-semibold text-center pl-2 pr-2 py-3 min-h-14 min-w-16": true, 
                                     "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
                                     "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,

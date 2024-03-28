@@ -29,6 +29,12 @@
             Modifica
         <% end %>
 
+        <%= button_to duplica_tappa_path( tappa ),
+                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
+            Duplica
+        <% end %>
+        <hr/>
         <%= link_to tappa_path(tappa), 
                     class: "block px-3 py-1 text-sm leading-6 text-red-500",
                     data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  do %> 
