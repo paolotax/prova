@@ -11,6 +11,7 @@ class GiriController < ApplicationController
   def show
   end
 
+  
   def tappe
     @tappe = @giro.tappe.includes(:tappable)
     
@@ -27,20 +28,21 @@ class GiriController < ApplicationController
     end
 
     @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
-
-    if params[:search].present?      
-      @tappe = @tappe.search(params[:search])
-    end
-
+    @tappe = @tappe.search(params[:search]) if params[:search].present? 
 
     if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
-      @tappe = @tappe.per_data if params[:sort] == "per_data"
-      @tappe = @tappe.per_data_desc if params[:sort] == "per_data_desc"
-      @tappe = @tappe.per_ordine_e_data if params[:sort] == "per_ordine_e_data"
+      @tappe = @tappe.send(params[:sort])
     end
 
-
+    #inizializzo geared pagination
     set_page_and_extract_portion_from @tappe
+
+    #raggruppo le tappe per data o direzione a seconda dell'ordine
+    if params[:sort].presence.in? ["per_data", "per_data_desc"]
+      @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
+    else
+      @grouped_records = @page.records.group_by{|t| t.tappable.direzione }
+    end
 
   end
 

@@ -30,9 +30,12 @@ class Tappa < ApplicationRecord
 
   scope :per_ordine_e_data, -> { order(:ordine, :data_tappa) }
   scope :per_ordine_e_data_desc, -> { order(:ordine, data_tappa: :desc) }
+  
   scope :per_data, -> { order(:data_tappa) }
   scope :per_data_desc, -> { order(data_tappa: :desc) }
+  
   scope :per_ordine, -> { order(:ordine) }
+  
   scope :per_titolo, -> { order(:titolo) }
   scope :per_comune_e_direzione, -> { joins(:tappable).order('import_scuole."DESCRIZIONECOMUNE", import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO"') }
 

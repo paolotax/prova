@@ -30,13 +30,13 @@
 
         <%= render "form_tappe" %>
         
-        <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg px-4 py-2 text-right ht text-xs font-semibold flex justify-between" do %>
+        <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg px-4 py-2 text-right ht text-xs font-semibold flex items-center justify-between" do %>
             <label for="select_all" id="select_all">
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona tutte" %></span>
             </label>
 
-            <select aria-label="select" data-controller="tax-select-sort" class="field">
+            <select aria-label="select" data-controller="tax-select-sort" class="field w-40">
                 <option value="per_ordine_e_data">scuola</option>
                 <option value="per_data">-------></option>
                 <option value="per_data_desc"><-------</option>
@@ -48,10 +48,14 @@
 
         <%= tag.div id: "tappe-list", class: "mt-2 grid grid-cols-1 gap-y-2 xl:grid-cols-2 xl:gap-2" do %>
             <p class="only:block hidden py-8 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
-            <%= render @page.records %>
+            
+            <% @grouped_records.each do |k, v| %>
+                <%= tag.div k.to_s.upcase, class: "col-span-1 xl:col-span-2 mt-2 px-3 py-2 text-indigo-600 text-xs font-semibold" %>
+                <%= render v %>
+            <% end %>
 
             <% unless @page.last? %>
-                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, sort: params[:sort], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, sort: params[:sort], giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
                     <%= render 'shared/lazy_loading' %>
                 <% end %>
                 <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>

@@ -18,6 +18,7 @@
                         "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
                         "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? 
         %> 
+        <%#= tappa.ordine %>
     <% end %>   
     
     <%= tag.div class: "col-span-4" do %>  
