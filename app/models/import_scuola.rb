@@ -98,6 +98,10 @@ class ImportScuola < ApplicationRecord
     ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
 
+  def direzione_or_privata
+    self.direzione || "<privata>".html_safe
+  end
+
   def adozioni 
     import_adozioni
   end

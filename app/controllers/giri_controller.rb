@@ -32,6 +32,8 @@ class GiriController < ApplicationController
 
     if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
       @tappe = @tappe.send(params[:sort])
+    else
+      @tappe = @tappe.per_ordine_e_data
     end
 
     #inizializzo geared pagination
@@ -41,7 +43,7 @@ class GiriController < ApplicationController
     if params[:sort].presence.in? ["per_data", "per_data_desc"]
       @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
     else
-      @grouped_records = @page.records.group_by{|t| t.tappable.direzione }
+      @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }
     end
 
   end
