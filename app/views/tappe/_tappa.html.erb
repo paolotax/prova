@@ -8,21 +8,24 @@
                       class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
                       data: { tax_checkbox_select_all_target: 'checkbox' }
                     } %>
-    <%= link_to edit_tappa_path(tappa), 
-            class: "col-span-1 my-auto text-center pr-2",
-            data: { turbo_frame: :modal, action: "click->dialog#open"}  do %>
-        <%= tag.div(tappa.data_tappa.strftime("%d"), 
-                class: ["mx-auto h-8 w-8 rounded-full font-semibold": true,
-                        "text-white bg-pink-500":  tappa.data_tappa > Time.now + 1.day,
-                        "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
-                        "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
-                        "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1]) unless tappa.data_tappa.nil? 
-        %> 
-        <%#= tappa.ordine %>
-    <% end %>   
+
+
+    <% unless tappa.data_tappa.nil? %>
+        <%= render partial: "tappe/tappa_data", locals: { tappa: tappa }%>
+    <% else %>
+        <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa }%>
+    <% end %>
+  
     
     <%= tag.div class: "col-span-4" do %>  
-        <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: true, with_logo: false, with_link: true } %>
+        <%= render partial: "import_scuole/scuola_small", 
+                locals: { 
+                            import_scuola: tappa.tappable, 
+                            with_navigation: true, 
+                            with_logo: false, 
+                            with_link: true 
+                        } 
+        %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
     <% end %>    
 

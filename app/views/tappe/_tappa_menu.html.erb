@@ -1,0 +1,41 @@
+<%= tag.div class: "relative flex items-center justify-center",
+            data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
+    
+    <%= tag.div class: "h-8 w-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-300 flex items-center justify-center",
+                type: "button",
+                id: "tappa-menu-button_#{dom_id tappa}",
+                aria: { expanded: false, haspopup: true},
+                data: { dropdown_target: "button" } do %>
+        <span class="sr-only">Apri menu tappa</span>
+        <%= inline_svg_tag  "icon-pencil.svg", class: "p-0.5" %>
+    <% end %>
+
+
+    <%= tag.div class: "hidden absolute right-0 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
+        data: { dropdown_target: "menu",
+                transition_enter: "transition ease-out duration-200",
+                transition_enter_from: "opacity-0",
+                transition_enter_to: "opacity-95",
+                transition_leave: "transition ease-in duration-150",
+                transition_leave_from: "opacity-95",
+                transition_leave_to: "opacity-0"
+              } do %>
+
+        <!-- Active: "bg-gray-50", Not Active: "" -->
+        <%= link_to edit_tappa_path( tappa ),
+                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                data: { turbo_frame: :modal, action: "click->dialog#open"}, 
+                role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
+            Modifica
+        <% end %>
+
+        <%= link_to tappa_path(tappa), 
+                    class: "block px-3 py-1 text-sm leading-6 text-red-500",
+                    data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  do %> 
+            <span class="">Elimina</span> 
+        <% end %>
+                        
+    <% end %>
+
+    
+<% end %>
