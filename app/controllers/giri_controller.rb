@@ -32,7 +32,13 @@ class GiriController < ApplicationController
       @tappe = @tappe.search(params[:search])
     end
 
-    @tappe = @tappe.per_data
+
+    if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
+      @tappe = @tappe.per_data if params[:sort] == "per_data"
+      @tappe = @tappe.per_data_desc if params[:sort] == "per_data_desc"
+      @tappe = @tappe.per_ordine_e_data if params[:sort] == "per_ordine_e_data"
+    end
+
 
     set_page_and_extract_portion_from @tappe
 

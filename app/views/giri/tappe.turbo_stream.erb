@@ -6,7 +6,7 @@
             <%= render @page.records %>
 
             <% unless @page.last? %>
-                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, sort: params[:sort], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
                     <%= render 'shared/lazy_loading' %>
                 <% end %>
                 <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
@@ -22,7 +22,7 @@
         <% if @page.last? %>
             <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>
         <% else %>
-            <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+            <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, sort: params[:sort],  filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
                 <%= render 'shared/lazy_loading' %>
             <% end %>
         <% end %>

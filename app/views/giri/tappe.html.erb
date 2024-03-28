@@ -35,6 +35,14 @@
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona tutte" %></span>
             </label>
+
+            <select aria-label="select" data-controller="tax-select-sort" class="field">
+                <option value="per_ordine_e_data">scuola</option>
+                <option value="per_data">-------></option>
+                <option value="per_data_desc"><-------</option>
+                
+            </select>
+
             <%= tag.div pluralize(@page.recordset.records_count, "tappa", "tappe"), id: "nr-tappe" %>
         <% end %>
 
@@ -43,7 +51,7 @@
             <%= render @page.records %>
 
             <% unless @page.last? %>
-                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= turbo_frame_tag "load_more", src: tappe_giro_path(@giro, sort: params[:sort], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
                     <%= render 'shared/lazy_loading' %>
                 <% end %>
                 <%#= link_to "Next page", tappe_giro_path(@giro, page: @page.next_param) %>
