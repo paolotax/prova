@@ -62,8 +62,10 @@ class TappeController < ApplicationController
       @selected_tappe.each do |tappa|
         t = tappa.dup
         t.data_tappa = params[:data_tappa]
+        t.titolo = params[:titolo]
         t.save
       end
+      redirect_to tappe_giro_url(@giro), notice: "Tappe duplicata!"
     end
     
     #@selected_tappe.each { |u| u.disabled! } if mass_cancella?

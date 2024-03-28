@@ -31,12 +31,13 @@
         <%= render "form_tappe" %>
         
         <%= tag.div class: "sticky top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg px-4 py-2 text-right ht text-xs font-semibold flex items-center justify-between" do %>
+            
             <label for="select_all" id="select_all">
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona tutte" %></span>
             </label>
 
-            <select aria-label="select" data-controller="tax-select-sort" class="field w-40">
+            <select aria-label="select" data-controller="tax-select-sort" class="field w-40" value="scuola">
                 <option value="per_ordine_e_data">scuola</option>
                 <option value="per_data">-------></option>
                 <option value="per_data_desc"><-------</option>
