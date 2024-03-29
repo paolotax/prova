@@ -1,15 +1,18 @@
 <%= tag.div class: "relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
-    
-    <%= tag.div class: "h-8 w-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-300 flex items-center justify-center",
-                type: "button",
-                id: "tappa-menu-button_#{dom_id tappa}",
-                aria: { expanded: false, haspopup: true},
-                data: { dropdown_target: "button" } do %>
-        <span class="sr-only">Apri menu tappa</span>
-        <%= inline_svg_tag  "icon-pencil.svg", class: "p-0.5" %>
+     
+    <% unless tappa.data_tappa.nil? %>
+        <%= render partial: "tappe/tappa_data", locals: { tappa: tappa }%>
+    <% else %>
+        <%= tag.div class: "h-8 w-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-300 flex items-center justify-center",
+                    type: "button",
+                    id: "tappa-menu-button_#{dom_id tappa}",
+                    aria: { expanded: false, haspopup: true},
+                    data: { dropdown_target: "button" } do %>
+            <span class="sr-only">Apri menu tappa</span>
+            <%= inline_svg_tag  "icon-pencil.svg", class: "p-0.5" %>
+        <% end %>
     <% end %>
-
 
     <%= tag.div class: "hidden absolute left-0 top-5 mt-2.5 w-32 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
         data: { dropdown_target: "menu",
