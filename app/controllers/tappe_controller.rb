@@ -59,13 +59,13 @@ class TappeController < ApplicationController
     @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
     
     if mass_duplica?
+      @nuove_tappe = []
       @selected_tappe.each do |tappa|
         t = tappa.dup
-        t.data_tappa = params[:data_tappa]
-        t.titolo = params[:titolo]
+        t.titolo = "(#{tappa.data_tappa&.to_date} - #{tappa.titolo})\r\n#{params[:titolo]}"
         t.save
+        @nuove_tappe << t
       end
-      redirect_to tappe_giro_url(@giro), notice: "Tappe duplicata!"
     end
     
     #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
