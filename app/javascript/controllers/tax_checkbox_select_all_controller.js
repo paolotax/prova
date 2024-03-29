@@ -22,11 +22,11 @@ export default class extends CheckboxSelectAll {
   toggleTax() {
 
     if (this.checked.length === 0) {
-      this.labelTarget.innerHTML = 'seleziona tutte';
+      this.labelTarget.innerHTML = 'seleziona';
     } else if ( this.checked.length === 1 ) {
-      this.labelTarget.innerHTML = '1 tappa selezionata';
+      this.labelTarget.innerHTML = '1 selezionata';
     } else {
-      this.labelTarget.innerHTML = this.checked.length + ' tappe selezionate';
+      this.labelTarget.innerHTML = this.checked.length + ' selezionate';
     }
 
     if (this.checked.length > 0) {
