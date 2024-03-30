@@ -1,39 +1,56 @@
-            <% @grouped_records.each do |k, v| %>
-                
-                <%# header direzione %>
-                <%= tag.div k.to_s.upcase, class: "text-xs font-semibold px-4 py-2 mt-3 text-gray-500" %>
-                
-                <%# list scuole %>
-                <% v.group_by{|t| t.tappable }.each do |s, tappe| %>
-                    
-                     <%# header scuola %>
-                    <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-white" do %>  
-                        
-                        <%= tag.div class: "col-span-5" do%>
-                            <%= render partial: "import_scuole/scuola_small", 
-                                    locals: { 
-                                                import_scuola: s, 
-                                                with_navigation: true, 
-                                                with_logo: false, 
-                                                with_link: true 
-                                            } 
-                            %>
-                        <% end %>
-
-                        <%= tag.div class: "col-span-3 text-xs text-gray-600 flex flex-col" do %>
-                            <%= tag.div s.terze_e_quinte.join(" "), class:"font-semibold "%>
-                            <%= tag.div s.combinazioni.join(" - "), class: "italic text-gray-600"  %>
-                        <% end %> 
-                        
-                    <% end %>  
-
-                    <%# list of tappe %>
-                    <%= tag.div class: "grid grid-cols-2 bg-white border-x rounded-b-xl shadow-md " do %>
-                        <% tappe.each do |t| %>
-                            <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
-                        <% end %>
-                    <% end%>
-                
-                <% end %>
+<% @grouped_records.each do |k, v| %>
+    
+    <%# header direzione %>
+    <%= tag.div k.to_s.upcase, class: "text-xs font-semibold px-4 py-2 mt-3 text-gray-500" %>
+    
+    <%# list scuole %>
+    <% v.group_by{|t| t.tappable }.each do |s, tappe| %>
+        
+        <%# header scuola %>
+        <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-white" do %>  
             
+            <%= tag.div class: "col-span-5" do%>
+                <%= render partial: "import_scuole/scuola_small", 
+                        locals: { 
+                                    import_scuola: s, 
+                                    with_navigation: true, 
+                                    with_logo: false, 
+                                    with_link: true 
+                                } 
+                %>
             <% end %>
+
+            <%= tag.div class: "col-span-3 text-xs text-gray-600 flex flex-col" do %>
+                <%= tag.div s.terze_e_quinte.join(" "), class:"font-semibold "%>
+                <%= tag.div s.combinazioni.join(" - "), class: "italic text-gray-600"  %>
+            <% end %>             
+        <% end %>  
+
+        <%# list of tappe %>
+        <%= tag.div class: "grid grid-cols-2 bg-white border-x rounded-b-xl shadow-md " do %>
+            
+            <%= tag.div id: "tappe-completate-#{s.id}", class: "col-span-1" do %>
+                <% tappe.select {|d| d.data_tappa < Time.now.beginning_of_day unless d.data_tappa.nil?}.each do |t| %>
+                    <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
+                <% end %>
+            <% end %>
+            
+            <%= tag.div id: "tappe-attuali-#{s.id}", class: "col-span-1" do %>
+                
+                <%= tag.div class: "hidden only:block" do %>
+                    <%= button_to duplica_tappa_path( tappe.first, new: true ),
+                            class: "mx-auto pl-0.5 pr-2 py-0.5 mt-2 rounded-full bg-gray-50 text-gray-400 text-sm hover:bg-gray-300 flex items-center justify-center" do %>
+                        <%= inline_svg_tag "icon-plus.svg", class: "p-0.5" %>
+                        aggiungi tappa
+                    <% end %>
+                <% end %>
+
+                <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa > Time.now.beginning_of_day }.each do |t| %>
+                    <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
+                <% end %>
+            <% end %>
+        <% end%>
+    
+    <% end %>
+
+<% end %>

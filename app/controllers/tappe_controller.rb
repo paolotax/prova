@@ -16,7 +16,10 @@ class TappeController < ApplicationController
   end
 
   def create
+    # ?????????????? rifare
+
     @tappable = find_tappable
+    @giro = current_user.giri.find(params[:giro_id])
 
     @tappa = @tappable.tappe.build(tappa_params)
     
@@ -53,8 +56,8 @@ class TappeController < ApplicationController
 
     @giro = @selected_tappe.first.giro if @selected_tappe.any?
     # update
-    @selected_tappe.update_all(data_tappa: Time.now) if mass_oggi?
-    @selected_tappe.update_all(data_tappa: Time.now + 1.day) if mass_domani?    
+    @selected_tappe.update_all(data_tappa: Time.now.end_of_day) if mass_oggi?
+    @selected_tappe.update_all(data_tappa: Time.now.end_of_day + 1.day) if mass_domani?    
     @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
     @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
     
@@ -85,6 +88,8 @@ class TappeController < ApplicationController
     @tappa = Tappa.find(params[:id])
     @giro = @tappa.giro
     @nuova_tappa = @tappa.dup
+    @nuova_tappa.data_tappa = nil if params[:new] == "true"
+    @nuova_tappa.titolo = "" if params[:new] == "true"
     @nuova_tappa.save
     respond_to do |format|
       format.turbo_stream
@@ -107,6 +112,7 @@ class TappeController < ApplicationController
   end
 
   private
+    
     def set_tappa
       @tappa = Tappa.find(params[:id])
     end
@@ -122,7 +128,7 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:giro, :tappable, :titolo, :data_tappa)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id)
     end
 
     def mass_oggi?

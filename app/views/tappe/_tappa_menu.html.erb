@@ -31,16 +31,21 @@
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
             Modifica
         <% end %>
-
+        <%= button_to duplica_tappa_path( tappa, new: true ),
+                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                role: "menuitem", tabindex: "-1", id: "user-menu-item-2" do %>
+            Nuova
+        <% end %>
         <%= button_to duplica_tappa_path( tappa ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
+                role: "menuitem", tabindex: "-1", id: "user-menu-item-1" do %>
             Duplica
         <% end %>
         <hr/>
         <%= link_to tappa_path(tappa), 
                     class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                    data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  do %> 
+                    data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" },
+                    role: "menuitem", tabindex: "-1", id: "user-menu-item-2"  do %> 
             <span class="">Elimina</span> 
         <% end %>
                         
