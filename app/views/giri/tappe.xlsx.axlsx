@@ -1,0 +1,12 @@
+wb = xlsx_package.workbook
+
+fields = [ "id", "titolo", "giro", "data_tappa", "giro_id", "ordine", "scuola" ]
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+  sheet.add_row  fields
+  
+  @tappe.each do |row|   
+    sheet.add_row [ row.id, row.titolo, row.giro.titolo, row.data_tappa, row.giro_id, row.ordine, row.tappable&.to_s ]
+  end
+end

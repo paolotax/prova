@@ -46,6 +46,11 @@ class GiriController < ApplicationController
       @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }
     end
 
+    respond_to do |format|
+      format.html
+      format.xlsx
+      format.turbo_stream
+    end
   end
 
   def crea_tappe
