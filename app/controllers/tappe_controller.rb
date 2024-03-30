@@ -85,11 +85,24 @@ class TappeController < ApplicationController
   end
 
   def duplica
+    
     @tappa = Tappa.find(params[:id])
     @giro = @tappa.giro
     @nuova_tappa = @tappa.dup
-    @nuova_tappa.data_tappa = nil if params[:new] == "true"
-    @nuova_tappa.titolo = "" if params[:new] == "true"
+
+    if params[:new] == "true"
+      @nuova_tappa.data_tappa = nil
+      @nuova_tappa.titolo = ""
+    end
+    if params[:new] == "oggi"
+      @nuova_tappa.data_tappa = Time.now.end_of_day
+      @nuova_tappa.titolo = ""
+    end
+    if params[:new] == "domani"
+      @nuova_tappa.data_tappa = Time.now.end_of_day + 1.day
+      @nuova_tappa.titolo = ""
+    end
+
     @nuova_tappa.save
     respond_to do |format|
       format.turbo_stream

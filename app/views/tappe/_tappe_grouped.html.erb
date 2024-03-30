@@ -38,11 +38,21 @@
             <%= tag.div id: "tappe-attuali-#{s.id}", class: "col-span-1" do %>
                 
                 <%= tag.div class: "hidden only:block" do %>
-                    <%= button_to duplica_tappa_path( tappe.first, new: true ),
-                            class: "mx-auto pl-0.5 pr-2 py-0.5 mt-2 rounded-full bg-gray-50 text-gray-400 text-sm hover:bg-gray-300 flex items-center justify-center" do %>
-                        <%= inline_svg_tag "icon-plus.svg", class: "p-0.5" %>
-                        aggiungi tappa
-                    <% end %>
+                    <div class="flex justify-center items-center space-x-1 p-1.5" >
+                        <%= button_to duplica_tappa_path( tappe.first, new: 'true' ),
+                                class: "mx-auto pl-0.5 h-8 pr-2 rounded-full bg-gray-50 text-gray-500 text-xs hover:bg-gray-300 hover:text-gray-700 flex items-center justify-center" do %>
+                            <%= inline_svg_tag "icon-plus.svg", class: "p-0.5" %>
+                            aggiungi tappa
+                        <% end %>
+                        <%= button_to duplica_tappa_path( tappe.first, new: 'oggi' ),
+                                class: "w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 flex items-center justify-center" do %>
+                            <%= inline_svg_tag "icon-plus.svg", class: "p-0.5" %>
+                        <% end %>
+                        <%= button_to duplica_tappa_path( tappe.first, new: 'domani' ),
+                                class: "w-8 h-8 rounded-full bg-yellow-300 text-white text-sm hover:bg-yellow-500 flex items-center justify-center" do %>
+                            <%= inline_svg_tag "icon-plus.svg", class: "p-0.5" %>
+                        <% end %>
+                    </div>
                 <% end %>
 
                 <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa > Time.now.beginning_of_day }.each do |t| %>

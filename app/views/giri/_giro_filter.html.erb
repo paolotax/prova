@@ -12,7 +12,7 @@
             <%= giro.tappe.di_oggi.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-yellow-500" do %>
+        <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-yellow-400" do %>
             domani:
             <%= giro.tappe.di_domani.size %>
         <% end %>
