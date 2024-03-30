@@ -1,12 +1,14 @@
-<% if @nuove_tappe.nil? %>
-    <% @selected_tappe.each do |tappa| %>
-        <%= turbo_stream.replace "tappa_#{tappa.id}", partial: "tappe/tappa_small", locals: { tappa: tappa } %>
+<% @selected_tappe.each do |tappa| %>
+    <%= turbo_stream.remove dom_id tappa %>
+
+    <%= turbo_stream.append "tappe-#{tappa.attuale? ? "attuali" : "completate"}-#{tappa.tappable_id}" do %>
+        <%= render partial: "tappe/tappa_small", locals: { tappa: tappa } %>
     <% end %>
-<% else %>
-    <% @selected_tappe.each_with_index do |tappa, i| %>
-        <%= turbo_stream.after dom_id(tappa) do %>
-            <%= render partial: "tappe/tappa_small", locals: { tappa: @nuove_tappe[i] } %>
-        <% end %>
+<% end %>
+
+<% @nuove_tappe&.each do |tappa| %>
+    <%= turbo_stream.append "tappe-#{tappa.attuale? ? "attuali" : "completate"}-#{tappa.tappable_id}" do %>
+        <%= render partial: "tappe/tappa_small", locals: { tappa: tappa } %>
     <% end %>
 <% end %>
 

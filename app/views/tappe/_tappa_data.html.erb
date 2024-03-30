@@ -1,7 +1,14 @@
-<%= tag.div(tappa.data_tappa.strftime("%d"), 
-        class: ["mx-auto h-8 w-8 rounded-full font-semibold": true,
+<%= tag.div  class: [
+                "h-8 w-8 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer": true,
                 "text-white bg-pink-500":  tappa.data_tappa > Time.now + 1.day,
                 "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
                 "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
-                "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1])  
-%>
+                "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1
+            ] do %>
+    <span class="text-sm leading-none">
+        <%= tappa.data_tappa.strftime("%d") %>
+    </span>
+    <span class="text-xs leading-none">
+       <%= tappa.data_tappa.strftime("%b").downcase %> 
+    </span>
+<% end %>

@@ -7,7 +7,7 @@
     <% v.group_by{|t| t.tappable }.each do |s, tappe| %>
         
         <%# header scuola %>
-        <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-white" do %>  
+        <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-gray-200" do %>  
             
             <%= tag.div class: "col-span-5" do%>
                 <%= render partial: "import_scuole/scuola_small", 
