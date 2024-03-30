@@ -1,5 +1,5 @@
 <%= turbo_stream.after dom_id(@tappa) do %>
-    <%= render partial: "tappe/tappa", locals: { tappa: @nuova_tappa } %>
+    <%= render partial: "tappe/tappa_small", locals: { tappa: @nuova_tappa } %>
 <% end %>
 
 <%= turbo_stream.replace "nr-tappe" do %>

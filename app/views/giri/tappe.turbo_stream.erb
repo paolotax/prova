@@ -6,10 +6,7 @@
 
     <%= turbo_stream.replace "load_more" do %>
         
-        <% @grouped_records.each do |k, v| %>
-            <%= tag.div k.to_s.upcase, class: "col-span-1 xl:col-span-2 mt-2 px-3 py-2 text-indigo-600 text-xs font-semibold" %>
-            <%= render v %>
-        <% end %>
+        <%= render partial: "tappe/tappe_grouped" %>
 
         <% if @page.last? %>
             <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>

@@ -1,0 +1,17 @@
+<%= tag.div id: dom_id(tappa),
+        class: "group px-2 py-1.5  grid grid-cols-5 items-center gap-x-2" do %>
+
+    <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
+                      multiple: true,
+                      form: :bulk_update_tappe_form,
+                      checked: false,
+                      class: " col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto",
+                      data: { tax_checkbox_select_all_target: 'checkbox' }
+                    } %>
+    <%= tag.div class: "col-span-1" do %> 
+        <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+    <% end %>
+    
+    <%= tag.div tappa.titolo, class: "col-span-3 text-xs italic font-semibold text-gray-400" %>      
+<% end %>
+      

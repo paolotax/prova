@@ -38,7 +38,7 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, partial: "tappe/tappa", locals: { tappa: @tappa }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, partial: "tappe/tappa_small", locals: { tappa: @tappa }) }
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
         format.json { render :show, status: :ok, location: @tappa }
       else
@@ -62,7 +62,8 @@ class TappeController < ApplicationController
       @nuove_tappe = []
       @selected_tappe.each do |tappa|
         t = tappa.dup
-        t.titolo = "(#{tappa.data_tappa&.to_date} - #{tappa.titolo})\r\n#{params[:titolo]}"
+        t.data_tappa = params[:data_tappa].to_date
+        t.titolo = params[:titolo]
         t.save
         @nuove_tappe << t
       end

@@ -1,0 +1,39 @@
+            <% @grouped_records.each do |k, v| %>
+                
+                <%# header direzione %>
+                <%= tag.div k.to_s.upcase, class: "text-xs font-semibold px-4 py-2 mt-3 text-gray-500" %>
+                
+                <%# list scuole %>
+                <% v.group_by{|t| t.tappable }.each do |s, tappe| %>
+                    
+                     <%# header scuola %>
+                    <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-white" do %>  
+                        
+                        <%= tag.div class: "col-span-5" do%>
+                            <%= render partial: "import_scuole/scuola_small", 
+                                    locals: { 
+                                                import_scuola: s, 
+                                                with_navigation: true, 
+                                                with_logo: false, 
+                                                with_link: true 
+                                            } 
+                            %>
+                        <% end %>
+
+                        <%= tag.div class: "col-span-3 text-xs text-gray-600 flex flex-col" do %>
+                            <%= tag.div s.terze_e_quinte.join(" "), class:"font-semibold "%>
+                            <%= tag.div s.combinazioni.join(" - "), class: "italic text-gray-600"  %>
+                        <% end %> 
+                        
+                    <% end %>  
+
+                    <%# list of tappe %>
+                    <%= tag.div class: "grid grid-cols-2 bg-white border-x rounded-b-xl shadow-md " do %>
+                        <% tappe.each do |t| %>
+                            <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
+                        <% end %>
+                    <% end%>
+                
+                <% end %>
+            
+            <% end %>

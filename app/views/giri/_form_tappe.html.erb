@@ -1,4 +1,4 @@
-<%= tag.div class: "fixed bottom-0 inset-x-0 mx-auto z-20" do %>
+<%= tag.div class: "fixed bottom-0 inset-x-0 mx-auto " do %>
     <%= tag.div class: "max-w-96  mx-auto" do %>
 
         <%= form_with(url: bulk_update_tappe_path, id: :bulk_update_tappe_form, method: :patch, 
@@ -14,12 +14,13 @@
                         Modifica
                     <% end %>  
                     <%= f.button type: :submit, value: 'duplica', class: " text-center text-white align-middle cursor-pointer bg-red-500 p-3 rounded-lg shadow-lg" do %>
-                        Duplica
+                        Aggiungi
                     <% end %>  
                 <% end %>
                 
-            <% end %>          
-            <%= tag.div class: "flex space-x-2 items-center mb-8" do %>
+            <% end %>     
+            <hr/>     
+            <%= tag.div class: "flex space-x-2 items-center mt-2 mb-8" do %>
                 <%= f.button type: :submit, value: 'cancella', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
                     Cancella
                 <% end %>

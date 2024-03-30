@@ -1,11 +1,11 @@
 <% if @nuove_tappe.nil? %>
     <% @selected_tappe.each do |tappa| %>
-        <%= turbo_stream.replace "tappa_#{tappa.id}", partial: "tappa", locals: { tappa: tappa } %>
+        <%= turbo_stream.replace "tappa_#{tappa.id}", partial: "tappe/tappa_small", locals: { tappa: tappa } %>
     <% end %>
 <% else %>
     <% @selected_tappe.each_with_index do |tappa, i| %>
         <%= turbo_stream.after dom_id(tappa) do %>
-            <%= render partial: "tappe/tappa", locals: { tappa: @nuove_tappe[i] } %>
+            <%= render partial: "tappe/tappa_small", locals: { tappa: @nuove_tappe[i] } %>
         <% end %>
     <% end %>
 <% end %>
