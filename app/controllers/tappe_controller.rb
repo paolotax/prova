@@ -95,11 +95,11 @@ class TappeController < ApplicationController
       @nuova_tappa.titolo = ""
     end
     if params[:new] == "oggi"
-      @nuova_tappa.data_tappa = Time.now.end_of_day
+      @nuova_tappa.data_tappa = Time.now.end_of_day - 5.hour
       @nuova_tappa.titolo = ""
     end
     if params[:new] == "domani"
-      @nuova_tappa.data_tappa = Time.now.end_of_day + 1.day
+      @nuova_tappa.data_tappa = Time.now.end_of_day - 5.hour + 1.day
       @nuova_tappa.titolo = ""
     end
 

@@ -1,13 +1,13 @@
 <%= tag.div id: dom_id(import_scuola), 
         class: [ "grid items-center": true,
-                 "grid-cols-8": with_navigation && with_info && with_appunti,
+                 "grid-cols-8": (with_navigation || with_logo) && with_info,
                  "grid-cols-5": with_navigation && with_logo,
                  "grid-cols-4": (with_navigation  && !with_logo) || (!with_navigation  && with_logo),
                  "grid-cols-3": !with_navigation && !with_logo
                 ] do %>
     
     <% if with_navigation == true %>
-        <div class="col-span-1 mx-auto">
+        <div class="col-span-1 pl-2">
             <%= link_to go_to_scuola_path(import_scuola, current_user.navigator),
                     data: { turbo_frame: :modal, action: "click->dialog#open"},
                     class: "text-gray-400 hover:text-gray-500" do %>
@@ -19,6 +19,11 @@
         </div>
     <% end %>
 
+    <% if with_logo == true %>
+        <%= tag.div class: "m-auto col-span-1 rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-600 ring-1 ring-red-500/60" do %>
+            <%= import_scuola.scuola.titleize[0..1] %>
+        <% end %>
+    <% end %>
 
     <div class="col-span-4">
         <div class="flex flex-col">
@@ -40,28 +45,24 @@
         </div>
     </div>
 
-    <% if with_logo == true %>
-        <%= tag.div class: "m-auto col-span-1 rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-600 ring-1 ring-red-500/60" do %>
-            <%= import_scuola.scuola.titleize[0..1] %>
-        <% end %>
-    <% end %>
-
     <% if with_info == true %>
-        
-        <%= tag.div class: [    
-                        "text-xs text-gray-600 flex flex-col": true,
-                        "col-span-3": import_scuola.appunti.empty?,
-                        "col-span-2": import_scuola.appunti.any?
-                    ] do %>
-            <%= tag.div import_scuola.terze_e_quinte.join(" "), class:"font-semibold "%>
-            <%=  tag.div import_scuola.combinazioni.join(" - "), class: "italic text-gray-600"  %>
-        <% end %> 
-            
-        <% if import_scuola.appunti.any? %>
-            <%= tag.div class: "col-span-1 mx-auto font-semibold rounded-full w-5 h-5 text-center align-center text-xs text-white bg-purple-500 " do %>
-                <%= import_scuola.appunti.size %>
+
+        <%= tag.div class: "col-span-3 flex justify-between items-center" do %> 
+            <%= tag.div class: [    
+                            "text-xs text-gray-600 flex flex-col": true,
+                            
+                        ] do %>
+                <%= tag.div import_scuola.terze_e_quinte.join(" "), class:"font-semibold "%>
+                <%=  tag.div import_scuola.combinazioni.join(" - "), class: "italic text-gray-600"  %>
             <% end %> 
-        <% end %>  
+                
+            <% if import_scuola.appunti.any? %>
+                <%= tag.div class: "mr-4 font-semibold rounded-full w-5 h-5 text-center text-xs text-white bg-purple-500 " do %>
+                    <%= import_scuola.appunti.size %>
+                <% end %> 
+            <% end %>  
+        <% end %>
+    
     <% end %>  
 
 <% end %>   

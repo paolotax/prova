@@ -5,9 +5,10 @@
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: " col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto",
+                      class: " col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-2",
                       data: { tax_checkbox_select_all_target: 'checkbox' }
                     } %>
+    
     <%= tag.div class: "col-span-1" do %> 
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
     <% end %>

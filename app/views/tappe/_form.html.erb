@@ -17,7 +17,12 @@
             <%= tappa.giro.titolo %>
         <% end %>
         <%= tag.div class: "rounded-b-lg bg-white border border-t-0 px-2 py-1.5" do %>
-           <%= render partial: "import_scuole/scuola_small", locals: { import_scuola: tappa.tappable, with_navigation: false, with_logo: true, with_link: false } %>
+           <%= render partial: "import_scuole/scuola_small", locals: { 
+                import_scuola: tappa.tappable, 
+                with_navigation: false, 
+                with_logo: true, 
+                with_link: false,
+                with_info: true } %>
         <% end %>
     <% end %>  
 
