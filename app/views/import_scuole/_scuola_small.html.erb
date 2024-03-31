@@ -56,9 +56,9 @@
                 <%=  tag.div import_scuola.combinazioni.join(" - "), class: "italic text-gray-600"  %>
             <% end %> 
                 
-            <% if import_scuola.appunti.any? %>
-                <%= link_to appunti_path(search: import_scuola.CODICESCUOLA), class: "mr-4 flex-0 font-semibold rounded-full w-5 h-5 text-center text-xs text-white bg-purple-500 " do %>
-                    <%= import_scuola.appunti.size %>
+            <% if import_scuola.appunti.non_archiviati.any? %>
+                <%= link_to import_scuola_path( import_scuola ), data: { turbo_frame: "_top"}, class: "mr-4 flex-0 font-semibold rounded-full w-5 h-5 text-center text-xs text-white bg-purple-500 " do %>
+                    <%= import_scuola.appunti.non_archiviati.size %>
                 <% end %> 
             <% end %>  
         <% end %>
