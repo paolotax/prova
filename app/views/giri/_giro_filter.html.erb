@@ -1,8 +1,12 @@
 <%= tag.div id: "giro_tappe_filter_#{dom_id(giro)}", data: {turbo_permanenttttttt: true }, class: "m-2 overflow-hidden" do %>
-     <%= tag.div class: "relative m-2 w-full flex items-start gap-2 overflow-x-auto" do %>  
+     <%= tag.div class: "relative w-full flex items-start gap-1 overflow-x-auto" do %>  
         
         <%= link_to tappe_giro_path(giro), data: {turbo_action: "advance"}, 
-                        class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-indigo-400" do %>
+                class: [ 
+                    "min-w-16 text-center rounded-lg text-xs font-semibold p-2 border-indigo-500 border-2": true,
+                    "text-white bg-indigo-500":  !params[:filter].present? && !params[:giorno].present?,
+                    "text-indigo-500 bg-transparent": params[:filter].present? || params[:giorno].present?
+                ] do %>
             scuole:
             <%= giro.tappe.pluck(:tappable_id).uniq.size %>
         <% end %>
@@ -28,33 +32,49 @@
             <%= giro.tappe.di_domani.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "advance"}, class: " min-h-14 min-w-16 text-center rounded-lg text-xs font-semibold p-3 text-white bg-gray-400" do %>
+        <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "advance"}, 
+                class: [
+                    "min-w-16 text-center rounded-lg text-xs font-semibold p-2 border-gray-400 border-2": true,
+                    "text-white bg-gray-400": params[:filter] == "completate",
+                    "text-gray-400 bg-transparent": params[:filter] != "completate"
+                ] do %>
             <span class="">fatto!!</span>
             <%= giro.tappe.completate.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-gray-600 bg-gray-200 border-gray-400" do %>
+        <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "advance"}, 
+                class: [
+                    "min-w-16 text-center rounded-lg text-xs font-semibold p-2 border-transparent border-2": true,
+                    "text-white bg-gray-800": params[:filter] == "programmare",
+                    "text-gray-800 bg-transparent": params[:filter] != "programmare"
+                ] do %>
             <span class="">quando?</span>
             <%= giro.tappe.da_programmare.size %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "advance"}, class: " min-h-14 text-center rounded-lg text-xs font-semibold p-3 text-white bg-pink-500" do %>
-            <span class="">programmate:</span>
+        <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "advance"},
+                class: [
+                    "min-w-16 text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true,
+                    "text-white bg-pink-500": params[:filter] == "programmate",
+                    "text-pink-500 bg-transparent": params[:filter] != "programmate"
+                ] do %>
+            <span class="">program:</span>
             <%= giro.tappe.programmate.size %>
         <% end %>
    
         <% giro.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
             <% if (tappa[1] > 0) %>
                 <%= link_to tappe_giro_path(giro, giorno: tappa[0]), data: {turbo_action: "advance"}, 
-                            class: ["text-center rounded-lg flex flex-col text-xs font-semibold text-center pl-2 pr-2 py-3 min-h-14 min-w-16": true, 
-                                    "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
-                                    "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,
-                                    "bg-yellow-500 text-white ": tappa[0].tomorrow? && tappa[1] > 0,
-                                    "bg-gray-400 text-white ":   tappa[0] < Time.now - 1.day && tappa[1] > 0,
-                                    "bg-white border-2 border-green-500  text-green-500": tappa[0].today? && tappa[1] == 0,
-                                    "bg-white border-2 border-yellow-500 text-yellow-500": tappa[1] == 0 && tappa[0].tomorrow?,
-                                    "bg-white border-2 border-pink-500 text-pink-500": tappa[1] == 0 && tappa[0] > Time.now + 1.day
-                                    ] do %>
+                            class: [
+                                "text-center rounded-lg flex flex-col text-xs font-semibold text-center pl-2 pr-2 py-3 min-h-14 min-w-16": true, 
+                                "bg-pink-500 text-white ":   tappa[0] > Time.now + 1.day && tappa[1] > 0,
+                                "bg-green-500 text-white ":  tappa[0].today? && tappa[1] > 0,
+                                "bg-yellow-500 text-white ": tappa[0].tomorrow? && tappa[1] > 0,
+                                "bg-gray-400 text-white ":   tappa[0] < Time.now - 1.day && tappa[1] > 0,
+                                "bg-white border-2 border-green-500  text-green-500": tappa[0].today? && tappa[1] == 0,
+                                "bg-white border-2 border-yellow-500 text-yellow-500": tappa[1] == 0 && tappa[0].tomorrow?,
+                                "bg-white border-2 border-pink-500 text-pink-500": tappa[1] == 0 && tappa[0] > Time.now + 1.day
+                            ] do %>
                     <%= tag.div tappa[0].to_fs(:short), class: "flex grow" %>
                     <%= tag.div tappa[1] %>
                 <% end %>

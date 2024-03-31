@@ -1,14 +1,17 @@
 <%= tag.div  class: [
-                "h-8 w-8 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer": true,
-                "text-white bg-pink-500":  tappa.data_tappa > Time.now + 1.day,
-                "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
-                "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
-                "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1.day
+                "h-8 w-8 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer": true,
+                "text-white bg-pink-500":   tappa.data_tappa.to_date >= Time.now.to_date + 2.day,
+                "text-white bg-gray-400":   tappa.data_tappa.to_date < Time.now.to_date,
+                "text-white bg-green-500":  tappa.data_tappa.to_date == Time.now.to_date,
+                "text-white bg-yellow-500": tappa.data_tappa.to_date == Time.now.to_date + 1.day
             ] do %>
-    <span class="text-sm leading-none">
-        <%= tappa.data_tappa.strftime("%d") %>
-    </span>
-    <span class="text-xs leading-none">
-       <%= tappa.data_tappa.strftime("%b").downcase %> 
-    </span>
+    
+    <% if tappa.data_tappa.to_date >= Time.now.to_date %>
+        <%= tag.div l(tappa.data_tappa, format: "%a").downcase, class: "text-xs leading-none" %>
+        <%= tag.div tappa.data_tappa.strftime("%d"), class: "text-sm leading-none" %>
+    <% else %>
+        <%= tag.div tappa.data_tappa.strftime("%d"), class: "text-sm leading-none" %>
+        <%= tag.div l(tappa.data_tappa, format: "%b").downcase, class: "text-xs leading-none" %>
+    <% end %>
+
 <% end %>
