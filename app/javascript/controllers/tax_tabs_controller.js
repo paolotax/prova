@@ -10,4 +10,21 @@ export default class extends Tabs {
   change(event) {
     super.change(event)
   }
+
+  previousTab(event) {
+    super.previousTab(event)
+  }
+
+  nextTab(event) {
+    super.nextTab(event)
+  }
+
+  firstTab(event) {
+    super.firstTab(event)
+  }
+
+  lastTab(event) {
+    super.lastTab(event)
+  }
+
 }
