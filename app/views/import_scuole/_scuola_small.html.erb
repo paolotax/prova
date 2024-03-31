@@ -57,7 +57,7 @@
             <% end %> 
                 
             <% if import_scuola.appunti.any? %>
-                <%= tag.div class: "mr-4 font-semibold rounded-full w-5 h-5 text-center text-xs text-white bg-purple-500 " do %>
+                <%= link_to appunti_path(search: import_scuola.CODICESCUOLA), class: "mr-4 flex-0 font-semibold rounded-full w-5 h-5 text-center text-xs text-white bg-purple-500 " do %>
                     <%= import_scuola.appunti.size %>
                 <% end %> 
             <% end %>  

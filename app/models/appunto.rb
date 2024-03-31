@@ -33,7 +33,7 @@ class Appunto < ApplicationRecord
   pg_search_scope :search_all_word, 
                       against: search_fields,
                       associated_against: {
-                        import_scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE],
+                        import_scuola:   [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE],
                         import_adozione: [:CODICESCUOLA, :CODICEISBN, :EDITORE],
                         rich_text_content: [:body],
                         attachments_blobs: [:filename]
