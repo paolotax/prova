@@ -16,19 +16,19 @@ class GiriController < ApplicationController
     @tappe = @giro.tappe.includes(:tappable)
     
     if params[:filter]  == 'programmate'
-      @tappe = @tappe.programmate
-    elsif params[:filter]  == 'oggi'
-      @tappe = @tappe.di_oggi
+      @tappe = @tappe.delle_scuole_di(@giro.tappe.programmate.pluck(:tappable_id))
+    elsif params[:filter]  == 'oggi'    
+      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_oggi.pluck(:tappable_id))
     elsif params[:filter]  == 'domani'
-      @tappe = @tappe.di_domani
+      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_domani.pluck(:tappable_id))
     elsif params[:filter]  == 'completate'
-      @tappe = @tappe.completate
+      @tappe = @tappe.delle_scuole_di(@giro.tappe.completate.pluck(:tappable_id))
     elsif params[:filter]  == 'programmare'
-      @tappe = @tappe.da_programmare
+      @tappe = @tappe.delle_scuole_di(@giro.tappe.da_programmare.pluck(:tappable_id))
     end
 
-    @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
-    @tappe = @tappe.search(params[:search]) if params[:search].present? 
+    @tappe = @tappe.delle_scuole_di(@giro.tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
+    @tappe = @tappe.delle_scuole_di(@giro.tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
 
     if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
       @tappe = @tappe.send(params[:sort])

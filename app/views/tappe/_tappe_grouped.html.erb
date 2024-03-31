@@ -7,23 +7,20 @@
     <% v.group_by{|t| t.tappable }.each do |s, tappe| %>
         
         <%# header scuola %>
-        <%= tag.div class: "px-4 py-2 mt-2 grid grid-cols-8 items-center border rounded-t-xl bg-gray-200" do %>  
+        <%= tag.div class: "px-2 py-2 mt-2 w-full border rounded-t-xl bg-gray-200" do %>  
             
-            <%= tag.div class: "col-span-5" do%>
+
                 <%= render partial: "import_scuole/scuola_small", 
                         locals: { 
                                     import_scuola: s, 
                                     with_navigation: true, 
                                     with_logo: false, 
-                                    with_link: true 
+                                    with_link: true,
+                                    with_info: true,
+                                    with_appunti: true 
                                 } 
                 %>
-            <% end %>
-
-            <%= tag.div class: "col-span-3 text-xs text-gray-600 flex flex-col" do %>
-                <%= tag.div s.terze_e_quinte.join(" "), class:"font-semibold "%>
-                <%= tag.div s.combinazioni.join(" - "), class: "italic text-gray-600"  %>
-            <% end %>             
+       
         <% end %>  
 
         <%# list of tappe %>

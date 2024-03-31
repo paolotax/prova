@@ -3,7 +3,7 @@
                 "text-white bg-pink-500":  tappa.data_tappa > Time.now + 1.day,
                 "text-white bg-gray-400":  tappa.data_tappa.day < Time.now.day,
                 "text-white bg-green-500": tappa.data_tappa.day == Time.now.day,
-                "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1
+                "text-white bg-yellow-500": tappa.data_tappa.day == Time.now.day + 1.day
             ] do %>
     <span class="text-sm leading-none">
         <%= tappa.data_tappa.strftime("%d") %>

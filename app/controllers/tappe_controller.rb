@@ -41,7 +41,7 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, partial: "tappe/tappa_small", locals: { tappa: @tappa }) }
+        format.turbo_stream
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
         format.json { render :show, status: :ok, location: @tappa }
       else

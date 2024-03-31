@@ -22,6 +22,8 @@ class Tappa < ApplicationRecord
   scope :di_oggi,   -> { where(data_tappa: Time.now.all_day) }
   scope :di_domani, -> { where(data_tappa: Time.now.tomorrow.all_day) }
   scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
+  
+  scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids)}
 
   scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.now.beginning_of_day) }
 
@@ -53,5 +55,6 @@ class Tappa < ApplicationRecord
   def attuale?
     data_tappa.nil? || data_tappa > Time.now.beginning_of_day 
   end
+
 
 end

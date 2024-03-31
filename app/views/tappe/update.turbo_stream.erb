@@ -1,0 +1,5 @@
+<%= turbo_stream.remove dom_id @tappa %>
+
+<%= turbo_stream.append "tappe-#{@tappa.attuale? ? "attuali" : "completate"}-#{@tappa.tappable_id}" do %>
+    <%= render partial: "tappe/tappa_small", locals: { tappa: @tappa } %>
+<% end %>
