@@ -3,7 +3,7 @@
         
         <%= link_to tappe_giro_path(giro), data: {turbo_action: "advance"}, 
                 class: [ 
-                    "h-14 w-16 text-center rounded-lg text-xs font-semibold p-2 border-indigo-500 border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-indigo-500 border-2": true,
                     "text-white bg-indigo-500":  !params[:filter].present? && !params[:giorno].present?,
                     "text-indigo-500 bg-transparent": params[:filter].present? || params[:giorno].present?
                 ] do %>
@@ -13,7 +13,7 @@
 
         <%= link_to tappe_giro_path(giro, filter: "oggi"), data: {turbo_action: "advance"}, 
                 class: [ 
-                    "h-14 w-16 text-center rounded-lg text-xs font-semibold p-2 border-green-500 border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-green-500 border-2": true,
                     "text-white bg-green-500":  params[:filter] == "oggi",
                     "text-green-500 bg-transparent": params[:filter] != "oggi"
                 ] do %>
@@ -23,7 +23,7 @@
 
         <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "advance"}, 
                 class: [
-                    "h-14 w-16 text-center rounded-lg text-xs font-semibold p-2 border-yellow-400 border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-yellow-400 border-2": true,
                     "text-white bg-yellow-400": params[:filter] == "domani", 
                     "text-yellow-400 bg-transparent": params[:filter] != "domani"
                 ] do %>
@@ -33,7 +33,7 @@
 
         <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "advance"}, 
                 class: [
-                    "h-14 h-14 w-16 text-center rounded-lg text-xs font-semibold p-2 border-gray-400 border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-gray-400 border-2": true,
                     "text-white bg-gray-400": params[:filter] == "completate",
                     "text-gray-400 bg-transparent": params[:filter] != "completate"
                 ] do %>
@@ -43,7 +43,7 @@
 
         <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "advance"}, 
                 class: [
-                    "h-14 w-16 text-center rounded-lg text-xs font-semibold p-2 border-transparent border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-transparent border-2": true,
                     "text-white bg-gray-800": params[:filter] == "programmare",
                     "text-gray-800 bg-transparent": params[:filter] != "programmare"
                 ] do %>
@@ -53,7 +53,7 @@
 
         <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "advance"},
                 class: [
-                    "h-14 w-16 text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true,
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true,
                     "text-white bg-pink-500": params[:filter] == "programmate",
                     "text-pink-500 bg-transparent": params[:filter] != "programmate"
                 ] do %>
@@ -65,7 +65,7 @@
             <% if (tappa[1] > 0) && (tappa[0] > Time.now.to_date + 1.day) %>
                 <%= link_to tappe_giro_path(giro, giorno: tappa[0]), data: {turbo_action: "advance"}, 
                             class: [
-                                "h-14 w-16 text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true, 
+                                "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true, 
                                 "text-white bg-pink-500":   params[:giorno] == tappa[0].to_s,
                                 "text-pink-500 bg-transparent": !(params[:giorno] == tappa[0].to_s)
                             ] do %>
