@@ -3,7 +3,7 @@
                 "text-white bg-pink-500":   tappa.data_tappa.to_date >= Time.now.to_date + 2.day,
                 "text-white bg-gray-400":   tappa.data_tappa.to_date < Time.now.to_date,
                 "text-white bg-green-500":  tappa.data_tappa.to_date == Time.now.to_date,
-                "text-white bg-yellow-500": tappa.data_tappa.to_date == Time.now.to_date + 1.day
+                "text-white bg-yellow-400": tappa.data_tappa.to_date == Time.now.to_date + 1.day
             ] do %>
     
     <% if tappa.data_tappa.to_date >= Time.now.to_date %>

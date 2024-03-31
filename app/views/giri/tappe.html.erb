@@ -22,7 +22,7 @@
     </div>
     
     <%# link per filtrare il giro %>
-    <%= tag.div class:"sticky z-20 top-16 bg-transparent bbborder-2 rounded-t-lg pb-2" do%>
+    <%= tag.div class:"sticky z-20 top-16 bg-gray-100 bbborder-2 rounded-t-lg" do%>
         <%= render partial: "giri/giro_filter", locals: { giro: @giro } %>
     <% end %>
         
@@ -30,7 +30,7 @@
 
         <%= render "form_tappe" %>
         
-        <%= tag.div class: "sticky z-20 top-36 bg-gray-200 text-gray-600 rounded-b-lg shadow-lg px-4 py-2 text-xs font-semibold flex items-center justify-between" do %>
+        <%= tag.div class: "sticky z-20 top-32 bg-gray-100 text-gray-600 rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
             
             <label for="select_all" id="select_all">
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
