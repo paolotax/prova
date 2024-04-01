@@ -4,15 +4,14 @@
     <%= tag.div class: "flex justify-between items-center space-x-2 text-base font-semibold px-4 py-2 mt-8 text-sky-500" do  %>
 
         <% if k.class == ImportScuola %>
-
-                <%= tag.div k.tipo_nome %>
-                <%= tag.div k.citta %>
-
+            <%= tag.div k.tipo_nome %>
+            <%= tag.div k.citta %>
         <% elsif k.class == Date %>
             <%= tag.div l(k, format: "%A, %-d %B %Y").titleize, class: "text-base font-semibold px-4 py-2 mt-8 text-sky-500" %>
         <% else %>
             <%= tag.div "<privata>" %>
         <% end %>
+
     <% end %>    
 
     <%# list scuole %>
@@ -58,7 +57,7 @@
                     <% end %>
 
                     <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa > Time.now.beginning_of_day }.each do |t| %>
-                        <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
+                        <%= render partial: "tappe/tappa_small", locals: { tappa: t } %>
                     <% end %>
                 <% end %>
 
@@ -66,7 +65,7 @@
                 <%= tag.div id: "tappe-completate-#{s.id}", class: "col-span-1" do %>
                     
                     <% tappe.select {|d| d.data_tappa < Time.now.beginning_of_day unless d.data_tappa.nil?}.each do |t| %>
-                        <%= render partial: "tappe/tappa_small", locals: {tappa: t} %>
+                        <%= render partial: "tappe/tappa_small", locals: { tappa: t, check_box: false } %>
                     <% end %>
                 
                 <% end %>

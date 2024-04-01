@@ -1,3 +1,5 @@
+<%# locals: (tappa:, check_box: true) -%>
+
 <%= tag.div id: dom_id(tappa),
         class: "group px-2 py-2  grid grid-cols-5 items-center gap-x-2" do %>
 
@@ -5,11 +7,11 @@
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: " col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-2",
+                      class: "#{ check_box ? "block" : "hidden" } col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-2",
                       data: { tax_checkbox_select_all_target: 'checkbox' }
                     } %>
     
-    <%= tag.div class: "col-span-1" do %> 
+    <%= tag.div class: "#{ check_box ? "" : "col-start-2" } col-span-1" do %> 
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
     <% end %>
     

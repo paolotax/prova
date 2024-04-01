@@ -1,6 +1,6 @@
 
 <%= turbo_stream.append "tappe-#{@nuova_tappa.attuale? ? "attuali" : "completate"}-#{@nuova_tappa.tappable_id}" do %>
-    <%= render partial: "tappe/tappa_small", locals: { tappa: @nuova_tappa } %>
+    <%= render partial: "tappe/tappa_small", locals: { tappa: @nuova_tappa, check_box: @nuova_tappa.attuale? ? true : false } %>
 <% end %>
 
 <%= turbo_stream.replace "nr-tappe" do %>
