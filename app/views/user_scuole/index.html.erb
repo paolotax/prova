@@ -12,7 +12,7 @@
             Whoops! Non ci sono scuole. 
         </p>    
 
-        <% current_user.import_scuole.where.not(CODICEISTITUTORIFERIMENTO: nil).order(:DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO).group_by(&:direzione).each do |direzione, scuole| %>
+        <% current_user.import_scuole.where.not(CODICEISTITUTORIFERIMENTO: nil).order(:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO).group_by(&:direzione).each do |direzione, scuole| %>
 
             <div class="flex flex-col">
                 <h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">

@@ -12,6 +12,7 @@
             <%= tag.div giro.tappe.pluck(:tappable_id).uniq.size, class: "leading-6" %>
         <% end %>
 
+
         <%= link_to tappe_giro_path(giro, filter: "oggi"), data: {turbo_action: "replace"}, 
                 class: [ 
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-green-500 border-2": true,

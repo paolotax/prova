@@ -48,6 +48,7 @@ class ImportScuola < ApplicationRecord
   has_many :classi, class_name: "Views::Classe", foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
   has_many :appunti
+  
   has_many :tappe, as: :tappable
 
   has_one :tipo_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
@@ -92,7 +93,7 @@ class ImportScuola < ApplicationRecord
   scope :dell_area_geografica, -> (area) { where(AREAGEOGRAFICA: area) }
   scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
-  scope :per_comune_e_direzione, -> { order([:DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
+  scope :per_comune_e_direzione, -> { order([:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
 
   def to_s  
     ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
