@@ -222,6 +222,10 @@ class ImportScuola < ApplicationRecord
     ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
   end
 
+  def tipo_nome
+    ApplicationController.helpers.titleize_con_apostrofi [self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(" ")
+  end
+
   def to_combobox_display
       self.scuola + " -> " + self.citta
   end
