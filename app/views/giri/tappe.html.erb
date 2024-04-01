@@ -22,7 +22,8 @@
     </div>
     
     <%# link per filtrare il giro %>
-    <%= tag.div class:"sticky z-20 top-16 bg-gray-100 bbborder-2 rounded-t-lg" do%>
+    <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg" do%>
+
         <%= render partial: "giri/giro_filter", locals: { giro: @giro } %>
     <% end %>
         
@@ -30,8 +31,10 @@
 
         <%= render "form_tappe" %>
         
-        <%= tag.div class: "sticky z-20 top-32 bg-gray-100 text-gray-600 rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
+        <%= tag.div class: "sticky z-20 top-32 bg-slate-100 text-gray-600 rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
             
+
+
             <label for="select_all" id="select_all">
                 <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
                 <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona" %></span>
@@ -40,21 +43,33 @@
             <%= tag.div pluralize(@page.recordset.records_count, "tappa", "tappe"), id: "nr-tappe" %>
 
             
-            <%= tag.div class: "flex space-x-1 rounded-lg bg-slate-100 p-0.5", role: "tablist", aria: { orientation: "horizontal" } do %>
-                <%= link_to tappe_giro_path(@giro, sort: "per_ordine_e_data"), class: "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 bg-white shadow" do %>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-                    </svg>
+            <%= tag.div class: "flex sssspace-x-1 rounded-lg bg-slate-100 p-0.5", role: "tablist", aria: { orientation: "horizontal" } do %>
+                
+                <%= link_to tappe_giro_path(@giro, sort: "per_ordine_e_data"), data: {turbo_action: "advance"}, 
+                        class: [
+                            "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 text-gray-600 shadow": true,
+                            "bg-white": (params[:sort] == "per_ordine_e_data") || !params[:sort].present?,
+                            "bg-slate-100": !(params[:sort] == "per_ordine_e_data")
+                        ] do %>
+                    <%= inline_svg_tag('icon-building-library.svg', class: "w-6 h-6 #{params[:sort] == "per_ordine_e_data" || !params[:sort].present? ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
                 <% end %>
-                <%= link_to tappe_giro_path(@giro, sort: "per_data"), class: "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 bg-white shadow" do %>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                       <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" />
-                    </svg>
+                
+                <%= link_to tappe_giro_path(@giro, sort: "per_data"), data: {turbo_action: "advance"}, 
+                        class: [
+                            "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 shadow": true,
+                            "bg-white stroke-indigo-400": (params[:sort] == "per_data"),
+                            "bg-slate-100 text-gray-800": !(params[:sort] == "per_data")
+                        ] do %>
+                    <%= inline_svg_tag('icon-arrow-long-down.svg', class: "w-6 h-6 #{params[:sort] == "per_data" ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
                 <% end %>
-                <%= link_to tappe_giro_path(@giro, sort: "per_data_desc"), class: "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 bg-white shadow" do %>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
-                    </svg>   
+                
+                <%= link_to tappe_giro_path(@giro, sort: "per_data_desc"), data: {turbo_action: "advance"},  
+                        class: [
+                            "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 shadow": true,
+                            "bg-white stroke-indigo-400": (params[:sort] == "per_data_desc"),
+                            "bg-slate-100 text-gray-800": !(params[:sort] == "per_data_desc")
+                        ] do %>
+                    <%= inline_svg_tag('icon-arrow-long-up.svg', class: "w-6 h-6 #{params[:sort] == "per_data_desc" ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
                 <% end %>
             <% end %>
 
@@ -64,7 +79,7 @@
                 <option value="per_data">-----></option>
                 <option value="per_data_desc"><-----</option>             
             </select> %>
-        
+
         <% end %>
 
         <%= tag.div id: "tappe-list", class: "sm:px-2" do %>
