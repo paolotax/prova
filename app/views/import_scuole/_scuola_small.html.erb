@@ -1,3 +1,5 @@
+<%# locals: (import_scuola:, with_navigation: true, with_logo: true, with_link: true, with_info: false) -%>
+
 <%= tag.div id: dom_id(import_scuola), 
         class: [ "grid items-center": true,
                  "grid-cols-8": (with_navigation || with_logo) && with_info,
@@ -9,8 +11,7 @@
     <% if with_navigation == true %>
         <div class="col-span-1 pl-2">
             <%= link_to go_to_scuola_path(import_scuola, current_user.navigator),
-                    data: { turbo_frame: :modal, action: "click->dialog#open"},
-                    class: "text-gray-400 hover:text-gray-500" do %>
+                    class: "text-red-400 hover:text-red-800" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />

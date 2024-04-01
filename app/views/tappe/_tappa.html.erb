@@ -9,30 +9,19 @@
                       data: { tax_checkbox_select_all_target: 'checkbox' }
                     } %>
 
-
-
-
-
     <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-
-  
     
-    <%= tag.div class: "col-span-4" do %>  
+    <%= tag.div class: "col-span-6" do %>  
         <%= render partial: "import_scuole/scuola_small", 
-                locals: { 
-                            import_scuola: tappa.tappable, 
-                            with_navigation: true, 
-                            with_logo: false, 
-                            with_link: true,
-                            with_info: true
-                        } 
+            locals: { 
+                        import_scuola: tappa.tappable, 
+                        with_navigation: false, 
+                        with_logo: false, 
+                        with_link: true,
+                        with_info: true
+                    } 
         %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
     <% end %>    
-
-    <%= tag.div class: "col-span-2 text-xs text-gray-600 flex flex-col" do %>
-       <%= tag.div tappa.tappable&.terze_e_quinte.join(" "), class:"font-semibold "%>
-       <%=  tag.div tappa.tappable&.combinazioni.join(" - "), class: "italic text-gray-600"  %>
-    <% end %> 
     
 <% end %>

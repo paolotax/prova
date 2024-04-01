@@ -1,8 +1,8 @@
-<%= tag.div id: "giro_tappe_filter_#{dom_id(giro)}", data: {turbo_permanenttttttt: true }, class: "m-2 overflow-hidden" do %>
+<%= tag.div id: "giro_tappe_filter_#{dom_id(giro)}", class: "m-2 overflow-hidden" do %>
           
-     <%= tag.div class: "relative w-full flex items-start gap-1 overflow-x-auto" do %>  
+     <%= tag.div class: "relative w-full flex items-start gap-1 overflow-x-scroll" do %>  
         
-        <%= link_to tappe_giro_path(giro), data: {turbo_action: "advance"}, 
+        <%= link_to tappe_giro_path(giro), data: {turbo_action: "replace"}, 
                 class: [ 
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-indigo-500 border-2": true,
                     "text-white bg-indigo-500":  !params[:filter].present? && !params[:giorno].present?,
@@ -12,7 +12,7 @@
             <%= tag.div giro.tappe.pluck(:tappable_id).uniq.size, class: "leading-6" %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "oggi"), data: {turbo_action: "advance"}, 
+        <%= link_to tappe_giro_path(giro, filter: "oggi"), data: {turbo_action: "replace"}, 
                 class: [ 
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-green-500 border-2": true,
                     "text-white bg-green-500":  params[:filter] == "oggi",
@@ -22,7 +22,7 @@
             <%= tag.div giro.tappe.di_oggi.size, class: "leading-6" %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "advance"}, 
+        <%= link_to tappe_giro_path(giro, filter: "domani"), data: {turbo_action: "replace"}, 
                 class: [
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-yellow-400 border-2": true,
                     "text-white bg-yellow-400": params[:filter] == "domani", 
@@ -32,7 +32,7 @@
             <%= tag.div giro.tappe.di_domani.size, class: "leading-6" %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "advance"}, 
+        <%= link_to tappe_giro_path(giro, filter: "completate"), data: {turbo_action: "replace"}, 
                 class: [
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-gray-400 border-2": true,
                     "text-white bg-gray-400": params[:filter] == "completate",
@@ -42,7 +42,7 @@
             <%= tag.div giro.tappe.completate.size, class: "leading-6" %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "advance"}, 
+        <%= link_to tappe_giro_path(giro, filter: "programmare"), data: {turbo_action: "replace"}, 
                 class: [
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-transparent border-2": true,
                     "text-white bg-gray-800": params[:filter] == "programmare",
@@ -52,7 +52,7 @@
             <%= tag.div giro.tappe.da_programmare.size, class: "leading-6" %>
         <% end %>
 
-        <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "advance"},
+        <%= link_to tappe_giro_path(giro, filter: "programmate"), data: {turbo_action: "replace"},
                 class: [
                     "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true,
                     "text-white bg-pink-500": params[:filter] == "programmate",
@@ -64,7 +64,7 @@
    
         <% giro.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
             <% if (tappa[1] > 0) && (tappa[0] > Time.now.to_date + 1.day) %>
-                <%= link_to tappe_giro_path(giro, giorno: tappa[0]), data: {turbo_action: "advance"}, 
+                <%= link_to tappe_giro_path(giro, giorno: tappa[0]), data: {turbo_action: "replace"}, 
                             class: [
                                 "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold py-2 px-0.5 border-pink-500 border-2": true, 
                                 "text-white bg-pink-500":   params[:giorno] == tappa[0].to_s,
