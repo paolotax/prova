@@ -15,7 +15,7 @@
         <% current_user.import_scuole.where.not(CODICEISTITUTORIFERIMENTO: nil).order(:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO).group_by(&:direzione).each do |direzione, scuole| %>
 
             <div class="flex flex-col">
-                <h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">
+                <h3 class="only:hidden block px-4 py-2 mt-4 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
                     <%= direzione.nil? ? "<private>" : direzione.to_s %>
                 </h3>
                 <%= render partial: "user_scuole/user_scuola", collection: scuole, as: :user_scuola %>  
@@ -26,7 +26,7 @@
        
 
         <div class="flex flex-col">
-            <h3 class="only:hidden block px-4 py-2 mt-4 bg-black rounded-t-lg font-semibold text-lg text-white">
+            <h3 class="only:hidden block px-4 py-2 mt-4 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
                 Scuole private...
             </h3> 
             <% current_user.import_scuole.where(CODICEISTITUTORIFERIMENTO: nil).order(:DESCRIZIONECOMUNE).each do |scuola| %>

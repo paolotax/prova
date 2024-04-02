@@ -1,0 +1,29 @@
+<% @import_scuola.import_adozioni.grouped_classe.each do |c| %>
+    <div class="my-3 px-3 flex flex-col">
+        
+        <%= tag.div c.titolo %>
+        <%= tag.div class: [
+            "bg-gray-200":   !@miei_editori.include?(c.EDITORE),
+			"bg-yellow-200": (@miei_editori.include?(c.EDITORE)),
+
+            "flex flex-row justify-between": true ] do %>
+            <%= tag.div c.editore %>
+            <%= tag.div c.disciplina %>
+        <% end %>
+    </div>
+    <div class="px-5 py-4 grid grid-cols-5 gap-2 sm:grid-cols-6 sm:gap-4 border-b">
+        <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
+        <% adozioni.sort_by(&:SEZIONEANNO).each do |a| %>
+
+            <%= link_to new_appunto_path(import_scuola_id: @import_scuola.id,
+                                import_adozione_id: a.id),
+                            data: { turbo_frame: :modal, action: "click->dialog#open"},
+                            class: "p-2.5 border rounded-md flex flex-col" do %>
+
+                <%= tag.div a.classe_e_sezione, class: "text-gray-800 font-semibold" %>
+                <%= tag.div a.combinazione, class: "text-gray-500 font-semibold text-xs truncate" %>
+            <% end %>
+                <%#= render partial: "import_adozioni/import_adozione", locals: { import_adozione:  @import_scuola.import_adozioni.find(a) } %>
+        <% end %>
+    </div>
+<% end %>

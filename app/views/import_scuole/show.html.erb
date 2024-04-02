@@ -63,28 +63,10 @@
 				</div>
 			</div>
 			
-			<!-- adozioni -->
+			<!-- adozioni grouped -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
-				<% @import_scuola.adozioni_grouped_classe.each do |classe, adozioni| %>
-					<p class="my-3 px-3">
-						<%= classe.to_s %>
-					</p>
-					<% adozioni.map do |adozione| %>
-						<%= tag.div class: [
-									"px-3 py-1": true,
-									"bg-yellow-100 font-semibold": @miei_editori.include?(adozione[:editore].join),
-									"bg-white": !@miei_editori.include?(adozione[:editore].join)
-								] do 
-						%>	
-							<p class="text-xs text-gray-600">
-								<%= adozione[:titolo].join.titleize %>
-								- 
-								<%= adozione[:editore].join %>
-							</p>  
-						<% end %>
-					<% end %>
-				<% end %>
+				<%= render partial: "import_adozioni/import_adozioni_grouped" %>
 			</div>
 
 			<!-- appunti non archiviati-->
