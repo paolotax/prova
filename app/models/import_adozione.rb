@@ -78,7 +78,7 @@ class ImportAdozione < ApplicationRecord
 
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
   
-  scope :grouped_classe, -> { 
+  scope :grouped_titolo, -> { 
     order(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
     .group(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
     .select(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
@@ -87,12 +87,11 @@ class ImportAdozione < ApplicationRecord
     .select("ARRAY_AGG(import_adozioni.\"COMBINAZIONE\") AS import_adozioni_combinazione")
   }
 
-  scope :grouped_titolo, -> { 
-    order(:CODICESCUOLA, :ANNOCORSO, :TITOLO, :DISCIPLINA)
-    .group(:CODICESCUOLA, :ANNOCORSO, :TITOLO, :DISCIPLINA)
-    .select(:CODICESCUOLA, :ANNOCORSO, :TITOLO, :DISCIPLINA)
+  scope :grouped_classe, -> { 
+    order(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE)
+    .group(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE)
+    .select(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE)
     .select("ARRAY_AGG(import_adozioni.id) AS import_adozioni_ids")
-    .select("ARRAY_AGG(import_adozioni.\"SEZIONEANNO\") AS import_adozioni_sezioni") 
   }
 
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
