@@ -66,7 +66,7 @@
 			<!-- adozioni grouped -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
-				<%= render partial: "import_adozioni/import_adozioni_grouped" %>
+				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
 			</div>
 
 			<!-- appunti non archiviati-->
@@ -80,8 +80,9 @@
 			<!-- classi -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
-			    <!-- da fare @classi -->
-				<%= render partial: "classi/classe", collection: @import_scuola.classi %>
+			    <%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
+				<!-- da fare @classi -->
+				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
 			
 			<!-- appunti archiviati -->

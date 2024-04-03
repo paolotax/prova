@@ -1,34 +1,36 @@
-<%# locals: (grouped: :classe) -%>
+<%# locals: (grouped: :titolo) -%>
 
 <% if grouped == :titolo %>
     <% @import_scuola.import_adozioni.grouped_titolo.each do |c| %>
         
-        <%= tag.div class: [
-                        "my-3 px-3 flex justify-between  border-b": true,
+        <%= tag.div class:  "px-2 flex items-start justify-between  border rounded-lg" do %>
+
+            <%= tag.div class: "pt-4 pb-2 px-3 w-56 sm:w-full flex flex-col " do %>            
+                <%= tag.div c.titolo, class: "text-gray-800 font-semibold leading-4 pb-4" %>
+                <%= tag.div class: [
+                    "flex flex-col justify-between": true ] do %>
+                    <%= tag.div c.editore, class: "text-gray-500 font-semibold text-xs truncate" %>
+                    <%= tag.div c.disciplina, class: "text-gray-500 font-semibold text-xs truncate" %>
+                <% end %>
+            <% end %>
+            
+            <%= tag.div class: " px-5 py-2 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4" do %>
+                <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
+                <% adozioni.sort_by(&:SEZIONEANNO).each do |a| %>
+                    <%= tag.div class: [
+                        "col-span-1 p-2.5 border rounded-md": true,
                         "bg-white":   !@miei_editori.include?(c.EDITORE),
                         "bg-yellow-200": (@miei_editori.include?(c.EDITORE))     
                     ] do %>
 
-            <%= tag.div class: "my-3 px-3 flex flex-col w-full" do %>            
-                <%= tag.div c.titolo %>
-                <%= tag.div class: [
-                    "flex flex-row justify-between": true ] do %>
-                    <%= tag.div c.editore %>
-                    <%= tag.div c.disciplina %>
-                <% end %>
-            <% end %>
-            
-            <%= tag.div class: "px-5 py-4 grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-4" do %>
-                <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
-                <% adozioni.sort_by(&:SEZIONEANNO).each do |a| %>
+                        <%= link_to new_appunto_path(import_scuola_id: @import_scuola.id,
+                                            import_adozione_id: a.id),
+                                        data: { turbo_frame: :modal, action: "click->dialog#open"},
+                                        class: "flex flex-col" do %>
 
-                    <%= link_to new_appunto_path(import_scuola_id: @import_scuola.id,
-                                        import_adozione_id: a.id),
-                                    data: { turbo_frame: :modal, action: "click->dialog#open"},
-                                    class: "col-span-1 p-2.5 border rounded-md flex flex-col" do %>
-
-                        <%= tag.div a.classe_e_sezione, class: "text-gray-800 font-semibold"  %>
-                        <%= tag.div a.combinazione, class: "text-gray-500 font-semibold text-xs truncate" %>
+                            <%= tag.div a.classe_e_sezione, class: "text-gray-800 font-semibold"  %>
+                            <%= tag.div a.combinazione, class: "text-gray-500 font-semibold text-xs truncate" %>
+                        <% end %>
                     <% end %>
                 <% end %>
             <% end %>
@@ -48,23 +50,25 @@
                 <%= tag.div c.combinazione, class: "text-gray-500 font-semibold text-xs truncate" %>
             <% end %>
             
-            <%= tag.div class: "grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-4" do %>
+            <%= tag.div class: "grid grid-cols-1 sm:grid-cols-3 sm:gap-2 sm" do %>
                 <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
-                <% adozioni.sort_by(&:DISCIPLINA).each do |a| %>
+                <% adozioni.sort_by(&:PREZZO).each do |a| %>
 
                     <%= tag.div class: [
-                                    "my-3 px-3 flex justify-between  border-b": true,
+                                    "py-2 px-2 flex justify-between ": true,
                                     "bg-white":   !@miei_editori.include?(a.EDITORE),
                                     "bg-yellow-200": @miei_editori.include?(a.EDITORE)    
                                 ] do %>
                         <%= link_to new_appunto_path(import_scuola_id: @import_scuola.id,
                                             import_adozione_id: a.id),
                                         data: { turbo_frame: :modal, action: "click->dialog#open"},
-                                        class: "flex flex-col" do %>
+                                        class: "px-1 flex flex-col justify-between" do %>
 
-                            <%= tag.div a.titolo, class: "text-gray-800 font-semibold"  %>
-                            <%= tag.div a.editore, class: "text-gray-500 font-semibold text-xs truncate" %>
-                            <%= tag.div a.disciplina, class: "text-gray-500 font-semibold text-xs truncate" %>
+                            <%= tag.div a.titolo, class: "text-gray-800 font-semibold leading-4 pb-4"  %>
+                            <%= tag.div class: "my-auto flex flex-col" do %>
+                                <%= tag.div a.editore, class: "text-gray-500 font-semibold text-xs truncate" %>
+                                <%= tag.div a.disciplina, class: "text-gray-500 font-semibold text-xs truncate" %>
+                            <% end %>
                         <% end %>
                     <% end %>
                 <% end %>

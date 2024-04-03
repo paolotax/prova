@@ -149,7 +149,7 @@ class ImportAdozione < ApplicationRecord
   end
 
   def editore
-    ApplicationController.helpers.titleize_con_apostrofi self.EDITORE
+    self.EDITORE.upcase
   end
 
   def codice_isbn
