@@ -16,6 +16,8 @@ class ImportAdozioniController < ApplicationController
       
       @miei_editori = current_user.editori.collect{|e| e.editore}
       @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
+      @import_adozioni = @import_adozioni.where(ANNOCORSO: params[:classe]) if params[:classe].present?
+
 
       if params[:search].present?      
   

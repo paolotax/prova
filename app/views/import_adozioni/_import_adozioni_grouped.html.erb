@@ -6,11 +6,11 @@
         <%= tag.div class:  "px-2 grid grid-cols-2 gap-2 border rounded-lg" do %>
 
             <%= tag.div class: "col-span-1 pt-4 pb-2 px-3 flex flex-col " do %>            
-                <%= tag.div c.titolo, class: "text-gray-800 font-semibold leading-4 pb-4" %>
+                <%= link_to c.titolo, import_adozioni_path(search: c.CODICEISBN), class: "text-gray-800 font-semibold leading-4 pb-4" %>
                 <%= tag.div class: [
                     "flex flex-col justify-between": true ] do %>
-                    <%= tag.div c.editore, class: "text-gray-500 font-semibold text-xs truncate" %>
-                    <%= tag.div c.disciplina, class: "text-gray-500 font-semibold text-xs truncate" %>
+                    <%= link_to c.editore, import_adozioni_path(search: c.editore, da_acquistare: "si"), class: "text-gray-500 font-semibold text-xs truncate" %>
+                    <%= link_to c.disciplina, import_adozioni_path(search: c.disciplina, classe: c.classe ), class: "text-gray-500 font-semibold text-xs truncate" %>
                 <% end %>
             <% end %>
             
