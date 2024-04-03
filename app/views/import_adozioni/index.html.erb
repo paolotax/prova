@@ -31,6 +31,8 @@
 			
 
 			<%= render partial: "import_adozioni/import_adozione_small", collection: @page.records, as: :import_adozione %>
+
+			<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: {import_adozioni: @page.records, grouped: "pippo" }  %>
 		</div>
 
 		<% unless @page.last? %>
