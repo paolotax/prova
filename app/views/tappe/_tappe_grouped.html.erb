@@ -56,7 +56,7 @@
                         </div>
                     <% end %>
 
-                    <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa > Time.now.beginning_of_day }.each do |t| %>
+                    <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa >= Time.now.beginning_of_day }.each do |t| %>
                         <%= render partial: "tappe/tappa_small", locals: { tappa: t } %>
                     <% end %>
                 <% end %>
