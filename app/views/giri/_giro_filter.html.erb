@@ -4,9 +4,9 @@
         
         <%= link_to tappe_giro_path(giro), data: {turbo_action: "replace"}, 
                 class: [ 
-                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-indigo-500 border-2": true,
-                    "text-white bg-indigo-500":  !params[:filter].present? && !params[:giorno].present?,
-                    "text-indigo-500 bg-transparent": params[:filter].present? || params[:giorno].present?
+                    "h-14 w-16 flex-none text-center rounded-lg text-xs font-semibold p-2 border-sky-500 border-2": true,
+                    "text-white bg-sky-500":  !params[:filter].present? && !params[:giorno].present?,
+                    "text-sky-500 bg-transparent": params[:filter].present? || params[:giorno].present?
                 ] do %>
             scuole:
             <%= tag.div giro.tappe.pluck(:tappable_id).uniq.size, class: "leading-6" %>
