@@ -1,0 +1,12 @@
+wb = xlsx_package.workbook
+
+fields = [ "id_adozione", "isbn", "titolo", "editore", "disciplina", "tipo", "scuola", "citta", "classe", "sezione", "combinazione", "codice_ministeriale" ]
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+  sheet.add_row  fields
+  
+  @import_adozioni.each do |row|   
+    sheet.add_row [ row.id, row.codice_isbn.to_s, row.titolo, row.editore, row.disciplina, row.tipo_scuola, row.scuola, row.citta, row.classe, row.sezione, row.combinazione, row.codice_ministeriale ]
+  end
+end

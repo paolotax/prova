@@ -104,8 +104,16 @@ class ImportAdozione < ApplicationRecord
     user_editori.include?(self.EDITORE)
   end
 
+  def codice_ministeriale
+    self.import_scuola.codice_ministeriale
+  end
+
   def scuola
     self.import_scuola.scuola
+  end
+
+  def tipo_scuola
+    self.import_scuola.tipo_scuola
   end
 
   def citta 
