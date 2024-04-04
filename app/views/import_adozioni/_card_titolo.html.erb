@@ -1,0 +1,17 @@
+<%= tag.div class: [
+                "py-2 px-2 border-b": true,
+                "bg-white":  !import_adozione.mia_adozione?(current_user.miei_editori),
+                "bg-yellow-200": import_adozione.mia_adozione?(current_user.miei_editori)   
+            ] do %>
+    <%= link_to new_appunto_path(import_scuola_id: import_adozione.import_scuola.id,
+                        import_adozione_id: import_adozione.id),
+                    data: { turbo_frame: :modal, action: "click->dialog#open"},
+                    class: "px-1 flex flex-col justify-between" do %>
+
+        <%= tag.div import_adozione.titolo, class: "text-gray-800 font-semibold leading-4 pb-4"  %>
+        <%= tag.div class: "my-auto flex flex-row justify-between sm:flex-col " do %>
+            <%= tag.div import_adozione.editore, class: "text-gray-500 font-semibold text-xs truncate" %>
+            <%= tag.div import_adozione.disciplina, class: "text-gray-500 font-semibold text-xs truncate" %>
+        <% end %>
+    <% end %>
+<% end %>

@@ -1,7 +1,13 @@
 <div id="<%= dom_id import_adozione %>" 
 	class=" flex justify-between">
 
-    <div class="my-3 px-3 font-semibold">
+	<div class="flex items-center justify-start">		
+		<div class="mt-2 text-gray-900">
+				<%= card_sezione import_adozione %>
+		</div>
+		<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione} %>
+    </div>
+	<div class="my-3 px-3 font-semibold">
 		
 		<div class="text-sm text-gray-900 hover:text-indigo-500" >
 			<%= link_to( 
@@ -15,28 +21,11 @@
 		<div class="">
 			<%= highlight import_adozione.citta, params_split(params[:search]) %>
 		</div>
-		<div class="mt-2 text-gray-900">
-			<%= import_adozione.classe[0] %>
-			<%= import_adozione.sezione %>
-			<span class="text-xs text-gray-600"><%= import_adozione.combinazione%>
-		</div>
+
 		
 	</div>
-	<%= tag.div class: [
-			"p-3": true
-		] do
-	%>	
-		<div class="text-sm font-semibold text-gray-900" >
-			<%= highlight import_adozione.disciplina, params_split(params[:search]) %>
-		</div>
-		<div class="text-sm font-semibold text-gray-900" >
-			<%= highlight import_adozione.titolo, params_split(params[:search]) %>
-		</div>
-		
-		<div>
-			<%= import_adozione.editore %>
-		</div>  	
-	<% end %>
+	
+
 
 </div>
 
