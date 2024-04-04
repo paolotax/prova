@@ -9,17 +9,15 @@
     </div>
 	<div class="my-3 px-3 font-semibold">
 		
-		<div class="text-sm text-gray-900 hover:text-indigo-500" >
-			<%= link_to( 
-					highlight(import_adozione.import_scuola.scuola, params_split(params[:search])),
-					import_scuola_path(import_adozione.import_scuola),
-					data: { turbo_frame: "_top"}
-				)
-			%>
-		</div>	
+
 
 		<div class="">
-			<%= highlight import_adozione.citta, params_split(params[:search]) %>
+			<%= render partial: "import_scuole/scuola_small",locals: {
+				import_scuola: import_adozione.import_scuola, 
+				with_navigation: false, 
+                with_logo: false, 
+                with_link: true,
+                with_info: false } %>
 		</div>
 
 		
