@@ -6,11 +6,10 @@
                 "bg-yellow-200": is_mia   
             ] do %>
 
-
     <%= tag.div class: "flex flex-col" do %>
         <%= tag.div class: "flex flex-row justify-between" do %>            
-            <%= link_to import_adozione.titolo, import_adozioni_path(search: import_adozione.CODICEISBN), class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5"  %>
-        
+            <%= tag.div import_adozione.classe_e_sezione, class: "text-gray-800 font-semibold" %>
+            
             <% unless is_header %>
                 <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
                                             import_adozione_id: import_adozione.id),
@@ -23,13 +22,6 @@
                 <% end %>
             <% end %>
         <% end %>
-        <%= tag.div class: "my-auto flex flex-col " do %>
-            <%= link_to import_adozione.editore, import_adozioni_path(search: import_adozione.editore, da_acquistare: "si"), class: "text-gray-500 hover:text-sky-500 font-semibold text-xs truncate" %>
-            <%= link_to import_adozione.disciplina, import_adozioni_path(search: import_adozione.disciplina, classe: import_adozione.classe ), class: "text-gray-500 hover:text-sky-500 font-semibold text-xs truncate" %>
-        <% end %> 
-     <% end %>
-
+        <%= tag.span import_adozione.combinazione, class: "line-clamp-2 hover:line-clamp-none pt-0.5 pr-4 text-gray-500 font-semibold text-xs" %>
+    <% end %>
 <% end %>
-
-
-

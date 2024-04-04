@@ -1,11 +1,7 @@
 module ImportAdozioniHelper
 
-
   def card_classe(import_adozione)
-    
     content_tag :div, import_adozione.classe, class: "badge bg-primary"
-    
-    
   end
 
   def card_sezione(adozione)  

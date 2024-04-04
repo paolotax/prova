@@ -1,28 +1,18 @@
-<div id="<%= dom_id import_adozione %>" 
-	class=" flex justify-between">
+<%= tag.div  id: dom_id(import_adozione), class: "flex justify-between" do %>
 
-	<div class="flex items-center justify-start">		
-		<div class="mt-2 text-gray-900">
-				<%= card_sezione import_adozione %>
-		</div>
-		<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione} %>
-    </div>
-	<div class="my-3 px-3 font-semibold">
-		
+	<%= tag.div class: "mx-2 grid grid-cols-4 gap-x-2" do %>		
+		<%= link_to import_adozione.import_scuola.to_s.upcase, 
+					import_scuola_path( import_adozione.import_scuola ),
+					data: { turbo_frame: "_top" },  
+					class: "col-span-4 text-xs text-slate-500 hover:text-sky-500 pb-0.5" 
+		%>
+		<%= tag.div class: "col-span-1" do %>
+			<%= render partial: "import_adozioni/card_classe", locals: { import_adozione: import_adozione, is_header: false, is_mia: import_adozione.mia_adozione?(current_user.miei_editori) } %>
+		<% end %>
+		<%= tag.div class: "col-span-3" do %>
+			<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione } %>
+		<% end %>	
+	<% end %>
 
+<% end %>
 
-		<div class="">
-			<%= render partial: "import_scuole/scuola_small",locals: {
-				import_scuola: import_adozione.import_scuola, 
-				with_navigation: false, 
-                with_logo: false, 
-                with_link: true,
-                with_info: false } %>
-		</div>
-
-		
-	</div>
-	
-
-
-</div>

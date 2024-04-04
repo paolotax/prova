@@ -3,21 +3,16 @@
 <% if grouped == :titolo %>
     <% @import_scuola.import_adozioni.grouped_titolo.each do |c| %>
         
-        <%= tag.div class:  "px-2 grid grid-cols-2 gap-2 border rounded-lg" do %>
+        <%= tag.div class:  "grid grid-cols-5 gap-1 mb-2" do %>
 
-            <%= tag.div class: "col-span-1 pt-4 pb-2 px-3 flex flex-col " do %>            
-                <%= link_to c.titolo, import_adozioni_path(search: c.CODICEISBN), class: "text-gray-800 font-semibold leading-4 pb-4" %>
-                <%= tag.div class: [
-                    "flex flex-col justify-between": true ] do %>
-                    <%= link_to c.editore, import_adozioni_path(search: c.editore, da_acquistare: "si"), class: "text-gray-500 font-semibold text-xs truncate" %>
-                    <%= link_to c.disciplina, import_adozioni_path(search: c.disciplina, classe: c.classe ), class: "text-gray-500 font-semibold text-xs truncate" %>
-                <% end %>
-            <% end %>
-            
-            <%= tag.div class: "col-span-1  px-5 py-2 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4" do %>
+            <%= tag.div class: "col-span-3" do %>
+                <%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: c, is_header: true, is_mia: false } %>
+            <% end %>	  
+
+            <%= tag.div class: "col-span-2 pr-1 grid grid-cols-2 gap-1 sm:grid-cols-4 sm:gap-4" do %>
                 <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
                 <% adozioni.sort_by(&:SEZIONEANNO).each do |a| %>
-                    <%= card_sezione a %>
+                    <%= render partial: "import_adozioni/card_classe", locals: { import_adozione: a, is_header: false, is_mia: a.mia_adozione?(current_user.miei_editori) } %>
                 <% end %>
             <% end %>
         <% end %>
@@ -25,27 +20,26 @@
 
 <% elsif grouped == :classe %>
 
-        <% @import_scuola.import_adozioni.grouped_classe.each do |c| %>
-        
-            <%= tag.div class: [
-                        "my-3 px-3 grid grid-cols-5 border-b": true    
-            ] do %>
+    <% @import_scuola.import_adozioni.grouped_classe.each do |c| %>
+    
+        <%= tag.div class: [
+                    "my-3 px-3 grid grid-cols-5 border-b": true    
+        ] do %>
 
-                <%= tag.div class: "col-span-1 p-2.5 border rounded-md flex flex-col" do %>
-                    <%= tag.div c.classe_e_sezione, class: "text-gray-800 font-semibold"  %>
-                    <%= tag.div c.combinazione, class: "text-gray-500 font-semibold text-xs truncate" %>
-                <% end %>
-                
-                <%= tag.div class: "col-span-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-2 sm" do %>
-                    <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
-                    <% adozioni.sort_by(&:PREZZO).each do |a| %>
+            <%= tag.div class: "col-span-1 p-2.5 border rounded-md flex flex-col" do %>
+                <%= render partial: "import_adozioni/card_classe", locals: { import_adozione: c } %>
+            <% end %>
+            
+            <%= tag.div class: "col-span-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-2 sm" do %>
+                <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
+                <% adozioni.sort_by(&:PREZZO).each do |a| %>
 
-                        <%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: a} %>
+                    <%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: a, is_header: false, is_mia: a.mia_adozione?(current_user.miei_editori) } %>
 
-                    <% end %>
                 <% end %>
             <% end %>
         <% end %>
+    <% end %>
 
 <% end %> 
 
