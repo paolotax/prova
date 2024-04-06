@@ -72,6 +72,11 @@ class Appunto < ApplicationRecord
   scope :nel_baule_di_oggi, -> { where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
   scope :nel_baule_di_domani, -> { where(import_scuola_id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
 
+  scope :saggi, -> { where(nome: "saggio").where.not(import_adozione_id: nil) }
+  scope :seguiti, -> { where(nome: "seguito").where.not(import_adozione_id: nil) }
+  scope :kit, -> { where(nome: "kit").where.not(import_adozione_id: nil) }
+  scope :ssk, -> { where(nome: ["saggio", "seguito", "kit"]).where.not(import_adozione_id: nil) }
+  
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed
@@ -117,5 +122,22 @@ class Appunto < ApplicationRecord
     #appunti_adozioni_di_oggi = Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id)) 
     #appunti_scuole_di_oggi.or(appunti_adozioni_di_oggi)
   end
+
+  def is_saggio?
+    nome == "saggio" && self.import_adozione.present?
+  end
+
+  def is_seguito?
+    nome == "seguito" && self.import_adozione.present?
+  end
+
+  def is_kit?
+    nome == "seguito" && self.import_adozione.present?
+  end
+
+  def is_ssk?
+    ["saggio", "seguito", "kit"].include?(nome) && self.import_adozione.present?
+  end
+
 
 end

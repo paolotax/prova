@@ -72,7 +72,7 @@ gem "omniauth-github", "~> 2.0"
 gem "devise-i18n"
 
 
-gem "hotwire_combobox", "~> 0.1.33"
+gem "hotwire_combobox"
 
 gem 'resend', '~> 0.10.0'
 

@@ -50,7 +50,7 @@ class Tappa < ApplicationRecord
   }
 
   def attuale?
-    data_tappa.nil? || data_tappa > Time.now.beginning_of_day 
+    data_tappa.nil? || data_tappa >= Time.now.beginning_of_day 
   end
 
 

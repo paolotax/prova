@@ -25,8 +25,9 @@ class AppuntiController < ApplicationController
   end
 
   def create
-    @appunto = current_user.appunti.build(appunto_params)
 
+    @appunto = current_user.appunti.build(appunto_params)
+    
     respond_to do |format|
       if @appunto.save
         format.html { redirect_to :back, notice: "Appunto inserito." }

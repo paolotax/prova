@@ -1,12 +1,4 @@
-<%= tag.div id: dom_id(appunto), class: [
-		"group pt-4 relative flex flex-col rounded-2xl shadow-xl align-end border-b-2": true,
-		"bg-red-200  text-gray-600 border-red-300":  appunto.stato == "archiviato",
-		"bg-white border-slate-200": !(appunto.stato == "archiviato"),
-    ] do %>
 
-	<% if appunto.is_ssk? %>
-		<%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto } %>
-	<% else %>
 		<%# appunto vecchio da sistemare  %>
 		<%= link_to edit_appunto_path(appunto),
 			data: { turbo_frame: :modal, action: "click->dialog#open"},
@@ -15,14 +7,8 @@
 		<% end %>
 		
 		<p class="px-4 font-semibold text-gray-900">
-			<%= appunto.nome %>      
+			<%= render partial: "import_adozioni/import_adozione_small", locals: { import_adozione: appunto.import_adozione } %>      
 		</p>	
-
-		<% if appunto.import_scuola %>
-			<div class="px-4">
-				<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
-			</div>
-		<% end %>
 		
 		<% if appunto.body && !appunto.body.blank?%>
 			<div class="px-4 group">
@@ -60,8 +46,6 @@
 			</div>
 		<% end %>
 		
-		<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
-
 		<div class="flex mt-auto justify-between items-center">
 		
 			<%= tag.div class: "pt-2 text-xs italic  pl-2" do %>
@@ -73,6 +57,3 @@
 			<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
 
 		</div>	
-	<% end %>
-
-<% end %>

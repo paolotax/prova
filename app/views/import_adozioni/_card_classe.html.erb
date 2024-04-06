@@ -11,16 +11,9 @@
             <%= tag.div import_adozione.classe_e_sezione, class: "text-gray-800 font-semibold" %>
             
             <% unless is_header %>
-                <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
-                                            import_adozione_id: import_adozione.id),
-                        data: { turbo_frame: :modal, action: "click->dialog#open" },
-                        class: "-mr-2 hover:text-sky-500" do %>
-
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                    </svg>
-                <% end %>
+                <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione } %>
             <% end %>
+
         <% end %>
         <%= tag.span import_adozione.combinazione, class: "line-clamp-2 hover:line-clamp-none pt-0.5 pr-4 text-gray-500 font-semibold text-xs" %>
     <% end %>

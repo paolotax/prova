@@ -39,6 +39,8 @@ class ImportAdozione < ApplicationRecord
 
   has_many :tappe, as: :tappable
 
+  has_many :appunti, dependent: :nullify
+
   include PgSearch::Model
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
