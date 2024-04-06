@@ -2,6 +2,16 @@ import Clipboard from 'stimulus-clipboard';
     
 // Connects to data-controller="tax-trix-clipboard"
 export default class extends Clipboard {
+  
+  static targets = ["button", "source"];
+  static values = {
+      successContent: String,
+      successDuration: {
+          type: Number,
+          default: 2e3
+      }
+  }
+
   connect() {
     super.connect()
     if (window.isSecureContext) {
