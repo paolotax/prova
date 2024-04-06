@@ -25,6 +25,15 @@
               } do %>
 
         <!-- Active: "bg-gray-50", Not Active: "" -->
+        <% unless tappa.attuale? %>
+            <%= link_to tappe_giro_path(tappa.giro, giorno: tappa.data_tappa.to_date),
+                    class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                    data: {turbo_action: "replace"}, 
+                    role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
+                Filtra giorno
+            <% end %>
+            <hr/>
+        <% end %>
         <%= link_to edit_tappa_path( tappa ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                 data: { turbo_frame: :modal, action: "click->dialog#open"}, 
