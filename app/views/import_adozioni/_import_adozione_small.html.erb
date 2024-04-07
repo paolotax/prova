@@ -10,7 +10,7 @@
 			<%= render partial: "import_adozioni/card_classe", locals: { import_adozione: import_adozione, is_header: true, is_mia: import_adozione.mia_adozione?(current_user.miei_editori) } %>
 		<% end %>
 		<%= tag.div class: "col-span-3" do %>
-			<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione, is_header: false } %>
+			<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione, is_header: false, is_mia: import_adozione.mia_adozione?(current_user.miei_editori) } %>
 		<% end %>	
 	<% end %>
 

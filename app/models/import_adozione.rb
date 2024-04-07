@@ -100,8 +100,6 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
 
-  
-
   def mia_adozione?(user_editori) 
     user_editori.include?(self.EDITORE)
   end
@@ -184,6 +182,21 @@ class ImportAdozione < ApplicationRecord
 
   def to_combobox_display
     "#{self.scuola} #{self.citta} - #{self.classe_e_sezione} - #{self.titolo} #{self.editore}"
+  end
+
+  def ssk
+    self.appunti
+      .joins(:import_adozione)
+      .select("import_adozioni.id,
+        count(CASE WHEN appunti.nome = 'saggio' THEN appunti.nome END ) AS saggi,
+        array_agg(CASE WHEN appunti.nome = 'saggio' THEN appunti.id END) AS saggi_ids,
+
+        count(CASE WHEN appunti.nome = 'seguito' THEN appunti.nome END ) AS seguiti,
+        array_agg(CASE WHEN appunti.nome = 'seguito' THEN appunti.id END) AS seguiti_ids,
+
+        count(CASE WHEN appunti.nome = 'kit' THEN  appunti.id END ) AS kit,
+        array_agg(CASE WHEN appunti.nome = 'kit' THEN appunti.id END) AS kit_ids")
+      .group("import_adozioni.id")
   end
 
 end

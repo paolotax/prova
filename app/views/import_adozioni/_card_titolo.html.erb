@@ -1,6 +1,6 @@
  <%# locals: ( import_adozione:, is_header: true, is_mia: false ) -%>
 
-<%= tag.div class: [
+<%= tag.div id: "card-titolo-#{import_adozione.id}", class: [
                 "py-2 px-2 w-full border rounded-lg": true,
                 "bg-white":  !is_mia,
                 "bg-yellow-200": is_mia   
@@ -10,7 +10,7 @@
         
         <%= tag.div class: "flex flex-row justify-between" do %>            
             <%= link_to import_adozione.titolo, import_adozioni_path(search: import_adozione.CODICEISBN), class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5"  %>
-        
+
             <% unless is_header %>
                 <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
             <% end %>
@@ -24,6 +24,22 @@
                 <%= link_to import_adozione.disciplina, import_adozioni_path(search: import_adozione.disciplina, classe: import_adozione.classe ), class: "" %>
             <% end %>
         <% end %> 
+        
+        <% if is_mia && !import_adozione.ssk.take.nil? %>
+            <%= tag.div class: "flex flex-row justify-end" do %>
+                <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs" do %>
+                    <%= import_adozione.ssk.take.saggi %>
+                <% end %>
+                <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs" do %>
+                    <%= import_adozione.ssk.take.seguiti %>
+                <% end %>
+                <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-500 text-white font-semibold text-xs" do %>
+                    <%= import_adozione.ssk.take.kit %>
+                <% end %>
+            <% end %>
+        <% end %>
+
+
      <% end %>
 
 <% end %>

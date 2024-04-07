@@ -2,4 +2,15 @@
     <%= render partial: "appunti/appunto", locals: { appunto: @appunto } %>
 <% end %>
 
+<% if @appunto.import_adozione %>
+    <%= turbo_stream.replace "card-titolo-#{@appunto.import_adozione_id }" do %>
+        <%= render partial: "import_adozioni/card_titolo", 
+                    locals: { 
+                        import_adozione: @appunto.import_adozione,
+                        is_header: false,
+                        is_mia: true 
+                    } %>
+    <% end %>
+<% end %>
+
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>
