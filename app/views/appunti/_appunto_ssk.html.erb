@@ -1,59 +1,63 @@
 
-		<%# appunto vecchio da sistemare  %>
-		<%= link_to edit_appunto_path(appunto),
-			data: { turbo_frame: :modal, action: "click->dialog#open"},
-			class: "absolute right-2 top-2 -m-2 p-2.5 text-gray-400 hover:text-gray-500" do %>
-			<%= inline_svg_tag "icon-appunto.svg" %>
-		<% end %>
-		
-		<p class="px-4 font-semibold text-gray-900">
-			<%= render partial: "import_adozioni/import_adozione_small", locals: { import_adozione: appunto.import_adozione } %>      
-		</p>	
-		
-		<% if appunto.body && !appunto.body.blank?%>
-			<div class="px-4 group">
-				<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-					<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
-						<%= emphasis do %>
-							<%= appunto.body %>
-						<% end %>
-					</div>
-									<div class="h-4">
+<%= tag.div id: dom_id(appunto), class: "py-2" do %>
+	
+	<%= tag.div class: "px-4 flex items-baseline space-x-1 text-sm" do %>
+		<%= tag. div appunto.nome.capitalize, class: "text-base font-semibold" %> 
+		<p>creato il</p> 
+		<%= tag.div appunto.created_at.strftime('%d-%m-%y') %>
+		<p>per la classe</p> 
+		<%= tag.div appunto.import_adozione.classe_e_sezione, class: "text-base font-semibold" %>		
+	<% end %>
+
+	<%= tag.div appunto.import_adozione.titolo, class: "text-center py-2 text-sky-500" %>
+	
+	<% if appunto.body && !appunto.body.blank?%>
+		<div class="px-4 group">
+			<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+				<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+					<%= emphasis do %>
+						<%= appunto.body %>
+					<% end %>
+				</div>
+								<div class="h-4">
+				<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
+					class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
+					>copia
+				</button>
+				</div>
+			</div>
+		</div>
+	<% end %>
+
+	<% if appunto.content && !appunto.content.blank?%>
+		<div class="px-4 group">
+			<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+				<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+					<%= emphasis do %>
+						<%= appunto.content %>
+					<% end %>
+				</div>
+				<div class="h-4">
 					<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-						class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
+						class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
 						>copia
 					</button>
-					</div>
 				</div>
 			</div>
-		<% end %>
+		</div>
+	<% end %>
 
-		<% if appunto.content && !appunto.content.blank?%>
-			<div class="px-4 group">
-				<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-					<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
-						<%= emphasis do %>
-							<%= appunto.content %>
-						<% end %>
-					</div>
-					<div class="h-4">
-						<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-							class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
-							>copia
-						</button>
-					</div>
-				</div>
-			</div>
-		<% end %>
-		
-		<div class="flex mt-auto justify-between items-center">
-		
-			<%= tag.div class: "pt-2 text-xs italic  pl-2" do %>
-				creato da
-				<%= time_ago_in_words appunto.created_at%>
-			<% end %>
-			<div><%= appunto.stato %></div>
-			
-			<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
+	<div class="flex mt-auto justify-between items-center space-x-2">
 
-		</div>	
+					<%= link_to appunto_path(appunto), 
+								data: { turbo_method: :delete },
+								class: "ml-2 btn btn-red" do %> 
+						<%= inline_svg_tag "icon-trash.svg" %>
+					<% end %>
+
+		<div><%= appunto.stato %></div>
+		<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
+	</div>	
+
+
+<% end %>
