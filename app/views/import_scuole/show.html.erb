@@ -29,11 +29,11 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-						Adozioni
-						<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-							<%= @import_scuola.mie_adozioni(current_user.miei_editori).size %> su <%= @import_scuola.adozioni_count %>
-						</span>
+							Classsi & Adozioni
+							<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
+							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+								<%= @import_scuola.classi_count %>
+							</span>
 						</a>
 						
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
@@ -46,10 +46,10 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-						Classi
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-							<%= @import_scuola.classi_count %>
-						</span>
+							Adozioni per titolo
+							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+								<%= @import_scuola.mie_adozioni(current_user.miei_editori).size %> su <%= @import_scuola.adozioni_count %>
+							</span>
 						</a>
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
@@ -63,12 +63,14 @@
 				</div>
 			</div>
 			
-			<!-- adozioni grouped -->
+			<!-- classi -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
-				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
+				<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
+				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
+				<!-- da fare @classi -->
+				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
-
+			
 			<!-- appunti non archiviati-->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
@@ -76,15 +78,13 @@
 					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati.dell_utente(current_user) %>
 				</div>
 			</div>
-						
-			<!-- classi -->
+
+			<!-- adozioni grouped -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
-			    <%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
-				<!-- da fare @classi -->
-				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
+				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
+				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
 			</div>
-			
+						
 			<!-- appunti archiviati -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
