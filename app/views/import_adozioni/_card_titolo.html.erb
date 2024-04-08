@@ -9,19 +9,25 @@
     <%= tag.div class: "h-full flex flex-col justify-between" do %>
         
         <%= tag.div class: "flex flex-row justify-between" do %>            
-            <%= link_to import_adozione.titolo, import_adozioni_path(search: import_adozione.CODICEISBN), class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5"  %>
-
+            <%= link_to import_adozione.titolo, import_adozioni_path(codice_isbn: import_adozione.CODICEISBN),
+                data: { turbo_frame: "_top", turbo_action: "advance"}, 
+                class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
+                
             <% unless is_header %>
                 <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
             <% end %>
         <% end %>
 
         <%= tag.div class: "flex flex-col justify-end text-gray-500 font-semibold text-xs " do %>
-            <%= tag.div class: "hover:text-sky-500  truncate" do %>
-                <%= link_to import_adozione.editore, import_adozioni_path(search: import_adozione.editore, da_acquistare: "si"), class: "" %>
+            <%= tag.div class: "truncate" do %>
+                <%= link_to import_adozione.editore, import_adozioni_path(editore: import_adozione.EDITORE), 
+                    data: { turbo_frame: "_top", turbo_action: "advance"},
+                    class: "hover:text-sky-500  " %>
             <% end %>
-            <%= tag.div class: "hover:text-sky-500  truncate" do %>
-                <%= link_to import_adozione.disciplina, import_adozioni_path(search: import_adozione.disciplina, classe: import_adozione.classe ), class: "" %>
+            <%= tag.div class: "truncate" do %>
+                <%= link_to import_adozione.disciplina, import_adozioni_path(disciplina: import_adozione.DISCIPLINA, classe: import_adozione.classe ), 
+                    data: { turbo_frame: "_top", turbo_action: "advance"},
+                    class: "hover:text-sky-500  " %>
             <% end %>
         <% end %> 
         

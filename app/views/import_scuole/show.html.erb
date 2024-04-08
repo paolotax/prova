@@ -16,8 +16,8 @@
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
 					<option>Classi & Adozioni</option>
-					<option>Appunti</option>
 					<option>Adozioni per titolo</option>
+					<option>Appunti</option>
 					<option>Archiviati</option>
 				</select>
 			</div>
@@ -37,18 +37,18 @@
 						</a>
 						
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
-						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
-						Appunti
-						<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-							<%= @import_scuola.appunti.non_archiviati.dell_utente(current_user).size %>
-						</span>
-						</a>
-
-						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Adozioni per titolo
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @import_scuola.mie_adozioni(current_user.miei_editori).size %> su <%= @import_scuola.adozioni_count %>
+							</span>
+						</a>
+
+						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
+						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
+							Appunti
+							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+								<%= @import_scuola.appunti.non_archiviati.dell_utente(current_user).size %>
 							</span>
 						</a>
 
@@ -70,19 +70,19 @@
 				<!-- da fare @classi -->
 				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
-			
+
+			<!-- adozioni grouped -->
+			<div class="hidden mt-4" data-tax-tabs-target="panel">
+				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
+				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
+			</div>
+						
 			<!-- appunti non archiviati-->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
 					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati.dell_utente(current_user) %>
 				</div>
-			</div>
-
-			<!-- adozioni grouped -->
-			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
-				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
 			</div>
 						
 			<!-- appunti archiviati -->

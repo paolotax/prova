@@ -18,7 +18,7 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= render partial: "stats" %>
+	<%= render partial: "import_adozioni/stats" %>
 
 	<div id="import_adozioni" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2">
 		<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
@@ -37,6 +37,9 @@
 							search_query: params[:search_query], 
 							mie_adozioni: params[:mie_adozioni],
 							classe: params[:classe],
+                            disciplina: params[:disciplina],
+                            editore: params[:editore],
+							codice_isbn: params[:codice_isbn],
 							format: :turbo_stream
 					),
 					loading: :lazy do %>
