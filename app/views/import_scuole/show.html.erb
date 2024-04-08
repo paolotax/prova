@@ -81,7 +81,7 @@
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
-					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati.dell_utente(current_user) %>
+					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati.dell_utente(current_user), locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 						
@@ -89,7 +89,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
-					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati.dell_utente(current_user) %>
+					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati.dell_utente(current_user), locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 		</div>

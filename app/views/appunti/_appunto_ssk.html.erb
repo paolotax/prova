@@ -1,15 +1,25 @@
-
 <%= tag.div id: dom_id(appunto), class: "py-2" do %>
 	
 	<%= tag.div class: "px-4 flex items-baseline space-x-1 text-sm" do %>
 		<%= tag. div appunto.nome.capitalize, class: "text-base font-semibold" %> 
-		<p>creato il</p> 
-		<%= tag.div appunto.created_at.strftime('%d-%m-%y') %>
-		<p>per la classe</p> 
-		<%= tag.div appunto.import_adozione.classe_e_sezione, class: "text-base font-semibold" %>		
+			
+		<p>del testo</p> 			
+		<%= tag.div appunto.import_adozione.titolo, class: "text-base text-sky-500" %>
 	<% end %>
 
-	<%= tag.div appunto.import_adozione.titolo, class: "text-center py-2 text-sky-500" %>
+	<%= tag.div class: "px-4 flex items-baseline space-x-1 text-sm" do %>		
+		<p>per la classe</p> 
+		<%= tag.div appunto.import_adozione.classe_e_sezione, class: "text-base font-semibold" %>	
+
+	<% end %>
+
+	<% if mostra_scuola %>
+		<%= tag.div class: "px-4 flex items-baseline space-x-1 text-sm" do %>		
+			<p>della scuola</p> 
+			<%= tag.div appunto.import_adozione.import_scuola.scuola, class: "text-base text-sky-500" %>
+		<% end %>
+	<% end %>
+
 	
 	<% if appunto.body && !appunto.body.blank?%>
 		<div class="px-4 group">
@@ -49,11 +59,15 @@
 
 	<div class="flex mt-auto justify-between items-center space-x-2">
 
+
+
 		<%= link_to appunto_path(appunto), 
 					data: { turbo_method: :delete },
 					class: "ml-2 btn btn-red" do %> 
 			<%= inline_svg_tag "icon-trash.svg" %>
 		<% end %>
+		
+		<%= tag.div appunto.created_at.strftime('%d-%m-%y'), class: "text-xs" %>
 
 		<div><%= appunto.stato %></div>
 		<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
