@@ -6,19 +6,43 @@
             "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs": true,
             "hidden": import_adozione.ssk.take.saggi.zero?
             ] do %>
-            <%= import_adozione.ssk.take.saggi %>
+
+            <% unless import_adozione.ssk.take.saggi.zero? %>
+
+                <%= link_to appunto_path(import_adozione.ssk.take.saggi_ids.compact.first), 
+                    data: { turbo_method: :delete } do %> 
+                    <%= import_adozione.ssk.take.saggi %>
+                <% end %>
+
+            <% end %>
         <% end %>
         
         <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs": true,
                 "hidden": import_adozione.ssk.take.seguiti.zero?
             ] do %>
-            <%= import_adozione.ssk.take.seguiti %>
+
+            <% unless import_adozione.ssk.take.seguiti.zero? %>
+
+                <%= link_to appunto_path(import_adozione.ssk.take.seguiti_ids.compact.first), 
+                    data: { turbo_method: :delete } do %> 
+                    <%=  import_adozione.ssk.take.seguiti %>
+                <% end %>
+
+            <% end %>          
         <% end %>
         
         <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-400 text-white font-semibold text-xs",
             "hidden": import_adozione.ssk.take.kit.zero?
             ] do %>
-            <%= import_adozione.ssk.take.kit %>
+            
+            <% unless import_adozione.ssk.take.kit.zero? %>
+
+                <%= link_to appunto_path(import_adozione.ssk.take.kit_ids.compact.first), 
+                    data: { turbo_method: :delete } do %> 
+                    <%=  import_adozione.ssk.take.kit %>
+                <% end %>
+
+            <% end %>   
         <% end %>
     <% end %>
 <% end %>

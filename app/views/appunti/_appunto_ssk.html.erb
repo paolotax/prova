@@ -49,11 +49,11 @@
 
 	<div class="flex mt-auto justify-between items-center space-x-2">
 
-					<%= link_to appunto_path(appunto), 
-								data: { turbo_method: :delete },
-								class: "ml-2 btn btn-red" do %> 
-						<%= inline_svg_tag "icon-trash.svg" %>
-					<% end %>
+		<%= link_to appunto_path(appunto), 
+					data: { turbo_method: :delete },
+					class: "ml-2 btn btn-red" do %> 
+			<%= inline_svg_tag "icon-trash.svg" %>
+		<% end %>
 
 		<div><%= appunto.stato %></div>
 		<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
