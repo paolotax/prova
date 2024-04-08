@@ -1,0 +1,24 @@
+ <%# locals: ( import_adozione:, tipo_card: 'classe' ) -%>
+ 
+<%= tag.div id: "card-ssk-#{ tipo_card }-#{ dom_id import_adozione }", class: "flex flex-row justify-end" do %>
+    <% if !import_adozione.ssk.take.nil? %> 
+        <%= tag.div class: [
+            "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs": true,
+            "hidden": import_adozione.ssk.take.saggi.zero?
+            ] do %>
+            <%= import_adozione.ssk.take.saggi %>
+        <% end %>
+        
+        <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs": true,
+                "hidden": import_adozione.ssk.take.seguiti.zero?
+            ] do %>
+            <%= import_adozione.ssk.take.seguiti %>
+        <% end %>
+        
+        <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-400 text-white font-semibold text-xs",
+            "hidden": import_adozione.ssk.take.kit.zero?
+            ] do %>
+            <%= import_adozione.ssk.take.kit %>
+        <% end %>
+    <% end %>
+<% end %>

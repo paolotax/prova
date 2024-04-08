@@ -25,26 +25,7 @@
             <% end %>
         <% end %> 
         
-        <% if is_mia && !import_adozione.ssk.take.nil? %>
-            <%= tag.div class: "flex flex-row justify-end" do %>
-                <%= tag.div class: [
-                    "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs": true,
-                    "hidden": import_adozione.ssk.take.saggi.zero?
-                    ] do %>
-                    <%= import_adozione.ssk.take.saggi %>
-                <% end %>
-                <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs": true,
-                        "hidden": import_adozione.ssk.take.seguiti.zero?
-                    ] do %>
-                    <%= import_adozione.ssk.take.seguiti %>
-                <% end %>
-                <%= tag.div class: ["h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-500 text-white font-semibold text-xs",
-                    "hidden": import_adozione.ssk.take.kit.zero?
-                    ] do %>
-                    <%= import_adozione.ssk.take.kit %>
-                <% end %>
-            <% end %>
-        <% end %>
+        <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "titolo" } %>
 
 
      <% end %>

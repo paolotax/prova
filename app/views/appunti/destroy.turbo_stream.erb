@@ -1,14 +1,15 @@
 <%= turbo_stream.remove @appunto %>
 
-<%# rimpiazza una sola card id adozione - correggere? %>
 <% if @appunto.import_adozione %>
-    <%= turbo_stream.replace "card-titolo-#{@appunto.import_adozione_id }" do %>
-        <%= render partial: "import_adozioni/card_titolo", 
-                    locals: { 
-                        import_adozione: @appunto.import_adozione,
-                        is_header: false,
-                        is_mia: true 
-                    } %>
+    
+    <% ["classe", "titolo"].each do |tipo_card|%>
+        <%= turbo_stream.replace "card-ssk-#{ tipo_card }-#{ dom_id @appunto.import_adozione }" do %>
+            <%= render partial: "import_adozioni/card_ssk", 
+                        locals: { 
+                            import_adozione: @appunto.import_adozione,
+                            tipo_card: tipo_card
+                        } %>
+        <% end %>
     <% end %>
 <% end %>
 
