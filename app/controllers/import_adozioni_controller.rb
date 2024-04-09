@@ -9,12 +9,12 @@ class ImportAdozioniController < ApplicationController
 
     if params[:q].present?
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
-      
+
     else      
       @miei_editori = current_user.editori.collect{|e| e.editore}
       @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
       
-      @import_adozioni = @import_adozioni.filtra(@import_adozioni, params)
+      @import_adozioni = @import_adozioni.filtra(params)
       
       @conteggio_adozioni = @import_adozioni.count;
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;

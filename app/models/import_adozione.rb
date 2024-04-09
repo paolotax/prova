@@ -100,8 +100,8 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
 
-  def self.filtra(adozioni, params)
-    #adozioni = scoped
+  def self.filtra(params)
+    adozioni = all
     adozioni = adozioni.da_acquistare if params[:da_acquistare] == "si"
             
     if params[:search].present?        
