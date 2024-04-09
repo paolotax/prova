@@ -9,26 +9,12 @@ class ImportAdozioniController < ApplicationController
 
     if params[:q].present?
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
-
-    else
-
-      @import_adozioni = @import_adozioni.da_acquistare if params[:da_acquistare] == "si"
       
+    else      
       @miei_editori = current_user.editori.collect{|e| e.editore}
       @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
       
-      if params[:search].present?        
-        if params[:search_query] == "all"
-          @import_adozioni = @import_adozioni.search_all_word(params[:search])
-        else
-          @import_adozioni = @import_adozioni.search_any_word(params[:search])
-        end
-      end
-      
-      @import_adozioni = @import_adozioni.where(ANNOCORSO: params[:classe]) if params[:classe].present?
-      @import_adozioni = @import_adozioni.where(DISCIPLINA: params[:disciplina]) if params[:disciplina].present?
-      @import_adozioni = @import_adozioni.where(EDITORE: params[:editore]) if params[:editore].present?
-      @import_adozioni = @import_adozioni.where(CODICEISBN: params[:codice_isbn]) if params[:codice_isbn].present?
+      @import_adozioni = @import_adozioni.filtra(@import_adozioni, params)
       
       @conteggio_adozioni = @import_adozioni.count;
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;

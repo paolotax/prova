@@ -100,6 +100,26 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
 
+  def self.filtra(adozioni, params)
+    #adozioni = scoped
+    adozioni = adozioni.da_acquistare if params[:da_acquistare] == "si"
+            
+    if params[:search].present?        
+      if params[:search_query] == "all"
+        adozioni = adozioni.search_all_word(params[:search])
+      else
+        adozioni = adozioni.search_any_word(params[:search])
+      end
+    end
+    
+    adozioni = adozioni.where(ANNOCORSO: params[:classe]) if params[:classe].present?
+    adozioni = adozioni.where(DISCIPLINA: params[:disciplina]) if params[:disciplina].present?
+    adozioni = adozioni.where(EDITORE: params[:editore]) if params[:editore].present?
+    adozioni = adozioni.where(CODICEISBN: params[:codice_isbn]) if params[:codice_isbn].present?
+    adozioni
+  
+  end
+
   def mia_adozione?(user_editori) 
     user_editori.include?(self.EDITORE)
   end
