@@ -31,9 +31,9 @@
             <% end %>
         <% end %> 
         
-        <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "titolo" } %>
-
-
+        <% if is_mia %>
+            <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "titolo" } %>
+        <% end %>
      <% end %>
 
 <% end %>

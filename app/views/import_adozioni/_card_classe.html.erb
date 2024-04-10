@@ -18,6 +18,8 @@
         <%= tag.span import_adozione.combinazione, class: "line-clamp-2 hover:line-clamp-none pt-0.5 pr-4 pb-1 text-gray-500 font-semibold text-xs" %>
     <% end %>
 
-    <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "classe" } %>
-
+    <% if is_mia %>
+        <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "classe" } %>
+    <% end %>
+    
 <% end %>

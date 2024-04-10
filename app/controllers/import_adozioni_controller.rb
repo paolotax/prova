@@ -5,7 +5,7 @@ class ImportAdozioniController < ApplicationController
 
   def index
 
-    @import_adozioni = current_user.import_adozioni.includes(:import_scuola)
+    @import_adozioni = current_user.import_adozioni.includes(:import_scuola, :appunti, :saggi, :seguiti, :kit)
 
     if params[:q].present?
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
@@ -16,10 +16,10 @@ class ImportAdozioniController < ApplicationController
       
       @import_adozioni = @import_adozioni.filtra(params)
       
-      @conteggio_adozioni = @import_adozioni.count;
-      @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
-      @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
-      @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
+      # @conteggio_adozioni = @import_adozioni.count;
+      # @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
+      # @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
+      # @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
     end
 
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
