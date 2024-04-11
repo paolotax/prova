@@ -41,8 +41,6 @@ class ImportAdozione < ApplicationRecord
   has_many :seguiti, -> { where(nome: "seguito") }, class_name: "Appunto", foreign_key: "import_adozione_id"
   has_many :kit,     -> { where(nome: "kit") },     class_name: "Appunto", foreign_key: "import_adozione_id"
 
-  has_many :appunti, dependent: :destroy
-
   has_many :tappe, as: :tappable
 
   has_many :appunti, dependent: :nullify
