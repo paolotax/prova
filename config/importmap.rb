@@ -9,8 +9,10 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 
 
 pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/index.js"
+
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
+
 
 
 pin "stimulus-clipboard" # @4.0.1

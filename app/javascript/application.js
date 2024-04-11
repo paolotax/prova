@@ -5,6 +5,7 @@ import "controllers"
 import "trix"
 import "@rails/actiontext"
 
+
 console.log("Hello from application.js")
 
 
