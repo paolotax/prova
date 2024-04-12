@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  editore: one
+  titolo: MyString
+  codice_isbn: MyString
+  prezzo_in_cents: 1
+  classe: 1
+  disciplina: MyString
+  note: MyText
+  categoria: MyString
+
+two:
+  user: two
+  editore: two
+  titolo: MyString
+  codice_isbn: MyString
+  prezzo_in_cents: 1
+  classe: 1
+  disciplina: MyString
+  note: MyText
+  categoria: MyString

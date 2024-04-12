@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_24_083728) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_12_161615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -159,6 +159,27 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_24_083728) do
     t.integer "iva"
   end
 
+  create_table "libri", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "editore_id", null: false
+    t.string "titolo"
+    t.string "codice_isbn"
+    t.integer "prezzo_in_cents"
+    t.integer "classe"
+    t.string "disciplina"
+    t.text "note"
+    t.string "categoria"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
+    t.index ["editore_id"], name: "index_libri_on_editore_id"
+    t.index ["user_id", "categoria"], name: "index_libri_on_user_id_and_categoria"
+    t.index ["user_id", "codice_isbn"], name: "index_libri_on_user_id_and_codice_isbn"
+    t.index ["user_id", "editore_id"], name: "index_libri_on_user_id_and_editore_id"
+    t.index ["user_id", "titolo"], name: "index_libri_on_user_id_and_titolo"
+    t.index ["user_id"], name: "index_libri_on_user_id"
+  end
+
   create_table "mandati", primary_key: ["user_id", "editore_id"], force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "editore_id", null: false
@@ -248,6 +269,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_24_083728) do
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "giri", "users"
+  add_foreign_key "libri", "editori"
+  add_foreign_key "libri", "users"
   add_foreign_key "tappe", "giri"
   add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
