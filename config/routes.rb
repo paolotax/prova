@@ -10,7 +10,7 @@ end
 # then mount it
 Rails.application.routes.draw do
   
-  resources :tipi_scuole, only: [:index, :edit, :update]
+  resources :tipi_scuole, only: [:index, :update]
   
   mount Sidekiq::Web => "/sidekiq"
 

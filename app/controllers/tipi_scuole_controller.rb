@@ -6,9 +6,6 @@ class TipiScuoleController < ApplicationController
     @tipi_scuole = TipoScuola.all
   end
 
-  def edit
-  end
-
   def update
     @tipo_scuola = TipoScuola.find(params[:id])
     if @tipo_scuola.update(tipo_scuola_params)

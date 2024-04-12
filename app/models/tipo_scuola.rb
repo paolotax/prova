@@ -9,8 +9,8 @@
 #  updated_at :datetime         not null
 #
 class TipoScuola < ApplicationRecord
+  
   belongs_to :import_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
-
 
   GRADI = [["infanzia", "I"], ["primaria", "E"], ["secondaria I grado", "M"], ["secondaria II grado", "N"], ["altro", "altro"]]
 
