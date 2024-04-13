@@ -104,6 +104,10 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
 
+  scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
+  scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
+
+
   def self.filtra(params)
     adozioni = all
     adozioni = adozioni.da_acquistare if params[:da_acquistare] == "si"
@@ -116,6 +120,7 @@ class ImportAdozione < ApplicationRecord
       end
     end
     
+    adozioni = adozioni.where(CODICESCUOLA: params[:codice_scuola]) if params[:codice_scuola].present?
     adozioni = adozioni.where(ANNOCORSO: params[:classe]) if params[:classe].present?
     adozioni = adozioni.where(DISCIPLINA: params[:disciplina]) if params[:disciplina].present?
     adozioni = adozioni.where(EDITORE: params[:editore]) if params[:editore].present?

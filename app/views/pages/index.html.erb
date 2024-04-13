@@ -22,14 +22,14 @@
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
 				
 				<% if current_user.tappe.last %>
-					<%= link_to "#{current_user.tappe.last.giro.titolo} di oggi", tappe_giro_path(current_user.tappe.last.giro, filter: "oggi" ), class: "btn btn-outline" %>
+					<%= link_to "Tappe di oggi", tappe_giro_path(current_user.tappe.last.giro, filter: "oggi" ), class: "btn btn-outline" %>
 				<% else %>
 					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
 				<% end %>
 
 				<%= link_to "Appunti di oggi", appunti_path(filter: "oggi"), class: "btn btn-outline" %>
 				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
-				<%= link_to "Adozioni", import_adozioni_path, class: "btn btn-outline" %>
+				<%= link_to "Adozioni di oggi", import_adozioni_path(filter: "oggi"), class: "btn btn-outline" %>
 				<%= link_to "Libri", libri_path, class: "btn btn-outline" %>
 				<%= link_to "Stats", stats_path, class: "btn btn-outline" %>
 				
