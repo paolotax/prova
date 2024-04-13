@@ -11,21 +11,22 @@
 		<% if current_user %>
 
 			<%= turbo_frame_tag "Combobox" do %>
-				<div class="youtubes m-10 mx-auto">
+				<div class="youtubes mx-auto">
 					<%= form_with url: import_adozioni_path do |form| %>
-						<%= form.combobox :search, import_adozioni_path, placeholder: "in costruzione... sorry!",
+						<%#= form.combobox :search, import_adozioni_path, placeholder: "in costruzione... sorry!",
 							id: "adozioni-search", mobile_at: "0px" %>
 					<% end %>
 				</div>
 			<% end %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
-				<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
+				<%= link_to "Giri", tappe_giro_path(current_user.giri.last, filter: "oggi" ), class: "btn btn-outline" %>
 				<%= link_to "Appunti", appunti_path, class: "btn btn-outline" %>
 				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
 				<%= link_to "Adozioni", import_adozioni_path, class: "btn btn-outline" %>
+				<%= link_to "Libri", libri_path, class: "btn btn-outline" %>
 				<%= link_to "Stats", stats_path, class: "btn btn-outline" %>
-
+				
 				
 				<%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
 					class: "text-center px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"

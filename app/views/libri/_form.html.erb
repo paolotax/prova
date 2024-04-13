@@ -10,15 +10,18 @@
       </ul>
     </div>
   <% end %>
+  
+  <div class="flex justify-between">
+    
+    <div class="my-5 flex flex-col">
+      <%= form.label :categoria %>
+      <%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :user_id %>
-    <%= form.text_field :user_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :editore_id %>
-    <%= form.text_field :editore_id, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <div class="my-5">
+      <%= form.label :editore_id %>
+      <%= form.collection_select :editore_id, current_user.editori.order(:editore), :id, :editore, { prompt: true },  class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
   </div>
 
   <div class="my-5">
@@ -26,34 +29,29 @@
     <%= form.text_field :titolo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="hidden my-5">
     <%= form.label :codice_isbn %>
     <%= form.text_field :codice_isbn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :prezzo_in_cents %>
-    <%= form.number_field :prezzo_in_cents, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.label :prezzo %>
+    <%= form.number_field :prezzo, step: 0.01, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="hidden my-5">
     <%= form.label :classe %>
     <%= form.number_field :classe, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="hidden my-5">
     <%= form.label :disciplina %>
     <%= form.text_field :disciplina, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="hidden my-5">
     <%= form.label :note %>
     <%= form.text_area :note, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :categoria %>
-    <%= form.text_field :categoria, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">

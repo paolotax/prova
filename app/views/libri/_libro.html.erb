@@ -1,52 +1,35 @@
-<div id="<%= dom_id libro %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= libro.user_id %>
-  </p>
+<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-8 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
+  
+    <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600"  %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Editore:</strong>
-    <%= libro.editore_id %>
-  </p>
+	<%= tag.div class: "col-span-2 flex flex-col" do %>
+		<%= tag.div libro.titolo, class: "font-bold" %>
+		<%= tag.div libro.editore.editore, class: "text-xs font-semibold text-gray-600" %>	
+		<%= tag.div libro.codice_isbn %>
+	<% end %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Titolo:</strong>
-    <%= libro.titolo %>
-  </p>
+    <%= tag.div  libro.prezzo, class: "col-span-1" %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Codice isbn:</strong>
-    <%= libro.codice_isbn %>
-  </p>
+	<%= tag.div class: "col-span-2 flex flex-col" do %>
+		<%= tag.div  libro.classe %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Prezzo in cents:</strong>
-    <%= libro.prezzo_in_cents %>
-  </p>
+		<%= tag.div  libro.disciplina %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Classe:</strong>
-    <%= libro.classe %>
-  </p>
+    	<%= libro.note %>
+	<% end %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Disciplina:</strong>
-    <%= libro.disciplina %>
-  </p>
+  	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Note:</strong>
-    <%= libro.note %>
-  </p>
+		<%= link_to edit_libro_path(libro), 
+						data: { turbo_frame: :modal, action: "click->dialog#open"},
+						class: "mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm text-gray-400 hover:text-gray-500 hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
+			<%= inline_svg_tag "icon-pencil.svg" %>
+		<% end %>
+        <%= button_to libro_path(libro), 
+				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
+        	    class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
+            <%= inline_svg_tag "icon-trash.svg" %>
+        <% end %>
+    <% end %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Categoria:</strong>
-    <%= libro.categoria %>
-  </p>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show this libro", libro, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this libro", edit_libro_path(libro), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
-</div>
+<% end %>

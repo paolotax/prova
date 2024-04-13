@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "libri-list" do %>
+
+    <div id="libri-list" class="min-w-full">
+        <%= render current_user.libri.order(:categoria, :titolo, :classe).all %>
+    </div>
+
+<% end %>

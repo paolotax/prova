@@ -1,14 +1,19 @@
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<%= heading do %>	
+	<%= h1 {"Libri"} %>
+	<%= link_to new_libro_path(@libro), 
+				data: { turbo_frame: :modal, action: "click->dialog#open"}, class: "w-16 btn btn-indigo" do %>
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+			<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+		</svg>
+		<span>Nuovo</span>
+	<% end %>
+<% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Libri</h1>
-    <%= link_to "New libro", new_libro_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
-  </div>
 
-  <div id="libri" class="min-w-full">
-    <%= render @libri %>
-  </div>
-</div>
+<%= turbo_frame_tag "search_results" do %>
+    <div class="w-full">
+        <div id="libri-list" class="min-w-full">
+            <%= render @libri %>
+        </div>
+    </div>
+<% end %>
