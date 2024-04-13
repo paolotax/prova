@@ -8,7 +8,7 @@
 		<%= tag.div libro.codice_isbn %>
 	<% end %>
 
-    <%= tag.div  libro.prezzo, class: "col-span-1" %>
+    <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
 
 	<%= tag.div class: "col-span-2 flex flex-col" do %>
 		<%= tag.div  libro.classe %>

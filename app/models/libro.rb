@@ -1,4 +1,7 @@
 class Libro < ApplicationRecord
+
+  monetize :prezzo_in_cents
+
   belongs_to :user
   belongs_to :editore
 
@@ -11,6 +14,7 @@ class Libro < ApplicationRecord
     order(:categoria).distinct.pluck(:categoria).compact
   end
 
+  # ora così poi devo vedere come funziona money-rails
   def prezzo
     prezzo_in_cents.to_f / 100
   end
