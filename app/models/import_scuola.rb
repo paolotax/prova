@@ -188,5 +188,11 @@ class ImportScuola < ApplicationRecord
                         .order(:ANNOCORSO, :SEZIONEANNO)
                         .map { |a| "#{a.ANNOCORSO}#{a.SEZIONEANNO}" }
   end
+
+
+  def self.con_appunti(relation)
+    ids = relation.pluck(:import_scuola_id).uniq
+    ImportScuola.where('import_scuole.id in (?)', ids)
+  end
   
 end

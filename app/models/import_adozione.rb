@@ -104,6 +104,8 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
 
+  #scope :mie_adozioni_new, -> { where(EDITORE: User.current.miei_editori) }
+
   scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
   scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
 
@@ -133,22 +135,10 @@ class ImportAdozione < ApplicationRecord
     user_editori.include?(self.EDITORE)
   end
 
-  def codice_ministeriale
-    self.import_scuola.codice_ministeriale
-  end
 
-  def scuola
-    self.import_scuola.scuola
-  end
+  delegate :codice_ministeriale, :scuola, :citta, :tipo_scuola, :tipo_nome, to: :import_scuola
+  
 
-  def tipo_scuola
-    self.import_scuola.tipo_scuola
-  end
-
-  def citta 
-    self.import_scuola.citta
-  end
- 
   def anno
     self.ANNOCORSO
   end

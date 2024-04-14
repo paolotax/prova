@@ -5,7 +5,7 @@ class ImportScuoleController < ApplicationController
 
   def index
 
-    @import_scuole = current_user.import_scuole.includes(:import_adozioni)
+    @import_scuole = current_user.import_scuole.includes(:import_adozioni, :appunti)
 
     if params[:search].present?
       if params[:search_query] == "all"
@@ -16,6 +16,7 @@ class ImportScuoleController < ApplicationController
     end
 
     @import_scuole = @import_scuole.order(:CODICEISTITUTORIFERIMENTO, :CODICESCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
+    @import_scuole = @import_scuole.con_appunti(current_user.appunti.non_archiviati) if params[:con_appunti] == "non_archiviati"
 
     @conteggio_scuole   = @import_scuole.count
     @conteggio_classi   = @import_scuole.sum(&:classi_count) 

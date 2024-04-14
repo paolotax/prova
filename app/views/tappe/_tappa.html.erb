@@ -3,7 +3,7 @@
 <%= tag.div id: dom_id(tappa),
         class: [ 
             "group px-2 py-1.5 grid  bg-white border-b rounded-md shadow-md items-center": true,
-            "grid-cols-6": !with_scuola,
+            "grid-cols-4 gap-2 mb-2": !with_scuola,
             "grid-cols-8": with_scuola
         ] do %>
 
@@ -18,26 +18,28 @@
     <% end %>
 
     <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-    
-    
-        <% if with_scuola %>
-            <%= tag.div class: "col-span-6" do %>  
-                <%= render partial: "import_scuole/scuola_small", 
-                    locals: { 
-                                import_scuola: tappa.tappable, 
-                                with_navigation: false, 
-                                with_logo: false, 
-                                with_link: true,
-                                with_info: true
-                            } 
-                %>
+        
+    <% if with_scuola %>
+        <%= tag.div class: "col-span-6" do %>  
+            <%= render partial: "import_scuole/scuola_small", 
+                locals: { 
+                            import_scuola: tappa.tappable, 
+                            with_navigation: false, 
+                            with_logo: false, 
+                            with_link: true,
+                            with_info: true
+                        } 
+            %>
 
-            <% end %>
-
-            <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-        <% else %> 
-            <%= tag.div tappa.titolo, class: "col-span-4 text-xs italic font-semibold text-gray-400" %>
         <% end %>
+
+        <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+    <% else %>
+        <%= tag.div class: "col-span-3 flex flex-col" do %>
+            <%= tag.div tappa.giro.titolo, class: "text-xs  font-bold text-gray-600" %>
+            <%= tag.div tappa.titolo, class: "text-xs italic font-semibold text-gray-400" %>
+        <% end %>
+    <% end %>
 
     
 <% end %>
