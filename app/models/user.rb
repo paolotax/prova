@@ -33,12 +33,23 @@ class User < ApplicationRecord
   has_rich_text :card
 
   has_many :user_scuole, dependent: :destroy  
+  
   has_many :import_scuole, through: :user_scuole
-  has_many :import_adozioni, through: :import_scuole 
+  has_many :import_adozioni, through: :import_scuole   
+  
+  has_many :mie_adozioni, -> { 
+      where( EDITORE: Current.user.miei_editori )  
+    }, 
+    through: :import_scuole, source: :import_adozioni
+
   has_many :mandati, dependent: :destroy  
   has_many :editori, through: :mandati
-  has_many :adozioni, through: :editori_users
+  
+  # delirio da riprovare 
+  #has_many :adozioni, through: :mandati, source: :import_adozione
+  
   has_many :appunti, dependent: :destroy
+
   has_many :giri, dependent: :destroy
   has_many :tappe, dependent: :destroy, through: :giri
   has_many :libri, dependent: :destroy
@@ -55,10 +66,6 @@ class User < ApplicationRecord
     editori.collect{|e| e.editore}
   end
   
-  def mie_adozioni
-    import_adozioni.where(editore: editori.collect{|e| e.editore})
-  end
-
   def avatar_thumbnail
     if avatar.attached?
       avatar.variant(resize: "150x150!").processed

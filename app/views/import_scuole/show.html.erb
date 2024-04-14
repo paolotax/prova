@@ -51,7 +51,7 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Adozioni per titolo
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @import_scuola.mie_adozioni(current_user.miei_editori).size %> su <%= @import_scuola.adozioni_count %>
+								<%= @import_scuola.mie_adozioni.size %> su <%= @import_scuola.adozioni_count %>
 							</span>
 						</a>
 

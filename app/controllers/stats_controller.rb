@@ -18,7 +18,7 @@ class StatsController < ApplicationController
   end
 
   def execute    
-    @miei_editori = current_user.editori.collect{|e| e.editore}
+    @miei_editori = current_user.miei_editori
     
     @result = @stat.execute current_user
     respond_to do |format|

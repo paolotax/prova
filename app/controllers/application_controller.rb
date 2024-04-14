@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
 
   before_action :congigure_permitted_parameters, if: :devise_controller?
   
+  before_action :set_current_user 
+
   include Pagy::Backend
 
   protected
@@ -16,6 +18,10 @@ class ApplicationController < ActionController::Base
     end
 
   private
+
+    def set_current_user
+      Current.user = current_user if current_user
+    end
 
     def remember_page
         session[:previous_pages] ||= []

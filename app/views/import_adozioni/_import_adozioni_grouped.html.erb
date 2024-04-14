@@ -11,7 +11,7 @@
                 <%= render partial: "import_adozioni/card_titolo", locals: { 
                     import_adozione: c, 
                     is_header: true, 
-                    is_mia: c.mia_adozione?(current_user.miei_editori)  
+                    is_mia: c.mia_adozione?  
                 } %>
             <% end %>
 
@@ -23,7 +23,7 @@
                     <%= render partial: "import_adozioni/card_classe", locals: { 
                         import_adozione: a, 
                         is_header: false, 
-                        is_mia: a.mia_adozione?(current_user.miei_editori) 
+                        is_mia: a.mia_adozione? 
                     } %>
             
                 <% end %>
@@ -50,7 +50,7 @@
                     <%= render partial: "import_adozioni/card_titolo", locals: { 
                         import_adozione: a, 
                         is_header: false, 
-                        is_mia: a.mia_adozione?(current_user.miei_editori) 
+                        is_mia: a.mia_adozione? 
                     } %>
 
                 <% end %>

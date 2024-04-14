@@ -108,8 +108,8 @@ class ImportScuola < ApplicationRecord
     marchi.size
   end
 
-  def mie_adozioni(user_editori = [])
-    import_adozioni.mie_adozioni(user_editori)
+  def mie_adozioni
+    Current.user.mie_adozioni
   end
 
   def self.zone

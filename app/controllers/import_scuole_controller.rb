@@ -31,8 +31,8 @@ class ImportScuoleController < ApplicationController
   end
 
   def show
-    @miei_editori = current_user.editori.collect{|e| e.editore}
-  end 
+    @miei_editori = current_user.miei_editori
+  end
   
   def new
     @import_scuola = ImportScuola.new

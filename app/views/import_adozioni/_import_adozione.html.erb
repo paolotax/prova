@@ -37,8 +37,8 @@
 	</div>
 	<%= tag.div class: [
 			"p-3": true,
-			"bg-gray-200":   !import_adozione.mia_adozione?(@miei_editori),
-			"bg-yellow-200": import_adozione.mia_adozione?(@miei_editori)
+			"bg-gray-200":   !import_adozione.mia_adozione?,
+			"bg-yellow-200": import_adozione.mia_adozione?
 		] do
 	%>
 		<div class="truncate">
@@ -90,8 +90,8 @@
 	</div>
 	<%= tag.div class: [
 			"pt-5 px-3 flex justify-between": true,
-			"bg-gray-200": !import_adozione.mia_adozione?(@miei_editori),
-			"bg-yellow-200": import_adozione.mia_adozione?(@miei_editori)
+			"bg-gray-200": !import_adozione.mia_adozione?,
+			"bg-yellow-200": import_adozione.mia_adozione?
 		] do
 	%>
 

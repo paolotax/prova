@@ -7,10 +7,10 @@
 					class: "col-span-4 text-xs text-slate-500 hover:text-sky-500 pb-0.5" 
 		%>
 		<%= tag.div class: "col-span-1" do %>
-			<%= render partial: "import_adozioni/card_classe", locals: { import_adozione: import_adozione, is_header: true, is_mia: import_adozione.mia_adozione?(current_user.miei_editori) } %>
+			<%= render partial: "import_adozioni/card_classe", locals: { import_adozione: import_adozione, is_header: true, is_mia: import_adozione.mia_adozione?} %>
 		<% end %>
 		<%= tag.div class: "col-span-3" do %>
-			<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione, is_header: false, is_mia: import_adozione.mia_adozione?(current_user.miei_editori) } %>
+			<%= render partial: "import_adozioni/card_titolo", locals: { import_adozione: import_adozione, is_header: false, is_mia: import_adozione.mia_adozione?} %>
 		<% end %>	
 	<% end %>
 

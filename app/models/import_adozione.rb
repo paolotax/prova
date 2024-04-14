@@ -102,9 +102,7 @@ class ImportAdozione < ApplicationRecord
 
   scope :da_acquistare, -> { where(DAACQUIST: "Si") }
 
-  scope :mie_adozioni, -> (user_editori = []) { where(EDITORE: user_editori) }
-
-  #scope :mie_adozioni_new, -> { where(EDITORE: User.current.miei_editori) }
+  scope :mie_adozioni, -> { where(EDITORE: Current.user.miei_editori) }
 
   scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
   scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
@@ -131,8 +129,8 @@ class ImportAdozione < ApplicationRecord
   
   end
 
-  def mia_adozione?(user_editori) 
-    user_editori.include?(self.EDITORE)
+  def mia_adozione?
+    Current.user.miei_editori.include?(self.EDITORE)
   end
 
 

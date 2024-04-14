@@ -11,11 +11,11 @@ class ImportAdozioniController < ApplicationController
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
 
     else      
-      @miei_editori = current_user.editori.collect{|e| e.editore}
-      @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori) if params[:mie_adozioni] == "si"
+
+      @import_adozioni = @import_adozioni.mie_adozioni if params[:mie_adozioni] == "si"
       
-      @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori).nel_baule_di_oggi if params[:filter] == "oggi"
-      @import_adozioni = @import_adozioni.mie_adozioni(@miei_editori).nel_baule_di_domani if params[:filter] == "domani"
+      @import_adozioni = @import_adozioni.mie_adozioni.nel_baule_di_oggi if params[:filter] == "oggi"
+      @import_adozioni = @import_adozioni.mie_adozioni.nel_baule_di_domani if params[:filter] == "domani"
       
       @import_adozioni = @import_adozioni.filtra(params)
       

@@ -7,8 +7,8 @@ module ImportAdozioniHelper
   def card_sezione(adozione)  
     tag.div class: [
         "col-span-1 p-2.5 border rounded-md": true,
-        "bg-white":   !adozione.mia_adozione?(current_user.miei_editori),
-        "bg-yellow-200": adozione.mia_adozione?(current_user.miei_editori)    
+        "bg-white":   !adozione.mia_adozione?,
+        "bg-yellow-200": adozione.mia_adozione?    
       ] do
       link_to new_appunto_path(import_scuola_id: adozione.import_scuola.id, import_adozione_id: adozione.id),
                       data: { turbo_frame: :modal, action: "click->dialog#open"},
