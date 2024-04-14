@@ -1,8 +1,19 @@
 <div class="flex">
 	<div class="w-full mx-auto">
 		
-		<div class="lg:w-1/2">
-			<%= render @import_scuola %>
+		<div class="flex flex-col sm:flex-row w-full">
+			<div class="sm:w-3/5">
+				<%= render @import_scuola %>
+			</div>
+			<div class="pl-2">
+				<%= render partial: "tappe/tappa", 
+						collection: @import_scuola.tappe.order(data_tappa: :desc), 
+						locals: { 
+							with_scuola: false,
+							with_checkbox: false 
+						} 
+				%>
+			</div>
 		</div>
 
 		<div data-controller="tax-tabs"

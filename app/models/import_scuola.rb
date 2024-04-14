@@ -159,7 +159,8 @@ class ImportScuola < ApplicationRecord
   end
 
   def citta
-    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
+    #ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
+    self.DESCRIZIONECOMUNE.upcase
   end
 
   def tipo_scuola

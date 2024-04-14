@@ -1,27 +1,43 @@
-<%= tag.div id: dom_id(tappa),
-        class: "group px-2 py-1.5  grid grid-cols-8 bg-white border-b rounded-md shadow-md items-center" do %>
+ <%# locals: ( tappa:, with_scuola: true, with_checkbox: true ) -%>
 
-    <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
-                      multiple: true,
-                      form: :bulk_update_tappe_form,
-                      checked: false,
-                      class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
-                      data: { tax_checkbox_select_all_target: 'checkbox' }
-                    } %>
+<%= tag.div id: dom_id(tappa),
+        class: [ 
+            "group px-2 py-1.5 grid  bg-white border-b rounded-md shadow-md items-center": true,
+            "grid-cols-6": !with_scuola,
+            "grid-cols-8": with_scuola
+        ] do %>
+
+    <% if with_checkbox %>
+        <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
+                        multiple: true,
+                        form: :bulk_update_tappe_form,
+                        checked: false,
+                        class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
+                        data: { tax_checkbox_select_all_target: 'checkbox' }
+                        } %>
+    <% end %>
 
     <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
     
-    <%= tag.div class: "col-span-6" do %>  
-        <%= render partial: "import_scuole/scuola_small", 
-            locals: { 
-                        import_scuola: tappa.tappable, 
-                        with_navigation: false, 
-                        with_logo: false, 
-                        with_link: true,
-                        with_info: true
-                    } 
-        %>
-        <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-    <% end %>    
+    
+        <% if with_scuola %>
+            <%= tag.div class: "col-span-6" do %>  
+                <%= render partial: "import_scuole/scuola_small", 
+                    locals: { 
+                                import_scuola: tappa.tappable, 
+                                with_navigation: false, 
+                                with_logo: false, 
+                                with_link: true,
+                                with_info: true
+                            } 
+                %>
+
+            <% end %>
+
+            <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+        <% else %> 
+            <%= tag.div tappa.titolo, class: "col-span-4 text-xs italic font-semibold text-gray-400" %>
+        <% end %>
+
     
 <% end %>
