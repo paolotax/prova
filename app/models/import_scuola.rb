@@ -109,7 +109,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def mie_adozioni
-    Current.user.mie_adozioni
+    import_adozioni.mie_adozioni
   end
 
   def self.zone
