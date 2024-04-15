@@ -26,7 +26,8 @@ class ImportAdozioniController < ApplicationController
     end
 
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
-
+    #@import_adozioni = @import_adozioni.raggruppate
+    
     set_page_and_extract_portion_from @import_adozioni
 
     respond_to do |format|

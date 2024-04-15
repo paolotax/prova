@@ -84,6 +84,14 @@ class ImportAdozione < ApplicationRecord
 
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
   
+  scope :raggruppate, -> { 
+    order([:ANNOCORSO, :DISCIPLINA, :TITOLO, :CODICEISBN, :EDITORE])
+    .group(:ANNOCORSO, :DISCIPLINA, :TITOLO, :CODICEISBN, :EDITORE)
+    .select(:ANNOCORSO, :DISCIPLINA, :TITOLO, :CODICEISBN, :EDITORE)
+    .select("ARRAY_AGG(import_adozioni.id) AS import_adozioni_ids")
+    .select("COUNT(import_adozioni.id) as numero_sezioni") 
+  }
+
   scope :grouped_titolo, -> { 
     order(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
     .group(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
