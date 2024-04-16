@@ -13,8 +13,10 @@
 #  updated_at  :datetime         not null
 #
 class Giro < ApplicationRecord
+  
   belongs_to :user
-  has_many :tappe, dependent: :destroy
+  
+  has_many :tappe, dependent: :nullify
 
   validates :titolo, presence: true
   

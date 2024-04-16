@@ -16,7 +16,8 @@
 #
 class Tappa < ApplicationRecord
 
-  belongs_to :giro
+  belongs_to :user
+  belongs_to :giro, optional: true
   belongs_to :tappable, polymorphic: true
 
   belongs_to :import_scuola, class_name: 'ImportScuola', foreign_key: 'tappable_id'

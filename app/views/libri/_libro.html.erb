@@ -2,7 +2,7 @@
   
     <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600"  %>
 
-	<%= tag.div class: "col-span-2 flex flex-col" do %>
+	<%= tag.div class: "col-span-4 flex flex-col" do %>
 		<%= tag.div libro.titolo, class: "font-bold" %>
 		<%= tag.div libro.editore.editore, class: "text-xs font-semibold text-gray-600" %>	
 		<%= tag.div libro.codice_isbn %>
@@ -10,13 +10,6 @@
 
     <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
 
-	<%= tag.div class: "col-span-2 flex flex-col" do %>
-		<%= tag.div  libro.classe %>
-
-		<%= tag.div  libro.disciplina %>
-
-    	<%= libro.note %>
-	<% end %>
 
   	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
 
