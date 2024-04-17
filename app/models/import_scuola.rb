@@ -151,7 +151,11 @@ class ImportScuola < ApplicationRecord
   end
 
   def address
-    [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(", ")
+    [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].compact.join(", ")
+  end
+
+  def to_coordinates
+    Geocoder.search(self.address)&.first&.coordinates || []
   end
 
   
