@@ -149,6 +149,7 @@ GEM
     geared_pagination (1.2.0)
       activesupport (>= 5.0)
       addressable (>= 2.5.0)
+    geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
     groupdate (6.4.0)
@@ -197,6 +198,7 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mapkick-rb (0.1.5)
     marcel (1.0.4)
     matrix (0.4.2)
     method_source (1.0.0)
@@ -423,6 +425,7 @@ DEPENDENCIES
   devise-i18n
   faker
   geared_pagination (~> 1.2)
+  geocoder
   groupdate (~> 6.4)
   highline (~> 2.0.3)
   hotwire_combobox
@@ -431,6 +434,7 @@ DEPENDENCIES
   inline_svg
   jbuilder
   letter_opener
+  mapkick-rb
   money-rails (~> 1.15)
   omniauth-github (~> 2.0)
   omniauth-google-oauth2 (~> 1.1)

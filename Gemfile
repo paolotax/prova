@@ -84,3 +84,6 @@ gem "geared_pagination", "~> 1.2"
 gem "groupdate", "~> 6.4"
 
 gem 'rack-mini-profiler', require: false
+
+gem "mapkick-rb"
+gem "geocoder"

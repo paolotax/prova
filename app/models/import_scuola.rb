@@ -150,6 +150,11 @@ class ImportScuola < ApplicationRecord
     [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(" ")
   end
 
+  def address
+    [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(", ")
+  end
+
+  
   def codice_ministeriale
     self.CODICESCUOLA
   end

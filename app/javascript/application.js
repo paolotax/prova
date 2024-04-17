@@ -5,6 +5,8 @@ import "controllers"
 import "trix"
 import "@rails/actiontext"
 
+import "mapkick/bundle"
+
 
 console.log("Hello from application.js")
 
