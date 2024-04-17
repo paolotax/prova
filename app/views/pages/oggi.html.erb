@@ -1,0 +1,22 @@
+<%= tag.div do %>
+    <%= tag.div "Tappe di oggi", class: "text-2xl font-bold p-4" %>
+    <%= render partial: "tappe/tappe_grouped" %>
+<% end %>
+
+<%= tag.div do %>
+    <%= tag.div "Appunti di oggi", class: "text-2xl font-bold p-4" %>
+    <%= render @appunti_di_oggi %>
+<% end %>
+
+
+<%= tag.div do %>
+    <%= tag.div "Adozioni in scorrimento OGGI:", class: "text-2xl font-bold p-4" %>
+    <% @adozioni_di_oggi.where(ANNOCORSO: [1,2,4]).where.not(DISCIPLINA: "RELIGIONE").raggruppate.each do |a| %>
+        <%= tag.div class: "grid grid-cols-8 gap-2" do %>
+            <%= tag.div a.disciplina, class: "col-span-3" %>
+            <%= tag.div a.classe, class: "col-span-1 text-left" %>
+            <%= tag.div a.titolo, class: "col-span-3" %>
+            <%= tag.div a.numero_sezioni, class: "col-span-1 text-center" %>
+        <% end %>
+    <% end %>
+<% end %>

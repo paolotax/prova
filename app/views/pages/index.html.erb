@@ -21,37 +21,28 @@
 
 			<%#= tappe_coordinates %>
 
-			<%= js_map get_scuole_coordinates(current_user.import_scuole.con_appunti(current_user.appunti.non_archiviati).compact) %>
+			<%#= js_map get_scuole_coordinates(current_user.import_scuole.con_appunti(current_user.appunti.non_archiviati).compact) %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
-				<%= link_to "Scuole con appunti", import_scuole_path(con_appunti: "non_archiviati"), class: "btn btn-outline" %>
+				
+				<%= link_to "OGGI", oggi_path, class: "btn btn-outline" %>
+				
+				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
 				
 				<% unless current_user.tappe.empty? %>
-					<%= link_to "Tappe di oggi", tappe_path(filter: "oggi" ), class: "btn btn-outline" %>
+					<%= link_to "Tappe", tappe_path, class: "btn btn-outline" %>
 				<% else %>
 					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
 				<% end %>
 
-				<%= link_to "Appunti di oggi", appunti_path(filter: "oggi"), class: "btn btn-outline" %>
-				<%= link_to "Adozioni di oggi", import_adozioni_path(filter: "oggi"), class: "btn btn-outline" %>
+				<%= link_to "Appunti", appunti_path, class: "btn btn-outline" %>
+				<%= link_to "Adozioni", import_adozioni_path, class: "btn btn-outline" %>
 				<%= link_to "Libri", libri_path, class: "btn btn-outline" %>
 				<%= link_to "Stats", stats_path, class: "btn btn-outline" %>
 								
 				<%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
 					class: "text-center px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"
 				%>
-			<% end %>
-
-			<%= tag.div do%>
-				<%= tag.div "Adozioni in scorrimento OGGI:", class: "text-xl font-bold" %>
-				<% Current.user.mie_adozioni.nel_baule_di_oggi.where(ANNOCORSO: [1,2,4]).where.not(DISCIPLINA: "RELIGIONE").raggruppate.each do |a| %>
-					<%= tag.div class: "grid grid-cols-8 gap-2" do %>
-						<%= tag.div a.disciplina, class: "col-span-3" %>
-						<%= tag.div a.classe, class: "col-span-1 text-left" %>
-						<%= tag.div a.titolo, class: "col-span-3" %>
-						<%= tag.div a.numero_sezioni, class: "col-span-1 text-center" %>
-					<% end %>
-				<% end %>
 			<% end %>
 
 		<% else %>	

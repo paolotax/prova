@@ -69,8 +69,8 @@ class Appunto < ApplicationRecord
   scope :archiviati, -> { where(stato: "archiviato") }
   scope :non_archiviati, -> { where.not(stato: "archiviato").where.not(stato: "completato") }
 
-  scope :nel_baule_di_oggi, -> { where(import_scuola_id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
-  scope :nel_baule_di_domani, -> { where(import_scuola_id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
+  scope :nel_baule_di_oggi, -> { where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
+  scope :nel_baule_di_domani, -> { where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
 
   scope :saggi, -> { where(nome: "saggio").where.not(import_adozione_id: nil) }
   scope :seguiti, -> { where(nome: "seguito").where.not(import_adozione_id: nil) }

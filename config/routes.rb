@@ -84,6 +84,8 @@ Rails.application.routes.draw do
   
   resources :import_adozioni, only: [:index, :show]
 
+  get 'oggi', to: 'pages#oggi'
+  
   get 'clienti',      to: 'clienti#index'
   get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  

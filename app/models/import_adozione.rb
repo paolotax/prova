@@ -112,8 +112,8 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> { where(EDITORE: Current.user.miei_editori) }
 
-  scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
-  scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Tappa.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
+  scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
+  scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
 
 
   def self.filtra(params)
