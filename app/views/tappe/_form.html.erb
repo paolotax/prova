@@ -14,7 +14,9 @@
     <%= tag.div class: "my-4" do %>  
         <%= tag.div class: "rounded-t-lg bg-gray-100 border px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
             giro:
-            <%= tappa.giro.titolo %>
+            <%= form.combobox :giro_id, current_user.giri.all,
+                name_when_new: "tappa[new_giro]" %>
+            
         <% end %>
         <%= tag.div class: "rounded-b-lg bg-white border border-t-0 px-2 py-1.5" do %>
            <%= render partial: "import_scuole/scuola_small", locals: { 

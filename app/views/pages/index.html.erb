@@ -26,8 +26,8 @@
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
 				<%= link_to "Scuole con appunti", import_scuole_path(con_appunti: "non_archiviati"), class: "btn btn-outline" %>
 				
-				<% if current_user.tappe.last %>
-					<%= link_to "Tappe di oggi", tappe_giro_path(current_user.tappe.last.giro, filter: "oggi" ), class: "btn btn-outline" %>
+				<% unless current_user.tappe.empty? %>
+					<%= link_to "Tappe di oggi", tappe_path(filter: "oggi" ), class: "btn btn-outline" %>
 				<% else %>
 					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
 				<% end %>

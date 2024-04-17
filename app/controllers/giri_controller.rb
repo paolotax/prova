@@ -58,7 +58,7 @@ class GiriController < ApplicationController
     @scuole = current_user.import_scuole.per_comune_e_direzione
     @scuole.each_with_index do |s, i|
       if empty_tappe || !@giro.tappe.where(tappable: s).exists?
-        Tappa.create!(tappable: s, ordine: i+1, giro: @giro)      
+        Tappa.create!(user: current_user, tappable: s, ordine: i+1, giro: @giro)      
       end  
     end
 

@@ -2,27 +2,23 @@ class TappeController < ApplicationController
   before_action :set_tappa, only: %i[ show edit update destroy ]
 
   def index
-    @tappe = Tappa.all
-  end
 
-
-  def tappe
-    @tappe = @giro.tappe.includes(:tappable)
+    @tappe = current_user.tappe
     
     if params[:filter]  == 'programmate'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.programmate.pluck(:tappable_id))
+      @tappe = @tappe.delle_scuole_di(@tappe.programmate.pluck(:tappable_id))
     elsif params[:filter]  == 'oggi'    
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_oggi.pluck(:tappable_id))
+      @tappe = @tappe.delle_scuole_di(@tappe.di_oggi.pluck(:tappable_id))
     elsif params[:filter]  == 'domani'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_domani.pluck(:tappable_id))
+      @tappe = @tappe.delle_scuole_di(@tappe.di_domani.pluck(:tappable_id))
     elsif params[:filter]  == 'completate'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.completate.pluck(:tappable_id))
+      @tappe = @tappe.delle_scuole_di(@tappe.completate.pluck(:tappable_id))
     elsif params[:filter]  == 'programmare'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.da_programmare.pluck(:tappable_id))
+      @tappe = @tappe.delle_scuole_di(@tappe.da_programmare.pluck(:tappable_id))
     end
 
-    @tappe = @tappe.delle_scuole_di(@giro.tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
-    @tappe = @tappe.delle_scuole_di(@giro.tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
+    @tappe = @tappe.delle_scuole_di(@tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
+    @tappe = @tappe.delle_scuole_di(@tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
 
     if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
       @tappe = @tappe.send(params[:sort])
@@ -48,12 +44,12 @@ class TappeController < ApplicationController
   end
 
 
-  
+
   def show
   end
 
   def new
-    @tappa = Tappa.new
+    @tappa = current_user.tappe.build(giro: current_user.giri.last)
   end
 
   def edit
@@ -83,6 +79,9 @@ class TappeController < ApplicationController
   end
 
   def update
+
+    #raise params.inspect
+
     respond_to do |format|
       if @tappa.update(tappa_params)
         format.turbo_stream
@@ -110,6 +109,7 @@ class TappeController < ApplicationController
       @selected_tappe.each do |tappa|
         t = tappa.dup
         t.data_tappa = params[:data_tappa].to_date
+        t.giro = Current.user.giri.last
         t.titolo = params[:titolo]
         t.save
         @nuove_tappe << t
@@ -133,6 +133,7 @@ class TappeController < ApplicationController
     @tappa = Tappa.find(params[:id])
     @giro = @tappa.giro
     @nuova_tappa = @tappa.dup
+    @nuova_tappa.giro = Current.user.giri.last
 
     if params[:new] == "true"
       @nuova_tappa.data_tappa = nil
@@ -185,7 +186,7 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :new_giro)
     end
 
     def mass_oggi?

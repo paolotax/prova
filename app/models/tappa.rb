@@ -55,4 +55,14 @@ class Tappa < ApplicationRecord
   end
 
 
+
+
+
+  def new_giro=(new_giro)
+    giro = Current.user.giri.find_or_create_by(titolo: new_giro)
+    giro.save
+    self.giro = giro
+  end
+
+
 end

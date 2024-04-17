@@ -1,0 +1,27 @@
+<% if @page.first? %> 
+    
+
+
+<% else %>
+
+    <%= turbo_stream.replace "load_more" do %>
+        
+        <%= render partial: "tappe/tappe_grouped" %>
+
+        <% if @page.last? %>
+            <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>
+        <% else %>
+            <%= turbo_frame_tag "load_more", src: tappe_path(sort: params[:sort],  giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
+                <%= render 'shared/lazy_loading' %>
+            <% end %>
+        <% end %>
+    <% end %>
+
+<% end %>
+
+<%= turbo_stream.replace "nr-tappe" do %>
+    <%= tag.div pluralize(@page.recordset.records_count, "tappa", "tappe"), id: "nr-tappe" %>
+<% end %>
+
+
+

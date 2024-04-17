@@ -1,6 +1,6 @@
 <%# da correggere mel login non deve comparire la search %>
 
-<% if  (['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti'].any?(params[:controller]) && (params[:action] != 'edit' && params[:action] != 'new')) ||
+<% if  (['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti', "tappe"].any?(params[:controller]) && (params[:action] != 'edit' && params[:action] != 'new')) ||
 	 (params[:controller] == "giri" && params[:action] == "tappe")  %>
 	
 	<%= form_with( url: url_for(controller: params[:controller], action: params[:action]),

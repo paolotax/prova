@@ -14,7 +14,14 @@
     <%= tag.div class: "#{ check_box ? "" : "col-start-2" } col-span-1" do %> 
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
     <% end %>
-    
-    <%= tag.div tappa.titolo, class: "col-span-3 text-xs italic font-semibold text-gray-400" %>      
+
+
+    <%= tag.div class: "col-span-3 flex flex-col" do %>
+
+        <%= tag.div tappa&.giro&.titolo, class: "text-xs italic font-semibold text-gray-700" %>   
+        
+        <%= tag.div tappa.titolo, class: "text-xs italic font-semibold text-gray-400" %>    
+
+    <% end %>  
 <% end %>
       

@@ -20,5 +20,9 @@ class Giro < ApplicationRecord
 
   validates :titolo, presence: true
   
+  def to_combobox_display
+    titolo
+  end
+
 
 end
