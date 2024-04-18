@@ -32,6 +32,7 @@ class ImportScuoleController < ApplicationController
 
   def show
     @miei_editori = current_user.miei_editori
+    @mie_tappe = current_user.tappe.where(tappable_id: @import_scuola.id)
   end
   
   def new

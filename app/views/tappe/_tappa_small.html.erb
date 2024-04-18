@@ -7,9 +7,9 @@
                       multiple: true,
                       form: :bulk_update_tappe_form,
                       checked: false,
-                      class: "#{ check_box ? "block" : "hidden" } col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-2",
+                      class: "col-span-1 rounded rounded-full border-2 border-gray-300 h-5 w-5 ml-2",
                       data: { tax_checkbox_select_all_target: 'checkbox' }
-                    } %>
+        } if check_box %>
     
     <%= tag.div class: "#{ check_box ? "" : "col-start-2" } col-span-1" do %> 
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
