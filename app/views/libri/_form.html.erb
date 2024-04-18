@@ -11,14 +11,14 @@
     </div>
   <% end %>
   
-  <div class="flex justify-between">
+  <div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
     
-    <div class="my-5 flex flex-col">
-      <%= form.label :categoria %>
+    <div class="cb-tax mt-5 flex flex-col">
+      <%= form.label :categoria, class: "mb-2" %>
       <%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]" %>
     </div>
 
-    <div class="my-5">
+    <div class="mt-5">
       <%= form.label :editore_id %>
       <%= form.collection_select :editore_id, current_user.editori.order(:editore), :id, :editore, { prompt: true },  class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
     </div>

@@ -14,7 +14,7 @@
  *= require_self
  */
 
-
+ 
  /* Global slight fade */
 ::view-transition-old(root),
 ::view-transition-new(root) {

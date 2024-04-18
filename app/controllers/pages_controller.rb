@@ -13,12 +13,11 @@ class PagesController < ApplicationController
 
     def oggi
         @tappe = current_user.tappe.di_oggi
-        
-        @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }
-        
         @scuole_di_oggi = current_user.import_scuole.where(id: @tappe.where(tappable_type: "ImportScuola").pluck(:tappable_id)) 
         
-        @appunti_di_oggi = current_user.appunti.nel_baule_di_oggi
+        @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }
+               
+        @appunti_di_oggi = current_user.appunti.nel_baule_di_oggi.group_by{ |a| a.import_scuola.id }
         
         @adozioni_di_oggi = current_user.mie_adozioni.nel_baule_di_oggi
     end
