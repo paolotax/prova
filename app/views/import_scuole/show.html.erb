@@ -59,7 +59,7 @@
 						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
 							Appunti
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @import_scuola.appunti.non_archiviati.dell_utente(current_user).size %>
+								<%= @appunti_non_archiviati.load.size %>
 							</span>
 						</a>
 
@@ -67,7 +67,7 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Archiviati 
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @import_scuola.appunti.archiviati.dell_utente(current_user).size %>
+								<%= @appunti_archiviati.load.size %>
 							</span>
 						</a>
 					</nav>
@@ -92,7 +92,7 @@
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
-					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.non_archiviati.dell_utente(current_user), locals: {mostra_scuola: false} %>
+					<%= render partial: "appunti/appunto", collection: @appunti_non_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 						
@@ -100,7 +100,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
-					<%= render partial: "appunti/appunto", collection: @import_scuola.appunti.archiviati.dell_utente(current_user), locals: {mostra_scuola: false} %>
+					<%= render partial: "appunti/appunto", collection: @appunti_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 		</div>

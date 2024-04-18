@@ -9,9 +9,7 @@
 <% @scuole_di_oggi.each do |scuola| %>
     
     <%= tag.div scuola.scuola %>
-    
-
-    
+        
     <% @appunti_di_oggi.select{|s| scuola.id == s }.values.flatten.each do |appunto| %>    
         <%= tag.div appunto, class: "flex-col" do %>
             <%= tag.div appunto.nome, class: "text-base font-semibold text-gray-600" %>

@@ -33,6 +33,8 @@ class ImportScuoleController < ApplicationController
   def show
     @miei_editori = current_user.miei_editori
     @mie_tappe = current_user.tappe.where(tappable_id: @import_scuola.id)
+    @appunti_non_archiviati = @import_scuola.appunti.non_archiviati.dell_utente(current_user)
+    @appunti_archiviati = @import_scuola.appunti.archiviati.dell_utente(current_user)
   end
   
   def new
