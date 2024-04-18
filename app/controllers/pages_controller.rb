@@ -18,7 +18,7 @@ class PagesController < ApplicationController
        
         @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }
                
-        @appunti_di_oggi = current_user.appunti.nel_baule_di_oggi.group_by{ |a| a.import_scuola.id }
+        @appunti_di_oggi = current_user.appunti.nel_baule_di_oggi.non_archiviati.group_by{ |a| a.import_scuola.id }
         
         @adozioni_di_oggi = current_user.mie_adozioni.nel_baule_di_oggi
     end

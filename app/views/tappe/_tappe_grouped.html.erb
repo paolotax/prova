@@ -1,16 +1,22 @@
+ <%# locals: ( with_direzione: false ) -%>
+
 <% @grouped_records.each do |k, v| %>
     
-    <%# header direzione %>
-    <%= tag.div class: "flex justify-between items-center space-x-2 text-base font-semibold px-4 py-2 mt-8 text-sky-500" do  %>
 
-        <% if k.class == ImportScuola %>
-            <%= tag.div k.tipo_nome %>
-            <%= tag.div k.citta %>
-        <% elsif k.class == Date %>
-            <%= tag.div l(k, format: "%A, %-d %B %Y").titleize %>
-        <% else %>
-            <%= tag.div "<privata>" %>
-        <% end %>
+    <%# header direzione %>
+    
+    <% if with_direzione %>
+        <%= tag.div class: "flex justify-between items-center space-x-2 text-base font-semibold px-4 py-2 mt-8 text-sky-500" do  %>
+
+            <% if k.class == ImportScuola %>
+                <%= tag.div k.tipo_nome %>
+                <%= tag.div k.citta %>
+            <% elsif k.class == Date %>
+                <%= tag.div l(k, format: "%A, %-d %B %Y").titleize %>
+            <% else %>
+                <%= tag.div "<privata>" %>
+            <% end %>
+        <% end%>
 
     <% end %>    
 

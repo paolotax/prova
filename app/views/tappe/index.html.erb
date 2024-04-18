@@ -65,7 +65,7 @@
         <%= tag.div id: "tappe-list", class: "sm:px-2" do %>
             <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
             
-            <%= render partial: "tappe/tappe_grouped" %>
+            <%= render partial: "tappe/tappe_grouped", locals: { with_direzione: true } %>
 
             <% unless @page.last? %>
                 <%= turbo_frame_tag "load_more", src: tappe_path( sort: params[:sort], giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
