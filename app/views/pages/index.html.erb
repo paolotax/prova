@@ -13,7 +13,7 @@
 			<%= turbo_frame_tag "Combobox" do %>
 				<div class="youtubes mx-auto">
 					<%= form_with url: import_adozioni_path do |form| %>
-						<%= form.combobox :search, import_adozioni_path, placeholder: "in costruzione... sorry!",
+						<%#= form.combobox :search, import_adozioni_path, placeholder: "in costruzione... sorry!",
 							id: "adozioni-search", mobile_at: "0px" %>
 					<% end %>
 				</div>
