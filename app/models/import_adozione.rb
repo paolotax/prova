@@ -145,6 +145,10 @@ class ImportAdozione < ApplicationRecord
   delegate :codice_ministeriale, :scuola, :citta, :tipo_scuola, :tipo_nome, to: :import_scuola
   
 
+  def to_s 
+    "#{self.classe_e_sezione} - #{self.titolo} - #{self.editore}"
+  end
+
   def anno
     self.ANNOCORSO
   end

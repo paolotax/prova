@@ -77,10 +77,18 @@ class Appunto < ApplicationRecord
   scope :kit, -> { where(nome: "kit").where.not(import_adozione_id: nil) }
   scope :ssk, -> { where(nome: ["saggio", "seguito", "kit"]).where.not(import_adozione_id: nil) }
   
+  
+  def content_to_s
+    content.to_s.gsub('<div class="trix-content">', "").gsub('</div>', "").gsub('<div>', "").gsub('</br>', "").gsub('<p>', "").gsub('</p>', "").gsub('<div>', "").gsub('</div>', "").gsub('<br/>', "").gsub('</br/>', "").gsub('<p/>', "").gsub('</p/>', "").gsub('<div/>', "").gsub('</div/>', "").gsub('<br />', "").gsub('</br />', "").gsub('<p />', "").gsub('</p />', "").gsub('<div />', "").gsub('</div />', "")
+  end
+  
+  
+  
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
     self.image.variant(resize_to_limit: [300, 300]).processed
   end
+
 
   def appunto_attachment(index)
     target = attachments[index]

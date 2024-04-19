@@ -1,0 +1,12 @@
+wb = xlsx_package.workbook
+
+fields = [ "id", "nome", "body", "content", "created_at", "updated_at", "scuola", "adozione" ]
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+  sheet.add_row  fields
+  
+  @appunti.each do |row|   
+    sheet.add_row [ row.id, row.nome, row.body, row.content_to_s, row.created_at, row.updated_at, row.import_scuola&.to_s, row.import_adozione&.to_s ]
+  end
+end

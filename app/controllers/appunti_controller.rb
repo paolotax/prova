@@ -13,6 +13,12 @@ class AppuntiController < ApplicationController
       
       @appunti = @appunti.search(params[:q]) if params[:q]
       @pagy, @appunti =  pagy(@appunti.all, items: 30)
+
+      respond_to do |format|
+        format.html
+        format.xlsx
+        format.turbo_stream
+      end
   end
 
   def show
