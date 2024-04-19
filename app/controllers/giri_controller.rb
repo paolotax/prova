@@ -4,8 +4,17 @@ class GiriController < ApplicationController
   before_action :set_giro, only: %i[ show edit update destroy crea_tappe tappe]
 
   def index
+    
+    @scuole = current_user.import_scuole.per_comune_e_direzione
+    @tappe = current_user.tappe.includes(:tappable).order(data_tappa: :desc)
+    @appunti = current_user.appunti.non_archiviati.order(:import_scuola_id)  
+
+
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)   
     @pagy, @giri =  pagy(@giri.all, items: 10)
+  
+  
+  
   end
 
   def show

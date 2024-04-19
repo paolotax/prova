@@ -8,6 +8,26 @@
 	<% end %>
 <% end %>
 
+
+<% @scuole.each do |scuola| %>
+	<%= render scuola %>
+	<% @tappe.select {|s| s.tappable_id == scuola.id }.each do |tappa| %>
+		<%= render tappa %>
+	<% end %>
+	<% @appunti.select {|a| a.import_scuola_id == scuola.id }.each do |appunto| %>
+		<%= render appunto %>
+	<% end %>
+<% end %>
+
+
+
+
+
+
+
+
+
+
 <%= paragraph do %>
 	<ul class="px-4">
 		<li>Crea un nuovo giro.</li>
