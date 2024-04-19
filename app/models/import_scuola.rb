@@ -47,12 +47,16 @@ class ImportScuola < ApplicationRecord
 
   has_many :classi, class_name: "Views::Classe", foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
-  has_many :appunti
+  has_many :appunti, -> { where(user_id: Current.user.id) }
   
-  has_many :tappe, as: :tappable
+  has_many :tappe, -> { where("tappe.tappable_type = 'ImportScuola' and tappe.user_id = ?", Current.user.id) }, as: :tappable 
 
   has_one :tipo_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
   
+  def mie_adozioni
+    import_adozioni.mie_adozioni
+  end
+
   include PgSearch::Model
 
   search_fields =  [ :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO ]
@@ -108,10 +112,6 @@ class ImportScuola < ApplicationRecord
     marchi.size
   end
 
-  def mie_adozioni
-    import_adozioni.mie_adozioni
-  end
-
   def self.zone
     self.pluck([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA])
                 .uniq
@@ -143,9 +143,9 @@ class ImportScuola < ApplicationRecord
   end
 
   def indirizzo
-    "https://www.google.com/maps/search/?api=1&query=#{self.INDIRIZZOSCUOLA}+#{self.CAPSCUOLA}+#{self.DESCRIZIONECOMUNE}+#{self.PROVINCIA}"
+    #"https://www.google.com/maps/search/?api=1&query=#{self.INDIRIZZOSCUOLA}+#{self.CAPSCUOLA}+#{self.DESCRIZIONECOMUNE}+#{self.PROVINCIA}"
      
-    "https://waze.com/ul?q=66%20Acacia%20Avenue"
+    #"https://waze.com/ul?q=66%20Acacia%20Avenue"
   
     [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(" ")
   end
@@ -168,8 +168,8 @@ class ImportScuola < ApplicationRecord
   end
 
   def citta
-    #ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
-    self.DESCRIZIONECOMUNE.upcase
+    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
+    #self.DESCRIZIONECOMUNE.upcase
   end
 
   def tipo_scuola
