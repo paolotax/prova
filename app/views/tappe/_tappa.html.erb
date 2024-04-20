@@ -1,9 +1,9 @@
- <%# locals: ( tappa:, with_scuola: true, with_checkbox: true ) -%>
+ <%# locals: ( tappa:, with_scuola: false, with_checkbox: true ) -%>
 
 <%= tag.div id: dom_id(tappa),
         class: [ 
             "group px-2 py-1.5 grid  bg-white border-b rounded-md shadow-md items-center": true,
-            "grid-cols-4 gap-2 mb-2": !with_scuola,
+            "grid-cols-6 gap-2 mb-2": !with_scuola,
             "grid-cols-8": with_scuola
         ] do %>
 
@@ -17,7 +17,9 @@
                         } %>
     <% end %>
 
-    <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-2" } col-span-1" do %> 
+        <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+    <% end %>
         
     <% if with_scuola %>
         <%= tag.div class: "col-span-6" do %>  
@@ -35,6 +37,7 @@
 
         <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+
     <% else %>
         <%= tag.div class: "col-span-3 flex flex-col" do %>
             <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>

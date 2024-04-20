@@ -82,6 +82,8 @@ class ImportScuola < ApplicationRecord
   scope :dell_area_geografica, -> (area) { where(AREAGEOGRAFICA: area) }
   scope :del_comune, -> (comune) { where(DESCRIZIONECOMUNE: comune) }
 
+  scope :per_direzione, -> { joins(:direzione).order([:CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
+
   scope :per_comune_e_direzione, -> { order([:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
 
   def to_s  

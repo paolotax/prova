@@ -1,4 +1,4 @@
-<%= tag.div class: "relative flex items-center justify-center",
+<%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
      
     <% unless tappa.data_tappa.nil? %>

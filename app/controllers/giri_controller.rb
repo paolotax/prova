@@ -5,12 +5,13 @@ class GiriController < ApplicationController
 
   def index
     
-    @scuole = current_user.import_scuole.per_comune_e_direzione
+    @scuole = current_user.import_scuole.per_direzione
     @tappe = current_user.tappe.includes(:tappable).order(data_tappa: :desc)
     @appunti = current_user.appunti.non_archiviati.order(:import_scuola_id)  
 
-
-    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)   
+    @giri = current_user.giri.order(:created_at).reverse_order
+    
+    @giri = current_user.giri.includes(:tappe).order(created_at: :asc)   
     @pagy, @giri =  pagy(@giri.all, items: 10)
   
   

@@ -7,6 +7,6 @@ wb.add_worksheet(name: "Foglio 1") do |sheet|
   sheet.add_row  fields
   
   @tappe.each do |row|   
-    sheet.add_row [ row.id, row.giro.titolo, row.titolo, row.data_tappa, row.giro_id, row.ordine, row.tappable&.to_s ]
+    sheet.add_row [ row.id, row.giro&.titolo, row.titolo, row.data_tappa, row.giro_id, row.ordine, row.tappable&.to_s ]
   end
 end

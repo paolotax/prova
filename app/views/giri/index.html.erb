@@ -9,22 +9,47 @@
 <% end %>
 
 
-<% @scuole.each do |scuola| %>
-	<%= render scuola %>
-	<% @tappe.select {|s| s.tappable_id == scuola.id }.each do |tappa| %>
-		<%= render tappa %>
+
+<table>
+	<tr>
+		<th>Scuola</th>
+		<th>Città</th>
+		<% @giri.each do |giro| %>
+			<th><%= giro.titolo.titleize %></th>
+		<% end %>
+		<th>...</th>
+		<th>Note</th>
+	</tr>
+	<% @scuole.each do |scuola| %>
+		<tr class="border-b border-gray-200">
+			<td class="py-2"><%= link_to scuola.scuola, scuola %></td>
+			<td class="py-2"><%= scuola.citta %></td>
+			<% @giri.each do |giro| %>
+				<td class="py-2">
+					<% scuola.tappe.select { |t| t.giro == giro }.each do |tappa| %>
+						<%= tag.div do %>
+							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+						<% end %>
+					<% end %>
+				</td>
+			<% end %>
+			<td class="py-2">
+				<% scuola.tappe.select { |t| t.giro.nil? }.each do |tappa| %>
+					<%= tag.div do %>
+						<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+					<% end %>
+				<% end %>
+			</td>
+			<td class="py-2">
+				<% scuola.tappe.order(:giro_id).each do |tappa| %>
+					<%= tag.div "- #{tappa.titolo}", id: "tappa-titolo-#{dom_id tappa}", class: "text-xs text-gray-500 font-semibold"  %> 
+				<% end %>
+			</td>
+		</tr>
 	<% end %>
-	<% @appunti.select {|a| a.import_scuola_id == scuola.id }.each do |appunto| %>
-		<%= render appunto %>
-	<% end %>
-<% end %>
 
 
-
-
-
-
-
+</table>
 
 
 

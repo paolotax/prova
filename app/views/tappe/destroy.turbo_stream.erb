@@ -1,3 +1,5 @@
+<%= turbo_stream.remove "tappa-titolo-#{dom_id @tappa}" %>
+<%= turbo_stream.remove "tappa-menu-#{dom_id @tappa}" %>
 <%= turbo_stream.remove @tappa %>
 
 <%= turbo_stream.replace "tappe_filter" do %>
