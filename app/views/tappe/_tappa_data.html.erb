@@ -1,5 +1,5 @@
 <%= tag.div  class: [
-                "h-8 w-8 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer": true,
+                "h-8 w-8 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer border shadow-lg": true,
                 "text-white bg-pink-500":   tappa.data_tappa.to_date >= Time.now.to_date + 2.day,
                 "text-white bg-gray-400":   tappa.data_tappa.to_date < Time.now.to_date,
                 "text-white bg-green-500":  tappa.data_tappa.to_date == Time.now.to_date,
