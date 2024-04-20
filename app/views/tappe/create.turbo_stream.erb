@@ -1,3 +1,3 @@
-<%= turbo_stream.append "tappe-list-#{dom_id @tappa.giro}-#{dom_id @tappa.tappable}" do %>
+<%= turbo_stream.append "tappe-list-#{dom_id(@tappa.giro) if @tappa.giro}-#{dom_id @tappa.tappable}" do %>
     <%= render partial: "tappe/tappa_menu", locals: { tappa: @tappa } %>
 <% end %>

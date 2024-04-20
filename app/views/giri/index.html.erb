@@ -53,11 +53,16 @@
 				<% end %>
 				
 				<%# celle senza giro %>
-				<td class="hidden sm:table-cell min-w-[80px] py-2 content-center border-l">
-					<% scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
+				<td class="hidden sm:table-cell min-w-[80px] py-2 content-center border-l group">
+					<%= tag.div id: "tappe-list--#{dom_id scuola}" do %>
 
-						<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+						<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: nil } %>
 
+						<% scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
+
+							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+
+						<% end %>
 					<% end %>
 				</td>
 

@@ -40,16 +40,37 @@
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
             Modifica
         <% end %>
-        <%= button_to duplica_tappa_path( tappa, new: true ),
+        
+        <% ["oggi", "domani", "la prossima"].each do |item| %>
+
+            <%= form_with model: tappa,
+                        class: "flex" do |f| %>
+                <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
+                <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
+                <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
+                
+                <%= f.submit item, class: [
+                    "block px-3 py-1 text-sm leading-6 text-gray-900": true,
+                    "bg-green-500 hover:bg-green-600": item == "oggi",
+                    "bg-yellow-300 hover:bg-yellow-500": item == "domani",
+                    "bg-pink-500 hover:bg-pink-600": item == "la prossima"
+                ] %>
+
+
+            <% end %>
+
+        <% end %>
+        
+        <%#= button_to duplica_tappa_path( tappa, new: true ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-2" do %>
-            Nuova
-        <% end %>
-        <%= button_to duplica_tappa_path( tappa ),
+            <%# Nuova %>
+        <%# end %>
+        <%#= button_to duplica_tappa_path( tappa ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-1" do %>
-            Duplica
-        <% end %>
+            <%# Duplica %>
+        <%# end %>
         <hr/>
         <% if tappa.vuota? %>
 
