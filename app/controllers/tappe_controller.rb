@@ -56,13 +56,20 @@ class TappeController < ApplicationController
   end
 
   def create
+    
+    #fail
+    
+    #raise tappa_params.inspect
+
     # ?????????????? rifare
 
-    @tappable = find_tappable
-    @giro = current_user.giri.find(params[:giro_id])
+    # @tappable = find_tappable
+    # @giro = current_user.giri.find(params[:giro_id])
 
-    @tappa = @tappable.tappe.build(tappa_params)
+    @tappa = current_user.tappe.build(tappa_params)
     
+    
+
     if @tappa.save
       respond_to do |format|
         format.html { redirect_to @tappable, notice: 'Tappa creata.'  }
@@ -186,7 +193,7 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :new_giro)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro)
     end
 
     def mass_oggi?

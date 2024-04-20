@@ -1,17 +1,25 @@
 <%= tag.div class: "hidden only:block" do %>
-    <div class="hidden group-hover:flex justify-center items-center space-x-1 p-1.5 " >
-        <%= button_to duplica_tappa_path( tappe.first, new: 'true' ),
-                class: "mx-auto pl-0.5 h-8 pr-2 rounded-full bg-gray-50 text-gray-500 text-xs hover:bg-gray-300 hover:text-gray-700 flex items-center justify-center" do %>
-            <%= inline_svg_tag "icon-plus.svg", class: "p-1" %>
-            aggiungi tappa
-        <% end %>
-        <%= button_to duplica_tappa_path( tappe.first, new: 'oggi' ),
-                class: "w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 flex items-center justify-center" do %>
-            <%= inline_svg_tag "icon-plus.svg", class: "p-1" %>
-        <% end %>
-        <%= button_to duplica_tappa_path( tappe.first, new: 'domani' ),
-                class: "w-8 h-8 rounded-full bg-yellow-300 text-white hover:bg-yellow-500 flex items-center justify-center" do %>
-            <%= inline_svg_tag "icon-plus.svg", class: "p-1" %>
+    <div class="hidden group-hover:flex justify-center items-center space-x-1 " >
+        
+        <% ["oggi", "domani"].each do |item| %>
+
+            <%= form_with model: current_user.tappe.build,
+                        class: "" do |f| %>
+                <%= f.hidden_field :tappable_id, value: scuola.id %>
+                <%= f.hidden_field :tappable_type, value: "ImportScuola" %>
+                <%= f.hidden_field :giro_id, value: giro_id %>
+                <%= f.hidden_field :data_tappa, value: item == "oggi" ? Time.now : Time.now + 1.day %>
+                
+                <%= tag.button class: [
+                    "w-8 h-8 rounded-full  text-white  flex items-center justify-center": true,
+                    "bg-green-500 hover:bg-green-600": item == "oggi",
+                    "bg-yellow-300 hover:bg-yellow-500": item == "domani"
+                ] do %>
+                    <%= inline_svg_tag "icon-plus.svg", class: "p-1" %>
+                <% end %>
+
+            <% end %>
+
         <% end %>
     </div>
 <% end %>

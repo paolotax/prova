@@ -30,41 +30,46 @@
 		<% @scuole.each do |scuola| %>
 			<tr class="border-b border-gray-200">
 				
-				<td class="py-2"><%= link_to scuola.scuola, scuola %></td>
-				<td class="hidden sm:table-cell py-2"><%= scuola.citta %></td>
+				<td class="p-2"><%= link_to scuola.scuola, scuola %></td>
+				<td class="hidden sm:table-cell p-2"><%= scuola.citta %></td>
 				
 				<%# loop per celle giri %>
 				<% @giri.each do |giro| %>
 					<%= tag.td class: [ 
-						"min-w-[80px] py-2 content-center": true,
+						"min-w-[80px] py-2 content-center border-l group": true,
 						"hidden sm:table-cell": giro != @giri.last
 					] do %>
-						<% scuola.tappe.select { |t| t.giro == giro }.each do |tappa| %>
-							<%= tag.div class: "mx-auto" do %>
+						<%= tag.div id: "tappe-list-#{dom_id giro}-#{dom_id scuola}" do %>
+							
+							<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: giro.id } %>
+							
+							<% scuola.tappe.select { |t| t.giro == giro && t.persisted? }.each do |tappa| %>
+
 								<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+
 							<% end %>
 						<% end %>
 					<% end %>
 				<% end %>
 				
 				<%# celle senza giro %>
-				<td class="hidden sm:table-cell min-w-[80px] py-2 content-center">
-					<% scuola.tappe.select { |t| t.giro.nil? }.each do |tappa| %>
-						<%= tag.div class: "mx-auto" do %>
-							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-						<% end %>
+				<td class="hidden sm:table-cell min-w-[80px] py-2 content-center border-l">
+					<% scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
+
+						<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+
 					<% end %>
 				</td>
 
 				<%# cella note %>
-				<td class="hidden sm:table-cell py-2">
+				<td class="hidden sm:table-cell p-2 border-l">
 					<% scuola.tappe.order(:giro_id).each do |tappa| %>
 						<%= tag.div "- #{tappa.titolo}", id: "tappa-titolo-#{dom_id tappa}", class: "text-xs text-gray-500 font-semibold"  %> 
 					<% end %>
 				</td>
 
 				<%# cella appunti %>
-				<td class="min-w-[80px] py-2 content-center">
+				<td class="min-w-[80px] py-2 content-center border-l">
 					<% if scuola.appunti.non_archiviati.any? %>
 						<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
 							<%= link_to import_scuola_path(scuola, selected_tab: "2"), data: { turbo_frame: "_top"}, class: "" do %>                
