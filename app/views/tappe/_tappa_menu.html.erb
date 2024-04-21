@@ -28,7 +28,7 @@
         <% unless tappa.attuale? %>
             <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
                     class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                    data: {turbo_action: "replace"}, 
+                    data: {turbo_action: "replace", turbo_frame: "_top"}, 
                     role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
                 Filtra giorno
             <% end %>
