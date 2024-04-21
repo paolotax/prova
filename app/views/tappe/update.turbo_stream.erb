@@ -2,8 +2,8 @@
     <%= render partial: "tappe/tappa_menu", locals: { tappa: @tappa } %>
 <% end %>
 
-<%= turbo_stream.replace "tappa-titolo-#{dom_id @tappa}" do %>
-    <%= tag.div "- #{@tappa.titolo}", id: "tappa-titolo-#{dom_id @tappa}", class: "text-xs text-gray-500 font-semibold"  %>
+<%= turbo_stream.replace "tappa-riga-#{dom_id @tappa}" do %>
+    <%= render partial: "tappe/tappa_riga", locals: { tappa: @tappa }  %>
 <% end %>
 
 <%= turbo_stream.append "tappe-#{@tappa.attuale? ? "attuali" : "completate"}-#{@tappa.tappable_id}" do %>

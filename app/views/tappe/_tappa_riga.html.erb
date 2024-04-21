@@ -1,6 +1,6 @@
  <%# locals: ( tappa: ) -%>
 
-<%= tag.div id: "tappa-titolo-#{dom_id tappa}", 
+<%= tag.div id: "tappa-riga-#{dom_id tappa}", 
     class: "group first:border-t sm:first:border-t-0 rounded-0 first:rounded-t-lg last:rounded-b-lg px-6 sm:px-2 py-1 bg-slate-100 hover:bg-slate-500 hover:text-white" do %>
     <%= link_to edit_tappa_path(tappa),
                 data: { turbo_frame: :modal, action: "click->dialog#open"},

@@ -52,14 +52,10 @@
 						"col-span-1 py-2 content-center border-l group": true,
 						"hidden sm:inline-block": giro != @default_giro
 					] do %>
-						<%= tag.div id: "tappe-list-#{dom_id giro}-#{dom_id scuola}" do %>
-							
+						<%= tag.div id: "tappe-list-#{dom_id giro}-#{dom_id scuola}" do %>							
 							<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: giro.id } %>
-							
 							<% scuola.tappe.select { |t| t.giro == giro && t.persisted? }.each do |tappa| %>
-
 								<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-
 							<% end %>
 						<% end %>
 					<% end %>
@@ -68,13 +64,9 @@
 				<%# celle senza giro %>
 				<%= tag.div class: "hidden sm:inline-block col-span-1 py-2 content-center border-l group" do %>
 					<%= tag.div id: "tappe-list--#{dom_id scuola}" do %>
-
 						<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: nil } %>
-
 						<% scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
-
 							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-
 						<% end %>
 					<% end %>
 				<% end %>
