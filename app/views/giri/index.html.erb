@@ -5,6 +5,11 @@
 
 <% end %>
 
+<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8 xl:gap-x-8">
+	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									
+	<%= render @giri %>
+</div>
+
 <%#= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 bg-gradient-to-r from-slate-900 to-slate-500" do %>
@@ -31,9 +36,9 @@
 
 		<% @scuole.each do |scuola| %>
 			
-			<%= tag.div class: "grid grid-cols-5 sm:grid-cols-12 border-b" do %>
+			<%= tag.div class: "grid grid-cols-5 sm:grid-cols-12 border-b mb-3 rounded-lg bg-white shadow" do %>
 				
-				<%= tag.div class: "col-span-3 p-2" do %>
+				<%= tag.div class: "col-span-3 p-2 font-semibold" do %>
 					<%= link_to scuola.scuola, scuola, data: { turbo_frame: "_top" } %>
 				<% end %>
 				
@@ -101,7 +106,7 @@
 					<% end %>
 
 					<% scuola.appunti.non_archiviati.each do |appunto| %>
-						<%= tag.div id: dom_id(appunto), class: "first:border-t sm:first:border-t-0 flex items-center justify-between px-6 sm:px-2 py-1" do %>
+						<%= tag.div id: dom_id(appunto), class: "first:border-t sm:first:border-t-0 flex items-center justify-between px-6 sm:px-2 py-1 bg-purple-200" do %>
 							<%= tag.div class: "flex sm:flex-col items-start" do %>
 								<%= tag.div appunto.nome, class: "text-xs text-gray-600 font-semibold" %>
 								<%= tag.div appunto.body, class: "px-2 sm:px-0 text-xs text-gray-500" %> 
@@ -140,30 +145,10 @@
 
 
 
-<%= heading do %>	
-	<%= h1 {"Giri"} %>
 
-	<%= link_to new_giro_path(@giro), 
-				data: { turbo_frame: :modal, action: "click->dialog#open"}, class: "w-16 btn btn-indigo" do %>
-		<%= inline_svg_tag "icon-truck.svg" %>
-		<span>Nuovo</span>
-	<% end %>
-<% end %>
 
-<%= paragraph do %>
-	<ul class="px-4">
-		<li>Crea un nuovo giro.</li>
-	
-	<li>Aprilo cliccando il titolo.</li>
-	<li>Crea le tappe cliccando il pulsante "Crea Tappe!".</li>
-	<li>Buona Propaganda!</li>
-	</ul>
-<% end %>
 
-<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8 xl:gap-x-8">
-	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									
-	<%= render @giri %>
-</div>
+
 
 
 
