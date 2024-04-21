@@ -79,7 +79,7 @@
 					<% end %>
 				<% end %>
 
-				<%# cella appunti %>
+				<%# cella appunti ping %>
 				<%= tag.div class: "col-span-1 py-2 content-center border-l" do %>
 					<% if scuola.appunti.non_archiviati.any? %>
 						<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
@@ -91,29 +91,13 @@
 				<% end %>
 
 				<%# cella note %>
-				<%= tag.div class: "col-span-5 sm:col-span-2 sm:p-2 border-l" do %>
-					
+				<%= tag.div class: "col-span-5 sm:col-span-2 px-1 pb-1 sm:pt-1 sm:border-l" do %>
 					<% scuola.tappe.order(:giro_id).each do |tappa| %>
-						<%= tag.div id: "tappa-titolo-#{dom_id tappa}", class: "first:border-t sm:first:border-t-0 rounded-0 last:rounded-b-lg flex items-center justify-between px-6 sm:px-2 py-1 bg-gray-100" do %>
-							
-							<%= tag.div class: "flex sm:flex-col items-start" do %>
-								<%= tag.span tappa.giro&.titolo, class: "text-xs text-gray-600 font-semibold" %>
-								<%= tag.span tappa.titolo, class: "px-2 sm:px-0 text-xs text-gray-500" %>  
-							<% end %>
-
-							<%= tag.div tappa.data_tappa.nil? ? "" : l( tappa.data_tappa&.to_date, format: "%b %d"), class: "text-xs text-gray-400 text-right" %>  
-						<% end %>
+						<%= render partial: "tappe/tappa_riga", locals: { tappa: tappa } %>
 					<% end %>
 
 					<% scuola.appunti.non_archiviati.each do |appunto| %>
-						<%= tag.div id: dom_id(appunto), class: "first:border-t sm:first:border-t-0 rounded-0 last:rounded-b-lg flex items-center justify-between px-6 sm:px-2 py-1 bg-purple-200" do %>
-							<%= tag.div class: "flex sm:flex-col items-start" do %>
-								<%= tag.div appunto.nome, class: "text-xs text-gray-600 font-semibold" %>
-								<%= tag.div appunto.body, class: "px-2 sm:px-0 text-xs text-gray-500" %> 
-								<%= tag.div appunto.content, class: "px-2 sm:px-0 text-xs text-gray-500" %> 
-							<% end %>
-							<%= tag.div l( appunto.created_at, format: "%b %d") , class: "text-xs text-gray-400 text-right" %>
-						<% end %>
+						<%= render partial: "appunti/appunto_riga", locals: { appunto: appunto } %>
 					<% end %>  
 				<% end %>
 

@@ -1,0 +1,15 @@
+ <%# locals: ( tappa: ) -%>
+
+<%= tag.div id: "tappa-titolo-#{dom_id tappa}", 
+    class: "group first:border-t sm:first:border-t-0 rounded-0 first:rounded-t-lg last:rounded-b-lg px-6 sm:px-2 py-1 bg-slate-100 hover:bg-slate-500 hover:text-white" do %>
+    <%= link_to edit_tappa_path(tappa),
+                data: { turbo_frame: :modal, action: "click->dialog#open"},
+                class: "flex items-center justify-between" do %>
+        <%= tag.div class: "flex sm:flex-col items-start" do %>
+            <%= tag.span tappa.giro&.titolo, class: "text-xs text-gray-600 font-semibold group-hover:text-white" %>
+            <%= tag.span tappa.titolo, class: "px-2 sm:px-0 text-xs text-gray-500 group-hover:text-white" %>  
+        <% end %>
+        <%= tag.div tappa.data_tappa.nil? ? "" : l( tappa.data_tappa&.to_date, format: "%b %d"), 
+            class: "text-xs text-gray-400 text-right flex-none sm:flex-1 group-hover:text-white" %>  
+    <% end %>
+<% end %>
