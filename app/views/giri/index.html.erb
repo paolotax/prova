@@ -12,7 +12,7 @@
 
 <%#= turbo_frame_tag "search_results" do %>
 
-	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 bg-gradient-to-r from-slate-900 to-slate-500" do %>
+	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 rounded-t-lg bg-gradient-to-b from-slate-900 to-slate-500" do %>
 		<%= tag.div "Scuola", class: "col-span-3 p-2 text-white text-sm font-bold" %>
 		<%= tag.div "Città", class: "col-span-3 hidden sm:inline-block p-2 text-white text-sm font-bold" %>
 		
@@ -94,7 +94,7 @@
 				<%= tag.div class: "col-span-5 sm:col-span-2 sm:p-2 border-l" do %>
 					
 					<% scuola.tappe.order(:giro_id).each do |tappa| %>
-						<%= tag.div id: "tappa-titolo-#{dom_id tappa}", class: "first:border-t sm:first:border-t-0 flex items-center justify-between px-6 sm:px-2 py-1" do %>
+						<%= tag.div id: "tappa-titolo-#{dom_id tappa}", class: "first:border-t sm:first:border-t-0 rounded-0 last:rounded-b-lg flex items-center justify-between px-6 sm:px-2 py-1 bg-gray-100" do %>
 							
 							<%= tag.div class: "flex sm:flex-col items-start" do %>
 								<%= tag.span tappa.giro&.titolo, class: "text-xs text-gray-600 font-semibold" %>
@@ -106,7 +106,7 @@
 					<% end %>
 
 					<% scuola.appunti.non_archiviati.each do |appunto| %>
-						<%= tag.div id: dom_id(appunto), class: "first:border-t sm:first:border-t-0 flex items-center justify-between px-6 sm:px-2 py-1 bg-purple-200" do %>
+						<%= tag.div id: dom_id(appunto), class: "first:border-t sm:first:border-t-0 rounded-0 last:rounded-b-lg flex items-center justify-between px-6 sm:px-2 py-1 bg-purple-200" do %>
 							<%= tag.div class: "flex sm:flex-col items-start" do %>
 								<%= tag.div appunto.nome, class: "text-xs text-gray-600 font-semibold" %>
 								<%= tag.div appunto.body, class: "px-2 sm:px-0 text-xs text-gray-500" %> 
