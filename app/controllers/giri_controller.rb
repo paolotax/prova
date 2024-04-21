@@ -12,10 +12,9 @@ class GiriController < ApplicationController
     #@giri = current_user.giri.order(:created_at).reverse_order
     
     @giri = current_user.giri.includes(:tappe).order(created_at: :asc)   
-    @pagy, @giri =  pagy(@giri.all, items: 10)
-  
-  
-  
+    
+    @pagy, @scuole =  pagy(@scuole.all, items: 30)
+
   end
 
   def show
