@@ -10,7 +10,7 @@
 	<%= render @giri %>
 </div>
 
-<%#= turbo_frame_tag "search_results" do %>
+<%= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 rounded-t-lg bg-gradient-to-b from-slate-900 to-slate-500" do %>
 		<%= tag.div "Scuola", class: "col-span-3 p-2 text-white text-sm font-bold" %>
@@ -140,7 +140,7 @@
 		<% end %>
 
 	<% end %>
-<%# end %>
+<% end %>
 
 
 

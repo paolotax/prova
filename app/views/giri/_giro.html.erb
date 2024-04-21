@@ -24,9 +24,11 @@
 				class: "mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
 			<%= inline_svg_tag "icon-pencil.svg" %>
 		<% end %>
-        <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
-        	    class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
-            <%= inline_svg_tag "icon-trash.svg" %>
+        <% if giro.tappe.empty? %>
+            <%= button_to giro_path(giro), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
+                    class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
+                <%= inline_svg_tag "icon-trash.svg" %>
+            <% end %>
         <% end %>
     </div>
 

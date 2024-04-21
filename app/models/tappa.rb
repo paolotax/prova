@@ -54,6 +54,10 @@ class Tappa < ApplicationRecord
     data_tappa.nil? || data_tappa >= Time.now.beginning_of_day 
   end
 
+  def oggi?
+    data_tappa.to_date == Time.now.to_date
+  end
+  
   def vuota?
     data_tappa.nil? && titolo.blank?
   end
