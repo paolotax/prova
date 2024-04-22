@@ -6,6 +6,9 @@ class GiriController < ApplicationController
   def index
     
     @scuole = current_user.import_scuole.includes(:tappe, :appunti).per_direzione
+
+    @scuole = @scuole.search_all_word(params[:search]) if params[:search].present?
+    
     #@tappe = current_user.tappe.includes(:tappable).order(data_tappa: :desc)
     #@appunti = current_user.appunti.non_archiviati.order(:import_scuola_id)  
 

@@ -1,3 +1,15 @@
+<%= heading do %>	
+	<%= h1 {"Tappe"} %>
+
+	<%= tag.div class: "flex flex-col space-y-2 sm:flex-row space-x-2 sm:space-y-0" do %>
+        <% current_user.giri.each do |giro| %>
+            <%= link_to giro.titolo, tappe_giro_path(giro), class: "btn btn-white" %> 
+        <% end %>
+    <% end %>
+
+<% end %>
+
+
 <div class="w-full">
   <div id="tappe" class="min-w-full">
 
