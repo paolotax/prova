@@ -11,7 +11,7 @@ class GiriController < ApplicationController
 
     #@giri = current_user.giri.order(:created_at).reverse_order
     
-    @giri = current_user.giri.includes(:tappe).order(updated_at: :asc)   
+    @giri = current_user.giri.includes(:tappe).order(created_at: :asc)   
     
     @default_giro = @giri.last
 

@@ -3,8 +3,17 @@
 <%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
 
-    <%- giro_previous = tappa&.giro&.previous&.id %>
-    <%- giro_next = tappa&.giro&.next&.id %>
+    <% if tappa.giro.nil? %>
+        <%- giro_previous = current_user.giri.last.id %>
+        <%- giro_next = nil %>
+    <% else %>
+        <%- giro_previous = tappa&.giro&.previous&.id %>
+        <% if tappa.giro == current_user.giri.last %>
+            <%- giro_next = "" %>
+        <% else %>
+            <%- giro_next = tappa&.giro&.next&.id %>
+        <% end %>
+    <% end %>
 
     <% unless tappa.data_tappa.nil? %>
         <%= render partial: "tappe/tappa_data", locals: { tappa: tappa }%>
@@ -68,18 +77,18 @@
         <% end %>
 
 
-        <%= tag.div class: "flex justify-between" do %>
+        <%= tag.div class: "flex justify-between px-2 py-2" do %>
         
             <% ["oggi", "domani", "la prossima"].each do |item| %>
 
                 <%= form_with model: tappa,
-                            class: "flex" do |f| %>
+                            class: "flex justify-between" do |f| %>
                     <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
                     <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
                     <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
                     
                     <%= f.submit item, class: [
-                        "block px-3 py-1 text-sm leading-6 text-gray-900": true,
+                        "w-8 h-8 rounded-full text-xs text-white": true,
                         "bg-green-500 hover:bg-green-600": item == "oggi",
                         "bg-yellow-300 hover:bg-yellow-500": item == "domani",
                         "bg-pink-500 hover:bg-pink-600": item == "la prossima"
