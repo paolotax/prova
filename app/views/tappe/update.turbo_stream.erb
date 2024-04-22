@@ -6,6 +6,8 @@
     <%= render partial: "tappe/tappa_riga", locals: { tappa: @tappa }  %>
 <% end %>
 
+
+
 <%= turbo_stream.append "tappe-#{@tappa.attuale? ? "attuali" : "completate"}-#{@tappa.tappable_id}" do %>
     <%= render partial: "tappe/tappa_small", locals: { tappa: @tappa, check_box: @tappa.attuale? ? true : false } %>
 <% end %>
@@ -13,3 +15,14 @@
 <%= turbo_stream.replace "tappe_filter" do %>
     <%= render partial: "tappe/tappe_filter" %>
 <% end %>
+
+
+
+
+<% if @giro_changed %>
+    <%= turbo_stream.remove "tappa-menu-#{dom_id @tappa}" %>
+    <%= turbo_stream.append "tappe-list-#{@tappa.giro.nil? ? "" : dom_id(@tappa.giro)}-#{dom_id @tappa.tappable}" do %>
+        <%= render partial: "tappe/tappa_menu", locals: { tappa: @tappa } %>
+    <% end %>
+<% end %>
+

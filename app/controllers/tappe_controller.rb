@@ -43,8 +43,6 @@ class TappeController < ApplicationController
     end
   end
 
-
-
   def show
   end
 
@@ -68,8 +66,6 @@ class TappeController < ApplicationController
 
     @tappa = current_user.tappe.build(tappa_params)
     
-    
-
     if @tappa.save
       respond_to do |format|
         format.html { redirect_to @tappable, notice: 'Tappa creata.'  }
@@ -87,10 +83,15 @@ class TappeController < ApplicationController
 
   def update
 
-    #raise params.inspect
-
     respond_to do |format|
+
       if @tappa.update(tappa_params)
+        
+        if @tappa.saved_change_to_giro_id?
+          # serve per aggiornare la colonna della view
+          @giro_changed = true
+        end
+        
         format.turbo_stream
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
         format.json { render :show, status: :ok, location: @tappa }
