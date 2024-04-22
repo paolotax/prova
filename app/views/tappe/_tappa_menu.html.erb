@@ -1,3 +1,5 @@
+ <%# locals: ( tappa:, giro_previous: nil, giro_next: nil ) -%>
+
 <%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
      
@@ -41,25 +43,48 @@
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
             Modifica
         <% end %>
-        
-        <% ["oggi", "domani", "la prossima"].each do |item| %>
 
-            <%= form_with model: tappa,
-                        class: "flex" do |f| %>
-                <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
-                <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
-                <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
-                
-                <%= f.submit item, class: [
-                    "block px-3 py-1 text-sm leading-6 text-gray-900": true,
-                    "bg-green-500 hover:bg-green-600": item == "oggi",
-                    "bg-yellow-300 hover:bg-yellow-500": item == "domani",
-                    "bg-pink-500 hover:bg-pink-600": item == "la prossima"
-                ] %>
+        <%= tag.div class: "flex justify-between" do %>
 
-
+            <% if giro_previous %>
+                <%= form_with(model: tappa) do |form| %>
+                    <%= form.hidden_field :giro_id, value: giro_previous %>
+                    <%= form.submit "<-", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200 " %>
+                <% end %>
             <% end %>
 
+            <% if giro_next %>
+                <%= form_with(model: tappa) do |form| %>
+                    <%= form.hidden_field :giro_id, value: giro_next %>
+                    <%= form.submit "->", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200" %>
+                <% end %>
+            <% end %>
+    
+        <% end %>
+
+
+        <%= tag.div class: "flex justify-between" do %>
+        
+            <% ["oggi", "domani", "la prossima"].each do |item| %>
+
+                <%= form_with model: tappa,
+                            class: "flex" do |f| %>
+                    <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
+                    <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
+                    <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
+                    
+                    <%= f.submit item, class: [
+                        "block px-3 py-1 text-sm leading-6 text-gray-900": true,
+                        "bg-green-500 hover:bg-green-600": item == "oggi",
+                        "bg-yellow-300 hover:bg-yellow-500": item == "domani",
+                        "bg-pink-500 hover:bg-pink-600": item == "la prossima"
+                    ] %>
+
+
+                <% end %>
+
+            <% end %>
+        
         <% end %>
         
         <%#= button_to duplica_tappa_path( tappa, new: true ),

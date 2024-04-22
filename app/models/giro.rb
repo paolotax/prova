@@ -24,5 +24,13 @@ class Giro < ApplicationRecord
     titolo
   end
 
+  def next
+    self.class.where("id > ? and user_id = ?", id, user_id).first
+  end
+
+  def previous
+    self.class.where("id < ? and user_id = ?", id, user_id).last
+  end
+
 
 end
