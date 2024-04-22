@@ -2,7 +2,10 @@
 
 <%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
-     
+
+    <%- giro_previous = tappa&.giro&.previous&.id %>
+    <%- giro_next = tappa&.giro&.next&.id %>
+
     <% unless tappa.data_tappa.nil? %>
         <%= render partial: "tappe/tappa_data", locals: { tappa: tappa }%>
     <% else %>
@@ -51,6 +54,8 @@
                     <%= form.hidden_field :giro_id, value: giro_previous %>
                     <%= form.submit "<-", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200 " %>
                 <% end %>
+            <% else %>
+                <%= tag.div  %>
             <% end %>
 
             <% if giro_next %>
