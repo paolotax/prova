@@ -1,47 +1,56 @@
-<div id="<%= dom_id adozione %>">
+<div id="<%= dom_id adozione %>" class="p-2 border flex items-center justify-between">
   
-    <p class="">
-    	Le maestre
-      	<strong class="inline-block font-bold"><%= adozione.team %></strong>              
-  	</p>
-  
-  	della classe 
-  
-  	<%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-bold"  %> 
-  	
-	della scuola
-  	
-	<%= tag.span adozione.import_adozione&.scuola, class: "font-bold" %>
-  	
-	di
-  	
-	<%= tag.span adozione.import_adozione&.citta, class: "font-bold" %>
-  
+	<%= tag.div do %>
+		<p class="">
+			Le maestre
+			<strong class="inline-block font-bold"><%= adozione.team %></strong>              
+		</p>
+	
+		della classe 
+	
+		<%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-bold"  %> 
+		
+		della scuola
+		
+		<%= tag.span adozione.import_adozione&.scuola, class: "font-bold" %>
+		
+		di
+		
+		<%= tag.span adozione.import_adozione&.citta, class: "font-bold" %>
+	
+		<p class="">
+			<%= tag.span adozione.stato_adozione, class: "font-bold" %>
+			il libro
+			<%= tag.span adozione.libro.titolo.upcase, class: "font-bold" %>
+			in
+			<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
+		</p>
 
-	<p class="">
-		<%= tag.span adozione.stato_adozione, class: "font-bold" %>
-		il libro
-		<%= tag.span adozione.libro.titolo.upcase, class: "font-bold" %>
-		in
-		<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
-	</p>
+		<% unless adozione.note.blank?%>
+			<p class="">
+				Note:
+				<%= adozione.note %>
+			</p>
+		<% end %>
 
-  <p class="">
-    Note:
-    <%= adozione.note %>
-  </p>
+	<% end %>
 
 
 
 
 
 
-  <% if action_name != "show" %>
-    <%= link_to "Show this adozione", adozione, 
-          class: "rounded-lg py-3 px-5 bg-gray-100 inline-inline-block font-medium" %>
-    <%= link_to "Edit this adozione", edit_adozione_path(adozione), 
-          data: { turbo_frame: :modal, action: "click->dialog#open"},
-          class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
+
+	<% if action_name != "show" %>
+
+		<%= tag.div do %>
+			<%= link_to "apri", adozione, 
+				class: "rounded-lg py-3 px-5 bg-gray-100 inline-inline-block font-medium" %>
+			
+			<%= link_to "modifica", edit_adozione_path(adozione), 
+				data: { turbo_frame: :modal, action: "click->dialog#open"},
+				class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-inline-block font-medium" %>
+
+		<% end %>	
+	<% end %>
 </div>
