@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  import_adozione: one
+  libro: one
+  team: MyString
+  note: MyText
+  numero_sezioni: 1
+
+two:
+  user: two
+  import_adozione: two
+  libro: two
+  team: MyString
+  note: MyText
+  numero_sezioni: 1

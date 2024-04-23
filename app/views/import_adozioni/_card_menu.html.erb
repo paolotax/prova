@@ -22,6 +22,16 @@
                 transition_leave_to: "opacity-0"
               } do %>
 
+
+        <!-- Active: "bg-gray-50", Not Active: "" -->
+        <%= link_to new_adozione_path( import_adozione_id: import_adozione.id),
+                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
+
+            ADOTTA!!!
+        <% end %>
+
         <!-- Active: "bg-gray-50", Not Active: "" -->
         <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
                                       import_adozione_id: import_adozione.id),

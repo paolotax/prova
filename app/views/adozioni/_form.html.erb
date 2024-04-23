@@ -1,0 +1,56 @@
+<%= form_with(model: adozione, class: "contents") do |form| %>
+  <% if adozione.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+      <h2><%= pluralize(adozione.errors.count, "error") %> prohibited this adozione from being saved:</h2>
+
+      <ul>
+        <% adozione.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :import_adozione_id %>
+
+
+  <p class="font-2xl">
+     Le maestre 
+  </p>
+  
+  
+  <div class="my-5">
+    <%= form.text_field :team, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+
+  della classe <%= adozione.import_adozione&.classe %> dell' istituto <%= adozione.import_adozione&.scuola %>
+
+  <div class="my-5 youtubes">
+    <%= form.combobox :stato_adozione, current_user.adozioni.stato_adozione, 
+            name_when_new: "adozione[stato_adozione]", placeholder: "che fanno?" %>
+  </div>
+
+  il seguente testo:
+
+  <div class="my-5 youtubes">
+    <%= form.combobox :libro_id, current_user.libri, placeholder: "inserisci libro..." %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :numero_sezioni %>
+    <%= form.number_field :numero_sezioni, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+  
+
+  <div class="my-5">
+    <%= form.label :note %>
+    <%= form.text_area :note, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+
+
+  <div class="inline">
+    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

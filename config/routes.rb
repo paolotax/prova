@@ -9,6 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  resources :adozioni
   resources :libri
   
   resources :tipi_scuole, only: [:index, :update]

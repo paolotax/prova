@@ -1,10 +1,8 @@
  <%# locals: ( tappa: ) -%>
 
-<%= tag.div id: "tappa-riga-#{dom_id tappa}", 
-    class: "group first:border-t sm:first:border-t-0 rounded-0 first:rounded-t-lg last:rounded-b-lg px-4 sm:px-2 py-1.5 bg-slate-100 hover:bg-slate-500 hover:text-white" do %>
-    <%= link_to edit_tappa_path(tappa),
+    <%= link_to edit_tappa_path(tappa), id: "tappa-riga-#{dom_id tappa}", 
                 data: { turbo_frame: :modal, action: "click->dialog#open"},
-                class: "flex items-center justify-between" do %>
+                class: "group first:border-t sm:first:border-t-0 rounded-0 first:rounded-t-lg last:rounded-b-lg px-4 sm:px-2 py-1.5 bg-slate-100 hover:bg-slate-500 hover:text-white flex items-center justify-between" do %>
         <%= tag.div class: "flex sm:flex-col items-start" do %>
             <%= tag.span tappa.giro&.titolo, class: "text-sm text-gray-600 font-semibold group-hover:text-white" %>
             <%= tag.span tappa.titolo, class: "px-2 sm:px-0 text-sm text-gray-500 group-hover:text-white" %>  
@@ -12,4 +10,4 @@
         <%= tag.div tappa.data_tappa.nil? ? "" : l( tappa.data_tappa&.to_date, format: "%b %d").downcase, 
             class: "text-sm text-gray-400 text-right flex-none sm:flex-1 group-hover:text-white" %>  
     <% end %>
-<% end %>
+

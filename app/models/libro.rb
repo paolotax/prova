@@ -4,7 +4,8 @@ class Libro < ApplicationRecord
 
   belongs_to :user
   belongs_to :editore
-
+  
+  has_many :adozioni
 
   validates :titolo, presence: true
   #validates :codice_isbn, presence: true, uniqueness: true
@@ -12,6 +13,10 @@ class Libro < ApplicationRecord
 
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
+  end
+
+  def to_combobox_display
+    self.titolo
   end
 
   # ora così poi devo vedere come funziona money-rails

@@ -44,6 +44,8 @@ class User < ApplicationRecord
 
   has_many :mandati, dependent: :destroy  
   has_many :editori, through: :mandati
+
+  has_many :adozioni, dependent: :destroy
   
   # delirio da riprovare 
   #has_many :adozioni, through: :mandati, source: :import_adozione

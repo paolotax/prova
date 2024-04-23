@@ -41,10 +41,17 @@ class ImportAdozione < ApplicationRecord
   has_many :seguiti, -> { where(nome: "seguito") }, class_name: "Appunto", foreign_key: "import_adozione_id"
   has_many :kit,     -> { where(nome: "kit") },     class_name: "Appunto", foreign_key: "import_adozione_id"
 
+  
+  
   has_many :tappe, as: :tappable
 
   has_many :appunti, dependent: :nullify
 
+  has_many :adozioni, dependent: :nullify
+
+
+  
+  
   include PgSearch::Model
   
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
@@ -75,11 +82,7 @@ class ImportAdozione < ApplicationRecord
                           using: {
                             tsearch: { any_word: true, prefix: true }
                           }
-                
-  scope :elementari, -> { where(TIPOGRADOSCUOLA: "EE") }
-
-  scope :di_reggio,  -> { where(CODICESCUOLA: 'RE'..'REZZ') }
-
+                                          
   scope :per_scuola_classe_sezione_disciplina, -> { order( :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }

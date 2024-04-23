@@ -1,4 +1,4 @@
- <%# locals: ( tappa:, giro_previous: nil, giro_next: nil ) -%>
+<%# locals: ( tappa:, giro_previous: nil, giro_next: nil ) -%>
 
 <%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
@@ -39,22 +39,15 @@
               } do %>
 
         <!-- Active: "bg-gray-50", Not Active: "" -->
-        <% unless tappa.data_tappa.nil? %>
-            <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
-                    class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                    data: {turbo_action: "replace", turbo_frame: "_top"}, 
-                    role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
-                Filtra giorno
-            <% end %>
-            <hr/>
-        <% end %>
-        
+                
         <%= link_to edit_tappa_path( tappa ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                 data: { turbo_frame: :modal, action: "click->dialog#open"}, 
                 role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
             Modifica
         <% end %>
+        
+        <hr/>
 
         <%= tag.div class: "flex justify-between" do %>
 
@@ -76,11 +69,9 @@
     
         <% end %>
 
-
-        <%= tag.div class: "flex justify-between px-2 py-2" do %>
-        
+        <!-- oggi domani la prossima -->
+        <%= tag.div class: "flex justify-between px-2 py-2" do %>        
             <% ["oggi", "domani", "la prossima"].each do |item| %>
-
                 <%= form_with model: tappa,
                             class: "flex justify-between" do |f| %>
                     <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
@@ -93,13 +84,42 @@
                         "bg-yellow-300 hover:bg-yellow-500": item == "domani",
                         "bg-pink-500 hover:bg-pink-600": item == "la prossima"
                     ] %>
-
-
                 <% end %>
-
-            <% end %>
-        
+            <% end %>        
         <% end %>
+
+                <!-- oggi domani la prossima -->
+        <%= tag.div class: "flex justify-between px-2 py-2" do %>        
+            <% ["lu", "ma", "me"].each do |item| %>
+                <%= form_with model: tappa,
+                            class: "flex justify-between" do |f| %>
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:monday) if item == "lu" %>                    
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:tuesday) if item == "ma" %>                    
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:wednesday) if item == "me" %>                    
+
+                    <%= f.submit item, class: [
+                        "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
+                    ] %>
+                <% end %>
+            <% end %>
+        <% end %>    
+
+        <%= tag.div class: "flex justify-between px-2 pb-2" do %>  
+            <% ["gi", "ve", "sa"].each do |item| %>
+                <%= form_with model: tappa,
+                            class: "flex justify-between" do |f| %>
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:thursday) if item == "gi" %>                    
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:friday) if item == "ve" %>                    
+                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:saturday) if item == "sa" %>                    
+                    <%= f.submit item, class: [
+                        "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
+                    ] %>
+                <% end %>
+            <% end %>       
+        <% end %>
+
+
+
         
         <%#= button_to duplica_tappa_path( tappa, new: true ),
                 class: "block px-3 py-1 text-sm leading-6 text-gray-900",
@@ -112,24 +132,34 @@
             <%# Duplica %>
         <%# end %>
         <hr/>
-        <% if tappa.vuota? %>
 
+        <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
+        <% unless tappa.data_tappa.nil? %>
+            <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
+                    class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                    data: {turbo_action: "replace", turbo_frame: "_top"}, 
+                    role: "menuitem", tabindex: "-1", id: "tappa-menu-item-0" do %>
+                Filtra giorno
+            <% end %>
+        <% end %>
+
+        <hr/>
+
+        <!-- elimina tappa -->
+        <% if tappa.vuota? %>
             <%= link_to tappa_path(tappa), 
                         class: "block px-3 py-1 text-sm leading-6 text-red-500",
                         data: { turbo_method: :delete },
-                        role: "menuitem", tabindex: "-1", id: "user-menu-item-2"  do %> 
+                        role: "menuitem", tabindex: "-1", id: "tappa-menu-item-2"  do %> 
                 <span class="">Elimina</span> 
             <% end %>
-
         <% else %>
-
             <%= link_to tappa_path(tappa), 
                         class: "block px-3 py-1 text-sm leading-6 text-red-500",
                         data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" },
-                        role: "menuitem", tabindex: "-1", id: "user-menu-item-2"  do %> 
+                        role: "menuitem", tabindex: "-1", id: "tappa-menu-item-2"  do %> 
                 <span class="">Elimina</span> 
             <% end %>
-
         <% end %>
                             
     <% end %>
