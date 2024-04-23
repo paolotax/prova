@@ -1,24 +1,30 @@
 <div id="<%= dom_id adozione %>">
   
-  <p class="">
-      Le maestre
-      <strong class="inline-block font-medium"><%= adozione.team.titleize %></strong>              
-  </p>
+    <p class="">
+    	Le maestre
+      	<strong class="inline-block font-bold"><%= adozione.team %></strong>              
+  	</p>
   
-  della classe 
+  	della classe 
   
-  <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> 
-  dell' istituto 
-  <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
+  	<%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-bold"  %> 
+  	
+	della scuola
+  	
+	<%= tag.span adozione.import_adozione&.scuola, class: "font-bold" %>
+  	
+	di
+  	
+	<%= tag.span adozione.import_adozione&.citta, class: "font-bold" %>
+  
 
-  <p class="">
-    <strong class="inline-block font-medium"><%= adozione.stato_adozione %></strong>
-     il libro
-    <strong class="inline-block font-medium"><%= adozione.libro.titolo %></strong> 
-    in
-    <%= adozione.numero_sezioni %>
-    sezioni
-  </p>
+	<p class="">
+		<%= tag.span adozione.stato_adozione, class: "font-bold" %>
+		il libro
+		<%= tag.span adozione.libro.titolo.upcase, class: "font-bold" %>
+		in
+		<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
+	</p>
 
   <p class="">
     Note:
