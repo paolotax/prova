@@ -14,17 +14,18 @@
   <%= form.hidden_field :import_adozione_id %>
 
 
-  <p class="font-2xl">
+  <p class="my-5 tex-2xl font-semibold">
      Le maestre 
   </p>
   
   
   <div class="my-5">
-    <%= form.text_field :team, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :team, 
+        class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
 
-  della classe <%= adozione.import_adozione&.classe %> dell' istituto <%= adozione.import_adozione&.scuola %>
+  della classe <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> dell' istituto <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
 
   <div class="my-5 youtubes">
     <%= form.combobox :stato_adozione, current_user.adozioni.stato_adozione, 

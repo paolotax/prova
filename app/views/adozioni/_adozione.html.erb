@@ -1,37 +1,38 @@
 <div id="<%= dom_id adozione %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= adozione.user_id %>
+  
+  <p class="">
+      Le maestre
+      <strong class="inline-block font-medium"><%= adozione.team.titleize %></strong>              
+  </p>
+  
+  della classe 
+  
+  <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> 
+  dell' istituto 
+  <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
+
+  <p class="">
+    <strong class="inline-block font-medium"><%= adozione.stato_adozione %></strong>
+     il libro
+    <strong class="inline-block font-medium"><%= adozione.libro.titolo %></strong> 
+    in
+    <%= adozione.numero_sezioni %>
+    sezioni
   </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Import adozione:</strong>
-    <%= adozione.import_adozione_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Libro:</strong>
-    <%= adozione.libro_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Team:</strong>
-    <%= adozione.team %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Note:</strong>
+  <p class="">
+    Note:
     <%= adozione.note %>
   </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Numero sezioni:</strong>
-    <%= adozione.numero_sezioni %>
-  </p>
+
+
+
+
 
   <% if action_name != "show" %>
-    <%= link_to "Show this adozione", adozione, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this adozione", edit_adozione_path(adozione), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Show this adozione", adozione, class: "rounded-lg py-3 px-5 bg-gray-100 inline-inline-block font-medium" %>
+    <%= link_to "Edit this adozione", edit_adozione_path(adozione), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-inline-block font-medium" %>
     <hr class="mt-6">
   <% end %>
 </div>
