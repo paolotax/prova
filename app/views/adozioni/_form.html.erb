@@ -24,7 +24,13 @@
         class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-
+  <% if adozione.import_adozione.nil? %>
+  		<div class="my-5 youtubes w-full">
+        <%= form.label :import_scuola_id, "Scuola", class: "label" %>
+        <%= combobox :import_scuola_id, current_user.import_scuole.all %>
+      </div>
+  <% end %>
+  
   della classe <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> dell' istituto <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
 
   <div class="my-5 youtubes">
