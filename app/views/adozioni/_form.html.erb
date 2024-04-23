@@ -35,7 +35,8 @@
   il seguente testo:
 
   <div class="my-5 youtubes">
-    <%= form.combobox :libro_id, current_user.libri, placeholder: "inserisci libro..." %>
+    <%= form.combobox :libro_id, current_user.libri,
+            name_when_new: "adozione[new_libro]", placeholder: "inserisci libro..." %>
   </div>
 
   <div class="my-5">

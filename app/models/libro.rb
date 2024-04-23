@@ -3,7 +3,7 @@ class Libro < ApplicationRecord
   monetize :prezzo_in_cents
 
   belongs_to :user
-  belongs_to :editore
+  belongs_to :editore, optional: true
   
   has_many :adozioni
 

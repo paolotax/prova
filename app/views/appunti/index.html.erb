@@ -10,7 +10,8 @@
 	<% end %>  
 
 	<%= link_to new_appunto_path(@appunto), 
-				data: { turbo_frame: :modal, action: "click->dialog#open"}, class: "w-16 btn btn-indigo" do %>
+				data: { turbo_frame: :modal, action: "click->dialog#open"}, 
+				class: "w-16 btn btn-indigo" do %>
 		<%= inline_svg_tag "icon-appunto.svg" %>
 		<span>Nuovo</span>
 	<% end %>
