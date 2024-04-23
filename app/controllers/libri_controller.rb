@@ -4,7 +4,7 @@ class LibriController < ApplicationController
   before_action :set_libro, only: %i[ show edit update destroy ]
 
   def index
-    @libri = current_user.libri.order(:categoria, :titolo, :classe).all
+    @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe).all
   end
 
   def show

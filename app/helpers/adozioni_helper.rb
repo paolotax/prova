@@ -1,5 +1,9 @@
 module AdozioniHelper
 
+
+
+	# rifatto nel modello da correggere e sistemare view per ora funziona
+
     def quante_maestre(team)
 		
         if team.split(",").size == 1 && team.split(" e ").size == 1

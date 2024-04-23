@@ -33,6 +33,14 @@
 			</p>
 		<% end %>
 
+
+			
+		<p class="mt-1 text-right text-xs text-gray-600">
+			adozione presunta il <%= l(adozione.created_at, format: "%d-%m-%y") %>
+		</p>
+
+
+
 	<% end %>
 
 
@@ -43,13 +51,13 @@
 
 	<% if action_name != "show" %>
 
-		<%= tag.div do %>
+		<%= tag.div class: "flex flex-col sm:flex-row space-y-2 sm:space-y-0 space-x-2 items-center align-center" do %>
 			<%= link_to "apri", adozione, 
-				class: "rounded-lg py-3 px-5 bg-gray-100 inline-inline-block font-medium" %>
+				class: "rounded-lg py-3 px-5 bg-gray-100 hover:bg-gray-400 hover:text-white inline-block font-sm" %>
 			
 			<%= link_to "modifica", edit_adozione_path(adozione), 
 				data: { turbo_frame: :modal, action: "click->dialog#open"},
-				class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-inline-block font-medium" %>
+				class: "rounded-lg py-3 px-5 bg-gray-100 hover:bg-gray-400 hover:text-white inline-block font-sm" %>
 
 		<% end %>	
 	<% end %>

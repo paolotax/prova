@@ -1,6 +1,6 @@
-<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-8 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
+<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-9 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
   
-    <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600"  %>
+    <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600 truncate"  %>
 
 	<%= tag.div class: "col-span-4 flex flex-col" do %>
 		<%= tag.div libro.titolo, class: "font-bold" %>
@@ -9,7 +9,7 @@
 	<% end %>
 
     <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
-
+	<%= tag.div libro.adozioni.size, class: "col-span-1 text-right" %>
   	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
 
 		<%= link_to edit_libro_path(libro), 
@@ -17,11 +17,18 @@
 						class: "mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm text-gray-400 hover:text-gray-500 hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
 			<%= inline_svg_tag "icon-pencil.svg" %>
 		<% end %>
-        <%= button_to libro_path(libro), 
-				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
-        	    class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
-            <%= inline_svg_tag "icon-trash.svg" %>
-        <% end %>
+
+		<%= button_to libro_path(libro), 
+				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
+				disabled: libro.adozioni.size > 0,  
+				class: [
+					"mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm": true,
+					"bg-red-600 text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600": libro.adozioni.size == 0,
+					"cursor-not-allowed opacity-50 bg-gray-200 text-gray-400 ": libro.adozioni.size > 0
+				] do %>
+			<%= inline_svg_tag "icon-trash.svg" %>
+		<% end %>
+		
     <% end %>
 
 <% end %>

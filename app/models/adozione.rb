@@ -16,4 +16,9 @@ class Adozione < ApplicationRecord
     self.libro = libro
   end
 
+  def maestre
+    team.split(",").map{ |m| m.strip.split(" e ") }.flatten
+  end
+
+  
 end

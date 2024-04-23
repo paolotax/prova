@@ -4,7 +4,7 @@ class AdozioniController < ApplicationController
   before_action :set_adozione, only: %i[ show edit update destroy ]
 
   def index
-    @adozioni = current_user.adozioni.all
+    @adozioni = current_user.adozioni.includes(:libro, import_adozione: [:import_scuola]).all
   end
 
   def show
