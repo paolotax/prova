@@ -7,16 +7,81 @@
 	
 </li>
 <li>
-	<%= link_to giri_path, class:"sidebar-item" do %>
-		<%= inline_svg_tag('icon-truck.svg') %>
-		Giri                        
-	<% end %>
+	<div data-controller="tax-reveal"  >
+		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
+			
+			<%= link_to giri_path, class:"flex w-full gap-x-3 " do %>
+				<%= inline_svg_tag('icon-truck.svg') %>
+				Giri                    
+			<% end %>
+			<!-- Expanded: "rotate-90 text-gray-500", Collapsed: "text-gray-400" -->
+			<%= tag.div data: {action: "click->tax-reveal#toggle"} do %>
+				<svg class="rotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
+					data-tax-reveal-target="chevron">
+					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+				</svg>   
+			<% end %> 
+		</div>
+		
+		<ul>
+			<li>
+				<!-- 44px -->
+				<%= link_to oggi_path, 
+						class:" sidebar-item pl-9 text-sm font-normal",
+						data: { tax_reveal_target: "item" } do %>
+					Oggi                 
+				<% end %>
+			</li>
+			<li>
+				<!-- 44px -->
+				<%= link_to tappe_path, 
+						class:" sidebar-item pl-9 text-sm font-normal",
+						data: { tax_reveal_target: "item" } do %>
+					Tutte le tappe                  
+				<% end %>
+			</li>
+		</ul>
+	</div>
+
 </li>
 <li>
-	<%= link_to appunti_path, class:"sidebar-item" do %>
-		<%= inline_svg_tag('icon-appunto.svg') %>
-		Appunti                        
-	<% end %>
+
+	<div data-controller="tax-reveal"  >
+		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
+			
+			<%= link_to adozioni_path, class:"flex w-full gap-x-3 " do %>
+				<%= inline_svg_tag('icon-cash.svg') %>
+				Adozioni                    
+			<% end %>
+			<!-- Expanded: "rotate-90 text-gray-500", Collapsed: "text-gray-400" -->
+			<%= tag.div data: {action: "click->tax-reveal#toggle"} do %>
+				<svg class="rotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
+					data-tax-reveal-target="chevron">
+					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+				</svg>   
+			<% end %> 
+		</div>
+		
+		<ul>
+			<li>
+				<!-- 44px -->
+				<%= link_to import_adozioni_path, 
+						class:" sidebar-item pl-9 text-sm font-normal",
+						data: { tax_reveal_target: "item" } do %>
+					Adozioni (OpenData)                   
+				<% end %>
+			</li>
+			<li>
+				<!-- 44px -->
+				<%= link_to libri_path, 
+						class:" sidebar-item pl-9 text-sm font-normal",
+						data: { tax_reveal_target: "item" } do %>
+					Librini                 
+				<% end %>
+			</li>
+		</ul>
+	</div>
+
 </li>
 <% if current_user && current_user.name == "paolotax"%>
 	<li>
@@ -44,12 +109,6 @@
 	<%= link_to import_scuole_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole
-	<% end %>
-</li>
-<li>
-	<%= link_to import_adozioni_path, class:"sidebar-item" do %>
-		<%= inline_svg_tag('icon-currency-euro.svg') %>                
-		Adozioni
 	<% end %>
 </li>
 <li>

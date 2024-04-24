@@ -9,7 +9,7 @@
 	<% end %>
 
     <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
-	<%= tag.div libro.adozioni.size, class: "col-span-1 text-right" %>
+	<%= tag.div libro.adozioni&.sum(:numero_sezioni), class: "col-span-1 text-right" %>
   	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
 
 		<%= link_to edit_libro_path(libro), 

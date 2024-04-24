@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_23_164829) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_24_113238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "tablefunc"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -62,6 +63,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_23_164829) do
     t.string "stato_adozione"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "numero_copie"
+    t.integer "prezzo_cents"
+    t.integer "importo_cents"
     t.index ["import_adozione_id"], name: "index_adozioni_on_import_adozione_id"
     t.index ["libro_id"], name: "index_adozioni_on_libro_id"
     t.index ["user_id"], name: "index_adozioni_on_user_id"
@@ -297,64 +301,64 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_23_164829) do
   add_foreign_key "user_scuole", "users"
 
   create_view "view_documenti", sql_definition: <<-SQL
-      SELECT DISTINCT concat(imports.fornitore, '-', imports.numero_documento, '-', imports.data_documento) AS id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
+      SELECT DISTINCT concat(fornitore, '-', numero_documento, '-', data_documento) AS id,
+      fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
+      tipo_documento,
+      numero_documento,
+      data_documento,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- sum(imports.quantita))
-              ELSE sum(imports.quantita)
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- sum(quantita))
+              ELSE sum(quantita)
           END AS quantita_totale,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round(sum((imports.importo_netto * (100)::double precision))))
-              ELSE round(sum((imports.importo_netto * (100)::double precision)))
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round(sum((importo_netto * (100)::double precision))))
+              ELSE round(sum((importo_netto * (100)::double precision)))
           END AS importo_netto_totale,
           CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round((imports.totale_documento * (100)::double precision)))
-              ELSE round((imports.totale_documento * (100)::double precision))
+              WHEN ((tipo_documento)::text = ANY ((ARRAY['Nota di accredito'::character varying, 'TD04'::character varying])::text[])) THEN (- round((totale_documento * (100)::double precision)))
+              ELSE round((totale_documento * (100)::double precision))
           END AS totale_documento,
           CASE
-              WHEN ((imports.iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
+              WHEN ((iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
               ELSE 'c.acquisti'::text
           END AS conto,
-      (round((imports.totale_documento * (100)::double precision)) - round((sum(imports.importo_netto) * (100)::double precision))) AS "check"
+      (round((totale_documento * (100)::double precision)) - round((sum(importo_netto) * (100)::double precision))) AS "check"
      FROM imports
-    GROUP BY imports.fornitore, imports.iva_fornitore, imports.cliente, imports.iva_cliente, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
-    ORDER BY imports.fornitore, imports.data_documento DESC, imports.numero_documento, imports.tipo_documento;
+    GROUP BY fornitore, iva_fornitore, cliente, iva_cliente, tipo_documento, numero_documento, data_documento, totale_documento
+    ORDER BY fornitore, data_documento DESC, numero_documento, tipo_documento;
   SQL
   create_view "view_righe", sql_definition: <<-SQL
-      SELECT imports.id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
+      SELECT id,
+      fornitore,
+      iva_fornitore,
+      cliente,
+      iva_cliente,
+      tipo_documento,
+      numero_documento,
+      data_documento,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.totale_documento)
-              ELSE imports.totale_documento
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- totale_documento)
+              ELSE totale_documento
           END AS totale_documento,
-      imports.riga,
-      imports.codice_articolo,
-      imports.descrizione,
-      imports.prezzo_unitario,
+      riga,
+      codice_articolo,
+      descrizione,
+      prezzo_unitario,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.quantita)
-              ELSE imports.quantita
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- quantita)
+              ELSE quantita
           END AS quantita,
           CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.importo_netto)
-              ELSE imports.importo_netto
+              WHEN ((tipo_documento)::text = 'Nota di accredito'::text) THEN (- importo_netto)
+              ELSE importo_netto
           END AS importo_netto,
-      imports.sconto,
-      imports.iva,
+      sconto,
+      iva,
           CASE
-              WHEN ((imports.iva_fornitore)::text = (( SELECT users.partita_iva
+              WHEN ((iva_fornitore)::text = (( SELECT users.partita_iva
                  FROM users
                LIMIT 1))::text) THEN 'c.vendita'::text
               ELSE 'c.acquisti'::text
@@ -362,65 +366,34 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_23_164829) do
      FROM imports;
   SQL
   create_view "view_articoli", sql_definition: <<-SQL
-      SELECT DISTINCT view_righe.codice_articolo,
-      view_righe.descrizione,
-      sum(view_righe.quantita) AS giacenza,
-      sum(round((view_righe.importo_netto * (100)::double precision))) AS valore
+      SELECT DISTINCT codice_articolo,
+      descrizione,
+      sum(quantita) AS giacenza,
+      sum(round((importo_netto * (100)::double precision))) AS valore
      FROM view_righe
-    GROUP BY view_righe.codice_articolo, view_righe.descrizione
-    ORDER BY view_righe.codice_articolo;
+    GROUP BY codice_articolo, descrizione
+    ORDER BY codice_articolo;
   SQL
   create_view "view_fornitori", sql_definition: <<-SQL
       SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.fornitore,
-      view_documenti.iva_fornitore
+      fornitore,
+      iva_fornitore
      FROM view_documenti
-    WHERE ((view_documenti.iva_cliente)::text = (( SELECT users.partita_iva
+    WHERE ((iva_cliente)::text = (( SELECT users.partita_iva
              FROM users
            LIMIT 1))::text)
-    GROUP BY view_documenti.fornitore, view_documenti.iva_fornitore;
+    GROUP BY fornitore, iva_fornitore;
   SQL
   create_view "view_clienti", sql_definition: <<-SQL
       SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.cliente,
-      view_documenti.iva_cliente
+      cliente,
+      iva_cliente
      FROM view_documenti
-    WHERE ((view_documenti.iva_fornitore)::text = (( SELECT users.partita_iva
+    WHERE ((iva_fornitore)::text = (( SELECT users.partita_iva
              FROM users
            LIMIT 1))::text)
-    GROUP BY view_documenti.cliente, view_documenti.iva_cliente;
+    GROUP BY cliente, iva_cliente;
   SQL
-  create_view "classifica_elementari_provincia_materia_editore", sql_definition: <<-SQL
-      SELECT DISTINCT import_scuole."REGIONE" AS regione,
-      import_scuole."PROVINCIA" AS provincia,
-      import_adozioni."ANNOCORSO" AS classe,
-      import_adozioni."DISCIPLINA" AS disciplina,
-      import_adozioni."EDITORE" AS editore,
-      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO") AS in_provincia,
-      count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."EDITORE") AS dell_editore,
-      round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale
-     FROM (import_scuole
-       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
-    WHERE ((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = ANY ((ARRAY['SCUOLA PRIMARIA'::character varying, 'SCUOLA PRIMARIA NON STATALE'::character varying, 'ISTITUTO COMPRENSIVO'::character varying])::text[]))
-    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", (round(((((count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."EDITORE"))::double precision / (count(1) OVER (PARTITION BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO"))::double precision) * (100)::double precision))::numeric, 2)) DESC;
-  SQL
-  create_view "classi_2023", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
-      import_scuole."REGIONE" AS regione,
-      import_scuole."PROVINCIA" AS provincia,
-      import_scuole."CODICESCUOLA" AS codice_ministeriale,
-      import_adozioni."ANNOCORSO" AS classe,
-      import_adozioni."SEZIONEANNO" AS sezione,
-      import_adozioni."COMBINAZIONE" AS combinazione,
-      '2023'::text AS anno
-     FROM (import_scuole
-       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
-    ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE";
-  SQL
-  add_index "classi_2023", ["codice_ministeriale", "classe", "sezione", "combinazione"], name: "classi_2023_primary_index", unique: true
-  add_index "classi_2023", ["codice_ministeriale"], name: "classi_2023_codice_ministeriale_index"
-  add_index "classi_2023", ["provincia"], name: "classi_2023_provincia_index"
-
   create_view "view_adozioni144ant_editori", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT import_scuole."REGIONE" AS regione,
       import_scuole."PROVINCIA" AS provincia,
@@ -459,34 +432,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_23_164829) do
   add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
   add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
 
-  create_view "adozioni144scie_titoli", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
-      import_scuole."REGIONE" AS regione,
-      import_scuole."PROVINCIA" AS provincia,
-      tipi_scuole.grado,
-      import_adozioni."ANNOCORSO" AS classe,
-      import_adozioni."DISCIPLINA" AS disciplina,
-      import_adozioni."CODICEISBN" AS isbn,
-      import_adozioni."TITOLO" AS titolo,
-      import_adozioni."EDITORE" AS editore,
-      import_adozioni."PREZZO" AS prezzo,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA") AS titolo_in_provincia,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."REGIONE") AS titolo_in_regione,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN") AS titolo_in_italia,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA") AS mercato_in_provincia,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."REGIONE") AS mercato_in_regione,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA") AS mercato_in_italia,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE", import_scuole."PROVINCIA") AS editore_in_provincia,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE", import_scuole."REGIONE") AS editore_in_regione,
-      count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."EDITORE") AS editore_in_italia,
-      round(((((count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN", import_scuole."PROVINCIA"))::double precision / (count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_scuole."PROVINCIA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_provincia,
-      round(((((count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."CODICEISBN"))::double precision / (count(1) OVER (PARTITION BY tipi_scuole.grado, import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA"))::double precision) * (100)::double precision))::numeric, 2) AS percentuale_titolo_italia
-     FROM ((import_scuole
-       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
-       JOIN tipi_scuole ON (((import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")::text = (tipi_scuole.tipo)::text)))
-    WHERE (((tipi_scuole.grado)::text = 'E'::text) AND ((import_adozioni."ANNOCORSO")::text = ANY (ARRAY[('1'::character varying)::text, ('4'::character varying)::text])) AND ((import_adozioni."DISCIPLINA")::text = ANY (ARRAY[('IL LIBRO DELLA PRIMA CLASSE'::character varying)::text, ('SUSSIDIARIO DEI LINGUAGGI'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE'::character varying)::text, ('SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)'::character varying)::text])))
-    ORDER BY import_scuole."REGIONE", import_scuole."PROVINCIA", import_adozioni."ANNOCORSO", import_adozioni."DISCIPLINA", import_adozioni."TITOLO";
-  SQL
   create_view "view_adozioni_elementari", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
       import_scuole."REGIONE" AS regione,

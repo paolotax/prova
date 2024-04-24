@@ -18,5 +18,6 @@ pin "@rails/actiontext", to: "actiontext.esm.js"
 pin "stimulus-clipboard" # @4.0.1
 pin "tailwindcss-stimulus-components" # @4.0.4
 pin "stimulus-checkbox-select-all" # @5.3.0
+pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.0
 
 pin "mapkick/bundle", to: "mapkick.bundle.js"
