@@ -22,7 +22,8 @@ class AdozioniController < ApplicationController
 
     respond_to do |format|
       if @adozione.save
-        format.html { redirect_to adozione_url(@adozione), notice: "Adozione was successfully created." }
+        format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
+        format.html { redirect_to adozione_url(@adozione), notice: "Si adotta e si sboccia!" }
         format.json { render :show, status: :created, location: @adozione }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +35,8 @@ class AdozioniController < ApplicationController
   def update
     respond_to do |format|
       if @adozione.update(adozione_params)
-        format.html { redirect_to adozione_url(@adozione), notice: "Adozione was successfully updated." }
+        format.turbo_stream { flash.now[:notice] = "Adozione modificata." }
+        format.html { redirect_to adozione_url(@adozione), notice: "Adozione modificata." }
         format.json { render :show, status: :ok, location: @adozione }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -47,7 +49,8 @@ class AdozioniController < ApplicationController
     @adozione.destroy!
 
     respond_to do |format|
-      format.html { redirect_to adozioni_url, notice: "Adozione was successfully destroyed." }
+      format.turbo_stream { flash.now[:notice] = "Adozione eliminata." }
+      format.html { redirect_to adozioni_url, notice: "Adozione eliminata." }
       format.json { head :no_content }
     end
   end
