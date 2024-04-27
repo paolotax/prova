@@ -26,7 +26,7 @@
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-					<option>Classi & Adozioni</option>
+					<option>Classi</option>
 					<option>Adozioni per titolo</option>
 					<option>Appunti</option>
 					<option>Archiviati</option>
@@ -77,9 +77,9 @@
 			<!-- classi -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
-				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
+				<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
 				<!-- da fare @classi -->
-				<%#= render partial: "classi/classe", collection: @import_scuola.classi %>
+				<%= render partial: "classi/classe", collection: @import_scuola.classi %>
 			</div>
 
 			<!-- adozioni grouped -->

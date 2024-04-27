@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_24_113238) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_27_130556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -65,6 +65,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_113238) do
     t.integer "numero_copie"
     t.integer "prezzo_cents"
     t.integer "importo_cents"
+    t.bigint "classe_id"
+    t.index ["classe_id"], name: "index_adozioni_on_classe_id"
     t.index ["import_adozione_id"], name: "index_adozioni_on_import_adozione_id"
     t.index ["libro_id"], name: "index_adozioni_on_libro_id"
     t.index ["user_id"], name: "index_adozioni_on_user_id"
@@ -445,23 +447,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_113238) do
   add_index "view_adozioni144ant_editori", ["editore"], name: "index_view_adozioni144ant_editori_on_editore"
   add_index "view_adozioni144ant_editori", ["provincia", "editore"], name: "index_view_adozioni144ant_editori_on_provincia_and_editore", unique: true
 
-  create_view "view_classi", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
-      import_scuole."REGIONE" AS regione,
-      import_scuole."PROVINCIA" AS provincia,
-      import_scuole."CODICESCUOLA" AS codice_ministeriale,
-      import_adozioni."ANNOCORSO" AS classe,
-      import_adozioni."SEZIONEANNO" AS sezione,
-      import_adozioni."COMBINAZIONE" AS combinazione,
-      '2023'::text AS anno
-     FROM (import_scuole
-       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
-    ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE";
-  SQL
-  add_index "view_classi", ["codice_ministeriale", "classe", "sezione", "combinazione"], name: "idx_on_codice_ministeriale_classe_sezione_combinazi_79414f61ec", unique: true
-  add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
-  add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
-
   create_view "adozioni144scie_titoli", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT import_scuole."AREAGEOGRAFICA" AS area_geografica,
       import_scuole."REGIONE" AS regione,
@@ -521,5 +506,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_24_113238) do
   add_index "view_adozioni_elementari", ["isbn"], name: "index_view_adozioni_elementari_on_isbn"
   add_index "view_adozioni_elementari", ["provincia", "classe", "disciplina", "titolo"], name: "idx_on_provincia_classe_disciplina_titolo_ddcaa2b4ab"
   add_index "view_adozioni_elementari", ["provincia"], name: "index_view_adozioni_elementari_on_provincia"
+
+  create_view "view_classi", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT row_number() OVER (PARTITION BY true::boolean) AS id,
+      import_scuole."AREAGEOGRAFICA" AS area_geografica,
+      import_scuole."REGIONE" AS regione,
+      import_scuole."PROVINCIA" AS provincia,
+      import_scuole."CODICESCUOLA" AS codice_ministeriale,
+      import_adozioni."ANNOCORSO" AS classe,
+      import_adozioni."SEZIONEANNO" AS sezione,
+      import_adozioni."COMBINAZIONE" AS combinazione,
+      array_agg(import_adozioni.id) AS import_adozioni_ids,
+      '2023'::text AS anno
+     FROM (import_scuole
+       JOIN import_adozioni ON (((import_adozioni."CODICESCUOLA")::text = (import_scuole."CODICESCUOLA")::text)))
+    GROUP BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE", '2023'::text
+    ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", import_adozioni."ANNOCORSO", import_adozioni."SEZIONEANNO", import_adozioni."COMBINAZIONE";
+  SQL
+  add_index "view_classi", ["codice_ministeriale", "classe", "sezione", "combinazione"], name: "idx_on_codice_ministeriale_classe_sezione_combinazi_79414f61ec", unique: true
+  add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
+  add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
 
 end

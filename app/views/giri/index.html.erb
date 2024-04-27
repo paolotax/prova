@@ -45,6 +45,10 @@
 				<%= tag.div class: "col-span-3 hidden sm:inline-block p-2" do %>
 					<%= scuola.citta %>
 				<% end %>
+
+				<% scuola.classi.classe_che_adotta.each do |c| %>
+					<%= render partial: "classi/classe", locals: { classe: c } %>
+				<% end %>
 				
 				<%# loop per celle giri %>
 				<% @giri.each do |giro| %>

@@ -2,11 +2,13 @@
 #
 # Table name: view_classi
 #
+#  id                  :bigint
 #  anno                :text
 #  area_geografica     :string
 #  classe              :string           primary key
 #  codice_ministeriale :string           primary key
 #  combinazione        :string           primary key
+#  import_adozioni_ids :bigint           is an Array
 #  provincia           :string
 #  regione             :string
 #  sezione             :string           primary key
@@ -19,16 +21,20 @@
 #
 class Views::Classe < ApplicationRecord
 
-    self.primary_key = [
-        "codice_ministeriale",
-        "classe",
-        "sezione",
-        "combinazione"
-    ]
+    # self.primary_key = [
+    #     "codice_ministeriale",
+    #     "classe",
+    #     "sezione",
+    #     "combinazione"
+    # ]
 
     has_many :import_adozioni, query_constraints: [
         :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
     ]
+
+    has_many :adozioni
+
+
 
     scope :prime, -> { where(classe: "1") }
     scope :seconde, -> { where(classe: "2") }

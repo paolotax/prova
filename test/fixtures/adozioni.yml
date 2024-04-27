@@ -12,12 +12,14 @@
 #  team               :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  classe_id          :bigint
 #  import_adozione_id :bigint           not null
 #  libro_id           :bigint           not null
 #  user_id            :bigint           not null
 #
 # Indexes
 #
+#  index_adozioni_on_classe_id           (classe_id)
 #  index_adozioni_on_import_adozione_id  (import_adozione_id)
 #  index_adozioni_on_libro_id            (libro_id)
 #  index_adozioni_on_user_id             (user_id)
