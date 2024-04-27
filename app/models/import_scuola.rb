@@ -5,26 +5,32 @@
 #  id                                        :bigint           not null, primary key
 #  ANNOSCOLASTICO                            :string
 #  AREAGEOGRAFICA                            :string
-#  REGIONE                                   :string
-#  PROVINCIA                                 :string
-#  CODICEISTITUTORIFERIMENTO                 :string
-#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
-#  CODICESCUOLA                              :string
-#  DENOMINAZIONESCUOLA                       :string
-#  INDIRIZZOSCUOLA                           :string
 #  CAPSCUOLA                                 :string
 #  CODICECOMUNESCUOLA                        :string
-#  DESCRIZIONECOMUNE                         :string
+#  CODICEISTITUTORIFERIMENTO                 :string
+#  CODICESCUOLA                              :string
+#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
+#  DENOMINAZIONESCUOLA                       :string
 #  DESCRIZIONECARATTERISTICASCUOLA           :string
+#  DESCRIZIONECOMUNE                         :string
 #  DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA :string
 #  INDICAZIONESEDEDIRETTIVO                  :string
 #  INDICAZIONESEDEOMNICOMPRENSIVO            :string
 #  INDIRIZZOEMAILSCUOLA                      :string
 #  INDIRIZZOPECSCUOLA                        :string
-#  SITOWEBSCUOLA                             :string
+#  INDIRIZZOSCUOLA                           :string
+#  PROVINCIA                                 :string
+#  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
+#  SITOWEBSCUOLA                             :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
+#
+# Indexes
+#
+#  idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a  (DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
+#  index_import_scuole_on_CODICESCUOLA                          (CODICESCUOLA) UNIQUE
+#  index_import_scuole_on_PROVINCIA                             (PROVINCIA)
 #
 class ImportScuola < ApplicationRecord
 
@@ -53,6 +59,7 @@ class ImportScuola < ApplicationRecord
 
   has_one :tipo_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
   
+
   def mie_adozioni
     import_adozioni.mie_adozioni
   end

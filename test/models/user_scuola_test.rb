@@ -3,10 +3,20 @@
 # Table name: user_scuole
 #
 #  id               :bigint           not null, primary key
-#  import_scuola_id :bigint           not null
-#  user_id          :bigint           not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  import_scuola_id :bigint           not null
+#  user_id          :bigint           not null
+#
+# Indexes
+#
+#  index_user_scuole_on_import_scuola_id  (import_scuola_id)
+#  index_user_scuole_on_user_id           (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (import_scuola_id => import_scuole.id)
+#  fk_rails_...  (user_id => users.id)
 #
 require "test_helper"
 

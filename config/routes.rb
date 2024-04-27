@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resources :tappe
     collection do
       get 'appunti'
+      get 'classi_che_adottano'
     end
   end
 

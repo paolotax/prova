@@ -3,24 +3,31 @@
 # Table name: import_adozioni
 #
 #  id              :bigint           not null, primary key
-#  CODICESCUOLA    :string
 #  ANNOCORSO       :string
-#  SEZIONEANNO     :string
-#  TIPOGRADOSCUOLA :string
-#  COMBINAZIONE    :string
-#  DISCIPLINA      :string
-#  CODICEISBN      :string
 #  AUTORI          :string
-#  TITOLO          :string
-#  SOTTOTITOLO     :string
-#  VOLUME          :string
-#  EDITORE         :string
-#  PREZZO          :string
-#  NUOVAADOZ       :string
-#  DAACQUIST       :string
+#  CODICEISBN      :string
+#  CODICESCUOLA    :string
+#  COMBINAZIONE    :string
 #  CONSIGLIATO     :string
+#  DAACQUIST       :string
+#  DISCIPLINA      :string
+#  EDITORE         :string
+#  NUOVAADOZ       :string
+#  PREZZO          :string
+#  SEZIONEANNO     :string
+#  SOTTOTITOLO     :string
+#  TIPOGRADOSCUOLA :string
+#  TITOLO          :string
+#  VOLUME          :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  import_adozioni_pk                   (CODICESCUOLA,ANNOCORSO,SEZIONEANNO,TIPOGRADOSCUOLA,COMBINAZIONE,CODICEISBN,NUOVAADOZ,DAACQUIST,CONSIGLIATO) UNIQUE
+#  index_import_adozioni_on_DISCIPLINA  (DISCIPLINA)
+#  index_import_adozioni_on_EDITORE     (EDITORE)
+#  index_import_adozioni_on_TITOLO      (TITOLO)
 #
 class ImportAdozione < ApplicationRecord
 
@@ -87,6 +94,8 @@ class ImportAdozione < ApplicationRecord
 
   scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
   
+  scope :classi_che_adottano, -> { where(ANNOCORSO: [3, 5]) }
+
   scope :raggruppate, -> { 
     order([:ANNOCORSO, :DISCIPLINA, :TITOLO, :CODICEISBN, :EDITORE])
     .group(:ANNOCORSO, :DISCIPLINA, :TITOLO, :CODICEISBN, :EDITORE)

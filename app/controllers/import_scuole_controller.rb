@@ -30,6 +30,10 @@ class ImportScuoleController < ApplicationController
     @scuole = current_user.import_scuole.search params[:q]
   end
 
+  def classi_che_adottano
+    @classi_che_adottano = @import_scuola.import_adozioni.classi_che_adottano.per_scuola_classe_sezione_disciplina
+  end
+
   def show
     @miei_editori = current_user.miei_editori
     @mie_tappe = current_user.tappe.where(tappable_id: @import_scuola.id)
