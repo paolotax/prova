@@ -13,7 +13,7 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  classe_id          :bigint
-#  import_adozione_id :bigint           not null
+#  import_adozione_id :bigint
 #  libro_id           :bigint           not null
 #  user_id            :bigint           not null
 #
@@ -32,7 +32,7 @@
 #
 class Adozione < ApplicationRecord
   belongs_to :user
-  belongs_to :import_adozione
+  belongs_to :import_adozione, optional: true
   
   belongs_to :libro, optional: true
 
@@ -75,5 +75,12 @@ class Adozione < ApplicationRecord
     team.split(",").map{ |m| m.strip.split(" e ") }.flatten
   end
 
+  def classe_e_sezione
+    "#{self.classe&.classe} #{self.classe&.sezione}"
+  end
+
+  def scuola 
+    self.classe.import_scuola.scuola
+  end
   
 end

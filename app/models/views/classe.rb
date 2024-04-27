@@ -5,13 +5,13 @@
 #  id                  :bigint
 #  anno                :text
 #  area_geografica     :string
-#  classe              :string           primary key
-#  codice_ministeriale :string           primary key
-#  combinazione        :string           primary key
+#  classe              :string
+#  codice_ministeriale :string
+#  combinazione        :string
 #  import_adozioni_ids :bigint           is an Array
 #  provincia           :string
 #  regione             :string
-#  sezione             :string           primary key
+#  sezione             :string
 #
 # Indexes
 #
@@ -20,6 +20,8 @@
 #  index_view_classi_on_provincia                                  (provincia)
 #
 class Views::Classe < ApplicationRecord
+
+    self.primary_key = "id"
 
     # self.primary_key = [
     #     "codice_ministeriale",
@@ -32,6 +34,8 @@ class Views::Classe < ApplicationRecord
         :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
     ]
 
+    belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
+ 
     has_many :adozioni
 
 
@@ -45,4 +49,12 @@ class Views::Classe < ApplicationRecord
     scope :classe_che_adotta, -> { where(classe: [3, 5]) }
 
     scope :tempo_pieno, -> { where("view_classi.combinazione like ?", "%40 ORE%") }
+
+    def to_combobox_display
+    "#{classe} #{sezione} - #{combinazione.downcase}"
+    end
+
+    def readonly?
+        true
+    end
 end

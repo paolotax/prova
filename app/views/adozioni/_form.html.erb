@@ -32,6 +32,11 @@
                         tax_combobox_select_target: "combobox" 
                 } %>
       </div>
+
+      <div class="my-5  w-full">
+          <%= form.label :classe_id, "Classi", class: "label" %>
+          <%= form.combobox :classe_ids, current_user.import_scuole.last.classi.classe_che_adotta, multiselect_chip_src: new_classe_chip_path %>
+		</div>
   <% end %>
   
   della classe <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> dell' istituto <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>

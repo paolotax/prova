@@ -19,7 +19,7 @@ class AdozioniController < ApplicationController
 
   def create
     @adozione = current_user.adozioni.build(adozione_params)
-
+    #raise params.inspect
     respond_to do |format|
       if @adozione.save
         format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
@@ -62,6 +62,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :stato_adozione, :new_libro)
+      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :stato_adozione, :classe_id, :new_libro)
     end
 end

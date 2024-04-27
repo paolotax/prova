@@ -13,7 +13,7 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  classe_id          :bigint
-#  import_adozione_id :bigint           not null
+#  import_adozione_id :bigint
 #  libro_id           :bigint           not null
 #  user_id            :bigint           not null
 #
