@@ -8,8 +8,6 @@
 	
 		della classe 
 	
-		<%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-bold"  %> 
-
 		<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
 		
 		della scuola
@@ -23,7 +21,7 @@
 		<p class="">
 			<%= tag.span pluralize_stato_adozione(adozione), class: "font-bold" %>
 			il libro
-			<%= tag.span adozione.libro.titolo.upcase, class: "font-bold" %>
+			<%= tag.span adozione.titolo.upcase, class: "font-bold" %>
 			in
 			<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
 		</p>

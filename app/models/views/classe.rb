@@ -19,16 +19,28 @@
 #  index_view_classi_on_codice_ministeriale                        (codice_ministeriale)
 #  index_view_classi_on_provincia                                  (provincia)
 #
+
+
+
+
+# Adozione.where(classe_id: nil).each do |a|
+#     unless a.import_adozione.nil?
+#     a.classe_id = a.import_adozione.classe.attributes['id']
+#     a.save
+#   end
+# end
+
+
 class Views::Classe < ApplicationRecord
 
-    self.primary_key = "id"
+    #self.primary_key = "id"
 
-    # self.primary_key = [
-    #     "codice_ministeriale",
-    #     "classe",
-    #     "sezione",
-    #     "combinazione"
-    # ]
+    self.primary_key = [
+        "codice_ministeriale",
+        "classe",
+        "sezione",
+        "combinazione"
+    ]
 
     has_many :import_adozioni, query_constraints: [
         :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
