@@ -13,8 +13,8 @@
 <%= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 rounded-t-lg bg-gradient-to-b from-slate-900 to-slate-500" do %>
-		<%= tag.div "Scuola", class: "col-span-3 p-2 text-white text-sm font-bold" %>
-		<%= tag.div "Città", class: "col-span-3 hidden sm:inline-block p-2 text-white text-sm font-bold" %>
+		<%= tag.div "Scuola", class: "col-span-3 sm:col-span-6 p-2 text-white text-sm font-bold" %>
+		<%#= tag.div "Città", class: "col-span-3 hidden sm:inline-block p-2 text-white text-sm font-bold" %>
 		
 		<% @giri.each do |giro| %>
 			<%= tag.div class: [
@@ -38,18 +38,20 @@
 			
 			<%= tag.div class: "grid grid-cols-5 sm:grid-cols-12 border-b mb-3 rounded-lg bg-white shadow" do %>
 				
-				<%= tag.div class: "col-span-3 p-2 font-semibold" do %>
-					<%= link_to scuola.scuola, scuola, data: { turbo_frame: "_top" } %>
+				<%= tag.div class: "col-span-3 sm:col-span-6 flex flex-col" do %>
+					
+					<%= tag.div class: "p-2 font-semibold" do %>
+						<%= link_to scuola.scuola, scuola, data: { turbo_frame: "_top" } %>
+						<%= scuola.citta %>
+					<% end %>
+					
+					<%# classi-che-adottano %>
+					<%= turbo_frame_tag "classi-che-adottano-#{dom_id scuola}",
+							src: classi_che_adottano_import_scuola_path(scuola),
+							loading: :lazy do %>
+					<% end %>
 				<% end %>
-				
-				<%= tag.div class: "col-span-3 hidden sm:inline-block p-2" do %>
-					<%= scuola.citta %>
-				<% end %>
-
-				<% scuola.classi.classe_che_adotta.each do |c| %>
-					<%= render partial: "classi/classe", locals: { classe: c } %>
-				<% end %>
-				
+			
 				<%# loop per celle giri %>
 				<% @giri.each do |giro| %>
 					<%= tag.div class: [ 
@@ -96,8 +98,6 @@
 						<%= render partial: "appunti/appunto_riga", locals: { appunto: appunto } %>
 					<% end %>  
 				<% end %>
-
-
 
 			<% end %>
 		<% end %>

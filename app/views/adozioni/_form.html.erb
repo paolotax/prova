@@ -12,7 +12,7 @@
   <% end %>
 
   <%= form.hidden_field :import_adozione_id %>
-
+  <%= form.hidden_field :classe_id %>
 
   <p class="my-5 tex-2xl font-semibold">
      Le maestre 
@@ -24,7 +24,7 @@
         class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <% if adozione.import_adozione.nil? %>
+  <% if adozione.classe.nil? %>
   		<div class="my-5 youtubes w-full" data-controller="tax-combobox-select">
         <%= form.label :import_scuola_id, "Scuola", class: "label" %>
         <%= form.combobox :import_scuola_id, current_user.import_scuole.all, 
@@ -32,11 +32,10 @@
                         tax_combobox_select_target: "combobox" 
                 } %>
       </div>
-
-      <div class="my-5  w-full">
-          <%= form.label :classe_id, "Classi", class: "label" %>
-          <%= form.combobox :classe_ids, current_user.import_scuole.last.classi.classe_che_adotta, multiselect_chip_src: new_classe_chip_path %>
-		</div>
+      
+      <%= turbo_frame_tag :combo_classi  %>
+  <% else %>
+    <%= render partial: "classi/combobox_classi", locals: { scuola: adozione.classe.import_scuola } %>
   <% end %>
   
   della classe <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> dell' istituto <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>

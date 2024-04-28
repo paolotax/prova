@@ -1,7 +1,7 @@
 class ImportScuoleController < ApplicationController
   
   before_action :authenticate_user!
-  before_action :set_import_scuola, only: %i[ show edit update destroy ]
+  before_action :set_import_scuola, only: %i[ show classi_che_adottano combobox_classi ]
 
   def index
 
@@ -31,7 +31,11 @@ class ImportScuoleController < ApplicationController
   end
 
   def classi_che_adottano
-    @classi_che_adottano = @import_scuola.import_adozioni.classi_che_adottano.per_scuola_classe_sezione_disciplina
+    @classi_che_adottano = @import_scuola.classi.classe_che_adotta 
+  end
+
+  def combobox_classi
+    @classi = @import_scuola.classi.classe_che_adotta 
   end
 
   def show
@@ -39,48 +43,6 @@ class ImportScuoleController < ApplicationController
     @mie_tappe = current_user.tappe.where(tappable_id: @import_scuola.id)
     @appunti_non_archiviati = @import_scuola.appunti.non_archiviati.dell_utente(current_user)
     @appunti_archiviati = @import_scuola.appunti.archiviati.dell_utente(current_user)
-  end
-  
-  def new
-    @import_scuola = ImportScuola.new
-  end
-
-  def edit
-  end
-
-  def create
-    @import_scuola = ImportScuola.new(import_scuola_params)
-
-    respond_to do |format|
-      if @import_scuola.save
-        format.html { redirect_to import_scuola_url(@import_scuola), notice: "Import scuola was successfully created." }
-        format.json { render :show, status: :created, location: @import_scuola }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @import_scuola.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def update
-    respond_to do |format|
-      if @import_scuola.update(import_scuola_params)
-        format.html { redirect_to import_scuola_url(@import_scuola), notice: "Import scuola was successfully updated." }
-        format.json { render :show, status: :ok, location: @import_scuola }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @import_scuola.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def destroy
-    @import_scuola.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to import_scuole_url, notice: "Import scuola was successfully destroyed." }
-      format.json { head :no_content }
-    end
   end
 
   private

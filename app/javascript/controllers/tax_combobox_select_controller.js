@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
+
 // Connects to data-controller="tax-combobox-select"
 export default class extends Controller {
   
@@ -15,8 +16,13 @@ export default class extends Controller {
 
     console.log("Combobox target", this.element)
 
-    let scuola_id = document.getElementById("adozione_import_scuola_id-hw-hidden-field").value;
+    let scuola_id = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;
+    let url = `/import_scuole/${scuola_id}/combobox_classi`;
+    
+    Turbo.visit(url, { frame: "combobox_classi", turbo: true, acceptsStreamResponse: true }) 
 
-    console.log("Combobox value changed", scuola_id)
+    console.log("Combobox value changed", url)
+
+    
   }
 }

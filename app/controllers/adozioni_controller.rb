@@ -18,17 +18,23 @@ class AdozioniController < ApplicationController
   end
 
   def create
-    @adozione = current_user.adozioni.build(adozione_params)
+
+    if params[:adozione][:classe_ids].present?
+      classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
+      classi.each do |classe|
+        @adozione = current_user.adozioni.build(adozione_params)
+        @adozione.classe_id = classe.id
+        @adozione.save
+      end
+    end 
+
     #raise params.inspect
     respond_to do |format|
-      if @adozione.save
+
         format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
         format.html { redirect_to adozione_url(@adozione), notice: "Si adotta e si sboccia!" }
         format.json { render :show, status: :created, location: @adozione }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @adozione.errors, status: :unprocessable_entity }
-      end
+
     end
   end
 

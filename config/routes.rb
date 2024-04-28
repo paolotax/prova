@@ -9,7 +9,14 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  
+  
+  resources :classe_chips, only: :new, param: :combobox_value
+  
   resources :adozioni
+  
+  
+  
   resources :libri
   
   resources :tipi_scuole, only: [:index, :update]
@@ -77,7 +84,10 @@ Rails.application.routes.draw do
     resources :tappe
     collection do
       get 'appunti'
+    end
+    member do
       get 'classi_che_adottano'
+      get 'combobox_classi'
     end
   end
 

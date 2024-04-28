@@ -40,6 +40,10 @@ class Adozione < ApplicationRecord
 
   belongs_to :classe, class_name: "Views::Classe", optional: true
 
+  before_save do |a|
+    a.numero_sezioni = 1 if a.numero_sezioni.nil?
+  end
+
   # return [["amica parola", 22]=>3, [...]=>2, ...]
   scope :per_titolo, -> { 
       joins(:libro)        
@@ -76,11 +80,15 @@ class Adozione < ApplicationRecord
   end
 
   def classe_e_sezione
-    "#{self.classe&.classe} #{self.classe&.sezione}"
+    "#{self.classe&.classe} #{self.classe&.sezione&.titleize}"
   end
 
   def scuola 
-    self.classe.import_scuola.scuola
+    self.classe&.import_scuola&.scuola || self.import_adozione&.scuola
+  end
+
+  def citta 
+    self.classe&.import_scuola&.citta || self.import_adozione&.citta
   end
   
 end
