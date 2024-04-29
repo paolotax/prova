@@ -4,12 +4,10 @@ class AdozioniController < ApplicationController
   before_action :set_adozione, only: %i[ show edit update destroy ]
 
   def index
-    @adozioni = current_user.adozioni.includes(:libro, import_adozione: [:import_scuola]).order(updated_at: :desc).all
+    @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(updated_at: :desc).all
     @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
 
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
-
-
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
 
   end
@@ -24,24 +22,40 @@ class AdozioniController < ApplicationController
   def edit
   end
 
-  def create 
+  def bulk_create 
   end
 
-  def bulk_create
+  def bulk_update
+  end
+
+  def create
 
     if params[:adozione][:classe_ids].present?
+
       classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
+      libri = current_user.libri.find(params[:adozione][:libro_ids].split(","))
+
+      @adozioni = []
+      
       classi.each do |classe|
-        @adozione = current_user.adozioni.build(adozione_params)
-        @adozione.classe_id = classe.id
-        @adozione.save
+
+        libri.each do |libro|
+
+          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :new_libro, :import_adozione_id))
+          adozione.classe_id = classe.id
+
+          adozione.libro_id = libro.id
+          if adozione.save
+            @adozioni << adozione
+          end
+        end
       end
     end 
 
     #raise params.inspect
     respond_to do |format|
 
-        #format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
+        format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
         format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
         format.json { render :show, status: :created, location: @adozione }
 

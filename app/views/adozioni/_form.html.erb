@@ -57,9 +57,10 @@
 
 	il seguente testo:
 
-	<div class="my-5 youtubes">
-		<%= form.combobox :libro_id, current_user.libri.order(:titolo),
-				name_when_new: "adozione[new_libro]", placeholder: "inserisci libro..." %>
+	<div class="my-5">
+		<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
+				placeholder: "inserisci libri...",
+				multiselect_chip_src: new_libro_chip_path %>
 	</div>
 
 	<div class="div flex flex-row justify-start gap-4">

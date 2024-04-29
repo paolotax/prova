@@ -33,40 +33,38 @@
 
 class Views::Classe < ApplicationRecord
 
-    self.primary_key = "id"
+  self.primary_key = "id"
 
-    # self.primary_key = [
-    #     "codice_ministeriale",
-    #     "classe",
-    #     "sezione",
-    #     "combinazione"
-    # ]
+  # self.primary_key = [
+  #     "codice_ministeriale",
+  #     "classe",
+  #     "sezione",
+  #     "combinazione"
+  # ]
 
-    has_many :import_adozioni, query_constraints: [
-        :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
-    ]
+  has_many :import_adozioni, query_constraints: [
+    :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
+  ]
 
-    belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
- 
-    has_many :adozioni
+  belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
+  has_many :adozioni
 
+  scope :prime, -> { where(classe: "1") }
+  scope :seconde, -> { where(classe: "2") }
+  scope :terze, -> { where(classe: "3") }
+  scope :quarte, -> { where(classe: "4") }
+  scope :quinte, -> { where(classe: "5") }
 
-    scope :prime, -> { where(classe: "1") }
-    scope :seconde, -> { where(classe: "2") }
-    scope :terze, -> { where(classe: "3") }
-    scope :quarte, -> { where(classe: "4") }
-    scope :quinte, -> { where(classe: "5") }
+  scope :classe_che_adotta, -> { where(classe: [3, 5]) }
+  scope :tempo_pieno, -> { where("view_classi.combinazione like ?", "%40 ORE%") }
 
-    scope :classe_che_adotta, -> { where(classe: [3, 5]) }
+  def to_combobox_display
+    "#{classe} #{sezione}"
+  end
 
-    scope :tempo_pieno, -> { where("view_classi.combinazione like ?", "%40 ORE%") }
+  def readonly?
+    true
+  end
 
-    def to_combobox_display
-    "#{classe} #{sezione} - #{combinazione.downcase}"
-    end
-
-    def readonly?
-        true
-    end
 end

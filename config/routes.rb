@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   
   
   resources :classe_chips, only: :new, param: :combobox_value
+  resources :libro_chips,  only: :new, param: :combobox_value
   
   resources :adozioni do 
     collection do

@@ -80,7 +80,7 @@ class Adozione < ApplicationRecord
   #           attachments_blobs: [:filename], 
   #           import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
   
-
+  
   def self.stato_adozione
     order(:stato_adozione).distinct.pluck(:stato_adozione).compact
   end
@@ -100,15 +100,15 @@ class Adozione < ApplicationRecord
     "#{self.classe&.classe} #{self.classe&.sezione&.titleize}"
   end
 
-  # def scuola 
-  #   self.classe&.import_scuola&.scuola || self.import_adozione&.scuola
-  # end
+  def nome_scuola 
+    self.scuola&.scuola || self.import_adozione&.scuola
+  end
 
   def citta 
     self.classe&.import_scuola&.citta || self.import_adozione&.citta
   end
   
-  def titolo
+  def titolo_libro
     self.libro&.titolo
   end
 

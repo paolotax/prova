@@ -1,5 +1,7 @@
-<%= turbo_stream.prepend "adozioni-lista" do %>
-    <%= render  @adozione %>
+<% @adozioni.each do |adozione| %>
+    <%= turbo_stream.prepend "adozioni-lista" do %>
+        <%= render  adozione %>
+    <% end %>
 <% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>
