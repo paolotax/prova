@@ -24,7 +24,10 @@ class AdozioniController < ApplicationController
   def edit
   end
 
-  def create
+  def create 
+  end
+
+  def bulk_create
 
     if params[:adozione][:classe_ids].present?
       classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
@@ -38,8 +41,8 @@ class AdozioniController < ApplicationController
     #raise params.inspect
     respond_to do |format|
 
-        format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
-        format.html { redirect_to adozione_url(@adozione), notice: "Si adotta e si sboccia!" }
+        #format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
+        format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
         format.json { render :show, status: :created, location: @adozione }
 
     end

@@ -13,10 +13,13 @@ Rails.application.routes.draw do
   
   resources :classe_chips, only: :new, param: :combobox_value
   
-  resources :adozioni
-  
-  
-  
+  resources :adozioni do 
+    collection do
+      post 'bulk_create'
+      patch 'bulk_update'
+    end
+  end
+    
   resources :libri
   
   resources :tipi_scuole, only: [:index, :update]

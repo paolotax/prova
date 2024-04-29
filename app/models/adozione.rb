@@ -32,16 +32,14 @@
 #
 class Adozione < ApplicationRecord
   belongs_to :user
-  belongs_to :import_adozione, optional: true
   
+  belongs_to :import_adozione, optional: true
   belongs_to :libro, optional: true
 
   #belongs_to :classe, class_name: "Views::Classe", query_constraints: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA]
 
   belongs_to :classe, class_name: "Views::Classe", optional: true
-
   has_one :scuola, through: :classe, source: :import_scuola
-
 
   before_save do |a|
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
@@ -49,11 +47,11 @@ class Adozione < ApplicationRecord
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
-  scope :per_titolo, -> { 
+  scope :per_libro, -> { 
       joins(:libro)        
       .select(:titolo, :libro_id)
       .select("sum(adozioni.numero_sezioni) as numero_sezioni")
-      .select("ARRAY_AGG(adozioni.id) AS adozioni_ids")
+      .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
       .group(:titolo, :libro_id) 
       .order(:titolo)
   }
@@ -62,7 +60,7 @@ class Adozione < ApplicationRecord
     joins(:scuola)        
     .select('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
-    .select("ARRAY_AGG(adozioni.id) AS adozioni_ids")
+    .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
     .order("import_scuole.id")
   }
@@ -120,7 +118,19 @@ class Adozione < ApplicationRecord
     self.per_scuola.map do |a|
       { scuola_id: a.id, 
         nome_scuola: a.DENOMINAZIONESCUOLA, 
-        numero_sezioni: a.numero_sezioni
+        numero_sezioni: a.numero_sezioni,
+        adozione_ids: a.adozione_ids
+      }
+    end
+  end
+
+  def self.per_libro_hash 
+    
+    self.per_libro.map do |a|
+      { libro_id: a.libro_id, 
+        titolo: a.titolo, 
+        numero_sezioni: a.numero_sezioni,
+        adozione_ids: a.adozione_ids
       }
     end
   end

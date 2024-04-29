@@ -24,9 +24,9 @@
 
   <%= tag.div "adozioni-per-titolo", class: "pb-6 flex flex-wrap gap-1" do%>
     
-    <% current_user.adozioni.per_titolo.sum(:numero_sezioni).each do |k, v| %>
+    <% current_user.adozioni.per_libro_hash.each do |libro| %>
       <%= tag.div class: "px-2 py-1.5 bg-red-400 text-xs font-semibold text-white rounded-md" do %>
-        <%= link_to "#{k[0]} - #{v}", adozioni_path(libro_id: k[1]), class: ""  %>
+        <%= link_to "#{libro[:titolo]} - #{libro[:numero_sezioni]}", adozioni_path(libro_id: libro[:libro_id]), class: ""  %>
       <% end %>
     <% end %>
 
