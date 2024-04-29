@@ -1,12 +1,12 @@
 wb = xlsx_package.workbook
 
-fields = [ "id", "nome", "body", "content", "created_at", "updated_at", "scuola", "adozione" ]
+fields = [ "id", "titolo", "classe", "scuola", "citta", "classe_id", "note", "numero_sezioni", "numero_copie" ]
 
 wb.add_worksheet(name: "Foglio 1") do |sheet|
  
   sheet.add_row  fields
   
   @adozioni.each do |row|   
-    sheet.add_row [ row.id, row.nome, row.body, row.content_to_s, row.created_at, row.updated_at, row.import_scuola&.to_s, row.import_adozione&.to_s ]
+    sheet.add_row [ row.id, row.titolo, row.classe_e_sezione, row.scuola, row.citta, row.classe_id, row.note, row.numero_sezioni, row.numero_copie ]
   end
 end

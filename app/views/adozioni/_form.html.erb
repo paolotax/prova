@@ -27,7 +27,7 @@
 		
 		<div class="my-5 youtubes w-full" data-controller="tax-combobox-select">
 			<%= form.label :import_scuola_id, "della scuola", class: "label" %>
-			<%= form.combobox :import_scuola_id, current_user.import_scuole.all, 
+			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					data: { action: "hw-combobox:selection->tax-combobox-select#change",
 							tax_combobox_select_target: "combobox" } %>
 		</div>
@@ -58,7 +58,7 @@
 	il seguente testo:
 
 	<div class="my-5 youtubes">
-		<%= form.combobox :libro_id, current_user.libri,
+		<%= form.combobox :libro_id, current_user.libri.order(:titolo),
 				name_when_new: "adozione[new_libro]", placeholder: "inserisci libro..." %>
 	</div>
 

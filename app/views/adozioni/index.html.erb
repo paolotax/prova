@@ -22,8 +22,19 @@
 
 <% end %>
 
-  <%#= current_user.adozioni.per_titolo.sum(:numero_sezioni) %>
-  <%#= current_user.adozioni.per_scuola.sum(:numero_sezioni) %>
+  <% current_user.adozioni.per_titolo.sum(:numero_sezioni).each do |k, v| %>
+    <%= tag.div class: "inline-block p-2 bg-red-400 text-white rounded-md" do %>
+      <%= k[0]%> - <%= v %>
+    <% end %>
+  <% end %>
+
+    <% current_user.adozioni.per_scuola.sum(:numero_sezioni).each do |k, v| %>
+    <%= tag.div class: "inline-block p-2 bg-blue-400 text-white rounded-md" do %>
+      <%= k %> - <%= v %>
+    <% end %>
+  <% end %>
+
+
 
   <div id="adozioni" class="min-w-full">
     <%= render @adozioni %>
