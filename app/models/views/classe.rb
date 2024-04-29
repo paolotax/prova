@@ -2,7 +2,7 @@
 #
 # Table name: view_classi
 #
-#  id                  :bigint
+#  id                  :bigint           primary key
 #  anno                :text
 #  area_geografica     :string
 #  classe              :string

@@ -40,8 +40,12 @@ class Adozione < ApplicationRecord
 
   belongs_to :classe, class_name: "Views::Classe", optional: true
 
+  has_one :scuola, through: :classe, source: :import_scuola
+
+
   before_save do |a|
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
+    a.numero_copie = 0 if a.numero_copie.nil?
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
@@ -55,13 +59,29 @@ class Adozione < ApplicationRecord
   }
 
   scope :per_scuola, -> { 
-    joins(classe: :import_scuola)        
+    joins(:scuola)        
     .select('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
     .select("ARRAY_AGG(adozioni.id) AS adozioni_ids")
     .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
     .order("import_scuole.id")
   }
+
+  include Searchable
+
+  search_on :stato_adozione, 
+            :team, 
+            :note, 
+            classe: [:classe, :sezione, :combinazione], 
+            libro:  [:categoria, :titolo, :disciplina],
+            scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]
+
+  # search_on :nome, :body, :email, :telefono, :stato, 
+  #           import_adozione: [:CODICESCUOLA, :CODICEISBN, :EDITORE],
+  #           rich_text_content: [:body],
+  #           attachments_blobs: [:filename], 
+  #           import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
+  
 
   def self.stato_adozione
     order(:stato_adozione).distinct.pluck(:stato_adozione).compact
@@ -82,9 +102,9 @@ class Adozione < ApplicationRecord
     "#{self.classe&.classe} #{self.classe&.sezione&.titleize}"
   end
 
-  def scuola 
-    self.classe&.import_scuola&.scuola || self.import_adozione&.scuola
-  end
+  # def scuola 
+  #   self.classe&.import_scuola&.scuola || self.import_adozione&.scuola
+  # end
 
   def citta 
     self.classe&.import_scuola&.citta || self.import_adozione&.citta
@@ -92,6 +112,17 @@ class Adozione < ApplicationRecord
   
   def titolo
     self.libro&.titolo
+  end
+
+
+  def self.per_scuola_hash 
+    
+    self.per_scuola.map do |a|
+      { scuola_id: a.id, 
+        nome_scuola: a.DENOMINAZIONESCUOLA, 
+        numero_sezioni: a.numero_sezioni
+      }
+    end
   end
 
 end

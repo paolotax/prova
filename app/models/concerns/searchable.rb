@@ -12,9 +12,9 @@ module Searchable
       self.searchable_fields = searchable_fields
       self.searchable_associations_fields = searchable_associations_fields
 
-      # scope :search, ->(query) do
-      #   joins(searchable_joins).where(searchable_where_clause, query: "%#{query}%")
-      # end
+      scope :search, ->(query) do
+        joins(searchable_joins).where(searchable_where_clause, query: "%#{query}%")
+      end
 
       scope :left_search, ->(query) do
         left_joins(searchable_joins).where(searchable_where_clause, query: "%#{query}%")
