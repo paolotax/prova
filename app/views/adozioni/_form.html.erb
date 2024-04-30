@@ -55,18 +55,18 @@
 				name_when_new: "adozione[stato_adozione]", placeholder: "che fanno?" %>
 	</div>
 
-	il seguente testo:
+	i seguenti testi:
 
-	<div class="my-5">
+	<div class="my-5 youtubes">
 		<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
-				placeholder: "inserisci libri...",
-				multiselect_chip_src: new_libro_chip_path, name_when_new: "adozione[new_libro]" %>
+				placeholder: "seleziona titoli...",
+				multiselect_chip_src: new_libro_chip_path %>
 	</div>
 
 	<div class="div flex flex-row justify-start gap-4">
 		<div class="my-5">
-		<%= form.label :numero_sezioni %>
-		<%= form.number_field :numero_sezioni, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+		<%#= form.label :numero_sezioni %>
+		<%#= form.number_field :numero_sezioni, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
 		</div>
 
 		<div class="my-5">
