@@ -40,7 +40,7 @@
 		della classe 
 		<%= tag.span adozione&.classe_e_sezione, class: "font-semibold"  %> 
 		dell' istituto 
-		<%= tag.span adozione&.scuola, class: "font-semibold" %>
+		<%= tag.span adozione&.nome_scuola, class: "font-semibold" %>
 		di
 		<%= tag.span adozione&.citta, class: "font-semibold" %>		
 	<% end %>
@@ -60,7 +60,7 @@
 	<div class="my-5">
 		<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
 				placeholder: "inserisci libri...",
-				multiselect_chip_src: new_libro_chip_path %>
+				multiselect_chip_src: new_libro_chip_path, name_when_new: "adozione[new_libro]" %>
 	</div>
 
 	<div class="div flex flex-row justify-start gap-4">

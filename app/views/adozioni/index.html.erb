@@ -23,7 +23,9 @@
 <% end %>
 
 	<%= tag.div "adozioni-per-titolo", class: "pb-6 flex flex-wrap gap-1" do%>
-		
+        <%= tag.div class: "px-2 py-1.5 bg-gray-800 text-xs font-semibold text-white rounded-md" do %>
+            <%= link_to "tutte - #{current_user.adozioni.per_libro.sum {|a| a[:numero_sezioni]}}", adozioni_path, class: ""  %>
+        <% end %>		
 		<% current_user.adozioni.per_libro_hash.each do |libro| %>
 			<%= tag.div class: "px-2 py-1.5 bg-red-400 text-xs font-semibold text-white rounded-md" do %>
 				<%= link_to "#{libro[:titolo]} - #{libro[:numero_sezioni]}", adozioni_path(libro_id: libro[:libro_id]), class: ""  %>
