@@ -19,6 +19,10 @@ export default class extends Controller {
     let scuola_id = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;
     let url = `/import_scuole/${scuola_id}/combobox_classi`;
     
+    if (scuola_id == "") {
+      return
+    }
+    
     Turbo.visit(url, { frame: "combobox_classi", turbo: true, acceptsStreamResponse: true }) 
 
     console.log("Combobox value changed", url)
