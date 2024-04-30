@@ -58,9 +58,18 @@
 	i seguenti testi:
 
 	<div class="my-5 youtubes">
-		<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
+		<%= form.combobox :titolo, current_user.libri.order(:titolo),
+				placeholder: "seleziona titoli...",
+				multiselect_chip_src: new_libro_chip_path,
+				name_when_new: :titolo %>
+		<%#= form.combobox :libro_ids, current_user.libri.order(:titolo),
 				placeholder: "seleziona titoli...",
 				multiselect_chip_src: new_libro_chip_path %>
+	</div>
+
+	<div class="my-5">
+		<%= form.label :note %>
+		<%= form.text_area :note, rows: 2, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
 	</div>
 
 	<div class="div flex flex-row justify-start gap-4">
@@ -75,10 +84,7 @@
 		</div>
 	</div>
 	
-	<div class="my-5">
-		<%= form.label :note %>
-		<%= form.text_area :note, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-	</div>
+
 
 	<div class="inline">
 		<%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

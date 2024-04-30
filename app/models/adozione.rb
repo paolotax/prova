@@ -31,13 +31,10 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Adozione < ApplicationRecord
-  belongs_to :user
-  
+
+  belongs_to :user  
   belongs_to :import_adozione, optional: true
   belongs_to :libro, optional: true
-
-  #belongs_to :classe, class_name: "Views::Classe", query_constraints: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA]
-
   belongs_to :classe, class_name: "Views::Classe", optional: true
   has_one :scuola, through: :classe, source: :import_scuola
 
@@ -83,6 +80,15 @@ class Adozione < ApplicationRecord
   
   def self.stato_adozione
     order(:stato_adozione).distinct.pluck(:stato_adozione).compact
+  end
+
+  #attr_accessor :titolo
+
+  def titolo=(titolo)
+    libro = Current.user.libri.find_or_create_by(titolo: new_libro)
+    libro.prezzo_in_cents = 0
+    libro.save
+    self.libro = libro
   end
 
   def new_libro=(new_libro)
