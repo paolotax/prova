@@ -23,7 +23,7 @@ export default class extends Controller {
       return
     }
     
-    Turbo.visit(url, { frame: "combobox_classi", turbo: true, acceptsStreamResponse: true }) 
+    Turbo.visit(url, { frame: "combobox_classi", acceptsStreamResponse: true }) 
 
     console.log("Combobox value changed", url)
 

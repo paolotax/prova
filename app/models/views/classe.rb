@@ -67,4 +67,8 @@ class Views::Classe < ApplicationRecord
     true
   end
 
+  def libro_ids
+    adozioni.map(&:libro_id)
+  end
+
 end

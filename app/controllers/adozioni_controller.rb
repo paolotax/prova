@@ -30,8 +30,12 @@ class AdozioniController < ApplicationController
 
   def create
 
+    #raise params.inspect
+
     if params[:adozione][:classe_ids].present?
 
+      
+      
       classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
       libri = current_user.libri.find(params[:adozione][:libro_ids].split(","))
 
@@ -92,6 +96,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :stato_adozione, :classe_id, :new_libro)
+      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :stato_adozione, :classe_id, :titolo, :new_libro)
     end
 end

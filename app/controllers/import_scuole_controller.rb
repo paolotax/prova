@@ -35,7 +35,11 @@ class ImportScuoleController < ApplicationController
   end
 
   def combobox_classi
+
+    
     @classi = @import_scuola.classi.classe_che_adotta 
+    render layout: false
+
   end
 
   def show

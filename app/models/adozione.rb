@@ -45,12 +45,12 @@ class Adozione < ApplicationRecord
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
   scope :per_libro, -> { 
-      joins(:libro)        
-      .select(:titolo, :libro_id)
-      .select("sum(adozioni.numero_sezioni) as numero_sezioni")
-      .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
-      .group(:titolo, :libro_id) 
-      .order(:titolo)
+    joins(:libro)        
+    .select(:titolo, :libro_id)
+    .select("sum(adozioni.numero_sezioni) as numero_sezioni")
+    .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
+    .group(:titolo, :libro_id) 
+    .order(:titolo)
   }
 
   scope :per_scuola, -> { 
@@ -71,15 +71,9 @@ class Adozione < ApplicationRecord
             libro:  [:categoria, :titolo, :disciplina],
             scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]
 
-  # search_on :nome, :body, :email, :telefono, :stato, 
-  #           import_adozione: [:CODICESCUOLA, :CODICEISBN, :EDITORE],
-  #           rich_text_content: [:body],
-  #           attachments_blobs: [:filename], 
-  #           import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
-  
-  
+    
   def self.stato_adozione
-    order(:stato_adozione).distinct.pluck(:stato_adozione).compact
+    where.not(stato_adozione:[ nil, ""]).order(:stato_adozione).distinct.pluck(:stato_adozione).compact
   end
 
   #attr_accessor :titolo
@@ -118,11 +112,10 @@ class Adozione < ApplicationRecord
     self.libro&.titolo
   end
 
-
-  def self.per_scuola_hash 
-    
+  def self.per_scuola_hash     
     self.per_scuola.map do |a|
-      { scuola_id: a.id, 
+      { 
+        scuola_id: a.id, 
         nome_scuola: a.DENOMINAZIONESCUOLA, 
         numero_sezioni: a.numero_sezioni,
         adozione_ids: a.adozione_ids
@@ -131,14 +124,15 @@ class Adozione < ApplicationRecord
   end
 
   def self.per_libro_hash 
-    
     self.per_libro.map do |a|
-      { libro_id: a.libro_id, 
+      { 
+        libro_id: a.libro_id, 
         titolo: a.titolo, 
         numero_sezioni: a.numero_sezioni,
         adozione_ids: a.adozione_ids
       }
     end
   end
+  
 
 end

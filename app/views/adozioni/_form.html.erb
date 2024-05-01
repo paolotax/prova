@@ -11,60 +11,63 @@
 		</div>
 	<% end %>
 
-	<%#= form.hidden_field :import_adozione_id %>
-	<%#= form.hidden_field :classe_id %>
-
-	<p class="my-5 tex-2xl font-semibold">
-		Le maestre 
-	</p>
-		
 	<div class="my-5">
+		<%= form.label :team, "Le maestre" %>
 		<%= form.text_field :team, 
-			class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+			class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-80" %>
 	</div>
 
 	<% if adozione.classe.nil? %>
 		
 		<div class="my-5 youtubes w-full" data-controller="tax-combobox-select">
-			<%= form.label :import_scuola_id, "della scuola", class: "label" %>
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
+					placeholder: "seleziona scuola...",
+					label: "della scuola:",
 					data: { action: "hw-combobox:selection->tax-combobox-select#change",
 							tax_combobox_select_target: "combobox" } %>
 		</div>
-		
-		<%= turbo_frame_tag :combo_classi do %>
-			<%= tag.div class: "min-h-12" %>
-		<% end %>
-	
-	<% else %>
-		della classe 
-		<%= tag.span adozione&.classe_e_sezione, class: "font-semibold"  %> 
-		dell' istituto 
-		<%= tag.span adozione&.nome_scuola, class: "font-semibold" %>
-		di
-		<%= tag.span adozione&.citta, class: "font-semibold" %>		
 	<% end %>
 
 	<%# compatibilita vecchio import_adozioni_id da eliminare da adozioni %>
 	<% unless adozione.import_adozione.nil? %>	
-		della classe <%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> dell' istituto <%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
+		della classe 
+		<%= tag.span adozione.import_adozione&.classe_e_sezione, class: "font-semibold"  %> 
+		dell' istituto 
+		<%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
 	<% end %>
 
 	<div class="my-5 youtubes">
-		<%= form.combobox :stato_adozione, current_user.adozioni.stato_adozione, 
-				name_when_new: "adozione[stato_adozione]", placeholder: "che fanno?" %>
+		<%= form.combobox :stato_adozione, 
+				current_user.adozioni.stato_adozione, 
+				name_when_new: "adozione[stato_adozione]", 
+				label: "che fanno?",
+				placeholder: "adottano o comprano?" %>
 	</div>
 
-	i seguenti testi:
+	<%= turbo_frame_tag :combo_classi do %>
+		<% if adozione.classe.nil? %>
+			<%= tag.div class: "min-h-12" %>
+		<% else %>
+			<%= render partial: "classi/combobox_classi", 
+				locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+		<% end %>
+	<% end %>
+
+	<%#= form.collection_radio_buttons :stato_adozione, current_user.adozioni.stato_adozione, :to_s, :to_s %>
 
 	<div class="my-5 youtubes">
-		<%= form.combobox :titolo, current_user.libri.order(:titolo),
-				placeholder: "seleziona titoli...",
-				multiselect_chip_src: new_libro_chip_path,
-				name_when_new: :titolo %>
-		<%#= form.combobox :libro_ids, current_user.libri.order(:titolo),
-				placeholder: "seleziona titoli...",
-				multiselect_chip_src: new_libro_chip_path %>
+		<% if action_name == "new" %>
+			<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
+					value: [adozione.libro_id],
+					label: "i seguenti testi:",
+					placeholder: "seleziona titoli...",
+					multiselect_chip_src: new_libro_chip_path %>
+		<% else %>
+			<%= form.combobox :libro_id, current_user.libri.order(:titolo),
+					label: "il testo:",
+					placeholder: "seleziona il titolo o inseriscine uno nuovo...",
+					name_when_new: "adozione[new_libro]" %>
+		<% end %>
 	</div>
 
 	<div class="my-5">
