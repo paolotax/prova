@@ -5,7 +5,7 @@
     <% if action_name == "edit" %>
         <div class="my-5  youtubes">
             <%= combobox_tag "adozione[classe_id]", 
-                    scuola.classi.classe_che_adotta,
+                    scuola.classi,
                     value: classe_ids[0],
                     placeholder: "seleziona classe...",
                     label: "per la classe:" %>
@@ -13,7 +13,7 @@
     <% else %>
         <div class="my-5  youtubes">
             <%= combobox_tag "adozione[classe_ids]", 
-                    scuola.classi.classe_che_adotta,
+                    scuola.classi,
                     value: classe_ids, 
                     multiselect_chip_src: new_classe_chip_path, 
                     placeholder: "seleziona classi...",

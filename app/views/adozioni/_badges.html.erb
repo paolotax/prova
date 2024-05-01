@@ -1,0 +1,19 @@
+<%= turbo_frame_tag :adozioni_badges, class: "px-2 pb-6 flex flex-wrap gap-1" do %>
+    
+    <%= tag.div class: "p-2 py-1.5 bg-gray-800 text-xs font-semibold text-white rounded-md" do %>
+        <%= link_to "tutte - #{current_user.adozioni.per_libro.sum {|a| a[:numero_sezioni]}}", adozioni_path, class: ""  %>
+    <% end %>		
+
+    <% current_user.adozioni.per_libro_hash.each do |libro| %>
+        <%= tag.div class: "px-2 py-1.5 bg-red-400 text-xs font-semibold text-white rounded-md" do %>
+            <%= link_to "#{libro[:titolo]} - #{libro[:numero_sezioni]}", adozioni_path(libro_id: libro[:libro_id]), class: ""  %>
+        <% end %>
+    <% end %>
+
+    <% current_user.adozioni.per_scuola_hash.each do |scuola| %>
+        <%= tag.div class: "px-2 py-1.5 bg-blue-400 text-xs font-semibold text-white rounded-md" do %>
+            <%= link_to "#{scuola[:nome_scuola]} - #{scuola[:numero_sezioni]}", adozioni_path(scuola_id: scuola[:scuola_id]), class: ""  %>
+        <% end %>
+    <% end %>
+
+<% end %>

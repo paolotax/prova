@@ -8,7 +8,7 @@
   .cb-tax {
 
     .hw-combobox__main__wrapper {
-       @apply sm:w-[35rem] rounded-md w-40;
+       @apply sm:w-full rounded-md w-40;
     }
     .hw-combobox__input {
       @apply py-0.5;
@@ -25,12 +25,12 @@
   .youtubes {
     .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply sm:w-[35rem] rounded-lg w-80 bg-white shadow-lg;
+        @apply sm:w-[42rem] rounded-lg w-80 bg-white shadow-lg;
       }
     
     }
     .hw-combobox__main__wrapper {
-      @apply sm:w-[35rem] rounded-lg w-80 bg-white shadow-lg;
+      @apply sm:w-[42rem] rounded-lg w-80 bg-white shadow-lg;
     }
 
     .hw-combobox__handle {

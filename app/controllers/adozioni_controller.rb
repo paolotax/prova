@@ -16,7 +16,10 @@ class AdozioniController < ApplicationController
   end
 
   def new
-    @adozione = current_user.adozioni.build(import_adozione_id: params[:import_adozione_id])
+    if params[:classe_id].present?
+      scuola_id = Views::Classe.find(params[:classe_id]).import_scuola.id
+    end
+    @adozione = current_user.adozioni.build(classe_id: params[:classe_id], import_adozione_id: scuola_id  )
   end
 
   def edit

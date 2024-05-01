@@ -14,7 +14,7 @@
 	<div class="my-5">
 		<%= form.label :team, "Le maestre" %>
 		<%= form.text_field :team, 
-			class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-80" %>
+			class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full sm:w-[42rem]" %>
 	</div>
 
 	<% if adozione.classe.nil? %>
@@ -26,6 +26,10 @@
 					data: { action: "hw-combobox:selection->tax-combobox-select#change",
 							tax_combobox_select_target: "combobox" } %>
 		</div>
+	<% else %>
+		della scuola:
+		<br/>
+		<%= tag.span adozione&.scuola, class: "font-semibold" %>
 	<% end %>
 
 	<%# compatibilita vecchio import_adozioni_id da eliminare da adozioni %>
@@ -72,7 +76,7 @@
 
 	<div class="my-5">
 		<%= form.label :note %>
-		<%= form.text_area :note, rows: 2, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+		<%= form.text_area :note, rows: 3, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full sm:w-[42rem]" %>
 	</div>
 
 	<div class="div flex flex-row justify-start gap-4">

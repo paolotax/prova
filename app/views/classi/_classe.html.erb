@@ -1,7 +1,6 @@
-<%= tag.div dom_id(classe), class: "inline-block max-w-24 p-1 bg-gray-100 border rounded-md m-1" do %>
+<%= tag.div dom_id(classe), class: "inline-block max-w-32 p-1 bg-gray-100 border rounded-md m-1" do %>
 
-
-    <%= tag.div class: "flex flex-row text-md font-medium text-gray-900 items-baseline" do %>
+    <%= tag.div class: "flex flex-row text-md font-medium text-gray-900 items-center" do %>
         <%= tag.div class: "" do %>
             <%= classe.classe %>
         <% end %>
@@ -11,7 +10,13 @@
         <%= tag.div class: "pl-2 text-xs text-gray-500 truncate" do %>
             <%= classe.combinazione.downcase %>
         <% end %>
-    <% end %>
 
+        <%# qui ci devo mettere il menu %>
+        <%= link_to new_adozione_path(classe_id: classe.id), 
+                data: { turbo_frame: :modal, action: "click->dialog#open"}, 
+                class: "w-6 h-6 rounded-full flex align-center text-gray-400 text-sm p-0.5 items-center" do %>
+            <%= inline_svg_tag "icon-ellipsis-vertical.svg" %>
+        <% end %>
+    <% end %>
 
 <% end %>

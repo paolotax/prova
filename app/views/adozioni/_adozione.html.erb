@@ -40,7 +40,7 @@
 	<% end %>
 
 	<div class="px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around ">
-    	<%= link_to "apri", adozione, class: "text-xs text-center", 
+    	<%#= link_to "apri", adozione, class: "text-xs text-center", 
             data: { turbo_frame: "_top" } %>
 		<%= link_to edit_adozione_path(adozione), class: "text-gray-400 hover:text-gray-500", 
 						data: { turbo_frame: :modal, action: "click->dialog#open"},
