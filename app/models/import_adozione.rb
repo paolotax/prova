@@ -39,7 +39,9 @@ class ImportAdozione < ApplicationRecord
   belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
   belongs_to :editore,       foreign_key: "EDITORE",      primary_key: "EDITORE"
 
-  belongs_to :classe, class_name: "Views::Classe", query_constraints: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE]
+  has_one :classe, class_name: "Views::Classe", 
+                  primary_key: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE],
+      query_constraints: [:codice_ministeriale, :classe, :sezione, :combinazione]
 
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
@@ -48,16 +50,12 @@ class ImportAdozione < ApplicationRecord
   has_many :seguiti, -> { where(nome: "seguito") }, class_name: "Appunto", foreign_key: "import_adozione_id"
   has_many :kit,     -> { where(nome: "kit") },     class_name: "Appunto", foreign_key: "import_adozione_id"
 
-  
-  
   has_many :tappe, as: :tappable
 
   has_many :appunti, dependent: :nullify
 
   has_many :adozioni, dependent: :nullify
 
-
-  
   
   include PgSearch::Model
   

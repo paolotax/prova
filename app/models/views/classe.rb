@@ -42,10 +42,10 @@ class Views::Classe < ApplicationRecord
   #     "combinazione"
   # ]
 
-  has_many :import_adozioni, query_constraints: [
-    :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE
-  ]
-
+  has_many :import_adozioni, 
+          primary_key: [:codice_ministeriale, :classe, :sezione, :combinazione],
+          query_constraints: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE]
+          
   belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
   has_many :adozioni
