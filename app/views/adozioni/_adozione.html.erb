@@ -1,6 +1,6 @@
-<div id="<%= dom_id adozione %>" class="p-2 border flex items-center align-center justify-between">
+<%= turbo_frame_tag dom_id(adozione), class: "p-2 border flex items-center align-center justify-between" do %>
   
-	<%= tag.div do %>
+	<%= tag.div  do %>
 		<p class="">
 			<%= maestra_o_maestre(adozione.team) %>
 			<strong class="inline-block font-bold"><%= adozione.team %></strong>              
@@ -24,6 +24,8 @@
 			<%= tag.span adozione.titolo_libro.upcase, class: "font-bold" %>
 			in
 			<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
+			-
+			<%= pluralize adozione.numero_sezioni, "copia", "copie" %>
 		</p>
 
 		<% unless adozione.note.blank?%>
@@ -39,7 +41,7 @@
 
 	<% end %>
 
-	<div class="px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around ">
+	<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
     	<%#= link_to "apri", adozione, class: "text-xs text-center", 
             data: { turbo_frame: "_top" } %>
 		<%= link_to edit_adozione_path(adozione), class: "text-gray-400 hover:text-gray-500", 
@@ -52,6 +54,6 @@
 				class: "h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
 			<%= inline_svg_tag "icon-trash.svg" %>
 		<% end %>
-    </div>
+    <% end %>
 
-</div>
+<% end %>
