@@ -59,6 +59,7 @@ class ImportScuola < ApplicationRecord
 
   has_one :tipo_scuola, primary_key: "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA", foreign_key: "tipo"
   
+  has_many :adozioni, through: :classi
 
   def mie_adozioni
     import_adozioni.mie_adozioni
@@ -101,12 +102,9 @@ class ImportScuola < ApplicationRecord
     self.direzione || "<privata>".html_safe
   end
 
-  def adozioni 
-    import_adozioni
-  end
   
   def adozioni_count
-    adozioni.size
+    import_adozioni.count
   end
 
   def classi_count
