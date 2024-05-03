@@ -52,8 +52,10 @@
 		<% if adozione.classe.nil? %>
 			<%= tag.div class: "min-h-12" %>
 		<% else %>
-			<%= render partial: "classi/combobox_classi", 
-				locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+			<div class="my-5  youtubes">
+				<%= render partial: "classi/combobox_classi", 
+					locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+			</div>
 		<% end %>
 	<% end %>
 
