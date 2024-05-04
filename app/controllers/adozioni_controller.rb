@@ -13,7 +13,6 @@ class AdozioniController < ApplicationController
   end
 
   def show
-
     @adozione = Adozione.find(params[:id])
 
     respond_to do |format|

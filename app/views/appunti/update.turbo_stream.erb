@@ -4,4 +4,5 @@
     <%= render partial: "appunti/appunto_riga", locals: { appunto: @appunto }  %>
 <% end %>
 
+
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>

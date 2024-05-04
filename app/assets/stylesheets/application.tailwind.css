@@ -26,7 +26,7 @@
       @apply hidden;
     }
     .hw-combobox__input {
-      @apply py-0.5;
+      @apply py-0.5 w-full;
     }
     .hw-combobox__handle {
       @apply right-3;

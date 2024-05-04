@@ -1,0 +1,60 @@
+<%= turbo_frame_tag dom_id(adozione) do %>
+	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
+		<%= tag.div class: "grid grid-cols-12"  do %>
+
+			<%= tag.div adozione.team, class: "col-span-2" %>         
+
+		
+			<%= tag.div tag.span adozione.classe_e_sezione, class: "font-bold col-span-1"  %> 
+			
+			
+
+			<%= tag.div pluralize_stato_adozione(adozione), class: "col-span-2 font-bold" %>
+			
+            <%= tag.div adozione.titolo_libro, class: "col-span-3 font-bold" %>
+
+			<%#= adozione.numero_sezioni %>
+
+			<%= tag.div adozione.numero_copie, class: "font-bold col-span-1" %>
+			
+            <%= tag.div adozione.prezzo, class: "font-bold col-span-1" %>
+			<%= tag.div adozione.importo, class: "font-bold col-span-1" %>
+
+
+
+			<%= adozione.note %>
+
+		<% end %>
+
+        <%= tag.div class: "flex align-center items-end justify-between" do %>
+            
+
+
+            <% if adozione.created_at != adozione.updated_at %>
+                <p class="mt-1 text-right text-xs text-gray-600">
+                    ultima modifica il <%= l(adozione.updated_at, format: "%d-%m-%y") %>
+                </p>
+            <% end %>
+
+            <p class="mt-1 text-right text-xs text-gray-600">
+                creato il <%= l(adozione.created_at, format: "%d-%m-%y") %>
+            </p>
+        <% end %>
+
+
+		<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
+			<%= link_to "pdf", adozione_path(adozione, format: "pdf"), class: "text-xs text-center", 
+				data: { turbo_frame: "_top" } %>
+			<%= link_to edit_adozione_path(adozione),
+					class: "h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
+				<%= inline_svg_tag "icon-pencil.svg" %>
+			<% end %>
+
+			<%= button_to adozione_path(adozione), data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete, 
+					class: "h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
+				<%= inline_svg_tag "icon-trash.svg" %>
+			<% end %>
+		<% end %>
+	<% end %>
+
+<% end %>

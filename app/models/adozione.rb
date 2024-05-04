@@ -85,6 +85,10 @@ class Adozione < ApplicationRecord
     self.prezzo_cents = (prezzo.to_f * 100).to_i
   end
 
+  def importo
+    self.prezzo_cents.to_f * self.numero_copie / 100
+  end
+
   #attr_accessor :titolo
 
   def titolo=(titolo)
