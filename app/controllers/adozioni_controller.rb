@@ -13,6 +13,20 @@ class AdozioniController < ApplicationController
   end
 
   def show
+
+    @adozione = Adozione.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        @adozioni = Array(@adozione)
+        pdf = AdozionePdf.new(@adozioni, view_context)
+        send_data pdf.render, filename: "adozione_#{@adozione.id}.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+      
+      end
+    end
   end
 
   def new

@@ -12,7 +12,7 @@
 			
 			della scuola
 			
-			<%= link_to adozione.nome_scuola, adozione.scuola, class: "font-bold" %>
+			<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" }, class: "font-bold" %>
 			
 			di
 			
@@ -34,15 +34,25 @@
 					<%= adozione.note %>
 				</p>
 			<% end %>
-				
-			<p class="mt-1 text-right text-xs text-gray-600">
-				adozione presunta il <%= l(adozione.created_at, format: "%d-%m-%y") %>
-			</p>
 
+			<%= tag.div class: "flex align-center items-end justify-between" do %>
+				
+
+
+				<% if adozione.created_at != adozione.updated_at %>
+					<p class="mt-1 text-right text-xs text-gray-600">
+						ultima modifica il <%= l(adozione.updated_at, format: "%d-%m-%y") %>
+					</p>
+				<% end %>
+
+				<p class="mt-1 text-right text-xs text-gray-600">
+					creato il <%= l(adozione.created_at, format: "%d-%m-%y") %>
+				</p>
+			<% end %>
 		<% end %>
 
 		<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
-			<%#= link_to "apri", adozione, class: "text-xs text-center", 
+			<%= link_to "pdf", adozione_path(adozione, format: "pdf"), class: "text-xs text-center", 
 				data: { turbo_frame: "_top" } %>
 			<%= link_to edit_adozione_path(adozione),
 					class: "h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
