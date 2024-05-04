@@ -13,7 +13,7 @@
 <%= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 rounded-t-lg bg-gradient-to-b from-slate-900 to-slate-500" do %>
-		<%= tag.div "Scuola", class: "col-span-3 sm:col-span-6 p-2 text-white text-sm font-bold" %>
+		<%= tag.div "Scuola", class: "col-span-3 sm:col-span-5 p-2 text-white text-sm font-bold" %>
 		<%#= tag.div "Città", class: "col-span-3 hidden sm:inline-block p-2 text-white text-sm font-bold" %>
 		
 		<% @giri.each do |giro| %>
@@ -38,7 +38,7 @@
 			
 			<%= tag.div class: "grid grid-cols-5 sm:grid-cols-12 border-b mb-3 rounded-lg bg-white shadow" do %>
 				
-				<%= tag.div class: "col-span-3 sm:col-span-6 flex flex-col" do %>
+				<%= tag.div class: "col-span-3 sm:col-span-5 flex flex-col" do %>
 					
 					<%= tag.div class: "p-2 font-semibold" do %>
 						<%= link_to scuola.scuola, scuola, data: { turbo_frame: "_top" } %>

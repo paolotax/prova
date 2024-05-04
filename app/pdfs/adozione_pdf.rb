@@ -83,7 +83,7 @@ class AdozionePdf < Prawn::Document
 
   def line_item_rows
 
-    [["Titolo", "Quantità", "Pr. copertina", "Sconto", "Prezzo unitario", "Importo"]] +
+    [["Titolo", "Quantità", "Prezzo copertina", "Sconto", "Prezzo netto", "Importo netto"]] +
     @adozioni.map do |item|
       [
         item.libro.titolo + " " + item.classe.classe, 
@@ -109,9 +109,10 @@ class AdozionePdf < Prawn::Document
   end
   
   def totali(adozione)  
-    move_down(10)
-    text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold
-    text "Totale importo: #{price(adozione.libro.prezzo_in_cents * adozione.numero_copie)}", :size => 14, :style => :bold
+    move_down(14)
+    text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold, :align => :right
+    move_down(3)
+    text "Totale importo: #{price(adozione.libro.prezzo_in_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
   end
   
   def intestazione

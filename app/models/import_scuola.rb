@@ -154,7 +154,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def indirizzo
-    self.INDIRIZZOSCUOLA.titleize
+    ApplicationController.helpers.titleize_con_apostrofi  self.INDIRIZZOSCUOLA
   end
 
   def indirizzo_formattato
