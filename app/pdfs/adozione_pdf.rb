@@ -35,6 +35,8 @@ class AdozionePdf < Prawn::Document
       adozione_number(a)
       line_items(@adozioni)
 
+      totali(a)
+
     #   unless @righe.blank?
     #     adozione_number(a)
     #     line_items(a) 
@@ -86,10 +88,10 @@ class AdozionePdf < Prawn::Document
       [
         item.libro.titolo + " " + item.classe.classe, 
         item.numero_copie, 
-        price(item.libro.prezzo_in_cents), 
+        0, #price(item.libro.prezzo_in_cents), 
         0, #item.sconto == 0.0 ? price(item.prezzo_copertina - item.prezzo) : item.sconto, 
-        0, #price(item.prezzo_cents), 
-        0  #price(item.importo_cents) 
+        price(item.libro.prezzo_in_cents), #price(item.prezzo_cents), 
+        price(item.libro.prezzo_in_cents * item.numero_copie) 
       ]
     end
   end
@@ -108,8 +110,8 @@ class AdozionePdf < Prawn::Document
   
   def totali(adozione)  
     move_down(10)
-    text "Totale copie: #{adozione.totale_copie}", :size => 14, :style => :bold
-    text "Totale importo: #{price(adozione.totale_importo)}", :size => 14, :style => :bold
+    text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold
+    text "Totale importo: #{price(adozione.libro.prezzo_in_cents * adozione.numero_copie)}", :size => 14, :style => :bold
   end
   
   def intestazione
@@ -119,14 +121,16 @@ class AdozionePdf < Prawn::Document
   
   def destinatario(adozione)
   
-    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 100 do
+    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
       #stroke_bounds
       text adozione.team, :size => 14, :style => :bold, :spacing => 4
-      #move_down(3)
+      move_down(3)
       text "#{adozione.classe_e_sezione}",  :size => 14, :style => :bold, :spacing => 4      
+      move_down(8)
+      text adozione.scuola.tipo_scuola,  :size => 12
       text adozione.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
-      text adozione.scuola.indirizzo,  :size => 12
-      #text adozione.cliente.cap + ' ' + adozione.cliente.frazione  + ' ' + adozione.cliente.comune  + ' ' + adozione.cliente.provincia,  :size => 12
+      move_down(3)
+      text adozione.scuola.indirizzo_formattato,  :size => 12
 
     end
   end

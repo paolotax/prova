@@ -76,6 +76,15 @@ class Adozione < ApplicationRecord
     where.not(stato_adozione:[ nil, ""]).order(:stato_adozione).distinct.pluck(:stato_adozione).compact
   end
 
+  # ora così poi devo vedere come funziona money-rails
+  def prezzo
+    prezzo_cents.to_f / 100
+  end
+
+  def prezzo=(prezzo)
+    self.prezzo_cents = (prezzo.to_f * 100).to_i
+  end
+
   #attr_accessor :titolo
 
   def titolo=(titolo)

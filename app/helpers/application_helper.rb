@@ -51,11 +51,11 @@ module ApplicationHelper
   
   def go_to_scuola_path(scuola, provider = 'waze')
     if provider == 'waze'
-      "https://waze.com/ul?q=#{u scuola.indirizzo}"
+      "https://waze.com/ul?q=#{u scuola.indirizzo_navigator}"
     elsif provider == 'google'
-      "https://www.google.com/maps/search/?api=1&query=#{u scuola.indirizzo}"
+      "https://www.google.com/maps/search/?api=1&query=#{u scuola.indirizzo_navigator}"
     elsif provider == 'apple'
-      "https://maps.apple.com/?q=#{u scuola.indirizzo}"
+      "https://maps.apple.com/?q=#{u scuola.indirizzo_navigator}"
     end
   end
 

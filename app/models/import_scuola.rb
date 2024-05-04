@@ -149,12 +149,28 @@ class ImportScuola < ApplicationRecord
     10.643349039039835
   end
 
-  def indirizzo
-    #"https://www.google.com/maps/search/?api=1&query=#{self.INDIRIZZOSCUOLA}+#{self.CAPSCUOLA}+#{self.DESCRIZIONECOMUNE}+#{self.PROVINCIA}"
-     
-    #"https://waze.com/ul?q=66%20Acacia%20Avenue"
-  
+  def indirizzo_navigator  
     [self.INDIRIZZOSCUOLA, self.CAPSCUOLA, self.DESCRIZIONECOMUNE, self.PROVINCIA].join(" ")
+  end
+
+  def indirizzo
+    self.INDIRIZZOSCUOLA.titleize
+  end
+
+  def indirizzo_formattato
+    [self.indirizzo, self.cap + " " + self.comune, self.provincia].join("\r\n")
+  end
+
+  def cap
+    self.CAPSCUOLA
+  end
+
+  def comune
+    self.DESCRIZIONECOMUNE.upcase
+  end
+
+  def provincia
+    "(#{self.PROVINCIA.titleize})"
   end
 
   def address

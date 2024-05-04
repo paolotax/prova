@@ -20,7 +20,7 @@
   .cb-tax {
 
     .hw-combobox__main__wrapper {
-       @apply sm:w-full rounded-md w-40 bg-white;
+       @apply sm:w-full rounded-md w-full bg-white;
     }
     .hw-combobox__label {
       @apply hidden;

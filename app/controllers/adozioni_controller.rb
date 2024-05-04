@@ -115,6 +115,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :stato_adozione, :classe_id, :titolo, :new_libro)
+      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro)
     end
 end
