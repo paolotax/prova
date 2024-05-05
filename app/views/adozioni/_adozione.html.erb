@@ -54,7 +54,7 @@
 		<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
 			
 			<%= link_to "pdf", adozione_path(adozione, format: "pdf"), class: "text-xs text-center", 
-				data: { turbo_frame: "_top" } %>
+				target: "_blank" %>
 			
 			<%= link_to edit_adozione_path(adozione),
 					class: "h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
