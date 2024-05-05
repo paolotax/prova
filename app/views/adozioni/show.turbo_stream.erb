@@ -1,14 +1,7 @@
 <%= turbo_stream.replace @adozione do %>
-    <% if @item  && @item == 'true' %>
+    <% if @item && @item == 'true' %>
         <%= render partial: "adozioni/adozione_scuola", locals: { adozione: @adozione, item: true } %>
     <% else %>
         <%= render @adozione %>
     <% end %>
 <% end %>
-
-<%= turbo_stream.replace :adozioni_badges, partial: "adozioni/badges" %>
-
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
-
-
-

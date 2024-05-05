@@ -13,9 +13,12 @@ class AdozioniController < ApplicationController
   end
 
   def show
+    @item = params[:item] if params[:item].present?
+    #raise params.inspect
     @adozione = Adozione.find(params[:id])
 
     respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(@adozione) }
       format.html
       format.pdf do
         @adozioni = Array(@adozione)
@@ -51,8 +54,6 @@ class AdozioniController < ApplicationController
     #raise params.inspect
 
     if params[:adozione][:classe_ids].present?
-
-      
       
       classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
       libri = current_user.libri.find(params[:adozione][:libro_ids].split(","))
@@ -85,6 +86,10 @@ class AdozioniController < ApplicationController
   end
 
   def update
+    #raise params.inspect
+    
+    @item = params[:item] if params[:item].present?
+    
     respond_to do |format|
       if @adozione.update(adozione_params)
         format.turbo_stream { flash.now[:notice] = "Adozione modificata." }
@@ -114,6 +119,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro)
+      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item)
     end
 end

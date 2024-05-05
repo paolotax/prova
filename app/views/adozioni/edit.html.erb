@@ -1,3 +1,3 @@
 <%= turbo_frame_tag @adozione do %>
-	<%= render partial: "adozioni/form_inline", locals: { adozione: @adozione } %>
+	<%= render partial: "adozioni/form_inline", locals: { adozione: @adozione, item: params[:item] } %>
 <% end %>

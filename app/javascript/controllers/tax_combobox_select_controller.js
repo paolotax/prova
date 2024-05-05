@@ -6,16 +6,9 @@ export default class extends Controller {
   
   static targets = ["combobox"]
   
-  connect() {
-    console.log("Hello, Stimulus!", this.element)
-  }
-
   // Called when the combobox value changes
   change(event) {
     
-
-    console.log("Combobox target", this.element)
-
     let scuola_id = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;
     let url = `/import_scuole/${scuola_id}/combobox_classi`;
     
@@ -25,8 +18,5 @@ export default class extends Controller {
     
     Turbo.visit(url, { frame: "combobox_classi", acceptsStreamResponse: true }) 
 
-    console.log("Combobox value changed", url)
-
-    
   }
 }

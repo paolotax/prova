@@ -2,6 +2,10 @@
 	
 	<!--manca gestione "error_explanation"-->
 
+
+    <%= hidden_field_tag :item, params[:item] %>
+
+
 	<%= tag.div class: "flex flex-wrap sm:flex-nowrap items-center gap-2" do %>
 		<%= form.label :team, "#{maestra_o_maestre(adozione.team)}:", class: "min-w-24" %>
 		<%= form.text_field :team, 
@@ -47,12 +51,19 @@
     <% end %>
 
     <%= tag.div class: "flex flex-col sm:flex-row justify-between sm:items-end mt-2" do %>
+        
         <%= tag.div class: "w-full" do %>
             <%= form.text_area :note, rows: 3, class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full", placeholder: "note..." %>
         <% end %>
+        
         <%= tag.div class: "mt-2 sm:m-0 sm:mb-1 w-full flex justify-end space-x-2" do %>
+            
             <%= form.submit "salva", class: "bg-blue-600 rounded-lg py-1.5 px-2 text-white font-small cursor-pointer" %>
-            <%= link_to "annulla", adozione, class: " bg-gray-600 rounded-lg py-1.5 px-2 text-white font-small cursor-pointer"%>
+            
+            <%= link_to "annulla", adozione_path(adozione, item: params[:item]), 
+                data: { turbo_stream: true, turbo_method: "get", turbo_frame: dom_id(adozione) }, 
+                class: " bg-gray-600 rounded-lg py-1.5 px-2 text-white font-small cursor-pointer"%>
+        
         <% end %>
     <% end %>
 <% end %>
