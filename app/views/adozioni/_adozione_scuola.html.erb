@@ -14,10 +14,8 @@
             <%= tag.div adozione.titolo_libro, class: "col-span-3 font-bold" %>
 
 			<%#= adozione.numero_sezioni %>
-			<%= render "shared/inline_edit", model: adozione, method: :numero_copie do %>
+			<%= render "shared/inline_edit", model: adozione, method: :copie_e_prezzo do %>
 				<%= tag.div adozione.numero_copie, class: "font-bold col-span-1 text-right" %>
-			<% end %>
-			<%= render "shared/inline_edit", model: adozione, method: :prezzo do %>
 				<%= tag.div adozione.prezzo, class: "col-span-1 text-right" %>
 			<% end %>
 			

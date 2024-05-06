@@ -4,7 +4,7 @@
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
 
     <% if tappa.giro.nil? %>
-        <%- giro_previous = current_user.giri.last.id %>
+        <%- giro_previous = current_user.giri.last&.id %>
         <%- giro_next = nil %>
     <% else %>
         <%- giro_previous = tappa&.giro&.previous&.id %>

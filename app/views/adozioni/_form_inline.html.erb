@@ -2,26 +2,30 @@
 	
 	<!--manca gestione "error_explanation"-->
 
-
     <%= hidden_field_tag :item, params[:item] %>
 
+    <%= render "shared/inline_fields", form: form, method: :team do %>
 
-	<%= tag.div class: "flex flex-wrap sm:flex-nowrap items-center gap-2" do %>
-		<%= form.label :team, "#{maestra_o_maestre(adozione.team)}:", class: "min-w-24" %>
-		<%= form.text_field :team, 
-			class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-1.5 w-full" %>
-	<% end %>
+        <%= tag.div class: "flex flex-wrap sm:flex-nowrap items-center gap-2" do %>
+            <%= form.label :team, "#{maestra_o_maestre(adozione.team)}:", class: "min-w-24" %>
+            <%= form.text_field :team, 
+                class: "block shadow rounded-md border border-gray-200 outline-none px-2 py-1.5 w-full" %>
+        <% end %>
+    
+    <% end %>
 		
     <%= tag.div class: "cb-tax w-full flex flex-wrap gap-2 items-center", data: { controller: "tax-combobox-select" } do %>   
         
-        <%= form.label :classi_ids, "della classe:", class: "min-w-24" %>    
-        <%= turbo_frame_tag :combo_classi do %>
-            <%= render partial: "classi/combobox_classi", 
-                locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+        <%= render "shared/inline_fields", form: form, method: :classe_id do %>  
+            <%= turbo_frame_tag :combo_classi do %>
+                <%= render partial: "classi/combobox_classi", 
+                    locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+            <% end %>
         <% end %>
-        
+
         <%= tag.span "della scuola:", class: "my-2 sm:m-0" %>			
 		<%= tag.span adozione.nome_scuola, class: "font-bold my-2 sm:m-0" %>
+    
     <% end %>
 
 	<%= tag.div class: "flex flex-wrap items-center gap-2" do %>
@@ -33,31 +37,37 @@
                     placeholder: "adozione o vendita?" %>
         <% end %>
 
-        <%= tag.div class: "cb-tax w-80" do %>
-            <%= form.combobox :libro_id, current_user.libri.order(:titolo),
-                    label: "il testo:",
-                    placeholder: "seleziona il titolo o inseriscine uno nuovo...",
-                    name_when_new: "adozione[new_libro]" %>
+        <%= render "shared/inline_fields", form: form, method: :libro_id do %>
+        
+            <%= tag.div class: "cb-tax w-80" do %>
+                <%= form.combobox :libro_id, current_user.libri.order(:titolo),
+                        label: "il testo:",
+                        placeholder: "seleziona il titolo o inseriscine uno nuovo...",
+                        name_when_new: "adozione[new_libro]" %>
+            <% end %>
+
         <% end %>
     
-        <%= render "shared/inline_fields", form: form, method: :numero_copie do %>
-
+        <%= render "shared/inline_fields", form: form, method: :copie_e_prezzo do %>
             <%= tag.div class: "flex items-center space-x-2" do %>
                 <%= form.label :numero_copie, "copie:" %>
                 <%= form.number_field :numero_copie, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
             <% end %>
+          
+            <%= tag.div class: "flex items-center space-x-2" do %>
+                <%= form.label :prezzo, "prezzo:" %>
+                <%= form.number_field :prezzo, step: 0.01, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+            <% end %>
         <% end %>
-        <%= tag.div class: "flex items-center space-x-2" do %>
-            <%= form.label :prezzo, "prezzo:" %>
-            <%= form.number_field :prezzo, step: 0.01, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
-        <% end %>
-
+    
     <% end %>
 
     <%= tag.div class: "flex flex-col sm:flex-row justify-between sm:items-end mt-2" do %>
         
-        <%= tag.div class: "w-full" do %>
-            <%= form.text_area :note, rows: 3, class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full", placeholder: "note..." %>
+        <%= render "shared/inline_fields", form: form, method: :note do %>
+            <%= tag.div class: "w-full" do %>
+                <%= form.text_area :note, rows: 3, class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full", placeholder: "note..." %>
+            <% end %>
         <% end %>
         
         <%= tag.div class: "mt-2 sm:m-0 sm:mb-1 w-full flex justify-end space-x-2" do %>

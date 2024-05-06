@@ -1,0 +1,53 @@
+# == Schema Information
+#
+# Table name: profiles
+#
+#  id              :bigint           not null, primary key
+#  cap             :string
+#  cellulare       :string
+#  citta           :string
+#  cognome         :string
+#  email           :string
+#  iban            :string
+#  indirizzo       :string
+#  nome            :string
+#  nome_banca      :string
+#  ragione_sociale :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  user_id         :bigint           not null
+#
+# Indexes
+#
+#  index_profiles_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
+
+one:
+  user: one
+  nome: MyString
+  cognome: MyString
+  ragione_sociale: MyString
+  indirizzo: MyString
+  cap: MyString
+  citta: MyString
+  cellulare: MyString
+  email: MyString
+  iban: MyString
+  nome_banca: MyString
+
+two:
+  user: two
+  nome: MyString
+  cognome: MyString
+  ragione_sociale: MyString
+  indirizzo: MyString
+  cap: MyString
+  citta: MyString
+  cellulare: MyString
+  email: MyString
+  iban: MyString
+  nome_banca: MyString

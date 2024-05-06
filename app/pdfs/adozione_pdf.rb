@@ -90,8 +90,8 @@ class AdozionePdf < Prawn::Document
         item.numero_copie, 
         0, #price(item.libro.prezzo_in_cents), 
         0, #item.sconto == 0.0 ? price(item.prezzo_copertina - item.prezzo) : item.sconto, 
-        price(item.libro.prezzo_in_cents), #price(item.prezzo_cents), 
-        price(item.libro.prezzo_in_cents * item.numero_copie) 
+        price(item.prezzo_cents), #price(item.prezzo_cents), 
+        price(item.prezzo_cents * item.numero_copie) 
       ]
     end
   end
@@ -112,7 +112,7 @@ class AdozionePdf < Prawn::Document
     move_down(14)
     text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold, :align => :right
     move_down(3)
-    text "Totale importo: #{price(adozione.libro.prezzo_in_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
+    text "Totale importo: #{price(adozione.prezzo_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
   end
   
   def intestazione

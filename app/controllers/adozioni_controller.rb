@@ -72,6 +72,16 @@ class AdozioniController < ApplicationController
             @adozioni << adozione
           end
         end
+
+        if params[:adozione][:new_libro].present?
+          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :import_adozione_id))
+          adozione.classe_id = classe.id
+          adozione.new_libro = params[:adozione][:new_libro]
+          #raise adozione.inspect
+          if adozione.save
+            @adozioni << adozione
+          end
+        end
       end
     end 
 

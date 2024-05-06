@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_27_142914) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_06_134559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -211,6 +211,23 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_142914) do
     t.index ["user_id"], name: "index_mandati_on_user_id"
   end
 
+  create_table "profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "nome"
+    t.string "cognome"
+    t.string "ragione_sociale"
+    t.string "indirizzo"
+    t.string "cap"
+    t.string "citta"
+    t.string "cellulare"
+    t.string "email"
+    t.string "iban"
+    t.string "nome_banca"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
   create_table "stats", force: :cascade do |t|
     t.string "descrizione"
     t.string "seleziona_campi"
@@ -297,6 +314,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_142914) do
   add_foreign_key "giri", "users"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
+  add_foreign_key "profiles", "users"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
   add_foreign_key "user_scuole", "import_scuole"

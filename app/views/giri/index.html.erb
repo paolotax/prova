@@ -1,7 +1,7 @@
 <%= heading do %>	
 	<%= h1 {"Giri"} %>
 
-	<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro.id), include_blank: true, class: "sm:hidden" %>
+	<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "sm:hidden" %>
 
 <% end %>
 

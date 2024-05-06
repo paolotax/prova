@@ -38,6 +38,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_rich_text :card
 
+  has_one :profile, dependent: :destroy
+  
   has_many :user_scuole, dependent: :destroy  
   
   has_many :import_scuole, through: :user_scuole
@@ -69,6 +71,8 @@ class User < ApplicationRecord
   def set_default_role
     self.role ||= :scagnozzo
   end
+
+  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, to: :profile, allow_nil: true
 
   def miei_editori
     editori.collect{|e| e.editore}

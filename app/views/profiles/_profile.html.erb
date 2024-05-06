@@ -1,0 +1,62 @@
+<div id="<%= dom_id profile %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">User:</strong>
+    <%= profile.user_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Nome:</strong>
+    <%= profile.nome %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Cognome:</strong>
+    <%= profile.cognome %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Ragione sociale:</strong>
+    <%= profile.ragione_sociale %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Indirizzo:</strong>
+    <%= profile.indirizzo %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Cap:</strong>
+    <%= profile.cap %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Citta:</strong>
+    <%= profile.citta %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Cellulare:</strong>
+    <%= profile.cellulare %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Email:</strong>
+    <%= profile.email %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Iban:</strong>
+    <%= profile.iban %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Nome banca:</strong>
+    <%= profile.nome_banca %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this profile", profile, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Edit this profile", edit_profile_path(profile), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

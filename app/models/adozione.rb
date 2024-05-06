@@ -41,6 +41,13 @@ class Adozione < ApplicationRecord
   before_save do |a|
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
     a.numero_copie = 0 if a.numero_copie.nil?
+    a.prezzo_cents = 0 if a.prezzo_cents.nil?
+  end
+
+  before_update do |a|
+    a.numero_sezioni = 1 if a.numero_sezioni.nil?
+    a.numero_copie = 0 if a.numero_copie.nil?
+    a.prezzo_cents = 0 if a.prezzo_cents.nil?
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]

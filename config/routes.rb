@@ -9,6 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  resources :profiles
   
   
   resources :classe_chips, only: :new, param: :combobox_value

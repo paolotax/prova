@@ -1,14 +1,23 @@
 <%= turbo_frame_tag dom_id(adozione) do %>
 	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
 		<%= tag.div  do %>
-			<p class="">
-				<%= maestra_o_maestre(adozione.team) %>
-				<strong class="inline-block font-bold"><%= adozione.team %></strong>              
-			</p>
-		
-			della classe 
-		
-			<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
+
+			<div class="flex">
+				<%= render "shared/inline_edit", model: adozione, method: :team do %>					
+					<%= maestra_o_maestre(adozione.team) %>
+					<strong class="ml-2 font-bold"><%= adozione.team %></strong>              					
+				<% end %>
+			</div>
+
+
+
+			<div class="flex items-center space-x-2">
+				<%= tag.div "della classe:" %>
+				<%= tag.div class: "w-1" %>
+				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
+					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
+				<% end %>
+			</div>
 			
 			della scuola
 			
@@ -18,39 +27,39 @@
 			
 			<%= tag.span adozione.citta, class: "font-bold" %>
 		
-			<p class="">
-				<%= tag.span pluralize_stato_adozione(adozione), class: "font-bold" %>
-				il libro
-				<%= tag.span adozione.titolo_libro.upcase, class: "font-bold" %>
-				in
-				<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
-				<%= render "shared/inline_edit", model: adozione, method: :numero_copie do %>
-					-
-				<%= pluralize adozione.numero_copie, "copia", "copie" %>
-					-
+			<div class="flex items-center space-x-2">
+				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold" %>
+				<%= tag.div "il libro:" %>
+				<%= tag.div class: "w-1" %>
+				<%= render "shared/inline_edit", model: adozione, method: :libro_id do %>
+					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
 				<% end %>
-				
-				
-				
-			</p>
 
-			<% unless adozione.note.blank?%>
-				<p class="">
+			</div>
+							
+			<div class="flex items-center space-x-2">
+				<%= render "shared/inline_edit", model: adozione, method: :copie_e_prezzo do %>
+					<%= tag.div "copie: #{adozione.numero_copie}" %>
+					<%= tag.div class: "w-2" %>
+					<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
+				<% end %>
+				<%= tag.div "importo: " %>
+				<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+			</div>
+			
+			<div class="flex items-center space-x-2">
+				<%= render "shared/inline_edit", model: adozione, method: :note do %>
 					Note:
 					<%= adozione.note %>
-				</p>
-			<% end %>
+				<% end %>
+			</div>
 
 			<%= tag.div class: "flex align-center items-end justify-between" do %>
-				
-
-
 				<% if adozione.created_at != adozione.updated_at %>
 					<p class="mt-1 text-right text-xs text-gray-600">
 						ultima modifica il <%= l(adozione.updated_at, format: "%d-%m-%y") %>
 					</p>
 				<% end %>
-
 				<p class="mt-1 text-right text-xs text-gray-600">
 					creato il <%= l(adozione.created_at, format: "%d-%m-%y") %>
 				</p>

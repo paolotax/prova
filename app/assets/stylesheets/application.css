@@ -14,8 +14,8 @@
  *= require_self
  */
 
- 
- /* Global slight fade */
+
+/* Global slight fade */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.5s;
