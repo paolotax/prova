@@ -39,6 +39,12 @@
 
         <%= render "shared/inline_fields", form: form, method: :libro_id do %>
         
+
+
+        <% end %>
+    
+        <%= render "shared/inline_fields", form: form, method: :titolo_copie_e_prezzo do %>
+
             <%= tag.div class: "cb-tax w-80" do %>
                 <%= form.combobox :libro_id, current_user.libri.order(:titolo),
                         label: "il testo:",
@@ -46,9 +52,6 @@
                         name_when_new: "adozione[new_libro]" %>
             <% end %>
 
-        <% end %>
-    
-        <%= render "shared/inline_fields", form: form, method: :copie_e_prezzo do %>
             <%= tag.div class: "flex items-center space-x-2" do %>
                 <%= form.label :numero_copie, "copie:" %>
                 <%= form.number_field :numero_copie, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>

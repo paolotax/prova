@@ -32,6 +32,17 @@
 		<%= tag.span adozione&.scuola, class: "font-semibold" %>
 	<% end %>
 
+	<%= turbo_frame_tag :combo_classi do %>
+		<% if adozione.classe.nil? %>
+			<%= tag.div class: "min-h-12" %>
+		<% else %>
+			<div class="my-5  youtubes">
+				<%= render partial: "classi/combobox_classi", 
+					locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
+			</div>
+		<% end %>
+	<% end %>
+
 	<%# compatibilita vecchio import_adozioni_id da eliminare da adozioni %>
 	<% unless adozione.import_adozione.nil? %>	
 		della classe 
@@ -48,16 +59,6 @@
 				placeholder: "adottano o comprano?" %>
 	</div>
 
-	<%= turbo_frame_tag :combo_classi do %>
-		<% if adozione.classe.nil? %>
-			<%= tag.div class: "min-h-12" %>
-		<% else %>
-			<div class="my-5  youtubes">
-				<%= render partial: "classi/combobox_classi", 
-					locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
-			</div>
-		<% end %>
-	<% end %>
 
 	<%#= form.collection_radio_buttons :stato_adozione, current_user.adozioni.stato_adozione, :to_s, :to_s %>
 
@@ -69,9 +70,12 @@
 					placeholder: "seleziona titoli...",
 					multiselect_chip_src: new_libro_chip_path %>
 			
-			oppure: 
-			<%= form.text_field :new_libro, placeholder: "inserisci nuovo titolo..." %>
-		
+			
+			<%= tag.div class: "my-2 flex space-x-2 items-center" do %>
+				<%= tag.div "oppure:" %> 
+				<%= form.text_field :new_libro, placeholder: "inserisci nuovo titolo...", 
+								class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+			<% end %>
 		<% else %>
 			<%= form.combobox :libro_id, current_user.libri.order(:titolo),
 					label: "il testo:",

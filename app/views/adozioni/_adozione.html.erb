@@ -29,16 +29,13 @@
 		
 			<div class="flex items-center space-x-2">
 				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold" %>
-				<%= tag.div "il libro:" %>
-				<%= tag.div class: "w-1" %>
-				<%= render "shared/inline_edit", model: adozione, method: :libro_id do %>
-					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
-				<% end %>
-
 			</div>
 							
 			<div class="flex items-center space-x-2">
-				<%= render "shared/inline_edit", model: adozione, method: :copie_e_prezzo do %>
+				<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
+					<%= tag.div "il libro:" %>
+					<%= tag.div class: "w-1" %>
+					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
 					<%= tag.div "copie: #{adozione.numero_copie}" %>
 					<%= tag.div class: "w-2" %>
 					<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
