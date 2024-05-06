@@ -86,11 +86,17 @@
 		<%#= form.label :numero_sezioni %>
 		<%#= form.number_field :numero_sezioni, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
 		</div>
+		
+		<%= render "shared/inline_fields", form: form, method: :numero_copie do %>
 
-		<div class="my-5">
-			<%= form.label :numero_copie %>
-			<%= form.number_field :numero_copie, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2" %>
-		</div>
+
+			<div class="my-5">
+
+				<%= form.label :numero_copie %>
+				<%= form.number_field :numero_copie, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2" %>
+			</div>
+		<% end %>
+		
 		<div class="my-5">
 			<%= form.label :prezzo %>
 			<%= form.number_field :prezzo, step: 0.01, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2" %>

@@ -24,8 +24,14 @@
 				<%= tag.span adozione.titolo_libro.upcase, class: "font-bold" %>
 				in
 				<%= pluralize adozione.numero_sezioni, "sezione", "sezioni" %>
-				-
+				<%= render "shared/inline_edit", model: adozione, method: :numero_copie do %>
+					-
 				<%= pluralize adozione.numero_copie, "copia", "copie" %>
+					-
+				<% end %>
+				
+				
+				
 			</p>
 
 			<% unless adozione.note.blank?%>
