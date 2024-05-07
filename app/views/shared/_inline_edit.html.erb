@@ -2,7 +2,7 @@
 
 <%= form_with model: model, class: "contents", data: { turbo_frame: frame_id } do %>
   
-  <turbo-frame id="<%= frame_id %>" class="contents group/riga inline-edit">
+  <turbo-frame id="<%= frame_id %>" class="contents group/riga group inline-edit">
     <%= yield %>
 
     <%= link_to edit_polymorphic_path(model) do %>
