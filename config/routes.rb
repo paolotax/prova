@@ -16,8 +16,9 @@ Rails.application.routes.draw do
   resources :profiles
   
   
-  resources :classe_chips, only: :new, param: :combobox_value
-  resources :libro_chips,  only: :new, param: :combobox_value
+  resources :classe_chips, only: :create, param: :combobox_value
+  
+  resources :libro_chips,  only: :create, param: :combobox_value
   
   resources :adozioni do 
     collection do

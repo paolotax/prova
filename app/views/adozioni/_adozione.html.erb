@@ -12,6 +12,7 @@
 				<% end %>
 				
 				<%= tag.div "della classe:", class: "hidden md:inline-block" %>
+				
 				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
 					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
 				<% end %>
@@ -24,23 +25,34 @@
 				</fieldset>
 			</div>
 										
-			<fieldset class="flex flex-wrap items-center gap-2">
+			<fieldset class="flex items-center justify-between">
 				
-				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold inline-block px-2 py-1.5 bg-cyan-500 text-white border rounded-md" %>
+				<%= tag.div class: "flex flex-wrap items-center gap-2" do%>
+					<%= tag.div pluralize_stato_adozione(adozione), class: [
+								"font-bold inline-block px-2 py-1.5 text-white border rounded-md": true,
+								"bg-cyan-500": adozione.stato_adozione.downcase[0..2] == "com",
+								"bg-pink-500": adozione.stato_adozione.downcase[0..2] != "com",
+							] %>
 
-				<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
-					<%= tag.div "il libro:", class: "hidden md:inline-block" %>
-					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
+					<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
+						<%= tag.div "il libro:", class: "hidden md:inline-block" %>
+						<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
 
-					<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
-						<%= tag.div class: "flex sm:flex-nowrap gap-2" do %>
-							<%= tag.div "copie:", class: "hidden md:inline-block" %>
-							<%= tag.div adozione.numero_copie, class: "font-semibold" %>
-							<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
+						<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+							<%= tag.div class: "flex sm:flex-nowrap gap-2" do %>
+								<%= tag.div "copie:", class: "hidden md:inline-block" %>
+								<%= tag.div adozione.numero_copie, class: "font-semibold" %>
+								<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
+							<% end %>
 						<% end %>
+
+					<% end %>
+				<% end %>
+
+				<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+					<%= tag.div class: "flex flex-nowrap gap-2" do %>
 						<%= tag.div "importo:", class: "hidden md:inline-block" %>
 						<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
-
 					<% end %>
 				<% end %>
 			</fieldset>

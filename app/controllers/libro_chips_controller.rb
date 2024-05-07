@@ -1,22 +1,23 @@
 class LibroChipsController < ApplicationController
     
-  before_action :set_libri, except: :new_possibly_new
-  
-  def new
+  before_action :set_libri, except: :create_possibly_new
+
+  def create
     render turbo_stream: helpers.combobox_selection_chips_for(@libri)
   end
 
-  def new_html
+  def create_html
   end
 
-  def new_dismissing
+  def create_dismissing
     render turbo_stream: helpers.dismissing_combobox_selection_chips_for(@libri)
   end
 
-  def new_possibly_new
+  def create_possibly_new
     @libri = params[:combobox_values].split(",").map do |value|
-      current_user.libri.find_by(id: value) || OpenStruct.new(to_combobox_display: value, id: value)
+      Views::Classe.find_by(id: value) || OpenStruct.new(to_combobox_display: value, id: value)
     end
+
     render turbo_stream: helpers.combobox_selection_chips_for(@libri)
   end
 
