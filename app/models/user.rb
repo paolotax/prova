@@ -73,7 +73,7 @@ class User < ApplicationRecord
     self.role ||= :scagnozzo
   end
 
-  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, to: :profile, allow_nil: true
+  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca, to: :profile, allow_nil: true
 
   def miei_editori
     editori.collect{|e| e.editore}

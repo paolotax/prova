@@ -37,6 +37,8 @@ class AdozionePdf < Prawn::Document
 
       totali(a)
 
+      footer
+
     #   unless @righe.blank?
     #     adozione_number(a)
     #     line_items(a) 
@@ -56,7 +58,10 @@ class AdozionePdf < Prawn::Document
   
   def note(adozione)
     move_down 40
-    stroke_horizontal_rule
+    mask(:line_width) do
+      line_width 0.5
+      stroke_horizontal_rule
+    end
     move_down 10
     text adozione.note, :size => 13
     #text "tel. #{adozione.telefono}", :size => 13 unless adozione.telefono.blank?
@@ -69,15 +74,21 @@ class AdozionePdf < Prawn::Document
   
   def line_items(adozione)
     move_down 10
-    table line_item_rows do
-      row(0).font_style = :bold
-      columns(1..5).align = :right
-      columns(0).width = 200
-      columns(1).width = 60
-      # columns(2..3).width = 70
-      # columns(5).width = 80
-      self.row_colors = ["DDDDDD", "FFFFFF"]
-      self.header = true
+
+    mask(:line_width) do
+      line_width 0.5
+      
+      table line_item_rows, cell_style: { border_width: 0.5 } do
+        row(0).font_style = :bold
+        columns(1..5).align = :right
+        columns(0).width = 200
+        columns(1).width = 60
+        # columns(2..3).width = 70
+        # columns(5).width = 80
+        self.row_colors = ["DDDDDD", "FFFFFF"]
+        self.header = true       
+      end
+    
     end
   end
 
@@ -135,6 +146,26 @@ class AdozionePdf < Prawn::Document
 
     end
   end
+
+  def footer
+    # footer
+
+
+    bounding_box [bounds.left, bounds.bottom + 28.mm], :width  => bounds.width, :height => 50.mm do
+    
+
+        bounding_box [bounds.left, bounds.top - 15.mm], :width  => bounds.width, :height => 12.mm do
+          mask(:line_width) do
+            line_width 0.5
+            stroke_horizontal_rule
+          end
+          stroke_axis
+          draw_text "Pagamento con Bonifico: IBAN: #{current_user.iban} Banca di appoggio: #{current_user.nome_banca}", :at => [bounds.left + 1, bounds.top - 5.mm], :size => 11
+        end
+ 
+    end
+  end
+
   
   def current_user
     @view.current_user
