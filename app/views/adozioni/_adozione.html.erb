@@ -1,50 +1,42 @@
-<%= turbo_frame_tag dom_id(adozione) do %>
+<%= turbo_frame_tag dom_id(adozione), class: "" do %>
 	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
 		<%= tag.div  do %>
 
-			<div class="flex">
+			<div class="flex items-center gap-2">
 				<%= render "shared/inline_edit", model: adozione, method: :team do %>					
-					<%= maestra_o_maestre(adozione.team) %>
+					<%= maestra_o_maestre(adozione.team) %>:
 					<strong class="ml-2 font-bold"><%= adozione.team %></strong>              					
 				<% end %>
-			</div>
-
-
-
-			<div class="flex items-center space-x-2">
 				<%= tag.div "della classe:" %>
-				<%= tag.div class: "w-1" %>
 				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
 					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
 				<% end %>
 			</div>
 			
-			della scuola
-			
-			<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" }, class: "font-bold" %>
-			
-			di
-			
-			<%= tag.span adozione.citta, class: "font-bold" %>
-		
+			<div class="flex flex-row items-center gap-2 group-[.show-scuola]:hidden" >
+				<%= tag.div "della scuola:" %>
+				<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" }, class: "font-bold" %>
+				<%= tag.div "di" %>
+				<%= tag.div adozione.citta, class: "font-bold" %>
+			</div>
+
 			<div class="flex items-center space-x-2">
 				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold" %>
 			</div>
 							
-			<div class="flex items-center space-x-2">
+			<div class="flex items-center gap-2">
 				<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
 					<%= tag.div "il libro:" %>
-					<%= tag.div class: "w-1" %>
 					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
-					<%= tag.div "copie: #{adozione.numero_copie}" %>
-					<%= tag.div class: "w-2" %>
+					<%= tag.div "copie:" %>
+					<%= tag.div adozione.numero_copie, class: "font-semibold" %>
 					<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
+					<%= tag.div "importo:" %>
+					<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
 				<% end %>
-				<%= tag.div "importo: " %>
-				<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
 			</div>
 			
-			<div class="flex items-center space-x-2">
+			<div class="flex items-center mt-1 space-x-2">
 				<%= render "shared/inline_edit", model: adozione, method: :note do %>
 					Note:
 					<%= adozione.note %>
