@@ -9,6 +9,10 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  
+  get 'classi', to: 'classi#index'
+  get 'classi/show', to: 'classi#show'
+
   resources :profiles
   
   
