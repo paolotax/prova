@@ -2,39 +2,42 @@
 	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
 		<%= tag.div  do %>
 
-			<div class="flex items-center gap-2">
+			<div class="flex flex-wrap items-center gap-2">
 				<%= render "shared/inline_edit", model: adozione, method: :team do %>					
-					<%= maestra_o_maestre(adozione.team) %>:
-					<strong class="ml-2 font-bold"><%= adozione.team %></strong>              					
+					<%#= tag.div "#{maestra_o_maestre(adozione.team)}:", class: "hidden md:inline-block" %>
+					<%= tag.div  adozione.team, class: "mmmmd:ml-2" %>           					
 				<% end %>
-				<%= tag.div "della classe:" %>
+				<%= tag.div "della classe:", class: "hidden md:inline-block" %>
 				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
 					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
 				<% end %>
-			</div>
-			
-			<div class="flex flex-row items-center gap-2 group-[.show-scuola]:hidden" >
-				<%= tag.div "della scuola:" %>
-				<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" }, class: "font-bold" %>
-				<%= tag.div "di" %>
-				<%= tag.div adozione.citta, class: "font-bold" %>
-			</div>
 
-			<div class="flex items-center space-x-2">
+				<fieldset class="flex flex-row items-center gap-2 group-[.show-scuola]:hidden" >
+					<%= tag.div "della scuola:", class: "hidden md:inline-block" %>
+					<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" } %>
+					<%= tag.div "di", class: "hidden md:inline-block" %>
+					<%= tag.div adozione.citta %>
+				</fieldset>
+			</div>
+										
+			<fieldset class="flex flex-wrap items-center gap-2">
 				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold" %>
-			</div>
-							
-			<div class="flex items-center gap-2">
+
 				<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
-					<%= tag.div "il libro:" %>
+					<%= tag.div "il libro:", class: "hidden md:inline-block" %>
 					<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
-					<%= tag.div "copie:" %>
-					<%= tag.div adozione.numero_copie, class: "font-semibold" %>
-					<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
-					<%= tag.div "importo:" %>
-					<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+
+					<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+						<%= tag.div class: "flex sm:flex-nowrap gap-2" do %>
+							<%= tag.div "copie:", class: "hidden md:inline-block" %>
+							<%= tag.div adozione.numero_copie, class: "font-semibold" %>
+							<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
+							<%= tag.div "importo:", class: "hidden md:inline-block" %>
+							<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+						<% end %>
+					<% end %>
 				<% end %>
-			</div>
+			</fieldset>
 			
 			<div class="flex items-center mt-1 space-x-2">
 				<%= render "shared/inline_edit", model: adozione, method: :note do %>

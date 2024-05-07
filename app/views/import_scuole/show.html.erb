@@ -82,7 +82,7 @@
 
 				<% (1..5).each do |c|%>
 					<%= render partial: "classi/classe", collection: @import_scuola.classi.select{|a| a.classe == c.to_s} %>
-					<%= render partial: "adozioni/adozione_scuola", collection: @import_scuola.adozioni.select{|a| a.classe.classe == c.to_s}, as: :adozione %>
+					<%= render partial: "adozioni/adozione", collection: @import_scuola.adozioni.select{|a| a.classe.classe == c.to_s}, as: :adozione %>
 					<br/>
 				<% end %>
 
