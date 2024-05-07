@@ -61,13 +61,26 @@ class Adozione < ApplicationRecord
   }
 
   scope :per_scuola, -> { 
-    joins(:scuola)        
+    joins(:scuola, :classe)        
     .select('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
     .order("import_scuole.id")
   }
+
+  # scope :per_, -> { 
+  #   joins(:scuola, :classe)        
+  #   .select('classi.id, import_scuole."DENOMINAZIONESCUOLA"')
+  #   .select("sum(adozioni.numero_sezioni) as numero_sezioni")
+  #   .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
+  #   .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
+  #   .order("import_scuole.id")
+  # }
+
+  scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
+  scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }
+  scope :saggi,    -> { where(stato_adozione: ['saggio', "saggio"]) }
 
   include Searchable
 

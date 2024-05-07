@@ -20,16 +20,12 @@
 #  index_view_classi_on_provincia                                  (provincia)
 #
 
-
-
-
 # Adozione.where(classe_id: nil).each do |a|
 #     unless a.import_adozione.nil?
 #     a.classe_id = a.import_adozione.classe.attributes['id']
 #     a.save
 #   end
 # end
-
 
 class Views::Classe < ApplicationRecord
 
@@ -48,8 +44,11 @@ class Views::Classe < ApplicationRecord
           
   belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
-  has_many :adozioni
-
+  has_many :adozioni  # dovrò chiamare la tabella in altro modo movimenti o righe e cambiare stato_adozione in tipo_movimento
+  has_many :vendite, -> { vendite }, class_name: "Adozione"
+  has_many :saggi, -> { saggi }, class_name: "Adozione"
+  has_many :pre_adozioni, -> { pre_adozioni }, class_name: "Adozione"
+ 
   scope :prime, -> { where(classe: "1") }
   scope :seconde, -> { where(classe: "2") }
   scope :terze, -> { where(classe: "3") }
