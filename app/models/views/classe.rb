@@ -58,8 +58,14 @@ class Views::Classe < ApplicationRecord
   scope :classe_che_adotta, -> { where(classe: [3, 5]) }
   scope :tempo_pieno, -> { where("view_classi.combinazione like ?", "%40 ORE%") }
 
+  delegate :tipo_scuola, :nome_scuola, :citta_scuola, to: :import_scuola, allow_nil: true
+  
+  def classe_e_sezione
+    "#{classe} #{sezione.titleize}"
+  end
+
   def to_combobox_display
-    "#{classe} #{sezione}"
+    "#{classe} #{sezione.titleize}"
   end
 
   def readonly?
@@ -68,6 +74,10 @@ class Views::Classe < ApplicationRecord
 
   def libro_ids
     adozioni.map(&:libro_id)
+  end
+
+  def maestre
+    adozioni.map(&:maestre).flatten.uniq.sort
   end
 
 end

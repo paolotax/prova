@@ -1,4 +1,24 @@
-<div>
+<div class= "group show-classe show-scuola">
   <h1 class="font-bold text-4xl">Classi#show</h1>
-  <p>Find me in app/views/classi/show.html.erb</p>
+      
+      <%= tag.div @classe.tipo_scuola %>
+      <%= tag.div @classe.nome_scuola %>
+      <%= tag.div @classe.citta_scuola %>
+
+
+
+      <%= render @classe.import_scuola %>
+      <%= render partial: "classi/classe", locals: { classe: @classe } %>
+      <% @classe.maestre.each do |maestra| %>
+          <%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
+      <% end %>
+
+      <%= render partial: "adozioni/adozione", collection: @classe.vendite, as: :adozione %>
+
+      <%= render partial: "adozioni/adozione", collection: @classe.pre_adozioni, as: :adozione %>
+
+      <%= render partial: "adozioni/adozione", collection: @classe.saggi, as: :adozione %>
+      
+
+   <%= link_to "classi", classi_path %>
 </div>

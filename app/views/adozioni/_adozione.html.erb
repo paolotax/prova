@@ -2,11 +2,15 @@
 	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
 		<%= tag.div  do %>
 
-			<div class="flex flex-wrap items-center gap-2">
+			<div class="flex flex-wrap items-center gap-2 group-[.show-classe]:hidden">
+				
 				<%= render "shared/inline_edit", model: adozione, method: :team do %>					
 					<%#= tag.div "#{maestra_o_maestre(adozione.team)}:", class: "hidden md:inline-block" %>
-					<%= tag.div  adozione.team, class: "mmmmd:ml-2" %>           					
+					<% adozione.maestre.each do |maestra| %>
+          				<%= tag.div maestra, class: "inline-block px-2 py-1.5 bg-purple-500 text-white border rounded-md" %>
+      				<% end %>         					
 				<% end %>
+				
 				<%= tag.div "della classe:", class: "hidden md:inline-block" %>
 				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
 					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
@@ -21,7 +25,8 @@
 			</div>
 										
 			<fieldset class="flex flex-wrap items-center gap-2">
-				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold" %>
+				
+				<%= tag.div pluralize_stato_adozione(adozione), class: "font-bold inline-block px-2 py-1.5 bg-cyan-500 text-white border rounded-md" %>
 
 				<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
 					<%= tag.div "il libro:", class: "hidden md:inline-block" %>
@@ -32,21 +37,22 @@
 							<%= tag.div "copie:", class: "hidden md:inline-block" %>
 							<%= tag.div adozione.numero_copie, class: "font-semibold" %>
 							<%= tag.div "prezzo: #{number_to_currency adozione.prezzo}" %>
-							<%= tag.div "importo:", class: "hidden md:inline-block" %>
-							<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
 						<% end %>
+						<%= tag.div "importo:", class: "hidden md:inline-block" %>
+						<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+
 					<% end %>
 				<% end %>
 			</fieldset>
 			
-			<div class="flex items-center mt-1 space-x-2">
+			<div class="flex items-center mt-1 space-x-2 group-[.show-classe]:hidden">
 				<%= render "shared/inline_edit", model: adozione, method: :note do %>
 					Note:
 					<%= adozione.note %>
 				<% end %>
 			</div>
 
-			<%= tag.div class: "flex align-center items-end justify-between" do %>
+			<%= tag.div class: "flex align-center items-end justify-between group-[.show-classe]:hidden" do %>
 				<% if adozione.created_at != adozione.updated_at %>
 					<p class="mt-1 text-right text-xs text-gray-600">
 						ultima modifica il <%= l(adozione.updated_at, format: "%d-%m-%y") %>

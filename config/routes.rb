@@ -11,7 +11,7 @@ end
 Rails.application.routes.draw do
   
   get 'classi', to: 'classi#index'
-  get 'classi/show', to: 'classi#show'
+  get 'classi/:id', to: 'classi#show', as: 'classe'
 
   resources :profiles
   

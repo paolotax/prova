@@ -4,7 +4,7 @@ class ClassiController < ApplicationController
   before_action :set_classe, only: %i[ show ]
   
   def index
-    @classi = current_user.classi.all
+    @classi = current_user.classi.includes(:import_scuola).all
   end
 
   def show
@@ -13,7 +13,7 @@ class ClassiController < ApplicationController
   private
 
     def set_classe
-      @classe = Views::Classi.find(params[:id])
+      @classe = Views::Classe.find(params[:id])
     end
 
 end
