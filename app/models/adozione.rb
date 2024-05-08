@@ -69,14 +69,15 @@ class Adozione < ApplicationRecord
     .order("import_scuole.id")
   }
 
-  # scope :per_, -> { 
-  #   joins(:scuola, :classe)        
-  #   .select('classi.id, import_scuole."DENOMINAZIONESCUOLA"')
-  #   .select("sum(adozioni.numero_sezioni) as numero_sezioni")
-  #   .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
-  #   .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
-  #   .order("import_scuole.id")
-  # }
+  scope :per_libro_titolo, -> { 
+    joins(:libro, :classe)        
+    .select('CONCAT(libri.titolo, \' \', view_classi.classe) AS libro_titolo')
+    .select("sum(adozioni.numero_copie) as numero_copie")
+    .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
+    .where("adozioni.numero_copie > 0")
+    .group('libro_titolo') 
+    .order("libro_titolo")
+  }
 
   scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
   scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }

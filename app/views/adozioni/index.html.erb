@@ -28,3 +28,11 @@
     <%= render @adozioni %>
 </div>
 
+
+<% current_user.adozioni.vendite.per_libro_titolo.collect do |adozione| %>
+    <%= adozione.libro_titolo %> -
+    <%= adozione.numero_copie %>
+    <br/>
+<% end %>
+
+
