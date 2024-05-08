@@ -22,6 +22,12 @@ User.all.select { |u| u.confirmed? }
 
 User.all.each { |u| u.confirm unless u.confirmed? }
 
+Appunto.where.not(import_adozione_id: nil).each do |a|
+    classe = a.import_adozione.classe
+    a.classe = classe
+    a.save
+end
+
 
 $ ssh root@<SERVER_IP>
 mkdir -p /letsencrypt && touch /letsencrypt/acme.json && chmod 600 /letsencrypt/acme.json
