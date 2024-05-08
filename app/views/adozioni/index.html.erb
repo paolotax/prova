@@ -35,4 +35,10 @@
     <br/>
 <% end %>
 
+<% current_user.adozioni.pre_adozioni.per_libro_categoria.collect do |adozione| %>
+    <%= adozione.libro_categoria %> -
+    <%= adozione.numero_sezioni %>
+    <br/>
+<% end %>
+
 

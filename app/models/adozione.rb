@@ -79,6 +79,15 @@ class Adozione < ApplicationRecord
     .order("libro_titolo")
   }
 
+  scope :per_libro_categoria, -> { 
+    joins(:libro)        
+    .select('libri.categoria AS libro_categoria')
+    .select("sum(adozioni.numero_sezioni) as numero_sezioni")
+    .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
+    .group('libro_categoria') 
+    .order("libro_categoria")
+  }
+
   scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
   scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }
   scope :saggi,    -> { where(stato_adozione: ['saggio', "saggio"]) }
