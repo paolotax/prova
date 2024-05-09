@@ -12,7 +12,18 @@ export default class extends Controller {
 
   // Called when the combobox value changes
   change(event) {
+
+
     let scuola_id = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;    
+
+    if (scuola_id == null) {
+      scuola_id = document.querySelector("#ppunto_import_scuola_id-hw-hidden-field").value;
+    };
+
+    if (scuola_id == null) {
+      return;
+    }
+    
     let url = `/import_scuole/${scuola_id}/combobox_classi`;
     
     fetch(url, {
