@@ -111,6 +111,6 @@ class AppuntiController < ApplicationController
     end
 
     def appunto_params
-      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :stato, :image, :content, attachments: [])
+      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :stato, :classe_id, :team, :completed_at, :image, :content, attachments: [])
     end
 end

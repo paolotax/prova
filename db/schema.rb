@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_06_134559) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_08_185111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_06_134559) do
     t.string "stato"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "completed_at"
+    t.string "team"
+    t.bigint "classe_id"
+    t.index ["classe_id"], name: "index_appunti_on_classe_id"
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"

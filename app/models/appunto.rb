@@ -4,18 +4,22 @@
 #
 #  id                 :bigint           not null, primary key
 #  body               :text
+#  completed_at       :datetime
 #  email              :string
 #  nome               :string
 #  stato              :string
+#  team               :string
 #  telefono           :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  classe_id          :bigint
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
 #  user_id            :bigint           not null
 #
 # Indexes
 #
+#  index_appunti_on_classe_id           (classe_id)
 #  index_appunti_on_import_adozione_id  (import_adozione_id)
 #  index_appunti_on_import_scuola_id    (import_scuola_id)
 #  index_appunti_on_user_id             (user_id)
@@ -27,9 +31,11 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Appunto < ApplicationRecord
+  
   belongs_to :import_scuola, required: false
   belongs_to :user
   belongs_to :import_adozione, required: false
+  belongs_to :classe, class_name: "Views::Classe", optional: true
 
   has_one_attached :image
   has_many_attached :attachments
@@ -89,6 +95,10 @@ class Appunto < ApplicationRecord
   scope :kit, -> { where(nome: "kit").where.not(import_adozione_id: nil) }
   scope :ssk, -> { where(nome: ["saggio", "seguito", "kit"]).where.not(import_adozione_id: nil) }
   
+
+  def scuola 
+    import_scuola
+  end
   
   def content_to_s
     content.to_s.gsub('<div class="trix-content">', "").gsub('</div>', "").gsub('<div>', "").gsub('</br>', "").gsub('<p>', "").gsub('</p>', "").gsub('<div>', "").gsub('</div>', "").gsub('<br/>', "").gsub('</br/>', "").gsub('<p/>', "").gsub('</p/>', "").gsub('<div/>', "").gsub('</div/>', "").gsub('<br />', "").gsub('</br />', "").gsub('<p />', "").gsub('</p />', "").gsub('<div />', "").gsub('</div />', "")

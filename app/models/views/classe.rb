@@ -48,7 +48,10 @@ class Views::Classe < ApplicationRecord
   has_many :vendite, -> { vendite }, class_name: "Adozione"
   has_many :saggi, -> { saggi }, class_name: "Adozione"
   has_many :pre_adozioni, -> { pre_adozioni }, class_name: "Adozione"
- 
+  
+  has_many :appunti # dovrò METTERE SOLO QUELLI DELL USER LOGGATO
+  
+  
   scope :prime, -> { where(classe: "1") }
   scope :seconde, -> { where(classe: "2") }
   scope :terze, -> { where(classe: "3") }

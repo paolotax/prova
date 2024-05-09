@@ -20,6 +20,12 @@
 			<%= appunto.nome %>      
 		</p>	
 
+		<% if appunto.classe %>
+			<div class="px-4">
+				<%= render partial: "classi/classe", locals: {classe: appunto.classe} %>
+			</div>
+		<% end %>
+
 		<% if mostra_scuola && appunto.import_scuola %>
 			<div class="px-4">
 				<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
