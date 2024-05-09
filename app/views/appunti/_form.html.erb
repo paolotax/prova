@@ -16,15 +16,37 @@
 	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 
-	<%# scuola o combobox %>	
-	<% if appunto.import_scuola %>
-		<%= render partial: "appunto_scuola", locals: {appunto: appunto, with_navigation: false } %>
-	<% else %>
-		<div class="my-5 youtubes w-full">
-			<%= form.label :import_scuola_id, "Scuola", class: "label" %>
-			<%= form.combobox :import_scuola_id, current_user.import_scuole.all %>
+
+	<% if appunto.classe.nil? %>
+		
+		<div class="my-5 youtubes w-full" data-controller="tax-combobox-select">
+			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
+					placeholder: "seleziona scuola...",
+					label: "Scuola:",
+					data: { action: "hw-combobox:selection->tax-combobox-select#change",
+							tax_combobox_select_target: "combobox" } %>
 		</div>
+	<% else %>
+		Scuola:
+		<br/>
+		<%= tag.span appunto&.scuola, class: "font-semibold" %>
 	<% end %>
+
+	<%= turbo_frame_tag :combo_classi do %>
+		<% if appunto.classe.nil? %>
+			<%= tag.div class: "min-h-12" %>
+		<% else %>
+			<div class="my-5  youtubes">
+				<%= render partial: "classi/combobox_classi", 
+					locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
+			</div>
+		<% end %>
+	<% end %>
+
+
+
+
+
 
 	<%# oggetto anziche nome %>
 	<div class="relative mt-5">
