@@ -23,7 +23,7 @@
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					placeholder: "seleziona scuola...",
 					label: "della scuola:",
-					data: { action: "hw-combobox:selection->tax-combobox-select#change",
+					data: { action: "hw-combobox:preselection->tax-combobox-select#check hw-combobox:selection->tax-combobox-select#change", 
 							tax_combobox_select_target: "combobox" } %>
 		</div>
 	<% else %>
