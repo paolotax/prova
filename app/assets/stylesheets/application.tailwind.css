@@ -17,7 +17,7 @@
     
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply rounded-md  bg-white;
+        @apply rounded-md bg-white;
       }
     }
 
