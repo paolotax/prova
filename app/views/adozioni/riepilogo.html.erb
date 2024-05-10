@@ -1,10 +1,37 @@
+<%= heading do %>	
+	
+    <%= h1 {"Riepiloghi"} %>
 
+    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-2 sm:space-x-4" do %>
+        
+        <%= link_to adozioni_path, 
+            class: "btn btn-white" do %>
+            <%= inline_svg_tag "icon-cash.svg" %>
+            <span class="">Adozioni</span>        
+        <% end %> 
+        
+        <%= link_to new_adozione_path(@adozione), 
+                data: { turbo_frame: :modal, action: "click->dialog#open"}, 
+                class: "btn btn-indigo" do %>
+            <%= inline_svg_tag "icon-cash.svg" %>
+            <span>Sbocci?</span>
+        <% end %>
+    <% end %>
+
+<% end %>
 
 <% @vendite.collect do |adozione| %>
     <%= adozione.libro_titolo %> -
-    <%= adozione.numero_copie %>
+    <%= adozione.numero_copie %> --------
+    <%= number_to_currency adozione.importo_cents / 100 %>
     <br/>
 <% end %>
+
+<%= @vendite.sum(&:numero_copie) %> --------
+<%= number_to_currency @vendite.sum(&:importo_cents) / 100 %>
+    <br/>
+        <br/>
+
 
 <% @adozioni_per_disciplina.collect do |adozione| %>
     <%= adozione.libro_categoria %> -

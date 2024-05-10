@@ -2,8 +2,8 @@
 	
     <%= h1 {"Si sboccia!!!"} %>
 
-    <%= tag.div class: "pl-4 flex flex-col justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4" do %>
-    
+    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-2 sm:space-x-4" do %>
+
         <%= link_to adozioni_path(format: :xlsx, params: request.query_parameters), 
             class: "btn btn-green" do %>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -12,12 +12,19 @@
             <span class="">Excel</span>        
         <% end %>  
 
+        <%= link_to riepilogo_adozioni_path, 
+            class: "btn btn-yellow" do %>
+            <%= inline_svg_tag "icon-calculator.svg" %>
+            <span class="">Sum</span>        
+        <% end %> 
+
         <%= link_to new_adozione_path(@adozione), 
                 data: { turbo_frame: :modal, action: "click->dialog#open"}, 
                 class: "btn btn-indigo" do %>
             <%= inline_svg_tag "icon-cash.svg" %>
             <span>Sbocci?</span>
         <% end %>
+
     <% end %>
 
 <% end %>

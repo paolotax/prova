@@ -73,6 +73,7 @@ class Adozione < ApplicationRecord
     joins(:libro, :classe)        
     .select('CONCAT(libri.titolo, \' \', view_classi.classe) AS libro_titolo')
     .select("sum(adozioni.numero_copie) as numero_copie")
+    .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .where("adozioni.numero_copie > 0")
     .group('libro_titolo') 
