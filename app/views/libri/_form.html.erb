@@ -13,7 +13,7 @@
   
   <div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
     
-    <div class="cb-tax mt-5 flex flex-col">
+    <div class="cb-tax cb-small mt-5 flex flex-col">
       <%= form.label :categoria, class: "mb-2" %>
       <%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]" %>
     </div>

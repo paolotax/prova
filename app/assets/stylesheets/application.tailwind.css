@@ -10,20 +10,7 @@
 
 @layer components {
 
-
-
-
   .cb-tax {
-    
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply rounded-md bg-white;
-      }
-    }
-
-    .hw-combobox__label {
-      @apply hidden;
-    }
     .hw-combobox__input {
       @apply py-0.5 ;
     }
@@ -35,41 +22,39 @@
     }
   }
 
-  .cb-tax-2 {
-    
+  .cb-small {    
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply rounded-md w-64 bg-white;
+        @apply w-40 rounded-lg  shadow-lg bg-white;
       }
-    }
-
-    .hw-combobox__label {
-      @apply hidden;
-    }
-    .hw-combobox__input {
-      @apply py-0.5 ;
-    }
-    .hw-combobox__handle {
-      @apply right-3;
-    }
-    .hw-combobox__listbox {
-      @apply rounded-md;
     }
   }
   
+  .cb-medium {
+    .hw-combobox, .hw-combobox--multiple {
+      .hw-combobox__main__wrapper {
+        @apply w-80 rounded-lg  shadow-lg bg-white;
+      }
+    }
+  }
 
-  .youtubes {
-    
+  .cb-large {
+    .hw-combobox, .hw-combobox--multiple {
+      .hw-combobox__main__wrapper {
+        @apply w-80 rounded-md  shadow-lg bg-white;
+      }
+    }
+  }
+  
+  .youtubes {  
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
         @apply sm:w-[30rem] rounded-lg w-80 bg-white shadow-lg;
       }
-    
     }
     .hw-combobox__main__wrapper {
       @apply sm:w-[42rem] rounded-lg w-80 bg-white shadow-lg;
     }
-
     .hw-combobox__handle {
       @apply right-3;
     }

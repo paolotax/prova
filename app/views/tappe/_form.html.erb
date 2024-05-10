@@ -12,7 +12,7 @@
     <% end %>
 
     <%= tag.div class: "my-4" do %>  
-        <%= tag.div class: "cb-tax rounded-t-lg bg-gray-100 border px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
+        <%= tag.div class: "cb-tax cb-medium rounded-t-lg bg-gray-100 border px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
             <span class="pr-2">giro:</span>
             <%= form.combobox :giro_id, current_user.giri.all,
                 name_when_new: "tappa[new_giro]" %>

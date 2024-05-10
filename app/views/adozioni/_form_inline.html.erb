@@ -30,7 +30,7 @@
 
 	<%= tag.div class: "flex flex-wrap items-center gap-2" do %>
 
-        <%= tag.div class: "cb-tax" do %>
+        <%= tag.div class: "cb-tax cb-small" do %>
             <%= form.combobox :stato_adozione, 
                     current_user.adozioni.stato_adozione, 
                     name_when_new: "adozione[stato_adozione]", 
@@ -39,7 +39,7 @@
         <% end %>
     
         <%= render "shared/inline_fields", form: form, method: :titolo_copie_e_prezzo do %>
-            <%= tag.div class: "cb-tax-2" do %>
+            <%= tag.div class: "cb-tax cb-medium" do %>
                 <%= form.combobox :libro_id, current_user.libri.order(:titolo),
                         label: "il testo:",
                         placeholder: "seleziona il titolo o inseriscine uno nuovo...",

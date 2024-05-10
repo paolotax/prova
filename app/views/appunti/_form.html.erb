@@ -31,7 +31,7 @@
 	<% end %>
 
 	<%= turbo_frame_tag :combo_classi do %>
-		<% if appunto.classe.nil? %>
+		<% if appunto.scuola.nil? %>
 			<%= tag.div class: "min-h-12" %>
 		<% else %>
 			<div class="my-5">
