@@ -6,24 +6,23 @@ export default class extends Controller {
   static targets = ["combobox"]
 
   check(event) {
-    this.idlibro = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;
-    console.log("check", scuola_id);
+    // da eliminare anche data-action 
   }
 
-  // Called when the combobox value changes
   change(event) {
 
-
-    let scuola_id = document.querySelector("#adozione_import_scuola_id-hw-hidden-field").value;    
-
-    if (scuola_id == null) {
-      scuola_id = document.querySelector("#ppunto_import_scuola_id-hw-hidden-field").value;
+    let input = document.querySelector("#appunto_import_scuola_id-hw-hidden-field");
+    if (input == null) {
+      input = document.querySelector("#adozione_import_scuola_id-hw-hidden-field");  
+    };
+    if (input == null) {
+      return;
     };
 
-    if (scuola_id == null) {
+    let scuola_id = input.value;
+    if (scuola_id == "") {
       return;
-    }
-    
+    };
     let url = `/import_scuole/${scuola_id}/combobox_classi`;
     
     fetch(url, {
@@ -35,9 +34,7 @@ export default class extends Controller {
     .then(r => r.text())
     .then(html => Turbo.renderStreamMessage(html))
     
-    // html: <turbo-stream action="replace"> ...</turbo-stream>
-
-    console.log("change", scuola_id);
+    // // html: <turbo-stream action="replace"> ...</turbo-stream>
   }
 }
 

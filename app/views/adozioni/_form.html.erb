@@ -19,11 +19,11 @@
 
 	<% if adozione.classe.nil? %>
 		
-		<div class="my-5 youtubes w-full" data-controller="tax-combobox-select">
+		<div class="my-5 youtubes" data-controller="tax-combobox-select">
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					placeholder: "seleziona scuola...",
 					label: "della scuola:",
-					data: { action: "hw-combobox:preselection->tax-combobox-select#check hw-combobox:selection->tax-combobox-select#change", 
+					data: { action: "hw-combobox:selection->tax-combobox-select#change", 
 							tax_combobox_select_target: "combobox" } %>
 		</div>
 	<% else %>
@@ -36,7 +36,7 @@
 		<% if adozione.classe.nil? %>
 			<%= tag.div class: "min-h-12" %>
 		<% else %>
-			<div class="my-5  youtubes">
+			<div class="my-5">
 				<%= render partial: "classi/combobox_classi", 
 					locals: { scuola: adozione.scuola, classe_ids: [adozione.classe_id] } %>
 			</div>
