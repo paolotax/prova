@@ -14,16 +14,15 @@ Rails.application.routes.draw do
   get 'classi/:id', to: 'classi#show', as: 'classe'
 
   resources :profiles
-  
-  
-  resources :classe_chips, only: :create, param: :combobox_value
-  
+    
+  resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
   
   resources :adozioni do 
     collection do
       post 'bulk_create'
       patch 'bulk_update'
+      get "riepilogo"
     end
   end
     

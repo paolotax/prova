@@ -22,23 +22,7 @@
 
 <% end %>
 
-<%= render partial: "adozioni/badges" %>
-  
 <div id="adozioni-lista" class="min-w-full">
     <%= render @adozioni %>
 </div>
-
-
-<% current_user.adozioni.vendite.per_libro_titolo.collect do |adozione| %>
-    <%= adozione.libro_titolo %> -
-    <%= adozione.numero_copie %>
-    <br/>
-<% end %>
-
-<% current_user.adozioni.pre_adozioni.per_libro_categoria.collect do |adozione| %>
-    <%= adozione.libro_categoria %> -
-    <%= adozione.numero_sezioni %>
-    <br/>
-<% end %>
-
 

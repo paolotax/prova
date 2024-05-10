@@ -12,6 +12,11 @@ class AdozioniController < ApplicationController
 
   end
 
+  def riepilogo
+    @vendite = current_user.adozioni.vendite.per_libro_titolo
+    @adozioni_per_disciplina = current_user.adozioni.pre_adozioni.per_libro_categoria
+  end
+
   def show
     @item = params[:item] if params[:item].present?
     #raise params.inspect
