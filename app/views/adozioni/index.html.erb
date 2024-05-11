@@ -12,18 +12,20 @@
             <span class="">Excel</span>        
         <% end %>  
 
-        <%= link_to riepilogo_adozioni_path, 
-            class: "btn btn-yellow" do %>
-            <%= inline_svg_tag "icon-calculator.svg" %>
-            <span class="">Totali</span>        
-        <% end %> 
-
-        <%= link_to new_adozione_path(@adozione), 
-                data: { turbo_frame: :modal, action: "click->dialog#open"}, 
-                class: "btn btn-indigo" do %>
-            <%= inline_svg_tag "icon-cash.svg" %>
-            <span>Sbocci?</span>
-        <% end %>
+        <%= render TaxButton.new(
+                caption: "Totali",
+                svg_file: "icon-calculator.svg",
+                color: "white",
+                url: url_for( controller: "adozioni", action: "riepilogo", params: [] )
+        ) %>
+        
+        <%= render TaxButton.new(
+                caption: "Sbocci?",
+                svg_file: "icon-cash.svg",
+                color: "blue",
+                url: url_for( controller: "adozioni", action: "new", model: @adozione ),
+                data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
+        ) %>
 
     <% end %>
 

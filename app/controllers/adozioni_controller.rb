@@ -40,6 +40,7 @@ class AdozioniController < ApplicationController
   end
 
   def new
+    #raise params.inspect  
     classe_id = params[:classe_id] if params[:classe_id].present?
     if params[:import_adozione_id].present?
       classe_id = ImportAdozione.find(params[:import_adozione_id]).classe.id

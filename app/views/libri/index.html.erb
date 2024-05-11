@@ -1,10 +1,14 @@
 <%= heading do %>	
 	<%= h1 {"Libri"} %>
-	<%= link_to new_libro_path(@libro), 
-				data: { turbo_frame: :modal, action: "click->dialog#open"}, class: "w-16 btn btn-indigo" do %>
-		<%= inline_svg_tag "icon-bookopen.svg" %>
-		<span>Nuovo</span>
-	<% end %>
+        
+        <%= render TaxButton.new(
+                caption: "Nuovo",
+                svg_file: "icon-bookopen.svg",
+                color: "blue",
+                url: url_for( controller: "libri", action: "new", model: @libro ),
+                data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
+        ) %>
+	
 <% end %>
 
 

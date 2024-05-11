@@ -3,7 +3,7 @@
 
 
 	<%= tag.div class: "pl-4 flex flex-col justify-left sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
-    
+		
 		<%= link_to appunti_path(format: :xlsx, params: request.query_parameters), 
 			class: "btn btn-green" do %>
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -11,12 +11,15 @@
 			</svg>
 			<span class="">Excel</span>        
 		<% end %>  
-		<%= link_to new_appunto_path(@appunto), 
-					data: { turbo_frame: :modal, action: "click->dialog#open"}, 
-					class: "btn btn-indigo" do %>
-			<%= inline_svg_tag "icon-appunto.svg" %>
-			<span>Nuovo</span>
-		<% end %>
+        
+        <%= render TaxButton.new(
+                caption: "Nuovo",
+                svg_file: "icon-cash.svg",
+                color: "blue",
+                url: url_for( controller: "appunti", action: "new", model: @appunto ),
+                data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
+        ) %>
+
     <% end %>
 
 
