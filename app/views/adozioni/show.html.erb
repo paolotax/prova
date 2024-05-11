@@ -3,14 +3,14 @@
 
     <%= render @adozione %>
 
-    <%= link_to "Edit this adozione", edit_adozione_path(@adozione), 
+    <%= link_to "Modifica", edit_adozione_path(@adozione), 
             data: { turbo_frame: :modal, action: "click->dialog#open"},
             class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     
     <div class="inline-block ml-2">
-      <%= button_to "Destroy this adozione", adozione_path(@adozione), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+      <%= button_to "Elimina", adozione_path(@adozione), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
     </div>
     
-    <%= link_to "Back to adozioni", adozioni_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "<- adozioni", adozioni_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
   </div>
 </div>

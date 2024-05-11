@@ -6,6 +6,12 @@
 	<% end %>	
 </li>
 <li>
+	<%= link_to import_scuole_path, class:"sidebar-item" do %>
+		<%= inline_svg_tag('icon-building-library.svg') %>                
+		Scuole
+	<% end %>
+</li>
+<li>
 	<%= link_to appunti_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-pencil.svg') %>                
 		Appunti
@@ -21,14 +27,14 @@
 			<% end %>
 			<!-- Expanded: " text-gray-500", Collapsed: "text-gray-400" -->
 			<%= tag.div data: {action: "click->tax-reveal#toggle"} do %>
-				<svg class="rotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
+				<svg class="rrotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
 					data-tax-reveal-target="chevron">
 					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
 				</svg>   
 			<% end %> 
 		</div>
 		
-		<ul data-tax-reveal-target="item" class="hhidden">
+		<ul data-tax-reveal-target="item" class="hidden">
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to oggi_path, 
@@ -54,16 +60,16 @@
 				<%= inline_svg_tag('icon-cash.svg') %>
 				Adozioni                    
 			<% end %>
-			<!-- Expanded: "rotate-90 text-gray-500", Collapsed: "text-gray-400" -->
+			<!-- Expanded: "rrotate-90 text-gray-500", Collapsed: "text-gray-400" -->
 			<%= tag.div data: { action: "click->tax-reveal#toggle" } do %>
-				<svg class="rotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
+				<svg class="rrotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
 					data-tax-reveal-target="chevron">
 					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
 				</svg>   
 			<% end %> 
 		</div>
 
-		<ul data-tax-reveal-target="item" class="hhidden">
+		<ul data-tax-reveal-target="item" class="hidden">
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to import_adozioni_path, 
@@ -83,12 +89,6 @@
 </li>
 
 <li>
-	<%= link_to import_scuole_path, class:"sidebar-item" do %>
-		<%= inline_svg_tag('icon-building-library.svg') %>                
-		Scuole
-	<% end %>
-</li>
-<li>
 	<%= link_to stats_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
 		Stats...
@@ -105,7 +105,7 @@
 					<%= inline_svg_tag('icon-cash.svg') %>
 					Magazzino                    
 				<% end %>
-				<!-- Expanded: "rotate-90 text-gray-500", Collapsed: "text-gray-400" -->
+				<!-- Expanded: "rrotate-90 text-gray-500", Collapsed: "text-gray-400" -->
 				<%= tag.div data: { action: "click->tax-reveal#toggle" } do %>
 					<svg class="text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
 						data-tax-reveal-target="chevron">
@@ -126,7 +126,7 @@
 					<!-- 44px -->
 					<%= link_to fornitori_path, 
 							class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
-						Formitori                 
+						Fornitori                 
 					<% end %>
 				</li>
 				<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
