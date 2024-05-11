@@ -2,7 +2,7 @@
 	
     <%= h1 {"Si sboccia!!!"} %>
 
-    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-2 sm:space-x-4" do %>
+    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
 
         <%= link_to adozioni_path(format: :xlsx, params: request.query_parameters), 
             class: "btn btn-green" do %>
@@ -15,7 +15,7 @@
         <%= link_to riepilogo_adozioni_path, 
             class: "btn btn-yellow" do %>
             <%= inline_svg_tag "icon-calculator.svg" %>
-            <span class="">Sum</span>        
+            <span class="">Totali</span>        
         <% end %> 
 
         <%= link_to new_adozione_path(@adozione), 

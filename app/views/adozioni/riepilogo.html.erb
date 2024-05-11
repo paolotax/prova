@@ -2,12 +2,12 @@
 	
     <%= h1 {"Riepiloghi"} %>
 
-    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-2 sm:space-x-4" do %>
+    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
         
         <%= link_to adozioni_path, 
             class: "btn btn-white" do %>
             <%= inline_svg_tag "icon-cash.svg" %>
-            <span class="">Adozioni</span>        
+            <span class="">Lista</span>        
         <% end %> 
         
         <%= link_to new_adozione_path(@adozione), 

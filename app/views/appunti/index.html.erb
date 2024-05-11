@@ -2,7 +2,7 @@
 	<%= h1 {"Appunti"} %>
 
 
-	<%= tag.div class: "pl-4 flex flex-col justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4" do %>
+	<%= tag.div class: "pl-4 flex flex-col justify-left sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
     
 		<%= link_to appunti_path(format: :xlsx, params: request.query_parameters), 
 			class: "btn btn-green" do %>
