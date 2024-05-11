@@ -69,7 +69,7 @@ class Appunto < ApplicationRecord
             import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
                               
 
-  STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "da pagare", "completato", "archiviato"]  
+  STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "in visione", "da pagare", "completato", "archiviato"]  
   
   after_initialize :set_default_stato, :if => :new_record?
   
