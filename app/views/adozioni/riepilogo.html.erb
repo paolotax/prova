@@ -24,6 +24,7 @@
     <%= adozione.libro_titolo %> -
     <%= adozione.numero_copie %> --------
     <%= number_to_currency adozione.importo_cents / 100 %>
+    <%= link_to "lista", adozioni_path(ids: adozione.adozione_ids.join(","))%>
     <br/>
 <% end %>
 
