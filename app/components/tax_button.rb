@@ -12,7 +12,5 @@ class TaxButton < ViewComponent::Base
     @url = url
     @data_attr = data_attr
   end
-
-
-  
+ 
 end
