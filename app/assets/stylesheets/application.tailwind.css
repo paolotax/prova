@@ -25,6 +25,28 @@
     }
   }
 
+  .cb-tax-fancy {
+    .hw-combobox, .hw-combobox--multiple {
+      .hw-combobox__main__wrapper {
+        @apply block w-80 rounded-none border-0 border-b  bg-gray-50 py-1.5 text-gray-900 ring-0;
+      }
+    }
+    .hw-combobox__label {
+      @apply hidden;
+    }
+    .hw-combobox__input {
+      @apply py-0.5 bg-gray-50;
+    }
+    .hw-combobox__handle {
+      @apply right-3;
+    }
+    .hw-combobox__listbox {
+      @apply rounded-md border-b ;
+    }
+  }
+
+  
+
   .cb-small {    
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {

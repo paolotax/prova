@@ -17,12 +17,15 @@
 
 	<% if appunto.classe.nil? %>
 		
-		<div class="my-5 youtubes" data-controller="tax-combobox-select">
+		<div class="my-5 relative peer cb-tax-fancy" 
+			data-controller="tax-combobox-select">
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					placeholder: "seleziona scuola...",
 					label: "Scuola:",
 					data: { action: "hw-combobox:selection->tax-combobox-select#change",
 							tax_combobox_select_target: "combobox" } %>
+		
+			<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
 		</div>
 	<% else %>
 		Scuola:
@@ -44,54 +47,57 @@
 	<%# oggetto anziche nome %>
 	<div class="relative mt-5">
 		<%= form.text_field :nome, 
-				class: " peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6", 
-				placeholder: "oggetto",
+				class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0", 
+				placeholder: "titolo o destinatario...",
 				autofocus: :true  %>
 		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 	</div>
 
 	<%# text area o trix  %>
-	<div class="my-5">
+	<div class="mt-5">
 		<% unless appunto.body.blank? %>
 			<%= form.text_area :body, rows: 5, 
-				class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6" %>
+				class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0" %>
 		<% else %>
 			<%= form.rich_text_area :content, 
-				class: "block w-full resize-none min-h-[150px] sm:min-h-[150px] bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6",
+				class: "block w-full resize-none min-h-[150px] sm:min-h-[150px] bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0",
 				placeholder: "scrivi..." %>
 		<% end %>
 	</div>  
 
-	<%# attachments %>
-	<div class="mt-2 flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
-		<div class="text-center flex justify-left gap-x-4 items-center">
-			<%# <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-				<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
-			</svg> %>
-			<div class="flex text-sm  text-gray-600">
-				<label for="appunto_attachments" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-						<path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
-					</svg>
-					<input multiple="multiple" id="appunto_attachments" type="file" name="appunto[attachments][]"  class="sr-only"> 
-					<%= form.file_field :attachments, multiple: true, class: "hidden" %>
-				</label>			
-			</div>
-			    <% if appunto.attachments.attached? %>
-					<% appunto.attachments.each do |image| %>
-						<%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
-					<% end %>
-						<span class="text-sm italic text-gray-600"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
-					<br/>
-				<% end %>
+	<%= tag.div class: "flex items-center justify-between space-x-5" do %>
+		<%# stato %>
+		<div class="relative mt-5 w-1/2">
+			<%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s}, { include_blank: "" }, 
+					class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0" %>
+			<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 		</div>
-	</div>
 
-	<%# stato %>
-	<div class="relative mt-5">
-		<%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s},  include_blank: "", class: "field"   %>
-	</div>
-
+		<%# attachments %>
+		<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
+			<div class="text-center flex justify-left gap-x-4 items-center">
+				<%# <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+				</svg> %>
+				<div class="flex text-sm  text-gray-600">
+					<label for="appunto_attachments" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+						</svg>
+						<input multiple="multiple" id="appunto_attachments" type="file" name="appunto[attachments][]"  class="sr-only"> 
+						<%= form.file_field :attachments, multiple: true, class: "hidden" %>
+					</label>			
+				</div>
+					<% if appunto.attachments.attached? %>
+						<% appunto.attachments.each do |image| %>
+							<%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
+						<% end %>
+							<span class="text-sm italic text-gray-600"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
+						<br/>
+					<% end %>
+			</div>
+		</div>
+	<% end %>
 	<%# actions %>
 	<div class="mt-5 flex items-center justify-between">
 
