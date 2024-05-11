@@ -2,29 +2,34 @@
 	<%= tag.div class: "p-2 border flex items-center align-center justify-between" do %>
 		<%= tag.div  do %>
 
-			<div class="flex flex-wrap items-center gap-2 group-[.show-classe]:hidden">
-				
-				<%= render "shared/inline_edit", model: adozione, method: :team do %>					
-					<%#= tag.div "#{maestra_o_maestre(adozione.team)}:", class: "hidden md:inline-block" %>
-					<% adozione.maestre.each do |maestra| %>
-          				<%= tag.div maestra, class: "inline-block px-2 py-1.5 bg-purple-500 text-white border rounded-md" %>
-      				<% end %>         					
-				<% end %>
-				
-				<%= tag.div "della classe:", class: "hidden md:inline-block" %>
-				
-				<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
-					<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
-				<% end %>
+			<%= tag.div class: "flex flex-wrap gap-2" do %>
+				<%# team e classe %>
+				<fieldset class="flex flex-wrap items-center align-center gap-2 group-[.show-classe]:hidden">
+					
+					<%= render "shared/inline_edit", model: adozione, method: :team do %>					
+						<%#= tag.div "#{maestra_o_maestre(adozione.team)}:", class: "hidden md:inline-block" %>
+						<% adozione.maestre.each do |maestra| %>
+							<%= tag.div maestra, class: "inline-block px-2 py-1.5 bg-purple-500 text-white border rounded-md" %>
+						<% end %>         					
+					<% end %>
+					
+					<%= tag.div "Classe:", class: "hidden md:inline-block" %>
+					
+					<%= render "shared/inline_edit", model: adozione, method: :classe_id do %>
+						<%= tag.span adozione.classe_e_sezione, class: "font-bold"  %> 
+					<% end %>
+				</fieldset>
 
-				<fieldset class="flex flex-row items-center gap-2 group-[.show-scuola]:hidden" >
-					<%= tag.div "della scuola:", class: "hidden md:inline-block" %>
+				<%# scuola %>
+				<fieldset class="py-2 flex flex-row items-center gap-2 group-[.show-scuola]:hidden" >
+					<%= tag.div "Scuola:", class: "hidden md:inline-block" %>
 					<%= link_to adozione.nome_scuola, adozione.scuola, data: { turbo_frame: "_top" } %>
 					<%= tag.div "di", class: "hidden md:inline-block" %>
 					<%= tag.div adozione.citta %>
 				</fieldset>
-			</div>
-										
+			<% end %>
+
+			<%# numero e copie %>
 			<fieldset class="flex items-center justify-between">
 				
 				<%= tag.div class: "flex flex-wrap items-center gap-2" do%>
@@ -49,14 +54,18 @@
 					<% end %>
 				<% end %>
 
-				<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
-					<%= tag.div class: "flex flex-nowrap gap-2" do %>
-						<%= tag.div "importo:", class: "hidden md:inline-block" %>
-						<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
-					<% end %>
-				<% end %>
+
 			</fieldset>
 			
+			<%# importo %>
+			<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+				<%= tag.div class: "py-2 flex flex-nowrap gap-2" do %>
+					<%= tag.div "importo:", class: "hidden md:inline-block" %>
+					<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+				<% end %>
+			<% end %>
+			
+			<%# note %>
 			<div class="flex items-center mt-1 space-x-2 group-[.show-classe]:hidden">
 				<%= render "shared/inline_edit", model: adozione, method: :note do %>
 					Note:
@@ -64,6 +73,7 @@
 				<% end %>
 			</div>
 
+			<%# timestamps %>
 			<%= tag.div class: "flex align-center items-end justify-between group-[.show-classe]:hidden" do %>
 				<% if adozione.created_at != adozione.updated_at %>
 					<p class="mt-1 text-right text-xs text-gray-600">
@@ -76,6 +86,7 @@
 			<% end %>
 		<% end %>
 
+		<%# action buttons %>
 		<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
 			
 			<%= link_to "pdf", adozione_path(adozione, format: "pdf"), class: "text-xs text-center", 

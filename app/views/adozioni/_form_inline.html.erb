@@ -61,14 +61,14 @@
     <% end %>
 
     <%= tag.div class: "flex flex-col sm:flex-row justify-between sm:items-end mt-2" do %>
-        
-        <%= render "shared/inline_fields", form: form, method: :note do %>
-            <%= tag.div class: "w-full" do %>
+
+        <%= tag.div class: "w-full sm:mr-4" do %>
+            <%= render "shared/inline_fields", form: form, method: :note do %>
                 <%= form.text_area :note, rows: 3, class: "shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full", placeholder: "note..." %>
             <% end %>
         <% end %>
         
-        <%= tag.div class: "mt-2 sm:m-0 sm:mb-1 w-full flex justify-end space-x-2" do %>
+        <%= tag.div class: "mt-2 sm:m-0 sm:mb-1 flex justify-end space-x-2" do %>
             
             <%= form.submit "salva", class: "bg-blue-600 rounded-lg py-1.5 px-2 text-white font-small cursor-pointer" %>
             
