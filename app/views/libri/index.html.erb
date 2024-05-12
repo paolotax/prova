@@ -3,7 +3,7 @@
         
         <%= render TaxButton.new(
                 caption: "Nuovo",
-                svg_file: "icon-bookopen.svg",
+                svg_file: "icon-plus.svg",
                 color: "blue",
                 url: url_for( controller: "libri", action: "new", model: @libro ),
                 data_attr: { turbo_frame: :modal, action: "click->dialog#open" }

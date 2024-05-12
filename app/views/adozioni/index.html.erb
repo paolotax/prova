@@ -4,7 +4,7 @@
 
     <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
 
-        
+
         <%= render TaxButton.new(
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
@@ -21,7 +21,7 @@
         
         <%= render TaxButton.new(
                 caption: "Sbocci?",
-                svg_file: "icon-cash.svg",
+                svg_file: "icon-plus.svg",
                 color: "blue",
                 url: url_for( controller: "adozioni", action: "new", model: @adozione ),
                 data_attr: { turbo_frame: :modal, action: "click->dialog#open" }

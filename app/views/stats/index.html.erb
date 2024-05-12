@@ -3,21 +3,21 @@
 	<%= h1 {"Stats"} %>
 
 	<% if current_user.admin? %>
-		<%= link_to new_stat_path, class: "w-16 btn btn-indigo" do %>
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-			</svg>
 
-			<span>Stats</span>
-		<% end %>
+        <%= render TaxButton.new(
+                caption: "Nuovo",
+                svg_file: "icon-plus.svg",
+                color: "blue",
+                url: url_for( controller: "stats", action: "new" )
+        ) %>
 	<% end %>
-
 <% end %>
 
 
 <%= turbo_frame_tag "search_results" do %>
 	<div class="mt-8 flow-root sm:mx-0">
 		<table class="min-w-full overflow-x-auto divide-y divide-gray-300">
+			
 			<%# <colgroup>
 				<col class="w-full sm:w-1/3">
 				<col class="w-full sm:w-1/3">
@@ -40,7 +40,7 @@
 			</thead>
 			
 			<tbody>
-					<%=  render @stats %>
+				<%=  render @stats %>
 			</tbody>
 
 			<tfoot>
