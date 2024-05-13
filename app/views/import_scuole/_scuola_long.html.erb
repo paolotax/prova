@@ -21,6 +21,13 @@
 	</div>
 	
 	<div class="ml-2 flex flex-row">
+		
+		<%= link_to new_adozione_path(import_scuola_id: import_scuola.id),
+                    data: { turbo_frame: :modal, action: "click->dialog#open"},
+                    class: "p-2.5 text-green-400 hover:text-indigo-600" do %>
+			<%= inline_svg_tag "icon-cash.svg" %>
+        <% end %>
+
         <%= link_to new_appunto_path(import_scuola_id: import_scuola.id),
                     data: { turbo_frame: :modal, action: "click->dialog#open"},
                     class: "p-2.5 text-indigo-400 hover:text-indigo-600" do %>
