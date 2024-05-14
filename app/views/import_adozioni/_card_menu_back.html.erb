@@ -1,0 +1,44 @@
+<%= render DropdownComponent.new do |dropdown| %>
+    
+    <%= dropdown.with_button do %>
+        <%= inline_svg_tag  "icon-ellipsis-vertical.svg", class: "p-0.5" %>
+    <% end %>
+    
+    <% dropdown.with_item do %>
+        <%= link_to new_adozione_path( import_adozione_id: import_adozione.id),
+                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
+
+            Si sboccia!!!
+        <% end %>
+    <% end %>
+    <% dropdown.with_item do %>
+        <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
+                                      import_adozione_id: import_adozione.id),
+                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
+
+            nuovo appunto
+        <% end %>
+    <% end %>
+
+    <% if import_adozione.mia_adozione? %>
+
+        <% ["saggio", "seguito", "kit"].each do |m| %>
+
+            <!-- scarico saggio -->
+            <% dropdown.with_item do %>
+                <%= form_with model: current_user.appunti.build,
+                            class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                            role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do |f| %>
+                    <%= f.hidden_field :import_scuola_id, value: import_adozione.import_scuola.id %>
+                    <%= f.hidden_field :import_adozione_id, value: import_adozione.id %>
+                    <%= f.hidden_field :nome, value: m %>
+                    <%= f.submit  m, class: "text-left w-full cursor-pointer" %>
+                <% end %>
+            <% end %>
+        <% end %>
+    <% end %>
+<% end %>
