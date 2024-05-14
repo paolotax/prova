@@ -73,10 +73,10 @@
 					multiselect_chip_src: libro_chips_path %>
 			
 			
-			<%= tag.div class: "my-2 flex space-x-2 items-center" do %>
+			<%= tag.div class: "my-5 flex space-x-2 items-center" do %>
 				<%= tag.div "oppure:" %> 
 				<%= form.text_field :new_libro, placeholder: "inserisci nuovo titolo...", 
-								class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+								class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full  sm:w-[38rem]" %>
 			<% end %>
 		<% else %>
 			<%= form.combobox :libro_id, current_user.libri.order(:titolo),

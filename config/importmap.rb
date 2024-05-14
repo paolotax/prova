@@ -21,3 +21,5 @@ pin "stimulus-checkbox-select-all" # @5.3.0
 pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.0
 
 pin "mapkick/bundle", to: "mapkick.bundle.js"
+
+pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm", preload: true
