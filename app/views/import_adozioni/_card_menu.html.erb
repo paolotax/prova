@@ -1,40 +1,18 @@
-<%# locals: ( tappa:, giro_previous: nil, giro_next: nil, orientation: "left" ) -%>
-
-<%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center",
+<%= tag.div class: "relative flex items-center justify-center",
             data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
+     
 
-    <% if tappa.giro.nil? %>
-        <%- giro_previous = current_user.giri.last&.id %>
-        <%- giro_next = nil %>
-    <% else %>
-        <%- giro_previous = tappa&.giro&.previous&.id %>
-        <% if tappa.giro == current_user.giri.last %>
-            <%- giro_next = "" %>
-        <% else %>
-            <%- giro_next = tappa&.giro&.next&.id %>
-        <% end %>
+    <%= tag.div class: "-mr-2 hover:text-sky-500",
+                type: "button",
+                id: "titolo-menu-button_#{dom_id import_adozione}",
+                aria: { expanded: false, haspopup: true},
+                data: { dropdown_target: "button" } do %>
+        <span class="sr-only">Apri menu titolo</span>
+        <%= inline_svg_tag  "icon-ellipsis-vertical.svg", class: "p-0.5" %>
     <% end %>
 
-    <% unless tappa.data_tappa.nil? %>
-        <%= render partial: "tappe/tappa_data", locals: { tappa: tappa }%>
-    <% else %>
 
-        <%= tag.div class: "h-8 w-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-300 flex items-center justify-center",
-                    type: "button",
-                    id: "tappa-menu-button_#{dom_id tappa}",
-                    aria: { expanded: false, haspopup: true},
-                    data: { dropdown_target: "button" } do %>
-            <span class="sr-only">Apri menu tappa</span>
-            <%= inline_svg_tag  "icon-pencil.svg", class: "p-0.5" %>
-        <% end %>
-    <% end %>
-    <%# QUI devo cambiare l'orientamento del menu or left right %>
-    <%= tag.div class: [
-                    "hidden absolute top-5 z-20 mt-2.5 w-32 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none": true,
-                    "right-0": orientation == "right",
-                    "left-0": orientation == "left"
-                ],
-                role: "menu",   
+    <%= tag.div class: "hidden absolute right-0 top-5 mt-2.5 w-32 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
         data: { dropdown_target: "menu",
                 transition_enter: "transition ease-out duration-200",
                 transition_enter_from: "opacity-0",
@@ -44,132 +22,44 @@
                 transition_leave_to: "opacity-0"
               } do %>
 
+
         <!-- Active: "bg-gray-50", Not Active: "" -->
-                
-        <%= link_to edit_tappa_path( tappa ),
-                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                data: { turbo_frame: :modal, action: "click->dialog#open"}, 
-                role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
-            Modifica
-        <% end %>
-        
-        <hr/>
+        <%= link_to new_adozione_path( import_adozione_id: import_adozione.id),
+                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
 
-        <%= tag.div class: "flex justify-between" do %>
-
-            <% if giro_previous %>
-                <%= form_with(model: tappa) do |form| %>
-                    <%= form.hidden_field :giro_id, value: giro_previous %>
-                    <%= form.submit "<-", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200 " %>
-                <% end %>
-            <% else %>
-                <%= tag.div  %>
-            <% end %>
-
-            <% if giro_next %>
-                <%= form_with(model: tappa) do |form| %>
-                    <%= form.hidden_field :giro_id, value: giro_next %>
-                    <%= form.submit "->", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200" %>
-                <% end %>
-            <% end %>
-    
+            ADOTTA!!!
         <% end %>
 
-        <!-- oggi domani la prossima -->
-        <%= tag.div class: "flex justify-between px-2 py-2" do %>        
-            <% ["oggi", "domani", "la prossima"].each do |item| %>
-                <%= form_with model: tappa,
-                            class: "flex justify-between" do |f| %>
-                    <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
-                    <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
-                    <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
-                    
-                    <%= f.submit item, class: [
-                        "w-8 h-8 rounded-full text-xs text-white": true,
-                        "bg-green-500 hover:bg-green-600": item == "oggi",
-                        "bg-yellow-300 hover:bg-yellow-500": item == "domani",
-                        "bg-pink-500 hover:bg-pink-600": item == "la prossima"
-                    ] %>
-                <% end %>
-            <% end %>        
+        <!-- Active: "bg-gray-50", Not Active: "" -->
+        <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
+                                      import_adozione_id: import_adozione.id),
+                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
+
+            nuovo appunto
         <% end %>
 
-                <!-- oggi domani la prossima -->
-        <%= tag.div class: "flex justify-between px-2 py-2" do %>        
-            <% ["lu", "ma", "me"].each do |item| %>
-                <%= form_with model: tappa,
-                            class: "flex justify-between" do |f| %>
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:monday) if item == "lu" %>                    
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:tuesday) if item == "ma" %>                    
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:wednesday) if item == "me" %>                    
+        <% if import_adozione.mia_adozione? %>
 
-                    <%= f.submit item, class: [
-                        "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
-                    ] %>
+            <% ["saggio", "seguito", "kit"].each do |m| %>
+
+                <!-- scarico saggio -->
+                <%= form_with model: current_user.appunti.build,
+                            class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                            role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do |f| %>
+                    <%= f.hidden_field :import_scuola_id, value: import_adozione.import_scuola.id %>
+                    <%= f.hidden_field :import_adozione_id, value: import_adozione.id %>
+                    <%= f.hidden_field :nome, value: m %>
+                    <%= f.submit  m, class: "text-left w-full cursor-pointer" %>
                 <% end %>
             <% end %>
-        <% end %>    
-
-        <%= tag.div class: "flex justify-between px-2 pb-2" do %>  
-            <% ["gi", "ve", "sa"].each do |item| %>
-                <%= form_with model: tappa,
-                            class: "flex justify-between" do |f| %>
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:thursday) if item == "gi" %>                    
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:friday) if item == "ve" %>                    
-                    <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:saturday) if item == "sa" %>                    
-                    <%= f.submit item, class: [
-                        "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
-                    ] %>
-                <% end %>
-            <% end %>       
         <% end %>
 
-
-
-        
-        <%#= button_to duplica_tappa_path( tappa, new: true ),
-                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                role: "menuitem", tabindex: "-1", id: "user-menu-item-2" do %>
-            <%# Nuova %>
-        <%# end %>
-        <%#= button_to duplica_tappa_path( tappa ),
-                class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                role: "menuitem", tabindex: "-1", id: "user-menu-item-1" do %>
-            <%# Duplica %>
-        <%# end %>
-        <hr/>
-
-        <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
-        <% unless tappa.data_tappa.nil? %>
-            <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
-                    class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                    data: {turbo_action: "replace", turbo_frame: "_top"}, 
-                    role: "menuitem", tabindex: "-1", id: "tappa-menu-item-0" do %>
-                Filtra giorno
-            <% end %>
-        <% end %>
-
-        <hr/>
-
-        <!-- elimina tappa -->
-        <% if tappa.vuota? %>
-            <%= link_to tappa_path(tappa), 
-                        class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                        data: { turbo_method: :delete },
-                        role: "menuitem", tabindex: "-1", id: "tappa-menu-item-2"  do %> 
-                <span class="">Elimina</span> 
-            <% end %>
-        <% else %>
-            <%= link_to tappa_path(tappa), 
-                        class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" },
-                        role: "menuitem", tabindex: "-1", id: "tappa-menu-item-2"  do %> 
-                <span class="">Elimina</span> 
-            <% end %>
-        <% end %>
-                            
+                        
     <% end %>
 
     
 <% end %>
-
