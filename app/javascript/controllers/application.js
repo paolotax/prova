@@ -2,6 +2,7 @@ import { Application } from "@hotwired/stimulus"
 import Clipboard from 'stimulus-clipboard'
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import RevealController from '@stimulus-components/reveal'
+
 import { Tabs, Slideover } from 'tailwindcss-stimulus-components'
 
 const application = Application.start()
