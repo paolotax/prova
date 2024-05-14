@@ -23,4 +23,4 @@ pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.
 pin "mapkick/bundle", to: "mapkick.bundle.js"
 
 pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm", preload: true
-pin_all_from "app/assets/javascripts/controllers/helpers", under: "helpers", to: "controllers/helpers"
+pin_all_from "app/javascripts/controllers/helpers", under: "helpers", to: "controllers/helpers"
