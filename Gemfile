@@ -90,3 +90,7 @@ gem "mapkick-rb"
 gem "geocoder"
 
 
+
+source "https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private" do
+  gem "rails_designer", "~> 0.12.0"
+end

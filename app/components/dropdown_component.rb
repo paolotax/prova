@@ -33,7 +33,7 @@ class DropdownComponent < ViewComponent::Base
   def dark_theme? = @theme == "dark"
 
   def menu_data
-    {turbo_temporary: "", dropdown_target: "menu"}.merge(menu_transitions)
+    {turbo_temporary: "", rd_dropdown_target: "menu"}.merge(menu_transitions)
   end
 
   def menu_css
