@@ -2,6 +2,7 @@ kamal app exec -i 'bin/rails console'
 kamal app exec -i 'bin/rails runner "Tappa.all.each {|t| if t.giro then t.user = t.giro.user; t.save; end }"'
 
 kamal app exec -i 'bin/rails runner "Adozione.all.each {|t| if t.prezzo_cents.nil? then t.prezzo_cents = 0; t.save; end }"'
+kamal app exec -i 'bin/importmap json'
 
 u = User.find_by_name("enrico")
 u.confirm 
