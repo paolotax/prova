@@ -9,7 +9,6 @@ end
 
 # then mount it
 Rails.application.routes.draw do
-  mount RailsDesigner::Engine, at: '/rails_designer'
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'

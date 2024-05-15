@@ -11,7 +11,8 @@
                 url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters )
         ) %> 
         
-        <%= render TaxButton.new(
+    
+		<%= render TaxButton.new(
                 caption: "Nuovo",
                 svg_file: "icon-plus.svg",
                 color: "blue",
