@@ -7,6 +7,20 @@
 
 	
 	<div class="mx-auto max-w-2xl py-24 sm:py-24 lg:py-36">
+		
+
+		<%= render DropdownComponent.new do |dropdown| %>
+  <%= dropdown.with_button do %>
+    Toggle dropdown
+  <% end %>
+  <% dropdown.with_item { link_to "Profile", "#", class: "focus-visible:outline-none focus-visible:bg-gray-50" } %>
+  <% dropdown.with_item { link_to "Your settings", "#", class: "focus-visible:outline-none focus-visible:bg-gray-50" } %>
+  <% dropdown.with_item do %>
+    <span class="text-gray-400">
+      Notifications (coming soon)
+    </span>
+  <% end %>
+<% end %>
 
 		<% if current_user %>
 
