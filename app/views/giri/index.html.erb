@@ -3,6 +3,15 @@
 
 	<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "sm:hidden" %>
 
+
+	<%= render TaxButton.new(
+			caption: "Giro",
+			svg_file: "icon-plus.svg",
+			color: "blue",
+			url: url_for( controller: "giri", action: "new", model: nil ),
+			data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
+	) %>	
+
 <% end %>
 
 <div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8 xl:gap-x-8">

@@ -1,19 +1,38 @@
-<%= render DropdownComponent.new do |dropdown| %>
-    
-    <%= dropdown.with_button do %>
+<%= tag.div class: "relative flex items-center justify-center",
+            data: { controller: "dropdown", action: "click->dropdown#toggle click@window->dropdown#hide" } do %>
+     
+
+    <%= tag.div class: "-mr-2 hover:text-sky-500",
+                type: "button",
+                id: "titolo-menu-button_#{dom_id import_adozione}",
+                aria: { expanded: false, haspopup: true},
+                data: { dropdown_target: "button" } do %>
+        <span class="sr-only">Apri menu titolo</span>
         <%= inline_svg_tag  "icon-ellipsis-vertical.svg", class: "p-0.5" %>
     <% end %>
-    
-    <% dropdown.with_item do %>
+
+
+    <%= tag.div class: "hidden absolute right-0 top-5 mt-2.5 w-32 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
+        data: { dropdown_target: "menu",
+                transition_enter: "transition ease-out duration-200",
+                transition_enter_from: "opacity-0",
+                transition_enter_to: "opacity-95",
+                transition_leave: "transition ease-in duration-150",
+                transition_leave_from: "opacity-95",
+                transition_leave_to: "opacity-0"
+              } do %>
+
+
+        <!-- Active: "bg-gray-50", Not Active: "" -->
         <%= link_to new_adozione_path( import_adozione_id: import_adozione.id),
                         data: { turbo_frame: :modal, action: "click->dialog#open" },
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
 
-            Si sboccia!!!
+            ADOTTA!!!
         <% end %>
-    <% end %>
-    <% dropdown.with_item do %>
+
+        <!-- Active: "bg-gray-50", Not Active: "" -->
         <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
                                       import_adozione_id: import_adozione.id),
                         data: { turbo_frame: :modal, action: "click->dialog#open" },
@@ -22,14 +41,12 @@
 
             nuovo appunto
         <% end %>
-    <% end %>
 
-    <% if import_adozione.mia_adozione? %>
+        <% if import_adozione.mia_adozione? %>
 
-        <% ["saggio", "seguito", "kit"].each do |m| %>
+            <% ["saggio", "seguito", "kit"].each do |m| %>
 
-            <!-- scarico saggio -->
-            <% dropdown.with_item do %>
+                <!-- scarico saggio -->
                 <%= form_with model: current_user.appunti.build,
                             class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                             role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do |f| %>
@@ -40,5 +57,9 @@
                 <% end %>
             <% end %>
         <% end %>
+
+                        
     <% end %>
+
+    
 <% end %>

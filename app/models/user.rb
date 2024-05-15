@@ -30,8 +30,8 @@ class User < ApplicationRecord
   # tutti i metodi di Devise
   include Authenticable
   
-  #validates :name,  presence: true, uniqueness: { case_sensitive: false }
-  #validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
+  validates :name,  presence: true, uniqueness: { case_sensitive: false }
+  validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
   #validates :partita_iva, format: { with: /\A\d{11}\z/ }
   #validates :password, length: { minimum: 6, allow_blank: true }
 
@@ -73,7 +73,7 @@ class User < ApplicationRecord
     self.role ||= :scagnozzo
   end
 
-  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca, to: :profile, allow_nil: true
+  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :iban, :nome_banca, to: :profile, allow_nil: true
 
   def miei_editori
     editori.collect{|e| e.editore}
