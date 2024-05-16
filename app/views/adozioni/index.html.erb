@@ -2,6 +2,8 @@
 	
     <%= h1 {"Si sboccia!!!"} %>
 
+    
+
     <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
 
 
@@ -31,7 +33,57 @@
 
 <% end %>
 
-<div id="adozioni-lista" class="min-w-full">
-    <%= render @adozioni %>
-</div>
+<%= tag.div class: "flex space-x-2 p-2" do %>
+    
+    <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.load.size, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
+    
+    <%= render TaxButton.new(
+            caption: "Adozioni",
+            svg_file: "icon-cash.svg",
+            color: "pink",
+            url: "/adozioni" 
+    ) %>
+            <%= render TaxButton.new(
+            caption: "Vendite",
+            svg_file: "icon-cash.svg",
+            color: "cyan",
+            url: "/vendite"
+    ) %>
+<% end %>
+
+<%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
+
+    <%# form update multiple tappe %>
+    <%#= render "form_tappe" %>
+    
+    <%# link per filtrare il giro %>
+    <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>
+        
+        <%# header per le tappe %>
+        <%= tag.div class: "rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
+            
+            <label for="select_all" id="select_all">
+                <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
+                <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona" %></span>
+            </label>
+        
+        <% end %>
+    <% end %>
+
+
+    <%= tag.div id: "adozioni-list", class: "sm:px-2" do %>
+        <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono righe </p>
+        
+        <%= render @adozioni %>
+
+        <% unless @page.last? %>
+            <%= turbo_frame_tag "load_more", src: adozioni_path( sort: params[:sort], giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param,
+							format: :turbo_stream), loading: :lazy do %>
+                <%= render 'shared/lazy_loading' %>
+            <% end %>
+        <% end %>
+    <% end %>
+<% end %>
+
+
 

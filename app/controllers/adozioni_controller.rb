@@ -4,7 +4,15 @@ class AdozioniController < ApplicationController
   before_action :set_adozione, only: %i[ show edit update destroy ]
 
   def index
+
+
     @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(updated_at: :desc).all
+    if request.fullpath == "/vendite"
+      @adozioni = @adozioni.vendite
+    else
+      @adozioni = @adozioni.pre_adozioni
+    end
+
     @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
 
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
@@ -12,6 +20,9 @@ class AdozioniController < ApplicationController
    
     #raise params.inspect if params[:ids].present?
     @adozioni = @adozioni.find(params[:ids].split(",")) if params[:ids].present?
+
+
+    set_page_and_extract_portion_from @adozioni
 
   end
 

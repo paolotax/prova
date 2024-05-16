@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
   
+  get "vendite", to: "adozioni#index"
   resources :adozioni do 
     collection do
       post 'bulk_create'
