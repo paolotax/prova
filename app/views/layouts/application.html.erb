@@ -63,6 +63,42 @@
 
 		
 		</div>		
+		<%= render CommandMenuComponent.new(collapse_on_open: false) do |menu| %>
+		<% menu.with_item(title: "Home", target: "/") %>
+		<% menu.with_item(title: "Adozioni", target: adozioni_path) %>
+		<% menu.with_item(title: "Scuole", target: import_scuole_path) %>
+		<% menu.with_item(title: "Appunti", target: appunti_path) %>
+		<%# etc. %>
+		<% menu.with_footer do %>
+			<ul class="flex items-center gap-4">
+			<li class="flex items-center">
+				<div class="flex items-center gap-1">
+				<%# Heroicons > Micro > arrow-down %>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="p-0.5 w-4 h-4 bg-gray-200/60 rounded">
+					<path fill-rule="evenodd" d="M8 2a.75.75 0 0 1 .75.75v8.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.22 3.22V2.75A.75.75 0 0 1 8 2Z" clip-rule="evenodd" />
+				</svg>
+				<%# Heroicons > Micro > arrow-up %>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="p-0.5 w-4 h-4 bg-gray-200/60 rounded">
+					<path fill-rule="evenodd" d="M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z" clip-rule="evenodd" />
+				</svg>
+				</div>
+				<span class="ml-1.5">
+				Navigate
+				</span>
+			</li>
+			<li class="flex items-center">
+				<span class="px-1 py-0.5 text-xs font-mono bg-gray-200/60 rounded">
+				Esc
+				</span>
+				<span class="ml-1.5">
+				Close
+				</span>
+			</li>
+			</ul>
+		<% end %>
+		<% end %>
+
+
 	</body>
 
 
