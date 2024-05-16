@@ -5,7 +5,7 @@ import { verticalNavigation } from "./helpers/keyboard_navigation";
 export default class extends Controller {
   static targets = ["input", "itemsList", "item"];
   static values = {
-    showKey: { type: String, default: null },
+    showKey: { type: String, default: "" },
     hideKey: { type: String, default: "Escape" },
     open: { type: Boolean, default: false },
     listOpen: { type: Boolean, default: true },
