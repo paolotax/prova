@@ -7,10 +7,13 @@ class AdozioniController < ApplicationController
 
 
     @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(updated_at: :desc).all
-    if request.fullpath == "/vendite"
-      @adozioni = @adozioni.vendite
-    else
-      @adozioni = @adozioni.pre_adozioni
+    
+    if params[:tipo].present? 
+      if params[:tipo] == "vendite"
+         @adozioni = @adozioni.vendite
+      else
+        @adozioni = @adozioni.pre_adozioni
+      end
     end
 
     @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
@@ -149,6 +152,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item)
+      params.require(:adozione).permit(:user_id, :tipo, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item)
     end
 end

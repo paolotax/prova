@@ -41,13 +41,13 @@
             caption: "Adozioni",
             svg_file: "icon-cash.svg",
             color: "pink",
-            url: "/adozioni" 
+            url: "/adozioni?tipo=adozioni" 
     ) %>
             <%= render TaxButton.new(
             caption: "Vendite",
             svg_file: "icon-cash.svg",
             color: "cyan",
-            url: "/vendite"
+            url: "/adozioni?tipo=vendite" 
     ) %>
 <% end %>
 
@@ -77,8 +77,17 @@
         <%= render @adozioni %>
 
         <% unless @page.last? %>
-            <%= turbo_frame_tag "load_more", src: adozioni_path( sort: params[:sort], giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param,
-							format: :turbo_stream), loading: :lazy do %>
+            <%= turbo_frame_tag "load_more", src: adozioni_path(                              
+                                    search: params[:search], 
+                                    page: @page.next_param, 
+                                    tipo: params[:tipo],
+                                    classe: params[:classe],
+                                    disciplina: params[:disciplina],
+                                    editore: params[:editore],
+                                    codice_isbn: params[:codice_isbn],
+                                    filter: params[:filter],
+                                    format: :turbo_stream
+                              ), loading: :lazy do %>
                 <%= render 'shared/lazy_loading' %>
             <% end %>
         <% end %>
