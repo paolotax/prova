@@ -21,12 +21,13 @@ class AdozioniController < ApplicationController
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
    
-    #raise params.inspect if params[:ids].present?
-    @adozioni = @adozioni.find(params[:ids].split(",")) if params[:ids].present?
+    if params[:ids].present?
+      @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
+    
 
-
+    end
     set_page_and_extract_portion_from @adozioni
-
+    
   end
 
   def riepilogo
