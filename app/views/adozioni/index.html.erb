@@ -35,7 +35,7 @@
 
 <%= tag.div class: "flex space-x-2 p-2" do %>
     
-    <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.load.size, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
+    <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.count, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
     
     <%= render TaxButton.new(
             caption: "Adozioni",
