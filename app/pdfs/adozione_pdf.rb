@@ -27,13 +27,10 @@ class AdozionePdf < Prawn::Document
       #@righe = a.righe
       intestazione
       destinatario(a)
-      pieghi_di_libri?(a)
-
-
-      
+      pieghi_di_libri?(a)      
       note(a)
 
-      adozione_number(a)
+      numero_documento(a)
       line_items(a)
 
       totali(a)
@@ -47,6 +44,26 @@ class AdozionePdf < Prawn::Document
     #   end
       
       start_new_page unless a == @adozioni.last
+    end
+  end
+
+  def intestazione
+    logo
+    agente(current_user) unless current_user.nil?
+  end
+  
+  def destinatario(adozione)
+  
+    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
+      #stroke_bounds
+      text adozione.team, :size => 14, :style => :bold, :spacing => 4
+      move_down(3)
+      text "#{adozione.classe_e_sezione}",  :size => 14, :style => :bold, :spacing => 4      
+      move_down(8)
+      text adozione.scuola.tipo_scuola,  :size => 12
+      text adozione.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
+      move_down(3)
+      text adozione.scuola.indirizzo_formattato,  :size => 12
     end
   end
   
@@ -68,13 +85,23 @@ class AdozionePdf < Prawn::Document
     #text "tel. #{adozione.telefono}", :size => 13 unless adozione.telefono.blank?
   end
   
-  def adozione_number(adozione)
+  def numero_documento(adozione)
     move_down 20
-    text "ordine \##{adozione.id} del #{l(adozione.created_at)}", size: 13, style: :bold
+    bounding_box [bounds.left, bounds.top - 11.5.cm], :width => bounds.width / 2.0, :height => 150 do
+      #stroke_bounds
+      text "Documento di trasporto", size: 12, style: :bold, align: :left
+      move_down(5)
+      text "Numero _______ del ____________", size: 12, style: :bold, align: :left
+    end
+    bounding_box [bounds.width / 2.0, bounds.top - 11.5.cm], :width => bounds.width / 2.0, :height => 30 do
+      #stroke_bounds
+      text "ordine \##{adozione.id} del #{l(adozione.created_at)}", size: 11, align: :right
+    end
+    
   end
   
   def line_items(adozione)
-    move_down 10
+    move_down 20
 
     mask(:line_width) do
       line_width 0.5
@@ -127,26 +154,7 @@ class AdozionePdf < Prawn::Document
     text "Totale importo: #{price(adozione.prezzo_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
   end
   
-  def intestazione
-    logo
-    agente(current_user) unless current_user.nil?
-  end
-  
-  def destinatario(adozione)
-  
-    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
-      #stroke_bounds
-      text adozione.team, :size => 14, :style => :bold, :spacing => 4
-      move_down(3)
-      text "#{adozione.classe_e_sezione}",  :size => 14, :style => :bold, :spacing => 4      
-      move_down(8)
-      text adozione.scuola.tipo_scuola,  :size => 12
-      text adozione.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
-      move_down(3)
-      text adozione.scuola.indirizzo_formattato,  :size => 12
 
-    end
-  end
 
   def footer
     # footer
