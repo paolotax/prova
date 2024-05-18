@@ -75,22 +75,24 @@
 			</div>
 			
 			<!-- classi -->
-			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
-				<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
-				<!-- da fare @classi -->
+			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller='tax-checkbox-select-all' }>
+				<%= render "adozioni/form_multi" %>				
+				<div>
+					<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
+					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
+					<!-- da fare @classi -->
 
-				<% @import_scuola.classi.each do |classe| %>
-					<%= render partial: "classi/classe", locals: { classe: classe } %>
-					<% classe.maestre.each do |maestra| %>
-						<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
+					<% @import_scuola.classi.each do |classe| %>
+						<%= render partial: "classi/classe", locals: { classe: classe } %>
+						<% classe.maestre.each do |maestra| %>
+							<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
+						<% end %>
+						<%= render partial: "adozioni/adozione", collection: classe.vendite, as: :adozione %>
+						<%= render partial: "adozioni/adozione", collection: classe.pre_adozioni, as: :adozione %>
+						<%= render partial: "adozioni/adozione", collection: classe.saggi, as: :adozione %>
+						<br/>
 					<% end %>
-					<%= render partial: "adozioni/adozione", collection: classe.vendite, as: :adozione %>
-					<%= render partial: "adozioni/adozione", collection: classe.pre_adozioni, as: :adozione %>
-					<%= render partial: "adozioni/adozione", collection: classe.saggi, as: :adozione %>
-					<br/>
-				<% end %>
-    
+				</div>
 			</div>
 
 			<!-- adozioni grouped -->
