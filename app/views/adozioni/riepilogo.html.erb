@@ -23,6 +23,11 @@
 
 <% end %>
 
+<%= render StatComponent.new(title: "Vacanze", width: "w-1/4", current_value: @vendite.sum(&:importo_cents) / 100.to_f) do |stat| %>
+    <% stat.with_current_value_leader { "€" } %>
+<% end %>
+
+
 <%= render StatComponent.new(type: "horizontal_bar", width: "w-full", title: "Vendite Vacanze", current_value: current_user.adozioni.vendite.sum(:numero_copie), color: "blue") do |stat| %>
   <% stat.with_data_points( current_user.adozioni.vendite.per_libro_hash.map {|a| { x: a[:titolo], y: a[:numero_copie]} }  ) %>
 <% end %>
@@ -61,12 +66,6 @@
 </ul>
 
 
-
-
-<%= @vendite.sum(&:numero_copie) %> --------
-<%= number_to_currency @vendite.sum(&:importo_cents) / 100.to_f %>
-    <br/>
-    <br/>
 
 
 <% @adozioni_per_disciplina.collect do |adozione| %>
