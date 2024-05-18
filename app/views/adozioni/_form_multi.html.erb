@@ -1,0 +1,23 @@
+<%= tag.div class: "fixed bottom-0 inset-x-0 mx-auto z-20" do %>
+    <%= tag.div class: "max-w-96  mx-auto" do %>
+
+  <%# .btn-group
+    = form_tag print_multiple_adozioni_path, :method => :put, target: "_blank", :id => "form_print_adozioni" do
+      - for a in @giro.adozioni do
+        = hidden_field_tag "adozione_ids[]", a.id
+      = submit_tag "Stampa Adozioni",  id: "bnt-adozioni", class: "btn" %>
+
+
+        <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",
+                        data: { turbo: false, tax_checkbox_select_all_target: "formTappe" },
+                        class: "hidden mx-auto flex flex-col space-x-3 bg-gray-300  shadow-lg  p-2 border-1 rounded rounded-lg border-gray-500 z-50" do |f| %>
+    
+            <%= tag.div class: "flex space-x-2 items-center mt-2 mb-8" do %>
+                <%= f.button type: :submit, value: 'stampa', class: " text-center text-gray-800 align-middle cursor-pointer bg-gray-200 p-3  rounded-lg shadow-lg" do %>
+                    Stampa
+                <% end %>
+            <% end %>
+        <% end %>   
+    <% end %>         
+
+<% end %> 

@@ -23,6 +23,7 @@ class AdozionePdf < Prawn::Document
 
     @adozioni.each do |a|
       
+      @adozione = Array[a]
       #@righe = a.righe
       intestazione
       destinatario(a)
@@ -33,7 +34,7 @@ class AdozionePdf < Prawn::Document
       note(a)
 
       adozione_number(a)
-      line_items(@adozioni)
+      line_items(a)
 
       totali(a)
 
@@ -95,7 +96,7 @@ class AdozionePdf < Prawn::Document
   def line_item_rows
 
     [["Titolo", "Quantità", "Prezzo copertina", "Sconto", "Prezzo netto", "Importo netto"]] +
-    @adozioni.map do |item|
+    @adozione.map do |item|
       [
         item.libro.titolo + " " + item.classe.classe, 
         item.numero_copie, 

@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resources :adozioni do 
     collection do
       post 'bulk_create'
-      patch 'bulk_update'
+      put 'bulk_update', format: "pdf"
       get "riepilogo"
     end
   end

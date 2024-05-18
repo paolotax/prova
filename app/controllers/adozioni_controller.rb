@@ -5,9 +5,15 @@ class AdozioniController < ApplicationController
 
   def index
 
-
     @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(updated_at: :desc).all
-    
+
+    @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
+
+    @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
+    @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
+   
+    @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
+
     if params[:tipo].present? 
       if params[:tipo] == "vendite"
          @adozioni = @adozioni.vendite
@@ -16,18 +22,7 @@ class AdozioniController < ApplicationController
       end
     end
 
-    @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
-
-    @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
-    @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
-   
-    if params[:ids].present?
-      @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
-    
-
-    end
-    set_page_and_extract_portion_from @adozioni
-    
+    set_page_and_extract_portion_from @adozioni    
   end
 
   def riepilogo
@@ -36,8 +31,7 @@ class AdozioniController < ApplicationController
   end
 
   def show
-    @item = params[:item] if params[:item].present?
-    #raise params.inspect
+
     @adozione = Adozione.find(params[:id])
 
     respond_to do |format|
@@ -48,18 +42,15 @@ class AdozioniController < ApplicationController
         pdf = AdozionePdf.new(@adozioni, view_context)
         send_data pdf.render, filename: "adozione_#{@adozione.id}.pdf",
                               type: "application/pdf",
-                              disposition: "inline"
-      
+                              disposition: "inline"      
       end
     end
   end
 
   def new
-    #raise params.inspect  
     classe_id = params[:classe_id] if params[:classe_id].present?
     if params[:import_adozione_id].present?
       classe_id = ImportAdozione.find(params[:import_adozione_id]).classe.id
-
     end
     @adozione = current_user.adozioni.build(classe_id: classe_id  )
   end
@@ -71,11 +62,20 @@ class AdozioniController < ApplicationController
   end
 
   def bulk_update
+
+    @adozioni = current_user.adozioni.where(id: params.fetch(:adozione_ids, []).compact)
+    respond_to do |format|
+
+      format.pdf do
+        pdf = AdozionePdf.new(@adozioni, view_context)
+        send_data pdf.render, filename: "adozioni.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+      end 
+    end 
   end
 
   def create
-
-    #raise params.inspect
 
     if params[:adozione][:classe_ids].present?
       
@@ -101,7 +101,6 @@ class AdozioniController < ApplicationController
           adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :import_adozione_id))
           adozione.classe_id = classe.id
           adozione.new_libro = params[:adozione][:new_libro]
-          #raise adozione.inspect
           if adozione.save
             @adozioni << adozione
           end
@@ -109,19 +108,14 @@ class AdozioniController < ApplicationController
       end
     end 
 
-    #raise params.inspect
     respond_to do |format|
-
-        format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
-        format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
-        format.json { render :show, status: :created, location: @adozione }
-
+      format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
+      format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
+      format.json { render :show, status: :created, location: @adozione }
     end
   end
 
   def update
-    #raise params.inspect
-    
     @item = params[:item] if params[:item].present?
     
     respond_to do |format|
@@ -148,11 +142,11 @@ class AdozioniController < ApplicationController
 
   private
 
-  def set_adozione
+    def set_adozione
       @adozione = Adozione.find(params[:id])
     end
 
     def adozione_params
-      params.require(:adozione).permit(:user_id, :tipo, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item)
+      params.require(:adozione).permit(:user_id, :tipo, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item, :adozione_ids)
     end
 end

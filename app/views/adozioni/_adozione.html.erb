@@ -3,6 +3,7 @@
 		<%= tag.div  do %>
 
 			<%= tag.div class: "flex flex-wrap gap-2" do %>
+
 				<%# team e classe %>
 				<fieldset class="flex flex-wrap items-center align-center gap-2 group-[.show-classe]:hidden">
 					
@@ -88,6 +89,16 @@
 
 		<%# action buttons %>
 		<%= tag.div class: "px-4 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pr-4 sm:pr-0 justify-around " do %>
+			
+
+			<%= check_box_tag "adozione_ids[]", adozione.id, nil, {
+				multiple: true,
+				form: :bulk_update_adozioni_form,
+				checked: false,
+				class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
+				data: { tax_checkbox_select_all_target: 'checkbox' }
+				} %>
+			
 			
 			<%= link_to "pdf", adozione_path(adozione, format: "pdf"), class: "text-xs text-center", 
 				target: "_blank" %>

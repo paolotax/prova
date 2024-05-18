@@ -54,7 +54,7 @@
 <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
 
     <%# form update multiple tappe %>
-    <%#= render "form_tappe" %>
+    <%= render "form_multi" %>
     
     <%# link per filtrare il giro %>
     <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>
@@ -71,10 +71,10 @@
     <% end %>
 
 
-    <%= tag.div id: "adozioni-list", class: "sm:px-2" do %>
+    <%= tag.div id: "adozioni-lista", class: "sm:px-2" do %>
         <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono righe </p>
         
-        <%= render @adozioni %>
+        <%= render @page.records %>
 
         <% unless @page.last? %>
             <%= turbo_frame_tag "load_more", src: adozioni_path(                              
