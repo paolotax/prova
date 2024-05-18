@@ -152,19 +152,22 @@ class AdozionePdf < Prawn::Document
     # footer
 
 
-    bounding_box [bounds.left, bounds.bottom + 28.mm], :width  => bounds.width, :height => 50.mm do
-    
+    bounding_box [bounds.left, bounds.bottom + 30.mm], :width  => bounds.width, :height => 30.mm do    
+      mask(:line_width) do
+        line_width 0.5
+        stroke_horizontal_rule
+      end
+      move_down(15)
+      text "Pagamento con Bonifico - Banca di appoggio: #{current_user.nome_banca}", :size => 11, :style => :bold, :spacing => 4
+      move_down(3)
+      text "IBAN: #{current_user.iban}",  :size => 12, :style => :bold, :spacing => 4      
+      move_down(3)
+      text "conto intestato a #{current_user.ragione_sociale}",  :size => 11
+      text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
 
-        bounding_box [bounds.left, bounds.top - 15.mm], :width  => bounds.width, :height => 12.mm do
-          mask(:line_width) do
-            line_width 0.5
-            stroke_horizontal_rule
-          end
-          stroke_axis
-          draw_text "Pagamento con Bonifico: IBAN: #{current_user.iban} Banca di appoggio: #{current_user.nome_banca}", :at => [bounds.left + 1, bounds.top - 5.mm], :size => 11
-        end
- 
     end
+ 
+
   end
 
   
