@@ -3,7 +3,7 @@ import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 // Connects to data-controller="tax-checkbox-select-all"
 export default class extends CheckboxSelectAll {
 
-  static targets = ['formTappe', 'label']
+  static targets = ['formMulti', 'label']
 
   connect() {
     super.connect()
@@ -30,9 +30,9 @@ export default class extends CheckboxSelectAll {
     }
 
     if (this.checked.length > 0) {
-      this.formTappeTarget.style.display = "block";
+      this.formMultiTarget.style.display = "block";
     } else {
-      this.formTappeTarget.style.display = "none";
+      this.formMultiTarget.style.display = "none";
     }
   }
 }

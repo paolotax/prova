@@ -55,6 +55,7 @@ class Adozione < ApplicationRecord
     joins(:libro)        
     .select(:titolo, :libro_id)
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
+    .select("sum(adozioni.numero_copie) as numero_copie")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .group(:titolo, :libro_id) 
     .order(:titolo)
@@ -173,6 +174,7 @@ class Adozione < ApplicationRecord
         libro_id: a.libro_id, 
         titolo: a.titolo, 
         numero_sezioni: a.numero_sezioni,
+        numero_copie: a.numero_copie,
         adozione_ids: a.adozione_ids
       }
     end

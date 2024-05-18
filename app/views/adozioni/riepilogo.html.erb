@@ -34,7 +34,7 @@
 <%= @vendite.sum(&:numero_copie) %> --------
 <%= number_to_currency @vendite.sum(&:importo_cents) / 100 %>
     <br/>
-        <br/>
+    <br/>
 
 
 <% @adozioni_per_disciplina.collect do |adozione| %>
@@ -42,5 +42,10 @@
     <%= adozione.numero_sezioni %>
     <br/>
 <% end %>
+
+<%= render StatComponent.new(type: "horizontal_bar", title: "Vendite Vacanze", current_value: current_user.adozioni.vendite.sum(:numero_copie), color: "blue") do |stat| %>
+  <% stat.with_data_points( current_user.adozioni.vendite.per_libro_hash.map {|a| { x: a[:titolo], y: a[:numero_copie]} }  ) %>
+<% end %>
+
 
 <%= render partial: "adozioni/badges" %>
