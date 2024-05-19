@@ -3,13 +3,19 @@
 # Table name: adozioni
 #
 #  id                 :bigint           not null, primary key
+#  consegnato_il      :datetime
 #  importo_cents      :integer
 #  note               :text
 #  numero_copie       :integer
+#  numero_documento   :integer
 #  numero_sezioni     :integer
+#  pagato_il          :datetime
 #  prezzo_cents       :integer
 #  stato_adozione     :string
+#  status             :integer          default(0)
 #  team               :string
+#  tipo               :integer          default(0)
+#  tipo_pagamento     :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  classe_id          :bigint
@@ -22,6 +28,8 @@
 #  index_adozioni_on_classe_id           (classe_id)
 #  index_adozioni_on_import_adozione_id  (import_adozione_id)
 #  index_adozioni_on_libro_id            (libro_id)
+#  index_adozioni_on_status              (status)
+#  index_adozioni_on_tipo                (tipo)
 #  index_adozioni_on_user_id             (user_id)
 #
 # Foreign Keys
@@ -32,6 +40,10 @@
 #
 class Adozione < ApplicationRecord
 
+  enum :status, %i(bozza in_consegna da_pagare da_registrare corrispettivi fattura)
+  enum :tipo, %i(adozione vendita omaggio)
+  
+  
   belongs_to :user  
   belongs_to :import_adozione, optional: true
   belongs_to :libro, optional: true

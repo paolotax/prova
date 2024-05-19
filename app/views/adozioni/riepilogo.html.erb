@@ -52,11 +52,7 @@
             <% end %>
         <% end %>
         
-        <% list_item.with_action do %>
-            <%= link_to "lista", adozioni_path(ids: vendita.adozione_ids.join(",")), class: "text-sm font-medium text-red-600 hover:text-red-800" %>
-        <% end %>
-
-        <%= tag.div class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
                 <%= tag.span vendita.libro_titolo, class: "col-span-2 text-base font-semibold text-gray-800" %>
                 <%= tag.span vendita.numero_copie, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
                 <%= tag.span number_to_currency(vendita.importo_cents / 100), class: "col-span-1 text-sm font-normal text-right text-gray-500" %>

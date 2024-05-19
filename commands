@@ -1,7 +1,7 @@
 kamal app exec -i 'bin/rails console'
 kamal app exec -i 'bin/rails runner "Tappa.all.each {|t| if t.giro then t.user = t.giro.user; t.save; end }"'
 
-kamal app exec -i 'bin/rails runner "Adozione.all.each {|t| if t.prezzo_cents.nil? then t.prezzo_cents = 0; t.save; end }"'
+kamal app exec -i 'bin/rails runner "Adozione.pluck(:stato_adozione).uniq"'
 kamal app exec -i 'bin/importmap json'
 
 u = User.find_by_name("enrico")
@@ -29,6 +29,14 @@ Appunto.where.not(import_adozione_id: nil).each do |a|
     a.save
 end
 
+Adozione.all.each do |a|
+  if a.stato_adozione == "comprano"
+    a.tipo = "vendita"
+    a.save
+  end
+end
+
+Adozione.pluck(:stato_adozione).uniq
 
 $ ssh root@<SERVER_IP>
 mkdir -p /letsencrypt && touch /letsencrypt/acme.json && chmod 600 /letsencrypt/acme.json
