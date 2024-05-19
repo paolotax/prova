@@ -28,12 +28,12 @@ class AdozionePdf < Prawn::Document
       intestazione
       destinatario(a)
       pieghi_di_libri?(a)      
-      note(a)
 
       numero_documento(a)
       line_items(a)
-
       totali(a)
+
+      note(a)
 
       footer
 
@@ -74,29 +74,25 @@ class AdozionePdf < Prawn::Document
             size: 13, style: :bold, rotate: 90) # if adozione.tag_list.find_index("posta")
   end
   
-  def note(adozione)
-    move_down 40
+  
+  def numero_documento(adozione)
+    move_down 20
     mask(:line_width) do
       line_width 0.5
       stroke_horizontal_rule
     end
-    move_down 10
-    text adozione.note, :size => 13
-    #text "tel. #{adozione.telefono}", :size => 13 unless adozione.telefono.blank?
-  end
-  
-  def numero_documento(adozione)
-    move_down 20
-    bounding_box [bounds.left, bounds.top - 11.5.cm], :width => bounds.width / 2.0, :height => 150 do
+    bounding_box [bounds.left, bounds.top - 11.cm], :width => bounds.width / 2.0, :height => 50 do
+      #stroke_bounds
+      text "ordine \##{adozione.id} del #{l(adozione.created_at)}", size: 11
+    end
+
+    bounding_box [bounds.width / 2.0, bounds.top - 11.cm], :width => bounds.width / 2.0, :height => 50 do
       #stroke_bounds
       text "Documento di trasporto", size: 12, style: :bold, align: :left
       move_down(5)
-      text "Numero _______ del ____________", size: 12, style: :bold, align: :left
+      text "Numero _______ del ____________", size: 12, style: :bold, align: :left      
     end
-    bounding_box [bounds.width / 2.0, bounds.top - 11.5.cm], :width => bounds.width / 2.0, :height => 30 do
-      #stroke_bounds
-      text "ordine \##{adozione.id} del #{l(adozione.created_at)}", size: 11, align: :right
-    end
+
     
   end
   
@@ -135,31 +131,24 @@ class AdozionePdf < Prawn::Document
     end
   end
   
-  def price(num)    
-    @view.number_to_currency(num.to_f / 100, :locale => :it, :format => "%n %u", :precision => 2)
-  end
-  
-  def l(data)
-    @view.l data, :format => :only_date
-  end
-  
-  def t(data)
-    @view.t data
-  end
-  
   def totali(adozione)  
     move_down(14)
     text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold, :align => :right
     move_down(3)
     text "Totale importo: #{price(adozione.prezzo_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
   end
-  
+
+  def note(adozione)
+    move_down 20
+    move_down 10
+    text "Note", :size => 14, :style => :bold
+    text adozione.note, :size => 13
+    #text "tel. #{adozione.telefono}", :size => 13 unless adozione.telefono.blank?
+  end
 
 
   def footer
     # footer
-
-
     bounding_box [bounds.left, bounds.bottom + 30.mm], :width  => bounds.width, :height => 30.mm do    
       mask(:line_width) do
         line_width 0.5
@@ -174,11 +163,22 @@ class AdozionePdf < Prawn::Document
       text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
 
     end
- 
-
   end
 
+
+
+  def price(num)    
+    @view.number_to_currency(num.to_f / 100, :locale => :it, :format => "%n %u", :precision => 2)
+  end
   
+  def l(data)
+    @view.l data, :format => :only_date
+  end
+  
+  def t(data)
+    @view.t data
+  end
+    
   def current_user
     @view.current_user
   end
