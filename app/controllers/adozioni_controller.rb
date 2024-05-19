@@ -26,7 +26,13 @@ class AdozioniController < ApplicationController
   end
 
   def riepilogo
+    
+        # qui COrreGgere CON ENUMuso il nuovo enum
+   
     @vendite = current_user.adozioni.vendite.per_libro_titolo
+    @vendite_per_scuola = current_user.adozioni.vendite.per_scuola
+
+    
     @adozioni_per_disciplina = current_user.adozioni.pre_adozioni.per_libro_categoria
   end
 

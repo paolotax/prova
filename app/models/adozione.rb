@@ -77,6 +77,8 @@ class Adozione < ApplicationRecord
     joins(:scuola, :classe)        
     .select('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
+    .select("sum(adozioni.numero_copie) as numero_copie")
+    .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
     .order("import_scuole.id")

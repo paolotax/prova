@@ -23,15 +23,22 @@
 
 <% end %>
 
+
+<%# totale Vacanze %>
+
 <%= render StatComponent.new(title: "Vacanze", width: "w-1/4", current_value: @vendite.sum(&:importo_cents) / 100.to_f) do |stat| %>
     <% stat.with_current_value_leader { "€" } %>
 <% end %>
 
 
+<%# stat per titolo %>
+
 <%= render StatComponent.new(type: "horizontal_bar", width: "w-full", title: "Vendite Vacanze", current_value: current_user.adozioni.vendite.sum(:numero_copie), color: "blue") do |stat| %>
   <% stat.with_data_points( current_user.adozioni.vendite.per_libro_hash.map {|a| { x: a[:titolo], y: a[:numero_copie]} }  ) %>
 <% end %>
 
+
+<%# riepilogo per libro_titolo %>
 
 <ul class="bg-white border rounded-2xl shadow-2xl px-4 my-2">
     <% @vendite.each do |vendita| %>
@@ -63,14 +70,76 @@
 
 
 
+<%# riepilogo per scuola %>
 
+<ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
+    <% @vendite_per_scuola.each do |vendita| %>
+        <%= render ListItemComponent.new(
+        ) do |list_item| %>
+        
+
+        
+        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+                <%= tag.span vendita.DENOMINAZIONESCUOLA, class: "col-span-2 text-base font-semibold text-gray-800" %>
+                <%= tag.span vendita.numero_copie, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+                <%= tag.span number_to_currency(vendita.importo_cents / 100), class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+            <% end %>
+        <% end %>
+    <% end %>
+</ul>
+
+
+
+<%# adozioni per disciplina %>
+
+<ul class="bg-white border rounded-2xl shadow-2xl px-4 my-2">
 <% @adozioni_per_disciplina.collect do |adozione| %>
-    <%= adozione.libro_categoria %> -
-    <%= adozione.numero_sezioni %>
-    <br/>
+        <%= render ListItemComponent.new(
+        ) do |list_item| %>
+
+        <%= link_to adozioni_path(ids: adozione.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+                <%= tag.span adozione.libro_categoria, class: "col-span-2 text-base font-semibold text-gray-800" %>
+                <%= tag.span adozione.numero_sezioni, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+             <% end %>
+        <% end %>
 <% end %>
+</ul>
+
+
+<%# adozioni per titolo %>
+
+<ul class="bg-white border rounded-2xl shadow-2xl px-4 my-2">
+<% current_user.adozioni.pre_adozioni.per_libro.map do |adozione| %>
+        <%= render ListItemComponent.new(
+        ) do |list_item| %>
+
+        <%= link_to adozioni_path(ids: adozione.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+                <%= tag.span adozione.titolo, class: "col-span-2 text-base font-semibold text-gray-800" %>
+                <%= tag.span adozione.numero_sezioni, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+             <% end %>
+        <% end %>
+<% end %>
+</ul>
+
+
+<%# adozioni per scuola %>
+
+<ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
+    <% current_user.adozioni.pre_adozioni.per_scuola.each do |vendita| %>
+        <%= render ListItemComponent.new(
+        ) do |list_item| %>
+        
+
+        
+        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+                <%= tag.span vendita.DENOMINAZIONESCUOLA, class: "col-span-2 text-base font-semibold text-gray-800" %>
+                <%= tag.span vendita.numero_sezioni, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+            <% end %>
+        <% end %>
+    <% end %>
+</ul>
 
 
 
 
-<%= render partial: "adozioni/badges" %>
+<%#= render partial: "adozioni/badges" %>
