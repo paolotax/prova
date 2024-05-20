@@ -58,11 +58,16 @@
 
 			</fieldset>
 			
-			<%# importo %>
+			<%# importo e stato e pagamento %>
 			<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
-				<%= tag.div class: "py-2 flex flex-nowrap gap-2" do %>
-					<%= tag.div "importo:", class: "hidden md:inline-block" %>
-					<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+				<%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
+					<%= render "shared/inline_edit", model: adozione, method: :stato_e_pagamento do %>
+						<%= tag.div "importo:", class: "hidden md:inline-block" %>
+						<%= tag.div number_to_currency(adozione.importo), class: "font-semibold" %>
+						<%= tag.div adozione.status.titleize, class: "font-semibold" %>
+						<%= tag.div adozione.tipo_pagamento, class: "font-semibold" %>
+						<%= tag.div l(adozione.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if adozione.pagato_il %>					
+					<% end %>
 				<% end %>
 			<% end %>
 			

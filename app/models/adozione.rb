@@ -40,7 +40,7 @@
 #
 class Adozione < ApplicationRecord
 
-  enum :status, %i(bozza in_consegna da_pagare da_registrare corrispettivi fattura)
+  enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   enum :tipo, %i(adozione vendita omaggio)
   
   
@@ -113,7 +113,9 @@ class Adozione < ApplicationRecord
 
   search_on :stato_adozione, 
             :team, 
-            :note, 
+            :note,
+            :tipo_pagamento,
+            :status, 
             classe: [:classe, :sezione, :combinazione], 
             libro:  [:categoria, :titolo, :disciplina],
             scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]

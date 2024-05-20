@@ -60,6 +60,17 @@
     
     <% end %>
 
+    <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
+        <%= tag.div class: "sm:mr-4 flex space-x-2 items-center" do %>
+            <%= form.label :status, "stato:" %> 
+            <%= form.select :status, options_for_select(options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, adozione.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+            <%= form.label :tipo_pagamento, "pagamento:" %>
+            <%= form.text_field :tipo_pagamento, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+            <%= form.label :pagato_il, "pagato il:" %>
+            <%= form.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+        <% end %>
+    <% end %>
+
     <%= tag.div class: "flex flex-col sm:flex-row justify-between sm:items-end mt-2" do %>
 
         <%= tag.div class: "w-full sm:mr-4" do %>
