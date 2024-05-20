@@ -115,7 +115,6 @@ class Adozione < ApplicationRecord
             :team, 
             :note,
             :tipo_pagamento,
-            :status, 
             classe: [:classe, :sezione, :combinazione], 
             libro:  [:categoria, :titolo, :disciplina],
             scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]
