@@ -45,7 +45,8 @@
                         placeholder: "seleziona il titolo o inseriscine uno nuovo...",
                         name_when_new: "adozione[new_libro]" %>
             <% end %>
-            <% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+            
+            <% if adozione.vendita? %>
                 <%= tag.div class: "flex items-center space-x-2" do %>
                     <%= form.label :numero_copie, "copie:" %>
                     <%= form.number_field :numero_copie, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
@@ -56,19 +57,22 @@
                     <%= form.number_field :prezzo, step: 0.01, class: "w-24 text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
             <% end %>
-        <% end %>
-    
+        <% end %>    
     <% end %>
 
-    <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
-        <%= tag.div class: "sm:mr-4 flex space-x-2 items-center" do %>
-            <%= form.label :status, "stato:" %> 
-            <%= form.select :status, options_for_select(options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, adozione.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
-            <%= form.label :tipo_pagamento, "pagamento:" %>
-            <%= form.text_field :tipo_pagamento, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
-            <%= form.label :pagato_il, "pagato il:" %>
-            <%= form.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+    <% if adozione.vendita? %>
+
+        <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
+            <%= tag.div class: "sm:mr-4 flex space-x-2 items-center" do %>
+                <%= form.label :status, "stato:" %> 
+                <%= form.select :status, options_for_select(options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, adozione.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                <%= form.label :tipo_pagamento, "pagamento:" %>
+                <%= form.text_field :tipo_pagamento, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                <%= form.label :pagato_il, "pagato il:" %>
+                <%= form.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+            <% end %>
         <% end %>
+
     <% end %>
 
     <%= tag.div class: "flex flex-col sm:flex-row justify-between sm:items-end mt-2" do %>
