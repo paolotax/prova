@@ -170,7 +170,14 @@ class Adozione < ApplicationRecord
   end
   
   def titolo_libro
-    self.libro&.titolo
+    return if self.libro.nil?
+
+    if self.libro.categoria && self.libro.categoria.downcase == "vacanze"
+      "#{self.libro.titolo} #{self.classe.classe}"
+    else
+      self.libro.titolo
+    end
+
   end
 
   def self.per_scuola_hash     
