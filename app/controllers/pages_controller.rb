@@ -12,7 +12,7 @@ class PagesController < ApplicationController
 
 
     def oggi
-        @scuole_di_oggi = current_user.import_scuole.where(id: @current_user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) 
+        @scuole_di_oggi = current_user.import_scuole.where(id: current_user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) 
         
         @tappe = current_user.tappe.where(tappable_id: @scuole_di_oggi.pluck(:id))
        
