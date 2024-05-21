@@ -123,6 +123,14 @@ class Adozione < ApplicationRecord
     .order("libro_categoria")
   }
 
+  scope :incassi, -> {
+    select(:tipo, :status, :tipo_pagamento, :pagato_il)
+    .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
+    .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
+    .group(:tipo, :status, :tipo_pagamento, :pagato_il)
+    .order(:pagato_il)
+  }
+
   scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
   scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }
   scope :saggi,    -> { where(stato_adozione: ['saggio', "saggio"]) }
