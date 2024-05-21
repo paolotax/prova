@@ -21,5 +21,7 @@ class PagesController < ApplicationController
         @appunti_di_oggi = current_user.appunti.non_archiviati.nel_baule_di_oggi.group_by{ |a| a.import_scuola.id }
         
         @adozioni_di_oggi = current_user.mie_adozioni.nel_baule_di_oggi
+
+        @vendite_di_oggi = current_user.adozioni.vendite.joins(:scuola).where("import_scuole.id in (?)", @scuole_di_oggi.pluck(:id))
     end
 end
