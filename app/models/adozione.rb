@@ -90,6 +90,7 @@ class Adozione < ApplicationRecord
     .select('editori.editore AS editore')
     .select("sum(adozioni.numero_copie) as numero_copie")
     .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
+    .select("sum(CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) AS in_consegna")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .where("adozioni.numero_copie > 0")
     .group('libro_titolo, editore') 
