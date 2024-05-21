@@ -91,6 +91,8 @@ class Adozione < ApplicationRecord
     .select("sum(adozioni.numero_copie) as numero_copie")
     .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
     .select("sum(CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) AS in_consegna")
+    .select("sum(CASE WHEN adozioni.status > 1 THEN adozioni.numero_copie ELSE 0 END) AS consegnato")
+    .select("sum(adozioni.numero_copie - (CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) - (CASE WHEN adozioni.status > 1 THEN adozioni.numero_copie ELSE 0 END)) as giacenza")    
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .where("adozioni.numero_copie > 0")
     .group('libro_titolo, editore') 
