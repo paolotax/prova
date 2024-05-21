@@ -35,7 +35,7 @@ class CommandMenuComponent < ViewComponent::Base
   end
 
   erb_template <<-ERB
-    <%= tag.div data: container_data, id: @id, class: "fixed top-1/4 left-0 items-start justify-center w-full h-screen z-10 pointer-events-none group/container", hidden: true do %>
+    <%= tag.div data: container_data, id: @id, class: "fixed top-1/4 left-0 items-start justify-center w-full h-screen z-50 pointer-events-none group/container", hidden: true do %>
       <%= tag.div class: command_menu_css do %>
         <div class="flex items-center">
           <%= icons %>

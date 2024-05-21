@@ -3,7 +3,9 @@
         <%# header per le tappe %>
         <%= tag.div class: "rounded-b-lg w-full space-x-8 shadow-lg px-4 py-3 text-xs font-semibold flex flex-row items-center justify-end" do %>
             
-        
+            <%= select_tag :status, options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, params[:status]), 
+                 include_blank: "stato...", selected: params[:status] %>
+            
             <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",
                     data: { turbo: false, tax_checkbox_select_all_target: "formMulti" },
                     class: "pr-2" do |f| %>

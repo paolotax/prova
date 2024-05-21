@@ -30,7 +30,7 @@ Appunto.where.not(import_adozione_id: nil).each do |a|
 end
 
 Adozione.all.each do |a|
-  if a.stato_adozione == "comprano"
+  if a.stato_adozione.downcase[0..2] == "com"
     a.tipo = "vendita"
     a.save
   end
