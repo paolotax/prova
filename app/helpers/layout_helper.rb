@@ -24,7 +24,7 @@ module LayoutHelper
     end
 
     def h2(text)
-      tag.h2 text, class: "text-2xl font-semibold"
+      tag.h2 text, class: "text-xl font-semibold pt-5 pb-1 px-4"
     end
       
     def mono(text)
