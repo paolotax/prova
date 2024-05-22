@@ -4,8 +4,18 @@
         <%= tag.div class: "rounded-b-lg w-full space-x-8 shadow-lg px-4 py-3 text-xs font-semibold flex flex-row items-center justify-end" do %>
 
             <%= form_with(url: adozioni_path, method: :get, data: { controller: "tax-filters", tax_filters_target: "form", turbo_frame: "search_results" }) do |f| %>
-                <%= f.select :status, options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, params[:status]), {}, 
-                    include_blank: "stato...", selected: params[:status], data: { action: "change->tax-filters#submit" } %>
+                <%= f.select :status, options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, params[:status]), 
+                    { include_blank: "stato..."}, 
+                    data: { action: "change->tax-filters#submit" } %>
+                <%= f.select :import_scuola_id, options_for_select(current_user.adozioni.joins(:scuola).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq, params[:import_scuola_id]), 
+                    { include_blank: "scuola..."}, 
+                    data: { action: "change->tax-filters#submit" } %>
+                <%= f.select :libro_id, options_for_select(current_user.adozioni.joins(:libro).pluck(:titolo, :libro_id).uniq, params[:libro_id]), 
+                    { include_blank: "titolo..."}, 
+                    data: { action: "change->tax-filters#submit" } %>
+                <%= f.select :classe, options_for_select([1,2,3,4,5], params[:classe]), 
+                    { include_blank: "classe..."}, 
+                    data: { action: "change->tax-filters#submit" } %>
             <% end %>
             
             <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",

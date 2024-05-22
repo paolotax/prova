@@ -12,8 +12,8 @@ class AdozioniController < ApplicationController
     @adozioni = @adozioni.where(status: params[:status]) if params[:status].present?
 
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
-    @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
-   
+    @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:import_scuola_id]) if params[:import_scuola_id].present?
+    @adozioni = @adozioni.joins(:classe).where("view_classi.classe = ?", params[:classe]) if params[:classe].present?
     @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
 
     if params[:tipo].present? 
@@ -155,6 +155,6 @@ class AdozioniController < ApplicationController
     end
 
     def adozione_params
-      params.require(:adozione).permit(:status, :user_id, :tipo, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :titolo, :new_libro, :item, :adozione_ids, :tipo_pagamento, :pagato_il)
+      params.require(:adozione).permit(:status, :user_id, :tipo, :import_scuola_id, :import_adozione_id, :libro_id, :team, :note, :numero_sezioni, :numero_copie, :prezzo, :stato_adozione, :classe_id, :classe, :titolo, :new_libro, :item, :adozione_ids, :tipo_pagamento, :pagato_il)
     end
 end
