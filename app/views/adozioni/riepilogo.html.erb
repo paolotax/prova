@@ -39,16 +39,16 @@
 
 
 <%# riepilogo per libro_titolo %>
-<%= tag.div class: "w-full grid grid-cols-4 sm:grid-cols-7 px-4 py-2 -mb-2 mt-2 gap-2 rounded-t-2xl bg-gray-600 text-white text-sm font-semibold" do %>
+<%= tag.div class: "w-full grid grid-cols-4 sm:grid-cols-7 px-4 py-2 -mb-2 mt-2 gap-2 rounded-t-xl bg-gray-600 text-white text-sm font-semibold" do %>
     <%= tag.div "titolo", class: "col-span-2" %>
     <%= tag.div "prenotati", class: "col-span-1 text-right" %>
     <%= tag.div "totale copie", class: "hidden sm:block truncate col-span-1 text-right" %>
     <%= tag.div "in consegna", class: "truncate col-span-1 text-right" %>
-    <%= tag.div "consegnati", class: "col-span-1 text-right" %>
+    <%= tag.div "consegnati", class: "hidden sm:block col-span-1 text-right" %>
     <%= tag.div "importo", class: "hidden sm:block col-span-1 text-right" %>
 <% end %>
 
-<ul class="bg-white border rounded-b-2xl shadow-2xl my-2">
+<ul class="bg-white border rounded-b-xl shadow-2xl my-2">
     <% @vendite.each do |vendita| %>
         <%= render ListItemComponent.new(content_wrapper_css: "flex items-center justify-between py-2 hover:bg-gray-100") do |list_item| %>
             <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-4 sm:grid-cols-7 px-4 gap-2" do %>

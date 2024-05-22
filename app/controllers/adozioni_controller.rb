@@ -5,9 +5,11 @@ class AdozioniController < ApplicationController
 
   def index
 
-    @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(updated_at: :desc).all
+    @adozioni = current_user.adozioni.includes(:libro, :classe, :scuola).order(created_at: :desc).all
 
     @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
+
+    @adozioni = @adozioni.where(status: params[:status]) if params[:status].present?
 
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:scuola_id]) if params[:scuola_id].present?
