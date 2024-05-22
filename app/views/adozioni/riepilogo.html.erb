@@ -30,6 +30,22 @@
     <% stat.with_current_value_leader { "€" } %>
 <% end %>
 
+<%# incassi  %>
+<ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
+    <% current_user.adozioni.vendita.incassi.each do |vendita| %>
+        <%= render ListItemComponent.new(
+        ) do |list_item| %>
+       
+        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-6 px-2 gap-2" do %>
+                <%= tag.span vendita.tipo, class: "col-span-1 text-base font-semibold text-gray-800" %>
+                <%= tag.span vendita.status, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+                <%= tag.span vendita.tipo_pagamento, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+                <%= tag.span vendita.pagato_il&.strftime("%d-%m"), class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+                <%= tag.span vendita.importo_cents / 100.0, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+            <% end %>
+        <% end %>
+    <% end %>
+</ul>
 
 <%# stat per titolo %>
 
@@ -143,21 +159,8 @@
     <% end %>
 </ul>
 
-<ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
-    <% current_user.adozioni.vendita.incassi.each do |vendita| %>
-        <%= render ListItemComponent.new(
-        ) do |list_item| %>
-       
-        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-6 px-2 gap-2" do %>
-                <%= tag.span vendita.tipo, class: "col-span-1 text-base font-semibold text-gray-800" %>
-                <%= tag.span vendita.status, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
-                <%= tag.span vendita.tipo_pagamento, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
-                <%= tag.span vendita.pagato_il, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
-                <%= tag.span vendita.importo_cents / 100.0, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
-            <% end %>
-        <% end %>
-    <% end %>
-</ul>
+
+
 
 
 
