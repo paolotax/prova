@@ -144,7 +144,7 @@
 </ul>
 
 <ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
-    <% @vendite.incassi.each do |vendita| %>
+    <% current_user.adozioni.vendita.incassi.each do |vendita| %>
         <%= render ListItemComponent.new(
         ) do |list_item| %>
        
