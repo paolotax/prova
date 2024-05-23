@@ -22,7 +22,10 @@
             <% end %>
 
 
-            <%= tag.div class: "flex items-center justify-end" do %>
+            <%= tag.div class: "flex items-center justify-between gap-2" do %>
+                
+                <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.count, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
+
                 <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",
                         data: { turbo: false, tax_checkbox_select_all_target: "formMulti" },
                         class: "pr-2" do |f| %>
