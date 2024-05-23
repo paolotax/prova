@@ -96,7 +96,7 @@ class AdozioniController < ApplicationController
 
         libri.each do |libro|
 
-          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :new_libro, :import_adozione_id))
+          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :new_libro, :import_adozione_id, :import_scuola_id))
           adozione.classe_id = classe.id
 
           adozione.libro_id = libro.id
