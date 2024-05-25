@@ -24,6 +24,11 @@ class AdozioniController < ApplicationController
       end
     end
 
+    #@status_options = Adozione.statuses.keys
+    @scuole_options = @adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq
+    @libri_options  = @adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq
+    @classi_options = @adozioni.joins(:classe).order("view_classi.classe").pluck("view_classi.classe").uniq.sort
+
     set_page_and_extract_portion_from @adozioni    
   end
 
@@ -145,6 +150,15 @@ class AdozioniController < ApplicationController
       format.turbo_stream { flash.now[:notice] = "Adozione eliminata." }
       format.html { redirect_to adozioni_url, notice: "Adozione eliminata." }
       format.json { head :no_content }
+    end
+  end
+
+
+  def libri
+    @target = params[:target]
+    @libri = current_user.libri.select(:titolo, :id).distinct
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 
