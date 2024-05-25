@@ -228,6 +228,13 @@ class Adozione < ApplicationRecord
       }
     end
   end
+
+  def self.totale_copie
+    self.sum(:numero_copie)
+  end
   
+  def self.totale_importo
+    self.sum(&:importo)
+  end
 
 end

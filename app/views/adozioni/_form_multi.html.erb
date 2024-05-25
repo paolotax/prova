@@ -1,54 +1,20 @@
-    <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>
+<%# header per le tappe %>
+<%= tag.div class: "w-full space-x-8 shadow-lg px-4 py-3 text-xs font-semibold flex flex-wrap items-center justify-end" do %>
         
-        <%# header per le tappe %>
-        <%= tag.div class: "rounded-b-lg w-full space-x-8 shadow-lg px-4 py-3 text-xs font-semibold flex flex-wrap items-center justify-end sm:justify-between" do %>
+    <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",
+            data: { turbo: false, tax_checkbox_select_all_target: "formMulti" },
+            class: "pr-2" do |f| %>
 
-            <%= tag.div class: "flex gap-2 items-center" do %>
-                
-                <%= form_with(url: adozioni_path, method: :get, data: { controller: "tax-filters", tax_filters_target: "form", turbo_frame: "search_results" }) do |f| %>
-                    
-                    <%#= tag.div data: { controller: "tax-filter-conditions" } do %>
-                        <%= f.select :status, options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, params[:status]), 
-                            { include_blank: "stato..." }, 
-                            data: { action: "change->tax-filters#submit" } %>
-                        <%# current_user.adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq %>
-                        <%= f.select :import_scuola_id, options_for_select(@scuole_options, params[:import_scuola_id]), 
-                            { include_blank: "scuola..." }, 
-                            data: { action: "change->tax-filters#submit" } %>
-                        <%# current_user.adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq %>
-                        <%= f.select :libro_id, options_for_select(@libri_options, params[:libro_id]), 
-                            { include_blank: "titolo..." }, 
-                            data: { action: "change->tax-filters#submit" } %>
-                        
-                        <%= f.select :classe, options_for_select(@classi_options, params[:classe]), 
-                            { include_blank: "classe..." }, 
-                            data: { action: "change->tax-filters#submit" } %>
-                    <%# end %>
-                <% end %>
-                
-                <%=  link_to "reset", adozioni_path, class: "text-xs font-semibold text-red-500" %>
+        <%= tag.div class: "flex space-x-2 items-center" do %>
+            <%= f.button type: :submit, value: 'stampa', class: " text-center font-semibold text-red-500 align-middle cursor-pointer border hover:bg-gray-200 w-6 h-6 rounded-full shadow-lg" do %>
+                pdf
             <% end %>
+        <% end %>
+    <% end %>  
 
-
-            <%= tag.div class: "flex items-center justify-between gap-2" do %>
-                
-                <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.count, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
-
-                <%= form_with url: bulk_update_adozioni_path, method: :put, format: "pdf", id: :bulk_update_adozioni_form, target: "_blank",
-                        data: { turbo: false, tax_checkbox_select_all_target: "formMulti" },
-                        class: "pr-2" do |f| %>
-
-                    <%= tag.div class: "flex space-x-2 items-center" do %>
-                        <%= f.button type: :submit, value: 'stampa', class: " text-center font-semibold text-red-500 align-middle cursor-pointer border hover:bg-gray-200 w-6 h-6 rounded-full shadow-lg" do %>
-                            pdf
-                        <% end %>
-                    <% end %>
-                <% end %>  
-
-                <%= tag.label for: "select_all", id: "select_all" do %>
-                    <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
-                    <%= tag.span  "seleziona", data: { tax_checkbox_select_all_target: "label" }, class: "pl-2" %>
-                <% end %>
-            <% end %>
-        <% end %>    
+    <%= tag.label for: "select_all", id: "select_all" do %>
+        <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
+        <%= tag.span  "seleziona", data: { tax_checkbox_select_all_target: "label" }, class: "pl-2" %>
     <% end %>
+<% end %>
+

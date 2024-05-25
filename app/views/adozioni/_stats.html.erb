@@ -1,0 +1,9 @@
+<%= tag.div class: "flex justify-end py-2" do %>
+    <%= render StatComponent.new(title: "Totale classi", width: "w-1/4", current_value: @adozioni.count) %>
+
+    <%= render StatComponent.new(title: "Totale copie", width:  "w-1/4", current_value: @adozioni.totale_copie) %>
+
+    <%= render StatComponent.new(title: "Importo totale", width: "w-1/4", current_value: @adozioni.totale_importo) do |stat| %>
+        <% stat.with_current_value_leader { "€" } %>
+    <% end %>
+<% end %>

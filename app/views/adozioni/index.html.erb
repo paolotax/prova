@@ -34,9 +34,7 @@
 <% end %>
 
 <%= tag.div class: "flex space-x-2 p-2" do %>
-    
-    <%= render BadgeComponent.new(text: "#{ pluralize @adozioni.count, "sezione", "sezioni"}", color: "blue", transparent_background: false) %>
-    
+        
     <%= render TaxButton.new(
             caption: "Adozioni",
             svg_file: "icon-cash.svg",
@@ -53,7 +51,11 @@
 
 <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
 
-    <%= render 'form_multi' %>
+    <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>    
+        <%= render 'form_multi' %>
+        <%= render 'form_filters' %>
+        <%= render 'stats' %>
+    <% end %>
 
     <%= tag.div id: "adozioni-lista", class: "sm:px-2" do %>
         <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono righe </p>
