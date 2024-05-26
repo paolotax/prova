@@ -5,21 +5,29 @@
         <%#= tag.div data: { controller: "tax-filter-conditions" } do %>
             <%= f.select :status, options_for_select(Adozione.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]}, params[:status]), 
                 { include_blank: "stato..." }, 
-                data: { action: "change->tax-filters#submit" } %>
-            <%# current_user.adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq %>
-            <%= f.select :import_scuola_id, options_for_select(@scuole_options, params[:import_scuola_id]), 
-                { include_blank: "scuola..." }, 
-                data: { action: "change->tax-filters#submit" } %>
+                data: { action: "change->tax-filters#submit" },
+                class: "min-w-40 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+
             <%# current_user.adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq %>
             <%= f.select :libro_id, options_for_select(@libri_options, params[:libro_id]), 
                 { include_blank: "titolo..." }, 
-                data: { action: "change->tax-filters#submit" } %>
+                data: { action: "change->tax-filters#submit" },
+                class: "min-w-80 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
             
             <%= f.select :classe, options_for_select(@classi_options, params[:classe]), 
                 { include_blank: "classe..." }, 
-                data: { action: "change->tax-filters#submit" } %>
+                data: { action: "change->tax-filters#submit" },
+                class: "min-w-40 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+
+            <%# current_user.adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq %>
+            <%= f.select :import_scuola_id, options_for_select(@scuole_options, params[:import_scuola_id]), 
+                { include_blank: "scuola..." }, 
+                data: { action: "change->tax-filters#submit" },
+                class: "min-w-80 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+
         <%# end %>
     <% end %>
-    
+
+
     <%=  link_to "reset", adozioni_path, class: "text-xs font-semibold text-red-500" %>
 <% end %>
