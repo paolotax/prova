@@ -20,8 +20,9 @@ class AdozionePdf < Prawn::Document
           })
     
     self.font_families.update("DejaVuSans" => {
-      :normal => "#{Rails.root}/public/DejaVuSans.ttf",
-      :bold => "#{Rails.root}/public/dejavu-sans-Bold.ttf" })
+      :normal => "app/assets/stylesheets/DejaVuSans.ttf",
+      :bold => "app/assets/stylesheets/dejavu-sans-Bold.ttf"
+    })
     
     font "DejaVuSans"
 
