@@ -15,9 +15,9 @@
         ) %>
 
         <%= render TaxButton.new(
-                caption: "Totali",
-                svg_file: "icon-calculator.svg",
-                color: "yellow",
+                caption: "Stats",
+                svg_file: "icon-chart-bar.svg",
+                color: "white",
                 url: url_for( controller: "adozioni", action: "riepilogo", params: [] )
         ) %>
         
@@ -31,22 +31,6 @@
 
     <% end %>
 
-<% end %>
-
-<%= tag.div class: "flex space-x-2 p-2" do %>
-        
-    <%= render TaxButton.new(
-            caption: "Adozioni",
-            svg_file: "icon-cash.svg",
-            color: "pink",
-            url: "/adozioni?tipo=adozioni" 
-    ) %>
-            <%= render TaxButton.new(
-            caption: "Vendite",
-            svg_file: "icon-cash.svg",
-            color: "cyan",
-            url: "/adozioni?tipo=vendite" 
-    ) %>
 <% end %>
 
 <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>

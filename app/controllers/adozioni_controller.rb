@@ -10,19 +10,12 @@ class AdozioniController < ApplicationController
     @adozioni = @adozioni.left_search(params[:search]) if params[:search].present?
 
     @adozioni = @adozioni.where(status: params[:status]) if params[:status].present?
+    @adozioni = @adozioni.where(tipo: params[:tipo]) if params[:tipo].present?
 
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:import_scuola_id]) if params[:import_scuola_id].present?
     @adozioni = @adozioni.joins(:classe).where("view_classi.classe = ?", params[:classe]) if params[:classe].present?
     @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
-
-    if params[:tipo].present? 
-      if params[:tipo] == "vendite"
-         @adozioni = @adozioni.vendite
-      else
-        @adozioni = @adozioni.pre_adozioni
-      end
-    end
 
     #@status_options = Adozione.statuses.keys
     @scuole_options = @adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq
