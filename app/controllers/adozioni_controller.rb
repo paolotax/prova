@@ -18,8 +18,8 @@ class AdozioniController < ApplicationController
     @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
 
     #@status_options = Adozione.statuses.keys
-    @scuole_options = @adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq
-    @libri_options  = @adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq
+    @scuole_options = @adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq.sort
+    @libri_options  = @adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq.sort
     @classi_options = @adozioni.joins(:classe).order("view_classi.classe").pluck("view_classi.classe").uniq.sort
 
     set_page_and_extract_portion_from @adozioni    
