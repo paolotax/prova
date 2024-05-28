@@ -87,11 +87,6 @@
 		<% end %>
 	</div>
 
-	<div class="my-5">
-		<%= form.label :note %>
-		<%= form.text_area :note, rows: 3, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full sm:w-[42rem]" %>
-	</div>
-
 	<div class="my-5 flex flex-row justify-start items-center gap-2">		
 		<%= form.label :numero_copie, "copie:" %>
 		<%= form.number_field :numero_copie, class: "shadow max-w-24 rounded-md border border-gray-200 outline-none px-3 py-2" %>
@@ -99,8 +94,11 @@
 		<%= form.label :prezzo, "prezzo:" %>
 		<%= form.number_field :prezzo, step: 0.01, class: "max-w-24 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
 	</div>
-	
 
+	<div class="my-5">
+		<%= form.label :note %>
+		<%= form.text_area :note, rows: 3, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full sm:w-[42rem]" %>
+	</div>
 
 	<div class="inline">
 		<%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

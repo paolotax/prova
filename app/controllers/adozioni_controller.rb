@@ -11,7 +11,6 @@ class AdozioniController < ApplicationController
 
     @adozioni = @adozioni.where(status: params[:status]) if params[:status].present?
     @adozioni = @adozioni.where(tipo: params[:tipo]) if params[:tipo].present?
-
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:import_scuola_id]) if params[:import_scuola_id].present?
     @adozioni = @adozioni.joins(:classe).where("view_classi.classe = ?", params[:classe]) if params[:classe].present?
@@ -83,47 +82,55 @@ class AdozioniController < ApplicationController
 
   def create
 
+    @adozioni = []
+
     if params[:adozione][:classe_ids].present?
       
       classi = Views::Classe.find(params[:adozione][:classe_ids].split(","))
       libri = current_user.libri.find(params[:adozione][:libro_ids].split(","))
-
-      @adozioni = []
-      
       classi.each do |classe|
-
         libri.each do |libro|
-
           adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :new_libro, :import_adozione_id, :import_scuola_id))
           adozione.classe_id = classe.id
-
           adozione.libro_id = libro.id
           if adozione.save
             @adozioni << adozione
+          else
+            respond_to do |format|
+              format.turbo_stream { flash.now[:alert] = "Ritenta sarai più fortunato" }
+            end
           end
         end
 
         if params[:adozione][:new_libro].present?
-          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :import_adozione_id))
+          adozione = current_user.adozioni.build(adozione_params.except(:classe_id, :libro_id, :import_adozione_id, :import_scuola_id))
           adozione.classe_id = classe.id
           adozione.new_libro = params[:adozione][:new_libro]
           if adozione.save
             @adozioni << adozione
+          else
+            respond_to do |format|
+              format.turbo_stream { flash.now[:alert] = "Ritenta sarai più fortunato" }
+            end
           end
         end
       end
-    end 
-
+    end
+    
     respond_to do |format|
-      format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
-      format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
-      format.json { render :show, status: :created, location: @adozione }
+      unless @adozioni.empty?
+        format.turbo_stream { flash.now[:notice] = "Si adotta e si sboccia!" }
+        format.html { redirect_to adozioni_url notice: "Si adotta e si sboccia!" }
+        format.json { render :show, status: :created, location: @adozione }
+      else
+        format.turbo_stream { flash.now[:alert] = "Ritenta sarai più fortunato" }
+        format.json { render json: @adozione.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def update
-    @item = params[:item] if params[:item].present?
-    
+        
     respond_to do |format|
       if @adozione.update(adozione_params)
         format.turbo_stream { flash.now[:notice] = "Adozione modificata." }

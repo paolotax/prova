@@ -36,15 +36,16 @@
 				<%= tag.div class: "flex flex-wrap items-center gap-2" do%>
 					<%= tag.div pluralize_stato_adozione(adozione), class: [
 								"font-bold inline-block px-2 py-1.5 text-white border rounded-md": true,
-								"bg-cyan-500": adozione.stato_adozione.downcase[0..2] == "com",
-								"bg-pink-500": adozione.stato_adozione.downcase[0..2] != "com",
+								"bg-cyan-500": adozione.vendita?,
+								"bg-pink-500": adozione.adozione?,
+								"bg-green-500": adozione.omaggio?,
 							] %>
 
 					<%= render "shared/inline_edit", model: adozione, method: :titolo_copie_e_prezzo do %>
 						<%= tag.div "il libro:", class: "hidden md:inline-block" %>
 						<%= tag.div adozione.titolo_libro.upcase, class: "font-bold" %>
 
-						<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+						<% if adozione.vendita? %>
 							<%= tag.div class: "flex sm:flex-nowrap gap-2" do %>
 								<%= tag.div "copie:", class: "hidden md:inline-block" %>
 								<%= tag.div adozione.numero_copie, class: "font-semibold" %>
@@ -59,7 +60,7 @@
 			</fieldset>
 			
 			<%# importo e stato e pagamento %>
-			<% if adozione.stato_adozione&.downcase[0..2] == "com" %>
+			<% if adozione.vendita? %>
 				<%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
 					<%= render "shared/inline_edit", model: adozione, method: :stato_e_pagamento do %>
 						<%= tag.div "importo:", class: "hidden md:inline-block" %>

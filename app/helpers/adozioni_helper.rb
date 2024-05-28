@@ -24,16 +24,18 @@ module AdozioniHelper
 
     def pluralize_stato_adozione(adozione)
 
-        if adozione.stato_adozione == "adottano" || adozione.stato_adozione == "adotta"
+        adozione.tipo
 
-            if quante_maestre(adozione.team) > 1
-                return "adottano"
-            else
-                return "adotta"
-            end
-        else
-            return adozione.stato_adozione
-        end
+        # if adozione.adozione?
+
+        #     if quante_maestre(adozione.team) > 1
+        #         return "adottano"
+        #     else
+        #         return "adotta"
+        #     end
+        # else
+        #     return adozione.tipo
+        # end
 
     end
     

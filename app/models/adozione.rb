@@ -55,26 +55,26 @@ class Adozione < ApplicationRecord
     a.numero_copie = 0 if a.numero_copie.nil?
     a.prezzo_cents = 0 if a.prezzo_cents.nil?
 
-    if a.stato_adozione.downcase[0..2] == "com"
-      a.tipo = "vendita"
-    elsif a.stato_adozione.downcase[0..2] == "ado"
-      a.tipo = "adozione"
-    else
-      a.tipo = "omaggio"
-    end
+    # if a.stato_adozione.downcase[0..2] == "com"
+    #   a.tipo = "vendita"
+    # elsif a.stato_adozione.downcase[0..2] == "ado"
+    #   a.tipo = "adozione"
+    # else
+    #   a.tipo = "omaggio"
+    # end
   end
 
   before_update do |a|
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
     a.numero_copie = 0 if a.numero_copie.nil?
     a.prezzo_cents = 0 if a.prezzo_cents.nil?
-    if a.stato_adozione.downcase[0..2] == "com"
-      a.tipo = "vendita"
-    elsif a.stato_adozione.downcase[0..2] == "ado"
-      a.tipo = "adozione"
-    else
-      a.tipo = "omaggio"
-    end
+    # if a.stato_adozione.downcase[0..2] == "com"
+    #   a.tipo = "vendita"
+    # elsif a.stato_adozione.downcase[0..2] == "ado"
+    #   a.tipo = "adozione"
+    # else
+    #   a.tipo = "omaggio"
+    # end
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
@@ -166,7 +166,7 @@ class Adozione < ApplicationRecord
   #attr_accessor :titolo
 
   def titolo=(titolo)
-    libro = Current.user.libri.find_or_create_by(titolo: new_libro)
+    libro = Current.user.libri.find_or_create_by(titolo: titolo)
     libro.prezzo_in_cents = 0
     libro.save
     self.libro = libro
