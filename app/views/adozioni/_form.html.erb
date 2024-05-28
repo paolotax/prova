@@ -53,16 +53,17 @@
 		<%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
 	<% end %>
 
-	<div class="my-5 cb-tax cb-small">
+	<%# <div class="my-5 cb-tax cb-small">
 		<%= form.combobox :stato_adozione, 
 				current_user.adozioni.stato_adozione, 
 				name_when_new: "adozione[stato_adozione]", 
 				label: "che fanno?",
 				placeholder: "adottano o comprano?" %>
-	</div>
+	<%# </div> %>
 
-
-	<%#= form.collection_radio_buttons :stato_adozione, current_user.adozioni.stato_adozione, :to_s, :to_s %>
+	<%= tag.div class: "my-5 flex gap-2 items-center" do %>
+		<%= form.collection_radio_buttons :tipo, current_user.adozioni.tipos, :first, :first %>
+	<% end %>
 
 	<div class="my-5 cb-tax cb-medium">
 		<% if action_name == "new" %>
@@ -92,11 +93,11 @@
 	</div>
 
 	<div class="my-5 flex flex-row justify-start items-center gap-2">		
-		<%= form.label :numero_copie %>
-		<%= form.number_field :numero_copie, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+		<%= form.label :numero_copie, "copie:" %>
+		<%= form.number_field :numero_copie, class: "shadow max-w-24 rounded-md border border-gray-200 outline-none px-3 py-2" %>
 
-		<%= form.label :prezzo %>
-		<%= form.number_field :prezzo, step: 0.01, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+		<%= form.label :prezzo, "prezzo:" %>
+		<%= form.number_field :prezzo, step: 0.01, class: "max-w-24 shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
 	</div>
 	
 
