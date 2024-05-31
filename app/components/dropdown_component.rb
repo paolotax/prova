@@ -33,12 +33,13 @@ class DropdownComponent < ViewComponent::Base
   def dark_theme? = @theme == "dark"
 
   def menu_data
-    {turbo_temporary: "", rd_dropdown_target: "menu"}.merge(menu_transitions)
+    # ho messo turbo_persisted: anziche turbo_temporary: "" perche altrimenti non viene ricreato dopo un morph
+    {turbo_persisted: "", rd_dropdown_target: "menu"}.merge(menu_transitions)
   end
 
   def menu_css
     class_names(
-      "absolute mt-1 text-sm shadow-xl overflow-x-hidden rounded-lg z-10",
+      "absolute mt-1 text-sm shadow-xl overflow-x-hidden rounded-lg z-30",
       content_min_max_width,
       "max-h-60 overflow-y-auto", # max height: 240px
       @padding,

@@ -43,6 +43,7 @@
                 <%# tappe attuali %>
                 <%= tag.div id: "tappe-attuali-#{s.id}", class: "col-span-1" do %>
                     
+                    <%# nuova tappa attuale buttons %>
                     <%= tag.div class: "hidden only:block" do %>
                         <div class="hidden group-hover:flex justify-center items-center space-x-1 p-1.5 " >
                             <%= button_to duplica_tappa_path( tappe.first, new: 'true' ),
@@ -61,7 +62,7 @@
                         </div>
                     <% end %>
 
-                    <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa >= Time.now.beginning_of_day }.each do |t| %>
+                    <% tappe.select {|d| d.data_tappa.nil? || d.data_tappa >= Time.zone.now.beginning_of_day }.each do |t| %>
                         <%= render partial: "tappe/tappa_small", locals: { tappa: t } %>
                     <% end %>
                 <% end %>
@@ -69,7 +70,7 @@
                 <%# tappe completate %>
                 <%= tag.div id: "tappe-completate-#{s.id}", class: "col-span-1" do %>
                     
-                    <% tappe.select {|d| d.data_tappa < Time.now.beginning_of_day unless d.data_tappa.nil?}.each do |t| %>
+                    <% tappe.select {|d| d.data_tappa < Time.zone.now.beginning_of_day unless d.data_tappa.nil?}.each do |t| %>
                         <%= render partial: "tappe/tappa_small", locals: { tappa: t, check_box: false } %>
                     <% end %>
                 
