@@ -1,4 +1,4 @@
-<div id="<%= dom_id import_scuola %>" class="relative bg-white rounded-xl border border-gray-200 shadow-lg" >
+<div id="<%= dom_id import_scuola %>" class="w-full relative bg-white rounded-xl border border-gray-200 shadow-lg" >
 	
 	<%= link_to new_appunto_path(import_scuola_id: import_scuola.id),
 				data: { turbo_frame: :modal, action: "click->dialog#open"},
