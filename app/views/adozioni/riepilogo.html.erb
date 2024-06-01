@@ -33,8 +33,8 @@
 
 <%# stat per titolo %>
 
-<%= render StatComponent.new(type: "horizontal_bar", width: "w-full", title: "Vendite Vacanze", current_value: current_user.adozioni.vendite.sum(:numero_copie), color: "blue") do |stat| %>
-  <% stat.with_data_points( current_user.adozioni.vendite.per_libro_hash.map {|a| { x: a[:titolo], y: a[:numero_copie]} }  ) %>
+<%= render StatComponent.new(type: "horizontal_bar", width: "w-full", title: "Vendite Vacanze", current_value: current_user.adozioni.vendita.sum(:numero_copie), color: "blue") do |stat| %>
+  <% stat.with_data_points( current_user.adozioni.vendita.per_libro_hash.map {|a| { x: a[:titolo], y: a[:numero_copie]} }  ) %>
 <% end %>
 
 
@@ -142,7 +142,7 @@
 <%# adozioni per titolo %>
 
 <ul class="bg-white border rounded-2xl shadow-2xl px-4 my-2">
-<% current_user.adozioni.pre_adozioni.per_libro.map do |adozione| %>
+<% current_user.adozioni.adozione.per_libro.map do |adozione| %>
         <%= render ListItemComponent.new(
         ) do |list_item| %>
 
@@ -158,15 +158,13 @@
 <%# adozioni per scuola %>
 
 <ul class="bg-sky-100 border rounded-2xl shadow-2xl px-4 my-2">
-    <% current_user.adozioni.pre_adozioni.per_scuola.each do |vendita| %>
+    <% current_user.adozioni.adozione.per_scuola.each do |adozione| %>
         <%= render ListItemComponent.new(
         ) do |list_item| %>
-        
-
-        
-        <%= link_to adozioni_path(ids: vendita.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
-                <%= tag.span vendita.DENOMINAZIONESCUOLA, class: "col-span-2 text-base font-semibold text-gray-800" %>
-                <%= tag.span vendita.numero_sezioni, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
+                
+        <%= link_to adozioni_path(ids: adozione.adozione_ids.join(",")), class: "w-full grid grid-cols-4 px-2 gap-2" do %>
+                <%= tag.span adozione.DENOMINAZIONESCUOLA, class: "col-span-2 text-base font-semibold text-gray-800" %>
+                <%= tag.span adozione.numero_sezioni, class: "col-span-1 text-sm font-normal text-right text-gray-500" %>
             <% end %>
         <% end %>
     <% end %>

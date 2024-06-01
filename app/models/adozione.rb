@@ -131,9 +131,9 @@ class Adozione < ApplicationRecord
     .order(:pagato_il)
   }
 
-  scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
-  scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }
-  scope :saggi,    -> { where(stato_adozione: ['saggio', "saggio"]) }
+  #scope :pre_adozioni, -> { where(stato_adozione: ['adotta', "adottano"]) }
+  #scope :vendite,  -> { where(stato_adozione: ['compra', "comprano"]) }
+  #scope :saggi,    -> { where(stato_adozione: ['saggio', "saggio"]) }
 
   include Searchable
 
