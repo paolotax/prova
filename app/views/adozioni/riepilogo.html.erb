@@ -1,16 +1,14 @@
-<%= heading do %>	
-	
-    <%= h1 {"Riepiloghi"} %>
-
-    <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
-        
+<%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
+    
+    <% heading.with_action do %>
         <%= render TaxButton.new(
                 caption: "Indietro",
                 svg_file: "icon-arrow-long-left.svg",
                 color: "white",
                 url: url_for( controller: "adozioni", action: "index", params: [] )
         ) %>
-        
+    <% end %>
+    <% heading.with_action do %>
         <%= render TaxButton.new(
                 caption: "Sbocci?",
                 svg_file: "icon-plus.svg",
@@ -18,15 +16,17 @@
                 url: url_for( controller: "adozioni", action: "new", model: @adozione ),
                 data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
         ) %>
-
     <% end %>
+    
+    <%= h1 {"Riepiloghi"} %>
 
 <% end %>
 
 
+
 <%# totale Vacanze %>
 
-<%= render StatComponent.new(title: "Vacanze", width: "w-1/4", current_value: @vendite.sum(&:importo_cents) / 100.to_f) do |stat| %>
+<%= render StatComponent.new(title: "Vacanze", width: "w-1/2 sm:w-1/4", current_value: @vendite.sum(&:importo_cents) / 100.to_f) do |stat| %>
     <% stat.with_current_value_leader { "€" } %>
 <% end %>
 
