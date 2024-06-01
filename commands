@@ -52,6 +52,8 @@ kamal setup
 
 kamal deploy
 
+kamal lock release
+
 kamal traefik restart
 
 kamal traefik logs
