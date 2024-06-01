@@ -1,27 +1,29 @@
-      <%= turbo_stream.replace "load_more" do %>
-            <%= tag.div class: "" do %>
-                  <% @page.records.each do |adozione| %>
-                        <%= render adozione %>
-                  <% end %>
-            <% end %>
+<%= turbo_stream.replace "load_more" do %>
+	<%= tag.div class: "" do %>
+		<% @page.records.each do |adozione| %>
+			<%= render adozione %>
+		<% end %>
+	<% end %>
 
-            <% if @page.last? %>
-                 <%= tag.div "Fine delle adozioni!", class: "py-8 px-4 text-center" %>
-            <% else %>
-                  <%= turbo_frame_tag "load_more",
-                        src: adozioni_path(                              
-                                    search: params[:search], 
-                                    page: @page.next_param, 
-                                    tipo: params[:tipo],
-                                    classe: params[:classe],
-                                    disciplina: params[:disciplina],
-                                    editore: params[:editore],
-                                    codice_isbn: params[:codice_isbn],
-                                    filter: params[:filter],
-                                    format: :turbo_stream
-                              ),
-                        loading: :lazy do %>
-                        <%= render 'shared/lazy_loading' %>
-                  <% end %>
-            <% end %>
-      <% end %>
+	<% if @page.last? %>
+		<%= tag.div "Fine delle adozioni!", class: "py-8 px-4 text-center" %>
+	<% else %>
+		<%= turbo_frame_tag "load_more",
+					src: adozioni_path(                              
+						page: @page.next_param, 
+						format: :turbo_stream,
+
+						search: params[:search], 
+						status: params[:status],
+						tipo: params[:tipo],
+						libro_id: params[:libro_id],
+						import_scuola_id: params[:import_scuola_id],
+						classe: params[:classe],
+						ids: params[:ids]
+						
+						),
+					loading: :lazy do %>
+			<%= render 'shared/lazy_loading' %>
+		<% end %>
+	<% end %>
+<% end %>

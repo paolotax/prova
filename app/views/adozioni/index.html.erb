@@ -2,8 +2,6 @@
 	
     <%= h1 {"Si sboccia!!!"} %>
 
-    
-
     <%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
 
 
@@ -48,15 +46,17 @@
 
         <% unless @page.last? %>
             <%= turbo_frame_tag "load_more", src: adozioni_path(                              
-                                    search: params[:search], 
                                     page: @page.next_param, 
+                                    format: :turbo_stream,
+
+                                    search: params[:search], 
+                                    status: params[:status],
                                     tipo: params[:tipo],
+                                    libro_id: params[:libro_id],
+                                    import_scuola_id: params[:import_scuola_id],
                                     classe: params[:classe],
-                                    disciplina: params[:disciplina],
-                                    editore: params[:editore],
-                                    codice_isbn: params[:codice_isbn],
-                                    filter: params[:filter],
-                                    format: :turbo_stream
+                                    ids: params[:ids]
+
                               ), loading: :lazy do %>
                 <%= render 'shared/lazy_loading' %>
             <% end %>
