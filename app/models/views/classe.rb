@@ -45,9 +45,9 @@ class Views::Classe < ApplicationRecord
   belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
   has_many :adozioni  # dovrò chiamare la tabella in altro modo movimenti o righe e cambiare stato_adozione in tipo_movimento
-  has_many :vendite, -> { vendite }, class_name: "Adozione"
-  has_many :saggi, -> { saggi }, class_name: "Adozione"
-  has_many :pre_adozioni, -> { pre_adozioni }, class_name: "Adozione"
+  has_many :vendita, -> { vendita }, class_name: "Adozione"
+  has_many :omaggio, -> { omaggio }, class_name: "Adozione"
+  has_many :adozione, -> { adozione }, class_name: "Adozione"
   
   has_many :appunti # dovrò METTERE SOLO QUELLI DELL USER LOGGATO
   

@@ -87,9 +87,9 @@
 						<% classe.maestre.each do |maestra| %>
 							<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
 						<% end %>
-						<%= render partial: "adozioni/adozione", collection: classe.vendite, as: :adozione %>
-						<%= render partial: "adozioni/adozione", collection: classe.pre_adozioni, as: :adozione %>
-						<%= render partial: "adozioni/adozione", collection: classe.saggi, as: :adozione %>
+						<%= render partial: "adozioni/adozione", collection: classe.vendita, as: :adozione %>
+						<%= render partial: "adozioni/adozione", collection: classe.adozione, as: :adozione %>
+						<%= render partial: "adozioni/adozione", collection: classe.omaggio, as: :adozione %>
 						<br/>
 					<% end %>
 				</div>
