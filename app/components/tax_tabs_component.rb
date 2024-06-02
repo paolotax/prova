@@ -40,9 +40,11 @@ class TaxTabsComponent < ViewComponent::Base
         
     <%= tag.div data: {controller: "rd-tabs", rd_tabs_initial_tab_value: @initial_tab, rd_tabs_active_item_class: @active_item_css}, class: @container_css do %>
       
-      <%= select_tag "select_tabs", options_for_select(@options_for_select, @initial_tab), 
-                  class: "block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:hidden",
-                  data: { rd_tabs_target: "option", action: "rd-tabs#change" } %>
+      <%= tag.div class: "sm:hidden px-2" do %>
+        <%= select_tag "select_tabs", options_for_select(@options_for_select, @initial_tab), 
+                    class: "block w-full rounded-md border-gray-300 text-base focus:border-indigo-500",
+                    data: { rd_tabs_target: "option", action: "rd-tabs#change" } %>
+      <% end %>
       
       <%= tag.ul safe_join(items + hidden_items), class: @merged_items_css if items? %>
 
