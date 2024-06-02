@@ -30,11 +30,65 @@
 
 <% end %>
 
+<%= render TabsComponent.new(
+				id: "search_results",	
+				container_css: "sticky z-20 top-16 max-w-sm bg-slate-100 bg-gradient-to-r from-purple-100 from-25%", 
+				items_decorations: "border-gray-200 max-w-sm", 
+				item_css: "border-b-2 block py-2 -mb-1 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 flex whitespace-nowrap py-4 px-1 text-sm font-medium", 
+				active_item_css: "border-indigo-500 text-indigo-600") do |tabs| %>
 
+	<% tabs.with_item(href: adozioni_path(tipo: "adozione")) do %>
+		<p class="">
+			Adozioni
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.adozioni.adozione.load.size %>
+			</span>
+		</p>
+	<% end %>
+	<% tabs.with_item(href: adozioni_path(tipo: "vendita")) do %>
+		<p class="">
+			Vendite
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.adozioni.vendita.load.size %>
+			</span>
+		</p>
+	<% end %>
+	<% tabs.with_item(href: adozioni_path(tipo: "vendita", status: "ordine")) do %>
+		<p class="">
+			Ordini
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.adozioni.vendita.ordine.load.size %>
+			</span>
+		</p>
+	<% end %>
+
+
+  	<% tabs.with_item(href: adozioni_path(giorno: "oggi")) { "Oggi" } %>
+  	<% tabs.with_item(href: adozioni_path(giorno: "domani")) { "Domani" } %>
+    
+    <% tabs.with_hidden_item(href: adozioni_path(tipo: "vendita", status: "in_consegna")) do %>
+		<p class="">
+			In consegna
+            <span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.adozioni.vendita.in_consegna.load.size %>
+			</span>
+		</p>
+	<% end %>
+
+    <% tabs.with_hidden_item(href: adozioni_path(tipo: "vendita", status: "da_pagare")) do %>
+		<p class="">
+			Da pagare
+            <span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.adozioni.vendita.da_pagare.load.size %>
+			</span>
+		</p>
+	<% end %>
+
+<% end %>
 
 <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
 
-    <%= tag.div class:"sticky z-20 top-16 bg-slate-100 py-2 px-2 border rounded-lg shadow-lg mb-4 bg-gradient-to-r from-purple-100 from-25%" do%>    
+    <%= tag.div class:"bg-slate-100 py-2 px-2 border rounded-lg shadow-lg mb-4 bg-gradient-to-r from-purple-100 from-25%" do%>    
         <%= render 'form_filters' %>
         <%= render 'stats' %>
         <%= render 'form_multi' %>

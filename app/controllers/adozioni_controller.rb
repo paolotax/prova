@@ -14,6 +14,19 @@ class AdozioniController < ApplicationController
     @adozioni = @adozioni.joins(:libro).where(libro_id: params[:libro_id]) if params[:libro_id].present?
     @adozioni = @adozioni.joins(:scuola).where("import_scuole.id = ?", params[:import_scuola_id]) if params[:import_scuola_id].present?
     @adozioni = @adozioni.joins(:classe).where("view_classi.classe = ?", params[:classe]) if params[:classe].present?
+    
+    if params[:giorno].present?
+      if params[:giorno] == "oggi"
+          scuole = current_user.import_scuole.where(id: current_user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))
+      else
+          scuole = current_user.import_scuole.where(id: current_user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) 
+      end   
+    # fix this @adozioni in form_multi 
+       @adozioni = current_user.adozioni.vendita.joins(:scuola).where("import_scuole.id in (?)", scuole.pluck(:id))
+    end
+
+
+
     @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
 
     #@status_options = Adozione.statuses.keys
