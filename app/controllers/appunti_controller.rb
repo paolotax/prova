@@ -10,7 +10,8 @@ class AppuntiController < ApplicationController
       @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?     
       
       @appunti = @appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
-      
+      @appunti = @appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
+
       @appunti = @appunti.non_archiviati if params[:filter] == "non_archiviati"       
       @appunti = @appunti.in_sospeso if params[:filter] == "in_sospeso" 
 
