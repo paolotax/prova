@@ -22,13 +22,13 @@
 
 <% end %>
 
-
 <%= render TabsComponent.new(id: "search_results", container_css: "w-1/2", items_decorations: "p-1 bg-gray-100 rounded-lg", item_css: "block px-2 py-1 text-sm font-medium text-center text-gray-700 rounded-md", active_item_css: "bg-white ring-1 ring-offset-0 ring-gray-200") do |tabs| %>
-  <% tabs.with_item(href: adozioni_path(tipo: "vendita")) { "oggi" } %>
-  <% tabs.with_item(href: adozioni_path(tipo: "adozione")) { "non archiviati" } %>
+	<% tabs.with_item(href: appunti_path) { "tutti" } %>
+  	<% tabs.with_item(href: appunti_path(filter: "non_archiviati")) { "non archiviati" } %>
+	<% tabs.with_item(href: appunti_path(filter: "oggi")) { "oggi" } %> 	
 <% end %>
 
-<%= turbo_frame_tag "search_results" do %>
+<%= turbo_frame_tag "search_results", data: {rd_tabs_target: "content"} do %>
 
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
@@ -37,7 +37,7 @@
 				Whoops! Non ci sono appunti. 
 				
 				<% if current_user.import_scuole.blank? %>
-					 <%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" %>
+					<%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" %>
 				<% end %>
 			</p>
 			<%= render @appunti %>

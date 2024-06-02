@@ -19,10 +19,10 @@ export default class extends Controller {
 
   #loadInitialTab() {
     if (!this.initialTabValue) { return; }
-
+    console.log("this.#initialTab")
     this.#initialTab.classList.add(...this.activeItemClasses);
-
-    this.contentTarget.src = this.#initialTab.href;
+    // non carico il contenuto iniziale ma devo farlo solo quando clicco se no non funziona nella stessa pagina 
+    // this.contentTarget.src = this.#initialTab.href;
   }
 
   get #initialTab() {
