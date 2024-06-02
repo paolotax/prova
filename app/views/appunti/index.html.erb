@@ -24,8 +24,12 @@
 
 <%= render TabsComponent.new(id: "search_results", container_css: "w-1/2", items_decorations: "p-1 bg-gray-100 rounded-lg", item_css: "block px-2 py-1 text-sm font-medium text-center text-gray-700 rounded-md", active_item_css: "bg-white ring-1 ring-offset-0 ring-gray-200") do |tabs| %>
 	<% tabs.with_item(href: appunti_path) { "tutti" } %>
+	<% tabs.with_item(href: appunti_path(filter: "oggi")) { "oggi" } %> 
+	<% tabs.with_item(href: appunti_path(filter: "da_fare")) { "da fare" } %>
+	<% tabs.with_item(href: appunti_path(filter: "in_sospeso")) { "in sospeso" } %> 
+	<% tabs.with_item(href: appunti_path(filter: "in_settimana")) { "in settimana" } %>
   	<% tabs.with_item(href: appunti_path(filter: "non_archiviati")) { "non archiviati" } %>
-	<% tabs.with_item(href: appunti_path(filter: "oggi")) { "oggi" } %> 	
+	<% tabs.with_item(href: appunti_path(filter: "archiviati")) { "archiviati" } %> 	
 <% end %>
 
 <%= turbo_frame_tag "search_results", data: {rd_tabs_target: "content"} do %>

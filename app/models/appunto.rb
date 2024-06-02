@@ -83,9 +83,12 @@ class Appunto < ApplicationRecord
   scope :in_evidenza, -> { where(stato: "in evidenza") }
   scope :in_settimana, -> { where(stato: "in settimana") }
   scope :da_pagare, -> { where(stato: "da pagare") }
+  scope :in_visione, -> { where(stato: "in visione") }
   scope :completati, -> { where(stato: "completato") }
   scope :archiviati, -> { where(stato: "archiviato") }
-  scope :non_archiviati, -> { where.not(stato: "archiviato").where.not(stato: "completato") }
+ 
+  scope :in_sospeso, -> { where(stato: ["in visione", "da pagare"]) } 
+  scope :non_archiviati, -> { where.not(stato: ["archiviato", "completato"]) }
 
   scope :nel_baule_di_oggi, -> { where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
   scope :nel_baule_di_domani, -> { where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
