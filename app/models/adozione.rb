@@ -43,7 +43,17 @@ class Adozione < ApplicationRecord
   enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   enum :tipo, %i(adozione vendita omaggio)
   
-  
+  FILTERS = [
+    ["Adozioni", "/adozioni?tipo=adozione"], 
+    ["Vendite", "/adozioni?tipo=vendita"],
+    ["Oggi",    "/adozioni?giorno=oggi"], 
+    ["Domani",  "/adozioni?giorno=domani"], 
+    ["Ordini",  "/adozioni?status=ordine&tipo=vendita"],
+    ["In consegna", "/adozioni?status=in_consegna&tipo=vendita"], 
+    ["Da pagare", "/adozioni?status=da_pagare&tipo=vendita"],
+    ["Corrispettivi", "/adozioni?status=corrispettivi&tipo=vendita"],
+  ]
+
   belongs_to :user  
   belongs_to :import_adozione, optional: true
   belongs_to :libro, optional: true

@@ -22,12 +22,13 @@
 
 <% end %>
 
-<%= render TabsComponent.new(
+<%= render TaxTabsComponent.new(
 				id: "search_results",	
 				container_css: "sticky z-20 top-16 bg-slate-100 bg-gradient-to-r from-purple-100 from-25% border-b rounded-t-lg", 
 				items_decorations: "", 
 				item_css: "block py-2 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 flex whitespace-nowrap py-4 px-2 text-sm font-medium", 
-				active_item_css: "border-b-2 border-indigo-500 text-indigo-600") do |tabs| %>
+				active_item_css: "border-b-2 border-indigo-500 text-indigo-600",
+				options_for_select: Appunto::FILTERS) do |tabs| %>
 
 	<% tabs.with_item(href: appunti_path) do %>
 		<p class="">

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["item", "content"];
+  static targets = ["item", "content", "option"];
   static values = { initialTab: Number };
   static classes = ["activeItem"];
 
@@ -13,6 +13,20 @@ export default class extends Controller {
     this.itemTargets.forEach(item => item.classList.remove(...this.activeItemClasses));
 
     event.currentTarget.classList.add(...this.activeItemClasses);
+  }
+
+  change(event) {
+
+    let src = this.optionTarget.options[this.optionTarget.selectedIndex].value
+    this.itemTargets.forEach(item => item.classList.remove(...this.activeItemClasses));
+
+    event.currentTarget.classList.add(...this.activeItemClasses);
+
+    console.log(src);
+
+    document.getElementById("search_results").src = src;
+
+    // this.contentTarget.src = src;
   }
 
   // private

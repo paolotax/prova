@@ -6,7 +6,6 @@ export default class extends Controller {
   static targets = [ "form" ];
 
   submit() {
-    console.log("submit")
     this.formTarget.requestSubmit();
   }
 
