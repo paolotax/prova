@@ -1,17 +1,14 @@
-<%= heading do %>	
-	<%= h1 {"Appunti"} %>
-
-
-	<%= tag.div class: "pl-4 flex flex-col-reverse justify-center gap-2 sm:flex-row sm:justify-between sm:align-center sm:gap-4" do %>
-		
+<%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
+    
+    <% heading.with_action do %>
         <%= render TaxButton.new(
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
                 url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters )
         ) %> 
-        
-    
+    <% end %>
+    <% heading.with_action do %>
 		<%= render TaxButton.new(
                 caption: "Nuovo",
                 svg_file: "icon-plus.svg",
@@ -19,17 +16,19 @@
                 url: url_for( controller: "appunti", action: "new", model: @appunto ),
                 data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
         ) %>
-
     <% end %>
-
-
-
+    
+    <%= h1 {"Appunti"} %>
 
 <% end %>
 
 
-<%= turbo_frame_tag "search_results" do %>
+<%= render TabsComponent.new(id: "search_results", container_css: "w-1/2", items_decorations: "p-1 bg-gray-100 rounded-lg", item_css: "block px-2 py-1 text-sm font-medium text-center text-gray-700 rounded-md", active_item_css: "bg-white ring-1 ring-offset-0 ring-gray-200") do |tabs| %>
+  <% tabs.with_item(href: adozioni_path(tipo: "vendita")) { "oggi" } %>
+  <% tabs.with_item(href: adozioni_path(tipo: "adozione")) { "non archiviati" } %>
+<% end %>
 
+<%= turbo_frame_tag "search_results" do %>
 
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
@@ -46,9 +45,13 @@
 
 		<% if @pagy.next %>
 			<%= turbo_frame_tag "appunti_page#{@pagy.next}",
-						src: appunti_path(search: params[:search], page: @pagy.next, da_acquistare: params[:da_acquistare], search_query: params[:search_query], mie_adozioni: params[:mie_adozioni]),
+						src: appunti_path(
+							search: params[:search], 
+							page: @pagy.next,
+							search_query: params[:search_query], 
+							mie_adozioni: params[:mie_adozioni]
+						),
 						loading: :lazy do %>
-				
 				<div role="status">
 					<div class="flex justify-center">
 						<svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,7 +64,6 @@
 			<% end %>
 		<% end %>
 	<% end %>
-
 
 <% end %>
 

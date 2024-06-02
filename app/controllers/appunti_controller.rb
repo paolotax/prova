@@ -6,10 +6,11 @@ class AppuntiController < ApplicationController
 
   def index
       @appunti = current_user.appunti.includes(:import_scuola, :import_adozione).order(created_at: :desc)
-
-      @appunti = @appunti.non_archiviati if params[:filter] == "non_archiviati"       
+      
       @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?     
+      
       @appunti = @appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
+      @appunti = @appunti.non_archiviati if params[:filter] == "non_archiviati"       
       
       @appunti = @appunti.search(params[:q]) if params[:q]
       @pagy, @appunti =  pagy(@appunti.all, items: 30)
