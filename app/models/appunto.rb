@@ -71,14 +71,14 @@ class Appunto < ApplicationRecord
 
   STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "in visione", "da pagare", "completato", "archiviato"]  
   FILTERS = [ 
-              ["Tutti",  "/appunti"], 
-              ["Oggi",   "/appunti?filter=oggi"], 
-              ["Domani", "/appunti?filter=domani"],
-              ["In sospeso", "/appunti?filter=in_sospeso"],
-              ["In settimana", "/appunti?filter=in_settimana"],
-              ["Non archiviati", "/appunti?filter=non_archiviati"],
-              ["Archiviati", "/appunti?filter=archiviato"],
-            ]
+    ["Tutti",  "/appunti"], 
+    ["Oggi",   "/appunti?filter=oggi"], 
+    ["Domani", "/appunti?filter=domani"],
+    ["In sospeso", "/appunti?filter=in_sospeso"],
+    ["In settimana", "/appunti?filter=in_settimana"],
+    ["Non archiviati", "/appunti?filter=non_archiviati"],
+    ["Archiviati", "/appunti?filter=archiviato"],
+  ]
 
   
   after_initialize :set_default_stato, :if => :new_record?
