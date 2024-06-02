@@ -85,7 +85,7 @@ class Appunto < ApplicationRecord
   scope :da_pagare, -> { where(stato: "da pagare") }
   scope :in_visione, -> { where(stato: "in visione") }
   scope :completati, -> { where(stato: "completato") }
-  scope :archiviati, -> { where(stato: "archiviato") }
+  scope :archiviato, -> { where(stato: "archiviato") }
  
   scope :in_sospeso, -> { where(stato: ["in visione", "da pagare"]) } 
   scope :non_archiviati, -> { where.not(stato: ["archiviato", "completato"]) }
