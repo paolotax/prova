@@ -20,7 +20,7 @@ class AppuntiController < ApplicationController
       @appunti = @appunti.in_visione if params[:filter] == "in_visione"
       @appunti = @appunti.da_pagare if params[:filter] == "da_pagare" 
       @appunti = @appunti.completato if params[:filter] == "completato" 
-      @appunti = @appunti.archiviato if params[:filter] == "archiviato" 
+      @appunti = @appunti.archiviati if params[:filter] == "archiviato" 
 
       @appunti = @appunti.search(params[:q]) if params[:q]
       @pagy, @appunti =  pagy(@appunti.all, items: 30)
