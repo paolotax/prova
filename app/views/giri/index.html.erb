@@ -96,7 +96,7 @@
 					] do %>
 						<%= tag.div id: "tappe-list-#{dom_id giro}-#{dom_id scuola}" do %>							
 							<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: giro.id } %>
-							<% scuola.tappe.select { |t| t.giro == giro && t.persisted? }.each do |tappa| %>
+							<% scuola.tappe.all.select { |t| t.giro == giro && t.persisted? }.each do |tappa| %>
 								<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, orientation: "right" } %>
 							<% end %>
 						<% end %>
@@ -107,7 +107,7 @@
 				<%= tag.div class: "col-span-1 py-2 content-center border-l group" do %>
 					<%= tag.div id: "tappe-list--#{dom_id scuola}" do %>
 						<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: nil } %>
-						<% scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
+						<% scuola.tappe.all.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
 							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, orientation: "right" } %>
 						<% end %>
 					<% end %>
