@@ -1,23 +1,50 @@
-<%= heading do %>	
+<%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
+    
+	<% heading.with_action do %>
+		<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "sm:hidden" %>
+    <% end %>
+
+	<% heading.with_action do %>
+		<%= render TaxButton.new(
+				caption: "Giro",
+				svg_file: "icon-plus.svg",
+				color: "blue",
+				url: url_for( controller: "giri", action: "new", model: nil ),
+				data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
+		) %>	
+    <% end %>
+    
 	<%= h1 {"Giri"} %>
 
-	<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "sm:hidden" %>
-
-
-	<%= render TaxButton.new(
-			caption: "Giro",
-			svg_file: "icon-plus.svg",
-			color: "blue",
-			url: url_for( controller: "giri", action: "new", model: nil ),
-			data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
-	) %>	
-
 <% end %>
+
+
 
 <div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8 xl:gap-x-8">
 	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									
 	<%= render @giri %>
 </div>
+
+
+
+<%= render TaxTabsComponent.new(
+				id: "search_results",	
+				container_css: "sticky z-20 top-16 bg-slate-100 bg-gradient-to-r from-purple-100 from-25% border-b mb-2 rounded-t-lg", 
+				items_decorations: "", 
+				item_css: "block py-2 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 flex whitespace-nowrap py-4 px-2 text-sm font-medium", 
+				active_item_css: "border-b-2 border-indigo-500 text-indigo-600",
+                options_for_select: Adozione::FILTERS) do |tabs| %>
+
+	<% tabs.with_item(href: giri_path) { "Tutte le scuole" } %>
+
+  	<% tabs.with_item(href: giri_path(giorno: "oggi")) { "Oggi" } %>
+  	<% tabs.with_item(href: giri_path(giorno: "domani")) { "Domani" } %>
+	<% tabs.with_item(href: giri_path(giorno: "da_programmare")) { "Da programmare" } %>
+
+<% end %>
+
+
+
 
 <%= turbo_frame_tag "search_results" do %>
 

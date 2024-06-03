@@ -40,8 +40,8 @@ class Tappa < ApplicationRecord
     super
   end
 
-  scope :di_oggi,   -> { where(data_tappa: Time.now.all_day) }
-  scope :di_domani, -> { where(data_tappa: Time.now.tomorrow.all_day) }
+  scope :di_oggi,   -> { where(data_tappa: Time.zone.now.all_day) }
+  scope :di_domani, -> { where(data_tappa: Time.zone.now.tomorrow.all_day) }
   scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
   
   scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids)}

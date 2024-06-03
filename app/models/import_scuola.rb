@@ -94,6 +94,16 @@ class ImportScuola < ApplicationRecord
 
   scope :per_comune_e_direzione, -> { order([:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO, :CODICESCUOLA])}
 
+  scope :delle_tappe_del_giorno, -> (giorno) { joins(:tappe).where("DATE(tappe.data_tappa) = ?", giorno) }
+
+  scope :delle_tappe_da_programmare, -> { joins(:tappe).where("DATE(tappe.data_tappa) IS NULL") }
+
+  scope :delle_tappe_di_oggi, -> { joins(:tappe).where("DATE(tappe.data_tappa) = ?", Date.today) }
+
+  scope :delle_tappe_di_domani, -> { joins(:tappe).where("DATE(tappe.data_tappa) = ?", Date.tomorrow) }
+
+ 
+
   def to_s  
     ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
