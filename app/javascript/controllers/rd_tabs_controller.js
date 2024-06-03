@@ -18,6 +18,7 @@ export default class extends Controller {
   change(event) {
 
     let src = this.optionTarget.options[this.optionTarget.selectedIndex].value
+    console.log(event.currentTarget.tagName)
     this.itemTargets.forEach(item => item.classList.remove(...this.activeItemClasses));
 
     event.currentTarget.classList.add(...this.activeItemClasses);
@@ -33,7 +34,7 @@ export default class extends Controller {
 
   #loadInitialTab() {
     if (!this.initialTabValue) { return; }
-    console.log("this.#initialTab")
+
     this.#initialTab.classList.add(...this.activeItemClasses);
     // non carico il contenuto iniziale ma devo farlo solo quando clicco se no non funziona nella stessa pagina 
     // this.contentTarget.src = this.#initialTab.href;
