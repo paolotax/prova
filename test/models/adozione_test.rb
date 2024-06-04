@@ -12,9 +12,9 @@
 #  pagato_il          :datetime
 #  prezzo_cents       :integer
 #  stato_adozione     :string
-#  status             :integer          default(0)
+#  status             :integer          default("ordine")
 #  team               :string
-#  tipo               :integer          default(0)
+#  tipo               :integer          default("adozione")
 #  tipo_pagamento     :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

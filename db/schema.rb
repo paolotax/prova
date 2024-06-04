@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_19_182547) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_04_043619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -80,6 +80,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_182547) do
     t.index ["user_id"], name: "index_adozioni_on_user_id"
   end
 
+  create_table "adozioni_2024", id: false, force: :cascade do |t|
+    t.text "codicescuola"
+    t.integer "annocorso"
+    t.text "sezioneanno"
+    t.text "tipogradoscuola"
+    t.text "combinazione"
+    t.text "disciplina"
+    t.float "codiceisbn"
+    t.text "autori"
+    t.text "titolo"
+    t.text "sottotitolo"
+    t.text "volume"
+    t.text "editore"
+    t.text "prezzo"
+    t.text "nuovaadoz"
+    t.text "daacquist"
+    t.text "consigliato"
+  end
+
   create_table "appunti", force: :cascade do |t|
     t.bigint "import_scuola_id"
     t.bigint "user_id", null: false
@@ -138,6 +157,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_182547) do
     t.string "CONSIGLIATO"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "anno_scolastico"
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"

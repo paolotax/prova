@@ -150,7 +150,7 @@ namespace :import do
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")   
     if answer == true
-      ImportAdozione.destroy_all
+      ImportAdozione.delete_all
     end
     
     counter = 0

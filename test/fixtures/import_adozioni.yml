@@ -19,6 +19,7 @@
 #  TIPOGRADOSCUOLA :string
 #  TITOLO          :string
 #  VOLUME          :string
+#  anno_scolastico :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
