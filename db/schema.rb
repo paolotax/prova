@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_04_043619) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_07_173309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -81,13 +81,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_043619) do
   end
 
   create_table "adozioni_2024", id: false, force: :cascade do |t|
+    t.text "codiceisbn"
     t.text "codicescuola"
     t.integer "annocorso"
     t.text "sezioneanno"
     t.text "tipogradoscuola"
     t.text "combinazione"
     t.text "disciplina"
-    t.float "codiceisbn"
     t.text "autori"
     t.text "titolo"
     t.text "sottotitolo"
@@ -240,6 +240,28 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_043619) do
     t.datetime "updated_at", null: false
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
     t.index ["user_id"], name: "index_mandati_on_user_id"
+  end
+
+  create_table "new_adozioni", force: :cascade do |t|
+    t.string "CODICESCUOLA"
+    t.string "ANNOCORSO"
+    t.string "SEZIONEANNO"
+    t.string "TIPOGRADOSCUOLA"
+    t.string "COMBINAZIONE"
+    t.string "DISCIPLINA"
+    t.string "CODICEISBN"
+    t.string "AUTORI"
+    t.string "TITOLO"
+    t.string "SOTTOTITOLO"
+    t.string "VOLUME"
+    t.string "EDITORE"
+    t.string "PREZZO"
+    t.string "NUOVAADOZ"
+    t.string "DAACQUIST"
+    t.string "CONSIGLIATO"
+    t.string "anno_scolastico"
+    t.bigint "scuola_id"
+    t.index ["anno_scolastico", "CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "COMBINAZIONE", "CODICEISBN"], name: "index_new_adozioni_on_classe", unique: true
   end
 
   create_table "profiles", force: :cascade do |t|
