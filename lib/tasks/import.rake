@@ -440,7 +440,7 @@ namespace :import do
 
     Dir.glob(csv_dir).each do |file|
       file_size = File.size(file)
-      if file_size > 30 * 1024 * 1024 # 30MB in bytes
+      if file_size > 10 * 1024 * 1024 # 30MB in bytes
 
         FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
         split_files = []
@@ -506,6 +506,8 @@ namespace :import do
         end
       end
     end
+
+    puts "righe inserite #{counter} da #{file_counter} file/s"
   end
 
 

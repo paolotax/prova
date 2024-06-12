@@ -4,6 +4,10 @@ kamal app exec -i 'bin/rails runner "Tappa.all.each {|t| if t.giro then t.user =
 kamal app exec -i 'bin/rails runner "Adozione.pluck(:stato_adozione).uniq"'
 kamal app exec -i 'bin/importmap json'
 
+kamal app exec -i 'bundle exec rake import:new_adozioni'
+
+
+
 u = User.find_by_name("enrico")
 u.confirm 
 
