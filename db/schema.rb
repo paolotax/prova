@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_07_173309) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_15_145225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -262,6 +262,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_07_173309) do
     t.string "anno_scolastico"
     t.bigint "scuola_id"
     t.index ["anno_scolastico", "CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "COMBINAZIONE", "CODICEISBN"], name: "index_new_adozioni_on_classe", unique: true
+  end
+
+  create_table "new_scuole", force: :cascade do |t|
+    t.string "anno_scolastico"
+    t.string "area_geografica"
+    t.string "regione"
+    t.string "provincia"
+    t.string "codice_istituto_riferimento"
+    t.string "denominazione_istituto_riferimento"
+    t.string "codice_scuola"
+    t.string "denominazione"
+    t.string "indirizzo"
+    t.string "cap"
+    t.string "codice_comune"
+    t.string "comune"
+    t.string "descrizione_caratteristica"
+    t.string "tipo_scuola"
+    t.string "indicazione_sede_direttivo"
+    t.string "indicazione_sede_omnicomprensivo"
+    t.string "email"
+    t.string "pec"
+    t.string "sito_web"
+    t.string "sede_scolastica"
+    t.bigint "import_scuola_id"
+    t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
   end
 
   create_table "profiles", force: :cascade do |t|

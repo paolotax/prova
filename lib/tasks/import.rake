@@ -10,7 +10,7 @@ namespace :import do
 
     Benchmark.bm do |x|
       x.report('agg. RELIGIONE') {
-        ImportAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No")
+        NewAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No")
       }
     end
     # start = Time.now
@@ -437,10 +437,9 @@ namespace :import do
     tmp_dir = File.join(Rails.root, 'storage/tmp') 
     #, "r:ISO-8859-1"
 
-
     Dir.glob(csv_dir).each do |file|
       file_size = File.size(file)
-      if file_size > 10 * 1024 * 1024 # 30MB in bytes
+      if file_size > 10 * 1024 * 1024 # 10MB in bytes
 
         FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
         split_files = []
@@ -459,20 +458,11 @@ namespace :import do
           end
         end
 
-        # Senza salvataggio su file
-        # Benchmark.bm do |x|
-        #   x.report("importing split hash\n") do
-        #     split_files.each_with_index do |split_data, index|
-        #       puts split_data
-        #       #ImportAdozione.import split_data[index], validate: false, on_duplicate_key_ignore: true
-        #     end
-        #   end
-        # end
-        
         # con salvataggio su file
         Benchmark.bm do |x|
           x.report("saving csv split files\n") do
             split_files.each_with_index do |split_data, index|
+              
               split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
 
               CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
@@ -489,13 +479,34 @@ namespace :import do
               FileUtils.rm(split_file_path)
             end
           end
+          FileUtils.rm(file)
         end
       else
         items = []
         Benchmark.bm do |x|
           x.report("leggo #{file.split('/').last} #{file_counter}\n") do
             CSV.foreach(file, headers: true, col_sep: ',') do |row|
-              items << row.to_h
+              
+              adozione_hash = {}
+              adozione_hash[:CODICESCUOLA] = row["CODICESCUOLA"]
+              adozione_hash[:ANNOCORSO] = row["ANNOCORSO"]
+              adozione_hash[:SEZIONEANNO] = row["SEZIONEANNO"]
+              adozione_hash[:TIPOGRADOSCUOLA] = row["TIPOGRADOSCUOLA"]
+              adozione_hash[:COMBINAZIONE] = row["COMBINAZIONE"]
+              adozione_hash[:DISCIPLINA] = row["DISCIPLINA"]
+              adozione_hash[:CODICEISBN] = row["CODICEISBN"]
+              adozione_hash[:AUTORI] = row["AUTORI"]
+              adozione_hash[:TITOLO] = row["TITOLO"]
+              adozione_hash[:SOTTOTITOLO] = row["SOTTOTITOLO"]
+              adozione_hash[:VOLUME] = row["VOLUME"]
+              adozione_hash[:EDITORE] = row["EDITORE"]
+              adozione_hash[:PREZZO] = row["PREZZO"]
+              adozione_hash[:NUOVAADOZ] = row["NUOVAADOZ"]
+              adozione_hash[:DAACQUIST] = row["DAACQUIST"]
+              adozione_hash[:CONSIGLIATO] = row["CONSIGLIATO"]
+              adozione_hash[:anno_scolastico] = "202425"
+
+              items << adozione_hash
               counter += 1
             end
           end
@@ -510,7 +521,84 @@ namespace :import do
     puts "righe inserite #{counter} da #{file_counter} file/s"
   end
 
+  desc "NewScuole SCUOLE 2024"
+  task new_scuole: :environment do
 
+    include ActionView::Helpers
+    include ApplicationHelper
+      
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")      
+    if answer == true
+      NewScuola.delete_all
+    end
+    
+    csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')    
+    map_scuole = {
+      "ANNOSCOLASTICO" => "anno_scolastico",
+      "AREAGEOGRAFICA" => "area_geografica",
+      "REGIONE" => "regione",
+      "PROVINCIA" => "provincia",
+      "CODICEISTITUTORIFERIMENTO" => "codice_istituto_riferimento",
+      "DENOMINAZIONEISTITUTORIFERIMENTO" => "denominazione_istituto_riferimento",
+      "CODICESCUOLA" => "codice_scuola",
+      "DENOMINAZIONESCUOLA" => "denominazione",
+      "INDIRIZZOSCUOLA" => "indirizzo",
+      "CAPSCUOLA" => "cap",
+      "CODICECOMUNESCUOLA" => "codice_comune",
+      "DESCRIZIONECOMUNE" => "comune",
+      "DESCRIZIONECARATTERISTICASCUOLA" => "descrizione_caratteristica",
+      "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" => "tipo_scuola",
+      "INDICAZIONESEDEDIRETTIVO" => "indicazione_sede_direttivo",
+      "INDICAZIONESEDEOMNICOMPRENSIVO" => "indicazione_sede_omnicomprensivo",
+      "INDIRIZZOEMAILSCUOLA" => "email",
+      "INDIRIZZOPECSCUOLA" => "pec",
+      "SITOWEBSCUOLA" => "sito_web",
+      "SEDESCOLASTICA" => "sede_scolastica"     
+    }
+
+    Dir.glob(csv_dir).each do |file|
+      import_csv(file, NewScuola, map_scuole)
+    end
+    
+    puts "Totale NewScuola: #{NewScuola.count}"
+  end
+
+  private
+
+  def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'ISO-8859-1' })
+
+    # options = {
+    #   col_sep: ',',
+    #   headers: true,
+    #   encoding: 'ISO-8859-1'
+    # }
+
+    items = []
+    counter = 0
+    file_counter = 0
+
+    Benchmark.bm do |x|      
+      x.report("leggo #{model} #{file.split('/').last} - #{file_counter}") do
+        CSV.foreach(file, headers: options[:headers], col_sep: options[:col_sep], encoding: options[:encoding]) do |row|
+          if mappings.present?
+            row = row.to_h.transform_keys(mappings)
+            items << row
+          else
+            items << row.to_h
+          end
+          counter += 1
+        end
+      end
+
+      x.report("importo #{model}  #{file.split('/').last} - #{file_counter}") do 
+    
+        model.import items, validate: false, on_duplicate_key_ignore: true
+        file_counter += 1
+      end
+    end
+
+    puts "righe inserite #{counter} da #{file_counter} file/s"
+  end
 
 
 
