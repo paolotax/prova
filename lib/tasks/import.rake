@@ -430,95 +430,13 @@ namespace :import do
       NewAdozione.delete_all
     end
     
-    counter = 0
-    file_counter = 0
-    
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
-    tmp_dir = File.join(Rails.root, 'storage/tmp') 
-    #, "r:ISO-8859-1"
 
     Dir.glob(csv_dir).each do |file|
-      file_size = File.size(file)
-      if file_size > 10 * 1024 * 1024 # 10MB in bytes
-
-        FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
-        split_files = []
-        split_counter = 0
-
-        Benchmark.bm do |x|
-          x.report("splitto #{file.split('/').last}\n") do
-            CSV.foreach(file, headers: true, col_sep: ',') do |row|
-              split_files[split_counter] ||= []
-              split_files[split_counter] << row.headers if split_files[split_counter].empty?
-              split_files[split_counter] << row.to_h
-              if split_files[split_counter].size >= 10000 # Split every 10,000 rows
-                split_counter += 1
-              end
-            end
-          end
-        end
-
-        # con salvataggio su file
-        Benchmark.bm do |x|
-          x.report("saving csv split files\n") do
-            split_files.each_with_index do |split_data, index|
-              
-              split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
-
-              CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
-                split_data.each do |row|
-                  csv << row
-                end
-              end
-
-              data = []
-              CSV.foreach(split_file_path, headers: true, col_sep: ',') do |row|
-                data << row.to_h
-              end
-              NewAdozione.import data, validate: false, on_duplicate_key_ignore: true
-              FileUtils.rm(split_file_path)
-            end
-          end
-          FileUtils.rm(file)
-        end
-      else
-        items = []
-        Benchmark.bm do |x|
-          x.report("leggo #{file.split('/').last} #{file_counter}\n") do
-            CSV.foreach(file, headers: true, col_sep: ',') do |row|
-              
-              adozione_hash = {}
-              adozione_hash[:CODICESCUOLA] = row["CODICESCUOLA"]
-              adozione_hash[:ANNOCORSO] = row["ANNOCORSO"]
-              adozione_hash[:SEZIONEANNO] = row["SEZIONEANNO"]
-              adozione_hash[:TIPOGRADOSCUOLA] = row["TIPOGRADOSCUOLA"]
-              adozione_hash[:COMBINAZIONE] = row["COMBINAZIONE"]
-              adozione_hash[:DISCIPLINA] = row["DISCIPLINA"]
-              adozione_hash[:CODICEISBN] = row["CODICEISBN"]
-              adozione_hash[:AUTORI] = row["AUTORI"]
-              adozione_hash[:TITOLO] = row["TITOLO"]
-              adozione_hash[:SOTTOTITOLO] = row["SOTTOTITOLO"]
-              adozione_hash[:VOLUME] = row["VOLUME"]
-              adozione_hash[:EDITORE] = row["EDITORE"]
-              adozione_hash[:PREZZO] = row["PREZZO"]
-              adozione_hash[:NUOVAADOZ] = row["NUOVAADOZ"]
-              adozione_hash[:DAACQUIST] = row["DAACQUIST"]
-              adozione_hash[:CONSIGLIATO] = row["CONSIGLIATO"]
-              adozione_hash[:anno_scolastico] = "202425"
-
-              items << adozione_hash
-              counter += 1
-            end
-          end
-          x.report("scrivo #{file.split('/').last} #{file_counter}\n") do
-            NewAdozione.import items, validate: false, on_duplicate_key_ignore: true
-            file_counter += 1
-          end
-        end
-      end
+      import_csv(file, NewAdozione, nil)
     end
 
-    puts "righe inserite #{counter} da #{file_counter} file/s"
+    puts "Totale #{model} #{model.count} inserite"
   end
 
   desc "NewScuole SCUOLE 2024"
@@ -532,7 +450,8 @@ namespace :import do
       NewScuola.delete_all
     end
     
-    csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')    
+    csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
+    
     map_scuole = {
       "ANNOSCOLASTICO" => "anno_scolastico",
       "AREAGEOGRAFICA" => "area_geografica",
@@ -577,23 +496,56 @@ namespace :import do
     counter = 0
     file_counter = 0
 
-    Benchmark.bm do |x|      
-      x.report("leggo #{model} #{file.split('/').last} - #{file_counter}") do
-        CSV.foreach(file, headers: options[:headers], col_sep: options[:col_sep], encoding: options[:encoding]) do |row|
-          if mappings.present?
-            row = row.to_h.transform_keys(mappings)
-            items << row
-          else
-            items << row.to_h
+    
+    file_size = File.size(file)
+    if file_size > 10 * 1024 * 1024 # 10MB in bytes
+      tmp_dir = File.join(Rails.root, "storage/tmp/#{model.to_s.underscore}")
+      FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
+      split_files = []
+      split_counter = 0
+
+      Benchmark.bm do |x|
+        x.report("splitto #{file.split('/').last}\n") do
+          CSV.foreach(file, headers: true, col_sep: ',') do |row|
+            split_files[split_counter] ||= []
+            split_files[split_counter] << row.headers if split_files[split_counter].empty?
+            split_files[split_counter] << row.to_h
+            if split_files[split_counter].size >= 10000 # Split every 10,000 rows
+              split_counter += 1
+            end
           end
-          counter += 1
+        end
+        x.report("saving csv split files\n") do
+          split_files.each_with_index do |split_data, index|              
+            split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
+            CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
+              split_data.each do |row|
+                csv << row
+              end
+            end
+            import_csv(split_file_path, model, mappings)
+            FileUtils.rm(split_file_path)
+          end
         end
       end
+    else
 
-      x.report("importo #{model}  #{file.split('/').last} - #{file_counter}") do 
-    
-        model.import items, validate: false, on_duplicate_key_ignore: true
-        file_counter += 1
+      Benchmark.bm do |x|        
+        x.report("leggo #{model} #{file.split('/').last} - #{file_counter}") do
+          CSV.foreach(file, headers: options[:headers], col_sep: options[:col_sep], encoding: options[:encoding]) do |row|
+            if mappings.present?
+              row = row.to_h.transform_keys(mappings)
+              items << row
+            else
+              items << row.to_h
+            end
+            counter += 1
+          end
+        end
+        x.report("importo #{model}  #{file.split('/').last} - #{file_counter}") do 
+          model.import items, validate: false, on_duplicate_key_ignore: true
+          file_counter += 1
+        end
       end
     end
 
