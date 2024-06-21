@@ -436,7 +436,7 @@ namespace :import do
       import_csv(file, NewAdozione, nil)
     end
 
-    puts "Totale #{model} #{model.count} inserite"
+    puts "Totale: #{model.count} NewAdozioni inserite"
   end
 
   desc "NewScuole SCUOLE 2024"
@@ -510,28 +510,38 @@ namespace :import do
             split_files[split_counter] ||= []
             split_files[split_counter] << row.headers if split_files[split_counter].empty?
             split_files[split_counter] << row.to_h
+            
             if split_files[split_counter].size >= 10000 # Split every 10,000 rows
+              
+              split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{split_counter}.csv"
+              CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
+                split_files[split_counter].each do |row|
+                  csv << row
+                end
+              end
+              import_csv(split_file_path, model, mappings)
+              #FileUtils.rm(split_file_path)
               split_counter += 1
             end
           end
         end
-        x.report("saving csv split files\n") do
-          split_files.each_with_index do |split_data, index|              
-            split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
-            CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
-              split_data.each do |row|
-                csv << row
-              end
-            end
-            import_csv(split_file_path, model, mappings)
-            FileUtils.rm(split_file_path)
-          end
-        end
+        # x.report("saving csv split files\n") do
+        #   split_files.each_with_index do |split_data, index|              
+        #     split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
+        #     CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
+        #       split_data.each do |row|
+        #         csv << row
+        #       end
+        #     end
+        #     import_csv(split_file_path, model, mappings)
+        #     FileUtils.rm(split_file_path)
+        #   end
+        # end
       end
     else
 
       Benchmark.bm do |x|        
-        x.report("leggo #{model} #{file.split('/').last} - #{file_counter}") do
+        x.report("leggo #{model} #{file.split('/').last}") do
           CSV.foreach(file, headers: options[:headers], col_sep: options[:col_sep], encoding: options[:encoding]) do |row|
             if mappings.present?
               row = row.to_h.transform_keys(mappings)
@@ -542,7 +552,7 @@ namespace :import do
             counter += 1
           end
         end
-        x.report("importo #{model}  #{file.split('/').last} - #{file_counter}") do 
+        x.report("importo #{model}  #{file.split('/').last}") do 
           model.import items, validate: false, on_duplicate_key_ignore: true
           file_counter += 1
         end
