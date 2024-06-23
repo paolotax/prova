@@ -29,22 +29,6 @@ class Stat < ApplicationRecord
         end
     end
 
-    def ordina
-        if self.ordina_per.blank?
-            return []
-        else
-            self.ordina_per.split(",")
-        end
-    end
-
-    def condizioni
-        if self.condizioni.blank?
-            return []
-        else
-            self.condizioni.split(",")
-        end
-    end 
-
     def totali
         if self.seleziona_campi.blank?
             return []
