@@ -79,8 +79,17 @@ trix-toolbar { display: none; }
 .cell-dell_editore,
 .cell-percentuale,
 .cell-classe,
-.cell-sezioni {
+.cell-sezioni,
+.cell-fatturato,
+.cell-copie_x18,
+.cell-provvigioni_20 {
   text-align: right;
+}
+
+.cell-rank,
+.cell-rank_2024,
+.cell-diff_2024 {
+  text-align: center;
 }
 
  
