@@ -78,14 +78,19 @@ trix-toolbar { display: none; }
 .cell-percentuale_editore_in_italia,
 .cell-dell_editore,
 .cell-percentuale,
-.cell-classe,
 .cell-sezioni,
 .cell-fatturato,
+.cell-fatturato_2024,
 .cell-copie_x18,
-.cell-provvigioni_20 {
+.cell-copie_x18_2024,
+.cell-provvigioni_20,
+.cell-provvigioni_20_2024,
+.cell-valore_adottato,
+.cell-valore_adottato_2024 {
   text-align: right;
 }
 
+.cell-classe,
 .cell-rank,
 .cell-rank_2024,
 .cell-diff_2024 {
