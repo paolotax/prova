@@ -10,7 +10,7 @@ namespace :import do
 
     Benchmark.bm do |x|
       x.report('agg. RELIGIONE') {
-        NewAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: "RELIGIONE").update(DAACQUIST: "No")
+        NewAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "]).update(DAACQUIST: "No")
       }
     end
     # start = Time.now

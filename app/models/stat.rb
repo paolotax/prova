@@ -3,7 +3,7 @@
 # Table name: stats
 #
 #  id              :bigint           not null, primary key
-#  descrizione     :string
+#  descrizione     :strin g
 #  seleziona_campi :string
 #  raggruppa_per   :string
 #  ordina_per      :string
@@ -26,6 +26,30 @@ class Stat < ApplicationRecord
             return []
         else
             self.raggruppa_per.split(",")
+        end
+    end
+
+    def ordina
+        if self.ordina_per.blank?
+            return []
+        else
+            self.ordina_per.split(",")
+        end
+    end
+
+    def condizioni
+        if self.condizioni.blank?
+            return []
+        else
+            self.condizioni.split(",")
+        end
+    end 
+
+    def totali
+        if self.seleziona_campi.blank?
+            return []
+        else
+            self.seleziona_campi.split(",")
         end
     end
 

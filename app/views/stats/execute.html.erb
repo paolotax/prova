@@ -54,6 +54,21 @@
                             <% end %>
                         <% end %>
                     <% end %>
+
+                    <%# Totali   %>
+                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>">
+                        <% group_result.first.keys.each do |header| %>
+                            <% unless @stat.raggruppa.include? header %>
+                                <% if @stat.totali.include? header %>
+                                    <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold">
+                                        <%= group_result.map { |r| r[header] }.sum %>
+                                    </th>
+                                <% else %>
+                                    <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"></th>
+                                <% end %>
+                            <% end %> 
+                        <% end %>   
+                    </tr>
                 <% end %>              
             </tbody>
         </table>
