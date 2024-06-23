@@ -10,16 +10,12 @@ namespace :import do
 
     Benchmark.bm do |x|
       x.report('agg. RELIGIONE') {
-        NewAdozione.where(TIPOGRADOSCUOLA: "EE").where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "]).update(DAACQUIST: "No")
+        NewAdozione.
+          where(TIPOGRADOSCUOLA: "EE")
+          .where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "])
+          .update_all(DAACQUIST: "No")
       }
     end
-    # start = Time.now
-    # ImportAdozione.elementari.where(ANNOCORSO: "1").update(ANNOCORSO: "1 - prima")
-    # ImportAdozione.elementari.where(ANNOCORSO: "2").update(ANNOCORSO: "2 - seconda")
-    # ImportAdozione.elementari.where(ANNOCORSO: "3").update(ANNOCORSO: "3 - terza")
-    # ImportAdozione.elementari.where(ANNOCORSO: "4").update(ANNOCORSO: "4 - quarta")
-    # ImportAdozione.elementari.where(ANNOCORSO: "5").update(ANNOCORSO: "5 - quinta")
-    # puts "classi aggiornate in #{(Time.now - start).to_i} secondi"
   end
 
   desc "cambia SUPERIORI No-Nt"
@@ -27,7 +23,7 @@ namespace :import do
 
     Benchmark.bm do |x|
       x.report('agg. SUPERIORI') {
-        ImportAdozione.where(TIPOGRADOSCUOLA: ["NO", "NT"]).update(TIPOGRADOSCUOLA: "SU")
+        ImportAdozione.where(TIPOGRADOSCUOLA: ["NO", "NT"]).update_all(TIPOGRADOSCUOLA: "SU")
       }
     end
   end
@@ -498,7 +494,9 @@ namespace :import do
 
     
     file_size = File.size(file)
+    
     if file_size > 10 * 1024 * 1024 # 10MB in bytes
+      
       tmp_dir = File.join(Rails.root, "storage/tmp/#{model.to_s.underscore}")
       FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
       split_files = []
@@ -511,8 +509,7 @@ namespace :import do
             split_files[split_counter] << row.headers if split_files[split_counter].empty?
             split_files[split_counter] << row.to_h
             
-            if split_files[split_counter].size >= 10000 # Split every 10,000 rows
-              
+            if split_files[split_counter].size >= 10000 # Split every 10,000 rows             
               split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{split_counter}.csv"
               CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
                 split_files[split_counter].each do |row|
@@ -525,19 +522,8 @@ namespace :import do
             end
           end
         end
-        # x.report("saving csv split files\n") do
-        #   split_files.each_with_index do |split_data, index|              
-        #     split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{index + 1}.csv"
-        #     CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
-        #       split_data.each do |row|
-        #         csv << row
-        #       end
-        #     end
-        #     import_csv(split_file_path, model, mappings)
-        #     FileUtils.rm(split_file_path)
-        #   end
-        # end
       end
+    
     else
 
       Benchmark.bm do |x|        

@@ -49,7 +49,13 @@
                         %>
                             <% r.values.each_with_index do |value, index| %>
                                 <% unless @stat.raggruppa.include? r.keys[index] %>                 
-                                    <td class="cell-<%= r.keys[index]%> border px-4 py-2"><%= value %></td>
+                                    <td class="cell-<%= r.keys[index]%> border px-4 py-2">
+                                        <% if  value.is_a? BigDecimal %>
+                                            <%= number_to_currency(value, unit: "", separator: ",", delimiter: ".") %>
+                                        <% else %>
+                                            <%= value %>
+                                        <% end %>
+                                    </td>
                                 <% end %>
                             <% end %>
                         <% end %>
@@ -75,4 +81,5 @@
     </div>  
     
     <% @result.clear %>
+    
 <% end %>
