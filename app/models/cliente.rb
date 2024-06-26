@@ -32,8 +32,8 @@
 class Cliente < ApplicationRecord
 
   def self.import(file)
-    CSV.foreach(file.path, headers: true) do |row|
-      raise row.inspect
+    CSV.foreach(file.path, headers: true, col_sep: ';') do |row|
+      #raise row.inspect
       Cliente.create! row.to_hash
     end
   end
