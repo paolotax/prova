@@ -89,6 +89,8 @@ gem 'rack-mini-profiler', require: false
 gem "mapkick-rb"
 gem "geocoder"
 
+gem "roo", "~> 2.10.0"
+
 
 
 source "https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private" do

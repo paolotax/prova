@@ -9,7 +9,14 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  
   mount RailsDesigner::Engine, at: '/rails_designer'
+
+  resources :clienti do
+    collection do
+      post 'import'
+    end
+  end
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
@@ -109,8 +116,8 @@ Rails.application.routes.draw do
 
   get 'oggi', to: 'pages#oggi'
   
-  get 'clienti',      to: 'clienti#index'
-  get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
+  # get 'clienti',      to: 'clienti#index'
+  # get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  
   get 'fornitori',      to: 'fornitori#index'
   get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'

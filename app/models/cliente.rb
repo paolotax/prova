@@ -29,10 +29,25 @@
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #
-require "test_helper"
+class Cliente < ApplicationRecord
 
-class ClienteTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  def self.import(file)
+    CSV.foreach(file.path, headers: true) do |row|
+      raise row.inspect
+      Cliente.create! row.to_hash
+    end
+  end
+
+  def self.search_any_word(search)
+    where("cliente ILIKE :search", search: "%#{search}%")
+  end
+
+  def self.search(search)
+    if search
+      where("cliente ILIKE :search", search: "%#{search}%")
+    else
+      all
+    end
+  end
+
 end

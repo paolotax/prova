@@ -1,0 +1,81 @@
+# == Schema Information
+#
+# Table name: clienti
+#
+#  id                      :bigint           not null, primary key
+#  banca                   :string
+#  beneficiario            :string
+#  cap                     :string
+#  codice_cliente          :string
+#  codice_eori             :string
+#  codice_fiscale          :string
+#  cognome                 :string
+#  comune                  :string
+#  condizioni_di_pagamento :string
+#  denominazione           :string
+#  email                   :string
+#  id_paese                :string
+#  indirizzo               :string
+#  indirizzo_telematico    :string
+#  metodo_di_pagamento     :string
+#  nazione                 :string
+#  nome                    :string
+#  numero_civico           :string
+#  partita_iva             :string
+#  pec                     :string
+#  provincia               :string
+#  telefono                :string
+#  tipo_cliente            :string
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#
+
+one:
+  codice_cliente: MyString
+  tipo_cliente: MyString
+  indirizzo_telematico: MyString
+  email: MyString
+  pec: MyString
+  telefono: MyString
+  id_paese: MyString
+  partita_iva: MyString
+  codice_fiscale: MyString
+  denominazione: MyString
+  nome: MyString
+  cognome: MyString
+  codice_eori: MyString
+  nazione: MyString
+  cap: MyString
+  provincia: MyString
+  comune: MyString
+  indirizzo: MyString
+  numero_civico: MyString
+  beneficiario: MyString
+  condizioni_di_pagamento: MyString
+  metodo_di_pagamento: MyString
+  banca: MyString
+
+two:
+  codice_cliente: MyString
+  tipo_cliente: MyString
+  indirizzo_telematico: MyString
+  email: MyString
+  pec: MyString
+  telefono: MyString
+  id_paese: MyString
+  partita_iva: MyString
+  codice_fiscale: MyString
+  denominazione: MyString
+  nome: MyString
+  cognome: MyString
+  codice_eori: MyString
+  nazione: MyString
+  cap: MyString
+  provincia: MyString
+  comune: MyString
+  indirizzo: MyString
+  numero_civico: MyString
+  beneficiario: MyString
+  condizioni_di_pagamento: MyString
+  metodo_di_pagamento: MyString
+  banca: MyString

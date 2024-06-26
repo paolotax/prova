@@ -19,3 +19,8 @@
   </ul>
 
 <% end %>
+
+<%= form_tag import_clienti_path, multipart: :true do %>
+  <%= file_field_tag :file, accept: 'text/csv' %>
+  <%= submit_tag "Importa" %>
+<% end %>
