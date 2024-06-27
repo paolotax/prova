@@ -4,6 +4,7 @@ class ClientiController < ApplicationController
   # GET /clienti or /clienti.json
   def index
     @clienti = Cliente.all
+    @import = Cliente::Import.new
   end
 
   # GET /clienti/1 or /clienti/1.json
@@ -58,8 +59,14 @@ class ClientiController < ApplicationController
   end
 
   def import
-    Cliente.import(params[:file])
-    redirect_to clienti_url, notice: "Clienti imported."
+    @import = Cliente::Import.new cliente_import_params
+    if @import.save
+      redirect_to clienti_url, notice: "#{@import.imported_count} clienti imported."
+    else
+      @clienti = Cliente.all
+      flash.now[:error] = @import.errors.full_messages.to_sentence
+      render :index
+    end
   end
 
   private
@@ -71,5 +78,9 @@ class ClientiController < ApplicationController
     # Only allow a list of trusted parameters through.
     def cliente_params
       params.require(:cliente).permit(:file, :codice_cliente, :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, :id_paese, :partita_iva, :codice_fiscale, :denominazione, :nome, :cognome, :codice_eori, :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
+    end
+
+    def cliente_import_params
+      params.require(:cliente_import).permit(:file)
     end
 end

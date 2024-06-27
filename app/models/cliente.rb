@@ -31,23 +31,18 @@
 #
 class Cliente < ApplicationRecord
 
-  def self.import(file)
-    CSV.foreach(file.path, headers: true, col_sep: ';') do |row|
-      #raise row.inspect
-      Cliente.create! row.to_hash
-    end
-  end
+  #validates :partita_iva, presence: true, uniqueness: true
 
-  def self.search_any_word(search)
-    where("cliente ILIKE :search", search: "%#{search}%")
-  end
-
-  def self.search(search)
-    if search
-      where("cliente ILIKE :search", search: "%#{search}%")
+  def self.assign_from_row(row)
+    if row[:partita_iva].blank?
+      cliente = Cliente.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize
+      
     else
-      all
+      cliente = Cliente.where(partita_iva: row[:partita_iva]).first_or_initialize
     end
+    cliente.assign_attributes row.to_hash
+    cliente
   end
 
+  
 end
