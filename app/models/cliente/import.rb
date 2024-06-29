@@ -4,8 +4,11 @@ class Cliente::Import
 
 	def process!
 		@imported_count = 0
-		CSV.foreach(file.path, headers: true, col_sep: ';', header_converters: :symbol) do |row|
-			cliente = Cliente.assign_from_row(row)
+
+		# CSV.foreach(file.path, headers: true, col_sep: ';', header_converters: :symbol) do |row|
+		
+		SmarterCSV.process(file.path) do |row|
+			cliente = Cliente.assign_from_row(row.first)
 			if cliente.save
 				@imported_count += 1
 			else
@@ -13,7 +16,6 @@ class Cliente::Import
 				return false
 			end
 		end
-		true
 	end
 
 	def save

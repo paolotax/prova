@@ -62,12 +62,14 @@
 					Tutto ciò che ti serve per questa Propaganda.
 				</h1>
 				<p class="mt-6 text-lg leading-8 text-gray-600">
-					Anim aute id magna aliqua ad ad non deserunt sunt. 
-					Qui irure qui lorem cupidatat commodo. 
-					Elit sunt amet fugiat veniam occaecat fugiat aliqua.
-					
+
 					Tutte le scuole <%= @totale_scuole %> e
-					le <%= @totale_adozioni %> adozioni grazie al <br/><%= link_to("Portale Unico dei Dati della Scuola", "https://dati.istruzione.it/opendata/opendata/", class: "font-semibold") %>.
+					le <%= @totale_adozioni %> adozioni 2025 grazie al <br/><%= link_to("Portale Unico dei Dati della Scuola", "https://dati.istruzione.it/opendata/opendata/", class: "font-semibold") %>.
+
+					<br/>
+					
+					Tutte le scuole <%= @old_totale_scuole %> e
+					le <%= @old_totale_adozioni %> adozioni 2024 grazie al <br/><%= link_to("Portale Unico dei Dati della Scuola", "https://dati.istruzione.it/opendata/opendata/", class: "font-semibold") %>.
 				</p>
 				<div class="mt-10 flex items-center justify-center gap-x-6">
 					<a href="<%= new_user_registration_path %>" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">

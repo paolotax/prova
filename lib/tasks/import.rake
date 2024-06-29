@@ -16,6 +16,7 @@ namespace :import do
           .update_all(DAACQUIST: "No")
       }
     end
+
   end
 
   desc "cambia SUPERIORI No-Nt"
@@ -432,7 +433,7 @@ namespace :import do
       import_csv(file, NewAdozione, nil)
     end
 
-    puts "Totale: #{model.count} NewAdozioni inserite"
+    puts "Totale: #{NewAdozione.count} NewAdozioni inserite"
   end
 
   desc "NewScuole SCUOLE 2024"
@@ -478,53 +479,56 @@ namespace :import do
     puts "Totale NewScuola: #{NewScuola.count}"
   end
 
+  
+  
+  
+  
+  
+  
+  desc "Splitta file adozioni"
+  task splitta_adozioni: :environment do
+    csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
+    Dir.glob(csv_dir).each do |file|
+      #puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
+      if File.size(file) > 5 * 1024 * 1024 # 7MB in bytes
+        split_csv(file, File.size(file) / (3 * 1024 * 1024))
+        FileUtils.rm(file)
+      end
+    end
+  end
+
+
+  
+  
+  
+  
+  
   private
 
-  def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'ISO-8859-1' })
-
-    # options = {
-    #   col_sep: ',',
-    #   headers: true,
-    #   encoding: 'ISO-8859-1'
-    # }
-
-    items = []
-    counter = 0
-    file_counter = 0
-
+    def split_csv(original, file_count)
+      header_lines = 1
+      lines = Integer(`cat #{original} | wc -l`) - header_lines
+      lines_per_file = (lines / file_count.to_f).ceil + header_lines
+      header = `head -n #{header_lines} #{original}`
     
-    file_size = File.size(file)
+      start = header_lines
+      file_count.times.map do |i|
+        finish = start + lines_per_file
+        file = "#{original}-#{i}.csv"
     
-    if file_size > 10 * 1024 * 1024 # 10MB in bytes
-      
-      tmp_dir = File.join(Rails.root, "storage/tmp/#{model.to_s.underscore}")
-      FileUtils.mkdir_p(tmp_dir) unless File.directory?(tmp_dir)
-      split_files = []
-      split_counter = 0
-
-      Benchmark.bm do |x|
-        x.report("splitto #{file.split('/').last}\n") do
-          CSV.foreach(file, headers: true, col_sep: ',') do |row|
-            split_files[split_counter] ||= []
-            split_files[split_counter] << row.headers if split_files[split_counter].empty?
-            split_files[split_counter] << row.to_h
-            
-            if split_files[split_counter].size >= 10000 # Split every 10,000 rows             
-              split_file_path = "#{tmp_dir}/#{File.basename(file, '.csv')}_part#{split_counter}.csv"
-              CSV.open(split_file_path, 'w', headers: true, col_sep: ',') do |csv|
-                split_files[split_counter].each do |row|
-                  csv << row
-                end
-              end
-              import_csv(split_file_path, model, mappings)
-              #FileUtils.rm(split_file_path)
-              split_counter += 1
-            end
-          end
-        end
+        File.write(file, header)
+        sh "tail -n #{lines - start} #{original} | head -n #{lines_per_file} >> #{file}"
+    
+        start = finish
+        file
       end
-    
-    else
+    end
+
+    def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'ISO-8859-1' })
+
+      items = []
+      counter = 0
+      file_counter = 0
 
       Benchmark.bm do |x|        
         x.report("leggo #{model} #{file.split('/').last}") do
@@ -543,10 +547,9 @@ namespace :import do
           file_counter += 1
         end
       end
+      
+      puts "righe inserite #{counter} da #{file_counter} file/s"
     end
-
-    puts "righe inserite #{counter} da #{file_counter} file/s"
-  end
 
 
 

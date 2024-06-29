@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_24_194604) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_29_101242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -271,25 +271,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_24_194604) do
   end
 
   create_table "new_adozioni", force: :cascade do |t|
-    t.string "CODICESCUOLA"
-    t.string "ANNOCORSO"
-    t.string "SEZIONEANNO"
-    t.string "TIPOGRADOSCUOLA"
-    t.string "COMBINAZIONE"
-    t.string "DISCIPLINA"
-    t.string "CODICEISBN"
-    t.string "AUTORI"
-    t.string "TITOLO"
-    t.string "SOTTOTITOLO"
-    t.string "VOLUME"
-    t.string "EDITORE"
-    t.string "PREZZO"
-    t.string "NUOVAADOZ"
-    t.string "DAACQUIST"
-    t.string "CONSIGLIATO"
+    t.string "codicescuola"
+    t.string "annocorso"
+    t.string "sezioneanno"
+    t.string "tipogradoscuola"
+    t.string "combinazione"
+    t.string "disciplina"
+    t.string "codiceisbn"
+    t.string "autori"
+    t.string "titolo"
+    t.string "sottotitolo"
+    t.string "volume"
+    t.string "editore"
+    t.string "prezzo"
+    t.string "nuovaadoz"
+    t.string "daacquist"
+    t.string "consigliato"
     t.string "anno_scolastico"
-    t.bigint "scuola_id"
-    t.index ["anno_scolastico", "CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "COMBINAZIONE", "CODICEISBN"], name: "index_new_adozioni_on_classe", unique: true
+    t.bigint "import_scuola_id"
+    t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_new_adozioni_on_classe", unique: true
   end
 
   create_table "new_scuole", force: :cascade do |t|

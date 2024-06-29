@@ -34,9 +34,8 @@ class Cliente < ApplicationRecord
   #validates :partita_iva, presence: true, uniqueness: true
 
   def self.assign_from_row(row)
-    if row[:partita_iva].blank?
-      cliente = Cliente.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize
-      
+    if row[:partita_iva].nil?
+      cliente = Cliente.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize      
     else
       cliente = Cliente.where(partita_iva: row[:partita_iva]).first_or_initialize
     end

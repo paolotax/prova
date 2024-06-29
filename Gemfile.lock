@@ -374,6 +374,7 @@ GEM
       connection_pool (>= 2.3.0)
       rack (>= 2.2.4)
       redis-client (>= 0.19.0)
+    smarter_csv (1.10.3)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -477,6 +478,7 @@ DEPENDENCIES
   scenic (~> 1.7)
   selenium-webdriver
   sidekiq (~> 7.2)
+  smarter_csv
   sprockets-rails
   stimulus-rails
   tailwindcss-rails
