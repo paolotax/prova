@@ -11,9 +11,9 @@ namespace :import do
     Benchmark.bm do |x|
       x.report('agg. RELIGIONE') {
         NewAdozione.
-          where(TIPOGRADOSCUOLA: "EE")
-          .where(ANNOCORSO: ["2", "3", "5"], DISCIPLINA: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "])
-          .update_all(DAACQUIST: "No")
+          where(tipogradoscuola: "EE")
+          .where(annocorso: ["2", "3", "5"], disciplina: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "])
+          .update_all(daacquist: "No")
       }
     end
 
@@ -426,11 +426,30 @@ namespace :import do
     if answer == true
       NewAdozione.delete_all
     end
+
+    map_adozioni = {
+      "ANNOCORSO" => "annocorso",
+      "AUTORI" => "autori",
+      "CODICEISBN" => "codiceisbn",
+      "CODICESCUOLA" => "codicescuola",
+      "COMBINAZIONE" => "combinazione",
+      "CONSIGLIATO" => "consigliato",
+      "DAACQUIST" => "daacquist",
+      "DISCIPLINA" => "disciplina",
+      "EDITORE" => "editore",
+      "NUOVAADOZ" => "nuovaadoz",
+      "PREZZO" => "prezzo",
+      "SEZIONEANNO" => "sezioneanno",
+      "SOTTOTITOLO" => "sottotitolo",
+      "TIPOGRADOSCUOLA" => "tipogradoscuola",
+      "TITOLO" => "titolo",
+      "VOLUME" => "volume", 
+    }
     
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
 
     Dir.glob(csv_dir).each do |file|
-      import_csv(file, NewAdozione, nil)
+      import_csv(file, NewAdozione, map_adozioni)
     end
 
     puts "Totale: #{NewAdozione.count} NewAdozioni inserite"
@@ -477,6 +496,13 @@ namespace :import do
     end
     
     puts "Totale NewScuola: #{NewScuola.count}"
+
+    sql = 'UPDATE new_scuole SET import_scuola_id = import_scuole.id FROM import_scuole WHERE import_scuole."CODICESCUOLA" = new_scuole.codice_scuola'
+    ActiveRecord::Base.connection.execute(sql)
+
+    puts "Totale NewScuola con import_scuola_id: #{NewScuola.where.not(import_scuola_id: nil).count}"
+
+
   end
 
   
