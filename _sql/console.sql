@@ -1,3 +1,4 @@
+-- nr_scuole e nr_sezioni per editore elementari
 SELECT "import_adozioni"."EDITORE",
        COUNT(DISTINCT "import_scuole"."id") nr_scuole,
        COUNT("import_adozioni"."id") nr_sezioni
@@ -8,8 +9,19 @@ AND "import_adozioni"."DAACQUIST" = 'Si'
 GROUP BY "import_adozioni"."EDITORE"
 ORDER BY nr_sezioni DESC;
 
-SELECT "import_scuole"."REGIONE", "import_scuole"."PROVINCIA", "EDITORE", count(DISTINCT "import_scuole"."id") nr_scuole, count("import_adozioni". "id") nr_adozioni FROM "import_scuole" INNER JOIN "import_adozioni" ON "import_adozioni"."CODICESCUOLA" = "import_scuole"."CODICESCUOLA" WHERE "import_scuole"."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" IN ('SCUOLA PRIMARIA', 'SCUOLA PRIMARIA NON STATALE', 'ISTITUTO COMPRENSIVO') GROUP BY "import_scuole"."REGIONE", "import_scuole"."PROVINCIA", "EDITORE"
+-- nr_scuole nr_adozioni per provincia
+SELECT
+    "import_scuole"."REGIONE", 
+    "import_scuole"."PROVINCIA", 
+    "EDITORE", count(DISTINCT "import_scuole"."id") nr_scuole, 
+    count("import_adozioni". "id") nr_adozioni 
+FROM "import_scuole" 
+    INNER JOIN "import_adozioni" ON "import_adozioni"."CODICESCUOLA" = "import_scuole"."CODICESCUOLA" 
+WHERE "import_scuole"."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" IN ('SCUOLA PRIMARIA', 'SCUOLA PRIMARIA NON STATALE', 'ISTITUTO COMPRENSIVO') 
+GROUP BY "import_scuole"."REGIONE", "import_scuole"."PROVINCIA", "EDITORE"
 
+
+-- classifica adozioni per disciplina, editore, anno corso
 SELECT
     "import_adozioni"."TIPOGRADOSCUOLA",
     "import_adozioni"."ANNOCORSO",

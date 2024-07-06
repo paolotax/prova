@@ -25,16 +25,17 @@ SELECT DISTINCT
             100::double precision)::numeric, 2)
                                                 AS percentuale_titolo_italia
 FROM new_scuole
-JOIN new_adozioni ON new_adozioni.codicescuola = new_scuole.codice_scuola::text
-JOIN tipi_scuole ON new_scuole.tipo_scuola::text = tipi_scuole.tipo::text
-WHERE tipi_scuole.grado::text = 'E'::text
+JOIN new_adozioni ON new_adozioni.codicescuola = new_scuole.codice_scuola
+JOIN tipi_scuole ON new_scuole.tipo_scuola = tipi_scuole.tipo
+WHERE tipi_scuole.grado = 'E'
 AND (new_adozioni.annocorso = ANY
-        (ARRAY ['1'::character varying::text, '4'::character varying::text]))
-AND (new_adozioni.disciplina::text = ANY
-        (ARRAY ['IL LIBRO DELLA PRIMA CLASSE'::character varying::text,
-            'SUSSIDIARIO DEI LINGUAGGI'::character varying::text,
-            'SUSSIDIARIO DELLE DISCIPLINE'::character varying::text,
-            'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO) '::character varying::text]))
+        (ARRAY ['1', '4']))
+AND (new_adozioni.disciplina = ANY
+        (ARRAY ['IL LIBRO DELLA PRIMA CLASSE',
+            'SUSSIDIARIO DEI LINGUAGGI',
+            'SUSSIDIARIO DELLE DISCIPLINE',
+            'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO) ',
+            'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)']))
 
 ORDER BY classe, disciplina, titolo
 )

@@ -60,4 +60,12 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (valore.to_f * 100).to_i
   end
 
+  def self.assign_from_row(row)
+    libro = Current.user.libri.where(codice_isbn: row[:codice_isbn]).first_or_initialize
+    libro.assign_attributes row
+    puts "Libro: #{libro.inspect}"
+    libro
+  end
+
+
 end
