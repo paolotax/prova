@@ -35,7 +35,11 @@ Rails.application.routes.draw do
     end
   end
     
-  resources :libri
+  resources :libri do
+    collection do
+      post 'import_ministeriali'
+    end
+  end
   
   resources :tipi_scuole, only: [:index, :update]
   

@@ -61,9 +61,11 @@ class Libro < ApplicationRecord
   end
 
   def self.assign_from_row(row)
-    libro = Current.user.libri.where(codice_isbn: row[:codice_isbn]).first_or_initialize
-    libro.assign_attributes row
-    puts "Libro: #{libro.inspect}"
+    libro = Libro.where(codice_isbn: row["codice_isbn"], user_id: Current.user.id).first_or_initialize
+    puts "row: #{row.inspect}"
+    puts "libro: #{libro.inspect}"
+    libro.assign_attributes row.to_hash
+    puts "libro 2: #{libro.inspect}"
     libro
   end
 

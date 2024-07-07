@@ -54,6 +54,15 @@ class LibriController < ApplicationController
     end
   end
 
+  def import_ministeriali
+    @import = Libro::Import.new(file: "_sql/sql_import_ministeriali.sql")
+    if @import.import_ministeriali!
+      redirect_to libri_url, notice: "Libri importati!"
+    else
+      redirect_to libri_url, alert: "Errore nell'importazione dei libri!"
+    end
+  end
+
   private
 
     def set_libro
