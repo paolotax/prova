@@ -550,7 +550,7 @@ namespace :import do
       end
     end
 
-    def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'ISO-8859-1' })
+    def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'UTF-8' })
 
       items = []
       counter = 0
