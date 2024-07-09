@@ -1,7 +1,5 @@
 <%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
     
-
-
     <% heading.with_action do %>
         <%= form_with url: import_ministeriali_libri_path, method: :post do |f| %>
             <%= f.submit "Importa Ministeriali" %>
@@ -21,21 +19,6 @@
     <%= h1 {"Libri"} %>
 
 <% end %>
-
-
-<%= heading do %>	
-	<%= h1 {"Libri"} %>
-        
-        <%= render TaxButton.new(
-                caption: "Nuovo",
-                svg_file: "icon-plus.svg",
-                color: "blue",
-                url: url_for( controller: "libri", action: "new", model: @libro ),
-                data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
-        ) %>
-	
-<% end %>
-
 
 <%= turbo_frame_tag "search_results" do %>
     <div class="w-full">

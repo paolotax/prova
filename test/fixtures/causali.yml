@@ -1,0 +1,24 @@
+# == Schema Information
+#
+# Table name: causali
+#
+#  id             :bigint           not null, primary key
+#  causale        :string
+#  magazzino      :string
+#  movimento      :integer
+#  tipo_movimento :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+
+one:
+  causale: MyString
+  magazzino: MyString
+  tipo_movimento: 
+  movimento: MyString
+
+two:
+  causale: MyString
+  magazzino: MyString
+  tipo_movimento: 
+  movimento: MyString

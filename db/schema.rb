@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_29_101242) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_09_184307) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -117,6 +117,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_29_101242) do
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"
+  end
+
+  create_table "causali", force: :cascade do |t|
+    t.string "causale"
+    t.string "magazzino"
+    t.integer "tipo_movimento"
+    t.integer "movimento"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "clienti", force: :cascade do |t|

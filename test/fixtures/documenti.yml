@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  numero_documento: 1
+  user: one
+  cliente: one
+  data_documento: 2024-07-09
+  causale: one
+  tipo_pagamento: 1
+  consegnato_il: 2024-07-09
+  pagato_il: 1
+  status: 1
+  iva_cents: 
+  totale_cents: 
+  spese_cents: 
+  totale_copie: 1
+
+two:
+  numero_documento: 1
+  user: two
+  cliente: two
+  data_documento: 2024-07-09
+  causale: two
+  tipo_pagamento: 1
+  consegnato_il: 2024-07-09
+  pagato_il: 1
+  status: 1
+  iva_cents: 
+  totale_cents: 
+  spese_cents: 
+  totale_copie: 1

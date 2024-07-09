@@ -9,6 +9,8 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  resources :documenti
+  resources :causali
   
   mount RailsDesigner::Engine, at: '/rails_designer'
 
@@ -134,9 +136,6 @@ Rails.application.routes.draw do
 
   get 'articoli',     to: 'articoli#index'
   get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
-
-  get 'documenti',     to: 'documenti#index'
-  get 'documenti/:id', to: 'documenti#show', as: 'documento'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
