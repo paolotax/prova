@@ -1,4 +1,5 @@
 class DocumentiController < ApplicationController
+
   before_action :authenticate_user!
   before_action :set_documento, only: %i[ show edit update destroy ]
 
@@ -20,7 +21,7 @@ class DocumentiController < ApplicationController
 
   # GET /documenti/new
   def new
-    @documento = Documento.new
+    @documento = current_user.documenti.build
   end
 
   # GET /documenti/1/edit

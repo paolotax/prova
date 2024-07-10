@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_09_184307) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_10_044911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -154,6 +154,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_09_184307) do
     t.string "banca"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_clienti_on_user_id"
+  end
+
+  create_table "documenti", force: :cascade do |t|
+    t.integer "numero_documento"
+    t.bigint "user_id", null: false
+    t.bigint "cliente_id", null: false
+    t.date "data_documento"
+    t.bigint "causale_id", null: false
+    t.integer "tipo_pagamento"
+    t.date "consegnato_il"
+    t.integer "pagato_il"
+    t.integer "status"
+    t.bigint "iva_cents"
+    t.bigint "totale_cents"
+    t.bigint "spese_cents"
+    t.integer "totale_copie"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["causale_id"], name: "index_documenti_on_causale_id"
+    t.index ["cliente_id"], name: "index_documenti_on_cliente_id"
+    t.index ["user_id"], name: "index_documenti_on_user_id"
   end
 
   create_table "editori", force: :cascade do |t|
@@ -426,6 +449,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_09_184307) do
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
+  add_foreign_key "clienti", "users"
+  add_foreign_key "documenti", "causali"
+  add_foreign_key "documenti", "clienti"
+  add_foreign_key "documenti", "users"
   add_foreign_key "giri", "users"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
