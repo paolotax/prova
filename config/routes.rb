@@ -9,8 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
-  resources :documenti
-  resources :causali
+
   
   mount RailsDesigner::Engine, at: '/rails_designer'
 
@@ -19,6 +18,9 @@ Rails.application.routes.draw do
       post 'import'
     end
   end
+  
+  resources :documenti
+  resources :causali
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'

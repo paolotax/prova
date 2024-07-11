@@ -1,5 +1,4 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
-const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   content: [
@@ -23,13 +22,3 @@ module.exports = {
     require('@tailwindcss/container-queries'),
   ]
 }
-
-module.exports = plugin(function({ addUtilities }) {
-  addUtilities({
-    '.smoothTransition': {
-      'transition-property': 'all',
-      'transition-timing-function': 'ease-in-out',
-      'transition-duration': '200ms',
-    },
-  })
-})
