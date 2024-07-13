@@ -28,6 +28,11 @@
 #  tipo_cliente            :string
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  user_id                 :bigint
+#
+# Indexes
+#
+#  index_clienti_on_user_id  (user_id)
 #
 class Cliente < ApplicationRecord
 
@@ -46,6 +51,10 @@ class Cliente < ApplicationRecord
   end
 
   def to_s
+    "#{denominazione} - #{comune}"
+  end
+
+  def to_combobox_display
     "#{denominazione} - #{comune}"
   end
 

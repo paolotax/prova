@@ -30,7 +30,7 @@ class DocumentiController < ApplicationController
 
   # POST /documenti or /documenti.json
   def create
-    @documento = Documento.new(documento_params)
+    @documento = current_user.documenti.build(documento_params)
 
     respond_to do |format|
       if @documento.save

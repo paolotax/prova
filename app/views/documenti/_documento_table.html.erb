@@ -1,3 +1,7 @@
+
+
+
+
 <tr class="border-b border-gray-200">
 	<td class="relative py-5 pr-6">
 		
@@ -5,7 +9,7 @@
 			<div class="flex-auto">
 				<div class="flex items-start gap-x-3">
 					<div class="text-sm font-medium leading-6 text-gray-900">
-						<%= documento.tipo_documento %>
+						<%= documento.causale %>
 					</div>
 				</div>
 				<div class="mt-1 text-xs leading-5 text-gray-500">
@@ -22,7 +26,7 @@
 	
 	<td class="hidden py-5 pr-6 sm:table-cell">
 		<div class="text-sm leading-6 text-gray-900">
-			<%= documento.fornitore %>
+			<%= documento.cliente %>
 		</div> 
 		<div class="flex">
 			<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -34,12 +38,12 @@
 
 	<td class="py-5 text-right">
 		<div class="flex justify-end">      
-			<%= Money.from_cents( documento.totale_documento, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
+			<%= Money.from_cents( documento.totale_cents, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
 		</div>
 		<div class="mt-1 text-xs leading-5 text-gray-500">
 			copie 
 			<span class="text-gray-900">
-				<%= documento.quantita_totale %>
+				<%= documento.totale_copie %>
 			</span>
 		</div>
 	</td>

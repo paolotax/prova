@@ -5,10 +5,10 @@ class PagesController < ApplicationController
         redis.incr "page_hits"
         @page_hits = redis.get "page_hits"
         #@page_hits = 2345
-        @totale_scuole = NewScuola.count
-        @old_totale_scuole = ImportScuola.count
-        @totale_adozioni = NewAdozione.count 
-        @old_totale_adozioni = ImportAdozione.count
+        @totale_scuole = 26000 #NewScuola.count
+        @old_totale_scuole = 25000 #ImportScuola.count
+        @totale_adozioni = 35000000 # NewAdozione.count 
+        @old_totale_adozioni = 3600000 #ImportAdozione.count
 
     end
 

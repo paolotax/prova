@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_10_044911) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_13_084241) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -461,100 +461,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_10_044911) do
   add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
 
-  create_view "view_documenti", sql_definition: <<-SQL
-      SELECT DISTINCT concat(imports.fornitore, '-', imports.numero_documento, '-', imports.data_documento) AS id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- sum(imports.quantita))
-              ELSE sum(imports.quantita)
-          END AS quantita_totale,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round(sum((imports.importo_netto * (100)::double precision))))
-              ELSE round(sum((imports.importo_netto * (100)::double precision)))
-          END AS importo_netto_totale,
-          CASE
-              WHEN ((imports.tipo_documento)::text = ANY (ARRAY[('Nota di accredito'::character varying)::text, ('TD04'::character varying)::text])) THEN (- round((imports.totale_documento * (100)::double precision)))
-              ELSE round((imports.totale_documento * (100)::double precision))
-          END AS totale_documento,
-          CASE
-              WHEN ((imports.iva_fornitore)::text = '04155820378'::text) THEN 'c.vendite'::text
-              ELSE 'c.acquisti'::text
-          END AS conto,
-      (round((imports.totale_documento * (100)::double precision)) - round((sum(imports.importo_netto) * (100)::double precision))) AS "check"
-     FROM imports
-    GROUP BY imports.fornitore, imports.iva_fornitore, imports.cliente, imports.iva_cliente, imports.tipo_documento, imports.numero_documento, imports.data_documento, imports.totale_documento
-    ORDER BY imports.fornitore, imports.data_documento DESC, imports.numero_documento, imports.tipo_documento;
-  SQL
-  create_view "view_righe", sql_definition: <<-SQL
-      SELECT imports.id,
-      imports.fornitore,
-      imports.iva_fornitore,
-      imports.cliente,
-      imports.iva_cliente,
-      imports.tipo_documento,
-      imports.numero_documento,
-      imports.data_documento,
-          CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.totale_documento)
-              ELSE imports.totale_documento
-          END AS totale_documento,
-      imports.riga,
-      imports.codice_articolo,
-      imports.descrizione,
-      imports.prezzo_unitario,
-          CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.quantita)
-              ELSE imports.quantita
-          END AS quantita,
-          CASE
-              WHEN ((imports.tipo_documento)::text = 'Nota di accredito'::text) THEN (- imports.importo_netto)
-              ELSE imports.importo_netto
-          END AS importo_netto,
-      imports.sconto,
-      imports.iva,
-          CASE
-              WHEN ((imports.iva_fornitore)::text = (( SELECT users.partita_iva
-                 FROM users
-               LIMIT 1))::text) THEN 'c.vendita'::text
-              ELSE 'c.acquisti'::text
-          END AS conto
-     FROM imports;
-  SQL
-  create_view "view_articoli", sql_definition: <<-SQL
-      SELECT DISTINCT view_righe.codice_articolo,
-      view_righe.descrizione,
-      sum(view_righe.quantita) AS giacenza,
-      sum(round((view_righe.importo_netto * (100)::double precision))) AS valore
-     FROM view_righe
-    GROUP BY view_righe.codice_articolo, view_righe.descrizione
-    ORDER BY view_righe.codice_articolo;
-  SQL
-  create_view "view_fornitori", sql_definition: <<-SQL
-      SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.fornitore,
-      view_documenti.iva_fornitore
-     FROM view_documenti
-    WHERE ((view_documenti.iva_cliente)::text = (( SELECT users.partita_iva
-             FROM users
-           LIMIT 1))::text)
-    GROUP BY view_documenti.fornitore, view_documenti.iva_fornitore;
-  SQL
-  create_view "view_clienti", sql_definition: <<-SQL
-      SELECT DISTINCT (row_number() OVER (PARTITION BY true::boolean))::integer AS id,
-      view_documenti.cliente,
-      view_documenti.iva_cliente
-     FROM view_documenti
-    WHERE ((view_documenti.iva_fornitore)::text = (( SELECT users.partita_iva
-             FROM users
-           LIMIT 1))::text)
-    GROUP BY view_documenti.cliente, view_documenti.iva_cliente;
-  SQL
   create_view "classifica_elementari_provincia_materia_editore", sql_definition: <<-SQL
       SELECT DISTINCT import_scuole."REGIONE" AS regione,
       import_scuole."PROVINCIA" AS provincia,

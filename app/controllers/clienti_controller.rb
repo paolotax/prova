@@ -3,7 +3,7 @@ class ClientiController < ApplicationController
 
   # GET /clienti or /clienti.json
   def index
-    @clienti = Cliente.all
+    @clienti = current_user.clienti.all
     @import = Cliente::Import.new
   end
 
@@ -13,7 +13,7 @@ class ClientiController < ApplicationController
 
   # GET /clienti/new
   def new
-    @cliente = Cliente.new
+    @cliente = current_user.cliente.new
   end
 
   # GET /clienti/1/edit
@@ -77,7 +77,7 @@ class ClientiController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def cliente_params
-      params.require(:cliente).permit(:file, :codice_cliente, :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, :id_paese, :partita_iva, :codice_fiscale, :denominazione, :nome, :cognome, :codice_eori, :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
+      params.require(:cliente).permit(:user, :file, :codice_cliente, :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, :id_paese, :partita_iva, :codice_fiscale, :denominazione, :nome, :cognome, :codice_eori, :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
     end
 
     def cliente_import_params

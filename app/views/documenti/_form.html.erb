@@ -11,25 +11,38 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :numero_documento %>
-    <%= form.number_field :numero_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+
+  
+
+
+  <div class="flex justify-between items center">
+    <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
+        <%= form.label :causale_id, "Tipo documento" %>
+        <%= form.combobox :causale_id, Causale.all,
+            label: "tipo documento:",
+            placeholder: "seleziona tipo documento..." %>
+    </div>
+    <div class="my-5">
+      <%= form.label :numero_documento %>
+      <%= form.number_field :numero_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
+
+    <div class="my-5">
+      <%= form.label :data_documento %>
+      <%= form.date_field :data_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :cliente_id %>
-    <%= form.select :cliente_id, current_user.clienti.all, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+  <div class="my-5 cb-tax cb-medium">
 
-  <div class="my-5">
-    <%= form.label :data_documento %>
-    <%= form.date_field :data_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+			<%= form.combobox :cliente_id, current_user.clienti.order(:denominazione),
+					label: "cliente:",
+					placeholder: "seleziona cliente..." %>
+	</div>
 
-  <div class="my-5">
-    <%= form.label :causale_id %>
-    <%= form.select :causale_id, Causale.all, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+
+
+
 
   <div class="my-5">
     <%= form.label :tipo_pagamento %>

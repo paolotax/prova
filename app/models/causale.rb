@@ -26,4 +26,7 @@ class Causale < ApplicationRecord
     causale
   end
 
+  def to_combobox_display
+    causale # or `title`, `to_s`, etc.
+  end
 end

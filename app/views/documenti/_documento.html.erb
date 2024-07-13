@@ -1,83 +1,16 @@
-<div id="<%= dom_id documento %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Numero documento:</strong>
-    <%= documento.numero_documento %>
-  </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">User:</strong>
-    <%= documento.user_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Cliente:</strong>
-    <%= documento.cliente_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Data documento:</strong>
-    <%= documento.data_documento %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Causale:</strong>
-    <%= documento.causale_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Tipo pagamento:</strong>
-    <%= documento.tipo_pagamento %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Consegnato il:</strong>
-    <%= documento.consegnato_il %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Pagato il:</strong>
-    <%= documento.pagato_il %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Status:</strong>
-    <%= documento.status %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Iva cents:</strong>
-    <%= documento.iva_cents %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Totale cents:</strong>
-    <%= documento.totale_cents %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Spese cents:</strong>
-    <%= documento.spese_cents %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Totale copie:</strong>
-    <%= documento.totale_copie %>
-  </p>
-
-</div>
-
-<li class="flex justify-between gap-x-6 py-5">
+<div div id="<%= dom_id documento %>" class="flex justify-between gap-x-6 py-5">
 	<div class="flex min-w-0 gap-x-4">
 		<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 		<div class="min-w-0 flex-auto">
 			<p class="text-sm font-semibold leading-6 text-gray-900">
-				<%= documento.fornitore %>
+				<%= documento.cliente %>
 			</p>
 			<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 				
 			</p>
 			<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-				<%= documento.tipo_documento %> 
+				<%= documento.causale %> 
 			</p>
 			<p class="mt-1 truncate text-xs leading-5 text-gray-500">  
 				<span class="text-gray-900 font-semibold">
@@ -88,7 +21,7 @@
 		</div>
 	</div>
 	<div class="shrink-0 text-right sm:flex sm:flex-col sm:items-end">
-		<% if not  documento.totale_documento.nil? %>
+		<% if not documento.totale_cents.nil? %>
 		
 			<% if documento.totale_documento > 0 %>
 				<p class="text-indigo-500" >
@@ -97,16 +30,16 @@
 			<% end %>
 		<% end %>
 		
-		<%= number_to_currency documento.totale_documento, locale: :it %>
+		<%= number_to_currency documento.totale_cents, locale: :it %>
 		</p>
 		
 		<p class="text-sm leading-6 text-gray-900">
 			
-			 <%= documento.quantita_totale %>
+			 <%= documento.totale_copie %>
 			 copie
 		</p>  
 		<p class="mt-1 text-xs leading-5">
 
 		</p>
 	</div>      
-</li>
+</div>

@@ -19,9 +19,9 @@
     
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">
-          <%= @documento.fornitore %></h1>
+          <%= @documento.cliente %></h1>
       <p class="mt-2 text-sm text-gray-700">
-          <%= @documento.tipo_documento %> 
+          <%= @documento.causale %> 
           <%= @documento.numero_documento %> 
           <%= @documento.data_documento %> 
       </p>
@@ -64,14 +64,14 @@
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
           <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
-            <%= @documento.quantita_totale %>
+            <%= @documento.totale_cents %>
           </td>
         </tr>
         <tr>
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
           <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
-            <%= Money.from_cents(@documento.totale_documento, :eur).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
+            <%= Money.from_cents(@documento.totale_cents, :eur).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
           </td>
         </tr>
       </tfoot>
