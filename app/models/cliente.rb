@@ -28,17 +28,21 @@
 #  tipo_cliente            :string
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  user_id                 :bigint
+#  user_id                 :bigint           not null
 #
 # Indexes
 #
 #  index_clienti_on_user_id  (user_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
 class Cliente < ApplicationRecord
 
   #validates :partita_iva, presence: true, uniqueness: true
 
-  has_many :documenti
+  has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, as: :clientable 
 
   def self.assign_from_row(row)
     if row[:partita_iva].nil?
@@ -58,5 +62,10 @@ class Cliente < ApplicationRecord
     "#{denominazione} - #{comune}"
   end
 
+  attr_accessor :cliente_id
   
+  def cliente_id=(cliente_id)
+    self.clientable_id = cliente_id
+    self.clientable_type = 'Cliente'
+  end 
 end

@@ -1,35 +1,58 @@
-<%= heading do %>	
+<% content_for :title, "Documenti" %>
 
-	<%= h1 {"Documenti"} %>
-
-	<div class="py-2">
-		<%= link_to("< indietro", :back, class:"btn") %>
-	</div>
+<%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
+    
+    <% heading.with_action do %>
+        <%= render TaxButton.new(
+                caption: "Documento",
+                svg_file: "icon-plus.svg",
+                color: "blue",
+                url: url_for( controller: "documenti", action: "new", model: @documento ),
+                data_attr: { turbo_frameaaa: :modal, action: "click->dialog#open" }
+        ) %>
+    <% end %>
+    
+    <%= h1 {"Documenti"} %>
 
 <% end %>
 
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<%= turbo_frame_tag "search_results" do %>
 
-  <% content_for :title, "Documenti" %>
-
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Documenti</h1>
-    <%= link_to "New documento", new_documento_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
-  </div>
-
+	<%= render GridItemComponent.new(item_css: 'bg-white border border-gray-100 rounded-md', header_css: 'flex items-center gap-2 pt-4 px-4', actions_css: 'grid-cols-2 mt-4 border-t border-gray-100 divide-x divide-gray-100') do |grid| %>
+		
+		<% @documenti.each do |documento| %>
+			<% grid.with_item do |item| %>
+				<% item.with_leader { documento.causale } %>
+				<% item.with_title(css: "text-sm font-semibold text-gray-800") { documento.clientable&.denominazione } %>
+				<% item.with_body(css: "text-sm text-gray-500 ml-12") { "nr. #{documento.numero_documento} del #{documento.data_documento}" } %>
+				<% item.with_action(href: "mailto:#{documento.clientable&.email}", css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+						<path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+						<path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+					</svg>
+					Email
+				<% end %>
+				<% item.with_action(href: "tel:#{documento.clientable&.telefono}", css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+						<path fill-rule="evenodd" d="m3.855 7.286 1.067-.534a1 1 0 0 0 .542-1.046l-.44-2.858A1 1 0 0 0 4.036 2H3a1 1 0 0 0-1 1v2c0 .709.082 1.4.238 2.062a9.012 9.012 0 0 0 6.7 6.7A9.024 9.024 0 0 0 11 14h2a1 1 0 0 0 1-1v-1.036a1 1 0 0 0-.848-.988l-2.858-.44a1 1 0 0 0-1.046.542l-.534 1.067a7.52 7.52 0 0 1-4.86-4.859Z" clip-rule="evenodd" />
+					</svg>
+					Phone
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+  
+  
+  
   <div id="documenti" class="min-w-full">
     <% @documenti.each do |documento| %>
       <%= render documento %>
       <p>
-        <%= link_to "Show this documento", documento, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+        <%= link_to "Show this documento", documento, data: { turbo_frame: "_top" }, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
       </p>
     <% end %>
   </div>
-</div>
-<%= turbo_frame_tag "search_results" do %>
+
 	<div class="mx-2 mt-8 flow-root sm:mx-0">
 		<table class="min-w-full">
 			<colgroup>

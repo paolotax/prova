@@ -13,7 +13,7 @@ class ClientiController < ApplicationController
 
   # GET /clienti/new
   def new
-    @cliente = current_user.cliente.new
+    @cliente = current_user.clienti.new
   end
 
   # GET /clienti/1/edit

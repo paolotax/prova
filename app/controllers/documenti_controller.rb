@@ -21,7 +21,7 @@ class DocumentiController < ApplicationController
 
   # GET /documenti/new
   def new
-    @documento = current_user.documenti.build
+    @documento = current_user.documenti.build(data_documento: Date.today)
   end
 
   # GET /documenti/1/edit
@@ -32,6 +32,7 @@ class DocumentiController < ApplicationController
   def create
     @documento = current_user.documenti.build(documento_params)
 
+    #raise params.inspect
     respond_to do |format|
       if @documento.save
         format.html { redirect_to documento_url(@documento), notice: "Documento was successfully created." }
@@ -74,6 +75,6 @@ class DocumentiController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def documento_params
-      params.require(:documento).permit(:numero_documento, :user_id, :cliente_id, :data_documento, :causale_id, :tipo_pagamento, :consegnato_il, :pagato_il, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie)
+      params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :numero_documento, :user_id, :data_documento, :causale_id, :tipo_pagamento, :consegnato_il, :pagato_il, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento)
     end
 end

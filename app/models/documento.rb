@@ -3,6 +3,7 @@
 # Table name: documenti
 #
 #  id               :bigint           not null, primary key
+#  clientable_type  :string
 #  consegnato_il    :date
 #  data_documento   :date
 #  iva_cents        :bigint
@@ -10,32 +11,36 @@
 #  pagato_il        :integer
 #  spese_cents      :bigint
 #  status           :integer
+#  tipo_documento   :integer
 #  tipo_pagamento   :integer
 #  totale_cents     :bigint
 #  totale_copie     :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  causale_id       :bigint           not null
-#  cliente_id       :bigint           not null
+#  clientable_id    :bigint
 #  user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_documenti_on_causale_id  (causale_id)
-#  index_documenti_on_cliente_id  (cliente_id)
-#  index_documenti_on_user_id     (user_id)
+#  index_documenti_on_causale_id                         (causale_id)
+#  index_documenti_on_clientable_type_and_clientable_id  (clientable_type,clientable_id)
+#  index_documenti_on_user_id                            (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (causale_id => causali.id)
-#  fk_rails_...  (cliente_id => clienti.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class Documento < ApplicationRecord
+  
   belongs_to :user
-  belongs_to :cliente
+  belongs_to :clientable, polymorphic: true
   belongs_to :causale
 
+  validates :numero_documento, presence: true
+  validates :data_documento, presence: true
+  
   def righe
     []
   end

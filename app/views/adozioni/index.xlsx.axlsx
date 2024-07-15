@@ -1,12 +1,12 @@
 wb = xlsx_package.workbook
 
-fields = [ "id", "titolo", "classe", "scuola", "citta", "note", "numero_sezioni", "numero_copie", "prezzo_cents", "classe_id", "libro_id", "scuola_id", "status", "tipo_pagamento", "pagato_il", "tipo" ]
+fields = [ "id", "codice_isbn", "titolo", "editore", "classe", "scuola", "citta", "team", "numero_sezioni", "numero_copie", "prezzo_cents", "classe_id", "libro_id", "scuola_id", "status", "tipo_pagamento", "pagato_il", "tipo", "note" ]
 
 wb.add_worksheet(name: "Foglio 1") do |sheet|
  
   sheet.add_row  fields
   
   @adozioni.each do |row|   
-    sheet.add_row [ row.id, row.titolo_libro, row.classe_e_sezione, row.nome_scuola, row.citta, row.note, row.numero_sezioni, row.numero_copie, row.prezzo_cents, row.classe_id, row.libro_id, row.scuola.id, row.status, row.tipo_pagamento, row.pagato_il, row.tipo ]
+    sheet.add_row [ row.id, row.libro.codice_isbn, row.titolo_libro, row.titolo_editore, row.classe_e_sezione, row.nome_scuola, row.citta, row.team, row.numero_sezioni, row.numero_copie, row.prezzo_cents, row.classe_id, row.libro_id, row.scuola.id, row.status, row.tipo_pagamento, row.pagato_il, row.tipo, row.note ]
   end
 end

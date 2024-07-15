@@ -27,6 +27,8 @@
       <%= form.number_field :numero_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
     </div>
 
+    <%= form.hidden_field :clientable_type, value: "Cliente" %>
+    
     <div class="my-5">
       <%= form.label :data_documento %>
       <%= form.date_field :data_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
@@ -35,7 +37,7 @@
 
   <div class="my-5 cb-tax cb-medium">
 
-			<%= form.combobox :cliente_id, current_user.clienti.order(:denominazione),
+			<%= form.combobox :clientable_id, current_user.clienti.order(:denominazione),
 					label: "cliente:",
 					placeholder: "seleziona cliente..." %>
 	</div>

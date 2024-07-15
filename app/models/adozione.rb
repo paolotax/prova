@@ -216,6 +216,15 @@ class Adozione < ApplicationRecord
 
   end
 
+  def titolo_editore
+    return if self.libro.nil?
+
+
+    self.libro.editore&.editore
+
+
+  end
+
   def self.per_scuola_hash     
     self.per_scuola.map do |a|
       { 
