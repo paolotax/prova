@@ -135,7 +135,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
     t.string "banca"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_clienti_on_user_id"
   end
 
@@ -432,7 +432,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
-  add_foreign_key "clienti", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"
   add_foreign_key "giri", "users"
