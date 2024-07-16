@@ -1,4 +1,4 @@
-class DocumentiController < ApplicationController
+class DocumentiOldController < ApplicationController
   
   before_action :authenticate_user!
   before_action :set_documento, only: %i[ show ]
