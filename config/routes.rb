@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   
   resources :documenti
   resources :causali
+  resources :documento_righe, only: [:new, :destroy] 
+  
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'

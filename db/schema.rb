@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_16_105104) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -160,6 +160,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
     t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable_type_and_clientable_id"
     t.index ["user_id"], name: "index_documenti_on_user_id"
+  end
+
+  create_table "documento_righe", force: :cascade do |t|
+    t.bigint "documento_id"
+    t.bigint "riga_id"
+    t.integer "posizione"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["documento_id", "riga_id"], name: "index_documento_righe_on_documento_id_and_riga_id", unique: true
+    t.index ["documento_id"], name: "index_documento_righe_on_documento_id"
+    t.index ["riga_id"], name: "index_documento_righe_on_riga_id"
   end
 
   create_table "editori", force: :cascade do |t|
@@ -349,6 +360,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
+  create_table "righe", force: :cascade do |t|
+    t.bigint "libro_id", null: false
+    t.integer "quantita", default: 1
+    t.integer "prezzo_copertina_cents", default: 0
+    t.integer "prezzo_cents", default: 0
+    t.decimal "sconto", precision: 5, scale: 2, default: "0.0"
+    t.integer "iva_cents", default: 0
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["libro_id"], name: "index_righe_on_libro_id"
+  end
+
   create_table "stats", force: :cascade do |t|
     t.string "descrizione"
     t.string "seleziona_campi"
@@ -438,6 +462,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_14_085800) do
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "profiles", "users"
+  add_foreign_key "righe", "libri"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
   add_foreign_key "user_scuole", "import_scuole"

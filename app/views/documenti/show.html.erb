@@ -1,16 +1,3 @@
-<div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto">
-
-
-    <%= render @documento %>
-
-    <%= link_to "Edit this documento", edit_documento_path(@documento), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Back to documenti", documenti_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Destroy this documento", @documento, method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-    </div>
-  </div>
-</div>
 <div class="mx-auto md:w-2/3 w-full">
 
   <div class="sm:flex sm:items-center">
@@ -74,6 +61,13 @@
         </tr>
       </tfoot>
     </table>
+
+
+        <%= link_to "Edit this documento", edit_documento_path(@documento), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Back to documenti", documenti_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <div class="inline-block ml-2">
+      <%= button_to "Destroy this documento", @documento, method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+    </div>
   </div>
 </div>
 

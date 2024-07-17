@@ -1,4 +1,6 @@
 <%= form_with(model: documento, class: "contents") do |form| %>
+  
+  
   <% if documento.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(documento.errors.count, "error") %> prohibited this documento from being saved:</h2>
@@ -12,10 +14,8 @@
   <% end %>
 
 
-  
 
-
-  <div class="flex justify-between items center">
+  <fieldset class="flex justify-between items center">
     <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
         <%= form.label :causale_id, "Tipo documento" %>
         <%= form.combobox :causale_id, Causale.all,
@@ -33,57 +33,21 @@
       <%= form.label :data_documento %>
       <%= form.date_field :data_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
     </div>
-  </div>
+  </fieldset>
 
-  <div class="my-5 cb-tax cb-medium">
+  <fieldset class="my-5 cb-tax cb-medium">
 
 			<%= form.combobox :clientable_id, current_user.clienti.order(:denominazione),
 					label: "cliente:",
 					placeholder: "seleziona cliente..." %>
-	</div>
+	</fieldset>
 
-
-
-
-
-  <div class="my-5">
-    <%= form.label :tipo_pagamento %>
-    <%= form.number_field :tipo_pagamento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <div id="documento_righe" class="mx-8">
+    <%= render partial: "documento_righe/documento_riga", collection: @documento.documento_righe %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :consegnato_il %>
-    <%= form.date_field :consegnato_il, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :pagato_il %>
-    <%= form.number_field :pagato_il, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :status %>
-    <%= form.number_field :status, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :iva_cents %>
-    <%= form.text_field :iva_cents, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :totale_cents %>
-    <%= form.text_field :totale_cents, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :spese_cents %>
-    <%= form.text_field :spese_cents, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :totale_copie %>
-    <%= form.number_field :totale_copie, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <div>
+    <%= link_to "Aggiungi riga", new_documento_riga_path(documento_id: @documento.id), data: { turbo_stream: true }, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
   </div>
 
   <div class="inline">

@@ -22,10 +22,12 @@ class DocumentiController < ApplicationController
   # GET /documenti/new
   def new
     @documento = current_user.documenti.build(data_documento: Date.today)
+    @documento.documento_righe.build(posizione: 1 ).build_riga
   end
 
   # GET /documenti/1/edit
   def edit
+    #@documento.documento_righe.build(posizione: 2 ).build_riga
   end
 
   # POST /documenti or /documenti.json
@@ -44,8 +46,10 @@ class DocumentiController < ApplicationController
     end
   end
 
-  # PATCH/PUT /documenti/1 or /documenti/1.json
+  # PATCH/PUT /documenti/2 or /documenti/1.json
   def update
+
+    #raise params.inspect
     respond_to do |format|
       if @documento.update(documento_params)
         format.html { redirect_to documento_url(@documento), notice: "Documento was successfully updated." }
@@ -75,6 +79,9 @@ class DocumentiController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def documento_params
-      params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :numero_documento, :user_id, :data_documento, :causale_id, :tipo_pagamento, :consegnato_il, :pagato_il, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento)
+      params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :numero_documento, :user_id, :data_documento, :causale_id, :tipo_pagamento, :consegnato_il, :pagato_il, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento, 
+        documento_righe_attributes: [:id, :posizione, 
+          { riga_attributes: [ :id, :libro_id, :quantita, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
+        ])
     end
 end

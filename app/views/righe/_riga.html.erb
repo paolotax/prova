@@ -2,20 +2,14 @@
 
   <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
     <div class="font-medium text-gray-900">
-      <%= riga.descrizione %>
+      <%= riga.libro&.titolo %>
     </div>
     <div class="mt-1 truncate text-gray-500">
-      <%= 
-          if riga.codice_articolo.nil? or riga.codice_articolo.blank? then
-            ''
-          else
-            link_to riga.codice_articolo, articolo_path(riga.codice_articolo), class:"hover:text-indigo-500 hover:font-semibold"
-          end
-      %>
+
     </div>
   </td>
   <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
-    <%= number_to_currency riga.prezzo_unitario, locale: :it %>
+    <%= number_to_currency riga.prezzo_cents/100.0, locale: :it %>
   </td>
   <td class="px-3 py-5 text-right text-sm text-gray-500">
     <%= riga.quantita %>
@@ -30,12 +24,7 @@
         %>
   </td>
   <td class="py-5 pl-3 pr-4 text-right text-sm font-medium text-gray-900 sm:pr-0">
-    <%= if riga.importo_netto == 0 then
-          ''
-        else
-          number_to_currency riga.importo_netto, locale: :it
-        end
-      %>
+
   </td>
 
 </tr>

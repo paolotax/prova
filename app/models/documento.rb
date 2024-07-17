@@ -38,10 +38,17 @@ class Documento < ApplicationRecord
   belongs_to :clientable, polymorphic: true
   belongs_to :causale
 
+  has_many :documento_righe, inverse_of: :documento, dependent: :destroy
+  has_many :righe, through: :documento_righe
+
+  accepts_nested_attributes_for :documento_righe
+
   validates :numero_documento, presence: true
   validates :data_documento, presence: true
+
+
+
+
   
-  def righe
-    []
-  end
+
 end
