@@ -2,6 +2,11 @@ module ApplicationHelper
 
   include Pagy::Frontend
 
+
+  def turbo_id_for(obj)
+    obj.persisted? ? obj.id : obj.hash
+  end
+
   def tempo_trascorso( data_inizio, data_fine = Time.now )
 
     data_inizio = Time.parse(data_inizio) if data_inizio.is_a? String

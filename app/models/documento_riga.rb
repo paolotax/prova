@@ -20,6 +20,6 @@ class DocumentoRiga < ApplicationRecord
   belongs_to :documento
   belongs_to :riga
 
-  accepts_nested_attributes_for :riga  #, :reject_if => lambda { |a| (a[:quantita].blank? || a[:libro_id].blank?)}, :allow_destroy => false
+  accepts_nested_attributes_for :riga#, :reject_if => lambda { |a| (a[:quantita].blank? || a[:libro_id].blank?)}, :allow_destroy => false
 
 end

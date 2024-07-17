@@ -10,13 +10,12 @@ class DocumentoRigheController < ApplicationController
   end
 
   def destroy
-    @documento_riga.destroy
-    respond_to do |format|
-      format.html { redirect_to documento_righe_url, notice: "Documento riga was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    documento_riga = DocumentoRiga.find(params[:id])
+    documento_riga.destroy
+  rescue ActiveRecord::RecordNotFound
+    documento_riga = DocumentoRiga.new(id: params[:id])
+  ensure
+    render turbo_stream: turbo_stream.remove(documento_riga.id)
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions
 end
