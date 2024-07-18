@@ -68,7 +68,15 @@
   .cb-large {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply w-80 rounded-md  shadow-lg bg-white;
+        @apply w-96 rounded-md  shadow-lg bg-white;
+      }
+    }
+  }
+
+  .cb-xlarge {
+    .hw-combobox, .hw-combobox--multiple {
+      .hw-combobox__main__wrapper {
+        @apply w-[420px] rounded-md  shadow-lg bg-white;
       }
     }
   }

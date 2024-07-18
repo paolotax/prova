@@ -23,8 +23,8 @@ module LayoutHelper
       tag.h1 class: "text-4xl font-bold", &block
     end
 
-    def h2(text)
-      tag.h2 text, class: "text-xl font-semibold pt-5 pb-1 px-4"
+    def h2(&block)
+      tag.h2 class: "text-xl font-semibold pt-5 pb-1 px-4", &block
     end
       
     def mono(text)

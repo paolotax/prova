@@ -1,54 +1,55 @@
 <%= form_with(model: documento, class: "contents") do |form| %>
-  
-  
-  <% if documento.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(documento.errors.count, "error") %> prohibited this documento from being saved:</h2>
-
-      <ul>
-        <% documento.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-
-
-  <fieldset class="flex justify-between items center">
-    <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
-        <%= form.label :causale_id, "Tipo documento" %>
-        <%= form.combobox :causale_id, Causale.all,
-            label: "tipo documento:",
-            placeholder: "seleziona tipo documento..." %>
-    </div>
-    <div class="my-5">
-      <%= form.label :numero_documento %>
-      <%= form.number_field :numero_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <%= form.hidden_field :clientable_type, value: "Cliente" %>
     
-    <div class="my-5">
-      <%= form.label :data_documento %>
-      <%= form.date_field :data_documento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <% if documento.errors.any? %>
+        <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+            <h2>
+                <%= pluralize(documento.errors.count, "errore impedisce", "errori impediscono") %> di salvare il documento:
+            </h2>
+            <ul>
+                <% documento.errors.each do |error| %>
+                    <li><%= error.full_message %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+  
+    <div class="flex justify-start items-center space-x-2">
+    
+        <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
+            <%= form.label :causale_id, "Tipo documento" %>
+            <%= form.combobox :causale_id, Causale.all, label: "tipo documento:", placeholder: "seleziona tipo documento..." %>
+        </div>
+    
+         <div class="my-5">
+            <%= form.label :numero_documento, "Numero" %>
+            <%= form.number_field :numero_documento, class: "field w-32" %>
+        </div>
+    
+        <div class="my-5">
+            <%= form.label :data_documento, "Data" %>
+            <%= form.date_field :data_documento, class: "field" %>
+        </div>
     </div>
+
+  <fieldset class="my-5 cb-tax cb-xlarge flex flex-col space-y-2">
+      <%= form.label :clientable_id, "Cliente" %>
+			<%= form.combobox :clientable_id, current_user.clienti.order(:denominazione), label: "cliente:", placeholder: "seleziona cliente..." %>      
+      <%#  This is a hidden field that is used to store the type of the clientable DA MODIFICARE %>
+      <%= form.hidden_field :clientable_type, value: "Cliente" %>	
   </fieldset>
 
-  <fieldset class="my-5 cb-tax cb-medium">
+  <div>
+    <%= link_to "Aggiungi riga", 
+            new_documento_riga_path(documento_id: @documento.id), 
+            data: { turbo_stream: true }, 
+            class: "my-4 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  </div>
 
-			<%= form.combobox :clientable_id, current_user.clienti.order(:denominazione),
-					label: "cliente:",
-					placeholder: "seleziona cliente..." %>
-	</fieldset>
-
-  <div id="documento_righe" class="mx-8">
+  <div id="documento_righe">
     <%= render @documento.documento_righe %>
   </div>
 
-  <div>
-    <%= link_to "Aggiungi riga", new_documento_riga_path(documento_id: @documento.id), data: { turbo_stream: true }, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  </div>
+
 
   <div class="inline">
     <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

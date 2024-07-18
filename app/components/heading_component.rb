@@ -7,7 +7,7 @@ class HeadingComponent < ViewComponent::Base
   end
   renders_one :description
 
-  def initialize(level: "h1", wrapper_css: nil)
+  def initialize(level: "h1", wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0")
     @level, @wrapper_css = level, wrapper_css
 
     raise "Incorrect level; needs to be one of h1, h2, h3, h4" if %w[h1 h2 h3 h4].exclude? @level

@@ -1,32 +1,32 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
-  <fieldset class="mb-4 inline-block" id="<%= turbo_id_for(documento_riga) %>">
 
+    <%= tag.div class:"mb-4 inline-block grid grid-cols-12", id: turbo_id_for(documento_riga) do %>
 
-    <%= ff.label :posizione %><br>
-    <%= ff.text_field :posizione, class: "px-2 py-1 border rounded-md" %>
-    <%= ff.hidden_field :id %>
+        <%= tag.div documento_riga.posizione, class: "field col-span-1" %>
+        <%= ff.hidden_field :id %>
 
-  <%= ff.fields_for :riga do |form_riga| %>
+        <%= ff.fields_for :riga do |form_riga| %>
     
-    <fieldset class="cb-tax cb-large" >
-      <%= form_riga.label :libro_id %>
-      <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, label: "libro:", placeholder: "seleziona libro..." %>
-    </fieldset>
+            <fieldset class="cb-tax cb-large col-span-6 flex flex-col" >
+                <%= form_riga.label :libro_id %>
+                <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, label: "libro:", placeholder: "seleziona libro..." %>
+            </fieldset>
 
-    <fieldset class="flex justify-between items-center">  
-      <%= form_riga.label :quantita %>
-      <%= form_riga.number_field :quantita, class: "px-2 py-1 border rounded-md" %>
+            <fieldset class="col-span-4 flex flex-col justify-between items-center">  
+                <%= form_riga.label :quantita %>
+                <%= form_riga.number_field :quantita, class: "field w-20" %>
+                
+
+                <%= form_riga.label :prezzo_cents %>
+                <%= form_riga.number_field :prezzo_cents, class: "field w-20" %>
+
+                <%= form_riga.label :sconto %>
+                <%= form_riga.number_field :sconto, class: "field w-20" %>
+            </fieldset>      
+            <%= form_riga.hidden_field :id %>
+        <% end %>
+
+        <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "col-span-1 mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
     
-
-      <%= form_riga.label :prezzo_cents %>
-      <%= form_riga.number_field :prezzo_cents, class: "px-2 py-1 border rounded-md" %>
-
-      <%= form_riga.label :sconto %>
-      <%= form_riga.number_field :sconto, class: "px-2 py-1 border rounded-md" %>
-    </fieldset>      
-    <%= form_riga.hidden_field :id %>
-  <% end %>
-
-  <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
-  </fieldset>
+    <% end %>
 <% end %>

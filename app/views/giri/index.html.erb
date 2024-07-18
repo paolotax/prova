@@ -1,4 +1,4 @@
-<%= render Heading::WithActionsComponent.new(wrapper_css: "py-4 px-2 my-2 sm:px-0 flex flex-col space-y-4 justify-between sm:flex-row sm:items-center sm:space-y-0") do |heading| %>
+<%= render Heading::WithActionsComponent.new do |heading| %>
     
 	<% heading.with_action do %>
 		<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "sm:hidden" %>

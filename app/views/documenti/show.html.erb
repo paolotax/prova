@@ -1,15 +1,52 @@
-<div class="mx-auto md:w-2/3 w-full">
+<%= render Heading::WithActionsComponent.new(level: 'h3') do |heading| %>
+
+    <%# <% heading.with_leader do %>
+        <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
+    <%# <% end %>
+    
+    <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
+
+    <% heading.with_action do %>
+        <%= render TaxButton.new(
+                caption: "Elimina",
+                svg_file: "icon-trash-real.svg",
+                color: "red",
+                url: url_for( controller: "documenti", action: "destroy", model: @documento ),
+                data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }
+        ) %>
+    <% end %>
+
+    <% heading.with_action do %>
+        <%= render TaxButton.new(
+                caption: "Documenti",
+                svg_file: "icon-arrow-long-left.svg",
+                color: "white",
+                url: url_for( controller: "documenti", action: "index" )
+        ) %>
+    <% end %>
+
+    <% heading.with_action do %>
+        <%= render TaxButton.new(
+                caption: "Modifica",
+                svg_file: "icon-pencil.svg",
+                color: "blue",
+                url: url_for( controller: "documenti", action: "edit", model: @documento )
+        ) %>
+    <% end %>
+
+    <%= @documento.causale %>
+
+<% end %>
+
+
+<div class="mx-auto md:w-10/12 w-full">
 
   <div class="sm:flex sm:items-center">
     
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">
           <%= @documento.clientable&.denominazione %></h1>
-      <p class="mt-2 text-sm text-gray-700">
-          <%= @documento.causale %> 
-          <%= @documento.numero_documento %> 
-          <%= @documento.data_documento %> 
-      </p>
+
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
       <%= link_to_previous_page("<- indietro") %>
@@ -56,18 +93,15 @@
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
           <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
-            <%= Money.from_cents(@documento.totale_cents, :eur).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
+            <%= @documento.totale_cents %>
           </td>
         </tr>
       </tfoot>
     </table>
 
 
-        <%= link_to "Edit this documento", edit_documento_path(@documento), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Back to documenti", documenti_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Destroy this documento", @documento, method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-    </div>
+
   </div>
+
 </div>
 
