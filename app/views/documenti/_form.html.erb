@@ -38,20 +38,20 @@
       <%= form.hidden_field :clientable_type, value: "Cliente" %>	
   </fieldset>
 
-  <div>
-    <%= link_to "Aggiungi riga", 
-            new_documento_riga_path(documento_id: @documento.id), 
-            data: { turbo_stream: true }, 
-            class: "my-4 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  </div>
+
 
   <div id="documento_righe">
     <%= render @documento.documento_righe %>
   </div>
 
-
+  <div>
+    <%= link_to "Aggiungi riga", 
+            new_documento_riga_path(documento_id: @documento.id), 
+            data: { turbo_stream: true }, 
+            class: "my-4 btn btn-red" %>
+  </div>
 
   <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit "Salva", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>

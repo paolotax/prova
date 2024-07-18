@@ -1,37 +1,41 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-4 inline-block grid grid-cols-12", id: turbo_id_for(documento_riga) do %>
+    <%= tag.div class:"mb-4 inline-block grid grid-cols-12", 
+        id: turbo_id_for(documento_riga),
+        data: { controller: "tax-combobox-select-libro" } do %>
 
-        <%= tag.div documento_riga.posizione, class: "field col-span-1" %>
+        <%= tag.div documento_riga.posizione, class: "col-span-1" %>
         <%= ff.hidden_field :id %>
 
         <%= ff.fields_for :riga do |form_riga| %>
-            <div class="col-span-6" data-controller="tax-combobox-select-libro" >
-                <div class="cb-tax cb-large flex flex-col">
+                <div class="col-span-6 cb-tax cb-large w-full flex flex-col">
+                    <%= form_riga.label :libro_id, class: "mb-1" %>
                     <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
                             placeholder: "seleziona libro...",
-                            label: "Libro:",
                             data: { action: "hw-combobox:selection->tax-combobox-select-libro#change",
                                     tax_combobox_select_libro_target: "combobox" } %>
                 </div>
+            
 
-
-                <fieldset class="col-span-4 flex flex-col justify-between items-center">  
+                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= form_riga.label :quantita %>
-                    <%= form_riga.number_field :quantita, class: "field w-20" %>
-                    
-
-                    <%= form_riga.label :prezzo_cents %>
-                    <%= form_riga.number_field :prezzo_cents, class: "field w-20", data: { tax_combobox_select_libro_target: "prezzo" } %>
-
+                    <%= form_riga.number_field :quantita, class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
+                </fieldset>    
+                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
+                    <%= form_riga.label :prezzo_cents, "Prezzo" %>
+                    <%= form_riga.number_field :prezzo_cents, 
+                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", data: { tax_combobox_select_libro_target: "prezzo" } %>
+                </fieldset>
+                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= form_riga.label :sconto %>
-                    <%= form_riga.number_field :sconto, class: "field w-20" %>
+                    <%= form_riga.number_field :sconto, class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
                 </fieldset>      
                 <%= form_riga.hidden_field :id %>
-            </div>
+
+
         <% end %>
 
-        <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "col-span-1 mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
+        <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "col-span-1 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>
     
     <% end %>
 <% end %>
