@@ -1,7 +1,7 @@
 class LibriController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_libro, only: %i[ show edit update destroy ]
+  before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
 
   def index
     @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe).all
@@ -61,6 +61,10 @@ class LibriController < ApplicationController
     else
       redirect_to libri_url, alert: "Errore nell'importazione dei libri!"
     end
+  end
+
+  def get_prezzo_copertina_cents
+    render json: { prezzo_copertina_cents: @libro.prezzo_in_cents }
   end
 
   private

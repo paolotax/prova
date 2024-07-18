@@ -45,6 +45,9 @@ Rails.application.routes.draw do
     collection do
       post 'import_ministeriali'
     end
+    member do 
+      get 'get_prezzo_copertina_cents'
+    end
   end
   
   resources :tipi_scuole, only: [:index, :update]

@@ -9,38 +9,24 @@ export default class extends Controller {
   }
 
   change(event) {
+    let id_libro = this.comboboxTarget.querySelector("input").value;
+    let url = `/libri/${id_libro}/get_prezzo_copertina_cents`;
 
-    let riga = 20;
-    let interpolatedString = `documento_documento_righe_attributes_${riga}_riga_attributes_libro_id-hw-hidden-field`;
-    
-    let input = document.querySelector(`#${interpolatedString}`);
-
-    this.prezzoTarget.value = input.value;
-    console.log("change", input.value);
-
-    // let input = document.querySelector("#appunto_import_scuola_id-hw-hidden-field");
-    // if (input == null) {
-    //   input = document.querySelector("#adozione_import_scuola_id-hw-hidden-field");  
-    // };
-    // if (input == null) {
-    //   return;
-    // };
-
-    // let scuola_id = input.value;
-    // if (scuola_id == "") {
-    //   return;
-    // };
-    // let url = `/import_scuole/${scuola_id}/combobox_libri`;
-    
-    // fetch(url, {
-    //   method: "GET",
-    //   headers: {
-    //     Accept: "text/vnd.turbo-stream.html"
-    //   }
-    // })
-    // .then(r => r.text())
-    // .then(html => Turbo.renderStreamMessage(html))
-    
-    // // // html: <turbo-stream action="replace"> ...</turbo-stream>
+    fetch(url, {
+      method: "GET",
+      contentType: 'application/json',
+      hearders: 'application/json'
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Assuming the response contains the prezzo_copertina_cents
+      let prezzo_copertina_cents = data.prezzo_copertina_cents;
+      // Use the prezzo_copertina_cents as needed
+      this.prezzoTarget.value = prezzo_copertina_cents;
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error(error);
+    });
   }
 }
