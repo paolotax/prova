@@ -6,24 +6,29 @@
         <%= ff.hidden_field :id %>
 
         <%= ff.fields_for :riga do |form_riga| %>
-    
-            <fieldset class="cb-tax cb-large col-span-6 flex flex-col" >
-                <%= form_riga.label :libro_id %>
-                <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, label: "libro:", placeholder: "seleziona libro..." %>
-            </fieldset>
+            <div class="col-span-6" data-controller="tax-combobox-select-libro" >
+                <div class="cb-tax cb-large flex flex-col">
+                    <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
+                            placeholder: "seleziona libro...",
+                            label: "Libro:",
+                            data: { action: "hw-combobox:selection->tax-combobox-select-libro#change",
+                                    tax_combobox_select_target_libro: "combobox" } %>
+                </div>
 
-            <fieldset class="col-span-4 flex flex-col justify-between items-center">  
-                <%= form_riga.label :quantita %>
-                <%= form_riga.number_field :quantita, class: "field w-20" %>
-                
 
-                <%= form_riga.label :prezzo_cents %>
-                <%= form_riga.number_field :prezzo_cents, class: "field w-20" %>
+                <fieldset class="col-span-4 flex flex-col justify-between items-center">  
+                    <%= form_riga.label :quantita %>
+                    <%= form_riga.number_field :quantita, class: "field w-20" %>
+                    
 
-                <%= form_riga.label :sconto %>
-                <%= form_riga.number_field :sconto, class: "field w-20" %>
-            </fieldset>      
-            <%= form_riga.hidden_field :id %>
+                    <%= form_riga.label :prezzo_cents %>
+                    <%= form_riga.number_field :prezzo_cents, class: "field w-20", data: { tax_combobox_select_libro_target: "prezzo" } %>
+
+                    <%= form_riga.label :sconto %>
+                    <%= form_riga.number_field :sconto, class: "field w-20" %>
+                </fieldset>      
+                <%= form_riga.hidden_field :id %>
+            </div>
         <% end %>
 
         <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "col-span-1 mt-4 float-right p-2 rounded-md bg-red-300 hover:bg-red-400" %>

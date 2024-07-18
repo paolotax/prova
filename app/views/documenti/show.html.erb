@@ -39,6 +39,9 @@
 <% end %>
 
 
+
+
+
 <div class="mx-auto md:w-10/12 w-full">
 
   <div class="sm:flex sm:items-center">
@@ -86,14 +89,14 @@
           <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
           <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
-            <%= @documento.totale_cents %>
+            <%= @documento.righe.sum(&:quantita) %>
           </td>
         </tr>
         <tr>
-          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
-          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
+          <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale importo</th>
+          <th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale importo</th>
           <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
-            <%= @documento.totale_cents %>
+            <%= number_to_currency @documento.righe.sum(&:importo), locale: :it %>
           </td>
         </tr>
       </tfoot>
