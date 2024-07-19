@@ -18,40 +18,48 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= render GridItemComponent.new(item_css: 'bg-white border border-gray-100 rounded-md', header_css: 'flex items-center gap-2 pt-4 px-4', actions_css: 'grid-cols-2 mt-4 border-t border-gray-100 divide-x divide-gray-100') do |grid| %>
+	<%= render GridItemComponent.new(
+			item_css: 'bg-white border border-gray-100 rounded-md', 
+			header_css: 'flex items-center gap-2 pt-4 px-4', 
+			actions_css: 'grid-cols-3 mt-4 border-t border-gray-100 divide-x divide-gray-100') do |grid| %>		
 		
 		<% @documenti.each do |documento| %>
 			<% grid.with_item do |item| %>
-				<% item.with_leader { documento.causale } %>
+				<% item.with_leader { inline_svg_tag "icon-pdf.svg", class: "size-8 object-fit"    } %>
 				<% item.with_title(css: "text-sm font-semibold text-gray-800") { documento.clientable&.denominazione } %>
-				<% item.with_body(css: "text-sm text-gray-500 ml-12") { "nr. #{documento.numero_documento} del #{documento.data_documento}" } %>
-				<% item.with_action(href: "mailto:#{documento.clientable&.email}", css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-						<path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-						<path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-					</svg>
-					Email
+				<% item.with_body(css: "text-sm text-gray-500 ml-12") do %>
+					<%= documento.causale.causale %> 
+					<br/>
+					nr. <%= documento.numero_documento %> del <%= documento.data_documento %>
+					<br/>
+					<p  class="text-right text-sm text-gray-500 mr-12">
+						<%= documento.documento_righe.count %> 
+						titoli - 
+						<%= documento.righe.sum(:quantita) %> 
+						copie
+					</p>
+					<p class="text-right text-sm text-gray-500 mr-12">
+						<%= number_to_currency(documento.righe.sum(&:importo)) %>
+					</p>
 				<% end %>
-				<% item.with_action(href: "tel:#{documento.clientable&.telefono}", css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-						<path fill-rule="evenodd" d="m3.855 7.286 1.067-.534a1 1 0 0 0 .542-1.046l-.44-2.858A1 1 0 0 0 4.036 2H3a1 1 0 0 0-1 1v2c0 .709.082 1.4.238 2.062a9.012 9.012 0 0 0 6.7 6.7A9.024 9.024 0 0 0 11 14h2a1 1 0 0 0 1-1v-1.036a1 1 0 0 0-.848-.988l-2.858-.44a1 1 0 0 0-1.046.542l-.534 1.067a7.52 7.52 0 0 1-4.86-4.859Z" clip-rule="evenodd" />
-					</svg>
-					Phone
+				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top" }, css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+					Apri
 				<% end %>
+				<% item.with_action(href: edit_documento_path(documento), data: { turbo_frame: "_top" }, css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+					<%= inline_svg_tag "icon-pencil.svg" %>
+					Modifica
+				<% end %>	
+
+				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top", turbo_method: :delete , turbo_confirm: "Sei sicuro di voler eliminare il documento?" }, 
+							css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-red-600 truncate hover:text-red-800 hover:bg-gray-50") do %>
+					<%= inline_svg_tag "icon-trash.svg" %>
+					Elimina
+				<% end %>			
 			<% end %>
 		<% end %>
 	<% end %>
   
   
-  
-  <div id="documenti" class="min-w-full">
-    <% @documenti.each do |documento| %>
-      <%= render documento %>
-      <p>
-        <%= link_to "Show this documento", documento, data: { turbo_frame: "_top" }, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
-  </div>
 
 	<div class="mx-2 mt-8 flow-root sm:mx-0">
 		<table class="min-w-full">
