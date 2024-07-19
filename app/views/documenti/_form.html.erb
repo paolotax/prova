@@ -13,16 +13,20 @@
         </div>
     <% end %>
   
-    <div class="flex justify-start items-center space-x-2">
+    <div class="flex justify-start items-center space-x-2" data-controller="tax-combobox-causale">
     
         <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
             <%= form.label :causale_id, "Tipo documento" %>
-            <%= form.combobox :causale_id, Causale.all, label: "tipo documento:", placeholder: "seleziona tipo documento..." %>
+            <%= form.combobox :causale_id, Causale.all, label: "tipo documento:", 
+                            placeholder: "seleziona tipo documento...",
+                            data: { action: "hw-combobox:selection->tax-combobox-causale#change",
+                                    tax_combobox_causale_target: "combobox" }%>
         </div>
     
-         <div class="my-5">
+        <div class="my-5">
             <%= form.label :numero_documento, "Numero" %>
-            <%= form.number_field :numero_documento, class: "field w-32" %>
+            <%= form.number_field :numero_documento, class: "field w-32", 
+            data: { tax_combobox_causale_target: "prezzo" } %>
         </div>
     
         <div class="my-5">

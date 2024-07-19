@@ -71,6 +71,11 @@ class DocumentiController < ApplicationController
     end
   end
 
+  def nuovo_numero_documento
+    numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
+    render json: { numero_documento: numero_documento }
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_documento

@@ -19,7 +19,12 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :documenti
+  resources :documenti do 
+    collection do 
+      get 'nuovo_numero_documento'
+    end
+  end
+
   resources :causali
   resources :documento_righe, only: [:new, :destroy] 
   

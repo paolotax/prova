@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="tax-combobox-select-libro"
+// Connects to data-controller="tax-combobox-libro"
 export default class extends Controller {
 
   static targets = ["combobox", "prezzo"]
