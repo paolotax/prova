@@ -27,6 +27,17 @@ class Riga < ApplicationRecord
   has_many :documento_righe
   has_many :documenti, through: :documento_righe
 
+
+  attr_accessor :prezzo 
+
+  def prezzo
+    prezzo_cents / 100.0
+  end
+
+  def prezzo=(value)
+    self.prezzo_cents = value.to_f * 100
+  end
+  
   def importo
     ((prezzo_cents * (100 - sconto )) / 100.0 * quantita ) / 100.0
   end

@@ -1,41 +1,72 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-4 inline-block grid grid-cols-12", 
+    <%= tag.div class:"mb-4 inline-block grid grid-cols-9 gap-4 items-end", 
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro" } do %>
 
-        <%= tag.div documento_riga.posizione, class: "col-span-1" %>
+        <%#= tag.div documento_riga.posizione, class: "col-span-1" %>
         <%= ff.hidden_field :id %>
 
         <%= ff.fields_for :riga do |form_riga| %>
-                <div class="col-span-6 cb-tax cb-large w-full flex flex-col">
+                
+                <% if form_riga.object.new_record? %>
+                    <fieldset class="col-span-1 flex flex-col justify-between items-start">  
+                        <%= form_riga.label :quantita, class: "pb-2" %>
+                        <%= form_riga.number_field :quantita,
+                                data: { controller: "focus", focus_focus_value: "now" },
+                                class: [
+                                    "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                                    "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                                    ] %>
+                    </fieldset>    
+                 <% else %>
+                    <fieldset class="col-span-1 flex flex-col justify-between items-center">  
+                        <%= form_riga.label :quantita, class: "text-normal mb-2" %>
+                        <%= form_riga.number_field :quantita,
+                                class: [
+                                    "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                                    "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                                    ] %>
+                    </fieldset>    
+                <% end %>
+
+                <fieldset class="col-span-5 cb-tax cb-large w-full flex flex-col">
                     <%= form_riga.label :libro_id, class: "mb-1" %>
                     <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
                             placeholder: "seleziona libro...",
                             data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                     tax_combobox_libro_target: "combobox" } %>
-                </div>
-            
+                </fieldset>                    
 
+                
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= form_riga.label :quantita %>
-                    <%= form_riga.number_field :quantita, class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
-                </fieldset>    
-                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= form_riga.label :prezzo_cents, "Prezzo" %>
-                    <%= form_riga.number_field :prezzo_cents, 
-                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", data: { tax_combobox_libro_target: "prezzo" } %>
+                    <%= form_riga.label :prezzo, "Prezzo" %>
+                    <%= form_riga.number_field :prezzo, 
+                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", data: { tax_combobox_libro_target: "prezzo" },
+                            step: 0.01 %>
                 </fieldset>
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= form_riga.label :sconto %>
-                    <%= form_riga.number_field :sconto, class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
+                    <%= form_riga.number_field :sconto, 
+                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
                 </fieldset>      
                 <%= form_riga.hidden_field :id %>
 
 
         <% end %>
 
-        <%= button_tag "elimina riga", formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete, class: "col-span-1 float-right p-2 rounded-md bg-red-300 hover:bg-red-400", tabindex: "-1" %>
-    
+        <%= tag.div class: "col-span-1 flex justify-center items-center" do %>
+            <%= button_tag  formaction: documento_riga_path(turbo_id_for(documento_riga)), formmethod: :delete,
+                    #data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, 
+                    #disabled: false,
+                    tabindex: -1,
+                    class: [
+                        "mb-1.5 mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm": true,
+                        "bg-red-600 text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600": true,
+                        "cursor-not-allowed opacity-50 bg-gray-200 text-gray-400 ": false
+                    ] do %>
+                <%= inline_svg_tag "icon-trash.svg" %>
+            <% end %>
+        <% end %>
     <% end %>
 <% end %>

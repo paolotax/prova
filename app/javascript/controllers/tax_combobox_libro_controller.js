@@ -22,7 +22,7 @@ export default class extends Controller {
       // Assuming the response contains the prezzo_copertina_cents
       let prezzo_copertina_cents = data.prezzo_copertina_cents;
       // Use the prezzo_copertina_cents as needed
-      this.prezzoTarget.value = prezzo_copertina_cents;
+      this.prezzoTarget.value = prezzo_copertina_cents / 100.0;
     })
     .catch(error => {
       // Handle any errors
