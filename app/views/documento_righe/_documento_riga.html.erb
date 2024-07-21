@@ -1,6 +1,6 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-4 bg-white p-4 border rounded-lg inline-block grid grid-cols-4 gap-4 items-end", 
+    <%= tag.div class:"mb-4 bg-white p-4 border rounded-lg inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
         
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro" } do %>
@@ -31,9 +31,9 @@
                     </fieldset>    
                 <% end %>
 
-                <fieldset class="col-span-5 cb-tax cb-medium w-full flex flex-col">
-                    <%= form_riga.label :libro_id, class: "mb-1" %>
+                <fieldset class="col-span-3 sm:col-span-4 cb-tax cb-medium flex flex-col">
                     <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
+                            label: "Libro",
                             placeholder: "seleziona libro...",
                             data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                     tax_combobox_libro_target: "combobox" } %>
@@ -43,7 +43,8 @@
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= form_riga.label :prezzo, "Prezzo" %>
                     <%= form_riga.number_field :prezzo, 
-                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", data: { tax_combobox_libro_target: "prezzo" },
+                            class: "field col-start-1 sm:col-start-0 w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", 
+                            data: { tax_combobox_libro_target: "prezzo" },
                             step: 0.01 %>
                 </fieldset>
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  

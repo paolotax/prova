@@ -13,9 +13,7 @@
 @layer components {
 
   .cb-tax {
-    .hw-combobox__label {
-      @apply hidden;
-    }
+  
     .hw-combobox__input {
       @apply py-0.5 ;
     }
@@ -60,7 +58,7 @@
   .cb-medium {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply w-80 rounded-lg  shadow-lg bg-white;
+        @apply w-60 xl:w-80 rounded-lg  shadow-lg bg-white;
       }
     }
   }

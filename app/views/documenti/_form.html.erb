@@ -13,54 +13,53 @@
         </div>
     <% end %>
   
-    <section class="grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 border rounded-lg" data-controller="tax-combobox-causale">
+    <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 border rounded-lg",
+             data: { controller:"tax-combobox-causale" } do %>
         
-        <fieldset class="col-span-4 my-5 cb-tax cb-small flex flex-col space-y-2">
-            <%= form.label :causale_id, "Tipo documento" %>
-            <%= form.combobox :causale_id, Causale.all, label: "tipo documento:", 
+        <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col space-y-2" do %>
+            <%= form.combobox :causale_id, Causale.all, label: "Tipo documento", 
                             placeholder: "seleziona tipo documento...",
                             data: { action: "hw-combobox:selection->tax-combobox-causale#change",
-                                    tax_combobox_causale_target: "combobox" }%>
-        </fieldset>
+                                    tax_combobox_causale_target: "combobox" } %>
+        <% end %>
     
-        <fieldset class="col-span-2 my-5">
+        <%= tag.fieldset class: "col-span-2 my-5" do %>
             <%= form.label :numero_documento, "Numero" %>
             <%= form.number_field :numero_documento, class: "field w-32", 
                                  data: { tax_combobox_causale_target: "prezzo" } %>
-        </fieldset>
+        <% end %>
     
-        <fieldset class="col-span-2 my-5">
+        <%= tag.fieldset class: "col-span-2 my-5" do %>
             <%= form.label :data_documento, "Data" %>
-            <%= form.date_field :data_documento, class: "field" %>
-        </fieldset>
-    </section>
+            <%= form.date_field :data_documento, class: "field w-36" %>
+        <% end %>
+   
+    <% end %>
 
-    <section class= "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg">
+    <%= tag.section class: "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg" do %>
         <%= render TaxSelectClientableComponent.new( 
                 form: form, 
                 clientable_type: documento.clientable_type, 
                 clientable_id: documento.clientable_id
             ) %>
-    </section>
+    <% end %>
 
-    
+    <%= tag.section id: "documento_righe", class: "col-span-4 px-4" do %>
+        <%= render @documento.documento_righe %>
+    <% end %>
 
+    <div class="px-4 flex items-start mb-8">
+        <%= render TaxButton.new(
+                    caption: "",
+                    svg_file: "icon-plus.svg",
+                    color: "blue",
+                    url: url_for( controller: "documento_righe", action: "new", model: @documento ),
+                    data_attr: { turbo_stream: true }
+            ) %>
+    </div>
 
-  <div id="documento_righe" class="col-span-4 px-4">
-    <%= render @documento.documento_righe %>
-  </div>
+    <div class="inline px-4">
+        <%= form.submit "Salva", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    </div>
 
-  <div class="px-4 flex items-start mb-8">
-    <%= render TaxButton.new(
-                caption: "riga",
-                svg_file: "icon-plus.svg",
-                color: "blue",
-                url: url_for( controller: "documento_righe", action: "new", model: @documento ),
-                data_attr: { turbo_stream: true }
-        ) %>
-  </div>
-
-  <div class="inline px-4">
-    <%= form.submit "Salva", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-  </div>
 <% end %>
