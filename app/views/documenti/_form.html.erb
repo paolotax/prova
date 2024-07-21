@@ -13,42 +13,44 @@
         </div>
     <% end %>
   
-    <div class="flex justify-start items-center space-x-2" data-controller="tax-combobox-causale">
+    <section class="grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 border rounded-lg" data-controller="tax-combobox-causale">
         
-        <div class="my-5 cb-tax cb-medium flex flex-col space-y-2">
+        <fieldset class="col-span-4 my-5 cb-tax cb-small flex flex-col space-y-2">
             <%= form.label :causale_id, "Tipo documento" %>
             <%= form.combobox :causale_id, Causale.all, label: "tipo documento:", 
                             placeholder: "seleziona tipo documento...",
                             data: { action: "hw-combobox:selection->tax-combobox-causale#change",
                                     tax_combobox_causale_target: "combobox" }%>
-        </div>
+        </fieldset>
     
-        <div class="my-5">
+        <fieldset class="col-span-2 my-5">
             <%= form.label :numero_documento, "Numero" %>
             <%= form.number_field :numero_documento, class: "field w-32", 
-            data: { tax_combobox_causale_target: "prezzo" } %>
-        </div>
+                                 data: { tax_combobox_causale_target: "prezzo" } %>
+        </fieldset>
     
-        <div class="my-5">
+        <fieldset class="col-span-2 my-5">
             <%= form.label :data_documento, "Data" %>
             <%= form.date_field :data_documento, class: "field" %>
-        </div>
-    </div>
+        </fieldset>
+    </section>
 
-  <fieldset class="my-5 cb-tax cb-xlarge flex flex-col space-y-2">
-      <%= form.label :clientable_id, "Cliente" %>
-			<%= form.combobox :clientable_id, current_user.clienti.order(:denominazione), label: "cliente:", placeholder: "seleziona cliente..." %>      
-      <%#  This is a hidden field that is used to store the type of the clientable DA MODIFICARE %>
-      <%= form.hidden_field :clientable_type, value: "Cliente" %>	
-  </fieldset>
+    <section class= "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg">
+        <%= render TaxSelectClientableComponent.new( 
+                form: form, 
+                clientable_type: documento.clientable_type, 
+                clientable_id: documento.clientable_id
+            ) %>
+    </section>
+
+    
 
 
-
-  <div id="documento_righe">
+  <div id="documento_righe" class="col-span-4 px-4">
     <%= render @documento.documento_righe %>
   </div>
 
-  <div class="flex items-start mb-8">
+  <div class="px-4 flex items-start mb-8">
     <%= render TaxButton.new(
                 caption: "riga",
                 svg_file: "icon-plus.svg",
@@ -58,7 +60,7 @@
         ) %>
   </div>
 
-  <div class="inline">
+  <div class="inline px-4">
     <%= form.submit "Salva", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>

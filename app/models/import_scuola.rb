@@ -106,6 +106,10 @@ class ImportScuola < ApplicationRecord
     self.direzione || "<privata>".html_safe
   end
 
+  def denominazione 
+    ApplicationController.helpers.titleize_con_apostrofi self.DENOMINAZIONESCUOLA
+  end
+
   
   def adozioni_count
     import_adozioni.count

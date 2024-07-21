@@ -9,8 +9,13 @@ end
 
 # then mount it
 Rails.application.routes.draw do
-
   
+
+  namespace :searches do
+    get 'clientable/show'
+    get 'clientable/new'
+  end
+
   mount RailsDesigner::Engine, at: '/rails_designer'
 
   resources :clienti do

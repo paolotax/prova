@@ -1,48 +1,50 @@
-<%= render Heading::WithActionsComponent.new(level: 'h3') do |heading| %>
-
-    <%# <% heading.with_leader do %>
-        <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
-    <%# <% end %>
-    
-    <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
-
-    <% heading.with_action do %>
-        <%= render TaxButton.new(
-                caption: "Elimina",
-                svg_file: "icon-trash-real.svg",
-                color: "red",
-                url: url_for( controller: "documenti", action: "destroy", model: @documento ),
-                data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }
-        ) %>
-    <% end %>
-
-    <% heading.with_action do %>
-        <%= render TaxButton.new(
-                caption: "Documenti",
-                svg_file: "icon-arrow-long-left.svg",
-                color: "white",
-                url: url_for( controller: "documenti", action: "index" )
-        ) %>
-    <% end %>
-
-    <% heading.with_action do %>
-        <%= render TaxButton.new(
-                caption: "Modifica",
-                svg_file: "icon-pencil.svg",
-                color: "blue",
-                url: url_for( controller: "documenti", action: "edit", model: @documento )
-        ) %>
-    <% end %>
-
-    <%= @documento.causale %>
-
-<% end %>
-
-
-
-
-
 <div class="mx-auto md:w-10/12 w-full">
+  
+  <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+
+      <%# <% heading.with_leader do %>
+          <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
+      <%# <% end %>
+      
+      <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
+
+      <% heading.with_action do %>
+          <%= render TaxButton.new(
+                  caption: "Elimina",
+                  svg_file: "icon-trash-real.svg",
+                  color: "red",
+                  url: url_for( controller: "documenti", action: "destroy", model: @documento ),
+                  data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }
+          ) %>
+      <% end %>
+
+      <% heading.with_action do %>
+          <%= render TaxButton.new(
+                  caption: "Documenti",
+                  svg_file: "icon-arrow-long-left.svg",
+                  color: "white",
+                  url: url_for( controller: "documenti", action: "index" )
+          ) %>
+      <% end %>
+
+      <% heading.with_action do %>
+          <%= render TaxButton.new(
+                  caption: "Modifica",
+                  svg_file: "icon-pencil.svg",
+                  color: "blue",
+                  url: url_for( controller: "documenti", action: "edit", model: @documento )
+          ) %>
+      <% end %>
+
+      <%= @documento.causale %>
+
+  <% end %>
+
+
+
+
+
+
 
   <div class="sm:flex sm:items-center">
     

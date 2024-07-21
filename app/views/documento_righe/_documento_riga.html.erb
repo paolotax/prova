@@ -1,6 +1,7 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-4 inline-block grid grid-cols-9 gap-4 items-end", 
+    <%= tag.div class:"mb-4 bg-white p-4 border rounded-lg inline-block grid grid-cols-4 gap-4 items-end", 
+        
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro" } do %>
 
@@ -30,7 +31,7 @@
                     </fieldset>    
                 <% end %>
 
-                <fieldset class="col-span-5 cb-tax cb-large w-full flex flex-col">
+                <fieldset class="col-span-5 cb-tax cb-medium w-full flex flex-col">
                     <%= form_riga.label :libro_id, class: "mb-1" %>
                     <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
                             placeholder: "seleziona libro...",
@@ -48,7 +49,8 @@
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= form_riga.label :sconto %>
                     <%= form_riga.number_field :sconto, 
-                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" %>
+                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                            step: 0.01 %>
                 </fieldset>      
                 <%= form_riga.hidden_field :id %>
 

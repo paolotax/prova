@@ -1,0 +1,18 @@
+<fieldset class="my-5 cb-tax cb-medium flex flex-col space-y-2" id="select-clientable">
+    
+    <% if @clientable_type == "ImportScuola" %>
+
+        <%= label_tag "documento_clientable_id", "Scuola" %>
+        <%= combobox_tag "documento[clientable_id]", @user.import_scuole, value: @clientable_id, label: "Scuola:", placeholder: "seleziona scuola..." %>      
+        <%#  This is a hidden field that is used to store the type of the clientable DA MODIFICARE %>
+        <%= hidden_field_tag "documento[clientable_type]", "ImportScuola" %>
+
+    <% else %>
+
+        <%= label_tag "documento_clientable_id", "Cliente" %>
+        <%= combobox_tag "documento[clientable_id]", @user.clienti.order(:denominazione), value: @clientable_id, label: "Cliente:", placeholder: "seleziona cliente..." %>      
+        <%= hidden_field_tag "documento[clientable_type]", "Cliente" %>	
+    
+    <% end %>
+
+</fieldset>
