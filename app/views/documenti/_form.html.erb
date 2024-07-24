@@ -5,11 +5,6 @@
             <h2>
                 <%= pluralize(documento.errors.count, "errore impedisce", "errori impediscono") %> di salvare il documento:
             </h2>
-            <ul>
-                <% documento.errors.each do |error| %>
-                    <li><%= error.full_message %></li>
-                <% end %>
-            </ul>
         </div>
     <% end %>
   
@@ -17,20 +12,21 @@
              data: { controller:"tax-combobox-causale" } do %>
         
         <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col space-y-2" do %>
-            <%= form.combobox :causale_id, Causale.all, label: "Tipo documento", 
+            <%= render FormLabelComponent.new(form: form, field: 'causale', label: 'Tipo documento') %>
+            <%= form.combobox :causale_id, Causale.all, 
                             placeholder: "seleziona tipo documento...",
                             data: { action: "hw-combobox:selection->tax-combobox-causale#change",
                                     tax_combobox_causale_target: "combobox" } %>
         <% end %>
     
         <%= tag.fieldset class: "col-span-2 my-5" do %>
-            <%= form.label :numero_documento, "Numero" %>
+            <%= render FormLabelComponent.new(form: form, field: 'numero_documento', label: 'Numero') %>
             <%= form.number_field :numero_documento, class: "field w-32", 
                                  data: { tax_combobox_causale_target: "prezzo" } %>
         <% end %>
     
         <%= tag.fieldset class: "col-span-2 my-5" do %>
-            <%= form.label :data_documento, "Data" %>
+            <%= render FormLabelComponent.new(form: form, field: 'data_documento', label: 'Data') %>
             <%= form.date_field :data_documento, class: "field w-36" %>
         <% end %>
    

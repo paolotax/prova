@@ -12,7 +12,7 @@
                 
                 <% if form_riga.object.new_record? %>
                     <fieldset class="col-span-1 flex flex-col justify-between items-start">  
-                        <%= form_riga.label :quantita, class: "pb-2" %>
+                        <%= render FormLabelComponent.new(form: form_riga, field: 'quantita', label: 'Quantità') %>
                         <%= form_riga.number_field :quantita,
                                 data: { controller: "focus", focus_focus_value: "now" },
                                 class: [
@@ -22,7 +22,7 @@
                     </fieldset>    
                  <% else %>
                     <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                        <%= form_riga.label :quantita, class: "text-normal mb-2" %>
+                        <%= render FormLabelComponent.new(form: form_riga, field: 'quantita', label: 'Quantità') %>
                         <%= form_riga.number_field :quantita,
                                 class: [
                                     "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
@@ -32,26 +32,32 @@
                 <% end %>
 
                 <fieldset class="col-span-3 sm:col-span-4 cb-tax cb-medium flex flex-col">
+                    <%= render FormLabelComponent.new(form: form_riga, field: 'libro', label: 'Libro') %>
                     <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
-                            label: "Libro",
                             placeholder: "seleziona libro...",
                             data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                     tax_combobox_libro_target: "combobox" } %>
                 </fieldset>                    
 
                 
-                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= form_riga.label :prezzo, "Prezzo" %>
+                <fieldset class="col-start-2 sm:col-start-auto col-span-1 flex flex-col justify-between items-center">  
+                    <%= render FormLabelComponent.new(form: form_riga, field: 'prezzo', label: 'Prezzo') %>
                     <%= form_riga.number_field :prezzo, 
-                            class: "field col-start-1 sm:col-start-0 w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none", 
                             data: { tax_combobox_libro_target: "prezzo" },
-                            step: 0.01 %>
+                            step: 0.01,
+                            class: [
+                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                            ] %>
                 </fieldset>
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= form_riga.label :sconto %>
+                    <%= render FormLabelComponent.new(form: form_riga, field: 'sconto', label: 'Sconto') %>
                     <%= form_riga.number_field :sconto, 
-                            class: "field w-full text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                            step: 0.01 %>
+                            step: 0.01,
+                            class: [
+                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                            ] %>
                 </fieldset>      
                 <%= form_riga.hidden_field :id %>
 
