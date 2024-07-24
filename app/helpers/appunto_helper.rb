@@ -1,7 +1,8 @@
 module AppuntoHelper
 
-  def attachment_icon_tag(attachment)
 
+  def attachment_icon_tag(attachment)
+    
     # suggerito da copilot lo provo
     case attachment.content_type
       when "application/pdf"

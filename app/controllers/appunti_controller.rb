@@ -5,32 +5,19 @@ class AppuntiController < ApplicationController
   before_action :ensure_frame_response, only: %i[ new edit show ]
 
   def index
-      @appunti = current_user.appunti.includes(:import_scuola, :import_adozione).order(created_at: :desc)
+    @appunti = current_user.appunti.includes(:import_scuola, :import_adozione).order(created_at: :desc)
       
-      @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?     
-      
-      @appunti = @appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
-      @appunti = @appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
+    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
+    @appunti = @appunti.search(params[:q]) if params[:q]
+    @appunti = filter_appunti(@appunti)
+    
+    @pagy, @appunti =  pagy(@appunti.all, items: 30)
 
-      @appunti = @appunti.non_archiviati if params[:filter] == "non_archiviati"       
-      @appunti = @appunti.in_sospeso if params[:filter] == "in_sospeso" 
-
-      @appunti = @appunti.da_fare if params[:filter] == "da_fare" 
-      @appunti = @appunti.in_evidenza if params[:filter] == "in_evidenza"
-      @appunti = @appunti.in_settimana if params[:filter] == "in_settimana"       
-      @appunti = @appunti.in_visione if params[:filter] == "in_visione"
-      @appunti = @appunti.da_pagare if params[:filter] == "da_pagare" 
-      @appunti = @appunti.completato if params[:filter] == "completato" 
-      @appunti = @appunti.archiviati if params[:filter] == "archiviato" 
-
-      @appunti = @appunti.search(params[:q]) if params[:q]
-      @pagy, @appunti =  pagy(@appunti.all, items: 30)
-
-      respond_to do |format|
-        format.html
-        format.xlsx
-        format.turbo_stream
-      end
+    respond_to do |format|
+      format.html
+      format.xlsx
+      format.turbo_stream
+    end
   end
 
   def show
@@ -124,5 +111,24 @@ class AppuntiController < ApplicationController
 
     def appunto_params
       params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :stato, :classe_id, :team, :completed_at, :image, :content, attachments: [])
+    end
+
+
+
+    def filter_appunti(appunti)
+          
+      appunti = appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
+      appunti = appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
+      appunti = appunti.non_archiviati if params[:filter] == "non_archiviati"       
+      appunti = appunti.in_sospeso if params[:filter] == "in_sospeso" 
+      appunti = appunti.da_fare if params[:filter] == "da_fare" 
+      appunti = appunti.in_evidenza if params[:filter] == "in_evidenza"
+      appunti = appunti.in_settimana if params[:filter] == "in_settimana"       
+      appunti = appunti.in_visione if params[:filter] == "in_visione"
+      appunti = appunti.da_pagare if params[:filter] == "da_pagare" 
+      appunti = appunti.completato if params[:filter] == "completato" 
+      appunti = appunti.archiviati if params[:filter] == "archiviato" 
+
+      appunti
     end
 end
