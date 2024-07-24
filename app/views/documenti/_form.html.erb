@@ -3,7 +3,7 @@
     <% if documento.errors.any? %>
         <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
             <h2>
-                <%= pluralize(documento.errors.count, "errore impedisce", "errori impediscono") %> di salvare il documento:
+                Non posso salvare il documento. <%= t 'misc.errori', count: documento.errors.count %>
             </h2>
         </div>
     <% end %>
@@ -11,7 +11,7 @@
     <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 border rounded-lg",
              data: { controller:"tax-combobox-causale" } do %>
         
-        <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col space-y-2" do %>
+        <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col" do %>
             <%= render FormLabelComponent.new(form: form, field: 'causale', label: 'Tipo documento') %>
             <%= form.combobox :causale_id, Causale.all, 
                             placeholder: "seleziona tipo documento...",
@@ -51,7 +51,7 @@
                     color: "blue",
                     url: url_for( controller: "documento_righe", action: "new", model: @documento ),
                     data_attr: { turbo_stream: true }
-            ) %>
+        ) %>
     </div>
 
     <div class="inline px-4">

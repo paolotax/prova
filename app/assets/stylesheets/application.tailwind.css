@@ -13,6 +13,9 @@
 @layer components {
 
   .cb-tax {
+    .hw-combobox__label {
+      @apply text-sm text-gray-700 font-medium;
+    }
   
     .hw-combobox__input {
       @apply py-0.5 ;
