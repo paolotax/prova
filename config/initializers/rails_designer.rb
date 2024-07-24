@@ -28,7 +28,7 @@ RailsDesigner.configure do |config|
   # Set the Rails Designer helpers.
   # Default is an empty array, meaning no Rails Designer helpers will be available.
   # See the docs for all the details: https://railsdesigner.com/docs/helpers/.
-  config.view_helpers = ["component", "stream_notification", "string_to_color"]
+  config.view_helpers = ["component", "stream_notification", "string_to_color", "label_for"]
 
   # Set one of Tailwind CSS colors as your primary- and gray color.
   # The default primary color is `sky`. The default gray color is `gray`.

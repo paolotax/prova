@@ -12,21 +12,22 @@
              data: { controller:"tax-combobox-causale" } do %>
         
         <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col" do %>
-            <%= render FormLabelComponent.new(form: form, field: 'causale', label: 'Tipo documento') %>
+            <%= label_for form: form, field: 'causale', label: 'Tipo documento' %>
             <%= form.combobox :causale_id, Causale.all, 
                             placeholder: "seleziona tipo documento...",
                             data: { action: "hw-combobox:selection->tax-combobox-causale#change",
                                     tax_combobox_causale_target: "combobox" } %>
         <% end %>
     
-        <%= tag.fieldset class: "col-span-2 my-5" do %>
-            <%= render FormLabelComponent.new(form: form, field: 'numero_documento', label: 'Numero') %>
-            <%= form.number_field :numero_documento, class: "field w-32", 
+        <%= tag.fieldset class: "col-span-2 my-5 flex flex-col" do %>
+            <%= label_for form: form, field: 'numero_documento', label: 'Numero' %>            
+            <%= component 'form_number',form: form, field: 'numero_documento', data_attr: { tax_combobox_causale_target: "prezzo" } %>
+            <%#= form.number_field :numero_documento, class: "field w-32", 
                                  data: { tax_combobox_causale_target: "prezzo" } %>
         <% end %>
     
         <%= tag.fieldset class: "col-span-2 my-5" do %>
-            <%= render FormLabelComponent.new(form: form, field: 'data_documento', label: 'Data') %>
+            <%= label_for form: form, field: 'data_documento', label: 'Data' %>
             <%= form.date_field :data_documento, class: "field w-36" %>
         <% end %>
    
