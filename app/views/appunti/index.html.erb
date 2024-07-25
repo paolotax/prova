@@ -1,21 +1,19 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
     
     <% heading.with_action do %>
-        <%= render TaxButtonComponent.new(
+        <%= component 'tax_button',
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
-                url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters )
-        ) %> 
+                url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ) %> 
     <% end %>
     <% heading.with_action do %>
-		<%= render TaxButtonComponent.new(
+		<%= component 'tax_button',
                 caption: "Nuovo",
                 svg_file: "icon-plus.svg",
                 color: "blue",
                 url: url_for( controller: "appunti", action: "new", model: @appunto ),
-                data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
-        ) %>
+                data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
     <% end %>
     
     <%= h1 {"Appunti"} %>

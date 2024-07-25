@@ -6,33 +6,30 @@
 	
 	<div class="flex items-end gap-x-4 sm:pl-4 px-2 my-4">
 
-		<%= render TaxButtonComponent.new(
+		<%= component 'tax_button',
                 caption: "Stats...",
                 svg_file: "icon-chart-pie.svg",
                 color: "white",
-                url: url_for( controller: "stats", action: "index" )
-        ) %>  
-        <%= render TaxButtonComponent.new(
+                url: url_for( controller: "stats", action: "index" ) %>  
+        <%= component 'tax_button',
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
-                url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters )
-        ) %>     
+                url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>     
+		
 		<% if current_user.admin? %>
 
-			<%= render TaxButtonComponent.new(
+			<%= component 'tax_button',
 				caption: "SQL",
 				svg_file: "icon-pencil.svg",
 				color: "yellow",
-				url: url_for( controller: "stats", action: "edit", model: @stat )
-			) %> 
-			<%= render TaxButtonComponent.new(
+				url: url_for( controller: "stats", action: "edit", model: @stat ) %> 
+			<%= component 'tax_button',
 				caption: "Elimina",
 				svg_file: "icon-trash-real.svg",
 				color: "red",
 				url: url_for( controller: "stats", action: "destroy", model: @stat ),
-				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }
-			) %> 
+				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %> 
 
 		<% end %>
 	</div>

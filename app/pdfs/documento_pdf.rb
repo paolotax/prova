@@ -48,12 +48,12 @@ class DocumentoPdf < Prawn::Document
       line_width 1
 
       move_down 5
-      text "#{current_user.name}", :size => 13, :style => :bold
+      text "#{current_user.ragione_sociale}", :size => 13, :style => :bold
       text "Via Vestri, 4"
       text "40128 Bologna BO"
       move_down 5
-      text "tel 051 6342585  fax 051 6341521"
-      text "cell {current_user.telefono}"
+
+      text "cell #{current_user.cellulare}"
       text "email #{current_user.email}"
       text "partita iva #{current_user.partita_iva}"
       text "codice fiscale {current_user.codice_fiscale}"
@@ -74,7 +74,7 @@ class DocumentoPdf < Prawn::Document
     
     bounding_box [bounds.left, bounds.top - 55.mm], :width => 44.mm, :height => 8.mm do
       stroke_bounds
-      text "documento", :align => :center, :valign => :center
+      text "#{@documento.causale.causale}", :align => :center, :valign => :center
     end
 
 
@@ -143,7 +143,7 @@ class DocumentoPdf < Prawn::Document
         stroke_bounds
         draw_text "NOSTRO CODICE IBAN PER BONIFICI", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text "IT81M0538702414000000075619", :align => :center, :valign => :center, :size => 8
+          text "#{current_user.iban}", :align => :center, :valign => :center, :size => 8
         end
       end
     end

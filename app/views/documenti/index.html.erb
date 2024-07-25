@@ -3,13 +3,12 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
     
     <% heading.with_action do %>
-        <%= render TaxButtonComponent.new(
+        <%= component 'tax_button',
                 caption: "Documento",
                 svg_file: "icon-plus.svg",
                 color: "blue",
                 url: url_for( controller: "documenti", action: "new", model: @documento ),
-                data_attr: { turbo_frameaaa: :modal, action: "click->dialog#open" }
-        ) %>
+                data_attr: { turbo_frameaaa: :modal, action: "click->dialog#open" } %>
     <% end %>
     
     <%= h1 {"Documenti"} %>

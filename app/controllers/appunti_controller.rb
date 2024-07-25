@@ -12,7 +12,7 @@ class AppuntiController < ApplicationController
     @appunti = @appunti.search(params[:q]) if params[:q]
     
     @appunti = filter_appunti(@appunti)
-
+    
     @pagy, @appunti =  pagy(@appunti.all, items: 30)
 
     respond_to do |format|

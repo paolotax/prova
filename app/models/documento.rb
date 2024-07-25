@@ -46,9 +46,5 @@ class Documento < ApplicationRecord
   validates :numero_documento, presence: true
   validates :data_documento, presence: true
 
-
-
-
-  
-
+  #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
 end
