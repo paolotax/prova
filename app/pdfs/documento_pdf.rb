@@ -197,7 +197,7 @@ class DocumentoPdf < Prawn::Document
 
         bounding_box [bounds.left, bounds.top], :width  => 32.mm, :height => 15.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
+            text "#{@documento.righe.sum(&:importo)}", :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -221,7 +221,7 @@ class DocumentoPdf < Prawn::Document
 
         bounding_box [bounds.left, bounds.top - 15.mm], :width  => 40.mm, :height => 9.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
+            text "#{@documento.righe.sum(&:importo)}", :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -239,7 +239,7 @@ class DocumentoPdf < Prawn::Document
 
         bounding_box [bounds.left + 144.mm, bounds.top - 13.mm], :width  => 44.mm, :height => 11.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 8.mm do
-            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
+            text "#{@documento.righe.sum(&:importo)}", :align => :right, :valign => :center, :size => 8
           end
         end
       end    
