@@ -47,4 +47,13 @@ class Documento < ApplicationRecord
   validates :data_documento, presence: true
 
   #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
+  #
+  
+  def totale_importo
+    righe.sum(&:importo)
+  end
+
+  def totale_copie
+    righe.sum(&:quantita)
+  end
 end
