@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaxButton < ViewComponent::Base
+class TaxButtonComponent < ViewComponent::Base
   
   attr_reader :caption, :svg_file, :color, :url, :data_attr
   

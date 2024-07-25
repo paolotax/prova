@@ -8,7 +8,9 @@ class AppuntiController < ApplicationController
     @appunti = current_user.appunti.includes(:import_scuola, :import_adozione).order(created_at: :desc)
       
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
+    
     @appunti = @appunti.search(params[:q]) if params[:q]
+    
     @appunti = filter_appunti(@appunti)
 
     @pagy, @appunti =  pagy(@appunti.all, items: 30)

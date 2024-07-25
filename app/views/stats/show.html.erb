@@ -6,13 +6,13 @@
 	
 	<div class="flex items-end gap-x-4 sm:pl-4 px-2 my-4">
 
-		<%= render TaxButton.new(
+		<%= render TaxButtonComponent.new(
                 caption: "Stats...",
                 svg_file: "icon-chart-pie.svg",
                 color: "white",
                 url: url_for( controller: "stats", action: "index" )
         ) %>  
-        <%= render TaxButton.new(
+        <%= render TaxButtonComponent.new(
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
@@ -20,13 +20,13 @@
         ) %>     
 		<% if current_user.admin? %>
 
-			<%= render TaxButton.new(
+			<%= render TaxButtonComponent.new(
 				caption: "SQL",
 				svg_file: "icon-pencil.svg",
 				color: "yellow",
 				url: url_for( controller: "stats", action: "edit", model: @stat )
 			) %> 
-			<%= render TaxButton.new(
+			<%= render TaxButtonComponent.new(
 				caption: "Elimina",
 				svg_file: "icon-trash-real.svg",
 				color: "red",

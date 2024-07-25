@@ -4,21 +4,24 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
-
-    # if params[:search].present?
-    #   @documenti = Views::Documento.search_any_word(params[:search]).order(data_documento: :desc)
-    # else
-    #   @documenti = Views::Documento.order(data_documento: :desc)
-    # end
-
-    @documenti = Documento.all
+    @documenti = current_user.documenti.all
   end
 
   def show
+    respond_to do |format|
+      format.html
+      format.pdf do
+        #@adozioni = Array(@adozione)
+        pdf = DocumentoPdf.new(@documento, view_context)
+        send_data pdf.render, filename: "documento_#{@documento.id}.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"      
+      end
+    end
   end
   
   def new
-    causale = Causale.find_by(causale: "Ordine Scuola")
+    causale = Causale.find_by(causale: "Ordine Cliente")
     @documento = current_user.documenti.build(data_documento: Date.today, causale: causale)
     @documento.documento_righe.build.build_riga
   end
@@ -63,21 +66,21 @@ class DocumentiController < ApplicationController
   end
 
 
-  def nuovo_numero_documento
+  # def nuovo_numero_documento
     
-    causale = Causale.find(params[:causale]).causale
-    if causale == "Ordine Cliente"
-      clientable_type = "Cliente"
-    elsif causale == "Ordine Scuola"
-      clientable_type = "ImportScuola"
-    else
-      clientable_type = nil
-    end
+  #   causale = Causale.find(params[:causale]).causale
+  #   if causale == "Ordine Cliente"
+  #     clientable_type = "Cliente"
+  #   elsif causale == "Ordine Scuola"
+  #     clientable_type = "ImportScuola"
+  #   else
+  #     clientable_type = nil
+  #   end
     
-    numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
-    render json: { numero_documento: numero_documento, clientable_type: clientable_type }
+  #   numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
+  #   render json: { numero_documento: numero_documento, clientable_type: clientable_type }
   
-  end
+  # end
 
 
   private

@@ -1,36 +1,36 @@
 # encoding: utf-8
 require "prawn/measurement_extensions"
 
-class FatturaPdf < Prawn::Document
+class DocumentoPdf < Prawn::Document
 
   include LayoutPdf
   
-  def initialize(fattura, view)
+  def initialize(documento, view)
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
           :info => {
-              :Title => "fattura",
+              :Title => "documento",
               :Author => "todo-propa",
               :Subject => "fatture",
-              :Keywords => "fattura todo-propa",
+              :Keywords => "documento todo-propa",
               :Creator => "todo-propa",
               :Producer => "Prawn",
               :CreationDate => Time.now
          })
          
 
-    @fattura = fattura
-    @cliente = @fattura.cliente
+    @documento = documento
+    @cliente = @documento.clientable
     @view = view
 
     repeat :all do
       intestazione_cliente(@cliente)
-      intestazione_fattura
+      intestazione_documento
       footer      
     end
 
-    righe_fattura
+    righe_documento
     
     footer_totals
     
@@ -48,33 +48,33 @@ class FatturaPdf < Prawn::Document
       line_width 1
 
       move_down 5
-      text "#{current_user.nome_completo}", :size => 13, :style => :bold
+      text "#{current_user.name}", :size => 13, :style => :bold
       text "Via Vestri, 4"
       text "40128 Bologna BO"
       move_down 5
       text "tel 051 6342585  fax 051 6341521"
-      text "cell #{current_user.telefono}"
+      text "cell {current_user.telefono}"
       text "email #{current_user.email}"
       text "partita iva #{current_user.partita_iva}"
-      text "codice fiscale #{current_user.codice_fiscale}"
+      text "codice fiscale {current_user.codice_fiscale}"
 
       bounding_box [bounds.width / 2.0, bounds.top - 55.mm], :width => bounds.width / 2.0 do
         text 'Spett.le'
         move_down 5
-        text cliente.ragione_sociale,  :size => 14, :style => :bold, :spacing => 4
+        text cliente.denominazione,  :size => 14, :style => :bold, :spacing => 4
         text cliente.indirizzo
-        text cliente.cap + ' ' + cliente.frazione + ' ' + cliente.comune + ' ' + cliente.provincia
+        text cliente.cap + ' ' + cliente.comune + ' ' + cliente.provincia
         
       end
     end
 
   end
 
-  def intestazione_fattura
+  def intestazione_documento
     
     bounding_box [bounds.left, bounds.top - 55.mm], :width => 44.mm, :height => 8.mm do
       stroke_bounds
-      text "FATTURA", :align => :center, :valign => :center
+      text "documento", :align => :center, :valign => :center
     end
 
 
@@ -87,14 +87,14 @@ class FatturaPdf < Prawn::Document
         stroke_bounds
         draw_text "DATA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text "#{l(@fattura.data, :format => :only_date)}", :align => :center, :valign => :center, :size => 8
+          text "#{l(@documento.data_documento, :format => :only_date)}", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [bounds.left + 26.mm, bounds.top], :width => 18.mm, :height => 8.mm do
         stroke_bounds
         draw_text "NUMERO", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text "#{@fattura.numero}", :align => :center, :valign => :center, :size => 8
+          text "#{@documento.numero_documento}", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [bounds.left + 44.mm, bounds.top], :width => 28.mm, :height => 8.mm do
@@ -108,7 +108,7 @@ class FatturaPdf < Prawn::Document
       stroke_bounds
       draw_text "CONDIZIONI DI PAGAMENTO", :at => [bounds.left + 1, bounds.top - 6], :size => 6
       bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-        text "#{@fattura.condizioni_pagamento}", :align => :center, :valign => :center, :size => 8
+        text "#{@documento.tipo_pagamento}", :align => :center, :valign => :center, :size => 8
       end
     end
 
@@ -157,18 +157,22 @@ class FatturaPdf < Prawn::Document
 
   end
 
-  def righe_fattura
+  def righe_documento
     #  TABLE
     bounding_box([bounds.left, bounds.top - 106.mm], :width  => bounds.width, :height => 135.mm) do
 
-      unless @fattura.righe.empty?
-        @fattura.righe.group_by(&:appunto).each do |a, righe|
-          text "Ordine del #{l a.created_at, :format => :short}", size: 8
-          r =  righe.map do |riga|
+      unless @documento.righe.empty?
+        
+        #@documento.righe.group_by(&:appunto).each do |a, righe|
+        
+        
+            
+          #text "Ordine del #{l a.created_at, :format => :short}", size: 8
+          r =  @documento.righe.map do |riga|
             [
               riga.libro.titolo,
               riga.quantita,
-              riga.prezzo_unitario,
+              riga.prezzo,
               riga.sconto.round(2),
               riga.importo,
               "VA"
@@ -180,7 +184,7 @@ class FatturaPdf < Prawn::Document
             cells.columns(1..5).style(:align => :right)
           end  
           move_down(5)
-        end
+        
       end
     end
   end
@@ -193,7 +197,7 @@ class FatturaPdf < Prawn::Document
 
         bounding_box [bounds.left, bounds.top], :width  => 32.mm, :height => 15.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "#{@fattura.importo_fattura}", :align => :right, :valign => :center, :size => 8
+            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -217,7 +221,7 @@ class FatturaPdf < Prawn::Document
 
         bounding_box [bounds.left, bounds.top - 15.mm], :width  => 40.mm, :height => 9.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "#{@fattura.importo_fattura}", :align => :right, :valign => :center, :size => 8
+            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -235,7 +239,7 @@ class FatturaPdf < Prawn::Document
 
         bounding_box [bounds.left + 144.mm, bounds.top - 13.mm], :width  => 44.mm, :height => 11.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 8.mm do
-            text "#{@fattura.importo_fattura}", :align => :right, :valign => :center, :size => 8
+            text "{@documento.importo_documento}", :align => :right, :valign => :center, :size => 8
           end
         end
       end    
@@ -285,7 +289,7 @@ class FatturaPdf < Prawn::Document
         
         bounding_box [bounds.left + 144.mm, bounds.top - 13.mm], :width  => 44.mm, :height => 11.mm do
           stroke_bounds
-          draw_text "TOTALE FATTURA   EUR", :at => [bounds.left + 1, bounds.top - 6], :size => 6, :style => :bold
+          draw_text "TOTALE documento   EUR", :at => [bounds.left + 1, bounds.top - 6], :size => 6, :style => :bold
         end
       end    
     end
@@ -301,7 +305,7 @@ class FatturaPdf < Prawn::Document
   end
   
   def l(data, format)
-    @view.l data, :format => :only_date
+    @view.l data#, :format => :only_date
   end
   
   def t(data)

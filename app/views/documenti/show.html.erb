@@ -9,31 +9,39 @@
       <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
       <% heading.with_action do %>
-          <%= render TaxButton.new(
+        	<%= component 'tax_button', 
+                  caption: "PDF",
+                  svg_file: "icon-pdf.svg",
+                  color: "white",
+                  url: url_for( controller: "documenti", action: "show", model: @documento, format: 'pdf' )
+           %>
+
+				<%# target: "_blank" %> 
+      <% end %>                     
+      
+      <% heading.with_action do %>
+          <%= component 'tax_button',
                   caption: "Elimina",
                   svg_file: "icon-trash-real.svg",
                   color: "red",
                   url: url_for( controller: "documenti", action: "destroy", model: @documento ),
-                  data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }
-          ) %>
+                  data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
       <% end %>
 
       <% heading.with_action do %>
-          <%= render TaxButton.new(
+          <%= component 'tax_button',
                   caption: "Documenti",
                   svg_file: "icon-arrow-long-left.svg",
                   color: "white",
-                  url: url_for( controller: "documenti", action: "index" )
-          ) %>
+                  url: url_for( controller: "documenti", action: "index" ) %>
       <% end %>
 
       <% heading.with_action do %>
-          <%= render TaxButton.new(
+          <%= component 'tax_button',
                   caption: "Modifica",
                   svg_file: "icon-pencil.svg",
                   color: "blue",
-                  url: url_for( controller: "documenti", action: "edit", model: @documento )
-          ) %>
+                  url: url_for( controller: "documenti", action: "edit", model: @documento ) %>
       <% end %>
 
       <%= @documento.causale %>

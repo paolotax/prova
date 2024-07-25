@@ -22,14 +22,10 @@ class AdozioniController < ApplicationController
           scuole = current_user.import_scuole.where(id: current_user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) 
       end   
     # fix this @adozioni in form_multi 
-       @adozioni = current_user.adozioni.vendita.joins(:scuola).where("import_scuole.id in (?)", scuole.pluck(:id))
+      @adozioni = current_user.adozioni.vendita.joins(:scuola).where("import_scuole.id in (?)", scuole.pluck(:id))
     end
-
-
-
     @adozioni = @adozioni.where(id: params[:ids].split(",")) if params[:ids].present?
 
-    #@status_options = Adozione.statuses.keys
     @scuole_options = @adozioni.joins(:scuola).order(:DENOMINAZIONESCUOLA).pluck('import_scuole."DENOMINAZIONESCUOLA", import_scuole.id').uniq.sort
     @libri_options  = @adozioni.joins(:libro).order(:titolo).pluck(:titolo, :libro_id).uniq.sort
     @classi_options = @adozioni.joins(:classe).order("view_classi.classe").pluck("view_classi.classe").uniq.sort

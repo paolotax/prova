@@ -1,7 +1,7 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
     
     <% heading.with_action do %>
-        <%= render TaxButton.new(
+        <%= render TaxButtonComponent.new(
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
@@ -9,7 +9,7 @@
         ) %> 
     <% end %>
     <% heading.with_action do %>
-		<%= render TaxButton.new(
+		<%= render TaxButtonComponent.new(
                 caption: "Nuovo",
                 svg_file: "icon-plus.svg",
                 color: "blue",
