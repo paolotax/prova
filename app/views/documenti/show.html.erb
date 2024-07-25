@@ -9,17 +9,6 @@
       <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
       <% heading.with_action do %>
-        	<%= component 'tax_button', 
-                  caption: "PDF",
-                  svg_file: "icon-pdf.svg",
-                  color: "white",
-                  url: url_for( controller: "documenti", action: "show", model: @documento, format: 'pdf' )
-           %>
-
-				<%# target: "_blank" %> 
-      <% end %>                     
-      
-      <% heading.with_action do %>
           <%= component 'tax_button',
                   caption: "Elimina",
                   svg_file: "icon-trash-real.svg",
@@ -27,7 +16,16 @@
                   url: url_for( controller: "documenti", action: "destroy", model: @documento ),
                   data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
       <% end %>
+      <% heading.with_action do %>
+        	<%= component 'tax_button', 
+                  caption: "Stampa",
+                  svg_file: "icon-print.svg",
+                  color: "white",
+                  url: url_for( controller: "documenti", action: "show", model: @documento, format: 'pdf' )
+           %>
 
+				<%# target: "_blank" %> 
+      <% end %>  
       <% heading.with_action do %>
           <%= component 'tax_button',
                   caption: "Documenti",
@@ -35,7 +33,6 @@
                   color: "white",
                   url: url_for( controller: "documenti", action: "index" ) %>
       <% end %>
-
       <% heading.with_action do %>
           <%= component 'tax_button',
                   caption: "Modifica",
@@ -47,12 +44,6 @@
       <%= @documento.causale %>
 
   <% end %>
-
-
-
-
-
-
 
   <div class="sm:flex sm:items-center">
     

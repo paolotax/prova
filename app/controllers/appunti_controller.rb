@@ -119,19 +119,31 @@ class AppuntiController < ApplicationController
 
     def filter_appunti(appunti)
           
-      appunti = appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
-      appunti = appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
+      # appunti = appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
+      # appunti = appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
       
-      appunti = appunti.non_archiviati if params[:filter] == "non_archiviati"       
-      appunti = appunti.in_sospeso if params[:filter] == "in_sospeso" 
-      appunti = appunti.da_fare if params[:filter] == "da_fare" 
-      appunti = appunti.in_evidenza if params[:filter] == "in_evidenza"
-      appunti = appunti.in_settimana if params[:filter] == "in_settimana"       
-      appunti = appunti.in_visione if params[:filter] == "in_visione"
-      appunti = appunti.da_pagare if params[:filter] == "da_pagare" 
-      appunti = appunti.completato if params[:filter] == "completato" 
-      appunti = appunti.archiviati if params[:filter] == "archiviato" 
-
-      appunti
+      # appunti = appunti.non_archiviati if params[:filter] == "non_archiviati"       
+      # appunti = appunti.in_sospeso if params[:filter] == "in_sospeso" 
+      # appunti = appunti.da_fare if params[:filter] == "da_fare" 
+      # appunti = appunti.in_evidenza if params[:filter] == "in_evidenza"
+      # appunti = appunti.in_settimana if params[:filter] == "in_settimana"       
+      # appunti = appunti.in_visione if params[:filter] == "in_visione"
+      # appunti = appunti.da_pagare if params[:filter] == "da_pagare" 
+      # appunti = appunti.completato if params[:filter] == "completato" 
+      # appunti = appunti.archiviati if params[:filter] == "archiviato" 
+      # appunti
+      
+      
+      appunti.then { |appunti| params[:filter] == "archiviato" ? appunti.archiviati : appunti }
+          .then { |appunti| params[:filter] == "completato" ? appunti.completato : appunti }
+          .then { |appunti| params[:filter] == "da_pagare" ? appunti.da_pagare : appunti }
+          .then { |appunti| params[:filter] == "in_visione" ? appunti.in_visione : appunti }
+          .then { |appunti| params[:filter] == "in_evidenza" ? appunti.in_evidenza : appunti }
+          .then { |appunti| params[:filter] == "da_fare" ? appunti.da_fare : appunti }
+          .then { |appunti| params[:filter] == "in_sospeso" ? appunti.in_sospeso : appunti }
+          .then { |appunti| params[:filter] == "non_archiviati" ? appunti.non_archiviati : appunti }
+          .then { |appunti| params[:filter] == "oggi" ? appunti.nel_baule_di_oggi : appunti }
+          .then { |appunti| params[:filter] == "domani" ? appunti.nel_baule_di_domani : appunti }
+      
     end
 end
