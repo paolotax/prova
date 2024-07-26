@@ -69,7 +69,7 @@ brew services restart postgresql@14
 
 docker exec -i prova-db /usr/bin/pg_dump -U prova prova_production > backup.sql
 
-tar --same-permissions -czvf backup.tar.gz backup
+tar --same-permissions -czvf backup.tar.gz backup.sql
 
 kamal accessory exec -i --reuse -v db "/usr/bin/pg_dump -U prova prova_production" > backup.sql
 

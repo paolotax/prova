@@ -72,58 +72,51 @@ class DocumentoPdf < Prawn::Document
 
   def intestazione_documento
     
-    bounding_box [bounds.left, bounds.top - 55.mm], :width => 44.mm, :height => 8.mm do
-      mask(:line_width) do
-        line_width 0.5
-        stroke_bounds
-      end
-      text "#{@documento.causale.causale}", :align => :center, :valign => :center
+    # causale
+    bounding_box [bounds.left, bounds.top - 55.mm], :width => 72.mm, :height => 8.mm do
+      
+      fill_color @view.string_to_color_hex(@documento.causale.causale)
+      
+      fill_rectangle [bounds.left, bounds.top], bounds.width, bounds.height            
+      
+      fill_color "FFFFFF"
+      text "#{@documento.causale.causale}", align: :center, valign: :center, style: :bold
+      draw_bounds
+      fill_color "000000"
+      
     end
 
 
+    # pagina data numero codice cliente
     bounding_box [bounds.left, bounds.top - 63.mm], :width => 72.mm, :height => 8.mm do
       bounding_box [ bounds.left, bounds.top], :width => 8.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
         draw_text "PAG", :at => [bounds.left + 1, bounds.top - 6], :size => 6
       end
       bounding_box [ bounds.left + 8.mm, bounds.top], :width => 18.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
         draw_text "DATA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "#{l(@documento.data_documento, :format => :only_date)}", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [bounds.left + 26.mm, bounds.top], :width => 18.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
         draw_text "NUMERO", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "#{@documento.numero_documento}", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [bounds.left + 44.mm, bounds.top], :width => 28.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
+        draw_line_right(8.mm)        
         draw_text "COD.CLIENTE", :at => [bounds.left + 1, bounds.top - 6], :size => 6
       end
     end
 
-
+    #conduzione di pagamento
     bounding_box [bounds.left, bounds.top - 71.mm], :width => 72.mm, :height => 8.mm do
-      mask(:line_width) do
-        line_width 0.5
-        stroke_bounds
-      end
+      draw_bounds
       draw_text "CONDIZIONI DI PAGAMENTO", :at => [bounds.left + 1, bounds.top - 6], :size => 6
       bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
         text "#{@documento.tipo_pagamento}", :align => :center, :valign => :center, :size => 8
@@ -133,20 +126,15 @@ class DocumentoPdf < Prawn::Document
 
     bounding_box [bounds.left, bounds.top - 79.mm], :width => 72.mm, :height => 8.mm do
       bounding_box [ bounds.left, bounds.top], :width => 44.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
         draw_text "COD. FISCALE", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "#{@cliente.codice_fiscale}", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [ bounds.left + 44.mm, bounds.top], :width => 28.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
+        draw_line_right(8.mm)
         draw_text "PARTITA IVA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "#{@cliente.partita_iva}", :align => :center, :valign => :center, :size => 8
@@ -156,21 +144,18 @@ class DocumentoPdf < Prawn::Document
 
 
     bounding_box [bounds.left, bounds.top - 87.mm], :width => 72.mm, :height => 8.mm do
+      
+      draw_line_top
       bounding_box [ bounds.left, bounds.top], :width => 15.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
         draw_text "VALUTA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "EUR", :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [ bounds.left + 15.mm, bounds.top], :width => 57.mm, :height => 8.mm do
-        mask(:line_width) do
-          line_width 0.5
-          stroke_bounds
-        end
+        draw_line_left(8.mm)
+        draw_line_right(8.mm)
         draw_text "NOSTRO CODICE IBAN PER BONIFICI", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
           text "#{current_user.iban}", :align => :center, :valign => :center, :size => 8
@@ -363,6 +348,38 @@ class DocumentoPdf < Prawn::Document
   def current_user
     @view.current_user
   end
+
+  def draw_line_left(height)
+    mask(:line_width) do
+      line_width 0.5
+      line [bounds.left, bounds.top - height], [bounds.left, bounds.top]
+      stroke
+    end
+  end
+
+  def draw_line_right(height)
+    mask(:line_width) do
+      line_width 0.5
+      line [bounds.right, bounds.top - height], [bounds.right, bounds.top]
+      stroke
+    end
+  end
+
+  def draw_line_top
+    mask(:line_width) do
+      line_width 0.5
+      line [bounds.left, bounds.top], [bounds.right, bounds.top]
+      stroke
+    end
+  end
+
+  def draw_bounds
+    mask(:line_width) do
+      line_width 0.5
+      stroke_bounds
+    end
+  end
+
   
   
 end
