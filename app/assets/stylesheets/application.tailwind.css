@@ -12,27 +12,6 @@
 
 @layer components {
 
-  .cb-tax {
-
-
-
-
-
-    .hw-combobox__label {
-      @apply text-sm text-gray-700 font-medium;
-    }
-  
-    .hw-combobox__input {
-      @apply py-0.5 ;
-    }
-    .hw-combobox__handle {
-      @apply right-3;
-    }
-    .hw-combobox__listbox {
-      @apply rounded-md;
-    }
-  }
-
   .cb-tax-fancy {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
@@ -53,40 +32,6 @@
     }
   }
 
-  
-
-  .cb-smalllll {    
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply w-40 rounded-lg  shadow-lg bg-white;
-      }
-    }
-  }
-  
-  .cb-mediumlll {
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply w-60 xl:w-80 rounded-lg  shadow-lg bg-white;
-      }
-    }
-  }
-
-  .cb-largelll {
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply w-80 sm:w-96 rounded-md  shadow-lg bg-white;
-      }
-    }
-  }
-
-  .cb-xlarge {
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply w-[420px] rounded-md  shadow-lg bg-white;
-      }
-    }
-  }
-  
   .youtubes {  
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {

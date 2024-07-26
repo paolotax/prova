@@ -1,12 +1,32 @@
-<%= heading do %>	
-
-	<%= h1 {"Clienti"} %>
-
-	<div>
-		<%= link_to("< indietro", :back, class:"btn btn-white") %>
-	</div>
+<%= render Heading::WithActionsComponent.new do |heading| %>
+    
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "Excel",
+                svg_file: "icon-excel-bis.svg",
+                color: "green",
+                url: url_for( controller: "clienti", action: "index", format: :xlsx, params: request.query_parameters ) %>
+    <% end %>
+    <%# heading.with_action do %>
+        <%#= component 'tax_button',
+                caption: "Stats",
+                svg_file: "icon-chart-bar.svg",
+                color: "white",
+                url: url_for( controller: "adozioni", action: "riepilogo", params: [] ) %>
+    <%# end %>
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "Nuovo",
+                svg_file: "icon-plus.svg",
+                color: "blue",
+                url: url_for( controller: "clienti", action: "new", model: @cliente ) %>
+    <% end %>
+    
+    <%= h1 {"Clienti"} %>
 
 <% end %>
+
+
 
 <%= form_for @import, url: import_clienti_path, multipart: :true do |f| %>
   <%= f.file_field :file, accept: 'text/csv' %>
