@@ -13,6 +13,11 @@
 @layer components {
 
   .cb-tax {
+
+
+
+
+
     .hw-combobox__label {
       @apply text-sm text-gray-700 font-medium;
     }
@@ -31,7 +36,7 @@
   .cb-tax-fancy {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
-        @apply block w-80 rounded-none border-0 border-b  bg-gray-50 py-1.5 text-gray-900 ring-0;
+        @apply rounded-none border-0 border-b  bg-gray-50 py-1.5 text-gray-900 ring-0;
       }
     }
     .hw-combobox__label {
@@ -50,7 +55,7 @@
 
   
 
-  .cb-small {    
+  .cb-smalllll {    
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
         @apply w-40 rounded-lg  shadow-lg bg-white;
@@ -58,7 +63,7 @@
     }
   }
   
-  .cb-medium {
+  .cb-mediumlll {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
         @apply w-60 xl:w-80 rounded-lg  shadow-lg bg-white;
@@ -66,7 +71,7 @@
     }
   }
 
-  .cb-large {
+  .cb-largelll {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
         @apply w-80 sm:w-96 rounded-md  shadow-lg bg-white;

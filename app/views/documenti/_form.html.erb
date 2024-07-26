@@ -8,7 +8,7 @@
         </div>
     <% end %>
   
-    <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 border rounded-lg",
+    <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 gap-4 border rounded-lg",
              data: { controller:"tax-combobox-causale" } do %>
         
         <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col" do %>
@@ -54,6 +54,11 @@
                     data_attr: { turbo_stream: true }
         ) %>
     </div>
+
+
+    <%#= component("button", state: "primary") { "Salva" } %>
+    
+    <%#= component("button", type: :reset) { "Annulla" } %>
 
     <div class="inline px-4">
         <%= form.submit "Salva", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>

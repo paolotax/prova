@@ -36,7 +36,7 @@ class ButtonComponent < ViewComponent::Base
       " [&_svg]:active:scale-105 [[disabled]_&]:cursor-default",
       {
         "text-gray-600 ring-gray-200 bg-white border-white/70 hover:ring-gray-400/70 active:text-gray-500 active:ring-gray-400 hover:[[disabled]_&]:ring-gray-200": secondary_state?,
-        "text-white ring-sky-500 bg-sky-500 border-sky-400/60 hover:bg-sky-400 hover:border-sky-300/50 active:text-sky-100 active:bg-sky-500 active:ring-sky-600/60 hover:[[disabled]_&]:bg-sky-500": primary_state?
+        "text-white ring-indigo-500 bg-indigo-500 border-indigo-400/60 hover:bg-indigo-400 hover:border-indigo-300/50 active:text-indigo-100 active:bg-indigo-500 active:ring-indigo-600/60 hover:[[disabled]_&]:bg-indigo-500": primary_state?
       }
     )
   end

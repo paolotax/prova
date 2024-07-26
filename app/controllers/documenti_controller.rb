@@ -66,21 +66,21 @@ class DocumentiController < ApplicationController
   end
 
 
-  # def nuovo_numero_documento
+  def nuovo_numero_documento
     
-  #   causale = Causale.find(params[:causale]).causale
-  #   if causale == "Ordine Cliente"
-  #     clientable_type = "Cliente"
-  #   elsif causale == "Ordine Scuola"
-  #     clientable_type = "ImportScuola"
-  #   else
-  #     clientable_type = nil
-  #   end
+    causale = Causale.find(params[:causale]).causale
+    if causale == "Ordine Cliente"
+      clientable_type = "Cliente"
+    elsif causale == "Ordine Scuola"
+      clientable_type = "ImportScuola"
+    else
+      clientable_type = nil
+    end
     
-  #   numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
-  #   render json: { numero_documento: numero_documento, clientable_type: clientable_type }
+    numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
+    render json: { numero_documento: numero_documento, clientable_type: clientable_type }
   
-  # end
+  end
 
 
   private

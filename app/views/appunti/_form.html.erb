@@ -17,8 +17,7 @@
 
 	<% if appunto.classe.nil? %>
 		
-		<div class="my-5 relative peer cb-tax-fancy" 
-			data-controller="tax-combobox-select">
+		<div class="my-5 relative peer cb-tax-fancy flex flex-col" data-controller="tax-combobox-select">
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					placeholder: "seleziona scuola...",
 					label: "Scuola:",

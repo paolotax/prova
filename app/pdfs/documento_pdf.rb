@@ -31,7 +31,7 @@ class DocumentoPdf < Prawn::Document
     end
 
     righe_documento
-    
+
     footer_totals
     
     repeat(:all, :dynamic => true) do
@@ -50,13 +50,13 @@ class DocumentoPdf < Prawn::Document
       move_down 5
       text "#{current_user.ragione_sociale}", :size => 13, :style => :bold
       text "Via Vestri, 4"
-      text "40128 Bologna BO"
+      text "40127 Bologna BO"
       move_down 5
 
-      text "cell #{current_user.cellulare}"
-      text "email #{current_user.email}"
-      text "partita iva #{current_user.partita_iva}"
-      text "codice fiscale {current_user.codice_fiscale}"
+      text "cell.: #{current_user.cellulare}"
+      text "email: paolo.tassinari@gmail.com"
+      text "partita iva: #{current_user.partita_iva}"
+      text "codice fiscale: TSSPLA65L31A944U"
 
       bounding_box [bounds.width / 2.0, bounds.top - 55.mm], :width => bounds.width / 2.0 do
         text 'Spett.le'
@@ -180,7 +180,7 @@ class DocumentoPdf < Prawn::Document
 
 
     bounding_box [bounds.left, bounds.top - 95.mm], :width => bounds.width do
-      table [["Titolo", "Quantità", "Prezzo Unitario", "% Sconto", "Importo", "IVA"]],
+      table [["EAN - Titolo", "Quantità", "Prezzo Unitario", "% Sconto", "Importo", "IVA"]],
             :cell_style => {:border_width   => 0.5, :size => 7},
             :column_widths => { 0 => 72.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 40.mm, 5 => 8.mm } # ,
     end
@@ -190,31 +190,25 @@ class DocumentoPdf < Prawn::Document
   def righe_documento
     #  TABLE
     bounding_box([bounds.left, bounds.top - 106.mm], :width  => bounds.width, :height => 135.mm) do
-
       unless @documento.righe.empty?
-        
-        #@documento.righe.group_by(&:appunto).each do |a, righe|
-        
-        
-            
-          #text "Ordine del #{l a.created_at, :format => :short}", size: 8
-          r =  @documento.righe.map do |riga|
-            [
-              riga.libro.titolo,
-              riga.quantita,
-              riga.prezzo,
-              riga.sconto.round(2),
-              riga.importo,
-              "VA"
-            ]
-          end
-          table r, :row_colors => ["FFFFFF","DDDDDD"],
-                   :cell_style => {:border_width   => 0.5, :size => 7}, 
-                   :column_widths => { 0 => 72.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 40.mm, 5 => 8.mm } do
-            cells.columns(1..5).style(:align => :right)
-          end  
-          move_down(5)
-        
+        r =  @documento.righe.map do |riga|
+          [
+            riga.libro.codice_isbn + ' - ' + riga.libro.titolo,
+            riga.quantita,
+            riga.prezzo,
+            riga.sconto.round(2),
+            riga.importo,
+            "VA"
+          ]
+        end
+        table r, :row_colors => ["FFFFFF","DDDDDD"],
+                  :cell_style => {:border_width   => 0.5, :size => 7}, 
+                  :column_widths => { 0 => 72.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 40.mm, 5 => 8.mm } do
+          cells.columns(1..5).style(:align => :right)
+        end  
+        move_down(15)
+        text "Totale copie: #{@documento.totale_copie}", :size => 8   
+        move_down(5)   
       end
     end
   end
