@@ -60,14 +60,4 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (valore.to_f * 100).to_i
   end
 
-  def self.assign_from_row(row)
-    libro = Libro.where(codice_isbn: row["codice_isbn"], user_id: Current.user.id).first_or_initialize
-    puts "row: #{row.inspect}"
-    puts "libro: #{libro.inspect}"
-    libro.assign_attributes row.to_hash
-    puts "libro 2: #{libro.inspect}"
-    libro
-  end
-
-
 end
