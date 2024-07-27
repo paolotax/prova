@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 
   resources :causali
   resources :documento_righe, only: [:new, :destroy] 
+  resources :libri_importer, only: [:create]
   
   
   get 'classi', to: 'classi#index'

@@ -20,6 +20,11 @@
 
 <% end %>
 
+<%= form_for @import, url: libri_importer_index_path, method: :post, multipart: :true do |f| %>
+  <%= f.file_field :file, accept: 'text/csv' %>
+  <%= f.submit "Importa CSV" %>
+<% end %>
+
 <%= turbo_frame_tag "search_results" do %>
     <div class="w-full">
         <div id="libri-list" class="min-w-full">

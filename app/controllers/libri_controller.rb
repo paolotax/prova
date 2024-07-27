@@ -4,6 +4,7 @@ class LibriController < ApplicationController
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
 
   def index
+    @import = LibriImporter.new
     @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe).all
   end
 
@@ -18,17 +19,14 @@ class LibriController < ApplicationController
   end
 
   def create
-    @libro = current_user.libri.new(libro_params)
-
-    respond_to do |format|
-      if @libro.save
-        format.turbo_stream 
-        format.html { redirect_to libri_url, notice: "Libro creato!" }
-        format.json { render :show, status: :created, location: @libro }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @libro.errors, status: :unprocessable_entity }
-      end
+    result = LibroCreator.new.create_libro(
+                current_user.libri.build(libri_params)
+    )    
+    if result.created?
+      redirect_to libri_url, notice: "Libro inserito."
+    else
+      @libro = result.libro
+      render :new, status: :unprocessable_entity
     end
   end
 
