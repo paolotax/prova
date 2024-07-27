@@ -21,26 +21,39 @@ class DocumentiController < ApplicationController
   end
   
   def new
-    causale = Causale.find_by(causale: "Ordine Cliente")
-    @documento = current_user.documenti.build(data_documento: Date.today, causale: causale)
-    @documento.documento_righe.build.build_riga
+    #causale = Causale.find_by(causale: "Ordine Cliente")
+    @documento = current_user.documenti.build(data_documento: Date.today, causale: nil)
+    @documento.documento_righe.build.build_riga(sconto: 16.0)
   end
 
   def edit
   end
 
   def create
-    @documento = current_user.documenti.build(documento_params)
 
-    respond_to do |format|
-      if @documento.save
-        format.html { redirect_to documento_url(@documento), notice: "Documento was successfully created." }
-        format.json { render :show, status: :created, location: @documento }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @documento.errors, status: :unprocessable_entity }
-      end
+    result = DocumentoCreator.new.create_documento(
+                current_user.documenti.build(documento_params)
+    )
+
+    if result.created?
+      redirect_to documenti_url, notice: "Documento inserito."
+    else
+      @documento = result.documento
+      render :new, status: :unprocessable_entity
     end
+
+
+    # @documento = current_user.documenti.build(documento_params)
+
+    # respond_to do |format|
+    #   if @documento.save
+    #     format.html { redirect_to documento_url(@documento), notice: "Documento was successfully created." }
+    #     format.json { render :show, status: :created, location: @documento }
+    #   else
+    #     format.html { render :new, status: :unprocessable_entity }
+    #     format.json { render json: @documento.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   def update
