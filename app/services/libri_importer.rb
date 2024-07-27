@@ -46,8 +46,14 @@ class LibriImporter
   private
 
     def assign_from_row(row)
-      puts row["codice_isbn"]
-      libro = Libro.where(codice_isbn: row[:codice_isbn], user_id: Current.user.id).first_or_initialize
+ 
+      codice_isbn = row[:codice_isbn] || row["codice_isbn"]
+      user_id = Current.user.id
+      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      unless libro.new_record?
+        if row[:titolo] then row.delete(:titolo) end
+        if row["titolo"] then row.delete("titolo") end
+      end
       libro.assign_attributes row.to_hash
       libro
     end
