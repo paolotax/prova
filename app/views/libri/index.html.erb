@@ -1,8 +1,26 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
     
+
+
     <% heading.with_action do %>
-        <%= form_with url: import_ministeriali_libri_path, method: :post do |f| %>
-            <%= f.submit "Importa Ministeriali" %>
+        <%= form_for @import, url: libri_importer_index_path, method: :post, multipart: :true do |f| %>
+            <%= tag.div class: "hidden md:flex md:flex-row p-4 bg-gray-200 rounded-md" do %>
+                <%= f.file_field :file, accept: 'text/csv' %>
+                <%= component('button') do  %>
+                    File
+                    <%= inline_svg_tag "icon-paper-clip.svg" %>
+                    
+                <% end %>
+            <% end %>
+        <% end %>
+    <% end %>
+
+    <% heading.with_action do %>
+        <%= form_with url: import_ministeriali_libri_importer_index_path, method: :post do |f| %>
+            <%= component('button') do  %>
+                <%= inline_svg_tag "icon-folder-arrow-down.svg" %>
+                A.I.E.
+            <% end %>
         <% end %>
     <% end %>
 
@@ -20,10 +38,7 @@
 
 <% end %>
 
-<%= form_for @import, url: libri_importer_index_path, method: :post, multipart: :true do |f| %>
-  <%= f.file_field :file, accept: 'text/csv' %>
-  <%= f.submit "Importa CSV" %>
-<% end %>
+
 
 <%= turbo_frame_tag "search_results" do %>
     <div class="w-full">

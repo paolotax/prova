@@ -32,7 +32,12 @@ Rails.application.routes.draw do
 
   resources :causali
   resources :documento_righe, only: [:new, :destroy] 
-  resources :libri_importer, only: [:create]
+  
+  resources :libri_importer, only: [:create] do
+    collection do
+      post 'import_ministeriali'
+    end
+  end
   
   
   get 'classi', to: 'classi#index'
@@ -53,9 +58,7 @@ Rails.application.routes.draw do
   end
     
   resources :libri do
-    collection do
-      post 'import_ministeriali'
-    end
+
     member do 
       get 'get_prezzo_copertina_cents'
     end

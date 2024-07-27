@@ -27,7 +27,7 @@ class LibriImporter
     result = ActiveRecord::Base.connection.execute(sql)
     
     result.each do |row|
-      libro = Libro.assign_from_row(row)
+      libro = assign_from_row(row)
       if libro.save
         @imported_count += 1
       else
