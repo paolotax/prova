@@ -31,27 +31,37 @@
 	<% end %>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
-
-		<%= tag.fieldset class: "" do %>
+		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
+			<%= label_for form: form, field: 'prezzo', label: 'Prezzo' %>
+			<%= form.number_field :prezzo, 
+					step: 0.01,
+					class: [
+						"text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+						"w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+					] %>
+        <% end %>
+		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
 			<%= label_for form: form, field: 'codice_isbn', label: 'ISBN' %>
 			<%= form.text_field :codice_isbn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
 		<% end %>
+	</div>
 
-		<%= tag.fieldset class: "flex flex-col" do %>
-			<%= label_for form: form, field: 'numero_documento', label: 'Prezzo' %>            
-			<%= component 'form_number',form: form, field: 'prezzo' %>
+	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
+		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
+			<%= label_for form: form, field: 'classe', label: 'Classe' %>
+			<%= form.number_field :classe, 
+					class: [
+						"text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+						"rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+					] %>
+		<% end %>
+
+		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
+			<%= label_for form: form, field: 'disciplina', label: 'Disciplina' %>
+			<%= form.text_field :disciplina, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
 		<% end %>
 	</div>
 
-  <div class=" my-5">
-    <%= form.label :classe %>
-    <%= form.number_field :classe, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class=" my-5">
-    <%= form.label :disciplina %>
-    <%= form.text_field :disciplina, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
   <div class=" my-5">
     <%= form.label :note %>
