@@ -5,7 +5,9 @@ class LibriController < ApplicationController
 
   def index
     @import = LibriImporter.new
-    @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe).all
+    @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
+    @libri = @libri.left_search(params[:search]) if params[:search].present?
+    set_page_and_extract_portion_from @libri
   end
 
   def show
@@ -25,7 +27,7 @@ class LibriController < ApplicationController
     if result.created?
       #raise result.inspect
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: result.libro }) }
         format.html { redirect_to libri_url, notice: "Libro inserito." }
         format.json { render :show, status: :created, location: result.libro }
       end
@@ -52,6 +54,10 @@ class LibriController < ApplicationController
     @libro.destroy!
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.remove(@libro)
+        flash.now[:notice] = "Libro eliminato." 
+      end 
       format.html { redirect_to libri_url, notice: "Libro eliminato!" }
       format.json { head :no_content }
     end

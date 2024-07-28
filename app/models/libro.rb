@@ -32,6 +32,10 @@
 #
 class Libro < ApplicationRecord
 
+  include Searchable
+
+  search_on :titolo, :codice_isbn, :disciplina, :note, :categoria, editore: :editore
+
   monetize :prezzo_in_cents
 
   belongs_to :user
@@ -42,9 +46,7 @@ class Libro < ApplicationRecord
   validates :titolo, presence: true
   validates :editore, presence: true
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
-
   validates :codice_isbn, presence: true, uniqueness: true
-  validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
 
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact

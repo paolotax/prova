@@ -14,7 +14,9 @@ class LibriImporterController < ApplicationController
   def import_ministeriali
     @import = LibriImporter.new(file: "_sql/sql_import_ministeriali.sql")
     if @import.import_ministeriali!
-      redirect_to libri_url, notice: "Libri importati!"
+      respond_to do |format|
+        format.html { redirect_to libri_url, notice: "Libri importati!" }
+      end
     else
       redirect_to libri_url, alert: "Errore nell'importazione dei libri!"
     end

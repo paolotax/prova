@@ -1,0 +1,20 @@
+<%= turbo_stream.replace "load_more" do %>
+
+	<% @page.records.each do |libro| %>
+		<%= render libro %>
+	<% end %>
+
+	<% if @page.last? %>
+		<%= tag.div "Fine dei Librini!", class: "py-8 px-4 text-center" %>
+	<% else %>
+		<%= turbo_frame_tag "load_more",
+					src: libri_path(                              
+						page: @page.next_param, 
+						format: :turbo_stream,
+						search: params[:search]						
+					),
+					loading: :lazy do %>
+			<%= render 'shared/lazy_loading' %>
+		<% end %>
+	<% end %>
+<% end %>
