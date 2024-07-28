@@ -1,43 +1,47 @@
 <%= form_with(model: libro, class: "contents") do |form| %>
-  <% if libro.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(libro.errors.count, "error") %> prohibited this libro from being saved:</h2>
-
-      <ul>
-        <% libro.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
   
-  <div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
-    
-    <div class="cb-tax cb-small mt-5 flex flex-col">
-      <%= form.label :categoria, class: "mb-2" %>
-      <%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]" %>
-    </div>
+	<% if libro.errors.any? %>
+		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+			<h2>Non posso salvare il Libro. <%= t 'misc.errori', count: libro.errors.count %></h2>
+		</div>
+	<% end %>
+  
+	<div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
 
-    <div class="mt-5">
-      <%= form.label :editore_id %>
-      <%= form.collection_select :editore_id, current_user.editori.order(:editore), :id, :editore, { prompt: true },  class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-  </div>
 
-  <div class="my-5">
-    <%= form.label :titolo %>
-    <%= form.text_field :titolo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+		<%= tag.fieldset class: "my-5 cb-tax cb-small flex flex-col" do %>
+			<%= label_for form: form, field: 'categoria', label: 'Categoria' %>
+			<%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]",
+							placeholder: "categoria ..." %>
+		<% end %>
 
-  <div class=" my-5">
-    <%= form.label :codice_isbn %>
-    <%= form.text_field :codice_isbn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
 
-  <div class="my-5">
-    <%= form.label :prezzo %>
-    <%= form.number_field :prezzo, step: 0.01, class: "text-right block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+		<%= tag.fieldset class: "sm:my-5" do %>
+			<%= label_for form: form, field: 'editore', label: 'Editore' %>
+			<%= form.collection_select :editore_id, 
+						current_user.editori.order(:editore), :id, :editore, { prompt: true },  
+						class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+		<% end %>
+
+	</div>
+
+	<%= tag.fieldset class: "my-5" do %>
+		<%= label_for form: form, field: 'titolo', label: 'Titolo' %>
+		<%= form.text_field :titolo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+	<% end %>
+
+	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
+
+		<%= tag.fieldset class: "" do %>
+			<%= label_for form: form, field: 'codice_isbn', label: 'ISBN' %>
+			<%= form.text_field :codice_isbn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+		<% end %>
+
+		<%= tag.fieldset class: "flex flex-col" do %>
+			<%= label_for form: form, field: 'numero_documento', label: 'Prezzo' %>            
+			<%= component 'form_number',form: form, field: 'prezzo' %>
+		<% end %>
+	</div>
 
   <div class=" my-5">
     <%= form.label :classe %>

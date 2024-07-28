@@ -20,10 +20,15 @@ class LibriController < ApplicationController
 
   def create
     result = LibroCreator.new.create_libro(
-                current_user.libri.build(libri_params)
+                current_user.libri.build(libro_params)
     )    
     if result.created?
-      redirect_to libri_url, notice: "Libro inserito."
+      #raise result.inspect
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to libri_url, notice: "Libro inserito." }
+        format.json { render :show, status: :created, location: result.libro }
+      end
     else
       @libro = result.libro
       render :new, status: :unprocessable_entity

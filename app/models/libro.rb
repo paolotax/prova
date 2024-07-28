@@ -40,8 +40,11 @@ class Libro < ApplicationRecord
   has_many :adozioni
 
   validates :titolo, presence: true
-  #validates :codice_isbn, presence: true, uniqueness: true
-  #validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
+  validates :editore, presence: true
+  validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
+
+  validates :codice_isbn, presence: true, uniqueness: true
+  validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
 
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
