@@ -1,24 +1,41 @@
 class LibriImporterController < ApplicationController
-
+  include ActionView::Helpers::TextHelper
   before_action :authenticate_user!
 
   def create
     @import = LibriImporter.new(libri_importer_params)    
-    if @import.save
-      redirect_to libri_url, notice: "Libri importati!"
-    else
-      redirect_to libri_url, alert: "Errore nell'importazione dei libri!"
+    respond_to do |format|
+      if @import.save
+        format.turbo_stream do 
+          flash[:notice] =  @import.flash_message
+          render turbo_stream: turbo_stream.action(:redirect, libri_url)
+        end
+        format.html { redirect_to libri_url, notice: @import.flash_message }
+      else
+        format.turbo_stream do 
+          flash[:alert] =  "Errore nell'importazione dei libri!"
+          render turbo_stream: turbo_stream.action(:redirect, libri_url) 
+        end
+      end
     end
   end
 
   def import_ministeriali
     @import = LibriImporter.new(file: "_sql/sql_import_ministeriali.sql")
-    if @import.import_ministeriali!
-      respond_to do |format|
-        format.html { redirect_to libri_url, notice: "Libri importati!" }
+    
+    respond_to do |format|
+      if @import.import_ministeriali!
+        format.turbo_stream do 
+          flash[:notice] =  @import.flash_message
+          render turbo_stream: turbo_stream.action(:redirect, libri_url)
+        end
+        format.html { redirect_to libri_url, notice: @import.flash_message }
+      else
+        format.turbo_stream do 
+          flash[:alert] =  "Errore nell'importazione dei libri!"
+          render turbo_stream: turbo_stream.action(:redirect, libri_url) 
+        end
       end
-    else
-      redirect_to libri_url, alert: "Errore nell'importazione dei libri!"
     end
   end
 

@@ -1,27 +1,40 @@
 class LibriImporter
+
+  include ActionView::Helpers::TextHelper
   
 
   include ActiveModel::Model
-  attr_accessor :file, :imported_count, :import_method
+  attr_accessor :file, :imported_count, :updated_count, :errors_count, :import_method
+
+  def initialize(attributes = {})
+    super
+    @imported_count = 0
+    @updated_count = 0
+    @errors_count = 0
+  end
 
   def process!
-    @imported_count = 0
-    # CSV.foreach(file.path, headers: true, col_sep: ';', header_converters: :symbol) do |row|          
+
     SmarterCSV.process(file.path) do |row|
+      
       libro = assign_from_row(row.first)
-      #raise libro.inspect
       if libro.save
+        if libro.previously_new_record?
           @imported_count += 1
+        else
+          @updated_count += 1
+        end
       else
+          @errors_count += 1
           errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
-          return false
+          #return false
       end
     end
   end
 
   def import_ministeriali!
-    @imported_count = 0
-
+    
+  
     sql = File.open(file).read
     sql.gsub!("{{user.id}}", "#{Current.user.id}")
     result = ActiveRecord::Base.connection.execute(sql)
@@ -29,18 +42,31 @@ class LibriImporter
     result.each do |row|
       libro = assign_from_row(row)
       if libro.save
-        @imported_count += 1
+        if libro.previously_new_record?
+          @imported_count += 1
+        else
+          @updated_count += 1
+        end
       else
-        puts "PIPPA: #{libro.inspect}"
-        #errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
-        return false
+        @errors_count += 1
+        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")} PIPPO")
+        #return false
       end
+    end
+  end
+
+
+  def flash_message
+    if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
+      pluralize(@imported_count, 'libro importato', 'libri importati') + "\ne " + pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') + "\ne " + pluralize(@errors_count, 'libro errato', 'libri errati') + " " + errors.full_messages.join(", ")
+    else
+      "Nessun libro importato"
     end
   end
 
   def save
     process!
-    errors.none?
+    #errors.none?
   end
 
   private

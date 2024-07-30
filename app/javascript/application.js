@@ -22,3 +22,10 @@ console.log("Hello from application.js")
 // window.addEventListener("turbo:frame-load", (e) => {
 //     console.log("turbo:frame-load", e)
 // })
+
+import {Turbo} from "@hotwired/turbo-rails"
+
+Turbo.StreamActions.redirect =  function() {
+    Turbo.visit(this.target);
+};
+
