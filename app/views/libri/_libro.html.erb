@@ -3,14 +3,18 @@
     <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600 truncate"  %>
 
 	<%= tag.div class: "col-span-4 flex flex-col" do %>
-		<%= tag.div libro.titolo, class: "font-bold" %>
+		<%= link_to libro.titolo, libro_path(libro), data: { turbo_frame: "_top" }, class: "font-bold" %>
 		<%= tag.div libro.editore&.editore, class: "text-xs font-semibold text-gray-600" %>	
 		<%= tag.div libro.codice_isbn %>
 	<% end %>
 
     <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
-	<%= tag.div libro.adozioni&.sum(:numero_sezioni), class: "col-span-1 text-right" %>
-  	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
+	
+	
+	<%= link_to libro.adozioni&.sum(:numero_sezioni), adozioni_path(libro_id: libro.id), class: "col-span-1 text-right" %>
+  	
+	
+	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
 
 		<%= link_to edit_libro_path(libro), 
 						data: { turbo_frame: :modal, action: "click->dialog#open"},

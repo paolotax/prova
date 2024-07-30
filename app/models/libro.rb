@@ -42,6 +42,9 @@ class Libro < ApplicationRecord
   belongs_to :editore, optional: true
   
   has_many :adozioni
+  has_many :righe
+  has_many :documenti, through: :righe
+  has_many :documento_righe, through: :righe
 
   validates :titolo, presence: true
   validates :editore, presence: true

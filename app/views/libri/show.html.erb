@@ -1,11 +1,57 @@
-<div class="mx-auto md:w-2/3 w-full flex">
+<%= render Heading::WithActionsComponent.new(wrapper_css: 'flex items-center justify-between px-3 py-1 border border-gray-200 rounded-md', level: 'h3') do |heading| %>
+  <% heading.with_leader do %>
+    <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+  <% end %>
+  <% heading.with_description { @libro.codice_isbn } %>
+  <% heading.with_action do %>
+            <%= component 'tax_button',
+                caption: "Modifica",
+                svg_file: "icon-pencil.svg",
+                color: "yellow",
+                url: url_for( controller: "libri", action: "edit", model: @libro ),
+                data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+  <% end %>
+  <% heading.with_action do %>
+    <% heading.with_action do %>
+            <%= component 'tax_button',
+                caption: "libri",
+                svg_file: "icon-arrow-long-left.svg",
+                color: "white",
+                url: url_for( controller: "libri", action: "index", model: nil ) %>
+    <% end %>
+      <%#= render ButtonComponent.new(text: "Elimina", path: libro_path(@libro), method: :delete, data: { confirm: "Sei sicuro?" }) %>
+  <% end %>
 
-    <%= render @libro %>
+  <%= @libro.titolo %>
+  
+<% end %>
 
-    <%= link_to "Edit this libro", edit_libro_path(@libro), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Destroy this libro", libro_path(@libro), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-    </div>
-    <%= link_to "Back to libri", libri_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  </div>
-</div>
+<ul>
+  <% @libro.documento_righe.each do |documento_riga| %>
+    <%= render ListItemComponent.new() do |list_item| %>
+      <% list_item.with_leader do %>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-500 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+          </svg>
+
+      <% end %>
+      <% list_item.with_action do %>
+        <%= link_to "Revoke session", "#", class: "text-sm font-medium text-red-600 hover:text-red-800" %>
+      <% end %>
+      <div>
+        <p class="flex items-center gap-1">
+          <%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800" %>
+          <%= tag.span documento_riga.riga.prezzo, class: "text-xs font-medium text-emerald-600" %>
+        </p>
+        <%= tag.p documento_riga.documento.clientable.denominazione, class: "text-sm font-normal textgray-500" %>
+      </div>
+    <% end %>
+  <% end %>
+</ul>
+
+
+
+
+
+  <%= render @libro.adozioni%>
