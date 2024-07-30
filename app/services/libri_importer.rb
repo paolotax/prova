@@ -58,7 +58,10 @@ class LibriImporter
 
   def flash_message
     if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
-      pluralize(@imported_count, 'libro importato', 'libri importati') + "\ne " + pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') + "\ne " + pluralize(@errors_count, 'libro errato', 'libri errati') + " " + errors.full_messages.join(", ")
+      pluralize(@imported_count, 'libro importato', 'libri importati') + " e " + 
+      pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') + " e " + 
+      pluralize(@errors_count, 'libro errato', 'libri errati') + 
+      " " + errors.full_messages.join(", ").html_safe
     else
       "Nessun libro importato"
     end
