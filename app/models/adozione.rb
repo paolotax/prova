@@ -64,27 +64,12 @@ class Adozione < ApplicationRecord
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
     a.numero_copie = 0 if a.numero_copie.nil?
     a.prezzo_cents = 0 if a.prezzo_cents.nil?
-
-    # if a.stato_adozione.downcase[0..2] == "com"
-    #   a.tipo = "vendita"
-    # elsif a.stato_adozione.downcase[0..2] == "ado"
-    #   a.tipo = "adozione"
-    # else
-    #   a.tipo = "omaggio"
-    # end
   end
 
   before_update do |a|
     a.numero_sezioni = 1 if a.numero_sezioni.nil?
     a.numero_copie = 0 if a.numero_copie.nil?
     a.prezzo_cents = 0 if a.prezzo_cents.nil?
-    # if a.stato_adozione.downcase[0..2] == "com"
-    #   a.tipo = "vendita"
-    # elsif a.stato_adozione.downcase[0..2] == "ado"
-    #   a.tipo = "adozione"
-    # else
-    #   a.tipo = "omaggio"
-    # end
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
@@ -255,5 +240,37 @@ class Adozione < ApplicationRecord
   def self.totale_importo
     self.sum(&:importo)
   end
+
+
+  def self.crea_documento_e_righe
+    
+    adozioni = Adozione.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").where.not("libri.codice_isbn = ''")
+    # creo il documento
+    
+    causale = Causale.find_by(causale: "Ordine Scuola")
+
+
+    
+    adozioni.each do |ad|
+      numero_documento = Current.user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1    
+      classe = Views::Classe.find(ad.classe_id)
+      scuola = classe.import_scuola
+      libro = Libro.find(ad.libro_id)
+      documento = Current.user.documenti.create(
+            causale: causale, 
+            numero_documento: numero_documento,
+            data_documento: ad.created_at, 
+            clientable_type: "ImportScuola",
+            clientable_id: scuola.id)
+
+      documento.documento_righe.build.build_riga(libro_id: libro.id, 
+        quantita: ad.numero_copie, prezzo_cents: ad.prezzo_cents, iva_cents: 0, sconto: 0)
+      documento.save
+    end
+
+    
+  end
+
+
 
 end

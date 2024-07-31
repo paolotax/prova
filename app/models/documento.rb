@@ -56,4 +56,11 @@ class Documento < ApplicationRecord
   def totale_copie
     righe.sum(&:quantita)
   end
+
+  def self.clear_all
+    Documento.destroy_all
+    Riga.destroy_all
+    Documento.all 
+    Riga.all 
+  end
 end
