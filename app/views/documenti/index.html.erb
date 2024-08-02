@@ -24,7 +24,7 @@
 				active_item_css: "border-b-2 border-indigo-500 text-indigo-600",
 				options_for_select: Appunto::FILTERS) do |tabs| %>
 
-	<% tabs.with_item(href: appunti_path) do %>
+	<% tabs.with_item(href: documenti_path) do %>
 		<p class="">
 			Tutti
 			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
@@ -32,11 +32,11 @@
 			</span>
 		</p>
 	<% end %>
-	<% tabs.with_item(href: appunti_path(filter: "oggi")) do %>
+	<% tabs.with_item(href: documenti_path(status: "da_pagare")) do %>
 		<p class="">
-			Oggi
+			Da pagare
 			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-				<%= current_user.appunti.nel_baule_di_oggi.load.size %>
+				<%= current_user.documenti.where(status: "da_pagare").count %>
 			</span>
 		</p>
 	<% end %>

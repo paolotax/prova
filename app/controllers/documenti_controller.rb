@@ -4,7 +4,8 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
-    @documenti = current_user.documenti.all
+    @documenti = current_user.documenti
+    @documenti = @documenti.where(status: params[:status]) if params[:status].present?
   end
 
   def show
