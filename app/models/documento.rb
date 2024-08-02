@@ -9,7 +9,7 @@
 #  iva_cents        :bigint
 #  note             :text
 #  numero_documento :integer
-#  pagato_il        :integer
+#  pagato_il        :datetime
 #  referente        :text
 #  spese_cents      :bigint
 #  status           :integer
@@ -48,6 +48,8 @@ class Documento < ApplicationRecord
   validates :numero_documento, presence: true
   validates :data_documento, presence: true
 
+  enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
+  enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :carta_di_credito, :paypal, :satispay]
   #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
   #
   

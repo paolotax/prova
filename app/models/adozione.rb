@@ -258,7 +258,7 @@ class Adozione < ApplicationRecord
       classe = Views::Classe.find(ad.classe_id)
       scuola = classe.import_scuola
       libro = Libro.find(ad.libro_id)
-      
+
       
       documento = user.documenti.create(
             causale: causale, 
@@ -267,7 +267,10 @@ class Adozione < ApplicationRecord
             clientable_type: "ImportScuola",
             clientable_id: scuola.id,
             referente: "#{ad.classe_e_sezione} - #{ad.team}",
-            note: ad.note
+            note: ad.note,
+            status: ad.status,
+            pagato_il: ad.pagato_il,
+            tipo_pagamento: ad.tipo_pagamento&.downcase
           )
 
       documento.documento_righe.build.build_riga(libro_id: libro.id, 

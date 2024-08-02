@@ -146,7 +146,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_105619) do
     t.bigint "causale_id", null: false
     t.integer "tipo_pagamento"
     t.date "consegnato_il"
-    t.integer "pagato_il"
     t.integer "status"
     t.bigint "iva_cents"
     t.bigint "totale_cents"
@@ -159,6 +158,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_105619) do
     t.integer "tipo_documento"
     t.text "note"
     t.text "referente"
+    t.datetime "pagato_il"
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
     t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable_type_and_clientable_id"
     t.index ["user_id"], name: "index_documenti_on_user_id"

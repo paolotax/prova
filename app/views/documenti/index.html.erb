@@ -28,11 +28,12 @@
 				<% item.with_leader { inline_svg_tag "icon-pdf.svg", class: "size-8 object-fit"    } %>
 				<% item.with_title(css: "text-sm font-semibold text-gray-800") { "#{documento.clientable&.denominazione} - #{ documento&.referente}" } %>
 				<% item.with_body(css: "text-sm text-gray-500 ml-12") do %>
+
 					<%= documento.causale.causale %> 
 					<br/>
-					nr. <%= documento.numero_documento %> del <%= documento.data_documento %>
+					nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
 					<br/>
-					<p  class="text-right text-sm text-gray-500 mr-12">
+					<p  class="text-right text-sm font-semibold text-gray-500 mr-12">
 						<%= documento.documento_righe.count %> 
 						titoli - 
 						<%= documento.righe.sum(:quantita) %> 
@@ -43,6 +44,11 @@
 					</p>
 					<p class="text-right text-sm text-gray-500 mr-12">
 						<%= number_to_currency(documento.righe.sum(&:importo)) %>
+					</p>
+					<p class="text-right text-sm text-gray-500 mr-12">
+						<%= documento.status.humanize %>
+						<%= documento.tipo_pagamento&.titleize %>
+						<%= documento.pagato_il&.to_date&.strftime("%d-%m") %>
 					</p>
 				<% end %>
 				
@@ -67,8 +73,6 @@
 		<% end %>
 	<% end %>
   
-  
-
 	<div class="mx-2 mt-8 flow-root sm:mx-0">
 		<table class="min-w-full">
 			<colgroup>

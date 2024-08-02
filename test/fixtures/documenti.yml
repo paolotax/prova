@@ -9,7 +9,7 @@
 #  iva_cents        :bigint
 #  note             :text
 #  numero_documento :integer
-#  pagato_il        :integer
+#  pagato_il        :datetime
 #  referente        :text
 #  spese_cents      :bigint
 #  status           :integer
