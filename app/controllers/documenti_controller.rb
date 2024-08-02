@@ -41,19 +41,6 @@ class DocumentiController < ApplicationController
       @documento = result.documento
       render :new, status: :unprocessable_entity
     end
-
-
-    # @documento = current_user.documenti.build(documento_params)
-
-    # respond_to do |format|
-    #   if @documento.save
-    #     format.html { redirect_to documento_url(@documento), notice: "Documento was successfully created." }
-    #     format.json { render :show, status: :created, location: @documento }
-    #   else
-    #     format.html { render :new, status: :unprocessable_entity }
-    #     format.json { render json: @documento.errors, status: :unprocessable_entity }
-    #   end
-    # end
   end
 
   def update
@@ -71,11 +58,16 @@ class DocumentiController < ApplicationController
 
   def destroy
     @documento.destroy!
-
+  
     respond_to do |format|
+      format.turbo_stream do 
+        flash.now[:alert] = "Documento eliminato."
+        render turbo_stream: turbo_stream.remove(@documento)
+      end 
       format.html { redirect_to documenti_url, notice: "Documento was successfully destroyed." }
-      format.json { head :no_content }
     end
+  
+    flash[:alert] = "Documento eliminato."
   end
 
 

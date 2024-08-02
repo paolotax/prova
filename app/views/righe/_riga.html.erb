@@ -1,11 +1,12 @@
 <tr class="border-b border-gray-200">
 
   <td class="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
-    <div class="font-medium text-gray-900">
-      <%= riga.libro&.titolo %>
+    <div class="font-medium text-gray-900 hover:font-bold">
+      <%= link_to riga.libro&.titolo, libro_path(riga.libro) %>
+
     </div>
     <div class="mt-1 truncate text-gray-500">
-
+            <% riga.libro&.codice_isbn  %>
     </div>
   </td>
   <td class="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">

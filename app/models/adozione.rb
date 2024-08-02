@@ -241,7 +241,6 @@ class Adozione < ApplicationRecord
     self.sum(&:importo)
   end
 
-
   def self.crea_documento_e_righe
     
     adozioni = Adozione.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").where.not("libri.codice_isbn = ''")
@@ -252,25 +251,34 @@ class Adozione < ApplicationRecord
 
     
     adozioni.each do |ad|
-      numero_documento = Current.user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1    
+      
+      user = User.find(ad.user_id)
+
+      numero_documento = user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1    
       classe = Views::Classe.find(ad.classe_id)
       scuola = classe.import_scuola
       libro = Libro.find(ad.libro_id)
-      documento = Current.user.documenti.create(
+      
+      
+      documento = user.documenti.create(
             causale: causale, 
             numero_documento: numero_documento,
             data_documento: ad.created_at, 
             clientable_type: "ImportScuola",
-            clientable_id: scuola.id)
+            clientable_id: scuola.id,
+            referente: "#{ad.classe_e_sezione} - #{ad.team}",
+            note: ad.note
+          )
 
       documento.documento_righe.build.build_riga(libro_id: libro.id, 
         quantita: ad.numero_copie, prezzo_cents: ad.prezzo_cents, iva_cents: 0, sconto: 0)
       documento.save
-    end
-
-    
+    end      
   end
 
+  def note_to_riga(adozione)
+    
+  end
 
 
 end

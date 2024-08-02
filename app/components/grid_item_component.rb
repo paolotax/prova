@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class GridItemComponent < ViewComponent::Base
-  renders_many :items, ->(target: nil, item_css: nil, header_css: nil, actions_css: nil) do
+  renders_many :items, ->(target: nil, item_css: nil, header_css: nil, actions_css: nil, item_id: nil) do
     ItemComponent.new(
       target: target,
       item_css: item_css.presence || @item_css,
       header_css: header_css.presence || @header_css,
-      actions_css: actions_css.presence || @actions_css
+      actions_css: actions_css.presence || @actions_css,
+      item_id: item_id.presence || @item_id
     )
   end
 
@@ -42,15 +43,16 @@ class GridItemComponent < ViewComponent::Base
       tag.li link_to(action_content, href, class: css, data: data)
     end
 
-    def initialize(target: nil, item_css: nil, header_css: nil, actions_css: nil)
+    def initialize(target: nil, item_css: nil, header_css: nil, actions_css: nil, item_id: nil) 
       @target = target
       @item_css = item_css
       @header_css = header_css
       @actions_css = actions_css
+      @item_id = item_id
     end
 
     erb_template <<-ERB
-      <%= tag.li wrapped(item_content), class: @item_css %>
+      <%= tag.li wrapped(item_content), class: @item_css, id: @item_id %>
     ERB
 
     private

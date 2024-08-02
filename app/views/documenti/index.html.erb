@@ -23,9 +23,10 @@
 			actions_css: 'grid-cols-3 mt-4 border-t border-gray-100 divide-x divide-gray-100') do |grid| %>		
 		
 		<% @documenti.each do |documento| %>
-			<% grid.with_item do |item| %>
+			
+			<% grid.with_item(item_id: dom_id(documento)) do |item| %>
 				<% item.with_leader { inline_svg_tag "icon-pdf.svg", class: "size-8 object-fit"    } %>
-				<% item.with_title(css: "text-sm font-semibold text-gray-800") { documento.clientable&.denominazione } %>
+				<% item.with_title(css: "text-sm font-semibold text-gray-800") { "#{documento.clientable&.denominazione} - #{ documento&.referente}" } %>
 				<% item.with_body(css: "text-sm text-gray-500 ml-12") do %>
 					<%= documento.causale.causale %> 
 					<br/>
@@ -37,20 +38,28 @@
 						<%= documento.righe.sum(:quantita) %> 
 						copie
 					</p>
+					<p  class="text-right text-sm text-gray-500 mr-12">
+						<%= documento.note %> 
+					</p>
 					<p class="text-right text-sm text-gray-500 mr-12">
 						<%= number_to_currency(documento.righe.sum(&:importo)) %>
 					</p>
 				<% end %>
-				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top" }, css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+				
+				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top" }, 
+						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
 					Apri
 				<% end %>
-				<% item.with_action(href: edit_documento_path(documento), data: { turbo_frame: "_top" }, css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
+				
+				<% item.with_action(href: edit_documento_path(documento), data: { turbo_frame: "_top" }, 
+						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
 					<%= inline_svg_tag "icon-pencil.svg" %>
 					Modifica
 				<% end %>	
 
-				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top", turbo_method: :delete , turbo_confirm: "Sei sicuro di voler eliminare il documento?" }, 
-							css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-red-600 truncate hover:text-red-800 hover:bg-gray-50") do %>
+				<% item.with_action(href: documento_path(documento), 
+						data: { turbo_method: :delete , turbo_confirm: "Sei sicuro di voler eliminare il documento?" }, 
+						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-red-600 truncate hover:text-red-800 hover:bg-gray-50") do %>
 					<%= inline_svg_tag "icon-trash.svg" %>
 					Elimina
 				<% end %>			

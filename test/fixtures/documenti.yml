@@ -7,8 +7,10 @@
 #  consegnato_il    :date
 #  data_documento   :date
 #  iva_cents        :bigint
+#  note             :text
 #  numero_documento :integer
 #  pagato_il        :integer
+#  referente        :text
 #  spese_cents      :bigint
 #  status           :integer
 #  tipo_documento   :integer

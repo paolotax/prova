@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_16_105104) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_31_105619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -157,6 +157,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_16_105104) do
     t.bigint "clientable_id"
     t.string "clientable_type"
     t.integer "tipo_documento"
+    t.text "note"
+    t.text "referente"
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
     t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable_type_and_clientable_id"
     t.index ["user_id"], name: "index_documenti_on_user_id"

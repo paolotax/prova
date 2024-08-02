@@ -31,7 +31,7 @@
     <%= render ListItemComponent.new() do |list_item| %>
       <% list_item.with_leader do %>
 
-        <%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800" %>
+        <%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16" %>
 
       <% end %>
       <% list_item.with_action do %>
