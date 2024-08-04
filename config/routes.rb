@@ -38,6 +38,12 @@ Rails.application.routes.draw do
       post 'import_ministeriali'
     end
   end
+
+  resources :clienti_importer, only: [:create] do
+    collection do
+      post 'import_ministeriali'
+    end
+  end
   
   
   get 'classi', to: 'classi#index'

@@ -1,9 +1,8 @@
 class LibriImporter
 
   include ActionView::Helpers::TextHelper
-  
-
   include ActiveModel::Model
+  
   attr_accessor :file, :imported_count, :updated_count, :errors_count, :import_method
 
   def initialize(attributes = {})

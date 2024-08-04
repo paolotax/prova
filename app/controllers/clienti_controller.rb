@@ -3,7 +3,7 @@ class ClientiController < ApplicationController
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
-    @import = Cliente::Import.new
+    @import = ClientiImporter.new
     @clienti = current_user.clienti.all
   end
 
