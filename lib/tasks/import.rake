@@ -416,7 +416,7 @@ namespace :import do
 
 
 
-  desc "ADOZIONI 2024" 
+  desc "New Adozioni ADOZIONI 2024" 
   task new_adozioni: :environment do
     
     include ActionView::Helpers

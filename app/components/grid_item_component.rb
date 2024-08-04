@@ -19,7 +19,7 @@ class GridItemComponent < ViewComponent::Base
   end
 
   def call
-    tag.ul safe_join(items), class: @container_css
+    tag.div safe_join(items), class: @container_css
   end
 
   attr_reader :item_css
@@ -34,13 +34,13 @@ class GridItemComponent < ViewComponent::Base
     end
 
     renders_one :body, ->(css: nil, &block) do
-      tag.p capture(&block), class: css
+      tag.div capture(&block), class: css
     end
 
     renders_many :actions, ->(label: nil, href: "#", css: nil, data: {}, &block) do
       action_content = block.present? ? capture(&block) : label
 
-      tag.li link_to(action_content, href, class: css, data: data)
+      tag.div link_to(action_content, href, class: css, data: data)
     end
 
     def initialize(target: nil, item_css: nil, header_css: nil, actions_css: nil, item_id: nil) 
@@ -52,7 +52,7 @@ class GridItemComponent < ViewComponent::Base
     end
 
     erb_template <<-ERB
-      <%= tag.li wrapped(item_content), class: @item_css, id: @item_id %>
+      <%= tag.div wrapped(item_content), class: @item_css, id: @item_id %>
     ERB
 
     private
@@ -74,7 +74,7 @@ class GridItemComponent < ViewComponent::Base
     def actions_list
       return if actions.blank?
 
-      tag.ul safe_join(actions), class: @actions_css
+      tag.div safe_join(actions), class: @actions_css
     end
 
     def is_link? = @target.present?

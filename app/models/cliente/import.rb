@@ -7,7 +7,8 @@ class Cliente::Import
 
 		# CSV.foreach(file.path, headers: true, col_sep: ';', header_converters: :symbol) do |row|
 		
-		SmarterCSV.process(file.path) do |row|
+		options = { convert_values_to_numeric: { except: [:partita_iva, :codice_fiscale, :telefono] } }
+		SmarterCSV.process(file.path, options) do |row|
 			cliente = Cliente.assign_from_row(row.first)
 			if cliente.save
 				@imported_count += 1

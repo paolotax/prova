@@ -4,8 +4,9 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
-    @documenti = current_user.documenti
+    @documenti = current_user.documenti.order(data_documento: :desc, numero_documento: :desc)
     @documenti = @documenti.where(status: params[:status]) if params[:status].present?
+    @documenti = @documenti.where(causale: Causale.find_by(causale: params[:causale])) if params[:causale].present?
   end
 
   def show

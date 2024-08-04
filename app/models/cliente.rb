@@ -41,6 +41,7 @@ class Cliente < ApplicationRecord
   has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, as: :clientable 
 
   def self.assign_from_row(row)
+    puts row[:partita_iva]
     if row[:partita_iva].nil?
       cliente = Current.user.clienti.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize      
     else
