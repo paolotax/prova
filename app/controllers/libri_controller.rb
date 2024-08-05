@@ -81,6 +81,7 @@ class LibriController < ApplicationController
 
     def filter_params
       {
+        search: params["search"],
         titolo: params["titolo"],
         editore: params["editore"],
         disciplina: params["disciplina"],
