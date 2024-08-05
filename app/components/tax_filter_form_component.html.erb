@@ -1,11 +1,27 @@
 <%= form_with(url: @url, method: :get, class: "px-8 py-6 inline-flex gap-6") do |form| %>
     <%= tag.div(class: "flex flex-col gap-2") do %>
 
+
         <% @fields.each do |field| %>
-			<%= form.label field[:field], field[:label].to_s.capitalize %>
-			<%= form.text_field field[:field], value: filter_params[field[:field]],
-					class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+            <%= tag.fieldset class: "relative" do %>
+
+
+                <% if field[:type] == :text %>
+			        <%#= form.label field[:field], field[:label].to_s.capitalize %>
+                    <%= form.text_field field[:field], value: filter_params[field[:field]],
+                        class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6",
+                        placeholder: field[:label] %>
+                    <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>
+                
+                <% elsif field[:type] == :select %>
+                    <%#= form.label field[:field], field[:label].to_s.capitalize %>
+                    <%= form.select field[:field], options_for_select(field[:collection], filter_params[field[:field]]), { include_blank: field[:label] }, { class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" } %>
+                    <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
+                <% end %>
+            <% end %>
         <% end %>
+
+
 
         <%= form.submit "Filtra" %>
     
