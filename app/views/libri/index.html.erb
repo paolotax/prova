@@ -42,13 +42,11 @@
 <% end %>
 
 
-<%= turbo_frame_tag :search_results, data: {controller: 'tax-checkbox-select-all'} do %>
 
-    <%#= tag.div class:"bg-slate-100 py-2 px-2 border rounded-lg shadow-lg mb-4 bg-gradient-to-r from-purple-100 from-25%" do%>    
-        <%#= render 'form_filters' %>
-        <%#= render 'stats' %>
-        <%#= render 'form_multi' %>
-    <%# end %>
+<%= component 'tax_filter_form', base_url: libri_path %>
+
+
+<%= turbo_frame_tag :search_results, data: {controller: 'tax-checkbox-select-all'} do %>
 
     <%= tag.div id: "libri-lista", class: "sm:px-2" do %>
         <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p>
@@ -59,7 +57,12 @@
             <%= turbo_frame_tag "load_more", src: libri_path(                              
                 page: @page.next_param, 
                                     format: :turbo_stream,
-                                    search: params[:search]
+                                    search: params[:search],
+                                    editore: params[:editore],
+                                    titolo: params[:titolo],
+                                    disciplina: params[:disciplina],
+                                    categoria: params[:categoria],
+                                    classe: params[:classe]
                               ), loading: :lazy do %>
                 <%= render 'shared/lazy_loading' %>
             <% end %>

@@ -11,7 +11,13 @@
 					src: libri_path(                              
 						page: @page.next_param, 
 						format: :turbo_stream,
-						search: params[:search]						
+						search: params[:search],
+						
+						editore: params[:editore],
+						titolo: params[:titolo],
+						disciplina: params[:disciplina],
+						categoria: params[:categoria],
+						classe: params[:classe]						
 					),
 					loading: :lazy do %>
 			<%= render 'shared/lazy_loading' %>

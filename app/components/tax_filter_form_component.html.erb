@@ -1,0 +1,27 @@
+<%= form_with(url: @url, method: :get, class: "px-8 py-6 inline-flex gap-6") do |form| %>
+    <%= tag.div(class: "flex flex-col gap-2") do %>
+        
+        <%= form.label :titolo, "Titolo" %>
+        <%= form.text_field :titolo, value: filter_params[:titolo],
+                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+        
+        <%= form.label :editore, "Editore" %>
+        <%= form.text_field :editore, value: filter_params[:editore],
+                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+        
+        <%= form.label :categoria, "Categoria" %>
+        <%= form.text_field :categoria, value: filter_params[:categoria],
+                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+        
+        <%= form.label :disciplina, "Disciplina" %>
+        <%= form.text_field :disciplina, value: filter_params[:disciplina],
+                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+       
+        <%= form.label :Classe, "Classe" %>
+        <%= form.select :classe, options_for_select( ["1", "2", "3", "4", "5"], params[:classe]), { include_blank: "" },
+                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
+
+       <%= form.submit "Filtra" %>
+    
+    <% end %>
+<% end %>

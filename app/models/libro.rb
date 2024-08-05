@@ -33,8 +33,13 @@
 class Libro < ApplicationRecord
 
   include Searchable
-
   search_on :titolo, :codice_isbn, :disciplina, :note, :categoria, editore: :editore
+
+  extend FilterableModel
+  class << self
+    def filter_proxy = Filters::LibroFilterProxy
+  end
+
 
   monetize :prezzo_in_cents
 

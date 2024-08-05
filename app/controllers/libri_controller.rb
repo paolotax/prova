@@ -1,12 +1,14 @@
 class LibriController < ApplicationController
 
+  include FilterableController
+
   before_action :authenticate_user!
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
 
   def index
     @import = LibriImporter.new
     @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
-    @libri = @libri.left_search(params[:search]) if params[:search].present?
+    @libri = filter(@libri.all)
     set_page_and_extract_portion_from @libri
   end
 
@@ -75,5 +77,15 @@ class LibriController < ApplicationController
 
     def libro_params
       params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo, :classe, :disciplina, :note, :categoria)
+    end
+
+    def filter_params
+      {
+        titolo: params["titolo"],
+        editore: params["editore"],
+        disciplina: params["disciplina"],
+        categoria: params["categoria"],
+        classe: params["classe"]
+      }
     end
 end

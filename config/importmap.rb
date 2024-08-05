@@ -25,3 +25,4 @@ pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm
 
 
 
+pin_all_from "app/assets/javascripts/controllers/helpers", under: "helpers", to: "controllers/helpers"
