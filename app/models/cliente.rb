@@ -39,6 +39,16 @@ class Cliente < ApplicationRecord
   #validates :partita_iva, presence: true, uniqueness: true
 
   has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, as: :clientable 
+  
+  extend FilterableModel
+
+  class << self
+    def filter_proxy = Filters::ClienteFilterProxy
+  end
+
+  include Searchable
+  search_on :denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome
+
 
   def to_s
     "#{denominazione} - #{comune}"

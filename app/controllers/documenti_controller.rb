@@ -7,6 +7,7 @@ class DocumentiController < ApplicationController
     @documenti = current_user.documenti.order(data_documento: :desc, numero_documento: :desc)
     @documenti = @documenti.where(status: params[:status]) if params[:status].present?
     @documenti = @documenti.where(causale: Causale.find_by(causale: params[:causale])) if params[:causale].present?
+    @documenti = @documenti.search(params[:search]) if params[:search].present?
   end
 
   def show

@@ -1,10 +1,22 @@
 class ClientiController < ApplicationController
+
+  include FilterableController
+
   before_action :authenticate_user!
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
     @import = ClientiImporter.new
-    @clienti = current_user.clienti.all
+    @clienti = filter(current_user.clienti.all)
+    
+    #@clienti = @clienti.left_search(params[:search]) if params[:search].present?
+    #@clienti = @clienti.filter_by(cliente: "GI")
+    
+    @clienti = @clienti.filter_by(
+      search: params[:search],
+      cliente: params[:search]
+    )
+    #set_page_and_extract_portion_from @clienti
   end
 
   def show
@@ -75,5 +87,13 @@ class ClientiController < ApplicationController
 
     def cliente_import_params
       params.require(:cliente_import).permit(:file)
+    end
+
+    def filter_params
+      {
+        cliente: params["cliente"],
+        comune: params["comune"],
+        search: params["search"]
+      }
     end
 end
