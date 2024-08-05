@@ -91,7 +91,8 @@ class ClientiController < ApplicationController
 
     def filter_params
       {
-        cliente: params["cliente"],
+        ragione_sociale: params["ragione_sociale"],
+        partita_iva: params["partita_iva"],
         comune: params["comune"],
         search: params["search"]
       }

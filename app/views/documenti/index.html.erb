@@ -65,6 +65,28 @@
 <% end %>
 
 
+<%= component 'tax_filter_form', base_url: documenti_path, 
+	fields: [ 
+		{
+			field: :search,
+			label: "Cerca",
+			collection: nil,
+			type: :text,
+			placeholder: "Cerca per cliente, referente, numero documento, note"
+		}, {
+			field: :causale,
+			label: "Causale",
+			collection: Causale.all,
+			type: :select,
+			placeholder: "Seleziona la causale"
+		}, {
+			field: :da_pagare,
+			label: "Da pagare",
+			collection: nil,
+			type: :checkbox,
+			placeholder: "Seleziona per visualizzare solo i documenti da pagare"
+		} 
+	] %>
 
 
 <%= turbo_frame_tag "search_results" do %>
@@ -167,4 +189,5 @@
 			</tfoot>
 		</table>
 	</div>
+
 <% end %>

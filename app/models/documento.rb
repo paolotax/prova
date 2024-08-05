@@ -53,25 +53,13 @@ class Documento < ApplicationRecord
   #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
   #
   
-  #include Searchable
+  extend FilterableModel
+  class << self
+    def filter_proxy = Filters::DocumentoFilterProxy
+  end
 
-  #search_on :numero_documento, :data_documento, :note, :referente, :status, :tipo_pagamento, :tipo_documento, causale: :causale, clientable: :denominazione
 
-  scope :search, ->(search) { 
-    joins("LEFT JOIN import_scuole ON documenti.clientable_id = import_scuole.id AND documenti.clientable_type = 'ImportScuola'")
-    .joins("LEFT JOIN clienti ON documenti.clientable_id = clienti.id AND documenti.clientable_type = 'Cliente'")
-    .joins("JOIN causali ON documenti.causale_id = causali.id")
-    .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? 
-            OR import_scuole."DESCRIZIONECOMUNE" ILIKE ? 
-            OR import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ILIKE ? 
-            OR clienti.denominazione ILIKE ? 
-            OR clienti.comune ILIKE ? 
-            
 
-            OR causali.causale ILIKE ?', 
-    "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%") 
-  }
-  
   
   def totale_importo
     righe.sum(&:importo)

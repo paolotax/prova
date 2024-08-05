@@ -4,8 +4,10 @@ class TaxFilterFormComponent < ViewComponent::Base
 
   delegate :filter_params, to: :helpers
 
-  def initialize(base_url:)
+  def initialize(base_url:, fields: [])
     @base_url = base_url
+    @fields = fields
   end
+
 
 end

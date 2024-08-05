@@ -1,13 +1,13 @@
 class DocumentiController < ApplicationController
 
+  include FilterableController
+
   before_action :authenticate_user!
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
     @documenti = current_user.documenti.order(data_documento: :desc, numero_documento: :desc)
-    @documenti = @documenti.where(status: params[:status]) if params[:status].present?
-    @documenti = @documenti.where(causale: Causale.find_by(causale: params[:causale])) if params[:causale].present?
-    @documenti = @documenti.search(params[:search]) if params[:search].present?
+    @documenti = filter(@documenti.all)
   end
 
   def show
@@ -102,5 +102,14 @@ class DocumentiController < ApplicationController
         documento_righe_attributes: [:id, :posizione, 
           { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
         ])
+    end
+
+    def filter_params 
+      {
+        search: params["search"],
+        causale: params["causale"],
+        status: params["status"],
+        da_pagare: params["da_pagare"]
+      } 
     end
 end

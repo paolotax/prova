@@ -41,16 +41,29 @@
 
 <% end %>
 
-
-<%= form_with(url: clienti_path, method: :get, class: "px-8 py-6 inline-flex gap-6") do |form| %>
-    <%= tag.div(class: "inline-flex gap-4") do %>
-        <%= form.label :comune, "Comune" %>
-        <%= form.text_field :comune, value: filter_params[:comune],
-                class: "border-b-2 focus:border-slate-400 focus:outline-none" %>
-        <%= form.submit "Filtra" %>
-    <% end %>
-<% end %>
-
+<%= component 'tax_filter_form', base_url: clienti_path, 
+        fields: [ 
+            {
+                field: :ragione_sociale,
+                label: "Ragione sociale",
+                collection: nil,
+                type: :text,
+                placeholder: "Inserisci una ragione sociale"
+            }, {
+                field: :comune,
+                label: "Comune",
+                collection: nil,
+                type: :text,
+                placeholder: "Inserisci un comune"
+            }, {
+                field: :partita_iva,
+                label: "Partita IVA",
+                collection: nil,
+                type: :text,
+                placeholder: "Inserisci una partita IVA"
+            }
+        
+        ] %>
 
 <%= turbo_frame_tag "search_results" do %>
 
