@@ -8,14 +8,6 @@ class ClientiController < ApplicationController
   def index
     @import = ClientiImporter.new
     @clienti = filter(current_user.clienti.all)
-    
-    #@clienti = @clienti.left_search(params[:search]) if params[:search].present?
-    #@clienti = @clienti.filter_by(cliente: "GI")
-    
-    @clienti = @clienti.filter_by(
-      search: params[:search],
-      cliente: params[:search]
-    )
     #set_page_and_extract_portion_from @clienti
   end
 
@@ -33,7 +25,6 @@ class ClientiController < ApplicationController
     result = ClienteCreator.new.create_cliente(
                current_user.clienti.new(cliente_params)
     )
-    
     if result.created?
       redirect_to clienti_url, notice: "Cliente inserito."
       #redirect_to cliente_path(result.cliente)
@@ -61,17 +52,6 @@ class ClientiController < ApplicationController
     respond_to do |format|
       format.html { redirect_to clienti_url, notice: "Cliente eliminato!" }
       format.json { head :no_content }
-    end
-  end
-
-  def import
-    @import = Cliente::Import.new cliente_import_params
-    if @import.save
-      redirect_to clienti_url, notice: "#{@import.imported_count} clienti importati."
-    else
-      @clienti = Cliente.all
-      flash.now[:error] = @import.errors.full_messages.to_sentence
-      render :index
     end
   end
 

@@ -18,11 +18,7 @@ Rails.application.routes.draw do
 
   mount RailsDesigner::Engine, at: '/rails_designer'
 
-  resources :clienti do
-    collection do
-      post 'import'
-    end
-  end
+  resources :clienti
   
   resources :documenti do 
     collection do 
@@ -31,6 +27,7 @@ Rails.application.routes.draw do
   end
 
   resources :causali
+  
   resources :documento_righe, only: [:new, :destroy] 
   
   resources :libri_importer, only: [:create] do
