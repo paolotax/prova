@@ -7,8 +7,11 @@ class LibriController < ApplicationController
 
   def index
     @import = LibriImporter.new
+    
     @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
     @libri = filter(@libri.all)
+    
+    @situazio = Libro.crosstab
     set_page_and_extract_portion_from @libri
   end
 

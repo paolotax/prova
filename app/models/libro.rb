@@ -73,4 +73,49 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (valore.to_f * 100).to_i
   end
 
+
+  def self.crosstab
+    
+    # Costruisci la lista delle causali
+    causali = Causale.order(:id).all.map(&:causale)
+
+    # Costruisci la query dinamica
+    crosstab_query = <<-SQL
+      WITH situazio AS (
+        SELECT *
+        FROM crosstab(
+          $$
+          SELECT libri.id, causali.causale, sum(righe.quantita) as quantita
+          FROM libri
+                  JOIN righe ON righe.libro_id = libri.id
+                  JOIN documento_righe on righe.id = documento_righe.riga_id
+                  JOIN documenti on documento_righe.documento_id = documenti.id
+                  JOIN causali on documenti.causale_id = causali.id
+                  JOIN users on documenti.user_id = users.id 
+          WHERE users.id = #{Current.user.id}
+          GROUP BY libri.id, causali.causale
+          ORDER BY libri.id
+          $$, $$
+          SELECT causali.causale
+          FROM causali ORDER BY causali.id
+          $$
+        ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
+      ) 
+      SELECT libri.titolo, libri.categoria, libri.codice_isbn, editori.editore, libri.prezzo_in_cents, situazio.*
+      FROM libri
+      INNER JOIN situazio ON libri.id = situazio.id
+      INNER JOIN editori ON editori.id =  libri.editore_id
+    SQL
+
+    puts crosstab_query
+
+    # Esegui la query
+    result = ActiveRecord::Base.connection.execute(crosstab_query)
+    # Stampa i risultati
+    result.each do |row|
+      puts row
+    end
+    result
+  end
+
 end

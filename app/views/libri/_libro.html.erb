@@ -1,5 +1,8 @@
-<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-9 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
-  
+<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-10 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
+	
+	<% situazio_hash = @situazio.find {|h| h["id"] == libro.id} %>
+	<% situazio = LibroSituazio.new(situazio_hash) %>
+
     <%= tag.div libro.categoria, class: "col-span-1 font-semibold text-sm text-gray-600 truncate"  %>
 
 	<%= tag.div class: "col-span-4 flex flex-col" do %>
@@ -10,29 +13,29 @@
 
     <%= tag.div humanized_money_with_symbol(libro.prezzo_in), class: "col-span-1 text-right" %>
 	
-	
-	<%= link_to libro.adozioni&.sum(:numero_sezioni), adozioni_path(libro_id: libro.id), class: "col-span-1 text-right" %>
-  	
-	
-	<%= tag.div class: "col-span-2 flex items-center align-center justify-around" do %>
-
-		<%= link_to edit_libro_path(libro), 
-						data: { turbo_frame: :modal, action: "click->dialog#open"},
-						class: "mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm text-gray-400 hover:text-gray-500 hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
-			<%= inline_svg_tag "icon-pencil.svg" %>
-		<% end %>
-
-		<%= button_to libro_path(libro), 
-				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
-				disabled: libro.adozioni.size > 0,  
-				class: [
-					"mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm": true,
-					"bg-red-600 text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600": libro.adozioni.size == 0,
-					"cursor-not-allowed opacity-50 bg-gray-200 text-gray-400 ": libro.adozioni.size > 0
-				] do %>
-			<%= inline_svg_tag "icon-trash.svg" %>
-		<% end %>
-		
+	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
+      <%= tag.dt "Ordini", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd situazio.ordine_cliente, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
+	  										"text-transparent": situazio.ordine_cliente == 0] %>
     <% end %>
+
+	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
+      <%= tag.dt "Fatture", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd situazio.td01 - situazio.td04, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
+	  										"text-transparent": (situazio.td01 - situazio.td04) == 0] %>
+    <% end %>
+
+	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
+      <%= tag.dt "Corrispettivi", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd situazio.ordine_scuola, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
+	  										"text-transparent": situazio.ordine_scuola == 0] %>
+    <% end %>
+
+	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
+      <%= tag.dt "Venduto", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd situazio.venduto, class: ["mt-1 text-xl font-semibold tracking-tight text-red-500",
+	  										"text-transparent": situazio.venduto == 0] %>
+    <% end %>
+
 
 <% end %>
