@@ -35,7 +35,7 @@
 
 	<td class="py-5 text-right">
 		<div class="flex justify-end">      
-			<%= Money.from_cents( documento.totale_cents, :eur ).format(format: I18n.t(:format, scope: 'number.currency.format')) %>
+			<%= documento.totale_importo %>
 		</div>
 		<div class="mt-1 text-xs leading-5 text-gray-500">
 			copie 

@@ -82,8 +82,8 @@
       
       <tbody>
 
-        <% @documento.righe.each do |riga| %> 
-          <%=  render partial: "righe/riga", locals: { riga: riga } %>    
+        <% @documento.documento_righe.order(:posizione).each do |docu_riga| %> 
+          <%=  render partial: "righe/riga", locals: { riga: docu_riga.riga } %>    
         <% end %>
       
       </tbody>

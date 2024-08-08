@@ -61,66 +61,17 @@
 	] %>
 
 
+
+
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= render GridItemComponent.new(
-			item_css: 'flex flex-col bg-white border border-gray-100 rounded-md', 
-			header_css: 'flex items-center gap-2 pt-4 px-4', 
-			actions_css: 'mt-auto grid-cols-3 border-t border-gray-100 divide-x divide-gray-100') do |grid| %>		
-		
-		<% @documenti.each do |documento| %>
-			
-			<% grid.with_item(item_id: dom_id(documento)) do |item| %>
-				<% item.with_leader { inline_svg_tag "icon-pdf.svg", class: "size-8 object-fit"    } %>
-				<% item.with_title(css: "text-sm font-semibold text-gray-800") { "#{documento.clientable&.denominazione} - #{ documento&.referente}" } %>
-				<% item.with_body(css: "text-sm text-gray-500 ml-12") do %>
 
 
-						<%= documento.causale.causale %> 
-						<br/>
-						nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
-						<br/>
-						<p  class="text-right text-sm font-semibold text-gray-500 mr-12">
-							<%= documento.documento_righe.count %> 
-							titoli - 
-							<%= documento.righe.sum(:quantita) %> 
-							copie
-						</p>
-						<p  class="text-right text-sm text-gray-500 mr-12">
-							<%= documento.note %> 
-						</p>
-						<p class="text-right text-sm text-gray-500 mr-12">
-							<%= number_to_currency(documento.righe.sum(&:importo)) %>
-						</p>
-						<p class="text-right text-sm text-gray-500 mr-12">
-							<%= documento.status&.humanize %>
-							<%= documento.tipo_pagamento&.titleize %>
-							<%= documento.pagato_il&.to_date&.strftime("%d-%m") %>
-						</p>
 
-				<% end %>
-				
-				<% item.with_action(href: documento_path(documento), data: { turbo_frame: "_top" }, 
-						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
-					Apri
-				<% end %>
-				
-				<% item.with_action(href: edit_documento_path(documento), data: { turbo_frame: "_top" }, 
-						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-600 truncate hover:text-gray-800 hover:bg-gray-50") do %>
-					<%= inline_svg_tag "icon-pencil.svg" %>
-					Modifica
-				<% end %>	
 
-				<% item.with_action(href: documento_path(documento), 
-						data: { turbo_method: :delete , turbo_confirm: "Sei sicuro di voler eliminare il documento?" }, 
-						css: "flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-red-600 truncate hover:text-red-800 hover:bg-gray-50") do %>
-					<%= inline_svg_tag "icon-trash.svg" %>
-					Elimina
-				<% end %>			
-			<% end %>
-		<% end %>
-	<% end %>
-  
+	<%#= render partial: "documenti_grid_component" %>
+
+
 	<div class="mx-2 mt-8 flow-root sm:mx-0">
 		<table class="min-w-full">
 			<colgroup>
