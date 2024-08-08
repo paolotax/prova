@@ -39,7 +39,8 @@ class Riga < ApplicationRecord
   end
 
   def prezzo_scontato
-    (prezzo - (prezzo * sconto) / 100.0).round(2)
+    sc = sconto || 0.0
+    (prezzo - (prezzo * sc) / 100.0).round(2)
   end
 
   def importo

@@ -7,7 +7,7 @@ class DocumentiController < ApplicationController
 
   def index
     @import = DocumentiImporter.new
-    @documenti = current_user.documenti.order(data_documento: :desc, numero_documento: :desc)
+    @documenti = current_user.documenti.order(created_at: :desc).includes(:causale)
     @documenti = filter(@documenti.all)
   end
 
