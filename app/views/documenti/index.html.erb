@@ -31,55 +31,6 @@
 <% end %>
 
 
-<%= render TaxTabsComponent.new(
-				id: "search_results",	
-				container_css: "sticky z-20 top-16 bg-slate-100 bg-gradient-to-r from-purple-100 from-25% border-b rounded-t-lg", 
-				items_decorations: "", 
-				item_css: "block py-2 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 flex whitespace-nowrap py-4 px-2 text-sm font-medium", 
-				active_item_css: "border-b-2 border-indigo-500 text-indigo-600",
-				options_for_select: Appunto::FILTERS) do |tabs| %>
-
-	<% tabs.with_item(href: documenti_path) do %>
-		<p class="">
-			Tutti
-			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-				<%= current_user.documenti.load.size %>
-			</span>
-		</p>
-	<% end %>
-	<% tabs.with_item(href: documenti_path(status: "da_pagare")) do %>
-		<p class="">
-			Da pagare
-			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-				<%= current_user.documenti.where(status: "da_pagare").count %>
-			</span>
-		</p>
-	<% end %>
-	<% tabs.with_item(href: documenti_path(causale: "Ordine Scuola")) do %>
-		<p class="">
-			Scuole
-			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-				<%= current_user.documenti.where(clientable_type: "ImportScuola").load.size %>
-			</span>
-		</p>
-	<% end %>
-		<% tabs.with_item(href: documenti_path(causale: "Ordine Cliente")) do %>
-		<p class="">
-			Clienti
-			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-				<%= current_user.documenti.where(clientable_type: "Cliente").count %>
-			</span>
-		</p>
-	<% end %>
-
-
-  	<%# tabs.with_hidden_item(href: appunti_path(filter: "in_settimana")) { "In settimana" } %>
-  	<%# tabs.with_hidden_item(href: appunti_path(filter: "non_archiviati")) { "Non archiviati" } %>
-	<%# tabs.with_hidden_item(href: appunti_path(filter: "archiviato")) { "Archiviati" } %> 	
-
-<% end %>
-
-
 <%= component 'tax_filter_form', base_url: documenti_path, 
 	fields: [ 
 		{
@@ -87,20 +38,26 @@
 			label: "Cerca",
 			collection: nil,
 			type: :text,
-			placeholder: "Cerca per cliente, referente, numero documento, note"
+			placeholder: "cliente..."
 		}, {
 			field: :causale,
 			label: "Causale",
 			collection: Causale.all,
 			type: :select,
-			placeholder: "Seleziona la causale"
+			placeholder: "seleziona causale"
 		}, {
 			field: :da_pagare,
 			label: "Da pagare",
 			collection: nil,
 			type: :checkbox,
 			placeholder: "Seleziona per visualizzare solo i documenti da pagare"
-		} 
+		}, {
+			field: :ordina_per,
+			label: "Ordina per",
+			collection: ["data documento", "fresh"],
+			type: :select,
+			placeholder: "ordina per"
+		}
 	] %>
 
 

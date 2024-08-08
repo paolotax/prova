@@ -20,6 +20,16 @@ module Filters
               OR causali.causale ILIKE ?', 
       "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%") 
     }
+
+    filter_scope :ordina_per, ->(ordine) { ordina_per_m(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
+
+    def ordina_per_m(ordine)
+      if ordine == 'fresh'
+        order(updated_at: :desc)
+      else
+        order(data_documento: :desc, numero_documento: :desc )
+      end
+    end
   end
 
   class DocumentoFilterProxy < FilterProxy

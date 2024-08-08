@@ -7,7 +7,7 @@ class DocumentiController < ApplicationController
 
   def index
     @import = DocumentiImporter.new
-    @documenti = current_user.documenti.order(created_at: :desc).includes(:causale)
+    @documenti = current_user.documenti
     @documenti = filter(@documenti.all)
   end
 
@@ -110,7 +110,8 @@ class DocumentiController < ApplicationController
         search: params["search"],
         causale: params["causale"],
         status: params["status"],
-        da_pagare: params["da_pagare"]
+        da_pagare: params["da_pagare"],
+        ordina_per: params["ordina_per"]
       } 
     end
 end
