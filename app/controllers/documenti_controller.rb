@@ -111,7 +111,8 @@ class DocumentiController < ApplicationController
         causale: params["causale"],
         status: params["status"],
         da_pagare: params["da_pagare"],
-        ordina_per: params["ordina_per"]
+        ordina_per: params["ordina_per"],
+        search_libro: params["search_libro"]
       } 
     end
 end

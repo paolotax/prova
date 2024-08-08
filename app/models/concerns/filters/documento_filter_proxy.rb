@@ -22,6 +22,7 @@ module Filters
     }
 
     filter_scope :ordina_per, ->(ordine) { ordina_per_m(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
+    filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%") }
 
     def ordina_per_m(ordine)
       if ordine == 'fresh'

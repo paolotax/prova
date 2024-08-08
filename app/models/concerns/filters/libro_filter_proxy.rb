@@ -11,7 +11,7 @@ module Filters
     filter_scope :classe, ->(classe) { where(classe: classe) }
     
     filter_scope :search, ->(search) { left_search(search) }
-  end
+    
 
   class LibroFilterProxy < FilterProxy
     def self.query_scope = Libro
