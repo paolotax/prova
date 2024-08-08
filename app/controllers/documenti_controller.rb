@@ -6,6 +6,7 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
+    @import = DocumentiImporter.new
     @documenti = current_user.documenti.order(data_documento: :desc, numero_documento: :desc)
     @documenti = filter(@documenti.all)
   end

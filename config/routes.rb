@@ -41,7 +41,10 @@ Rails.application.routes.draw do
       post 'import_ministeriali'
     end
   end
-  
+
+  resources :documenti_importer, only: [:create]
+
+  resources :_importer, only: [:create]
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
