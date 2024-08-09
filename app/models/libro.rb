@@ -41,7 +41,7 @@ class Libro < ApplicationRecord
   end
 
 
-  monetize :prezzo_in_cents
+  #monetize :prezzo_in_cents
 
   belongs_to :user
   belongs_to :editore, optional: true
@@ -66,7 +66,7 @@ class Libro < ApplicationRecord
 
   # ora così poi devo vedere come funziona money-rails
   def prezzo
-    prezzo_in_cents.to_f / 100
+    prezzo_in_cents / 100.to_f
   end
 
   def prezzo=(valore)
@@ -107,14 +107,7 @@ class Libro < ApplicationRecord
       INNER JOIN editori ON editori.id =  libri.editore_id
     SQL
 
-    puts crosstab_query
-
-    # Esegui la query
     result = ActiveRecord::Base.connection.execute(crosstab_query)
-    # Stampa i risultati
-    result.each do |row|
-      puts row
-    end
     result
   end
 
