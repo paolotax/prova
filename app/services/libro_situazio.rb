@@ -2,7 +2,7 @@ class LibroSituazio
 
   include ActiveModel::Model
   
-  attr_accessor :id, :titolo, :categoria, :codice_isbn, :editore, :prezzo_in_cents, :ordine_cliente, :documento_di_trasporto, :ddt_fornitore, :ordine_scuola, :td01, :td04
+  attr_accessor :id, :titolo, :categoria, :codice_isbn, :editore, :prezzo_in_cents, :ordine_cliente, :documento_di_trasporto, :ddt_fornitore, :ordine_scuola, :td01, :td04, :giacenza
 
   def initialize(attributes = {})
     super
