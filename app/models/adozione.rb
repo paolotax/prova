@@ -151,7 +151,7 @@ class Adozione < ApplicationRecord
   end
 
   def prezzo=(prezzo)
-    self.prezzo_cents = (prezzo.to_f * 100).to_i
+    self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
 
   def importo
