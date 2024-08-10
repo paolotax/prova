@@ -15,6 +15,7 @@ class LibroSituazio
     @ordine_scuola = ordine_scuola || 0
     @td01 = td01 || 0
     @td04 = td04 || 0
+    @giacenza = giacenza || 0
   end
   
   def venduto

@@ -31,6 +31,9 @@ class LibriController < ApplicationController
     )    
     if result.created?
       #raise result.inspect
+              # fa schifo
+              @situazio = Libro.crosstab
+              
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: result.libro }) }
         format.html { redirect_to libri_url, notice: "Libro inserito." }
@@ -45,6 +48,10 @@ class LibriController < ApplicationController
   def update
     respond_to do |format|
       if @libro.update(libro_params)
+        
+        # fa schifo
+        @situazio = Libro.crosstab
+        
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@libro) }
         format.html { redirect_to libri_url, notice: "Libro modificato!" }
         format.json { render :show, status: :ok, location: @libro }

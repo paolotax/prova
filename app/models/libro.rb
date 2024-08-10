@@ -56,6 +56,12 @@ class Libro < ApplicationRecord
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
   validates :codice_isbn, presence: true, uniqueness: true
 
+  
+  after_initialize :init
+  def init
+    self.prezzo_in_cents ||= 0
+  end
+  
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
   end
@@ -64,13 +70,14 @@ class Libro < ApplicationRecord
     self.titolo
   end
 
+  attr_accessor :prezzo
   # ora così poi devo vedere come funziona money-rails
   def prezzo
-    prezzo_in_cents / 100.to_f
+    prezzo_in_cents / 100.0
   end
 
-  def prezzo=(valore)
-    self.prezzo_in_cents = (valore.to_f * 100).to_i
+  def prezzo=(prezzo)
+    self.prezzo_in_cents = (prezzo.to_f.round(2) * 100).to_i
   end
 
 

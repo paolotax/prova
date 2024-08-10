@@ -147,7 +147,7 @@ class Adozione < ApplicationRecord
 
   # ora così poi devo vedere come funziona money-rails
   def prezzo
-    prezzo_cents.to_f / 100
+    prezzo_cents / 100.0
   end
 
   def prezzo=(prezzo)
