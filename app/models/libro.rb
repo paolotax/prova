@@ -77,7 +77,7 @@ class Libro < ApplicationRecord
   end
 
   def prezzo=(prezzo)
-    self.prezzo_in_cents = (prezzo.to_f.round(2) * 100).to_i
+    self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
 
 
