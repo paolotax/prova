@@ -12,7 +12,11 @@ class LibriController < ApplicationController
     @libri = filter(@libri.all)
     
     @situazio = Libro.crosstab
-    set_page_and_extract_portion_from @libri
+
+    @pagy, @libri = pagy(@libri, items: 20, link_extra: 'data-turbo-action="advance"')
+    
+    # tolto geared_pagination e index.turbo_stream perchè non funziona con redirect destroy
+    # set_page_and_extract_portion_from @libri
   end
 
   def show

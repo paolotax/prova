@@ -44,6 +44,7 @@
 
 
 <%= component 'tax_filter_form', base_url: libri_path, 
+        
         fields: [ 
             {
                 field: :titolo,
@@ -82,13 +83,43 @@
 
 <%= turbo_frame_tag :search_results, data: {controller: 'tax-checkbox-select-all'} do %>
 
-    <%= tag.div id: "libri-lista", class: "sm:px-2" do %>
-        <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p>
-        
-        <%= render @page.records %>
 
-        <% unless @page.last? %>
-            <%= turbo_frame_tag "load_more", src: libri_path(                              
+    <%= turbo_frame_tag "libri_page_#{@pagy.page}" do %> 
+		
+		<div id="libri" role="list" class="grid grid-cols-1 ">
+			<p class="only:block hidden py-8 px-4 text-center">
+				Whoops! Non ci sono libri. 
+		    </p>
+
+			<%= render @libri %>
+		</div>
+		
+		<% if @pagy.next %>
+			<%= turbo_frame_tag "libri_page_#{@pagy.next}",
+						src: libri_path(
+                                search: params[:search],
+                                editore: params[:editore],
+                                titolo: params[:titolo],
+                                disciplina: params[:disciplina],
+                                categoria: params[:categoria],
+                                classe: params[:classe],
+                                page: @pagy.next),
+						loading: :lazy do %>
+				
+				<%= render 'shared/lazy_loading' %>
+			<% end %>
+		<% end %>
+	<% end %>
+
+    <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
+
+    <%#= tag.div id: "libri-lista", class: "sm:px-2" do %>
+        <%# <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p> %>
+        
+        <%#= render @page.records %>
+
+        <%# unless @page.last? %>
+            <%#= turbo_frame_tag "load_more", src: libri_path(                              
                 page: @page.next_param, 
                                     format: :turbo_stream,
                                     search: params[:search],
@@ -98,10 +129,10 @@
                                     categoria: params[:categoria],
                                     classe: params[:classe]
                               ), loading: :lazy do %>
-                <%= render 'shared/lazy_loading' %>
-            <% end %>
-        <% end %>
-    <% end %>
+                <%#= render 'shared/lazy_loading' %>
+            <%# end %>
+        <%# end %>
+    <%# end %>
 
 <% end %>
 
