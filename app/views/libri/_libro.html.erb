@@ -11,7 +11,7 @@
 		<%= tag.div libro.codice_isbn %>
 	<% end %>
 
-    <%= tag.div number_to_currency(libro.prezzo), class: "col-span-1 text-right" %>
+    <%= tag.div number_to_currency(libro.prezzo_in_cents / 100.0), class: "col-span-1 text-right" %>
 	
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
       <%= tag.dt "Ordini", class: "truncate text-sm font-medium text-gray-500" %>

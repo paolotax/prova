@@ -26,6 +26,7 @@ class LibriController < ApplicationController
   end
 
   def create
+    libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
     result = LibroCreator.new.create_libro(
                 current_user.libri.build(libro_params)
     )    
@@ -46,6 +47,7 @@ class LibriController < ApplicationController
   end
 
   def update
+    libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
     respond_to do |format|
       if @libro.update(libro_params)
         
@@ -64,13 +66,12 @@ class LibriController < ApplicationController
 
   def destroy
     @libro.destroy!
-
     respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.remove(@libro)
-        flash.now[:notice] = "Libro eliminato." 
-      end 
-      format.html { redirect_to libri_url, notice: "Libro eliminato!" }
+      # format.turbo_stream do
+      #   render turbo_stream: turbo_stream.remove(@libro)
+      #   flash.now[:notice] = "Libro eliminato." 
+      # end 
+      format.html { redirect_to libri_url, status: :see_other, alert: "Libro eliminato!" }
       format.json { head :no_content }
     end
   end
@@ -86,7 +87,7 @@ class LibriController < ApplicationController
     end
 
     def libro_params
-      params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo, :classe, :disciplina, :note, :categoria)
+      params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo_in_cents, :classe, :disciplina, :note, :categoria)
     end
 
     def filter_params

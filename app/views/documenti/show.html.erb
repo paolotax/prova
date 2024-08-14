@@ -9,12 +9,14 @@
       <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
       <% heading.with_action do %>
+
           <%= component 'tax_button',
                   caption: "Elimina",
                   svg_file: "icon-trash-real.svg",
                   color: "red",
                   url: url_for( controller: "documenti", action: "destroy", model: @documento ),
                   data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+                  
       <% end %>
       <% heading.with_action do %>
         	<%= component 'tax_button', 
