@@ -64,14 +64,12 @@ class DocumentiController < ApplicationController
     @documento.destroy!
   
     respond_to do |format|
-      format.turbo_stream do 
-        flash.now[:alert] = "Documento eliminato."
-        render turbo_stream: turbo_stream.remove(@documento)
-      end 
-      format.html { redirect_to documenti_url, notice: "Documento was successfully destroyed." }
+      # format.turbo_stream do 
+      #   flash.now[:alert] = "Documento eliminato."
+      #   render turbo_stream: turbo_stream.remove(@documento)
+      # end 
+      format.html { redirect_to documenti_url, alert: "Documento eliminato." }
     end
-  
-    flash[:alert] = "Documento eliminato."
   end
 
 
