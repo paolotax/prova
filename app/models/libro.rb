@@ -70,15 +70,15 @@ class Libro < ApplicationRecord
     self.titolo
   end
 
-  # attr_accessor :prezzo
-  # # ora così poi devo vedere come funziona money-rails
-  # def prezzo
-  #   prezzo_in_cents / 100.0
-  # end
+  attr_accessor :prezzo
+  # ora così poi devo vedere come funziona money-rails
+  def prezzo
+    prezzo_in_cents / 100.0
+  end
 
-  # def prezzo=(prezzo)
-  #   self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
-  # end
+  def prezzo=(prezzo)
+    self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
+  end
 
 
   def self.crosstab

@@ -1,0 +1,8 @@
+<%= link_to documento_path(@documento) do %>
+    <%= tag.span @documento.causale %>
+    - nr.
+    <%= tag.span @documento.numero_documento, class: "font-semibold" %>
+    del
+    <%= tag.span @documento.data_documento.strftime("%d-%m-%Y"), class: "text-sm text-gray-600" %>
+<% end %>
+    

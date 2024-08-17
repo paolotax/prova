@@ -243,7 +243,7 @@ class Adozione < ApplicationRecord
 
   def self.crea_documento_e_righe
     
-    adozioni = Adozione.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").where.not("libri.codice_isbn = ''").order(:created_at)
+    adozioni = Adozione.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").order(:created_at)
     # creo il documento
     
     causale = Causale.find_by(causale: "Ordine Scuola")
@@ -273,10 +273,12 @@ class Adozione < ApplicationRecord
 
       documento.documento_righe.build.build_riga(libro_id: libro.id, 
         quantita: ad.numero_copie, prezzo_cents: ad.prezzo_cents, iva_cents: 0, sconto: 0)
+      
       if documento.save
         ad.destroy
       end
-    end      
+    end 
+    adozioni.size     
   end
 
   def note_to_riga(adozione)

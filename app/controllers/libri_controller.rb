@@ -30,7 +30,7 @@ class LibriController < ApplicationController
   end
 
   def create
-    libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
+    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
     result = LibroCreator.new.create_libro(
                 current_user.libri.build(libro_params)
     )    
@@ -51,7 +51,8 @@ class LibriController < ApplicationController
   end
 
   def update
-    libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
+    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
+    
     respond_to do |format|
       if @libro.update(libro_params)
         
@@ -91,7 +92,7 @@ class LibriController < ApplicationController
     end
 
     def libro_params
-      params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo_in_cents, :classe, :disciplina, :note, :categoria)
+      params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo_in_cents, :prezzo, :classe, :disciplina, :note, :categoria)
     end
 
     def filter_params

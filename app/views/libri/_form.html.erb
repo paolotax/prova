@@ -32,7 +32,7 @@
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
-			<%= label_for form: form, field: 'prezzo_in_cents', label: 'Prezzo' %>
+			<%= label_for form: form, field: 'prezzo', label: 'Prezzo' %>
 			<%= form.number_field :prezzo, 
 					step: 0.01,
 					class: [
