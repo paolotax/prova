@@ -22,6 +22,10 @@ class LibroSituazio
     ordine_cliente + documento_di_trasporto + ddt_fornitore + ordine_scuola + td01 - td04
   end
 
+  def in_ordine
+    @ordine_scuola + @ordine_cliente
+  end
+
   def create_libro(libro)
     
     libro.titolo = libro.titolo.upcase

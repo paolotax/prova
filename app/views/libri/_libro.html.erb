@@ -15,8 +15,8 @@
 	
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
       <%= tag.dt "Ordini", class: "truncate text-sm font-medium text-gray-500" %>
-      <%= tag.dd situazio.ordine_cliente, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
-	  										"text-transparent": situazio.ordine_cliente == 0] %>
+      <%= tag.dd situazio.in_ordine, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
+	  										"text-transparent": situazio.in_ordine == 0] %>
     <% end %>
 
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>

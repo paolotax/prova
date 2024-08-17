@@ -243,7 +243,7 @@ class Adozione < ApplicationRecord
 
   def self.crea_documento_e_righe
     
-    adozioni = Adozione.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").order(:created_at)
+    adozioni = Current.user.adozioni.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").order(:created_at)
     # creo il documento
     
     causale = Causale.find_by(causale: "Ordine Scuola")
@@ -255,7 +255,7 @@ class Adozione < ApplicationRecord
       numero_documento = user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1    
       classe = Views::Classe.find(ad.classe_id)
       scuola = classe.import_scuola
-      libro = Libro.find(ad.libro_id)
+      libro = Current.user.libri.find(ad.libro_id)
 
       
       documento = user.documenti.create(

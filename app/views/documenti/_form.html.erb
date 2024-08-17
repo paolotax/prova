@@ -33,12 +33,22 @@
    
     <% end %>
 
-    <%= tag.section class: "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg" do %>
+    <%= tag.section class: "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg flex flex-col" do %>
         <%= render TaxSelectClientableComponent.new( 
                 form: form, 
                 clientable_type: documento.clientable_type, 
                 clientable_id: documento.clientable_id
             ) %>
+
+        <%= tag.fieldset class: "my-2" do %>
+            <%= label_for form: form, field: 'referente', label: 'Referente' %>
+            <%= form.text_field :referente, class: "field" %>
+        <% end %>    
+
+        <%= tag.fieldset class: "my-2" do %>
+            <%= label_for form: form, field: 'note', label: 'Note' %>
+            <%= form.text_area :note, class: "field" %>
+        <% end %>
     <% end %>
 
     <%= tag.section id: "documento_righe", class: "col-span-4 px-4" do %>

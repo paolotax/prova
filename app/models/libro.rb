@@ -100,8 +100,8 @@ class Libro < ApplicationRecord
                   JOIN causali on documenti.causale_id = causali.id
                   JOIN users on documenti.user_id = users.id 
           WHERE users.id = #{Current.user.id}
-          GROUP BY libri.id, causali.causale
-          ORDER BY libri.id
+          GROUP BY 1, 2
+          ORDER BY 1
           $$, $$
           SELECT causali.causale
           FROM causali ORDER BY causali.id
