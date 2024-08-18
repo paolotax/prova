@@ -30,6 +30,17 @@
             <%= label_for form: form, field: 'data_documento', label: 'Data' %>
             <%= form.date_field :data_documento, class: "field w-36" %>
         <% end %>
+
+        <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
+            <%= tag.div class: "sm:mr-4 flex space-x-2 items-center" do %>
+                <%= form.label :status, "stato:" %> 
+                <%= form.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, documento.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                <%= form.label :tipo_pagamento, "pagamento:" %>
+                <%= form.select :status, options_for_select(options_for_select(Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]}, documento.tipo_pagamento)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                <%= form.label :pagato_il, "pagato il:" %>
+                <%= form.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+            <% end %>
+        <% end %>
    
     <% end %>
 
