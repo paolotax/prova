@@ -25,17 +25,27 @@
 	</td>
 	
 	<td class="hidden py-5 pr-6 sm:table-cell">
-		<div class="flex">
+		<%= tag.div class: "flex" %> 
 			<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
 			</svg>
-			<%= documento.clientable&.denominazione %>
+			<%= tag.div documento.clientable&.denominazione %>
+			<%= tag.div documento.referente, class: "text-sm text-gray-600 font-semibold" %>
+			<%= tag.div documento.note, class: "text-sm text-gray-600 font-semibold" %>
 		</div>
 	</td>
 
+	<%= tag.td class: "bg-black text-white p-5" do %>
+		<%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
+			<%= tag.div documento.status&.titleize, class: "font-semibold" %>
+			<%= tag.div documento.tipo_pagamento&.titleize, class: "font-semibold" %>
+			<%= tag.div l(documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if documento.pagato_il %>					
+		<% end %>
+	<% end %>
+
 	<td class="py-5 text-right">
 		<div class="flex justify-end">      
-			<%= documento.totale_importo %>
+			<%= number_to_currency documento.totale_importo %>
 		</div>
 		<div class="mt-1 text-xs leading-5 text-gray-500">
 			copie 

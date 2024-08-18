@@ -56,6 +56,15 @@
         <%= @documento.referente %>
       </p>
 
+
+      <%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
+					<%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
+						<%= tag.div @documento.status&.titleize, class: "font-semibold" %>
+						<%= tag.div @documento.tipo_pagamento&.titleize, class: "font-semibold" %>
+						<%= tag.div l(@documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if @documento.pagato_il %>					
+					<% end %>
+			<% end %>
+
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
       <%= link_to_previous_page("<- indietro") %>
