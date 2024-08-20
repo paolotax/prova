@@ -145,6 +145,12 @@ class Adozione < ApplicationRecord
     where.not(stato_adozione:[ nil, ""]).order(:stato_adozione).distinct.pluck(:stato_adozione).compact
   end
 
+    
+  after_initialize :init
+  def init
+    self.prezzo_cents ||= 0
+  end
+  
   # ora così poi devo vedere come funziona money-rails
   def prezzo
     prezzo_cents / 100.0
@@ -280,10 +286,5 @@ class Adozione < ApplicationRecord
     end 
     adozioni.size     
   end
-
-  def note_to_riga(adozione)
-    
-  end
-
 
 end
