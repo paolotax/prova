@@ -245,7 +245,7 @@ class ImportAdozione < ApplicationRecord
     
     count = 0
     a = []
-    NewAdozione.find_each(batch_size: 50_000) do |new_adozione|
+    NewAdozione.find_each(batch_size: 10_000) do |new_adozione|
       
       a << ImportAdozione.new(
         anno_scolastico: '202425',      
@@ -267,7 +267,7 @@ class ImportAdozione < ApplicationRecord
         VOLUME: new_adozione.volume
       )
       count += 1
-      if count >= 50000
+      if count >= 10000
         ImportAdozione.import a, on_duplicate_key_ignore: true 
         count = 0
         a = []
