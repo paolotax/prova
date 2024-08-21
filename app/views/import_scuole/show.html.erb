@@ -92,6 +92,7 @@
 						<%= render partial: "adozioni/adozione", collection: classe.vendita, as: :adozione %>
 						<%= render partial: "adozioni/adozione", collection: classe.adozione, as: :adozione %>
 						<%= render partial: "adozioni/adozione", collection: classe.omaggio, as: :adozione %>
+						<%= render partial: "import_adozioni/card_titolo", collection: classe.import_adozioni.mie_adozioni, as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
 						<br/>
 					<% end %>
 				</div>

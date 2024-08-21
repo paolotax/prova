@@ -52,3 +52,6 @@ _xml/*
 /config/credentials/development.key
 
 commands
+
+backup.tar.gz
+
