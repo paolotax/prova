@@ -53,9 +53,9 @@ class ImportAdozione < ApplicationRecord
 
   has_many :tappe, as: :tappable
 
-  has_many :appunti, dependent: :nullify
+  #has_many :appunti, dependent: :nullify
 
-  has_many :adozioni, dependent: :nullify
+  #has_many :adozioni, dependent: :nullify
 
   
   include PgSearch::Model
@@ -237,6 +237,46 @@ class ImportAdozione < ApplicationRecord
         count(CASE WHEN appunti.nome = 'kit' THEN  appunti.id END ) AS kit,
         array_agg(CASE WHEN appunti.nome = 'kit' THEN appunti.id END) AS kit_ids")
       .group("import_adozioni.id")
+  end
+
+
+
+  def self.import_new_adozioni
+    
+    count = 0
+    a = []
+    NewAdozione.find_each(batch_size: 50_000) do |new_adozione|
+      
+      a << ImportAdozione.new(
+        anno_scolastico: '202425',      
+        ANNOCORSO: new_adozione.annocorso,
+        AUTORI: new_adozione.autori,
+        CODICEISBN: new_adozione.codiceisbn,
+        CODICESCUOLA: new_adozione.codicescuola,
+        COMBINAZIONE: new_adozione.combinazione,
+        CONSIGLIATO: new_adozione.consigliato,
+        DAACQUIST: new_adozione.daacquist,
+        DISCIPLINA: new_adozione.disciplina,
+        EDITORE: new_adozione.editore,
+        NUOVAADOZ: new_adozione.nuovaadoz,
+        PREZZO: new_adozione.prezzo,
+        SEZIONEANNO: new_adozione.sezioneanno,
+        SOTTOTITOLO: new_adozione.sottotitolo,
+        TIPOGRADOSCUOLA: new_adozione.tipogradoscuola,
+        TITOLO: new_adozione.titolo,
+        VOLUME: new_adozione.volume
+      )
+      count += 1
+      if count >= 50000
+        ImportAdozione.import a, on_duplicate_key_ignore: true 
+        count = 0
+        a = []
+      end    
+    end
+    ImportAdozione.import a, on_duplicate_key_ignore: true if a.present?
+
+    Scenic.database.refresh_materialized_view("view_classi", concurrently: false, cascade: false)
+    
   end
 
 end

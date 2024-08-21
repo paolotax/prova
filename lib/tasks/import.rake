@@ -525,6 +525,32 @@ namespace :import do
 
 
   
+  task import_2024: :environment do
+    
+    NewAdozione.find_each(batch_size: 100_000) do |new_adozione|
+      ImportAdozione.create!(
+        anno_scolastico: '202425',
+        
+        ANNOCORSO: new_adozione.annocorso,
+        AUTORI: new_adozione.autori,
+        CODICEISBN: new_adozione.codiceisbn,
+        CODICESCUOLA: new_adozione.codicescuola,
+        COMBINAZIONE: new_adozione.combinazione,
+        CONSIGLIATO: new_adozione.consigliato,
+        DAACQUIST: new_adozione.daacquist,
+        DISCIPLINA: new_adozione.disciplina,
+        EDITORE: new_adozione.editore,
+        NUOVAADOZ: new_adozione.nuovaadoz,
+        PREZZO: new_adozione.prezzo,
+        SEZIONEANNO: new_adozione.sezioneanno,
+        SOTTOTITOLO: new_adozione.sottotitolo,
+        TIPOGRADOSCUOLA: new_adozione.tipogradoscuola,
+        TITOLO: new_adozione.titolo,
+        VOLUME: new_adozione.volume
+      )
+      puts new_adozione.id
+    end
+  end
   
   
   

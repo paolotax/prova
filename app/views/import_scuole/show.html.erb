@@ -84,7 +84,7 @@
 					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
 					<!-- da fare @classi -->
 
-					<% @import_scuola.classi.each do |classe| %>
+					<% @import_scuola.classi.order(:classe, :sezione).each do |classe| %>
 						<%= render partial: "classi/classe", locals: { classe: classe } %>
 						<% classe.maestre.each do |maestra| %>
 							<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
