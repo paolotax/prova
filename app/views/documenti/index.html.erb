@@ -52,11 +52,11 @@
 			type: :select,
 			placeholder: "seleziona causale"
 		}, {
-			field: :da_pagare,
-			label: "Da pagare",
-			collection: nil,
-			type: :checkbox,
-			placeholder: "Seleziona per visualizzare solo i documenti da pagare"
+			field: :status,
+			label: "Status",
+			collection: Documento.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]},
+			type: :select,
+			placeholder: "seleziona ..."
 		}, {
 			field: :ordina_per,
 			label: "Ordina per",
@@ -89,8 +89,9 @@
 			<thead class="border-b border-gray-300 text-gray-900">
 				<tr>
 					<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Documento</th>
-					<th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Fornitore</th>
-					<th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">...</th>
+					<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Cliente</th>
+					<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Info</th>
+					<th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-right text-sm font-semibold text-gray-900">...</th>
 				</tr>
 			</thead>
 			

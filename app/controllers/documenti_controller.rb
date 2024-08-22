@@ -110,7 +110,8 @@ class DocumentiController < ApplicationController
         status: params["status"],
         da_pagare: params["da_pagare"],
         ordina_per: params["ordina_per"],
-        search_libro: params["search_libro"]
+        search_libro: params["search_libro"],
+        status: params["status"]
       } 
     end
 end

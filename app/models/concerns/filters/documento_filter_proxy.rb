@@ -25,6 +25,8 @@ module Filters
     
     filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%") }
 
+    filter_scope :status, ->(status) { where(status: status) }
+    
     def ordina_per_m(ordine)
       if ordine == 'fresh'
         order(updated_at: :desc)
