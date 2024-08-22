@@ -1,8 +1,44 @@
-<div>
-  <h1 class="font-bold text-4xl">Clienti#show</h1>
-  <p>Find me in app/views/clienti/show.html.erb</p>
-</div>
+<%= render Heading::WithActionsComponent.new(wrapper_css: 'flex items-center justify-between px-3 py-1 border border-gray-200 rounded-md', level: 'h3') do |heading| %>
+	
+	<% heading.with_leader do %>
+		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+	<% end %>
+	
+	<% heading.with_description { @cliente.comune } %>
+
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "Elimina",
+			svg_file: "icon-trash-real.svg",
+			color: "red",
+			url: url_for( controller: "clienti", action: "destroy", model: @cliente ),
+			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
+	<% end %>
+	
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "Modifica",
+			svg_file: "icon-pencil.svg",
+			color: "yellow",
+			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
+	<% end %>
+
+	<% heading.with_action do %>	
+		<%= component 'tax_button',
+			caption: "Clienti",
+			svg_file: "icon-arrow-long-left.svg",
+			color: "white",
+			url: url_for( controller: "clienti", action: "index", model: nil ) %>
+	<% end %>
+
+
+	<%= @cliente.denominazione %>
+  
+<% end %>
 
   <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
     <%= link_to_previous_page("<- indietro") %>
   </div>  
+
+<%= render @cliente.documenti %>
+<%= render @cliente.righe %>

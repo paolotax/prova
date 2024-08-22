@@ -39,6 +39,7 @@ class Cliente < ApplicationRecord
   #validates :partita_iva, presence: true, uniqueness: true
 
   has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, as: :clientable 
+  has_many :righe, through: :documenti
   
   extend FilterableModel
 
