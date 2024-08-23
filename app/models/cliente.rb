@@ -42,7 +42,6 @@ class Cliente < ApplicationRecord
   has_many :righe, through: :documenti
   
   extend FilterableModel
-
   class << self
     def filter_proxy = Filters::ClienteFilterProxy
   end

@@ -25,14 +25,17 @@
 	</td>
 	
 	<td class="py-5 pr-6">
-		<%= tag.div class: "flex" %> 
-			<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-			</svg>
-			<%= tag.div documento.clientable&.denominazione %>
+		
+		<%= link_to polymorphic_path(documento.clientable), data: { turbo_frame: "_top" }, class: "flex flex-col" do %> 
+			<%= tag.div class: "flex flex-row" do %>
+				<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+				</svg>
+				<%= tag.div documento.clientable&.denominazione %>
+			<% end %>
 			<%= tag.div documento.referente, class: "text-sm text-gray-600 font-semibold" %>
 			<%= tag.div documento.note, class: "text-sm text-gray-600 font-semibold" %>
-		</div>
+		<% end %>
 	</td>
 
 	<%= tag.td class: "bg-black text-white p-5" do %>
