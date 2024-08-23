@@ -12,10 +12,13 @@ class DocumentiController < ApplicationController
   end
 
   def show
+    @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)
+    @documenti = filter(@documenti.all)
+
+    
     respond_to do |format|
       format.html
       format.pdf do
-        #@adozioni = Array(@adozione)
         pdf = DocumentoPdf.new(@documento, view_context)
         send_data pdf.render, filename: "documento_#{@documento.id}.pdf",
                               type: "application/pdf",
@@ -93,7 +96,7 @@ class DocumentiController < ApplicationController
   private
 
     def set_documento
-      @documento = Documento.find(params[:id])
+      @documento = current_user.documenti.find(params[:id])
     end
 
     def documento_params

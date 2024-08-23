@@ -1,0 +1,31 @@
+<%= tag.div id: dom_id(documento), class: "w-full bg-white border rounded-lg shadow-lg p-4 mb-4" do %>
+    <%= link_to documento do %>
+        <%= documento.causale.causale %> 
+        <br/>
+        nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
+        <br/>
+
+        <p  class="text-right text-sm text-gray-500">
+            <%= documento.clientable&.denominazione %>
+            <%= documento.referente %> 
+        </p>
+
+
+
+        <p  class="text-right text-sm font-semibold text-gray-500">
+            <%= documento.documento_righe.count %> 
+            titoli - 
+            <%= documento.righe.sum(:quantita) %> 
+            copie
+        </p>
+
+        <p class="text-right text-sm text-gray-500">
+            <%= number_to_currency(documento.righe.sum(&:importo)) %>
+        </p>
+        <p class="text-right text-sm text-gray-500">
+            <%= documento.status&.humanize %>
+            <%= documento.tipo_pagamento&.titleize %>
+            <%= documento.pagato_il&.to_date&.strftime("%d-%m") %>
+        </p>
+    <% end %>
+<% end %>
