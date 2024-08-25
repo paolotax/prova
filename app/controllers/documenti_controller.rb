@@ -12,6 +12,7 @@ class DocumentiController < ApplicationController
   end
 
   def show
+    @filter_params = filter_params
     @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)
     @documenti = filter(@documenti.all)
 

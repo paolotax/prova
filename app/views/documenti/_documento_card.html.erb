@@ -1,31 +1,35 @@
-<%= tag.div id: dom_id(documento), class: "w-full bg-white border rounded-lg shadow-lg p-4 mb-4" do %>
-    <%= link_to documento do %>
+<%= tag.div id: dom_id(documento), class: ["w-full border rounded-lg shadow-lg p-4 mb-4",
+                "bg-white ": @documento != documento,
+                "bg-indigo-500 text-white": @documento == documento] do %>
+    <%= link_to documento_path(documento, @filter_params) do %>
+        
         <%= documento.causale.causale %> 
         <br/>
         nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
         <br/>
 
-        <p  class="text-right text-sm text-gray-500">
+        <%= tag.p class: ["text-right text-sm text-gray-500", "text-white": @documento == documento] do %>
             <%= documento.clientable&.denominazione %>
             <%= documento.referente %> 
-        </p>
+        <% end %>
 
 
-
-        <p  class="text-right text-sm font-semibold text-gray-500">
+        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
             <%= documento.documento_righe.count %> 
             titoli - 
             <%= documento.righe.sum(:quantita) %> 
             copie
-        </p>
+        <% end %>
 
-        <p class="text-right text-sm text-gray-500">
+        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
             <%= number_to_currency(documento.righe.sum(&:importo)) %>
-        </p>
-        <p class="text-right text-sm text-gray-500">
+        <% end %>
+        
+        
+        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
             <%= documento.status&.humanize %>
             <%= documento.tipo_pagamento&.titleize %>
             <%= documento.pagato_il&.to_date&.strftime("%d-%m") %>
-        </p>
+        <% end %>
     <% end %>
 <% end %>
