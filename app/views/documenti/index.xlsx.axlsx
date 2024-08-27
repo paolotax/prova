@@ -1,6 +1,6 @@
 wb = xlsx_package.workbook
 
-fields = [ "codice_isbn", "titolo", "editore", 
+fields = [ "codice_isbn", "titolo", "editore", "categoria", 
            "quantita", "prezzo_cents", "sconto", 
            "cliente", "comune", "referente", "note",
            "causale", "numero_documento", "data_documento", "status", "tipo_pagamento", "pagato_il", "riga_id", "documento_id", "libro_id"]
@@ -11,7 +11,7 @@ wb.add_worksheet(name: "Foglio 1") do |sheet|
   
   @documenti.each do |documento|
     documento.righe.each do |row|
-        sheet.add_row [ row.libro.codice_isbn, row.libro.titolo, row.libro.editore.editore, 
+        sheet.add_row [ row.libro.codice_isbn, row.libro.titolo, row.libro.editore.editore, row.libro.categoria, 
         row.quantita, row.prezzo_cents, row.sconto, 
         documento.clientable.denominazione,  documento.clientable.comune, documento.referente, documento.note, 
         documento.causale, documento.numero_documento, documento.data_documento, documento.status, documento.tipo_pagamento, documento.pagato_il, row.id, documento.id, row.libro_id ]

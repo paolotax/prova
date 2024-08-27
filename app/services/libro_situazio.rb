@@ -26,27 +26,5 @@ class LibroSituazio
     @ordine_scuola + @ordine_cliente
   end
 
-  def create_libro(libro)
-    
-    libro.titolo = libro.titolo.upcase
-    libro.save
-    if libro.invalid?
-      return Result.new(created: false, libro: libro)
-    end
-    # do some stuff here
-    Result.new(created: libro.valid?, libro: libro)
-  end
-  #{"titolo"=>"IN VACANZA CON MAGHETTO PASTICCIONE 1", "codice_isbn"=>"9788883885921", "editore"=>"TREDIECI EDITRICE", "prezzo_in_cents"=>680, "id"=>200, "ordine_cliente"=>nil, "documento_di_trasporto"=>nil, "ddt_fornitore"=>nil, "ordine_scuola"=>29, "td01"=>nil, "td04"=>nil}
-  class Result
-    attr_reader :libro
-    def initialize(created:, libro:)
-      @created = created
-      @libro = libro
-    end
-
-    def created?
-      @created
-    end
-  end
 
 end

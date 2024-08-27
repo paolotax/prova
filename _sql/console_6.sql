@@ -19,7 +19,7 @@ SELECT * FROM righe
 
 
 
-SELECT users.id, libri.titolo, libri.codice_isbn,
+SELECT users.id, libri.titolo, libri.codice_isbn, documenti.clientable_type, documenti.clientable_id,
        SUM(righe.quantita) FILTER (WHERE causali.movimento = 1) as uscite,
        - SUM(righe.quantita) FILTER (WHERE causali.movimento = 0) as entrate
 FROM righe
@@ -28,8 +28,7 @@ INNER JOIN documento_righe ON righe.id = documento_righe.riga_id
 INNER JOIN documenti ON documento_righe.documento_id = documenti.id
 INNER JOIN causali ON documenti.causale_id = causali.id
 INNER JOIN users ON users.id = documenti.user_id
-WHERE causali.causale = 'Ordine Scuola'
-GROUP BY 1, 2, 3
+GROUP BY 1, 2, 3, 4, 5
 ORDER BY 1, 2
 
  SELECT libri.id, libri.titolo, causali.causale, documenti.status, sum(righe.quantita) as quantita

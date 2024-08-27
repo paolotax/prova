@@ -2,7 +2,6 @@ class DocumentoCreator
 
   def create_documento(documento)
     
-
     documento.save
     
     if documento.invalid?
