@@ -41,4 +41,19 @@
   </div>  
 
 <%= render @cliente.documenti %>
+
 <%= render @cliente.righe %>
+
+<%= tag.ul  do %>
+	<% @situazio.each do |libro| %>
+		<%= tag.li class: "grid grid-cols-8" do %>
+			<%= tag.p libro["status"], class: "col-span-1" %>
+			<%= tag.p libro["causale"], class: "col-span-2" %>
+
+			<%= tag.p libro["titolo"], class: "col-span-3" %>
+
+			<%= tag.p libro["entrate"], class: "col-span-1" %>
+			<%= tag.p libro["uscite"], class: "col-span-1" %>
+		<% end %>
+	<% end %>
+<% end %>

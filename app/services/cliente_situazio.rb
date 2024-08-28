@@ -22,7 +22,7 @@ class ClienteSituazio
         AND clientable_type = '#{@clientable.class}' AND clientable_id = #{@clientable.id}
         
       GROUP BY 1, 2, 3, 4, 5, 6, 7
-      ORDER BY 1, 2
+      ORDER BY 6, 7, 2
     SQL
 
     sql_text
