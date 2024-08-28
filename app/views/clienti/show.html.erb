@@ -40,10 +40,6 @@
     <%= link_to_previous_page("<- indietro") %>
   </div>  
 
-<%= render @cliente.documenti %>
-
-<%= render @cliente.righe %>
-
 <%= tag.ul  do %>
 	<% @situazio.each do |libro| %>
 		<%= tag.li class: "grid grid-cols-8" do %>
@@ -57,3 +53,10 @@
 		<% end %>
 	<% end %>
 <% end %>
+
+
+<%= render @cliente.documenti %>
+
+<%= render @cliente.righe %>
+
+
