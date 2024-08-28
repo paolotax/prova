@@ -48,6 +48,7 @@ class ImportScuoleController < ApplicationController
     @adozioni = current_user.adozioni.joins(:scuola).where("import_scuole.id = ?", @import_scuola.id)
     @appunti_non_archiviati = @import_scuola.appunti.non_archiviati.dell_utente(current_user)
     @appunti_archiviati = @import_scuola.appunti.archiviati.dell_utente(current_user)
+    @documenti = @import_scuola.documenti.where(user_id: current_user.id)
   end
 
   private

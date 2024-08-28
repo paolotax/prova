@@ -61,6 +61,8 @@ class ImportScuola < ApplicationRecord
   
   has_many :adozioni, through: :classi
 
+  has_many :documenti, as: :clientable
+
   def mie_adozioni
     import_adozioni.mie_adozioni
   end
