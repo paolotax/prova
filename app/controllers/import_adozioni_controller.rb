@@ -34,6 +34,14 @@ class ImportAdozioniController < ApplicationController
       format.html
       format.xlsx
       format.turbo_stream
+      format.pdf do
+        
+        pdf = ImportAdozionePdf.new(@import_adozioni, view_context)
+        send_data pdf.render, filename: "sovfapacchi_#{Date.today}.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"      
+
+      end
     end
   end
 

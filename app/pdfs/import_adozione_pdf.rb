@@ -1,7 +1,7 @@
 # encoding: utf-8
 require "prawn/measurement_extensions"
 
-class AdozionePdf < Prawn::Document
+class ImportAdozionePdf < Prawn::Document
   
   include LayoutPdf
   
@@ -39,9 +39,9 @@ class AdozionePdf < Prawn::Document
 
       numero_documento(a)
       line_items(a)
-      totali(a)
+      #totali(a)
 
-      note(a)
+      #note(a)
 
       footer
 
@@ -63,15 +63,14 @@ class AdozionePdf < Prawn::Document
   def destinatario(adozione)
   
     bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
-      #stroke_bounds
-      text adozione.team, :size => 14, :style => :bold, :spacing => 4
+
       move_down(3)
-      text "#{adozione.classe_e_sezione}",  :size => 14, :style => :bold, :spacing => 4      
+      text "<u>Classe #{adozione.classe_e_sezione}</u>",  :size => 14, :style => :bold, :spacing => 4, :inline_format => true   
       move_down(8)
-      text adozione.scuola.tipo_scuola,  :size => 12
-      text adozione.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
+      text adozione.import_scuola.tipo_scuola,  :size => 12
+      text adozione.import_scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
       move_down(3)
-      text adozione.scuola.indirizzo_formattato,  :size => 12
+      text adozione.import_scuola.indirizzo_formattato,  :size => 12
     end
   end
   
@@ -89,17 +88,7 @@ class AdozionePdf < Prawn::Document
       line_width 0.5
       stroke_horizontal_rule
     end
-    bounding_box [bounds.left, bounds.top - 11.cm], :width => bounds.width / 2.0, :height => 50 do
-      #stroke_bounds
-      text "ordine \##{adozione.id} del #{l(adozione.created_at)}", size: 11
-    end
-
-    bounding_box [bounds.width / 2.0, bounds.top - 11.cm], :width => bounds.width / 2.0, :height => 50 do
-      #stroke_bounds
-      text "Documento di trasporto", size: 12, style: :bold, align: :left
-      move_down(5)
-      text "Numero _______ del ____________", size: 12, style: :bold, align: :left      
-    end
+    
 
     
   end
@@ -109,18 +98,13 @@ class AdozionePdf < Prawn::Document
 
     mask(:line_width) do
       line_width 0.5
-      
-      table line_item_rows, cell_style: { border_width: 0.5 } do
-        row(0).font_style = :bold
-        columns(1..5).align = :right
-        columns(0).width = 200
-        columns(1).width = 60
-        # columns(2..3).width = 70
-        # columns(5).width = 80
-        self.row_colors = ["DDDDDD", "FFFFFF"]
-        self.header = true       
-      end
-    
+
+      text "Materiale per la classe <b>#{adozione.classe_e_sezione}</b> abbinato all'adozione del testo:", :size => 12, inline_format: true
+      move_down 10
+      text adozione.disciplina,  :size => 12, style: :italic
+      text adozione.titolo,  :size => 14, :style => :bold, :spacing => 4
+      text adozione.editore, :size => 12, :spacing => 4
+
     end
   end
 
@@ -162,13 +146,13 @@ class AdozionePdf < Prawn::Document
         line_width 0.5
         stroke_horizontal_rule
       end
-      move_down(15)
-      text "Pagamento con Bonifico - Banca di appoggio: #{current_user.nome_banca}", :size => 11, :style => :bold, :spacing => 4
-      move_down(3)
-      text "IBAN: #{current_user.iban}",  :size => 12, :style => :bold, :spacing => 4      
-      move_down(3)
-      text "conto intestato a #{current_user.ragione_sociale}",  :size => 11
-      text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
+      # move_down(15)
+      # text "Pagamento con Bonifico - Banca di appoggio: #{current_user.nome_banca}", :size => 11, :style => :bold, :spacing => 4
+      # move_down(3)
+      # text "IBAN: #{current_user.iban}",  :size => 12, :style => :bold, :spacing => 4      
+      # move_down(3)
+      # text "conto intestato a #{current_user.ragione_sociale}",  :size => 11
+      # text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
 
     end
   end
