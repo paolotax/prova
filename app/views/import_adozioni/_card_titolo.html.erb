@@ -14,7 +14,17 @@
                 class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
                 
             <% unless is_header %>
-                <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
+                <%= tag.div class: "flex" do %>
+                    <%= check_box_tag "import_adozione_ids[]", import_adozione.id, nil, {
+                            multiple: true,
+                            form: :bulk_update_import_adozioni_form,
+                            checked: false,
+                            class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
+                            data: { tax_checkbox_select_all_target: 'checkbox' }
+                            } %> 
+                    
+                    <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
+                <% end %>
             <% end %>
         <% end %>
 
@@ -32,6 +42,7 @@
         <% end %> 
         
         <% if is_mia %>
+            
             <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "titolo" } %>
         <% end %>
      <% end %>

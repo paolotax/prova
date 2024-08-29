@@ -47,6 +47,20 @@ class ImportAdozioniController < ApplicationController
 
   def show
   end
+
+  def bulk_update
+
+    @adozioni = current_user.import_adozioni.where(id: params.fetch(:import_adozione_ids, []).compact)
+    respond_to do |format|
+
+      format.pdf do
+        pdf = ImportAdozionePdf.new(@adozioni, view_context)
+        send_data pdf.render, filename: "adozioni.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+      end 
+    end 
+  end
   
   private
 

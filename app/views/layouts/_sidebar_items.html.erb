@@ -56,7 +56,7 @@
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to adozioni_path, class:"flex w-full gap-x-3 " do %>
+			<%= link_to import_adozioni_path, class:"flex w-full gap-x-3 " do %>
 				<%= inline_svg_tag('icon-cash.svg') %>
 				Adozioni                    
 			<% end %>
@@ -72,9 +72,9 @@
 		<ul data-tax-reveal-target="item" class="hidden">
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to import_adozioni_path, 
+				<%= link_to adozioni_path, 
 						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
-					Adozioni (OpenData)                 
+					Si sboccia !!!                 
 				<% end %>
 			</li>
 		</ul>		
