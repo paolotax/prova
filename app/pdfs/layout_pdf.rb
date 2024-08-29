@@ -17,8 +17,8 @@ module LayoutPdf
       text "#{user.cap} #{user.citta}",   :align => :right
       move_down 5
       #text "tel 051 6342585  fax 051 6341521", :align => :right
-      text "cell #{user.cellulare}", :align => :right
-      text "email #{user.email}", :align => :right
+      text "cell #{user.profile.cellulare}", :align => :right
+      text "email #{user.profile.email}", :align => :right
       move_down 5
     end
   end

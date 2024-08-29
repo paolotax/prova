@@ -2,6 +2,12 @@
 
 	<%= h1 {"Adozioni"} %>
 
+	<%= component 'tax_button',
+                caption: "Etichette",
+                svg_file: "icon-tag.svg",
+                color: "pink",
+                url: url_for( controller: "import_adozioni", action: "index", format: :pdf, params: request.query_parameters ) %>
+
 	<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
 		<div class="">
 			<%= toggle_button_tag( false, "mie adozioni", "adozioni" )%>
