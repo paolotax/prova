@@ -101,7 +101,7 @@ class ImportAdozionePdf < Prawn::Document
 
       text "Materiale per la classe <b>#{adozione.classe_e_sezione}</b> abbinato all'adozione del testo:", :size => 12, inline_format: true
       move_down 10
-      text adozione.disciplina,  :size => 12, style: :italic
+      text adozione.disciplina,  :size => 12, style: :bold
       text adozione.titolo,  :size => 14, :style => :bold, :spacing => 4
       text adozione.editore, :size => 12, :spacing => 4
 
