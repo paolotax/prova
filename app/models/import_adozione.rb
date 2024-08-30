@@ -168,6 +168,10 @@ class ImportAdozione < ApplicationRecord
   #   self.ANNOCORSO
   # end
 
+  def codice_scuola
+    self.CODICESCUOLA
+  end
+  
   def classe_e_sezione 
     "#{self.ANNOCORSO} #{sezione}"
   end
@@ -219,6 +223,7 @@ class ImportAdozione < ApplicationRecord
   def consigliato
     self.CONSIGLIATO
   end
+
 
   def to_combobox_display
     "#{self.scuola} #{self.citta} - #{self.classe_e_sezione} - #{self.titolo} #{self.editore}"

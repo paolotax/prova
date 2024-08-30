@@ -1,11 +1,16 @@
 <%= tag.div  id: dom_id(import_adozione) do %>
 
 	<%= tag.div class: "mx-2 grid grid-cols-4 gap-x-2" do %>		
-		<%= link_to import_adozione.import_scuola.to_s.upcase, 
+		<%= tag.div class: "col-span-4 flex flex-row justify-between" do %>
+			<%= link_to import_adozione.import_scuola.to_s.upcase, 
+					import_adozioni_path(codice_scuola: import_adozione.codice_scuola),
+					class: "text-xs text-slate-500 hover:text-sky-500 pb-0.5" %>
+			<%= link_to "foglio scuola", 
 					import_scuola_path( import_adozione.import_scuola ),
 					data: { turbo_frame: "_top" },  
-					class: "col-span-4 text-xs text-slate-500 hover:text-sky-500 pb-0.5" 
-		%>
+					class: "text-xs text-red-500 hover:text-sky-500 pb-0.5" 
+			%>
+		<% end %>
 		<%= tag.div class: "col-span-1" do %>
 			<%= render partial: "import_adozioni/card_classe", locals: { import_adozione: import_adozione, is_header: true, is_mia: import_adozione.mia_adozione?} %>
 		<% end %>
