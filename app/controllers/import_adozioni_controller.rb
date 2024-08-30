@@ -34,14 +34,7 @@ class ImportAdozioniController < ApplicationController
       format.html
       format.xlsx
       format.turbo_stream
-      format.pdf do
-        
-        pdf = ImportAdozionePdf.new(@import_adozioni, view_context)
-        send_data pdf.render, filename: "sovfapacchi_#{Date.today}.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"      
-
-      end
+      format.pdf { print_pdf(@import_adozioni) }
     end
   end
 
@@ -49,17 +42,11 @@ class ImportAdozioniController < ApplicationController
   end
 
   def bulk_update
-    @adozioni = current_user.import_adozioni
+    @import_adozioni = current_user.import_adozioni
                   .where(id: params.fetch(:import_adozione_ids, []).compact)
-                  .order(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA, :CODICEISBN)
-                  
-                  respond_to do |format|
-      format.pdf do
-        pdf = ImportAdozionePdf.new(@adozioni, view_context)
-        send_data pdf.render, filename: "adozioni.pdf",
-                              type: "application/pdf",
-                              disposition: "inline"
-      end 
+                  .order(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA, :CODICEISBN) 
+    respond_to do |format|
+      format.pdf { print_pdf(@import_adozioni) }
     end 
   end
   
@@ -69,4 +56,10 @@ class ImportAdozioniController < ApplicationController
       @import_adozione = ImportAdozione.find(params[:id])
     end
 
+    def print_pdf(import_adozioni)
+      pdf = ImportAdozionePdf.new(import_adozioni, view_context)
+        send_data pdf.render, filename: "sovfapacchi_#{Date.today}.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"
+    end
 end

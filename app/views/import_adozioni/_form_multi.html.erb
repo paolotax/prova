@@ -1,7 +1,7 @@
 <%# header per le tappe %>
 <%= tag.div class: "w-full space-x-8 px-3 py-3 text-xs font-semibold flex flex-wrap items-center justify-end" do %>
         
-    <%= form_with url: bulk_update_import_adozioni_path, method: :put, format: "pdf", id: :bulk_update_import_adozioni_form, target: "_blank",
+    <%= form_with url: bulk_update_import_adozioni_path, method: :put, format: "pdf", id: :bulk_update_import_adozioni_form, action: "action-page",
             data: { turbo: false, tax_checkbox_select_all_target: "formMulti" },
             class: "pr-2" do |f| %>
 
