@@ -1,5 +1,6 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
 
+	<%# button print pdf sovrapacchi %>
 	<% heading.with_action do %>
 		<%= component 'tax_button',
                 caption: "Etichette",
@@ -8,6 +9,7 @@
                 url: url_for( controller: "import_adozioni", action: "index", format: :pdf, params: request.query_parameters ) %>
 	<% end %>
 	
+	<%# button export excel %>
 	<% heading.with_action do %>
 		<%= component 'tax_button',
                 caption: "Excel",
@@ -16,6 +18,7 @@
                 url: url_for( controller: "import_adozioni", action: "index", format: :xlsx, params: request.query_parameters ) %>
 	<% end %>
 	
+	<%# button old filters %>
 	<% heading.with_action do %>
 		<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
 			<div class="">
