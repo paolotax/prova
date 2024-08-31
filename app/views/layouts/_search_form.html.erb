@@ -3,7 +3,7 @@
 <% if  (['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti', "tappe", "adozioni", "libri"].any?(params[:controller]) && (params[:action] != 'edit' && params[:action] != 'new')) ||
 	 (params[:controller] == "giri" && (params[:action] == "tappe" || params[:action] == "index"))  %>
 	
-	<%= form_with( url: url_for(controller: params[:controller], action: params[:action]),
+	<%= form_with( url: url_for(controller: params[:controller], action: params[:action], params: request.query_parameters ),
 					id: "search_form",
 					class: "relative flex flex-1", 
 					method: "get",
