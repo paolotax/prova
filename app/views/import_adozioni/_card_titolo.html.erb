@@ -37,7 +37,7 @@
                     class: "hover:text-sky-500  " %>
             <% end %>
             <%= tag.div class: "truncate" do %>
-                <%= link_to import_adozione.disciplina, import_adozioni_path(disciplina: import_adozione.DISCIPLINA, classe: import_adozione.classe ), 
+                <%= link_to import_adozione.disciplina, import_adozioni_path(disciplina: import_adozione.DISCIPLINA, classe: import_adozione.ANNOCORSO ), 
                     data: { turbo_frame: "_top", turbo_action: "advance"},
                     class: "hover:text-sky-500  " %>
             <% end %>

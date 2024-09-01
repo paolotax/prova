@@ -16,20 +16,8 @@
                  <%= tag.div "Fine delle adozioni!", class: "py-8 px-4 text-center" %>
             <% else %>
                   <%= turbo_frame_tag "load_more",
-                        src: import_adozioni_path(                              
-                                    search: params[:search], 
-                                    page: @page.next_param, 
-                                    da_acquistare: params[:da_acquistare], 
-                                    search_query: params[:search_query], 
-                                    mie_adozioni: params[:mie_adozioni],
-                                    classe: params[:classe],
-                                    disciplina: params[:disciplina],
-                                    editore: params[:editore],
-                                    codice_isbn: params[:codice_isbn],
-                                    filter: params[:filter],
-                                    codice_scuola: params[:codice_scuola],
-                                    format: :turbo_stream
-                              ),
+                        src: import_adozioni_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),                              
+
                         loading: :lazy do %>
                         <%= render 'shared/lazy_loading' %>
                   <% end %>

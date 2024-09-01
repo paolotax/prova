@@ -33,8 +33,12 @@
 class ImportAdozione < ApplicationRecord
 
   include Searchable
-
   search_on :TITOLO, :EDITORE, :DISCIPLINA, import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
+
+  extend FilterableModel
+  class << self
+    def filter_proxy = Filters::ImportAdozioneFilterProxy
+  end
 
 
   belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
@@ -42,7 +46,7 @@ class ImportAdozione < ApplicationRecord
 
   has_one :classe, class_name: "Views::Classe", 
                   primary_key: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE],
-      query_constraints: [:codice_ministeriale, :classe, :sezione, :combinazione]
+            query_constraints: [:codice_ministeriale, :classe, :sezione, :combinazione]
 
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
@@ -54,12 +58,10 @@ class ImportAdozione < ApplicationRecord
   has_many :tappe, as: :tappable
 
   #has_many :appunti, dependent: :nullify
-
   #has_many :adozioni, dependent: :nullify
 
   
-  include PgSearch::Model
-  
+  include PgSearch::Model  
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
 
   pg_search_scope :search_combobox,
@@ -118,36 +120,12 @@ class ImportAdozione < ApplicationRecord
     .select(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE)
     .select("ARRAY_AGG(import_adozioni.id) AS import_adozioni_ids")
   }
-
-  scope :da_acquistare, -> { where(DAACQUIST: "Si") }
-
+  
   scope :mie_adozioni, -> { where(EDITORE: Current.user.miei_editori) }
-
   scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
   scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
 
-
-  def self.filtra(params)
-    adozioni = all
-    adozioni = adozioni.da_acquistare if params[:da_acquistare] == "si"
-            
-    if params[:search].present?        
-      if params[:search_query] == "all"
-        adozioni = adozioni.search_all_word(params[:search])
-      else
-        adozioni = adozioni.search_any_word(params[:search])
-      end
-    end
-    
-    adozioni = adozioni.where(CODICESCUOLA: params[:codice_scuola]) if params[:codice_scuola].present?
-    adozioni = adozioni.where(ANNOCORSO: params[:classe]) if params[:classe].present?
-    adozioni = adozioni.where(DISCIPLINA: params[:disciplina]) if params[:disciplina].present?
-    adozioni = adozioni.where(EDITORE: params[:editore]) if params[:editore].present?
-    adozioni = adozioni.where(CODICEISBN: params[:codice_isbn]) if params[:codice_isbn].present?
-    adozioni
   
-  end
-
   def mia_adozione?
     Current.user.miei_editori.include?(self.EDITORE)
   end

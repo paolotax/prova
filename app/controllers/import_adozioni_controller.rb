@@ -1,4 +1,6 @@
 class ImportAdozioniController < ApplicationController
+
+  include FilterableController
   
   before_action :authenticate_user!
   before_action :set_import_adozione, only: %i[ show ]
@@ -9,15 +11,8 @@ class ImportAdozioniController < ApplicationController
 
     if params[:q].present?
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
-
     else      
-
-      @import_adozioni = @import_adozioni.mie_adozioni if params[:mie_adozioni] == "si"
-      
-      @import_adozioni = @import_adozioni.mie_adozioni.nel_baule_di_oggi if params[:filter] == "oggi"
-      @import_adozioni = @import_adozioni.mie_adozioni.nel_baule_di_domani if params[:filter] == "domani"
-      
-      @import_adozioni = @import_adozioni.filtra(params)
+      @import_adozioni = filter(@import_adozioni.all)
       
       @conteggio_adozioni = @import_adozioni.count;
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
@@ -54,6 +49,23 @@ class ImportAdozioniController < ApplicationController
 
     def set_import_adozione
       @import_adozione = ImportAdozione.find(params[:id])
+    end
+
+    def filter_params
+      {
+        search: params["search"],
+        codice_isbn: params["codice_isbn"],
+        titolo: params["titolo"],
+        editore: params["editore"],
+        disciplina: params["disciplina"],
+        classe: params["classe"],
+        codice_scuola: params["codice_scuola"],
+        comune: params["comune"],
+        scuola: params["scuola"],
+        mie_adozioni: params["mie_adozioni"],
+        da_acquistare: params["da_acquistare"],
+        nel_baule: params["nel_baule"]
+      }
     end
 
     def print_pdf(import_adozioni)
