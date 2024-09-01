@@ -3,7 +3,9 @@
     <%= tag.div class:"mb-4 bg-white p-4 border rounded-lg inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
         
         id: turbo_id_for(documento_riga),
-        data: { controller: "tax-combobox-libro" } do %>
+        data: { controller: "tax-combobox-libro",
+                sortable_update_url: documento_riga.persisted? ? update_posizione_documento_riga_path(documento_riga) : nil ,
+                sortable_param_value: "posizione" } do %>
 
         <%#= tag.div documento_riga.posizione, class: "col-span-1" %>
         <%= ff.hidden_field :id %>

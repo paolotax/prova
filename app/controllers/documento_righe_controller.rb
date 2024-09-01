@@ -18,4 +18,16 @@ class DocumentoRigheController < ApplicationController
     render turbo_stream: turbo_stream.remove(documento_riga.id)
   end
 
+  def update_posizione
+    @documento_riga = DocumentoRiga.find(params[:id])
+    @documento_riga.insert_at(documento_riga_params[:position].to_i)
+    head :ok
+  end
+
+  private
+
+    def documento_riga_params
+      params.require(:documento_riga).permit(:position)
+    end
+
 end

@@ -26,3 +26,6 @@ pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm
 
 
 pin_all_from "app/assets/javascripts/controllers/helpers", under: "helpers", to: "controllers/helpers"
+pin "@stimulus-components/sortable", to: "@stimulus-components--sortable.js" # @5.0.1
+pin "sortablejs" # @1.15.2
+pin "@rails/request.js", to: "@rails--request.js.js" # @0.0.8

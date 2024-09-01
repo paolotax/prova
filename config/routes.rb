@@ -28,7 +28,11 @@ Rails.application.routes.draw do
 
   resources :causali
   
-  resources :documento_righe, only: [:new, :destroy] 
+  resources :documento_righe, only: [:new, :destroy] do
+    member do
+      patch 'update_posizione'
+    end
+  end
   
   resources :libri_importer, only: [:create] do
     collection do

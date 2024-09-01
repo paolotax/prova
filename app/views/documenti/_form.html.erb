@@ -62,8 +62,11 @@
         <% end %>
     <% end %>
 
-    <%= tag.section id: "documento_righe", class: "col-span-4 px-4" do %>
-        <%= render @documento.documento_righe %>
+    <%= tag.section id: "documento_righe", class: "col-span-4 px-4",  
+                    data: { controller: "sortable", 
+                            sortable_animation_value: "150", 
+                            sortable_resource_name_value: "documento_riga" } do %>
+        <%= render @documento.documento_righe.order(:posizione) %>
     <% end %>
 
     <div class="px-4 flex items-start mb-8">

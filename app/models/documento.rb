@@ -40,7 +40,7 @@ class Documento < ApplicationRecord
   belongs_to :clientable, polymorphic: true
   belongs_to :causale
 
-  has_many :documento_righe, inverse_of: :documento, dependent: :destroy
+  has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
 
   accepts_nested_attributes_for :documento_righe#,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
@@ -74,6 +74,14 @@ class Documento < ApplicationRecord
     Riga.destroy_all
     Documento.all 
     Riga.all 
+  end
+
+  def self.reset_righe
+    Documento.all.each do |documento|
+      documento.documento_righe.order(:created_at).each.with_index(1) do |documento_riga, index|
+        documento_riga.update_column :posizione, index
+      end
+    end
   end
 
   

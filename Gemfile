@@ -93,6 +93,8 @@ gem "roo", "~> 2.10.0"
 
 gem 'smarter_csv'
 
+gem "acts_as_list"
+
 
 
 source "https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private" do
