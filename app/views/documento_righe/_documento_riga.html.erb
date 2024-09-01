@@ -4,8 +4,7 @@
         
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro",
-                sortable_update_url: documento_riga.persisted? ? update_posizione_documento_riga_path(documento_riga) : nil ,
-                sortable_param_value: "posizione" } do %>
+                sortable_update_url: documento_riga.persisted? ? update_posizione_documento_riga_path(documento_riga) : nil } do %>
 
         <%#= tag.div documento_riga.posizione, class: "col-span-1" %>
         <%= ff.hidden_field :id %>
