@@ -103,23 +103,23 @@
 				}
 			] %>
 
+		<div class="flex flex-col">
+			<div id="import_adozioni" class="py-5 w-full grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2">
+				<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
+					Whoops! Non ci sono adozioni. 
+					<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] || !current_user.import_scuole.empty? %>
+				</p>		
+				<%= render partial: "import_adozioni/import_adozione_small", collection: @page.records, as: :import_adozione %>
+			</div>
 		
-		<div id="import_adozioni" class="py-5 w-full grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2">
-			<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
-				Whoops! Non ci sono adozioni. 
-				<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] || !current_user.import_scuole.empty? %>
-			</p>		
-			<%= render partial: "import_adozioni/import_adozione_small", collection: @page.records, as: :import_adozione %>
-		</div>
-	
-		<% unless @page.last? %>
-			<%= turbo_frame_tag "load_more",
-						src: import_adozioni_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),
-						loading: :lazy do %>
-				<%= render 'shared/lazy_loading' %>
+			<% unless @page.last? %>
+				<%= turbo_frame_tag "load_more",
+							src: import_adozioni_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),
+							loading: :lazy do %>
+					<%= render 'shared/lazy_loading' %>
+				<% end %>
 			<% end %>
-		<% end %>
-
+		</div>
 	<% end %>
 
 <% end %>
