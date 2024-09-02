@@ -19,19 +19,19 @@
 	<%# <% end %>
 	
 	<%# button old filters %>
-	<%# <% heading.with_action do %>
-		<%# <div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
+	<% heading.with_action do %>
+		<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
 			<div class="">
-				<%= toggle_button_tag( false, "mie adozioni", "adozioni" )%>
-			<%# </div>
+				<%= toggle_button_tag( params["mie_adozioni"] == "si", "mie adozioni", "adozioni" )%>
+			</div>
 			<div class="">
-				<%= toggle_button_tag( false, "da acquistare", "acquistare" )%>
-			<%# </div>
+				<%= toggle_button_tag( params["da_acquistare"] == "si", "da acquistare", "acquistare" )%>
+			</div>
 			<div class="">
 				<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
-			<%# </div> %>
-		<%# </div> %>
-	<%# <% end %>
+			</div>
+		</div>
+	<% end %>
 
 	<%= h1 {"Adozioni"} %>
 

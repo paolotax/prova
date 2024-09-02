@@ -3,16 +3,20 @@
 
 <div data-controller="toggletax" class="flex  items-center">
     
-    <button 
-        data-toggletax-target="button"        
-        data-queryopt-target="button"        
-        data-action="click->toggletax#toggle click->queryopt#update<%= html_id.capitalize %>"
+    <%= button_tag type: "button", 
+        class: "#{button_css} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2", 
+        role: "switch",
+       
+        data: { toggletax_target: "button",
+            queryopt_target: "button",        
+            action: "click->toggletax#toggle click->queryopt#update#{ html_id.capitalize }" },
         
-        type="button" 
-        class="<%= button_css %> relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2" 
-        role="switch" 
-        aria-checked="<%= checked %>" 
-        aria-labelledby="label-<%= html_id %>-label">
+        "aria-checked": checked, 
+        "aria-labelledby": "label-#{ html_id }-label",
+        form: "form-filter" do %>      
+
+    
+
 
         <span
             data-toggletax-target="pushbutton" 
@@ -20,7 +24,7 @@
             aria-hidden="false" 
             class="<%= span_css %> pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
         </span>
-    </button>
+    <% end %>
     <span class="ml-3 text-sm" id="label-<%= html_id %>-label">
         <span class="font-medium text-gray-900"><%= label %></span>
     </span>

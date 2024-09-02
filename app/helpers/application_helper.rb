@@ -101,6 +101,7 @@ module ApplicationHelper
     raw doc
   end
 
+  
   def toggle_button_tag( checked = true, label = "", html_id = nil ) 
     #             TailwindUI
     # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->
