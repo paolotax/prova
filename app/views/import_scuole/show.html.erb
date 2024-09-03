@@ -16,6 +16,12 @@
 						} 
 				%>
 			</div>
+			<%= component 'tax_button', 
+                    caption: "Stampa",
+                    svg_file: "icon-print.svg",
+                    color: "white",
+                    url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
+            %>
 		</div>
 
 		<div data-controller="tax-tabs"

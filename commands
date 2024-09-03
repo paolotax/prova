@@ -63,9 +63,7 @@ kamal traefik restart
 kamal traefik logs
 kamal app logs
 
-rm /opt/homebrew/var/postgresql@14/postmaster.pid
-
-brew services restart postgresql@14
+rm /opt/homebrew/var/postgresql@14/postmaster.pid && brew services restart postgresql@14
 
 docker exec -i prova-db /usr/bin/pg_dump -U prova prova_production > backup.sql
 
