@@ -16,14 +16,6 @@
 			url: url_for( controller: "clienti", action: "destroy", model: @cliente ),
 			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
 	<% end %>
-	
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-			caption: "Modifica",
-			svg_file: "icon-pencil.svg",
-			color: "blue",
-			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
-	<% end %>
 
 	<% heading.with_action do %>	
 		<%= component 'tax_button',
@@ -33,6 +25,13 @@
 			url: request.referrer %>
 	<% end %>
 
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "Modifica",
+			svg_file: "icon-pencil.svg",
+			color: "yellow",
+			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
+	<% end %>
 
 	<%= @cliente.denominazione %>
   

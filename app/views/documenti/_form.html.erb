@@ -8,7 +8,7 @@
         </div>
     <% end %>
   
-    <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 m-2 px-4 bg-gray-200 gap-4 border rounded-lg",
+    <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 my-4 px-6 pb-5 bg-gray-200 gap-4 border rounded-lg",
              data: { controller:"tax-combobox-causale" } do %>
         
         <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col" do %>
@@ -44,7 +44,7 @@
    
     <% end %>
 
-    <%= tag.section class: "m-2 col-span-4 px-4 bg-gray-200 border rounded-lg flex flex-col" do %>
+    <%= tag.section class: "col-span-4 mb-4 px-6 pb-5 bg-gray-200 border rounded-lg flex flex-col" do %>
         <%= render TaxSelectClientableComponent.new( 
                 form: form, 
                 clientable_type: documento.clientable_type, 
@@ -62,7 +62,7 @@
         <% end %>
     <% end %>
 
-    <%= tag.section id: "documento_righe", class: "col-span-4 px-4",  
+    <%= tag.section id: "documento_righe", class: "col-span-4",  
                     data: { controller: "sortable", 
                             sortable_animation_value: "150", 
                             sortable_resource_name_value: "documento_riga" } do %>
