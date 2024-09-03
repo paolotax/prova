@@ -113,12 +113,11 @@ class DocumentiController < ApplicationController
     def filter_params 
       {
         search: params["search"],
+        search_libro: params["search_libro"],
         causale: params["causale"],
         status: params["status"],
-        da_pagare: params["da_pagare"],
-        ordina_per: params["ordina_per"],
-        search_libro: params["search_libro"],
-        status: params["status"]
+        tipo_pagamento: params["tipo_pagamento"],
+        ordina_per: params["ordina_per"]
       } 
     end
 end
