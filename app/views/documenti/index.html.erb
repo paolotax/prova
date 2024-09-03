@@ -51,7 +51,7 @@
 				type: :select,
 				placeholder: "stato..."
 			}, {
-				field: :status,
+				field: :tipo_pagamento,
 				label: "Pagamento",
 				collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
 				type: :select,
