@@ -1,4 +1,6 @@
-<%= render Heading::WithActionsComponent.new(wrapper_css: 'flex items-center justify-between px-3 py-1 border border-gray-200 rounded-md', level: 'h3') do |heading| %>
+<%= render Heading::WithActionsComponent.new(
+		wrapper_css: 'flex items-center bg-white justify-between px-4 py-3 mb-4 border border-gray-200 rounded-md shadow-md', 
+		level: 'h3') do |heading| %>
 	
 	<% heading.with_leader do %>
 		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
@@ -19,16 +21,16 @@
 		<%= component 'tax_button',
 			caption: "Modifica",
 			svg_file: "icon-pencil.svg",
-			color: "yellow",
+			color: "blue",
 			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
 	<% end %>
 
 	<% heading.with_action do %>	
 		<%= component 'tax_button',
-			caption: "Clienti",
+			caption: "Indietro",
 			svg_file: "icon-arrow-long-left.svg",
 			color: "white",
-			url: url_for( controller: "clienti", action: "index", model: nil ) %>
+			url: request.referrer %>
 	<% end %>
 
 

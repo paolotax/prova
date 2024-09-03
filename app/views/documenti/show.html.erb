@@ -73,10 +73,10 @@
         <% end %>  
         <% heading.with_action do %>
             <%= component 'tax_button',
-                    caption: "Documenti",
+                    caption: "Indietro",
                     svg_file: "icon-arrow-long-left.svg",
                     color: "white",
-                    url: url_for( controller: "documenti", action: "index" ) %>
+                    url: request.referrer %>
         <% end %>
         <% heading.with_action do %>
             <%= component 'tax_button',
