@@ -32,7 +32,7 @@ class FoglioScuolaPdf < Prawn::Document
 
       
       bounding_box([bounds.right - 200, cursor], width: 200) do       
-          text "#{l(t.data_tappa.to_date)} - #{t.giro&.titolo}", size: 10, style: :bold
+          text "#{t&.data_tappa&.strftime("%d-%m")} - #{t.giro&.titolo}", size: 10, style: :bold
           text t.titolo, size: 10
 
         
@@ -100,12 +100,12 @@ class FoglioScuolaPdf < Prawn::Document
         data = adozioni.map { |a| [ a.titolo, nil, nil, nil, nil ] }
 
         adozioni_table = make_table(data, width: 150.mm, 
-            :cell_style => {:border_width   => 0.5, :size => 7}, 
-            :column_widths => { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm })
+            cell_style: { border_width: 0.5, size: 7 }, 
+            column_widths: { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm })
 
         rows = []
         rows << [classe_table, adozioni_table]
-        table rows, width: 188.mm, column_widths: [38.mm, 150.mm]
+        table rows, width: 188.mm, column_widths: [38.mm, 150.mm], cell_style: { border_width: 0.5 }
       end
 
       move_down(5)   

@@ -3,7 +3,7 @@
 		
 
 		<%# info scuola + tappe %>
-		<div class="flex flex-col sm:flex-row w-full">
+		<div class="flex flex-col sm:flex-row gap-4 w-full">
 			<div class="sm:w-3/5 sm:flex-none">
 				<%= render @import_scuola %>
 			</div>
@@ -16,12 +16,22 @@
 						} 
 				%>
 			</div>
-			<%= component 'tax_button', 
-                    caption: "Stampa",
-                    svg_file: "icon-print.svg",
-                    color: "white",
-                    url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
-            %>
+			<div class="flex flex-col gap-4">
+
+				<%= component 'tax_button', 
+						caption: "Ordine",
+						svg_file: "icon-plus.svg",
+						color: "blue",
+						url: url_for( controller: "documenti", action: "new", params: { numero_documento: 123, clientable_type: "ImportScuola", clientable_id: @import_scuola.id, causale: "Ordine Scuola" }, model: nil )
+				%>
+
+				<%= component 'tax_button', 
+						caption: "Stampa",
+						svg_file: "icon-print.svg",
+						color: "white",
+						url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
+				%>
+			</div>
 		</div>
 
 		<div data-controller="tax-tabs"

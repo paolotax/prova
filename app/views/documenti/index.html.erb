@@ -28,13 +28,13 @@
 		fields: [ 
 			{
 				field: :search,
-				label: "Cerca",
+				label: "Cliente",
 				collection: nil,
 				type: :text,
 				placeholder: "cliente..."
 			}, {
 				field: :search_libro,
-				label: "Cerca libro",
+				label: "Libro",
 				collection: nil,
 				type: :text,
 				placeholder: "libro..."
@@ -43,16 +43,22 @@
 				label: "Causale",
 				collection: Causale.all,
 				type: :select,
-				placeholder: "seleziona causale"
+				placeholder: "causale..."
 			}, {
 				field: :status,
-				label: "Status",
-				collection: Documento.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]},
+				label: "Stato",
+				collection: Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]},
 				type: :select,
-				placeholder: "seleziona ..."
+				placeholder: "stato..."
 			}, {
+				field: :status,
+				label: "Pagamento",
+				collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
+				type: :select,
+				placeholder: "pagamento..."
+			},{
 				field: :ordina_per,
-				label: "Ordina per",
+				label: "Ordina",
 				collection: ["data documento", "fresh"],
 				type: :select,
 				placeholder: "ordina per"

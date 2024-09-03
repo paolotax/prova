@@ -29,8 +29,11 @@ class DocumentiController < ApplicationController
   end
   
   def new
-    #causale = Causale.find_by(causale: "Ordine Cliente")
-    @documento = current_user.documenti.build(data_documento: Date.today, causale: nil)
+    causale = Causale.find_by(causale: params[:causale])
+    clientable_id = params[:clientable_id]
+    clientable_type = params[:clientable_type]
+    
+    @documento = current_user.documenti.build(data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
     @documento.documento_righe.build.build_riga(sconto: 16.0)
   end
 
