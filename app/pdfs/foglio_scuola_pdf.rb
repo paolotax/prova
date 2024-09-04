@@ -27,6 +27,10 @@ class FoglioScuolaPdf < Prawn::Document
 
     table_tappe
 
+    if @cursor_tappe > @cursor_scuola
+      move_cursor_to @cursor_scuola
+    end
+
     table_adozioni
 
 
@@ -60,6 +64,9 @@ class FoglioScuolaPdf < Prawn::Document
       text "cod.min.: #{@scuola.codice_ministeriale}",  :size => 10
       text "email: #{@scuola.email}",  :size => 10
     end
+
+    @cursor_scuola = cursor
+    
   end
 
   def table_tappe
@@ -80,6 +87,9 @@ class FoglioScuolaPdf < Prawn::Document
       end
     end
     move_down 20
+
+    @cursor_tappe = cursor
+    
   end
 
   def table_adozioni
@@ -111,7 +121,6 @@ class FoglioScuolaPdf < Prawn::Document
 
       move_down(5)   
     end
-
   end
   
   def pieghi_di_libri?(scuola)
