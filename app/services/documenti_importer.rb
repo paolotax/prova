@@ -135,6 +135,8 @@ class DocumentiImporter
   end
 
   def import_csv
+
+    #documento = Current.user.documenti.build
     
     SmarterCSV.process(file.path) do |row|
       
