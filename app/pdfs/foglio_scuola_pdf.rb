@@ -10,11 +10,11 @@ class FoglioScuolaPdf < Prawn::Document
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
           :info => {
-              :Title => "sovrapacchi",
-              :Author => "todo-propa",
-              :Subject => "sovrapacchi",
-              :Keywords => "sovrapacchi appunti todo-propa",
-              :Creator => "todo-propa",
+              :Title => "FoglioScuola",
+              :Author => "paolotax",
+              :Subject => "foglio scuola",
+              :Keywords => "sovrapacchi adozioni foglio scuola",
+              :Creator => "scagnozz",
               :Producer => "Prawn",
               :CreationDate => Time.now
           })
