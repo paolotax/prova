@@ -25,26 +25,7 @@ class FoglioScuolaPdf < Prawn::Document
 
     intestazione_scuola
 
-    @tappe.each do |t|
-
-      
-        
-
-      
-      bounding_box([bounds.right - 200, cursor], width: 200) do       
-          text "#{t&.data_tappa&.strftime("%d-%m")} - #{t.giro&.titolo}", size: 10, style: :bold
-          text t.titolo, size: 10
-
-        
-          mask(:line_width) do
-            line_width 0.5
-            #stroke_bounds
-          end
-      end
-      move_down 5
-    end
-
-    move_down 20
+    table_tappe
 
     table_adozioni
 
@@ -81,6 +62,26 @@ class FoglioScuolaPdf < Prawn::Document
     end
   end
 
+  def table_tappe
+    
+    bounding_box([bounds.right - 200, bounds.top], width: 200) do
+      @tappe.each do |t|                    
+        bounding_box([bounds.right - 200, cursor], width: 200) do       
+            text "#{t&.data_tappa&.strftime("%d-%m")} - #{t.giro&.titolo}", size: 10, style: :bold
+            text t.titolo, size: 10
+
+          
+            mask(:line_width) do
+              line_width 0.5
+              #stroke_bounds
+            end
+        end
+        move_down 5
+      end
+    end
+    move_down 20
+  end
+
   def table_adozioni
     #  TABLE
     #bounding_box([bounds.left, cursor - 20], :width  => bounds.width, :height => bounds.) do
@@ -105,7 +106,7 @@ class FoglioScuolaPdf < Prawn::Document
 
         rows = []
         rows << [classe_table, adozioni_table]
-        table rows, width: 188.mm, column_widths: [38.mm, 150.mm], cell_style: { border_width: 0.5 }
+        table rows, width: 188.mm, column_widths: [38.mm, 150.mm], cell_style: { border_width: 0.5 }, position: :center
       end
 
       move_down(5)   
