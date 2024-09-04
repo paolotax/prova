@@ -24,9 +24,9 @@ class LibriImporter
           @updated_count += 1
         end
       else
-          @errors_count += 1
-          errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
-          #return false
+        @errors_count += 1
+        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
+        #return false
       end
     end
   end
@@ -73,16 +73,33 @@ class LibriImporter
 
   private
 
+    def check_prezzo(prezzo)
+      if prezzo.is_a? String
+        prezzo = prezzo.gsub(",",".")
+      end
+      prezzo
+    end
+
     def assign_from_row(row)
  
-      codice_isbn = row[:codice_isbn] || row["codice_isbn"]
+      codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
+      titolo = row[:titolo] || row[:descrizione]      
+      prezzo = row[:prezzo]
+      prezzo = check_prezzo(prezzo) if prezzo
       user_id = Current.user.id
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
       unless libro.new_record?
         if row[:titolo] then row.delete(:titolo) end
         if row["titolo"] then row.delete("titolo") end
       end
-      libro.assign_attributes row.to_hash
+
+      libro.assign_attributes(
+        codice_isbn: codice_isbn,
+        titolo: titolo,
+        prezzo: prezzo
+      ) #row.to_hash
       libro
     end
+
+
 end

@@ -52,7 +52,7 @@ class Libro < ApplicationRecord
   has_many :documento_righe, through: :righe
 
   validates :titolo, presence: true
-  validates :editore, presence: true
+  #validates :editore, presence: true
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
   validates :codice_isbn, presence: true, uniqueness: true
 
@@ -70,7 +70,7 @@ class Libro < ApplicationRecord
     self.titolo
   end
 
-  attr_accessor :prezzo
+  # attr_accessor :prezzo
   # ora così poi devo vedere come funziona money-rails
   def prezzo
     prezzo_in_cents / 100.0
