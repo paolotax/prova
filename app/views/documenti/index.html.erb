@@ -3,6 +3,20 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
     
 	<% heading.with_action do %>
+		<%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: :true do |f| %>
+			<%= tag.div class: "hidden md:flex md:flex-row items-center px-4 py-2.5 bg-gray-200 rounded-md" do %>
+				<%= f.file_field :file, accept: 'text/xml' %>
+				<%= component('button', busy_content_css: 'flex py-1 [[disabled]_&]:opacity-0') do |button| %>
+					<% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
+						<svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
+					<% end %>
+					Importa xml                 
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+	
+	<% heading.with_action do %>
         <%= component 'tax_button',
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
@@ -23,114 +37,100 @@
 
 <% end %>
 
-<%= tag.div class: "flex justify-start" do %>
-	<%= component 'tax_filter_form', base_url: documenti_path, 
-		fields: [ 
-			{
-				field: :search,
-				label: "Cliente",
-				collection: nil,
-				type: :text,
-				placeholder: "cliente..."
-			}, {
-				field: :search_libro,
-				label: "Libro",
-				collection: nil,
-				type: :text,
-				placeholder: "libro..."
-			},{
-				field: :causale,
-				label: "Causale",
-				collection: Causale.all,
-				type: :select,
-				placeholder: "causale..."
-			}, {
-				field: :status,
-				label: "Stato",
-				collection: Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]},
-				type: :select,
-				placeholder: "stato..."
-			}, {
-				field: :tipo_pagamento,
-				label: "Pagamento",
-				collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
-				type: :select,
-				placeholder: "pagamento..."
-			},{
-				field: :ordina_per,
-				label: "Ordina",
-				collection: ["data documento", "fresh"],
-				type: :select,
-				placeholder: "ordina per"
-			}
-		] %>
-
-	<%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: :true do |f| %>
-		<%= tag.div class: "hidden md:flex md:flex-row p-4 bg-gray-200 rounded-md" do %>
-			<%= f.file_field :file, accept: 'text/xml' %>
-			<%= component('button', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
-				<% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
-					<svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
-				<% end %>
-				File xml
-				<%= inline_svg_tag "icon-paper-clip.svg" %>                   
-			<% end %>
-		<% end %>
-	<% end %>
-<% end %>
-
-
 
 
 <%= turbo_frame_tag "search_results" do %>
 
+	<%= tag.div class: "flex flex-row gap-4" do %>
+		<%= component 'tax_filter_form', base_url: documenti_path, 
+			fields: [ 
+				{
+					field: :search,
+					label: "Cliente",
+					collection: nil,
+					type: :text,
+					placeholder: "cliente..."
+				}, {
+					field: :search_libro,
+					label: "Libro",
+					collection: nil,
+					type: :text,
+					placeholder: "libro..."
+				},{
+					field: :causale,
+					label: "Causale",
+					collection: Causale.all,
+					type: :select,
+					placeholder: "causale..."
+				}, {
+					field: :status,
+					label: "Stato",
+					collection: Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]},
+					type: :select,
+					placeholder: "stato..."
+				}, {
+					field: :tipo_pagamento,
+					label: "Pagamento",
+					collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
+					type: :select,
+					placeholder: "pagamento..."
+				},{
+					field: :ordina_per,
+					label: "Ordina",
+					collection: ["data documento", "fresh"],
+					type: :select,
+					placeholder: "ordina per"
+				}
+			] %>
 
 
+	
 
 
-	<%#= render partial: "documenti_grid_component" %>
+		<%#= render partial: "documenti_grid_component" %>
 
 
-	<div class="mx-2 mt-8 flow-root sm:mx-0">
-		<table class="min-w-full">
-			<colgroup>
-				<col class="w-full sm:w-1/3">
-				<col class="w-full sm:w-1/3">
-				<col class="w-full sm:w-1/3">
-			</colgroup>
-			
-			<thead class="border-b border-gray-300 text-gray-900">
-				<tr>
-					<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Documento</th>
-					<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Cliente</th>
-					<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Info</th>
-					<th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-right text-sm font-semibold text-gray-900">...</th>
-				</tr>
-			</thead>
-			
-			<tbody>
-				<% @documenti.each do |documento| %>      
-					<%=  render partial: "documenti/documento_table", locals: { documento: documento } %>
-				<% end %>  
-			</tbody>
+		<div class="mx-2 mt-8 flow-root sm:mx-0 w-full">
+			<table class="min-w-full">
+				<colgroup>
+					<col class="w-full sm:w-1/3">
+					<col class="w-full sm:w-1/3">
+					<col class="w-full sm:w-1/3">
+				</colgroup>
+				
+				<thead class="border-b border-gray-300 text-gray-900">
+					<tr>
+						<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Documento</th>
+						<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Cliente</th>
+						<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ">Info</th>
+						<th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-right text-sm font-semibold text-gray-900">...</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<% @documenti.each do |documento| %>      
+						<%=  render partial: "documenti/documento_table", locals: { documento: documento } %>
+					<% end %>  
+				</tbody>
 
-			<tfoot>
-				<tr>
-					<th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
-					<th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
-					<td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
+				<tfoot>
+					<tr>
+						<th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
+						<th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
+						<td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
 
-					</td>
-				</tr>
-				<tr>
-					<th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
-					<th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
-					<td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale</th>
+						<th scope="row" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale</th>
+						<td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
 
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	<% end %>
 
 <% end %>

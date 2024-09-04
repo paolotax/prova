@@ -2,14 +2,13 @@
     
     <% heading.with_action do %>
         <%= form_for @import, url: clienti_importer_index_path, method: :post, multipart: :true do |f| %>
-            <%= tag.div class: "hidden md:flex md:flex-row p-4 bg-gray-200 rounded-md" do %>
+            <%= tag.div class: "hidden md:flex md:flex-row items-center p-4 py-2.5 bg-gray-200 rounded-md" do %>
                 <%= f.file_field :file, accept: 'text/csv' %>
-                <%= component('button', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
+                <%= component('button', busy_content_css: 'flex py-1 [[disabled]_&]:opacity-0') do |button| %>
                     <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
                         <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
                     <% end %>
-                    File .csv
-                    <%= inline_svg_tag "icon-paper-clip.svg" %>                   
+                    Importa csv           
                 <% end %>
             <% end %>
         <% end %>
@@ -41,39 +40,43 @@
 
 <% end %>
 
-<%= component 'tax_filter_form', base_url: clienti_path, 
-        fields: [ 
-            {
-                field: :ragione_sociale,
-                label: "Ragione sociale",
-                collection: nil,
-                type: :text,
-                placeholder: "Inserisci una ragione sociale"
-            }, {
-                field: :comune,
-                label: "Comune",
-                collection: nil,
-                type: :text,
-                placeholder: "Inserisci un comune"
-            }, {
-                field: :partita_iva,
-                label: "Partita IVA",
-                collection: nil,
-                type: :text,
-                placeholder: "Inserisci una partita IVA"
-            }
-        
-        ] %>
-
 <%= turbo_frame_tag "search_results" do %>
 
-  <div role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <%= tag.div class: "flex flex-row gap-4" do %>
 
-      <% @clienti.each do |cliente| %>
-        <%= render partial: "clienti/cliente", locals: { cliente: cliente }%>
-      <% end %>
-    <!-- More people... -->
-  </div>
+        <%= component 'tax_filter_form', base_url: clienti_path, 
+            fields: [ 
+                {
+                    field: :ragione_sociale,
+                    label: "Ragione sociale",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "ragione sociale..."
+                }, {
+                    field: :comune,
+                    label: "Comune",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "comune..."
+                }, {
+                    field: :partita_iva,
+                    label: "Partita IVA",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "partita iva..."
+                }
+            
+        ] %>
+
+        <div role="list" class="pt-4 w-full grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+
+            <% @clienti.each do |cliente| %>
+                <%= render partial: "clienti/cliente", locals: { cliente: cliente }%>
+            <% end %>
+            <!-- More people... -->
+        </div>
+    
+    <% end %>
 
 <% end %>
 
