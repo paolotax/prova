@@ -51,12 +51,11 @@ class DocumentiImporter
         end
 
         posizione = element.xpath("./NumeroLinea").text
-        libro_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id          
-        #raise libro_id.inspect
+           #raise riga_id.inspect
 
-        if libro_id
+        if riga_id
           documento.documento_righe.build(posizione: posizione).build_riga(
-            libro_id:  libro_id,              
+            riga_id:  riga_id,              
             prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
             quantita:  quantita,
             sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
@@ -113,13 +112,13 @@ class DocumentiImporter
           end
 
           posizione = element.xpath("./NumeroLinea").text
-          libro_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id          
+          riga_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id          
 
-          puts libro_id
+          puts riga_id
 
-          if libro_id
+          if riga_id
             documento.documento_righe.build(posizione: posizione).build_riga(
-              libro_id:  libro_id,              
+              riga_id:  riga_id,              
               prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
               quantita:  quantita,
               sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
@@ -135,16 +134,35 @@ class DocumentiImporter
 
   end
 
+  def import_csv
+    
+    SmarterCSV.process(file.path) do |row|
+      
+      riga = assign_from_row(row.first)
+      if riga.save
+        if riga.previously_new_record?
+          @imported_count += 1
+        else
+          @updated_count += 1
+        end
+      else
+        @errors_count += 1
+        errors.add(:base, "Line #{$.} - #{riga.errors.full_messages.join(", ")}")
+        #return false
+      end
+    end
+  end
+
 
 
   def flash_message
     if @imported_count > 0 || @updated_count > 0
-      pluralize(@imported_count, 'libro importato', 'libri importati') + " e " + 
-      pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati')
+      pluralize(@imported_count, 'riga importato', 'libri importati') + " e " + 
+      pluralize(@updated_count, 'riga aggiornato', 'libri aggiornati')
     else
-      pluralize(@errors_count, 'libro errato', 'libri errati') + 
+      pluralize(@errors_count, 'riga errato', 'libri errati') + 
       " " + errors.full_messages.join(", ").html_safe + " " +
-      "Nessun libro importato"
+      "Nessun riga importato"
     end
   end
 
@@ -159,13 +177,13 @@ class DocumentiImporter
  
       codice_isbn = row[:codice_isbn] || row["codice_isbn"]
       user_id = Current.user.id
-      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
-      unless libro.new_record?
+      riga = riga.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      unless riga.new_record?
         if row[:titolo] then row.delete(:titolo) end
         if row["titolo"] then row.delete("titolo") end
       end
-      libro.assign_attributes row.to_hash
-      libro
+      riga.assign_attributes row.to_hash
+      riga
     end
 
 
