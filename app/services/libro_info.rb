@@ -1,11 +1,12 @@
 class LibroInfo
   
-  attr_accessor :ordini, :vendite, :carichi
+  attr_accessor :ordini, :vendite, :carichi, :adozioni
   
   def initialize(libro:, user:)
     @libro = libro
     @user = user
     situazione_magazzino
+    count_adozioni
   end
 
   def situazione_magazzino    
@@ -33,8 +34,8 @@ class LibroInfo
     @carichi = result[0]['carichi']
   end
 
-  def mie_adozioni
-    @user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
+  def count_adozioni
+    @adozioni = @user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si").count
   end
 
 end
