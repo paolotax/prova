@@ -1,6 +1,6 @@
 class LibroInfo 
   
-  def initialize(libro: libro, user: user)
+  def initialize(libro:, user:)
     @libro = libro
     @user.id
   end
