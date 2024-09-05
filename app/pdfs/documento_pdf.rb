@@ -191,11 +191,22 @@ class DocumentoPdf < Prawn::Document
                   :column_widths => { 0 => 72.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 40.mm, 5 => 8.mm } do
           cells.columns(1..5).style(:align => :right)
         end  
-        move_down(15)
-        text "Totale copie: #{@documento.totale_copie}", :size => 8   
-        move_down(5)   
+ 
       end
+      move_down(15)
+      text "Totale copie: #{@documento.totale_copie}", :size => 10   
+      move_down(5)  
+
+      note
     end
+
+  end
+
+  def note
+    text "Note: ", :size => 8
+    move_down(5)
+    text @documento.referente, :size => 10
+    text @documento.note, :size => 10
   end
 
   def footer_totals
