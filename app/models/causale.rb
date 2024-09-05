@@ -12,12 +12,14 @@
 #
 class Causale < ApplicationRecord
 
-  enum tipo_movimento: { carico: 0, scarico: 1}
+  enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 } 
+  
   enum movimento: { entrata: 0, uscita: 1 }
   
   validates :causale, presence: true
   
   validates :tipo_movimento, presence: true
+  
   validates :movimento, presence: true
   
   validates :magazzino, presence: true

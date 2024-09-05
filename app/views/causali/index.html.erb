@@ -1,4 +1,4 @@
-<div class="w-full">
+<div class="mx-auto md:w-3/5 w-full">
 
   <% content_for :title, "Causali" %>
 
@@ -10,9 +10,6 @@
   <div id="causali" class="min-w-full">
     <% @causali.each do |causale| %>
       <%= render causale %>
-      <p>
-        <%= link_to "Show this causale", causale, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
     <% end %>
   </div>
 </div>

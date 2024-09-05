@@ -13,22 +13,28 @@
 
   <div class="my-5">
     <%= form.label :causale %>
-    <%= form.text_field :causale, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :causale, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
     <%= form.label :magazzino %>
-    <%= form.text_field :magazzino, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :magazzino, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
     <%= form.label :tipo_movimento %>
-    <%= form.text_field :tipo_movimento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.select :tipo_movimento, 
+                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, params[:tipo_movimento]),
+                {}, 
+                class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
   </div>
 
   <div class="my-5">
     <%= form.label :movimento %>
-    <%= form.text_field :movimento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.select :movimento, 
+                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, params[:movimento]),
+                {}, 
+                class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">

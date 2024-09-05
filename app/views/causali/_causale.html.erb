@@ -1,22 +1,15 @@
-<div id="<%= dom_id causale %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Causale:</strong>
-    <%= causale.causale %>
-  </p>
+<%= tag.div id: dom_id(causale), class: "px-3 py-2.5 mb-2 grid grid-cols-6 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
+	
+  <%= tag.div causale.causale, class: "col-span-2 font-semibold text-gray-600 truncate"  %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Magazzino:</strong>
-    <%= causale.magazzino %>
-  </p>
+	<%= tag.div causale.magazzino, class: "col-span-1 font-semibold text-gray-600" %>	
+	
+  <%= tag.div causale.tipo_movimento, class: "col-span-1 font-semibold text-gray-600" %>	
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Tipo causale:</strong>
-    <%= causale.tipo_movimento %>
-  </p>
+  <%= tag.div causale.movimento, class: "col-span-1 font-semibold text-gray-600" %>	
+	  
+  <%= link_to "Modifica", edit_causale_path(causale), class: "col-span-1 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Movimento:</strong>
-    <%= causale.movimento %>
-  </p>
+<% end %>
 
-</div>
+
