@@ -20,6 +20,8 @@ class LibriController < ApplicationController
   end
 
   def show
+    @situazione = @libro.calcola_situazione
+    #raise @situazione.inspect
   end
 
   def new

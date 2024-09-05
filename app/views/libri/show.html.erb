@@ -38,6 +38,13 @@
   
 <% end %>
 
+
+<%= render StatComponent.new(title: "Ordini", width: "w-1/3  sm:w-1/4", current_value: @situazione[0]["ordini"]) %>
+<%= render StatComponent.new(title: "Venduti", width: "w-1/3 sm:w-1/4", current_value: @situazione[0]["vendite"]) %>
+<%= render StatComponent.new(title: "Carichi", width: "w-1/3 sm:w-1/4", current_value: @situazione[0]["carichi"]) %>
+
+
+
 <ul>
   <% @libro.documento_righe.each do |documento_riga| %>
 		<%= render ListItemComponent.new() do |list_item| %>
