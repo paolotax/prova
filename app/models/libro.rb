@@ -56,6 +56,7 @@ class Libro < ApplicationRecord
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
   validates :codice_isbn, presence: true, uniqueness: true
 
+  has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
   after_initialize :init
   def init
@@ -79,7 +80,6 @@ class Libro < ApplicationRecord
   def prezzo=(prezzo)
     self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
-
 
   def calcola_situazione    
     query = <<-SQL

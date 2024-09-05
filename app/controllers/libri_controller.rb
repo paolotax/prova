@@ -21,8 +21,9 @@ class LibriController < ApplicationController
 
   def show
     @situazione = @libro.calcola_situazione
-    #raise @situazione.inspect
+    @mie_adozioni = current_user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
+
 
   def new
     @libro = current_user.libri.new
