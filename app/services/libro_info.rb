@@ -28,10 +28,15 @@ class LibroInfo
       GROUP BY 1, 2, 3
     SQL
     result = ActiveRecord::Base.connection.execute(query)
-    
-    @ordini = result[0]['ordini']
-    @vendite = result[0]['vendite']
-    @carichi = result[0]['carichi']
+    if result.ntuples == 0
+      @ordini = 0
+      @vendite = 0
+      @carichi = 0
+    else
+      @ordini = result[0]['ordini']
+      @vendite = result[0]['vendite']
+      @carichi = result[0]['carichi']
+    end
   end
 
   def count_adozioni
