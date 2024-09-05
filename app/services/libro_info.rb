@@ -1,8 +1,11 @@
-class LibroInfo 
+class LibroInfo
+  
+  attr_accessor :ordini, :vendite, :carichi
   
   def initialize(libro:, user:)
     @libro = libro
     @user = user
+    situazione_magazzino
   end
 
   def situazione_magazzino    
@@ -20,14 +23,17 @@ class LibroInfo
       INNER JOIN documenti ON documento_righe.documento_id = documenti.id
       INNER JOIN causali ON documenti.causale_id = causali.id
       INNER JOIN users ON users.id = documenti.user_id
-      WHERE users.id = #{Current.user.id} AND libri.id = #{@libro_id}
+      WHERE users.id = #{Current.user.id} AND libri.id = #{@libro.id}
       GROUP BY 1, 2, 3
     SQL
     result = ActiveRecord::Base.connection.execute(query)
-    result
+    
+    @ordini = result[0]['ordini']
+    @vendite = result[0]['vendite']
+    @carichi = result[0]['carichi']
   end
 
-  def adozioni
+  def mie_adozioni
     @user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
 
