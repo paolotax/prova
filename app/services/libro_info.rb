@@ -2,7 +2,7 @@ class LibroInfo
   
   def initialize(libro:, user:)
     @libro = libro
-    @user.id
+    @user = user
   end
 
   def situazione_magazzino    
