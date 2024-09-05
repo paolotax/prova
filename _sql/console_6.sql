@@ -15,7 +15,7 @@ SELECT righe.id FROM righe
 LEFT JOIN documento_righe ON documento_righe.riga_id = righe.id
 WHERE documento_righe.riga_id is null
 
-SELECT * FROM righe
+SELECT * FROM righe;
 
 
 

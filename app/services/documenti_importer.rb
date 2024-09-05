@@ -51,11 +51,11 @@ class DocumentiImporter
         end
 
         posizione = element.xpath("./NumeroLinea").text
-           #raise riga_id.inspect
-
-        if riga_id
+        
+        libro_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id
+        if libro_id
           documento.documento_righe.build(posizione: posizione).build_riga(
-            riga_id:  riga_id,              
+            libro_id:  libro_id,              
             prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
             quantita:  quantita,
             sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
@@ -112,13 +112,13 @@ class DocumentiImporter
           end
 
           posizione = element.xpath("./NumeroLinea").text
-          riga_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id          
+          libro_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id          
 
-          puts riga_id
+          #puts libro_id
 
-          if riga_id
+          if libro_id
             documento.documento_righe.build(posizione: posizione).build_riga(
-              riga_id:  riga_id,              
+              libro_id:  libro_id,              
               prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
               quantita:  quantita,
               sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
