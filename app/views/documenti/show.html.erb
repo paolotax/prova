@@ -20,13 +20,13 @@
             label: "Causale",
             collection: Causale.all,
             type: :select,
-            placeholder: "seleziona causale"
+            placeholder: "causale..."
           }, {
             field: :status,
             label: "Status",
             collection: Documento.statuses.map {|key, value| [key.titleize, Adozione.statuses.key(value)]},
             type: :select,
-            placeholder: "seleziona ..."
+            placeholder: "stato..."
           }, {
             field: :ordina_per,
             label: "Ordina per",
@@ -111,7 +111,6 @@
           <%= @documento.note %>
         </p>
 
-
         <%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
             <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
               <%= tag.div @documento.status&.titleize, class: "font-semibold" %>
@@ -121,9 +120,7 @@
         <% end %>
 
       </div>
-      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
-        <%= link_to_previous_page("<- indietro") %>
-      </div>  
+
     </div>
 
     <div class="mx-4 mt-8 flow-root sm:mx-0">
