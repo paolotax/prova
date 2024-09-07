@@ -20,10 +20,10 @@ module Filters
     filter_scope :status, ->(status) { where(status: status) }
     filter_scope :tipo_pagamento, ->(tipo_pagamento) { where(tipo_pagamento: tipo_pagamento) }
 
-    filter_scope :ordina_per, ->(ordine) { ordina_per_m(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
+    filter_scope :ordina_per, ->(ordine) { order_by(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
 
     
-    def ordina_per_m(ordine)
+    def order_by(ordine)
       if ordine == 'fresh'
         order(updated_at: :desc)
       else
