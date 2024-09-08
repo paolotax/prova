@@ -37,10 +37,6 @@
   
 <% end %>
 
-  <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none" >
-    <%= link_to_previous_page("<- indietro") %>
-  </div>  
-
 <%= tag.ul  do %>
 	<% @situazio.each do |libro| %>
 		<%= tag.li class: "grid grid-cols-8" do %>
@@ -56,8 +52,6 @@
 <% end %>
 
 
-<%= render @cliente.documenti %>
-
-<%= render @cliente.righe %>
+<%= render partial: "documenti/documento", collection: @cliente.documenti.order(data_documento: :desc) %>
 
 
