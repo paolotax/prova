@@ -69,8 +69,11 @@ docker exec -i prova-db /usr/bin/pg_dump -U prova prova_production > backup.sql
 
 tar --same-permissions -czvf backup.tar.gz backup.sql
 
-kamal accessory exec -i --reuse -v db "/usr/bin/pg_dump -U prova prova_production" > backup.sql
 
+
+kamal accessory exec -i --reuse -v db "/usr/bin/pg_dump -U prova prova_production" > ~/backup/backup.sql
 
 
 scp root@116.203.224.90:backup.tar.gz . 
+
+ssh root@116.203.224.90

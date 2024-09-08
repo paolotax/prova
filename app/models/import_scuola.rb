@@ -61,7 +61,9 @@ class ImportScuola < ApplicationRecord
   
   has_many :adozioni, through: :classi
 
-  has_many :documenti, as: :clientable
+  has_many :documenti,  -> { where(user_id: Current.user.id) }, as: :clientable
+  has_many :documento_righe, through: :documenti
+  has_many :righe, through: :documento_righe
 
   def mie_adozioni
     import_adozioni.mie_adozioni

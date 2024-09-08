@@ -49,7 +49,10 @@ class TappeController < ApplicationController
   end
 
   def new
-    @tappa = current_user.tappe.build(giro: current_user.giri.last)
+
+    @tappable = ImportScuola.find(params[:tappable_id])
+
+    @tappa = current_user.tappe.build(giro: current_user.giri.last, tappable: @tappable)
   end
 
   def edit
