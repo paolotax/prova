@@ -5,7 +5,7 @@ class AppuntiController < ApplicationController
   before_action :ensure_frame_response, only: %i[ new edit show ]
 
   def index
-    @appunti = current_user.appunti.includes(:import_scuola, :import_adozione).order(created_at: :desc)
+    @appunti = current_user.appunti.non_saggi.includes(:import_scuola, :import_adozione).order(created_at: :desc)
       
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
     
