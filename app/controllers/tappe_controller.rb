@@ -52,7 +52,7 @@ class TappeController < ApplicationController
 
     @tappable = ImportScuola.find(params[:tappable_id])
 
-    @tappa = current_user.tappe.build(giro: current_user.giri.last, tappable: @tappable)
+    @tappa = current_user.tappe.build(giro: current_user.giri.last, tappable: @tappable, data_tappa: Time.now.end_of_day)
   end
 
   def edit

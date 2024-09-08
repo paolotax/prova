@@ -1,43 +1,47 @@
-<div div id="<%= dom_id documento %>" class="flex justify-between gap-x-6 py-5">
-	<div class="flex min-w-0 gap-x-4">
-		<div class="min-w-0 flex-auto">
-			<p class="text-sm font-semibold leading-6 text-gray-900">
-				<%= documento.clientable&.denominazione %>
-			</p>
-			<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-				
-			</p>
-			<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-				<%= documento.causale %> 
-			</p>
-			<p class="mt-1 truncate text-xs leading-5 text-gray-500">  
-				<span class="text-gray-900 font-semibold">
-					<%= link_to documento.numero_documento, documento_path(documento), data: { turbo_frame: "_top" } %>
-				</span>
-				del <%= documento.data_documento&.strftime('%d-%m-%Y') %>  
-			</p>
-		</div>
-	</div>
-	<div class="shrink-0 text-right sm:flex sm:flex-col sm:items-end">
-		<% if not documento.totale_cents.nil? %>
-		
-			<% if documento.totale_documento > 0 %>
-				<p class="text-indigo-500" >
-			<% else %>
-				<p class="text-red-500" >
-			<% end %>
-		<% end %>
-		
-		<%= number_to_currency documento.totale_cents, locale: :it %>
-		</p>
-		
-		<p class="text-sm leading-6 text-gray-900">
-			
-			 <%= documento.totale_copie %>
-			 copie
-		</p>  
-		<p class="mt-1 text-xs leading-5">
+<div div id="<%= dom_id documento %>" class="w-full col-span-8">
 
-		</p>
-	</div>      
+	<div class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
+
+			
+		<%= tag.div class: "flex flex-row gap-4 border items-center " do %>
+			
+			
+			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: "_top" } do %>
+				<%= tag.div documento.causale.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
+			<% end %>
+
+			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
+				<%#= documento.clientable&.denominazione %>
+				<%= tag.p documento.referente %> 
+				<%= tag.p documento.note %> 
+			<% end %>	
+		<% end %>
+
+		<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "da evadere", color:  documento.ordine_evaso? ? 'green' : "red") %>
+			
+	</div>
+    
+
+	<% documento.righe.each do |riga| %>
+		<%= render partial: "righe/riga_item", locals: { riga: riga } %>
+	<% end %>
+
+	<% if documento.righe.size > 1 %>
+		<div class="p-4 border border-t-0 border-gray-300 last:rounded-b-lg last:shadow-md grid grid-cols-8">
+
+			<div class="col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
+				<%= documento.totale_copie %>
+			</div>  
+
+			<div class="col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
+				<%= number_to_currency documento.totale_importo, locale: :it %>
+			</div>
+			
+
+
+
+		</div>
+	<% end %>
+
 </div>
+

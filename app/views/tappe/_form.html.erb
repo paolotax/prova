@@ -1,4 +1,7 @@
 <%= form_with(model: tappa, class: "contents") do |form| %>
+
+    <%= form.hidden_field :tappable_id, value: @tappable.id %>
+    <%= form.hidden_field :tappable_type, value: @tappable.class.name %>
     
     <% if tappa.errors.any? %>
         <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">

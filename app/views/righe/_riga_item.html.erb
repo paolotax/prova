@@ -1,4 +1,4 @@
-<%= tag.div id: dom_id(riga), class: "px-4 py-2 w-full bg-white border rounded-md shadow-md grid grid-cols-8" do %>
+<%= tag.div id: dom_id(riga), class: "px-4 py-2 w-full bg-white  border border-t-0 border-gray-300 last:rounded-b-lg last:shadow-md grid grid-cols-8" do %>
 
     <%= tag.div class: "col-span-3 flex flex-col" do %>
         <div class="font-medium text-gray-900 hover:font-bold">
@@ -13,19 +13,14 @@
     <%= tag.div class: "col-span-1 hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell" do %>
         <%= number_to_currency riga.prezzo_cents/100.0, locale: :it %>
   	<% end %>
-  	<%= tag.div class: "col-span-1 px-3 py-5 text-right text-sm text-gray-500" do %>
+  	<%= tag.div class: "col-span-1 px-3 py-5 text-right font-semibold text-sm text-gray-500" do %>
     	<%= riga.quantita %>
   	<% end %>
 	<%= tag.div class: "col-span-1 hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell" do %>
 		<%= (riga.sconto.nil? || riga.sconto == 0.0) ? "" : riga.sconto.to_s + ' %' %>
 	<% end %>
-	<%= tag.div class: "col-span-2 py-5 pl-3 pr-4 text-right text-sm font-medium text-gray-900 sm:pr-0" do %>
+	<%= tag.div class: "col-span-2 py-5 pl-3 pr-4 text-right text-sm font-semibold text-gray-900 sm:pr-0" do %>
 		<%= number_to_currency riga.importo, locale: :it %>
 	<% end %>
-
-
-
-
-
 
 <% end %>

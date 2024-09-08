@@ -52,15 +52,20 @@ class Documento < ApplicationRecord
   enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
   #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
   #  
+  #
+  
+  delegate :tipo_movimento, :movimento, to: :causale
 
   extend FilterableModel
   class << self
     def filter_proxy = Filters::DocumentoFilterProxy
   end
 
+  # poi
+  def ordine_evaso?
+    tipo_movimento == "ordine" && status != "ordine"
+  end
 
-
-  
   def totale_importo
     righe.sum(&:importo)
   end
@@ -68,6 +73,8 @@ class Documento < ApplicationRecord
   def totale_copie
     righe.sum(&:quantita)
   end
+
+
 
   def self.clear_all
     Documento.destroy_all

@@ -42,7 +42,7 @@
 					<% end %>
 
 					<% dropdown.with_item do %>
-						<%= link_to "Nuova tappa", new_tappa_path( tappable_type: "ImportScuola", tappable_id: @import_scuola.id ), 
+						<%= link_to "Nuova tappa", new_tappa_path( tappable_type: "ImportScuola", tappable_id: @import_scuola.id, data_tappa: Date.today ), 
 								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								data: { turbo_frame: :modal, action: "click->dialog#open" },
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
@@ -183,7 +183,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="vendite" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 2xl:gap-x-8">
 				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
-					<%= render partial: "righe/riga_card", collection: @righe, as: :riga %>
+					<%= render @documenti.order(data_documento: :desc) %>
 				</div>
 			</div>
 
