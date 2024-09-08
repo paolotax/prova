@@ -49,6 +49,7 @@
 					<option>Appunti</option>
 					<option>Archiviati</option>
 					<option>Documenti</option>
+					<option>Saggi</option>
 				</select>
 			</div>
 			
@@ -97,6 +98,14 @@
 								<%= @documenti.load.size %>
 							</span>
 						</a>
+						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
+						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+							Saggi 
+							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+								<%= @ssk.load.size %>
+							</span>
+						</a>
+
 					</nav>
 				</div>
 			</div>
@@ -145,11 +154,19 @@
 				</div>
 			</div>
 
-						<!-- appunti archiviati -->
+			<!-- documenti -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
 					<%= render partial: "documenti/documento", collection: @documenti %>
+				</div>
+			</div>
+
+			<!-- saggi -->
+			<div class="hidden mt-4 " data-tax-tabs-target="panel">
+				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>				
+					<%= render partial: "appunti/appunto", collection: @ssk.order(updated_at: :desc), locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 		</div>
