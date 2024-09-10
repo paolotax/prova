@@ -116,7 +116,7 @@ class FoglioScuolaPdf < Prawn::Document
             a.seguiti.size > 0 ? a.seguiti.size : nil, 
             nil ] 
         end
-        data << [ "." ]
+        data << [ "." ] if data.size > 1
 
         adozioni_table = make_table(data, width: 150.mm, 
             cell_style: { border_width: 0.5, size: 7 }, 
