@@ -1,7 +1,7 @@
 <%= form_with(model: tappa, class: "contents") do |form| %>
 
-    <%= form.hidden_field :tappable_id, value: @tappable.id %>
-    <%= form.hidden_field :tappable_type, value: @tappable.class.name %>
+    <%= form.hidden_field :tappable_id, value: @tappable&.id %>
+    <%= form.hidden_field :tappable_type, value: @tappable&.class&.name %>
     
     <% if tappa.errors.any? %>
         <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -60,9 +60,7 @@
                 <%= link_to tappa_path(tappa), 
                             data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
                             class: "btn btn-red" do %> 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> 
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /> 
-                    </svg> 
+                    <%= inline_svg_tag "icon-trash.svg" %>
                     <span class="">Elimina</span> 
                 <% end %>
             </div>

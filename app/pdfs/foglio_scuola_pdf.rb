@@ -108,7 +108,14 @@ class FoglioScuolaPdf < Prawn::Document
             ], position: :left, width: 38.mm, cell_style: { borders: [], inline_format: true }
         )
 
-        data = adozioni.map { |a| [ a.titolo, nil, nil, nil, nil ] }
+        data = adozioni.map do |a| 
+          [ 
+            a.titolo, 
+            a.saggi.size > 0 ? a.saggi.size : nil, 
+            a.kit.size > 0 ? a.kit.size : nil, 
+            a.seguiti.size > 0 ? a.seguiti.size : nil, 
+            nil ] 
+        end
         data << [ "." ]
 
         adozioni_table = make_table(data, width: 150.mm, 
