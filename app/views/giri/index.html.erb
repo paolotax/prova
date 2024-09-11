@@ -49,7 +49,7 @@
 <%= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "sticky z-20 top-16 grid grid-cols-5 sm:grid-cols-12 rounded-t-lg bg-gradient-to-b from-slate-900 to-slate-500" do %>
-		<%= tag.div "Scuola", class: "col-span-3 sm:col-span-5 p-2 text-white text-sm font-bold" %>
+		<%= tag.div "Scuola", class: "col-span-3 sm:col-span-4 p-2 text-white text-sm font-bold" %>
 		<%#= tag.div "Città", class: "col-span-3 hidden sm:inline-block p-2 text-white text-sm font-bold" %>
 		
 		<% @giri.each do |giro| %>
@@ -74,7 +74,7 @@
 			
 			<%= tag.div class: "grid grid-cols-5 sm:grid-cols-12 border-b mb-3 rounded-lg bg-white shadow" do %>
 				
-				<%= tag.div class: "col-span-3 sm:col-span-5 flex flex-col" do %>
+				<%= tag.div class: "col-span-3 sm:col-span-4 flex flex-col" do %>
 					
 					<%= tag.div class: "p-2 font-semibold" do %>
 						<%= link_to scuola.scuola, scuola, data: { turbo_frame: "_top" } %>
@@ -115,10 +115,10 @@
 
 				<%# cella appunti ping %>
 				<%= tag.div class: "hidden sm:inline-block col-span-1 py-2 content-center border-l" do %>
-					<% if scuola.appunti.non_archiviati.any? %>
+					<% if scuola.appunti.non_saggi.non_archiviati.any? %>
 						<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
 							<%= link_to import_scuola_path(scuola, selected_tab: "2"), data: { turbo_frame: "_top"}, class: "" do %>                
-								<%= scuola.appunti.non_archiviati.size %>
+								<%= scuola.appunti.non_saggi.non_archiviati.size %>
 							<% end %> 
 						<% end %>
 					<% end %>  
