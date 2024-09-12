@@ -18,7 +18,7 @@ async function transition(direction, element, animation) {
   const dataset = element.dataset;
   const animationClass = animation ? `${animation}-${direction}` : direction;
 
-  let transition = `transition${direction.charAt(0).toUpperCase() + direction.slice(1)}`;
+  const transition = `transition${direction.charAt(0).toUpperCase() + direction.slice(1)}`;
 
   const genesis = dataset[transition] ? dataset[transition].split(" ") : [animationClass];
   const start = dataset[`${transition}Start`] ? dataset[`${transition}Start`].split(" ") : [`${animationClass}-start`];
@@ -58,5 +58,9 @@ function nextFrame() {
 }
 
 function afterTransition(element) {
-  return Promise.all(element.getAnimations().map(animation => animation.finished));
+  return Promise.all(
+    element.getAnimations().map(animation =>
+      animation.finished.catch(() => null)
+    )
+  );
 }

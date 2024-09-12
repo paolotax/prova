@@ -1,17 +1,19 @@
 import { Controller } from "@hotwired/stimulus";
 import { enter, leave } from "./helpers/transitions";
 import { verticalNavigation } from "./helpers/keyboard_navigation";
+import { FetchRequest } from "@rails/request.js"
 
 export default class extends Controller {
   static targets = ["input", "itemsList", "item"];
   static values = {
-    showKey: { type: String, default: "" },
+    showKey: { type: String, default: null },
     hideKey: { type: String, default: "Escape" },
     open: { type: Boolean, default: false },
     listOpen: { type: Boolean, default: true },
     filtering: { type: Boolean, default: false },
     minimumCharacters: { type: Number, default: 3 },
-    collapse: Boolean
+    collapse: Boolean,
+    endpoint: String
   };
 
   disconnect() {
@@ -70,6 +72,8 @@ export default class extends Controller {
 
       this.listOpenValue = false;
     } else {
+      this.#fetchRemoteItems({ query: filterText });
+
       this.itemTargets.forEach(item => {
         const attribute = item.getAttribute("data-command-menu-attribute").toLowerCase();
 
@@ -111,14 +115,42 @@ export default class extends Controller {
     element.setSelectionRange(element.value.length, element.value.length);
   }
 
+  async #fetchRemoteItems({ query = null }) {
+    if (!this.hasEndpointValue) return;
+
+    this.#resetRemoteItems();
+
+    const request = new FetchRequest("get", this.endpointValue, { responseKind: "turbo-stream",  query: { query: query }  })
+    const response = await this.#withProgress(request.perform());
+
+    if (!response.ok) {
+      console.error("Error fetching Turbo Stream:", response.statusText);
+    }
+  }
+
   #houseKeeping() {
     this.inputTarget.value = null;
 
+    this.#resetRemoteItems();
     this.#resetFilter();
   }
 
   #resetFilter() {
     this.itemTargets.forEach(item => item.hidden = this.collapseValue);
+  }
+
+  #resetRemoteItems() {
+    [...this.itemsListTarget.querySelectorAll('[data-command-menu-item-remote="true"]')].forEach(item => item.remove());
+  }
+
+  #withProgress(request) {
+    this.fetchingValue = true;
+
+    return request.then((response) => {
+      this.fetchingValue = false;
+
+      return response;
+    })
   }
 
   #isFromCommandMenuButton(event) {

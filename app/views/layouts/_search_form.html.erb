@@ -1,6 +1,6 @@
 <%# da correggere mel login non deve comparire la search %>
 
-<% if  (['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti', "tappe", "adozioni", "libri"].any?(params[:controller]) && (params[:action] != 'edit' && params[:action] != 'new')) ||
+<% if  (['import_adozioni', 'import_scuole', 'appunti', 'documenti', 'fornitori', 'clienti', "tappe", "adozioni", "libri"].any?(params[:controller]) && (params[:action] == 'index')) ||
 	 (params[:controller] == "giri" && (params[:action] == "tappe" || params[:action] == "index"))  %>
 	
 	<%= form_with( url: url_for(controller: params[:controller], action: params[:action], params: request.query_parameters ),
@@ -33,7 +33,15 @@
 	<% end %>
 
 <% else %>
+
+
 	<div class="relative flex flex-1">
+		<button data-controller="command-menu--button" data-command-menu--button-command-menu-outlet="#command_menu" data-action="command-menu--button#open" class="flex items-center">
+			<svg class="pointer-events-none w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+				<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+			</svg>
+			<span class="text-sm text-gray-400 pl-3">cerca scuola...</span>
+		</button>
 	</div>
 <% end %>
 

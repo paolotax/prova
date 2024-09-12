@@ -98,5 +98,5 @@ gem "acts_as_list"
 
 
 source "https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private" do
-  gem "rails_designer", "~> 1.4.0"
+  gem "rails_designer", "~> 1.5.0"
 end

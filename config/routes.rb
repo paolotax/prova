@@ -9,8 +9,10 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  get 'search/index'
   
-
+  get "cerca", to: "search#index"
+  
   namespace :searches do
     get 'clientable/show'
     get 'clientable/new'

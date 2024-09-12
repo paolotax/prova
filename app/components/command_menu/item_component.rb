@@ -2,7 +2,7 @@
 
 module CommandMenu
   class ItemComponent < ViewComponent::Base
-    def initialize(target:, icon:, title:, params: nil, theme: "light", method: :get, data: {}, group: nil, description: nil, collapsed: false)
+    def initialize(target:, title:, icon: nil, params: nil, theme: "light", method: :get, data: {}, group: nil, remote: false, description: nil, collapsed: false)
       @theme = theme
       @target = target
       @params = params
@@ -11,6 +11,7 @@ module CommandMenu
       @group = group
       @icon = icon
       @title = title
+      @remote = remote
       @description = description
       @collapsed = collapsed
     end
@@ -18,7 +19,7 @@ module CommandMenu
     attr_reader :group, :title
 
     erb_template <<-ERB
-      <%= tag.li data: {command_menu_target: "item", command_menu_attribute: @title.parameterize}, hidden: @collapsed ? true : nil do %>
+      <%= tag.li data: {command_menu_target: "item", command_menu_item_remote: @remote, command_menu_attribute: @title.parameterize}, hidden: @collapsed ? true : nil do %>
         <%= button_to @target, params: @params, method: @method, form_class: "block", class: item_css do %>
           <%= tag.span @icon, class: icon_css if @icon.present? %>
 

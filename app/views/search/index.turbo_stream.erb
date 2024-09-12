@@ -1,0 +1,7 @@
+
+<% @import_scuole.each do |scuola| %>
+    <%= turbo_stream.append("itemsList") do %>
+      <%= render CommandMenu::ItemComponent.new(remote: true, target: scuola, title: "#{scuola.denominazione} - #{scuola.citta}") %>
+      <%# etc… %>
+    <% end %>
+<% end %>
