@@ -1,0 +1,2 @@
+module OrdiniHelper
+end

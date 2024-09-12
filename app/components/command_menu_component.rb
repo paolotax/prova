@@ -107,8 +107,10 @@ class CommandMenuComponent < ViewComponent::Base
       )
   end
 
+
+  # correzione ho aggiunto id:
   def items_list
-    tag.ul data: {command_menu_target: "itemsList"}, id: "itemsList",
+    tag.ul data: {command_menu_target: "itemsList"},
       class: class_names(
         "flex flex-col",
         "overflow-y-auto",

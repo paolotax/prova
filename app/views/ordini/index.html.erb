@@ -1,0 +1,26 @@
+
+<% @ordini.group_by(&:libro).each do |key, values| %>
+  
+  <%= render Heading::WithActionsComponent.new(
+    wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 mb-4 border border-gray-200 rounded-md shadow-md', 
+    level: 'h3') do |heading| %>
+    
+    <% heading.with_leader do %>
+      <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+    <% end %>
+    
+    <% heading.with_action do %>
+      
+      <%= tag.span values.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
+    <% end %>
+    
+    <% heading.with_description { key.codice_isbn } %>
+
+    <%= key.titolo %>    
+
+  <% end %>
+
+  <% values.each do |riga| %>
+    <%= render partial: "righe/riga_cliente", locals: { riga: riga } %>
+  <% end%>
+<% end %>
