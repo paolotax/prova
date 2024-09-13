@@ -5,8 +5,8 @@
             <%= link_to riga.documenti.first.clientable.denominazione, polymorphic_path(riga.documenti.first.clientable) %>
         </div>
 
-        <div class="mt-1 truncate text-gray-500">
-            <%= riga.libro&.codice_isbn  %>
+        <div class="mt-1 truncate text-gray-500 text-sm">
+            <%= "Ordine #{riga.documenti.first.numero_documento} #{riga.documenti.first.data_documento}"  %>
         </div>
     <% end %>
 
@@ -22,10 +22,5 @@
 	<%= tag.div class: "col-span-2 py-5 pl-3 pr-4 text-right text-sm font-medium text-gray-900 sm:pr-0" do %>
 		<%= number_to_currency riga.importo, locale: :it %>
 	<% end %>
-
-
-
-
-
 
 <% end %>

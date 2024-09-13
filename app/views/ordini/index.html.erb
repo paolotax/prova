@@ -2,7 +2,7 @@
 <% @ordini.group_by(&:libro).sort_by{|k,v| k["titolo"]}.each do |key, values| %>
   
   <%= render Heading::WithActionsComponent.new(
-    wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 mb-4 border border-gray-200 rounded-md shadow-md', 
+    wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
     level: 'h3') do |heading| %>
     
     <% heading.with_leader do %>
