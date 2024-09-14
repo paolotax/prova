@@ -66,6 +66,10 @@ class Documento < ApplicationRecord
     tipo_movimento == "ordine" && status != "ordine"
   end
 
+  def ordine_in_corso?
+    !ordine_evaso?
+  end
+
   def totale_importo
     righe.sum(&:importo)
   end
