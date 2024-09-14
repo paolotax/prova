@@ -8,11 +8,19 @@
 
     <%= tag.div class: "h-full flex flex-col justify-between" do %>
         
-        <%= tag.div class: "flex flex-row justify-between" do %>            
-            <%= link_to import_adozione.titolo, import_adozioni_path(codice_isbn: import_adozione.CODICEISBN),
-                data: { turbo_frame: "_top", turbo_action: "advance"}, 
-                class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
-                
+        <%= tag.div class: "flex flex-row justify-between" do %>
+            
+            <% if is_mia && import_adozione.libro %>            
+                <%= link_to import_adozione.titolo, import_adozione.libro,
+                    data: { turbo_frame: "_top", turbo_action: "advance"}, 
+                    class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
+
+            <% else %>
+                <%= link_to import_adozione.titolo, import_adozioni_path(codice_isbn: import_adozione.CODICEISBN),
+                    data: { turbo_frame: "_top", turbo_action: "advance"}, 
+                    class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
+            <% end %>
+
             <% unless is_header %>
                 <%= tag.div class: "flex" do %>
                     <% if is_mia %>

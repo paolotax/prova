@@ -60,6 +60,7 @@ class ImportAdozione < ApplicationRecord
   #has_many :appunti, dependent: :nullify
   #has_many :adozioni, dependent: :nullify
 
+  has_one :libro, -> { where( user_id: Current.user.id) }, foreign_key: "codice_isbn", primary_key: "CODICEISBN"
   
   include PgSearch::Model  
   search_fields =  [ :TITOLO, :EDITORE, :DISCIPLINA, :AUTORI, :ANNOCORSO, :CODICEISBN, :CODICESCUOLA, :PREZZO ]
