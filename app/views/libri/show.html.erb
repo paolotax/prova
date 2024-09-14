@@ -52,10 +52,10 @@
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
-						<div>
-							<%= tag.p documento_riga.documento.clientable.denominazione, class: "text-sm font-normal textgray-500" %>
+						<%= tag.div class: "flex flex-col" do %>
+							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
-						</div>
+						<% end %>
 					<% end %>
 				<% end %>
 			<% end %>
@@ -74,10 +74,10 @@
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
-						<div>
-							<%= tag.p documento_riga.documento.clientable.denominazione, class: "text-sm font-normal textgray-500" %>
+						<%= tag.div class: "flex flex-col" do %>
+							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
-						</div>
+						<% end %>
 					<% end %>
 				<% end %>
 			<% end %>
@@ -91,15 +91,17 @@
 			<% @libro.documento_righe.each do |documento_riga| %>
 
 				<% if documento_riga.documento.causale.carico? %>
-					<%= render ListItemComponent.new() do |list_item| %>
+					
+					<%= component 'list_item' do |list_item| %>
 						<% list_item.with_leader do %>
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
-						<div>
-							<%= tag.p documento_riga.documento.clientable.denominazione, class: "text-sm font-normal textgray-500" %>
+						<%= tag.div class: "flex flex-col" do %>
+							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
-						</div>
+						<% end %>
+
 					<% end %>
 				<% end %>
 			<% end %>
@@ -118,7 +120,7 @@
 					<% end %>
 
 					<div>
-						<%= tag.p adozione.scuola, class: "text-sm font-normal textgray-500" %>
+						<%= link_to adozione.scuola, adozione.import_scuola, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 					</div>
 				<% end %>
 
@@ -128,8 +130,3 @@
 
 
 <% end %>
-
-
-
-
-
