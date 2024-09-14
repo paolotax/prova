@@ -9,14 +9,13 @@
       <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
     <% end %>
     
-    <% heading.with_action do %>
-      
+    <% heading.with_action do %>      
       <%= tag.span values.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
     <% end %>
     
     <% heading.with_description { key.codice_isbn } %>
 
-    <%= key.titolo %>    
+    <%= link_to key.titolo, key, class:  %>    
 
   <% end %>
 
