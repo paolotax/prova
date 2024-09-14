@@ -49,7 +49,7 @@
 				<% if documento_riga.documento.ordine? %>
 					<%= render ListItemComponent.new() do |list_item| %>
 
-						<%= tag.div class: "flex flex-col" do %>
+						<%= tag.div class: "flex flex-col px-4" do %>
 							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
 						<% end %>
@@ -74,7 +74,7 @@
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
-						<%= tag.div class: "flex flex-col" do %>
+						<%= tag.div class: "flex flex-col px-4" do %>
 							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
 						<% end %>
@@ -97,7 +97,7 @@
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
-						<%= tag.div class: "flex flex-col" do %>
+						<%= tag.div class: "flex flex-col px-4" do %>
 							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
 						<% end %>
@@ -119,9 +119,10 @@
 						<%= tag.span adozione.classe_e_sezione, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 					<% end %>
 
-					<div>
+					<%= tag.div class: "flex flex-col" do %>
 						<%= link_to adozione.scuola, adozione.import_scuola, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
-					</div>
+						<%= render partial: "import_adozioni/card_ssk", locals: {import_adozione: adozione} %>
+					<% end %>
 				<% end %>
 
 			<% end %>
