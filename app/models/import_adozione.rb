@@ -46,7 +46,7 @@ class ImportAdozione < ApplicationRecord
 
   has_one :classe, class_name: "Views::Classe", 
                   primary_key: [:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE],
-            query_constraints: [:codice_ministeriale, :classe, :sezione, :combinazione]
+                  query_constraints: [:codice_ministeriale, :classe, :sezione, :combinazione]
 
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole

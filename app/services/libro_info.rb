@@ -52,6 +52,8 @@ class LibroInfo
     end
   end
 
+  
+  
   def count_adozioni
     @adozioni = @user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si").count
   end

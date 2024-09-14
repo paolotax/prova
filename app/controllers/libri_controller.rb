@@ -21,7 +21,7 @@ class LibriController < ApplicationController
 
   def show
     @situazione = LibroInfo.new(user: current_user, libro: @libro)
-    
+    @adozioni = current_user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
 
 

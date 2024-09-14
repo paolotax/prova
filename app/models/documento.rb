@@ -43,7 +43,7 @@ class Documento < ApplicationRecord
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
 
-  accepts_nested_attributes_for :documento_righe#,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
+  accepts_nested_attributes_for :documento_righe #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
   validates :numero_documento, presence: true
   validates :data_documento, presence: true
