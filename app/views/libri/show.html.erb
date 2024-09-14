@@ -38,9 +38,9 @@
   
 <% end %>
 
-<%= tag.div class: "flex flex-row" do %>
+<%= tag.div class: "flex flex-col md:flex-row space-y-8 md:space-y-0" do %>
 
-	<%= tag.div class: "flex flex-col w-1/3 sm:w-1/4" do %>
+	<%= tag.div class: "flex flex-col w-full md:w-1/4" do %>
 
 		<%= render StatComponent.new(title: "Ordini", width: "w-full", current_value: @situazione.ordini) %>
 		<ul>
@@ -48,13 +48,13 @@
 
 				<% if documento_riga.documento.ordine? %>
 					<%= render ListItemComponent.new() do |list_item| %>
-						<% list_item.with_leader do %>
-							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
-						<% end %>
 
 						<%= tag.div class: "flex flex-col" do %>
 							<%= link_to documento_riga.documento.clientable.denominazione, documento_riga.documento.clientable, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 							<%= component "tax_documento_card", documento: documento_riga.documento %>
+						<% end %>
+						<% list_item.with_trailer do %>
+							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 					<% end %>
 				<% end %>
@@ -62,7 +62,7 @@
 		</ul>	
 	<% end %>
 
-	<%= tag.div class: "flex flex-col w-1/3 sm:w-1/4" do %>
+	<%= tag.div class: "flex flex-col w-full md:w-1/4" do %>
 
 		<%= render StatComponent.new(title: "Venduti", width: "w-full", current_value: @situazione.vendite) %>
 		<ul>
@@ -70,7 +70,7 @@
 
 				<% if documento_riga.documento.vendita? %>
 					<%= render ListItemComponent.new() do |list_item| %>
-						<% list_item.with_leader do %>
+						<% list_item.with_trailer do %>
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
@@ -84,7 +84,7 @@
 		</ul>	
 	<% end %>
 
-	<%= tag.div class: "flex flex-col w-1/3 sm:w-1/4" do %>
+	<%= tag.div class: "flex flex-col  w-full md:w-1/4" do %>
 
 		<%= render StatComponent.new(title: "Carichi", width: "w-full", current_value: @situazione.carichi) %>
 		<ul>
@@ -93,7 +93,7 @@
 				<% if documento_riga.documento.causale.carico? %>
 					
 					<%= component 'list_item' do |list_item| %>
-						<% list_item.with_leader do %>
+						<% list_item.with_trailer do %>
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 						<% end %>
 
@@ -108,7 +108,7 @@
 		</ul>	
 	<% end %>
 
-	<%= tag.div class: "flex flex-col w-1/3 sm:w-1/4" do %>
+	<%= tag.div class: "flex flex-col  w-full md:w-1/4" do %>
 
 		<%= render StatComponent.new(title: "Adozioni", width: "w-full", current_value: @situazione.adozioni) %>
 		<ul>
