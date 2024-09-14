@@ -46,7 +46,7 @@
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 
-				<% if documento_riga.documento.ordine_in_corso? %>
+				<% if documento_riga.documento.ordine? %>
 					<%= render ListItemComponent.new() do |list_item| %>
 						<% list_item.with_leader do %>
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
@@ -68,7 +68,7 @@
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 
-				<% if documento_riga.documento.causale.vendita? %>
+				<% if documento_riga.documento.vendita? %>
 					<%= render ListItemComponent.new() do |list_item| %>
 						<% list_item.with_leader do %>
 							<%= tag.span documento_riga.riga.quantita, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>

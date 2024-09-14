@@ -5,3 +5,10 @@
       <%# etc… %>
     <% end %>
 <% end %>
+
+<% @libri.each do |libro| %>
+    <%= turbo_stream.append("itemsList") do %>
+      <%= render CommandMenu::ItemComponent.new(remote: true, target: libro, title: "#{libro.titolo} - #{libro.editore.editore}") %>
+      <%# etc… %>
+    <% end %>
+<% end %>

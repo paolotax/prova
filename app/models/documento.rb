@@ -50,9 +50,9 @@ class Documento < ApplicationRecord
 
   enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
-  #enum tipo_documento: { fattura: 0, ddt: 1, ordine: 2, preventivo: 3, nota_di_credito: 4, nota_di_debito: 5 }
-  #  
-  #
+  
+  #enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }   
+  #enum movimento: { entrata: 0, uscita: 1 }
   
   delegate :tipo_movimento, :movimento, to: :causale
 
@@ -61,13 +61,16 @@ class Documento < ApplicationRecord
     def filter_proxy = Filters::DocumentoFilterProxy
   end
 
+  def vendita?
+    tipo_movimento == "vendita" || ( tipo_movimento == "ordine" && status != "ordine" )
+  end
   # poi
   def ordine_evaso?
     tipo_movimento == "ordine" && status != "ordine"
   end
 
   def ordine_in_corso?
-    !ordine_evaso?
+    tipo_movimento == "ordine" && status == "ordine"
   end
 
   def totale_importo

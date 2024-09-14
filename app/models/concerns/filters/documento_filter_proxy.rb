@@ -25,7 +25,7 @@ module Filters
     
     def order_by(ordine)
       if ordine == 'fresh'
-        order(updated_at: :desc)
+        order(created_at: :desc)
       else
         order(data_documento: :desc, numero_documento: :desc )
       end
