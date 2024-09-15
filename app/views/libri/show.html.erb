@@ -115,9 +115,15 @@
 			<% @adozioni.each do |adozione| %>
 
 				<%= render ListItemComponent.new() do |list_item| %>
+					
 					<% list_item.with_leader do %>
 						<%= tag.span adozione.classe_e_sezione, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 					<% end %>
+
+					<% list_item.with_trailer do %>
+						<%= render partial: "import_adozioni/card_menu", locals: { import_adozione: adozione } %>				
+					<% end %>
+
 
 					<%= tag.div class: "flex flex-col space-y-2" do %>
 						<%= link_to adozione.scuola, adozione.import_scuola, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
