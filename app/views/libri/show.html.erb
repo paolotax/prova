@@ -17,6 +17,22 @@
 			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
 	<% end %>
 
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "prec",
+			svg_file: "icon-arrow-left.svg",
+			color: "gray",
+			url: "/libri/#{@libro&.previous&.id}"  %>
+	<% end %>
+
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "succ",
+			svg_file: "icon-arrow-right.svg",
+			color: "gray",
+			url: "/libri/#{@libro&.next&.id}"  %>
+	<% end %>
+
 	<% heading.with_action do %>	
 		<%= component 'tax_button',
 			caption: "Indietro",

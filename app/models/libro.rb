@@ -81,6 +81,14 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
 
+  def previous
+    Current.user.libri.where("titolo < ?", titolo).order(titolo: :desc).first
+  end
+
+  def next
+    Current.user.libri.where("titolo > ?", titolo).order(titolo: :asc).first
+  end
+
   def calcola_situazione    
     query = <<-SQL
       SELECT users.id, libri.titolo, libri.codice_isbn,
