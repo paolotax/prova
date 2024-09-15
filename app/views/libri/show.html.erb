@@ -64,7 +64,7 @@
 
 	<%= tag.div class: "flex flex-col w-full md:w-1/4" do %>
 
-		<%= render StatComponent.new(title: "Venduti", width: "w-full", current_value: @situazione.vendite) %>
+		<%= render StatComponent.new(title: "Vendite", width: "w-full", current_value: @situazione.vendite) %>
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 
@@ -119,7 +119,7 @@
 						<%= tag.span adozione.classe_e_sezione, class: "text-base font-semibold text-gray-800 w-16 px-4 text-right" %>
 					<% end %>
 
-					<%= tag.div class: "flex flex-col" do %>
+					<%= tag.div class: "flex flex-col space-y-2" do %>
 						<%= link_to adozione.scuola, adozione.import_scuola, class: "text-sm font-normal text-gray-500 hover:font-semibold" %>
 						<%= render partial: "import_adozioni/card_ssk", locals: {import_adozione: adozione} %>
 					<% end %>
