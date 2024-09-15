@@ -12,3 +12,10 @@
       <%# etc… %>
     <% end %>
 <% end %>
+
+<% @clienti.each do |cliente| %>
+    <%= turbo_stream.append("itemsList") do %>
+      <%= render CommandMenu::ItemComponent.new(remote: true, target: cliente, title: "#{cliente.denominazione} - #{cliente.comune}") %>
+      <%# etc… %>
+    <% end %>
+<% end %>

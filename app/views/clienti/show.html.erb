@@ -17,6 +17,14 @@
 			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
 	<% end %>
 
+	<% heading.with_action do %>
+		<%= component 'tax_button',
+			caption: "Modifica",
+			svg_file: "icon-pencil.svg",
+			color: "yellow",
+			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
+	<% end %>
+
 	<% heading.with_action do %>	
 		<%= component 'tax_button',
 			caption: "Indietro",
@@ -25,12 +33,12 @@
 			url: request.referrer %>
 	<% end %>
 
-	<% heading.with_action do %>
+	<% heading.with_action do %>	
 		<%= component 'tax_button',
-			caption: "Modifica",
-			svg_file: "icon-pencil.svg",
-			color: "yellow",
-			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
+			caption: "Nuovo Documento",
+			svg_file: "icon-plus.svg",
+			color: "blue",
+			url: url_for( controller: "documenti", action: "new", params: current_user.documenti.build( clientable: @cliente, causale_id: Causale.find_by(causale: "Ordine Cliente" ).id)) %>
 	<% end %>
 
 	<%= @cliente.denominazione %>
