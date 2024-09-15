@@ -38,7 +38,7 @@
 			caption: "Nuovo Documento",
 			svg_file: "icon-plus.svg",
 			color: "blue",
-			url: url_for( controller: "documenti", action: "new", params: current_user.documenti.build( clientable: @cliente, causale_id: Causale.find_by(causale: "Ordine Cliente" ).id)) %>
+			url: url_for( controller: "documenti", action: "new", paams: current_user.documenti.build( clientable: @cliente, causale_id: Causale.find_by(causale: "Ordine Cliente" ).id)) %>
 	<% end %>
 
 	<%= @cliente.denominazione %>

@@ -24,7 +24,7 @@
   <div class="my-5">
     <%= form.label :tipo_movimento %>
     <%= form.select :tipo_movimento, 
-                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, params[:tipo_movimento]),
+                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, causale.tipo_movimento),
                 {}, 
                 class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
   </div>
@@ -32,7 +32,7 @@
   <div class="my-5">
     <%= form.label :movimento %>
     <%= form.select :movimento, 
-                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, params[:movimento]),
+                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, causale.movimento),
                 {}, 
                 class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
