@@ -40,7 +40,6 @@ class ImportAdozione < ApplicationRecord
     def filter_proxy = Filters::ImportAdozioneFilterProxy
   end
 
-
   belongs_to :import_scuola, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"  
   belongs_to :editore,       foreign_key: "EDITORE",      primary_key: "EDITORE"
 

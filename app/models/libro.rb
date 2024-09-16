@@ -40,8 +40,16 @@ class Libro < ApplicationRecord
     def filter_proxy = Filters::LibroFilterProxy
   end
 
-
-  #monetize :prezzo_in_cents
+  include PgSearch::Model  
+  search_fields =  [ :titolo, :disciplina, :codice_isbn, :categoria, :note ]
+  pg_search_scope :search_all_word, 
+                        against: search_fields,
+                        associated_against: {
+                          editore: [:editore]
+                        },
+                        using: {
+                          tsearch: { any_word: false, prefix: true }
+                        }
 
   belongs_to :user
   belongs_to :editore, optional: true
@@ -58,10 +66,13 @@ class Libro < ApplicationRecord
 
   has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
+  
   after_initialize :init
   def init
     self.prezzo_in_cents ||= 0
   end
+  
+  
   
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
@@ -71,8 +82,6 @@ class Libro < ApplicationRecord
     self.titolo
   end
 
-  # attr_accessor :prezzo
-  # ora così poi devo vedere come funziona money-rails
   def prezzo
     prezzo_in_cents / 100.0
   end
@@ -81,6 +90,8 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
 
+  
+  
   def previous
     Current.user.libri.where("titolo < ?", titolo).order(titolo: :desc).first
   end
@@ -89,6 +100,13 @@ class Libro < ApplicationRecord
     Current.user.libri.where("titolo > ?", titolo).order(titolo: :asc).first
   end
 
+
+
+  
+  
+  
+  # DA SPOSTARE IN UNA CLASSE DI SERVIZIO
+  # 
   def calcola_situazione    
     query = <<-SQL
       SELECT users.id, libri.titolo, libri.codice_isbn,

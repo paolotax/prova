@@ -1,21 +1,36 @@
 
-<% @import_scuole.each do |scuola| %>
-    <%= turbo_stream.append("itemsList") do %>
-      <%= render CommandMenu::ItemComponent.new(remote: true, target: scuola, title: "#{scuola.denominazione} - #{scuola.citta}") %>
-      <%# etc… %>
-    <% end %>
+<% if !@import_scuole.empty? %>
+
+
+
+  <% @import_scuole.each do |scuola| %>
+      <%= turbo_stream.append("itemsList") do %>
+        <%= render CommandMenu::ItemComponent.new(remote: true, target: scuola, title: "#{scuola.denominazione} - #{scuola.citta}") %>
+        <%# etc… %>
+      <% end %>
+  <% end %>
+
 <% end %>
 
-<% @libri.each do |libro| %>
-    <%= turbo_stream.append("itemsList") do %>
-      <%= render CommandMenu::ItemComponent.new(remote: true, target: libro, title: "#{libro.titolo} - #{libro.editore.editore}") %>
-      <%# etc… %>
-    <% end %>
+<% if !@clienti.empty? %>
+
+
+  <% @clienti.each do |cliente| %>
+      <%= turbo_stream.append("itemsList") do %>
+        <%= render CommandMenu::ItemComponent.new(remote: true, target: cliente, title: "#{cliente.denominazione} - #{cliente.comune}") %>
+        <%# etc… %>
+      <% end %>
+  <% end %>
 <% end %>
 
-<% @clienti.each do |cliente| %>
-    <%= turbo_stream.append("itemsList") do %>
-      <%= render CommandMenu::ItemComponent.new(remote: true, target: cliente, title: "#{cliente.denominazione} - #{cliente.comune}") %>
-      <%# etc… %>
-    <% end %>
+<% if !@libri.empty? %>
+
+
+  <% @libri.each do |libro| %>
+      <%= turbo_stream.append("itemsList") do %>
+        <%= render CommandMenu::ItemComponent.new(remote: true, target: libro, title: "#{libro.titolo} - #{libro.editore.editore}") %>
+        <%# etc… %>
+      <% end %>
+  <% end %>
 <% end %>
+

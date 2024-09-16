@@ -25,8 +25,8 @@ class LibroInfo
           (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and (documenti.status = 0)), 0) -
           COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and (documenti.status = 0)), 0)) as ordini,
           
-          (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento = 1 and documenti.status <> 0), 0) -
-          COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento = 1 and documenti.status <> 0), 0)) as vendite,
+          (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento <> 2 and documenti.status <> 0), 0) -
+          COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento <> 2 and documenti.status <> 0), 0)) as vendite,
           
           (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento = 2), 0) -
           COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento = 2), 0)) as carichi

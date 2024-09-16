@@ -3,9 +3,10 @@
 	<div class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
 
 			
-		<%= tag.div class: "flex flex-row gap-4 border items-center " do %>
-			
-			
+		<%= tag.div class: "flex flex-row gap-4 border items-center" do %>
+	
+			<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
+		
 			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: "_top" } do %>
 				<%= tag.div documento.causale.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
 			<% end %>
@@ -14,10 +15,14 @@
 				<%#= documento.clientable&.denominazione %>
 				<%= tag.p documento.referente %> 
 				<%= tag.p documento.note %> 
-			<% end %>	
+			<% end %>					
 		<% end %>
-
-		<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "da evadere", color:  documento.ordine_evaso? ? 'green' : "red") %>
+		
+		<%= component 'tax_button',
+                caption: "Stampa",
+                svg_file: "icon-print.svg",
+                color: "white",
+                url: url_for( controller: "documenti", action: "show", format: :pdf, model: @documento ) %>
 			
 	</div>
     

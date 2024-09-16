@@ -1,6 +1,4 @@
-<%= render Heading::WithActionsComponent.new(
-	wrapper_css: 'flex items-center bg-white justify-between px-4 py-3 mb-4 border border-gray-200 rounded-md shadow-md', 
-	level: 'h3') do |heading| %>
+<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 	
 	<% heading.with_leader do %>
 		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
