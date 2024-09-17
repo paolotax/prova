@@ -4,8 +4,7 @@ class TaxButtonComponent < ViewComponent::Base
   
   attr_reader :caption, :svg_file, :color, :url, :data_attr
   
-  def initialize(caption:, svg_file:, color:, url: nil, data_attr: {}, enabled: true, style: :link, target: nil)
-      
+  def initialize(caption: nil, svg_file:, color:, url: nil, data_attr: {}, enabled: true, style: :link, target: nil)      
     @caption = caption
     @svg_file = svg_file
     @color = color

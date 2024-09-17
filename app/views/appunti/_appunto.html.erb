@@ -70,23 +70,22 @@
 		
 		<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
 
-		<div class="flex mt-auto justify-between items-center">
+		<div class="pl-3 pt-2 flex mt-auto justify-between items-center">
 
 			<%= component 'tax_button',
-                caption: "Stampa",
-                svg_file: "icon-print.svg",
-                color: "white",
-                url: appunto_url(appunto, format: :pdf),
-				target: "" %>
+					svg_file: "icon-print.svg",
+					color: "white",
+					url: appunto_url(appunto, format: :pdf),
+					target: "" %>
 		
 			<%= tag.div class: "pt-2 text-xs italic  pl-2" do %>
 				creato da
-				<%= time_ago_in_words appunto.created_at%>
+				<%= time_ago_in_words appunto.created_at %>
 			<% end %>
+			
 			<div><%= appunto.stato %></div>
 			
-			<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>	
-
+			<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>
 		</div>	
 	<% end %>
 

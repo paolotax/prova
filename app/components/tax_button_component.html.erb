@@ -12,7 +12,7 @@
 
   <%= tag.div class: css_class do %>
       <%= inline_svg_tag svg_file  %>
-      <%= tag.div caption, class: "hidden sm:block" %>
+      <%= tag.div( caption, class: "hidden sm:block" ) if caption %>
   <% end %>
 
 <% end %>
