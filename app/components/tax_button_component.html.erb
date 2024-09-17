@@ -1,6 +1,7 @@
 <% if @style == :link %>
 
   <%= link_to url,
+              target: @target,
               data: data_attr, 
               class: css_class do %>
       <%= inline_svg_tag svg_file  %>

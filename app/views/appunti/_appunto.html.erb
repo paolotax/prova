@@ -71,6 +71,13 @@
 		<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
 
 		<div class="flex mt-auto justify-between items-center">
+
+			<%= component 'tax_button',
+                caption: "Stampa",
+                svg_file: "icon-print.svg",
+                color: "white",
+                url: appunto_url(appunto, format: :pdf),
+				target: "" %>
 		
 			<%= tag.div class: "pt-2 text-xs italic  pl-2" do %>
 				creato da

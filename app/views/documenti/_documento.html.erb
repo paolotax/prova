@@ -22,7 +22,8 @@
                 caption: "Stampa",
                 svg_file: "icon-print.svg",
                 color: "white",
-                url: url_for( controller: "documenti", action: "show", format: :pdf, model: @documento ) %>
+                url: documento_url(documento, format: :pdf),
+				target: "_blank" %>
 			
 	</div>
     

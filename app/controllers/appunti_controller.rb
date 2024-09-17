@@ -2,7 +2,7 @@ class AppuntiController < ApplicationController
   
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
-  before_action :ensure_frame_response, only: %i[ new edit show ]
+  before_action :ensure_frame_response, only: %i[ new edit ]
 
   def index
     @appunti = current_user.appunti.non_saggi.includes(:import_scuola, :import_adozione).order(created_at: :desc)
@@ -23,6 +23,15 @@ class AppuntiController < ApplicationController
   end
 
   def show
+    respond_to do |format|
+      format.pdf do
+        @appunti = Array(@appunto)
+        pdf = AppuntoPdf.new(@appunti, view_context)
+        send_data pdf.render, filename: "appunto_#{@appunto.id}.pdf",
+                              type: "application/pdf",
+                              disposition: "inline"      
+      end
+    end
   end
 
   def new
