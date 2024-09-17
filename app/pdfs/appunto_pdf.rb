@@ -47,8 +47,8 @@ class AppuntoPdf < Prawn::Document
     move_down 10
     text appunto.nome, :size => 13
 
-    
-    text @view.sanitize(appunto.content, attributes: [], tags: []), :size => 13, inline_format: true
+
+    text @view.sanitize(appunto.content.body.to_s.gsub("<br>", " \r "), attributes: [], tags: []), :size => 13, inline_format: true
     #text "tel. #{appunto.telefono}", :size => 13 unless appunto.telefono.blank?
   end
   
