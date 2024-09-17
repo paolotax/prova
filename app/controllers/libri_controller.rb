@@ -11,7 +11,7 @@ class LibriController < ApplicationController
     @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
     @libri = filter(@libri.all)
     
-    @situazio = Libro.crosstab
+    #@situazio = Libro.crosstab
 
     @pagy, @libri = pagy(@libri, items: 20, link_extra: 'data-turbo-action="advance"')
     
