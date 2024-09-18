@@ -29,6 +29,9 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'comune', 'comuni'
   inflect.irregular 'magazzino', 'magazzini'
 
+  inflect.irregular 'ordine', 'ordini'
+  inflect.irregular 'vendita', 'vendite'
+  inflect.irregular 'giacenza', 'giacenze'
 
   inflect.irregular 'carico', 'carichi'
   inflect.irregular 'scarichi', 'scarichi'
@@ -41,9 +44,6 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'fattura acquisti', 'fatture acquisti'
   
   
-
-  inflect.irregular 'ordine', 'ordini'
-
   inflect.irregular 'causale', 'causali'
   inflect.irregular 'documento', 'documenti'
   inflect.irregular 'editore', 'editori'

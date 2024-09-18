@@ -54,6 +54,8 @@ class Libro < ApplicationRecord
   belongs_to :user
   belongs_to :editore, optional: true
   
+  has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
+
   has_many :adozioni
   has_many :righe
   has_many :documenti, through: :righe

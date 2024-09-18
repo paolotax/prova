@@ -6,7 +6,7 @@ class LibroInfo
     @libro = libro
     @user = user
     
-    situazione_magazzino
+    situazione_magazzino(@libro.id)
     count_adozioni
   end
 
@@ -18,7 +18,7 @@ class LibroInfo
   # enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   # enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
   
-  def situazione_magazzino    
+  def situazione_magazzino(libri)    
     
     query = <<-SQL
       SELECT users.id, libri.titolo, libri.codice_isbn,
@@ -37,7 +37,7 @@ class LibroInfo
       INNER JOIN documenti ON documento_righe.documento_id = documenti.id
       INNER JOIN causali ON documenti.causale_id = causali.id
       INNER JOIN users ON users.id = documenti.user_id
-      WHERE users.id = #{Current.user.id} AND libri.id = #{@libro.id}
+      WHERE users.id = #{Current.user.id} AND libri.id IN ( #{libri} )
       GROUP BY 1, 2, 3
     SQL
 
@@ -49,13 +49,12 @@ class LibroInfo
     else
       @ordini = result[0]['ordini']
       @vendite = result[0]['vendite']
-      @carichi = result[0]['carichi']
+      @carichi = result[0]['carichi   ']
     end
   end
-
-  
-  
-  def count_adozioni
+      
+  def count_adozioni 
+   
     @adozioni = @user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si").count
   end
 

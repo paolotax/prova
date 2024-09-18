@@ -56,7 +56,7 @@
 
 	<%= tag.div class: "flex flex-col w-full md:w-1/4" do %>
 
-		<%= render StatComponent.new(title: "Ordini", width: "w-full", current_value: @situazione.ordini) %>
+		<%= render StatComponent.new(title: "Ordini", width: "w-full", current_value: @giacenza&.ordini) %>
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 
@@ -78,7 +78,7 @@
 
 	<%= tag.div class: "flex flex-col w-full md:w-1/4" do %>
 
-		<%= render StatComponent.new(title: "Vendite", width: "w-full", current_value: @situazione.vendite) %>
+		<%= render StatComponent.new(title: "Vendite", width: "w-full", current_value: @giacenza&.vendite) %>
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 
@@ -100,7 +100,7 @@
 
 	<%= tag.div class: "flex flex-col  w-full md:w-1/4" do %>
 
-		<%= render StatComponent.new(title: "Carichi", width: "w-full", current_value: @situazione.carichi) %>
+		<%= render StatComponent.new(title: "Carichi", width: "w-full", current_value: @giacenza&.carichi) %>
 		<ul>
 			<% @libro.documento_righe.each do |documento_riga| %>
 

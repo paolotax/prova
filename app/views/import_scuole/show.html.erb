@@ -3,7 +3,7 @@
 		
 
 		<%# info scuola + tappe %>
-		<div class="flex flex-col sm:flex-row gap-4 w-full">
+		<div class="flex flex-col sm:flex-row sm:justify-end gap-4 w-full">
 			<div class="sm:w-3/5 sm:flex-none">
 				<%= render @import_scuola %>
 			</div>
@@ -20,7 +20,7 @@
 
 
 
-			<div class="flex flex-col gap-4">
+			<div class="px-2 flex flex-row sm:flex-col gap-2">
 
 				<%= render DropdownComponent.new() do |dropdown| %>
 					<%= dropdown.with_button do %>
@@ -77,7 +77,7 @@
 					<option>Adozioni per titolo</option>
 					<option>Appunti</option>
 					<option>Archiviati</option>
-					<option>Documenti</option>
+					<option>Vendite</option>
 					<option>Saggi</option>
 				</select>
 			</div>

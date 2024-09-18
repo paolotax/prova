@@ -8,7 +8,7 @@ class LibriController < ApplicationController
   def index
     @import = LibriImporter.new
     
-    @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
+    @libri = current_user.libri.includes(:editore, :adozioni, :giacenza).order(:categoria, :titolo, :classe)
     @libri = filter(@libri.all)
     
     #@situazio = Libro.crosstab
@@ -21,6 +21,8 @@ class LibriController < ApplicationController
 
   def show
     @situazione = LibroInfo.new(user: current_user, libro: @libro)
+    @giacenza = @libro.giacenza
+    
     @adozioni = current_user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
 

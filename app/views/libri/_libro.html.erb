@@ -15,24 +15,24 @@
 	
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
       <%= tag.dt "Ordini", class: "truncate text-sm font-medium text-gray-500" %>
-      <%#= tag.dd situazio.in_ordine, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
-	  										"text-transparent": situazio.in_ordine == 0] %>
+      <%= tag.dd libro.giacenza&.ordini, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
+	  										"text-transparent": libro.giacenza&.ordini == 0] %>
     <% end %>
 
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
-      <%= tag.dt "Fatture", class: "truncate text-sm font-medium text-gray-500" %>
-      <%#= tag.dd situazio.td01 - situazio.td04, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
-	  										"text-transparent": (situazio.td01 - situazio.td04) == 0] %>
+      <%= tag.dt "Vendite", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd libro.giacenza&.vendite, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
+	  										"text-transparent": libro.giacenza&.vendite == 0] %>
     <% end %>
 
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
-      <%= tag.dt "Corrispettivi", class: "truncate text-sm font-medium text-gray-500" %>
-      <%#= tag.dd situazio.ordine_scuola, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
-	  										"text-transparent": situazio.ordine_scuola == 0] %>
+      <%= tag.dt "Carichi", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dd libro.giacenza&.carichi, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-500",
+	  										"text-transparent": libro.giacenza&.carichi == 0] %>
     <% end %>
 
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
-      <%= tag.dt "Venduto", class: "truncate text-sm font-medium text-gray-500" %>
+      <%= tag.dt "Adozioni", class: "truncate text-sm font-medium text-gray-500" %>
       <%#= tag.dd situazio.venduto, class: ["mt-1 text-xl font-semibold tracking-tight text-red-500",
 	  										"text-transparent": situazio.venduto == 0] %>
     <% end %>

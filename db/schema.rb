@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_31_105619) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_18_075333) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "tablefunc"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -543,4 +544,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_105619) do
   add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
   add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
 
+  create_view "view_giacenze", sql_definition: <<-SQL
+      SELECT users.id AS user_id,
+      libri.id AS libro_id,
+      libri.titolo,
+      libri.codice_isbn,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (documenti.status = 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (documenti.status = 0))), (0)::bigint)) AS ordini,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint)) AS vendite,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento = 2))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento = 2))), (0)::bigint)) AS carichi
+     FROM (((((righe
+       JOIN libri ON ((righe.libro_id = libri.id)))
+       JOIN documento_righe ON ((righe.id = documento_righe.riga_id)))
+       JOIN documenti ON ((documento_righe.documento_id = documenti.id)))
+       JOIN causali ON ((documenti.causale_id = causali.id)))
+       JOIN users ON ((users.id = documenti.user_id)))
+    WHERE (users.id = 1)
+    GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
+    ORDER BY libri.titolo;
+  SQL
 end
