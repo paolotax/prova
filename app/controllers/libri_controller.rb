@@ -22,7 +22,7 @@ class LibriController < ApplicationController
   def show
     @situazione = LibroInfo.new(user: current_user, libro: @libro)
     @giacenza = @libro.giacenza
-    
+
     @adozioni = current_user.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
 
@@ -107,7 +107,8 @@ class LibriController < ApplicationController
         editore: params["editore"],
         disciplina: params["disciplina"],
         categoria: params["categoria"],
-        classe: params["classe"]
+        classe: params["classe"],
+        ordini: params["ordini"]
       }
     end
 end

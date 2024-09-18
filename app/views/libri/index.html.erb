@@ -74,6 +74,12 @@
                 collection: [ "1", "2", "3", "4", "5" ],
                 type: :select,
                 placeholder: "scegli la classe..."
+            }, {
+                field: :ordini,
+                label: "Classe",
+                collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
+                type: :select,
+                placeholder: "ordini..."
             }
         
         ] %>
