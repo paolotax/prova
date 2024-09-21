@@ -1,52 +1,71 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
+<% content_for :title, "Adozioni" %>
 
-	<%# button print pdf sovrapacchi %>
-	<%# <% heading.with_action do %>
-		<%# <%= component 'tax_button',
-                caption: "Etichette",
-                svg_file: "icon-tag.svg",
-                color: "pink",
-                url: url_for( controller: "import_adozioni", action: "index", format: :pdf, params: request.query_parameters ) %>
-	<%# <% end %>
-	
-	<%# button export excel %>
-	<%# <% heading.with_action do %>
-		 <%# <%= component 'tax_button',
-                caption: "Excel",
-                svg_file: "icon-excel-bis.svg",
-                color: "green",
-                url: url_for( controller: "import_adozioni", action: "index", format: :xlsx, params: request.query_parameters ) %>
-	<%# <% end %>
-	
-	<%# button old filters %>
-	<% heading.with_action do %>
-		<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
-			<div class="">
-				<%#= toggle_button_tag( params["mie_adozioni"] == "si", "mie adozioni", "adozioni" )%>
+<div class= "sticky top-20 z-10">
+	<%= render Heading::WithActionsComponent.new do |heading| %>
+
+		<%# button print pdf sovrapacchi %>
+		<%# <% heading.with_action do %>
+			<%# <%= component 'tax_button',
+					caption: "Etichette",
+					svg_file: "icon-tag.svg",
+					color: "pink",
+					url: url_for( controller: "import_adozioni", action: "index", format: :pdf, params: request.query_parameters ) %>
+		<%# <% end %>
+		
+
+		
+		<%# button old filters %>
+		<% heading.with_action do %>
+			<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
+				<div class="">
+					<%#= toggle_button_tag( params["mie_adozioni"] == "si", "mie adozioni", "adozioni" )%>
+				</div>
+				<div class="">
+					<%= toggle_button_tag( params["da_acquistare"] == "si", "da acquistare", "acquistare" )%>
+				</div>
+				<div class="">
+					<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
+				</div>
 			</div>
-			<div class="">
-				<%= toggle_button_tag( params["da_acquistare"] == "si", "da acquistare", "acquistare" )%>
-			</div>
-			<div class="">
-				<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
-			</div>
-		</div>
+		<% end %>
+
+		<%# button export excel %>
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+					caption: "Excel",
+					svg_file: "icon-excel-bis.svg",
+					color: "green",
+					url: url_for( controller: "import_adozioni", action: "index", format: :xlsx, params: request.query_parameters ) %>
+		<% end %>
+
+		<% heading.with_action do %>	
+			<%= component 'tax_button',
+				caption: "Indietro",
+				svg_file: "icon-arrow-long-left.svg",
+				color: "white",
+				url: 'javascript:history.back()' %>
+		<% end %>
+
+		<%= h1 {"Adozioni"} %>
+
 	<% end %>
-
-	<%= h1 {"Adozioni"} %>
-
-<% end %>
+</div>
 
 <%= turbo_frame_tag "search_results", data: {controller: 'tax-checkbox-select-all'} do %>
 	
-	<%= render partial: "import_adozioni/stats" %>
-
+	<div class="sticky top-[10rem]">
+		<%= render partial: "import_adozioni/stats" %>
+	</div>
 	
 
-	<%= tag.div class: "flex flex-col sm:flex-row sm:gap-4" do %>
+	<%= tag.div class: "w-full flex flex-col lg:pr-[15rem]" do %>
 		
 		<div class="flex flex-col">
-			<%= render partial: "form_multi" %>
+			
+			<div class="sticky top-72 bg-gray-100 mb-2">
+				<%= render partial: "form_multi" %>
+			</div>
+
 			<div id="import_adozioni" class="py-5 w-full grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2">
 				<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
 					Whoops! Non ci sono adozioni. 
@@ -65,10 +84,8 @@
 		</div>
 	<% end %>
 
-<% end %>
-
-<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
-<%= component 'tax_filter_form', base_url: documenti_path, 
+	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-72 lg:px-8 lg:block">
+		<%= component 'tax_filter_form', base_url: documenti_path, 
 			fields: [ 
 				{
 					field: :scuola,
@@ -119,9 +136,12 @@
 					type: :checkbox,
 					placeholder: "mie adozioni?"
 				}
-			] %>
+		] %>
+	</aside>
 
-</aside>
+<% end %>
+
+
 
 		
 

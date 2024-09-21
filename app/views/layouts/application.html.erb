@@ -28,6 +28,7 @@
 	<body class="flex h-full flex-col">
 		
 		<div class="flex min-h-full flex-col">
+			
 			<%= turbo_frame_tag :modal %>
 	
 			<!-- back-to-top di jason... -->
@@ -54,20 +55,12 @@
 					<!-- Your content -->
 					<%= yield %>
 	
-
+					<%= render CommandMenuComponent.new(placeholder: 'Cerca libro, scuola o cliente…', endpoint: '/cerca') %>
 
 					<%= render "layouts/footer" %>
 					
 				</main>
-
 			</div>  
-
-		
 		</div>		
-
-		<%= render CommandMenuComponent.new(placeholder: 'Cerca libro, scuola o cliente…', endpoint: '/cerca') %>
-
 	</body>
-
-
 </html>
