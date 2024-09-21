@@ -18,9 +18,10 @@
                     <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
                 
                 <% elsif field[:type] == :checkbox %>
-                    <%= check_box_tag field[:field], "si", filter_params[field[:field]] == "si", {} %>
+                    <%= toggle_button_tag( params[field[:field]] == "si", field[:placeholder], field[:label] )%>
+                    <%#= check_box_tag field[:field], "si", filter_params[field[:field]] == "si", {} %>
                     <%#= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
-                    <%= form.label field[:field], field[:label].to_s %>
+                    <%#= form.label field[:field], field[:label].to_s %>
                     
                 <% end %>
             <% end %>

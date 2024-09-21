@@ -77,3 +77,9 @@ kamal accessory exec -i --reuse -v db "/usr/bin/pg_dump -U prova prova_productio
 scp root@116.203.224.90:backup.tar.gz ~/backup/
 
 ssh root@116.203.224.90
+
+
+prova-web-06dfbe5fc272c0a18fc11937b1fad580
+
+
+prova-web-833ac632eeec3866e2bc6f7e2e5ea9551526b6ae

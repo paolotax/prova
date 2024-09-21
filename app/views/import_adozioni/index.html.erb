@@ -12,23 +12,6 @@
 					url: url_for( controller: "import_adozioni", action: "index", format: :pdf, params: request.query_parameters ) %>
 		<%# <% end %>
 		
-
-		
-		<%# button old filters %>
-		<% heading.with_action do %>
-			<div class="pl-4 flex items-end justify-left space-y-2 sm:flex-row sm:justify-between sm:align-center sm:space-y-0 sm:space-x-4">
-				<div class="">
-					<%#= toggle_button_tag( params["mie_adozioni"] == "si", "mie adozioni", "adozioni" )%>
-				</div>
-				<div class="">
-					<%= toggle_button_tag( params["da_acquistare"] == "si", "da acquistare", "acquistare" )%>
-				</div>
-				<div class="">
-					<%= toggle_button_tag( false, "cerca ogni parola", "parole" ) %>
-				</div>
-			</div>
-		<% end %>
-
 		<%# button export excel %>
 		<% heading.with_action do %>
 			<%= component 'tax_button',
@@ -125,16 +108,16 @@
 					placeholder: "nel baule?"
 				}, {
 					field: :da_acquistare,
-					label: "Da acquistare",
-					collection: ["si"],
-					type: :select,
+					label: "acquistare",  # uso la label per queryopt
+					collection: ["si", "no"],
+					type: :checkbox,
 					placeholder: "da acquistare"
 				}, {
 					field: :mie_adozioni,
-					label: "Mie adozioni",
+					label: "adozioni",
 					collection: ["si", "no"],
 					type: :checkbox,
-					placeholder: "mie adozioni?"
+					placeholder: "mie adozioni"
 				}
 		] %>
 	</aside>

@@ -15,7 +15,7 @@ module Filters
     filter_scope :scuola, ->(denominazione) { joins(:import_scuola).where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ?', "%#{denominazione}%") }
 
     filter_scope :mie_adozioni, ->  (q) { q == "si" ? where(EDITORE: Current.user.miei_editori) : all  }
-    filter_scope :da_acquistare, -> (q) { where(DAACQUIST: "Si") if q == "si" }
+    filter_scope :da_acquistare, -> (q) { q == "si" ? where(DAACQUIST: "Si") : all }
 
     filter_scope :nel_baule, -> (q) { filter_nel_baule(q) }  
     
