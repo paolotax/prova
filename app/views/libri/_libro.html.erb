@@ -1,4 +1,4 @@
-<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-10 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
+<%= tag.div id: dom_id(libro), class: "px-3 py-2.5 mb-2 grid grid-cols-9 items-center gap-2 bg-white rounded-lg shadow-lg border" do %>
 	
 	<%# situazio_hash = @situazio.find {|h| h["id"] == libro.id} %>
 	<%# situazio = LibroSituazio.new(situazio_hash) %>
@@ -8,14 +8,15 @@
 	<%= tag.div class: "col-span-4 flex flex-col" do %>
 		<%= link_to libro.titolo, libro_path(libro), data: { turbo_frame: "_top" }, class: "font-bold" %>
 		<%= tag.div libro.editore&.editore, class: "text-xs font-semibold text-gray-600" %>	
-		<%= tag.div libro.codice_isbn %>
+		<%= tag.div class: "flex justify-between items-center pr-4" do %>
+			<%= tag.div libro.codice_isbn %>
+			<%= tag.div number_to_currency(libro.prezzo_in_cents / 100.0), class: "text-right" %>
+		<% end %>
 	<% end %>
-
-    <%= tag.div number_to_currency(libro.prezzo_in_cents / 100.0), class: "col-span-1 text-right" %>
 	
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
       <%= tag.dt "Ordini", class: "truncate text-sm font-medium text-gray-500" %>
-      <%= tag.dd libro.giacenza&.ordini, class: ["mt-1 text-xl font-semibold tracking-tight text-gray-900",
+      <%= tag.dd libro.giacenza&.ordini, class: ["mt-1 text-xl font-semibold tracking-tight text-red-500",
 	  										"text-transparent": libro.giacenza&.ordini == 0] %>
     <% end %>
 
@@ -33,7 +34,7 @@
 
 	<%= tag.div class: "col-span-1 overflow-hidden rounded-lg bg-white px-4 py-0.5 shadow sm:px-6" do %>
       <%= tag.dt "Adozioni", class: "truncate text-sm font-medium text-gray-500" %>
-      <%#= tag.dd situazio.venduto, class: ["mt-1 text-xl font-semibold tracking-tight text-red-500",
+      <%#= tag.dd libro..venduto, class: ["mt-1 text-xl font-semibold tracking-tight text-red-500",
 	  										"text-transparent": situazio.venduto == 0] %>
     <% end %>
 

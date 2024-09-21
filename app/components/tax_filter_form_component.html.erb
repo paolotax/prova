@@ -16,7 +16,12 @@
                     <%#= form.label field[:field], field[:label].to_s.capitalize %>
                     <%= form.select field[:field], options_for_select(field[:collection], filter_params[field[:field]]), { include_blank: field[:placeholder] }, { class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" } %>
                     <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
-
+                
+                <% elsif field[:type] == :checkbox %>
+                    <%= check_box_tag field[:field], "si", filter_params[field[:field]] == "si", {} %>
+                    <%#= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
+                    <%= form.label field[:field], field[:label].to_s %>
+                    
                 <% end %>
             <% end %>
         <% end %>
