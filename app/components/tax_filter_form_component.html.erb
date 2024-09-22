@@ -1,6 +1,6 @@
 <%= form_with(url: @url, method: :get, id: "form-filter", class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>
     <%# my-4 px-8 py-6 min-w-[260px] inline-flex gap-6 bg-white rounded-lg border %>
-    <%= tag.div(class: "flex flex-row lg:flex-col gap-2") do %>
+    <%= tag.div(class: "flex flex-row lg:flex-col gap-3") do %>
 
 
         <% @fields.each do |field| %>
@@ -18,11 +18,8 @@
                     <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
                 
                 <% elsif field[:type] == :checkbox %>
-                    <%= toggle_button_tag( params[field[:field]] == "si", field[:placeholder], field[:label] )%>
-                    <%#= check_box_tag field[:field], "si", filter_params[field[:field]] == "si", {} %>
-                    <%#= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600", aria: { hidden: "true" } %>                           
-                    <%#= form.label field[:field], field[:label].to_s %>
-                    
+
+                    <%= toggle_button_tag( params[field[:field]] == "si", field[:placeholder], field[:label] )%>                    
                 <% end %>
             <% end %>
         <% end %>
