@@ -1,6 +1,6 @@
 <div class="mx-auto md:w-10/12 w-full flex gap-8">
 
-  <%= tag.div class: "max-w-64 max-h-screen	overflow-y-scroll pr-2" do %>
+  <%= tag.div class: "hidden xl:block min-w-64 max-h-screen	overflow-y-scroll pr-2" do %>
     <%= component 'tax_filter_form', base_url: documenti_path, 
         fields: [ 
           {
@@ -37,11 +37,7 @@
         ] %>
     <%= render partial: "documento_card", collection: @documenti, as: :documento %>
   <% end %>
-
-
-
-
-  
+ 
   <%= tag.div class: "flex flex-col w-full" do%>
     <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 

@@ -19,7 +19,13 @@
                 
                 <% elsif field[:type] == :checkbox %>
 
-                    <%= toggle_button_tag( params[field[:field]] == "si", field[:placeholder], field[:label] )%>                    
+                    <%#= toggle_button_tag( params[field[:field]] == "si", field[:placeholder], field[:label] )%>                    
+
+                    <%= component "tax_toggle_button", 
+                            field: field[:field],
+                            checked: params[field[:field]] == "si", 
+                            button_color: "gray-900" %>
+
                 <% end %>
             <% end %>
         <% end %>

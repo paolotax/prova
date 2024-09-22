@@ -1,10 +1,11 @@
 {
   "version": "1.0.4",
   "createdAt": "2024-09-21T19:59:02.286Z",
-  "updatedAt": "2024-09-21T19:59:02.286Z",
+  "updatedAt": "2024-09-22T15:45:36.713Z",
   "options": {
     "ignoredControllerIdentifiers": [
-      "tax-checkbox-select-all"
+      "tax-checkbox-select-all",
+      "tax-toggle-button"
     ],
     "ignoredAttributes": []
   }
