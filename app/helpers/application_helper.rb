@@ -110,7 +110,7 @@ module ApplicationHelper
       button_css = "bg-gray-900"
       span_css   = "translate-x-5"
     else
-      button_css = "bg-gray-200"
+      button_css = "bg-gray-100"
       span_css   = "translate-x-0"
     end      
     render partial: "layouts/toggle_button", locals: { html_id: html_id, checked: checked, label: label, button_css: button_css, span_css: span_css }

@@ -5,7 +5,7 @@
                 caption: "Indietro",
                 svg_file: "icon-arrow-long-left.svg",
                 color: "white",
-                url: url_for( controller: "adozioni", action: "index", params: [] ) %>
+                url: 'javascript:history.back()' %>
     <% end %>
     <% heading.with_action do %>
         <%= component 'tax_button',

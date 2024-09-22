@@ -1,14 +1,14 @@
-<%# Toggletax button basato su TailwindUI %>
+<%# tax_toggle_button button basato su TailwindUI %>
 
-<div data-controller="toggletax" class="flex  items-center">
+<div data-controller="tax-toggle-button" class="flex  items-center">
 
-    <%= hidden_field_tag "#{ label.parameterize(separator: "_")}", checked  ? "si" : "no", data: { toggletax_target: "field" } %>
+    <%= hidden_field_tag "#{ label.parameterize(separator: "_")}", checked  ? "si" : "no", data: { tax_toggle_button_target: "field" } %>
     
     <%= button_tag type: "button", 
         class: "#{button_css} relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2", 
         role: "switch",
        
-        data: { toggletax_target: "button", action: "click->toggletax#toggle" },
+        data: { tax_toggle_button_target: "button", action: "click->tax-toggle-button#toggle" },
         
         "aria-checked": checked, 
         "aria-labelledby": "label-#{ html_id }-label",
@@ -16,7 +16,7 @@
         form: "form-filter" do %>      
         
         <span
-            data-toggletax-target="pushbutton" 
+            data-tax-toggle-button-target="pushbutton" 
             
             aria-hidden="false" 
             class="<%= span_css %> pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
