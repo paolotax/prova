@@ -1,4 +1,4 @@
-<div class= "sticky top-20">
+<div class="sticky top-20 z-10">
 
     <%= component "heading/with_actions" do |heading| %>
         
@@ -45,7 +45,7 @@
 
 </div>
   
-<%= turbo_frame_tag :search_results, data: {controller: 'tax-checkbox-select-all'} do %>
+<%= turbo_frame_tag :search_results do %>
 
     <%= turbo_frame_tag "libri_page_#{@pagy.page}" do %> 
 		
@@ -76,7 +76,6 @@
 	<% end %>
 
     <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
-
     <%#= tag.div id: "libri-lista", class: "sm:px-2" do %>
         <%# <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p> %>
         
@@ -98,54 +97,56 @@
         <%# end %>
     <%# end %>
 
+    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
+        <!-- Secondary column (hidden on smaller screens) -->
+        <%= component 'tax_filter_form', base_url: libri_path, 
+            
+            fields: [ 
+                {
+                    field: :titolo,
+                    label: "Titolo",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "titolo..."
+                }, {
+                    field: :editore,
+                    label: "Editore",
+                    collection: current_user.miei_editori,
+                    type: :select,
+                    placeholder: "scegli editore..."
+                }, {
+                    field: :categoria,
+                    label: "Categoria",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "categoria..."
+                }, {
+                    field: :disciplina,
+                    label: "Disciplina",
+                    collection: nil,
+                    type: :text,
+                    placeholder: "disciplina..."
+                }, {
+                    field: :classe,
+                    label: "Classe",
+                    collection: [ "1", "2", "3", "4", "5" ],
+                    type: :select,
+                    placeholder: "scegli la classe..."
+                }, {
+                    field: :ordini,
+                    label: "Classe",
+                    collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
+                    type: :select,
+                    placeholder: "ordini..."
+                }
+            
+            ] %>
+
+    </aside>
+
 <% end %>
 
-<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
-    <!-- Secondary column (hidden on smaller screens) -->
-    <%= component 'tax_filter_form', base_url: libri_path, 
-        
-        fields: [ 
-            {
-                field: :titolo,
-                label: "Titolo",
-                collection: nil,
-                type: :text,
-                placeholder: "titolo..."
-            }, {
-                field: :editore,
-                label: "Editore",
-                collection: current_user.miei_editori,
-                type: :select,
-                placeholder: "scegli editore..."
-            }, {
-                field: :categoria,
-                label: "Categoria",
-                collection: nil,
-                type: :text,
-                placeholder: "categoria..."
-            }, {
-                field: :disciplina,
-                label: "Disciplina",
-                collection: nil,
-                type: :text,
-                placeholder: "disciplina..."
-            }, {
-                field: :classe,
-                label: "Classe",
-                collection: [ "1", "2", "3", "4", "5" ],
-                type: :select,
-                placeholder: "scegli la classe..."
-            }, {
-                field: :ordini,
-                label: "Classe",
-                collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
-                type: :select,
-                placeholder: "ordini..."
-            }
-        
-        ] %>
 
-</aside>
 
 
 
