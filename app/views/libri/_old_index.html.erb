@@ -30,13 +30,11 @@
         <% end %>
             
         <% heading.with_action do %>    
-            <div id="button-excel-libri">
-                <%= component 'tax_button',
+            <%= component 'tax_button',
                     caption: "Excel",
                     svg_file: "icon-excel-bis.svg",
                     color: "green",
-                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters ) %>
-            </div>
+                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters.except(:page) ) %>
         <% end %>
 
         <% heading.with_action do %>
@@ -57,20 +55,55 @@
   
 <%= turbo_frame_tag :search_results do %>
 
-    <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
-    <%= tag.div id: "libri-lista", class: "grid grid-cols-1 lg:pr-[15rem]" do %>
-        <p class="only:block hidden py-32 px-4 text-center xl:col-span-2 lg:pr-[15rem]">Whoops! Non ci sono libri </p>
-        
-        <%= render @page.records %>
+    <%= turbo_frame_tag "libri_page_#{@pagy.page}" do %> 
+		
+		<div id="libri" role="list" class="grid grid-cols-1 lg:pr-[15rem]">
+			<p class="only:block hidden py-8 px-4 text-center lg:pr-[15rem]">
+				Whoops! Non ci sono libri. 
+		    </p>
 
-        <% unless @page.last? %>
-			<%= turbo_frame_tag "load_more",
-						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),
+			<%= render @libri %>
+		</div>
+		
+		<% if @pagy.next %>
+			<%= turbo_frame_tag "libri_page_#{@pagy.next}",
+						src: libri_path(
+                                search: params[:search],
+                                editore: params[:editore],
+                                titolo: params[:titolo],
+                                disciplina: params[:disciplina],
+                                categoria: params[:categoria],
+                                classe: params[:classe],
+                                ordini: params[:ordini],
+                                page: @pagy.next),
 						loading: :lazy do %>
+				
 				<%= render 'shared/lazy_loading' %>
 			<% end %>
 		<% end %>
-    <% end %>
+	<% end %>
+
+    <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
+    <%#= tag.div id: "libri-lista", class: "sm:px-2" do %>
+        <%# <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p> %>
+        
+        <%#= render @page.records %>
+
+        <%# unless @page.last? %>
+            <%#= turbo_frame_tag "load_more", src: libri_path(                              
+                page: @page.next_param, 
+                                    format: :turbo_stream,
+                                    search: params[:search],
+                                    editore: params[:editore],
+                                    titolo: params[:titolo],
+                                    disciplina: params[:disciplina],
+                                    categoria: params[:categoria],
+                                    classe: params[:classe]
+                              ), loading: :lazy do %>
+                <%#= render 'shared/lazy_loading' %>
+            <%# end %>
+        <%# end %>
+    <%# end %>
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
         <!-- Secondary column (hidden on smaller screens) -->

@@ -14,15 +14,17 @@ class LibriController < ApplicationController
     
     
     #@pagy, @libri = pagy(@libri.all, items: 20, link_extra: 'data-turbo-action="advance"')
-    
-    respond_to do |format|
-      format.html { @pagy, @libri = pagy(@libri.all, items: 20, link_extra: 'data-turbo-action="advance"') }
-      format.xlsx { @libri_xls = @libri }
-    end
-
 
     # tolto geared_pagination e index.turbo_stream perchè non funziona con redirect destroy
-    # set_page_and_extract_portion_from @libri
+    
+    set_page_and_extract_portion_from @libri
+    
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+      format.xlsx 
+    end
+
   end
 
   def show
@@ -87,7 +89,7 @@ class LibriController < ApplicationController
       #   render turbo_stream: turbo_stream.remove(@libro)
       #   flash.now[:notice] = "Libro eliminato." 
       # end 
-      format.html { redirect_to libri_url, status: :see_other, alert: "Libro eliminato!" }
+      format.html { redirect_to libro_url(@libro.next), status: :see_other, alert: "Libro eliminato!" }
       format.json { head :no_content }
     end
   end

@@ -1,4 +1,4 @@
-<%= form_with(url: @url, method: :get, id: "form-filter", class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>
+<%= form_with(url: @url, method: :get, data: { turbo_stream: true }, id: "form-filter", class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>
     <%# my-4 px-8 py-6 min-w-[260px] inline-flex gap-6 bg-white rounded-lg border %>
     <%= tag.div(class: "flex flex-row lg:flex-col gap-3") do %>
 
@@ -40,7 +40,7 @@
                 Filtra
             <% end %>
 
-            <%=  link_to "reset", @url, class: "text-xs font-semibold text-red-500", data: { turbo_action: "advance" } %>
+            <%=  link_to "reset", @url, class: "text-xs font-semibold text-red-500", data: { turbo_action: "advance", turbo_stream: true} %>
         <% end %>
         
     <% end %>
