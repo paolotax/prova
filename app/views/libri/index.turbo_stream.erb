@@ -2,6 +2,7 @@
 
 <% if @page.first? %>
     
+    
     <%= turbo_stream.replace "button-excel-libri" do %>
         <div id="button-excel-libri">
             <%= component 'tax_button',
@@ -90,7 +91,7 @@
             <%= tag.div "Fine dei Librini!", class: "py-8 px-4 text-center" %>
         <% else %>
 			<%= turbo_frame_tag "load_more",
-						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),
+						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)),
 						loading: :lazy do %>
 				<%= render 'shared/lazy_loading' %>
 			<% end %>

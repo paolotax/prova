@@ -35,7 +35,8 @@
                     caption: "Excel",
                     svg_file: "icon-excel-bis.svg",
                     color: "green",
-                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters ) %>
+                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters ),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
             </div>
         <% end %>
 
@@ -65,7 +66,7 @@
 
         <% unless @page.last? %>
 			<%= turbo_frame_tag "load_more",
-						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),
+						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)),
 						loading: :lazy do %>
 				<%= render 'shared/lazy_loading' %>
 			<% end %>
