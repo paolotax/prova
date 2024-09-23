@@ -1,0 +1,14 @@
+wb = xlsx_package.workbook
+
+fields = [ "codice_isbn", "titolo", "editore", "categoria", "prezzo", "sconto", "ordini", "vendite", "carichi"]
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+    sheet.add_row  fields
+  
+  
+    @libri_xls.each do |row|
+        sheet.add_row [ row.codice_isbn, row.titolo, row&.editore&.editore, row.categoria, row&.giacenza&.ordini, row&.giacenza&.vendite, row&.giacenza&.carichi ] 
+    end
+
+end

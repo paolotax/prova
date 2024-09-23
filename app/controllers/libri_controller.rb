@@ -11,10 +11,16 @@ class LibriController < ApplicationController
     @libri = current_user.libri.includes(:editore, :adozioni, :giacenza).order(:categoria, :titolo, :classe)
     @libri = filter(@libri.all)
     
-    #@situazio = Libro.crosstab
-
-    @pagy, @libri = pagy(@libri, items: 20, link_extra: 'data-turbo-action="advance"')
     
+    
+    #@pagy, @libri = pagy(@libri.all, items: 20, link_extra: 'data-turbo-action="advance"')
+    
+    respond_to do |format|
+      format.html { @pagy, @libri = pagy(@libri.all, items: 20, link_extra: 'data-turbo-action="advance"') }
+      format.xlsx { @libri_xls = @libri }
+    end
+
+
     # tolto geared_pagination e index.turbo_stream perchè non funziona con redirect destroy
     # set_page_and_extract_portion_from @libri
   end

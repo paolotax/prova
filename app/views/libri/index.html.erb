@@ -28,6 +28,14 @@
                 <% end %>
             <% end %>
         <% end %>
+            
+        <% heading.with_action do %>    
+            <%= component 'tax_button',
+                    caption: "Excel",
+                    svg_file: "icon-excel-bis.svg",
+                    color: "green",
+                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters.except(:page) ) %>
+        <% end %>
 
         <% heading.with_action do %>
             <%= component 'tax_button',  
