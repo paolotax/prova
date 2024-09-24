@@ -1,25 +1,17 @@
 
 <%= render SlideOverComponent.new(slide_over_max_width: "max-w-sm") do |slide_over| %>
-    
+    <% slide_over.with_close_button %>
     <% slide_over.with_leader do %>
         <div class="px-4 py-5 bg-gray-50">
-        <h2 class="pr-6 text-lg font-semibold text-gray-800">
-            Filtra librini
-        </h2>
-        <p class="mt-1.5 text-sm text-gray-500">
-            Imposta i filtri che vuoi e premi Filtra o Reset per azzerare la ricerca.
-        </p>
+            <h2 class="pr-6 text-lg font-semibold text-gray-800">
+                Filtra librini
+            </h2>
+            <p class="mt-1.5 text-sm text-gray-500">
+                Imposta i filtri che vuoi e premi Filtra o Reset per azzerare la ricerca.
+            </p>
         </div>
     <% end %>
-    
-    <% slide_over.with_trailer do %>
-        <div class="fixed bottom-0 flex items-center justify-end w-full max-w-sm px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
-        <%# When using a “submit” type/method, the Slide Over hides using `turbo:submit-end->dialog#hideOnSubmit` %>
-            <%= button_tag "Chiudi", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-300" %>
-            <%#= button_tag "Continue", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-sky-50 bg-sky-500 border border-sky-600 rounded-md hover:bg-sky-600" %>
-        </div>
-    <% end %>
-    
+        
     <%= tag.div class: "px-4" do %>
         <%= render "filter_form" %>
     <% end %>
