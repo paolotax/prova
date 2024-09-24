@@ -1,5 +1,6 @@
 # encoding: utf-8
 require "prawn/measurement_extensions"
+require "prawn-html"
 
 class AppuntoPdf < Prawn::Document
   
@@ -18,6 +19,9 @@ class AppuntoPdf < Prawn::Document
               :Producer => "Prawn",
               :CreationDate => Time.now
           })
+    
+
+    
     
     @appunti = appunti
     @view = view
@@ -48,7 +52,11 @@ class AppuntoPdf < Prawn::Document
     text appunto.nome, :size => 13
 
 
-    text @view.sanitize(appunto.content.body.to_s.gsub("<br>", " \r "), attributes: [], tags: []), :size => 13, inline_format: true
+    text @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: []), :size => 13, inline_format: true
+    #@phtml = PrawnHtml::Instance.new(self)
+
+    #@phtml.append(html: appunto.content.body.to_s)
+
     #text "tel. #{appunto.telefono}", :size => 13 unless appunto.telefono.blank?
   end
   
