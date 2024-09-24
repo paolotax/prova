@@ -85,118 +85,12 @@
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
         <!-- Secondary column (hidden on smaller screens) -->
-        <%= component 'tax_filter_form', base_url: libri_path, 
-            
-            fields: [ 
-                {
-                    field: :search,
-                    label: "Titolo",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "titolo..."
-                }, {
-                    field: :editore,
-                    label: "Editore",
-                    collection: current_user.miei_editori,
-                    type: :select,
-                    placeholder: "scegli editore..."
-                }, {
-                    field: :categoria,
-                    label: "Categoria",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "categoria..."
-                }, {
-                    field: :disciplina,
-                    label: "Disciplina",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "disciplina..."
-                }, {
-                    field: :classe,
-                    label: "Classe",
-                    collection: [ "1", "2", "3", "4", "5" ],
-                    type: :select,
-                    placeholder: "scegli la classe..."
-                }, {
-                    field: :ordini,
-                    label: "Classe",
-                    collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
-                    type: :select,
-                    placeholder: "ordini..."
-                }
-            
-            ] %>
-
+        <%= render "filter_form" %>
     </aside>
 
-    <%= render SlideOverComponent.new() do |slide_over| %>
-        <% slide_over.with_leader do %>
-            <div class="px-4 py-5 bg-gray-50">
-            <h2 class="pr-6 text-lg font-semibold text-gray-800">
-                Filtra librini
-            </h2>
-            <p class="mt-1.5 text-sm text-gray-500">
-                Imposta i filtri che vuoi e premi Filtra o Reset per azzerare la ricerca.
-            </p>
-            </div>
-        <% end %>
-        <% slide_over.with_trailer do %>
-            <div class="fixed bottom-0 flex items-center justify-end w-full max-w-lg px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
-            <%# When using a “submit” type/method, the Slide Over hides using `turbo:submit-end->dialog#hideOnSubmit` %>
-                <%= button_tag "Chiudi", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-300" %>
-                <%#= button_tag "Continue", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-sky-50 bg-sky-500 border border-sky-600 rounded-md hover:bg-sky-600" %>
-            </div>
-        <% end %>
-        
-        <%= tag.div class: "px-4" do%>
-            <%= component 'tax_filter_form', base_url: libri_path, 
-                    
-                    fields: [ 
-                        {
-                            field: :search,
-                            label: "Titolo",
-                            collection: nil,
-                            type: :text,
-                            placeholder: "titolo..."
-                        }, {
-                            field: :editore,
-                            label: "Editore",
-                            collection: current_user.miei_editori,
-                            type: :select,
-                            placeholder: "scegli editore..."
-                        }, {
-                            field: :categoria,
-                            label: "Categoria",
-                            collection: nil,
-                            type: :text,
-                            placeholder: "categoria..."
-                        }, {
-                            field: :disciplina,
-                            label: "Disciplina",
-                            collection: nil,
-                            type: :text,
-                            placeholder: "disciplina..."
-                        }, {
-                            field: :classe,
-                            label: "Classe",
-                            collection: [ "1", "2", "3", "4", "5" ],
-                            type: :select,
-                            placeholder: "scegli la classe..."
-                        }, {
-                            field: :ordini,
-                            label: "Classe",
-                            collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
-                            type: :select,
-                            placeholder: "ordini..."
-                        }
-                    
-                    ] %>
-        <% end %>
-    
-   
-    <% end %>
-
+    <div class="lg:hidden block">
+        <%= render "slide_filter" %>
+    </div>
 <% end %>
 
 

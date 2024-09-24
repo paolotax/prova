@@ -70,7 +70,6 @@ Rails.application.routes.draw do
   end
     
   resources :libri do
-
     member do 
       get 'get_prezzo_copertina_cents'
     end
