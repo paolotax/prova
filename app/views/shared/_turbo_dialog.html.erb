@@ -2,8 +2,8 @@
 
     <dialog 
         
-        data-controller="dialog"
-        data-action="click->dialog#clickOutside"
+        data-controller="old-dialog"
+        data-action="click->old-dialog#clickOutside"
         class="z-10 backdrop:bg-black backdrop:bg-opacity-80 
             transform overflow-y-scroll rounded-lg bg-white
             shadow-xl transition-all 
@@ -12,7 +12,7 @@
             sm:w-full px-4 py-4 sm:p-6" 
         >
         <div class="absolute right-4 top-4 sm:block">
-            <button type="button" tabindex="-1" data-action="dialog#close" 
+            <button type="button" tabindex="-1" data-action="old-dialog#close" 
                 class="rounded-md bg-white text-gray-400 hover:text-gray-500 
                         focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
