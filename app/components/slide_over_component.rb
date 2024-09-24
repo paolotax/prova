@@ -40,7 +40,7 @@ class SlideOverComponent < ViewComponent::Base
 
   def slide_over_css
     class_names(
-      "flex flex-col relative z-20 w-full h-screen bg-white shadow-lg ring-1 ring-offset-0 ring-gray-100 md:shadow-xl lg:shadow-2xl",
+      "flex flex-col relative z-40 w-full h-screen bg-white shadow-lg ring-1 ring-offset-0 ring-gray-100 md:shadow-xl lg:shadow-2xl",
       @slide_over_max_width
     )
   end

@@ -1,0 +1,52 @@
+<%= component 'tax_filter_form', base_url: documenti_path, 
+    fields: [ 
+        {
+            field: :search,
+            label: "Scuola",
+            collection: nil,
+            type: :text,
+            placeholder: "scuola..."
+        }, {
+            field: :titolo,
+            label: "Titolo",
+            collection: nil,
+            type: :text,
+            placeholder: "titolo..."
+        }, {
+            field: :editore,
+            label: "Editore",
+            collection: nil,
+            type: :text,
+            placeholder: "editore..."
+        }, {
+            field: :disciplina,
+            label: "Disciplina",
+            collection: nil,
+            type: :text,
+            placeholder: "disciplina..."
+        }, {
+            field: :classe,
+            label: "Classe",
+            collection: ["1", "2", "3", "4", "5"],
+            type: :select,
+            placeholder: "classe..."
+        }, {
+            field: :nel_baule,
+            label: "Nel baule",
+            collection: ["oggi", "domani"],
+            type: :select,
+            placeholder: "nel baule?"
+        }, {
+            field: :da_acquistare,
+            label: "acquistare",  # uso la label per queryopt
+            collection: ["si", "no"],
+            type: :checkbox,
+            placeholder: "da acquistare"
+        }, {
+            field: :mie_adozioni,
+            label: "adozioni",
+            collection: ["si", "no"],
+            type: :checkbox,
+            placeholder: "mie adozioni"
+        }
+] %>

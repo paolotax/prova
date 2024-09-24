@@ -1,5 +1,5 @@
 <turbo-frame id="slide-over">
-  <%= tag.div data: slide_over_data, tabindex: "-1", role: "dialog", aria_modal: "true", class: "isolate fixed inset-0 z-30 flex items-end justify-end w-full h-screen" do %>
+  <%= tag.div data: slide_over_data, tabindex: "-1", role: "dialog", aria_modal: "true", class: "fixed inset-0 z-30 flex items-end justify-end w-full h-screen" do %>
     <%= tag.button type: :button, data: {action: "dialog#hide"}, tabindex: "-1", class: backdrop_css %>
 
     <%= tag.div class: slide_over_css do %>
