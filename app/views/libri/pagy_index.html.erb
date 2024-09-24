@@ -34,7 +34,8 @@
                     caption: "Excel",
                     svg_file: "icon-excel-bis.svg",
                     color: "green",
-                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters.except(:page) ) %>
+                    url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters.except(:page) ),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
         <% end %>
 
         <% heading.with_action do %>

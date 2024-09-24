@@ -5,7 +5,8 @@
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
-                url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ) %> 
+                url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
+				data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %> 
     <% end %>
     <% heading.with_action do %>
 		<%= component 'tax_button',

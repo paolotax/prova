@@ -2,18 +2,6 @@
 
 <% if @page.first? %>
     
-    
-    <%= turbo_stream.replace "button-excel-libri" do %>
-        <div id="button-excel-libri">
-            <%= component 'tax_button',
-                        caption: "Excel",
-                        svg_file: "icon-excel-bis.svg",
-                        color: "green",
-                        url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters ) %>
-            
-        </div>
-    <% end %>
-
     <%= turbo_stream.replace "search_results" do %>
         <%= turbo_frame_tag "search_results" do %>
             <%= tag.div id: "libri-lista", class: " lg:pr-[15rem]" do %>
