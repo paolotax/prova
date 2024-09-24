@@ -67,17 +67,22 @@ class Appunto < ApplicationRecord
             rich_text_content: [:body],
             attachments_blobs: [:filename], 
             import_scuola: [:CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
-                              
+  
+  extend FilterableModel
+  class << self
+    def filter_proxy = Filters::AppuntoFilterProxy
+  end
 
   STATO_APPUNTI = ["da fare", "in evidenza", "in settimana", "in visione", "da pagare", "completato", "archiviato"]  
+  
   FILTERS = [ 
     ["Tutti",  "/appunti"], 
     ["Oggi",   "/appunti?filter=oggi"], 
     ["Domani", "/appunti?filter=domani"],
-    ["In sospeso", "/appunti?filter=in_sospeso"],
-    ["In settimana", "/appunti?filter=in_settimana"],
+    ["In sospeso", "/appunti?stato=in_sospeso"],
+    ["In settimana", "/appunti?stato=in_settimana"],
     ["Non archiviati", "/appunti?filter=non_archiviati"],
-    ["Archiviati", "/appunti?filter=archiviato"],
+    ["Archiviati", "/appunti?stato=archiviato"],
   ]
 
   

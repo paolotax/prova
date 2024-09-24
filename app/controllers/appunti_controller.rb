@@ -1,10 +1,13 @@
 class AppuntiController < ApplicationController
   
+  include FilterableController
+
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
   before_action :ensure_frame_response, only: %i[ new edit ]
 
   def index
+    
     @appunti = current_user.appunti.non_saggi.includes(:import_scuola, :import_adozione).order(created_at: :desc)
       
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
@@ -12,6 +15,8 @@ class AppuntiController < ApplicationController
     @appunti = @appunti.search(params[:q]) if params[:q]
     
     @appunti = filter_appunti(@appunti)
+
+    @appunti = filter(@appunti.all)
     
     @pagy, @appunti =  pagy(@appunti.all, items: 30)
 
@@ -125,24 +130,15 @@ class AppuntiController < ApplicationController
     end
 
 
+    def filter_params
+      {
+        search: params["search"],
+        stato: params["stato"]
+      }
+    end
 
     def filter_appunti(appunti)
-          
-      # appunti = appunti.non_archiviati.nel_baule_di_oggi if params[:filter] == "oggi"
-      # appunti = appunti.non_archiviati.nel_baule_di_domani if params[:filter] == "domani" 
-      
-      # appunti = appunti.non_archiviati if params[:filter] == "non_archiviati"       
-      # appunti = appunti.in_sospeso if params[:filter] == "in_sospeso" 
-      # appunti = appunti.da_fare if params[:filter] == "da_fare" 
-      # appunti = appunti.in_evidenza if params[:filter] == "in_evidenza"
-      # appunti = appunti.in_settimana if params[:filter] == "in_settimana"       
-      # appunti = appunti.in_visione if params[:filter] == "in_visione"
-      # appunti = appunti.da_pagare if params[:filter] == "da_pagare" 
-      # appunti = appunti.completato if params[:filter] == "completato" 
-      # appunti = appunti.archiviati if params[:filter] == "archiviato" 
-      # appunti
-      
-      
+            
       appunti.then { |appunti| params[:filter] == "archiviato" ? appunti.archiviati : appunti }
           .then { |appunti| params[:filter] == "completato" ? appunti.completato : appunti }
           .then { |appunti| params[:filter] == "da_pagare" ? appunti.da_pagare : appunti }

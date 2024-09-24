@@ -1,25 +1,27 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
-    
-    <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Excel",
-                svg_file: "icon-excel-bis.svg",
-                color: "green",
-                url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
-				data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %> 
-    <% end %>
-    <% heading.with_action do %>
-		<%= component 'tax_button',
-                caption: "Nuovo",
-                svg_file: "icon-plus.svg",
-                color: "blue",
-                url: url_for( controller: "appunti", action: "new", model: @appunto ),
-                data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
-    <% end %>
-    
-    <%= h1 {"Appunti"} %>
+<div class="sticky top-20 z-10">
+	<%= render Heading::WithActionsComponent.new do |heading| %>
+		
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+					caption: "Excel",
+					svg_file: "icon-excel-bis.svg",
+					color: "green",
+					url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %> 
+		<% end %>
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+					caption: "Nuovo",
+					svg_file: "icon-plus.svg",
+					color: "blue",
+					url: url_for( controller: "appunti", action: "new", model: @appunto ),
+					data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+		<% end %>
+		
+		<%= h1 {"Appunti"} %>
 
-<% end %>
+	<% end %>
+</div>
 
 <%= render TaxTabsComponent.new(
 				id: "search_results",	
@@ -69,8 +71,8 @@
 
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
-		<div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-			<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3">
+		<div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8 lg:pr-[15rem]">
+			<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3 lg:pr-[15rem]">
 				Whoops! Non ci sono appunti. 
 				
 				<% if current_user.import_scuole.blank? %>
@@ -101,6 +103,15 @@
 			<% end %>
 		<% end %>
 	<% end %>
+
+    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-80 lg:px-8 lg:block">
+        <!-- Secondary column (hidden on smaller screens) -->
+        <%= render "filter_form" %>
+    </aside>
+
+    <div class="lg:hidden block">
+        <%#= render "slide_filter" %>
+    </div>
 
 <% end %>
 

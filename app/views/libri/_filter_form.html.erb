@@ -37,6 +37,12 @@
             collection: [ ["ordini in corso", 0], [">= 20", 19], [">= 100", 99] ],
             type: :select,
             placeholder: "ordini..."
+        }, {
+            field: :incompleti,
+            label: "Incompleti",
+            collection: [ "si", "no" ],
+            type: :checkbox,
+            placeholder: "incompleti"
         }
     
     ] 

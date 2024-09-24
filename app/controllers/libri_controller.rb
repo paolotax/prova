@@ -117,7 +117,8 @@ class LibriController < ApplicationController
         disciplina: params["disciplina"],
         categoria: params["categoria"],
         classe: params["classe"],
-        ordini: params["ordini"]
+        ordini: params["ordini"],
+        incompleti: params["incompleti"]
       }
     end
 end

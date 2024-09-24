@@ -1,0 +1,19 @@
+<%= component 'tax_filter_form', base_url: appunti_path, 
+    
+    fields: [ 
+        {
+            field: :search,
+            label: "Cerca",
+            collection: nil,
+            type: :text,
+            placeholder: "cerca..."
+        }, {
+            field: :stato,
+            label: "Status",
+            collection: Appunto::STATO_APPUNTI.index_by(&:itself),
+            type: :select,
+            placeholder: "status..."
+        }
+    
+    ] 
+%>

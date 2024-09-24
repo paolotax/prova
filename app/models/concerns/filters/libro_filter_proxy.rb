@@ -2,7 +2,6 @@ module Filters
   module LibroFilterScopes
     extend FilterScopeable
 
-
     # We define scopes with out new method
     filter_scope :titolo, ->(name) { where("libri.titolo ILIKE ?", "%#{name}%") }
     filter_scope :disciplina, ->(name) { where("libri.disciplina ILIKE ?", "%#{name}%") }
@@ -11,6 +10,9 @@ module Filters
     filter_scope :classe, ->(classe) { where(classe: classe) }
     
     filter_scope :ordini, ->(ordini) { joins(:giacenza).where("view_giacenze.ordini > ?", ordini) }
+    
+    filter_scope :incompleti, ->(incompleti) { incompleti == "si" ? where("libri.editore_id IS NULL OR libri.categoria IS NULL") : all }
+    
     filter_scope :search, ->(search) { left_search(search) }
   end
 
