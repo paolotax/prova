@@ -33,8 +33,52 @@
 	<% end %>
 </div>
 
+<%= render TaxTabsComponent.new(
+				id: "search_results",	
+				container_css: "sticky z-20 top-16 bg-slate-100 bg-gradient-to-r from-purple-100 from-25% border-b rounded-t-lg", 
+				items_decorations: "", 
+				item_css: "block py-2 text-gray-500 hover:border-indigo-500 hover:text-indigo-600 flex whitespace-nowrap py-4 px-2 text-sm font-medium", 
+				active_item_css: "border-b-2 border-indigo-500 text-indigo-600",
+				options_for_select: Appunto::FILTERS) do |tabs| %>
 
-<%= turbo_frame_tag "search_results" do %>
+	<% tabs.with_item(href: appunti_path) do %>
+		<p class="">
+			Tutti
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.appunti.non_saggi.load.size %>
+			</span>
+		</p>
+	<% end %>
+	<% tabs.with_item(href: appunti_path(filter: "oggi")) do %>
+		<p class="">
+			Oggi
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.appunti.nel_baule_di_oggi.load.size %>
+			</span>
+		</p>
+	<% end %>
+	<% tabs.with_item(href: appunti_path(filter: "domani")) do %>
+		<p class="">
+			Domani
+			<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
+				<%= current_user.appunti.nel_baule_di_domani.load.size %>
+			</span>
+		</p>
+	<% end %>
+	<% tabs.with_item(href: appunti_path(filter: "in_sospeso")) do %>
+		<p class="">
+			In sospeso
+		</p>
+	<% end %>
+
+  	<% tabs.with_hidden_item(href: appunti_path(filter: "in_settimana")) { "In settimana" } %>
+  	<% tabs.with_hidden_item(href: appunti_path(filter: "non_archiviati")) { "Non archiviati" } %>
+	<% tabs.with_hidden_item(href: appunti_path(filter: "archiviato")) { "Archiviati" } %> 	
+
+<% end %>
+
+
+<%= turbo_frame_tag "search_results", data: {rd_tabs_target: "content"} do %>
 
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
@@ -68,7 +112,7 @@
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-52 lg:px-8 lg:block">
         <!-- Secondary column (hidden on smaller screens) -->
-        <%= render partial: "filter_form", locals: { reload: true } %>
+        <%= render "filter_form" %>
     </aside>
 
     <div class="lg:hidden block">
@@ -76,5 +120,3 @@
     </div>
 
 <% end %>
-
-

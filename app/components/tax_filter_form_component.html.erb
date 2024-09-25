@@ -1,8 +1,13 @@
-<%= form_with(url: @url, method: :get, id: "form-filter", class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>     
-    <%# my-4 px-8 py-6 min-w-[260px] inline-flex gap-6 bg-white rounded-lg border %>
+<%= form_with(url: @url, method: :get, 
+    id: "form-filter", 
+    data: form_data_attributes,
+    class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>     
+
     <%= tag.div(class: "flex-col space-y-3") do %>
         <% @fields.each do |field| %>
+            
             <%= tag.fieldset class: "relative" do %>
+            
                 <% if field[:type] == :text %>
 			        <%#= form.label field[:field], field[:label].to_s.capitalize %>
                     <%= form.text_field field[:field], value: filter_params[field[:field]],
@@ -12,7 +17,11 @@
                 
                 <% elsif field[:type] == :select %>
                     <%#= form.label field[:field], field[:label].to_s.capitalize %>
-                    <%= form.select field[:field], options_for_select(field[:collection], filter_params[field[:field]]), { include_blank: field[:placeholder] }, { class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" } %>
+                    <%= form.select field[:field], 
+                            options_for_select(field[:collection], 
+                            filter_params[field[:field]]), 
+                            { include_blank: field[:placeholder] }, 
+                            { data: field_data_attributes, class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" } %>
                     <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>                           
                 
                 <% elsif field[:type] == :checkbox %>
@@ -24,8 +33,12 @@
                 <% elsif field[:type] == :checkbox_group %>    
                     <% field[:collection].each do |cb| %>
                         <div class="flex items-center justify-start mb-1">
-                            <%= check_box_tag "#{field[:field]}[]", cb, filter_params[field[:field]]&.include?(cb),
-                                    id: "statuses_#{cb}", class: 'mr-4' %>
+                            <%= check_box_tag "#{field[:field]}[]", 
+                                    cb, 
+                                    filter_params[field[:field]]&.include?(cb),
+                                    id: "statuses_#{cb}", 
+                                    data: field_data_attributes,
+                                    class: 'mr-4' %>
                             <%= label_tag "statuses_#{cb}", cb %>
                         </div>
                     <% end %>

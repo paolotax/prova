@@ -28,7 +28,6 @@ export default class extends Controller {
     const newUrl = `${form.action}?${params.toString()}`;
 
     Turbo.visit(newUrl, { frame: "search_results", action: "advance" });
-    // history.pushState({}, "", newUrl);
   }
 
 }
