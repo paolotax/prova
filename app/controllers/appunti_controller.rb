@@ -133,7 +133,8 @@ class AppuntiController < ApplicationController
     def filter_params
       {
         search: params["search"],
-        stato: params["stato"]
+        stato: params["stato"],
+        statuses: params["statuses"]
       }
     end
 

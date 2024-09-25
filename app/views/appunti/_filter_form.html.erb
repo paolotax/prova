@@ -8,10 +8,10 @@
             type: :text,
             placeholder: "cerca..."
         }, {
-            field: :stato,
+            field: :statuses,
             label: "Status",
-            collection: Appunto::STATO_APPUNTI.index_by(&:itself),
-            type: :select,
+            collection: Appunto::STATO_APPUNTI.map(&:itself),
+            type: :checkbox_group,
             placeholder: "status..."
         }
     

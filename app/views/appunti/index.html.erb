@@ -17,6 +17,16 @@
 					url: url_for( controller: "appunti", action: "new", model: @appunto ),
 					data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
 		<% end %>
+		<% heading.with_action do %>
+            <%= tag.div class: "block lg:hidden" do %>
+                <%= component 'tax_button',
+                    caption: "Filtra",
+                    svg_file: "icon-funnel.svg",
+                    color: "white",
+                    url: "#",
+                    data_attr: { turbo_frame: "slide-over" } %>
+            <% end %>
+        <% end %>
 		
 		<%= h1 {"Appunti"} %>
 
@@ -104,13 +114,13 @@
 		<% end %>
 	<% end %>
 
-    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-80 lg:px-8 lg:block">
+    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-64 lg:px-8 lg:block">
         <!-- Secondary column (hidden on smaller screens) -->
         <%= render "filter_form" %>
     </aside>
 
     <div class="lg:hidden block">
-        <%#= render "slide_filter" %>
+        <%= render "slide_filter" %>
     </div>
 
 <% end %>

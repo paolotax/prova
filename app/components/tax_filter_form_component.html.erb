@@ -20,7 +20,15 @@
                             field: field[:field],
                             checked: params[field[:field]] == "si", 
                             button_color: "gray-900" %>
-
+                
+                <% elsif field[:type] == :checkbox_group %>    
+                    <% field[:collection].each do |cb| %>
+                        <div class="flex items-center justify-start mb-1">
+                            <%= check_box_tag "#{field[:field]}[]", cb, filter_params[field[:field]]&.include?(cb),
+                                    id: "statuses_#{cb}", class: 'mr-4' %>
+                            <%= label_tag "statuses_#{cb}", cb %>
+                        </div>
+                    <% end %>
                 <% end %>
             <% end %>
         <% end %>
