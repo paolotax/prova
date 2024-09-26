@@ -1,4 +1,8 @@
-module MultistepFormModel
+module MultistepFormModel 
+  
+
+
+  
   ERROR_ATTRIBUTE = :current_step
   ERROR_DETAIL = :incompleted_multistep_form
 
