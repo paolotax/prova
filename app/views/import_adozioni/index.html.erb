@@ -68,7 +68,7 @@
 	<% end %>
 
 	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-72 lg:px-8 lg:block">
-		<%= render "filter_form"%>
+		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
 
 	<div class="lg:hidden block">

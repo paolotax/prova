@@ -1,4 +1,6 @@
-<%= component 'tax_filter_form', base_url: documenti_path, 
+<%# locals: ( reload: false ) -%>
+
+<%= component 'tax_filter_form', base_url: documenti_path, reload: reload,
     fields: [ 
         {
             field: :search,
