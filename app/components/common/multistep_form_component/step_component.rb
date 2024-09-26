@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Common
   class MultistepFormComponent::StepComponent < ApplicationComponent
     class << self

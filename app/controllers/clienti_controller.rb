@@ -25,16 +25,25 @@ class ClientiController < ApplicationController
   end
 
   def create
-    result = ClienteCreator.new.create_cliente(
-               current_user.clienti.new(cliente_params)
-    )
-    if result.created?
-      redirect_to clienti_url, notice: "Cliente inserito."
-      #redirect_to cliente_path(result.cliente)
+    @cliente = current_user.clienti.new(cliente_params)
+
+    if @cliente.save
+      redirect_to(cliente_path(@cliente), notice: "Cliente inserito.") # rubocop:disable Rails/I18nLocaleTexts
     else
-      @cliente = result.cliente
-      render :new, status: :unprocessable_entity
+      response.status = :unprocessable_entity
     end
+
+
+    # result = ClienteCreator.new.create_cliente(
+    #            current_user.clienti.new(cliente_params)
+    # )
+    # if result.created?
+    #   redirect_to clienti_url, notice: "Cliente inserito."
+    #   #redirect_to cliente_path(result.cliente)
+    # else
+    #   @cliente = result.cliente
+    #   render :new, status: :unprocessable_entity
+    # end
   end
 
   def update
@@ -65,7 +74,12 @@ class ClientiController < ApplicationController
     end
 
     def cliente_params
-      params.require(:cliente).permit(:user, :file, :total_steps, :current_step, :codice_cliente, :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, :id_paese, :partita_iva, :codice_fiscale, :denominazione, :nome, :cognome, :codice_eori, :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
+      params.require(:cliente).permit(:user, :file, :total_steps, :current_step, :latest_step, :codice_cliente, 
+              :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, 
+              :id_paese, :partita_iva, :codice_fiscale, :denominazione, 
+              :nome, :cognome, :codice_eori, 
+              :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, 
+              :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
     end
 
     def cliente_import_params
