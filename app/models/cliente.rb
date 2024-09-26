@@ -46,6 +46,7 @@ class Cliente < ApplicationRecord
     def filter_proxy = Filters::ClienteFilterProxy
   end
 
+  include MultistepFormModel
   include Searchable
   search_on :denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome
 
