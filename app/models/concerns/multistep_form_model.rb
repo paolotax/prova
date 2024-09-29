@@ -14,7 +14,10 @@ module MultistepFormModel
 
   private
 
-  def all_multistep_form_steps_completed? = current_step == total_steps
+  def all_multistep_form_steps_completed? = current_step == (total_steps.to_i - 1).to_s
+  #
+  #
+  #tdef all_multistep_form_steps_completed? = current_step == total_steps
 
   def all_multistep_form_steps_completed
     errors.add(ERROR_ATTRIBUTE, ERROR_DETAIL) unless all_multistep_form_steps_completed?

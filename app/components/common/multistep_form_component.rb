@@ -27,7 +27,7 @@ module Common
         concat(form.hidden_field(:current_step, value: current_step_index))
 
         steps.each_with_index do |step, index|
-          concat(step_wrapper(step, index) { render step.new(multistep_component: self, index:) })
+          concat(step_wrapper(step, index) { render step.new(multistep_component: self, index: index) })
         end
       end
     end
@@ -68,12 +68,14 @@ module Common
       previous_step = model.current_step&.to_i
 
       @current_step_index =
+        
         if model.current_step.nil?
           0
         else
           next_step = previous_step + (steps[previous_step].completed?(model) ? 1 : 0)
           [next_step, first_incompleted_step_index].compact.min
         end
+    
     end
 
     def latest_step_index
@@ -93,7 +95,7 @@ module Common
 
     def clear_next_steps_errors
       return if model.errors.blank?
-
+      
       (steps[(latest_step_index + 1)..] || []).each do |step|
         step.input_attributes.each { |k| model.errors.delete(k) }
       end

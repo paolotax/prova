@@ -30,6 +30,7 @@ class ClientiController < ApplicationController
     if @cliente.save
       redirect_to(cliente_path(@cliente), notice: "Cliente inserito.") # rubocop:disable Rails/I18nLocaleTexts
     else
+     # raise params.inspect
       response.status = :unprocessable_entity
     end
 

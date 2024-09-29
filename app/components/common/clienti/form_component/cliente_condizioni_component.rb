@@ -10,7 +10,13 @@ module Common
     end
 
     def call
+      
       tag.div(**wrapper_attributes) do
+        concat(
+          tag.div(class: "flex flex-col gap-2") do
+            "#{form.object.current_step}:current_step   #{form.object.latest_step}:latest_step"
+          end
+        )
         concat(
           tag.div(class: "flex flex-col gap-2") do
             concat(form.label(:condizioni_di_pagamento, "Condizioni di pagamento", class: "text-sm"))
@@ -23,6 +29,12 @@ module Common
           end
         )
       end
+    end
+    
+    private
+
+    def default_html_attributes
+      concat_html_attributes(super, { class: "flex flex-col gap-4" })
     end
 
   end
