@@ -49,7 +49,7 @@ class Cliente < ApplicationRecord
   include Searchable
   search_on :denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome
 
-  validates :partita_iva, presence: true, numericality: true, length: { is: 11 }, uniqueness: { scope: :user_id }
+  #validates :partita_iva, presence: true, numericality: true, length: { is: 11 }, uniqueness: { scope: :user_id }
   validates :denominazione, presence: true
 
   validates :condizioni_di_pagamento, presence: true

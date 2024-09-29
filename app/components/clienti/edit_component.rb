@@ -14,7 +14,7 @@ module Clienti
         form_url: cliente_path(cliente),
         back_url: cliente_path(cliente),
         model: cliente,
-        html_attributes: wrapper_attributes
+        html_attributes:  { class: "w-full sm:max-w-[700px] sm:mx-auto gap-4" } # wrapper_attributes
       )
     end
   end

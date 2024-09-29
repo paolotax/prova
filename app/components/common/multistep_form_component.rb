@@ -96,6 +96,7 @@ module Common
     def clear_next_steps_errors
       return if model.errors.blank?
       
+
       (steps[(latest_step_index + 1)..] || []).each do |step|
         step.input_attributes.each { |k| model.errors.delete(k) }
       end

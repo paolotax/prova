@@ -12,6 +12,10 @@
 
 @layer components {
 
+  .field_with_errors {
+    @apply w-full;
+  }
+
   .cb-tax-fancy {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {

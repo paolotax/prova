@@ -10,7 +10,7 @@ module Common
       tag.div(**wrapper_attributes) do
         concat(
           tag.div(class: "flex flex-col gap-2") do
-            "#{form.object.current_step}:current_step   #{form.object.latest_step}:latest_step_index"
+            "#{form.object.current_step}:current_step   #{form.object.latest_step}:latest_step"
           end
         )
         concat(
