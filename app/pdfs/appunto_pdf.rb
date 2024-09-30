@@ -81,7 +81,7 @@ class AppuntoPdf < Prawn::Document
       #stroke_bounds
       #text adozione.team, :size => 14, :style => :bold, :spacing => 4
       move_down(3)
-      #text "#{adozione.classe_e_sezione}",  :size => 14, :style => :bold, :spacing => 4      
+      text "#{appunto.nome}",  :size => 14, :style => :bold, :spacing => 4      
       move_down(8)
       text appunto.scuola.tipo_scuola,  :size => 12
       text appunto.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
