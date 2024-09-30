@@ -1,6 +1,5 @@
 # encoding: utf-8
 require "prawn/measurement_extensions"
-require "prawn-html"
 
 class AppuntoPdf < Prawn::Document
   
@@ -18,10 +17,8 @@ class AppuntoPdf < Prawn::Document
               :Creator => "todo-propa",
               :Producer => "Prawn",
               :CreationDate => Time.now
-          })
-    
-
-    
+          }
+    )
     
     @appunti = appunti
     @view = view
@@ -76,12 +73,26 @@ class AppuntoPdf < Prawn::Document
   
 
   def destinatario(appunto)
-  
-    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
-      #stroke_bounds
+
+    highlight = HighlightCallback.new(color: 'ffff00', document: self)
+    #border = ConnectedBorderCallback.new(radius: 2.5, document: self)
+
+       #stroke_bounds
       #text adozione.team, :size => 14, :style => :bold, :spacing => 4
-      move_down(3)
-      text "#{appunto.nome}",  :size => 14, :style => :bold, :spacing => 4      
+    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 8.mm do
+    
+      formatted_text(
+        [
+          { text: "#{appunto.nome}", callback: highlight },
+        ],
+        size: 14,
+      )
+    
+      
+    end
+    bounding_box [bounds.width / 2.0, bounds.top - 160], :width => bounds.width / 2.0, :height => 120 do
+     
+      # text "#{appunto.nome}",  :size => 14, :style => :bold, :spacing => 4      
       move_down(8)
       text appunto.scuola.tipo_scuola,  :size => 12
       text appunto.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
@@ -97,3 +108,5 @@ class AppuntoPdf < Prawn::Document
   end
 
 end
+
+

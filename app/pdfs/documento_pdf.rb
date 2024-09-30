@@ -17,9 +17,9 @@ class DocumentoPdf < Prawn::Document
               :Creator => "todo-propa",
               :Producer => "Prawn",
               :CreationDate => Time.now
-         })
+          }
+    )
          
-
     @documento = documento
     @cliente = @documento.clientable
     @view = view
@@ -81,7 +81,9 @@ class DocumentoPdf < Prawn::Document
       
       fill_color "FFFFFF"
       text "#{@documento.causale.causale}", align: :center, valign: :center, style: :bold
+      
       draw_bounds
+      
       fill_color "000000"
       
     end

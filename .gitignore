@@ -46,6 +46,9 @@ _miur/scuole/*
 _csv/*
 _xml/*
 
+/.vscode
+/.vscode/
+/.vscode/*
 
 /config/credentials/production.key
 
@@ -55,3 +58,4 @@ commands
 
 backup.tar.gz
 
+.vscode/rdbg_autoattach.json
