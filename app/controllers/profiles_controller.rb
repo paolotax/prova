@@ -1,69 +1,33 @@
 class ProfilesController < ApplicationController
-  before_action :set_profile, only: %i[ show edit update destroy ]
+  
+  include Wicked::Wizard
 
-  # GET /profiles or /profiles.json
-  def index
-    @profiles = Profile.all
-  end
+  before_action :authenticate_user!  
+  #before_action :set_profile, only: %i[ show edit update destroy ]
 
-  # GET /profiles/1 or /profiles/1.json
+  steps :personal, :address, :bank
+
   def show
+    @user = current_user
+    @profile = @user.profile || @user.build_profile
+    render_wizard
   end
 
-  # GET /profiles/new
-  def new
-    @profile = Profile.build(user: current_user)
-  end
-
-  # GET /profiles/1/edit
-  def edit
-  end
-
-  # POST /profiles or /profiles.json
   def create
-    @profile = Profile.new(profile_params)
-
-    respond_to do |format|
-      if @profile.save
-        format.html { redirect_to profile_url(@profile), notice: "Profile was successfully created." }
-        format.json { render :show, status: :created, location: @profile }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @profile.errors, status: :unprocessable_entity }
-      end
-    end
+    @user = current_user
+    @profile = @user.profile || @user.build_profile
+    redirect_to wizard_path(steps.first, profile_id: @profile.id)
   end
 
-  # PATCH/PUT /profiles/1 or /profiles/1.json
   def update
-    respond_to do |format|
-      if @profile.update(profile_params)
-        format.html { redirect_to profile_url(@profile), notice: "Profile was successfully updated." }
-        format.json { render :show, status: :ok, location: @profile }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @profile.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /profiles/1 or /profiles/1.json
-  def destroy
-    @profile.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to profiles_url, notice: "Profile was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    @user = current_user
+    @profile = @user.profile || @user.build_profile
+    @profile.update(profile_params)
+    render_wizard @profile
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_profile
-      @profile = Profile.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
     def profile_params
       params.require(:profile).permit(:user_id, :nome, :cognome, :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca)
     end

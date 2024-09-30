@@ -55,7 +55,7 @@ Rails.application.routes.draw do
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
 
-  resources :profiles
+  resources :profiles, only: [:show, :create, :update]
     
   resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
