@@ -49,25 +49,12 @@
 
         <% heading.with_action do %>
             <%= component 'tax_button',
+                    style: :button,
                     caption: "Elimina",
                     svg_file: "icon-trash-real.svg",
                     color: "red",
                     url: url_for( controller: "documenti", action: "destroy", model: @documento, method: :delete ),
                     data_attr: {
-                      turbo_method: "delete",
-                      turbo_confirm: "Vuoi veramente eliminare questo documento?",
-                      turbo_confirm_theme: "dark",
-                      turbo_confirm_confirm_label: "Si, distruggilo!",
-                      turbo_confirm_cancel_label: "Oops, no annulla…",
-                    } %>                  
-        <% end %>
-
-
-        <% heading.with_action do %>
-            <%= button_to 'tax_button',
-                    
-                    documento_path(@documento), method: :delete ,
-                    data: {
                       turbo_method: "delete",
                       turbo_confirm: "Vuoi veramente eliminare questo documento?",
                       turbo_confirm_theme: "dark",

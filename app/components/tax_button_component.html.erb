@@ -15,6 +15,17 @@
       <%= tag.div( caption, class: "hidden sm:block" ) if caption %>
   <% end %>
 
+<% elsif @style == :button %>
+
+  <%= button_to url,
+              method: :delete,
+              target: @target,
+              data: data_attr, 
+              class: css_class do %>
+      <%= inline_svg_tag svg_file  %>
+      <%= tag.div caption, class: "hidden sm:block" %>
+  <% end %>
+
 <% end %>
 
 

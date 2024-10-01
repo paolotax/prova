@@ -13,6 +13,10 @@ class TaxButtonComponent < ViewComponent::Base
     @enabled = enabled
     @style = style
     @target = target
+
+    if caption == "Elimina"
+      @style = :button
+    end
   end
 
 
