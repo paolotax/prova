@@ -29,3 +29,5 @@ Turbo.StreamActions.redirect =  function() {
     Turbo.visit(this.target);
 };
 
+import "./utilities/confirm_modal.js"
+

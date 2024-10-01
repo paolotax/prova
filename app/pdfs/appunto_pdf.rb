@@ -93,7 +93,7 @@ class AppuntoPdf < Prawn::Document
     bounding_box [bounds.width / 2.0, bounds.top - 160], :width => bounds.width / 2.0, :height => 120 do
      
       # text "#{appunto.nome}",  :size => 14, :style => :bold, :spacing => 4      
-      move_down(8)
+      move_down(12)
       text appunto.scuola.tipo_scuola,  :size => 12
       text appunto.scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
       move_down(3)
