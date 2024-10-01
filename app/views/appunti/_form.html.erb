@@ -133,8 +133,8 @@
 
 			<% if action_name != "new" %>
 				<div class="inline-flex">
-					<%= link_to appunto_path(@appunto), 
-								data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
+					<%= button_to appunto_path(@appunto), method: :delete,
+								data: { turbo_method: "delete", turbo_confirm: "Sei sicuro?" }, # non funziona il contirm nella dialog (???)
 								class: "flex items-center px-2.5 py-2 rounded-md shadow-lg space-x-1 border bg-red-500 text-white text-sm font-semibold" do %> 
 						<%= inline_svg_tag "icon-trash.svg" %>
 						<span class="">Elimina</span> 

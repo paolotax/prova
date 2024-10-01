@@ -6,15 +6,17 @@
 	
 	<% heading.with_description { @libro.codice_isbn } %>
 
-	<% heading.with_action do %>	
+	<% if @libro.can_delete? %>
+		<% heading.with_action do %>	
 
-		<%= component 'tax_button',
-			caption: "Elimina",
-			svg_file: "icon-trash-real.svg",
-			color: "red",
-			url: url_for( controller: "libri", action: "destroy", model: @libro ),
-			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  %>
+			<%= component 'tax_button',
+				caption: "Elimina",
+				svg_file: "icon-trash-real.svg",
+				color: "red",
+				url: url_for( controller: "libri", action: "destroy", model: @libro ),
+				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  %>
 
+		<% end %>
 	<% end %>
 
 	<% heading.with_action do %>

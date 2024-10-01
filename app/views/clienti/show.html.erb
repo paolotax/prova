@@ -6,15 +6,20 @@
 		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
 	<% end %>
 	
-	<% heading.with_description { @cliente.comune } %>
+	<% heading.with_description do %>
+		<%= tag.div @cliente.indirizzo, class: "text-sm font-semibold text-gray-400" %>
+		<%= tag.div @cliente.comune, class: "text-sm font-semibold text-gray-400"  %>
+	<% end %>
 
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-			caption: "Elimina",
-			svg_file: "icon-trash-real.svg",
-			color: "red",
-			url: url_for( controller: "clienti", action: "destroy", model: @cliente ),
-			data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
+	<% if @cliente.can_delete? %>
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+				caption: "Elimina",
+				svg_file: "icon-trash-real.svg",
+				color: "red",
+				url: url_for( controller: "clienti", action: "destroy", model: @cliente ),
+				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", turbo_stream: false }  %>
+		<% end %>
 	<% end %>
 
 	<% heading.with_action do %>
@@ -23,6 +28,22 @@
 			svg_file: "icon-pencil.svg",
 			color: "yellow",
 			url: url_for( controller: "clienti", action: "edit", model: @cliente ) %>
+	<% end %>
+
+	<% heading.with_action do %>
+		<%= tag.div class: "flex flex-row gap-1" do %>
+			<%= component 'tax_button',
+				caption: "prec",
+				svg_file: "icon-arrow-left.svg",
+				color: "white",
+				url: "/clienti/#{@cliente&.previous&.id}"  %>
+
+			<%= component 'tax_button',
+				caption: "succ",
+				svg_file: "icon-arrow-right.svg",
+				color: "white",
+				url: "/clienti/#{@cliente&.next&.id}"  %>
+		<% end %>
 	<% end %>
 
 	<% heading.with_action do %>	

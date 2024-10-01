@@ -37,7 +37,8 @@
 class Cliente < ApplicationRecord
 
   belongs_to :user  
-  has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, as: :clientable 
+  has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, 
+           as: :clientable, dependent: :destroy 
   has_many :righe, through: :documenti
   
   extend FilterableModel
@@ -56,6 +57,18 @@ class Cliente < ApplicationRecord
  
   def to_s
     "#{denominazione} - #{comune}"
+  end
+
+  def can_delete?
+    documenti.empty?
+  end
+
+  def previous
+    Current.user.clienti.where("denominazione < ?", denominazione).order(denominazione: :desc).first
+  end
+
+  def next
+    Current.user.clienti.where("denominazione > ?", denominazione).order(denominazione: :asc).first
   end
 
   def to_combobox_display

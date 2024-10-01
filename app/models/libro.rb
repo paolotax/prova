@@ -69,13 +69,17 @@ class Libro < ApplicationRecord
   has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
   
+
+  
   after_initialize :init
   def init
     self.prezzo_in_cents ||= 0
   end
-  
-  
-  
+    
+  def can_delete?
+    righe.empty?
+  end
+
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
   end
@@ -92,8 +96,6 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
   end
 
-  
-  
   def previous
     Current.user.libri.where("titolo < ?", titolo).order(titolo: :desc).first
   end
@@ -103,33 +105,7 @@ class Libro < ApplicationRecord
   end
 
 
-
-  
-  
-  
-  # DA SPOSTARE IN UNA CLASSE DI SERVIZIO
-  # 
-  def calcola_situazione    
-    query = <<-SQL
-      SELECT users.id, libri.titolo, libri.codice_isbn,
-          (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento = 0), 0) -
-          COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento = 0), 0)) as ordini,
-          (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento = 1), 0) -
-          COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento = 1), 0)) as vendite,
-          (COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 0 and causali.tipo_movimento = 2), 0) -
-          COALESCE(SUM(righe.quantita) FILTER (WHERE causali.movimento = 1 and causali.tipo_movimento = 2), 0)) as carichi
-      FROM righe
-      INNER JOIN libri ON righe.libro_id = libri.id
-      INNER JOIN documento_righe ON righe.id = documento_righe.riga_id
-      INNER JOIN documenti ON documento_righe.documento_id = documenti.id
-      INNER JOIN causali ON documenti.causale_id = causali.id
-      INNER JOIN users ON users.id = documenti.user_id
-      WHERE users.id = #{Current.user.id} AND libri.id = #{id}
-      GROUP BY 1, 2, 3
-    SQL
-    result = ActiveRecord::Base.connection.execute(query)
-    result
-  end
+  # DA RIVEDERE
 
   def self.crosstab
     
