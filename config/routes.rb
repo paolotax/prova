@@ -55,7 +55,6 @@ Rails.application.routes.draw do
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
 
-  resources :profiles, only: [:show, :create, :update]
     
   resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
@@ -96,8 +95,13 @@ Rails.application.routes.draw do
       post 'duplica'
     end
   end
+ 
+  #get 'profile', action: :show, controller: 'profiles'
+  resources :profiles, only: [:show, :create, :update]
   
   resources :users, only: [:index, :show] do
+
+    
     member do
       post  'modifica_navigatore' 
     end

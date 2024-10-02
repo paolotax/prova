@@ -47,10 +47,10 @@
                         <%= render AvatarComponent.new(user: current_user) %>
                     <% end %>
                     <% dropdown.with_item do %>
-                        <%= link_to "Il mio profilo", current_user %>
+                        <%= link_to "Il mio profilo", "profiles/personal" %>
                     <% end %>
                     <% dropdown.with_item do %>
-                        <%= link_to "Account settings", "#" %>
+                        <%= link_to "La mia Zona", current_user %>
                     <% end %>
                     <%= dropdown.with_trailer do %>
                         <%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete }, class: "block hover:text-red-500" %>

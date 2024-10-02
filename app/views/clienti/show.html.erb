@@ -56,7 +56,7 @@
 
 	<% heading.with_action do %>	
 		<%= component 'tax_button',
-			caption: "Nuovo Documento",
+			caption: "Documento",
 			svg_file: "icon-plus.svg",
 			color: "blue",
 			url: url_for( controller: "documenti", action: "new", paams: current_user.documenti.build( clientable: @cliente, causale_id: Causale.find_by(causale: "Ordine Cliente" ).id)) %>

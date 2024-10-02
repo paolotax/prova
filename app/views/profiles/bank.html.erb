@@ -26,8 +26,8 @@
         <% end %>
 
         <%= tag.div(class: "mt-5 w-full inline-flex gap-2 items-center justify-end") do %>
-            <%= link_to "Indietro", previous_wizard_path, class: "px-4 py-2 bg-gray-500 text-white"  %>
-            <%= f.submit 'Avanti', name: "next", class: "px-4 py-2 bg-gray-500 text-white" %>
+            <%#= link_to "Indietro", previous_wizard_path, class: "px-4 py-2 bg-gray-500 text-white"  %>
+            <%= f.submit 'Salva', name: "submit", class: "px-4 py-2 bg-gray-500 text-white" %>
         <% end %>
 
     <% end %>
