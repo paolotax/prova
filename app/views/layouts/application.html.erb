@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="h-full bg-gray-50 antialiased">
+<%= tag.html class: ["h-full antialiased": true, "bg-gray-50": Rails.env == "production", "bg-indigo-100": Rails.env == "development"] do %>
 	<head>
 		<title>Scagnozz</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
@@ -67,4 +67,4 @@
 		<%# data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: {settings: settings_path, notifications: notifications_path}} %> %>
 
 	</body>
-</html>
+<% end %>
