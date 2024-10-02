@@ -190,7 +190,8 @@ class DocumentiImporter
 
 
     def parse_numero_documento(numero_documento)
-      numero_documento.split(" ")[1].split("/")[0].to_i
+      # numero_documento.split(" ")[1].split("/")[0].to_i
+      numero_documento.gsub(/\D/, '')
     end
 
  
