@@ -30,20 +30,21 @@
 				
 				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
 
-				<%= link_to "ORDINI DA EVADERE", ordini_in_corso_path, class: "btn btn-outline" %>
-
 				<%= link_to "Appunti", appunti_path, class: "btn btn-outline" %>
 
+				<%= link_to "Documenti", documenti_path, class: "btn btn-outline" %>
 				
-				
+				<%= link_to "ORDINI DA EVADERE", ordini_in_corso_path, class: "btn btn-outline" %>
+
 				<% unless current_user.tappe.empty? %>
 					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
-					<%= link_to "Tappe", tappe_path, class: "btn btn-outline" %>
+					<%#= link_to "Tappe", tappe_path, class: "btn btn-outline" %>
 				<% else %>
 					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
 				<% end %>
 
 				<%= link_to "Libri", libri_path, class: "btn btn-outline" %>
+
 				<%= link_to "Stats", stats_path, class: "btn btn-outline" %>
 								
 				<%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
