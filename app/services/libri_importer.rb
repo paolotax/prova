@@ -32,8 +32,7 @@ class LibriImporter
   end
 
   def import_ministeriali!
-    
-  
+      
     sql = File.open(file).read
     sql.gsub!("{{user.id}}", "#{Current.user.id}")
     result = ActiveRecord::Base.connection.execute(sql)
@@ -48,7 +47,7 @@ class LibriImporter
         end
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")} PIPPO")
+        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
         #return false
       end
     end
@@ -73,33 +72,48 @@ class LibriImporter
 
   private
 
+    def assign_from_row(row)
+ 
+      codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
+      user_id = Current.user.id
+      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+
+      row.keys.each do |key|
+        next if key == :editore
+        next if key == :titolo && !libro.new_record?
+        
+        if key == :prezzo
+          row[key] = check_prezzo(row[key])
+        end
+
+        if libro.respond_to?("#{key}=") 
+          libro.send("#{key}=", row[key])
+        end
+      end
+
+      # unless libro.new_record?
+      #   if row[:titolo] then row.delete(:titolo) end
+      #   if row["titolo"] then row.delete("titolo") end
+      # end
+      # 
+      # titolo = row[:titolo] || row[:descrizione]      
+      # prezzo = row[:prezzo]
+      # prezzo = check_prezzo(prezzo) if prezzo
+      #
+      # libro.assign_attributes(
+      #   codice_isbn: codice_isbn,
+      #   titolo: titolo,
+      #   prezzo: prezzo
+      # ) #row.to_hash
+      
+      libro
+    end
+
     def check_prezzo(prezzo)
       if prezzo.is_a? String
         prezzo = prezzo.gsub(",",".")
       end
       prezzo
     end
-
-    def assign_from_row(row)
- 
-      codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
-      titolo = row[:titolo] || row[:descrizione]      
-      prezzo = row[:prezzo]
-      prezzo = check_prezzo(prezzo) if prezzo
-      user_id = Current.user.id
-      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
-      unless libro.new_record?
-        if row[:titolo] then row.delete(:titolo) end
-        if row["titolo"] then row.delete("titolo") end
-      end
-
-      libro.assign_attributes(
-        codice_isbn: codice_isbn,
-        titolo: titolo,
-        prezzo: prezzo
-      ) #row.to_hash
-      libro
-    end
-
 
 end
