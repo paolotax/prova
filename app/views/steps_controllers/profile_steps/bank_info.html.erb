@@ -1,14 +1,8 @@
 <%= turbo_frame_tag dom_id(@profile) do %>    
 
-        
     <%= tag.div class: "w-full px-2 mx-auto sm:max-w-2xl gap-4" do %>
 
-        <%= tag.div class: "
-                w-full inline-flex items-center px-4 py-2 gap-4 border-2 bg-gray-500 text-white border-gray-500
-                peer-checked/radio:bg-gray-500 peer-checked/radio:text-white" do %>
-            <%= tag.p "3.", class: "h-6 w-6 text-center rounded-full text-white bg-gray-500" %>
-            <%= tag.p params[:id].humanize.titleize %>
-        <% end %>
+        <%= render "profile_steps_header" %>
 
         <%= form_with model: @profile, url: wizard_path, data: { turbo_action: "advance", turbo_frame: :_top} do |f| %>
             
@@ -30,5 +24,8 @@
             <% end %>
 
         <% end %>
+
+        <%= render "profile_steps_footer" %>
+        
     <% end %>
 <% end %>

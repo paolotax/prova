@@ -6,6 +6,7 @@ module StepsControllers
 
     def show
       @profile = Profile.find(params[:profile_id])
+      #raise params.inspect
       render_wizard
     end
 
