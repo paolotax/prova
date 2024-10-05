@@ -39,15 +39,13 @@
                 <!-- Separator -->
                 <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true"></div>
 
-
-
                 <!-- User dropdown -->
                 <%= render DropdownComponent.new do |dropdown| %>
                     <%= dropdown.with_button do %>
                         <%= render AvatarComponent.new(user: current_user) %>
                     <% end %>
                     <% dropdown.with_item do %>
-                        <%= link_to "Il mio profilo", "profiles/personal" %>
+                        <%= link_to "Il mio profilo", current_user.profile.nil? ? new_profile_path : profile_step_path(current_user.profile, Profile.form_steps.keys.first) %>
                     <% end %>
                     <% dropdown.with_item do %>
                         <%= link_to "La mia Zona", current_user %>

@@ -96,12 +96,11 @@ Rails.application.routes.draw do
     end
   end
  
-  #get 'profile', action: :show, controller: 'profiles'
-  resources :profiles, only: [:show, :create, :update]
+  resources :profiles do
+    resources :steps, only: [:show, :update], controller: 'steps_controllers/profile_steps'
+  end
   
-  resources :users, only: [:index, :show] do
-
-    
+  resources :users, only: [:index, :show] do    
     member do
       post  'modifica_navigatore' 
     end

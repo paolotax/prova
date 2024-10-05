@@ -1,32 +1,40 @@
 class ProfilesController < ApplicationController
   
-  include Wicked::Wizard
-
   before_action :authenticate_user!  
-  #before_action :set_profile, only: %i[ show edit update destroy ]
+  before_action :set_profile, only: %i[ show edit update destroy ]
 
-  steps :personal, :address, :bank
-
-  def show
-    @user = current_user
-    @profile = @user.profile || @user.build_profile
-    render_wizard
+  def index
+    @profiles = Profile.all
   end
 
-  def create
-    @user = current_user
-    @profile = @user.profile || @user.build_profile
-    redirect_to wizard_path(steps.first, profile_id: @profile.id)
+  def new  
+    @profile = current_user.profile || current_user.build_profile
+    @profile.save! validate: false
+
+
+    redirect_to profile_step_path(@profile, Profile.form_steps.keys.first)
+  end
+  
+  def show
+  end
+
+  def edit  
+  end
+
+  def create    
   end
 
   def update
-    @user = current_user
-    @profile = @user.profile || @user.build_profile
-    @profile.update(profile_params)
-    render_wizard @profile
+  end
+
+  def destroy
   end
 
   private
+
+    def set_profile
+      @profile = Profile.find(params[:id])
+    end
 
     def profile_params
       params.require(:profile).permit(:user_id, :nome, :cognome, :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca)
