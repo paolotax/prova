@@ -5,10 +5,13 @@ fields = [ "codice_isbn", "titolo", "editore", "categoria", "classe", "disciplin
 wb.add_worksheet(name: "Foglio 1") do |sheet|
  
     sheet.add_row  fields
-  
-  
+   
     @libri.each do |row|
-        sheet.add_row [ row.codice_isbn, row.titolo, row&.editore&.editore, row.categoria, row.classe, row.disciplina, row.prezzo, row&.giacenza&.ordini, row&.giacenza&.vendite, row&.giacenza&.carichi, row.editore_id, row.id] 
+        sheet.add_row [ row.codice_isbn, row.titolo, row&.editore&.editore, 
+                        row.categoria, row.classe, row.disciplina, 
+                        row.prezzo, row&.giacenza&.ordini, row&.giacenza&.vendite, 
+                        row&.giacenza&.carichi, row.editore_id, row.id ],
+                types: [ :string  ] 
     end
 
 end

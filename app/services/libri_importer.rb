@@ -77,6 +77,7 @@ class LibriImporter
       codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
       user_id = Current.user.id
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      
 
       row.keys.each do |key|
         next if key == :editore
