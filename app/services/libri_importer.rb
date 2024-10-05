@@ -53,7 +53,38 @@ class LibriImporter
     end
   end
 
+  def import_excel!
+    xlsx = Roo::Spreadsheet.open(file.path)
+    
+    # columns = xlsx.sheet(0).first_row
 
+    # raise columns.inspect
+
+    xlsx.default_sheet = xlsx.sheets.first 
+    header = xlsx.row(1) 
+
+    header.map! { |h| h.downcase.gsub(" ", "_").to_sym }
+
+    2.upto(xlsx.last_row) do |line|  
+      row_data = Hash[header.zip xlsx.row(line)]
+
+      libro = assign_from_row(row_data)
+
+      if libro.save
+        if libro.previously_new_record?
+          @imported_count += 1
+        else
+          @updated_count += 1
+        end
+      else
+        @errors_count += 1
+        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
+        #return false
+      end
+    end
+  
+  end
+  
   def flash_message
     if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
       pluralize(@imported_count, 'libro importato', 'libri importati') + " e " + 
@@ -66,7 +97,7 @@ class LibriImporter
   end
 
   def save
-    process!
+    import_excel!
     #errors.none?
   end
 
@@ -114,7 +145,7 @@ class LibriImporter
       if prezzo.is_a? String
         prezzo = prezzo.gsub(",",".")
       end
-      prezzo
+      prezzo.to_s
     end
 
 end
