@@ -64,7 +64,9 @@ class Libro < ApplicationRecord
   validates :titolo, presence: true
   #validates :editore, presence: true
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
-  validates :codice_isbn, presence: true, uniqueness: true
+  
+  
+  validates :codice_isbn, presence: true, uniqueness: { scope: :user_id }
 
   has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   

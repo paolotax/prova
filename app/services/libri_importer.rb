@@ -59,7 +59,7 @@ class LibriImporter
       pluralize(@imported_count, 'libro importato', 'libri importati') + " e " + 
       pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') + " e " + 
       pluralize(@errors_count, 'libro errato', 'libri errati') + 
-      " " + errors.full_messages.join(", ").html_safe
+      " " + errors.full_messages[0..10].join(", ").html_safe
     else
       "Nessun libro importato"
     end
@@ -85,7 +85,7 @@ class LibriImporter
         if key == :prezzo
           row[key] = check_prezzo(row[key])
         end
-
+        
         if libro.respond_to?("#{key}=") 
           libro.send("#{key}=", row[key])
         end
