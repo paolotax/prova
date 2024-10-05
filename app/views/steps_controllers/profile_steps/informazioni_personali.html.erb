@@ -4,7 +4,8 @@
 
         <%= render "profile_steps_header" %>
 
-        <%= form_with model: @profile, url: wizard_path, data: { turbo_action: "advance" }, class: "px-2" do |f| %>
+        <%= form_with model: @profile, url: wizard_path, data: { turbo_action: "advance" }, class: "px-2 py-5" do |f| %>
+            
             <%= tag.div class: "w-full mt-5 flex flex-col gap-2" do %>
                 <%= f.label :nome, class: "text-sm" %>
                 <%= f.text_field :nome, class: "w-full px-2 py-1 outline-none border-b-2 border-gray-300 hover:border-slate-500 focus:border-slate-500 "%>

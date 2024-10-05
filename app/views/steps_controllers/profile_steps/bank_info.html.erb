@@ -4,7 +4,7 @@
 
         <%= render "profile_steps_header" %>
 
-        <%= form_with model: @profile, url: wizard_path, data: { turbo_action: "advance", turbo_frame: :_top} do |f| %>
+        <%= form_with model: @profile, url: wizard_path, data: { turbo_action: "advance", turbo_frame: :_top}, class: "px-2 py-5" do |f| %>
             
             <%= tag.div class: "w-full mt-5 flex flex-col gap-2" do %>
                 <%= f.label :nome_banca, class: "text-sm", value: "Banca" %>
@@ -26,6 +26,6 @@
         <% end %>
 
         <%= render "profile_steps_footer" %>
-        
+
     <% end %>
 <% end %>
