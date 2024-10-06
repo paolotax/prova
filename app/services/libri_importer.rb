@@ -54,15 +54,14 @@ class LibriImporter
   end
 
   def import_excel!
-    xlsx = Roo::Spreadsheet.open(file.path)
+    xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: ";" } })
     
     # columns = xlsx.sheet(0).first_row
-
     # raise columns.inspect
 
     xlsx.default_sheet = xlsx.sheets.first 
+    
     header = xlsx.row(1) 
-
     header.map! { |h| h.downcase.gsub(" ", "_").to_sym }
 
     2.upto(xlsx.last_row) do |line|  
@@ -106,18 +105,17 @@ class LibriImporter
     def assign_from_row(row)
  
       codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
+      titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]
       user_id = Current.user.id
-      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
       
-
+      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      libro.titolo = titolo
+      
       row.keys.each do |key|
         next if key == :editore
-        next if key == :titolo && !libro.new_record?
-        
-        if key == :prezzo
-          row[key] = check_prezzo(row[key])
-        end
-        
+        next if key == :titolo                
+        row[key] = check_prezzo(row[key]) if key == :prezzo
+
         if libro.respond_to?("#{key}=") 
           libro.send("#{key}=", row[key])
         end
