@@ -1,6 +1,6 @@
 <%# locals: ( reload: false ) -%>
 
-<%= component 'tax_filter_form', base_url: documenti_path, reload: reload,
+<%= component 'tax_filter_form', base_url: documenti_path, reload: false,
     fields: [ 
         {
             field: :search,
@@ -21,17 +21,17 @@
             type: :text,
             placeholder: "editore..."
         }, {
-            field: :disciplina,
-            label: "Disciplina",
-            collection: nil,
-            type: :text,
-            placeholder: "disciplina..."
-        }, {
             field: :classe,
             label: "Classe",
             collection: ["1", "2", "3", "4", "5"],
-            type: :select,
+            type: :checkbox_group,
             placeholder: "classe..."
+        }, {
+            field: :disciplina,
+            label: "Disciplina",
+            collection: @lista_discipline,
+            type: :checkbox_group,
+            placeholder: "disciplina..."
         }, {
             field: :nel_baule,
             label: "Nel baule",

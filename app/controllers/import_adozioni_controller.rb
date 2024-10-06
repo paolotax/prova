@@ -18,6 +18,8 @@ class ImportAdozioniController < ApplicationController
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
       @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
       @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
+      
+      @lista_discipline   = @import_adozioni.order(:DISCIPLINA).pluck(:DISCIPLINA).uniq;
     end
 
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina

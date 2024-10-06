@@ -6,7 +6,7 @@ module Filters
     
     filter_scope :titolo, ->(name) { where('import_adozioni."TITOLO" ILIKE ?', "%#{name}%") }
     filter_scope :editore, ->(name) { where('import_adozioni."EDITORE" ILIKE ?', "%#{name}%") }
-    filter_scope :disciplina, ->(name) { where('import_adozioni."DISCIPLINA" ILIKE ?', "%#{name}%") }
+    filter_scope :disciplina, ->(name) { where('import_adozioni."DISCIPLINA" IN (?)', name) }
     filter_scope :codice_isbn, ->(isbn) { where('import_adozioni."CODICEISBN" ILIKE ?', "%#{isbn}%") }
     filter_scope :classe, ->(classe) { where(ANNOCORSO: classe) }
 
