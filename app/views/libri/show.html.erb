@@ -4,7 +4,21 @@
 		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
 	<% end %>
 	
-	<% heading.with_description { @libro.codice_isbn } %>
+	<% heading.with_description do %>
+
+		<%= tag.div @libro.editore.editore, class: "text-sm font-semibold text-gray-500"  %>
+
+		<%= tag.div class: "flex flex-row items-center gap-2" do %>
+			<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
+			<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
+			<%= tag.div @libro.categoria, class: "text-sm font-semibold text-gray-400"  %>
+		<% end %>
+
+		<%= tag.div class: "flex flex-row items-center gap-2" do %>
+			<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
+			<%= tag.div @libro.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
+		<% end %>
+	<% end %>
 
 	<% if @libro.can_delete? %>
 		<% heading.with_action do %>	
@@ -13,8 +27,14 @@
 				caption: "Elimina",
 				svg_file: "icon-trash-real.svg",
 				color: "red",
-				url: url_for( controller: "libri", action: "destroy", model: @libro ),
-				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" }  %>
+				url: url_for( controller: "libri", action: "destroy", model: @libri, method: :delete ),
+                    data_attr: {
+                      turbo_method: "delete",
+                      turbo_confirm: "Vuoi veramente eliminare questo Libro?",
+                      turbo_confirm_theme: "",
+                      turbo_confirm_confirm_label: "Si, eliminalo!",
+                      turbo_confirm_cancel_label: "Oops, no annulla…",
+                    } %>
 
 		<% end %>
 	<% end %>
