@@ -91,6 +91,7 @@ gem "mapkick-rb"
 gem "geocoder"
 
 gem "roo", "~> 2.10.0"
+gem "roo-xls", "~> 1.0"
 
 gem 'smarter_csv'
 

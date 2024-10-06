@@ -1,80 +1,82 @@
-<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
-	
-	<% heading.with_leader do %>
-		<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
-	<% end %>
-	
-	<% heading.with_description do %>
+<div class="sticky top-20 z-10">
+	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+		
+		<% heading.with_leader do %>
+			<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+		<% end %>
+		
+		<% heading.with_description do %>
 
-		<%= tag.div @libro.editore.editore, class: "text-sm font-semibold text-gray-500"  %>
+			<%= tag.div @libro.editore.editore, class: "text-sm font-semibold text-gray-500"  %>
 
-		<%= tag.div class: "flex flex-row items-center gap-2" do %>
-			<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
-			<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
-			<%= tag.div @libro.categoria, class: "text-sm font-semibold text-gray-400"  %>
+			<%= tag.div class: "flex flex-row items-center gap-2" do %>
+				<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
+				<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
+				<%= tag.div @libro.categoria, class: "text-sm font-semibold text-gray-400"  %>
+			<% end %>
+
+			<%= tag.div class: "flex flex-row items-center gap-2" do %>
+				<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
+				<%= tag.div @libro.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
+			<% end %>
 		<% end %>
 
-		<%= tag.div class: "flex flex-row items-center gap-2" do %>
-			<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
-			<%= tag.div @libro.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
+		<% if @libro.can_delete? %>
+			<% heading.with_action do %>	
+
+				<%= component 'tax_button',
+					caption: "Elimina",
+					svg_file: "icon-trash-real.svg",
+					color: "red",
+					url: url_for( controller: "libri", action: "destroy", model: @libri, method: :delete ),
+					data_attr: {
+						turbo_method: "delete",
+						turbo_confirm: "Vuoi veramente eliminare questo Libro?",
+						turbo_confirm_theme: "",
+						turbo_confirm_confirm_label: "Si, eliminalo!",
+						turbo_confirm_cancel_label: "Oops, no annulla…",
+					} %>
+
+			<% end %>
 		<% end %>
-	<% end %>
 
-	<% if @libro.can_delete? %>
-		<% heading.with_action do %>	
-
+		<% heading.with_action do %>
 			<%= component 'tax_button',
-				caption: "Elimina",
-				svg_file: "icon-trash-real.svg",
-				color: "red",
-				url: url_for( controller: "libri", action: "destroy", model: @libri, method: :delete ),
-                    data_attr: {
-                      turbo_method: "delete",
-                      turbo_confirm: "Vuoi veramente eliminare questo Libro?",
-                      turbo_confirm_theme: "",
-                      turbo_confirm_confirm_label: "Si, eliminalo!",
-                      turbo_confirm_cancel_label: "Oops, no annulla…",
-                    } %>
-
+				caption: "prec",
+				svg_file: "icon-arrow-left.svg",
+				color: "white",
+				url: "/libri/#{@libro&.previous&.id}"  %>
 		<% end %>
-	<% end %>
 
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-			caption: "prec",
-			svg_file: "icon-arrow-left.svg",
-			color: "white",
-			url: "/libri/#{@libro&.previous&.id}"  %>
-	<% end %>
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+				caption: "succ",
+				svg_file: "icon-arrow-right.svg",
+				color: "white",
+				url: "/libri/#{@libro&.next&.id}"  %>
+		<% end %>
 
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-			caption: "succ",
-			svg_file: "icon-arrow-right.svg",
-			color: "white",
-			url: "/libri/#{@libro&.next&.id}"  %>
-	<% end %>
+		<% heading.with_action do %>	
+			<%= component 'tax_button',
+				caption: "Indietro",
+				svg_file: "icon-arrow-long-left.svg",
+				color: "white",
+				url: 'javascript:history.back()' %>
+		<% end %>
 
-	<% heading.with_action do %>	
-		<%= component 'tax_button',
-			caption: "Indietro",
-			svg_file: "icon-arrow-long-left.svg",
-			color: "white",
-			url: 'javascript:history.back()' %>
-	<% end %>
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+				caption: "Modifica",
+				svg_file: "icon-pencil.svg",
+				color: "yellow",
+				url: url_for( controller: "libri", action: "edit", model: @libro ),
+				data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+		<% end %>
 
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-			caption: "Modifica",
-			svg_file: "icon-pencil.svg",
-			color: "yellow",
-			url: url_for( controller: "libri", action: "edit", model: @libro ),
-			data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+		<%= @libro.titolo %>
+	
 	<% end %>
-
-	<%= @libro.titolo %>
-  
-<% end %>
+</div>
 
 <%= tag.div class: "flex flex-col md:flex-row space-y-8 md:space-y-0" do %>
 

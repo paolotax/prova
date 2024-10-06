@@ -1,6 +1,5 @@
-
 <%= render SlideOverComponent.new(slide_over_max_width: "max-w-sm") do |slide_over| %>
-    <% slide_over.with_close_button %>
+    <% slide_over.with_close_button(css: "absolute top-6 right-6 text-black transition ease-in-out duration-200 hover:scale-105 hover:text-white active:scale-100") %>
     <% slide_over.with_leader do %>
         <div class="px-4 py-5 bg-gray-50">
             <h2 class="pr-6 text-lg font-semibold text-gray-800">
@@ -15,6 +14,6 @@
     <%= tag.div class: "px-4" do %>
         <%= render "filter_form" %>
     <% end %>
-
-
 <% end %>
+
+

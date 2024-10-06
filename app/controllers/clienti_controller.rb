@@ -7,7 +7,8 @@ class ClientiController < ApplicationController
 
   def index
     @import = ClientiImporter.new
-    @clienti = filter(current_user.clienti.all)
+    @clienti = current_user.clienti.order(:denominazione)
+    @clienti = filter(@clienti.all)
     #set_page_and_extract_portion_from @clienti
   end
 

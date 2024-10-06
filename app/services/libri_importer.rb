@@ -120,21 +120,6 @@ class LibriImporter
           libro.send("#{key}=", row[key])
         end
       end
-
-      # unless libro.new_record?
-      #   if row[:titolo] then row.delete(:titolo) end
-      #   if row["titolo"] then row.delete("titolo") end
-      # end
-      # 
-      # titolo = row[:titolo] || row[:descrizione]      
-      # prezzo = row[:prezzo]
-      # prezzo = check_prezzo(prezzo) if prezzo
-      #
-      # libro.assign_attributes(
-      #   codice_isbn: codice_isbn,
-      #   titolo: titolo,
-      #   prezzo: prezzo
-      # ) #row.to_hash
       
       libro
     end

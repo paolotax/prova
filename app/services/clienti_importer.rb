@@ -32,9 +32,38 @@ class ClientiImporter
 		end
 	end
 
+  def import_excel!
+    xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: ";" } })
+
+    xlsx.default_sheet = xlsx.sheets.first 
+    
+    header = xlsx.row(1) 
+    header.map! { |h| h.downcase.gsub(" ", "_").to_sym }
+
+    2.upto(xlsx.last_row) do |line|  
+      row_data = Hash[header.zip xlsx.row(line)]
+
+      cliente = assign_from_row(row_data)
+
+      if cliente.save
+        if cliente.previously_new_record?
+          @imported_count += 1
+        else
+          @updated_count += 1
+        end
+      else
+        @errors_count += 1
+        errors.add(:base, "Line #{$.} - #{cliente.errors.full_messages.join(", ")}")
+        #return false
+      end
+    end
+  
+  end
+
+
 	def save
-		process!
-		errors.none?
+		import_excel!
+		#errors.none?
 	end
 
 	def flash_message
@@ -51,11 +80,11 @@ class ClientiImporter
   private
 
 		def assign_from_row(row)
-			puts row[:partita_iva]
-			if row[:denominazione].nil?
+			
+			if row[:partita_iva].nil?
 				cliente = Current.user.clienti.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize      
 			else
-				cliente = Current.user.clienti.where(denominazione: row[:denominazione]).first_or_initialize
+				cliente = Current.user.clienti.where(partita_iva: row[:partita_iva]).first_or_initialize
 			end
 			cliente.assign_attributes row.to_hash
 			cliente

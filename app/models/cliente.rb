@@ -53,7 +53,7 @@ class Cliente < ApplicationRecord
   #validates :partita_iva, presence: true, numericality: true, length: { is: 11 }, uniqueness: { scope: :user_id }
   validates :denominazione, presence: true
 
-  validates :condizioni_di_pagamento, presence: true
+  #validates :condizioni_di_pagamento, presence: true
  
   def to_s
     "#{denominazione} - #{comune}"
