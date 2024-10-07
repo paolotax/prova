@@ -8,13 +8,13 @@
             
             <%= tag.div class: "w-full mt-5 flex flex-col gap-2" do %>
                 <%= f.label :nome_banca, class: "text-sm", value: "Banca" %>
-                <%= f.text_field :nome_banca, class: "w-full px-2 py-1 outline-none border-b-2 border-zinc-300 hover:border-slate-500 focus:border-slate-500 "%>
+                <%= f.text_field :nome_banca, class: "w-full px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-gray-400 hover:border-slate-500 focus:border-slate-500 "%>
                 <%= tag.p f.object.errors.full_messages_for(:nome_banca)&.first, class: "text-sm text-red-500" %>
             <% end %>
 
             <%= tag.div class: "w-full mt-5 flex flex-col gap-2" do %>
                 <%= f.label :iban, class: "text-sm" %>
-                <%= f.text_field :iban, class: "w-full px-2 py-1 outline-none border-b-2 border-zinc-300 hover:border-slate-500 focus:border-slate-500 "%>
+                <%= f.text_field :iban, class: "w-full px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-gray-400 hover:border-slate-500 focus:border-slate-500 "%>
                 <%= tag.p f.object.errors.full_messages_for(:iban)&.first, class: "text-sm text-red-500" %>
             <% end %>
 
