@@ -43,7 +43,7 @@
 		<%= render partial: "import_adozioni/stats" %>
 	</div>
 	
-	<%= tag.div class: "w-full flex flex-col lg:pr-[15rem]", data: {controller: 'tax-checkbox-select-all'} do %>
+	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all'} do %>
 				
 		<div class="sticky top-72 bg-gray-100 mb-2">
 			<%= render partial: "form_multi" %>
@@ -67,7 +67,7 @@
 
 	<% end %>
 
-	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-72 lg:px-8 lg:block">
+	<aside class="fixed inset-y-0 right-0 hidden w-80 overflow-y-auto pt-72 lg:px-8 lg:block">
 		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
 

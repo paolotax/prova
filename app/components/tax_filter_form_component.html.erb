@@ -32,14 +32,14 @@
                 
                 <% elsif field[:type] == :checkbox_group %>    
                     <% field[:collection].each do |cb| %>
-                        <div class="flex items-center justify-start mb-1">
+                        <div class="py-1 flex items-center justify-start mb-1">
                             <%= check_box_tag "#{field[:field]}[]", 
                                     cb, 
                                     filter_params[field[:field]]&.include?(cb),
                                     id: "statuses_#{cb}", 
                                     data: field_data_attributes,
-                                    class: 'mr-4' %>
-                            <%= label_tag "statuses_#{cb}", cb %>
+                                    class: 'w-5 h-5 rounded-full border-3 mr-4 border-gray-300 text-gray-600 focus:ring-gray-600' %>
+                            <%= label_tag "statuses_#{cb}", cb, class: "text-sm" %>
                         </div>
                     <% end %>
                 <% end %>
