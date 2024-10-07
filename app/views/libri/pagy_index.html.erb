@@ -4,7 +4,7 @@
         
         <% heading.with_action do %>
             <%= form_for @import, url: libri_importer_index_path, method: :post, multipart: :true do |f| %>
-                <%= tag.div class: "hidden xl:flex xl:flex-row items-center p-4 py-2.5 bg-gray-200 rounded-md" do %>
+                <%= tag.div class: "hidden xl:flex xl:flex-row items-center px-4 py-2.5 bg-gray-200 rounded-md" do %>
                     <%= f.file_field :file, accept: 'text/csv' %>
                     <%= component('button', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
                         <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
@@ -15,9 +15,6 @@
                     <% end %>
                 <% end %>
             <% end %>
-        <% end %>
-
-        <% heading.with_action do %>
             <%= form_with url: import_ministeriali_libri_importer_index_path, method: :post do |f| %>
                 <%= component('button', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
                     <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
@@ -27,6 +24,10 @@
                     A.I.E.
                 <% end %>
             <% end %>
+        <% end %>
+
+        <% heading.with_action do %>
+
         <% end %>
             
         <% heading.with_action do %>    

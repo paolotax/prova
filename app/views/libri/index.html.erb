@@ -3,10 +3,10 @@
     <%= component "heading/with_actions" do |heading| %>
         
         <% heading.with_action do %>
-            <%= tag.div class: "hidden xl:flex xl:flex-row items-center gap-4 p-4 py-2.5 bg-gray-200 rounded-md" do %>
+            <%= tag.div class: "hidden xl:flex xl:flex-row items-center gap-4 px-4 py-2.5 bg-gray-200 rounded-md" do %>
                 
                 <%= form_for @import, url: libri_importer_index_path, method: :post, multipart: :true do |f| %>
-                    <%= tag.div class: "flex flex-row items-center justify-start" do %>
+                    <%= tag.div class: "flex flex-row items-center" do %>
                         <%= f.file_field :file, accept:  'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel' %>
                         <%= component('button', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
                             <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
