@@ -6,11 +6,11 @@ export default class extends Reveal {
 
   connect() {
     super.connect()
-    console.log('Do what you want here.')
   }
 
   toggle(e) {
     super.toggle()
+    e.preventDefault()
     this.chevronTarget.classList.toggle('rotate-90')
   }
 }

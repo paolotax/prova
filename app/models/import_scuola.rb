@@ -131,6 +131,14 @@ class ImportScuola < ApplicationRecord
     marchi.size
   end
 
+  def codice_fiscale
+    
+  end
+
+  def partita_iva
+    
+  end
+  
   def self.zone
     self.pluck([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA])
                 .uniq

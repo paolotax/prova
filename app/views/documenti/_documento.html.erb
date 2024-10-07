@@ -1,7 +1,6 @@
-<div div id="<%= dom_id documento %>" class="w-full col-span-8">
+<div div id="<%= dom_id documento %>" class="w-full col-span-8" data-controller="tax-reveal">
 
 	<div class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
-
 			
 		<%= tag.div class: "flex flex-row gap-4 border items-center" do %>
 	
@@ -18,36 +17,44 @@
 			<% end %>					
 		<% end %>
 		
-		<%= component 'tax_button',
-                caption: "Stampa",
-                svg_file: "icon-print.svg",
-                color: "white",
-                url: documento_url(documento, format: :pdf),
-				target: "_blank" %>
-			
+		<div class="flex flex-row gap-2">
+			<%= component 'tax_button',
+					caption: "",
+					svg_file: "icon-pencil.svg",
+					color: "yellow",
+					url: edit_documento_url(documento) %>
+			<%= component 'tax_button',
+					caption: "",
+					svg_file: "icon-print.svg",
+					color: "white",
+					url: documento_url(documento, format: :pdf),
+					target: "_blank" %>
+			<%= component 'tax_button',
+					svg_file: "icon-chevron-right.svg",
+					color: "white",
+					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
+		</div>
 	</div>
     
-
-	<% documento.righe.each do |riga| %>
-		<%= render partial: "righe/riga_item", locals: { riga: riga } %>
-	<% end %>
-
-	<% if documento.righe.size > 1 %>
-		<div class="p-4 border border-t-0 border-gray-300 last:rounded-b-lg last:shadow-md grid grid-cols-8">
-
-			<div class="col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
-				<%= documento.totale_copie %>
-			</div>  
-
-			<div class="col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
-				<%= number_to_currency documento.totale_importo, locale: :it %>
-			</div>
-			
+	<ul data-tax-reveal-target="item" class="hidden">
+		<% documento.righe.each do |riga| %>
+			<%= render partial: "righe/riga_item", locals: { riga: riga } %>
+		<% end %>
+	</ul>
 
 
+	<div class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-8">
 
+		<div class="col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
+			<%= documento.totale_copie %>
+		</div>  
+
+		<div class="col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
+			<%= number_to_currency documento.totale_importo, locale: :it %>
 		</div>
-	<% end %>
+		
+	</div>
+
 
 </div>
 
