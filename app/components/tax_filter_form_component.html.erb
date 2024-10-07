@@ -38,7 +38,7 @@
                                     filter_params[field[:field]]&.include?(cb),
                                     id: "statuses_#{cb}", 
                                     data: field_data_attributes,
-                                    class: 'w-5 h-5 rounded-full border-3 mr-4 border-gray-300 text-gray-600 focus:ring-gray-600' %>
+                                    class: 'w-5 h-5 rounded-full border-2 mr-4 border-gray-300 text-gray-600 outline-none ring-0 focus:ring-0' %>
                             <%= label_tag "statuses_#{cb}", cb, class: "text-sm" %>
                         </div>
                     <% end %>
