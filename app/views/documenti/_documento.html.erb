@@ -31,7 +31,7 @@
 					target: "_blank" %>
 			<%= component 'tax_button',
 					svg_file: "icon-chevron-right.svg",
-					color: "white",
+					color: "gray",
 					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
 		</div>
 	</div>
@@ -43,13 +43,13 @@
 	</ul>
 
 
-	<div class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-8">
+	<div class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8">
 
-		<div class="col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
+		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
 			<%= documento.totale_copie %>
 		</div>  
 
-		<div class="col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
+		<div class="col-start-5 sm:col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
 			<%= number_to_currency documento.totale_importo, locale: :it %>
 		</div>
 		
