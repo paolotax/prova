@@ -76,7 +76,7 @@ class Cliente < ApplicationRecord
   end
 
   def importo_uscite
-    righe.joins(documenti: :causale).where("causali.movimento = ?", 2).sum(&:importo).to_f
+    righe.joins(documenti: :causale).where("causali.movimento = ?", 0).sum(&:importo).to_f
   end
 
   def to_combobox_display
