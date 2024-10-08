@@ -71,6 +71,14 @@ class Cliente < ApplicationRecord
     Current.user.clienti.where("denominazione > ?", denominazione).order(denominazione: :asc).first
   end
 
+  def importo_entrate
+    righe.joins(documenti: :causale).where("causali.movimento = ?", 1).sum(&:importo).to_f 
+  end
+
+  def importo_uscite
+    righe.joins(documenti: :causale).where("causali.movimento = ?", 2).sum(&:importo).to_f
+  end
+
   def to_combobox_display
     "#{denominazione} - #{comune}"
   end
