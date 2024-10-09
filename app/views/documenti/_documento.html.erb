@@ -2,7 +2,7 @@
 
 	<div class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
 			
-		<%= tag.div class: "flex flex-row gap-4 border items-center" do %>
+		<%= tag.div class: "flex flex-row gap-4 border items-start" do %>
 	
 			<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
@@ -11,7 +11,7 @@
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-				<%#= documento.clientable&.denominazione %>
+				<%= documento.clientable&.denominazione %>
 				<%= tag.p documento.referente %> 
 				<%= tag.p documento.note %> 
 			<% end %>					
@@ -22,7 +22,8 @@
 					caption: "",
 					svg_file: "icon-pencil.svg",
 					color: "yellow",
-					url: edit_documento_url(documento) %>
+					url: edit_documento_url(documento),
+					data_attr: { turbo_frame: :_top} %>
 			<%= component 'tax_button',
 					caption: "",
 					svg_file: "icon-print.svg",
@@ -37,6 +38,7 @@
 	</div>
     
 	<ul data-tax-reveal-target="item" class="hidden">
+		<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
 		<% documento.righe.each do |riga| %>
 			<%= render partial: "righe/riga_item", locals: { riga: riga } %>
 		<% end %>
@@ -44,7 +46,17 @@
 
 
 	<div class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8">
-
+		
+		
+		<%= tag.div class: "col-span-4 flex flex-row gap-2 sm:gap-4" do %>
+            <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
+              <%= tag.div documento.status&.titleize, class: "font-semibold" %>
+              <%= tag.div documento.tipo_pagamento&.titleize, class: "font-semibold" %>
+              <%= tag.div l(documento.pagato_il, format: "%d-%m"), class: "font-semibold" if documento.pagato_il %>					
+            <% end %>
+        <% end %>
+		
+		
 		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
 			<%= documento.totale_copie %>
 		</div>  
