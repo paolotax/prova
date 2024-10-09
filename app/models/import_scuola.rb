@@ -45,7 +45,7 @@ class ImportScuola < ApplicationRecord
   belongs_to :direzione, class_name: "ImportScuola", 
                          primary_key: "CODICESCUOLA",   
                          foreign_key: "CODICEISTITUTORIFERIMENTO", optional: true
-  
+                         
   has_many :import_adozioni, foreign_key: "CODICESCUOLA", primary_key: "CODICESCUOLA"
   
   has_many :user_scuole
@@ -139,18 +139,32 @@ class ImportScuola < ApplicationRecord
     
   end
 
+  def self.joins_direzione
+    self.joins("LEFT JOIN import_scuole direz ON import_scuole.\"CODICEISTITUTORIFERIMENTO\" =  direz.\"CODICESCUOLA\"")
+  end
+
   def previous
     Current.user.import_scuole
-      .where("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" < ? OR (import_scuole.\"DENOMINAZIONESCUOLA\" < ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ?)", 
-      self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA, self.DENOMINAZIONEISTITUTORIFERIMENTO)
-      .order("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" DESC, import_scuole.\"DENOMINAZIONESCUOLA\" DESC").first
+      .joins_direzione
+      .where("(direz.\"DESCRIZIONECOMUNE\" < ?) 
+              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" < ?)
+              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ? AND import_scuole.\"DENOMINAZIONESCUOLA\" < ?)", 
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, 
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO,
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA)
+      .order("direz.\"DESCRIZIONECOMUNE\" DESC, import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" DESC, import_scuole.\"DENOMINAZIONESCUOLA\" DESC").first
   end
 
   def next
     Current.user.import_scuole
-      .where("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" > ? OR (import_scuole.\"DENOMINAZIONESCUOLA\" > ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ?)", 
-      self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA, self.DENOMINAZIONEISTITUTORIFERIMENTO)
-      .order("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" ASC, import_scuole.\"DENOMINAZIONESCUOLA\" ASC").first
+      .joins_direzione
+      .where("(direz.\"DESCRIZIONECOMUNE\" > ?) 
+              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" > ?)
+              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ? AND import_scuole.\"DENOMINAZIONESCUOLA\" > ?)", 
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, 
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO,
+          direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA)
+      .order("direz.\"DESCRIZIONECOMUNE\" ASC, import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" ASC, import_scuole.\"DENOMINAZIONESCUOLA\" ASC").first
   end
 
 

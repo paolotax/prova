@@ -15,7 +15,10 @@ class ImportScuoleController < ApplicationController
       end
     end
 
-    @import_scuole = @import_scuole.order(:CODICEISTITUTORIFERIMENTO, :CODICESCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
+    @import_scuole = @import_scuole
+      .joins_direzione
+      .order("direz.\"DESCRIZIONECOMUNE\", direz.\"DENOMINAZIONESCUOLA\", import_scuole.\"DENOMINAZIONESCUOLA\"")
+    
     @import_scuole = @import_scuole.con_appunti(current_user.appunti.non_archiviati) if params[:con_appunti] == "non_archiviati"
 
     @conteggio_scuole   = @import_scuole.count
