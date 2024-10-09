@@ -1,27 +1,50 @@
-<div class="flex group show-scuola">
-	<div class="w-full mx-auto">
+<div class="sticky top-20 z-10 mb-4">
+	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
-
-		<%# info scuola + tappe %>
-		<div class="flex flex-col sm:flex-row sm:justify-end gap-4 w-full">
-			<div class="sm:w-3/5 sm:flex-none">
-				<%= render @import_scuola %>
-			</div>
-			
-			<div id="scuola-tappe-list" class="pl-2">
-				<%= render partial: "tappe/tappa", 
-						collection: @mie_tappe.order(data_tappa: :desc), 
-						locals: { 
-							with_scuola: false,
-							with_checkbox: false 
-						} 
-				%>
-			</div>
+		<% heading.with_leader do %>
+			<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+		<% end %>
+		
+		<% heading.with_description do %>
+			<%= tag.div @import_scuola.indirizzo, class: "text-sm font-semibold text-gray-400" %>
+			<%= tag.div @import_scuola.comune, class: "text-sm font-semibold text-gray-400"  %>
+		<% end %>
 
 
+		<% heading.with_action do %>
+			<%= component 'tax_button', 
+					caption: "Stampa",
+					svg_file: "icon-print.svg",
+					color: "white",
+					url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
+			%>
+		<% end %>
 
-			<div class="px-2 flex flex-row sm:flex-col gap-2">
+		<% heading.with_action do %>
+			<%= tag.div class: "flex flex-row gap-1" do %>
+				<%= component 'tax_button',
+					caption: "prec",
+					svg_file: "icon-arrow-left.svg",
+					color: "white",
+					url: "/import_scuole/#{@import_scuola&.previous&.id}"  %>
 
+				<%= component 'tax_button',
+					caption: "succ",
+					svg_file: "icon-arrow-right.svg",
+					color: "white",
+					url: "/import_scuole/#{@import_scuola&.next&.id}"  %>
+			<% end %>
+		<% end %>
+
+		<% heading.with_action do %>	
+			<%= component 'tax_button',
+				caption: "Indietro",
+				svg_file: "icon-arrow-long-left.svg",
+				color: "white",
+				url: 'javascript:history.back()' %>
+		<% end %>
+
+		<% heading.with_action do %>
 				<%= render DropdownComponent.new() do |dropdown| %>
 					<%= dropdown.with_button do %>
 						<%= component 'tax_button', 
@@ -52,16 +75,35 @@
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
 					<% end %>
 				<% end %>
+		<% end %>
 
 
-				<%= component 'tax_button', 
-						caption: "Stampa",
-						svg_file: "icon-print.svg",
-						color: "white",
-						url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
-				%>
-			</div>
-		</div>
+
+		<%= @import_scuola.denominazione %>
+	
+	<% end %>
+
+	<%#= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", current_value: @import_scuola.importo_entrate - @import_scuola.importo_uscite) do |stat| %>
+		<%# stat.with_current_value_leader { "€ " } %>
+	<%# end %>
+
+</div>
+
+<div id="scuola-tappe-list" class="pl-2 flex flex-row flex-wrap">
+	<%= render partial: "tappe/tappa", 
+			collection: @mie_tappe.order(data_tappa: :asc), 
+			locals: { 
+				with_scuola: false,
+				with_checkbox: false 
+			} 
+	%>
+</div>
+
+
+<div class="flex group show-scuola">
+	<div class="w-full mx-auto">
+		
+
 
 		<div data-controller="tax-tabs"
 			 	data-tax-tabs-index-value="<%= params[:selected_tab] || 0 %>"

@@ -138,7 +138,22 @@ class ImportScuola < ApplicationRecord
   def partita_iva
     
   end
-  
+
+  def previous
+    Current.user.import_scuole
+      .where("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" < ? OR (import_scuole.\"DENOMINAZIONESCUOLA\" < ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ?)", 
+      self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA, self.DENOMINAZIONEISTITUTORIFERIMENTO)
+      .order("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" DESC, import_scuole.\"DENOMINAZIONESCUOLA\" DESC").first
+  end
+
+  def next
+    Current.user.import_scuole
+      .where("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" > ? OR (import_scuole.\"DENOMINAZIONESCUOLA\" > ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ?)", 
+      self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA, self.DENOMINAZIONEISTITUTORIFERIMENTO)
+      .order("import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" ASC, import_scuole.\"DENOMINAZIONESCUOLA\" ASC").first
+  end
+
+
   def self.zone
     self.pluck([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA])
                 .uniq

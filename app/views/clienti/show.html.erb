@@ -1,4 +1,4 @@
-<div class="sticky top-20 z-10">
+<div class="sticky top-20 z-10 mb-4">
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 		<% heading.with_leader do %>
@@ -70,12 +70,14 @@
 		<%= @cliente.denominazione %>
 	
 	<% end %>
+
+	<%= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", current_value: @cliente.importo_entrate - @cliente.importo_uscite) do |stat| %>
+		<% stat.with_current_value_leader { "€ " } %>
+	<% end %>
+
 </div>
 
 
-<%= render StatComponent.new(title: "Fatturato", width: "w-full", current_value: @cliente.importo_entrate - @cliente.importo_uscite) do |stat| %>
-	<% stat.with_current_value_leader { "€ " } %>
-<% end %>
 
 
 <%= render partial: "documenti/documento", collection: @cliente.documenti.order(data_documento: :desc, numero_documento: :desc) %>
