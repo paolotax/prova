@@ -9,14 +9,16 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
     @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)
     @documenti = filter(@documenti.all)
+    @pagy, @documenti =  pagy(@documenti.all, items: 10)
+
   end
 
   def show
     @filter_params = filter_params
     @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)
+    
     @documenti = filter(@documenti.all)
 
-    
     respond_to do |format|
       format.html
       format.pdf do
