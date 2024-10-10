@@ -1,3 +1,4 @@
+<%# menu_item SCAGNOZZ %>
 <li>
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
 	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
@@ -5,58 +6,29 @@
 		ScagnoZZ                        
 	<% end %>	
 </li>
+
+<%# menu_item SCUOLE %>
 <li>
 	<%= link_to import_scuole_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole
 	<% end %>
 </li>
+
+<%# menu_item APPUNTI %>
 <li>
 	<%= link_to appunti_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-pencil.svg') %>                
 		Appunti
 	<% end %>
 </li>
+
+<%# menu_item ADOZIONI %>
 <li>
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to giri_path, class:"flex w-full gap-x-3 " do %>
-				<%= inline_svg_tag('icon-truck.svg') %>
-				Giri                    
-			<% end %>
-			<!-- Expanded: " text-gray-500", Collapsed: "text-gray-400" -->
-			<%= tag.div data: {action: "click->tax-reveal#toggle"} do %>
-				<svg class="rrotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
-					data-tax-reveal-target="chevron">
-					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-				</svg>   
-			<% end %> 
-		</div>
-		
-		<ul data-tax-reveal-target="item" class="hidden">
-			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
-				<!-- 44px -->
-				<%= link_to oggi_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
-					Oggi                 
-				<% end %>
-			</li>
-			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
-				<!-- 44px -->
-				<%= link_to tappe_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
-					Tutte le tappe                  
-				<% end %>
-			</li>
-		</ul>
-	</div>
-</li>
-<li>
-	<div data-controller="tax-reveal"  >
-		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
-			
-			<%= link_to import_adozioni_path, class:"flex w-full gap-x-3 " do %>
+			<%= link_to import_adozioni_path, class:"flex w-full gap-x-3", data: { action: "click->tax-reveal#toggle" } do %>
 				<%= inline_svg_tag('icon-cash.svg') %>
 				Adozioni                    
 			<% end %>
@@ -81,11 +53,12 @@
 	</div>
 </li>
 
+<%# menu_item MAGAZZINO %>
 <li>
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= tag.div class:"flex w-full gap-x-3 " do %>
+			<%= tag.div class:"flex w-full gap-x-3 ", data: { action: "click->tax-reveal#toggle" } do %>
 				<%= inline_svg_tag('icon-circle-stack.svg') %>
 				Magazzino                    
 			<% end %>
@@ -124,6 +97,44 @@
 	</div>
 </li>	
 
+<%# menu_item GIRI %>
+<li>
+	<div data-controller="tax-reveal"  >
+		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
+			
+			<%= link_to giri_path, class:"flex w-full gap-x-3", data: {action: "click->tax-reveal#toggle"} do %>
+				<%= inline_svg_tag('icon-truck.svg') %>
+				Giri                    
+			<% end %>
+			<!-- Expanded: " text-gray-500", Collapsed: "text-gray-400" -->
+			<%= tag.div data: {action: "click->tax-reveal#toggle"} do %>
+				<svg class="rrotate-90 text-gray-400 ml-auto h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true",
+					data-tax-reveal-target="chevron">
+					<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+				</svg>   
+			<% end %> 
+		</div>
+		
+		<ul data-tax-reveal-target="item" class="hidden">
+			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
+				<!-- 44px -->
+				<%= link_to oggi_path, 
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+					Oggi                 
+				<% end %>
+			</li>
+			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
+				<!-- 44px -->
+				<%= link_to tappe_path, 
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
+					Tutte le tappe                  
+				<% end %>
+			</li>
+		</ul>
+	</div>
+</li>
+
+<%# menu_item Stats %>
 <li>
 	<%= link_to stats_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
