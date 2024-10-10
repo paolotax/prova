@@ -3,7 +3,7 @@
 
     <%= tag.div class: "col-span-3 flex flex-col" do %>
         <div class="font-medium text-gray-900 hover:font-bold">
-            <%= link_to riga.libro&.titolo, libro_path(riga.libro) %>
+            <%= link_to  highlight(riga.libro&.titolo, params[:search_libro]), libro_path(riga.libro) %>
         </div>
 
         <div class="mt-1 truncate text-gray-500">
