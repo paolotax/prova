@@ -15,7 +15,7 @@ module Filters
       "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%") 
     }
     
-    filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%") }
+    filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%").distinct }
     filter_scope :causale, ->(causale) { joins(:causale).where("causali.causale ILIKE ?", "%#{causale}%") }
     filter_scope :status, ->(status) { where(status: status) }
     filter_scope :tipo_pagamento, ->(tipo_pagamento) { where(tipo_pagamento: tipo_pagamento) }
