@@ -1,0 +1,43 @@
+<%# locals: ( reload: false ) -%>
+
+<%= component 'tax_filter_form', base_url: documenti_path, reload: reload,
+    fields: [ 
+        {
+            field: :search,
+            label: "Cliente",
+            collection: nil,
+            type: :text,
+            placeholder: "cliente..."
+        }, {
+            field: :search_libro,
+            label: "Libro",
+            collection: nil,
+            type: :text,
+            placeholder: "libro..."
+        },{
+            field: :causale,
+            label: "Causale",
+            collection: Causale.all,
+            type: :select,
+            placeholder: "causale..."
+        }, {
+            field: :status,
+            label: "Stato",
+            collection: Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]},
+            type: :select,
+            placeholder: "stato..."
+        }, {
+            field: :tipo_pagamento,
+            label: "Pagamento",
+            collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
+            type: :select,
+            placeholder: "pagamento..."
+        },{
+            field: :ordina_per,
+            label: "Ordina",
+            collection: ["data documento", "fresh", "creato il"],
+            type: :select,
+            placeholder: "ordina per"
+        }
+] %>
+	
