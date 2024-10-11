@@ -28,7 +28,7 @@
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to import_adozioni_path, class:"flex w-full gap-x-3", data: { action: "click->tax-reveal#toggle" } do %>
+			<%= link_to import_adozioni_path, class:"flex w-full gap-x-3" do %>
 				<%= inline_svg_tag('icon-cash.svg') %>
 				Adozioni                    
 			<% end %>
@@ -102,7 +102,7 @@
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to giri_path, class:"flex w-full gap-x-3", data: {action: "click->tax-reveal#toggle"} do %>
+			<%= link_to giri_path, class:"flex w-full gap-x-3" do %>
 				<%= inline_svg_tag('icon-truck.svg') %>
 				Giri                    
 			<% end %>

@@ -1,12 +1,12 @@
-<div div id="<%= dom_id documento %>" class="w-full" data-controller="tax-reveal">
+<div id="<%= dom_id documento %>" class="w-full" data-controller="tax-reveal">
 
-	<div class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
+	<header class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
 			
 		<%= tag.div class: "flex flex-row gap-4 border items-start" do %>
 	
 			<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
-			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: "_top" } do %>
+			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: :_top } do %>
 				<%= tag.div documento.causale.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
 			<% end %>
 
@@ -17,7 +17,7 @@
 			<% end %>					
 		<% end %>
 		
-		<div class="flex flex-row gap-2">
+		<div class="flex flex-row gap-2 wrap">
 			<%= component 'tax_button',
 					caption: "",
 					svg_file: "icon-pencil.svg",
@@ -35,7 +35,7 @@
 					color: "gray",
 					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
 		</div>
-	</div>
+	</header>
     
 	<ul data-tax-reveal-target="item" class="hidden">
 		<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
@@ -45,9 +45,8 @@
 	</ul>
 
 
-	<div class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8">
-		
-		
+	<footer class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8">
+				
 		<%= tag.div class: "col-span-4 flex flex-row gap-2 sm:gap-4" do %>
             <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
               <%= tag.div documento.status&.titleize, class: "font-semibold" %>
@@ -65,7 +64,7 @@
 			<%= number_to_currency documento.totale_importo, locale: :it %>
 		</div>
 		
-	</div>
+	</footer>
 
 
 </div>
