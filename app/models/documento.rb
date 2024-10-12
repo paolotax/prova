@@ -43,10 +43,10 @@ class Documento < ApplicationRecord
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
 
-  accepts_nested_attributes_for :documento_righe #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
+  accepts_nested_attributes_for :documento_righe  #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
-  validates :numero_documento, presence: true
-  validates :data_documento, presence: true
+  #validates :numero_documento, presence: true
+  #validates :data_documento, presence: true
 
   enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
@@ -60,6 +60,47 @@ class Documento < ApplicationRecord
   class << self
     def filter_proxy = Filters::DocumentoFilterProxy
   end
+
+  attr_accessor :form_step
+  
+  with_options if: -> { required_for_step?(:tipo_documento) } do
+    validates :causale, presence: true
+    validates :numero_documento, presence: true
+    validates :data_documento, presence: true 
+  end
+
+  with_options if: -> { required_for_step?(:cliente) } do
+    validates :clientable_type, presence: true
+    validates :clientable_id, presence: true
+  end
+
+  with_options if: -> { required_for_step?(:dettaglio) } do
+    validates :righe, presence: true
+  end
+
+  def self.form_steps
+    {
+      tipo_documento: [:causale, :numero_documento, :data_documento],
+      cliente: [:clientable_type, :clientable_id, :referente, :note],
+      dettaglio: [ documento_righe_attributes: 
+                    [:id, :posizione, 
+                         { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
+                    ]
+                  ]
+    }
+  end
+
+  def required_for_step?(step)
+    # All fields are required if no form step is present
+    return true if form_step.nil?
+
+    # All fields from previous steps are required
+    ordered_keys = self.class.form_steps.keys.map(&:to_sym)
+    !!(ordered_keys.index(step) <= ordered_keys.index(form_step))
+  end
+
+
+
 
   def vendita?
     tipo_movimento == "vendita" || ( tipo_movimento == "ordine" && status != "ordine" )

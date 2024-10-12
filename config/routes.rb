@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :clienti
   
   resources :documenti do 
+    resources :steps, only: [:show, :update], controller: 'steps_controllers/documento_steps'
     collection do 
       get 'nuovo_numero_documento'
     end

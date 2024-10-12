@@ -38,6 +38,8 @@ class DocumentiController < ApplicationController
     
     @documento = current_user.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
     @documento.documento_righe.build.build_riga(sconto: 0.0)
+  
+    
   end
 
   def edit

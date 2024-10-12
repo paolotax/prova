@@ -4,7 +4,7 @@ class DocumentoRigheController < ApplicationController
   
   def new
     @documento_riga = DocumentoRiga.build(documento_id: params[:documento_id])
-    @documento_riga.build_riga(sconto: 16.0)
+    @documento_riga.build_riga(sconto: 0.0)
 
     render turbo_stream: turbo_stream.append(:documento_righe, partial: "documento_righe/documento_riga", locals: { documento_riga: @documento_riga})
   end
