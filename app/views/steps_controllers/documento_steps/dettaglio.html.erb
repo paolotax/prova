@@ -4,7 +4,7 @@
 
         <%= render partial: "steps_controllers/common/steps_header", locals: { resource: @documento } %>   
         
-        <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance", turbo_frame: :_top }, class: "px-2 py-5"  do |f| %>
+        <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance" }, class: "px-2 py-5"  do |f| %>
             
             <%= tag.section id: "documento_righe", class: "col-span-4",  
                             data: { controller: "sortable", 
@@ -25,7 +25,7 @@
 
             <%= tag.div(class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
                 <%= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 py-2 bg-gray-500 text-white"  %>
-                <%= f.submit 'Salva', name: "submit", class: "px-4 py-2 bg-gray-500 text-white" %>
+                <%= f.submit 'Avanti', name: "next", class: "px-4 py-2 bg-gray-500 text-white" %>
             <% end %>
 
         <% end %>

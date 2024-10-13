@@ -86,7 +86,8 @@ class Documento < ApplicationRecord
                     [:id, :posizione, 
                          { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
                     ]
-                  ]
+                  ],
+      stato_documento: [:status, :tipo_pagamento, :pagato_il]
     }
   end
 
