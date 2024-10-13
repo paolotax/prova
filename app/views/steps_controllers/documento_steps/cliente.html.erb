@@ -6,21 +6,21 @@
         
         <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance" }, class: "px-2 py-5"  do |f| %>
             
-                <%= render TaxSelectClientableComponent.new( 
-                    form: f, 
-                    clientable_type: @documento.clientable_type, 
-                    clientable_id: @documento.clientable_id
-                ) %>
+            <%= render TaxSelectClientableComponent.new( 
+                form: f, 
+                clientable_type: @documento.clientable_type, 
+                clientable_id: @documento.clientable_id
+            ) %>
 
-                <%= tag.div class: "mt-5" do %>
-                    <%= label_for form: f, field: 'referente', label: 'Referente' %>
-                    <%= f.text_field :referente, class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
-                <% end %>
+            <%= tag.div class: "mt-5" do %>
+                <%= label_for form: f, field: 'referente', label: 'Referente' %>
+                <%= f.text_field :referente, class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
+            <% end %>
 
-                <%= tag.div class: "mt-5" do %>
-                    <%= label_for form: f, field: 'note', label: 'Note' %>
-                    <%= f.text_area :note, rows: 3, class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
-                <% end %>
+            <%= tag.div class: "mt-5" do %>
+                <%= label_for form: f, field: 'note', label: 'Note' %>
+                <%= f.text_area :note, rows: 3, class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
+            <% end %>
 
             <%= tag.div(class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
                 <%= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 py-2 bg-gray-500 text-white"  %>

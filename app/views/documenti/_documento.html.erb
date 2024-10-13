@@ -2,7 +2,7 @@
 
 	<header class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
 			
-		<%= tag.div class: "flex flex-row gap-4 border items-start" do %>
+		<%= tag.div class: "block sm:flex gap-4 border items-start" do %>
 	
 			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
@@ -15,6 +15,7 @@
 				<%= tag.p documento.referente %> 
 				<%= tag.p documento.note %> 
 			<% end %>					
+		
 		<% end %>
 		
 		<div class="flex flex-row gap-2 wrap">
