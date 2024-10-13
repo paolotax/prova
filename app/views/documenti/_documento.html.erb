@@ -4,10 +4,10 @@
 			
 		<%= tag.div class: "flex flex-row gap-4 border items-start" do %>
 	
-			<%= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
+			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
 			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: :_top } do %>
-				<%= tag.div documento.causale.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
+				<%= tag.div documento&.causale&.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>

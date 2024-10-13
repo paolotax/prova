@@ -14,10 +14,9 @@ class DocumentiController < ApplicationController
   end
 
   def show
-    @filter_params = filter_params
-    @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)
-    
-    @documenti = filter(@documenti.all)
+    # @filter_params = filter_params
+    # @documenti = current_user.documenti.includes(:causale, documento_righe: [:riga]).order(data_documento: :desc, numero_documento: :desc)    
+    # @documenti = filter(@documenti.all)
 
     respond_to do |format|
       format.html
@@ -37,9 +36,10 @@ class DocumentiController < ApplicationController
     numero_documento = current_user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1
     
     @documento = current_user.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
-    @documento.documento_righe.build.build_riga(sconto: 0.0)
+    @documento.save! validate: false
+    @documento.documento_righe.build.build_riga(sconto: 0.0)  
   
-    
+    redirect_to documento_step_path(@documento, Documento.form_steps.keys.first)
   end
 
   def edit
@@ -62,6 +62,7 @@ class DocumentiController < ApplicationController
   def update
 
     respond_to do |format|
+
       if @documento.update(documento_params)
         format.html { redirect_to documento_url(@documento), notice: "Documento was successfully updated." }
         format.json { render :show, status: :ok, location: @documento }

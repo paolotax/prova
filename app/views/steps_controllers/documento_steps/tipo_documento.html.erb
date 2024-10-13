@@ -4,18 +4,24 @@
 
         <%= render partial: "steps_controllers/common/steps_header", locals: { resource: @documento } %>   
         
-        <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance" }, class: "px-2 py-5"  do |f| %>
+        <%= form_with model: @documento, url: wizard_path, method: :put, 
+                data: { turbo_action: "advance", controller: "tax-select-causale" }, 
+                class: "px-2 py-5"  do |f| %>
             
+            <%= f.hidden_field :clientable_type, value: @documento.clientable_type, data: { tax_select_causale_target: "clientable"} %>
+            <%= f.hidden_field :clientable_id, value: @documento.clientable_id, data: { tax_select_causale_target: "clientableId"} %>
+
             <%= tag.div class: "mt-5" do %>
                 <%= label_for form: f, field: 'causale', label: 'Tipo Documento' %>
-                <%= f.select :causale_id, options_from_collection_for_select(Causale.order(:causale).all, "id", "causale", @documento.causale_id),
-                        {}, class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
+                <%= f.select :causale_id, options_from_collection_for_select(Causale.order(:causale).all, :id, :causale, @documento.causale_id), {}, 
+                        data: { tax_select_causale_target: "select", action: "change->tax-select-causale#change" },
+                        class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
             <% end %>
 
             <%= tag.div class: "flex flex-row justify-start items-center gap-4" do %>
                 <%= tag.div class: "mt-5 flex flex-col gap-2" do %>
                     <%= label_for form: f, field: 'numero_documento', label: 'Numero' %>            
-                    <%= component 'form_number', form: f, field: 'numero_documento' %>
+                    <%= component 'form_number', form: f, field: 'numero_documento', data_attr: { tax_select_causale_target: "numero" } %>
                 <% end %>
 
                 <%= tag.div class: "mt-5" do %>

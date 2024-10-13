@@ -19,7 +19,7 @@
 #  totale_copie     :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  causale_id       :bigint           not null
+#  causale_id       :bigint
 #  clientable_id    :bigint
 #  user_id          :bigint           not null
 #

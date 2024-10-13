@@ -19,7 +19,7 @@
 #  totale_copie     :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  causale_id       :bigint           not null
+#  causale_id       :bigint
 #  clientable_id    :bigint
 #  user_id          :bigint           not null
 #
@@ -37,7 +37,7 @@
 class Documento < ApplicationRecord
   
   belongs_to :user
-  belongs_to :clientable, polymorphic: true
+  belongs_to :clientable, polymorphic: true, optional: true
   belongs_to :causale
 
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
@@ -45,8 +45,6 @@ class Documento < ApplicationRecord
 
   accepts_nested_attributes_for :documento_righe  #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
-  #validates :numero_documento, presence: true
-  #validates :data_documento, presence: true
 
   enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
   enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
@@ -61,12 +59,14 @@ class Documento < ApplicationRecord
     def filter_proxy = Filters::DocumentoFilterProxy
   end
 
+
   attr_accessor :form_step
   
   with_options if: -> { required_for_step?(:tipo_documento) } do
-    validates :causale, presence: true
+    validates :causale_id, presence: true
     validates :numero_documento, presence: true
     validates :data_documento, presence: true 
+    
   end
 
   with_options if: -> { required_for_step?(:cliente) } do
@@ -75,12 +75,12 @@ class Documento < ApplicationRecord
   end
 
   with_options if: -> { required_for_step?(:dettaglio) } do
-    validates :righe, presence: true
+    # validates :righe, presence: true
   end
 
   def self.form_steps
     {
-      tipo_documento: [:causale, :numero_documento, :data_documento],
+      tipo_documento: [:causale_id, :numero_documento, :data_documento, :clientable_type, :clientable_id],
       cliente: [:clientable_type, :clientable_id, :referente, :note],
       dettaglio: [ documento_righe_attributes: 
                     [:id, :posizione, 

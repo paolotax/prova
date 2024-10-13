@@ -6,13 +6,19 @@ module StepsControllers
 
     def show
       @documento = Documento.find(params[:documento_id])
-      #raise params.inspect
+      
+      case step
+        when :dettaglio
+          @documento.documento_righe.build.build_riga(sconto: 0.0) if @documento.documento_righe.empty?
+      end
+      
       render_wizard
     end
 
     def update
+      
       @documento = Documento.find(params[:documento_id])
-      # Use #assign_attributes since render_wizard runs a #save for us
+      # Use #assign_attributes since render_wizard runs a #save for us 
       @documento.assign_attributes documento_params
       render_wizard @documento
     end

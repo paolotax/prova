@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_18_075333) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_13_034645) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -144,7 +144,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_18_075333) do
     t.integer "numero_documento"
     t.bigint "user_id", null: false
     t.date "data_documento"
-    t.bigint "causale_id", null: false
+    t.bigint "causale_id"
     t.integer "tipo_pagamento"
     t.date "consegnato_il"
     t.integer "status"
