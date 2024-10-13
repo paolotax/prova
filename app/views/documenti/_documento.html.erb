@@ -22,7 +22,7 @@
 					caption: "",
 					svg_file: "icon-pencil.svg",
 					color: "yellow",
-					url: edit_documento_url(documento),
+					url: documento_step_path(documento, Documento.form_steps.keys.first),
 					data_attr: { turbo_frame: :_top} %>
 			<%= component 'tax_button',
 					caption: "",

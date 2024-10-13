@@ -8,23 +8,23 @@
             
             <%= tag.div class: "mt-5 flex flex-row gap-2 mx-auto " do %>
                 <%= tag.div class: "flex flex-col gap-2" do %>
-                    <%= label_for form: f, field: :status, label: "stato:" %> 
+                    <%= label_for form: f, field: :status, label: "Stato:" %> 
                     <%= f.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, @documento.status)), 
                         {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
                 <%= tag.div class: "flex flex-col gap-2" do %>
-                    <%= label_for form: f, field: :consegnato_il, label: "consegnato il:" %>
+                    <%= label_for form: f, field: :consegnato_il, label: "Consegnato il:" %>
                     <%= f.date_field :consegnato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
             <% end %>
 
             <%= tag.div class: "mt-5 flex flex-row gap-2" do %>
                 <%= tag.div class: "flex flex-col gap-2" do %>
-                    <%= label_for form: f, field: :tipo_pagamento, label:  "pagamento:" %>
+                    <%= label_for form: f, field: :tipo_pagamento, label:  "Pagamento:" %>
                     <%= f.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]}, @documento.tipo_pagamento)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
                 <%= tag.div class: "flex flex-col gap-2" do %>
-                    <%= label_for form: f, field: :pagato_il, label:  "pagato il:" %>
+                    <%= label_for form: f, field: :pagato_il, label:  "Pagato il:" %>
                     <%= f.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
             <% end %>
