@@ -6,25 +6,27 @@ class LibriController < ApplicationController
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
 
   def index
-    @import = LibriImporter.new
-    
-    @libri = current_user.libri.includes(:editore, :adozioni, :giacenza).order(:categoria, :titolo, :classe)
-    @libri = filter(@libri.all)
-    
-    
-    
-    #@pagy, @libri = pagy(@libri.all, items: 20, link_extra: 'data-turbo-action="advance"')
 
-    # tolto geared_pagination e index.turbo_stream perchè non funziona con redirect destroy
-    
-    set_page_and_extract_portion_from @libri
-    
-    respond_to do |format|
-      format.turbo_stream
-      format.html
-      format.xlsx 
+    unless params[:q].present?
+
+      @import = LibriImporter.new
+      
+      @libri = current_user.libri.includes(:editore, :adozioni, :giacenza).order(:categoria, :titolo, :classe)
+      @libri = filter(@libri.all)
+
+
+      set_page_and_extract_portion_from @libri
+      
+      respond_to do |format|
+        format.turbo_stream
+        format.html
+        format.xlsx 
+      end
+    else
+      @libri = current_user.libri.search_all_word(params[:q]).order(:titolo)
+  
     end
-
+  
   end
 
   def show

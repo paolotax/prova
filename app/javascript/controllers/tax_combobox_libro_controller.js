@@ -10,6 +10,12 @@ export default class extends Controller {
 
   change(event) {
     let id_libro = this.comboboxTarget.querySelector("input").value;
+    
+    if (id_libro == "") {
+      this.prezzoTarget.value = "0.0";
+      return;
+    }
+
     let url = `/libri/${id_libro}/get_prezzo_copertina_cents`;
 
     fetch(url, {

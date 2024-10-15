@@ -1,1 +1,4 @@
-<%= link_to clientable.denominazione, polymorphic_path(clientable), data: { turbo_frame: :_top } %>
+<%= link_to polymorphic_path(clientable), data: { turbo_frame: :_top } do %>
+    <%= tag.p clientable.tipo_nome, class: "text-gray-700 font-semibold" %>
+    <%= tag.p clientable.citta, class: "text-xs" %>
+<% end %>

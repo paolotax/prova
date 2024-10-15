@@ -34,11 +34,15 @@
 
                 <fieldset class="col-span-3 sm:col-span-4 cb-tax cb-medium flex flex-col">
                     <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
-                    <%= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
+                    <%#= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
                             placeholder: "seleziona libro...",
                             data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                     tax_combobox_libro_target: "combobox" } %>
-                </fieldset>                    
+                    <%= form_riga.combobox :libro_id, libri_path, 
+                            placeholder: "seleziona libro...",
+                            data: { action: "hw-combobox:selection->tax-combobox-libro#change",
+                                    tax_combobox_libro_target: "combobox" } %>
+                </fieldset>
 
                 
                 <fieldset class="col-start-2 sm:col-start-auto col-span-1 flex flex-col justify-between items-center">  
