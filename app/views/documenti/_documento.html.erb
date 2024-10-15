@@ -11,9 +11,17 @@
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-				<%= link_to documento&.clientable&.denominazione, polymorphic_path(documento&.clientable), data: { turbo_frame: :_top } %>
-				<%= tag.p documento.referente %> 
-				<%= tag.p documento.note %> 
+				
+				<% if documento.clientable.present? %>
+				
+					<%= link_to documento&.clientable&.denominazione, polymorphic_path(documento&.clientable), data: { turbo_frame: :_top } %>
+					<%= tag.p documento.referente %> 
+					<%= tag.p documento.note %> 
+				<% else %>
+
+					<%= tag.p "Cliente non definito" %>
+
+				<% end %>
 			<% end %>					
 		
 		<% end %>
