@@ -11,7 +11,7 @@
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-				<%= documento.clientable&.denominazione %>
+				<%= link_to documento.clientable&.denominazione, polymorphic_path(documento.clientable), data: { turbo_frame: :_top } %>
 				<%= tag.p documento.referente %> 
 				<%= tag.p documento.note %> 
 			<% end %>					

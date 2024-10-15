@@ -75,7 +75,7 @@ class Documento < ApplicationRecord
   end
 
   with_options if: -> { required_for_step?(:dettaglio) } do
-    # validates :righe, presence: true
+    #validates :documento_righe, length: {minimum: 1, message: 'deve esserci almeno una riga.'}
   end
 
   def self.form_steps
@@ -83,7 +83,7 @@ class Documento < ApplicationRecord
       tipo_documento: [:causale_id, :numero_documento, :data_documento, :clientable_type, :clientable_id],
       cliente: [:clientable_type, :clientable_id, :referente, :note],
       dettaglio: [ documento_righe_attributes: 
-                    [:id, :posizione, 
+                    [ :id, :posizione, 
                          { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
                     ]
                   ],

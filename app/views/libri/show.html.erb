@@ -7,7 +7,7 @@
 		
 		<% heading.with_description do %>
 
-			<%= tag.div @libro.editore.editore, class: "text-sm font-semibold text-gray-500"  %>
+			<%= tag.div @libro&.editore&.editore, class: "text-sm font-semibold text-gray-500"  %>
 
 			<%= tag.div class: "flex flex-row items-center gap-2" do %>
 				<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
@@ -17,7 +17,7 @@
 
 			<%= tag.div class: "flex flex-row items-center gap-2" do %>
 				<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
-				<%= tag.div @libro.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
+				<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
 			<% end %>
 		<% end %>
 
