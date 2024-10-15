@@ -12,16 +12,11 @@
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
 				
-				<% unless documento.clientable.class == Domain::NessunCliente %>
-				
-					<%= link_to documento.clientable.denominazione, polymorphic_path(documento.clientable), data: { turbo_frame: :_top } %>
-					<%= tag.p documento.referente %> 
-					<%= tag.p documento.note %> 
-				<% else %>
+				<%= render partial: "clientable/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+								
+				<%= tag.p documento.referente %> 
+				<%= tag.p documento.note %> 
 
-					<%= tag.p documento.clientable.denominazione %>
-
-				<% end %>
 			<% end %>					
 		
 		<% end %>
