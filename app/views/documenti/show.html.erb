@@ -106,7 +106,7 @@
       
         <div class="px-4 sm:flex-auto">
             <h1 class="text-xl font-semibold leading-6 text-gray-900">
-                <%= link_to @documento.clientable&.denominazione, @documento.clientable %></h1>
+                <%= @documento.clientable.denominazione %></h1>
             
             <p class="mt-1 text-sm text-gray-500">
                 <%= @documento.referente %>

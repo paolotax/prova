@@ -101,6 +101,9 @@ class Documento < ApplicationRecord
   end
 
 
+  def clientable
+    super || Domain::NessunCliente.new
+  end
 
 
   def vendita?
