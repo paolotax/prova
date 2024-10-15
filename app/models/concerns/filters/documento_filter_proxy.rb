@@ -25,9 +25,9 @@ module Filters
     
     def order_by(ordine)
       if ordine == 'fresh'
-        order(created_at: :desc)
+        unscope(:order).order(created_at: :desc)
       else
-        order(data_documento: :desc, numero_documento: :desc )
+        unscope(:order).order(data_documento: :desc, numero_documento: :desc )
       end
     end
   end
