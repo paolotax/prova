@@ -152,7 +152,7 @@ class DocumentiImporter
 
     def check_prezzo(prezzo)
       if prezzo.is_a? String
-        prezzo = prezzo.gsub(",",".")
+        prezzo = prezzo.gsub("€","").gsub(",",".").strip
       end
       prezzo.to_s
     end

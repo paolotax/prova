@@ -10,6 +10,15 @@
 			<%= tag.div @import_scuola.comune, class: "text-sm font-semibold text-gray-400"  %>
 		<% end %>
 
+		<% heading.with_action do %>
+			<%= component 'tax_button', 
+					caption: "Vai...",
+					svg_file: "icon-map-pin.svg",
+					color: "pink",
+					url:  go_to_scuola_path(@import_scuola, current_user.navigator),
+					target: "_blank"
+			%>
+		<% end %>
 
 		<% heading.with_action do %>
 			<%= component 'tax_button', 
