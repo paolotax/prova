@@ -21,19 +21,22 @@
 	</div>
 	
 	<div class="ml-2 flex flex-row">
-						<%# cella appunti ping %>
-			<%= tag.div class: "w-12 p-2.5 content-center" do %>
-				<% if import_scuola.appunti.non_saggi.non_archiviati.any? %>
-					<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
-						<%= link_to import_scuola_path(import_scuola, selected_tab: "2"), data: { turbo_frame: "_top"}, class: "" do %>                
-							<%= import_scuola.appunti.non_saggi.non_archiviati.size %>
-						<% end %> 
-					<% end %>
-				<% end %>  
-			<% end %>
-		
-
-
+			
+		<%# cella appunti ping %>
+		<%= tag.div class: "w-12 p-2.5 content-center" do %>
+			<% if import_scuola.appunti.non_saggi.non_archiviati.any? %>
+				<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
+					<%= link_to import_scuola_path(import_scuola, selected_tab: "2"), data: { turbo_frame: "_top"}, class: "" do %>                
+						<%= import_scuola.appunti.non_saggi.non_archiviati.size %>
+					<% end %> 
+				<% end %>
+			<% end %>  
+		<% end %>
+	
+	
+		<%= render partial: "import_scuola_menu", locals: { import_scuola: import_scuola } %>
+	
+	
 	</div>
 
 </div>
