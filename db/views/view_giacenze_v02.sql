@@ -14,7 +14,6 @@
       INNER JOIN documenti ON documento_righe.documento_id = documenti.id
       INNER JOIN causali ON documenti.causale_id = causali.id
       INNER JOIN users ON users.id = documenti.user_id
-      WHERE users.id = 1
       GROUP BY 1, 2, 3, 4
       ORDER BY 3;
       

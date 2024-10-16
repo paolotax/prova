@@ -5,7 +5,7 @@ class DocumentiImporterController < ApplicationController
 
   def create
     @import = DocumentiImporter.new(documenti_importer_params)
-
+    #raise @import.inspect
     respond_to do |format|
       if @import.save
         format.turbo_stream do 
@@ -29,7 +29,7 @@ class DocumentiImporterController < ApplicationController
   private
 
   def documenti_importer_params
-    params.require(:documenti_importer).permit(:file, :import_method)
+    params.require(:documenti_importer).permit(:file, :import_method, :documento_id, :documento)
   end
   
 end

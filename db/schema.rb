@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_13_034645) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_16_154901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -558,7 +558,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_13_034645) do
        JOIN documenti ON ((documento_righe.documento_id = documenti.id)))
        JOIN causali ON ((documenti.causale_id = causali.id)))
        JOIN users ON ((users.id = documenti.user_id)))
-    WHERE (users.id = 1)
     GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
     ORDER BY libri.titolo;
   SQL
