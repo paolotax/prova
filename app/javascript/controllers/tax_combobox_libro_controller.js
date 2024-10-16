@@ -5,9 +5,6 @@ export default class extends Controller {
 
   static targets = ["combobox", "prezzo"]
 
-  connect() {
-  }
-
   change(event) {
     let id_libro = this.comboboxTarget.querySelector("input").value;
     

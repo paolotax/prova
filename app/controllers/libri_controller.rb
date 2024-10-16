@@ -7,7 +7,11 @@ class LibriController < ApplicationController
 
   def index
 
-    unless params[:q].present?
+    if params[:q].present?
+
+      @libri = current_user.libri.order(:titolo).search_all_word(params[:q])
+
+    else
 
       @import = LibriImporter.new
       
@@ -22,11 +26,7 @@ class LibriController < ApplicationController
         format.html
         format.xlsx 
       end
-    else
-      @libri = current_user.libri.search_all_word(params[:q]).order(:titolo)
-  
     end
-  
   end
 
   def show
