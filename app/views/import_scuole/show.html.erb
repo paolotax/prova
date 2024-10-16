@@ -229,7 +229,7 @@
 			<!-- appunti archiviati -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
 					<%= render partial: "appunti/appunto", collection: @appunti_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
@@ -237,7 +237,7 @@
 			<!-- documenti -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="vendite" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 2xl:gap-x-8">
-				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
 					<%= render @documenti.order(data_documento: :desc) %>
 				</div>
 			</div>
@@ -245,7 +245,7 @@
 			<!-- saggi -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="saggi" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-				<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>				
 					<%= render partial: "appunti/appunto", collection: @ssk.order(updated_at: :desc), locals: {mostra_scuola: false} %>
 				</div>
 			</div>

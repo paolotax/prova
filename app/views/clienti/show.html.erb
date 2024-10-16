@@ -78,10 +78,11 @@
 </div>
 
 
+<div class="group show-cliente">
+	<%= render partial: "documenti/documento", collection: @cliente.documenti.order(data_documento: :desc, numero_documento: :desc) %>
+</div>
 
-
-<%= render partial: "documenti/documento", collection: @cliente.documenti.order(data_documento: :desc, numero_documento: :desc) %>
-
+\
 <%= tag.ul  do %>
 	<% @situazio.each do |libro| %>
 		<%= tag.li class: "grid grid-cols-8" do %>
@@ -95,4 +96,5 @@
 		<% end %>
 	<% end %>
 <% end %>
+</div>
 
