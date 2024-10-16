@@ -81,10 +81,6 @@ class DocumentiImporter
 
   def import_excel!
     xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: ";" } })
-    
-    # columns = xlsx.sheet(0).first_row
-    # raise columns.inspect
-
     xlsx.default_sheet = xlsx.sheets.first 
     
     header = xlsx.row(1) 
@@ -92,22 +88,23 @@ class DocumentiImporter
 
     documento = Current.user.documenti.find(documento_id)
 
-    2.upto(xlsx.last_row) do |line| 
-      
-
-      
+    2.upto(xlsx.last_row) do |line|  
       row_data = Hash[header.zip xlsx.row(line)]
 
+      codice = row_data[:codice_isbn] || row_data[:ean] || row_data[:isbn]
+      libro = Current.user.libri.find_by(codice_isbn: codice)
       
-      libro = Current.user.libri.find_by(codice_isbn: row_data[:codice_isbn])
+      quantita = row_data[:quantita] || row_data[:qta]
+      
       documento_riga = documento.documento_righe.build
-      riga = documento_riga.build_riga(libro: libro, sconto: 0.0)
+      riga = documento_riga.build_riga(libro: libro, sconto: 0.0, quantita: quantita)
       
       
       assign_from_row_2(row_data, riga)
 
       if documento_riga.save
           @imported_count += 1
+          @documento = documento
       else
         @errors_count += 1
         errors.add(:base, "Line #{$.} - #{riga.errors.full_messages.join(", ")}")
