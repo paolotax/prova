@@ -3,9 +3,6 @@ class DocumentoRigheController < ApplicationController
   before_action :authenticate_user!
   
   def new
-
-
-    
     @documento_riga = DocumentoRiga.build(documento_id: params[:documento_id])
     @documento_riga.build_riga(sconto: 0.0)
 

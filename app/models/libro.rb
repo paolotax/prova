@@ -58,13 +58,13 @@ class Libro < ApplicationRecord
   
   has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
   
-  has_many :righe_confezione, foreign_key: "confezione_id", class_name: "Confezione"
-  has_many :fascicoli, through: :righe_confezione, dependent: :destroy
+  has_many :confezione_righe, foreign_key: "confezione_id", class_name: "ConfezioneRiga"
+  has_many :fascicoli, through: :confezione_righe, dependent: :destroy
 
-  has_many :righe_fascicolo, foreign_key: "fascicolo_id", class_name: "Confezione"
-  has_many :confezioni, through: :righe_fascicolo, dependent: :destroy
+  has_many :fascicolo_righe, foreign_key: "fascicolo_id", class_name: "ConfezioneRiga"
+  has_many :confezioni, through: :fascicolo_righe, dependent: :destroy
   
-  accepts_nested_attributes_for :righe_confezione
+  accepts_nested_attributes_for :confezione_righe
 
   has_many :adozioni
   has_many :righe

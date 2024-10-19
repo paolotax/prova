@@ -76,8 +76,5 @@ scp root@116.203.224.90:backup.tar.gz ~/backup/
 ssh root@116.203.224.90
 
 
-docker exec -it prova-web-ebbe551c1da57db7169a4f59844afac3e8d9c783 bin/rails c
-prova-web-06dfbe5fc272c0a18fc11937b1fad580
+docker exec -it prova-web-xxx bin/rails c
 
-
-prova-web-833ac632eeec3866e2bc6f7e2e5ea9551526b6ae

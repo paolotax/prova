@@ -13,21 +13,31 @@ class ConfezionatorController < ApplicationController
   end
 
   def create
-    @confezione = @libro.righe_confezione.build(confezione_params)
+    
+    #raise params.inspect
+    @confezione = @libro.confezione_righe.build(confezione_params)
     @confezione.save!
   end
 
   def destroy
     
-    @confezione = Confezione.find(params[:id])
+    @confezione = ConfezioneRiga.find(params[:id])
     @libro = @confezione.confezione
     @confezione.destroy!
+  end
+
+  def sort
+
+    @confezione = ConfezioneRiga.find(params[:id])
+    @confezione.update(row_order: (params[:row_order].to_i))
+
+    head :no_content
   end
 
   private
 
     def confezione_params
-      params.permit(:confezione_id, :fascicolo_id)
+      params.require(:confezione_riga).permit(:confezione_id, :fascicolo_id, :row_order)
     end
 
     

@@ -73,13 +73,20 @@ Rails.application.routes.draw do
     member do 
       get 'get_prezzo_copertina_cents'
     end
-
     member do
       get "fascicoli", to: "confezionator#index"
-      post 'fascicoli', to: "confezionator#create"
+      post 'fascicoli', to: "confezionator#create", as: "confezione"
       delete 'fascicoli', to: "confezionator#destroy"
     end
   end
+
+  resources :confezione do
+    member do
+      patch 'sort', to: "confezionator#sort"
+    end
+  end
+
+ 
   
   resources :tipi_scuole, only: [:index, :update]
   

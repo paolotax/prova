@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_19_120951) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_19_174853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -140,7 +140,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_19_120951) do
     t.index ["user_id"], name: "index_clienti_on_user_id"
   end
 
-  create_table "confezioni", force: :cascade do |t|
+  create_table "confezione_righe", force: :cascade do |t|
     t.bigint "confezione_id"
     t.bigint "fascicolo_id"
     t.datetime "created_at", null: false

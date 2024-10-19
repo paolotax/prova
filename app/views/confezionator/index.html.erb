@@ -1,10 +1,15 @@
 
   <%= turbo_frame_tag "confezione_#{@libro.id}_fascicoli" do %>  
-	<%= tag.ul do %>
-		<% @libro.righe_confezione.each do |c| %>
+	<%= tag.ul data: { controller: "sortable", 
+                        sortable_animation_value: "150", 
+                        sortable_resource_name_value: "confezione_riga",
+						sortable_param_name_value: "row_order" } do %>
+		<% @libro.confezione_righe.order(:row_order).each do |c| %>
 			<%= render partial: "confezionator/fascicolo", locals: { confezione: c }%>
 		<% end %>
 
-		<%= render partial: "confezionator/prezzo_fascicoli", locals: { libro: @libro } %>
+		
 	<% end %>
+
+	<%= render partial: "confezionator/prezzo_fascicoli", locals: { libro: @libro } %>
   <% end %>  
