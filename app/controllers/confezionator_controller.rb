@@ -29,7 +29,7 @@ class ConfezionatorController < ApplicationController
   def sort
 
     @confezione = ConfezioneRiga.find(params[:id])
-    @confezione.update(row_order: (params[:row_order].to_i))
+    @confezione.update(row_order: (params[:confezione_riga][:row_order].to_i))
 
     head :no_content
   end

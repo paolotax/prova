@@ -20,5 +20,5 @@ class ConfezioneRiga < ApplicationRecord
 
   #acts_as_list scope: [:confezione_id], column: "row_order"
 
-  positioned on: :confezione, column: :row_order
+  positioned on: [:confezione_id], column: :row_order
 end
