@@ -8,9 +8,6 @@ class AddFascicoliCountToConfezioni < ActiveRecord::Migration[7.1]
   end
 
 
-  Libro.all.each do |l|
-    l.fascicoli_count = l.fascicoli.count
-    l.save
-  end
+
 
 end
