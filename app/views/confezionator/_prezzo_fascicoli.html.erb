@@ -1,0 +1,15 @@
+<%= tag.li id: "prezzo_fascicoli_#{@libro.id}", class: "text-sm font-semibold text-gray-400 flex justify-between items-center gap-4" do %>
+
+    <%= tag.div class: "w-full flex flex-row justify-between" do %>
+        <%= tag.div "Totale" %>
+        
+        <%= tag.div number_to_currency @libro.fascicoli.sum(&:prezzo) %>
+    <% end %>
+
+    <%= tag.div class: "invisible m-0.5 h-6 w-6 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" do %>
+        <%= inline_svg_tag "icon-trash.svg" %>
+    <% end %>
+
+<% end %>
+
+

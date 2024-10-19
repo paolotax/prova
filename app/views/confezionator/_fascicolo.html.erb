@@ -1,11 +1,15 @@
-<%= tag.li class: "text-sm font-semibold text-gray-400 flex justify-between gap-4" do %>
+<%= tag.li id: dom_id(confezione), class: "text-sm font-semibold text-gray-400 flex justify-between items-center gap-4" do %>
 
-        <%= tag.div class: "w-full flex flex-row justify-between" do %>
-            <%= link_to fascicolo.titolo, libro_path(fascicolo), data: { turbo_frame: :_top }, class: "hover:text-black" %>
-            
-            <%= tag.div number_to_currency fascicolo.prezzo %>
+    <%= tag.div class: "w-full flex flex-row justify-between" do %>
+        <%= link_to confezione.fascicolo.titolo, libro_path(confezione.fascicolo), data: { turbo_frame: :_top }, class: "hover:text-black" %>
+        
+        <%= tag.div number_to_currency confezione.fascicolo.prezzo %>
+    <% end %>
+
+
+    <%= form_with url: fascicoli_libro_path(confezione), method: "delete" do |f| %>
+        <%= f.button type: "submit", class: "m-0.5 h-6 w-6 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" do %>
+            <%= inline_svg_tag "icon-trash.svg" %>
         <% end %>
-
-
-    <%= tag.button "elimina" %>
+    <% end %>
 <% end %>

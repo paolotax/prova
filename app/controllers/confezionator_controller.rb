@@ -1,7 +1,7 @@
 class ConfezionatorController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_libro, only: %i[ index create destroy ]
+  before_action :set_libro, only: %i[ index create ]
 
   def index
     @fascicoli = @libro.fascicoli
@@ -18,6 +18,10 @@ class ConfezionatorController < ApplicationController
   end
 
   def destroy
+    
+    @confezione = Confezione.find(params[:id])
+    @libro = @confezione.confezione
+    @confezione.destroy!
   end
 
   private

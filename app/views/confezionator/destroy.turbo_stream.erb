@@ -1,0 +1,7 @@
+<%= turbo_stream.remove @confezione %>
+
+<%= turbo_stream.replace "prezzo_fascicoli_#{@libro.id}" do %>
+
+  <%= render partial: "confezionator/prezzo_fascicoli", locals: { libro: @libro } %>
+
+<% end %>

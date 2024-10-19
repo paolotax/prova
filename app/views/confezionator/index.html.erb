@@ -2,21 +2,9 @@
   <%= turbo_frame_tag "confezione_#{@libro.id}_fascicoli" do %>  
 	<%= tag.ul do %>
 		<% @libro.righe_confezione.each do |c| %>
-			<%= render partial: "confezionator/fascicolo", locals: { fascicolo: c.fascicolo }%>
+			<%= render partial: "confezionator/fascicolo", locals: { confezione: c }%>
 		<% end %>
+
+		<%= render partial: "confezionator/prezzo_fascicoli", locals: { libro: @libro } %>
 	<% end %>
-
-
-	<%= form_with url: fascicoli_libro_path(@libro), method: :post do |f| %>
-		<%= f.hidden_field :confezione_id, value: @libro.id %>
-		<div class="flex flex-row gap-4">
-			<div class="w-full my-5 cb-tax cb-large flex flex-col gap-2" id="select-clientable">
-				<%= f.combobox :fascicolo_id, libri_path, placeholder: "aggiungi fascicolo..." %>
-			</div>
-			<%= f.submit "Aggiungi" %>
-		</div>
-
-	<% end %>
-
-
   <% end %>  

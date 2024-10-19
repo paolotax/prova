@@ -77,7 +77,7 @@ Rails.application.routes.draw do
     member do
       get "fascicoli", to: "confezionator#index"
       post 'fascicoli', to: "confezionator#create"
-      delete 'confezione/:id', to: "confezionator#destroy"
+      delete 'fascicoli', to: "confezionator#destroy"
     end
   end
   
