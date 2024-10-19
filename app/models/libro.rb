@@ -55,6 +55,14 @@ class Libro < ApplicationRecord
   belongs_to :editore, optional: true
   
   has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
+  
+  has_many :righe_confezione, foreign_key: "confezione_id", class_name: "Confezione"
+  has_many :fascicoli, through: :righe_confezione, dependent: :destroy
+
+  has_many :righe_fascicolo, foreign_key: "fascicolo_id", class_name: "Confezione"
+  has_many :confezioni, through: :righe_fascicolo, dependent: :destroy
+  
+  accepts_nested_attributes_for :righe_confezione
 
   has_many :adozioni
   has_many :righe
@@ -63,6 +71,7 @@ class Libro < ApplicationRecord
 
   validates :titolo, presence: true
   #validates :editore, presence: true
+  
   validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
   
   

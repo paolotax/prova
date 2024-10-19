@@ -1,0 +1,2 @@
+module ConfezioneHelper
+end

@@ -19,6 +19,17 @@
 				<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
 				<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
 			<% end %>
+
+			<%# if !@libro.righe_confezione.empty? %>
+				  <%= turbo_frame_tag "confezione_#{@libro.id}_fascicoli",
+					src: fascicoli_libro_path(@libro),
+					loading: :lazy do %>
+					
+
+				<% end %>
+			<%# end %>
+
+
 		<% end %>
 
 		<% if @libro.can_delete? %>

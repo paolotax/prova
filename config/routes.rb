@@ -9,7 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
-  
+    
   get 'ordini_in_corso', to: "ordini#index"
   get "cerca", to: "search#index"
   
@@ -72,6 +72,12 @@ Rails.application.routes.draw do
   resources :libri do
     member do 
       get 'get_prezzo_copertina_cents'
+    end
+
+    member do
+      get "fascicoli", to: "confezionator#index"
+      post 'fascicoli', to: "confezionator#create"
+      delete 'confezione/:id', to: "confezionator#destroy"
     end
   end
   

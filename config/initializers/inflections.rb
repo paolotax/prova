@@ -62,7 +62,8 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'adozione_elementare', 'adozioni_elementari'
 
-
+  inflect.irregular 'confezione', 'confezioni'
+  inflect.irregular 'fascicolo', 'fascicoli'
 
 
   # inflect.irregular 'documento_riga', 'documenti_righe'

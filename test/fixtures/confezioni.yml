@@ -1,0 +1,18 @@
+# == Schema Information
+#
+# Table name: confezioni
+#
+#  id            :bigint           not null, primary key
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  confezione_id :bigint
+#  fascicolo_id  :bigint
+#
+
+one:
+  libro: one
+  fascicolo: one
+
+two:
+  libro: two
+  fascicolo: two

@@ -1,0 +1,11 @@
+<%= tag.li class: "text-sm font-semibold text-gray-400 flex justify-between gap-4" do %>
+
+        <%= tag.div class: "w-full flex flex-row justify-between" do %>
+            <%= link_to fascicolo.titolo, libro_path(fascicolo), data: { turbo_frame: :_top }, class: "hover:text-black" %>
+            
+            <%= tag.div number_to_currency fascicolo.prezzo %>
+        <% end %>
+
+
+    <%= tag.button "elimina" %>
+<% end %>
