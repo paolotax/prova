@@ -20,6 +20,8 @@
 				<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
 			<% end %>
 
+			<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli.empty? %>
+
 			<%# if !@libro.righe_confezione.empty? %>
 			<%= turbo_frame_tag "confezione_#{@libro.id}_fascicoli",
 				src: fascicoli_libro_path(@libro),

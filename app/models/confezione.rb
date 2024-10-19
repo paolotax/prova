@@ -13,6 +13,8 @@ class Confezione < ApplicationRecord
   belongs_to :confezione, class_name: "Libro"
   belongs_to :fascicolo, class_name: "Libro"
 
+  counter_culture :confezione, column_name: "fascicoli_count"
+  
   include RankedModel
   ranks :row_order, with_same: :confezione_id
 end

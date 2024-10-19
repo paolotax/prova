@@ -7,6 +7,7 @@
 #  classe           :integer
 #  codice_isbn      :string
 #  disciplina       :string
+#  fascicoli_count  :integer          default(0), not null
 #  note             :text
 #  numero_fascicoli :integer
 #  prezzo_in_cents  :integer

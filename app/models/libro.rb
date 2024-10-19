@@ -7,6 +7,7 @@
 #  classe           :integer
 #  codice_isbn      :string
 #  disciplina       :string
+#  fascicoli_count  :integer          default(0), not null
 #  note             :text
 #  numero_fascicoli :integer
 #  prezzo_in_cents  :integer
@@ -83,18 +84,18 @@ class Libro < ApplicationRecord
   
 
   
-  after_initialize :init
+  before_save :init
   def init
     self.prezzo_in_cents ||= 0
   end
 
 
-  before_save :update_numero_fascicoli
-  def update_numero_fascicoli
-    self.numero_fascicoli = fascicoli.size
-  end
+  # before_save :update_numero_fascicoli
+  # def update_numero_fascicoli
+  #   self.numero_fascicoli = fascicoli.size
+  # end
     
-  
+
   def can_delete?
     righe.empty?
   end
