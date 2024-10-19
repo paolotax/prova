@@ -1,6 +1,7 @@
 
-  <%= turbo_frame_tag "confezione_#{@libro.id}_fascicoli" do %>  
-	<%= tag.ul data: { controller: "sortable", 
+  <%= turbo_frame_tag "confezione_#{@libro.id}" do %>  
+	<%= tag.ul id: "confezione_#{@libro.id}_fascicoli", 
+			   data: { controller: "sortable", 
                         sortable_animation_value: "150", 
                         sortable_resource_name_value: "confezione_riga",
 						sortable_param_name_value: "row_order" } do %>

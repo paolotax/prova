@@ -1,4 +1,4 @@
-<%= turbo_stream.before "prezzo_fascicoli_#{@libro.id}" do %>
+<%= turbo_stream.append "confezione_#{@libro.id}_fascicoli" do %>
     <%= render partial: "confezionator/fascicolo", locals: { confezione: @confezione }%>
 <% end %>
 
