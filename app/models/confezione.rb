@@ -3,6 +3,7 @@
 # Table name: confezioni
 #
 #  id            :bigint           not null, primary key
+#  row_order     :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  confezione_id :bigint
@@ -11,4 +12,7 @@
 class Confezione < ApplicationRecord
   belongs_to :confezione, class_name: "Libro"
   belongs_to :fascicolo, class_name: "Libro"
+
+  include RankedModel
+  ranks :row_order, with_same: :confezione_id
 end

@@ -3,6 +3,7 @@
 # Table name: confezioni
 #
 #  id            :bigint           not null, primary key
+#  row_order     :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  confezione_id :bigint

@@ -13,7 +13,7 @@ module Filters
     
     filter_scope :incompleti, ->(incompleti) { incompleti == "si" ? where("libri.editore_id IS NULL OR libri.categoria IS NULL") : all }
     
-    filter_scope :search, ->(search) { left_search(search) }
+    filter_scope :search, ->(search) { search_all_word(search) }
   end
 
   class LibroFilterProxy < FilterProxy

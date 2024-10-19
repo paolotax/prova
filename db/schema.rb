@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_17_055148) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_19_102859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -145,6 +145,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_17_055148) do
     t.bigint "fascicolo_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "row_order"
   end
 
   create_table "documenti", force: :cascade do |t|
@@ -287,6 +288,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_17_055148) do
     t.string "categoria"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "numero_fascicoli"
     t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
     t.index ["editore_id"], name: "index_libri_on_editore_id"
     t.index ["user_id", "categoria"], name: "index_libri_on_user_id_and_categoria"

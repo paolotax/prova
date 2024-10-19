@@ -353,6 +353,8 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
+    ranked-model (0.4.10)
+      activerecord (>= 5.2)
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
     redis (5.2.0)
@@ -501,6 +503,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (~> 7.1.2)
   rails_designer (~> 1.7.0)!
+  ranked-model (~> 0.4.10)
   redis (~> 5.1)
   resend (~> 0.10.0)
   roo (~> 2.10.0)

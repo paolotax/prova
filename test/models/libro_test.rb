@@ -2,18 +2,19 @@
 #
 # Table name: libri
 #
-#  id              :bigint           not null, primary key
-#  categoria       :string
-#  classe          :integer
-#  codice_isbn     :string
-#  disciplina      :string
-#  note            :text
-#  prezzo_in_cents :integer
-#  titolo          :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  editore_id      :bigint
-#  user_id         :bigint           not null
+#  id               :bigint           not null, primary key
+#  categoria        :string
+#  classe           :integer
+#  codice_isbn      :string
+#  disciplina       :string
+#  note             :text
+#  numero_fascicoli :integer
+#  prezzo_in_cents  :integer
+#  titolo           :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  editore_id       :bigint
+#  user_id          :bigint           not null
 #
 # Indexes
 #
