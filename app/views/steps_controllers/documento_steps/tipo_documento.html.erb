@@ -13,7 +13,7 @@
 
             <%= tag.div class: "mt-5" do %>
                 <%= label_for form: f, field: 'causale', label: 'Tipo Documento' %>
-                <%= f.select :causale_id, options_from_collection_for_select(Causale.order(:causale).all, :id, :causale, @documento.causale_id), {}, 
+                <%= f.select :causale_id, options_from_collection_for_select(Causale.order(:causale).all, :id, :causale, @documento.causale_id), { prompt: "seleziona causale" }, 
                         data: { tax_select_causale_target: "select", action: "change->tax-select-causale#change" },
                         class: "block w-full mt-2 px-2 py-1 outline-none border-0 focus:ring-0 border-b-2 border-transparent hover:border-slate-500 focus:border-b-2 focus:border-slate-500"%>
             <% end %>

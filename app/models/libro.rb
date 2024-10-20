@@ -74,7 +74,7 @@ class Libro < ApplicationRecord
   validates :titolo, presence: true
   #validates :editore, presence: true
   
-  validates :prezzo_in_cents, presence: true, numericality: { greater_than: 0 }
+  validates :prezzo_in_cents, presence: true
   
   
   validates :codice_isbn, presence: true, uniqueness: { scope: :user_id }
@@ -117,7 +117,11 @@ class Libro < ApplicationRecord
   end
 
   def prezzo=(prezzo)
-    self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
+    if prezzo.present?
+      self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
+    else
+      self.prezzo_in_cents = 0
+    end
   end
 
   def previous

@@ -110,11 +110,12 @@ class LibriImporter
       
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
       libro.titolo = titolo
+      libro.prezzo = check_prezzo(row[:prezzo]) || 0.0
       
       row.keys.each do |key|
         next if key == :editore
         next if key == :titolo                
-        row[key] = check_prezzo(row[key]) if key == :prezzo
+        next if key == :prezzo
 
         if libro.respond_to?("#{key}=") 
           libro.send("#{key}=", row[key])
