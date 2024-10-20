@@ -9,8 +9,12 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
     @documenti = current_user.documenti.includes(:causale, documento_righe: [riga: :libro]).order(updated_at: :desc)
     @documenti = filter(@documenti.all)
-    @pagy, @documenti =  pagy(@documenti.all, items: 10)
-
+    respond_to do |format|
+      format.html do 
+        @pagy, @documenti = pagy(@documenti.all, items: 10)
+      end
+      format.xlsx
+    end
   end
 
   def show

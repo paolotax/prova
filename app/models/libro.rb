@@ -109,7 +109,11 @@ class Libro < ApplicationRecord
   end
 
   def prezzo
-    prezzo_in_cents / 100.0
+    if prezzo_in_cents 
+      prezzo_in_cents/ 100.0
+    else
+      0.0
+    end
   end
 
   def prezzo=(prezzo)
