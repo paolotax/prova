@@ -110,7 +110,7 @@ class LibriImporter
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
       
       titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]      
-      libro.titolo = titolo if titolo.present?
+      libro.titolo = strip_tags(titolo) if titolo.present?
       
       if row[:prezzo].present?
         libro.prezzo = check_prezzo(row[:prezzo]) || 0.0
