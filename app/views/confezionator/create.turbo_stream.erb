@@ -5,3 +5,7 @@
 <%= turbo_stream.replace "prezzo_fascicoli_#{@libro.id}" do %>
     <%= render partial: "confezionator/prezzo_fascicoli", locals: { libro: @libro }%>
 <% end %>
+
+<%= turbo_stream.update "badge_#{@libro.id}" do %>
+    <%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
+<% end %>
