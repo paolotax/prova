@@ -105,13 +105,17 @@ class LibriImporter
     def assign_from_row(row)
  
       codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
-      titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]
       user_id = Current.user.id
       
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
-      libro.titolo = titolo
-      libro.prezzo = check_prezzo(row[:prezzo]) || 0.0
       
+      titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]      
+      libro.titolo = titolo if titolo.present?
+      
+      if row[:prezzo].present?
+        libro.prezzo = check_prezzo(row[:prezzo]) || 0.0
+      end 
+
       row.keys.each do |key|
         next if key == :editore
         next if key == :titolo                
