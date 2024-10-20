@@ -240,6 +240,12 @@ trix-toolbar { display: none; }
     color: rgb(55 65 81);
     font-weight: 500;
   }
+  &.cb-font-size-sm {
+    .hw-combobox__input {
+      font-size: 0.875rem; /* 14px */
+      line-height: 1.25rem; /* 20px */
+    }
+  }
 }
 
 .cb-tax-fancy {
