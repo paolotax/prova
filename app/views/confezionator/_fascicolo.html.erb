@@ -1,6 +1,6 @@
 <%= tag.li id: dom_id(confezione),
     data: { sortable_update_url: sort_confezione_path(confezione) },
-    class: "text-sm font-semibold text-gray-400 flex justify-between items-center gap-4" do %>
+    class: "text-sm font-semibold text-gray-400 flex justify-between items-center gap-4 hover:bg-gray-100" do %>
 
     <%= tag.div class: "w-full flex flex-row justify-between gap-2" do %>
         <%= link_to confezione.fascicolo.titolo, libro_path(confezione.fascicolo), data: { turbo_frame: :_top }, class: "hover:text-black" %>
