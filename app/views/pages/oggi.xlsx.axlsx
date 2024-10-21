@@ -1,0 +1,12 @@
+wb = xlsx_package.workbook
+
+fields = [ "scuola", "indirizzo", "comune", "cap", "provincia", "codice_ministeriale" ]
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+  sheet.add_row  fields
+  
+  @indirizzi.each do |row|   
+    sheet.add_row [ row.scuola, row.indirizzo, row.comune, row.cap, row.provincia, row.codice_ministeriale ]
+  end
+end

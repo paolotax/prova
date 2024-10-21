@@ -25,5 +25,12 @@ class PagesController < ApplicationController
         @adozioni_di_oggi = current_user.mie_adozioni.nel_baule_di_oggi
         # fix this @adozioni in form_multi 
         @adozioni = current_user.adozioni.vendita.joins(:scuola).where("import_scuole.id in (?)", @scuole_di_oggi.pluck(:id))
+
+        @indirizzi = current_user.import_scuole.where(id: current_user.tappe.di_oggi.pluck(:tappable_id))
+
+        respond_to do |format|
+          format.html
+          format.xlsx
+        end
     end
 end

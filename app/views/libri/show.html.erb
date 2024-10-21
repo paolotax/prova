@@ -32,7 +32,7 @@
 				<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
 			<% end %>
 
-			<%# if !@libro.righe_confezione.empty? %>
+			<%# if @libro.righe_confezione.empty? %>
 			<%= turbo_frame_tag "confezione_#{@libro.id}",
 				src: fascicoli_libro_path(@libro),
 				loading: :lazy do %>					
