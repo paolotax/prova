@@ -35,6 +35,7 @@
 			<%# if @libro.righe_confezione.empty? %>
 			<%= turbo_frame_tag "confezione_#{@libro.id}",
 				src: fascicoli_libro_path(@libro),
+				refresh: "morph",
 				loading: :lazy do %>					
 			<% end %>
 

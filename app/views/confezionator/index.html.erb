@@ -1,5 +1,5 @@
 
-<%= turbo_frame_tag "confezione_#{@libro.id}" do %>  
+<%= turbo_frame_tag "confezione_#{@libro.id}", refresh: "morph" do %>  
 	
 	<%= tag.ul id: "confezione_#{@libro.id}_fascicoli", 
 			   data: { controller: "sortable", 
