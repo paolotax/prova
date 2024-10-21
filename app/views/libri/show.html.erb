@@ -20,6 +20,14 @@
 				<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
 			<% end %>
 
+			<% if @libro.has_confezioni? %>
+				<% @libro.confezioni.each do |c| %>
+					<%= link_to c do %>
+						<%= component( 'badge', text: c.titolo, color: "blue")  %>
+					<% end %>
+				<% end %>
+			<% end %>
+			
 			<%= tag.div id: "badge_#{@libro.id}", class: "flex flex-row items-center gap-2" do %>
 				<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
 			<% end %>

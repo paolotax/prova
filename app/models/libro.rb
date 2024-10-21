@@ -100,6 +100,14 @@ class Libro < ApplicationRecord
     righe.empty?
   end
 
+  def has_fascicoli?
+    fascicoli_count > 0
+  end
+
+  def has_confezioni?
+    confezioni.size > 0
+  end
+
   def self.categorie
     order(:categoria).distinct.pluck(:categoria).compact
   end
