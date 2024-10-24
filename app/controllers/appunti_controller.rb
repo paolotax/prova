@@ -113,6 +113,9 @@ class AppuntiController < ApplicationController
     redirect_back(fallback_location: request.referer)
   end
 
+  def filtra  
+  end
+
   private
 
     def ensure_frame_response

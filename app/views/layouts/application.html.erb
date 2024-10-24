@@ -63,8 +63,8 @@
 			</div>  
 		</div>		
   		
-		<%= turbo_frame_tag "slide-over" %>  
-		<%# data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: {settings: settings_path, notifications: notifications_path}} %>
+		<%#= turbo_frame_tag "slide-over" %>  
+		<%= turbo_frame_tag "slide-over", data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: { filtra_appunti: filtra_appunti_path }} %>
 	
 	</body>
 <% end %>

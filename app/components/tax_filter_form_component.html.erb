@@ -1,4 +1,4 @@
-<%= form_with(url: @url, method: :get, 
+<%= form_with(url: @base_url, method: :get, 
     id: "form-filter", 
     data: form_data_attributes,
     class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>     
@@ -56,7 +56,7 @@
                 Filtra
             <% end %>
 
-            <%=  link_to "reset", @url, class: "text-xs font-semibold text-red-500", data: { turbo_frame: "search_results", turbo_action: "advance"} %>
+            <%=  link_to "reset", @base_url, class: "text-xs font-semibold text-red-500", data: { turbo_frame: "search_results", turbo_action: "advance"} %>
         <% end %>
         
     <% end %>

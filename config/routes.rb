@@ -128,6 +128,9 @@ Rails.application.routes.draw do
   
   resources :appunti do
     resources :tappe
+    collection do
+      get "filtra"
+    end
     member do
       put 'modifica_stato'
       delete 'remove_attachment'
