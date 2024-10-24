@@ -48,7 +48,10 @@ class TaxButtonComponent < ViewComponent::Base
         focus:outline-purple-600": color == "purple",
 
       "bg-pink-600 text-white hover:bg-pink-500 active:bg-pink-600 
-        focus:outline-pink-600": color == "pink"
+        focus:outline-pink-600": color == "pink",
+      
+      "border-none shadow-none bg-none text-gray-500 hover:bg-gray-200 hover:text-gray-900 active:bg-gray-200 
+      focus:outline-none": color == "transparent"
     )
   end
  
