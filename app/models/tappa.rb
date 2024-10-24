@@ -34,12 +34,19 @@ class Tappa < ApplicationRecord
   
   belongs_to :tappable, polymorphic: true
 
+  # controllare se filtrare per user_id
   belongs_to :import_scuola, class_name: 'ImportScuola', foreign_key: 'tappable_id'
   def import_scuola
     return unless tappable_type == 'ImportScuola'
     super
   end
 
+  belongs_to :cliente, class_name: 'Cliente', foreign_key: 'tappable_id'
+  def cliente
+    return unless tappable_type == 'Cliente'
+    super
+  end
+  
   scope :di_oggi,   -> { where(data_tappa: Time.zone.now.all_day) }
   scope :di_domani, -> { where(data_tappa: Time.zone.now.tomorrow.all_day) }
   scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
@@ -47,9 +54,9 @@ class Tappa < ApplicationRecord
   scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids)}
   scope :della_provincia, ->(provincia) { joins(:import_scuola).where('import_scuole."PROVINCIA" = ?', provincia) }
 
-  scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.now.beginning_of_day) }
-  scope :programmate, -> { where("data_tappa > ?", Time.now) }  
-  scope :completate,  -> { where("data_tappa < ?", Time.now.beginning_of_day) }
+  scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.zone.now.beginning_of_day) }
+  scope :programmate, -> { where("data_tappa > ?", Time.zone.now) }  
+  scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
   scope :da_programmare, -> { where(data_tappa: nil) }
 
   scope :per_ordine_e_data, -> { joins(:import_scuola).order('import_scuole."PROVINCIA"').order(:ordine, :data_tappa) }
@@ -65,11 +72,11 @@ class Tappa < ApplicationRecord
   }
 
   def attuale?
-    data_tappa.nil? || data_tappa >= Time.now.beginning_of_day 
+    data_tappa.nil? || data_tappa >= Time.zone..now.beginning_of_day 
   end
 
   def oggi?
-    data_tappa.to_date == Time.now.to_date
+    data_tappa.to_date == Time.zone.now.to_date
   end
   
   def vuota?
