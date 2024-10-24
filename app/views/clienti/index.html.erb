@@ -40,6 +40,17 @@
                     url: url_for( controller: "clienti", action: "new", model: @cliente ) %>
         <% end %>
         
+        <% heading.with_action do %>
+            <%= tag.div class: "block lg:hidden" do %>
+                <%= component 'tax_button',
+                    caption: "Filtra",
+                    svg_file: "icon-funnel.svg",
+                    color: "white",
+                    url: filtra_clienti_path( params: request.query_parameters ),
+                    data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
+            <% end %>
+        <% end %>
+
         <%= h1 {"Clienti"} %>
 
     <% end %>
@@ -60,29 +71,7 @@
     <% end %>
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
-        <%= component 'tax_filter_form', base_url: clienti_path, 
-            fields: [ 
-                {
-                    field: :ragione_sociale,
-                    label: "Ragione sociale",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "ragione sociale..."
-                }, {
-                    field: :comune,
-                    label: "Comune",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "comune..."
-                }, {
-                    field: :partita_iva,
-                    label: "Partita IVA",
-                    collection: nil,
-                    type: :text,
-                    placeholder: "partita iva..."
-                }
-            
-        ] %>
+        <%= render partial: "filter_form", locals: { reload: true } %>
     </aside>
 
 <% end %>

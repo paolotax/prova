@@ -1,0 +1,25 @@
+<%# locals: ( reload: false ) -%>
+
+<%= component 'tax_filter_form', base_url: clienti_path, reload: reload, 
+    fields: [ 
+        {
+            field: :ragione_sociale,
+            label: "Ragione sociale",
+            collection: nil,
+            type: :text,
+            placeholder: "ragione sociale..."
+        }, {
+            field: :comune,
+            label: "Comune",
+            collection: nil,
+            type: :text,
+            placeholder: "comune..."
+        }, {
+            field: :partita_iva,
+            label: "Partita IVA",
+            collection: nil,
+            type: :text,
+            placeholder: "partita iva..."
+        }
+    
+] %>
