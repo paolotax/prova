@@ -46,8 +46,8 @@
 	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all'} do %>
 		<%= turbo_frame_tag "scuole_page_#{@pagy.page}" do %> 
 			
-			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-				<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3">
+			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-4 2xl:grid-cols-2">
+				<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2">
 					Whoops! Non ci sono scuole. 
 					<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] %>
 				</p>
@@ -69,7 +69,7 @@
 			
 			<% if @pagy.next %>
 				<%= turbo_frame_tag "scuole_page_#{@pagy.next}",
-							src: import_scuole_path(search: params[:search], page: @pagy.next, search_query: params[:search_query]),
+							src: import_scuole_path(request.query_parameters.merge(page: @pagy.next)),
 							loading: :lazy do %>
 					
 					<div role="status">
@@ -86,7 +86,7 @@
 		<% end %>
 	<% end %>
 
-	<aside class="z-20 fixed inset-y-0 right-0 hidden w-80 overflow-y-auto pt-72 lg:px-8 lg:block">
+	<aside class="z-20 fixed inset-y-0 right-0 hidden w-80 overflow-y-auto pt-80 lg:px-8 lg:block">
 		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
 <% end %>

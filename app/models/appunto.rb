@@ -105,6 +105,7 @@ class Appunto < ApplicationRecord
   
   scope :archiviati, -> { where(stato: "archiviato").non_saggi }
  
+  scope :da_completare, -> { where(stato: ["da fare", "in evidenza", "in settimana"]).non_saggi }
   scope :in_sospeso, -> { where(stato: ["in visione", "da pagare"]).non_saggi } 
   scope :non_archiviati, -> { where.not(stato: ["archiviato", "completato"]).non_saggi }
 

@@ -18,7 +18,6 @@ module Filters
     filter_scope :da_acquistare, -> (q) { q == "si" ? where(DAACQUIST: "Si") : all }
 
     filter_scope :nel_baule, -> (q) { filter_nel_baule(q) }  
-    
     def filter_nel_baule(quando)
       if quando == "oggi"
         where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)))
@@ -29,7 +28,6 @@ module Filters
       end
     end
 
-    # filter_scope :per_scuola_classe_sezione_disciplina, -> { order( :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 
     # filter_scope :per_scuola_classe_disciplina_sezione, -> { order( :CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
     

@@ -78,7 +78,7 @@ class ImportScuoleController < ApplicationController
         direzione: params["direzione"],
         codice_direzione: params["codice_direzione"],
         comune: params["comune"],
-        # codice_scuola: params["codice_scuola"],
+        con_appunti: params["con_appunti"],
         # comune: params["comune"],
         # scuola: params["scuola"],
         # mie_adozioni: params["mie_adozioni"],
