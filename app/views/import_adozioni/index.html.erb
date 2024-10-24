@@ -27,8 +27,8 @@
                     caption: "Filtra",
                     svg_file: "icon-funnel.svg",
                     color: "white",
-                    url: "#",
-                    data_attr: { turbo_frame: "slide-over" } %>
+                    url: filtra_import_adozioni_path( params: request.query_parameters ),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
             <% end %>
         <% end %>
 		
@@ -71,9 +71,6 @@
 		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
 
-	<div class="lg:hidden block">
-        <%= render "slide_filter" %>
-    </div>
 
 <% end %>
 

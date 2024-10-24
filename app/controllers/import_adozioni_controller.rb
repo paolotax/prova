@@ -38,6 +38,10 @@ class ImportAdozioniController < ApplicationController
   def show
   end
 
+  def filtra
+    @lista_discipline   = current_user.import_adozioni.order(:DISCIPLINA).pluck(:DISCIPLINA).uniq;
+  end
+
   def bulk_update
     @import_adozioni = current_user.import_adozioni
                   .where(id: params.fetch(:import_adozione_ids, []).compact)

@@ -106,6 +106,9 @@ class DocumentiController < ApplicationController
   
   end
 
+  def filtra 
+  end
+
 
   private
 

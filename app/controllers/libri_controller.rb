@@ -100,6 +100,8 @@ class LibriController < ApplicationController
     render json: { prezzo_copertina_cents: @libro.prezzo_in_cents }
   end
 
+  def filtra  
+  end
 
   private
 

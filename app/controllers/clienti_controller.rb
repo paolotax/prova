@@ -69,6 +69,9 @@ class ClientiController < ApplicationController
     end
   end
 
+  def filtra  
+  end
+  
   private
 
     def set_cliente

@@ -20,11 +20,16 @@ Rails.application.routes.draw do
 
   mount RailsDesigner::Engine, at: '/rails_designer'
 
-  resources :clienti
+  resources :clienti do
+    collection do
+      get 'filtra'
+    end
+  end
   
   resources :documenti do 
     resources :steps, only: [:show, :update], controller: 'steps_controllers/documento_steps'
-    collection do 
+    collection do
+      get 'filtra' 
       get 'nuovo_numero_documento'
     end
   end
@@ -70,10 +75,11 @@ Rails.application.routes.draw do
   end
     
   resources :libri do
-    member do 
-      get 'get_prezzo_copertina_cents'
+    collection do
+      get 'filtra'
     end
     member do
+      get 'get_prezzo_copertina_cents'
       get "fascicoli", to: "confezionator#index"
       post 'fascicoli', to: "confezionator#create", as: "confezione"
       delete 'fascicoli', to: "confezionator#destroy"
@@ -159,6 +165,7 @@ Rails.application.routes.draw do
   resources :import_scuole do
     resources :tappe
     collection do
+      get 'filtra'
       get 'appunti'
     end
     member do
@@ -172,6 +179,7 @@ Rails.application.routes.draw do
   
   resources :import_adozioni, only: [:index, :show] do
     collection do
+      get "filtra"
       put 'bulk_update', format: "pdf"
     end
   end
