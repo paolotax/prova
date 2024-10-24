@@ -35,9 +35,13 @@
 class ImportScuola < ApplicationRecord
 
   include Searchable
-
   search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO
 
+  extend FilterableModel
+  class << self
+    def filter_proxy = Filters::ImportScuolaFilterProxy
+  end
+  
   has_many :plessi, class_name: "ImportScuola",
                     primary_key: "CODICESCUOLA",   
                     foreign_key: "CODICEISTITUTORIFERIMENTO"
@@ -70,7 +74,6 @@ class ImportScuola < ApplicationRecord
   end
 
   include PgSearch::Model
-
   search_fields =  [ :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO ]
 
   pg_search_scope :search_all_word, 

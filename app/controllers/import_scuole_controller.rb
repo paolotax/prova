@@ -1,5 +1,7 @@
 class ImportScuoleController < ApplicationController
   
+  include FilterableController
+
   before_action :authenticate_user!
   before_action :set_import_scuola, only: %i[ show classi_che_adottano combobox_classi ]
 
@@ -7,13 +9,7 @@ class ImportScuoleController < ApplicationController
 
     @import_scuole = current_user.import_scuole.includes(:import_adozioni, :appunti)
 
-    if params[:search].present?
-      if params[:search_query] == "all"
-        @import_scuole = @import_scuole.search_all_word(params[:search])
-      else
-        @import_scuole = @import_scuole.search_any_word(params[:search])
-      end
-    end
+    @import_scuole = filter(@import_scuole.all)
 
     @import_scuole = @import_scuole
       .joins_direzione
@@ -38,11 +34,8 @@ class ImportScuoleController < ApplicationController
   end
 
   def combobox_classi
-
-    
     @classi = @import_scuola.classi.classe_che_adotta 
     render layout: false
-
   end
 
   def show
@@ -72,7 +65,27 @@ class ImportScuoleController < ApplicationController
     end
   end
 
+  def filtra 
+  end
+
   private
+
+    def filter_params
+      { 
+        search: params["search"],
+        nome: params["nome"],
+        codice: params["codice"],
+        direzione: params["direzione"],
+        codice_direzione: params["codice_direzione"],
+        comune: params["comune"],
+        # codice_scuola: params["codice_scuola"],
+        # comune: params["comune"],
+        # scuola: params["scuola"],
+        # mie_adozioni: params["mie_adozioni"],
+        # da_acquistare: params["da_acquistare"],
+        # nel_baule: params["nel_baule"]
+      }
+    end
 
     def set_import_scuola
       @import_scuola = ImportScuola.find(params[:id])

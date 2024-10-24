@@ -1,0 +1,42 @@
+<%# locals: ( reload: false ) -%>
+
+<%= component 'tax_filter_form', base_url: import_scuole_path, reload: reload,
+    fields: [ 
+        {
+            field: :search,
+            label: "Scuola",
+            collection: nil,
+            type: :text,
+            placeholder: "scuola..."
+        }, {
+            field: :nome,
+            label: "Nome",
+            collection: nil,
+            type: :text,
+            placeholder: "nome..."
+        }, {
+            field: :direzione,
+            label: "Direzione",
+            collection: nil,
+            type: :text,
+            placeholder: "direzione..."
+        }, {
+            field: :comune,
+            label: "comune",
+            collection: nil,
+            type: :text,
+            placeholder: "comune..."
+        }, {
+            field: :codice,
+            label: "Codice",
+            collection: nil,
+            type: :text,
+            placeholder: "codice..."
+        }, {
+            field: :codice_direzione,
+            label: "Codice direzione",
+            collection: nil,
+            type: :text,
+            placeholder: "codice direzione..."
+        }
+] %>
