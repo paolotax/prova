@@ -6,6 +6,7 @@
 #  categoria        :string
 #  classe           :integer
 #  codice_isbn      :string
+#  confezioni_count :integer          default(0), not null
 #  disciplina       :string
 #  fascicoli_count  :integer          default(0), not null
 #  note             :text

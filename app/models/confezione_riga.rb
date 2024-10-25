@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: confezioni
+# Table name: confezione_righe
 #
 #  id            :bigint           not null, primary key
 #  row_order     :integer
@@ -10,15 +10,13 @@
 #  fascicolo_id  :bigint
 #
 class ConfezioneRiga < ApplicationRecord
+
   belongs_to :confezione, class_name: "Libro"
   belongs_to :fascicolo, class_name: "Libro"
 
   counter_culture :confezione, column_name: "fascicoli_count"
-  
-  # include RankedModel
-  # ranks :row_order, with_same: :confezione_id
-
-  #acts_as_list scope: [:confezione_id], column: "row_order"
+  counter_culture :fascicolo,  column_name: "confezioni_count"
 
   positioned on: [:confezione_id], column: :row_order
+
 end
