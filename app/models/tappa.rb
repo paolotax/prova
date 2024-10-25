@@ -31,7 +31,6 @@ class Tappa < ApplicationRecord
   belongs_to :user
   
   belongs_to :giro, optional: true, touch: true
-  
   belongs_to :tappable, polymorphic: true
 
   # controllare se filtrare per user_id
@@ -41,11 +40,11 @@ class Tappa < ApplicationRecord
     super
   end
 
-  belongs_to :cliente, class_name: 'Cliente', foreign_key: 'tappable_id'
-  def cliente
-    return unless tappable_type == 'Cliente'
-    super
-  end
+  # # belongs_to :cliente, class_name: 'Cliente', foreign_key: 'tappable_id'
+  # # def cliente
+  # #   return nil unless tappable_type == 'Cliente'
+  # #   super
+  # # end
   
   scope :di_oggi,   -> { where(data_tappa: Time.zone.now.all_day) }
   scope :di_domani, -> { where(data_tappa: Time.zone.now.tomorrow.all_day) }
@@ -72,7 +71,7 @@ class Tappa < ApplicationRecord
   }
 
   def attuale?
-    data_tappa.nil? || data_tappa >= Time.zone..now.beginning_of_day 
+    data_tappa.nil? || data_tappa >= Time.zone.now.beginning_of_day 
   end
 
   def oggi?
@@ -83,6 +82,9 @@ class Tappa < ApplicationRecord
     data_tappa.nil? && titolo.blank?
   end
 
+  def da_ritirare?
+    data_tappa.nil? && giro.giro_ritiri?
+  end
 
 
   def new_giro=(new_giro)

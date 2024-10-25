@@ -57,15 +57,15 @@
 			</div>
 		<% end %>
 
-        <% if action_name != "new" %>
-            <div class="ml-6 inline-block">
-                <%= link_to tappa_path(tappa), 
+        <%# <% if action_name != "new" %>
+            <%# <div class="ml-6 inline-block">
+                <%#= link_to tappa_path(tappa), 
                             data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
                             class: "btn btn-red" do %> 
-                    <%= inline_svg_tag "icon-trash.svg" %>
-                    <span class="">Elimina</span> 
-                <% end %>
-            </div>
-        <% end %>
+                    <%#= inline_svg_tag "icon-trash.svg" %>
+                    <%# <span class="">Elimina</span>  %>
+                <%# <% end %>
+            <%# </div> %>
+        <%# <% end %>
 	</div>
 <% end %>

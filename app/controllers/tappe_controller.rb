@@ -66,7 +66,7 @@ class TappeController < ApplicationController
 
     # ?????????????? rifare
 
-    # @tappable = find_tappable
+    # @tappable = ImportScuola.find(params[:tappable_id])
     # @giro = current_user.giri.find(params[:giro_id])
 
     @tappa = current_user.tappe.build(tappa_params)

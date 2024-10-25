@@ -97,7 +97,6 @@
             <% end %>   
         <% end %>
 
-
         <% dropdown.with_item do %>
             <%= tag.div class: "flex justify-between px-2 pb-2" do %>  
                 <% ["gi", "ve", "sa"].each do |item| %>
@@ -114,8 +113,7 @@
             <% end %>
         <% end %>
 
-
-            <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
+        <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
         <% unless tappa.data_tappa.nil? %>
             <% dropdown.with_item do %>
                 <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
@@ -126,9 +124,6 @@
                 <% end %>
             <% end %>
         <% end %>
-
-
-
                 
         <% dropdown.with_trailer do %>
             <% if tappa.vuota? %>
@@ -141,14 +136,19 @@
         
             <% else %>
                 
-                <%= link_to tappa_path(tappa), 
+                <%= button_to tappa_path(tappa), method: :delete,
                             class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                            data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %> 
+                            data: {
+                                turbo_method: "delete",
+                                turbo_confirm: "Vuoi veramente eliminare questo Cliente?",
+                                turbo_confirm_theme: "",
+                                turbo_confirm_confirm_label: "Si, eliminalo!",
+                                turbo_confirm_cancel_label: "Oops, no annulla…",
+                            } do %> 
                     <span class="">Elimina</span> 
                 <% end %>
             <% end %>
         <% end %>
-
     <% end %>
 
 <% end %>

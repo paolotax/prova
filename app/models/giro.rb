@@ -40,5 +40,9 @@ class Giro < ApplicationRecord
     self.class.where("id < ? and user_id = ?", id, user_id).last
   end
 
+  def giro_ritiri?
+    titolo == "Ritiri"
+  end
+
 
 end
