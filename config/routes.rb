@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     get 'clientable/new'
   end
 
+  post "sfascicola", to: "sfascicolator#generate"
+
   mount RailsDesigner::Engine, at: '/rails_designer'
 
   resources :clienti do

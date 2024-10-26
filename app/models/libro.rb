@@ -82,8 +82,12 @@ class Libro < ApplicationRecord
 
   has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
-  
+  scope :no_fascicoli, -> { where(fascicoli_count: 0) }
+  scope :no_confezioni, -> { where(confezioni_count: 0) }
+  scope :with_fascicoli, -> { where("fascicoli_count > 0") }
+  scope :with_confezioni, -> { where("confezioni_count > 0") }
 
+  scope :lista, -> { where("confezioni_count = 0 or fascicoli_count > 0") }
   
   before_save :init
   def init

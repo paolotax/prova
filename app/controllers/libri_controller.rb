@@ -47,7 +47,7 @@ class LibriController < ApplicationController
   def create
     #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
     result = LibroCreator.new.create_libro(
-                current_user.libri.build(libro_params)
+      current_user.libri.build(libro_params)
     )    
     if result.created?
       #raise result.inspect
