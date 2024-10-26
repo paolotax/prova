@@ -9,7 +9,7 @@ class Sfascicolator
   def generate!
     @libro.fascicoli.each do |fascicolo|
       documento_riga = DocumentoRiga.build(documento: @documento)
-      documento_riga.build_riga(libro_id: fascicolo.id, prezzo: fascicolo.prezzo.to_f, sconto: 0.0, quantita: @quantita)
+      documento_riga.build_riga(libro_id: fascicolo.id, prezzo_cents: fascicolo.prezzo_in_cents, sconto: 0.0, quantita: @quantita)
       documento_riga.save!
     end
   end
