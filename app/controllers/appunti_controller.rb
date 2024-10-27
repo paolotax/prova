@@ -8,7 +8,11 @@ class AppuntiController < ApplicationController
 
   def index
     
-    @appunti = current_user.appunti.non_saggi.includes(:import_scuola, :import_adozione).order(created_at: :desc)
+    @appunti = current_user.appunti.non_saggi
+                .with_attached_attachments
+                .with_attached_image
+                .with_rich_text_content
+                .includes(:import_scuola, :import_adozione).order(created_at: :desc)
       
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
     

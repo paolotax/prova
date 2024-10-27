@@ -1,37 +1,41 @@
-<%= tag.div "Oggi devi andare in #{ pluralize @scuole_di_oggi.size, "scuola", "scuole" }", class: "text-2xl font-bold p-4" %>
+<%#= tag.div "Oggi devi andare in #{ pluralize @scuole_di_oggi.size, "scuola", "scuole" }", class: "text-2xl font-bold p-4" %>
     
 <%= tag.div do %>
     <%= render partial: "import_scuole/scuola_long", collection: @scuole, as: :import_scuola %>
 <% end %>
 
+<%= tag.div do %>
+    <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
+<% end %>
+
 
 <%= tag.div "Appunti di OGGI:", class: "text-2xl font-bold p-4" %>
-<% @scuole_di_oggi.each do |scuola| %>            
-    <% @appunti_di_oggi.select{|s| scuola.id == s }.values.flatten.each do |appunto| %>    
+<% @scuole.each do |scuola| %>
+    <% @appunti_di_oggi.each do |appunto| %>
         <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
     <% end %>
 <% end %>
 
 
-<%= tag.div data: { controller: 'tax-checkbox-select-all' } do %>
-    <%= tag.div "Vendite di OGGI:", class: "text-2xl font-bold p-4" %>
-    <%= render "adozioni/form_multi" %>
-    <%= tag.div id: "adozioni-lista", class: "sm:px-2" do %>
-        <%= render @adozioni %>
-    <% end %>
-<% end %>
+<%# <%= tag.div data: { controller: 'tax-checkbox-select-all' } do %> %>
+    <%# <%= tag.div "Vendite di OGGI:", class: "text-2xl font-bold p-4" %> %>
+    <%# <%= render "adozioni/form_multi" %> %>
+    <%# <%= tag.div id: "adozioni-lista", class: "sm:px-2" do %> %>
+        <%# <%= render @adozioni %> %>
+    <%# <% end %> %>
+<%# <% end %> %>
 
 
 <%= tag.div do %>
     <%= tag.div "Adozioni in scorrimento OGGI:", class: "text-2xl font-bold p-4" %>
-    <% @adozioni_di_oggi.where(ANNOCORSO: [1,2,4]).where.not(DISCIPLINA: "RELIGIONE").raggruppate.each do |a| %>
-        <%= tag.div class: "mx-2 grid grid-cols-8 gap-2" do %>
-            <%= tag.div a.disciplina, class: "col-span-3" %>
-            <%= tag.div a.classe, class: "col-span-1 text-left" %>
-            <%= tag.div a.titolo, class: "col-span-3" %>
-            <%= tag.div a.numero_sezioni, class: "col-span-1 text-center" %>
-        <% end %>
-    <% end %>
+    <%# <% @adozioni_di_oggi.where(ANNOCORSO: [1,2,4]).where.not(DISCIPLINA: "RELIGIONE").raggruppate.each do |a| %> %>
+        <%# <%= tag.div class: "mx-2 grid grid-cols-8 gap-2" do %> %>
+            <%# <%= tag.div a.disciplina, class: "col-span-3" %> %>
+            <%# <%= tag.div a.classe, class: "col-span-1 text-left" %> %>
+            <%# <%= tag.div a.titolo, class: "col-span-3" %> %>
+            <%# <%= tag.div a.numero_sezioni, class: "col-span-1 text-center" %> %>
+        <%# <% end %> %>
+    <%# <% end %> %>
 <% end %>
 
 

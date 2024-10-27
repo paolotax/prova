@@ -1,14 +1,4 @@
-<% if tappa.giro.nil? %>
-    <%- giro_previous = current_user.giri.last&.id %>
-    <%- giro_next = nil %>
-<% else %>
-    <%- giro_previous = tappa&.giro&.previous&.id %>
-    <% if tappa.giro == current_user.giri.last %>
-        <%- giro_next = "" %>
-    <% else %>
-        <%- giro_next = tappa&.giro&.next&.id %>
-    <% end %>
-<% end %>
+
 
 <%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center" do %>
     
@@ -38,36 +28,15 @@
             <% end %>
         <% end %>
         
-        <% dropdown.with_item do %>
-            <%= tag.div class: "flex justify-between" do %>
-
-                <% if giro_previous %>
-                    <%= form_with(model: tappa) do |form| %>
-                        <%= form.hidden_field :giro_id, value: giro_previous %>
-                        <%= form.submit "<-", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200 " %>
-                    <% end %>
-                <% else %>
-                    <%= tag.div  %>
-                <% end %>
-
-                <% if giro_next %>
-                    <%= form_with(model: tappa) do |form| %>
-                        <%= form.hidden_field :giro_id, value: giro_next %>
-                        <%= form.submit "->", class: "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-200" %>
-                    <% end %>
-                <% end %>
-        
-            <% end %>
-        <% end %>
 
         <% dropdown.with_item do %>
             <%= tag.div class: "flex justify-between px-2 py-2" do %>        
                 <% ["oggi", "domani", "la prossima"].each do |item| %>
                     <%= form_with model: tappa,
                                 class: "flex justify-between" do |f| %>
-                        <%= f.hidden_field :data_tappa, value: Time.now if item == "oggi" %>
-                        <%= f.hidden_field :data_tappa, value: Time.now + 1.day if item == "domani"  %>
-                        <%= f.hidden_field :data_tappa, value: Time.now + 1.week if item == "la prossima"  %>
+                        <%= f.hidden_field :data_tappa, value: Time.zone.now if item == "oggi" %>
+                        <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.day if item == "domani"  %>
+                        <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.week if item == "la prossima"  %>
                         
                         <%= f.submit item, class: [
                             "w-8 h-8 rounded-full text-xs text-white": true,

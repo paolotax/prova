@@ -91,15 +91,15 @@ class DocumentiImporter
     2.upto(xlsx.last_row) do |line|  
       row_data = Hash[header.zip xlsx.row(line)]
 
-      codice = row_data[:codice_isbn] || row_data[:ean] || row_data[:isbn]
-      libro = Current.user.libri.find_by(codice_isbn: codice)
-      
+      codice   = row_data[:codice_isbn] || row_data[:ean] || row_data[:isbn]
+      libro    = Current.user.libri.find_by(codice_isbn: codice)
       quantita = row_data[:quantita] || row_data[:qta]
+      sconto   = row_data[:sconto] || 0.0
       
       documento_riga = documento.documento_righe.build
-      riga = documento_riga.build_riga(libro: libro, sconto: 0.0, quantita: quantita)
-      
-      
+
+      riga = documento_riga.build_riga(libro: libro, sconto: sconto, quantita: quantita)
+           
       assign_from_row_2(row_data, riga)
 
       if documento_riga.save
