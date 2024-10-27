@@ -43,7 +43,7 @@
     
 	<ul data-tax-reveal-target="item" class="hidden">
 		<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
-		<% documento.documento_righe.includes(riga: :libro).each do |riga| %>
+		<% documento.documento_righe.each do |riga| %>
 			<%= render partial: "righe/riga_item", locals: { riga: riga.riga } %>
 		<% end %>
 	</ul>

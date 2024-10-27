@@ -6,9 +6,14 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
+    @causali = Causale.all.map { |c| [c.causale, c.id] }
     @import = DocumentiImporter.new
-    @documenti = current_user.documenti.includes(:causale, documento_righe: [riga: :libro]).order(updated_at: :desc)
+    
+    @documenti = current_user.documenti
+        .includes(:clientable, :causale, :righe, documento_righe: [riga: :libro])
+        .order(updated_at: :desc)
     @documenti = filter(@documenti.all)
+    
     respond_to do |format|
       format.html do 
         @pagy, @documenti = pagy(@documenti.all, items: 10)
