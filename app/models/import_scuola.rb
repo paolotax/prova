@@ -58,7 +58,7 @@ class ImportScuola < ApplicationRecord
   has_many :classi, class_name: "Views::Classe", foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
   has_many :appunti, -> { where(user_id: Current.user.id) }
-  has_many :appunti_da_completare, -> { where(user_id: Current.user.id).where(stato: ["da fare", "in evidenza", "in settimana"]).non_saggi }, class_name: "Appunto"
+  has_many :appunti_da_completare, -> { da_completare.where(user_id: Current.user.id) }, class_name: "Appunto"
   
   has_many :tappe, -> { where("tappe.tappable_type = 'ImportScuola' and tappe.user_id = ?", Current.user.id) }, as: :tappable 
 
