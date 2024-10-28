@@ -7,7 +7,8 @@ class ImportScuoleController < ApplicationController
 
   def index
 
-    @import_scuole = current_user.import_scuole.includes(:import_adozioni, :appunti)
+    @import_scuole = current_user.import_scuole
+      .includes(:appunti_da_completare, :direzione, import_adozioni: [:classe, :import_scuola])
 
     @import_scuole = filter(@import_scuole.all)
 
@@ -17,10 +18,10 @@ class ImportScuoleController < ApplicationController
     
     @import_scuole = @import_scuole.con_appunti(current_user.appunti.non_archiviati) if params[:con_appunti] == "non_archiviati"
 
-    @conteggio_scuole   = @import_scuole.count
-    @conteggio_classi   = @import_scuole.sum(&:classi_count) 
-    @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
-    @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
+    # @conteggio_scuole   = @import_scuole.load.count
+    # @conteggio_classi   = @import_scuole.sum(&:classi_count) 
+    # @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
+    # @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
 
     @pagy, @import_scuole = pagy(@import_scuole, items: 20, link_extra: 'data-turbo-action="advance"')
   end

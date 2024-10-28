@@ -41,7 +41,7 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= render partial: "stats" %>
+	<%#= render partial: "stats" %>
 
 	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all'} do %>
 		<%= turbo_frame_tag "scuole_page_#{@pagy.page}" do %> 
