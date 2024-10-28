@@ -12,7 +12,7 @@ class AppuntiController < ApplicationController
                 .with_attached_attachments
                 .with_attached_image
                 .with_rich_text_content
-                .includes(:import_scuola, :import_adozione).order(created_at: :desc)
+                .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
       
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
     

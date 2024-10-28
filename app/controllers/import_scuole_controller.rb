@@ -8,7 +8,7 @@ class ImportScuoleController < ApplicationController
   def index
 
     @import_scuole = current_user.import_scuole
-      .includes(:appunti_da_completare, :direzione, import_adozioni: [:classe, :import_scuola])
+      .includes(:appunti_da_completare, :direzione)
 
     @import_scuole = filter(@import_scuole.all)
 
@@ -18,7 +18,7 @@ class ImportScuoleController < ApplicationController
     
     @import_scuole = @import_scuole.con_appunti(current_user.appunti.non_archiviati) if params[:con_appunti] == "non_archiviati"
 
-    # @conteggio_scuole   = @import_scuole.load.count
+    @conteggio_scuole   = @import_scuole.load.count
     # @conteggio_classi   = @import_scuole.sum(&:classi_count) 
     # @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
     # @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size

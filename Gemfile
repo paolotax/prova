@@ -36,6 +36,8 @@ group :development do
   gem 'faker'
   gem "annotate", "~> 3.2"
   gem "letter_opener"
+
+  gem "bullet"
 end
 
 group :test do

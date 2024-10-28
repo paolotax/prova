@@ -10,7 +10,7 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
     
     @documenti = current_user.documenti
-        .includes(:clientable, :causale, :righe, documento_righe: [riga: :libro])
+        .includes(:causale, :righe, documento_righe: [riga: :libro])
         .order(updated_at: :desc)
     @documenti = filter(@documenti.all)
     
