@@ -10,13 +10,15 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
     
     @documenti = current_user.documenti
+        .joins("left outer join import_scuole on clientable_type = 'ImportScuola' and clientable_id = import_scuole.id")
+        .joins("left outer join clienti on clientable_type = 'Cliente' and clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
         .order(updated_at: :desc)
     @documenti = filter(@documenti.all)
     
     respond_to do |format|
       format.html do 
-        @pagy, @documenti = pagy(@documenti.all, items: 10)
+        @pagy, @documenti = pagy(@documenti.all, items: 5)
       end
       format.xlsx
     end
@@ -136,6 +138,7 @@ class DocumentiController < ApplicationController
         status: params["status"],
         tipo_pagamento: params["tipo_pagamento"],
         ordina_per: params["ordina_per"]
-      } 
+      }.compact_blank
     end
+
 end
