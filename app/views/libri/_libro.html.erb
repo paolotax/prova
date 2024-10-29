@@ -7,6 +7,7 @@
 		<%= tag.div libro.categoria %>
 		<%= tag.div class: "w-full place-content-center" do %>
 			<%= component( 'badge', text: libro.fascicoli_count, color: "yellow" ) unless libro.fascicoli_count.zero? %>
+			<%= component( 'badge', text: libro.confezioni_count, color: "blue" ) unless libro.confezioni_count.zero? %>
 		<% end %>
 	<% end %>
 	<%= tag.div class: "col-span-4 flex flex-col" do %>
