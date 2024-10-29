@@ -18,10 +18,8 @@ class ImportScuoleController < ApplicationController
     
     @import_scuole = @import_scuole.con_appunti(current_user.appunti.non_archiviati) if params[:con_appunti] == "non_archiviati"
 
-    @conteggio_scuole   = @import_scuole.load.count
-    # @conteggio_classi   = @import_scuole.sum(&:classi_count) 
-    # @conteggio_adozioni = @import_scuole.sum(&:adozioni_count)
-    # @conteggio_marchi   = @import_scuole.map(&:marchi).flatten.uniq.size
+    @stats = Scuole::Stats.new(@import_scuole).stats
+
 
     @pagy, @import_scuole = pagy(@import_scuole, items: 20, link_extra: 'data-turbo-action="advance"')
   end
