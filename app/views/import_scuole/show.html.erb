@@ -102,7 +102,7 @@
 
 <div id="scuola-tappe-list" class="pl-2 flex flex-row flex-wrap">
 	<%= render partial: "tappe/tappa", 
-			collection: @mie_tappe.order(data_tappa: :asc), 
+			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
 			locals: { 
 				with_scuola: false,
 				with_checkbox: false 
@@ -145,7 +145,7 @@
 							Classi & Adozioni
 							<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @import_scuola.classi_count %>
+								<%= @foglio_scuola.classi.load.size %>
 							</span>
 						</a>
 						
@@ -153,7 +153,7 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Adozioni per titolo
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @import_scuola.mie_adozioni.size %> su <%= @import_scuola.adozioni_count %>
+								<%= @foglio_scuola.mie_adozioni.load.size %> su <%= @foglio_scuola.import_adozioni.load.size %>
 							</span>
 						</a>
 
@@ -161,7 +161,7 @@
 						   href="#" class="border-indigo-500 text-indigo-600 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" aria-current="page">
 							Appunti
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @appunti_non_archiviati.load.size %>
+								<%= @foglio_scuola.appunti_non_archiviati.load.size %>
 							</span>
 						</a>
 
@@ -169,7 +169,7 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Archiviati 
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @appunti_archiviati.load.size %>
+								<%= @foglio_scuola.appunti_archiviati.load.size %>
 							</span>
 						</a>
 
@@ -177,14 +177,14 @@
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Vendite 
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @documenti.load.size %>
+								<%= @foglio_scuola.documenti.load.size %>
 							</span>
 						</a>
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Saggi 
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @ssk.load.size %>
+								<%= @foglio_scuola.ssk.load.size %>
 							</span>
 						</a>
 
@@ -200,7 +200,7 @@
 					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
 					<!-- da fare @classi -->
 
-					<% @import_scuola.classi.order(:classe, :sezione).each do |classe| %>
+					<% @foglio_scuola.classi.order(:classe, :sezione).each do |classe| %>
 						<%= render partial: "classi/classe", locals: { classe: classe } %>
 						<% classe.maestre.each do |maestra| %>
 							<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
@@ -208,7 +208,7 @@
 						<%= render partial: "adozioni/adozione", collection: classe.vendita, as: :adozione %>
 						<%= render partial: "adozioni/adozione", collection: classe.adozione, as: :adozione %>
 						<%= render partial: "adozioni/adozione", collection: classe.omaggio, as: :adozione %>
-						<%= render partial: "import_adozioni/card_titolo", collection: classe.import_adozioni.mie_adozioni, as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
+						<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni.select { |a| a.classe == classe } , as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
 						<br/>
 					<% end %>
 				</div>
@@ -224,7 +224,7 @@
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
-					<%= render partial: "appunti/appunto", collection: @appunti_non_archiviati, locals: {mostra_scuola: false} %>
+					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_non_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 						
@@ -232,7 +232,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
-					<%= render partial: "appunti/appunto", collection: @appunti_archiviati, locals: {mostra_scuola: false} %>
+					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 
@@ -240,7 +240,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="vendite" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 2xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
-					<%= render @documenti.order(data_documento: :desc) %>
+					<%= render @foglio_scuola.documenti.order(data_documento: :desc) %>
 				</div>
 			</div>
 
@@ -248,7 +248,7 @@
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="saggi" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>				
-					<%= render partial: "appunti/appunto", collection: @ssk.order(updated_at: :desc), locals: {mostra_scuola: false} %>
+					<%= render partial: "appunti/appunto", collection: @foglio_scuola.ssk.order(updated_at: :desc), locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 		</div>

@@ -2,6 +2,6 @@
     <%= render partial: "tappe/tappa_menu", locals: { tappa: @tappa } %>
 <% end %>
 
-<%= turbo_stream.prepend "scuola-tappe-list" do %>
+<%= turbo_stream.append "scuola-tappe-list" do %>
     <%= render partial: "tappe/tappa", locals: { tappa: @tappa } %>
 <% end %>

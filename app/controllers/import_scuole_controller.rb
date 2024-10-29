@@ -20,7 +20,6 @@ class ImportScuoleController < ApplicationController
 
     @stats = Scuole::Stats.new(@import_scuole).stats
 
-
     @pagy, @import_scuole = pagy(@import_scuole, items: 20, link_extra: 'data-turbo-action="advance"')
   end
 
@@ -39,22 +38,14 @@ class ImportScuoleController < ApplicationController
 
   def show
 
-    @miei_editori = current_user.miei_editori
-    @mie_tappe = current_user.tappe.where(tappable_id: @import_scuola.id)
-    @adozioni = current_user.adozioni.joins(:scuola).where("import_scuole.id = ?", @import_scuola.id)
-    @appunti_non_archiviati = @import_scuola.appunti.non_archiviati.dell_utente(current_user)
-    @appunti_archiviati = @import_scuola.appunti.archiviati.dell_utente(current_user)
-   
-    @documenti = @import_scuola.documenti
-
-    @righe = @import_scuola.righe
-
-    @ssk = @import_scuola.appunti.ssk.dell_utente(current_user)
+    @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
 
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = FoglioScuolaPdf.new(scuola: @import_scuola, tappe: @mie_tappe.order(:data_tappa), adozioni: @import_scuola.mie_adozioni.order(:ANNOCORSO, :CODICEISBN, :SEZIONEANNO), view: view_context)
+        pdf = FoglioScuolaPdf.new(scuola: @import_scuola, 
+            tappe: @foglio_scuola.mie_tappe.order(:data_tappa), 
+            adozioni: @foglio_scuola.mie_adozioni.order(:ANNOCORSO, :CODICEISBN, :SEZIONEANNO), view: view_context)
         send_data pdf.render, filename: "foglio_scuola_#{Date.today}.pdf",
                               type: "application/pdf",
                               disposition: "inline"
@@ -78,12 +69,7 @@ class ImportScuoleController < ApplicationController
         codice_direzione: params["codice_direzione"],
         comune: params["comune"],
         con_appunti: params["con_appunti"],
-        # comune: params["comune"],
-        # scuola: params["scuola"],
-        # mie_adozioni: params["mie_adozioni"],
-        # da_acquistare: params["da_acquistare"],
-        # nel_baule: params["nel_baule"]
-      }
+     }.compact_blank!
     end
 
     def set_import_scuola

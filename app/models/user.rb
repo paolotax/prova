@@ -67,6 +67,7 @@ class User < ApplicationRecord
 
   has_many :giri, dependent: :destroy
   has_many :tappe, dependent: :destroy
+  
   has_many :libri, dependent: :destroy
  
   

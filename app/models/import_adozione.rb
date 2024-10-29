@@ -105,7 +105,7 @@ class ImportAdozione < ApplicationRecord
     .select("COUNT(import_adozioni.id) as numero_sezioni") 
   }
 
-  scope :grouped_titolo, -> { 
+  scope :grouped_titolo, -> {
     order(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
     .group(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)
     .select(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :CODICEISBN, :TITOLO, :EDITORE)

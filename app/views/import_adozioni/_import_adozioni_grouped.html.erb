@@ -2,7 +2,7 @@
 
 <% if grouped == :titolo %>
     
-    <% @import_scuola.import_adozioni.grouped_titolo.each do |c| %>
+    <% @foglio_scuola.import_adozioni.grouped_titolo.each do |c| %>
         
         <%= tag.div class:  "grid grid-cols-5 gap-2 px-2  mb-2" do %>
             
@@ -17,7 +17,7 @@
 
             <%# classi %>
             <%= tag.div class: "col-span-2 pr-1 grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5" do %>
-                <% adozioni =  @import_scuola.import_adozioni.find  c.import_adozioni_ids %>
+                <% adozioni =  @foglio_scuola.import_adozioni.find  c.import_adozioni_ids %>
                 <% adozioni.sort_by(&:SEZIONEANNO).each do |a| %>
                     
                     <%= render partial: "import_adozioni/card_classe", locals: { 
@@ -33,7 +33,7 @@
 
 <% elsif grouped == :classe %>
 
-    <% @import_scuola.import_adozioni.grouped_classe.each do |classe| %>
+    <% @foglio_scuola.import_adozioni.grouped_classe.each do |classe| %>
     
         <%= tag.div class: "my-3 px-2 grid grid-cols-5 gap-2" do %>
             

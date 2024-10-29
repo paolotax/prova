@@ -14,6 +14,7 @@ class DocumentiController < ApplicationController
         .joins("left outer join clienti on clientable_type = 'Cliente' and clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
         .order(updated_at: :desc)
+
     @documenti = filter(@documenti.all)
     
     respond_to do |format|

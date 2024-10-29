@@ -3,9 +3,9 @@ module Filters
     extend FilterScopeable
     
     filter_scope :search, ->(search) { 
-      joins("LEFT JOIN import_scuole ON documenti.clientable_id = import_scuole.id AND documenti.clientable_type = 'ImportScuola'")
-      .joins("LEFT JOIN clienti ON documenti.clientable_id = clienti.id AND documenti.clientable_type = 'Cliente'")
-      .joins("JOIN causali ON documenti.causale_id = causali.id")
+      # joins("LEFT JOIN import_scuole ON documenti.clientable_id = import_scuole.id AND documenti.clientable_type = 'ImportScuola'")
+      # .joins("LEFT JOIN clienti ON documenti.clientable_id = clienti.id AND documenti.clientable_type = 'Cliente'")
+      joins("JOIN causali ON documenti.causale_id = causali.id")
       .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? 
               OR import_scuole."DESCRIZIONECOMUNE" ILIKE ? 
               OR import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ILIKE ? 
