@@ -10,6 +10,7 @@ module StepsControllers
       case step
         when :dettaglio
           @import = DocumentiImporter.new(import_method: :xlsx_csv, documento: @documento)
+          @documento_righe = @documento.documento_righe.preload(riga: :libro)
           @documento.documento_righe.build.build_riga(sconto: 0.0) if @documento.documento_righe.empty?
       end
       
