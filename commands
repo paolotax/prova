@@ -78,3 +78,12 @@ ssh root@116.203.224.90
 
 docker exec -it prova-web-xxx bin/rails c
 
+
+ User.all.each do |user|
+   Current.user = user
+   Current.user.libri.each do |libro|
+     libro.adozioni_count = Current.user.import_adozioni.joins(:libro).where(libro: {id: libro.id}).count
+     libro.save
+   end
+ end
+

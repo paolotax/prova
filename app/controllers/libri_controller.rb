@@ -30,7 +30,7 @@ class LibriController < ApplicationController
   end
 
   def show
-    @situazione = LibroInfo.new(user: current_user, libro: @libro)
+    #@situazione = LibroInfo.new(user: current_user, libro: @libro)
     
     @giacenza = @libro.giacenza
 

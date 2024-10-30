@@ -125,6 +125,7 @@ class ImportAdozione < ApplicationRecord
   scope :nel_baule_di_oggi, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))) }  
   scope :nel_baule_di_domani, -> { where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct.where( id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id))) } 
 
+  scope :da_acquistare, -> { where(DAACQUIST: "Si") }
   
   def mia_adozione?
     Current.user.miei_editori.include?(self.EDITORE)

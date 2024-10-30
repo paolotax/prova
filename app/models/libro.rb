@@ -79,6 +79,9 @@ class Libro < ApplicationRecord
   
   validates :prezzo_in_cents, presence: true
   
+  has_many :user_adozioni, -> {
+    Current.user.import_adozioni.da_acquistare.joins(:libro)
+  }, class_name: "ImportAdozione", foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
   validates :codice_isbn, presence: true, uniqueness: { scope: :user_id }
 

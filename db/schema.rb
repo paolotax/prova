@@ -292,7 +292,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_092046) do
     t.integer "fascicoli_count", default: 0, null: false
     t.integer "confezioni_count", default: 0, null: false
     t.integer "adozioni_count", default: 0, null: false
-    t.integer "mie_adozioni_count", default: 0, null: false
     t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
     t.index ["editore_id"], name: "index_libri_on_editore_id"
     t.index ["user_id", "categoria"], name: "index_libri_on_user_id_and_categoria"

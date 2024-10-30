@@ -172,7 +172,7 @@
 
 	<%= tag.div class: "flex flex-col  w-full md:w-1/4" do %>
 
-		<%= render StatComponent.new(title: "Adozioni", width: "w-full", current_value: @situazione.adozioni) %>
+		<%= render StatComponent.new(title: "Adozioni", width: "w-full", current_value: @libro.adozioni_count) %>
 		<ul>
 			<% @adozioni.each do |adozione| %>
 
