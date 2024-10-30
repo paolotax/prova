@@ -9,6 +9,9 @@ module Filters
     filter_scope :editore, ->(name) { joins(:editore).where("editori.editore ILIKE ?", "%#{name}%") }
     filter_scope :classe, ->(classe) { where(classe: classe) }
     
+    filter_scope :fascicoli, ->(confezione_id) { where(id: ConfezioneRiga.where(confezione_id: confezione_id).select(:fascicolo_id)) }
+    filter_scope :confezioni, ->(fascicolo_id) { where(id: ConfezioneRiga.where(fascicolo_id: fascicolo_id).select(:confezione_id)) }
+    
     filter_scope :ordini, ->(ordini) { joins(:giacenza).where("view_giacenze.ordini > ?", ordini) }
     
     filter_scope :incompleti, ->(incompleti) { incompleti == "si" ? where("libri.editore_id IS NULL OR libri.categoria IS NULL") : all }
