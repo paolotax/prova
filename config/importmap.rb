@@ -21,12 +21,11 @@ pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.
 
 pin "mapkick/bundle", to: "mapkick.bundle.js"
 
-pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm", preload: true
-
-
+#pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm", preload: true
 
 pin_all_from "app/assets/javascripts/controllers/helpers", under: "helpers", to: "controllers/helpers"
 pin "@stimulus-components/sortable", to: "@stimulus-components--sortable.js" # @5.0.1
 pin "sortablejs" # @1.15.2
 pin "@rails/request.js", to: "@rails--request.js.js" # @0.0.8
 pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.7/+esm", preload: true
+pin "@stimulus-components/scroll-to", to: "@stimulus-components--scroll-to.js" # @5.0.1

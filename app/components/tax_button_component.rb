@@ -4,7 +4,7 @@ class TaxButtonComponent < ViewComponent::Base
   
   attr_reader :caption, :svg_file, :color, :url, :data_attr
   
-  def initialize(caption: nil, svg_file:, color:, url: nil, data_attr: {}, enabled: true, style: :link, target: nil)      
+  def initialize(caption: nil, svg_file:, color:, url: nil, data_attr: {}, enabled: true, style: :link, target: nil, type: nil, orientation: "vertical")      
     @caption = caption
     @svg_file = svg_file
     @color = color
@@ -13,7 +13,7 @@ class TaxButtonComponent < ViewComponent::Base
     @enabled = enabled
     @style = style
     @target = target
-
+    @type = type
     if caption == "Elimina"
       @style = :button
     end
@@ -49,9 +49,12 @@ class TaxButtonComponent < ViewComponent::Base
 
       "bg-pink-600 text-white hover:bg-pink-500 active:bg-pink-600 
         focus:outline-pink-600": color == "pink",
+
+      "bg-gray-500 text-white hover:bg-gray-400 active:bg-gray-400 
+        focus:outline-gray-400": color == "gray",        
       
-      "border-none shadow-none bg-none text-gray-500 hover:bg-gray-200 hover:text-gray-900 active:bg-gray-200 
-      focus:outline-none": color == "transparent"
+        "border-none shadow-none bg-none text-gray-500 hover:text-gray-900 
+        focus:outline-none": color == "transparent"
     )
   end
  

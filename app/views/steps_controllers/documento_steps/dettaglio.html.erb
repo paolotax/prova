@@ -1,6 +1,6 @@
 <%= turbo_frame_tag dom_id(@documento) do %>
         
-    <%= tag.div class: "w-full mx-auto sm:max-w-2xl gap-4" do %>
+    <%= tag.div class: "w-full mx-auto sm:max-w-4xl gap-4" do %>
 
         <%= render partial: "steps_controllers/common/steps_header", locals: { resource: @documento } %>   
 
@@ -20,7 +20,17 @@
             <% end %>
         <% end %>
 
-        <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance" }, class: "px-2 py-5"  do |f| %>
+        <% if @documento_righe.size > 20 %>
+            <%= tag.div id: "top", class: "align-right" do %>
+                <%= component "tax_button", 
+                        svg_file: "icon-chevron-double-down",
+                        color: "transparent",
+                        url: "#bottom",
+                        data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
+            <% end  %>
+        <% end %>
+
+        <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance", controller: "unload" }, class: "px-2 py-5"  do |f| %>
             
             <%= tag.section id: "documento_righe", class: "col-span-4",  
                             data: { controller: "sortable", 
@@ -29,21 +39,31 @@
                 <%= render partial: "documento_righe/documento_riga", collection: @documento_righe %>
             <% end %>
 
-            <div class="px-4 flex items-start mb-8">
+            <div class="py-4 flex justify-between  mb-6">
                 <%= render TaxButtonComponent.new(
                             caption: "",
                             svg_file: "icon-plus.svg",
-                            color: "blue",
+                            color: "gray",
                             url: url_for( controller: "/documento_righe", action: "new", model: @documento ),
                             data_attr: { turbo_stream: true }
                 ) %>
+
+
+                <% if @documento_righe.size > 20 %>
+                    <%= tag.div id: "bottom" do %>
+                        <%= component "tax_button", 
+                                svg_file: "icon-chevron-double-up",
+                                color: "transparent",
+                                url: "#top",
+                                data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
+                    <% end  %>
+                <% end %>
             </div>
 
-
-
-            <%= tag.div(class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
-                <%= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 py-2 bg-gray-500 text-white"  %>
-                <%= f.submit 'Avanti', name: "next", class: "px-4 py-2 bg-gray-500 text-white" %>
+            
+            <%= tag.div(id: "bottom", class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
+                <%= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 rounded-md py-2 bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white"  %>
+                <%= f.submit 'Avanti', name: "next", class: "px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white" %>
             <% end %>
 
         <% end %>

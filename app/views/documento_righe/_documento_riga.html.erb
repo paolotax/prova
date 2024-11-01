@@ -1,6 +1,6 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-4 bg-white p-4 border rounded-lg inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
+    <%= tag.div class:"mb-2 bg-white px-4 py-2.5 border rounded-lg inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
         
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro",
