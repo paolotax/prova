@@ -64,7 +64,14 @@
 
             
             <%= tag.div(id: "bottom", class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
-                <%= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 rounded-md py-2 bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white"  %>
+                <%#= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 rounded-md py-2 bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white"  %>
+                
+                <%= component "tax_button",
+                        caption: "Indietro",
+                        color: "gray",
+                        url: previous_wizard_path,
+                        data_attr: { turbo_action: "advance" } %>
+                
                 <%= f.submit 'Avanti', name: "next", class: "px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white" %>
             <% end %>
 

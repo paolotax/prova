@@ -4,15 +4,15 @@
               target: @target,
               data: data_attr, 
               class: css_class do %>
-      <%= inline_svg_tag svg_file  %>
-      <%= tag.div caption, class: "hidden sm:block" %>
+      <%= inline_svg_tag(svg_file) if svg_file %>
+      <%= tag.div( caption, class: [ "hidden": !svg_file.nil?, "px-1 text-base font-normal": svg_file.nil?, "sm:block": true ]) if caption %>
   <% end %>
 
 <% elsif @style == :dropdown %>
 
   <%= tag.div class: css_class do %>
-      <%= inline_svg_tag svg_file  %>
-      <%= tag.div( caption, class: "hidden sm:block" ) if caption %>
+      <%= inline_svg_tag(svg_file) if svg_file %>
+      <%= tag.div( caption, class: [ "hidden": !svg_file.nil?, "px-1 text-base font-normal": svg_file.nil?, "sm:block": true ]) if caption %>
   <% end %>
 
 <% elsif @style == :button %>
@@ -22,8 +22,8 @@
               target: @target,
               data: data_attr, 
               class: css_class do %>
-      <%= inline_svg_tag svg_file  %>
-      <%= tag.div caption, class: "hidden sm:block" %>
+      <%= inline_svg_tag(svg_file) if svg_file %>
+      <%= tag.div( caption, class: [ "hidden": !svg_file.nil?, "px-1 text-base font-normal": svg_file.nil?, "sm:block": true ]) if caption %>
   <% end %>
 
 <% end %>
