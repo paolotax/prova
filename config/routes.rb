@@ -9,6 +9,7 @@ end
 
 # then mount it
 Rails.application.routes.draw do
+  mount Avo::Engine, at: Avo.configuration.root_path
     
   get 'ordini_in_corso', to: "ordini#index"
   get "cerca", to: "search#index"

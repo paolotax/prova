@@ -110,6 +110,14 @@ class ImportScuola < ApplicationRecord
     ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + " " + self.DENOMINAZIONESCUOLA + " - " + self.DESCRIZIONECOMUNE)
   end
 
+  def self.ransackable_attributes(auth_object = nil)
+    [:PROVINCIA, :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [:PROVINCIA, :CODICESCUOLA]
+  end
+
   def direzione_or_privata
     self.direzione || "<privata>".html_safe
   end
