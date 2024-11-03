@@ -116,3 +116,5 @@ gem "positioning", "~> 0.3.0"
 
 gem 'avo'
 gem "ransack"
+
+gem "pundit"

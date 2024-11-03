@@ -7,8 +7,8 @@ class Avo::Resources::Editore < Avo::BaseResource
 
   def fields
     field :id, as: :id
-    field :editore, as: :text
-    field :gruppo, as: :text
+    field :editore, as: :text, sortable: true
+    field :gruppo, as: :text, sortable: true
     field :mandati, as: :has_many
     field :users, as: :has_many, through: :mandati
     field :import_adozioni, as: :has_many

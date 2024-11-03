@@ -340,6 +340,8 @@ GEM
     public_suffix (5.0.5)
     puma (6.4.2)
       nio4r (~> 2.0)
+    pundit (2.4.0)
+      activesupport (>= 3.0.0)
     racc (1.7.3)
     rack (3.0.11)
     rack-mini-profiler (3.3.1)
@@ -542,6 +544,7 @@ DEPENDENCIES
   prawn-html
   prawn-table (~> 0.2)
   puma (>= 5.0)
+  pundit
   rack-mini-profiler
   rails (~> 7.1.2)
   rails_designer (~> 1.7.0)!

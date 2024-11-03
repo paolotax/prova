@@ -23,9 +23,14 @@ Avo.configure do |config|
 
   ## == Authentication ==
   config.current_user_method = :current_user
-  # config.authenticate_with do
-  # end
-  
+
+  config.authenticate_with do
+    # user = User.find_by(id: session[:user_id])
+
+    unless current_user&.admin?
+      redirect_to main_app.root_url, alert: t("controllers.avo.unauthorized")
+    end
+  end
 
   ## == Authorization ==
   # config.is_admin_method = :is_admin
@@ -42,7 +47,7 @@ Avo.configure do |config|
   # }
   # config.raise_error_on_missing_policy = false
   config.authorization_client = nil
-  config.implicit_authorization = true
+  #config.implicit_authorization = true
 
   ## == Localization ==
   # config.locale = 'en-US'
