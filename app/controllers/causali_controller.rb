@@ -3,6 +3,10 @@ class CausaliController < ApplicationController
   before_action :authenticate_user!
   before_action :set_causale, only: %i[ show edit update destroy ]
 
+  rescue_from Pundit::NotAuthorizedError do
+    redirect_to causali_path, alert: "Non sei autorizzato a eseguire questa azione."
+  end
+
   # GET /causali or /causali.json
   def index
     @causali = Causale.all
@@ -15,6 +19,7 @@ class CausaliController < ApplicationController
   # GET /causali/new
   def new
     @causale = Causale.new
+    authorize @causale
   end
 
   # GET /causali/1/edit
@@ -24,6 +29,7 @@ class CausaliController < ApplicationController
   # POST /causali or /causali.json
   def create
     @causale = Causale.new(causale_params)
+    authorize @causale
 
     respond_to do |format|
       if @causale.save
@@ -63,6 +69,7 @@ class CausaliController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_causale
       @causale = Causale.find(params[:id])
+      authorize @causale
     end
 
     # Only allow a list of trusted parameters through.

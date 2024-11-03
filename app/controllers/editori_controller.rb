@@ -3,8 +3,13 @@ class EditoriController < ApplicationController
   before_action :authenticate_user! 
   before_action :set_editore, only: %i[ show edit update destroy ]
 
+  rescue_from Pundit::NotAuthorizedError do
+    redirect_to root_path, alert: "Non sei autorizzato a eseguire questa azione."
+  end
+
   def index
-    @editori = Editore.all
+    @editori = policy_scope(Editore).all
+    # authorize @editori
   end
 
   def show

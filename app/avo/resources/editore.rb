@@ -1,17 +1,30 @@
 class Avo::Resources::Editore < Avo::BaseResource
+  
   # self.includes = []
   # self.attachments = []
-  # self.search = {
-  #   query: -> { query.ransack(id_eq: params[:q], m: "or").result(distinct: false) }
-  # }
+  
+  self.search = {
+    query: -> { 
+      query.ransack(
+        id_eq: params[:q], 
+        editore_cont: params[:q],
+        gruppo_cont: params[:q],
+        m: "or").result(distinct: false) 
+      },
+    item: -> do
+      {
+        title: "[#{record.id}] #{record.editore}"
+      }
+    end
+  }
 
   def fields
     field :id, as: :id
-    field :editore, as: :text, sortable: true
-    field :gruppo, as: :text, sortable: true
-    field :mandati, as: :has_many
-    field :users, as: :has_many, through: :mandati
-    field :import_adozioni, as: :has_many
-    field :import_scuole, as: :has_many, through: :import_adozioni
+    field :editore, 
+      as: :text, 
+      sortable: true
+    field :gruppo, 
+      as: :text, 
+      sortable: true
   end
 end

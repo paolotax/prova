@@ -1,5 +1,7 @@
 class ApplicationController < ActionController::Base
 
+  include Pundit
+
   before_action :congigure_permitted_parameters, if: :devise_controller?
   
   before_action :set_current_user 
