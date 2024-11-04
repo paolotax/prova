@@ -118,6 +118,14 @@ class Appunto < ApplicationRecord
   scope :ssk, -> { where(nome: ["saggio", "seguito", "kit"]).where.not(import_adozione_id: nil) }
   
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[nome body]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[nome body]
+  end
+
   def scuola 
     import_scuola
   end

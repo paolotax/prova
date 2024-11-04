@@ -5,7 +5,8 @@ class Avo::Resources::ImportScuola < Avo::BaseResource
     query: -> { query.ransack(
       CODICESCUOLA_cont: params[:q], 
       PROVINCIA_cont: params[:q],
-      
+      DESCRIZIONECOMUNE_cont: params[:q],
+      DENOMINAZIONESCUOLA_cont: params[:q],
       m: "or").result(distinct: false) },
     item: -> do
       { title: "#{record.DENOMINAZIONESCUOLA} --- #{record.DESCRIZIONECOMUNE}" }
@@ -36,6 +37,7 @@ class Avo::Resources::ImportScuola < Avo::BaseResource
     field :INDIRIZZOPECSCUOLA, as: :text
     field :SITOWEBSCUOLA, as: :text
     field :SEDESCOLASTICA, as: :text
+    field :import_adozioni, as: :has_many
     
   end
 end

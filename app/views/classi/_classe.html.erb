@@ -13,7 +13,7 @@
         <% end %>
 
         <%# qui ci devo mettere il menu %>
-        <%= link_to new_appunto_path(import_scuola_id: classe.import_scuola.id, classe_id: classe.id), 
+        <%= link_to new_appunto_path(import_scuola_id: classe.import_scuola.id, classe_ids: classe.id), 
                 data: { turbo_frame: :modal, action: "click->dialog#open"}, 
                 class: "w-6 h-6 rounded-full flex align-center text-gray-400 text-sm p-0.5 items-center" do %>
             <%= inline_svg_tag "icon-ellipsis-vertical.svg" %>
