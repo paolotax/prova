@@ -7,7 +7,12 @@
 		
 		<% heading.with_description do %>
 			<%= tag.div @import_scuola.indirizzo, class: "text-sm font-semibold text-gray-400" %>
-			<%= tag.div @import_scuola.comune, class: "text-sm font-semibold text-gray-400"  %>
+			<%= tag.div class: "flex items-center justify-start gap-2" do %>
+				<%= tag.div @import_scuola.cap, class: "text-sm font-semibold text-gray-400" %>
+				<%= link_to @import_scuola.comune, import_scuole_path(comune: @import_scuola.comune), class: "text-sm font-semibold text-gray-400 hover:text-gray-900"  %>
+				<%= tag.div @import_scuola.provincia, class: "text-sm font-semibold text-gray-400" %>
+			<% end %>
+			<%= tag.div @import_scuola.codice_ministeriale, class: "text-sm font-semibold text-gray-400"  %>
 		<% end %>
 
 		<% heading.with_action do %>
