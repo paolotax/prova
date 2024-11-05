@@ -41,7 +41,7 @@
     <% else %>
         <%= tag.div class: "col-span-3 flex flex-col" do %>
             <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
-            <%= tag.div tappa.titolo, class: "text-xs italic font-semibold text-gray-400" %>
+            <%= tag.div tappa.titolo, class: "line-clamp-2 hover:line-clamp-none text-xs italic font-semibold text-gray-400" %>
         <% end %>
     <% end %>
 

@@ -118,3 +118,5 @@ gem 'avo'
 gem "ransack"
 
 gem "pundit"
+
+gem "rack-attack"
