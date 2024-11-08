@@ -20,6 +20,9 @@
 		<%= javascript_importmap_tags %>
 
 		<% turbo_refreshes_with method: :morph, scroll: :reset %>
+
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+		
 		<%= yield :head %>
 		
 	</head>

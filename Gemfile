@@ -120,3 +120,4 @@ gem "ransack"
 gem "pundit"
 
 gem "rack-attack"
+
