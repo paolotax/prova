@@ -13,6 +13,7 @@
 #  note             :text
 #  numero_fascicoli :integer
 #  prezzo_in_cents  :integer
+#  slug             :string
 #  titolo           :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
@@ -23,6 +24,7 @@
 #
 #  index_libri_on_classe_and_disciplina    (classe,disciplina)
 #  index_libri_on_editore_id               (editore_id)
+#  index_libri_on_slug                     (slug) UNIQUE
 #  index_libri_on_user_id                  (user_id)
 #  index_libri_on_user_id_and_categoria    (user_id,categoria)
 #  index_libri_on_user_id_and_codice_isbn  (user_id,codice_isbn)

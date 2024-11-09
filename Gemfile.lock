@@ -140,6 +140,12 @@ GEM
     bcrypt (3.1.20)
     bigdecimal (3.1.8)
     bindex (0.8.1)
+    blazer (3.1.0)
+      activerecord (>= 6.1)
+      chartkick (>= 5)
+      csv
+      railties (>= 7)
+      safely_block (>= 0.4)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
     builder (3.2.4)
@@ -163,6 +169,7 @@ GEM
     caxlsx_rails (0.6.3)
       actionpack (>= 3.1)
       caxlsx (>= 3.0)
+    chartkick (5.1.2)
     childprocess (5.0.0)
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
@@ -522,6 +529,7 @@ DEPENDENCIES
   awesome_back_url
   aws-sdk-s3
   bcrypt (~> 3.1.7)
+  blazer (~> 3.1)
   bootsnap
   bullet
   capybara

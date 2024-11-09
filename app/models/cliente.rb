@@ -24,6 +24,7 @@
 #  partita_iva             :string
 #  pec                     :string
 #  provincia               :string
+#  slug                    :string
 #  telefono                :string
 #  tipo_cliente            :string
 #  created_at              :datetime         not null
@@ -32,6 +33,7 @@
 #
 # Indexes
 #
+#  index_clienti_on_slug     (slug) UNIQUE
 #  index_clienti_on_user_id  (user_id)
 #
 class Cliente < ApplicationRecord
