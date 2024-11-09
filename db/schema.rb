@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_09_105342) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_09_132054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -234,6 +234,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_105342) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "friendly_id_slugs", force: :cascade do |t|
+    t.string "slug", null: false
+    t.integer "sluggable_id", null: false
+    t.string "sluggable_type", limit: 50
+    t.string "scope"
+    t.datetime "created_at"
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
+    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+  end
+
   create_table "giri", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "iniziato_il"
@@ -295,9 +306,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_105342) do
     t.string "SEDESCOLASTICA"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
     t.index ["CODICESCUOLA"], name: "index_import_scuole_on_CODICESCUOLA", unique: true
     t.index ["DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"], name: "idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a"
     t.index ["PROVINCIA"], name: "index_import_scuole_on_PROVINCIA"
+    t.index ["slug"], name: "index_import_scuole_on_slug", unique: true
   end
 
   create_table "imports", force: :cascade do |t|
@@ -491,9 +504,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_105342) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.integer "role", default: 0
+    t.string "slug"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 
   create_table "zone", force: :cascade do |t|

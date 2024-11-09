@@ -23,6 +23,7 @@
 #  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
 #  SITOWEBSCUOLA                             :string
+#  slug                                      :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
 #
@@ -31,8 +32,12 @@
 #  idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a  (DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
 #  index_import_scuole_on_CODICESCUOLA                          (CODICESCUOLA) UNIQUE
 #  index_import_scuole_on_PROVINCIA                             (PROVINCIA)
+#  index_import_scuole_on_slug                                  (slug) UNIQUE
 #
 class ImportScuola < ApplicationRecord
+
+  extend FriendlyId
+  friendly_id :DENOMINAZIONESCUOLA, use: :slugged
 
   include Searchable
   search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO

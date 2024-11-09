@@ -73,7 +73,7 @@ class ImportScuoleController < ApplicationController
     end
 
     def set_import_scuola
-      @import_scuola = ImportScuola.find(params[:id])
+      @import_scuola = ImportScuola.friendly.find(params[:id])
     end
 
     def import_scuola_params

@@ -123,3 +123,5 @@ gem "rack-attack"
 
 gem "ahoy_matey"
 
+
+gem "friendly_id", "~> 5.5"

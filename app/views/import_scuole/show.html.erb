@@ -40,13 +40,13 @@
 					caption: "prec",
 					svg_file: "icon-arrow-left.svg",
 					color: "white",
-					url: "/import_scuole/#{@import_scuola&.previous&.id}"  %>
+					url: "/import_scuole/#{@import_scuola&.previous&.slug}"  %>
 
 				<%= component 'tax_button',
 					caption: "succ",
 					svg_file: "icon-arrow-right.svg",
 					color: "white",
-					url: "/import_scuole/#{@import_scuola&.next&.id}"  %>
+					url: "/import_scuole/#{@import_scuola&.next&.slug}"  %>
 			<% end %>
 		<% end %>
 

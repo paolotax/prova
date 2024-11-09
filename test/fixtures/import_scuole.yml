@@ -23,6 +23,7 @@
 #  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
 #  SITOWEBSCUOLA                             :string
+#  slug                                      :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
 #
@@ -31,6 +32,7 @@
 #  idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a  (DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
 #  index_import_scuole_on_CODICESCUOLA                          (CODICESCUOLA) UNIQUE
 #  index_import_scuole_on_PROVINCIA                             (PROVINCIA)
+#  index_import_scuole_on_slug                                  (slug) UNIQUE
 #
 
 # This model initially had no columns defined. If you add columns to the

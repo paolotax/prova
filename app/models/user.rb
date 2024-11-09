@@ -15,6 +15,7 @@
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  role                   :integer          default("scagnozzo")
+#  slug                   :string
 #  unconfirmed_email      :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -24,12 +25,16 @@
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_slug                  (slug) UNIQUE
 #
 class User < ApplicationRecord
 
   # tutti i metodi di Devise
   include Authenticable
   
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+
   validates :name,  presence: true, uniqueness: { case_sensitive: false }
   validates :email, format: { with: /\S+@\S+/ }, uniqueness: { case_sensitive: false }
   #validates :partita_iva, format: { with: /\A\d{11}\z/ }
