@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class Users::RegistrationsController < Devise::RegistrationsController
-  
+module Users  
   class RegistrationsController < Devise::RegistrationsController
     prepend_before_action :validate_cloudflare_turnstile, only: :create
 
