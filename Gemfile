@@ -121,3 +121,5 @@ gem "pundit"
 
 gem "rack-attack"
 
+gem "ahoy_matey"
+

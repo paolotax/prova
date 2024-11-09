@@ -30,4 +30,5 @@ Turbo.StreamActions.redirect =  function() {
 };
 
 import "./utilities/confirm_modal.js"
+import "ahoy"
 

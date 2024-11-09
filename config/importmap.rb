@@ -29,3 +29,5 @@ pin "sortablejs" # @1.15.2
 pin "@rails/request.js", to: "@rails--request.js.js" # @0.0.8
 pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.7/+esm", preload: true
 pin "@stimulus-components/scroll-to", to: "@stimulus-components--scroll-to.js" # @5.0.1
+
+pin "ahoy", to: "ahoy.js"
