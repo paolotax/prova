@@ -48,7 +48,7 @@
 					<%= f.submit "Registra un nuovo account", class: "mt-10 flex w-full justify-center rounded-md bg-gray-900 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900" %>
 				</div>
 
-				<%= tag.div data: {controller: :turnstile, turnstile_site_key_value: Rails.application.credentials.dig(:turnstile, :site_key), class: "pl-2" %>
+				<%= tag.div data: {controller: :turnstile, turnstile_site_key_value: Rails.application.credentials.dig(:turnstile, :site_key)}, class: "pl-2" %>
 
 			</div>
 		<% end %>
