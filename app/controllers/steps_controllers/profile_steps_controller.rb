@@ -2,16 +2,18 @@ module StepsControllers
   class ProfileStepsController < ApplicationController
     include Wicked::Wizard
 
+    before_action :authenticate_user!
+    
     steps *Profile.form_steps.keys
 
     def show
-      @profile = Profile.find(params[:profile_id])
+      @profile = authorize Profile.find(params[:profile_id])
       #raise params.inspect
       render_wizard
     end
 
     def update
-      @profile = Profile.find(params[:profile_id])
+      @profile = authorize Profile.find(params[:profile_id])
       # Use #assign_attributes since render_wizard runs a #save for us
       @profile.assign_attributes profile_params
       render_wizard @profile

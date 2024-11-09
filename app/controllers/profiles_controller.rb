@@ -4,14 +4,14 @@ class ProfilesController < ApplicationController
   before_action :set_profile, only: %i[ show edit update destroy ]
 
   def index
-    @profiles = Profile.all
+    @profiles = authorize Profile.all
   end
 
   def new  
     @profile = current_user.profile || current_user.build_profile
+    authorize @profile
     @profile.save! validate: false
-
-
+    
     redirect_to profile_step_path(@profile, Profile.form_steps.keys.first)
   end
   
@@ -33,7 +33,7 @@ class ProfilesController < ApplicationController
   private
 
     def set_profile
-      @profile = Profile.find(params[:id])
+      @profile = authorize Profile.find(params[:id])
     end
 
     def profile_params
