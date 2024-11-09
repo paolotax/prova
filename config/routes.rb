@@ -101,7 +101,7 @@ Rails.application.routes.draw do
   
   mount Sidekiq::Web => "/sidekiq"
 
-  devise_for :users, controllers: { confirmations: 'confirmations' }
+  devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
 
   resources :giri do 
     member do 
