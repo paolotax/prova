@@ -9,8 +9,8 @@ default: &default
 production:
   <<: *default
   database: prova_production
-  username: <%= ENV['POSTGRES_USER'] %>
-  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  username: prova
+  password: ptaxptax
   host: <%= ENV["DB_HOST"] %>
 
 development:
