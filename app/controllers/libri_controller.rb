@@ -107,7 +107,7 @@ class LibriController < ApplicationController
   private
 
     def set_libro
-      @libro = Libro.find(params[:id])
+      @libro = current_user.libri.friendly.find(params[:id])
     end
 
     def libro_params

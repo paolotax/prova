@@ -38,6 +38,16 @@
 #
 class Libro < ApplicationRecord
 
+  include FriendlyId
+  friendly_id :slug_candidates, use: :slugged
+  def slug_candidates
+    [
+      :titolo,
+      [:titolo, :user_id],
+      [:titolo, :user_id, :codice_isbn],
+    ]
+  end
+
   include Searchable
   search_on :titolo, :codice_isbn, :disciplina, :note, :categoria, editore: :editore
 

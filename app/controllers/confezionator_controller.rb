@@ -37,7 +37,7 @@ class ConfezionatorController < ApplicationController
 
     
     def set_libro
-      @libro = Libro.find(params[:id])
+      @libro = Libro.friendly.find(params[:id])
     end
 
 end

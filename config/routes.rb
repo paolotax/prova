@@ -101,6 +101,10 @@ Rails.application.routes.draw do
   
   mount Sidekiq::Web => "/sidekiq"
 
+  authenticate :user, ->(user) { user.admin? } do
+    mount Blazer::Engine, at: "blazer"
+  end
+  
   devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
 
   resources :giri do 

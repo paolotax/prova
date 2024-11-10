@@ -67,7 +67,7 @@
 				caption: "prec",
 				svg_file: "icon-arrow-left.svg",
 				color: "white",
-				url: "/libri/#{@libro&.previous&.id}"  %>
+				url: "/libri/#{@libro&.previous&.slug}"  %>
 		<% end %>
 
 		<% heading.with_action do %>
@@ -75,7 +75,7 @@
 				caption: "succ",
 				svg_file: "icon-arrow-right.svg",
 				color: "white",
-				url: "/libri/#{@libro&.next&.id}"  %>
+				url: "/libri/#{@libro&.next&.slug}"  %>
 		<% end %>
 
 		<% heading.with_action do %>	
