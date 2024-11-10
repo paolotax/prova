@@ -89,3 +89,11 @@ User.where("id > 100").destroy_all
    end
  end
 
+
+BEGIN;
+CREATE ROLE blazer LOGIN PASSWORD 'secret';
+GRANT CONNECT ON DATABASE prova_production TO blazer;
+GRANT USAGE ON SCHEMA public TO blazer;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+COMMIT;

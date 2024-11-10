@@ -2,7 +2,9 @@
 
 data_sources:
   main:
-    url: <%= ENV["BLAZER_DATABASE_URL"] %>
+    url: "postgres://blazer:secret@127.0.0.1:5432/prova_production"
+
+    #url: <%= ENV["BLAZER_DATABASE_URL"] %>
 
     # statement timeout, in seconds
     # none by default
