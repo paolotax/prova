@@ -6,8 +6,9 @@
 	
 			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
-			<%= link_to documento_path(documento), class: "hover:font-bold", data: { turbo_frame: :_top } do %>
-				<%= tag.div documento&.causale&.causale %> nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
+			<%= link_to documento_path(documento), class: "text-sm font-semibold hover:font-bold", data: { turbo_frame: :_top } do %>
+				<%= tag.div documento&.causale&.causale %>  
+				<%= tag.div "#{documento.numero_documento} del #{documento.data_documento.strftime("%d-%m-%Y")}", class: "text-xs font-semibold text-gray-600" %>
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
