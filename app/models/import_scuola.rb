@@ -37,7 +37,13 @@
 class ImportScuola < ApplicationRecord
 
   extend FriendlyId
-  friendly_id :DENOMINAZIONESCUOLA, use: :slugged
+  friendly_id  :slug_candidates, use: :slugged
+  def slug_candidates
+    [
+      :DENOMINAZIONESCUOLA,
+      [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
+    ]
+  end
 
   include Searchable
   search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO

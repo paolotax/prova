@@ -114,5 +114,5 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
    
-
+  ENV["BLAZER_DATABASE_URL"] = "postgres://blazer:secret@scagnozz.com:5432/prova_production"
 end

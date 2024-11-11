@@ -78,22 +78,20 @@ ssh root@116.203.224.90
 
 docker exec -it prova-web-xxx bin/rails c
 
-User.where("id > 100").destroy_all
 
 
- User.all.each do |user|
-   Current.user = user
-   Current.user.libri.each do |libro|
-     libro.adozioni_count = Current.user.import_adozioni.da_acquistare.joins(:libro).where(libro: {id: libro.id}).count
-     libro.save
-   end
- end
 
+User.all.each do |user|
+  Current.user = user
+  Current.user.libri.each do |libro|
+    libro.adozioni_count = Current.user.import_adozioni.da_acquistare.joins(:libro).where(libro: {id: libro.id}).count
+    libro.save
+  end
+end
 
-BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret';
-GRANT CONNECT ON DATABASE prova_production TO blazer;
-GRANT USAGE ON SCHEMA public TO blazer;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
-COMMIT;
+ImportScuola.find_each do |s|
+  s.slug = nil
+  s.save
+end
+
+EDITOR="code --wait" rails credentials:edit
