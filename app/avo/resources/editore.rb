@@ -26,5 +26,6 @@ class Avo::Resources::Editore < Avo::BaseResource
     field :gruppo, 
       as: :text, 
       sortable: true
+    field :slug, as: :text
   end
 end

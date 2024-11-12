@@ -37,7 +37,18 @@ class Avo::Resources::ImportScuola < Avo::BaseResource
     field :INDIRIZZOPECSCUOLA, as: :text
     field :SITOWEBSCUOLA, as: :text
     field :SEDESCOLASTICA, as: :text
+    field :slug, as: :text
     field :import_adozioni, as: :has_many
-    
+    field :user_scuole, as: :has_many
   end
+
+  self.find_record_method = -> {
+    if id.is_a?(Array)
+      query.where(slug: id)
+    else
+      # We have to add .friendly to the query
+      query.friendly.find id
+    end
+  }
+  
 end

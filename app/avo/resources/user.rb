@@ -11,6 +11,7 @@ class Avo::Resources::User < Avo::BaseResource
     field :email, as: :text
     field :partita_iva, as: :text
     field :navigator, as: :text
+    field :slug, as: :text
     field :confirmation_token, as: :text
     field :confirmed_at, as: :date_time
     field :confirmation_sent_at, as: :date_time
@@ -35,4 +36,13 @@ class Avo::Resources::User < Avo::BaseResource
     field :libri, as: :has_many
     field :card, as: :trix
   end
+
+  self.find_record_method = -> {
+    if id.is_a?(Array)
+      query.where(slug: id)
+    else
+      # We have to add .friendly to the query
+      query.friendly.find id
+    end
+  }
 end

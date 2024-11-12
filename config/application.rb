@@ -28,7 +28,7 @@ module Prova
     # [RailsNotes UI Addition]
     # Default mailer hostname for Pay gem and your app
     #
-    config.action_mailer.default_url_options = { host: "scagnozz.com" }
+    # config.action_mailer.default_url_options = { host: "scagnozz.com" }
 
     # [RailsNotes UI Addition]
     # Use Sidekiq for jobs
