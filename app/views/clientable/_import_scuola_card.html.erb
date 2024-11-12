@@ -1,4 +1,4 @@
-<%= link_to polymorphic_path( clientable, selected_tab: "4" ), data: { turbo_frame: :_top }, class: "group-[.show-scuola]:hidden" do %>
-    <%= tag.p clientable.tipo_nome, class: "text-gray-700 font-semibold" %>
-    <%= tag.p clientable.citta, class: "text-xs" %>
+<%= link_to polymorphic_path( clientable, selected_tab: "4" ), data: { turbo_frame: :_top }, class: "group-[.show-scuola]:hidden text-gray-700 font-semibold hover:font-bold" do %>
+    <%= tag.p clientable.tipo_nome, class: "" %>
+    <%= tag.p clientable.citta %>
 <% end %>
