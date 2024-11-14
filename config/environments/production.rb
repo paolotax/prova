@@ -115,4 +115,9 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
    
   ENV["BLAZER_DATABASE_URL"] = "postgres://blazer:secret@scagnozz.com:5432/prova_production"
+
+  # [RailsNotes UI Addition]
+  # Use Sidekiq for jobs
+  #
+  config.active_job.queue_adapter = :sidekiq
 end

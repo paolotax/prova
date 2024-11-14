@@ -30,11 +30,6 @@ module Prova
     #
     # config.action_mailer.default_url_options = { host: "scagnozz.com" }
 
-    # [RailsNotes UI Addition]
-    # Use Sidekiq for jobs
-    #
-    config.active_job.queue_adapter = :sidekiq
-
     # Tax Addition]
     # Set the default locale to something other than :en
     config.i18n.default_locale = :it
