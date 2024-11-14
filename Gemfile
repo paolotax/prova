@@ -38,6 +38,14 @@ group :development do
   gem "letter_opener"
 
   gem "bullet"
+
+  gem "derailed_benchmarks"
+  gem "stackprof"
+
+end
+
+group :development, :production do
+  gem "rails_performance"
 end
 
 group :test do

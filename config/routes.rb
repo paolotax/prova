@@ -1,16 +1,24 @@
-# == Route Map
-#
 
 # first, setup dashboard authentication
 require "sidekiq/web"
-Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-  username == "admin" && password == "password"
-end
+
+# Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+#   username == "admin" && password == "password"
+# end
 
 # then mount it
 Rails.application.routes.draw do
-  mount Avo::Engine, at: Avo.configuration.root_path
-    
+
+  authenticate :user, ->(user) { user.admin? } do
+    mount Blazer::Engine, at: "blazer"
+    mount RailsPerformance::Engine, at: 'rails/performance'
+    mount Sidekiq::Web => "/sidekiq"
+    mount Avo::Engine, at: Avo.configuration.root_path
+    mount RailsDesigner::Engine, at: '/rails_designer'
+  end
+
+  devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
+  
   get 'ordini_in_corso', to: "ordini#index"
   get "cerca", to: "search#index"
   
@@ -20,8 +28,6 @@ Rails.application.routes.draw do
   end
 
   post "sfascicola", to: "sfascicolator#generate"
-
-  mount RailsDesigner::Engine, at: '/rails_designer'
 
   resources :clienti do
     collection do
@@ -58,13 +64,10 @@ Rails.application.routes.draw do
   end
 
   resources :documenti_importer, only: [:create]
-
-  resources :_importer, only: [:create]
   
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
-
-    
+  
   resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
   
@@ -95,18 +98,8 @@ Rails.application.routes.draw do
     end
   end
 
- 
-  
   resources :tipi_scuole, only: [:index, :update]
-  
-  mount Sidekiq::Web => "/sidekiq"
-
-  authenticate :user, ->(user) { user.admin? } do
-    mount Blazer::Engine, at: "blazer"
-  end
-  
-  devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
-
+    
   resources :giri do 
     member do 
       get "tappe"
