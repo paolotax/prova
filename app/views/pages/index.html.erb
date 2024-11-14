@@ -52,6 +52,12 @@
 				%>
 			<% end %>
 
+			<% if current_user.admin? %>
+
+				<%= tag.div id: "#{dom_id(@chat)}_messages"  %>
+				<%= render partial: "messages/form", locals: { chat: @chat } %>
+			<% end %>
+
 		<% else %>	
 
 			<div class="hidden sm:mb-8 sm:flex sm:justify-center">

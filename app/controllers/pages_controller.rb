@@ -10,6 +10,9 @@ class PagesController < ApplicationController
         @totale_adozioni = NewAdozione.count 
         @old_totale_adozioni = ImportAdozione.count
 
+        if current_user && current_user.admin?
+          @chat = Chat.create(user_id: current_user.id)
+        end
     end
 
 

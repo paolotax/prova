@@ -17,6 +17,10 @@ Rails.application.routes.draw do
     mount RailsDesigner::Engine, at: '/rails_designer'
   end
 
+  resources :chats, only: %i[create show] do
+    resources :messages, only: %i[create]
+  end
+
   devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
   
   get 'ordini_in_corso', to: "ordini#index"

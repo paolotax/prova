@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_09_174216) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_14_171532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -207,6 +207,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_174216) do
     t.integer "movimento"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "chats", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
   create_table "clienti", force: :cascade do |t|
@@ -427,6 +434,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_174216) do
     t.index ["user_id"], name: "index_mandati_on_user_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.bigint "chat_id"
+    t.integer "role", default: 0, null: false
+    t.string "content", null: false
+    t.integer "response_number", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_id"], name: "index_messages_on_chat_id"
+  end
+
   create_table "new_adozioni", force: :cascade do |t|
     t.string "codicescuola"
     t.string "annocorso"
@@ -589,11 +606,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_09_174216) do
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
+  add_foreign_key "chats", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"
   add_foreign_key "giri", "users"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
+  add_foreign_key "messages", "chats"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
   add_foreign_key "tappe", "giri"

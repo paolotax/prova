@@ -99,6 +99,7 @@ gem 'rack-mini-profiler', require: false
 
 gem "mapkick-rb"
 gem "geocoder"
+gem "maxminddb"
 
 gem "roo", "~> 2.10.0"
 gem "roo-xls", "~> 1.0"
@@ -135,3 +136,5 @@ gem "ahoy_matey"
 gem "friendly_id", "~> 5.5"
 
 gem "blazer", "~> 3.1"
+
+gem "ruby-openai"
