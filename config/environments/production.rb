@@ -118,8 +118,6 @@ Rails.application.configure do
 
   # [RailsNotes UI Addition]
   # Use Sidekiq for jobs
-  #
-  config.eager_load_paths << Rails.root.join('app', 'sidekiq')
-  
+  #  
   config.active_job.queue_adapter = :sidekiq
 end

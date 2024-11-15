@@ -1,7 +1,7 @@
-class GetAiResponse
-  #require Sidekiq::Worker
+class GetAiResponse  
   
   include Sidekiq::Worker
+  
   RESPONSES_PER_MESSAGE = 1
 
   def perform(chat_id)

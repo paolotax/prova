@@ -1,4 +1,0 @@
-:schedule:
-  hello_world_job:
-    every: 20s
-    class: HelloWorldJob
