@@ -54,10 +54,8 @@
 
 			<% if current_user.admin? %>
 
-				<%= tag.div id: "#{dom_id(@chat)}_messages" do %>
-					<%= render partial: "messages/message", collection: @chat.messages.order(id: :asc) %>
-				<% end %>
-				<%= render partial: "messages/form", locals: { chat: @chat } %>
+				<%= button_to "chatta con me", chats_path, data: { turbo: false } %>
+
 			<% end %>
 
 		<% else %>	
@@ -100,12 +98,3 @@
 	</div>
   </div>
 </div>
-
-
-| Comune | Santo | Data | 
-|------------------|------------------------------|---------------------| 
-| Reggio Emilia    | San Prospero                 | 24 novembre | 
-| Correggio | San Quirino | 4 giugno | 
-| Scandiano | San Giacomo | 25 luglio | 
-| Guastalla | San Pietro e San Paolo | 29 giugno | | Castelnovo ne' Monti | San Giovanni Battista | 24 giugno |
-| Castelnovo di Sotto | San Giovanni Battista | 24 giugno | | Gualtieri | San Giacomo | 25 luglio | | Boretto | Santa Maria Assunta | 15 agosto | | Bibbiano | San Lorenzo | 10 agosto | | Brescello | San Bartolomeo | 24 agosto | | Cadelbosco di Sopra | San Giovanni Battista | 24 giugno | | Campagnola Emilia | San Giovanni Battista | 24 giugno | | Canossa | San Martino | 11 novembre | | Carpineti | San Michele Arcangelo | 29 settembre | | Casalgrande | San Giovanni Battista | 24 giugno | | Casina | San Lorenzo | 10 agosto | | Castellarano | San Lorenzo | 10 agosto | | Castelnovo di Sotto | San Giovanni Battista | 24 giugno | | Cavriago | San Giovanni Battista | 24 giugno | | Collagna | San Giovanni Battista | 24 giugno | | Albinea | Sant'Antonio da Padova | 13 giugno

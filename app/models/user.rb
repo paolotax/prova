@@ -74,6 +74,8 @@ class User < ApplicationRecord
   has_many :tappe, dependent: :destroy
   
   has_many :libri, dependent: :destroy
+
+  has_many :chats, dependent: :destroy
  
   
   enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]

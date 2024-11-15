@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     mount RailsDesigner::Engine, at: '/rails_designer'
   end
 
-  resources :chats, only: %i[create show] do
+  resources :chats, only: %i[create show new] do
     resources :messages, only: %i[create]
   end
 
