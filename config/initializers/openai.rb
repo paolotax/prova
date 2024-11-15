@@ -1,5 +1,5 @@
 require 'openai'
 
 OpenAI.configure do |config|
-  # config.access_token = ENV.fetch("OPENAI_ACCESS_TOKEN")
+  config.access_token = Rails.application.credentials.openai[:api_key]
 end

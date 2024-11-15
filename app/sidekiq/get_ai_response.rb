@@ -12,7 +12,7 @@ class GetAiResponse
   private
 
   def call_openai(chat:)
-    OpenAI::Client.new.chat(      
+    OpenAI::Client.new(access_token: Rails.application.credentials.openai[:api_key]).chat(      
       parameters: {
         model: "gpt-3.5-turbo",
         messages: Message.for_openai(chat.messages),
