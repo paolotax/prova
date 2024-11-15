@@ -6,7 +6,7 @@ class MessagesController < ApplicationController
   def create
     @message = Message.create(message_params.merge(chat_id: params[:chat_id], role: "user"))
 
-    GetAiResponse.perform_later(@message.chat_id)
+    GetAiResponse.perform_async(@message.chat_id)
 
     respond_to do |format|
       format.turbo_stream

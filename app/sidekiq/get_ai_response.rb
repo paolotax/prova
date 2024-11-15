@@ -1,4 +1,7 @@
-class GetAiResponse < ApplicationJob
+class GetAiResponse
+  #require Sidekiq::Worker
+  
+  include Sidekiq::Worker
   RESPONSES_PER_MESSAGE = 1
 
   def perform(chat_id)
@@ -9,8 +12,7 @@ class GetAiResponse < ApplicationJob
   private
 
   def call_openai(chat:)
-    OpenAI::Client.new(access_token: Rails.application.credentials.openai[:api_key]).chat(
-      
+    OpenAI::Client.new.chat(      
       parameters: {
         model: "gpt-3.5-turbo",
         messages: Message.for_openai(chat.messages),
