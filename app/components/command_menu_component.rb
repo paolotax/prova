@@ -99,7 +99,7 @@ class CommandMenuComponent < ViewComponent::Base
     tag.input data: {command_menu_target: "input", action: "input->command-menu#filter"},
       placeholder: @placeholder,
       class: class_names(
-        "w-full px-4 py-3 text-lg font-normal bg-transparent focus-within:outline-none",
+        "w-full px-4 py-3 text-lg font-normal bg-transparent focus-within:outline-none ring-0",
         {
           "placeholder:text-gray-400": @theme.light?,
           "placeholder:text-text-gray-400": @theme.dark?
