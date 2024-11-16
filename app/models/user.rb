@@ -78,7 +78,7 @@ class User < ApplicationRecord
   has_many :chats, dependent: :destroy
  
   
-  enum role: [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
+  enum :role, [ :scagnozzo, :sbocciatore, :omaccio, :admin ]
 
   after_initialize :set_default_role, :if => :new_record?
   def set_default_role
