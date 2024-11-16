@@ -25,7 +25,13 @@
 			<%#= js_map get_scuole_coordinates(current_user.import_scuole.con_appunti(current_user.appunti.non_archiviati).compact) %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
-				
+
+				<% if current_user.admin? %>
+
+					<%= button_to "chatta con gpt", chats_path, data: { turbo: false }, class: "btn btn-outline w-full" %>
+
+				<% end %>
+
 				<%= link_to "OGGI", oggi_path, class: "btn btn-outline" %>
 				
 				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
@@ -52,11 +58,7 @@
 				%>
 			<% end %>
 
-			<% if current_user.admin? %>
 
-				<%= button_to "chatta con me", chats_path, data: { turbo: false } %>
-
-			<% end %>
 
 		<% else %>	
 

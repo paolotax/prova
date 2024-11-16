@@ -178,6 +178,18 @@ Rails.application.routes.draw do
     end
   end
 
+
+  namespace :import_scuole do
+    resources :bulk_actions, only: [] do
+      collection do
+        patch :add_tappa_oggi
+        patch :add_tappa_domani
+        patch :add_tappa_custom
+      end
+    end
+  end
+
+
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
   

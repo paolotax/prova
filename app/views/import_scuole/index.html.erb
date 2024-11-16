@@ -46,7 +46,7 @@
 	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all'} do %>
 		<%= turbo_frame_tag "scuole_page_#{@pagy.page}" do %> 
 			
-			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-4 2xl:grid-cols-2">
+			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-4 2xl:grid-cols-2" data-controller="bulk-actions">
 				<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2">
 					Whoops! Non ci sono scuole. 
 					<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] %>
@@ -63,7 +63,13 @@
 
 				<% end %>    
 
-
+				<%= render BulkActionsComponent.new(theme: "dark", container_css: "px-5 py-3 bg-gray-900 rounded-lg fixed bottom-4 left-1/2 -translate-x-1/2") do |bulk| %>
+					<%= tag.div class:  "px-5 py-3 rounded-lg" do %>
+						<% bulk.with_action("Oggi", href: add_tappa_oggi_import_scuole_bulk_actions_path, method: :patch, data: {}) %>
+						<% bulk.with_action("Domani", href: add_tappa_domani_import_scuole_bulk_actions_path, method: :patch, data: {}) %>
+						<% bulk.with_action("Annulla", href: "#", method: :patch, data: {}) %>
+					<% end %>
+				<% end %>
 				<%#= render @import_scuole %>
 			</div>
 			

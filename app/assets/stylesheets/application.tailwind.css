@@ -236,7 +236,7 @@
   }
 
   .btn-outline {
-    @apply bg-transparent border-2 border-solid border-current text-current;
+    @apply bg-transparent border-2 border-solid border-current text-current hover:bg-black hover:text-white;
   }
 
   .btn-outline-blue {
