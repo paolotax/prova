@@ -6,7 +6,7 @@ Geocoder.configure(
   geoip2: {
     file: "db/geocoder/GeoLite2-City.mmdb"
   },
-  language: :it,              # ISO-639 language code
+  language: :en,              # ISO-639 language code
   # use_https: false,           # use HTTPS for lookup requests? (if supported)
   # http_proxy: nil,            # HTTP proxy server (user:pass@host:port)
   # https_proxy: nil,           # HTTPS proxy server (user:pass@host:port)
