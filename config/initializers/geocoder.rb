@@ -2,7 +2,10 @@ Geocoder.configure(
   # Geocoding options
   timeout: 10,                 # geocoding service timeout (secs)
   lookup: :mapbox,         # name of geocoding service (symbol)
-  ip_lookup: :ipinfo_io,      # name of IP address geocoding service (symbol)
+  ip_lookup: :geoip2,      # name of IP address geocoding service (symbol)
+  geoip2: {
+    file: "db/geocoder/GeoLite2-City.mmdb"
+  },
   language: :it,              # ISO-639 language code
   # use_https: false,           # use HTTPS for lookup requests? (if supported)
   # http_proxy: nil,            # HTTP proxy server (user:pass@host:port)
@@ -24,6 +27,7 @@ Geocoder.configure(
   #   expiration: 2.days,
   #   prefix: 'geocoder:'
   # }
+  # 
   
   # caching (see Caching section below for details):
   cache: Redis.new,
