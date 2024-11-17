@@ -46,7 +46,7 @@ _miur/scuole/*
 _csv/*
 _xml/*
 
-db/geocoder/GeoLite2-City.mmdb
+
 
 /.vscode
 /.vscode/
