@@ -1,0 +1,4 @@
+:queues:
+  - ahoy
+  - default
+  - mailers
