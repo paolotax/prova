@@ -1,7 +1,7 @@
 require "net/http"
 
 class TurnstileVerifier
-  PRIVATE_KEY = Rails.application.credentials.dig(:turnstile, :secret_key)
+  PRIVATE_KEY = ENV["TURNSTILE_SECRET_KEY"] #.dig(:turnstile, :secret_key)
 
   # Catch relevant network errors only.
   NETWORK_ERRORS = [Errno::ETIMEDOUT]

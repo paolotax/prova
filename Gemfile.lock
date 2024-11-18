@@ -214,6 +214,7 @@ GEM
     devise-i18n (1.12.1)
       devise (>= 4.9.0)
     docile (1.4.1)
+    dotenv (3.1.4)
     drb (2.2.1)
     erubi (1.13.0)
     event_stream_parser (1.0.0)
@@ -600,6 +601,7 @@ DEPENDENCIES
   derailed_benchmarks
   devise (~> 4.9)
   devise-i18n
+  dotenv
   faker
   friendly_id (~> 5.5)
   geared_pagination (~> 1.2)
