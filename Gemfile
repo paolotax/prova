@@ -32,7 +32,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem "dotenv"
 
-  gem 'jupyter_on_rails', path: '~/rails_2023/jupyter_on_rails'
+  gem 'jupyter_on_rails'#, path: '~/rails_2023/jupyter_on_rails'
 
 # # For sessions pick either:
   gem 'ffi-rzmq'
