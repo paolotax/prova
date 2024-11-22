@@ -1,11 +1,3 @@
-PATH
-  remote: ../jupyter_on_rails
-  specs:
-    jupyter_on_rails (0.13.0)
-      daru
-      iruby
-      railties
-
 GEM
   remote: https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private/
   specs:
@@ -304,6 +296,10 @@ GEM
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
     json (2.8.2)
+    jupyter_on_rails (0.13.0)
+      daru
+      iruby
+      railties
     jwt (2.9.3)
       base64
     launchy (3.0.1)
@@ -645,7 +641,7 @@ DEPENDENCIES
   importmap-rails
   inline_svg
   jbuilder
-  jupyter_on_rails!
+  jupyter_on_rails
   letter_opener
   mapkick-rb
   maxminddb
