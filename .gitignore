@@ -47,16 +47,15 @@ _csv/*
 _xml/*
 
 
-/.vscode
-/.vscode/
-/.vscode/*
 
-/config/credentials/production.key
 
-/config/credentials/development.key
 
 commands
 
 backup.tar.gz
 
+.vscode*    
 .vscode/rdbg_autoattach.json
+
+Untitled*
+.ipython*

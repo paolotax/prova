@@ -52,7 +52,7 @@
 
 	<footer class="p-4 border border-t-0 border-gray-300 bg-white mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8">
 				
-		<%= tag.div class: "col-span-4 flex flex-row gap-2 sm:gap-4" do %>
+		<%= tag.div class: "z-10 col-span-4 flex flex-row gap-2 sm:gap-4" do %>
             <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
               <%= tag.div documento.status&.titleize, class: "font-semibold" %>
               <%= tag.div documento.tipo_pagamento&.titleize, class: "font-semibold" %>

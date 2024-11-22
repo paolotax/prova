@@ -31,6 +31,11 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
   gem "dotenv"
+
+  gem 'jupyter_on_rails', path: '~/rails_2023/jupyter_on_rails'
+
+# # For sessions pick either:
+  gem 'ffi-rzmq'
 end
 
 group :development do
