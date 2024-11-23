@@ -9,7 +9,7 @@ class ClienteSituazio
 
   def sql
     sql_text = <<-SQL
-      SELECT users.id, libri.titolo, libri.codice_isbn, documenti.clientable_type, documenti.clientable_id, causali.causale, documenti.status,
+      SELECT users.id, libri.titolo, libri.codice_isbn, documenti.clientable_type, documenti.clientable_id,
         SUM(righe.quantita) FILTER (WHERE causali.movimento = 1) as uscite,
         - SUM(righe.quantita) FILTER (WHERE causali.movimento = 0) as entrate
       FROM righe
@@ -21,8 +21,8 @@ class ClienteSituazio
         WHERE users.id = #{@user.id}
         AND clientable_type = '#{@clientable.class}' AND clientable_id = #{@clientable.id}
         
-      GROUP BY 1, 2, 3, 4, 5, 6, 7
-      ORDER BY 6, 7, 2
+      GROUP BY 1, 2, 3, 4, 5
+      ORDER BY 2
     SQL
 
     sql_text

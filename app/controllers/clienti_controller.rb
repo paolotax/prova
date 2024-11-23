@@ -14,7 +14,6 @@ class ClientiController < ApplicationController
 
   def show
     @situazio = ClienteSituazio.new(clientable: @cliente, user: current_user).execute
-
     
   end
 
