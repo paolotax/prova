@@ -85,11 +85,13 @@
 
 <%= tag.ul  do %>
 	<% @situazio.each do |libro| %>
-		<%= tag.li class: "grid grid-cols-9" do %>
+		<%= tag.li class: "grid grid-cols-10" do %>
+			<%= tag.p libro["categoria"], class: "col-span-1" %>
 			<%= tag.p libro["titolo"], class: "col-span-5" %>
-			<%= tag.p libro["codice_isbn"], class: "col-span-2" %>
+			<%= tag.p libro["codice_isbn"], class: "col-span-1" %>
 			<%= tag.p libro["uscite"], class: "col-span-1" %>
 			<%= tag.p libro["entrate"], class: "col-span-1" %>
+			<%= tag.p (libro["uscite"]&.to_i || 0) + (libro["entrate"]&.to_i || 0), class: "col-span-1 text-red-500 font-bold" %>
 		<% end %>
 	<% end %>
 <% end %>
