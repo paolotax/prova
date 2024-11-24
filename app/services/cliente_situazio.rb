@@ -1,6 +1,6 @@
 class ClienteSituazio
 
-  #attr_accessor :user, :clientable_id, :clientable_type, :result
+  attr_accessor :user, :clientable, :result
   
   def initialize(clientable:, user:)  
     @clientable = clientable
@@ -21,8 +21,8 @@ class ClienteSituazio
         INNER JOIN documenti ON documento_righe.documento_id = documenti.id
         INNER JOIN causali ON documenti.causale_id = causali.id
         INNER JOIN users ON users.id = documenti.user_id
-        WHERE users.id = #{@user.id}
-        AND clientable_type = '#{@clientable.class}' AND clientable_id = #{@clientable.id}
+        WHERE users.id = #{user.id}
+        AND clientable_type = '#{clientable.class}' AND clientable_id = #{clientable.id}
         
       GROUP BY 1, 2, 3, 4, 5, 6
       ORDER BY 2, 3
