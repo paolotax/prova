@@ -27,8 +27,7 @@ class Riga < ApplicationRecord
   has_many :documento_righe
   has_many :documenti, through: :documento_righe
 
-
-  attr_accessor :prezzo, :importo, :importo_cents 
+  #attr_accessor :prezzo, :importo, :importo_cents 
 
   def prezzo
     prezzo_cents / 100.0
@@ -39,8 +38,7 @@ class Riga < ApplicationRecord
   end
 
   def prezzo_scontato
-    sc = sconto || 0.0
-    (prezzo_cents - (prezzo_cents * sc) / 100.0)
+    (prezzo_cents - (prezzo_cents * (sconto || 0.0)) / 100.0)
   end
 
   def importo
@@ -48,14 +46,9 @@ class Riga < ApplicationRecord
   end
 
   def importo_cents
-    sconto_cents = ((prezzo_cents * sconto) / 100.0)
+    sconto_cents = ((prezzo_cents * (sconto || 0.0)) / 100.0)
     (prezzo_cents - sconto_cents) * quantita
   end
   
-  def self.aggiorna_prezzi
-    Riga.all.each do |r|
-      r.update(prezzo_cents: r.libro.prezzo_in_cents)
-    end
-  end       
-  
+     
 end

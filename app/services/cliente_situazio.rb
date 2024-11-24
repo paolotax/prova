@@ -11,7 +11,10 @@ class ClienteSituazio
     sql_text = <<-SQL
       SELECT users.id, libri.categoria, libri.titolo, libri.codice_isbn, documenti.clientable_type, documenti.clientable_id,
         SUM(righe.quantita) FILTER (WHERE causali.movimento = 1) as uscite,
-        - SUM(righe.quantita) FILTER (WHERE causali.movimento = 0) as entrate
+        - SUM(righe.quantita) FILTER (WHERE causali.movimento = 0) as entrate,
+        COALESCE(SUM((righe.prezzo_cents - (righe.prezzo_cents * righe.sconto / 100)) * righe.quantita / 100) FILTER (WHERE causali.movimento = 1), 0)
+        - COALESCE(SUM((righe.prezzo_cents - (righe.prezzo_cents * righe.sconto / 100)) * righe.quantita / 100) FILTER (WHERE causali.movimento = 0), 0) as valore
+
       FROM righe
         INNER JOIN libri ON righe.libro_id = libri.id
         INNER JOIN documento_righe ON righe.id = documento_righe.riga_id
