@@ -1,6 +1,8 @@
 <div id="<%= dom_id documento %>" class="w-full" data-controller="tax-reveal">
 
-	<header class="p-4 flex items-center justify-between border bg-gray-200 rounded-tl-lg rounded-tr-lg">
+	<%= tag.header class: ["p-4 flex items-center justify-between border rounded-tl-lg rounded-tr-lg": true,
+				"bg-gray-200": documento.pagato? == false,
+				"bg-green-200": documento.pagato? == true] do %>
 			
 		<%= tag.div class: "block sm:flex gap-4 border items-start" do %>
 	
@@ -40,7 +42,7 @@
 					color: "transparent",
 					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
 		</div>
-	</header>
+	<% end %>
     
 	<ul data-tax-reveal-target="item" class="hidden">
 		<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>

@@ -14,7 +14,7 @@ class ClientiController < ApplicationController
 
   def show
     @situazio = ClienteSituazio.new(clientable: @cliente, user: current_user).execute
-    
+    @documenti = @cliente.documenti.includes(:causale, documento_righe: [riga: :libro]).order(data_documento: :desc, numero_documento: :desc)
   end
 
   def new

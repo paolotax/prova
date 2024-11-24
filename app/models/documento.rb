@@ -118,6 +118,14 @@ class Documento < ApplicationRecord
     tipo_movimento == "ordine" && status == "ordine"
   end
 
+  def registrato?
+    ["TD01", "TD04", "TD24"].include?(causale.causale)
+  end
+
+  def pagato?
+    pagato_il.present?
+  end
+
   def totale_importo
     righe.sum(&:importo)
   end
@@ -125,8 +133,6 @@ class Documento < ApplicationRecord
   def totale_copie
     righe.sum(&:quantita)
   end
-
-
 
   def self.clear_all
     Documento.destroy_all

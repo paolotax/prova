@@ -8,7 +8,7 @@ class GetAiResponse
     chat = Chat.find(chat_id)
     response = call_openai(chat: chat)
     if response
-      execute_tool_call(chat: chat, response: response)
+      #execute_tool_call(chat: chat, response: response)
     end
   end
 
@@ -35,7 +35,7 @@ class GetAiResponse
     messages
   end
 
-  def call_openai(chat:)
+  def call_openaiNEWWWW(chat:)
     response = OpenAI::Client.new.chat(      
       parameters: {
         model: "gpt-3.5-turbo",
@@ -97,6 +97,20 @@ class GetAiResponse
             },        
           }
       ],
+        temperature: 0.7,
+        stream: stream_proc(chat: chat),
+        n: RESPONSES_PER_MESSAGE
+      }
+    )
+    response
+  end
+  
+  def call_openai(chat:)
+    response = OpenAI::Client.new.chat(      
+      parameters: {
+        model: "gpt-3.5-turbo",
+        messages: Message.for_openai(chat.messages),
+
         temperature: 0.7,
         stream: stream_proc(chat: chat),
         n: RESPONSES_PER_MESSAGE
