@@ -6,7 +6,7 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[ show edit update destroy ]
 
   def index
-    @causali = Causale.all.map { |c| [c.causale, c.causale] }
+    @causali = Causale.all
     @import = DocumentiImporter.new
     
     @documenti = current_user.documenti
@@ -115,6 +115,7 @@ class DocumentiController < ApplicationController
   end
 
   def filtra 
+    @causali = Causale.all
   end
 
 

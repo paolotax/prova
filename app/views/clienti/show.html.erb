@@ -95,26 +95,26 @@
 
 
 <%= tag.ul  do %>
-	<% @situazio.group_by{ |l| l["categoria"]}.each do |categoria, libri| %>
+	<% @situazio.group_by{ |l| l.categoria}.each do |categoria, libri| %>
 		<%= tag.li class: "grid grid-cols-10" do %>
 			<%= tag.p categoria, class: "col-start-1 text-red-500 font-bold text-right" %>
 		<% end %>
 		<% libri.each do |libro| %>
 			<%= tag.li class: "grid grid-cols-10" do %>
-				<%= tag.p libro["codice_isbn"], class: "col-span-2" %>
-				<%= tag.p libro["titolo"], class: "col-span-4 truncate" %>
-				<%= tag.p libro["uscite"], class: "col-span- text-right" %>
-				<%= tag.p libro["entrate"], class: "col-span-1 text-right" %>
-				<%= tag.p (libro["uscite"]&.to_i || 0) + (libro["entrate"]&.to_i || 0), class: "col-span-1 text-red-500 font-bold text-right" %>
-				<%= tag.p number_to_currency(libro["valore"]&.to_f), class: "col-span-1 text-red-500 font-bold text-right" %>
+				<%= tag.p libro.codice_isbn, class: "col-span-2" %>
+				<%= tag.p libro.titolo, class: "col-span-4 truncate" %>
+				<%= tag.p libro.uscite&.to_i, class: "col-span- text-right" %>
+				<%= tag.p libro.entrate&.to_i, class: "col-span-1 text-right" %>
+				<%= tag.p (libro.uscite&.to_i || 0) + (libro.entrate&.to_i || 0), class: "col-span-1 text-red-500 font-bold text-right" %>
+				<%= tag.p number_to_currency(libro.valore&.to_f), class: "col-span-1 text-red-500 font-bold text-right" %>
 			<% end %>
 		<% end %>
 		<%= tag.li class: "grid grid-cols-10" do %>
-			<%= tag.p number_to_currency(libri.sum{|s| s["valore"]}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
+			<%= tag.p number_to_currency(libri.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
 		<% end %>
 	<% end %>
 	<%= tag.li class: "grid grid-cols-10" do %>
-		<%= tag.p number_to_currency(@situazio.sum{|s| s["valore"]}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
+		<%= tag.p number_to_currency(@situazio.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
 	<% end %>
 <% end %>
 
