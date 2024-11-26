@@ -204,7 +204,7 @@ class Libro < ApplicationRecord
   def self.scarico_fascicoli
     
     sql = <<-SQL
-      SELECT DISTINCT fascicolo_id as id, fasc.titolo, fasc.codice_isbn, fasc.prezzo_in_cents, 50.0 as sconto, SUM(conf.adozioni_count)
+      SELECT DISTINCT fascicolo_id, fasc.titolo, fasc.codice_isbn, fasc.prezzo_in_cents as prezzo_cents, 50.0 as sconto, SUM(conf.adozioni_count) as quantita
       FROM confezione_righe cr
         INNER JOIN libri fasc ON fasc.id = cr.fascicolo_id
         INNER JOIN libri conf ON conf.id = cr.confezione_id
