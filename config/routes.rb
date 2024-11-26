@@ -62,9 +62,6 @@ Rails.application.routes.draw do
   end
 
   resources :clienti_importer, only: [:create] do
-    collection do
-      post 'import_ministeriali'
-    end
   end
 
   resources :documenti_importer, only: [:create]

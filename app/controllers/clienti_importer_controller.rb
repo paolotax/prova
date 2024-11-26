@@ -20,25 +20,6 @@ class ClientiImporterController < ApplicationController
     end
   end
 
-  # def import_ministeriali
-  #   @import = ClientiImporter.new(file: "_sql/sql_import_ministeriali.sql")
-    
-  #   respond_to do |format|
-  #     if @import.import_ministeriali!
-  #       format.turbo_stream do 
-  #         flash[:notice] =  @import.flash_message
-  #         render turbo_stream: turbo_stream.action(:redirect, clienti_url)
-  #       end
-  #       format.html { redirect_to clienti_url, notice: @import.flash_message }
-  #     else
-  #       format.turbo_stream do 
-  #         flash[:alert] =  "Errore nell'importazione dei libri!"
-  #         render turbo_stream: turbo_stream.action(:redirect, clienti_url) 
-  #       end
-  #     end
-  #   end
-  # end
-
   private
 
   def clienti_importer_params
