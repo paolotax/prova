@@ -1,0 +1,13 @@
+wb = xlsx_package.workbook
+
+fields = @libri.first.keys
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+    sheet.add_row  fields
+   
+    @libri.each do |row|
+        sheet.add_row row.values
+    end
+
+end

@@ -5,6 +5,21 @@ class LibriController < ApplicationController
   before_action :authenticate_user!
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
 
+
+  def crosstab
+    @libri = current_user.libri.crosstab
+    respond_to do |format|
+      format.xlsx 
+    end
+  end
+
+  def scarico_fascicoli
+    @libri = current_user.libri.scarico_fascicoli
+    respond_to do |format|
+      format.xlsx 
+    end
+  end
+
   def index
 
     if params[:q].present?

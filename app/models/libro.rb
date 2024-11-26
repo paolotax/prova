@@ -191,7 +191,7 @@ class Libro < ApplicationRecord
           $$
         ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
       ) 
-      SELECT libri.titolo, libri.categoria, libri.codice_isbn, editori.editore, libri.prezzo_in_cents, situazio.*
+      SELECT libri.id, libri.titolo, libri.categoria, libri.codice_isbn, editori.editore, libri.prezzo_in_cents, situazio.*, libri.adozioni_count
       FROM libri
       INNER JOIN situazio ON libri.id = situazio.id
       INNER JOIN editori ON editori.id =  libri.editore_id
@@ -200,5 +200,24 @@ class Libro < ApplicationRecord
     result = ActiveRecord::Base.connection.execute(crosstab_query)
     result
   end
+
+  def self.scarico_fascicoli
+    
+    sql = <<-SQL
+      SELECT DISTINCT fascicolo_id as id, fasc.titolo, fasc.codice_isbn, fasc.prezzo_in_cents, 50.0 as sconto, SUM(conf.adozioni_count)
+      FROM confezione_righe cr
+        INNER JOIN libri fasc ON fasc.id = cr.fascicolo_id
+        INNER JOIN libri conf ON conf.id = cr.confezione_id
+        INNER JOIN users ON conf.user_id = users.id
+      WHERE users.id = #{Current.user.id}
+      GROUP BY 1, 2, 3, 4, 5
+      HAVING (SUM(conf.adozioni_count) > 0)
+    SQL
+
+    result = ActiveRecord::Base.connection.execute(sql)
+    result
+  end
+
+
 
 end

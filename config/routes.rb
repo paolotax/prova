@@ -87,6 +87,8 @@ Rails.application.routes.draw do
   resources :libri do
     collection do
       get 'filtra'
+      get 'crosstab'
+      get 'scarico_fascicoli'
     end
     member do
       get 'get_prezzo_copertina_cents'

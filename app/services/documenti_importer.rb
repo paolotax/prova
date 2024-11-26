@@ -52,7 +52,19 @@ class DocumentiImporter
 
         posizione = element.xpath("./NumeroLinea").text
         
-        libro_id = Current.user.libri.find_by(codice_isbn: element.xpath("./CodiceArticolo/CodiceValore").text)&.id
+        codice_articoli = element.xpath("./CodiceArticolo")
+
+        # Verifica se ci sono duplicati
+        if codice_articoli.size > 1
+          # Se ci sono duplicati, seleziona il primo o il secondo
+          codice_valore = codice_articoli[0].xpath("./CodiceValore").text # Primo CodiceArticolo
+          # codice_valore = codice_articoli[1].xpath("./CodiceValore").text # Secondo CodiceArticolo (se necessario)
+        else
+          # Se non ci sono duplicati, seleziona il CodiceValore normalmente
+          codice_valore = codice_articoli.xpath("./CodiceValore").text
+        end
+
+        libro_id = Current.user.libri.find_by(codice_isbn: codice_valore)&.id
         if libro_id
           documento.documento_righe.build(posizione: posizione).build_riga(
             libro_id:  libro_id,              
