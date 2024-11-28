@@ -167,7 +167,7 @@ class Libro < ApplicationRecord
   def self.crosstab
     
     # Costruisci la lista delle causali
-    causali = Causale.order(:id).all.map(&:causale)
+    causali = Causale.order(:magazzino, :movimento, :tipo_movimento).all.map(&:causale)
 
     # Costruisci la query dinamica
     crosstab_query = <<-SQL
