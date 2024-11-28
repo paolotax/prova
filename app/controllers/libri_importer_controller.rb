@@ -1,9 +1,6 @@
 class LibriImporterController < ApplicationController
   include ActionView::Helpers::TextHelper
   before_action :authenticate_user!
-
-  def new    
-  end
   
   def create
     @import = LibriImporter.new(libri_importer_params)    

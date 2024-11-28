@@ -10,15 +10,15 @@ class DocumentiImporterController < ApplicationController
       if @import.save
         format.turbo_stream do 
           flash[:notice] =  @import.flash_message
-          render turbo_stream: turbo_stream.action(:redirect, documento_url(@import.documento))
+          render turbo_stream: turbo_stream.action(:redirect, request.referrer)
         end
         format.html do 
-          redirect_to documenti_url, notice: @import.flash_message 
+          redirect_to request.referrer, notice: @import.flash_message 
         end
       else
         format.turbo_stream do 
           flash[:alert] =  @import.flash_message
-          render turbo_stream: turbo_stream.action(:redirect, documenti_url) 
+          render turbo_stream: turbo_stream.action(:redirect, request.referrer) 
         end
       end
     end
