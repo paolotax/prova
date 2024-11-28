@@ -42,7 +42,6 @@
                         <%= inline_svg_tag  "icon-plus.svg", class: "p-0.5" %>
                     <% end %>
                     
-
                     <% dropdown.with_item do %>
                         <%= link_to new_appunto_path,
                             data: { turbo_frame: :modal, action: "click->dialog#open"},
