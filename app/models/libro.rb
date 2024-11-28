@@ -187,7 +187,7 @@ class Libro < ApplicationRecord
           ORDER BY 1
           $$, $$
           SELECT causali.causale
-          FROM causali ORDER BY causali.id
+          FROM causali ORDER BY causali.magazzino, causali.movimento, causali.tipo_movimento
           $$
         ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
       ) 
