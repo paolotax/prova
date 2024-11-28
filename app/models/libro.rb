@@ -191,7 +191,7 @@ class Libro < ApplicationRecord
           $$
         ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
       ) 
-      SELECT libri.id, libri.titolo, libri.categoria, libri.codice_isbn, editori.editore, libri.prezzo_in_cents, situazio.*, libri.adozioni_count
+      SELECT libri.id, libri.titolo, libri.categoria, libri.codice_isbn, editori.editore, libri.prezzo_in_cents, situazio.*, libri.adozioni_count, libri.classe, libri.disciplina
       FROM libri
       INNER JOIN situazio ON libri.id = situazio.id
       INNER JOIN editori ON editori.id =  libri.editore_id

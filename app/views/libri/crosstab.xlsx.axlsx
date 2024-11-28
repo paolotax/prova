@@ -7,7 +7,8 @@ wb.add_worksheet(name: "Foglio 1") do |sheet|
     sheet.add_row  fields
    
     @libri.each do |row|
-        sheet.add_row row.values
+        sheet.add_row row.values,
+        types: [ :integer, :string, :string, :string, :string  ] 
     end
 
 end
