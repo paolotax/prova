@@ -95,3 +95,9 @@ ImportScuola.find_each do |s|
 end
 
 EDITOR="code --wait" rails credentials:edit
+
+UserScuola.find_each do |us|
+  scu = us.import_scuola
+  scu.geocode
+  scu.save
+end
