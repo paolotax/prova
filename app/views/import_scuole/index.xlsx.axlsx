@@ -1,0 +1,13 @@
+wb = xlsx_package.workbook
+
+fields = @import_scuole.column_names
+
+wb.add_worksheet(name: "Foglio 1") do |sheet|
+ 
+    sheet.add_row  fields
+   
+    @import_scuole.each do |row|
+        sheet.add_row row.attributes.values
+    end
+
+end

@@ -20,7 +20,10 @@ class ImportScuoleController < ApplicationController
 
     @stats = Scuole::Stats.new(@import_scuole).stats
 
-    @pagy, @import_scuole = pagy(@import_scuole, items: 20, link_extra: 'data-turbo-action="advance"')
+    respond_to do |format|
+      format.html { @pagy, @import_scuole = pagy(@import_scuole, items: 20, link_extra: 'data-turbo-action="advance"') }
+      format.xlsx
+    end
   end
 
   def search_scuole

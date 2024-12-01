@@ -23,6 +23,8 @@
 #  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
 #  SITOWEBSCUOLA                             :string
+#  latitude                                  :float
+#  longitude                                 :float
 #  slug                                      :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null

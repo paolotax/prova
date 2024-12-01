@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_14_171532) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_30_160738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -372,6 +372,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_14_171532) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
+    t.float "latitude"
+    t.float "longitude"
     t.index ["CODICESCUOLA"], name: "index_import_scuole_on_CODICESCUOLA", unique: true
     t.index ["DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"], name: "idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a"
     t.index ["PROVINCIA"], name: "index_import_scuole_on_PROVINCIA"

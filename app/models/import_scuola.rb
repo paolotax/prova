@@ -23,6 +23,8 @@
 #  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
 #  SITOWEBSCUOLA                             :string
+#  latitude                                  :float
+#  longitude                                 :float
 #  slug                                      :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
@@ -44,6 +46,9 @@ class ImportScuola < ApplicationRecord
       [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE]
     ]
   end
+
+  geocoded_by :indirizzo_navigator
+  after_validation :geocode, if: ->(obj){ obj.INDIRIZZOSCUOLA.present? and obj.CAPSCUOLA.present? and obj.DESCRIZIONECOMUNE.present? and obj.PROVINCIA.present? and obj.latitude.nil? and obj.longitude.nil? }
 
   include Searchable
   search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO
