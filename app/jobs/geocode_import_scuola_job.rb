@@ -4,6 +4,7 @@ class GeocodeImportScuolaJob
   def perform(import_scuola_id)
     import_scuola = ImportScuola.find(import_scuola_id)
     import_scuola.geocode
+    import_scuola.geocoded = true
     import_scuola.save
   end
 end

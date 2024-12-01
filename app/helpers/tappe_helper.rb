@@ -6,11 +6,11 @@ module TappeHelper
     scuole = ImportScuola.where(id: scuole_ids)
 
     data = scuole.map do |scuola|
-      next if scuola.to_coordinates.empty?
+      next if scuola.geocoded.nil? || scuola.geocoded == false 
 
       {
-        latitude: scuola.to_coordinates[0],
-        longitude: scuola.to_coordinates[1],
+        latitude: scuola.latitude,
+        longitude: scuola.longitude,
         label: scuola.scuola,
         color: "#f84d4d"
       }

@@ -22,7 +22,7 @@
 
 			<%#= tappe_coordinates %>
 
-			<%#= js_map get_scuole_coordinates(current_user.import_scuole.con_appunti(current_user.appunti.non_archiviati).compact) %>
+			<%= js_map get_scuole_coordinates(current_user.import_scuole.ids.compact) %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
 
