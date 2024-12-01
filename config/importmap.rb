@@ -19,7 +19,6 @@ pin "tailwindcss-stimulus-components" # @4.0.4
 pin "stimulus-checkbox-select-all" # @5.3.0
 pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.0
 
-pin "mapkick/bundle", to: "mapkick.bundle.js"
 
 #pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.4/+esm", preload: true
 
@@ -31,3 +30,4 @@ pin "floating-ui", to: "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.7/+esm
 pin "@stimulus-components/scroll-to", to: "@stimulus-components--scroll-to.js" # @5.0.1
 
 pin "ahoy", to: "ahoy.js"
+pin "mapkick/bundle", to: "mapkick--bundle.js" # @0.2.6
