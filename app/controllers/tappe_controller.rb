@@ -50,8 +50,7 @@ class TappeController < ApplicationController
 
   def new
 
-    @tappable = ImportScuola.find(params[:tappable_id])
-
+    @tappable = find_tappable
     @tappa = current_user.tappe.build(giro: current_user.giri.last, tappable: @tappable, data_tappa: Time.now.end_of_day)
   end
 
@@ -189,14 +188,18 @@ class TappeController < ApplicationController
     end
 
     def find_tappable
-      params.each do |name, value|
-          # Differentiate between parent models.
-          # EG: post_id, photo_id, etc.
-          if name =~ /(.+)_id$/
-              return $1.classify.constantize.find(value)
-          end
-      end
+      params[:tappable_type].constantize.find(params[:tappable_id])
     end
+
+    # def find_tappable
+    #   params.each do |name, value|
+    #       # Differentiate between parent models.
+    #       # EG: post_id, photo_id, etc.
+    #       if name =~ /(.+)_id$/
+    #           return $1.classify.constantize.find(value)
+    #       end
+    #   end
+    # end
 
     def tappa_params
       params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro)

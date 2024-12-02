@@ -59,12 +59,40 @@
 				url: 'javascript:history.back()' %>
 		<% end %>
 
-		<% heading.with_action do %>	
-			<%= component 'tax_button',
-				caption: "Documento",
-				svg_file: "icon-plus.svg",
-				color: "blue",
-				url: url_for( controller: "documenti", action: "new", paams: current_user.documenti.build( clientable: @cliente, causale_id: Causale.find_by(causale: "Ordine Cliente" ).id)) %>
+		<% heading.with_action do %>
+				<%= render DropdownComponent.new() do |dropdown| %>
+					<%= dropdown.with_button do %>
+						<%= component 'tax_button', 
+								caption: "Nuovo",
+								svg_file: "icon-plus.svg",
+								color: "blue",
+								style: :dropdown
+						%>
+					<% end %>
+
+					<% dropdown.with_item do %>
+						<%#= link_to "nuovo appunto", new_appunto_path( import_scuola_id: @import_scuola.id ), 
+								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
+								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
+					<% end %>
+					
+					<% dropdown.with_item do %>
+						<%= link_to "nuovo ordine", 
+								new_documento_path( clientable_type: "Cliente", clientable_id: @cliente.id, causale: "Ordine Scuola" ),
+								data: { turbo_prefetch: false }, 
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
+					<% end %>
+
+					<% dropdown.with_item do %>
+						<%= link_to "nuova tappa", new_tappa_path( tappable_type: "Cliente", tappable_id: @cliente.id, data_tappa: Date.today ), 
+								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
+								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
+					
+					<% end %>
+				<% end %>
 		<% end %>
 
 		<%= @cliente.denominazione %>

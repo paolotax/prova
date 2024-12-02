@@ -6,8 +6,7 @@ module TappeHelper
         link_to(scuola.scuola, scuola)
       end +
       content_tag(:p, scuola.indirizzo) +
-      content_tag(:p, "#{scuola.cap} #{scuola.comune} (#{scuola.provincia})") +
-      content_tag(:p, "lat: #{scuola.latitude} - long: #{scuola.longitude}")
+      content_tag(:p, "#{scuola.cap} #{scuola.comune} (#{scuola.provincia})") 
     end
   end
 
@@ -17,8 +16,7 @@ module TappeHelper
         link_to(cliente.denominazione, cliente)
       end +
       content_tag(:p, cliente.indirizzo) +
-      content_tag(:p, "#{cliente.cap} #{cliente.comune} (#{cliente.provincia})") +
-      content_tag(:p, "lat: #{cliente.latitude} - long: #{cliente.longitude}")
+      content_tag(:p, "#{cliente.cap} #{cliente.comune} (#{cliente.provincia})") 
     end
   end
 
