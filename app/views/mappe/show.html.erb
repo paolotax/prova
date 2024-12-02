@@ -25,8 +25,6 @@
 </style>
 
 
-
-
 <div id="map"></div>
 <pre id="coordinates" class="coordinates"></pre>
 
@@ -74,7 +72,8 @@
 
     function onUp(e) {
         const coords = e.lngLat;
-
+        
+        console.log(coordinates)
         // Print the coordinates of where the point had
         // finished being dragged to on the map.
         coordinates.style.display = 'block';
@@ -113,7 +112,7 @@
         map.on('mouseleave', 'point', () => {
             map.setPaintProperty('point', 'circle-color', '#3887be');
             canvas.style.cursor = '';
-            console.log (geojson.features[0].geometry);
+
             updateCoordinates(<%= @scuola.id %>, geojson.features[0].geometry.coordinates[0], geojson.features[0].geometry.coordinates[1]);
         });
 

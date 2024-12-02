@@ -1,4 +1,7 @@
 class MappeController < ApplicationController
+
+  before_action :authenticate_user!
+
   def show
     @scuola = current_user.import_scuole.friendly.find(params[:id])
   end
@@ -11,7 +14,6 @@ class MappeController < ApplicationController
       render json: { status: 'error', message: @scuola.errors.full_messages }, status: :unprocessable_entity
     end
   end
-
 
   private
 
