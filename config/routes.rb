@@ -177,7 +177,8 @@ Rails.application.routes.draw do
     end
   end
 
-
+  resources :mappe, only: [:show, :update]
+  
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
       collection do

@@ -61,6 +61,8 @@ class ImportScuoleController < ApplicationController
   def filtra 
   end
 
+
+
   private
 
     def filter_params
@@ -79,7 +81,11 @@ class ImportScuoleController < ApplicationController
       @import_scuola = authorize ImportScuola.friendly.find(params[:id])
     end
 
+    # def import_scuola_params
+    #   params.fetch(:import_scuola, {})
+    # end
+
     def import_scuola_params
-      params.fetch(:import_scuola, {})
+      params.require(:import_scuola).permit(:latitude, :longitude )
     end
 end

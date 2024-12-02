@@ -27,6 +27,16 @@
 
 		<% heading.with_action do %>
 			<%= component 'tax_button', 
+					caption: "Mappa",
+					svg_file: "icon-map.svg",
+					color: "pink",
+					url:  mappe_path(@import_scuola),
+					target: "_blank"
+			%>
+		<% end %>
+
+		<% heading.with_action do %>
+			<%= component 'tax_button', 
 					caption: "Stampa",
 					svg_file: "icon-print.svg",
 					color: "white",
