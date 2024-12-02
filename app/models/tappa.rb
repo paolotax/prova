@@ -34,11 +34,12 @@ class Tappa < ApplicationRecord
   belongs_to :tappable, polymorphic: true
 
   # controllare se filtrare per user_id
-  belongs_to :import_scuola, class_name: 'ImportScuola', foreign_key: 'tappable_id'
-  def import_scuola
-    return unless tappable_type == 'ImportScuola'
-    super
-  end
+  # NON FUNZIONA TAPPA
+  # belongs_to :import_scuola, -> { where(tappable_type == 'ImportScuola') }, class_name: 'ImportScuola', foreign_key: 'tappable_id'
+  # def import_scuola
+  #   return unless tappable_type == 'ImportScuola'
+  #   super
+  # end
 
   # # belongs_to :cliente, class_name: 'Cliente', foreign_key: 'tappable_id'
   # # def cliente

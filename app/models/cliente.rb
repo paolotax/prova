@@ -14,9 +14,12 @@
 #  condizioni_di_pagamento :string
 #  denominazione           :string
 #  email                   :string
+#  geocoded                :boolean
 #  id_paese                :string
 #  indirizzo               :string
 #  indirizzo_telematico    :string
+#  latitude                :float
+#  longitude               :float
 #  metodo_di_pagamento     :string
 #  nazione                 :string
 #  nome                    :string
@@ -38,11 +41,17 @@
 #
 class Cliente < ApplicationRecord
 
+  geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
+  after_validation :geocode#, if: ->(obj){ obj.address.present? and obj.address_changed? }
+
+
   belongs_to :user  
   has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) }, 
            as: :clientable, dependent: :destroy 
   has_many :righe, through: :documenti
-  
+
+  has_many :tappe, -> { where("tappe.tappable_type = 'Cliente' and tappe.user_id = ?", Current.user.id) }, as: :tappable 
+
   extend FilterableModel
   class << self
     def filter_proxy = Filters::ClienteFilterProxy
@@ -57,12 +66,21 @@ class Cliente < ApplicationRecord
 
   #validates :condizioni_di_pagamento, presence: true
  
+  def direzione_or_privata
+    "cliente".html_safe
+  end
+
   def to_s
     "#{denominazione} - #{comune}"
   end
 
   def can_delete?
     documenti.empty?
+  end
+
+  attr_accessor :address
+  def address
+    "#{self.indirizzo} #{self.numero_civico} \n #{self.cap} #{self.comune} #{self.provincia}".strip
   end
 
   def previous

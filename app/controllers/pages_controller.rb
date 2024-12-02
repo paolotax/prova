@@ -20,8 +20,12 @@ class PagesController < ApplicationController
         
         @scuole = current_user.import_scuole
                     .includes(:appunti_da_completare)
-                    .where(id: current_user.tappe.di_oggi.pluck(:tappable_id))
-                   
+                    .where(id: current_user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id))
+        
+        @clienti = current_user.clienti
+                    .where(id: current_user.tappe.di_oggi.where(tappable_type: "Cliente").pluck(:tappable_id))
+        
+        
         @tappe = current_user.tappe.di_oggi.includes(:tappable, :giro)
        
         # @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }

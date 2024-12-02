@@ -31,12 +31,12 @@ class TappeController < ApplicationController
     #inizializzo geared pagination
     set_page_and_extract_portion_from @tappe
 
-    #raggruppo le tappe per data o direzione a seconda dell'ordine
-    if params[:sort].presence.in? ["per_data", "per_data_desc"]
-      @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
-    else
-      @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }
-    end
+    # #raggruppo le tappe per data o direzione a seconda dell'ordine
+    # if params[:sort].presence.in? ["per_data", "per_data_desc"]
+    #   @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
+    # else
+    #   @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }     
+    # end
 
     respond_to do |format|
       format.html

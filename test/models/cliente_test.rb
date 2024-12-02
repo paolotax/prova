@@ -14,9 +14,12 @@
 #  condizioni_di_pagamento :string
 #  denominazione           :string
 #  email                   :string
+#  geocoded                :boolean
 #  id_paese                :string
 #  indirizzo               :string
 #  indirizzo_telematico    :string
+#  latitude                :float
+#  longitude               :float
 #  metodo_di_pagamento     :string
 #  nazione                 :string
 #  nome                    :string

@@ -29,7 +29,7 @@ class GiriController < ApplicationController
   
   def tappe
     @tappe = @giro.tappe.includes(:tappable)
-    
+  
     if params[:filter]  == 'programmate'
       @tappe = @tappe.delle_scuole_di(@giro.tappe.programmate.pluck(:tappable_id))
     elsif params[:filter]  == 'oggi'    
@@ -52,13 +52,15 @@ class GiriController < ApplicationController
     end
 
     #inizializzo geared pagination
-    set_page_and_extract_portion_from @tappe
+    @pagy, @tappe =  pagy(@tappe.all, items: 30)
+
+    #set_page_and_extract_portion_from @tappe
 
     #raggruppo le tappe per data o direzione a seconda dell'ordine
     if params[:sort].presence.in? ["per_data", "per_data_desc"]
-      @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
+      @grouped_records = @pagy.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
     else
-      @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }
+      @grouped_records = @pagy.group_by{|t| t.tappable.direzione_or_privata }
     end
 
     respond_to do |format|
