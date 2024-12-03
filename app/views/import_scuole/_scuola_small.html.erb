@@ -10,7 +10,7 @@
     
     <% if with_navigation == true %>
         <div class="col-span-1 pl-2">
-            <%= link_to go_to_scuola_path(import_scuola, current_user.navigator),
+            <%= link_to go_to_tappable_path(import_scuola, current_user.navigator),
                     class: "text-red-400 hover:text-red-800" do %>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />

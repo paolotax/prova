@@ -18,7 +18,7 @@
 
 
     <% dropdown.with_item do %>
-        <%= link_to go_to_scuola_path(import_scuola, current_user.navigator),
+        <%= link_to go_to_tappable_path(import_scuola, current_user.navigator),
                     target: "_blank",
                     data: { turbo_frame: :modal, action: "click->dialog#open"},
                     class: "p-2.5 text-red-500 hover:text-red-600 flex flex-row gap-2" do %>

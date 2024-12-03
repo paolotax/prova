@@ -10,10 +10,10 @@
 
 
 		<% if current_user %>
-
-			<%#= tappe_coordinates %>
  
-			<%#= js_map get_scuole_coordinates(current_user.import_scuole.ids.compact), tooltips: { hover: false, html: true } %>
+			<%= js_map get_coordinates(
+					scuole_ids: current_user.import_scuole.ids.compact,
+					clienti_ids: current_user.clienti.ids.compact), tooltips: { hover: false, html: true } %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
 

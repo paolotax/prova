@@ -28,6 +28,16 @@
 		<% end %>
 
 		<% heading.with_action do %>
+			<%= component 'tax_button', 
+					caption: "Vai...",
+					svg_file: "icon-map-pin.svg",
+					color: "pink",
+					url:  go_to_tappable_path(@cliente, current_user.navigator),
+					target: "_blank"
+			%>
+		<% end %>
+
+		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "Modifica",
 				svg_file: "icon-pencil.svg",
