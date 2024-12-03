@@ -30,8 +30,7 @@
 					caption: "Mappa",
 					svg_file: "icon-mappa.svg",
 					color: "pink",
-					url:  mappe_path(@import_scuola),
-					target: "_blank"
+					url:  mappe_path(id: @import_scuola.class.name.underscore + "-" + @import_scuola.id.to_s)
 			%>
 		<% end %>
 

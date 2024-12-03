@@ -1,24 +1,35 @@
 class MappeController < ApplicationController
-
   before_action :authenticate_user!
 
   def show
-    @scuola = current_user.import_scuole.friendly.find(params[:id])
+    @tappable = find_tappable(params[:id])
+    
   end
 
   def update
-    @scuola = current_user.import_scuole.find(params[:id])
-    if @scuola.update(latitude: params[:latitude], longitude: params[:longitude])
+    @tappable = find_tappable(params[:id])
+    if @tappable.update(latitude: params[:latitude], longitude: params[:longitude])
       render json: { status: 'success' }
     else
-      render json: { status: 'error', message: @scuola.errors.full_messages }, status: :unprocessable_entity
+      render json: { status: 'error', message: @tappable.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   private
 
-    def scuola_params
-      params.permit(:latitude, :longitude)
+  def find_tappable(compound_id)
+    type, id = compound_id.split('-')
+    case type
+    when 'import_scuola'
+      current_user.import_scuole.find(id)
+    when 'cliente'
+      current_user.clienti.find(id)
+    else
+      raise ActiveRecord::RecordNotFound, "Unknown tappable type"
     end
-    
+  end
+
+  def tappable_params
+    params.permit(:latitude, :longitude)
+  end
 end

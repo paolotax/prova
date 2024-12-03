@@ -1,12 +1,12 @@
 module MappeHelper
 
-  def html_for_tappable(tappable)
+  def html_for_scuola(scuola)
     content_tag(:div, class: "tappable") do
       content_tag(:h4, class: "font-semibold hover:font-110%") do
-        link_to(tappable.tappable, tappable)
+        link_to(scuola.scuola, scuola)
       end +
-      content_tag(:p, tappable.indirizzo) +
-      content_tag(:p, "#{tappable.cap} #{tappable.comune} (#{tappable.provincia})") 
+      content_tag(:p, scuola.indirizzo) +
+      content_tag(:p, "#{scuola.cap} #{scuola.comune} (#{scuola.provincia})") 
     end
   end
 
@@ -22,21 +22,21 @@ module MappeHelper
 
   def get_coordinates(scuole_ids: [], clienti_ids: [])
     #scuole_ids = current_user.tappe.di_oggi.pluck(:tappable_id)
-    scuole = Importtappable.where(id: scuole_ids)
+    scuole = ImportScuola.where(id: scuole_ids)
     clienti = Cliente.where(id: clienti_ids)
     
     data = []
     
-    scuole.map do |tappable|
-      next if tappable.geocoded.nil? || tappable.geocoded == false 
+    scuole.map do |scuola|
+      next if scuola.geocoded.nil? || scuola.geocoded == false 
 
       data << {
-        latitude: tappable.latitude,
-        longitude: tappable.longitude,
-        label: tappable.tappable,
+        latitude: scuola.latitude,
+        longitude: scuola.longitude,
+        label: scuola.scuola,
         color: "#85C9E6",
-        tooltip: html_for_tappable(tappable),
-        tipo: "Importtappable"
+        tooltip: html_for_scuola(scuola),
+        tipo: "ImportScuola"
       }
     
     end

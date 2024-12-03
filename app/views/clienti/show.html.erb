@@ -38,6 +38,15 @@
 		<% end %>
 
 		<% heading.with_action do %>
+			<%= component 'tax_button', 
+					caption: "Mappa",
+					svg_file: "icon-mappa.svg",
+					color: "pink",
+					url:  mappe_path(id: @cliente.class.name.underscore + "-" + @cliente.id.to_s)
+			%>
+		<% end %>
+
+		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "Modifica",
 				svg_file: "icon-pencil.svg",
