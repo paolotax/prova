@@ -11,7 +11,7 @@
 
 		<% if current_user %>
  
-			<%= js_map get_coordinates(
+			<%#= js_map get_coordinates(
 					scuole_ids: current_user.import_scuole.ids.compact,
 					clienti_ids: current_user.clienti.ids.compact), tooltips: { hover: false, html: true } %>
 

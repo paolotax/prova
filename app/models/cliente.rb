@@ -42,7 +42,7 @@
 class Cliente < ApplicationRecord
 
   geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
-  after_validation :geocode#, if: ->(obj){ obj.address.present? and obj.address_changed? }
+  after_validation :geocode, if: ->(obj) { (obj.indirizzo_changed? || obj.cap_changed? || obj.comune_changed? || obj.provincia_changed?) } 
 
 
   belongs_to :user  
