@@ -8,7 +8,7 @@ class GetAiResponse
     chat = Chat.find(chat_id)
     response = call_openai(chat: chat)
     if response
-      #execute_tool_call(chat: chat, response: response)
+      handle_response(chat: chat, response: response)
     end
   end
 
@@ -17,26 +17,37 @@ class GetAiResponse
   def crea_appunto(scuola: nil, nome:, body:, telefono: nil, data: nil)
     scuola_body = "#{body} (#{scuola}) #{data}"
     appunto = current_user.appunti.build(nome: nome, body: scuola_body, telefono: telefono)
-    appunto.save!
+    if appunto.save
+      add_message_to_chat(chat: chat, message: "Appunto creato con successo")
+      "Appunto creato con successo"
+    else
+      add_message_to_chat(chat: chat, message: "Errore nella creazione dell'appunto")
+      "Errore nella creazione dell'appunto"
+    end
   end
 
   def totale_adozioni(titolo: nil, editore: nil)
     query = current_user.import_adozioni.search(titolo)
-    query.all
+    results = query.all
+
+    if results.any?
+      message = "Totale adozioni per '#{titolo}'"
+      message += " di '#{editore}'" if editore.present?
+      message += ":\n"
+      results.each do |result|
+        message += "- #{result.nome_scuola}: #{result.quantita} copie\n"
+      end
+    else
+      message = "Nessuna adozione trovata per '#{titolo}'"
+      message += " di '#{editore}'" if editore.present?
+    end
+
+    add_message_to_chat(chat: chat, message: message)
+    message
   end
 
-  def messages
-    messages = [
-      {
-        "role": "user",
-        "content": "Manda il libro richiesto all'insegnante GIANNA NANNINI dell'istituto da vinci. Sii formale e gentile. Grazie",
-      },
-    ]
-    messages
-  end
-
-  def call_openaiNEWWWW(chat:)
-    response = OpenAI::Client.new.chat(      
+  def call_openai(chat:)
+    response = OpenAI::Client.new.chat(
       parameters: {
         model: "gpt-3.5-turbo",
         messages: Message.for_openai(chat.messages),
@@ -46,7 +57,7 @@ class GetAiResponse
             function: {
               name: "crea_appunto",
               description: "Crea un appunto con nome, body, scuola e telefono",
-              parameters: {  # Format: https://json-schema.org/understanding-json-schema
+              parameters: {
                 type: :object,
                 properties: {
                   nome: {
@@ -55,57 +66,85 @@ class GetAiResponse
                   },
                   body: {
                     type: "string",
-                    description: "il testo dell'appunto senza la scuola, la data di oggi e la data prevista ma aggiungi un emoticon a caso",
+                    description: "Il testo dell'appunto senza la scuola, la data di oggi e la data prevista ma aggiungi un emoticon a caso",
                   },
                   telefono: {
                     type: "string",
-                    description: "un recapito telefonico",
+                    description: "Un recapito telefonico",
                   },
                   scuola: {
                     type: "string",
-                    description: "il nome della scuola",
+                    description: "Il nome della scuola",
                   },
                   data: {
                     type: "string",
-                    description: "converti la data in cui eseguire la richiesta",
-                  },
+                    description: "La data prevista",
+                  }
                 },
-                required: ["nome", "body"],
-              },
-            },
-          
+                required: ["nome", "body"]
+              }
+            }
           },
           {
             type: "function",
             function: {
               name: "totale_adozioni",
-              description: "Calcola il totale delle adozioni",
-              parameters: {  # Format: https://json-schema.org/understanding-json-schema
+              description: "Calcola il totale delle adozioni per un titolo e un editore",
+              parameters: {
                 type: :object,
                 properties: {
-                  editore: {
-                    type: "string",
-                    description: "Il nome dell' editore",
-                  },
                   titolo: {
                     type: "string",
-                    description: "il titolo del libro",
+                    description: "Il titolo del libro",
+                  },
+                  editore: {
+                    type: "string",
+                    description: "Il nome dell'editore",
                   }
                 },
-                required: ["titolo"],
-              },
-            },        
+                required: ["titolo"]
+              }
+            }
           }
-      ],
-        temperature: 0.7,
-        stream: stream_proc(chat: chat),
-        n: RESPONSES_PER_MESSAGE
+        ]
       }
     )
-    response
+
+    handle_response(chat: chat, response: response)
   end
-  
-  def call_openai(chat:)
+
+  def handle_response(chat:, response:)
+
+    message = response.dig("choices", 0, "message")
+    if message["role"] == "assistant" && message["tool_calls"]
+
+      message["tool_calls"].each do |tool_call|
+        tool_call_id = tool_call.dig("id")
+        function_name = tool_call.dig("function", "name")
+        function_args = JSON.parse(
+            tool_call.dig("function", "arguments"),
+            { symbolize_names: true },
+        )
+        function_response =   
+              case function_name
+              when "crea_appunto"
+                crea_appunto(**function_args) 
+              when "totale_adozioni"
+                totale_adozioni(**function_args) 
+              else
+                add_message_to_chat(chat: chat, message: "Funzione non riconosciuta")
+              end
+      end
+    else
+      add_message_to_chat(chat: chat, message: response["choices"].first["message"]["content"])
+    end
+  end
+
+  def add_message_to_chat(chat:, message:)
+    chat.messages.create(content: message, role: "system")
+  end
+
+  def call_openai_old(chat:)
     response = OpenAI::Client.new.chat(      
       parameters: {
         model: "gpt-3.5-turbo",

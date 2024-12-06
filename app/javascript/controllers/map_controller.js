@@ -14,7 +14,9 @@ export default class extends Controller {
       container: this.mapTarget,
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [this.data.get("longitude"), this.data.get("latitude")],
-      zoom: 16
+      zoom: 16,
+      pitchEnabled: true,
+      zoomEnabled: true
     })
 
     this.map.on('load', () => {
