@@ -108,7 +108,15 @@ class TappeController < ApplicationController
 
   def sort
     @tappa = current_user.tappe.find(params[:id])
-    @tappa.update(position: params[:tappa][:position].to_i)
+
+    # nelle liste raggrupate per data la posizione è doppia quindi uso  #, sortable_param_name_value: "posizione_doppia" 
+    if params[:tappa]["posizione_doppia"].present?
+      posizione = params[:tappa]["posizione_doppia"].to_i / 2
+    else
+      posizione = params[:tappa][:position].to_i
+    end
+
+    @tappa.update(position: posizione)
     head :no_content
   end
 
