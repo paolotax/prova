@@ -34,7 +34,7 @@ class Tappa < ApplicationRecord
   belongs_to :giro, optional: true, touch: true
   belongs_to :tappable, polymorphic: true
 
-  positioned on: :data_tappa, column: :position
+  positioned on: [:user, :data_tappa], column: :position
 
   # controllare se filtrare per user_id
   # NON FUNZIONA TAPPA
@@ -50,15 +50,23 @@ class Tappa < ApplicationRecord
   # #   super
   # # end
   
+  scope :con_data_tappa, -> { where.not(data_tappa: nil) }
+  
   scope :di_oggi,   -> { where(data_tappa: Time.zone.now.all_day) }
   scope :di_domani, -> { where(data_tappa: Time.zone.now.tomorrow.all_day) }
-  scope :del_giorno, ->(data) { where(data_tappa: data.to_date.all_day) }
   
-  scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids)}
+  scope :del_giorno, ->(day) { where(data_tappa: day.to_date.all_day) }
+  scope :della_settimana, ->(day) { where(data_tappa: day.beginning_of_week..day.end_of_week) } 
+  scope :del_mese, ->(day) { where(data_tappa: day.beginning_of_month..day.end_of_month) } 
+  scope :dell_anno, ->(day) { where(data_tappa: day.beginning_of_year..day.end_of_year) }
+
+  scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids, tappable_type: 'ImportScuola') }
   scope :della_provincia, ->(provincia) { joins(:import_scuola).where('import_scuole."PROVINCIA" = ?', provincia) }
 
   scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.zone.now.beginning_of_day) }
+  
   scope :programmate, -> { where("data_tappa > ?", Time.zone.now) }  
+  
   scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
   scope :da_programmare, -> { where(data_tappa: nil) }
 

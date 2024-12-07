@@ -1,0 +1,51 @@
+ <%# locals: ( tappa:, with_scuola: false, with_checkbox: true ) -%>
+
+<%= tag.li id: dom_id(tappa),
+        class: [ 
+            "group px-2 py-1.5 grid  bg-white border-b max-w-72 rounded-md shadow-md items-center": true,
+            "grid-cols-6 gap-2 mb-2": !with_scuola,
+            "grid-cols-8": with_scuola
+        ],
+         data: { sortable_update_url: sort_tappa_path(tappa) } do %>
+
+    <% if with_checkbox %>
+        <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
+                        multiple: true,
+                        form: :bulk_update_tappe_form,
+                        checked: false,
+                        class: "rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
+                        data: { tax_checkbox_select_all_target: 'checkbox' }
+                        } %>
+    <% end %>
+
+    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-1" } col-span-1" do %> 
+        <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+    <% end %>
+        
+    <% if with_scuola %>
+        <%= tag.div class: "col-span-6" do %>  
+            <%= render partial: "import_scuole/scuola_small", 
+                locals: { 
+                            import_scuola: tappa.tappable, 
+                            with_navigation: false, 
+                            with_logo: false, 
+                            with_link: true,
+                            with_info: true
+                        } 
+            %>
+
+        <% end %>
+
+        <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
+        <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+         <%= tag.div tappa.position, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+         <%= tag.div tappa.id, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+    <% else %>
+        <%= tag.div class: "col-span-5 flex flex-col" do %>
+            <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
+            <%= tag.div tappa.titolo, class: "line-clamp-1 hover:line-clamp-none text-xs italic font-semibold text-gray-400" %>
+        <% end %>
+    <% end %>
+
+    
+<% end %>

@@ -114,11 +114,10 @@
 
 </div>
 
-<div id="scuola-tappe-list" class="pl-2 flex flex-row flex-wrap">
+<div id="scuola-tappe-list" class="group show-scuola pl-2 flex flex-row flex-wrap">
 	<%= render partial: "tappe/tappa", 
 			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
-			locals: { 
-				with_scuola: false,
+			locals: {
 				with_checkbox: false 
 			} 
 	%>
@@ -127,9 +126,6 @@
 
 <div class="flex group show-scuola">
 	<div class="w-full mx-auto">
-		
-
-
 		<div data-controller="tax-tabs"
 			 	data-tax-tabs-index-value="<%= params[:selected_tab] || 0 %>"
 				data-tax-tabs-active-tab-class="border-indigo-500 text-indigo-600"

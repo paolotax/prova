@@ -61,9 +61,8 @@ class User < ApplicationRecord
 
   has_many :adozioni, dependent: :destroy
 
-  has_many :documenti, dependent: :destroy
   has_many :clienti, dependent: :destroy
-  
+  has_many :documenti, dependent: :destroy
   has_many :righe, through: :documenti
   # delirio da riprovare 
   #has_many :adozioni, through: :mandati, source: :import_adozione
@@ -71,6 +70,7 @@ class User < ApplicationRecord
   has_many :appunti, dependent: :destroy
 
   has_many :giri, dependent: :destroy
+  
   has_many :tappe, dependent: :destroy
   
   has_many :libri, dependent: :destroy

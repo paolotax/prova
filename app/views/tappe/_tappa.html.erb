@@ -1,10 +1,10 @@
- <%# locals: ( tappa:, with_scuola: false, with_checkbox: true ) -%>
+ <%# locals: ( tappa:, with_checkbox: true ) -%>
 
 <%= tag.li id: dom_id(tappa),
         class: [ 
             "group px-2 py-1.5 grid  bg-white border-b max-w-72 rounded-md shadow-md items-center": true,
-            "grid-cols-6 gap-2 mb-2": !with_scuola,
-            "grid-cols-8": with_scuola
+            "grid-cols-6 gap-2 mb-2": !with_checkbox,
+            "grid-cols-7": with_checkbox
         ],
          data: { sortable_update_url: sort_tappa_path(tappa) } do %>
 
@@ -22,30 +22,18 @@
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
     <% end %>
         
-    <% if with_scuola %>
-        <%= tag.div class: "col-span-6" do %>  
-            <%= render partial: "import_scuole/scuola_small", 
-                locals: { 
-                            import_scuola: tappa.tappable, 
-                            with_navigation: false, 
-                            with_logo: false, 
-                            with_link: true,
-                            with_info: true
-                        } 
-            %>
 
-        <% end %>
-
+    <%= tag.div class: [
+            "col-span-4": with_checkbox,
+            "col-span-5": !with_checkbox
+        ] do %>  
+        <%= render partial: "clientable/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
         <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-         <%= tag.div tappa.position, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-         <%= tag.div tappa.id, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-    <% else %>
-        <%= tag.div class: "col-span-5 flex flex-col" do %>
-            <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
-            <%= tag.div tappa.titolo, class: "line-clamp-1 hover:line-clamp-none text-xs italic font-semibold text-gray-400" %>
-        <% end %>
+        <%= tag.div tappa.position, class: "pt-2 text-xs italic font-semibold text-gray-800" %>  
+        <%= tag.div tappa.id, class: "pt-2 text-xs italic font-semibold text-gray-800" %>  
     <% end %>
+
 
     
 <% end %>

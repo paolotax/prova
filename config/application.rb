@@ -34,5 +34,7 @@ module Prova
     # Set the default locale to something other than :en
     config.i18n.default_locale = :it
 
+    config.beginning_of_week = :monday
+
   end
 end

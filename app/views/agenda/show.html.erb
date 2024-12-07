@@ -1,0 +1,25 @@
+<div>
+  <h1 class="font-bold text-4xl">Agenda#show</h1>
+  <p>Find me in app/views/agenda/show.html.erb</p>
+
+    <%= @settimana %>
+
+    <% @tappe_per_giorno.each do |giorno, tappe| %>
+
+        <h2><%= giorno %></h2>
+        
+        <%= tag.ul data: {
+          controller: "sortable",
+          sortable_animation_value: "150",
+          sortable_resource_name_value: "tappa",
+          sortable_param_name_value: "posizione_doppia"
+        } do %>
+          <% tappe.sort_by(&:position).each do |tappa| %>
+            <li>
+              <%= render tappa, with_checkbox: false %>
+            </li>
+          <% end %>
+        <% end %>
+
+    <% end %>
+</div>

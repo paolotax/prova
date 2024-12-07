@@ -130,7 +130,7 @@ gem "ranked-model", "~> 0.4.10"
 
 gem "counter_culture", "~> 3.8"
 
-gem "positioning", "~> 0.3.0"
+gem "positioning"
 
 gem 'avo'
 gem "ransack"

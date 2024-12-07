@@ -1,11 +1,19 @@
 <%#= tag.div "Oggi devi andare in #{ pluralize @scuole_di_oggi.size, "scuola", "scuole" }", class: "text-2xl font-bold p-4" %>
-<div class=""> 
-    <%= js_map get_coordinates(scuole_ids: @scuole.ids.compact, clienti_ids: @clienti.ids.compact), controls: true, tooltips: { hover: false, html: true } %>
+<div data-controller="tax-reveal"> 
+    
+    
+    <%= component 'tax_button',
+					svg_file: "icon-chevron-right.svg",
+					color: "transparent",
+					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
+
+
+    <div data-tax-reveal-target="item" class="hidden w-full flex">
+        <%= js_map get_coordinates(scuole_ids: @scuole.ids.compact, clienti_ids: @clienti.ids.compact), controls: true, tooltips: { hover: false, html: true } %>
+	</div>
+    
 </div>
 
-<%= tag.div do %>
-    <%= render partial: "import_scuole/scuola_long", collection: @scuole, as: :import_scuola %>
-<% end %>
 
 <%= tag.ul data: {
         controller: "sortable",
@@ -14,7 +22,7 @@
         sortable_param_name_value: "position"
 
     } do %>
-    <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_scuola: true, with_checkbox: false} %>
+    <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false} %>
 <% end %>
 
 <%= tag.div "Appunti di OGGI:", class: "text-2xl font-bold p-4" %>
