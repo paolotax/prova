@@ -7,6 +7,7 @@
 #  descrizione   :string
 #  entro_il      :datetime
 #  ordine        :integer
+#  position      :integer
 #  tappable_type :string           not null
 #  titolo        :string
 #  created_at    :datetime         not null

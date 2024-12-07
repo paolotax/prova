@@ -116,6 +116,7 @@ Rails.application.routes.draw do
     end
     member do
       post 'duplica'
+      patch 'sort'
     end
   end
  

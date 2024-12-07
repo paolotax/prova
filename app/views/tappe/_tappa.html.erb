@@ -1,11 +1,12 @@
  <%# locals: ( tappa:, with_scuola: false, with_checkbox: true ) -%>
 
-<%= tag.div id: dom_id(tappa),
+<%= tag.li id: dom_id(tappa),
         class: [ 
             "group px-2 py-1.5 grid  bg-white border-b max-w-72 rounded-md shadow-md items-center": true,
             "grid-cols-6 gap-2 mb-2": !with_scuola,
             "grid-cols-8": with_scuola
-        ] do %>
+        ],
+         data: { sortable_update_url: sort_tappa_path(tappa) } do %>
 
     <% if with_checkbox %>
         <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
@@ -37,7 +38,8 @@
 
         <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-
+         <%= tag.div tappa.position, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+         <%= tag.div tappa.id, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
     <% else %>
         <%= tag.div class: "col-span-5 flex flex-col" do %>
             <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>

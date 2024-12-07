@@ -26,7 +26,7 @@ class PagesController < ApplicationController
                     .where(id: current_user.tappe.di_oggi.where(tappable_type: "Cliente").pluck(:tappable_id))
         
         
-        @tappe = current_user.tappe.di_oggi.includes(:tappable, :giro)
+        @tappe = current_user.tappe.di_oggi.includes(:tappable, :giro).order(:position)
        
         # @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }
         # 

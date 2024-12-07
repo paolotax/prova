@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_02_102839) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_06_185716) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -550,6 +550,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_02_102839) do
     t.datetime "updated_at", null: false
     t.bigint "giro_id"
     t.bigint "user_id"
+    t.integer "position"
     t.index ["giro_id"], name: "index_tappe_on_giro_id"
     t.index ["tappable_type", "tappable_id"], name: "index_tappe_on_tappable"
     t.index ["user_id"], name: "index_tappe_on_user_id"

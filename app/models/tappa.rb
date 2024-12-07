@@ -7,6 +7,7 @@
 #  descrizione   :string
 #  entro_il      :datetime
 #  ordine        :integer
+#  position      :integer
 #  tappable_type :string           not null
 #  titolo        :string
 #  created_at    :datetime         not null
@@ -32,6 +33,8 @@ class Tappa < ApplicationRecord
   
   belongs_to :giro, optional: true, touch: true
   belongs_to :tappable, polymorphic: true
+
+  positioned on: :data_tappa, column: :position
 
   # controllare se filtrare per user_id
   # NON FUNZIONA TAPPA

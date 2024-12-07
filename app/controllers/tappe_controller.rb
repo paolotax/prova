@@ -106,6 +106,12 @@ class TappeController < ApplicationController
     end
   end
 
+  def sort
+    @tappa = current_user.tappe.find(params[:id])
+    @tappa.update(position: params[:tappa][:position].to_i)
+    head :no_content
+  end
+
   def bulk_update
     @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
 
@@ -202,7 +208,7 @@ class TappeController < ApplicationController
     # end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro, :position)
     end
 
     def mass_oggi?
