@@ -2,24 +2,35 @@
   <h1 class="font-bold text-4xl">Agenda#show</h1>
   <p>Find me in app/views/agenda/show.html.erb</p>
 
-    <%= @settimana %>
-
-    <% @tappe_per_giorno.each do |giorno, tappe| %>
-
-        <h2><%= giorno %></h2>
+  <div class="flex w-full gap-2">
+    <% @settimana.each do |giorno| %>
         
-        <%= tag.ul data: {
-          controller: "sortable",
-          sortable_animation_value: "150",
-          sortable_resource_name_value: "tappa",
-          sortable_param_name_value: "posizione_doppia"
-        } do %>
-          <% tappe.sort_by(&:position).each do |tappa| %>
-            <li>
-              <%= render tappa, with_checkbox: false %>
-            </li>
+        <%= tag.div class: "w-1/6 flex flex-col gap-2" do %>
+          <%= tag.p giorno[0].strftime("%d %m %a") %>
+
+
+          <% @tappe_per_giorno.select {|t| giorno[0] == t }.values.each do |tappe| %>
+
+            <%= tag.ul data: {
+              controller: "sortable",
+              sortable_animation_value: "150",
+              sortable_resource_name_value: "tappa",
+              sortable_param_name_value: "posizione_doppia"
+            } do %>
+              <% tappe.sort_by(&:position).each do |tappa| %>
+                <li>
+                  <%= render tappa, with_checkbox: false %>
+                </li>
+              <% end %>
+            <% end %>
           <% end %>
+
         <% end %>
 
-    <% end %>
+      <% end %>
+  </div>
+    
+    
+    
+
 </div>
