@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_06_204219) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_08_075854) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -541,8 +541,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_06_204219) do
   create_table "tappe", force: :cascade do |t|
     t.string "titolo"
     t.string "descrizione"
-    t.integer "ordine"
-    t.datetime "data_tappa"
+    t.date "data_tappa"
     t.datetime "entro_il"
     t.string "tappable_type", null: false
     t.bigint "tappable_id", null: false
@@ -550,7 +549,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_06_204219) do
     t.datetime "updated_at", null: false
     t.bigint "giro_id"
     t.bigint "user_id"
-    t.integer "position"
+    t.integer "position", null: false
     t.index ["giro_id"], name: "index_tappe_on_giro_id"
     t.index ["tappable_type", "tappable_id"], name: "index_tappe_on_tappable"
     t.index ["user_id"], name: "index_tappe_on_user_id"

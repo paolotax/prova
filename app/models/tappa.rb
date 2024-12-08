@@ -3,11 +3,10 @@
 # Table name: tappe
 #
 #  id            :bigint           not null, primary key
-#  data_tappa    :datetime
+#  data_tappa    :date
 #  descrizione   :string
 #  entro_il      :datetime
-#  ordine        :integer
-#  position      :integer
+#  position      :integer          not null
 #  tappable_type :string           not null
 #  titolo        :string
 #  created_at    :datetime         not null
