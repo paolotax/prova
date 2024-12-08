@@ -17,9 +17,10 @@
 #
 # Indexes
 #
-#  index_tappe_on_giro_id   (giro_id)
-#  index_tappe_on_tappable  (tappable_type,tappable_id)
-#  index_tappe_on_user_id   (user_id)
+#  index_tappe_on_giro_id                              (giro_id)
+#  index_tappe_on_tappable                             (tappable_type,tappable_id)
+#  index_tappe_on_user_id                              (user_id)
+#  index_tappe_on_user_id_and_data_tappa_and_position  (user_id,data_tappa,position) UNIQUE
 #
 # Foreign Keys
 #
