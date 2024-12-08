@@ -116,7 +116,7 @@ class TappeController < ApplicationController
       posizione = params[:tappa][:position].to_i
     end
 
-    @tappa.update(position: posizione)
+    @tappa.update(position: posizione, data_tappa: params[:tappa][:data_tappa])
     head :no_content
   end
 

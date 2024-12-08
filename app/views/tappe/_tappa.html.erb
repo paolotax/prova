@@ -6,7 +6,7 @@
             "grid-cols-6 gap-2 mb-2": !with_checkbox,
             "grid-cols-7": with_checkbox
         ],
-         data: { sortable_update_url: sort_tappa_path(tappa) } do %>
+         data: { tax_sortable_update_url: sort_tappa_path(tappa) } do %>
 
     <% if with_checkbox %>
         <%= check_box_tag "tappa_ids[]", tappa.id, nil, {

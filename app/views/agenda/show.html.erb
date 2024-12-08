@@ -76,10 +76,9 @@
         <% @tappe_per_giorno.select {|t| giorno == t }.values.each do |tappe| %>
 
           <%= tag.ul id: "giorno_#{giorno.to_s}", data: {
-                controller: "sortable",
-                sortable_animation_value: "150",
-                sortable_resource_name_value: "tappa",
-                sortable_param_name_value: "posizione_doppia",
+                controller: "tax-sortable",
+                tax_sortable_group_value: "data-tappa",
+                tax_sortable_data_tappa: "#{giorno}"
           } do %>
             <% tappe.sort_by(&:position).each do |tappa| %>
               <li>
