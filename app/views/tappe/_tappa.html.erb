@@ -24,14 +24,13 @@
         
 
     <%= tag.div class: [
+            "text-xs font-bold text-gray-600": true,
             "col-span-4": with_checkbox,
             "col-span-5": !with_checkbox
         ] do %>  
         <%= render partial: "clientable/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
         <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
         <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
-        <%= tag.div tappa.position, class: "pt-2 text-xs italic font-semibold text-gray-800" %>  
-        <%= tag.div tappa.id, class: "pt-2 text-xs italic font-semibold text-gray-800" %>  
     <% end %>
 
 

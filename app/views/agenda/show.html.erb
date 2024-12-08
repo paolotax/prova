@@ -5,7 +5,9 @@
   <div class="flex w-full gap-2">
     <% @settimana.each do |giorno| %>
         
-        <%= tag.div class: "w-1/6 flex flex-col gap-2" do %>
+        <%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
+          
+          
           <%= tag.p giorno[0].strftime("%d %m %a") %>
 
 
