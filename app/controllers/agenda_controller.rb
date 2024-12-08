@@ -1,8 +1,11 @@
 class AgendaController < ApplicationController
   def show
 
-    @settimana = current_user.tappe.della_settimana(Date.today).group_by_day(:data_tappa).count
-    
-    @tappe_per_giorno = current_user.tappe.della_settimana(Date.today).group_by_day { |t| t.data_tappa }
+    Groupdate.week_start = :monday
+
+    @giorno = params[:giorno]&.to_date || Date.today
+    @settimana = helpers.dates_of_week(@giorno)
+
+    @tappe_per_giorno = current_user.tappe.della_settimana(@giorno).group_by_day { |t| t.data_tappa }
   end
 end

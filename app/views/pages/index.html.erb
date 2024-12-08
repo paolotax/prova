@@ -23,7 +23,7 @@
 
 				<% end %>
 
-				<%= link_to "OGGI", oggi_path, class: "btn btn-outline" %>
+				<%= link_to "AGENDA", agenda_path(giorno: Date.today), class: "btn btn-outline" %>
 				
 				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
 

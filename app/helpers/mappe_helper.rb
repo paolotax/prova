@@ -90,4 +90,16 @@ module MappeHelper
     end
   end
 
+  def waze_url(coordinates)
+    base_url = "https://waze.com/ul"
+    params = coordinates.map.with_index do |coord, index|
+      if index == 0
+        "ll=#{coord[:latitude]},#{coord[:longitude]}"
+      else
+        "via=#{coord[:latitude]},#{coord[:longitude]}"
+      end
+    end
+    "#{base_url}?#{params.join('&')}&navigate=yes"
+  end
+
 end

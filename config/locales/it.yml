@@ -47,6 +47,8 @@ it:
       default: "%d/%m/%Y"
       long: "%d %B %Y"
       short: "%d %b"
+      day_calendar: "%a %d"
+      month_calendar: "%B %Y"
     month_names:
     - 
     - gennaio

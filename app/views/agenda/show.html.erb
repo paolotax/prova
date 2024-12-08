@@ -1,38 +1,80 @@
-<div>
-  <h1 class="font-bold text-4xl">Agenda#show</h1>
-  <p>Find me in app/views/agenda/show.html.erb</p>
+<div class="sticky top-20 z-10">
+	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+		
 
-  <div class="flex w-full gap-2">
-    <% @settimana.each do |giorno| %>
+        <% heading.with_description do %>
+           <%= tag.p I18n.l(@giorno, format: :month_calendar, locale: :it) %>
+        <% end %>
+
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+				caption: "prec",
+				svg_file: "icon-arrow-left.svg",
+				color: "white",
+				url: agenda_path(giorno: (@giorno - 7.days).to_s),
+                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+		<% end %>
+
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+				caption: "succ",
+				svg_file: "icon-arrow-right.svg",
+				color: "white",
+				url: agenda_path(giorno: (@giorno + 7.days).to_s),
+                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+		<% end %>
+
+		<% heading.with_action do %>	
+			<%= component 'tax_button',
+				caption: "oggi",
+				svg_file: "icon-calendar.svg",
+				color: "blue",
+				url: agenda_path(giorno:  Date.today.to_s),
+                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+		<% end %>
+
+		<% heading.with_action do %>
+			<%#= component 'tax_button',
+				caption: "Modifica",
+				svg_file: "icon-pencil.svg",
+				color: "yellow",
+				url: url_for( controller: "libri", action: "edit", model: @libro ),
+				data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+		<% end %>
+
+		<%= "Agenda" %>
+
+	<% end %>
+</div>
+
+
+<%= turbo_frame_tag "agenda", class: "flex w-full gap-2" do %>
+  
+  <% @settimana.each do |giorno| %>
+      
+      <%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
         
-        <%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
-          
-          
-          <%= tag.p giorno[0].strftime("%d %m %a") %>
+        
+        <%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
 
+        <% @tappe_per_giorno.select {|t| giorno == t + 1 }.values.each do |tappe| %>
 
-          <% @tappe_per_giorno.select {|t| giorno[0] == t }.values.each do |tappe| %>
-
-            <%= tag.ul data: {
-              controller: "sortable",
-              sortable_animation_value: "150",
-              sortable_resource_name_value: "tappa",
-              sortable_param_name_value: "posizione_doppia"
-            } do %>
-              <% tappe.sort_by(&:position).each do |tappa| %>
-                <li>
-                  <%= render tappa, with_checkbox: false %>
-                </li>
-              <% end %>
+          <%= tag.ul id: "giorno_#{giorno.to_s}", data: {
+                controller: "sortable",
+                sortable_animation_value: "150",
+                sortable_resource_name_value: "tappa",
+                sortable_param_name_value: "posizione_doppia",
+          } do %>
+            <% tappe.sort_by(&:position).each do |tappa| %>
+              <li>
+                <%= render tappa, with_checkbox: false %>
+              </li>
             <% end %>
           <% end %>
-
         <% end %>
 
       <% end %>
-  </div>
-    
-    
-    
 
-</div>
+    <% end %>
+<% end %>
+  
