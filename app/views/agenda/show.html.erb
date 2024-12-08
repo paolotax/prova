@@ -3,7 +3,23 @@
 		
 
         <% heading.with_description do %>
-           <%= tag.p I18n.l(@giorno, format: :month_calendar, locale: :it) %>
+           
+            <%= tag.div class: "flex items-center -ml-3" do %>  
+                <%= component 'tax_button',
+                    svg_file: "icon-arrow-left.svg",
+                    color: "transparent",
+                    url: agenda_path(giorno: (@giorno - 1.month).to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                
+                <%= tag.p I18n.l(@settimana.first, format: :month_calendar, locale: :it), class: "mx-4" %>
+                
+
+                <%= component 'tax_button',
+                    svg_file: "icon-arrow-right.svg",
+                    color: "transparent",
+                    url: agenda_path(giorno: (@giorno + 1.month).to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+            <% end %>
         <% end %>
 
 		<% heading.with_action do %>
