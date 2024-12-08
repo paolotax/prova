@@ -73,7 +73,7 @@
         
         <%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
 
-        <% @tappe_per_giorno.select {|t| giorno == t + 1 }.values.each do |tappe| %>
+        <% @tappe_per_giorno.select {|t| giorno == t }.values.each do |tappe| %>
 
           <%= tag.ul id: "giorno_#{giorno.to_s}", data: {
                 controller: "sortable",
