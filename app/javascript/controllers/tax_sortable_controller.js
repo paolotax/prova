@@ -22,7 +22,7 @@ export default class extends Controller {
     var sortableDataTappa = event.to.dataset.taxSortableDataTappa
 
     patch(sortableUpdateUrl, {
-      body: JSON.stringify({position: event.newIndex, data_tappa: sortableDataTappa}),
+      body: JSON.stringify({posizione_doppia: event.newIndex, data_tappa: sortableDataTappa}),
     })
   }
 }

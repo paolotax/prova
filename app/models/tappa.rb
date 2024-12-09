@@ -52,11 +52,11 @@ class Tappa < ApplicationRecord
   
   scope :con_data_tappa, -> { where.not(data_tappa: nil) }
   
-  scope :di_oggi,   -> { where(data_tappa: Time.zone.now.all_day) }
-  scope :di_domani, -> { where(data_tappa: Time.zone.now.tomorrow.all_day) }
+  scope :di_oggi,   -> { where(data_tappa: Date.today) }
+  scope :di_domani, -> { where(data_tappa: Date.tomorrow) }
   
   scope :del_giorno, ->(day) { where(data_tappa: day.to_date.all_day) }
-  scope :della_settimana, ->(day) { where(data_tappa: day.beginning_of_week..day.end_of_week) } 
+  scope :della_settimana, ->(day) { where(data_tappa: day.to_date.beginning_of_week..day.to_date.end_of_week) } 
   scope :del_mese, ->(day) { where(data_tappa: day.beginning_of_month..day.end_of_month) } 
   scope :dell_anno, ->(day) { where(data_tappa: day.beginning_of_year..day.end_of_year) }
 

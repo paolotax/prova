@@ -66,30 +66,30 @@
 
 <%= turbo_frame_tag "agenda", class: "flex w-full gap-2" do %>
   
-  <% @settimana.each do |giorno| %>
+  	<% @settimana.each do |giorno| %>
       
-      <%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
+      	<%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
         
-        
-        <%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
+			<%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
 
-        <% @tappe_per_giorno.select {|t| giorno == t }.values.each do |tappe| %>
+			<%= tag.div id: "giorno_#{giorno.to_s}", 
+					class: "min-h-72 w-full bg-transparent",
+					data: {
+						controller: "tax-sortable",
+						tax_sortable_group_value: "data-tappa",
+						tax_sortable_data_tappa: "#{giorno}",
+						
+					} do %>        
+				<%# <li class="h-72 w-full bg-gray-200">...</li> %>
+				<% @tappe_per_giorno.select {|t| giorno == t }.values.each do |tappe| %>
+					<% tappe.sort_by(&:position).each do |tappa| %>
 
-          <%= tag.ul id: "giorno_#{giorno.to_s}", data: {
-                controller: "tax-sortable",
-                tax_sortable_group_value: "data-tappa",
-                tax_sortable_data_tappa: "#{giorno}"
-          } do %>
-            <% tappe.sort_by(&:position).each do |tappa| %>
-              <li>
-                <%= render tappa, with_checkbox: false %>
-              </li>
-            <% end %>
-          <% end %>
-        <% end %>
+						<%= render tappa, with_checkbox: false %>
 
-      <% end %>
-
+					<% end %>
+				<% end %>
+			<% end %>
+      	<% end %>
     <% end %>
 <% end %>
   
