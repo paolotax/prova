@@ -1,8 +1,8 @@
- <%# locals: ( tappa:, with_checkbox: false ) -%>
+ <%# locals: ( tappa:, with_checkbox: false, with_navigator: false ) -%>
 
-<%= tag.li id: dom_id(tappa),
+<%= tag.div id: dom_id(tappa),
         class: [ 
-            "group px-2 py-1.5 grid border-b max-w-72 rounded-md shadow-md items-center": true,
+            "group px-2 py-1.5 grid border-b rounded-md shadow-md items-center": true,
             "grid-cols-6 gap-2 mb-2": !with_checkbox,
             "grid-cols-7": with_checkbox,
             "bg-blue-100": tappa.tappable_type == "Cliente",
@@ -26,15 +26,27 @@
         
 
     <%= tag.div class: [
-            "text-xs font-bold text-gray-600": true,
+            "text-xs font-bold text-gray-600 flex justify-between items-center": true,
             "col-span-4": with_checkbox,
             "col-span-5": !with_checkbox
-        ] do %>  
-        <%= render partial: "clientable/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
-        <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
-        <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+        ] do %>
+        
+        <%= tag.div class: "flex flex-col" do %>  
+            <%= render partial: "clientable/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
+            <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
+            <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
+        <% end %>
+        
+        <% if with_navigator %>
+            <%= tag.div  do %>
+                <%= component 'tax_button', 
+                        svg_file: "icon-map-pin.svg",
+                        color: "pink",
+                        url:  go_to_tappable_path(tappa.tappable, current_user.navigator),
+                        target: "_blank"
+                %>
+            <% end %>
+        <% end %>
     <% end %>
 
-
-    
 <% end %>
