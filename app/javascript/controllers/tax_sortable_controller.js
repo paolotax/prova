@@ -19,10 +19,10 @@ export default class extends Controller {
 
   onEnd(event) {
     var sortableUpdateUrl = event.item.dataset.taxSortableUpdateUrl
-    var sortableDataTappa = event.to.dataset.taxSortableDataTappa
-
+    var dataTappa = event.to.dataset.taxSortableDataTappa
+    var newPosition = event.newIndex + 1
     patch(sortableUpdateUrl, {
-      body: JSON.stringify({posizione_doppia: event.newIndex, data_tappa: sortableDataTappa}),
+      body: JSON.stringify({position: newPosition, data_tappa: dataTappa}),
     })
   }
 }
