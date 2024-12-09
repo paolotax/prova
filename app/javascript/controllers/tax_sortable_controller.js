@@ -23,6 +23,9 @@ export default class extends Controller {
     var newPosition = event.newIndex + 1
     patch(sortableUpdateUrl, {
       body: JSON.stringify({position: newPosition, data_tappa: dataTappa}),
+      headers: {
+        Accept: "text/vnd.turbo-stream.html"
+      }
     })
   }
 }

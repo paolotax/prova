@@ -117,7 +117,12 @@ class TappeController < ApplicationController
     end
 
     @tappa.update(position: posizione, data_tappa: params[:tappa][:data_tappa])
-    head :no_content
+    
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa) }
+    end
+    
+    # head :no_content
   end
 
   def bulk_update
