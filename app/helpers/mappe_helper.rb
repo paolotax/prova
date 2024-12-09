@@ -91,6 +91,8 @@ module MappeHelper
   end
 
   def waze_url(coordinates)
+
+    #raise coordinates.inspect
     base_url = "https://waze.com/ul"
     params = coordinates.map.with_index do |coord, index|
       if index == 0
@@ -101,5 +103,36 @@ module MappeHelper
     end
     "#{base_url}?#{params.join('&')}&navigate=yes"
   end
+
+  def create_google_maps_link(coordinates)
+    
+    if coordinates.length < 2
+      return "Devi fornire almeno due coordinate: partenza e destinazione."
+    end
+  
+    origin = "#{coordinates.first[:latitude]},#{coordinates.first[:longitude]}"
+    destination = "#{coordinates.last[:latitude]},#{coordinates.last[:longitude]}"
+    waypoints = coordinates[1...-1].map { |coord| "#{coord[:latitude]},#{coord[:longitude]}" }.join('|')
+  
+    link = "https://www.google.com/maps/dir/?api=1&origin=#{origin}&destination=#{destination}"
+    link += "&waypoints=#{waypoints}" unless waypoints.empty?
+  
+    link
+  end
+
+  def create_apple_maps_link(coordinates)
+    if coordinates.length < 2
+      return "Devi fornire almeno due coordinate: partenza e destinazione."
+    end
+  
+    origin = "#{coordinates.first[:latitude]},#{coordinates.first[:longitude]}"
+    destination = "#{coordinates.last[:latitude]},#{coordinates.last[:longitude]}"
+  
+    link = "http://maps.apple.com/?saddr=#{origin}&daddr=#{destination}"
+    
+    # Nota: Apple Maps non supporta direttamente tappe intermedie nei link
+    link
+  end
+
 
 end

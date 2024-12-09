@@ -2,24 +2,26 @@
 <div data-controller="tax-reveal"> 
     
     
-    <%= component 'tax_button',
-					svg_file: "icon-chevron-right.svg",
-					color: "transparent",
-					data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
 
 
-    <div data-tax-reveal-target="item" class="hidden w-full flex">
+
+
+    <div class="w-full flex">
         <%= js_map get_coordinates(scuole_ids: @scuole.ids.compact, clienti_ids: @clienti.ids.compact), controls: true, tooltips: { hover: false, html: true } %>
 	</div>
-    
+    <%= component 'tax_button',
+                    caption: "Controlla il percorso su Google Maps!!!",
+					svg_file: "icon-truck.svg",
+					color: "transparent",
+                    url: create_google_maps_link(@indirizzi),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
 </div>
 
 
 <%= tag.ul data: {
-        controller: "sortable",
-        sortable_animation_value: "150",
-        sortable_resource_name_value: "tappa",
-        sortable_param_name_value: "position"
+        controller: "tax-sortable",
+        tax_sortable_param_name_value: "position",
+		tax_sortable_data_tappa: "#{Date.today.to_s}",
 
     } do %>
     <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false} %>

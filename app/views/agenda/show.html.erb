@@ -64,11 +64,11 @@
 </div>
 
 
-<%= turbo_frame_tag "agenda", class: "flex w-full gap-2" do %>
+<%= turbo_frame_tag "agenda", class: "flex w-full grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7 gap-4" do %>
   
   	<% @settimana.each do |giorno| %>
       
-      	<%= tag.div class: "w-full md:min-w-1/2 3xl:w-1/6 flex flex-col gap-2" do %>
+      	<%= tag.div class: "col-span-1" do %>
         
 			<%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
 

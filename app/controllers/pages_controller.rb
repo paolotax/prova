@@ -27,7 +27,15 @@ class PagesController < ApplicationController
         
         
         @tappe = current_user.tappe.di_oggi.includes(:tappable, :giro).order(:position)
-       
+
+        @indirizzi = @tappe.map do |t|
+          {
+            latitude: t.tappable.latitude,
+            longitude: t.tappable.longitude
+          }
+        end
+
+
         # @grouped_records = @tappe.group_by{|t| t.tappable.direzione_or_privata }
         # 
         @appunti_di_oggi = current_user.appunti.da_completare.nel_baule_di_oggi
@@ -42,7 +50,7 @@ class PagesController < ApplicationController
         # # fix this @adozioni in form_multi 
         # @adozioni = current_user.adozioni.vendita.joins(:scuola).where("import_scuole.id in (?)", @scuole_di_oggi.pluck(:id))
 
-        # @indirizzi = current_user.import_scuole.where(id: current_user.tappe.di_oggi.pluck(:tappable_id))
+        
 
         respond_to do |format|
           format.html
