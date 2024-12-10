@@ -18,8 +18,9 @@
 </div>
 
 
-<%= tag.ul data: {
+<%= tag.div data: {
         controller: "tax-sortable",
+        tax_sortable_group_value: "calendar",
         tax_sortable_param_name_value: "position",
 		tax_sortable_data_tappa: "#{Date.today.to_s}",
 

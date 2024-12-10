@@ -6,8 +6,7 @@
 		<% end %>
 		
 		<% heading.with_description do %>
-			<%= tag.div @cliente.indirizzo, class: "text-sm font-semibold text-gray-400" %>
-			<%= tag.div @cliente.comune, class: "text-sm font-semibold text-gray-400"  %>
+			<%= tag.div simple_format(@cliente.address), class: "text-sm font-semibold text-gray-400" %>
 		<% end %>
 
 		<% if @cliente.can_delete? %>
@@ -27,23 +26,26 @@
 			<% end %>
 		<% end %>
 
-		<% heading.with_action do %>
-			<%= component 'tax_button', 
-					caption: "Vai...",
-					svg_file: "icon-map-pin.svg",
-					color: "pink",
-					url:  go_to_tappable_path(@cliente, current_user.navigator),
-					target: "_blank"
-			%>
-		<% end %>
+		<% if @cliente.geocoded? %>
+			<% heading.with_action do %>
 
-		<% heading.with_action do %>
-			<%= component 'tax_button', 
-					caption: "Mappa",
-					svg_file: "icon-mappa.svg",
-					color: "pink",
-					url:  mappe_path(id: @cliente.class.name.underscore + "-" + @cliente.id.to_s)
-			%>
+					<%= component 'tax_button', 
+							caption: "Vai...",
+							svg_file: "icon-map-pin.svg",
+							color: "pink",
+							url:  go_to_tappable_path(@cliente, current_user.navigator),
+							target: "_blank"
+					%>
+			<% end %>
+
+			<% heading.with_action do %>
+				<%= component 'tax_button', 
+						caption: "Mappa",
+						svg_file: "icon-mappa.svg",
+						color: "pink",
+						url:  mappe_path(id: @cliente.class.name.underscore + "-" + @cliente.id.to_s)
+				%>
+			<% end %>
 		<% end %>
 
 		<% heading.with_action do %>
