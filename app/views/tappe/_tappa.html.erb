@@ -1,5 +1,7 @@
  <%# locals: ( tappa:, with_checkbox: false, with_navigator: false ) -%>
 
+docker run -d -p 3000:8080 --gpus=all -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollama
+
 <%= tag.div id: dom_id(tappa),
         class: [ 
             "group px-2 py-1.5 grid border-b rounded-md shadow-md items-center": true,
@@ -26,7 +28,7 @@
         
 
     <%= tag.div class: [
-            "text-xs font-bold text-gray-600 flex justify-between items-center": true,
+            "group text-xs font-bold text-gray-600 flex justify-between items-center": true,
             "col-span-4": with_checkbox,
             "col-span-5": !with_checkbox
         ] do %>
@@ -37,8 +39,8 @@
             <%= tag.div tappa.titolo, class: "pt-2 text-xs italic font-semibold text-gray-400" %>  
         <% end %>
         
-        <% if with_navigator %>
-            <%= tag.div  do %>
+        <%# if with_navigator %>
+            <%= tag.div class: "hidden group-[.show-navigator]:inline-block" do %>
                 <%= component 'tax_button', 
                         svg_file: "icon-map-pin.svg",
                         color: "pink",
@@ -46,7 +48,7 @@
                         target: "_blank"
                 %>
             <% end %>
-        <% end %>
+        <%# end %>
     <% end %>
 
 <% end %>
