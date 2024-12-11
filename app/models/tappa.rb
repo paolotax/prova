@@ -82,6 +82,8 @@ class Tappa < ApplicationRecord
         "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%") 
   }
 
+  delegate :latitude, :longitude, :denominazione, to: :tappable
+
   def attuale?
     data_tappa.nil? || data_tappa >= Time.zone.now.beginning_of_day 
   end

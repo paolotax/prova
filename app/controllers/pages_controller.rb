@@ -28,8 +28,8 @@ class PagesController < ApplicationController
 
         @indirizzi = @tappe.map do |t|
           {
-            latitude: t.tappable.latitude,
-            longitude: t.tappable.longitude
+            latitude: t.latitude,
+            longitude: t.longitude
           }
         end
 

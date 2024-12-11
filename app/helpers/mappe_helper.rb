@@ -20,39 +20,21 @@ module MappeHelper
     end
   end
 
-  def get_coordinates(scuole_ids: [], clienti_ids: [])
-    #scuole_ids = current_user.tappe.di_oggi.pluck(:tappable_id)
-    scuole = ImportScuola.where(id: scuole_ids)
-    clienti = Cliente.where(id: clienti_ids)
-    
+  def get_coordinates(tappe)
     data = []
-    
-    scuole.map do |scuola|
-      next if scuola.geocoded.nil? || scuola.geocoded == false 
+
+    tappe.each do |tappa|
+      tappable = tappa.tappable
+      next if tappable.geocoded.nil? || tappable.geocoded == false 
 
       data << {
-        latitude: scuola.latitude,
-        longitude: scuola.longitude,
-        label: scuola.scuola,
-        color: "#85C9E6",
-        tooltip: html_for_scuola(scuola),
-        tipo: "ImportScuola"
+        latitude: tappa.latitude,
+        longitude: tappa.longitude,
+        label: tappa.denominazione,
+        color: tappable.is_a?(ImportScuola) ? "#85C9E6" : "#f84d4d",
+        tooltip: tappable.is_a?(ImportScuola) ? html_for_scuola(tappable) : html_for_cliente(tappable),
+        tipo: tappable.class.name
       }
-    
-    end
-
-    clienti.map do |cliente|
-      next if cliente.geocoded.nil? || cliente.geocoded == false 
-
-      data << {
-        latitude: cliente.latitude,
-        longitude: cliente.longitude,
-        label: cliente.denominazione,
-        color: "#f84d4d",
-        tooltip: html_for_cliente(cliente),
-        tipo: "Cliente"
-      }
-    
     end
 
     if data.empty?
@@ -65,7 +47,6 @@ module MappeHelper
     end
 
     data.compact
-
   end
 
   def go_to_tappable_path(tappable, provider = 'waze')
