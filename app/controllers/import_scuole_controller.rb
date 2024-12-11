@@ -8,7 +8,7 @@ class ImportScuoleController < ApplicationController
   def index
 
     @import_scuole = current_user.import_scuole
-      .includes(:appunti_da_completare, :direzione)
+      .includes(:appunti_da_completare, :direzione, :tappe)
 
     @import_scuole = filter(@import_scuole.all)
 
