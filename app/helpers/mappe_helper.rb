@@ -32,7 +32,7 @@ module MappeHelper
         longitude: tappa.longitude,
         label: tappa.denominazione,
         color: tappable.is_a?(ImportScuola) ? "#85C9E6" : "#f84d4d",
-        tooltip: tappable.is_a?(ImportScuola) ? html_for_scuola(tappable) : html_for_cliente(tappable),
+        # tooltip: tappable.is_a?(ImportScuola) ? html_for_scuola(tappable) : html_for_cliente(tappable),
         tipo: tappable.class.name
       }
     end

@@ -1,4 +1,3 @@
-
 # first, setup dashboard authentication
 require "sidekiq/web"
 
@@ -180,7 +179,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :mappe, only: [:show, :update]
+  resources :mappe, only: [:show, :update] do
+    collection do
+      get 'calcola_percorso_ottimale'
+    end
+  end
   
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
