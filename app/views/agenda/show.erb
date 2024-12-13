@@ -64,11 +64,6 @@
     <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
 <% end %>
 
-<%= tag.div "Appunti di OGGI:", class: "text-2xl font-bold p-4" %>
-<% @appunti_di_oggi.each do |appunto| %>
-    <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
-<% end %>
-
 <div data-controller="tax-reveal"> 
     <div class="w-full flex">
         <%= js_map get_coordinates(@tappe), controls: true, tooltips: { hover: false, html: true } %>
@@ -78,3 +73,13 @@
 
     </div>
 </div>
+
+<% unless @appunti_del_giorno.empty? %>
+    <%= tag.div "Appunti di OGGI:", class: "text-xl font-bold p-4" %>
+    <div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+			
+        <% @appunti_del_giorno.each do |appunto| %>
+            <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
+        <% end %>
+    </div>
+<% end %>

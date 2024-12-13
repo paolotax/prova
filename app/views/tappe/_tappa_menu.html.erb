@@ -85,11 +85,11 @@
         <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
         <% unless tappa.data_tappa.nil? %>
             <% dropdown.with_item do %>
-                <%= link_to tappe_path( giorno: tappa.data_tappa.to_date),
+                <%= link_to giorno_path( giorno: tappa.data_tappa),
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         data: {turbo_action: "replace", turbo_frame: "_top"}, 
                         role: "menuitem", tabindex: "-1", id: "tappa-menu-item-0" do %>
-                    Filtra giorno
+                    Vai al giorno
                 <% end %>
             <% end %>
         <% end %>

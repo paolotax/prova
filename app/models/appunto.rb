@@ -109,8 +109,11 @@ class Appunto < ApplicationRecord
   scope :in_sospeso, -> { where(stato: ["in visione", "da pagare"]).non_saggi } 
   scope :non_archiviati, -> { where.not(stato: ["archiviato", "completato"]).non_saggi }
 
+  # non includono clienti REFACTOR appunto clientable
   scope :nel_baule_di_oggi, -> { where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
   scope :nel_baule_di_domani, -> { where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
+  scope :nel_baule_del_giorno, ->(day) { where(import_scuola_id: Current.user.tappe.del_giorno(day).where(tappable_type: "ImportScuola").pluck(:tappable_id)) }  
+
 
   scope :saggi, -> { where(nome: "saggio").where.not(import_adozione_id: nil) }
   scope :seguiti, -> { where(nome: "seguito").where.not(import_adozione_id: nil) }

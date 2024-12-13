@@ -32,7 +32,7 @@ class AgendaController < ApplicationController
       }
     end
 
-    @appunti_di_oggi = current_user.appunti.da_completare.nel_baule_di_oggi
+    @appunti_del_giorno = current_user.appunti.da_completare.nel_baule_del_giorno(@giorno)
                                 .with_attached_attachments
                                 .with_attached_image
                                 .with_rich_text_content
