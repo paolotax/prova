@@ -53,35 +53,31 @@
 
 
 <div class="p-1" 
-	data-controller="map"
-     data-map-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-     data-map-latitude="<%= @tappable.latitude %>"
-     data-map-longitude="<%= @tappable.longitude %>"
-     data-map-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>">
+	data-controller="mappa-posizione"
+    data-mappa-posizione-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+    data-mappa-posizione-latitude="<%= @tappable.latitude %>"
+    data-mappa-posizione-longitude="<%= @tappable.longitude %>"
+    data-mappa-posizione-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>">
 
-			  <div class="relative flex w-44">
-	<select data-action="change->map#changeStyle" class="peer block w-full border-0 bg-transparent py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" >
-		<option value="satellite-streets-v12">Satellite e strade</option>
-		
-		<option value="streets-v12">Strade</option>
-		<option value="satellite-v9">Satellite</option>
-		<option value="outdoors-v12">Outdoors</option>
-		<option value="light-v10">Light</option>
-		<option value="dark-v10">Dark</option>
-	</select>
-	<%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
-  </div>
+	<div class="relative flex w-44">
+		<select data-action="change->mappa-posizione#changeStyle" class="peer block w-full border-0 bg-transparent py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" >
+			<option value="satellite-streets-v12">Satellite e strade</option>
+			
+			<option value="streets-v12">Strade</option>
+			<option value="satellite-v9">Satellite</option>
+			<option value="outdoors-v12">Outdoors</option>
+			<option value="light-v10">Light</option>
+			<option value="dark-v10">Dark</option>
+		</select>
+		<%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
+	</div>
 
-  <div id="map" data-map-target="map" style="height: 500px;" class="mt-4"></div>
+  	<div id="map" data-mappa-posizione-target="map" style="height: 500px;" class="mt-4"></div>
   
-  <pre id="coordinates" 
-      class="bg-black bg-opacity-50 text-white p-1.5 m-0 text-xs leading-4 rounded-sm" 
-      data-map-target="coordinates">
-  </pre>
-
-  
-  
-
+	<pre id="coordinates" 
+		class="bg-black bg-opacity-50 text-white p-1.5 m-0 text-xs leading-4 rounded-sm" 
+		data-mappa-posizione-target="coordinates">
+	</pre>
 </div>
 
 
