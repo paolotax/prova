@@ -12,3 +12,27 @@ eagerLoadControllersFrom("controllers", application)
 // lazyLoadControllersFrom("controllers", application)
 
 
+// Ricarica la mappa dopo ogni aggiornamento Turbo
+document.addEventListener("turbo:frame-load", () => {
+    const mapControllers = application.getControllerForElementAndIdentifier(
+      document.querySelector('[data-controller="mappa-directions"]'),
+      "map"
+    );
+    if (mapControllers) {
+        console.log("turbo:frame-load")
+      mapControllers.initMap();
+    }
+  });
+  
+  document.addEventListener("turbo:load", () => {
+    const mapControllers = application.getControllerForElementAndIdentifier(
+      document.querySelector('[data-controller="mappa-directions"]'),
+      "map"
+    );
+    if (mapControllers) {
+        console.log("turbo:load")
+      mapControllers.initMap();
+    }
+  });
+
+

@@ -6,6 +6,18 @@ export default class extends Controller {
   static targets = ["map"]
 
   connect() {
+    this.initMap();
+  }
+
+  initMap() {
+
+    if (!this.mapTarget) return;
+
+    // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
+    if (this.map) {
+      this.map.remove();
+    }
+
     mapboxgl.accessToken = this.data.get("mapboxAccessToken")
     const coordinates = JSON.parse(this.data.get("coordinates"))
 
@@ -13,13 +25,16 @@ export default class extends Controller {
       container: this.mapTarget,
       style: "mapbox://styles/mapbox/streets-v11",
       center: [coordinates[0].lng, coordinates[0].lat],
-      zoom: 12
+      zoom: 12,
+      language: 'it-IT'
     })
 
     const directions = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
       unit: 'metric',
-      profile: 'mapbox/driving'
+      profile: 'mapbox/driving',
+      interactive: false,
+      language: 'it-IT'
     })
 
     this.map.addControl(directions, 'top-left')
@@ -29,7 +44,40 @@ export default class extends Controller {
 
     coordinates.slice(1, -1).forEach((coord, index) => {
         directions.addWaypoint(index, [coord.lng, coord.lat]);
-}   );
+        // Aggiungi un marker sulla mappa
+        this.addMarker(coord);
+    });
 
+      // Force geometry rendering
+      directions.on("route", (e) => {
+      if (e.route && e.route.length > 0) {
+        console.log("Route geometry updated successfully.");
+      } else {
+        console.warn("No route found.");
+      }
+    });
+
+    this.forceGeometryRender(directions);
   }
+
+  forceGeometryRender(directions) {
+    // Trigger a manual render if waypoints are set
+    directions.on("waypoint", () => {
+      console.log("Waypoint set. Updating route...");
+      directions.queryRenderedFeatures();
+    });
+  }
+
+  addMarker(coord) {
+    const marker = new mapboxgl.Marker()
+      .setLngLat([coord.lng, coord.lat])
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }).setHTML(
+          `<h3>${coord.name || "Tappa"}</h3><p>${coord.description || ""}</p>`
+        )
+      ) // Aggiungi un popup con il nome e la descrizione
+      .addTo(this.map);
+  }
+
 }
+
