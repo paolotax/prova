@@ -8,7 +8,8 @@ require "sidekiq/web"
 # then mount it
 Rails.application.routes.draw do
   
-  get "agenda", to: "agenda#show"
+  get "agenda", to: "agenda#index"
+  get "agenda/:giorno", to: "agenda#show", as: "giorno"
 
   authenticate :user, ->(user) { user.admin? } do
     mount Blazer::Engine, at: "blazer"

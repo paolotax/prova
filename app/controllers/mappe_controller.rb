@@ -16,10 +16,11 @@ class MappeController < ApplicationController
   end
 
   def calcola_percorso_ottimale
-    places = current_user.tappe.del_giorno(Time.zone.today).includes(:tappable).order(:position)
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+    places = current_user.tappe.del_giorno(@giorno).includes(:tappable).order(:position)
     percorso = PercorsoOttimale.new(places)
     percorso.calcola
-    redirect_to oggi_path, notice: 'Percorso ottimale calcolato con successo.'
+    redirect_to request.referrer, notice: 'Percorso ottimale calcolato con successo.'
   end
 
   private

@@ -70,7 +70,7 @@
       
       	<%= tag.div class: "col-span-1" do %>
         
-			<%= tag.p I18n.l(giorno, format: :day_calendar, locale: :it) %>
+			<%= tag.p link_to(I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s), data: { turbo_frame: :_top } ) %>
 
 			<%= tag.div id: "giorno_#{giorno.to_s}", 
 					class: "min-h-72 w-full bg-transparent",
