@@ -38,9 +38,5 @@ class AgendaController < ApplicationController
                                 .with_rich_text_content
                                 .includes(:import_scuola)
                    
-    respond_to do |format|
-      format.html
-      format.xlsx
-    end
   end
 end

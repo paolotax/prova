@@ -207,8 +207,6 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'oggi', to: 'pages#oggi'
-  
   # get 'clienti',      to: 'clienti#index'
   # get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  
