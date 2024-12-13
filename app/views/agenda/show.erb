@@ -75,7 +75,7 @@
 
 <div data-controller="mappa-directions"
     data-mappa-directions-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-    data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude } }.to_json %>">
+    data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>">
     <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
 </div>
 

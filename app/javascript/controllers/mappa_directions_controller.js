@@ -37,19 +37,37 @@ export default class extends Controller {
       language: 'it-IT'
     })
 
-    this.map.addControl(directions, 'top-left')
+    this.map.on('load', () => {
 
-    directions.setOrigin([coordinates[0].lng, coordinates[0].lat]);
-    directions.setDestination([coordinates[coordinates.length - 1].lng, coordinates[coordinates.length - 1].lat]);
+      this.map.addControl(directions, 'top-left');
 
-    coordinates.slice(1, -1).forEach((coord, index) => {
-        directions.addWaypoint(index, [coord.lng, coord.lat]);
-        // Aggiungi un marker sulla mappa
-        this.addMarker(coord);
-    });
+      directions.setOrigin([coordinates[0].lng, coordinates[0].lat]);
+      directions.setDestination([coordinates[coordinates.length - 1].lng, coordinates[coordinates.length - 1].lat]);
+      this.addMarker(coordinates[0]);
+      this.addMarker(coordinates[coordinates.length - 1]);
 
-      // Force geometry rendering
-      directions.on("route", (e) => {
+      coordinates.slice(1, -1).forEach((coord, index) => {
+          directions.addWaypoint(index, [coord.lng, coord.lat]);
+          // Aggiungi un marker sulla mappa
+          this.addMarker(coord);
+      });
+
+      const bounds = new mapboxgl.LngLatBounds();
+      // Extend the bounds to include all waypoints
+      coordinates.forEach(coord => {
+          console.log(coord);
+          bounds.extend(coord);
+      });
+      
+      // Fit the map to the bounds with padding
+      this.map.fitBounds(bounds, {
+          padding: 50 // 50 pixels of padding
+      });
+    }); 
+    
+
+    // Force geometry rendering
+    directions.on("route", (e) => {
       if (e.route && e.route.length > 0) {
         console.log("Route geometry updated successfully.");
       } else {
