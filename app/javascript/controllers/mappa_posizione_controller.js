@@ -1,13 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="posizione-mappa"
+// Connects to data-controller="mappa-posizione"
 export default class extends Controller {
 
   static targets = [ "map", "coordinates" ]
 
   connect() {
 
-    console.log(this.data.get("mapboxAccessToken"))
     mapboxgl.accessToken = this.data.get("mapboxAccessToken")
 
     this.map = new mapboxgl.Map({

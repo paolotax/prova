@@ -31,3 +31,5 @@ pin "@stimulus-components/scroll-to", to: "@stimulus-components--scroll-to.js" #
 
 pin "ahoy", to: "ahoy.js"
 pin "mapkick/bundle", to: "mapkick--bundle.js" # @0.2.6
+
+

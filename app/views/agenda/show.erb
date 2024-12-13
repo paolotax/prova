@@ -1,3 +1,12 @@
+<% content_for :head do %>
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>  
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>  
+    
+    <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
+
+    <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
+<% end %>
+
 <div class="sticky top-20 z-10">
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
@@ -64,14 +73,10 @@
     <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
 <% end %>
 
-<div data-controller="tax-reveal"> 
-    <div class="w-full flex">
-        <%= js_map get_coordinates(@tappe), controls: true, tooltips: { hover: false, html: true } %>
-    </div>
-    <div class="w-full flex justify-between">
-
-
-    </div>
+<div data-controller="mappa-directions"
+    data-mappa-directions-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+    data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude } }.to_json %>">
+    <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
 </div>
 
 <% unless @appunti_del_giorno.empty? %>
