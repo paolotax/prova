@@ -1,4 +1,4 @@
- <%# locals: ( tappa:, with_checkbox: false, with_handle: true ) -%>
+<%# locals: ( tappa:, with_checkbox: false, with_handle: true ) -%>
 
 <%= tag.div id: dom_id(tappa),
         class: [ 
@@ -10,14 +10,6 @@
         ],
          data: { tax_sortable_update_url: sort_tappa_path(tappa) } do %>
 
-    <% if with_handle %>
-        <%= tag.div class: "handle cursor-move text-gray-400" do %>
-            <%= inline_svg_tag "icon-bars-4" %>
-        <% end %>
-    <% end %>
-
-
-
     <% if with_checkbox %>
         <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
                         multiple: true,
@@ -28,11 +20,15 @@
                         } %>
     <% end %>
 
-    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-1" } col-span-1" do %> 
+    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-1" } col-span-1 flex flex-col justify-between items-center align-center gap-2 group-[.show-navigator]:flex-row-reverse" do %> 
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
+        <% if with_handle %>
+            <%= tag.div class: "handle cursor-move text-gray-400" do %>
+                <%= inline_svg_tag "icon-bars-4" %>
+            <% end %>
+        <% end %>
     <% end %>
         
-
     <%= tag.div class: [
             "group text-xs font-bold text-gray-600 flex justify-between items-center": true,
             "col-span-4": with_checkbox,

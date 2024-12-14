@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   
-  static targets = ["map"]
+  static targets = ["map", "totaleKm", "totaleTempo"];
 
   static values = {
     mapboxToken: String,
@@ -17,12 +17,12 @@ export default class extends Controller {
 
   initMap() {
 
-    if (!this.mapTarget) return;
+    // if (!this.mapTarget) return;
 
-    // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
-    if (this.map) {
-      this.map.remove();
-    }
+    // // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
+    // if (this.map) {
+    //   this.map.remove();
+    // }
 
     mapboxgl.accessToken = this.mapboxTokenValue;
     const coordinates = JSON.parse(this.data.get("coordinates"))
@@ -68,15 +68,13 @@ export default class extends Controller {
       
       // Fit the map to the bounds with padding
       this.map.fitBounds(bounds, {
-          padding: 50 // 50 pixels of padding
+          padding: 100 // 50 pixels of padding
       });
     }); 
 
     this.fetchAndDrawRoute();
     
   }
-
-
 
   addMarker(coord) {
     const marker = new mapboxgl.Marker()
@@ -91,17 +89,15 @@ export default class extends Controller {
 
   fetchAndDrawRoute() {
     const waypoints = this.waypointsValue.map(coord => coord.join(',')).join(';');
-
-    console.log(waypoints);
-
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
-    console.log(url);
 
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
         const route = data.routes[0].geometry;
-        console.log("data");
+        const distance = data.routes[0].distance; // Distance in meters
+        const duration = data.routes[0].duration; // Duration in seconds
+
         // Add the route to the map as a layer
         this.map.addLayer({
           id: "route",
@@ -120,7 +116,7 @@ export default class extends Controller {
           },
           paint: {
             "line-color": "#3887be",
-            "line-width": 5,
+            "line-width": 6,
             "line-opacity": 0.75
           }
         });
@@ -129,9 +125,28 @@ export default class extends Controller {
         const bounds = new mapboxgl.LngLatBounds();
         route.coordinates.forEach((coord) => bounds.extend(coord));
         this.map.fitBounds(bounds, { padding: 50 });
+
+        // Display the total distance
+        const distanceInKm = (distance / 1000).toFixed(1); // Convert to km and round to 2 decimal places
+        let durationDisplay;
+        if (duration < 3600) {
+          durationDisplay = `${(duration / 60).toFixed()} minuti`; // Convert to minutes and round to 2 decimal places
+        } else {
+          const hours = Math.floor(duration / 3600);
+          const minutes = Math.round((duration % 3600) / 60);
+          const hoursDisplay = hours === 1 ? `${hours} ora` : `${hours} ore`;
+          const minutesDisplay = minutes === 1 ? `${minutes} minuto` : `${minutes} minuti`;
+          durationDisplay = `${hoursDisplay} ${minutesDisplay}`;
+        }
+
+        console.log(`Total distance: ${distanceInKm} km`);
+        console.log(`Total duration: ${durationDisplay}`);
+        // You can also display this in your UI as needed
+        this.totaleKmTarget.textContent = distanceInKm;
+        this.totaleTempoTarget.textContent = durationDisplay;
       })
       .catch((error) => console.error("Error fetching route:", error));
   }
 
-}
+};
 
