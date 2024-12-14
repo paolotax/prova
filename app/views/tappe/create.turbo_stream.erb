@@ -5,3 +5,11 @@
 <%= turbo_stream.append "scuola-tappe-list" do %>
     <%= render partial: "tappe/tappa", locals: { tappa: @tappa } %>
 <% end %>
+
+<%= turbo_stream.replace "no-tappe" do %>
+    <%= "" %>
+<% end %>
+
+<%= turbo_stream.append "giorno-#{@tappa.data_tappa.to_s}" do %>
+    <%= render @tappa %>
+<% end %>

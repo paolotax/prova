@@ -1,8 +1,8 @@
 <%= form_with(model: tappa, class: "contents") do |form| %>
 
     <% if params[:action] == "new" %>
-        <%= form.hidden_field :tappable_id, value: @tappable&.id %>
-        <%= form.hidden_field :tappable_type, value: @tappable&.class&.name %>
+        <%= form.hidden_field :tappable_id, value: @tappable_id %>
+        <%= form.hidden_field :tappable_type, value: @tappable_type %>
     <% end %>
 
     <% if tappa.errors.any? %>
@@ -17,26 +17,16 @@
     <% end %>
 
     <%= tag.div class: "my-4" do %>  
-        <%= tag.div class: "cb-tax cb-medium rounded-t-lg bg-gray-100 border px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
-            <span class="pr-2">giro:</span>
-            <%= form.combobox :giro_id, current_user.giri.all,
-                name_when_new: "tappa[new_giro]" %>
-            
-        <% end %>
+
         <%= tag.div class: "rounded-b-lg bg-white border border-t-0 px-2 py-1.5" do %>
            
            <%#= render partial: "clientable/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
-				
-            <% if tappa.tappable_type == "ImportScuola" %>
-                <%= render partial: "import_scuole/scuola_small", locals: { 
-                        import_scuola: tappa.tappable, 
-                        with_navigation: false, 
-                        with_logo: true, 
-                        with_link: false,
-                        with_info: true } %>
-            <% else %>
-                <%= tappa.tappable&.denominazione %>
-            <% end %>
+            <%= component "tax_select_clientable", 
+                form: form, 
+                object_type: "tappable", 
+                field_name_suffix: "tappa", 
+                type: tappa.tappable_type, 
+                id: tappa.tappable_id %>
 
         <% end %>
     <% end %>  
@@ -48,15 +38,22 @@
         %>
     </div> 
 
-    <div class="my-5">
+    <div class="my-5 flex justify-between items-center">
         <%= form.date_field :data_tappa,
             placeholder: "data tappa...", 
             class: "block bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6"
         %>
+        <%= tag.div class: "cb-tax cb-medium rounded-t-lg bg-gray-100 border px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
+            <span class="pr-2">giro:</span>
+            <%= form.combobox :giro_id, current_user.giri.all,
+                name_when_new: "tappa[new_giro]" %>
+            
+        <% end %>
     </div>  
     
     <div class="my-5 flex justify-between">
-        		<%= button_to  do %>
+        
+        <%= button_to  do %>
 			<div class="btn btn-indigo">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

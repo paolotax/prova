@@ -63,15 +63,38 @@
 </div>
 
 
-<% if @tappe.any? %>
-  <div class="group show-navigator"
-      data-controller="tax-sortable"
-      data-tax-sortable-group-value="calendar"
-      data-tax-sortable-param-name-value="position"
-      data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
-      <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
-  </div>
+<div id="giorno-<%= @giorno %>"
+    class="group show-navigator"
+    data-controller="tax-sortable"
+    data-tax-sortable-group-value="calendar"
+    data-tax-sortable-param-name-value="position"
+    data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
 
+    <%# non riordina bene position col css che nasconde quindi lo devo eliminare nel turbo stream %>
+    <% if @tappe.empty? %>
+        <div class="no-tappe text-center p-4 hidden only:block">
+            <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
+            <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
+        </div>
+    <% else %>
+        <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
+    <% end %>
+</div>
+
+
+<div class="flex justify-center gap-4 mt-4">
+    <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno), 
+    data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
+    class: 'btn btn-primary' do %>
+    <%= inline_svg_tag('icon-building-library.svg') %> Vai in una scuola
+    <% end %>
+    <%= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno), class: 'btn btn-primary',
+        data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
+    <%= inline_svg_tag('icon-cash.svg') %> Vai da un cliente
+    <% end %>
+</div>
+
+<% if @tappe.any? %>
   <div data-controller="mappa-directions"
       data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
       data-mappa-directions-waypoints-value="<%= @waypoints %>"    
@@ -87,13 +110,8 @@
       
       <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
   </div>
-<% else %>
-  <div class="text-center p-4">
-    <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
-    <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
-    <%= link_to 'Crea nuova tappa', new_tappa_path, class: 'btn btn-primary mt-4' %>
-  </div>
 <% end %>
+
 
 <% unless @appunti_del_giorno.empty? %>
     <div>

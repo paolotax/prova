@@ -49,40 +49,26 @@ class TappeController < ApplicationController
   end
 
   def new
-
-    @tappable = find_tappable
-    @tappa = current_user.tappe.build(giro: current_user.giri.last, tappable: @tappable, data_tappa: Time.now.end_of_day)
+    @tappable_type = params[:tappable_type] || "ImportScuola"
+    @tappable_id = params[:tappable_id] || nil
+    @data_tappa = params[:data_tappa] || Date.today
+    @tappa = current_user.tappe.build(tappable_id: @tappable_id, tappable_type: @tappable_type, data_tappa: @data_tappa)
   end
 
   def edit
   end
 
   def create
-    
-    #fail
-    
-    #raise tappa_params.inspect
-
-    # ?????????????? rifare
-
-    # @tappable = ImportScuola.find(params[:tappable_id])
-    # @giro = current_user.giri.find(params[:giro_id])
 
     @tappa = current_user.tappe.build(tappa_params)
     
     if @tappa.save
       respond_to do |format|
-        format.html { redirect_to @tappable, notice: 'Tappa creata.'  }
-        format.turbo_stream do 
-          flash.now[:notice] = 'Tappa creata!!.'
-          #render partial: "layouts/flash", locals: { notice: "Tappa creata." }
-          #render turbo_stream: turbo_stream.replace(@tappable, partial: "tappe/tappa", locals: { tappa: @tappa })
-        end
+        format.turbo_stream
       end
     else
-      redirect_to @tappable, alert: 'Error: Comment could not be created.'
+      render :new, alert: 'Error: Comment could not be created.'
     end
-    #redirect_back(fallback_location: request.referer)
   end
 
   def update

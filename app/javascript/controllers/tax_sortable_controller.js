@@ -16,7 +16,8 @@ export default class extends Controller {
       onEnd: this.onEnd.bind(this),
       swapThreshold: 0.55,
       group: this.groupValue,
-      handle: '.handle'
+      handle: '.handle',
+      filter: '.filtered'
     })
   }
 

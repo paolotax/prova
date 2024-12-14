@@ -1,20 +1,11 @@
 <fieldset class="my-5 cb-tax cb-large flex flex-col gap-2" id="select-clientable">
+   
+    <%= label_for form: @form, field: "#{object_type}_id", label: @type.gsub("Import", "") %> 
     
-    <% if @clientable_type == "ImportScuola" %>
-        <%= label_for form: @form, field: 'clientable_id', label: 'Scuola' %> 
-        <%= combobox_tag "documento[clientable_id]", @user.import_scuole, 
-            value: @clientable_id, 
-            placeholder: "seleziona scuola..." %>      
-        <%= hidden_field_tag "documento[clientable_type]", "ImportScuola" %>
-
-    <% else %>
-        <%= label_for form: @form, field: 'clientable_id', label: 'Cliente' %> 
-        <%= combobox_tag "documento[clientable_id]", 
-                @user.clienti.order(:denominazione), 
-                value: @clientable_id, 
-                placeholder: "seleziona cliente..." %>      
-        <%= hidden_field_tag "documento[clientable_type]", "Cliente" %>	
-    
-    <% end %>
+    <%= combobox_tag "#{field_name_suffix}[#{object_type}_id]", @user.send(type.underscore.pluralize), 
+            value: @id, 
+            placeholder: "seleziona #{type.humanize.downcase.gsub("import","")}..." %>      
+   
+    <%= hidden_field_tag "#{field_name_suffix}[#{object_type}_type]", type %>
 
 </fieldset>
