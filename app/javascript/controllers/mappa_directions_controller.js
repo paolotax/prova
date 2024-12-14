@@ -3,7 +3,13 @@ import { Controller } from "@hotwired/stimulus"
 // import MapboxDirections from "@mapbox/mapbox-gl-directions"
 
 export default class extends Controller {
+  
   static targets = ["map"]
+
+  static values = {
+    mapboxToken: String,
+    waypoints: Array
+  };
 
   connect() {
     this.initMap();
@@ -18,7 +24,7 @@ export default class extends Controller {
       this.map.remove();
     }
 
-    mapboxgl.accessToken = this.data.get("mapboxAccessToken")
+    mapboxgl.accessToken = this.mapboxTokenValue;
     const coordinates = JSON.parse(this.data.get("coordinates"))
 
     this.map = new mapboxgl.Map({
@@ -29,34 +35,35 @@ export default class extends Controller {
       language: 'it-IT'
     })
 
-    const directions = new MapboxDirections({
-      accessToken: mapboxgl.accessToken,
-      unit: 'metric',
-      profile: 'mapbox/driving',
-      interactive: false,
-      language: 'it-IT'
-    })
+    // const directions = new MapboxDirections({
+    //   accessToken: mapboxgl.accessToken,
+    //   unit: 'metric',
+    //   profile: 'mapbox/driving',
+    //   interactive: false,
+    //   language: 'it-IT'
+    // })
 
     this.map.on('load', () => {
 
-      this.map.addControl(directions, 'top-left');
+      // this.map.addControl(directions, 'top-left');
 
-      directions.setOrigin([coordinates[0].lng, coordinates[0].lat]);
-      directions.setDestination([coordinates[coordinates.length - 1].lng, coordinates[coordinates.length - 1].lat]);
-      this.addMarker(coordinates[0]);
-      this.addMarker(coordinates[coordinates.length - 1]);
+      // directions.setOrigin([coordinates[0].lng, coordinates[0].lat]);
+      // directions.setDestination([coordinates[coordinates.length - 1].lng, coordinates[coordinates.length - 1].lat]);
+      // this.addMarker(coordinates[0]);
+      // this.addMarker(coordinates[coordinates.length - 1]);
 
-      coordinates.slice(1, -1).forEach((coord, index) => {
-          directions.addWaypoint(index, [coord.lng, coord.lat]);
-          // Aggiungi un marker sulla mappa
-          this.addMarker(coord);
-      });
+      // coordinates.slice(1, -1).forEach((coord, index) => {
+      //     directions.addWaypoint(index, [coord.lng, coord.lat]);
+      //     // Aggiungi un marker sulla mappa
+      //     this.addMarker(coord);
+      // });
 
       const bounds = new mapboxgl.LngLatBounds();
       // Extend the bounds to include all waypoints
       coordinates.forEach(coord => {
           console.log(coord);
           bounds.extend(coord);
+          this.addMarker(coord);
       });
       
       // Fit the map to the bounds with padding
@@ -64,27 +71,12 @@ export default class extends Controller {
           padding: 50 // 50 pixels of padding
       });
     }); 
+
+    this.fetchAndDrawRoute();
     
-
-    // Force geometry rendering
-    directions.on("route", (e) => {
-      if (e.route && e.route.length > 0) {
-        console.log("Route geometry updated successfully.");
-      } else {
-        console.warn("No route found.");
-      }
-    });
-
-    this.forceGeometryRender(directions);
   }
 
-  forceGeometryRender(directions) {
-    // Trigger a manual render if waypoints are set
-    directions.on("waypoint", () => {
-      console.log("Waypoint set. Updating route...");
-      directions.queryRenderedFeatures();
-    });
-  }
+
 
   addMarker(coord) {
     const marker = new mapboxgl.Marker()
@@ -95,6 +87,50 @@ export default class extends Controller {
         )
       ) // Aggiungi un popup con il nome e la descrizione
       .addTo(this.map);
+  }
+
+  fetchAndDrawRoute() {
+    const waypoints = this.waypointsValue.map(coord => coord.join(',')).join(';');
+
+    console.log(waypoints);
+
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+    console.log(url);
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        const route = data.routes[0].geometry;
+        console.log("data");
+        // Add the route to the map as a layer
+        this.map.addLayer({
+          id: "route",
+          type: "line",
+          source: {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              properties: {},
+              geometry: route
+            }
+          },
+          layout: {
+            "line-join": "round",
+            "line-cap": "round"
+          },
+          paint: {
+            "line-color": "#3887be",
+            "line-width": 5,
+            "line-opacity": 0.75
+          }
+        });
+
+        // Adjust map bounds to fit the route
+        const bounds = new mapboxgl.LngLatBounds();
+        route.coordinates.forEach((coord) => bounds.extend(coord));
+        this.map.fitBounds(bounds, { padding: 50 });
+      })
+      .catch((error) => console.error("Error fetching route:", error));
   }
 
 }

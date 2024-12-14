@@ -5,6 +5,7 @@ import { patch } from '@rails/request.js'
 // Connects to data-controller="tax-sortable"
 export default class extends Controller {
 
+  static targets = ["handle"]
   static values = {
     group: String
   }
@@ -13,7 +14,9 @@ export default class extends Controller {
     Sortable.create(this.element, {
       animation: 150,
       onEnd: this.onEnd.bind(this),
+      swapThreshold: 0.55,
       group: this.groupValue,
+      handle: '.handle'
     })
   }
 

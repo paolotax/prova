@@ -118,7 +118,7 @@
 	<%= render partial: "tappe/tappa", 
 			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
 			locals: {
-				with_checkbox: false 
+				with_checkbox: false, with_handle: false 
 			} 
 	%>
 </div>

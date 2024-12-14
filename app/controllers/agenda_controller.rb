@@ -32,6 +32,13 @@ class AgendaController < ApplicationController
       }
     end
 
+    @waypoints = @tappe.map do |indirizzo|
+      [
+        indirizzo.longitude,
+        indirizzo.latitude,
+      ]
+    end
+
     @appunti_del_giorno = current_user.appunti.da_completare.nel_baule_del_giorno(@giorno)
                                 .with_attached_attachments
                                 .with_attached_image

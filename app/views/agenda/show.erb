@@ -3,11 +3,10 @@
     <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>  
     
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
-
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
 <% end %>
 
-<div class="sticky top-20 z-10">
+<div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 
@@ -28,6 +27,7 @@
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
             <% end %>
+        
         <% end %>
 
 		<% heading.with_action do %>	
@@ -63,28 +63,30 @@
 	<% end %>
 </div>
 
-<%= tag.div class: "group show-navigator",
-    data: {
-        controller: "tax-sortable",
-        tax_sortable_group_value: "calendar",
-        tax_sortable_param_name_value: "position",
-        tax_sortable_data_tappa: "#{@giorno.to_s}"  
-    } do %>
+<div class="group show-navigator"
+    data-controller="tax-sortable"
+    data-tax-sortable-group-value="calendar"
+    data-tax-sortable-param-name-value="position"
+    data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
     <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
-<% end %>
+</div>
 
 <div data-controller="mappa-directions"
-    data-mappa-directions-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+    data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+    data-mappa-directions-waypoints-value="<%= @waypoints %>"    
     data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>">
+    
+    <h2 class="text-xl font-bold p-4">Mappa:</h2>
     <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
 </div>
 
 <% unless @appunti_del_giorno.empty? %>
-    <%= tag.div "Appunti di OGGI:", class: "text-xl font-bold p-4" %>
-    <div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-			
-        <% @appunti_del_giorno.each do |appunto| %>
-            <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
-        <% end %>
+    <div>
+        <h2 class="text-xl font-bold p-4">Appunti del <%= I18n.l(@giorno, format: :short, lang: :it) %></h2>
+        <div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+            <% @appunti_del_giorno.each do |appunto| %>
+                <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
+            <% end %>
+        </div>
     </div>
 <% end %>

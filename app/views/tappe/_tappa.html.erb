@@ -1,4 +1,4 @@
- <%# locals: ( tappa:, with_checkbox: false ) -%>
+ <%# locals: ( tappa:, with_checkbox: false, with_handle: true ) -%>
 
 <%= tag.div id: dom_id(tappa),
         class: [ 
@@ -9,6 +9,14 @@
             "bg-yellow-100": tappa.tappable_type == "ImportScuola",
         ],
          data: { tax_sortable_update_url: sort_tappa_path(tappa) } do %>
+
+    <% if with_handle %>
+        <%= tag.div class: "handle cursor-move text-gray-400" do %>
+            <%= inline_svg_tag "icon-bars-4" %>
+        <% end %>
+    <% end %>
+
+
 
     <% if with_checkbox %>
         <%= check_box_tag "tappa_ids[]", tappa.id, nil, {
