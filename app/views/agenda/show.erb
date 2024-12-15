@@ -16,7 +16,7 @@
                     svg_file: "icon-arrow-left.svg",
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno - 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_cache: false } %>
                 
             
 
@@ -24,7 +24,7 @@
                     svg_file: "icon-arrow-right.svg",
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_cache: false } %>
             <% end %>
         
         <% end %>
@@ -35,18 +35,8 @@
 				svg_file: 'icon-path-rounded-square.svg',
 				color: "transparent",
 				url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
-			<% end %>
-
-		<% heading.with_action do %>
-        	<%= component 'tax_button',
-				caption: "Google Maps!",
-				svg_file: "icon-truck.svg",
-				color: "transparent",
-				url: create_google_maps_link(@indirizzi),
-				data_attr: { controller: "link-modifier", link_modifier_target: "link" },
-				target: "_blank" %>
 		<% end %>
-
+        
 		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "Agenda",
@@ -95,21 +85,31 @@
 </div>
 
 <% if @tappe.any? %>
-  <div data-controller="mappa-directions"
+    <div
+      data-controller="mappa-directions"
       data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
       data-mappa-directions-waypoints-value="<%= @waypoints %>"    
       data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>">
       
-      <div class="flex justify-between items-center p-4">
-          <h2 class="text-xl font-bold">Mappa:</h2>
-          <div>
+        <div class="flex justify-between items-center p-4">
+            <h2 class="text-xl font-bold">Mappa:</h2>
+            
+            <div>
               <p><strong>Distanza totale:</strong> <span data-mappa-directions-target="totaleKm"></span> km</p>
               <p><strong>Durata totale:</strong> <span data-mappa-directions-target="totaleTempo"></span></p>
-          </div>
-      </div>
+            </div>
+
+            <%= component 'tax_button',
+                caption: "Google Maps!",
+                svg_file: "icon-truck.svg",
+                color: "transparent",
+                url: create_google_maps_link(@indirizzi),
+                data_attr: { controller: "link-modifier", link_modifier_target: "link" },
+                target: "_blank" %>
+        </div>
       
-      <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
-  </div>
+        <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
+    </div>
 <% end %>
 
 
