@@ -22,26 +22,6 @@ class AgendaController < ApplicationController
                 .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Cliente").pluck(:tappable_id))
     
     @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giro).order(:position)
-
-    # @indirizzi = @tappe.map do |t|
-    #   {
-    #     latitude: t.latitude,
-    #     longitude: t.longitude
-    #   }
-    # end
-
-    # @waypoints = @tappe.map do |indirizzo|
-    #   [
-    #     indirizzo.longitude,
-    #     indirizzo.latitude,
-    #   ]
-    # end
-
-    @appunti_del_giorno = current_user.appunti.da_completare.nel_baule_del_giorno(@giorno)
-                                .with_attached_attachments
-                                .with_attached_image
-                                .with_rich_text_content
-                                .includes(:import_scuola)
                    
   end
 

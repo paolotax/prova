@@ -141,7 +141,8 @@ class AppuntiController < ApplicationController
       {
         search: params["search"],
         stato: params["stato"],
-        statuses: params["statuses"]
+        statuses: params["statuses"],
+        del_giorno: params["del_giorno"]
       }
     end
 

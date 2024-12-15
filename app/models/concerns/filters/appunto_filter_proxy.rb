@@ -8,6 +8,15 @@ module Filters
     
     filter_scope :archiviati, ->(archiviati) { archiviati == "si" ? where(stato: "archiviato") : all }
     
+    filter_scope :del_giorno, ->(giorno) {
+      da_completare
+      .nel_baule_del_giorno(giorno)
+      .with_attached_attachments
+      .with_attached_image
+      .with_rich_text_content
+      .includes(:import_scuola) 
+    }
+
     filter_scope :search, ->(search) { search_all_word(search) }
   end
 

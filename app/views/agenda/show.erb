@@ -29,13 +29,15 @@
         
         <% end %>
 
-		<% heading.with_action do %>	
-	        <%= component 'tax_button',
-				caption: 'Percorso', 
-				svg_file: 'icon-path-rounded-square.svg',
-				color: "transparent",
-				url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
-		<% end %>
+        <% if @tappe.size > 1 %>
+            <% heading.with_action do %>	
+                <%= component 'tax_button',
+                    caption: 'Percorso', 
+                    svg_file: 'icon-path-rounded-square.svg',
+                    color: "transparent",
+                    url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
+            <% end %>
+        <% end %>
         
 		<% heading.with_action do %>
 			<%= component 'tax_button',
@@ -85,20 +87,15 @@
 </div>
 
 <% if @tappe.any? %>
+    
     <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
-<% end %>
 
-
-<% unless @appunti_del_giorno.empty? %>
     <div class="mt-4">
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Appunti" %>
         <% end %>
-
-        <div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-            <% @appunti_del_giorno.each do |appunto| %>
-                <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
-            <% end %>
-        </div>
+            
+        <%= turbo_frame_tag :search_results, src: appunti_path(del_giorno: @giorno), loading: :lazy %>
     </div>
 <% end %>
+
