@@ -15,8 +15,6 @@ class AgendaController < ApplicationController
   def show
 
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
-
-
     @scuole = current_user.import_scuole
                 .includes(:appunti_da_completare)
                 .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "ImportScuola").pluck(:tappable_id))        
@@ -45,5 +43,27 @@ class AgendaController < ApplicationController
                                 .with_rich_text_content
                                 .includes(:import_scuola)
                    
+  end
+
+  def mappa 
+
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+    
+    @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giro).order(:position)
+
+    @indirizzi = @tappe.map do |t|
+      {
+        latitude: t.latitude,
+        longitude: t.longitude
+      }
+    end
+
+    @waypoints = @tappe.map do |indirizzo|
+      [
+        indirizzo.longitude,
+        indirizzo.latitude,
+      ]
+    end
+
   end
 end

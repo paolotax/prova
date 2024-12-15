@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   
   get "agenda", to: "agenda#index"
   get "agenda/:giorno", to: "agenda#show", as: "giorno"
+  get "agenda/:giorno/mappa", to: "agenda#mappa", as: "mappa_del_giorno"
 
   authenticate :user, ->(user) { user.admin? } do
     mount Blazer::Engine, at: "blazer"
