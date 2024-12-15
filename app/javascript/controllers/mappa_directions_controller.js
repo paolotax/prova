@@ -13,23 +13,28 @@ export default class extends Controller {
 
   connect() {
     this.initMap();
+    document.addEventListener("refresh-map", this.refreshMap.bind(this));
+  }
+
+  refreshMap() {
+    this.initMap();
   }
 
   initMap() {
 
-    // if (!this.mapTarget) return;
+    if (!this.mapTarget) return;
 
-    // // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
-    // if (this.map) {
-    //   this.map.remove();
-    // }
+    // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
+    if (this.map) {
+      this.map.remove();
+    }
 
     mapboxgl.accessToken = this.mapboxTokenValue;
     const coordinates = JSON.parse(this.data.get("coordinates"))
 
     this.map = new mapboxgl.Map({
       container: this.mapTarget,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: "mapbox://styles/mapbox/streets-v12",
       center: [coordinates[0].lng, coordinates[0].lat],
       zoom: 12,
       language: 'it-IT'

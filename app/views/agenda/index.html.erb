@@ -1,4 +1,4 @@
-<div class="sticky top-20 z-10">
+<div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 
@@ -64,32 +64,35 @@
 </div>
 
 
-<%= turbo_frame_tag "agenda", class: "flex w-full grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-7 gap-4" do %>
-  
-  	<% @settimana.each do |giorno| %>
-      
-      	<%= tag.div class: "col-span-1" do %>
+<%= turbo_frame_tag "agenda", 
+	class: "flex w-full overflow-x-auto p-1.5",
+	data: {
+		controller: "scroll-to-day",
+		"scroll-to-day-giorno-value": params[:giorno]
+	} do %>
+	
+  <div class="flex gap-2 px-4 sm:px-0">
+    <% @settimana.each do |giorno| %>      
+      <%= tag.div class: "flex-shrink-0 w-[300px] bg-white p-4 border border-gray-200 rounded", "data-giorno": giorno.to_s do %>
         
-			<%= tag.p link_to(I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s), data: { turbo_frame: :_top } ) %>
+		<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s), 
+				data: { turbo_frame: :_top },
+				class: "hover:font-semibold" %>
 
-			<%= tag.div id: "giorno_#{giorno.to_s}", 
-					class: "min-h-72 w-full bg-transparent",
-					data: {
-						controller: "tax-sortable",
-						tax_sortable_group_value: "calendar",
-						tax_sortable_data_tappa: "#{giorno}",
-						
-					} do %>        
-				<%# <li class="h-72 w-full bg-gray-200">...</li> %>
-				<% @tappe_per_giorno.select {|t| giorno == t }.values.each do |tappe| %>
-					<% tappe.sort_by(&:position).each do |tappa| %>
-
-						<%= render tappa, with_checkbox: false %>
-
-					<% end %>
-				<% end %>
-			<% end %>
-      	<% end %>
+        <%= tag.div id: "giorno_#{giorno.to_s}", 
+                    class: "min-h-72 w-full bg-transparent mt-4",
+                    data: {
+                      controller: "tax-sortable",
+                      tax_sortable_group_value: "calendar",
+                      tax_sortable_data_tappa: "#{giorno}",
+                    } do %>        
+          <% @tappe_per_giorno.select { |t| giorno == t }.values.each do |tappe| %>
+            <% tappe.sort_by(&:position).each do |tappa| %>
+              <%= render tappa, with_checkbox: false %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
     <% end %>
+  </div>
 <% end %>
-  
