@@ -9,14 +9,14 @@
 <div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
 		
-        <% heading.with_description do %>
+        <% heading.with_action do %>
            
             <%= tag.div class: "flex items-center -ml-3" do %>  
                 <%= component 'tax_button',
                     svg_file: "icon-arrow-left.svg",
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno - 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_cache: false } %>
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
                 
             
 
@@ -24,7 +24,7 @@
                     svg_file: "icon-arrow-right.svg",
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_cache: false } %>
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
             <% end %>
         
         <% end %>
@@ -90,9 +90,12 @@
 
 
 <% unless @appunti_del_giorno.empty? %>
-    <div>
-        <h2 class="text-xl font-bold p-4">Appunti del <%= I18n.l(@giorno, format: :short, lang: :it) %></h2>
-        <div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
+    <div class="mt-4">
+        <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
+            <%= "Appunti" %>
+        <% end %>
+
+        <div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
             <% @appunti_del_giorno.each do |appunto| %>
                 <%= render partial: "appunti/appunto", locals: { appunto: appunto } %>
             <% end %>
