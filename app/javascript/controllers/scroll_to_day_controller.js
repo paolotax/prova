@@ -12,6 +12,7 @@ export default class extends Controller {
       if (giornoElement) {
         // Scorri fino all'elemento
         giornoElement.scrollIntoView({ behavior: "smooth", inline: "center" });
+        window.scrollTo(0, 0);
         // Aggiungi la classe active
         giornoElement.classList.remove("bg-white");
         giornoElement.classList.add("bg-pink-100", "ring-2", "ring-red-500", "rounded-md");
