@@ -52,8 +52,8 @@
     <%= tag.section class: "col-span-4 mb-4 px-6 pb-5 bg-gray-200 border rounded-lg flex flex-col" do %>
         <%= render TaxSelectClientableComponent.new( 
                 form: form, 
-                clientable_type: documento.clientable_type, 
-                clientable_id: documento.clientable_id
+                type: documento.clientable_type, 
+                id: documento.clientable_id
             ) %>
 
         <%= tag.fieldset class: "my-2" do %>

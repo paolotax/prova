@@ -8,8 +8,8 @@
             
             <%= render TaxSelectClientableComponent.new( 
                 form: f, 
-                clientable_type: @documento.clientable_type, 
-                clientable_id: @documento.clientable_id
+                type: @documento.clientable_type, 
+                id: @documento.clientable_id
             ) %>
 
             <%= tag.div class: "mt-5" do %>

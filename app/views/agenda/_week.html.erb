@@ -1,0 +1,30 @@
+<% settimana.each do |giorno| %>      
+	<%= tag.div class: [ 
+                    "flex-shrink-0 w-[300px] scroll-snap-start p-4": true,
+                    "bg-white border border-gray-200 rounded ": giorno != Date.today,
+                    "bg-pink-100 border-2 border-red-500 rounded-md": giorno == Date.today,
+                    "bg-gray-500": giorno.sunday?
+                ], 
+                data: { giorno: giorno } do %>
+				
+		<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s),
+                data: { turbo_frame: :_top },
+				class: "hover:font-semibold" %>
+
+		<%= tag.div id: "giorno_#{giorno.to_s}", 
+					class: "min-h-72 w-full bg-transparent mt-4",
+					data: {
+                        controller: "tax-sortable",
+                        tax_sortable_group_value: "calendar",
+                        tax_sortable_data_tappa: "#{giorno}",
+					} do %>        
+			
+			<% @tappe_per_giorno.select { |t| giorno == t }.values.each do |tappe| %>
+				
+				<% tappe.sort_by(&:position).each do |tappa| %>
+					<%= render tappa, with_checkbox: false %>
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+<% end %>
