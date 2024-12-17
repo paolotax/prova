@@ -70,7 +70,7 @@
   
   <div id="week-container" 
        class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
-	   data-action="scroll->agenda-scroll#loadMore"
+	   xxdata-action="scroll->agenda-scroll#loadMore"
        data-agenda-scroll-target="weekContainer">
     <%#= render partial: "week", locals: { settimana: @settimana_precedente } %>
     <%= render partial: "week", locals: { settimana: @settimana } %>

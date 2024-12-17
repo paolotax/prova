@@ -2,7 +2,7 @@ class AgendaController < ApplicationController
   def index  
     @giorno = params[:giorno]&.to_date || Date.today
     @settimana = helpers.dates_of_week(@giorno)
-    @settimana_precedente = helpers.dates_of_week(@giorno - 7.days)
+    # @settimana_precedente = helpers.dates_of_week(@giorno - 7.days)
     @tappe_per_giorno = current_user.tappe.della_settimana(@giorno).group_by(&:data_tappa)
     
     respond_to do |format|
