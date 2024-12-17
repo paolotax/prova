@@ -63,13 +63,15 @@ export default class extends Controller {
   }
 
   loadNextWeek() {
-    alert("Fetching next week...");
-    
+    // alert("Fetching next week...");
+
     this.loading = true;
 
     const lastElement = Array.from(this.weekContainerTarget.children).reverse().find(
       (child) => child.dataset.giorno
     );
+
+    alert(lastElement.dataset.giorno);
 
     if (!lastElement) {
       console.error("No last day found in the container");
