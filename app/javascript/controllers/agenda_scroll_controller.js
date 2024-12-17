@@ -32,12 +32,12 @@ export default class extends Controller {
   addScrollTriggers() {
     const leftTrigger = document.createElement("div");
     leftTrigger.dataset.trigger = "previous";
-    leftTrigger.classList.add("scroll-trigger");
+    leftTrigger.classList.add("scroll-trigger", "bg-red-500", "text-white", "w-12");
     this.weekContainerTarget.prepend(leftTrigger);
 
     const rightTrigger = document.createElement("div");
     rightTrigger.dataset.trigger = "next";
-    rightTrigger.classList.add("scroll-trigger");
+    rightTrigger.classList.add("scroll-trigger", "bg-red-500", "text-white", "w-12");
     this.weekContainerTarget.append(rightTrigger);
 
     this.observer.observe(leftTrigger);
@@ -63,6 +63,8 @@ export default class extends Controller {
   }
 
   loadNextWeek() {
+    alert("Fetching next week...");
+    
     this.loading = true;
 
     const lastElement = Array.from(this.weekContainerTarget.children).reverse().find(
