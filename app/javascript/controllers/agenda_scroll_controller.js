@@ -7,6 +7,10 @@ export default class extends Controller {
   connect() {
     console.log("AgendaScrollController connected");
 
+    document.querySelector("#load-next").addEventListener("click", () => {
+      this.loadNextWeek();
+    });
+
     this.loading = false;
 
     // Abilita scroll e IntersectionObserver
