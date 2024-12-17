@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["weekContainer"];
+  static targets = ["weekContainer", "log"];
     
   connect() {
     console.log("AgendaScrollController connected");
@@ -76,7 +76,7 @@ export default class extends Controller {
       (child) => child.dataset.giorno
     );
 
-    console.log("next->", lastElement.dataset.giorno);
+    this.logTarget.textContent = lastElement.dataset.giorno;
 
     if (!lastElement) {
       console.error("No last day found in the container");
