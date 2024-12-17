@@ -11,7 +11,7 @@ export default class extends Controller {
     // Crea un IntersectionObserver per gli elementi di trigger
     this.observer = new IntersectionObserver(this.handleIntersection.bind(this), {
       root: this.weekContainerTarget, // Il contenitore scrollabile
-      rootMargin: "0px",
+      rootMargin: "100px",
       threshold: 0.1, // Percentuale di visibilità per attivare il callback
     });
 
