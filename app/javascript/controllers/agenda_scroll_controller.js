@@ -11,7 +11,7 @@ export default class extends Controller {
     // Abilita scroll e IntersectionObserver
     if ("IntersectionObserver" in window) {
       this.setupIntersectionObserver();
-      alert("IntersectionObserver supportato");
+      // alert("IntersectionObserver supportato");
     } else {
       console.warn("IntersectionObserver non supportato, fallback su scroll.");
       // this.setupScrollListener();
@@ -30,6 +30,7 @@ export default class extends Controller {
   }
 
   addScrollTriggers() {
+
     const leftTrigger = document.createElement("div");
     leftTrigger.dataset.trigger = "previous";
     leftTrigger.classList.add("scroll-trigger", "bg-red-500", "text-white", "w-12");
@@ -50,20 +51,24 @@ export default class extends Controller {
         const trigger = entry.target.dataset.trigger;
 
         if (trigger === "previous") {
-          alert("Fetching previous week...");
+          console.log("Fetching previous week...");
           // this.loadPreviousWeek();
-        } else if (trigger === "next") {
-          
+        } else if (trigger === "next") {          
           this.loadNextWeek();
-
-          // alert("Fetching next week...");
+          console.log("Fetching next week...");
         }
       }
     });
   }
 
+  clearTriggers() {
+    // Rimuovi i vecchi trigger
+    this.weekContainerTarget.querySelectorAll(".scroll-trigger").forEach((trigger) => {
+      trigger.remove();
+    });
+  };     
+
   loadNextWeek() {
-    // alert("Fetching next week...");
 
     this.loading = true;
 
@@ -71,7 +76,7 @@ export default class extends Controller {
       (child) => child.dataset.giorno
     );
 
-    alert(lastElement.dataset.giorno);
+    console.log("next->", lastElement.dataset.giorno);
 
     if (!lastElement) {
       console.error("No last day found in the container");
@@ -88,7 +93,15 @@ export default class extends Controller {
     })
     .then((response) => response.text())
     .then((html) => {
-      this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
+      this.clearTriggers(); // Rimuovi i trigger vecchi
+      
+      // this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = html;
+      while (tempDiv.firstChild) {
+        this.weekContainerTarget.appendChild(tempDiv.firstChild);
+      }
+      
       this.addScrollTriggers(); // Ricrea i trigger
       this.loading = false;
     })
