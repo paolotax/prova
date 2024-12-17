@@ -60,24 +60,14 @@
 	<% end %>
 </div>
 
+<%= turbo_frame_tag "agenda", class: "w-full flex", data: { controller: "agenda-scroll" } do %>
 
-
-<%= turbo_frame_tag "agenda", 
-	class: "w-full flex flex-col xxoverflow-x-auto",
-	data: {
-		controller: "agenda-scroll"    	
-	} do %>
-  
-  <div data-agenda-scroll-target="log">log:</div>
-  <button id="load-next" class="p-2 bg-blue-500 text-white">Carica Prossima Settimana</button>
-  <div id="week-container" 
-       class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
-	   xxdata-action="scroll->agenda-scroll#loadMore"
-       data-agenda-scroll-target="weekContainer">
-    <%#= render partial: "week", locals: { settimana: @settimana_precedente } %>
+	<div id="week-container" 
+        class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
+        data-agenda-scroll-target="weekContainer">
 	
-    <%= render partial: "week", locals: { settimana: @settimana } %>
-  </div>
+    	<%= render partial: "week", locals: { settimana: @settimana } %>
+    </div>
 
 <% end %>
 

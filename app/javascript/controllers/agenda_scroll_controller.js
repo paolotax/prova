@@ -2,14 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 import { get } from "@rails/request.js";
 
 export default class extends Controller {
-  static targets = ["weekContainer", "log"];
+  static targets = ["weekContainer"];
     
   connect() {
-    console.log("AgendaScrollController connected");
-
-    document.querySelector("#load-next").addEventListener("click", () => {
-      this.loadNextWeek();
-    });
+    // console.log("AgendaScrollController connected");
+    // document.querySelector("#load-next").addEventListener("click", () => {
+    //   this.loadNextWeek();
+    // });
 
     this.loading = false;
 
@@ -77,14 +76,12 @@ export default class extends Controller {
     if (this.loading) return;
   
     this.loading = true;
-    this.logTarget.textContent = "Starting loadNextWeek...";
   
     const lastElement = Array.from(this.weekContainerTarget.children).reverse().find(
       (child) => child.dataset.giorno
     );
   
     if (!lastElement) {
-      this.logTarget.textContent = "Error: No last day found in the container.";
       this.loading = false;
       return;
     }
@@ -92,11 +89,8 @@ export default class extends Controller {
 
     // Normalizza la data per Safari
     const lastDayString = this.normalizeDate(lastElement.dataset.giorno);
-    console.log("Last day string: ", lastDayString);
     const lastDay = new Date(lastDayString);
-
     if (isNaN(lastDay.getTime())) {
-      this.logTarget.textContent = `Error: Invalid date format (${lastElement.dataset.giorno})`;
       this.loading = false;
       return;
     }
@@ -105,33 +99,30 @@ export default class extends Controller {
     nextWeekStart.setDate(nextWeekStart.getDate() + 7);
     const url = `/agenda?giorno=${nextWeekStart.toISOString().slice(0, 10)}&direction=append`;
 
-    this.logTarget.textContent = `Attempting to fetch URL: ${url}`;
-  
+    this.clearTriggers();
+
     try {
-      const response = await fetch(url, {
-        headers: { Accept: "text/html" },
-      });
-  
-      if (!response.ok) {
-        this.logTarget.textContent = `Fetch failed: ${response.status}`;
-        throw new Error(`Network response was not ok: ${response.status}`);
+      const response = await get(url, { responseKind: "turbo-stream" });
+
+      if (response.ok) {
+
+        this.weekContainerTarget.insertAdjacentHTML("beforeend", response);
+        this.addScrollTriggers();
+      } else {
+        console.error("Failed to load next week:", response);
       }
-  
-      const html = await response.text();
-      this.logTarget.textContent = "HTML successfully fetched.";
-  
-      this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
-      this.logTarget.textContent = "Next week loaded successfully.";
     } catch (error) {
-      this.logTarget.textContent = `Error in fetch request: ${error.message}`;
+      console.error("Error with request.js:", error);
     } finally {
       this.loading = false;
     }
   }
-  
-  calculateNextWeekDate() {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
+
+  normalizeDate(dateString) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return `${dateString}T00:00:00Z`;
+    }
+    return dateString;
   }
 
   loadPreviousWeek() {
@@ -145,11 +136,5 @@ export default class extends Controller {
     // this.weekContainerTarget.removeEventListener("scroll", this.handleScroll);
   }
 
-  normalizeDate(dateString) {
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      return `${dateString}T00:00:00Z`;
-    }
-    return dateString;
-  }
 
 }
