@@ -38,14 +38,14 @@ export default class extends Controller {
   
       const scrollRight =
         container.scrollLeft + container.offsetWidth >= container.scrollWidth - 100;
-      const scrollLeft = container.scrollLeft <= 150;
+      const scrollLeft = container.scrollLeft <= 100;
   
       if (scrollRight && !this.loading) {
         console.log("Fetching next week...");
         this.loadNextWeek();
       } else if (scrollLeft && !this.loading) {
         console.log("Fetching previous week...");
-        // this.loadPreviousWeek();
+        this.loadPreviousWeek();
       }
     }, 200); 
   }
@@ -84,23 +84,26 @@ export default class extends Controller {
   }
 
   loadPreviousWeek() {
+    if (this.loading) return;
 
-    if (this.loading) return; // Previeni caricamenti multipli
+    const firstElement = Array.from(this.weekContainerTarget.children).find(
+      (child) => child.dataset.giorno
+    );
 
-    const firstDay = this.getFirstDay();
-    if (!firstDay) {
-      console.error("Could not find the first day");
+    if (!firstElement) {
+      console.error("No first day found in the container");
       this.loading = false;
       return;
     }
 
+    const firstDay = firstElement.dataset.giorno;
     const previousWeekStart = new Date(firstDay);
     previousWeekStart.setDate(previousWeekStart.getDate() - 7);
 
-    console.log("Previous week start:", previousWeekStart);
-
-    const previousScrollWidth = this.weekContainerTarget.scrollWidth;
-
+    this.loading = true;
+    
+    console.log(firstDay);
+    console.log(previousWeekStart.toISOString().slice(0, 10));
     fetch(`/agenda?giorno=${previousWeekStart.toISOString().slice(0, 10)}&direction=prepend`, {
       headers: { Accept: "text/vnd.turbo-stream.html" },
     })
@@ -108,6 +111,7 @@ export default class extends Controller {
       .then((html) => {
         this.weekContainerTarget.insertAdjacentHTML("afterbegin", html);
 
+        const previousScrollWidth = this.weekContainerTarget.scrollWidth;
         const newContentWidth = this.weekContainerTarget.scrollWidth - previousScrollWidth;
         this.weekContainerTarget.scrollLeft += newContentWidth;
 
@@ -117,12 +121,14 @@ export default class extends Controller {
         console.error("Error loading previous week:", error);
         this.loading = false;
       });
+  
   }
 
   getFirstDay() {
     const firstElement = Array.from(this.weekContainerTarget.children).find(
       (child) => child.dataset.giorno
     );
+    console.log("First element:", firstElement);
     return firstElement ? firstElement.dataset.giorno : null;
   }
 
