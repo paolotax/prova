@@ -74,43 +74,52 @@ export default class extends Controller {
   };     
 
   async loadNextWeek() {
-
+    if (this.loading) return;
+  
     this.loading = true;
-
+    this.logTarget.textContent = "Starting loadNextWeek...";
+  
     const lastElement = Array.from(this.weekContainerTarget.children).reverse().find(
       (child) => child.dataset.giorno
     );
-
-    this.logTarget.textContent = `loadNextWeek: ${lastElement.dataset.giorno}`
-
+  
     if (!lastElement) {
-      console.error("No last day found in the container");
+      this.logTarget.textContent = "Error: No last day found in the container.";
       this.loading = false;
       return;
     }
-
+  
     const lastDay = new Date(lastElement.dataset.giorno);
     lastDay.setDate(lastDay.getDate() + 7);
     const url = `/agenda?giorno=${lastDay.toISOString().slice(0, 10)}&direction=append`;
-
-    this.clearTriggers();
-
+  
+    this.logTarget.textContent = `Attempting to fetch URL: ${url}`;
+  
     try {
-      const response = await get(url, {
-        responseKind: "turbo-stream",
+      const response = await fetch(url, {
+        headers: { Accept: "text/html" },
       });
-
-      if (response.ok) {
-        console.log("Next week loaded successfully.");
-        this.addScrollTriggers();
-      } else {
-        console.error("Failed to load next week:", response);
+  
+      if (!response.ok) {
+        this.logTarget.textContent = `Fetch failed: ${response.status}`;
+        throw new Error(`Network response was not ok: ${response.status}`);
       }
+  
+      const html = await response.text();
+      this.logTarget.textContent = "HTML successfully fetched.";
+  
+      this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
+      this.logTarget.textContent = "Next week loaded successfully.";
     } catch (error) {
-      console.error("Error with request.js:", error);
+      this.logTarget.textContent = `Error in fetch request: ${error.message}`;
     } finally {
       this.loading = false;
     }
+  }
+  
+  calculateNextWeekDate() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
   }
 
   loadPreviousWeek() {
