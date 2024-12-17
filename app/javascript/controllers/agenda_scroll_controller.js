@@ -88,11 +88,23 @@ export default class extends Controller {
       this.loading = false;
       return;
     }
-  
-    const lastDay = new Date(lastElement.dataset.giorno);
-    lastDay.setDate(lastDay.getDate() + 7);
-    const url = `/agenda?giorno=${lastDay.toISOString().slice(0, 10)}&direction=append`;
-  
+    console.log("Last element: ", lastElement.dataset.giorno);
+
+    // Normalizza la data per Safari
+    const lastDayString = this.normalizeDate(lastElement.dataset.giorno);
+    console.log("Last day string: ", lastDayString);
+    const lastDay = new Date(lastDayString);
+
+    if (isNaN(lastDay.getTime())) {
+      this.logTarget.textContent = `Error: Invalid date format (${lastElement.dataset.giorno})`;
+      this.loading = false;
+      return;
+    }
+
+    const nextWeekStart = new Date(lastDay);
+    nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+    const url = `/agenda?giorno=${nextWeekStart.toISOString().slice(0, 10)}&direction=append`;
+
     this.logTarget.textContent = `Attempting to fetch URL: ${url}`;
   
     try {
@@ -133,5 +145,11 @@ export default class extends Controller {
     // this.weekContainerTarget.removeEventListener("scroll", this.handleScroll);
   }
 
+  normalizeDate(dateString) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return `${dateString}T00:00:00Z`;
+    }
+    return dateString;
+  }
 
 }

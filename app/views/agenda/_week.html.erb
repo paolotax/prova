@@ -5,7 +5,7 @@
                     "bg-pink-100 border-2 border-red-500 rounded-md": giorno == Date.today,
                     "bg-gray-500": giorno.sunday?
                 ], 
-                data: { giorno: giorno } do %>
+                data: { giorno: giorno.to_s } do %>
 				
 		<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s),
                 data: { turbo_frame: :_top },
