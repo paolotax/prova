@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { get } from "@rails/request.js";
 
 export default class extends Controller {
   static targets = ["weekContainer", "log"];
@@ -68,7 +69,7 @@ export default class extends Controller {
     });
   };     
 
-  loadNextWeek() {
+  async loadNextWeek() {
 
     this.loading = true;
 
@@ -76,7 +77,7 @@ export default class extends Controller {
       (child) => child.dataset.giorno
     );
 
-    this.logTarget.textContent = lastElement.dataset.giorno;
+    this.logTarget.textContent = `loadNextWeek: ${lastElement.dataset.giorno}`
 
     if (!lastElement) {
       console.error("No last day found in the container");
@@ -84,31 +85,28 @@ export default class extends Controller {
       return;
     }
 
-    const lastDay = lastElement.dataset.giorno;
-    const nextWeekStart = new Date(lastDay);
-    nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+    const lastDay = new Date(lastElement.dataset.giorno);
+    lastDay.setDate(lastDay.getDate() + 7);
+    const url = `/agenda?giorno=${lastDay.toISOString().slice(0, 10)}&direction=append`;
 
-    fetch(`/agenda?giorno=${nextWeekStart.toISOString().slice(0, 10)}&direction=append`, {
-      headers: { Accept: "text/vnd.turbo-stream.html" },
-    })
-    .then((response) => response.text())
-    .then((html) => {
-      this.clearTriggers(); // Rimuovi i trigger vecchi
-      
-      // this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = html;
-      while (tempDiv.firstChild) {
-        this.weekContainerTarget.appendChild(tempDiv.firstChild);
+    this.clearTriggers();
+
+    try {
+      const response = await get(url, {
+        responseKind: "turbo-stream",
+      });
+
+      if (response.ok) {
+        console.log("Next week loaded successfully.");
+        this.addScrollTriggers();
+      } else {
+        console.error("Failed to load next week:", response);
       }
-      
-      this.addScrollTriggers(); // Ricrea i trigger
+    } catch (error) {
+      console.error("Error with request.js:", error);
+    } finally {
       this.loading = false;
-    })
-    .catch((error) => {
-      console.error("Error loading next week:", error);
-      this.loading = false;
-    });
+    }
   }
 
   loadPreviousWeek() {
