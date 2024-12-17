@@ -20,13 +20,44 @@ export default class extends Controller {
   }
 
   setupIntersectionObserver() {
-    // this.observer = new IntersectionObserver(this.handleIntersection.bind(this), {
-    //   root: this.weekContainerTarget,
-    //   rootMargin: "0px",
-    //   threshold: 0.1,
-    // });
+    this.observer = new IntersectionObserver(this.handleIntersection.bind(this), {
+      root: this.weekContainerTarget,
+      rootMargin: "0px",
+      threshold: 0.1,
+    });
 
-    // this.addScrollTriggers();
+    this.addScrollTriggers();
+  }
+
+  addScrollTriggers() {
+    const leftTrigger = document.createElement("div");
+    leftTrigger.dataset.trigger = "previous";
+    leftTrigger.classList.add("scroll-trigger");
+    this.weekContainerTarget.prepend(leftTrigger);
+
+    const rightTrigger = document.createElement("div");
+    rightTrigger.dataset.trigger = "next";
+    rightTrigger.classList.add("scroll-trigger");
+    this.weekContainerTarget.append(rightTrigger);
+
+    this.observer.observe(leftTrigger);
+    this.observer.observe(rightTrigger);
+  }
+
+  handleIntersection(entries) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && !this.loading) {
+        const trigger = entry.target.dataset.trigger;
+
+        if (trigger === "previous") {
+          alert("Fetching previous week...");
+          // this.loadPreviousWeek();
+        } else if (trigger === "next") {
+          alert("Fetching next week...");
+          // this.loadNextWeek();
+        }
+      }
+    });
   }
 
 }
