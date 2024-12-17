@@ -53,11 +53,57 @@ export default class extends Controller {
           alert("Fetching previous week...");
           // this.loadPreviousWeek();
         } else if (trigger === "next") {
-          alert("Fetching next week...");
-          // this.loadNextWeek();
+          
+          this.loadNextWeek();
+
+          // alert("Fetching next week...");
         }
       }
     });
   }
+
+  loadNextWeek() {
+    this.loading = true;
+
+    const lastElement = Array.from(this.weekContainerTarget.children).reverse().find(
+      (child) => child.dataset.giorno
+    );
+
+    if (!lastElement) {
+      console.error("No last day found in the container");
+      this.loading = false;
+      return;
+    }
+
+    const lastDay = lastElement.dataset.giorno;
+    const nextWeekStart = new Date(lastDay);
+    nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+
+    fetch(`/agenda?giorno=${nextWeekStart.toISOString().slice(0, 10)}&direction=append`, {
+      headers: { Accept: "text/vnd.turbo-stream.html" },
+    })
+    .then((response) => response.text())
+    .then((html) => {
+      this.weekContainerTarget.insertAdjacentHTML("beforeend", html);
+      this.addScrollTriggers(); // Ricrea i trigger
+      this.loading = false;
+    })
+    .catch((error) => {
+      console.error("Error loading next week:", error);
+      this.loading = false;
+    });
+  }
+
+  loadPreviousWeek() {
+    this.loading = true;
+    console.log("Loading previous week...");
+    // Fetch logica
+  }
+
+  disconnect() {
+    if (this.observer) this.observer.disconnect();
+    // this.weekContainerTarget.removeEventListener("scroll", this.handleScroll);
+  }
+
 
 }
