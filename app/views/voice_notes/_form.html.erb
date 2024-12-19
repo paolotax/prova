@@ -5,7 +5,7 @@
     <div>
       <label for="voice_note_title" class="block text-sm font-medium text-gray-700">Titolo</label>
       <input type="text" id="voice_note_title" name="title" placeholder="Inserisci un titolo"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" >
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
     </div>
 
     <div class="flex items-center space-x-4">
@@ -34,9 +34,11 @@
     <!-- Player per l'audio -->
     <audio data-audio-recorder-target="audioPlayback" controls class="mt-4 w-full"></audio>
 
+    <!-- Campo nascosto per il file -->
+    <input type="file" id="audioBlobInput" name="audio_file" data-audio-recorder-target="audioInput" class="hidden">
+
     <!-- Pulsante per caricare -->
     <div>
-      <input type="hidden" id="audioBlobInput" name="audio_file">
       <button type="submit"
               class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition">
         Carica Registrazione
