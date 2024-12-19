@@ -5,11 +5,6 @@ export default class extends Controller {
   static targets = ["weekContainer"];
     
   connect() {
-    // console.log("AgendaScrollController connected");
-    // document.querySelector("#load-next").addEventListener("click", () => {
-    //   this.loadNextWeek();
-    // });
-
     this.loading = false;
 
     // Abilita scroll e IntersectionObserver
@@ -19,7 +14,7 @@ export default class extends Controller {
     } else {
       console.warn("IntersectionObserver non supportato, fallback su scroll.");
       // this.setupScrollListener();
-      alert("IntersectionObserver non supportato");
+      // alert("IntersectionObserver non supportato");
     }
   }
 
@@ -29,7 +24,6 @@ export default class extends Controller {
       rootMargin: "0px",
       threshold: 0.1,
     });
-
     this.addScrollTriggers();
   }
 
@@ -37,12 +31,11 @@ export default class extends Controller {
 
     const leftTrigger = document.createElement("div");
     leftTrigger.dataset.trigger = "previous";
-    leftTrigger.classList.add("scroll-trigger", "bg-red-500", "text-white", "w-12");
+    leftTrigger.classList.add("scroll-trigger");
     this.weekContainerTarget.prepend(leftTrigger);
-
     const rightTrigger = document.createElement("div");
     rightTrigger.dataset.trigger = "next";
-    rightTrigger.classList.add("scroll-trigger", "bg-red-500", "text-white", "w-12");
+    rightTrigger.classList.add("scroll-trigger");
     this.weekContainerTarget.append(rightTrigger);
 
     this.observer.observe(leftTrigger);
@@ -85,7 +78,6 @@ export default class extends Controller {
       this.loading = false;
       return;
     }
-    console.log("Last element: ", lastElement.dataset.giorno);
 
     // Normalizza la data per Safari
     const lastDayString = this.normalizeDate(lastElement.dataset.giorno);
@@ -99,15 +91,28 @@ export default class extends Controller {
     nextWeekStart.setDate(nextWeekStart.getDate() + 7);
     const url = `/agenda?giorno=${nextWeekStart.toISOString().slice(0, 10)}&direction=append`;
 
-    this.clearTriggers();
+    
 
     try {
       const response = await get(url, { responseKind: "turbo-stream" });
 
       if (response.ok) {
+        
+        
+        // const turboStreamContent = await response.body; // Ottieni il contenuto come testo
+        
+        // console.log("Turbo Stream content:", response.body);
 
-        this.weekContainerTarget.insertAdjacentHTML("beforeend", response);
+        // if (!turboStreamContent) {
+        //   console.error("Empty Turbo Stream content received.");
+        //   this.loading = false;
+        //   return;
+        // }
+
+        // Turbo.renderStreamMessage(turboStreamContent);
+        this.clearTriggers();
         this.addScrollTriggers();
+        
       } else {
         console.error("Failed to load next week:", response);
       }

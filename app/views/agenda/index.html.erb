@@ -66,9 +66,7 @@
         class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
         data-agenda-scroll-target="weekContainer">
 	
-    	<%= render partial: "week", locals: { settimana: @settimana } %>
+    	<%= render partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno } %>
     </div>
 
 <% end %>
-
-

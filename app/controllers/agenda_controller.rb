@@ -9,9 +9,9 @@ class AgendaController < ApplicationController
       format.html # Render the full page initially
       format.turbo_stream do
         if params[:direction] == 'prepend'
-          render turbo_stream: turbo_stream.prepend("week-container", partial: "week", locals: { settimana: @settimana })
+          render turbo_stream: turbo_stream.prepend("week-container", partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno })
         else
-          render turbo_stream: turbo_stream.append("week-container", partial: "week", locals: { settimana: @settimana })
+          render turbo_stream: turbo_stream.append("week-container", partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno })
         end
       end
     end
