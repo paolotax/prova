@@ -1,67 +1,38 @@
 <div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
 		
-        <% heading.with_action do %>   
-            <%= tag.div class: "flex items-center -ml-3" do %>  
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-left.svg",
-                    color: "transparent",
-                    url: agenda_path(giorno: (@giorno - 1.month).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-                
-                <%= tag.p I18n.l(@settimana.first, format: :month_calendar, locale: :it), class: "mx-4" %>
-                
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-right.svg",
-                    color: "transparent",
-                    url: agenda_path(giorno: (@giorno + 1.month).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-            <% end %>
-        <% end %>
-
 		<% heading.with_action do %>
-			<%= component 'tax_button',
-				caption: "prec",
-				svg_file: "icon-arrow-left.svg",
-				color: "white",
-				url: agenda_path(giorno: (@giorno - 7.days).end_of_week.to_s),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+			<div class="flex gap-1">
+				<%= component 'tax_button',
+					svg_file: "icon-arrow-left.svg",
+					color: "white",
+					url: agenda_path(giorno: (@giorno - 7.days).to_s),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+
+				<%= component 'tax_button',
+					caption: "Oggi",
+					color: "white",
+					url: agenda_path(giorno:  Date.today.to_s),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+
+				<%= component 'tax_button',
+					svg_file: "icon-arrow-right.svg",
+					color: "white",
+					url: agenda_path(giorno: (@giorno + 7.days).to_s),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+			</div>
 		<% end %>
 
-		<% heading.with_action do %>
-			<%= component 'tax_button',
-				caption: "succ",
-				svg_file: "icon-arrow-right.svg",
-				color: "white",
-				url: agenda_path(giorno: (@giorno + 7.days).beginning_of_week.to_s),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-		<% end %>
-
-		<% heading.with_action do %>	
-			<%= component 'tax_button',
-				caption: "oggi",
-				svg_file: "icon-calendar.svg",
-				color: "blue",
-				url: agenda_path(giorno:  Date.today.to_s),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%#= component 'tax_button',
-				caption: "Modifica",
-				svg_file: "icon-pencil.svg",
-				color: "yellow",
-				url: url_for( controller: "libri", action: "edit", model: @libro ),
-				data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
-		<% end %>
-
-		<%= "Agenda" %>
+		<%= I18n.l(@settimana.first, format: :month_calendar, locale: :it).titleize %>
 
 	<% end %>
 </div>
 
-<%= turbo_frame_tag "agenda", class: "w-full flex", data: { controller: "agenda-scroll" } do %>
-
+<%= turbo_frame_tag "agenda", class: "w-full flex", 
+				data: { controller: "scroll-to-day xxxagenda-scroll",
+				"scroll-to-day-giorno-value": params[:giorno],
+				xxturbo_cache: "false" } do %>
+		
 	<div id="week-container" 
         class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
         data-agenda-scroll-target="weekContainer">

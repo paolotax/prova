@@ -11,7 +11,7 @@
 				class: "hover:font-semibold" %>
 
 		<%= tag.div id: "giorno_#{giorno.to_s}", 
-					class: "min-h-72 w-full bg-transparent mt-4",
+					class: "h-96 w-full bg-transparent mt-4 overflow-y-auto",
 					data: {
                         controller: "tax-sortable",
                         tax_sortable_group_value: "calendar",

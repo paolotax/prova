@@ -130,10 +130,72 @@ export default class extends Controller {
     return dateString;
   }
 
-  loadPreviousWeek() {
+  async loadPreviousWeek() {
+    if (this.loading) return;
+  
     this.loading = true;
-    console.log("Loading previous week...");
-    // Fetch logica
+  
+    // Trova il primo elemento visibile
+    const firstElement = Array.from(this.weekContainerTarget.children).find(
+      (child) => child.dataset.giorno
+    );
+  
+    if (!firstElement) {
+      this.loading = false;
+      return;
+    }
+  
+    const firstDayString = this.normalizeDate(firstElement.dataset.giorno);
+    const firstDay = new Date(firstDayString);
+  
+    if (isNaN(firstDay.getTime())) {
+      this.loading = false;
+      return;
+    }
+  
+    // Calcola la settimana precedente
+    const previousWeekStart = new Date(firstDay);
+    previousWeekStart.setDate(previousWeekStart.getDate() - 7);
+    const url = `/agenda?giorno=${previousWeekStart.toISOString().slice(0, 10)}&direction=prepend`;
+    
+
+    // Turbo Stream is automatically handled, no need to call renderStreamMessage
+        // Reposition scroll to account for prepending content
+        const previousScrollHeight = this.weekContainerTarget.scrollHeight;
+
+    try {
+      const response = await get(url, { responseKind: "turbo-stream" });
+  
+      if (response.ok) {
+        // const turboStreamContent = await response.body;
+  
+        // if (!turboStreamContent) {
+        //   console.error("Empty Turbo Stream content received.");
+        //   this.loading = false;
+        //   return;
+        // }
+  
+        // console.log("Turbo Stream Content for Previous Week:", turboStreamContent);
+  
+        this.clearTriggers();
+  
+        
+        // this.weekContainerTarget.insertAdjacentHTML("afterbegin", turboStreamContent);
+  
+        const newScrollHeight = this.weekContainerTarget.scrollHeight;
+        this.weekContainerTarget.scrollTop += newScrollHeight - previousScrollHeight;
+  
+        setTimeout(() => {
+          this.addScrollTriggers();
+        }, 50);
+      } else {
+        console.error("Failed to load previous week:", response);
+      }
+    } catch (error) {
+      console.error("Error with request.js:", error);
+    } finally {
+      this.loading = false;
+    }
   }
 
   disconnect() {

@@ -9,31 +9,10 @@
 <div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
 		
-        <% heading.with_action do %>
-           
-            <%= tag.div class: "flex items-center -ml-3" do %>  
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-left.svg",
-                    color: "transparent",
-                    url: giorno_path(giorno: (@giorno - 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-                
-            
-
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-right.svg",
-                    color: "transparent",
-                    url: giorno_path(giorno: (@giorno + 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-            <% end %>
-        
-        <% end %>
-
         <% if @tappe.size > 1 %>
             <% heading.with_action do %>	
                 <%= component 'tax_button',
-                    caption: 'Percorso', 
-                    svg_file: 'icon-path-rounded-square.svg',
+                    caption: 'Ricalcola percorso', 
                     color: "transparent",
                     url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
             <% end %>
@@ -42,11 +21,35 @@
 		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "Agenda",
-				svg_file: "icon-calendar.svg",
 				color: "yellow",
 				url: agenda_path(giorno: (@giorno).to_s),
                 data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
 		<% end %>
+            
+        <% heading.with_action do %>
+            <div class="flex gap-1">
+                <%= component 'tax_button',
+                    svg_file: "icon-arrow-left.svg",
+                    color: "white",
+                    url: giorno_path(giorno: (@giorno - 1.day).to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                
+                <%= component 'tax_button',
+                    caption: "Oggi",
+                    color: "white",
+                    url: giorno_path(giorno: Date.today.to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>                
+            
+                <%= component 'tax_button',
+                    svg_file: "icon-arrow-right.svg",
+                    color: "white",
+                    url: giorno_path(giorno: (@giorno + 1.day).to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+            </div>
+        
+        <% end %>
+
+  
 
 
 		<%= I18n.l( @giorno.to_date, format: :long, locale: :it ) %>
@@ -64,7 +67,7 @@
 
     <%# non riordina bene position col css che nasconde quindi lo devo eliminare nel turbo stream %>
     <% if @tappe.empty? %>
-        <div class="no-tappe text-center p-4 hidden only:block">
+        <div class="no-tappe text-center py-16 hidden only:block">
             <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
             <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
         </div>
