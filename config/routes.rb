@@ -7,6 +7,8 @@ require "sidekiq/web"
 
 # then mount it
 Rails.application.routes.draw do
+
+  resources :voice_notes, only: [:create, :index, :new, :destroy]
   
   get "agenda", to: "agenda#index"
   get "agenda/:giorno", to: "agenda#show", as: "giorno"

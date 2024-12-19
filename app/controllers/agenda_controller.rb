@@ -1,4 +1,7 @@
 class AgendaController < ApplicationController
+
+  before_action :authenticate_user!
+  
   def index  
     @giorno = params[:giorno]&.to_date || Date.today
     @settimana = helpers.dates_of_week(@giorno)

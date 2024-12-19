@@ -10,10 +10,6 @@
 
 
 		<% if current_user %>
- 
-			<%#= js_map get_coordinates(
-					scuole_ids: current_user.import_scuole.ids.compact,
-					clienti_ids: current_user.clienti.ids.compact), tooltips: { hover: false, html: true } %>
 
 			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
 
@@ -22,6 +18,8 @@
 					<%= button_to "chatta con gpt", chats_path, data: { turbo: false }, class: "btn btn-outline w-full" %>
 
 				<% end %>
+
+				<%= link_to "Vocals", new_voice_note_path, class: "btn btn-outline", data: { turbo_frame: :modal, action: "click->dialog#open"} %>
 
 				<%= link_to "AGENDA", agenda_path(giorno: Date.today), class: "btn btn-outline" %>
 				
