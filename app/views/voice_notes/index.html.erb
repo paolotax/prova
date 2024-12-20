@@ -20,7 +20,7 @@
         <td>
           <% if voice_note.audio_file.attached? %>
             <audio controls>
-              <source src="<%= url_for(voice_note.audio_file) %>" type="audio/webm">
+              <source src="<%= url_for(voice_note.audio_file) %>" type="audio/mp4">
               Il tuo browser non supporta l'elemento audio.
             </audio>
           <% else %>

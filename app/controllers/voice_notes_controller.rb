@@ -23,7 +23,7 @@ class VoiceNotesController < ApplicationController
 
   def index
     # Mostra solo le note vocali dell'utente autenticato
-    @voice_notes = current_user.voice_notes
+    @voice_notes = current_user.voice_notes.with_attached_audio_file
   end
 
 end

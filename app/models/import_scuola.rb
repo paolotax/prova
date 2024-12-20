@@ -48,8 +48,8 @@ class ImportScuola < ApplicationRecord
     ]
   end
 
-  geocoded_by :indirizzo_navigator
-  after_validation :geocode, if: ->(obj){ obj.INDIRIZZOSCUOLA.present? and obj.CAPSCUOLA.present? and obj.DESCRIZIONECOMUNE.present? and obj.PROVINCIA.present? and obj.latitude.nil? and obj.longitude.nil? }
+  # geocoded_by :indirizzo_navigator
+  # after_validation :geocode, if: ->(obj){ obj.INDIRIZZOSCUOLA.present? and obj.CAPSCUOLA.present? and obj.DESCRIZIONECOMUNE.present? and obj.PROVINCIA.present? and obj.latitude.nil? and obj.longitude.nil? }
 
   include Searchable
   search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO
