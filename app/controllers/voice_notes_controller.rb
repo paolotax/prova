@@ -1,7 +1,7 @@
 class VoiceNotesController < ApplicationController
 
   before_action :authenticate_user! # Protegge il controller
-  before_action :set_voice_note, only: [:destroy]
+  before_action :set_voice_note, only: [:destroy, :transcribe]
   
   def create
     @voice_note = current_user.voice_notes.build(title: params[:title])
@@ -35,10 +35,45 @@ class VoiceNotesController < ApplicationController
     end
   end
 
+  def transcribe
+    if @voice_note.audio_file.attached?
+      # Scarica il file allegato come Tempfile
+      audio_file = download_blob_to_tempfile(@voice_note.audio_file.blob)
+
+      # Invia richiesta a OpenAI Whisper
+      response = OpenAI::Client.new.audio.transcribe(
+        parameters: {
+          model: "whisper-1",
+          file: audio_file
+        } 
+      )
+
+      # Verifica la presenza del testo trascritto nella risposta
+      if response && response["text"]
+        transcription = response["text"]
+        render json: { transcription: transcription }, status: :ok
+      else
+        render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "Nessun file audio allegato" }, status: :bad_request
+    end
+  end
+
   private
 
   def set_voice_note
     @voice_note = current_user.voice_notes.find(params[:id])
   end
 
+  # Metodo per scaricare il blob in un Tempfile
+  def download_blob_to_tempfile(blob)
+    file_extension = blob.filename.extension_with_delimiter
+    tempfile = Tempfile.new([blob.filename.base, file_extension], binmode: true)
+
+    blob.download { |chunk| tempfile.write(chunk) }
+    tempfile.rewind
+
+    tempfile
+  end
 end

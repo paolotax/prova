@@ -1,9 +1,17 @@
-<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex items-center gap-4">
-  <h3 class="text-lg font-bold"><%= voice_note.title %></h3>
-  <audio controls class="w-full">
+<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex items-center justify-between gap-4">
+  
+  <div class="text-lg font-bold"><%= voice_note.title %></div>
+  
+  
+  <audio controls>
     <source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
     Il tuo browser non supporta l'elemento audio.
   </audio>
+
+  <%= button_to "Trascrivi",
+              transcribe_voice_note_path(voice_note),
+              method: :post,
+              class: "px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600" %>
 
   <div class="flex justify-end space-x-4">
     <!-- Pulsante elimina -->

@@ -27,7 +27,7 @@ class VoiceNote < ApplicationRecord
 
   before_validation :set_title
   def set_title
-    self.title = "Nota vocale ##{id}" if title.blank?
+    self.title = "Nota vocale del #{Time.zone.now.strftime("%d-%m..%H:%M")}" if title.blank?
   end
 
 end
