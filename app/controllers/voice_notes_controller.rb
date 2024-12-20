@@ -50,8 +50,8 @@ class VoiceNotesController < ApplicationController
 
       # Verifica la presenza del testo trascritto nella risposta
       if response && response["text"]
-        transcription = response["text"]
-        render json: { transcription: transcription }, status: :ok
+        @voice_note.update(transcription: response["text"])
+        render turbo_stream: turbo_stream.replace(@voice_note, partial: "voice_notes/voice_note", locals: { voice_note: @voice_note })
       else
         render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
       end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_19_165617) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_20_184452) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -600,6 +600,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_19_165617) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.text "title"
+    t.text "transcription"
     t.index ["user_id"], name: "index_voice_notes_on_user_id"
   end
 

@@ -2,11 +2,12 @@
 #
 # Table name: voice_notes
 #
-#  id         :bigint           not null, primary key
-#  title      :text
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  user_id    :bigint           not null
+#  id            :bigint           not null, primary key
+#  title         :text
+#  transcription :text
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  user_id       :bigint           not null
 #
 # Indexes
 #
