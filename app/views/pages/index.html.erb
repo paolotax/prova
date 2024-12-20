@@ -19,7 +19,7 @@
 
 				<% end %>
 
-				<%= link_to "Vocals", new_voice_note_path, class: "btn btn-outline", data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+				<%= link_to "Vocals", voice_notes_path, class: "btn btn-outline" %>
 
 				<%= link_to "AGENDA", agenda_path(giorno: Date.today), class: "btn btn-outline" %>
 				
