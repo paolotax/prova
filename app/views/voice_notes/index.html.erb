@@ -1,6 +1,7 @@
 
-<%=  render "form" %>
-
+<div data-controller="audio-recorder" >
+  <%=  render "form" %>
+</div>
 <div id="voice-notes-list" class="mt-4">
     <% @voice_notes.order(created_at: :desc).each do |voice_note| %>
       <%= render voice_note %>
