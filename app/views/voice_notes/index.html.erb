@@ -4,30 +4,8 @@
 
 
 
-<table>
-  <thead>
-    <tr>
-      <th>Titolo</th>
-      <th>Data e Ora</th>
-      <th>Ascolta</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @voice_notes.each do |voice_note| %>
-      <tr>
-        <td><%= voice_note.title %></td>
-        <td><%= voice_note.created_at.strftime("%d/%m/%Y %H:%M:%S") %></td>
-        <td>
-          <% if voice_note.audio_file.attached? %>
-            <audio controls>
-              <source src="<%= url_for(voice_note.audio_file) %>" type="audio/mp4">
-              Il tuo browser non supporta l'elemento audio.
-            </audio>
-          <% else %>
-            Nessun file audio.
-          <% end %>
-        </td>
-      </tr>
+<div id="pippo">
+    <% @voice_notes.order(created_at: :desc).each do |voice_note| %>
+      <%= render voice_note %>
     <% end %>
-  </tbody>
-</table>
+</div>

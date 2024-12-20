@@ -1,0 +1,14 @@
+      <div>
+        <div><%= voice_note.title %></div>
+        <div><%= voice_note.created_at.strftime("%d/%m/%Y %H:%M:%S") %></div>
+        <div>
+          <% if voice_note.audio_file.attached? %>
+            <audio controls>
+              <source src="<%= url_for(voice_note.audio_file) %>" type="audio/mp4">
+              Il tuo browser non supporta l'elemento audio.
+            </audio>
+          <% else %>
+            Nessun file audio.
+          <% end %>
+        </div>
+      </div>

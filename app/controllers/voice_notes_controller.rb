@@ -15,7 +15,12 @@ class VoiceNotesController < ApplicationController
     end
   
     if @voice_note.save
-      render json: { message: "VoiceNote salvata con successo!" }, status: :created
+
+      respond_to do |format|
+        format.html { redirect_to voice_notes_path, notice: "VoiceNote salvata con successo!" }
+        format.turbo_stream
+        format.json { render json: { message: "VoiceNote salvata con successo!" }, status: :created } 
+      end
     else
       render json: { error: @voice_note.errors.full_messages }, status: :unprocessable_entity
     end
