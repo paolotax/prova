@@ -1,48 +1,51 @@
-<div data-controller="audio-recorder" class="space-y-4">
-  <form action="<%= voice_notes_path %>" method="post" format="turbo-stream" enctype="multipart/form-data" class="space-y-4">
+<div id="form_container" 
+    data-controller="audio-recorder" 
+	data-action="turbo:submit-end->audio-recorder#resetForm" 
+	class="space-y-4 py-5">
+  	
+	<form action="<%= voice_notes_path %>" method="post" format="turbo-stream" enctype="multipart/form-data" class="space-y-4">
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
-    <div>
-      <label for="voice_note_title" class="block text-sm font-medium text-gray-700">Titolo</label>
-      <input type="text" id="voice_note_title" name="title" placeholder="Inserisci un titolo"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-    </div>
-
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-4" data-audio-recorder-target="startControl" >
       <!-- Pulsante per iniziare la registrazione -->
       <button type="button"
               class="px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              data-audio-recorder-target="startButton"
               data-action="audio-recorder#startRecording">
-        Inizia Registrazione
-      </button>
-
-      <!-- Pulsante per fermare la registrazione -->
-      <button type="button"
-              class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              data-audio-recorder-target="stopButton"
-              data-action="audio-recorder#stopRecording" disabled>
-        Ferma Registrazione
+        Registra
       </button>
     </div>
 
-    <!-- Indicatore di registrazione -->
-    <p data-audio-recorder-target="recordingIndicator" class="text-red-500 font-bold hidden">
-      Registrazione in corso...
-    </p>
+    <div class="flex items-center space-x-4" data-audio-recorder-target="recordingControls" class="hidden">
+      <!-- Pulsante per fermare la registrazione -->
+      <button type="button"
+              class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition"
+              data-action="audio-recorder#stopRecording">
+        Ferma Registrazione
+      </button>
 
-    <!-- Player per l'audio -->
-    <audio data-audio-recorder-target="audioPlayback" controls class="mt-4 w-full"></audio>
 
-    <!-- Campo nascosto per il file -->
-    <input type="file" id="audioBlobInput" name="audio_file" data-audio-recorder-target="audioInput" class="hidden">
+      <!-- Indicatore di registrazione -->
+      <p class="text-red-500 font-bold">
+        Registrazione in corso...
+      </p>
+    </div>
+
+
 
     <!-- Pulsante per caricare -->
-    <div>
-      <button type="submit"
+    <div class="flex items-center space-x-4" data-audio-recorder-target="uploadControls" class="hidden">
+      
+	  <button type="submit"
               class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition">
-        Carica Registrazione
+        Salva
       </button>
+
+      <!-- Player per l'audio -->
+      <audio controls class="w-full"></audio>
+
+      <!-- Campo nascosto per il file -->
+      <input type="file" id="audioBlobInput" name="audio_file" class="hidden">
+
     </div>
   </form>
 </div>

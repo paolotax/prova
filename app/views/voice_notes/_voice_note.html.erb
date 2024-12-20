@@ -1,14 +1,16 @@
-      <div>
-        <div><%= voice_note.title %></div>
-        <div><%= voice_note.created_at.strftime("%d/%m/%Y %H:%M:%S") %></div>
-        <div>
-          <% if voice_note.audio_file.attached? %>
-            <audio controls>
-              <source src="<%= url_for(voice_note.audio_file) %>" type="audio/mp4">
-              Il tuo browser non supporta l'elemento audio.
-            </audio>
-          <% else %>
-            Nessun file audio.
-          <% end %>
-        </div>
-      </div>
+<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex items-center gap-4">
+  <h3 class="text-lg font-bold"><%= voice_note.title %></h3>
+  <audio controls class="w-full">
+    <source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
+    Il tuo browser non supporta l'elemento audio.
+  </audio>
+
+  <div class="flex justify-end space-x-4">
+    <!-- Pulsante elimina -->
+    <%= button_to "Elimina",
+                  voice_note_path(voice_note),
+                  method: :delete,
+                  form: { data: { turbo_confirm: "Sei sicuro di voler eliminare questa nota vocale?" } },
+                  class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
+  </div>
+</div>

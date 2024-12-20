@@ -1,10 +1,7 @@
-<h1>Le tue Registrazioni</h1>
 
-				<%= link_to "Nuova Registrazione", new_voice_note_path, class: "btn btn-outline", data: { turbo_frame: :modal, action: "click->dialog#open"} %>
+<%=  render "form" %>
 
-
-
-<div id="pippo">
+<div id="voice-notes-list" class="mt-4">
     <% @voice_notes.order(created_at: :desc).each do |voice_note| %>
       <%= render voice_note %>
     <% end %>

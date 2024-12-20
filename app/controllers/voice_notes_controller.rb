@@ -1,12 +1,8 @@
 class VoiceNotesController < ApplicationController
 
   before_action :authenticate_user! # Protegge il controller
-
-
-  def new
-    @voice_note = VoiceNote.new
-  end
-
+  before_action :set_voice_note, only: [:destroy]
+  
   def create
     @voice_note = current_user.voice_notes.build(title: params[:title])
 
@@ -29,6 +25,20 @@ class VoiceNotesController < ApplicationController
   def index
     # Mostra solo le note vocali dell'utente autenticato
     @voice_notes = current_user.voice_notes.with_attached_audio_file
+  end
+
+  def destroy
+    @voice_note.destroy
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@voice_note) }
+      format.html { redirect_to voice_notes_path, notice: "Nota vocale eliminata con successo." }
+    end
+  end
+
+  private
+
+  def set_voice_note
+    @voice_note = current_user.voice_notes.find(params[:id])
   end
 
 end
