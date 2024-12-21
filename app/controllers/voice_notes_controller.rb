@@ -38,22 +38,23 @@ class VoiceNotesController < ApplicationController
   def transcribe
     if @voice_note.audio_file.attached?
       # Scarica il file allegato come Tempfile
-      audio_file = download_blob_to_tempfile(@voice_note.audio_file.blob)
+      @voice_note.audio_file.blob.open do |audio_file|
 
-      # Invia richiesta a OpenAI Whisper
-      response = OpenAI::Client.new.audio.transcribe(
-        parameters: {
-          model: "whisper-1",
-          file: audio_file
-        } 
-      )
+        # Invia richiesta a OpenAI Whisper
+        response = OpenAI::Client.new.audio.transcribe(
+          parameters: {
+            model: "whisper-1",
+            file: audio_file
+          } 
+        )
 
-      # Verifica la presenza del testo trascritto nella risposta
-      if response && response["text"]
-        @voice_note.update(transcription: response["text"])
-        render turbo_stream: turbo_stream.replace(@voice_note, partial: "voice_notes/voice_note", locals: { voice_note: @voice_note })
-      else
-        render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
+        # Verifica la presenza del testo trascritto nella risposta
+        if response && response["text"]
+          @voice_note.update(transcription: response["text"])
+          render turbo_stream: turbo_stream.replace(@voice_note, partial: "voice_notes/voice_note", locals: { voice_note: @voice_note })
+        else
+          render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
+        end
       end
     else
       render json: { error: "Nessun file audio allegato" }, status: :bad_request
