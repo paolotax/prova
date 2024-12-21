@@ -44,7 +44,8 @@ class VoiceNotesController < ApplicationController
         response = OpenAI::Client.new.audio.transcribe(
           parameters: {
             model: "whisper-1",
-            file: audio_file
+            file: audio_file,
+            language: "it"
           } 
         )
 
