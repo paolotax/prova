@@ -6,13 +6,6 @@ kamal app exec -i 'bin/importmap json'
 
 kamal app exec -i 'bundle exec rake import:new_adozioni'
 
-
-
-u = User.find_by_name("enrico")
-u.confirm 
-
-User.all.collect {|u| { name: u.name, adozioni: u.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size } }
-
 kamal details
 
 kamal app exec -i --reuse bash
@@ -23,26 +16,7 @@ docker ps
 
 docker logs -ft container
 
-User.all.select { |u| u.confirmed? }
-
-User.all.each { |u| u.confirm unless u.confirmed? }
-
-Appunto.where.not(import_adozione_id: nil).each do |a|
-    classe = a.import_adozione.classe
-    a.classe = classe
-    a.save
-end
-
-Adozione.all.each do |a|
-  if a.stato_adozione.downcase[0..2] == "com"
-    a.tipo = "vendita"
-    a.save
-  end
-end
-
-Adozione.pluck(:stato_adozione).uniq
-
-$ ssh root@<SERVER_IP>
+ssh root@<SERVER_IP>
 mkdir -p /letsencrypt && touch /letsencrypt/acme.json && chmod 600 /letsencrypt/acme.json
 docker network create -d bridge private
 
