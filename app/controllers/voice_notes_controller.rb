@@ -35,30 +35,52 @@ class VoiceNotesController < ApplicationController
     end
   end
 
-  def transcribe
-    if @voice_note.audio_file.attached?
-      # Scarica il file allegato come Tempfile
-      @voice_note.audio_file.blob.open do |audio_file|
 
-        # Invia richiesta a OpenAI Whisper
-        response = OpenAI::Client.new.audio.transcribe(
-          parameters: {
-            model: "whisper-1",
-            file: audio_file,
-            language: "it"
-          } 
+  def transcribe
+    @voice_note = VoiceNote.find(params[:id]) # Trova la VoiceNote
+
+    if @voice_note.audio_file.attached?
+      @voice_note.audio_file.blob.open do |file|
+        # Percorso per il file convertito
+        converted_path = Rails.root.join("tmp", "converted_audio.wav")
+
+        # Converti in formato compatibile con Whisper
+        convert_to_wav(file.path, converted_path)
+
+        # Aggiorna il blob con il file convertito
+        @voice_note.audio_file.attach(
+          io: File.open(converted_path, "rb"),
+          filename: "converted_#{@voice_note.audio_file.filename.base}.wav",
+          content_type: "audio/wav"
         )
 
-        # Verifica la presenza del testo trascritto nella risposta
+        # Invia il file convertito a OpenAI Whisper
+        begin
+          response = OpenAI::Client.new
+          .audio.transcribe(
+            parameters: {
+              model: "whisper-1",
+              file: File.open(converted_path, "rb"),
+              language: "it"
+            }
+          )
+        rescue Faraday::BadRequestError => e
+          puts e.response[:body] # Stampa il corpo della risposta dell'API
+          render json: { error: "Errore nella richiesta: #{e.response[:body]}" }, status: :unprocessable_entity
+        end
+
         if response && response["text"]
           @voice_note.update(transcription: response["text"])
           render turbo_stream: turbo_stream.replace(@voice_note, partial: "voice_notes/voice_note", locals: { voice_note: @voice_note })
         else
           render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
         end
+
+        # Rimuovi il file temporaneo
+        File.delete(converted_path) if File.exist?(converted_path)
       end
     else
-      render json: { error: "Nessun file audio allegato" }, status: :bad_request
+      render json: { error: "Nessun file audio allegato." }, status: :bad_request
     end
   end
 
@@ -77,5 +99,9 @@ class VoiceNotesController < ApplicationController
     tempfile.rewind
 
     tempfile
+  end
+
+  def convert_to_wav(input_path, output_path)
+    system("ffmpeg -i #{input_path} -ar 16000 -ac 1 #{output_path}")
   end
 end
