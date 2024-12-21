@@ -42,7 +42,7 @@ class VoiceNotesController < ApplicationController
     if @voice_note.audio_file.attached?
       @voice_note.audio_file.blob.open do |file|
         # Percorso per il file convertito
-        converted_path = Rails.root.join("tmp", "converted_audio.wav")
+        converted_path = Rails.root.join("_sql", "converted_audio.wav")
 
         # Converti in formato compatibile con Whisper
         convert_to_wav(file.path, converted_path)
@@ -88,17 +88,6 @@ class VoiceNotesController < ApplicationController
 
   def set_voice_note
     @voice_note = current_user.voice_notes.find(params[:id])
-  end
-
-  # Metodo per scaricare il blob in un Tempfile
-  def download_blob_to_tempfile(blob)
-    file_extension = blob.filename.extension_with_delimiter
-    tempfile = Tempfile.new([blob.filename.base, file_extension], binmode: true)
-
-    blob.download { |chunk| tempfile.write(chunk) }
-    tempfile.rewind
-
-    tempfile
   end
 
   def convert_to_wav(input_path, output_path)
