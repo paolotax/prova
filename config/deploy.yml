@@ -107,6 +107,11 @@ accessories:
     options:
       network: "private"
 
+docker:
+  volumes:
+    - /usr/bin/ffmpeg:/usr/bin/ffmpeg
+
+
 # Configure custom arguments for Traefik
 # traefik:
 #   args:
