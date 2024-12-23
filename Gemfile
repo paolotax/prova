@@ -147,3 +147,5 @@ gem "friendly_id", "~> 5.5"
 gem "blazer", "~> 3.1"
 
 gem "ruby-openai"
+
+gem "streamio-ffmpeg"
