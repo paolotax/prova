@@ -15,6 +15,8 @@ servers:
       traefik.http.routers.prova.tls.certresolver: letsencrypt
     options:
       network: "private"
+    volumes:
+      - /usr/bin/ffmpeg:/usr/bin/ffmpeg
   job:
     hosts:
       - 116.203.224.90
@@ -106,10 +108,6 @@ accessories:
       - data:/data
     options:
       network: "private"
-
-docker:
-  volumes:
-    - /usr/bin/ffmpeg:/usr/bin/ffmpeg
 
 
 # Configure custom arguments for Traefik
