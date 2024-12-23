@@ -108,7 +108,8 @@ accessories:
       network: "private"
 
 volumes:
-  - /usr/bin:/usr/bin
+  - /usr/bin/ffmpeg:/usr/bin/ffmpeg
+  - /lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu
 
 
 # Configure custom arguments for Traefik
