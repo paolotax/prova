@@ -25,7 +25,13 @@ RUN apt-get update -qq && \
     libpq-dev \
     libvips \
     pkg-config \
-    ffmpeg
+    ffmpeg \
+    libavdevice-dev \
+    libavformat-dev \
+    libavcodec-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libavfilter-dev
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./

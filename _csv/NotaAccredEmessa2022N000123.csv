@@ -1,4 +1,0 @@
-Fornitore;TipoDocumento;NumeroDocumento;Data;ImportoTotale;TotNetto;Riga;Cod.articolo;Descrizione;Prezzo Unit.;Quantita;TotLordo;Sconti;Tot. Netto;Iva
-Gaia;Nota di accredito;123/N;01/07/22;0;0;1;SOLMAT5;aa.vv. VOCE DELLA TERRA 5 Mate_Libro doc. soluz ;0.01;1;0.01;99.99;;74
-Gaia;Nota di accredito;123/N;01/07/22;0;0;2;SOLMAT4;aa.vv. VOCE DELLA TERRA 4 Mate_Libro doc. soluz;0.01;17;0.17;99.99;;74
-Gaia;Nota di accredito;123/N;01/07/22;0;0;3;INVTSOLGRAM4;aa.vv. InvestigaTESTO CL.4;0.01;31;0.31;99.99;;74
