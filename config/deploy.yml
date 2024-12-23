@@ -109,7 +109,6 @@ accessories:
 
 volumes:
   - /usr/bin/ffmpeg:/usr/bin/ffmpeg
-  - /lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu
 
 
 # Configure custom arguments for Traefik
