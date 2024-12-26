@@ -43,10 +43,10 @@ class VoiceNotesController < ApplicationController
       
       @voice_note.audio_file.blob.open do |file|
         # # Percorso per il file convertito
-        # converted_path = Rails.root.join("_sql", "converted_audio.wav")
+        converted_path = Rails.root.join("_sql", "converted_audio.wav")
 
         # # Converti in formato compatibile con Whisper
-        # convert_to_wav(file.path, converted_path)
+        convert_to_wav(file.path, converted_path)
 
         # Aggiorna il blob con il file convertito
         # @voice_note.audio_file.attach(
@@ -60,7 +60,7 @@ class VoiceNotesController < ApplicationController
           response = OpenAI::Client.new.audio.transcribe(
             parameters: {
               model: "whisper-1",
-              file: file #File.open(converted_path, "rb")
+              file: File.open(converted_path, "rb")
             }
           )
         rescue Faraday::BadRequestError => e
@@ -76,7 +76,7 @@ class VoiceNotesController < ApplicationController
         end
 
         # Rimuovi il file temporaneo
-        # File.delete(converted_path) if File.exist?(converted_path)
+        File.delete(converted_path) if File.exist?(converted_path)
       end
     else
       render json: { error: "Nessun file audio allegato." }, status: :bad_request
