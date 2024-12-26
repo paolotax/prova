@@ -37,54 +37,9 @@ class VoiceNotesController < ApplicationController
 
 
   def transcribe
-    @voice_note = VoiceNote.find(params[:id])
-
     if @voice_note.audio_file.attached?
-      @voice_note.audio_file.blob.open do |file|
-        begin
-          audio_format = detect_audio_format(file.path)
-          
-          if needs_conversion?(audio_format)
-            converted_path = Rails.root.join("tmp", "converted_#{SecureRandom.hex(8)}.wav")
-            
-            begin
-              convert_to_wav(file.path, converted_path)
-              transcription_file = File.open(converted_path, "rb")
-            rescue StandardError => e
-              Rails.logger.error("Errore nella conversione audio: #{e.message}")
-              render json: { error: "Errore nella conversione audio" }, status: :unprocessable_entity
-              return
-            end
-          else
-            transcription_file = file
-          end
-
-          response = OpenAI::Client.new.audio.transcribe(
-            parameters: {
-              model: "whisper-1",
-              file: transcription_file
-            }
-          )
-
-          if response && response["text"]
-            @voice_note.update(transcription: response["text"])
-            render turbo_stream: turbo_stream.replace(
-              @voice_note, 
-              partial: "voice_notes/voice_note", 
-              locals: { voice_note: @voice_note }
-            )
-          else
-            render json: { error: "Errore nella trascrizione" }, status: :unprocessable_entity
-          end
-
-        rescue Faraday::BadRequestError => e
-          Rails.logger.error("Errore OpenAI: #{e.response[:body]}")
-          render json: { error: "Errore nella richiesta: #{e.response[:body]}" }, status: :unprocessable_entity
-        ensure
-          # Pulizia file temporaneo se esiste
-          File.delete(converted_path) if defined?(converted_path) && File.exist?(converted_path)
-        end
-      end
+      TranscribeVoiceNoteJob.perform_async(@voice_note.id)
+      render json: { message: "La trascrizione è stata avviata e sarà disponibile a breve." }
     else
       render json: { error: "Nessun file audio allegato." }, status: :bad_request
     end
@@ -94,26 +49,5 @@ class VoiceNotesController < ApplicationController
 
   def set_voice_note
     @voice_note = current_user.voice_notes.find(params[:id])
-  end
-
-  def detect_audio_format(file_path)
-    # Usa ffprobe per ottenere informazioni sul formato del file
-    format_info = `ffprobe -v quiet -print_format json -show_format #{file_path}`
-    JSON.parse(format_info)["format"]["format_name"] rescue nil
-  end
-
-  def needs_conversion?(format)
-    # Lista di formati che non necessitano conversione
-    # Whisper accetta mp3, mp4, mpeg, mpga, m4a, wav, e webm
-    acceptable_formats = ['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm']
-    
-    # Controlla se il formato è nella lista dei formati accettabili
-    !format.split(',').any? { |f| acceptable_formats.include?(f.strip) }
-
-    true
-  end
-
-  def convert_to_wav(input_path, output_path)
-    system("ffmpeg -i #{input_path} -ar 16000 -ac 1 -c:a pcm_s16le #{output_path}")
   end
 end

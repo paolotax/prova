@@ -31,4 +31,25 @@ class VoiceNote < ApplicationRecord
     self.title = "Nota vocale del #{Time.zone.now.strftime("%d-%m..%H:%M")}" if title.blank?
   end
 
+  after_create_commit :schedule_transcription, if: :audio_file_attached?
+  after_update_commit -> { 
+    broadcast_replace_to "voice_notes",
+                        target: "voice_note_#{id}",
+                        partial: "voice_notes/voice_note",
+                        locals: { voice_note: self }
+  }
+
+  def schedule_transcription
+    TranscribeVoiceNoteJob.perform_async(id)
+  end
+
+  def audio_file_attached?
+    audio_file.attached?
+  end
+
+  def transcribed?
+    transcription.present?
+  end
+
+  
 end

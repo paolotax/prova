@@ -1,28 +1,33 @@
-<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex flex-col gap-4">
-  <div class="text-lg font-bold"><%= voice_note.title %></div>
+<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex flex-col sm:flex-row items-center justify-between gap-4">
   
-  <audio controls>
-    <source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
-    Il tuo browser non supporta l'elemento audio.
-  </audio>
-
-  <% if voice_note.transcription.present? %>
-    <div class="text-sm text-gray-700">
-      <strong>Trascrizione:</strong>
-      <p><%= voice_note.transcription %></p>
+  <div class="flex flex-col gap-2">
+    <% if voice_note.transcription.present? %>
+      <div class="text-lg font-semibold text-gray-900">
+        <p><%= voice_note.transcription %></p>
+      </div>
+    <% else %>
+      <div class="text-sm text-gray-700">
+        <em>Trascrizione in corso...</em>
+      </div>
+    <% end %>
+    <div class="text-sm text-gray-700"><%= voice_note.title %></div>
+  </div>
+  
+  <div class="flex flex-col gap-2 items-end">
+    <audio controls>
+      <source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
+      Il tuo browser non supporta l'elemento audio.
+    </audio>
+    <%= button_to "Trascrivi",
+                  transcribe_voice_note_path(voice_note),
+                  method: :post,
+                  class: "px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600" %>
+    <div class="flex justify-end space-x-4">
+      <%= button_to "Elimina",
+                    voice_note_path(voice_note),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Sei sicuro di voler eliminare questa nota vocale?" } },
+                    class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
     </div>
-  <% end %>
-
-  <%= button_to "Trascrivi",
-                transcribe_voice_note_path(voice_note),
-                method: :post,
-                class: "px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600" %>
-
-  <div class="flex justify-end space-x-4">
-    <%= button_to "Elimina",
-                  voice_note_path(voice_note),
-                  method: :delete,
-                  form: { data: { turbo_confirm: "Sei sicuro di voler eliminare questa nota vocale?" } },
-                  class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
   </div>
 </div>
