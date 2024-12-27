@@ -32,11 +32,11 @@ class CreateNoteFromTranscriptJob
                 properties: {
                   nome: {
                     type: "string",
-                    description: "Il nome dell'insegnante o il titolo dell'appunto",
+                    description: "Il nome dell'insegnante o del cliente se lo trovi oppure dai tu un titolo",
                   },
                   body: {
                     type: "string",
-                    description: "Il testo dell'appunto senza la scuola, la data di oggi e la data prevista ma aggiungi un emoticon a caso",
+                    description: "Il testo dell'appunto senza la scuola, la data di oggi e la data prevista ma aggiungi un emoticon a caso metti i titoli dei libri tra virgolette",
                   },
                   telefono: {
                     type: "string",
