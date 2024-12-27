@@ -13,7 +13,7 @@
     <div class="text-sm text-gray-700"><%= voice_note.title %></div>
   </div>
   
-  <div class="flex flex-col gap-2 items-end">
+  <div class="flex sm:flex-col gap-2 items-center justify-between sm:items-end">
     <audio controls>
       <source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
       Il tuo browser non supporta l'elemento audio.
