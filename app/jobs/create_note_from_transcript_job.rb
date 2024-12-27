@@ -78,6 +78,13 @@ class CreateNoteFromTranscriptJob
     appunto = chat.user.appunti.build(nome: nome, body: scuola_body, telefono: telefono)
     if appunto.save
       add_message_to_chat(chat: chat, message: "Appunto creato con successo")
+      # Aggiungiamo il broadcast
+      Turbo::StreamsChannel.broadcast_append_to(
+        "voice_notes",
+        target: "voice_note_appunti",
+        partial: "appunti/appunto",
+        locals: { appunto: appunto }
+      )
     else
       add_message_to_chat(chat: chat, message: "Errore nella creazione dell'appunto")
     end
