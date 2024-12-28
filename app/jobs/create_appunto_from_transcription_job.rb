@@ -37,7 +37,7 @@ class CreateAppuntoFromTranscriptionJob
                   },
                   body: {
                     type: "string",
-                    description: "Il testo dell'appunto",
+                    description: "Il testo dell'appunto. Se sono presenti calcoli matematici (es. '2 + 3', '10 * 5', ecc), risolvi i calcoli e includi sia l'espressione che il risultato",
                   },
                   telefono: {
                     type: "string",
