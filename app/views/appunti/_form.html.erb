@@ -1,4 +1,4 @@
-<%= form_with(model: appunto, class: "relative") do |form| %>
+<%= form_with(model: appunto, class: "relative", id: :appunto_form) do |form| %>
 	
 	<% if appunto.errors.any? %>
 		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -97,12 +97,16 @@
 			</div>
 		</div>
 	<% end %>
+
+
+<% end %>
+
 	<%# actions %>
 	<div class="mt-5 flex items-center justify-between">
 
 		<div class="flex justify-end items-center ">
-
-			<%= button_to  do %>
+			
+			<%= button_tag type: :submit, form: :appunto_form do %>
 				<div class="inline-flex items-center gap-x-2 rounded-md 
 						bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white 
 						shadow-sm hover:bg-indigo-500 focus-visible:outline 
@@ -117,7 +121,7 @@
 			<% end %>
 
 			<div class="ml-6 inline-flex">
-				<%= link_to appunti_path, data: { action: "dialog#close" }, 
+				<%= link_to appunti_path, data: { action: "dialog#close", turbo_frame: "_top" }, 
 					class: "inline-flex text-sm font-semibold gap-x-2 text-gray-500 hover:text-gray-800" do  %>
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
@@ -134,7 +138,7 @@
 			<% if action_name != "new" %>
 				<div class="inline-flex">
 					<%= button_to appunto_path(@appunto), method: :delete,
-								data: { turbo_method: "delete", turbo_confirm: "Sei sicuro?" }, # non funziona il contirm nella dialog (???)
+								data: { turbo_method: "delete"}, # non funziona il contirm nella dialog (???)
 								class: "flex items-center px-2.5 py-2 rounded-md shadow-lg space-x-1 border bg-red-500 text-white text-sm font-semibold" do %> 
 						<%= inline_svg_tag "icon-trash.svg" %>
 						<span class="">Elimina</span> 
@@ -142,7 +146,5 @@
 				</div> 
 			<% end %>
 	</div>
-
-<% end %>
 
 			

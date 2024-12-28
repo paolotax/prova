@@ -85,9 +85,12 @@ class AppuntiController < ApplicationController
     @appunto.destroy!
 
     respond_to do |format|
-      format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
+      # format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
       format.json { head :no_content }
-      format.turbo_stream { flash.now[:alert] = "Appunto eliminato." }
+      format.turbo_stream do
+        flash.now[:alert] = "Appunto eliminato."
+        #turbo_stream.remove(@appunto)
+      end
     end
   end
 
