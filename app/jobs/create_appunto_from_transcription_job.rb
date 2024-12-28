@@ -37,7 +37,7 @@ class CreateAppuntoFromTranscriptionJob
                   },
                   body: {
                     type: "string",
-                    description: "Il testo dell'appunto. Se sono presenti calcoli matematici (es. '2 + 3', '10 * 5', ecc), risolvi i calcoli e includi sia l'espressione che il risultato",
+                    description: "Il testo dell'appunto. Se sono presenti calcoli matematici sia in forma numerica (es. '2 + 3 = 5', '10 * 5 = 50') che testuale (es. 'quanto fa due più tre', 'calcola il prodotto di dieci e cinque'), risolvi i calcoli e includi sia l'espressione che il risultato. Supporta operazioni di addizione (+), sottrazione (-), moltiplicazione (*), divisione (/) e potenze (^)",
                   },
                   telefono: {
                     type: "string",
