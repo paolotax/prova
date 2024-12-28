@@ -1,69 +1,30 @@
-<div id="form_container" class="px-2 sm:px-0"
-    
-	data-action="turbo:submit-end->audio-recorder#resetForm" 
-	class="space-y-4 py-5">
-  	
-	<form action="<%= voice_notes_path %>" method="post" format="turbo-stream" enctype="multipart/form-data" class="space-y-4">
-    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<div id="form_container" class="px-2 sm:px-0" data-controller="audio-recorder">
+  <div class="flex items-center space-x-4" data-audio-recorder-target="startControl">
+    <button type="button"
+            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
+      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
+      transition duration-150 ease-in-out
+      focus:outline focus:outline-2 focus:outline-offset-2
+      bg-green-600 text-white hover:bg-green-500 active:bg-green-700 
+      focus:outline-green-500"
+            data-action="audio-recorder#startRecording">
+      <%= inline_svg_tag "icon-microphone.svg" %>
+      Registra
+    </button>
+  </div>
 
-    <div class="flex items-center space-x-4" data-audio-recorder-target="startControl" >
-      <!-- Pulsante per iniziare la registrazione -->
-      <button type="button"
-              class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
-        text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
-        transition duration-150 ease-in-out
-        focus:outline focus:outline-2 focus:outline-offset-2
-        bg-green-600 text-white hover:bg-green-500 active:bg-green-700 
-        focus:outline-green-500"
-              data-action="audio-recorder#startRecording">
-        <%= inline_svg_tag "icon-microphone.svg" %>
-        Registra
-      </button>
-    </div>
-
-    <div class="flex items-center space-x-4" data-audio-recorder-target="recordingControls" class="hidden">
-      <!-- Pulsante per fermare la registrazione -->
-      <button type="button"
-              class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
-        text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
-        transition duration-150 ease-in-out
-        focus:outline focus:outline-2 focus:outline-offset-2
-        bg-red-600 text-white hover:bg-red-500 active:bg-red-600 
-        focus:outline-red-600"
-              data-action="audio-recorder#stopRecording">
-        <%= inline_svg_tag "icon-stop.svg" %>
-        Ferma
-      </button>
-
-
-      <!-- Indicatore di registrazione -->
-      <p class="text-red-500 font-bold">
-        Registrazione in corso...
-      </p>
-    </div>
-
-
-
-    <!-- Pulsante per caricare -->
-    <div class="flex items-center space-x-4" data-audio-recorder-target="uploadControls" class="hidden">
-      
-	  <button type="submit"
-              class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
-        text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
-        transition duration-150 ease-in-out
-        focus:outline focus:outline-2 focus:outline-offset
-        bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700 
-        focus:outline-blue-600">
-        
-        Salva
-      </button>
-
-      <!-- Player per l'audio -->
-      <audio controls class="w-full"></audio>
-
-      <!-- Campo nascosto per il file -->
-      <input type="file" id="audioBlobInput" name="audio_file" class="hidden">
-
-    </div>
-  </form>
+  <div class="flex items-center space-x-4" data-audio-recorder-target="recordingControls" class="hidden">
+    <button type="button"
+            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
+      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
+      transition duration-150 ease-in-out
+      focus:outline focus:outline-2 focus:outline-offset-2
+      bg-red-600 text-white hover:bg-red-500 active:bg-red-600 
+      focus:outline-red-600"
+            data-action="audio-recorder#stopRecording">
+      <%= inline_svg_tag "icon-stop.svg" %>
+      Ferma
+    </button>
+    <p class="text-red-500 font-bold">Registrazione in corso...</p>
+  </div>
 </div>

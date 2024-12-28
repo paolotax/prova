@@ -4,13 +4,15 @@ class VoiceNotesController < ApplicationController
   before_action :set_voice_note, only: [:destroy, :transcribe]
   
   def create
-    @voice_note = current_user.voice_notes.build(title: params[:title])
+    @voice_note = current_user.voice_notes.build
 
     if params[:audio_file].present?
       @voice_note.audio_file.attach(params[:audio_file])
     end
-  
+
     if @voice_note.save
+      # Avvia automaticamente la trascrizione
+      TranscribeVoiceNoteJob.perform_async(@voice_note.id)
 
       respond_to do |format|
         format.html { redirect_to voice_notes_path, notice: "VoiceNote salvata con successo!" }
@@ -48,12 +50,11 @@ class VoiceNotesController < ApplicationController
   def create_note_from_transcript
     voice_note = VoiceNote.find(params[:id])
     chat = current_user.chats.create!
-    # Aggiungiamo il messaggio iniziale di sistema
     chat.messages.create!(
       content: "Sei un assistente che aiuta a creare appunti. Analizza il testo e crea un appunto utilizzando la funzione crea_appunto con i dati che riesci ad estrarre.",
       role: "system"
     )
-    CreateNoteFromTranscriptJob.perform_async(chat.id, voice_note.transcription, current_user.id)  
+    CreateAppuntoFromTranscriptionJob.perform_async(chat.id, voice_note.transcription, current_user.id)  
     render json: { message: "La creazione dell'appunto è stata avviata." }
   end
 

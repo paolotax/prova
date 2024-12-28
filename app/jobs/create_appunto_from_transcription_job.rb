@@ -1,4 +1,4 @@
-class CreateNoteFromTranscriptJob
+class CreateAppuntoFromTranscriptionJob
   include Sidekiq::Worker
   include SchoolMatcher
 

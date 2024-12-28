@@ -28,21 +28,32 @@ export default class extends Controller {
       this.mediaRecorder.onstop = () => {
         const audioBlob = new Blob(this.audioChunks, { type: mimeType });
         this.audioChunks = [];
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        // Configura il player audio e l'input nascosto
-        const audioPlayer = this.uploadControlsTarget.querySelector("audio");
-        const fileInput = this.uploadControlsTarget.querySelector("input[type='file']");
-
-        audioPlayer.src = audioUrl;
-
+        
         const file = new File([audioBlob], `recording.${mimeType.split("/")[1]}`, { type: mimeType });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
+        const formData = new FormData();
+        formData.append('audio_file', file);
 
-        // Mostra i controlli di caricamento
-        this.showUploadControls();
+        fetch('/voice_notes', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'text/vnd.turbo-stream.html'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.text();
+          }
+          throw new Error('Errore durante il salvataggio');
+        })
+        .then(html => {
+          Turbo.renderStreamMessage(html);
+          this.showStartControls();
+        })
+        .catch(error => {
+          console.error('Errore:', error);
+        });
       };
     } catch (error) {
       console.error("Errore nell'accesso al microfono:", error);
