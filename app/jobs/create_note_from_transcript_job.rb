@@ -1,5 +1,6 @@
 class CreateNoteFromTranscriptJob
   include Sidekiq::Worker
+  include SchoolMatcher
 
   def perform(chat_id, transcript, user_id)
     user = User.find(user_id)
@@ -32,23 +33,23 @@ class CreateNoteFromTranscriptJob
                 properties: {
                   nome: {
                     type: "string",
-                    description: "Il nome dell'insegnante o del cliente se lo trovi oppure dai tu un titolo",
+                    description: "Il testo che potrebbe contenere il nome del destinatario se presente",
                   },
                   body: {
                     type: "string",
-                    description: "Il testo dell'appunto senza la scuola, la data di oggi e la data prevista ma aggiungi un emoticon a caso metti i titoli dei libri tra virgolette",
+                    description: "Il testo dell'appunto",
                   },
                   telefono: {
                     type: "string",
-                    description: "Un recapito telefonico",
+                    description: "Un recapito telefonico se presente",
                   },
-                  scuola: {
+                  scuola_text: {
                     type: "string",
-                    description: "Il nome della scuola",
+                    description: "Il testo che potrebbe contenere il nome della scuola o del cliente",
                   },
                   data: {
                     type: "string",
-                    description: "La data prevista",
+                    description: "La data prevista se presente",
                   }
                 },
                 required: ["nome", "body"]
@@ -73,19 +74,41 @@ class CreateNoteFromTranscriptJob
     end
   end
 
-  def crea_appunto(chat:, scuola: nil, nome:, body:, telefono: nil, data: nil)
-    scuola_body = "#{body} (#{scuola}) #{data}"
-    appunto = chat.user.appunti.build(nome: nome, body: scuola_body, telefono: telefono)
+  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, data: nil)
+    # Aggiungiamo log per debug
+    Rails.logger.info "Cercando scuola per il testo: #{scuola_text}"
+    
+    scuola_match = find_matching_school(scuola_text, chat.user_id) if scuola_text.present?
+    #scuola_match = nil
+    # Log del risultato
+    Rails.logger.info "Risultato ricerca scuola: #{scuola_match.inspect}"
+    
+    scuola_body = if scuola_match
+      "#{body} #{data}"
+    else
+      "#{body} #{data}"
+    end
+
+    appunto = chat.user.appunti.build(
+      nome: nome, 
+      body: scuola_body, 
+      telefono: telefono,
+      import_scuola_id: scuola_match&.dig(:import_scuola_id)
+    )
+    
     if appunto.save
+      Rails.logger.info "Appunto creato con successo: #{appunto.inspect}"
       add_message_to_chat(chat: chat, message: "Appunto creato con successo")
-      # Aggiungiamo il broadcast
-      Turbo::StreamsChannel.broadcast_append_to(
+      
+      Turbo::StreamsChannel.broadcast_action_to(
         "voice_notes",
+        action: :append,
         target: "voice_note_appunti",
         partial: "appunti/appunto",
         locals: { appunto: appunto }
       )
     else
+      Rails.logger.error "Errore nella creazione dell'appunto: #{appunto.errors.full_messages}"
       add_message_to_chat(chat: chat, message: "Errore nella creazione dell'appunto")
     end
   end

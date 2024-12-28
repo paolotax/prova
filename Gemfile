@@ -149,3 +149,5 @@ gem "blazer", "~> 3.1"
 gem "ruby-openai"
 
 gem "streamio-ffmpeg"
+
+gem 'fuzzy_match'

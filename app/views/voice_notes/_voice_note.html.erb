@@ -36,11 +36,11 @@
 
 		<%= button_to "Elimina",
 					voice_note_path(voice_note),
-					method: :delete,
-					
+					method: :delete,					
 					class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
 	</div>
 
+	<%= turbo_stream_from "voice_notes" %>
 	<%# Aggiungiamo il container per gli appunti %>
 	<div id="voice_note_appunti" class="mt-4">
 		<%# Qui verranno inseriti gli appunti tramite broadcast %>

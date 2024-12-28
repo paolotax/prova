@@ -234,6 +234,7 @@ GEM
     ffi (1.17.0-x86_64-linux-gnu)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
+    fuzzy_match (2.1.0)
     geared_pagination (1.2.0)
       activesupport (>= 5.0)
       addressable (>= 2.5.0)
@@ -608,6 +609,7 @@ DEPENDENCIES
   dotenv
   faker
   friendly_id (~> 5.5)
+  fuzzy_match
   geared_pagination (~> 1.2)
   geocoder
   groupdate (~> 6.4)
