@@ -67,7 +67,18 @@
 				</div>
 			</div>
 		<% end %>
-		
+
+		<div class="px-4 text-right text-indigo-500">
+			<%= phone_to appunto.telefono %>
+		</div>
+
+		<% if appunto.completed_at %>
+			<div class="px-4 text-right text-indigo-500">
+				<%= link_to giorno_path(giorno: appunto.completed_at.to_date.to_s), data: { turbo_frame: :_top } do %>
+					<%= l(appunto.completed_at.to_date, format: "%A %d/%m/%Y", locale: :it) %>
+				<% end %>
+			</div>
+		<% end %>
 		<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
 
 		<div class="pl-3 pt-2 flex mt-auto justify-between items-center">

@@ -33,7 +33,7 @@ class CreateNoteFromTranscriptJob
                 properties: {
                   nome: {
                     type: "string",
-                    description: "Il testo che potrebbe contenere il nome del destinatario se presente",
+                    description: "Il testo che potrebbe contenere il nome del destinatario, la classe, o il cliente (libreria, cartoleria o privato, non le scuole)se presenti",
                   },
                   body: {
                     type: "string",
@@ -43,13 +43,17 @@ class CreateNoteFromTranscriptJob
                     type: "string",
                     description: "Un recapito telefonico se presente",
                   },
+                  email: {
+                    type: "string",
+                    description: "Un indirizzo email se presente",
+                  },
                   scuola_text: {
                     type: "string",
                     description: "Il testo che potrebbe contenere il nome della scuola o del cliente",
                   },
                   data: {
                     type: "string",
-                    description: "La data prevista se presente",
+                    description: "Data di scadenza dell'appunto. Accetta formati come: 'entro il 7 gennaio', 'lunedì prossimo', 'domani', 'tra 3 giorni', '15/03/2024', 'il 15 marzo', ecc. La data verrà interpretata a partire da #{Time.zone.now.strftime('%d/%m/%Y')}"
                   }
                 },
                 required: ["nome", "body"]
@@ -74,7 +78,11 @@ class CreateNoteFromTranscriptJob
     end
   end
 
-  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, data: nil)
+  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, email: nil, data: nil)
+    parsed_date = if data.present?
+      ItalianDateParser.parse(data)
+    end
+    
     # Aggiungiamo log per debug
     Rails.logger.info "Cercando scuola per il testo: #{scuola_text}"
     
@@ -84,15 +92,17 @@ class CreateNoteFromTranscriptJob
     Rails.logger.info "Risultato ricerca scuola: #{scuola_match.inspect}"
     
     scuola_body = if scuola_match
-      "#{body} #{data}"
+      "#{body}"
     else
-      "#{body} #{data}"
+      "#{body}"
     end
 
     appunto = chat.user.appunti.build(
       nome: nome, 
       body: scuola_body, 
       telefono: telefono,
+      email: email,
+      completed_at: parsed_date,
       import_scuola_id: scuola_match&.dig(:import_scuola_id)
     )
     

@@ -150,4 +150,6 @@ gem "ruby-openai"
 
 gem "streamio-ffmpeg"
 
-gem 'fuzzy_match'
+gem "fuzzy_match"
+
+
