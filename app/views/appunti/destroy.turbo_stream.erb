@@ -1,5 +1,14 @@
+<%= turbo_stream_action_tag_with_block "remove", 
+        target: dom_id(@appunto), 
+        data: {
+            transition_leave: "transition ease-out duration-1000", 
+            transition_leave_start: "opacity-100", 
+            transition_leave_end: "opacity-0"
+        } %>
+
+
 <%= turbo_stream.remove "appunto-riga-#{dom_id @appunto}" %>
-<%= turbo_stream.remove @appunto %>
+
 
 <% if @appunto.import_adozione %>
     

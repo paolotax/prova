@@ -30,5 +30,6 @@ Turbo.StreamActions.redirect =  function() {
 };
 
 import "./utilities/confirm_modal.js"
-import "ahoy"
+import "./utilities/turbo_stream_render.js"
 
+import "ahoy"

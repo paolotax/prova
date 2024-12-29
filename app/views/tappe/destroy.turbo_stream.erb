@@ -1,10 +1,15 @@
-<%= turbo_stream.remove "tappa-riga-#{dom_id @tappa}" %>
-<%= turbo_stream.remove "tappa-menu-#{dom_id @tappa}" %>
-<%= turbo_stream.remove @tappa %>
+<%= turbo_stream_action_tag_with_block "remove", 
+        target: dom_id(@tappa), 
+        data: {
+            transition_leave: "transition ease-out duration-1000", 
+            transition_leave_start: "opacity-100", 
+            transition_leave_end: "opacity-0"
+        } %>
 
 <%= turbo_stream.replace "tappe_filter" do %>
     <%= render partial: "tappe/tappe_filter" %>
 <% end %>
+
 
 <% if @giro %>
 
@@ -16,6 +21,10 @@
         <%= render partial: "giri/giro_filter", locals: { giro: @giro } %>
     <% end %>
 
+    <%= turbo_stream.remove "tappa-riga-#{dom_id @tappa}" %>
+    <%= turbo_stream.remove "tappa-menu-#{dom_id @tappa}" %>
+
+    
 <% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>

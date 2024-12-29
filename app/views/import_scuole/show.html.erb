@@ -116,11 +116,12 @@
 </div>
 
 <div id="scuola-tappe-list" class="group show-scuola pl-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
-	<% @foglio_scuola.mie_tappe.order(data_tappa: :asc).each do |tappa| %>
-		<div class="w-full col-span-1">
-			<%= render partial: "tappe/tappa", locals: { tappa: tappa, with_checkbox: false, with_handle: false } %>
-		</div>
-	<% end %>
+	<%= render partial: "tappe/tappa", 
+			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
+			locals: {
+				with_checkbox: false, with_handle: false 
+			} 
+	%>
 </div>
 
 
