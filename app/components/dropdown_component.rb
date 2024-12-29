@@ -39,7 +39,7 @@ class DropdownComponent < ViewComponent::Base
 
   def menu_css
     class_names(
-      "absolute mt-1 text-sm shadow-xl overflow-x-hidden rounded-lg z-40",
+      "absolute mt-1 text-sm shadow-xl overflow-x-hidden rounded-lg z-10",
       content_min_max_width,
       "max-h-60 overflow-y-auto", # max height: 240px
       @padding,
