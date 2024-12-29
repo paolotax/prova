@@ -1,5 +1,6 @@
 <div class="sticky top-20 z-10 mb-4">
-	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+	<%= render Heading::WithActionsComponent.new(level: 'h2', wrapper_css: "flex flex-col gap-4 sm:flex-row sm:items-start bg-white/90 sm:justify-between px-4 py-3 mb-4 border border-gray-200 rounded-md shadow-md flex-wrap"
+	) do |heading| %>
 		
 		<% heading.with_leader do %>
 			<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
@@ -114,13 +115,12 @@
 
 </div>
 
-<div id="scuola-tappe-list" class="group show-scuola pl-2 flex flex-row flex-wrap">
-	<%= render partial: "tappe/tappa", 
-			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
-			locals: {
-				with_checkbox: false, with_handle: false 
-			} 
-	%>
+<div id="scuola-tappe-list" class="group show-scuola pl-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
+	<% @foglio_scuola.mie_tappe.order(data_tappa: :asc).each do |tappa| %>
+		<div class="w-full col-span-1">
+			<%= render partial: "tappe/tappa", locals: { tappa: tappa, with_checkbox: false, with_handle: false } %>
+		</div>
+	<% end %>
 </div>
 
 
