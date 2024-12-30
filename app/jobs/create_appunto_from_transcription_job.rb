@@ -37,7 +37,14 @@ class CreateAppuntoFromTranscriptionJob
                   },
                   body: {
                     type: "string",
-                    description: "Il testo dell'appunto. Se sono presenti calcoli matematici sia in forma numerica (es. '2 + 3 = 5', '10 * 5 = 50') che testuale (es. 'quanto fa due più tre', 'calcola il prodotto di dieci e cinque'), risolvi i calcoli e includi sia l'espressione che il risultato. Supporta operazioni di addizione (+), sottrazione (-), moltiplicazione (*), divisione (/) e potenze (^), Aggiung un emoticon",
+                    description: "
+                        Rimuovi dal body tutte le frasi relative a libri, titoli, copie e quantità (che vanno inserite nel campo quantita).
+                        Se sono presenti calcoli matematici sia in forma numerica (es. '2 + 3 = 5', '10 * 5 = 50') 
+                        che testuale (es. 'quanto fa due più tre', 'calcola il prodotto di dieci e cinque'), 
+                        risolvi i calcoli e includi sia l'espressione che il risultato. 
+                        Supporta operazioni di addizione (+), sottrazione (-), moltiplicazione (*), divisione (/) e potenze (^).
+                        Il body deve contenere solo il testo dell'appunto depurato da riferimenti a libri e quantità.
+                        Aggiungi un emoticon appropriato al contesto.",
                   },
                   telefono: {
                     type: "string",
@@ -46,6 +53,27 @@ class CreateAppuntoFromTranscriptionJob
                   email: {
                     type: "string",
                     description: "Un indirizzo email se presente",
+                  },
+                  quantita: {
+                    type: "array",
+                    description: "Array di oggetti contenenti quantità e titoli",
+                    items: {
+                      type: "object",
+                      properties: {
+                        quantita: {
+                          type: "integer",
+                          description: "Numero di copie richieste"
+                        },
+                        titolo: {
+                          type: "string", 
+                          description: "Titolo del libro o materiale quasi sempre con la classe"
+                        }
+                      }
+                    }
+                  },
+                  libri: {
+                    type: "string",
+                    description: "Libri da piegare",
                   },
                   scuola_text: {
                     type: "string",
@@ -78,7 +106,7 @@ class CreateAppuntoFromTranscriptionJob
     end
   end
 
-  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, email: nil, data: nil)
+  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, email: nil, data: nil, libri: nil, quantita: nil)
     parsed_date = if data.present?
       ItalianDateParser.parse(data)
     end
@@ -91,10 +119,15 @@ class CreateAppuntoFromTranscriptionJob
     # Log del risultato
     Rails.logger.info "Risultato ricerca scuola: #{scuola_match.inspect}"
     
+    
+
+
+    formatted_quantita = format_quantita_table(quantita)
+    
     scuola_body = if scuola_match
-      "#{body}"
+      "#{body}</br>Libri:</br>#{formatted_quantita}"
     else
-      "#{body}"
+      "#{body}</br>Libri:</br>#{formatted_quantita}"
     end
 
     appunto = chat.user.appunti.build(
@@ -126,4 +159,20 @@ class CreateAppuntoFromTranscriptionJob
   def add_message_to_chat(chat:, message:)
     chat.messages.create(content: message, role: "system")
   end
+
+  def format_quantita_table(quantita_array)
+    return nil if quantita_array.nil?
+    
+    begin
+      parsed_array = JSON.parse(quantita_array) if quantita_array.is_a?(String)
+      items = parsed_array || quantita_array
+      
+      items.map do |item|
+        sprintf("%3d - %s", item[:quantita], item[:titolo])
+      end.join("</br>")
+    rescue JSON::ParserError
+      quantita_array.to_s
+    end
+  end
+
 end 

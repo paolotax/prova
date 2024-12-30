@@ -281,11 +281,11 @@ class ImportScuola < ApplicationRecord
   end
 
   def tipo_scuola
-    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA
+    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).gsub("Non Statale", "Privata")
   end
 
   def tipo_nome
-    ApplicationController.helpers.titleize_con_apostrofi [self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(" ")
+    ApplicationController.helpers.titleize_con_apostrofi [self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(" ").gsub("Non Statale", "Privata")
   end
 
   def email
