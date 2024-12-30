@@ -34,7 +34,7 @@
 					<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
 						<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
 							<%= emphasis do %>
-								<%= appunto.body %>
+								<%= simple_format(appunto.body) %>
 							<% end %>
 						</div>
 										<div class="h-4">

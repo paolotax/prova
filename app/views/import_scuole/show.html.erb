@@ -1,12 +1,10 @@
 <div class="sticky top-20 z-10 mb-4">
-	<%= render Heading::WithActionsComponent.new(level: 'h2', wrapper_css: "flex flex-col gap-4 sm:flex-row sm:items-start bg-white/90 sm:justify-between px-4 py-3 mb-4 border border-gray-200 rounded-md shadow-md flex-wrap"
-	) do |heading| %>
-		
-		<% heading.with_leader do %>
-			<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
-		<% end %>
-		
-		<% heading.with_description do %>
+	<header class="flex flex-col gap-4 sm:flex-row sm:items-center 
+				bg-white/90 sm:justify-between px-4 py-3 mb-4 
+				border border-gray-200 rounded-md shadow-md flex-wrap" >
+				
+		<%= tag.div class: "flex flex-col items-start justify-start" do %>
+			<%= tag.div @import_scuola.denominazione, class: "text-2xl font-bold text-gray-900" %>
 			<%= tag.div @import_scuola.indirizzo, class: "text-sm font-semibold text-gray-400" %>
 			<%= tag.div class: "flex items-center justify-start gap-2" do %>
 				<%= tag.div @import_scuola.cap, class: "text-sm font-semibold text-gray-400" %>
@@ -16,59 +14,41 @@
 			<%= tag.div @import_scuola.codice_ministeriale, class: "text-sm font-semibold text-gray-400"  %>
 		<% end %>
 
-		<% heading.with_action do %>
-			<%= component 'tax_button', 
-					caption: "Vai...",
-					svg_file: "icon-map-pin.svg",
-					color: "pink",
-					url:  go_to_tappable_path(@import_scuola, current_user.navigator),
-					target: "_blank"
-			%>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= component 'tax_button', 
-					caption: "Mappa",
-					svg_file: "icon-mappa.svg",
-					color: "pink",
-					url:  mappe_path(id: @import_scuola.class.name.underscore + "-" + @import_scuola.id.to_s)
-			%>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= component 'tax_button', 
-					caption: "Stampa",
-					svg_file: "icon-print.svg",
-					color: "white",
-					url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
-			%>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= tag.div class: "flex flex-row gap-1" do %>
+		<div class="flex items-center justify-between gap-2">	
+			<div class="flex items-center gap-2">
+				<%= component 'tax_button', 
+						caption: "Vai...",
+						svg_file: "icon-map-pin.svg",
+						color: "pink",
+						url:  go_to_tappable_path(@import_scuola, current_user.navigator),
+						target: "_blank"
+				%>
+				<%= component 'tax_button', 
+						caption: "Mappa",
+						svg_file: "icon-mappa.svg",
+						color: "pink",
+						url:  mappe_path(id: @import_scuola.class.name.underscore + "-" + @import_scuola.id.to_s)
+				%>
+				<%= component 'tax_button', 
+						caption: "Stampa",
+						svg_file: "icon-print.svg",
+						color: "white",
+						url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
+				%>
+			</div>
+			<div class="flex items-center gap-2">
 				<%= component 'tax_button',
-					caption: "prec",
-					svg_file: "icon-arrow-left.svg",
-					color: "white",
-					url: "/import_scuole/#{@import_scuola&.previous&.slug}"  %>
-
+						caption: "prec",
+						svg_file: "icon-arrow-left.svg",
+						color: "white",
+						url: "/import_scuole/#{@import_scuola&.previous&.slug}"  
+				%>
 				<%= component 'tax_button',
 					caption: "succ",
 					svg_file: "icon-arrow-right.svg",
 					color: "white",
-					url: "/import_scuole/#{@import_scuola&.next&.slug}"  %>
-			<% end %>
-		<% end %>
-
-		<% heading.with_action do %>	
-			<%= component 'tax_button',
-				caption: "Indietro",
-				svg_file: "icon-arrow-long-left.svg",
-				color: "white",
-				url: 'javascript:history.back()' %>
-		<% end %>
-
-		<% heading.with_action do %>
+					url: "/import_scuole/#{@import_scuola&.next&.slug}"  
+				%>
 				<%= render DropdownComponent.new() do |dropdown| %>
 					<%= dropdown.with_button do %>
 						<%= component 'tax_button', 
@@ -101,19 +81,18 @@
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
 					<% end %>
 				<% end %>
-		<% end %>
-
-
-
-		<%= @import_scuola.denominazione %>
-	
-	<% end %>
-
-	<%#= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", current_value: @import_scuola.importo_entrate - @import_scuola.importo_uscite) do |stat| %>
-		<%# stat.with_current_value_leader { "€ " } %>
-	<%# end %>
-
+				<div class="hidden sm:flex">	
+					<%= component 'tax_button',
+						caption: "Indietro",
+						svg_file: "icon-arrow-long-left.svg",
+						color: "white",
+						url: 'javascript:history.back()' %>
+				</div>
+			</div>
+		</div>
+	</header>
 </div>
+	<%#= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", current_value: @import_scuola.importo_entrate - @import_scuola.importo_uscite) do |stat| %>
 
 <div id="scuola-tappe-list" class="group show-scuola pl-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
 	<%= render partial: "tappe/tappa", 
