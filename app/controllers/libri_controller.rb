@@ -40,6 +40,7 @@ class LibriController < ApplicationController
         format.turbo_stream
         format.html
         format.xlsx 
+        format.json
       end
     end
   end

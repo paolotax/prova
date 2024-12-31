@@ -20,7 +20,7 @@ class CreateAppuntoFromTranscriptionJob
   def call_openai(chat:)
     OpenAI::Client.new.chat(
       parameters: {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: Message.for_openai(chat.messages),
         tools: [
           {
@@ -66,14 +66,10 @@ class CreateAppuntoFromTranscriptionJob
                         },
                         titolo: {
                           type: "string", 
-                          description: "Titolo del libro o materiale quasi sempre con la classe"
+                          description: "Titolo del libro e volumequasi sempre con la classe"
                         }
                       }
                     }
-                  },
-                  libri: {
-                    type: "string",
-                    description: "Libri da piegare",
                   },
                   scuola_text: {
                     type: "string",
@@ -106,7 +102,7 @@ class CreateAppuntoFromTranscriptionJob
     end
   end
 
-  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, email: nil, data: nil, libri: nil, quantita: nil)
+  def crea_appunto(chat:, nome:, body:, scuola_text: nil, telefono: nil, email: nil, data: nil, quantita: nil)
     parsed_date = if data.present?
       ItalianDateParser.parse(data)
     end

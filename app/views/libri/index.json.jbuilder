@@ -1,0 +1,1 @@
+json.array! @libri, partial: "libri/libro", as: :libro
