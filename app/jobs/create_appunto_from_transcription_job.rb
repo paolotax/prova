@@ -27,7 +27,7 @@ class CreateAppuntoFromTranscriptionJob
             type: "function",
             function: {
               name: "crea_appunto",
-              description: "Crea un appunto con nome, body, scuola e telefono",
+              description: "Crea un solo appunto per trascrizionecon nome, body, scuola, telefono, email e data",
               parameters: {
                 type: :object,
                 properties: {
@@ -66,7 +66,9 @@ class CreateAppuntoFromTranscriptionJob
                         },
                         titolo: {
                           type: "string", 
-                          description: "Titolo del libro e volumequasi sempre con la classe"
+                          description: "Titolo del libro (inclusi titoli come 'invalsi', 'w il tutto esercizi', 'tutto vacanze', 'libroagenda' ecc.). 
+                              Cerca attentamente il volume e la classe nel testo, che potrebbero essere espressi in vari modi (es. 'volume 1', 'vol 2', '2', 'classe prima', '1a', 'secondo anno', ecc.).
+                              Separa la materia dal titolo e classecon un trattino (es. 'invalsi 2 - matematica')"
                         }
                       }
                     }
@@ -92,13 +94,13 @@ class CreateAppuntoFromTranscriptionJob
   def handle_response(chat:, response:)
     message = response.dig("choices", 0, "message")
     if message["role"] == "assistant" && message["tool_calls"]
-      message["tool_calls"].each do |tool_call|
-        function_args = JSON.parse(
-          tool_call.dig("function", "arguments"),
-          { symbolize_names: true }
-        )
-        crea_appunto(chat: chat, **function_args)
-      end
+      # Prendiamo solo il primo tool_call
+      tool_call = message["tool_calls"].first
+      function_args = JSON.parse(
+        tool_call.dig("function", "arguments"),
+        { symbolize_names: true }
+      )
+      crea_appunto(chat: chat, **function_args)
     end
   end
 

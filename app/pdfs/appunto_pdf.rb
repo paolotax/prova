@@ -87,11 +87,15 @@ class AppuntoPdf < Prawn::Document
   end
 
   def note(appunto)
-    move_down 40
-    stroke_horizontal_rule
-    move_down 10
-    text appunto.nome, :size => 13
 
+    move_cursor_to bounds.height / 2
+    dash([2, 5])  # Imposta lo stile della linea a puntini [lunghezza punto, spazio]
+    stroke_horizontal_rule
+    undash        # Ripristina lo stile della linea normale
+    move_down 30
+    text appunto.nome, :size => 13
+    text appunto.scuola.to_combobox_display, :size => 12, style: :bold if appunto.scuola.present?
+    move_down 10
     if appunto.content.present?
       text @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: []), :size => 13, inline_format: true
     else
