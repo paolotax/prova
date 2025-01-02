@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_20_184452) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_02_082718) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -601,6 +601,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_20_184452) do
     t.bigint "user_id", null: false
     t.text "title"
     t.text "transcription"
+    t.bigint "appunto_id"
+    t.index ["appunto_id"], name: "index_voice_notes_on_appunto_id"
     t.index ["user_id"], name: "index_voice_notes_on_user_id"
   end
 
@@ -635,6 +637,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_20_184452) do
   add_foreign_key "tappe", "users"
   add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
+  add_foreign_key "voice_notes", "appunti"
   add_foreign_key "voice_notes", "users"
 
   create_view "view_adozioni144ant_editori", materialized: true, sql_definition: <<-SQL

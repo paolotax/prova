@@ -4,6 +4,7 @@ class TranscribeVoiceNoteJob
   def perform(voice_note_id)
     voice_note = VoiceNote.find(voice_note_id)
     return unless voice_note.audio_file.attached?
+    return if voice_note.transcription.present? # Evita trascrizioni multiple
 
     voice_note.audio_file.blob.open do |file|
       audio_format = detect_audio_format(file.path)
@@ -31,7 +32,31 @@ class TranscribeVoiceNoteJob
         )
 
         if response && response["text"]
-          voice_note.update(transcription: response["text"])
+          # Usa transaction per evitare race conditions
+          VoiceNote.transaction do
+            voice_note.reload.lock! # Lock del record per evitare race conditions
+            
+            # Doppio controllo per evitare appunti multipli
+            if !voice_note.transcription.present? && !voice_note.appunto.present?
+              voice_note.update!(transcription: response["text"])
+              
+              chat = voice_note.user.chats.create!
+              chat.messages.create!(
+                content: "Sei un assistente che aiuta a creare appunti. Analizza il testo e crea un solo appunto utilizzando la funzione crea_appunto con i dati che riesci ad estrarre.",
+                role: "system"
+              )
+              
+              # Broadcast dell'aggiornamento
+              Turbo::StreamsChannel.broadcast_replace_to(
+                "voice_notes",
+                target: voice_note,
+                partial: "voice_notes/voice_note",
+                locals: { voice_note: voice_note }
+              )
+              
+              CreateAppuntoFromTranscriptionJob.perform_async(chat.id, voice_note.transcription, voice_note.user_id, voice_note.id)
+            end
+          end
         end
       rescue Faraday::BadRequestError => e
         Rails.logger.error("Errore OpenAI: #{e.response[:body]}")

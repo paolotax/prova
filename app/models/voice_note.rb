@@ -7,14 +7,17 @@
 #  transcription :text
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  appunto_id    :bigint
 #  user_id       :bigint           not null
 #
 # Indexes
 #
-#  index_voice_notes_on_user_id  (user_id)
+#  index_voice_notes_on_appunto_id  (appunto_id)
+#  index_voice_notes_on_user_id     (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (appunto_id => appunti.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class VoiceNote < ApplicationRecord
@@ -22,6 +25,7 @@ class VoiceNote < ApplicationRecord
   belongs_to :user
    
   has_one_attached :audio_file
+  belongs_to :appunto, optional: true
 
   validates :audio_file, presence: true
   validates :user, presence: true
@@ -31,17 +35,17 @@ class VoiceNote < ApplicationRecord
     self.title = "Nota vocale del #{Time.zone.now.strftime("%d-%m..%H:%M")}" if title.blank?
   end
 
-  after_create_commit :schedule_transcription, if: :audio_file_attached?
-  after_update_commit -> { 
-    broadcast_replace_to "voice_notes",
-                        target: "voice_note_#{id}",
-                        partial: "voice_notes/voice_note",
-                        locals: { voice_note: self }
-  }
+  # after_create_commit :schedule_transcription, if: :audio_file_attached?
+  # after_update_commit -> { 
+  #   broadcast_replace_to "voice_notes",
+  #                       target: "voice_note_#{id}",
+  #                       partial: "voice_notes/voice_note",
+  #                       locals: { voice_note: self }
+  # }
 
-  def schedule_transcription
-    TranscribeVoiceNoteJob.perform_async(id)
-  end
+  # def schedule_transcription
+  #   TranscribeVoiceNoteJob.perform_async(id)
+  # end
 
   def audio_file_attached?
     audio_file.attached?

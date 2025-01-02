@@ -11,7 +11,7 @@ class VoiceNotesController < ApplicationController
     end
 
     if @voice_note.save
-      # Avvia automaticamente la trascrizione
+      # Avvia solo la trascrizione
       TranscribeVoiceNoteJob.perform_async(@voice_note.id)
 
       respond_to do |format|

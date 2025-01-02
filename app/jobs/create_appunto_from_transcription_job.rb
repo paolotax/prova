@@ -2,17 +2,19 @@ class CreateAppuntoFromTranscriptionJob
   include Sidekiq::Worker
   include SchoolMatcher
 
-  def perform(chat_id, transcript, user_id)
+  def perform(chat_id, transcription, user_id, voice_note_id)  # Aggiunto voice_note_id come quarto parametro
+    chat = Chat.find(chat_id)
+    voice_note = VoiceNote.find(voice_note_id)
     user = User.find(user_id)
-    chat = user.chats.find(chat_id)
     
     # Aggiungiamo la trascrizione come messaggio dell'utente
-    chat.messages.create(content: transcript, role: "user")
+    chat.messages.create(content: transcription, role: "user")
     
     response = call_openai(chat: chat)
     if response
       handle_response(chat: chat, response: response)
     end
+
   end
 
   private
@@ -66,9 +68,9 @@ class CreateAppuntoFromTranscriptionJob
                         },
                         titolo: {
                           type: "string", 
-                          description: "Titolo del libro (inclusi titoli come 'invalsi', 'w il tutto esercizi', 'tutto vacanze', 'libroagenda' ecc.). 
+                          description: "Titolo del libro (inclusi titoli come 'invalsi', 'viva il tutto esercizi', 'tutto esercizi', 'tutto vacanze', 'libroagenda' ecc.). 
                               Cerca attentamente il volume e la classe nel testo, che potrebbero essere espressi in vari modi (es. 'volume 1', 'vol 2', '2', 'classe prima', '1a', 'secondo anno', ecc.).
-                              Separa la materia dal titolo e classecon un trattino (es. 'invalsi 2 - matematica')"
+                              Separa la materia dal titolo e classe con un trattino (es. 'invalsi 2 - matematica')"
                         }
                       }
                     }
@@ -143,7 +145,7 @@ class CreateAppuntoFromTranscriptionJob
       
       Turbo::StreamsChannel.broadcast_action_to(
         "voice_notes",
-        action: :append,
+        action: :replace,
         target: "voice_note_appunti",
         partial: "appunti/appunto",
         locals: { appunto: appunto }

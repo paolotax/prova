@@ -202,5 +202,6 @@ class Appunto < ApplicationRecord
     ["saggio", "seguito", "kit"].include?(nome) && self.import_adozione.present?
   end
 
+  has_one :voice_note
 
 end

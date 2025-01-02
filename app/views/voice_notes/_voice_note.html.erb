@@ -7,10 +7,15 @@
 					<p><%= voice_note.transcription %></p>
 				</div>
 			<% else %>
-				<div class="text-sm text-gray-700">
-					<em>Trascrizione in corso...</em>
+				<div class="flex items-center gap-2 text-sm text-gray-700">
+					<svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+					<span>Trascrizione in corso...</span>
 				</div>
 			<% end %>
+
 			<div class="text-sm text-gray-700"><%= voice_note.title %></div> 
 		</div>
 
@@ -21,28 +26,21 @@
 	</div>
 
 	<div class="w-full flex gap-2 justify-end">
-
-		<%= button_to "Trascrivi",
-					transcribe_voice_note_path(voice_note),
-					method: :post,
-					class: "px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600" %>
-
-		<% if voice_note.transcription.present? %>
-			<%= button_to "Crea Appunto",
-						create_note_from_transcript_voice_note_path(voice_note),
-						method: :post,
-						class: "px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600" %>
-		<% end %>
-
 		<%= button_to "Elimina",
 					voice_note_path(voice_note),
 					method: :delete,					
 					class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
 	</div>
 
-	<%= turbo_stream_from "voice_notes" %>
-	<%# Aggiungiamo il container per gli appunti %>
-	<div id="voice_note_appunti" class="mt-4">
-		<%# Qui verranno inseriti gli appunti tramite broadcast %>
-	</div>
+	<%= turbo_frame_tag "voice_note_appunti" do %>
+			<% if voice_note.transcription.present? && !voice_note.appunto.present? %>
+				<div class="flex items-center gap-2 text-sm text-gray-700">
+					<svg class="animate-spin h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+					<span>Creazione appunto in corso...</span>
+				</div>
+			<% end %>
+	<% end %>
 </div>
