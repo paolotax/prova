@@ -119,15 +119,12 @@ class CreateAppuntoFromTranscriptionJob
     # Log del risultato
     Rails.logger.info "Risultato ricerca scuola: #{scuola_match.inspect}"
     
-    
-
-
     formatted_quantita = format_quantita_table(quantita)
     
-    scuola_body = if scuola_match
-      "#{body}</br>Libri:</br>#{formatted_quantita}"
+    if formatted_quantita.present?
+      scuola_body = "#{body}</br>Libri:</br>#{formatted_quantita}"
     else
-      "#{body}</br>Libri:</br>#{formatted_quantita}"
+      scuola_body = body
     end
 
     appunto = chat.user.appunti.build(
@@ -147,7 +144,7 @@ class CreateAppuntoFromTranscriptionJob
         "voice_notes",
         action: :replace,
         target: "voice_note_appunti",
-        partial: "appunti/appunto",
+        partial: "appunti/appunto_vocale",
         locals: { appunto: appunto }
       )
     else

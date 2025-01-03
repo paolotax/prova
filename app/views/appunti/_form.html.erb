@@ -16,15 +16,18 @@
 	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 
 	<% if appunto.classe.nil? %>
-		
-		<div class="my-5 relative peer cb-tax-fancy flex flex-col" data-controller="tax-combobox-select">
-			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
-					placeholder: "seleziona scuola...",
-					label: "Scuola:",
-					data: { action: "hw-combobox:selection->tax-combobox-select#change",
-							tax_combobox_select_target: "combobox" } %>
-		
-			<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
+		<div class="mt-5">		
+			<%= render "shared/inline_fields", form: form, method: :import_scuola do %>
+				<div class="my-5 relative peer cb-tax-fancy w-full flex flex-col" data-controller="tax-combobox-select">		
+					<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
+							placeholder: "seleziona scuola...",
+							label: "Scuola:",
+						data: { action: "hw-combobox:selection->tax-combobox-select#change",
+								tax_combobox_select_target: "combobox" } %>
+			
+					<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
+				</div>
+			<% end %>
 		</div>
 	<% else %>
 		Scuola:
@@ -43,24 +46,32 @@
 		<% end %>
 	<% end %>
 
-	<%# oggetto anziche nome %>
-	<div class="relative mt-5">
-		<%= form.text_field :nome, 
-				class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0", 
-				placeholder: "titolo o destinatario...",
-				autofocus: :true  %>
-		<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
+	<%# oggetto anziche nome %>	
+	<div class="mt-5">		
+		<%= render "shared/inline_fields", form: form, method: :nome do %>
+			<div class="relative w-full">
+				<%= form.text_field :nome, 
+						class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0", 
+						placeholder: "titolo o destinatario...",
+						autofocus: :true  %>
+				<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
+			</div>
+    	<% end %>    
 	</div>
 
 	<%# text area o trix  %>
 	<div class="mt-5">
-		<% unless appunto.body.blank? %>
-			<%= form.text_area :body, rows: 5, 
-				class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0" %>
-		<% else %>
-			<%= form.rich_text_area :content, 
-				class: "block w-full resize-none min-h-[150px] sm:min-h-[150px] bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0",
-				placeholder: "scrivi..." %>
+		<%= render "shared/inline_fields", form: form, method: :body_or_content do %>
+			<div class="relative w-full">
+				<% unless appunto.body.blank? %>
+					<%= form.text_area :body, rows: 5, 
+					class: "block resize-none w-full bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0" %>
+				<% else %>
+					<%= form.rich_text_area :content, 
+						class: "block resize-none w-full min-h-[150px] sm:min-h-[150px] bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0",
+							placeholder: "scrivi..." %>
+				<% end %>
+			</div>
 		<% end %>
 	</div>  
 
@@ -93,13 +104,11 @@
 						<% end %>
 							<span class="text-sm italic text-gray-600"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
 						<br/>
-					<% end %>
+						<% end %>
+				</div>
 			</div>
-		</div>
+		<% end %>
 	<% end %>
-
-
-<% end %>
 
 	<%# actions %>
 	<div class="mt-5 flex items-center justify-between">

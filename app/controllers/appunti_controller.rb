@@ -33,6 +33,8 @@ class AppuntiController < ApplicationController
 
   def show
     respond_to do |format|
+            
+      format.html
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)

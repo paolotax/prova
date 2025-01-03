@@ -4,5 +4,8 @@
     <%= render partial: "appunti/appunto_riga", locals: { appunto: @appunto }  %>
 <% end %>
 
+<%= turbo_stream.replace dom_id(@appunto, "vocale") do %>
+    <%= render partial: "appunti/appunto_vocale", locals: { appunto: @appunto }  %>
+<% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>

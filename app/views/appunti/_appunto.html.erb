@@ -13,57 +13,68 @@
 
 		<div class="w-full px-4 flex flex-col justify-between items-start space-y-2">
 			<div class="flex flex-col">
-				<p class="pt-2 font-semibold text-gray-900">
-					<%= appunto.nome %>      
-				</p>	
+				
+				<%= tag.div class: "mt-2 w-full flex items-center justify-between" do %>
+					<%= render "shared/inline_edit", model: appunto, method: :nome do %>
+						<%= tag.div appunto.nome, class: "w-full" %>      
+					<% end %>
+				<% end %>
 
 				<% if appunto.classe %>
-
-						<%= render partial: "classi/classe", locals: {classe: appunto.classe} %>
-
+					<%= render partial: "classi/classe", locals: {classe: appunto.classe} %>
 				<% end %>
 
-				<% if mostra_scuola && appunto.import_scuola %>
-
-						<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
-
+				<%= tag.div class: "mt-2 flex items-center gap-2" do %>
+					<%= render "shared/inline_edit", model: appunto, method: :import_scuola do %>										
+						<% if mostra_scuola && appunto.import_scuola %>
+							<div class="w-full">
+								<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
+							</div>
+						<% end %>    
+					<% end %>
 				<% end %>
-				
-				<% if appunto.body && !appunto.body.blank?%>
-					<div class="group">
-						<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-							<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
-								<%= emphasis do %>
-									<%= simple_format(appunto.body) %>
-								<% end %>
-							</div>
-											<div class="h-4">
-							<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-								class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
-								>copia
-							</button>
-							</div>
+
+
+				<%= tag.div class: "flex items-center gap-2" do%>
+					<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
+						<div>
+							<% if appunto.body && !appunto.body.blank?%>
+								<div class="group">
+									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+										<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+											<%= emphasis do %>
+												<%= simple_format(appunto.body) %>
+											<% end %>
+										</div>
+										<div class="h-4">
+											<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
+												class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
+												>copia
+											</button>
+										</div>
+									</div>
+								</div>
+							<% end %>
+							<% if appunto.content && !appunto.content.blank?%>
+								<div class="roup">
+									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+										<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+											<%= emphasis do %>
+												<%= appunto.content %>
+											<% end %>
+										</div>
+										<div class="h-4">
+											<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
+												class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
+												>copia
+											</button>
+										</div>
+									</div>
+								</div>
+							<% end %>
 						</div>
-					</div>
-				<% end %>
-
-				<% if appunto.content && !appunto.content.blank?%>
-					<div class="roup">
-						<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-							<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
-								<%= emphasis do %>
-									<%= appunto.content %>
-								<% end %>
-							</div>
-							<div class="h-4">
-								<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-									class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
-									>copia
-								</button>
-							</div>
-						</div>
-					</div>
-				<% end %>
+					<% end %>
+				<% end %>				
 
 				<div class="w-full text-right text-indigo-500">
 					<%= phone_to appunto.telefono %>
