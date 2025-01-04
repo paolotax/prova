@@ -64,17 +64,30 @@ class VoiceNotesController < ApplicationController
 
   def update
     @voice_note = current_user.voice_notes.find(params[:id])
-    if @voice_note.update(voice_note_params)
-      chat = current_user.chats.create!
-      chat.messages.create!(
-        content: "Sei un assistente che aiuta a creare appunti. Analizza il testo e crea un appunto utilizzando la funzione crea_appunto con i dati che riesci ad estrarre.",
-        role: "system"
-      )
-      CreateAppuntoFromTranscriptionJob.perform_async(chat.id, @voice_note.transcription, current_user.id, @voice_note.id)        
-      redirect_to voice_notes_path
-    else
-      render :edit
+    
+      
+    respond_to do |format|
+      if @voice_note.update(voice_note_params)
+
+        chat = current_user.chats.create!
+        chat.messages.create!(
+          content: "Sei un assistente che aiuta a creare appunti. Analizza il testo e crea un appunto utilizzando la funzione crea_appunto con i dati che riesci ad estrarre.",
+          role: "system"
+        )
+        CreateAppuntoFromTranscriptionJob.perform_async(chat.id, @voice_note.transcription, current_user.id, @voice_note.id)  
+
+        format.html { redirect_to voice_notes_url, notice: "VoiceNote modificato." }
+        format.json { render :show, status: :ok, location: @voice_note }
+        format.turbo_stream do
+          flash[:notice] = "VoiceNote turbo modificato."
+          render turbo_stream: turbo_stream.replace(@voice_note)
+        end
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
+      
+
   end
 
   def show
