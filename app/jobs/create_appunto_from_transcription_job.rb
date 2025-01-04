@@ -2,10 +2,11 @@ class CreateAppuntoFromTranscriptionJob
   include Sidekiq::Worker
   include SchoolMatcher
 
+
   def perform(chat_id, transcription, user_id, voice_note_id)  # Aggiunto voice_note_id come quarto parametro
     chat = Chat.find(chat_id)
-    voice_note = VoiceNote.find(voice_note_id)
-    user = User.find(user_id)
+    
+    @voice_note_id = voice_note_id
     
     # Aggiungiamo la trascrizione come messaggio dell'utente
     chat.messages.create(content: transcription, role: "user")
@@ -122,7 +123,7 @@ class CreateAppuntoFromTranscriptionJob
     formatted_quantita = format_quantita_table(quantita)
     
     if formatted_quantita.present?
-      scuola_body = "#{body}</br>Libri:</br>#{formatted_quantita}"
+      scuola_body = "#{body}</br></br>#{formatted_quantita}"
     else
       scuola_body = body
     end
@@ -133,7 +134,8 @@ class CreateAppuntoFromTranscriptionJob
       telefono: telefono,
       email: email,
       completed_at: parsed_date,
-      import_scuola_id: scuola_match&.dig(:import_scuola_id)
+      import_scuola_id: scuola_match&.dig(:import_scuola_id),
+      voice_note_id: @voice_note_id
     )
     
     if appunto.save
@@ -142,9 +144,9 @@ class CreateAppuntoFromTranscriptionJob
       
       Turbo::StreamsChannel.broadcast_action_to(
         "voice_notes",
-        action: :replace,
-        target: "voice_note_appunti",
-        partial: "appunti/appunto_vocale",
+        action: :prepend,
+        target: "appunti_voice_note_#{@voice_note_id}",
+        partial: "appunti/appunto",
         locals: { appunto: appunto }
       )
     else

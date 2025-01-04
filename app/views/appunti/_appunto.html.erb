@@ -141,10 +141,11 @@
 					<%= button_to appunto_path(appunto), method: :delete,
 							class: "w-full text-left px-3 py-3 block text-red-500 hover:text-red-600 focus-visible:outline-none focus-visible:bg-gray-50",
 							data: {
-								turbo_confirm: "Vuoi veramente eliminare questo appunto?",
-								turbo_confirm_theme: "dark",
-								turbo_confirm_confirm_label: "Si, elimina!",
-								turbo_confirm_cancel_label: "Oops, no annulla…",
+								turbo_method: :delete,
+								# turbo_confirm: "Vuoi veramente eliminare questo appunto?",
+								# turbo_confirm_theme: "dark",
+								# turbo_confirm_confirm_label: "Si, elimina!",
+								# turbo_confirm_cancel_label: "Oops, no annulla…",
 							} do %>
 						Elimina
 					<% end %>

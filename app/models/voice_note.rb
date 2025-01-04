@@ -7,17 +7,14 @@
 #  transcription :text
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  appunto_id    :bigint
 #  user_id       :bigint           not null
 #
 # Indexes
 #
-#  index_voice_notes_on_appunto_id  (appunto_id)
-#  index_voice_notes_on_user_id     (user_id)
+#  index_voice_notes_on_user_id  (user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (appunto_id => appunti.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class VoiceNote < ApplicationRecord
@@ -25,7 +22,7 @@ class VoiceNote < ApplicationRecord
   belongs_to :user
    
   has_one_attached :audio_file
-  belongs_to :appunto, optional: true
+  has_many :appunti, dependent: :nullify
 
   validates :audio_file, presence: true
   validates :user, presence: true

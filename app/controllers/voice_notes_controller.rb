@@ -79,7 +79,7 @@ class VoiceNotesController < ApplicationController
         format.html { redirect_to voice_notes_url, notice: "VoiceNote modificato." }
         format.json { render :show, status: :ok, location: @voice_note }
         format.turbo_stream do
-          flash[:notice] = "VoiceNote turbo modificato."
+          flash.now[:notice] = "VoiceNote turbo modificato."
           render turbo_stream: turbo_stream.replace(@voice_note)
         end
       else

@@ -16,6 +16,7 @@
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
 #  user_id            :bigint           not null
+#  voice_note_id      :bigint
 #
 # Indexes
 #
@@ -23,12 +24,14 @@
 #  index_appunti_on_import_adozione_id  (import_adozione_id)
 #  index_appunti_on_import_scuola_id    (import_scuola_id)
 #  index_appunti_on_user_id             (user_id)
+#  index_appunti_on_voice_note_id       (voice_note_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (import_adozione_id => import_adozioni.id)
 #  fk_rails_...  (import_scuola_id => import_scuole.id)
 #  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (voice_note_id => voice_notes.id)
 #
 class Appunto < ApplicationRecord
   
@@ -42,6 +45,8 @@ class Appunto < ApplicationRecord
   has_rich_text :content
 
   has_many :tappe, as: :tappable
+
+  belongs_to :voice_note, optional: true
 
 
   include PgSearch::Model
@@ -201,7 +206,5 @@ class Appunto < ApplicationRecord
   def is_ssk?
     ["saggio", "seguito", "kit"].include?(nome) && self.import_adozione.present?
   end
-
-  has_one :voice_note
 
 end

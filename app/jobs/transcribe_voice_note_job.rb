@@ -39,7 +39,7 @@ class TranscribeVoiceNoteJob
           VoiceNote.transaction do
             voice_note.reload.lock!
             
-            if !voice_note.transcription.present? && !voice_note.appunto.present?
+            if !voice_note.transcription.present?
               full_transcription = ""
               
               response["segments"].each do |segment|
