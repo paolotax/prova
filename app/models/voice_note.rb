@@ -32,7 +32,7 @@ class VoiceNote < ApplicationRecord
 
   before_validation :set_title
   def set_title
-    self.title = "Nota vocale del #{Time.zone.now.strftime("%d-%m..%H:%M")}" if title.blank?
+    self.title = "Nota vocale del #{Time.now.strftime("%d-%m ore %H:%M")}" if title.blank?
   end
 
   # after_create_commit :schedule_transcription, if: :audio_file_attached?

@@ -58,9 +58,36 @@ class VoiceNotesController < ApplicationController
     render json: { message: "La creazione dell'appunto è stata avviata." }
   end
 
+  def edit
+    @voice_note = current_user.voice_notes.find(params[:id])
+  end
+
+  def update
+    @voice_note = current_user.voice_notes.find(params[:id])
+    if @voice_note.update(voice_note_params)
+      chat = current_user.chats.create!
+      chat.messages.create!(
+        content: "Sei un assistente che aiuta a creare appunti. Analizza il testo e crea un appunto utilizzando la funzione crea_appunto con i dati che riesci ad estrarre.",
+        role: "system"
+      )
+      CreateAppuntoFromTranscriptionJob.perform_async(chat.id, @voice_note.transcription, current_user.id, @voice_note.id)        
+      redirect_to voice_notes_path
+    else
+      render :edit
+    end
+  end
+
+  def show
+    @voice_note = current_user.voice_notes.find(params[:id])
+  end
+
   private
 
   def set_voice_note
     @voice_note = current_user.voice_notes.find(params[:id])
+  end
+
+  def voice_note_params
+    params.require(:voice_note).permit(:title, :transcription)
   end
 end

@@ -8,7 +8,7 @@ require "sidekiq/web"
 # then mount it
 Rails.application.routes.draw do
 
-  resources :voice_notes, only: [:create, :index, :destroy] do
+  resources :voice_notes do
     member do
       post :transcribe
       post :create_note_from_transcript

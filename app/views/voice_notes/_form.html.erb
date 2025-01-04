@@ -1,30 +1,38 @@
-<div id="form_container" class="px-2 sm:px-0" data-controller="audio-recorder">
-  <div class="flex items-center space-x-4" data-audio-recorder-target="startControl">
-    <button type="button"
-            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
-      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
-      transition duration-150 ease-in-out
-      focus:outline focus:outline-2 focus:outline-offset-2
-      bg-green-600 text-white hover:bg-green-500 active:bg-green-700 
-      focus:outline-green-500"
-            data-action="audio-recorder#startRecording">
-      <%= inline_svg_tag "icon-microphone.svg" %>
-      Registra
-    </button>
-  </div>
+<%= form_with(model: voice_note, class: "relative", id: :voice_note_form) do |form| %>
+	
+	<% if voice_note.errors.any? %>
+		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+			<h2><%= pluralize(voice_note.errors.count, "error") %> prohibited this voice_note from being saved:</h2>
+			<ul>
+				<% voice_note.errors.each do |error| %>
+					<li><%= error.full_message %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
 
-  <div class="flex items-center space-x-4" data-audio-recorder-target="recordingControls" class="hidden">
-    <button type="button"
-            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
-      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
-      transition duration-150 ease-in-out
-      focus:outline focus:outline-2 focus:outline-offset-2
-      bg-red-600 text-white hover:bg-red-500 active:bg-red-600 
-      focus:outline-red-600"
-            data-action="audio-recorder#stopRecording">
-      <%= inline_svg_tag "icon-stop.svg" %>
-      Ferma
-    </button>
-    <p class="text-red-500 font-bold">Registrazione in corso...</p>
-  </div>
-</div>
+	<%# oggetto anziche nome %>	
+	<div class="mt-5">		
+		<%= render "shared/inline_fields", form: form, method: :title do %>
+			<div class="relative w-full">
+				<%= form.text_field :title, 
+						class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0", 
+						placeholder: "titolo",
+						autofocus: :true  %>
+				<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
+			</div>
+    	<% end %>    
+	</div>
+
+	<%# text area o trix  %>
+	<div class="mt-5">
+		<%= render "shared/inline_fields", form: form, method: :transcription do %>
+			<div class="relative w-full">
+					<%= form.text_area :transcription, rows: 5, 
+							placeholder: "scrivi...", class: "w-full" %>
+			</div>
+		<% end %>
+	</div>  
+<% end %>
+
+			

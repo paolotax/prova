@@ -24,21 +24,36 @@ class TranscribeVoiceNoteJob
       end
 
       begin
+        # Aggiorniamo lo stato iniziale
+        broadcast_transcription_status(voice_note, "Trascrizione in corso...")
+
         response = OpenAI::Client.new.audio.transcribe(
           parameters: {
             model: "whisper-1",
-            file: transcription_file
+            file: transcription_file,
+            response_format: "verbose_json"
           }
         )
 
-        if response && response["text"]
-          # Usa transaction per evitare race conditions
+        if response && response["segments"]
           VoiceNote.transaction do
-            voice_note.reload.lock! # Lock del record per evitare race conditions
+            voice_note.reload.lock!
             
-            # Doppio controllo per evitare appunti multipli
             if !voice_note.transcription.present? && !voice_note.appunto.present?
-              voice_note.update!(transcription: response["text"])
+              full_transcription = ""
+              
+              response["segments"].each do |segment|
+                text = segment["text"]
+                # Dividiamo il testo in parole e trasmettiamo gruppi di 2-3 parole
+                words = text.split
+                words.each_slice(rand(2..3)) do |word_group|
+                  full_transcription += word_group.join(' ') + ' '
+                  broadcast_transcription_status(voice_note, full_transcription.strip)
+                  sleep(0.15) # Pausa leggermente più lunga per un effetto più visibile
+                end
+              end
+
+              voice_note.update!(transcription: full_transcription.strip)
               
               chat = voice_note.user.chats.create!
               chat.messages.create!(
@@ -60,6 +75,7 @@ class TranscribeVoiceNoteJob
         end
       rescue Faraday::BadRequestError => e
         Rails.logger.error("Errore OpenAI: #{e.response[:body]}")
+        broadcast_transcription_status(voice_note, "Errore durante la trascrizione")
       ensure
         File.delete(converted_path) if defined?(converted_path) && File.exist?(converted_path)
       end
@@ -82,5 +98,13 @@ class TranscribeVoiceNoteJob
 
   def convert_to_wav(input_path, output_path)
     system("ffmpeg -i #{input_path} -ar 16000 -ac 1 -c:a pcm_s16le #{output_path}")
+  end
+
+  def broadcast_transcription_status(voice_note, text)
+    Turbo::StreamsChannel.broadcast_update_to(
+      "voice_note_#{voice_note.id}",
+      target: "voice_note_transcription_#{voice_note.id}",
+      html: text
+    )
   end
 end 

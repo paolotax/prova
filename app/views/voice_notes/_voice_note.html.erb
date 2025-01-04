@@ -1,28 +1,31 @@
 <div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex flex-col justify-between gap-4">
 	
-	<div class="flex justify-between w-full">
-		<div class="flex flex-col gap-2">
-			<% if voice_note.transcription.present? %>
-				<div class="text-lg font-semibold text-gray-900">
-					<p><%= voice_note.transcription %></p>
-				</div>
-			<% else %>
-				<div class="flex items-center gap-2 text-sm text-gray-700">
-					<svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-					</svg>
-					<span>Trascrizione in corso...</span>
+	<%= turbo_stream_from "voice_note_#{voice_note.id}" if voice_note %>
+
+
+	<div class="flex flex-col justify-between w-full">
+		
+
+		<div id="voice_note_transcription_<%= voice_note.id %>" class="w-full pb-2 text-gray-700">
+			<%= render "shared/inline_edit", model: voice_note, method: :transcription do %>
+				<div class="relative w-full">
+					<% if voice_note.transcription.present? %>
+						<%= simple_format(voice_note.transcription, class: "italic") %>
+					<% else %>
+						<span class="italic">In attesa della trascrizione...</span>
+					<% end %>
 				</div>
 			<% end %>
-
-			<div class="text-sm text-gray-700"><%= voice_note.title %></div> 
 		</div>
+		
 
-		<audio controls>
-			<source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
-			Il tuo browser non supporta l'elemento audio.
-		</audio>
+		<div class="flex items-center justify-between gap-2">
+			<div class="text-sm text-gray-700"><%= voice_note.title %></div> 
+			<audio controls class="max-w-28">
+				<source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
+				Il tuo browser non supporta l'elemento audio.
+			</audio>
+		</div>
 	</div>
 
 	<div class="w-full flex gap-2 justify-end">
@@ -43,4 +46,6 @@
 				</div>
 			<% end %>
 	<% end %>
+
+
 </div>

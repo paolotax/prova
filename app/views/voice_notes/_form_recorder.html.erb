@@ -1,0 +1,30 @@
+<div id="form_container" class="px-2 sm:px-0" data-controller="audio-recorder">
+  <div class="flex items-center space-x-4" data-audio-recorder-target="startControl">
+    <button type="button"
+            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
+      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
+      transition duration-150 ease-in-out
+      focus:outline focus:outline-2 focus:outline-offset-2
+      bg-green-600 text-white hover:bg-green-500 active:bg-green-700 
+      focus:outline-green-500"
+            data-action="audio-recorder#startRecording">
+      <%= inline_svg_tag "icon-microphone.svg" %>
+      Registra
+    </button>
+  </div>
+
+  <div class="flex items-center space-x-4" data-audio-recorder-target="recordingControls" class="hidden">
+    <button type="button"
+            class="flex sm:flex-col items-center gap-x-2 py-2 px-3 
+      text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
+      transition duration-150 ease-in-out
+      focus:outline focus:outline-2 focus:outline-offset-2
+      bg-red-600 text-white hover:bg-red-500 active:bg-red-600 
+      focus:outline-red-600"
+            data-action="audio-recorder#stopRecording">
+      <%= inline_svg_tag "icon-stop.svg" %>
+      Ferma
+    </button>
+    <p class="text-red-500 font-bold">Registrazione in corso...</p>
+  </div>
+</div>
