@@ -21,7 +21,8 @@
 
 
 
-        <div class="flex w-full items-center">
+    <div class="flex w-full items-center">
+        
         <div class="flex-shrink-0 w-10 h-10">
             <label class="cursor-pointer relative">
                 <input type="checkbox" class="hidden peer">
@@ -34,7 +35,7 @@
                     font-bold
                     items-center justify-center content-center text-center overflow-hidden
                     peer-active:ring-2 peer-active:ring-blue-200">
-                    <%= appunto.import_scuola.scuola.titleize[0..2] if appunto.import_scuola %>
+                    <%= scuola_avatar_abbreviation(appunto.import_scuola) if appunto.import_scuola %>
                 </div>  
                 <div class="hidden peer-checked:block border-4 
                   border-blue-500 bg-blue-500 rounded-full 

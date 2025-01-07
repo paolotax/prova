@@ -126,4 +126,23 @@ module ApplicationHelper
     colors[hash % colors.length]
   end
 
+  def scuola_avatar_abbreviation(import_scuola)
+    return "" unless import_scuola
+
+    # Rimuovi caratteri speciali e parole non necessarie
+    nome_pulito = import_scuola.scuola
+      .gsub(/[^\w\s]/, '') # rimuove caratteri speciali
+      .gsub(/\b(SCUOLA|PRIMARIA)\b/, '') # rimuove "SCUOLA" e "PRIMARIA"
+      .strip
+
+    # Prendi le prime due lettere del nome della scuola
+    prime_lettere = nome_pulito[0..1].titleize
+
+    # Prendi la prima lettera della città
+    iniziale_citta = import_scuola.citta_scuola.to_s[0].upcase
+
+    # Combina le lettere e assicurati che sia maiuscolo
+    (prime_lettere + iniziale_citta)
+  end
+
 end
