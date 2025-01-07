@@ -42,7 +42,7 @@ class AppuntoPdf < Prawn::Document
       
       note(a)
       
-      # start_new_page unless a == @appunti.last
+      start_new_page unless a == @appunti.last
     end
   end
 

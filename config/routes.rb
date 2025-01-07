@@ -204,6 +204,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :appunti do
+    resources :bulk_actions, only: [] do
+      collection do
+        patch :print_all, format: "pdf"
+        patch :add_tappa_domani
+        patch :add_tappa_custom
+      end
+    end
+  end
+
+
 
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
