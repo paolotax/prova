@@ -1,6 +1,6 @@
  <%# locals: ( appunto:, with_navigation: true ) -%>
 
-<div class="flex items-center gap-3 mt-2">
+<div class="flex items-center gap-3">
 
     <% if appunto.import_adozione %>
         <%= tag.div class: [
@@ -17,47 +17,49 @@
             ] do %>
             <%= appunto.import_adozione&.classe_e_sezione %>
         <% end %>
-    <% else %>
-        <%= tag.div class: "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-600 ring-1 ring-red-500/10" do %>
-            <%= appunto.import_scuola.scuola.titleize[0..1] %>
-        <% end %>
     <% end %>
 
-    <div class="pr-8 flex justify-between items-center">
-        <div class="flex flex-col">
-            
-            <% if with_navigation == true %>
-                <div class="font-medium text-sm italic text-gray-600">  
-                    <%= link_to appunto.import_scuola.scuola, 
-                                import_scuola_path(appunto.import_scuola), 
-                                data: { turbo_frame: "_top" } 
-                    %>
-                </div>
-            <% else %>
-                <div class="font-medium text-sm italic text-gray-600">  
-                    <%= appunto.import_scuola.scuola %>
-                </div>
-            <% end %>
 
-            <div class="font-medium text-sm italic text-gray-600">  
-                <%= appunto.import_scuola.citta %>
-            </div>
-            <div class="font-medium text-xs italic text-gray-400">  
-                <%= appunto.import_adozione&.TITOLO&.titleize %>
-            </div>			
+
+        <div class="flex w-full items-center">
+        <div class="flex-shrink-0 w-10 h-10">
+            <label class="cursor-pointer relative">
+                <input type="checkbox" class="hidden peer">
+                
+                <div class="<%= string_to_tailwind_color(appunto&.import_scuola&.citta_scuola) %>
+                    hover:border-blue-500 hover:border-[5px]
+                    hover:bg-black hover:text-black 
+                    h-10 w-10
+                    rounded-full absolute block 
+                    font-bold
+                    items-center justify-center content-center text-center overflow-hidden
+                    peer-active:ring-2 peer-active:ring-blue-200">
+                    <%= appunto.import_scuola.scuola.titleize[0..2] if appunto.import_scuola %>
+                </div>  
+                <div class="hidden peer-checked:block border-4 
+                  border-blue-500 bg-blue-500 rounded-full 
+                  absolute items-center content-center justify-center
+                  peer-active:ring-2 peer-active:ring-blue-200">
+                    <svg class="w-8 h-8 text-white" 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          stroke-width="3" 
+                          stroke-linecap="round" 
+                          stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+
+            </label>
+        </div>
+        
+        <div class="ml-4 flex-grow">
+            <h3 class="text-gray-900 font-medium"><%= appunto.import_scuola.to_combobox_display.titleize if appunto.import_scuola %></h3>
         </div>
 
-        <% if with_navigation == true %>
-            <div class="pl-2">
-                <%= link_to go_to_tappable_path(appunto.import_scuola, appunto.user.navigator),
-                        data: { turbo_frame: :modal, action: "click->dialog#open"},
-                        class: "text-gray-400 hover:text-gray-500" do %>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                    </svg>
-                <% end %>
-            </div>
-        <% end %>
-    </div>      
+    </div>
+
+     
 </div>

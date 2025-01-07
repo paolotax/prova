@@ -108,4 +108,22 @@ module ApplicationHelper
     render partial: "layouts/toggle_button", locals: { html_id: html_id, checked: checked, label: label, button_css: button_css, span_css: span_css }
   end
 
+  def string_to_tailwind_color(str)
+    
+    return "bg-gray-100" if str.blank?
+    
+    hash = str.to_s[0..2].bytes.sum
+    # Array di classi Tailwind per 5 diversi colori
+    colors = [
+      "bg-blue-500 text-white",
+      "bg-green-500 text-white", 
+      "bg-purple-500 text-white",
+      "bg-orange-500 text-white",
+      "bg-pink-500 text-white"
+    ]
+
+    # Seleziona un colore basato sul modulo del hash
+    colors[hash % colors.length]
+  end
+
 end

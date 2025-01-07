@@ -18,7 +18,7 @@
 	<% if appunto.classe.nil? %>
 		<div class="mt-5">		
 			<%= render "shared/inline_fields", form: form, method: :import_scuola do %>
-				<div class="my-5 relative peer cb-tax-fancy w-full flex flex-col" data-controller="tax-combobox-select">		
+				<div class="relative peer cb-tax-fancy w-full flex flex-col" data-controller="tax-combobox-select">		
 					<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 							placeholder: "seleziona scuola...",
 							label: "Scuola:",
@@ -51,10 +51,10 @@
 		<%= render "shared/inline_fields", form: form, method: :nome do %>
 			<div class="relative w-full">
 				<%= form.text_field :nome, 
-						class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0", 
+						class: "peer w-full pl-2 block border-0 bg-gray-50 text-gray-900 focus:ring-0", 
 						placeholder: "titolo o destinatario...",
 						autofocus: :true  %>
-				<div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
+				<div class="absolute inset-x-0 pl-2 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div>
 			</div>
     	<% end %>    
 	</div>

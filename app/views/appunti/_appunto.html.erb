@@ -14,26 +14,25 @@
 		<div class="w-full px-4 flex flex-col justify-between items-start space-y-2">
 			<div class="flex flex-col">
 				
-				<%= tag.div class: "mt-2 w-full flex items-center justify-between" do %>
-					<%= render "shared/inline_edit", model: appunto, method: :nome do %>
-						<%= tag.div appunto.nome, class: "w-full" %>      
-					<% end %>
-				<% end %>
-
 				<% if appunto.classe %>
 					<%= render partial: "classi/classe", locals: {classe: appunto.classe} %>
 				<% end %>
 
 				<%= tag.div class: "mt-2 flex items-center gap-2" do %>
 					<%= render "shared/inline_edit", model: appunto, method: :import_scuola do %>										
-						<% if mostra_scuola && appunto.import_scuola %>
-							<div class="w-full">
-								<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
-							</div>
-						<% end %>    
+						
+						<div class="w-full">
+							<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
+						</div>
+
 					<% end %>
 				<% end %>
 
+				<%= tag.div class: "mt-2 w-full flex items-center justify-between" do %>
+					<%= render "shared/inline_edit", model: appunto, method: :nome do %>
+						<%= tag.div appunto.nome, class: "w-full" %>      
+					<% end %>
+				<% end %>
 
 				<%= tag.div class: "flex items-center gap-2" do%>
 					<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
@@ -161,3 +160,4 @@
 	<% end %>
 
 <% end %>
+
