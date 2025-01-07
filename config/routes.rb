@@ -208,7 +208,7 @@ Rails.application.routes.draw do
     resources :bulk_actions, only: [] do
       collection do
         patch :print_all, format: "pdf"
-        patch :add_tappa_domani
+        patch :add_tappa_oggi
         patch :add_tappa_custom
       end
     end

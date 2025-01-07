@@ -16,20 +16,32 @@ module Appunti
     end
 
     def add_tappa_oggi
-      scuole = ImportScuola.where(id: params[:import_scuola_ids])
-      scuole.each do |scuola|
-        scuola.tappe.create(data_tappa: Date.tomorrow, titolo: "Tappa di oggi")
+      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola).uniq
+      
+      # raise "scuole_ids: #{scuole_ids.inspect}"
+      scuole_ids.each do |scuola_id|
+        unless scuola.blank?
+          scuola.tappe.create(tappable_type: "ImportScuola", tappable_id: scuola_id, data_tappa: Date.tomorrow, titolo: "Tappa di oggi")
+        end
       end
-      redirect_to appunti_path, notice: "Tappa aggiunta per domani"
+
+      # raise "scuole_ids: #{scuole_ids.inspect}"
+
+      # redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
+
+      # scuole.each do |scuola|
+      #   scuola.tappe.create(data_tappa: Date.tomorrow, titolo: "Tappa di oggi")
+      # end
+      # redirect_to appunti_path, notice: "Tappa aggiunta per domani"
     end
 
     def add_tappa_custom
-      scuole = ImportScuola.where(id: params[:import_scuola_ids])
-      custom_date = params[:data]
-      scuole.each do |scuola|
-        scuola.tappe.create(data: custom_date, titolo: "Tappa personalizzata")
-      end
-      redirect_to scuole_path, notice: "Tappa personalizzata aggiunta"
+      # scuole = ImportScuola.where(id: params[:import_scuola_ids])
+      # custom_date = params[:data]
+      # scuole.each do |scuola|
+      #   scuola.tappe.create(data: custom_date, titolo: "Tappa personalizzata")
+      # end
+      # redirect_to scuole_path, notice: "Tappa personalizzata aggiunta"
     end
 
     private

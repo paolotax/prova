@@ -72,7 +72,8 @@
 			<% bulk.with_action("Stampa", href: "/appunti/bulk_actions/print_all.pdf", method: :patch, data: {}) %>
 			
 			
-			<% bulk.with_action("Archivia", href: add_tappa_domani_import_scuole_bulk_actions_path, method: :patch, data: {}) %>
+			<% bulk.with_action("Oggi", href: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: {}) %>
+			
 			<% bulk.with_action("Completa", href: "#", method: :patch, data: {}) %>
 		<% end %>
 	<% end %>
