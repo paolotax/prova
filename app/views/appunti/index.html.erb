@@ -1,4 +1,6 @@
-<div class="sticky top-20 z-10">
+<% content_for :title, "Appunti" %>
+
+<div class="sticky top-20 z-10 hotwire-native:hidden">
 	<%= render Heading::WithActionsComponent.new do |heading| %>
 		
 		<% heading.with_action do %>
