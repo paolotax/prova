@@ -1,50 +1,119 @@
 <div class="">
-  	<div class="relative isolate px-6 pt-6 lg:px-8">
+  	<%# <div class="relative isolate px-6 pt-6 lg:px-8"> %>
 	
 	<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
 		<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 	</div>
 
 	
-	<div class="mx-auto max-w-2xl py-24 sm:py-24 lg:py-36">
+	<div class="mx-auto max-w-2xl py-4 sm:py-8 lg:py-12">
 
 
 		<% if current_user %>
 
-			<%= tag.div class: "max-w-48 mx-auto flex flex-col space-y-4 " do %>
+			<%= tag.div class: "min-h-[calc(100vh-80px)] flex items-center justify-center" do %>
+				<%= tag.div class: "max-w-md w-full grid grid-cols-2 gap-4 p-4" do %>
 
-				<% if current_user.admin? %>
+					<%= link_to voice_notes_path, 
+						class: "aspect-square rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "microphone", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Vocals</span>
+						</div>
+					<% end %>
 
-					<%= button_to "chatta con gpt", chats_path, data: { turbo: false }, class: "btn btn-outline w-full" %>
+					<%= link_to agenda_path(giorno: Date.today),
+						class: "aspect-square rounded-xl bg-lime-500 hover:bg-lime-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "calendar", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Agenda</span>
+						</div>
+					<% end %>
 
+					<%= link_to import_scuole_path,
+						class: "aspect-square rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "academic-cap", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Scuole</span>
+						</div>
+					<% end %>
+
+					<%= link_to import_adozioni_path,
+						class: "aspect-square rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "currency-euro", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Adozioni</span>
+						</div>
+					<% end %>
+
+					<%= link_to appunti_path,
+						class: "aspect-square rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "pencil", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Appunti</span>
+						</div>
+					<% end %>
+
+					<%= link_to documenti_path,
+						class: "aspect-square rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "document", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Documenti</span>
+						</div>
+					<% end %>
+
+					<%= link_to ordini_in_corso_path,
+						class: "aspect-square rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "shopping-cart", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Ordini</span>
+						</div>
+					<% end %>
+
+					<%= link_to giri_path,
+						class: "aspect-square rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "map", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Giri</span>
+						</div>
+					<% end %>
+
+					<%= link_to libri_path,
+						class: "aspect-square rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "book-open", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Libri</span>
+						</div>
+					<% end %>
+
+					<%= link_to stats_path,
+						class: "aspect-square rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "chart-bar", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Stats</span>
+						</div>
+					<% end %>
+
+					<% if current_user.admin? %>
+						<%= link_to chats_path,
+							data: { turbo: false },
+							class: "aspect-square rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+							<div class="text-center">
+								<%= heroicon "chat-bubble-left-right", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+								<span>Chat GPT</span>
+							</div>
+						<% end %>
+					<% end %>
+					
+					<%= link_to destroy_user_session_path, 
+						data: { turbo_method: :delete },
+						class: "col-span-2 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "arrow-right-on-rectangle", variant: :solid, options: { class: "w-6 h-6 mx-auto" } %>
+							<span>Esci</span>
+						</div>
+					<% end %>
 				<% end %>
-
-				<%= link_to "Vocals", voice_notes_path, class: "btn btn-outline" %>
-
-				<%= link_to "AGENDA", agenda_path(giorno: Date.today), class: "btn btn-outline" %>
-				
-				<%= link_to "Scuole", import_scuole_path, class: "btn btn-outline" %>
-
-				<%= link_to "Appunti", appunti_path, class: "btn btn-outline" %>
-
-				<%= link_to "Documenti", documenti_path, class: "btn btn-outline" %>
-				
-				<%= link_to "ORDINI DA EVADERE", ordini_in_corso_path, class: "btn btn-outline" %>
-
-				<% unless current_user.tappe.empty? %>
-					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
-					<%#= link_to "Tappe", tappe_path, class: "btn btn-outline" %>
-				<% else %>
-					<%= link_to "Giri", giri_path, class: "btn btn-outline" %>
-				<% end %>
-
-				<%= link_to "Libri", libri_path, class: "btn btn-outline" %>
-
-				<%= link_to "Stats", stats_path, class: "btn btn-outline" %>
-								
-				<%= link_to "Esci", destroy_user_session_path, data: { turbo_method: :delete },
-					class: "text-center px-3 py-1 text-sm leading-6 text-gray-900", role: "menuitem", tabindex: "-1", id: "user-menu-item-1"
-				%>
 			<% end %>
 
 
