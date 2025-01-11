@@ -1,11 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["startControl", "recordingControls", "uploadControls"];
+  static targets = ["startControl", "recordingControls", "uploadControls", "countdown"];
+  static values = {
+    recordingTimeout: { type: Number, default: 15000 } // 15 secondi in millisecondi
+  }
 
   connect() {
     this.mediaRecorder = null;
     this.audioChunks = [];
+    this.recordingTimer = null;
     this.initializeMediaRecorder();
     // this.showStartControls(); // Mostra solo i controlli di inizio all'avvio
   }
@@ -14,10 +18,8 @@ export default class extends Controller {
     try {
       // Richiede l'accesso al microfono
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
       // Controlla il tipo MIME supportato
       const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-
       // Configura MediaRecorder
       this.mediaRecorder = new MediaRecorder(stream, { mimeType });
 
@@ -68,12 +70,43 @@ export default class extends Controller {
 
       // Passa ai controlli di registrazione
       this.showRecordingControls();
+      
+      // Inizializza il countdown
+      let secondsLeft = this.recordingTimeoutValue / 1000;
+      this.updateCountdown(secondsLeft);
+      
+      // Aggiorna il countdown ogni secondo
+      this.countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        this.updateCountdown(secondsLeft);
+      }, 1000);
+
+      // Imposta il timer per lo stop automatico
+      this.recordingTimer = setTimeout(() => {
+        clearInterval(this.countdownTimer);
+        this.stopRecording();
+      }, this.recordingTimeoutValue);
     }
   }
 
   stopRecording() {
     if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+      clearTimeout(this.recordingTimer);
+      clearInterval(this.countdownTimer);
       this.mediaRecorder.stop();
+    }
+  }
+
+  updateCountdown(seconds) {
+    this.countdownTarget.textContent = `Registrazione in corso... ${seconds} secondi rimanenti`;
+  }
+
+  disconnect() {
+    if (this.recordingTimer) {
+      clearTimeout(this.recordingTimer);
+    }
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
     }
   }
 

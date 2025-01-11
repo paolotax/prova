@@ -1,8 +1,8 @@
-<div id="form_container" class="px-2 sm:px-0" data-controller="audio-recorder">
-  <div class="flex flex-col items-center space-y-8">
+<div id="form_container" class="my-2" data-controller="audio-recorder">
+  <div class="flex flex-col items-center">
     
     <%# Bottone Start %>
-    <div class="flex items-center space-x-4" data-audio-recorder-target="startControl">
+    <div class="flex flex-col items-center space-y-4" data-audio-recorder-target="startControl">
       <button type="button"
               class="w-32 h-32 flex flex-col items-center justify-center gap-y-3
         rounded-full shadow-lg cursor-pointer 
@@ -14,6 +14,9 @@
         <%= inline_svg_tag "icon-microphone.svg", class: "w-12 h-12" %>
         <span class="text-lg font-semibold">Registra</span>
       </button>
+      <p class="text-green-500 font-bold text-lg animate-pulse">
+        Registrazione 15 secondi
+      </p>
     </div>
 
     <%# Bottone Stop %>
@@ -29,7 +32,9 @@
         <%= inline_svg_tag "icon-stop.svg", class: "w-12 h-12" %>
         <span class="text-lg font-semibold">Ferma</span>
       </button>
-      <p class="text-red-500 font-bold text-lg animate-pulse">Registrazione in corso...</p>
+      <p class="text-red-500 font-bold text-lg animate-pulse" data-audio-recorder-target="countdown">
+        Registrazione in corso... 15 secondi rimanenti
+      </p>
     </div>
   
   </div>
