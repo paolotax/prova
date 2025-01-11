@@ -1,6 +1,6 @@
 <% content_for :title, "Scuole" %>
 
-<div class="sticky z-10 not-hotwire-native:top-20">
+<% content_for :header do %>
 	<%= render Heading::WithActionsComponent.new do |heading| %>
 
 		<%# button export excel %>
@@ -35,7 +35,8 @@
 		<%= h1 {"Scuole"} %>
 
 	<% end %>
-</div>
+<% end %>
+
 
 
 <%= turbo_frame_tag "search_results" do %>

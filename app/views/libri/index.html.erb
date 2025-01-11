@@ -1,5 +1,7 @@
-<div class="sticky top-20 z-10">
 
+<% content_for :title, "Libri" %>
+
+<% content_for :header do %>
     <%= component "heading/with_actions" do |heading| %>
         
         <% heading.with_action do %>
@@ -64,8 +66,7 @@
         <%= h1 {"Libri"} %>
 
     <% end %>
-
-</div>
+<% end %>
   
 <%= turbo_frame_tag :search_results do %>
 

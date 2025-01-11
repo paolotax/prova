@@ -13,7 +13,7 @@
 		<%# aggiunto per turbo-8 transition %>
 		<meta name="view-transition" content="same-origin" />
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
   		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 		<meta name="theme-color" content="#ffffff">
@@ -67,6 +67,9 @@
 
 					<%= render partial: "layouts/flash" %>
 
+					<div class="sticky top-20 z-10 hotwire-native:hidden">
+						<%= content_for(:header) %>
+					</div>
 					<!-- Your content -->
 					<%= yield %>
 	
