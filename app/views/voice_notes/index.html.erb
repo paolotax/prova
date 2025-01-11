@@ -1,7 +1,9 @@
 <% content_for :title, "Vocals" %>
 
-<div data-controller="audio-recorder" >
-  <%=  render "form_recorder" %>
+<div class="w-full flex flex-col items-cente">
+  <div class="w-full mx-auto" data-controller="audio-recorder">
+    <%= render "form_recorder" %>
+  </div>
 </div>
 
 <%= turbo_stream_from "voice_notes" %>

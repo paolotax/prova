@@ -7,7 +7,7 @@ export default class extends Controller {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.initializeMediaRecorder();
-    this.showStartControls(); // Mostra solo i controlli di inizio all'avvio
+    // this.showStartControls(); // Mostra solo i controlli di inizio all'avvio
   }
 
   async initializeMediaRecorder() {
@@ -87,19 +87,19 @@ export default class extends Controller {
 
   // Gestione della visibilità dei controlli
   showStartControls() {
-    // this.startControlTarget.classList.remove("hidden");
+    this.startControlTarget.classList.remove("hidden");
     this.recordingControlsTarget.classList.add("hidden");
     // this.uploadControlsTarget.classList.add("hidden");
   }
 
   showRecordingControls() {
-    // this.startControlTarget.classList.add("hidden");
+    this.startControlTarget.classList.add("hidden");
     this.recordingControlsTarget.classList.remove("hidden");
     // this.uploadControlsTarget.classList.add("hidden");
   }
 
   showUploadControls() {
-    // this.startControlTarget.classList.add("hidden");
+    this.startControlTarget.classList.add("hidden");
     this.recordingControlsTarget.classList.add("hidden");
     // this.uploadControlsTarget.classList.remove("hidden");
   }
