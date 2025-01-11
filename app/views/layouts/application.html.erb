@@ -4,8 +4,7 @@
 <html <%= "data-hotwire-native-app" if turbo_native_app? %> class="<%= [
 	"h-full antialiased",
 	("bg-gray-50" if Rails.env == "production"),
-	("bg-red-200" if Rails.env == "development")
-].compact.join(" ") %>">
+	("bg-red-200" if Rails.env == "development")].compact.join(" ") %>">
 	<head>
 		
 		<title><%= content_for(:title) || "Scagnozz" %></title>
@@ -13,6 +12,12 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<%# aggiunto per turbo-8 transition %>
 		<meta name="view-transition" content="same-origin" />
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+  		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="theme-color" content="#ffffff">
+  
 		
 		<%= csrf_meta_tags %>
 		<%= csp_meta_tag %>
