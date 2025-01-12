@@ -22,7 +22,7 @@
     <div class="my-5">
         <%= form.text_area :descrizione, rows: 3,
                 placeholder: "descrizione...", 
-                class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6" 
+                class: "block w-full resize-none bg-gray-50 border-gray-300 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6" 
         %>
     </div>  
 
@@ -30,11 +30,10 @@
         <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
     </div>
 
-    <div class="hidden hotwire-native:block">
-        <%= form.submit class: "w-full bg-blue-600 text-white rounded-lg py-3 px-5 font-medium cursor-pointer", 
-            data: {
+    <div class="hidden">
+        <%= form.submit data: {
                 controller: "bridge--button",
-                # bridge_title: "Save"
+                bridge_title: "Salva"
         } %>
     </div>
 <% end %>

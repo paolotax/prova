@@ -1,23 +1,29 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
-    
-	<% heading.with_action do %>
-		<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "field sm:hidden" %>
-    <% end %>
+<% content_for :title, "Giri" %>
 
-	<% heading.with_action do %>
-		<%= component 'tax_button',
-				caption: "Giro",
-				svg_file: "icon-plus.svg",
-				color: "blue",
-				url: url_for( controller: "giri", action: "new", model: nil ),
-				data_attr: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } %>
-    <% end %>
-    
-	<%= h1 {"Giri"} %>
+<% content_for :header do %>
+	<%= render Heading::WithActionsComponent.new do |heading| %>
+		
+		<% heading.with_action do %>
+			<%= select_tag "giri", options_from_collection_for_select(@giri, "id", "titolo", @default_giro&.id), include_blank: true, class: "field sm:hidden" %>
+		<% end %>
 
+		<% heading.with_action do %>
+			<%= component 'tax_button',
+					caption: "Giro",
+					svg_file: "icon-plus.svg",
+					color: "blue",
+					url: url_for( controller: "giri", action: "new", model: nil ),
+					data_attr: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } %>
+		<% end %>
+		
+		<%= h1 {"Giri"} %>
+
+	<% end %>
 <% end %>
 
+<%= turbo_stream_from current_user, "giri" %>
 
+<%= link_to "Nuovo Giro", new_giro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
 
 <div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-2 xl:gap-x-8">
 	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									

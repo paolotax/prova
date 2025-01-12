@@ -94,12 +94,16 @@ class GiriController < ApplicationController
 
     respond_to do |format|
       if @giro.save
+
+        @giro.broadcast_append_later_to [current_user, "giri"], target: "giri-lista"
+        
         if hotwire_native_app?
           format.html { redirect_to giri_url, notice: "Giro creato." }
         else
           format.turbo_stream { flash.now[:notice] = "Giro creato." }
           format.html { redirect_to giri_url, notice: "Giro creato." }
         end
+
       else      
         if hotwire_native_app?
           format.html { render :new, status: :unprocessable_entity }
@@ -117,6 +121,9 @@ class GiriController < ApplicationController
   def update
     respond_to do |format|
       if @giro.update(giro_params)
+        
+        @giro.broadcast_replace_later_to [current_user, "giri"]
+        
         if hotwire_native_app?
           format.html { redirect_to giri_url, notice: "Giro modificato." }
         else
@@ -137,19 +144,22 @@ class GiriController < ApplicationController
     end
   end
 
-  def destroy
-    @giro.destroy!
+    def destroy
+      @giro.broadcast_remove_to [current_user, "giri"]
+      @giro.destroy!
 
-    respond_to do |format|
-      format.turbo_stream do 
-        flash.now[:alert] = "Giro eliminato."
-        turbo_stream.remove(@giro)
-        redirect_to giri_url
-      end
-      format.html { redirect_to giri_url, alert: "Giro eliminato." }
-      format.json { head :no_content }
+      respond_to do |format|
+        if hotwire_native_app?
+          format.html { redirect_to giri_url, alert: "Giro eliminato." }
+        else
+          format.turbo_stream do 
+            flash.now[:alert] = "Giro eliminato."
+          end
+          format.html { redirect_to giri_url, alert: "Giro eliminato." }
+          format.json { head :no_content }
+        end
+      end 
     end
-  end
 
   private
 

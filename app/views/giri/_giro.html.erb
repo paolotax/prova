@@ -19,11 +19,25 @@
   	<div class="col-span-2 flex items-center align-center justify-around ">
     	<%= link_to "apri", tappe_giro_path(giro), class: "text-xs h-6 w-6 text-center", 
             data: { turbo_frame: "_top" } %>
+		
+
 		<%= link_to edit_giro_path(giro), 
-			class: "mx-2 h-7 w-7 flex justify-center items-center text-center text-gray-400 hover:text-gray-500 rounded-full shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
-			data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
+			class: "not-hotwire-native:hidden 
+				mx-2 h-7 w-7 flex justify-center items-center text-center text-gray-400 hover:text-gray-500 
+				rounded-full shadow-sm hover:bg-gray-300 
+				focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
 			<%= inline_svg_tag "icon-pencil.svg" %>
 		<% end %>
+
+		<%= link_to edit_giro_path(giro), 
+			class: "hotwire-native:hidden 
+				mx-2 h-7 w-7 flex justify-center items-center text-center text-gray-400 hover:text-gray-500 
+				rounded-full shadow-sm hover:bg-gray-300 
+				focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+			data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+			<%= inline_svg_tag "icon-pencil.svg" %>
+		<% end %>
+		
 		<%= button_to giro_path(giro), 
 				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
 				disabled: !giro.tappe.empty?,  

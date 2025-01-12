@@ -28,6 +28,8 @@ class Giro < ApplicationRecord
 
   validates :titolo, presence: true
   
+  broadcasts_to ->(giro) { [giro.user, "giri"] }
+
   def to_combobox_display
     titolo
   end

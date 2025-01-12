@@ -28,6 +28,14 @@ class ConfigurationsController < ApplicationController
           ],
           properties: {
             view_controller: "map"
+          },
+        },
+        {
+          patterns: [
+            "refresh_historical_location"
+          ],
+          properties: {
+            presentation: "refresh"
           }
         }
       ]
