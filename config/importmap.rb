@@ -33,3 +33,4 @@ pin "ahoy", to: "ahoy.js"
 pin "mapkick/bundle", to: "mapkick--bundle.js" # @0.2.6
 
 
+pin "@hotwired/hotwire-native-bridge", to: "@hotwired--hotwire-native-bridge.js" # @1.0.0

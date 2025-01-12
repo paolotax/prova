@@ -26,7 +26,15 @@
         %>
     </div>  
 
-    <div class="inline">
+    <div class="inline hotwire-native:hidden">
         <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    </div>
+
+    <div class="hidden hotwire-native:block">
+        <%= form.submit class: "w-full bg-blue-600 text-white rounded-lg py-3 px-5 font-medium cursor-pointer", 
+            data: {
+                controller: "bridge--button",
+                # bridge_title: "Save"
+        } %>
     </div>
 <% end %>

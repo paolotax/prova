@@ -10,7 +10,7 @@
 				svg_file: "icon-plus.svg",
 				color: "blue",
 				url: url_for( controller: "giri", action: "new", model: nil ),
-				data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>	
+				data_attr: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } %>
     <% end %>
     
 	<%= h1 {"Giri"} %>
@@ -19,7 +19,7 @@
 
 
 
-<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8 xl:gap-x-8">
+<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-2 xl:gap-x-8">
 	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									
 	<%= render @giri %>
 </div>

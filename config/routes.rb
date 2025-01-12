@@ -226,6 +226,12 @@ Rails.application.routes.draw do
     end
   end
 
+
+  resources :configurations, only: [] do
+    get :ios_v1, on: :collection
+    get :android_v1, on: :collection
+  end
+
   # get 'clienti',      to: 'clienti#index'
   # get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
  

@@ -13,6 +13,8 @@ class ConfigurationsController < ApplicationController
       rules: [
         {
           patterns: [
+            "/users/sign_in$",
+            "/users/sign_up$",
             "/new$",
             "/edit$"
           ],

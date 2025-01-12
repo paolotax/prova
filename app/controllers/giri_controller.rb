@@ -94,14 +94,22 @@ class GiriController < ApplicationController
 
     respond_to do |format|
       if @giro.save
-        format.turbo_stream { flash.now[:notice] = "Giro creato." }
-        format.html { redirect_to giri_url, notice: "Giro creato." }
-      else      
-        format.turbo_stream do 
-          flash.now[:alert] = "Impossibile creare il giro."   
+        if hotwire_native_app?
+          format.html { redirect_to giri_url, notice: "Giro creato." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Giro creato." }
+          format.html { redirect_to giri_url, notice: "Giro creato." }
         end
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @giro.errors, status: :unprocessable_entity }
+      else      
+        if hotwire_native_app?
+          format.html { render :new, status: :unprocessable_entity }
+        else
+          format.turbo_stream do 
+            flash.now[:alert] = "Impossibile creare il giro."   
+          end
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @giro.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -109,12 +117,22 @@ class GiriController < ApplicationController
   def update
     respond_to do |format|
       if @giro.update(giro_params)
-        format.turbo_stream { flash.now[:notice] = "Giro modificato." }
-        format.html { redirect_to giri_url, notice: "Giro modificato." }
-        format.json { render :show, status: :ok, location: @giro }
+        if hotwire_native_app?
+          format.html { redirect_to giri_url, notice: "Giro modificato." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Giro modificato." }
+          format.html { redirect_to giri_url, notice: "Giro modificato." }
+        end
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @giro.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :edit, status: :unprocessable_entity }
+        else
+          format.turbo_stream do 
+            flash.now[:alert] = "Impossibile modificare il giro."   
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @giro.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
