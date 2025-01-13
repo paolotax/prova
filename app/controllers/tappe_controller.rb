@@ -61,33 +61,61 @@ class TappeController < ApplicationController
   def create
 
     @tappa = current_user.tappe.build(tappa_params)
-    
-    if @tappa.save
-      respond_to do |format|
-        format.turbo_stream
+
+    respond_to do |format|
+      if @tappa.save
+
+        # @tappa.broadcast_append_later_to [current_user, "tappe"], target: "tappe-lista"
+        
+        if hotwire_native_app?
+          format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Tappa creata." }
+          format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
+        end
+
+      else      
+        if hotwire_native_app?
+          format.html { render :new, status: :unprocessable_entity }
+        else
+          format.turbo_stream do 
+            flash.now[:alert] = "Impossibile creare la tappa."   
+          end
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @tappa.errors, status: :unprocessable_entity }
+        end
       end
-    else
-      render :new, alert: 'Error: Comment could not be created.'
     end
+  
   end
 
   def update
-
     respond_to do |format|
-
       if @tappa.update(tappa_params)
         
+        # serve per aggiornare la colonna della view
         if @tappa.saved_change_to_giro_id?
-          # serve per aggiornare la colonna della view
           @giro_changed = true
         end
+
+        @tappa.broadcast_replace_later_to [current_user, "tappe"]
         
-        format.turbo_stream
-        format.html { redirect_to tappa_url(@tappa), notice: "Tappa was successfully updated." }
-        format.json { render :show, status: :ok, location: @tappa }
+        if hotwire_native_app?
+          format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Tappa modificata." }
+          format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata." }
+        end
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @tappa.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :edit, status: :unprocessable_entity }
+        else
+          format.turbo_stream do 
+            flash.now[:alert] = "Impossibile modificare la tappa."   
+          end
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @tappa.errors, status: :unprocessable_entity }
+        end
       end
     end
   end

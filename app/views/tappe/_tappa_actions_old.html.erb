@@ -25,7 +25,7 @@
 
         <%= link_to "edit", edit_tappa_path(tappa), 
                 class: "hidden group-hover:block btn btn-indigo my-auto text-center", 
-                data: { turbo_frame: :modal, action: "click->dialog#open"} %>    
+                data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open"} %>    
     
     <% end %>
 

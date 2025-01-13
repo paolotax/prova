@@ -16,7 +16,8 @@ class ConfigurationsController < ApplicationController
             "/users/sign_in$",
             "/users/sign_up$",
             "/new$",
-            "/edit$"
+            "/edit$",
+            "/new?.*$"
           ],
           properties: {
             context: "modal"

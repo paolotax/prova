@@ -22,7 +22,7 @@
         <% dropdown.with_item do %>
             <%= link_to edit_tappa_path( tappa ),
                     class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                    data: { turbo_frame: :modal, action: "click->dialog#open"}, 
+                    data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open"}, 
                     role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
                 Modifica
             <% end %>

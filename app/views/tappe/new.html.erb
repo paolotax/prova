@@ -1,8 +1,13 @@
-<%= render "shared/turbo_dialog" do %>
-    <div data-action="turbo:submit-end->old-dialog#submitEnd" class="w-full">
-
-        <h2 class="font-bold text-2xl">Nuova tappa</h2>
+<% unless hotwire_native_app? %>
+    <%= render "shared/turbo_dialog" do %>
+        <div data-action="turbo:submit-end->old-dialog#submitEnd" class="w-full">
+            <h2 class="font-bold text-2xl">Crea Tappa</h2>
+            <%= render "form", tappa: @tappa %>
+        </div>
+    <% end %>
+<% else %>
+    <% content_for :title, "Crea Tappa" %>
+    <div class="p-4">
         <%= render "form", tappa: @tappa %>
-        
     </div>
 <% end %>
