@@ -22,6 +22,22 @@
 						</div>
 					<% end %>
 
+					<%= link_to appunti_path,
+						class: "aspect-square rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "pencil", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Appunti</span>
+						</div>
+					<% end %>
+
+					<%= link_to giorno_path(giorno: Date.today),
+						class: "aspect-square rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						<div class="text-center">
+							<%= heroicon "map-pin", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<span>Oggi</span>
+						</div>
+					<% end %>
+
 					<%= link_to agenda_path(giorno: Date.today),
 						class: "aspect-square rounded-xl bg-lime-500 hover:bg-lime-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
@@ -46,13 +62,6 @@
 						</div>
 					<% end %>
 
-					<%= link_to appunti_path,
-						class: "aspect-square rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= heroicon "pencil", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
-							<span>Appunti</span>
-						</div>
-					<% end %>
 
 					<%= link_to documenti_path,
 						class: "aspect-square rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
