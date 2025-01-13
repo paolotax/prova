@@ -4,7 +4,9 @@ class AppuntiController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
-  before_action :ensure_frame_response, only: %i[ new edit ]
+  
+  
+  before_action :ensure_frame_response, only: %i[ new edit ], unless: :hotwire_native_app?
 
   def index
     
@@ -46,9 +48,8 @@ class AppuntiController < ApplicationController
   end
 
   def new
-    @scuola   = ImportScuola.find(params[:import_scuola_id]) if !params[:import_scuola_id].nil?
-    @adozione = ImportAdozione.find(params[:import_adozione_id]) if !params[:import_adozione_id].nil?
-    @appunto  = current_user.appunti.new(import_scuola_id: params[:import_scuola_id], import_adozione_id: params[:import_adozione_id])
+    @scuola   = current_user.import_scuola.find(params[:import_scuola_id]) unless params[:import_scuola_id].nil?
+    @appunto  = current_user.appunti.build(import_scuola_id: params[:import_scuola_id])
   end
 
   def edit

@@ -1,5 +1,7 @@
 <% content_for :title, "Appunti" %>
 
+<%= link_to "Nuovo Appunto", new_appunto_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
+
 <% content_for :header do %>
 	<%= render Heading::WithActionsComponent.new do |heading| %>
 		

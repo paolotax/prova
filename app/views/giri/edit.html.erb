@@ -1,7 +1,7 @@
 <% unless hotwire_native_app? %>
     <%= render "shared/turbo_dialog" do %>
         <div data-action="turbo:submit-end->old-dialog#submitEnd" class="w-full">
-           <h2 class="font-bold text-2xl">Aggiorna giro</h2>
+           <h2 class="font-bold text-2xl">Aggiorna Giro</h2>
             <%= render "form", giro: @giro %>            
         </div>
     <% end %>

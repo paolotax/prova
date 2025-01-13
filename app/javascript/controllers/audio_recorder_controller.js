@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["startControl", "recordingControls", "uploadControls", "countdown"];
   static values = {
-    recordingTimeout: { type: Number, default: 15000 } // 15 secondi in millisecondi
+    recordingTimeout: { type: Number, default: 30000 } // 30 secondi in millisecondi
   }
 
   connect() {
@@ -98,7 +98,7 @@ export default class extends Controller {
   }
 
   updateCountdown(seconds) {
-    this.countdownTarget.textContent = `Registrazione in corso... ${seconds} secondi rimanenti`;
+    this.countdownTarget.innerHTML = `Registrazione in corso</br> ${seconds} secondi rimanenti`;
   }
 
   disconnect() {
