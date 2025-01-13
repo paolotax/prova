@@ -61,7 +61,7 @@ class AppuntiController < ApplicationController
     
     respond_to do |format|
       if @appunto.save
-        @appunto.broadcast_append_later_to [current_user, "appunti"], target: "appunti-lista"
+        @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti-lista"
         
         if hotwire_native_app?
           format.html { redirect_to appunto_url(@appunto), notice: "Appunto inserito." }

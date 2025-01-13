@@ -64,6 +64,7 @@
   </div>
 <% end %>
 
+<%= turbo_stream_from current_user, "appunti" %>
 
 <%= turbo_frame_tag "search_results", data: { controller: "bulk-actions" } do %>
 
