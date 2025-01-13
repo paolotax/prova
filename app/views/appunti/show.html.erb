@@ -1,15 +1,8 @@
-<%= render "shared/turbo_dialog" do %>
 
-    <div class="mx-auto">
-
-        <%= render @appunto %>
+  <div class="w-full grid grid-cols-1 px-2 group show-navigator">
 
 
-      <%= link_to "Edit this appunto", edit_appunto_path(@appunto), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      <div class="inline-block ml-2">
-        <%= button_to "Destroy this appunto", appunto_path(@appunto), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-      </div>
-      <%= link_to "Back to appunti", appunti_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    </div>
+    <%= render @appunto %>
 
-<% end %>
+  </div>
+
