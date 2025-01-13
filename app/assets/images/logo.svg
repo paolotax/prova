@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sfondo circolare -->
+  <circle cx="256" cy="256" r="240" fill="#3B82F6"/>
+  
+  <!-- Faccia (spostata più in alto) -->
+  <circle cx="256" cy="236" r="180" fill="#FEF3C7"/>
+  
+  <!-- Occhi concentrati (spostati più in alto) -->
+  <path d="M186 186C186 186 176 196 196 206" stroke="#1E40AF" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M306 186C306 186 296 196 316 206" stroke="#1E40AF" stroke-width="12" stroke-linecap="round" fill="none"/>
+  
+  <!-- Sorriso concentrato (spostato più in alto) -->
+  <path d="M216 256C216 256 246 266 296 256" stroke="#1E40AF" stroke-width="12" stroke-linecap="round" fill="none"/>
+  
+  <!-- Libro aperto (ruotato di 180 gradi) -->
+  <path d="M146 346C146 346 236 386 256 386C276 386 366 346 366 346" 
+        stroke="#EF4444" stroke-width="16" stroke-linecap="round" fill="#EF4444"/>
+  <path d="M146 366C146 366 236 406 256 406C276 406 366 366 366 366" 
+        stroke="#EF4444" stroke-width="16" stroke-linecap="round" fill="#EF4444"/>
+  
+  <!-- Pagine che si muovono -->
+  <path d="M256 386C256 386 276 396 296 386" 
+        stroke="#F87171" stroke-width="8" stroke-linecap="round" fill="#F87171"/>
+  <path d="M256 406C256 406 276 416 296 406" 
+        stroke="#F87171" stroke-width="8" stroke-linecap="round" fill="#F87171"/>
+</svg>
