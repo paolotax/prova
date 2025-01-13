@@ -1,43 +1,40 @@
-<div id="<%= dom_id(voice_note) %>" class="border p-4 rounded-lg shadow-sm space-y-2 flex flex-col justify-between gap-4">
+<div id="<%= dom_id(voice_note) %>" class="border border-gray-700 p-4 rounded-lg shadow-md space-y-4 flex flex-col bg-gray-800">
 	
 	<%= turbo_stream_from "voice_note_#{voice_note.id}" if voice_note %>
 
-
-	<div class="flex flex-col justify-between w-full">
+	<div class="flex items-center justify-between w-full">
+		<h3 class="text-lg font-semibold text-gray-100"><%= voice_note.title %></h3>
 		
-
-		<div id="voice_note_transcription_<%= voice_note.id %>" class="w-full pb-2 text-gray-700">
-			<%= render "shared/inline_edit", model: voice_note, method: :transcription do %>
-				<div class="relative w-full">
-					<% if voice_note.transcription.present? %>
-						<%= simple_format(voice_note.transcription, class: "italic") %>
-					<% else %>
-						<span class="italic">In attesa della trascrizione...</span>
-					<% end %>
-				</div>
-			<% end %>
-		</div>
-		
-
-		<div class="flex items-center justify-between gap-2">
-			<div class="text-sm text-gray-700"><%= voice_note.title %></div> 
+		<div class="flex items-center gap-3">
 			<audio controls class="max-w-28">
 				<source src="<%= url_for(voice_note.audio_file) %>" type="<%= voice_note.audio_file.content_type %>">
 				Il tuo browser non supporta l'elemento audio.
 			</audio>
+
+			<%= button_to voice_note_path(voice_note),
+						method: :delete,
+						class: "w-8 h-8 flex items-center justify-center rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors" do %>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+				</svg>
+			<% end %>
 		</div>
 	</div>
 
-	<div class="w-full flex gap-2 justify-end">
-		<%= button_to "Elimina",
-					voice_note_path(voice_note),
-					method: :delete,					
-					class: "px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition" %>
+	<div id="voice_note_transcription_<%= voice_note.id %>" class="w-full py-3 text-gray-200 border-t border-b border-gray-600">
+		<%= render "shared/inline_edit", model: voice_note, method: :transcription do %>
+			<div class="relative w-full">
+				<% if voice_note.transcription.present? %>
+					<%= simple_format(voice_note.transcription, class: "italic") %>
+				<% else %>
+					<span class="italic">In attesa della trascrizione...</span>
+				<% end %>
+			</div>
+		<% end %>
 	</div>
 
 	<%= turbo_frame_tag dom_id(voice_note, "appunti") do %>
 		<%= render partial: "appunti/appunto", collection: voice_note.appunti, as: :appunto %>
 	<% end %>
-
 
 </div>
