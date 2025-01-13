@@ -37,7 +37,32 @@
 	<% end %>
 <% end %>
 
+<% if hotwire_native_app? %>
+  <div class="flex items-center gap-2 px-4 py-4">
+    <div class="flex-1 relative">
+      <%= form_with url: import_scuole_path, method: :get, data: { turbo_frame: "search_results", controller: "search-form" } do |f| %>
+        <div class="relative">
+          <%= f.search_field :search, 
+              class: "w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+              placeholder: "Cerca scuole...",
+              value: params[:search],
+              data: { action: "input->search-form#search" } %>
+          
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <%= heroicon "magnifying-glass", options: { class: "h-5 w-5 text-gray-400" } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
 
+    <%= link_to filtra_import_scuole_path(params: request.query_parameters),
+        class: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-300",
+        data: { turbo_frame: "slide-over" } do %>
+      <%= heroicon "funnel", options: { class: "h-5 w-5" } %>
+      <span>Filtra</span>
+    <% end %>
+  </div>
+<% end %>
 
 <%= turbo_frame_tag "search_results" do %>
 
@@ -46,7 +71,7 @@
 	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all bulk-actions'} do %>
 		<%= turbo_frame_tag "scuole_page_#{@pagy.page}" do %> 
 			
-			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-4 2xl:grid-cols-2">
+			<div id="import_scuole" role="list" class="py-5 grid grid-cols-1 gap-2 2xl:grid-cols-2">
 				<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2">
 					Whoops! Non ci sono scuole. 
 					<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] %>
@@ -55,7 +80,7 @@
 				<% @import_scuole.group_by(&:direzione).each do |direzione, scuole| %>
 
 					<div class="flex flex-col">
-						<h3 class="only:hidden block px-4 py-2 mt-4 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
+						<h3 class="only:hidden block px-4 py-2 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
 							<%= direzione.nil? ? "<private>" : direzione.to_s %>
 						</h3>
 						<%= render partial: "import_scuole/scuola_long", collection: scuole, as: :import_scuola %>  

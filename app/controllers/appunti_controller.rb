@@ -61,12 +61,22 @@ class AppuntiController < ApplicationController
     
     respond_to do |format|
       if @appunto.save
-        format.html { redirect_to :back, notice: "Appunto inserito." }
-        format.json { render :show, status: :created, location: @appunto }
-        format.turbo_stream { flash.now[:notice] = "Appunto inserito." }
+        @appunto.broadcast_append_later_to [current_user, "appunti"], target: "appunti-lista"
+        
+        if hotwire_native_app?
+          format.html { redirect_to appunto_url(@appunto), notice: "Appunto inserito." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Appunto inserito." }
+          format.html { redirect_to appunti_url, notice: "Appunto inserito." }
+        end
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @appunto.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :new, status: :unprocessable_entity }
+        else
+          format.turbo_stream { flash.now[:alert] = "Impossibile creare l'appunto." }
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @appunto.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -74,12 +84,22 @@ class AppuntiController < ApplicationController
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
-        format.html { redirect_to appunti_url, notice: "Appunto modificato." }
-        format.json { render :show, status: :ok, location: @appunto }
-        format.turbo_stream { flash.now[:notice] = "Appunto modificato." }
+        @appunto.broadcast_replace_later_to [current_user, "appunti"]
+        
+        if hotwire_native_app?
+          format.html { redirect_to appunto_url(@appunto), notice: "Appunto modificato." }
+        else
+          format.turbo_stream { flash.now[:notice] = "Appunto modificato." }
+          format.html { redirect_to appunti_url, notice: "Appunto modificato." }
+        end
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @appunto.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :edit, status: :unprocessable_entity }
+        else
+          format.turbo_stream { flash.now[:alert] = "Impossibile modificare l'appunto." }
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @appunto.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
