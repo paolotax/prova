@@ -49,9 +49,6 @@
         
         <% end %>
 
-  
-
-
 		<%= I18n.l( @giorno.to_date, format: :long, locale: :it ) %>
 
 	<% end %>
@@ -77,16 +74,24 @@
 </div>
 
 
-<div class="flex justify-center gap-4 mt-4">
-    <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno), 
-    data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
-    class: 'btn btn-primary' do %>
-    <%= inline_svg_tag('icon-building-library.svg') %> Vai in una scuola
-    <% end %>
-    <%= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno), class: 'btn btn-primary',
-        data: { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-    <%= inline_svg_tag('icon-cash.svg') %> Vai da un cliente
-    <% end %>
+
+<div class="flex justify-center gap-4 m-4">
+
+        <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno),
+            class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
+            data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
+            <%= heroicon "academic-cap", variant: :solid, options: { class: "w-6 h-6" } %>
+            <span>Aggiungi scuola</span>
+        <% end %>
+
+        <%= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno),
+            class: "w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
+            data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
+
+            <%= heroicon "currency-euro", variant: :solid, options: { class: "w-6 h-6" } %>
+            <span>Aggiungi cliente</span>
+        <% end %>
+
 </div>
 
 <% if @tappe.any? %>
