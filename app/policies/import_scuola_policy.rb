@@ -23,4 +23,8 @@ class ImportScuolaPolicy < ApplicationPolicy
   def show?
     user.admin? || record.user_ids.any?(user.id)
   end
+
+  def combobox_classi?
+    true
+  end
 end
