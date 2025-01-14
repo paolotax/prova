@@ -75,7 +75,7 @@
 		<% end %>
 	</div>  
 
-	<%= tag.div class: "flex items-center justify-between space-x-5" do %>
+	<%= tag.div class: "flex flex-col sm:flex-row sm:items-center sm:justify-between sm:space-x-5" do %>
 		<%# stato %>
 		<div class="relative mt-5 w-1/2">
 			<%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s}, { include_blank: "" }, 
@@ -84,8 +84,15 @@
 		</div>
 
 		<%# attachments %>
-		<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
-			<div class="text-center flex justify-left gap-x-4 items-center">
+		<% if hotwire_native_app? %>
+			<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">	
+				<%= form.file_field :attachments, multiple: true %>
+					<%#= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
+			</div>
+
+		<% else %>
+			<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
+				<div class="text-center flex justify-left gap-x-4 items-center">
 				<%# <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
 				</svg> %>
@@ -106,7 +113,7 @@
 
 				<% end %>
 			</div>
-		</div>
+		<% end %>
 	<% end %>
 
 	<%# hidden submit for hotwire native %>
