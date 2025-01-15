@@ -7,7 +7,7 @@
     <% dropdown.with_item do %>
         <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
                                       import_adozione_id: import_adozione.id),
-                        data: { turbo_frame: :modal, action: "click->dialog#open" },
+                        data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open" },
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
 
