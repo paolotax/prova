@@ -18,6 +18,12 @@ class ProfilesController < ApplicationController
   def show
   end
 
+  def get_user_profile
+    @profile = current_user.profile
+    authorize @profile
+    redirect_to current_user
+  end
+
   def edit  
   end
 

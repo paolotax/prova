@@ -15,7 +15,7 @@
 				<%= tag.div class: "max-w-md w-full grid grid-cols-2 gap-4 p-4" do %>
 
 					<%= link_to voice_notes_path, 
-						class: "aspect-square rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+						class: "hotwire-native:hidden aspect-square rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
 							<%= heroicon "microphone", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
 							<span>Vocals</span>
@@ -106,7 +106,7 @@
 					<% if current_user.admin? %>
 						<%= link_to chats_path,
 							data: { turbo: false },
-							class: "aspect-square rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
+							class: "hotwire-native:hidden aspect-square rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 							<div class="text-center">
 								<%= heroicon "chat-bubble-left-right", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
 								<span>Chat GPT</span>

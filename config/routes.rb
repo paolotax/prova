@@ -129,6 +129,8 @@ Rails.application.routes.draw do
       patch 'sort'
     end
   end
+
+  get 'profilo', to: 'profiles#get_user_profile'
  
   resources :profiles do
     resources :steps, only: [:show, :update], controller: 'steps_controllers/profile_steps'

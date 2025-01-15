@@ -28,4 +28,8 @@ class ProfilePolicy < ApplicationPolicy
     user.admin? || record.user == user
   end
 
+  def get_user_profile?
+    user.admin? || record.user == user
+  end
+  
 end
