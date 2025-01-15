@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :user_scuole do %>
 
-    <div class="sticky top-16 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
+    <div class="sticky not-hotwire-native:top-16 hotwire-native:top-0  p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
         <h2 class="font-semibold">Le mie SCUOLE </h2>
         <%= tag.div id:"#{dom_id(current_user)}-user-scuole", 
             class: "text-sm font-semibold pr-4" do %>
