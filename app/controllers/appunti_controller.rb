@@ -48,7 +48,7 @@ class AppuntiController < ApplicationController
   end
 
   def new
-    @scuola   = current_user.import_scuola.find(params[:import_scuola_id]) unless params[:import_scuola_id].nil?
+    @scuola   = current_user.import_scuole.find(params[:import_scuola_id]) unless params[:import_scuola_id].nil?
     @appunto  = current_user.appunti.build(import_scuola_id: params[:import_scuola_id])
   end
 

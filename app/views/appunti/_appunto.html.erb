@@ -6,6 +6,9 @@
 		"bg-white border-slate-200": !(appunto.stato == "archiviato"),
     ] do %>
 
+
+
+
 	<% if appunto.is_ssk? %>
 		<%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto, mostra_scuola: mostra_scuola } %>
 	<% else %>
