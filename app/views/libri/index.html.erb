@@ -67,7 +67,36 @@
 
     <% end %>
 <% end %>
-  
+
+
+<% if hotwire_native_app? %>
+  <div class="flex items-center gap-2 px-4 py-4">
+    <div class="flex-1 relative">
+      <%= form_with url: libri_path, method: :get, data: { turbo_frame: "search_results", controller: "search-form" } do |f| %>
+        <div class="relative">
+          <%= f.search_field :search, 
+              class: "w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+              placeholder: "Cerca...",
+              value: params[:search],
+              data: { action: "input->search-form#search" } %>
+          
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <%= heroicon "magnifying-glass", options: { class: "h-5 w-5 text-gray-400" } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%= link_to filtra_libri_path(params: request.query_parameters),
+        class: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-300",
+        data: { turbo_frame: "slide-over" } do %>
+      <%= heroicon "funnel", options: { class: "h-5 w-5" } %>
+      <span>Filtra</span>
+    <% end %>
+  </div>
+<% end %>
+
+
 <%= turbo_frame_tag :search_results do %>
 
     <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
