@@ -1,7 +1,7 @@
 <%= form_with(url: @base_url, method: :get, 
     id: "form-filter", 
     data: form_data_attributes,
-    class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg") do |form| %>     
+    class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg hotwire-native:mb-24") do |form| %>     
 
     <%= tag.div(class: "flex-col space-y-3") do %>
         <% @fields.each do |field| %>
