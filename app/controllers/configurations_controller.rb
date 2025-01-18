@@ -51,8 +51,11 @@ class ConfigurationsController < ApplicationController
         },
         {
           patterns: [
+            "/users/sign_in$",
+            "/users/sign_up$",
             "/new$",
-            "/edit$"
+            "/edit$",
+            "/new?.*$"
           ],
           properties: {
             context: "modal",
