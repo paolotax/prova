@@ -1,8 +1,14 @@
-<%= form_with(model: tappa, class: "contents") do |form| %>
+<%= form_with(model: tappa, builder: RailsDesigner::FormBuilder) do |form| %>
 
     <%= form.submit data: { controller: "bridge--button", bridge_title: "Salva" },
                 class: "hidden" do %>
         salva tappa
+    <% end %>
+
+    <% if tappa.errors.any? %>
+        <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+            <h2>Non posso salvare la Tappa. <%= t 'misc.errori', count: tappa.errors.count %></h2>
+        </div>
     <% end %>
 
     <% if params[:action] == "new" %>
@@ -10,22 +16,7 @@
         <%= form.hidden_field :tappable_type, value: @tappable_type %>
     <% end %>
 
-    <% if tappa.errors.any? %>
-        <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-            <h2><%= pluralize(tappa.errors.count, "error") %> prohibited this tappa from being saved:</h2>
-            <ul>
-                <% tappa.errors.each do |error| %>
-                    <li><%= error.full_message %></li>
-                <% end %>
-            </ul>
-        </div>
-    <% end %>
-
-    <%= tag.div class: "my-4" do %>  
-
-        <%= tag.div class: "rounded-b-lg bg-white border border-t-0 px-2 py-1.5" do %>
-           
-           <%#= render partial: "clientable/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+    <%= tag.div class: "my-5" do %>                
             <%= component "tax_select_clientable", 
                 form: form, 
                 object_type: "tappable", 
@@ -33,27 +24,27 @@
                 type: tappa.tappable_type, 
                 id: tappa.tappable_id %>
 
-        <% end %>
     <% end %>  
 
     <div class="my-5">
-        <%= form.text_area :titolo, rows: 3,
-            placeholder: "note...", 
-            class: "block w-full resize-none bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6"
-        %>
+        <%= component "field" do |field| %>
+            <% field.with_label { render FormLabelComponent.new(form: form, field: :titolo, label: "Note") } %>
+            <% field.with_hint { "Qui puoi segnare le note per la tappa" } %>
+            <%= form.text_area :titolo, rows: 3,
+                placeholder: "note..." %>
+        <% end %>
     </div> 
 
     <div class="my-5 flex-col space-y-4">
-        
-        <%= form.date_field :data_tappa,
-            placeholder: "data tappa...", 
-            class: "flex bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6"
-        %>
-        <%= tag.div class: "cb-tax cb-medium px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
+        <%= component "field" do |field| %>
+            <% field.with_label { render FormLabelComponent.new(form: form, field: :data_tappa, label: "Data tappa") } %>
+            <%= form.date_field :data_tappa, placeholder: "data tappa..." %>
+        <% end %>
+
+        <%= tag.div class: "cb-tax cb-tax-fancy px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
             <span class="pr-2">giro:</span>
             <%= form.combobox :giro_id, current_user.giri.all,
-                name_when_new: "tappa[new_giro]" %>
-            
+                name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
         <% end %>
     </div>  
     

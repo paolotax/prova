@@ -1,15 +1,10 @@
 <%= form_with(model: giro, builder: RailsDesigner::FormBuilder) do |form| %>
 
-    <% if giro.errors.any? %>
-        <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-            <h2><%= pluralize(giro.errors.count, "error") %> prohibited this giro from being saved:</h2>
-            <ul>
-                <% giro.errors.each do |error| %>
-                    <li><%= error.full_message %></li>
-                <% end %>
-            </ul>
-        </div>
-    <% end %>
+	<% if giro.errors.any? %>
+		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+			<h2>Non posso salvare il Giro. <%= t 'misc.errori', count: giro.errors.count %></h2>
+		</div>
+	<% end %>
 
     <div class="my-5">
         <%= component "field" do |field| %>
@@ -17,11 +12,9 @@
             <%= form.text_field :titolo, placeholder: "titolo", autofocus: :true %>
         <% end %>
     </div>
-
-           
+          
     <div class="my-5">
         <%= component "field" do |field| %>
-            <%= field.with_label { render FormLabelComponent.new(form: form, field: :descrizione, label: "Descrizione") } %>
             <% field.with_hint { "Qui puoi segnare le note per il giro" } %>
             <%= form.text_area :descrizione, rows: 3, placeholder: "descrizione..." %>
         <% end %>

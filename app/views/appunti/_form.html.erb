@@ -1,13 +1,8 @@
 <%= form_with(model: appunto, class: "relative", id: :appunto_form) do |form| %>
-	
+
 	<% if appunto.errors.any? %>
 		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-			<h2><%= pluralize(appunto.errors.count, "error") %> prohibited this appunto from being saved:</h2>
-			<ul>
-				<% appunto.errors.each do |error| %>
-					<li><%= error.full_message %></li>
-				<% end %>
-			</ul>
+			<h2>Non posso salvare l'Appunto. <%= t 'misc.errori', count: appunto.errors.count %></h2>
 		</div>
 	<% end %>
 
@@ -22,9 +17,9 @@
 					<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 							placeholder: "seleziona scuola...",
 							label: "Scuola:",
-						data: { action: "xxxhw-combobox:selection->tax-combobox-select#change",
-								tax_combobox_select_target: "combobox" } %>
-			
+							mobile_at: "0px",
+							data: { action: "xxxhw-combobox:selection->tax-combobox-select#change",
+								tax_combobox_select_target: "combobox" } %>			
 					<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
 				</div>
 			<% end %>
