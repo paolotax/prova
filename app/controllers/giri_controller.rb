@@ -108,9 +108,6 @@ class GiriController < ApplicationController
         if hotwire_native_app?
           format.html { render :new, status: :unprocessable_entity }
         else
-          format.turbo_stream do 
-            flash.now[:alert] = "Impossibile creare il giro."   
-          end
           format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @giro.errors, status: :unprocessable_entity }
         end
@@ -134,9 +131,6 @@ class GiriController < ApplicationController
         if hotwire_native_app?
           format.html { render :edit, status: :unprocessable_entity }
         else
-          format.turbo_stream do 
-            flash.now[:alert] = "Impossibile modificare il giro."   
-          end
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @giro.errors, status: :unprocessable_entity }
         end

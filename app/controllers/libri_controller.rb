@@ -62,39 +62,34 @@ class LibriController < ApplicationController
   end
 
   def create
-    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
-    result = LibroCreator.new.create_libro(
-      current_user.libri.build(libro_params)
-    )    
-    if result.created?
-      #raise result.inspect
-      # fa schifo
-      @situazio = Libro.crosstab
+    @libro = current_user.libri.build(libro_params)
+
+    respond_to do |format|
+      if @libro.save
               
-      respond_to do |format|
+        # fa schifo
+        @situazio = Libro.crosstab
+        
         if hotwire_native_app?
-          format.html { redirect_to libro_url(result.libro), notice: "Libro inserito." }
+          format.html { redirect_to libro_url(@libro), notice: "Libro inserito." }
         else
-          format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: result.libro }) }
+          format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: @libro }) }
           format.html { redirect_to libri_url, notice: "Libro inserito." }
-          format.json { render :show, status: :created, location: result.libro }
         end
-      end
-    else
-      @libro = result.libro
-      if hotwire_native_app?
-        format.html { render :new, status: :unprocessable_entity }
       else
-        format.turbo_stream { flash.now[:alert] = "Impossibile creare il libro." }
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @libro.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :new, status: :unprocessable_entity }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @libro.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
 
+
   def update
-    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents
-    
+    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents    
     respond_to do |format|
       if @libro.update(libro_params)
         
@@ -112,7 +107,6 @@ class LibriController < ApplicationController
         if hotwire_native_app?
           format.html { render :edit, status: :unprocessable_entity }
         else
-          format.turbo_stream { flash.now[:alert] = "Impossibile modificare il libro." }
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @libro.errors, status: :unprocessable_entity }
         end

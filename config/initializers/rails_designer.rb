@@ -28,8 +28,13 @@ RailsDesigner.configure do |config|
   # Set the Rails Designer helpers.
   # Default is an empty array, meaning no Rails Designer helpers will be available.
   # See the docs for all the details: https://railsdesigner.com/docs/helpers/.
-  config.view_helpers = ["component", "stream_notification", "string_to_color", "label_for"]
+  config.view_helpers = ["component", "stream_notification", "string_to_color", "label_for", "form_builder"]
 
+  config.form_builder.input_css = "block w-full resize-none bg-gray-50 border-gray-300 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-sm sm:leading-6 "
+  # config.form_builder.file_field_css = ""
+  # config.form_builder.toggle_input_css = ""
+  # config.form_builder.toggle_label_css = ""
+# 
   # Set one of Tailwind CSS colors as your primary- and gray color.
   # The default primary color is `sky`. The default gray color is `gray`.
   #

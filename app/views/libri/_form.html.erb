@@ -1,4 +1,4 @@
-<%= form_with(model: libro, class: "contents") do |form| %>
+<%= form_with(model: libro, builder: RailsDesigner::FormBuilder) do |form| %>
   
 	<% if libro.errors.any? %>
 		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -19,62 +19,61 @@
 		<%= tag.fieldset class: "sm:my-5" do %>
 			<%= label_for form: form, field: 'editore', label: 'Editore' %>
 			<%= form.collection_select :editore_id, 
-						current_user.editori.order(:editore), :id, :editore, { prompt: true },  
-						class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+						current_user.editori.order(:editore), :id, :editore, { prompt: true } %>
 		<% end %>
 
 	</div>
 
 	<%= tag.fieldset class: "my-5" do %>
-		<%= label_for form: form, field: 'titolo', label: 'Titolo' %>
-		<%= form.text_field :titolo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+		<%= component "field" do |field| %>
+			<% field.with_label { render FormLabelComponent.new(form: form, field: :titolo, label: "Titolo") } %>
+			<%= form.text_field :titolo %>
+		<% end %>
 	<% end %>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
-			<%= label_for form: form, field: 'prezzo', label: 'Prezzo' %>
-			<%= form.number_field :prezzo, 
-					step: 0.01,
-					class: [
-						"text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-						"w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-					] %>
+			<%= component "field" do |field| %>
+				<% field.with_label { render FormLabelComponent.new(form: form, field: :prezzo, label: "Prezzo") } %>
+				<%= form.number_field :prezzo, step: 0.01 %>
+			<% end %>
         <% end %>
+
 		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
-			<%= label_for form: form, field: 'codice_isbn', label: 'ISBN' %>
-			<%= form.text_field :codice_isbn, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+			<%= component "field" do |field| %>
+				<% field.with_label { render FormLabelComponent.new(form: form, field: :codice_isbn, label: "ISBN") } %>
+				<%= form.text_field :codice_isbn %>
+			<% end %>
 		<% end %>
 	</div>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
-			<%= label_for form: form, field: 'classe', label: 'Classe' %>
-			<%= form.select :classe, 
-					options_for_select([nil, 1, 2, 3, 4, 5], form.object.classe),
-					{},
-					class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
-			<%= form.number_field :classe, 
-					class: [
-						"text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-						"rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-					] %>
+			<%= component "field" do |field| %>
+				<% field.with_label { render FormLabelComponent.new(form: form, field: :classe, label: "Classe") } %>
+				<%= form.select :classe, 
+						options_for_select([nil, 1, 2, 3, 4, 5], form.object.classe) %>
+			<% end %>
 		<% end %>
 
 		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
-			<%= label_for form: form, field: 'disciplina', label: 'Disciplina' %>
-			<%= form.text_field :disciplina, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+			<%= component "field" do |field| %>
+				<% field.with_label { render FormLabelComponent.new(form: form, field: :disciplina, label: "Disciplina") } %>
+				<%= form.text_field :disciplina %>
+			<% end %>
 		<% end %>
 	</div>
 
+    <%= tag.fieldset class: "my-5" do %>
+		<%= component "field" do |field| %>
+			<% field.with_label { render FormLabelComponent.new(form: form, field: :note, label: "Note") } %>
+			<%= form.text_area :note, rows: 4 %>
+		<% end %>
+	<% end %>
 
-  <div class=" my-5">
-    <%= form.label :note %>
-    <%= form.text_area :note, rows: 4, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "hotwire-native:hidden rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-  </div>
+	<div class="inline">
+		<%= form.submit class: "hotwire-native:hidden rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+	</div>
 
     <div class="hidden">
         <%= form.submit data: {
