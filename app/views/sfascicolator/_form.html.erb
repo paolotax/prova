@@ -2,7 +2,9 @@
     <%= hidden_field_tag "sfascicolator[documento_id]", documento.id %>
     <div class="flex flex-row gap-4 items-center">
         <div class="w-full my-5 cb-tax cb-font-size-sm flex flex-col gap-2" id="select-clientable">
-            <%= combobox_tag "sfascicolator[libro_id]", current_user.libri.with_fascicoli.order(:titolo).all, placeholder: "aggiungi fascicolo..." %>
+            <%= combobox_tag "sfascicolator[libro_id]", current_user.libri.with_fascicoli.order(:titolo).all, 
+                    placeholder: "aggiungi fascicolo...",
+                    mobile_at: "0px" %>
         </div>
 
         <%= f.button type: "submit", class: "h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>

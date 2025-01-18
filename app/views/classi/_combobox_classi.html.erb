@@ -8,7 +8,8 @@
             <%= combobox_tag "appunto[classe_id]", 
                     scuola.classi,
                     value: classe_ids[0],
-                    placeholder: "seleziona classe..." %>
+                    placeholder: "seleziona classe...",
+                    mobile_at: "0px"  %>
         <% end %>
 
     <% else %>
@@ -19,7 +20,8 @@
                     value: classe_ids, 
                     multiselect_chip_src: classe_chips_path, 
                     placeholder: "seleziona classi...",
-                    label: "Classi:" %>
+                    label: "Classi:",
+                    mobile_at: "0px"  %>
         <% end %>
 
     <% end %>

@@ -4,7 +4,8 @@
     
     <%= combobox_tag "#{field_name_suffix}[#{object_type}_id]", @user.send(type.underscore.pluralize), 
             value: @id, 
-            placeholder: "seleziona #{type.humanize.downcase.gsub("import","")}..." %>      
+            placeholder: "seleziona #{type.humanize.downcase.gsub("import","")}...",
+            mobile_at: "0px" %>      
    
     <%= hidden_field_tag "#{field_name_suffix}[#{object_type}_type]", type %>
 
