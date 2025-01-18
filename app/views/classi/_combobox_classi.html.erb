@@ -1,29 +1,11 @@
  <%# locals: ( scuola:, classe_ids: [] ) -%>
 
-<%= turbo_frame_tag :combo_classi do %>
-        
-    <% if action_name == "edit" %>
-        
-        <%= tag.div class: "block cb-tax cb-small flex flex-col" do %>
-            <%= combobox_tag "appunto[classe_id]", 
-                    scuola.classi,
-                    value: classe_ids[0],
-                    placeholder: "seleziona classe...",
-                    mobile_at: "0px"  %>
-        <% end %>
-
-    <% else %>
-
-        <%= tag.div class: "block cb-tax cb-medium flex flex-col" do %>
-            <%= combobox_tag "appunto[classe_ids]", 
-                    scuola.classi,
-                    value: classe_ids, 
-                    multiselect_chip_src: classe_chips_path, 
-                    placeholder: "seleziona classi...",
-                    label: "Classi:",
-                    mobile_at: "0px"  %>
-        <% end %>
-
+<%= turbo_frame_tag :combo_classi do %>              
+    <%= tag.div class: "mt-5 block cb-tax-fancy cb-small flex flex-col" do %>
+        <%= combobox_tag "appunto[classe_id]", 
+                scuola.classi,
+                value: classe_ids[0],
+                placeholder: "seleziona classe...",
+                mobile_at: "0px"  %>
     <% end %>
-
 <% end %>

@@ -27,23 +27,25 @@
 						placeholder: "seleziona scuola...",
 						label: "Scuola:",
 						mobile_at: "0px",
-						data: { action: "xxxhw-combobox:selection->tax-combobox-select#change",
+						data: { action: "hw-combobox:selection->tax-combobox-select#change",
 							tax_combobox_select_target: "combobox" } %>			
 				<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
 			</div>
-		</div>
+		
+			<%= turbo_frame_tag :combo_classi do %>
+				<% if appunto.scuola.nil? %>
+					<%= tag.div class: "min-h-12" %>
+				<% else %>
+					<div class="my-5">
+						<%= render partial: "classi/combobox_classi", 
+							locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
+					</div>
+				<% end %>
+			<% end %>
+		</div>		
 	<% end %>
 
-	<%= turbo_frame_tag :combo_classi do %>
-		<% if appunto.scuola.nil? %>
-			<%= tag.div class: "min-h-12" %>
-		<% else %>
-			<div class="my-5">
-				<%= render partial: "classi/combobox_classi", 
-					locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
-			</div>
-		<% end %>
-	<% end %>
+
 
 	<%# text area o trix  %>
 	<div class="mt-5">

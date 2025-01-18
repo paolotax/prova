@@ -142,7 +142,17 @@ class Appunto < ApplicationRecord
     content.to_s.gsub('<div class="trix-content">', "").gsub('</div>', "").gsub('<div>', "").gsub('</br>', "").gsub('<p>', "").gsub('</p>', "").gsub('<div>', "").gsub('</div>', "").gsub('<br/>', "").gsub('</br/>', "").gsub('<p/>', "").gsub('</p/>', "").gsub('<div/>', "").gsub('</div/>', "").gsub('<br />', "").gsub('</br />', "").gsub('<p />', "").gsub('</p />', "").gsub('<div />', "").gsub('</div />', "")
   end
   
-  
+  def nome_e_classe
+    if nome.present? && classe.present?
+      "#{nome} - #{classe.to_combobox_display}"
+    elsif nome.present?
+      nome
+    elsif classe.present?
+      classe.to_combobox_display
+    else
+      ""
+    end
+  end
   
   def image_as_thumbnail
     return unless image.content_type.in?(%w[image/jpeg image/png image/jpg image/gif image/webp])
