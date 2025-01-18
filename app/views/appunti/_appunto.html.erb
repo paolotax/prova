@@ -22,7 +22,7 @@
 				<% end %>
 
 				<%= tag.div class: "mt-2 flex items-center gap-2" do %>
-					<%= render "shared/inline_edit", model: appunto, method: :import_scuola do %>										
+					<%= render "shared/inline_edit", model: appunto, method: :nome_e_import_scuola do %>										
 						
 						<div class="w-full">
 							<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
@@ -31,13 +31,9 @@
 					<% end %>
 				<% end %>
 
-				<%= tag.div class: "mt-2 w-full flex items-center justify-between" do %>
-					<%= render "shared/inline_edit", model: appunto, method: :nome do %>
-						<%= tag.div appunto.nome, class: "w-full" %>      
-					<% end %>
-				<% end %>
 
-				<%= tag.div class: "flex items-center gap-2" do%>
+
+				<%= tag.div class: "mt-2 flex items-center gap-2" do%>
 					<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
 						<div>
 							<% if appunto.body && !appunto.body.blank?%>
