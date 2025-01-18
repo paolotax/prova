@@ -12,7 +12,7 @@
 		<%= tag.fieldset class: "my-5 cb-tax cb-small flex flex-col" do %>
 			<%= label_for form: form, field: 'categoria', label: 'Categoria' %>
 			<%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]",
-							placeholder: "categoria ..." %>
+							placeholder: "categoria ...", mobile_at: "0px" %>
 		<% end %>
 
 
@@ -49,6 +49,10 @@
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
 			<%= label_for form: form, field: 'classe', label: 'Classe' %>
+			<%= form.select :classe, 
+					options_for_select([nil, 1, 2, 3, 4, 5], form.object.classe),
+					{},
+					class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
 			<%= form.number_field :classe, 
 					class: [
 						"text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
@@ -69,6 +73,13 @@
   </div>
 
   <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit class: "hotwire-native:hidden rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
+
+    <div class="hidden">
+        <%= form.submit data: {
+                controller: "bridge--button",
+                bridge_title: "Salva"
+        } %>
+    </div>
 <% end %>

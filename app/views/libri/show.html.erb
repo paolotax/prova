@@ -1,4 +1,8 @@
-<div class="sticky top-20 z-10">
+<% content_for :title do %>
+	<%= @libro.titolo %>
+<% end %>
+
+<div class="sticky not-hotwire-native:top-20 z-10">
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 		<% heading.with_leader do %>
@@ -91,8 +95,8 @@
 				caption: "Modifica",
 				svg_file: "icon-pencil.svg",
 				color: "yellow",
-				url: url_for( controller: "libri", action: "edit", model: @libro ),
-				data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+				url: edit_libro_path(@libro),
+				data_attr: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open" } %>
 		<% end %>
 
 		<%= @libro.titolo %>

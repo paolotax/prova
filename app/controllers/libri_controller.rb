@@ -68,17 +68,27 @@ class LibriController < ApplicationController
     )    
     if result.created?
       #raise result.inspect
-              # fa schifo
-              @situazio = Libro.crosstab
+      # fa schifo
+      @situazio = Libro.crosstab
               
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: result.libro }) }
-        format.html { redirect_to libri_url, notice: "Libro inserito." }
-        format.json { render :show, status: :created, location: result.libro }
+        if hotwire_native_app?
+          format.html { redirect_to libro_url(result.libro), notice: "Libro inserito." }
+        else
+          format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: result.libro }) }
+          format.html { redirect_to libri_url, notice: "Libro inserito." }
+          format.json { render :show, status: :created, location: result.libro }
+        end
       end
     else
       @libro = result.libro
-      render :new, status: :unprocessable_entity
+      if hotwire_native_app?
+        format.html { render :new, status: :unprocessable_entity }
+      else
+        format.turbo_stream { flash.now[:alert] = "Impossibile creare il libro." }
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @libro.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -91,12 +101,21 @@ class LibriController < ApplicationController
         # fa schifo
         @situazio = Libro.crosstab
         
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@libro) }
-        format.html { redirect_to libri_url, notice: "Libro modificato!" }
-        format.json { render :show, status: :ok, location: @libro }
+        if hotwire_native_app?
+          format.html { redirect_to libro_url(@libro), notice: "Libro modificato!" }
+        else
+          format.turbo_stream { render turbo_stream: turbo_stream.replace(@libro) }
+          format.html { redirect_to libri_url, notice: "Libro modificato!" }
+          format.json { render :show, status: :ok, location: @libro }
+        end
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @libro.errors, status: :unprocessable_entity }
+        if hotwire_native_app?
+          format.html { render :edit, status: :unprocessable_entity }
+        else
+          format.turbo_stream { flash.now[:alert] = "Impossibile modificare il libro." }
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @libro.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
