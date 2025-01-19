@@ -1,4 +1,4 @@
-<%= button_to appunto, method: "put" do |f| %>
+<%= button_to appunto, method: "put", data: { turbo_frame: :_top } do |f| %>
     <%= hidden_field_tag "appunto[stato]", "#{appunto.stato == 'archiviato' ? 'da fare' : 'archiviato'}" %>       
     <div class= "mr-2 rounded-lg p-2 bg-gray-100 inline-block">
         <% if appunto.stato == "archiviato" %>

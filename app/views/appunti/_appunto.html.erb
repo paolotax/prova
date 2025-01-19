@@ -7,8 +7,6 @@
     ] do %>
 
 
-
-
 	<% if appunto.is_ssk? %>
 		<%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto, mostra_scuola: mostra_scuola } %>
 	<% else %>
@@ -24,9 +22,9 @@
 					<% end %>
 				<% end %>
 
-				<%= tag.div class: "mt-2 flex items-center gap-2" do%>
+				<%= tag.div class: "mt-2 w-full flex items-center gap-2" do%>
 					<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
-						<div>
+						<div class="w-full">
 							<% if appunto.body && !appunto.body.blank?%>
 								<div class="group">
 									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
@@ -45,9 +43,9 @@
 								</div>
 							<% end %>
 							<% if appunto.content && !appunto.content.blank?%>
-								<div class="roup">
+								<div class="group">
 									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-										<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+										<div data-tax-trix-clipboard-target="source" class="w-full overflow-hidden"> 
 											<%= emphasis do %>
 												<%= appunto.content %>
 											<% end %>
@@ -112,8 +110,15 @@
 				<%= dropdown.with_item do %>
 					
 					<%= link_to edit_appunto_path(appunto), 
-						class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
-							data: hotwire_native_app? ? { turbo_frame: "_top" } : { turbo_frame: :modal, action: "click->dialog#open" },
+						class: "block hotwire-native:hidden px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+							data: { turbo_frame: :modal, action: "click->dialog#open" },
+							role: "menuitem", tabindex: "-1" do %>
+						Modifica
+					<% end %>
+
+					<%= link_to edit_appunto_path(appunto), 
+						class: "hidden hotwire-native:block px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+							data: { turbo_frame: "_top" },
 							role: "menuitem", tabindex: "-1" do %>
 						Modifica
 					<% end %>

@@ -17,10 +17,13 @@ class ConfigurationsController < ApplicationController
             "/users/sign_up$",
             "/new$",
             "/edit$",
-            "/new?.*$"
+            "/new?.*$",
+            "/[^/]+/edit$",
+            ".+/new$"
           ],
           properties: {
-            context: "modal"
+            context: "modal",
+            pull_to_refresh_enabled: false
           }
         },
         {
@@ -31,6 +34,14 @@ class ConfigurationsController < ApplicationController
             view_controller: "map"
           },
         },
+        {
+          patterns: [
+            "refresh_historical_location"
+          ],
+          properties: {
+            presentation: "refresh"
+          }
+        }
 
       ]
     }
@@ -55,7 +66,9 @@ class ConfigurationsController < ApplicationController
             "/users/sign_up$",
             "/new$",
             "/edit$",
-            "/new?.*$"
+            "/new?.*$",
+            "/[^/]+/edit$",
+            ".+/new$"
           ],
           properties: {
             context: "modal",
@@ -69,6 +82,14 @@ class ConfigurationsController < ApplicationController
           properties: {
             uri: "hotwire://fragment/map",
             title: "Map"
+          }
+        },
+        {
+          patterns: [
+            "refresh_historical_location"
+          ],
+          properties: {
+            presentation: "refresh"
           }
         }
       ]

@@ -64,7 +64,8 @@ class AppuntiController < ApplicationController
         @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti-lista"
         
         if hotwire_native_app?
-          format.html { redirect_to appunto_url(@appunto), notice: "Appunto inserito." }
+          #  format.html { redirect_to appunto_path(@appunto) }
+          format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto inserito.") }
         else
           format.turbo_stream { flash.now[:notice] = "Appunto inserito." }
           format.html { redirect_to appunti_url, notice: "Appunto inserito." }
@@ -87,7 +88,8 @@ class AppuntiController < ApplicationController
         @appunto.broadcast_replace_later_to [current_user, "appunti"]
         
         if hotwire_native_app?
-          format.html { redirect_to appunto_url(@appunto), notice: "Appunto modificato." }
+          format.html { redirect_to appunto_path(@appunto) }
+          # format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto modificato.") }
         else
           format.turbo_stream { flash.now[:notice] = "Appunto modificato." }
           format.html { redirect_to appunti_url, notice: "Appunto modificato." }
@@ -107,6 +109,8 @@ class AppuntiController < ApplicationController
   def destroy
     @appunto.destroy!
 
+    @appunto.broadcast_remove_to [current_user, "appunti"]
+    
     respond_to do |format|
       # format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
       format.json { head :no_content }
