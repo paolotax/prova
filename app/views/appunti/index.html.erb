@@ -20,7 +20,7 @@
 					data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
 		<% end %>
 		<% heading.with_action do %>
-			<%= tag.div class: "block lg:hidden" do %>
+			<%= tag.div class: "block 2xl:hidden" do %>
 				<%= component 'tax_button',
 					caption: "Filtra",
 					svg_file: "icon-funnel.svg",
@@ -50,8 +50,8 @@
 
 	<%= turbo_frame_tag "appunti_page#{@pagy.page}" do %> 
 
-		<div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8 lg:pr-[15rem]">
-			<p class="hidden only:block  py-8 px-4 text-center lg:col-span-2 2xl:col-span-3 lg:pr-[15rem]">
+		<div id="appunti-lista" role="list" class="py-5 grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8 2xl:pr-[15rem]">
+			<p class="hidden only:block  py-8 px-4 text-center 2xl:col-span-2 4xl:col-span-3">
 				Whoops! Non ci sono appunti. 
 				
 				<% if current_user.user_scuole.blank? %>
@@ -89,10 +89,10 @@
 			<% bulk.with_action("Completa", href: "#", method: :patch, data: {}) %>
 		<% end %>
 	<% end %>
+	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-52 2xl:px-8 2xl:block">
+		<!-- Secondary column (hidden on smaller screens) -->
+		<%= render partial: "filter_form", locals: { reload: true } %>
+	</aside>
 <% end %>
 
-<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-52 lg:px-8 lg:block">
-	<!-- Secondary column (hidden on smaller screens) -->
-	<%= render partial: "filter_form", locals: { reload: true } %>
-</aside>
 
