@@ -21,7 +21,7 @@
 
 	<% if adozione.classe.nil? %>
 		
-		<div class="my-5 cb-tax cb-medium" data-controller="tax-combobox-select">
+		<div class="my-5 cb-tax" data-controller="tax-combobox-select">
 			<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
 					placeholder: "seleziona scuola...",
 					label: "della scuola:",
@@ -53,19 +53,11 @@
 		<%= tag.span adozione.import_adozione&.scuola, class: "font-semibold" %>
 	<% end %>
 
-	<%# <div class="my-5 cb-tax cb-small">
-		<%= form.combobox :stato_adozione, 
-				current_user.adozioni.stato_adozione, 
-				name_when_new: "adozione[stato_adozione]", 
-				label: "che fanno?",
-				placeholder: "adottano o comprano?" %>
-	<%# </div> %>
-
 	<%= tag.div class: "my-5 flex gap-2 items-center" do %>
 		<%= form.collection_radio_buttons :tipo, current_user.adozioni.tipos, :first, :first %>
 	<% end %>
 
-	<div class="my-5 cb-tax cb-medium">
+	<div class="my-5 cb-tax">
 		<% if action_name == "new" %>
 			<%= form.combobox :libro_ids, current_user.libri.order(:titolo),
 					value: [adozione.libro_id],

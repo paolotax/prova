@@ -32,7 +32,7 @@
                     </fieldset>    
                 <% end %>
 
-                <fieldset class="col-span-3 sm:col-span-4 cb-tax cb-medium flex flex-col">
+                <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
                     <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
                     <%#= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
                             placeholder: "seleziona libro...",

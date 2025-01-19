@@ -11,7 +11,7 @@
     <%= tag.section class: "grid grid-cols-4 sm:grid-cols-8 my-4 px-6 pb-5 bg-gray-200 gap-4 border rounded-lg",
              data: { controller: "tax-combobox-causale" } do %>
         
-        <%= tag.fieldset class: "col-span-4 my-5 cb-tax cb-small flex flex-col" do %>
+        <%= tag.fieldset class: "col-span-4 my-5 cb-tax flex flex-col" do %>
             <%= label_for form: form, field: 'causale', label: 'Tipo documento' %>
             <%= form.combobox :causale_id, Causale.all, 
                             placeholder: "seleziona tipo documento...",

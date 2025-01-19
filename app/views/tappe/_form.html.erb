@@ -40,11 +40,14 @@
             <% field.with_label { render FormLabelComponent.new(form: form, field: :data_tappa, label: "Data tappa") } %>
             <%= form.date_field :data_tappa, placeholder: "data tappa..." %>
         <% end %>
-
-        <%= tag.div class: "cb-tax cb-tax-fancy px-2 py-1.5 text-medium italic font-semibold text-gray-800" do %>
-            <span class="pr-2">giro:</span>
-            <%= form.combobox :giro_id, current_user.giri.all,
-                name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
+        
+        <%= tag.div class: "cb-tax-fancy flex" do %>
+            <%= component "field" do |field| %>
+                <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giro") } %>
+            
+                <%= form.combobox :giro_id, current_user.giri.all,
+                    name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
+            <% end %>
         <% end %>
     </div>  
     

@@ -4,7 +4,7 @@
         
     <% if action_name == "edit" %>
         
-        <%= tag.div class: "block cb-tax-fancy cb-small flex flex-col" do %>
+        <%= tag.div class: "block cb-tax-fancy flex flex-col" do %>
             <%= combobox_tag "appunto[classe_id]", 
                     scuola.classi,
                     value: classe_ids[0],
@@ -14,7 +14,7 @@
 
     <% else %>
 
-        <%= tag.div class: "block cb-tax-fancy cb-medium flex flex-col" do %>
+        <%= tag.div class: "block cb-tax-fancy flex flex-col" do %>
             <%= combobox_tag "appunto[classe_ids]", 
                     scuola.classi,
                     value: classe_ids, 

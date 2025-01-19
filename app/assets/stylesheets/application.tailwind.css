@@ -15,17 +15,25 @@
     @apply w-full;
   }
 
+  /* .cb-tax-fancy {
+    .hw-combobox__main__wrapper {
+      width: 100%;
+    }
+  }   */
+  
+
   .cb-tax-fancy {
-    .hw-combobox, .hw-combobox--multiple {
-      .hw-combobox__main__wrapper {
-        @apply rounded-none border-0 border-b bg-gray-50 py-1.5 text-gray-900 ring-0;
+
+    .hw-combobox__main__wrapper {
+      @apply w-full rounded-none border-0 border-b bg-gray-50 py-1.5 text-gray-900 text-lg ring-0
+    }
+    .hw-combobox__main__wrapper:focus {
+      .hw-combobox__input:focus {
+        @apply border-0 border-b-2 border-indigo-600;
       }
     }
     .hw-combobox__input {
-      @apply py-0.5 bg-gray-50;
-    }
-    .hw-combobox__input:focus {
-      @apply border-b-2 border-indigo-600 ring-0;
+      @apply bg-gray-50 pr-2;
     }
     .hw-combobox__label {
       @apply hidden;
@@ -34,8 +42,9 @@
       @apply right-3;
     }
     .hw-combobox__listbox {
-      @apply rounded-md border-b;
+      @apply rounded-md;
     }
+
   }
 
   .youtubes {  
