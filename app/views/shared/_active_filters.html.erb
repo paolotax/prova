@@ -1,0 +1,35 @@
+<div class="flex flex-wrap justify-end gap-2 px-4 py-2">
+  <% request.query_parameters.except(:page).each do |key, value| %>
+    <% if value.is_a?(Array) %>
+      <% value.each do |single_value| %>
+        <% unless single_value.blank? %>
+          <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
+            <span class="mr-2"><%= "#{key.humanize}: #{single_value}" %></span>
+            <%= link_to url_for(request.query_parameters.merge(key => value - [single_value])), 
+                       class: "text-gray-500 hover:text-gray-700" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% unless value.blank? %>
+        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
+          <span class="mr-2"><%= "#{key.humanize}: #{value}" %></span>
+          <%= link_to url_for(request.query_parameters.except(key)), class: "text-gray-500 hover:text-gray-700" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%# Badge con il conteggio dei record %>
+  <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+    <%= pluralize(collection.count, controller_name.classify.constantize.model_name.human) %>
+  </div>
+</div> 

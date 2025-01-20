@@ -37,6 +37,7 @@
 	<% end %>
 <% end %>
 
+
 <% if hotwire_native_app? %>
   <%= render "shared/native_search_filter",
       url: import_adozioni_path,
@@ -56,6 +57,8 @@
 			<%= render partial: "form_multi" %>
 		</div>
 
+		<%= render "shared/active_filters", collection: @import_adozioni %>
+		
 		<div id="import_adozioni" class="py-5 w-full grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2">
 			<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
 				Whoops! Non ci sono adozioni. 

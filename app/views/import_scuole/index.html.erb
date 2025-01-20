@@ -48,6 +48,8 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
+	<%= render "shared/active_filters", collection: @import_scuole %>
+
 	<%= render partial: "stats", locals: { stats: @stats } %>
 
 	<%= tag.div class: "w-full flex flex-col lg:pr-[17rem]", data: {controller: 'tax-checkbox-select-all bulk-actions'} do %>
