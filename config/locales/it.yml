@@ -28,6 +28,10 @@ it:
       import_adozione:
         one: Adozione
         other: Adozioni
+    attributes:
+      appunto:
+        status: Stato
+        
   date:
     abbr_day_names:
     - dom
