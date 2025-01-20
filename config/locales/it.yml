@@ -12,6 +12,22 @@ it:
         restrict_dependent_destroy:
           has_one: Il record non può essere cancellato perchè esiste un %{record} dipendente
           has_many: Il record non può essere cancellato perchè esistono %{record} dipendenti
+    models:
+      appunto:
+        one: Appunto
+        other: Appunti
+      libro:
+        one: Libro
+        other: Libri
+      documento:
+        one: Documento
+        other: Documenti
+      import_scuola:
+        one: Scuola
+        other: Scuole
+      import_adozione:
+        one: Adozione
+        other: Adozioni
   date:
     abbr_day_names:
     - dom
