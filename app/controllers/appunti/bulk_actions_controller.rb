@@ -16,38 +16,46 @@ module Appunti
     end
 
     def add_tappa_oggi
-      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola).uniq
-      
-      # raise "scuole_ids: #{scuole_ids.inspect}"
+      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola_id).uniq
+
       scuole_ids.each do |scuola_id|
-        unless scuola.blank?
-          scuola.tappe.create(tappable_type: "ImportScuola", tappable_id: scuola_id, data_tappa: Date.tomorrow, titolo: "Tappa di oggi")
+        unless scuola_id.blank?
+          current_user.tappe.find_or_create_by(tappable_type: "ImportScuola", tappable_id: scuola_id, data_tappa: Date.today, user_id: current_user.id)
         end
       end
 
-      # raise "scuole_ids: #{scuole_ids.inspect}"
-
-      # redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
-
-      # scuole.each do |scuola|
-      #   scuola.tappe.create(data_tappa: Date.tomorrow, titolo: "Tappa di oggi")
-      # end
-      # redirect_to appunti_path, notice: "Tappa aggiunta per domani"
+      redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
     end
 
-    def add_tappa_custom
-      # scuole = ImportScuola.where(id: params[:import_scuola_ids])
-      # custom_date = params[:data]
-      # scuole.each do |scuola|
-      #   scuola.tappe.create(data: custom_date, titolo: "Tappa personalizzata")
-      # end
-      # redirect_to scuole_path, notice: "Tappa personalizzata aggiunta"
+    def add_tappa_qiorno
+      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola_id).uniq
+
+      scuole_ids.each do |scuola_id|
+        unless scuola_id.blank?
+          current_user.tappe.find_or_create_by(tappable_type: "ImportScuola", tappable_id: scuola_id, data_tappa: params[:data_tappa], user_id: current_user.id)
+        end
+      end
+
+      redirect_to appunti_path, notice: "Tappe aggiunte per #{params[:data_tappa]}"
+    end
+
+
+
+    def segna_come
+      @appunti = current_user.appunti.where(id: params[:appunto_ids])
+      @appunti.update_all(stato: params[:stato])
+      
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("appunto_#{@appunti.first.id}",  partial: "appunti/appunto",  locals: { appunto: @appunti.first } )
+        end
+      end
     end
 
     private
 
     def bulk_action_params
-      params.require(:bulk_action).permit(:attribute1, :attribute2, appunto_ids: [])
+      params.require(:bulk_action).permit(:data_tappa, :status, appunto_ids: [])
     end
   end
 end

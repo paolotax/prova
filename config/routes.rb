@@ -211,7 +211,8 @@ Rails.application.routes.draw do
       collection do
         patch :print_all, format: "pdf"
         patch :add_tappa_oggi
-        patch :add_tappa_custom
+        patch :add_tappa_giorno
+        patch :segna_come
       end
     end
   end

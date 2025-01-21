@@ -28,7 +28,7 @@
                 <%# <input type="checkbox" class="hidden peer"> %>
                 <%= check_box_tag "appunto_ids[]", appunto.id, nil, form: "bulk-actions", 
                         class: "hidden peer", 
-                        data: {action: "input->bulk-actions#count"} %>
+                        data: {action: "input->bulk-actions#count", bulk_actions_target: "checkbox"} %>
                 
                 <div class="<%= string_to_tailwind_color(appunto&.import_scuola&.citta_scuola) %>
                     hover:border-blue-500 hover:border-[5px]

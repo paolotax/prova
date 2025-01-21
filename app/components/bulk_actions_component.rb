@@ -5,7 +5,7 @@ class BulkActionsComponent < ApplicationComponent
     button_content = block&.call || label
     selected_count_badge = tag.span(data: {bulk_actions_target: "counter"}, class: counter_css)
 
-    tag.li button_to(safe_join([button_content, selected_count_badge]), href, method: method, class: action_css, **options.merge(form: {id: "bulk-actions"}))
+    tag.li button_to(safe_join([button_content, selected_count_badge]), href, method: method, class: action_css, **options.merge(form: { data: { bulk_actions_target: "form" }}))
   end
 
   def initialize(theme: "light", container_css: nil)

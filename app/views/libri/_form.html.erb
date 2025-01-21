@@ -15,6 +15,9 @@
 							placeholder: "categoria ...", mobile_at: "0px" %>
 		<% end %>
 
+		<%= tag.div class: "my-5" do %>
+			<%= form.toggle :editore_id, label: "attivo", value: "true" %>
+		<% end %>
 
 		<%= tag.fieldset class: "sm:my-5" do %>
 			<%= label_for form: form, field: 'editore', label: 'Editore' %>
