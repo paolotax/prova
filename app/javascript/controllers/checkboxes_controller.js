@@ -13,7 +13,7 @@ export default class CheckboxesController extends Controller {
 
   toggle(event) {
     const checkbox = event.currentTarget.querySelector('input[type="checkbox"]')
-
+    console.log("checkbox");
     checkbox.checked = !checkbox.checked
 
     this.count();

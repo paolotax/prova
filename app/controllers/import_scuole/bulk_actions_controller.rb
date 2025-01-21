@@ -9,7 +9,7 @@ module ImportScuole
 
       redirect_to import_scuole_path, notice: "Tappa aggiunta per oggi"
     end
-
+    
     def add_tappa_domani
       scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
       scuole.each do |scuola|

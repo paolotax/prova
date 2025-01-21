@@ -24,10 +24,10 @@ module Appunti
         end
       end
 
-      redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
+      #redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
     end
 
-    def add_tappa_qiorno
+    def add_tappa_giorno
       scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola_id).uniq
 
       scuole_ids.each do |scuola_id|
@@ -36,19 +36,19 @@ module Appunti
         end
       end
 
-      redirect_to appunti_path, notice: "Tappe aggiunte per #{params[:data_tappa]}"
+      #redirect_to request.referrer, notice: "Tappe aggiunte per #{params[:data_tappa]}"
     end
-
-
 
     def segna_come
       @appunti = current_user.appunti.where(id: params[:appunto_ids])
       @appunti.update_all(stato: params[:stato])
-      
+
       respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("appunto_#{@appunti.first.id}",  partial: "appunti/appunto",  locals: { appunto: @appunti.first } )
-        end
+        format.turbo_stream {
+          render turbo_stream: @appunti.map { |appunto|
+            turbo_stream.replace("appunto_#{appunto.id}", partial: "appunti/appunto", locals: { appunto: appunto })
+          }
+        }
       end
     end
 
