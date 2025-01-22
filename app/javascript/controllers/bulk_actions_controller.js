@@ -2,7 +2,7 @@ import CheckboxesController from "./checkboxes_controller";
 import { enter, leave } from "./helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
-  static targets = ["container", "form", "counter"];
+  static targets = ["container", "form", "counter", "stampaForm", "tappaForm", "statoForm"];
   static values = { open: Boolean };
 
   toggle(event) {
@@ -16,6 +16,25 @@ export default class BulkActionsController extends CheckboxesController {
   hide(event) {
     this.element.contains(event.target) || this.setCheckboxesTo(false);
   }
+
+  toggleTappa() {
+    this.statoFormTarget.classList.add('hidden')
+    this.stampaFormTarget.classList.add('hidden')
+    this.tappaFormTarget.classList.toggle('hidden')
+  }
+
+  toggleStato() {
+    this.tappaFormTarget.classList.add('hidden')
+    this.stampaFormTarget.classList.add('hidden')
+    this.statoFormTarget.classList.toggle('hidden')
+  }
+
+  stampa() {
+    this.tappaFormTarget.classList.add('hidden')
+    this.statoFormTarget.classList.add('hidden')
+    this.stampaFormTarget.classList.toggle('hidden')
+  }
+
 
   // private
 

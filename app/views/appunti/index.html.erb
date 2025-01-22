@@ -104,7 +104,7 @@
 		<% end%>
 	<% end %>
 
-	<%= tag.div hidden: true, class: "px-5 py-3 bg-gray-900 rounded-lg fixed top-4 z-30 left-1/2 -translate-x-1/2 ",
+	<%= tag.div hidden: true, class: "px-5 py-3 bg-gray-900 rounded-lg fixed top-4 z-30 left-1/2 -translate-x-1/2",
 			data: {
 				bulk_actions_target: "container",
 				transition_enter: "transition ease-out duration-100",
@@ -114,33 +114,63 @@
 				transition_leave_start: "opacity-100",
 				transition_leave_end: "opacity-0"
 			} do %>
-		<%= tag.div class: "flex items-center justify-center gap-2" do %>
-			<%= form_with url: "/appunti/bulk_actions/print_all.pdf", method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.submit "Stampa", class: "p-4 text-white" %>
+		<%= tag.div class: "flex items-center gap-4 mb-4" do %>
+			<%= button_tag "Stampa", 
+					class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+					data: { action: "bulk-actions#stampa" } %>
+
+			<%= button_tag "Tappa", 
+					class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+					data: { action: "bulk-actions#toggleTappa" } %>
+
+			<%= button_tag "Stato", 
+					class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+					data: { action: "bulk-actions#toggleStato" } %>
+		<% end %>
+
+		<div class="forms-container">
+			<%= form_with url: "/appunti/bulk_actions/print_all.pdf", 
+					method: :patch, 
+					class: "hidden",
+					data: { bulk_actions_target: "stampaForm form" } do |form| %>
+				<%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
 			<% end %>
 
-			<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.submit "Oggi", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-			<% end %>
+			<div class="hidden space-y-2" data-bulk-actions-target="tappaForm">
+				<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, 
+						method: :patch,
+						data: { bulk_actions_target: "form" } do |form| %>
+					<%= form.submit "Oggi", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+				<% end %>
 
-			<%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.date_field :data_tappa, class: "block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
-				<%= form.submit "Tappa", class: "mt-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-			<% end %>
+				<%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
+						method: :patch,
+						data: { bulk_actions_target: "form" } do |form| %>
+					<div class="flex gap-2">
+						<%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+						<%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+					</div>
+				<% end %>
+			</div>
 
-			<%= form_with url: segna_come_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.select :stato, 
-						Appunto::STATO_APPUNTI, 
-						{}, 
-						class: "block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
-				<%= form.submit "Segna come", class: "mt-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+			<%= form_with url: segna_come_appunti_bulk_actions_path, 
+					method: :patch, 
+					class: "hidden",
+					data: { bulk_actions_target: "statoForm form" } do |form| %>
+				<div class="flex gap-2">
+					<%= form.select :stato, 
+							Appunto::STATO_APPUNTI, 
+							{}, 
+							class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900" %>
+					<%= form.submit "Conferma", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+				</div>
 			<% end %>
+		</div>
 
-				<%= link_to "", data: { action: "bulk-actions#deselectAll" }, class: "absolute -top-2 -right-2 p-2 rounded-full bg-gray-800 hover:bg-gray-700" do %>
-		<svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-		</svg>
-	<% end %>
+		<%= link_to "", data: { action: "bulk-actions#deselectAll" }, class: "absolute -top-2 -right-2 p-2 rounded-full bg-gray-800 hover:bg-gray-700" do %>
+			<svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+			</svg>
 		<% end %>
 	<% end %>
 <% end %>
