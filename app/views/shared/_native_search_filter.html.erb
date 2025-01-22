@@ -9,7 +9,7 @@
             data: { action: "input->search-form#search" } %>
         
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <%= heroicon "magnifying-glass", options: { class: "h-5 w-5 text-gray-400" } %>
+          <%= icon "magnifying-glass", class: "h-5 w-5 text-gray-400" %>
         </div>
       </div>
     <% end %>
@@ -18,7 +18,7 @@
   <%= link_to filter_url,
       class: "inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-300",
       data: { turbo_frame: "slide-over" } do %>
-    <%= heroicon "funnel", options: { class: "h-5 w-5" } %>
+    <%= icon "funnel",  class: "h-5 w-5" %>
     <span>Filtra</span>
   <% end %>
 </div> 

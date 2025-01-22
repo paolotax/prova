@@ -153,5 +153,3 @@ gem "streamio-ffmpeg"
 gem "fuzzy_match"
 
 
-
-gem "heroicon", "~> 1.0"

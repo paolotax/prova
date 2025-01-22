@@ -22,12 +22,13 @@ module Filters
 
     filter_scope :ordina_per, ->(ordine) { order_by(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
 
+    filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
     
     def order_by(ordine)
       if ordine == 'fresh'
-        unscope(:order).order(created_at: :desc)
+        unscope(:order).order(Arel.sql('EXTRACT(YEAR FROM data_documento) DESC, created_at DESC'))
       else
-        unscope(:order).order(data_documento: :desc, numero_documento: :desc )
+        unscope(:order).order(Arel.sql('EXTRACT(YEAR FROM data_documento) DESC, data_documento DESC, numero_documento DESC'))
       end
     end
   end

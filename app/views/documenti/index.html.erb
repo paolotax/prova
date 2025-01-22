@@ -57,7 +57,7 @@
 <% if hotwire_native_app? %>
 	<%= link_to new_documento_path, class: "hidden",	
 			data: { controller: "bridge--button", bridge_title: "Nuovo" } do %>
-			<%= heroicon "plus", options: { class: "h-5 w-5" } %>
+			<%= icon "plus", class: "h-5 w-5" %>
 	<% end %>
 	<%= render "shared/native_search_filter",
 		url: documenti_path,
@@ -67,8 +67,6 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= render "shared/active_filters", collection: @documenti %>
-	
 	<%= tag.div class: "flex flex-col lg:pr-[15rem]" do %>
 		
 		<%#= render partial: "documenti_grid_component" %>
@@ -77,6 +75,8 @@
 
 		<%= turbo_frame_tag "documenti_page#{@pagy.page}" do %> 
 
+			<%= render "shared/active_filters", collection: @documenti %>
+			
 			<div id="documenti-lista" role="list" class="">
 				<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3 lg:pr-[15rem]">
 					Whoops! Non ci sono documenti. 

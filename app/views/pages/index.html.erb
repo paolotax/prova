@@ -17,7 +17,7 @@
 					<%= link_to voice_notes_path, 
 						class: "hotwire-native:hidden aspect-square rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "microphone", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "microphone", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Vocals</span>
 						</div>
 					<% end %>
@@ -25,7 +25,7 @@
 					<%= link_to appunti_path,
 						class: "aspect-square rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "pencil", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "pencil", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Appunti</span>
 						</div>
 					<% end %>
@@ -33,7 +33,7 @@
 					<%= link_to giorno_path(giorno: Date.today),
 						class: "aspect-square rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "map-pin", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "map-pin", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Oggi</span>
 						</div>
 					<% end %>
@@ -41,7 +41,7 @@
 					<%= link_to agenda_path(giorno: Date.today),
 						class: "aspect-square rounded-xl bg-lime-500 hover:bg-lime-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "calendar", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "calendar", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Agenda</span>
 						</div>
 					<% end %>
@@ -49,7 +49,7 @@
 					<%= link_to import_scuole_path,
 						class: "aspect-square rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "academic-cap", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "academic-cap", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Scuole</span>
 						</div>
 					<% end %>
@@ -57,7 +57,7 @@
 					<%= link_to import_adozioni_path,
 						class: "aspect-square rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "currency-euro", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "currency-euro", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Adozioni</span>
 						</div>
 					<% end %>
@@ -66,7 +66,7 @@
 					<%= link_to documenti_path,
 						class: "aspect-square rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "document", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "document", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Documenti</span>
 						</div>
 					<% end %>
@@ -74,7 +74,7 @@
 					<%= link_to ordini_in_corso_path,
 						class: "aspect-square rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "shopping-cart", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "shopping-cart", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Ordini</span>
 						</div>
 					<% end %>
@@ -82,7 +82,7 @@
 					<%= link_to giri_path,
 						class: "aspect-square rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "map", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "map", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Giri</span>
 						</div>
 					<% end %>
@@ -90,7 +90,7 @@
 					<%= link_to libri_path,
 						class: "aspect-square rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "book-open", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "book-open", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Libri</span>
 						</div>
 					<% end %>
@@ -98,7 +98,7 @@
 					<%= link_to stats_path,
 						class: "aspect-square rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "chart-bar", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+							<%= icon "chart-bar", class: "w-8 h-8 mx-auto mb-2" %>
 							<span>Stats</span>
 						</div>
 					<% end %>
@@ -108,7 +108,7 @@
 							data: { turbo: false },
 							class: "hotwire-native:hidden aspect-square rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 							<div class="text-center">
-								<%= heroicon "chat-bubble-left-right", variant: :solid, options: { class: "w-8 h-8 mx-auto mb-2" } %>
+								<%= icon "chat-bubble-left-right", class: "w-8 h-8 mx-auto mb-2" %>
 								<span>Chat GPT</span>
 							</div>
 						<% end %>
@@ -118,7 +118,7 @@
 						data: { turbo_method: :delete },
 						class: "col-span-2 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
 						<div class="text-center">
-							<%= heroicon "arrow-right-on-rectangle", variant: :solid, options: { class: "w-6 h-6 mx-auto" } %>
+							<%= icon "arrow-right-on-rectangle", variant: :solid, options: { class: "w-6 h-6 mx-auto" } %>
 							<span>Esci</span>
 						</div>
 					<% end %>

@@ -80,7 +80,7 @@
         <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno),
             class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-            <%= heroicon "academic-cap", variant: :solid, options: { class: "w-6 h-6" } %>
+            <%= icon "academic-cap", variant: :solid, class: "w-6 h-6" %>
             <span>Aggiungi scuola</span>
         <% end %>
 
@@ -88,7 +88,7 @@
             class: "w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
 
-            <%= heroicon "currency-euro", variant: :solid, options: { class: "w-6 h-6" } %>
+            <%= icon "currency-euro", variant: :solid, class: "w-6 h-6" %>
             <span>Aggiungi cliente</span>
         <% end %>
 

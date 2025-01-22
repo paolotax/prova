@@ -109,7 +109,9 @@ class DocumentiController < ApplicationController
       clientable_type = nil
     end
     
-    numero_documento = current_user.documenti.where(causale: params[:causale]).maximum(:numero_documento).to_i + 1
+    anno_corrente = Date.current.year
+    ultimo_documento = current_user.documenti.where(causale: params[:causale]).where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente).maximum(:numero_documento)
+    numero_documento = (ultimo_documento || 0) + 1
     render json: { numero_documento: numero_documento, clientable_type: clientable_type }
   
   end
@@ -139,6 +141,7 @@ class DocumentiController < ApplicationController
         causale: params["causale"],
         status: params["status"],
         tipo_pagamento: params["tipo_pagamento"],
+        anno: params["anno"],
         ordina_per: params["ordina_per"]
       }.compact_blank
     end

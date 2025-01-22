@@ -33,6 +33,12 @@
             type: :select,
             placeholder: "pagamento..."
         },{
+            field: :anno,
+            label: "Anno",
+            collection: (2024..Date.current.year).to_a.reverse,
+            type: :select,
+            placeholder: "anno..."
+        },{
             field: :ordina_per,
             label: "Ordina",
             collection: ["data documento", "fresh", "creato il"],
