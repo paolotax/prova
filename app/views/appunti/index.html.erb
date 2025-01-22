@@ -120,20 +120,27 @@
 			<% end %>
 
 			<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.submit "Oggi", class: "p-4 text-white" %>
+				<%= form.submit "Oggi", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
 			<% end %>
 
 			<%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.date_field :data_tappa, class: "w-full" %>
-				<%= form.submit "Tappa", class: "p-4 text-white" %>
+				<%= form.date_field :data_tappa, class: "block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+				<%= form.submit "Tappa", class: "mt-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
 			<% end %>
 
 			<%= form_with url: segna_come_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-				<%= form.select :stato, Appunto::STATO_APPUNTI %>
-				<%= form.submit "Segna come", class: "p-4 w-full text-white" %>
+				<%= form.select :stato, 
+						Appunto::STATO_APPUNTI, 
+						{}, 
+						class: "block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6" %>
+				<%= form.submit "Segna come", class: "mt-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
 			<% end %>
 
-			<%= link_to "Chiudi", "", data: { action: "bulk-actions#deselectAll" }, class: "p-4 text-white" %>
+				<%= link_to "", data: { action: "bulk-actions#deselectAll" }, class: "absolute -top-2 -right-2 p-2 rounded-full bg-gray-800 hover:bg-gray-700" do %>
+		<svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+		</svg>
+	<% end %>
 		<% end %>
 	<% end %>
 <% end %>
