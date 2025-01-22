@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module CommandMenu
-  class ItemComponent < ViewComponent::Base
+  class ItemComponent < ApplicationComponent
     def initialize(target:, title:, icon: nil, params: nil, theme: "light", method: :get, data: {}, group: nil, remote: false, description: nil, collapsed: false)
       @theme = theme
       @target = target

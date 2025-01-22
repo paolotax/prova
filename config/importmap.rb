@@ -34,3 +34,4 @@ pin "mapkick/bundle", to: "mapkick--bundle.js" # @0.2.6
 
 
 pin "@hotwired/hotwire-native-bridge", to: "@hotwired--hotwire-native-bridge.js" # @1.0.0
+pin "rails_request", to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0.0.6/+esm", preload: true

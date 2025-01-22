@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CommandMenuComponent < ViewComponent::Base
+class CommandMenuComponent < ApplicationComponent
   renders_many :items, ->(target:, title:, params: nil, group: nil, method: :get, data: {}, icon: nil, description: nil) do
     ItemComponent.new(
       theme: @theme,
@@ -20,7 +20,7 @@ class CommandMenuComponent < ViewComponent::Base
     tag.footer capture(&block), class: css
   end
 
-  def initialize(id: "command_menu", enabled: true, theme: "light", show_key: "k", placeholder: "Go to page…", max_container_width: "max-w-2xl", collapse_on_open: true, endpoint: '/'  ) 
+  def initialize(id: "command_menu", enabled: true, theme: "light", show_key: "k", placeholder: "Go to page…", max_container_width: "max-w-2xl", collapse_on_open: true,endpoint: "/")
     @id = id
     @enabled = enabled
     @theme = theme.inquiry
@@ -36,7 +36,7 @@ class CommandMenuComponent < ViewComponent::Base
   end
 
   erb_template <<-ERB
-    <%= tag.div data: container_data, id: @id, class: "fixed top-1/4 left-0 items-start justify-center w-full h-screen z-40 pointer-events-none group/container", hidden: true do %>
+    <%= tag.div data: container_data, id: @id, class: "fixed top-1/4 left-0 items-start justify-center w-full h-screen z-10 pointer-events-none group/container", hidden: true do %>
       <%= tag.div class: command_menu_css do %>
         <div class="flex items-center">
           <%= icons %>
@@ -92,14 +92,14 @@ class CommandMenuComponent < ViewComponent::Base
   end
 
   def icons
-    icon + fetching_icon
+    base_icon + fetching_icon
   end
 
   def input_field
     tag.input data: {command_menu_target: "input", action: "input->command-menu#filter"},
       placeholder: @placeholder,
       class: class_names(
-        "w-full px-4 py-3 text-lg font-normal bg-transparent focus-within:outline-none ring-0",
+        "w-full px-4 py-3 text-lg font-normal border-0 focus:ring-0 bg-transparent focus-within:outline-none",
         {
           "placeholder:text-gray-400": @theme.light?,
           "placeholder:text-text-gray-400": @theme.dark?
@@ -107,10 +107,8 @@ class CommandMenuComponent < ViewComponent::Base
       )
   end
 
-
-  # correzione ho aggiunto id:
   def items_list
-    tag.ul data: {command_menu_target: "itemsList"}, id: "itemsList",
+    tag.ul data: {command_menu_target: "itemsList"},
       class: class_names(
         "flex flex-col",
         "overflow-y-auto",
@@ -135,12 +133,8 @@ class CommandMenuComponent < ViewComponent::Base
     end
   end
 
-  def icon
-    <<-SVG.html_safe
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="size-5 ml-4 shrink-0 opacity-60 block group-data-[command-menu-fetching-value=true]/container:hidden">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-            </svg>
-SVG
+  def base_icon
+    icon("magnifying-glass", inline_component: true, class: "size-5 ml-4 shrink-0 opacity-60 block group-data-[command-menu-fetching-value=true]/container:hidden")
   end
 
   def fetching_icon
