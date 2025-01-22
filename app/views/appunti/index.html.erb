@@ -38,13 +38,16 @@
 <%= turbo_stream_from current_user, "appunti" %>
 
 <% if hotwire_native_app? %>
-	<%= link_to "Nuovo Appunto", new_appunto_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
+	<%= link_to "Nuovo Appunto", new_appunto_path, 
+			data: { controller: "bridge--button", bridge_title: "Nuovo" }, 
+			class: "hidden" %>
 
 	<%= render "shared/native_search_filter",
 			url: appunti_path,
 			filter_url: filtra_appunti_path(params: request.query_parameters),
 			placeholder: "Cerca appunti..." %>
 <% end %>
+
 
 
 <%= turbo_frame_tag "search_results", data: { controller: "bulk-actions" } do %>

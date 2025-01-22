@@ -31,7 +31,7 @@
         <% end %>
 
         <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
-            <%= tag.div class: "sm:mr-4 flex space-x-2 items-center text-black" do %>
+            <%= tag.div class: "sm:mr-4 flex flex-col space-x-2 items-start text-black" do %>
                 <%= tag.div class: "flex flex-col" do %>
                     <%= form.label :status, "stato:" %> 
                     <%= form.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, documento.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>

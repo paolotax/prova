@@ -45,7 +45,10 @@ class DocumentiController < ApplicationController
     causale = Causale.find_by(causale: params[:causale])
     clientable_id = params[:clientable_id]
     clientable_type = params[:clientable_type]
-    numero_documento = current_user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1
+    numero_documento = (current_user.documenti
+                        .where(causale: causale)
+                        .where('EXTRACT(YEAR FROM data_documento) = ?', Date.today.year)
+                        .maximum(:numero_documento) || 0).to_i + 1
     
     @documento = current_user.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
     @documento.save! validate: false

@@ -72,10 +72,10 @@
 		<%#= render partial: "documenti_grid_component" %>
 		<%#= render partial: "documenti_table" %>
 		<%#= render @documenti %>
+		<%= render "shared/active_filters", collection: @documenti %>
 
 		<%= turbo_frame_tag "documenti_page#{@pagy.page}" do %> 
 
-			<%= render "shared/active_filters", collection: @documenti %>
 			
 			<div id="documenti-lista" role="list" class="">
 				<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3 lg:pr-[15rem]">

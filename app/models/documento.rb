@@ -105,6 +105,10 @@ class Documento < ApplicationRecord
     super || Domain::NessunCliente.new
   end
 
+  def incompleto?
+    causale.blank? || clientable.is_a?(Domain::NessunCliente)
+  end
+
 
   def vendita?
     tipo_movimento == "vendita" || ( tipo_movimento == "ordine" && status != "ordine" )
