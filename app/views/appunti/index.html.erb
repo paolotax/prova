@@ -96,11 +96,12 @@
 					
 			<% bulk.with_action("Oggi", href: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: {}) %>
 			
-			<% bulk.with_action("Completa", href: "#", method: :patch, data: {}) %>
-		<% end %>
+			<% bulk.with_action("Archivia", href: segna_come_appunti_bulk_actions_path, method: :patch, data: {}) %>
+
+		<% end%>
 	<% end %>
 
-	<%= tag.div hidden: true, class: "px-5 py-3 bg-gray-900 rounded-lg fixed top-4 z-30 left-1/2 -translate-x-1/2",
+	<%= tag.div hidden: true, class: "px-5 py-3 bg-gray-900 rounded-lg fixed top-4 z-30 left-1/2 -translate-x-1/2 ",
 			data: {
 				bulk_actions_target: "container",
 				transition_enter: "transition ease-out duration-100",
@@ -110,25 +111,27 @@
 				transition_leave_start: "opacity-100",
 				transition_leave_end: "opacity-0"
 			} do %>
-		
-		<%= form_with url: "/appunti/bulk_actions/print_all.pdf", method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-			<%= form.submit "Stampa", class: "p-4 w-full text-white" %>
-		<% end %>
+		<%= tag.div class: "flex items-center justify-center gap-2" do %>
+			<%= form_with url: "/appunti/bulk_actions/print_all.pdf", method: :patch, data: { bulk_actions_target: "form" } do |form| %>
+				<%= form.submit "Stampa", class: "p-4 text-white" %>
+			<% end %>
 
-		<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-			<%= form.submit "Oggi", class: "p-4 w-full text-white" %>
-		<% end %>
+			<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
+				<%= form.submit "Oggi", class: "p-4 text-white" %>
+			<% end %>
 
-		<%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-			<%= form.date_field :data_tappa, class: "w-full" %>
-			<%= form.submit "Aggiungi tappa", class: "p-4 w-full text-white" %>
-		<% end %>
+			<%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
+				<%= form.date_field :data_tappa, class: "w-full" %>
+				<%= form.submit "Tappa", class: "p-4 text-white" %>
+			<% end %>
 
-		<%= form_with url: segna_come_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
-			<%= form.select :stato, Appunto::STATO_APPUNTI, class: "w-full" %>
-			<%= form.submit "Segna come", class: "p-4 w-full text-white" %>
-		<% end %>
+			<%= form_with url: segna_come_appunti_bulk_actions_path, method: :patch, data: { bulk_actions_target: "form" } do |form| %>
+				<%= form.select :stato, Appunto::STATO_APPUNTI %>
+				<%= form.submit "Segna come", class: "p-4 w-full text-white" %>
+			<% end %>
 
+			<%= link_to "Chiudi", "", data: { action: "bulk-actions#deselectAll" }, class: "p-4 text-white" %>
+		<% end %>
 	<% end %>
 <% end %>
 

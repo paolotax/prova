@@ -34,6 +34,19 @@
 		<% end %>
 	<% end %>
 
+		<%= tag.fieldset class: "my-5" do %>
+				<%= form.radio_pills(
+					:categoria,
+					[
+						["Ministeriali", "Hobby • $29/mo"],
+						["Parascolastico", "Pro • $99/mo"],
+						["Vacanze", "Business • $249/mo"]
+					],
+					:first,
+					:last
+				) %>
+		<% end %>
+
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
 			<%= component "field" do |field| %>

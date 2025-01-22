@@ -66,6 +66,7 @@ it:
     formats:
       default: "%d/%m/%Y"
       long: "%d %B %Y"
+      long_with_day: "%A, %d %B %Y"
       short: "%d %b"
       day_calendar: "%a %d"
       month_calendar: "%B %Y"

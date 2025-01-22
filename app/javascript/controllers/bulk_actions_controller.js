@@ -5,13 +5,13 @@ export default class BulkActionsController extends CheckboxesController {
   static targets = ["container", "form", "counter"];
   static values = { open: Boolean };
 
-  // toggle(event) {
-  //   super.toggle(event);
+  toggle(event) {
+    super.toggle(event);
     
-  //   console.log("toggle");
+    console.log("toggle");
     
-  //   this.#syncSelection();
-  // }
+    this.#syncSelection();
+  }
 
   hide(event) {
     this.element.contains(event.target) || this.setCheckboxesTo(false);
