@@ -28,7 +28,9 @@ module Appunti
     end
 
     def add_tappa_giorno
-      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola_id).uniq
+      @appunti = current_user.appunti.where(id: params[:appunto_ids])
+      
+      scuole_ids = @appunti.map(&:import_scuola_id).uniq
 
       scuole_ids.each do |scuola_id|
         unless scuola_id.blank?
@@ -36,6 +38,15 @@ module Appunti
         end
       end
 
+      respond_to do |format|
+        format.turbo_stream {
+          render turbo_stream: @appunti.map { |appunto|
+            unless appunto.import_scuola.blank?
+              turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "tappe/tappa_menu", locals: { tappa: appunto.import_scuola.tappe.load.first, appunto: appunto, mostra_dropdown: false })
+            end
+          }
+        }
+      end
       #redirect_to request.referrer, notice: "Tappe aggiunte per #{params[:data_tappa]}"
     end
 

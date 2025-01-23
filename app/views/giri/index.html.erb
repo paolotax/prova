@@ -103,7 +103,7 @@
 						<%= tag.div id: "tappe-list-#{dom_id giro}-#{dom_id scuola}" do %>							
 							<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: giro.id } %>
 							<% scuola.tappe.all.select { |t| t.giro == giro && t.persisted? }.each do |tappa| %>
-								<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, orientation: "right" } %>
+								<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
 							<% end %>
 						<% end %>
 					<% end %>
@@ -114,7 +114,7 @@
 					<%= tag.div id: "tappe-list--#{dom_id scuola}" do %>
 						<%= render partial: "tappe/tappa_new", locals: { scuola: scuola, giro_id: nil } %>
 						<% scuola.tappe.all.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
-							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, orientation: "right" } %>
+							<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
 						<% end %>
 					<% end %>
 				<% end %>

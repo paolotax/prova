@@ -1,6 +1,6 @@
+<%# locals: ( appunto: nil, tappa: nil, mostra_dropdown: true ) -%>
 
-
-<%= tag.div id: "tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center" do %>
+<%= tag.div id: "#{appunto&.id}tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center" do %>
     
     <%= render DropdownComponent.new do |dropdown| %>
         
@@ -19,102 +19,104 @@
             <% end %>
         <% end %>
         
-        <% dropdown.with_item do %>
-            <%= link_to edit_tappa_path( tappa ),
-                    class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                    data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open"}, 
-                    role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
-                Modifica
-            <% end %>
-        <% end %>
-        
-
-        <% dropdown.with_item do %>
-            <%= tag.div class: "flex justify-between px-2 py-2" do %>        
-                <% ["oggi", "domani", "la prossima"].each do |item| %>
-                    <%= form_with model: tappa,
-                                class: "flex justify-between" do |f| %>
-                        <%= f.hidden_field :data_tappa, value: Time.zone.now if item == "oggi" %>
-                        <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.day if item == "domani"  %>
-                        <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.week if item == "la prossima"  %>
-                        
-                        <%= f.submit item, class: [
-                            "w-8 h-8 rounded-full text-xs text-white": true,
-                            "bg-green-500 hover:bg-green-600": item == "oggi",
-                            "bg-yellow-300 hover:bg-yellow-500": item == "domani",
-                            "bg-pink-500 hover:bg-pink-600": item == "la prossima"
-                        ] %>
-                    <% end %>
-                <% end %>        
-            <% end %>
-        <% end %>
-
-        <% dropdown.with_item do %>
-            <%= tag.div class: "flex justify-between px-2 py-2" do %>        
-                <% ["lu", "ma", "me"].each do |item| %>
-                    <%= form_with model: tappa,
-                                class: "flex justify-between" do |f| %>
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:monday) if item == "lu" %>                    
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:tuesday) if item == "ma" %>                    
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:wednesday) if item == "me" %>                    
-
-                        <%= f.submit item, class: [
-                            "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
-                        ] %>
-                    <% end %>
-                <% end %>
-            <% end %>   
-        <% end %>
-
-        <% dropdown.with_item do %>
-            <%= tag.div class: "flex justify-between px-2 pb-2" do %>  
-                <% ["gi", "ve", "sa"].each do |item| %>
-                    <%= form_with model: tappa,
-                                class: "flex justify-between" do |f| %>
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:thursday) if item == "gi" %>                    
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:friday) if item == "ve" %>                    
-                        <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:saturday) if item == "sa" %>                    
-                        <%= f.submit item, class: [
-                            "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
-                        ] %>
-                    <% end %>
-                <% end %>       
-            <% end %>
-        <% end %>
-
-        <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
-        <% unless tappa.data_tappa.nil? %>
+        <% if mostra_dropdown %>
             <% dropdown.with_item do %>
-                <%= link_to giorno_path( giorno: tappa.data_tappa),
+                <%= link_to edit_tappa_path( tappa ),
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                        data: {turbo_action: "replace", turbo_frame: "_top"}, 
-                        role: "menuitem", tabindex: "-1", id: "tappa-menu-item-0" do %>
-                    Vai al giorno
+                        data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open"}, 
+                        role: "menuitem", tabindex: "-1", id: "user-menu-item-0" do %>
+                    Modifica
                 <% end %>
             <% end %>
-        <% end %>
-                
-        <% dropdown.with_trailer do %>
-            <% if tappa.vuota? %>
-                
-                <%= link_to tappa_path(tappa), 
-                            class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                            data: { turbo_method: :delete } do %> 
-                    <span class="">Elimina</span> 
-                <% end %>
         
-            <% else %>
+
+            <% dropdown.with_item do %>
+                <%= tag.div class: "flex justify-between px-2 py-2" do %>        
+                    <% ["oggi", "domani", "la prossima"].each do |item| %>
+                        <%= form_with model: tappa,
+                                    class: "flex justify-between" do |f| %>
+                            <%= f.hidden_field :data_tappa, value: Time.zone.now if item == "oggi" %>
+                            <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.day if item == "domani"  %>
+                            <%= f.hidden_field :data_tappa, value: Time.zone.now + 1.week if item == "la prossima"  %>
+                            
+                            <%= f.submit item, class: [
+                                "w-8 h-8 rounded-full text-xs text-white": true,
+                                "bg-green-500 hover:bg-green-600": item == "oggi",
+                                "bg-yellow-300 hover:bg-yellow-500": item == "domani",
+                                "bg-pink-500 hover:bg-pink-600": item == "la prossima"
+                            ] %>
+                        <% end %>
+                    <% end %>        
+                <% end %>
+            <% end %>
+
+            <% dropdown.with_item do %>
+                <%= tag.div class: "flex justify-between px-2 py-2" do %>        
+                    <% ["lu", "ma", "me"].each do |item| %>
+                        <%= form_with model: tappa,
+                                    class: "flex justify-between" do |f| %>
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:monday) if item == "lu" %>                    
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:tuesday) if item == "ma" %>                    
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:wednesday) if item == "me" %>                    
+
+                            <%= f.submit item, class: [
+                                "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
+                            ] %>
+                        <% end %>
+                    <% end %>
+                <% end %>   
+            <% end %>
+
+            <% dropdown.with_item do %>
+                <%= tag.div class: "flex justify-between px-2 pb-2" do %>  
+                    <% ["gi", "ve", "sa"].each do |item| %>
+                        <%= form_with model: tappa,
+                                    class: "flex justify-between" do |f| %>
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:thursday) if item == "gi" %>                    
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:friday) if item == "ve" %>                    
+                            <%= f.hidden_field :data_tappa, value: Date.today.next_occurring(:saturday) if item == "sa" %>                    
+                            <%= f.submit item, class: [
+                                "w-8 h-8 rounded-full text-xs text-gray-900 hover:bg-gray-700 hover:text-white border": true
+                            ] %>
+                        <% end %>
+                    <% end %>       
+                <% end %>
+            <% end %>
+
+            <!-- filtra giorno  da correggere apre Tappe deve aprire Giri -->
+            <% unless tappa.data_tappa.nil? %>
+                <% dropdown.with_item do %>
+                    <%= link_to giorno_path( giorno: tappa.data_tappa),
+                            class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                            data: {turbo_action: "replace", turbo_frame: "_top"}, 
+                            role: "menuitem", tabindex: "-1", id: "tappa-menu-item-0" do %>
+                        Vai al giorno
+                    <% end %>
+                <% end %>
+            <% end %>
                 
-                <%= button_to tappa_path(tappa), method: :delete,
-                            class: "block px-3 py-1 text-sm leading-6 text-red-500",
-                            data: {
-                                turbo_method: "delete",
-                                turbo_confirm: "Vuoi veramente eliminare questa tappa?",
-                                turbo_confirm_theme: "",
-                                turbo_confirm_confirm_label: "Si, elimina!",
-                                turbo_confirm_cancel_label: "Oops, no annulla…",
-                            } do %> 
-                    <span class="">Elimina</span> 
+            <% dropdown.with_trailer do %>
+                <% if tappa.vuota? %>
+                    
+                    <%= link_to tappa_path(tappa), 
+                                class: "block px-3 py-1 text-sm leading-6 text-red-500",
+                                data: { turbo_method: :delete } do %> 
+                        <span class="">Elimina</span> 
+                    <% end %>
+            
+                <% else %>
+                    
+                    <%= button_to tappa_path(tappa), method: :delete,
+                                class: "block px-3 py-1 text-sm leading-6 text-red-500",
+                                data: {
+                                    turbo_method: "delete",
+                                    turbo_confirm: "Vuoi veramente eliminare questa tappa?",
+                                    turbo_confirm_theme: "",
+                                    turbo_confirm_confirm_label: "Si, elimina!",
+                                    turbo_confirm_cancel_label: "Oops, no annulla…",
+                                } do %> 
+                        <span class="">Elimina</span> 
+                    <% end %>
                 <% end %>
             <% end %>
         <% end %>

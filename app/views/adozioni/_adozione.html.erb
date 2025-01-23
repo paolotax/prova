@@ -110,7 +110,7 @@
 				<%= tag.div id: "tappe-list--#{dom_id adozione.scuola}" do %>
 					<%= render partial: "tappe/tappa_new", locals: { scuola: adozione.scuola, giro_id: nil } %>
 					<% adozione.scuola.tappe.select { |t| t.giro.nil? && t.persisted? }.each do |tappa| %>
-						<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, orientation: "right" } %>
+						<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
 					<% end %>
 				<% end %>
 			<% end %>
