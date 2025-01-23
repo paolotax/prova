@@ -36,6 +36,7 @@ class Tappa < ApplicationRecord
 
   positioned on: [:user, :data_tappa], column: :position
 
+  
   # controllare se filtrare per user_id
   # NON FUNZIONA TAPPA
   # belongs_to :import_scuola, -> { where(tappable_type == 'ImportScuola') }, class_name: 'ImportScuola', foreign_key: 'tappable_id'

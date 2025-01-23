@@ -42,12 +42,19 @@ module Appunti
         format.turbo_stream {
           render turbo_stream: @appunti.map { |appunto|
             unless appunto.import_scuola.blank?
-              turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe })
+              # Trova tutti gli appunti con la stessa scuola
+              appunti_stessa_scuola = current_user.appunti.where(import_scuola_id: appunto.import_scuola_id)
+              
+              # Mappa tutti gli appunti della stessa scuola per aggiornare le loro tappe
+              appunti_stessa_scuola.map do |app|
+                turbo_stream.update("tappa-appunto-#{app.id}", 
+                  partial: "clientable/lista_tappe", 
+                  locals: { tappe: appunto.import_scuola.tappe })
+              end
             end
-          }
+          }.flatten.compact
         }
       end
-      #redirect_to request.referrer, notice: "Tappe aggiunte per #{params[:data_tappa]}"
     end
 
     def segna_come
