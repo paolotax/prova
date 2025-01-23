@@ -79,12 +79,12 @@
 			</div>
 			<div class="pb-2 w-full mt-auto flex justify-between items-center">
 				
-				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "flex items-center gap-2" do %>
+				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "flex items-center -space-x-2.5" do %>
 					<% if appunto.import_scuola %>
-						<%= render partial: "tappe/tappa_menu", locals: { tappa: appunto.import_scuola.tappe&.last, appunto: appunto, mostra_dropdown: false }%>
+						<%= render partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
 					<% end %>
 				<% end %>
-
+				
 				<%= tag.div class: "text-xs italic" do %>
 					creato da
 					<%= time_ago_in_words appunto.created_at %>

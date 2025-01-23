@@ -42,7 +42,7 @@ module Appunti
         format.turbo_stream {
           render turbo_stream: @appunti.map { |appunto|
             unless appunto.import_scuola.blank?
-              turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "tappe/tappa_menu", locals: { tappa: appunto.import_scuola.tappe.load.first, appunto: appunto, mostra_dropdown: false })
+              turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe })
             end
           }
         }

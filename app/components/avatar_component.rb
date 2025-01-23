@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AvatarComponent < ViewComponent::Base
+class AvatarComponent < ApplicationComponent
   def initialize(user:, size: "md", show_badge: false, animate_badge: false)
     @user = user
     @size = size

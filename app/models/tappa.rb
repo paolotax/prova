@@ -50,6 +50,11 @@ class Tappa < ApplicationRecord
   # #   super
   # # end
   
+  scope :ultima, -> { order(created_at: :desc).first }
+  
+  scope :ultima_tappa_passata, -> { order(data_tappa: :desc).where("data_tappa < ?", Date.today).first }
+  scope :tappe_future, -> { order(data_tappa: :asc).where("data_tappa >= ?", Date.today) }
+
   scope :con_data_tappa, -> { where.not(data_tappa: nil) }
   
   scope :di_oggi,   -> { where(data_tappa: Date.today) }
