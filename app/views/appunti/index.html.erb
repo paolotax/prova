@@ -131,7 +131,7 @@
 		<div class="forms-container">
 			<%= form_with url: "/appunti/bulk_actions/print_all.pdf", 
 					method: :patch, 
-					class: "hidden",
+					class: "hidden content-center",
 					data: { bulk_actions_target: "stampaForm form" } do |form| %>
 				<%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
 			<% end %>
