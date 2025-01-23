@@ -131,12 +131,27 @@
 		<div class="forms-container">
 			<%= form_with url: "/appunti/bulk_actions/print_all.pdf", 
 					method: :patch, 
-					class: "hidden content-center",
-					data: { bulk_actions_target: "stampaForm form" } do |form| %>
+					class: "hidden transition-all duration-300 ease-out origin-top",
+					data: { 
+						bulk_actions_target: "stampaForm form",
+						transition_enter: "transform transition ease-out duration-300",
+						transition_enter_start: "transform -translate-y-4 opacity-0",
+						transition_enter_end: "transform translate-y-0 opacity-100",
+						transition_leave: "transform transition ease-in duration-200",
+						transition_leave_start: "transform translate-y-0 opacity-100",
+						transition_leave_end: "transform -translate-y-4 opacity-0"
+					} do |form| %>
 				<%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
 			<% end %>
 
-			<div class="hidden space-y-2" data-bulk-actions-target="tappaForm">
+			<div class="hidden transition-all duration-300 ease-out origin-top"
+				 data-bulk-actions-target="tappaForm"
+				 data-transition-enter="transform transition ease-out duration-300"
+				 data-transition-enter-start="transform -translate-y-4 opacity-0"
+				 data-transition-enter-end="transform translate-y-0 opacity-100"
+				 data-transition-leave="transform transition ease-in duration-200"
+				 data-transition-leave-start="transform translate-y-0 opacity-100"
+				 data-transition-leave-end="transform -translate-y-4 opacity-0">
 				<%= form_with url: add_tappa_oggi_appunti_bulk_actions_path, 
 						method: :patch,
 						data: { bulk_actions_target: "form" } do |form| %>
@@ -155,8 +170,16 @@
 
 			<%= form_with url: segna_come_appunti_bulk_actions_path, 
 					method: :patch, 
-					class: "hidden",
-					data: { bulk_actions_target: "statoForm form" } do |form| %>
+					class: "hidden transition-all duration-300 ease-out origin-top",
+					data: { 
+						bulk_actions_target: "statoForm form",
+						transition_enter: "transform transition ease-out duration-300",
+						transition_enter_start: "transform -translate-y-4 opacity-0",
+						transition_enter_end: "transform translate-y-0 opacity-100",
+						transition_leave: "transform transition ease-in duration-200",
+						transition_leave_start: "transform translate-y-0 opacity-100",
+						transition_leave_end: "transform -translate-y-4 opacity-0"
+					} do |form| %>
 				<div class="flex gap-2">
 					<%= form.select :stato, 
 							Appunto::STATO_APPUNTI, 

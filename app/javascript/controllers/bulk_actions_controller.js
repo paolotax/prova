@@ -17,24 +17,65 @@ export default class BulkActionsController extends CheckboxesController {
     this.element.contains(event.target) || this.setCheckboxesTo(false);
   }
 
+  
   toggleTappa() {
     this.statoFormTarget.classList.add('hidden')
     this.stampaFormTarget.classList.add('hidden')
-    this.tappaFormTarget.classList.toggle('hidden')
+    
+    if (this.tappaFormTarget.classList.contains('hidden')) {
+      this.tappaFormTarget.classList.remove('hidden')
+      // Trigger enter animation
+      requestAnimationFrame(() => {
+        this.tappaFormTarget.classList.remove('-translate-y-4', 'opacity-0')
+        this.tappaFormTarget.classList.add('translate-y-0', 'opacity-100')
+      })
+    } else {
+      // Trigger leave animation
+      this.tappaFormTarget.classList.add('-translate-y-4', 'opacity-0')
+      this.tappaFormTarget.classList.remove('translate-y-0', 'opacity-100')
+      setTimeout(() => {
+        this.tappaFormTarget.classList.add('hidden')
+      }, 200)
+    }
   }
 
   toggleStato() {
     this.tappaFormTarget.classList.add('hidden')
     this.stampaFormTarget.classList.add('hidden')
-    this.statoFormTarget.classList.toggle('hidden')
+    
+    if (this.statoFormTarget.classList.contains('hidden')) {
+      this.statoFormTarget.classList.remove('hidden')
+      requestAnimationFrame(() => {
+        this.statoFormTarget.classList.remove('-translate-y-4', 'opacity-0')
+        this.statoFormTarget.classList.add('translate-y-0', 'opacity-100')
+      })
+    } else {
+      this.statoFormTarget.classList.add('-translate-y-4', 'opacity-0')
+      this.statoFormTarget.classList.remove('translate-y-0', 'opacity-100')
+      setTimeout(() => {
+        this.statoFormTarget.classList.add('hidden')
+      }, 200)
+    }
   }
 
   stampa() {
     this.tappaFormTarget.classList.add('hidden')
     this.statoFormTarget.classList.add('hidden')
-    this.stampaFormTarget.classList.toggle('hidden')
+    
+    if (this.stampaFormTarget.classList.contains('hidden')) {
+      this.stampaFormTarget.classList.remove('hidden')
+      requestAnimationFrame(() => {
+        this.stampaFormTarget.classList.remove('-translate-y-4', 'opacity-0')
+        this.stampaFormTarget.classList.add('translate-y-0', 'opacity-100')
+      })
+    } else {
+      this.stampaFormTarget.classList.add('-translate-y-4', 'opacity-0')
+      this.stampaFormTarget.classList.remove('translate-y-0', 'opacity-100')
+      setTimeout(() => {
+        this.stampaFormTarget.classList.add('hidden')
+      }, 200)
+    }
   }
-
 
   // private
 
