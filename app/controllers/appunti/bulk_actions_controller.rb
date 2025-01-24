@@ -39,21 +39,7 @@ module Appunti
       end
 
       respond_to do |format|
-        format.turbo_stream {
-          render turbo_stream: @appunti.map { |appunto|
-            unless appunto.import_scuola.blank?
-              # Trova tutti gli appunti con la stessa scuola
-              appunti_stessa_scuola = current_user.appunti.where(import_scuola_id: appunto.import_scuola_id)
-              
-              # Mappa tutti gli appunti della stessa scuola per aggiornare le loro tappe
-              appunti_stessa_scuola.map do |app|
-                turbo_stream.update("tappa-appunto-#{app.id}", 
-                  partial: "clientable/lista_tappe", 
-                  locals: { tappe: appunto.import_scuola.tappe })
-              end
-            end
-          }.flatten.compact
-        }
+        format.turbo_stream
       end
     end
 

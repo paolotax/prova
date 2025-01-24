@@ -1,5 +1,6 @@
-        <%= render partial: "tappe/tappa_data", locals: { tappa: tappe&.ultima_tappa_passata }%>
-        <% tappe&.tappe_future.each do |tappa| %>
-            <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa }%>
-        <% end %>
+<%= render partial: "tappe/tappa_data", locals: { tappa: tappe&.ultima_tappa_passata }%>
+
+<% tappe&.tappe_future.each do |tappa| %>
+    <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa }%>
+<% end %>
 
