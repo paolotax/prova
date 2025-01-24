@@ -2,7 +2,7 @@
     <% unless appunto.import_scuola_id.nil? %>
         <turbo-stream action="update" targets=".tappe-import_scuola-<%= appunto.import_scuola_id %>"> 
             <template>
-                <%= render "clientable/lista_tappe", tappe: appunto.import_scuola.tappe %>
+                <%= render partial: "clientable/lista_tappe", formats: :html, locals: { tappe: appunto.import_scuola.tappe } %>
             </template>
         </turbo-stream>  
     <% end %>

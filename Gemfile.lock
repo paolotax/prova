@@ -631,6 +631,7 @@ DEPENDENCIES
   mapkick-rb
   maxminddb
   money-rails (~> 1.15)
+  nokogiri
   omniauth-github (~> 2.0)
   omniauth-google-oauth2 (~> 1.1)
   omniauth-rails_csrf_protection (~> 1.0)

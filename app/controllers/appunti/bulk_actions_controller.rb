@@ -15,18 +15,6 @@ module Appunti
       end
     end
 
-    def add_tappa_oggi
-      scuole_ids = current_user.appunti.where(id: params[:appunto_ids]).map(&:import_scuola_id).uniq
-
-      scuole_ids.each do |scuola_id|
-        unless scuola_id.blank?
-          current_user.tappe.find_or_create_by(tappable_type: "ImportScuola", tappable_id: scuola_id, data_tappa: Date.today, user_id: current_user.id)
-        end
-      end
-
-      #redirect_to appunti_path, notice: "Tappe aggiunte per oggi"
-    end
-
     def add_tappa_giorno
       @appunti = current_user.appunti.where(id: params[:appunto_ids])
       

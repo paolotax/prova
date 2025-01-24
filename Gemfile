@@ -152,4 +152,6 @@ gem "streamio-ffmpeg"
 
 gem "fuzzy_match"
 
+gem 'nokogiri'
+
 

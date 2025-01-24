@@ -123,6 +123,20 @@ class DocumentiController < ApplicationController
     @causali = Causale.all
   end
 
+  def esporta_xml
+    @documento = Documento.find(params[:id])
+    xml_generator = FatturaElettronicaXml.new(@documento)
+    
+    respond_to do |format|
+      format.xml do
+        xml_content = xml_generator.genera_xml
+        send_data xml_content, 
+                  filename: "IT#{@documento.azienda.partita_iva}_#{@documento.numero}.xml",
+                  type: 'application/xml',
+                  disposition: 'attachment'
+      end
+    end
+  end
 
   private
 

@@ -55,6 +55,9 @@ Rails.application.routes.draw do
       get 'filtra' 
       get 'nuovo_numero_documento'
     end
+    member do
+      get :esporta_xml
+    end
   end
 
   resources :causali
