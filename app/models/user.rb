@@ -10,7 +10,6 @@
 #  encrypted_password     :string           default(""), not null
 #  name                   :string
 #  navigator              :string
-#  partita_iva            :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -43,7 +42,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_rich_text :card
 
-  has_one :profile, dependent: :destroy
+  has_one :profile
   
   has_many :user_scuole, dependent: :destroy    
   has_many :import_scuole, through: :user_scuole
@@ -87,8 +86,17 @@ class User < ApplicationRecord
     self.role ||= :scagnozzo
   end
 
-  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :iban, :nome_banca, to: :profile, allow_nil: true
+  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :iban, :nome_banca, to: :profile, allow_nil: true, prefix: true
+  
 
+  has_one :azienda
+
+  delegate :partita_iva, :codice_fiscale, :ragione_sociale, :regime_fiscale,
+          :indirizzo, :cap, :comune, :provincia, :nazione,
+          :email, :telefono, :indirizzo_telematico,
+          :iban, :banca,
+          to: :azienda, allow_nil: true, prefix: true
+  
   def miei_editori
     editori.collect{|e| e.editore}
   end
@@ -108,5 +116,22 @@ class User < ApplicationRecord
   def self.stats
     User.all.collect {|u| { name: u.name, adozioni: u.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
   end
-  
+
+  def self.create_aziende_from_profiles
+    User.all.each do |user|
+      user.create_azienda
+      user.azienda.ragione_sociale = user&.profile&.ragione_sociale
+      user.azienda.indirizzo = user&.profile&.indirizzo
+      user.azienda.cap = user&.profile&.cap
+      user.azienda.comune = user&.profile&.citta
+      user.azienda.email = user&.profile&.email
+      user.azienda.telefono = user&.profile&.cellulare
+      user.azienda.iban = user&.profile&.iban
+      user.azienda.banca = user&.profile&.nome_banca
+      user.azienda.save!
+    end
+  end
+
+
+
 end

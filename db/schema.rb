@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_04_182923) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_24_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -144,6 +144,29 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_182923) do
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"
     t.index ["voice_note_id"], name: "index_appunti_on_voice_note_id"
+  end
+
+  create_table "aziende", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "partita_iva", limit: 11, null: false
+    t.string "codice_fiscale", limit: 16, null: false
+    t.string "ragione_sociale", null: false
+    t.string "regime_fiscale", default: "RF19", null: false
+    t.string "indirizzo", null: false
+    t.string "cap", limit: 5, null: false
+    t.string "comune", null: false
+    t.string "provincia", limit: 2, null: false
+    t.string "nazione", limit: 2, default: "IT", null: false
+    t.string "email", null: false
+    t.string "telefono"
+    t.string "indirizzo_telematico", limit: 7
+    t.string "iban", limit: 27
+    t.string "banca"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["codice_fiscale"], name: "index_aziende_on_codice_fiscale", unique: true
+    t.index ["partita_iva"], name: "index_aziende_on_partita_iva", unique: true
+    t.index ["user_id"], name: "index_aziende_on_user_id"
   end
 
   create_table "blazer_audits", force: :cascade do |t|
@@ -577,7 +600,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_182923) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.string "partita_iva"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "navigator"
@@ -625,6 +647,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_182923) do
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
+  add_foreign_key "aziende", "users"
   add_foreign_key "chats", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"

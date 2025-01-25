@@ -131,7 +131,7 @@ class DocumentiController < ApplicationController
       format.xml do
         xml_content = xml_generator.genera_xml
         send_data xml_content, 
-                  filename: "IT#{@documento.azienda.partita_iva}_#{@documento.numero}.xml",
+                  filename: "IT#{@documento.user.partita_iva}_#{@documento.numero_documento}.xml",
                   type: 'application/xml',
                   disposition: 'attachment'
       end
