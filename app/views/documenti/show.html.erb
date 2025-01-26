@@ -15,7 +15,7 @@
                     caption: "Elimina",
                     svg_file: "icon-trash-real.svg",
                     color: "red",
-                    url: url_for( controller: "documenti", action: "destroy", model: @documento, method: :delete ),
+                    url: url_for( controller: "documenti", action: "destroy", model: @documento, method: :delete, format: :html  ),
                     data_attr: {
                       turbo_method: "delete",
                       turbo_confirm: "Vuoi veramente eliminare questo documento?",
