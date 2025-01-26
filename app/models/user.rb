@@ -86,7 +86,7 @@ class User < ApplicationRecord
     self.role ||= :scagnozzo
   end
 
-  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :iban, :nome_banca, to: :profile, allow_nil: true, prefix: true
+  delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca, to: :profile, allow_nil: true, prefix: true
   
 
   has_one :azienda

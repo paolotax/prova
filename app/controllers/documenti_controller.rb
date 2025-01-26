@@ -103,15 +103,11 @@ class DocumentiController < ApplicationController
 
   def nuovo_numero_documento
     
-    causale = Causale.find(params[:causale]).causale
-    if causale == "Ordine Cliente"
-      clientable_type = "Cliente"
-    elsif causale == "Ordine Scuola"
-      clientable_type = "ImportScuola"
-    else
-      clientable_type = nil
-    end
+    causale = Causale.find(params[:causale])
     
+    clientable_type = causale.clientable_type&.camelize || "Cliente"
+    
+
     anno_corrente = Date.current.year
     ultimo_documento = current_user.documenti.where(causale: params[:causale]).where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente).maximum(:numero_documento)
     numero_documento = (ultimo_documento || 0) + 1
@@ -131,7 +127,7 @@ class DocumentiController < ApplicationController
       format.xml do
         xml_content = xml_generator.genera_xml
         send_data xml_content, 
-                  filename: "IT#{@documento.user.partita_iva}_#{@documento.numero_documento}.xml",
+                  filename: "IT#{@documento.user.azienda_partita_iva}_#{@documento.numero_documento}.xml",
                   type: 'application/xml',
                   disposition: 'attachment'
       end

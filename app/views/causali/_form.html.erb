@@ -1,4 +1,5 @@
-<%= form_with(model: causale, class: "contents") do |form| %>
+<%= form_with(model: causale, builder: RailsDesigner::FormBuilder) do |form| %>
+  
   <% if causale.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(causale.errors.count, "error") %> prohibited this causale from being saved:</h2>
@@ -13,28 +14,30 @@
 
   <div class="my-5">
     <%= form.label :causale %>
-    <%= form.text_field :causale, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :causale %>
   </div>
 
   <div class="my-5">
     <%= form.label :magazzino %>
-    <%= form.text_field :magazzino, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.text_field :magazzino %>
   </div>
 
   <div class="my-5">
     <%= form.label :tipo_movimento %>
     <%= form.select :tipo_movimento, 
-                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, causale.tipo_movimento),
-                {}, 
-                class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 w-full" %>
+                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, causale.tipo_movimento) %>
   </div>
 
   <div class="my-5">
     <%= form.label :movimento %>
     <%= form.select :movimento, 
-                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, causale.movimento),
-                {}, 
-                class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, causale.movimento) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :clientable_type %>
+    <%= form.select :clientable_type, 
+                options_for_select(["import_scuola", "cliente"]) %>
   </div>
 
   <div class="inline">

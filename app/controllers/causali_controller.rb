@@ -74,6 +74,6 @@ class CausaliController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def causale_params
-      params.require(:causale).permit(:causale, :magazzino, :tipo_movimento, :movimento)
+      params.require(:causale).permit(:causale, :magazzino, :tipo_movimento, :movimento, :clientable_type)
     end
 end

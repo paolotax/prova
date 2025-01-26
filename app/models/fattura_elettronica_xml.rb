@@ -7,19 +7,20 @@ class FatturaElettronicaXml
 
   def genera_xml
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+      
       xml.FatturaElettronica(versione: 'FPR12', 
                             xmlns: "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2") {
         
-        xml.FatturaElettronicaHeader {
+        xml.FatturaElettronicaHeader(xmlns: "") {
           genera_dati_trasmissione(xml)
           genera_cedente_prestatore(xml)
           genera_cessionario_committente(xml)
         }
         
-        xml.FatturaElettronicaBody {
-          #genera_dati_generali(xml)
-          #genera_dati_beni_servizi(xml)
-          #genera_dati_pagamento(xml) if @documento.tipo_pagamento.present?
+        xml.FatturaElettronicaBody(xmlns: "") {
+          genera_dati_generali(xml)
+          genera_dati_beni_servizi(xml)
+          genera_dati_pagamento(xml) if @documento.tipo_pagamento.present?
         }
       }
     end
@@ -52,7 +53,7 @@ class FatturaElettronicaXml
         xml.Anagrafica {
           xml.Denominazione @documento.user&.azienda_ragione_sociale
         }
-        xml.RegimeFiscale 'RF07'  # Regime forfettario
+        xml.RegimeFiscale @documento.user&.azienda_regime_fiscale.upcase
       }
       xml.Sede {
         xml.Indirizzo @documento.user&.azienda_indirizzo
@@ -92,13 +93,16 @@ class FatturaElettronicaXml
   def genera_dati_generali(xml)
     xml.DatiGenerali {
       xml.DatiGeneraliDocumento {
-        xml.TipoDocumento 'TD01'
+        xml.TipoDocumento @documento.causale.causale
         xml.Divisa 'EUR'
         xml.Data @documento.data_documento.strftime('%Y-%m-%d')
-        xml.Numero "FPR #{@documento.numero_documento}/#{@documento.data_documento.strftime('%y')}"
+        xml.Numero "FPR #{@documento.numero_documento.to_s[0..1]}/#{@documento.data_documento.strftime('%y')}"
         xml.ImportoTotaleDocumento format('%.2f', @documento.totale_importo)
       }
-      genera_dati_ddt(xml) if @documento.ddt.present?
+
+      # generatore di dati DDT
+      # TODO: aggiungere riferimento ai DDT nel modello Documento
+      #genera_dati_ddt(xml) if @documento.ddt.present?
     }
   end
 
@@ -109,7 +113,7 @@ class FatturaElettronicaXml
           xml.NumeroLinea index + 1
           xml.CodiceArticolo {
             xml.CodiceTipo 'ISBN'
-            xml.CodiceValore riga.libro.codice
+            xml.CodiceValore riga.libro.codice_isbn
           }
           xml.Descrizione riga.libro.titolo
           xml.Quantita format('%.2f', riga.quantita)
@@ -117,7 +121,7 @@ class FatturaElettronicaXml
           xml.PrezzoUnitario format('%.2f', riga.prezzo)
           xml.ScontoMaggiorazione {
             xml.Tipo 'SC'
-            xml.Percentuale '20.00'
+            xml.Percentuale format('%.2f', riga.sconto)
           }
           xml.PrezzoTotale format('%.2f', riga.importo)
           xml.AliquotaIVA '0.00'

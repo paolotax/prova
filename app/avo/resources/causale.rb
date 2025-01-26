@@ -11,5 +11,6 @@ class Avo::Resources::Causale < Avo::BaseResource
     field :magazzino, as: :text
     field :tipo_movimento, as: :select, enum: ::Causale.tipo_movimentos
     field :movimento, as: :select, enum: ::Causale.movimentos
+    field :clientable_type, as: :select, options: ["import_scuola", "cliente"]
   end
 end
