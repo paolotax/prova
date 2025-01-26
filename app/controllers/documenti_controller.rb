@@ -10,8 +10,8 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
     
     @documenti = current_user.documenti
-        .joins("left outer join import_scuole on clientable_type = 'ImportScuola' and clientable_id = import_scuole.id")
-        .joins("left outer join clienti on clientable_type = 'Cliente' and clientable_id = clienti.id")
+        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
+        .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
         .order(updated_at: :desc)
 
