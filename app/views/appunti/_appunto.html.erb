@@ -79,7 +79,7 @@
 			</div>
 			<div class="pb-2 w-full mt-auto flex justify-between items-center">
 				
-				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "tappe-import_scuola-#{appunto.import_scuola_id} flex items-center -space-x-2.5" do %>
+				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "tappe-import_scuola-#{appunto.import_scuola_id} flex items-center -space-x-2" do %>
 					<% if appunto.import_scuola %>
 						<%= render partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
 					<% end %>

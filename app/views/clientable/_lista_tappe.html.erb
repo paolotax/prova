@@ -1,3 +1,14 @@
+<% tappe_precedenti = tappe&.tappe_passate.load.size - 1 %>
+
+<% if tappe_precedenti > 0 %>
+   <%= tag.div "+#{tappe_precedenti}",
+        class: class_names(
+          "flex justify-center items-center shrink-0 leading-none uppercase bg-white ring ring-1 ring-offset-0 ring-gray-300 rounded-full",
+          "size-7 ml-0.5 text-[.85rem] font-normal text-gray-700"
+        )
+    %>
+<% end %>
+
 <%= render partial: "tappe/tappa_data", locals: { tappa: tappe&.ultima_tappa_passata }%>
 
 <% tappe&.tappe_future.each do |tappa| %>
