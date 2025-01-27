@@ -220,6 +220,16 @@ class Libro < ApplicationRecord
     result
   end
 
-
+  has_one_attached :copertina
+  
+  def avatar_url
+    if copertina.attached?
+      copertina
+    else
+      # Restituisce le prime due iniziali del titolo
+      iniziali = titolo.split.map(&:first).join[0..1].upcase
+      "https://ui-avatars.com/api/?name=#{iniziali}&color=7F9CF5&background=EBF4FF"
+    end
+  end
 
 end

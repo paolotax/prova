@@ -76,7 +76,7 @@
 				"bg-green-200": documento.pagato? == true,
 				"bg-red-200": documento.incompleto?] do %>
 				
-		<%= tag.div class: "col-span-4 flex gap-2 sm:gap-4" do %>
+		<%= tag.div class: "col-span-6 flex gap-2 sm:gap-4" do %>
             <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
               <%= tag.div documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
               <%= tag.div documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
@@ -85,6 +85,9 @@
             <% end %>
         <% end %>
 		
+		<%= tag.div class: "col-span-3 sm:col-span-2 flex gap-2 sm:gap-4" do %>
+			<%= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
+		<% end %>
 		
 		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
 			<%= documento.totale_copie %>
