@@ -1,13 +1,13 @@
 <div class="flex -space-x-2">
   <% libri_da_mostrare.each do |libro| %>
     <%= image_tag libro.avatar_url, 
-        class: "inline-block h-8 w-8 rounded-lg ring-2 ring-white dark:ring-gray-800",
+        class: "inline-block h-8 w-8 rounded-lg ring-2 ring-white xdark:ring-gray-800",
         alt: libro.titolo %>
   <% end %>
   
   <% if altri_libri > 0 %>
-    <span class="flex items-center justify-center h-8 w-8 rounded-lg ring-2 ring-white bg-gray-200 dark:ring-gray-800 dark:bg-gray-700">
-      <span class="text-xs font-medium leading-none text-gray-600 dark:text-gray-400">
+    <span class="flex items-center justify-center h-8 w-8 rounded-lg ring-2 ring-white bg-gray-200 xdark:ring-gray-800 xdark:bg-gray-700">
+      <span class="text-xs font-medium leading-none xtext-gray-600 xdark:text-gray-400">
         +<%= altri_libri %>
       </span>
     </span>

@@ -6,7 +6,7 @@
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 		<% heading.with_leader do %>
-			<%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+			<%= image_tag @libro.avatar_url, class: "h-36 w-28 mr-2 rounded-lg ring-2 ring-white xdark:ring-gray-800", alt: @libro.titolo %>
 		<% end %>
 		
 		<% heading.with_description do %>

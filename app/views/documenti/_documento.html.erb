@@ -76,7 +76,7 @@
 				"bg-green-200": documento.pagato? == true,
 				"bg-red-200": documento.incompleto?] do %>
 				
-		<%= tag.div class: "col-span-6 flex gap-2 sm:gap-4" do %>
+		<%= tag.div class: "col-span-6 sm:col-span-8 flex gap-2 sm:gap-4 mb-2" do %>
             <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
               <%= tag.div documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
               <%= tag.div documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>

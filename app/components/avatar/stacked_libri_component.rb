@@ -1,6 +1,6 @@
 module Avatar
   class StackedLibriComponent < ViewComponent::Base
-    def initialize(libri:, limit: 3)
+    def initialize(libri:, limit: 5)
       @libri = libri
       @limit = limit
     end
