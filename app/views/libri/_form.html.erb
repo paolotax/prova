@@ -15,11 +15,7 @@
 							placeholder: "categoria ...", mobile_at: "0px" %>
 		<% end %>
 
-		<%= tag.div class: "my-5" do %>
-			<%= form.toggle :editore_id, label: "attivo", value: "true" %>
-		<% end %>
-
-		<%= tag.fieldset class: "sm:my-5" do %>
+		<%= tag.fieldset class: "my-5" do %>
 			<%= label_for form: form, field: 'editore', label: 'Editore' %>
 			<%= form.collection_select :editore_id, 
 						current_user.editori.order(:editore), :id, :editore, { prompt: true } %>
@@ -28,69 +24,45 @@
 	</div>
 
 	<%= tag.fieldset class: "my-5" do %>
-		<%= component "field" do |field| %>
-			<% field.with_label { render FormLabelComponent.new(form: form, field: :titolo, label: "Titolo") } %>
-			<%= form.text_field :titolo %>
-		<% end %>
+		<%= label_for form: form, field: 'titolo', label: 'Titolo' %>
+		<%= form.text_field :titolo %>
 	<% end %>
 
-		<%= tag.fieldset class: "my-5" do %>
-				<%= form.radio_pills(
-					:categoria,
-					[
-						["Ministeriali", "Hobby • $29/mo"],
-						["Parascolastico", "Pro • $99/mo"],
-						["Vacanze", "Business • $249/mo"]
-					],
-					:first,
-					:last
-				) %>
-		<% end %>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
+
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
-			<%= component "field" do |field| %>
-				<% field.with_label { render FormLabelComponent.new(form: form, field: :prezzo, label: "Prezzo") } %>
-				<%= form.number_field :prezzo, step: 0.01 %>
-			<% end %>
-        <% end %>
+			<%= label_for form: form, field: 'prezzo', label: 'Prezzo' %>
+			<%= form.number_field :prezzo, step: 0.01 %>
+		<% end %>
 
 		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
-			<%= component "field" do |field| %>
-				<% field.with_label { render FormLabelComponent.new(form: form, field: :codice_isbn, label: "ISBN") } %>
-				<%= form.text_field :codice_isbn %>
-			<% end %>
+			<%= label_for form: form, field: 'codice_isbn', label: 'ISBN' %>
+			<%= form.text_field :codice_isbn %>
 		<% end %>
 	</div>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
 		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
-			<%= component "field" do |field| %>
-				<% field.with_label { render FormLabelComponent.new(form: form, field: :classe, label: "Classe") } %>
-				<%= form.select :classe, 
+			<%= label_for form: form, field: 'classe', label: 'Classe' %>
+			<%= form.select :classe, 
 						options_for_select([nil, 1, 2, 3, 4, 5], form.object.classe) %>
-			<% end %>
 		<% end %>
 
 		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
-			<%= component "field" do |field| %>
-				<% field.with_label { render FormLabelComponent.new(form: form, field: :disciplina, label: "Disciplina") } %>
-				<%= form.text_field :disciplina %>
-			<% end %>
+			<%= label_for form: form, field: 'disciplina', label: 'Disciplina' %>
+			<%= form.text_field :disciplina %>
 		<% end %>
 	</div>
 
     <%= tag.fieldset class: "my-5" do %>
-		<%= component "field" do |field| %>
-			<% field.with_label { render FormLabelComponent.new(form: form, field: :note, label: "Note") } %>
-			<%= form.text_area :note, rows: 4 %>
-		<% end %>
+		<%= label_for form: form, field: 'note', label: 'Note' %>
+		<%= form.text_area :note, rows: 4 %>
 	<% end %>
 
 	<div class="mb-4">
-		<%= form.label :copertina, class: "block text-sm font-medium text-gray-700 dark:text-gray-200" %>
-		<%= form.file_field :copertina, 
-				class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700" %>
+		<%= label_for form: form, field: 'copertina', label: 'Copertina' %>
+		<%= form.file_field :copertina %>
 	</div>
 
 	<div class="inline">
