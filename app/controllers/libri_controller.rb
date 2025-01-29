@@ -99,7 +99,15 @@ class LibriController < ApplicationController
         if hotwire_native_app?
           format.html { redirect_to libro_url(@libro), notice: "Libro modificato!" }
         else
-          format.turbo_stream { render turbo_stream: turbo_stream.replace(@libro) }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(@libro),
+              # Aggiorniamo specificamente l'area della copertina
+              turbo_stream.replace("libro_copertina_#{@libro.id}",
+                partial: "libri/copertina",
+                locals: { libro: @libro })
+            ]
+          end
           format.html { redirect_to libri_url, notice: "Libro modificato!" }
           format.json { render :show, status: :ok, location: @libro }
         end

@@ -6,7 +6,7 @@
 	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 		
 		<% heading.with_leader do %>
-			<%= image_tag @libro.avatar_url, class: "h-36 w-28 mr-2 rounded-lg ring-2 ring-white xdark:ring-gray-800", alt: @libro.titolo %>
+			<%= render "copertina", libro: @libro %>
 		<% end %>
 		
 		<% heading.with_description do %>
@@ -203,3 +203,5 @@
 
 
 <% end %>
+
+
