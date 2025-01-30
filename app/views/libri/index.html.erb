@@ -80,21 +80,25 @@
 
 <%= turbo_frame_tag :search_results do %>
 
-    <%= render "shared/active_filters", collection: @libri %>
-    
-    <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
-    <%= tag.div id: "libri-lista", class: "grid grid-cols-1 lg:pr-[15rem]" do %>
-        <p class="only:block hidden py-32 px-4 text-center xl:col-span-2 lg:pr-[15rem]">Whoops! Non ci sono libri </p>
-        
-        <%= render @page.records %>
+    <%= tag.div class: "flex flex-col lg:pr-[15rem]" do %>
 
-        <% unless @page.last? %>
-			<%= turbo_frame_tag "load_more",
-						src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)),
-						loading: :lazy do %>
-				<%= render 'shared/lazy_loading' %>
-			<% end %>
-		<% end %>
+        <%= render "shared/active_filters", collection: @libri %>
+        
+        <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
+        <%= tag.div id: "libri-lista", class: "grid grid-cols-1" do %>
+            <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p>
+            
+            <%= render @page.records %>
+
+            <% unless @page.last? %>
+                <%= turbo_frame_tag "load_more",
+                            src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)),
+                            loading: :lazy do %>
+                    <%= render 'shared/lazy_loading' %>
+                <% end %>
+            <% end %>
+        <% end %>
+
     <% end %>
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
