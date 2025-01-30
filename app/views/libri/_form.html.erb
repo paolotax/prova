@@ -9,7 +9,7 @@
 	<div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
 
 
-		<%= tag.fieldset class: "my-5 cb-tax-fancy flex flex-col" do %>
+		<%= tag.fieldset class: "my-5 cb-tax-fancy flex flex-col space-y-1" do %>
 			<%= label_for form: form, field: 'categoria', label: 'Categoria' %>
 			<%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]",
 							placeholder: "categoria ...", mobile_at: "0px" %>
@@ -43,7 +43,7 @@
 	</div>
 
 	<div class="my-5 flex flex-col sm:flex-row justify-start space-y-5 sm:space-y-0 sm:space-x-4">
-		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
+		<%= tag.fieldset class: "flex flex-col justify-between items-start min-w-24" do %>
 			<%= label_for form: form, field: 'classe', label: 'Classe' %>
 			<%= form.select :classe, 
 						options_for_select([nil, 1, 2, 3, 4, 5], form.object.classe) %>

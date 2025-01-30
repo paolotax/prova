@@ -16,7 +16,7 @@
 
 	<%# oggetto anziche nome %>	
 	<%= render "shared/inline_fields", form: form, method: :nome_e_import_scuola do %>
-		<div class="w-full flex flex-col">		
+		<div class="w-full mt-5 flex flex-col">		
 	
 			<%= component "field" do |field| %>
 				<%= form.text_field :nome, placeholder: "titolo o destinatario...", autofocus: :true %>

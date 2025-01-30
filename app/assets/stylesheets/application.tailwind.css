@@ -33,7 +33,7 @@
       }
     }
     .hw-combobox__input {
-      @apply bg-gray-50 pr-2;
+      @apply bg-gray-50 pr-2 py-1;
     }
     .hw-combobox__label {
       @apply hidden;
