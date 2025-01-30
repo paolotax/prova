@@ -3,53 +3,58 @@
 <% end %>
 
 <div class="sticky not-hotwire-native:top-20 z-10">
-	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+	<div class="mb-4 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 bg-white p-4 rounded-lg justify-between">
 		
-		<% heading.with_leader do %>
-			<%= render "copertina", libro: @libro %>
-		<% end %>
-		
-		<% heading.with_description do %>
+		<div class="flex gap-4">
+			
+			<div class="flex items-start">
+				<%= render "copertina", libro: @libro %>
+			</div>
+			
+			<div class="flex flex-col space-y-2">
 
-			<%= tag.div @libro&.editore&.editore, class: "text-sm font-semibold text-gray-500"  %>
+				<h2 class="text-2xl font-bold"><%= @libro.titolo %></h2>
+				
+				<%= tag.div @libro&.editore&.editore, class: "text-sm font-semibold text-gray-500"  %>
 
-			<%= tag.div class: "flex flex-row items-center gap-2" do %>
-				<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
-				<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
-				<%= tag.div @libro.categoria, class: "text-sm font-semibold text-gray-400"  %>
-			<% end %>
+				<%= tag.div class: "flex flex-col sm:flex-row sm:items-center gap-2" do %>
+					<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
+					<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
+					<%= tag.div @libro.categoria, class: "text-sm font-semibold text-gray-400"  %>
+				<% end %>
 
-			<%= tag.div class: "flex flex-row items-center gap-2" do %>
-				<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
-				<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
-			<% end %>
+				<%= tag.div class: "flex flex-row items-center gap-2" do %>
+					<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
+					<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
+				<% end %>
 
-			<% if @libro.has_confezioni? %>
-				<% @libro.confezioni.each do |c| %>
-					<%= link_to c do %>
-						<%= component( 'badge', text: c.titolo, color: "blue")  %>
+				<% if @libro.has_confezioni? %>
+					<% @libro.confezioni.each do |c| %>
+						<%= link_to c do %>
+							<%= component( 'badge', text: c.titolo, color: "blue")  %>
+						<% end %>
 					<% end %>
 				<% end %>
-			<% end %>
-			
-			<%= tag.div id: "badge_#{@libro.id}", class: "flex flex-row items-center gap-2" do %>
-				<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
-			<% end %>
+				
+				<%= tag.div id: "badge_#{@libro.id}", class: "flex flex-row items-center gap-2" do %>
+					<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
+				<% end %>
 
-			<%# if @libro.righe_confezione.empty? %>
-			<%= turbo_frame_tag "confezione_#{@libro.id}",
-				src: fascicoli_libro_path(@libro),
-				refresh: "morph",
-				loading: :lazy do %>					
-			<% end %>
+				<%= tag.div class:"hidden sm:block" do %>
+					<%= turbo_frame_tag "confezione_#{@libro.id}",
+						src: fascicoli_libro_path(@libro),
+						refresh: "morph",
+						loading: :lazy do %>					
+					<% end %>
 
-			<%= render partial: "confezionator/form", locals: { libro: @libro } %>
+					<%= render partial: "confezionator/form", locals: { libro: @libro } %>
+				<% end %>
+			</div>
 
-		<% end %>
+		</div>
 
-		<% if @libro.can_delete? %>
-			<% heading.with_action do %>	
-
+		<div class="flex items-start gap-2 justify-end">
+			<% if @libro.can_delete? %>
 				<%= component 'tax_button',
 					caption: "Elimina",
 					svg_file: "icon-trash-real.svg",
@@ -62,46 +67,34 @@
 						turbo_confirm_confirm_label: "Si, eliminalo!",
 						turbo_confirm_cancel_label: "Oops, no annulla…",
 					} %>
-
 			<% end %>
-		<% end %>
 
-		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "prec",
 				svg_file: "icon-arrow-left.svg",
 				color: "white",
 				url: "/libri/#{@libro&.previous&.slug}"  %>
-		<% end %>
 
-		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "succ",
 				svg_file: "icon-arrow-right.svg",
 				color: "white",
 				url: "/libri/#{@libro&.next&.slug}"  %>
-		<% end %>
 
-		<% heading.with_action do %>	
 			<%= component 'tax_button',
 				caption: "Indietro",
 				svg_file: "icon-arrow-long-left.svg",
 				color: "white",
 				url: 'javascript:history.back()' %>
-		<% end %>
 
-		<% heading.with_action do %>
 			<%= component 'tax_button',
 				caption: "Modifica",
 				svg_file: "icon-pencil.svg",
 				color: "yellow",
 				url: edit_libro_path(@libro),
 				data_attr: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open" } %>
-		<% end %>
-
-		<%= @libro.titolo %>
-
-	<% end %>
+		</div>
+	</div>
 </div>
 
 <%= tag.div class: "flex flex-col md:flex-row space-y-8 md:space-y-0" do %>

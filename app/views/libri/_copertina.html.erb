@@ -1,6 +1,6 @@
 <%= tag.div id: "libro_copertina_#{libro.id}" do %>
   <% if libro.copertina.attached? %>
-    <%= image_tag libro.copertina, class: "w-32 h-40 object-cover rounded-lg", alt: libro.titolo %>
+    <%= image_tag libro.copertina, class: "w-32 h-40 object-scale-down rounded-lg", alt: libro.titolo %>
   <% else %>
     <%= render DragDropCoverComponent.new(libro: libro) %>
   <% end %>
