@@ -53,7 +53,6 @@ class Tappa < ApplicationRecord
   
   scope :ultima, -> { order(created_at: :desc).first }
   
-  scope :ultima_tappa_passata, -> { order(data_tappa: :desc).where("data_tappa < ?", Date.today).first }
   scope :tappe_future, -> { order(data_tappa: :asc).where("data_tappa >= ?", Date.today) }
   scope :tappe_passate, -> { order(data_tappa: :desc).where("data_tappa < ?", Date.today) }
   
@@ -105,6 +104,10 @@ class Tappa < ApplicationRecord
 
   def da_ritirare?
     data_tappa.nil? && giro.giro_ritiri?
+  end
+
+  def self.ultima_tappa_passata
+    order(data_tappa: :desc).where("data_tappa < ?", Date.today).first
   end
 
 

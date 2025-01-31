@@ -30,13 +30,8 @@
 	<div class="ml-2 flex flex-row">
 
 		<%# celle senza giro %>
-		<%= tag.div class: "py-2 content-center border-l group" do %>
-			<%= tag.div id: "tappe-list--#{dom_id import_scuola}" do %>
-				<% import_scuola.tappe.order(data_tappa: :desc).limit(1).each do |tappa| %>
-					<%= render partial: "tappe/tappa_menu", locals: { tappa: tappa, mostra_dropdown: false } %>
-				<% end %>
-				<%= render partial: "tappe/tappa_new", locals: { scuola: import_scuola, giro_id: nil } %>
-			<% end %>	
+		<%= tag.div id: "tappa-scuola-#{import_scuola.id}", class: "tappe-import_scuola-#{import_scuola.id} flex items-center -space-x-2" do %>
+			<%= render partial: "clientable/lista_tappe", locals: { tappe: import_scuola.tappe } %>	
 		<% end %>
 			
 		<%# cella appunti ping %>
