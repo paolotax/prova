@@ -108,7 +108,7 @@ class CommandMenuComponent < ApplicationComponent
   end
 
   def items_list
-    tag.ul data: {command_menu_target: "itemsList"},
+    tag.ul data: {command_menu_target: "itemsList"}, id: "itemsList",
       class: class_names(
         "flex flex-col",
         "overflow-y-auto",
