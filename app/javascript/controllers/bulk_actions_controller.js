@@ -19,8 +19,13 @@ export default class BulkActionsController extends CheckboxesController {
 
   
   toggleTappa() {
-    this.statoFormTarget.classList.add('hidden')
-    this.stampaFormTarget.classList.add('hidden')
+    if (this.hasStampaFormTarget) {
+      this.stampaFormTarget.classList.add('hidden')
+    }
+
+    if (this.hasStatoFormTarget) {
+      this.statoFormTarget.classList.add('hidden')
+    }
     
     if (this.tappaFormTarget.classList.contains('hidden')) {
       this.tappaFormTarget.classList.remove('hidden')
@@ -41,20 +46,25 @@ export default class BulkActionsController extends CheckboxesController {
 
   toggleStato() {
     this.tappaFormTarget.classList.add('hidden')
-    this.stampaFormTarget.classList.add('hidden')
     
-    if (this.statoFormTarget.classList.contains('hidden')) {
-      this.statoFormTarget.classList.remove('hidden')
-      requestAnimationFrame(() => {
-        this.statoFormTarget.classList.remove('-translate-y-4', 'opacity-0')
-        this.statoFormTarget.classList.add('translate-y-0', 'opacity-100')
-      })
-    } else {
-      this.statoFormTarget.classList.add('-translate-y-4', 'opacity-0')
-      this.statoFormTarget.classList.remove('translate-y-0', 'opacity-100')
-      setTimeout(() => {
-        this.statoFormTarget.classList.add('hidden')
-      }, 200)
+    if (this.hasStampaFormTarget) {
+      this.stampaFormTarget.classList.add('hidden')
+    }
+    
+    if (this.statoFormTarget) {
+      if (this.statoFormTarget.classList.contains('hidden')) {
+        this.statoFormTarget.classList.remove('hidden')
+        requestAnimationFrame(() => {
+          this.statoFormTarget.classList.remove('-translate-y-4', 'opacity-0')
+          this.statoFormTarget.classList.add('translate-y-0', 'opacity-100')
+        })
+      } else {
+        this.statoFormTarget.classList.add('-translate-y-4', 'opacity-0')
+        this.statoFormTarget.classList.remove('translate-y-0', 'opacity-100')
+        setTimeout(() => {
+          this.statoFormTarget.classList.add('hidden')
+        }, 200)
+      }
     }
   }
 

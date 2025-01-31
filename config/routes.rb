@@ -202,9 +202,7 @@ Rails.application.routes.draw do
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
       collection do
-        patch :add_tappa_oggi
-        patch :add_tappa_domani
-        patch :add_tappa_custom
+        patch :add_tappa_giorno
       end
     end
   end

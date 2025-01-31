@@ -97,13 +97,7 @@
 				<% end %>
 			<% end %>
 
-			<%= render BulkActionsComponent.new(theme: "dark", container_css: "px-5 py-3 bg-gray-900 rounded-lg fixed top-4 z-30 left-1/2 -translate-x-1/2") do |bulk| %>
-				<%= tag.div class:  "px-5 py-3 rounded-lg" do %>
-					<% bulk.with_action("Oggi", href: add_tappa_oggi_import_scuole_bulk_actions_path, method: :patch, data: {}) %>
-					<% bulk.with_action("Domani", href: add_tappa_domani_import_scuole_bulk_actions_path, method: :patch, data: {}) %>
-					<% bulk.with_action("Annulla", href: "#", method: :patch, data: {}) %>
-				<% end %>
-			<% end %>
+			<%= render "import_scuole/bulk_actions/form" %>
 		
 	<% end %>
 
