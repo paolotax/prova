@@ -17,37 +17,50 @@
                     url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
             <% end %>
         <% end %>
-        
-		<% heading.with_action do %>
-			<%= component 'tax_button',
-				caption: "Agenda",
-				color: "yellow",
-				url: agenda_path(giorno: (@giorno).to_s),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-		<% end %>
-            
-        <% heading.with_action do %>
-            <div class="flex gap-1">
+                    
+        <% heading.with_description do %>
+            <div class="flex items-center -ml-3">
                 <%= component 'tax_button',
                     svg_file: "icon-arrow-left.svg",
-                    color: "white",
+                    color: "transparent",
                     url: giorno_path(giorno: (@giorno - 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-                
-                <%= component 'tax_button',
-                    caption: "Oggi",
-                    color: "white",
-                    url: giorno_path(giorno: Date.today.to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>                
-            
+                                            
+                <div data-controller="date-selector" class="relative">
+                    <%= date_field_tag :giorno, 
+                        @giorno, 
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
+                        style: "width: 2.5rem; color: transparent;",
+                        data: {
+                            action: "change->date-selector#change",
+                            date_selector_target: "select",
+                            current_date: @giorno
+                        } %>
+                    <%= icon "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
+                </div>
+
                 <%= component 'tax_button',
                     svg_file: "icon-arrow-right.svg",
-                    color: "white",
+                    color: "transparent",
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
             </div>
         
         <% end %>
+
+        <% heading.with_action do %>
+			<%#= component 'tax_button',
+                    caption: "Oggi",
+                    color: "white",
+                    url: giorno_path(giorno: Date.today.to_s),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+
+            <%= component 'tax_button',
+				caption: "Agenda",
+				color: "yellow",
+				url: agenda_path(giorno: (@giorno).to_s),
+                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+		<% end %>
 
 		<%= I18n.l( @giorno.to_date, format: :long_with_day, locale: :it ) %>
 
