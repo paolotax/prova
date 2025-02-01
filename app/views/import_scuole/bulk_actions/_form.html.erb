@@ -1,4 +1,4 @@
-<%= tag.div hidden: true, class: "px-5 py-3 bg-indigo-500 rounded-xl border border-indigo-600 shadow-xl fixed top-4 z-30 left-1/2 -translate-x-1/2",
+<%= tag.div hidden: true, class: "px-5 py-5 bg-indigo-500 rounded-2xl border border-indigo-600 shadow-xl fixed top-4 z-30 left-1/2 -translate-x-1/2",
         data: {
             bulk_actions_target: "container",
             transition_enter: "transition ease-out duration-100",
@@ -8,7 +8,7 @@
             transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } do %>
-    <%= tag.div class: "flex items-center gap-4 mb-4" do %>
+    <%= tag.div class: "flex items-center gap-4" do %>
 
 
         <%= button_tag "Tappa", 
@@ -20,7 +20,7 @@
 
     <div class="forms-container">
 
-        <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top"
+        <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
                 data-bulk-actions-target="tappaForm"
                 data-transition-enter="transform transition ease-out duration-300"
                 data-transition-enter-start="transform -translate-y-4 opacity-0"
@@ -54,8 +54,8 @@
 
     </div>
 
-    <%= link_to "", data: { action: "bulk-actions#deselectAll" }, class: "absolute -top-2 -right-2 p-2 rounded-full bg-gray-800 hover:bg-gray-700" do %>
-        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <%= link_to "", data: { action: "bulk-actions#deselectAll" }, class: "absolute top-1 left-1 p-1 rounded-full bg-white hover:bg-gray-100" do %>
+        <svg class="w-4 h-4 text-indigo-500 font-bold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
     <% end %>
