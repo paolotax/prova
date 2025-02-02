@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   namespace :searches do
     get 'clientable/show'
     get 'clientable/new'
+    resources :clientable, only: :index
   end
 
   post "sfascicola", to: "sfascicolator#generate"

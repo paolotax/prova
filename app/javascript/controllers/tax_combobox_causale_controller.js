@@ -30,6 +30,7 @@ export default class extends Controller {
   }
 
   showClientableForm(clientable_type) {
+    console.log("showClientableForm", clientable_type);
     
     let url = `/searches/clientable/new?clientable_type=${clientable_type}`;
     
