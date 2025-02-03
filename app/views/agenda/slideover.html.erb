@@ -18,16 +18,15 @@
     <%= tag.div class: "px-4" do %>
         <%= form_with(url: tappe_bulk_actions_path, method: :post, class: "space-y-4", builder: RailsDesigner::FormBuilder) do |form| %>
             
-            <div class="flex-col space-y-4">
-                <%= component "field" do |field| %>
-                    <%# field.with_label { render FormLabelComponent.new(form: form, field: :data_tappa, label: "Data tappa") } %>
+            <div class="flex flex-col space-y-4">
+                <%= tag.fieldset   do %>
+                    <%= form.label  :data_tappa, "Data tappa", class: "block text-sm font-medium text-gray-700" %>
                     <%= form.date_field :data_tappa, value: @giorno, placeholder: "data tappa..." %>
                 <% end %>
                 
-                <%= tag.div class: "cb-tax-fancy flex w-full" do %>
+                <%= tag.div class: "cb-tax-fancy flex flex-col" do %>
 
-                        <%# field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giro") } %>
-                    
+                        <%= form.label  :giro_id, "Giro", class: "block text-sm font-medium text-gray-700" %>
                         <%= form.combobox :giro_id, current_user.giri.all, name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
 
                 <% end %>
@@ -38,8 +37,8 @@
                 <label class="block text-sm font-medium text-gray-700">Seleziona Tipo</label>
 
                 <%= form.select :tappable_type, class: "w-full" do %>
-                    <option value="Cliente">Cliente</option>
                     <option value="ImportScuola">Scuola</option>
+                    <option value="Cliente">Cliente</option>
                 <% end %>
             </div>
 
