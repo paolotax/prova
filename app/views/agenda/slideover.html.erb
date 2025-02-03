@@ -27,7 +27,7 @@
                 <%= tag.div class: "cb-tax-fancy flex flex-col" do %>
 
                         <%= form.label  :giro_id, "Giro", class: "block text-sm font-medium text-gray-700" %>
-                        <%= form.combobox :giro_id, current_user.giri.all, name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
+                        <%= form.combobox :giro_id, current_user.giri.all, mobile_at: "0px" %>
 
                 <% end %>
             </div> 
