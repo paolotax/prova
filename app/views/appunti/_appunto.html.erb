@@ -81,7 +81,7 @@
 				
 				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "tappe-import_scuola-#{appunto.import_scuola_id} flex items-center -space-x-2" do %>
 					<% if appunto.import_scuola %>
-						<%= render partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
+						<%= render partial: "clientables/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
 					<% end %>
 				<% end %>
 				

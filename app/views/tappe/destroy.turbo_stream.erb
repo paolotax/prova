@@ -43,5 +43,5 @@
 
  <%# TODO: questo funziona ma voglio usare i targets: ".tappe-import_scuola-#{tappa.tappable.import_scuola_id}" %>
 <% @tappa.tappable.appunti.each do |appunto| %>
-    <%= turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "clientable/lista_tappe", locals: { tappe: appunto.import_scuola.tappe }) %>
+    <%= turbo_stream.update("tappa-appunto-#{appunto.id}", partial: "clientables/lista_tappe", locals: { tappe: appunto.import_scuola.tappe }) %>
 <% end %>

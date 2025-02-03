@@ -16,7 +16,7 @@
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
 				
-				<%= render partial: "clientable/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+				<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
 								
 				<%= tag.p documento.referente, class: "text-xs" %> 
 				<%= tag.p documento.note, class: "text-xs" %> 

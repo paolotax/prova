@@ -50,4 +50,9 @@ class AgendaController < ApplicationController
       ]
     end
   end
+
+  def slideover
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+  end
+
 end

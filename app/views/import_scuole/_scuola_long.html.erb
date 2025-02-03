@@ -31,7 +31,7 @@
 
 		<%# celle senza giro %>
 		<%= tag.div id: "tappa-scuola-#{import_scuola.id}", class: "tappe-import_scuola-#{import_scuola.id} flex items-center -space-x-2" do %>
-			<%= render partial: "clientable/lista_tappe", locals: { tappe: import_scuola.tappe } %>	
+			<%= render partial: "clientables/lista_tappe", locals: { tappe: import_scuola.tappe } %>	
 		<% end %>
 			
 		<%# cella appunti ping %>

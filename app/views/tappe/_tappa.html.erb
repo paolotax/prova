@@ -38,7 +38,7 @@
         ] do %>
         
         <%= tag.div class: "flex flex-col" do %>  
-            <%= render partial: "clientable/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
+            <%= render partial: "clientables/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
             <%= tag.div tappa&.giro&.titolo, class: "text-xs  font-bold text-gray-600" %>
             <%= tag.div simple_format(tappa.titolo), class: "pt-2 text-xs italic font-semibold text-gray-400 line-clamp-2 hover:line-clamp-none" %>
         <% end %>

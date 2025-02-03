@@ -68,7 +68,7 @@
       
         <div class="px-4 sm:flex-auto">
             <h1 class="text-xl font-semibold leading-6 text-gray-900">
-                <%= render partial: "clientable/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>    
+                <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>    
             </h1>
             
             <p class="mt-1 text-sm text-gray-500">

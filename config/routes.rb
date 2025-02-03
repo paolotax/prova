@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get "agenda", to: "agenda#index"
   get "agenda/:giorno", to: "agenda#show", as: "giorno"
   get "agenda/:giorno/mappa", to: "agenda#mappa", as: "mappa_del_giorno"
+  get "agenda/:giorno/slideover", to: "agenda#slideover", as: "slideover"
 
   authenticate :user, ->(user) { user.admin? } do
     mount Blazer::Engine, at: "blazer"
@@ -216,6 +217,10 @@ Rails.application.routes.draw do
         patch :segna_come
       end
     end
+  end
+
+  namespace :tappe do
+    resources :bulk_actions, only: [:create]
   end
 
 
