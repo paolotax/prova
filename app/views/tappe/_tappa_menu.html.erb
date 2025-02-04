@@ -24,7 +24,8 @@
                 <%= link_to "#",
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         data: {
-                            action: "click->bulk-actions#showCheckboxes click->rd-dropdown#toggle",
+                            action: "click->bulk-actions#showCheckboxes click->rd-dropdown#toggle click->bulk-actions#selectCheckbox",
+                            bulk_actions_tappa_param: tappa.id,
                             turbo: false
                         },
                         role: "menuitem", tabindex: "-1" do %>

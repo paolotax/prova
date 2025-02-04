@@ -78,7 +78,7 @@
 
 <div data-controller="bulk-actions">
     <div id="giorno-<%= @giorno %>"
-        class="group show-navigator"
+        class="group show-navigator pt-2 pb-4"
         data-controller="tax-sortable"
         data-tax-sortable-group-value="calendar"
         data-tax-sortable-param-name-value="position"
@@ -98,24 +98,24 @@
 </div>
 
 
-<div class="flex justify-center gap-4 m-4">
+<%# <div class="flex justify-center gap-4 m-4">
 
         <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno),
             class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-            <%= icon "academic-cap", variant: :solid, class: "w-6 h-6" %>
-            <span>Aggiungi scuola</span>
-        <% end %>
+            <%# <%= icon "academic-cap", variant: :solid, class: "w-6 h-6" %>
+            <%# <span>Aggiungi scuola</span> %>
+        <%# <% end %> 
 
-        <%= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno),
+        <%#= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno),
             class: "w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
 
-            <%= icon "currency-euro", variant: :solid, class: "w-6 h-6" %>
-            <span>Aggiungi cliente</span>
-        <% end %>
+            <%#= icon "currency-euro", variant: :solid, class: "w-6 h-6" %>
+            <%# <span>Aggiungi cliente</span> %>
+        <%# <% end %> 
 
-</div>
+<%# </div> %>
 
 <% if @tappe.any? %>
     

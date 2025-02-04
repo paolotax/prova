@@ -133,4 +133,19 @@ export default class BulkActionsController extends CheckboxesController {
         });
     });
   }
+
+  selectCheckbox(event) {
+    const tappaId = event.currentTarget.dataset.bulkActionsTappaParam;
+    const checkbox = document.querySelector(`input[type="checkbox"][value="${tappaId}"]`);
+    
+    if (checkbox) {
+        checkbox.checked = true;
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Aggiorna il contatore e mostra il container
+        this.checkboxesCheckedCountValue = this.checkboxes.filter(c => c.checked).length;
+        this.openValue = true;
+        this.#syncSelection();
+    }
+  }
 }
