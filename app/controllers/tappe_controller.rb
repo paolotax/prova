@@ -140,37 +140,37 @@ class TappeController < ApplicationController
   end
 
   def bulk_update
-    @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
+    # @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
 
-    @giro = @selected_tappe.first.giro if @selected_tappe.any?
-    # update
-    @selected_tappe.update_all(data_tappa: Time.now.end_of_day) if mass_oggi?
-    @selected_tappe.update_all(data_tappa: Time.now.end_of_day + 1.day) if mass_domani?    
-    @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
-    @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
+    # @giro = @selected_tappe.first.giro if @selected_tappe.any?
+    # # update
+    # @selected_tappe.update_all(data_tappa: Time.now.end_of_day) if mass_oggi?
+    # @selected_tappe.update_all(data_tappa: Time.now.end_of_day + 1.day) if mass_domani?    
+    # @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
+    # @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
     
-    if mass_duplica?
-      @nuove_tappe = []
-      @selected_tappe.each do |tappa|
-        t = tappa.dup
-        t.data_tappa = params[:data_tappa].to_date
-        t.giro = Current.user.giri.last
-        t.titolo = params[:titolo]
-        t.save
-        @nuove_tappe << t
-      end
-    end
+    # if mass_duplica?
+    #   @nuove_tappe = []
+    #   @selected_tappe.each do |tappa|
+    #     t = tappa.dup
+    #     t.data_tappa = params[:data_tappa].to_date
+    #     t.giro = Current.user.giri.last
+    #     t.titolo = params[:titolo]
+    #     t.save
+    #     @nuove_tappe << t
+    #   end
+    # end
     
-    #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
-    flash.now[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
+    # #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
+    # flash.now[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
     
-    respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata!" }
-        format.json { render :show, status: :ok, location: @tappa }
-    end    
+    # respond_to do |format|
+    #     format.turbo_stream
+    #     format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata!" }
+    #     format.json { render :show, status: :ok, location: @tappa }
+    # end    
 
-    #redirect_back(fallback_location: request.referer)
+    # #redirect_back(fallback_location: request.referer)
   end
 
   def duplica

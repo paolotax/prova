@@ -6,9 +6,9 @@
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
 <% end %>
 
-<div class="">
-	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
-		
+<div>
+    <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
+        
         <% if @tappe.size > 1 %>
             <% heading.with_action do %>	
                 <%= component 'tax_button',
@@ -49,18 +49,18 @@
         <% end %>
 
         <% heading.with_action do %>
-			<%#= component 'tax_button',
+            <%#= component 'tax_button',
                     caption: "Oggi",
                     color: "white",
                     url: giorno_path(giorno: Date.today.to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
 
             <%= component 'tax_button',
-				caption: "Agenda settimanale",
-				color: "yellow",
-				url: agenda_path(giorno: (@giorno).to_s),
+                caption: "Agenda settimanale",
+                color: "yellow",
+                url: agenda_path(giorno: (@giorno).to_s),
                 data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-		<% end %>
+        <% end %>
 
         <% heading.with_action do %>
             <%= component 'tax_button',
@@ -70,30 +70,32 @@
                 data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
         <% end %>
 
-		<%= I18n.l( @giorno.to_date, format: :long_with_day, locale: :it ) %>
+        <%= I18n.l( @giorno.to_date, format: :long_with_day, locale: :it ) %>
 
-	<% end %>
-</div>
-
-
-<div id="giorno-<%= @giorno %>"
-    class="group show-navigator"
-    data-controller="tax-sortable"
-    data-tax-sortable-group-value="calendar"
-    data-tax-sortable-param-name-value="position"
-    data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
-
-    <%# non riordina bene position col css che nasconde quindi lo devo eliminare nel turbo stream %>
-    <% if @tappe.empty? %>
-        <div class="no-tappe text-center py-16 hidden only:block">
-            <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
-            <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
-        </div>
-    <% else %>
-        <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
     <% end %>
 </div>
 
+
+<div data-controller="bulk-actions">
+    <div id="giorno-<%= @giorno %>"
+        class="group show-navigator"
+        data-controller="tax-sortable"
+        data-tax-sortable-group-value="calendar"
+        data-tax-sortable-param-name-value="position"
+        data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
+
+        <%# non riordina bene position col css che nasconde quindi lo devo eliminare nel turbo stream %>
+        <% if @tappe.empty? %>
+            <div class="no-tappe text-center py-16 px-4 hidden only:block">
+                <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
+                <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
+            </div>
+        <% else %>
+            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
+        <% end %>
+    </div>
+    <%= render "tappe/bulk_actions/form" %>
+</div>
 
 
 <div class="flex justify-center gap-4 m-4">

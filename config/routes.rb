@@ -220,7 +220,10 @@ Rails.application.routes.draw do
   end
 
   namespace :tappe do
-    resources :bulk_actions, only: [:create]
+    resources :bulk_actions, only: [:create] do
+      patch :update_all, on: :collection
+      delete :destroy_all, on: :collection
+    end
   end
 
 

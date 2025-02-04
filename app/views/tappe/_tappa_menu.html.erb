@@ -1,6 +1,6 @@
 <%# locals: ( appunto: nil, tappa: nil, mostra_dropdown: true ) -%>
 
-<%= tag.div id: "#{appunto&.id}tappa-menu-#{dom_id tappa}", class: "mx-auto relative flex items-center justify-center" do %>
+<%= tag.div id: "#{appunto&.id}tappa-menu-#{dom_id tappa}", class: "tappa-menu mx-auto relative flex items-center justify-center" do %>
     
     <%= render DropdownComponent.new do |dropdown| %>
         
@@ -20,6 +20,18 @@
         <% end %>
         
         <% if mostra_dropdown %>
+            <% dropdown.with_item do %>
+                <%= link_to "#",
+                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+                        data: {
+                            action: "click->bulk-actions#showCheckboxes click->rd-dropdown#toggle",
+                            turbo: false
+                        },
+                        role: "menuitem", tabindex: "-1" do %>
+                    Seleziona
+                <% end %>
+            <% end %>
+
             <% dropdown.with_item do %>
                 <%= link_to edit_tappa_path( tappa ),
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",

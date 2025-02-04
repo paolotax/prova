@@ -21,6 +21,10 @@
   animation-duration: 0.5s;
 }
 
+.bulk-actions-checkbox.show {
+  display: block !important;
+}
+
 trix-toolbar { display: none; }
 
 .cell-in_provincia,

@@ -2,14 +2,12 @@ import CheckboxesController from "./checkboxes_controller";
 import { enter, leave } from "./helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
-  static targets = ["container", "form", "counter", "stampaForm", "tappaForm", "statoForm"];
+  static targets = ["container", "form", "counter", "stampaForm", "tappaForm", "statoForm", "eliminaForm"];
   static values = { open: Boolean };
 
   toggle(event) {
     super.toggle(event);
-    
-    console.log("toggle");
-    
+        
     this.#syncSelection();
   }
 
@@ -18,6 +16,8 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   
+  // mie d togliere
+
   toggleTappa() {
     if (this.hasStampaFormTarget) {
       this.stampaFormTarget.classList.add('hidden')
@@ -87,6 +87,10 @@ export default class BulkActionsController extends CheckboxesController {
     }
   }
 
+  toggleElimina() {
+    this.eliminaFormTarget.classList.toggle('hidden')
+  }
+
   // private
 
   checkboxesCheckedCountValueChanged() {
@@ -100,6 +104,19 @@ export default class BulkActionsController extends CheckboxesController {
   openValueChanged() {
     this.openValue ? this.containerTarget.hidden && enter(this.containerTarget) : leave(this.containerTarget);
   }
+
+  
+  showCheckboxes(event) {
+    console.log("showCheckboxes");
+    event.preventDefault();
+    document.querySelectorAll('.bulk-actions-checkbox').forEach(checkbox => {
+      checkbox.classList.toggle('hidden');
+    });
+    document.querySelectorAll('.tappa-menu').forEach(menu => {
+      menu.classList.toggle('hidden');
+    });
+  }
+
 
   #syncSelection() {
     const name = this.checkboxes[0]?.name || "ids[]";

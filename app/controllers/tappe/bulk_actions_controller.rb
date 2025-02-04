@@ -39,10 +39,51 @@ module Tappe
       end
     end
     
+    def update_all  
+      tappa_ids   = params.fetch(:tappa_ids, []).compact
+      new_data_tappa = params[:data_tappa]
+      new_titolo     = params[:titolo]
+      new_giro_id    = params[:giro_id]
+      
+      @selected_tappe = current_user.tappe.where(id: tappa_ids)
+    
+      @selected_tappe.each do |tappa|
+        tappa.update(
+          data_tappa: new_data_tappa,
+          titolo: new_titolo,
+          giro_id: new_giro_id
+        )
+      end
+      
+      flash[:notice] = "#{@selected_tappe.count} tappe aggiornate"     
+      respond_to do |format|
+        format.html { redirect_to giorno_path(new_data_tappa) }
+        format.turbo_stream { turbo_redirect_to(giorno_path(new_data_tappa)) }
+      end
+    end
+
+    def destroy_all
+      @selected_tappe = current_user.tappe.where(id: params.fetch(:tappa_ids, []).compact)
+      giorno = @selected_tappe.first.data_tappa
+      count = @selected_tappe.count
+      @selected_tappe.destroy_all
+      flash[:notice] = helpers.pluralize(count, "tappa eliminata", "tappe eliminate")
+      respond_to do |format|
+        format.html { redirect_to giorno_path(giorno) }
+        format.turbo_stream { turbo_redirect_to(giorno_path(giorno)) }
+      end
+    end
+
     private
 
     def bulk_action_params
-      params.require(:bulk_action).permit(:data_tappa, :giro_id, :titolo, :tappable_type, tappable_ids: [])
+      params.permit(:data_tappa, :giro_id, :titolo, :tappable_type, tappable_ids: [])
+    end
+
+    def turbo_redirect_to(path)
+      render turbo_stream: turbo_stream.append_all("body", 
+        "<script>window.location.href = '#{path}';</script>".html_safe
+      )
     end
   end
 end
