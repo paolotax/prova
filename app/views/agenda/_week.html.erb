@@ -1,36 +1,39 @@
-<%- settimana.each do |giorno| %>      
-	<%= tag.div class: [ 
-                    "flex-shrink-0 w-[300px] scroll-snap-start p-4": true,
-                    "bg-white border border-gray-200 rounded ": giorno.to_date != Date.today,
-                    "bg-pink-100 border-2 border-red-500 rounded-md": giorno.to_date == Date.today,
-                ], 
-                data: { giorno: giorno.to_s } do %>
 
-		<%= tag.div class: "flex justify-between items-center" do %>
-			<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s),
-                data: { turbo_frame: :_top },
-				class: "hover:font-semibold" %>
-			<%= component 'tax_button',
-				svg_file: "icon-plus.svg",
-                color: "blue",
-                url: slideover_path(giorno: giorno),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
-		<% end %>
+	<%- settimana.each do |giorno| %>      
+		<%= tag.div class: [ 
+						"flex-shrink-0 w-[300px] scroll-snap-start p-4": true,
+						"bg-white border border-gray-200 rounded ": giorno.to_date != Date.today,
+						"bg-pink-100 border-2 border-red-500 rounded-md": giorno.to_date == Date.today,
+					], 
+					data: { giorno: giorno.to_s } do %>
 
-		<%= tag.div id: "giorno-#{giorno.to_s}", 
-					class: "h-96 w-full bg-transparent mt-4 overflow-y-auto",
-					data: {
-                        controller: "tax-sortable",
-                        tax_sortable_group_value: "calendar",
-                        tax_sortable_data_tappa: "#{giorno.to_s}",
-					} do %>        
-			
-			<% tappe_per_giorno.select { |t| giorno == t }.values.each do |tappe| %>
+			<%= tag.div class: "flex justify-between items-center" do %>
+				<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s),
+					data: { turbo_frame: :_top },
+					class: "hover:font-semibold" %>
+				<%= component 'tax_button',
+					svg_file: "icon-plus.svg",
+					color: "blue",
+					url: slideover_path(giorno: giorno),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+			<% end %>
+
+			<%= tag.div id: "giorno-#{giorno.to_s}", 
+						class: "h-96 w-full bg-transparent mt-4 overflow-y-auto",
+						data: {
+							controller: "tax-sortable",
+							tax_sortable_group_value: "calendar",
+							tax_sortable_data_tappa: "#{giorno.to_s}",
+						} do %>        
 				
-				<% tappe.sort_by(&:position).each do |tappa| %>
-					<%= render tappa, with_checkbox: false %>
+				<% tappe_per_giorno.select { |t| giorno == t }.values.each do |tappe| %>
+					
+					<% tappe.sort_by(&:position).each do |tappa| %>
+						<%= render tappa, with_checkbox: false %>
+					<% end %>
 				<% end %>
 			<% end %>
+		
 		<% end %>
 	<% end %>
-<% end %>
+

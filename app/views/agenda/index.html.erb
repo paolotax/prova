@@ -37,9 +37,12 @@
 		
 	<div id="week-container" 
         class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px]" 
-        data-agenda-scroll-target="weekContainer">
+        data-agenda-scroll-target="weekContainer"
+		data-controller="bulk-actions">
 	
     	<%= render partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno } %>
+
+		<%= render "tappe/bulk_actions/form" %>
     </div>
 
 <% end %>
