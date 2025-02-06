@@ -19,7 +19,13 @@
         <% end %>
                     
         <% heading.with_description do %>
-            <div class="flex items-center -ml-3">
+            <div class="flex items-center">
+                <%= component 'tax_button',
+                    caption: "Settimana",
+                    color: "yellow",
+                    url: agenda_path(giorno: @giorno),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                
                 <%= component 'tax_button',
                     svg_file: "icon-arrow-left.svg",
                     color: "transparent",
@@ -44,27 +50,15 @@
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-            </div>
         
+
+
+            </div>
         <% end %>
-
-        <% heading.with_action do %>
-            <%#= component 'tax_button',
-                    caption: "Oggi",
-                    color: "white",
-                    url: giorno_path(giorno: Date.today.to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-
-            <%= component 'tax_button',
-                caption: "Agenda settimanale",
-                color: "yellow",
-                url: agenda_path(giorno: (@giorno).to_s),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-        <% end %>
-
+       
         <% heading.with_action do %>
             <%= component 'tax_button',
-                caption: "Aggiungi tappe",
+                svg_file: "icon-plus.svg",
                 color: "blue",
                 url: slideover_path,
                 data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
