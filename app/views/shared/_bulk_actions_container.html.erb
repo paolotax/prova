@@ -10,11 +10,18 @@
         } do %>
     
     <%= tag.div class: "flex items-center gap-4" do %>
+        
         <%= yield :bulk_action_buttons %>
-    <% end %>
-
-    <%= tag.div(data: {bulk_actions_target: "counter"}, class: "text-sm font-medium items-center text-white align-right bg-indigo-600 hover:bg-indigo-700 rounded-md") do %>
-        <%= pluralize(0, "tappa", "tappe") %>
+        
+        <%= button_tag "Seleziona tutto", 
+            class: "flex flex-col items-center gap-y-1 px-2 py-3 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#selectAll" } do %>
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-select"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M9 11l3 3l3 -3" /></svg>
+            <div class="flex items-center gap-x-1.5">
+                Seleziona
+                <%= tag.span(data: {bulk_actions_target: "counter"}, class: "block px-1 py-0.5 text-xs tabular-nums font-light text-white") %>
+            </div>
+        <% end %>
     <% end %>
 
     <div class="forms-container">
