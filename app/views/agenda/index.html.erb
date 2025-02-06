@@ -2,14 +2,46 @@
 
 <div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
-		
-		<% heading.with_action do %>
-			<div class="flex gap-1">
+
+
+        <% heading.with_description do %>
+            <div class="flex items-center gap-1 mt-2">
+				<%= component 'tax_button',
+					caption: "Oggi",
+					color: "green",
+					url: agenda_path(giorno:  Date.today.to_s),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+                
 				<%= component 'tax_button',
 					svg_file: "icon-arrow-left.svg",
-					color: "white",
+					color: "transparent",
 					url: agenda_path(giorno: (@giorno - 7.days).to_s),
 					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+                                            
+                <div data-controller="date-selector" class="relative">
+                    <%= date_field_tag :giorno, 
+                        @giorno, 
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
+                        style: "width: 2.5rem; color: transparent;",
+                        data: {
+                            action: "change->date-selector#change",
+                            date_selector_target: "select",
+                            current_date: @giorno
+                        } %>
+                    <%= icon "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
+                </div>
+
+				<%= component 'tax_button',
+					svg_file: "icon-arrow-right.svg",
+					color: "transparent",
+					url: agenda_path(giorno: (@giorno + 7.days).to_s),
+					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+            </div>
+        <% end %>
+
+		<% heading.with_action do %>
+			<div class="flex gap-1">
+
 
 				<%= component 'tax_button',
 					caption: "Oggi",
@@ -17,11 +49,7 @@
 					url: agenda_path(giorno:  Date.today.to_s),
 					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
 
-				<%= component 'tax_button',
-					svg_file: "icon-arrow-right.svg",
-					color: "white",
-					url: agenda_path(giorno: (@giorno + 7.days).to_s),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+
 			</div>
 		<% end %>
 

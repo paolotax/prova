@@ -19,7 +19,7 @@
         <% end %>
                     
         <% heading.with_description do %>
-            <div class="flex items-center">
+            <div class="flex items-center gap-1 mt-2">
                 <%= component 'tax_button',
                     caption: "Settimana",
                     color: "yellow",
@@ -50,9 +50,6 @@
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno + 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-        
-
-
             </div>
         <% end %>
        
