@@ -126,9 +126,6 @@ Rails.application.routes.draw do
   end
 
   resources :tappe do
-    collection do
-      patch 'bulk_update'
-    end
     member do
       post 'duplica'
       patch 'sort'

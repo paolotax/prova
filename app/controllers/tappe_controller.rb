@@ -5,7 +5,7 @@ class TappeController < ApplicationController
 
   def index
 
-    @tappe = current_user.tappe
+    @tappe = current_user.tappe.where(tappable_type: "ImportScuola")
     
     if params[:filter]  == 'programmate'
       @tappe = @tappe.delle_scuole_di(@tappe.programmate.pluck(:tappable_id))
@@ -22,21 +22,23 @@ class TappeController < ApplicationController
     @tappe = @tappe.delle_scuole_di(@tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
     @tappe = @tappe.delle_scuole_di(@tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
 
-    if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
-      @tappe = @tappe.send(params[:sort])
-    else
-      @tappe = @tappe.per_ordine_e_data
-    end
+    # if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
+    #   @tappe = @tappe.send(params[:sort])
+    # else
+    #   @tappe = @tappe.per_ordine_e_data
+    # end
 
     #inizializzo geared pagination
     set_page_and_extract_portion_from @tappe
 
+    # raise @page.records.inspect
+
     # #raggruppo le tappe per data o direzione a seconda dell'ordine
-    # if params[:sort].presence.in? ["per_data", "per_data_desc"]
-    #   @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
-    # else
-    #   @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }     
-    # end
+    if params[:sort].presence.in? ["per_data", "per_data_desc"]
+      @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
+    else
+      @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }     
+    end
 
     respond_to do |format|
       format.html
@@ -139,40 +141,7 @@ class TappeController < ApplicationController
     # head :no_content
   end
 
-  def bulk_update
-    # @selected_tappe = Tappa.where(id: params.fetch(:tappa_ids, []).compact)
-
-    # @giro = @selected_tappe.first.giro if @selected_tappe.any?
-    # # update
-    # @selected_tappe.update_all(data_tappa: Time.now.end_of_day) if mass_oggi?
-    # @selected_tappe.update_all(data_tappa: Time.now.end_of_day + 1.day) if mass_domani?    
-    # @selected_tappe.update_all(data_tappa: nil) if mass_cancella?
-    # @selected_tappe.update_all(data_tappa: params[:data_tappa], titolo: params[:titolo]) if mass_data_tappa?
-    
-    # if mass_duplica?
-    #   @nuove_tappe = []
-    #   @selected_tappe.each do |tappa|
-    #     t = tappa.dup
-    #     t.data_tappa = params[:data_tappa].to_date
-    #     t.giro = Current.user.giri.last
-    #     t.titolo = params[:titolo]
-    #     t.save
-    #     @nuove_tappe << t
-    #   end
-    # end
-    
-    # #@selected_tappe.each { |u| u.disabled! } if mass_cancella?
-    # flash.now[:notice] = "#{@selected_tappe.count} tappe: #{params[:button]}"
-    
-    # respond_to do |format|
-    #     format.turbo_stream
-    #     format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata!" }
-    #     format.json { render :show, status: :ok, location: @tappa }
-    # end    
-
-    # #redirect_back(fallback_location: request.referer)
-  end
-
+  
   def duplica
     
     @tappa = Tappa.find(params[:id])
@@ -210,8 +179,6 @@ class TappeController < ApplicationController
       format.html { redirect_to tappe_url, notice: "Tappa eliminata!" }
       format.json { head :no_content }
     end
-
-    #redirect_back(fallback_location: request.referer)
   end
 
   private
@@ -238,33 +205,5 @@ class TappeController < ApplicationController
       params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro, :position)
     end
 
-    def mass_oggi?
-      params[:button] == 'oggi'
-      # params[:commit] == "active"
-    end
-  
-    def mass_domani?
-      params[:button] == 'domani'
-      # params[:commit] == "disabled"
-    end
-
-    def mass_cancella?
-      params[:button] == 'cancella'
-      # params[:commit] == "active"
-    end
-  
-    def mass_elimina_tappa?
-      params[:button] == 'elimina_tappa'
-      # params[:commit] == "disabled"
-    end
-
-    def mass_data_tappa?
-      params[:button] == 'data'
-      # params[:commit] == "disabled"
-    end
-
-    def mass_duplica?
-      params[:button] == 'duplica'
-      # params[:commit] == "disabled"
-    end
+   
 end

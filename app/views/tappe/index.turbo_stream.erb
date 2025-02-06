@@ -6,7 +6,7 @@
 
     <%= turbo_stream.replace "load_more" do %>
         
-        <%= render partial: "tappe/tappe_grouped" %>
+        <%= render @page.records %>
 
         <% if @page.last? %>
             <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>
