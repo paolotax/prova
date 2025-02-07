@@ -24,7 +24,10 @@ class AppuntiController < ApplicationController
 
     @appunti = filter(@appunti.all)
     
-    @pagy, @appunti =  pagy(@appunti.all, items: 30)
+    # Per il badge del conteggio dei record e pagy_countless
+    @total_count = @appunti.count
+
+    @pagy, @appunti =  pagy_countless(@appunti.all, items: 30)
 
     respond_to do |format|
       format.html
