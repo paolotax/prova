@@ -159,6 +159,10 @@ class ImportAdozione < ApplicationRecord
     "#{self.ANNOCORSO} #{sezione} #{self.COMBINAZIONE.downcase}"
   end
 
+  def classe_e_sezione_e_disciplina
+    "#{self.ANNOCORSO} #{sezione} #{self.DISCIPLINA.downcase}"
+  end
+
   def sezione
     self.SEZIONEANNO.titleize
   end

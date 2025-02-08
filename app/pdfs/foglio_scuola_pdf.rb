@@ -25,7 +25,7 @@ class FoglioScuolaPdf < Prawn::Document
       
       @scuola = scuola
       @tappe = scuola.tappe
-      @adozioni = scuola.import_adozioni.sort_by { |a| [a.classe_e_sezione, a.combinazione] }
+      @adozioni = scuola.import_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
 
       intestazione_scuola
       table_tappe
