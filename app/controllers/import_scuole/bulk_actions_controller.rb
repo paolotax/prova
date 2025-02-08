@@ -1,6 +1,21 @@
 module ImportScuole
   class BulkActionsController < ApplicationController
 
+    before_action :authenticate_user!
+
+    def print_all
+      @import_scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
+      respond_to do |format|
+        format.pdf do
+          pdf = FoglioScuolaPdf.new(@import_scuole, view_context)
+          send_data pdf.render,
+            filename: "fogli_scuola_#{Time.current.to_i}.pdf",
+            type: "application/pdf",
+            disposition: "inline"
+        end
+      end
+    end
+
     def add_tappa_giorno
       @import_scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
       
@@ -16,6 +31,7 @@ module ImportScuole
         format.turbo_stream
       end
     end
+
     private
 
     def bulk_action_params

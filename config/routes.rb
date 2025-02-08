@@ -201,6 +201,7 @@ Rails.application.routes.draw do
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
       collection do
+        patch :print_all, format: "pdf"
         patch :add_tappa_giorno
       end
     end

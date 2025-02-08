@@ -1,6 +1,8 @@
 module Appunti
   class BulkActionsController < ApplicationController
 
+    before_action :authenticate_user!
+
     def print_all
       @appunti = current_user.appunti.where(id: params[:appunto_ids])
       

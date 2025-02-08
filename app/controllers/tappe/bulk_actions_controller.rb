@@ -1,6 +1,8 @@
 module Tappe
   class BulkActionsController < ApplicationController
 
+    before_action :authenticate_user!
+
     def create
       @tappe = []
       tappable_ids = []

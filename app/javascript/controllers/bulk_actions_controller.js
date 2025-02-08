@@ -30,19 +30,6 @@ export default class BulkActionsController extends CheckboxesController {
     this.openValue ? this.containerTarget.hidden && enter(this.containerTarget) : leave(this.containerTarget);
   }
 
-  
-  showCheckboxes(event) {
-    console.log("showCheckboxes");
-    event.preventDefault();
-    document.querySelectorAll('.bulk-actions-checkbox').forEach(checkbox => {
-      checkbox.classList.toggle('hidden');
-    });
-    document.querySelectorAll('.tappa-menu').forEach(menu => {
-      menu.classList.toggle('hidden');
-    });
-  }
-
-
   #syncSelection() {
     const name = this.checkboxes[0]?.name || "ids[]";
     console.log(name);
@@ -59,6 +46,17 @@ export default class BulkActionsController extends CheckboxesController {
     });
   }
 
+  showCheckboxes(event) {
+    console.log("showCheckboxes");
+    event.preventDefault();
+    document.querySelectorAll('.bulk-actions-checkbox').forEach(checkbox => {
+      checkbox.classList.toggle('hidden');
+    });
+    document.querySelectorAll('.tappa-menu').forEach(menu => {
+      menu.classList.toggle('hidden');
+    });
+  }
+  
   selectCheckbox(event) {
     const tappaId = event.currentTarget.dataset.bulkActionsTappaParam;
     const checkbox = document.querySelector(`input[type="checkbox"][value="${tappaId}"]`);

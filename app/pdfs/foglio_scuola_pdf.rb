@@ -5,7 +5,7 @@ class FoglioScuolaPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(scuola:, tappe:, adozioni:, view:)
+  def initialize(import_scuole, view)
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
@@ -18,21 +18,24 @@ class FoglioScuolaPdf < Prawn::Document
               :Producer => "Prawn",
               :CreationDate => Time.now
           })
-    @scuola = scuola
-    @tappe = tappe
-    @adozioni = adozioni
     @view = view
 
-    intestazione_scuola
+    import_scuole.each_with_index do |scuola, index|
+      start_new_page if index > 0
+      
+      @scuola = scuola
+      @tappe = scuola.tappe
+      @adozioni = scuola.import_adozioni.sort_by { |a| [a.classe_e_sezione, a.combinazione] }
 
-    table_tappe
+      intestazione_scuola
+      table_tappe
 
-    if @cursor_tappe > @cursor_scuola
-      move_cursor_to @cursor_scuola
+      if @cursor_tappe > @cursor_scuola
+        move_cursor_to @cursor_scuola
+      end
+
+      table_adozioni
     end
-
-    table_adozioni
-
   end
   
   def intestazione_scuola
