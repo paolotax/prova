@@ -2,7 +2,7 @@ import CheckboxesController from "./checkboxes_controller";
 import { enter, leave } from "./helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
-  static targets = ["container", "form", "counter", "stampaForm", "tappaForm", "statoForm", "eliminaForm"];
+  static targets = ["container", "form", "counter", "formContainer"];
   static values = { open: Boolean };
 
   toggle(event) {
@@ -15,81 +15,6 @@ export default class BulkActionsController extends CheckboxesController {
     this.element.contains(event.target) || this.setCheckboxesTo(false);
   }
 
-  
-  // mie d togliere
-
-  toggleTappa() {
-    if (this.hasStampaFormTarget) {
-      this.stampaFormTarget.classList.add('hidden')
-    }
-
-    if (this.hasStatoFormTarget) {
-      this.statoFormTarget.classList.add('hidden')
-    }
-    
-    if (this.tappaFormTarget.classList.contains('hidden')) {
-      this.tappaFormTarget.classList.remove('hidden')
-      // Trigger enter animation
-      requestAnimationFrame(() => {
-        this.tappaFormTarget.classList.remove('-translate-y-4', 'opacity-0')
-        this.tappaFormTarget.classList.add('translate-y-0', 'opacity-100')
-      })
-    } else {
-      // Trigger leave animation
-      this.tappaFormTarget.classList.add('-translate-y-4', 'opacity-0')
-      this.tappaFormTarget.classList.remove('translate-y-0', 'opacity-100')
-      setTimeout(() => {
-        this.tappaFormTarget.classList.add('hidden')
-      }, 200)
-    }
-  }
-
-  toggleStato() {
-    this.tappaFormTarget.classList.add('hidden')
-    
-    if (this.hasStampaFormTarget) {
-      this.stampaFormTarget.classList.add('hidden')
-    }
-    
-    if (this.statoFormTarget) {
-      if (this.statoFormTarget.classList.contains('hidden')) {
-        this.statoFormTarget.classList.remove('hidden')
-        requestAnimationFrame(() => {
-          this.statoFormTarget.classList.remove('-translate-y-4', 'opacity-0')
-          this.statoFormTarget.classList.add('translate-y-0', 'opacity-100')
-        })
-      } else {
-        this.statoFormTarget.classList.add('-translate-y-4', 'opacity-0')
-        this.statoFormTarget.classList.remove('translate-y-0', 'opacity-100')
-        setTimeout(() => {
-          this.statoFormTarget.classList.add('hidden')
-        }, 200)
-      }
-    }
-  }
-
-  stampa() {
-    this.tappaFormTarget.classList.add('hidden')
-    this.statoFormTarget.classList.add('hidden')
-    
-    if (this.stampaFormTarget.classList.contains('hidden')) {
-      this.stampaFormTarget.classList.remove('hidden')
-      requestAnimationFrame(() => {
-        this.stampaFormTarget.classList.remove('-translate-y-4', 'opacity-0')
-        this.stampaFormTarget.classList.add('translate-y-0', 'opacity-100')
-      })
-    } else {
-      this.stampaFormTarget.classList.add('-translate-y-4', 'opacity-0')
-      this.stampaFormTarget.classList.remove('translate-y-0', 'opacity-100')
-      setTimeout(() => {
-        this.stampaFormTarget.classList.add('hidden')
-      }, 200)
-    }
-  }
-
-  toggleElimina() {
-    this.eliminaFormTarget.classList.toggle('hidden')
-  }
 
   // private
 
@@ -146,6 +71,32 @@ export default class BulkActionsController extends CheckboxesController {
         this.checkboxesCheckedCountValue = this.checkboxes.filter(c => c.checked).length;
         this.openValue = true;
         this.#syncSelection();
+    }
+  }
+
+  toggleFormContainer(event) {
+    const formId = event.currentTarget.dataset.formId
+    
+    // Trova la form target
+    const targetForm = this.formContainerTargets.find(formContainer => formContainer.dataset.formId === formId)
+    
+    // Se la form target è già visibile, la nascondiamo e usciamo
+    if (targetForm && !targetForm.classList.contains('hidden')) {
+      targetForm.classList.add('hidden')
+      targetForm.classList.remove('flex')
+      return
+    }
+    
+    // Altrimenti, nascondi tutte le form
+    this.formContainerTargets.forEach(formContainer => {
+      formContainer.classList.add('hidden')
+      formContainer.classList.remove('flex')
+    })
+    
+    // E mostra la form selezionata
+    if (targetForm) {
+      targetForm.classList.remove('hidden')
+      targetForm.classList.add('flex')
     }
   }
 }

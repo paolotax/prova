@@ -1,23 +1,31 @@
 <% content_for :bulk_action_buttons_appunti do %>
-    <%= button_tag "Stampa", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
-            data: { action: "bulk-actions#stampa" } %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "stampa" } do %>
+        <%= icon "printer" %>
+        Stampa
+    <% end %>
 
-    <%= button_tag "Tappa", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
-            data: { action: "bulk-actions#toggleTappa" } %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "tappa" } do %>
+        <%= icon "map-pin" %>
+        Tappa
+    <% end %>
 
-    <%= button_tag "Stato", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
-            data: { action: "bulk-actions#toggleStato" } %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "stato" } do %>
+        <%= icon "check-circle" %>
+        Stato
+    <% end %>
 <% end %>
 
 <% content_for :bulk_action_forms_appunti do %>
+    
     <%= form_with url: "/appunti/bulk_actions/print_all.pdf", 
             method: :patch, 
             class: "hidden transition-all duration-300 ease-out origin-top mt-4",
             data: { 
-                bulk_actions_target: "stampaForm form",
+                bulk_actions_target: "form formContainer",
+                form_id: "stampa",
                 transition_enter: "transform transition ease-out duration-300",
                 transition_enter_start: "transform -translate-y-4 opacity-0",
                 transition_enter_end: "transform translate-y-0 opacity-100",
@@ -28,8 +36,9 @@
         <%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
     <% end %>
 
-    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
-            data-bulk-actions-target="tappaForm"
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+            data-bulk-actions-target="formContainer"
+            data-form-id="tappa"
             data-transition-enter="transform transition ease-out duration-300"
             data-transition-enter-start="transform -translate-y-4 opacity-0"
             data-transition-enter-end="transform translate-y-0 opacity-100"
@@ -64,7 +73,8 @@
             method: :patch, 
             class: "hidden transition-all duration-300 ease-out origin-top mt-4",
             data: { 
-                bulk_actions_target: "statoForm form",
+                bulk_actions_target: "form formContainer",
+                form_id: "stato",
                 transition_enter: "transform transition ease-out duration-300",
                 transition_enter_start: "transform -translate-y-4 opacity-0",
                 transition_enter_end: "transform translate-y-0 opacity-100",

@@ -1,7 +1,9 @@
 <% content_for :bulk_action_buttons do %>
-    <%= button_tag "Tappa", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
-            data: { action: "bulk-actions#toggleTappa" } %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleTappa" } do %>
+        <%= icon "map-pin" %>
+        Tappa
+    <% end %>
 <% end %>
 
 <% content_for :bulk_action_forms do %>

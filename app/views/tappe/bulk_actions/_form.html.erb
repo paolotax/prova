@@ -2,19 +2,25 @@
 
 <% content_for :bulk_action_buttons do %>
 
-    <%= button_tag "Tappa", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
-            data: { action: "bulk-actions#toggleTappa" } %>
-    <%= button_tag "Elimina", 
-            class: "px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
-            data: { action: "bulk-actions#toggleElimina" } %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "tappa" } do %>
+        <%= icon "map-pin" %>
+        Tappa
+    <% end %>
+
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "elimina" } do %>
+        <%= icon "trash" %>
+        Elimina
+    <% end %>
 
 <% end %>
 
 <% content_for :bulk_action_forms do %>
 
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
-            data-bulk-actions-target="tappaForm"
+            data-bulk-actions-target="formContainer"
+            data-form-id="tappa"
             data-transition-enter="transform transition ease-out duration-300"
             data-transition-enter-start="transform -translate-y-4 opacity-0"
             data-transition-enter-end="transform translate-y-0 opacity-100"
@@ -26,14 +32,15 @@
                 method: :patch,
                 data: { bulk_actions_target: "form" } do |form| %>
             <div class="flex justify-between gap-2">
-                <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                 <%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
             </div>
         <% end %>
     </div>
 
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
-            data-bulk-actions-target="eliminaForm"
+            data-bulk-actions-target="formContainer"
+            data-form-id="elimina"
             data-transition-enter="transform transition ease-out duration-300"
             data-transition-enter-start="transform -translate-y-4 opacity-0"
             data-transition-enter-end="transform translate-y-0 opacity-100"
