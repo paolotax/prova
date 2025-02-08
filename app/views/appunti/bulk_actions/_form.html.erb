@@ -1,4 +1,4 @@
-<% content_for :bulk_action_buttons do %>
+<% content_for :bulk_action_buttons_appunti do %>
     <%= button_tag "Stampa", 
             class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#stampa" } %>
@@ -12,7 +12,7 @@
             data: { action: "bulk-actions#toggleStato" } %>
 <% end %>
 
-<% content_for :bulk_action_forms do %>
+<% content_for :bulk_action_forms_appunti do %>
     <%= form_with url: "/appunti/bulk_actions/print_all.pdf", 
             method: :patch, 
             class: "hidden transition-all duration-300 ease-out origin-top mt-4",
@@ -82,4 +82,4 @@
     <% end %>
 <% end %>
 
-<%= render partial: "shared/bulk_actions_container" %>
+<%= render partial: "shared/bulk_actions_container", locals: { form: "appunti" } %>

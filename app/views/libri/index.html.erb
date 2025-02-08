@@ -1,4 +1,3 @@
-
 <% content_for :title, "Libri" %>
 
 <% content_for :header do %>
@@ -68,7 +67,6 @@
     <% end %>
 <% end %>
 
-
 <% if hotwire_native_app? %>
 	<%= link_to "Nuovo Libro", new_libro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
     <%= render "shared/native_search_filter",
@@ -84,7 +82,6 @@
 
         <%= render "shared/active_filters", collection: @libri %>
         
-        <%# geared_pagination tolto perchè non funziona il redirect da destroy %>
         <%= tag.div id: "libri-lista", class: "grid grid-cols-1" do %>
             <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p>
             

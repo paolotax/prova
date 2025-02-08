@@ -1,11 +1,11 @@
-<%= turbo_stream.append :appunti do %>
-  <%= render @appunti %>
+<%= turbo_stream.append :import_scuole do %>
+  <%= render "grouped_scuole", import_scuole: @import_scuole %>
 <% end %>
 <%= turbo_stream.replace :pagination do %>
   <% if @pagy.next.present? %>
     <%= turbo_frame_tag :pagination,
                 loading: :lazy,
-          src: appunti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)) do %>
+        src: import_scuole_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)) do %>
         <div role="status">
           <div class="flex justify-center">
             <%= icon "bouncing-dots", library: :animated, class: "mx-auto w-8 h-8 text-gray-500 fill-gray-600" %>

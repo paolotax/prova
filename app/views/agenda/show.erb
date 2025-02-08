@@ -110,15 +110,22 @@
 
 <% if @tappe.any? %>
     
-    <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
-
-    <div class="mt-4">
+    
+    <div class="mt-4", data-controller="bulk-actions" >
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Appunti" %>
         <% end %>
             
-        <%= turbo_frame_tag :search_results, src: appunti_path(del_giorno: @giorno), loading: :lazy %>
+        <%= turbo_frame_tag :appunti, 
+            src: appunti_path(del_giorno: @giorno), 
+            loading: :lazy,
+            class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
+
+        <%= render "appunti/bulk_actions/form" %>
     </div>
+
+    <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
+
 <% end %>
 
 

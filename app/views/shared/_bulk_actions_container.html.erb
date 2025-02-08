@@ -1,3 +1,5 @@
+<%# locals: ( form: "" ) -%>
+
 <%= tag.div hidden: true, class: "px-5 pt-5 pb-2 bg-indigo-500 rounded-2xl border border-indigo-600 shadow-xl fixed top-4 z-30 left-1/2 -translate-x-1/2",
         data: {
             bulk_actions_target: "container",
@@ -11,8 +13,9 @@
     
     <%= tag.div class: "flex items-center gap-4" do %>
         
-        <%= yield :bulk_action_buttons %>
-        
+        <%= yield :bulk_action_buttons_appunti if form == "appunti" %>
+        <%= yield :bulk_action_buttons unless form == "appunti" %>
+
         <%= button_tag "Seleziona tutto", 
             class: "flex flex-col items-center gap-y-1 px-2 py-3 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#selectAll" } do %>
@@ -25,7 +28,8 @@
     <% end %>
 
     <div class="forms-container">
-        <%= yield :bulk_action_forms %>
+        <%= yield :bulk_action_forms_appunti if form == "appunti" %>
+        <%= yield :bulk_action_forms unless form == "appunti" %>
     </div>
 
 

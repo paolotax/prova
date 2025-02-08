@@ -1,0 +1,10 @@
+<% import_scuole.group_by(&:direzione).each do |direzione, scuole| %>
+
+    <div class="flex flex-col">
+        <h3 class="only:hidden block px-4 py-2 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
+            <%= direzione.nil? ? "<private>" : direzione.to_s %>
+        </h3>
+        <%= render partial: "import_scuole/scuola_long", collection: scuole, as: :import_scuola %>  
+    </div>
+
+<% end %>  
