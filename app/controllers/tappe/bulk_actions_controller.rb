@@ -15,14 +15,18 @@ module Tappe
         tappable_ids = current_user.clienti.where(id: params[:tappable_ids]).pluck(:id)
       end
 
+      new_data_tappa = params[:data_tappa] if params[:controller] == "agenda"
+      new_titolo     = params[:titolo] if params[:controller] == "agenda"
+      new_giro_id    = params[:giro_id] if params[:controller] == "agenda"
+
       tappable_ids.uniq.each do |tappable_id|
         unless tappable_id.blank?
           tappa = current_user.tappe.find_or_create_by(
             tappable_type: tappable_type,
             tappable_id: tappable_id,
-            data_tappa: params[:data_tappa],
-            giro_id: params[:giro_id],
-            titolo: params[:titolo],
+            data_tappa: new_data_tappa,
+            giro_id: new_giro_id,
+            titolo: new_titolo,
             user_id: current_user.id
           )
           @tappe << tappa
@@ -43,9 +47,9 @@ module Tappe
     
     def update_all  
       tappa_ids   = params.fetch(:tappa_ids, []).compact
-      new_data_tappa = params[:data_tappa]
-      new_titolo     = params[:titolo]
-      new_giro_id    = params[:giro_id]
+      new_data_tappa = params[:data_tappa] if params[:data_tappa].present?
+      new_titolo     = params[:titolo] if params[:titolo].present?
+      new_giro_id    = params[:giro_id] if params[:giro_id].present?
       
       @selected_tappe = current_user.tappe.where(id: tappa_ids)
     

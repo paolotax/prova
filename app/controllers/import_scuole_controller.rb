@@ -49,9 +49,7 @@ class ImportScuoleController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = FoglioScuolaPdf.new(scuola: @import_scuola, 
-            tappe: @foglio_scuola.mie_tappe.order(:data_tappa), 
-            adozioni: @foglio_scuola.mie_adozioni.order(:ANNOCORSO, :CODICEISBN, :SEZIONEANNO), view: view_context)
+        pdf = FoglioScuolaPdf.new(Array(@import_scuola), view: view_context)
         send_data pdf.render, filename: "foglio_scuola_#{Date.today}.pdf",
                               type: "application/pdf",
                               disposition: "inline"
