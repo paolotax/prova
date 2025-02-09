@@ -9,7 +9,7 @@
                     "text-sky-500 bg-transparent": params[:filter].present? || params[:giorno].present?
                 ] do %>
             scuole:
-            <%= tag.div current_user.tappe.pluck(:tappable_id).uniq.size, class: "leading-6" %>
+            <%= tag.div tappe.pluck(:tappable_id).uniq.size, class: "leading-6" %>
         <% end %>
 
 
@@ -20,7 +20,7 @@
                     "text-green-500 bg-transparent": params[:filter] != "oggi"
                 ] do %>
             oggi:
-            <%= tag.div current_user.tappe.di_oggi.size, class: "leading-6" %>
+            <%= tag.div tappe.di_oggi.size, class: "leading-6" %>
         <% end %>
 
         <%= link_to tappe_path(filter: "domani"), data: {turbo_action: "replace"}, 
@@ -30,7 +30,7 @@
                     "text-yellow-400 bg-transparent": params[:filter] != "domani"
                 ] do %>
             domani:
-            <%= tag.div current_user.tappe.di_domani.size, class: "leading-6" %>
+            <%= tag.div tappe.di_domani.size, class: "leading-6" %>
         <% end %>
 
         <%= link_to tappe_path(filter: "completate"), data: {turbo_action: "replace"}, 
@@ -40,7 +40,7 @@
                     "text-gray-400 bg-transparent": params[:filter] != "completate"
                 ] do %>
             fatto!!
-            <%= tag.div current_user.tappe.completate.size, class: "leading-6" %>
+            <%= tag.div tappe.completate.size, class: "leading-6" %>
         <% end %>
 
         <%= link_to tappe_path(filter: "programmare"), data: {turbo_action: "replace"}, 
@@ -50,7 +50,7 @@
                     "text-gray-800 bg-transparent": params[:filter] != "programmare"
                 ] do %>
             quando?
-            <%= tag.div current_user.tappe.da_programmare.size, class: "leading-6" %>
+            <%= tag.div tappe.da_programmare.size, class: "leading-6" %>
         <% end %>
 
         <%= link_to tappe_path(filter: "programmate"), data: {turbo_action: "replace"},
@@ -60,10 +60,10 @@
                     "text-pink-500 bg-transparent": params[:filter] != "programmate"
                 ] do %>
             program:
-            <%= tag.div current_user.tappe.programmate.size, class: "leading-6" %>
+            <%= tag.div tappe.programmate.size, class: "leading-6" %>
         <% end %>
    
-        <% current_user.tappe.group_by_day(:data_tappa).count.each do |tappa| %>
+        <% tappe.group_by_day(:data_tappa).count.each do |tappa| %>
             <% if (tappa[1] > 0) && (tappa[0] > Time.now.to_date + 1.day) %>
                 <%= link_to tappe_path(giorno: tappa[0]), data: {turbo_action: "replace"}, 
                             class: [

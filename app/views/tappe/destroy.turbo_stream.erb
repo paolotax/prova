@@ -23,11 +23,6 @@
         } %>
 
 
-<%= turbo_stream.replace "tappe_filter" do %>
-    <%= render partial: "tappe/tappe_filter" %>
-<% end %>
-
-
 <% if @giro %>
     <%= turbo_stream.replace "nr-tappe" do %>
         <%= tag.div pluralize(@giro.tappe.size, "tappa", "tappe"), id: "nr-tappe" %>

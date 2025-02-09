@@ -1,7 +1,7 @@
 class GiriController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[ show edit update destroy crea_tappe tappe]
+  before_action :set_giro, only: %i[ show edit update destroy crea_tappe]
 
   def index
     
@@ -26,49 +26,6 @@ class GiriController < ApplicationController
   def show
   end
 
-  
-  def tappe
-    @tappe = @giro.tappe.includes(:tappable)
-  
-    if params[:filter]  == 'programmate'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.programmate.pluck(:tappable_id))
-    elsif params[:filter]  == 'oggi'    
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_oggi.pluck(:tappable_id))
-    elsif params[:filter]  == 'domani'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.di_domani.pluck(:tappable_id))
-    elsif params[:filter]  == 'completate'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.completate.pluck(:tappable_id))
-    elsif params[:filter]  == 'programmare'
-      @tappe = @tappe.delle_scuole_di(@giro.tappe.da_programmare.pluck(:tappable_id))
-    end
-
-    @tappe = @tappe.delle_scuole_di(@giro.tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
-    @tappe = @tappe.delle_scuole_di(@giro.tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
-
-    if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
-      @tappe = @tappe.send(params[:sort])
-    else
-      @tappe = @tappe.per_ordine_e_data
-    end
-
-    #inizializzo geared pagination
-    @pagy, @tappe =  pagy(@tappe.all, items: 30)
-
-    #set_page_and_extract_portion_from @tappe
-
-    #raggruppo le tappe per data o direzione a seconda dell'ordine
-    if params[:sort].presence.in? ["per_data", "per_data_desc"]
-      @grouped_records = @pagy.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
-    else
-      @grouped_records = @pagy.group_by{|t| t.tappable.direzione_or_privata }
-    end
-
-    respond_to do |format|
-      format.html
-      format.xlsx
-      format.turbo_stream
-    end
-  end
 
   def crea_tappe
     empty_tappe = @giro.tappe.empty?

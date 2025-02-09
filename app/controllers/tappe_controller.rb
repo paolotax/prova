@@ -6,6 +6,11 @@ class TappeController < ApplicationController
   def index
 
     @tappe = current_user.tappe.where(tappable_type: "ImportScuola")
+
+    if params[:giro_id].present?
+      @tappe = @tappe.where(giro_id: params[:giro_id])
+    end
+    
     
     if params[:filter]  == 'programmate'
       @tappe = @tappe.delle_scuole_di(@tappe.programmate.pluck(:tappable_id))

@@ -118,9 +118,9 @@ Rails.application.routes.draw do
 
   resources :tipi_scuole, only: [:index, :update]
     
-  resources :giri do 
+  resources :giri do
+    resources :tappe, only: [:index]
     member do 
-      get "tappe"
       post 'crea_tappe'
     end
   end

@@ -15,9 +15,9 @@ module Tappe
         tappable_ids = current_user.clienti.where(id: params[:tappable_ids]).pluck(:id)
       end
 
-      new_data_tappa = params[:data_tappa] if params[:controller] == "agenda"
-      new_titolo     = params[:titolo] if params[:controller] == "agenda"
-      new_giro_id    = params[:giro_id] if params[:controller] == "agenda"
+      new_data_tappa = params[:data_tappa]
+      new_titolo     = params[:titolo]
+      new_giro_id    = params[:giro_id]
 
       tappable_ids.uniq.each do |tappable_id|
         unless tappable_id.blank?
@@ -47,18 +47,15 @@ module Tappe
     
     def update_all  
       tappa_ids   = params.fetch(:tappa_ids, []).compact
-      new_data_tappa = params[:data_tappa] if params[:data_tappa].present?
-      new_titolo     = params[:titolo] if params[:titolo].present?
-      new_giro_id    = params[:giro_id] if params[:giro_id].present?
+      
+      new_data_tappa = params[:data_tappa]
+      # new_titolo     = params[:titolo] unless params[:titolo].nil?
+      # new_giro_id    = params[:giro_id] unless params[:giro_id].nil?
       
       @selected_tappe = current_user.tappe.where(id: tappa_ids)
     
       @selected_tappe.each do |tappa|
-        tappa.update(
-          data_tappa: new_data_tappa,
-          titolo: new_titolo,
-          giro_id: new_giro_id
-        )
+        tappa.update(bulk_action_params.reject { |_, v| v.nil? || v.blank? }) 
       end
       
       flash[:notice] = "#{@selected_tappe.count} tappe aggiornate"     

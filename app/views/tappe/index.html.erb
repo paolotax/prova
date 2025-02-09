@@ -3,7 +3,7 @@
 
 	<%= tag.div class: "flex flex-col space-y-2 sm:flex-row space-x-2 sm:space-y-0" do %>
         <% current_user.giri.each do |giro| %>
-            <%= link_to giro.titolo, tappe_giro_path(giro), class: "btn btn-white" %> 
+            <%= link_to giro.titolo, giro_tappe_path(giro), class: "btn btn-white" %> 
         <% end %>
     <% end %>
 
@@ -17,7 +17,7 @@
         <%# link per filtrare il giro %>
         <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>
             
-            <%= render partial: "tappe/tappe_filter" %>
+            <%#= render partial: "tappe/tappe_filter", locals: {tappe: @tappe} %>
 
             <%# header per le tappe %>
             <%= tag.div class: "rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
