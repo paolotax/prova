@@ -23,7 +23,14 @@ module ImportScuole
 
       import_scuole_ids.each do |import_scuola_id|
         unless import_scuola_id.blank?
-          current_user.tappe.find_or_create_by(tappable_type: "ImportScuola", tappable_id: import_scuola_id, data_tappa: params[:data_tappa], user_id: current_user.id)
+          current_user.tappe.find_or_create_by(
+            tappable_type: "ImportScuola", 
+            tappable_id: import_scuola_id, 
+            data_tappa: params[:data_tappa], 
+            user_id: current_user.id,
+            titolo: params[:titolo],
+            giro_id: params[:giro_id]
+          )
         end
       end
 
@@ -35,7 +42,7 @@ module ImportScuole
     private
 
     def bulk_action_params
-      params.require(:bulk_action).permit(:data_tappa, import_scuola_ids: [])
+      params.require(:bulk_action).permit(:data_tappa, :giro_id, :titolo, import_scuola_ids: [])
     end
   end
 end

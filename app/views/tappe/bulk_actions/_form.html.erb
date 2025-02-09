@@ -31,10 +31,14 @@
         <%= form_with url: update_all_tappe_bulk_actions_path, 
                 method: :patch,
                 data: { bulk_actions_target: "form" } do |form| %>
-            <div class="flex justify-between gap-2">
-                <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
-                <%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
-            </div>
+            <%= tag.div class: "flex flex-col justify-between gap-2" do %>
+                <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
+                <div class="flex justify-between gap-2">
+                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                    <%= form.submit "Aggiorna", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
+                </div>
+            <% end %>
         <% end %>
     </div>
 

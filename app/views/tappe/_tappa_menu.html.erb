@@ -20,9 +20,11 @@
         <% end %>
         
         <% if mostra_dropdown %>
-            <% dropdown.with_item do %>
-                <%= link_to "#",
-                        class: "block px-3 py-1 text-sm leading-6 text-gray-900",
+            
+            <% if params[:controller] == "agenda" %>
+                <% dropdown.with_item do %>
+                    <%= link_to "#",
+                            class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         data: {
                             action: "click->bulk-actions#showCheckboxes click->rd-dropdown#toggle click->bulk-actions#selectCheckbox",
                             bulk_actions_tappa_param: tappa.id,
@@ -30,9 +32,10 @@
                         },
                         role: "menuitem", tabindex: "-1" do %>
                     Seleziona
+                    <% end %>
                 <% end %>
             <% end %>
-
+            
             <% dropdown.with_item do %>
                 <%= link_to edit_tappa_path( tappa ),
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
