@@ -24,6 +24,13 @@ module Filters
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
     
+    filter_scope :tappe_del_giorno, ->(data) {
+      joins("INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id 
+             AND documenti.clientable_type = tappe.tappable_type")
+      .where("DATE(tappe.data_tappa) = ?", data)
+      .distinct
+    }
+
     def order_by(ordine)
       if ordine == 'fresh'
         unscope(:order).order(Arel.sql('EXTRACT(YEAR FROM data_documento) DESC, created_at DESC'))

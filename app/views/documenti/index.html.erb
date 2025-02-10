@@ -74,7 +74,7 @@
 		<%#= render @documenti %>
 		<%= render "shared/active_filters", collection: @documenti %>
 
-		<%= turbo_frame_tag "documenti_page#{@pagy.page}" do %> 
+		<%= turbo_frame_tag "documenti" do %> 
 
 			
 			<div id="documenti-lista" role="list" class="">

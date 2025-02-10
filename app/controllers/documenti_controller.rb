@@ -155,7 +155,8 @@ class DocumentiController < ApplicationController
         status: params["status"],
         tipo_pagamento: params["tipo_pagamento"],
         anno: params["anno"],
-        ordina_per: params["ordina_per"]
+        ordina_per: params["ordina_per"],
+        tappe_del_giorno: params["tappe_del_giorno"]
       }.compact_blank
     end
 
