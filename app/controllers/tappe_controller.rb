@@ -11,39 +11,34 @@ class TappeController < ApplicationController
       @tappe = @tappe.where(giro_id: params[:giro_id])
     end
     
+    @giro = current_user.giri.find(params[:giro_id]) if params[:giro_id].present?
     
     if params[:filter]  == 'programmate'
-      @tappe = @tappe.delle_scuole_di(@tappe.programmate.pluck(:tappable_id))
+      @tappe = @tappe.programmate
     elsif params[:filter]  == 'oggi'    
-      @tappe = @tappe.delle_scuole_di(@tappe.di_oggi.pluck(:tappable_id))
+      @tappe = @tappe.di_oggi
     elsif params[:filter]  == 'domani'
-      @tappe = @tappe.delle_scuole_di(@tappe.di_domani.pluck(:tappable_id))
+      @tappe = @tappe.di_domani
     elsif params[:filter]  == 'completate'
-      @tappe = @tappe.delle_scuole_di(@tappe.completate.pluck(:tappable_id))
-    elsif params[:filter]  == 'programmare'
-      @tappe = @tappe.delle_scuole_di(@tappe.da_programmare.pluck(:tappable_id))
+      @tappe = @tappe.completate
+    elsif params[:filter]  == 'da programmare'
+      @tappe = @tappe.da_programmare
     end
 
-    @tappe = @tappe.delle_scuole_di(@tappe.del_giorno(params[:giorno]).pluck(:tappable_id)) if params[:giorno].present?
-    @tappe = @tappe.delle_scuole_di(@tappe.search(params[:search]).pluck(:tappable_id)) if params[:search].present? 
+    @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
+    @tappe = @tappe.search(params[:search]) if params[:search].present? 
 
-    # if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
-    #   @tappe = @tappe.send(params[:sort])
-    # else
-    #   @tappe = @tappe.per_ordine_e_data
-    # end
+    if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
+      @tappe = @tappe.send(params[:sort])
+    else
+      @tappe = @tappe.per_ordine_e_data
+    end
 
     #inizializzo geared pagination
     set_page_and_extract_portion_from @tappe
 
     # raise @page.records.inspect
 
-    # #raggruppo le tappe per data o direzione a seconda dell'ordine
-    if params[:sort].presence.in? ["per_data", "per_data_desc"]
-      @grouped_records = @page.records.group_by{|t| t.data_tappa.to_date unless t.data_tappa.nil? }
-    else
-      @grouped_records = @page.records.group_by{|t| t.tappable.direzione_or_privata }     
-    end
 
     respond_to do |format|
       format.html

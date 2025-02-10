@@ -11,8 +11,16 @@
         <% if @page.last? %>
             <%= tag.div "Fine delle tappe!", class: "col-span-1 xl:col-span-2 py-8 px-4 text-center" %>
         <% else %>
-            <%= turbo_frame_tag "load_more", src: tappe_path(sort: params[:sort],  giorno: params[:giorno], filter: params[:filter], search: params[:search], page: @page.next_param, format: :turbo_stream), loading: :lazy do %>
-                <%= render 'shared/lazy_loading' %>
+            <% if @giro %>
+                <%= turbo_frame_tag "load_more", 
+                        src: giro_tappe_path(@giro, request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)), loading: :lazy do %>
+                    <%= render 'shared/lazy_loading' %>
+                <% end %>
+            <% else %>
+                <%= turbo_frame_tag "load_more", 
+                        src: tappe_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)), loading: :lazy do %>
+                    <%= render 'shared/lazy_loading' %>
+                <% end %>
             <% end %>
         <% end %>
     <% end %>
