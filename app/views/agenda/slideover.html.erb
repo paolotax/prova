@@ -15,8 +15,8 @@
     <% end %>
 
     
-    <%= tag.div class: "px-4" do %>
-        <%= form_with(url: tappe_bulk_actions_path, method: :post, class: "space-y-4", builder: RailsDesigner::FormBuilder) do |form| %>
+    <%= tag.div class: "px-4", data: { controller: "clientable-search" } do %>
+        <%= form_with(url: tappe_bulk_actions_path, method: :post, id: "tappe-form", class: "space-y-4", builder: RailsDesigner::FormBuilder) do |form| %>
             
             <div class="flex flex-col space-y-4">
                 <%= tag.fieldset   do %>
@@ -36,32 +36,34 @@
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Seleziona Tipo</label>
 
-                <%= form.select :tappable_type, class: "w-full" do %>
-                    <option value="ImportScuola">Scuola</option>
-                    <option value="Cliente">Cliente</option>
-                <% end %>
+                <%= form.select :tappable_type, [["tutte le scuole", "ImportScuola"], ["tutti i clienti", "Cliente"]], {},
+                    data: { 
+                      action: "change->clientable-search#updateType",
+                      clientable_search_target: "select"
+                    } %>
             </div>
 
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Cerca</label>
-                <div data-controller="clientable-search">
+                <div>
                     <%= form.search_field :search, 
                         placeholder: "Inizia a digitare...", 
-                        data: { clientable_search_target: "input", 
-                        action: "input->clientable-search#search" } %>
+                        data: { 
+                          clientable_search_target: "input", 
+                          action: "input->clientable-search#search"
+                        } %>
                     <div data-clientable-search-target="results" class="mt-2"></div>
                 </div>
             </div>
-
-            <%= form.submit "Aggiungi", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
 
         <% end %>
     <% end %>
 
     
     <% slide.with_trailer do %>
-        <div class="fixed bottom-0 flex items-center justify-end w-full max-w-sm px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
-            <%# When using a "submit" type/method, the Slide Over hides using `turbo:submit-end->dialog#hideOnSubmit` %>
+        <div class="fixed bottom-0 flex items-center justify-between w-full max-w-sm px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
+            <%= button_tag "Aggiungi", type: "submit", form: "tappe-form", class: "px-3 py-1 text-sm leading-6 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700" %>
+            
             <%= button_tag "Chiudi", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-300" %>
         </div>
     <% end %>

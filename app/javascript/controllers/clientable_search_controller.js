@@ -1,32 +1,24 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "results"]
+  static targets = ["input", "results", "select"]
 
   connect() {
-    console.log("ClientableSearchController connected")
-    this.timeout = null
-    
-    // Aggiungiamo l'event listener per l'input
-    this.inputTarget.addEventListener("input", () => this.search())
+    this.search()
   }
 
-  search() {
-    clearTimeout(this.timeout)
-    this.timeout = setTimeout(() => {
-      const query = this.inputTarget.value
-      const type = document.querySelector('select[name="tappable_type"]').value
-      
-      if (query.length < 2) {
-        this.resultsTarget.innerHTML = ""
-        return
-      }
+  updateType() {
+    this.inputTarget.value = ""
+    this.search()
+  }
 
-      fetch(`/searches/clientable?query=${encodeURIComponent(query)}&type=${type}`)
-        .then(response => response.text())
-        .then(html => {
-          this.resultsTarget.innerHTML = html
-        })
-    }, 300)
+  async search() {
+    const query = this.inputTarget.value
+    const type = this.selectTarget.value
+    
+    const response = await fetch(`/searches/clientable?type=${type}&query=${query}`)
+    const html = await response.text()
+    
+    this.resultsTarget.innerHTML = html
   }
 } 
