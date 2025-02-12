@@ -3,6 +3,7 @@
 # Table name: user_scuole
 #
 #  id               :bigint           not null, primary key
+#  position         :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  import_scuola_id :bigint           not null
@@ -10,8 +11,9 @@
 #
 # Indexes
 #
-#  index_user_scuole_on_import_scuola_id  (import_scuola_id)
-#  index_user_scuole_on_user_id           (user_id)
+#  index_user_scuole_on_import_scuola_id      (import_scuola_id)
+#  index_user_scuole_on_user_id               (user_id)
+#  index_user_scuole_on_user_id_and_position  (user_id,position)
 #
 # Foreign Keys
 #

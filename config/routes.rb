@@ -178,7 +178,11 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :user_scuole, only: [:index, :destroy]
+  resources :user_scuole, only: [:index, :destroy] do
+    member do
+      patch :sort
+    end
+  end
   
   resources :import_scuole do
     resources :tappe

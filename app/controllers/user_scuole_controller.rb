@@ -4,7 +4,11 @@ class UserScuoleController < ApplicationController
   before_action :set_user_scuola, only: %i[ show edit update ]
 
   def index
-    @user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
+    @user_scuole = current_user.user_scuole
+        .joins(:import_scuola)
+        .order(:position, :PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO)
+        #.order(:PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO)
+    #@user_scuole = current_user.user_scuole.joins(:import_scuola).order([:PROVINCIA, :CODICESCUOLA])
   end
 
   def show
@@ -55,6 +59,12 @@ class UserScuoleController < ApplicationController
       format.json { head :no_content }
       format.turbo_stream
     end
+  end
+
+  def sort
+    @user_scuola = current_user.user_scuole.find(params[:id])
+    @user_scuola.update(position: params[:position].to_i)
+    head :ok
   end
 
   private

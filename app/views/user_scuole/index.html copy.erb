@@ -1,0 +1,43 @@
+<%= turbo_frame_tag :user_scuole do %>
+
+    <div class="sticky not-hotwire-native:top-16 hotwire-native:top-0  p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
+        <h2 class="font-semibold">Le mie SCUOLE </h2>
+        <%= tag.div id:"#{dom_id(current_user)}-user-scuole", 
+            class: "text-sm font-semibold pr-4" do %>
+            <%= current_user.import_scuole.count %>
+        <% end %>    
+    </div>
+    <div id="user-scuole" class="" data-controller="tax-sortable" data-tax-sortable-group-value="user-scuole"> 
+        <p class="only:block hidden py-8 px-4 text-center">
+            Whoops! Non ci sono scuole. 
+        </p>    
+
+        <% current_user.import_scuole.where.not(CODICEISTITUTORIFERIMENTO: nil).order(:position, :PROVINCIA, :DESCRIZIONECOMUNE, :CODICEISTITUTORIFERIMENTO).group_by(&:direzione).each do |direzione, scuole| %>
+
+            <div class="flex flex-col">
+                <h3 class="only:hidden block px-4 py-2 mt-4 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
+                    <%= direzione.nil? ? "<private>" : direzione.to_s %>
+                </h3>
+                <%= render partial: "user_scuole/user_scuola", collection: scuole, as: :user_scuola %>  
+            </div>
+
+        <% end %>    
+
+       
+
+        <div class="flex flex-col">
+            <h3 class="only:hidden block px-4 py-2 mt-4 rounded-t-lg font-semibold text-lg text-white bg-gradient-to-r from-slate-800 to-slate-500">
+                Scuole private...
+            </h3> 
+            <% current_user.import_scuole.where(CODICEISTITUTORIFERIMENTO: nil).order(:DESCRIZIONECOMUNE).each do |scuola| %>
+                <%= render partial: "user_scuole/user_scuola", locals: { user_scuola: scuola } %>  
+            <% end %>
+        </div>
+
+           
+        
+        <%#= render @user_scuole %>
+    
+    </div>
+
+<% end %>

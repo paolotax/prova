@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_26_173823) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_10_174845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -594,7 +594,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_26_173823) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position"
     t.index ["import_scuola_id"], name: "index_user_scuole_on_import_scuola_id"
+    t.index ["user_id", "position"], name: "index_user_scuole_on_user_id_and_position"
     t.index ["user_id"], name: "index_user_scuole_on_user_id"
   end
 

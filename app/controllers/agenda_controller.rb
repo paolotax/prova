@@ -47,6 +47,9 @@ class AgendaController < ApplicationController
       [
         indirizzo.longitude,
         indirizzo.latitude,
+        indirizzo.tappable.denominazione,
+        indirizzo.tappable.comune,
+        indirizzo.tappable_type == "ImportScuola" ? indirizzo.tappable_id : nil
       ]
     end
   end

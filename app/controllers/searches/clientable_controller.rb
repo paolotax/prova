@@ -5,7 +5,7 @@ module Searches
                 when 'Cliente'
                   current_user.clienti.search(params[:query])
                 when 'ImportScuola'
-                  current_user.import_scuole.search(params[:query])
+                  current_user.import_scuole.search(params[:query]).order(:position)
                 end
 
       render partial: 'results', locals: { results: @results }

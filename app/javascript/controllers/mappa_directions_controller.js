@@ -82,13 +82,23 @@ export default class extends Controller {
   }
 
   addMarker(coord) {
+    // Aggiungiamo un controllo per debug
+    console.log("Coordinate ricevute:", coord);
+    
     const marker = new mapboxgl.Marker()
       .setLngLat([coord.lng, coord.lat])
       .setPopup(
         new mapboxgl.Popup({ offset: 25 }).setHTML(
-          `<h3>${coord.name || "Tappa"}</h3><p>${coord.description || ""}</p>`
+          `<h3>${coord.name || "Tappa"}</h3>
+           <p>${coord.description || ""}</p>
+           ${coord.import_scuola_id ? 
+             `<a href="/import_scuole/${coord.import_scuola_id}" class="text-blue-600 hover:text-blue-800">
+                Vedi dettagli scuola
+              </a>` 
+             : ''
+           }`
         )
-      ) // Aggiungi un popup con il nome e la descrizione
+      )
       .addTo(this.map);
   }
 
