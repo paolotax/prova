@@ -24,7 +24,7 @@ class UserScuola < ApplicationRecord
   belongs_to :import_scuola
   belongs_to :user
 
-  #positioned on: :user
+  positioned on: :user
 
   def self.generate_positions_by_provincia_comune_direzione
     self.joins(:import_scuola).group_by(&:user_id).each do |user_id, user_scuole|
