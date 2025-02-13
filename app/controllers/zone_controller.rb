@@ -50,7 +50,14 @@ class ZoneController < ApplicationController
         @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo)
       end
        
-      @scuole_da_assegnare.each do |s|
+      @scuole_da_assegnare.includes(:direzione).to_a.sort_by { |s| 
+        [
+          s.PROVINCIA.to_s,
+          (s.direzione.present? ? s.direzione.DESCRIZIONECOMUNE.to_s : s.DESCRIZIONECOMUNE.to_s).to_s,
+          s.CODICEISTITUTORIFERIMENTO.to_s,
+          s.CODICESCUOLA.to_s
+        ]
+      }.each do |s|
         current_user.import_scuole << s unless current_user.import_scuole.include?(s)
       end
 
