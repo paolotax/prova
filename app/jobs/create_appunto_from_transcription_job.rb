@@ -147,15 +147,23 @@ class CreateAppuntoFromTranscriptionJob
       Rails.logger.info "Appunto creato con successo: #{appunto.inspect}"
       add_message_to_chat(chat: chat, message: "Appunto creato con successo")
       
-      # Invia il broadcast solo se voice_note_id è presente
-      if voice_note_id.present?
-        Turbo::StreamsChannel.broadcast_action_to(
-          "voice_notes",
-          action: :prepend,
-          target: "appunti_voice_note_#{voice_note_id}",
-          partial: "appunti/appunto",
-          locals: { appunto: appunto }
-        )
+      begin
+        if @voice_note_id.present?
+          Rails.logger.info "[Production Debug] Broadcasting con voice_note_id: #{@voice_note_id}"
+          Rails.logger.info "[Production Debug] Appunto ID: #{appunto.id}"
+          
+          Turbo::StreamsChannel.broadcast_action_to(
+            "voice_notes",
+            action: :prepend,
+            target: "appunti_voice_note_#{@voice_note_id}",
+            partial: "appunti/appunto",
+            locals: { appunto: appunto }
+          )
+        end
+      rescue StandardError => e
+        Rails.logger.error "[Production Error] Errore durante il broadcast: #{e.message}"
+        Rails.logger.error "[Production Error] Backtrace: #{e.backtrace.join("\n")}"
+        # Non facciamo fallire il job se il broadcast fallisce
       end
     else
       Rails.logger.error "Errore nella creazione dell'appunto: #{appunto.errors.full_messages}"

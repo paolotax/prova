@@ -1,165 +1,168 @@
  <%# locals: ( appunto:, mostra_scuola: true ) -%>
  
-<%= tag.div id: dom_id(appunto), class: [
-		"group pt-2 w-full flex rounded-2xl shadow-xl align-end border-b-2": true,
-		"bg-red-200  text-gray-600 border-red-300":  appunto.stato == "archiviato",
-		"bg-white border-slate-200": !(appunto.stato == "archiviato"),
-    ] do %>
+<% if local_assigns[:appunto].present? && appunto.persisted? %>
+	<%= tag.div id: dom_id(appunto), class: [
+			"group pt-2 w-full flex rounded-2xl shadow-xl align-end border-b-2": true,
+			"bg-red-200  text-gray-600 border-red-300":  appunto.stato == "archiviato",
+			"bg-white border-slate-200": !(appunto.stato == "archiviato"),
+		] do %>
 
 
-	<% if appunto.is_ssk? %>
-		<%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto, mostra_scuola: mostra_scuola } %>
-	<% else %>
-		<%# appunto vecchio da sistemare  %>
+		<% if appunto.is_ssk? %>
+			<%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto, mostra_scuola: mostra_scuola } %>
+		<% else %>
+			<%# appunto vecchio da sistemare  %>
 
-		<div class="w-full px-4 flex flex-col justify-between items-start space-y-2">
-			<div class="flex flex-col">				
-				<%= tag.div class: "mt-2 flex items-center gap-2" do %>
-					<%= render "shared/inline_edit", model: appunto, method: :nome_e_import_scuola do %>																
-						<div class="w-full">
-							<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
-						</div>
-					<% end %>
-				<% end %>
-
-				<%= tag.div class: "mt-2 w-full flex items-center gap-2" do%>
-					<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
-						<div class="w-full">
-							<% if appunto.body && !appunto.body.blank?%>
-								<div class="group">
-									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-										<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
-											<%= emphasis do %>
-												<%= simple_format(appunto.body) %>
-											<% end %>
-										</div>
-										<div class="h-4">
-											<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-												class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
-												>copia
-											</button>
-										</div>
-									</div>
-								</div>
-							<% end %>
-							<% if appunto.content && !appunto.content.blank?%>
-								<div class="group">
-									<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-										<div data-tax-trix-clipboard-target="source" class="w-full overflow-hidden"> 
-											<%= emphasis do %>
-												<%= appunto.content %>
-											<% end %>
-										</div>
-										<div class="h-4">
-											<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-												class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
-												>copia
-											</button>
-										</div>
-									</div>
-								</div>
-							<% end %>
-						</div>
-					<% end %>
-				<% end %>				
-
-				<div class="w-full text-right text-indigo-500">
-					<%= phone_to appunto.telefono %>
-				</div>
-
-				<% if appunto.completed_at %>
-					<div class="w-full text-right text-indigo-500">
-						<%= link_to giorno_path(giorno: appunto.completed_at.to_date.to_s), data: { turbo_frame: :_top } do %>
-							<%= l(appunto.completed_at.to_date, format: "%A %d/%m/%Y", locale: :it) %>
+			<div class="w-full px-4 flex flex-col justify-between items-start space-y-2">
+				<div class="flex flex-col">				
+					<%= tag.div class: "mt-2 flex items-center gap-2" do %>
+						<%= render "shared/inline_edit", model: appunto, method: :nome_e_import_scuola do %>																
+							<div class="w-full">
+								<%= render partial: "appunti/appunto_scuola", locals: {appunto: appunto} %>
+							</div>
 						<% end %>
-					</div>
-				<% end %>
-				
-				<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
-			</div>
-			<div class="pb-2 w-full mt-auto flex justify-between items-center">
-				
-				<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "tappe-import_scuola-#{appunto.import_scuola_id} flex items-center -space-x-2" do %>
-					<% if appunto.import_scuola %>
-						<%= render partial: "clientables/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
 					<% end %>
-				<% end %>
-				
-				<%= tag.div class: "text-xs italic" do %>
-					creato da
-					<%= time_ago_in_words appunto.created_at %>
-				<% end %>
-				
-				<div><%= appunto.stato %></div>
-				
-				
-			</div>	
 
-		</div>
+					<%= tag.div class: "mt-2 w-full flex items-center gap-2" do%>
+						<%= render "shared/inline_edit", model: appunto, method: :body_or_content do %>
+							<div class="w-full">
+								<% if appunto.body && !appunto.body.blank?%>
+									<div class="group">
+										<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+											<div data-tax-trix-clipboard-target="source" class="overflow-hidden"> 
+												<%= emphasis do %>
+													<%= simple_format(appunto.body) %>
+												<% end %>
+											</div>
+											<div class="h-4">
+												<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
+													class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5 "
+													>copia
+												</button>
+											</div>
+										</div>
+									</div>
+								<% end %>
+								<% if appunto.content && !appunto.content.blank?%>
+									<div class="group">
+										<div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
+											<div data-tax-trix-clipboard-target="source" class="w-full overflow-hidden"> 
+												<%= emphasis do %>
+													<%= appunto.content %>
+												<% end %>
+											</div>
+											<div class="h-4">
+												<button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
+													class="invisible group-hover:visible text-xs font-semibold text-yellow-800  bg-yellow-300 rounded-full px-1 py-0.5"
+													>copia
+												</button>
+											</div>
+										</div>
+									</div>
+								<% end %>
+							</div>
+						<% end %>
+					<% end %>				
 
-		<%# Actions %>
-
-		<div class="flex flex-col items-center justify-between">
-
-			<%= render DropdownComponent.new() do |dropdown| %>
-				<%= dropdown.with_button do %>
-				
-					<div class="mr-1 text-gray-400 hover:text-gray-500">
-						<%= component 'tax_button', 
-								svg_file: "icon-appunto.svg",
-								color: "transparent",
-								style: :dropdown
-						%>
+					<div class="w-full text-right text-indigo-500">
+						<%= phone_to appunto.telefono %>
 					</div>
-				<% end %>
 
-				<%= dropdown.with_item do %>
+					<% if appunto.completed_at %>
+						<div class="w-full text-right text-indigo-500">
+							<%= link_to giorno_path(giorno: appunto.completed_at.to_date.to_s), data: { turbo_frame: :_top } do %>
+								<%= l(appunto.completed_at.to_date, format: "%A %d/%m/%Y", locale: :it) %>
+							<% end %>
+						</div>
+					<% end %>
 					
-					<%= link_to edit_appunto_path(appunto), 
-						class: "block hotwire-native:hidden px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
-							data: { turbo_frame: :modal, action: "click->dialog#open" },
-							role: "menuitem", tabindex: "-1" do %>
-						Modifica
+					<%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
+				</div>
+				<div class="pb-2 w-full mt-auto flex justify-between items-center">
+					
+					<%= tag.div id: "tappa-appunto-#{appunto.id}", class: "tappe-import_scuola-#{appunto.import_scuola_id} flex items-center -space-x-2" do %>
+						<% if appunto.import_scuola %>
+							<%= render partial: "clientables/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
+						<% end %>
+					<% end %>
+					
+					<%= tag.div class: "text-xs italic" do %>
+						creato da
+						<%= time_ago_in_words appunto.created_at %>
+					<% end %>
+					
+					<div><%= appunto.stato %></div>
+					
+					
+				</div>	
+
+			</div>
+
+			<%# Actions %>
+
+			<div class="flex flex-col items-center justify-between">
+
+				<%= render DropdownComponent.new() do |dropdown| %>
+					<%= dropdown.with_button do %>
+					
+						<div class="mr-1 text-gray-400 hover:text-gray-500">
+							<%= component 'tax_button', 
+									svg_file: "icon-appunto.svg",
+									color: "transparent",
+									style: :dropdown
+							%>
+						</div>
 					<% end %>
 
-					<%= link_to edit_appunto_path(appunto), 
-						class: "hidden hotwire-native:block px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
-							data: { turbo_frame: "_top" },
-							role: "menuitem", tabindex: "-1" do %>
-						Modifica
+					<%= dropdown.with_item do %>
+						
+						<%= link_to edit_appunto_path(appunto), 
+							class: "block hotwire-native:hidden px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								data: { turbo_frame: :modal, action: "click->dialog#open" },
+								role: "menuitem", tabindex: "-1" do %>
+							Modifica
+						<% end %>
+
+						<%= link_to edit_appunto_path(appunto), 
+							class: "hidden hotwire-native:block px-3 py-3 hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								data: { turbo_frame: "_top" },
+								role: "menuitem", tabindex: "-1" do %>
+							Modifica
+						<% end %>
+
 					<% end %>
 
+					<%= dropdown.with_item do %>
+						<%= link_to appunto_path(appunto, format: :pdf),
+								target: "_blank",
+								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1" do %>
+							Stampa
+						<% end %>
+					<% end %>
+
+					<% dropdown.with_item do %>
+						<%= button_to appunto_path(appunto), method: :delete,
+								class: "w-full text-left px-3 py-3 block text-red-500 hover:text-red-600 focus-visible:outline-none focus-visible:bg-gray-50",
+								data: {
+									turbo_method: :delete,
+									# turbo_confirm: "Vuoi veramente eliminare questo appunto?",
+									# turbo_confirm_theme: "dark",
+									# turbo_confirm_confirm_label: "Si, elimina!",
+									# turbo_confirm_cancel_label: "Oops, no annulla…",
+								} do %>
+							Elimina
+						<% end %>
+					<% end %>				
 				<% end %>
 
-				<%= dropdown.with_item do %>
-					<%= link_to appunto_path(appunto, format: :pdf),
-							target: "_blank",
-							class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
-							role: "menuitem", tabindex: "-1" do %>
-						Stampa
-					<% end %>
-				<% end %>
+				<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>
 
-				<% dropdown.with_item do %>
-					<%= button_to appunto_path(appunto), method: :delete,
-							class: "w-full text-left px-3 py-3 block text-red-500 hover:text-red-600 focus-visible:outline-none focus-visible:bg-gray-50",
-							data: {
-								turbo_method: :delete,
-								# turbo_confirm: "Vuoi veramente eliminare questo appunto?",
-								# turbo_confirm_theme: "dark",
-								# turbo_confirm_confirm_label: "Si, elimina!",
-								# turbo_confirm_cancel_label: "Oops, no annulla…",
-							} do %>
-						Elimina
-					<% end %>
-				<% end %>				
-			<% end %>
-
-			<%= render partial: "appunti/appunto_stato", locals: { appunto: appunto }%>
-
-		</div>
+			</div>
 
 
+
+		<% end %>
 
 	<% end %>
 
