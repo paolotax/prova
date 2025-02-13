@@ -76,7 +76,13 @@ class Tappa < ApplicationRecord
   scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
   scope :da_programmare, -> { where(data_tappa: nil) }
 
-  scope :per_ordine_e_data, -> { joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'").order('import_scuole."PROVINCIA"') }
+  scope :per_ordine_e_data, -> { 
+    joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'")
+    joins("INNER JOIN user_scuole ON tappe.tappable_id = user_scuole.import_scuola_id AND user_scuole.user_id = #{Current.user.id}")
+    .order('user_scuole.position') }
+  
+  
+  
   scope :per_data, -> { order(:data_tappa, :position) }
   scope :per_data_desc, -> { order(data_tappa: :desc, position: :desc) }
     
