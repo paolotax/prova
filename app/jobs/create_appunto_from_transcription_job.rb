@@ -95,10 +95,14 @@ class CreateAppuntoFromTranscriptionJob
   end
 
   def handle_response(chat:, response:)
+    return unless response  # Aggiungiamo un controllo di sicurezza
+    
     message = response.dig("choices", 0, "message")
-    if message["role"] == "assistant" && message["tool_calls"]
+    if message && message["role"] == "assistant" && message["tool_calls"]
       # Prendiamo solo il primo tool_call
       tool_call = message["tool_calls"].first
+      return unless tool_call  # Aggiungiamo un altro controllo di sicurezza
+      
       function_args = JSON.parse(
         tool_call.dig("function", "arguments"),
         { symbolize_names: true }
