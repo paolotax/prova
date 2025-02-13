@@ -24,7 +24,7 @@ class UserScuola < ApplicationRecord
   belongs_to :import_scuola
   belongs_to :user
 
-  positioned on: :user
+  #positioned on: :user
 
   def self.generate_positions_by_provincia_comune_direzione
     self.joins(:import_scuola).group_by(&:user_id).each do |user_id, user_scuole|
@@ -32,7 +32,7 @@ class UserScuola < ApplicationRecord
       sorted_scuole = user_scuole.sort_by do |user_scuola| 
         [
           user_scuola.import_scuola.PROVINCIA.to_s,  # Convertiamo in string
-          user_scuola.import_scuola.DESCRIZIONECOMUNE.to_s,
+          user_scuola.import_scuola.direzione.nil? ? user_scuola.import_scuola.DESCRIZIONECOMUNE.to_s : user_scuola.import_scuola.direzione.DESCRIZIONECOMUNE.to_s,
           user_scuola.import_scuola.CODICEISTITUTORIFERIMENTO.to_s
         ]
       end
