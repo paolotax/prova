@@ -2,6 +2,7 @@ class CreateAppuntoFromTranscriptionJob
   include Sidekiq::Worker
   include SchoolMatcher
 
+  attr_accessor :voice_note_id
 
   def perform(chat_id, transcription, user_id, voice_note_id)  # Aggiunto voice_note_id come quarto parametro
     chat = Chat.find(chat_id)
@@ -147,11 +148,11 @@ class CreateAppuntoFromTranscriptionJob
       add_message_to_chat(chat: chat, message: "Appunto creato con successo")
       
       # Invia il broadcast solo se voice_note_id è presente
-      if @voice_note_id.present?
+      if voice_note_id.present?
         Turbo::StreamsChannel.broadcast_action_to(
           "voice_notes",
           action: :prepend,
-          target: "appunti_voice_note_#{@voice_note_id}",
+          target: "appunti_voice_note_#{voice_note_id}",
           partial: "appunti/appunto",
           locals: { appunto: appunto }
         )
