@@ -146,13 +146,16 @@ class CreateAppuntoFromTranscriptionJob
       Rails.logger.info "Appunto creato con successo: #{appunto.inspect}"
       add_message_to_chat(chat: chat, message: "Appunto creato con successo")
       
-      Turbo::StreamsChannel.broadcast_action_to(
-        "voice_notes",
-        action: :prepend,
-        target: "appunti_voice_note_#{@voice_note_id}",
-        partial: "appunti/appunto",
-        locals: { appunto: appunto }
-      )
+      # Invia il broadcast solo se voice_note_id è presente
+      if @voice_note_id.present?
+        Turbo::StreamsChannel.broadcast_action_to(
+          "voice_notes",
+          action: :prepend,
+          target: "appunti_voice_note_#{@voice_note_id}",
+          partial: "appunti/appunto",
+          locals: { appunto: appunto }
+        )
+      end
     else
       Rails.logger.error "Errore nella creazione dell'appunto: #{appunto.errors.full_messages}"
       add_message_to_chat(chat: chat, message: "Errore nella creazione dell'appunto")
