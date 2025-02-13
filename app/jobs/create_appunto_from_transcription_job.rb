@@ -164,17 +164,27 @@ class CreateAppuntoFromTranscriptionJob
   end
 
   def format_quantita_table(quantita_array)
-    return nil if quantita_array.nil?
+    return nil if quantita_array.nil? || quantita_array.empty?
     
     begin
-      parsed_array = JSON.parse(quantita_array) if quantita_array.is_a?(String)
-      items = parsed_array || quantita_array
+      items = case quantita_array
+      when String
+        JSON.parse(quantita_array, symbolize_names: true)
+      when Array
+        quantita_array
+      else
+        return nil
+      end
+      
+      return nil if items.empty?
       
       items.map do |item|
+        next unless item && item[:quantita] && item[:titolo]
         sprintf("%3d - %s", item[:quantita], item[:titolo])
-      end.join("</br>")
-    rescue JSON::ParserError
-      quantita_array.to_s
+      end.compact.join("</br>")
+    rescue JSON::ParserError, TypeError => e
+      Rails.logger.error "Errore nel parsing della quantità: #{e.message}"
+      nil
     end
   end
 
