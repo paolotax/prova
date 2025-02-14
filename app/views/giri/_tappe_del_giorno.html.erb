@@ -5,20 +5,21 @@
         <%= l(data, format: :long) %>
       <% end %>
       <span class="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-        <%= comuni.values.flatten.count %> tappe
+        <%= pluralize(comuni.values.flatten.count, "tp") %>
       </span>
     <% end %>
   </div>
-  <% comuni.each do |comune, tappe| %>
+  <% comuni.each do |comune, items| %>
     <div class="mb-2">
       <div class="text-sm font-medium text-gray-500 mb-1">
         <%= comune %>
       </div>
       <div class="flex flex-wrap gap-2">
-        <% tappe.each do |tappa| %>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_color %>">
-            <%= tappa.tappable.denominazione %>
-          </span>
+        <% items.each do |item| %>
+          <% scuola = item.respond_to?(:tappable) ? item.tappable : item %>
+          <%= link_to import_scuola_path(scuola), class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_color} hover:opacity-75 transition-opacity" do %>
+            <%= scuola.denominazione %>
+          <% end %>
         <% end %>
       </div>
     </div>

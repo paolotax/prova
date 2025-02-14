@@ -26,9 +26,13 @@ class GiriController < ApplicationController
   def show
     @tappe = @giro.tappe.where(tappable_type: "ImportScuola")
     
-    @tappe_da_programmare = Tappe::GroupByDateService.new(@tappe, 'da programmare').call
-    @tappe_programmate = Tappe::GroupByDateService.new(@tappe, 'programmate').call
-    @tappe_completate = Tappe::GroupByDateService.new(@tappe, 'completate').call
+    @tappe_da_programmare = Tappe::GroupByDateService.new(@tappe, 'da programmare', @giro).call
+    @tappe_programmate = Tappe::GroupByDateService.new(@tappe, 'programmate', @giro).call
+    @tappe_completate = Tappe::GroupByDateService.new(@tappe, 'completate', @giro).call
+
+    @conteggio_da_programmare = @tappe_da_programmare.values.first&.values&.flatten&.count || 0
+    @conteggio_programmate = @tappe_programmate.values.flatten(2).count
+    @conteggio_completate = @tappe_completate.values.flatten(2).count
   end
 
 

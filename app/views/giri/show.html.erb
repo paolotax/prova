@@ -2,9 +2,16 @@
 
 <%= tag.div class: "mt-4 flex flex-col space-y-2 sm:flex-row space-x-2 sm:space-y-0" do %>
    <%= tag.div class: "w-1/3" do %>
-      <%= component "heading", level: "h3" do  %>
+
+      <%= component "heading", level: "h3" do |heading| %>
          Da programmare
+         <% heading.with_trailer do %>
+         <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+            <%= @conteggio_da_programmare %> scuole
+         </span>
+         <% end %>
       <% end %>
+
 
       <% if @tappe_da_programmare&.any? %>
         <% @tappe_da_programmare.each do |data, comuni| %>
@@ -14,9 +21,16 @@
    <% end %>
 
    <%= tag.div class: "w-1/3" do %>
-      <%= component "heading", level: "h3" do %>
+
+      <%= component "heading", level: "h3" do |heading| %>
          Programmate
+         <% heading.with_trailer do %>
+         <span class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">
+            <%= pluralize(@tappe_programmate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_programmate.keys.count, "giorno", "giorni") %>
+         </span>
+         <% end %>
       <% end %>
+
 
       <% if @tappe_programmate&.any? %>
         <% @tappe_programmate.each do |data, comuni| %>
@@ -26,9 +40,16 @@
    <% end %>
 
    <%= tag.div class: "w-1/3" do %>
-      <%= component "heading", level: "h3" do %>
+
+      <%= component "heading", level: "h3" do |heading| %>
          Completate
+         <% heading.with_trailer do %>
+         <span class="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
+            <%= pluralize(@tappe_completate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_completate.keys.count, "giorno", "giorni") %>
+         </span>
+         <% end %>
       <% end %>
+
 
       <% if @tappe_completate&.any? %>
         <% @tappe_completate.each do |data, comuni| %>
