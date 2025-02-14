@@ -1,7 +1,7 @@
 class GiriController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[ show edit update destroy crea_tappe]
+  before_action :set_giro, only: %i[ show edit update destroy]
 
   def index    
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)       
@@ -17,19 +17,6 @@ class GiriController < ApplicationController
     @conteggio_da_programmare = @tappe_da_programmare.values.first&.values&.flatten&.count || 0
     @conteggio_programmate = @tappe_programmate.values.flatten(2).count
     @conteggio_completate = @tappe_completate.values.flatten(2).count
-  end
-
-
-  def crea_tappe
-    empty_tappe = @giro.tappe.empty?
-    @scuole = current_user.import_scuole.per_comune_e_direzione
-    @scuole.each_with_index do |s, i|
-      if empty_tappe || !@giro.tappe.where(tappable: s).exists?
-        Tappa.create!(user: current_user, tappable: s, ordine: i+1, giro: @giro)      
-      end  
-    end
-
-    redirect_to tappe_giro_url(@giro), notice: "Tappe create."
   end
 
   def new

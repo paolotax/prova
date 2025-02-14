@@ -120,9 +120,6 @@ Rails.application.routes.draw do
     
   resources :giri do
     resources :tappe, only: [:index]
-    member do 
-      post 'crea_tappe'
-    end
   end
 
   resources :tappe do
