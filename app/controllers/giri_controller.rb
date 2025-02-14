@@ -3,24 +3,8 @@ class GiriController < ApplicationController
   before_action :authenticate_user!
   before_action :set_giro, only: %i[ show edit update destroy crea_tappe]
 
-  def index
-    
-    @scuole = current_user.import_scuole
-    @scuole = @scuole.search_all_word(params[:search]) if params[:search].present?
-
-    if params[:giorno].present?
-      @scuole = @scuole.delle_tappe_di_oggi if params[:giorno] == 'oggi'
-      @scuole = @scuole.delle_tappe_di_domani if params[:giorno] == 'domani'
-      @scuole = @scuole.delle_tappe_da_programmare if params[:giorno] == 'da_programmare'
-    end
-
-    @scuole = @scuole.includes(:tappe, :appunti).per_direzione
-
-    @giri = current_user.giri.includes(:tappe).order(created_at: :asc)       
-    @default_giro = @giri.last
-
-    @pagy, @scuole =  pagy(@scuole.all, items: 30)
-
+  def index    
+    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)       
   end
 
   def show
