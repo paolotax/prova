@@ -24,6 +24,11 @@ class GiriController < ApplicationController
   end
 
   def show
+    @tappe = @giro.tappe.where(tappable_type: "ImportScuola")
+    
+    @tappe_da_programmare = Tappe::GroupByDateService.new(@tappe, 'da programmare').call
+    @tappe_programmate = Tappe::GroupByDateService.new(@tappe, 'programmate').call
+    @tappe_completate = Tappe::GroupByDateService.new(@tappe, 'completate').call
   end
 
 
@@ -115,7 +120,7 @@ class GiriController < ApplicationController
   private
 
     def set_giro
-      @giro = Giro.find(params[:id])
+      @giro = current_user.giri.find(params[:id])
     end
 
     def giro_params

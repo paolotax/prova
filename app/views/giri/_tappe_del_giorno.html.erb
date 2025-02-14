@@ -1,0 +1,26 @@
+<div class="bg-white rounded-lg shadow p-4 mb-4">
+  <div class="flex items-center justify-between text-lg font-semibold text-gray-700 mb-2">
+    <% if data %>
+      <%= link_to giorno_path(data), class: "hover:text-blue-600" do %>
+        <%= l(data, format: :long) %>
+      <% end %>
+      <span class="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+        <%= comuni.values.flatten.count %> tappe
+      </span>
+    <% end %>
+  </div>
+  <% comuni.each do |comune, tappe| %>
+    <div class="mb-2">
+      <div class="text-sm font-medium text-gray-500 mb-1">
+        <%= comune %>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <% tappe.each do |tappa| %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_color %>">
+            <%= tappa.tappable.denominazione %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div> 
