@@ -1,6 +1,5 @@
-
 <%= render SlideOverComponent.new(slide_over_max_width: "max-w-sm") do |slide| %>
-    
+
     <% slide.with_close_button(css: "absolute top-6 right-6 text-black transition ease-in-out duration-200 hover:scale-105 hover:text-white active:scale-100") %>
     
     <% slide.with_leader do %>
@@ -14,10 +13,8 @@
         </div>
     <% end %>
 
-    
     <%= tag.div class: "px-4", data: { controller: "clientable-search" } do %>
         <%= form_with(url: tappe_bulk_actions_path, method: :post, id: "tappe-form", class: "space-y-4", builder: RailsDesigner::FormBuilder) do |form| %>
-            
             <div class="flex flex-col space-y-4">
                 <%= tag.fieldset   do %>
                     <%= form.label  :data_tappa, "Data tappa", class: "block text-sm font-medium text-gray-700" %>
@@ -27,19 +24,20 @@
                 <%= tag.div class: "cb-tax-fancy flex flex-col" do %>
 
                         <%= form.label  :giro_id, "Giro", class: "block text-sm font-medium text-gray-700" %>
-                        <%= form.combobox :giro_id, current_user.giri.all, mobile_at: "0px" %>
+                        <%= form.select :giro_id, current_user.giri.order(created_at: :desc).collect { |giro| [giro.titolo, giro.id] }, { include_blank: true },
+                            data: { action: "change->clientable-search#search" } %>
 
                 <% end %>
             </div> 
 
-             
+                
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Seleziona Tipo</label>
 
                 <%= form.select :tappable_type, [["tutte le scuole", "ImportScuola"], ["tutti i clienti", "Cliente"]], {},
                     data: { 
-                      action: "change->clientable-search#updateType",
-                      clientable_search_target: "select"
+                        action: "change->clientable-search#updateType",
+                        clientable_search_target: "select"
                     } %>
             </div>
 
@@ -49,8 +47,8 @@
                     <%= form.search_field :search, 
                         placeholder: "Inizia a digitare...", 
                         data: { 
-                          clientable_search_target: "input", 
-                          action: "input->clientable-search#search"
+                            clientable_search_target: "input", 
+                            action: "input->clientable-search#search"
                         } %>
                     <div data-clientable-search-target="results" class="mt-2"></div>
                 </div>
@@ -59,12 +57,18 @@
         <% end %>
     <% end %>
 
-    
     <% slide.with_trailer do %>
         <div class="fixed bottom-0 flex items-center justify-between w-full max-w-sm px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
             <%= button_tag "Aggiungi", type: "submit", form: "tappe-form", class: "px-3 py-1 text-sm leading-6 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700" %>
             
+            <span class="text-sm text-gray-600" id="results-counter">
+                0 scuole trovate
+            </span>
+
             <%= button_tag "Chiudi", type: :button, method: :get, data: { action: "dialog#hide" }, class: "px-3 py-1 text-sm leading-6 font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-300" %>
         </div>
     <% end %>
 <% end %>
+
+
+
