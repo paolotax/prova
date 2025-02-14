@@ -1,0 +1,9 @@
+<% @ids.each do |appunto_id| %>
+    <%= turbo_stream_action_tag_with_block "remove", 
+        target: "appunto_#{appunto_id}", 
+        data: {
+            transition_leave: "transition ease-out duration-1000", 
+            transition_leave_start: "opacity-100", 
+            transition_leave_end: "opacity-0"
+        } %>
+<% end %>

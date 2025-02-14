@@ -217,6 +217,7 @@ Rails.application.routes.draw do
         patch :print_all, format: "pdf"
         patch :add_tappa_giorno
         patch :segna_come
+        delete :destroy_all
       end
     end
   end

@@ -46,6 +46,20 @@ module Appunti
       end
     end
 
+
+    def destroy_all
+      @ids = params[:appunto_ids]
+      count = @ids.count
+
+      @appunti = current_user.appunti.where(id: @ids)
+      @appunti.destroy_all
+      flash[:notice] = helpers.pluralize(count, "appunto eliminato", "appunti eliminati")
+      respond_to do |format|
+        format.html { redirect_to appunti_path }
+        format.turbo_stream
+      end
+    end
+
     private
 
     def bulk_action_params
