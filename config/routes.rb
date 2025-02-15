@@ -122,6 +122,7 @@ Rails.application.routes.draw do
     resources :tappe, only: [:index]
     member do
       post 'bulk_create_tappe', to: 'tappe/giro_bulk_actions#create'
+      delete 'remove_tappa/:tappa_id', to: 'tappe/giro_bulk_actions#remove_tappa', as: 'remove_tappa'
     end
   end
 

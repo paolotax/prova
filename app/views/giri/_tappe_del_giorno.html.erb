@@ -30,12 +30,24 @@
               "bg-gray-400 text-white" # completate
             end
           %>
-          <%= link_to import_scuola_path(scuola), 
-              class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_classes} hover:opacity-75 transition-opacity",
-              draggable: true,
-              data: { school_id: scuola.id },
-              ondragstart: "event.dataTransfer.setData('text/plain', event.target.dataset.schoolId)" do %>
-            <%= scuola.denominazione %>
+          <%= tag.div id: item.respond_to?(:tappable) ? dom_id(item) : nil,
+              class: "inline-flex items-center gap-1" do %>
+            <%= link_to import_scuola_path(scuola), 
+                class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_classes} hover:opacity-75 transition-opacity",
+                draggable: true,
+                data: { school_id: scuola.id },
+                ondragstart: "event.dataTransfer.setData('text/plain', event.target.dataset.schoolId)" do %>
+              <%= scuola.denominazione %>
+            <% end %>
+            
+            <% if item.respond_to?(:tappable) # è una tappa %>
+              <%= button_to remove_tappa_giro_path(@giro, tappa_id: item),
+                  method: :delete,
+                  class: "text-xs font-bold hover:text-red-500",
+                  form: { data: { turbo_confirm: "Sei sicuro di voler rimuovere questa tappa dal giro?" } } do %>
+                ×
+              <% end %>
+            <% end %>
           <% end %>
         <% end %>
       </div>

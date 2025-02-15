@@ -1,6 +1,7 @@
 module Tappe
   class GiroBulkActionsController < ApplicationController
     before_action :authenticate_user!
+    before_action :set_giro
 
     def create
       @giro = Giro.find(params[:giro_id])
@@ -23,7 +24,29 @@ module Tappe
       end
     end
 
+    def remove_tappa
+      @tappa = current_user.tappe.find(params[:tappa_id])
+      
+      respond_to do |format|
+        if @tappa.destroy
+          format.turbo_stream { 
+            render turbo_stream: turbo_stream.remove(helpers.dom_id(@tappa))
+          }
+        else
+          format.turbo_stream { 
+            render turbo_stream: turbo_stream.update("flash", 
+              partial: "shared/flash", 
+              locals: { message: "Impossibile rimuovere la tappa", type: "error" })
+          }
+        end
+      end
+    end
+
     private
+
+    def set_giro
+      @giro = current_user.giri.find(params[:id])
+    end
 
     def bulk_action_params
       params.permit(:data, :giro_id, tappable_ids: [])

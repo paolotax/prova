@@ -169,22 +169,20 @@ class TappeController < ApplicationController
   end
 
   def destroy
-    @giro = @tappa.giro
-    @tappa.destroy!
-
+    @tappa.destroy
+    
     respond_to do |format|
-      format.turbo_stream do 
-        flash.now[:alert] = "Tappa eliminata."
-      end
-      format.html { redirect_to tappe_url, notice: "Tappa eliminata!" }
-      format.json { head :no_content }
+      format.turbo_stream { 
+        render turbo_stream: turbo_stream.remove(helpers.dom_id(@tappa))
+      }
+      format.html { redirect_back(fallback_location: root_path, notice: 'Tappa eliminata.') }
     end
   end
 
   private
     
     def set_tappa
-      @tappa = Tappa.find(params[:id])
+      @tappa = current_user.tappe.find(params[:id])
     end
 
     def find_tappable
