@@ -2,15 +2,17 @@
 #
 # Table name: giri
 #
-#  id          :bigint           not null, primary key
-#  descrizione :string
-#  finito_il   :datetime
-#  iniziato_il :datetime
-#  stato       :string
-#  titolo      :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  user_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  conditions   :text
+#  descrizione  :string
+#  excluded_ids :text
+#  finito_il    :datetime
+#  iniziato_il  :datetime
+#  stato        :string
+#  titolo       :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #
@@ -30,6 +32,11 @@ class Giro < ApplicationRecord
   
   broadcasts_to ->(giro) { [giro.user, "giri"] }
 
+  serialize :conditions, coder: YAML
+  serialize :excluded_ids, coder: YAML
+
+  before_save :normalize_arrays
+
   def to_combobox_display
     titolo
   end
@@ -46,5 +53,37 @@ class Giro < ApplicationRecord
     titolo == "Ritiri"
   end
 
+  def filter_schools(schools)
+    schools = schools.to_a
+    
+    # Escludi le scuole specificate
+    schools = schools.reject { |s| excluded_ids.include?(s.id.to_s) } if excluded_ids.present?
+    
+    # Applica le condizioni
+    if conditions.present?
+      conditions.each do |condition|
+        case condition
+        when 'with_adozioni'
+          schools = schools.select { |s| s.adozioni.any? }
+        when 'with_appunti'
+          schools = schools.select { |s| s.appunti.any? }
+        when 'with_ordini'
+          schools = schools.select { |s| s.ordini.any? }
+        end
+      end
+    end
+    
+    schools
+  end
+
+  private
+
+  def normalize_arrays
+    self.conditions = [] if conditions.nil?
+    self.excluded_ids = [] if excluded_ids.nil?
+    
+    # Assicurati che gli ID siano stringhe
+    self.excluded_ids = excluded_ids.map(&:to_s) if excluded_ids.present?
+  end
 
 end

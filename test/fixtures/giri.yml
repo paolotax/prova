@@ -2,15 +2,17 @@
 #
 # Table name: giri
 #
-#  id          :bigint           not null, primary key
-#  descrizione :string
-#  finito_il   :datetime
-#  iniziato_il :datetime
-#  stato       :string
-#  titolo      :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  user_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  conditions   :text
+#  descrizione  :string
+#  excluded_ids :text
+#  finito_il    :datetime
+#  iniziato_il  :datetime
+#  stato        :string
+#  titolo       :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #

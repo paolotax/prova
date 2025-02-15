@@ -20,6 +20,35 @@
         <% end %>
     </div>  
 
+    <div class="my-5">
+        <%= component "field" do |field| %>
+            <% field.with_label { render FormLabelComponent.new(form: form, field: :conditions, label: "Condizioni") } %>
+            <% field.with_hint { "Seleziona le condizioni per filtrare le scuole" } %>
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_adozioni', nil %>
+                    <%= form.label "Tutte le scuole", class: "text-sm text-gray-700" %>
+                </div>
+                <div class="flex items-center gap-2">
+                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_appunti', nil %>
+                    <%= form.label "Scuole con appunti", class: "text-sm text-gray-700" %>
+                </div>
+                <div class="flex items-center gap-2">
+                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_ordini', nil %>
+                    <%= form.label "Scuole con ordini", class: "text-sm text-gray-700" %>
+                </div>
+            </div>
+        <% end %>
+    </div>
+
+    <div class="my-5">
+        <%= component "field" do |field| %>
+            <% field.with_label { render FormLabelComponent.new(form: form, field: :excluded_ids, label: "Scuole da escludere") } %>
+            <% field.with_hint { "Inserisci gli ID delle scuole da escludere, separati da virgola" } %>
+            <%= form.text_field :excluded_ids, value: @giro.excluded_ids&.join(','), placeholder: "es: 1,2,3" %>
+        <% end %>
+    </div>
+
     <div class="inline hotwire-native:hidden">
         <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
     </div>
