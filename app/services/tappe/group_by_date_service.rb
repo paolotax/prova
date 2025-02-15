@@ -26,16 +26,17 @@ class Tappe::GroupByDateService
     # Prendi tutte le scuole dell'utente che non hanno tappe in questo giro
     scuole_senza_tappe = Current.user.import_scuole
                           .where.not(id: @giro.tappe.where(tappable_type: 'ImportScuola').select(:tappable_id))
-                          .includes(:direzione)
+                          .includes(:direzione, :user_scuole)
+                          .order('user_scuole.position')
     
-    # Raggruppa per comune della direzione o della scuola
+    # Raggruppa per comune della direzione o della scuola e ordina alfabeticamente
     {nil => scuole_senza_tappe.group_by { |s| 
       if s.direzione.present?
         s.direzione.DESCRIZIONECOMUNE
       else
         s.DESCRIZIONECOMUNE
       end
-    }}
+    }.sort.to_h}
   end
 
   def tappe_programmate

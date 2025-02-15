@@ -1,60 +1,85 @@
 <%= render @giro %>
 
-<%= tag.div class: "mt-4 flex flex-col space-y-2 sm:flex-row space-x-2 sm:space-y-0" do %>
-   <%= tag.div class: "w-1/3" do %>
-
-      <%= component "heading", level: "h3" do |heading| %>
-         Da programmare
-         <% heading.with_trailer do %>
-         <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-            <%= @conteggio_da_programmare %> scuole
-         </span>
+<%= tag.div class: "mt-4 h-[calc(100vh-200px)] flex flex-col sm:flex-row space-x-2" do %>
+   <%= tag.div class: "w-1/3 flex flex-col" do %>
+      <%= tag.div class: "flex-none" do %>
+         <%= component "heading", level: "h3" do |heading| %>
+            Da programmare
+            <% heading.with_trailer do %>
+            <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+               <%= @conteggio_da_programmare %> scuole
+            </span>
+            <% end %>
          <% end %>
       <% end %>
 
-
-      <% if @tappe_da_programmare&.any? %>
-        <% @tappe_da_programmare.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-blue-100 text-blue-800" %>
-        <% end %>
+      <%= tag.div class: "flex-1 overflow-y-auto pr-2" do %>
+         <% if @tappe_da_programmare&.any? %>
+            <% @tappe_da_programmare.each do |data, comuni| %>
+               <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-blue-100 text-blue-800" %>
+            <% end %>
+         <% end %>
       <% end %>
    <% end %>
 
-   <%= tag.div class: "w-1/3" do %>
+   <%= tag.div class: "w-1/3 flex flex-col" do %>
+      <%= tag.div class: "flex-none" do %>
+         <%= component "heading", level: "h3" do |heading| %>
+            Programmate
+            <% heading.with_trailer do %>
+            <span class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">
+               <%= pluralize(@tappe_programmate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_programmate.keys.count, "giorno", "giorni") %>
+            </span>
+            <% end %>
+         <% end %>
 
-      <%= component "heading", level: "h3" do |heading| %>
-         Programmate
-         <% heading.with_trailer do %>
-         <span class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">
-            <%= pluralize(@tappe_programmate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_programmate.keys.count, "giorno", "giorni") %>
-         </span>
+         <%= form_tag bulk_create_tappe_giro_path(@giro.id), data: { controller: "tappa-dropzone", tappa_dropzone_giro_id_value: @giro.id, tappa_dropzone_target: "form" }, class: "mb-4" do %>
+            <%= hidden_field_tag :giro_id, @giro.id %>
+            
+            <%= date_field_tag :data, nil, 
+               class: "w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-2",
+               required: true,
+               data: { tappa_dropzone_target: "date" } %>
+               
+            <%= tag.div class: "min-h-24 border-2 border-dashed border-gray-300 rounded-lg p-4 space-y-2",
+               data: { tappa_dropzone_target: "dropzone" } do %>
+               <p class="text-center text-gray-500">Trascina qui le scuole da programmare</p>
+            <% end %>
+            
+            <%= button_tag type: "submit",
+               class: "mt-4 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600" do %>
+               Crea tappe
+            <% end %>
          <% end %>
       <% end %>
 
-
-      <% if @tappe_programmate&.any? %>
-        <% @tappe_programmate.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-green-100 text-green-800" %>
-        <% end %>
+      <%= tag.div class: "flex-1 overflow-y-auto pr-2" do %>
+         <% if @tappe_programmate&.any? %>
+            <% @tappe_programmate.each do |data, comuni| %>
+               <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-green-100 text-green-800" %>
+            <% end %>
+         <% end %>
       <% end %>
    <% end %>
 
-   <%= tag.div class: "w-1/3" do %>
-
-      <%= component "heading", level: "h3" do |heading| %>
-         Completate
-         <% heading.with_trailer do %>
-         <span class="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
-            <%= pluralize(@tappe_completate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_completate.keys.count, "giorno", "giorni") %>
-         </span>
+   <%= tag.div class: "w-1/3 flex flex-col" do %>
+      <%= tag.div class: "flex-none" do %>
+         <%= component "heading", level: "h3" do |heading| %>
+            Completate
+            <% heading.with_trailer do %>
+            <span class="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
+               <%= pluralize(@tappe_completate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_completate.keys.count, "giorno", "giorni") %>
+            </span>
+            <% end %>
          <% end %>
       <% end %>
 
-
-      <% if @tappe_completate&.any? %>
-        <% @tappe_completate.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-gray-100 text-gray-800" %>
-        <% end %>
+      <%= tag.div class: "flex-1 overflow-y-auto pr-2" do %>
+         <% if @tappe_completate&.any? %>
+            <% @tappe_completate.each do |data, comuni| %>
+               <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-gray-100 text-gray-800" %>
+            <% end %>
+         <% end %>
       <% end %>
    <% end %>
 <% end %>

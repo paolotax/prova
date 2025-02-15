@@ -120,6 +120,9 @@ Rails.application.routes.draw do
     
   resources :giri do
     resources :tappe, only: [:index]
+    member do
+      post 'bulk_create_tappe', to: 'tappe/giro_bulk_actions#create'
+    end
   end
 
   resources :tappe do

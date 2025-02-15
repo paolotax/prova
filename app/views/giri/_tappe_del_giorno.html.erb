@@ -17,7 +17,24 @@
       <div class="flex flex-wrap gap-2">
         <% items.each do |item| %>
           <% scuola = item.respond_to?(:tappable) ? item.tappable : item %>
-          <%= link_to import_scuola_path(scuola), class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_color} hover:opacity-75 transition-opacity" do %>
+          <% 
+            badge_classes = if data.nil?
+              "bg-blue-100 text-blue-800" # da programmare
+            elsif data.to_date == Date.today
+              "bg-green-500 text-white" # oggi
+            elsif data.to_date == Date.tomorrow
+              "bg-yellow-400 text-white" # domani
+            elsif data.to_date > Date.tomorrow
+              "bg-pink-500 text-white" # future
+            else
+              "bg-gray-400 text-white" # completate
+            end
+          %>
+          <%= link_to import_scuola_path(scuola), 
+              class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_classes} hover:opacity-75 transition-opacity",
+              draggable: true,
+              data: { school_id: scuola.id },
+              ondragstart: "event.dataTransfer.setData('text/plain', event.target.dataset.schoolId)" do %>
             <%= scuola.denominazione %>
           <% end %>
         <% end %>

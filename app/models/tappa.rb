@@ -71,7 +71,7 @@ class Tappa < ApplicationRecord
 
   scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.zone.now.beginning_of_day) }
   
-  scope :programmate, -> { where("data_tappa > ?", Time.zone.now) }  
+  scope :programmate, -> { where("data_tappa >= ?", Time.zone.now.beginning_of_day) }  
   
   scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
   scope :da_programmare, -> { where(data_tappa: nil) }
