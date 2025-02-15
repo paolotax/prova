@@ -1,6 +1,8 @@
 <%= render @giro %>
 
-<%= tag.div class: "mt-4 h-[calc(100vh-200px)] flex flex-col sm:flex-row space-x-2" do %>
+<%= tag.div class: "mt-4 h-[calc(100vh-200px)] flex flex-col sm:flex-row space-x-2",
+    data: { controller: "tappa-dropzone", tappa_dropzone_giro_id_value: @giro.id } do %>
+   
    <%= tag.div class: "w-1/3 flex flex-col" do %>
       <%= tag.div class: "flex-none" do %>
          <%= component "heading", level: "h3" do |heading| %>
@@ -33,22 +35,26 @@
             <% end %>
          <% end %>
 
-         <%= form_tag bulk_create_tappe_giro_path(@giro.id), data: { controller: "tappa-dropzone", tappa_dropzone_giro_id_value: @giro.id, tappa_dropzone_target: "form" }, class: "mb-4" do %>
+         <%= form_tag bulk_create_tappe_giro_path(@giro.id), 
+               data: { tappa_dropzone_target: "form" }, 
+               class: "mb-4 bg-gray-50 p-4 rounded-lg" do %>
+
             <%= hidden_field_tag :giro_id, @giro.id %>
             
-            <%= date_field_tag :data, nil, 
-               class: "w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-2",
-               required: true,
-               data: { tappa_dropzone_target: "date" } %>
-               
             <%= tag.div class: "min-h-24 border-2 border-dashed border-gray-300 rounded-lg p-4 space-y-2",
                data: { tappa_dropzone_target: "dropzone" } do %>
                <p class="text-center text-gray-500">Trascina qui le scuole da programmare</p>
             <% end %>
             
-            <%= button_tag type: "submit",
-               class: "mt-4 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600" do %>
-               Crea tappe
+            <%= tag.div class: "mt-2 flex justify-between items-center gap-2" do %>
+               <%= date_field_tag :data, nil, 
+                  class: "w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                  required: true,
+                  data: { tappa_dropzone_target: "date" } %>
+               <%= button_tag type: "submit",
+                  class: "w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+                  Crea tappe
+               <% end %>
             <% end %>
          <% end %>
       <% end %>

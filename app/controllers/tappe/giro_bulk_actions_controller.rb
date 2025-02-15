@@ -18,6 +18,7 @@ module Tappe
       end
       
       if @tappe.all?(&:save)
+        flash[:notice] = "Tappe create con successo"
         redirect_to @giro, notice: "Tappe create con successo"
       else
         redirect_to @giro, alert: "Errore nella creazione delle tappe"

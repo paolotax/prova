@@ -31,14 +31,16 @@
             end
           %>
           <%= tag.div id: item.respond_to?(:tappable) ? dom_id(item) : nil,
-              class: "inline-flex items-center gap-1" do %>
-            <%= link_to import_scuola_path(scuola), 
-                class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium #{badge_classes} hover:opacity-75 transition-opacity",
-                draggable: true,
-                data: { school_id: scuola.id },
-                ondragstart: "event.dataTransfer.setData('text/plain', event.target.dataset.schoolId)" do %>
+              class: "inline-flex items-center gap-1 #{badge_classes} rounded-full text-xs font-medium px-2.5 py-0.5 cursor-move",
+              draggable: true,
+              data: { 
+                school_id: scuola.id,
+                action: "dragstart->tappa-dropzone#handleDragStart dragend->tappa-dropzone#handleDragEnd"
+              } do %>
+            
+            <span class="hover:opacity-75 transition-opacity">
               <%= scuola.denominazione %>
-            <% end %>
+            </span>
             
             <% if item.respond_to?(:tappable) # è una tappa %>
               <%= button_to remove_tappa_giro_path(@giro, tappa_id: item),
