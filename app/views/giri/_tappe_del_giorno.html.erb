@@ -1,5 +1,8 @@
 <div class="bg-white rounded-lg shadow p-4 mb-4">
-  <div class="flex items-center justify-between text-lg font-semibold text-gray-700 mb-2">
+  <div class="flex items-center justify-between text-lg font-semibold text-gray-700 mb-2 border-2 border-transparent p-2 rounded-lg"
+       data-controller="tappa-date"
+       data-tappa-date-date-value="<%= data&.to_s %>"
+       data-tappa-date-giro-id-value="<%= @giro.id %>">
     <% if data %>
       <%= link_to giorno_path(data), class: "hover:text-blue-600" do %>
         <%= l(data, format: :long) %>
@@ -35,17 +38,25 @@
               draggable: true,
               data: { 
                 school_id: scuola.id,
+                tappable_type: "ImportScuola",
+                tappa_id: item.respond_to?(:tappable) ? item.id : nil,
                 action: "dragstart->tappa-dropzone#handleDragStart dragend->tappa-dropzone#handleDragEnd"
               } do %>
             
-            <span class="hover:opacity-75 transition-opacity">
-              <%= scuola.denominazione %>
+            <span class="-ml-1 hover:opacity-75 transition-opacity cursor-grab">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9h8M8 15h8"></path>
+              </svg>
             </span>
+
+            <%= link_to import_scuola_path(scuola), class: "mr-2 hover:opacity-75 transition-opacity" do %>
+                <%= scuola.denominazione %>
+            <% end %>
             
             <% if item.respond_to?(:tappable) # è una tappa %>
               <%= button_to remove_tappa_giro_path(@giro, tappa_id: item),
                   method: :delete,
-                  class: "text-xs font-bold hover:text-red-500",
+                  class: "-ml-1 text-xs font-bold hover:text-red-500",
                   form: { data: { turbo_confirm: "Sei sicuro di voler rimuovere questa tappa dal giro?" } } do %>
                 ×
               <% end %>

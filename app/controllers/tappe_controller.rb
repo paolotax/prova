@@ -94,30 +94,11 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
-        
-        # serve per aggiornare la colonna della view
-        if @tappa.saved_change_to_giro_id?
-          @giro_changed = true
-        end
-
-        @tappa.broadcast_replace_later_to [current_user, "tappe"]
-        
-        if hotwire_native_app?
-          format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata." }
-        else
-          format.turbo_stream { flash.now[:notice] = "Tappa modificata." }
-          format.html { redirect_to tappa_url(@tappa), notice: "Tappa modificata." }
-        end
+        format.json { head :no_content }
+        format.html { redirect_to @tappa, notice: "Tappa aggiornata." }
       else
-        if hotwire_native_app?
-          format.html { render :edit, status: :unprocessable_entity }
-        else
-          format.turbo_stream do 
-            flash.now[:alert] = "Impossibile modificare la tappa."   
-          end
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @tappa.errors, status: :unprocessable_entity }
-        end
+        format.json { render json: @tappa.errors, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_entity }
       end
     end
   end
