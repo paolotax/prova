@@ -56,13 +56,11 @@
     <%= tag.div class: "w-full sm:w-1/3 flex flex-col" do %>
         
         <%= tag.div class: "flex-none" do %>
-            <%= component "heading/with_actions", level: "h3" do |heading| %>
-                Da programmare
-                <% heading.with_action do %>
-                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                        <%= @conteggio_da_programmare %> scuole
-                    </span>
-                <% end %>
+            <%= tag.div class: "flex flex-col gap-4 sm:flex-row sm:items-start bg-white/90 sm:justify-between px-4 py-3 border border-gray-200 rounded-t-lg shadow-md" do %>               
+                <h2 class="text-lg font-semibold text-gray-700">Da programmare</h2>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    <%= pluralize(@conteggio_da_programmare, "scuola", "scuole") %>
+                </span>
             <% end %>
         <% end %>
 
@@ -77,7 +75,6 @@
 
     <%= tag.div class: "w-full sm:w-1/3 flex flex-col" do %>
         <%= tag.div class: "flex-none" do %>
-
 
             <%= form_tag bulk_create_tappe_giro_path(@giro.id), 
                     data: { tappa_dropzone_target: "form" }, 
@@ -102,18 +99,15 @@
                 <% end %>
             <% end %>
 
-            <%= component "heading/with_actions", level: "h3" do |heading| %>
-                Programmate
-                <% heading.with_action do %>
-                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        <%= pluralize(@tappe_programmate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_programmate.keys.count, "giorno", "giorni") %>
-                    </span>
-                <% end %>
+            <%= tag.div class: "flex flex-col gap-4 sm:flex-row sm:items-center bg-white/90 sm:justify-between px-4 py-3 border border-gray-200 rounded-t-lg shadow-md" do %>
+                <h2 class="text-lg font-semibold text-gray-700">Programmate</h2>
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    <%= pluralize(@tappe_programmate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_programmate.keys.count, "giorno", "giorni") %>
+                </span>
             <% end %>
-
         <% end %>
 
-        <%= tag.div class: "flex-1 overflow-y-auto pr-2" do %>
+        <%= tag.div class: "flex-1 overflow-y-auto" do %>
             <% if @tappe_programmate&.any? %>
                 <% @tappe_programmate.each do |data, comuni| %>
                     <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-green-100 text-green-800" %>
@@ -123,29 +117,13 @@
     <% end %>
 
     <%= tag.div class: "w-full sm:w-1/3 flex flex-col" do %>
-        <%= tag.div class: "flex-none" do %>
-            <%= component "heading/with_actions", level: "h3" do |heading| %>
-                Completate
-                <% heading.with_action do %>
-                    <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
-                        <%= pluralize(@tappe_completate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_completate.keys.count, "giorno", "giorni") %>
-                    </span>
-                <% end %>
-            <% end %>
-        <% end %>
-
-        <%= tag.div class: "flex-1 overflow-y-auto pr-2" do %>
-            <% if @tappe_completate&.any? %>
-                <% @tappe_completate.each do |data, comuni| %>
-                    <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-gray-100 text-gray-800" %>
-                <% end %>
-            <% end %>
-        <% end %>
+        
 
         <% if @giro.excluded_ids.present? %>
-            <%= component "heading", level: "h3" do |heading| %>
-                Scuole Escluse
-                <% heading.with_trailer do %>
+                    
+            <%= tag.div class: "flex-none" do %>
+                <%= tag.div class: "flex flex-col gap-4 sm:flex-row sm:items-center bg-white/90 sm:justify-between px-4 py-3 border border-gray-200 rounded-t-lg shadow-md" do %>               
+                    <h2 class="text-lg font-semibold text-gray-700">Scuole Escluse</h2>
                     <span class="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                         <%= pluralize(@giro.excluded_ids.count, "scuola", "scuole") %>
                     </span>
@@ -153,7 +131,7 @@
             <% end %>
 
             <% current_user.import_scuole.where(id: @giro.excluded_ids).group_by(&:comune).each do |comune, scuole| %>
-                <div class="mb-4">
+                <div class="bg-white rounded-b-lg border-x border-b border-gray-200 shadow-lg p-4 mb-4">
                     <div class="text-sm font-medium text-gray-500 mb-2">
                         <%= comune %>
                     </div>
@@ -178,5 +156,23 @@
                 </div>
             <% end %>
         <% end %>
+
+        <%= tag.div class: "flex-none" do %>
+            <%= tag.div class: "flex flex-col gap-4 sm:flex-row sm:items-center bg-white/90 sm:justify-between px-4 py-3 border border-gray-200 rounded-t-lg shadow-md" do %>
+                <h2 class="text-lg font-semibold text-gray-700">Completate</h2>
+                <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
+                    <%= pluralize(@tappe_completate.sum { |_data, comuni| comuni.values.flatten.count }, "scuola", "scuole") %> in <%= pluralize(@tappe_completate.keys.count, "giorno", "giorni") %>
+                </span>
+            <% end %>
+        <% end %>
+
+        <%= tag.div class: "flex-1 overflow-y-auto" do %>
+            <% if @tappe_completate&.any? %>
+                <% @tappe_completate.each do |data, comuni| %>
+                    <%= render "tappe_del_giorno", data: data, comuni: comuni, badge_color: "bg-gray-100 text-gray-800" %>
+                <% end %>
+            <% end %>
+        <% end %>
+
     <% end %>
 <% end %>
