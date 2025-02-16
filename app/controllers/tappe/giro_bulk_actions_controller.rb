@@ -28,18 +28,10 @@ module Tappe
     def remove_tappa
       @tappa = current_user.tappe.find(params[:tappa_id])
       
-      respond_to do |format|
-        if @tappa.destroy
-          format.turbo_stream { 
-            render turbo_stream: turbo_stream.remove(helpers.dom_id(@tappa))
-          }
-        else
-          format.turbo_stream { 
-            render turbo_stream: turbo_stream.update("flash", 
-              partial: "shared/flash", 
-              locals: { message: "Impossibile rimuovere la tappa", type: "error" })
-          }
-        end
+      if @tappa.destroy
+        redirect_back(fallback_location: @giro, notice: "Tappa rimossa con successo")
+      else
+        redirect_back(fallback_location: @giro, alert: "Impossibile rimuovere la tappa")
       end
     end
 

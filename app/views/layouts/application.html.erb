@@ -75,7 +75,7 @@
 	
 					<%= render CommandMenuComponent.new(placeholder: 'Cerca libro, scuola o cliente…', endpoint: '/cerca') %>
 
-					<%= render "layouts/footer" %>
+					<%= render "layouts/footer" unless content_for?(:hide_footer) %>
 					
 				</main>
 			</div>  

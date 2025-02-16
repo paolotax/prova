@@ -41,6 +41,10 @@ class Giro < ApplicationRecord
     titolo
   end
 
+  def can_delete?
+    tappe.empty?
+  end
+
   def next
     self.class.where("id > ? and user_id = ?", id, user_id).first
   end
@@ -60,18 +64,18 @@ class Giro < ApplicationRecord
     schools = schools.reject { |s| excluded_ids.include?(s.id.to_s) } if excluded_ids.present?
     
     # Applica le condizioni
-    if conditions.present?
-      conditions.each do |condition|
-        case condition
-        when 'with_adozioni'
-          schools = schools.select { |s| s.adozioni.any? }
-        when 'with_appunti'
-          schools = schools.select { |s| s.appunti.any? }
-        when 'with_ordini'
-          schools = schools.select { |s| s.ordini.any? }
-        end
-      end
-    end
+    # if conditions.present?
+    #   conditions.each do |condition|
+    #     case condition
+    #     when 'with_adozioni'
+    #       schools = schools.select { |s| s.adozioni.any? }
+    #     when 'with_appunti'
+    #       schools = schools.select { |s| s.appunti.any? }
+    #     when 'with_ordini'
+    #       schools = schools.select { |s| s.ordini.any? }
+    #     end
+    #   end
+    # end
     
     schools
   end

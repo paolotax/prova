@@ -29,6 +29,8 @@ class Tappe::GroupByDateService
                           .includes(:direzione, :user_scuole)
                           .order('user_scuole.position')
     
+    scuole_senza_tappe = scuole_senza_tappe.where.not(id: @giro.excluded_ids)
+
     # Raggruppa per comune della direzione o della scuola e ordina alfabeticamente
     {nil => scuole_senza_tappe.group_by { |s| 
       if s.direzione.present?

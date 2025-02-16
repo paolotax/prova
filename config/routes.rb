@@ -123,6 +123,8 @@ Rails.application.routes.draw do
     member do
       post 'bulk_create_tappe', to: 'tappe/giro_bulk_actions#create'
       delete 'remove_tappa/:tappa_id', to: 'tappe/giro_bulk_actions#remove_tappa', as: 'remove_tappa'
+      post 'exclude_school/:school_id', to: 'giri#exclude_school', as: 'exclude_school'
+      post 'include_school/:school_id', to: 'giri#include_school', as: 'include_school'
     end
   end
 

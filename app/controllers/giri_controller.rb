@@ -1,7 +1,7 @@
 class GiriController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[ show edit update destroy]
+  before_action :set_giro, only: %i[ show edit update destroy exclude_school include_school ]
 
   def index    
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)       
@@ -75,22 +75,52 @@ class GiriController < ApplicationController
     end
   end
 
-    def destroy
-      @giro.broadcast_remove_to [current_user, "giri"]
-      @giro.destroy!
+  def destroy
+    @giro.broadcast_remove_to [current_user, "giri"]
+    @giro.destroy!
 
-      respond_to do |format|
-        if hotwire_native_app?
-          format.html { redirect_to giri_url, alert: "Giro eliminato." }
-        else
-          format.turbo_stream do 
-            flash.now[:alert] = "Giro eliminato."
-          end
-          format.html { redirect_to giri_url, alert: "Giro eliminato." }
-          format.json { head :no_content }
+    respond_to do |format|
+      if hotwire_native_app?
+        format.html { redirect_to giri_url, alert: "Giro eliminato." }
+      else
+        format.turbo_stream do 
+          flash.now[:alert] = "Giro eliminato."
         end
-      end 
+        format.html { redirect_to giri_url, alert: "Giro eliminato." }
+        format.json { head :no_content }
+      end
+    end 
+  end
+
+  def exclude_school
+    school_id = params[:school_id].to_s
+    current_excluded_ids = @giro.excluded_ids || []
+    @giro.excluded_ids = current_excluded_ids + [school_id]
+    
+    if @giro.save
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: giro_path(@giro), notice: "Scuola esclusa dal giro.") }
+        #format.turbo_stream { render turbo_stream: turbo_stream.replace("tappe_da_programmare", partial: "tappe_del_giorno", locals: { data: nil, comuni: @giro.filter_schools(current_user.import_scuole.all).group_by(&:comune) }) }
+      end
+    else
+      redirect_back fallback_location: giro_path(@giro), alert: "Errore nell'esclusione della scuola."
     end
+  end
+
+  def include_school
+    school_id = params[:school_id].to_s
+    current_excluded_ids = @giro.excluded_ids || []
+    @giro.excluded_ids = current_excluded_ids - [school_id]
+    
+    if @giro.save
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: giro_path(@giro), notice: "Scuola inclusa nel giro.") }
+        #format.turbo_stream { render turbo_stream: turbo_stream.replace("tappe_da_programmare", partial: "tappe_del_giorno", locals: { data: nil, comuni: @giro.filter_schools(current_user.import_scuole.all).group_by(&:comune) }) }
+      end
+    else
+      redirect_back fallback_location: giro_path(@giro), alert: "Errore nell'inclusione della scuola."
+    end
+  end
 
   private
 
@@ -99,6 +129,11 @@ class GiriController < ApplicationController
     end
 
     def giro_params
+      # Convertiamo excluded_ids in array se arriva come stringa
+      if params[:giro][:excluded_ids].present? && !params[:giro][:excluded_ids].is_a?(Array)
+        params[:giro][:excluded_ids] = [params[:giro][:excluded_ids]]
+      end
+      
       params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione, :filter, conditions: [], excluded_ids: [])
     end
 end
