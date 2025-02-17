@@ -1,5 +1,5 @@
 <div class="bg-white last:rounded-b-lg border-x border-b border-gray-200 shadow-lg p-4">
-  <div class="flex items-center justify-between text-lg font-semibold text-gray-700 mb-2 border-2 border-transparent p-2 rounded-lg"
+  <div class="flex items-center justify-between text-lg font-semibold text-gray-700 mb-2 border-2 border-transparent py-2 rounded-lg"
        data-controller="tappa-date"
        data-tappa-date-date-value="<%= data&.to_s %>"
        data-tappa-date-giro-id-value="<%= @giro.id %>">
@@ -7,7 +7,7 @@
       <%= link_to giorno_path(data), class: "hover:text-blue-600" do %>
         <%= l(data, format: :long) %>
       <% end %>
-      <span class="text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+      <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
         <%= pluralize(comuni.values.flatten.count, "tp") %>
       </span>
     <% end %>
