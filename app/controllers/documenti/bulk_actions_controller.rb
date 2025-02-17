@@ -35,7 +35,8 @@ module Documenti
                 disposition: 'inline'
     end
 
-    def generate_new
+    
+    def duplica
       @documenti = current_user.documenti.where(id: params[:documento_ids])
       
       @documenti.each do |documento|
@@ -61,6 +62,43 @@ module Documenti
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to documenti_path, notice: "Nuovi documenti creati con successo" }
+      end
+    end
+
+    def unisci
+      @documenti = current_user.documenti.where(id: params[:documento_ids])
+      
+      # Raggruppa i documenti per clientable
+      @documenti.group_by { |d| [d.clientable_type, d.clientable_id] }.each do |(_type, _id), docs|
+        # Crea un nuovo documento per ogni gruppo
+        nuovo_documento = current_user.documenti.create(
+          causale: docs.first.causale,
+          clientable: docs.first.clientable,
+          referente: docs.first.referente,
+          note: [
+            docs.map(&:note).compact.join("\n"),
+            "\nDocumenti uniti:",
+            docs.map { |d| "- Nr. #{d.numero_documento} del #{I18n.l(d.data_documento)}" }.join("\n")
+          ].join("\n"),
+          data_documento: Date.current,
+          numero_documento: current_user.documenti
+                            .where(causale: docs.first.causale)
+                            .where('EXTRACT(YEAR FROM data_documento) = ?', Date.current.year)
+                            .maximum(:numero_documento).to_i + 1
+        )
+
+        # Aggiungi tutte le righe uniche al nuovo documento
+        docs.flat_map(&:documento_righe).uniq { |dr| dr.riga_id }.each.with_index(1) do |dr, index|
+          nuovo_documento.documento_righe.create(
+            riga: dr.riga,
+            posizione: index
+          )
+        end
+      end
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
       end
     end
 

@@ -8,7 +8,13 @@
     <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "genera" } do %>
         <%= icon "plus" %>
-        Genera Nuovo
+        Duplica
+    <% end %>
+
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "unisci" } do %>
+        <%= icon "document-duplicate" %>
+        Unisci
     <% end %>
 <% end %>
 
@@ -41,11 +47,29 @@
         data-transition-leave="transform transition ease-in duration-200"
         data-transition-leave-start="transform translate-y-0 opacity-100"
         data-transition-leave-end="transform -translate-y-4 opacity-0">
-        <%= form_with url: generate_new_documenti_bulk_actions_path, 
+        <%= form_with url: duplica_documenti_bulk_actions_path, 
                 method: :post,
                 data: { bulk_actions_target: "form" } do |form| %>
             <div class="flex justify-between gap-2">
-                <%= form.submit "Conferma generazione", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+                <%= form.submit "Conferma duplicazione", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+            </div>
+        <% end %>
+    </div>
+
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+        data-bulk-actions-target="formContainer"
+        data-form-id="unisci"
+        data-transition-enter="transform transition ease-out duration-300"
+        data-transition-enter-start="transform -translate-y-4 opacity-0"
+        data-transition-enter-end="transform translate-y-0 opacity-100"
+        data-transition-leave="transform transition ease-in duration-200"
+        data-transition-leave-start="transform translate-y-0 opacity-100"
+        data-transition-leave-end="transform -translate-y-4 opacity-0">
+        <%= form_with url: unisci_documenti_bulk_actions_path, 
+                method: :post,
+                data: { bulk_actions_target: "form" } do |form| %>
+            <div class="flex justify-between gap-2">
+                <%= form.submit "Conferma unione", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
             </div>
         <% end %>
     </div>

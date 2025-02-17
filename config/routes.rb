@@ -236,7 +236,8 @@ Rails.application.routes.draw do
     resources :bulk_actions, only: [] do
       collection do
         patch :print_all
-        post :generate_new
+        post :duplica
+        post :unisci
       end
     end
   end
