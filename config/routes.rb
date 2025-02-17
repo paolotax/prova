@@ -231,7 +231,15 @@ Rails.application.routes.draw do
       delete :destroy_all, on: :collection
     end
   end
-
+  
+  namespace :documenti do
+    resources :bulk_actions, only: [] do
+      collection do
+        patch :print_all
+        post :generate_new
+      end
+    end
+  end
 
 
   # resources :import_scuole, except: :show

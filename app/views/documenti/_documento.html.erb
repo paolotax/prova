@@ -7,6 +7,13 @@
 			
 		<%= tag.div class: "block sm:flex gap-4 border items-start" do %>
 	
+			<%= check_box_tag "documento_ids[]", 
+					documento.id, 
+					false, 
+					id: "documento_#{documento.id}", 
+					class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600",
+					data: {action: "input->bulk-actions#count"} %>
+
 			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 		
 			<%= link_to documento_path(documento), class: "text-sm font-semibold hover:font-bold", data: { turbo_frame: :_top } do %>

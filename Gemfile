@@ -71,6 +71,7 @@ gem "money-rails", "~> 1.15"
 gem "prawn", "~> 2.4"
 gem "prawn-table", "~> 0.2"
 gem 'prawn-html'
+gem 'combine_pdf'
 
 gem "pg_search", "~> 2.3"
 gem 'activerecord-import'

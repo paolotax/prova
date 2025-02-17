@@ -1,0 +1,54 @@
+<% content_for :bulk_action_buttons do %>
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "stampa" } do %>
+        <%= icon "printer" %>
+        Stampa
+    <% end %>
+
+    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+            data: { action: "bulk-actions#toggleFormContainer", form_id: "genera" } do %>
+        <%= icon "plus" %>
+        Genera Nuovo
+    <% end %>
+<% end %>
+
+<% content_for :bulk_action_forms do %>
+
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+        data-bulk-actions-target="formContainer"
+        data-form-id="stampa"
+        data-transition-enter="transform transition ease-out duration-300"
+        data-transition-enter-start="transform -translate-y-4 opacity-0"
+        data-transition-enter-end="transform translate-y-0 opacity-100"
+        data-transition-leave="transform transition ease-in duration-200"
+        data-transition-leave-start="transform translate-y-0 opacity-100"
+        data-transition-leave-end="transform -translate-y-4 opacity-0">
+        <%= form_with url: print_all_documenti_bulk_actions_path(format: :pdf), 
+                method: :patch,
+                data: { bulk_actions_target: "form" } do |form| %>
+            <div class="flex justify-between gap-2">
+                <%= form.submit "Conferma stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+            </div>
+        <% end %>
+    </div>
+
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+        data-bulk-actions-target="formContainer"
+        data-form-id="genera"
+        data-transition-enter="transform transition ease-out duration-300"
+        data-transition-enter-start="transform -translate-y-4 opacity-0"
+        data-transition-enter-end="transform translate-y-0 opacity-100"
+        data-transition-leave="transform transition ease-in duration-200"
+        data-transition-leave-start="transform translate-y-0 opacity-100"
+        data-transition-leave-end="transform -translate-y-4 opacity-0">
+        <%= form_with url: generate_new_documenti_bulk_actions_path, 
+                method: :post,
+                data: { bulk_actions_target: "form" } do |form| %>
+            <div class="flex justify-between gap-2">
+                <%= form.submit "Conferma generazione", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+            </div>
+        <% end %>
+    </div>
+<% end %>
+
+<%= render partial: "shared/bulk_actions_container", locals: { form: "documenti" } %> 
