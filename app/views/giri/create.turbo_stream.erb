@@ -1,4 +1,4 @@
-<%= turbo_stream.prepend "giri-lista" do %>
+<%= turbo_stream.append "giri-lista" do %>
     <%= render partial: "giri/giro", locals: { giro: @giro } %>
 <% end %>
 
