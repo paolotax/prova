@@ -1,0 +1,11 @@
+<%= turbo_stream.append "documenti" do %>
+  <%= render partial: "documenti/documento", locals: { documento: @documento } %>
+<% end %>
+
+<%= turbo_stream.update "flash" do %>
+  <%= render "layouts/flash", message: "Documenti uniti con successo", type: "success" %>
+<% end %>
+
+<%= turbo_stream.update "documenti_counter" do %>
+  <%= current_user.documenti.count %>
+<% end %> 

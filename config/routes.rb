@@ -238,6 +238,7 @@ Rails.application.routes.draw do
         patch :print_all
         post :duplica
         post :unisci
+        delete :destroy_all
       end
     end
   end

@@ -102,6 +102,16 @@ module Documenti
       end
     end
 
+    def destroy_all
+      @documenti = current_user.documenti.where(id: params[:documento_ids])
+      @documenti.destroy_all
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to documenti_path, notice: "Documenti eliminati con successo" }
+      end
+    end
+
     private
 
     def bulk_action_params

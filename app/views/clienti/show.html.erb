@@ -128,7 +128,9 @@
 </div>
 
 
-<div class="group show-cliente flex flex-row gap-4">
+<div class="group show-cliente flex flex-row gap-4" data-controller="bulk-actions">
+
+	<%= render partial: "documenti/bulk_actions/form" %>
 
 	<div class="w-1/2">
 		<%= render partial: "documenti/documento", 
