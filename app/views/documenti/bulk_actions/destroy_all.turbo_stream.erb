@@ -1,12 +1,16 @@
-<%# Rimuove i documenti eliminati dalla lista %>
-<% @documenti.each do |documento| %>
-  <%= turbo_stream.remove "documento_#{documento.id}" %>
+<%# Rimuove i documenti eliminati dalla lista %>    
+<% @ids.each do |id| %>
+  <%= turbo_stream.remove "documento_#{id}" %>
 <% end %>
 
 <%= turbo_stream.update "flash" do %>
   <%= render "layouts/flash", message: "Documenti eliminati con successo", type: "success" %>
 <% end %>
-    
+
+<%= turbo_stream.update "flash" do %>
+  <div class="alert alert-success">Test turbo stream</div>
+<% end %>
+
 <%= turbo_stream.update "documenti_counter" do %>
   <%= current_user.documenti.count %>
 <% end %> 
