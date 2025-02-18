@@ -73,28 +73,44 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   toggleFormContainer(event) {
-    const formId = event.currentTarget.dataset.formId
+    const formId = event.currentTarget.dataset.formId;
+    const clickedButton = event.currentTarget;
+    const allButtons = this.containerTarget.querySelectorAll('button, a');
+    const closeButton = this.element.querySelector('[data-action="bulk-actions#deselectAll"]');
     
     // Trova la form target
-    const targetForm = this.formContainerTargets.find(formContainer => formContainer.dataset.formId === formId)
+    const targetForm = this.formContainerTargets.find(formContainer => 
+        formContainer.dataset.formId === formId
+    );
     
-    // Se la form target è già visibile, la nascondiamo e usciamo
+    // Se la form target è già visibile
     if (targetForm && !targetForm.classList.contains('hidden')) {
-      targetForm.classList.add('hidden')
-      targetForm.classList.remove('flex')
-      return
+        // Nascondi la form
+        targetForm.classList.add('hidden');
+        targetForm.classList.remove('flex');
+        // Mostra tutti i pulsanti
+        allButtons.forEach(button => button.classList.remove('hidden'));
+        return;
     }
     
-    // Altrimenti, nascondi tutte le form
+    // Nascondi tutte le form
     this.formContainerTargets.forEach(formContainer => {
-      formContainer.classList.add('hidden')
-      formContainer.classList.remove('flex')
-    })
+        formContainer.classList.add('hidden');
+        formContainer.classList.remove('flex');
+    });
     
-    // E mostra la form selezionata
+    // Se c'è una form target
     if (targetForm) {
-      targetForm.classList.remove('hidden')
-      targetForm.classList.add('flex')
+        // Nascondi tutti i pulsanti eccetto quello cliccato e il pulsante di chiusura
+        allButtons.forEach(button => {
+            if (button !== clickedButton && button !== closeButton) {
+                button.classList.add('hidden');
+            }
+        });
+        
+        // Mostra la form selezionata
+        targetForm.classList.remove('hidden');
+        targetForm.classList.add('flex');
     }
   }
 }

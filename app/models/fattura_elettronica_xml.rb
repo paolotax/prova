@@ -34,7 +34,7 @@ class FatturaElettronicaXml
     xml.DatiTrasmissione {
       xml.IdTrasmittente {
         xml.IdPaese 'IT'
-        xml.IdCodice @documento.user&.azienda_partita_iva
+        xml.IdCodice "01879020517"
       }
       xml.ProgressivoInvio @documento.numero_documento
       xml.FormatoTrasmissione 'FPR12'
