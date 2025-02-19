@@ -29,4 +29,16 @@ class Causale < ApplicationRecord
   def to_combobox_display
     causale # or `title`, `to_s`, etc.
   end
+
+  def descrizione_causale
+    if causale == "TD01"
+      "Fattura"
+    elsif causale == "TD04"
+      "Nota di credito"
+    elsif causale == "TD24"
+      "Fattura"
+    else
+      causale
+    end
+  end
 end

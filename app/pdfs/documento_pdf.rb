@@ -118,12 +118,12 @@ class DocumentoPdf < Prawn::Document
     # causale
     bounding_box [bounds.left, bounds.top - 55.mm], :width => 72.mm, :height => 8.mm do
       
-      fill_color @view.string_to_color_hex(@documento.causale.causale)
+      fill_color @view.string_to_color_hex(@documento.causale.descrizione_causale)
       
       fill_rectangle [bounds.left, bounds.top], bounds.width, bounds.height            
       
       fill_color "FFFFFF"
-      text "#{@documento.causale.causale}", align: :center, valign: :center, style: :bold
+      text "#{@documento.causale.descrizione_causale}", align: :center, valign: :center, style: :bold
       
       draw_bounds
       
