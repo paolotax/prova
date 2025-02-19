@@ -11,7 +11,7 @@
             transition_leave_end: "opacity-0"
         } do %>
     
-    <%= tag.div class: "flex flex-col sm:flex-row items-center gap-4" do %>
+    <%= tag.div class: "mx-auto flex flex-col sm:flex-row items-center gap-4" do %>
         
         <%= yield :bulk_action_buttons_appunti if form == "appunti" %>
         <%= yield :bulk_action_buttons unless form == "appunti" %>

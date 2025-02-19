@@ -1,23 +1,23 @@
 <% content_for :bulk_action_buttons_appunti do %>
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mxflex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "stampa" } do %>
         <%= icon "printer" %>
         Stampa
     <% end %>
 
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "tappa" } do %>
         <%= icon "map-pin" %>
         Tappa
     <% end %>
 
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "stato" } do %>
         <%= icon "check-circle" %>
         Stato
     <% end %>
 
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "elimina" } do %>
         <%= icon "trash" %>
         Elimina
@@ -53,21 +53,30 @@
             data-transition-leave-end="transform -translate-y-4 opacity-0">
         <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
                 method: :patch,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
+                } do |form| %>
             <%= form.hidden_field :data_tappa, value: Date.today %>
             <%= form.submit "Oggi", class: "w-full px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" %>
         <% end %>
 
         <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
                 method: :patch,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
+                } do |form| %>
             <%= form.hidden_field :data_tappa, value: Date.tomorrow %>
             <%= form.submit "Domani", class: "w-full px-4 py-2 text-sm font-medium text-white bg-yellow-400 hover:bg-yellow-500 rounded-md" %>
         <% end %>
 
         <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
                 method: :patch,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
+                } do |form| %>
             <div class="flex justify-between gap-2">
                 <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                 <%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
@@ -81,6 +90,7 @@
             data: { 
                 bulk_actions_target: "form formContainer",
                 form_id: "stato",
+                action: "turbo:submit-end->bulk-actions#hideAfterSubmit",
                 transition_enter: "transform transition ease-out duration-300",
                 transition_enter_start: "transform -translate-y-4 opacity-0",
                 transition_enter_end: "transform translate-y-0 opacity-100",
@@ -108,7 +118,10 @@
         data-transition-leave-end="transform -translate-y-4 opacity-0">
         <%= form_with url: destroy_all_appunti_bulk_actions_path, 
                 method: :delete,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
+                } do |form| %>
             <div class="flex justify-between gap-2">
                 <%= form.submit "Conferma eliminazione", class: "px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md" %>
             </div>

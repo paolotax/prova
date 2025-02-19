@@ -113,4 +113,22 @@ export default class BulkActionsController extends CheckboxesController {
         targetForm.classList.add('flex');
     }
   }
+
+  hideAfterSubmit(event) {
+    // Nascondiamo il container con l'animazione
+    leave(this.containerTarget).then(() => {
+      // Dopo che il container è nascosto, resettiamo lo stato
+      this.formContainerTargets.forEach(formContainer => {
+        formContainer.classList.add('hidden');
+        formContainer.classList.remove('flex');
+      });
+      
+      // Mostra tutti i pulsanti
+      const allButtons = this.containerTarget.querySelectorAll('button, a');
+      allButtons.forEach(button => button.classList.remove('hidden'));
+      
+      // Deseleziona le checkbox
+      this.setCheckboxesTo(false);
+    });
+  }
 }

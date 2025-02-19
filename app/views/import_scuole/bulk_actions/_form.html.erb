@@ -1,11 +1,11 @@
 <% content_for :bulk_action_buttons do %>
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "stampa" } do %>
         <%= icon "printer" %>
         Stampa
     <% end %>
     
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "tappa" } do %>
         <%= icon "map-pin" %>
         Tappa
@@ -25,7 +25,8 @@
                 transition_enter_end: "transform translate-y-0 opacity-100",
                 transition_leave: "transform transition ease-in duration-200",
                 transition_leave_start: "transform translate-y-0 opacity-100",
-                transition_leave_end: "transform -translate-y-4 opacity-0"
+                transition_leave_end: "transform -translate-y-4 opacity-0",
+                action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
             } do |form| %>
         <%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
     <% end %>
@@ -38,7 +39,8 @@
             data-transition-enter-end="transform translate-y-0 opacity-100"
             data-transition-leave="transform transition ease-in duration-200"
             data-transition-leave-start="transform translate-y-0 opacity-100"
-            data-transition-leave-end="transform -translate-y-4 opacity-0">
+            data-transition-leave-end="transform -translate-y-4 opacity-0"
+            data-action="turbo:submit-end->bulk-actions#hideAfterSubmit">
         
         <div class="flex gap-2">
           <%= form_with url: add_tappa_giorno_import_scuole_bulk_actions_path, 
@@ -62,7 +64,10 @@
 
         <%= form_with url: add_tappa_giorno_import_scuole_bulk_actions_path, 
                 method: :patch,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
                 <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                 <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>

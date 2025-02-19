@@ -2,13 +2,13 @@
 
 <% content_for :bulk_action_buttons do %>
 
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "tappa" } do %>
         <%= icon "map-pin" %>
         Tappa
     <% end %>
 
-    <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
             data: { action: "bulk-actions#toggleFormContainer", form_id: "elimina" } do %>
         <%= icon "trash" %>
         Elimina
@@ -30,7 +30,10 @@
 
         <%= form_with url: update_all_tappe_bulk_actions_path, 
                 method: :patch,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
                 <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                 <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
@@ -54,7 +57,10 @@
 
         <%= form_with url: destroy_all_tappe_bulk_actions_path, 
                 method: :delete,
-                data: { bulk_actions_target: "form" } do |form| %>
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
             <div class="flex justify-between gap-2">
                 <%= form.submit "Conferma eliminazione", class: "px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md" %>
             </div>
