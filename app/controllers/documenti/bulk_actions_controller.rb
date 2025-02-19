@@ -34,8 +34,7 @@ module Documenti
                 type: 'application/pdf',
                 disposition: 'inline'
     end
-
-    
+  
     def duplica
       @documenti = current_user.documenti.where(id: params[:documento_ids])
       
@@ -59,10 +58,12 @@ module Documenti
         end
       end
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "Nuovi documenti creati con successo" }
-      end
+      redirect_back(fallback_location: documenti_path, notice: "Documenti duplicati con successo")
+
+      # respond_to do |format|
+      #   format.turbo_stream
+      #   format.html { redirect_to documenti_path, notice: "Nuovi documenti creati con successo" }
+      # end
     end
 
     def unisci
@@ -103,10 +104,12 @@ module Documenti
         @documenti_creati << @documento_unito
       end
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
-      end
+      redirect_back(fallback_location: documenti_path, notice: "Documenti uniti con successo")
+
+      # respond_to do |format|
+      #   format.turbo_stream
+      #   format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
+      # end
     end
 
     def destroy_all

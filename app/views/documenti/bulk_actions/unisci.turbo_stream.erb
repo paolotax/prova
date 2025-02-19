@@ -1,14 +1,10 @@
-<%= turbo_stream.append "documenti-lista" do %>
-  <%= render partial: "documenti/documento", collection: @documenti_creati %>
+<% @documenti_creati.each do |documento| %>
+ <%= turbo_stream.append "documenti" do %>
+  <%= render partial: "documenti/documento", locals: { documento: documento } %>
+<% end %>
 <% end %>
 
-<%= turbo_stream.update "flash" do %>
-  <%= render "layouts/flash", message: "Documenti uniti con successo", type: "success" %>
-<% end %>
 
-<%= turbo_stream.update "flash" do %>
-  <div class="alert alert-success">Test turbo stream</div>
-<% end %>
 
 
 <%= turbo_stream.update "documenti_counter" do %>
