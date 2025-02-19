@@ -120,10 +120,29 @@ module Documenti
       end
     end
 
+    def update_stato
+      @documenti = current_user.documenti.where(id: params[:documento_ids])
+      count = @documenti.count
+
+      @documenti.each do |documento|
+        documento.update(stato_params.compact)
+      end
+
+      flash[:notice] = "Stato aggiornato per #{helpers.pluralize(count, 'documento', 'documenti')}"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to documenti_path, notice: "Stato dei documenti aggiornato con successo" }
+      end
+    end
+
     private
 
     def bulk_action_params
       params.permit(:documento_ids)
+    end
+
+    def stato_params
+      params.permit(:status, :tipo_pagamento, :pagato_il)
     end
   end
 end

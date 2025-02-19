@@ -11,7 +11,7 @@
 					documento.id, 
 					false, 
 					id: "documento_#{documento.id}", 
-					class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600",
+					class: "mx-auto w-7 h-7 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
 					data: {action: "input->bulk-actions#count"} %>
 
 			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>

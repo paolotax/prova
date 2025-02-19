@@ -1,0 +1,9 @@
+<% @documenti.each do |documento| %>
+  <%= turbo_stream.update "documento_#{documento.id}" do %>
+    <%= render partial: "documenti/documento", locals: { documento: documento } %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update "flash" do %>
+  <%= render partial: "layouts/flash" %>
+<% end %>
