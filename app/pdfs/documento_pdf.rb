@@ -30,6 +30,49 @@ class DocumentoPdf < Prawn::Document
       footer      
     end
 
+    # Aggiungo il timbro pagato se il documento è pagato
+    if @documento.pagato_il.present?
+      # Calcolo le dimensioni del testo per il box
+      testo_pagato = "PAGATO"
+      testo_data = "#{@documento.pagato_il.strftime("%d/%m/%Y")} - #{@documento.tipo_pagamento}"
+      
+      # Imposto il font per calcolare le dimensioni
+      font("Helvetica", style: :bold) do
+        width_pagato = width_of(testo_pagato, size: 14)
+        width_data = width_of(testo_data, size: 8)
+        box_width = [width_pagato, width_data].max + 4.mm # padding 2mm per lato
+        
+        # Creo il box con le dimensioni calcolate
+        bounding_box [bounds.right - box_width - 2.mm, bounds.top + 5.mm], 
+                    width: box_width, 
+                    height: 12.mm do
+          
+          stroke_color "FF0000"
+          fill_color "FFFFFF"
+          fill_and_stroke_rounded_rectangle [bounds.left, bounds.top], 
+                                          bounds.width, 
+                                          bounds.height, 
+                                          3
+
+          fill_color "FF0000"
+          text_box testo_pagato,
+                  at: [bounds.left + 2.mm, bounds.top - 2.mm],
+                  width: bounds.width - 4.mm,
+                  align: :center,
+                  size: 14
+                  
+          text_box testo_data,
+                  at: [bounds.left + 2.mm, bounds.top - 8.mm],
+                  width: bounds.width - 4.mm,
+                  align: :right,
+                  size: 8
+          
+          stroke_color "000000"
+          fill_color "000000"
+        end
+      end
+    end
+
     righe_documento
 
     footer_totals
