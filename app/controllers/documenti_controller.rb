@@ -17,10 +17,11 @@ class DocumentiController < ApplicationController
 
     @documenti = filter(@documenti.all)
     
+    @pagy, @documenti = pagy(@documenti.all, items: 20)
+    
     respond_to do |format|
-      format.html do 
-        @pagy, @documenti = pagy(@documenti.all, items: 5)
-      end
+      format.html 
+      format.turbo_stream
       format.xlsx
     end
   end
