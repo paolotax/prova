@@ -178,13 +178,13 @@ class DocumentoPdf < Prawn::Document
     #  TABLE
     bounding_box([bounds.left, bounds.top - 106.mm], :width  => bounds.width, :height => 135.mm) do
       unless @documento.righe.empty?
-        r =  @documento.righe.map do |riga|
+        r =  @documento.righe.map do |riga| 
           [
-            riga.libro.codice_isbn + ' - ' + riga.libro.titolo,
+            riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
             riga.quantita,
-            riga.prezzo,
+            currency(riga.prezzo),
             riga.sconto.round(2),
-            riga.importo,
+            currency(riga.importo),
             "VA"
           ]
         end
@@ -201,7 +201,6 @@ class DocumentoPdf < Prawn::Document
 
       note
     end
-
   end
 
   def note
@@ -215,11 +214,11 @@ class DocumentoPdf < Prawn::Document
     #  FOOTER WITH TOTALS
     bounding_box [bounds.left, bounds.bottom + 28.mm], :width  => bounds.width, :height => 50.mm do
 
-      bounding_box [bounds.left, bounds.top], :width  => 188.mm, :height => 24.mm do
+      bounding_box [bounds.left, bounds.top], width: bounds.width, :height => 24.mm do
 
         bounding_box [bounds.left, bounds.top], :width  => 32.mm, :height => 15.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "#{@documento.totale_importo}", :align => :right, :valign => :center, :size => 8
+            text currency(@documento.totale_importo), :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -235,7 +234,8 @@ class DocumentoPdf < Prawn::Document
           end
         end
 
-        bounding_box [bounds.left + 72.mm, bounds.top], :width  => 108.mm, :height => 15.mm do
+        bounding_box [bounds.left + 72.mm, bounds.top], :width  => bounds.width - bounds.left - 72.mm, :height => 15.mm do
+         #draw_bounds
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
             text "VA: IVA ass.editore art.74.1.C", :align => :left, :valign => :center, :size => 8
           end
@@ -243,7 +243,7 @@ class DocumentoPdf < Prawn::Document
 
         bounding_box [bounds.left, bounds.top - 15.mm], :width  => 40.mm, :height => 9.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-            text "#{@documento.totale_importo}", :align => :right, :valign => :center, :size => 8
+            text currency(@documento.totale_importo), :align => :right, :valign => :center, :size => 8
           end
         end
 
@@ -259,9 +259,9 @@ class DocumentoPdf < Prawn::Document
           end
         end
 
-        bounding_box [bounds.left + 144.mm, bounds.top - 13.mm], :width  => 44.mm, :height => 11.mm do
+        bounding_box [bounds.right - 50.mm, bounds.top - 13.mm], :width  => 50.mm, :height => 11.mm do
           bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 8.mm do
-            text "#{@documento.totale_importo}", :align => :right, :valign => :center, :size => 8
+            text currency(@documento.totale_importo), :align => :right, :valign => :center, :size => 8
           end
         end
       end    
@@ -272,7 +272,8 @@ class DocumentoPdf < Prawn::Document
     # footer
     bounding_box [bounds.left, bounds.bottom + 28.mm], :width  => bounds.width, :height => 50.mm do
     
-      bounding_box [bounds.left, bounds.top], :width  => 188.mm, :height => 24.mm do
+      bounding_box [bounds.left, bounds.top], :width  => bounds.width, :height => 24.mm do
+        
         mask(:line_width) do
           line_width 0.5
           stroke_bounds
@@ -302,7 +303,7 @@ class DocumentoPdf < Prawn::Document
           draw_text "IMPOSTA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         end
         
-        bounding_box [bounds.left + 72.mm, bounds.top], :width  => 108.mm, :height => 15.mm do
+        bounding_box [bounds.left + 72.mm, bounds.top], width: bounds.width - bounds.left - 72.mm, :height => 15.mm do
 
         end
         
@@ -330,14 +331,15 @@ class DocumentoPdf < Prawn::Document
           draw_text "SPESE DI PORTO E IMBALLO", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         end
         
-        bounding_box [bounds.left + 144.mm, bounds.top - 13.mm], :width  => 44.mm, :height => 11.mm do
+        bounding_box [bounds.right - 50.mm, bounds.top - 13.mm], :width  => 50.mm, :height => 11.mm do
           mask(:line_width) do
             line_width 0.5
             stroke_bounds
           end
-          draw_text "TOTALE #{@documento.causale.causale.upcase}   EUR", :at => [bounds.left + 1, bounds.top - 6], :size => 6, :style => :bold
+          draw_text "TOTALE #{@documento.causale.causale.upcase}", :at => [bounds.left + 1, bounds.top - 6], :size => 6, :style => :bold
         end
       end    
+    
     end
   end
     
@@ -393,6 +395,11 @@ class DocumentoPdf < Prawn::Document
     end
   end
 
-  
+  private
+
+  def currency(number)
+    return "€ 0,00" if number.nil?
+    sprintf("€ %.2f", number.to_f).gsub(".", ",")
+  end
   
 end
