@@ -2,9 +2,9 @@
 
 class TaxButtonComponent < ViewComponent::Base
   
-  attr_reader :caption, :svg_file, :color, :url, :data_attr
+  attr_reader :caption, :svg_file, :color, :url, :data_attr, :style, :target, :type
   
-  def initialize(caption: nil, svg_file: nil, color:, url: nil, data_attr: {}, enabled: true, style: :link, target: nil, type: nil, orientation: "vertical")      
+  def initialize(caption: nil, svg_file: nil, color:, url: nil, data_attr: {}, enabled: true, style: nil, target: nil, type: :link, orientation: "vertical")      
     @caption = caption
     @svg_file = svg_file
     @color = color
@@ -22,8 +22,8 @@ class TaxButtonComponent < ViewComponent::Base
 
   def css_class
     class_names(
-      "flex sm:flex-col items-center gap-x-2 py-2 px-3 
-        text-sm text-center font-semibold rounded-md shadow-md cursor-pointer 
+      "flex sm:flex-col items-center gap-x-2
+        text-sm text-center font-semibold cursor-pointer 
         transition duration-150 ease-in-out
         focus:outline focus:outline-2 focus:outline-offset-2": true,
       
@@ -54,7 +54,11 @@ class TaxButtonComponent < ViewComponent::Base
         focus:outline-gray-400": color == "gray",        
       
         "border-none shadow-none bg-none text-gray-500 hover:text-gray-900 
-        focus:outline-none": color == "transparent"
+        focus:outline-none": color == "transparent",
+
+      "rounded-md shadow-md  py-2 px-3": style != :rounded,
+      
+      "rounded-full p-1": style == :rounded
     )
   end
  

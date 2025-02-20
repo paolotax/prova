@@ -1,4 +1,4 @@
-<% if @style == :link %>
+<% if @type == :link %>
 
   <%= link_to url,
               target: @target,
@@ -8,14 +8,14 @@
       <%= tag.div( caption, class: [ "hidden": !svg_file.nil?, "px-1 text-base font-normal": svg_file.nil?, "sm:block": true ]) if caption %>
   <% end %>
 
-<% elsif @style == :dropdown %>
+<% elsif @type == :dropdown %>
 
   <%= tag.div class: css_class do %>
       <%= inline_svg_tag(svg_file) if svg_file %>
       <%= tag.div( caption, class: [ "hidden": !svg_file.nil?, "px-1 text-base font-normal": svg_file.nil?, "sm:block": true ]) if caption %>
   <% end %>
 
-<% elsif @style == :button %>
+<% elsif @type == :button %>
 
   <%= button_to url,
               method: :delete,
