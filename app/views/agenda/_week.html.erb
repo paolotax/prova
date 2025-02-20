@@ -11,6 +11,8 @@
 				<%= link_to I18n.l(giorno, format: :day_calendar, locale: :it), giorno_path(giorno.to_s),
 					data: { turbo_frame: :_top },
 					class: "hover:font-semibold" %>
+				
+				
 				<%= component 'tax_button',
 					svg_file: "icon-plus.svg",
 					color: "blue",
@@ -19,7 +21,7 @@
 			<% end %>
 
 			<%= tag.div id: "giorno-#{giorno.to_s}", 
-						class: "h-96 w-full bg-transparent mt-4 overflow-y-auto",
+						class: "w-full bg-transparent mt-4 overflow-y-auto h-[calc(100%-3rem)]",
 						data: {
 							controller: "tax-sortable",
 							tax_sortable_group_value: "calendar",
