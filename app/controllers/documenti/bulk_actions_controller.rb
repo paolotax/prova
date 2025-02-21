@@ -37,7 +37,8 @@ module Documenti
   
     def duplica
       @documenti = current_user.documenti.where(id: params[:documento_ids])
-      
+      @documenti_creati = []
+
       @documenti.each do |documento|
         nuovo_documento = current_user.documenti.create(
           causale: documento.causale,
@@ -56,14 +57,13 @@ module Documenti
             riga: riga.riga.dup
           )
         end
+        @documenti_creati << nuovo_documento
       end
 
-      redirect_back(fallback_location: documenti_path, notice: "Documenti duplicati con successo")
-
-      # respond_to do |format|
-      #   format.turbo_stream
-      #   format.html { redirect_to documenti_path, notice: "Nuovi documenti creati con successo" }
-      # end
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to documenti_path, notice: "#{helpers.pluralize(@documenti_creati.count, 'documento', 'documenti')} duplicati con successo" }
+      end
     end
 
     def unisci
@@ -104,12 +104,10 @@ module Documenti
         @documenti_creati << @documento_unito
       end
 
-      redirect_back(fallback_location: documenti_path, notice: "Documenti uniti con successo")
-
-      # respond_to do |format|
-      #   format.turbo_stream
-      #   format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
-      # end
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
+      end
     end
 
     def destroy_all

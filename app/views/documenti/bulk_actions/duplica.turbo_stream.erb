@@ -3,10 +3,3 @@
       	<%= render partial: "documenti/documento", locals: { documento: documento } %>
     <% end %>
 <% end %>
-
-
-
-
-<%= turbo_stream.update "documenti_counter" do %>
-  <%= current_user.documenti.count %>
-<% end %> 

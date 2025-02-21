@@ -2,7 +2,7 @@ import CheckboxesController from "./checkboxes_controller";
 import { enter, leave } from "./helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
-  static targets = ["container", "form", "counter", "formContainer"];
+  static targets = ["container", "form", "counter", "formContainer", "menuButton"];
   static values = { open: Boolean };
 
   toggle(event) {
@@ -75,7 +75,6 @@ export default class BulkActionsController extends CheckboxesController {
   toggleFormContainer(event) {
     const formId = event.currentTarget.dataset.formId;
     const clickedButton = event.currentTarget;
-    const allButtons = this.containerTarget.querySelectorAll('button, a');
     const closeButton = this.element.querySelector('[data-action="bulk-actions#deselectAll"]');
     
     // Trova la form target
@@ -88,8 +87,8 @@ export default class BulkActionsController extends CheckboxesController {
         // Nascondi la form
         targetForm.classList.add('hidden');
         targetForm.classList.remove('flex');
-        // Mostra tutti i pulsanti
-        allButtons.forEach(button => button.classList.remove('hidden'));
+        // Mostra tutti i pulsanti del menu
+        this.menuButtonTargets.forEach(button => button.classList.remove('hidden'));
         return;
     }
     
@@ -101,9 +100,9 @@ export default class BulkActionsController extends CheckboxesController {
     
     // Se c'è una form target
     if (targetForm) {
-        // Nascondi tutti i pulsanti eccetto quello cliccato e il pulsante di chiusura
-        allButtons.forEach(button => {
-            if (button !== clickedButton && button !== closeButton) {
+        // Nascondi tutti i pulsanti del menu eccetto quello cliccato
+        this.menuButtonTargets.forEach(button => {
+            if (button !== clickedButton) {
                 button.classList.add('hidden');
             }
         });
@@ -130,5 +129,11 @@ export default class BulkActionsController extends CheckboxesController {
       // Deseleziona le checkbox
       this.setCheckboxesTo(false);
     });
+  }
+
+  toggleButtons(show) {
+    this.menuButtonTargets.forEach(button => {
+      button.style.display = show ? "block" : "none"
+    })
   }
 }
