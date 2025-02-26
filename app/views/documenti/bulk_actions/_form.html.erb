@@ -1,5 +1,5 @@
 <% content_for :bulk_action_buttons do %>
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "stampa",
@@ -9,7 +9,7 @@
         Stampa
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "genera",
@@ -19,7 +19,7 @@
         Duplica
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "unisci",
@@ -39,7 +39,7 @@
         Elimina
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "modifica_stato",
@@ -68,7 +68,7 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <div class="flex pt-2 w-full justify-center">
-                <%= form.submit "Conferma stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+                <%= form.submit "Conferma stampa", class: "px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
             </div>
         <% end %>
     </div>
@@ -89,7 +89,7 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <div class="flex pt-2 w-full justify-center">
-                <%= form.submit "Conferma duplicazione", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+                <%= form.submit "Conferma duplicazione", class: "px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
             </div>
         <% end %>
     </div>
@@ -139,7 +139,7 @@
             </div>
 
             <div class="flex pt-2 w-full justify-center">
-                <%= render ButtonComponent.new(state: 'primary', busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
+                <%= render ButtonComponent.new(busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
                     <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
                         <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
                     <% end %>
@@ -212,7 +212,7 @@
             </div>
 
             <div class="flex pt-2 w-full justify-center">
-                <%= form.submit "Aggiorna Stato", class: "mx-auto w-full mt-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+                <%= form.submit "Aggiorna Stato", class: "mx-auto w-full mt-2 px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
             </div>
         <% end %>
     </div>
