@@ -36,7 +36,9 @@
                 transition_leave_end: "transform -translate-y-4 opacity-0",
                 action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
             } do |form| %>
-        <%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+        <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+            <%= form.submit "Conferma Stampa", class: "mx-auto px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+        <% end %>
     <% end %>
    
    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"

@@ -1,5 +1,6 @@
 <% content_for :bulk_action_buttons_appunti do %>
-    <%= button_tag class: "mxflex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-gray hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "stampa",
@@ -9,7 +10,7 @@
         Stampa
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-gray hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "tappa",
@@ -19,7 +20,7 @@
         Tappa
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md",
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-gray hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
               form_id: "stato",
@@ -55,7 +56,9 @@
                 transition_leave_start: "transform translate-y-0 opacity-100",
                 transition_leave_end: "transform -translate-y-4 opacity-0"
             } do |form| %>
-        <%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+        <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+            <%= form.submit "Conferma Stampa", class: "px-4 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-600 rounded-md" %>
+        <% end %>
     <% end %>
 
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
@@ -74,7 +77,9 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
                 } do |form| %>
             <%= form.hidden_field :data_tappa, value: Date.today %>
-            <%= form.submit "Oggi", class: "w-full px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" %>
+            <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+                <%= form.submit "Oggi", class: "w-full px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" %>
+            <% end %>
         <% end %>
 
         <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
@@ -84,7 +89,9 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit" 
                 } do |form| %>
             <%= form.hidden_field :data_tappa, value: Date.tomorrow %>
-            <%= form.submit "Domani", class: "w-full px-4 py-2 text-sm font-medium text-white bg-yellow-400 hover:bg-yellow-500 rounded-md" %>
+            <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+                <%= form.submit "Domani", class: "w-full px-4 py-2 text-sm font-medium text-white bg-yellow-400 hover:bg-yellow-500 rounded-md" %>
+            <% end %>
         <% end %>
 
         <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
@@ -119,7 +126,7 @@
                     Appunto::STATO_APPUNTI, 
                     {}, 
                     class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900" %>
-            <%= form.submit "Conferma", class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md" %>
+            <%= form.submit "Conferma", class: "px-4 py-2 text-sm font-medium text-white bg-gray hover:bg-gray-600 rounded-md" %>
         </div>
     <% end %>
     

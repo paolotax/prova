@@ -21,8 +21,8 @@ function insertConfirmModal(message, element) {
   const button = element.querySelector("button");
   
   const theme = button.dataset.turboConfirmTheme || "light";
-  const cancelLabel = button.dataset.turboConfirmCancelLabel || "Cancel";
-  const confirmLabel = button.dataset.turboConfirmConfirmLabel || "Confirm";
+  const cancelLabel = button.dataset.turboConfirmCancelLabel || "Annulla";
+  const confirmLabel = button.dataset.turboConfirmConfirmLabel || "Conferma";
   
   const template = new Template({theme: theme, message: message, cancelLabel: cancelLabel, confirmLabel: confirmLabel});
 
