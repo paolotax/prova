@@ -29,8 +29,14 @@
   <% end %>
 
   <%# Badge con il conteggio dei record %>
-  <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-    <% total_count = collection.except(:limit, :offset).count %>
-    <%= "#{total_count} #{controller_name.classify.constantize.model_name.human(count: total_count).gsub("Import", "")}" %>
+  <div id="collection_counter" 
+       data-controller="collection-counter"
+       data-collection-counter-total-value="<%= collection.except(:limit, :offset).count %>"
+       data-collection-counter-model-name-value="<%= controller_name.classify.constantize.model_name.human(count: 2).gsub("Import", "") %>"
+       class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+    <span data-collection-counter-target="count">
+      <% total_count = collection.except(:limit, :offset).count %>
+      <%= "#{total_count} #{controller_name.classify.constantize.model_name.human(count: total_count).gsub("Import", "")}" %>
+    </span>
   </div>
 </div> 
