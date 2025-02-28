@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_14_204949) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_26_114517) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -139,6 +139,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_14_204949) do
     t.string "team"
     t.bigint "classe_id"
     t.bigint "voice_note_id"
+    t.boolean "active"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"

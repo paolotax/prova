@@ -226,7 +226,7 @@ class DocumentoPdf < Prawn::Document
             riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
             riga.quantita,
             currency(riga.prezzo),
-            riga.sconto.round(2),
+            riga.sconto,
             currency(riga.importo),
             "VA"
           ]

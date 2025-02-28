@@ -3,6 +3,7 @@
 # Table name: appunti
 #
 #  id                 :bigint           not null, primary key
+#  active             :boolean
 #  body               :text
 #  completed_at       :datetime
 #  email              :string

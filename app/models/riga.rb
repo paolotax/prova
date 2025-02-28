@@ -27,7 +27,7 @@ class Riga < ApplicationRecord
   has_many :documento_righe
   has_many :documenti, through: :documento_righe
 
-  #attr_accessor :prezzo, :importo, :importo_cents 
+  before_validation :set_default_value
 
   def prezzo
     prezzo_cents / 100.0
@@ -49,6 +49,11 @@ class Riga < ApplicationRecord
     sconto_cents = ((prezzo_cents * (sconto || 0.0)) / 100.0)
     (prezzo_cents - sconto_cents) * quantita
   end
-  
-     
+
+  private
+    
+    def set_default_value
+      self.sconto ||= 0.0
+    end
+      
 end
