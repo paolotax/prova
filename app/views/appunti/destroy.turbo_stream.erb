@@ -1,7 +1,7 @@
 <%= turbo_stream_action_tag_with_block "remove", 
-        target: dom_id(@appunto), 
+        target: "appunto_#{@appunto.id}", 
         data: {
-            transition_leave: "transition ease-out duration-1000", 
+            transition_leave: "transition ease-out duration-500", 
             transition_leave_start: "opacity-100", 
             transition_leave_end: "opacity-0"
         } %>
@@ -9,7 +9,7 @@
 <%= turbo_stream_action_tag_with_block "remove", 
         target: dom_id(@appunto, "vocale"), 
         data: {
-            transition_leave: "transition ease-out duration-1000", 
+            transition_leave: "transition ease-out duration-500", 
             transition_leave_start: "opacity-100", 
             transition_leave_end: "opacity-0"
         } %>
@@ -31,9 +31,3 @@
 <% end %>
 
 <%= turbo_stream.replace "notice", partial: "layouts/flash" %>
-
-<script>
-  document.addEventListener('turbo:load', () => {
-    document.dispatchEvent(new CustomEvent('collection-counter:decrement', { detail: { amount: 1 } }));
-  });
-</script>
