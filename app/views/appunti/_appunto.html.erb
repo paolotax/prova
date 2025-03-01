@@ -2,7 +2,7 @@
  
 <% if local_assigns[:appunto].present? && appunto.persisted? %>
 	<%= tag.div id: dom_id(appunto), class: [
-			"group pt-2 w-full flex rounded-2xl shadow-xl align-end border-b-2": true,
+			"item group pt-2 w-full flex rounded-2xl shadow-xl align-end border-b-2": true,
 			"bg-red-200  text-gray-600 border-red-300":  appunto.stato == "archiviato",
 			"bg-white border-slate-200": !(appunto.stato == "archiviato"),
 		] do %>

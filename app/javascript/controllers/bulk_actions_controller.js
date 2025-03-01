@@ -130,26 +130,8 @@ export default class BulkActionsController extends CheckboxesController {
       // Deseleziona le checkbox e conta quante erano selezionate
       const selectedCount = this.checkboxes.filter(c => c.checked).length;
       this.setCheckboxesTo(false);
-      
-      // Aggiorna il contatore della collezione
-      this.decrementCollectionCounter(selectedCount);
-    });
-  }
 
-  decrementCollectionCounter(count) {
-    // Trova direttamente il controller e aggiorna il valore
-    const counterElement = document.getElementById('collection_counter');
-    if (!counterElement) return;
-    
-    const controller = this.application.getControllerForElementAndIdentifier(
-      counterElement, 
-      'collection-counter'
-    );
-    
-    if (controller) {
-      // Aggiorna direttamente il valore
-      controller.totalValue = Math.max(0, controller.totalValue - count);
-    }
+    });
   }
 
   toggleButtons(show) {
