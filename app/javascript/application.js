@@ -9,10 +9,6 @@ import "@rails/actiontext"
 import "mapkick/bundle"
 
 
-console.log("Hello from application.js")
-
-
-
 // Turbo.setProgressBarDelay(1)
 
 // window.addEventListener("turbo:frame-render", (e) => {

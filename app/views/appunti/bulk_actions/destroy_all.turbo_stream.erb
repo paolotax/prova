@@ -7,19 +7,3 @@
             transition_leave_end: "opacity-0"
         } %>
 <% end %>
-
-<%= turbo_stream.update "flash" do %>
-  <%= render "layouts/flash", message: "Appunti eliminati con successo", type: "success" %>
-<% end %>
-
-<%= turbo_stream.update "appunti_counter" do %>
-  <%= current_user.appunti.count %>
-<% end %>
-
-<%# Aggiorniamo il contatore nella pagina %>
-<%= turbo_stream.update "collection_counter" do %>
-  <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-    <% total_count = current_user.appunti.count %>
-    <%= "#{total_count} #{Appunto.model_name.human(count: total_count)}" %>
-  </div>
-<% end %>

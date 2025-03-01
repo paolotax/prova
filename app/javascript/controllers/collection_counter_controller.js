@@ -35,27 +35,7 @@ export default class extends Controller {
     this.totalValue = Math.max(0, this.totalValue - amount)
     this.updateDisplay()
   }
-  
-  // Incrementa il contatore di un valore specifico
-  increment(event) {
-    const amount = event.detail?.amount || 1
-    this.totalValue = this.totalValue + amount
-    this.updateDisplay()
-  }
-  
-  // Aggiorna il contatore con un valore specifico
-  update(event) {
-    if (event.detail?.count !== undefined) {
-      this.totalValue = event.detail.count
-    }
-    
-    if (event.detail?.modelName) {
-      this.modelNameValue = event.detail.modelName
-    }
-    
-    this.updateDisplay()
-  }
-  
+      
   // Aggiorna il display con i valori correnti
   updateDisplay() {
     if (this.hasCountTarget) {

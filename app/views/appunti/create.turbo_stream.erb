@@ -2,8 +2,7 @@
     <%= render partial: "appunti/appunto", locals: { appunto: @appunto } %>
 <% end %>
 
-<% if @appunto.import_adozione %>
-    
+<% if @appunto.import_adozione %>    
     <% ["classe", "titolo"].each do |tipo_card|%>
         <%= turbo_stream.replace "card-ssk-#{ tipo_card }-#{ dom_id @appunto.import_adozione }" do %>
             <%= render partial: "import_adozioni/card_ssk", 
