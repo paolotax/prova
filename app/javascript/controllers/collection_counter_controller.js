@@ -6,20 +6,7 @@ export default class extends Controller {
     total: Number,
     modelName: String 
   }
-  
-  connect() {
-    console.log("Collection counter controller connected")
-  }
-  
-  disconnect() {
-  }
-  
-  handleDecrement(event) {
-    const amount = event.detail?.amount || 1
-    this.totalValue = Math.max(0, this.totalValue - amount)
-    this.updateDisplay()
-  }
-      
+          
   // Aggiorna il display con i valori correnti
   updateDisplay() {
     if (this.hasCountTarget) {
