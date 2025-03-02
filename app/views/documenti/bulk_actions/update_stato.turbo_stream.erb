@@ -4,6 +4,4 @@
   <% end %>
 <% end %>
 
-<%= turbo_stream.update "flash" do %>
-  <%= render partial: "layouts/flash" %>
-<% end %>
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

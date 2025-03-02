@@ -16,7 +16,7 @@ class Appunti::BulkActionsController < ApplicationController
     end
   end
 
-  def add_tappa_giorno
+  def create_tappa
     @appunti = current_user.appunti.where(id: params[:appunto_ids])
     
     scuole_ids = @appunti.map(&:import_scuola_id).uniq

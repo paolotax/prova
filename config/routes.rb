@@ -209,7 +209,7 @@ Rails.application.routes.draw do
     resources :bulk_actions, only: [] do
       collection do
         patch :print_all, format: "pdf"
-        patch :add_tappa_giorno
+        patch :create_tappa
       end
     end
   end
@@ -218,7 +218,7 @@ Rails.application.routes.draw do
     resources :bulk_actions, only: [] do
       collection do
         patch :print_all, format: "pdf"
-        patch :add_tappa_giorno
+        patch :create_tappa
         patch :segna_come
         delete :destroy_all
       end

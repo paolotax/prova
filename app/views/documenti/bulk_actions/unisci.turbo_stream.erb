@@ -4,9 +4,4 @@
     <% end %>
 <% end %>
 
-
-
-
-<%= turbo_stream.update "documenti_counter" do %>
-  <%= current_user.documenti.count %>
-<% end %> 
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

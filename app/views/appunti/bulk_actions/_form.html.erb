@@ -70,7 +70,7 @@
             data-transition-leave="transform transition ease-in duration-200"
             data-transition-leave-start="transform translate-y-0 opacity-100"
             data-transition-leave-end="transform -translate-y-4 opacity-0">
-        <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
+        <%= form_with url: create_tappa_appunti_bulk_actions_path, 
                 method: :patch,
                 data: { 
                     bulk_actions_target: "form",
@@ -82,7 +82,7 @@
             <% end %>
         <% end %>
 
-        <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
+        <%= form_with url: create_tappa_appunti_bulk_actions_path, 
                 method: :patch,
                 data: { 
                     bulk_actions_target: "form",
@@ -94,7 +94,7 @@
             <% end %>
         <% end %>
 
-        <%= form_with url: add_tappa_giorno_appunti_bulk_actions_path, 
+        <%= form_with url: create_tappa_appunti_bulk_actions_path, 
                 method: :patch,
                 data: { 
                     bulk_actions_target: "form",

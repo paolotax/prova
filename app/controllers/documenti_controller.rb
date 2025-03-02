@@ -90,10 +90,10 @@ class DocumentiController < ApplicationController
   
     respond_to do |format|
       format.turbo_stream do 
-        flash.now[:alert] = "Documento eliminato."
+        flash.now[:notice] = "Documento eliminato."
         render turbo_stream: turbo_stream.remove(@documento)
       end 
-      format.html { redirect_to documenti_url, alert: "Documento eliminato." }
+      format.html { redirect_to documenti_url, notice: "Documento eliminato.", status: :see_other }
     end
   end
 

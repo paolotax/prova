@@ -3,3 +3,5 @@
       	<%= render partial: "documenti/documento", locals: { documento: documento } %>
     <% end %>
 <% end %>
+
+<%= turbo_stream.replace "notice", partial: "layouts/flash" %>

@@ -35,7 +35,7 @@ module Documenti
                 disposition: 'inline'
     end
   
-    def duplica
+    def duplica 
       @documenti = current_user.documenti.where(id: params[:documento_ids])
       @documenti_creati = []
 
@@ -60,9 +60,13 @@ module Documenti
         @documenti_creati << nuovo_documento
       end
 
+      notice = helpers.pluralize(@documenti_creati.count, 'documento duplicato', 'documenti duplicati')
+
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "#{helpers.pluralize(@documenti_creati.count, 'documento', 'documenti')} duplicati con successo" }
+        format.turbo_stream do
+          flash.now[:notice] = notice
+        end
+        format.html { redirect_to documenti_path, notice: notice }
       end
     end
 
@@ -104,38 +108,46 @@ module Documenti
         @documenti_creati << @documento_unito
       end
 
+      notice = helpers.pluralize(@documenti_creati.count, 'documento generato', 'documenti generati')
+
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "Documenti uniti con successo" }
+        format.turbo_stream do
+          flash.now[:notice] = notice
+        end
+        format.html { redirect_to documenti_path, notice: notice }
       end
     end
 
     def destroy_all
       @ids = params[:documento_ids]
-      count = @ids.count
 
       @documenti = current_user.documenti.where(id: @ids)
       @documenti.destroy_all
       
-      flash[:notice] = helpers.pluralize(count, "documento eliminato", "documenti eliminati")
+      notice = helpers.pluralize(@ids.count, "documento eliminato", "documenti eliminati")
+      
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "Documenti eliminati con successo" }
+        format.turbo_stream do 
+          flash.now[:notice] = notice
+        end
+        format.html { redirect_to documenti_path, notice: notice }
       end
     end
 
     def update_stato
       @documenti = current_user.documenti.where(id: params[:documento_ids])
-      count = @documenti.count
+      count = @documenti.load.size
 
       @documenti.each do |documento|
         documento.update(stato_params.compact)
       end
 
-      flash[:notice] = "Stato aggiornato per #{helpers.pluralize(count, 'documento', 'documenti')}"
+      notice = "Stato aggiornato per #{helpers.pluralize(count, 'documento', 'documenti')}"
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "Stato dei documenti aggiornato con successo" }
+        format.turbo_stream do
+          flash.now[:notice] = notice
+        end
+        format.html { redirect_to documenti_path, notice: notice }
       end
     end
 
