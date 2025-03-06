@@ -232,4 +232,15 @@ class Libro < ApplicationRecord
     end
   end
 
+  def qr_code(size = 120)
+    qrcode = RQRCode::QRCode.new(self.url || "https://example.com/libri/#{self.id}")
+    qrcode.as_svg(
+      offset: 0,
+      color: '000',
+      shape_rendering: 'crispEdges',
+      module_size: size / qrcode.modules.size,
+      standalone: true
+    ).html_safe
+  end
+
 end
