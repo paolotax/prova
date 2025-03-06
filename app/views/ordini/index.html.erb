@@ -7,7 +7,6 @@
     
     <% heading.with_leader do %>
       <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
-      <%= key.qr_code(80) if key.respond_to?(:qr_code) %>
     <% end %>
     
     <% heading.with_action do %>      

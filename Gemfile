@@ -155,6 +155,4 @@ gem "fuzzy_match"
 
 gem 'nokogiri'
 
-gem 'rqrcode'
-
 
