@@ -11,5 +11,5 @@
 <% end %>
 
 <%= turbo_stream.append "giorno-#{@tappa.data_tappa.to_s}" do %>
-    <%= render @tappa %>
+    <%= render @tappa, with_checkbox: true, with_handle: true %>
 <% end %>

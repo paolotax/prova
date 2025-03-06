@@ -21,7 +21,7 @@
         
         <% if mostra_dropdown %>
             
-            <% if params[:controller] == "agenda" %>
+
                 <% dropdown.with_item do %>
                     <%= link_to "#",
                             class: "block px-3 py-1 text-sm leading-6 text-gray-900",
@@ -34,7 +34,7 @@
                     Seleziona
                     <% end %>
                 <% end %>
-            <% end %>
+
             
             <% dropdown.with_item do %>
                 <%= link_to edit_tappa_path( tappa ),

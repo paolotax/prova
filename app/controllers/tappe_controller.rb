@@ -116,7 +116,7 @@ class TappeController < ApplicationController
     @tappa.update(position: posizione, data_tappa: params[:tappa][:data_tappa])
     
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa) }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, with_checkbox: true, with_handle: true) }
     end
     
     # head :no_content
