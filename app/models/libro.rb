@@ -232,4 +232,11 @@ class Libro < ApplicationRecord
     end
   end
 
+  has_many :qrcodes, as: :qrcodable, dependent: :destroy
+  
+  # Metodo di convenienza per ottenere il primo QR code o crearne uno nuovo
+  def qr_code
+    qrcodes.first || qrcodes.create(url: "https://example.com/libri/#{self.id}")
+  end
+
 end

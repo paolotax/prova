@@ -1,0 +1,20 @@
+<div id="<%= dom_id qrcode %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Description:</strong>
+    <%= qrcode.description %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Url:</strong>
+    <%= qrcode.url %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Qrcodable:</strong>
+    <%= qrcode.qrcodable&.titolo %>
+  </p>
+  <p class="my-10"> 
+    <% if qrcode.image.attached? %>
+      <%= image_tag qrcode.image, width: 80, height: 80 %>
+    <% end %>
+  </p>
+
+</div>

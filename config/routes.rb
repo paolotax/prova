@@ -108,7 +108,10 @@ Rails.application.routes.draw do
       post 'fascicoli', to: "confezionator#create", as: "confezione"
       delete 'fascicoli', to: "confezionator#destroy"
     end
+    resources :qrcodes
   end
+
+  resources :qrcodes 
 
   resources :confezione do
     member do
@@ -284,4 +287,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "pages#index"
+
+  resources :scuole do
+    resources :qrcodes
+  end
 end

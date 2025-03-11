@@ -7,6 +7,9 @@
     
     <% heading.with_leader do %>
       <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
+      <% if key.qr_code.image.attached? %>
+        <%= image_tag key.qr_code.image, width: 80, height: 80 %>
+      <% end %>
     <% end %>
     
     <% heading.with_action do %>      

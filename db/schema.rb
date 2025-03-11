@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_26_114517) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_06_113023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -541,6 +541,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_26_114517) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "qrcodes", force: :cascade do |t|
+    t.text "description"
+    t.string "url"
+    t.string "qrcodable_type"
+    t.bigint "qrcodable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["qrcodable_type", "qrcodable_id"], name: "index_qrcodes_on_qrcodable"
   end
 
   create_table "righe", force: :cascade do |t|
