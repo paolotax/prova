@@ -132,6 +132,9 @@ class User < ApplicationRecord
     end
   end
 
-
+  def qrcodes
+    Qrcode.where(qrcodable_type: "Libro", qrcodable_id: libri.pluck(:id))
+          .or(Qrcode.where(qrcodable_type: "Scuola", qrcodable_id: import_scuole.pluck(:id)))
+  end
 
 end
