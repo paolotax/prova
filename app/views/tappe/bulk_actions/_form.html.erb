@@ -5,11 +5,21 @@
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: { 
               action: "bulk-actions#toggleFormContainer", 
-              form_id: "tappa",
+              form_id: "duplica",
               bulk_actions_target: "menuButton"
             } do %>
         <%= icon "map-pin" %>
-        Tappa
+        Duplica
+    <% end %>
+
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
+            data: { 
+              action: "bulk-actions#toggleFormContainer", 
+              form_id: "modifica",
+              bulk_actions_target: "menuButton"
+            } do %>
+        <%= icon "map-pin" %>
+        Modifica
     <% end %>
 
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
@@ -26,9 +36,36 @@
 
 <% content_for :bulk_action_forms do %>
 
+        <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
+            data-bulk-actions-target="formContainer"
+            data-form-id="duplica"
+            data-transition-enter="transform transition ease-out duration-300"
+            data-transition-enter-start="transform -translate-y-4 opacity-0"
+            data-transition-enter-end="transform translate-y-0 opacity-100"
+            data-transition-leave="transform transition ease-in duration-200"
+            data-transition-leave-start="transform translate-y-0 opacity-100"
+            data-transition-leave-end="transform -translate-y-4 opacity-0">
+
+        <%= form_with url: duplica_tappe_bulk_actions_path, 
+                method: :patch,
+                data: { 
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
+            <%= tag.div class: "flex flex-col justify-between gap-2" do %>
+                <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
+                <div class="flex justify-between gap-2">
+                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                    <%= form.submit "Crea Tappe", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
+                </div>
+            <% end %>
+        <% end %>
+    </div>
+
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
             data-bulk-actions-target="formContainer"
-            data-form-id="tappa"
+            data-form-id="modifica"
             data-transition-enter="transform transition ease-out duration-300"
             data-transition-enter-start="transform -translate-y-4 opacity-0"
             data-transition-enter-end="transform translate-y-0 opacity-100"
