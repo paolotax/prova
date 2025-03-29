@@ -61,13 +61,10 @@ module Tappe
         @tappe_create << nuova_tappa
       end
 
-      notice = helpers.pluralize(@tappe_create.count, 'tappa duplicata', 'tappe duplicate')
+      flash[:notice] = helpers.pluralize(@tappe_create.count, 'tappa duplicata', 'tappe duplicate')
 
       respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = notice
-          turbo_redirect_to(giorno_path(params[:data_tappa]))
-        end
+        format.turbo_stream { turbo_redirect_to(giorno_path(params[:data_tappa])) }
         format.html { redirect_to giorno_path(params[:data_tappa]) }
       end
     end
