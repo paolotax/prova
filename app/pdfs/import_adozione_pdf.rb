@@ -99,12 +99,14 @@ class ImportAdozionePdf < Prawn::Document
     mask(:line_width) do
       line_width 0.5
 
-      text "Materiale per la classe <b>#{adozione.classe_e_sezione}</b> abbinato all'adozione del testo:", :size => 12, inline_format: true
+      text "Materiale per l'anno scolastico 2025/2026", :size => 14, style: :bold
       move_down 10
-      text adozione.disciplina,  :size => 12, style: :bold
-      text adozione.titolo,  :size => 14, :style => :bold, :spacing => 4
-      text adozione.editore, :size => 12, :spacing => 4
+      
+      text "Editore: #{adozione.editore}", :size => 12, :spacing => 4
 
+      # text "Disciplina: #{adozione.disciplina}", :size => 12, :spacing => 4
+      # text "Classe: #{adozione.classe}", :size => 12, :spacing => 4
+      # text "Titolo: #{adozione.titolo}", :size => 12, :spacing => 4
     end
   end
 
