@@ -75,3 +75,8 @@ UserScuola.find_each do |us|
   scu.geocode
   scu.save
 end
+
+tappe_con_giro = Tappa.where.not(giro_id: nil).pluck(:id, :giro_id)
+tappe_con_giro.each do |t|
+  TappaGiro.create!(tappa_id: t[0], giro_id: t[1])
+end

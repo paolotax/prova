@@ -28,13 +28,13 @@ class AgendaController < ApplicationController
     @clienti = current_user.clienti
                 .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Cliente").pluck(:tappable_id))
     
-    @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giro).order(:position)
+    @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giri).order(:position)
   end
 
   def mappa 
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
     
-    @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giro).order(:position)
+    @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giri).order(:position)
 
     @indirizzi = @tappe.map do |t|
       {

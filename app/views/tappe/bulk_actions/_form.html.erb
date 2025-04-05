@@ -53,7 +53,14 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
-                <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                
+                <div class="flex bg-white rounded-md">
+                    <%= form.combobox :giro_ids, 
+                            current_user.giri.order(created_at: :desc),
+                            id: "duplica_giro_ids",
+                            multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
+                </div>
+
                 <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
                 <div class="flex justify-between gap-2">
                     <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
@@ -79,9 +86,16 @@
                     bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
+            
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
-                <%= form.select :giro_id, current_user.giri.order(id: :desc).map { |giro| [giro.titolo, giro.id] }, { prompt: "Seleziona un giro" }, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                <div class="flex bg-white rounded-md">
+                    <%= form.combobox :giro_ids, 
+                            current_user.giri.order(created_at: :desc),
+                            id: "modifica_giro_ids",
+                            multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
+                </div>
                 <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
+                
                 <div class="flex justify-between gap-2">
                     <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                     <%= form.submit "Aggiorna", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>

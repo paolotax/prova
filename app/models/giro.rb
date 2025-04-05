@@ -26,7 +26,10 @@ class Giro < ApplicationRecord
   
   belongs_to :user
   
-  has_many :tappe, dependent: :nullify
+  #has_many :tappe, dependent: :nullify
+  
+  has_many :tappa_giri
+  has_many :tappe, through: :tappa_giri
 
   validates :titolo, presence: true
   

@@ -17,7 +17,7 @@ module Tappe
 
       new_data_tappa = params[:data_tappa]
       new_titolo     = params[:titolo]
-      new_giro_id    = params[:giro_id]
+      new_giro_ids    = params[:giro_ids]
 
       tappable_ids.uniq.each do |tappable_id|
         unless tappable_id.blank?
@@ -25,10 +25,10 @@ module Tappe
             tappable_type: tappable_type,
             tappable_id: tappable_id,
             data_tappa: new_data_tappa,
-            giro_id: new_giro_id,
             titolo: new_titolo,
             user_id: current_user.id
           )
+          update_tappa_giri(tappa, new_giro_ids) if new_giro_ids.present?
           @tappe << tappa
         end
       end
@@ -54,10 +54,10 @@ module Tappe
       @tappe.each do |tappa|
         nuova_tappa = tappa.dup
         nuova_tappa.data_tappa = params[:data_tappa]
-        nuova_tappa.giro_id = params[:giro_id]
         nuova_tappa.titolo = params[:titolo]
         nuova_tappa.save
 
+        update_tappa_giri(nuova_tappa, params[:giro_ids]) if params[:giro_ids].present?    
         @tappe_create << nuova_tappa
       end
 
@@ -80,6 +80,7 @@ module Tappe
     
       @selected_tappe.each do |tappa|
         tappa.update(bulk_action_params.reject { |_, v| v.nil? || v.blank? }) 
+        update_tappa_giri(tappa, params[:giro_ids]) if params[:giro_ids].present?
       end
       
       flash[:notice] = "#{@selected_tappe.count} tappe aggiornate"     
@@ -103,8 +104,25 @@ module Tappe
 
     private
 
+    def update_tappa_giri(tappa, giro_ids)
+      return if giro_ids.blank?
+      
+      # Se giro_ids è già una stringa con virgole, la usiamo così com'è
+      # altrimenti la convertiamo in una stringa singola
+      giro_ids_string = giro_ids.is_a?(Array) ? giro_ids.join(',') : giro_ids.to_s
+      
+      # Converte la stringa di ID in un array di interi
+      giro_ids_array = giro_ids_string.split(',').map(&:to_i)
+      
+      # Rimuove tutte le associazioni esistenti e crea quelle nuove
+      tappa.tappa_giri.destroy_all
+      giro_ids_array.each do |giro_id|
+        tappa.tappa_giri.create(giro_id: giro_id)
+      end
+    end
+
     def bulk_action_params
-      params.permit(:data_tappa, :giro_id, :titolo, :tappable_type, tappable_ids: [])
+      params.permit(:data_tappa, :giro_ids, :titolo, :tappable_type, tappable_ids: [])
     end
 
     def turbo_redirect_to(path)

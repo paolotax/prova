@@ -45,8 +45,9 @@
             <%= component "field" do |field| %>
                 <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giro") } %>
             
-                <%= form.combobox :giro_id, current_user.giri.all,
-                    name_when_new: "tappa[new_giro]", mobile_at: "0px" %>
+                <%= form.combobox :giro_ids, 
+                            current_user.giri.order(created_at: :desc),
+                            multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
             <% end %>
         <% end %>
     </div>  

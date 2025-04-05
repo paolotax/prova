@@ -17,7 +17,7 @@ module Scuole
     end
 
     def mie_tappe
-      @mie_tappe ||=  user.tappe.includes(:giro).where(tappable_id: scuola.id) 
+      @mie_tappe ||=  user.tappe.includes(:giri).where(tappable_id: scuola.id) 
     end
 
     def adozioni

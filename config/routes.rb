@@ -86,6 +86,7 @@ Rails.application.routes.draw do
   
   resources :classe_chips, only: :create, param: :combobox_value  
   resources :libro_chips,  only: :create, param: :combobox_value
+  resources :giro_chips, only: :create, param: :combobox_value
   
   #get "vendite", to: "adozioni#index"
   resources :adozioni do 
@@ -133,7 +134,6 @@ Rails.application.routes.draw do
 
   resources :tappe do
     member do
-      post 'duplica'
       patch 'sort'
     end
   end

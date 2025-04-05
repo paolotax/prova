@@ -31,9 +31,16 @@ class Tappa < ApplicationRecord
 
   belongs_to :user
   
-  belongs_to :giro, optional: true, touch: true
+  #belongs_to :giro, optional: true, touch: true
+  has_many :tappa_giri, dependent: :destroy
+  has_many :giri, through: :tappa_giri, source: :giro
+
+  
   belongs_to :tappable, polymorphic: true
 
+  accepts_nested_attributes_for :giri
+
+  
   positioned on: [:user, :data_tappa], column: :position
 
   
@@ -109,7 +116,7 @@ class Tappa < ApplicationRecord
   end
 
   def da_ritirare?
-    data_tappa.nil? && giro.giro_ritiri?
+    #data_tappa.nil? && giro.giro_ritiri?
   end
 
   def self.ultima_tappa_passata

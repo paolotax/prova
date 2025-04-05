@@ -68,7 +68,8 @@ class TappeController < ApplicationController
       if @tappa.save
 
         # @tappa.broadcast_append_later_to [current_user, "tappe"], target: "tappe-lista"
-        
+        update_tappa_giri(@tappa, params[:tappa][:giro_ids])
+    
         if hotwire_native_app?
           format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
         else
@@ -94,6 +95,12 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
+        
+        update_tappa_giri(@tappa, params[:tappa][:giro_ids])
+        
+        format.turbo_stream { flash.now[:notice] = "Tappa aggiornata." }
+
+
         format.json { head :no_content }
         format.html { redirect_to @tappa, notice: "Tappa aggiornata." }
       else
@@ -106,7 +113,11 @@ class TappeController < ApplicationController
   def sort
     @tappa = current_user.tappe.find(params[:id])
 
-    # nelle liste raggrupate per data la posizione è doppia quindi uso  #, sortable_param_name_value: "posizione_doppia" 
+    #raise params.inspect
+
+    # nelle liste raggrupate per data la posizione è doppia quindi uso  
+    # sortable_param_name_value: "posizione_doppia" 
+    
     if params[:tappa]["posizione_doppia"].present?
       posizione = params[:tappa]["posizione_doppia"].to_i / 2
     else
@@ -116,37 +127,10 @@ class TappeController < ApplicationController
     @tappa.update(position: posizione, data_tappa: params[:tappa][:data_tappa])
     
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace(@tappa, with_checkbox: true, with_handle: true) }
+      format.turbo_stream
     end
     
     # head :no_content
-  end
-
-  
-  def duplica
-    
-    @tappa = Tappa.find(params[:id])
-    @giro = @tappa.giro
-    @nuova_tappa = @tappa.dup
-    @nuova_tappa.giro = Current.user.giri.last
-
-    if params[:new] == "true"
-      @nuova_tappa.data_tappa = nil
-      @nuova_tappa.titolo = ""
-    end
-    if params[:new] == "oggi"
-      @nuova_tappa.data_tappa = Time.now.end_of_day - 5.hour
-      @nuova_tappa.titolo = ""
-    end
-    if params[:new] == "domani"
-      @nuova_tappa.data_tappa = Time.now.end_of_day - 5.hour + 1.day
-      @nuova_tappa.titolo = ""
-    end
-
-    @nuova_tappa.save
-    respond_to do |format|
-      format.turbo_stream
-    end  
   end
 
   def destroy
@@ -168,18 +152,21 @@ class TappeController < ApplicationController
       params[:tappable_type].constantize.find(params[:tappable_id])
     end
 
-    # def find_tappable
-    #   params.each do |name, value|
-    #       # Differentiate between parent models.
-    #       # EG: post_id, photo_id, etc.
-    #       if name =~ /(.+)_id$/
-    #           return $1.classify.constantize.find(value)
-    #       end
-    #   end
-    # end
+    def update_tappa_giri(tappa, giro_ids)
+      return if giro_ids.blank?
+      
+      # Converte la stringa di ID in un array di interi
+      giro_ids_array = giro_ids.split(',').map(&:to_i)
+      
+      # Rimuove tutte le associazioni esistenti e crea quelle nuove
+      tappa.tappa_giri.destroy_all
+      giro_ids_array.each do |giro_id|
+        tappa.tappa_giri.create(giro_id: giro_id)
+      end
+    end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro, :position)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro, :position, :giro_ids)
     end
 
    

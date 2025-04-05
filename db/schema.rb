@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_06_113023) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_03_190750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "tablefunc"
@@ -577,6 +577,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_06_113023) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tappa_giri", force: :cascade do |t|
+    t.bigint "tappa_id"
+    t.bigint "giro_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["giro_id"], name: "index_tappa_giri_on_giro_id"
+    t.index ["tappa_id"], name: "index_tappa_giri_on_tappa_id"
+  end
+
   create_table "tappe", force: :cascade do |t|
     t.string "titolo"
     t.string "descrizione"
@@ -673,6 +682,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_06_113023) do
   add_foreign_key "messages", "chats"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
+  add_foreign_key "tappa_giri", "giri"
+  add_foreign_key "tappa_giri", "tappe"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
   add_foreign_key "user_scuole", "import_scuole"

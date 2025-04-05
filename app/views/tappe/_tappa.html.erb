@@ -41,14 +41,17 @@
         <%= tag.div class: "flex flex-col" do %>  
             <%= render partial: "clientables/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
             
-            <% if tappa&.giro %>
-                <div class="flex flex-wrap gap-2">
-                    <%= link_to tappa.giro, 
-                        class: "rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset bg-gray-50 text-gray-600 ring-gray-500/10",
-                        data: { turbo_frame: "_top" } do %>
-                        <%= tappa.giro.titolo %>
-                    <% end %>
-                </div>
+            <% if tappa&.giri.any? %>
+
+                <% tappa.giri.map do |giro| %>
+                    <div class="flex flex-wrap gap-2">
+                        <%= link_to giro, 
+                            class: "rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset bg-gray-50 text-gray-600 ring-gray-500/10",
+                            data: { turbo_frame: "_top" } do %>
+                            <%= giro.titolo %>
+                        <% end %>
+                    </div>
+                <% end %>
             <% end %>
             
             <%= tag.div simple_format(tappa.titolo), class: "pt-2 text-xs italic font-semibold text-gray-400 line-clamp-2 hover:line-clamp-none" %>
