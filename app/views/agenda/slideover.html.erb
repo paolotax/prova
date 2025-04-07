@@ -23,8 +23,8 @@
                 
                 <%= tag.div class: "cb-tax-fancy flex flex-col" do %>
 
-                        <%= form.label  :giro_id, "Giro", class: "block text-sm font-medium text-gray-700" %>
-                        <%= form.select :giro_id, current_user.giri.order(created_at: :desc).collect { |giro| [giro.titolo, giro.id] }, { include_blank: true },
+                        <%= form.label  :giro_ids, "Giro", class: "block text-sm font-medium text-gray-700" %>
+                        <%= form.select :giro_ids, current_user.giri.order(created_at: :desc).collect { |giro| [giro.titolo, giro.id] }, { include_blank: true },
                             data: { action: "change->clientable-search#search" } %>
 
                 <% end %>
@@ -59,6 +59,7 @@
 
     <% slide.with_trailer do %>
         <div class="fixed bottom-0 flex items-center justify-between w-full max-w-sm px-4 py-4 mt-4 border-t border-gray-100 bg-white/70 backdrop-blur-sm gap-4">
+            
             <%= button_tag "Aggiungi", type: "submit", form: "tappe-form", class: "px-3 py-1 text-sm leading-6 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700" %>
             
             <span class="text-sm text-gray-600" id="results-counter">

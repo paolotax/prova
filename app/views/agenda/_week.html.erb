@@ -1,7 +1,8 @@
 
-	<%- settimana.each do |giorno| %>      
+	<%- settimana[0..4].each do |giorno| %>      
 		<%= tag.div class: [ 
-						"flex-shrink-0 w-[300px] scroll-snap-start p-4": true,
+						"flex flex-col flex-shrink-0 w-1/5 scroll-snap-start p-4": true,
+						"flex-shrink-0 w-[300px] scroll-snap-start p-4": false,
 						"bg-white border border-gray-200 rounded ": giorno.to_date != Date.today,
 						"bg-pink-100 border-2 border-red-500 rounded-md": giorno.to_date == Date.today,
 					], 

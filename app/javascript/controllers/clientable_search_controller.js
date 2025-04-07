@@ -15,7 +15,7 @@ export default class extends Controller {
   async search() {
     const query = this.inputTarget.value
     const type = this.selectTarget.value
-    const giroId = document.querySelector('#tappe-form select[name="giro_id"]').value
+    const giroId = document.querySelector('#tappe-form select[name="giro_ids"]').value
     
     const response = await fetch(`/searches/clientable?type=${type}&query=${query}&giro_id=${giroId}`)
     const html = await response.text()

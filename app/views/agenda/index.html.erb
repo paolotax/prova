@@ -5,7 +5,6 @@
 <div class="">
 	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
 
-
         <% heading.with_description do %>
             <div class="flex items-center gap-1 mt-2">
 				<%= component 'tax_button',
@@ -66,7 +65,7 @@
 				xxturbo_cache: "false" } do %>
 		
 	<div id="week-container" 
-        class="flex gap-2 overflow-x-auto scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px] h-full" 
+        class="flex w-full pr-8 gap-2 scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px] h-full" 
         data-agenda-scroll-target="weekContainer"
 		data-controller="bulk-actions">
 	

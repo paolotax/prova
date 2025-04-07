@@ -41,10 +41,10 @@
             <%= form.date_field :data_tappa, placeholder: "data tappa..." %>
         <% end %>
         
-        <%= tag.div class: "cb-tax-fancy flex" do %>
+        <%= tag.div class: "cb-tax-fancy w-full" do %>
             <%= component "field" do |field| %>
-                <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giro") } %>
-            
+                <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giri") } %>
+                <% field.with_hint { "Qui puoi segnare i giri per la tappa" } %>
                 <%= form.combobox :giro_ids, 
                             current_user.giri.order(created_at: :desc),
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
