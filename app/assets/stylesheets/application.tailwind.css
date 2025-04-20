@@ -15,26 +15,22 @@
     @apply w-full;
   }
 
-  /* .cb-tax-fancy {
-    .hw-combobox__main__wrapper {
-      width: 100%;
-    }
-  }   */
-  
-
   .cb-tax-fancy {
 
     .hw-combobox__main__wrapper {
       @apply w-full rounded-none border-0 border-b bg-gray-50 py-1.5 text-gray-900 text-lg ring-0
     }
+    
+    .hw-combobox__input {
+      @apply bg-gray-50;
+    }
+
     .hw-combobox__main__wrapper:focus {
       .hw-combobox__input:focus {
         @apply border-0 border-b-2 border-indigo-600;
       }
     }
-    .hw-combobox__input {
-      @apply bg-gray-50 pr-2 py-1;
-    }
+
     .hw-combobox__label {
       @apply hidden;
     }
@@ -46,6 +42,8 @@
     }
 
   }
+
+
 
   .youtubes {  
     .hw-combobox, .hw-combobox--multiple {
@@ -255,6 +253,16 @@
   }
 
 
+}
+
+
+.hw-combobox--multiple {
+    
+  width: 100%;
+
+  .hw-combobox__main__wrapper {
+    width: 100%;
+  }
 }
 
 

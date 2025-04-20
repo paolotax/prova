@@ -41,7 +41,7 @@
             <%= form.date_field :data_tappa, placeholder: "data tappa..." %>
         <% end %>
         
-        <%= tag.div class: "cb-tax-fancy w-full" do %>
+        <%= tag.div class: "cb-tax-fancy" do %>
             <%= component "field" do |field| %>
                 <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giri") } %>
                 <% field.with_hint { "Qui puoi segnare i giri per la tappa" } %>
