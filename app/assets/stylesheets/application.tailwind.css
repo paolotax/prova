@@ -4,9 +4,6 @@
 
 
 @layer base {
-  
-
-
 }
 
 @layer components {
@@ -255,13 +252,16 @@
 
 }
 
-
-.hw-combobox--multiple {
-    
+.hw-combobox--multiple {    
+  
   width: 100%;
-
+  
   .hw-combobox__main__wrapper {
     width: 100%;
+  }
+
+  .hw-combobox__chip {
+    @apply bg-indigo-100 text-indigo-700;
   }
 }
 
