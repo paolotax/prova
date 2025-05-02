@@ -2,7 +2,7 @@
 #
 # Table name: imports
 #
-#  id               :bigint           not null, primary key
+#  id               :integer          not null, primary key
 #  fornitore        :string
 #  iva_fornitore    :string
 #  cliente          :string
@@ -20,5 +20,6 @@
 #  sconto           :float
 #  iva              :integer
 #
+
 class Import < ApplicationRecord
 end

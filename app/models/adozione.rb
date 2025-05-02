@@ -40,21 +40,21 @@
 #
 class Adozione < ApplicationRecord
 
-  enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
-  enum :tipo, %i(adozione vendita omaggio)
-  
+  enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5 }
+  enum :tipo, { adozione: 0, vendita: 1, omaggio: 2 }
+
   FILTERS = [
-    ["Adozioni", "/adozioni?tipo=adozione"], 
+    ["Adozioni", "/adozioni?tipo=adozione"],
     ["Vendite", "/adozioni?tipo=vendita"],
-    ["Oggi",    "/adozioni?giorno=oggi"], 
-    ["Domani",  "/adozioni?giorno=domani"], 
+    ["Oggi",    "/adozioni?giorno=oggi"],
+    ["Domani",  "/adozioni?giorno=domani"],
     ["Ordini",  "/adozioni?status=ordine&tipo=vendita"],
-    ["In consegna", "/adozioni?status=in_consegna&tipo=vendita"], 
+    ["In consegna", "/adozioni?status=in_consegna&tipo=vendita"],
     ["Da pagare", "/adozioni?status=da_pagare&tipo=vendita"],
     ["Corrispettivi", "/adozioni?status=corrispettivi&tipo=vendita"],
   ]
 
-  belongs_to :user  
+  belongs_to :user
   belongs_to :import_adozione, optional: true
   belongs_to :libro, optional: true
   belongs_to :classe, class_name: "Views::Classe", optional: true
@@ -73,48 +73,48 @@ class Adozione < ApplicationRecord
   end
 
   # return [["amica parola", 22]=>3, [...]=>2, ...]
-  scope :per_libro, -> { 
-    joins(:libro)        
+  scope :per_libro, -> {
+    joins(:libro)
     .select(:titolo, :libro_id)
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
     .select("sum(adozioni.numero_copie) as numero_copie")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
-    .group(:titolo, :libro_id) 
+    .group(:titolo, :libro_id)
     .order(:titolo)
   }
 
-  scope :per_scuola, -> { 
-    joins(:scuola, :classe)        
+  scope :per_scuola, -> {
+    joins(:scuola, :classe)
     .select('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
     .select("sum(adozioni.numero_copie) as numero_copie")
     .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
-    .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"') 
+    .group('import_scuole.id, import_scuole."DENOMINAZIONESCUOLA"')
     .order("import_scuole.id")
   }
 
-  scope :per_libro_titolo, -> { 
-    joins(:classe, libro: [:editore])        
+  scope :per_libro_titolo, -> {
+    joins(:classe, libro: [:editore])
     .select('CONCAT(libri.titolo, \' \', view_classi.classe) AS libro_titolo')
     .select('editori.editore AS editore')
     .select("sum(adozioni.numero_copie) as numero_copie")
     .select("sum(adozioni.numero_copie * adozioni.prezzo_cents) as importo_cents")
     .select("sum(CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) AS in_consegna")
     .select("sum(CASE WHEN adozioni.status > 1 THEN adozioni.numero_copie ELSE 0 END) AS consegnato")
-    .select("sum(adozioni.numero_copie - (CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) - (CASE WHEN adozioni.status > 1 THEN adozioni.numero_copie ELSE 0 END)) as giacenza")    
+    .select("sum(adozioni.numero_copie - (CASE WHEN adozioni.status = 1 THEN adozioni.numero_copie ELSE 0 END) - (CASE WHEN adozioni.status > 1 THEN adozioni.numero_copie ELSE 0 END)) as giacenza")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
     .where("adozioni.numero_copie > 0")
-    .group('libro_titolo, editore') 
+    .group('libro_titolo, editore')
     .order("libro_titolo")
   }
 
-  scope :per_libro_categoria, -> { 
-    joins(:libro)        
+  scope :per_libro_categoria, -> {
+    joins(:libro)
     .select('libri.categoria AS libro_categoria')
     .select("sum(adozioni.numero_sezioni) as numero_sezioni")
     .select("ARRAY_AGG(adozioni.id) AS adozione_ids")
-    .group('libro_categoria') 
+    .group('libro_categoria')
     .order("libro_categoria")
   }
 
@@ -132,25 +132,25 @@ class Adozione < ApplicationRecord
 
   include Searchable
 
-  search_on :stato_adozione, 
-            :team, 
+  search_on :stato_adozione,
+            :team,
             :note,
             :tipo_pagamento,
-            classe: [:classe, :sezione, :combinazione], 
+            classe: [:classe, :sezione, :combinazione],
             libro:  [:categoria, :titolo, :disciplina],
             scuola: [:DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA]
 
-    
+
   def self.stato_adozione
     where.not(stato_adozione:[ nil, ""]).order(:stato_adozione).distinct.pluck(:stato_adozione).compact
   end
 
-    
+
   after_initialize :init
   def init
     self.prezzo_cents ||= 0
   end
-  
+
   # ora così poi devo vedere come funziona money-rails
   def prezzo
     prezzo_cents / 100.0
@@ -188,14 +188,14 @@ class Adozione < ApplicationRecord
     "#{self.classe&.classe} #{self.classe&.sezione&.titleize}"
   end
 
-  def nome_scuola 
+  def nome_scuola
     self.scuola&.scuola || self.import_adozione&.scuola
   end
 
-  def citta 
+  def citta
     self.classe&.import_scuola&.citta || self.import_adozione&.citta
   end
-  
+
   def titolo_libro
     return if self.libro.nil?
 
@@ -216,22 +216,22 @@ class Adozione < ApplicationRecord
 
   end
 
-  def self.per_scuola_hash     
+  def self.per_scuola_hash
     self.per_scuola.map do |a|
-      { 
-        scuola_id: a.id, 
-        nome_scuola: a.DENOMINAZIONESCUOLA, 
+      {
+        scuola_id: a.id,
+        nome_scuola: a.DENOMINAZIONESCUOLA,
         numero_sezioni: a.numero_sezioni,
         adozione_ids: a.adozione_ids
       }
     end
   end
 
-  def self.per_libro_hash 
+  def self.per_libro_hash
     self.per_libro.map do |a|
-      { 
-        libro_id: a.libro_id, 
-        titolo: a.titolo, 
+      {
+        libro_id: a.libro_id,
+        titolo: a.titolo,
         numero_sezioni: a.numero_sezioni,
         numero_copie: a.numero_copie,
         adozione_ids: a.adozione_ids
@@ -242,32 +242,32 @@ class Adozione < ApplicationRecord
   def self.totale_copie
     self.sum(:numero_copie)
   end
-  
+
   def self.totale_importo
     self.sum(&:importo)
   end
 
   def self.crea_documento_e_righe
-    
+
     adozioni = Current.user.adozioni.joins(:libro).where(tipo: "vendita").where.not("libri.codice_isbn IS NULL").order(:created_at)
     # creo il documento
-    
+
     causale = Causale.find_by(causale: "Ordine Scuola")
-    
+
     adozioni.each do |ad|
-      
+
       user = User.find(ad.user_id)
 
-      numero_documento = user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1    
+      numero_documento = user.documenti.where(causale: causale).maximum(:numero_documento).to_i + 1
       classe = Views::Classe.find(ad.classe_id)
       scuola = classe.import_scuola
       libro = Current.user.libri.find(ad.libro_id)
 
-      
+
       documento = user.documenti.create(
-            causale: causale, 
+            causale: causale,
             numero_documento: numero_documento,
-            data_documento: ad.created_at, 
+            data_documento: ad.created_at,
             clientable_type: "ImportScuola",
             clientable_id: scuola.id,
             referente: "#{ad.classe_e_sezione} - #{ad.team}",
@@ -277,14 +277,14 @@ class Adozione < ApplicationRecord
             tipo_pagamento: ad.tipo_pagamento&.downcase
           )
 
-      documento.documento_righe.build.build_riga(libro_id: libro.id, 
+      documento.documento_righe.build.build_riga(libro_id: libro.id,
         quantita: ad.numero_copie, prezzo_cents: ad.prezzo_cents, iva_cents: 0, sconto: 0)
-      
+
       if documento.save
         ad.destroy
       end
-    end 
-    adozioni.size     
+    end
+    adozioni.size
   end
 
 end

@@ -35,7 +35,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Documento < ApplicationRecord
-  
+
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
   belongs_to :causale
@@ -46,12 +46,12 @@ class Documento < ApplicationRecord
   accepts_nested_attributes_for :documento_righe  #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
 
-  enum :status, [:ordine, :in_consegna, :da_pagare, :da_registrare, :corrispettivi, :fattura]
-  enum :tipo_pagamento, [:contanti, :assegno, :bonifico, :bancomat, :carta_di_credito, :paypal, :satispay, :cedole]
-  
-  #enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }   
+  enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5 }
+  enum :tipo_pagamento, { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
+
+  #enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
   #enum movimento: { entrata: 0, uscita: 1 }
-  
+
   delegate :tipo_movimento, :movimento, to: :causale
 
   extend FilterableModel
@@ -61,12 +61,12 @@ class Documento < ApplicationRecord
 
 
   attr_accessor :form_step
-  
+
   with_options if: -> { required_for_step?(:tipo_documento) } do
     validates :causale_id, presence: true
     validates :numero_documento, presence: true
-    validates :data_documento, presence: true 
-    
+    validates :data_documento, presence: true
+
   end
 
   with_options if: -> { required_for_step?(:cliente) } do
@@ -82,8 +82,8 @@ class Documento < ApplicationRecord
     {
       tipo_documento: [:causale_id, :numero_documento, :data_documento, :clientable_type, :clientable_id],
       cliente: [:clientable_type, :clientable_id, :referente, :note],
-      dettaglio: [ documento_righe_attributes: 
-                    [ :id, :posizione, 
+      dettaglio: [ documento_righe_attributes:
+                    [ :id, :posizione,
                          { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
                     ]
                   ],
@@ -141,8 +141,8 @@ class Documento < ApplicationRecord
   def self.clear_all
     Documento.destroy_all
     Riga.destroy_all
-    Documento.all 
-    Riga.all 
+    Documento.all
+    Riga.all
   end
 
   def self.reset_righe
@@ -153,5 +153,5 @@ class Documento < ApplicationRecord
     end
   end
 
-  
+
 end
