@@ -10,7 +10,7 @@ kamal details
 
 kamal app exec -i --reuse bash
 
-ssh root@116.203.224.90 
+ssh root@116.203.224.90
 
 docker ps
 

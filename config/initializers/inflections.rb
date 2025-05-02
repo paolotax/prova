@@ -11,7 +11,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'scuola', 'scuole'
   inflect.irregular 'appunto', 'appunti'
   inflect.irregular 'persona', 'persone'
-  inflect.irregular 'visita', 'visite'   
+  inflect.irregular 'visita', 'visite'
   inflect.irregular 'indirizzo', 'indirizzi'
   inflect.irregular 'telefono', 'telefoni'
   inflect.irregular 'libro', 'libri'
@@ -38,12 +38,12 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'buono di consegna', 'buoni di consegna'
   inflect.irregular 'nota di accredito', 'note di accredito'
-  
+
   inflect.irregular 'bolla di carico', 'bolle di carico'
   inflect.irregular 'resa a fornitore', 'rese a fornitore'
   inflect.irregular 'fattura acquisti', 'fatture acquisti'
-  
-  
+
+
   inflect.irregular 'causale', 'causali'
   inflect.irregular 'documento', 'documenti'
   inflect.irregular 'editore', 'editori'
@@ -55,7 +55,7 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'user_editore',   'user_editori'
   inflect.irregular 'mandato',   'mandati'
-  
+
 
   inflect.irregular 'tipo_scuola', 'tipi_scuole'
   inflect.irregular 'zona', 'zone'
@@ -69,11 +69,26 @@ ActiveSupport::Inflector.inflections do |inflect|
 
 
   # inflect.irregular 'documento_riga', 'documenti_righe'
-  
+
   # inflect.plural /^([\w]*)a/i, '\1e'
   # inflect.singular /^([\w]*)e/i, '\1a'
   # inflect.plural /^([\w]*)o/i, '\1i'
   # inflect.singular /^([\w]*)i/i, '\1o'
-  
+
   # inflect.uncountable %w( fish sheep )
+
+  # Add new inflection rules using the following format. Inflections
+# are locale specific, and you may define rules for as many different
+# locales as you wish. All of these examples are active by default:
+# ActiveSupport::Inflector.inflections(:en) do |inflect|
+#   inflect.plural /^(ox)$/i, "\\1en"
+#   inflect.singular /^(ox)en/i, "\\1"
+#   inflect.irregular "person", "people"
+#   inflect.uncountable %w( fish sheep )
+# end
+
+# These inflection rules are supported but not enabled by default:
+# ActiveSupport::Inflector.inflections(:en) do |inflect|
+#   inflect.acronym "RESTful"
+# end
 end

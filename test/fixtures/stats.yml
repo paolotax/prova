@@ -2,7 +2,7 @@
 #
 # Table name: stats
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  descrizione     :string
 #  seleziona_campi :string
 #  raggruppa_per   :string

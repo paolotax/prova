@@ -2,7 +2,7 @@
 #
 # Table name: imports
 #
-#  id               :bigint           not null, primary key
+#  id               :integer          not null, primary key
 #  fornitore        :string
 #  iva_fornitore    :string
 #  cliente          :string
@@ -20,6 +20,7 @@
 #  sconto           :float
 #  iva              :integer
 #
+
 require "test_helper"
 
 class ImportTest < ActiveSupport::TestCase

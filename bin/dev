@@ -6,3 +6,9 @@ if ! gem list foreman -i --silent; then
 fi
 
 exec foreman start -f Procfile.dev "$@"
+
+# Modifica rails 8.0.2 elimina l'altro DA CONTROLLARE
+
+
+# #!/usr/bin/env ruby
+# exec "./bin/rails", "server", *ARGV

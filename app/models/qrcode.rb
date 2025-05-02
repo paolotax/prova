@@ -2,18 +2,19 @@
 #
 # Table name: qrcodes
 #
-#  id             :bigint           not null, primary key
+#  id             :integer          not null, primary key
 #  description    :text
-#  qrcodable_type :string
 #  url            :string
+#  qrcodable_type :string
+#  qrcodable_id   :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  qrcodable_id   :bigint
 #
 # Indexes
 #
 #  index_qrcodes_on_qrcodable  (qrcodable_type,qrcodable_id)
 #
+
 class Qrcode < ApplicationRecord
   belongs_to :qrcodable, polymorphic: true, optional: true
   
