@@ -2,24 +2,25 @@
 #
 # Table name: view_adozioni144ant_editori
 #
-#  dell_editore_in_italia           :bigint
-#  dell_editore_in_provincia        :bigint
-#  dell_editore_in_regione          :bigint
-#  differenza_media_nazionale       :decimal(, )
-#  editore                          :string
-#  in_provincia                     :bigint
-#  mercato                          :text
-#  percentuale_editore_in_italia    :decimal(, )
-#  percentuale_editore_in_provincia :decimal(, )
-#  percentuale_editore_in_regione   :decimal(, )
-#  provincia                        :string
 #  regione                          :string
+#  provincia                        :string
+#  editore                          :string
+#  mercato                          :text
+#  in_provincia                     :integer
+#  dell_editore_in_provincia        :integer
+#  percentuale_editore_in_provincia :decimal(, )
+#  differenza_media_nazionale       :decimal(, )
+#  dell_editore_in_italia           :integer
+#  percentuale_editore_in_italia    :decimal(, )
+#  dell_editore_in_regione          :integer
+#  percentuale_editore_in_regione   :decimal(, )
 #
 # Indexes
 #
 #  index_view_adozioni144ant_editori_on_editore                (editore)
 #  index_view_adozioni144ant_editori_on_provincia_and_editore  (provincia,editore) UNIQUE
 #
+
 class Views::Adozioni144antEditore < ApplicationRecord
 
 end

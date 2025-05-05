@@ -2,26 +2,26 @@
 #
 # Table name: import_adozioni
 #
-#  id              :bigint           not null, primary key
-#  ANNOCORSO       :string
-#  AUTORI          :string
-#  CODICEISBN      :string
+#  id              :integer          not null, primary key
 #  CODICESCUOLA    :string
-#  COMBINAZIONE    :string
-#  CONSIGLIATO     :string
-#  DAACQUIST       :string
-#  DISCIPLINA      :string
-#  EDITORE         :string
-#  NUOVAADOZ       :string
-#  PREZZO          :string
+#  ANNOCORSO       :string
 #  SEZIONEANNO     :string
-#  SOTTOTITOLO     :string
 #  TIPOGRADOSCUOLA :string
+#  COMBINAZIONE    :string
+#  DISCIPLINA      :string
+#  CODICEISBN      :string
+#  AUTORI          :string
 #  TITOLO          :string
+#  SOTTOTITOLO     :string
 #  VOLUME          :string
-#  anno_scolastico :string
+#  EDITORE         :string
+#  PREZZO          :string
+#  NUOVAADOZ       :string
+#  DAACQUIST       :string
+#  CONSIGLIATO     :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  anno_scolastico :string
 #
 # Indexes
 #
@@ -30,6 +30,7 @@
 #  index_import_adozioni_on_EDITORE     (EDITORE)
 #  index_import_adozioni_on_TITOLO      (TITOLO)
 #
+
 class ImportAdozione < ApplicationRecord
 
   include Searchable

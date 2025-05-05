@@ -2,18 +2,18 @@
 #
 # Table name: tappe
 #
-#  id            :bigint           not null, primary key
-#  data_tappa    :date
-#  descrizione   :string
-#  entro_il      :datetime
-#  position      :integer          not null
-#  tappable_type :string           not null
+#  id            :integer          not null, primary key
 #  titolo        :string
+#  descrizione   :string
+#  data_tappa    :date
+#  entro_il      :datetime
+#  tappable_type :string           not null
+#  tappable_id   :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  giro_id       :bigint
-#  tappable_id   :bigint           not null
-#  user_id       :bigint
+#  giro_id       :integer
+#  user_id       :integer
+#  position      :integer          not null
 #
 # Indexes
 #
@@ -22,11 +22,7 @@
 #  index_tappe_on_user_id                              (user_id)
 #  index_tappe_on_user_id_and_data_tappa_and_position  (user_id,data_tappa,position) UNIQUE
 #
-# Foreign Keys
-#
-#  fk_rails_...  (giro_id => giri.id)
-#  fk_rails_...  (user_id => users.id)
-#
+
 class Tappa < ApplicationRecord
 
   belongs_to :user

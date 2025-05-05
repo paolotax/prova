@@ -2,16 +2,16 @@
 #
 # Table name: view_classi
 #
-#  id                  :bigint           primary key
-#  anno                :text
+#  id                  :integer          primary key
 #  area_geografica     :string
-#  classe              :string
-#  codice_ministeriale :string
-#  combinazione        :string
-#  import_adozioni_ids :bigint           is an Array
-#  provincia           :string
 #  regione             :string
+#  provincia           :string
+#  codice_ministeriale :string
+#  classe              :string
 #  sezione             :string
+#  combinazione        :string
+#  import_adozioni_ids :integer          is an Array
+#  anno                :text
 #
 # Indexes
 #
