@@ -2,15 +2,16 @@
 #
 # Table name: causali
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  causale         :string
-#  clientable_type :string
 #  magazzino       :string
-#  movimento       :integer
 #  tipo_movimento  :integer
+#  movimento       :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  clientable_type :string
 #
+
 class Causale < ApplicationRecord
 
   enum :tipo_movimento, { ordine: 0, vendita: 1, carico: 2 }

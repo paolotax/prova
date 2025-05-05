@@ -1,13 +1,13 @@
 class PagesController < ApplicationController
 
-    def index 
-        redis = Redis.new
+    def index
+        redis = Redis.new(url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" })
         redis.incr "page_hits"
         @page_hits = redis.get "page_hits"
         #@page_hits = 2345
         @totale_scuole = NewScuola.count
         @old_totale_scuole = ImportScuola.count
-        @totale_adozioni = NewAdozione.count 
+        @totale_adozioni = NewAdozione.count
         @old_totale_adozioni = ImportAdozione.count
 
         if current_user && current_user.admin?

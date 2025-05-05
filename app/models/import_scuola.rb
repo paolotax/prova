@@ -2,33 +2,33 @@
 #
 # Table name: import_scuole
 #
-#  id                                        :bigint           not null, primary key
+#  id                                        :integer          not null, primary key
 #  ANNOSCOLASTICO                            :string
 #  AREAGEOGRAFICA                            :string
+#  REGIONE                                   :string
+#  PROVINCIA                                 :string
+#  CODICEISTITUTORIFERIMENTO                 :string
+#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
+#  CODICESCUOLA                              :string
+#  DENOMINAZIONESCUOLA                       :string
+#  INDIRIZZOSCUOLA                           :string
 #  CAPSCUOLA                                 :string
 #  CODICECOMUNESCUOLA                        :string
-#  CODICEISTITUTORIFERIMENTO                 :string
-#  CODICESCUOLA                              :string
-#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
-#  DENOMINAZIONESCUOLA                       :string
-#  DESCRIZIONECARATTERISTICASCUOLA           :string
 #  DESCRIZIONECOMUNE                         :string
+#  DESCRIZIONECARATTERISTICASCUOLA           :string
 #  DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA :string
 #  INDICAZIONESEDEDIRETTIVO                  :string
 #  INDICAZIONESEDEOMNICOMPRENSIVO            :string
 #  INDIRIZZOEMAILSCUOLA                      :string
 #  INDIRIZZOPECSCUOLA                        :string
-#  INDIRIZZOSCUOLA                           :string
-#  PROVINCIA                                 :string
-#  REGIONE                                   :string
-#  SEDESCOLASTICA                            :string
 #  SITOWEBSCUOLA                             :string
-#  geocoded                                  :boolean
-#  latitude                                  :float
-#  longitude                                 :float
-#  slug                                      :string
+#  SEDESCOLASTICA                            :string
 #  created_at                                :datetime         not null
 #  updated_at                                :datetime         not null
+#  slug                                      :string
+#  latitude                                  :float
+#  longitude                                 :float
+#  geocoded                                  :boolean
 #
 # Indexes
 #
@@ -37,6 +37,7 @@
 #  index_import_scuole_on_PROVINCIA                             (PROVINCIA)
 #  index_import_scuole_on_slug                                  (slug) UNIQUE
 #
+
 class ImportScuola < ApplicationRecord
 
   extend FriendlyId

@@ -2,30 +2,31 @@
 #
 # Table name: new_adozioni
 #
-#  id               :bigint           not null, primary key
-#  anno_scolastico  :string
-#  annocorso        :string
-#  autori           :string
-#  codiceisbn       :string
+#  id               :integer          not null, primary key
 #  codicescuola     :string
-#  combinazione     :string
-#  consigliato      :string
-#  daacquist        :string
-#  disciplina       :string
-#  editore          :string
-#  nuovaadoz        :string
-#  prezzo           :string
+#  annocorso        :string
 #  sezioneanno      :string
-#  sottotitolo      :string
 #  tipogradoscuola  :string
+#  combinazione     :string
+#  disciplina       :string
+#  codiceisbn       :string
+#  autori           :string
 #  titolo           :string
+#  sottotitolo      :string
 #  volume           :string
-#  import_scuola_id :bigint
+#  editore          :string
+#  prezzo           :string
+#  nuovaadoz        :string
+#  daacquist        :string
+#  consigliato      :string
+#  anno_scolastico  :string
+#  import_scuola_id :integer
 #
 # Indexes
 #
 #  index_new_adozioni_on_classe  (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
 #
+
 class NewAdozione < ApplicationRecord
     
     #belongs_to :import_scuola, class_name: 'Import::Scuola', foreign_key: 'import_scuola_id'

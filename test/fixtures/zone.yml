@@ -2,7 +2,7 @@
 #
 # Table name: zone
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  area_geografica :string
 #  regione         :string
 #  provincia       :string

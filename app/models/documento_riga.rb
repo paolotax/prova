@@ -2,12 +2,12 @@
 #
 # Table name: documento_righe
 #
-#  id           :bigint           not null, primary key
+#  id           :integer          not null, primary key
+#  documento_id :integer
+#  riga_id      :integer
 #  posizione    :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  documento_id :bigint
-#  riga_id      :bigint
 #
 # Indexes
 #
@@ -15,6 +15,7 @@
 #  index_documento_righe_on_documento_id_and_riga_id  (documento_id,riga_id) UNIQUE
 #  index_documento_righe_on_riga_id                   (riga_id)
 #
+
 class DocumentoRiga < ApplicationRecord
   
   acts_as_list scope: :documento, column: "posizione"

@@ -2,14 +2,15 @@
 #
 # Table name: view_giacenze
 #
-#  carichi     :bigint
-#  codice_isbn :string
-#  ordini      :bigint
+#  user_id     :integer
+#  libro_id    :integer
 #  titolo      :string
-#  vendite     :bigint
-#  libro_id    :bigint
-#  user_id     :bigint
+#  codice_isbn :string
+#  ordini      :integer
+#  vendite     :integer
+#  carichi     :integer
 #
+
 class Views::Giacenza < ApplicationRecord 
 
   belongs_to :user, class_name: "User", foreign_key: "user_id"
