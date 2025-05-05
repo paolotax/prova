@@ -21,7 +21,7 @@
 class Message < ApplicationRecord
   include ActionView::RecordIdentifier
 
-  enum role: { system: 0, assistant: 10, user: 20 }
+  enum :role, { system: 0, assistant: 10, user: 20 }
 
   belongs_to :chat
 
