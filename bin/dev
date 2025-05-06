@@ -1,14 +1,17 @@
 #!/usr/bin/env sh
 
-if ! gem list foreman -i --silent; then
-  echo "Installing foreman..."
-  gem install foreman
-fi
+docker compose up -d
+docker compose logs -f --tail=10
 
-exec foreman start -f Procfile.dev "$@"
+# if ! gem list foreman -i --silent; then
+#   echo "Installing foreman..."
+#   gem install foreman
+# fi
 
-# Modifica rails 8.0.2 elimina l'altro DA CONTROLLARE
+# exec foreman start -f Procfile.dev "$@"
+
+# # Modifica rails 8.0.2 elimina l'altro DA CONTROLLARE
 
 
-# #!/usr/bin/env ruby
-# exec "./bin/rails", "server", *ARGV
+# # #!/usr/bin/env ruby
+# # exec "./bin/rails", "server", *ARGV

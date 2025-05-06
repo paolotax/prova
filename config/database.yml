@@ -1,7 +1,6 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: localhost
   port: 5432
 
   # For details on connection pooling, see Rails configuration guide
@@ -19,8 +18,7 @@ production:
 development:
   <<: *default
   database: prova_development
-  username: paolotax
-  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
 
 test:
   <<: *default

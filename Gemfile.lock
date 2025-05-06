@@ -237,6 +237,7 @@ GEM
     ffi (1.17.1-arm64-darwin)
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
+    foreman (0.88.1)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
     fuzzy_match (2.1.0)
@@ -630,6 +631,7 @@ DEPENDENCIES
   devise-i18n
   dotenv
   faker
+  foreman
   friendly_id (~> 5.5)
   fuzzy_match
   geared_pagination (~> 1.2)

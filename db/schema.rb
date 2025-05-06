@@ -13,7 +13,6 @@
 ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "tablefunc"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -377,7 +376,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
-    t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
   end
 
   create_table "import_scuole", force: :cascade do |t|
@@ -665,28 +663,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "adozioni", "import_adozioni", column: "import_adozione_id"
-  add_foreign_key "adozioni", "libri", column: "libro_id"
+  add_foreign_key "adozioni", "import_adozioni"
+  add_foreign_key "adozioni", "libri"
   add_foreign_key "adozioni", "users"
-  add_foreign_key "appunti", "import_adozioni", column: "import_adozione_id"
-  add_foreign_key "appunti", "import_scuole", column: "import_scuola_id"
+  add_foreign_key "appunti", "import_adozioni"
+  add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
   add_foreign_key "aziende", "users"
   add_foreign_key "chats", "users"
-  add_foreign_key "documenti", "causali", column: "causale_id"
+  add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"
   add_foreign_key "giri", "users"
-  add_foreign_key "libri", "editori", column: "editore_id"
+  add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "messages", "chats"
   add_foreign_key "profiles", "users"
-  add_foreign_key "righe", "libri", column: "libro_id"
-  add_foreign_key "tappa_giri", "giri", column: "giro_id"
-  add_foreign_key "tappa_giri", "tappe", column: "tappa_id"
-  add_foreign_key "tappe", "giri", column: "giro_id"
+  add_foreign_key "righe", "libri"
+  add_foreign_key "tappa_giri", "giri"
+  add_foreign_key "tappa_giri", "tappe"
+  add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
-  add_foreign_key "user_scuole", "import_scuole", column: "import_scuola_id"
+  add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
   add_foreign_key "voice_notes", "users"
 
