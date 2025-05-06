@@ -71,6 +71,8 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
   config.action_mailer.delivery_method = :letter_opener
 
-
   config.active_job.queue_adapter = :sidekiq
+
+  # Allow web console from Docker network
+  config.web_console.permissions = ['127.0.0.1', '::1', '172.16.0.0/12']
 end

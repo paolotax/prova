@@ -63,6 +63,12 @@ group :test do
   gem "selenium-webdriver"
 end
 
+
+
+group :development do
+  gem "foreman"
+end
+
 gem "scenic", "~> 1.7"
 gem "highline", "~> 2.0.3"
 

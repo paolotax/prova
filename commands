@@ -80,3 +80,9 @@ tappe_con_giro = Tappa.where.not(giro_id: nil).pluck(:id, :giro_id)
 tappe_con_giro.each do |t|
   TappaGiro.create!(tappa_id: t[0], giro_id: t[1])
 end
+
+
+docker exec -it prova-app-1 bin/rails db:migrate
+
+docker cp ~/backup/backup.sql prova-postgres-1:/backup.sql
+docker exec -it prova-postgres-1 psql -U postgres -d prova_development -f /backup.sql
