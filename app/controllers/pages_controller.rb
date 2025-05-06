@@ -1,7 +1,7 @@
 class PagesController < ApplicationController
 
     def index
-        redis = Redis.new(url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" })
+        redis = Redis.new
         redis.incr "page_hits"
         @page_hits = redis.get "page_hits"
         #@page_hits = 2345
