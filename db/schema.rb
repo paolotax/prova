@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "tablefunc"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -376,6 +377,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
+    t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
   end
 
   create_table "import_scuole", force: :cascade do |t|
