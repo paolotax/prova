@@ -18,6 +18,9 @@ production:
 development:
   <<: *default
   database: prova_development
+  username: postgres
+  password: postgres
+  host: localhost
   url: <%= ENV["DATABASE_URL"] %>
 
 test:
