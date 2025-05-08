@@ -2,14 +2,14 @@
 
 <% content_for :header do %>
 	<%= render Heading::WithActionsComponent.new do |heading| %>
-		
+
 		<% heading.with_action do %>
 			<%= component 'tax_button',
 					caption: "Excel",
 					svg_file: "icon-excel-bis.svg",
 					color: "green",
 					url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %> 
+					data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %>
 		<% end %>
 		<% heading.with_action do %>
 			<%= component 'tax_button',
@@ -20,7 +20,7 @@
 					data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
 		<% end %>
 		<% heading.with_action do %>
-			<%= tag.div class: "block 2xl:hidden" do %>
+			<%= tag.div class: "block xl:hidden" do %>
 				<%= component 'tax_button',
 					caption: "Filtra",
 					svg_file: "icon-funnel.svg",
@@ -29,7 +29,7 @@
 					data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
 			<% end %>
 		<% end %>
-		
+
 		<%= h1 {"Appunti"} %>
 
 	<% end %>
@@ -38,8 +38,8 @@
 <%= turbo_stream_from current_user, "appunti" %>
 
 <% if hotwire_native_app? %>
-	<%= link_to "Nuovo Appunto", new_appunto_path, 
-			data: { controller: "bridge--button", bridge_title: "Nuovo" }, 
+	<%= link_to "Nuovo Appunto", new_appunto_path,
+			data: { controller: "bridge--button", bridge_title: "Nuovo" },
 			class: "hidden" %>
 
 	<%= render "shared/native_search_filter",
@@ -49,23 +49,23 @@
 <% end %>
 
 <%= turbo_frame_tag "search_results" do %>
-		
-	<%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: "bulk-actions" }  do %>			
-		
+
+	<%= tag.div class: "flex flex-col xl:pr-[15rem]", data: { controller: "bulk-actions" }  do %>
+
 		<%= render "shared/active_filters", collection: @appunti %>
 		<%= render "appunti/bulk_actions/form" %>
 
-		<%= turbo_frame_tag :appunti, 
+		<%= turbo_frame_tag :appunti,
 				data: { controller: "list-observer",
 						list_observer_counter_id_value: "collection_counter",
 						list_observer_item_selector_value: ".item",
 						list_observer_target: "list"
 					},
 				class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" do %>
-			
+
 			<p class="hidden only:block  py-8 px-4 text-center md:col-span-2 4xl:col-span-3">
-				Whoops! Non ci sono appunti. 
-				
+				Whoops! Non ci sono appunti.
+
 				<% if current_user.user_scuole.blank? %>
 					<%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" %>
 				<% end %>
@@ -85,9 +85,9 @@
 				</div>
 			<% end %>
 		<% end %>
-	<% end %>	
+	<% end %>
 
-	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
+	<aside class="fixed inset-y-0 right-0 hidden xl:w-72 overflow-y-auto pt-[184px] lg:px-8 xl:block">
 		<!-- Secondary column (hidden on smaller screens) -->
 		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
