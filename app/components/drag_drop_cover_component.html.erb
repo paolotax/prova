@@ -1,9 +1,9 @@
-<%= form_with(model: @libro, class: "h-full", 
-        data: { controller: "drag-drop", 
+<%= form_with(model: @libro,
+        class: "h-full w-24 sm:w-32 h-32 sm:h-40",
+        data: { controller: "drag-drop",
                 action: "dragover->drag-drop#dragOver dragenter->drag-drop#dragEnter dragleave->drag-drop#dragLeave drop->drag-drop#drop",
                 turbo_frame: "libro_copertina_#{@libro.id}"
-              },
-        class: "w-24 sm:w-32 h-32 sm:h-40") do |f| %>
+              }) do |f| %>
   <div class="flex items-center justify-center w-full h-full border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
        data-drag-drop-target="dropZone">
     <div class="text-center p-6">
@@ -12,10 +12,10 @@
       </svg>
       <p class="mt-2 text-sm text-gray-500">
         <span class="hidden sm:block text-sm">Trascina qui la copertina o </span>
-        <%= f.file_field :copertina, 
+        <%= f.file_field :copertina,
             class: "hidden",
             accept: "image/*",
-            data: { 
+            data: {
               drag_drop_target: "input",
               action: "change->drag-drop#handleFiles"
             } %>
@@ -24,4 +24,4 @@
       <%# <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF fino a 5MB</p> %>
     </div>
   </div>
-<% end %> 
+<% end %>
