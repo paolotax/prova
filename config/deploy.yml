@@ -23,22 +23,24 @@ proxy:
   host: paolotax.it
 
 env:
+  clear:
+    POSTGRES_USER: prova
+    POSTGRES_DB: prova_production
   secret:
     - RAILS_MASTER_KEY
+    - POSTGRES_PASSWORD
 
 accessories:
   db:
     image: postgres:15
     host: 159.69.18.62
-    port: 5432
+    port: 5432:5432
     env:
       clear:
-        POSTGRES_USER: POSTGRES_USER
-        POSTGRES_DB: POSTGRES_DB
+        POSTGRES_USER: prova
+        POSTGRES_DB: prova_production
       secret:
         - POSTGRES_PASSWORD
-    files:
-      - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
       - data:/var/lib/postgresql/data
 
