@@ -36,5 +36,6 @@
 !/app/assets/builds/.keep
 /public/assets
 
+# Ignore kamal secrets.
 .kamal/secrets
 .kamal/secrets.*

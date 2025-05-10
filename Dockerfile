@@ -5,7 +5,7 @@ ARG RUBY_VERSION=3.2.2
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
-WORKDIR /railþs
+WORKDIR /rails
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -58,5 +58,5 @@ USER rails:rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD ["./bin/rails", "server"]
+EXPOSE 80
+CMD ["./bin/thrust", "./bin/rails", "server"]

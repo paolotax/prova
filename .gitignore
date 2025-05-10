@@ -46,7 +46,9 @@ _miur/scuole/*
 _csv/*
 _xml/*
 
-
+# Ignore kamal secrets.
+.kamal/secrets
+.kamal/secrets.*
 
 
 
@@ -54,7 +56,7 @@ commands
 
 backup.tar.gz
 
-.vscode*    
+.vscode*
 .vscode/rdbg_autoattach.json
 
 Untitled*

@@ -1,45 +1,45 @@
-<%= form_with(url: @base_url, method: :get, 
-    id: "form-filter", 
+<%= form_with(url: @base_url, method: :get,
+    id: "form-filter",
     data: form_data_attributes,
-    class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg hotwire-native:mb-24", 
-    builder: RailsDesigner::FormBuilder) do |form| %>     
+    class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg hotwire-native:mb-24",
+    builder: RailsDesigner::FormBuilder) do |form| %>
 
     <%= tag.div(class: "flex-col space-y-3") do %>
         <% @fields.each do |field| %>
-            
+
             <%= tag.fieldset class: "relative" do %>
-            
+
                 <% if field[:type] == :text %>
 			        <%#= form.label field[:field], field[:label].to_s.capitalize %>
                     <%= form.text_field field[:field], value: filter_params[field[:field]],
                         class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6",
                         placeholder: field[:placeholder] %>
                     <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
-                
+
                 <% elsif field[:type] == :select %>
                     <%#= form.label field[:field], field[:label].to_s.capitalize %>
-                    <%= form.select field[:field], 
-                            options_for_select(field[:collection], 
-                            filter_params[field[:field]]), 
-                            { include_blank: field[:placeholder] }, 
+                    <%= form.select field[:field],
+                            options_for_select(field[:collection],
+                            filter_params[field[:field]]),
+                            { include_blank: field[:placeholder] },
                             { data: field_data_attributes, class: "peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" } %>
-                    <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>                           
-                
-                <% elsif field[:type] == :checkbox %>
-                    <%#= form.toggle field[:field], label: field[:placehoòder], toggle_size: "1rem" %>
+                    <%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
 
-                    <%= component "tax_toggle_button", 
+                <% elsif field[:type] == :checkbox %>
+                    <%#= form.toggle field[:field], label: field[:placeholder], toggle_size: "1rem" %>
+
+                    <%= component "tax_toggle_button",
                             field: field[:field],
-                            checked: params[field[:field]] == "si", 
+                            checked: params[field[:field]] == "si",
                             button_color: "gray-900" %>
-                
-                <% elsif field[:type] == :checkbox_group %>    
+
+                <% elsif field[:type] == :checkbox_group %>
                     <% field[:collection].each do |cb| %>
                         <div class="py-1 flex items-center justify-start mb-1">
-                            <%= check_box_tag "#{field[:field]}[]", 
-                                    cb, 
+                            <%= check_box_tag "#{field[:field]}[]",
+                                    cb,
                                     filter_params[field[:field]]&.include?(cb),
-                                    id: "statuses_#{cb}", 
+                                    id: "statuses_#{cb}",
                                     data: field_data_attributes,
                                     class: 'w-5 h-5 rounded-full border-2 mr-4 border-gray-300 text-gray-600 outline-none ring-0 focus:ring-0' %>
                             <%= label_tag "statuses_#{cb}", cb, class: "text-sm" %>
@@ -51,7 +51,7 @@
 
 
         <%= tag.div class: "mt-2 flex flex-row-reverse justify-between items-center" do %>
-            
+
             <%= render ButtonComponent.new(state: 'secondary', busy_content_css: 'flex [[disabled]_&]:opacity-0', data: { turbo_frame: "search_results", turbo_action: "advance" }) do |button| %>
                 <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
                     <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.    /2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
@@ -61,6 +61,6 @@
 
             <%=  link_to "reset", @base_url, class: "text-xs font-semibold text-red-500", data: { turbo_frame: "search_results", turbo_action: "advance"} %>
         <% end %>
-        
+
     <% end %>
 <% end %>
