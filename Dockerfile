@@ -62,4 +62,4 @@ USER rails:rails
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["./bin/rails", "server"]
