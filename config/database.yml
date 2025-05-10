@@ -1,40 +1,25 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  port: 5432
-
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
-  # host: <%= ENV['POSTGRES_HOST'] %>
-
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 production:
   <<: *default
-  database: prova_production
-  username: prova
-  password: ptaxptax
-  host: <%= ENV["DB_HOST"] %>
+  database: <%= ENV['POSTGRES_DB'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  port: 5432
 
 development:
   <<: *default
   database: prova_development
   username: postgres
   password: postgres
-  host: localhost
-  url: <%= ENV["DATABASE_URL"] %>
+  port: 5433
 
 test:
   <<: *default
   database: prova_test
   username: <%= ENV['POSTGRES_USER'] %>
   password: <%= ENV['POSTGRES_PASSWORD'] %>
-
-
-# production:
-#   <<: *default
-#   database: <%= ENV['POSTGRES_DB'] %>
-#   username: <%= ENV['POSTGRES_USER'] %>
-#   password: <%= ENV['POSTGRES_PASSWORD'] %>
-#   host: <%= ENV['POSTGRES_HOST'] %>
-#   # port: 5432
-
+  port: 5432
