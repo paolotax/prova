@@ -22,7 +22,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/prova_development
       - REDIS_URL=redis://redis:6379/1
 
-  postgres:
+  db:
     image: postgres:14.2
     restart: always
     volumes:
