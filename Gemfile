@@ -164,3 +164,5 @@ gem 'nokogiri'
 gem 'rqrcode'
 
 
+
+
