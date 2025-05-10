@@ -5,29 +5,26 @@ image: paolotax/prova
 servers:
   web:
     - 159.69.18.62
-
   job:
     hosts:
       - 159.69.18.62
     cmd: bundle exec sidekiq -q default -q mailers -q ahoy
 
-# Credentials for your image host.
 registry:
   username: paolotax
-
-  # Always use an access token rather than real password when possible.
   password:
     - KAMAL_REGISTRY_PASSWORD
-
 
 builder:
   arch: amd64
 
 proxy:
   ssl: true
-  host: app.paolotax.it www.paolotax.it
+  host: paolotax.it
 
-# Use accessory services (secrets come from .env).
+env:
+  secret:
+    - RAILS_MASTER_KEY
 
 accessories:
   db:

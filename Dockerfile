@@ -24,7 +24,10 @@ RUN apt-get update -qq && \
     git \
     libpq-dev \
     libvips \
-    pkg-config
+    pkg-config \
+    nodejs \
+    npm \
+    postgresql-client
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
