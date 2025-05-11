@@ -17,7 +17,9 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 builder:
-  arch: amd64
+  arch:
+    - amd64
+    - arm64
 
 proxy:
   ssl: true
