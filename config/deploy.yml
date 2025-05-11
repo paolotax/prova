@@ -22,6 +22,7 @@ builder:
 proxy:
   ssl: true
   host: paolotax.it
+  app_port: 3000
 
 
 env:
@@ -32,6 +33,7 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - DATABASE_URL
+    - REDIS_URL
 
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
@@ -63,6 +65,6 @@ accessories:
   redis:
     image: redis:latest
     host: 159.69.18.62
-    port: 6379
+    port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
