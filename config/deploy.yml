@@ -23,12 +23,9 @@ proxy:
   host: paolotax.it
 
 env:
-  clear:
-    POSTGRES_USER: prova
-    POSTGRES_DB: prova_production
-    POSTGRES_PASSWORD: ptaxptax
   secret:
     - RAILS_MASTER_KEY
+    - DATABASE_URL
 
 accessories:
   db:
@@ -46,6 +43,9 @@ accessories:
       #   - POSTGRES_PASSWORD
     directories:
       - data:/var/lib/postgresql/data
+    files:
+      - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+
 
   redis:
     image: redis:latest
