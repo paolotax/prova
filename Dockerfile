@@ -24,6 +24,8 @@ RUN apt-get update -qq && \
     curl \
     libjemalloc2 \
     libvips \
+    libpq-dev \
+    libyaml-dev \
     pkg-config \
     postgresql-client
 
@@ -50,8 +52,6 @@ FROM base
 # Install packages needed for deployment
 RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     git \
-    libpq-dev \
-    libyaml-dev \
     ffmpeg \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
