@@ -21,16 +21,12 @@ builder:
 proxy:
   ssl: true
   host: paolotax.it
-  port: 80
 
 env:
   secret:
     - RAILS_MASTER_KEY
     - DATABASE_URL
-  clear:
-    PORT: 3000
-    RAILS_SERVE_STATIC_FILES: "true"
-    RAILS_LOG_TO_STDOUT: "true"
+
 
 accessories:
   db:
