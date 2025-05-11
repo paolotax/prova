@@ -20,7 +20,7 @@ builder:
   arch: amd64
 
 proxy:
-  ssl: false
+  ssl: true
   host: paolotax.it
   app_port: 3000
 
