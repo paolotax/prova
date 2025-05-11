@@ -28,6 +28,13 @@ env:
     - RAILS_MASTER_KEY
     - DATABASE_URL
 
+# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
+# "bin/kamal logs -r job" will tail logs from the first server in the job section.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
 accessories:
   db:
@@ -50,6 +57,6 @@ accessories:
   redis:
     image: redis:latest
     host: 159.69.18.62
-    port: "6379:6379"
+    port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
