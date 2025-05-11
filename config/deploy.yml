@@ -26,9 +26,9 @@ env:
   clear:
     POSTGRES_USER: prova
     POSTGRES_DB: prova_production
+    POSTGRES_PASSWORD: ptaxptax
   secret:
     - RAILS_MASTER_KEY
-    - POSTGRES_PASSWORD
 
 accessories:
   db:
