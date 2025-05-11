@@ -53,6 +53,8 @@ FROM base
 RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     git \
     ffmpeg \
+    libpq5 \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
