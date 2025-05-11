@@ -21,6 +21,7 @@ builder:
 proxy:
   ssl: true
   host: paolotax.it
+  app_port: 3000
 
 env:
   secret:
