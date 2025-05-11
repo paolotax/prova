@@ -4,7 +4,8 @@ image: paolotax/prova
 
 servers:
   web:
-    - 159.69.18.62
+    hosts:
+      - 159.69.18.62
   job:
     hosts:
       - 159.69.18.62
@@ -21,12 +22,17 @@ builder:
 proxy:
   ssl: true
   host: paolotax.it
-  app_port: 3000
+
 
 env:
+  clear:
+    HOST: paolotax.it
+    RAILS_SERVE_STATIC_FILES: "true"
+    RAILS_LOG_TO_STDOUT: "true"
   secret:
     - RAILS_MASTER_KEY
     - DATABASE_URL
+    - REDIS_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
@@ -39,7 +45,8 @@ aliases:
 accessories:
   db:
     image: postgres:15
-    host: 159.69.18.62
+    roles:
+      - web
     port: "127.0.0.1:5432:5432"
     env:
       clear:
@@ -56,7 +63,10 @@ accessories:
 
   redis:
     image: redis:latest
-    host: 159.69.18.62
+    roles:
+      - web
     port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
+roles:
+      - web
