@@ -21,16 +21,15 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     build-essential \
-    git \
-    libpq-dev \
+    curl \
+    libjemalloc2 \
     libvips \
-    pkg-config \
-    nodejs \
-    npm \
-    postgresql-client
+    postgresql-client && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+
 RUN bundle install && rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && bundle exec bootsnap precompile --gemfile
 
 # Copy application code
@@ -47,7 +46,13 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 FROM base
 
 # Install packages needed for deployment
-RUN apt-get update -qq && apt-get install --no-install-recommends -y curl libvips postgresql-client ffmpeg && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+RUN apt-get update -qq && apt-get install --no-install-recommends -y \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    pkg-config \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
