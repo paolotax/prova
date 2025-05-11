@@ -42,7 +42,6 @@ group :development do
   # Use console on exceptions pages          [https://github.com/rails/web-console]
   gem "web-console"
 
-  gem 'faker'
   gem "annotate"
   gem "letter_opener"
 
@@ -56,6 +55,8 @@ end
 group :development, :production do
   gem "rails_performance"
 end
+
+gem 'faker'
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
