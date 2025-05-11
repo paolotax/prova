@@ -6,10 +6,7 @@ default: &default
 production:
   <<: *default
   database: prova_production
-  username: prova
-  password: ptaxptax
-  host: db
-  port: 5432
+  url: <%= ENV['DATABASE_URL'] %>
 
 development:
   <<: *default
