@@ -50,6 +50,6 @@ accessories:
   redis:
     image: redis:latest
     host: 159.69.18.62
-    port: "127.0.0.1:6379:6379"
+    port: "6379:6379"
     directories:
       - data:/data
