@@ -86,3 +86,31 @@ docker exec -it prova-app-1 bin/rails db:migrate
 
 docker cp ~/backup/backup.sql prova-postgres-1:/backup.sql
 docker exec -it prova-postgres-1 psql -U postgres -d prova_development -f /backup.sql
+
+
+
+** nel mio pc **
+
+kamal app stop
+scp ~/backup/backup.tar.gz root@159.69.18.62:backup.tar.gz
+ssh root@159.69.18.62
+
+** nel server **
+
+docker exec -i prova-db psql -U prova -d postgres -c "DROP DATABASE prova_production;"
+docker exec -i prova-db createdb -U prova prova_production
+docker exec -i prova-db psql -U prova -d prova_production -c "CREATE ROLE blazer WITH LOGIN PASSWORD 'blazer';"
+
+docker cp ~/backup.tar.gz prova-db:/backup.tar.gz
+docker exec -i prova-db tar -xzvf /backup.tar.gz
+docker exec -i prova-db psql -U prova -d prova_production -f /backup.sql
+
+docker exec -i prova-db rm -rf /backup.*
+rm ~/backup.*
+
+** nel mio pc **
+
+kamal deploy 
+
+
+
