@@ -1,5 +1,16 @@
 class InstallBlazer < ActiveRecord::Migration[7.1]
   def change
+    # Create blazer role if it doesn't exist
+    execute <<-SQL
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'blazer') THEN
+          CREATE ROLE blazer;
+        END IF;
+      END
+      $$;
+    SQL
+
     create_table :blazer_queries do |t|
       t.references :creator
       t.string :name
@@ -43,5 +54,10 @@ class InstallBlazer < ActiveRecord::Migration[7.1]
       t.datetime :last_run_at
       t.timestamps null: false
     end
+
+
+
   end
+
+
 end
