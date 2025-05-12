@@ -73,3 +73,18 @@ accessories:
     port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
+
+  backup:
+    image: kartoza/pg-backup:15
+    host: 159.69.18.62
+    env:
+      clear:
+        POSTGRES_USER: prova
+        POSTGRES_DB: prova_production
+        POSTGRES_HOST: prova-db
+        POSTGRES_PORT: 5432
+        CRON_SCHEDULE: "*/30 * * * *"
+      secret:
+        - POSTGRES_PASS
+    directories:
+      - backups:/backups
