@@ -35,6 +35,10 @@ env:
     - RAILS_MASTER_KEY
     - DATABASE_URL
     - REDIS_URL
+    - RESEND_API_KEY
+    - TURNSTILE_SECRET_KEY
+    - TURNSTILE_SITE_KEY
+    - OPENAI_ACCESS_TOKEN
 
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
