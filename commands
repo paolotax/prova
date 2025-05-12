@@ -110,7 +110,7 @@ rm ~/backup.*
 
 ** nel mio pc **
 
-kamal deploy 
+kamal deploy
 
 
-
+scp ~/new_backup.dmp root@159.69.18.62:/prova-backup/May/PG_prova_production.12-May-2025.dmp

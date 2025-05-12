@@ -75,7 +75,7 @@ accessories:
       - data:/data
 
   backup:
-    image: kartoza/pg-backup:15
+    image: kartoza/pg-backup:15-3.3
     host: 159.69.18.62
     env:
       clear:
