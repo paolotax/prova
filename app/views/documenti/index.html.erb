@@ -3,7 +3,7 @@
 <% content_for :header do %>
 
 		<%= render Heading::WithActionsComponent.new do |heading| %>
-			
+
 			<% heading.with_action do %>
 				<%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: :true do |f| %>
 					<%= tag.div class: "hidden xl:flex xl:flex-row items-center px-4 py-2.5 bg-gray-200 rounded-md" do %>
@@ -12,19 +12,19 @@
 							<% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
 								<svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>
 							<% end %>
-							Importa xml                 
+							Importa xml
 						<% end %>
 					<% end %>
 				<% end %>
 			<% end %>
-			
+
 			<% heading.with_action do %>
 				<%= component 'tax_button',
 						caption: "Excel",
 						svg_file: "icon-excel-bis.svg",
 						color: "green",
 						url: url_for( controller: "documenti", action: "index", format: :xlsx, params: request.query_parameters ),
-						data_attr: { controller: "link-modifier", link_modifier_target: "link" } %> 
+						data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
 			<% end %>
 
 			<% heading.with_action do %>
@@ -33,7 +33,7 @@
 						svg_file: "icon-plus.svg",
 						color: "blue",
 						url: url_for( controller: "documenti", action: "new", model: @documento ),
-						data_attr: { turbo_frameaaa: :modal, action: "click->dialog#open" } %>
+						data_attr: { action: "click->dialog#open", turbo: false } %>
 			<% end %>
 
 			<% heading.with_action do %>
@@ -46,7 +46,7 @@
 						data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
 				<% end %>
 			<% end %>
-			
+
 			<%= h1 {"Documenti"} %>
 
 		<% end %>
@@ -55,7 +55,7 @@
 
 
 <% if hotwire_native_app? %>
-	<%= link_to new_documento_path, class: "hidden",	
+	<%= link_to new_documento_path, class: "hidden",
 			data: { controller: "bridge--button", bridge_title: "Nuovo" } do %>
 			<%= icon "plus", class: "h-5 w-5" %>
 	<% end %>
@@ -68,10 +68,10 @@
 <%= turbo_frame_tag "search_results" do %>
 
 	<%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: 'bulk-actions' } do %>
-		
+
 		<%#= render partial: "documenti_grid_component" %>
 		<%#= render partial: "documenti_table" %>
-		
+
 		<%= render "shared/active_filters", collection: @documenti %>
 		<%= render "documenti/bulk_actions/form" %>
 
@@ -80,9 +80,9 @@
 						list_observer_item_selector_value: ".item",
 						list_observer_target: "list"
 					},
-				class: "pb-5 grid grid-cols-1 gap-2 4xl:grid-cols-2" do %> 
+				class: "pb-5 grid grid-cols-1 gap-2 4xl:grid-cols-2" do %>
 			<p class="only:block hidden py-8 px-4 text-center lg:col-span-2 2xl:col-span-3 lg:pr-[15rem]">
-				Whoops! Non ci sono documenti. 			
+				Whoops! Non ci sono documenti.
 			</p>
 			<%= render @documenti %>
 		<% end %>
@@ -110,7 +110,6 @@
 
 
 
-	
 
 
-		
+
