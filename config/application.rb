@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Prova
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -24,6 +24,8 @@ module Prova
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # Active Storage configuration
+    config.active_storage.service = :local
 
     # [RailsNotes UI Addition]
     # Default mailer hostname for Pay gem and your app
