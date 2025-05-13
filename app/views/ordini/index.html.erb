@@ -48,7 +48,7 @@
 
         <div class="flex gap-4">
             <%= link_to "Raggruppa per Titolo", request.path, 
-                class: "px-4 py-2 rounded-lg #{params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
+                class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
             
             <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente", 
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
@@ -100,20 +100,7 @@
 
 <% when 'ordine' %>
     <% @ordini.group_by(&:ordine).sort_by{|k,v| k.created_at}.reverse.each do |ordine, righe| %>
-        <%= render Heading::WithActionsComponent.new(
-            wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
-            level: 'h3') do |heading| %>
-            
-            <% heading.with_action do %>      
-                <%= tag.span righe.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
-            <% end %>
-            
-            <%= link_to "Ordine del #{l(ordine.created_at, format: :long)}", ordine, class: "hover:font-bold hover:text-indigo-400" %>
-        <% end %>
-
-        <% righe.each do |riga| %>
-            <%= render partial: "righe/riga_cliente", locals: { riga: riga } %>
-        <% end %>
+        <%= render "documenti/documento", documento: ordine %>
     <% end %>
 
 <% else %>
