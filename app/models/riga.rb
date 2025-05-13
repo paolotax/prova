@@ -50,6 +50,10 @@ class Riga < ApplicationRecord
     (prezzo_cents - sconto_cents) * quantita
   end
 
+  def ordine
+    documenti.where("status = 0").first || ' nessuno '
+  end
+
   private
     
     def set_default_value

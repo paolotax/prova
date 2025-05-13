@@ -1,12 +1,12 @@
 <%= tag.div id: dom_id(riga), class: "px-4 py-2 w-full bg-white border rounded-md shadow-md grid grid-cols-6 sm:grid-cols-8" do %>
 
     <%= tag.div class: "col-span-3 flex flex-col" do %>
-        <div class="font-medium text-gray-900 hover:font-bold">
+        <div class="font-medium text-gray-900 hover:font-bold hover:text-indigo-400">
             <%= link_to riga.documenti.first.clientable.denominazione, polymorphic_path(riga.documenti.first.clientable) %>
         </div>
 
         <div class="mt-1 truncate text-gray-500 text-sm">
-            <%= "Ordine #{riga.documenti.first.numero_documento} #{riga.documenti.first.data_documento}"  %>
+            <%= link_to "Ordine #{riga.documenti.first.numero_documento} #{riga.documenti.first.data_documento}", riga.ordine, class: "hover:font-bold hover:text-indigo-400"  %>
         </div>
     <% end %>
 

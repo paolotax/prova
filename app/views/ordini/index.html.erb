@@ -1,29 +1,36 @@
+<% content_for :title, "Documenti" %>
 
-<% @ordini.group_by(&:libro).sort_by{|k,v| k["titolo"]}.each do |key, values| %>
+<% content_for :header do %>
+
+    <%= render Heading::WithActionsComponent.new do |heading| %>
+
+        <%= "Ordini in corso" %>
+    <% end %>
+
+<% end %>
+
+<% @ordini.group_by(&:libro).sort_by{|k,v| [k.editore, k.categoria, k.titolo]}.each do |key, values| %>
   
-  <%= render Heading::WithActionsComponent.new(
-    wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
-    level: 'h3') do |heading| %>
-    
-    <% heading.with_leader do %>
-      <%#= render AvatarComponent.new(user: OpenStruct.new(name: "Cam"), size: "xl") %>
-      <% if key.qr_code.image.attached? %>
-        <%= image_tag key.qr_code.image, width: 80, height: 80 %>
-      <% end %>
+    <%= render Heading::WithActionsComponent.new(
+        wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
+        level: 'h3') do |heading| %>
+        
+        <% heading.with_leader do %>
+            <%= image_tag key.avatar_url, width: 60, height: 60 %>
+        <% end %>
+        
+        <% heading.with_action do %>      
+        <%= tag.span values.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
+        <% end %>
+        
+        <% heading.with_description { key.codice_isbn } %>
+
+        <%= link_to key.titolo, key, class: "hove:font-bold hover:text-indigo-400"  %>    
+
     <% end %>
-    
-    <% heading.with_action do %>      
-      <%= tag.span values.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
-    <% end %>
-    
-    <% heading.with_description { key.codice_isbn } %>
 
-    <%= link_to key.titolo, key, class:  %>    
-
-  <% end %>
-
-  <% values.each do |riga| %>
-    <%= render partial: "righe/riga_cliente", locals: { riga: riga } %>
-  <% end%>
+    <% values.each do |riga| %>
+        <%= render partial: "righe/riga_cliente", locals: { riga: riga } %>
+    <% end%>
 
 <% end %>
