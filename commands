@@ -99,7 +99,7 @@ ssh root@159.69.18.62
 
 docker exec -i prova-db psql -U prova -d postgres -c "DROP DATABASE prova_production;"
 docker exec -i prova-db createdb -U prova prova_production
-docker exec -i prova-db psql -U prova -d prova_production -c "CREATE ROLE blazer WITH LOGIN PASSWORD 'blazer';"
+#  already exists   docker exec -i prova-db psql -U prova -d prova_production -c "CREATE ROLE blazer WITH LOGIN PASSWORD 'blazer';"
 
 docker cp ~/backup.tar.gz prova-db:/backup.tar.gz
 docker exec -i prova-db tar -xzvf /backup.tar.gz
@@ -113,4 +113,12 @@ rm ~/backup.*
 kamal deploy
 
 
-scp ~/new_backup.dmp root@159.69.18.62:/prova-backup/May/PG_prova_production.12-May-2025.dmp
+scp root@116.203.224.90:prova-backup/backups/2025/May/PG_prova_production.13-May-2025.dmp ~/backup/new_backup.dmp 
+docker cp ~/backup/new_backup.dmp prova-db-1:/new_backup.dmp
+docker exec -i prova-db-1 pg_restore
+
+
+
+# development
+docker exec -i prova-db-1 psql -U postgres -d postgres -c "DROP DATABASE prova_development;"
+docker exec -i prova-db-1 createdb -U postgres prova_development;

@@ -4,6 +4,6 @@ web: rm -f tmp/pids/server.pid &&  bin/rails server -b 0.0.0.0 -p 3000
 
 css: bin/rails tailwindcss:watch
 
-redis: /usr/local/opt/redis/bin/redis-server
+# redis: /usr/local/opt/redis/bin/redis-server
 
-sidekiq: bundle exec sidekiq
+# sidekiq: bundle exec sidekiq

@@ -1,90 +1,90 @@
-service: prova-staging
+service: prova
 
-image: paolotax/prova-staging
+image: paolotax/prova
 
 servers:
   web:
     hosts:
-      - 116.203.224.90
-    labels:
-      thruster.http.routers.prova-staging.entrypoints: websecure
-      thruster.http.routers.prova-staging.rule: Host("scagnozz.com")
-      thruster.http.routers.prova-staging.tls.certresolver: letsencrypt
-    options:
-      network: "private"
+      - 159.69.18.62
   job:
     hosts:
-      - 116.203.224.90
+      - 159.69.18.62
     cmd: bundle exec sidekiq -q default -q mailers -q ahoy
-    options:
-      network: "private"
 
 registry:
   username: paolotax
-
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Inject ENV variables into containers (secrets come from .env).
-# Remember to run `kamal env push` after making changes!
+builder:
+  arch:
+    - amd64
+
+proxy:
+  ssl: true
+  host: paolotax.it
+  app_port: 3000
+
+
 env:
   clear:
-    DB_HOST: 116.203.224.90
-    RAILS_SERVE_STATIC_FILES: true
-    RAILS_LOG_TO_STDOUT: true
-    REDIS_URL: "redis://prova-redis:6379/0"
+    HOST: paolotax.it
+    RAILS_SERVE_STATIC_FILES: "true"
+    RAILS_LOG_TO_STDOUT: "true"
   secret:
     - RAILS_MASTER_KEY
-    - POSTGRES_PASSWORD
-    - TURNSTILE_SITE_KEY
+    - DATABASE_URL
+    - REDIS_URL
+    - RESEND_API_KEY
     - TURNSTILE_SECRET_KEY
+    - TURNSTILE_SITE_KEY
     - OPENAI_ACCESS_TOKEN
 
-thruster:
-  options:
-    publish:
-      - "443:443"
-    volume:
-      - "/letsencrypt/acme.json:/letsencrypt/acme.json"
-    network: "private"
-  args:
-    entryPoints.web.address: ":80"
-    entryPoints.websecure.address: ":443"
-    entryPoints.web.http.redirections.entryPoint.to: websecure
-    entryPoints.web.http.redirections.entryPoint.scheme: https
-    entryPoints.web.http.redirections.entrypoint.permanent: true
-    certificatesResolvers.letsencrypt.acme.email: "paolo.tassinari@hey.com"
-    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json"
-    certificatesResolvers.letsencrypt.acme.httpchallenge: true
-    certificatesResolvers.letsencrypt.acme.httpchallenge.entrypoint: web
 
-builder:
-  args:
-    RUBY_VERSION: 3.2.2
-  remote:
-    arch: amd64
+# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
+# "bin/kamal logs -r job" will tail logs from the first server in the job section.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console --sandbox"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
 accessories:
   db:
     image: postgres:15
-    host: 116.203.224.90
-    port: 5432
+    host: 159.69.18.62
+    port: "127.0.0.1:5432:5432"
     env:
       clear:
-        POSTGRES_USER: POSTGRES_USER
-        POSTGRES_DB: POSTGRES_DB
+        POSTGRES_USER: prova
+        POSTGRES_DB: prova_production
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
       secret:
         - POSTGRES_PASSWORD
-    files:
-      - db/staging.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
       - data:/var/lib/postgresql/data
-    options:
-      network: "private"
+    files:
+      - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+
   redis:
     image: redis:latest
-    host: 116.203.224.90
+    host: 159.69.18.62
+    port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
-    options:
-      network: "private"
+
+  backup:
+    image: kartoza/pg-backup:15-3.3
+    host: 159.69.18.62
+    env:
+      clear:
+        POSTGRES_USER: prova
+        POSTGRES_DB: prova_production
+        POSTGRES_HOST: prova-db
+        POSTGRES_PORT: 5432
+        CRON_SCHEDULE: "*/30 * * * *"
+      secret:
+        - POSTGRES_PASS
+    directories:
+      - backups:/backups
