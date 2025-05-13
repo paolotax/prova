@@ -1,12 +1,17 @@
 <%= tag.div id: dom_id(riga), class: "px-4 py-2 w-full bg-white border rounded-md shadow-md grid grid-cols-6 sm:grid-cols-8" do %>
 
     <%= tag.div class: "col-span-3 flex flex-col" do %>
-        <div class="font-medium text-gray-900 hover:font-bold hover:text-indigo-400">
-            <%= link_to riga.libro.titolo, riga.libro %>
-        </div>
+        <div class="flex items-center gap-4">
+            <%= image_tag riga.libro.avatar_url, width: 60, height: 60, class: "rounded-md" %>
+            <div class="flex flex-col">
+                <div class="font-medium text-gray-900 hover:font-bold hover:text-indigo-400">
+                    <%= link_to riga.libro.titolo, riga.libro %>
+                </div>
 
-        <div class="mt-1 truncate text-gray-500 text-sm">
-            <%= link_to "Ordine #{riga.documenti.first.numero_documento} #{riga.documenti.first.data_documento}", riga.ordine, class: "hover:font-bold hover:text-indigo-400"  %>
+                <div class="mt-1 truncate text-gray-500 text-sm">
+                    <%= link_to "Ordine #{riga.documenti.first.numero_documento} #{riga.documenti.first.data_documento}", riga.ordine, class: "hover:font-bold hover:text-indigo-400"  %>
+                </div>
+            </div>
         </div>
     <% end %>
 
