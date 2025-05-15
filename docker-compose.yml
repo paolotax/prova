@@ -19,7 +19,7 @@ services:
       redis:
         condition: service_started
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/prova_development
+      - DATABASE_URL=postgresql://prova:ptaxptax@db:5432/prova_development
       - REDIS_URL=redis://redis:6379/1
 
   db:
@@ -29,7 +29,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=prova
-      - POSTGRES_PASSWORD=""
+      - POSTGRES_PASSWORD=ptaxptax
       - POSTGRES_DB=prova_development
     ports:
       - "5432:5432"

@@ -12,7 +12,7 @@ development:
   <<: *default
   database: prova_development
   username: prova
-  password: ""
+  password: ptaxptax
   port: 5433
 
 test:
