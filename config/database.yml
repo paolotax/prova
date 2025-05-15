@@ -11,8 +11,8 @@ production:
 development:
   <<: *default
   database: prova_development
-  username: postgres
-  password: postgres
+  username: prova
+  password: ""
   port: 5433
 
 test:

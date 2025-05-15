@@ -28,8 +28,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=prova
+      - POSTGRES_PASSWORD=""
       - POSTGRES_DB=prova_development
     ports:
       - "5432:5432"
