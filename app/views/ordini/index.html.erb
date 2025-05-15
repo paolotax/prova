@@ -1,7 +1,7 @@
 <% content_for :head do %>
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>  
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>  
-    
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>
+
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
 <% end %>
@@ -13,9 +13,9 @@
 <% content_for :header do %>
     <div class="flex flex-col gap-4">
         <%= render Heading::WithActionsComponent.new do |heading| %>
-            
-            <% heading.with_action do %>	
-                <div class="flex">            
+
+            <% heading.with_action do %>
+                <div class="flex">
                     <%= render StatComponent.new(
                         title: "Totale Copie",
                         current_value: @ordini.sum(&:quantita),
@@ -47,16 +47,16 @@
         <% end %>
 
         <div class="flex gap-4">
-            <%= link_to "Raggruppa per Titolo", request.path, 
+            <%= link_to "Raggruppa per Titolo", request.path,
                 class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
-            
-            <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente", 
+
+            <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
-            
-            <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine", 
+
+            <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'ordine' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Mappa", request.path + "?group_by=mappa", 
+            <%= link_to "Mappa", request.path + "?group_by=mappa",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'mappa' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
         </div>
     </div>
@@ -66,17 +66,17 @@
 <% when 'cliente' %>
     <% @ordini.group_by{|o| o.ordine.clientable}.sort_by{|k,v| k.denominazione}.each do |cliente, ordini| %>
         <%= render Heading::WithActionsComponent.new(
-            wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
+            wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg',
             level: 'h3') do |heading| %>
-            
+
             <% heading.with_leader do %>
                 <%= image_tag cliente.avatar_url, width: 60, height: 60 if cliente.respond_to?(:avatar_url) %>
             <% end %>
-            
-            <% heading.with_action do %>      
+
+            <% heading.with_action do %>
                 <%= tag.span ordini.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
             <% end %>
-            
+
             <%= link_to cliente.denominazione, cliente, class: "hover:font-bold hover:text-indigo-400" %>
         <% end %>
 
@@ -86,40 +86,43 @@
     <% end %>
 
 <% when 'mappa' %>
-    
+
     <% if clienti.any?(&:geocoded?) %>
         <div
             data-controller="mappa-directions"
             data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-            data-mappa-directions-waypoints-value="<%= clienti.map { |c| [c.longitude, c.latitude, c.denominazione, c.comune, nil] } %>"    
+            data-mappa-directions-waypoints-value="<%= clienti.map { |c| [c.longitude, c.latitude, c.denominazione, c.comune, nil] } %>"
             data-mappa-directions-coordinates="<%= clienti.map { |c| { lng: c.longitude, lat: c.latitude, name: c.denominazione } }.to_json %>">
-            
+
             <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
         </div>
     <% end %>
 
 <% when 'ordine' %>
-    <% @ordini.group_by(&:ordine).sort_by{|k,v| k.created_at}.reverse.each do |ordine, righe| %>
-        <%= render "documenti/documento", documento: ordine %>
+    <%= tag.div class: "flex flex-col mt-4", data: { controller: 'bulk-actions' } do %>
+        <%= render "documenti/bulk_actions/form" %>
+        <% @ordini.group_by(&:ordine).sort_by{|k,v| k.created_at}.reverse.each do |ordine, righe| %>
+            <%= render "documenti/documento", documento: ordine %>
+        <% end %>
     <% end %>
 
 <% else %>
     <% @ordini.group_by(&:libro).sort_by{|k,v| [k.editore, k.categoria, k.titolo]}.each do |key, values| %>
         <%= render Heading::WithActionsComponent.new(
-            wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg', 
+            wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg',
             level: 'h3') do |heading| %>
-            
+
             <% heading.with_leader do %>
                 <%= image_tag key.avatar_url, width: 60, height: 60 %>
             <% end %>
-            
-            <% heading.with_action do %>      
+
+            <% heading.with_action do %>
                 <%= tag.span values.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
             <% end %>
-            
+
             <% heading.with_description { key.codice_isbn } %>
 
-            <%= link_to key.titolo, key, class: "hover:font-bold hover:text-indigo-400" %>    
+            <%= link_to key.titolo, key, class: "hover:font-bold hover:text-indigo-400" %>
         <% end %>
 
         <% values.each do |riga| %>
