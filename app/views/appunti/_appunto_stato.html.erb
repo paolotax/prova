@@ -1,11 +1,58 @@
-<%= button_to appunto, method: "put", data: { turbo_frame: :_top } do |f| %>
-    <%= hidden_field_tag "appunto[stato]", "#{appunto.stato == 'archiviato' ? 'da fare' : 'archiviato'}" %>       
-    <div class= "mr-2 rounded-lg p-2 bg-gray-100 inline-block">
-        <% if appunto.stato == "archiviato" %>
-            <%= inline_svg_tag "icon-da-fare.svg", class: "h-6 w-6 text-gray-400 hover:text-gray-500" %>
-        <% else %>
-            <%= inline_svg_tag "icon-archivia.svg", class: "h-6 w-6 text-gray-400 hover:text-gray-500" %>
-        <% end %>
+<%= render DropdownComponent.new do |dropdown| %>
+  <%= dropdown.with_button do %>
+    <div class="mr-2 mb-1 rounded-lg p-2 bg-gray-100 inline-block text-gray-400 hover:text-gray-500">
+      <% case appunto.stato %>
+      <% when "da fare" %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+      <% when "in evidenza" %>
+        <%= inline_svg_tag "icon-star.svg", class: "h-6 w-6 text-yellow-400" %>
+      <% when "in settimana" %>
+        <%= inline_svg_tag "icon-calendar.svg", class: "h-6 w-6 text-blue-400" %>
+      <% when "in visione" %>
+        <%= inline_svg_tag "icon-eye.svg", class: "h-6 w-6 text-indigo-400" %>
+      <% when "da pagare" %>
+        <%= inline_svg_tag "icon-credit-card.svg", class: "h-6 w-6 text-green-400" %>
+      <% when "completato" %>
+        <%= inline_svg_tag "icon-check.svg", class: "h-6 w-6 text-green-400" %>
+      <% when "archiviato" %>
+        <%= inline_svg_tag "icon-archive.svg", class: "h-6 w-6" %>
+      <% end %>
     </div>
+  <% end %>
+
+  <% Appunto::STATO_APPUNTI.each do |stato| %>
+    <%= dropdown.with_item do %>
+      <%= button_to appunto_path(appunto), method: :put,
+          class: "w-full text-left px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+          data: { turbo_frame: :_top },
+          role: "menuitem",
+          tabindex: "-1" do |f| %>
+        <%= hidden_field_tag "appunto[stato]", stato %>
+        <div class="flex items-center gap-2">
+          <% case stato %>
+          <% when "da fare" %>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+          <% when "in evidenza" %>
+            <%= inline_svg_tag "icon-star.svg", class: "h-5 w-5 text-yellow-400" %>
+          <% when "in settimana" %>
+            <%= inline_svg_tag "icon-calendar.svg", class: "h-5 w-5 text-blue-400" %>
+          <% when "in visione" %>
+            <%= inline_svg_tag "icon-eye.svg", class: "h-5 w-5 text-indigo-400" %>
+          <% when "da pagare" %>
+            <%= inline_svg_tag "icon-credit-card.svg", class: "h-5 w-5 text-green-400" %>
+          <% when "completato" %>
+            <%= inline_svg_tag "icon-check.svg", class: "h-5 w-5 text-green-400" %>
+          <% when "archiviato" %>
+            <%= inline_svg_tag "icon-archive.svg", class: "h-5 w-5" %>
+          <% end %>
+          <span class="<%= 'font-semibold' if stato == appunto.stato %>"><%= stato.titleize %></span>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
 <% end %>
 
