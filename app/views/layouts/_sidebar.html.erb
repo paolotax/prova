@@ -1,17 +1,17 @@
 <!--	 Sidebar component, swap this element with another sidebar if you like     -->
 <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
-	
+
 	<div class="flex h-16 shrink-0 items-center">
-		<%= image_tag "scagnozz.bb", class: "h-12 w-auto", alt: "ScagnoZZ" %>
+		<%= image_tag "scagnozz.png", class: "mt-2 h-12 w-auto", alt: "ScagnoZZ" %>
 	</div>
-	
+
 	<nav class="flex flex-1 flex-col">
 		<ul role="list" class="flex flex-1 flex-col gap-y-7">
 			<li>
 				<ul role="list" class="-mx-2 space-y-1">
-				
+
 					<%= render "layouts/sidebar_items" %>
-			
+
 				</ul>
 			</li>
 			<% if current_user && current_user.admin? %>
@@ -71,7 +71,7 @@
 					<%= link_to destroy_user_session_path, data: { turbo_method: :delete },
 							class: "sidebar-item" do %>
 						<%= inline_svg_tag('icon-exit.svg') %>
-						Esci                        
+						Esci
 					<% end %>
 				</li>
 			<% end %>
