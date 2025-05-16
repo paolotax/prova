@@ -41,7 +41,7 @@ class DropdownComponent < ViewComponent::Base
     class_names(
       "absolute mt-1 text-sm shadow-xl overflow-x-hidden rounded-lg z-10",
       content_min_max_width,
-      "max-h-60 overflow-y-auto", # max height: 240px
+      "max-h-96 overflow-y-auto", # max height: 240px
       @padding,
       {
         "bg-white ring-1 ring-inset ring-gray-100/50 backdrop-blur-md": light_theme?,

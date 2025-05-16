@@ -1,25 +1,25 @@
 <div class="mx-auto md:w-10/12 w-full flex gap-8">
- 
+
   <%= tag.div class: "flex flex-col w-full" do%>
     <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
 
         <%# <% heading.with_leader do %>
             <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
         <%# <% end %>
-        
+
         <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
 <% heading.with_action do %>
-    <%= button_to documento_path(@documento), 
-            method: :delete, 
-            form: { data: { turbo: false } },
+    <%= button_to documento_path(@documento),
+            method: :delete,
+            form: { data: { turbo_prefetch: false } },
             onclick: "return confirm('Sei sicuro di voler eliminare questo documento?')",
             class: "flex sm:flex-col items-center gap-x-2
-					text-sm text-center font-semibold cursor-pointer 
+					text-sm text-center font-semibold cursor-pointer
 					transition duration-150 ease-in-ou
 					rounded-md shadow-md  py-2 px-3
         			focus:outline focus:outline-2 focus:outline-offset-2
-					bg-red-600 text-white hover:bg-red-500 
+					bg-red-600 text-white hover:bg-red-500
 					active:bg-red-600 focus:outline-red-600" do %>
 		<%= icon "trash" %>
 		Elimina
@@ -27,13 +27,13 @@
 <% end %>
 
         <% heading.with_action do %>
-            <%= component 'tax_button', 
+            <%= component 'tax_button',
                     caption: "Stampa",
                     svg_file: "icon-print.svg",
                     color: "white",
                     url: documento_path(@documento, format: :pdf),
                     target: "_blank" %>
-        <% end %>  
+        <% end %>
 
         <% heading.with_action do %>
             <%= component 'tax_button',
@@ -41,8 +41,8 @@
                     svg_file: "icon-pencil.svg",
                     color: "yellow",
                     url:  documento_step_path(@documento, Documento.form_steps.keys.first) %>
-                   
-                    
+
+
         <% end %>
 
         <% heading.with_action do %>
@@ -66,12 +66,12 @@
     <% end %>
 
     <div class="sm:flex sm:items-center">
-      
+
         <div class="px-4 sm:flex-auto">
             <h1 class="text-xl font-semibold leading-6 text-gray-900">
-                <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>    
+                <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>
             </h1>
-            
+
             <p class="mt-1 text-sm text-gray-500">
                 <%= @documento.referente %>
             </p>
@@ -83,13 +83,13 @@
                 <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
                     <%= tag.div @documento.status&.titleize, class: "font-semibold" %>
                     <%= tag.div @documento.tipo_pagamento&.titleize, class: "font-semibold" %>
-                    <%= tag.div l(@documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if @documento.pagato_il %>					
+                    <%= tag.div l(@documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if @documento.pagato_il %>
                 <% end %>
             <% end %>
 
             <% if @documento.documento_righe.size > 15 %>
                 <%= tag.div id: "top", class: "w-full flex justify-end -pr-4" do %>
-                    <%= component "tax_button", 
+                    <%= component "tax_button",
                             svg_file: "icon-chevron-double-down",
                             color: "transparent",
                             url: "#bottom",
@@ -110,7 +110,7 @@
           <col class="sm:w-1/8">
           <col class="sm:w-1/6">
         </colgroup>
-        
+
         <thead class="border-b border-gray-300 text-gray-900">
           <tr>
             <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Titolo</th>
@@ -120,15 +120,15 @@
             <th scope="col" class="py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">Importo</th>
           </tr>
         </thead>
-        
+
         <tbody>
 
-          <% @documento.documento_righe.order(:posizione).each do |docu_riga| %> 
-            <%=  render partial: "righe/riga", locals: { riga: docu_riga.riga } %>    
+          <% @documento.documento_righe.order(:posizione).each do |docu_riga| %>
+            <%=  render partial: "righe/riga", locals: { riga: docu_riga.riga } %>
           <% end %>
-        
+
         </tbody>
-        
+
         <tfoot>
           <tr>
             <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
@@ -149,7 +149,7 @@
 
       <% if @documento.documento_righe.size > 20 %>
           <%= tag.div id: "bottom", class: "w-full flex justify-end -pr-4" do %>
-              <%= component "tax_button", 
+              <%= component "tax_button",
                       svg_file: "icon-chevron-double-up",
                       color: "transparent",
                       url: "#top",
@@ -159,7 +159,7 @@
 
     </div>
 
-    <%= link_to "Esporta XML", esporta_xml_documento_path(@documento, format: :xml), 
+    <%= link_to "Esporta XML", esporta_xml_documento_path(@documento, format: :xml),
                 class: "btn btn-primary" %>
 
   <% end %>
