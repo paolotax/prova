@@ -13,7 +13,7 @@ class DocumentiController < ApplicationController
         .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
-        .order(updated_at: :desc)
+        .order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
 
     @documenti = filter(@documenti.all)
     
