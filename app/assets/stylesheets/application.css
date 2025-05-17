@@ -1,19 +1,13 @@
 /*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
+ * This is a manifest file that'll be compiled into application.css.
  *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
  *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
+ * Consider organizing styles into separate files for maintainability.
  */
-
  /* Global slight fade */
 
 ::view-transition-old(root),
@@ -60,7 +54,7 @@ trix-toolbar { display: none; }
   text-align: center;
 }
 
- 
+
  .turbo-progress-bar {
     background-color: rgb(67 56 202);
  }
@@ -111,7 +105,7 @@ trix-toolbar { display: none; }
     border:1px solid black;
   }
   .hw-combobox__handle {
-    right: 0.75rem; 
+    right: 0.75rem;
   }
   .hw-combobox__listbox {
     border-radius: 0.375rem;
@@ -139,5 +133,4 @@ trix-toolbar { display: none; }
 
 
 
- 
- 
+
