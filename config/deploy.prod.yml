@@ -5,10 +5,10 @@ image: paolotax/prova
 servers:
   web:
     hosts:
-      - 159.69.18.62
+      - 116.203.224.90
   job:
     hosts:
-      - 159.69.18.62
+      - 116.203.224.90
     cmd: bundle exec sidekiq -q default -q mailers -q ahoy
 
 registry:
@@ -22,13 +22,13 @@ builder:
 
 proxy:
   ssl: true
-  host: paolotax.it
+  host: scagnozz.com
   app_port: 3000
 
 
 env:
   clear:
-    HOST: paolotax.it
+    HOST: scagnozz.com
     RAILS_SERVE_STATIC_FILES: "true"
     RAILS_LOG_TO_STDOUT: "true"
   secret:
@@ -52,7 +52,7 @@ aliases:
 accessories:
   db:
     image: postgres:15
-    host: 159.69.18.62
+    host: 116.203.224.90
     port: "127.0.0.1:5432:5432"
     env:
       clear:
@@ -69,14 +69,14 @@ accessories:
 
   redis:
     image: redis:latest
-    host: 159.69.18.62
+    host: 116.203.224.90
     port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
 
   backup:
     image: kartoza/pg-backup:15-3.3
-    host: 159.69.18.62
+    host: 116.203.224.90
     env:
       clear:
         POSTGRES_USER: prova
