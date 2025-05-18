@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+// const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   content: [
@@ -20,7 +20,7 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/container-queries'),
-    ({ addVariant }) => { 
+    ({ addVariant }) => {
       addVariant('hotwire-native', 'html[data-hotwire-native-app] &');
       addVariant('not-hotwire-native', 'html:not([data-hotwire-native-app]) &');
     }
