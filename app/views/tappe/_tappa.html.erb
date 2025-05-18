@@ -1,51 +1,51 @@
 <%# locals: ( tappa:, with_checkbox: true, with_handle: true ) -%>
 
 <%= tag.div id: dom_id(tappa),
-        class: [ 
+        class: [
             "col-span-1 group px-2 py-1.5 grid border-b rounded-md shadow-md items-center": true,
             "grid-cols-6 gap-2 mb-2": !with_checkbox,
             "grid-cols-7": with_checkbox,
             "bg-blue-100": tappa.tappable_type == "Cliente",
             "bg-yellow-100": tappa.tappable_type == "ImportScuola",
         ],
-        data: { 
+        data: {
             tax_sortable_update_url: sort_tappa_path(tappa)
         } do %>
 
-    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-1" } col-span-1 flex flex-col justify-between items-center align-center gap-2 group-[.show-navigator]:flex-row-reverse" do %> 
-        
-        <%= check_box_tag "tappa_ids[]", tappa.id, nil, 
+    <%= tag.div class: "#{ with_checkbox ? "" : "col-start-1" } col-span-1 flex flex-col justify-between items-center align-center gap-2 group-[.show-navigator]:flex-row-reverse" do %>
+
+        <%= check_box_tag "tappa_ids[]", tappa.id, nil,
             form: "bulk-actions",
-            class: "hidden bulk-actions-checkbox mx-auto w-7 h-7 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0", 
+            class: "hidden bulk-actions-checkbox mx-auto w-7 h-7 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
             data: {
                 action: "input->bulk-actions#count",
                 bulk_actions_target: "checkbox"
             } %>
-        
+
         <%= render partial: "tappe/tappa_menu", locals: { tappa: tappa } %>
-        
+
         <% if with_handle %>
             <%= tag.div class: "handle cursor-move text-gray-400 group-[.show-scuola]:hidden" do %>
-                <%= inline_svg_tag "icon-bars-4" %>
+                <%= inline_svg_tag "icon-bars-4.svg" %>
             <% end %>
         <% end %>
-    
+
     <% end %>
-        
+
     <%= tag.div class: [
             "group text-xs font-bold text-gray-600 flex justify-between items-center": true,
             "col-span-4": with_checkbox,
             "col-span-5": !with_checkbox
         ] do %>
-        
-        <%= tag.div class: "flex flex-col" do %>  
+
+        <%= tag.div class: "flex flex-col" do %>
             <%= render partial: "clientables/#{tappa.tappable.class.name.underscore}_card", locals: { clientable: tappa.tappable } %>
-            
+
             <% if tappa&.giri.any? %>
 
                 <% tappa.giri.map do |giro| %>
                     <div class="flex flex-wrap gap-2">
-                        <%= link_to giro, 
+                        <%= link_to giro,
                             class: "rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset bg-gray-50 text-gray-600 ring-gray-500/10",
                             data: { turbo_frame: "_top" } do %>
                             <%= giro.titolo %>
@@ -53,13 +53,13 @@
                     </div>
                 <% end %>
             <% end %>
-            
+
             <%= tag.div simple_format(tappa.titolo), class: "pt-2 text-xs italic font-semibold text-gray-400 line-clamp-2 hover:line-clamp-none" %>
         <% end %>
-        
+
         <%# navigator  %>
         <%= tag.div class: "hidden group-[.show-navigator]:inline-block" do %>
-            <%= component 'tax_button', 
+            <%= component 'tax_button',
                     svg_file: "icon-map-pin.svg",
                     color: "pink",
                     url:  go_to_tappable_path(tappa.tappable, current_user.navigator),

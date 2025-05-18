@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
-import { enter, leave } from "./helpers/transitions";
-import { verticalNavigation } from "./helpers/keyboard_navigation";
+import { enter, leave } from "controllers/helpers/transitions";
+import { verticalNavigation } from "controllers/helpers/keyboard_navigation";
 import { FetchRequest } from "@rails/request.js"
 
 export default class extends Controller {

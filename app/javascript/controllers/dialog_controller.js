@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { enter, leave } from "./helpers/transitions";
+import { enter, leave } from "controllers/helpers/transitions";
 
 export default class extends Controller {
   static values = { elementId: String }

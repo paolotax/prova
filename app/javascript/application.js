@@ -2,6 +2,8 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
+// import "utilities/turbo_stream_render.js"
+// import "utilities/confirm_modal.js"
 
 import "trix"
 import "@rails/actiontext"
@@ -14,7 +16,7 @@ import "mapkick/bundle"
 // window.addEventListener("turbo:frame-render", (e) => {
 //     console.log("turbo:frame-render", e)
 // })
-  
+
 // window.addEventListener("turbo:frame-load", (e) => {
 //     console.log("turbo:frame-load", e)
 // })
@@ -24,8 +26,5 @@ import {Turbo} from "@hotwired/turbo-rails"
 Turbo.StreamActions.redirect =  function() {
     Turbo.visit(this.target);
 };
-
-import "./utilities/confirm_modal.js"
-import "./utilities/turbo_stream_render.js"
 
 import "ahoy"

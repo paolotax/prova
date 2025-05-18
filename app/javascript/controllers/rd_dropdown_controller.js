@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
-import { enter, leave } from "./helpers/transitions";
+import { enter, leave } from "controllers/helpers/transitions";
 import { computePosition, offset, flip, shift } from "floating-ui";
-import { verticalNavigation } from "./helpers/keyboard_navigation";
+import { verticalNavigation } from "controllers/helpers/keyboard_navigation";
 
 export default class extends Controller {
   static targets = ["button", "menu"];

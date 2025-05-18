@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { leave } from "./helpers/transitions";
+import { leave } from "controllers/helpers/transitions";
 
 export default class extends Controller {
   connect() {

@@ -1,5 +1,5 @@
-import CheckboxesController from "./checkboxes_controller";
-import { enter, leave } from "./helpers/transitions";
+import CheckboxesController from "controllers/checkboxes_controller";
+import { enter, leave } from "controllers/helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
   static targets = ["container", "form", "counter", "formContainer", "menuButton"];
@@ -7,7 +7,7 @@ export default class BulkActionsController extends CheckboxesController {
 
   toggle(event) {
     super.toggle(event);
-        
+
     this.#syncSelection();
   }
 
@@ -22,7 +22,7 @@ export default class BulkActionsController extends CheckboxesController {
     this.counterTargets.forEach(counter => counter.textContent = this.checkboxesCheckedCount);
 
     this.openValue = this.checkboxesCheckedCount;
-    
+
     this.#syncSelection();
   }
 
@@ -56,15 +56,15 @@ export default class BulkActionsController extends CheckboxesController {
       menu.classList.toggle('hidden');
     });
   }
-  
+
   selectCheckbox(event) {
     const tappaId = event.currentTarget.dataset.bulkActionsTappaParam;
     const checkbox = document.querySelector(`input[type="checkbox"][value="${tappaId}"]`);
-    
+
     if (checkbox) {
         checkbox.checked = true;
         checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-        
+
         // Aggiorna il contatore e mostra il container
         this.checkboxesCheckedCountValue = this.checkboxes.filter(c => c.checked).length;
         this.openValue = true;
@@ -76,12 +76,12 @@ export default class BulkActionsController extends CheckboxesController {
     const formId = event.currentTarget.dataset.formId;
     const clickedButton = event.currentTarget;
     const closeButton = this.element.querySelector('[data-action="bulk-actions#deselectAll"]');
-    
+
     // Trova la form target
-    const targetForm = this.formContainerTargets.find(formContainer => 
+    const targetForm = this.formContainerTargets.find(formContainer =>
         formContainer.dataset.formId === formId
     );
-    
+
     // Se la form target è già visibile
     if (targetForm && !targetForm.classList.contains('hidden')) {
         // Nascondi la form
@@ -91,13 +91,13 @@ export default class BulkActionsController extends CheckboxesController {
         this.menuButtonTargets.forEach(button => button.classList.remove('hidden'));
         return;
     }
-    
+
     // Nascondi tutte le form
     this.formContainerTargets.forEach(formContainer => {
         formContainer.classList.add('hidden');
         formContainer.classList.remove('flex');
     });
-    
+
     // Se c'è una form target
     if (targetForm) {
         // Nascondi tutti i pulsanti del menu eccetto quello cliccato
@@ -106,7 +106,7 @@ export default class BulkActionsController extends CheckboxesController {
                 button.classList.add('hidden');
             }
         });
-        
+
         // Mostra la form selezionata
         targetForm.classList.remove('hidden');
         targetForm.classList.add('flex');
@@ -121,12 +121,12 @@ export default class BulkActionsController extends CheckboxesController {
         formContainer.classList.add('hidden');
         formContainer.classList.remove('flex');
       });
-      
+
       // Mostra tutti i pulsanti
       this.menuButtonTargets.forEach(button => {
         button.classList.remove('hidden');
       });
-      
+
       // Deseleziona le checkbox e conta quante erano selezionate
       const selectedCount = this.checkboxes.filter(c => c.checked).length;
       this.setCheckboxesTo(false);

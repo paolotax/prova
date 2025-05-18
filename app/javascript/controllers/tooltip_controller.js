@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
-import { enter, leave } from "./helpers/transitions";
-import { classNames } from "./helpers/class_names";
+import { enter, leave } from "controllers/helpers/transitions";
+import { classNames } from "controllers/helpers/class_names";
 import { computePosition, offset, flip, shift } from "floating-ui";
 
 export default class extends Controller {
