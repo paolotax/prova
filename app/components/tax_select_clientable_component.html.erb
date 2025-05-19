@@ -1,12 +1,12 @@
 <fieldset class="my-5 cb-tax-fancy flex flex-col gap-2" id="select-clientable">
-   
-    <%= label_for form: @form, field: "#{object_type}_id", label: @type.gsub("Import", "") %> 
-    
-    <%= combobox_tag "#{field_name_suffix}[#{object_type}_id]", @user.send(type.underscore.pluralize), 
-            value: @id, 
+
+    <%= label_for form: @form, field: "#{object_type}_id", label: @type.gsub("Import", "") %>
+
+    <%= combobox_tag "#{field_name_suffix}[#{object_type}_id]", @user.send(type.underscore.pluralize),
+            value: @id,
             placeholder: "seleziona #{type.humanize.downcase.gsub("import","")}...",
-            mobile_at: "0px" %>      
-   
+            mobile_at: "0px" %>
+
     <%= hidden_field_tag "#{field_name_suffix}[#{object_type}_type]", type %>
 
 </fieldset>

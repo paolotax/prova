@@ -16,15 +16,15 @@
         <%= form.hidden_field :tappable_type, value: @tappable_type %>
     <% end %>
 
-    <%= tag.div class: "my-5" do %>                
-            <%= component "tax_select_clientable", 
-                form: form, 
-                object_type: "tappable", 
-                field_name_suffix: "tappa", 
-                type: tappa.tappable_type, 
+    <%= tag.div class: "my-5" do %>
+            <%= component "tax_select_clientable",
+                form: form,
+                object_type: "tappable",
+                field_name_suffix: "tappa",
+                type: tappa.tappable_type,
                 id: tappa.tappable_id %>
 
-    <% end %>  
+    <% end %>
 
     <div class="my-5">
         <%= component "field" do |field| %>
@@ -33,27 +33,27 @@
             <%= form.text_area :titolo, rows: 3,
                 placeholder: "note..." %>
         <% end %>
-    </div> 
+    </div>
 
     <div class="my-5 flex-col space-y-4">
         <%= component "field" do |field| %>
             <% field.with_label { render FormLabelComponent.new(form: form, field: :data_tappa, label: "Data tappa") } %>
             <%= form.date_field :data_tappa, placeholder: "data tappa..." %>
         <% end %>
-        
+
         <%= tag.div class: "cb-tax-fancy" do %>
             <%= component "field" do |field| %>
                 <% field.with_label { render FormLabelComponent.new(form: form, field: :giro_id, label: "Giri") } %>
                 <% field.with_hint { "Qui puoi segnare i giri per la tappa" } %>
-                <%= form.combobox :giro_ids, 
+                <%= form.combobox :giro_ids,
                             current_user.giri.order(created_at: :desc),
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
             <% end %>
         <% end %>
-    </div>  
-    
+    </div>
+
     <div class="my-5 flex justify-between">
-        
+
         <%= button_to  do %>
 			<div class="btn btn-indigo hotwire-native:hidden">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -65,9 +65,9 @@
 
         <%# <% if action_name != "new" %>
             <%# <div class="ml-6 inline-block">
-                <%#= link_to tappa_path(tappa), 
+                <%#= link_to tappa_path(tappa),
                             data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?", action: "dialog#close" },
-                            class: "btn btn-red" do %> 
+                            class: "btn btn-red" do %>
                     <%#= inline_svg_tag "icon-trash.svg" %>
                     <%# <span class="">Elimina</span>  %>
                 <%# <% end %>
