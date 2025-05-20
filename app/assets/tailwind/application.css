@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
+
 @layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
   dialog {
     margin: auto;
   }
 }
+
+
 .sidebar-item {
   @apply text-gray-200 flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold;
 }
