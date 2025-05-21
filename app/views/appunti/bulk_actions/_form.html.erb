@@ -101,7 +101,7 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <div class="flex justify-between gap-2">
-                <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 <%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
             </div>
         <% end %>
@@ -125,7 +125,7 @@
             <%= form.select :stato,
                     Appunto::STATO_APPUNTI,
                     {},
-                    class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900" %>
+                    class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 bg-white" %>
             <%= form.submit "Conferma", class: "px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
         </div>
     <% end %>

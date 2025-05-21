@@ -2,8 +2,8 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-// import "utilities/turbo_stream_render.js"
-// import "utilities/confirm_modal.js"
+// import "./utilities/confirm_modal.js"
+// import "./utilities/turbo_stream_render.js"
 
 import "trix"
 import "@rails/actiontext"

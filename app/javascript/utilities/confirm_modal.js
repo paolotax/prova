@@ -3,12 +3,12 @@ import { Template } from "./confirm_modal/template.js";
 
 // Setup:
 // Add this file into your application.js, eg.
-// `import "./lib/confirm_modal.js"`
+// `import "./utilities/confirm_modal.js"`
 //
 // Usage:
 // ```ruby
 //  data: {
-//    turbo_method: "delete",
+//    turbo_method: "delete", // only for `link_to` helper
 //    turbo_confirm: "Really delete this filter?",
 //    turbo_confirm_confirm_label: "Yes, put it in the shredder!",
 //    turbo_confirm_cancel_label: "Oops, no go back…",
@@ -16,14 +16,10 @@ import { Template } from "./confirm_modal/template.js";
 // ```
 //
 function insertConfirmModal(message, element) {
-  
-  // aggiunta da me
-  const button = element.querySelector("button");
-  
-  const theme = button.dataset.turboConfirmTheme || "light";
-  const cancelLabel = button.dataset.turboConfirmCancelLabel || "Annulla";
-  const confirmLabel = button.dataset.turboConfirmConfirmLabel || "Conferma";
-  
+  const theme = element.dataset.turboConfirmTheme || "light";
+  const cancelLabel = element.dataset.turboConfirmCancelLabel || "Cancel";
+  const confirmLabel = element.dataset.turboConfirmConfirmLabel || "Confirm";
+
   const template = new Template({theme: theme, message: message, cancelLabel: cancelLabel, confirmLabel: confirmLabel});
 
   document.body.insertAdjacentHTML('beforeend', template.render());
@@ -32,7 +28,7 @@ function insertConfirmModal(message, element) {
   return document.getElementById("confirm-modal");
 }
 
-Turbo.setConfirmMethod((message, element) => {
+Turbo.config.forms.confirm = (message, element) => {
   const dialog = insertConfirmModal(message, element);
 
   return new Promise((resolve) => {
@@ -47,4 +43,4 @@ Turbo.setConfirmMethod((message, element) => {
       resolve(true);
     }, { once: true })
   })
-})
+}

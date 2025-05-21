@@ -12,16 +12,16 @@
 					color: "green",
 					url: agenda_path(giorno:  Date.today.to_s),
 					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-                
+
 				<%= component 'tax_button',
 					svg_file: "icon-arrow-left.svg",
 					color: "transparent",
 					url: agenda_path(giorno: (@giorno - 7.days).to_s),
 					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-                                            
+
                 <div data-controller="date-selector" class="relative">
-                    <%= date_field_tag :giorno, 
-                        @giorno, 
+                    <%= date_field_tag :giorno,
+                        @giorno,
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
                         style: "width: 2.5rem; color: transparent;",
                         data: {
@@ -59,16 +59,20 @@
 	<% end %>
 </div>
 
-<%= turbo_frame_tag "agenda", class: "w-full flex h-[calc(100vh-230px)]", 
+<%= render CalendarComponent.new(view: "week", events: @tappe_per_giorno) %>
+
+
+
+<%= turbo_frame_tag "agenda", class: "w-full flex h-[calc(100vh-230px)]",
 				data: { controller: "scroll-to-day xxxagenda-scroll",
 				"scroll-to-day-giorno-value": params[:giorno],
 				xxturbo_cache: "false" } do %>
-		
-	<div id="week-container" 
-        class="flex w-full pr-8 gap-2 scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px] h-full" 
+
+	<div id="week-container"
+        class="flex w-full pr-8 gap-2 scroll-smooth scroll-snap-x-mandatory xx-ml-[300px] xxpl-[300px] h-full"
         data-agenda-scroll-target="weekContainer"
 		data-controller="bulk-actions">
-	
+
     	<%= render partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno } %>
 
 		<%= render "tappe/bulk_actions/form" %>
