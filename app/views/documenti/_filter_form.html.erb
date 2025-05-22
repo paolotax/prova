@@ -1,7 +1,7 @@
 <%# locals: ( reload: false ) -%>
 
 <%= component 'tax_filter_form', base_url: documenti_path, reload: reload,
-    fields: [ 
+    fields: [
         {
             field: :search,
             label: "Cliente",
@@ -41,9 +41,8 @@
         },{
             field: :ordina_per,
             label: "Ordina",
-            collection: ["data documento", "fresh", "creato il"],
+            collection: ["data documento", "fresh", "cliente", "creato il"],
             type: :select,
             placeholder: "ordina per"
         }
 ] %>
-	
