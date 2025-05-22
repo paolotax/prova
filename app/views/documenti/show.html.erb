@@ -58,7 +58,8 @@
                     caption: "Nuovo",
                     svg_file: "icon-plus.svg",
                     color: "blue",
-                    url: url_for( controller: "documenti", action: "new", model: @documento ) %>
+                    url: url_for( controller: "documenti", action: "new", model: @documento ),
+                    data_attr: { turbo_prefetch: false } %>
         <% end %>
 
         <%= @documento.causale %>
