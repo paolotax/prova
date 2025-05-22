@@ -9,10 +9,10 @@ DUMP_PATH_IN_CONTAINER="/tmp/new_backup.dmp"
 
 # 1. Drop e ricrea il database
 echo "👉 Dropping database $DB_NAME (se esiste)..."
-docker exec -i $CONTAINER_NAME psql -U prova -c "DROP DATABASE IF EXISTS $DB_NAME;"
+docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "DROP DATABASE IF EXISTS $DB_NAME;"
 
 echo "✅ Database droppato. Ora lo ricreo con owner $DB_USER..."
-docker exec -i $CONTAINER_NAME psql -U prova -c "CREATE DATABASE $DB_NAME WITH OWNER $DB_USER;"
+docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "CREATE DATABASE $DB_NAME WITH OWNER $DB_USER;"
 
 # 2. Copia il file .dmp nel container
 echo "📦 Copio il dump nel container..."

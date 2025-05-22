@@ -10,11 +10,12 @@
             transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } do %>
-    
+
     <%= tag.div class: "mx-auto flex flex-col sm:flex-row items-center gap-4" do %>
-        
+
         <%= yield :bulk_action_buttons_appunti if form == "appunti" %>
-        <%= yield :bulk_action_buttons unless form == "appunti" %>
+        <%= yield :bulk_action_buttons_documenti if form == "documenti" %>
+        <%= yield :bulk_action_buttons unless form.in?(["appunti", "documenti"]) %>
 
         <%= button_tag class: "flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-gray-600 rounded-md",
             data: { action: "bulk-actions#selectAll" } do %>
@@ -28,7 +29,8 @@
 
     <div class="forms-container">
         <%= yield :bulk_action_forms_appunti if form == "appunti" %>
-        <%= yield :bulk_action_forms unless form == "appunti" %>
+        <%= yield :bulk_action_forms_documenti if form == "documenti" %>
+        <%= yield :bulk_action_forms unless form.in?(["appunti", "documenti"]) %>
     </div>
 
 
@@ -37,4 +39,4 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
     <% end %>
-<% end %> 
+<% end %>

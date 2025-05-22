@@ -1,23 +1,23 @@
 <% content_for :head do %>
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>  
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>  
-    
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
+    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>
+
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
     <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
 <% end %>
 
 <div>
     <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
-        
+
         <% if @tappe.size > 1 %>
-            <% heading.with_action do %>	
+            <% heading.with_action do %>
                 <%= component 'tax_button',
-                    caption: 'Ricalcola percorso', 
+                    caption: 'Ricalcola percorso',
                     color: "transparent",
                     url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
             <% end %>
         <% end %>
-                    
+
         <% heading.with_description do %>
             <div class="flex items-center gap-1 mt-2">
                 <%= component 'tax_button',
@@ -25,16 +25,16 @@
                     color: "yellow",
                     url: agenda_path(giorno: @giorno),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-                
+
                 <%= component 'tax_button',
                     svg_file: "icon-arrow-left.svg",
                     color: "transparent",
                     url: giorno_path(giorno: (@giorno - 1.day).to_s),
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-                                            
+
                 <div data-controller="date-selector" class="relative">
-                    <%= date_field_tag :giorno, 
-                        @giorno, 
+                    <%= date_field_tag :giorno,
+                        @giorno,
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
                         style: "width: 2.5rem; color: transparent;",
                         data: {
@@ -52,7 +52,7 @@
                     data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
             </div>
         <% end %>
-       
+
         <% heading.with_action do %>
             <%= component 'tax_button',
                 svg_file: "icon-plus.svg",
@@ -96,7 +96,7 @@
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
             <%# <%= icon "academic-cap", variant: :solid, class: "w-6 h-6" %>
             <%# <span>Aggiungi scuola</span> %>
-        <%# <% end %> 
+        <%# <% end %>
 
         <%#= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno),
             class: "w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
@@ -104,20 +104,20 @@
 
             <%#= icon "currency-euro", variant: :solid, class: "w-6 h-6" %>
             <%# <span>Aggiungi cliente</span> %>
-        <%# <% end %> 
+        <%# <% end %>
 
 <%# </div> %>
 
 <% if @tappe.any? %>
-    
-    
+
+
     <div class="mt-4", data-controller="bulk-actions" >
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Appunti" %>
         <% end %>
-            
-        <%= turbo_frame_tag :appunti, 
-            src: appunti_path(del_giorno: @giorno), 
+
+        <%= turbo_frame_tag :appunti,
+            src: appunti_path(del_giorno: @giorno),
             loading: :lazy,
             class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
 
@@ -128,13 +128,13 @@
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Ordini" %>
         <% end %>
-            
-        <%= turbo_frame_tag :documenti, 
-            src: documenti_path(status: "ordine", tappe_del_giorno: @giorno), 
+
+        <%= turbo_frame_tag :documenti,
+            src: documenti_path(status: "ordine", tappe_del_giorno: @giorno),
             loading: :lazy,
             class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
 
-        <%= render "appunti/bulk_actions/form" %>
+        <%= render "documenti/bulk_actions/form" %>
     </div>
 
     <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
