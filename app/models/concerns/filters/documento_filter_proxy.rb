@@ -12,7 +12,7 @@ module Filters
               OR clienti.denominazione ILIKE ?
               OR clienti.comune ILIKE ?
               OR causali.causale ILIKE ?',
-      "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%", "%#{search}%", "%#{search}form bulk%")
+      "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%")
     }
 
     filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%").distinct }
@@ -23,9 +23,6 @@ module Filters
     filter_scope :ordina_per, ->(ordine) { order_by(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
-
-    filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data) }
-    filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
 
     filter_scope :tappe_del_giorno, ->(data) {
       joins("INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
