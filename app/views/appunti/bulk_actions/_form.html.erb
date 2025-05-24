@@ -10,6 +10,7 @@
         Stampa
     <% end %>
 
+    <!-- Tappa -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -20,6 +21,7 @@
         Tappa
     <% end %>
 
+    <!-- Stato -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -30,6 +32,7 @@
         Stato
     <% end %>
 
+    <!-- Elimina -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -61,6 +64,7 @@
         <% end %>
     <% end %>
 
+    <!-- Tappa -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
             data-bulk-actions-target="formContainer"
             data-form-id="tappa"
@@ -125,7 +129,7 @@
             <%= form.select :stato,
                     Appunto::STATO_APPUNTI,
                     {},
-                    class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 bg-white" %>
+                    class: "rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900" %>
             <%= form.submit "Conferma", class: "px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
         </div>
     <% end %>
