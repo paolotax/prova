@@ -24,6 +24,9 @@ module Filters
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
 
+    filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data) }
+    filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
+
     filter_scope :tappe_del_giorno, ->(data) {
       joins("INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
              AND documenti.clientable_type = tappe.tappable_type")
