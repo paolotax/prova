@@ -1,4 +1,6 @@
 <% content_for :bulk_action_buttons_documenti do %>
+
+    <!-- Stampa -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -9,6 +11,7 @@
         Stampa
     <% end %>
 
+    <!-- Duplica -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -19,6 +22,7 @@
         Duplica
     <% end %>
 
+    <!-- Genera -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -29,16 +33,7 @@
         Genera
     <% end %>
 
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
-            data: {
-              action: "bulk-actions#toggleFormContainer",
-              form_id: "elimina",
-              bulk_actions_target: "menuButton"
-            } do %>
-        <%= icon "trash" %>
-        Elimina
-    <% end %>
-
+    <!-- Modifica Stato -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
@@ -48,10 +43,22 @@
         <%= icon "pencil-square" %>
         Stato
     <% end %>
+
+    <!-- Elimina -->
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
+            data: {
+              action: "bulk-actions#toggleFormContainer",
+              form_id: "elimina",
+              bulk_actions_target: "menuButton"
+            } do %>
+        <%= icon "trash" %>
+        Elimina
+    <% end %>
 <% end %>
 
 <% content_for :bulk_action_forms_documenti do %>
 
+    <!-- Stampa -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="stampa"
@@ -73,6 +80,7 @@
         <% end %>
     </div>
 
+    <!-- Duplica -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="genera"
@@ -94,6 +102,7 @@
         <% end %>
     </div>
 
+    <!-- Genera -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="unisci"
@@ -111,34 +120,34 @@
                 } do |form| %>
             <div class="flex flex-col gap-4 mb-4">
                 <div class="flex justify-between items-center gap-2">
-                    <%= form.label :causale_id, "Causale", class: "block text-sm font-medium text-white mb-1" %>
+                    <%= form.label :causale_id, "Causale", class: "text-sm font-medium text-white" %>
                     <%= form.select :causale_id, Causale.all.map { |c| [c.causale, c.id] },
                         { include_blank: true },
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
 
                 <div class="flex justify-between items-center gap-2">
-                    <%= form.label :status, "Stato", class: "block text-sm font-medium text-white mb-1" %>
+                    <%= form.label :status, "Stato", class: "text-sm font-medium text-white" %>
                     <%= form.select :status, Documento.statuses.keys.map { |s| [s.titleize, s] },
                         { include_blank: true },
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
 
                 <div class="flex justify-between items-center gap-2">
-                    <%= form.label :consegnato_il, "Data Consegna", class: "w-full text-sm font-medium text-white mb-1" %>
+                    <%= form.label :consegnato_il, "Data Consegna", class: "text-sm font-medium text-white" %>
                     <%= form.date_field :consegnato_il,
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
 
-                <div>
-                    <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "block text-sm font-medium text-white mb-1" %>
+                <div class="flex justify-between items-center gap-2">
+                    <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "text-sm font-medium text-white" %>
                     <%= form.select :tipo_pagamento, Documento.tipo_pagamentos.keys.map { |tp| [tp.titleize, tp] },
                         { include_blank: true },
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
 
                 <div class="flex justify-between items-center gap-2">
-                    <%= form.label :pagato_il, "Data Pagamento", class: "w-full text-sm font-medium text-white mb-1" %>
+                    <%= form.label :pagato_il, "Data Pagamento", class: "text-sm font-medium text-white" %>
                     <%= form.date_field :pagato_il,
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
@@ -158,6 +167,58 @@
         <% end %>
     </div>
 
+    <!-- Modifica Stato -->
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+        data-bulk-actions-target="formContainer"
+        data-form-id="modifica_stato"
+        data-transition-enter="transform transition ease-out duration-300"
+        data-transition-enter-start="transform -translate-y-4 opacity-0"
+        data-transition-enter-end="transform translate-y-0 opacity-100"
+        data-transition-leave="transform transition ease-in duration-200"
+        data-transition-leave-start="transform translate-y-0 opacity-100"
+        data-transition-leave-end="transform -translate-y-4 opacity-0">
+        <%= form_with url: update_stato_documenti_bulk_actions_path,
+                method: :patch,
+                data: {
+                    bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
+            <div class="flex flex-col gap-4 mb-4">
+
+                <div class="w-full flex gap-2 items-center justify-between">
+                    <%= form.label :status, "Stato", class: "text-sm font-medium text-white" %>
+                    <%= form.select :status, Documento.statuses.keys.map { |s| [s.titleize, s] },
+                        { include_blank: true },
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
+                </div>
+
+                <div class="w-full flex gap-2 items-center justify-between">
+                    <%= form.label :consegnato_il, "Data Consegna", class: "text-sm font-medium text-white" %>
+                    <%= form.date_field :consegnato_il,
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
+                </div>
+
+                <div class="w-full flex gap-2 items-center justify-between">
+                    <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "text-sm font-medium text-white" %>
+                    <%= form.select :tipo_pagamento, Documento.tipo_pagamentos.keys.map { |tp| [tp.titleize, tp] },
+                        { include_blank: true },
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
+                </div>
+
+                <div class="w-full flex gap-2 items-center justify-between">
+                    <%= form.label :pagato_il, "Data Pagamento", class: "text-sm font-medium text-white" %>
+                    <%= form.date_field :pagato_il,
+                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
+                </div>
+            </div>
+
+            <div class="flex pt-2 w-full justify-center">
+                <%= form.submit "Aggiorna Stato", class: "mx-auto w-full mt-2 px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
+            </div>
+        <% end %>
+    </div>
+
+    <!-- Elimina -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="elimina"
@@ -176,55 +237,6 @@
                 } do |form| %>
             <div class="flex pt-2 w-full justify-center">
                 <%= form.submit "Conferma eliminazione", class: "px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md" %>
-            </div>
-        <% end %>
-    </div>
-
-    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
-        data-bulk-actions-target="formContainer"
-        data-form-id="modifica_stato"
-        data-transition-enter="transform transition ease-out duration-300"
-        data-transition-enter-start="transform -translate-y-4 opacity-0"
-        data-transition-enter-end="transform translate-y-0 opacity-100"
-        data-transition-leave="transform transition ease-in duration-200"
-        data-transition-leave-start="transform translate-y-0 opacity-100"
-        data-transition-leave-end="transform -translate-y-4 opacity-0">
-        <%= form_with url: update_stato_documenti_bulk_actions_path,
-                method: :patch,
-                data: {
-                    bulk_actions_target: "form",
-                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
-                } do |form| %>
-            <div class="flex flex-col items-center gap-4 mb-4">
-                <div>
-                    <%= form.label :status, "Stato", class: "block text-sm font-medium text-white mb-1" %>
-                    <%= form.select :status, Documento.statuses.keys.map { |s| [s.titleize, s] },
-                        { include_blank: true },
-                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
-                </div>
-
-                <div class="w-full flex gap-2 items-center justify-between">
-                    <%= form.label :consegnato_il, "Data Consegna", class: "w-full text-sm font-medium text-white mb-1" %>
-                    <%= form.date_field :consegnato_il,
-                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
-                </div>
-
-                <div>
-                    <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "block text-sm font-medium text-white mb-1" %>
-                    <%= form.select :tipo_pagamento, Documento.tipo_pagamentos.keys.map { |tp| [tp.titleize, tp] },
-                        { include_blank: true },
-                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
-                </div>
-
-                <div>
-                    <%= form.label :pagato_il, "Data Pagamento", class: "w-full text-sm font-medium text-white mb-1" %>
-                    <%= form.date_field :pagato_il,
-                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
-                </div>
-            </div>
-
-            <div class="flex pt-2 w-full justify-center">
-                <%= form.submit "Aggiorna Stato", class: "mx-auto w-full mt-2 px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md" %>
             </div>
         <% end %>
     </div>

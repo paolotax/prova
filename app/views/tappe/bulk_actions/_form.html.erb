@@ -2,9 +2,10 @@
 
 <% content_for :bulk_action_buttons do %>
 
+    <!-- Duplica -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
-            data: { 
-              action: "bulk-actions#toggleFormContainer", 
+            data: {
+              action: "bulk-actions#toggleFormContainer",
               form_id: "duplica",
               bulk_actions_target: "menuButton"
             } do %>
@@ -12,9 +13,10 @@
         Duplica
     <% end %>
 
+    <!-- Modifica -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
-            data: { 
-              action: "bulk-actions#toggleFormContainer", 
+            data: {
+              action: "bulk-actions#toggleFormContainer",
               form_id: "modifica",
               bulk_actions_target: "menuButton"
             } do %>
@@ -22,9 +24,10 @@
         Modifica
     <% end %>
 
+    <!-- Elimina -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md",
-            data: { 
-              action: "bulk-actions#toggleFormContainer", 
+            data: {
+              action: "bulk-actions#toggleFormContainer",
               form_id: "elimina",
               bulk_actions_target: "menuButton"
             } do %>
@@ -36,6 +39,7 @@
 
 <% content_for :bulk_action_forms do %>
 
+    <!-- Duplica -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="duplica"
@@ -46,17 +50,18 @@
         data-transition-leave-start="transform translate-y-0 opacity-100"
         data-transition-leave-end="transform -translate-y-4 opacity-0">
 
-        <%= form_with url: duplica_tappe_bulk_actions_path, 
+        <%= form_with url: duplica_tappe_bulk_actions_path,
                 method: :patch,
-                data: { 
+                data: {
                     bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
-                
+
                 <div class="flex bg-white rounded-md">
-                    <%= form.combobox :giro_ids, 
+                    <%= form.combobox :giro_ids,
                             current_user.giri.order(created_at: :desc),
+                            placeholder: "Seleziona giri...",
                             id: "duplica_giro_ids",
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
                 </div>
@@ -70,32 +75,34 @@
         <% end %>
     </div>
 
+    <!-- Modifica -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
             data-bulk-actions-target="formContainer"
             data-form-id="modifica"
             data-transition-enter="transform transition ease-out duration-300"
             data-transition-enter-start="transform -translate-y-4 opacity-0"
-            data-transition-enter-end="transform translate-y-0 opacity-100"
+            daþta-transition-enter-end="transform translate-y-0 opacity-100"
             data-transition-leave="transform transition ease-in duration-200"
             data-transition-leave-start="transform translate-y-0 opacity-100"
             data-transition-leave-end="transform -translate-y-4 opacity-0">
 
-        <%= form_with url: update_all_tappe_bulk_actions_path, 
+        <%= form_with url: update_all_tappe_bulk_actions_path,
                 method: :patch,
-                data: { 
+                data: {
                     bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
-            
+
             <%= tag.div class: "flex flex-col justify-between gap-2" do %>
                 <div class="flex bg-white rounded-md">
-                    <%= form.combobox :giro_ids, 
+                    <%= form.combobox :giro_ids,
                             current_user.giri.order(created_at: :desc),
+                            placeholder: "Seleziona giri...",
                             id: "modifica_giro_ids",
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
                 </div>
                 <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
-                
+
                 <div class="flex justify-between gap-2">
                     <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                     <%= form.submit "Aggiorna", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
@@ -104,6 +111,7 @@
         <% end %>
     </div>
 
+    <!-- Elimina -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
             data-bulk-actions-target="formContainer"
             data-form-id="elimina"
@@ -114,9 +122,9 @@
             data-transition-leave-start="transform translate-y-0 opacity-100"
             data-transition-leave-end="transform -translate-y-4 opacity-0">
 
-        <%= form_with url: destroy_all_tappe_bulk_actions_path, 
+        <%= form_with url: destroy_all_tappe_bulk_actions_path,
                 method: :delete,
-                data: { 
+                data: {
                     bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
