@@ -1,12 +1,13 @@
 <% content_for :bulk_action_buttons_appunti do %>
 
+    <!-- Stampa -->
     <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
             data: {
               action: "bulk-actions#toggleFormContainer",
               form_id: "stampa",
               bulk_actions_target: "menuButton"
             } do %>
-        <%= icon "printer", class: "size-6" %>
+        <%= icon "printer" %>
         Stampa
     <% end %>
 
@@ -17,7 +18,7 @@
               form_id: "tappa",
               bulk_actions_target: "menuButton"
             } do %>
-        <%= icon "map-pin", class: "size-6" %>
+        <%= icon "map-pin" %>
         Tappa
     <% end %>
 
@@ -28,7 +29,7 @@
               form_id: "stato",
               bulk_actions_target: "menuButton"
             } do %>
-        <%= icon "check-circle", class: "size-6" %>
+        <%= icon "check-circle" %>
         Stato
     <% end %>
 
@@ -39,13 +40,14 @@
               form_id: "elimina",
               bulk_actions_target: "menuButton"
             } do %>
-        <%= icon "trash", class: "size-6" %>
+        <%= icon "trash" %>
         Elimina
     <% end %>
 <% end %>
 
 <% content_for :bulk_action_forms_appunti do %>
 
+    <!-- Stampa -->
     <%= form_with url: "/appunti/bulk_actions/print_all.pdf",
             method: :patch,
             class: "hidden transition-all duration-300 ease-out origin-top mt-4",
@@ -105,12 +107,13 @@
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
                 } do |form| %>
             <div class="flex justify-between gap-2">
-                <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
+                <%= form.date_field :data_tappa, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
                 <%= form.submit "Tappa", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
             </div>
         <% end %>
     </div>
 
+    <!-- Stato -->
     <%= form_with url: segna_come_appunti_bulk_actions_path,
             method: :patch,
             class: "hidden transition-all duration-300 ease-out origin-top mt-4",
@@ -134,6 +137,7 @@
         </div>
     <% end %>
 
+    <!-- Elimina -->
     <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
         data-bulk-actions-target="formContainer"
         data-form-id="elimina"
