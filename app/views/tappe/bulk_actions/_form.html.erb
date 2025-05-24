@@ -36,15 +36,15 @@
 
 <% content_for :bulk_action_forms do %>
 
-        <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
-            data-bulk-actions-target="formContainer"
-            data-form-id="duplica"
-            data-transition-enter="transform transition ease-out duration-300"
-            data-transition-enter-start="transform -translate-y-4 opacity-0"
-            data-transition-enter-end="transform translate-y-0 opacity-100"
-            data-transition-leave="transform transition ease-in duration-200"
-            data-transition-leave-start="transform translate-y-0 opacity-100"
-            data-transition-leave-end="transform -translate-y-4 opacity-0">
+    <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top  mt-4"
+        data-bulk-actions-target="formContainer"
+        data-form-id="duplica"
+        data-transition-enter="transform transition ease-out duration-300"
+        data-transition-enter-start="transform -translate-y-4 opacity-0"
+        data-transition-enter-end="transform translate-y-0 opacity-100"
+        data-transition-leave="transform transition ease-in duration-200"
+        data-transition-leave-start="transform translate-y-0 opacity-100"
+        data-transition-leave-end="transform -translate-y-4 opacity-0">
 
         <%= form_with url: duplica_tappe_bulk_actions_path, 
                 method: :patch,
