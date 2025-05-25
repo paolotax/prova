@@ -12,9 +12,7 @@
 
         <% if @tappe.size > 1 %>
             <% heading.with_action do %>
-            <% heading.with_action do %>
                 <%= component 'tax_button',
-                    caption: 'Ricalcola percorso',
                     caption: 'Ricalcola percorso',
                     color: "transparent",
                     url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
@@ -39,8 +37,7 @@
 
 
                 <div data-controller="date-selector" class="relative">
-                    <%= date_field_tag :giorno,
-                        @giorno,
+
                     <%= date_field_tag :giorno,
                         @giorno,
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
@@ -120,9 +117,6 @@
 <%# </div> %>
 
 <% if @tappe.any? %>
-
-
-
 
     <div class="mt-4", data-controller="bulk-actions" >
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>

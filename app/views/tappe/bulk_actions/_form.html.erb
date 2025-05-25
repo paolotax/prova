@@ -66,9 +66,9 @@
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
                 </div>
 
-                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
+                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white", placeholder: "Note..." %>
                 <div class="flex justify-between gap-2">
-                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                     <%= form.submit "Crea Tappe", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
                 </div>
             <% end %>
@@ -101,10 +101,10 @@
                             id: "modifica_giro_ids",
                             multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
                 </div>
-                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900", placeholder: "Note..." %>
+                <%= form.text_field :titolo, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white", placeholder: "Note..." %>
 
                 <div class="flex justify-between gap-2">
-                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900" %>
+                    <%= form.date_field :data_tappa, value: @giorno, class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                     <%= form.submit "Aggiorna", class: "px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-md" %>
                 </div>
             <% end %>
