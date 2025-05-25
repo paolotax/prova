@@ -7,14 +7,15 @@
 
 		<%= tag.div class: "block sm:flex gap-4 items-start" do %>
 
-			<%= tag.div class: "flex items-center justify-start gap-2" do %>
+			<%= tag.div class: "flex flex-shrink-0 items-center justify-start gap-3" do %>
 				<%= check_box_tag "documento_ids[]",
 					documento.id,
 					false,
 					id: "documento_#{documento.id}",
-					class: "flex-shrink-0 w-7 h-7 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
+					class: "peer relative appearance-none size-6 border-2 rounded-full border-gray-400 cursor-pointer
+          				bg-white checked:bg-indigo-500 checked:border-indigo-500 checked:bg-[url('./check.svg')] bg-no-repeat bg-center bg-cover",
 					data: {action: "input->bulk-actions#count"} %>
-			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
+					<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
 
 				<%= link_to documento_path(documento), class: "text-sm font-semibold hover:font-bold", data: { turbo_frame: :_top } do %>
 					<%= tag.div documento&.causale&.causale %>
@@ -107,7 +108,5 @@
 		</div>
 
 	<% end %>
-
-
 </div>
 

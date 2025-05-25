@@ -1,11 +1,12 @@
-<div id="<%= dom_id import_scuola %>" 
+<div id="<%= dom_id import_scuola %>"
 	class="pr-2 pl-4 bg-white py-4 flex justify-between items-center border border-t-0 border-gray-300 last:rounded-b-lg">
-	
+
 	<div class="flex justify-start items-center gap-4">
-		
-		<%= check_box_tag "import_scuola_ids[]", import_scuola.id, nil, 
-				form: "bulk-actions", 
-				class: "w-5 h-5 rounded-full border-2 mr-4 border-gray-300 text-gray-600 outline-none ring-0 focus:ring-2 focus:ring-gray-600 focus:ring-offset-0", 
+
+		<%= check_box_tag "import_scuola_ids[]", import_scuola.id, nil,
+				form: "bulk-actions",
+				class: "peer relative appearance-none size-6 border-2 rounded-full border-gray-400 cursor-pointer
+          			bg-white checked:bg-indigo-500 checked:border-indigo-500 checked:bg-[url('./check.svg')] bg-no-repeat bg-center bg-cover",
 				data: {action: "input->bulk-actions#count"} %>
 
 		<div class="flex flex-col">
@@ -27,29 +28,29 @@
 			<% end %>
 		</div>
 	</div>
-	
+
 	<div class="ml-2 flex flex-row">
 
 		<%# celle senza giro %>
 		<%= tag.div id: "tappa-scuola-#{import_scuola.id}", class: "tappe-import_scuola-#{import_scuola.id} flex items-center -space-x-2" do %>
-			<%= render partial: "clientables/lista_tappe", locals: { tappe: import_scuola.tappe } %>	
+			<%= render partial: "clientables/lista_tappe", locals: { tappe: import_scuola.tappe } %>
 		<% end %>
-			
+
 		<%# cella appunti ping %>
 		<%= tag.div class: "w-12 p-2.5 content-center" do %>
 			<% if import_scuola.appunti_da_completare.any? %>
 				<%= tag.div class: "w-4 h-4 mx-auto animate-ping rounded-full font-semibold text-center text-xs text-white bg-purple-500 " do %>
-					<%= link_to import_scuola_path(import_scuola, selected_tab: "2"), data: { turbo_frame: :_top }, class: "" do %>                
+					<%= link_to import_scuola_path(import_scuola, selected_tab: "2"), data: { turbo_frame: :_top }, class: "" do %>
 						<%= import_scuola.appunti_da_completare.size %>
-					<% end %> 
+					<% end %>
 				<% end %>
-			<% end %>  
+			<% end %>
 		<% end %>
-	
-	
+
+
 		<%= render partial: "import_scuole/import_scuola_menu", locals: { import_scuola: import_scuola } %>
-	
-	
+
+
 	</div>
 
 </div>
