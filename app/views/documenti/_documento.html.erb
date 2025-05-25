@@ -4,37 +4,37 @@
 				"bg-gray-200": documento.pagato? == false,
 				"bg-green-200": documento.pagato? == true,
 				"bg-red-200": documento.incompleto?] do %>
-			
+
 		<%= tag.div class: "block sm:flex gap-4 items-start" do %>
 
-			<%= tag.div class: "flex items-center justify-start gap-2" do %>
-				<%= check_box_tag "documento_ids[]", 
-					documento.id, 
-					false, 
-					id: "documento_#{documento.id}", 
-					class: "flex-shrink-0 w-7 h-7 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
+			<%= tag.div class: "flex flex-shrink-0 items-center justify-start gap-2" do %>
+				<%= check_box_tag "documento_ids[]",
+					documento.id,
+					false,
+					id: "documento_#{documento.id}",
+					class: "w-7 h-7 mr-2 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
 					data: {action: "input->bulk-actions#count"} %>
 
 			<%#= component("badge", text: documento.ordine_evaso? ? 'evaso' : "aperto", color:  documento.ordine_evaso? ? 'green' : "red") %>
-		
+
 				<%= link_to documento_path(documento), class: "text-sm font-semibold hover:font-bold", data: { turbo_frame: :_top } do %>
-					<%= tag.div documento&.causale&.causale %>  
+					<%= tag.div documento&.causale&.causale %>
 					<%= tag.div "#{documento.numero_documento} del #{documento.data_documento.strftime("%d-%m-%Y")}", class: "text-xs font-semibold text-gray-600" %>
 				<% end %>
 
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-				
-				<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
-								
-				<%= tag.p documento.referente, class: "text-xs" %> 
-				<%= tag.p documento.note, class: "text-xs" %> 
 
-			<% end %>					
-		
+				<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+
+				<%= tag.p documento.referente, class: "text-xs" %>
+				<%= tag.p documento.note, class: "text-xs" %>
+
+			<% end %>
+
 		<% end %>
-		
+
 		<div class="flex flex-col sm:flex-row gap-2 wrap">
 			<% if documento.incompleto? %>
 				<%= component 'tax_button',
@@ -44,7 +44,7 @@
 						url: documento_path(documento),
 						data_attr: { turbo_method: :delete } %>
 			<% end %>
-			
+
 			<% unless hotwire_native_app? %>
 				<%= component 'tax_button',
 						caption: "",
@@ -71,7 +71,7 @@
 			<% end %>
 		</div>
 	<% end %>
-    
+
 	<% unless hotwire_native_app? %>
 		<ul data-tax-reveal-target="item" class="hidden">
 			<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
@@ -85,28 +85,28 @@
 				"bg-gray-200": documento.pagato? == false,
 				"bg-green-200": documento.pagato? == true,
 				"bg-red-200": documento.incompleto?] do %>
-				
+
 		<%= tag.div class: "col-span-6 sm:col-span-8 flex gap-2 sm:gap-4 mb-2" do %>
             <%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
               <%= tag.div documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
               <%= tag.div documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
 			  <br>
-              <%= tag.div l(documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.pagato_il %>					
+              <%= tag.div l(documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.pagato_il %>
             <% end %>
         <% end %>
-		
+
 		<%= tag.div class: "col-span-3 sm:col-span-2 flex gap-2 sm:gap-4" do %>
 			<%= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
 		<% end %>
-		
-		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">				
+
+		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">
 			<%= documento.totale_copie %>
-		</div>  
+		</div>
 
 		<div class="col-start-5 sm:col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
 			<%= number_to_currency documento.totale_importo, locale: :it %>
 		</div>
-		
+
 	<% end %>
 
 
