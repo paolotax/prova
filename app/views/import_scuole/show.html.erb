@@ -215,19 +215,21 @@
 			</div>
 
 			<!-- appunti non archiviati-->
-			<div class="hidden mt-4" data-tax-tabs-target="panel">
+			<div class="hidden mt-4" data-tax-tabs-target="panel" data-controller="bulk-actions">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>
 					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_non_archiviati, locals: {mostra_scuola: false} %>
 				</div>
+				<%= render "appunti/bulk_actions/form" %>
 			</div>
 
 			<!-- appunti archiviati -->
-			<div class="hidden mt-4 " data-tax-tabs-target="panel">
+			<div class="hidden mt-4 " data-tax-tabs-target="panel" data-controller="bulk-actions">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
 					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>
 					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_archiviati, locals: {mostra_scuola: false} %>
 				</div>
+				<%= render "appunti/bulk_actions/form" %>
 			</div>
 
 			<!-- documenti -->
