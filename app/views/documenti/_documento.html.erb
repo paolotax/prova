@@ -25,8 +25,10 @@
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-
-				<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+				<div class="flex items-center gap-2">
+					<%= inline_svg_tag "icon-shopping-cart.svg", class: "flex-shrink-0 size-6 hover:text-green-500" %>
+					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+				</div>
 
 				<%= tag.p documento.referente, class: "text-xs" %>
 				<%= tag.p documento.note, class: "text-xs" %>

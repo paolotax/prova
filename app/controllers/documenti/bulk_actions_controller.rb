@@ -12,17 +12,17 @@ module Documenti
       # Per ogni documento, crea un PDF singolo e aggiungilo al PDF combinato
       params[:documento_ids].each do |documento_id|
         documento = Documento.find(documento_id)
-        
+
         # Genera il PDF per il singolo documento
         pdf = DocumentoPdf.new(documento, view_context)
-        
+
         # Salva temporaneamente il PDF
         temp_file = Tempfile.new(['documento', '.pdf'])
         pdf.render_file(temp_file.path)
-        
+
         # Aggiungi il PDF al documento combinato
         combined_pdf << CombinePDF.load(temp_file.path)
-        
+
         # Chiudi e elimina il file temporaneo
         temp_file.close
         temp_file.unlink
@@ -34,8 +34,8 @@ module Documenti
                 type: 'application/pdf',
                 disposition: 'inline'
     end
-  
-    def duplica 
+
+    def duplica
       @documenti = current_user.documenti.where(id: params[:documento_ids])
       @documenti_creati = []
 
@@ -83,7 +83,7 @@ module Documenti
       documenti_per_cliente.each do |clientable, documenti|
         @documenti_originali.concat(documenti)
         documento_base = documenti.first
-        
+
         @documento_unito = current_user.documenti.create(
           causale_id: params[:causale_id] || documento_base.causale_id,
           clientable: clientable,
@@ -96,7 +96,8 @@ module Documenti
           note: "Riferimento documenti:\n #{documenti.map { |d| "#{d.causale} nr.#{d.numero_documento} del #{d.data_documento.strftime('%d/%m/%Y')}" }.join("\n")}",
           status: params[:status] || documento_base.status,
           tipo_pagamento: params[:tipo_pagamento] || documento_base.tipo_pagamento,
-          pagato_il: params[:pagato_il] || documento_base.pagato_il
+          pagato_il: params[:pagato_il] || documento_base.pagato_il,
+          consegnato_il: params[:consegnato_il] || documento_base.consegnato_il
         )
 
         documenti.flat_map(&:documento_righe).uniq { |dr| dr.riga_id }.each.with_index(1) do |dr, index|
@@ -123,11 +124,11 @@ module Documenti
 
       @documenti = current_user.documenti.where(id: @ids)
       @documenti.destroy_all
-      
+
       notice = helpers.pluralize(@ids.count, "documento eliminato", "documenti eliminati")
-      
+
       respond_to do |format|
-        format.turbo_stream do 
+        format.turbo_stream do
           flash.now[:notice] = notice
         end
         format.html { redirect_to documenti_path, notice: notice }
@@ -158,7 +159,7 @@ module Documenti
     end
 
     def stato_params
-      params.permit(:status, :tipo_pagamento, :pagato_il)
+      params.permit(:status, :tipo_pagamento, :pagato_il, :consegnato_il)
     end
   end
 end
