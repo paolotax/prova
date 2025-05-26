@@ -3,10 +3,10 @@
 <% end %>
 
 <div class="sticky not-hotwire-native:top-20 z-10 mb-4">
-	<header class="flex flex-col gap-4 sm:flex-row sm:items-center 
-				bg-white/90 sm:justify-between px-4 py-3 mb-4 
+	<header class="flex flex-col gap-4 sm:flex-row sm:items-center
+				bg-white/90 sm:justify-between px-4 py-3 mb-4
 				border border-gray-200 rounded-md shadow-md flex-wrap" >
-				
+
 		<%= tag.div class: "flex flex-col items-start justify-start" do %>
 			<%= tag.div @import_scuola.denominazione, class: "text-2xl font-bold text-gray-900" %>
 			<%= tag.div @import_scuola.indirizzo, class: "text-sm font-semibold text-gray-400" %>
@@ -18,22 +18,22 @@
 			<%= tag.div @import_scuola.codice_ministeriale, class: "text-sm font-semibold text-gray-400"  %>
 		<% end %>
 
-		<div class="flex items-center justify-between gap-2">	
+		<div class="flex items-center justify-between gap-2">
 			<div class="flex items-center gap-2">
-				<%= component 'tax_button', 
+				<%= component 'tax_button',
 						caption: "Vai...",
 						svg_file: "icon-map-pin.svg",
 						color: "pink",
 						url:  go_to_tappable_path(@import_scuola, current_user.navigator),
 						target: "_blank"
 				%>
-				<%= component 'tax_button', 
+				<%= component 'tax_button',
 						caption: "Mappa",
 						svg_file: "icon-mappa.svg",
 						color: "pink",
 						url:  mappe_path(id: @import_scuola.class.name.underscore + "-" + @import_scuola.id.to_s)
 				%>
-				<%= component 'tax_button', 
+				<%= component 'tax_button',
 						caption: "Stampa",
 						svg_file: "icon-print.svg",
 						color: "white",
@@ -45,17 +45,17 @@
 						caption: "prec",
 						svg_file: "icon-arrow-left.svg",
 						color: "white",
-						url: "/import_scuole/#{@import_scuola&.previous&.slug}"  
+						url: "/import_scuole/#{@import_scuola&.previous&.slug}"
 				%>
 				<%= component 'tax_button',
 					caption: "succ",
 					svg_file: "icon-arrow-right.svg",
 					color: "white",
-					url: "/import_scuole/#{@import_scuola&.next&.slug}"  
+					url: "/import_scuole/#{@import_scuola&.next&.slug}"
 				%>
 				<%= render DropdownComponent.new() do |dropdown| %>
 					<%= dropdown.with_button do %>
-						<%= component 'tax_button', 
+						<%= component 'tax_button',
 								caption: "Nuovo",
 								svg_file: "icon-plus.svg",
 								color: "blue",
@@ -64,28 +64,28 @@
 					<% end %>
 
 					<% dropdown.with_item do %>
-						<%= link_to "nuovo appunto", new_appunto_path( import_scuola_id: @import_scuola.id ), 
+						<%= link_to "nuovo appunto", new_appunto_path( import_scuola_id: @import_scuola.id ),
 								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
 					<% end %>
-					
+
 					<% dropdown.with_item do %>
-						<%= link_to "nuovo ordine", 
+						<%= link_to "nuovo ordine",
 								new_documento_path( clientable_type: "ImportScuola", clientable_id: @import_scuola.id, causale: "Ordine Scuola" ),
-								data: { turbo_prefetch: false }, 
+								data: { turbo_prefetch: false },
 								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
 					<% end %>
 
 					<% dropdown.with_item do %>
-						<%= link_to "Crea Tappa", new_tappa_path( tappable_type: "ImportScuola", tappable_id: @import_scuola.id, data_tappa: Date.today ), 
+						<%= link_to "Crea Tappa", new_tappa_path( tappable_type: "ImportScuola", tappable_id: @import_scuola.id, data_tappa: Date.today ),
 								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
 					<% end %>
 				<% end %>
-				<div class="hidden sm:flex">	
+				<div class="hidden sm:flex">
 					<%= component 'tax_button',
 						caption: "Indietro",
 						svg_file: "icon-arrow-long-left.svg",
@@ -99,11 +99,11 @@
 	<%#= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", current_value: @import_scuola.importo_entrate - @import_scuola.importo_uscite) do |stat| %>
 
 <div id="scuola-tappe-list" class="group show-scuola pl-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
-	<%= render partial: "tappe/tappa", 
-			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc), 
+	<%= render partial: "tappe/tappa",
+			collection: @foglio_scuola.mie_tappe.order(data_tappa: :asc),
 			locals: {
-				with_checkbox: false, with_handle: false 
-			} 
+				with_checkbox: false, with_handle: false
+			}
 	%>
 </div>
 
@@ -128,7 +128,7 @@
 					<option>Saggi</option>
 				</select>
 			</div>
-			
+
 			<!-- menu -->
 			<div class="hidden sm:block">
 				<div class="border-b border-gray-200">
@@ -142,7 +142,7 @@
 								<%= @foglio_scuola.classi.load.size %>
 							</span>
 						</a>
-						
+
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
 							Adozioni per titolo
@@ -161,7 +161,7 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Archiviati 
+							Archiviati
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @foglio_scuola.appunti_archiviati.load.size %>
 							</span>
@@ -169,14 +169,14 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Vendite 
+							Vendite
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @foglio_scuola.documenti.load.size %>
 							</span>
 						</a>
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Saggi 
+							Saggi
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @foglio_scuola.ssk.load.size %>
 							</span>
@@ -185,10 +185,10 @@
 					</nav>
 				</div>
 			</div>
-			
+
 			<!-- classi -->
 			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller='tax-checkbox-select-all' }>
-				<%= render "import_adozioni/form_multi" %>				
+				<%= render "import_adozioni/form_multi" %>
 				<div>
 					<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
 					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
@@ -210,42 +210,43 @@
 
 			<!-- adozioni grouped -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
-				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>				
+				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>
 				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
 			</div>
-						
+
 			<!-- appunti non archiviati-->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<div id="appunti-lista" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti</p>
 					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_non_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
-						
+
 			<!-- appunti archiviati -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="appunti-archiviati" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono appunti archiviati</p>
 					<%= render partial: "appunti/appunto", collection: @foglio_scuola.appunti_archiviati, locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 
 			<!-- documenti -->
-			<div class="hidden mt-4 " data-tax-tabs-target="panel">
+			<div class="hidden mt-4 " data-tax-tabs-target="panel" data-controller="bulk-actions">
 				<div id="vendite" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 2xl:gap-x-8">
-					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vemdite</p>
 					<%= render @foglio_scuola.documenti.order(data_documento: :desc) %>
 				</div>
+				<%= render "documenti/bulk_actions/form" %>
 			</div>
 
 			<!-- saggi -->
 			<div class="hidden mt-4 " data-tax-tabs-target="panel">
 				<div id="saggi" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 2xl:grid-cols-3 xl:gap-x-8">
-					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>				
+					<p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono saggi</p>
 					<%= render partial: "appunti/appunto", collection: @foglio_scuola.ssk.order(updated_at: :desc), locals: {mostra_scuola: false} %>
 				</div>
 			</div>
 		</div>
-	</div>	
+	</div>
 </div>
 

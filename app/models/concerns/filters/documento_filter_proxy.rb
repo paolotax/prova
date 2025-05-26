@@ -20,12 +20,39 @@ module Filters
     filter_scope :status, ->(status) { where(status: status) }
     filter_scope :tipo_pagamento, ->(tipo_pagamento) { where(tipo_pagamento: tipo_pagamento) }
 
-    filter_scope :ordina_per, ->(ordine) { order_by(ordine) }#{ ordine == "fresh"? order(updated_at: :desc) : order(data_documento: :desc, numero_documento: :desc ) }
+    filter_scope :ordina_per, ->(ordine) { order_by(ordine) }
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
 
     filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data.to_date) }
     filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
+
+    filter_scope :nel_baule_del_giorno, ->(data) {
+      sanitized_date = ActiveRecord::Base.connection.quote(data)
+
+      union_sql = <<-SQL
+        (
+          SELECT DISTINCT documenti.*
+          FROM documenti
+          INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
+            AND documenti.clientable_type = tappe.tappable_type
+          WHERE DATE(tappe.data_tappa) = #{sanitized_date}
+            AND documenti.status in (0, 1)
+        )
+        UNION
+        (
+          SELECT DISTINCT documenti.*
+          FROM documenti
+          INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
+            AND documenti.clientable_type = tappe.tappable_type
+          WHERE (DATE(documenti.consegnato_il) = #{sanitized_date} OR DATE(documenti.pagato_il) = #{sanitized_date})
+            AND documenti.status in (2, 3, 4, 5)
+        )
+      SQL
+
+      from("(#{union_sql}) AS documenti")
+    }
+
 
     filter_scope :tappe_del_giorno, ->(data) {
       joins("INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id

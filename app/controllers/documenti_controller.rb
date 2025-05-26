@@ -155,7 +155,8 @@ class DocumentiController < ApplicationController
         ordina_per: params["ordina_per"],
         consegnato_il: params["consegnato_il"],
         pagato_il: params["pagato_il"],
-        tappe_del_giorno: params["tappe_del_giorno"]
+        tappe_del_giorno: params["tappe_del_giorno"],
+        nel_baule_del_giorno: params["nel_baule_del_giorno"]
       }.compact_blank
     end
 

@@ -130,16 +130,7 @@
         <% end %>
 
         <%= turbo_frame_tag :documenti,
-            src: documenti_path(status: "ordine", tappe_del_giorno: @giorno),
-            loading: :lazy,
-            class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
-
-        <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
-            <%= "In consegna" %>
-        <% end %>
-
-        <%= turbo_frame_tag :documenti,
-            src: documenti_path(consegnato_il: @giorno),
+            src: documenti_path(nel_baule_del_giorno: @giorno, ordina_per: "cliente"),
             loading: :lazy,
             class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
 
