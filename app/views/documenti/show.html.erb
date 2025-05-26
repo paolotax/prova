@@ -82,10 +82,12 @@
 
             <%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
                 <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
-                    <%= tag.div @documento.status&.titleize, class: "font-semibold" %>
-                    <%= tag.div @documento.tipo_pagamento&.titleize, class: "font-semibold" %>
-                    <%= tag.div l(@documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if @documento.pagato_il %>
+                    <%= tag.div @documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+                    <%= tag.div l(@documento.consegnato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.consegnato_il %>
+                    <%= tag.div @documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+                    <%= tag.div l(@documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.pagato_il %>
                 <% end %>
+
             <% end %>
 
             <% if @documento.documento_righe.size > 15 %>

@@ -24,7 +24,7 @@ module Filters
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
 
-    filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data) }
+    filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data.to_date) }
     filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
 
     filter_scope :tappe_del_giorno, ->(data) {

@@ -4,7 +4,7 @@
 
 <tr class="border-b border-gray-200">
 	<td class="relative py-5 pr-6">
-		
+
 		<div class="flex gap-x-6">
 			<div class="flex-auto">
 				<div class="flex items-start gap-x-3">
@@ -13,20 +13,20 @@
 					</div>
 				</div>
 				<div class="mt-1 text-xs leading-5 text-gray-500">
-					<%= link_to documento_path(documento), 
-								class:"hover:text-indigo-500 hover:font-semibold", 
+					<%= link_to documento_path(documento),
+								class:"hover:text-indigo-500 hover:font-semibold",
 								data: { turbo_frame: "_top" } do %>
-						
+
 							<%= "#{documento.numero_documento} del #{documento.data_documento&.strftime('%d-%m-%y')}" %>
 					<% end %>
 				</div>
 			</div>
-		</div>  
+		</div>
 	</td>
-	
+
 	<td class="py-5 pr-6">
-		
-		<%= link_to polymorphic_path(documento.clientable), data: { turbo_frame: "_top" }, class: "flex flex-col" do %> 
+
+		<%= link_to polymorphic_path(documento.clientable), data: { turbo_frame: "_top" }, class: "flex flex-col" do %>
 			<%= tag.div class: "flex flex-row" do %>
 				<svg class="w-4 h-4 mt-1 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
@@ -39,19 +39,20 @@
 	</td>
 
 	<%= tag.td class: "bg-black text-white p-5" do %>
-		<%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
-			<%= tag.div documento.status&.titleize, class: "font-semibold" %>
-			<%= tag.div documento.tipo_pagamento&.titleize, class: "font-semibold" %>
-			<%= tag.div l(documento.pagato_il, format: "%d-%m-%y"), class: "font-semibold" if documento.pagato_il %>					
-		<% end %>
+				<%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
+						<%= tag.div documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+						<%= tag.div l(documento.consegnato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.consegnato_il %>
+						<%= tag.div documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+						<%= tag.div l(documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.pagato_il %>
+				<% end %>
 	<% end %>
 
 	<td class="py-5 text-right hidden sm:table-cell">
-		<div class="flex justify-end">      
+		<div class="flex justify-end">
 			<%= number_to_currency documento.totale_importo %>
 		</div>
 		<div class="mt-1 text-xs leading-5 text-gray-500">
-			copie 
+			copie
 			<span class="text-gray-900">
 				<%= documento.totale_copie %>
 			</span>
