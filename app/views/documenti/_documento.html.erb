@@ -25,7 +25,7 @@
 			<% end %>
 
 			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
-				<div class="flex items-center gap-2">
+				<div class="group-[.show-scuola]:hidden flex items-center gap-2">
 					<%= inline_svg_tag "icon-shopping-cart.svg", class: "flex-shrink-0 size-6 hover:text-green-500" %>
 					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
 				</div>
