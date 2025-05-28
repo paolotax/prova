@@ -16,16 +16,23 @@ class ImportScuole::BulkActionsController < ApplicationController
   end
 
   def create_tappa
-    @import_scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
-    
+
+    if params[:import_scuola_ids].present?
+      @import_scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
+    end
+    if params[:documento_ids].present?
+      @documenti = current_user.documenti.where(id: params[:documento_ids])
+      @import_scuole = @documenti.map(&:clientable).uniq
+    end
+
     import_scuole_ids = @import_scuole.map(&:id).uniq
 
     import_scuole_ids.each do |import_scuola_id|
       unless import_scuola_id.blank?
         current_user.tappe.find_or_create_by(
-          tappable_type: "ImportScuola", 
-          tappable_id: import_scuola_id, 
-          data_tappa: params[:data_tappa], 
+          tappable_type: "ImportScuola",
+          tappable_id: import_scuola_id,
+          data_tappa: params[:data_tappa],
           user_id: current_user.id,
           titolo: params[:titolo],
           giro_id: params[:giro_id]
@@ -43,6 +50,6 @@ class ImportScuole::BulkActionsController < ApplicationController
   private
 
   def bulk_action_params
-    params.require(:bulk_action).permit(:data_tappa, :giro_id, :titolo, import_scuola_ids: [])
+    params.require(:bulk_action).permit(:data_tappa, :giro_id, :titolo, import_scuola_ids: [], documento_ids: [])
   end
 end
