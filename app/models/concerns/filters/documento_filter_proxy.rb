@@ -37,7 +37,7 @@ module Filters
           INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
             AND documenti.clientable_type = tappe.tappable_type
           WHERE DATE(tappe.data_tappa) = #{sanitized_date}
-            AND documenti.status in (0, 1)
+            AND ((documenti.consegnato_il IS NULL) OR (documenti.pagato_il IS NULL))
         )
         UNION
         (
