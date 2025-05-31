@@ -2,6 +2,9 @@ class OrdiniController < ApplicationController
 
   before_action :authenticate_user!
   def index
-    @ordini = current_user.righe.joins(:documenti).where("documenti.status = 0")
+
+    status = params[:status] || 1
+    @ordini = current_user.righe.joins(:documenti).where("documenti.status = #{status}")
+
   end
 end
