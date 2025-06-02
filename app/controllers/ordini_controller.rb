@@ -4,7 +4,15 @@ class OrdiniController < ApplicationController
   def index
 
     status = params[:status] || 0
-    @ordini = current_user.righe.joins(:documenti).where("documenti.status = #{status}")
+
+    @documenti = current_user.documenti.includes(:righe).where(status: status)
+    @documento_righe = @documenti.map(&:documento_righe).flatten
+    @righe = @documento_righe.map(&:riga).flatten
+
+    @clienti = @documenti.map(&:clientable).uniq.sort_by(&:denominazione)
+
+    #@ordini = current_user.righe.joins(:documenti).where(documenti: { status: 0 })
+
 
   end
 end

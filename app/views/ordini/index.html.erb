@@ -8,7 +8,7 @@
 
 <% content_for :title, "Documenti" %>
 
-<% clienti = @ordini.map(&:ordine).map(&:clientable).uniq %>
+<% clienti = @clienti %>
 
 <% content_for :header do %>
     <div class="flex flex-col gap-4">
@@ -18,13 +18,13 @@
                 <div class="flex">
                     <%= render StatComponent.new(
                         title: "Totale Copie",
-                        current_value: @ordini.sum(&:quantita),
+                        current_value: @righe.sum(&:quantita),
                         theme: ""
                     ) %>
 
                     <%= render StatComponent.new(
                         title: "Totale Importo",
-                        current_value: @ordini.sum { |o| o.quantita * o.prezzo },
+                        current_value: @righe.sum { |o| o.quantita * o.prezzo },
                         theme: ""
                     ) do |stat| %>
                         <% stat.with_current_value_leader { "€ " } %>
@@ -32,13 +32,13 @@
 
                     <%= render StatComponent.new(
                         title: "Numero Ordini",
-                        current_value: @ordini.map(&:ordine).uniq.count,
+                        current_value: @documenti.count,
                         theme: ""
                     ) %>
 
                     <%= render StatComponent.new(
                         title: "Numero Clienti",
-                        current_value: clienti.count,
+                        current_value: @clienti.count,
                         theme: ""
                     ) %>
                 </div>
@@ -47,16 +47,16 @@
         <% end %>
 
         <div class="flex gap-4">
-            <%= link_to "Raggruppa per Titolo", request.path,
+            <%= link_to "Raggruppa per Titolo", request.path + "?status=#{params[:status]}",
                 class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente",
+            <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente&status=#{params[:status]}",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine",
+            <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine&status=#{params[:status]}",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'ordine' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Mappa", request.path + "?group_by=mappa",
+            <%= link_to "Mappa", request.path + "?group_by=mappa&status=#{params[:status]}",
                 class: "px-4 py-2 rounded-lg #{params[:group_by] == 'mappa' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
         </div>
     </div>
@@ -64,7 +64,7 @@
 
 <% case params[:group_by] %>
 <% when 'cliente' %>
-    <% @ordini.group_by{|o| o.ordine.clientable}.sort_by{|k,v| k.denominazione}.each do |cliente, ordini| %>
+    <% @clienti.each do |cliente| %>
         <%= render Heading::WithActionsComponent.new(
             wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg',
             level: 'h3') do |heading| %>
@@ -74,13 +74,13 @@
             <% end %>
 
             <% heading.with_action do %>
-                <%= tag.span ordini.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
+                <%= tag.span @documenti.select {|d| d.clientable == cliente}.map(&:righe).flatten.sum(&:quantita), class: "font-bold text-2xl text-red-500" %>
             <% end %>
 
             <%= link_to cliente.denominazione, cliente, class: "hover:font-bold hover:text-indigo-400" %>
         <% end %>
 
-        <% ordini.each do |riga| %>
+        <% @documenti.select {|d| d.clientable == cliente}.map(&:righe).flatten.each do |riga| %>
             <%= render partial: "righe/riga_titolo", locals: { riga: riga } %>
         <% end %>
     <% end %>
@@ -101,13 +101,13 @@
 <% when 'ordine' %>
     <%= tag.div class: "flex flex-col mt-4", data: { controller: 'bulk-actions' } do %>
         <%= render "documenti/bulk_actions/form" %>
-        <% @ordini.group_by(&:ordine).sort_by{|k,v| k.created_at}.reverse.each do |ordine, righe| %>
-            <%= render "documenti/documento", documento: ordine %>
+        <% @documenti.each do |documento| %>
+            <%= render "documenti/documento", documento: documento %>
         <% end %>
     <% end %>
 
 <% else %>
-    <% @ordini.group_by(&:libro).sort_by{|k,v| [k.editore, k.categoria, k.titolo]}.each do |key, values| %>
+    <% @righe.group_by(&:libro).sort_by{|k,v| [k.editore, k.categoria, k.titolo]}.each do |key, values| %>
         <%= render Heading::WithActionsComponent.new(
             wrapper_css: 'flex items-center bg-gray-200 justify-between px-4 py-3 mt-4 border border-gray-200 rounded-t-lg',
             level: 'h3') do |heading| %>
