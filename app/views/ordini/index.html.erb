@@ -9,39 +9,47 @@
 <% content_for :title, "Documenti" %>
 
 <div class="flex flex-col gap-4">
-    <%= render Heading::WithActionsComponent.new do |heading| %>
+        <%= h1 { "Ordini in corso" } %>
 
-        <% heading.with_action do %>
-            <div class="flex">
-                <%= render StatComponent.new(
-                    title: "Totale Copie",
-                    current_value: @righe.sum(&:quantita),
-                    theme: ""
-                ) %>
+        <div class="flex items-center gap-4">
+            <%= form_with url: request.path, method: :get, data: { turbo_frame: "_top" } do |f| %>
+                <%= select_tag :status,
+                    options_for_select(Documento.statuses.map { |k, v| [k.titleize, v] }, params[:status]),
+                    class: "rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                    data: {
+                        controller: "auto-submit",
+                        action: "change->auto-submit#submit"
+                    } %>
+            <% end %>
+        </div>
 
-                <%= render StatComponent.new(
-                    title: "Totale Importo",
-                    current_value: @righe.sum { |o| o.quantita * o.prezzo },
-                    theme: ""
-                ) do |stat| %>
-                    <% stat.with_current_value_leader { "€ " } %>
-                <% end %>
+        <div class="flex">
+            <%= render StatComponent.new(
+                title: "Totale Copie",
+                current_value: @righe.sum(&:quantita),
+                theme: "dark"
+            ) %>
 
-                <%= render StatComponent.new(
-                    title: "Numero Ordini",
-                    current_value: @documenti.count,
-                    theme: ""
-                ) %>
+            <%= render StatComponent.new(
+                title: "Totale Importo",
+                current_value: @righe.sum { |o| o.quantita * o.prezzo },
+                theme: "dark"
+            ) do |stat| %>
+                <% stat.with_current_value_leader { "€ " } %>
+            <% end %>
 
-                <%= render StatComponent.new(
-                    title: "Numero Clienti",
-                    current_value: @clienti.count,
-                    theme: ""
-                ) %>
-            </div>
-        <% end %>
-        <%= "Ordini in corso" %>
-    <% end %>
+            <%= render StatComponent.new(
+                title: "Numero Ordini",
+                current_value: @documenti.count,
+                theme: "dark"
+            ) %>
+
+            <%= render StatComponent.new(
+                title: "Numero Clienti",
+                current_value: @clienti.count,
+                theme: "dark"
+            ) %>
+        </div>
 
     <div class="flex gap-4">
         <%= link_to "Raggruppa per Titolo", request.path + "?status=#{params[:status]}",

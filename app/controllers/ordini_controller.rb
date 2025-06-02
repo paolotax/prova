@@ -5,7 +5,7 @@ class OrdiniController < ApplicationController
 
     status = params[:status] || 0
 
-    @documenti = current_user.documenti.includes(:righe).where(status: status)
+    @documenti = current_user.documenti.where('EXTRACT(YEAR FROM data_documento) = 2025').includes(:righe).where(status: status)
     @documento_righe = @documenti.map(&:documento_righe).flatten
     @righe = @documento_righe.map(&:riga).flatten
 
