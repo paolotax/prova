@@ -8,59 +8,56 @@
 
 <% content_for :title, "Documenti" %>
 
-<% clienti = @clienti %>
+<div class="flex flex-col gap-4">
+    <%= render Heading::WithActionsComponent.new do |heading| %>
 
-<% content_for :header do %>
-    <div class="flex flex-col gap-4">
-        <%= render Heading::WithActionsComponent.new do |heading| %>
+        <% heading.with_action do %>
+            <div class="flex">
+                <%= render StatComponent.new(
+                    title: "Totale Copie",
+                    current_value: @righe.sum(&:quantita),
+                    theme: ""
+                ) %>
 
-            <% heading.with_action do %>
-                <div class="flex">
-                    <%= render StatComponent.new(
-                        title: "Totale Copie",
-                        current_value: @righe.sum(&:quantita),
-                        theme: ""
-                    ) %>
+                <%= render StatComponent.new(
+                    title: "Totale Importo",
+                    current_value: @righe.sum { |o| o.quantita * o.prezzo },
+                    theme: ""
+                ) do |stat| %>
+                    <% stat.with_current_value_leader { "€ " } %>
+                <% end %>
 
-                    <%= render StatComponent.new(
-                        title: "Totale Importo",
-                        current_value: @righe.sum { |o| o.quantita * o.prezzo },
-                        theme: ""
-                    ) do |stat| %>
-                        <% stat.with_current_value_leader { "€ " } %>
-                    <% end %>
+                <%= render StatComponent.new(
+                    title: "Numero Ordini",
+                    current_value: @documenti.count,
+                    theme: ""
+                ) %>
 
-                    <%= render StatComponent.new(
-                        title: "Numero Ordini",
-                        current_value: @documenti.count,
-                        theme: ""
-                    ) %>
-
-                    <%= render StatComponent.new(
-                        title: "Numero Clienti",
-                        current_value: @clienti.count,
-                        theme: ""
-                    ) %>
-                </div>
-            <% end %>
-            <%= "Ordini in corso" %>
+                <%= render StatComponent.new(
+                    title: "Numero Clienti",
+                    current_value: @clienti.count,
+                    theme: ""
+                ) %>
+            </div>
         <% end %>
+        <%= "Ordini in corso" %>
+    <% end %>
 
-        <div class="flex gap-4">
-            <%= link_to "Raggruppa per Titolo", request.path + "?status=#{params[:status]}",
-                class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
+    <div class="flex gap-4">
+        <%= link_to "Raggruppa per Titolo", request.path + "?status=#{params[:status]}",
+            class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente&status=#{params[:status]}",
-                class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
+        <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente&status=#{params[:status]}",
+            class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine&status=#{params[:status]}",
-                class: "px-4 py-2 rounded-lg #{params[:group_by] == 'ordine' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
+        <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine&status=#{params[:status]}",
+            class: "px-4 py-2 rounded-lg #{params[:group_by] == 'ordine' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-            <%= link_to "Mappa", request.path + "?group_by=mappa&status=#{params[:status]}",
-                class: "px-4 py-2 rounded-lg #{params[:group_by] == 'mappa' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
-        </div>
+        <%= link_to "Mappa", request.path + "?group_by=mappa&status=#{params[:status]}",
+            class: "px-4 py-2 rounded-lg #{params[:group_by] == 'mappa' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
     </div>
-<% end %>
+</div>
+
 
 <% case params[:group_by] %>
 <% when 'cliente' %>
@@ -87,12 +84,12 @@
 
 <% when 'mappa' %>
 
-    <% if clienti.any?(&:geocoded?) %>
+    <% if @clienti.any?(&:geocoded?) %>
         <div
             data-controller="mappa-directions"
             data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-            data-mappa-directions-waypoints-value="<%= clienti.map { |c| [c.longitude, c.latitude, c.denominazione, c.comune, nil] } %>"
-            data-mappa-directions-coordinates="<%= clienti.map { |c| { lng: c.longitude, lat: c.latitude, name: c.denominazione } }.to_json %>">
+            data-mappa-directions-waypoints-value="<%= @clienti.map { |c| [c.longitude, c.latitude, c.denominazione, c.comune, nil] } %>"
+            data-mappa-directions-coordinates="<%= @clienti.map { |c| { lng: c.longitude, lat: c.latitude, name: c.denominazione } }.to_json %>">
 
             <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
         </div>
