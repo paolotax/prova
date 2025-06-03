@@ -11,9 +11,35 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :descrizione, "Descrizione", class: "label" %>
-    <%= form.text_field :descrizione, class: "field" %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div>
+      <%= form.label :titolo, "Titolo", class: "label" %>
+      <%= form.text_field :titolo, class: "field" %>
+    </div>
+
+    <div>
+      <%= form.label :categoria, "Categoria", class: "label" %>
+      <%= form.select :categoria,
+          options_for_select([
+            ['Utenti', 'utenti'],
+            ['Titoli', 'titoli'],
+            ['Editori', 'editori'],
+            ['Province', 'province'],
+            ['Altre', 'altre']
+          ], stat.categoria),
+          { include_blank: true },
+          class: "field" %>
+    </div>
+
+    <div>
+      <%= form.label :anno, "Anno", class: "label" %>
+      <%= form.text_field :anno, class: "field" %>
+    </div>
+
+    <div>
+      <%= form.label :descrizione, "Descrizione", class: "label" %>
+      <%= form.text_field :descrizione, class: "field" %>
+    </div>
   </div>
 
   <div class="my-5">

@@ -4,7 +4,9 @@ class StatsController < ApplicationController
   before_action :set_stat, only: %i[ show edit update destroy execute ]
 
   def index
-    @stats = Stat.all.order(:descrizione)
+    @stats = Stat.all
+    @stats = @stats.where(categoria: params[:categoria]) if params[:categoria].present?
+    @stats = @stats.order(:titolo)
   end
 
   def show
@@ -69,6 +71,6 @@ class StatsController < ApplicationController
     end
 
     def stat_params
-      params.require(:stat).permit(:descrizione, :seleziona_campi, :raggruppa_per, :ordina_per, :condizioni, :testo)
+      params.require(:stat).permit(:descrizione, :seleziona_campi, :raggruppa_per, :ordina_per, :condizioni, :testo, :titolo, :categoria, :anno)
     end
 end

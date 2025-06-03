@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_03_185738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -575,6 +575,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_163906) do
     t.text "testo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "titolo"
+    t.string "categoria"
+    t.string "anno"
   end
 
   create_table "tappa_giri", force: :cascade do |t|

@@ -11,6 +11,9 @@
 #  testo           :text
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  titolo          :string
+#  categoria       :string
+#  anno            :string
 #
 
 require "test_helper"
