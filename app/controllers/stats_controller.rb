@@ -1,5 +1,5 @@
 class StatsController < ApplicationController
-  
+
   before_action :authenticate_user!
   before_action :set_stat, only: %i[ show edit update destroy execute ]
 
@@ -17,9 +17,9 @@ class StatsController < ApplicationController
   def edit
   end
 
-  def execute    
+  def execute
     @miei_editori = current_user.miei_editori
-    
+
     @result = @stat.execute current_user
     respond_to do |format|
       format.html
@@ -32,7 +32,7 @@ class StatsController < ApplicationController
 
     respond_to do |format|
       if @stat.save
-        format.html { redirect_to stats_url, notice: "Stat creata." }
+        format.html { redirect_to @stat, notice: "Stat creata." }
         format.json { render :show, status: :created, location: @stat }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -44,7 +44,7 @@ class StatsController < ApplicationController
   def update
     respond_to do |format|
       if @stat.update(stat_params)
-        format.html { redirect_to stats_url, notice: "Stat aggiornata!" }
+        format.html { redirect_to @stat, notice: "Stat aggiornata!" }
         format.json { render :show, status: :ok, location: @stat }
       else
         format.html { render :edit, status: :unprocessable_entity }

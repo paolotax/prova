@@ -1,4 +1,4 @@
-<%= form_with(model: stat, class: "contents") do |form| %>
+<%= form_with(model: stat, id: "stat_form", class: "contents") do |form| %>
   <% if stat.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
       <h2><%= pluralize(stat.errors.count, "error") %> prohibited this stat from being saved:</h2>
@@ -12,47 +12,42 @@
   <% end %>
 
   <div class="my-5">
-    <%= form.label :descrizione, class: "label" %>
+    <%= form.label :descrizione, "Descrizione", class: "label" %>
     <%= form.text_field :descrizione, class: "field" %>
   </div>
 
-
-
   <div class="my-5">
-    <%= form.label :testo, class: "label" %>
-    <%= form.text_area :testo, rows: 7, class: "field" %>
+    <%= form.label :testo, "SQL", class: "label" %>
+    <div data-controller="codemirror">
+      <%= form.text_area :testo,
+          rows: 7,
+          class: "field",
+          data: {
+            codemirror_target: "input"
+          } %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :raggruppa_per, class: "label" %>
-    <%= form.text_field :raggruppa_per, class: "field" %>
-  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div>
+      <%= form.label :raggruppa_per, class: "label" %>
+      <%= form.text_field :raggruppa_per, class: "field" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :seleziona_campi, class: "label" %>
-    <%= form.text_field :seleziona_campi, class: "field" %>
-  </div>
+    <div>
+      <%= form.label :seleziona_campi, class: "label" %>
+      <%= form.text_field :seleziona_campi, class: "field" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :ordina_per, class: "label" %>
-    <%= form.text_field :ordina_per, class: "field" %>
-  </div>
+    <div>
+      <%= form.label :ordina_per, class: "label" %>
+      <%= form.text_field :ordina_per, class: "field" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :condizioni, class: "label" %>
-    <%= form.text_field :condizioni, class: "field" %>
+    <div>
+      <%= form.label :condizioni, class: "label" %>
+      <%= form.text_field :condizioni, class: "field" %>
+    </div>
   </div>
-
-  <div class="inline">
-    <%= button_to  do %>
-      <div class="btn btn-indigo">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-        <span class="">Salva</span>
-      </div>
-    <% end %>
-  </div>
-  
 <% end %>
 

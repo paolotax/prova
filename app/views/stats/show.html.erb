@@ -1,40 +1,36 @@
-<div class="flex flex-col sm:flex sm:flex-row sm:items-center sm:justify-between">
-	
-	<h2 class="font-bold text-2xl mt-4 mb-4">
-		<%= @stat.descrizione %>
-	</h2>
-	
-	<div class="flex items-end gap-x-4 sm:pl-4 px-2 my-4">
-
-		<%= component 'tax_button',
-                caption: "Stats...",
-                svg_file: "icon-chart-pie.svg",
-                color: "white",
-                url: url_for( controller: "stats", action: "index" ) %>  
+<%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "Elimina",
+                svg_file: "icon-trash-real.svg",
+                color: "red",
+                url: url_for( controller: "stats", action: "destroy", model: @stat ),
+                data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+    <% end %>
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "SQL",
+                svg_file: "icon-pencil.svg",
+                color: "yellow",
+                url: url_for( controller: "stats", action: "edit", model: @stat ) %>
+    <% end %>
+    <% heading.with_action do %>
         <%= component 'tax_button',
                 caption: "Excel",
                 svg_file: "icon-excel-bis.svg",
                 color: "green",
-                url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>     
-		
-		<% if current_user.admin? %>
+                url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>
+    <% end %>
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "Stats...",
+                svg_file: "icon-chart-pie.svg",
+                color: "white",
+                url: url_for( controller: "stats", action: "index" ) %>
+    <% end %>
 
-			<%= component 'tax_button',
-				caption: "SQL",
-				svg_file: "icon-pencil.svg",
-				color: "yellow",
-				url: url_for( controller: "stats", action: "edit", model: @stat ) %> 
-			
-			<%= component 'tax_button',
-				caption: "Elimina",
-				svg_file: "icon-trash-real.svg",
-				color: "red",
-				url: url_for( controller: "stats", action: "destroy", model: @stat ),
-				data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %> 
-
-		<% end %>
-	</div>
-</div>
+    <%= h1 { @stat.descrizione } %>
+<% end %>
 
 <%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
 	<%= render 'shared/lazy_loading' %>

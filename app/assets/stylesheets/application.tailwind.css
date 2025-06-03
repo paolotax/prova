@@ -17,7 +17,7 @@
     .hw-combobox__main__wrapper {
       @apply w-full rounded-none border-0 border-b bg-gray-50 py-1.5 text-gray-900 text-lg ring-0
     }
-    
+
     .hw-combobox__input {
       @apply bg-gray-50;
     }
@@ -42,7 +42,7 @@
 
 
 
-  .youtubes {  
+  .youtubes {
     .hw-combobox, .hw-combobox--multiple {
       .hw-combobox__main__wrapper {
         @apply sm:w-[30rem] rounded-lg w-80 bg-white shadow-lg;
@@ -64,7 +64,7 @@
   .sidebar-item {
     @apply text-gray-200 flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold;
   }
-  
+
   .sidebar-item:hover {
     @apply bg-gray-700 text-white;
   }
@@ -80,7 +80,7 @@
   .btn {
     @apply flex space-x-2 sm:flex-col sm:space-x-0 items-center py-2 px-3 text-sm text-center font-semibold rounded-md transition duration-150 ease-in-out shadow-md cursor-pointer;
   }
-  
+
   .btn-blue {
     @apply bg-blue-600 text-white;
   }
@@ -249,13 +249,37 @@
     @apply border-blue-600 text-blue-600;
   }
 
+  /* CodeMirror styles */
+  .cm-editor {
+    @apply h-[200px] text-sm font-mono border rounded-md overflow-hidden;
+  }
+
+  .cm-editor .cm-scroller {
+    @apply font-mono;
+  }
+
+  .cm-editor .cm-gutters {
+    @apply border-r border-gray-700 bg-gray-800;
+  }
+
+  .cm-editor .cm-lineNumbers {
+    @apply text-gray-500;
+  }
+
+  .cm-editor .cm-content {
+    @apply p-2;
+  }
+
+  .cm-editor .cm-line {
+    @apply px-2;
+  }
 
 }
 
-.hw-combobox--multiple {    
-  
+.hw-combobox--multiple {
+
   width: 100%;
-  
+
   .hw-combobox__main__wrapper {
     width: 100%;
   }

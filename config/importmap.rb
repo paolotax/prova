@@ -35,3 +35,11 @@ pin "mapkick/bundle", to: "mapkick--bundle.js" # @0.2.6
 
 pin "@hotwired/hotwire-native-bridge", to: "@hotwired--hotwire-native-bridge.js" # @1.0.0
 pin "rails_request", to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0.0.6/+esm", preload: true
+
+# CodeMirror
+pin "@codemirror/state", to: "https://cdn.jsdelivr.net/npm/@codemirror/state@6.4.0/+esm"
+pin "@codemirror/view", to: "https://cdn.jsdelivr.net/npm/@codemirror/view@6.24.0/+esm"
+pin "@codemirror/commands", to: "https://cdn.jsdelivr.net/npm/@codemirror/commands@6.3.0/+esm"
+pin "@codemirror/language", to: "https://cdn.jsdelivr.net/npm/@codemirror/language@6.10.0/+esm"
+pin "@codemirror/lang-sql", to: "https://cdn.jsdelivr.net/npm/@codemirror/lang-sql@6.5.4/+esm"
+pin "@codemirror/theme-one-dark", to: "https://cdn.jsdelivr.net/npm/@codemirror/theme-one-dark@6.1.2/+esm"

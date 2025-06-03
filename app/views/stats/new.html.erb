@@ -1,17 +1,23 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-3xl">Nuova stat</h1>
+<%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+        <%= button_tag type: 'submit', form: "stat_form", class: "btn btn-indigo" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Salva</span>
+        <% end %>
+    <% end %>
+    <% heading.with_action do %>
+        <%= component 'tax_button',
+                caption: "Stats...",
+                svg_file: "icon-chart-pie.svg",
+                color: "white",
+                url: url_for( controller: "stats", action: "index" ) %>
+    <% end %>
 
+    <%= h1 {"Nuova statistica"} %>
+<% end %>
+
+<div class="mx-auto w-full">
   <%= render "form", stat: @stat %>
-  
-  <div class="inline-block" >
-    <%= link_to stats_path, 
-          class: "ml-6 btn btn-white" do %>
-          
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
-          </svg>
-          <span class="">Stats...</span>
-      <% end %>
-    </div>
 </div>
