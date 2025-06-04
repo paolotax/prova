@@ -40,6 +40,11 @@
       <%= form.label :descrizione, "Descrizione", class: "label" %>
       <%= form.text_field :descrizione, class: "field" %>
     </div>
+
+    <div class="flex items-center space-x-2">
+      <%= form.check_box :visible, class: "h-4 w-4 rounded border-gray-300" %>
+      <%= form.label :visible, "Visibile agli utenti non admin", class: "label" %>
+    </div>
   </div>
 
   <div class="my-5">

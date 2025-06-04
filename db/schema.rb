@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_03_185738) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_03_213153) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -578,6 +578,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_185738) do
     t.string "titolo"
     t.string "categoria"
     t.string "anno"
+    t.boolean "visible", default: true, null: false
   end
 
   create_table "tappa_giri", force: :cascade do |t|

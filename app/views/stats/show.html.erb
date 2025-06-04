@@ -1,4 +1,4 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
+<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
     <% heading.with_action do %>
         <%= component 'tax_button',
                 caption: "Elimina",
@@ -29,7 +29,11 @@
                 url: url_for( controller: "stats", action: "index" ) %>
     <% end %>
 
-    <%= h1 { @stat.descrizione } %>
+    <% heading.with_description do %>
+        <%= @stat.descrizione %>
+    <% end %>
+
+    <%= @stat.titolo %>
 <% end %>
 
 <%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>

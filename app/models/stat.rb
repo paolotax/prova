@@ -18,6 +18,20 @@
 
 class Stat < ApplicationRecord
 
+    def test_execution
+        begin
+            # Try to execute the SQL with a test user
+            test_user = User.first
+            execute(test_user)
+            # If execution succeeds, ensure it's visible
+            update_column(:visible, true)
+            return true
+        rescue => e
+            # If execution fails, set visible to false
+            update_column(:visible, false)
+            return false
+        end
+    end
 
     def execute(user)
         sql = self.testo
