@@ -65,15 +65,14 @@
 </div>
 
 <%= turbo_frame_tag "search_results" do %>
-	<div class="mt-8 flow-root sm:mx-0">
+	<div class="mt-4 flow-root sm:mx-0">
 		<table class="min-w-full overflow-x-auto divide-y divide-gray-300">
-			<thead class="border-b border-gray-300 text-gray-900 text-left">
-				<tr>
+			<thead class="bg-black text-white text-left py-2">
+				<tr class="py-4">
 					<th scope="col" class=""></th>
-					<th scope="col" class="">Titolo</th>
-					<th scope="col" class="">Descrizione</th>
 					<th scope="col" class="">Categoria</th>
-					<th scope="col" class="">Anno</th>
+					<th scope="col" class="">Descrizione</th>
+					<th scoptext-sme="col" class="">Anno</th>
 					<th scope="col" class="hidden md:table-cell">Raggruppa per...</th>
 					<% if current_user.admin? %>
 						<th scope="col" class="text-center"></th>

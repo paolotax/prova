@@ -41,7 +41,7 @@ dump.rdb
 
 .DS_Store
 .idea/
-#_miur/adozioni/*
+_miur/adozioni/*
 _miur/scuole/*
 _csv/*
 _xml/*
