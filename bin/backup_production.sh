@@ -2,6 +2,7 @@
 
 # Create backup directory if it doesn't exist
 mkdir -p ~/backup
+rm -f ~/backup/new_backup.dmp
 
 # Get the latest backup file from the container
 echo "Executing backup in production container..."
@@ -13,7 +14,7 @@ LATEST_BACKUP=$(ssh root@116.203.224.90 "docker exec prova-db ls -t /tmp | head 
 # Copy the backup file to local machine
 echo "Downloading backup file: $LATEST_BACKUP"
 ssh root@116.203.224.90 "docker cp prova-db:/tmp/$LATEST_BACKUP /tmp/$LATEST_BACKUP"
-scp root@116.203.224.90:/tmp/$LATEST_BACKUP ~/backup/
+scp root@116.203.224.90:/tmp/$LATEST_BACKUP ~/backup/new_backup.dmp
 ssh root@116.203.224.90 "rm /tmp/$LATEST_BACKUP"
 
 echo "Backup completed successfully!"
