@@ -400,6 +400,10 @@ GEM
     omniauth-rails_csrf_protection (1.0.2)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
+    open-uri (0.5.0)
+      stringio
+      time
+      uri
     orm_adapter (0.5.0)
     ostruct (0.6.1)
     pagy (9.3.3)
@@ -595,6 +599,8 @@ GEM
     thruster (0.1.13-arm64-darwin)
     thruster (0.1.13-x86_64-darwin)
     thruster (0.1.13-x86_64-linux)
+    time (0.4.1)
+      date
     timeout (0.4.3)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
@@ -683,6 +689,7 @@ DEPENDENCIES
   omniauth-github (~> 2.0)
   omniauth-google-oauth2 (~> 1.1)
   omniauth-rails_csrf_protection (~> 1.0)
+  open-uri
   pagy
   pg (~> 1.1)
   pg_search (~> 2.3)

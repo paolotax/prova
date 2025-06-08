@@ -172,6 +172,7 @@ gem "streamio-ffmpeg"
 gem "fuzzy_match"
 
 gem 'nokogiri'
+gem 'open-uri'
 
 gem 'rqrcode'
 

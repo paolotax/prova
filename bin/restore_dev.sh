@@ -9,7 +9,7 @@ DUMP_PATH_IN_CONTAINER="/tmp/new_backup.dmp"
 
 # Fermo il container dell'app
 echo "🛑 Fermo il container dell'app..."
-docker-compose down prova-app
+docker-compose down app
 
 # 1. Drop e ricrea il database
 echo "👉 Dropping database $DB_NAME (se esiste)..."

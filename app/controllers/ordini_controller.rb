@@ -3,7 +3,7 @@ class OrdiniController < ApplicationController
   before_action :authenticate_user!
   def index
 
-    status = params[:status] || 0
+    status = params[:status] ||= 0
 
     @documenti = current_user.documenti.where('EXTRACT(YEAR FROM data_documento) = 2025').includes(:righe).where(status: status)
     @documento_righe = @documenti.map(&:documento_righe).flatten
