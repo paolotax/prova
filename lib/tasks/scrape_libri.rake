@@ -194,4 +194,74 @@ namespace :scrape do
       puts "Operazione annullata dall'utente"
     end
   end
+
+  desc "Rimuove i file CSV da Git e dal filesystem"
+  task remove_from_git: :environment do
+    include ActionView::Helpers
+    include ApplicationHelper
+
+    # Define the directory path
+    adozioni_dir = Rails.root.join('_miur', 'adozioni')
+
+    # Check if directory exists
+    unless Dir.exist?(adozioni_dir)
+      puts "Directory #{adozioni_dir} non esiste"
+      exit 1
+    end
+
+    # Get list of files
+    files = Dir.glob(File.join(adozioni_dir, '*.csv'))
+
+    if files.empty?
+      puts "Nessun file CSV trovato in #{adozioni_dir}"
+      exit 0
+    end
+
+    # Log files to be removed
+    puts "Trovati #{files.count} file da rimuovere da Git:"
+    files.each do |file|
+      puts "  - #{File.basename(file)}"
+    end
+
+    # Ask for confirmation using HighLine
+    answer = HighLine.agree("Vuoi rimuovere questi file da Git e dal filesystem? (y/n)")
+
+    if answer == true
+      # Remove files from Git and filesystem
+      files.each do |file|
+        begin
+          # Remove from Git
+          system("git rm --cached #{file}")
+          if $?.success?
+            puts "Rimosso da Git: #{File.basename(file)}"
+          else
+            puts "Errore nella rimozione da Git di #{File.basename(file)}"
+          end
+
+          # Remove from filesystem
+          FileUtils.rm(file)
+          puts "Eliminato dal filesystem: #{File.basename(file)}"
+        rescue => e
+          puts "Errore nella rimozione di #{File.basename(file)}: #{e.message}"
+        end
+      end
+
+      # Update .gitignore if needed
+      gitignore_path = Rails.root.join('.gitignore')
+      gitignore_content = File.read(gitignore_path)
+      unless gitignore_content.include?('_miur/adozioni/*.csv')
+        File.open(gitignore_path, 'a') do |f|
+          f.puts "\n# Ignore MIUR adoption files"
+          f.puts '_miur/adozioni/*.csv'
+        end
+        puts "\nAggiunto _miur/adozioni/*.csv a .gitignore"
+      end
+
+      puts "\nRimozione completata. Ricordati di committare le modifiche con:"
+      puts "git add .gitignore"
+      puts "git commit -m 'Remove MIUR adoption files from Git'"
+    else
+      puts "Operazione annullata dall'utente"
+    end
+  end
 end

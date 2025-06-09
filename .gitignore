@@ -41,7 +41,8 @@ dump.rdb
 
 .DS_Store
 .idea/
-_miur/adozioni/*
+
+
 _miur/scuole/*
 _csv/*
 _xml/*
@@ -64,3 +65,6 @@ Untitled*
 
 .kamal/secrets
 .kamal/secrets.*
+
+# Ignore MIUR adoption files
+_miur/adozioni/*.csv
