@@ -417,12 +417,12 @@ namespace :import do
 
 
   desc "Importa nuove ADOZIONI 2025/6"
-  task new_adozioni: :environment do
+  task :new_adozioni, [:force] => :environment do |t, args|
 
     include ActionView::Helpers
     include ApplicationHelper
 
-    answer = HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
+    answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewAdozione.delete_all
     end

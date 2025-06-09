@@ -166,9 +166,9 @@ namespace :scrape do
 
       puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
       Rake::Task['import:splitta_adozioni'].invoke
-      Rake::Task['import:new_adozioni'].invoke
+      Rake::Task['import:new_adozioni'].invoke(true)
       Rake::Task['import:cambia_religione'].invoke
-      Rake::Task['scrape:delete_adozioni'].invoke
+      Rake::Task['scrape:delete_adozioni'].invoke(true)
 
     rescue => e
       puts "Si è verificato un errore generale: #{e.message}"
@@ -177,7 +177,7 @@ namespace :scrape do
   end
 
   desc "Elimina i file CSV nella directory tmp/_miur/adozioni"
-  task delete_adozioni: :environment do
+  task :delete_adozioni, [:force] => :environment do |t, args|
     include ActionView::Helpers
     include ApplicationHelper
 
@@ -205,7 +205,7 @@ namespace :scrape do
     end
 
     # Ask for confirmation using HighLine
-    answer = HighLine.agree("Vuoi eliminare questi file? (y/n)")
+    answer = args[:force] == 'true' ? true : HighLine.agree("Vuoi eliminare questi file? (y/n)")
 
     if answer == true
       # Delete files
