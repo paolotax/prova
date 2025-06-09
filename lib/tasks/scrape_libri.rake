@@ -222,7 +222,7 @@ namespace :scrape do
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = '/rails/tmp/_miur/adozioni'
+    adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)

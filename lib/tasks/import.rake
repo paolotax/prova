@@ -446,7 +446,7 @@ namespace :import do
       "VOLUME" => "volume",
     }
 
-    csv_dir = Rails.root.join('storage', '_miur', 'adozioni', '*.csv')
+    csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
 
     Dir.glob(csv_dir).each do |file|
       import_csv(file, NewAdozione, map_adozioni)
@@ -466,7 +466,7 @@ namespace :import do
       NewScuola.delete_all
     end
 
-    csv_dir = Rails.root.join('storage', '_miur', 'scuole', '*.csv')
+    csv_dir = Rails.root.join('tmp', '_miur', 'scuole', '*.csv')
 
     map_scuole = {
       "ANNOSCOLASTICO" => "anno_scolastico",
@@ -513,7 +513,7 @@ namespace :import do
 
   desc "Splitta file adozioni"
   task splitta_adozioni: :environment do
-    csv_dir = Rails.root.join('storage', '_miur', 'adozioni', '*.csv')
+    csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
     Dir.glob(csv_dir).each do |file|
       #puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
       if File.size(file) > 5 * 1024 * 1024 # 7MB in bytes
