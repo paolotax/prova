@@ -9,7 +9,9 @@ namespace :scrape do
   task adozioni: :environment do
     # Crea la directory per i file se non esiste
     download_dir = Rails.root.join('storage', '_miur', 'adozioni')
+
     FileUtils.mkdir_p(download_dir)
+
     puts "Directory creata: #{download_dir}"
 
     # URL base del sito
