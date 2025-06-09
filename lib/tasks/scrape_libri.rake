@@ -8,10 +8,8 @@ namespace :scrape do
   desc "Scarica i file CSV delle adozioni"
   task adozioni: :environment do
     # Crea la directory per i file se non esiste
-    download_dir = Rails.root.join('storage', '_miur', 'adozioni')
-
+    download_dir = '/rails/tmp/_miur/adozioni'
     FileUtils.mkdir_p(download_dir)
-
     puts "Directory creata: #{download_dir}"
 
     # URL base del sito
@@ -103,7 +101,7 @@ namespace :scrape do
                 regioni_aggiornate << region.upcase
 
                 # Crea la directory di archivio con la data del file vecchio
-                archive_dir = Rails.root.join('storage', '_miur', 'adozioni', existing_file_date)
+                archive_dir = File.join(download_dir, existing_file_date)
                 FileUtils.mkdir_p(archive_dir)
 
                 # Sposta il file vecchio nella directory di archivio
@@ -151,13 +149,13 @@ namespace :scrape do
     end
   end
 
-  desc "Elimina i file CSV nella directory storage/_miur/adozioni"
+  desc "Elimina i file CSV nella directory tmp/_miur/adozioni"
   task delete_adozioni: :environment do
     include ActionView::Helpers
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = Rails.root.join('storage', '_miur', 'adozioni')
+    adozioni_dir = '/rails/tmp/_miur/adozioni'
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)
@@ -204,7 +202,7 @@ namespace :scrape do
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = Rails.root.join('storage', '_miur', 'adozioni')
+    adozioni_dir = '/rails/tmp/_miur/adozioni'
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)
@@ -252,12 +250,12 @@ namespace :scrape do
       # Update .gitignore if needed
       gitignore_path = Rails.root.join('.gitignore')
       gitignore_content = File.read(gitignore_path)
-      unless gitignore_content.include?('storage/_miur/adozioni/*.csv')
+      unless gitignore_content.include?('tmp/_miur/adozioni/*.csv')
         File.open(gitignore_path, 'a') do |f|
           f.puts "\n# Ignore MIUR adoption files"
-          f.puts 'storage/_miur/adozioni/*.csv'
+          f.puts 'tmp/_miur/adozioni/*.csv'
         end
-        puts "\nAggiunto storage/_miur/adozioni/*.csv a .gitignore"
+        puts "\nAggiunto tmp/_miur/adozioni/*.csv a .gitignore"
       end
 
       puts "\nRimozione completata. Ricordati di committare le modifiche con:"
