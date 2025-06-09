@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Scraping Adozioni Completato</h1>
+
+    <h2>Regioni Aggiornate (<%= @regioni_aggiornate.count %>)</h2>
+    <ul>
+      <% @regioni_aggiornate.each do |regione| %>
+        <li><%= regione %></li>
+      <% end %>
+    </ul>
+
+    <h2>Regioni Saltate (<%= @regioni_saltate.count %>)</h2>
+    <ul>
+      <% @regioni_saltate.each do |regione| %>
+        <li><%= regione %></li>
+      <% end %>
+    </ul>
+
+    <h2>Regioni Nuove (<%= @regioni_nuove.count %>)</h2>
+    <ul>
+      <% @regioni_nuove.each do |regione| %>
+        <li><%= regione %></li>
+      <% end %>
+    </ul>
+
+    <p>Totale adozioni nel database: <%= NewAdozione.count %></p>
+  </body>
+</html>
