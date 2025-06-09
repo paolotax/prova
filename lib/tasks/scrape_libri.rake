@@ -169,9 +169,9 @@ namespace :scrape do
 
       puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
       Rake::Task['import:splitta_adozioni'].invoke
-      Rake::Task['import:new_adozioni'].invoke(true)
+      Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
-      Rake::Task['scrape:delete_adozioni'].invoke(true)
+      Rake::Task['scrape:delete_adozioni'].invoke("true")
 
     rescue => e
       puts "Si è verificato un errore generale: #{e.message}"
