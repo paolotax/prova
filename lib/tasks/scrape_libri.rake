@@ -167,6 +167,7 @@ namespace :scrape do
       puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
       Rake::Task['import:splitta_adozioni'].invoke
       Rake::Task['import:new_adozioni'].invoke
+      Rake::Task['import:cambia_religione'].invoke
       Rake::Task['scrape:delete_adozioni'].invoke
 
     rescue => e
