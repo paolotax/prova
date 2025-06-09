@@ -9,8 +9,13 @@ namespace :scrape do
   task adozioni: :environment do
     # Crea la directory per i file se non esiste
     download_dir = Rails.root.join('tmp', '_miur', 'adozioni')
+
+    # Crea la directory e imposta i permessi
+    puts "Creazione directory e impostazione permessi..."
     FileUtils.mkdir_p(download_dir)
+    FileUtils.chmod_R(0777, Rails.root.join('tmp'))
     puts "Directory creata: #{download_dir}"
+    puts "Permessi impostati su 777 per la directory tmp"
 
     # URL base del sito
     base_url = 'https://dati.istruzione.it/opendata/opendata/catalogo/elements1'
@@ -160,8 +165,9 @@ namespace :scrape do
       regioni_nuove.each { |r| puts "  - #{r}" }
 
       puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
-
+      Rake::Task['import:splitta_adozioni'].invoke
       Rake::Task['import:new_adozioni'].invoke
+      Rake::Task['scrape:delete_adozioni'].invoke
 
     rescue => e
       puts "Si è verificato un errore generale: #{e.message}"
