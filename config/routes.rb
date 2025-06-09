@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       post :create_note_from_transcript
     end
   end
-  
+
   get "agenda", to: "agenda#index"
   get "agenda/:giorno", to: "agenda#show", as: "giorno"
   get "agenda/:giorno/mappa", to: "agenda#mappa", as: "mappa_del_giorno"
@@ -33,10 +33,10 @@ Rails.application.routes.draw do
   end
 
   devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
-  
+
   get 'ordini_in_corso', to: "ordini#index"
   get "cerca", to: "search#index"
-  
+
   namespace :searches do
     get 'clientable/show'
     get 'clientable/new'
@@ -50,11 +50,11 @@ Rails.application.routes.draw do
       get 'filtra'
     end
   end
-  
-  resources :documenti do 
+
+  resources :documenti do
     resources :steps, only: [:show, :update], controller: 'steps_controllers/documento_steps'
     collection do
-      get 'filtra' 
+      get 'filtra'
       get 'nuovo_numero_documento'
     end
     member do
@@ -63,13 +63,13 @@ Rails.application.routes.draw do
   end
 
   resources :causali
-  
+
   resources :documento_righe, only: [:new, :destroy] do
     member do
       patch 'update_posizione'
     end
   end
-  
+
   resources :libri_importer, only: [:create] do
     collection do
       post 'import_ministeriali'
@@ -80,23 +80,23 @@ Rails.application.routes.draw do
   end
 
   resources :documenti_importer, only: [:create]
-  
+
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
-  
-  resources :classe_chips, only: :create, param: :combobox_value  
+
+  resources :classe_chips, only: :create, param: :combobox_value
   resources :libro_chips,  only: :create, param: :combobox_value
   resources :giro_chips, only: :create, param: :combobox_value
-  
+
   #get "vendite", to: "adozioni#index"
-  resources :adozioni do 
+  resources :adozioni do
     collection do
       post 'bulk_create'
       put 'bulk_update', format: "pdf"
       get "riepilogo"
     end
   end
-    
+
   resources :libri do
     collection do
       get 'filtra'
@@ -112,7 +112,7 @@ Rails.application.routes.draw do
     resources :qrcodes
   end
 
-  resources :qrcodes 
+  resources :qrcodes
 
   resources :confezione do
     member do
@@ -121,7 +121,7 @@ Rails.application.routes.draw do
   end
 
   resources :tipi_scuole, only: [:index, :update]
-    
+
   resources :giri do
     resources :tappe, only: [:index]
     member do
@@ -139,23 +139,23 @@ Rails.application.routes.draw do
   end
 
   get 'profilo', to: 'profiles#get_user_profile'
- 
+
   resources :profiles do
     resources :steps, only: [:show, :update], controller: 'steps_controllers/profile_steps'
   end
-  
-  resources :users, only: [:index, :show] do    
+
+  resources :users, only: [:index, :show] do
     member do
-      post  'modifica_navigatore' 
+      post  'modifica_navigatore'
     end
   end
-    
+
   resources :stats do
     member do
       get 'execute'
     end
   end
-  
+
   resources :appunti do
     resources :tappe
     collection do
@@ -167,7 +167,7 @@ Rails.application.routes.draw do
       delete 'remove_image'
     end
   end
-  
+
   resources :zone, only: [:index] do
     collection do
       get 'select_zone'
@@ -175,21 +175,21 @@ Rails.application.routes.draw do
       delete 'rimuovi_scuole'
     end
   end
-  
+
   resources :editori
-  
+
   resources :mandati do
     collection do
       get 'select_editori'
     end
   end
-  
+
   resources :user_scuole, only: [:index, :destroy] do
     member do
       patch :sort
     end
   end
-  
+
   resources :import_scuole do
     resources :tappe
     collection do
@@ -207,7 +207,7 @@ Rails.application.routes.draw do
       get 'calcola_percorso_ottimale'
     end
   end
-  
+
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
       collection do
@@ -235,7 +235,7 @@ Rails.application.routes.draw do
       delete :destroy_all, on: :collection
     end
   end
-  
+
   namespace :documenti do
     resources :bulk_actions, only: [] do
       collection do
@@ -251,7 +251,7 @@ Rails.application.routes.draw do
 
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
-  
+
   resources :import_adozioni, only: [:index, :show] do
     collection do
       get "filtra"
@@ -267,13 +267,13 @@ Rails.application.routes.draw do
 
   # get 'clienti',      to: 'clienti#index'
   # get 'clienti/:id',  to: 'clienti#show', as: 'cliente'
- 
+
   get 'fornitori',      to: 'fornitori#index'
   get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'
-  
+
 
   get 'duplicates',   to: 'articoli#duplicates'
-  
+
   get "duplicates/:codice_articolo", to: "articoli#update_descrizione", as: "update_descrizione"
 
 

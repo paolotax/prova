@@ -176,6 +176,8 @@ gem 'open-uri'
 
 gem 'rqrcode'
 
+# gem 'rails_icons'
+
 
 
 
