@@ -143,8 +143,8 @@ namespace :scrape do
 
       puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
 
-      Rake::Task['impor:new_adozioni'].invoke
-      
+      Rake::Task['import:new_adozioni'].invoke
+
     rescue => e
       puts "Si è verificato un errore generale: #{e.message}"
       puts e.backtrace
