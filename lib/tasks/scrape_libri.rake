@@ -5,10 +5,10 @@ require 'fileutils'
 require 'highline'
 
 namespace :scrape do
-  desc "Scarica i file CSV dei libri di testo"
-  task libri: :environment do
+  desc "Scarica i file CSV delle adozioni"
+  task adozioni: :environment do
     # Crea la directory per i file se non esiste
-    download_dir = Rails.root.join('_miur', 'adozioni')
+    download_dir = Rails.root.join('tmp', '_miur', 'adozioni')
     FileUtils.mkdir_p(download_dir)
 
     # URL base del sito
@@ -154,7 +154,7 @@ namespace :scrape do
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = Rails.root.join('_miur', 'adozioni')
+    adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)
@@ -201,7 +201,7 @@ namespace :scrape do
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = Rails.root.join('_miur', 'adozioni')
+    adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)

@@ -44,6 +44,7 @@ dump.rdb
 
 
 _miur/scuole/*
+_miur/adozioni/*
 _csv/*
 _xml/*
 
@@ -67,4 +68,4 @@ Untitled*
 .kamal/secrets.*
 
 # Ignore MIUR adoption files
-_miur/adozioni/*.csv
+tmp/_miur/adozioni/*.csv

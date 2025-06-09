@@ -30,8 +30,8 @@ namespace :import do
   end
 
   desc "EDITORI da adozioni"
-  task editori: :environment do  
-    
+  task editori: :environment do
+
     include ActionView::Helpers
     include ApplicationHelper
 
@@ -43,45 +43,45 @@ namespace :import do
     Benchmark.bm do |x|
       x.report('A') { @editori = ImportAdozione.order(:EDITORE).pluck(:EDITORE).uniq.map {|e| { editore: e } } }
       x.report('B') { Editore.import @editori, batch_size: 50 }
-    end  
-  end 
+    end
+  end
 
-  desc "EDITORI CSV" 
+  desc "EDITORI CSV"
   task gruppi_editoriali: :environment do
-    
+
     include ActionView::Helpers
     include ApplicationHelper
 
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")   
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       Editore.destroy_all
     end
-    
+
     counter = 0
     file_counter = 0
-    
+
     csv_dir = File.join(Rails.root, '_miur/gruppi_editoriali.csv')
-    
+
     #, "r:ISO-8859-1"
     Dir.glob(csv_dir).each do |file|
       items = []
-      Benchmark.bm do |x|      
+      Benchmark.bm do |x|
         x.report("leggo  file #{file} #{file_counter}") do
           CSV.foreach(file, headers: true, col_sep: ',') do |row|
             items << row.to_h
             counter += 1
           end
-        end  
-        x.report("scrivo file #{file} #{file_counter}") do 
+        end
+        x.report("scrivo file #{file} #{file_counter}") do
           Editore.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
           file_counter += 1
         end
-      end      
+      end
     end
   end
 
   desc "TIPI SCUOLE da adozioni"
-  task tipi_scuole: :environment do  
+  task tipi_scuole: :environment do
 
     include ActionView::Helpers
     include ApplicationHelper
@@ -97,14 +97,14 @@ namespace :import do
             INNER JOIN import_adozioni on import_scuole."CODICESCUOLA" = import_adozioni."CODICESCUOLA"
             GROUP BY tipo, grado
             ORDER BY grado, tipo'
-   
+
     Benchmark.bm do |x|
-      x.report("sql") do 
+      x.report("sql") do
         @tipi_scuole = ActiveRecord::Base.connection.execute(sql).map do |ts|
           { grado: ts['grado'], tipo: ts['tipo'] }
         end
       end
-      # x.report('A') do 
+      # x.report('A') do
       #   @tipi_scuole = ImportScuola.joins(:import_adozioni)
       #             .order([:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA])
       #             .select(:TIPOGRADOSCUOLA, :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)
@@ -114,10 +114,10 @@ namespace :import do
       # end
       x.report('B') { TipoScuola.import @tipi_scuole, batch_size: 50 }
     end
-  end 
+  end
 
   desc "ZONE"
-  task zone: :environment do  
+  task zone: :environment do
 
     include ActionView::Helpers
     include ApplicationHelper
@@ -128,7 +128,7 @@ namespace :import do
     end
 
     Benchmark.bm do |x|
-      x.report('A') do 
+      x.report('A') do
         @zona = ImportScuola.order([:AREAGEOGRAFICA, :REGIONE, :PROVINCIA, :DESCRIZIONECOMUNE])
                             .select(:AREAGEOGRAFICA, :REGIONE, :PROVINCIA, :DESCRIZIONECOMUNE, :CODICECOMUNESCUOLA)
                             .distinct.map do |z|
@@ -137,24 +137,24 @@ namespace :import do
       end
       x.report('B') { Zona.import @zona, batch_size: 50 }
     end
-  end 
-  
-  desc "ADOZIONI" 
+  end
+
+  desc "ADOZIONI"
   task miur_adozioni: :environment do
-    
+
     include ActionView::Helpers
     include ApplicationHelper
 
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")   
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       ImportAdozione.delete_all
     end
-    
+
     counter = 0
     file_counter = 0
-    
+
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
-    tmp_dir = File.join(Rails.root, 'storage/tmp') 
+    tmp_dir = File.join(Rails.root, 'storage/tmp')
     #, "r:ISO-8859-1"
 
 
@@ -188,7 +188,7 @@ namespace :import do
         #     end
         #   end
         # end
-        
+
         # con salvataggio su file
         Benchmark.bm do |x|
           x.report("saving csv split files\n") do
@@ -233,40 +233,40 @@ namespace :import do
 
     include ActionView::Helpers
     include ApplicationHelper
-      
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")      
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       ImportScuola.destroy_all
     end
 
     counter = 0
     file_counter = 0
-    
+
     csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
-    
+
     Dir.glob(csv_dir).each do |file|
       items = []
-      Benchmark.bm do |x|      
+      Benchmark.bm do |x|
         x.report("leggo  file scuole #{file.split('/').last} - #{file_counter}") do
           CSV.foreach(file, headers: true, col_sep: ',') do |row|
             items << row.to_h
             counter += 1
           end
-        end  
-        x.report("scrivo file scuole  #{file.split('/').last} - #{file_counter}") do 
+        end
+        x.report("scrivo file scuole  #{file.split('/').last} - #{file_counter}") do
           ImportScuola.import items, validate: false, on_duplicate_key_ignore: true, batch_size: 10000
           file_counter += 1
         end
-      end      
+      end
     end
-    
+
   end
 
-  desc "csv GAIA"  
+  desc "csv GAIA"
   task gaia: :environment do
-        
+
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
-    
+
     if answer == true
       puts 'wait....'
       Import.delete_all
@@ -276,13 +276,13 @@ namespace :import do
 
     counter = 0
     file_counter = 0
-    
+
     csv_dir = File.join(Rails.root, '_csv/*.csv')
-    
+
     Dir.glob(csv_dir).each do |file|
-      
+
       CSV.foreach(file, "r:ISO-8859-1", headers: true, col_sep: ';') do |row|
-        
+
         if row["Data"].nil?
           my_date = nil
           puts "la riga #{counter} ha una data errata. Documento-#{row["NumeroDocumento"]} file: #{file}"
@@ -295,13 +295,13 @@ namespace :import do
         else
           iva_fornitore = '12472610968'
         end
-        
+
         if row["Prezzo Unit."].nil?
           prezzo = row["PrezzoCopertina"]
         else
           prezzo = row["Prezzo Unit."]
-        end               
-        
+        end
+
         import = Import.create(
           fornitore:        row["Fornitore"],
           iva_fornitore:    iva_fornitore,
@@ -309,36 +309,36 @@ namespace :import do
           iva_cliente:      '04155820378',
 
           tipo_documento:   row["TipoDocumento"],
-          numero_documento: row["NumeroDocumento"],  
+          numero_documento: row["NumeroDocumento"],
           data_documento:   my_date,
-          
+
           totale_documento:   row["ImportoTotale"],
-                   
+
           riga:             row["Riga"],
           codice_articolo:  row["Cod.articolo"],
           descrizione:      row["Descrizione"],
-          
+
           prezzo_unitario:  prezzo,
           quantita:         row["Quantita"],
-          
+
           importo_netto:    row["TotNetto"],
           sconto:           row["Sconti"],
           iva:              row["Iva"]
         )
-        
+
         counter += 1 if import.persisted?
       end
-      
+
       file_counter += 1
     end
-    
+
     puts "righe inserite #{counter} da #{file_counter} file/s"
-    
+
   end
 
-  desc "xml ARUBA"  
+  desc "xml ARUBA"
   task aruba: :environment do
-     
+
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       puts 'wait....'
@@ -353,28 +353,28 @@ namespace :import do
 
     counter = 0
     file_counter = 0
-    
+
     # Specifica la directory contenente i file XML
-    xml_dir = File.join('_xml/*.xml') 
-    
+    xml_dir = File.join('_xml/*.xml')
+
     # Loop attraverso i file XML nella directory
     Dir.glob(xml_dir).each do |file|
-      
+
       doc = Nokogiri::XML(File.open(file))
-      
+
       # Specifica il percorso agli elementi XML che vuoi estrarre
       righe_path = '//DettaglioLinee'
-      
+
       # Esegui un loop sugli elementi XML che corrispondono al percorso specificato
       doc.xpath(righe_path).each do |element|
-        
-        quantita = element.xpath("./Quantita").text       
-        if quantita == ''  
-          quantita = '0' 
+
+        quantita = element.xpath("./Quantita").text
+        if quantita == ''
+          quantita = '0'
         end
-        
+
         import = Import.create(
-          
+
           fornitore:        doc.xpath('//CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione').text,
           iva_fornitore:    doc.xpath('//CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
 
@@ -382,22 +382,22 @@ namespace :import do
           iva_cliente:      doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text,
 
           tipo_documento:   doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text,
-          numero_documento: doc.xpath('//DatiGeneraliDocumento/Numero').text,  
+          numero_documento: doc.xpath('//DatiGeneraliDocumento/Numero').text,
           data_documento:   doc.xpath('//DatiGeneraliDocumento/Data').text,
-          
+
           totale_documento:   doc.xpath('//DatiGeneraliDocumento/ImportoTotaleDocumento').text,
-          
-          
+
+
           riga:             element.xpath("./NumeroLinea").text,
           codice_articolo:  element.xpath("./CodiceArticolo/CodiceValore").text,
           descrizione:      element.xpath("./Descrizione").text,
-          
+
           prezzo_unitario:  element.xpath("./PrezzoUnitario").text,
           quantita:         quantita,
-          
+
           importo_netto:    element.xpath("./PrezzoTotale").text,
           sconto:           element.xpath("./ScontoMaggiorazione/Percentuale").text,
-          
+
           iva:              element.xpath("./AliquotaIVA").text
         )
 
@@ -410,19 +410,19 @@ namespace :import do
     puts "righe inserite #{counter} da #{file_counter} file/s"
 
   end
-  
-  
 
 
 
 
-  desc "New Adozioni ADOZIONI 2024" 
+
+
+  desc "Importa nuove ADOZIONI 2025/6"
   task new_adozioni: :environment do
-    
+
     include ActionView::Helpers
     include ApplicationHelper
 
-    answer = HighLine.agree("ADOZIONI 2024 Vuoi cancellare tutti i dati esistenti? (y/n)")   
+    answer = HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewAdozione.delete_all
     end
@@ -443,10 +443,10 @@ namespace :import do
       "SOTTOTITOLO" => "sottotitolo",
       "TIPOGRADOSCUOLA" => "tipogradoscuola",
       "TITOLO" => "titolo",
-      "VOLUME" => "volume", 
+      "VOLUME" => "volume",
     }
-    
-    csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
+
+    csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
 
     Dir.glob(csv_dir).each do |file|
       import_csv(file, NewAdozione, map_adozioni)
@@ -460,14 +460,14 @@ namespace :import do
 
     include ActionView::Helpers
     include ApplicationHelper
-      
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")      
+
+    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewScuola.delete_all
     end
-    
-    csv_dir = File.join(Rails.root, '_miur/scuole/*.csv')
-    
+
+    csv_dir = Rails.root.join('tmp', '_miur', 'scuole', '*.csv')
+
     map_scuole = {
       "ANNOSCOLASTICO" => "anno_scolastico",
       "AREAGEOGRAFICA" => "area_geografica",
@@ -488,13 +488,13 @@ namespace :import do
       "INDIRIZZOEMAILSCUOLA" => "email",
       "INDIRIZZOPECSCUOLA" => "pec",
       "SITOWEBSCUOLA" => "sito_web",
-      "SEDESCOLASTICA" => "sede_scolastica"     
+      "SEDESCOLASTICA" => "sede_scolastica"
     }
 
     Dir.glob(csv_dir).each do |file|
       import_csv(file, NewScuola, map_scuole)
     end
-    
+
     puts "Totale NewScuola: #{NewScuola.count}"
 
     sql = 'UPDATE new_scuole SET import_scuola_id = import_scuole.id FROM import_scuole WHERE import_scuole."CODICESCUOLA" = new_scuole.codice_scuola'
@@ -505,12 +505,12 @@ namespace :import do
 
   end
 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
   desc "Splitta file adozioni"
   task splitta_adozioni: :environment do
     csv_dir = File.join(Rails.root, '_miur/adozioni/*.csv')
@@ -524,13 +524,13 @@ namespace :import do
   end
 
 
-  
+
   task import_2024: :environment do
-    
+
     NewAdozione.find_each(batch_size: 100_000) do |new_adozione|
       ImportAdozione.create!(
         anno_scolastico: '202425',
-        
+
         ANNOCORSO: new_adozione.annocorso,
         AUTORI: new_adozione.autori,
         CODICEISBN: new_adozione.codiceisbn,
@@ -551,10 +551,10 @@ namespace :import do
       puts new_adozione.id
     end
   end
-  
-  
-  
-  
+
+
+
+
   private
 
     def split_csv(original, file_count)
@@ -562,15 +562,15 @@ namespace :import do
       lines = Integer(`cat #{original} | wc -l`) - header_lines
       lines_per_file = (lines / file_count.to_f).ceil + header_lines
       header = `head -n #{header_lines} #{original}`
-    
+
       start = header_lines
       file_count.times.map do |i|
         finish = start + lines_per_file
         file = "#{original}-#{i}.csv"
-    
+
         File.write(file, header)
         sh "tail -n #{lines - start} #{original} | head -n #{lines_per_file} >> #{file}"
-    
+
         start = finish
         file
       end
@@ -582,7 +582,7 @@ namespace :import do
       counter = 0
       file_counter = 0
 
-      Benchmark.bm do |x|        
+      Benchmark.bm do |x|
         x.report("leggo #{model} #{file.split('/').last}") do
           CSV.foreach(file, headers: options[:headers], col_sep: options[:col_sep], encoding: options[:encoding]) do |row|
             if mappings.present?
@@ -594,12 +594,12 @@ namespace :import do
             counter += 1
           end
         end
-        x.report("importo #{model}  #{file.split('/').last}") do 
+        x.report("importo #{model}  #{file.split('/').last}") do
           model.import items, validate: false, on_duplicate_key_ignore: true
           file_counter += 1
         end
       end
-      
+
       puts "righe inserite #{counter} da #{file_counter} file/s"
     end
 
