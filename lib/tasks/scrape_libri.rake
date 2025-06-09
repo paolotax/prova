@@ -12,10 +12,13 @@ namespace :scrape do
 
     # Crea la directory e imposta i permessi
     puts "Creazione directory e impostazione permessi..."
+    puts "Directory da creare: #{download_dir}"
+    puts "Directory esiste? #{Dir.exist?(download_dir)}"
     FileUtils.mkdir_p(download_dir)
-    FileUtils.chmod_R(0777, Rails.root.join('tmp'))
     puts "Directory creata: #{download_dir}"
-    puts "Permessi impostati su 777 per la directory tmp"
+    puts "Directory esiste ora? #{Dir.exist?(download_dir)}"
+    FileUtils.chmod(0777, download_dir)
+    puts "Permessi impostati su 777 per la directory #{download_dir}"
 
     # URL base del sito
     base_url = 'https://dati.istruzione.it/opendata/opendata/catalogo/elements1'
