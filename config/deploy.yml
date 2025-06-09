@@ -12,8 +12,7 @@ servers:
     hosts:
       - 116.203.224.90
     cmd: bundle exec sidekiq -q default -q mailers -q ahoy
-    directories:
-      - storage:/rails/storage
+
 
 registry:
   username: paolotax
