@@ -118,16 +118,34 @@ namespace :scrape do
         puts "Scaricamento #{region}..."
         puts "URL: #{csv_url}"
         puts "Salvataggio come: #{filename}"
+        puts "Percorso completo: #{filepath}"
 
         begin
           # Scarica il file
+          puts "Tentativo di download da #{csv_url}..."
           response = URI.open(csv_url)
+          puts "Download completato, dimensione: #{response.size} bytes"
+
+          puts "Tentativo di salvataggio in #{filepath}..."
           File.open(filepath, 'wb') do |file|
-            file.write(response.read)
+            content = response.read
+            puts "Contenuto letto, dimensione: #{content.size} bytes"
+            file.write(content)
+            puts "Contenuto scritto nel file"
           end
+
+          # Verifica che il file sia stato effettivamente creato
+          if File.exist?(filepath)
+            puts "File verificato: #{filepath} (dimensione: #{File.size(filepath)} bytes)"
+          else
+            puts "ERRORE: Il file non è stato creato in #{filepath}"
+          end
+
           puts "Completato: #{filename}"
         rescue => e
           puts "Errore nel download di #{region}: #{e.message}"
+          puts "Backtrace:"
+          puts e.backtrace
         end
       end
 
@@ -157,7 +175,7 @@ namespace :scrape do
     include ApplicationHelper
 
     # Define the directory path
-    adozioni_dir = '/rails/tmp/_miur/adozioni'
+    adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 
     # Check if directory exists
     unless Dir.exist?(adozioni_dir)
