@@ -1,0 +1,4 @@
+scrape_adozioni:
+  cron: '0 */6 * * *'  # Esegui ogni 6 ore
+  class: ScrapeAdozioniJob
+  queue: default
