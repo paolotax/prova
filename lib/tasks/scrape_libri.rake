@@ -174,7 +174,7 @@ namespace :scrape do
       Rake::Task['scrape:delete_adozioni'].invoke("true")
 
       # Invia email di notifica
-      ScrapingNotificationJob.perform_later(regioni_aggiornate, regioni_saltate, regioni_nuove)
+      ScrapingNotificationJob.perform_async(regioni_aggiornate, regioni_saltate, regioni_nuove)
 
     rescue => e
       puts "Si è verificato un errore generale: #{e.message}"
