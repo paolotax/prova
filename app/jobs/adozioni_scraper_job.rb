@@ -1,3 +1,5 @@
+require 'rake'
+
 class AdozioniScraperJob
   include Sidekiq::Job
 
@@ -6,4 +8,4 @@ class AdozioniScraperJob
     Rake::Task['scrape:adozioni'].invoke
     Rails.logger.info "Scraping adozioni completato"
   end
-end 
+end
