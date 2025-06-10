@@ -182,3 +182,5 @@ gem 'rqrcode'
 
 
 
+
+gem "sidekiq-scheduler", "~> 6.0"
