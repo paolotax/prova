@@ -1,5 +1,5 @@
 require 'sidekiq'
-require 'sidekiq-scheduler'
+# require 'sidekiq-scheduler'
 
 Sidekiq.configure_server do |config|
   config.logger = Rails.logger
