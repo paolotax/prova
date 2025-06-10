@@ -226,8 +226,6 @@ GEM
     drb (2.2.1)
     ed25519 (1.4.0)
     erubi (1.13.1)
-    et-orbi (1.2.11)
-      tzinfo
     event_stream_parser (1.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
@@ -246,9 +244,6 @@ GEM
     foreman (0.88.1)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
-    fugit (1.11.1)
-      et-orbi (~> 1, >= 1.2.11)
-      raabro (~> 1.4)
     fuzzy_match (2.1.0)
     geared_pagination (1.2.0)
       activesupport (>= 5.0)
@@ -447,7 +442,6 @@ GEM
       nio4r (~> 2.0)
     pundit (2.4.0)
       activesupport (>= 3.0.0)
-    raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.13)
     rack-attack (6.7.0)
@@ -549,8 +543,6 @@ GEM
       logger
     ruby2_keywords (0.0.5)
     rubyzip (2.4.1)
-    rufus-scheduler (3.9.2)
-      fugit (~> 1.1, >= 1.11.1)
     safely_block (0.4.1)
     scenic (1.8.0)
       activerecord (>= 4.0.0)
@@ -568,11 +560,6 @@ GEM
       logger
       rack (>= 2.2.4)
       redis-client (>= 0.22.2)
-    sidekiq-scheduler (4.0.2)
-      redis (>= 4.2.0)
-      rufus-scheduler (~> 3.2)
-      sidekiq (>= 4)
-      tilt (>= 1.4.0)
     smarter_csv (1.13.1)
     snaky_hash (2.0.1)
       hashie
@@ -612,7 +599,6 @@ GEM
     thruster (0.1.13-arm64-darwin)
     thruster (0.1.13-x86_64-darwin)
     thruster (0.1.13-x86_64-linux)
-    tilt (2.6.0)
     time (0.4.1)
       date
     timeout (0.4.3)
@@ -729,7 +715,6 @@ DEPENDENCIES
   scenic (~> 1.7)
   selenium-webdriver
   sidekiq (~> 7.2)
-  sidekiq-scheduler (~> 4.0)
   smarter_csv
   sprockets-rails
   stackprof
