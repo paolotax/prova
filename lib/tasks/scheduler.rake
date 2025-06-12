@@ -11,7 +11,8 @@ namespace :scheduler do
       puts "[scheduler] Caricamento da #{schedule_file}..."
       Sidekiq::Scheduler.dynamic = true
       config = YAML.load_file(schedule_file)
-      Sidekiq.schedule = config['scheduler']['schedule']
+      schedule = config[:scheduler][:schedule] || config['scheduler']['schedule']
+      Sidekiq.schedule = schedule
       Sidekiq::Scheduler.reload_schedule!
       puts "[scheduler] Job schedulati ricaricati correttamente."
     else
