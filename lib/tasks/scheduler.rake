@@ -10,7 +10,8 @@ namespace :scheduler do
     if File.exist?(schedule_file)
       puts "[scheduler] Caricamento da #{schedule_file}..."
       Sidekiq::Scheduler.dynamic = true
-      Sidekiq.schedule = YAML.load_file(schedule_file).deep_stringify_keys
+      config = YAML.load_file(schedule_file)
+      Sidekiq.schedule = config['scheduler']['schedule']
       Sidekiq::Scheduler.reload_schedule!
       puts "[scheduler] Job schedulati ricaricati correttamente."
     else
