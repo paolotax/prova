@@ -5,8 +5,9 @@
   - active_storage_analysis
   - active_storage_purge
 
-
-adozioni_scraper:
-  cron: '0 */6 * * *'  # Esegue ogni 6 ore
-  class: AdozioniScraperJob
-  queue: default
+:scheduler:
+  :schedule:
+    adozioni_scraper:
+      cron: '0 */6 * * *'  # Esegue ogni 6 ore
+      class: AdozioniScraperJob
+      queue: default
