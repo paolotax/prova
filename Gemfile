@@ -19,7 +19,7 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 gem "redis", "~> 5.1"
 gem "sidekiq", "~> 7.2"
-#gem "sidekiq-scheduler", "~> 4.0"
+gem "sidekiq-scheduler", "~> 6.0"
 
 gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -178,9 +178,3 @@ gem 'open-uri'
 gem 'rqrcode'
 
 # gem 'rails_icons'
-
-
-
-
-
-gem "sidekiq-scheduler", "~> 6.0"

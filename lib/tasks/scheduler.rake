@@ -11,7 +11,7 @@ namespace :scheduler do
       puts "[scheduler] Caricamento da #{schedule_file}..."
       Sidekiq::Scheduler.dynamic = true
       config = YAML.load_file(schedule_file)
-      schedule = config[:scheduler][:schedule] || config['scheduler']['schedule']
+      schedule = config[:scheduler][:schedule]
 
       # Assicuriamoci che ogni job abbia un identificatore unico
       schedule.each do |job_name, job_config|
