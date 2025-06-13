@@ -12,8 +12,6 @@ servers:
       - 116.203.224.90
     cmd: bundle exec sidekiq -q default -q mailers -q ahoy
 
-
-
 registry:
   username: paolotax
   password:
@@ -28,7 +26,6 @@ proxy:
   host: scagnozz.com
   app_port: 3000
 
-
 env:
   clear:
     HOST: scagnozz.com
@@ -42,7 +39,6 @@ env:
     - TURNSTILE_SECRET_KEY
     - TURNSTILE_SITE_KEY
     - OPENAI_ACCESS_TOKEN
-
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
