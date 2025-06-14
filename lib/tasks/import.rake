@@ -8,6 +8,8 @@ namespace :import do
   desc "cambia RELIGIONE elementari"
   task cambia_religione: :environment do
 
+    Rails.logger.info "Inizio cambio religione elementari"
+
     Benchmark.bm do |x|
       x.report('agg. RELIGIONE') {
         NewAdozione.
@@ -16,6 +18,8 @@ namespace :import do
           .update_all(daacquist: "No")
       }
     end
+
+    Rails.logger.info "Cambio religione elementari completato"
 
   end
 
@@ -422,6 +426,8 @@ namespace :import do
     include ActionView::Helpers
     include ApplicationHelper
 
+    Rails.logger.info "Inizio importazione nuove adozioni 2025/6"
+
     answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewAdozione.delete_all
@@ -502,7 +508,7 @@ namespace :import do
 
     puts "Totale NewScuola con import_scuola_id: #{NewScuola.where.not(import_scuola_id: nil).count}"
 
-
+    Rails.logger.info "Importazione nuove adozioni 2025/6 completata"
   end
 
 
@@ -513,6 +519,9 @@ namespace :import do
 
   desc "Splitta file adozioni"
   task splitta_adozioni: :environment do
+
+    Rails.logger.info "Inizio splitta file adozioni"
+
     csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
     Dir.glob(csv_dir).each do |file|
       #puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
@@ -521,6 +530,8 @@ namespace :import do
         FileUtils.rm(file)
       end
     end
+
+    Rails.logger.info "Splitta file adozioni completata"
   end
 
 

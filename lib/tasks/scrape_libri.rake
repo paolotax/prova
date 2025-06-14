@@ -8,6 +8,9 @@ namespace :scrape do
   desc "Scarica i file CSV delle adozioni"
   task adozioni: :environment do
     # Crea la directory per i file se non esiste
+
+    Rails.logger.info "Inizio download dei file CSV delle adozioni"
+
     download_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 
     # Crea la directory e imposta i permessi
@@ -167,7 +170,8 @@ namespace :scrape do
       puts "\nRegioni nuove (#{regioni_nuove.count}):"
       regioni_nuove.each { |r| puts "  - #{r}" }
 
-      puts "\nDownload completato! I file sono stati salvati in: #{download_dir}"
+      Rails.logger.info "Download completato! I file sono stati salvati in: #{download_dir}"
+
       Rake::Task['import:splitta_adozioni'].invoke
       Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
@@ -186,6 +190,8 @@ namespace :scrape do
   task :delete_adozioni, [:force] => :environment do |t, args|
     include ActionView::Helpers
     include ApplicationHelper
+
+    Rails.logger.info "Inizio eliminazione file CSV"
 
     # Define the directory path
     adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
@@ -224,6 +230,7 @@ namespace :scrape do
         end
       end
       puts "Eliminazione completata"
+      Rails.logger.info "Eliminazione file CSV completata"
     else
       puts "Operazione annullata dall'utente"
     end
