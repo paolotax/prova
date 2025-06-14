@@ -12,6 +12,7 @@ Sidekiq.configure_server do |config|
       schedule = config[:scheduler][:schedule]
       Sidekiq.schedule = schedule
       Sidekiq::Scheduler.dynamic = true
+      Sidekiq::Scheduler.enabled = true
       Sidekiq::Scheduler.reload_schedule!
       Rails.logger.info("Sidekiq schedule loaded from #{schedule_file}")
     else

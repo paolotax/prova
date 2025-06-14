@@ -11,3 +11,4 @@
       cron: '0 */6 * * *'  # Esegue ogni 6 ore
       class: AdozioniScraperJob
       queue: default
+      unique: true
