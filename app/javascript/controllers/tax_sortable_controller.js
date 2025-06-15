@@ -5,7 +5,7 @@ import { patch } from '@rails/request.js'
 // Connects to data-controller="tax-sortable"
 export default class extends Controller {
 
-  static targets = ["handle"]
+  static targets = ["handle", "item"]
   static values = {
     group: String
   }
@@ -22,11 +22,11 @@ export default class extends Controller {
   }
 
   onEnd(event) {
-    var sortableUpdateUrl = event.item.dataset.taxSortableUpdateUrl
-    var dataTappa = event.to.dataset.taxSortableDataTappa
-    var newPosition = event.newIndex + 1
-    patch(sortableUpdateUrl, {
-      body: JSON.stringify({position: newPosition, data_tappa: dataTappa}),
+    const item = event.item
+    const newPosition = event.newIndex + 1
+
+    patch(`/stats/${item.dataset.id}/sort`, {
+      body: JSON.stringify({position: newPosition}),
       headers: {
         Accept: "text/vnd.turbo-stream.html"
       }

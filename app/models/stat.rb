@@ -18,6 +18,8 @@
 
 class Stat < ApplicationRecord
 
+    positioned on: [:categoria], column: :position
+
     def test_execution
         begin
             # Try to execute the SQL with a test user

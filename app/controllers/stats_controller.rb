@@ -1,12 +1,12 @@
 class StatsController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_stat, only: %i[ show edit update destroy execute ]
+  before_action :set_stat, only: %i[ show edit update destroy execute sort ]
 
   def index
     @stats = Stat.all
     @stats = @stats.where(categoria: params[:categoria]) if params[:categoria].present?
-    @stats = @stats.order(:titolo)
+    @stats = @stats.order(:position, :titolo)
   end
 
   def show
@@ -61,6 +61,16 @@ class StatsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to stats_url, alert: "Stat eliminata!" }
       format.json { head :no_content }
+    end
+  end
+
+  def sort
+    @stat = Stat.find(params[:id])
+    @stat.update(position: params[:position].to_i)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { head :ok }
     end
   end
 

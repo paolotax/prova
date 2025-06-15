@@ -154,6 +154,7 @@ Rails.application.routes.draw do
   resources :stats do
     member do
       get 'execute'
+      patch :sort
     end
   end
 
