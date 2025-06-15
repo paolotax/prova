@@ -1,0 +1,25 @@
+<%= tag.li data: notification_attributes, class: notification_css do %>
+  <div class="flex flex-row gap-2">
+    <%== rendered_icon %>
+
+    <div class="<%= content_css %>">
+      <%= tag.h5 message, class: message_css %>
+
+      <%= tag.p class: description_css do %>
+        <%= description %>
+      <% end if description.present? %>
+    </div>
+  </div>
+
+  <%= tag.ul class: actions_css do %>
+    <%= tag.li do %>
+      <%= button_to primary_action["title"], primary_action["path"], method: primary_action["method"].presence || "get", data: primary_action["data"], class: class_names(action_css, primary_action_css) %>
+    <% end if primary_action.present? %>
+
+    <%= tag.li do %>
+      <%= button_to secondary_action["title"], secondary_action["path"], method: secondary_action["method"].presence || "get", data: secondary_action["data"], class: class_names(action_css, secondary_action_css) %>
+    <% end if secondary_action.present? %>
+  <% end if actions_present? %>
+
+  <%= progress_indicator %>
+<% end %>

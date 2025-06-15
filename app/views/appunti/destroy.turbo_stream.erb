@@ -1,28 +1,27 @@
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: "appunto_#{@appunto.id}", 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: "appunto_#{@appunto.id}",
         data: {
-            transition_leave: "transition ease-out duration-500", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-500",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: dom_id(@appunto, "vocale"), 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: dom_id(@appunto, "vocale"),
         data: {
-            transition_leave: "transition ease-out duration-500", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-500",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
 <%= turbo_stream.remove "appunto-riga-#{dom_id @appunto}" %>
 
-
 <% if @appunto.import_adozione %>
-    
+
     <% ["classe", "titolo"].each do |tipo_card|%>
         <%= turbo_stream.replace "card-ssk-#{ tipo_card }-#{ dom_id @appunto.import_adozione }" do %>
-            <%= render partial: "import_adozioni/card_ssk", 
-                        locals: { 
+            <%= render partial: "import_adozioni/card_ssk",
+                        locals: {
                             import_adozione: @appunto.import_adozione,
                             tipo_card: tipo_card
                         } %>
@@ -30,4 +29,5 @@
     <% end %>
 <% end %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Appunto eliminato!", type: "success" %>

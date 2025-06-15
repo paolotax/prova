@@ -2,4 +2,5 @@
     <%= render partial: "appunti/appunto_stato", locals: { appunto: @appunto } %>
 <% end %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Stato modificato!", type: "success" %>
