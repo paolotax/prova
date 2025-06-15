@@ -1,11 +1,12 @@
 <% @import_scuole.map do |import_scuola| %>
     <% unless import_scuola.id.nil? %>
-        <turbo-stream action="update" targets=".tappe-import_scuola-<%= import_scuola.id %>"> 
+        <turbo-stream action="update" targets=".tappe-import_scuola-<%= import_scuola.id %>">
             <template>
                 <%= render partial: "clientables/lista_tappe", formats: :html, locals: { tappe: import_scuola.tappe } %>
             </template>
-        </turbo-stream>  
+        </turbo-stream>
     <% end %>
-<% end %>   
+<% end %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Tappa creata!", type: "success" %>

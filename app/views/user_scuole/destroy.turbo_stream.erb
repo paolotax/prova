@@ -6,10 +6,11 @@
   <%= current_user.import_scuole.size %>
 <% end %>
 
-<%= turbo_stream.replace "user-scuole" do %>    
+<%= turbo_stream.replace "user-scuole" do %>
 	<%= render partial: "zone/zone_list" %>
 <% end %>
 
 <%= turbo_stream.remove @user_scuola.import_scuola %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Scuola eliminata!", type: "success" %>

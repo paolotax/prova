@@ -6,8 +6,9 @@
 
 <%= turbo_stream.replace "user_scuole" do %>
     <%= turbo_frame_tag :user_scuole, src: user_scuole_path(current_user), loading: :lazy do %>
-        <%= render 'shared/lazy_loading' %> 
+        <%= render 'shared/lazy_loading' %>
     <% end%>
 <% end %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Scuole rimosse!", type: "success" %>

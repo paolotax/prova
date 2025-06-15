@@ -2,4 +2,5 @@
     <%= render partial: "giri/giro", locals: { giro: @giro } %>
 <% end %>
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Giro creato!", type: "success" %>

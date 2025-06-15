@@ -1,32 +1,32 @@
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: dom_id(@tappa), 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: dom_id(@tappa),
         data: {
-            transition_leave: "transition ease-out duration-1000", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-1000",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: "tappa-riga-#{dom_id(@tappa)}", 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: "tappa-riga-#{dom_id(@tappa)}",
         data: {
-            transition_leave: "transition ease-out duration-500", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-500",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: "tappa-menu-#{dom_id(@tappa)}", 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: "tappa-menu-#{dom_id(@tappa)}",
         data: {
-            transition_leave: "transition ease-out duration-500", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-500",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
-<%= turbo_stream_action_tag_with_block "remove", 
-        target: "tappa-data-#{dom_id(@tappa)}", 
+<%= turbo_stream_action_tag_with_block "remove",
+        target: "tappa-data-#{dom_id(@tappa)}",
         data: {
-            transition_leave: "transition ease-out duration-500", 
-            transition_leave_start: "opacity-100", 
+            transition_leave: "transition ease-out duration-500",
+            transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
 
@@ -38,11 +38,12 @@
 
     <%= turbo_stream.replace "giro_tappe_filter_#{dom_id @giro}" do %>
         <%= render partial: "giri/giro_filter", locals: { giro: @giro } %>
-    <% end %> 
+    <% end %>
 <% end %>
 
 
-<%= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
+<%= stream_notification "Tappa eliminata!", type: "success" %>
 
  <%# TODO: questo funziona ma voglio usare i targets: ".tappe-import_scuola-#{tappa.tappable.import_scuola_id}" %>
 <% @tappa.tappable.appunti.each do |appunto| %>

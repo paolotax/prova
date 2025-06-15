@@ -1,29 +1,29 @@
 class AppuntiController < ApplicationController
-  
+
   include FilterableController
 
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
-  
-  
+
+
   before_action :ensure_frame_response, only: %i[ new edit ], unless: :hotwire_native_app?
 
   def index
-    
+
     @appunti = current_user.appunti.non_saggi
                 .with_attached_attachments
                 .with_attached_image
                 .with_rich_text_content
                 .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
-      
-    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank? 
-    
+
+    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
+
     @appunti = @appunti.search(params[:q]) if params[:q]
-    
+
     @appunti = filter_appunti(@appunti)
 
     @appunti = filter(@appunti.all)
-    
+
     # Per il badge del conteggio dei record e pagy_countless
     @total_count = @appunti.count
 
@@ -38,14 +38,14 @@ class AppuntiController < ApplicationController
 
   def show
     respond_to do |format|
-            
+
       format.html
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)
         send_data pdf.render, filename: "appunto_#{@appunto.id}.pdf",
                               type: "application/pdf",
-                              disposition: "inline"      
+                              disposition: "inline"
       end
     end
   end
@@ -61,16 +61,16 @@ class AppuntiController < ApplicationController
   def create
 
     @appunto = current_user.appunti.build(appunto_params)
-    
+
     respond_to do |format|
       if @appunto.save
         @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
-        
+
         if hotwire_native_app?
           #  format.html { redirect_to appunto_path(@appunto) }
           format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto inserito.") }
         else
-          format.turbo_stream { flash.now[:notice] = "Appunto inserito." }
+          format.turbo_stream
           format.html { redirect_to appunti_url, notice: "Appunto inserito." }
         end
       else
@@ -89,12 +89,12 @@ class AppuntiController < ApplicationController
     respond_to do |format|
       if @appunto.update(appunto_params)
         @appunto.broadcast_replace_later_to [current_user, "appunti"]
-        
+
         if hotwire_native_app?
           format.html { redirect_to appunto_path(@appunto) }
           # format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto modificato.") }
         else
-          format.turbo_stream { flash.now[:notice] = "Appunto modificato." }
+          format.turbo_stream
           format.html { redirect_to appunti_url, notice: "Appunto modificato." }
         end
       else
@@ -113,35 +113,21 @@ class AppuntiController < ApplicationController
     @appunto.destroy!
 
     @appunto.broadcast_remove_to [current_user, "appunti"]
-    
+
     respond_to do |format|
       # format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
       format.json { head :no_content }
-      format.turbo_stream do
-        flash.now[:alert] = "Appunto eliminato."
-        #turbo_stream.remove(@appunto)
-      end
+      format.turbo_stream
     end
   end
 
   def modifica_stato
     @appunto.update(stato: params[:stato])
-    respond_to do |format|
-      format.turbo_stream do
-        flash.now[:notice] = "Stato modificato."
-      end
-    end
   end
 
   def remove_attachment
     @attachment = ActiveStorage::Attachment.find(params[:id])
     @attachment.purge_later
-    respond_to do |format|
-      format.turbo_stream do
-        flash.now[:alert] = "Allegato eliminato."
-      end
-    end
-    #redirect_back(fallback_location: request.referer)
   end
 
   def remove_image
@@ -150,7 +136,7 @@ class AppuntiController < ApplicationController
     redirect_back(fallback_location: request.referer)
   end
 
-  def filtra  
+  def filtra
   end
 
   private
@@ -158,7 +144,7 @@ class AppuntiController < ApplicationController
     def ensure_frame_response
       redirect_to root_path unless turbo_frame_request?
     end
-    
+
     def set_appunto
       @appunto = Appunto.find(params[:id])
       @scuola = @appunto.import_scuola
@@ -180,7 +166,7 @@ class AppuntiController < ApplicationController
     end
 
     def filter_appunti(appunti)
-            
+
       appunti.then { |appunti| params[:filter] == "archiviato" ? appunti.archiviati : appunti }
           .then { |appunti| params[:filter] == "completato" ? appunti.completato : appunti }
           .then { |appunti| params[:filter] == "da_pagare" ? appunti.da_pagare : appunti }
@@ -191,6 +177,6 @@ class AppuntiController < ApplicationController
           .then { |appunti| params[:filter] == "non_archiviati" ? appunti.non_archiviati : appunti }
           .then { |appunti| params[:filter] == "oggi" ? appunti.nel_baule_di_oggi : appunti }
           .then { |appunti| params[:filter] == "domani" ? appunti.nel_baule_di_domani : appunti }
-      
+
     end
 end
