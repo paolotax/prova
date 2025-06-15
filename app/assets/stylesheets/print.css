@@ -1,0 +1,19 @@
+@media print {
+
+  .print,
+  .print * {
+    visibility: visible;
+  }
+
+  body *,
+  .print-hidden,
+  .print-hidden * {
+    visibility: hidden;
+  }
+
+  .print-hidden,
+  nav,
+  :not(.print)>h1 {
+    display: none;
+  }
+}

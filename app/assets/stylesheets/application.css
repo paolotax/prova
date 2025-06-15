@@ -16,6 +16,8 @@
 
  /* Global slight fade */
 
+@import "print";
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.5s;
@@ -60,7 +62,7 @@ trix-toolbar { display: none; }
   text-align: center;
 }
 
- 
+
  .turbo-progress-bar {
     background-color: rgb(67 56 202);
  }
@@ -111,7 +113,7 @@ trix-toolbar { display: none; }
     border:1px solid black;
   }
   .hw-combobox__handle {
-    right: 0.75rem; 
+    right: 0.75rem;
   }
   .hw-combobox__listbox {
     border-radius: 0.375rem;
@@ -139,5 +141,4 @@ trix-toolbar { display: none; }
 
 
 
- 
- 
+

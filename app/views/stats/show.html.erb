@@ -1,41 +1,63 @@
-<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
-    <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Elimina",
-                svg_file: "icon-trash-real.svg",
-                color: "red",
-                url: url_for( controller: "stats", action: "destroy", model: @stat ),
-                data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
-    <% end %>
-    <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "SQL",
-                svg_file: "icon-pencil.svg",
-                color: "yellow",
-                url: url_for( controller: "stats", action: "edit", model: @stat ) %>
-    <% end %>
-    <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Excel",
-                svg_file: "icon-excel-bis.svg",
-                color: "green",
-                url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>
-    <% end %>
-    <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Stats...",
-                svg_file: "icon-chart-pie.svg",
-                color: "white",
-                url: url_for( controller: "stats", action: "index" ) %>
+<div class="print">
+    <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+        <% heading.with_action do %>
+            <div class="print-hidden">
+                <%= component 'tax_button',
+                        caption: "Elimina",
+                        svg_file: "icon-trash-real.svg",
+                        color: "red",
+                        url: url_for( controller: "stats", action: "destroy", model: @stat ),
+                        data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+            </div>
+        <% end %>
+        <% heading.with_action do %>
+            <div class="print-hidden">
+                <%= component 'tax_button',
+                        caption: "SQL",
+                        svg_file: "icon-pencil.svg",
+                        color: "yellow",
+                        url: url_for( controller: "stats", action: "edit", model: @stat ) %>
+            </div>
+        <% end %>
+        <% heading.with_action do %>
+            <div class="print-hidden">
+                <%= component 'tax_button',
+                    caption: "Excel",
+                    svg_file: "icon-excel-bis.svg",
+                    color: "green",
+                    url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>
+            </div>
+        <% end %>
+
+        <% heading.with_action do %>
+            <div class="print-hidden">
+                <%= component 'tax_button',
+                    caption: "Stampa",
+                    svg_file: "icon-print.svg",
+                    color: "pink",
+                    url: 'javascript:window.print()' %>
+            </div>
+        <% end %>
+
+        <% heading.with_action do %>
+            <div class="print-hidden">
+                <%= component 'tax_button',
+                    caption: "Stats...",
+                    svg_file: "icon-chart-pie.svg",
+                    color: "white",
+                    url: 'javascript:history.back()' %>
+            </div>
+        <% end %>
+
+        <% heading.with_description do %>
+            <%= @stat.descrizione %>
+        <% end %>
+
+        <%= @stat.titolo %>
     <% end %>
 
-    <% heading.with_description do %>
-        <%= @stat.descrizione %>
+    <%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
+        <%= render 'shared/lazy_loading' %>
     <% end %>
 
-    <%= @stat.titolo %>
-<% end %>
-
-<%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
-	<%= render 'shared/lazy_loading' %>
-<% end %>
+</div>

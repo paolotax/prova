@@ -9,22 +9,22 @@
 
         <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
-<% heading.with_action do %>
-    <%= button_to documento_path(@documento),
-            method: :delete,
-            form: { data: { turbo_prefetch: false } },
-            onclick: "return confirm('Sei sicuro di voler eliminare questo documento?')",
-            class: "flex sm:flex-col items-center gap-x-2
-					text-sm text-center font-semibold cursor-pointer
-					transition duration-150 ease-in-ou
-					rounded-md shadow-md  py-2 px-3
-        			focus:outline focus:outline-2 focus:outline-offset-2
-					bg-red-600 text-white hover:bg-red-500
-					active:bg-red-600 focus:outline-red-600" do %>
-		<%= icon "trash" %>
-		Elimina
-	<% end %>
-<% end %>
+        <% heading.with_action do %>
+            <%= button_to documento_path(@documento),
+                    method: :delete,
+                    form: { data: { turbo_prefetch: false } },
+                    onclick: "return confirm('Sei sicuro di voler eliminare questo documento?')",
+                    class: "flex sm:flex-col items-center gap-x-2
+                  text-sm text-center font-semibold cursor-pointer
+                  transition duration-150 ease-in-ou
+                  rounded-md shadow-md  py-2 px-3
+                      focus:outline focus:outline-2 focus:outline-offset-2
+                  bg-red-600 text-white hover:bg-red-500
+                  active:bg-red-600 focus:outline-red-600" do %>
+            <%= icon "trash" %>
+            Elimina
+          <% end %>
+        <% end %>
 
         <% heading.with_action do %>
             <%= component 'tax_button',
