@@ -22,11 +22,13 @@ export default class extends Controller {
   }
 
   onEnd(event) {
-    const item = event.item
-    const newPosition = event.newIndex + 1
+    var sortableUpdateUrl = event.item.dataset.taxSortableUpdateUrl
 
-    patch(`/stats/${item.dataset.id}/sort`, {
-      body: JSON.stringify({position: newPosition}),
+    var dataTappa = event.to.dataset.taxSortableDataTappa
+    var newPosition = event.newIndex + 1
+    patch(sortableUpdateUrl, {
+      body: JSON.stringify({position: newPosition, data_tappa: dataTappa}),
+
       headers: {
         Accept: "text/vnd.turbo-stream.html"
       }
