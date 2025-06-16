@@ -17,6 +17,7 @@ class DocumentiController < ApplicationController
 
     @documenti = filter(@documenti.all)
 
+    @tutti_documenti = @documenti.all
     @pagy, @documenti = pagy(@documenti.all, items: 20)
 
     respond_to do |format|

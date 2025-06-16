@@ -11,7 +11,7 @@ wb.add_worksheet(name: "Foglio 1") do |sheet|
  
   sheet.add_row  fields
   
-  @documenti.each do |documento|
+  @tutti_documenti.each do |documento|
     documento.righe.each do |row|
         sheet.add_row [ row.libro.codice_isbn, row.libro.titolo, row.libro.editore.editore, row.libro.categoria, 
         row.quantita, row.prezzo_cents, row.sconto, 
