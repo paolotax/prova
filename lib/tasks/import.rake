@@ -431,6 +431,7 @@ namespace :import do
     answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewAdozione.delete_all
+      NewAdozione.connection.execute('ALTER SEQUENCE new_adozioni_id_seq RESTART WITH 1')
     end
 
     map_adozioni = {
