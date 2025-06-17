@@ -24,7 +24,12 @@ class StatsController < ApplicationController
     @result = @stat.execute current_user
     respond_to do |format|
       format.html
-      format.xlsx
+      format.xlsx do
+        # Converti il titolo in formato snake_case e rimuovi caratteri speciali
+        safe_titolo = @stat.titolo.to_s.parameterize(separator: '_')
+        filename = "#{@stat.categoria}_#{safe_titolo}.xlsx"
+        response.headers['Content-Disposition'] = "attachment; filename=\"#{filename}\""
+      end
     end
   end
 
