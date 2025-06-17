@@ -12,60 +12,48 @@
 	<%= h1 { "Statistiche" } %>
 <% end %>
 
-<div class="flex justify-center my-4">
-	<div class="flex flex-wrap md:flex-nowrap gap-4 justify-center">
+<div class="border-b border-gray-200 mb-6">
+	<nav class="-mb-px flex space-x-8 justify-center" aria-label="Tabs">
 		<%= link_to stats_path,
-				class: "rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "list-bullet", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Tutte</span>
-			</div>
+				class: "#{params[:categoria].blank? ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "list-bullet", class: "w-5 h-5 mr-2" %>
+			<span>Tutte</span>
 		<% end %>
 
 		<%= link_to stats_path(categoria: "utenti"),
-				class: "rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "user", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Utente</span>
-			</div>
+				class: "#{params[:categoria] == 'utenti' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "user", class: "w-5 h-5 mr-2" %>
+			<span>Utente</span>
 		<% end %>
 
 		<%= link_to stats_path(categoria: "titoli"),
-				class: "rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "book-open", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Titoli</span>
-			</div>
+				class: "#{params[:categoria] == 'titoli' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "book-open", class: "w-5 h-5 mr-2" %>
+			<span>Titoli</span>
 		<% end %>
 
 		<%= link_to stats_path(categoria: "editori"),
-				class: "rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "building-office", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Editori</span>
-			</div>
+				class: "#{params[:categoria] == 'editori' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "building-office", class: "w-5 h-5 mr-2" %>
+			<span>Editori</span>
 		<% end %>
 
 		<%= link_to stats_path(categoria: "province"),
-				class: "rounded-xl bg-lime-500 hover:bg-lime-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "map", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Province</span>
-			</div>
+				class: "#{params[:categoria] == 'province' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "map", class: "w-5 h-5 mr-2" %>
+			<span>Province</span>
 		<% end %>
 
 		<%= link_to stats_path(categoria: "altre"),
-				class: "rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-			<div class="text-center">
-				<%= icon "chart-bar", class: "w-8 h-8 mx-auto mb-2" %>
-				<span>Altre</span>
-			</div>
+				class: "#{params[:categoria] == 'altre' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-base flex items-center" do %>
+			<%= icon "chart-bar", class: "w-5 h-5 mr-2" %>
+			<span>Altre</span>
 		<% end %>
-	</div>
+	</nav>
 </div>
 
 <%= turbo_frame_tag "search_results" do %>
-	<div class="mt-4 flow-root sm:mx-0">
+	<div class="sm:mx-0 rounded-lg overflow-hidden border border-gray-300">
 		<table class="min-w-full overflow-x-auto divide-y divide-gray-300">
 			<thead class="bg-black text-white text-left py-2">
 				<tr class="py-4">

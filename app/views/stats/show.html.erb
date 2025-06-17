@@ -1,24 +1,30 @@
 <div class="print">
     <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
-        <% heading.with_action do %>
-            <div class="print-hidden">
-                <%= component 'tax_button',
-                        caption: "Elimina",
-                        svg_file: "icon-trash-real.svg",
-                        color: "red",
-                        url: url_for( controller: "stats", action: "destroy", model: @stat ),
-                        data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
-            </div>
+        <% if current_user.admin? %>
+            <% heading.with_action do %>
+                <div class="print-hidden">
+                    <%= component 'tax_button',
+                            caption: "Elimina",
+                            svg_file: "icon-trash-real.svg",
+                            color: "red",
+                            url: url_for( controller: "stats", action: "destroy", model: @stat ),
+                            data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+                </div>
+            <% end %>
         <% end %>
-        <% heading.with_action do %>
-            <div class="print-hidden">
-                <%= component 'tax_button',
-                        caption: "SQL",
-                        svg_file: "icon-pencil.svg",
-                        color: "yellow",
-                        url: url_for( controller: "stats", action: "edit", model: @stat ) %>
-            </div>
+
+        <% if current_user.admin? %>
+            <% heading.with_action do %>
+                <div class="print-hidden">
+                    <%= component 'tax_button',
+                            caption: "SQL",
+                            svg_file: "icon-pencil.svg",
+                            color: "yellow",
+                            url: url_for( controller: "stats", action: "edit", model: @stat ) %>
+                </div>
+            <% end %>
         <% end %>
+
         <% heading.with_action do %>
             <div class="print-hidden">
                 <%= component 'tax_button',

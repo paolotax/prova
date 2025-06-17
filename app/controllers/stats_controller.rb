@@ -4,9 +4,8 @@ class StatsController < ApplicationController
   before_action :set_stat, only: %i[ show edit update destroy execute sort ]
 
   def index
-    @stats = Stat.all
+    @stats = Stat.order(:categoria, :position, :titolo)
     @stats = @stats.where(categoria: params[:categoria]) if params[:categoria].present?
-    @stats = @stats.order(:position, :titolo)
   end
 
   def show
