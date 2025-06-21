@@ -90,6 +90,6 @@
 
 		<%= turbo_frame_tag "slide-over" %>
 		<%#= turbo_frame_tag "slide-over", data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: { filtra_appunti: filtra_appunti_path }} %>
-  	<%= render Notification::ContainerComponent.new(flash: flash, position: "top-left") %>
+  	<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
 	</body>
 </html>
