@@ -1,16 +1,21 @@
-services:
+x-base: &base
+  build:
+    context: .
+    dockerfile: ./Dockerfile.dev
 
+x-backend: &backend
+  <<: *base
+  stdin_open: true
+  tty: true
+  restart: always
+  volumes:
+    - .:/rails:cached
+    - app-storage:/rails/storage
+
+services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    stdin_open: true
-    tty: true
+    <<: *backend
     command: sh -c "bundle exec foreman start -f Procfile.dev"
-    restart: always
-    volumes:
-      - .:/rails:cached
-      - app-storage:/rails/storage
     ports:
       - "3002:3000"
     depends_on:

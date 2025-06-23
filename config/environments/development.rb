@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require "lograge"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -75,4 +76,14 @@ Rails.application.configure do
 
   # Allow web console from Docker network
   config.web_console.permissions = ['127.0.0.1', '::1', '172.16.0.0/12']
+
+  config.lograge.enabled = true
+  config.lograge.formatter = Lograge::Formatters::Json.new
+  config.log_bench.show_init_message = :full # or :min or :none
+  config.lograge.custom_options = lambda do |event|
+    params = event.payload[:params]&.except("controller", "action")
+    { params: params } if params.present?
+  end
+  config.logger ||= ActiveSupport::Logger.new(config.default_log_file)
+  config.logger.formatter = LogBench::JsonFormatter.new
 end

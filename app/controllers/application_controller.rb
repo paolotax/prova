@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include Pagy::Backend
 
+  allow_browser versions: :modern
+
+  before_action :set_current_request_identifier
   before_action :congigure_permitted_parameters, if: :devise_controller?
   before_action :set_current_user 
 
@@ -20,6 +23,10 @@ class ApplicationController < ActionController::Base
 
     def set_current_user
       Current.user = current_user if current_user
+    end
+
+    def set_current_request_identifier
+      Current.request_id = request.request_id
     end
 
     def remember_page

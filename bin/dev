@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
 docker compose up -d
-docker compose logs -f --tail=10
+docker compose exec app sh -c 'until bundle exec rails runner "puts \"Ready\""; do echo "Waiting..."; sleep 2; done'
+docker compose exec -it app bundle exec log_bench
 
 # if ! gem list foreman -i --silent; then
 #   echo "Installing foreman..."

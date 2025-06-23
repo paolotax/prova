@@ -9,9 +9,12 @@ RUN apt-get update -qq && \
   git \
   libpq-dev \
   curl \
+  libjemalloc2 \
   libvips \
   postgresql-client \
-  ffmpeg
+  ffmpeg && \
+  apt-get install watchman libncurses5-dev libncursesw5-dev -y && \
+  rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 
 COPY Gemfile Gemfile.lock ./

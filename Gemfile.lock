@@ -190,6 +190,7 @@ GEM
       activesupport (>= 4.2)
     crass (1.0.6)
     csv (3.3.2)
+    curses (1.5.3)
     date (3.4.1)
     debug (1.10.0)
       irb (~> 1.10)
@@ -316,7 +317,17 @@ GEM
       childprocess (~> 5.0)
     letter_opener (1.10.0)
       launchy (>= 2.2, < 4)
+    log_bench (0.1.8)
+      curses (~> 1.5)
+      lograge (~> 0.14)
+      net-http (~> 0.6)
+      zeitwerk (~> 2.7)
     logger (1.7.0)
+    lograge (0.14.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -517,6 +528,8 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     resend (0.10.0)
       httparty (>= 0.19.1)
     responders (3.1.1)
@@ -693,6 +706,7 @@ DEPENDENCIES
   jbuilder
   kamal
   letter_opener
+  log_bench
   mapkick-rb
   maxminddb
   money-rails (~> 1.15)
