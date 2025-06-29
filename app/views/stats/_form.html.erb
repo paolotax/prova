@@ -11,7 +11,7 @@
     </div>
   <% end %>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+  <div class="px-2 sm:px-0 grid grid-cols-1 md:grid-cols-2 gap-5">
     <div>
       <%= form.label :titolo, "Titolo", class: "label" %>
       <%= form.text_field :titolo, class: "field" %>
@@ -35,7 +35,7 @@
       <%= form.label :descrizione, "Descrizione", class: "label" %>
       <%= form.text_field :descrizione, class: "field" %>
     </div>
-    
+
     <div>
       <%= form.label :anno, "Anno", class: "label" %>
       <%= form.text_field :anno, class: "field" %>
@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <div class="my-5">
+  <div class="my-5 px-2 sm:px-0">
     <%= form.label :testo, "SQL", class: "label" %>
     <div data-controller="codemirror">
       <%= form.text_area :testo,
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+  <div class="px-2 sm:px-0 grid grid-cols-1 md:grid-cols-2 gap-5">
     <div>
       <%= form.label :raggruppa_per, class: "label" %>
       <%= form.text_field :raggruppa_per, class: "field" %>
