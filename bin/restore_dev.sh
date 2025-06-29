@@ -9,7 +9,7 @@ DUMP_PATH_IN_CONTAINER="/tmp/new_backup.dmp"
 
 # Fermo il container dell'app
 echo "🛑 Fermo il container dell'app..."
-docker-compose down app
+docker compose down app
 
 # 1. Drop e ricrea il database
 echo "👉 Dropping database $DB_NAME (se esiste)..."
@@ -19,8 +19,14 @@ echo "✅ Database droppato. Ora lo ricreo con owner $DB_USER..."
 docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "CREATE DATABASE $DB_NAME WITH OWNER $DB_USER;"
 
 echo "👤 Creo l'utente blazer..."
-docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "CREATE USER blazer WITH PASSWORD 'blazer';"
-docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO blazer;"
+docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "DO \$\$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'blazer') THEN
+        CREATE USER blazer WITH PASSWORD 'blazer';
+        GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO blazer;
+    END IF;
+END \$\$;"
+# docker exec -i $CONTAINER_NAME psql -U prova -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO blazer;"
 
 # 2. Copia il file .dmp nel container
 echo "📦 Copio il dump nel container..."
@@ -37,6 +43,6 @@ echo "🎉 Restore completato!"
 
 # Riavvio i container
 echo "🚀 Riavvio i container..."
-docker-compose up -d
+docker compose up -d
 
-echo "✨ Tutto pronto!" 
+echo "✨ Tutto pronto!"

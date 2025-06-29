@@ -9,7 +9,7 @@ x-backend: &backend
   tty: true
   restart: always
   volumes:
-    #- .:/rails:cached
+    - .:/rails:cached
     - app-storage:/rails/storage
 
 services:
