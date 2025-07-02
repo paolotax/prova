@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include Pagy::Backend
 
-  allow_browser versions: :modern
+  # allow_browser versions: :modern
 
   before_action :set_current_request_identifier
   before_action :congigure_permitted_parameters, if: :devise_controller?
