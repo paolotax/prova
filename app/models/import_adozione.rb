@@ -25,7 +25,6 @@
 #
 # Indexes
 #
-#  import_adozioni_pk                   (CODICESCUOLA,ANNOCORSO,SEZIONEANNO,TIPOGRADOSCUOLA,COMBINAZIONE,CODICEISBN,NUOVAADOZ,DAACQUIST,CONSIGLIATO) UNIQUE
 #  index_import_adozioni_on_DISCIPLINA  (DISCIPLINA)
 #  index_import_adozioni_on_EDITORE     (EDITORE)
 #  index_import_adozioni_on_TITOLO      (TITOLO)
