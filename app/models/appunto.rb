@@ -134,7 +134,26 @@ class Appunto < ApplicationRecord
   end
   
   def content_to_s
-    content.to_s.gsub('<div class="trix-content">', "").gsub('</div>', "").gsub('<div>', "").gsub('</br>', "").gsub('<p>', "").gsub('</p>', "").gsub('<div>', "").gsub('</div>', "").gsub('<br/>', "").gsub('</br/>', "").gsub('<p/>', "").gsub('</p/>', "").gsub('<div/>', "").gsub('</div/>', "").gsub('<br />', "").gsub('</br />', "").gsub('<p />', "").gsub('</p />', "").gsub('<div />', "").gsub('</div />', "")
+    content.to_s.gsub('<div class="trix-content">', "")
+        .gsub('</div>', "")
+        .gsub('<div>', "")
+        .gsub('</br>', "")
+        .gsub('<p>', "")
+        .gsub('</p>', "")
+        .gsub('<div>', "")
+        .gsub('</div>', "")
+        .gsub('<br/>', "")
+        .gsub('</br/>', "")
+        .gsub('<p/>', "")
+        .gsub('</p/>', "")
+        .gsub('<div/>', "")
+        .gsub('</div/>', "")
+        .gsub('<br />', "")
+        .gsub('</br />', "")
+        .gsub('<p />', "")
+        .gsub('</p />', "")
+        .gsub('<div />', "")
+        .gsub('</div />', "")
   end
   
   def nome_e_classe
