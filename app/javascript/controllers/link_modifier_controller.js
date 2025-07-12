@@ -22,18 +22,4 @@ export default class extends Controller {
     }
 }
 
-// document.addEventListener('turbo:frame-load', function(event) {
-//     if (event.target.id === "search_results") {
-//         // Trova e modifica i link esterni al turbo_frame
-//         var externalLinkContainer = document.getElementById("button-excel-libri");
-//         var externalLink1 = externalLinkContainer.querySelector("a");
-
-//         var params = window.location.search;
-
-//         // Modifica gli href dei link esterni
-//         if (externalLink1) {
-//             externalLink1.href = "/libri.xlsx" + params;
-//         }
-//     }
-// });
 
