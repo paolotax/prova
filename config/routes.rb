@@ -1,6 +1,6 @@
 # first, setup dashboard authentication
-require "sidekiq/web"
-require "sidekiq-scheduler/web"
+require 'sidekiq/web'
+require 'sidekiq-scheduler/web'
 
 # Sidekiq::Web.use Rack::Auth::Basic do |username, password|
 #   username == "admin" && password == "password"
@@ -8,7 +8,6 @@ require "sidekiq-scheduler/web"
 
 # then mount it
 Rails.application.routes.draw do
-
   resources :voice_notes do
     member do
       post :transcribe
@@ -16,15 +15,15 @@ Rails.application.routes.draw do
     end
   end
 
-  get "agenda", to: "agenda#index"
-  get "agenda/:giorno", to: "agenda#show", as: "giorno"
-  get "agenda/:giorno/mappa", to: "agenda#mappa", as: "mappa_del_giorno"
-  get "agenda/:giorno/slideover", to: "agenda#slideover", as: "slideover"
+  get 'agenda', to: 'agenda#index'
+  get 'agenda/:giorno', to: 'agenda#show', as: 'giorno'
+  get 'agenda/:giorno/mappa', to: 'agenda#mappa', as: 'mappa_del_giorno'
+  get 'agenda/:giorno/slideover', to: 'agenda#slideover', as: 'slideover'
 
   authenticate :user, ->(user) { user.admin? } do
-    mount Blazer::Engine, at: "blazer"
+    mount Blazer::Engine, at: 'blazer'
     mount RailsPerformance::Engine, at: 'rails/performance'
-    mount Sidekiq::Web => "/sidekiq"
+    mount Sidekiq::Web => '/sidekiq'
     mount Avo::Engine, at: Avo.configuration.root_path
     mount RailsDesigner::Engine, at: '/rails_designer'
   end
@@ -35,8 +34,8 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
 
-  get 'ordini_in_corso', to: "ordini#index"
-  get "cerca", to: "search#index"
+  get 'ordini_in_corso', to: 'ordini#index'
+  get 'cerca', to: 'search#index'
 
   namespace :searches do
     get 'clientable/show'
@@ -44,7 +43,7 @@ Rails.application.routes.draw do
     resources :clientable, only: :index
   end
 
-  post "sfascicola", to: "sfascicolator#generate"
+  post 'sfascicola', to: 'sfascicolator#generate'
 
   resources :clienti do
     collection do
@@ -53,7 +52,7 @@ Rails.application.routes.draw do
   end
 
   resources :documenti do
-    resources :steps, only: [:show, :update], controller: 'steps_controllers/documento_steps'
+    resources :steps, only: %i[show update], controller: 'steps_controllers/documento_steps'
     collection do
       get 'filtra'
       get 'nuovo_numero_documento'
@@ -65,7 +64,7 @@ Rails.application.routes.draw do
 
   resources :causali
 
-  resources :documento_righe, only: [:new, :destroy] do
+  resources :documento_righe, only: %i[new destroy] do
     member do
       patch 'update_posizione'
     end
@@ -89,12 +88,12 @@ Rails.application.routes.draw do
   resources :libro_chips,  only: :create, param: :combobox_value
   resources :giro_chips, only: :create, param: :combobox_value
 
-  #get "vendite", to: "adozioni#index"
+  # get "vendite", to: "adozioni#index"
   resources :adozioni do
     collection do
       post 'bulk_create'
-      put 'bulk_update', format: "pdf"
-      get "riepilogo"
+      put 'bulk_update', format: 'pdf'
+      get 'riepilogo'
     end
   end
 
@@ -106,9 +105,9 @@ Rails.application.routes.draw do
     end
     member do
       get 'get_prezzo_copertina_cents'
-      get "fascicoli", to: "confezionator#index"
-      post 'fascicoli', to: "confezionator#create", as: "confezione"
-      delete 'fascicoli', to: "confezionator#destroy"
+      get 'fascicoli', to: 'confezionator#index'
+      post 'fascicoli', to: 'confezionator#create', as: 'confezione'
+      delete 'fascicoli', to: 'confezionator#destroy'
     end
     resources :qrcodes
   end
@@ -117,11 +116,11 @@ Rails.application.routes.draw do
 
   resources :confezione do
     member do
-      patch 'sort', to: "confezionator#sort"
+      patch 'sort', to: 'confezionator#sort'
     end
   end
 
-  resources :tipi_scuole, only: [:index, :update]
+  resources :tipi_scuole, only: %i[index update]
 
   resources :giri do
     resources :tappe, only: [:index]
@@ -142,10 +141,10 @@ Rails.application.routes.draw do
   get 'profilo', to: 'profiles#get_user_profile'
 
   resources :profiles do
-    resources :steps, only: [:show, :update], controller: 'steps_controllers/profile_steps'
+    resources :steps, only: %i[show update], controller: 'steps_controllers/profile_steps'
   end
 
-  resources :users, only: [:index, :show] do
+  resources :users, only: %i[index show] do
     member do
       post  'modifica_navigatore'
     end
@@ -161,7 +160,7 @@ Rails.application.routes.draw do
   resources :appunti do
     resources :tappe
     collection do
-      get "filtra"
+      get 'filtra'
     end
     member do
       put 'modifica_stato'
@@ -186,7 +185,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :user_scuole, only: [:index, :destroy] do
+  resources :user_scuole, only: %i[index destroy] do
     member do
       patch :sort
     end
@@ -204,7 +203,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :mappe, only: [:show, :update] do
+  resources :mappe, only: %i[show update] do
     collection do
       get 'calcola_percorso_ottimale'
     end
@@ -213,7 +212,7 @@ Rails.application.routes.draw do
   namespace :import_scuole do
     resources :bulk_actions, only: [] do
       collection do
-        patch :print_all, format: "pdf"
+        patch :print_all, format: 'pdf'
         patch :create_tappa
       end
     end
@@ -222,7 +221,7 @@ Rails.application.routes.draw do
   namespace :appunti do
     resources :bulk_actions, only: [] do
       collection do
-        patch :print_all, format: "pdf"
+        patch :print_all, format: 'pdf'
         patch :create_tappa
         patch :segna_come
         delete :destroy_all
@@ -250,17 +249,15 @@ Rails.application.routes.draw do
     end
   end
 
-
   # resources :import_scuole, except: :show
   # get 'import_scuole/:CODICESCUOLA', to: 'import_scuole#show'
 
-  resources :import_adozioni, only: [:index, :show] do
+  resources :import_adozioni, only: %i[index show] do
     collection do
-      get "filtra"
-      put 'bulk_update', format: "pdf"
+      get 'filtra'
+      put 'bulk_update', format: 'pdf'
     end
   end
-
 
   resources :configurations, only: [] do
     get :ios_v1, on: :collection
@@ -273,23 +270,21 @@ Rails.application.routes.draw do
   get 'fornitori',      to: 'fornitori#index'
   get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'
 
+  get 'duplicates', to: 'articoli#duplicates'
 
-  get 'duplicates',   to: 'articoli#duplicates'
+  get 'duplicates/:codice_articolo', to: 'articoli#update_descrizione', as: 'update_descrizione'
 
-  get "duplicates/:codice_articolo", to: "articoli#update_descrizione", as: "update_descrizione"
-
-
-  get 'articoli',     to: 'articoli#index'
+  get 'articoli', to: 'articoli#index'
   get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  get 'up' => 'rails/health#show', as: :rails_health_check
 
   # Defines the root path route ("/")
-  root "pages#index"
+  root 'pages#index'
 
   resources :scuole do
     resources :qrcodes
