@@ -31,7 +31,6 @@
 #
 
 class Documento < ApplicationRecord
-
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
   belongs_to :causale
@@ -39,14 +38,14 @@ class Documento < ApplicationRecord
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
 
-  accepts_nested_attributes_for :documento_righe  #,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
-
+  accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5 }
-  enum :tipo_pagamento, { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
+  enum :tipo_pagamento,
+       { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
 
-  #enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
-  #enum movimento: { entrata: 0, uscita: 1 }
+  # enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
+  # enum movimento: { entrata: 0, uscita: 1 }
 
   delegate :tipo_movimento, :movimento, to: :causale
 
@@ -55,14 +54,12 @@ class Documento < ApplicationRecord
     def filter_proxy = Filters::DocumentoFilterProxy
   end
 
-
   attr_accessor :form_step
 
   with_options if: -> { required_for_step?(:tipo_documento) } do
     validates :causale_id, presence: true
     validates :numero_documento, presence: true
     validates :data_documento, presence: true
-
   end
 
   with_options if: -> { required_for_step?(:cliente) } do
@@ -71,19 +68,17 @@ class Documento < ApplicationRecord
   end
 
   with_options if: -> { required_for_step?(:dettaglio) } do
-    #validates :documento_righe, length: {minimum: 1, message: 'deve esserci almeno una riga.'}
+    # validates :documento_righe, length: {minimum: 1, message: 'deve esserci almeno una riga.'}
   end
 
   def self.form_steps
     {
-      tipo_documento: [:causale_id, :numero_documento, :data_documento, :clientable_type, :clientable_id],
-      cliente: [:clientable_type, :clientable_id, :referente, :note],
-      dettaglio: [ documento_righe_attributes:
-                    [ :id, :posizione,
-                         { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
-                    ]
-                  ],
-      stato_documento: [:status, :tipo_pagamento, :consegnato_il, :pagato_il]
+      tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],
+      cliente: %i[clientable_type clientable_id referente note],
+      dettaglio: [documento_righe_attributes:
+                    [:id, :posizione,
+                     { riga_attributes: %i[id libro_id quantita prezzo prezzo_cents prezzo_copertina_cents sconto iva_cents status _destroy] }]],
+      stato_documento: %i[status tipo_pagamento consegnato_il pagato_il]
     }
   end
 
@@ -96,7 +91,6 @@ class Documento < ApplicationRecord
     !!(ordered_keys.index(step) <= ordered_keys.index(form_step))
   end
 
-
   def clientable
     super || Domain::NessunCliente.new
   end
@@ -105,21 +99,21 @@ class Documento < ApplicationRecord
     causale.blank? || clientable.is_a?(Domain::NessunCliente)
   end
 
-
   def vendita?
-    tipo_movimento == "vendita" || ( tipo_movimento == "ordine" && status != "ordine" )
+    tipo_movimento == 'vendita' || (tipo_movimento == 'ordine' && status != 'ordine')
   end
+
   # poi
   def ordine_evaso?
-    tipo_movimento == "ordine" && status != "ordine"
+    tipo_movimento == 'ordine' && status != 'ordine'
   end
 
   def ordine_in_corso?
-    tipo_movimento == "ordine" && status == "ordine"
+    tipo_movimento == 'ordine' && status == 'ordine'
   end
 
   def registrato?
-    ["TD01", "TD04", "TD24"].include?(causale.causale)
+    %w[TD01 TD04 TD24].include?(causale.causale)
   end
 
   def pagato?
@@ -148,6 +142,4 @@ class Documento < ApplicationRecord
       end
     end
   end
-
-
 end
