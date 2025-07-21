@@ -32,7 +32,7 @@ function insertConfirmModal(message, element) {
   return document.getElementById("confirm-modal");
 }
 
-Turbo.setConfirmMethod((message, element) => {
+Turbo.config.forms.confirm = (message, element) => {
   const dialog = insertConfirmModal(message, element);
 
   return new Promise((resolve) => {
@@ -47,4 +47,4 @@ Turbo.setConfirmMethod((message, element) => {
       resolve(true);
     }, { once: true })
   })
-})
+}

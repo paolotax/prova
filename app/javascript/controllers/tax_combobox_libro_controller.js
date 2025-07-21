@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="tax-combobox-libro"
 export default class extends Controller {
 
-  static targets = ["combobox", "prezzo"]
+  static targets = ["combobox", "prezzo", "quantita"]
 
   change(event) {
     let id_libro = this.comboboxTarget.querySelector("input").value;
@@ -26,6 +26,8 @@ export default class extends Controller {
       let prezzo_copertina_cents = data.prezzo_copertina_cents;
       // Use the prezzo_copertina_cents as needed
       this.prezzoTarget.value = prezzo_copertina_cents / 100.0;
+      this.quantitaTarget.focus();
+      this.quantitaTarget.select();
     })
     .catch(error => {
       // Handle any errors

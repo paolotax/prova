@@ -12,38 +12,32 @@
         <%= ff.fields_for :riga do |form_riga| %>
                 
                 <% if form_riga.object.new_record? %>
-                    <fieldset class="col-span-1 flex flex-col justify-between items-start">  
-                        <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
-                        <%= form_riga.number_field :quantita,
-                                data: { controller: "focus", focus_focus_value: "now" },
-                                class: [
-                                    "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                                    "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                                    ] %>
-                    </fieldset>    
-                 <% else %>
-                    <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                        <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
-                        <%= form_riga.number_field :quantita,
-                                class: [
-                                    "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                                    "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                                    ] %>
-                    </fieldset>    
+                    <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
+                        <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
+                        <%= form_riga.combobox :libro_id, libri_path, 
+                                placeholder: "seleziona libro...",
+                                data: { action: "hw-combobox:selection->tax-combobox-libro#change",
+                                        tax_combobox_libro_target: "combobox", controller: "focus", focus_focus_value: "now", focus_target: "combobox" } %>
+                    </fieldset>
+                <% else %>
+                    <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
+                        <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
+                        <%= form_riga.combobox :libro_id, libri_path, 
+                                placeholder: "seleziona libro...",
+                                data: { action: "hw-combobox:selection->tax-combobox-libro#change",
+                                        tax_combobox_libro_target: "combobox" } %>
+                    </fieldset>
                 <% end %>
 
-                <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
-                    <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
-                    <%#= form_riga.combobox :libro_id, current_user.libri.where.not(codice_isbn: [nil, ""]).order(:titolo).all, 
-                            placeholder: "seleziona libro...",
-                            data: { action: "hw-combobox:selection->tax-combobox-libro#change",
-                                    tax_combobox_libro_target: "combobox" } %>
-                    <%= form_riga.combobox :libro_id, libri_path, 
-                            placeholder: "seleziona libro...",
-                            data: { action: "hw-combobox:selection->tax-combobox-libro#change",
-                                    tax_combobox_libro_target: "combobox" } %>
-                </fieldset>
-
+                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
+                    <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
+                    <%= form_riga.number_field :quantita,
+                            data: { tax_combobox_libro_target: "quantita" },
+                            class: [
+                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                                ] %>
+                </fieldset>    
                 
                 <fieldset class="col-start-2 sm:col-start-auto col-span-1 flex flex-col justify-between items-center">  
                     <%= label_for form: form_riga, field: 'prezzo', label: 'Prezzo' %>
@@ -55,6 +49,7 @@
                                 "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
                             ] %>
                 </fieldset>
+                
                 <fieldset class="col-span-1 flex flex-col justify-between items-center">  
                     <%= label_for form: form_riga, field: 'sconto', label: 'Sconto' %>
                     <%= form_riga.number_field :sconto, 
