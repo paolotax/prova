@@ -1,65 +1,70 @@
 <%= fields_for "documento[documento_righe_attributes][#{turbo_id_for(documento_riga)}]", documento_riga do |ff| %>
 
-    <%= tag.div class:"mb-2 bg-white px-4 py-2.5 border rounded-lg inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
+    <%= tag.div class:"mb-2 bg-white px-4 py-2.5 border rounded-lg 
+            inline-block grid grid-cols-4 sm:grid-cols-8 gap-4 items-end", 
         
         id: turbo_id_for(documento_riga),
         data: { controller: "tax-combobox-libro",
                 sortable_update_url: documento_riga.persisted? ? update_posizione_documento_riga_path(documento_riga) : nil } do %>
 
-        <%#= tag.div documento_riga.posizione, class: "col-span-1" %>
+
+        	
+        <%# <%= tag.div documento_riga.posizione, class: "col-span-1" %>
+
         <%= ff.hidden_field :id %>
 
         <%= ff.fields_for :riga do |form_riga| %>
-                
-                <% if form_riga.object.new_record? %>
-                    <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
+            
+            <fieldset class="col-span-3 sm:col-span-4 cb-tax flex items-center">
+                <div class="handle cursor-move flex-0 pr-4">⋮⋮</div>	
+                <div class="flex flex-col">
+                    <% if form_riga.object.new_record? %>
                         <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
                         <%= form_riga.combobox :libro_id, libri_path, 
                                 placeholder: "seleziona libro...",
                                 data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                         tax_combobox_libro_target: "combobox", controller: "focus", focus_focus_value: "now", focus_target: "combobox" } %>
-                    </fieldset>
-                <% else %>
-                    <fieldset class="col-span-3 sm:col-span-4 cb-tax flex flex-col">
+                    <% else %>
                         <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
                         <%= form_riga.combobox :libro_id, libri_path, 
                                 placeholder: "seleziona libro...",
                                 data: { action: "hw-combobox:selection->tax-combobox-libro#change",
                                         tax_combobox_libro_target: "combobox" } %>
-                    </fieldset>
-                <% end %>
+                    <% end %>
+                </div>
+            </fieldset>
 
-                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
-                    <%= form_riga.number_field :quantita,
-                            data: { tax_combobox_libro_target: "quantita" },
-                            class: [
-                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                                ] %>
-                </fieldset>    
-                
-                <fieldset class="col-start-2 sm:col-start-auto col-span-1 flex flex-col justify-between items-center">  
-                    <%= label_for form: form_riga, field: 'prezzo', label: 'Prezzo' %>
-                    <%= form_riga.number_field :prezzo, 
-                            data: { tax_combobox_libro_target: "prezzo" },
-                            step: 0.01,
-                            class: [
-                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+            <fieldset class="col-span-1 flex flex-col justify-between items-center">  
+                <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
+                <%= form_riga.number_field :quantita,
+                        data: { tax_combobox_libro_target: "quantita" },
+                        class: [
+                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
                             ] %>
-                </fieldset>
-                
-                <fieldset class="col-span-1 flex flex-col justify-between items-center">  
-                    <%= label_for form: form_riga, field: 'sconto', label: 'Sconto' %>
-                    <%= form_riga.number_field :sconto, 
-                            step: 0.01,
-                            class: [
-                                "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                                "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                            ] %>
-                </fieldset>      
-                <%= form_riga.hidden_field :id %>
+            </fieldset>    
+            
+            <fieldset class="col-start-2 sm:col-start-auto col-span-1 flex flex-col justify-between items-center">  
+                <%= label_for form: form_riga, field: 'prezzo', label: 'Prezzo' %>
+                <%= form_riga.number_field :prezzo, 
+                        data: { tax_combobox_libro_target: "prezzo" },
+                        step: 0.01,
+                        class: [
+                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                        ] %>
+            </fieldset>
+            
+            <fieldset class="col-span-1 flex flex-col justify-between items-center">  
+                <%= label_for form: form_riga, field: 'sconto', label: 'Sconto' %>
+                <%= form_riga.number_field :sconto, 
+                        step: 0.01,
+                        class: [
+                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                        ] %>
+            </fieldset>      
+            <%= form_riga.hidden_field :id %>
 
 
         <% end %>
@@ -76,6 +81,7 @@
                     ] do %>
                 <%= inline_svg_tag "icon-trash.svg" %>
             <% end %>
+
         <% end %>
     <% end %>
 <% end %>

@@ -12,7 +12,7 @@
         <% heading.with_action do %>
             <%= button_to documento_path(@documento),
                     method: :delete,
-                    form: { data: { turbo_prefetch: false } },
+                    form: { data: { turbo_prefetch: false, turbo: false } },
                     onclick: "return confirm('Sei sicuro di voler eliminare questo documento?')",
                     class: "flex sm:flex-col items-center gap-x-2
                   text-sm text-center font-semibold cursor-pointer
@@ -50,7 +50,7 @@
                     caption: "Indietro",
                     svg_file: "icon-arrow-long-left.svg",
                     color: "white",
-                    url: 'javascript:history.back()' %>
+                    url: awesome_back_path(except: /\/steps|\/edit/, fallback: documenti_path) %>
         <% end %>
 
         <% heading.with_action do %>
@@ -73,12 +73,12 @@
                 <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>
             </h1>
 
-            <p class="mt-1 text-sm text-gray-500">
+            <div class="mt-1 text-sm text-gray-700">
                 <%= @documento.referente %>
-            </p>
-            <p class="mt-1 text-sm text-gray-500">
-                <%= @documento.note %>
-            </p>
+            </div>
+            <div class="mt-1 text-sm text-gray-500">
+                <%= simple_format @documento.note %>
+            </div>
 
             <%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
                 <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>

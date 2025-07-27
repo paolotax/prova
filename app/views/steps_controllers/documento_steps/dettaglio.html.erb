@@ -4,13 +4,13 @@
 
         <%= render partial: "steps_controllers/common/steps_header", locals: { resource: @documento } %>   
 
-        <%= tag.div class: "flex justify-between items-center" do %>
+        <%= tag.div class: "hidden sm:flex justify-between items-center" do %>
             <%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: :true do |f| %>
                 
                 <%= f.hidden_field :import_method, value: @import.import_method %>
                 <%= f.hidden_field :documento_id, value: @documento.id %>
                 
-                <%= tag.div class: "flex flex-row items-center px-4 py-2.5" do %>
+                <%= tag.div class: "flex flex-col sm:flex-row items-center px-4 py-2.5" do %>
                     <%= f.file_field :file, accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel' %>
                     <%= component('button', busy_content_css: 'flex py-1 [[disabled]_&]:opacity-0') do |button| %>
                         <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
@@ -37,7 +37,8 @@
             <%= tag.section id: "documento_righe", class: "col-span-4",  
                             data: { controller: "sortable", 
                                     sortable_animation_value: "150", 
-                                    sortable_resource_name_value: "documento_riga" } do %>
+                                    sortable_resource_name_value: "documento_riga",
+                                    sortable_handle_value: ".handle" } do %>
                 <%= render partial: "documento_righe/documento_riga", collection: @documento_righe %>
             <% end %>
 
@@ -50,7 +51,6 @@
                             data_attr: { turbo_stream: true }
                 ) %>
 
-
                 <% if @documento_righe.size > 20 %>
                     <%= tag.div id: "bottom" do %>
                         <%= component "tax_button", 
@@ -61,8 +61,7 @@
                     <% end  %>
                 <% end %>
             </div>
-
-            
+          
             <%= tag.div(id: "bottom", class: "mt-10 w-full inline-flex gap-2 items-center justify-end mb-7") do %>
                 <%#= link_to "Indietro", previous_wizard_path, data: { turbo_action: "advance" }, class: "px-4 rounded-md py-2 bg-gray-500 hover:bg-gray-400 focus:bg-gray-400 text-white"  %>
                 
@@ -80,8 +79,5 @@
         <%= render partial: "sfascicolator/form", locals: { documento: @documento } %>
         <%= render partial: "steps_controllers/common/steps_footer", locals: { resource: @documento } %>  
 
-
-
     <% end %>
-
 <% end %>
