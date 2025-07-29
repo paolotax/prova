@@ -27,7 +27,7 @@
 					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
 				</div>
 
-				<%= tag.p documento.referente, class: "text-xs" %>
+				<%= tag.p documento.referente, class: "mt-2 text-xs" %>
 				
 				<%= tag.div class: "text-xs" do %>
 					<%= tag.div simple_format(documento.note), class: "max-h-8 overflow-hidden hover:max-h-none transition-all duration-200" %>

@@ -1,1 +1,6 @@
-<%= link_to clientable.denominazione, polymorphic_path(clientable), data: { turbo_frame: :_top }, class: "group-[.show-cliente]:hidden" %>
+<%= link_to polymorphic_path(clientable), 
+        data: { turbo_frame: :_top }, 
+        class: "group-[.show-cliente]:hidden hover:text-blue-500 hover:font-bold" do %>
+    <%= tag.p clientable.denominazione, class: "" %>
+    <%= tag.p clientable.comune %>
+<% end %>
