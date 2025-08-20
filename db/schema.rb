@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_162412) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_20_062347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "tablefunc"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -376,6 +377,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_162412) do
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
+    t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
   end
 
   create_table "import_scuole", force: :cascade do |t|
@@ -522,6 +524,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_162412) do
     t.string "sede_scolastica"
     t.bigint "import_scuola_id"
     t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
+  end
+
+  create_table "old_adozioni", force: :cascade do |t|
+    t.string "codicescuola"
+    t.string "annocorso"
+    t.string "sezioneanno"
+    t.string "tipogradoscuola"
+    t.string "combinazione"
+    t.string "disciplina"
+    t.string "codiceisbn"
+    t.string "autori"
+    t.string "titolo"
+    t.string "sottotitolo"
+    t.string "volume"
+    t.string "editore"
+    t.string "prezzo"
+    t.string "nuovaadoz"
+    t.string "daacquist"
+    t.string "consigliato"
+    t.string "anno_scolastico"
+    t.bigint "import_scuola_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_old_adozioni_on_classe", unique: true
+    t.index ["import_scuola_id"], name: "index_old_adozioni_on_import_scuola_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -683,6 +710,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_162412) do
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "messages", "chats"
+  add_foreign_key "old_adozioni", "import_scuole"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
   add_foreign_key "tappa_giri", "giri"

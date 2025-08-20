@@ -462,7 +462,7 @@ namespace :import do
     puts "Totale: #{NewAdozione.count} NewAdozioni inserite"
   end
 
-  desc "NewScuole SCUOLE 2024"
+  desc "NewScuole SCUOLE 2025/6"
   task new_scuole: :environment do
 
     include ActionView::Helpers
@@ -473,7 +473,7 @@ namespace :import do
       NewScuola.delete_all
     end
 
-    csv_dir = Rails.root.join('tmp', '_miur', 'scuole', '*.csv')
+    csv_dir = Rails.root.join('_miur', 'scuole', '*.csv')
 
     map_scuole = {
       "ANNOSCOLASTICO" => "anno_scolastico",
@@ -499,6 +499,7 @@ namespace :import do
     }
 
     Dir.glob(csv_dir).each do |file|
+      puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
       import_csv(file, NewScuola, map_scuole)
     end
 

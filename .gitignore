@@ -43,7 +43,7 @@ dump.rdb
 .idea/
 
 
-_miur/scuole/*
+#_miur/scuole/*
 _miur/adozioni/*
 _csv/*
 _xml/*
