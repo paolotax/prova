@@ -109,7 +109,7 @@ DO UPDATE SET
   updated_at      = GREATEST(old_adozioni.updated_at, EXCLUDED.updated_at);
 
 -- 2) Reset import_adozioni
-TRUNCATE TABLE import_adozioni RESTART IDENTITY CASCADE;
+DELETE FROM import_adozioni;
 
 -- 3) Deduplicate new_adozioni on the same unique key and refill import_adozioni
 WITH deduplicated_new_adozioni AS (
@@ -193,32 +193,3 @@ SELECT
 FROM deduplicated_new_adozioni;
 
 COMMIT;
-
--- Checks
-SELECT 'old_adozioni' AS tabella, COUNT(*) AS record_count FROM old_adozioni
-UNION ALL
-SELECT 'import_adozioni' AS tabella, COUNT(*) AS record_count FROM import_adozioni
-UNION ALL
-SELECT 'new_adozioni' AS tabella, COUNT(*) AS record_count FROM new_adozioni;
-
--- Verify no duplicates exist for the unique key in import_adozioni (sanity)
-SELECT
-  'duplicati_key_import_adozioni' AS descrizione,
-  COUNT(*) AS count
-FROM (
-  SELECT anno_scolastico, "CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "COMBINAZIONE", "CODICEISBN"
-  FROM import_adozioni
-  GROUP BY anno_scolastico, "CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "COMBINAZIONE", "CODICEISBN"
-  HAVING COUNT(*) > 1
-) d;
-
--- Join coverage
-SELECT
-  'scuole_matchate'  AS descrizione, COUNT(*) AS count
-FROM old_adozioni
-WHERE import_scuola_id IS NOT NULL
-UNION ALL
-SELECT
-  'scuole_non_matchate' AS descrizione, COUNT(*) AS count
-FROM old_adozioni
-WHERE import_scuola_id IS NULL;

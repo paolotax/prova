@@ -117,10 +117,15 @@ class Appunto < ApplicationRecord
     where(import_scuola_id: Current.user.tappe.del_giorno(day).where(tappable_type: 'ImportScuola').pluck(:tappable_id))
   }
 
-  scope :saggi, -> { where(nome: 'saggio').where.not(import_adozione_id: nil) }
-  scope :seguiti, -> { where(nome: 'seguito').where.not(import_adozione_id: nil) }
-  scope :kit, -> { where(nome: 'kit').where.not(import_adozione_id: nil) }
-  scope :ssk, -> { where(nome: %w[saggio seguito kit]).where.not(import_adozione_id: nil) }
+  # scope :saggi, -> { where(nome: 'saggio').where.not(import_adozione_id: nil) }
+  # scope :seguiti, -> { where(nome: 'seguito').where.not(import_adozione_id: nil) }
+  # scope :kit, -> { where(nome: 'kit').where.not(import_adozione_id: nil) }
+  # scope :ssk, -> { where(nome: %w[saggio seguito kit]).where.not(import_adozione_id: nil) }
+  
+  scope :saggi, -> { where(nome: 'saggio') }
+  scope :seguiti, -> { where(nome: 'seguito') }
+  scope :kit, -> { where(nome: 'kit') }
+  scope :ssk, -> { where(nome: %w[saggio seguito kit]) }
 
   def self.ransackable_attributes(auth_object = nil)
     %w[nome body]
@@ -221,7 +226,7 @@ class Appunto < ApplicationRecord
   end
 
   def is_kit?
-    nome == 'seguito' && import_adozione.present?
+    nome == 'kit' && import_adozione.present?
   end
 
   def is_ssk?

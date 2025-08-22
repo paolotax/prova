@@ -1,15 +1,8 @@
 -- Script per aggiornare import_scuole con dati di new_scuole
 
--- 1. Prima verifichiamo quanti record nuovi ci sono
-SELECT COUNT(*) as nuove_scuole
-FROM new_scuole ns
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM import_scuole i
-    WHERE i."CODICESCUOLA" = ns.codice_scuola
-);
+BEGIN;
 
--- 2. Inseriamo le nuove scuole in import_scuole
+-- 1. Inseriamo le nuove scuole in import_scuole
 INSERT INTO import_scuole (
     "ANNOSCOLASTICO",
     "AREAGEOGRAFICA",
@@ -64,7 +57,7 @@ WHERE NOT EXISTS (
     WHERE i."CODICESCUOLA" = ns.codice_scuola
 );
 
--- 3. Aggiorniamo i record esistenti (se necessario)
+-- 2. Aggiorniamo i record esistenti (se necessario)
 UPDATE import_scuole
 SET
     "ANNOSCOLASTICO" = ns.anno_scolastico,
@@ -90,19 +83,4 @@ SET
 FROM new_scuole ns
 WHERE import_scuole."CODICESCUOLA" = ns.codice_scuola;
 
--- 4. Verifichiamo il risultato finale
-SELECT
-    COUNT(*) as totale_import_scuole,
-    COUNT(DISTINCT "CODICESCUOLA") as scuole_distinte
-FROM import_scuole;
-
--- 5. Verifichiamo le scuole che sono state aggiunte/aggiornate
-SELECT
-    "CODICESCUOLA",
-    "DENOMINAZIONESCUOLA",
-    "PROVINCIA",
-    created_at,
-    updated_at
-FROM import_scuole
-WHERE updated_at >= NOW() - INTERVAL '1 minute'
-ORDER BY updated_at DESC;
+COMMIT;
