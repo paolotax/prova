@@ -81,10 +81,10 @@ COMMIT;
 
 ```bash
 # Con conferma utente
-docker exec prova-app-1 bundle exec rake db_update:scuole_e_adozioni
+docker exec -it prova-app-1 bin/rails db_update:scuole_e_adozioni
 
 # Senza conferma (automatico)
-docker exec prova-app-1 bundle exec rake db_update:scuole_e_adozioni[true]
+docker exec -it prova-app-1 bin/rails db_update:scuole_e_adozioni[true]
 ```
 
 **Fasi di esecuzione:**
@@ -113,22 +113,22 @@ docker exec prova-app-1 bundle exec rake db_update:scuole_e_adozioni[true]
 
 #### Solo Aggiornamento Scuole
 ```bash
-docker exec prova-app-1 bundle exec rake db_update:solo_scuole
+docker exec -it prova-app-1 bin/rails db_update:solo_scuole
 ```
 
 #### Solo Gestione Adozioni
 ```bash
-docker exec prova-app-1 bundle exec rake db_update:solo_adozioni
+docker exec -it prova-app-1 bin/rails db_update:solo_adozioni
 ```
 
 #### Solo Ricostruzione Viste
 ```bash
-docker exec prova-app-1 bundle exec rake db_update:refresh_views
+docker exec -it prova-app-1 bin/rails db_update:refresh_views
 ```
 
 #### Verifica Stato Database
 ```bash
-docker exec prova-app-1 bundle exec rake db_update:verifica
+docker exec -it prova-app-1 bin/rails db_update:verifica
 ```
 
 ## 📊 Risultati Tipici
@@ -237,7 +237,7 @@ PG::QueryCanceled: canceling statement due to statement timeout
 
 Prima dell'aggiornamento:
 ```bash
-docker exec prova-app-1 bundle exec rake db_update:verifica
+docker exec -it prova-app-1 bin/rails db_update:verifica
 ```
 
 Dopo errori:
