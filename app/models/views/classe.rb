@@ -11,7 +11,7 @@
 #  sezione             :string
 #  combinazione        :string
 #  import_adozioni_ids :integer          is an Array
-#  anno                :text
+#  anno                :string
 #
 # Indexes
 #
