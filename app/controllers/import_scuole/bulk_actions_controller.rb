@@ -6,9 +6,14 @@ class ImportScuole::BulkActionsController < ApplicationController
     @import_scuole = current_user.import_scuole.where(id: params[:import_scuola_ids])
     respond_to do |format|
       format.pdf do
-        pdf = FoglioScuolaPdf.new(@import_scuole, view_context)
+        tipo_stampa = params[:tipo_stampa] || 'tutte_adozioni'
+        pdf = FoglioScuolaPdf.new(@import_scuole, view: view_context, tipo_stampa: tipo_stampa)
+        
+        filename_suffix = tipo_stampa == 'mie_adozioni' ? '_mie_adozioni' : ''
+        filename = "fogli_scuola#{filename_suffix}_#{Time.current.to_i}.pdf"
+        
         send_data pdf.render,
-          filename: "fogli_scuola_#{Time.current.to_i}.pdf",
+          filename: filename,
           type: "application/pdf",
           disposition: "inline"
       end

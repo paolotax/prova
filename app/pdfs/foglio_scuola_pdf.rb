@@ -5,7 +5,7 @@ class FoglioScuolaPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(import_scuole, view)
+  def initialize(import_scuole, view:, tipo_stampa: 'tutte_adozioni')
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
@@ -19,13 +19,14 @@ class FoglioScuolaPdf < Prawn::Document
               :CreationDate => Time.now
           })
     @view = view
+    @tipo_stampa = tipo_stampa
 
     import_scuole.each_with_index do |scuola, index|
       start_new_page if index > 0
       
       @scuola = scuola
       @tappe = scuola.tappe
-      @adozioni = scuola.import_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
+      @adozioni = get_adozioni_per_tipo_stampa(scuola)
 
       intestazione_scuola
       table_tappe
@@ -37,6 +38,22 @@ class FoglioScuolaPdf < Prawn::Document
       table_adozioni
     end
   end
+  
+  private
+  
+  def get_adozioni_per_tipo_stampa(scuola)
+    case @tipo_stampa
+    when 'mie_adozioni'
+      # Prendo solo le adozioni dell'utente corrente per questa scuola
+      foglio_scuola = Scuole::FoglioScuola.new(scuola: scuola)
+      foglio_scuola.mie_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
+    else # 'tutte_adozioni'
+      # Prendo tutte le adozioni della scuola
+      scuola.import_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
+    end
+  end
+  
+  public
   
   def intestazione_scuola
   

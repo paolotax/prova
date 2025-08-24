@@ -33,12 +33,30 @@
 						color: "pink",
 						url:  mappe_path(id: @import_scuola.class.name.underscore + "-" + @import_scuola.id.to_s)
 				%>
-				<%= component 'tax_button',
-						caption: "Stampa",
-						svg_file: "icon-print.svg",
-						color: "white",
-						url: url_for( controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf' )
-				%>
+				<%= render DropdownComponent.new() do |dropdown| %>
+					<%= dropdown.with_button do %>
+						<%= component 'tax_button',
+								caption: "Stampa",
+								svg_file: "icon-print.svg",
+								color: "white",
+								type: :dropdown
+						%>
+					<% end %>
+
+					<%= dropdown.with_item do %>
+						<%= link_to "Tutte le adozioni", 
+								url_for(controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf', tipo_stampa: 'tutte_adozioni'),
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", target: "_blank" %>
+					<% end %>
+
+					<%= dropdown.with_item do %>
+						<%= link_to "Solo le mie adozioni", 
+								url_for(controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf', tipo_stampa: 'mie_adozioni'),
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", target: "_blank" %>
+					<% end %>
+				<% end %>
 			</div>
 			<div class="flex items-center gap-2">
 				<%= component 'tax_button',
