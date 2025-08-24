@@ -59,9 +59,9 @@ class FoglioScuolaPdf < Prawn::Document
   def table_tappe
     
     bounding_box([bounds.right - 200, bounds.top], width: 200) do
-      @tappe.each do |t|                    
+      @tappe.sort_by(&:data_tappa).each do |t|                    
         bounding_box([bounds.right - 200, cursor], width: 200) do       
-            text "#{t&.data_tappa&.strftime("%d-%m")} - #{t.giro&.titolo}", size: 10, style: :bold
+            text "#{t&.data_tappa&.strftime("%d-%m-%y")} - #{t.giri.pluck(:titolo).join(", ")}", size: 10, style: :bold
             text t.titolo, size: 10
 
           
@@ -107,7 +107,15 @@ class FoglioScuolaPdf < Prawn::Document
 
         adozioni_table = make_table(data, width: 150.mm, 
             cell_style: { border_width: 0.5, size: 7 }, 
-            column_widths: { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm })
+            column_widths: { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm }) do
+          
+          # Color title cells yellow for mie_adozioni
+          adozioni.each_with_index do |a, index|
+            if a.mia_adozione?
+              row(index).column(0).background_color = "FFFF00"  # Yellow
+            end
+          end
+        end
 
         rows = []
         rows << [classe_table, adozioni_table]
