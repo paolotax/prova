@@ -76,7 +76,7 @@ class FoglioScuolaPdf < Prawn::Document
   def table_tappe
     
     bounding_box([bounds.right - 200, bounds.top], width: 200) do
-      @tappe.sort_by(&:data_tappa).each do |t|                    
+      @tappe.where.not(data_tappa: nil).sort_by(&:data_tappa).each do |t|                    
         bounding_box([bounds.right - 200, cursor], width: 200) do       
             text "#{t&.data_tappa&.strftime("%d-%m-%y")} - #{t.giri.pluck(:titolo).join(", ")}", size: 10, style: :bold
             text t.titolo, size: 10
@@ -126,11 +126,17 @@ class FoglioScuolaPdf < Prawn::Document
             cell_style: { border_width: 0.5, size: 7 }, 
             column_widths: { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm }) do
           
-          # Color title cells yellow for mie_adozioni
+          # Color and style title cells only for mie_adozioni
           adozioni.each_with_index do |a, index|
             if a.mia_adozione?
-              row(index).column(0).background_color = "FFFF00"  # Yellow
+              if a.da_acquistare?
+                row(index).column(0).background_color = "FFFF00"  # Bright yellow for my adoptions da_acquistare
+                row(index).column(0).font_style = :bold  # Bold text for my adoptions da_acquistare
+              else
+                row(index).column(0).background_color = "FFFFCC"  # Pale yellow for my other adoptions
+              end
             end
+            # All other publishers' adoptions remain white (default)
           end
         end
 

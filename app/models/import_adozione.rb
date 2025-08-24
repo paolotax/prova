@@ -208,6 +208,10 @@ class ImportAdozione < ApplicationRecord
     self.DAACQUIST
   end
 
+  def da_acquistare?
+    self.DAACQUIST == 'Si'
+  end
+
   def consigliato
     self.CONSIGLIATO
   end
