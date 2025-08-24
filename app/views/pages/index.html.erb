@@ -1,176 +1,17 @@
 <div class="">
   	<%# <div class="relative isolate px-6 pt-6 lg:px-8"> %>
-
 	<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
 		<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 	</div>
 
-
 	<div class="mx-auto max-w-2xl py-4 sm:py-8 lg:py-12">
-
-
 		<% if current_user %>
-
-			<%= tag.div class: "min-h-[calc(100vh-80px)] flex items-center justify-center" do %>
-				<%= tag.div class: "max-w-md w-full grid grid-cols-2 gap-4 p-4" do %>
-
-					<%= link_to voice_notes_path,
-						class: "hotwire-native:hidden aspect-square rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "microphone", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Vocals</span>
-						</div>
-					<% end %>
-
-					<%= link_to appunti_path,
-						class: "aspect-square rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "pencil", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Appunti</span>
-						</div>
-					<% end %>
-
-					<%= link_to giorno_path(giorno: Date.today),
-						class: "aspect-square rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "map-pin", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Oggi</span>
-						</div>
-					<% end %>
-
-					<%= link_to agenda_path(giorno: Date.today),
-						class: "aspect-square rounded-xl bg-lime-500 hover:bg-lime-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "calendar", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Agenda</span>
-						</div>
-					<% end %>
-
-					<%= link_to import_scuole_path,
-						class: "aspect-square rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "academic-cap", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Scuole</span>
-						</div>
-					<% end %>
-
-					<%= link_to import_adozioni_path,
-						class: "aspect-square rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "currency-euro", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Adozioni</span>
-						</div>
-					<% end %>
-
-
-					<%= link_to documenti_path,
-						class: "aspect-square rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "document", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Documenti</span>
-						</div>
-					<% end %>
-
-					<%= link_to ordini_in_corso_path,
-						class: "aspect-square rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "shopping-cart", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Ordini</span>
-						</div>
-					<% end %>
-
-					<%= link_to giri_path,
-						class: "aspect-square rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "map", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Giri</span>
-						</div>
-					<% end %>
-
-					<%= link_to libri_path,
-						class: "aspect-square rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "book-open", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Libri</span>
-						</div>
-					<% end %>
-
-					<%= link_to stats_path,
-						class: "aspect-square rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "chart-bar", class: "w-8 h-8 mx-auto mb-2" %>
-							<span>Stats</span>
-						</div>
-					<% end %>
-
-					<% if current_user.admin? %>
-						<%= link_to chats_path,
-							data: { turbo: false },
-							class: "hotwire-native:hidden aspect-square rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-							<div class="text-center">
-								<%= icon "chat-bubble-left-right", class: "w-8 h-8 mx-auto mb-2" %>
-								<span>Chat GPT</span>
-							</div>
-						<% end %>
-					<% end %>
-
-					<%= link_to destroy_user_session_path,
-						data: { turbo_method: :delete },
-						class: "col-span-2 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold p-4 shadow-lg hover:shadow-xl transition-all flex items-center justify-center" do %>
-						<div class="text-center">
-							<%= icon "arrow-right-on-rectangle", variant: :solid, options: { class: "w-6 h-6 mx-auto" } %>
-							<span>Esci</span>
-						</div>
-					<% end %>
-				<% end %>
-			<% end %>
-
-
-
+			<%= render 'dashboard_navigation' %>
 		<% else %>
-
-			<div class="flex min-h-[calc(100vh-180px)]">
-				<div class="m-auto w-full px-6 sm:px-8 lg:px-12">
-					<div class="text-center max-w-4xl mx-auto py-16 sm:py-20 lg:py-24">
-
-						<div class="hidden sm:mb-8 sm:flex sm:justify-center">
-							<div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-								Sta per uscire ScagnoZZ (<%= @page_hits %>)
-								<a href="#" class="font-semibold text-indigo-600"><span class="absolute inset-0" aria-hidden="true">
-									</span>Scopri di più <span aria-hidden="true">&rarr;</span>
-								</a>
-							</div>
-						</div>
-						<div class="text-center hero-section">
-							<h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-								Tutto ciò che ti serve per questa Propaganda.
-							</h1>
-							<p class="mt-6 text-lg leading-8 text-gray-600">
-
-								Tutte le <%= @totale_scuole %> scuole e
-								le <%= @totale_adozioni %> adozioni 2025 
-</br>
-								e le <%= @old_totale_scuole %> scuole e
-								le <%= @old_totale_adozioni %> adozioni 2024 grazie al <%= link_to("Portale Unico dei Dati della Scuola", "https://dati.istruzione.it/opendata/opendata/", class: "font-semibold") %>.
-
-								<%= link_to "https://dati.istruzione.it/opendata/opendata/", class: "inline-block align-top pl-2 pt-2" do %>
-									<%= image_tag "logo_iodl_esteso.png", class: "w-32 mx-auto" %>
-								<% end %>
-							</p>
-							<div class="mt-14 flex items-center justify-center gap-x-6">
-								<a href="<%= new_user_registration_path %>" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-									Registrati
-								</a>
-								<a href="<%= new_user_session_path %>" class="text-sm font-semibold leading-6 text-gray-900">
-									Accedi <span aria-hidden="true">→</span>
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<%= render 'hero_section' %>
 		<% end %>
 	</div>
+	
 	<div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
 	  	<div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 	</div>
