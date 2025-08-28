@@ -1,4 +1,4 @@
-<div id="user-scuole" class="">
+<%= turbo_frame_tag "user-zone" do %>
     
     <% current_user.zone.each do |zona, count|%>
 
@@ -25,4 +25,4 @@
         </div>							
     <% end %>
 
-</div>
+<% end %>

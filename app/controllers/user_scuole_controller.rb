@@ -1,7 +1,7 @@
 class UserScuoleController < ApplicationController
   
   before_action :authenticate_user!
-  before_action :set_user_scuola, only: %i[ show edit update ]
+  before_action :set_user_scuola, only: %i[ show edit update destroy ]
 
   def index
     @user_scuole = current_user.user_scuole
@@ -48,9 +48,6 @@ class UserScuoleController < ApplicationController
   end
 
   def destroy
-
-    # intanto lo faccio cosi ma poi vediamo
-    @user_scuola = current_user.user_scuole.find_by_import_scuola_id(params[:id])
     
     @user_scuola.destroy!
 

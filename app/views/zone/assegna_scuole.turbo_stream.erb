@@ -2,7 +2,7 @@
 	<%= current_user.import_scuole.count %>
 <% end %>
 
-<%= turbo_stream.replace "user-scuole" do %>
+<%= turbo_stream.replace "user-zone" do %>
 	<%= render partial: "zone/zone_list", locals: { current_user: current_user } %>
 <% end %>
 
