@@ -104,7 +104,7 @@ class Appunto < ApplicationRecord
 
   scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
   scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  scope :non_archiviati, -> { where.not(stato: %w[archiviato completato]).non_saggi }
+  scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
 
   # non includono clienti REFACTOR appunto clientable
   scope :nel_baule_di_oggi, lambda {

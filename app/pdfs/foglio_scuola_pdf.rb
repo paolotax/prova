@@ -18,6 +18,10 @@ class FoglioScuolaPdf < Prawn::Document
               :Producer => "Prawn",
               :CreationDate => Time.now
           })
+    
+    # Configura encoding UTF-8 per gestire caratteri speciali
+    # I caratteri emoji verranno comunque sanitizzati dalla funzione sanitize_text_for_pdf
+    
     @view = view
     @tipo_stampa = tipo_stampa
 
@@ -28,18 +32,48 @@ class FoglioScuolaPdf < Prawn::Document
       @tappe = scuola.tappe
       @adozioni = get_adozioni_per_tipo_stampa(scuola)
 
-      intestazione_scuola
-      table_tappe
-
-      if @cursor_tappe > @cursor_scuola
-        move_cursor_to @cursor_scuola
-      end
+      intestazione_e_tappe
 
       table_adozioni
+      table_appunti
+      table_seguiti
     end
   end
   
   private
+  
+  # Sanitizza il testo per rimuovere caratteri non compatibili con Windows-1252
+  def sanitize_text_for_pdf(text)
+    return "" if text.blank?
+    
+    begin
+      # Tentativo di codifica diretta a Windows-1252
+      sanitized = text.encode('Windows-1252', invalid: :replace, undef: :replace, replace: '')
+      return sanitized.strip
+    rescue => e
+      puts "WARNING: Errore encoding #{e.message}, uso sanitizzazione manuale"
+    end
+    
+    # Fallback: sanitizzazione manuale più aggressiva
+    sanitized = text.to_s
+    
+    # Rimuovi tutti i caratteri emoji e simboli Unicode
+    sanitized = sanitized.gsub(/[\u{1F000}-\u{1FAFF}]/, '')  # Tutti gli emoji
+                        .gsub(/[\u{2000}-\u{2BFF}]/, '')   # Simboli generali
+                        .gsub(/[\u{E000}-\u{F8FF}]/, '')   # Area uso privato
+    
+    # Sostituisci caratteri comuni problematici
+    sanitized = sanitized.gsub(/["""]/, '"')     # Smart quotes
+                        .gsub(/[''']/, "'")      # Smart apostrophes  
+                        .gsub(/[–—]/, "-")       # En/Em dashes
+                        .gsub(/…/, "...")        # Ellipsis
+                        .gsub(/[°]/, " gradi ")  # Simbolo gradi
+    
+    # Rimuovi qualsiasi carattere non ASCII rimasto
+    sanitized = sanitized.gsub(/[^\x00-\x7F]/, '')
+    
+    sanitized.strip
+  end
   
   def get_adozioni_per_tipo_stampa(scuola)
     case @tipo_stampa
@@ -55,45 +89,106 @@ class FoglioScuolaPdf < Prawn::Document
   
   public
   
-  def intestazione_scuola
-  
-    bounding_box [ 0, bounds.top], :width => bounds.width / 2.0, :height => 120 do
-      #stroke_bounds
+  def intestazione_e_tappe
+    # Layout a 3 colonne dall'alto della pagina
+    # 50% intestazione + 25% tappe precedenti + 25% tappe correnti
+    
+    larghezza_totale = bounds.width
+    margine_intestazione = 10  # Piccolo margine destro per l'intestazione
+    larghezza_intestazione = (larghezza_totale * 0.5) - margine_intestazione
+    larghezza_tappe = larghezza_totale * 0.25
+    
+    start_y = cursor
+    altezza_disponibile = cursor - bounds.bottom  # Spazio disponibile fino al fondo
+    puts "DEBUG: altezza_disponibile=#{altezza_disponibile}"
+    
+    cursors_finali = []
+    
+    # COLONNA 1: INTESTAZIONE SCUOLA (50%)
+    bounding_box([0, start_y], width: larghezza_intestazione, height: altezza_disponibile) do
       text @scuola.tipo_scuola, :size => 12, :spacing => 4
-      #move_down(3)
-      text  @scuola.denominazione,  :size => 14, :style => :bold, :spacing => 4      
-      text @scuola.indirizzo,  :size => 12
-      text @scuola.cap + ' ' + @scuola.comune  + ' ' + @scuola.provincia,  :size => 12
+      text @scuola.denominazione, :size => 14, :style => :bold, :spacing => 4      
+      text @scuola.indirizzo, :size => 12
+      text @scuola.cap + ' ' + @scuola.comune + ' ' + @scuola.provincia, :size => 12
       move_down(10)
-      text "cod.min.: #{@scuola.codice_ministeriale}",  :size => 10
-      text "email: #{@scuola.email}",  :size => 10
+      text "cod.min.: #{@scuola.codice_ministeriale}", :size => 10
+      text "email: #{@scuola.email}", :size => 10
+      stroke_horizontal_rule
+      move_down 5
+      cursors_finali << cursor
+      puts "DEBUG: cursor_intestazione=#{cursor}"
     end
-
-    @cursor_scuola = cursor
     
-  end
-
-  def table_tappe
+    # Prepara dati tappe
+    tappe_complete = @tappe.where.not(data_tappa: nil)
+                           .select { |t| t.giri.any? || t.titolo.present? }
+                           .sort_by(&:data_tappa)
     
-    bounding_box([bounds.right - 200, bounds.top], width: 200) do
-      @tappe.where.not(data_tappa: nil).sort_by(&:data_tappa).each do |t|                    
-        bounding_box([bounds.right - 200, cursor], width: 200) do       
-            text "#{t&.data_tappa&.strftime("%d-%m-%y")} - #{t.giri.pluck(:titolo).join(", ")}", size: 10, style: :bold
-            text t.titolo, size: 10
-
-          
-            mask(:line_width) do
-              line_width 0.5
-              #stroke_bounds
-            end
+    anno_corrente = Date.current.year
+    tappe_precedenti = tappe_complete.select { |t| t.data_tappa&.year < anno_corrente }
+    tappe_correnti = tappe_complete.select { |t| t.data_tappa&.year >= anno_corrente }
+    
+    # COLONNA 2: TAPPE PRECEDENTI (25%)
+    bounding_box([larghezza_intestazione + margine_intestazione, start_y], width: larghezza_tappe, height: altezza_disponibile) do
+      text "PRECEDENTI (#{tappe_precedenti.count})", size: 8, style: :bold, align: :center
+      stroke_horizontal_rule
+      move_down 3
+      
+      tappe_precedenti.each do |tappa|
+        # Data e giro sulla stessa riga con font diversi
+        data_text = tappa.data_tappa&.strftime("%d-%m-%y") || ""
+        giro_text = tappa.giri.any? ? " #{tappa.giri.pluck(:titolo).join(", ")}" : ""
+        
+        formatted_text([
+          { text: data_text, size: 7, styles: [:italic] },
+          { text: giro_text, size: 7, styles: [:bold] }
+        ])
+        
+        if tappa.titolo.present?
+          text tappa.titolo, size: 6
         end
-        move_down 5
+        move_down 3
       end
+      cursors_finali << cursor
+      puts "DEBUG: cursor_tappe_precedenti=#{cursor}"
     end
-    move_down 20
-
-    @cursor_tappe = cursor
     
+    # COLONNA 3: TAPPE CORRENTI (25%)
+    bounding_box([larghezza_intestazione + margine_intestazione + larghezza_tappe, start_y], width: larghezza_tappe, height: altezza_disponibile) do
+      text "#{anno_corrente}+ (#{tappe_correnti.count})", size: 8, style: :bold, align: :center
+      stroke_horizontal_rule
+      move_down 3
+      
+      tappe_correnti.each do |tappa|
+        # Data e giro sulla stessa riga con font diversi
+        data_text = tappa.data_tappa&.strftime("%d-%m-%y") || ""
+        giro_text = tappa.giri.any? ? " #{tappa.giri.pluck(:titolo).join(", ")}" : ""
+        
+        formatted_text([
+          { text: data_text, size: 7, styles: [:italic] },
+          { text: giro_text, size: 7, styles: [:bold] }
+        ])
+        
+        if tappa.titolo.present?
+          text tappa.titolo, size: 6
+        end
+        move_down 3
+      end
+      cursors_finali << cursor
+      puts "DEBUG: cursor_tappe_correnti=#{cursor}"
+    end
+    
+    # Sposta il cursor principale al punto più basso delle 3 colonne
+    cursor_piu_basso = cursors_finali.min
+    puts "DEBUG: start_y=#{start_y}, cursors_finali=#{cursors_finali}, cursor_piu_basso=#{cursor_piu_basso}"
+    
+    # Calcola quanto spazio hanno occupato le colonne + margine
+    spazio_occupato = start_y - cursor_piu_basso + 20
+    puts "DEBUG: spazio_occupato=#{spazio_occupato}"
+    
+    # Riposiziona il cursor direttamente al punto più basso + margine
+    move_cursor_to cursor_piu_basso - 20
+    puts "DEBUG: cursor_finale=#{cursor}"
   end
 
   def table_adozioni
@@ -122,9 +217,9 @@ class FoglioScuolaPdf < Prawn::Document
         end
         data << [ "." ] if data.size > 1
 
-        adozioni_table = make_table(data, width: 150.mm, 
+        adozioni_table = make_table(data, width: 142.mm, 
             cell_style: { border_width: 0.5, size: 7 }, 
-            column_widths: { 0 => 70.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm }) do
+            column_widths: { 0 => 62.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 20.mm }) do
           
           # Color and style title cells only for mie_adozioni
           adozioni.each_with_index do |a, index|
@@ -136,17 +231,141 @@ class FoglioScuolaPdf < Prawn::Document
                 row(index).column(0).background_color = "FFFFCC"  # Pale yellow for my other adoptions
               end
             end
-            # All other publishers' adoptions remain white (default)
+            
+            # Stilizzazione celle SSK
+            if a.saggi.size > 0
+              row(index).column(1).background_color = "FF0000"  # Rosso per saggi
+              row(index).column(1).font_style = :bold
+              row(index).column(1).text_color = "FFFFFF"       # Testo bianco
+              row(index).column(1).align = :center
+            end
+            
+            if a.kit.size > 0
+              row(index).column(2).background_color = "FF1493"  # Rosa per kit
+              row(index).column(2).font_style = :bold
+              row(index).column(2).text_color = "FFFFFF"       # Testo bianco
+              row(index).column(2).align = :center
+            end
+            
+            if a.seguiti.size > 0
+              row(index).column(3).background_color = "0080FF"  # Azzurro per seguiti
+              row(index).column(3).font_style = :bold
+              row(index).column(3).text_color = "FFFFFF"       # Testo bianco
+              row(index).column(3).align = :center
+            end
           end
         end
 
         rows = []
         rows << [classe_table, adozioni_table]
-        table rows, width: 188.mm, column_widths: [38.mm, 150.mm], cell_style: { border_width: 0.5 }, position: :center
+        table rows, width: 180.mm, column_widths: [38.mm, 142.mm], cell_style: { border_width: 0.5 }, position: :center
       end
 
       move_down(5)   
     end
+  end
+
+  def render_appunti_table(appunti, title, header_color, alternate_color, use_adozione_data: false)
+      move_down(10)
+      
+    # Title for section
+    text title, size: 12, style: :bold
+      move_down(5)
+      
+      # Prepare data for the table
+      data = [["Classe", "Titolo", "Body / Content", "Stato", "Creato"]]
+      
+      appunti.each do |appunto|
+        # Combine body and content with line breaks
+        body_content = []
+        if appunto.content.present?
+          clean_content = @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: [])
+          body_content << sanitize_text_for_pdf(clean_content)
+        end
+        if appunto.body.present?
+          body_content << sanitize_text_for_pdf(appunto.body.to_s)
+        end
+        
+        combined_content = body_content.join("\n")
+      
+      # Use different data sources based on use_adozione_data flag
+      if use_adozione_data && appunto.import_adozione
+        titolo_info = sanitize_text_for_pdf(appunto.import_adozione.titolo)
+        classe_info = sanitize_text_for_pdf("#{appunto.import_adozione.ANNOCORSO} #{appunto.import_adozione.SEZIONEANNO}")
+      else
+        titolo_info = sanitize_text_for_pdf(appunto.nome || "")
+        classe_info = sanitize_text_for_pdf(appunto.classe&.to_combobox_display || "")
+      end
+        
+        # Debug per identificare testo problematico
+        row_data = [
+          classe_info,
+          titolo_info,
+          combined_content,
+          sanitize_text_for_pdf(appunto.stato || ""),
+          appunto.created_at&.strftime("%d/%m/%Y") || ""
+        ]
+        
+        # Verifica encoding di ogni campo
+        row_data.each_with_index do |field, index|
+          begin
+            field.to_s.encode('Windows-1252')
+          rescue => e
+            puts "ERROR: Campo #{index} (#{['Classe', 'Titolo', 'Content', 'Stato', 'Data'][index]}) ha caratteri problematici: #{e.message}"
+            puts "Contenuto problematico: #{field.inspect}"
+            # Forza sanitizzazione aggressiva
+            row_data[index] = field.to_s.gsub(/[^\x00-\x7F]/, '?')
+          end
+        end
+        
+        data << row_data
+      end
+      
+    # Create and style the table using make_table
+    appunti_table = make_table(data, width: 180.mm,
+            cell_style: { 
+              border_width: 0.5, 
+              size: 8, 
+              inline_format: true,
+              valign: :top
+            },
+            column_widths: { 
+            0 => 20.mm,   # Classe
+              1 => 40.mm,   # Titolo  
+            2 => 85.mm,   # Body/Content
+            3 => 17.5.mm, # Stato
+            4 => 17.5.mm  # Creato
+          }) do
+        
+        # Header row styling
+        row(0).font_style = :bold
+      row(0).background_color = header_color
+        
+        # Alternate row colors for better readability
+        (1...row_length).each do |i|
+        row(i).background_color = alternate_color if i.odd?
+        end
+        
+        # Allow rows to expand based on content
+        cells.style do |cell|
+          cell.height = nil  # Let height adjust automatically
+        end
+      end
+    
+    # Position the table
+    table [[appunti_table]], width: 180.mm, cell_style: { border_width: 0 }, position: :center
+      
+      move_down(10)
+    end
+
+  def table_appunti
+    appunti = @scuola.appunti.non_archiviati.order(created_at: :desc)
+    render_appunti_table(appunti, "APPUNTI", "DDDDDD", "F9F9F9") unless appunti.empty?
+  end
+
+  def table_seguiti
+    seguiti = @scuola.appunti.where(nome: 'seguito').where.not(import_adozione_id: nil).includes(:import_adozione, :classe).order(created_at: :desc)
+    render_appunti_table(seguiti, "SEGUITI", "CCE5FF", "F0F8FF", use_adozione_data: true) unless seguiti.empty?
   end
   
   def pieghi_di_libri?(scuola)
@@ -225,6 +444,11 @@ class FoglioScuolaPdf < Prawn::Document
     
   def current_user
     @view.current_user
+  end
+
+  def truncate_text(text, max_length = 30)
+    return "" if text.blank?
+    text.length > max_length ? "#{text[0...max_length]}..." : text
   end
 
 end
