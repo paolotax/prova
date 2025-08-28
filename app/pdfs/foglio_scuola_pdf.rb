@@ -266,28 +266,28 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def render_appunti_table(appunti, title, header_color, alternate_color, use_adozione_data: false)
-      move_down(10)
+    move_down(10)
       
     # Title for section
     text title, size: 12, style: :bold
-      move_down(5)
+    move_down(5)
+    
+    # Prepare data for the table
+    data = [["Classe", "Titolo", "Body / Content", "Stato", "Creato"]]
+    
+    appunti.each do |appunto|
+      # Combine body and content with line breaks
+      body_content = []
+      if appunto.content.present?
+        clean_content = @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: [])
+        body_content << sanitize_text_for_pdf(clean_content)
+      end
+      if appunto.body.present?
+        body_content << sanitize_text_for_pdf(appunto.body.to_s)
+      end
       
-      # Prepare data for the table
-      data = [["Classe", "Titolo", "Body / Content", "Stato", "Creato"]]
-      
-      appunti.each do |appunto|
-        # Combine body and content with line breaks
-        body_content = []
-        if appunto.content.present?
-          clean_content = @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: [])
-          body_content << sanitize_text_for_pdf(clean_content)
-        end
-        if appunto.body.present?
-          body_content << sanitize_text_for_pdf(appunto.body.to_s)
-        end
-        
-        combined_content = body_content.join("\n")
-      
+      combined_content = body_content.join("\n")
+    
       # Use different data sources based on use_adozione_data flag
       if use_adozione_data && appunto.import_adozione
         titolo_info = sanitize_text_for_pdf(appunto.import_adozione.titolo)
@@ -296,30 +296,30 @@ class FoglioScuolaPdf < Prawn::Document
         titolo_info = sanitize_text_for_pdf(appunto.nome || "")
         classe_info = sanitize_text_for_pdf(appunto.classe&.to_combobox_display || "")
       end
-        
-        # Debug per identificare testo problematico
-        row_data = [
-          classe_info,
-          titolo_info,
-          combined_content,
-          sanitize_text_for_pdf(appunto.stato || ""),
-          appunto.created_at&.strftime("%d/%m/%Y") || ""
-        ]
-        
-        # Verifica encoding di ogni campo
-        row_data.each_with_index do |field, index|
-          begin
-            field.to_s.encode('Windows-1252')
-          rescue => e
-            puts "ERROR: Campo #{index} (#{['Classe', 'Titolo', 'Content', 'Stato', 'Data'][index]}) ha caratteri problematici: #{e.message}"
-            puts "Contenuto problematico: #{field.inspect}"
-            # Forza sanitizzazione aggressiva
-            row_data[index] = field.to_s.gsub(/[^\x00-\x7F]/, '?')
-          end
+      
+      # Debug per identificare testo problematico
+      row_data = [
+        classe_info,
+        titolo_info,
+        combined_content,
+        sanitize_text_for_pdf(appunto.stato || ""),
+        appunto.created_at&.strftime("%d/%m/%Y") || ""
+      ]
+      
+      # Verifica encoding di ogni campo
+      row_data.each_with_index do |field, index|
+        begin
+          field.to_s.encode('Windows-1252')
+        rescue => e
+          puts "ERROR: Campo #{index} (#{['Classe', 'Titolo', 'Content', 'Stato', 'Data'][index]}) ha caratteri problematici: #{e.message}"
+          puts "Contenuto problematico: #{field.inspect}"
+          # Forza sanitizzazione aggressiva
+          row_data[index] = field.to_s.gsub(/[^\x00-\x7F]/, '?')
         end
-        
-        data << row_data
       end
+      
+      data << row_data
+    end
       
     # Create and style the table using make_table
     appunti_table = make_table(data, width: 180.mm,
@@ -337,26 +337,26 @@ class FoglioScuolaPdf < Prawn::Document
             4 => 17.5.mm  # Creato
           }) do
         
-        # Header row styling
-        row(0).font_style = :bold
+      # Header row styling
+      row(0).font_style = :bold
       row(0).background_color = header_color
         
-        # Alternate row colors for better readability
-        (1...row_length).each do |i|
+      # Alternate row colors for better readability
+      (1...row_length).each do |i|
         row(i).background_color = alternate_color if i.odd?
-        end
-        
-        # Allow rows to expand based on content
-        cells.style do |cell|
-          cell.height = nil  # Let height adjust automatically
-        end
       end
+      
+      # Allow rows to expand based on content
+      cells.style do |cell|
+        cell.height = nil  # Let height adjust automatically
+      end
+    end
     
     # Position the table
     table [[appunti_table]], width: 180.mm, cell_style: { border_width: 0 }, position: :center
       
-      move_down(10)
-    end
+    move_down(10)
+  end
 
   def table_appunti
     appunti = @scuola.appunti.non_archiviati.order(created_at: :desc)
@@ -364,7 +364,7 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def table_seguiti
-    seguiti = @scuola.appunti.where(nome: 'seguito').where.not(import_adozione_id: nil).includes(:import_adozione, :classe).order(created_at: :desc)
+    seguiti = @scuola.appunti.where(nome: 'seguito').includes(:classe).order(created_at: :desc)
     render_appunti_table(seguiti, "SEGUITI", "CCE5FF", "F0F8FF", use_adozione_data: true) unless seguiti.empty?
   end
   
