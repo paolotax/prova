@@ -80,119 +80,14 @@ class FoglioScuolaPdf < Prawn::Document
     when 'mie_adozioni'
       # Prendo solo le adozioni dell'utente corrente per questa scuola
       foglio_scuola = Scuole::FoglioScuola.new(scuola: scuola)
-      foglio_scuola.mie_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
+      foglio_scuola.mie_adozioni.da_acquistare.sort_by(&:classe_e_sezione_e_disciplina)
     else # 'tutte_adozioni'
       # Prendo tutte le adozioni della scuola
       scuola.import_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
     end
   end
   
-  public
-  
-  def intestazione_e_tappe
-    # Layout a 3 colonne dall'alto della pagina
-    # 50% intestazione + 25% tappe precedenti + 25% tappe correnti
-    
-    larghezza_totale = bounds.width
-    margine_intestazione = 10  # Piccolo margine destro per l'intestazione
-    larghezza_intestazione = (larghezza_totale * 0.5) - margine_intestazione
-    larghezza_tappe = larghezza_totale * 0.25
-    
-    start_y = cursor
-    altezza_disponibile = cursor - bounds.bottom  # Spazio disponibile fino al fondo
-    puts "DEBUG: altezza_disponibile=#{altezza_disponibile}"
-    
-    cursors_finali = []
-    
-    # COLONNA 1: INTESTAZIONE SCUOLA (50%)
-    bounding_box([0, start_y], width: larghezza_intestazione, height: altezza_disponibile) do
-      text @scuola.tipo_scuola, :size => 12, :spacing => 4
-      text @scuola.denominazione, :size => 14, :style => :bold, :spacing => 4      
-      text @scuola.indirizzo, :size => 12
-      text @scuola.cap + ' ' + @scuola.comune + ' ' + @scuola.provincia, :size => 12
-      move_down(10)
-      text "cod.min.: #{@scuola.codice_ministeriale}", :size => 10
-      text "email: #{@scuola.email}", :size => 10
-      stroke_horizontal_rule
-      move_down 5
-      cursors_finali << cursor
-      puts "DEBUG: cursor_intestazione=#{cursor}"
-    end
-    
-    # Prepara dati tappe
-    tappe_complete = @tappe.where.not(data_tappa: nil)
-                           .select { |t| t.giri.any? || t.titolo.present? }
-                           .sort_by(&:data_tappa)
-    
-    anno_corrente = Date.current.year
-    tappe_precedenti = tappe_complete.select { |t| t.data_tappa&.year < anno_corrente }
-    tappe_correnti = tappe_complete.select { |t| t.data_tappa&.year >= anno_corrente }
-    
-    # COLONNA 2: TAPPE PRECEDENTI (25%)
-    bounding_box([larghezza_intestazione + margine_intestazione, start_y], width: larghezza_tappe, height: altezza_disponibile) do
-      text "PRECEDENTI (#{tappe_precedenti.count})", size: 8, style: :bold, align: :center
-      stroke_horizontal_rule
-      move_down 3
-      
-      tappe_precedenti.each do |tappa|
-        # Data e giro sulla stessa riga con font diversi
-        data_text = tappa.data_tappa&.strftime("%d-%m-%y") || ""
-        giro_text = tappa.giri.any? ? " #{tappa.giri.pluck(:titolo).join(", ")}" : ""
-        
-        formatted_text([
-          { text: data_text, size: 7, styles: [:italic] },
-          { text: giro_text, size: 7, styles: [:bold] }
-        ])
-        
-        if tappa.titolo.present?
-          text tappa.titolo, size: 6
-        end
-        move_down 3
-      end
-      cursors_finali << cursor
-      puts "DEBUG: cursor_tappe_precedenti=#{cursor}"
-    end
-    
-    # COLONNA 3: TAPPE CORRENTI (25%)
-    bounding_box([larghezza_intestazione + margine_intestazione + larghezza_tappe, start_y], width: larghezza_tappe, height: altezza_disponibile) do
-      text "#{anno_corrente}+ (#{tappe_correnti.count})", size: 8, style: :bold, align: :center
-      stroke_horizontal_rule
-      move_down 3
-      
-      tappe_correnti.each do |tappa|
-        # Data e giro sulla stessa riga con font diversi
-        data_text = tappa.data_tappa&.strftime("%d-%m-%y") || ""
-        giro_text = tappa.giri.any? ? " #{tappa.giri.pluck(:titolo).join(", ")}" : ""
-        
-        formatted_text([
-          { text: data_text, size: 7, styles: [:italic] },
-          { text: giro_text, size: 7, styles: [:bold] }
-        ])
-        
-        if tappa.titolo.present?
-          text tappa.titolo, size: 6
-        end
-        move_down 3
-      end
-      cursors_finali << cursor
-      puts "DEBUG: cursor_tappe_correnti=#{cursor}"
-    end
-    
-    # Sposta il cursor principale al punto più basso delle 3 colonne
-    cursor_piu_basso = cursors_finali.min
-    puts "DEBUG: start_y=#{start_y}, cursors_finali=#{cursors_finali}, cursor_piu_basso=#{cursor_piu_basso}"
-    
-    # Calcola quanto spazio hanno occupato le colonne + margine
-    spazio_occupato = start_y - cursor_piu_basso + 20
-    puts "DEBUG: spazio_occupato=#{spazio_occupato}"
-    
-    # Riposiziona il cursor direttamente al punto più basso + margine
-    move_cursor_to cursor_piu_basso - 20
-    puts "DEBUG: cursor_finale=#{cursor}"
-  end
-
-  def table_adozioni
-    #  TABLE
+  publicget_adozioni_per_tipo_stampa
     #bounding_box([bounds.left, cursor - 20], :width  => bounds.width, :height => bounds.) do
     unless @adozioni.empty?
       
