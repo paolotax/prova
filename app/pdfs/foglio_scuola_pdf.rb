@@ -87,7 +87,9 @@ class FoglioScuolaPdf < Prawn::Document
     end
   end
   
-  publicget_adozioni_per_tipo_stampa
+  public
+  
+  def intestazione_e_tappe
     #bounding_box([bounds.left, cursor - 20], :width  => bounds.width, :height => bounds.) do
     unless @adozioni.empty?
       
