@@ -17,7 +17,8 @@ class ImportAdozionePdf < Prawn::Document
               :Creator => "paolotax",
               :Producer => "Prawn",
               :CreationDate => Time.now
-          })
+          }
+    )
     
     font_families.update(
       "DejaVuSans" => {
@@ -41,19 +42,7 @@ class ImportAdozionePdf < Prawn::Document
       destinatario(a)
       pieghi_di_libri?(a)      
 
-      numero_documento(a)
       line_items(a)
-      #totali(a)
-
-      #note(a)
-
-      footer
-
-    #   unless @righe.blank?
-    #     adozione_number(a)
-    #     line_items(a) 
-    #     totali(a)
-    #   end
       
       start_new_page unless a == @adozioni.last
     end
@@ -78,6 +67,7 @@ class ImportAdozionePdf < Prawn::Document
     end
 
     if adozione.import_scuola.present?
+
       bounding_box [bounds.width / 2.0, bounds.top - 160], :width => bounds.width / 2.0, :height => 120 do
         move_down(12)
         text adozione.import_scuola.tipo_scuola,  :size => 12
@@ -95,25 +85,18 @@ class ImportAdozionePdf < Prawn::Document
             size: 13, style: :bold, rotate: 90) # if adozione.tag_list.find_index("posta")
   end
   
-  
-  def numero_documento(adozione)
-    move_down 20
-    mask(:line_width) do
-      line_width 0.5
-      stroke_horizontal_rule
-    end
     
-
-    
-  end
-  
   def line_items(adozione)
-    move_down 20
+    
+    move_cursor_to bounds.height / 2
+    dash([2, 5])  # Imposta lo stile della linea a puntini [lunghezza punto, spazio]
+    stroke_horizontal_rule
+    undash 
 
     mask(:line_width) do
-      line_width 0.5
 
-      text "Materiale abbinato al testo:", :size => 12, style: :bold
+      move_down 15
+      text "Materiale abbinato al testo in adozione:", :size => 12, style: :bold
       move_down 10
       
       highlight = HighlightCallback.new(color: 'ffff00', document: self)
@@ -128,73 +111,46 @@ class ImportAdozionePdf < Prawn::Document
 
       text "Editore: #{adozione.editore}", :size => 12, :spacing => 4
 
-      # text "Disciplina: #{adozione.disciplina}", :size => 12, :spacing => 4
+      text "Disciplina: #{adozione.disciplina}", :size => 12, :spacing => 4
+
+      # Pallini colorati con quantità affiancati
+      if adozione.saggi.any? || adozione.seguiti.any? || adozione.kit.any?
+        move_down 15
+        x_position = bounds.left + 8
+        y_position = cursor
+        
+        if adozione.saggi.any?
+          # Pallino rosso per saggi
+          fill_color "FF0000"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.saggi.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+          x_position += 20
+        end
+
+        if adozione.seguiti.any?
+          # Pallino blu per seguiti
+          fill_color "0080FF"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.seguiti.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+          x_position += 20
+        end
+
+        if adozione.kit.any?
+          # Pallino rosa per kit
+          fill_color "FF1493"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.kit.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+        end
+        
+        fill_color "000000"  # Ripristina colore nero
+      end
+      
       # text "Classe: #{adozione.classe}", :size => 12, :spacing => 4
       # text "Titolo: #{adozione.titolo}", :size => 12, :spacing => 4
     end
-  end
-
-  def line_item_rows
-
-    [["Titolo", "Quantità", "Prezzo copertina", "Sconto", "Prezzo netto", "Importo netto"]] +
-    @adozione.map do |item|
-      [
-        item.libro.titolo + " " + item.classe.classe, 
-        item.numero_copie, 
-        0, #price(item.libro.prezzo_in_cents), 
-        0, #item.sconto == 0.0 ? price(item.prezzo_copertina - item.prezzo) : item.sconto, 
-        price(item.prezzo_cents), #price(item.prezzo_cents), 
-        price(item.prezzo_cents * item.numero_copie) 
-      ]
-    end
-  end
-  
-  def totali(adozione)  
-    move_down(14)
-    text "Totale copie: #{adozione.numero_copie}", :size => 14, :style => :bold, :align => :right
-    move_down(3)
-    text "Totale importo: #{price(adozione.prezzo_cents * adozione.numero_copie)}", :size => 14, :style => :bold, :align => :right
-  end
-
-  def note(adozione)
-    move_down 20
-    move_down 10
-    text "Note", :size => 14, :style => :bold
-    text adozione.note, :size => 13
-    #text "tel. #{adozione.telefono}", :size => 13 unless adozione.telefono.blank?
-  end
-
-
-  def footer
-    # footer
-    bounding_box [bounds.left, bounds.bottom + 30.mm], :width  => bounds.width, :height => 30.mm do    
-      mask(:line_width) do
-        line_width 0.5
-        stroke_horizontal_rule
-      end
-      # move_down(15)
-      # text "Pagamento con Bonifico - Banca di appoggio: #{current_user.nome_banca}", :size => 11, :style => :bold, :spacing => 4
-      # move_down(3)
-      # text "IBAN: #{current_user.iban}",  :size => 12, :style => :bold, :spacing => 4      
-      # move_down(3)
-      # text "conto intestato a #{current_user.ragione_sociale}",  :size => 11
-      # text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
-
-    end
-  end
-
-
-
-  def price(num)    
-    @view.number_to_currency(num.to_f / 100, :locale => :it, :format => "%n %u", :precision => 2)
-  end
-  
-  def l(data)
-    @view.l data#, :format => :only_date
-  end
-  
-  def t(data)
-    @view.t data
   end
     
   def current_user
