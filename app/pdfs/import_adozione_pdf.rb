@@ -19,11 +19,15 @@ class ImportAdozionePdf < Prawn::Document
               :CreationDate => Time.now
           })
     
-    self.font_families.update("DejaVuSans" => {
-      :normal => "app/assets/stylesheets/DejaVuSans.ttf",
-      :bold => "app/assets/stylesheets/dejavu-sans-bold.ttf"
-    })
+    font_families.update(
+      "DejaVuSans" => {
+        normal: Rails.root.join("app/assets/fonts/DejaVuSans.ttf"),
+        bold: Rails.root.join("app/assets/fonts/DejaVuSans-Bold.ttf"),
+        italic: Rails.root.join("app/assets/fonts/DejaVuSans-Oblique.ttf")
+      }
+    )
     
+    # Imposta il font di default
     font "DejaVuSans"
 
     @adozioni = adozioni
@@ -61,16 +65,26 @@ class ImportAdozionePdf < Prawn::Document
   end
   
   def destinatario(adozione)
-  
-    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 120 do
 
-      move_down(3)
-      text "<u>Classe #{adozione.classe_e_sezione}</u>",  :size => 14, :style => :bold, :spacing => 4, :inline_format => true   
-      move_down(8)
-      text adozione.import_scuola.tipo_scuola,  :size => 12
-      text adozione.import_scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
-      move_down(3)
-      text adozione.import_scuola.indirizzo_formattato,  :size => 12
+    highlight = HighlightCallback.new(color: 'ffff00', document: self)
+
+    bounding_box [bounds.width / 2.0, bounds.top - 150], :width => bounds.width / 2.0, :height => 8.mm do    
+      formatted_text(
+        [
+          { text: "Classe #{adozione.classe_e_sezione}", callback: highlight },
+        ],
+        size: 14,
+      )
+    end
+
+    if adozione.import_scuola.present?
+      bounding_box [bounds.width / 2.0, bounds.top - 160], :width => bounds.width / 2.0, :height => 120 do
+        move_down(12)
+        text adozione.import_scuola.tipo_scuola,  :size => 12
+        text adozione.import_scuola.scuola,  :size => 14, :style => :bold, :spacing => 4
+        move_down(3)
+        text adozione.import_scuola.indirizzo_formattato,  :size => 12
+      end
     end
   end
   
@@ -99,9 +113,19 @@ class ImportAdozionePdf < Prawn::Document
     mask(:line_width) do
       line_width 0.5
 
-      text "Materiale per l'anno scolastico 2025/2026", :size => 14, style: :bold
+      text "Materiale abbinato al testo:", :size => 12, style: :bold
       move_down 10
       
+      highlight = HighlightCallback.new(color: 'ffff00', document: self)
+      formatted_text(
+        [
+          { text: "#{adozione.titolo}", callback: highlight, styles: [:bold] },
+        ],
+        size: 14,
+        spacing: 4
+      )
+      move_down 5
+
       text "Editore: #{adozione.editore}", :size => 12, :spacing => 4
 
       # text "Disciplina: #{adozione.disciplina}", :size => 12, :spacing => 4
