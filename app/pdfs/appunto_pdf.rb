@@ -38,7 +38,8 @@ class AppuntoPdf < Prawn::Document
             
       intestazione
       destinatario(a)
-      pieghi_di_libri?(a)
+      
+      pieghi_di_libri
       
       note(a)
       
@@ -46,22 +47,6 @@ class AppuntoPdf < Prawn::Document
     end
   end
 
-  def intestazione
-    logo
-    agente(current_user) unless current_user.nil?
-  end
-
-  def current_user
-    @view.current_user
-  end
-  
-  def pieghi_di_libri?(appunto)
-    #stroke_rectangle [0, bounds.top - 100], 16, 150
-    text_box("PIEGHI DI LIBRI",
-            at: [0, bounds.top - 250],
-            size: 13, style: :bold, rotate: 90) # if appunto.tag_list.find_index("posta")
-  end
-  
   def destinatario(appunto)
 
     highlight = HighlightCallback.new(color: 'ffff00', document: self)
@@ -102,18 +87,5 @@ class AppuntoPdf < Prawn::Document
       text appunto.body, :size => 13
     end
   end
-  
-  
-  def l(data)
-    @view.l data, :format => :only_date
-  end
-  
-  def t(data)
-    @view.t data
-  end
-      
-
 
 end
-
-

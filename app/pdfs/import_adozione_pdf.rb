@@ -37,20 +37,17 @@ class ImportAdozionePdf < Prawn::Document
     @adozioni.each do |a|
       
       @adozione = Array[a]
-      #@righe = a.righe
+
       intestazione
+      
       destinatario(a)
-      pieghi_di_libri?(a)      
+      
+      pieghi_di_libri      
 
       line_items(a)
       
       start_new_page unless a == @adozioni.last
     end
-  end
-
-  def intestazione
-    logo
-    agente(current_user) unless current_user.nil?
   end
   
   def destinatario(adozione)
@@ -77,15 +74,7 @@ class ImportAdozionePdf < Prawn::Document
       end
     end
   end
-  
-  def pieghi_di_libri?(adozione)
-    #stroke_rectangle [0, bounds.top - 100], 16, 150
-    text_box("PIEGHI DI LIBRI",
-            at: [0, bounds.top - 250],
-            size: 13, style: :bold, rotate: 90) # if adozione.tag_list.find_index("posta")
-  end
-  
-    
+        
   def line_items(adozione)
     
     move_cursor_to bounds.height / 2
@@ -153,8 +142,4 @@ class ImportAdozionePdf < Prawn::Document
     end
   end
     
-  def current_user
-    @view.current_user
-  end
-
 end

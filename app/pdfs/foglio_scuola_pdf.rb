@@ -369,14 +369,7 @@ class FoglioScuolaPdf < Prawn::Document
     seguiti = @scuola.appunti.where(nome: 'seguito').includes(:classe).order(created_at: :desc)
     render_appunti_table(seguiti, "SEGUITI", "CCE5FF", "F0F8FF", use_adozione_data: true) unless seguiti.empty?
   end
-  
-  def pieghi_di_libri?(scuola)
-    #stroke_rectangle [0, bounds.top - 100], 16, 150
-    text_box("PIEGHI DI LIBRI",
-            at: [0, bounds.top - 250],
-            size: 13, style: :bold, rotate: 90) # if scuola.tag_list.find_index("posta")
-  end
-      
+    
   def render_sovrapacchi_per_scuola(scuola)
     # Ottieni le adozioni per questa scuola che sono da acquistare e sono mie adozioni
     adozioni_sovrapacchi = scuola.import_adozioni
@@ -502,10 +495,6 @@ class FoglioScuolaPdf < Prawn::Document
         fill_color "000000"  # Ripristina colore nero
       end
     end
-  end
-
-  def current_user
-    @view.current_user
   end
 
 end

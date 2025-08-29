@@ -91,6 +91,9 @@ gem "money-rails", "~> 1.15"
 gem "prawn", "~> 2.4"
 gem "prawn-table", "~> 0.2"
 gem 'prawn-html'
+gem 'prawn-svg'
+gem 'prawn-emoji'
+
 gem 'combine_pdf'
 
 gem "pg_search", "~> 2.3"
