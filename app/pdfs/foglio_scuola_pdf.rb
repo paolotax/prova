@@ -37,6 +37,9 @@ class FoglioScuolaPdf < Prawn::Document
       table_adozioni
       table_appunti
       table_seguiti
+      
+      # Render sovrapacchi per questa scuola
+      render_sovrapacchi_per_scuola(scuola)
     end
   end
   
@@ -192,8 +195,7 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def table_adozioni
-    #  TABLE
-    #bounding_box([bounds.left, cursor - 20], :width  => bounds.width, :height => bounds.) do
+    
     unless @adozioni.empty?
       
       adozioni_grouped = @adozioni.group_by { |a| [a.classe_e_sezione, a.combinazione] }
@@ -374,81 +376,136 @@ class FoglioScuolaPdf < Prawn::Document
             at: [0, bounds.top - 250],
             size: 13, style: :bold, rotate: 90) # if scuola.tag_list.find_index("posta")
   end
-  
-  def note(scuola)
-    move_down 40
-    stroke_horizontal_rule
-    move_down 10
-    text scuola.note, :size => 13
-    text "tel. #{scuola.telefono}", :size => 13 unless scuola.telefono.blank?
-  end
-  
-  def appunto_number(scuola)
-    move_down 20
-    text "ordine \##{scuola.id} del #{l(scuola.created_at)}", size: 13, style: :bold
-  end
-  
-  def line_items(scuola)
-    move_down 10
-    table line_item_rows do
-      row(0).font_style = :bold
-      columns(1..5).align = :right
-      columns(0).width = 200
-      columns(1).width = 60
-      # columns(2..3).width = 70
-      # columns(5).width = 80
-      self.row_colors = ["DDDDDD", "FFFFFF"]
-      self.header = true
+      
+  def render_sovrapacchi_per_scuola(scuola)
+    # Ottieni le adozioni per questa scuola che sono da acquistare e sono mie adozioni
+    adozioni_sovrapacchi = scuola.import_adozioni
+                                  .where(EDITORE: current_user.miei_editori)
+                                  .where(DAACQUIST: 'Si')
+                                  .sort_by(&:classe_e_sezione_e_disciplina)
+
+    unless adozioni_sovrapacchi.empty?
+      # Inizia una nuova pagina per i sovrapacchi
+      start_new_page
+      
+      # Renderizza 4 sovrapacchi per pagina in verticale, ognuno 1/4 della pagina
+      render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
     end
   end
 
-  def line_item_rows
-    [["Titolo", "Quantità", "Pr. copertina", "Sconto", "Prezzo unitario", "Importo"]] +
-    @righe.per_libro_id.map do |item|
-      [
-        item.titolo, 
-        item.quantita, 
-        price(item.prezzo_copertina), 
+  def render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
+    # Gestisce il rendering di 4 sovrapacchi per pagina in verticale
+    # Calcola l'altezza di ogni sovrapacco: 1/4 della pagina
+    altezza_sovrapacco = bounds.height / 4.0
+    
+    adozioni_sovrapacchi.each_slice(4).each_with_index do |gruppo_adozioni, page_index|
+      if page_index > 0
+        start_new_page
+      end
+      
+      gruppo_adozioni.each_with_index do |adozione, index|
+        # Calcola la posizione Y per questo sovrapacco
+        y_position = bounds.top - (index * altezza_sovrapacco)
         
-        item.sconto == 0.0 ? price(item.prezzo_copertina - item.prezzo) : item.sconto, 
-        price(item.prezzo_unitario), 
-        price(item.importo) ]
+        # Usa bounding_box per limitare ogni sovrapacco a 1/4 della pagina
+        bounding_box([0, y_position], width: bounds.width, height: altezza_sovrapacco) do
+          render_sovrapacco_singolo(adozione, scuola)
+          
+          # Aggiungi una linea di separazione in fondo (tranne per l'ultimo)
+          if index < 3 && index < gruppo_adozioni.length - 1
+            move_cursor_to 0
+            dash([2, 5])
+            stroke_horizontal_rule
+            undash
+          end
+        end
+      end
     end
   end
-  
-  def price(num)
+
+  def render_sovrapacco_singolo(adozione, scuola)
+    # Copia la logica da ImportAdozionePdf per renderizzare una singola adozione
     
-    (num * 100).modulo(2) == 0 ? precision = 2 : precision = 3
+    move_down(20)
+    # Classe evidenziata
+    highlight = HighlightCallback.new(color: 'ffff00', document: self)
     
-    @view.number_to_currency(num, :locale => :it, :format => "%n %u", :precision => precision)
-  end
-  
-  def l(data)
-    @view.l data#, :format => :only_date
-  end
-  
-  def t(data)
-    @view.t data
-  end
-  
-  def totali(scuola)  
+    # Destinatario (classe)
+    formatted_text(
+      [
+        { text: "Classe #{adozione.classe_e_sezione}", callback: highlight },
+      ],
+      size: 14,
+    )
+    move_down(3)
+    
+    # Nome e città della scuola
+    text "#{scuola.denominazione}", size: 10, style: :italic
+    text "#{scuola.comune}", size: 10, style: :italic
     move_down(10)
-    text "Totale copie: #{scuola.totale_copie}", :size => 14, :style => :bold
-    text "Totale importo: #{price(scuola.totale_importo)}", :size => 14, :style => :bold
-  end
-  
-  def intestazione
-    logo
-    agente(current_user) unless current_user.nil?
-  end
     
+    # Contenuto allineato a destra: Materiale abbinato e tutto quello che segue
+    # Calcola la larghezza per l'allineamento a destra (circa 60% della larghezza totale)
+    larghezza_destra = bounds.width * 0.6
+    x_position_destra = bounds.width - larghezza_destra
+    
+    bounding_box([x_position_destra, cursor], width: larghezza_destra, height: bounds.height) do
+      # Materiale abbinato
+      text "Materiale abbinato al testo in adozione:", size: 12, style: :bold
+      move_down(10)
+      
+      # Titolo evidenziato
+      formatted_text(
+        [
+          { text: "#{adozione.titolo}", callback: highlight, styles: [:bold] },
+        ],
+        size: 14,
+        spacing: 4
+      )
+      move_down(5)
+      
+      text "Editore: #{adozione.editore}", size: 12, spacing: 4
+      text "Disciplina: #{adozione.disciplina.truncate(30)}", size: 12, spacing: 4
+      
+      # Pallini colorati con quantità affiancati
+      if adozione.saggi.any? || adozione.seguiti.any? || adozione.kit.any?
+        move_down(15)
+        x_position = bounds.left + 8
+        y_position = cursor
+        
+        if adozione.saggi.any?
+          # Pallino rosso per saggi
+          fill_color "FF0000"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.saggi.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+          x_position += 20
+        end
+
+        if adozione.seguiti.any?
+          # Pallino blu per seguiti
+          fill_color "0080FF"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.seguiti.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+          x_position += 20
+        end
+
+        if adozione.kit.any?
+          # Pallino rosa per kit
+          fill_color "FF1493"
+          fill_circle [x_position, y_position], 8
+          fill_color "FFFFFF"  # Testo bianco
+          text_box "#{adozione.kit.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+        end
+        
+        fill_color "000000"  # Ripristina colore nero
+      end
+    end
+  end
+
   def current_user
     @view.current_user
-  end
-
-  def truncate_text(text, max_length = 30)
-    return "" if text.blank?
-    text.length > max_length ? "#{text[0...max_length]}..." : text
   end
 
 end
