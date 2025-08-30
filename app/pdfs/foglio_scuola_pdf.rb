@@ -426,6 +426,11 @@ class FoglioScuolaPdf < Prawn::Document
     larghezza_destra = bounds.width * 0.7
     x_position_destra = bounds.width - larghezza_destra
     
+    rotate(90, origin: [200, 200]) do
+      svg IO.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg"), at: [100, 400], width: 110
+    end
+
+
     bounding_box([x_position_destra, cursor], width: larghezza_destra, height: bounds.height) do
       #stroke_bounds
 
