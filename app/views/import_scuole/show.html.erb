@@ -56,6 +56,20 @@
 								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								role: "menuitem", tabindex: "-1", target: "_blank" %>
 					<% end %>
+
+					<%= dropdown.with_item do %>
+						<%= link_to "Tutte le adozioni + sovrapacchi", 
+								url_for(controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf', tipo_stampa: 'tutte_adozioni', con_sovrapacchi: 'true'),
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", target: "_blank" %>
+					<% end %>
+
+					<%= dropdown.with_item do %>
+						<%= link_to "Solo le mie + sovrapacchi", 
+								url_for(controller: "import_scuole", action: "show", model: @import_scuola, format: 'pdf', tipo_stampa: 'mie_adozioni', con_sovrapacchi: 'true'),
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", target: "_blank" %>
+					<% end %>
 				<% end %>
 			</div>
 			<div class="flex items-center gap-2">

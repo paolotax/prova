@@ -5,7 +5,7 @@ class FoglioScuolaPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(import_scuole, view:, tipo_stampa: 'tutte_adozioni')
+  def initialize(import_scuole, view:, tipo_stampa: 'tutte_adozioni', con_sovrapacchi: false)
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
@@ -24,6 +24,7 @@ class FoglioScuolaPdf < Prawn::Document
     
     @view = view
     @tipo_stampa = tipo_stampa
+    @con_sovrapacchi = con_sovrapacchi
 
     import_scuole.each_with_index do |scuola, index|
       start_new_page if index > 0
@@ -36,10 +37,11 @@ class FoglioScuolaPdf < Prawn::Document
 
       table_adozioni
       table_appunti
+
       table_seguiti
       
-      # Render sovrapacchi per questa scuola
-      render_sovrapacchi_per_scuola(scuola)
+      # Render sovrapacchi per questa scuola solo se richiesto
+      render_sovrapacchi_per_scuola(scuola) if @con_sovrapacchi
     end
   end
   

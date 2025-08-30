@@ -7,10 +7,12 @@ class ImportScuole::BulkActionsController < ApplicationController
     respond_to do |format|
       format.pdf do
         tipo_stampa = params[:tipo_stampa] || 'tutte_adozioni'
-        pdf = FoglioScuolaPdf.new(@import_scuole, view: view_context, tipo_stampa: tipo_stampa)
+        con_sovrapacchi = params[:con_sovrapacchi] == 'true'
+        pdf = FoglioScuolaPdf.new(@import_scuole, view: view_context, tipo_stampa: tipo_stampa, con_sovrapacchi: con_sovrapacchi)
         
         filename_suffix = tipo_stampa == 'mie_adozioni' ? '_mie_adozioni' : ''
-        filename = "fogli_scuola#{filename_suffix}_#{Time.current.to_i}.pdf"
+        sovrapacchi_suffix = con_sovrapacchi ? '_con_sovrapacchi' : ''
+        filename = "fs#{filename_suffix}#{sovrapacchi_suffix}_#{Time.current.to_i}.pdf"
         
         send_data pdf.render,
           filename: filename,
