@@ -6,23 +6,35 @@ module LayoutPdf
     @view.current_user
   end
 
-  def logo
+  def logo(editore = nil)
     bounding_box([0, bounds.top], :width => bounds.width / 2.0, :height => 100) do
-      # Usa SVG con prawn-svg per qualità vettoriale
-      begin
-        giunti_svg = File.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg")
-        svg giunti_svg, :at => [-10, bounds.top], :width => 200
-      rescue => e
-        # Fallback all'immagine JPG se l'SVG non funziona
-        Rails.logger.warn "Errore nel caricamento SVG: #{e.message}"
-        giunti = "#{Rails.root}/public/images/giunti_scuola.jpg"
-        image giunti, :width => 200, :height => 35, :at => [-10, bounds.top]
+      if editore == "GAIA EDIZIONI"
+        # Logo GAIA EDIZIONI
+        begin
+          gaia_png = "#{Rails.root}/app/assets/images/gaia.png"
+          image gaia_png, :width => 200, :at => [-10, bounds.top]
+        rescue => e
+          Rails.logger.warn "Errore nel caricamento logo GAIA: #{e.message}"
+          # Fallback testo se l'immagine non funziona
+          text "GAIA EDIZIONI", :size => 16, :style => :bold, :at => [-10, bounds.top - 20]
+        end
+      else
+        # Logo GIUNTI SCUOLA (default)
+        begin
+          giunti_svg = File.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg")
+          svg giunti_svg, :at => [-10, bounds.top], :width => 200
+        rescue => e
+          # Fallback all'immagine JPG se l'SVG non funziona
+          Rails.logger.warn "Errore nel caricamento SVG: #{e.message}"
+          giunti = "#{Rails.root}/public/images/giunti_scuola.jpg"
+          image giunti, :width => 200, :height => 35, :at => [-10, bounds.top]
+        end
       end
     end
   end  
   
-  def intestazione
-    logo
+  def intestazione(editore = nil)
+    logo(editore)
     agente(current_user) unless current_user.nil?
   end
   

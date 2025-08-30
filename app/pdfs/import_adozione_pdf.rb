@@ -38,7 +38,7 @@ class ImportAdozionePdf < Prawn::Document
       
       @adozione = Array[a]
 
-      intestazione
+      intestazione(a.editore)
       
       destinatario(a)
       
