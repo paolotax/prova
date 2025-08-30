@@ -391,9 +391,9 @@ class FoglioScuolaPdf < Prawn::Document
   def render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
     # Gestisce il rendering di 4 sovrapacchi per pagina in verticale
     # Calcola l'altezza di ogni sovrapacco: 1/4 della pagina
-    altezza_sovrapacco = bounds.height / 4.0
+    altezza_sovrapacco = bounds.height / 3.0
     
-    adozioni_sovrapacchi.each_slice(4).each_with_index do |gruppo_adozioni, page_index|
+    adozioni_sovrapacchi.each_slice(3).each_with_index do |gruppo_adozioni, page_index|
       if page_index > 0
         start_new_page
       end
@@ -420,33 +420,36 @@ class FoglioScuolaPdf < Prawn::Document
 
   def render_sovrapacco_singolo(adozione, scuola)
     # Copia la logica da ImportAdozionePdf per renderizzare una singola adozione
-    
-    move_down(20)
-    # Classe evidenziata
-    highlight = HighlightCallback.new(color: 'ffff00', document: self)
-    
-    # Destinatario (classe)
-    formatted_text(
-      [
-        { text: "Classe #{adozione.classe_e_sezione}", callback: highlight },
-      ],
-      size: 14,
-    )
-    move_down(3)
-    
-    # Nome e città della scuola
-    text "#{scuola.denominazione}", size: 10, style: :italic
-    text "#{scuola.comune}", size: 10, style: :italic
-    move_down(10)
-    
+        
     # Contenuto allineato a destra: Materiale abbinato e tutto quello che segue
     # Calcola la larghezza per l'allineamento a destra (circa 60% della larghezza totale)
-    larghezza_destra = bounds.width * 0.6
+    larghezza_destra = bounds.width * 0.7
     x_position_destra = bounds.width - larghezza_destra
     
     bounding_box([x_position_destra, cursor], width: larghezza_destra, height: bounds.height) do
+      stroke_bounds
+
+      move_down(40)
+      # Classe evidenziata
+      highlight = HighlightCallback.new(color: 'ffff00', document: self)
+      
+      # Destinatario (classe)
+      formatted_text(
+        [
+          { text: "Classe #{adozione.classe_e_sezione}", callback: highlight },
+        ],
+        size: 14,
+        style: :bold
+      )
+      move_down(3)
+      
+      # Nome e città della scuola
+      text "#{scuola.to_combobox_display}", size: 10, style: :italic
+      
+      move_down(70)
+      
       # Materiale abbinato
-      text "Materiale abbinato al testo in adozione:", size: 12, style: :bold
+      text "Materiale abbinato al testo in adozione:".upcase, size: 10, style: :bold
       move_down(10)
       
       # Titolo evidenziato
@@ -460,7 +463,7 @@ class FoglioScuolaPdf < Prawn::Document
       move_down(5)
       
       text "Editore: #{adozione.editore}", size: 12, spacing: 4
-      text "Disciplina: #{adozione.disciplina.truncate(30)}", size: 12, spacing: 4
+      text "Disciplina: #{adozione.disciplina.truncate(40)}", size: 12, spacing: 4
       
       # Pallini colorati con quantità affiancati
       if adozione.saggi.any? || adozione.seguiti.any? || adozione.kit.any?
