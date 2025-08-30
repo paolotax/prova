@@ -427,7 +427,7 @@ class FoglioScuolaPdf < Prawn::Document
     x_position_destra = bounds.width - larghezza_destra
     
     bounding_box([x_position_destra, cursor], width: larghezza_destra, height: bounds.height) do
-      stroke_bounds
+      #stroke_bounds
 
       move_down(40)
       # Classe evidenziata
