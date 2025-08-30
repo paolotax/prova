@@ -84,14 +84,11 @@ module LayoutPdf
 
   def agente_ruotato(user)
     # Info agente ruotato di 90 gradi e allineato in alto
-    rotate(90, origin: [bounds.width - 100, bounds.top]) do
+    rotate(90, origin: [80, 180]) do
       font_size 8
-      draw_text "#{user.profile_ragione_sociale}", 
-                :size => 10, :style => :bold, :at => [20, -20]
-      draw_text "cell #{user.profile_cellulare}", 
-                :at => [20, -40]
-      draw_text "email #{user.profile_email}", 
-                :at => [20, -55]
+      text "#{user.profile_ragione_sociale}", :size => 10, :style => :bold, align: :right
+      text "cell #{user.profile_cellulare}", align: :right
+      text "email #{user.profile_email}", align: :right
     end
   end
 

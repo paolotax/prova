@@ -433,8 +433,9 @@ class FoglioScuolaPdf < Prawn::Document
     # Logo ruotato a sinistra in area limitata
     bounding_box([0, start_y], width: larghezza_sinistra, height: bounds.height) do
       #stroke_bounds
+      
+      agente_ruotato(current_user) unless current_user.nil?
       logo_ruotato(adozione.editore)
-      #agente_ruotato(current_user) unless current_user.nil?
     end
 
     # Contenuto a destra ripartendo dall'alto
@@ -458,16 +459,16 @@ class FoglioScuolaPdf < Prawn::Document
       # Nome e città della scuola
       text "#{scuola.to_combobox_display}", size: 10, style: :italic
       
-      move_down(70)
+      move_down(75)
       
       # Materiale abbinato
-      text "Materiale abbinato al testo in adozione:".upcase, size: 10, style: :bold
-      move_down(10)
+      text "Materiale abbinato al testo in adozione:".upcase, size: 10
+      move_down(5)
       
       # Titolo evidenziato
       formatted_text(
         [
-          { text: "#{adozione.titolo}", callback: highlight, styles: [:bold] },
+          { text: "#{adozione.titolo}", styles: [:bold] },
         ],
         size: 14,
         spacing: 4
