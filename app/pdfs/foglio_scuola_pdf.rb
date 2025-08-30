@@ -419,19 +419,26 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def render_sovrapacco_singolo(adozione, scuola)
-    # Copia la logica da ImportAdozionePdf per renderizzare una singola adozione
-        
-    # Contenuto allineato a destra: Materiale abbinato e tutto quello che segue
-    # Calcola la larghezza per l'allineamento a destra (circa 60% della larghezza totale)
-    larghezza_destra = bounds.width * 0.7
-    x_position_destra = bounds.width - larghezza_destra
+    # Layout con logo a sinistra e contenuto a destra
     
-    rotate(90, origin: [200, 200]) do
-      svg IO.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg"), at: [100, 400], width: 110
+    # Salva la posizione Y iniziale del sovrapacco
+    start_y = cursor
+    
+    # Area per logo a sinistra (30% della larghezza)
+    larghezza_sinistra = bounds.width * 0.3
+    # Area per contenuto a destra (70% della larghezza) 
+    larghezza_destra = bounds.width * 0.7
+    x_position_destra = larghezza_sinistra
+
+    # Logo ruotato a sinistra in area limitata
+    bounding_box([0, start_y], width: larghezza_sinistra, height: bounds.height) do
+      #stroke_bounds
+      logo_ruotato(adozione.editore)
+      #agente_ruotato(current_user) unless current_user.nil?
     end
 
-
-    bounding_box([x_position_destra, cursor], width: larghezza_destra, height: bounds.height) do
+    # Contenuto a destra ripartendo dall'alto
+    bounding_box([x_position_destra, start_y], width: larghezza_destra, height: bounds.height) do
       #stroke_bounds
 
       move_down(40)
