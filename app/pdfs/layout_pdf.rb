@@ -59,23 +59,23 @@ module LayoutPdf
         # Logo GAIA EDIZIONI (PNG)
         begin
           gaia_png = "#{Rails.root}/app/assets/images/gaia.png"
-          image gaia_png, :at => [20, 400], :width => 110
+          image gaia_png, :at => [12, 400], :width => 110
         rescue => e
           Rails.logger.warn "Errore nel caricamento logo GAIA ruotato: #{e.message}"
-          draw_text "GAIA EDIZIONI", :size => 10, :style => :bold, :at => [20, 400]
+          draw_text "GAIA EDIZIONI", :size => 10, :style => :bold, :at => [12, 400]
         end
       else
         # Logo GIUNTI SCUOLA (SVG default)
         begin
-          svg IO.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg"), :at => [20, 400], :width => 110
+          svg IO.read("#{Rails.root}/app/assets/svg/giunti_scuola.svg"), :at => [12, 400], :width => 110
         rescue => e
           Rails.logger.warn "Errore nel caricamento SVG ruotato: #{e.message}"
           # Fallback a PNG se SVG non funziona
           begin
             giunti_png = "#{Rails.root}/public/images/giunti_scuola.jpg"
-            image giunti_png, :width => 110, :height => 20, :at => [20, 400]
+            image giunti_png, :width => 110, :height => 20, :at => [12, 400]
           rescue
-            draw_text "GIUNTI SCUOLA", :size => 10, :style => :bold, :at => [20, 400]
+            draw_text "GIUNTI SCUOLA", :size => 10, :style => :bold, :at => [12, 400]
           end
         end
       end
@@ -84,7 +84,7 @@ module LayoutPdf
 
   def agente_ruotato(user)
     # Info agente ruotato di 90 gradi e allineato in alto
-    rotate(90, origin: [80, 180]) do
+    rotate(90, origin: [85, 175]) do
       font_size 8
       text "#{user.profile_ragione_sociale}", :size => 10, :style => :bold, align: :right
       text "cell #{user.profile_cellulare}", align: :right
