@@ -12,26 +12,29 @@ module Scuole
       Current.user
     end
 
+    # Optimized: Only include necessary associations for classi
     def classi
-      @classi ||= scuola.classi.includes(:import_adozioni, :import_scuola, :adozioni, :appunti, :vendita, :omaggio, :adozione)  
+      @classi ||= scuola.classi.includes(:import_adozioni)  
     end
 
     def mie_tappe
-      @mie_tappe ||=  user.tappe.includes(:giri).where(tappable_id: scuola.id) 
+      @mie_tappe ||= user.tappe.includes(:giri).where(tappable_id: scuola.id) 
     end
 
-    def adozioni
-      @adozioni ||= user.adozioni.joins(:scuola).where("import_scuole.id = ?", scuola.id)
-    end
-
+    # Keep the full association for when we need the actual records
     def import_adozioni
       @import_adozioni ||= scuola.import_adozioni.includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
     end
 
-    def miei_editori
-      @miei_editori ||= user.miei_editori
+    # Optimized: Group by classe to avoid N+1 queries in the view
+    def mie_adozioni_by_classe
+      @mie_adozioni_by_classe ||= user.mie_adozioni
+                                      .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
+                                      .where(CODICESCUOLA: scuola.CODICESCUOLA)
+                                      .group_by(&:classe)
     end
 
+    # Keep the original method for compatibility
     def mie_adozioni
       @mie_adozioni ||= user.mie_adozioni
                           .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
@@ -50,13 +53,10 @@ module Scuole
       @documenti ||= scuola.documenti.where(user_id: user).includes(:causale, :righe, documento_righe: [riga: :libro])
     end
 
-    def righe
-      @righe ||= scuola.righe
+    def ssk
+      @ssk ||= scuola.appunti.ssk.dell_utente(user).includes(:import_scuola, :user)
     end
 
-    def ssk
-      @ssk ||= scuola.appunti.ssk.dell_utente(user)
-    end
   
   end
 end

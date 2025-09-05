@@ -228,13 +228,7 @@
 
 					<% @foglio_scuola.classi.order(:classe, :sezione).each do |classe| %>
 						<%= render partial: "classi/classe", locals: { classe: classe } %>
-						<% classe.maestre.each do |maestra| %>
-							<%= tag.div maestra, class: "inline-block p-2 bg-purple-500 text-white border rounded-md m-1" %>
-						<% end %>
-						<%= render partial: "adozioni/adozione", collection: classe.vendita, as: :adozione %>
-						<%= render partial: "adozioni/adozione", collection: classe.adozione, as: :adozione %>
-						<%= render partial: "adozioni/adozione", collection: classe.omaggio, as: :adozione %>
-						<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni.select { |a| a.classe == classe } , as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
+						<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni_by_classe[classe] || [], as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
 						<br/>
 					<% end %>
 				</div>

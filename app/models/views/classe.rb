@@ -44,10 +44,11 @@ class Views::Classe < ApplicationRecord
           
   belongs_to :import_scuola, foreign_key: "codice_ministeriale", primary_key: "CODICESCUOLA"
 
-  has_many :adozioni  # dovrò chiamare la tabella in altro modo movimenti o righe e cambiare stato_adozione in tipo_movimento
-  has_many :vendita, -> { vendita }, class_name: "Adozione"
-  has_many :omaggio, -> { omaggio }, class_name: "Adozione"
-  has_many :adozione, -> { adozione }, class_name: "Adozione"
+  # has_many :adozioni  # dovrò chiamare la tabella in altro modo movimenti o righe e cambiare stato_adozione in tipo_movimento
+  # has_many :vendita, -> { vendita }, class_name: "Adozione"
+  # has_many :omaggio, -> { omaggio }, class_name: "Adozione"
+  # has_many :adozione, -> { adozione }, class_name: "Adozione"
+ 
   
   has_many :appunti # dovrò METTERE SOLO QUELLI DELL USER LOGGATO
   
@@ -75,12 +76,5 @@ class Views::Classe < ApplicationRecord
     true
   end
 
-  def libro_ids
-    adozioni.map(&:libro_id)
-  end
-
-  def maestre
-    adozioni.map(&:maestre).flatten.uniq.sort
-  end
 
 end
