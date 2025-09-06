@@ -13,62 +13,6 @@
   <div id="tappe" class="min-w-full">
 
     <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
-
-        <%# link per filtrare il giro %>
-        <%= tag.div class:"sticky z-20 top-16 bg-slate-100 bbborder-2 rounded-t-lg bg-gradient-to-r from-purple-100 from-25%" do%>
-            
-            <%#= render partial: "tappe/tappe_filter", locals: {tappe: @tappe} %>
-
-            <%# header per le tappe %>
-            <%= tag.div class: "rounded-b-lg shadow-lg px-4 pt-2 pb-1 text-xs font-semibold flex items-center justify-between" do %>
-                
-                <label for="select_all" id="select_all">
-                    <%= check_box_tag "select_all", nil, false, data: { tax_checkbox_select_all_target: "checkboxAll" } %>
-                    <span data-tax-checkbox-select-all-target="label" class="pl-2"><%= "seleziona" %></span>
-                </label>
-
-                <%#= tag.div pluralize(@page.recordset.records_count, "tappa", "tappe"), id: "nr-tappe" %>
-            
-                <%= tag.div class: "flex sssspace-x-1 rounded-lg bg-slate-100 p-0.5", role: "tablist", aria: { orientation: "horizontal" } do %>
-                    
-                    <%= link_to giro_tappe_path(@giro, request.query_parameters.merge(sort: "per_ordine_e_data")), data: {turbo_action: "replace"}, 
-                            class: [
-                                "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 text-gray-600 shadow": true,
-                                "bg-white": (params[:sort] == "per_ordine_e_data") || !params[:sort].present?,
-                                "bg-slate-100": !(params[:sort] == "per_ordine_e_data")
-                            ] do %>
-                        <%= inline_svg_tag('icon-building-library.svg', class: "w-6 h-6 #{params[:sort] == "per_ordine_e_data" || !params[:sort].present? ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
-                    <% end %>
-                    
-                    <%= link_to giro_tappe_path(@giro, request.query_parameters.merge(sort: "per_data")), data: {turbo_action: "replace"}, 
-                            class: [
-                                "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 shadow": true,
-                                "bg-white stroke-indigo-400": (params[:sort] == "per_data"),
-                                "bg-slate-100 text-gray-800": !(params[:sort] == "per_data")
-                            ] do %>
-                        <%= inline_svg_tag('icon-arrow-long-down.svg', class: "w-6 h-6 #{params[:sort] == "per_data" ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
-                    <% end %>
-                    
-                    <%= link_to giro_tappe_path(@giro, request.query_parameters.merge(sort: "per_data_desc")), data: {turbo_action: "replace"},  
-                            class: [
-                                "flex items-center rounded-md py-[0.4375rem] pl-2 pr-2 text-sm font-semibold lg:pr-3 shadow": true,
-                                "bg-white stroke-indigo-400": (params[:sort] == "per_data_desc"),
-                                "bg-slate-100 text-gray-800": !(params[:sort] == "per_data_desc")
-                            ] do %>
-                        <%= inline_svg_tag('icon-arrow-long-up.svg', class: "w-6 h-6 #{params[:sort] == "per_data_desc" ? 'stroke-sky-400' : 'stroke-gray-600'}") %> 
-                    <% end %>
-                <% end %>
-
-                
-                <%# <select aria-label="select" data-controller="tax-select-sort" class="field w-28" value="scuola">
-                    <option value="per_ordine_e_data">scuola</option>
-                    <option value="per_data">-----></option>
-                    <option value="per_data_desc"><-----</option>             
-                </select> %>
-            <% end %>
-        <% end %>
-
-    
         <%# lista delle tappe %>
         <%= tag.div id: "tappe-list", class: "sm:px-2" do %>
             <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
