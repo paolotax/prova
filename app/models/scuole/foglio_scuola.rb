@@ -17,9 +17,9 @@ module Scuole
       @classi ||= scuola.classi.includes(:import_adozioni)  
     end
 
-    def mie_tappe
-      @mie_tappe ||= user.tappe.includes(:giri).where(tappable_id: scuola.id) 
-    end
+    # def mie_tappe
+    #   #@mie_tappe ||= user.tappe.includes(:giri).where(tappable_id: scuola.id) 
+    # end
 
     # Keep the full association for when we need the actual records
     def import_adozioni
@@ -42,14 +42,20 @@ module Scuole
     end
 
     def appunti_non_archiviati
+      Rails.logger.info "TAAAAAX appunti_non_archiviati"
+      Rails.logger.info scuola.appunti.non_archiviati.non_saggi.dell_utente(user).inspect
       @appunti_non_archiviati ||= scuola.appunti.non_archiviati.non_saggi.dell_utente(user)
     end
 
     def appunti_archiviati
+      Rails.logger.info "TAAAAAXappunti_archiviati"
+      Rails.logger.info scuola.appunti.archiviati.non_saggi.dell_utente(user).inspect
       @appunti_archiviati ||= scuola.appunti.archiviati.non_saggi.dell_utente(user)
     end
 
     def documenti
+      Rails.logger.info "TAAAAAX documenti"
+      Rails.logger.info scuola.documenti.where(user_id: user).includes(:causale, :righe, documento_righe: [riga: :libro]).inspect
       @documenti ||= scuola.documenti.where(user_id: user).includes(:causale, :righe, documento_righe: [riga: :libro])
     end
 

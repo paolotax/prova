@@ -27,6 +27,38 @@ class DocumentiController < ApplicationController
     end
   end
 
+  def vendite
+    @causali = Causale.all
+    @import = DocumentiImporter.new
+
+    @documenti = current_user.documenti
+        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
+        .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
+        .includes(:causale, :righe, documento_righe: [riga: :libro])
+        .order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
+
+    # Filtra per scuola specifica se viene chiamato con import_scuola_id
+    if params[:import_scuola_id].present?
+      @import_scuola = ImportScuola.find(params[:import_scuola_id])
+      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
+      @documenti = @foglio_scuola.documenti
+    end
+
+    @documenti = filter(@documenti.all)
+
+    respond_to do |format|
+      format.html do
+        if params[:import_scuola_id].present?
+          render partial: "import_scuole/vendite", layout: false
+        else
+          render :index
+        end
+      end
+      format.turbo_stream
+      format.xlsx
+    end
+  end
+
   def show
     respond_to do |format|
       format.html

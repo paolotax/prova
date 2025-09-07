@@ -7,6 +7,12 @@ class TappeController < ApplicationController
 
     @tappe = current_user.tappe.where(tappable_type: "ImportScuola")
 
+    # Filtra per scuola specifica se viene chiamato con import_scuola_id
+    if params[:import_scuola_id].present?
+      @import_scuola = ImportScuola.find(params[:import_scuola_id])
+      @tappe = @tappe.where(tappable_id: @import_scuola.id)
+    end
+
     if params[:giro_id].present?
       @tappe = @tappe.where(giro_id: params[:giro_id])
     end
@@ -36,9 +42,6 @@ class TappeController < ApplicationController
 
     #inizializzo geared pagination
     set_page_and_extract_portion_from @tappe
-
-    # raise @page.records.inspect
-
 
     respond_to do |format|
       format.html

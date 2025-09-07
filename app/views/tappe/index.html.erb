@@ -14,7 +14,7 @@
 
     <%= turbo_frame_tag :search_results, data: { controller: 'tax-checkbox-select-all' } do %>
         <%# lista delle tappe %>
-        <%= tag.div id: "tappe-list", class: "sm:px-2" do %>
+        <%= turbo_frame_tag :tappe_list, class: "sm:px-2" do %>
             <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono tappe </p>
             
             <%= render @page.records %>

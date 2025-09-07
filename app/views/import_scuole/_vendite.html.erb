@@ -1,0 +1,6 @@
+<%= turbo_frame_tag "vendite-content" do %>
+  <div id="vendite" role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2 2xl:gap-x-8">
+    <p class="only:block hidden py-8 px-4 lg:col-span-2 2xl:col-span-3 text-center">Whoops! Non ci sono vendite</p>
+    <%= render @foglio_scuola.documenti.order(data_documento: :desc) %>
+  </div>
+<% end %>

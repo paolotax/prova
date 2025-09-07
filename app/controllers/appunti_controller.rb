@@ -16,6 +16,13 @@ class AppuntiController < ApplicationController
                 .with_rich_text_content
                 .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
 
+    # Filtra per scuola specifica se viene chiamato con import_scuola_id
+    if params[:import_scuola_id].present?
+      @import_scuola = ImportScuola.find(params[:import_scuola_id])
+      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
+      @appunti = @foglio_scuola.appunti_non_archiviati
+    end
+
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
 
     @appunti = @appunti.search(params[:q]) if params[:q]
@@ -30,9 +37,75 @@ class AppuntiController < ApplicationController
     @pagy, @appunti =  pagy(@appunti.all, items: 30)
 
     respond_to do |format|
-      format.html
+      format.html do
+        if params[:import_scuola_id].present?
+          render partial: "import_scuole/appunti", layout: false
+        else
+          render :index
+        end
+      end
       format.xlsx
       format.turbo_stream
+    end
+  end
+
+  def archiviati
+    @appunti = current_user.appunti.archiviati.non_saggi
+                .with_attached_attachments
+                .with_attached_image
+                .with_rich_text_content
+                .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
+
+    # Filtra per scuola specifica se viene chiamato con import_scuola_id
+    if params[:import_scuola_id].present?
+      @import_scuola = ImportScuola.find(params[:import_scuola_id])
+      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
+      @appunti = @foglio_scuola.appunti_archiviati
+    end
+
+    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
+    @appunti = @appunti.search(params[:q]) if params[:q]
+    @appunti = filter_appunti(@appunti)
+    @appunti = filter(@appunti.all)
+
+    respond_to do |format|
+      format.html do
+        if params[:import_scuola_id].present?
+          render partial: "import_scuole/archiviati", layout: false
+        else
+          render :index
+        end
+      end
+    end
+  end
+
+  def saggi
+    @appunti = current_user.appunti.ssk
+                .with_attached_attachments
+                .with_attached_image
+                .with_rich_text_content
+                .includes(:import_scuola, :import_adozione, :classe).order(updated_at: :desc)
+
+    # Filtra per scuola specifica se viene chiamato con import_scuola_id
+    if params[:import_scuola_id].present?
+      @import_scuola = ImportScuola.find(params[:import_scuola_id])
+      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
+      @appunti = @foglio_scuola.ssk
+    end
+
+    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
+    @appunti = @appunti.search(params[:q]) if params[:q]
+    @appunti = filter_appunti(@appunti)
+    @appunti = filter(@appunti.all)
+
+    respond_to do |format|
+      format.html do
+        if params[:import_scuola_id].present?
+          render partial: "import_scuole/saggi", layout: false
+        else
+          render :index
+        end
+      end
     end
   end
 

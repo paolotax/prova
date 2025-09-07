@@ -56,6 +56,7 @@ Rails.application.routes.draw do
     collection do
       get 'filtra'
       get 'nuovo_numero_documento'
+      get 'vendite'
     end
     member do
       get :esporta_xml
@@ -161,6 +162,8 @@ Rails.application.routes.draw do
     resources :tappe
     collection do
       get 'filtra'
+      get 'archiviati'
+      get 'saggi'
     end
     member do
       put 'modifica_stato'
