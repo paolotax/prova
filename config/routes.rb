@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   get 'agenda/:giorno/mappa', to: 'agenda#mappa', as: 'mappa_del_giorno'
   get 'agenda/:giorno/slideover', to: 'agenda#slideover', as: 'slideover'
   get 'agenda/:giorno/adozioni_tappe.pdf', to: 'agenda#adozioni_tappe_pdf', as: 'adozioni_tappe_pdf'
+  get 'agenda/:giorno/tappe_giorno.pdf', to: 'agenda#tappe_giorno_pdf', as: 'tappe_giorno_pdf'
+  get 'agenda/:giorno/dettaglio_appunti_documenti.pdf', to: 'agenda#dettaglio_appunti_documenti_pdf', as: 'dettaglio_appunti_documenti_pdf'
 
   authenticate :user, ->(user) { user.admin? } do
     mount Blazer::Engine, at: 'blazer'

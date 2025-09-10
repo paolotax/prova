@@ -182,4 +182,149 @@ class AgendaController < ApplicationController
     end
   end
 
+  def tappe_giorno_pdf
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+    
+    # Recuperiamo le tappe del giorno con le relazioni necessarie per le note
+    @tappe = current_user.tappe.del_giorno(@giorno)
+                         .includes(:tappable, :giri)
+                         .order(:position)
+    
+    # Recuperiamo gli appunti e documenti per tutte le tappe con query ottimizzate
+    @appunti_per_tappa = {}
+    @documenti_per_tappa = {}
+    
+    # Recupera tutte le scuole e clienti delle tappe
+    scuole_ids = @tappe.select { |t| t.tappable_type == 'ImportScuola' }.map(&:tappable_id)
+    clienti_ids = @tappe.select { |t| t.tappable_type == 'Cliente' }.map(&:tappable_id)
+    
+    # Query ottimizzata per gli appunti delle scuole
+    if scuole_ids.any?
+      appunti_counts = current_user.appunti
+        .where(import_scuola_id: scuole_ids)
+        .where(stato: ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare'])
+        .group(:import_scuola_id)
+        .count
+      
+      # Mappa i conteggi alle tappe corrispondenti
+      @tappe.each do |tappa|
+        if tappa.tappable_type == 'ImportScuola'
+          @appunti_per_tappa[tappa.id] = appunti_counts[tappa.tappable_id] || 0
+        else
+          @appunti_per_tappa[tappa.id] = 0
+        end
+      end
+    else
+      @tappe.each { |tappa| @appunti_per_tappa[tappa.id] = 0 }
+    end
+    
+    # Query ottimizzata per i documenti
+    all_clientable_ids = scuole_ids + clienti_ids
+    if all_clientable_ids.any?
+      documenti_counts = current_user.documenti
+        .where(
+          "(clientable_type = 'ImportScuola' AND clientable_id IN (?)) OR (clientable_type = 'Cliente' AND clientable_id IN (?))",
+          scuole_ids, clienti_ids
+        )
+        .where("consegnato_il IS NULL OR pagato_il IS NULL")
+        .group(:clientable_type, :clientable_id)
+        .count
+      
+      # Mappa i conteggi alle tappe corrispondenti
+      @tappe.each do |tappa|
+        key = [tappa.tappable_type, tappa.tappable_id]
+        @documenti_per_tappa[tappa.id] = documenti_counts[key] || 0
+      end
+    else
+      @tappe.each { |tappa| @documenti_per_tappa[tappa.id] = 0 }
+    end
+
+    respond_to do |format|
+      format.pdf do
+        pdf = TappeGiornoPdf.new(@tappe, @giorno, view_context, @appunti_per_tappa, @documenti_per_tappa)
+        send_data pdf.render, 
+                  filename: "tappe_#{@giorno.strftime('%Y-%m-%d')}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
+  end
+
+  def dettaglio_appunti_documenti_pdf
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+    
+    # Recuperiamo le tappe del giorno ordinate per posizione
+    @tappe = current_user.tappe.del_giorno(@giorno)
+                         .includes(:tappable, :giri)
+                         .order(:position)
+    
+    # Recuperiamo gli appunti dettagliati per ogni tappa nell'ordine delle tappe
+    @appunti_dettagliati = []
+    @documenti_dettagliati = []
+    
+    @tappe.each do |tappa|
+      if tappa.tappable_type == 'ImportScuola'
+        # Appunti pendenti per questa scuola
+        appunti_scuola = current_user.appunti
+          .where(import_scuola_id: tappa.tappable_id)
+          .where(stato: ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare'])
+          .includes(:import_scuola, :import_adozione)
+          .order(:stato, :created_at)
+        
+        appunti_scuola.each do |appunto|
+          @appunti_dettagliati << {
+            tappa: tappa,
+            appunto: appunto,
+            posizione_tappa: tappa.position
+          }
+        end
+        
+        # Documenti pendenti per questa scuola (non consegnati O non pagati)
+        documenti_scuola = current_user.documenti
+          .where(clientable_type: 'ImportScuola', clientable_id: tappa.tappable_id)
+          .where("consegnato_il IS NULL OR pagato_il IS NULL")
+          .includes(:clientable, :causale)
+          .order(:data_documento)
+        
+        documenti_scuola.each do |documento|
+          @documenti_dettagliati << {
+            tappa: tappa,
+            documento: documento,
+            posizione_tappa: tappa.position
+          }
+        end
+        
+      elsif tappa.tappable_type == 'Cliente'
+        # Documenti pendenti per questo cliente (non consegnati O non pagati)
+        documenti_cliente = current_user.documenti
+          .where(clientable_type: 'Cliente', clientable_id: tappa.tappable_id)
+          .where("consegnato_il IS NULL OR pagato_il IS NULL")
+          .includes(:clientable, :causale)
+          .order(:data_documento)
+        
+        documenti_cliente.each do |documento|
+          @documenti_dettagliati << {
+            tappa: tappa,
+            documento: documento,
+            posizione_tappa: tappa.position
+          }
+        end
+      end
+    end
+    
+    # Ordina tutto per posizione tappa
+    @appunti_dettagliati.sort_by! { |item| item[:posizione_tappa] }
+    @documenti_dettagliati.sort_by! { |item| item[:posizione_tappa] }
+
+    respond_to do |format|
+      format.pdf do
+        pdf = DettaglioAppuntiDocumentiPdf.new(@appunti_dettagliati, @documenti_dettagliati, @giorno, view_context)
+        send_data pdf.render, 
+                  filename: "dettaglio_appunti_documenti_#{@giorno.strftime('%Y-%m-%d')}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
+  end
+
 end

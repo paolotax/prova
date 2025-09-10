@@ -1,0 +1,389 @@
+# encoding: utf-8
+require "prawn/measurement_extensions"
+
+class DettaglioAppuntiDocumentiPdf < Prawn::Document
+  
+  include LayoutPdf
+  
+  def initialize(appunti_dettagliati, documenti_dettagliati, giorno, view)
+    super(:page_size => "A4", 
+          :page_layout => :portrait,
+          :margin => [1.cm, 15.mm],
+          :info => {
+              :Title => "Dettaglio Appunti e Documenti",
+              :Author => "todo-propa",
+              :Subject => "Dettaglio appunti e documenti pendenti per tappa",
+              :Keywords => "appunti documenti tappe dettaglio todo-propa",
+              :Creator => "todo-propa",
+              :Producer => "Prawn",
+              :CreationDate => Time.now
+          }
+    )
+
+    font_families.update(
+      "DejaVuSans" => {
+        normal: Rails.root.join("app/assets/fonts/DejaVuSans.ttf"),
+        bold: Rails.root.join("app/assets/fonts/DejaVuSans-Bold.ttf"),
+        italic: Rails.root.join("app/assets/fonts/DejaVuSans-Oblique.ttf")
+      }
+    )
+    
+    # Imposta il font di default
+    font "DejaVuSans"
+    
+    @appunti_dettagliati = appunti_dettagliati
+    @documenti_dettagliati = documenti_dettagliati
+    @giorno = giorno
+    @view = view
+
+    generate_report
+  end
+
+  private
+
+  def generate_report
+    intestazione
+    
+    move_down 30
+    
+    # Titolo del report
+    text "DETTAGLIO APPUNTI E DOCUMENTI PENDENTI", 
+         size: 18, 
+         style: :bold, 
+         align: :center
+    
+    move_down 10
+    
+    text "Data: #{I18n.l(@giorno, format: :long, locale: :it)}", 
+         size: 12, 
+         align: :center
+    
+    move_down 20
+    
+    # Statistiche generali
+    text "Totale appunti pendenti: #{@appunti_dettagliati.count}", size: 12, style: :bold
+    text "Totale documenti pendenti: #{@documenti_dettagliati.count}", size: 12, style: :bold
+    
+    move_down 20
+    
+    # Sezione Appunti
+    if @appunti_dettagliati.any?
+      generate_appunti_section
+      
+      # Aggiungi una nuova pagina se ci sono anche documenti e non c'è spazio
+      if @documenti_dettagliati.any? && cursor < 200
+        start_new_page
+        intestazione
+        move_down 30
+      else
+        move_down 30
+      end
+    end
+    
+    # Sezione Documenti
+    if @documenti_dettagliati.any?
+      generate_documenti_section
+    end
+    
+    # Se non ci sono né appunti né documenti
+    if @appunti_dettagliati.empty? && @documenti_dettagliati.empty?
+      text "Nessun appunto o documento pendente per le tappe di oggi.", 
+           size: 14, 
+           align: :center, 
+           style: :italic
+    end
+  end
+
+  def generate_appunti_section
+    text "APPUNTI PENDENTI", 
+         size: 16, 
+         style: :bold, 
+         color: "0066CC"
+    
+    move_down 10
+    
+    # Raggruppa appunti per scuola
+    appunti_per_scuola = @appunti_dettagliati.group_by do |item|
+      {
+        scuola_id: item[:appunto].import_scuola_id,
+        scuola_nome: item[:appunto].import_scuola&.DENOMINAZIONESCUOLA || "N/D",
+        tappa: item[:tappa]
+      }
+    end
+    
+    appunti_per_scuola.each_with_index do |(scuola_info, appunti_scuola), scuola_index|
+      # Intestazione scuola
+      if scuola_index > 0
+        move_down 15
+      end
+      
+      text "#{scuola_info[:tappa].position}. #{truncate_text(scuola_info[:scuola_nome], 60)}", 
+           size: 12, 
+           style: :bold, 
+           color: "003366"
+      
+      move_down 5
+      
+      # Tabella appunti per questa scuola
+      table_data = [["Tipo", "Stato", "Classe", "Descrizione", "Adozione"]]
+      
+      appunti_scuola.each do |item|
+        appunto = item[:appunto]
+        
+        tipo_appunto = appunto.nome&.titleize || "Generico"
+        stato = appunto.stato&.titleize || "N/D"
+        
+        # Informazioni sulla classe
+        classe_info = ""
+        if appunto.classe.present?
+          classe_info = "#{appunto.classe.anno_corso} #{appunto.classe.sezione}"
+        elsif appunto.import_adozione.present?
+          adozione = appunto.import_adozione
+          classe_info = "#{adozione.ANNOCORSO} #{adozione.SEZIONEANNO}"
+        else
+          classe_info = "-"
+        end
+        
+        # Descrizione dell'appunto
+        descrizione_parts = []
+        if appunto.body.present?
+          descrizione_parts << strip_html_tags(appunto.body)
+        end
+        if appunto.content.present?
+          content_text = strip_html_tags(appunto.content.body.to_s)
+          descrizione_parts << content_text if content_text.present?
+        end
+        descrizione = descrizione_parts.join(" | ")
+        descrizione = "Nessuna descrizione" if descrizione.blank?
+        
+        # Informazioni sull'adozione se presente
+        adozione_info = ""
+        if appunto.import_adozione.present?
+          adozione = appunto.import_adozione
+          adozione_info = "#{adozione.EDITORE} - #{truncate_text(adozione.TITOLO, 25)}"
+        else
+          adozione_info = "-"
+        end
+        
+        # Tronca i testi
+        descrizione = truncate_text(descrizione, 35)
+        
+        table_data << [
+          tipo_appunto,
+          stato,
+          classe_info,
+          descrizione,
+          adozione_info
+        ]
+      end
+      
+      table(table_data, 
+            header: true,
+            width: bounds.width,
+            column_widths: [60, 70, 50, 150, bounds.width - 330],
+            cell_style: { 
+              size: 8, 
+              padding: [3, 4],
+              border_width: 0.5,
+              border_color: "CCCCCC",
+              valign: :top
+            }) do
+        
+        # Stile header
+        row(0).font_style = :bold
+        row(0).background_color = "E6F3FF"
+        row(0).text_color = "003366"
+        row(0).size = 9
+        
+        # Allineamento colonne
+        column(0).align = :center # Tipo
+        column(1).align = :center # Stato
+        column(2).align = :center # Classe
+        column(3).align = :left   # Descrizione
+        column(4).align = :left   # Adozione
+        
+        # Colore alternato per le righe
+        (1...row_length).each do |i|
+          row(i).background_color = i.odd? ? "FFFFFF" : "F8F8F8"
+          
+          # Evidenzia stati critici
+          case table_data[i][1] # colonna stato
+          when "In Evidenza"
+            row(i).background_color = "FFF2CC"
+          when "Da Pagare"
+            row(i).background_color = "FFE6E6"
+          end
+        end
+      end
+      
+      # Controlla se c'è spazio per la prossima scuola
+      if scuola_index < appunti_per_scuola.count - 1 && cursor < 100
+        start_new_page
+        intestazione
+        move_down 30
+        text "APPUNTI PENDENTI (continua)", 
+             size: 16, 
+             style: :bold, 
+             color: "0066CC"
+        move_down 10
+      end
+    end
+  end
+
+  def generate_documenti_section
+    text "DOCUMENTI PENDENTI", 
+         size: 16, 
+         style: :bold, 
+         color: "CC6600"
+    
+    move_down 10
+    
+    # Raggruppa documenti per cliente/scuola
+    documenti_per_cliente = @documenti_dettagliati.group_by do |item|
+      documento = item[:documento]
+      {
+        clientable_type: documento.clientable_type,
+        clientable_id: documento.clientable_id,
+        cliente_nome: case documento.clientable_type
+                      when 'ImportScuola'
+                        documento.clientable&.DENOMINAZIONESCUOLA || "Scuola N/D"
+                      when 'Cliente'
+                        documento.clientable&.ragione_sociale || "Cliente N/D"
+                      else
+                        "N/D"
+                      end,
+        tappa: item[:tappa]
+      }
+    end
+    
+    documenti_per_cliente.each_with_index do |(cliente_info, documenti_cliente), cliente_index|
+      # Intestazione cliente/scuola
+      if cliente_index > 0
+        move_down 15
+      end
+      
+      tipo_cliente = cliente_info[:clientable_type] == 'ImportScuola' ? 'SCUOLA' : 'CLIENTE'
+      text "#{cliente_info[:tappa].position}. #{tipo_cliente}: #{truncate_text(cliente_info[:cliente_nome], 55)}", 
+           size: 12, 
+           style: :bold, 
+           color: "663300"
+      
+      move_down 5
+      
+      # Tabella documenti per questo cliente/scuola
+      table_data = [["Tipo Doc.", "N° Doc.", "Data", "Stato", "Consegnato", "Pagato", "Importo"]]
+      
+      documenti_cliente.each do |item|
+        documento = item[:documento]
+        
+        tipo_doc = documento.causale&.causale || "N/D"
+        numero_doc = documento.numero_documento&.to_s || "N/D"
+        data_doc = documento.data_documento ? I18n.l(documento.data_documento, format: :short, locale: :it) : "N/D"
+        stato = documento.status&.humanize || "N/D"
+        
+        # Calcola importo totale (se disponibile)
+        importo = if documento.totale_cents && documento.totale_cents > 0
+                    "€ #{sprintf('%.2f', documento.totale_cents / 100.0)}"
+                  else
+                    "-"
+                  end
+        
+        # Date di consegna e pagamento
+        consegnato = documento.consegnato_il ? I18n.l(documento.consegnato_il.to_date, format: :short, locale: :it) : "NO"
+        pagato = documento.pagato_il ? I18n.l(documento.pagato_il.to_date, format: :short, locale: :it) : "NO"
+        
+        # Tronca i testi
+        tipo_doc = truncate_text(tipo_doc, 20)
+        
+        table_data << [
+          tipo_doc,
+          numero_doc,
+          data_doc,
+          stato,
+          consegnato,
+          pagato,
+          importo
+        ]
+      end
+      
+      table(table_data, 
+            header: true,
+            width: bounds.width,
+            column_widths: [70, 50, 50, 60, 60, 60, bounds.width - 350],
+            cell_style: { 
+              size: 8, 
+              padding: [3, 4],
+              border_width: 0.5,
+              border_color: "CCCCCC",
+              valign: :top
+            }) do
+        
+        # Stile header
+        row(0).font_style = :bold
+        row(0).background_color = "FFF2E6"
+        row(0).text_color = "663300"
+        row(0).size = 9
+        
+        # Allineamento colonne
+        column(0).align = :left   # Tipo Doc
+        column(1).align = :center # N° Doc
+        column(2).align = :center # Data
+        column(3).align = :center # Stato
+        column(4).align = :center # Consegnato
+        column(5).align = :center # Pagato
+        column(6).align = :right  # Importo
+        
+        # Colore alternato per le righe
+        (1...row_length).each do |i|
+          row(i).background_color = i.odd? ? "FFFFFF" : "F8F8F8"
+          
+          # Evidenzia documenti pendenti
+          consegnato_val = table_data[i][4] # colonna consegnato
+          pagato_val = table_data[i][5] # colonna pagato
+          
+          if consegnato_val == "NO" && pagato_val == "NO"
+            row(i).background_color = "FFE6E6" # Rosso chiaro - né consegnato né pagato
+          elsif consegnato_val == "NO" || pagato_val == "NO"
+            row(i).background_color = "FFF2CC" # Giallo - solo uno dei due completato
+          else
+            row(i).background_color = "E6FFE6" # Verde chiaro - tutto completato
+          end
+        end
+      end
+      
+      # Controlla se c'è spazio per il prossimo cliente
+      if cliente_index < documenti_per_cliente.count - 1 && cursor < 100
+        start_new_page
+        intestazione
+        move_down 30
+        text "DOCUMENTI PENDENTI (continua)", 
+             size: 16, 
+             style: :bold, 
+             color: "CC6600"
+        move_down 10
+      end
+    end
+  end
+
+  def get_tappa_name(tappa)
+    case tappa.tappable_type
+    when 'ImportScuola'
+      truncate_text(tappa.tappable.DENOMINAZIONESCUOLA, 20)
+    when 'Cliente'
+      truncate_text(tappa.tappable.ragione_sociale, 20)
+    else
+      "N/D"
+    end
+  end
+
+  def strip_html_tags(text)
+    return "" if text.blank?
+    text.gsub(/<[^>]*>/, '').gsub(/&nbsp;/, ' ').strip
+  end
+
+  def truncate_text(text, max_length)
+    return "" if text.blank?
+    return text if text.length <= max_length
+    "#{text[0..max_length-4]}..."
+  end
+end
