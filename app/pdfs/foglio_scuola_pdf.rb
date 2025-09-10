@@ -383,31 +383,37 @@ class FoglioScuolaPdf < Prawn::Document
       # Inizia una nuova pagina per i sovrapacchi
       start_new_page
       
-      # Renderizza 4 sovrapacchi per pagina in verticale, ognuno 1/4 della pagina
+      # Renderizza 2 sovrapacchi per pagina in verticale, ognuno 1/2 della pagina
       render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
     end
   end
 
   def render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
-    # Gestisce il rendering di 4 sovrapacchi per pagina in verticale
-    # Calcola l'altezza di ogni sovrapacco: 1/4 della pagina
-    altezza_sovrapacco = bounds.height / 3.0
+    # Gestisce il rendering di 2 sovrapacchi per pagina in verticale
+    # Calcola l'altezza di ogni sovrapacco: 1/2 della pagina
+    altezza_sovrapacco = bounds.height / 2.0
     
-    adozioni_sovrapacchi.each_slice(3).each_with_index do |gruppo_adozioni, page_index|
+    adozioni_sovrapacchi.each_slice(2).each_with_index do |gruppo_adozioni, page_index|
       if page_index > 0
         start_new_page
       end
       
       gruppo_adozioni.each_with_index do |adozione, index|
         # Calcola la posizione Y per questo sovrapacco
-        y_position = bounds.top - (index * altezza_sovrapacco)
+        if index == 0
+          # Prima etichetta: dall'alto della pagina
+          y_position = bounds.top
+        else
+          # Seconda etichetta: metà pagina - 30pt di margine
+          y_position = bounds.top - altezza_sovrapacco - 30
+        end
         
-        # Usa bounding_box per limitare ogni sovrapacco a 1/4 della pagina
+        # Usa bounding_box per limitare ogni sovrapacco a 1/2 della pagina
         bounding_box([0, y_position], width: bounds.width, height: altezza_sovrapacco) do
           render_sovrapacco_singolo(adozione, scuola)
           
           # Aggiungi una linea di separazione in fondo (tranne per l'ultimo)
-          if index < 3 && index < gruppo_adozioni.length - 1
+          if index < 2 && index < gruppo_adozioni.length - 1
             move_cursor_to 0
             dash([2, 5])
             stroke_horizontal_rule
@@ -419,30 +425,15 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def render_sovrapacco_singolo(adozione, scuola)
-    # Layout con logo a sinistra e contenuto a destra
     
-    # Salva la posizione Y iniziale del sovrapacco
-    start_y = cursor
-    
-    # Area per logo a sinistra (30% della larghezza)
-    larghezza_sinistra = bounds.width * 0.3
-    # Area per contenuto a destra (70% della larghezza) 
-    larghezza_destra = bounds.width * 0.7
-    x_position_destra = larghezza_sinistra
 
-    # Logo ruotato a sinistra in area limitata
-    bounding_box([0, start_y], width: larghezza_sinistra, height: bounds.height) do
-      #stroke_bounds
+    intestazione(adozione.editore)
+
+    move_down(40)
+    
+    # Contenuto principale con margine sinistro
+    indent(90) do
       
-      agente_ruotato(current_user) unless current_user.nil?
-      logo_ruotato(adozione.editore)
-    end
-
-    # Contenuto a destra ripartendo dall'alto
-    bounding_box([x_position_destra, start_y], width: larghezza_destra, height: bounds.height) do
-      #stroke_bounds
-
-      move_down(40)
       # Classe evidenziata
       highlight = HighlightCallback.new(color: 'ffff00', document: self)
       
@@ -451,68 +442,69 @@ class FoglioScuolaPdf < Prawn::Document
         [
           { text: "Classe #{adozione.classe_e_sezione}", callback: highlight },
         ],
-        size: 14,
+        size: 20,
         style: :bold
       )
-      move_down(3)
+      move_down(8)
       
       # Nome e città della scuola
-      text "#{scuola.to_combobox_display}", size: 10, style: :italic
+      text "#{scuola.to_combobox_display}", size: 12, style: :italic
       
-      move_down(75)
+      move_down(70)
       
       # Materiale abbinato
-      text "Materiale abbinato al testo in adozione:".upcase, size: 10
-      move_down(5)
+      text "MATERIALE ABBINATO AL TESTO IN ADOZIONE:", size: 12, style: :bold
+      move_down(10)
       
       # Titolo evidenziato
       formatted_text(
         [
           { text: "#{adozione.titolo}", styles: [:bold] },
         ],
-        size: 14,
+        size: 18,
         spacing: 4
       )
-      move_down(5)
+      move_down(12)
       
-      text "Editore: #{adozione.editore}", size: 12, spacing: 4
-      text "Disciplina: #{adozione.disciplina.truncate(40)}", size: 12, spacing: 4
+      # Info editore e disciplina
+      text "Editore: #{adozione.editore}", size: 14, spacing: 4
+      text "Disciplina: #{adozione.disciplina.truncate(50)}", size: 14, spacing: 4
       
       # Pallini colorati con quantità affiancati
       if adozione.saggi.any? || adozione.seguiti.any? || adozione.kit.any?
         move_down(15)
-        x_position = bounds.left + 8
+        x_position = bounds.left + 10
         y_position = cursor
         
         if adozione.saggi.any?
           # Pallino rosso per saggi
           fill_color "FF0000"
-          fill_circle [x_position, y_position], 8
+          fill_circle [x_position, y_position], 10
           fill_color "FFFFFF"  # Testo bianco
-          text_box "#{adozione.saggi.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
-          x_position += 20
+          text_box "#{adozione.saggi.size}", at: [x_position - 10, y_position + 3], width: 20, height: 10, align: :center, size: 9, style: :bold
+          x_position += 30
         end
 
         if adozione.seguiti.any?
           # Pallino blu per seguiti
           fill_color "0080FF"
-          fill_circle [x_position, y_position], 8
+          fill_circle [x_position, y_position], 10
           fill_color "FFFFFF"  # Testo bianco
-          text_box "#{adozione.seguiti.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
-          x_position += 20
+          text_box "#{adozione.seguiti.size}", at: [x_position - 10, y_position + 3], width: 20, height: 10, align: :center, size: 9, style: :bold
+          x_position += 30
         end
 
         if adozione.kit.any?
           # Pallino rosa per kit
           fill_color "FF1493"
-          fill_circle [x_position, y_position], 8
+          fill_circle [x_position, y_position], 10
           fill_color "FFFFFF"  # Testo bianco
-          text_box "#{adozione.kit.size}", at: [x_position - 8, y_position + 3], width: 16, height: 8, align: :center, size: 8, style: :bold
+          text_box "#{adozione.kit.size}", at: [x_position - 10, y_position + 3], width: 20, height: 10, align: :center, size: 9, style: :bold
         end
         
         fill_color "000000"  # Ripristina colore nero
       end
-    end
+    end  # Fine indent
   end
 
 end

@@ -66,28 +66,39 @@
                     
                     <%= dropdown.with_item do %>
                         <%= link_to adozioni_tappe_pdf_path(giorno: @giorno), 
-                            class: "flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                             data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            <%= inline_svg_tag "icon-bookopen.svg", class: "w-4 h-4 mr-2" rescue "" %>
                             Adozioni nelle tappe
                         <% end %>
                     <% end %>
                     
                     <%= dropdown.with_item do %>
                         <%= link_to tappe_giorno_pdf_path(giorno: @giorno), 
-                            class: "flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                             data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            <%= inline_svg_tag "icon-map-pin.svg", class: "w-4 h-4 mr-2" rescue "" %>
                             Elenco tappe del giorno
                         <% end %>
                     <% end %>
                     
                     <%= dropdown.with_item do %>
-                        <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno), 
-                            class: "flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                        <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno),
+                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                             data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            <%= inline_svg_tag "icon-document-check.svg", class: "w-4 h-4 mr-2" rescue "" %>
                             Dettaglio appunti e documenti
+                        <% end %>
+                    <% end %>
+                    <%= dropdown.with_item do %>
+                        <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'),
+                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                            Fogli scuola
+                        <% end %>
+                    <% end %>
+                    <%= dropdown.with_item do %>
+                        <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true),
+                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                            Fogli scuola + sovrapacchi
                         <% end %>
                     <% end %>
                 <% end %>

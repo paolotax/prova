@@ -251,6 +251,36 @@ class AgendaController < ApplicationController
     end
   end
 
+  def fogli_scuola_tappe_pdf
+    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
+    tipo_stampa = params[:tipo_stampa] || 'mie_adozioni'
+    con_sovrapacchi = params[:con_sovrapacchi] == 'true'
+    
+    # Prende le tappe del giorno (solo scuole)
+    @tappe = current_user.tappe.del_giorno(@giorno)
+                         .where(tappable_type: 'ImportScuola')
+                         .includes(:tappable)
+                         .order(:position)
+    
+    # Ottieni le scuole dalle tappe
+    @import_scuole = @tappe.map(&:tappable).uniq
+    
+    respond_to do |format|
+      format.pdf do
+        pdf = FoglioScuolaPdf.new(@import_scuole, view: view_context, tipo_stampa: tipo_stampa, con_sovrapacchi: con_sovrapacchi)
+        
+        filename_suffix = tipo_stampa == 'mie_adozioni' ? '_mie_adozioni' : ''
+        sovrapacchi_suffix = con_sovrapacchi ? '_con_sovrapacchi' : ''
+        filename = "fogli_scuola_tappe_#{@giorno.strftime('%Y-%m-%d')}#{filename_suffix}#{sovrapacchi_suffix}.pdf"
+        
+        send_data pdf.render, 
+                  filename: filename,
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
+  end
+
   def dettaglio_appunti_documenti_pdf
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
     
