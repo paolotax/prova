@@ -203,6 +203,7 @@ class AgendaController < ApplicationController
       appunti_counts = current_user.appunti
         .where(import_scuola_id: scuole_ids)
         .where(stato: ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare'])
+        .where.not(nome: ['saggio', 'seguito', 'kit'])
         .group(:import_scuola_id)
         .count
       
@@ -264,10 +265,11 @@ class AgendaController < ApplicationController
     
     @tappe.each do |tappa|
       if tappa.tappable_type == 'ImportScuola'
-        # Appunti pendenti per questa scuola
+        # Appunti pendenti per questa scuola (escludendo SSK)
         appunti_scuola = current_user.appunti
           .where(import_scuola_id: tappa.tappable_id)
           .where(stato: ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare'])
+          .where.not(nome: ['saggio', 'seguito', 'kit'])
           .includes(:import_scuola, :import_adozione)
           .order(:stato, :created_at)
         

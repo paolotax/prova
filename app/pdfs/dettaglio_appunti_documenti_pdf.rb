@@ -125,18 +125,18 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
       move_down 5
       
       # Tabella appunti per questa scuola
-      table_data = [["Tipo", "Stato", "Classe", "Descrizione", "Adozione"]]
+      table_data = [["Stato", "Classe", "Nome", "Descrizione"]]
       
       appunti_scuola.each do |item|
         appunto = item[:appunto]
         
-        tipo_appunto = appunto.nome&.titleize || "Generico"
         stato = appunto.stato&.titleize || "N/D"
+        nome_appunto = appunto.nome&.titleize || "Generico"
         
         # Informazioni sulla classe
         classe_info = ""
         if appunto.classe.present?
-          classe_info = "#{appunto.classe.anno_corso} #{appunto.classe.sezione}"
+          classe_info = "#{appunto.classe.classe} #{appunto.classe.sezione}"
         elsif appunto.import_adozione.present?
           adozione = appunto.import_adozione
           classe_info = "#{adozione.ANNOCORSO} #{adozione.SEZIONEANNO}"
@@ -144,7 +144,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
           classe_info = "-"
         end
         
-        # Descrizione dell'appunto
+        # Descrizione completa dell'appunto (body + content)
         descrizione_parts = []
         if appunto.body.present?
           descrizione_parts << strip_html_tags(appunto.body)
@@ -156,31 +156,21 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         descrizione = descrizione_parts.join(" | ")
         descrizione = "Nessuna descrizione" if descrizione.blank?
         
-        # Informazioni sull'adozione se presente
-        adozione_info = ""
-        if appunto.import_adozione.present?
-          adozione = appunto.import_adozione
-          adozione_info = "#{adozione.EDITORE} - #{truncate_text(adozione.TITOLO, 25)}"
-        else
-          adozione_info = "-"
-        end
-        
         # Tronca i testi
-        descrizione = truncate_text(descrizione, 35)
+        descrizione = truncate_text(descrizione, 50)
         
         table_data << [
-          tipo_appunto,
           stato,
           classe_info,
-          descrizione,
-          adozione_info
+          nome_appunto,
+          descrizione
         ]
       end
       
       table(table_data, 
             header: true,
             width: bounds.width,
-            column_widths: [60, 70, 50, 150, bounds.width - 330],
+            column_widths: [70, 50, 80, bounds.width - 200],
             cell_style: { 
               size: 8, 
               padding: [3, 4],
@@ -196,18 +186,17 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         row(0).size = 9
         
         # Allineamento colonne
-        column(0).align = :center # Tipo
-        column(1).align = :center # Stato
-        column(2).align = :center # Classe
+        column(0).align = :center # Stato
+        column(1).align = :center # Classe
+        column(2).align = :center # Nome
         column(3).align = :left   # Descrizione
-        column(4).align = :left   # Adozione
         
         # Colore alternato per le righe
         (1...row_length).each do |i|
           row(i).background_color = i.odd? ? "FFFFFF" : "F8F8F8"
           
           # Evidenzia stati critici
-          case table_data[i][1] # colonna stato
+          case table_data[i][0] # colonna stato (ora è la prima)
           when "In Evidenza"
             row(i).background_color = "FFF2CC"
           when "Da Pagare"
