@@ -5,4 +5,13 @@ class AgendaControllerTest < ActionDispatch::IntegrationTest
     get agenda_show_url
     assert_response :success
   end
+
+  test "should get adozioni_tappe_pdf" do
+    user = users(:one) # Assumes you have a user fixture
+    sign_in user
+    
+    get adozioni_tappe_pdf_path(giorno: Date.today), as: :pdf
+    assert_response :success
+    assert_equal 'application/pdf', response.content_type
+  end
 end

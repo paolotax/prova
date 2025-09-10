@@ -54,6 +54,13 @@
         <% end %>
 
         <% heading.with_action do %>
+            <% if @tappe.any? %>
+                <%= component 'tax_button',
+                    svg_file: "icon-print.svg",
+                    color: "green",
+                    url: adozioni_tappe_pdf_path(giorno: @giorno),
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+            <% end %>
             <%= component 'tax_button',
                 svg_file: "icon-plus.svg",
                 color: "blue",
