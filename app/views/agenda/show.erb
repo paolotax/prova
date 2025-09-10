@@ -54,60 +54,62 @@
         <% end %>
 
         <% heading.with_action do %>
-            <% if @tappe.any? %>
-                <%= render DropdownComponent.new do |dropdown| %>
-                    <%= dropdown.with_button do %>
-                        <div class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
-                            <%= inline_svg_tag "icon-print.svg", class: "w-4 h-4 mr-1" %>
-                            Stampa
-                            <%= inline_svg_tag "icon-chevron-double-down.svg", class: "w-3 h-3 ml-1" %>
-                        </div>
-                    <% end %>
-                    
-                    <%= dropdown.with_item do %>
-                        <%= link_to adozioni_tappe_pdf_path(giorno: @giorno), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            Adozioni nelle tappe
+            <div class="flex items-center space-x-2">
+                <% if @tappe.any? %>
+                    <%= render DropdownComponent.new() do |dropdown| %>
+                        <%= dropdown.with_button do %>
+                            <%= component 'tax_button',
+                                svg_file: "icon-print.svg",
+                                color: "pink",
+								type: :dropdown %>
                         <% end %>
-                    <% end %>
-                    
-                    <%= dropdown.with_item do %>
-                        <%= link_to tappe_giorno_pdf_path(giorno: @giorno), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            Elenco tappe del giorno
+                        
+                        <%= dropdown.with_item do %>
+                            <%= link_to tappe_giorno_pdf_path(giorno: @giorno), 
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                                data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                                Elenco tappe del giorno
+                            <% end %>
                         <% end %>
-                    <% end %>
-                    
-                    <%= dropdown.with_item do %>
-                        <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno),
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            Dettaglio appunti e documenti
+
+                        <%= dropdown.with_item do %>
+                            <%= link_to adozioni_tappe_pdf_path(giorno: @giorno), 
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                                data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                                Kit adozioni nel baule
+                            <% end %>
                         <% end %>
-                    <% end %>
-                    <%= dropdown.with_item do %>
-                        <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'),
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            Fogli scuola
+                                            
+                        <%= dropdown.with_item do %>
+                            <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno),
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                                data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                                Dettaglio appunti e documenti
+                            <% end %>
                         <% end %>
-                    <% end %>
-                    <%= dropdown.with_item do %>
-                        <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true),
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                            data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                            Fogli scuola + sovrapacchi
+                        <%= dropdown.with_item do %>
+                            <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'),
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                                data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                                Fogli scuola
+                            <% end %>
+                        <% end %>
+                        <%= dropdown.with_item do %>
+                            <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true),
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                                data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                                Fogli scuola + sovrapacchi
+                            <% end %>
                         <% end %>
                     <% end %>
                 <% end %>
-            <% end %>
-            <%= component 'tax_button',
-                svg_file: "icon-plus.svg",
-                color: "blue",
-                url: slideover_path,
-                data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+                
+                <%= component 'tax_button',
+                    svg_file: "icon-plus.svg",
+                    color: "blue",
+                    url: slideover_path,
+                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+            </div>
         <% end %>
 
         <%= I18n.l( @giorno.to_date, format: :long_with_day, locale: :it ) %>

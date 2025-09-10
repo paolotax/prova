@@ -46,7 +46,7 @@ class AdozioniTappePdf < Prawn::Document
     move_down 30
     
     # Titolo del report
-    text "ADOZIONI NELLE SCUOLE DELLE TAPPE", 
+    text "KIT ADOZIONI NEL BAULE", 
          size: 18, 
          style: :bold, 
          align: :center
@@ -72,9 +72,7 @@ class AdozioniTappePdf < Prawn::Document
     
     adozioni_per_editore.each_with_index do |(editore, adozioni), index|
       if index > 0
-        start_new_page
-        intestazione
-        move_down 30
+        move_down 20  # Spazio tra editori
       end
       
       generate_editore_section(editore, adozioni)
@@ -111,7 +109,7 @@ class AdozioniTappePdf < Prawn::Document
   def generate_disciplina_section(disciplina, adozioni)
     # Sottotitolo disciplina
     text disciplina.titleize, 
-         size: 14, 
+         size: 12, 
          style: :bold, 
          color: "666666"
     

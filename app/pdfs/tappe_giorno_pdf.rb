@@ -132,7 +132,7 @@ class TappeGiornoPdf < Prawn::Document
                      when 'ImportScuola'
                        "#{tappa.tappable.DENOMINAZIONESCUOLA}"
                      when 'Cliente'
-                       tappa.tappable.ragione_sociale
+                       tappa.tappable.denominazione
                      else
                        tappa.tappable.denominazione rescue "N/D"
                      end
@@ -141,7 +141,7 @@ class TappeGiornoPdf < Prawn::Document
                   when 'ImportScuola'
                     "#{tappa.tappable.INDIRIZZOSCUOLA}\n#{tappa.tappable.CAPSCUOLA} #{tappa.tappable.DESCRIZIONECOMUNE} (#{tappa.tappable.PROVINCIA})"
                   when 'Cliente'
-                    "#{tappa.tappable.indirizzo}\n#{tappa.tappable.cap} #{tappa.tappable.citta}"
+                    "#{tappa.tappable.indirizzo}\n#{tappa.tappable.cap} #{tappa.tappable.comune}"
                   else
                     "N/D"
                   end

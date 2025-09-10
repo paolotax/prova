@@ -244,7 +244,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
                       when 'ImportScuola'
                         documento.clientable&.DENOMINAZIONESCUOLA || "Scuola N/D"
                       when 'Cliente'
-                        documento.clientable&.ragione_sociale || "Cliente N/D"
+                        documento.clientable&.denominazione || "Cliente N/D"
                       else
                         "N/D"
                       end,
@@ -448,7 +448,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
     when 'ImportScuola'
       truncate_text(tappa.tappable.DENOMINAZIONESCUOLA, 20)
     when 'Cliente'
-      truncate_text(tappa.tappable.ragione_sociale, 20)
+      truncate_text(tappa.tappable.denominazione, 20)
     else
       "N/D"
     end
