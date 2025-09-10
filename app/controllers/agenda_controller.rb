@@ -317,10 +317,28 @@ class AgendaController < ApplicationController
     # Ordina tutto per posizione tappa
     @appunti_dettagliati.sort_by! { |item| item[:posizione_tappa] }
     @documenti_dettagliati.sort_by! { |item| item[:posizione_tappa] }
+    
+    # Calcola riassunto titoli da consegnare (documenti non consegnati)
+    @riassunto_titoli = {}
+    @documenti_dettagliati.each do |item|
+      documento = item[:documento]
+      next if documento.consegnato_il.present? # Solo documenti non consegnati
+      
+      documento.righe.includes(:libro).each do |riga|
+        titolo = riga.libro&.titolo || "Titolo N/D"
+        quantita = riga.quantita || 0
+        
+        if @riassunto_titoli[titolo]
+          @riassunto_titoli[titolo] += quantita
+        else
+          @riassunto_titoli[titolo] = quantita
+        end
+      end
+    end
 
     respond_to do |format|
       format.pdf do
-        pdf = DettaglioAppuntiDocumentiPdf.new(@appunti_dettagliati, @documenti_dettagliati, @giorno, view_context)
+        pdf = DettaglioAppuntiDocumentiPdf.new(@appunti_dettagliati, @documenti_dettagliati, @giorno, view_context, @riassunto_titoli)
         send_data pdf.render, 
                   filename: "dettaglio_appunti_documenti_#{@giorno.strftime('%Y-%m-%d')}.pdf",
                   type: 'application/pdf',

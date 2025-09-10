@@ -5,7 +5,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(appunti_dettagliati, documenti_dettagliati, giorno, view)
+  def initialize(appunti_dettagliati, documenti_dettagliati, giorno, view, riassunto_titoli = {})
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
@@ -35,6 +35,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
     @documenti_dettagliati = documenti_dettagliati
     @giorno = giorno
     @view = view
+    @riassunto_titoli = riassunto_titoli
 
     generate_report
   end
@@ -83,6 +84,12 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
     # Sezione Documenti
     if @documenti_dettagliati.any?
       generate_documenti_section
+      
+      # Aggiungi tabella riassunto titoli se ci sono documenti da consegnare
+      if @riassunto_titoli.any?
+        move_down 30
+        generate_riassunto_titoli_section
+      end
     end
     
     # Se non ci sono né appunti né documenti
@@ -260,7 +267,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
       move_down 5
       
       # Tabella documenti per questo cliente/scuola
-      table_data = [["Tipo Doc.", "N° Doc.", "Data", "Stato", "Consegnato", "Pagato", "Importo"]]
+      table_data = [["Tipo Doc.", "N° Doc.", "Data", "Stato", "Consegnato", "Pagato", "Referente", "Note", "Copie", "Importo"]]
       
       documenti_cliente.each do |item|
         documento = item[:documento]
@@ -270,19 +277,23 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         data_doc = documento.data_documento ? I18n.l(documento.data_documento, format: :short, locale: :it) : "N/D"
         stato = documento.status&.humanize || "N/D"
         
-        # Calcola importo totale (se disponibile)
-        importo = if documento.totale_cents && documento.totale_cents > 0
-                    "€ #{sprintf('%.2f', documento.totale_cents / 100.0)}"
-                  else
-                    "-"
-                  end
-        
         # Date di consegna e pagamento
         consegnato = documento.consegnato_il ? I18n.l(documento.consegnato_il.to_date, format: :short, locale: :it) : "NO"
         pagato = documento.pagato_il ? I18n.l(documento.pagato_il.to_date, format: :short, locale: :it) : "NO"
         
+        # Referente e note
+        referente = documento.referente.present? ? truncate_text(documento.referente, 20) : "-"
+        note = documento.note.present? ? truncate_text(documento.note, 25) : "-"
+        
+        # Totale copie calcolato dalle righe
+        totale_copie = documento.totale_copie || 0
+        
+        # Importo calcolato dalle righe
+        importo_calcolato = documento.totale_importo
+        importo = importo_calcolato > 0 ? "€ #{sprintf('%.2f', importo_calcolato)}" : "-"
+        
         # Tronca i testi
-        tipo_doc = truncate_text(tipo_doc, 20)
+        tipo_doc = truncate_text(tipo_doc, 15)
         
         table_data << [
           tipo_doc,
@@ -291,6 +302,9 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
           stato,
           consegnato,
           pagato,
+          referente,
+          note,
+          totale_copie.to_s,
           importo
         ]
       end
@@ -298,7 +312,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
       table(table_data, 
             header: true,
             width: bounds.width,
-            column_widths: [70, 50, 50, 60, 60, 60, bounds.width - 350],
+            column_widths: [60, 40, 40, 50, 50, 50, 60, 80, 30, bounds.width - 460],
             cell_style: { 
               size: 8, 
               padding: [3, 4],
@@ -320,7 +334,10 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         column(3).align = :center # Stato
         column(4).align = :center # Consegnato
         column(5).align = :center # Pagato
-        column(6).align = :right  # Importo
+        column(6).align = :left   # Referente
+        column(7).align = :left   # Note
+        column(8).align = :center # Copie
+        column(9).align = :right  # Importo
         
         # Colore alternato per le righe
         (1...row_length).each do |i|
@@ -352,6 +369,78 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         move_down 10
       end
     end
+  end
+
+  def generate_riassunto_titoli_section
+    # Controlla se c'è spazio per la sezione
+    if cursor < 200
+      start_new_page
+      intestazione
+      move_down 30
+    end
+    
+    text "RIASSUNTO TITOLI DA CONSEGNARE", 
+         size: 16, 
+         style: :bold, 
+         color: "006600"
+    
+    move_down 10
+    
+    # Ordina i titoli per quantità decrescente
+    titoli_ordinati = @riassunto_titoli.sort_by { |titolo, quantita| -quantita }
+    
+    # Tabella riassunto
+    table_data = [["Titolo", "Quantità Totale"]]
+    
+    titoli_ordinati.each do |titolo, quantita|
+      table_data << [
+        truncate_text(titolo, 70),
+        quantita.to_s
+      ]
+    end
+    
+    # Riga totale
+    totale_generale = @riassunto_titoli.values.sum
+    table_data << ["TOTALE GENERALE", totale_generale.to_s]
+    
+    table(table_data, 
+          header: true,
+          width: bounds.width,
+          column_widths: [bounds.width - 80, 80],
+          cell_style: { 
+            size: 9, 
+            padding: [4, 6],
+            border_width: 0.5,
+            border_color: "CCCCCC",
+            valign: :top
+          }) do
+      
+      # Stile header
+      row(0).font_style = :bold
+      row(0).background_color = "E6FFE6"
+      row(0).text_color = "003300"
+      row(0).size = 10
+      
+      # Stile riga totale
+      row(-1).font_style = :bold
+      row(-1).background_color = "CCFFCC"
+      row(-1).text_color = "003300"
+      
+      # Allineamento colonne
+      column(0).align = :left   # Titolo
+      column(1).align = :center # Quantità
+      
+      # Colore alternato per le righe (esclusa l'ultima che è il totale)
+      (1...(row_length-1)).each do |i|
+        row(i).background_color = i.odd? ? "FFFFFF" : "F8FFF8"
+      end
+    end
+    
+    move_down 10
+    text "Note: Include solo i documenti non ancora consegnati", 
+         size: 8, 
+         color: "666666",
+         style: :italic
   end
 
   def get_tappa_name(tappa)
