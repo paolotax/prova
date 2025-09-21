@@ -3,29 +3,7 @@
     <h1 class="text-xl font-bold mb-4">Le mie scuole</h1>
     
     <div id="user-scuole" data-controller="tax-sortable" data-tax-sortable-group-value="user-scuole">
-      <% @user_scuole.each do |user_scuola| %>
-        <div id="<%= dom_id user_scuola %>" class="bg-white shadow rounded-lg mb-2 p-4 flex items-center" 
-             data-tax-sortable-update-url="<%= sort_user_scuola_path(user_scuola) %>">
-          
-          <div class="handle cursor-move text-gray-400 mr-3 text-xl">
-            ⋮⋮
-          </div>
-          
-          <div class="flex-grow">
-            <%= user_scuola.import_scuola.DENOMINAZIONESCUOLA %>
-            <div class="text-sm text-gray-500">
-              <%= user_scuola.import_scuola.DESCRIZIONECOMUNE %> 
-            </div>
-          </div>
-
-          <div class="text-gray-400 ml-4">
-            <%= button_to user_scuola_path(user_scuola) , method: :delete, data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler eliminare questa scuola?" } ,
-                  class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" do %>
-              <%= inline_svg_tag "icon-trash.svg" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
+      <%= render partial: "user_scuole/user_scuola", collection: @user_scuole, as: :user_scuola %>
     </div>
   </div>
 <% end %>

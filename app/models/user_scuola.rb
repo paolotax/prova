@@ -22,6 +22,8 @@ class UserScuola < ApplicationRecord
 
   positioned on: :user
 
+  delegate :denominazione, :comune, :tipo_scuola, to: :import_scuola
+
   def self.generate_positions_by_provincia_comune_direzione
     self.joins(:import_scuola).group_by(&:user_id).each do |user_id, user_scuole|
       index = 1  # Iniziamo da 1 invece di 0
