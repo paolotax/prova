@@ -25,7 +25,7 @@
         
         <div class="flex-shrink-0 w-10 h-10">
             <label class="cursor-pointer relative">
-                <%# <input type="checkbox" class="hidden peer"> %>
+                
                 <%= check_box_tag "appunto_ids[]", appunto.id, nil, form: "bulk-actions", 
                         class: "hidden peer", 
                         data: {action: "input->bulk-actions#count", bulk_actions_target: "checkbox"} %>
@@ -55,7 +55,6 @@
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                 </div>
-
             </label>
         </div>
         

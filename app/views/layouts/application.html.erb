@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 
-<html <%= "data-hotwire-native-app" if turbo_native_app? %> class="<%= [
+<html class="<%= [
 	"h-full antialiased",
 	("bg-gray-50" if Rails.env == "production"),
 	("bg-red-200" if Rails.env == "development")].compact.join(" ") %>">

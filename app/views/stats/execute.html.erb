@@ -1,16 +1,11 @@
 <%= turbo_frame_tag "stat_results", loading: :lazy do %>
 
-    <% raggruppamento = @result.group_by do |c|
-                            fields = @stat.raggruppa
-                            fields.map { |f| c[f] } %>
-                        <% end %>
-
     <div class="rounded-lg w-full overflow-auto" data-controller="indice-tabella">
 
         <% if @stat.raggruppa.any? %>
             <div class="bg-gray-900 text-2xl font-bold text-white ">
                 <div class="px-4 py-3 print-hidden" colspan=<%= @stat.raggruppa.size %>>
-                    <%= select_tag "group_index_select", options_for_select(raggruppamento.keys.map { |r| [r.join(" -> "), r.join.gsub(" ", "-").downcase] }),
+                    <%= select_tag "group_index_select", options_for_select(@raggruppamento.keys.map { |r| [r.join(" -> "), r.join.gsub(" ", "-").downcase] }),
                         data: { action: "change->indice-tabella#changeGroup" },
                         class: "field" %>
                 </div>
@@ -19,12 +14,11 @@
 
         <table class="divide-y divide-gray-300">
             <tbody>
-                <% raggruppamento.each do |group, group_result| %>
+                <% @raggruppamento.each do |group, group_result| %>
 
                     <%# titolo del gruppo %>
-                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>"
-                        class="bg-gray-900 text-2xl font-bold text-white ">
-                        <td  class="px-4 py-3"colspan=<%= @result.first.keys.size - @stat.raggruppa.size %>>
+                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>" class="bg-gray-900 text-2xl font-bold text-white ">
+                        <td  class="px-4 py-3" colspan=<%= @result.first.keys.size - @stat.raggruppa.size %> >
                             <%= group.join(" -> ") %>
                         </td>
                     </tr>

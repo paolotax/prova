@@ -22,6 +22,13 @@ class StatsController < ApplicationController
     @miei_editori = current_user.miei_editori
 
     @result = @stat.execute current_user
+    @raggruppamento = @result.group_by do |c|
+      fields = @stat.raggruppa
+      fields.map { |f| c[f] }
+    end
+
+    #debugger
+    
     respond_to do |format|
       format.html
       format.xlsx do
