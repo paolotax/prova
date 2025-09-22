@@ -162,7 +162,7 @@
 <% if @tappe.any? %>
 
 
-    <div class="mt-4", data-controller="bulk-actions" >
+    <div class="mt-4" data-controller="bulk-actions" >
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Appunti" %>
         <% end %>
@@ -175,7 +175,7 @@
         <%= render "appunti/bulk_actions/form" %>
     </div>
 
-    <div class="mt-4", data-controller="bulk-actions" >
+    <div class="mt-4" data-controller="bulk-actions" >
         <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
             <%= "Ordini" %>
         <% end %>

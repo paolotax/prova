@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 
-
-<html class="<%= [
-	"h-full antialiased",
-	("bg-gray-50" if Rails.env == "production"),
-	("bg-red-200" if Rails.env == "development")].compact.join(" ") %>">
+<!--  <%= "data-hotwire-native-app" if turbo_native_app? %> -->
+<html <%= "data-hotwire-native-app" if turbo_native_app? %> class="<%= [
+			"h-full antialiased",
+			("bg-gray-50" if Rails.env == "production"),
+			("bg-red-200" if Rails.env == "development")].compact.join(" ") %>">
 	<head>
 
 		<title><%= content_for(:title) || "Scagnozz" %></title>
@@ -90,6 +90,6 @@
 
 		<%= turbo_frame_tag "slide-over" %>
 		<%#= turbo_frame_tag "slide-over", data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: { filtra_appunti: filtra_appunti_path }} %>
-  	<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
+  		<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
 	</body>
 </html>
