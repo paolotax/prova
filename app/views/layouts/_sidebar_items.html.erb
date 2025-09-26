@@ -74,29 +74,29 @@
 		<ul data-tax-reveal-target="item" class="hidden">
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to documenti_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+				<%= link_to documenti_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>
 					Documenti                
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to ordini_in_corso_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
+				<%= link_to ordini_in_corso_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
 					Ordini in corso                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to clienti_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
+				<%= link_to clienti_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
 					Clienti                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to libri_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
+				<%= link_to libri_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
 					i MIEI Librini                  
 				<% end %>
 			</li>				
@@ -125,15 +125,15 @@
 		<ul data-tax-reveal-target="item" class="hidden">
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to giorno_path(Date.today), 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+				<%= link_to giorno_path(Date.today),
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>
 					Oggi                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
-				<%= link_to tappe_path, 
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
+				<%= link_to tappe_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
 					Tutte le tappe                  
 				<% end %>
 			</li>
