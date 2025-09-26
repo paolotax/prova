@@ -15,13 +15,7 @@ export default class extends Controller {
     event.preventDefault();
 
     this.elementTargets.forEach((element) => {
-      if (element.classList.contains("hidden")) {
-        element.classList.remove("hidden");
-        element.classList.add("block");
-      } else {
-        element.classList.add("hidden");
-        element.classList.remove("block");
-      }
+      element.classList.toggle("hidden");
     });
   }
 }

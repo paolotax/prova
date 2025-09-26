@@ -62,11 +62,23 @@
   }
 
   .sidebar-item {
-    @apply text-gray-200 flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold;
+    @apply text-gray-200 flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-150 ease-in-out;
   }
 
   .sidebar-item:hover {
     @apply bg-gray-700 text-white;
+  }
+
+  /* Sidebar slideover smooth transitions */
+  [data-tax-sidebar-target="element"] {
+    @apply transition-all duration-200 ease-in-out;
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  [data-tax-sidebar-target="element"]:not(.hidden) {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   .label {
