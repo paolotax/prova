@@ -4,8 +4,15 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
 
   static targets = ["element"];
+  static values = { open: Boolean };
 
-  toggle(event) {
+  connect() {
+    console.log("tax-sidebar connected");
+  }
+
+  toggle(event) {data-tax-sidebar-target="element"
+
+    console.log("tax-sidebar toggle");
     event.preventDefault();
 
     this.elementTargets.forEach((element) => {
