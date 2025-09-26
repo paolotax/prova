@@ -1,7 +1,7 @@
 <%# menu_item SCAGNOZZ %>
 <li>
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
-	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
+	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", data: { turbo_action: "replace" } do %>
 		<%= inline_svg_tag('icon-home.svg') %>
 		ScagnoZZ                        
 	<% end %>	
@@ -9,7 +9,7 @@
 
 <%# menu_item SCUOLE %>
 <li>
-	<%= link_to import_scuole_path, class:"sidebar-item" do %>
+	<%= link_to import_scuole_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole
 	<% end %>
@@ -17,8 +17,8 @@
 
 <%# menu_item APPUNTI %>
 <li>
-	<%= link_to appunti_path, class:"sidebar-item" do %>
-		<%= inline_svg_tag('icon-pencil.svg') %>                
+	<%= link_to appunti_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
+		<%= inline_svg_tag('icon-pencil.svg') %>
 		Appunti
 	<% end %>
 </li>
@@ -109,7 +109,7 @@
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to giri_path, class:"flex w-full gap-x-3" do %>
+			<%= link_to giri_path, class:"flex w-full gap-x-3", data: { turbo_action: "replace" } do %>
 				<%= inline_svg_tag('icon-truck.svg') %>
 				Giri                    
 			<% end %>
@@ -143,7 +143,7 @@
 
 <%# menu_item Stats %>
 <li>
-	<%= link_to stats_path, class:"sidebar-item" do %>
+	<%= link_to stats_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
 		Stats...
 	<% end %>
