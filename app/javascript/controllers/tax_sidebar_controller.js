@@ -10,8 +10,7 @@ export default class extends Controller {
     console.log("tax-sidebar connected");
   }
 
-  toggle(event) {data-tax-sidebar-target="element"
-
+  toggle(event) {
     console.log("tax-sidebar toggle");
     event.preventDefault();
 
