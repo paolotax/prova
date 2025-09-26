@@ -11,7 +11,7 @@
 
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<%# aggiunto per turbo-8 transition %>
-		<meta name="view-transition" content="same-origin" />
+		<%# <meta name="view-transition" content="same-origin" /> %>
 
 		<meta name="mobile-web-app-capable" content="yes">
   		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -32,7 +32,7 @@
 
 		<%= javascript_importmap_tags %>
 
-		<% turbo_refreshes_with method: :morph, scroll: :reset %>
+		<%# turbo_refreshes_with method: :morph, scroll: :reset %>
 
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 
