@@ -183,4 +183,3 @@ gem 'rqrcode'
 
 # gem 'rails_icons'
 
-gem "reactionview", "~> 0.1.2"
