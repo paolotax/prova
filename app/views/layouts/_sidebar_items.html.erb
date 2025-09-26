@@ -1,7 +1,7 @@
 <%# menu_item SCAGNOZZ %>
 <li>
 	<!-- Current: "bg-gray-700 text-white", Default: "text-gray-200 hover:text-white hover:bg-gray-700" -->
-	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", data: { turbo_action: "replace" } do %>
+	<%= link_to root_path, class:"bg-gray-700 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold" do %>
 		<%= inline_svg_tag('icon-home.svg') %>
 		ScagnoZZ                        
 	<% end %>	
@@ -9,7 +9,7 @@
 
 <%# menu_item SCUOLE %>
 <li>
-	<%= link_to import_scuole_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
+	<%= link_to import_scuole_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-building-library.svg') %>                
 		Scuole
 	<% end %>
@@ -17,7 +17,7 @@
 
 <%# menu_item APPUNTI %>
 <li>
-	<%= link_to appunti_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
+	<%= link_to appunti_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-pencil.svg') %>
 		Appunti
 	<% end %>
@@ -75,28 +75,28 @@
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to documenti_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
 					Documenti                
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to ordini_in_corso_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
 					Ordini in corso                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to clienti_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
 					Clienti                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to libri_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
 					i MIEI Librini                  
 				<% end %>
 			</li>				
@@ -109,7 +109,7 @@
 	<div data-controller="tax-reveal"  >
 		<div   class="flex justify-between items-center text-gray-200 hover:text-white hover:bg-gray-700 rounded-md p-2 text-sm leading-6 font-semibold">
 			
-			<%= link_to giri_path, class:"flex w-full gap-x-3", data: { turbo_action: "replace" } do %>
+			<%= link_to giri_path, class:"flex w-full gap-x-3" do %>
 				<%= inline_svg_tag('icon-truck.svg') %>
 				Giri                    
 			<% end %>
@@ -126,14 +126,14 @@
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2 text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to giorno_path(Date.today),
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
 					Oggi                 
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to tappe_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold", data: { turbo_action: "replace" } do %>	
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
 					Tutte le tappe                  
 				<% end %>
 			</li>
@@ -143,7 +143,7 @@
 
 <%# menu_item Stats %>
 <li>
-	<%= link_to stats_path, class:"sidebar-item", data: { turbo_action: "replace" } do %>
+	<%= link_to stats_path, class:"sidebar-item" do %>
 		<%= inline_svg_tag('icon-reports.svg') %>                
 		Stats...
 	<% end %>
