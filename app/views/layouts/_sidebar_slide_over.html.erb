@@ -1,16 +1,15 @@
 <div id="sidebar-tax"
-	tabindex="-1"
-	data-controller="tax-sidebar">
+	tabindex="-1">
 
 	<!-- begin sidebar/slideover -->
 	<div id="sidebar-mobile">
-		<div data-tax-sidebar-target="element" class="hidden fixed inset-0 flex z-40"
+		<div data-tax-sidebar-target="element" class="sidebar-overlay"
 			data-action="keydown.esc->tax-sidebar#toggle">
 			<div class="fixed inset-0">
 				<div class="absolute inset-0 bg-gray-600 opacity-75"></div>
 			</div>
 
-			<div class="relative flex-1 flex flex-col max-w-xs w-full pb-4 bg-gray-800">
+			<div class="sidebar-panel pb-4">
 
 				<div class="absolute top-0 right-0 -mr-14 p-1">
 					<button

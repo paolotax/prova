@@ -69,6 +69,29 @@
     @apply bg-gray-700 text-white;
   }
 
+  /* Sidebar slide animation */
+  .sidebar-overlay {
+    @apply fixed inset-0 z-40 lg:hidden;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar-panel {
+    @apply relative flex w-full max-w-xs flex-1 flex-col bg-gray-800;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+  }
+
+  .sidebar-overlay.active .sidebar-panel {
+    transform: translateX(0);
+  }
+
   .label {
     @apply block text-sm font-medium leading-6 text-gray-900;
   }
