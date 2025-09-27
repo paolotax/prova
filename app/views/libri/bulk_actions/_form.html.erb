@@ -1,0 +1,21 @@
+<% content_for :bulk_action_buttons do %>
+
+    <!-- Carrello -->
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" do %>
+        <%= icon "shopping-cart" %>
+        Carrello
+    <% end %>
+
+    <!-- Aggiungi ad Ordine -->
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md" do %>
+        <%= icon "plus-circle" %>
+        Aggiungi
+    <% end %>
+
+<% end %>
+
+<% content_for :bulk_action_forms do %>
+    <!-- Form containers removed for now -->
+<% end %>
+
+<%= render partial: "shared/bulk_actions_container" %>

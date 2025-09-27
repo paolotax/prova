@@ -117,6 +117,13 @@ Rails.application.routes.draw do
     resources :qrcodes
   end
 
+  namespace :libri do
+    resources :bulk_actions, only: [] do
+      post :carrello, on: :collection
+      post :aggiungi, on: :collection
+    end
+  end
+
   resources :qrcodes
 
   resources :confezione do

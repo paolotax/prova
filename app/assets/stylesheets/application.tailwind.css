@@ -305,6 +305,20 @@
     overflow: hidden;
   }
 
+  /* Libro selection styles */
+  .libro-card {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .libro-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .libro-card.selected {
+    transform: translateY(-4px);
+  }
+
 }
 
 .hw-combobox--multiple {

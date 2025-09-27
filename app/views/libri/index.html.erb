@@ -78,10 +78,11 @@
 
 <%= turbo_frame_tag :search_results do %>
 
-    <%= tag.div class: "flex flex-col lg:pr-[15rem]" do %>
+    <%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: "bulk-actions" } do %>
 
         <%= render "shared/active_filters", collection: @libri %>
-        
+        <%= render "libri/bulk_actions/form" %>
+
         <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" do %>
             <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
             
@@ -104,6 +105,8 @@
     </aside>
 
 <% end %>
+
+<%= render "libri/bulk_actions/form" %>
 
 
 

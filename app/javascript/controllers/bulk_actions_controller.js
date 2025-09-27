@@ -15,6 +15,10 @@ export default class BulkActionsController extends CheckboxesController {
     this.element.contains(event.target) || this.setCheckboxesTo(false);
   }
 
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+
 
   // private
 

@@ -1,4 +1,6 @@
-<%= tag.div id: dom_id(libro), class: "bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300" do %>
+<%= tag.div id: dom_id(libro),
+    class: "item bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer has-[:checked]:border-4 has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-200",
+    data: { action: "click->bulk-actions#toggle" } do %>
 
   <!-- Cover Image with Overlay Content -->
   <div class="aspect-[4/5] w-full bg-gray-100 relative overflow-hidden">
@@ -9,9 +11,31 @@
     <!-- Gradient Overlay covering more from bottom -->
     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 via-30% to-transparent to-60%"></div>
 
+    <!-- Selection Checkbox -->
+    <div class="absolute top-3 left-3">
+      <%= check_box_tag "libro_ids[]", libro.id, nil,
+          form: "bulk-actions",
+          class: "peer sr-only",
+          data: { action: "input->bulk-actions#count", bulk_actions_target: "checkbox" } %>
+
+      <!-- Visual feedback when selected -->
+      <div class="hidden peer-checked:block border-4 border-blue-500 bg-blue-500 rounded-full absolute items-center content-center justify-center peer-active:ring-2 peer-active:ring-blue-200">
+        <svg class="w-8 h-8 text-white"
+             xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="3"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+    </div>
+
     <!-- Price Badge -->
-    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-md px-2 py-1">
-      <span class="text-sm font-semibold text-gray-900">
+    <div class="absolute top-3 right-3 bg-black/80 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
+      <span class="text-sm font-bold text-white">
         <%= number_to_currency(libro.prezzo_in_cents / 100.0) %>
       </span>
     </div>
@@ -22,7 +46,7 @@
       <!-- Title and Publisher -->
       <div class="space-y-1">
         <%= link_to libro_path(libro),
-            data: { turbo_frame: "_top" },
+            data: { turbo_frame: "_top", action: "click->bulk-actions#stopPropagation" },
             class: "block font-bold text-white hover:text-blue-300 line-clamp-2" do %>
           <%= libro.titolo %>
         <% end %>
@@ -38,12 +62,14 @@
       <!-- Badges Row -->
       <div class="flex flex-wrap gap-1">
         <% unless libro.fascicoli_count.zero? %>
-          <%= link_to libri_path(fascicoli: libro.id) do %>
+          <%= link_to libri_path(fascicoli: libro.id),
+              data: { action: "click->bulk-actions#stopPropagation" } do %>
             <%= component('badge', text: libro.fascicoli_count, color: "yellow") %>
           <% end %>
         <% end %>
         <% unless libro.confezioni_count.zero? %>
-          <%= link_to libri_path(confezioni: libro.id) do %>
+          <%= link_to libri_path(confezioni: libro.id),
+              data: { action: "click->bulk-actions#stopPropagation" } do %>
             <%= component('badge', text: libro.confezioni_count, color: "blue") %>
           <% end %>
         <% end %>
