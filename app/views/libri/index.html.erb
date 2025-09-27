@@ -82,8 +82,8 @@
 
         <%= render "shared/active_filters", collection: @libri %>
         
-        <%= tag.div id: "libri-lista", class: "grid grid-cols-1" do %>
-            <p class="only:block hidden py-32 px-4 text-center xl:col-span-2">Whoops! Non ci sono libri </p>
+        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" do %>
+            <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
             
             <%= render @page.records %>
 

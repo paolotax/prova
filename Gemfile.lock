@@ -269,6 +269,10 @@ GEM
     hashie (5.0.0)
     heapy (0.2.0)
       thor
+    herb (0.7.4-aarch64-linux-gnu)
+    herb (0.7.4-arm64-darwin)
+    herb (0.7.4-x86_64-darwin)
+    herb (0.7.4-x86_64-linux-gnu)
     highline (2.0.3)
     hotwire_combobox (0.3.2)
       rails (>= 7.0.7.2)
@@ -532,6 +536,9 @@ GEM
       i18n
     rdoc (6.13.1)
       psych (>= 4.0.0)
+    reactionview (0.1.2)
+      actionview (>= 7.0)
+      herb (>= 0.7.0, < 1.0.0)
     redis (5.3.0)
       redis-client (>= 0.22.0)
     redis-client (0.23.2)
@@ -745,6 +752,7 @@ DEPENDENCIES
   rails_performance
   ranked-model (~> 0.4.10)
   ransack
+  reactionview (~> 0.1.2)
   redis (~> 5.1)
   resend (~> 0.10.0)
   roo (~> 2.10.0)
