@@ -14,7 +14,6 @@
     <!-- Selection Checkbox -->
     <div class="absolute top-3 left-3">
       <%= check_box_tag "libro_ids[]", libro.id, nil,
-          form: "bulk-actions",
           class: "peer sr-only",
           data: { action: "input->bulk-actions#count", bulk_actions_target: "checkbox" } %>
 

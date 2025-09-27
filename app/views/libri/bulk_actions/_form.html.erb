@@ -1,13 +1,23 @@
 <% content_for :bulk_action_buttons do %>
 
     <!-- Carrello -->
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" do %>
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md",
+            data: {
+              action: "bulk-actions#toggleFormContainer",
+              form_id: "carrello",
+              bulk_actions_target: "menuButton"
+            } do %>
         <%= icon "shopping-cart" %>
         Carrello
     <% end %>
 
     <!-- Aggiungi ad Ordine -->
-    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md" do %>
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md",
+            data: {
+              action: "bulk-actions#toggleFormContainer",
+              form_id: "aggiungi",
+              bulk_actions_target: "menuButton"
+            } do %>
         <%= icon "plus-circle" %>
         Aggiungi
     <% end %>
@@ -15,7 +25,47 @@
 <% end %>
 
 <% content_for :bulk_action_forms do %>
-    <!-- Form containers removed for now -->
+
+    <!-- Carrello -->
+    <%= form_with url: carrello_libri_bulk_actions_path,
+            method: :post,
+            class: "hidden transition-all duration-300 ease-out origin-top mt-4",
+            data: {
+                bulk_actions_target: "form formContainer",
+                form_id: "carrello",
+                turbo_frame: "_top",
+                transition_enter: "transform transition ease-out duration-300",
+                transition_enter_start: "transform -translate-y-4 opacity-0",
+                transition_enter_end: "transform translate-y-0 opacity-100",
+                transition_leave: "transform transition ease-in duration-200",
+                transition_leave_start: "transform translate-y-0 opacity-100",
+                transition_leave_end: "transform -translate-y-4 opacity-0"
+            } do |form| %>
+        <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+            <%= form.submit "Crea Nuovo Ordine", class: "px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md" %>
+        <% end %>
+    <% end %>
+
+    <!-- Aggiungi -->
+    <%= form_with url: aggiungi_libri_bulk_actions_path,
+            method: :post,
+            class: "hidden transition-all duration-300 ease-out origin-top mt-4",
+            data: {
+                bulk_actions_target: "form formContainer",
+                form_id: "aggiungi",
+                turbo_frame: "_top",
+                transition_enter: "transform transition ease-out duration-300",
+                transition_enter_start: "transform -translate-y-4 opacity-0",
+                transition_enter_end: "transform translate-y-0 opacity-100",
+                transition_leave: "transform transition ease-in duration-200",
+                transition_leave_start: "transform translate-y-0 opacity-100",
+                transition_leave_end: "transform -translate-y-4 opacity-0"
+            } do |form| %>
+        <%= tag.div class: "flex pt-2 w-full justify-center" do %>
+            <%= form.submit "Aggiungi all'Ultimo Ordine", class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md" %>
+        <% end %>
+    <% end %>
+
 <% end %>
 
 <%= render partial: "shared/bulk_actions_container" %>

@@ -5,28 +5,49 @@ class Libri::BulkActionsController < ApplicationController
   def carrello
     @libri = Libro.where(id: params[:libro_ids])
 
+    # Trova la causale per ordini
+    causale = Causale.find_by(causale: 'Ordine Scuola')
+
+    # Genera il prossimo numero documento per l'anno corrente
+    numero_documento = (current_user.documenti
+                        .where(causale: causale)
+                        .where('EXTRACT(YEAR FROM data_documento) = ?', Date.today.year)
+                        .maximum(:numero_documento) || 0).to_i + 1
+
     # Creare un nuovo documento ordine
     @documento = current_user.documenti.build(
-      causale_id: Causale.find_by(sigla: 'ORDINE')&.id,
-      tipo_documento: 'ordine',
-      status: 'bozza'
+      causale: causale,
+      numero_documento: numero_documento,
+      data_documento: Date.today,
+      clientable_type: 'Cliente',
+      clientable_id: Cliente.first&.id,
+      status: 'ordine',
+      referente: @libri.all.map(&:titolo).join(', ')
     )
+    
 
     if @documento.save
       # Aggiungere i libri come righe del documento
       @libri.each do |libro|
-        @documento.documento_righe.create(
-          articolo_type: 'Libro',
-          articolo_id: libro.id,
-          descrizione: libro.titolo,
-          prezzo_unitario_cents: libro.prezzo_in_cents,
+        # Creo prima la Riga
+        riga = Riga.create!(
+          libro_id: libro.id,
+          prezzo_cents: libro.prezzo_in_cents,
           quantita: 1
         )
+        # Poi creo la DocumentoRiga che collega documento e riga
+        @documento.documento_righe.create!(riga: riga)
       end
 
-      redirect_to @documento, notice: "Nuovo ordine creato con #{@libri.count} libri"
+      respond_to do |format|
+        format.html { redirect_to @documento, notice: "Nuovo ordine creato con #{@libri.count} libri", status: :see_other }
+        format.turbo_stream { redirect_to @documento, notice: "Nuovo ordine creato con #{@libri.count} libri", status: :see_other }
+      end
     else
-      redirect_back(fallback_location: libri_path, alert: "Errore nella creazione dell'ordine")
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: libri_path, alert: "Errore nella creazione dell'ordine") }
+        format.turbo_stream { redirect_back(fallback_location: libri_path, alert: "Errore nella creazione dell'ordine") }
+      end
     end
   end
 
@@ -34,38 +55,37 @@ class Libri::BulkActionsController < ApplicationController
     @libri = Libro.where(id: params[:libro_ids])
     @documento_id = params[:documento_id]
 
+    # Se non è specificato un documento_id, prendi l'ultimo documento dell'utente
     if @documento_id.present?
       @documento = current_user.documenti.find(@documento_id)
-
-      @libri.each do |libro|
-        # Controllo se il libro è già nel documento
-        existing_riga = @documento.documento_righe.find_by(
-          articolo_type: 'Libro',
-          articolo_id: libro.id
-        )
-
-        if existing_riga
-          # Se esiste, incrementa la quantità
-          existing_riga.update(quantita: existing_riga.quantita + 1)
-        else
-          # Se non esiste, crea una nuova riga
-          @documento.documento_righe.create(
-            articolo_type: 'Libro',
-            articolo_id: libro.id,
-            descrizione: libro.titolo,
-            prezzo_unitario_cents: libro.prezzo_in_cents,
-            quantita: 1
-          )
-        end
-      end
-
-      redirect_to @documento, notice: "#{@libri.count} libri aggiunti all'ordine"
     else
-      redirect_back(fallback_location: libri_path, alert: "Seleziona un ordine esistente")
+      # Trova l'ultimo documento dell'utente (ordinato per data e numero documento)
+      @documento = current_user.documenti.order(data_documento: :desc, numero_documento: :desc).first
+
+      unless @documento
+        respond_to do |format|
+          format.html { redirect_back(fallback_location: libri_path, alert: "Nessun ordine disponibile. Crea prima un nuovo ordine.") }
+          format.turbo_stream { redirect_back(fallback_location: libri_path, alert: "Nessun ordine disponibile. Crea prima un nuovo ordine.") }
+        end
+        return
+      end
+    end
+
+    @libri.each do |libro|
+      # Crea prima la Riga (come nel metodo carrello)
+      riga = Riga.create!(
+        libro_id: libro.id,
+        prezzo_cents: libro.prezzo_in_cents,
+        quantita: 1
+      )
+
+      # Poi crea la DocumentoRiga che collega documento e riga
+      @documento.documento_righe.create!(riga: riga)
     end
 
     respond_to do |format|
-      format.turbo_stream
+      format.html { redirect_to @documento, notice: "#{@libri.count} libri aggiunti all'ordine ##{@documento.numero_documento}", status: :see_other }
+      format.turbo_stream { redirect_to @documento, notice: "#{@libri.count} libri aggiunti all'ordine ##{@documento.numero_documento}", status: :see_other }
     end
   end
 
