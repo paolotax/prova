@@ -83,7 +83,7 @@
   }
 
   .sidebar-panel {
-    @apply relative flex w-full max-w-xs flex-1 flex-col bg-gray-800;
+    @apply relative flex w-full max-w-xs flex-1 flex-col bg-gray-900 h-screen;
     transition: transform 0.3s ease-in-out;
     transform: translateX(-100%);
   }

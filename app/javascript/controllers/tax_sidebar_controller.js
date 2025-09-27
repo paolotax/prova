@@ -17,4 +17,8 @@ export default class extends Controller {
       element.classList.toggle("active");
     });
   }
+
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
 }

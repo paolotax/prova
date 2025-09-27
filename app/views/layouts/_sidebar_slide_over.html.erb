@@ -4,12 +4,12 @@
 	<!-- begin sidebar/slideover -->
 	<div id="sidebar-mobile">
 		<div data-tax-sidebar-target="element" class="sidebar-overlay"
-			data-action="keydown.esc->tax-sidebar#toggle">
+			data-action="keydown.esc->tax-sidebar#toggle click->tax-sidebar#toggle">
 			<div class="fixed inset-0">
 				<div class="absolute inset-0 bg-gray-600 opacity-75"></div>
 			</div>
 
-			<div class="sidebar-panel pb-4">
+			<div class="sidebar-panel" data-action="click->tax-sidebar#stopPropagation">
 
 				<div class="absolute top-0 right-0 -mr-14 p-1">
 					<button
@@ -21,10 +21,22 @@
 					</button>
 				</div>
 
-				<div class="flex-1 h-0 overflow-y-auto">
-					<nav class="space-y-1">
-						<%= render partial: "layouts/sidebar" %>
-					</nav>
+				<div class="flex flex-col h-full">
+					<div class="flex-1 overflow-y-auto p-1">
+						<nav class="space-y-1">
+							<%= render partial: "layouts/sidebar", locals: { hide_exit: true } %>
+						</nav>
+					</div>
+
+					<% if current_user %>
+						<div class="p-4">
+							<%= button_to destroy_user_session_path, method: :delete,
+									class: "sidebar-item w-full text-left border-0 bg-transparent" do %>
+								<%= inline_svg_tag('icon-exit.svg') %>
+								Esci
+							<% end %>
+						</div>
+					<% end %>
 				</div>
 
 			</div>
