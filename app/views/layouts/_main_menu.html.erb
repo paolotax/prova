@@ -21,13 +21,13 @@
             <!-- Search form -->
             <%= render partial: "layouts/search_form" %>
             
-            <div class="flex items-center gap-x-4 lg:gap-x-6">
+            <div class="flex items-center gap-x-3">
                 
                 <!-- Notification button -->
 
-                <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                <button type="button" class="flex items-center justify-center w-10 h-10 text-gray-400 hover:text-gray-500 rounded-full hover:bg-gray-100">
                     <span class="sr-only">View notifications</span>
-                    <%= link_to giorno_path(Date.today) do %>
+                    <%= link_to giorno_path(Date.today), class: "flex items-center justify-center w-full h-full" do %>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                         </svg>
@@ -38,9 +38,11 @@
 
                 
                 <%= render DropdownComponent.new( position: "bottom-end") do |dropdown| %>
-                    
+
                     <%= dropdown.with_button do %>
-                        <%= inline_svg_tag  "icon-plus.svg", class: "p-0.5" %>
+                        <div class="flex items-center justify-center w-10 h-10 text-gray-400 hover:text-gray-500 rounded-full hover:bg-gray-100">
+                            <%= inline_svg_tag  "icon-plus.svg", class: "w-6 h-6" %>
+                        </div>
                     <% end %>
                     
                     <% dropdown.with_item do %>
@@ -73,9 +75,9 @@
 
                 <% end %>
 
-                <button type="button" class="-m-2.5 p-2.5 text-white bg-green-500 hover:bg-greem-200 rounded-full">
+                <button type="button" class="flex items-center justify-center w-10 h-10 text-white bg-green-500 hover:bg-green-600 rounded-full">
                     <span class="sr-only">Note Vocali</span>
-                    <%= link_to voice_notes_path do %>
+                    <%= link_to voice_notes_path, class: "flex items-center justify-center w-full h-full" do %>
                         <%= inline_svg_tag  "icon-microphone.svg", class: "w-6 h-6" %>
                     <% end %>
                 </button>
@@ -85,7 +87,9 @@
                 <!-- User dropdown -->
                 <%= render DropdownComponent.new do |dropdown| %>
                     <%= dropdown.with_button do %>
-                        <%= render AvatarComponent.new(user: current_user) %>
+                        <div class="flex items-center justify-center w-10 h-10 hover:bg-gray-100 rounded-full">
+                            <%= render AvatarComponent.new(user: current_user) %>
+                        </div>
                     <% end %>
                     <% dropdown.with_item do %>
                         <%= link_to "Il mio Profilo", current_user.profile.nil? ? new_profile_path : profile_step_path(current_user.profile, Profile.form_steps.keys.first),
