@@ -7,7 +7,7 @@
             <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
         <%# <% end %>
 
-        <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
+        <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento || 'BOZZA'} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
 
         <% heading.with_action do %>
             <%= button_to documento_path(@documento),
@@ -62,7 +62,7 @@
                     data_attr: { turbo_prefetch: false } %>
         <% end %>
 
-        <%= @documento.causale %>
+        <%= @documento.causale || "Documento Bozza" %>
 
     <% end %>
 

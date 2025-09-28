@@ -3,27 +3,15 @@ class Libri::BulkActionsController < ApplicationController
   before_action :authenticate_user!
 
   def carrello
+    puts "=== CARRELLO CHIAMATO CON LIBRO_IDS: #{params[:libro_ids]} ==="
     @libri = Libro.where(id: params[:libro_ids])
 
-    # Trova la causale per ordini
-    causale = Causale.find_by(causale: 'Ordine Scuola')
-
-    # Genera il prossimo numero documento per l'anno corrente
-    numero_documento = (current_user.documenti
-                        .where(causale: causale)
-                        .where('EXTRACT(YEAR FROM data_documento) = ?', Date.today.year)
-                        .maximum(:numero_documento) || 0).to_i + 1
-
-    # Creare un nuovo documento ordine
+    # Creare un nuovo documento ordine come bozza (senza validazioni richieste)
     @documento = current_user.documenti.build(
-      causale: causale,
-      numero_documento: numero_documento,
       data_documento: Date.today,
-      clientable_type: 'Cliente',
-      clientable_id: Cliente.first&.id,
-      status: 'ordine',
-      referente: @libri.all.map(&:titolo).join(', ')
+      status: 'bozza'
     )
+    puts "=== DOCUMENTO CREATO: #{@documento.inspect} ==="
     
 
     if @documento.save

@@ -33,14 +33,14 @@
 class Documento < ApplicationRecord
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
-  belongs_to :causale
+  belongs_to :causale, optional: true
 
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
 
   accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
-  enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5 }
+  enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
   enum :tipo_pagamento,
        { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
 
@@ -83,6 +83,9 @@ class Documento < ApplicationRecord
   end
 
   def required_for_step?(step)
+    # Bozza documents don't require validation
+    return false if status == 'bozza'
+
     # All fields are required if no form step is present
     return true if form_step.nil?
 
