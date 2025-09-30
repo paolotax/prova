@@ -242,6 +242,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    faraday-retry (2.3.2)
+      faraday (~> 2.0)
     ffi (1.17.1-aarch64-linux-gnu)
     ffi (1.17.1-arm64-darwin)
     ffi (1.17.1-x86_64-darwin)
@@ -539,6 +541,7 @@ GEM
     reactionview (0.1.2)
       actionview (>= 7.0)
       herb (>= 0.7.0, < 1.0.0)
+    redcarpet (3.6.1)
     redis (5.3.0)
       redis-client (>= 0.22.0)
     redis-client (0.23.2)
@@ -579,6 +582,15 @@ GEM
       ffi (~> 1.12)
       logger
     ruby2_keywords (0.0.5)
+    ruby_llm (1.8.2)
+      base64
+      event_stream_parser (~> 1)
+      faraday (>= 1.10.0)
+      faraday-multipart (>= 1)
+      faraday-net_http (>= 1)
+      faraday-retry (>= 1)
+      marcel (~> 1.0)
+      zeitwerk (~> 2)
     rubyzip (2.4.1)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
@@ -753,12 +765,14 @@ DEPENDENCIES
   ranked-model (~> 0.4.10)
   ransack
   reactionview (~> 0.1.2)
+  redcarpet
   redis (~> 5.1)
   resend (~> 0.10.0)
   roo (~> 2.10.0)
   roo-xls (~> 1.0)
   rqrcode
   ruby-openai
+  ruby_llm
   scenic (~> 1.7)
   selenium-webdriver
   sidekiq (~> 7.2)

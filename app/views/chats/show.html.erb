@@ -1,18 +1,79 @@
-<div class="mx-auto w-full flex">
-  <div class="mx-auto">
+<% if notice %>
+  <div class="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-200">
+    <%= notice %>
+  </div>
+<% end %>
 
-    <div class="bg-white py-8">
-      <div class="mx-auto max-w-lg px-6 ">
-        <ul role="list" class="overflow-y-auto max-h-[48vh] flex flex-col-reverse">
-          <%= turbo_stream_from "#{dom_id(@chat)}_messages" %>
-          <div id="<%= dom_id(@chat) %>_messages">
-            <%= render @chat.messages %>
-          </div>
-        </ul>
+<%= turbo_stream_from "chat_#{@chat.id}" %>
 
-        <%= render partial: "messages/form", locals: { chat: @chat } %>
-      </div>
+<% content_for :title, "Chat" %>
+
+<div class="max-w-4xl mx-auto p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Chat <%= @chat.id %></h1>
+      <p class="text-sm text-gray-600 mt-1">
+        Utilizzo <span class="font-medium text-blue-600"><%= @chat.model.name %></span>
+      </p>
+    </div>
+    <%= link_to chats_path,
+        class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Torna alle chat
+    <% end %>
+  </div>
+
+  <!-- Messages Container -->
+  <div class="flex flex-col h-[70vh]">
+    <!-- Messages List -->
+    <div id="messages" class="flex-1 overflow-y-auto mb-6 space-y-4 pr-2">
+      <% @chat.messages.where.not(id: nil).each do |message| %>
+        <%= render message %>
+      <% end %>
     </div>
 
+    <!-- Message Form -->
+    <div class="border-t border-gray-200 pt-6">
+      <%= render "messages/form", chat: @chat, message: @message %>
+    </div>
   </div>
+
+  <!-- Scroll trigger for turbo streams -->
+  <div id="scroll_trigger"></div>
 </div>
+
+<script data-turbo-permanent>
+  // Auto-scroll to bottom when new messages arrive
+  function scrollToBottom() {
+    const messagesContainer = document.getElementById('messages');
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  }
+
+  // Scroll to bottom on page load
+  document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+  // Scroll to bottom when new content is added via Turbo Stream
+  document.addEventListener('turbo:before-stream-render', function(event) {
+    // Scroll after the DOM is updated
+    requestAnimationFrame(scrollToBottom);
+  });
+
+  // Also handle turbo frame loads
+  document.addEventListener('turbo:frame-load', scrollToBottom);
+
+  // Handle when turbo stream renders new content
+  document.addEventListener('turbo:render', scrollToBottom);
+
+  // Reset form after successful submission
+  document.addEventListener('turbo:submit-end', function(event) {
+    if (event.detail.success && event.target.id === 'new_message') {
+      // Form will be reset by turbo stream replacement
+      setTimeout(scrollToBottom, 100);
+    }
+  });
+</script>

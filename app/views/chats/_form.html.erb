@@ -1,0 +1,111 @@
+<%= form_with(model: chat, url: chats_path, class: "space-y-6") do |form| %>
+  <!-- Error Messages -->
+  <% if chat.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(chat.errors.count, "errore", "errori") %> ha impedito il salvataggio di questa chat:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc list-inside space-y-1">
+              <% chat.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Model Selection -->
+  <div>
+    <%= form.label :model, class: "block text-sm font-medium text-gray-700 mb-2" do %>
+      <svg class="w-4 h-4 inline mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+      </svg>
+      Seleziona Modello IA
+    <% end %>
+    <%= form.select :model,
+        options_for_select(Model.pluck(:name, :model_id).unshift(["Default (#{RubyLLM.config.default_model})", nil]), @selected_model),
+        {},
+        {
+          class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          data: { action: "change->model-select#updateDescription" }
+        } %>
+    <p class="mt-1 text-xs text-gray-500">
+      Scegli il modello di intelligenza artificiale più adatto alle tue esigenze di conversazione
+    </p>
+  </div>
+
+  <!-- Initial Prompt -->
+  <div>
+    <%= form.label :prompt, class: "block text-sm font-medium text-gray-700 mb-2" do %>
+      <svg class="w-4 h-4 inline mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+      </svg>
+      Inizia la Conversazione
+    <% end %>
+    <%= form.text_area :prompt,
+        rows: 4,
+        class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm resize-none",
+        placeholder: "Di cosa vorresti parlare? Fai una domanda, chiedi aiuto con un problema, o inizia qualsiasi conversazione...",
+        autofocus: true %>
+    <p class="mt-1 text-xs text-gray-500">
+      Questo sarà il tuo primo messaggio nella chat. Puoi lasciarlo vuoto per iniziare con una conversazione vuota.
+    </p>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="flex items-center justify-between pt-4">
+    <div class="flex items-center text-sm text-gray-500">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      La tua conversazione verrà salvata automaticamente
+    </div>
+
+    <%= form.submit "Inizia Nuova Chat",
+        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed",
+        data: { disable_with: "Creazione chat..." } %>
+  </div>
+
+  <!-- Model Info Cards -->
+  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-sm font-medium text-blue-800">Funzionalità</h3>
+      </div>
+      <ul class="mt-2 text-xs text-blue-700 space-y-1">
+        <li>• Supporto Markdown per formattazione avanzata</li>
+        <li>• Aggiornamenti conversazione in tempo reale</li>
+        <li>• Capacità di chiamata strumenti</li>
+        <li>• Tracciamento utilizzo token</li>
+      </ul>
+    </div>
+
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-sm font-medium text-green-800">Suggerimenti</h3>
+      </div>
+      <ul class="mt-2 text-xs text-green-700 space-y-1">
+        <li>• Sii specifico con le tue domande</li>
+        <li>• Usa Ctrl+Invio per inviare messaggi velocemente</li>
+        <li>• Prova modelli diversi per compiti vari</li>
+        <li>• Le conversazioni vengono salvate automaticamente</li>
+      </ul>
+    </div>
+  </div>
+<% end %>

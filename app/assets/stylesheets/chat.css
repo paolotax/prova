@@ -1,0 +1,148 @@
+/* Chat-specific styles for markdown rendering */
+
+/* Code blocks */
+.prose pre {
+  @apply bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto text-sm;
+}
+
+.prose code {
+  @apply bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm;
+}
+
+.prose pre code {
+  @apply bg-transparent text-gray-100 p-0;
+}
+
+/* Tables */
+.prose table {
+  @apply border-collapse border border-gray-300;
+}
+
+.prose th,
+.prose td {
+  @apply border border-gray-300 px-3 py-2 text-left;
+}
+
+.prose th {
+  @apply bg-gray-50 font-semibold;
+}
+
+/* Blockquotes */
+.prose blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600;
+}
+
+/* Lists */
+.prose ul {
+  @apply list-disc list-inside space-y-1;
+}
+
+.prose ol {
+  @apply list-decimal list-inside space-y-1;
+}
+
+/* Links */
+.prose a {
+  @apply text-blue-600 hover:text-blue-800 underline;
+}
+
+/* Headings */
+.prose h1 {
+  @apply text-2xl font-bold mt-6 mb-4;
+}
+
+.prose h2 {
+  @apply text-xl font-bold mt-5 mb-3;
+}
+
+.prose h3 {
+  @apply text-lg font-bold mt-4 mb-2;
+}
+
+.prose h4 {
+  @apply text-base font-bold mt-3 mb-2;
+}
+
+.prose h5 {
+  @apply text-sm font-bold mt-2 mb-1;
+}
+
+.prose h6 {
+  @apply text-xs font-bold mt-2 mb-1;
+}
+
+/* Paragraphs */
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+/* Horizontal rules */
+.prose hr {
+  @apply border-gray-300 my-6;
+}
+
+/* Emphasis */
+.prose strong {
+  @apply font-bold;
+}
+
+.prose em {
+  @apply italic;
+}
+
+/* Custom scrollbar for messages container */
+#messages {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+#messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+#messages::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 4px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+#messages::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Animation for new messages */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  @apply flex items-center space-x-1 text-gray-500;
+}
+
+.typing-indicator span {
+  @apply h-2 w-2 bg-gray-400 rounded-full animate-bounce;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.2s;
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_30_164358) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -240,6 +240,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "model_id"
+    t.index ["model_id"], name: "index_chats_on_model_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
@@ -471,12 +473,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
 
   create_table "messages", force: :cascade do |t|
     t.bigint "chat_id"
-    t.integer "role", default: 0, null: false
-    t.string "content", null: false
+    t.string "role", default: "0", null: false
+    t.text "content", null: false
     t.integer "response_number", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "input_tokens"
+    t.integer "output_tokens"
+    t.bigint "model_id"
+    t.bigint "tool_call_id"
     t.index ["chat_id"], name: "index_messages_on_chat_id"
+    t.index ["model_id"], name: "index_messages_on_model_id"
+    t.index ["role"], name: "index_messages_on_role"
+    t.index ["tool_call_id"], name: "index_messages_on_tool_call_id"
+  end
+
+  create_table "models", force: :cascade do |t|
+    t.string "model_id", null: false
+    t.string "name", null: false
+    t.string "provider", null: false
+    t.string "family"
+    t.datetime "model_created_at"
+    t.integer "context_window"
+    t.integer "max_output_tokens"
+    t.date "knowledge_cutoff"
+    t.jsonb "modalities", default: {}
+    t.jsonb "capabilities", default: []
+    t.jsonb "pricing", default: {}
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["capabilities"], name: "index_models_on_capabilities", using: :gin
+    t.index ["family"], name: "index_models_on_family"
+    t.index ["modalities"], name: "index_models_on_modalities", using: :gin
+    t.index ["provider", "model_id"], name: "index_models_on_provider_and_model_id", unique: true
+    t.index ["provider"], name: "index_models_on_provider"
   end
 
   create_table "new_adozioni", force: :cascade do |t|
@@ -702,6 +733,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tool_calls", force: :cascade do |t|
+    t.string "tool_call_id", null: false
+    t.string "name", null: false
+    t.jsonb "arguments", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "message_id", null: false
+    t.index ["message_id"], name: "index_tool_calls_on_message_id"
+    t.index ["name"], name: "index_tool_calls_on_name"
+    t.index ["tool_call_id"], name: "index_tool_calls_on_tool_call_id", unique: true
+  end
+
   create_table "user_scuole", force: :cascade do |t|
     t.bigint "import_scuola_id", null: false
     t.bigint "user_id", null: false
@@ -764,6 +807,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
   add_foreign_key "aziende", "users"
+  add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"
@@ -771,6 +815,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "messages", "chats"
+  add_foreign_key "messages", "models"
+  add_foreign_key "messages", "tool_calls"
   add_foreign_key "old_adozioni", "import_scuole"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
@@ -778,6 +824,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
   add_foreign_key "tappa_giri", "tappe"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
+  add_foreign_key "tool_calls", "messages"
   add_foreign_key "user_scuole", "import_scuole"
   add_foreign_key "user_scuole", "users"
   add_foreign_key "voice_notes", "users"
@@ -835,23 +882,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
   add_index "view_adozioni_elementari", ["provincia", "classe", "disciplina", "titolo"], name: "idx_on_provincia_classe_disciplina_titolo_ddcaa2b4ab"
   add_index "view_adozioni_elementari", ["provincia"], name: "index_view_adozioni_elementari_on_provincia"
 
-  create_view "view_giacenze", sql_definition: <<-SQL
-      SELECT users.id AS user_id,
-      libri.id AS libro_id,
-      libri.titolo,
-      libri.codice_isbn,
-      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (documenti.status = 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (documenti.status = 0))), (0)::bigint)) AS ordini,
-      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint)) AS vendite,
-      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento = 2))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento = 2))), (0)::bigint)) AS carichi
-     FROM (((((righe
-       JOIN libri ON ((righe.libro_id = libri.id)))
-       JOIN documento_righe ON ((righe.id = documento_righe.riga_id)))
-       JOIN documenti ON ((documento_righe.documento_id = documenti.id)))
-       JOIN causali ON ((documenti.causale_id = causali.id)))
-       JOIN users ON ((users.id = documenti.user_id)))
-    GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
-    ORDER BY libri.titolo;
-  SQL
   create_view "view_classi", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT row_number() OVER (PARTITION BY true::boolean) AS id,
       import_scuole."AREAGEOGRAFICA" AS area_geografica,
@@ -872,4 +902,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_175609) do
   add_index "view_classi", ["codice_ministeriale"], name: "index_view_classi_on_codice_ministeriale"
   add_index "view_classi", ["provincia"], name: "index_view_classi_on_provincia"
 
+  create_view "view_giacenze", sql_definition: <<-SQL
+      SELECT users.id AS user_id,
+      libri.id AS libro_id,
+      libri.titolo,
+      libri.codice_isbn,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (documenti.status = 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (documenti.status = 0))), (0)::bigint)) AS ordini,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint)) AS vendite,
+      (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento = 2))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento = 2))), (0)::bigint)) AS carichi
+     FROM (((((righe
+       JOIN libri ON ((righe.libro_id = libri.id)))
+       JOIN documento_righe ON ((righe.id = documento_righe.riga_id)))
+       JOIN documenti ON ((documento_righe.documento_id = documenti.id)))
+       JOIN causali ON ((documenti.causale_id = causali.id)))
+       JOIN users ON ((users.id = documenti.user_id)))
+    GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
+    ORDER BY libri.titolo;
+  SQL
 end

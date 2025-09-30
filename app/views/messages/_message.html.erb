@@ -1,11 +1,55 @@
-<div id="<%= dom_id(message) %>_messages">
-  <% if message.user? %>
-    <div class="bg-sky-400 rounded-lg m-8 text-white p-4">
-      <%= simple_format(message.content) %>
+<div id="message_<%= message.id %>" class="flex gap-4 <%= message.role == 'user' ? 'justify-end' : 'justify-start' %>">
+  <!-- Avatar -->
+  <div class="flex-shrink-0 <%= message.role == 'user' ? 'order-2' : 'order-1' %>">
+    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium
+                <%= message.role == 'user' ? 'bg-blue-500' : 'bg-green-500' %>">
+      <%= message.role == 'user' ? 'U' : 'AI' %>
     </div>
-  <% else %>
-    <div class="bg-gray-200 rounded-lg m-8 p-4">
-      <%= simple_format(message.content) %>
+  </div>
+
+  <!-- Message Content -->
+  <div class="flex-1 max-w-3xl <%= message.role == 'user' ? 'order-1' : 'order-2' %>">
+    <div class="rounded-lg p-4 shadow-sm
+                <%= message.role == 'user' ? 'bg-blue-50 border-l-4 border-blue-400' : 'bg-gray-50 border-l-4 border-green-400' %>">
+
+      <!-- Role Badge -->
+      <div class="flex items-center justify-between mb-2">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                     <%= message.role == 'user' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' %>">
+          <%= message.role&.capitalize %>
+        </span>
+        <span class="text-xs text-gray-500">
+          <%= message.created_at&.strftime("%I:%M %p") %>
+        </span>
+      </div>
+
+      <!-- Message Content with Markdown -->
+      <div id="message_<%= message.id %>_content"
+           class="prose prose-sm max-w-none
+                  <%= message.role == 'user' ? 'prose-blue' : 'prose-gray' %>">
+        <%= markdown(message.content) %>
+      </div>
+
+      <!-- Tool Calls -->
+      <% if message.tool_call? %>
+        <div class="mt-3 pt-3 border-t border-gray-200">
+          <%= render "messages/tool_calls", message: message %>
+        </div>
+      <% end %>
+
+      <!-- Token Info (if available) -->
+      <% if message.input_tokens.present? || message.output_tokens.present? %>
+        <div class="mt-2 pt-2 border-t border-gray-100">
+          <div class="flex gap-4 text-xs text-gray-500">
+            <% if message.input_tokens.present? %>
+              <span>Input: <%= message.input_tokens %> token</span>
+            <% end %>
+            <% if message.output_tokens.present? %>
+              <span>Output: <%= message.output_tokens %> token</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>

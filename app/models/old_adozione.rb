@@ -21,10 +21,13 @@
 #  consigliato      :string
 #  anno_scolastico  :string
 #  import_scuola_id :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 # Indexes
 #
-#  index_old_adozioni_on_classe  (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
+#  index_old_adozioni_on_classe            (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
+#  index_old_adozioni_on_import_scuola_id  (import_scuola_id)
 #
 
 class OldAdozione < ApplicationRecord
