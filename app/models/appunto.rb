@@ -89,6 +89,8 @@ class Appunto < ApplicationRecord
     self.stato ||= 'da fare'
   end
 
+  delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
+
   scope :dell_utente, ->(user) { where(user_id: user.id) }
 
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]) }
