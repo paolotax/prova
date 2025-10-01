@@ -38,5 +38,8 @@ module Prova
 
     config.beginning_of_week = :monday
 
+    # Add tools directory to autoload paths
+    config.autoload_paths << Rails.root.join("app", "tools")
+
   end
 end
