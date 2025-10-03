@@ -281,6 +281,16 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :adozioni_comunicate do
+    collection do
+      get :import
+      post :import
+      get :confronto
+      post :aggiorna_corrispondenze
+      get :export_excel
+    end
+  end
+
   resources :configurations, only: [] do
     get :ios_v1, on: :collection
     get :android_v1, on: :collection

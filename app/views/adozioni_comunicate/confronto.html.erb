@@ -1,0 +1,284 @@
+<% content_for :title, "Confronto Adozioni" %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Confronto Adozioni</h1>
+    <div class="flex gap-2">
+      <%= button_to "Aggiorna Corrispondenze", aggiorna_corrispondenze_adozioni_comunicate_path, 
+          method: :post,
+          class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+      <%= link_to "Torna alla Lista", adozioni_comunicate_path, 
+          class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
+    </div>
+  </div>
+
+  <!-- Statistiche generali -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-sm font-medium text-gray-500">Totale Comunicate</h3>
+      <p class="text-2xl font-bold text-gray-900"><%= @totale_comunicate %></p>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-sm font-medium text-gray-500">Con Corrispondenza</h3>
+      <p class="text-2xl font-bold text-green-600"><%= @con_corrispondenza %></p>
+      <p class="text-sm text-gray-500"><%= number_to_percentage(@con_corrispondenza.to_f / @totale_comunicate * 100, precision: 1) %></p>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-sm font-medium text-gray-500">Senza Corrispondenza</h3>
+      <p class="text-2xl font-bold text-red-600"><%= @senza_corrispondenza %></p>
+      <p class="text-sm text-gray-500"><%= number_to_percentage(@senza_corrispondenza.to_f / @totale_comunicate * 100, precision: 1) %></p>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h3 class="text-sm font-medium text-gray-500">Totale Alunni</h3>
+      <p class="text-2xl font-bold text-blue-600"><%= @totale_alunni_comunicate %></p>
+    </div>
+  </div>
+
+  <!-- Statistiche mie_adozioni -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+    <h3 class="text-lg font-medium text-blue-900 mb-4">Confronto con le Mie Adozioni (Solo per la Mia Zona)</h3>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-3 rounded-lg">
+        <h4 class="text-sm font-medium text-gray-500">Totale Mie Adozioni</h4>
+        <p class="text-xl font-bold text-gray-900"><%= @totale_mie_adozioni %></p>
+      </div>
+      <div class="bg-white p-3 rounded-lg">
+        <h4 class="text-sm font-medium text-gray-500">Con Corrispondenza</h4>
+        <p class="text-xl font-bold text-green-600"><%= @mie_adozioni_con_corrispondenza %></p>
+        <p class="text-xs text-gray-500"><%= number_to_percentage(@mie_adozioni_con_corrispondenza.to_f / @totale_mie_adozioni * 100, precision: 1) %></p>
+      </div>
+      <div class="bg-white p-3 rounded-lg">
+        <h4 class="text-sm font-medium text-gray-500">Senza Corrispondenza</h4>
+        <p class="text-xl font-bold text-orange-600"><%= @mie_adozioni_senza_corrispondenza_count %></p>
+        <p class="text-xs text-gray-500"><%= number_to_percentage(@mie_adozioni_senza_corrispondenza_count.to_f / @totale_mie_adozioni * 100, precision: 1) %></p>
+      </div>
+      <div class="bg-white p-3 rounded-lg">
+        <h4 class="text-sm font-medium text-gray-500">Stato</h4>
+        <% if @mie_adozioni_senza_corrispondenza_count == 0 %>
+          <p class="text-sm font-bold text-green-600">✓ Tutte corrispondenti</p>
+        <% else %>
+          <p class="text-sm font-bold text-orange-600">⚠ <%= @mie_adozioni_senza_corrispondenza_count %> in più</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confronto per Editore -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Confronto per Editore</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Statistiche raggruppate per editore</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Record</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alunni</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Corrispondenze</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alunni Senza Corrispondenza</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% Corrispondenza</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @confronto_per_editore.each do |editore| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <%= editore[:editore] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= editore[:totale_comunicate] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= editore[:totale_alunni] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <span class="text-green-600 font-semibold"><%= editore[:con_corrispondenza] %></span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <span class="text-red-600 font-semibold"><%= editore[:alunni_senza_corrispondenza] %></span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <% percentuale = editore[:totale_comunicate] > 0 ? editore[:con_corrispondenza].to_f / editore[:totale_comunicate] * 100 : 0 %>
+                <span class="<%= percentuale >= 80 ? 'text-green-600' : percentuale >= 50 ? 'text-yellow-600' : 'text-red-600' %> font-semibold">
+                  <%= number_to_percentage(percentuale, precision: 1) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Confronto per Scuola -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Confronto per Scuola</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Statistiche raggruppate per scuola</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scuola</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Codice</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Record</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alunni</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Corrispondenze</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% Corrispondenza</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @confronto_per_scuola.each do |scuola| %>
+            <tr>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                <div class="max-w-xs truncate" title="<%= scuola[:descrizione_scuola] %>">
+                  <%= scuola[:descrizione_scuola] %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= scuola[:cod_ministeriale] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= scuola[:totale_comunicate] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= scuola[:totale_alunni] %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <span class="text-green-600 font-semibold"><%= scuola[:con_corrispondenza] %></span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <% percentuale = scuola[:totale_comunicate] > 0 ? scuola[:con_corrispondenza].to_f / scuola[:totale_comunicate] * 100 : 0 %>
+                <span class="<%= percentuale >= 80 ? 'text-green-600' : percentuale >= 50 ? 'text-yellow-600' : 'text-red-600' %> font-semibold">
+                  <%= number_to_percentage(percentuale, precision: 1) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Adozioni senza corrispondenza -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Adozioni Senza Corrispondenza</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Dettaglio delle adozioni comunicate che non hanno corrispondenza nel database</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scuola</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EAN</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alunni</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @senza_corrispondenza_dettaglio.each do |adozione| %>
+            <tr class="bg-red-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= adozione.editore %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                <div class="max-w-xs truncate" title="<%= adozione.descrizione_scuola %>">
+                  <%= adozione.descrizione_scuola %>
+                </div>
+                <div class="text-xs text-gray-500"><%= adozione.cod_ministeriale %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= adozione.classe %><%= adozione.sezione %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                <div class="max-w-xs truncate" title="<%= adozione.titolo %>">
+                  <%= adozione.titolo %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= adozione.ean %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <span class="font-semibold text-red-600"><%= adozione.alunni %></span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Mie Adozioni senza corrispondenza (in più) -->
+  <% if @mie_adozioni_senza_corrispondenza_count > 0 %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Mie Adozioni in Più (Solo per la Mia Zona)</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Le tue adozioni per le scuole della tua zona che non hanno corrispondenza nelle adozioni comunicate</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scuola</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EAN</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @mie_adozioni_senza_corrispondenza.each do |adozione| %>
+              <tr class="bg-orange-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= adozione.EDITORE %>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <div class="max-w-xs truncate" title="<%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>">
+                    <%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>
+                  </div>
+                  <div class="text-xs text-gray-500"><%= adozione.import_scuola&.CODICESCUOLA %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= adozione.ANNOCORSO %><%= adozione.SEZIONEANNO %>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <div class="max-w-xs truncate" title="<%= adozione.TITOLO %>">
+                    <%= adozione.TITOLO %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= adozione.CODICEISBN %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @senza_corrispondenza_dettaglio.empty? && @mie_adozioni_senza_corrispondenza_count == 0 %>
+    <div class="text-center py-8">
+      <div class="text-green-600 text-6xl mb-4">✓</div>
+      <p class="text-gray-500 text-lg">Perfetto! Tutte le adozioni hanno corrispondenza!</p>
+    </div>
+  <% elsif @senza_corrispondenza_dettaglio.empty? %>
+    <div class="text-center py-8">
+      <div class="text-orange-600 text-6xl mb-4">⚠</div>
+      <p class="text-gray-500 text-lg">Tutte le adozioni comunicate hanno corrispondenza, ma ci sono <%= @mie_adozioni_senza_corrispondenza_count %> mie adozioni in più.</p>
+    </div>
+  <% elsif @mie_adozioni_senza_corrispondenza_count == 0 %>
+    <div class="text-center py-8">
+      <div class="text-red-600 text-6xl mb-4">✗</div>
+      <p class="text-gray-500 text-lg">Ci sono adozioni comunicate senza corrispondenza.</p>
+    </div>
+  <% end %>
+</div>

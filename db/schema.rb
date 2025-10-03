@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_01_120000) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -79,6 +79,38 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_120000) do
     t.index ["status"], name: "index_adozioni_on_status"
     t.index ["tipo"], name: "index_adozioni_on_tipo"
     t.index ["user_id"], name: "index_adozioni_on_user_id"
+  end
+
+  create_table "adozioni_comunicate", force: :cascade do |t|
+    t.string "cod_agente"
+    t.string "anno_scolastico"
+    t.string "cod_ministeriale"
+    t.string "descrizione_scuola"
+    t.string "indirizzo"
+    t.string "cap"
+    t.string "comune"
+    t.string "provincia"
+    t.string "cod_scuola"
+    t.string "editore"
+    t.string "ean"
+    t.string "titolo"
+    t.string "classe"
+    t.string "sezione"
+    t.integer "alunni"
+    t.string "codice_scuola_match"
+    t.string "codice_isbn_match"
+    t.string "anno_corso_match"
+    t.string "sezione_anno_match"
+    t.bigint "user_id", null: false
+    t.bigint "import_adozione_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cod_ministeriale"], name: "index_adozioni_comunicate_on_cod_ministeriale"
+    t.index ["ean"], name: "index_adozioni_comunicate_on_ean"
+    t.index ["import_adozione_id"], name: "index_adozioni_comunicate_on_import_adozione_id"
+    t.index ["user_id", "cod_ministeriale"], name: "index_adozioni_comunicate_on_user_id_and_cod_ministeriale"
+    t.index ["user_id", "ean"], name: "index_adozioni_comunicate_on_user_id_and_ean"
+    t.index ["user_id"], name: "index_adozioni_comunicate_on_user_id"
   end
 
   create_table "ahoy_events", force: :cascade do |t|
@@ -802,6 +834,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_01_120000) do
   add_foreign_key "adozioni", "import_adozioni"
   add_foreign_key "adozioni", "libri"
   add_foreign_key "adozioni", "users"
+  add_foreign_key "adozioni_comunicate", "import_adozioni"
+  add_foreign_key "adozioni_comunicate", "users"
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"

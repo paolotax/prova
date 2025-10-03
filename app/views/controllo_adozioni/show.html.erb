@@ -1,0 +1,178 @@
+<% content_for :title, "Dettagli Adozione Comunicata" %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Dettagli Adozione Comunicata</h1>
+      <div class="flex gap-2">
+        <%= link_to "Modifica", edit_adozione_comunicata_path(@adozione_comunicata), 
+            class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+        <%= link_to "Torna alla Lista", adozione_comunicate_index_path, 
+            class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
+      </div>
+    </div>
+
+    <!-- Informazioni principali -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Informazioni Adozione</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Dettagli dell'adozione comunicata dall'editore</p>
+      </div>
+      <div class="border-t border-gray-200">
+        <dl>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Titolo</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.titolo %></dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Editore</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.editore %></dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">EAN/ISBN</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.ean %></dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Classe e Sezione</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <%= @adozione_comunicata.classe %><%= @adozione_comunicata.sezione %>
+            </dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Numero Alunni</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <span class="text-2xl font-bold text-blue-600"><%= @adozione_comunicata.alunni %></span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Informazioni scuola -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Informazioni Scuola</h3>
+      </div>
+      <div class="border-t border-gray-200">
+        <dl>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Nome Scuola</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.descrizione_scuola %></dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Codice Ministeriale</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.cod_ministeriale %></dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Indirizzo</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <%= @adozione_comunicata.indirizzo %><br>
+              <%= @adozione_comunicata.cap %> <%= @adozione_comunicata.comune %> (<%= @adozione_comunicata.provincia %>)
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Stato corrispondenza -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Stato Corrispondenza</h3>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <% if @adozione_comunicata.corrispondenza_trovata? %>
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-green-800">Corrispondenza trovata</p>
+              <p class="text-sm text-green-700">Questa adozione ha una corrispondenza nel database delle tue adozioni</p>
+            </div>
+          </div>
+        <% else %>
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-red-800">Nessuna corrispondenza</p>
+              <p class="text-sm text-red-700">Questa adozione non ha una corrispondenza nel database delle tue adozioni</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Dettagli corrispondenza -->
+    <% if @adozione_comunicata.corrispondenza_trovata? && @differenze %>
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Confronto con Adozione Importata</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Confronto tra i dati comunicati e quelli nel database</p>
+        </div>
+        <div class="border-t border-gray-200">
+          <% @differenze.each do |campo, dati| %>
+            <div class="<%= dati[:uguali] ? 'bg-green-50' : 'bg-yellow-50' %> px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500"><%= campo.to_s.humanize %></dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-xs font-medium text-gray-500">Comunicato:</p>
+                    <p class="<%= dati[:uguali] ? 'text-green-800' : 'text-yellow-800' %>"><%= dati[:comunicato] %></p>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-gray-500">Importato:</p>
+                    <p class="<%= dati[:uguali] ? 'text-green-800' : 'text-yellow-800' %>"><%= dati[:importato] %></p>
+                  </div>
+                </div>
+                <% unless dati[:uguali] %>
+                  <div class="mt-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      ⚠️ Differenza rilevata
+                    </span>
+                  </div>
+                <% end %>
+              </dd>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Informazioni aggiuntive -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Informazioni Aggiuntive</h3>
+      </div>
+      <div class="border-t border-gray-200">
+        <dl>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Codice Agente</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.cod_agente %></dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Anno Scolastico</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.anno_scolastico %></dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Codice Scuola</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.cod_scuola %></dd>
+          </div>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Data Creazione</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.created_at.strftime("%d/%m/%Y %H:%M") %></dd>
+          </div>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Ultimo Aggiornamento</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @adozione_comunicata.updated_at.strftime("%d/%m/%Y %H:%M") %></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

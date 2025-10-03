@@ -1,0 +1,33 @@
+wb = xlsx_package.workbook
+
+fields = ["Cod. Agente", "Anno Scolastico", "Cod. Ministeriale", "Descrizione Scuola", 
+          "Indirizzo", "CAP", "Comune", "Provincia", "Cod. Scuola", "Editore", 
+          "EAN", "Titolo", "Classe", "Sezione", "Alunni", "Stato Corrispondenza", "Data Creazione"]
+
+wb.add_worksheet(name: "Adozioni Comunicate") do |sheet|
+  sheet.add_row fields
+  
+  @adozioni_comunicate.each do |adozione|
+    stato_corrispondenza = adozione.corrispondenza_trovata? ? "Con Corrispondenza" : "Senza Corrispondenza"
+    
+    sheet.add_row [
+      adozione.cod_agente,
+      adozione.anno_scolastico,
+      adozione.cod_ministeriale,
+      adozione.descrizione_scuola,
+      adozione.indirizzo,
+      adozione.cap,
+      adozione.comune,
+      adozione.provincia,
+      adozione.cod_scuola,
+      adozione.editore,
+      adozione.ean,
+      adozione.titolo,
+      adozione.classe,
+      adozione.sezione,
+      adozione.alunni,
+      stato_corrispondenza,
+      adozione.created_at.strftime("%d/%m/%Y %H:%M")
+    ], types: [:string]
+  end
+end

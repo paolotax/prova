@@ -25,6 +25,9 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'insegnante', 'insegnanti'
   inflect.irregular 'classe', 'classi'
   inflect.irregular 'adozione', 'adozioni'
+  
+  inflect.irregular 'adozione_comunicata', 'adozioni_comunicate'
+  
   inflect.irregular 'materia', 'materie'
   inflect.irregular 'tappa', 'tappe'
   inflect.irregular 'sezione', 'sezioni'
