@@ -1,4 +1,5 @@
 <%= form_with(model: message, url: [@chat, message], id: "new_message", class: "flex flex-col space-y-4") do |form| %>
+  
   <% if message.errors.any? %>
     <div class="rounded-md bg-red-50 p-4 border border-red-200">
       <div class="flex">
@@ -23,7 +24,7 @@
     </div>
   <% end %>
 
-  <div class="flex space-x-4">
+  <div class="flex space-x-4 items-center">
     <!-- Message Input -->
     <div class="flex-1">
       <%= form.text_area :content,

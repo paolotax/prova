@@ -3,21 +3,8 @@ class MessagesController < ApplicationController
 
   def create
     return unless content.present?
-
-    # Create user message first
-    @user_message = @chat.messages.create!(
-      role: 'user',
-      content: content
-    )
-
-    # Create AI message placeholder for streaming
-    @ai_message = @chat.messages.create!(
-      role: 'assistant',
-      content: ''
-    )
-
     # Enqueue background job to get AI response
-    ChatResponseJob.perform_async(@chat.id, content, @ai_message.id)
+    ChatResponseJob.perform_async(@chat.id, content)
 
     respond_to do |format|
       format.turbo_stream

@@ -1,21 +1,9 @@
 <%= turbo_stream.append "messages" do %>
-  <%= render @user_message %>
-  <%= render @ai_message %>
+  <% @chat.messages.last(2).each do |message| %>
+    <%= render message %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.replace "new_message" do %>
   <%= render "messages/form", chat: @chat, message: @chat.messages.build %>
-<% end %>
-
-<!-- Trigger scroll to bottom -->
-<%= turbo_stream.update "scroll_trigger" do %>
-  <script>
-    // Scroll to bottom after new messages are added
-    setTimeout(() => {
-      const messagesContainer = document.getElementById('messages');
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    }, 50);
-  </script>
 <% end %>

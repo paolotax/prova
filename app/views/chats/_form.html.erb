@@ -39,9 +39,6 @@
           class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
           data: { action: "change->model-select#updateDescription" }
         } %>
-    <p class="mt-1 text-xs text-gray-500">
-      Scegli il modello di intelligenza artificiale più adatto alle tue esigenze di conversazione
-    </p>
   </div>
 
   <!-- Initial Prompt -->
@@ -57,9 +54,6 @@
         class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm resize-none",
         placeholder: "Di cosa vorresti parlare? Fai una domanda, chiedi aiuto con un problema, o inizia qualsiasi conversazione...",
         autofocus: true %>
-    <p class="mt-1 text-xs text-gray-500">
-      Questo sarà il tuo primo messaggio nella chat. Puoi lasciarlo vuoto per iniziare con una conversazione vuota.
-    </p>
   </div>
 
   <!-- Submit Button -->
@@ -76,23 +70,8 @@
         data: { disable_with: "Creazione chat..." } %>
   </div>
 
-  <!-- Model Info Cards -->
-  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-      <div class="flex items-center">
-        <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <h3 class="text-sm font-medium text-blue-800">Funzionalità</h3>
-      </div>
-      <ul class="mt-2 text-xs text-blue-700 space-y-1">
-        <li>• Supporto Markdown per formattazione avanzata</li>
-        <li>• Aggiornamenti conversazione in tempo reale</li>
-        <li>• Capacità di chiamata strumenti</li>
-        <li>• Tracciamento utilizzo token</li>
-      </ul>
-    </div>
-
+  <!-- Suggerimenti -->
+  <div class="mt-8">
     <div class="bg-green-50 border border-green-200 rounded-lg p-4">
       <div class="flex items-center">
         <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

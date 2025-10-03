@@ -14,20 +14,8 @@ class ChatsController < ApplicationController
     return unless prompt.present?
 
     @chat = current_user.chats.create!(model: model)
-    
-    # Create user message
-    user_message = @chat.messages.create!(
-      role: 'user',
-      content: prompt
-    )
-    
-    # Create AI message placeholder
-    ai_message = @chat.messages.create!(
-      role: 'assistant',
-      content: ''
-    )
-    
-    ChatResponseJob.perform_async(@chat.id, prompt, ai_message.id)
+        
+    ChatResponseJob.perform_async(@chat.id, prompt)
 
     redirect_to @chat, notice: 'Chat was successfully created.'
   end

@@ -1,44 +1,46 @@
-<% if notice %>
-  <div class="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-200">
-    <%= notice %>
-  </div>
-<% end %>
-
 <%= turbo_stream_from "chat_#{@chat.id}" %>
 
 <% content_for :title, "Chat" %>
 
-<div class="max-w-4xl mx-auto p-6">
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Chat <%= @chat.id %></h1>
-      <p class="text-sm text-gray-600 mt-1">
-        Utilizzo <span class="font-medium text-blue-600"><%= @chat.model.name %></span>
-      </p>
-    </div>
-    <%= link_to chats_path,
-        class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-      </svg>
-      Torna alle chat
+<% content_for :header do %>
+  <div class="max-w-4xl mx-auto">
+    <%= render Heading::WithActionsComponent.new(level: "h2") do |heading| %>
+      <%= heading.with_description do %>
+        <%= @chat.id %>
+      <% end %>
+
+      <% heading.with_action do %>
+        <%= link_to chats_path,
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Torna alle chat
+        <% end %>
+      <% end %>
     <% end %>
   </div>
+<% end %>
+
+<% content_for :hide_footer, true %>
+
+<div class="max-w-4xl mx-auto p-6">
 
   <!-- Messages Container -->
-  <div class="flex flex-col h-[70vh]">
+  <div class="flex flex-col" style="height: calc(100vh - 350px);">
     <!-- Messages List -->
-    <div id="messages" class="flex-1 overflow-y-auto mb-6 space-y-4 pr-2">
-      <% @chat.messages.where.not(id: nil).each do |message| %>
+    <div id="messages" class="flex-1 overflow-y-auto space-y-4 pr-2 pb-4">
+      <% @chat.messages.where.not(id: nil).where.not(role: "tool").each do |message| %>
         <%= render message %>
       <% end %>
     </div>
+  </div>
+</div>
 
-    <!-- Message Form -->
-    <div class="border-t border-gray-200 pt-6">
-      <%= render "messages/form", chat: @chat, message: @message %>
-    </div>
+<!-- Fixed Message Form at Bottom -->
+<div class="fixed bottom-0 left-0 lg:left-72 right-0 border-t border-gray-200 p-6 shadow-lg">
+  <div class="max-w-4xl mx-auto">
+    <%= render "messages/form", chat: @chat, message: @message %>
   </div>
 
   <!-- Scroll trigger for turbo streams -->
@@ -74,6 +76,16 @@
     if (event.detail.success && event.target.id === 'new_message') {
       // Form will be reset by turbo stream replacement
       setTimeout(scrollToBottom, 100);
+
+      // Simple polling every 3 seconds for 30 seconds
+      let pollCount = 0;
+      const pollInterval = setInterval(() => {
+        window.location.reload();
+        pollCount++;
+        if (pollCount >= 10) { // 10 * 3 seconds = 30 seconds
+          clearInterval(pollInterval);
+        }
+      }, 3000);
     }
   });
 </script>
