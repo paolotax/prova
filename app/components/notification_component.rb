@@ -240,4 +240,6 @@ class NotificationComponent < ApplicationComponent
   def error_icon = icon("exclamation-triangle", inline_component: true, class: icon_css)
 
   def success_icon = icon("check-circle", inline_component: true, class: icon_css)
+
+  def warning_icon = icon("exclamation-triangle", inline_component: true, class: icon_css)
 end

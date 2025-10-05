@@ -134,11 +134,20 @@ class AdozioniComunicateController < ApplicationController
       if params[:file].present?
         begin
           result = AdozioneComunicata.importa_da_excel(params[:file].path, current_user)
-          
-          if result[:errori] > 0
-            flash[:warning] = "Importati #{result[:importati]} record nuovi, aggiornati #{result[:aggiornati]} record esistenti con #{result[:errori]} errori."
+
+          # Costruisce il messaggio flash
+          messaggi = []
+          messaggi << "Importati #{result[:importati]} record nuovi" if result[:importati] > 0
+          messaggi << "aggiornati #{result[:aggiornati]} record esistenti" if result[:aggiornati] > 0
+          messaggi << "#{result[:errori]} errori" if result[:errori] > 0
+          messaggi << "#{result[:non_autorizzati]} adozioni non autorizzate saltate" if result[:non_autorizzati] > 0
+
+          messaggio_completo = messaggi.join(", ").capitalize + "."
+
+          if result[:errori] > 0 || result[:non_autorizzati] > 0
+            flash[:warning] = messaggio_completo
           else
-            flash[:success] = "Importati #{result[:importati]} record nuovi, aggiornati #{result[:aggiornati]} record esistenti con successo."
+            flash[:success] = messaggio_completo
           end
           
           redirect_to adozioni_comunicate_path

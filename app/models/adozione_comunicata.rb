@@ -206,6 +206,7 @@ class AdozioneComunicata < ApplicationRecord
     importati = 0
     errori = 0
     aggiornati = 0
+    non_autorizzati = 0
 
     (2..xlsx.last_row).each do |row_num|
       begin
@@ -258,6 +259,13 @@ class AdozioneComunicata < ApplicationRecord
             adozione_per_isbn = ImportAdozione.where(CODICEISBN: row_data['Ean']).first
             editore = adozione_per_isbn&.EDITORE if adozione_per_isbn
           end
+        end
+
+        # CONTROLLO MANDATO: verifica che l'editore sia tra quelli dell'utente
+        if editore.present? && !user.miei_editori.include?(editore)
+          Rails.logger.warn "Editore '#{editore}' non autorizzato per utente #{user.name}. Record saltato."
+          non_autorizzati += 1
+          next  # Salta questo record se l'editore non è tra quelli autorizzati
         end
 
         # Gestisce da_acquistare: priorità a Excel, poi ImportAdozione
@@ -340,7 +348,7 @@ class AdozioneComunicata < ApplicationRecord
       end
     end
 
-    { importati: importati, aggiornati: aggiornati, errori: errori }
+    { importati: importati, aggiornati: aggiornati, errori: errori, non_autorizzati: non_autorizzati }
   end
   
   # Metodo per aggiornare tutte le corrispondenze

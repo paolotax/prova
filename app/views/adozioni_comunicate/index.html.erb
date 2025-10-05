@@ -21,7 +21,7 @@
       <p class="text-xs text-gray-500"><%= @totale_alunni %> alunni</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
-      <h3 class="text-sm font-medium text-gray-500">Mie Adozioni Importate</h3>
+      <h3 class="text-sm font-medium text-gray-500">Adozioni Miur</h3>
       <p class="text-2xl font-bold text-blue-600"><%= @totale_mie_adozioni %></p>
       <p class="text-xs text-gray-500">da acquistare</p>
     </div>
@@ -35,50 +35,6 @@
       <p class="text-2xl font-bold text-red-600"><%= @senza_corrispondenza + @mie_adozioni_senza_corrispondenza_count %></p>
       <p class="text-xs text-gray-500"><%= @senza_corrispondenza %> comunicate senza riscontro + <%= @mie_adozioni_senza_corrispondenza_count %> nelle scuole non comunicate</p>
     </div>
-  </div>
-
-  <!-- Filtri -->
-  <div class="bg-white p-4 rounded-lg shadow mb-6">
-    <%= form_with url: adozioni_comunicate_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-5 gap-4" do |form| %>
-      <div>
-        <%= form.label :editore, "Editore", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :editore, options_for_select([["Tutti", ""]] + @editori_options.map { |e| [e, e] }, params[:editore]),
-            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
-      </div>
-
-      <div>
-        <%= form.label :scuola, "Scuola", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :scuola, options_for_select([["Tutte", ""]] + @scuole_options, params[:scuola]),
-            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
-      </div>
-
-      <div>
-        <%= form.label :classe, "Classe", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :classe, options_for_select([["Tutte", ""]] + @classi_options.map { |c| [c, c] }, params[:classe]),
-            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
-      </div>
-
-      <div>
-        <%= form.label :titolo, "Titolo", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :titolo, value: params[:titolo], placeholder: "Cerca nel titolo...",
-            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
-      </div>
-
-      <div>
-        <%= form.label :corrispondenza, "Corrispondenza", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :corrispondenza, options_for_select([
-            ["Tutte", ""],
-            ["Con corrispondenza", "con"],
-            ["Senza corrispondenza", "senza"]
-          ], params[:corrispondenza]),
-          {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
-      </div>
-
-      <div class="md:col-span-5">
-        <%= form.submit "Filtra", class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
-        <%= link_to "Reset", adozioni_comunicate_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg ml-2" %>
-      </div>
-    <% end %>
   </div>
 
   <!-- Sezione Adozioni Importate senza Corrispondenza -->
@@ -168,6 +124,50 @@
       <% end %>
     </div>
   <% end %>
+
+  <!-- Filtri -->
+  <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <%= form_with url: adozioni_comunicate_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-5 gap-4" do |form| %>
+      <div>
+        <%= form.label :editore, "Editore", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :editore, options_for_select([["Tutti", ""]] + @editori_options.map { |e| [e, e] }, params[:editore]),
+            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
+      </div>
+
+      <div>
+        <%= form.label :scuola, "Scuola", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :scuola, options_for_select([["Tutte", ""]] + @scuole_options, params[:scuola]),
+            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
+      </div>
+
+      <div>
+        <%= form.label :classe, "Classe", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :classe, options_for_select([["Tutte", ""]] + @classi_options.map { |c| [c, c] }, params[:classe]),
+            {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
+      </div>
+
+      <div>
+        <%= form.label :titolo, "Titolo", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :titolo, value: params[:titolo], placeholder: "Cerca nel titolo...",
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+      </div>
+
+      <div>
+        <%= form.label :corrispondenza, "Corrispondenza", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.select :corrispondenza, options_for_select([
+            ["Tutte", ""],
+            ["Con corrispondenza", "con"],
+            ["Senza corrispondenza", "senza"]
+          ], params[:corrispondenza]),
+          {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
+      </div>
+
+      <div class="md:col-span-5">
+        <%= form.submit "Filtra", class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
+        <%= link_to "Reset", adozioni_comunicate_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg ml-2" %>
+      </div>
+    <% end %>
+  </div>
 
   <!-- Tabella adozioni raggruppate per scuola -->
   <% @adozioni_comunicate.group_by(&:cod_ministeriale).each do |cod_ministeriale, adozioni_scuola| %>
