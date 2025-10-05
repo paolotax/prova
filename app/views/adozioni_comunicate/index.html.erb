@@ -8,7 +8,7 @@
           class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
       <%= link_to "Confronto", confronto_adozioni_comunicate_path, 
           class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
-      <%= link_to "Esporta Excel", export_excel_adozioni_comunicate_path(format: :xlsx, editore: params[:editore], scuola: params[:scuola], classe: params[:classe], corrispondenza: params[:corrispondenza]), 
+      <%= link_to "Esporta Excel", export_excel_adozioni_comunicate_path(format: :xlsx, editore: params[:editore], scuola: params[:scuola], classe: params[:classe], titolo: params[:titolo], corrispondenza: params[:corrispondenza]),
           class: "bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg" %>
     </div>
   </div>
@@ -16,132 +16,245 @@
   <!-- Statistiche principali -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white p-4 rounded-lg shadow">
-      <h3 class="text-sm font-medium text-gray-500">Totale Record</h3>
-      <p class="text-2xl font-bold text-gray-900"><%= @adozioni_comunicate.count %></p>
+      <h3 class="text-sm font-medium text-gray-500">Adozioni Comunicate</h3>
+      <p class="text-2xl font-bold text-gray-900"><%= @totale_comunicate %></p>
+      <p class="text-xs text-gray-500"><%= @totale_alunni %> alunni</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
-      <h3 class="text-sm font-medium text-gray-500">Totale Alunni</h3>
-      <p class="text-2xl font-bold text-blue-600"><%= @totale_alunni %></p>
+      <h3 class="text-sm font-medium text-gray-500">Mie Adozioni Importate</h3>
+      <p class="text-2xl font-bold text-blue-600"><%= @totale_mie_adozioni %></p>
+      <p class="text-xs text-gray-500">da acquistare</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
       <h3 class="text-sm font-medium text-gray-500">Con Corrispondenza</h3>
-      <p class="text-2xl font-bold text-green-600"><%= @totale_corrispondenze %></p>
+      <p class="text-2xl font-bold text-green-600"><%= @con_corrispondenza %></p>
+      <p class="text-xs text-gray-500"><%= @mie_adozioni_con_corrispondenza %> importate</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
-      <h3 class="text-sm font-medium text-gray-500">Senza Corrispondenza</h3>
-      <p class="text-2xl font-bold text-red-600"><%= @adozioni_comunicate.count - @totale_corrispondenze %></p>
+      <h3 class="text-sm font-medium text-gray-500">Adozioni Mancanti</h3>
+      <p class="text-2xl font-bold text-red-600"><%= @senza_corrispondenza + @mie_adozioni_senza_corrispondenza_count %></p>
+      <p class="text-xs text-gray-500"><%= @senza_corrispondenza %> comunicate senza riscontro + <%= @mie_adozioni_senza_corrispondenza_count %> nelle scuole non comunicate</p>
     </div>
   </div>
 
   <!-- Filtri -->
   <div class="bg-white p-4 rounded-lg shadow mb-6">
-    <%= form_with url: adozioni_comunicate_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-4 gap-4" do |form| %>
+    <%= form_with url: adozioni_comunicate_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-5 gap-4" do |form| %>
       <div>
         <%= form.label :editore, "Editore", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :editore, options_for_select([["Tutti", ""]] + @editori_options.map { |e| [e, e] }, params[:editore]), 
+        <%= form.select :editore, options_for_select([["Tutti", ""]] + @editori_options.map { |e| [e, e] }, params[:editore]),
             {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
       </div>
-      
+
       <div>
         <%= form.label :scuola, "Scuola", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :scuola, options_for_select([["Tutte", ""]] + @scuole_options, params[:scuola]), 
+        <%= form.select :scuola, options_for_select([["Tutte", ""]] + @scuole_options, params[:scuola]),
             {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
       </div>
-      
+
       <div>
         <%= form.label :classe, "Classe", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.select :classe, options_for_select([["Tutte", ""]] + @classi_options.map { |c| [c, c] }, params[:classe]), 
+        <%= form.select :classe, options_for_select([["Tutte", ""]] + @classi_options.map { |c| [c, c] }, params[:classe]),
             {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
       </div>
-      
+
+      <div>
+        <%= form.label :titolo, "Titolo", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :titolo, value: params[:titolo], placeholder: "Cerca nel titolo...",
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+      </div>
+
       <div>
         <%= form.label :corrispondenza, "Corrispondenza", class: "block text-sm font-medium text-gray-700" %>
         <%= form.select :corrispondenza, options_for_select([
-            ["Tutte", ""], 
-            ["Con corrispondenza", "con"], 
+            ["Tutte", ""],
+            ["Con corrispondenza", "con"],
             ["Senza corrispondenza", "senza"]
-          ], params[:corrispondenza]), 
+          ], params[:corrispondenza]),
           {}, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" } %>
       </div>
-      
-      <div class="md:col-span-4">
+
+      <div class="md:col-span-5">
         <%= form.submit "Filtra", class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
         <%= link_to "Reset", adozioni_comunicate_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg ml-2" %>
       </div>
     <% end %>
   </div>
 
-  <!-- Tabella adozioni -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-md">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scuola</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EAN</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alunni</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stato</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% @adozioni_comunicate.each do |adozione| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <%= adozione.editore %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <div class="max-w-xs truncate" title="<%= adozione.descrizione_scuola %>">
-                  <%= adozione.descrizione_scuola %>
-                </div>
-                <div class="text-xs text-gray-500"><%= adozione.cod_ministeriale %></div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <%= adozione.classe %><%= adozione.sezione %>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-900">
-                <div class="max-w-xs truncate" title="<%= adozione.titolo %>">
-                  <%= adozione.titolo %>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <%= adozione.ean %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <span class="font-semibold"><%= adozione.alunni %></span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <% if adozione.corrispondenza_trovata? %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ✓ Corrispondenza
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    ✗ Nessuna corrispondenza
-                  </span>
-                <% end %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <%= link_to "Dettagli", adozione_comunicata_path(adozione), class: "text-blue-600 hover:text-blue-900 mr-2" %>
-                <%= link_to "Modifica", edit_adozione_comunicata_path(adozione), class: "text-indigo-600 hover:text-indigo-900 mr-2" %>
-                <%= link_to "Elimina", adozione_comunicata_path(adozione), method: :delete, 
-                    confirm: "Sei sicuro?", 
-                    class: "text-red-600 hover:text-red-900" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+  <!-- Sezione Adozioni Importate senza Corrispondenza -->
+  <% if @mie_adozioni_senza_corrispondenza.any? %>
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Adozioni NON Comunicate</h2>
+        <span class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+          <%= @mie_adozioni_senza_corrispondenza_count %> record
+        </span>
+      </div>
+
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-red-700">
+              <strong>ATTENZIONE:</strong> Queste sono le adozioni presenti nelle scuole della tua zona (importate dal ministero)
+              che NON sono state ancora comunicate. Sono adozioni che dovrebbero essere comunicate ma mancano dal tuo file Excel.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scuola</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classe</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disciplina</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @mie_adozioni_senza_corrispondenza.each do |adozione| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= adozione.editore %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div class="max-w-xs truncate" title="<%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>">
+                      <%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>
+                    </div>
+                    <div class="text-xs text-gray-500"><%= adozione.CODICESCUOLA %></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= adozione.classe_e_sezione %>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-900">
+                    <div class="max-w-xs truncate" title="<%= adozione.titolo %>">
+                      <%= adozione.titolo %>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= adozione.CODICEISBN %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= adozione.disciplina %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <%= link_to "Dettagli", import_adozione_path(adozione), class: "text-blue-600 hover:text-blue-900" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <% if @mie_adozioni_senza_corrispondenza_count > 50 %>
+        <div class="mt-4 text-center">
+          <p class="text-sm text-gray-500">
+            Mostrando i primi 50 record su <%= @mie_adozioni_senza_corrispondenza_count %> totali.
+            <%= link_to "Vedi tutti i dettagli nel confronto completo", confronto_adozioni_comunicate_path,
+                class: "text-blue-600 hover:text-blue-900 font-medium" %>
+          </p>
+        </div>
+      <% end %>
     </div>
-  </div>
+  <% end %>
+
+  <!-- Tabella adozioni raggruppate per scuola -->
+  <% @adozioni_comunicate.group_by(&:cod_ministeriale).each do |cod_ministeriale, adozioni_scuola| %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md mb-6">
+      <!-- Header scuola -->
+      <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-blue-900">
+          <%= adozioni_scuola.first.descrizione_scuola %>
+        </h3>
+        <p class="text-sm text-blue-700">
+          Codice: <%= cod_ministeriale %> • <%= adozioni_scuola.size %> adozioni • <%= adozioni_scuola.sum(&:alunni) %> alunni totali
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo<br><span class="text-xs font-normal normal-case text-gray-400">ISBN / Editore</span></th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Classe</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Alunni</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Stato</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Azioni</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% adozioni_scuola.each do |adozione| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-4 text-sm text-gray-900">
+                  <div class="font-medium text-gray-900 mb-1">
+                    <%= adozione.titolo %>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-500 font-mono bg-gray-50 px-2 py-1 rounded">
+                      ISBN: <%= adozione.ean %>
+                    </span>
+                    <span class="text-xs bg-gray-100 px-2 py-1 rounded"><%= adozione.editore %></span>
+                  </div>
+                </td>
+
+                <td class="px-4 py-4 whitespace-nowrap">
+                  <div class="flex items-center space-x-2">
+                    <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      <%= adozione.classe %><%= adozione.sezione %>
+                    </span>
+                  </div>
+                </td>
+
+                <td class="px-4 py-4 whitespace-nowrap text-center">
+                  <span class="bg-green-100 text-green-800 px-3 py-2 rounded-full text-lg font-bold">
+                    <%= adozione.alunni %>
+                  </span>
+                </td>
+
+                <td class="px-4 py-4 whitespace-nowrap">
+                  <% if adozione.corrispondenza_trovata? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      ✓ Corrispondenza
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      ✗ Nessuna corrispondenza
+                    </span>
+                  <% end %>
+                </td>
+
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex flex-col space-y-1">
+                    <%= link_to "Dettagli", adozione_comunicata_path(adozione), class: "text-blue-600 hover:text-blue-900 text-xs" %>
+                    <%= link_to "Modifica", edit_adozione_comunicata_path(adozione), class: "text-indigo-600 hover:text-indigo-900 text-xs" %>
+                    <%= link_to "Elimina", adozione_comunicata_path(adozione), method: :delete,
+                        confirm: "Sei sicuro?",
+                        class: "text-red-600 hover:text-red-900 text-xs" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 
   <% if @adozioni_comunicate.empty? %>
     <div class="text-center py-8">
       <p class="text-gray-500">Nessuna adozione comunicata trovata.</p>
-      <%= link_to "Importa il primo file Excel", import_adozioni_comunicate_path, 
+      <%= link_to "Importa il primo file Excel", import_adozioni_comunicate_path,
           class: "mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
     </div>
   <% end %>

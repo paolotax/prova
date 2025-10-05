@@ -20,6 +20,7 @@
 
     <% if is_mia %>
         <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "classe" } %>
+        <%= import_adozione.adozione_comunicata&.alunni %> alunni
     <% end %>
     
 <% end %>

@@ -48,6 +48,8 @@ class ImportAdozione < ApplicationRecord
                    primary_key: %i[CODICESCUOLA ANNOCORSO SEZIONEANNO COMBINAZIONE],
                    foreign_key: %i[codice_ministeriale classe sezione combinazione]
 
+  has_one :adozione_comunicata
+
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
 
@@ -133,6 +135,7 @@ class ImportAdozione < ApplicationRecord
   }
 
   scope :da_acquistare, -> { where(DAACQUIST: 'Si') }
+  scope :da_non_acquistare, -> { where(DAACQUIST: 'No') }
 
   def mia_adozione?
     Current.user.miei_editori.include?(self.EDITORE)

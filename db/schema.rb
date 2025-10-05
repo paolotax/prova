@@ -105,6 +105,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
     t.bigint "import_adozione_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "da_acquistare"
     t.index ["cod_ministeriale"], name: "index_adozioni_comunicate_on_cod_ministeriale"
     t.index ["ean"], name: "index_adozioni_comunicate_on_ean"
     t.index ["import_adozione_id"], name: "index_adozioni_comunicate_on_import_adozione_id"

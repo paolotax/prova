@@ -4,6 +4,7 @@ class AdozioniComunicateController < ApplicationController
   
   def index
     @adozioni_comunicate = AdozioneComunicata.mie_adozioni_comunicate
+                                            .da_acquistare
                                             .includes(:import_adozione)
                                             .order(:editore, :descrizione_scuola, :classe, :sezione)
     
@@ -11,6 +12,7 @@ class AdozioniComunicateController < ApplicationController
     @adozioni_comunicate = @adozioni_comunicate.per_editore(params[:editore]) if params[:editore].present?
     @adozioni_comunicate = @adozioni_comunicate.per_scuola(params[:scuola]) if params[:scuola].present?
     @adozioni_comunicate = @adozioni_comunicate.per_classe(params[:classe]) if params[:classe].present?
+    @adozioni_comunicate = @adozioni_comunicate.where("titolo ILIKE ?", "%#{params[:titolo]}%") if params[:titolo].present?
     
     # Filtro per corrispondenze
     case params[:corrispondenza]
@@ -20,14 +22,51 @@ class AdozioniComunicateController < ApplicationController
       @adozioni_comunicate = @adozioni_comunicate.senza_corrispondenza
     end
     
-    # Statistiche
+    # Statistiche adozioni comunicate
     @statistiche_editore = AdozioneComunicata.statistiche_per_editore(current_user)
     @statistiche_scuola = AdozioneComunicata.statistiche_per_scuola(current_user)
     @statistiche_classe = AdozioneComunicata.statistiche_per_classe(current_user)
     
-    # Totale alunni
+    # Totale alunni e corrispondenze
     @totale_alunni = @adozioni_comunicate.sum(:alunni)
     @totale_corrispondenze = @adozioni_comunicate.con_corrispondenza.count
+    
+    # Statistiche per il confronto con import_adozioni
+    @totale_comunicate = AdozioneComunicata.mie_adozioni_comunicate.da_acquistare.count
+    @con_corrispondenza = AdozioneComunicata.mie_adozioni_comunicate.con_corrispondenza.count
+    @senza_corrispondenza = AdozioneComunicata.mie_adozioni_comunicate.senza_corrispondenza.count
+    
+    # Trova le mie_adozioni che non hanno corrispondenza nelle adozioni comunicate
+    mie_scuole_codes = current_user.user_scuole.joins(:import_scuola).pluck('import_scuole.CODICESCUOLA').compact
+    
+    # Ottieni tutte le adozioni comunicate con i loro dettagli per il confronto
+    adozioni_comunicate_details = AdozioneComunicata.mie_adozioni_comunicate.pluck(:ean, :cod_ministeriale, :classe, :sezione)
+    
+    # Trova le mie_adozioni che NON hanno corrispondenza nelle adozioni comunicate
+    # Il confronto deve essere fatto per: ISBN, scuola, classe, sezione
+    mie_adozioni_tutte = ImportAdozione.mie_adozioni
+      .where(CODICESCUOLA: mie_scuole_codes)
+      .where(DAACQUIST: 'Si')
+      .includes(:import_scuola)
+      .order(:EDITORE, :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO)
+    
+    # Filtra le adozioni senza corrispondenza
+    mie_adozioni_senza_corrispondenza = mie_adozioni_tutte.reject do |adozione_import|
+      adozioni_comunicate_details.any? do |ean, cod_min, classe, sezione|
+        adozione_import.CODICEISBN == ean &&
+        adozione_import.CODICESCUOLA == cod_min &&
+        adozione_import.ANNOCORSO == classe &&
+        adozione_import.SEZIONEANNO == sezione
+      end
+    end
+    
+    # Limita a 50 record per la visualizzazione
+    @mie_adozioni_senza_corrispondenza = mie_adozioni_senza_corrispondenza.first(50)
+    
+    # Statistiche per le mie_adozioni (solo per la mia zona)
+    @totale_mie_adozioni = mie_adozioni_tutte.count
+    @mie_adozioni_con_corrispondenza = @totale_mie_adozioni - mie_adozioni_senza_corrispondenza.count
+    @mie_adozioni_senza_corrispondenza_count = mie_adozioni_senza_corrispondenza.count
     
     # Opzioni per i filtri
     @editori_options = AdozioneComunicata.mie_adozioni_comunicate
@@ -38,8 +77,9 @@ class AdozioniComunicateController < ApplicationController
     
     @scuole_options = AdozioneComunicata.mie_adozioni_comunicate
                                        .distinct
-                                       .pluck(:cod_ministeriale, :descrizione_scuola)
-                                       .map { |cod, desc| ["#{desc} (#{cod})", cod] }
+                                       .pluck(:descrizione_scuola, :cod_ministeriale)
+                                       .sort
+                                       .map { |desc, cod| ["#{desc} (#{cod})", cod] }
     
     @classi_options = AdozioneComunicata.mie_adozioni_comunicate
                                        .distinct
@@ -162,14 +202,16 @@ class AdozioniComunicateController < ApplicationController
     @mie_adozioni_senza_corrispondenza = ImportAdozione.mie_adozioni
       .where.not(CODICEISBN: mie_adozioni_ean)
       .where(CODICESCUOLA: mie_scuole_codes)
+      .where(DAACQUIST: 'Si')
       .includes(:import_scuola)
       .order(:EDITORE, :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO)
     
     # Statistiche per le mie_adozioni (solo per la mia zona)
-    @totale_mie_adozioni = ImportAdozione.mie_adozioni.where(CODICESCUOLA: mie_scuole_codes).count
+    @totale_mie_adozioni = ImportAdozione.mie_adozioni.where(CODICESCUOLA: mie_scuole_codes, DAACQUIST: 'Si').count
     @mie_adozioni_con_corrispondenza = ImportAdozione.mie_adozioni
       .where(CODICEISBN: mie_adozioni_ean)
       .where(CODICESCUOLA: mie_scuole_codes)
+      .where(DAACQUIST: 'Si')
       .count
     @mie_adozioni_senza_corrispondenza_count = @mie_adozioni_senza_corrispondenza.count
   end
@@ -186,6 +228,7 @@ class AdozioniComunicateController < ApplicationController
     @adozioni_comunicate = @adozioni_comunicate.per_editore(params[:editore]) if params[:editore].present?
     @adozioni_comunicate = @adozioni_comunicate.per_scuola(params[:scuola]) if params[:scuola].present?
     @adozioni_comunicate = @adozioni_comunicate.per_classe(params[:classe]) if params[:classe].present?
+    @adozioni_comunicate = @adozioni_comunicate.where("titolo ILIKE ?", "%#{params[:titolo]}%") if params[:titolo].present?
     
     # Filtro per corrispondenze
     case params[:corrispondenza]

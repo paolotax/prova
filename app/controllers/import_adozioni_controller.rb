@@ -7,7 +7,7 @@ class ImportAdozioniController < ApplicationController
 
   def index
 
-    @import_adozioni = current_user.import_adozioni.preload(:import_scuola, :saggi, :seguiti, :kit)
+    @import_adozioni = current_user.import_adozioni.preload(:import_scuola, :saggi, :seguiti, :kit, :adozione_comunicata)
 
     if params[:q].present?
       @import_adozioni = @import_adozioni.search_combobox params[:q]    
