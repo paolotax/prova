@@ -249,16 +249,11 @@ class AdozioneComunicata < ApplicationRecord
           end
         end
 
-        # Gestisce l'editore: priorità a Excel, poi ImportAdozione
-        editore = row_data['Editore']
-        if editore.nil? || editore.to_s.strip.empty?
-          if import_adozione_corrispondente&.EDITORE
-            editore = import_adozione_corrispondente.EDITORE
-          else
-            # Fallback: cerca per ISBN in qualsiasi adozione
-            adozione_per_isbn = ImportAdozione.where(CODICEISBN: row_data['Ean']).first
-            editore = adozione_per_isbn&.EDITORE if adozione_per_isbn
-          end
+        # Gestisce l'editore: priorità a ImportAdozione
+        if import_adozione_corrispondente
+          editore = import_adozione_corrispondente.EDITORE
+        else
+          editore = row_data['Editore']
         end
 
         # CONTROLLO MANDATO: verifica che l'editore sia tra quelli dell'utente
