@@ -1,12 +1,12 @@
 <% if params[:q] %>
-    
+
     <%= hw_async_combobox_options @libri,
         render_in: { partial: "libri/librino", formats: [:html], as: :libro } %>
-    
+
 <% else %>
 
     <% if @page.first? %>
-        
+
 
 
     <% else %>

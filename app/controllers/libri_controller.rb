@@ -29,8 +29,10 @@ class LibriController < ApplicationController
     else
 
       @import = LibriImporter.new
-      
-      @libri = current_user.libri.includes(:editore, :categoria, :adozioni).order("categorie.nome_categoria, libri.titolo, libri.classe").references(:categoria)
+
+      @libri = current_user.libri
+                  .includes(:editore, :adozioni, :categoria)
+                  .order("libri.titolo, libri.classe")
       @libri = filter(@libri.all)
 
 
