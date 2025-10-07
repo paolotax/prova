@@ -208,13 +208,14 @@ class Libro < ApplicationRecord
           FROM causali ORDER BY causali.magazzino, causali.movimento, causali.tipo_movimento
           $$
         ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
-      ) 
-      SELECT 
-        libri.codice_isbn, libri.titolo, libri.prezzo_in_cents, situazio.*, 
-        editori.gruppo, editori.editore, libri.adozioni_count, libri.categoria, libri.classe, libri.disciplina, libri.id
+      )
+      SELECT
+        libri.codice_isbn, libri.titolo, libri.prezzo_in_cents, situazio.*,
+        editori.gruppo, editori.editore, libri.adozioni_count, categorie.nome_categoria as categoria, libri.classe, libri.disciplina, libri.id
       FROM libri
       INNER JOIN situazio ON libri.id = situazio.id
       INNER JOIN editori ON editori.id =  libri.editore_id
+      LEFT JOIN categorie ON categorie.id = libri.categoria_id
     SQL
 
     result = ActiveRecord::Base.connection.execute(crosstab_query)

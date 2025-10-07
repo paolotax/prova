@@ -9,10 +9,13 @@
 	<div class="flex flex-col sm:flex-row justify-start sm:space-x-4">
 
 
-		<%= tag.fieldset class: "my-5 cb-tax-fancy flex flex-col space-y-1" do %>
-			<%= label_for form: form, field: 'categoria', label: 'Categoria' %>
-			<%= form.combobox :categoria, current_user.libri.categorie, name_when_new: "libro[categoria]",
-							placeholder: "categoria ...", mobile_at: "0px" %>
+		<%= tag.fieldset class: "my-5" do %>
+			<%= label_for form: form, field: 'categoria_id', label: 'Categoria' %>
+			<%= form.collection_select :categoria_id,
+						Current.user.categorie.order(:nome_categoria),
+						:id,
+						:nome_categoria,
+						{ prompt: "Seleziona una categoria" } %>
 		<% end %>
 
 		<%= tag.fieldset class: "my-5" do %>

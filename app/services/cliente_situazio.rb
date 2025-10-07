@@ -9,7 +9,7 @@ class ClienteSituazio
 
   def sql
     sql_text = <<-SQL
-      SELECT users.id, libri.id, libri.codice_isbn, libri.collana, libri.titolo, editori.editore,
+      SELECT users.id, libri.id, libri.codice_isbn, categorie.nome_categoria as categoria, libri.titolo, editori.editore,
         SUM(righe.quantita) FILTER (WHERE causali.movimento = 1) as uscite,
         - SUM(righe.quantita) FILTER (WHERE causali.movimento = 0) as entrate,
         COALESCE(SUM((righe.prezzo_cents - (righe.prezzo_cents * righe.sconto / 100)) * righe.quantita / 100) FILTER (WHERE causali.movimento = 1), 0)
@@ -18,6 +18,7 @@ class ClienteSituazio
       FROM righe
         INNER JOIN libri ON righe.libro_id = libri.id
         INNER JOIN editori ON libri.editore_id = editori.id
+        LEFT JOIN categorie ON libri.categoria_id = categorie.id
         INNER JOIN documento_righe ON righe.id = documento_righe.riga_id
         INNER JOIN documenti ON documento_righe.documento_id = documenti.id
         INNER JOIN causali ON documenti.causale_id = causali.id

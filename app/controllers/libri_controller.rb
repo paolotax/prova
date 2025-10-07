@@ -30,7 +30,7 @@ class LibriController < ApplicationController
 
       @import = LibriImporter.new
       
-      @libri = current_user.libri.includes(:editore, :adozioni).order(:categoria, :titolo, :classe)
+      @libri = current_user.libri.includes(:editore, :categoria, :adozioni).order("categorie.nome_categoria, libri.titolo, libri.classe").references(:categoria)
       @libri = filter(@libri.all)
 
 
@@ -148,7 +148,7 @@ class LibriController < ApplicationController
     end
 
     def libro_params
-      params.require(:libro).permit(:user_id, :editore_id, :titolo, :codice_isbn, :prezzo_in_cents, :prezzo, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
+      params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :prezzo_in_cents, :prezzo, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
     end
 
     def filter_params
