@@ -191,3 +191,7 @@ gem "ruby_llm-mcp"
 
 # Markdown processing
 gem 'redcarpet'
+
+group :development do
+  gem 'claude-on-rails'
+end

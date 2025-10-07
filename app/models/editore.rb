@@ -24,6 +24,9 @@ class Editore < ApplicationRecord
     has_many :import_adozioni, foreign_key: "EDITORE", primary_key: "editore"
     has_many :import_scuole, through: :import_adozioni
 
+    # Relazione con sconti
+    has_many :sconti, as: :scontabile, dependent: :destroy
+
     scope :miei_editori, ->(user) { joins(:mandati).where("mandati.user_id = ?", user.id) }
 
     def self.ransackable_attributes(_auth_object = nil)

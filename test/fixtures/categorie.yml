@@ -1,0 +1,28 @@
+# == Schema Information
+#
+# Table name: categorie
+#
+#  id             :integer          not null, primary key
+#  nome_categoria :string           not null
+#  descrizione    :text
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  user_id        :integer
+#
+# Indexes
+#
+#  index_categorie_on_user_id                     (user_id)
+#  index_categorie_on_user_id_and_nome_categoria  (user_id,nome_categoria) UNIQUE
+#
+
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one: {}
+# column: value
+#
+two: {}
+# column: value

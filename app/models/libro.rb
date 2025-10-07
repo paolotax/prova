@@ -49,19 +49,20 @@ class Libro < ApplicationRecord
   end
 
   include Searchable
-  search_on :titolo, :codice_isbn, :disciplina, :note, :categoria, editore: :editore
+  search_on :titolo, :codice_isbn, :disciplina, :note, :collana, editore: :editore, categoria: :nome_categoria
 
   extend FilterableModel
   class << self
     def filter_proxy = Filters::LibroFilterProxy
   end
 
-  include PgSearch::Model  
-  search_fields =  [ :titolo, :disciplina, :codice_isbn, :categoria, :note ]
-  pg_search_scope :search_all_word, 
+  include PgSearch::Model
+  search_fields =  [ :titolo, :disciplina, :codice_isbn, :collana, :note ]
+  pg_search_scope :search_all_word,
                         against: search_fields,
                         associated_against: {
-                          editore: [:editore]
+                          editore: [:editore],
+                          categoria: [:nome_categoria]
                         },
                         using: {
                           tsearch: { any_word: false, prefix: true }
@@ -69,6 +70,7 @@ class Libro < ApplicationRecord
 
   belongs_to :user
   belongs_to :editore, optional: true
+  belongs_to :categoria
   
   has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
   
@@ -130,7 +132,7 @@ class Libro < ApplicationRecord
   end
 
   def self.categorie
-    order(:categoria).distinct.pluck(:categoria).compact
+    Categoria.order(:nome_categoria).pluck(:nome_categoria)
   end
 
   def to_combobox_display
@@ -150,6 +152,22 @@ class Libro < ApplicationRecord
       self.prezzo_in_cents = (BigDecimal(prezzo) * 100).to_i
     else
       self.prezzo_in_cents = 0
+    end
+  end
+
+  def prezzo_suggerito
+    if prezzo_suggerito_cents
+      prezzo_suggerito_cents / 100.0
+    else
+      0.0
+    end
+  end
+
+  def prezzo_suggerito=(prezzo)
+    if prezzo.present?
+      self.prezzo_suggerito_cents = (BigDecimal(prezzo) * 100).to_i
+    else
+      self.prezzo_suggerito_cents = 0
     end
   end
 

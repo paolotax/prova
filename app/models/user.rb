@@ -74,6 +74,9 @@ class User < ApplicationRecord
 
   has_many :libri, dependent: :destroy
 
+  has_many :categorie, dependent: :destroy
+  has_many :sconti, dependent: :destroy
+
   has_many :chats, dependent: :destroy
 
   has_many :voice_notes, dependent: :destroy

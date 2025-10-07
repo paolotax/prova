@@ -90,6 +90,8 @@ class ImportScuola < ApplicationRecord
   has_many :documento_righe, through: :documenti
   has_many :righe, through: :documento_righe
 
+  has_many :sconti, as: :scontabile, dependent: :destroy
+
   def mie_adozioni
     import_adozioni.mie_adozioni
   end

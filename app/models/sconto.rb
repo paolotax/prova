@@ -1,0 +1,111 @@
+# == Schema Information
+#
+# Table name: sconti
+#
+#  id                  :bigint           not null, primary key
+#  data_fine           :date
+#  data_inizio         :date             not null
+#  percentuale_sconto  :decimal(5, 2)    not null
+#  scontabile_type     :string
+#  tipo_sconto         :integer          default("vendita"), not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  categoria_id        :bigint
+#  scontabile_id       :bigint
+#
+# Indexes
+#
+#  index_sconti_on_categoria_id  (categoria_id)
+#  index_sconti_on_scontabile    (scontabile_type,scontabile_id)
+#  index_sconti_unique           (scontabile_type,scontabile_id,categoria_id,data_inizio,tipo_sconto) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (categoria_id => categorie.id)
+#
+class Sconto < ApplicationRecord
+  belongs_to :user
+
+  # Polymorphic association - può essere Cliente, Editore, o nil per sconti globali
+  belongs_to :scontabile, polymorphic: true, optional: true
+
+  # Se nil, lo sconto vale per tutte le categorie
+  belongs_to :categoria, optional: true
+
+  enum :tipo_sconto, { vendita: 0, acquisto: 1 }
+
+  validates :percentuale_sconto, presence: true,
+            numericality: { greater_than: 0, less_than_or_equal_to: 100 }
+  validates :data_inizio, presence: true
+  validates :user_id, presence: true
+  validate :data_fine_dopo_data_inizio
+
+  # Scope utili
+  scope :attivi, -> { where("data_inizio <= ? AND (data_fine IS NULL OR data_fine >= ?)", Date.today, Date.today) }
+  scope :per_cliente, ->(cliente) { where(scontabile: cliente, tipo_sconto: :vendita) }
+  scope :per_editore, ->(editore) { where(scontabile: editore, tipo_sconto: :acquisto) }
+  scope :per_categoria, ->(categoria) { where(categoria: categoria) }
+  scope :globali, -> { where(scontabile_id: nil) }
+
+  # Scope per trovare sconti applicabili a un'entità specifica
+  scope :applicabili_a_cliente, ->(cliente_id) {
+    where("(scontabile_type = 'Cliente' AND scontabile_id = ?) OR (scontabile_type = 'Cliente' AND scontabile_id IS NULL)", cliente_id)
+  }
+
+  scope :applicabili_a_editore, ->(editore_id) {
+    where("(scontabile_type = 'Editore' AND scontabile_id = ?) OR (scontabile_type = 'Editore' AND scontabile_id IS NULL)", editore_id)
+  }
+
+  scope :applicabili_a_scuola, ->(scuola_id) {
+    where("(scontabile_type = 'ImportScuola' AND scontabile_id = ?) OR (scontabile_type = 'ImportScuola' AND scontabile_id IS NULL)", scuola_id)
+  }
+
+  def to_s
+    if scontabile.present?
+      "#{percentuale_sconto}% - #{scontabile} - #{categoria&.nome_categoria || 'Tutte le categorie'}"
+    elsif scontabile_type.present?
+      tipo_text = case scontabile_type
+                  when "Cliente" then "Tutti i clienti"
+                  when "Editore" then "Tutti gli editori"
+                  when "ImportScuola" then "Tutte le scuole"
+                  else scontabile_type
+                  end
+      "#{percentuale_sconto}% - #{tipo_text} - #{categoria&.nome_categoria || 'Tutte le categorie'}"
+    else
+      "#{percentuale_sconto}% - Sconto globale - #{categoria&.nome_categoria || 'Tutte le categorie'}"
+    end
+  end
+
+  def scontabile_description
+    if scontabile.present?
+      { type: scontabile_type, name: scontabile.to_s, scope: :specific }
+    elsif scontabile_type.present?
+      case scontabile_type
+      when "Cliente"
+        { type: "Cliente", name: "Tutti i clienti", scope: :all }
+      when "Editore"
+        { type: "Editore", name: "Tutti gli editori", scope: :all }
+      when "ImportScuola"
+        { type: "Scuola", name: "Tutte le scuole", scope: :all }
+      else
+        { type: scontabile_type, name: "Tutti", scope: :all }
+      end
+    else
+      { type: nil, name: "Globale", scope: :global }
+    end
+  end
+
+  def attivo?
+    data_inizio <= Date.today && (data_fine.nil? || data_fine >= Date.today)
+  end
+
+  private
+
+  def data_fine_dopo_data_inizio
+    return if data_fine.blank? || data_inizio.blank?
+
+    if data_fine < data_inizio
+      errors.add(:data_fine, "deve essere successiva alla data di inizio")
+    end
+  end
+end

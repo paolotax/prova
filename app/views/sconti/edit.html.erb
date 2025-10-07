@@ -1,0 +1,14 @@
+<div class="max-w-2xl mx-auto py-8 px-4">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      Modifica sconto
+      <% if @scontabile %>
+        per <%= @scontabile.class.model_name.human %>: <%= @scontabile %>
+      <% end %>
+    </h1>
+  </div>
+
+  <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg p-6">
+    <%= render "form", sconto: @sconto %>
+  </div>
+</div>

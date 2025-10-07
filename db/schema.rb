@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_07_114912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -259,6 +259,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
   end
 
+  create_table "categorie", force: :cascade do |t|
+    t.string "nome_categoria", null: false
+    t.text "descrizione"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id", "nome_categoria"], name: "index_categorie_on_user_id_and_nome_categoria", unique: true
+    t.index ["user_id"], name: "index_categorie_on_user_id"
+  end
+
   create_table "causali", force: :cascade do |t|
     t.string "causale"
     t.string "magazzino"
@@ -476,7 +486,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
     t.integer "classe"
     t.string "disciplina"
     t.text "note"
-    t.string "categoria"
+    t.string "collana"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "numero_fascicoli"
@@ -484,11 +494,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
     t.integer "confezioni_count", default: 0, null: false
     t.integer "adozioni_count", default: 0, null: false
     t.string "slug"
+    t.bigint "categoria_id", null: false
+    t.integer "prezzo_suggerito_cents", default: 0
+    t.index ["categoria_id"], name: "index_libri_on_categoria_id"
     t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
     t.index ["editore_id"], name: "index_libri_on_editore_id"
     t.index ["slug"], name: "index_libri_on_slug", unique: true
-    t.index ["user_id", "categoria"], name: "index_libri_on_user_id_and_categoria"
     t.index ["user_id", "codice_isbn"], name: "index_libri_on_user_id_and_codice_isbn"
+    t.index ["user_id", "collana"], name: "index_libri_on_user_id_and_collana"
     t.index ["user_id", "editore_id"], name: "index_libri_on_user_id_and_editore_id"
     t.index ["user_id", "titolo"], name: "index_libri_on_user_id_and_titolo"
     t.index ["user_id"], name: "index_libri_on_user_id"
@@ -653,6 +666,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["libro_id"], name: "index_righe_on_libro_id"
+  end
+
+  create_table "sconti", force: :cascade do |t|
+    t.string "scontabile_type"
+    t.bigint "scontabile_id"
+    t.bigint "categoria_id"
+    t.decimal "percentuale_sconto", precision: 5, scale: 2, null: false
+    t.date "data_inizio", null: false
+    t.date "data_fine"
+    t.integer "tipo_sconto", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["categoria_id"], name: "index_sconti_on_categoria_id"
+    t.index ["scontabile_type", "scontabile_id"], name: "index_sconti_on_scontabile"
+    t.index ["user_id", "scontabile_type", "scontabile_id", "categoria_id", "data_inizio", "tipo_sconto"], name: "index_sconti_unique", unique: true
+    t.index ["user_id"], name: "index_sconti_on_user_id"
   end
 
   create_table "ssk_appunti_backup", force: :cascade do |t|
@@ -842,11 +872,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
   add_foreign_key "aziende", "users"
+  add_foreign_key "categorie", "users"
   add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "users"
   add_foreign_key "giri", "users"
+  add_foreign_key "libri", "categorie"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "messages", "chats"
@@ -855,6 +887,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_090128) do
   add_foreign_key "old_adozioni", "import_scuole"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
+  add_foreign_key "sconti", "categorie"
+  add_foreign_key "sconti", "users"
   add_foreign_key "tappa_giri", "giri"
   add_foreign_key "tappa_giri", "tappe"
   add_foreign_key "tappe", "giri"

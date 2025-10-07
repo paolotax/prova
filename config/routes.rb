@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   post 'sfascicola', to: 'sfascicolator#generate'
 
   resources :clienti do
+    resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     collection do
       get 'filtra'
     end
@@ -199,13 +200,18 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :editori
+  resources :editori do
+    resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
+  end
 
   resources :mandati do
     collection do
       get 'select_editori'
     end
   end
+
+  resources :categorie
+  resources :sconti
 
   resources :user_scuole, only: %i[index destroy] do
     member do
@@ -215,6 +221,7 @@ Rails.application.routes.draw do
 
   resources :import_scuole do
     resources :tappe
+    resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     collection do
       get 'filtra'
       get 'appunti'

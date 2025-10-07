@@ -1,0 +1,16 @@
+<%= turbo_frame_tag :modal do %>
+  <div class="fixed inset-0 z-50 overflow-y-auto" data-controller="dialog" data-dialog-target="container">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" data-action="click->dialog#close"></div>
+
+      <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+          <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+            Nuova Categoria
+          </h3>
+          <%= render "form", categoria: @categoria %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

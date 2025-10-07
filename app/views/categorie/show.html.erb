@@ -1,0 +1,156 @@
+<% content_for :title, @categoria.nome_categoria %>
+
+<% content_for :header do %>
+  <%= component "heading/with_actions" do |heading| %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+        caption: "Modifica",
+        svg_file: "icon-pencil.svg",
+        color: "blue",
+        url: edit_categoria_path(@categoria),
+        data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+    <% end %>
+
+    <% heading.with_action do %>
+      <%= button_to "Elimina",
+        categoria_path(@categoria),
+        method: :delete,
+        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700",
+        data: { turbo_confirm: "Sei sicuro di voler eliminare questa categoria?" } %>
+    <% end %>
+
+    <% heading.with_action do %>
+      <%= link_to "Indietro",
+        categorie_path,
+        class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-200">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Dettagli Categoria
+      </h3>
+    </div>
+
+    <div class="px-6 py-5 space-y-6">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Nome Categoria</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @categoria.nome_categoria %></dd>
+      </div>
+
+      <% if @categoria.descrizione.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Descrizione</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @categoria.descrizione %></dd>
+        </div>
+      <% end %>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Numero di libri</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @categoria.libri.count %></dd>
+      </div>
+    </div>
+
+    <% if @libri.any? %>
+      <div class="px-6 py-5 border-t border-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-md leading-6 font-medium text-gray-900">
+            Libri in questa categoria
+          </h4>
+          <div class="text-sm text-gray-500">
+            Pagina <%= @pagy.page %> di <%= @pagy.pages %> · <%= @pagy.count %> libri
+          </div>
+        </div>
+
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Titolo</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ISBN</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Editore</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Prezzo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <% @libri.each do |libro| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <%= link_to libro.titolo, libro_path(libro), class: "text-blue-600 hover:text-blue-900" %>
+                  </td>
+                  <td class="px-3 py-4 text-sm text-gray-500"><%= libro.codice_isbn %></td>
+                  <td class="px-3 py-4 text-sm text-gray-500"><%= libro.editore&.editore %></td>
+                  <td class="px-3 py-4 text-sm text-gray-500"><%= number_to_currency(libro.prezzo, unit: "€ ") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <% if @pagy.pages > 1 %>
+          <div class="flex items-center justify-center gap-2 mt-6 pb-4">
+            <% if @pagy.prev %>
+              <%= link_to categoria_path(@categoria, page: @pagy.prev),
+                class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" do %>
+                ← Precedente
+              <% end %>
+            <% else %>
+              <span class="px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
+                ← Precedente
+              </span>
+            <% end %>
+
+            <div class="flex gap-1">
+              <% if @pagy.page > 3 %>
+                <%= link_to "1", categoria_path(@categoria, page: 1),
+                  class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+                <% if @pagy.page > 4 %>
+                  <span class="px-3 py-2 text-sm text-gray-500">...</span>
+                <% end %>
+              <% end %>
+
+              <% ([@pagy.page - 2, 1].max..[@pagy.page + 2, @pagy.pages].min).each do |page| %>
+                <% if page == @pagy.page %>
+                  <span class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
+                    <%= page %>
+                  </span>
+                <% else %>
+                  <%= link_to page, categoria_path(@categoria, page: page),
+                    class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+                <% end %>
+              <% end %>
+
+              <% if @pagy.page < @pagy.pages - 2 %>
+                <% if @pagy.page < @pagy.pages - 3 %>
+                  <span class="px-3 py-2 text-sm text-gray-500">...</span>
+                <% end %>
+                <%= link_to @pagy.pages, categoria_path(@categoria, page: @pagy.pages),
+                  class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+              <% end %>
+            </div>
+
+            <% if @pagy.next %>
+              <%= link_to categoria_path(@categoria, page: @pagy.next),
+                class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" do %>
+                Successivo →
+              <% end %>
+            <% else %>
+              <span class="px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
+                Successivo →
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-6 py-5 border-t border-gray-200">
+        <p class="text-sm text-gray-500 text-center py-4">
+          Nessun libro associato a questa categoria.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

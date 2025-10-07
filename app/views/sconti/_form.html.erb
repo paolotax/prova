@@ -1,0 +1,114 @@
+<%= form_with(model: [@scontabile, @sconto].compact, local: true, class: "space-y-4") do |form| %>
+  <% if @sconto.errors.any? %>
+    <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
+      <h2 class="text-lg font-semibold mb-2"><%= pluralize(@sconto.errors.count, "errore") %> ha impedito il salvataggio:</h2>
+      <ul class="list-disc list-inside">
+        <% @sconto.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :categoria_id, "Categoria", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.collection_select :categoria_id,
+        Current.user.categorie.order(:nome_categoria),
+        :id,
+        :nome_categoria,
+        { include_blank: "Tutte le categorie" },
+        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+    <p class="mt-1 text-sm text-gray-500">Se non selezioni una categoria, lo sconto varrà per tutte le categorie</p>
+  </div>
+
+  <div>
+    <%= form.label :percentuale_sconto, "Percentuale sconto (%)", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.number_field :percentuale_sconto,
+        step: 0.01,
+        min: 0,
+        max: 100,
+        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= form.label :data_inizio, "Data inizio", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.date_field :data_inizio,
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+    </div>
+
+    <div>
+      <%= form.label :data_fine, "Data fine", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.date_field :data_fine,
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      <p class="mt-1 text-sm text-gray-500">Lascia vuoto per sconto senza scadenza</p>
+    </div>
+  </div>
+
+  <% unless @scontabile %>
+    <div>
+      <%= form.label :scontabile_type, "Applica sconto a", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :scontabile_type,
+          [
+            ["Nessuno (sconto globale)", ""],
+            ["Tutti i clienti", "Cliente"],
+            ["Tutti gli editori", "Editore"],
+            ["Tutte le scuole", "ImportScuola"]
+          ],
+          {},
+          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+            data: { controller: "scontabile-selector", action: "change->scontabile-selector#toggleScontabile" } } %>
+      <p class="mt-1 text-sm text-gray-500">Seleziona una tipologia per applicare lo sconto a tutti o scegli un'entità specifica sotto</p>
+    </div>
+
+    <div data-scontabile-selector-target="container" class="hidden">
+      <%= form.label :scontabile_id, "Oppure seleziona uno specifico (opzionale)", class: "block text-sm font-medium text-gray-700 mt-4" %>
+
+      <div data-scontabile-selector-target="clienteSelect" class="hidden">
+        <%= form.collection_select :scontabile_id,
+            Current.user.clienti.order(:denominazione),
+            :id,
+            :denominazione,
+            { include_blank: "Tutti i clienti" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <p class="mt-1 text-sm text-gray-500">Lascia vuoto per applicare a tutti i clienti</p>
+      </div>
+
+      <div data-scontabile-selector-target="editoreSelect" class="hidden">
+        <%= form.collection_select :scontabile_id,
+            Current.user.editori.order(:editore),
+            :id,
+            :editore,
+            { include_blank: "Tutti gli editori" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <p class="mt-1 text-sm text-gray-500">Lascia vuoto per applicare a tutti gli editori</p>
+      </div>
+
+      <div data-scontabile-selector-target="scuolaSelect" class="hidden">
+        <%= form.collection_select :scontabile_id,
+            Current.user.import_scuole.order(:DENOMINAZIONESCUOLA),
+            :id,
+            :DENOMINAZIONESCUOLA,
+            { include_blank: "Tutte le scuole" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <p class="mt-1 text-sm text-gray-500">Lascia vuoto per applicare a tutte le scuole</p>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :tipo_sconto, "Tipo sconto", class: "block text-sm font-medium text-gray-700 mt-4" %>
+      <%= form.select :tipo_sconto,
+          Sconto.tipo_sconti.map { |k, v| [k.capitalize, k] },
+          {},
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+    </div>
+  <% end %>
+
+  <div class="flex items-center justify-end gap-4 pt-4">
+    <%= link_to "Annulla",
+        @scontabile ? polymorphic_path([@scontabile, :sconti]) : sconti_path,
+        class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+    <%= form.submit "Salva sconto",
+        class: "px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+<% end %>

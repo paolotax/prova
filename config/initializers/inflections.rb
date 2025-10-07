@@ -76,6 +76,10 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'ssk_appunto_backup', 'ssk_appunti_backup'
 
+  inflect.irregular 'collana', 'collane'
+  inflect.irregular 'categoria', 'categorie'
+  inflect.irregular 'sconto', 'sconti'
+
   # inflect.irregular 'documento_riga', 'documenti_righe'
 
   # inflect.plural /^([\w]*)a/i, '\1e'

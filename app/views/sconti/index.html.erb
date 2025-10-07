@@ -1,0 +1,170 @@
+<div class="py-8 px-4">
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        Sconti
+        <% if @scontabile %>
+          <% if @scontabile.is_a?(ImportScuola) %>
+            per Scuola: <span class="text-indigo-600"><%= @scontabile.DENOMINAZIONESCUOLA %></span>
+          <% elsif @scontabile.is_a?(Cliente) %>
+            per Cliente: <span class="text-indigo-600"><%= @scontabile.denominazione %></span>
+          <% elsif @scontabile.is_a?(Editore) %>
+            per Editore: <span class="text-indigo-600"><%= @scontabile.editore %></span>
+          <% else %>
+            per <%= @scontabile.class.model_name.human %>: <span class="text-indigo-600"><%= @scontabile %></span>
+          <% end %>
+        <% end %>
+      </h1>
+    </div>
+    <div>
+      <%= link_to "Nuovo sconto",
+          @scontabile ? new_polymorphic_path([@scontabile, :sconto]) : new_sconto_path,
+          class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
+  </div>
+
+  <% if @sconti.any? %>
+    <div class="mb-4 text-sm text-gray-500">
+      Totale sconti: <span class="font-semibold text-gray-900"><%= @sconti.count %></span>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg overflow-hidden">
+    <% if @sconti.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-300">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Applicato a
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Categoria
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Sconto
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Tipo
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Data inizio
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Data fine
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Stato
+            </th>
+            <th scope="col" class="relative px-6 py-3">
+              <span class="sr-only">Azioni</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @sconti.each do |sconto| %>
+            <tr>
+              <td class="px-6 py-4 text-sm text-gray-900">
+                <% desc = sconto.scontabile_description %>
+                <% case desc[:scope] %>
+                <% when :specific %>
+                  <% if sconto.scontabile.is_a?(ImportScuola) %>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                        Scuola
+                      </span>
+                      <%= link_to sconto.scontabile.DENOMINAZIONESCUOLA, import_scuola_path(sconto.scontabile), class: "text-indigo-600 hover:text-indigo-900 truncate" %>
+                    </div>
+                  <% elsif sconto.scontabile.is_a?(Cliente) %>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        Cliente
+                      </span>
+                      <%= link_to sconto.scontabile.denominazione, cliente_path(sconto.scontabile), class: "text-indigo-600 hover:text-indigo-900 truncate" %>
+                    </div>
+                  <% elsif sconto.scontabile.is_a?(Editore) %>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                        Editore
+                      </span>
+                      <%= link_to sconto.scontabile.editore, editore_path(sconto.scontabile), class: "text-indigo-600 hover:text-indigo-900 truncate" %>
+                    </div>
+                  <% end %>
+                <% when :all %>
+                  <div class="flex items-center gap-2">
+                    <% badge_class = case desc[:type]
+                                     when "Cliente" then "bg-blue-100 text-blue-800"
+                                     when "Editore" then "bg-orange-100 text-orange-800"
+                                     when "Scuola" then "bg-purple-100 text-purple-800"
+                                     else "bg-gray-100 text-gray-800"
+                                     end %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= badge_class %>">
+                      <%= desc[:type] %>
+                    </span>
+                    <span class="font-medium text-gray-700"><%= desc[:name] %></span>
+                  </div>
+                <% when :global %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                    Globale
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= sconto.categoria&.nome_categoria || content_tag(:span, "Tutte", class: "text-gray-500") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                <%= number_to_percentage(sconto.percentuale_sconto, precision: 2) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= sconto.vendita? ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' %>">
+                  <%= sconto.tipo_sconto.capitalize %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(sconto.data_inizio, format: :short) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= sconto.data_fine ? l(sconto.data_fine, format: :short) : content_tag(:span, "Nessuna", class: "text-gray-400") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if sconto.attivo? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Attivo
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Non attivo
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <%= link_to "Modifica",
+                    sconto.scontabile ? edit_polymorphic_path([sconto.scontabile, sconto]) : edit_sconto_path(sconto),
+                    class: "text-indigo-600 hover:text-indigo-900 mr-3" %>
+                <%= button_to "Elimina",
+                    sconto.scontabile ? polymorphic_path([sconto.scontabile, sconto]) : sconto_path(sconto),
+                    method: :delete,
+                    data: { turbo_confirm: "Sei sicuro di voler eliminare questo sconto?" },
+                    class: "text-red-600 hover:text-red-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Nessuno sconto</h3>
+        <p class="mt-1 text-sm text-gray-500">Inizia creando il primo sconto.</p>
+        <div class="mt-6">
+          <%= link_to "Nuovo sconto",
+              @scontabile ? new_polymorphic_path([@scontabile, :sconto]) : new_sconto_path,
+              class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

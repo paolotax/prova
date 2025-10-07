@@ -69,3 +69,7 @@ Untitled*
 
 # Ignore MIUR adoption files
 tmp/_miur/adozioni/*.csv
+
+# ClaudeOnRails
+.claude-on-rails/sessions/
+swarm.log

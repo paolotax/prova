@@ -107,11 +107,19 @@
 					<% end %>
 
 					<% dropdown.with_item do %>
-						<%= link_to "Crea Tappa", new_tappa_path( tappable_type: "Cliente", tappable_id: @cliente.id, data_tappa: Date.today ), 
+						<%= link_to "Crea Tappa", new_tappa_path( tappable_type: "Cliente", tappable_id: @cliente.id, data_tappa: Date.today ),
 								class: "px-3 py-3 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
 								data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false },
 								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" %>
-					
+
+					<% end %>
+
+					<% dropdown.with_item do %>
+						<%= link_to "Nuovo sconto",
+								new_cliente_sconto_path(@cliente),
+								data: { turbo_prefetch: false },
+								class: "px-3 py-2 block hover:text-blue-500 focus-visible:outline-none focus-visible:bg-gray-50",
+								role: "menuitem", tabindex: "-1", id: "titolo-menu-item-3" %>
 					<% end %>
 				<% end %>
 		<% end %>
@@ -120,12 +128,102 @@
 	
 	<% end %>
 
-	<%= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark", 
+	<%= render StatComponent.new(title: "Fatturato", width: "w-full", theme: "dark",
 						current_value: @cliente.importo_entrate - @cliente.importo_uscite) do |stat| %>
 		<% stat.with_current_value_leader { "€ " } %>
 	<% end %>
 
 </div>
+
+<!-- Sezione Sconti -->
+<% sconti_attivi = @sconti_applicabili.attivi %>
+<% sconti_unici_attivi = @sconti_unici.select(&:attivo?) %>
+
+<% if sconti_unici_attivi.any? %>
+	<div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg p-4 shadow-md">
+		<div class="flex items-center justify-between mb-3">
+			<div class="flex items-center gap-2">
+				<h3 class="text-lg font-bold text-blue-900">Sconti speciali per questo cliente</h3>
+				<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
+					<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+					</svg>
+					Differente
+				</span>
+			</div>
+			<%= link_to "Gestisci sconti", cliente_sconti_path(@cliente), class: "text-sm text-blue-700 hover:text-blue-900 font-semibold underline" %>
+		</div>
+		<div class="space-y-2">
+			<% sconti_unici_attivi.each do |sconto| %>
+				<div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 shadow-md border-l-4 border-amber-400">
+					<div class="flex items-center space-x-3">
+						<span class="font-bold text-2xl text-blue-900"><%= number_to_percentage(sconto.percentuale_sconto, precision: 1) %></span>
+						<div class="h-6 w-px bg-gray-300"></div>
+						<div class="flex flex-col">
+							<span class="text-base font-semibold text-gray-900">
+								<%= sconto.categoria&.nome_categoria || "Tutte le categorie" %>
+							</span>
+							<% if sconto.scontabile_id.present? %>
+								<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800 mt-1">
+									⭐ Sconto dedicato
+								</span>
+							<% else %>
+								<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 mt-1">
+									Per tutti i clienti
+								</span>
+							<% end %>
+						</div>
+					</div>
+					<div class="flex flex-col items-end gap-1">
+						<span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">
+							<%= sconto.tipo_sconto.capitalize %>
+						</span>
+						<span class="text-xs text-gray-600 font-medium">
+							<% if sconto.data_fine %>
+								Fino al <%= l(sconto.data_fine, format: :short) %>
+							<% else %>
+								Permanente
+							<% end %>
+						</span>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	</div>
+<% end %>
+
+<% if sconti_attivi.any? && (sconti_attivi.count > sconti_unici_attivi.count) %>
+	<details class="mb-6">
+		<summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-900 font-medium mb-2">
+			▸ Mostra anche sconti globali applicabili (<%= sconti_attivi.count - sconti_unici_attivi.count %>)
+		</summary>
+		<div class="mt-2 bg-gray-50 border border-gray-200 rounded-lg p-4">
+			<div class="space-y-2">
+				<% (sconti_attivi - sconti_unici_attivi).each do |sconto| %>
+					<div class="flex items-center justify-between bg-white rounded px-3 py-2 opacity-60">
+						<div class="flex items-center space-x-3">
+							<span class="font-semibold text-sm text-gray-700"><%= number_to_percentage(sconto.percentuale_sconto, precision: 1) %></span>
+							<div class="h-4 w-px bg-gray-300"></div>
+							<div class="flex flex-col">
+								<span class="text-sm text-gray-700">
+									<%= sconto.categoria&.nome_categoria || "Tutte le categorie" %>
+								</span>
+								<span class="text-xs text-gray-500 mt-1">Sconto globale</span>
+							</div>
+						</div>
+						<span class="text-xs text-gray-500">
+							<% if sconto.data_fine %>
+								Fino al <%= l(sconto.data_fine, format: :short) %>
+							<% else %>
+								Permanente
+							<% end %>
+						</span>
+					</div>
+				<% end %>
+			</div>
+		</div>
+	</details>
+<% end %>
 
 
 <div class="group show-cliente flex flex-row gap-4" data-controller="bulk-actions">
@@ -145,28 +243,29 @@
 </div>
 
 
+<%#
 <%= tag.ul  do %>
-	<% @situazio.group_by{ |l| l.categoria}.each do |categoria, libri| %>
-		<%= tag.li class: "grid grid-cols-10" do %>
-			<%= tag.p categoria, class: "col-start-1 text-red-500 font-bold text-right" %>
-		<% end %>
-		<% libri.each do |libro| %>
-			<%= tag.li class: "grid grid-cols-10" do %>
-				<%= tag.p libro.codice_isbn, class: "col-span-2" %>
-				<%= tag.p libro.titolo, class: "col-span-4 truncate" %>
-				<%= tag.p libro.uscite&.to_i, class: "col-span- text-right" %>
-				<%= tag.p libro.entrate&.to_i, class: "col-span-1 text-right" %>
-				<%= tag.p (libro.uscite&.to_i || 0) + (libro.entrate&.to_i || 0), class: "col-span-1 text-red-500 font-bold text-right" %>
-				<%= tag.p number_to_currency(libro.valore&.to_f), class: "col-span-1 text-red-500 font-bold text-right" %>
-			<% end %>
-		<% end %>
-		<%= tag.li class: "grid grid-cols-10" do %>
-			<%= tag.p number_to_currency(libri.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
-		<% end %>
-	<% end %>
-	<%= tag.li class: "grid grid-cols-10" do %>
-		<%= tag.p number_to_currency(@situazio.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
-	<% end %>
-<% end %>
+	<%# @situazio.group_by{ |l| l.collana}.each do |collana, libri| %>
+		<%#= tag.li class: "grid grid-cols-10" do %>
+			<%#= tag.p collana, class: "col-start-1 text-red-500 font-bold text-right" %>
+		<%# end %>
+		<%# libri.each do |libro| %>
+			<%#= tag.li class: "grid grid-cols-10" do %>
+				<%#= tag.p libro.codice_isbn, class: "col-span-2" %>
+				<%#= tag.p libro.titolo, class: "col-span-4 truncate" %>
+				<%#= tag.p libro.uscite&.to_i, class: "col-span- text-right" %>
+				<%#= tag.p libro.entrate&.to_i, class: "col-span-1 text-right" %>
+				<%#= tag.p (libro.uscite&.to_i || 0) + (libro.entrate&.to_i || 0), class: "col-span-1 text-red-500 font-bold text-right" %>
+				<%#= tag.p number_to_currency(libro.valore&.to_f), class: "col-span-1 text-red-500 font-bold text-right" %>
+			<%# end %>
+		<%# end %>
+		<%#= tag.li class: "grid grid-cols-10" do %>
+			<%#= tag.p number_to_currency(libri.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
+		<%# end %>
+	<%# end %>
+	<%#= tag.li class: "grid grid-cols-10" do %>
+		<%#= tag.p number_to_currency(@situazio.sum{|s| s.valore}), class: "col-span-2 col-start-9 text-red-500 font-bold text-right" %>
+	<%# end %>
+<%# end %>
 
 
