@@ -135,7 +135,13 @@ class LibriController < ApplicationController
   end
 
   def get_prezzo_copertina_cents
-    render json: { prezzo_copertina_cents: @libro.prezzo_in_cents }
+    cliente = current_user.clienti.find_by(id: params[:cliente_id]) if params[:cliente_id].present?
+    sconto = Sconto.sconto_per_libro(libro: @libro, cliente: cliente, user: current_user)
+
+    render json: {
+      prezzo_copertina_cents: @libro.prezzo_in_cents,
+      sconto: sconto
+    }
   end
 
   def filtra  

@@ -99,6 +99,75 @@ class Sconto < ApplicationRecord
     data_inizio <= Date.today && (data_fine.nil? || data_fine >= Date.today)
   end
 
+  # Trova lo sconto più specifico applicabile per un libro e opzionalmente un cliente
+  def self.sconto_per_libro(libro:, cliente: nil, user:)
+    categoria_id = libro.categoria_id
+
+    if cliente
+      # Con cliente: cerca sconti specifici per il cliente, "tutti i clienti", e globali
+      # Priorità:
+      # 1. Cliente specifico + categoria specifica
+      # 2. Cliente specifico + tutte categorie
+      # 3. Tutti i clienti + categoria specifica
+      # 4. Tutti i clienti + tutte categorie
+      # 5. Globale + categoria specifica
+      # 6. Globale + tutte categorie
+      sconto = user.sconti
+        .attivi
+        .vendita
+        .where("categoria_id = ? OR categoria_id IS NULL", categoria_id)
+        .where(
+          "scontabile_type IS NULL OR " \
+          "(scontabile_type = ? AND (scontabile_id = ? OR scontabile_id IS NULL))",
+          'Cliente', cliente.id
+        )
+        .order(
+          Arel.sql(
+            "CASE " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id = #{cliente.id} AND categoria_id = #{categoria_id.to_i} THEN 0 " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id = #{cliente.id} AND categoria_id IS NULL THEN 1 " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 2 " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 3 " \
+              "WHEN scontabile_type IS NULL AND categoria_id = #{categoria_id.to_i} THEN 4 " \
+              "WHEN scontabile_type IS NULL AND categoria_id IS NULL THEN 5 " \
+              "ELSE 6 " \
+            "END"
+          )
+        )
+        .first
+    else
+      # Senza cliente: cerca solo sconti "tutti i clienti" e globali
+      # Priorità:
+      # 1. Tutti i clienti + categoria specifica
+      # 2. Tutti i clienti + tutte categorie
+      # 3. Globale + categoria specifica
+      # 4. Globale + tutte categorie
+      sconto = user.sconti
+        .attivi
+        .vendita
+        .where("categoria_id = ? OR categoria_id IS NULL", categoria_id)
+        .where(
+          "scontabile_type IS NULL OR " \
+          "(scontabile_type = ? AND scontabile_id IS NULL)",
+          'Cliente'
+        )
+        .order(
+          Arel.sql(
+            "CASE " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 0 " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 1 " \
+              "WHEN scontabile_type IS NULL AND categoria_id = #{categoria_id.to_i} THEN 2 " \
+              "WHEN scontabile_type IS NULL AND categoria_id IS NULL THEN 3 " \
+              "ELSE 4 " \
+            "END"
+          )
+        )
+        .first
+    end
+
+    sconto&.percentuale_sconto&.to_f || 0.0
+  end
+
   private
 
   def data_fine_dopo_data_inizio

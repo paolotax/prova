@@ -34,11 +34,13 @@
 
         <%= form_with model: @documento, url: wizard_path, method: :put, data: { turbo_action: "advance", controller: "unload" }, class: "px-2 py-5"  do |f| %>
             
-            <%= tag.section id: "documento_righe", class: "col-span-4",  
-                            data: { controller: "sortable", 
-                                    sortable_animation_value: "150", 
+            <%= tag.section id: "documento_righe", class: "col-span-4",
+                            data: { controller: "sortable",
+                                    sortable_animation_value: "150",
                                     sortable_resource_name_value: "documento_riga",
-                                    sortable_handle_value: ".handle" } do %>
+                                    sortable_handle_value: ".handle",
+                                    clientable_id: @documento.clientable_id,
+                                    clientable_type: @documento.clientable_type } do %>
                 <%= render partial: "documento_righe/documento_riga", collection: @documento_righe %>
             <% end %>
 
