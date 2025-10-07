@@ -1,3 +1,4 @@
+<!-- Prossimi Passi -->
 <% resource.class.form_steps.keys.each_with_index do |step, index| %>
 
     <% unless resource.valid? %>
@@ -6,14 +7,14 @@
                             "hidden": index <= resource.class.form_steps.keys.index(params[:id].to_sym) ] do %>
             <%= tag.p "#{index + 1}.", class: "h-6 w-6 text-center rounded-full text-white bg-gray-500" %>
             <%= tag.p step.to_s.humanize.titleize %>
-        <% end %>   
+        <% end %>
     <% else %>
         <%= link_to wizard_path(step), class: ["w-full inline-flex items-center px-4 py-2 gap-4 border-2 text-gray-500 border-gray-500 -mt-[2px]": true,
                             "bg-gray-500 text-white border-gray-500": step == params[:id].to_sym,
                             "hidden": index <= resource.class.form_steps.keys.index(params[:id].to_sym) ] do %>
             <%= tag.p "#{index + 1}.", class: "h-6 w-6 text-center rounded-full text-white bg-gray-500" %>
             <%= tag.p step.to_s.humanize.titleize %>
-        <% end %> 
+        <% end %>
     <% end %>
 
 <% end %>

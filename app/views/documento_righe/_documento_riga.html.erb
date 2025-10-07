@@ -10,14 +10,13 @@
 
         	
         <%# <%= tag.div documento_riga.posizione, class: "col-span-1" %>
-
         <%= ff.hidden_field :id %>
 
         <%= ff.fields_for :riga do |form_riga| %>
             
-            <fieldset class="col-span-3 sm:col-span-4 cb-tax flex items-center">
+            <fieldset class="col-span-4 sm:col-span-4 flex items-center">
                 <div class="handle cursor-move flex-0 pr-4">⋮⋮</div>	
-                <div class="flex flex-col">
+                <div class="flex flex-col cb-tax-fancy w-full">
                     <% if form_riga.object.new_record? %>
                         <%= label_for form: form_riga, field: 'libro', label: 'Libro' %>
                         <%= form_riga.combobox :libro_id, libri_path, 
