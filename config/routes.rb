@@ -118,7 +118,7 @@ Rails.application.routes.draw do
       get 'scarico_fascicoli'
     end
     member do
-      get 'get_prezzo_copertina_cents'
+      get 'get_prezzo_e_sconto'
       get 'fascicoli', to: 'confezionator#index'
       post 'fascicoli', to: 'confezionator#create', as: 'confezione'
       delete 'fascicoli', to: 'confezionator#destroy'

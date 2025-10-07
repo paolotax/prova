@@ -3,7 +3,7 @@ class LibriController < ApplicationController
   include FilterableController
 
   before_action :authenticate_user!
-  before_action :set_libro, only: %i[ show edit update destroy get_prezzo_copertina_cents ]
+  before_action :set_libro, only: %i[ show edit update destroy get_prezzo_e_sconto ]
 
 
   def crosstab
@@ -136,7 +136,7 @@ class LibriController < ApplicationController
     end
   end
 
-  def get_prezzo_copertina_cents
+  def get_prezzo_e_sconto
     cliente = current_user.clienti.find_by(id: params[:cliente_id]) if params[:cliente_id].present?
     sconto = Sconto.sconto_per_libro(libro: @libro, cliente: cliente, user: current_user)
 

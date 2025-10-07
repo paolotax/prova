@@ -47,7 +47,7 @@ class Documento < ApplicationRecord
   # enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
   # enum movimento: { entrata: 0, uscita: 1 }
 
-  delegate :tipo_movimento, :movimento, to: :causale
+  delegate :tipo_movimento, :movimento, to: :causale, allow_nil: true
 
   extend FilterableModel
   class << self
