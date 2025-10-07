@@ -96,15 +96,31 @@
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
 				<%= link_to clienti_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
-					Clienti                 
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+					Clienti
 				<% end %>
 			</li>
 			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
 				<!-- 44px -->
+				<%= link_to sconti_path,
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+					Sconti
+				<% end %>
+			</li>
+			<% if current_user&.admin? %>
+				<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
+					<!-- 44px -->
+					<%= link_to categorie_path,
+							class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+						Categorie
+					<% end %>
+				</li>
+			<% end %>
+			<li class="first:rounded-t-md last:rounded-b-md mx-2 first:mt-2 last:mb-2  text-gray-100 bg-gray-700 hover:bg-gray-500">
+				<!-- 44px -->
 				<%= link_to libri_path,
-						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>	
-					i MIEI Librini                  
+						class: "flex gap-x-3 p-2 pl-7 leading-6 text-sm font-semibold" do %>
+					i MIEI Librini
 				<% end %>
 			</li>				
 		</ul>		
