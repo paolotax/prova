@@ -23,9 +23,11 @@ export default class extends Controller {
 
     let url = `/libri/${id_libro}/get_prezzo_e_sconto`;
 
-    // Aggiungi parametri cliente se presenti
+    // Aggiungi parametri cliente o scuola se presenti
     if (clientable_id && clientable_type === 'Cliente') {
       url += `?cliente_id=${clientable_id}`;
+    } else if (clientable_id && clientable_type === 'ImportScuola') {
+      url += `?scuola_id=${clientable_id}`;
     }
 
     fetch(url, {

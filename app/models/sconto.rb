@@ -99,19 +99,23 @@ class Sconto < ApplicationRecord
     data_inizio <= Date.today && (data_fine.nil? || data_fine >= Date.today)
   end
 
-  # Trova lo sconto più specifico applicabile per un libro e opzionalmente un cliente
-  def self.sconto_per_libro(libro:, cliente: nil, user:)
+  # Trova lo sconto più specifico applicabile per un libro e opzionalmente un'entità (cliente/scuola)
+  def self.sconto_per_libro(libro:, cliente: nil, scuola: nil, user:)
     categoria_id = libro.categoria_id
 
-    if cliente
-      # Con cliente: cerca prima con categoria specifica, poi senza categoria
+    # Determina l'entità (cliente o scuola)
+    entity = cliente || scuola
+    entity_type = cliente ? 'Cliente' : (scuola ? 'ImportScuola' : nil)
+
+    if entity && entity_type
+      # Con entità: cerca prima con categoria specifica, poi senza categoria
       # Priorità con categoria specifica:
-      # 0. Cliente specifico + categoria specifica
-      # 1. Tutti i clienti + categoria specifica
+      # 0. Entità specifica + categoria specifica
+      # 1. Tutte le entità + categoria specifica
       # 2. Globale + categoria specifica
       # Priorità senza categoria (solo se non trovato con categoria):
-      # 3. Cliente specifico + tutte categorie
-      # 4. Tutti i clienti + tutte categorie
+      # 3. Entità specifica + tutte categorie
+      # 4. Tutte le entità + tutte categorie
       # 5. Globale + tutte categorie
 
       # Prima cerca con categoria specifica
@@ -122,13 +126,13 @@ class Sconto < ApplicationRecord
         .where(
           "(scontabile_type IS NULL OR scontabile_type = '') OR " \
           "(scontabile_type = ? AND (scontabile_id = ? OR scontabile_id IS NULL))",
-          'Cliente', cliente.id
+          entity_type, entity.id
         )
         .order(
           Arel.sql(
             "CASE " \
-              "WHEN scontabile_type = 'Cliente' AND scontabile_id = #{cliente.id} THEN 0 " \
-              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL THEN 1 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = #{entity.id} THEN 0 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id IS NULL THEN 1 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') THEN 2 " \
               "ELSE 3 " \
             "END"
@@ -146,13 +150,13 @@ class Sconto < ApplicationRecord
         .where(
           "(scontabile_type IS NULL OR scontabile_type = '') OR " \
           "(scontabile_type = ? AND (scontabile_id = ? OR scontabile_id IS NULL))",
-          'Cliente', cliente.id
+          entity_type, entity.id
         )
         .order(
           Arel.sql(
             "CASE " \
-              "WHEN scontabile_type = 'Cliente' AND scontabile_id = #{cliente.id} THEN 0 " \
-              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL THEN 1 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = #{entity.id} THEN 0 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id IS NULL THEN 1 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') THEN 2 " \
               "ELSE 3 " \
             "END"
@@ -162,29 +166,33 @@ class Sconto < ApplicationRecord
 
       sconto_generico&.percentuale_sconto&.to_f || 0.0
     else
-      # Senza cliente: cerca solo sconti "tutti i clienti" e globali
+      # Senza entità: cerca solo sconti "tutti" e globali
       # Priorità:
       # 0. Tutti i clienti + categoria specifica
-      # 1. Globale + categoria specifica
-      # 2. Tutti i clienti + tutte categorie
-      # 3. Globale + tutte categorie
+      # 1. Tutte le scuole + categoria specifica
+      # 2. Globale + categoria specifica
+      # 3. Tutti i clienti + tutte categorie
+      # 4. Tutte le scuole + tutte categorie
+      # 5. Globale + tutte categorie
       sconto = user.sconti
         .attivi
         .vendita
         .where("categoria_id = ? OR categoria_id IS NULL", categoria_id)
         .where(
           "(scontabile_type IS NULL OR scontabile_type = '') OR " \
-          "(scontabile_type = ? AND scontabile_id IS NULL)",
-          'Cliente'
+          "(scontabile_type IN (?, ?) AND scontabile_id IS NULL)",
+          'Cliente', 'ImportScuola'
         )
         .order(
           Arel.sql(
             "CASE " \
               "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 0 " \
-              "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id = #{categoria_id.to_i} THEN 1 " \
-              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 2 " \
-              "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id IS NULL THEN 3 " \
-              "ELSE 4 " \
+              "WHEN scontabile_type = 'ImportScuola' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 1 " \
+              "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id = #{categoria_id.to_i} THEN 2 " \
+              "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 3 " \
+              "WHEN scontabile_type = 'ImportScuola' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 4 " \
+              "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id IS NULL THEN 5 " \
+              "ELSE 6 " \
             "END"
           )
         )

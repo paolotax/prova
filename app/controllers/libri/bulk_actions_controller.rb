@@ -18,8 +18,9 @@ class Libri::BulkActionsController < ApplicationController
       # Aggiungere i libri come righe del documento
       @libri.each do |libro|
         # Calcola lo sconto appropriato
-        cliente = @documento.clientable if @documento.clientable_type == 'Cliente'
-        sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, user: current_user)
+        cliente = @documento.clientable_type == 'Cliente' ? @documento.clientable : nil
+        scuola = @documento.clientable_type == 'ImportScuola' ? @documento.clientable : nil
+        sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, scuola: scuola, user: current_user)
 
         # Creo prima la Riga
         riga = Riga.create!(
@@ -66,8 +67,9 @@ class Libri::BulkActionsController < ApplicationController
 
     @libri.each do |libro|
       # Calcola lo sconto appropriato
-      cliente = @documento.clientable if @documento.clientable_type == 'Cliente'
-      sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, user: current_user)
+      cliente = @documento.clientable_type == 'Cliente' ? @documento.clientable : nil
+      scuola = @documento.clientable_type == 'ImportScuola' ? @documento.clientable : nil
+      sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, scuola: scuola, user: current_user)
 
       # Crea prima la Riga (come nel metodo carrello)
       riga = Riga.create!(
