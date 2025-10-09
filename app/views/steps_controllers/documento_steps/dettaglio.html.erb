@@ -11,7 +11,8 @@
                 <%= f.hidden_field :documento_id, value: @documento.id %>
                 
                 <%= tag.div class: "flex flex-col sm:flex-row items-center px-4 py-2.5" do %>
-                    <%= f.file_field :file, accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel' %>
+                    <%= f.file_field :file, accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
+                            class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
                     <%= component('button', busy_content_css: 'flex py-1 [[disabled]_&]:opacity-0') do |button| %>
                         <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
                             <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4"><style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style><g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g></svg>

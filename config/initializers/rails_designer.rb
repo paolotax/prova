@@ -32,7 +32,7 @@ RailsDesigner.configure do |config|
 
 
   config.form_builder.input_css = "block w-full resize-none text-lg text-gray-900 bg-gray-50 border-gray-300 border-0 border-b placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0 sm:text-md sm:leading-5 "
-  #config.form_builder.file_field_css = ""
+  config.form_builder.file_field_css = "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
   #config.form_builder.toggle_input_css = ""
   #config.form_builder.toggle_label_css = ""
 #
