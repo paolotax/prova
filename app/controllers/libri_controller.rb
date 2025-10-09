@@ -146,12 +146,20 @@ class LibriController < ApplicationController
       scuola = current_user.import_scuole.find_by(id: params[:scuola_id])
     end
 
-    sconto = Sconto.sconto_per_libro(libro: @libro, cliente: cliente, scuola: scuola, user: current_user)
+    # Se il cliente è una ImportScuola e il libro ha un prezzo_suggerito, usa quello con sconto 0
+    if scuola.present? && @libro.prezzo_suggerito_cents.present? && @libro.prezzo_suggerito_cents > 0
+      render json: {
+        prezzo_copertina_cents: @libro.prezzo_suggerito_cents,
+        sconto: 0.0
+      }
+    else
+      sconto = Sconto.sconto_per_libro(libro: @libro, cliente: cliente, scuola: scuola, user: current_user)
 
-    render json: {
-      prezzo_copertina_cents: @libro.prezzo_in_cents,
-      sconto: sconto
-    }
+      render json: {
+        prezzo_copertina_cents: @libro.prezzo_in_cents,
+        sconto: sconto
+      }
+    end
   end
 
   def filtra  
@@ -164,7 +172,7 @@ class LibriController < ApplicationController
     end
 
     def libro_params
-      params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :prezzo_in_cents, :prezzo, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
+      params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :prezzo_in_cents, :prezzo, :prezzo_suggerito, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
     end
 
     def filter_params

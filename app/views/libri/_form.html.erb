@@ -39,6 +39,11 @@
 			<%= form.number_field :prezzo, step: 0.01 %>
 		<% end %>
 
+		<%= tag.fieldset class: "flex flex-col justify-between items-start" do %>
+			<%= label_for form: form, field: 'prezzo_suggerito', label: 'Prezzo Suggerito' %>
+			<%= form.number_field :prezzo_suggerito, step: 0.01 %>
+		<% end %>
+
 		<%= tag.fieldset class: "w-full flex flex-col justify-between items-start" do %>
 			<%= label_for form: form, field: 'codice_isbn', label: 'ISBN' %>
 			<%= form.text_field :codice_isbn %>

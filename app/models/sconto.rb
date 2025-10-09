@@ -101,6 +101,11 @@ class Sconto < ApplicationRecord
 
   # Trova lo sconto più specifico applicabile per un libro e opzionalmente un'entità (cliente/scuola)
   def self.sconto_per_libro(libro:, cliente: nil, scuola: nil, user:)
+    # Caso speciale: se il cliente è ImportScuola e il libro ha un prezzo_suggerito, usa sconto 0
+    if scuola.present? && libro.prezzo_suggerito_cents.present? && libro.prezzo_suggerito_cents > 0
+      return 0.0
+    end
+
     categoria_id = libro.categoria_id
 
     # Determina l'entità (cliente o scuola)
