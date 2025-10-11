@@ -2,13 +2,13 @@
 #
 # Table name: view_giacenze
 #
-#  user_id     :integer
-#  libro_id    :integer
-#  titolo      :string
+#  carichi     :bigint
 #  codice_isbn :string
-#  ordini      :integer
-#  vendite     :integer
-#  carichi     :integer
+#  ordini      :bigint
+#  titolo      :string
+#  vendite     :bigint
+#  libro_id    :bigint
+#  user_id     :bigint
 #
 
 class Views::Giacenza < ApplicationRecord 

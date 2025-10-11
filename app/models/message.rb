@@ -3,20 +3,29 @@
 # Table name: messages
 #
 #  id              :bigint           not null, primary key
-#  content         :string           not null
+#  content         :text
+#  input_tokens    :integer
+#  output_tokens   :integer
 #  response_number :integer          default(0), not null
-#  role            :integer          default("system"), not null
+#  role            :string           default("0"), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  chat_id         :bigint
+#  model_id        :bigint
+#  tool_call_id    :bigint
 #
 # Indexes
 #
-#  index_messages_on_chat_id  (chat_id)
+#  index_messages_on_chat_id       (chat_id)
+#  index_messages_on_model_id      (model_id)
+#  index_messages_on_role          (role)
+#  index_messages_on_tool_call_id  (tool_call_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (chat_id => chats.id)
+#  fk_rails_...  (model_id => models.id)
+#  fk_rails_...  (tool_call_id => tool_calls.id)
 #
 class Message < ApplicationRecord
   

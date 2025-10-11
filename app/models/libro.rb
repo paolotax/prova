@@ -2,37 +2,41 @@
 #
 # Table name: libri
 #
-#  id               :bigint           not null, primary key
-#  adozioni_count   :integer          default(0), not null
-#  categoria        :string
-#  classe           :integer
-#  codice_isbn      :string
-#  confezioni_count :integer          default(0), not null
-#  disciplina       :string
-#  fascicoli_count  :integer          default(0), not null
-#  note             :text
-#  numero_fascicoli :integer
-#  prezzo_in_cents  :integer
-#  slug             :string
-#  titolo           :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  editore_id       :bigint
-#  user_id          :bigint           not null
+#  id                     :bigint           not null, primary key
+#  adozioni_count         :integer          default(0), not null
+#  classe                 :integer
+#  codice_isbn            :string
+#  collana                :string
+#  confezioni_count       :integer          default(0), not null
+#  disciplina             :string
+#  fascicoli_count        :integer          default(0), not null
+#  note                   :text
+#  numero_fascicoli       :integer
+#  prezzo_in_cents        :integer
+#  prezzo_suggerito_cents :integer          default(0)
+#  slug                   :string
+#  titolo                 :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  categoria_id           :bigint           not null
+#  editore_id             :bigint
+#  user_id                :bigint           not null
 #
 # Indexes
 #
+#  index_libri_on_categoria_id             (categoria_id)
 #  index_libri_on_classe_and_disciplina    (classe,disciplina)
 #  index_libri_on_editore_id               (editore_id)
 #  index_libri_on_slug                     (slug) UNIQUE
 #  index_libri_on_user_id                  (user_id)
-#  index_libri_on_user_id_and_categoria    (user_id,categoria)
 #  index_libri_on_user_id_and_codice_isbn  (user_id,codice_isbn)
+#  index_libri_on_user_id_and_collana      (user_id,collana)
 #  index_libri_on_user_id_and_editore_id   (user_id,editore_id)
 #  index_libri_on_user_id_and_titolo       (user_id,titolo)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (categoria_id => categorie.id)
 #  fk_rails_...  (editore_id => editori.id)
 #  fk_rails_...  (user_id => users.id)
 #

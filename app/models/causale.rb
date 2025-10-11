@@ -2,14 +2,23 @@
 #
 # Table name: causali
 #
-#  id              :integer          not null, primary key
-#  causale         :string
-#  magazzino       :string
-#  tipo_movimento  :integer
-#  movimento       :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  clientable_type :string
+#  id                 :bigint           not null, primary key
+#  causale            :string
+#  causali_successive :json
+#  clientable_type    :string
+#  magazzino          :string
+#  movimento          :integer
+#  priorita           :integer          default(0)
+#  stati_successivi   :json
+#  stato_iniziale     :string
+#  tipo_movimento     :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
+# Indexes
+#
+#  index_causali_on_priorita        (priorita)
+#  index_causali_on_stato_iniziale  (stato_iniziale)
 #
 
 class Causale < ApplicationRecord
@@ -22,6 +31,10 @@ class Causale < ApplicationRecord
   validates :tipo_movimento, presence: true
   validates :movimento, presence: true
   validates :magazzino, presence: true
+
+  # PostgreSQL supporta nativamente JSON, non serve serialize
+  # serialize :stati_successivi, type: Array, coder: JSON
+  # serialize :causali_successive, type: Array, coder: JSON
 
   def to_s
     causale
@@ -41,5 +54,27 @@ class Causale < ApplicationRecord
     else
       causale
     end
+  end
+
+  # Workflow methods
+  def causali_successive_records
+    return Causale.none if causali_successive.blank?
+    Causale.where(id: causali_successive).or(Causale.where(causale: causali_successive))
+  end
+
+  def puo_generare?(causale_target)
+    causali_successive.include?(causale_target.id) ||
+      causali_successive.include?(causale_target.causale)
+  end
+
+  def aggiungi_causale_successiva(causale_target)
+    causali_successive << causale_target.id unless causali_successive.include?(causale_target.id)
+    save
+  end
+
+  def rimuovi_causale_successiva(causale_target)
+    causali_successive.delete(causale_target.id)
+    causali_successive.delete(causale_target.causale)
+    save
   end
 end

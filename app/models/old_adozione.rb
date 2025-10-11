@@ -2,32 +2,36 @@
 #
 # Table name: old_adozioni
 #
-#  id               :integer          not null, primary key
-#  codicescuola     :string
-#  annocorso        :string
-#  sezioneanno      :string
-#  tipogradoscuola  :string
-#  combinazione     :string
-#  disciplina       :string
-#  codiceisbn       :string
-#  autori           :string
-#  titolo           :string
-#  sottotitolo      :string
-#  volume           :string
-#  editore          :string
-#  prezzo           :string
-#  nuovaadoz        :string
-#  daacquist        :string
-#  consigliato      :string
+#  id               :bigint           not null, primary key
 #  anno_scolastico  :string
-#  import_scuola_id :integer
+#  annocorso        :string
+#  autori           :string
+#  codiceisbn       :string
+#  codicescuola     :string
+#  combinazione     :string
+#  consigliato      :string
+#  daacquist        :string
+#  disciplina       :string
+#  editore          :string
+#  nuovaadoz        :string
+#  prezzo           :string
+#  sezioneanno      :string
+#  sottotitolo      :string
+#  tipogradoscuola  :string
+#  titolo           :string
+#  volume           :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  import_scuola_id :bigint
 #
 # Indexes
 #
 #  index_old_adozioni_on_classe            (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
 #  index_old_adozioni_on_import_scuola_id  (import_scuola_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (import_scuola_id => import_scuole.id)
 #
 
 class OldAdozione < ApplicationRecord

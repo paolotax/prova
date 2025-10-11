@@ -2,57 +2,57 @@
 #
 # Table name: ssk_appunti_backup
 #
-#  id                                            :integer          not null, primary key
-#  original_appunto_id                           :integer          not null
-#  user_id                                       :integer          not null
-#  nome                                          :string
-#  body                                          :text
-#  email                                         :string
-#  telefono                                      :string
-#  stato                                         :string
-#  team                                          :string
+#  id                                            :bigint           not null, primary key
 #  active                                        :boolean
-#  completed_at                                  :datetime
-#  original_created_at                           :datetime
-#  original_updated_at                           :datetime
-#  import_scuola_id                              :integer
-#  codice_scuola                                 :string
-#  denominazione_scuola                          :string
-#  descrizione_comune                            :string
-#  descrizione_caratteristica_scuola             :string
-#  descrizione_tipologia_grado_istruzione_scuola :string
-#  codice_istituto_riferimento                   :string
-#  denominazione_istituto_riferimento            :string
-#  area_geografica                               :string
-#  regione                                       :string
-#  provincia                                     :string
-#  import_adozione_id                            :integer
-#  codice_isbn                                   :string
-#  autori                                        :string
-#  titolo                                        :string
-#  sottotitolo                                   :string
-#  volume                                        :string
-#  editore                                       :string
-#  prezzo                                        :string
-#  disciplina                                    :string
-#  nuova_adozione                                :string
-#  da_acquistare                                 :string
-#  consigliato                                   :string
-#  classe_id                                     :integer
 #  anno_corso                                    :string
-#  sezione_anno                                  :string
+#  anno_scolastico_backup                        :string
+#  area_geografica                               :string
+#  autori                                        :string
+#  backup_created_at                             :datetime
+#  body                                          :text
+#  codice_isbn                                   :string
+#  codice_istituto_riferimento                   :string
+#  codice_scuola                                 :string
 #  combinazione                                  :string
-#  tipo_grado_scuola                             :string
-#  libro_id                                      :integer
-#  libro_titolo                                  :string
+#  completed_at                                  :datetime
+#  consigliato                                   :string
+#  da_acquistare                                 :string
+#  denominazione_istituto_riferimento            :string
+#  denominazione_scuola                          :string
+#  descrizione_caratteristica_scuola             :string
+#  descrizione_comune                            :string
+#  descrizione_tipologia_grado_istruzione_scuola :string
+#  disciplina                                    :string
+#  editore                                       :string
+#  email                                         :string
 #  libro_categoria                               :string
 #  libro_disciplina                              :string
-#  libro_prezzo_cents                            :integer
 #  libro_note                                    :text
-#  anno_scolastico_backup                        :string
-#  backup_created_at                             :datetime
+#  libro_prezzo_cents                            :integer
+#  libro_titolo                                  :string
+#  nome                                          :string
+#  nuova_adozione                                :string
+#  original_created_at                           :datetime
+#  original_updated_at                           :datetime
+#  prezzo                                        :string
+#  provincia                                     :string
+#  regione                                       :string
+#  sezione_anno                                  :string
+#  sottotitolo                                   :string
+#  stato                                         :string
+#  team                                          :string
+#  telefono                                      :string
+#  tipo_grado_scuola                             :string
+#  titolo                                        :string
+#  volume                                        :string
 #  created_at                                    :datetime         not null
 #  updated_at                                    :datetime         not null
+#  classe_id                                     :bigint
+#  import_adozione_id                            :bigint
+#  import_scuola_id                              :bigint
+#  libro_id                                      :bigint
+#  original_appunto_id                           :bigint           not null
+#  user_id                                       :bigint           not null
 #
 # Indexes
 #

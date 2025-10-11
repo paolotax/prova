@@ -2,7 +2,7 @@
 #
 # Table name: editori
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  editore    :string
 #  gruppo     :string
 #  created_at :datetime         not null

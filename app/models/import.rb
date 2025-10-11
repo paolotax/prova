@@ -2,23 +2,23 @@
 #
 # Table name: imports
 #
-#  id               :integer          not null, primary key
-#  fornitore        :string
-#  iva_fornitore    :string
+#  id               :bigint           not null, primary key
 #  cliente          :string
-#  iva_cliente      :string
-#  tipo_documento   :string
-#  numero_documento :string
-#  data_documento   :date
-#  totale_documento :float
-#  riga             :integer
 #  codice_articolo  :string
+#  data_documento   :date
 #  descrizione      :string
+#  fornitore        :string
+#  importo_netto    :float
+#  iva              :integer
+#  iva_cliente      :string
+#  iva_fornitore    :string
+#  numero_documento :string
 #  prezzo_unitario  :float
 #  quantita         :integer
-#  importo_netto    :float
+#  riga             :integer
 #  sconto           :float
-#  iva              :integer
+#  tipo_documento   :string
+#  totale_documento :float
 #
 
 class Import < ApplicationRecord

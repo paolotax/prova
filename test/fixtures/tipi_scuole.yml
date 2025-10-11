@@ -2,9 +2,9 @@
 #
 # Table name: tipi_scuole
 #
-#  id         :integer          not null, primary key
-#  tipo       :string
+#  id         :bigint           not null, primary key
 #  grado      :string
+#  tipo       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

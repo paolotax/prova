@@ -2,22 +2,22 @@
 #
 # Table name: appunti
 #
-#  id                 :integer          not null, primary key
-#  import_scuola_id   :integer
-#  user_id            :integer          not null
-#  import_adozione_id :integer
-#  nome               :string
+#  id                 :bigint           not null, primary key
+#  active             :boolean
 #  body               :text
+#  completed_at       :datetime
 #  email              :string
-#  telefono           :string
+#  nome               :string
 #  stato              :string
+#  team               :string
+#  telefono           :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  completed_at       :datetime
-#  team               :string
-#  classe_id          :integer
-#  voice_note_id      :integer
-#  active             :boolean
+#  classe_id          :bigint
+#  import_adozione_id :bigint
+#  import_scuola_id   :bigint
+#  user_id            :bigint           not null
+#  voice_note_id      :bigint
 #
 # Indexes
 #
@@ -26,6 +26,13 @@
 #  index_appunti_on_import_scuola_id    (import_scuola_id)
 #  index_appunti_on_user_id             (user_id)
 #  index_appunti_on_voice_note_id       (voice_note_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (import_adozione_id => import_adozioni.id)
+#  fk_rails_...  (import_scuola_id => import_scuole.id)
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (voice_note_id => voice_notes.id)
 #
 
 class Appunto < ApplicationRecord

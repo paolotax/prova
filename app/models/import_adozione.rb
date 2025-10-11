@@ -2,26 +2,26 @@
 #
 # Table name: import_adozioni
 #
-#  id              :integer          not null, primary key
-#  CODICESCUOLA    :string
+#  id              :bigint           not null, primary key
 #  ANNOCORSO       :string
-#  SEZIONEANNO     :string
-#  TIPOGRADOSCUOLA :string
-#  COMBINAZIONE    :string
-#  DISCIPLINA      :string
-#  CODICEISBN      :string
 #  AUTORI          :string
-#  TITOLO          :string
-#  SOTTOTITOLO     :string
-#  VOLUME          :string
-#  EDITORE         :string
-#  PREZZO          :string
-#  NUOVAADOZ       :string
-#  DAACQUIST       :string
+#  CODICEISBN      :string
+#  CODICESCUOLA    :string
+#  COMBINAZIONE    :string
 #  CONSIGLIATO     :string
+#  DAACQUIST       :string
+#  DISCIPLINA      :string
+#  EDITORE         :string
+#  NUOVAADOZ       :string
+#  PREZZO          :string
+#  SEZIONEANNO     :string
+#  SOTTOTITOLO     :string
+#  TIPOGRADOSCUOLA :string
+#  TITOLO          :string
+#  VOLUME          :string
+#  anno_scolastico :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  anno_scolastico :string
 #
 # Indexes
 #

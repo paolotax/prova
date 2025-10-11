@@ -2,33 +2,33 @@
 #
 # Table name: import_scuole
 #
-#  id                                        :integer          not null, primary key
+#  id                                        :bigint           not null, primary key
 #  ANNOSCOLASTICO                            :string
 #  AREAGEOGRAFICA                            :string
-#  REGIONE                                   :string
-#  PROVINCIA                                 :string
-#  CODICEISTITUTORIFERIMENTO                 :string
-#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
-#  CODICESCUOLA                              :string
-#  DENOMINAZIONESCUOLA                       :string
-#  INDIRIZZOSCUOLA                           :string
 #  CAPSCUOLA                                 :string
 #  CODICECOMUNESCUOLA                        :string
-#  DESCRIZIONECOMUNE                         :string
+#  CODICEISTITUTORIFERIMENTO                 :string
+#  CODICESCUOLA                              :string
+#  DENOMINAZIONEISTITUTORIFERIMENTO          :string
+#  DENOMINAZIONESCUOLA                       :string
 #  DESCRIZIONECARATTERISTICASCUOLA           :string
+#  DESCRIZIONECOMUNE                         :string
 #  DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA :string
 #  INDICAZIONESEDEDIRETTIVO                  :string
 #  INDICAZIONESEDEOMNICOMPRENSIVO            :string
 #  INDIRIZZOEMAILSCUOLA                      :string
 #  INDIRIZZOPECSCUOLA                        :string
-#  SITOWEBSCUOLA                             :string
+#  INDIRIZZOSCUOLA                           :string
+#  PROVINCIA                                 :string
+#  REGIONE                                   :string
 #  SEDESCOLASTICA                            :string
-#  created_at                                :datetime         not null
-#  updated_at                                :datetime         not null
-#  slug                                      :string
+#  SITOWEBSCUOLA                             :string
+#  geocoded                                  :boolean
 #  latitude                                  :float
 #  longitude                                 :float
-#  geocoded                                  :boolean
+#  slug                                      :string
+#  created_at                                :datetime         not null
+#  updated_at                                :datetime         not null
 #
 # Indexes
 #

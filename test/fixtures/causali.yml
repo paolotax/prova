@@ -2,14 +2,23 @@
 #
 # Table name: causali
 #
-#  id              :integer          not null, primary key
-#  causale         :string
-#  magazzino       :string
-#  tipo_movimento  :integer
-#  movimento       :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  clientable_type :string
+#  id                 :bigint           not null, primary key
+#  causale            :string
+#  causali_successive :json
+#  clientable_type    :string
+#  magazzino          :string
+#  movimento          :integer
+#  priorita           :integer          default(0)
+#  stati_successivi   :json
+#  stato_iniziale     :string
+#  tipo_movimento     :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
+# Indexes
+#
+#  index_causali_on_priorita        (priorita)
+#  index_causali_on_stato_iniziale  (stato_iniziale)
 #
 
 one:

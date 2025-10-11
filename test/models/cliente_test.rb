@@ -2,37 +2,37 @@
 #
 # Table name: clienti
 #
-#  id                      :integer          not null, primary key
-#  codice_cliente          :string
-#  tipo_cliente            :string
-#  indirizzo_telematico    :string
-#  email                   :string
-#  pec                     :string
-#  telefono                :string
-#  id_paese                :string
-#  partita_iva             :string
-#  codice_fiscale          :string
-#  denominazione           :string
-#  nome                    :string
-#  cognome                 :string
-#  codice_eori             :string
-#  nazione                 :string
-#  cap                     :string
-#  provincia               :string
-#  comune                  :string
-#  indirizzo               :string
-#  numero_civico           :string
-#  beneficiario            :string
-#  condizioni_di_pagamento :string
-#  metodo_di_pagamento     :string
+#  id                      :bigint           not null, primary key
 #  banca                   :string
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
-#  user_id                 :integer
-#  slug                    :string
+#  beneficiario            :string
+#  cap                     :string
+#  codice_cliente          :string
+#  codice_eori             :string
+#  codice_fiscale          :string
+#  cognome                 :string
+#  comune                  :string
+#  condizioni_di_pagamento :string
+#  denominazione           :string
+#  email                   :string
+#  geocoded                :boolean
+#  id_paese                :string
+#  indirizzo               :string
+#  indirizzo_telematico    :string
 #  latitude                :float
 #  longitude               :float
-#  geocoded                :boolean
+#  metodo_di_pagamento     :string
+#  nazione                 :string
+#  nome                    :string
+#  numero_civico           :string
+#  partita_iva             :string
+#  pec                     :string
+#  provincia               :string
+#  slug                    :string
+#  telefono                :string
+#  tipo_cliente            :string
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  user_id                 :bigint
 #
 # Indexes
 #

@@ -2,31 +2,31 @@
 #
 # Table name: adozioni_comunicate
 #
-#  id                  :integer          not null, primary key
-#  cod_agente          :string
-#  anno_scolastico     :string
-#  cod_ministeriale    :string
-#  descrizione_scuola  :string
-#  indirizzo           :string
-#  cap                 :string
-#  comune              :string
-#  provincia           :string
-#  cod_scuola          :string
-#  editore             :string
-#  ean                 :string
-#  titolo              :string
-#  classe              :string
-#  sezione             :string
+#  id                  :bigint           not null, primary key
 #  alunni              :integer
-#  codice_scuola_match :string
-#  codice_isbn_match   :string
 #  anno_corso_match    :string
+#  anno_scolastico     :string
+#  cap                 :string
+#  classe              :string
+#  cod_agente          :string
+#  cod_ministeriale    :string
+#  cod_scuola          :string
+#  codice_isbn_match   :string
+#  codice_scuola_match :string
+#  comune              :string
+#  da_acquistare       :string
+#  descrizione_scuola  :string
+#  ean                 :string
+#  editore             :string
+#  indirizzo           :string
+#  provincia           :string
+#  sezione             :string
 #  sezione_anno_match  :string
-#  user_id             :integer          not null
-#  import_adozione_id  :integer
+#  titolo              :string
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  da_acquistare       :string
+#  import_adozione_id  :bigint
+#  user_id             :bigint           not null
 #
 # Indexes
 #
@@ -36,6 +36,11 @@
 #  index_adozioni_comunicate_on_user_id                       (user_id)
 #  index_adozioni_comunicate_on_user_id_and_cod_ministeriale  (user_id,cod_ministeriale)
 #  index_adozioni_comunicate_on_user_id_and_ean               (user_id,ean)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (import_adozione_id => import_adozioni.id)
+#  fk_rails_...  (user_id => users.id)
 #
 
 class AdozioneComunicata < ApplicationRecord

@@ -2,11 +2,11 @@
 #
 # Table name: mandati
 #
-#  user_id    :integer          not null, primary key
-#  editore_id :integer          not null, primary key
 #  contratto  :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  editore_id :bigint           not null, primary key
+#  user_id    :bigint           not null, primary key
 #
 # Indexes
 #

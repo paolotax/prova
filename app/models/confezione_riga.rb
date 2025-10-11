@@ -2,12 +2,12 @@
 #
 # Table name: confezione_righe
 #
-#  id            :integer          not null, primary key
-#  confezione_id :integer
-#  fascicolo_id  :integer
+#  id            :bigint           not null, primary key
+#  row_order     :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  row_order     :integer
+#  confezione_id :bigint
+#  fascicolo_id  :bigint
 #
 
 class ConfezioneRiga < ApplicationRecord

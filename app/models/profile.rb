@@ -2,24 +2,28 @@
 #
 # Table name: profiles
 #
-#  id              :integer          not null, primary key
-#  user_id         :integer          not null
-#  nome            :string
-#  cognome         :string
-#  ragione_sociale :string
-#  indirizzo       :string
+#  id              :bigint           not null, primary key
 #  cap             :string
-#  citta           :string
 #  cellulare       :string
+#  citta           :string
+#  cognome         :string
 #  email           :string
 #  iban            :string
+#  indirizzo       :string
+#  nome            :string
 #  nome_banca      :string
+#  ragione_sociale :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  user_id         :bigint           not null
 #
 # Indexes
 #
 #  index_profiles_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
 #
 
 class Profile < ApplicationRecord
