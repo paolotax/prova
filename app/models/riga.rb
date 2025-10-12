@@ -28,6 +28,8 @@ class Riga < ApplicationRecord
   has_many :documenti, through: :documento_righe
 
   before_validation :set_default_value
+  after_save :aggiorna_totali_documenti
+  after_destroy :aggiorna_totali_documenti
 
   def prezzo
     prezzo_cents / 100.0
@@ -55,9 +57,14 @@ class Riga < ApplicationRecord
   end
 
   private
-    
+
     def set_default_value
       self.sconto ||= 0.0
     end
-      
+
+    def aggiorna_totali_documenti
+      # Aggiorna i totali di tutti i documenti che contengono questa riga
+      documenti.each(&:ricalcola_totali!)
+    end
+
 end

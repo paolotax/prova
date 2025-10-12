@@ -100,12 +100,22 @@ module Documenti
           consegnato_il: params[:consegnato_il] || documento_base.consegnato_il
         )
 
-        documenti.flat_map(&:documento_righe).uniq { |dr| dr.riga_id }.each.with_index(1) do |dr, index|
-          @documento_unito.documento_righe.create(
-            riga: dr.riga,
-            posizione: index
-          )
+        # Usa insert_all per evitare le callback durante il merge
+        righe_uniche = documenti.flat_map(&:documento_righe).uniq { |dr| dr.riga_id }
+        righe_data = righe_uniche.map.with_index(1) do |dr, index|
+          {
+            documento_id: @documento_unito.id,
+            riga_id: dr.riga_id,
+            posizione: index,
+            created_at: Time.current,
+            updated_at: Time.current
+          }
         end
+
+        DocumentoRiga.insert_all(righe_data) if righe_data.any?
+
+        # Ricalcola i totali una sola volta dopo aver inserito tutte le righe
+        @documento_unito.ricalcola_totali!
 
         # Imposta il documento_padre_id per tutti i documenti selezionati
         documenti.each do |documento|

@@ -138,19 +138,26 @@ class Documento < ApplicationRecord
   end
 
   def totale_importo
+    return totale_cents / 100.0 if totale_cents.present?
     righe.sum(&:importo)
   end
 
   def totale_copie
+    return super if super.present?
     righe.sum(&:quantita)
   end
 
-  def self.clear_all
-    Documento.destroy_all
-    Riga.destroy_all
-    Documento.all
-    Riga.all
+  def ricalcola_totali!
+    totale_importo_calcolato = righe.sum(&:importo_cents)
+    totale_copie_calcolato = righe.sum(&:quantita)
+
+    update_columns(
+      totale_cents: totale_importo_calcolato,
+      totale_copie: totale_copie_calcolato
+    )
   end
+
+
 
   def self.reset_righe
     Documento.all.each do |documento|

@@ -17,7 +17,7 @@
 #
 
 class DocumentoRiga < ApplicationRecord
-  
+
   acts_as_list scope: :documento, column: "posizione"
 
   belongs_to :documento
@@ -25,4 +25,12 @@ class DocumentoRiga < ApplicationRecord
 
   accepts_nested_attributes_for :riga #, :reject_if => lambda { |a| (a[:quantita].blank? || a[:libro_id].blank?)}, :allow_destroy => false
 
+  after_save :aggiorna_totali_documento
+  after_destroy :aggiorna_totali_documento
+
+  private
+
+  def aggiorna_totali_documento
+    documento&.ricalcola_totali!
+  end
 end
