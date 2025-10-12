@@ -118,15 +118,14 @@ module Documenti
       notice = helpers.pluralize(@documenti_creati.count, 'documento generato', 'documenti generati')
 
       respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = notice
-        end
+        format.turbo_stream
         format.html { redirect_to documenti_path, notice: notice }
       end
     end
 
     def destroy_all
       @ids = params[:documento_ids]
+      @figli_ids = current_user.documenti.where(documento_padre_id: @ids).pluck(:id).uniq
 
       @documenti = current_user.documenti.where(id: @ids)
       @documenti.destroy_all

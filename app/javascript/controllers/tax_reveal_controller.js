@@ -6,7 +6,7 @@ export default class extends Reveal {
 
   connect() {
     super.connect()
-    this.restoreState()
+    // this.restoreState()
   }
 
   disconnect() {

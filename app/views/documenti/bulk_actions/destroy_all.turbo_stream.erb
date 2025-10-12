@@ -7,6 +7,12 @@
             transition_leave_start: "opacity-100",
             transition_leave_end: "opacity-0"
         } %>
+  <% @figli_ids.each do |figlio_id| %>
+    <% documento = Documento.find(figlio_id) %>
+    <%= turbo_stream.prepend "documenti" do %>
+        <%= render partial: "documenti/documento_con_figli", locals: { documento: documento } %>
+    <% end %>
+  <% end %>
 
 <% end %>
 

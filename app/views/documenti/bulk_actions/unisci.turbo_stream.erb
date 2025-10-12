@@ -1,8 +1,16 @@
 <% @documenti_creati.each do |documento| %>
     <%= turbo_stream.prepend "documenti" do %>
-      	<%= render partial: "documenti/documento", locals: { documento: documento } %>
+      	<%= render partial: "documenti/documento_con_figli", locals: { documento: documento } %>
+    <% end %>
+    <% documento.documenti_derivati.each do |doc_figlio| %>
+        <%= turbo_stream_action_tag_with_block "remove",
+            target: dom_id(doc_figlio),
+            data: {
+                transition_leave: "transition ease-out duration-1000",
+                transition_leave_start: "opacity-100",
+                transition_leave_end: "opacity-0"
+            } %>
     <% end %>
 <% end %>
 
-<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
 <%= stream_notification "Documenti uniti!", type: "success" %>

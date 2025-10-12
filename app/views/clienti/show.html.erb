@@ -230,10 +230,19 @@
 
 	<%= render partial: "documenti/bulk_actions/form" %>
 
-	<div class="">
-		<%= render partial: "documenti/documento_con_figli",
-				collection: @documenti,
-				as: :documento %>
+	<div class="w-full mt-6">
+		<% @documenti.group_by { |doc| doc.data_documento.year }.sort.reverse.each do |anno, documenti| %>
+			<div class="mb-4">
+				<h3 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b-2 border-gray-300">
+					<%= anno %>
+				</h3>
+				<div id="documenti" class="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+					<%= render partial: "documenti/documento_con_figli",
+							collection: documenti,
+							as: :documento %>
+				</div>
+			</div>
+		<% end %>
 	</div>
 
 </div>
