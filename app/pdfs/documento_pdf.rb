@@ -241,7 +241,7 @@ class DocumentoPdf < Prawn::Document
         if righe_solo_documento.any?
           # Header per righe esclusive
           r << [{
-            :content => "Righe esclusive documento",
+            :content => "...",
             :colspan => 6,
             :background_color => "EEEEEE",
             :font_style => :bold,
