@@ -1,9 +1,6 @@
 <div id="<%= dom_id documento %>" class="w-full item" data-controller="tax-reveal">
 
-	<%= tag.header class: ["px-4 py-2 flex items-center justify-between border rounded-tl-lg rounded-tr-lg": true,
-				"bg-gray-200": documento.pagato? == false,
-				"bg-green-200": documento.pagato? == true,
-				"bg-red-200": documento.incompleto?] do %>
+	<%= tag.header class: ["px-4 py-2 flex items-center justify-between border rounded-tl-lg rounded-tr-lg", documento_header_bg_classes(documento)] do %>
 
 		<%= tag.div class: "block sm:flex gap-4 items-start" do %>
 
@@ -84,10 +81,7 @@
 		</ul>
 	<% end %>
 
-	<%= tag.footer class: ["p-4 border border-t-0 border-gray-300 mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8": true,
-				"bg-gray-200": documento.pagato? == false,
-				"bg-green-200": documento.pagato? == true,
-				"bg-red-200": documento.incompleto?] do %>
+	<%= tag.footer class: ["p-4 border border-t-0 border-gray-300 mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8", documento_footer_bg_classes(documento)] do %>
 
 		<%= tag.div class: "col-span-6 sm:col-span-8 flex gap-2 sm:gap-4 mb-2" do %>
 				<%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
