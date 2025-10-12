@@ -221,16 +221,121 @@ class DocumentoPdf < Prawn::Document
     #  TABLE
     bounding_box([bounds.left, bounds.top - 106.mm], :width  => bounds.width, :height => 135.mm) do
       unless @documento.righe.empty?
-        r =  @documento.righe.map do |riga|
-          [
-            riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
-            riga.quantita,
-            currency(riga.prezzo),
-            riga.sconto,
-            currency(riga.importo),
-            "VA"
-          ]
+
+        # Helper per raccogliere tutte le righe dei documenti derivati ricorsivamente
+        def collect_all_descendant_righe_recursive(doc, collected = {})
+          doc.documenti_derivati.each do |figlio|
+            figlio.righe.each { |riga| collected[riga.id] = riga }
+            collect_all_descendant_righe_recursive(figlio, collected)
+          end
+          collected
         end
+
+        # Righe del documento che NON sono nei derivati
+        tutte_righe_derivati = collect_all_descendant_righe_recursive(@documento)
+        righe_solo_documento = @documento.righe.reject { |riga| tutte_righe_derivati.key?(riga.id) }
+
+        r = []
+
+        # Righe esclusive del documento (se presenti, con header)
+        if righe_solo_documento.any?
+          # Header per righe esclusive
+          r << [{
+            :content => "Righe esclusive documento",
+            :colspan => 6,
+            :background_color => "EEEEEE",
+            :font_style => :bold,
+            :padding => [2, 5],
+            :size => 8
+          }]
+
+          # Righe esclusive
+          righe_solo_documento.each do |riga|
+            r << [
+              riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
+              riga.quantita,
+              currency(riga.prezzo),
+              riga.sconto,
+              currency(riga.importo),
+              "VA"
+            ]
+          end
+        end
+
+        # Righe raggruppate per documento derivato
+        @documento.documenti_derivati.order(:data_documento).each do |doc_derivato|
+          # Righe del documento che appartengono a questo derivato
+          righe_derivato_ids = doc_derivato.righe.pluck(:id)
+          righe_per_derivato = @documento.righe.select { |riga| righe_derivato_ids.include?(riga.id) }
+
+          # Se il derivato ha nipoti (es. DDT con ordini)
+          if doc_derivato.documenti_derivati.any?
+            # Header documento derivato di livello 1 (es. DDT)
+            r << [{
+              :content => "#{doc_derivato.causale&.causale} ##{doc_derivato.numero_documento} del #{doc_derivato.data_documento&.strftime("%d-%m-%Y")}",
+              :colspan => 6,
+              :background_color => "ADD8E6",
+              :font_style => :bold,
+              :padding => [2, 5]
+            }]
+
+            # Documenti nipoti con le loro righe
+            doc_derivato.documenti_derivati.order(:data_documento).each do |doc_nipote|
+              righe_nipote_ids = doc_nipote.righe.pluck(:id)
+              righe_per_nipote = @documento.righe.select { |riga| righe_nipote_ids.include?(riga.id) }
+
+              if righe_per_nipote.any?
+                # Header documento nipote (es. Ordine) - indentato
+                r << [{
+                  :content => "  > #{doc_nipote.causale&.causale} ##{doc_nipote.numero_documento} del #{doc_nipote.data_documento&.strftime("%d-%m-%Y")}",
+                  :colspan => 6,
+                  :background_color => "E6E6FA",
+                  :font_style => :bold,
+                  :padding => [2, 10],
+                  :size => 7
+                }]
+
+                # Righe del nipote
+                righe_per_nipote.each do |riga|
+                  r << [
+                    riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
+                    riga.quantita,
+                    currency(riga.prezzo),
+                    riga.sconto,
+                    currency(riga.importo),
+                    "VA"
+                  ]
+                end
+              end
+            end
+
+          else
+            # Documento derivato senza nipoti - mostra direttamente le sue righe
+            if righe_per_derivato.any?
+              # Header documento derivato
+              r << [{
+                :content => "#{doc_derivato.causale&.causale} ##{doc_derivato.numero_documento} del #{doc_derivato.data_documento&.strftime("%d-%m-%Y")}",
+                :colspan => 6,
+                :background_color => "ADD8E6",
+                :font_style => :bold,
+                :padding => [2, 5]
+              }]
+
+              # Righe del derivato
+              righe_per_derivato.each do |riga|
+                r << [
+                  riga.libro.codice_isbn + ' - ' + riga.libro.titolo + ' - ' + riga.libro.editore.editore,
+                  riga.quantita,
+                  currency(riga.prezzo),
+                  riga.sconto,
+                  currency(riga.importo),
+                  "VA"
+                ]
+              end
+            end
+          end
+        end
+
         table r, :row_colors => ["FFFFFF","DDDDDD"],
                   :cell_style => {:border_width   => 0.5, :size => 7},
                   :column_widths => { 0 => 72.mm, 1 => 20.mm, 2 => 20.mm, 3 => 20.mm, 4 => 40.mm, 5 => 8.mm } do

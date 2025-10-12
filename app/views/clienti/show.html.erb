@@ -226,18 +226,14 @@
 <% end %>
 
 
-<div class="group show-cliente flex flex-row gap-4" data-controller="bulk-actions">
+<div class="group show-cliente flex gap-4" data-controller="bulk-actions">
 
 	<%= render partial: "documenti/bulk_actions/form" %>
 
-	<div class="w-1/2">
-		<%= render partial: "documenti/documento", 
-				collection: @documenti.select{|d| d.registrato? == false} %>
-	</div>
-
-	<div class="w-1/2">
-		<%= render partial: "documenti/documento", 
-				collection: @documenti.select{|d| d.registrato? == true} %>
+	<div class="">
+		<%= render partial: "documenti/documento_con_figli",
+				collection: @documenti,
+				as: :documento %>
 	</div>
 
 </div>

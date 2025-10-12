@@ -1,7 +1,19 @@
-<div class="mx-auto md:w-3/5 w-full">
-  <h1 class="font-bold text-4xl">New causale</h1>
+<% content_for :title, "Nuova Causale" %>
 
+<% content_for :header do %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+            caption: "Torna alla lista",
+            svg_file: "icon-arrow-left.svg",
+            color: "white",
+            url: causali_path %>
+    <% end %>
+
+    <%= h1 { "Nuova Causale" } %>
+  <% end %>
+<% end %>
+
+<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
   <%= render "form", causale: @causale %>
-
-  <%= link_to "<- Causali", causali_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
 </div>

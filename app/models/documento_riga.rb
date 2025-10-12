@@ -2,12 +2,12 @@
 #
 # Table name: documento_righe
 #
-#  id           :integer          not null, primary key
-#  documento_id :integer
-#  riga_id      :integer
+#  id           :bigint           not null, primary key
 #  posizione    :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  documento_id :bigint
+#  riga_id      :bigint
 #
 # Indexes
 #

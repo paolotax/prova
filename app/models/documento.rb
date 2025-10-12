@@ -2,41 +2,55 @@
 #
 # Table name: documenti
 #
-#  id               :integer          not null, primary key
-#  numero_documento :integer
-#  user_id          :integer          not null
-#  data_documento   :date
-#  causale_id       :integer
-#  tipo_pagamento   :integer
-#  consegnato_il    :date
-#  status           :integer
-#  iva_cents        :integer
-#  totale_cents     :integer
-#  spese_cents      :integer
-#  totale_copie     :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  clientable_id    :integer
-#  clientable_type  :string
-#  tipo_documento   :integer
-#  note             :text
-#  referente        :text
-#  pagato_il        :datetime
+#  id                     :bigint           not null, primary key
+#  clientable_type        :string
+#  consegnato_il          :date
+#  data_documento         :date
+#  iva_cents              :bigint
+#  note                   :text
+#  numero_documento       :integer
+#  pagato_il              :datetime
+#  referente              :text
+#  spese_cents            :bigint
+#  status                 :integer
+#  tipo_documento         :integer
+#  tipo_pagamento         :integer
+#  totale_cents           :bigint
+#  totale_copie           :integer
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  causale_id             :bigint
+#  clientable_id          :bigint
+#  derivato_da_causale_id :integer
+#  documento_padre_id     :integer
+#  user_id                :bigint           not null
 #
 # Indexes
 #
 #  index_documenti_on_causale_id                         (causale_id)
 #  index_documenti_on_clientable_type_and_clientable_id  (clientable_type,clientable_id)
+#  index_documenti_on_derivato_da_causale_id             (derivato_da_causale_id)
+#  index_documenti_on_documento_padre_id                 (documento_padre_id)
 #  index_documenti_on_user_id                            (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (causale_id => causali.id)
+#  fk_rails_...  (derivato_da_causale_id => causali.id)
+#  fk_rails_...  (documento_padre_id => documenti.id)
+#  fk_rails_...  (user_id => users.id)
 #
 
 class Documento < ApplicationRecord
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
   belongs_to :causale, optional: true
+  belongs_to :documento_padre, class_name: 'Documento', optional: true
+  belongs_to :derivato_da_causale, class_name: 'Causale', optional: true
 
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
+  has_many :documenti_derivati, class_name: 'Documento', foreign_key: :documento_padre_id, dependent: :nullify
 
   accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
@@ -144,5 +158,60 @@ class Documento < ApplicationRecord
         documento_riga.update_column :posizione, index
       end
     end
+  end
+
+  # Workflow methods
+  def puo_generare_da_causale?(causale_target)
+    return false unless causale
+    causale.causali_successive.include?(causale_target.id) || causale.causali_successive.include?(causale_target.causale)
+  end
+
+  def genera_documento_derivato(causale_nuova, attributes = {})
+    nuovo = self.class.new(
+      documento_padre: self,
+      derivato_da_causale: self.causale,
+      causale: causale_nuova,
+      clientable: clientable,
+      user: user,
+      data_documento: Date.today,
+      status: causale_nuova.stato_iniziale || 'bozza'
+    )
+
+    nuovo.assign_attributes(attributes)
+
+    # Copia le righe del documento padre
+    documento_righe.each do |doc_riga|
+      nuovo.documento_righe.build(
+        riga: doc_riga.riga.dup,
+        posizione: doc_riga.posizione
+      )
+    end
+
+    nuovo
+  end
+
+  def catena_documenti
+    documenti = []
+    documento_corrente = self
+
+    # Risali alla radice
+    while documento_corrente.documento_padre
+      documento_corrente = documento_corrente.documento_padre
+    end
+
+    # Scendi fino all'ultimo derivato
+    documenti << documento_corrente
+    while documento_corrente.documenti_derivati.any?
+      documento_corrente = documento_corrente.documenti_derivati.order(:created_at).last
+      documenti << documento_corrente
+    end
+
+    documenti
+  end
+
+  def documento_radice
+    documento_corrente = self
+    documento_corrente = documento_corrente.documento_padre while documento_corrente.documento_padre
+    documento_corrente
   end
 end

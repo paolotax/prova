@@ -9,7 +9,8 @@ class CausaliController < ApplicationController
 
   # GET /causali or /causali.json
   def index
-    @causali = Causale.all
+    @causali = Causale.order(priorita: :desc, causale: :asc)
+    @causali_options = Causale.all.map { |c| [c.causale, c.id] }
   end
 
   # GET /causali/1 or /causali/1.json
@@ -19,11 +20,13 @@ class CausaliController < ApplicationController
   # GET /causali/new
   def new
     @causale = Causale.new
+    @causali_options = Causale.all.map { |c| [c.causale, c.id] }
     authorize @causale
   end
 
   # GET /causali/1/edit
   def edit
+    @causali_options = Causale.where.not(id: @causale.id).map { |c| [c.causale, c.id] }
   end
 
   # POST /causali or /causali.json
@@ -74,6 +77,16 @@ class CausaliController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def causale_params
-      params.require(:causale).permit(:causale, :magazzino, :tipo_movimento, :movimento, :clientable_type)
+      params.require(:causale).permit(
+        :causale,
+        :magazzino,
+        :tipo_movimento,
+        :movimento,
+        :clientable_type,
+        :stato_iniziale,
+        :priorita,
+        stati_successivi: [],
+        causali_successive: []
+      )
     end
 end

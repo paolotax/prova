@@ -1,10 +1,11 @@
-<%= form_with(model: causale, builder: RailsDesigner::FormBuilder) do |form| %>
-  
-  <% if causale.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(causale.errors.count, "error") %> prohibited this causale from being saved:</h2>
+<%= form_with(model: causale, builder: RailsDesigner::FormBuilder, class: "space-y-6") do |form| %>
 
-      <ul>
+  <% if causale.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-4 py-3 rounded-lg border border-red-200">
+      <h2 class="font-semibold mb-2">
+        <%= pluralize(causale.errors.count, "errore ha", "errori hanno") %> impedito il salvataggio:
+      </h2>
+      <ul class="list-disc list-inside">
         <% causale.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -12,35 +13,158 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :causale %>
-    <%= form.text_field :causale %>
+  <!-- Sezione Dati Base -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      Informazioni Base
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'causale', label: 'Causale' %>
+        <%= form.text_field :causale, placeholder: "es. ORD, DDT, TD01..." %>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'magazzino', label: 'Magazzino' %>
+        <%= form.text_field :magazzino, placeholder: "es. Principale, Deposito..." %>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'tipo_movimento', label: 'Tipo Movimento' %>
+        <%= form.select :tipo_movimento,
+                    options_for_select(
+                      Causale.tipo_movimentos.map {|key, value| [key.humanize, key]},
+                      causale.tipo_movimento
+                    ),
+                    { prompt: "Seleziona tipo movimento" } %>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'movimento', label: 'Direzione Movimento' %>
+        <%= form.select :movimento,
+                    options_for_select(
+                      Causale.movimentos.map {|key, value| [key.humanize, key]},
+                      causale.movimento
+                    ),
+                    { prompt: "Seleziona direzione" } %>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'clientable_type', label: 'Tipo Cliente' %>
+        <%= form.select :clientable_type,
+                    options_for_select(
+                      [["Scuola", "ImportScuola"], ["Cliente", "Cliente"], ["Nessuno", nil]],
+                      causale.clientable_type
+                    ),
+                    { prompt: "Seleziona tipo cliente" } %>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'priorita', label: 'Priorità' %>
+        <%= form.number_field :priorita,
+                    value: causale.priorita || 0,
+                    min: 0,
+                    max: 100,
+                    placeholder: "0-10" %>
+        <p class="text-xs text-gray-500 mt-1">
+          Priorità più alta = visualizzazione in cima alle liste (0-10)
+        </p>
+      <% end %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :magazzino %>
-    <%= form.text_field :magazzino %>
+  <!-- Sezione Workflow -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      Configurazione Workflow
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'stato_iniziale', label: 'Stato Iniziale Documento' %>
+        <%= form.select :stato_iniziale,
+                    options_for_select(
+                      [
+                        ["Ordine", "ordine"],
+                        ["In consegna", "in_consegna"],
+                        ["Da pagare", "da_pagare"],
+                        ["Da registrare", "da_registrare"],
+                        ["Corrispettivi", "corrispettivi"],
+                        ["Fattura", "fattura"],
+                        ["Bozza", "bozza"]
+                      ],
+                      causale.stato_iniziale
+                    ),
+                    { prompt: "Seleziona stato iniziale" } %>
+        <p class="text-xs text-gray-500 mt-1">
+          Stato che verrà assegnato ai documenti creati con questa causale
+        </p>
+      <% end %>
+
+      <%= tag.fieldset class: "space-y-2" do %>
+        <%= label_for form: form, field: 'stati_successivi', label: 'Stati Successivi Permessi' %>
+        <%= form.select :stati_successivi,
+                    options_for_select(
+                      [
+                        ["Ordine", "ordine"],
+                        ["In consegna", "in_consegna"],
+                        ["Da pagare", "da_pagare"],
+                        ["Da registrare", "da_registrare"],
+                        ["Corrispettivi", "corrispettivi"],
+                        ["Fattura", "fattura"],
+                        ["Bozza", "bozza"]
+                      ],
+                      causale.stati_successivi
+                    ),
+                    { prompt: "Seleziona stati" },
+                    { multiple: true, size: 7, class: "!h-auto" } %>
+        <p class="text-xs text-gray-500 mt-1">
+          Stati a cui può passare un documento con questa causale (tieni Ctrl/Cmd per selezioni multiple)
+        </p>
+      <% end %>
+    </div>
+
+    <%= tag.fieldset class: "space-y-2 mt-6" do %>
+      <%= label_for form: form, field: 'causali_successive', label: 'Causali Successive' %>
+      <%= form.select :causali_successive,
+                  options_for_select(
+                    @causali_options || [],
+                    causale.causali_successive
+                  ),
+                  { prompt: "Seleziona causali successive" },
+                  { multiple: true, size: 8, class: "!h-auto" } %>
+      <p class="text-xs text-gray-500 mt-1">
+        Causali che possono essere generate da questa causale. Es: da Ordine puoi generare DDT, da DDT puoi generare Fattura.
+        <br>
+        <strong>Esempio workflow:</strong> Ordine → DDT → Fattura
+      </p>
+
+      <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <div class="flex items-start">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+          <div class="text-xs text-blue-800">
+            <p class="font-semibold mb-1">Come usare le causali successive:</p>
+            <ul class="list-disc list-inside space-y-0.5 ml-1">
+              <li>Seleziona le causali che possono essere generate da questa</li>
+              <li>Mantieni premuto Ctrl (Windows) o Cmd (Mac) per selezionare più causali</li>
+              <li>L'ordine di creazione documenti seguirà questa configurazione</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :tipo_movimento %>
-    <%= form.select :tipo_movimento, 
-                options_for_select(Causale.tipo_movimentos.map {|key, value| [key.titleize, Causale.tipo_movimentos.key(value)]}, causale.tipo_movimento) %>
-  </div>
+  <!-- Pulsanti azione -->
+  <div class="flex items-center gap-3 pt-4">
+    <%= form.submit "Salva Causale",
+          class: "rounded-lg py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium cursor-pointer transition-colors" %>
 
-  <div class="my-5">
-    <%= form.label :movimento %>
-    <%= form.select :movimento, 
-                options_for_select(Causale.movimentos.map {|key, value| [key.titleize, Causale.movimentos.key(value)]}, causale.movimento) %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :clientable_type %>
-    <%= form.select :clientable_type, 
-                options_for_select(["import_scuola", "cliente"]) %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= link_to "Annulla",
+          causali_path,
+          class: "rounded-lg py-3 px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-colors" %>
   </div>
 <% end %>

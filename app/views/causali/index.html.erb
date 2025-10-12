@@ -1,15 +1,43 @@
-<div class="mx-auto md:w-3/5 w-full">
+<% content_for :title, "Causali" %>
 
-  <% content_for :title, "Causali" %>
+<% content_for :header do %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+            caption: "Nuova Causale",
+            svg_file: "icon-plus.svg",
+            color: "blue",
+            url: new_causale_path %>
+    <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Causali</h1>
-    <%= link_to "New causale", new_causale_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+    <%= h1 { "Causali" } %>
+  <% end %>
+<% end %>
+
+<div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
+
+  <!-- Header tabella -->
+  <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-3 bg-gray-50 rounded-t-lg border-b border-gray-200 font-semibold text-sm text-gray-600 uppercase tracking-wider">
+    <div class="col-span-2">Causale</div>
+    <div class="col-span-1">Magazzino</div>
+    <div class="col-span-2">Tipo Movimento</div>
+    <div class="col-span-1">Movimento</div>
+    <div class="col-span-1 text-center">Priorità</div>
+    <div class="col-span-2">Stato Iniziale</div>
+    <div class="col-span-2">Causali Successive</div>
+    <div class="col-span-1 text-center">Azioni</div>
   </div>
 
-  <div id="causali" class="min-w-full">
-    <% @causali.each do |causale| %>
-      <%= render causale %>
+  <!-- Lista causali -->
+  <div id="causali" class="bg-white rounded-b-lg shadow-sm border border-gray-200">
+    <% if @causali.any? %>
+      <% @causali.each do |causale| %>
+        <%= render causale %>
+      <% end %>
+    <% else %>
+      <div class="px-4 py-8 text-center text-gray-500">
+        Nessuna causale configurata. Crea la prima causale per iniziare.
+      </div>
     <% end %>
   </div>
 </div>

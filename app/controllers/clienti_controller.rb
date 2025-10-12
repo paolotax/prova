@@ -14,7 +14,16 @@ class ClientiController < ApplicationController
 
   def show
     # @situazio = ClienteSituazio.new(clientable: @cliente, user: current_user).execute
-    @documenti = @cliente.documenti.includes(:causale, documento_righe: [riga: :libro]).order(data_documento: :desc, numero_documento: :desc)
+
+    # Solo documenti padre (senza documento_padre_id) ordinati per data decrescente
+    @documenti = @cliente.documenti
+      .where(documento_padre_id: nil)
+      .includes(
+        :causale,
+        :documenti_derivati,
+        documento_righe: [riga: :libro]
+      )
+      .order(data_documento: :desc, numero_documento: :desc)
 
     # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
     @sconti_applicabili = Current.user.sconti

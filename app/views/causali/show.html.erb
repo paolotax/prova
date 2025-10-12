@@ -1,12 +1,217 @@
-<div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto">
+<% content_for :title, @causale.causale %>
 
-    <%= render @causale %>
+<% content_for :header do %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+            caption: "Modifica",
+            svg_file: "icon-pencil.svg",
+            color: "gray",
+            url: edit_causale_path(@causale) %>
+    <% end %>
 
-    <%= link_to "Modifica", edit_causale_path(@causale), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "<- Causali", causali_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to "Elimina", @causale, method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+            caption: "Elimina",
+            svg_file: "icon-trash.svg",
+            color: "red",
+            url: causale_path(@causale),
+            data_attr: {
+              turbo_method: :delete,
+              turbo_confirm: "Sei sicuro di voler eliminare questa causale?"
+            } %>
+    <% end %>
+
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+            caption: "Torna alla lista",
+            svg_file: "icon-arrow-left.svg",
+            color: "white",
+            url: causali_path %>
+    <% end %>
+
+    <%= h1 { "Causale: #{@causale.causale}" } %>
+  <% end %>
+<% end %>
+
+<div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-6">
+
+  <!-- Informazioni Base -->
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">Informazioni Base</h2>
+    </div>
+
+    <div class="px-6 py-4">
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Codice Causale</dt>
+          <dd class="text-lg font-bold text-gray-900"><%= @causale.causale %></dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Magazzino</dt>
+          <dd class="text-base text-gray-900"><%= @causale.magazzino %></dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Tipo Movimento</dt>
+          <dd>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= @causale.tipo_movimento == 'ordine' ? 'bg-yellow-100 text-yellow-800' : @causale.tipo_movimento == 'vendita' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800' %>">
+              <%= @causale.tipo_movimento&.humanize %>
+            </span>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Direzione Movimento</dt>
+          <dd>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= @causale.movimento == 'entrata' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800' %>">
+              <%= @causale.movimento&.humanize %>
+            </span>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Tipo Cliente</dt>
+          <dd class="text-base text-gray-900">
+            <%= @causale.clientable_type || "-" %>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500 mb-1">Priorità</dt>
+          <dd>
+            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full text-base font-bold <%= @causale.priorita.to_i > 5 ? 'bg-red-100 text-red-800' : @causale.priorita.to_i > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600' %>">
+              <%= @causale.priorita %>
+            </span>
+          </dd>
+        </div>
+      </dl>
     </div>
   </div>
+
+  <!-- Configurazione Workflow -->
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">Configurazione Workflow</h2>
+    </div>
+
+    <div class="px-6 py-4 space-y-6">
+      <!-- Stato Iniziale -->
+      <div>
+        <dt class="text-sm font-medium text-gray-500 mb-2">Stato Iniziale Documento</dt>
+        <dd>
+          <% if @causale.stato_iniziale.present? %>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+              <%= @causale.stato_iniziale.humanize %>
+            </span>
+            <p class="text-xs text-gray-500 mt-2">
+              I documenti creati con questa causale inizieranno con stato "<%= @causale.stato_iniziale %>"
+            </p>
+          <% else %>
+            <span class="text-gray-400 text-sm">Nessuno stato iniziale configurato</span>
+          <% end %>
+        </dd>
+      </div>
+
+      <!-- Stati Successivi -->
+      <div>
+        <dt class="text-sm font-medium text-gray-500 mb-2">Stati Successivi Permessi</dt>
+        <dd>
+          <% if @causale.stati_successivi.present? && @causale.stati_successivi.any? %>
+            <div class="flex flex-wrap gap-2">
+              <% @causale.stati_successivi.each do |stato| %>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <%= stato.humanize %>
+                </span>
+              <% end %>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              I documenti con questa causale possono passare a questi stati
+            </p>
+          <% else %>
+            <span class="text-gray-400 text-sm">Nessuno stato successivo configurato</span>
+          <% end %>
+        </dd>
+      </div>
+
+      <!-- Causali Successive -->
+      <div>
+        <dt class="text-sm font-medium text-gray-500 mb-2">Causali Successive</dt>
+        <dd>
+          <% if @causale.causali_successive_records.any? %>
+            <div class="space-y-3">
+              <div class="flex flex-wrap gap-2">
+                <% @causale.causali_successive_records.each do |causale_successiva| %>
+                  <%= link_to causale_path(causale_successiva), class: "group" do %>
+                    <div class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition-colors">
+                      <span><%= causale_successiva.causale %></span>
+                      <span class="text-xs text-green-600">(<%= causale_successiva.tipo_movimento %>)</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                  </svg>
+                  <div class="text-sm text-blue-800">
+                    <p class="font-semibold mb-1">Workflow configurato</p>
+                    <p>
+                      Da questa causale (<strong><%= @causale.causale %></strong>) puoi generare documenti con le seguenti causali:
+                      <strong><%= @causale.causali_successive_records.map(&:causale).join(", ") %></strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <span class="text-gray-400 text-sm">Nessuna causale successiva configurata</span>
+            <p class="text-xs text-gray-500 mt-2">
+              Configura le causali successive per abilitare la generazione automatica di documenti derivati
+            </p>
+          <% end %>
+        </dd>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documenti che usano questa causale -->
+  <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">Statistiche Utilizzo</h2>
+    </div>
+
+    <div class="px-6 py-4">
+      <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <dt class="text-sm font-medium text-gray-500 mb-1">Documenti Totali</dt>
+          <dd class="text-3xl font-bold text-gray-900">
+            <%= Documento.where(causale_id: @causale.id).count %>
+          </dd>
+        </div>
+
+        <div class="text-center p-4 bg-blue-50 rounded-lg">
+          <dt class="text-sm font-medium text-blue-600 mb-1">Documenti Padre</dt>
+          <dd class="text-3xl font-bold text-blue-900">
+            <%= Documento.where(causale_id: @causale.id, documento_padre_id: nil).count %>
+          </dd>
+        </div>
+
+        <div class="text-center p-4 bg-green-50 rounded-lg">
+          <dt class="text-sm font-medium text-green-600 mb-1">Documenti Derivati</dt>
+          <dd class="text-3xl font-bold text-green-900">
+            <%= Documento.where(derivato_da_causale_id: @causale.id).count %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
 </div>

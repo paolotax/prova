@@ -106,6 +106,12 @@ module Documenti
             posizione: index
           )
         end
+
+        # Imposta il documento_padre_id per tutti i documenti selezionati
+        documenti.each do |documento|
+          documento.update(documento_padre_id: @documento_unito.id)
+        end
+
         @documenti_creati << @documento_unito
       end
 
