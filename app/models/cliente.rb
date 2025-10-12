@@ -96,11 +96,11 @@ class Cliente < ApplicationRecord
   end
 
   def importo_entrate
-    righe.joins(documenti: :causale).where("causali.movimento = ?", 1).sum(&:importo).to_f 
+    righe.joins(documenti: :causale).where("causali.movimento = ? AND documenti.documento_padre_id IS NULL", 1).sum(&:importo).to_f 
   end
 
   def importo_uscite
-    righe.joins(documenti: :causale).where("causali.movimento = ?", 0).sum(&:importo).to_f
+    righe.joins(documenti: :causale).where("causali.movimento = ? AND documenti.documento_padre_id IS NULL", 0).sum(&:importo).to_f
   end
 
   def to_combobox_display
