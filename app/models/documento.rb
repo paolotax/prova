@@ -50,9 +50,14 @@ class Documento < ApplicationRecord
 
   has_many :documento_righe, -> { order(posizione: :asc) }, inverse_of: :documento, dependent: :destroy
   has_many :righe, through: :documento_righe
+  
   has_many :documenti_derivati, class_name: 'Documento', foreign_key: :documento_padre_id, dependent: :nullify
 
   accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
+
+  before_save :imposta_stato_iniziale_da_causale, if: :causale_id_changed?
+  after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
+  after_destroy :riporta_documenti_orfani_a_stato_precedente
 
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
   enum :tipo_pagamento,
@@ -220,5 +225,97 @@ class Documento < ApplicationRecord
     documento_corrente = self
     documento_corrente = documento_corrente.documento_padre while documento_corrente.documento_padre
     documento_corrente
+  end
+
+  # Restituisce tutti i discendenti (figli, nipoti, pronipoti, ecc.) in un array piatto
+  def tutti_i_discendenti
+    documenti_derivati.flat_map { |figlio| [figlio] + figlio.tutti_i_discendenti }
+  end
+
+  # Restituisce la struttura ad albero dei discendenti
+  # Formato: [{ documento: Documento, figli: [...] }, ...]
+  def albero_discendenti
+    documenti_derivati.map do |figlio|
+      { documento: figlio, figli: figlio.albero_discendenti }
+    end
+  end
+
+  # Trova lo stato precedente nella gerarchia degli stati_successivi della propria causale
+  def trova_stato_precedente_nella_causale
+    Rails.logger.debug "    trova_stato_precedente_nella_causale per: #{causale&.causale}"
+    Rails.logger.debug "      status corrente: #{status}"
+    Rails.logger.debug "      stati_successivi: #{causale&.stati_successivi.inspect}"
+
+    return nil unless status.present?
+    return nil unless causale&.stati_successivi.present?
+
+    # stati_successivi è un JSON array di stati in ordine per questa causale
+    stati = causale.stati_successivi
+    return nil unless stati.is_a?(Array) && stati.any?
+
+    Rails.logger.debug "      array stati: #{stati.inspect}"
+
+    # Trova l'indice dello stato corrente del documento
+    indice_corrente = stati.index(status.to_s)
+    Rails.logger.debug "      indice_corrente: #{indice_corrente.inspect}"
+
+    return nil unless indice_corrente && indice_corrente > 0
+
+    # Ritorna lo stato precedente nell'array
+    stato_prec = stati[indice_corrente - 1]
+    Rails.logger.debug "      stato precedente: #{stato_prec}"
+    stato_prec
+  end
+
+  private
+
+  # Imposta lo stato iniziale dalla causale quando viene creato un documento
+  def imposta_stato_iniziale_da_causale
+    return if status.present? # Non sovrascrivere se già impostato
+    return unless causale&.stato_iniziale.present?
+
+    # Verifica che lo stato_iniziale sia valido per l'enum status
+    if Documento.statuses.key?(causale.stato_iniziale)
+      self.status = causale.stato_iniziale
+    end
+  end
+
+  # Propaga lo stato a tutti i documenti figli quando viene modificato
+  def propaga_stato_ai_figli
+    tutti_i_discendenti.each do |discendente|
+      discendente.update_column(:status, status)
+    end
+  end
+
+  # Riporta tutti i documenti collegati dello stesso cliente allo stato precedente
+  def riporta_documenti_orfani_a_stato_precedente
+    return unless clientable_id && clientable_type
+
+    Rails.logger.debug "=== RIPORTA DOCUMENTI A STATO PRECEDENTE ==="
+    Rails.logger.debug "Documento eliminato: #{id} - #{causale&.causale} - status: #{status} - priorità: #{causale&.priorita}"
+
+    # Lo stato target è lo stato precedente del documento ELIMINATO
+    stato_target = trova_stato_precedente_nella_causale
+
+    unless stato_target
+      Rails.logger.debug "  Nessuno stato precedente trovato per il documento eliminato"
+      return
+    end
+
+    Rails.logger.debug "  Stato target da applicare: #{stato_target}"
+
+    # Trova TUTTI i documenti dello stesso cliente
+    tutti_documenti = Documento.where(
+      clientable_id: clientable_id,
+      clientable_type: clientable_type
+    )
+
+    Rails.logger.debug "  Documenti totali del cliente: #{tutti_documenti.count}"
+
+    # Aggiorna tutti i documenti con lo stato precedente
+    tutti_documenti.each do |doc|
+      Rails.logger.debug "    Aggiorno: #{doc.id} - #{doc.causale&.causale} da #{doc.status} a #{stato_target}"
+      doc.update_column(:status, Documento.statuses[stato_target])
+    end
   end
 end
