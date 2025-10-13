@@ -46,11 +46,11 @@ class Causale < ApplicationRecord
 
   def descrizione_causale
     if causale == "TD01"
-      "Fattura"
+      "TD01 - Fattura"
     elsif causale == "TD04"
-      "Nota di credito"
+      "TD04 - Nota di credito"
     elsif causale == "TD24"
-      "Fattura"
+      "TD24 - Fattura"
     else
       causale
     end

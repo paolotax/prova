@@ -77,3 +77,7 @@ Services:
 - Customize agent prompts in `.claude-on-rails/prompts/`
 - Update this file with project-specific conventions
 - The swarm learns from your codebase patterns
+
+## Convenzioni
+
+- esegui sempre le migrations i runners e la console nel container docker prova-app-1

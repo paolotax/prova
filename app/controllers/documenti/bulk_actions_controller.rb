@@ -122,6 +122,9 @@ module Documenti
           documento.update(documento_padre_id: @documento_unito.id)
         end
 
+        # Propaga lo stato del documento padre ai figli
+        @documento_unito.send(:propaga_stato_ai_figli)
+
         @documenti_creati << @documento_unito
       end
 
