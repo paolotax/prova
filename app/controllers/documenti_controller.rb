@@ -3,7 +3,7 @@ class DocumentiController < ApplicationController
   include FilterableController
 
   before_action :authenticate_user!
-  before_action :set_documento, only: %i[ show edit update destroy ]
+  before_action :set_documento, only: %i[ show edit update destroy edit_status ]
 
   def index
     @causali = Causale.all
@@ -162,6 +162,11 @@ class DocumentiController < ApplicationController
                   disposition: 'attachment'
       end
     end
+  end
+
+  def edit_status
+    @field = params[:field]
+    render partial: 'edit_status_modal', locals: { documento: @documento, field: @field }
   end
 
   private

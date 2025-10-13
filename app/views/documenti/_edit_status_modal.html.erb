@@ -1,0 +1,41 @@
+<%= turbo_frame_tag "documento_status_modal_#{documento.id}" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" data-controller="modal" data-action="click->modal#closeBackground">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4" data-modal-target="content">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          <%= field == 'consegnato_il' ? 'Aggiorna Consegna' : 'Aggiorna Pagamento' %>
+        </h3>
+      </div>
+
+      <%= form_with model: documento, url: documento_path(documento), method: :patch, data: { turbo_frame: "_top" } do |form| %>
+        <div class="px-6 py-4">
+          <% if field == 'consegnato_il' %>
+            <div class="mb-4">
+              <%= form.label :consegnato_il, "Data Consegna", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.date_field :consegnato_il, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+              <p class="mt-1 text-xs text-gray-500">Lascia vuoto per rimuovere la data di consegna</p>
+            </div>
+          <% else %>
+            <div class="mb-4">
+              <%= form.label :pagato_il, "Data Pagamento", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.date_field :pagato_il, value: documento.pagato_il&.to_date, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+              <p class="mt-1 text-xs text-gray-500">Lascia vuoto per rimuovere il pagamento</p>
+            </div>
+            <div class="mb-4">
+              <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.select :tipo_pagamento,
+                  Documento.tipo_pagamentos.keys.map { |k| [k.titleize, k] },
+                  { include_blank: "Seleziona..." },
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+          <%= link_to "Annulla", request.referer, class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo_frame: "_top" } %>
+          <%= form.submit "Salva", class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

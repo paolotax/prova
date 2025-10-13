@@ -220,12 +220,7 @@
 	<%= tag.footer class: ["p-4 border border-t-0 border-gray-300 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8", documento_footer_bg_classes(documento)] do %>
 
 		<%= tag.div class: "col-span-6 sm:col-span-8 flex gap-2 sm:gap-4 mb-2" do %>
-			<%= render "shared/inline_edit", model: documento, method: :stato_e_pagamento do %>
-				<%= tag.div documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
-				<%= tag.div l(documento.consegnato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.consegnato_il %>
-				<%= tag.div documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
-				<%= tag.div l(documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if documento.pagato_il %>
-			<% end %>
+			<%= render "documenti/status_badges", documento: documento %>
 		<% end %>
 
 		<%= tag.div class: "col-span-3 sm:col-span-2 flex gap-2 sm:gap-4" do %>

@@ -73,6 +73,7 @@ Rails.application.routes.draw do
     end
     member do
       get :esporta_xml
+      get :edit_status
     end
   end
 
