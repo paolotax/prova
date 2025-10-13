@@ -56,6 +56,7 @@ class Documento < ApplicationRecord
   accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
 
   before_save :imposta_stato_iniziale_da_causale, if: :causale_id_changed?
+  before_save :ricalcola_totali_se_necessario
   after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
   after_destroy :riporta_documenti_orfani_a_stato_precedente
 
@@ -278,6 +279,18 @@ class Documento < ApplicationRecord
     if Documento.statuses.key?(causale.stato_iniziale)
       self.status = causale.stato_iniziale
     end
+  end
+
+  # Ricalcola i totali se ci sono righe ma i totali non sono impostati
+  def ricalcola_totali_se_necessario
+    return if documento_righe.empty?
+    return if totale_cents.present? && totale_cents > 0
+
+    totale_importo_calcolato = righe.sum(&:importo_cents)
+    totale_copie_calcolato = righe.sum(&:quantita)
+
+    self.totale_cents = totale_importo_calcolato
+    self.totale_copie = totale_copie_calcolato
   end
 
   # Propaga lo stato a tutti i documenti figli quando viene modificato
