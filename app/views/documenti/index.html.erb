@@ -85,7 +85,7 @@
 			<p class="only:block hidden py-8 px-4 text-center md:col-span-2 4xl:col-span-3">
 				Whoops! Non ci sono documenti.
 			</p>
-			<%= render @documenti %>
+			<%= render partial: "documenti/documento_con_figli", collection: @documenti, as: :documento %>
 		<% end %>
 
 		<% if @pagy.next %>

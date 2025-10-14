@@ -27,6 +27,13 @@ module Filters
     filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data.to_date) }
     filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
 
+    filter_scope :consegnati, ->(consegnati) {
+      consegnati == 'si' ? where.not(consegnato_il: nil) : where(consegnato_il: nil)
+    }
+    filter_scope :pagati, ->(pagati) {
+      pagati == 'si' ? where.not(pagato_il: nil) : where(pagato_il: nil)
+    }
+
     filter_scope :nel_baule_del_giorno, ->(data) {
       sanitized_date = ActiveRecord::Base.connection.quote(data)
 

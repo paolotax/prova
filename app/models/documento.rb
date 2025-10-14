@@ -91,6 +91,8 @@ class Documento < ApplicationRecord
     # validates :documento_righe, length: {minimum: 1, message: 'deve esserci almeno una riga.'}
   end
 
+  scope :solo_padri, -> { where(documento_padre_id: nil) }
+
   def self.form_steps
     {
       tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],

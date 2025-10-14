@@ -39,6 +39,18 @@
             type: :select,
             placeholder: "anno..."
         },{
+            field: :consegnati,
+            label: "Consegnati",
+            collection: [["Consegnati", "si"], ["Da consegnare", "no"]],
+            type: :select,
+            placeholder: "consegnati..."
+        },{
+            field: :pagati,
+            label: "Pagati",
+            collection: [["Pagati", "si"], ["Da pagare", "no"]],
+            type: :select,
+            placeholder: "pagati..."
+        },{
             field: :ordina_per,
             label: "Ordina",
             collection: ["data documento", "fresh", "cliente", "creato il"],

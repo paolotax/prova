@@ -10,6 +10,7 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
 
     @documenti = current_user.documenti
+        .solo_padri
         .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
@@ -193,6 +194,8 @@ class DocumentiController < ApplicationController
         ordina_per: params["ordina_per"],
         consegnato_il: params["consegnato_il"],
         pagato_il: params["pagato_il"],
+        consegnati: params["consegnati"],
+        pagati: params["pagati"],
         tappe_del_giorno: params["tappe_del_giorno"],
         nel_baule_del_giorno: params["nel_baule_del_giorno"]
       }.compact_blank
