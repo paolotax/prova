@@ -1,0 +1,207 @@
+<% content_for :title, "Importazione Completata" %>
+
+<% content_for :header do %>
+  <div class="max-w-4xl mx-auto">
+    <%= component "heading/with_actions" do |heading| %>
+        <%= h1 {"Importazione Completata"} %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Box Risultati Principali -->
+    <div class="bg-gradient-to-r <%= @import.errors.any? ? 'from-yellow-50 to-yellow-100 border-yellow-300' : 'from-green-50 to-green-100 border-green-300' %> border-2 rounded-xl p-8 mb-6 shadow-lg">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="<%= @import.errors.any? ? 'bg-yellow-500' : 'bg-green-500' %> text-white rounded-full p-4">
+          <% if @import.errors.any? %>
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          <% else %>
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          <% end %>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold <%= @import.errors.any? ? 'text-yellow-900' : 'text-green-900' %>">
+            <%= @import.errors.any? ? 'Importazione Completata con Avvisi' : 'Importazione Riuscita!' %>
+          </h2>
+          <p class="<%= @import.errors.any? ? 'text-yellow-700' : 'text-green-700' %> mt-1">
+            <%= @import.errors.any? ? 'Il documento è stato creato ma alcune righe richiedono attenzione.' : 'I dati sono stati importati correttamente nel sistema.' %>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Statistiche -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-lg p-4 shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Righe Importate</p>
+              <p class="text-3xl font-bold text-green-600"><%= @import.imported_count %></p>
+            </div>
+            <div class="bg-green-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Righe Aggiornate</p>
+              <p class="text-3xl font-bold text-blue-600"><%= @import.updated_count %></p>
+            </div>
+            <div class="bg-blue-100 rounded-full p-3">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Errori</p>
+              <p class="text-3xl font-bold <%= @import.errors_count > 0 ? 'text-red-600' : 'text-gray-400' %>">
+                <%= @import.errors_count %>
+              </p>
+            </div>
+            <div class="<%= @import.errors_count > 0 ? 'bg-red-100' : 'bg-gray-100' %> rounded-full p-3">
+              <svg class="w-6 h-6 <%= @import.errors_count > 0 ? 'text-red-600' : 'text-gray-400' %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dettagli Documento (se disponibile) -->
+    <% if @import.documento.present? %>
+      <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <%= inline_svg_tag "icon-documenti.svg", class: "w-6 h-6" %>
+          Documento Creato/Aggiornato
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Numero Documento</p>
+              <p class="text-lg font-semibold text-gray-900"><%= @import.documento.numero_documento %></p>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-500">Cliente</p>
+              <p class="text-lg font-semibold text-gray-900">
+                <%= @import.documento.clientable&.denominazione || "---" %>
+              </p>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-500">Data Documento</p>
+              <p class="text-lg font-semibold text-gray-900">
+                <%= @import.documento.data_documento.strftime('%d/%m/%Y') rescue "---" %>
+              </p>
+            </div>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Causale</p>
+              <p class="text-lg font-semibold text-gray-900">
+                <%= @import.documento.causale&.causale || "---" %>
+              </p>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-500">Totale Righe</p>
+              <p class="text-lg font-semibold text-gray-900">
+                <%= @import.documento.documento_righe.count %>
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex gap-3">
+          <%= link_to documento_path(@import.documento), 
+              class: "inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition-colors duration-150" do %>
+            <%= inline_svg_tag "icon-eye.svg", class: "w-5 h-5" rescue nil %>
+            Visualizza Documento
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Avvisi/Errori (se presenti) -->
+    <% if @import.errors.any? %>
+      <div class="<%= @import.documento.present? ? 'bg-yellow-50 border-2 border-yellow-200' : 'bg-red-50 border-2 border-red-200' %> rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-bold <%= @import.documento.present? ? 'text-yellow-900' : 'text-red-900' %> mb-3 flex items-center gap-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <%= @import.documento.present? ? 'Avvisi' : 'Errori Riscontrati' %>
+        </h3>
+        
+        <div class="space-y-2">
+          <% @import.errors.full_messages.each do |error| %>
+            <div class="bg-white rounded p-3 text-sm <%= @import.documento.present? ? 'text-yellow-800 border border-yellow-200' : 'text-red-800 border border-red-200' %>">
+              <%= error %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Azioni -->
+    <div class="bg-gray-50 rounded-lg border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Cosa vuoi fare ora?</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <%= link_to new_documenti_importer_path,
+            class: "flex items-center gap-3 p-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors duration-150" do %>
+          <div class="bg-blue-100 rounded-full p-2">
+            <%= inline_svg_tag "icon-folder-arrow-down.svg", class: "w-6 h-6 text-blue-600" %>
+          </div>
+          <div>
+            <p class="font-medium text-gray-900">Nuova Importazione</p>
+            <p class="text-sm text-gray-500">Importa altri dati</p>
+          </div>
+        <% end %>
+        
+        <%= link_to documenti_path,
+            class: "flex items-center gap-3 p-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors duration-150" do %>
+          <div class="bg-green-100 rounded-full p-2">
+            <%= inline_svg_tag "icon-documenti.svg", class: "w-6 h-6 text-green-600" %>
+          </div>
+          <div>
+            <p class="font-medium text-gray-900">Vai ai Documenti</p>
+            <p class="text-sm text-gray-500">Visualizza tutti i documenti</p>
+          </div>
+        <% end %>
+        
+        <% if @import.documento.present? %>
+          <%= link_to documento_path(@import.documento),
+              class: "flex items-center gap-3 p-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-colors duration-150" do %>
+            <div class="bg-purple-100 rounded-full p-2">
+              <%= inline_svg_tag "icon-eye.svg", class: "w-6 h-6 text-purple-600" rescue raw('<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>') %>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Visualizza Dettagli</p>
+              <p class="text-sm text-gray-500">Apri il documento importato</p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    
+  </div>
+</div>
+

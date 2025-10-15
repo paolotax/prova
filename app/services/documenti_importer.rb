@@ -15,33 +15,49 @@ class DocumentiImporter
   def process!
     doc = Nokogiri::XML(File.open(file.path))
    
-    errors.add(:base, "Errore nel file XML") unless doc
+    unless doc
+      errors.add(:base, "Errore nel file XML")
+      return false
+    end
 
-    cliente_id = Current.user.clienti.find_by(partita_iva: doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text)&.id 
-    errors.add(:base, "Cliente non trovato") unless cliente_id
+    partita_iva = doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text
+    cliente = Current.user.clienti.find_by(partita_iva: partita_iva)
+    unless cliente
+      errors.add(:base, "Cliente non trovato con P.IVA: #{partita_iva}")
+      return false
+    end
     
-    causale_id = Causale.find_by(causale: doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text)&.id
-    errors.add(:base, "Causale non trovata") unless causale_id
+    tipo_documento = doc.xpath('//DatiGeneraliDocumento/TipoDocumento').text
+    causale = Causale.find_by(causale: tipo_documento)
+    unless causale
+      errors.add(:base, "Causale '#{tipo_documento}' non trovata nel sistema")
+      return false
+    end
     
     numero_documento = parse_numero_documento(doc.xpath('//DatiGeneraliDocumento/Numero').text)
-    errors.add(:base, "Numero documento non trovato") unless numero_documento
+    unless numero_documento.present?
+      errors.add(:base, "Numero documento non trovato nel file XML")
+      return false
+    end
 
-    if Current.user.documenti.find_by(numero_documento: numero_documento, causale_id: causale_id, clientable_id: cliente_id)
-      errors.add(:base, "Documento già presente")
-      return
+    if Current.user.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
+      errors.add(:base, "Documento n. #{numero_documento} già presente per questo cliente")
+      return false
     end 
 
-    if cliente_id
+    if cliente
       
       documento = Current.user.documenti.create(
         clientable_type:  "Cliente",
-        clientable_id: cliente_id,
-        causale_id: causale_id,
+        clientable_id: cliente.id,
+        causale_id: causale.id,
         numero_documento: numero_documento,  
         data_documento: Date.parse(doc.xpath('//DatiGeneraliDocumento/Data').text),
       )
       
       righe_path = '//DettaglioLinee'
+      righe_importate = 0
+      righe_saltate = []
   
       doc.xpath(righe_path).each do |element|
         
@@ -64,25 +80,39 @@ class DocumentiImporter
           codice_valore = codice_articoli.xpath("./CodiceValore").text
         end
 
-        libro_id = Current.user.libri.find_by(codice_isbn: codice_valore)&.id
-        if libro_id
+        libro = Current.user.libri.find_by(codice_isbn: codice_valore)
+        if libro
           documento.documento_righe.build(posizione: posizione).build_riga(
-            libro_id:  libro_id,              
+            libro_id:  libro.id,              
             prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
             quantita:  quantita,
             sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
           )
-          @imported_count += 1
+          righe_importate += 1
+        else
+          descrizione = element.xpath("./Descrizione").text
+          righe_saltate << "Riga #{posizione}: #{codice_valore} - #{descrizione}"
         end
         
         
       end
 
       unless documento.save
-        errors.add(:base, "Errore nel salvataggio del documento")
+        errors.add(:base, "Errore nel salvataggio del documento: #{documento.errors.full_messages.join(', ')}")
+        return false
       else
-        @imported_count += 1
+        @imported_count = righe_importate
         @documento = documento
+        
+        if righe_saltate.any?
+          errors.add(:base, "#{righe_saltate.count} righe non importate (articoli non trovati nel catalogo)")
+          righe_saltate.first(5).each do |riga|
+            errors.add(:base, riga)
+          end
+          if righe_saltate.count > 5
+            errors.add(:base, "... e altre #{righe_saltate.count - 5} righe")
+          end
+        end
       end
     end
   end
@@ -119,7 +149,7 @@ class DocumentiImporter
           @documento = documento
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{riga.errors.full_messages.join(", ")}")
+        errors.add(:base, "Riga #{line}: #{riga.errors.full_messages.join(", ")}")
         #return false
       end
     end

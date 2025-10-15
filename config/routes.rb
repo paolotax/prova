@@ -85,9 +85,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :libri_importer, only: [:create] do
+  resources :libri_importer, only: [:new, :create, :show] do
     collection do
-      get 'import'
       post 'import_ministeriali'
     end
   end
@@ -95,7 +94,7 @@ Rails.application.routes.draw do
   resources :clienti_importer, only: [:create] do
   end
 
-  resources :documenti_importer, only: [:new, :create]
+  resources :documenti_importer, only: [:new, :create, :show]
 
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'

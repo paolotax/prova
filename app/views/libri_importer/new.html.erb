@@ -2,15 +2,7 @@
 
 <% content_for :header do %>
   <div class="max-w-4xl mx-auto">
-
     <%= component "heading/with_actions" do |heading| %>
-        <% heading.with_action do %>
-            <%= link_to libri_path, class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50" do %>
-                <%= inline_svg_tag "icon-arrow-left.svg", class: "w-4 h-4" %>
-                <span>Torna ai Libri</span>
-            <% end %>
-        <% end %>
-        
         <%= h1 {"Importa Libri"} %>
     <% end %>
   </div>

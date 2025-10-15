@@ -13,8 +13,10 @@ class LibriImporter
   end
 
   def process!
-
+    line_number = 1 # Header è la riga 1
+    
     SmarterCSV.process(file.path) do |row|
+      line_number += 1
       
       libro = assign_from_row(row.first)
       if libro.save
@@ -25,7 +27,7 @@ class LibriImporter
         end
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
+        errors.add(:base, "Riga #{line_number}: #{libro.errors.full_messages.join(", ")}")
         #return false
       end
     end
@@ -55,7 +57,9 @@ class LibriImporter
     result = ActiveRecord::Base.connection.execute(sql)
     categoria_ministeriali = Categoria.find_or_create_by(nome_categoria: "Ministeriali")
 
+    record_number = 0
     result.each do |row|
+      record_number += 1
       libro = assign_from_row_ministeriali(row, categoria_ministeriali)
       if libro.save
         if libro.previously_new_record?
@@ -65,7 +69,7 @@ class LibriImporter
         end
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
+        errors.add(:base, "Record #{record_number} (ISBN: #{row['codice_isbn']}): #{libro.errors.full_messages.join(", ")}")
         #return false
       end
     end
@@ -95,7 +99,7 @@ class LibriImporter
         end
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{libro.errors.full_messages.join(", ")}")
+        errors.add(:base, "Riga #{line}: #{libro.errors.full_messages.join(", ")}")
         #return false
       end
     end
