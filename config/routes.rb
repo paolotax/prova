@@ -87,6 +87,7 @@ Rails.application.routes.draw do
 
   resources :libri_importer, only: [:create] do
     collection do
+      get 'import'
       post 'import_ministeriali'
     end
   end
