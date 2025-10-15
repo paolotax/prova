@@ -79,6 +79,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'collana', 'collane'
   inflect.irregular 'categoria', 'categorie'
   inflect.irregular 'sconto', 'sconti'
+  inflect.irregular 'edizione_titolo', 'edizioni_titoli'
 
   # inflect.irregular 'documento_riga', 'documenti_righe'
 

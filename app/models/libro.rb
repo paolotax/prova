@@ -102,6 +102,8 @@ class Libro < ApplicationRecord
   
   validates :codice_isbn, presence: true, uniqueness: { scope: :user_id }
 
+  belongs_to :edizione_titolo, primary_key: :codice_isbn, foreign_key: :codice_isbn, optional: true
+
   has_many :import_adozioni, foreign_key: "CODICEISBN",  primary_key: "codice_isbn"
   
   scope :no_fascicoli, -> { where(fascicoli_count: 0) }
@@ -244,15 +246,46 @@ class Libro < ApplicationRecord
   end
 
   has_one_attached :copertina
-  
+
+  # Callback: dopo il commit, sincronizza la copertina con EdizioneTitolo
+  after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
+
   def avatar_url
-    if copertina.attached?
-      copertina
+    # Prima prova con la copertina condivisa da EdizioneTitolo
+    if edizione_titolo&.copertina&.attached?
+      return edizione_titolo.copertina
+    # Poi fallback sulla copertina locale (per retrocompatibilità)
+    elsif copertina.attached?
+      return copertina
     else
       # Restituisce le prime due iniziali del titolo
       iniziali = titolo.split.map(&:first).join[0..1].upcase
-      "https://ui-avatars.com/api/?name=#{iniziali}&color=7F9CF5&background=EBF4FF"
+      return "https://ui-avatars.com/api/?name=#{iniziali}&color=7F9CF5&background=EBF4FF"
     end
+  end
+
+  private
+
+  def sync_copertina_to_edizione_titolo
+    return if codice_isbn.blank?
+    return unless copertina.attached?
+
+    # Trova o crea EdizioneTitolo per questo ISBN
+    edizione = EdizioneTitolo.find_or_initialize_by(codice_isbn: codice_isbn)
+    edizione.titolo_originale ||= titolo
+
+    # Sostituisci la copertina condivisa con quella nuova
+    if edizione.copertina.attached?
+      edizione.copertina.purge
+    end
+
+    edizione.copertina.attach(copertina.blob)
+    edizione.save!
+
+    # Rimuovi la copertina dal libro dopo averla copiata su EdizioneTitolo
+    copertina.purge
+  rescue => e
+    Rails.logger.error "Errore sync copertina per libro #{id}: #{e.message}"
   end
 
   has_many :qrcodes, as: :qrcodable, dependent: :destroy

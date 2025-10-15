@@ -1,0 +1,26 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: edizioni_titoli
+#
+#  id               :bigint           not null, primary key
+#  autore           :string
+#  codice_isbn      :string
+#  titolo_originale :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+# Indexes
+#
+#  index_edizioni_titoli_on_codice_isbn  (codice_isbn) UNIQUE
+#
+one:
+  codice_isbn: MyString
+  titolo_originale: MyString
+  autore: MyString
+
+two:
+  codice_isbn: MyString
+  titolo_originale: MyString
+  autore: MyString

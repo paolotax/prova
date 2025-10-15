@@ -31,7 +31,7 @@ class LibriController < ApplicationController
       @import = LibriImporter.new
 
       @libri = current_user.libri
-                  .includes(:editore, :adozioni, :categoria)
+                  .includes(:editore, :adozioni, :categoria, :edizione_titolo)
                   .order("libri.titolo, libri.classe")
       @libri = filter(@libri.all)
 

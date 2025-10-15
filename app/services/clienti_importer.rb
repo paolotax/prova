@@ -13,9 +13,11 @@ class ClientiImporter
 	end
 
 	def process!
-
+		line_number = 1 # Header è la riga 1
+		
 		options = { convert_values_to_numeric: { except: [:partita_iva, :codice_fiscale, :telefono] } }
     SmarterCSV.process(file.path, options) do |row|
+			line_number += 1
       
       cliente = assign_from_row(row.first)
       if cliente.save
@@ -26,7 +28,7 @@ class ClientiImporter
         end
       else
 				@errors_count += 1
-				errors.add(:base, "Line #{$.} - #{cliente.errors.full_messages.join(", ")}")
+				errors.add(:base, "Riga #{line_number}: #{cliente.errors.full_messages.join(", ")}")
 				#return false
       end
 		end
@@ -53,7 +55,7 @@ class ClientiImporter
         end
       else
         @errors_count += 1
-        errors.add(:base, "Line #{$.} - #{cliente.errors.full_messages.join(", ")}")
+        errors.add(:base, "Riga #{line}: #{cliente.errors.full_messages.join(", ")}")
         #return false
       end
     end
@@ -67,15 +69,15 @@ class ClientiImporter
 	end
 
 	def flash_message
-    if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
-      pluralize(@imported_count, 'cliente importato', 'clienti importati') + " e " + 
-      pluralize(@updated_count, 'cliente aggiornato', 'clienti aggiornati') + " e " + 
-      pluralize(@errors_count, 'cliente errato', 'clienti errati') + 
-      " " + errors.full_messages.join(", ").html_safe
-    else
-      "Nessun cliente importato"
-    end
-  end
+		if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
+			pluralize(@imported_count, 'cliente importato', 'clienti importati') + " e " + 
+			pluralize(@updated_count, 'cliente aggiornato', 'clienti aggiornati') + " e " + 
+			pluralize(@errors_count, 'cliente errato', 'clienti errati') + 
+			" " + errors.full_messages.join(", ").html_safe
+		else
+			"Nessun cliente importato"
+		end
+	end
 
   private
 

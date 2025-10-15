@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_11_104245) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_15_182444) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -382,6 +382,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_11_104245) do
     t.string "gruppo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "edizioni_titoli", force: :cascade do |t|
+    t.string "codice_isbn"
+    t.string "titolo_originale"
+    t.string "autore"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["codice_isbn"], name: "index_edizioni_titoli_on_codice_isbn", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
