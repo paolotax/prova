@@ -1,0 +1,206 @@
+<% content_for :title, "Importa Documenti" %>
+
+<% content_for :header do %>
+  <div class="max-w-4xl mx-auto">
+    <%= component "heading/with_actions" do |heading| %>
+        <% heading.with_action do %>
+            <%= link_to documenti_path, class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50" do %>
+                <%= inline_svg_tag "icon-arrow-left.svg", class: "w-4 h-4" %>
+                <span>Torna ai Documenti</span>
+            <% end %>
+        <% end %>
+        
+        <%= h1 {"Importa Documenti"} %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <p class="text-gray-600 mb-8">Scegli il metodo di importazione più adatto alle tue esigenze.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Opzione 1: Importa Fattura Elettronica XML -->
+      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+        <div class="bg-blue-600 text-white px-6 py-4">
+          <div class="flex items-center gap-3">
+            <%= inline_svg_tag "icon-documenti.svg", class: "w-8 h-8" %>
+            <h2 class="text-xl font-bold">Fattura Elettronica</h2>
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <p class="text-gray-600 mb-4">
+            Importa una fattura elettronica in formato XML (FatturaPA) per creare automaticamente un nuovo documento.
+          </p>
+          
+          <%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: true do |f| %>
+            <div class="space-y-4">
+              <div>
+                <%= f.label :file, "Seleziona file XML", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= f.file_field :file, 
+                    accept: 'text/xml,application/xml',
+                    class: "block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer border border-gray-300 rounded-lg" %>
+              </div>
+              
+              <div class="w-full">
+                <%= component('button', state: "primary", busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
+                  <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
+                    <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4">
+                      <style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
+                      <g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g>
+                    </svg>
+                  <% end %>
+                  Importa fattura XML
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-700 mb-2">Cosa verrà importato:</h4>
+            <ul class="text-xs text-gray-600 space-y-1">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                Cliente (dalla P.IVA)
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                Tipo e numero documento
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                Righe con articoli e prezzi
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Opzione 2: Importa Righe da Excel/CSV -->
+      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+        <div class="bg-green-600 text-white px-6 py-4">
+          <div class="flex items-center gap-3">
+            <%= inline_svg_tag "icon-excel-bis.svg", class: "w-8 h-8" %>
+            <h2 class="text-xl font-bold">Righe Documento</h2>
+          </div>
+        </div>
+        
+        <div class="p-6">
+          <p class="text-gray-600 mb-4">
+            Importa righe da un file Excel o CSV per aggiungerle a un documento esistente.
+          </p>
+          
+          <%= form_for @import, url: documenti_importer_index_path, method: :post, multipart: true do |f| %>
+            <div class="space-y-4">
+              <%= f.hidden_field :import_method, value: "xlsx_csv" %>
+              
+              <div>
+                <%= f.label :documento_id, "Documento di destinazione", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= f.collection_select :documento_id, 
+                    Current.user.documenti.order(data_documento: :desc).limit(50), 
+                    :id, 
+                    ->(d) { "#{d.numero_documento} - #{d.clientable&.denominazione} (#{d.data_documento.strftime('%d/%m/%Y')})" },
+                    { prompt: "Seleziona un documento" },
+                    class: "block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+              </div>
+              
+              <div>
+                <%= f.label :file, "Seleziona file CSV/Excel", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= f.file_field :file, 
+                    accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
+                    class: "block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 file:cursor-pointer border border-gray-300 rounded-lg" %>
+              </div>
+              
+              <div class="w-full">
+                <%= component('button', state: "primary", busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
+                  <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
+                    <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4">
+                      <style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
+                      <g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g>
+                    </svg>
+                  <% end %>
+                  Importa righe
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-700 mb-2">Formato richiesto:</h4>
+            <ul class="text-xs text-gray-600 space-y-1">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                Colonna: codice_isbn / ean / isbn
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                Colonna: quantita / qta
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                Colonna: sconto (opzionale)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Sezione Informazioni Aggiuntive -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-blue-900 mb-3">
+        ℹ️ Informazioni sull'importazione
+      </h3>
+      
+      <div class="space-y-3">
+        <div>
+          <h4 class="text-sm font-semibold text-blue-800 mb-1">Fattura Elettronica (XML)</h4>
+          <p class="text-sm text-blue-700">
+            Il sistema importa automaticamente i dati dalla fattura elettronica in formato XML (FatturaPA). 
+            Il cliente viene individuato tramite Partita IVA e gli articoli tramite codice ISBN.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold text-blue-800 mb-1">Import Righe (Excel/CSV)</h4>
+          <p class="text-sm text-blue-700">
+            Questa opzione permette di aggiungere rapidamente multiple righe a un documento esistente. 
+            Seleziona prima il documento e poi carica il file con le righe da importare.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold text-blue-800 mb-1">Gestione Articoli</h4>
+          <p class="text-sm text-blue-700">
+            Gli articoli vengono cercati nel tuo catalogo tramite codice ISBN/EAN. 
+            Se un articolo non viene trovato, la riga non sarà importata.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sezione Aiuto -->
+    <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div class="flex gap-3">
+        <div class="text-2xl flex-shrink-0">⚠️</div>
+        <div>
+          <h4 class="text-sm font-semibold text-yellow-800 mb-1">Hai bisogno di aiuto?</h4>
+          <p class="text-sm text-yellow-700">
+            Se riscontri problemi durante l'importazione, verifica che:
+          </p>
+          <ul class="text-sm text-yellow-700 list-disc list-inside mt-2 space-y-1">
+            <li>Il file XML sia una fattura elettronica valida (formato FatturaPA)</li>
+            <li>Il cliente esista già nel tuo database (con P.IVA corretta)</li>
+            <li>Gli articoli siano già presenti nel tuo catalogo</li>
+            <li>Per l'import Excel/CSV, il documento di destinazione sia stato selezionato</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+

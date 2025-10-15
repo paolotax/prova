@@ -95,7 +95,7 @@ Rails.application.routes.draw do
   resources :clienti_importer, only: [:create] do
   end
 
-  resources :documenti_importer, only: [:create]
+  resources :documenti_importer, only: [:new, :create]
 
   get 'classi', to: 'classi#index'
   get 'classi/:id', to: 'classi#show', as: 'classe'
