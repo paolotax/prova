@@ -248,7 +248,8 @@ class Libro < ApplicationRecord
   has_one_attached :copertina
 
   # Callback: dopo il commit, sincronizza la copertina con EdizioneTitolo
-  after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
+  # DISABLED: causa loop infinito con purge. Usare solo upload manuale o rake task
+  # after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
 
   def avatar_url
     # Prima prova con la copertina condivisa da EdizioneTitolo
