@@ -248,8 +248,10 @@ class Libro < ApplicationRecord
   has_one_attached :copertina
 
   # Callback: dopo il commit, sincronizza la copertina con EdizioneTitolo
-  # DISABLED: causa loop infinito con purge. Usare solo upload manuale o rake task
-  # after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
+  after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
+
+  # Flag per evitare loop infinito durante la sincronizzazione
+  attr_accessor :skip_copertina_sync
 
   def avatar_url
     # Prima prova con la copertina condivisa da EdizioneTitolo
@@ -268,6 +270,7 @@ class Libro < ApplicationRecord
   private
 
   def sync_copertina_to_edizione_titolo
+    return if skip_copertina_sync
     return if codice_isbn.blank?
     return unless copertina.attached?
 
@@ -284,7 +287,10 @@ class Libro < ApplicationRecord
     edizione.save!
 
     # Rimuovi la copertina dal libro dopo averla copiata su EdizioneTitolo
+    # Usa skip_copertina_sync per evitare loop infinito
+    self.skip_copertina_sync = true
     copertina.purge
+    self.skip_copertina_sync = false
   rescue => e
     Rails.logger.error "Errore sync copertina per libro #{id}: #{e.message}"
   end
