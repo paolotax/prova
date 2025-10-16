@@ -31,7 +31,7 @@
         <% end %>
 
         <% heading.with_action do %>
-            <%= tag.div class: "block lg:hidden" do %>
+            <%= tag.div class: "block xl:hidden" do %>
                 <%= component 'tax_button',
                     caption: "Filtra",
                     svg_file: "icon-funnel.svg",
@@ -57,12 +57,12 @@
 
 <%= turbo_frame_tag :search_results do %>
 
-    <%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: "bulk-actions" } do %>
+    <%= tag.div class: "flex flex-col xl:pr-[15rem]", data: { controller: "bulk-actions" } do %>
 
         <%= render "shared/active_filters", collection: @libri %>
         <%= render "libri/bulk_actions/form" %>
 
-        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" do %>
+        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6" do %>
             <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
             
             <%= render @page.records %>
@@ -78,7 +78,7 @@
 
     <% end %>
 
-    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
+    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 xl:block">
         <!-- Secondary column (hidden on smaller screens) -->
         <%= render partial: "filter_form", locals: { reload: true } %>
     </aside>
