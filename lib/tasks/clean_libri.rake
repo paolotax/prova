@@ -38,10 +38,10 @@ namespace :libri do
     libri.find_each do |libro|
       old_title = libro.titolo
 
-      # Rimuove aa.vv. e AA.VV. dall'inizio (case insensitive) e pulisce gli spazi
+      # Rimuove aa.vv., AA.VV. e AA VV dall'inizio (case insensitive) e pulisce gli spazi
       new_title = libro.titolo
-                       .sub(/^aa\.vv\.\s*/i, '')  # Rimuove solo dall'inizio con eventuali spazi dopo
-                       .strip                      # Rimuove spazi all'inizio e alla fine
+                       .sub(/^(aa\.vv\.|aa\s+vv)\s*/i, '')  # Rimuove solo dall'inizio con eventuali spazi dopo
+                       .strip                                # Rimuove spazi all'inizio e alla fine
 
       if new_title != old_title
         libro.titolo = new_title
@@ -67,7 +67,7 @@ namespace :libri do
     puts "=== PREVIEW PULIZIA TITOLI DA AA.VV. ==="
     puts ""
 
-    libri = Libro.where("titolo ILIKE ? OR titolo ILIKE ?", "aa.vv.%", "AA.VV.%")
+    libri = Libro.where("titolo ILIKE ? OR titolo ILIKE ? OR titolo ILIKE ?", "aa.vv.%", "AA.VV.%", "AA VV%")
 
     puts "Trovati #{libri.count} libri con titolo che inizia con aa.vv. o AA.VV."
     puts ""
@@ -83,7 +83,7 @@ namespace :libri do
     libri.each do |libro|
       old_title = libro.titolo
       new_title = libro.titolo
-                       .sub(/^aa\.vv\.\s*/i, '')
+                       .sub(/^(aa\.vv\.|aa\s+vv)\s*/i, '')
                        .strip
 
       puts "#{libro.id}: #{old_title}"
