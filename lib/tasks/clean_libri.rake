@@ -5,7 +5,7 @@ namespace :libri do
     puts ""
 
     # Trova tutti i libri che iniziano con aa.vv. o AA.VV.
-    libri = Libro.where("titolo ILIKE ? OR titolo ILIKE ?", "aa.vv.%", "AA.VV.%")
+    libri = Libro.where("titolo ILIKE ? OR titolo ILIKE ? OR titolo ILIKE ?", "aa.vv.%", "AA.VV.%", "AA VV%")
 
     total = libri.count
     puts "Trovati #{total} libri con titolo che inizia con aa.vv. o AA.VV."
