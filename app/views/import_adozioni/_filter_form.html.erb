@@ -4,22 +4,22 @@
     fields: [ 
         {
             field: :search,
-            label: "Scuola",
+            label: "Cerca",
             collection: nil,
             type: :text,
-            placeholder: "scuola..."
+            placeholder: "cerca..."
         }, {
-            field: :titolo,
-            label: "Titolo",
-            collection: nil,
-            type: :text,
-            placeholder: "titolo..."
+            field: :mie_adozioni,
+            label: "adozioni",
+            collection: ["si", "no"],
+            type: :checkbox,
+            placeholder: "mie adozioni"
         }, {
-            field: :editore,
-            label: "Editore",
-            collection: nil,
-            type: :text,
-            placeholder: "editore..."
+            field: :da_acquistare,
+            label: "acquistare",  # uso la label per queryopt
+            collection: ["si", "no"],
+            type: :checkbox,
+            placeholder: "da acquistare"
         }, {
             field: :classe,
             label: "Classe",
@@ -38,17 +38,5 @@
             collection: ["oggi", "domani"],
             type: :select,
             placeholder: "nel baule?"
-        }, {
-            field: :da_acquistare,
-            label: "acquistare",  # uso la label per queryopt
-            collection: ["si", "no"],
-            type: :checkbox,
-            placeholder: "da acquistare"
-        }, {
-            field: :mie_adozioni,
-            label: "adozioni",
-            collection: ["si", "no"],
-            type: :checkbox,
-            placeholder: "mie adozioni"
         }
 ] %>

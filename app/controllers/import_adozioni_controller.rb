@@ -10,22 +10,21 @@ class ImportAdozioniController < ApplicationController
     @import_adozioni = current_user.import_adozioni.preload(:import_scuola, :saggi, :seguiti, :kit, :adozione_comunicata)
 
     if params[:q].present?
-      @import_adozioni = @import_adozioni.search_combobox params[:q]    
-    else      
+      @import_adozioni = @import_adozioni.search_combobox params[:q]
+    else
       @import_adozioni = filter(@import_adozioni.all)
-      
+
       @conteggio_adozioni = @import_adozioni.count;
       @conteggio_scuole   = @import_adozioni.pluck(:CODICESCUOLA).uniq.count;
       @conteggio_titoli   = @import_adozioni.pluck(:CODICEISBN).uniq.count;
       @conteggio_editori  = @import_adozioni.pluck(:EDITORE).uniq.count;
-      
+
       @lista_discipline   = @import_adozioni.order(:DISCIPLINA).pluck(:DISCIPLINA).uniq;
     end
 
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
-    #@import_adozioni = @import_adozioni.raggruppate
-    
-    set_page_and_extract_portion_from @import_adozioni
+
+    @pagy, @import_adozioni = pagy(@import_adozioni.all, items: 30)
 
     respond_to do |format|
       format.html

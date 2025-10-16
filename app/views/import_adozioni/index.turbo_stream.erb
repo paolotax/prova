@@ -5,20 +5,15 @@
 
 <% else %>
 
-      <%= turbo_stream.replace "load_more" do %>
-            <%= tag.div class: "py-5 grid grid-cols-1 gap-x-6 gap-y-8 2xl:grid-cols-2" do %>
-                  <% @page.records.each do |adozione| %>
-                        <%= render partial: "import_adozioni/import_adozione_small", locals: { import_adozione: adozione } %>
-                  <% end %>
-            <% end %>
+      <%= turbo_stream.append :import_adozioni do %>
+            <%= render "grouped_adozioni", import_adozioni: @import_adozioni, grouped_by: (params[:grouped_by] || 'titolo').to_sym %>
+      <% end %>
 
-            <% if @page.last? %>
-                 <%= tag.div "Fine delle adozioni!", class: "py-8 px-4 text-center" %>
-            <% else %>
-                  <%= turbo_frame_tag "load_more",
-                        src: import_adozioni_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream, search: params[:search])),                              
-
-                        loading: :lazy do %>
+      <%= turbo_stream.replace :pagination do %>
+            <% if @pagy.next.present? %>
+                  <%= turbo_frame_tag :pagination,
+                        loading: :lazy,
+                        src: import_adozioni_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)) do %>
                         <%= render 'shared/lazy_loading' %>
                   <% end %>
             <% end %>

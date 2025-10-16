@@ -1,0 +1,70 @@
+<% grouped_by = local_assigns[:grouped_by] || :scuola %>
+
+<% import_adozioni.group_by(&:import_scuola).each do |import_scuola, scuola_adozioni| %>
+
+    <div class="flex flex-col mb-6">
+        <%# Header scuola con stile gradient %>
+        <div class="only:hidden flex items-center justify-between px-4 py-3 gap-2 rounded-t-lg font-semibold text-base text-white bg-gradient-to-r from-slate-700 to-slate-500 shadow-sm">
+            <div class="flex items-center gap-3">
+                <%= link_to import_scuola.to_s.upcase,
+                        import_adozioni_path(request.query_parameters.merge(codice_scuola: import_scuola.CODICESCUOLA).except(:page)),
+                        data: { turbo_action: "advance"},
+                        class: "hover:text-sky-200 transition-colors" %>
+                <span class="text-xs font-normal opacity-80">
+                    <%= scuola_adozioni.size %> <%= scuola_adozioni.size == 1 ? 'adozione' : 'adozioni' %>
+                </span>
+            </div>
+            <%= link_to "Foglio scuola →",
+                    import_scuola_path(import_scuola),
+                    data: { turbo_frame: "_top" },
+                    class: "text-xs font-normal hover:text-sky-200 transition-colors"
+            %>
+        </div>
+
+        <%# Contenuto adozioni %>
+        <div class="bg-white border border-t-0 border-gray-300 rounded-b-lg">
+            <% if grouped_by == :titolo %>
+                <%# Raggruppa per titolo, ordinato per classe %>
+                <div class="divide-y divide-gray-200">
+                    <% scuola_adozioni.group_by { |a| [a.CODICEISBN, a.TITOLO] }.each do |(isbn, titolo), titolo_adozioni| %>
+                        <div class="p-2 hover:bg-gray-50 transition-colors">
+                            <div class="flex flex-row gap-2 items-start">
+                                <%# header titolo %>
+                                <div class="flex-1 min-w-0">
+                                    <%= render partial: "import_adozioni/card_titolo", locals: {
+                                        import_adozione: titolo_adozioni.first,
+                                        is_header: true,
+                                        is_mia: titolo_adozioni.first.mia_adozione?
+                                    } %>
+                                </div>
+
+                                <%# classi - larghezza fissa in base al numero di colonne desiderato %>
+                                <div class="flex-shrink-0 w-[180px] sm:w-[300px] xl:w-[300px] 2xl:w-[600px]">
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 2xl:grid-cols-5 gap-2">
+                                        <% titolo_adozioni.sort_by { |a| [a.ANNOCORSO.to_i, a.SEZIONEANNO] }.each do |a| %>
+                                            <%= render partial: "import_adozioni/card_classe", locals: {
+                                                import_adozione: a,
+                                                is_header: false,
+                                                is_mia: a.mia_adozione?
+                                            } %>
+                                        <% end %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            <% else %>
+                <%# Visualizzazione standard per classe %>
+                <div class="grid grid-cols-1 2xl:grid-cols-2 divide-y 2xl:divide-y-0 2xl:divide-x divide-gray-200">
+                    <% scuola_adozioni.each do |adozione| %>
+                        <div class="px-4 py-3 hover:bg-gray-50 transition-colors">
+                            <%= render partial: "import_adozioni/import_adozione_small", locals: { import_adozione: adozione } %>
+                        </div>
+                    <% end %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+
+<% end %>
