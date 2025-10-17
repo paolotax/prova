@@ -54,6 +54,37 @@
                         </div>
                     <% end %>
                 </div>
+            <% elsif grouped_by == :classe %>
+                <%# Raggruppa per classe, mostra titoli %>
+                <div class="divide-y divide-gray-200">
+                    <% scuola_adozioni.group_by { |a| [a.ANNOCORSO, a.SEZIONEANNO, a.COMBINAZIONE] }.each do |(anno, sezione, combinazione), classe_adozioni| %>
+                        <div class="p-2 hover:bg-gray-50 transition-colors">
+                            <div class="flex flex-row gap-2 items-start">
+                                <%# header classe - larghezza fissa ridotta %>
+                                <div class="flex-shrink-0 w-[120px]">
+                                    <%= render partial: "import_adozioni/card_classe", locals: {
+                                        import_adozione: classe_adozioni.first,
+                                        is_header: true,
+                                        is_mia: classe_adozioni.first.mia_adozione?
+                                    } %>
+                                </div>
+
+                                <%# titoli - larghezza flessibile %>
+                                <div class="flex-1 min-w-0">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-2">
+                                        <% classe_adozioni.sort_by { |a| a.TITOLO }.each do |a| %>
+                                            <%= render partial: "import_adozioni/card_titolo", locals: {
+                                                import_adozione: a,
+                                                is_header: false,
+                                                is_mia: a.mia_adozione?
+                                            } %>
+                                        <% end %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
             <% else %>
                 <%# Visualizzazione standard per classe %>
                 <div class="grid grid-cols-1 2xl:grid-cols-2 divide-y 2xl:divide-y-0 2xl:divide-x divide-gray-200">
