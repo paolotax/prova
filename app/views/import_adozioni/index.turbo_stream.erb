@@ -13,7 +13,7 @@
             <% if @pagy.next.present? %>
                   <%= turbo_frame_tag :pagination,
                         loading: :lazy,
-                        src: import_adozioni_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)) do %>
+                        src: import_adozioni_path(request.query_parameters.merge(page: @pagy.next)) do %>
                         <%= render 'shared/lazy_loading' %>
                   <% end %>
             <% end %>

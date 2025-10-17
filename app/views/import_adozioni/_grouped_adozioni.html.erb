@@ -6,9 +6,9 @@
         <%# Header scuola con stile gradient %>
         <div class="only:hidden flex items-center justify-between px-4 py-3 gap-2 rounded-t-lg font-semibold text-base text-white bg-gradient-to-r from-slate-700 to-slate-500 shadow-sm">
             <div class="flex items-center gap-3">
-                <%= link_to import_scuola.to_s.upcase,
-                        import_adozioni_path(request.query_parameters.merge(codice_scuola: import_scuola.CODICESCUOLA).except(:page)),
-                        data: { turbo_action: "advance"},
+                <%= link_to import_scuola.denominazione.upcase,
+                        import_adozioni_path(request.query_parameters.merge(codice_scuola: import_scuola.CODICESCUOLA).except(:page, :format)),
+                        data: { turbo_frame: "_top", turbo_action: "advance"},
                         class: "hover:text-sky-200 transition-colors" %>
                 <span class="text-xs font-normal opacity-80">
                     <%= scuola_adozioni.size %> <%= scuola_adozioni.size == 1 ? 'adozione' : 'adozioni' %>

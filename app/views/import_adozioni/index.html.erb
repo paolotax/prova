@@ -72,7 +72,7 @@
 
 		<%= render "shared/active_filters", collection: @import_adozioni %>
 
-		<%= turbo_frame_tag :import_adozioni, class: "py-5 w-full space-y-8" do %>
+		<%= turbo_frame_tag :import_adozioni, class: "w-full" do %>
 			<p class="only:block hidden py-8 px-4 text-center 2xl:col-span-2 ">
 				Whoops! Non ci sono adozioni.
 				<%= link_to "Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" unless params[:search] || !current_user.import_scuole.empty? %>
