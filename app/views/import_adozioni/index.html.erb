@@ -53,18 +53,18 @@
 	
 	<%= tag.div class: "w-full flex flex-col xl:pr-[17rem]", data: {controller: 'tax-checkbox-select-all'} do %>
 				
-		<div class="sticky hotwire-native:top-[calc(5rem+6px)] not-hotwire-native:top-72 bg-gray-100 mb-2">
+		<div class="sticky z-20 hotwire-native:top-[calc(5rem+6px)] not-hotwire-native:top-[17rem] bg-gray-100 mb-2">
 			<div class="flex justify-between">
-				<div class="flex items-center justify-start gap-2 px-4 py-2 bg-white border-b">
+				<div class="flex items-center justify-start gap-2 px-4 py-2 bg-gray-100">
 					<span class="text-sm text-gray-600">Raggruppa per:</span>
 					<%= link_to "Titolo",
 							import_adozioni_path(request.query_parameters.merge(grouped_by: "titolo").except(:page)),
 							data: { turbo_action: "advance" },
-							class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'titolo' || params[:grouped_by].nil? ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+							class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'titolo' || params[:grouped_by].nil? ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
 					<%= link_to "Classe",
 							import_adozioni_path(request.query_parameters.merge(grouped_by: "classe").except(:page)),
 							data: { turbo_action: "advance" },
-							class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'classe' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+							class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'classe' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
 				</div>
 				<%= render partial: "form_multi" %>
 			</div>
@@ -91,7 +91,7 @@
 
 	<% end %>
 
-	<aside class="fixed inset-y-0 right-0 hidden w-80 overflow-y-auto pt-72 xl:px-8 xl:block">
+	<aside class="fixed inset-y-0 right-0 hidden w-80 overflow-y-auto pt-[17rem] xl:px-8 xl:block">
 		<%= render partial: "filter_form", locals: { reload: true } %>
 	</aside>
 
