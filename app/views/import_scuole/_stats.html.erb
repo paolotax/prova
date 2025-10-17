@@ -1,34 +1,35 @@
-<div class="bg-gray-900 rounded-t-lg">
+<div class="bg-gray-800 rounded-t-lg py-2 ring-1 ring-gray-900">
 	<div class="mx-auto max-w-7xl">
-		<div class="grid grid-cols-4 gap-px bg-white/5 sm:grid-cols-2 lg:grid-cols-4">
-			<div class="px-4 py-4 sm:px-6 lg:px-8">
-				<p class="hidden sm:inline-grid text-sm font-medium leading-6 text-gray-400">Numero scuole</p>
-				<p class="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-x-2">
-					<span class="text-2xl sm:text-4xl font-semibold tracking-tight text-white"><%= stats.conteggio_scuole %></span>
-					<span class="sm:hidden text-sm text-gray-400">scuole</span>
-				</p>
-			</div>
-			<div class="px-4 py-4 sm:px-6 lg:px-8">
-				<p class="hidden sm:inline-grid text-sm font-medium leading-6 text-gray-400">con quante classi</p>
-				<p class="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-x-2">
-					<span class="text-2xl sm:text-4xl font-semibold tracking-tight text-white"><%= stats.conteggio_classi %></span>
-					<span class="sm:hidden text-sm text-gray-400">classi</span>
-				</p>
-			</div>
-			<div class="px-4 py-4 sm:px-6 lg:px-8">
-				<p class="hidden sm:inline-grid text-sm font-medium leading-6 text-gray-400">con quante adozioni</p>
-				<p class="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-x-2">
-					 <span class="text-2xl sm:text-4xl font-semibold tracking-tight text-white"><%= stats.conteggio_adozioni %></span>
-					 <span class="sm:hidden text-sm text-gray-400">adozioni</span>
-				</p>
-			</div>
-			<div class=" px-4 py-4 sm:px-6 lg:px-8">
-				<p class="hidden sm:inline-grid text-sm font-medium leading-6 text-gray-400">con quanti editori</p>
-				<p class="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-x-2">
-					<span class="text-2xl sm:text-4xl font-semibold tracking-tight text-white"><%= stats.conteggio_marchi %></span>
-					<span class="sm:hidden text-sm text-gray-400">editori</span>
-				</p>
-			</div>
+		<div class="grid grid-cols-4 gap-px bg-gray-900/50">
+
+			<%= render StatComponent.new(
+				current_value: stats.conteggio_scuole,
+				title: content_tag(:span, "Scuole", class: "sm:hidden") + content_tag(:span, "Numero scuole", class: "hidden sm:inline"),
+				theme: "dark",
+				width: "w-full"
+			) %>
+
+			<%= render StatComponent.new(
+				current_value: stats.conteggio_classi,
+				title: content_tag(:span, "Classi", class: "sm:hidden") + content_tag(:span, "con quante classi", class: "hidden sm:inline"),
+				theme: "dark",
+				width: "w-full"
+			) %>
+
+			<%= render StatComponent.new(
+				current_value: stats.conteggio_adozioni,
+				title: content_tag(:span, "Adozioni", class: "sm:hidden") + content_tag(:span, "con quante adozioni", class: "hidden sm:inline"),
+				theme: "dark",
+				width: "w-full"
+			) %>
+
+			<%= render StatComponent.new(
+				current_value: stats.conteggio_marchi,
+				title: content_tag(:span, "Editori", class: "sm:hidden") + content_tag(:span, "con quanti editori", class: "hidden sm:inline"),
+				theme: "dark",
+				width: "w-full"
+			) %>
+
 		</div>
 	</div>
 </div>
