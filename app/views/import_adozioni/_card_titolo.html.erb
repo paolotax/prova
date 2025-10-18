@@ -16,7 +16,7 @@
                     class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
 
             <% else %>
-                <%= link_to import_adozione.titolo, import_adozioni_path(codice_isbn: import_adozione.CODICEISBN),
+                <%= link_to import_adozione.titolo, import_adozioni_path(search: import_adozione.CODICEISBN),
                     data: { turbo_frame: "_top", turbo_action: "advance"}, 
                     class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
             <% end %>
