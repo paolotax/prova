@@ -1,0 +1,37 @@
+<% content_for :bulk_action_buttons do %>
+    <%= button_tag class: "mx-auto flex flex-col items-center gap-y-1 px-3 py-2 text-sm font-medium text-white bg-black hover:bg-gray-600 rounded-md",
+            data: {
+              action: "bulk-actions#toggleFormContainer",
+              form_id: "stampa",
+              bulk_actions_target: "menuButton"
+            } do %>
+        <%= icon "printer" %>
+        Etichette
+    <% end %>
+<% end %>
+
+<% content_for :bulk_action_forms do %>
+
+   <div class="hidden flex-col space-y-2 transition-all duration-300 ease-out origin-top mt-4"
+            data-bulk-actions-target="formContainer"
+            data-form-id="stampa"
+            data-transition-enter="transform transition ease-out duration-300"
+            data-transition-enter-start="transform -translate-y-4 opacity-0"
+            data-transition-enter-end="transform translate-y-0 opacity-100"
+            data-transition-leave="transform transition ease-in duration-200"
+            data-transition-leave-start="transform translate-y-0 opacity-100"
+            data-transition-leave-end="transform -translate-y-4 opacity-0">
+
+        <%= form_with url: "/import_adozioni/bulk_actions/print_all.pdf",
+                method: :patch,
+                class: "w-full",
+                data: {
+                  bulk_actions_target: "form",
+                  action: "turbo:submit-end->bulk-actions#hideAfterSubmit"
+                } do |form| %>
+            <%= form.submit "Stampa etichette", class: "w-full py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md" %>
+        <% end %>
+    </div>
+<% end %>
+
+<%= render partial: "shared/bulk_actions_container" %>

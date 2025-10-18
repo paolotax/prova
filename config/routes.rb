@@ -284,7 +284,14 @@ Rails.application.routes.draw do
   resources :import_adozioni, only: %i[index show] do
     collection do
       get 'filtra'
-      put 'bulk_update', format: 'pdf'
+    end
+  end
+
+  namespace :import_adozioni do
+    resources :bulk_actions, only: [] do
+      collection do
+        patch :print_all, format: 'pdf'
+      end
     end
   end
 

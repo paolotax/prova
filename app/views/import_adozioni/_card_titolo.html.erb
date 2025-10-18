@@ -24,15 +24,12 @@
             <% unless is_header %>
                 <%= tag.div class: "flex" do %>
                     <% if is_mia %>
-                        <%= check_box_tag "import_adozione_ids[]", import_adozione.id, nil, {
-                                multiple: true,
-                                form: :bulk_update_import_adozioni_form,
-                                checked: false,
+                        <%= check_box_tag "import_adozione_ids[]", import_adozione.id, nil,
+                                form: "bulk-actions",
                                 class: "mr-2 rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
-                                data: { tax_checkbox_select_all_target: 'checkbox' }
-                                } %> 
+                                data: { action: "input->bulk-actions#count" } %>
                     <% end %>
-                    
+
                     <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
                 <% end %>
             <% end %>
