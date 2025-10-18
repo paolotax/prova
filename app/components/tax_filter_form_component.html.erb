@@ -4,6 +4,10 @@
     class: "w-full px-6 py-4 bg-gray-200 rounded-lg border shadow-lg hotwire-native:mb-24",
     builder: RailsDesigner::FormBuilder) do |form| %>
 
+    <% @hidden_fields.each do |field, value| %>
+        <%= hidden_field_tag field, value %>
+    <% end %>
+
     <%= tag.div(class: "flex-col space-y-3") do %>
         <% @fields.each do |field| %>
 

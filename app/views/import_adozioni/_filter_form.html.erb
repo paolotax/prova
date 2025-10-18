@@ -1,6 +1,7 @@
 <%# locals: ( reload: false ) -%>
 
 <%= component 'tax_filter_form', base_url: import_adozioni_path, reload: false,
+    hidden_fields: { grouped_by: params[:grouped_by] || 'titolo' },
     fields: [ 
         {
             field: :search,

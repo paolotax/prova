@@ -69,7 +69,8 @@ class ImportAdozioniController < ApplicationController
         scuola: params["scuola"],
         mie_adozioni: params["mie_adozioni"],
         da_acquistare: params["da_acquistare"],
-        nel_baule: params["nel_baule"]
+        nel_baule: params["nel_baule"],
+        grouped_by: params["grouped_by"]
       }
     end
 

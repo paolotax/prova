@@ -4,9 +4,10 @@ class TaxFilterFormComponent < ViewComponent::Base
 
   delegate :filter_params, :toggle_button_tag, to: :helpers
 
-  def initialize(base_url:, fields: [], reload: false)
+  def initialize(base_url:, fields: [], hidden_fields: {}, reload: false)
     @base_url = base_url
     @fields = fields
+    @hidden_fields = hidden_fields
     @reload = reload
   end
 
