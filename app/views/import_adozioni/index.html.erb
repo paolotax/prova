@@ -53,17 +53,19 @@
 	
 	<%= tag.div class: "w-full flex flex-col xl:pr-[17rem]", data: {controller: 'bulk-actions'} do %>
 				
-		<div class="sticky z-20 hotwire-native:top-[calc(5rem+6px)] not-hotwire-native:top-[17rem] bg-gray-100 mb-2">
-			<div class="flex items-center justify-start gap-2 px-4 py-2 bg-gray-100">
-				<span class="text-sm text-gray-600">Raggruppa per:</span>
-				<%= link_to "Titolo",
-						import_adozioni_path(request.query_parameters.merge(grouped_by: "titolo").except(:page)),
-						data: { turbo_action: "advance" },
-						class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'titolo' || params[:grouped_by].nil? ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-				<%= link_to "Classe",
-						import_adozioni_path(request.query_parameters.merge(grouped_by: "classe").except(:page)),
-						data: { turbo_action: "advance" },
-						class: "px-3 py-1 text-sm rounded #{params[:grouped_by] == 'classe' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+		<div class="sticky z-20 hotwire-native:top-[calc(5rem+6px)] not-hotwire-native:top-[17rem] mb-2">
+			<div class="flex items-center justify-center gap-3 px-4 pt-1 pb-3">
+				<span class="text-sm font-medium text-gray-700">Raggruppa per:</span>
+				<div class="inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50">
+					<%= link_to "Titolo",
+							import_adozioni_path(request.query_parameters.merge(grouped_by: "titolo").except(:page)),
+							data: { turbo_action: "advance" },
+							class: "px-4 py-1.5 text-sm font-medium rounded-md transition-colors #{params[:grouped_by] == 'titolo' || params[:grouped_by].nil? ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-700 hover:bg-gray-100'}" %>
+					<%= link_to "Classe",
+							import_adozioni_path(request.query_parameters.merge(grouped_by: "classe").except(:page)),
+							data: { turbo_action: "advance" },
+							class: "px-4 py-1.5 text-sm font-medium rounded-md transition-colors #{params[:grouped_by] == 'classe' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-700 hover:bg-gray-100'}" %>
+				</div>
 			</div>
 		</div>
 
