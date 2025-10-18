@@ -1,4 +1,98 @@
 namespace :libri do
+  desc "Pulisce le righe orfane (senza DocumentoRiga)"
+  desc "Salva un backup delle righe cancellate in tmp/orphaned_righe_TIMESTAMP.csv"
+  desc "Esempi:"
+  desc "  rails libri:clean_orphaned_righe              # Pulisce tutte le righe orfane"
+  desc "  rails libri:clean_orphaned_righe[dry_run]     # Solo report, non cancella"
+  task :clean_orphaned_righe, [:mode] => :environment do |t, args|
+    require 'csv'
+
+    mode = args[:mode] || 'execute'
+    dry_run = mode == 'dry_run'
+
+    puts "=" * 80
+    puts "Pulizia Righe Orfane"
+    puts "Mode: #{dry_run ? 'DRY RUN (solo report)' : 'EXECUTE (cancellazione effettiva)'}"
+    puts "=" * 80
+    puts
+
+    # Find orphaned righe
+    orphaned = Riga.left_joins(:documento_righe)
+                   .where(documento_righe: { id: nil })
+                   .includes(:libro)
+
+    count = orphaned.count
+
+    puts "Righe orfane trovate: #{count}"
+    puts "Total Riga: #{Riga.count}"
+    puts "Percentuale: #{(count.to_f / Riga.count * 100).round(2)}%"
+    puts
+
+    if count == 0
+      puts "Nessuna riga orfana trovata. Tutto OK!"
+      next
+    end
+
+    # Save backup to CSV
+    timestamp = Time.current.strftime('%Y%m%d_%H%M%S')
+    backup_file = Rails.root.join('tmp', "orphaned_righe_#{timestamp}.csv")
+
+    puts "Salvataggio backup in: #{backup_file}"
+
+    CSV.open(backup_file, 'w') do |csv|
+      csv << ['riga_id', 'libro_id', 'isbn', 'titolo', 'quantita', 'prezzo_cents', 'sconto', 'created_at', 'updated_at']
+
+      orphaned.find_each do |riga|
+        csv << [
+          riga.id,
+          riga.libro_id,
+          riga.libro&.codice_isbn,
+          riga.libro&.titolo,
+          riga.quantita,
+          riga.prezzo_cents,
+          riga.sconto,
+          riga.created_at,
+          riga.updated_at
+        ]
+      end
+    end
+
+    puts "Backup salvato con successo!"
+    puts
+
+    # Show statistics
+    puts "Statistiche per anno:"
+    orphaned.group("DATE_TRUNC('year', righe.created_at)").count.sort.each do |year, cnt|
+      puts "  #{year.year}: #{cnt} righe"
+    end
+
+    puts
+    puts "Statistiche per utente (top 10):"
+    orphaned.joins(:libro).group('libri.user_id').count.sort_by { |k,v| -v }.first(10).each do |user_id, cnt|
+      user = User.find_by(id: user_id)
+      puts "  User #{user_id} (#{user&.email}): #{cnt} righe"
+    end
+
+    puts
+
+    if dry_run
+      puts "DRY RUN: Le righe NON sono state cancellate."
+      puts "Per cancellare effettivamente, esegui: rails libri:clean_orphaned_righe"
+    else
+      print "Cancellazione in corso... "
+      deleted_count = orphaned.delete_all
+      puts "FATTO!"
+      puts
+      puts "Righe cancellate: #{deleted_count}"
+      puts "Righe rimanenti: #{Riga.count}"
+      puts
+      puts "Backup disponibile in: #{backup_file}"
+    end
+
+    puts
+    puts "=" * 80
+  end
+
   desc "Ricalcola adozioni_count per i libri"
   desc "Conta il numero totale di sezioni (import_adozioni) nelle scuole dell'utente per codice_isbn"
   desc "Esempi:"

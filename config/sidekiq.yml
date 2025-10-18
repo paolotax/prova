@@ -12,3 +12,10 @@
       class: AdozioniScraperJob
       queue: default
       unique: true
+
+    clean_orphaned_righe:
+      cron: '0 3 1 * *'  # Esegue il 1° di ogni mese alle 3:00 AM
+      class: CleanOrphanedRigheJob
+      queue: default
+      unique: true
+      description: 'Pulisce le righe orfane (senza DocumentoRiga) e salva un backup in tmp/'
