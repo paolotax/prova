@@ -1,45 +1,4 @@
-<!-- Riepilogo Documento -->
-<%= tag.div class: "bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-4 mt-4 mb-6" do %>
-    <div class="text-xs text-gray-500 uppercase font-semibold mb-3">Riepilogo Documento</div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <!-- Cliente -->
-        <div>
-            <div class="text-xs text-gray-400 mb-1">Cliente</div>
-            <div class="font-medium text-gray-900">
-                <%= resource.clientable&.denominazione || "---" %>
-            </div>
-            <% if resource.referente.present? %>
-                <div class="text-xs text-gray-600 mt-0.5"><%= resource.referente %></div>
-            <% end %>
-        </div>
-
-        <!-- Causale e Documento -->
-        <div>
-            <div class="text-xs text-gray-400 mb-1">Causale e Documento</div>
-            <div class="font-medium text-gray-900">
-                <%= resource.causale&.causale || "---" %>
-            </div>
-            <div class="text-xs text-gray-600 mt-0.5">
-                Nr. <%= resource.numero_documento || "---" %> del <%= resource.data_documento&.strftime("%d/%m/%Y") || "---" %>
-            </div>
-        </div>
-
-        <!-- Totali -->
-        <div class="sm:col-span-2 border-t border-gray-300 pt-3 mt-2">
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="text-xs text-gray-400">Totale Copie</div>
-                    <div class="text-lg font-bold text-gray-900"><%= resource.totale_copie || 0 %></div>
-                </div>
-                <div class="text-right">
-                    <div class="text-xs text-gray-400">Totale Importo</div>
-                    <div class="text-lg font-bold text-gray-900"><%= number_to_currency(resource.totale_importo || 0) %></div>
-                </div>
-            </div>
-        </div>
-    </div>
-<% end %>
+<%= yield :step_summary if content_for?(:step_summary) %>
 
 <% resource.class.form_steps.keys.each_with_index do |step, index| %>
 

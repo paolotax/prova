@@ -1,6 +1,10 @@
 <%= turbo_frame_tag dom_id(@documento) do %>
-        
+
     <%= tag.div class: "w-full mx-auto sm:max-w-2xl gap-4" do %>
+
+        <% content_for :step_summary do %>
+            <%= render partial: "steps_controllers/documento_steps/documento_summary", locals: { resource: @documento } %>
+        <% end %>
 
         <%= render partial: "steps_controllers/common/steps_header", locals: { resource: @documento } %>   
         
