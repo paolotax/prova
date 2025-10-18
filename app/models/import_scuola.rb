@@ -295,7 +295,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def tipo_nome
-    titleize([self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(' ')).gsub('Non Statale', 'Privata')
+    tipo_scuola + ' ' + self.DENOMINAZIONESCUOLA
   end
 
   def email
