@@ -138,7 +138,7 @@ class ImportScuola < ApplicationRecord
   scope :delle_tappe_di_domani, -> { joins(:tappe).where('DATE(tappe.data_tappa) = ?', Date.tomorrow) }
 
   def to_s
-    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + ' ' + self.DENOMINAZIONESCUOLA + ' - ' + self.DESCRIZIONECOMUNE)
+    titleize(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + ' ' + self.DENOMINAZIONESCUOLA + ' - ' + self.DESCRIZIONECOMUNE)
   end
 
   def self.ransackable_attributes(auth_object = nil)
@@ -155,7 +155,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def denominazione
-    ApplicationController.helpers.titleize_con_apostrofi self.DENOMINAZIONESCUOLA
+    titleize(self.DENOMINAZIONESCUOLA)
   end
 
   def adozioni_count
@@ -243,7 +243,7 @@ class ImportScuola < ApplicationRecord
   end
 
   def indirizzo
-    ApplicationController.helpers.titleize_con_apostrofi self.INDIRIZZOSCUOLA
+    titleize(self.INDIRIZZOSCUOLA)
   end
 
   def indirizzo_formattato
@@ -275,31 +275,27 @@ class ImportScuola < ApplicationRecord
   end
 
   def scuola
-    ApplicationController.helpers.titleize_con_apostrofi self.DENOMINAZIONESCUOLA
+    titleize(self.DENOMINAZIONESCUOLA)
   end
 
   def nome_scuola
-    ApplicationController.helpers.titleize_con_apostrofi self.DENOMINAZIONESCUOLA
+    titleize(self.DENOMINAZIONESCUOLA)
   end
 
   def citta
-    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
+    titleize(self.DESCRIZIONECOMUNE)
   end
 
   def citta_scuola
-    ApplicationController.helpers.titleize_con_apostrofi self.DESCRIZIONECOMUNE
+    titleize(self.DESCRIZIONECOMUNE)
   end
 
   def tipo_scuola
-    ApplicationController.helpers.titleize_con_apostrofi(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).gsub(
-      'Non Statale', 'Privata'
-    )
+    titleize(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA).gsub('Non Statale', 'Privata')
   end
 
   def tipo_nome
-    ApplicationController.helpers.titleize_con_apostrofi [self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(' ').gsub(
-      'Non Statale', 'Privata'
-    )
+    titleize([self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, self.DENOMINAZIONESCUOLA].join(' ')).gsub('Non Statale', 'Privata')
   end
 
   def email
@@ -329,5 +325,11 @@ class ImportScuola < ApplicationRecord
   def self.con_appunti(relation)
     ids = relation.pluck(:import_scuola_id).uniq
     ImportScuola.where('import_scuole.id in (?)', ids)
+  end
+
+  private
+
+  def titleize(text)
+    ApplicationController.helpers.titleize_con_apostrofi(text)
   end
 end
