@@ -36,7 +36,7 @@
 				<%= render DropdownComponent.new() do |dropdown| %>
 					<%= dropdown.with_button do %>
 						<%= component 'tax_button',
-								caption: "Stampa",
+								caption: "Stampe",
 								svg_file: "icon-print.svg",
 								color: "white",
 								type: :dropdown
@@ -209,8 +209,8 @@
 			</div>
 
 			<!-- classi -->
-			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller='tax-checkbox-select-all' >
-				<%= render "import_adozioni/form_multi" %>
+			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller="bulk-actions">
+				<%= render "import_adozioni/bulk_actions/form" %>
 				<div>
 					<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
 					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
@@ -218,7 +218,9 @@
 
 					<% @foglio_scuola.classi.order(:classe, :sezione).each do |classe| %>
 						<%= render partial: "classi/classe", locals: { classe: classe } %>
-						<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni_by_classe[classe] || [], as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
+						<div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-2">
+							<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni_by_classe[classe] || [], as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
+						</div>
 						<br/>
 					<% end %>
 				</div>
