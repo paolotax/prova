@@ -5,7 +5,7 @@
         <% unless single_value.blank? %>
           <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
             <span class="mr-2"><%= "#{key.humanize}: #{single_value}" %></span>
-            <%= link_to url_for(request.query_parameters.merge(key => value - [single_value])), 
+            <%= link_to url_for(request.query_parameters.merge(key => value - [single_value])),
                        class: "text-gray-500 hover:text-gray-700" do %>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -28,8 +28,19 @@
     <% end %>
   <% end %>
 
+  <%# Badge Reset (compare solo se ci sono filtri attivi) %>
+  <% if request.query_parameters.except(:page).any? { |k, v| v.present? && (v.is_a?(Array) ? v.any?(&:present?) : true) } %>
+    <%= link_to url_for(request.query_parameters.slice(:page)),
+                class: "inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800 hover:bg-red-200 transition-colors" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Reset
+    <% end %>
+  <% end %>
+
   <%# Badge con il conteggio dei record %>
-  <div id="collection_counter" 
+  <div id="collection_counter"
        data-controller="collection-counter"
        data-collection-counter-total-value="<%= collection.except(:limit, :offset).count %>"
        data-collection-counter-model-name-value="<%= controller_name.classify.constantize.model_name.human(count: 2).gsub("Import", "") %>"
