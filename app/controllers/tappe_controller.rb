@@ -13,15 +13,26 @@ class TappeController < ApplicationController
       @tappe = @tappe.where(tappable_id: @import_scuola.id)
     end
 
-    if params[:giro_id].present?
-      @tappe = @tappe.where(giro_id: params[:giro_id])
+    # Filtro per giri multipli
+    if params[:giro_ids].present?
+      giro_ids = params[:giro_ids].reject(&:blank?).map(&:to_i)
+      if giro_ids.any?
+        @tappe = @tappe.joins(:giri).where(giri: { id: giro_ids }).distinct
+      end
+    elsif params[:giro_id].present?
+      @tappe = @tappe.joins(:giri).where(giri: { id: params[:giro_id] }).distinct
     end
-    
+
     @giro = current_user.giri.find(params[:giro_id]) if params[:giro_id].present?
-    
+
+    # Filtro per range di date
+    if params[:data_inizio].present? && params[:data_fine].present?
+      @tappe = @tappe.where(data_tappa: params[:data_inizio]..params[:data_fine])
+    end
+
     if params[:filter]  == 'programmate'
       @tappe = @tappe.programmate
-    elsif params[:filter]  == 'oggi'    
+    elsif params[:filter]  == 'oggi'
       @tappe = @tappe.di_oggi
     elsif params[:filter]  == 'domani'
       @tappe = @tappe.di_domani
@@ -32,16 +43,39 @@ class TappeController < ApplicationController
     end
 
     @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
-    @tappe = @tappe.search(params[:search]) if params[:search].present? 
+    @tappe = @tappe.search(params[:search]) if params[:search].present?
 
+    # Filtra solo tappe con data
+    @tappe = @tappe.where.not(data_tappa: nil)
+
+    # Applica ordinamento prima del distinct per evitare errori SQL
     if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
       @tappe = @tappe.send(params[:sort])
     else
-      @tappe = @tappe.per_ordine_e_data
+      @tappe = @tappe.order(data_tappa: :asc, position: :asc)
     end
 
-    #inizializzo geared pagination
-    set_page_and_extract_portion_from @tappe
+    # Determina la settimana corrente o quella richiesta
+    if params[:week_offset].present?
+      week_offset = params[:week_offset].to_i
+    else
+      week_offset = 0
+    end
+
+    start_of_week = Date.today.beginning_of_week + week_offset.weeks
+    end_of_week = start_of_week.end_of_week
+
+    # Filtra le tappe per la settimana corrente
+    @tappe = @tappe.where(data_tappa: start_of_week..end_of_week)
+
+    # Informazioni sulla settimana
+    @current_week_start = start_of_week
+    @current_week_end = end_of_week
+    @week_offset = week_offset
+
+    # Raggruppa le tappe per data
+    @tappe_raggruppate = @tappe.group_by { |t| t.data_tappa }
+    @giri_disponibili = current_user.giri.order(created_at: :desc)
 
     respond_to do |format|
       format.html
