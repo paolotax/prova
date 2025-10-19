@@ -7,7 +7,7 @@
     <% dropdown.with_item do %>
         <%= link_to new_appunto_path( import_scuola_id: import_adozione.import_scuola.id,
                                       import_adozione_id: import_adozione.id),
-                        data: hotwire_native_app? ? { turbo_frame: :_top } : { turbo_frame: :modal, action: "click->dialog#open" },
+                        data: hotwire_native_app? ? { turbo_frame: :_top, action: "click->bulk-actions#stopPropagation" } : { turbo_frame: :modal, action: "click->dialog#open click->bulk-actions#stopPropagation" },
                         class: "block px-3 py-1 text-sm leading-6 text-gray-900",
                         role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do %>
 
@@ -17,13 +17,14 @@
 
     <% if import_adozione.mia_adozione? %>
 
-        <% ["saggio", "seguito", "kit"].each do |m| %>
+        <% ["saggio", "kit", "seguito"].each do |m| %>
 
             <!-- scarico saggio -->
             <% dropdown.with_item do %>
                 <%= form_with model: current_user.appunti.build,
                             class: "block px-3 py-1 text-sm leading-6 text-gray-900",
-                            role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2" do |f| %>
+                            role: "menuitem", tabindex: "-1", id: "titolo-menu-item-2",
+                            data: { action: "click->bulk-actions#stopPropagation" } do |f| %>
                     <%= f.hidden_field :import_scuola_id, value: import_adozione.import_scuola.id %>
                     <%= f.hidden_field :import_adozione_id, value: import_adozione.id %>
                     <%= f.hidden_field :nome, value: m %>

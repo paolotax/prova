@@ -1,49 +1,40 @@
  <%# locals: ( import_adozione:, tipo_card: 'classe' ) -%>
- 
-<%= tag.div id: "card-ssk-#{ tipo_card }-#{ dom_id import_adozione }", class: "flex flex-row justify-start" do %>
 
-    <%= tag.div class: [
-        "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs": true,
-        "hidden": import_adozione.saggi.empty?
-        ] do %>
+<%= tag.div id: "card-ssk-#{ tipo_card }-#{ dom_id import_adozione }", class: "flex flex-row justify-start mt-2" do %>
 
-        <% unless import_adozione.saggi.empty? %>
-
-            <%= link_to appunto_path(import_adozione.saggi_ids.compact.first), 
-                data: { turbo_method: :delete } do %> 
+    <% unless import_adozione.saggi.empty? %>
+        <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-red-500 text-white font-semibold text-xs",
+            data: { action: "click->bulk-actions#stopPropagation" } do %>
+            <%= button_to appunto_path(import_adozione.saggi_ids.compact.first),
+                method: :delete,
+                data: { turbo_method: :delete },
+                class: "p-0 m-0 bg-transparent border-0 text-white font-semibold text-xs cursor-pointer" do %>
                 <%= import_adozione.saggi.size %>
             <% end %>
-
         <% end %>
     <% end %>
-    
-    <%= tag.div class: [
-            "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs": true,
-            "hidden": import_adozione.seguiti.empty?
-        ] do %>
 
-        <% unless import_adozione.seguiti.empty? %>
-
-            <%= link_to appunto_path(import_adozione.seguiti_ids.compact.first), 
-                data: { turbo_method: :delete } do %> 
-                <%= import_adozione.seguiti.size %>
-            <% end %>
-
-        <% end %>
-    <% end %>
-    
-    <%= tag.div class: [
-            "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-400 text-white font-semibold text-xs",
-            "hidden": import_adozione.kit.empty?
-        ] do %>
-
-        <% unless import_adozione.kit.empty? %>
-
-            <%= link_to appunto_path(import_adozione.kit_ids.compact.first), 
-                data: { turbo_method: :delete } do %> 
+    <% unless import_adozione.kit.empty? %>
+        <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-pink-400 text-white font-semibold text-xs",
+            data: { action: "click->bulk-actions#stopPropagation" } do %>
+            <%= button_to appunto_path(import_adozione.kit_ids.compact.first),
+                method: :delete,
+                data: { turbo_method: :delete },
+                class: "p-0 m-0 bg-transparent border-0 text-white font-semibold text-xs cursor-pointer" do %>
                 <%= import_adozione.kit.size %>
             <% end %>
-
+        <% end %>
+    <% end %>
+    
+    <% unless import_adozione.seguiti.empty? %>
+        <%= tag.div class: "h-5 w-5 ml-1 p-1 rounded-full font-semibold flex flex-col justify-center items-center cursor-pointer bg-sky-500 text-white font-semibold text-xs",
+            data: { action: "click->bulk-actions#stopPropagation" } do %>
+            <%= button_to appunto_path(import_adozione.seguiti_ids.compact.first),
+                method: :delete,
+                data: { turbo_method: :delete },
+                class: "p-0 m-0 bg-transparent border-0 text-white font-semibold text-xs cursor-pointer" do %>
+                <%= import_adozione.seguiti.size %>
+            <% end %>
         <% end %>
     <% end %>
 

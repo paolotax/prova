@@ -1,55 +1,79 @@
  <%# locals: ( import_adozione:, is_header: true, is_mia: false ) -%>
 
 <%= tag.div id: "card-titolo-#{import_adozione.id}", class: [
-                "py-2 px-2 w-full border rounded-lg": true,
-                "bg-white":  !is_mia,
-                "bg-yellow-200": is_mia   
-            ] do %>
+                "py-2 px-2 w-full border rounded-lg transition-all duration-200": true,
+                "bg-white":  !is_mia && is_header,
+                "bg-yellow-50": is_mia && is_header,
+                "cursor-pointer has-[:checked]:border-4 has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-200 has-[:checked]:bg-blue-50": !is_header && is_mia,
+                "bg-white hover:bg-gray-50": !is_header && is_mia,
+                "bg-yellow-50": is_mia && !is_header
+            ],
+            data: !is_header && is_mia ? { action: "click->bulk-actions#toggle" } : {} do %>
 
     <%= tag.div class: "h-full flex flex-col justify-between" do %>
-        
+
         <%= tag.div class: "flex flex-row justify-between" do %>
-            
-            <% if is_mia && import_adozione.libro %>            
+
+            <% if is_mia && import_adozione.libro %>
                 <%= link_to import_adozione.titolo, import_adozione.libro,
-                    data: { turbo_frame: "_top", turbo_action: "advance"}, 
+                    data: { turbo_frame: "_top", turbo_action: "advance", action: "click->bulk-actions#stopPropagation" },
                     class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
 
             <% else %>
                 <%= link_to import_adozione.titolo, import_adozioni_path(search: import_adozione.CODICEISBN),
-                    data: { turbo_frame: "_top", turbo_action: "advance"}, 
+                    data: { turbo_frame: "_top", turbo_action: "advance", action: "click->bulk-actions#stopPropagation" },
                     class: "text-gray-800 hover:text-sky-500 font-semibold leading-4 pt-1 pb-1.5" %>
             <% end %>
 
             <% unless is_header %>
-                <%= tag.div class: "flex" do %>
+                <%= tag.div class: "flex items-center gap-2" do %>
                     <% if is_mia %>
                         <%= check_box_tag "import_adozione_ids[]", import_adozione.id, nil,
                                 form: "bulk-actions",
-                                class: "mr-2 rounded rounded-full border-2 border-gray-300 h-5 w-5 m-auto col-span-1",
-                                data: { action: "input->bulk-actions#count" } %>
-                    <% end %>
+                                class: "peer sr-only",
+                                data: { action: "input->bulk-actions#count", bulk_actions_target: "checkbox" } %>
 
-                    <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
+                        <!-- Visual feedback when selected -->
+                        <div class="hidden peer-checked:flex items-center justify-center w-6 h-6 border-2 border-blue-500 bg-blue-500 rounded-full">
+                            <svg class="w-4 h-4 text-white"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="3"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+
+                        <!-- Menu dropdown - nascosto quando selezionato -->
+                        <div class="peer-checked:hidden" data-action="click->bulk-actions#stopPropagation">
+                            <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
+                        </div>
+                    <% else %>
+                        <div data-action="click->bulk-actions#stopPropagation">
+                            <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: import_adozione }%>
+                        </div>
+                    <% end %>
                 <% end %>
             <% end %>
         <% end %>
 
         <%= tag.div class: "flex flex-col justify-end text-gray-500 font-semibold text-xs " do %>
             <%= tag.div class: "truncate" do %>
-                <%= link_to import_adozione.editore, import_adozioni_path(editore: import_adozione.EDITORE), 
-                    data: { turbo_frame: "_top", turbo_action: "advance"},
+                <%= link_to import_adozione.editore, import_adozioni_path(editore: import_adozione.EDITORE),
+                    data: { turbo_frame: "_top", turbo_action: "advance", action: "click->bulk-actions#stopPropagation" },
                     class: "hover:text-sky-500  " %>
             <% end %>
             <%= tag.div class: "truncate" do %>
-                <%= link_to import_adozione.disciplina, import_adozioni_path(disciplina: import_adozione.DISCIPLINA, classe: import_adozione.ANNOCORSO ), 
-                    data: { turbo_frame: "_top", turbo_action: "advance"},
+                <%= link_to import_adozione.disciplina, import_adozioni_path(disciplina: import_adozione.DISCIPLINA, classe: import_adozione.ANNOCORSO ),
+                    data: { turbo_frame: "_top", turbo_action: "advance", action: "click->bulk-actions#stopPropagation" },
                     class: "hover:text-sky-500  " %>
             <% end %>
-        <% end %> 
-        
-        <% if is_mia %>
-            
+        <% end %>
+
+        <% if is_mia && !is_header %>
             <%= render partial: "import_adozioni/card_ssk", locals: { import_adozione: import_adozione, tipo_card: "titolo" } %>
         <% end %>
      <% end %>
