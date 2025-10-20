@@ -151,7 +151,7 @@
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-					<option>Classi</option>
+					<option>Le mie per Classe</option>
 					<option>Adozioni</option>
 					<option>Appunti</option>
 					<option>Vendite</option>
@@ -166,10 +166,10 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Classi & Adozioni
+							Le mie Adozioni per Classe
 							<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
-								<%= @foglio_scuola.classi.load.size %>
+								<%= @foglio_scuola.mie_adozioni.load.size %>
 							</span>
 						</a>
 
@@ -212,16 +212,31 @@
 			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller="bulk-actions">
 				<%= render "import_adozioni/bulk_actions/form" %>
 				<div>
-					<p class="only:block hidden py-8 px-4 text-center">Whoops! Le classi ci sono ma per ora non si vedono</p>
-					<%#= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :classe } %>
-					<!-- da fare @classi -->
+					<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>
 
-					<% @foglio_scuola.classi.order(:classe, :sezione).each do |classe| %>
-						<%= render partial: "classi/classe", locals: { classe: classe } %>
-						<div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-2">
-							<%= render partial: "import_adozioni/card_titolo", collection: @foglio_scuola.mie_adozioni_by_classe[classe] || [], as: :import_adozione, locals: { is_mia: true, is_header: false }  %>
+					<% @foglio_scuola.mie_adozioni.group_by { |a| [a.ANNOCORSO, a.SEZIONEANNO, a.COMBINAZIONE] }.each do |(anno, sezione, combinazione), classe_adozioni| %>
+						<div class="my-3 px-2 grid grid-cols-5 gap-2">
+
+							<!-- header classe -->
+							<div class="col-span-1">
+								<%= render partial: "import_adozioni/card_classe", locals: {
+									import_adozione: classe_adozioni.first,
+									is_header: true,
+									is_mia: true
+								} %>
+							</div>
+
+							<!-- titoli -->
+							<div class="col-span-4 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+								<% classe_adozioni.sort_by { |a| a.TITOLO }.each do |a| %>
+									<%= render partial: "import_adozioni/card_titolo", locals: {
+										import_adozione: a,
+										is_header: false,
+										is_mia: true
+									} %>
+								<% end %>
+							</div>
 						</div>
-						<br/>
 					<% end %>
 				</div>
 			</div>

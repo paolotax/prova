@@ -55,30 +55,36 @@ class TappeController < ApplicationController
       @tappe = @tappe.order(data_tappa: :asc, position: :asc)
     end
 
-    # Determina la settimana corrente o quella richiesta
-    if params[:week_offset].present?
-      week_offset = params[:week_offset].to_i
-    else
-      week_offset = 0
+    # Determina la settimana corrente o quella richiesta (solo se NON viene chiamato da import_scuola)
+    unless params[:import_scuola_id].present?
+      if params[:week_offset].present?
+        week_offset = params[:week_offset].to_i
+      else
+        week_offset = 0
+      end
+
+      start_of_week = Date.today.beginning_of_week + week_offset.weeks
+      end_of_week = start_of_week.end_of_week
+
+      # Filtra le tappe per la settimana corrente
+      @tappe = @tappe.where(data_tappa: start_of_week..end_of_week)
+
+      # Informazioni sulla settimana
+      @current_week_start = start_of_week
+      @current_week_end = end_of_week
+      @week_offset = week_offset
     end
-
-    start_of_week = Date.today.beginning_of_week + week_offset.weeks
-    end_of_week = start_of_week.end_of_week
-
-    # Filtra le tappe per la settimana corrente
-    @tappe = @tappe.where(data_tappa: start_of_week..end_of_week)
-
-    # Informazioni sulla settimana
-    @current_week_start = start_of_week
-    @current_week_end = end_of_week
-    @week_offset = week_offset
 
     # Raggruppa le tappe per data
     @tappe_raggruppate = @tappe.group_by { |t| t.data_tappa }
     @giri_disponibili = current_user.giri.order(created_at: :desc)
 
     respond_to do |format|
-      format.html
+      format.html do
+        if params[:import_scuola_id].present? && params[:sort] == "per_data"
+          render partial: "tappe_scuola", locals: { tappe: @tappe }
+        end
+      end
       format.xlsx
       format.turbo_stream
     end
