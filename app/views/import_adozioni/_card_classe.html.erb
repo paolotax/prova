@@ -2,11 +2,15 @@
 
 <%= tag.div class: [
                 "py-2 px-2 w-full border rounded-lg transition-all duration-200": true,
-                "bg-white":  !is_mia && is_header,
-                "bg-yellow-50": is_mia && is_header,
+                # NON mie - sempre bianche
+                "bg-white": !is_mia,
+                # MIE da acquistare - giallo acceso
+                "bg-yellow-200": is_mia && import_adozione.respond_to?(:da_acquistare?) && import_adozione.da_acquistare?,
+                # MIE non da acquistare - giallo pallido
+                "bg-yellow-50": is_mia && (!import_adozione.respond_to?(:da_acquistare?) || !import_adozione.da_acquistare?),
+                # Quando selezionate
                 "cursor-pointer has-[:checked]:border-4 has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-200 has-[:checked]:bg-blue-50": !is_header && is_mia,
-                "bg-white hover:bg-gray-50": !is_header && is_mia,
-                "bg-yellow-50": is_mia && !is_header
+                "hover:brightness-95": !is_header
             ],
             data: !is_header && is_mia ? { action: "click->bulk-actions#toggle" } : {} do %>
 

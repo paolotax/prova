@@ -29,6 +29,7 @@ module Scuole
     # Optimized: Group by classe to avoid N+1 queries in the view
     def mie_adozioni_by_classe
       @mie_adozioni_by_classe ||= user.mie_adozioni
+                                      .select('import_adozioni.*')
                                       .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
                                       .where(CODICESCUOLA: scuola.CODICESCUOLA)
                                       .group_by(&:classe)
@@ -37,6 +38,7 @@ module Scuole
     # Keep the original method for compatibility
     def mie_adozioni
       @mie_adozioni ||= user.mie_adozioni
+                          .select('import_adozioni.*')
                           .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
                           .where(CODICESCUOLA: scuola.CODICESCUOLA)
     end

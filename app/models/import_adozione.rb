@@ -212,6 +212,7 @@ class ImportAdozione < ApplicationRecord
   end
 
   def da_acquistare?
+    return false unless has_attribute?(:DAACQUIST)
     self.DAACQUIST == 'Si'
   end
 
