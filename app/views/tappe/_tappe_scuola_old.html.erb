@@ -1,0 +1,45 @@
+<%= turbo_frame_tag :tappe_list, class: "group show-scuola pl-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1" do %>
+	<% if tappe.any? %>
+		<% anno_corrente = Date.today.year %>
+		<% tappe_anno_corrente = tappe.select { |t| t.data_tappa&.year == anno_corrente } %>
+		<% tappe_anni_precedenti = tappe.select { |t| t.data_tappa&.year && t.data_tappa.year < anno_corrente } %>
+
+		<div class="contents" data-controller="tax-reveal">
+			<% if tappe_anni_precedenti.any? %>
+				<!-- Bottone per mostrare/nascondere tappe precedenti -->
+				<div class="col-span-full flex justify-center py-4">
+					<button type="button"
+							data-action="click->tax-reveal#toggle"
+							class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						2024 (<%= tappe_anni_precedenti.size %>)
+					</button>
+				</div>
+
+				<!-- Tappe anni precedenti (nascoste di default) -->
+				<div data-tax-reveal-target="item" class="hidden col-span-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
+					<%= render partial: "tappe/tappa", collection: tappe_anni_precedenti, as: :tappa, locals: { with_checkbox: false, with_handle: false } %>
+				</div>
+			<% end %>
+
+			<% if tappe_anno_corrente.any? %>
+								<div class="col-span-full flex justify-center py-4">
+					<button type="button"
+							class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						2025 (<%= tappe_anni_precedenti.size %>)
+					</button>
+				</div>
+				<%= render partial: "tappe/tappa", collection: tappe_anno_corrente, as: :tappa, locals: { with_checkbox: false, with_handle: false } %>
+			<% end %>
+
+			<% if tappe_anno_corrente.empty? && tappe_anni_precedenti.empty? %>
+				<div class="col-span-full flex justify-center items-center py-8 text-gray-500">
+					Nessuna tappa per questa scuola
+				</div>
+			<% end %>
+		</div>
+	<% else %>
+		<div class="col-span-full flex justify-center items-center py-8 text-gray-500">
+			Nessuna tappa per questa scuola
+		</div>
+	<% end %>
+<% end %>
