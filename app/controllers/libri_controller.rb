@@ -126,13 +126,13 @@ class LibriController < ApplicationController
 
   def destroy
     @libro.destroy!
+
     respond_to do |format|
-      # format.turbo_stream do
-      #   render turbo_stream: turbo_stream.remove(@libro)
-      #   flash.now[:notice] = "Libro eliminato." 
-      # end 
-      format.html { redirect_to libro_url(@libro.next), status: :see_other, alert: "Libro eliminato!" }
-      format.json { head :no_content }
+      format.turbo_stream do
+        flash.now[:notice] = "Libro eliminato."
+        render turbo_stream: turbo_stream.remove(@libro)
+      end
+      format.html { redirect_to libri_url, notice: "Libro eliminato.", status: :see_other }
     end
   end
 
