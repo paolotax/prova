@@ -79,7 +79,12 @@ Rails.application.routes.draw do
 
   resources :causali
 
-  resources :campionario, only: [:show]
+  resources :campionario, only: [:show] do
+    member do
+      post :genera_saggi
+      post :genera_saggi_50
+    end
+  end
 
   resources :documento_righe, only: %i[new destroy] do
     member do
