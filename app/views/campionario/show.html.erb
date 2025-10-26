@@ -1,0 +1,178 @@
+<% content_for :title, "Confronto Campionario - Resa" %>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Confronto Campionario - Resa</h1>
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Info Campionario -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Campionario</h2>
+          <dl class="space-y-1">
+            <div class="flex justify-between">
+              <dt class="text-sm font-medium text-gray-500">Numero:</dt>
+              <dd class="text-sm text-gray-900"><%= @campionario.numero_documento %></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-sm font-medium text-gray-500">Data:</dt>
+              <dd class="text-sm text-gray-900"><%= @campionario.data_documento.strftime('%d/%m/%Y') rescue "---" %></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-sm font-medium text-gray-500">Cliente:</dt>
+              <dd class="text-sm text-gray-900"><%= @campionario.clientable&.denominazione || "---" %></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-sm font-medium text-gray-500">Totale Copie:</dt>
+              <dd class="text-sm text-gray-900 font-semibold"><%= @campionario.totale_copie || 0 %></dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Info Resa -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-semibold text-gray-900">Resa</h2>
+            <% if @resa.nil? %>
+              <%= link_to "Crea Resa",
+                  new_documento_path(
+                    causale_id: Causale.find_by(causale: "Campionario Resa")&.id,
+                    numero_documento: @campionario.numero_documento,
+                    data_documento: @campionario.data_documento,
+                    clientable_type: @campionario.clientable_type,
+                    clientable_id: @campionario.clientable_id
+                  ),
+                  class: "inline-flex items-center px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow transition-colors duration-150" %>
+            <% end %>
+          </div>
+          <% if @resa.present? %>
+            <dl class="space-y-1">
+              <div class="flex justify-between">
+                <dt class="text-sm font-medium text-gray-500">Numero:</dt>
+                <dd class="text-sm text-gray-900"><%= @resa.numero_documento %></dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-sm font-medium text-gray-500">Data:</dt>
+                <dd class="text-sm text-gray-900"><%= @resa.data_documento.strftime('%d/%m/%Y') rescue "---" %></dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-sm font-medium text-gray-500">Cliente:</dt>
+                <dd class="text-sm text-gray-900"><%= @resa.clientable&.denominazione || "---" %></dd>
+              </div>
+              <div class="flex justify-between">
+                <dt class="text-sm font-medium text-gray-500">Totale Copie:</dt>
+                <dd class="text-sm text-gray-900 font-semibold"><%= @resa.totale_copie || 0 %></dd>
+              </div>
+              <div class="mt-2">
+                <%= link_to "Vedi Documento",
+                    documento_path(@resa),
+                    class: "text-sm text-blue-600 hover:text-blue-700 font-medium" %>
+              </div>
+            </dl>
+          <% else %>
+            <p class="text-sm text-gray-500 italic">Nessuna resa trovata per questo campionario</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabella Confronto -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Titolo
+              </th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Qta Campionario
+              </th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Qta Resa
+              </th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Differenza
+              </th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Azioni
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @confronto.each do |row| %>
+              <% qta_campionario = row[:riga_campionario]&.quantita || 0 %>
+              <% qta_resa = row[:riga_resa]&.quantita || 0 %>
+              <% differenza = qta_campionario - qta_resa %>
+              <tr class="<%= 'bg-yellow-50' if differenza != 0 %>">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= row[:libro].titolo %></div>
+                  <div class="text-xs text-gray-500"><%= row[:libro].codice_isbn %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <span class="text-sm font-semibold text-gray-900"><%= qta_campionario %></span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <% if row[:riga_resa].present? %>
+                    <span class="text-sm font-semibold text-gray-900"><%= qta_resa %></span>
+                  <% else %>
+                    <span class="text-sm text-gray-400">---</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <% if differenza < 0 %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      <%= differenza %>
+                    </span>
+                  <% elsif differenza > 0 %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      +<%= differenza.abs %>
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      OK
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                  <% if @resa.present? %>
+                    <% if row[:riga_resa].present? %>
+                      <%= link_to "Modifica",
+                          edit_documento_path(@resa, anchor: "riga_#{row[:riga_resa].id}"),
+                          class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                    <% else %>
+                      <%= link_to "Aggiungi",
+                          edit_documento_path(@resa, add_libro_id: row[:libro].id),
+                          class: "text-green-600 hover:text-green-900 font-medium" %>
+                    <% end %>
+                  <% else %>
+                    <span class="text-gray-400">---</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6 flex gap-3">
+      <%= link_to "Indietro",
+          :back,
+          class: "inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg shadow transition-colors duration-150" %>
+
+      <%= link_to "Vedi Campionario",
+          documento_path(@campionario),
+          class: "inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition-colors duration-150" %>
+
+      <% if @resa.present? %>
+        <%= link_to "Modifica Resa",
+            edit_documento_path(@resa),
+            class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow transition-colors duration-150" %>
+      <% end %>
+    </div>
+
+  </div>
+</div>

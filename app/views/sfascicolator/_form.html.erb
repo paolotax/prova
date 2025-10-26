@@ -1,16 +1,40 @@
 <%= form_with url: sfascicola_path, method: :post do |f| %>
     <%= hidden_field_tag "sfascicolator[documento_id]", documento.id %>
-    <div class="flex flex-row gap-4 items-center">
-        <div class="w-full my-5 cb-tax cb-font-size-sm flex flex-col gap-2" id="select-clientable">
-            <%= combobox_tag "sfascicolator[libro_id]", current_user.libri.with_fascicoli.order(:titolo).all, 
-                    placeholder: "aggiungi fascicolo...",
-                    mobile_at: "0px" %>
-        </div>
+    <div class="flex flex-row gap-4 items-end mb-5">
+        <fieldset class="w-full cb-tax cb-font-size-sm flex flex-col gap-2" id="select-clientable">
+            <%= label_tag "sfascicolator[libro_id]", "Scegli il libro e carica tutti i suoi fascicoli", class: "text-xs font-medium text-gray-700" %>
 
-        <%= f.button type: "submit", class: "h-7 w-7 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <%= combobox_tag "sfascicolator[libro_id]", current_user.libri.with_fascicoli.order(:titolo).all,
+                    placeholder: "aggiungi i fascicoli di questo libro/kit...",
+                    mobile_at: "0px" %>
+        </fieldset>
+
+        <fieldset class="flex flex-col justify-between items-center w-24 mb-0.5">
+            <%= label_tag "sfascicolator[quantita]", "Quantità", class: "text-xs font-medium text-gray-700" %>
+            <%= number_field_tag "sfascicolator[quantita]", 1,
+                    min: 0,
+                    class: [
+                        "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                        "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                    ] %>
+        </fieldset>
+
+        <fieldset class="flex flex-col justify-between items-center w-24 mb-0.5">
+            <%= label_tag "sfascicolator[sconto]", "Sconto", class: "text-xs font-medium text-gray-700" %>
+            <%= number_field_tag "sfascicolator[sconto]", 0,
+                    min: 0,
+                    max: 100,
+                    step: 0.01,
+                    class: [
+                        "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
+                        "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
+                    ] %>
+        </fieldset>
+
+        <%= f.button type: "submit", class: "h-9 w-9 mb-0.5 rounded-full bg-indigo-600 p-1 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+            <svg class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-            </svg>            
-        <% end%>  
+            </svg>
+        <% end%>
     </div>
 <% end %>

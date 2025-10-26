@@ -79,6 +79,8 @@ Rails.application.routes.draw do
 
   resources :causali
 
+  resources :campionario, only: [:show]
+
   resources :documento_righe, only: %i[new destroy] do
     member do
       patch 'update_posizione'
