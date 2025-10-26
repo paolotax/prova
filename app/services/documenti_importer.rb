@@ -103,7 +103,11 @@ class DocumentiImporter
       else
         @imported_count = righe_importate
         @documento = documento
-        
+
+        # Ricalcola totali del documento dopo tutte le importazioni
+        documento.reload
+        documento.ricalcola_totali!
+
         if righe_saltate.any?
           errors.add(:base, "#{righe_saltate.count} righe non importate (articoli non trovati nel catalogo)")
           righe_saltate.first(5).each do |riga|
@@ -203,6 +207,12 @@ class DocumentiImporter
       if righe_con_errori.count > 5
         errors.add(:base, "... e altre #{righe_con_errori.count - 5} righe con errori")
       end
+    end
+
+    # Ricalcola totali del documento dopo tutte le importazioni
+    if documento.present?
+      documento.reload
+      documento.ricalcola_totali!
     end
 
   end
