@@ -1,16 +1,10 @@
 <% content_for :title, "Importazione Completata" %>
 
-<% content_for :header do %>
-  <div class="max-w-4xl mx-auto">
-    <%= component "heading/with_actions" do |heading| %>
-        <%= h1 {"Importazione Completata"} %>
-    <% end %>
-  </div>
-<% end %>
-
 <div class="container mx-auto px-4 py-8">
   <div class="max-w-4xl mx-auto">
-    
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Importazione Completata</h1>
+
     <!-- Box Risultati Principali -->
     <div class="bg-gradient-to-r <%= @import.errors.any? ? 'from-yellow-50 to-yellow-100 border-yellow-300' : 'from-green-50 to-green-100 border-green-300' %> border-2 rounded-xl p-8 mb-6 shadow-lg">
       <div class="flex items-center gap-4 mb-6">

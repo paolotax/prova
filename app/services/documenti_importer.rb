@@ -84,7 +84,7 @@ class DocumentiImporter
         if libro
           documento.documento_righe.build(posizione: posizione).build_riga(
             libro_id:  libro.id,              
-            prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i,
+            prezzo_cents:  (element.xpath("./PrezzoUnitario").text.to_f * 100).to_i || 0,
             quantita:  quantita,
             sconto:  element.xpath("./ScontoMaggiorazione/Percentuale").text || 0.0
           )
@@ -123,25 +123,66 @@ class DocumentiImporter
 
   def import_excel!
     xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: ";" } })
-    xlsx.default_sheet = xlsx.sheets.first 
-    
-    header = xlsx.row(1) 
+    xlsx.default_sheet = xlsx.sheets.first
+
+    header = xlsx.row(1)
     header.map! { |h| h.downcase.gsub(" ", "_").to_sym }
 
     documento = Current.user.documenti.find(documento_id)
+    righe_con_errori = []
 
-    2.upto(xlsx.last_row) do |line|  
+    2.upto(xlsx.last_row) do |line|
       row_data = Hash[header.zip xlsx.row(line)]
 
       codice   = row_data[:codice_isbn] || row_data[:ean] || row_data[:isbn]
-      libro    = Current.user.libri.find_by(codice_isbn: codice)
-      quantita = row_data[:quantita] || row_data[:qta]
-      sconto   = row_data[:sconto] || 0.0
-      
+
+      # Salta la riga se non c'è un codice ISBN
+      if codice.blank?
+        @errors_count += 1
+        righe_con_errori << "Riga #{line}: Codice ISBN mancante"
+        next
+      end
+
+      libro = Current.user.libri.find_by(codice_isbn: codice)
+
+      # Se il libro non esiste, crealo con dati minimi
+      unless libro
+        titolo = row_data[:titolo] || row_data[:descrizione] || "Libro #{codice}"
+        categoria = Categoria.find_or_create_by(nome_categoria: "Da completare", user_id: Current.user.id)
+
+        libro = Current.user.libri.create(
+          codice_isbn: codice,
+          titolo: titolo,
+          categoria: categoria,
+          prezzo_in_cents: row_data[:prezzo].present? ? (row_data[:prezzo].to_f * 100).to_i : 0
+        )
+
+        unless libro.persisted?
+          @errors_count += 1
+          righe_con_errori << "Riga #{line}: Impossibile creare libro - #{libro.errors.full_messages.join(", ")}"
+          next
+        end
+      end
+
+      # Quantità: usa quella del file, se mancante usa 1
+      quantita = row_data[:quantità] || row_data[:quantita] || row_data[:qta] || 1
+
+      # Prezzo: usa quello del file, se mancante usa quello del libro, se nuovo record usa 0
+      if row_data[:prezzo].present?
+        prezzo_cents = (row_data[:prezzo].to_f * 100).to_i
+      elsif libro&.prezzo_in_cents.present?
+        prezzo_cents = libro.prezzo_in_cents
+      else
+        prezzo_cents = 0
+      end
+
+      # Sconto: usa quello del file, se mancante usa 0.0
+      sconto = row_data[:sconto].present? ? row_data[:sconto].to_f : 0.0
+
       documento_riga = documento.documento_righe.build
 
-      riga = documento_riga.build_riga(libro: libro, sconto: sconto, quantita: quantita)
-           
+      riga = documento_riga.build_riga(libro: libro, sconto: sconto, quantita: quantita, prezzo_cents: prezzo_cents)
+
       assign_from_row_2(row_data, riga)
 
       if documento_riga.save
@@ -149,11 +190,21 @@ class DocumentiImporter
           @documento = documento
       else
         @errors_count += 1
-        errors.add(:base, "Riga #{line}: #{riga.errors.full_messages.join(", ")}")
+        righe_con_errori << "Riga #{line}: #{riga.errors.full_messages.join(", ")}"
         #return false
       end
     end
-  
+
+    if righe_con_errori.any?
+      errors.add(:base, "#{righe_con_errori.count} righe con errori")
+      righe_con_errori.first(5).each do |errore|
+        errors.add(:base, errore)
+      end
+      if righe_con_errori.count > 5
+        errors.add(:base, "... e altre #{righe_con_errori.count - 5} righe con errori")
+      end
+    end
+
   end
 
   def flash_message
@@ -180,11 +231,18 @@ class DocumentiImporter
 
     def assign_from_row_2(row, riga)
       row.keys.each do |key|
-          
-        row[key] = check_prezzo(row[key]) if key == :prezzo
+        # Salta chiavi che non vogliamo sovrascrivere
+        next if [:codice_isbn, :ean, :isbn, :quantità, :quantita, :qta].include?(key)
 
-        if riga.respond_to?("#{key}=") 
-          riga.send("#{key}=", row[key])
+        value = row[key]
+
+        # Salta valori nil o blank
+        next if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+        value = check_prezzo(value) if key == :prezzo
+
+        if riga.respond_to?("#{key}=")
+          riga.send("#{key}=", value)
         end
       end
     end

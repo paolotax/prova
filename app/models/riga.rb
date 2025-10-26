@@ -40,14 +40,17 @@ class Riga < ApplicationRecord
   end
 
   def prezzo_scontato
+    return 0 if prezzo_cents.nil?
     (prezzo_cents - (prezzo_cents * (sconto || 0.0)) / 100.0)
   end
 
   def importo
+    return 0.0 if prezzo_cents.nil? || quantita.nil?
     (prezzo_scontato * quantita) / 100.0
   end
 
   def importo_cents
+    return 0 if prezzo_cents.nil? || quantita.nil?
     sconto_cents = ((prezzo_cents * (sconto || 0.0)) / 100.0)
     (prezzo_cents - sconto_cents) * quantita
   end
@@ -60,6 +63,8 @@ class Riga < ApplicationRecord
 
     def set_default_value
       self.sconto ||= 0.0
+      self.prezzo_cents ||= 0
+      self.quantita ||= 1
     end
 
     def aggiorna_totali_documenti

@@ -170,6 +170,14 @@ class LibriImporter
         end
       end
 
+      # Gestione editore (dopo il loop per evitare conflitti)
+      # Cerca solo l'editore esistente, non lo crea se non trovato
+      if row[:editore].present? || row["editore"].present?
+        nome_editore = row[:editore] || row["editore"]
+        editore = Editore.find_by(editore: nome_editore)
+        libro.editore = editore if editore
+      end
+
       # Gestione categoria (dopo il loop per evitare conflitti)
       if row[:categoria].present? || row["categoria"].present?
         nome_categoria = row[:categoria] || row["categoria"]
