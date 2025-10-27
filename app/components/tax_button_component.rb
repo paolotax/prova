@@ -4,7 +4,7 @@ class TaxButtonComponent < ViewComponent::Base
   
   attr_reader :caption, :svg_file, :color, :url, :data_attr, :style, :target, :type
   
-  def initialize(caption: nil, svg_file: nil, color:, url: nil, data_attr: {}, enabled: true, style: nil, target: nil, type: :link, orientation: "vertical")      
+  def initialize(caption: nil, svg_file: nil, color:, url: nil, data_attr: {}, enabled: true, style: nil, target: nil, type: :link, orientation: "vertical", onclick: nil)      
     @caption = caption
     @svg_file = svg_file
     @color = color
@@ -14,6 +14,7 @@ class TaxButtonComponent < ViewComponent::Base
     @style = style
     @target = target
     @type = type
+    @onclick = onclick
     if caption == "Elimina"
       @style = :button
     end
@@ -22,7 +23,7 @@ class TaxButtonComponent < ViewComponent::Base
 
   def css_class
     class_names(
-      "flex sm:flex-col items-center gap-x-2
+      "flex 2xl:flex-col items-center gap-x-2
         text-sm text-center font-semibold cursor-pointer 
         transition duration-150 ease-in-out
         focus:outline focus:outline-2 focus:outline-offset-2": true,

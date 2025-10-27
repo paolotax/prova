@@ -5,7 +5,7 @@
 		
 		<div class="flex gap-4">
 			
-			<div class="flex items-start">
+			<div class="flex-shrink-0 items-start">
 				<%= render "copertina", libro: @libro %>
 			</div>
 			
@@ -52,37 +52,19 @@
 		</div>
 
 		<div class="flex items-start gap-2 justify-end">
-			<% if @libro.can_delete? %>
-								
-				<%= button_to libro_path(@libro),
-							method: :delete,
-							form: { data: { turbo_prefetch: false, turbo: false } },
-							onclick: "return confirm('Sei sicuro di voler eliminare questo libro?')",
-							class: "flex sm:flex-col items-center gap-x-2
-								text-sm text-center font-semibold cursor-pointer
-								transition duration-150 ease-in-ou
-								rounded-md shadow-md  py-2 px-3
-									focus:outline focus:outline-2 focus:outline-offset-2
-								bg-red-600 text-white hover:bg-red-500
-								active:bg-red-600 focus:outline-red-600" do %>
-					<%= icon "trash" %>
-					Elimina
-				<% end %>
-				
-				<%#= component 'tax_button',
+			
+			<% if @libro.can_delete? %>						
+				<%= component 'tax_button',
+					type: :button,
 					caption: "Elimina",
 					svg_file: "icon-trash-real.svg",
 					color: "red",
 					url: url_for( controller: "libri", action: "destroy", model: @libri, method: :delete ),
+					onclick: "return confirm('Sei sicuro di voler eliminare questo libro?')",
 					data_attr: {
-						turbo_method: "delete",
-						turbo_confirm: "Vuoi veramente eliminare questo Libro?",
-						turbo_confirm_theme: "",
-						turbo_confirm_confirm_label: "Si, eliminalo!",
-						turbo_confirm_cancel_label: "Oops, no annulla…",
+						turbo_prefetch: false,
+						turbo: false,
 					} %>
-
-
 			<% end %>
 
 			<%= component 'tax_button',
