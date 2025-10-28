@@ -1,0 +1,19 @@
+wb = xlsx_package.workbook
+
+fields = ["confezione_isbn", "confezione_titolo", "fascicolo_isbn", "fascicolo_titolo", "row_order"]
+
+wb.add_worksheet(name: "Confezioni") do |sheet|
+
+  sheet.add_row fields
+
+  @confezioni.each do |row|
+    sheet.add_row [
+      row["confezione_isbn"],
+      row["confezione_titolo"],
+      row["fascicolo_isbn"],
+      row["fascicolo_titolo"],
+      row["row_order"]
+    ], types: [:string, :string, :string, :string, :integer]
+  end
+
+end

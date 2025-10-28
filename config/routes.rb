@@ -95,6 +95,8 @@ Rails.application.routes.draw do
   resources :libri_importer, only: [:new, :create, :show] do
     collection do
       post 'import_ministeriali'
+      post 'import_confezioni'
+      get 'export_confezioni'
     end
   end
 

@@ -1,7 +1,7 @@
 
 
 <div class="sticky not-hotwire-native:top-20 z-10">
-	<div class="mb-4 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 bg-white p-4 rounded-lg justify-between shadow-lg">
+	<div class="mb-4 flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 bg-white p-4 rounded-lg justify-between shadow-lg">
 		
 		<div class="flex gap-4">
 			
@@ -17,7 +17,18 @@
 
 				<%= tag.div class: "flex flex-col sm:flex-row sm:items-center gap-2" do %>
 					<%= tag.div @libro.codice_isbn, class: "text-sm font-semibold text-gray-500" %>
-					<%= tag.div number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500"  %>
+					<%= tag.div class: "flex items-center gap-2" do %>
+						<%= tag.div do %>
+							<%= tag.span "Copertina: ", class: "text-xs text-gray-400" %>
+							<%= tag.span number_to_currency(@libro.prezzo), class: "text-sm font-semibold text-red-500" %>
+						<% end %>
+						<% if @libro.prezzo_suggerito_cents.present? && @libro.prezzo_suggerito_cents > 0 %>
+							<%= tag.div class: "border-l border-gray-300 pl-2" do %>
+								<%= tag.span "Suggerito: ", class: "text-xs text-gray-400" %>
+								<%= tag.span number_to_currency(@libro.prezzo_suggerito), class: "text-sm font-semibold text-blue-500" %>
+							<% end %>
+						<% end %>
+					<% end %>
 					<%= tag.div @libro.categoria&.nome_categoria, class: "text-sm font-semibold text-gray-400"  %>
 				<% end %>
 
@@ -38,7 +49,7 @@
 					<%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
 				<% end %>
 
-				<%= tag.div class:"hidden sm:block" do %>
+				<%= tag.div class:"hidden md:block" do %>
 					<%= turbo_frame_tag "confezione_#{@libro.id}",
 						src: fascicoli_libro_path(@libro),
 						refresh: "morph",

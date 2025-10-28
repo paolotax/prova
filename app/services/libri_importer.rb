@@ -2,14 +2,15 @@ class LibriImporter
 
   include ActionView::Helpers::TextHelper
   include ActiveModel::Model
-  
-  attr_accessor :file, :imported_count, :updated_count, :errors_count, :import_method
+
+  attr_accessor :file, :imported_count, :updated_count, :errors_count, :import_method, :created_count
 
   def initialize(attributes = {})
     super
     @imported_count = 0
     @updated_count = 0
     @errors_count = 0
+    @created_count = 0
   end
 
   def process!
@@ -106,14 +107,84 @@ class LibriImporter
   
   end
   
+  def import_confezioni_excel!
+    xlsx = Roo::Spreadsheet.open(file.path)
+    xlsx.default_sheet = xlsx.sheets.first
+
+    header = xlsx.row(1)
+    header.map! { |h| h.downcase.gsub(" ", "_").to_sym }
+
+    user_id = Current.user.id
+
+    2.upto(xlsx.last_row) do |line|
+      row_data = Hash[header.zip xlsx.row(line)]
+
+      confezione_isbn = row_data[:confezione_isbn]
+      fascicolo_isbn = row_data[:fascicolo_isbn]
+      row_order = row_data[:row_order].to_i
+
+      # Trova i libri dell'utente corrente usando gli ISBN
+      confezione = Libro.find_by(codice_isbn: confezione_isbn, user_id: user_id)
+      fascicolo = Libro.find_by(codice_isbn: fascicolo_isbn, user_id: user_id)
+
+      if confezione.nil?
+        @errors_count += 1
+        errors.add(:base, "Riga #{line}: Libro confezione con ISBN #{confezione_isbn} non trovato")
+        next
+      end
+
+      if fascicolo.nil?
+        @errors_count += 1
+        errors.add(:base, "Riga #{line}: Libro fascicolo con ISBN #{fascicolo_isbn} non trovato")
+        next
+      end
+
+      # Verifica se la relazione esiste già
+      existing = ConfezioneRiga.find_by(
+        confezione_id: confezione.id,
+        fascicolo_id: fascicolo.id
+      )
+
+      if existing
+        # Aggiorna il row_order se necessario
+        if existing.row_order != row_order
+          # Usa update_column per bypassare i callback di positioned
+          existing.update_column(:row_order, row_order)
+          @updated_count += 1
+        end
+      else
+        # Crea nuova relazione con row_order specifico
+        confezione_riga = ConfezioneRiga.new(
+          confezione_id: confezione.id,
+          fascicolo_id: fascicolo.id
+        )
+
+        # Salva prima senza row_order (positioned lo assegnerà automaticamente)
+        if confezione_riga.save
+          # Poi imposta il row_order corretto bypassando i callback
+          confezione_riga.update_column(:row_order, row_order) if row_order.present?
+          @created_count += 1
+        else
+          @errors_count += 1
+          errors.add(:base, "Riga #{line}: #{confezione_riga.errors.full_messages.join(", ")}")
+        end
+      end
+    end
+  end
+
   def flash_message
-    if @imported_count > 0 || @updated_count > 0 || @errors_count > 0
-      pluralize(@imported_count, 'libro importato', 'libri importati') + " e " + 
-      pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') + " e " + 
-      pluralize(@errors_count, 'libro errato', 'libri errati') + 
-      " " + errors.full_messages[0..10].join(", ").html_safe
+    if @imported_count > 0 || @updated_count > 0 || @errors_count > 0 || @created_count > 0
+      parts = []
+      parts << pluralize(@imported_count, 'libro importato', 'libri importati') if @imported_count > 0
+      parts << pluralize(@updated_count, 'libro aggiornato', 'libri aggiornati') if @updated_count > 0
+      parts << pluralize(@created_count, 'confezione creata', 'confezioni create') if @created_count > 0
+      parts << pluralize(@errors_count, 'errore', 'errori') if @errors_count > 0
+
+      message = parts.join(" e ")
+      message += " " + errors.full_messages[0..10].join(", ").html_safe if errors.any?
+      message
     else
-      "Nessun libro importato"
+      "Nessun dato importato"
     end
   end
 
@@ -158,11 +229,16 @@ class LibriImporter
         libro.prezzo = check_prezzo(row[:prezzo]) || 0.0
       end
 
+      if row[:prezzo_suggerito].present?
+        libro.prezzo_suggerito = check_prezzo(row[:prezzo_suggerito]) || 0.0
+      end
+
       row.keys.each do |key|
         key_str = key.to_s
         next if key_str == "editore"
         next if key_str == "titolo"
         next if key_str == "prezzo"
+        next if key_str == "prezzo_suggerito"
         next if key_str == "categoria"
 
         if libro.respond_to?("#{key}=")

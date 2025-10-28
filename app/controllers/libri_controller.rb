@@ -16,7 +16,7 @@ class LibriController < ApplicationController
   def scarico_fascicoli
     @libri = current_user.libri.scarico_fascicoli
     respond_to do |format|
-      format.xlsx 
+      format.xlsx
     end
   end
 
