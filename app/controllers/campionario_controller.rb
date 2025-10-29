@@ -43,21 +43,33 @@ class CampionarioController < ApplicationController
 
     # Prepara i dati per il confronto
     # Creo una struttura con tutti i libri presenti in campionario, resa, saggi e saggi_50
-    campionario_righe = @campionario.righe.to_a.index_by(&:libro_id)
-    resa_righe = @resa&.righe&.to_a&.index_by(&:libro_id) || {}
-    saggi_righe = @saggi&.righe&.to_a&.index_by(&:libro_id) || {}
-    saggi_50_righe = @saggi_50&.righe&.to_a&.index_by(&:libro_id) || {}
+    # Uso group_by invece di index_by per gestire righe duplicate per lo stesso libro_id
+    campionario_righe = @campionario.righe.to_a.group_by(&:libro_id)
+    resa_righe = @resa&.righe&.to_a&.group_by(&:libro_id) || {}
+    saggi_righe = @saggi&.righe&.to_a&.group_by(&:libro_id) || {}
+    saggi_50_righe = @saggi_50&.righe&.to_a&.group_by(&:libro_id) || {}
 
     # Unisco tutti i libro_id
     libro_ids = (campionario_righe.keys + resa_righe.keys + saggi_righe.keys + saggi_50_righe.keys).uniq.compact
 
     @confronto = libro_ids.map do |libro_id|
+      # Per ogni libro, prendo tutte le righe e sommo le quantità
+      righe_camp = campionario_righe[libro_id] || []
+      righe_resa_arr = resa_righe[libro_id] || []
+      righe_saggi_arr = saggi_righe[libro_id] || []
+      righe_saggi_50_arr = saggi_50_righe[libro_id] || []
+
       {
-        libro: campionario_righe[libro_id]&.libro || resa_righe[libro_id]&.libro || saggi_righe[libro_id]&.libro || saggi_50_righe[libro_id]&.libro,
-        riga_campionario: campionario_righe[libro_id],
-        riga_resa: resa_righe[libro_id],
-        riga_saggi: saggi_righe[libro_id],
-        riga_saggi_50: saggi_50_righe[libro_id]
+        libro: righe_camp.first&.libro || righe_resa_arr.first&.libro || righe_saggi_arr.first&.libro || righe_saggi_50_arr.first&.libro,
+        quantita_campionario: righe_camp.sum(&:quantita),
+        quantita_resa: righe_resa_arr.sum(&:quantita),
+        quantita_saggi: righe_saggi_arr.sum(&:quantita),
+        quantita_saggi_50: righe_saggi_50_arr.sum(&:quantita),
+        # Manteniamo le righe per i link (usiamo la prima riga disponibile)
+        riga_campionario: righe_camp.first,
+        riga_resa: righe_resa_arr.first,
+        riga_saggi: righe_saggi_arr.first,
+        riga_saggi_50: righe_saggi_50_arr.first
       }
     end.compact.sort_by { |row| row[:libro]&.titolo || "" }
   end
@@ -73,16 +85,11 @@ class CampionarioController < ApplicationController
       return
     end
 
-    # Calcola il prossimo numero documento per questa causale
-    numero_documento = Current.user.documenti
-      .where(causale: causale_saggi)
-      .maximum(:numero_documento).to_i + 1
-
-    # Crea il documento saggi
+    # Crea il documento saggi con stesso numero e data del campionario
     documento_saggi = Current.user.documenti.create!(
       causale: causale_saggi,
-      numero_documento: numero_documento,
-      data_documento: Date.current,
+      numero_documento: @campionario.numero_documento,
+      data_documento: @campionario.data_documento,
       clientable_type: @campionario.clientable_type,
       clientable_id: @campionario.clientable_id,
       referente: "Da campionario #{@campionario.numero_documento}",
@@ -135,16 +142,11 @@ class CampionarioController < ApplicationController
       return
     end
 
-    # Calcola il prossimo numero documento per questa causale
-    numero_documento = Current.user.documenti
-      .where(causale: causale_saggi_50)
-      .maximum(:numero_documento).to_i + 1
-
-    # Crea il documento saggi 50
+    # Crea il documento saggi 50 con stesso numero e data del campionario
     documento_saggi_50 = Current.user.documenti.create!(
       causale: causale_saggi_50,
-      numero_documento: numero_documento,
-      data_documento: Date.current,
+      numero_documento: @campionario.numero_documento,
+      data_documento: @campionario.data_documento,
       clientable_type: @campionario.clientable_type,
       clientable_id: @campionario.clientable_id,
       referente: "Da campionario #{@campionario.numero_documento}",

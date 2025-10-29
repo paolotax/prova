@@ -219,10 +219,10 @@
               totale_saggi_50 = 0
             %>
             <% @confronto.each do |row| %>
-              <% qta_campionario = row[:riga_campionario]&.quantita || 0 %>
-              <% qta_resa = row[:riga_resa]&.quantita || 0 %>
-              <% qta_saggi = row[:riga_saggi]&.quantita || 0 %>
-              <% qta_saggi_50 = row[:riga_saggi_50]&.quantita || 0 %>
+              <% qta_campionario = row[:quantita_campionario] || 0 %>
+              <% qta_resa = row[:quantita_resa] || 0 %>
+              <% qta_saggi = row[:quantita_saggi] || 0 %>
+              <% qta_saggi_50 = row[:quantita_saggi_50] || 0 %>
               <% differenza = qta_campionario - qta_resa - qta_saggi - qta_saggi_50 %>
               <%
                 totale_campionario += qta_campionario
