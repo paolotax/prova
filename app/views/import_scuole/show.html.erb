@@ -18,7 +18,7 @@
 			<%= tag.div @import_scuola.codice_ministeriale, class: "text-sm font-semibold text-gray-400"  %>
 		<% end %>
 
-		<div class="flex items-center justify-between gap-2">
+		<div class="flex flex-col sm:flex-row items-center justify-between gap-2">
 			<div class="flex items-center gap-2">
 				<%= component 'tax_button',
 						caption: "Vai...",
@@ -151,8 +151,8 @@
 				<label for="tax-tabs" class="sr-only">Seleziona</label>
 				<!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
 				<select id="tax-tabs" data-tax-tabs-target="select" data-action="tax-tabs#change" name="tax-tabs" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-					<option>Le mie per Classe</option>
-					<option>Adozioni</option>
+					<option>Mie Adozioni</option>
+					<option>Tute le Adozioni</option>
 					<option>Appunti</option>
 					<option>Vendite</option>
 					<option>Saggi</option>
@@ -166,7 +166,7 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Le mie Adozioni per Classe
+							Mie Adozioni
 							<!-- Current: "bg-indigo-100 text-indigo-600", Default: "bg-gray-100 text-gray-900" -->
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @foglio_scuola.mie_adozioni.load.size %>
@@ -175,7 +175,7 @@
 
 						<a data-tax-tabs-target="tab" data-action="click->tax-tabs#change:prevent keydown.left->tax-tabs#previousTab keydown.right->tax-tabs#nextTab keydown.home->tax-tabs#firstTab:prevent keydown.end->tax-tabs#lastTab:prevent"
 						   href="#" class="border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700 flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-							Adozioni
+							Tutte le Adozioni
 							<span class="bg-gray-100 text-gray-900 ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block">
 								<%= @foglio_scuola.mie_adozioni.load.size %> su <%= @foglio_scuola.import_adozioni.load.size %>
 							</span>
@@ -208,7 +208,7 @@
 				</div>
 			</div>
 
-			<!-- classi -->
+			<!-- Mie Adozioni -->
 			<div class="hidden mt-4 group show-classe" data-tax-tabs-target="panel" data-controller="bulk-actions">
 				<%= render "import_adozioni/bulk_actions/form" %>
 				<div>
@@ -241,7 +241,7 @@
 				</div>
 			</div>
 
-			<!-- adozioni grouped -->
+			<!-- Tutte le Adozioni -->
 			<div class="hidden mt-4" data-tax-tabs-target="panel">
 				<p class="only:block hidden py-8 px-4 text-center">Whoops! Non ci sono adozioni in questa scuola</p>
 				<%= render partial: "import_adozioni/import_adozioni_grouped", locals: { grouped: :titolo } %>
