@@ -77,7 +77,7 @@ class LibriImporter
   end
 
   def import_excel!
-    xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: ";" } })
+    xlsx = Roo::Spreadsheet.open(file.path, { csv_options: { encoding: 'bom|utf-8', col_sep: "," } })
     
     # columns = xlsx.sheet(0).first_row
     # raise columns.inspect
@@ -217,10 +217,11 @@ class LibriImporter
 
     def assign_from_row(row)
 
-      codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:ean] || row["ean"]
+      codice_isbn = row[:codice_isbn] || row["codice_isbn"] || row[:isbn] || row["isbn"] || row[:ean] || row["ean"]
       user_id = Current.user.id
 
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      libro.codice_isbn = codice_isbn if codice_isbn.present?
 
       titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]
       libro.titolo = strip_tags(titolo) if titolo.present?
@@ -240,6 +241,7 @@ class LibriImporter
         next if key_str == "prezzo"
         next if key_str == "prezzo_suggerito"
         next if key_str == "categoria"
+        next if key_str == "isbn"
 
         if libro.respond_to?("#{key}=")
           libro.send("#{key}=", row[key])
@@ -269,6 +271,8 @@ class LibriImporter
     end
 
     def check_prezzo(prezzo)
+      return "0.0" if prezzo.to_s.downcase.strip == "omaggio"
+
       if prezzo.is_a? String
         prezzo = prezzo.gsub(",",".")
       end

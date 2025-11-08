@@ -63,6 +63,7 @@ class DocumentiController < ApplicationController
   def show
     respond_to do |format|
       format.html
+      format.xlsx
       format.pdf do
         pdf = DocumentoPdf.new(@documento, view_context)
         send_data pdf.render, filename: "documento_#{@documento.id}.pdf",

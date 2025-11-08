@@ -11,12 +11,12 @@ class LibriImporterController < ApplicationController
     @import.save
 
     # Salva sempre i risultati (successo o errore) e mostra la pagina show
-    # Limita gli errori a max 20 per evitare cookie overflow
+    # Limita gli errori a max 10 e tronca ogni messaggio a 200 caratteri per evitare cookie overflow
     session[:import_result] = {
       imported_count: @import.imported_count,
       updated_count: @import.updated_count,
       errors_count: @import.errors_count,
-      errors: @import.errors.full_messages.first(20),
+      errors: @import.errors.full_messages.first(10).map { |msg| msg.truncate(200) },
       success: @import.errors.none?
     }
 
@@ -28,12 +28,12 @@ class LibriImporterController < ApplicationController
     @import.import_ministeriali!
 
     # Salva sempre i risultati (successo o errore) e mostra la pagina show
-    # Limita gli errori a max 20 per evitare cookie overflow
+    # Limita gli errori a max 10 e tronca ogni messaggio a 200 caratteri per evitare cookie overflow
     session[:import_result] = {
       imported_count: @import.imported_count,
       updated_count: @import.updated_count,
       errors_count: @import.errors_count,
-      errors: @import.errors.full_messages.first(20),
+      errors: @import.errors.full_messages.first(10).map { |msg| msg.truncate(200) },
       success: @import.errors.none?
     }
 
@@ -45,13 +45,13 @@ class LibriImporterController < ApplicationController
     @import.import_confezioni_excel!
 
     # Salva sempre i risultati (successo o errore) e mostra la pagina show
-    # Limita gli errori a max 20 per evitare cookie overflow
+    # Limita gli errori a max 10 e tronca ogni messaggio a 200 caratteri per evitare cookie overflow
     session[:import_result] = {
       imported_count: @import.imported_count,
       updated_count: @import.updated_count,
       created_count: @import.created_count,
       errors_count: @import.errors_count,
-      errors: @import.errors.full_messages.first(20),
+      errors: @import.errors.full_messages.first(10).map { |msg| msg.truncate(200) },
       success: @import.errors.none?
     }
 

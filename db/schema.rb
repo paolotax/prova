@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_15_182444) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_08_181331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "tablefunc"
@@ -515,8 +515,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_15_182444) do
     t.string "slug"
     t.bigint "categoria_id", null: false
     t.integer "prezzo_suggerito_cents", default: 0
+    t.string "cm"
     t.index ["categoria_id"], name: "index_libri_on_categoria_id"
     t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
+    t.index ["cm"], name: "index_libri_on_cm"
     t.index ["editore_id"], name: "index_libri_on_editore_id"
     t.index ["slug"], name: "index_libri_on_slug", unique: true
     t.index ["user_id", "codice_isbn"], name: "index_libri_on_user_id_and_codice_isbn"

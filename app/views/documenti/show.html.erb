@@ -35,6 +35,15 @@
         <% end %>
 
         <% heading.with_action do %>
+          <%= component 'tax_button',
+                    caption: "Export",
+                    svg_file: "icon-excel-bis.svg",
+                    color: "green",
+                    url: documento_path(@documento, format: :xlsx),
+                    target: "_blank" %>
+        <% end %>
+
+        <% heading.with_action do %>
             <%= component 'tax_button',
                     caption: "Modifica",
                     svg_file: "icon-pencil.svg",

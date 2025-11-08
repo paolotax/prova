@@ -1,0 +1,30 @@
+wb = xlsx_package.workbook
+
+fields = ["titolo", "codice_isbn", "cm", "editore", "classe", "disciplina", "prezzo", "quantita", "sconto", "importo"]
+
+wb.add_worksheet(name: "Documento #{@documento.numero_documento}") do |sheet|
+
+  sheet.add_row fields
+
+  @documento.righe.each do |riga|
+    libro = riga.libro
+    sheet.add_row [
+      libro&.titolo,
+      libro&.codice_isbn,
+      libro&.cm,
+      libro&.editore&.editore,
+      libro&.classe,
+      libro&.disciplina,
+      riga.prezzo,
+      riga.quantita,
+      riga.sconto,
+      riga.importo
+    ], types: [:string]
+  end
+
+  # Riga totali
+  sheet.add_row []
+  sheet.add_row ["", "", "", "", "", "", "", "Totale copie:", @documento.righe.sum(&:quantita)], types: [:string]
+  sheet.add_row ["", "", "", "", "", "", "", "Totale importo:", @documento.righe.sum(&:importo)], types: [:string]
+
+end

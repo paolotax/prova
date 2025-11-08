@@ -5,6 +5,7 @@
 #  id                     :bigint           not null, primary key
 #  adozioni_count         :integer          default(0), not null
 #  classe                 :integer
+#  cm                     :string
 #  codice_isbn            :string
 #  collana                :string
 #  confezioni_count       :integer          default(0), not null
@@ -26,6 +27,7 @@
 #
 #  index_libri_on_categoria_id             (categoria_id)
 #  index_libri_on_classe_and_disciplina    (classe,disciplina)
+#  index_libri_on_cm                       (cm)
 #  index_libri_on_editore_id               (editore_id)
 #  index_libri_on_slug                     (slug) UNIQUE
 #  index_libri_on_user_id                  (user_id)
