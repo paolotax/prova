@@ -33,7 +33,8 @@
 				<% end %>
 
 				<%= tag.div class: "flex flex-row items-center gap-2" do %>
-					<%= tag.div "cl. #{@libro.classe}", class: "text-sm font-semibold text-gray-400" %>
+					<%= tag.div "CM: #{@libro.cm}", class: "text-sm font-semibold text-gray-400" if @libro.cm.present? %>
+					<%= tag.div "classe #{@libro.classe}", class: "text-sm font-semibold text-gray-400" if @libro.classe.present? %>
 					<%= tag.div @libro&.disciplina&.titleize, class: "text-sm font-semibold text-gray-400"  %>
 				<% end %>
 

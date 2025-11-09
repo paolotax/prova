@@ -55,7 +55,7 @@ class Libro < ApplicationRecord
   end
 
   include Searchable
-  search_on :titolo, :codice_isbn, :disciplina, :note, :collana, editore: :editore, categoria: :nome_categoria
+  search_on :titolo, :codice_isbn, :cm, :disciplina, :note, :collana, editore: :editore, categoria: :nome_categoria
 
   extend FilterableModel
   class << self
@@ -63,7 +63,7 @@ class Libro < ApplicationRecord
   end
 
   include PgSearch::Model
-  search_fields =  [ :titolo, :disciplina, :codice_isbn, :collana, :note ]
+  search_fields =  [ :titolo, :disciplina, :codice_isbn, :collana, :note, :cm ]
   pg_search_scope :search_all_word,
                         against: search_fields,
                         associated_against: {
