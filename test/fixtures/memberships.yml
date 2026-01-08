@@ -1,0 +1,63 @@
+# == Schema Information
+#
+# Table name: memberships
+#
+#  id         :uuid             not null, primary key
+#  role       :integer          default("member"), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :uuid             not null
+#  user_id    :bigint           not null
+#
+# Indexes
+#
+#  index_memberships_on_account_id              (account_id)
+#  index_memberships_on_user_id                 (user_id)
+#  index_memberships_on_user_id_and_account_id  (user_id,account_id) UNIQUE
+#
+#
+# Table name: memberships
+#
+#  id         :uuid             not null, primary key
+#  role       :integer          default("member"), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :uuid             not null
+#  user_id    :bigint           not null
+#
+# Indexes
+#
+#  index_memberships_on_account_id              (account_id)
+#  index_memberships_on_user_id                 (user_id)
+#  index_memberships_on_user_id_and_account_id  (user_id,account_id) UNIQUE
+#
+#
+# Table name: memberships
+#
+#  id         :uuid             not null, primary key
+#  role       :integer          default("member"), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :uuid             not null
+#  user_id    :bigint           not null
+#
+
+alice_fizzy:
+  user: one
+  account: fizzy
+  role: owner
+
+bob_fizzy:
+  user: two
+  account: fizzy
+  role: member
+
+charlie_fizzy:
+  user: multi_account
+  account: fizzy
+  role: member
+
+charlie_acme:
+  user: multi_account
+  account: acme
+  role: admin

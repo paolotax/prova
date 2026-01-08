@@ -25,29 +25,30 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+#
+# Table name: profiles
+#
+#  user_id        :bigint           not null
+#  nome           :string
+#  cognome        :string
+#  ragione_sociale:string
+#  indirizzo      :string
+#  cap            :string
+#  citta          :string
+#  cellulare      :string
+#  email          :string
+#  iban           :string
+#  nome_banca     :string
+#
 
-one:
+alice_profile:
   user: one
-  nome: MyString
-  cognome: MyString
-  ragione_sociale: MyString
-  indirizzo: MyString
-  cap: MyString
-  citta: MyString
-  cellulare: MyString
-  email: MyString
-  iban: MyString
-  nome_banca: MyString
+  nome: "Alice"
+  cognome: "Rossi"
+  email: "alice@example.com"
 
-two:
+bob_profile:
   user: two
-  nome: MyString
-  cognome: MyString
-  ragione_sociale: MyString
-  indirizzo: MyString
-  cap: MyString
-  citta: MyString
-  cellulare: MyString
-  email: MyString
-  iban: MyString
-  nome_banca: MyString
+  nome: "Bob"
+  cognome: "Bianchi"
+  email: "bob@example.com"

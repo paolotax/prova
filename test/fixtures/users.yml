@@ -1,0 +1,53 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                     :bigint           not null, primary key
+#  confirmation_sent_at   :datetime
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  email                  :string
+#  encrypted_password     :string           default(""), not null
+#  name                   :string
+#  navigator              :string
+#  passwordless_enabled   :boolean          default(FALSE), not null
+#  remember_created_at    :datetime
+#  reset_password_sent_at :datetime
+#  reset_password_token   :string
+#  role                   :integer          default("scagnozzo")
+#  slug                   :string
+#  unconfirmed_email      :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_confirmation_token    (confirmation_token) UNIQUE
+#  index_users_on_email                 (email) UNIQUE
+#  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_slug                  (slug) UNIQUE
+#
+
+one:
+  name: alice
+  email: alice@example.com
+  role: admin
+  passwordless_enabled: true
+
+two:
+  name: bob
+  email: bob@example.com
+  role: scagnozzo
+  passwordless_enabled: true
+
+multi_account:
+  name: charlie
+  email: charlie@example.com
+  role: scagnozzo
+  passwordless_enabled: true
+
+no_account:
+  name: dana
+  email: dana@example.com
+  role: scagnozzo
+  passwordless_enabled: true

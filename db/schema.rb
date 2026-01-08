@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_08_160200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -182,7 +182,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
     t.bigint "classe_id"
     t.bigint "voice_note_id"
     t.boolean "active"
-    t.uuid "account_id", null: false
+    t.uuid "account_id"
     t.index ["account_id", "created_at"], name: "index_appunti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"
@@ -540,6 +540,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
     t.index ["user_id"], name: "index_libri_on_user_id"
   end
 
+  create_table "magic_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token", null: false
+    t.string "purpose", default: "sign_in", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_magic_links_on_expires_at"
+    t.index ["token"], name: "index_magic_links_on_token", unique: true
+    t.index ["user_id", "purpose"], name: "index_magic_links_on_user_id_and_purpose"
+    t.index ["user_id"], name: "index_magic_links_on_user_id"
+  end
+
   create_table "mandati", primary_key: ["user_id", "editore_id"], force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "editore_id", null: false
@@ -729,6 +744,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
     t.index ["user_id"], name: "index_sconti_on_user_id"
   end
 
+  create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.uuid "account_id"
+    t.string "token", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "last_active_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_sessions_on_account_id"
+    t.index ["token"], name: "index_sessions_on_token", unique: true
+    t.index ["user_id", "last_active_at"], name: "index_sessions_on_user_id_and_last_active_at"
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "ssk_appunti_backup", force: :cascade do |t|
     t.bigint "original_appunto_id", null: false
     t.bigint "user_id", null: false
@@ -879,6 +909,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
     t.string "unconfirmed_email"
     t.integer "role", default: 0
     t.string "slug"
+    t.boolean "passwordless_enabled", default: false, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

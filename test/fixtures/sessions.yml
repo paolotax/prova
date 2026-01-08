@@ -1,0 +1,58 @@
+# == Schema Information
+#
+# Table name: sessions
+#
+#  id             :uuid             not null, primary key
+#  ip_address     :string
+#  last_active_at :datetime
+#  token          :string           not null
+#  user_agent     :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  account_id     :uuid
+#  user_id        :bigint           not null
+#
+# Indexes
+#
+#  index_sessions_on_account_id                  (account_id)
+#  index_sessions_on_token                       (token) UNIQUE
+#  index_sessions_on_user_id                     (user_id)
+#  index_sessions_on_user_id_and_last_active_at  (user_id,last_active_at)
+#
+#
+# Table name: sessions
+#
+#  id             :uuid             not null, primary key
+#  ip_address     :string
+#  last_active_at :datetime
+#  token          :string           not null
+#  user_agent     :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  account_id     :uuid
+#  user_id        :bigint           not null
+#
+
+alice_session:
+  user: one
+  account: fizzy
+  token: <%= SecureRandom.urlsafe_base64(32) %>
+  ip_address: "127.0.0.1"
+  user_agent: "Mozilla/5.0 (Test)"
+  last_active_at: <%= 1.hour.ago %>
+
+alice_old_session:
+  user: one
+  account: fizzy
+  token: <%= SecureRandom.urlsafe_base64(32) %>
+  ip_address: "192.168.1.1"
+  user_agent: "Mozilla/5.0 (Old Device)"
+  last_active_at: <%= 31.days.ago %>
+
+bob_session:
+  user: two
+  account: fizzy
+  token: <%= SecureRandom.urlsafe_base64(32) %>
+  ip_address: "10.0.0.1"
+  user_agent: "Mozilla/5.0 (Bob Browser)"
+  last_active_at: <%= 2.days.ago %>

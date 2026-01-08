@@ -1,0 +1,113 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Le tue sessioni</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Gestisci le sessioni attive sul tuo account.
+      </p>
+    </div>
+    <% if @sessions.count > 1 %>
+      <%= button_to "Disconnetti altre sessioni",
+          destroy_all_passwordless_sessions_path,
+          method: :delete,
+          data: { turbo_confirm: "Sei sicuro? Verrai disconnesso da tutti gli altri dispositivi." },
+          class: "mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+    <% end %>
+  </div>
+
+  <% if flash[:notice] %>
+    <div class="mt-4 rounded-md bg-green-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm font-medium text-green-800"><%= flash[:notice] %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if flash[:alert] %>
+    <div class="mt-4 rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm font-medium text-red-800"><%= flash[:alert] %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-md">
+    <ul role="list" class="divide-y divide-gray-200">
+      <% @sessions.each do |session| %>
+        <li>
+          <div class="px-4 py-4 sm:px-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <% if session == @current_session %>
+                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  <% else %>
+                    <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="ml-4">
+                  <div class="flex items-center">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      <%= session.user_agent.present? ? session.user_agent.truncate(50) : "Dispositivo sconosciuto" %>
+                    </p>
+                    <% if session == @current_session %>
+                      <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Sessione corrente
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="mt-1 flex items-center text-sm text-gray-500">
+                    <span>IP: <%= session.ip_address || "N/A" %></span>
+                    <span class="mx-2">·</span>
+                    <span>Account: <%= session.account&.name || "N/A" %></span>
+                  </div>
+                  <p class="mt-1 text-xs text-gray-400">
+                    Ultima attività: <%= time_ago_in_words(session.last_active_at) %> fa
+                    ·
+                    Creata: <%= l(session.created_at, format: :short) %>
+                  </p>
+                </div>
+              </div>
+              <% unless session == @current_session %>
+                <%= button_to "Disconnetti",
+                    passwordless_session_path(session),
+                    method: :delete,
+                    data: { turbo_confirm: "Disconnettere questa sessione?" },
+                    class: "inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+              <% end %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="mt-8 text-center">
+    <%= link_to "Disconnetti",
+        logout_path,
+        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler uscire?" },
+        class: "text-red-600 hover:text-red-500 font-medium" %>
+  </div>
+</div>

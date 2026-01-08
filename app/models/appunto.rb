@@ -13,7 +13,7 @@
 #  telefono           :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  account_id         :uuid             not null
+#  account_id         :uuid
 #  classe_id          :bigint
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint

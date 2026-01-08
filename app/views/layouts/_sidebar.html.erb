@@ -59,7 +59,7 @@
 
 			<% if current_user && !local_assigns[:hide_exit] %>
 				<li class="mt-auto">
-					<%= link_to destroy_user_session_path, data: { turbo_method: :delete },
+					<%= link_to logout_path, data: { turbo_method: :delete },
 							class: "sidebar-item" do %>
 						<%= inline_svg_tag('icon-exit.svg') %>
 						Esci

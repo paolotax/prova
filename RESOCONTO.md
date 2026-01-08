@@ -1,0 +1,377 @@
+# Resoconto Migrazione Autenticazione Passwordless
+
+**Data:** 8 Gennaio 2026
+**Branch:** `feature/multi-tenancy`
+
+---
+
+## Obiettivo
+
+Sostituire Devise con un sistema di autenticazione passwordless via magic link, integrato con il nuovo sistema multi-tenant (Account/Membership).
+
+---
+
+## Modifiche Completate
+
+### 1. Modelli Creati
+
+#### `MagicLink` (`app/models/magic_link.rb`)
+Token monouso per autenticazione via email.
+
+```ruby
+# Caratteristiche:
+- UUID come primary key
+- Token univoco generato automaticamente (SecureRandom.urlsafe_base64)
+- Scadenza 15 minuti
+- Enum purpose: sign_in, email_verification
+- Tracciamento IP e timestamp utilizzo
+```
+
+**Metodi principali:**
+- `expired?` / `used?` / `valid_for_use?`
+- `mark_as_used!`
+- Scope: `valid`, `expired`
+- `cleanup_expired` - job per pulizia periodica
+
+#### `Session` (`app/models/session.rb`)
+Sessioni utente persistenti con supporto multi-tenant.
+
+```ruby
+# Caratteristiche:
+- UUID come primary key
+- Token univoco per cookie
+- Associazione opzionale con Account (multi-tenancy)
+- Tracciamento IP, user agent, last_active_at
+- Scadenza 30 giorni di inattività
+```
+
+**Metodi principali:**
+- `touch_last_active` - aggiorna ogni ora max
+- `expired?` / `revoke!`
+- Scope: `active`, `expired`
+
+---
+
+### 2. Controller Creati
+
+#### `MagicLinksController` (`app/controllers/magic_links_controller.rb`)
+Gestisce il flusso di login passwordless.
+
+| Action | Route | Descrizione |
+|--------|-------|-------------|
+| `new` | GET `/login` | Form richiesta magic link |
+| `create` | POST `/magic_links` | Invia email con link |
+| `sent` | GET `/magic_links/sent` | Conferma invio |
+| `verify` | GET `/magic_links/verify` | Verifica token |
+| `select_account` | POST `/magic_links/select_account` | Selezione account (multi-tenant) |
+
+**Logica verify:**
+1. Valida token
+2. Se utente ha 1 account → login diretto
+3. Se utente ha N account → mostra selezione
+4. Se utente ha 0 account → crea account personale
+
+#### `Passwordless::SessionsController` (`app/controllers/passwordless/sessions_controller.rb`)
+Gestisce le sessioni attive dell'utente.
+
+| Action | Route | Descrizione |
+|--------|-------|-------------|
+| `index` | GET `/sessions` | Lista sessioni attive |
+| `destroy` | DELETE `/sessions/:id` | Revoca sessione specifica |
+| `destroy_all` | DELETE `/sessions/destroy_all` | Revoca tutte tranne corrente |
+| `logout` | DELETE `/logout` | Logout |
+
+---
+
+### 3. Concern Autenticazione
+
+#### `PasswordlessAuthentication` (`app/controllers/concerns/passwordless_authentication.rb`)
+Concern incluso in `ApplicationController`.
+
+```ruby
+# Helper disponibili in tutti i controller:
+- current_user
+- current_session
+- current_account
+- current_membership
+- user_signed_in?
+- authenticate_user!
+
+# Imposta automaticamente Current attributes
+```
+
+---
+
+### 4. Mailer
+
+#### `MagicLinkMailer` (`app/mailers/magic_link_mailer.rb`)
+Invia email con magic link.
+
+- Template: `app/views/magic_link_mailer/sign_in_link.html.erb`
+- Subject: "Il tuo link di accesso"
+- Link valido 15 minuti
+
+---
+
+### 5. Rimozione Devise
+
+**File modificati:**
+
+| File | Modifica |
+|------|----------|
+| `config/routes.rb` | Rimosso `devise_for :users` |
+| `app/models/concerns/authenticable.rb` | Rimossi tutti i moduli Devise |
+| `app/controllers/application_controller.rb` | Sostituito `before_action :authenticate_user!` di Devise con quello del concern |
+| `app/views/layouts/_sidebar.html.erb` | Cambiato `destroy_user_session_path` → `logout_path` |
+| Varie views | Cambiato `new_user_session_path` → `new_magic_link_path` |
+
+**Constraint admin per route protette:**
+```ruby
+constraints ->(request) {
+  token = request.cookie_jar.signed[:session_token]
+  session = Session.active.find_by(token: token) if token.present?
+  session&.user&.admin?
+} do
+  mount Blazer::Engine, at: 'blazer'
+  # ...
+end
+```
+
+---
+
+### 6. Multi-Tenancy Foundation
+
+**Modelli esistenti (dalla migrazione precedente):**
+- `Account` - organizzazione/tenant
+- `Membership` - relazione user-account con ruolo
+
+**Integrazione con Session:**
+- Ogni sessione è associata a un account specifico
+- `Current.account` disponibile in tutta l'app
+- `Current.membership` per verificare ruolo nel contesto
+
+---
+
+### 7. Configurazione Database
+
+**Problema risolto:** I test usavano il database di development.
+
+**Causa:** `DATABASE_URL` nel container Docker sovrascriveva `database.yml`.
+
+**Soluzione in `config/database.yml`:**
+```yaml
+test:
+  <<: *default
+  url: <%= ENV.fetch('TEST_DATABASE_URL', "postgresql://...prova_test") %>
+```
+
+---
+
+### 8. Letter Opener
+
+Aggiunto supporto per visualizzare email in development:
+
+```ruby
+# Gemfile
+gem "letter_opener"
+gem "letter_opener_web"
+
+# config/routes.rb
+mount LetterOpenerWeb::Engine, at: "/letter_opener"
+
+# config/environments/development.rb
+config.action_mailer.default_url_options = { host: "localhost", port: 3002 }
+```
+
+Link aggiunto in `app/views/magic_links/sent.html.erb`.
+
+---
+
+## Test Scritti
+
+### Model Tests
+
+#### `test/models/magic_link_test.rb` (16 test)
+- Generazione token
+- Scadenza automatica
+- Metodi `expired?`, `used?`, `valid_for_use?`
+- `mark_as_used!`
+- Scope `valid`, `expired`
+- `cleanup_expired`
+- Enum `purpose`
+
+#### `test/models/session_test.rb` (13 test)
+- Generazione token
+- `last_active_at` automatico
+- `touch_last_active` (throttled)
+- `expired?`, `revoke!`
+- Scope `active`, `expired`
+- Associazioni user/account
+
+### Controller Tests
+
+#### `test/controllers/magic_links_controller_test.rb` (12 test)
+- Form login
+- Creazione magic link
+- Prevenzione user enumeration
+- Verifica token (valido/scaduto/usato)
+- Selezione account multi-tenant
+- Creazione account automatica
+- Redirect se autenticato
+
+#### `test/controllers/passwordless/sessions_controller_test.rb` (7 test)
+- Lista sessioni
+- Revoca sessione
+- Protezione sessione corrente
+- Revoca tutte le sessioni
+- Logout
+- Autenticazione richiesta
+
+**Totale: 48 test, 115 assertions, 0 failures**
+
+---
+
+## Fixtures Create
+
+```
+test/fixtures/
+├── users.yml          # 4 utenti test (alice, bob, charlie, dana)
+├── accounts.yml       # 2 account (fizzy, acme)
+├── memberships.yml    # Relazioni user-account
+├── sessions.yml       # Sessioni test (attive, scadute)
+├── magic_links.yml    # Magic link test (validi, scaduti, usati)
+├── aziende.yml        # Dati azienda per test
+└── profiles.yml       # Profili utente
+```
+
+---
+
+## Piano per Continuare
+
+### Fase 3: Multi-Tenancy Completo
+
+1. **Scoping dei modelli**
+   - Aggiungere `account_id` ai modelli principali (Documento, Appunto, etc.)
+   - Creare concern `AccountScoped` per default scope
+   - Migrazioni per dati esistenti
+
+2. **Controller scoping**
+   - Modificare controller per filtrare per `Current.account`
+   - Aggiornare policy Pundit
+
+3. **Account switching**
+   - UI per cambiare account nella sessione
+   - Controller per switch account
+
+### Fase 4: Cleanup e Ottimizzazioni
+
+1. **Rimuovere gemme Devise**
+   ```ruby
+   # Rimuovere da Gemfile:
+   gem 'devise'
+   gem 'devise-i18n'
+   ```
+
+2. **Rimuovere colonne Devise da users**
+   ```ruby
+   # Migrazione per rimuovere:
+   - encrypted_password
+   - reset_password_token
+   - reset_password_sent_at
+   - remember_created_at
+   - confirmation_token
+   - confirmed_at
+   - confirmation_sent_at
+   - unconfirmed_email
+   ```
+
+3. **Job per cleanup**
+   - `MagicLink.cleanup_expired` periodico
+   - `Session.expired.delete_all` periodico
+
+### Fase 5: Funzionalità Aggiuntive (Opzionali)
+
+1. **Rate limiting**
+   - Limitare richieste magic link per email
+   - Rack::Attack o custom
+
+2. **Notifiche sicurezza**
+   - Email su nuovo login da dispositivo sconosciuto
+   - Lista dispositivi conosciuti
+
+3. **2FA opzionale**
+   - TOTP per utenti che lo richiedono
+   - Backup codes
+
+---
+
+## Comandi Utili
+
+```bash
+# Avviare development
+bin/dev
+
+# Eseguire test
+docker exec -e RAILS_ENV=test prova-app-1 bundle exec rails test
+
+# Verificare dati development
+docker exec prova-app-1 bundle exec rails runner "puts User.count"
+
+# Letter opener
+http://localhost:3002/letter_opener
+
+# Ricreare container (se necessario)
+docker compose build app
+docker compose up -d
+```
+
+---
+
+## File Principali Modificati
+
+```
+app/
+├── controllers/
+│   ├── application_controller.rb
+│   ├── concerns/passwordless_authentication.rb
+│   ├── magic_links_controller.rb
+│   └── passwordless/sessions_controller.rb
+├── mailers/
+│   └── magic_link_mailer.rb
+├── models/
+│   ├── magic_link.rb
+│   ├── session.rb
+│   └── concerns/authenticable.rb
+└── views/
+    ├── magic_links/
+    │   ├── new.html.erb
+    │   ├── sent.html.erb
+    │   └── verify.html.erb
+    ├── magic_link_mailer/
+    │   └── sign_in_link.html.erb
+    └── passwordless/sessions/
+        └── index.html.erb
+
+config/
+├── database.yml
+├── routes.rb
+└── environments/development.rb
+
+db/migrate/
+├── 20260108155148_create_magic_links.rb
+└── 20260108160000_create_sessions.rb
+
+test/
+├── models/
+│   ├── magic_link_test.rb
+│   └── session_test.rb
+├── controllers/
+│   ├── magic_links_controller_test.rb
+│   └── passwordless/sessions_controller_test.rb
+└── fixtures/
+    ├── users.yml
+    ├── accounts.yml
+    ├── memberships.yml
+    ├── sessions.yml
+    └── magic_links.yml
+```

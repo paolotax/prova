@@ -1,0 +1,41 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id         :uuid             not null, primary key
+#  name       :string           not null
+#  slug       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_accounts_on_slug  (slug) UNIQUE
+#
+#
+# Table name: accounts
+#
+#  id         :uuid             not null, primary key
+#  name       :string           not null
+#  slug       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_accounts_on_slug  (slug) UNIQUE
+#
+#
+# Table name: accounts
+#
+#  id         :uuid             not null, primary key
+#  name       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+fizzy:
+  name: Fizzy Team
+
+acme:
+  name: Acme Corp

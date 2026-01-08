@@ -24,10 +24,10 @@
         
         <div class="my-8 sm:my-12 flex items-center justify-between">
             <%= tag.div do %>
-                <p class="label pr-4">Informazioni principali:</p>
-                <i class="text-xs leading-3">(nome utente, password, ecc.)</i>
+                <p class="label pr-4">Gestione sessioni:</p>
+                <i class="text-xs leading-3">(visualizza e gestisci le sessioni attive)</i>
             <% end %>
-            <%= link_to "Modifica", edit_user_registration_path(@user), class: "btn btn-white" %>
+            <%= link_to "Sessioni", passwordless_sessions_path, class: "btn btn-white" %>
         </div>
         
         <%= form_with url: modifica_navigatore_user_path(current_user), 

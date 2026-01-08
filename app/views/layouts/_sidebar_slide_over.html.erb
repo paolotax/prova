@@ -30,7 +30,7 @@
 
 					<% if current_user %>
 						<div class="p-4">
-							<%= button_to destroy_user_session_path, method: :delete,
+							<%= button_to logout_path, method: :delete,
 									class: "sidebar-item w-full text-left border-0 bg-transparent" do %>
 								<%= inline_svg_tag('icon-exit.svg') %>
 								Esci

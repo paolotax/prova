@@ -10,6 +10,7 @@
 #  encrypted_password     :string           default(""), not null
 #  name                   :string
 #  navigator              :string
+#  passwordless_enabled   :boolean          default(FALSE), not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -47,6 +48,10 @@ class User < ApplicationRecord
   # Multi-tenancy
   has_many :memberships, dependent: :destroy
   has_many :accounts, through: :memberships
+
+  # Passwordless authentication
+  has_many :sessions, dependent: :destroy
+  has_many :magic_links, dependent: :destroy
 
   has_many :user_scuole, dependent: :destroy
   has_many :import_scuole, through: :user_scuole
@@ -162,4 +167,21 @@ class User < ApplicationRecord
     role_in(account) == "owner"
   end
 
+  # Passwordless authentication helpers
+  def send_magic_link!(purpose: :sign_in, ip_address: nil)
+    # Invalidate previous magic links for same purpose
+    magic_links.where(purpose: purpose).valid.update_all(expires_at: Time.current)
+
+    magic_link = magic_links.create!(purpose: purpose, ip_address: ip_address)
+    MagicLinkMailer.sign_in(self, magic_link).deliver_later
+    magic_link
+  end
+
+  def revoke_all_sessions!
+    sessions.destroy_all
+  end
+
+  def revoke_other_sessions!(current_session)
+    sessions.where.not(id: current_session.id).destroy_all
+  end
 end

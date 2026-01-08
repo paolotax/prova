@@ -17,7 +17,5 @@ development:
 
 test:
   <<: *default
-  database: prova_test
-  username: <%= ENV['POSTGRES_USER'] %>
-  password: <%= ENV['POSTGRES_PASSWORD'] %>
-  port: 5432
+  # Force test to use a separate database, ignoring DATABASE_URL
+  url: <%= ENV.fetch('TEST_DATABASE_URL', "postgresql://#{ENV.fetch('POSTGRES_USER', 'prova')}:#{ENV.fetch('POSTGRES_PASSWORD', 'ptaxptax')}@#{ENV.fetch('POSTGRES_HOST', 'db')}:5432/prova_test") %>

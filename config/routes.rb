@@ -8,6 +8,8 @@ require 'sidekiq-scheduler/web'
 
 # then mount it
 Rails.application.routes.draw do
+  # Letter opener web for viewing emails in development
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if defined?(LetterOpenerWeb)
   resources :chats do
     resources :messages, only: [:create]
   end
@@ -32,19 +34,40 @@ Rails.application.routes.draw do
   get 'agenda/:giorno/dettaglio_appunti_documenti.pdf', to: 'agenda#dettaglio_appunti_documenti_pdf', as: 'dettaglio_appunti_documenti_pdf'
   get 'agenda/:giorno/fogli_scuola_tappe.pdf', to: 'agenda#fogli_scuola_tappe_pdf', as: 'fogli_scuola_tappe_pdf'
 
-  authenticate :user, ->(user) { user.admin? } do
-    mount Blazer::Engine, at: 'blazer'
-    mount RailsPerformance::Engine, at: 'rails/performance'
+  constraints ->(request) {
+    token = request.cookie_jar.signed[:session_token]
+    session = Session.active.find_by(token: token) if token.present?
+    session&.user&.admin?
+  } do
+    mount Blazer::Engine, at: 'blazer' if defined?(Blazer)
+    mount RailsPerformance::Engine, at: 'rails/performance' if defined?(RailsPerformance)
     mount Sidekiq::Web => '/sidekiq'
-    mount Avo::Engine, at: Avo.configuration.root_path
-    mount RailsDesigner::Engine, at: '/rails_designer'
+    mount Avo::Engine, at: Avo.configuration.root_path if defined?(Avo)
+    mount RailsDesigner::Engine, at: '/rails_designer' if defined?(RailsDesigner)
   end
 
   resources :chats, only: %i[create show new] do
     resources :messages, only: %i[create]
   end
 
-  devise_for :users, controllers: { confirmations: 'confirmations', registrations: 'users/registrations' }
+  # Passwordless authentication
+  resources :magic_links, only: [:new, :create] do
+    collection do
+      get :sent
+      get 'verify/:token', action: :verify, as: :verify
+      post :select_account
+    end
+  end
+
+  namespace :passwordless do
+    resources :sessions, only: [:index, :destroy] do
+      collection do
+        delete :destroy_all
+      end
+    end
+  end
+
+  delete 'logout', to: 'passwordless/sessions#logout', as: :logout
 
   get 'ordini_in_corso', to: 'ordini#index'
   get 'cerca', to: 'search#index'
