@@ -16,22 +16,30 @@ Sostituire Devise con un sistema di autenticazione passwordless via magic link, 
 ### 1. Modelli Creati
 
 #### `MagicLink` (`app/models/magic_link.rb`)
-Token monouso per autenticazione via email.
+Codice monouso 6 caratteri per autenticazione via email.
 
 ```ruby
 # Caratteristiche:
 - UUID come primary key
-- Token univoco generato automaticamente (SecureRandom.urlsafe_base64)
+- Codice 6 caratteri alfanumerico uppercase (es. "A7X9K2")
+- Case-insensitive e spazi ignorati in verifica
 - Scadenza 15 minuti
 - Enum purpose: sign_in, email_verification
 - Tracciamento IP e timestamp utilizzo
 ```
 
 **Metodi principali:**
+- `MagicLink.authenticate(code)` - trova e marca come usato
+- `formatted_code` - formato display "A7X 9K2"
 - `expired?` / `used?` / `valid_for_use?`
 - `mark_as_used!`
 - Scope: `valid`, `expired`
 - `cleanup_expired` - job per pulizia periodica
+
+**Vantaggi codice corto:**
+- Utente può digitarlo manualmente (es. da telefono a PC)
+- Visibile nel subject email
+- ~2 miliardi di combinazioni (sufficiente con scadenza 15 min)
 
 #### `Session` (`app/models/session.rb`)
 Sessioni utente persistenti con supporto multi-tenant.
@@ -60,13 +68,13 @@ Gestisce il flusso di login passwordless.
 | Action | Route | Descrizione |
 |--------|-------|-------------|
 | `new` | GET `/login` | Form richiesta magic link |
-| `create` | POST `/magic_links` | Invia email con link |
+| `create` | POST `/magic_links` | Invia email con codice |
 | `sent` | GET `/magic_links/sent` | Conferma invio |
-| `verify` | GET `/magic_links/verify` | Verifica token |
+| `verify` | GET `/magic_links/verify/:code` | Verifica codice |
 | `select_account` | POST `/magic_links/select_account` | Selezione account (multi-tenant) |
 
 **Logica verify:**
-1. Valida token
+1. Valida codice (case-insensitive, spazi ignorati)
 2. Se utente ha 1 account → login diretto
 3. Se utente ha N account → mostra selezione
 4. Se utente ha 0 account → crea account personale
@@ -105,11 +113,12 @@ Concern incluso in `ApplicationController`.
 ### 4. Mailer
 
 #### `MagicLinkMailer` (`app/mailers/magic_link_mailer.rb`)
-Invia email con magic link.
+Invia email con codice di accesso.
 
-- Template: `app/views/magic_link_mailer/sign_in_link.html.erb`
-- Subject: "Il tuo link di accesso"
-- Link valido 15 minuti
+- Template: `app/views/magic_link_mailer/sign_in.html.erb`
+- Subject: `"Il tuo codice di accesso: A7X 9K2"` (codice visibile nel subject)
+- Codice mostrato in grande nell'email + pulsante link
+- Codice valido 15 minuti
 
 ---
 
@@ -191,8 +200,11 @@ Link aggiunto in `app/views/magic_links/sent.html.erb`.
 
 ### Model Tests
 
-#### `test/models/magic_link_test.rb` (16 test)
-- Generazione token
+#### `test/models/magic_link_test.rb` (22 test)
+- Generazione codice 6 caratteri uppercase
+- `formatted_code` aggiunge spazio ("A7X 9K2")
+- `MagicLink.authenticate(code)` trova e marca come usato
+- Funziona con lowercase e spazi
 - Scadenza automatica
 - Metodi `expired?`, `used?`, `valid_for_use?`
 - `mark_as_used!`
@@ -210,11 +222,13 @@ Link aggiunto in `app/views/magic_links/sent.html.erb`.
 
 ### Controller Tests
 
-#### `test/controllers/magic_links_controller_test.rb` (12 test)
+#### `test/controllers/magic_links_controller_test.rb` (14 test)
 - Form login
 - Creazione magic link
 - Prevenzione user enumeration
-- Verifica token (valido/scaduto/usato)
+- Verifica codice (valido/scaduto/usato)
+- Verifica con lowercase
+- Verifica con spazi
 - Selezione account multi-tenant
 - Creazione account automatica
 - Redirect se autenticato
@@ -227,7 +241,7 @@ Link aggiunto in `app/views/magic_links/sent.html.erb`.
 - Logout
 - Autenticazione richiesta
 
-**Totale: 48 test, 115 assertions, 0 failures**
+**Totale: 56 test, 131 assertions, 0 failures**
 
 ---
 
@@ -359,7 +373,8 @@ config/
 
 db/migrate/
 ├── 20260108155148_create_magic_links.rb
-└── 20260108160000_create_sessions.rb
+├── 20260108160000_create_sessions.rb
+└── 20260108230000_rename_token_to_code_in_magic_links.rb
 
 test/
 ├── models/
