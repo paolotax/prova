@@ -3,10 +3,10 @@
 # Table name: magic_links
 #
 #  id         :uuid             not null, primary key
+#  code       :string           not null
 #  expires_at :datetime         not null
 #  ip_address :string
 #  purpose    :string           default("sign_in"), not null
-#  token      :string           not null
 #  used_at    :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -14,8 +14,8 @@
 #
 # Indexes
 #
+#  index_magic_links_on_code                 (code) UNIQUE
 #  index_magic_links_on_expires_at           (expires_at)
-#  index_magic_links_on_token                (token) UNIQUE
 #  index_magic_links_on_user_id              (user_id)
 #  index_magic_links_on_user_id_and_purpose  (user_id,purpose)
 #
@@ -25,12 +25,57 @@ class MagicLinkTest < ActiveSupport::TestCase
   # Only load the fixtures we need
   fixtures :users, :accounts, :memberships, :magic_links
 
-  test "generates token on create" do
+  test "generates 6-character uppercase code on create" do
     user = users(:one)
     magic_link = user.magic_links.create!(purpose: :sign_in)
 
-    assert magic_link.token.present?
-    assert_equal 43, magic_link.token.length # base64 of 32 bytes
+    assert magic_link.code.present?
+    assert_equal 6, magic_link.code.length
+    assert_match(/\A[A-Z0-9]+\z/, magic_link.code)
+  end
+
+  test "formatted_code adds space in the middle" do
+    user = users(:one)
+    magic_link = user.magic_links.create!(purpose: :sign_in)
+
+    # Format: "ABC DEF"
+    assert_match(/\A[A-Z0-9]{3} [A-Z0-9]{3}\z/, magic_link.formatted_code)
+  end
+
+  test "authenticate finds and marks link as used" do
+    magic_link = magic_links(:alice_sign_in)
+    code = magic_link.code
+
+    result = MagicLink.authenticate(code)
+
+    assert_equal magic_link, result
+    assert result.used?
+  end
+
+  test "authenticate works with lowercase code" do
+    magic_link = magic_links(:alice_sign_in)
+    code = magic_link.code.downcase
+
+    result = MagicLink.authenticate(code)
+
+    assert_equal magic_link, result
+  end
+
+  test "authenticate returns nil for invalid code" do
+    result = MagicLink.authenticate("INVALID")
+    assert_nil result
+  end
+
+  test "authenticate returns nil for expired code" do
+    magic_link = magic_links(:alice_expired)
+    result = MagicLink.authenticate(magic_link.code)
+    assert_nil result
+  end
+
+  test "authenticate returns nil for already used code" do
+    magic_link = magic_links(:alice_used)
+    result = MagicLink.authenticate(magic_link.code)
+    assert_nil result
   end
 
   test "sets expiry to 15 minutes from now on create" do

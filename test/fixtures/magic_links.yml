@@ -3,10 +3,10 @@
 # Table name: magic_links
 #
 #  id         :uuid             not null, primary key
+#  code       :string           not null
 #  expires_at :datetime         not null
 #  ip_address :string
 #  purpose    :string           default("sign_in"), not null
-#  token      :string           not null
 #  used_at    :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -14,8 +14,8 @@
 #
 # Indexes
 #
+#  index_magic_links_on_code                 (code) UNIQUE
 #  index_magic_links_on_expires_at           (expires_at)
-#  index_magic_links_on_token                (token) UNIQUE
 #  index_magic_links_on_user_id              (user_id)
 #  index_magic_links_on_user_id_and_purpose  (user_id,purpose)
 #
@@ -26,7 +26,27 @@
 #  expires_at :datetime         not null
 #  ip_address :string
 #  purpose    :string           default("sign_in"), not null
-#  token      :string           not null
+#  code      :string           not null
+#  used_at    :datetime
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  user_id    :bigint           not null
+#
+# Indexes
+#
+#  index_magic_links_on_expires_at           (expires_at)
+#  index_magic_links_on_code                (code) UNIQUE
+#  index_magic_links_on_user_id              (user_id)
+#  index_magic_links_on_user_id_and_purpose  (user_id,purpose)
+#
+#
+# Table name: magic_links
+#
+#  id         :uuid             not null, primary key
+#  expires_at :datetime         not null
+#  ip_address :string
+#  purpose    :string           default("sign_in"), not null
+#  code      :string           not null
 #  used_at    :datetime
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -35,21 +55,21 @@
 
 alice_sign_in:
   user: one
-  token: <%= SecureRandom.urlsafe_base64(32) %>
+  code: <%= SecureRandom.alphanumeric(6).upcase %>
   purpose: sign_in
   expires_at: <%= 10.minutes.from_now %>
   ip_address: "127.0.0.1"
 
 alice_expired:
   user: one
-  token: <%= SecureRandom.urlsafe_base64(32) %>
+  code: <%= SecureRandom.alphanumeric(6).upcase %>
   purpose: sign_in
   expires_at: <%= 1.hour.ago %>
   ip_address: "127.0.0.1"
 
 alice_used:
   user: one
-  token: <%= SecureRandom.urlsafe_base64(32) %>
+  code: <%= SecureRandom.alphanumeric(6).upcase %>
   purpose: sign_in
   expires_at: <%= 10.minutes.from_now %>
   used_at: <%= 5.minutes.ago %>
@@ -57,7 +77,7 @@ alice_used:
 
 bob_verification:
   user: two
-  token: <%= SecureRandom.urlsafe_base64(32) %>
+  code: <%= SecureRandom.alphanumeric(6).upcase %>
   purpose: email_verification
   expires_at: <%= 20.minutes.from_now %>
   ip_address: "10.0.0.1"

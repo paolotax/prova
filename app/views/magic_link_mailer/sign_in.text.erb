@@ -1,8 +1,12 @@
 Ciao <%= @user.name %>,
 
-Clicca questo link per accedere al tuo account:
+Il tuo codice di accesso:
+
+    <%= @code %>
+
+Oppure clicca questo link:
 <%= @sign_in_url %>
 
-Questo link scade tra 15 minuti.
+Questo codice scade tra 15 minuti.
 
-Se non hai richiesto questo link, puoi ignorare questa email.
+Se non hai richiesto questo codice, puoi ignorare questa email.

@@ -12,7 +12,7 @@
     <div class="mt-8 space-y-3">
       <% @accounts.each do |account| %>
         <%= form_with url: select_account_magic_links_path, method: :post, class: "w-full" do |form| %>
-          <%= form.hidden_field :token, value: params[:token] %>
+          <%= form.hidden_field :code, value: params[:code] %>
           <%= form.hidden_field :account_id, value: account.id %>
 
           <button type="submit" class="w-full flex items-center justify-between px-4 py-4 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">

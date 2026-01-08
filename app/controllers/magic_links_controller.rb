@@ -24,12 +24,12 @@ class MagicLinksController < ApplicationController
   def sent
   end
 
-  # GET /magic_links/verify/:token
+  # GET /magic_links/verify/:code
   def verify
-    @magic_link = MagicLink.valid.find_by(token: params[:token])
+    @magic_link = MagicLink.valid.find_by(code: normalize_code(params[:code]))
 
     if @magic_link.nil? || !@magic_link.valid_for_use?
-      redirect_to new_magic_link_path, alert: "Link non valido o scaduto. Richiedi un nuovo link."
+      redirect_to new_magic_link_path, alert: "Codice non valido o scaduto. Richiedi un nuovo codice."
       return
     end
 
@@ -52,10 +52,10 @@ class MagicLinksController < ApplicationController
 
   # POST /magic_links/select_account
   def select_account
-    @magic_link = MagicLink.valid.find_by(token: params[:token])
+    @magic_link = MagicLink.valid.find_by(code: normalize_code(params[:code]))
 
     if @magic_link.nil? || !@magic_link.valid_for_use?
-      redirect_to new_magic_link_path, alert: "Link non valido o scaduto. Richiedi un nuovo link."
+      redirect_to new_magic_link_path, alert: "Codice non valido o scaduto. Richiedi un nuovo codice."
       return
     end
 
@@ -73,6 +73,11 @@ class MagicLinksController < ApplicationController
 
   def redirect_if_authenticated
     redirect_to root_path if user_signed_in?
+  end
+
+  # Normalize code: remove spaces, uppercase
+  def normalize_code(code)
+    code.to_s.gsub(/\s/, "").upcase
   end
 
   def validate_turnstile

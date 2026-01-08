@@ -54,7 +54,7 @@ Rails.application.routes.draw do
   resources :magic_links, only: [:new, :create] do
     collection do
       get :sent
-      get 'verify/:token', action: :verify, as: :verify
+      get 'verify/:code', action: :verify, as: :verify
       post :select_account
     end
   end

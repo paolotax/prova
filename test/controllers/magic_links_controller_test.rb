@@ -37,59 +37,80 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "verify with valid token and single account logs in" do
+  test "verify with valid code and single account logs in" do
     user = users(:one)
     magic_link = user.magic_links.create!
 
-    get verify_magic_links_path(token: magic_link.token)
+    get verify_magic_links_path(code: magic_link.code)
 
     assert_redirected_to root_path
     assert_equal "Accesso effettuato!", flash[:notice]
     assert cookies[:session_token].present?
   end
 
-  test "verify with valid token and multiple accounts shows selection" do
+  test "verify with valid code and multiple accounts shows selection" do
     user = users(:multi_account)
     magic_link = user.magic_links.create!
 
-    get verify_magic_links_path(token: magic_link.token)
+    get verify_magic_links_path(code: magic_link.code)
 
     assert_response :success
     assert_select "button[type=submit]", minimum: 2
   end
 
-  test "verify with invalid token redirects with error" do
-    get verify_magic_links_path(token: "invalid_token")
+  test "verify with invalid code redirects with error" do
+    get verify_magic_links_path(code: "INVALID")
 
     assert_redirected_to new_magic_link_path
-    assert_equal "Link non valido o scaduto. Richiedi un nuovo link.", flash[:alert]
+    assert_equal "Codice non valido o scaduto. Richiedi un nuovo codice.", flash[:alert]
   end
 
-  test "verify with expired token redirects with error" do
+  test "verify with expired code redirects with error" do
     magic_link = magic_links(:alice_expired)
 
-    get verify_magic_links_path(token: magic_link.token)
+    get verify_magic_links_path(code: magic_link.code)
 
     assert_redirected_to new_magic_link_path
-    assert_equal "Link non valido o scaduto. Richiedi un nuovo link.", flash[:alert]
+    assert_equal "Codice non valido o scaduto. Richiedi un nuovo codice.", flash[:alert]
   end
 
-  test "verify with used token redirects with error" do
+  test "verify with used code redirects with error" do
     magic_link = magic_links(:alice_used)
 
-    get verify_magic_links_path(token: magic_link.token)
+    get verify_magic_links_path(code: magic_link.code)
 
     assert_redirected_to new_magic_link_path
-    assert_equal "Link non valido o scaduto. Richiedi un nuovo link.", flash[:alert]
+    assert_equal "Codice non valido o scaduto. Richiedi un nuovo codice.", flash[:alert]
   end
 
-  test "select_account with valid token logs in to selected account" do
+  test "verify works with lowercase code" do
+    user = users(:one)
+    magic_link = user.magic_links.create!
+
+    get verify_magic_links_path(code: magic_link.code.downcase)
+
+    assert_redirected_to root_path
+    assert_equal "Accesso effettuato!", flash[:notice]
+  end
+
+  test "verify works with spaces in code" do
+    user = users(:one)
+    magic_link = user.magic_links.create!
+    code_with_spaces = magic_link.formatted_code  # "ABC DEF"
+
+    get verify_magic_links_path(code: code_with_spaces)
+
+    assert_redirected_to root_path
+    assert_equal "Accesso effettuato!", flash[:notice]
+  end
+
+  test "select_account with valid code logs in to selected account" do
     user = users(:multi_account)
     magic_link = user.magic_links.create!
     account = user.accounts.first
 
     post select_account_magic_links_path, params: {
-      token: magic_link.token,
+      code: magic_link.code,
       account_id: account.id
     }
 
@@ -102,7 +123,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
     magic_link = user.magic_links.create!
 
     post select_account_magic_links_path, params: {
-      token: magic_link.token,
+      code: magic_link.code,
       account_id: "invalid-uuid"
     }
 
@@ -116,7 +137,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference "Account.count", 1 do
       assert_difference "Membership.count", 1 do
-        get verify_magic_links_path(token: magic_link.token)
+        get verify_magic_links_path(code: magic_link.code)
       end
     end
 

@@ -6,19 +6,29 @@
   </p>
 
   <p style="color: #555; font-size: 16px; line-height: 1.5;">
-    Clicca il pulsante qui sotto per accedere al tuo account.
+    Usa questo codice per accedere:
   </p>
 
-  <div style="text-align: center; margin: 30px 0;">
+  <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
+    <span style="font-family: 'SF Mono', Monaco, 'Courier New', monospace; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #111;">
+      <%= @code %>
+    </span>
+  </div>
+
+  <p style="color: #555; font-size: 16px; line-height: 1.5; text-align: center;">
+    Oppure clicca il pulsante:
+  </p>
+
+  <div style="text-align: center; margin: 20px 0;">
     <%= link_to "Accedi ora", @sign_in_url, style: "display: inline-block; background-color: #dc2626; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;" %>
   </div>
 
   <p style="color: #888; font-size: 14px; line-height: 1.5;">
-    Questo link scade tra <strong>15 minuti</strong>.
+    Questo codice scade tra <strong>15 minuti</strong>.
   </p>
 
   <p style="color: #888; font-size: 14px; line-height: 1.5;">
-    Se non hai richiesto questo link, puoi ignorare questa email.
+    Se non hai richiesto questo codice, puoi ignorare questa email.
   </p>
 
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">

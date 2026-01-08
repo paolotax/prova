@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_08_160200) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_08_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -542,15 +542,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_160200) do
 
   create_table "magic_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "token", null: false
+    t.string "code", null: false
     t.string "purpose", default: "sign_in", null: false
     t.datetime "expires_at", null: false
     t.datetime "used_at"
     t.string "ip_address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_magic_links_on_code", unique: true
     t.index ["expires_at"], name: "index_magic_links_on_expires_at"
-    t.index ["token"], name: "index_magic_links_on_token", unique: true
     t.index ["user_id", "purpose"], name: "index_magic_links_on_user_id_and_purpose"
     t.index ["user_id"], name: "index_magic_links_on_user_id"
   end
