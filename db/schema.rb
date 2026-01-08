@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_08_181331) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_08_155149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "tablefunc"
+
+  create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_accounts_on_slug", unique: true
+  end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -173,6 +182,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_08_181331) do
     t.bigint "classe_id"
     t.bigint "voice_note_id"
     t.boolean "active"
+    t.uuid "account_id", null: false
+    t.index ["account_id", "created_at"], name: "index_appunti_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
@@ -536,6 +548,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_08_181331) do
     t.datetime "updated_at", null: false
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
     t.index ["user_id"], name: "index_mandati_on_user_id"
+  end
+
+  create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.uuid "account_id", null: false
+    t.integer "role", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_memberships_on_account_id"
+    t.index ["user_id", "account_id"], name: "index_memberships_on_user_id_and_account_id", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "messages", force: :cascade do |t|

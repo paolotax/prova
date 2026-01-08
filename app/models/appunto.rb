@@ -13,6 +13,7 @@
 #  telefono           :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  account_id         :uuid             not null
 #  classe_id          :bigint
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
@@ -21,11 +22,13 @@
 #
 # Indexes
 #
-#  index_appunti_on_classe_id           (classe_id)
-#  index_appunti_on_import_adozione_id  (import_adozione_id)
-#  index_appunti_on_import_scuola_id    (import_scuola_id)
-#  index_appunti_on_user_id             (user_id)
-#  index_appunti_on_voice_note_id       (voice_note_id)
+#  index_appunti_on_account_id                 (account_id)
+#  index_appunti_on_account_id_and_created_at  (account_id,created_at)
+#  index_appunti_on_classe_id                  (classe_id)
+#  index_appunti_on_import_adozione_id         (import_adozione_id)
+#  index_appunti_on_import_scuola_id           (import_scuola_id)
+#  index_appunti_on_user_id                    (user_id)
+#  index_appunti_on_voice_note_id              (voice_note_id)
 #
 # Foreign Keys
 #
@@ -36,10 +39,14 @@
 #
 
 class Appunto < ApplicationRecord
+  belongs_to :account
   belongs_to :import_scuola, required: false
   belongs_to :user
   belongs_to :import_adozione, required: false
   belongs_to :classe, class_name: 'Views::Classe', optional: true
+
+  validates :account_id, presence: true
+  before_validation :set_account_from_current, on: :create
 
   has_one_attached :image
   has_many_attached :attachments
@@ -240,5 +247,11 @@ class Appunto < ApplicationRecord
 
   def is_ssk?
     %w[saggio seguito kit].include?(nome) && import_adozione.present?
+  end
+
+  private
+
+  def set_account_from_current
+    self.account ||= Current.account
   end
 end

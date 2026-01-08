@@ -44,6 +44,10 @@ class User < ApplicationRecord
 
   has_one :profile
 
+  # Multi-tenancy
+  has_many :memberships, dependent: :destroy
+  has_many :accounts, through: :memberships
+
   has_many :user_scuole, dependent: :destroy
   has_many :import_scuole, through: :user_scuole
   has_many :import_adozioni, through: :import_scuole
@@ -138,6 +142,24 @@ class User < ApplicationRecord
   def qrcodes
     Qrcode.where(qrcodable_type: "Libro", qrcodable_id: libri.pluck(:id))
           .or(Qrcode.where(qrcodable_type: "Scuola", qrcodable_id: import_scuole.pluck(:id)))
+  end
+
+  # Multi-tenancy helpers
+  def member_of?(account)
+    accounts.exists?(account.id)
+  end
+
+  def role_in(account)
+    memberships.find_by(account: account)&.role
+  end
+
+  def admin_of?(account)
+    role = role_in(account)
+    role == "admin" || role == "owner"
+  end
+
+  def owner_of?(account)
+    role_in(account) == "owner"
   end
 
 end
