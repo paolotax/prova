@@ -14,24 +14,34 @@ class TurnstileVerifierTest < ActiveSupport::TestCase
 
   # === Test casi senza chiamate HTTP ===
 
-  test "returns false when payload is nil" do
-    ENV["TURNSTILE_SECRET_KEY"] = "test-secret"
-    assert_not TurnstileVerifier.check(nil, @client_ip)
-  end
+  # === Secret key blank = skip verification ===
 
-  test "returns false when payload is empty string" do
-    ENV["TURNSTILE_SECRET_KEY"] = "test-secret"
-    assert_not TurnstileVerifier.check("", @client_ip)
-  end
-
-  test "returns true when secret key is nil" do
+  test "returns true when secret key is nil (skips verification)" do
     ENV["TURNSTILE_SECRET_KEY"] = nil
     assert TurnstileVerifier.check(@payload, @client_ip)
   end
 
-  test "returns true when secret key is empty" do
+  test "returns true when secret key is empty (skips verification)" do
     ENV["TURNSTILE_SECRET_KEY"] = ""
     assert TurnstileVerifier.check(@payload, @client_ip)
+  end
+
+  test "returns true when secret key is nil even with blank payload" do
+    ENV["TURNSTILE_SECRET_KEY"] = nil
+    assert TurnstileVerifier.check(nil, @client_ip)
+    assert TurnstileVerifier.check("", @client_ip)
+  end
+
+  # === Payload blank with secret configured = fail ===
+
+  test "returns false when payload is nil and secret is configured" do
+    ENV["TURNSTILE_SECRET_KEY"] = "test-secret"
+    assert_not TurnstileVerifier.check(nil, @client_ip)
+  end
+
+  test "returns false when payload is empty and secret is configured" do
+    ENV["TURNSTILE_SECRET_KEY"] = "test-secret"
+    assert_not TurnstileVerifier.check("", @client_ip)
   end
 
   # === Test con stubbing della risposta HTTP ===

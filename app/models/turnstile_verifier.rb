@@ -25,8 +25,8 @@ class TurnstileVerifier
   end
 
   def check
-    return false if @payload.blank?
     return true if secret_key.blank? # Skip if not configured
+    return false if @payload.blank?
 
     result = request_verification
     result&.dig("success") == true
