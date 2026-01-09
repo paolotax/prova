@@ -2,8 +2,7 @@ module Authenticable
   extend ActiveSupport::Concern
 
   included do
-    # Passwordless authentication - no Devise modules needed
-    # User authentication is handled via magic links and sessions
+    # Passwordless authentication via magic links and sessions
 
     validates :name, presence: true, uniqueness: true
 

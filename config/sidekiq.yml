@@ -19,3 +19,9 @@
       queue: default
       unique: true
       description: 'Pulisce le righe orfane (senza DocumentoRiga) e salva un backup in tmp/'
+
+    auth_cleanup:
+      cron: '0 4 * * *'  # Ogni giorno alle 4:00 AM
+      class: AuthCleanupJob
+      queue: default
+      description: 'Pulisce sessioni e magic link scaduti'
