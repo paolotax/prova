@@ -1,0 +1,8 @@
+# test/fixtures/editori.yml
+mondadori:
+  editore: "Mondadori"
+  gruppo: "Mondadori Group"
+
+zanichelli:
+  editore: "Zanichelli"
+  gruppo: "Zanichelli Group"

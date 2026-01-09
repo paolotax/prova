@@ -1,0 +1,22 @@
+# test/fixtures/libri.yml
+libro_fizzy:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: scolastica
+  titolo: "Libro Test Fizzy"
+  codice_isbn: "9788800000001"
+  prezzo_in_cents: 1500
+  classe: 1
+  disciplina: "Italiano"
+
+libro_acme:
+  account: acme
+  user: multi_account
+  editore: zanichelli
+  categoria: scolastica
+  titolo: "Libro Test Acme"
+  codice_isbn: "9788800000002"
+  prezzo_in_cents: 2000
+  classe: 2
+  disciplina: "Matematica"

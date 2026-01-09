@@ -1,0 +1,18 @@
+# test/fixtures/clienti.yml
+cliente_fizzy:
+  account: fizzy
+  user: one
+  denominazione: "Cliente Fizzy Srl"
+  codice_cliente: "CLI001"
+  tipo_cliente: "azienda"
+  partita_iva: "12345678901"
+  email: "cliente@fizzy.it"
+
+cliente_acme:
+  account: acme
+  user: multi_account
+  denominazione: "Cliente Acme Srl"
+  codice_cliente: "CLI002"
+  tipo_cliente: "azienda"
+  partita_iva: "98765432101"
+  email: "cliente@acme.it"

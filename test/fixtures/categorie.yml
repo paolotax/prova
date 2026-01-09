@@ -1,0 +1,10 @@
+# test/fixtures/categorie.yml
+scolastica:
+  nome_categoria: "Scolastica"
+  descrizione: "Libri scolastici"
+  user: one
+
+narrativa:
+  nome_categoria: "Narrativa"
+  descrizione: "Libri di narrativa"
+  user: one

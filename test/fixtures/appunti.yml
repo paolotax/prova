@@ -1,0 +1,16 @@
+# test/fixtures/appunti.yml
+appunto_fizzy:
+  account: fizzy
+  user: one
+  nome: "Appunto Test Fizzy"
+  body: "Contenuto appunto Fizzy"
+  stato: "da_fare"
+  active: true
+
+appunto_acme:
+  account: acme
+  user: multi_account
+  nome: "Appunto Test Acme"
+  body: "Contenuto appunto Acme"
+  stato: "da_fare"
+  active: true

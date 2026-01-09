@@ -1,0 +1,12 @@
+# test/fixtures/causali.yml
+vendita:
+  causale: "Vendita"
+  magazzino: "uscita"
+  tipo_movimento: 1
+  movimento: 1
+
+ordine:
+  causale: "Ordine"
+  magazzino: "entrata"
+  tipo_movimento: 0
+  movimento: 0

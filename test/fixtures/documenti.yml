@@ -1,0 +1,22 @@
+# test/fixtures/documenti.yml
+documento_fizzy:
+  account: fizzy
+  user: one
+  causale: vendita
+  numero_documento: 1
+  data_documento: <%= Date.today %>
+  status: 0
+  tipo_documento: 0
+  clientable_type: "Cliente"
+  clientable_id: 1
+
+documento_acme:
+  account: acme
+  user: multi_account
+  causale: ordine
+  numero_documento: 1
+  data_documento: <%= Date.today %>
+  status: 0
+  tipo_documento: 0
+  clientable_type: "Cliente"
+  clientable_id: 2
