@@ -1,15 +1,20 @@
 require "net/http"
 
 class TurnstileVerifier
-  PRIVATE_KEY = ENV["TURNSTILE_SECRET_KEY"] #.dig(:turnstile, :secret_key)
-
-  # Catch relevant network errors only.
-  NETWORK_ERRORS = [Errno::ETIMEDOUT]
-
-  # Set max retries here.
+  VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify".freeze
   MAX_RETRIES = 3
+  TIMEOUT_SECONDS = 5
 
-  # Syntactic sugar syntax to avoid initialization in the controller
+  NETWORK_ERRORS = [
+    Errno::ETIMEDOUT,
+    Errno::ECONNREFUSED,
+    Errno::ECONNRESET,
+    SocketError,
+    Timeout::Error,
+    Net::OpenTimeout,
+    Net::ReadTimeout
+  ].freeze
+
   def self.check(payload, client_ip)
     new(payload, client_ip).check
   end
@@ -20,26 +25,46 @@ class TurnstileVerifier
   end
 
   def check
-    return false unless @payload
+    return false if @payload.blank?
+    return true if secret_key.blank? # Skip if not configured
+
     result = request_verification
-    result["success"]
+    result&.dig("success") == true
   end
 
   private
 
-  def request_verification
-    attempts ||= 0
-    verification_url = URI("https://challenges.cloudflare.com/turnstile/v0/siteverify")
-
-    response = Net::HTTP.post_form(verification_url,
-      secret: PRIVATE_KEY,
-      response: @payload,
-      remoteip: @client_ip
-    )
-
-    JSON.parse(response.body)
-  rescue *NETWORK_ERRORS
-    retry if (attempts += 1) <  MAX_RETRIES # Retry mechanism
+  def secret_key
+    ENV["TURNSTILE_SECRET_KEY"]
   end
 
+  def request_verification
+    attempts = 0
+
+    begin
+      uri = URI(VERIFY_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = TIMEOUT_SECONDS
+      http.read_timeout = TIMEOUT_SECONDS
+
+      response = http.post(
+        uri.path,
+        URI.encode_www_form(
+          secret: secret_key,
+          response: @payload,
+          remoteip: @client_ip
+        ),
+        "Content-Type" => "application/x-www-form-urlencoded"
+      )
+
+      JSON.parse(response.body)
+    rescue *NETWORK_ERRORS, JSON::ParserError => e
+      attempts += 1
+      retry if attempts < MAX_RETRIES
+
+      Rails.logger.error("[TurnstileVerifier] Failed after #{MAX_RETRIES} attempts: #{e.message}")
+      nil
+    end
+  end
 end

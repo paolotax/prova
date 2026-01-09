@@ -86,7 +86,6 @@ class MagicLinksController < ApplicationController
 
   def validate_turnstile
     return if Rails.env.test?
-    return if ENV["TURNSTILE_SECRET_KEY"].blank?
 
     unless TurnstileVerifier.check(params["cf-turnstile-response"], request.remote_ip)
       redirect_to new_magic_link_path, alert: "Verifica di sicurezza fallita. Riprova."
