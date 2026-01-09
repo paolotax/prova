@@ -260,9 +260,71 @@ test/fixtures/
 
 ---
 
+## Fase 4 Completata: Cleanup Devise
+
+### Rimosso
+
+**Gemfile:**
+- `devise` e `devise-i18n` rimossi
+
+**Controller eliminati:**
+- `app/controllers/confirmations_controller.rb`
+- `app/controllers/users/registrations_controller.rb`
+
+**Views eliminate:**
+- Tutta la directory `app/views/devise/` (14 file)
+
+**Config eliminati:**
+- `config/initializers/devise.rb`
+- `config/locales/devise.en.yml`
+
+**Colonne rimosse da users:**
+```ruby
+# db/migrate/20260108235000_remove_devise_columns_from_users.rb
+- encrypted_password
+- reset_password_token
+- reset_password_sent_at
+- remember_created_at
+- confirmation_token
+- confirmed_at
+- confirmation_sent_at
+- unconfirmed_email
+```
+
+### Schema User Finale
+
+```ruby
+# Solo colonne essenziali:
+- id
+- email
+- name
+- navigator
+- passwordless_enabled
+- role
+- slug
+- created_at
+- updated_at
+```
+
+### Job Cleanup Aggiunto
+
+```ruby
+# app/jobs/auth_cleanup_job.rb
+class AuthCleanupJob < ApplicationJob
+  def perform
+    Session.expired.delete_all
+    MagicLink.cleanup_expired
+  end
+end
+
+# config/sidekiq.yml - schedulato ogni giorno alle 4:00 AM
+```
+
+---
+
 ## Piano per Continuare
 
-### Fase 3: Multi-Tenancy Completo
+### Fase 5: Multi-Tenancy Completo
 
 1. **Scoping dei modelli**
    - Aggiungere `account_id` ai modelli principali (Documento, Appunto, etc.)
@@ -277,33 +339,7 @@ test/fixtures/
    - UI per cambiare account nella sessione
    - Controller per switch account
 
-### Fase 4: Cleanup e Ottimizzazioni
-
-1. **Rimuovere gemme Devise**
-   ```ruby
-   # Rimuovere da Gemfile:
-   gem 'devise'
-   gem 'devise-i18n'
-   ```
-
-2. **Rimuovere colonne Devise da users**
-   ```ruby
-   # Migrazione per rimuovere:
-   - encrypted_password
-   - reset_password_token
-   - reset_password_sent_at
-   - remember_created_at
-   - confirmation_token
-   - confirmed_at
-   - confirmation_sent_at
-   - unconfirmed_email
-   ```
-
-3. **Job per cleanup**
-   - `MagicLink.cleanup_expired` periodico
-   - `Session.expired.delete_all` periodico
-
-### Fase 5: Funzionalità Aggiuntive (Opzionali)
+### Fase 6: Funzionalità Aggiuntive (Opzionali)
 
 1. **Rate limiting**
    - Limitare richieste magic link per email
@@ -374,7 +410,8 @@ config/
 db/migrate/
 ├── 20260108155148_create_magic_links.rb
 ├── 20260108160000_create_sessions.rb
-└── 20260108230000_rename_token_to_code_in_magic_links.rb
+├── 20260108230000_rename_token_to_code_in_magic_links.rb
+└── 20260108235000_remove_devise_columns_from_users.rb
 
 test/
 ├── models/
