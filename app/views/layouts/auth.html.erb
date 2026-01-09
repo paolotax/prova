@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html class="h-full antialiased bg-gray-50">
+  <head>
+    <title><%= content_for(:title) || "Scagnozz - Login" %></title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffffff">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <%= javascript_importmap_tags %>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+
+    <%= yield :head %>
+  </head>
+
+  <body class="flex min-h-full flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
+    <%= turbo_frame_tag :modal %>
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="flex justify-center">
+        <%= inline_svg_tag 'logo.svg', class: 'h-12 w-auto' rescue nil %>
+      </div>
+      <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <%= content_for(:heading) || "Scagnozz" %>
+      </h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+        <%= yield %>
+      </div>
+    </div>
+
+    <%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
+  </body>
+</html>

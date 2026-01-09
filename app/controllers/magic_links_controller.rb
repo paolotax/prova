@@ -1,5 +1,9 @@
 class MagicLinksController < ApplicationController
+  layout "auth"
+
   skip_before_action :authenticate_user!
+  skip_before_action :set_current_account_from_url
+  skip_before_action :ensure_account_member
   before_action :redirect_if_authenticated, only: [:new, :create, :sent]
   before_action :validate_turnstile, only: :create
 
@@ -110,6 +114,6 @@ class MagicLinksController < ApplicationController
     Current.account = account
     Current.membership = user.memberships.find_by(account: account)
 
-    redirect_to root_path, notice: "Accesso effettuato!"
+    redirect_to account_root_path(account), notice: "Accesso effettuato!"
   end
 end

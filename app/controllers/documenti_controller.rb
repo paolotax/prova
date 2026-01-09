@@ -9,7 +9,7 @@ class DocumentiController < ApplicationController
     @causali = Causale.all
     @import = DocumentiImporter.new
 
-    @documenti = current_user.documenti
+    @documenti = Current.account.documenti
         .solo_padri
         .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
@@ -32,7 +32,7 @@ class DocumentiController < ApplicationController
     @causali = Causale.all
     @import = DocumentiImporter.new
 
-    @documenti = current_user.documenti
+    @documenti = Current.account.documenti
         .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
@@ -77,12 +77,12 @@ class DocumentiController < ApplicationController
     causale = Causale.find_by(causale: params[:causale])
     clientable_id = params[:clientable_id]
     clientable_type = params[:clientable_type]
-    numero_documento = (current_user.documenti
+    numero_documento = (Current.account.documenti
                         .where(causale: causale)
                         .where('EXTRACT(YEAR FROM data_documento) = ?', Date.today.year)
                         .maximum(:numero_documento) || 0).to_i + 1
 
-    @documento = current_user.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
+    @documento = Current.account.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
     @documento.save! validate: false
     @documento.documento_righe.build.build_riga(sconto: 0.0)
 
@@ -95,7 +95,7 @@ class DocumentiController < ApplicationController
   def create
 
     result = DocumentoCreator.new.create_documento(
-                current_user.documenti.build(documento_params)
+                Current.account.documenti.build(documento_params)
     )
 
     if result.created?
@@ -141,7 +141,7 @@ class DocumentiController < ApplicationController
 
 
     anno_corrente = Date.current.year
-    ultimo_documento = current_user.documenti.where(causale: params[:causale]).where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente).maximum(:numero_documento)
+    ultimo_documento = Current.account.documenti.where(causale: params[:causale]).where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente).maximum(:numero_documento)
     numero_documento = (ultimo_documento || 0) + 1
     render json: { numero_documento: numero_documento, clientable_type: clientable_type }
 
@@ -174,7 +174,7 @@ class DocumentiController < ApplicationController
   private
 
     def set_documento
-      @documento = current_user.documenti.find(params[:id])
+      @documento = Current.account.documenti.find(params[:id])
     end
 
     def documento_params

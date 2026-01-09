@@ -32,15 +32,19 @@
 #  tipo_cliente            :string
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  account_id              :uuid             not null
 #  user_id                 :bigint
 #
 # Indexes
 #
-#  index_clienti_on_slug     (slug) UNIQUE
-#  index_clienti_on_user_id  (user_id)
+#  index_clienti_on_account_id                 (account_id)
+#  index_clienti_on_account_id_and_created_at  (account_id,created_at)
+#  index_clienti_on_slug                       (slug) UNIQUE
+#  index_clienti_on_user_id                    (user_id)
 #
 
 class Cliente < ApplicationRecord
+  include AccountScoped
 
   geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
   after_validation :geocode, if: ->(obj) { (obj.indirizzo_changed? || obj.numero_civico_changed? ||obj.cap_changed? || obj.comune_changed? || obj.provincia_changed?) } 

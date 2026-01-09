@@ -43,7 +43,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
 
     get verify_magic_links_path(code: magic_link.code)
 
-    assert_redirected_to root_path
+    assert_redirected_to account_root_path(user.accounts.first)
     assert_equal "Accesso effettuato!", flash[:notice]
     assert cookies[:session_token].present?
   end
@@ -89,7 +89,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
 
     get verify_magic_links_path(code: magic_link.code.downcase)
 
-    assert_redirected_to root_path
+    assert_redirected_to account_root_path(user.accounts.first)
     assert_equal "Accesso effettuato!", flash[:notice]
   end
 
@@ -100,7 +100,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
 
     get verify_magic_links_path(code: code_with_spaces)
 
-    assert_redirected_to root_path
+    assert_redirected_to account_root_path(user.accounts.first)
     assert_equal "Accesso effettuato!", flash[:notice]
   end
 
@@ -114,7 +114,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
       account_id: account.id
     }
 
-    assert_redirected_to root_path
+    assert_redirected_to account_root_path(account)
     assert_equal "Accesso effettuato!", flash[:notice]
   end
 
@@ -141,14 +141,17 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to root_path
+    # Il nuovo account creato è l'ultimo
+    new_account = Account.order(:created_at).last
+    assert_redirected_to account_root_path(new_account)
   end
 
   test "new redirects if already authenticated" do
-    login_as users(:one)
+    user = users(:one)
+    login_as user
 
     get new_magic_link_path
-    assert_redirected_to root_path
+    assert_redirected_to root_path  # root_path ora punta a accounts#index
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_09_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_09_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -337,6 +337,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_000000) do
     t.float "latitude"
     t.float "longitude"
     t.boolean "geocoded"
+    t.uuid "account_id", null: false
+    t.index ["account_id", "created_at"], name: "index_clienti_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_clienti_on_account_id"
     t.index ["slug"], name: "index_clienti_on_slug", unique: true
     t.index ["user_id"], name: "index_clienti_on_user_id"
   end
@@ -371,6 +374,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_000000) do
     t.datetime "pagato_il"
     t.integer "documento_padre_id"
     t.integer "derivato_da_causale_id"
+    t.uuid "account_id", null: false
+    t.index ["account_id", "created_at"], name: "index_documenti_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_documenti_on_account_id"
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
     t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable_type_and_clientable_id"
     t.index ["derivato_da_causale_id"], name: "index_documenti_on_derivato_da_causale_id"
@@ -528,6 +534,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_000000) do
     t.bigint "categoria_id", null: false
     t.integer "prezzo_suggerito_cents", default: 0
     t.string "cm"
+    t.uuid "account_id", null: false
+    t.index ["account_id", "created_at"], name: "index_libri_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_libri_on_account_id"
     t.index ["categoria_id"], name: "index_libri_on_categoria_id"
     t.index ["classe", "disciplina"], name: "index_libri_on_classe_and_disciplina"
     t.index ["cm"], name: "index_libri_on_cm"

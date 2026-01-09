@@ -3,11 +3,22 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include Pagy::Backend
   include PasswordlessAuthentication
+  include AccountFromUrl
 
   # allow_browser versions: :modern
 
   before_action :set_current_request_identifier
   before_action :authenticate_user!
+
+  # Inietta automaticamente account_id in tutti i path helpers
+  # Solo se siamo in una route con account context
+  def default_url_options
+    if params[:account_id].present? && Current.account
+      { account_id: Current.account.id }
+    else
+      {}
+    end
+  end
 
   private
 

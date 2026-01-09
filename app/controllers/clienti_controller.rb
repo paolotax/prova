@@ -7,7 +7,7 @@ class ClientiController < ApplicationController
 
   def index
     @import = ClientiImporter.new
-    @clienti = current_user.clienti.order(:denominazione)
+    @clienti = Current.account.clienti.order(:denominazione)
     @clienti = filter(@clienti.all)
     #set_page_and_extract_portion_from @clienti
   end
@@ -49,14 +49,14 @@ class ClientiController < ApplicationController
   end
 
   def new
-    @cliente = current_user.clienti.new
+    @cliente = Current.account.clienti.new
   end
 
   def edit
   end
 
   def create
-    @cliente = current_user.clienti.new(cliente_params)
+    @cliente = Current.account.clienti.new(cliente_params)
 
     if @cliente.save
       redirect_to(cliente_path(@cliente), notice: "Cliente inserito.") # rubocop:disable Rails/I18nLocaleTexts
@@ -67,7 +67,7 @@ class ClientiController < ApplicationController
 
 
     # result = ClienteCreator.new.create_cliente(
-    #            current_user.clienti.new(cliente_params)
+    #            Current.account.clienti.new(cliente_params)
     # )
     # if result.created?
     #   redirect_to clienti_url, notice: "Cliente inserito."
@@ -105,7 +105,7 @@ class ClientiController < ApplicationController
   private
 
     def set_cliente
-      @cliente = Cliente.find(params[:id])
+      @cliente = Current.account.clienti.find(params[:id])
     end
 
     def cliente_params

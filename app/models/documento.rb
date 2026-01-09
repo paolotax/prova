@@ -19,6 +19,7 @@
 #  totale_copie           :integer
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  account_id             :uuid             not null
 #  causale_id             :bigint
 #  clientable_id          :bigint
 #  derivato_da_causale_id :integer
@@ -27,6 +28,8 @@
 #
 # Indexes
 #
+#  index_documenti_on_account_id                         (account_id)
+#  index_documenti_on_account_id_and_created_at          (account_id,created_at)
 #  index_documenti_on_causale_id                         (causale_id)
 #  index_documenti_on_clientable_type_and_clientable_id  (clientable_type,clientable_id)
 #  index_documenti_on_derivato_da_causale_id             (derivato_da_causale_id)
@@ -42,6 +45,8 @@
 #
 
 class Documento < ApplicationRecord
+  include AccountScoped
+
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
   belongs_to :causale, optional: true

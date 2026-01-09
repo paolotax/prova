@@ -7,14 +7,14 @@ class LibriController < ApplicationController
 
 
   def crosstab
-    @libri = current_user.libri.crosstab
+    @libri = Current.account.libri.crosstab
     respond_to do |format|
       format.xlsx 
     end
   end
 
   def scarico_fascicoli
-    @libri = current_user.libri.scarico_fascicoli
+    @libri = Current.account.libri.scarico_fascicoli
     respond_to do |format|
       format.xlsx
     end
@@ -24,13 +24,13 @@ class LibriController < ApplicationController
 
     if params[:q].present?
 
-      @libri = current_user.libri.order(:titolo).search_all_word(params[:q])
+      @libri = Current.account.libri.order(:titolo).search_all_word(params[:q])
 
     else
 
       @import = LibriImporter.new
 
-      @libri = current_user.libri
+      @libri = Current.account.libri
                   .includes(:editore, :adozioni, :categoria, :edizione_titolo)
                   .order("libri.titolo, libri.classe")
       @libri = filter(@libri.all)
@@ -57,14 +57,14 @@ class LibriController < ApplicationController
 
 
   def new
-    @libro = current_user.libri.new
+    @libro = Current.account.libri.new
   end
 
   def edit
   end
 
   def create
-    @libro = current_user.libri.build(libro_params)
+    @libro = Current.account.libri.build(libro_params)
 
     respond_to do |format|
       if @libro.save
@@ -168,7 +168,7 @@ class LibriController < ApplicationController
   private
 
     def set_libro
-      @libro = current_user.libri.friendly.find(params[:id])
+      @libro = Current.account.libri.friendly.find(params[:id])
     end
 
     def libro_params

@@ -1,5 +1,9 @@
 module Passwordless
   class SessionsController < ApplicationController
+    layout "auth"
+
+    skip_before_action :set_current_account_from_url
+    skip_before_action :ensure_account_member
     before_action :set_session, only: [:destroy]
 
     # GET /sessions

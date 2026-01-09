@@ -19,22 +19,25 @@
 #  titolo                 :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  account_id             :uuid             not null
 #  categoria_id           :bigint           not null
 #  editore_id             :bigint
 #  user_id                :bigint           not null
 #
 # Indexes
 #
-#  index_libri_on_categoria_id             (categoria_id)
-#  index_libri_on_classe_and_disciplina    (classe,disciplina)
-#  index_libri_on_cm                       (cm)
-#  index_libri_on_editore_id               (editore_id)
-#  index_libri_on_slug                     (slug) UNIQUE
-#  index_libri_on_user_id                  (user_id)
-#  index_libri_on_user_id_and_codice_isbn  (user_id,codice_isbn)
-#  index_libri_on_user_id_and_collana      (user_id,collana)
-#  index_libri_on_user_id_and_editore_id   (user_id,editore_id)
-#  index_libri_on_user_id_and_titolo       (user_id,titolo)
+#  index_libri_on_account_id                 (account_id)
+#  index_libri_on_account_id_and_created_at  (account_id,created_at)
+#  index_libri_on_categoria_id               (categoria_id)
+#  index_libri_on_classe_and_disciplina      (classe,disciplina)
+#  index_libri_on_cm                         (cm)
+#  index_libri_on_editore_id                 (editore_id)
+#  index_libri_on_slug                       (slug) UNIQUE
+#  index_libri_on_user_id                    (user_id)
+#  index_libri_on_user_id_and_codice_isbn    (user_id,codice_isbn)
+#  index_libri_on_user_id_and_collana        (user_id,collana)
+#  index_libri_on_user_id_and_editore_id     (user_id,editore_id)
+#  index_libri_on_user_id_and_titolo         (user_id,titolo)
 #
 # Foreign Keys
 #
@@ -43,6 +46,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Libro < ApplicationRecord
+  include AccountScoped
 
   include FriendlyId
   friendly_id :slug_candidates, use: :slugged

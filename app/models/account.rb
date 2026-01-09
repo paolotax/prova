@@ -18,6 +18,9 @@ class Account < ApplicationRecord
 
   # Account-scoped resources
   has_many :appunti, dependent: :destroy
+  has_many :documenti, dependent: :destroy
+  has_many :clienti, dependent: :destroy
+  has_many :libri, dependent: :destroy
 
   validates :name, presence: true
 
