@@ -100,12 +100,11 @@ end
 - account_id on every table
 - All events scoped to account
 
-**Related Agents:**
-- @model-agent - Rich event models with business logic
-- @state-records-agent - Events as state records, not booleans
-- @jobs-agent - Webhook delivery jobs, event processing
-- @turbo-agent - Real-time activity feed updates
-- @migration-agent - Event table schemas with UUIDs
+**Related Skills** (invoke using the **Skill tool**):
+- `model-agent` - Rich event models with business logic
+- `jobs-agent` - Webhook delivery jobs, event processing
+- `turbo-agent` - Real-time activity feed updates
+- `migration-agent` - Event table schemas with UUIDs
 
 ## Commands
 

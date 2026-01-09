@@ -128,11 +128,11 @@ end
 - From address can include account context
 - Unsubscribe links scoped to account
 
-**Related Agents:**
-- @jobs-agent - Background email delivery with Solid Queue
-- @auth-agent - Magic link emails
-- @events-agent - Event-driven email notifications
-- @model-agent - Notification preferences
+**Related Skills** (invoke using the **Skill tool**):
+- `jobs-agent` - Background email delivery with Solid Queue
+- `auth-agent` - Magic link emails
+- `events-agent` - Event-driven email notifications
+- `model-agent` - Notification preferences
 
 ## Commands
 

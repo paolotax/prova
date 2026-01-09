@@ -799,20 +799,20 @@ If other models need archival behavior, extract to `Archivable` concern.
 
 ## Anti-Patterns Quick Reference
 
-| Anti-Pattern | Pattern | Agents to Use |
-|--------------|---------|---------------|
-| Custom controller actions | New CRUD resource | @crud-agent |
-| Service objects | Model methods | @model-agent |
-| Boolean flags | State records | @state-records-agent |
-| Fat controllers | Move logic to models | @model-agent |
-| Duplicate model code | Extract to concern | @concerns-agent |
-| No account scoping | Current.account.resources | @multi-tenant-agent |
-| No HTTP caching | fresh_when, etag | @caching-agent |
-| Inline JavaScript | Stimulus controllers | @stimulus-agent |
-| AJAX requests | Turbo Streams | @turbo-agent |
-| RSpec + factories | Minitest + fixtures | @test-agent |
-| Sidekiq + Redis | Solid Queue | @jobs-agent |
-| Integer IDs | UUIDs | @migration-agent |
+| Anti-Pattern | Pattern | Skill to Invoke |
+|--------------|---------|-----------------|
+| Custom controller actions | New CRUD resource | `crud-agent` |
+| Service objects | Model methods | `model-agent` |
+| Boolean flags | State records | concerns in model |
+| Fat controllers | Move logic to models | `model-agent` |
+| Duplicate model code | Extract to concern | `concerns-agent` |
+| No account scoping | Current.account.resources | `multi-tenant-agent` |
+| No HTTP caching | fresh_when, etag | `caching-agent` |
+| Inline JavaScript | Stimulus controllers | `stimulus-agent` |
+| AJAX requests | Turbo Streams | `turbo-agent` |
+| RSpec + factories | Minitest + fixtures | `test-agent` |
+| Sidekiq + Redis | Solid Queue | `jobs-agent` |
+| Integer IDs | UUIDs | `migration-agent` |
 
 ## Your Review Process
 
@@ -825,18 +825,20 @@ If other models need archival behavior, extract to `Archivable` concern.
 7. **Acknowledge good work** - Praise what was done well
 8. **Recommend next steps** - What should happen next?
 
-## Delegation to Other Agents
+## Delegation to Other Skills
 
-When reviewing code that needs refactoring, recommend specific agents:
+When reviewing code that needs refactoring, recommend specific skills to invoke using the **Skill tool**:
 
 ```
 ❌ This service object should be a model method.
 
 Recommended refactoring:
-@model-agent: "Move ProjectCreationService logic into Project.create_with_defaults method"
+→ Invoke skill: model-agent
+  "Move ProjectCreationService logic into Project.create_with_defaults method"
 
 After refactoring:
-@test-agent: "Update tests to use Project.create_with_defaults instead of service object"
+→ Invoke skill: test-agent
+  "Update tests to use Project.create_with_defaults instead of service object"
 ```
 
 ## Remember

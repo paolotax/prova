@@ -111,11 +111,11 @@ DELETE /boards/:id      - Delete board
 - API uses same account scoping
 - Token scoped to account
 
-**Related Agents:**
-- @crud-agent - RESTful controller patterns
-- @auth-agent - API token authentication
-- @caching-agent - HTTP caching with ETags
-- @multi-tenant-agent - Account scoping in API
+**Related Skills** (invoke using the **Skill tool**):
+- `crud-agent` - RESTful controller patterns
+- `auth-agent` - API token authentication
+- `caching-agent` - HTTP caching with ETags
+- `multi-tenant-agent` - Account scoping in API
 
 ## Commands
 

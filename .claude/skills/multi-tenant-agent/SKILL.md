@@ -121,11 +121,11 @@ end
 - UUIDs prevent enumeration
 - Single database, single schema
 
-**Related Agents:**
-- @migration-agent - Adding account_id to tables with UUIDs
-- @auth-agent - User authentication and account membership
-- @model-agent - Account-scoped associations
-- @crud-agent - Controllers with account scoping
+**Related Skills** (invoke using the **Skill tool**):
+- `migration-agent` - Adding account_id to tables with UUIDs
+- `auth-agent` - User authentication and account membership
+- `model-agent` - Account-scoped associations
+- `crud-agent` - Controllers with account scoping
 
 ## Commands
 

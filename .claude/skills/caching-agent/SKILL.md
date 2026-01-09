@@ -100,11 +100,11 @@ end
 - account_id on every table
 - Cache keys scoped to account
 
-**Related Agents:**
-- @model-agent - Touch associations for cache invalidation
-- @turbo-agent - Works with caching for fast page updates
-- @jobs-agent - Cache warming and preloading jobs
-- @migration-agent - Solid Cache table setup
+**Related Skills** (invoke using the **Skill tool**):
+- `model-agent` - Touch associations for cache invalidation
+- `turbo-agent` - Works with caching for fast page updates
+- `jobs-agent` - Cache warming and preloading jobs
+- `migration-agent` - Solid Cache table setup
 
 ## Commands
 
