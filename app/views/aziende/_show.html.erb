@@ -1,0 +1,87 @@
+<div class="space-y-6">
+  <!-- Dati Fiscali -->
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Dati Fiscali</h2>
+
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Ragione Sociale</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= azienda.ragione_sociale %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Regime Fiscale</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= Azienda.regime_fiscales[azienda.regime_fiscale] %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Partita IVA</dt>
+        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.partita_iva %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Codice Fiscale</dt>
+        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.codice_fiscale %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Sede Legale -->
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Sede Legale</h2>
+
+    <dl class="grid grid-cols-1 gap-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Indirizzo</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          <%= azienda.indirizzo %><br>
+          <%= azienda.cap %> <%= azienda.comune %> (<%= azienda.provincia %>)<br>
+          <%= azienda.nazione %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Contatti -->
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Contatti</h2>
+
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Email</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          <%= link_to azienda.email, "mailto:#{azienda.email}", class: "text-blue-600 hover:text-blue-500" %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Telefono</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          <%= link_to azienda.telefono, "tel:#{azienda.telefono}", class: "text-blue-600 hover:text-blue-500" %>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Codice SDI</dt>
+        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.indirizzo_telematico %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Dati Bancari -->
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Dati Bancari</h2>
+
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <dt class="text-sm font-medium text-gray-500">IBAN</dt>
+        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.iban %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Banca</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= azienda.banca %></dd>
+      </div>
+    </dl>
+  </div>
+</div>

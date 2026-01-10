@@ -1,0 +1,15 @@
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Dati Aziendali</h1>
+    <%= link_to "Modifica", edit_azienda_path, class: "rounded-lg py-2 px-4 bg-blue-600 text-white font-medium hover:bg-blue-700" %>
+  </div>
+
+  <% if @azienda.nil? %>
+    <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg">
+      <p>Nessun dato aziendale configurato.</p>
+      <%= link_to "Configura ora", new_azienda_path, class: "underline font-medium" %>
+    </div>
+  <% else %>
+    <%= render "show", azienda: @azienda %>
+  <% end %>
+</div>

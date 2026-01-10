@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_10_105419) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -193,7 +193,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_105419) do
   end
 
   create_table "aziende", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.string "partita_iva", limit: 11, null: false
     t.string "codice_fiscale", limit: 16, null: false
     t.string "ragione_sociale", null: false
@@ -210,6 +210,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_105419) do
     t.string "banca"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_aziende_on_account_id", unique: true
     t.index ["codice_fiscale"], name: "index_aziende_on_codice_fiscale", unique: true
     t.index ["partita_iva"], name: "index_aziende_on_partita_iva", unique: true
     t.index ["user_id"], name: "index_aziende_on_user_id"
@@ -956,7 +958,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_105419) do
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
-  add_foreign_key "aziende", "users"
   add_foreign_key "categorie", "users"
   add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"

@@ -19,43 +19,49 @@
 #  telefono             :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  user_id              :bigint           not null
+#  account_id           :uuid             not null
+#  user_id              :bigint
 #
 # Indexes
 #
+#  index_aziende_on_account_id      (account_id) UNIQUE
 #  index_aziende_on_codice_fiscale  (codice_fiscale) UNIQUE
 #  index_aziende_on_partita_iva     (partita_iva) UNIQUE
 #  index_aziende_on_user_id         (user_id)
 #
-# Foreign Keys
-#
-#  fk_rails_...  (user_id => users.id)
-#
-#
-# Table name: aziende
-#
-#  user_id            :bigint           not null
-#  partita_iva        :string(11)       not null
-#  codice_fiscale     :string(16)       not null
-#  ragione_sociale    :string           not null
-#  regime_fiscale     :string           default("RF19"), not null
-#  indirizzo          :string           not null
-#  cap                :string(5)        not null
-#  comune             :string           not null
-#  provincia          :string(2)        not null
-#  nazione            :string(2)        default("IT"), not null
-#  email              :string           not null
-#
 
-alice_azienda:
+fizzy_azienda:
+  account: fizzy
   user: one
   partita_iva: "12345678901"
   codice_fiscale: "RSSMRA80A01H501U"
-  ragione_sociale: "Alice SRL"
-  regime_fiscale: "RF19"
+  ragione_sociale: "Fizzy Team SRL"
+  regime_fiscale: rf19
   indirizzo: "Via Roma 1"
   cap: "00100"
   comune: "Roma"
   provincia: "RM"
   nazione: "IT"
-  email: "alice@example.com"
+  email: "info@fizzyteam.it"
+  telefono: "+39 06 1234567"
+  indirizzo_telematico: "KRRH6B9"
+  iban: "IT60X0542811101000000123456"
+  banca: "Banca Esempio"
+
+acme_azienda:
+  account: acme
+  user: two
+  partita_iva: "98765432101"
+  codice_fiscale: "BNCMRC85B15H501Z"
+  ragione_sociale: "Acme Corp SRL"
+  regime_fiscale: rf01
+  indirizzo: "Via Milano 10"
+  cap: "20100"
+  comune: "Milano"
+  provincia: "MI"
+  nazione: "IT"
+  email: "info@acmecorp.it"
+  telefono: "+39 02 9876543"
+  indirizzo_telematico: "ABC1234"
+  iban: "IT40S0760101600000099887766"
+  banca: "Banca Business"

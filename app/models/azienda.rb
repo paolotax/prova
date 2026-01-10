@@ -19,21 +19,26 @@
 #  telefono             :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  user_id              :bigint           not null
+#  account_id           :uuid             not null
+#  user_id              :bigint
 #
 # Indexes
 #
+#  index_aziende_on_account_id      (account_id) UNIQUE
 #  index_aziende_on_codice_fiscale  (codice_fiscale) UNIQUE
 #  index_aziende_on_partita_iva     (partita_iva) UNIQUE
 #  index_aziende_on_user_id         (user_id)
 #
-# Foreign Keys
-#
-#  fk_rails_...  (user_id => users.id)
-#
 class Azienda < ApplicationRecord
-  belongs_to :user
-  
+  # Primary association: Azienda belongs to Account (multi-tenancy)
+  belongs_to :account
+
+  # Legacy association: Keep user reference for backward compatibility
+  # Will be removed in future migration
+  belongs_to :user, optional: true
+
+  # Validations
+  validates :account_id, presence: true, uniqueness: true
   validates :partita_iva, presence: true, length: { is: 11 }
   validates :codice_fiscale, presence: true, length: { is: 16 }
   validates :ragione_sociale, presence: true

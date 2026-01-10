@@ -66,6 +66,9 @@ Rails.application.routes.draw do
     # Dashboard account
     root "pages#index", as: :account_root
 
+    # Dati aziendali (singular resource - one per account)
+    resource :azienda, only: [:show, :new, :create, :edit, :update]
+
     # Chats
     resources :chats do
       resources :messages, only: [:create]

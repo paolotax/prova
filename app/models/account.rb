@@ -17,6 +17,7 @@ class Account < ApplicationRecord
   has_many :users, through: :memberships
 
   # Account-scoped resources
+  has_one :azienda, dependent: :destroy
   has_many :appunti, dependent: :destroy
   has_many :documenti, dependent: :destroy
   has_many :clienti, dependent: :destroy
