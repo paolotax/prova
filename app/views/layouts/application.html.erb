@@ -49,47 +49,40 @@
 
 	<body class="flex h-full flex-col">
 
-		<div data-controller="tax-sidebar" class="flex min-h-full flex-col" >
+		<div class="flex min-h-full flex-col">
 
 			<%= turbo_frame_tag :modal %>
 
-			<!-- back-to-top di jason... -->
+			<%# Back to top button %>
 			<%= render partial: "layouts/back_to_top" %>
 
-			<%= render "layouts/sidebar_slide_over" %>
+			<%# Navigation (header + popup menu) %>
+			<%= render "layouts/header" %>
 
-			<div class="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col" id="sidebar-desktop">
-				<%= render "layouts/sidebar" %>
-			</div>
+			<%# Main content with padding for header and bottom bar %>
+			<main class="pt-14 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col" id="main-content" data-turbo-morphing-scope>
 
-			<div class="lg:pl-72">
+				<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+					<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+				</div>
 
-				<%= render "layouts/main_menu" %>
+				<div class="sticky top-14 z-10 hotwire-native:hidden">
+					<%= content_for(:header) %>
+				</div>
 
-				<main class="py-4 sm:px-6 lg:px-8 min-h-screen flex flex-col" id="main-content" data-turbo-morphing-scope>
+				<%# Your content %>
+				<%= yield %>
 
-					<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
-						<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
-					</div>
+				<%= render "layouts/footer" unless content_for?(:hide_footer) %>
 
-					<%#= render partial: "layouts/flash" %>
+			</main>
 
-					<div class="sticky top-20 z-10 hotwire-native:hidden">
-						<%= content_for(:header) %>
-					</div>
-					<!-- Your content -->
-					<%= yield %>
+			<%# Bottom search bar %>
+			<%= render "layouts/bar" %>
 
-					<%= render CommandMenuComponent.new(placeholder: 'Cerca libro, scuola o cliente…', endpoint: '/cerca') %>
-
-					<%= render "layouts/footer" unless content_for?(:hide_footer) %>
-
-				</main>
-			</div>
 		</div>
 
 		<%= turbo_frame_tag "slide-over" %>
-		<%#= turbo_frame_tag "slide-over", data: {controller: "turbo-frame-load", turbo_frame_load_paths_value: { filtra_appunti: filtra_appunti_path }} %>
   		<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
 	</body>
 </html>

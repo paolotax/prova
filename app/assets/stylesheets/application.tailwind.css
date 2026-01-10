@@ -4,12 +4,44 @@
 
 
 @layer base {
+  /* Ensure hidden attribute works */
+  [hidden] {
+    display: none !important;
+  }
+
+  /* Popup menu blank slate - show only when all items are hidden */
+  .nav-blank-slate {
+    display: block;
+  }
+
+  /* Hide blank slate when there are visible popup items */
+  dialog:has(.popup-item:not([hidden])) .nav-blank-slate {
+    display: none;
+  }
 }
 
 @layer components {
 
   .field_with_errors {
     @apply w-full;
+  }
+
+  /* Safe area for iPhone notch */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* Navigation section styles */
+  .nav-section summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-section summary::marker {
+    display: none;
+  }
+
+  .nav-section[open] > summary svg {
+    transform: rotate(90deg);
   }
 
   .cb-tax-fancy {
