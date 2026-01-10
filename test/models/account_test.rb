@@ -1,4 +1,18 @@
 # test/models/account_test.rb
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id         :uuid             not null, primary key
+#  name       :string           not null
+#  slug       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_accounts_on_slug  (slug) UNIQUE
+#
 require "test_helper"
 
 class AccountTest < ActiveSupport::TestCase

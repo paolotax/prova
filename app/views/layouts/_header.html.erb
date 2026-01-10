@@ -86,6 +86,7 @@
 
       <%# Sezione Impostazioni %>
       <%= collapsible_nav_section "Impostazioni" do %>
+        <%= nav_menu_item "Informazioni Personali", personal_info_path, "id-card" %>
         <% if Current.account %>
           <%= nav_menu_item "Profilo", profilo_path(Current.account), "person" %>
         <% end %>

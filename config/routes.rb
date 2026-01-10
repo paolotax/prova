@@ -36,6 +36,13 @@ Rails.application.routes.draw do
   resources :accounts, only: [:index, :new, :create]
 
   # =========================================
+  # USER SETTINGS (senza contesto account)
+  # =========================================
+
+  resource :personal_info, only: [:show, :new, :create, :edit, :update]
+  resource :avatar, only: [:show, :edit, :update, :destroy]
+
+  # =========================================
   # ADMIN ROUTES (con autenticazione admin)
   # =========================================
 

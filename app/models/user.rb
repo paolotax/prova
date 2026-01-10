@@ -31,6 +31,7 @@ class User < ApplicationRecord
   has_rich_text :card
 
   has_one :profile
+  has_one :personal_info, dependent: :destroy
 
   # Multi-tenancy
   has_many :memberships, dependent: :destroy
@@ -87,6 +88,15 @@ class User < ApplicationRecord
 
   delegate :ragione_sociale, :indirizzo, :cap, :citta, :cellulare, :email, :iban, :nome_banca, to: :profile, allow_nil: true, prefix: true
 
+  # Personal info delegates
+  delegate :nome, :cognome, :cellulare, :email_personale, :nome_completo, :iniziali,
+           :avatar_color, :avatar_data,
+           to: :personal_info, allow_nil: true, prefix: true
+
+  # Navigator from personal_info (with fallback to user.navigator during migration)
+  def effective_navigator
+    personal_info&.navigator || navigator
+  end
 
   has_one :azienda
 
@@ -102,10 +112,18 @@ class User < ApplicationRecord
 
   def avatar_thumbnail
     if avatar.attached?
-      avatar.variant(resize: "150x150!").processed
-    else
-      "/default_avatar.jpg"
+      avatar.variant(resize_to_fill: [150, 150])
     end
+  end
+
+  # Fizzy-style avatar with initials fallback
+  def display_avatar
+    personal_info&.avatar_data || {
+      has_image: avatar.attached?,
+      initials: name.first(2).upcase,
+      color: "bg-gray-500",
+      name: name
+    }
   end
 
   def zone

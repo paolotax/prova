@@ -1,0 +1,47 @@
+# == Schema Information
+#
+# Table name: personal_infos
+#
+#  id              :uuid             not null, primary key
+#  cellulare       :string
+#  cognome         :string
+#  email_personale :string
+#  navigator       :string
+#  nome            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  user_id         :bigint           not null
+#
+# Indexes
+#
+#  index_personal_infos_on_user_id  (user_id) UNIQUE
+#
+#
+# Table name: personal_infos
+#
+#  id              :uuid             not null, primary key
+#  cellulare       :string
+#  cognome         :string
+#  email_personale :string
+#  navigator       :string
+#  nome            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  user_id         :bigint           not null
+#
+
+alice_info:
+  user: one
+  nome: Alice
+  cognome: Rossi
+  cellulare: "+39 333 1234567"
+  email_personale: alice.rossi@personal.com
+  navigator: google_maps
+
+bob_info:
+  user: two
+  nome: Roberto
+  cognome: Bianchi
+  cellulare: "+39 333 7654321"
+  email_personale: roberto.b@personal.com
+  navigator: apple_maps

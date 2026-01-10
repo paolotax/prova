@@ -1,0 +1,34 @@
+<%#
+  Avatar badge component - Fizzy style
+  Usage: render "avatars/avatar_badge", user: current_user, size: :medium
+  Sizes: :small (32px), :medium (40px), :large (80px), :xlarge (120px)
+%>
+<%
+  size ||= :medium
+  avatar_data = user.display_avatar
+
+  size_classes = {
+    small: "h-8 w-8 text-xs",
+    medium: "h-10 w-10 text-sm",
+    large: "h-20 w-20 text-2xl",
+    xlarge: "h-30 w-30 text-4xl"
+  }
+
+  image_sizes = {
+    small: [32, 32],
+    medium: [40, 40],
+    large: [80, 80],
+    xlarge: [120, 120]
+  }
+%>
+
+<div class="relative inline-flex items-center justify-center rounded-full <%= size_classes[size] %> <%= avatar_data[:color] %> text-white font-medium overflow-hidden"
+     title="<%= avatar_data[:name] %>">
+  <% if avatar_data[:has_image] && user.avatar.attached? %>
+    <%= image_tag user.avatar.variant(resize_to_fill: image_sizes[size]),
+                  class: "absolute inset-0 h-full w-full object-cover",
+                  alt: avatar_data[:name] %>
+  <% else %>
+    <span><%= avatar_data[:initials] %></span>
+  <% end %>
+</div>

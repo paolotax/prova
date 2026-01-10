@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_09_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_10_105419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -694,6 +694,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_09_100000) do
     t.datetime "updated_at", null: false
     t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_old_adozioni_on_classe", unique: true
     t.index ["import_scuola_id"], name: "index_old_adozioni_on_import_scuola_id"
+  end
+
+  create_table "personal_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "nome"
+    t.string "cognome"
+    t.string "cellulare"
+    t.string "email_personale"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "navigator"
+    t.index ["user_id"], name: "index_personal_infos_on_user_id", unique: true
   end
 
   create_table "profiles", force: :cascade do |t|

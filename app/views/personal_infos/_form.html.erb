@@ -1,0 +1,71 @@
+<%= form_with(model: personal_info, url: personal_info_path, method: personal_info&.persisted? ? :patch : :post, class: "space-y-6") do |form| %>
+  <% if personal_info.errors.any? %>
+    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+      <h3 class="font-medium"><%= pluralize(personal_info.errors.count, "errore", "errori") %> da correggere:</h3>
+      <ul class="mt-2 list-disc list-inside text-sm">
+        <% personal_info.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">Avatar</h2>
+    <div class="flex items-center space-x-6">
+      <%= render "avatars/avatar_badge", user: current_user, size: :large %>
+      <div>
+        <%= link_to "Modifica avatar", edit_avatar_path, class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg p-6 space-y-6">
+    <h2 class="text-lg font-medium text-gray-900">Dati personali</h2>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <%= form.label :nome, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :nome, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Mario" %>
+      </div>
+
+      <div>
+        <%= form.label :cognome, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :cognome, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Rossi" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <%= form.label :cellulare, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.telephone_field :cellulare, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "+39 333 1234567" %>
+      </div>
+
+      <div>
+        <%= form.label :email_personale, "Email personale", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.email_field :email_personale, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "mario.rossi@email.com" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg p-6 space-y-6">
+    <h2 class="text-lg font-medium text-gray-900">Preferenze</h2>
+
+    <div>
+      <%= form.label :navigator, "Navigatore preferito", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :navigator,
+            options_for_select([
+              ["Google Maps", "google_maps"],
+              ["Apple Maps", "apple_maps"],
+              ["Waze", "waze"]
+            ], personal_info.navigator),
+            { include_blank: "Seleziona..." },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end space-x-4">
+    <%= link_to "Annulla", personal_info_path, class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
+    <%= form.submit personal_info.persisted? ? "Aggiorna" : "Salva", class: "rounded-lg py-2 px-4 bg-blue-600 text-white font-medium hover:bg-blue-700 cursor-pointer" %>
+  </div>
+<% end %>
