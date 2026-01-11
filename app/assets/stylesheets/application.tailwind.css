@@ -59,6 +59,13 @@
     flex-shrink: 0;
   }
 
+  /* Nav menu trigger kbd positioning */
+  .nav-menu-trigger kbd {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+  }
+
   /* Nav hotkeys - Fizzy style */
   .nav-hotkeys {
     --gap: 8px;
