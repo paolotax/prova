@@ -9,7 +9,7 @@
 
 	<body class="flex h-full flex-col">
 		<div id="global-container">
-			<header class="flex flex-row items-center justify-center p-2 bg-gray-300">
+			<header class="sticky top-0 z-40 flex flex-row items-center justify-center p-2 bg-gray-300">
 				<%= yield :nav_buttons_left %>
         		<%= render "my/menu" if Current.user %>
         		<%= yield :nav_buttons_right %>
