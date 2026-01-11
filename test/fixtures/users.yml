@@ -21,18 +21,22 @@ one:
   name: alice
   email: alice@example.com
   role: admin
+  slug: alice
 
 two:
   name: bob
   email: bob@example.com
   role: scagnozzo
+  slug: bob
 
 multi_account:
   name: charlie
   email: charlie@example.com
   role: scagnozzo
+  slug: charlie
 
 no_account:
   name: dana
   email: dana@example.com
   role: scagnozzo
+  slug: dana

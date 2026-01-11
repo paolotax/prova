@@ -2,7 +2,7 @@
   <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
     <div class="px-4 py-5 sm:px-6">
       <div class="flex items-center space-x-4">
-        <%= render "avatars/avatar_badge", user: current_user, size: :large %>
+        <%= render "users/avatars/avatar_badge", user: current_user, size: :large %>
         <div>
           <h3 class="text-lg font-medium text-gray-900"><%= personal_info.nome_completo %></h3>
           <p class="text-sm text-gray-500"><%= current_user.email %></p>

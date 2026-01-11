@@ -10,22 +10,24 @@ class PersonalInfosControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get show" do
-    get personal_info_url
+    get user_personal_info_url(@user)
     assert_response :success
   end
 
   test "should get new when no personal_info exists" do
     # Use a user without personal_info
-    sign_in_as(users(:no_account), @account)
-    get new_personal_info_url
+    user_without_info = users(:no_account)
+    sign_in_as(user_without_info, @account)
+    get new_user_personal_info_url(user_without_info)
     assert_response :success
   end
 
   test "should create personal_info" do
-    sign_in_as(users(:no_account), @account)
+    user_without_info = users(:no_account)
+    sign_in_as(user_without_info, @account)
 
     assert_difference("PersonalInfo.count") do
-      post personal_info_url, params: {
+      post user_personal_info_url(user_without_info), params: {
         personal_info: {
           nome: "Test",
           cognome: "User",
@@ -36,23 +38,23 @@ class PersonalInfosControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to personal_info_url
+    assert_redirected_to user_personal_info_url(user_without_info)
   end
 
   test "should get edit" do
-    get edit_personal_info_url
+    get edit_user_personal_info_url(@user)
     assert_response :success
   end
 
   test "should update personal_info" do
-    patch personal_info_url, params: {
+    patch user_personal_info_url(@user), params: {
       personal_info: {
         nome: "Updated",
         cognome: "Name"
       }
     }
 
-    assert_redirected_to personal_info_url
+    assert_redirected_to user_personal_info_url(@user)
     @user.personal_info.reload
     assert_equal "Updated", @user.personal_info.nome
   end

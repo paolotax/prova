@@ -10,21 +10,21 @@ class AvatarsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get show" do
-    get avatar_url
+    get user_avatar_url(@user)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_avatar_url
+    get edit_user_avatar_url(@user)
     assert_response :success
   end
 
   test "should update avatar" do
     file = fixture_file_upload("test_avatar.png", "image/png")
 
-    patch avatar_url, params: { avatar: file }
+    patch user_avatar_url(@user), params: { avatar: file }
 
-    assert_redirected_to avatar_url
+    assert_redirected_to user_avatar_url(@user)
     @user.reload
     assert @user.avatar.attached?
   end
@@ -37,17 +37,17 @@ class AvatarsControllerTest < ActionDispatch::IntegrationTest
       content_type: "image/png"
     )
 
-    delete avatar_url
+    delete user_avatar_url(@user)
 
-    assert_redirected_to avatar_url
+    assert_redirected_to user_avatar_url(@user)
     @user.reload
     assert_not @user.avatar.attached?
   end
 
   test "redirects to edit when no avatar provided on update" do
-    patch avatar_url, params: {}
+    patch user_avatar_url(@user), params: {}
 
-    assert_redirected_to edit_avatar_url
+    assert_redirected_to edit_user_avatar_url(@user)
   end
 
   private

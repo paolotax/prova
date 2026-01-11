@@ -45,13 +45,13 @@ Rails.application.routes.draw do
 
   resources :accounts, only: [:index, :new, :create]
 
-  # =========================================
-  # USER SETTINGS (senza contesto account)
-  # =========================================
-
-  resource :personal_info, only: [:show, :new, :create, :edit, :update]
-  resource :avatar, only: [:show, :edit, :update, :destroy]
-
+  resources :users do
+    scope module: :users do
+      resource :personal_info
+      resource :avatar
+    end
+  end
+  
   # =========================================
   # ADMIN ROUTES (con autenticazione admin)
   # =========================================
@@ -232,12 +232,6 @@ Rails.application.routes.draw do
 
     resources :profiles do
       resources :steps, only: %i[show update], controller: 'steps_controllers/profile_steps'
-    end
-
-    resources :users, only: %i[index show] do
-      member do
-        post  'modifica_navigatore'
-      end
     end
 
     resources :stats do

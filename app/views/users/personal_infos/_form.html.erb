@@ -1,4 +1,4 @@
-<%= form_with(model: personal_info, url: personal_info_path, method: personal_info&.persisted? ? :patch : :post, class: "space-y-6") do |form| %>
+<%= form_with(model: personal_info, url: user_personal_info_path(Current.user), method: personal_info&.persisted? ? :patch : :post, class: "space-y-6") do |form| %>
   <% if personal_info.errors.any? %>
     <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
       <h3 class="font-medium"><%= pluralize(personal_info.errors.count, "errore", "errori") %> da correggere:</h3>
@@ -13,9 +13,9 @@
   <div class="bg-white shadow rounded-lg p-6">
     <h2 class="text-lg font-medium text-gray-900 mb-4">Avatar</h2>
     <div class="flex items-center space-x-6">
-      <%= render "avatars/avatar_badge", user: current_user, size: :large %>
+      <%= render "users/avatars/avatar_badge", user: Current.user, size: :large %>
       <div>
-        <%= link_to "Modifica avatar", edit_avatar_path, class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+        <%= link_to "Modifica avatar", edit_user_avatar_path(Current.user), class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
       </div>
     </div>
   </div>
@@ -65,7 +65,7 @@
   </div>
 
   <div class="flex items-center justify-end space-x-4">
-    <%= link_to "Annulla", personal_info_path, class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
+    <%= link_to "Annulla", user_personal_info_path(Current.user), class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
     <%= form.submit personal_info.persisted? ? "Aggiorna" : "Salva", class: "rounded-lg py-2 px-4 bg-blue-600 text-white font-medium hover:bg-blue-700 cursor-pointer" %>
   </div>
 <% end %>
