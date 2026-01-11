@@ -1,0 +1,16 @@
+<%= turbo_frame_tag "my_menu", target: "_top" do %>
+  <%= render "my/menus/jump" do %>
+    <%#= render "my/menus/boards", boards: @boards %>
+    <%#= render "my/menus/tags", tags: @tags %>
+    <%#= render "my/menus/people", users: @users %>
+    <%= render "my/menus/main" %>
+    <%= render "my/menus/settings" %>    
+    <%= render "my/menus/utilities" %>
+    <%#= render "my/menus/shortcuts" %>
+    <%#= render "my/menus/accounts", accounts: @accounts %>
+  <% end %>
+
+  <footer class="nav__footer bg-white border-t border-gray-200 text-xs leading-relaxed -mt-0.5 p-4 text-center text-gray-500">
+    <strong>ScagnoZZ</strong> - paolotax
+  </footer>
+<% end %>

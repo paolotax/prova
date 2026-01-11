@@ -1,67 +1,26 @@
 <!DOCTYPE html>
-
 <!--  <%= "data-hotwire-native-app" if turbo_native_app? %> -->
 <html <%= "data-hotwire-native-app" if turbo_native_app? %> class="<%= [
 			"h-full antialiased",
 			("bg-gray-50" if Rails.env == "production"),
-			("bg-red-200" if Rails.env == "development")].compact.join(" ") %>">
-	<head>
+			("bg-red-50" if Rails.env == "development")].compact.join(" ") %>">
 
-		<title><%= content_for(:title) || "Scagnozz" %></title>
-
-		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<%# aggiunto per turbo-8 transition %>
-		<%# <meta name="view-transition" content="same-origin" /> %>
-
-		<meta name="mobile-web-app-capable" content="yes">
-  		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-		<meta name="theme-color" content="#ffffff">
-
-
-		<%= csrf_meta_tags %>
-		<%= csp_meta_tag %>
-
-		<%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
-
-		<%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-
-		<%= combobox_style_tag "data-turbo-track": "reload" %>
-
-		<%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-
-		<%= javascript_importmap_tags %>
-
-		<%# turbo_refreshes_with method: :morph, scroll: :reset %>
-
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
-
-		<!-- CodeMirror -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/sql/sql.min.js"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
-
-		<%= yield :head %>
-
-	</head>
-
+	<%= render "layouts/shared/head" %>
 
 	<body class="flex h-full flex-col">
-
-		<div class="flex min-h-full flex-col">
+		<div id="global-container">
+			<header class="flex flex-row items-center justify-center p-2 bg-gray-300">
+				<%= yield :nav_buttons_left %>
+        		<%= render "my/menu" if Current.user %>
+        		<%= yield :nav_buttons_right %>
+			</header>
 
 			<%= turbo_frame_tag :modal %>
-
 			<%# Back to top button %>
 			<%= render partial: "layouts/back_to_top" %>
 
-			<%# Navigation (header + popup menu) %>
-			<%= render "layouts/header" %>
-
 			<%# Main content with padding for header and bottom bar %>
-			<main class="pt-14 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col" id="main-content" data-turbo-morphing-scope>
-
+			<main class="max-w-7xl mx-auto pt-14 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col" id="main-content" data-turbo-morphing-scope>
 				<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
 					<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 				</div>
@@ -70,16 +29,13 @@
 					<%= content_for(:header) %>
 				</div>
 
-				<%# Your content %>
 				<%= yield %>
 
 				<%= render "layouts/footer" unless content_for?(:hide_footer) %>
-
 			</main>
 
 			<%# Bottom search bar %>
 			<%= render "layouts/bar" %>
-
 		</div>
 
 		<%= turbo_frame_tag "slide-over" %>

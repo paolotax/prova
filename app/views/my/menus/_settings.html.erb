@@ -1,0 +1,9 @@
+<%# Sezione Impostazioni %>
+<%= collapsible_nav_section "Impostazioni" do %>
+    <%= nav_menu_item "Informazioni Personali", personal_info_path, "id-card" %>
+    <% if Current.account %>
+        <%= nav_menu_item "Dati Aziendali", azienda_path(Current.account), "briefcase" %>
+        <%= nav_menu_item "la mia Zona", profilo_path(Current.account), "person" %>
+    <% end %>
+    <%= nav_menu_item "Esci", logout_path, "logout", method: :delete %>
+<% end %>

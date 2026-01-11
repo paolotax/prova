@@ -1,36 +1,66 @@
-import { Controller } from "@hotwired/stimulus";
-import { enter, leave } from "./helpers/transitions";
+import { Controller } from "@hotwired/stimulus"
+import { orient } from "helpers/orientation_helpers"
 
 export default class extends Controller {
-  static values = { elementId: String }
+  static targets = [ "dialog" ]
+  static values = {
+    modal: { type: Boolean, default: false },
+    sizing: { type: Boolean, default: true },
+    autoOpen: { type: Boolean, default: false }
+  }
 
   connect() {
-    enter(this.element).then(() => {
-      this.element.focus();
-    });
+    this.dialogTarget.setAttribute("aria-hidden", "true")
+    if (this.autoOpenValue) this.open()
   }
 
-  hide() {
-    leave(this.element).then(() => {
-      this.element.remove();
+  open() {
+    const modal = this.modalValue
 
-      this.#dialogTurboFrame.src = null;
-    });
+    if (modal) {
+      this.dialogTarget.showModal()
+    } else {
+      this.dialogTarget.show()
+      orient(this.dialogTarget)
+    }
+
+    this.loadLazyFrames()
+    this.dialogTarget.setAttribute("aria-hidden", "false")
+    this.dispatch("show")
   }
 
-  hideOnSubmit(event) {
-    if (event.detail.success) {
-      this.hide();
+  toggle() {
+    if (this.dialogTarget.open) {
+      this.close()
+    } else {
+      this.open()
     }
   }
 
-  disconnect() {
-    this.#dialogTurboFrame.src = null;
+  close() {
+    this.dialogTarget.close()
+    this.dialogTarget.setAttribute("aria-hidden", "true")
+    this.dialogTarget.blur()
+    orient(this.dialogTarget, false)
+    this.dispatch("close")
   }
 
-  // private
+  closeOnClickOutside({ target }) {
+    if (!this.element.contains(target)) this.close()
+  }
 
-  get #dialogTurboFrame() {
-    return document.querySelector(`turbo-frame[id="${this.elementIdValue}"]`);
+  preventCloseOnMorphing(event) {
+    if (event.detail?.attributeName === "open") {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+  }
+
+  loadLazyFrames() {
+    Array.from(this.dialogTarget.querySelectorAll("turbo-frame")).forEach(frame => { frame.loading = "eager" })
+  }
+
+  captureKey(event) {
+    if (event.key !== "Escape") { event.stopPropagation() }
   }
 }

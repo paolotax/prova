@@ -21,7 +21,7 @@ module NavMenuHelper
   # Pulsanti hotkey orizzontali (1, 2, 3)
   def filter_hotkey_link(title, path, key, icon_name)
     link_to path,
-      class: "popup-item flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-sm text-gray-700",
+      class: "popup-item flex-1 flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-sm text-gray-700",
       id: "filter-hotkey-#{key}",
       role: "listitem",
       data: {
@@ -45,10 +45,8 @@ module NavMenuHelper
                   nav_section_expander_key_value: title.parameterize
                 },
                 open: true do
-      concat(tag.summary(class: "flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 list-none") do
-        concat tag.svg(class: "w-3 h-3 transition-transform group-open:rotate-90") {
-          tag.path(d: "M9 5l7 7-7 7", stroke: "currentColor", stroke_width: "2", fill: "none")
-        }
+      concat(tag.summary(class: "flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 list-none") do
+        concat icon_tag "caret-down"
         concat title
       end)
       concat(tag.ul(class: "popup-list space-y-1 px-2") do

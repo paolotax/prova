@@ -1,0 +1,40 @@
+<head>
+
+    <title><%= content_for(:title) || "Scagnozz" %></title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%# aggiunto per turbo-8 transition %>
+    <%# <meta name="view-transition" content="same-origin" /> %>
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="theme-color" content="#ffffff">
+
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
+
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+
+    <%= combobox_style_tag "data-turbo-track": "reload" %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <%= javascript_importmap_tags %>
+
+    <%# turbo_refreshes_with method: :morph, scroll: :reset %>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+
+    <!-- CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/sql/sql.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+
+    <%= yield :head %>
+
+</head>

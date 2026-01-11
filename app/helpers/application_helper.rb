@@ -2,6 +2,25 @@ module ApplicationHelper
 
   include Pagy::Frontend
 
+  def page_title_tag
+    account_name = if Current.account && Current.session&.identity&.users&.many?
+      Current.account&.name
+    end
+    tag.title [ @page_title, account_name, "Fizzy" ].compact.join(" | ")
+  end
+
+  def icon_tag(name, **options)
+    tag.span class: class_names("icon icon--#{name}", options.delete(:class)), "aria-hidden": true, **options
+  end
+
+  def back_link_to(label, url, action, **options)
+    link_to url, class: "btn btn--back", data: { controller: "hotkey", action: action }, **options do
+      icon_tag("arrow-left") + tag.strong("Back to #{label}", class: "overflow-ellipsis") + tag.kbd("ESC", class: "txt-x-small hide-on-touch").html_safe
+    end
+  end
+
+
+
 
   def turbo_id_for(obj)
     obj.persisted? ? obj.id : obj.hash
@@ -54,31 +73,12 @@ module ApplicationHelper
     stringa.titleize.gsub("'e", "'E").gsub("'i", "'I").gsub("'a", "'A").gsub("'o", "'O").gsub("'u", "'U")
   end
   
-
-
-
   def link_to_previous_page(link_title)
     return unless session[:previous_pages].present?
     link_to(link_title, session[:previous_pages].first, class: "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
     )
   end
-  
-  # stack overflow 70960161 examle
-
-  #   # in the contracts_controller.rb
-  #   def destroy
-  #     @contract = Contract.find(params[:id]).destroy
     
-  #     if session[:previous_pages].present? && request.original_url == session[:previous_pages][1]
-  #       session[:previous_pages] = session[:previous_pages].first(1)
-  #     end
-  #     flash[:notice] = 'Contract was successfully deleted.'
-    
-  #     redirect_to action: 'index'
-  #   end
-
-
-  
   def embedded_svg(filename, options = {})
     assets = Rails.application.assets
     asset = assets.find_asset(filename)
@@ -93,7 +93,6 @@ module ApplicationHelper
     raw doc
   end
 
-  
   def toggle_button_tag( checked = true, label = "", html_id = nil ) 
     #             TailwindUI
     # button_css  <!-- Enabled: "bg-indigo-600", Not Enabled: "bg-gray-200" -->

@@ -6,6 +6,16 @@ Rails.application.routes.draw do
   # Letter opener web for viewing emails in development
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if defined?(LetterOpenerWeb)
 
+  
+  namespace :my do
+    #resource :identity, only: :show
+    #resources :access_tokens
+    #resources :pins
+    #resource :timezone
+    resource :menu
+  end
+  
+  
   # =========================================
   # AUTENTICAZIONE (senza contesto account)
   # =========================================
