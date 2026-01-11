@@ -21,7 +21,7 @@ module NavMenuHelper
   # Pulsanti hotkey orizzontali (1, 2, 3)
   def filter_hotkey_link(title, path, key, icon_name)
     link_to path,
-      class: "popup-item flex-1 flex flex-col items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-sm text-gray-700",
+      class: "popup-item",
       id: "filter-hotkey-#{key}",
       role: "listitem",
       data: {
@@ -30,9 +30,9 @@ module NavMenuHelper
         controller: "hotkey",
         action: "keydown.#{key}@document->hotkey#click"
       } do
-        concat nav_icon(icon_name)
         concat tag.span(title)
-        concat tag.kbd(key, class: "ml-1 px-1.5 py-0.5 text-xs bg-white text-gray-500 rounded border border-gray-300")
+        concat nav_icon(icon_name)
+        concat tag.kbd(key)
       end
   end
 

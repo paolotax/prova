@@ -59,6 +59,54 @@
     flex-shrink: 0;
   }
 
+  /* Nav hotkeys - Fizzy style */
+  .nav-hotkeys {
+    --gap: 8px;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    width: 100%;
+    list-style: none;
+    justify-content: center;
+    margin: 1rem auto 0.5rem;
+    padding: 0;
+
+    /* Hide when all children are hidden */
+    &:has(.popup-item[hidden]):not(:has(.popup-item:not([hidden]))) {
+      display: none;
+    }
+  }
+
+  .nav-hotkeys .popup-item {
+    position: relative;
+    aspect-ratio: 5/3;
+    background-color: rgb(243 244 246); /* bg-gray-100 */
+    border-radius: 0.5em;
+    flex-basis: calc((100% - var(--gap) * 2) / 3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    line-height: 1;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: rgb(55 65 81); /* text-gray-700 */
+    transition: background-color 150ms ease;
+
+    &:hover {
+      background-color: rgb(229 231 235); /* bg-gray-200 */
+    }
+
+    kbd {
+      position: absolute;
+      top: 0.5em;
+      right: 0.5em;
+    }
+  }
+
   /* Highlight selected item in navigable list */
   .popup-item[aria-selected="true"] {
     background-color: rgb(243 244 246); /* bg-gray-100 */

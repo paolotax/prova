@@ -20,7 +20,7 @@
 <%# Scroll container %>
 <div class="nav-scroll-container flex flex-col gap-0.5 -mx-5 pb-0.5 px-5">
     <%# Hot buttons - orizzontali come fizzy %>
-    <div class="flex flex-wrap gap-2 w-full justify-center p-4 list-none">
+    <div class="nav-hotkeys" role="list">
         <%= filter_hotkey_link "Oggi", giorno_path(Current.account, Date.today), 1, "calendar" %>
         <%= filter_hotkey_link "Appunti", appunti_path(Current.account), 2, "note" %>
         <%= filter_hotkey_link "Scuole", import_scuole_path(Current.account), 3, "school" %>
