@@ -81,11 +81,11 @@
     display: none;
   }
 
-  .nav-section > summary .nav-caret {
+  .nav-section > summary .icon--caret-down {
     transition: transform 150ms ease-out;
   }
 
-  .nav-section:not([open]) > summary .nav-caret {
+  .nav-section:not([open]) > summary .icon--caret-down {
     transform: rotate(-90deg);
   }
 
