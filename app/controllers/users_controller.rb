@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!
 
-  before_action :set_user, only: %i[ show modifica_navigatore]
+  before_action :set_user, only: %i[ show ]
    
   def index
     @users = authorize User.all
@@ -23,10 +23,6 @@ class UsersController < ApplicationController
     #   redirect_to request.referrer || root_path
     #   flash[:alert] = "Non hai i permessi per visualizzare questa pagina"
     # end  
-  end
-
-  def modifica_navigatore
-    @user.update(navigator: params[:navigator])
   end
 
   private

@@ -18,6 +18,7 @@
 #
 class User < ApplicationRecord
   include Authenticable
+  include User::Avatar
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -27,7 +28,6 @@ class User < ApplicationRecord
   #validates :partita_iva, format: { with: /\A\d{11}\z/ }
   #validates :password, length: { minimum: 6, allow_blank: true }
 
-  has_one_attached :avatar
   has_rich_text :card
 
   has_one :profile
@@ -90,7 +90,6 @@ class User < ApplicationRecord
 
   # Personal info delegates
   delegate :nome, :cognome, :cellulare, :email_personale, :nome_completo, :iniziali,
-           :avatar_color, :avatar_data,
            to: :personal_info, allow_nil: true, prefix: true
 
   # Navigator from personal_info (with fallback to user.navigator during migration)
@@ -117,22 +116,6 @@ class User < ApplicationRecord
 
   def miei_editori
     editori.collect{|e| e.editore}
-  end
-
-  def avatar_thumbnail
-    if avatar.attached?
-      avatar.variant(resize_to_fill: [150, 150])
-    end
-  end
-
-  # Fizzy-style avatar with initials fallback
-  def display_avatar
-    personal_info&.avatar_data || {
-      has_image: avatar.attached?,
-      initials: name.first(2).upcase,
-      color: "bg-gray-500",
-      name: name
-    }
   end
 
   def zone
@@ -179,6 +162,11 @@ class User < ApplicationRecord
 
   def owner_of?(account)
     role_in(account) == "owner"
+  end
+
+  # Can this user modify another user's data?
+  def can_change?(other_user)
+    self == other_user || admin_of?(Current.account)
   end
 
   # Passwordless authentication helpers

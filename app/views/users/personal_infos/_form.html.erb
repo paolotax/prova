@@ -1,4 +1,7 @@
-<%= form_with(model: personal_info, url: user_personal_info_path(Current.user), method: personal_info&.persisted? ? :patch : :post, class: "space-y-6") do |form| %>
+<%= form_with(model: [Current.user, personal_info],
+      method: personal_info&.persisted? ? :patch : :post,
+      multipart: true,
+      data: { controller: "form upload-preview" }, class: "space-y-6") do |form| %>
   <% if personal_info.errors.any? %>
     <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
       <h3 class="font-medium"><%= pluralize(personal_info.errors.count, "errore", "errori") %> da correggere:</h3>
@@ -10,15 +13,25 @@
     </div>
   <% end %>
 
-  <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Avatar</h2>
-    <div class="flex items-center space-x-6">
-      <%= render "users/avatars/avatar_badge", user: Current.user, size: :large %>
-      <div>
-        <%= link_to "Modifica avatar", edit_user_avatar_path(Current.user), class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+      <div class="avatar__form gap-4 items-center">
+        <span></span>
+
+        <div class="relative group">
+          <label class="avatar avatar--large cursor-pointer shadow-lg ring-4 ring-coral/30 group-hover:ring-coral/50 transition-all">
+            <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Avatar", class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
+            <%= file_field_tag :avatar, class: "sr-only", accept: "image/jpeg,image/png,image/gif,image/webp",
+                  data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+          </label>
+          <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+        </div>
+
+        <span></span>
       </div>
-    </div>
-  </div>
 
   <div class="bg-white shadow rounded-lg p-6 space-y-6">
     <h2 class="text-lg font-medium text-gray-900">Dati personali</h2>

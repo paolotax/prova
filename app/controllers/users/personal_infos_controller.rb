@@ -13,6 +13,12 @@ class Users::PersonalInfosController < ApplicationController
   def create
     @personal_info = Current.user.build_personal_info(personal_info_params)
 
+    # Handle avatar upload separately (avatar is on User, not PersonalInfo)
+    if params[:avatar].present?
+      Current.user.avatar.attach(params[:avatar])
+      Current.user.touch  # Invalidate cache
+    end
+
     if @personal_info.save
       redirect_to user_personal_info_path(Current.user), notice: "Informazioni personali create."
     else
@@ -30,6 +36,12 @@ class Users::PersonalInfosController < ApplicationController
     if @personal_info.nil?
       redirect_to new_user_personal_info_path(Current.user), alert: "Devi prima creare le informazioni personali."
       return
+    end
+
+    # Handle avatar upload separately (avatar is on User, not PersonalInfo)
+    if params[:avatar].present?
+      Current.user.avatar.attach(params[:avatar])
+      Current.user.touch  # Invalidate cache
     end
 
     if @personal_info.update(personal_info_params)

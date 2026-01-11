@@ -1,45 +1,41 @@
 class Users::AvatarsController < ApplicationController
   before_action :authenticate_user!
 
+  before_action :set_user
+  before_action :ensure_permission_to_administer_user, only: :destroy
+
   def show
-    @avatar_data = Current.user.display_avatar
-  end
-
-  def edit
-    @avatar_data = Current.user.display_avatar
-  end
-
-  def update
-    if params[:avatar].present?
-      Current.user.avatar.attach(params[:avatar])
-
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "avatar_display",
-            partial: "avatars/avatar_display",
-            locals: { user: Current.user }
-          )
-        end
-        format.html { redirect_to user_avatar_path(Current.user), notice: "Avatar aggiornato." }
-      end
-    else
-      redirect_to edit_user_avatar_path(Current.user), alert: "Seleziona un'immagine."
+    if @user.avatar.attached?
+      redirect_to rails_blob_url(@user.avatar_large, disposition: "inline"), allow_other_host: true
+    elsif stale? @user, cache_control: cache_control
+      render_initials
     end
   end
 
   def destroy
-    Current.user.avatar.purge
+    @user.avatar.purge
+    redirect_to @user
+  end
 
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(
-          "avatar_display",
-          partial: "avatars/avatar_display",
-          locals: { user: Current.user }
-        )
-      end
-      format.html { redirect_to user_avatar_path(Current.user), notice: "Avatar rimosso." }
+  private
+
+  def set_user
+    @user = User.friendly.find(params[:user_id])
+  end
+
+  def ensure_permission_to_administer_user
+    head :forbidden unless Current.user.can_change?(@user)
+  end
+
+  def cache_control
+    if @user == Current.user
+      {}
+    else
+      { max_age: 30.minutes, stale_while_revalidate: 1.week }
     end
+  end
+
+  def render_initials
+    render formats: :svg
   end
 end

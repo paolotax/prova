@@ -472,6 +472,48 @@
 /* FIZZY CLASSESS */
 
 @layer components {
+  /* Avatar styles - Fizzy pattern */
+  .avatar {
+    --avatar-border-radius: 50%;
+    --avatar-size-default: 5ch;
+
+    aspect-ratio: 1;
+    block-size: var(--avatar-size, var(--avatar-size-default));
+    border-radius: var(--avatar-border-radius);
+    display: grid;
+    flex-shrink: 0;
+    inline-size: var(--avatar-size, var(--avatar-size-default));
+    margin: 0;
+    place-items: center;
+
+    :is(img, .icon, svg) {
+      aspect-ratio: 1;
+      block-size: 100%;
+      border-radius: var(--avatar-border-radius);
+      grid-area: 1/1;
+      inline-size: 100%;
+      max-inline-size: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .avatar__form {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .avatar--large {
+    --avatar-size: 8rem;
+  }
+
+  .avatar--medium {
+    --avatar-size: 3rem;
+  }
+
+  .avatar--small {
+    --avatar-size: 2rem;
+  }
+
   .icon {
     -webkit-touch-callout: none;
     background-color: currentColor;
