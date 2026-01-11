@@ -503,6 +503,7 @@
   .icon--logout { --svg: url("logout.svg"); }
   .icon--id-card { --svg: url("id-card.svg"); }
   .icon--briefcase { --svg: url("briefcase.svg"); }
+  .icon--placeholder { --svg: url("placeholder.svg"); }
 
   .icon--calculator { --svg: url("calculator.svg"); }
   .icon--plus { --svg: url("plus.svg"); }

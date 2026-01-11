@@ -3,16 +3,16 @@
 
 <%= collapsible_nav_section "Adozioni" do %>
     <%= nav_menu_item "Tutte le adozioni", import_adozioni_path(Current.account), "cash" %>
-    <%= nav_menu_item "Controllo adozioni", adozioni_comunicate_path, "" %>
+    <%= nav_menu_item "Controllo adozioni", adozioni_comunicate_path %>
 <% end %>
 
 <%= collapsible_nav_section "Magazzino" do %>
     <%= nav_menu_item "Documenti", documenti_path(Current.account), "document" %>
-    <%= nav_menu_item "Ordini", ordini_in_corso_path(Current.account), "" %>
-    <%= nav_menu_item "Clienti", clienti_path(Current.account), "people" %>
+    <%= nav_menu_item "Ordini", ordini_in_corso_path(Current.account) %>
+    <%= nav_menu_item "Clienti", clienti_path(Current.account), "users" %>
     <%= nav_menu_item "i miei Librini", libri_path(Current.account), "book" %>
-    <%= nav_menu_item "Sconti", sconti_path(Current.account), "" %>
-    <%= nav_menu_item "Categorie", categorie_path(Current.account), "" %>
+    <%= nav_menu_item "Sconti", sconti_path(Current.account) %>
+    <%= nav_menu_item "Categorie", categorie_path(Current.account) %>
 <% end %>
     
 <%= collapsible_nav_section "Giri" do %>

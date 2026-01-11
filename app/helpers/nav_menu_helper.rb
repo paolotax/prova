@@ -56,7 +56,7 @@ module NavMenuHelper
   end
 
   # Voce singola del menu
-  def nav_menu_item(title, path, icon_name, options = {})
+  def nav_menu_item(title, path, icon_name = nil, options = {})
     method = options.delete(:method)
 
     link_options = {
@@ -67,7 +67,7 @@ module NavMenuHelper
     tag.li(class: "popup-item",
            data: { filter_target: "item", navigable_list_target: "item" }) do
       link_to path, link_options do
-        concat icon_tag(icon_name)
+        concat icon_tag(icon_name.presence || "placeholder")
         concat tag.span(title, class: "overflow-hidden text-ellipsis")
       end
     end
