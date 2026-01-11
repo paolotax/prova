@@ -490,6 +490,20 @@
   img.icon {
     background: none;
   }
+  .icon--cash { --svg: url("cash.svg"); }
+  .icon--home { --svg: url("home.svg"); }
+  .icon--building-library { --svg: url("building-library.svg"); }
+  .icon--calendar { --svg: url("calendar.svg"); }
+  .icon--note { --svg: url("note.svg"); }
+  .icon--book { --svg: url("book.svg"); }
+  .icon--truck { --svg: url("truck.svg"); }
+  .icon--document { --svg: url("document.svg"); }
+  .icon--users { --svg: url("users.svg"); }
+  .icon--user { --svg: url("user.svg"); }
+  .icon--logout { --svg: url("logout.svg"); }
+  .icon--id-card { --svg: url("id-card.svg"); }
+  .icon--briefcase { --svg: url("briefcase.svg"); }
+
   .icon--calculator { --svg: url("calculator.svg"); }
   .icon--plus { --svg: url("plus.svg"); }
   .icon--minus { --svg: url("minus.svg"); }

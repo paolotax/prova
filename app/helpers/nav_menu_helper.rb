@@ -31,7 +31,7 @@ module NavMenuHelper
         action: "keydown.#{key}@document->hotkey#click"
       } do
         concat tag.span(title)
-        concat nav_icon(icon_name)
+        concat icon_tag(icon_name, class: "w-6 h-6")
         concat tag.kbd(key)
       end
   end
@@ -67,7 +67,7 @@ module NavMenuHelper
     tag.li(class: "popup-item",
            data: { filter_target: "item", navigable_list_target: "item" }) do
       link_to path, link_options do
-        concat nav_icon(icon_name)
+        concat icon_tag(icon_name)
         concat tag.span(title, class: "overflow-hidden text-ellipsis")
       end
     end
