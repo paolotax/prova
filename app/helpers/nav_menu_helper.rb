@@ -31,7 +31,7 @@ module NavMenuHelper
         action: "keydown.#{key}@document->hotkey#click"
       } do
         concat tag.span(title)
-        concat icon_tag(icon_name, class: "w-6 h-6")
+        concat icon_tag(icon_name, style: "--icon-size: 1.5rem")
         concat tag.kbd(key)
       end
   end
