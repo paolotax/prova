@@ -69,7 +69,7 @@ class Adozione < ApplicationRecord
       editore: import_adozione.EDITORE,
       autori: import_adozione.AUTORI,
       disciplina: import_adozione.DISCIPLINA,
-      prezzo_cents: (import_adozione.PREZZO.to_f * 100).to_i,
+      prezzo_cents: (import_adozione.PREZZO.to_s.gsub(',', '.').to_f * 100).to_i,
       nuova_adozione: import_adozione.NUOVAADOZ == "Si",
       da_acquistare: import_adozione.DAACQUIST == "Si",
       consigliato: import_adozione.CONSIGLIATO == "Si"
