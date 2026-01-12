@@ -124,4 +124,141 @@ class AppuntoTest < ActiveSupport::TestCase
       # Already created above
     end
   end
+
+  # UUID Tests
+  test "uses uuid as primary key" do
+    appunto = Appunto.create!(
+      user: @user,
+      nome: "UUID Test Appunto"
+    )
+
+    assert_match(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i, appunto.id)
+  end
+
+  test "id is uuid type in database" do
+    column = Appunto.columns.find { |c| c.name == "id" }
+    assert_equal :uuid, column.type
+  end
+
+  # State Record Concerns Tests
+  test "includes Golden concern" do
+    assert_respond_to @appunto, :golden?
+    assert_respond_to @appunto, :mark_golden
+    assert_respond_to @appunto, :unmark_golden
+    assert_respond_to @appunto, :goldness
+  end
+
+  test "includes Closeable concern" do
+    assert_respond_to @appunto, :closed?
+    assert_respond_to @appunto, :open?
+    assert_respond_to @appunto, :close
+    assert_respond_to @appunto, :reopen
+    assert_respond_to @appunto, :closure
+  end
+
+  test "includes Consegnabile concern" do
+    assert_respond_to @appunto, :consegnato?
+    assert_respond_to @appunto, :mark_consegnato
+    assert_respond_to @appunto, :consegna
+  end
+
+  test "includes Pagabile concern" do
+    assert_respond_to @appunto, :pagato?
+    assert_respond_to @appunto, :mark_pagato
+    assert_respond_to @appunto, :pagamento
+  end
+
+  test "includes Registrabile concern" do
+    assert_respond_to @appunto, :registrato?
+    assert_respond_to @appunto, :mark_registrato
+    assert_respond_to @appunto, :registrazione
+  end
+
+  test "includes Postponable concern" do
+    assert_respond_to @appunto, :postponed?
+    assert_respond_to @appunto, :postpone
+    assert_respond_to @appunto, :resume
+    assert_respond_to @appunto, :postponed_at
+    assert_respond_to @appunto, :postponed_by
+  end
+
+  test "mark_golden creates goldness record" do
+    assert_not @appunto.golden?
+
+    assert_difference -> { Goldness.count }, 1 do
+      @appunto.mark_golden
+    end
+
+    assert @appunto.golden?
+    assert_equal @user, @appunto.goldness.user
+  end
+
+  test "unmark_golden destroys goldness record" do
+    @appunto.mark_golden
+    assert @appunto.golden?
+
+    assert_difference -> { Goldness.count }, -1 do
+      @appunto.unmark_golden
+    end
+
+    assert_not @appunto.reload.golden?
+  end
+
+  test "close creates closure record" do
+    assert @appunto.open?
+    assert_not @appunto.closed?
+
+    assert_difference -> { Closure.count }, 1 do
+      @appunto.close
+    end
+
+    assert @appunto.closed?
+    assert_not @appunto.open?
+    assert_equal @user, @appunto.closure.user
+  end
+
+  test "reopen destroys closure record" do
+    @appunto.close
+    assert @appunto.closed?
+
+    assert_difference -> { Closure.count }, -1 do
+      @appunto.reopen
+    end
+
+    assert @appunto.reload.open?
+    assert_not @appunto.closed?
+  end
+
+  test "mark_consegnato creates consegna record" do
+    assert_not @appunto.consegnato?
+
+    assert_difference -> { Consegna.count }, 1 do
+      @appunto.mark_consegnato
+    end
+
+    assert @appunto.consegnato?
+    assert_not_nil @appunto.consegna.consegnato_il
+  end
+
+  test "mark_pagato creates pagamento record" do
+    assert_not @appunto.pagato?
+
+    assert_difference -> { Pagamento.count }, 1 do
+      @appunto.mark_pagato
+    end
+
+    assert @appunto.pagato?
+    assert_not_nil @appunto.pagamento.pagato_il
+  end
+
+  test "mark_registrato creates registrazione record" do
+    assert_not @appunto.registrato?
+
+    assert_difference -> { Registrazione.count }, 1 do
+      @appunto.mark_registrato
+    end
+
+    assert @appunto.registrato?
+    assert_not_nil @appunto.registrazione.registrato_il
+  end
 end

@@ -48,7 +48,7 @@ class Appunto < ApplicationRecord
   # State Record concerns
   include Golden         # has_one :goldness
   include Closeable      # has_one :closure
-  include NotNowable     # has_one :not_now
+  include Postponable    # has_one :not_now
   include Consegnabile   # has_one :consegna
   include Pagabile       # has_one :pagamento
   include Registrabile   # has_one :registrazione
