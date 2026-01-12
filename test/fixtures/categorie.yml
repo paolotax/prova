@@ -26,8 +26,10 @@ scolastica:
   nome_categoria: "Scolastica"
   descrizione: "Libri scolastici"
   user: one
+  account: fizzy
 
 narrativa:
   nome_categoria: "Narrativa"
   descrizione: "Libri di narrativa"
   user: one
+  account: fizzy

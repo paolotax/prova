@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -60,6 +60,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "adozioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "classe_id", null: false
+    t.bigint "libro_id"
+    t.bigint "import_adozione_id"
+    t.string "codice_isbn"
+    t.string "titolo"
+    t.string "editore"
+    t.string "autori"
+    t.string "disciplina"
+    t.integer "prezzo_cents", default: 0
+    t.boolean "nuova_adozione", default: false
+    t.boolean "da_acquistare", default: false
+    t.boolean "consigliato", default: false
+    t.integer "numero_copie", default: 0
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "libro_id"], name: "index_adozioni_on_account_id_and_libro_id"
+    t.index ["account_id"], name: "index_adozioni_on_account_id"
+    t.index ["classe_id", "codice_isbn"], name: "index_adozioni_on_classe_id_and_codice_isbn", unique: true
+    t.index ["classe_id"], name: "index_adozioni_on_classe_id"
+    t.index ["import_adozione_id"], name: "index_adozioni_on_import_adozione_id"
+    t.index ["libro_id"], name: "index_adozioni_on_libro_id"
   end
 
   create_table "adozioni_comunicate", force: :cascade do |t|
@@ -155,13 +181,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.bigint "voice_note_id"
     t.boolean "active"
     t.uuid "account_id"
+    t.string "appuntabile_type"
+    t.uuid "appuntabile_id"
+    t.integer "totale_cents", default: 0
+    t.integer "totale_copie", default: 0
     t.index ["account_id", "created_at"], name: "index_appunti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_appunti_on_account_id"
+    t.index ["appuntabile_type", "appuntabile_id"], name: "index_appunti_on_appuntabile_type_and_appuntabile_id"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"
     t.index ["voice_note_id"], name: "index_appunti_on_voice_note_id"
+  end
+
+  create_table "appunto_righe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "appunto_id", null: false
+    t.bigint "riga_id", null: false
+    t.integer "posizione", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appunto_id", "posizione"], name: "index_appunto_righe_on_appunto_id_and_posizione"
+    t.index ["appunto_id", "riga_id"], name: "index_appunto_righe_on_appunto_id_and_riga_id", unique: true
+    t.index ["appunto_id"], name: "index_appunto_righe_on_appunto_id"
+    t.index ["riga_id"], name: "index_appunto_righe_on_riga_id"
   end
 
   create_table "aziende", force: :cascade do |t|
@@ -284,6 +327,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
 
+  create_table "classi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "scuola_id", null: false
+    t.string "anno_corso"
+    t.string "sezione"
+    t.string "combinazione"
+    t.string "tipo_scuola"
+    t.string "codice_ministeriale_origine"
+    t.string "classe_origine"
+    t.string "sezione_origine"
+    t.string "combinazione_origine"
+    t.text "note"
+    t.integer "numero_alunni"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "codice_ministeriale_origine", "classe_origine", "sezione_origine"], name: "index_classi_on_origine"
+    t.index ["account_id"], name: "index_classi_on_account_id"
+    t.index ["scuola_id", "anno_corso", "sezione"], name: "index_classi_on_scuola_id_and_anno_corso_and_sezione", unique: true
+    t.index ["scuola_id"], name: "index_classi_on_scuola_id"
+  end
+
   create_table "clienti", force: :cascade do |t|
     t.string "codice_cliente"
     t.string "tipo_cliente"
@@ -322,12 +386,39 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.index ["user_id"], name: "index_clienti_on_user_id"
   end
 
+  create_table "closures", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "closeable_type", null: false
+    t.uuid "closeable_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_closures_on_account_id"
+    t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable"
+    t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable_type_and_closeable_id", unique: true
+    t.index ["user_id"], name: "index_closures_on_user_id"
+  end
+
   create_table "confezione_righe", force: :cascade do |t|
     t.bigint "confezione_id"
     t.bigint "fascicolo_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "row_order"
+  end
+
+  create_table "consegne", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "consegnabile_type", null: false
+    t.uuid "consegnabile_id", null: false
+    t.bigint "user_id"
+    t.datetime "consegnato_il"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_consegne_on_account_id"
+    t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile"
+    t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile_type_and_consegnabile_id", unique: true
+    t.index ["user_id"], name: "index_consegne_on_user_id"
   end
 
   create_table "documenti", force: :cascade do |t|
@@ -414,6 +505,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.uuid "account_id", null: false
     t.index ["account_id"], name: "index_giri_on_account_id"
     t.index ["user_id"], name: "index_giri_on_user_id"
+  end
+
+  create_table "goldnesses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "goldenable_type", null: false
+    t.uuid "goldenable_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_goldnesses_on_account_id"
+    t.index ["goldenable_type", "goldenable_id"], name: "index_goldnesses_on_goldenable"
+    t.index ["goldenable_type", "goldenable_id"], name: "index_goldnesses_on_goldenable_type_and_goldenable_id", unique: true
+    t.index ["user_id"], name: "index_goldnesses_on_user_id"
   end
 
   create_table "import_adozioni", force: :cascade do |t|
@@ -651,6 +755,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
   end
 
+  create_table "not_nows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "not_nowable_type", null: false
+    t.uuid "not_nowable_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_not_nows_on_account_id"
+    t.index ["not_nowable_type", "not_nowable_id"], name: "index_not_nows_on_not_nowable"
+    t.index ["not_nowable_type", "not_nowable_id"], name: "index_not_nows_on_not_nowable_type_and_not_nowable_id", unique: true
+    t.index ["user_id"], name: "index_not_nows_on_user_id"
+  end
+
   create_table "old_adozioni", force: :cascade do |t|
     t.string "codicescuola"
     t.string "annocorso"
@@ -676,6 +793,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.index ["import_scuola_id"], name: "index_old_adozioni_on_import_scuola_id"
   end
 
+  create_table "pagamenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "pagabile_type", null: false
+    t.uuid "pagabile_id", null: false
+    t.bigint "user_id"
+    t.datetime "pagato_il"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_pagamenti_on_account_id"
+    t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile"
+    t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile_type_and_pagabile_id", unique: true
+    t.index ["user_id"], name: "index_pagamenti_on_user_id"
+  end
+
   create_table "personal_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "nome"
@@ -686,6 +817,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.datetime "updated_at", null: false
     t.string "navigator"
     t.index ["user_id"], name: "index_personal_infos_on_user_id", unique: true
+  end
+
+  create_table "persone", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "scuola_id"
+    t.string "nome"
+    t.string "cognome"
+    t.string "ruolo"
+    t.string "email"
+    t.string "telefono"
+    t.string "cellulare"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "cognome", "nome"], name: "index_persone_on_account_id_and_cognome_and_nome"
+    t.index ["account_id"], name: "index_persone_on_account_id"
+    t.index ["scuola_id", "ruolo"], name: "index_persone_on_scuola_id_and_ruolo"
+    t.index ["scuola_id"], name: "index_persone_on_scuola_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -713,6 +862,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["qrcodable_type", "qrcodable_id"], name: "index_qrcodes_on_qrcodable"
+  end
+
+  create_table "registrazioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "registrabile_type", null: false
+    t.uuid "registrabile_id", null: false
+    t.bigint "user_id"
+    t.datetime "registrato_il"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_registrazioni_on_account_id"
+    t.index ["registrabile_type", "registrabile_id"], name: "index_registrazioni_on_registrabile"
+    t.index ["registrabile_type", "registrabile_id"], name: "index_registrazioni_on_registrabile_type_and_registrabile_id", unique: true
+    t.index ["user_id"], name: "index_registrazioni_on_user_id"
   end
 
   create_table "righe", force: :cascade do |t|
@@ -745,6 +908,31 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
     t.index ["scontabile_type", "scontabile_id"], name: "index_sconti_on_scontabile"
     t.index ["user_id", "scontabile_type", "scontabile_id", "categoria_id", "data_inizio", "tipo_sconto"], name: "index_sconti_unique", unique: true
     t.index ["user_id"], name: "index_sconti_on_user_id"
+  end
+
+  create_table "scuole", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.bigint "import_scuola_id"
+    t.string "codice_ministeriale"
+    t.string "denominazione"
+    t.string "indirizzo"
+    t.string "cap"
+    t.string "comune"
+    t.string "provincia"
+    t.string "regione"
+    t.string "tipo_scuola"
+    t.string "email"
+    t.string "pec"
+    t.string "telefono"
+    t.text "note"
+    t.integer "priorita", default: 0
+    t.string "stato", default: "attiva"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "codice_ministeriale"], name: "index_scuole_on_account_id_and_codice_ministeriale", unique: true
+    t.index ["account_id", "denominazione"], name: "index_scuole_on_account_id_and_denominazione"
+    t.index ["account_id"], name: "index_scuole_on_account_id"
+    t.index ["import_scuola_id"], name: "index_scuole_on_import_scuola_id"
   end
 
   create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -931,35 +1119,59 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "adozioni", "accounts"
+  add_foreign_key "adozioni", "classi"
+  add_foreign_key "adozioni", "import_adozioni"
+  add_foreign_key "adozioni", "libri"
   add_foreign_key "adozioni_comunicate", "import_adozioni"
   add_foreign_key "adozioni_comunicate", "users"
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
+  add_foreign_key "appunto_righe", "appunti"
+  add_foreign_key "appunto_righe", "righe"
   add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"
   add_foreign_key "chats", "accounts"
   add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"
+  add_foreign_key "classi", "accounts"
+  add_foreign_key "classi", "scuole"
+  add_foreign_key "closures", "accounts"
+  add_foreign_key "closures", "users"
+  add_foreign_key "consegne", "accounts"
+  add_foreign_key "consegne", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "causali", column: "derivato_da_causale_id"
   add_foreign_key "documenti", "documenti", column: "documento_padre_id"
   add_foreign_key "documenti", "users"
   add_foreign_key "giri", "accounts"
   add_foreign_key "giri", "users"
+  add_foreign_key "goldnesses", "accounts"
+  add_foreign_key "goldnesses", "users"
   add_foreign_key "libri", "categorie"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "models"
   add_foreign_key "messages", "tool_calls"
+  add_foreign_key "not_nows", "accounts"
+  add_foreign_key "not_nows", "users"
   add_foreign_key "old_adozioni", "import_scuole"
+  add_foreign_key "pagamenti", "accounts"
+  add_foreign_key "pagamenti", "users"
+  add_foreign_key "persone", "accounts"
+  add_foreign_key "persone", "scuole"
   add_foreign_key "profiles", "users"
+  add_foreign_key "registrazioni", "accounts"
+  add_foreign_key "registrazioni", "users"
   add_foreign_key "righe", "libri"
   add_foreign_key "sconti", "accounts"
   add_foreign_key "sconti", "categorie"
   add_foreign_key "sconti", "users"
+  add_foreign_key "scuole", "accounts"
+  add_foreign_key "scuole", "import_scuole"
   add_foreign_key "tappa_giri", "giri"
   add_foreign_key "tappa_giri", "tappe"
   add_foreign_key "tappe", "accounts"

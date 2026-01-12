@@ -5,6 +5,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  active             :boolean
+#  appuntabile_type   :string
 #  body               :text
 #  completed_at       :datetime
 #  email              :string
@@ -12,9 +13,12 @@
 #  stato              :string
 #  team               :string
 #  telefono           :string
+#  totale_cents       :integer          default(0)
+#  totale_copie       :integer          default(0)
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  account_id         :uuid
+#  appuntabile_id     :uuid
 #  classe_id          :bigint
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
@@ -23,13 +27,14 @@
 #
 # Indexes
 #
-#  index_appunti_on_account_id                 (account_id)
-#  index_appunti_on_account_id_and_created_at  (account_id,created_at)
-#  index_appunti_on_classe_id                  (classe_id)
-#  index_appunti_on_import_adozione_id         (import_adozione_id)
-#  index_appunti_on_import_scuola_id           (import_scuola_id)
-#  index_appunti_on_user_id                    (user_id)
-#  index_appunti_on_voice_note_id              (voice_note_id)
+#  index_appunti_on_account_id                           (account_id)
+#  index_appunti_on_account_id_and_created_at            (account_id,created_at)
+#  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
+#  index_appunti_on_classe_id                            (classe_id)
+#  index_appunti_on_import_adozione_id                   (import_adozione_id)
+#  index_appunti_on_import_scuola_id                     (import_scuola_id)
+#  index_appunti_on_user_id                              (user_id)
+#  index_appunti_on_voice_note_id                        (voice_note_id)
 #
 # Foreign Keys
 #

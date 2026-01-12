@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  active             :boolean
+#  appuntabile_type   :string
 #  body               :text
 #  completed_at       :datetime
 #  email              :string
@@ -11,9 +12,12 @@
 #  stato              :string
 #  team               :string
 #  telefono           :string
+#  totale_cents       :integer          default(0)
+#  totale_copie       :integer          default(0)
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  account_id         :uuid
+#  appuntabile_id     :uuid
 #  classe_id          :bigint
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
@@ -22,13 +26,14 @@
 #
 # Indexes
 #
-#  index_appunti_on_account_id                 (account_id)
-#  index_appunti_on_account_id_and_created_at  (account_id,created_at)
-#  index_appunti_on_classe_id                  (classe_id)
-#  index_appunti_on_import_adozione_id         (import_adozione_id)
-#  index_appunti_on_import_scuola_id           (import_scuola_id)
-#  index_appunti_on_user_id                    (user_id)
-#  index_appunti_on_voice_note_id              (voice_note_id)
+#  index_appunti_on_account_id                           (account_id)
+#  index_appunti_on_account_id_and_created_at            (account_id,created_at)
+#  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
+#  index_appunti_on_classe_id                            (classe_id)
+#  index_appunti_on_import_adozione_id                   (import_adozione_id)
+#  index_appunti_on_import_scuola_id                     (import_scuola_id)
+#  index_appunti_on_user_id                              (user_id)
+#  index_appunti_on_voice_note_id                        (voice_note_id)
 #
 # Foreign Keys
 #
@@ -44,6 +49,12 @@ class Appunto < ApplicationRecord
   belongs_to :user
   belongs_to :import_adozione, required: false
   belongs_to :classe, class_name: 'Views::Classe', optional: true
+  belongs_to :appuntabile, polymorphic: true, optional: true
+
+  # Righe libri (stesso pattern di Documento)
+  has_many :appunto_righe, dependent: :destroy
+  has_many :righe, through: :appunto_righe
+  accepts_nested_attributes_for :appunto_righe, allow_destroy: true
 
   validates :account_id, presence: true
   before_validation :set_account_from_current, on: :create
@@ -247,6 +258,17 @@ class Appunto < ApplicationRecord
 
   def is_ssk?
     %w[saggio seguito kit].include?(nome) && import_adozione.present?
+  end
+
+  # Calcoli totali righe
+  def ricalcola_totali!
+    self.totale_copie = righe.sum(:quantita)
+    self.totale_cents = righe.sum(&:importo_cents)
+    save!
+  end
+
+  def totale
+    totale_cents / 100.0
   end
 
   private
