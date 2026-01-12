@@ -84,8 +84,6 @@ class ImportScuola < ApplicationRecord
 
   has_one :tipo_scuola, primary_key: 'DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA', foreign_key: 'tipo'
 
-  has_many :adozioni, through: :classi
-
   has_many :documenti, -> { where(user_id: Current.user.id) }, as: :clientable
   has_many :documento_righe, through: :documenti
   has_many :righe, through: :documento_righe

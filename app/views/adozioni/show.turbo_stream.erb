@@ -1,7 +1,0 @@
-<%= turbo_stream.replace @adozione do %>
-    <% if @item && @item == 'true' %>
-        <%= render partial: "adozioni/adozione_scuola", locals: { adozione: @adozione, item: true } %>
-    <% else %>
-        <%= render @adozione %>
-    <% end %>
-<% end %>

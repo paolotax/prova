@@ -172,14 +172,6 @@ Rails.application.routes.draw do
     resources :libro_chips,  only: :create, param: :combobox_value
     resources :giro_chips, only: :create, param: :combobox_value
 
-    resources :adozioni do
-      collection do
-        post 'bulk_create'
-        put 'bulk_update', format: 'pdf'
-        get 'riepilogo'
-      end
-    end
-
     resources :libri do
       collection do
         get 'filtra'

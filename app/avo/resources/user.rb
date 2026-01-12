@@ -26,7 +26,6 @@ class Avo::Resources::User < Avo::BaseResource
     field :mie_adozioni, as: :has_many, through: :import_scuole
     field :mandati, as: :has_many
     field :editori, as: :has_many, through: :mandati
-    field :adozioni, as: :has_many
     field :documenti, as: :has_many
     field :clienti, as: :has_many
     field :righe, as: :has_many, through: :documenti

@@ -19,10 +19,6 @@ class Avo::Resources::ViewsClasse < Avo::BaseResource
     field :anno, as: :textarea
     field :import_adozioni, as: :has_many
     field :import_scuola, as: :belongs_to
-    field :adozioni, as: :has_many
-    field :vendita, as: :has_many
-    field :omaggio, as: :has_many
-    field :adozione, as: :has_many
     field :appunti, as: :has_many
   end
 end

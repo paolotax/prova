@@ -92,7 +92,6 @@ class Libro < ApplicationRecord
   
   accepts_nested_attributes_for :confezione_righe
 
-  has_many :adozioni
   has_many :righe
   has_many :documenti, through: :righe
   has_many :documento_righe, through: :righe

@@ -55,8 +55,6 @@ class User < ApplicationRecord
   has_many :mandati, dependent: :destroy
   has_many :editori, through: :mandati
 
-  has_many :adozioni, dependent: :destroy
-
   has_many :clienti, dependent: :destroy
   has_many :documenti, dependent: :destroy
   has_many :righe, through: :documenti
