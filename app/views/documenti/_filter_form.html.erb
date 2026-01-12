@@ -29,7 +29,7 @@
         }, {
             field: :tipo_pagamento,
             label: "Pagamento",
-            collection: Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamentos.key(value)]},
+            collection: Documento.tipo_pagamenti.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]},
             type: :select,
             placeholder: "pagamento..."
         },{

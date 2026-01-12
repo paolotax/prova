@@ -23,7 +23,7 @@
     <div class="nav-hotkeys" role="list">
         <%= filter_hotkey_link "Oggi", giorno_path(Current.account, Date.today), 1, "calendar" %>
         <%= filter_hotkey_link "Appunti", appunti_path(Current.account), 2, "note" %>
-        <%= filter_hotkey_link "Scuole", import_scuole_path(Current.account), 3, "building-library" %>
+        <%= filter_hotkey_link "Scuole", scuole_path(Current.account), 3, "building-library" %>
     </div>
 
     <%= yield %>

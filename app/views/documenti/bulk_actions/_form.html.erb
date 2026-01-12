@@ -152,7 +152,7 @@
 
                 <div class="flex justify-between items-center gap-2">
                     <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "text-sm font-medium text-white" %>
-                    <%= form.select :tipo_pagamento, Documento.tipo_pagamentos.keys.map { |tp| [tp.titleize, tp] },
+                    <%= form.select :tipo_pagamento, Documento.tipo_pagamenti.keys.map { |tp| [tp.titleize, tp] },
                         { include_blank: true },
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
@@ -211,7 +211,7 @@
 
                 <div class="w-full flex gap-2 items-center justify-between">
                     <%= form.label :tipo_pagamento, "Tipo Pagamento", class: "text-sm font-medium text-white" %>
-                    <%= form.select :tipo_pagamento, Documento.tipo_pagamentos.keys.map { |tp| [tp.titleize, tp] },
+                    <%= form.select :tipo_pagamento, Documento.tipo_pagamenti.keys.map { |tp| [tp.titleize, tp] },
                         { include_blank: true },
                         class: "rounded-md border-0 py-1.5 px-3 text-gray-900 bg-white" %>
                 </div>
