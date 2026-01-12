@@ -3,7 +3,7 @@
 #
 # Table name: appunti
 #
-#  id                 :bigint           not null, primary key
+#  id                 :uuid             not null, primary key
 #  active             :boolean
 #  appuntabile_type   :string
 #  body               :text
@@ -31,6 +31,7 @@
 #  index_appunti_on_account_id_and_created_at            (account_id,created_at)
 #  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
 #  index_appunti_on_classe_id                            (classe_id)
+#  index_appunti_on_id                                   (id) UNIQUE
 #  index_appunti_on_import_adozione_id                   (import_adozione_id)
 #  index_appunti_on_import_scuola_id                     (import_scuola_id)
 #  index_appunti_on_user_id                              (user_id)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_12_142937) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -164,7 +164,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
   end
 
-  create_table "appunti", force: :cascade do |t|
+  create_table "appunti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "import_scuola_id"
     t.bigint "user_id", null: false
     t.bigint "import_adozione_id"
@@ -189,6 +189,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
     t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["appuntabile_type", "appuntabile_id"], name: "index_appunti_on_appuntabile_type_and_appuntabile_id"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"
+    t.index ["id"], name: "index_appunti_on_id", unique: true
     t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
     t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"
@@ -196,13 +197,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
   end
 
   create_table "appunto_righe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "appunto_id", null: false
     t.bigint "riga_id", null: false
     t.integer "posizione", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["appunto_id", "posizione"], name: "index_appunto_righe_on_appunto_id_and_posizione"
-    t.index ["appunto_id", "riga_id"], name: "index_appunto_righe_on_appunto_id_and_riga_id", unique: true
+    t.uuid "appunto_id", null: false
     t.index ["appunto_id"], name: "index_appunto_righe_on_appunto_id"
     t.index ["riga_id"], name: "index_appunto_righe_on_riga_id"
   end
@@ -1129,7 +1128,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_12_124200) do
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
-  add_foreign_key "appunto_righe", "appunti"
   add_foreign_key "appunto_righe", "righe"
   add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"

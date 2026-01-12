@@ -6,19 +6,16 @@
 #  posizione  :integer          default(0)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  appunto_id :bigint           not null
+#  appunto_id :uuid             not null
 #  riga_id    :bigint           not null
 #
 # Indexes
 #
-#  index_appunto_righe_on_appunto_id                (appunto_id)
-#  index_appunto_righe_on_appunto_id_and_posizione  (appunto_id,posizione)
-#  index_appunto_righe_on_appunto_id_and_riga_id    (appunto_id,riga_id) UNIQUE
-#  index_appunto_righe_on_riga_id                   (riga_id)
+#  index_appunto_righe_on_appunto_id  (appunto_id)
+#  index_appunto_righe_on_riga_id     (riga_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (appunto_id => appunti.id)
 #  fk_rails_...  (riga_id => righe.id)
 #
 class AppuntoRiga < ApplicationRecord
