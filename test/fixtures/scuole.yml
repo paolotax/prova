@@ -1,0 +1,28 @@
+# test/fixtures/scuole.yml
+scuola_fizzy:
+  account: fizzy
+  denominazione: "I.C. Leonardo da Vinci"
+  codice_ministeriale: "MIIC123456"
+  indirizzo: "Via Roma 1"
+  cap: "20100"
+  comune: "Milano"
+  provincia: "MI"
+  regione: "Lombardia"
+  tipo_scuola: "Istituto Comprensivo"
+  email: "info@leonardo.edu.it"
+  stato: "attiva"
+  priorita: 1
+
+scuola_acme:
+  account: acme
+  denominazione: "Liceo Scientifico Galileo"
+  codice_ministeriale: "RMIC654321"
+  indirizzo: "Viale Europa 10"
+  cap: "00100"
+  comune: "Roma"
+  provincia: "RM"
+  regione: "Lazio"
+  tipo_scuola: "Liceo Scientifico"
+  email: "info@galileo.edu.it"
+  stato: "attiva"
+  priorita: 0

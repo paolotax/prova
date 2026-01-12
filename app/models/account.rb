@@ -22,6 +22,7 @@ class Account < ApplicationRecord
   has_many :documenti, dependent: :destroy
   has_many :clienti, dependent: :destroy
   has_many :libri, dependent: :destroy
+  has_many :scuole, dependent: :destroy
 
   validates :name, presence: true
 

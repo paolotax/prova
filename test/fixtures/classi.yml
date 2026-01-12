@@ -1,0 +1,58 @@
+# test/fixtures/classi.yml
+
+# Classi per scuola_fizzy
+prima_a_fizzy:
+  account: fizzy
+  scuola: scuola_fizzy
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  codice_ministeriale_origine: "MIIC123456"
+  classe_origine: "1"
+  sezione_origine: "A"
+
+seconda_a_fizzy:
+  account: fizzy
+  scuola: scuola_fizzy
+  anno_corso: "2"
+  sezione: "A"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  codice_ministeriale_origine: "MIIC123456"
+  classe_origine: "2"
+  sezione_origine: "A"
+
+terza_b_fizzy:
+  account: fizzy
+  scuola: scuola_fizzy
+  anno_corso: "3"
+  sezione: "B"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  codice_ministeriale_origine: "MIIC123456"
+  classe_origine: "3"
+  sezione_origine: "B"
+
+# Classi per scuola_acme
+prima_a_acme:
+  account: acme
+  scuola: scuola_acme
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "Scienze applicate"
+  tipo_scuola: "Liceo Scientifico"
+  codice_ministeriale_origine: "RMIC654321"
+  classe_origine: "1"
+  sezione_origine: "A"
+
+seconda_b_acme:
+  account: acme
+  scuola: scuola_acme
+  anno_corso: "2"
+  sezione: "B"
+  combinazione: "Tradizionale"
+  tipo_scuola: "Liceo Scientifico"
+  codice_ministeriale_origine: "RMIC654321"
+  classe_origine: "2"
+  sezione_origine: "B"

@@ -1,0 +1,133 @@
+<% content_for :title, "Scuole" %>
+
+<% content_for :header do %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+      <%= link_to new_scuola_path,
+          class: "inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuova Scuola
+      <% end %>
+    <% end %>
+
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900">Scuole</h1>
+  <% end %>
+<% end %>
+
+<%= turbo_frame_tag "search_results" do %>
+  <div class="flex flex-col xl:flex-row gap-8">
+
+    <%# Main content %>
+    <div class="flex-1 min-w-0">
+
+      <%# Search and filters bar %>
+      <div class="mb-8 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+        <%= form_with url: scuole_path, method: :get, data: { turbo_frame: "scuole_list", turbo_action: "advance" }, class: "flex flex-col sm:flex-row gap-4" do |f| %>
+          <div class="flex-1 relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <%= text_field_tag :q, params[:q],
+                placeholder: "Cerca per denominazione...",
+                class: "w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all",
+                autocomplete: "off" %>
+          </div>
+
+          <div class="flex gap-3">
+            <%= select_tag :provincia,
+                options_for_select([["Tutte le province", ""]] + Scuola.distinct.pluck(:provincia).compact.sort.map { |p| [p, p] }, params[:provincia]),
+                class: "px-4 py-2.5 bg-gray-50 border-0 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 cursor-pointer",
+                onchange: "this.form.requestSubmit()" %>
+
+            <%= select_tag :comune,
+                options_for_select([["Tutti i comuni", ""]] + Scuola.distinct.pluck(:comune).compact.sort.map { |c| [c, c] }, params[:comune]),
+                class: "px-4 py-2.5 bg-gray-50 border-0 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 cursor-pointer",
+                onchange: "this.form.requestSubmit()" %>
+          </div>
+
+          <%= submit_tag "Cerca", class: "px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors cursor-pointer" %>
+        <% end %>
+      </div>
+
+      <%# Results count %>
+      <% if @scuole.any? %>
+        <p class="mb-4 text-sm text-gray-500">
+          <%= @pagy.count %> <%= @pagy.count == 1 ? "scuola trovata" : "scuole trovate" %>
+        </p>
+      <% end %>
+
+      <%# Schools list %>
+      <%= turbo_frame_tag "scuole_list" do %>
+        <% if @scuole.any? %>
+          <div class="grid gap-4">
+            <% @scuole.each do |scuola| %>
+              <%= render partial: "scuole/scuola", locals: { scuola: scuola } %>
+            <% end %>
+          </div>
+
+          <%# Pagination %>
+          <% if @pagy.pages > 1 %>
+            <nav class="mt-8 flex justify-center">
+              <%== pagy_nav(@pagy) if defined?(pagy_nav) %>
+            </nav>
+          <% end %>
+        <% else %>
+          <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
+            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            <h3 class="mt-4 text-lg font-semibold text-gray-900">Nessuna scuola trovata</h3>
+            <p class="mt-2 text-sm text-gray-500">Inizia aggiungendo la prima scuola al tuo account.</p>
+            <%= link_to new_scuola_path,
+                class: "mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Aggiungi Scuola
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Sidebar with stats %>
+    <aside class="hidden xl:block w-72 shrink-0">
+      <div class="sticky top-32 space-y-6">
+        <%# Stats card %>
+        <div class="p-6 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl text-white">
+          <h3 class="text-sm font-medium text-emerald-100">Totale Scuole</h3>
+          <p class="mt-2 text-4xl font-bold"><%= Current.account.scuole.count %></p>
+          <div class="mt-4 pt-4 border-t border-emerald-400/30 grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-emerald-100">Province</p>
+              <p class="font-semibold"><%= Current.account.scuole.distinct.count(:provincia) %></p>
+            </div>
+            <div>
+              <p class="text-emerald-100">Comuni</p>
+              <p class="font-semibold"><%= Current.account.scuole.distinct.count(:comune) %></p>
+            </div>
+          </div>
+        </div>
+
+        <%# Quick filters %>
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-gray-100">
+          <h3 class="text-sm font-semibold text-gray-900 mb-3">Filtri Rapidi</h3>
+          <div class="space-y-2">
+            <%= link_to scuole_path, class: "block px-3 py-2 text-sm rounded-lg #{'bg-gray-100 font-medium' if params[:stato].blank? && params[:provincia].blank?} hover:bg-gray-50 transition-colors" do %>
+              Tutte le scuole
+            <% end %>
+            <% Current.account.scuole.distinct.pluck(:provincia).compact.sort.first(5).each do |provincia| %>
+              <%= link_to scuole_path(provincia: provincia), class: "block px-3 py-2 text-sm rounded-lg #{'bg-gray-100 font-medium' if params[:provincia] == provincia} hover:bg-gray-50 transition-colors" do %>
+                <%= provincia %>
+                <span class="text-gray-400">(<%= Current.account.scuole.where(provincia: provincia).count %>)</span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+<% end %>

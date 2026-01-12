@@ -1,0 +1,102 @@
+# test/fixtures/adozioni.yml
+
+# Adozioni per prima_a_fizzy
+adozione_italiano_1a:
+  account: fizzy
+  classe: prima_a_fizzy
+  codice_isbn: "9788808123456"
+  titolo: "Il mio primo libro di italiano"
+  editore: "Zanichelli"
+  autori: "Mario Rossi"
+  disciplina: "Italiano"
+  prezzo_cents: 1500
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+adozione_matematica_1a:
+  account: fizzy
+  classe: prima_a_fizzy
+  codice_isbn: "9788808654321"
+  titolo: "Matematica facile"
+  editore: "Pearson"
+  autori: "Luca Bianchi"
+  disciplina: "Matematica"
+  prezzo_cents: 1800
+  nuova_adozione: true
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+adozione_inglese_1a:
+  account: fizzy
+  classe: prima_a_fizzy
+  codice_isbn: "9788808111222"
+  titolo: "English for Kids"
+  editore: "Oxford"
+  autori: "John Smith"
+  disciplina: "Inglese"
+  prezzo_cents: 2200
+  nuova_adozione: false
+  da_acquistare: false
+  consigliato: true
+  numero_copie: 0
+
+# Adozioni per seconda_a_fizzy
+adozione_italiano_2a:
+  account: fizzy
+  classe: seconda_a_fizzy
+  codice_isbn: "9788808222333"
+  titolo: "Parole in gioco - Volume 2"
+  editore: "Zanichelli"
+  autori: "Mario Rossi"
+  disciplina: "Italiano"
+  prezzo_cents: 1650
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+adozione_matematica_2a:
+  account: fizzy
+  classe: seconda_a_fizzy
+  codice_isbn: "9788808333444"
+  titolo: "Numeri e forme - Volume 2"
+  editore: "Pearson"
+  autori: "Luca Bianchi"
+  disciplina: "Matematica"
+  prezzo_cents: 1900
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+# Adozioni per prima_a_acme (altro account)
+adozione_fisica_acme:
+  account: acme
+  classe: prima_a_acme
+  codice_isbn: "9788808555666"
+  titolo: "Fisica moderna"
+  editore: "Zanichelli"
+  autori: "Alberto Einstein"
+  disciplina: "Fisica"
+  prezzo_cents: 3500
+  nuova_adozione: true
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+adozione_matematica_acme:
+  account: acme
+  classe: prima_a_acme
+  codice_isbn: "9788808666777"
+  titolo: "Matematica.blu"
+  editore: "Zanichelli"
+  autori: "Massimo Bergamini"
+  disciplina: "Matematica"
+  prezzo_cents: 4200
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0

@@ -1,0 +1,147 @@
+<% content_for :title, "Classe #{@classe.nome_breve} - #{@scuola.denominazione}" %>
+
+<% content_for :header do %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
+    <% heading.with_action do %>
+      <%= button_to import_adozioni_scuola_classe_path(@scuola, @classe),
+          method: :post,
+          class: "inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Importa Adozioni
+      <% end %>
+    <% end %>
+
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+      Classe <%= @classe.nome_breve %>
+    </h1>
+  <% end %>
+<% end %>
+
+<div class="space-y-6">
+
+  <%# Breadcrumb %>
+  <nav class="flex items-center gap-2 text-sm text-gray-500">
+    <%= link_to scuole_path, class: "hover:text-emerald-600 transition-colors" do %>
+      Scuole
+    <% end %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+    <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "hover:text-emerald-600 transition-colors truncate max-w-xs" %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+    <span class="text-gray-900 font-medium">Classe <%= @classe.nome_breve %></span>
+  </nav>
+
+  <%# Info classe %>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    <div class="flex items-center gap-4 mb-6">
+      <div class="w-16 h-16 rounded-xl bg-emerald-100 flex items-center justify-center">
+        <span class="text-2xl font-bold text-emerald-600"><%= @classe.nome_breve %></span>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900"><%= @scuola.denominazione %></h2>
+        <% if @classe.combinazione.present? %>
+          <p class="text-sm text-gray-500"><%= @classe.combinazione %></p>
+        <% end %>
+        <% if @classe.tipo_scuola.present? %>
+          <p class="text-xs text-gray-400"><%= @classe.tipo_scuola %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-600">
+        <%= @adozioni.count %> adozioni
+      </span>
+      <% if @adozioni.da_acquistare_flag.any? %>
+        <span class="px-3 py-1 bg-amber-100 rounded-full text-sm font-medium text-amber-700">
+          <%= @adozioni.da_acquistare_flag.count %> da acquistare
+        </span>
+      <% end %>
+      <% if @adozioni.nuove.any? %>
+        <span class="px-3 py-1 bg-blue-100 rounded-full text-sm font-medium text-blue-700">
+          <%= @adozioni.nuove.count %> nuove
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Tabella adozioni %>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <h3 class="font-semibold text-gray-900">Adozioni</h3>
+    </div>
+
+    <% if @adozioni.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Editore</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disciplina</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Prezzo</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Flags</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% @adozioni.each do |adozione| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                  <div class="text-sm font-medium text-gray-900 max-w-md truncate" title="<%= adozione.titolo %>">
+                    <%= adozione.titolo %>
+                  </div>
+                  <div class="text-xs text-gray-500 font-mono"><%= adozione.codice_isbn %></div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600"><%= adozione.editore %></td>
+                <td class="px-6 py-4 text-sm text-gray-600"><%= adozione.disciplina %></td>
+                <td class="px-6 py-4 text-sm text-gray-900 text-right font-medium">
+                  <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <% if adozione.nuova_adozione %>
+                      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium" title="Nuova adozione">N</span>
+                    <% end %>
+                    <% if adozione.da_acquistare %>
+                      <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs font-medium" title="Da acquistare">A</span>
+                    <% end %>
+                    <% if adozione.consigliato %>
+                      <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-medium" title="Consigliato">C</span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot class="bg-gray-50">
+            <tr>
+              <td colspan="3" class="px-6 py-3 text-sm font-medium text-gray-900">Totale</td>
+              <td class="px-6 py-3 text-sm font-bold text-gray-900 text-right">
+                <%= number_to_currency(@adozioni.sum(:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %>
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">Nessuna adozione</h3>
+        <p class="mt-2 text-sm text-gray-500">Questa classe non ha ancora adozioni registrate.</p>
+        <%= button_to "Importa Adozioni",
+            import_adozioni_scuola_classe_path(@scuola, @classe),
+            method: :post,
+            class: "mt-4 inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

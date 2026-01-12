@@ -1,0 +1,38 @@
+<%# Partial per visualizzare una classe card nella lista della scuola %>
+<%# Locals: classe, scuola %>
+
+<%= link_to scuola_classe_path(scuola, classe),
+    class: "block p-4 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors group" do %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-lg font-bold text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+        <%= classe.nome_breve %>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-900">Classe <%= classe.nome_breve %></p>
+        <% if classe.combinazione.present? %>
+          <p class="text-xs text-gray-500"><%= classe.combinazione %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <% if classe.adozioni.any? %>
+        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+          <%= classe.adozioni.count %> adozioni
+        </span>
+      <% end %>
+
+      <% da_acquistare_count = classe.adozioni.da_acquistare_flag.count %>
+      <% if da_acquistare_count > 0 %>
+        <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+          <%= da_acquistare_count %> da acquistare
+        </span>
+      <% end %>
+
+      <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </div>
+  </div>
+<% end %>
