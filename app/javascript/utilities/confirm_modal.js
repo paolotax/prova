@@ -15,14 +15,21 @@ import { Template } from "./confirm_modal/template.js";
 //  }
 // ```
 //
-function insertConfirmModal(message, element) {
-  
-  // aggiunta da me
-  const button = element.querySelector("button");
-  
-  const theme = button.dataset.turboConfirmTheme || "light";
-  const cancelLabel = button.dataset.turboConfirmCancelLabel || "Annulla";
-  const confirmLabel = button.dataset.turboConfirmConfirmLabel || "Conferma";
+function insertConfirmModal(message, element, submitter) {
+  // Try to find the button: submitter, button inside form, external button with form attribute, or element itself
+  let button = submitter || element.querySelector("button");
+
+  // If no button inside form, look for external button that references this form
+  if (!button && element.id) {
+    button = document.querySelector(`button[form="${element.id}"]`);
+  }
+
+  // Fallback to element itself
+  button = button || element;
+
+  const theme = button.dataset?.turboConfirmTheme || "light";
+  const cancelLabel = button.dataset?.turboConfirmCancelLabel || "Annulla";
+  const confirmLabel = button.dataset?.turboConfirmConfirmLabel || "Conferma";
   
   const template = new Template({theme: theme, message: message, cancelLabel: cancelLabel, confirmLabel: confirmLabel});
 
@@ -32,8 +39,8 @@ function insertConfirmModal(message, element) {
   return document.getElementById("confirm-modal");
 }
 
-Turbo.config.forms.confirm = (message, element) => {
-  const dialog = insertConfirmModal(message, element);
+Turbo.config.forms.confirm = (message, element, submitter) => {
+  const dialog = insertConfirmModal(message, element, submitter);
 
   return new Promise((resolve) => {
     dialog.querySelector("[data-behavior='cancel']").addEventListener("click", () => {

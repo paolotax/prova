@@ -3,58 +3,58 @@
 module User::Avatar
   extend ActiveSupport::Concern
 
-  AVATAR_COLORS = %w[
-    bg-red-500 bg-orange-500 bg-amber-500 bg-yellow-500
-    bg-lime-500 bg-green-500 bg-emerald-500 bg-teal-500
-    bg-cyan-500 bg-sky-500 bg-blue-500 bg-indigo-500
-    bg-violet-500 bg-purple-500 bg-fuchsia-500 bg-pink-500
-  ].freeze
+  ALLOWED_AVATAR_CONTENT_TYPES = %w[ image/jpeg image/png image/gif image/webp ].freeze
+  MAX_AVATAR_DIMENSIONS = { width: 4096, height: 4096 }.freeze
 
   included do
-    has_one_attached :avatar
-  end
-
-  # Avatar variants
-  def avatar_thumbnail
-    avatar.variant(resize_to_fill: [40, 40]) if avatar.attached?
-  end
-
-  def avatar_medium
-    avatar.variant(resize_to_fill: [80, 80]) if avatar.attached?
-  end
-
-  def avatar_large
-    avatar.variant(resize_to_fill: [256, 256]) if avatar.attached?
-  end
-
-  # Fizzy-style display data for views
-  def display_avatar
-    {
-      has_image: avatar.attached?,
-      initials: avatar_initials,
-      color: avatar_color,
-      name: display_name
-    }
-  end
-
-  # Initials from personal_info or fallback to user name
-  def avatar_initials
-    if personal_info&.nome.present? && personal_info&.cognome.present?
-      "#{personal_info.nome.first}#{personal_info.cognome.first}".upcase
-    else
-      name.first(2).upcase
+    has_one_attached :avatar do |attachable|
+      attachable.variant :thumb, resize_to_fill: [ 256, 256 ]
     end
-  end
-  alias_method :initials, :avatar_initials
 
-  # Deterministic color based on name
-  def avatar_color
-    seed = display_name.sum
-    AVATAR_COLORS[seed % AVATAR_COLORS.length]
+    scope :with_avatars, -> { preload(:account, :avatar_attachment) }
+
+    validate :avatar_content_type_allowed, :avatar_dimensions_allowed, if: :avatar_attached?
   end
 
-  # Display name from personal_info or user name
-  def display_name
-    personal_info&.nome_completo.presence || name
+  def avatar_attached?
+    avatar.attached?
   end
+
+  def avatar_thumbnail
+    avatar.variable? ? avatar.variant(:thumb) : avatar
+  end
+
+  # Avatars are always publicly accessible
+  def publicly_accessible?
+    true
+  end
+
+  private
+    def avatar_content_type_allowed
+      if !ALLOWED_AVATAR_CONTENT_TYPES.include?(avatar.content_type)
+        errors.add(:avatar, "must be a JPEG, PNG, GIF, or WebP image")
+      end
+    end
+
+    def avatar_dimensions_allowed
+      return unless avatar.blob.analyzed? || safely_analyze_blob
+
+      width = avatar.blob.metadata[:width]
+      height = avatar.blob.metadata[:height]
+
+      if width && width > MAX_AVATAR_DIMENSIONS[:width]
+        errors.add(:avatar, "width must be less than #{MAX_AVATAR_DIMENSIONS[:width]}px")
+      end
+
+      if height && height > MAX_AVATAR_DIMENSIONS[:height]
+        errors.add(:avatar, "height must be less than #{MAX_AVATAR_DIMENSIONS[:height]}px")
+      end
+    end
+
+    def safely_analyze_blob
+      avatar.blob.analyze
+    rescue ActiveStorage::FileNotFoundError
+      # File not yet persisted or missing - skip dimension validation
+      false
+    end
 end

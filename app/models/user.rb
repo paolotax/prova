@@ -81,6 +81,11 @@ class User < ApplicationRecord
 
   enum :role, { scagnozzo: 0, sbocciatore: 1, omaccio: 2, admin: 3 }
 
+  # For avatar SVG initials fallback
+  def initials
+    name.scan(/\b\p{L}/).join.upcase
+  end
+
   after_initialize :set_default_role, :if => :new_record?
   def set_default_role
     self.role ||= :scagnozzo

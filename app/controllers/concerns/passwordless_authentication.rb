@@ -32,6 +32,12 @@ module PasswordlessAuthentication
     current_user.present?
   end
 
+  # Load user from session without requiring authentication
+  # Use this for pages that work for both authenticated and unauthenticated users
+  def resume_session
+    authenticate_from_session
+  end
+
   def authenticate_from_session
     return nil unless session_token.present?
 
