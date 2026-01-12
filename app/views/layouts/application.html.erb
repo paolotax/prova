@@ -9,10 +9,13 @@
 
 	<body class="flex h-full flex-col">
 		<div id="global-container">
-			<header class="sticky top-0 z-40 flex flex-row items-center justify-center p-2 bg-gray-300">
-				<%= yield :nav_buttons_left %>
-        		<%= render "my/menu" if Current.user %>
-        		<%= yield :nav_buttons_right %>
+			<header class="sticky top-0 z-40 flex flex-col items-center justify-center p-2 bg-gray-300">
+				<div class="flex flex-col items-center justify-center">
+					<%= yield :nav_buttons_left %>
+					<%= render "my/menu" if Current.user %>
+					<%= yield :nav_buttons_right %>
+				<div>
+				<%= content_for(:header) %>
 			</header>
 
 			<%= turbo_frame_tag :modal %>
@@ -26,7 +29,7 @@
 				</div>
 
 				<div class="sticky top-14 z-10 hotwire-native:hidden">
-					<%= content_for(:header) %>
+					
 				</div>
 
 				<%= yield %>

@@ -1,4 +1,40 @@
 # test/fixtures/scuole.yml
+# == Schema Information
+#
+# Table name: scuole
+#
+#  id                  :uuid             not null, primary key
+#  cap                 :string
+#  codice_ministeriale :string
+#  comune              :string
+#  denominazione       :string
+#  email               :string
+#  indirizzo           :string
+#  note                :text
+#  pec                 :string
+#  priorita            :integer          default(0)
+#  provincia           :string
+#  regione             :string
+#  stato               :string           default("attiva")
+#  telefono            :string
+#  tipo_scuola         :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  account_id          :uuid             not null
+#  import_scuola_id    :bigint
+#
+# Indexes
+#
+#  index_scuole_on_account_id                          (account_id)
+#  index_scuole_on_account_id_and_codice_ministeriale  (account_id,codice_ministeriale) UNIQUE
+#  index_scuole_on_account_id_and_denominazione        (account_id,denominazione)
+#  index_scuole_on_import_scuola_id                    (import_scuola_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (import_scuola_id => import_scuole.id)
+#
 scuola_fizzy:
   account: fizzy
   denominazione: "I.C. Leonardo da Vinci"
