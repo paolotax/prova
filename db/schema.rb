@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_12_121256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -60,34 +60,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
-  end
-
-  create_table "adozioni", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "import_adozione_id"
-    t.bigint "libro_id", null: false
-    t.string "team"
-    t.text "note"
-    t.integer "numero_sezioni"
-    t.string "stato_adozione"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "numero_copie"
-    t.integer "prezzo_cents"
-    t.integer "importo_cents"
-    t.bigint "classe_id"
-    t.integer "status", default: 0
-    t.integer "tipo", default: 0
-    t.string "tipo_pagamento"
-    t.datetime "pagato_il"
-    t.datetime "consegnato_il"
-    t.integer "numero_documento"
-    t.index ["classe_id"], name: "index_adozioni_on_classe_id"
-    t.index ["import_adozione_id"], name: "index_adozioni_on_import_adozione_id"
-    t.index ["libro_id"], name: "index_adozioni_on_libro_id"
-    t.index ["status"], name: "index_adozioni_on_status"
-    t.index ["tipo"], name: "index_adozioni_on_tipo"
-    t.index ["user_id"], name: "index_adozioni_on_user_id"
   end
 
   create_table "adozioni_comunicate", force: :cascade do |t|
@@ -279,6 +251,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_categorie_on_account_id"
     t.index ["user_id", "nome_categoria"], name: "index_categorie_on_user_id_and_nome_categoria", unique: true
     t.index ["user_id"], name: "index_categorie_on_user_id"
   end
@@ -304,6 +278,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "model_id"
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_chats_on_account_id"
     t.index ["model_id"], name: "index_chats_on_model_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
@@ -435,6 +411,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.datetime "updated_at", null: false
     t.text "conditions"
     t.text "excluded_ids"
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_giri_on_account_id"
     t.index ["user_id"], name: "index_giri_on_user_id"
   end
 
@@ -761,6 +739,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_sconti_on_account_id"
     t.index ["categoria_id"], name: "index_sconti_on_categoria_id"
     t.index ["scontabile_type", "scontabile_id"], name: "index_sconti_on_scontabile"
     t.index ["user_id", "scontabile_type", "scontabile_id", "categoria_id", "data_inizio", "tipo_sconto"], name: "index_sconti_unique", unique: true
@@ -880,6 +860,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
     t.bigint "giro_id"
     t.bigint "user_id"
     t.integer "position", null: false
+    t.uuid "account_id", null: false
+    t.index ["account_id"], name: "index_tappe_on_account_id"
     t.index ["giro_id"], name: "index_tappe_on_giro_id"
     t.index ["tappable_type", "tappable_id"], name: "index_tappe_on_tappable"
     t.index ["user_id", "data_tappa", "position"], name: "index_tappe_on_user_id_and_data_tappa_and_position", unique: true
@@ -949,22 +931,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "adozioni", "import_adozioni"
-  add_foreign_key "adozioni", "libri"
-  add_foreign_key "adozioni", "users"
   add_foreign_key "adozioni_comunicate", "import_adozioni"
   add_foreign_key "adozioni_comunicate", "users"
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
+  add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"
+  add_foreign_key "chats", "accounts"
   add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "causali", column: "derivato_da_causale_id"
   add_foreign_key "documenti", "documenti", column: "documento_padre_id"
   add_foreign_key "documenti", "users"
+  add_foreign_key "giri", "accounts"
   add_foreign_key "giri", "users"
   add_foreign_key "libri", "categorie"
   add_foreign_key "libri", "editori"
@@ -975,10 +957,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_111206) do
   add_foreign_key "old_adozioni", "import_scuole"
   add_foreign_key "profiles", "users"
   add_foreign_key "righe", "libri"
+  add_foreign_key "sconti", "accounts"
   add_foreign_key "sconti", "categorie"
   add_foreign_key "sconti", "users"
   add_foreign_key "tappa_giri", "giri"
   add_foreign_key "tappa_giri", "tappe"
+  add_foreign_key "tappe", "accounts"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"
   add_foreign_key "tool_calls", "messages"

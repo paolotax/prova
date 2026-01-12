@@ -10,12 +10,14 @@
 #  tipo_sconto        :integer          default("vendita"), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  account_id         :uuid             not null
 #  categoria_id       :bigint
 #  scontabile_id      :bigint
 #  user_id            :bigint
 #
 # Indexes
 #
+#  index_sconti_on_account_id    (account_id)
 #  index_sconti_on_categoria_id  (categoria_id)
 #  index_sconti_on_scontabile    (scontabile_type,scontabile_id)
 #  index_sconti_on_user_id       (user_id)
@@ -23,10 +25,13 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (categoria_id => categorie.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class Sconto < ApplicationRecord
+  include AccountScoped
+
   belongs_to :user
 
   # Polymorphic association - può essere Cliente, Editore, o nil per sconti globali
