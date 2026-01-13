@@ -4,6 +4,23 @@
 
 
 @layer base {
+  /* Dialog base styles for Safari compatibility */
+  dialog {
+    position: fixed;
+    margin: auto;
+    border: none;
+    padding: 0;
+    background: white;
+  }
+
+  dialog:not([open]) {
+    display: none;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
   /* Ensure hidden attribute works */
   [hidden] {
     display: none !important;
@@ -37,6 +54,12 @@
   }
 
   /* Nav popup dialog styles */
+  .nav-popup {
+    max-width: 90vw;
+    width: 400px;
+    max-height: 80vh;
+  }
+
   .nav-popup[open] {
     display: flex;
     flex-direction: column;

@@ -42,7 +42,7 @@
                 <% end %>
                 <%= tag.div class: "flex flex-col" do %>
                     <%= form.label :tipo_pagamento, "pagamento:" %>
-                    <%= form.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamentos.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]}, documento.tipo_pagamento)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                    <%= form.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamenti.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]}, documento.tipo_pagamento)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
                 <% end %>
                 <%= tag.div class: "flex flex-col" do %>
                     <%= form.label :pagato_il, "pagato il:" %>
