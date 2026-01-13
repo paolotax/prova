@@ -1,69 +1,75 @@
- <%# locals: ( appunto:, with_navigation: true ) -%>
+<%# locals: ( appunto:, with_navigation: true ) -%>
 
-<div class="flex items-center gap-3">
+<div class="flex align-center gap">
 
     <% if appunto.import_adozione %>
-        <%= tag.div class: [
-                "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset": true,
-                "bg-gray-50   text-gray-600   ring-gray-500/10":   appunto.import_adozione&.anno == "8",
-                "bg-yellow-50 text-yellow-800 ring-yellow-600/20": appunto.import_adozione&.anno == "2",
-                "bg-green-50  text-green-700  ring-green-600/20":  appunto.import_adozione&.anno == "6",
-                "bg-blue-50   text-blue-700   ring-blue-700/10":   appunto.import_adozione&.anno == "1",
-                "bg-red-50    text-red-700    ring-red-600/10":    appunto.import_adozione&.anno == "3",
-                "bg-indigo-50 text-indigo-700 ring-indigo-700/10": appunto.import_adozione&.anno == "4",
-                "bg-purple-50 text-purple-700 ring-purple-700/10": appunto.import_adozione&.anno == "7",
-                "bg-pink-50   text-pink-700   ring-pink-700/10":   appunto.import_adozione&.anno == "5"
-
-            ] do %>
+        <%
+          anno_style = case appunto.import_adozione&.anno
+          when "8"
+            "background: var(--color-ink-lightest); color: var(--color-ink); border-color: var(--color-ink-lighter);"
+          when "2"
+            "background: var(--color-warning-lighter); color: var(--color-warning-dark); border-color: var(--color-warning);"
+          when "6"
+            "background: var(--color-positive-lighter); color: var(--color-positive-dark); border-color: var(--color-positive);"
+          when "1"
+            "background: var(--color-link-lighter); color: var(--color-link); border-color: var(--color-link);"
+          when "3"
+            "background: var(--color-negative-lighter); color: var(--color-negative-dark); border-color: var(--color-negative);"
+          when "4"
+            "background: var(--color-notice-lighter); color: var(--color-notice-dark); border-color: var(--color-notice);"
+          when "7"
+            "background: #f3e8ff; color: #7c3aed; border-color: #a78bfa;"
+          when "5"
+            "background: #fce7f3; color: #be185d; border-color: #f472b6;"
+          else
+            "background: var(--color-ink-lightest); color: var(--color-ink); border-color: var(--color-ink-lighter);"
+          end
+        %>
+        <%= tag.div class: "badge txt-xx-small font-weight-bold", style: "#{anno_style} border: 1px solid;" do %>
             <%= appunto.import_adozione&.classe_e_sezione %>
         <% end %>
     <% end %>
 
 
 
-    <div class="flex w-full items-center">
-        
-        <div class="flex-shrink-0 w-10 h-10">
+    <div class="flex align-center full-width">
+
+        <div class="flex-shrink-0" style="width: 2.5rem; height: 2.5rem;">
             <label class="cursor-pointer relative">
-                
-                <%= check_box_tag "appunto_ids[]", appunto.id, nil, form: "bulk-actions", 
-                        class: "hidden peer", 
+
+                <%= check_box_tag "appunto_ids[]", appunto.id, nil, form: "bulk-actions",
+                        class: "hidden peer",
                         data: {action: "input->bulk-actions#count", bulk_actions_target: "checkbox"} %>
-                
+
                 <div class="<%= string_to_tailwind_color(appunto&.import_scuola&.citta_scuola) %>
-                    hover:border-blue-500 hover:border-[5px]
-                    hover:bg-white hover:text-white 
-                    h-10 w-10
-                    rounded-full absolute block 
-                    font-bold
-                    items-center justify-center content-center text-center overflow-hidden
-                    peer-active:ring-2 peer-active:ring-blue-200">
+                    flex align-center justify-center
+                    font-weight-bold
+                    overflow-hidden border-radius"
+                    style="width: 2.5rem; height: 2.5rem; position: absolute; border: 2px solid transparent;">
                     <%= scuola_avatar_abbreviation(appunto.import_scuola) if appunto.import_scuola %>
-                </div>  
-                <div class="hidden peer-checked:block border-4 
-                  border-blue-500 bg-blue-500 rounded-full 
-                  absolute items-center content-center justify-center
-                  peer-active:ring-2 peer-active:ring-blue-200">
-                    <svg class="w-8 h-8 text-white" 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          stroke-width="3" 
-                          stroke-linecap="round" 
+                </div>
+                <div class="hidden peer-checked:block border-radius flex align-center justify-center"
+                    style="position: absolute; width: 2rem; height: 2rem; background: var(--color-link); border: 3px solid var(--color-link);">
+                    <svg style="width: 1.25rem; height: 1.25rem; color: white;"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
                           stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                 </div>
             </label>
         </div>
-        
-        <div class="ml-4 flex-grow">
-            <h3 class="text-gray-900 font-medium"><%= appunto.nome_e_classe%></h3>
-            <h3 class="text-gray-500 font-medium hover:text-blue-500"><%= link_to(appunto.import_scuola.to_combobox_display.titleize, appunto.import_scuola, data: { turbo_frame: :_top }) if appunto.import_scuola %></h3>
+
+        <div class="flex-item-grow" style="margin-left: 1rem;">
+            <h3 class="font-weight-bold" style="color: var(--color-ink);"><%= appunto.nome_e_classe%></h3>
+            <h3 class="txt-subtle font-weight-bold txt-link"><%= link_to(appunto.import_scuola.to_combobox_display.titleize, appunto.import_scuola, data: { turbo_frame: :_top }) if appunto.import_scuola %></h3>
         </div>
 
     </div>
 
-     
+
 </div>

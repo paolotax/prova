@@ -1,73 +1,63 @@
 <% content_for :title, "Clienti" %>
 
-<div class="sticky top-20 z-10"> 
-    <%= render Heading::WithActionsComponent.new do |heading| %>
-        
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                caption: "Importa",
-                svg_file: "icon-folder-arrow-down.svg",
-                color: "blue",
-                url: new_clienti_importer_path %>
-        <% end %>
+<div class="sticky top-header z-10">
+  <%= render Heading::WithActionsComponent.new do |heading| %>
 
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Excel",
-                    svg_file: "icon-excel-bis.svg",
-                    color: "green",
-                    url: url_for( controller: "clienti", action: "index", format: :xlsx, params: request.query_parameters ),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-        <% end %>
-        <%# heading.with_action do %>
-            <%#= component 'tax_button',
-                    caption: "Stats",
-                    svg_file: "icon-chart-bar.svg",
-                    color: "white",
-                    url: url_for( controller: "adozioni", action: "riepilogo", params: [] ) %>
-        <%# end %>
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Nuovo",
-                    svg_file: "icon-plus.svg",
-                    color: "blue",
-                    url: url_for( controller: "clienti", action: "new", model: @cliente ) %>
-        <% end %>
-        
-        <% heading.with_action do %>
-            <%= tag.div class: "block lg:hidden" do %>
-                <%= component 'tax_button',
-                    caption: "Filtra",
-                    svg_file: "icon-funnel.svg",
-                    color: "white",
-                    url: filtra_clienti_path( params: request.query_parameters ),
-                    data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
-            <% end %>
-        <% end %>
-
-        <%= h1 {"Clienti"} %>
-
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+          caption: "Importa",
+          svg_file: "icon-folder-arrow-down.svg",
+          color: "blue",
+          url: new_clienti_importer_path %>
     <% end %>
+
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+          caption: "Excel",
+          svg_file: "icon-excel-bis.svg",
+          color: "green",
+          url: url_for( controller: "clienti", action: "index", format: :xlsx, params: request.query_parameters ),
+          data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+    <% end %>
+
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+          caption: "Nuovo",
+          svg_file: "icon-plus.svg",
+          color: "blue",
+          url: url_for( controller: "clienti", action: "new", model: @cliente ) %>
+    <% end %>
+
+    <% heading.with_action do %>
+      <div class="hide-on-desktop">
+        <%= component 'tax_button',
+            caption: "Filtra",
+            svg_file: "icon-funnel.svg",
+            color: "white",
+            url: filtra_clienti_path( params: request.query_parameters ),
+            data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
+      </div>
+    <% end %>
+
+    <%= h1 {"Clienti"} %>
+
+  <% end %>
 </div>
 
 <%= turbo_frame_tag "search_results" do %>
 
-    <%= tag.div class: "flex flex-row gap-4 lg:pr-[15rem]" do %>
+  <div class="flex gap" style="padding-inline-end: 18rem;">
 
-        <div role="list" class="w-full grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+    <div role="list" class="card-grid full-width">
+      <% @clienti.each do |cliente| %>
+        <%= render partial: "clienti/cliente", locals: { cliente: cliente } %>
+      <% end %>
+    </div>
 
-            <% @clienti.each do |cliente| %>
-                <%= render partial: "clienti/cliente", locals: { cliente: cliente }%>
-            <% end %>
-            <!-- More people... -->
-        </div>
-    
-    <% end %>
+  </div>
 
-    <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
-        <%= render partial: "filter_form", locals: { reload: true } %>
-    </aside>
+  <aside class="sidebar-right hide-on-mobile">
+    <%= render partial: "filter_form", locals: { reload: true } %>
+  </aside>
 
 <% end %>
-
-

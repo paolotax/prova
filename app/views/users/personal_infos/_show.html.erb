@@ -1,47 +1,45 @@
 <% if personal_info.present? %>
-  <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
-    <div class="px-4 py-5 sm:px-6">
-      <div class="avatar avatar--large shadow-lg ring-4 ring-coral/30 dark:ring-coral/20">
+  <div class="panel pad border-radius shadow">
+    <div class="margin-block-end">
+      <div class="avatar avatar--large">
         <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Profile avatar for #{Current.user.name}", class: "avatar", size: 128 %>
       </div>
     </div>
 
-    <dl class="divide-y divide-gray-200">
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">Nome</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= personal_info.nome %></dd>
+    <dl class="dl-grid">
+      <div>
+        <dt class="txt-small txt-subtle">Nome</dt>
+        <dd class="txt-small"><%= personal_info.nome %></dd>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">Cognome</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= personal_info.cognome %></dd>
+      <div>
+        <dt class="txt-small txt-subtle">Cognome</dt>
+        <dd class="txt-small"><%= personal_info.cognome %></dd>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">Cellulare</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= personal_info.cellulare || "-" %></dd>
+      <div>
+        <dt class="txt-small txt-subtle">Cellulare</dt>
+        <dd class="txt-small mono"><%= personal_info.cellulare || "-" %></dd>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">Email personale</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= personal_info.email_personale || "-" %></dd>
+      <div>
+        <dt class="txt-small txt-subtle">Email personale</dt>
+        <dd class="txt-small"><%= personal_info.email_personale || "-" %></dd>
       </div>
 
-      <div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">Navigatore preferito</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"><%= personal_info.navigator&.humanize || "-" %></dd>
+      <div>
+        <dt class="txt-small txt-subtle">Navigatore preferito</dt>
+        <dd class="txt-small"><%= personal_info.navigator&.humanize || "-" %></dd>
       </div>
     </dl>
   </div>
 <% else %>
-  <div class="text-center py-12">
-    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    </svg>
-    <h3 class="mt-2 text-sm font-medium text-gray-900">Nessuna informazione personale</h3>
-    <p class="mt-1 text-sm text-gray-500">Inizia aggiungendo le tue informazioni personali.</p>
-    <div class="mt-6">
-      <%= link_to "Aggiungi informazioni", new_personal_info_path, class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700" %>
+  <div class="panel pad fill-highlight border-radius txt-align-center">
+    <%= icon_tag "user", class: "txt-subtle" %>
+    <h3 class="txt-medium font-weight-bold margin-block-start-half">Nessuna informazione personale</h3>
+    <p class="txt-small txt-subtle margin-block-start-half">Inizia aggiungendo le tue informazioni personali.</p>
+    <div class="margin-block-start">
+      <%= link_to "Aggiungi informazioni", new_personal_info_path, class: "btn btn--primary" %>
     </div>
   </div>
 <% end %>

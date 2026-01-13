@@ -1,73 +1,76 @@
 
 
-    <% if  appunto.representables_attachments.any? %>
-		 
-        <div class="relative overflow-hidden">
-            
-            <div id="appunto-gallery" class="relative mt-6 w-full flex items-start gap-8 snap-x snap-mandatory overflow-x-auto">
-                
-                <% appunto.representables_attachments.each_with_index do |attachment, index| %>
-                        
+<% if appunto.representables_attachments.any? %>
 
-                    <div id="<%= dom_id attachment %>" class="group snap-center min-w-full">
+  <div class="overflow-hidden margin-block-start">
 
-                        <div class="">
-                            <% if attachment.image? %>
-                                <%= link_to image_tag( attachment.representation(resize_to_limit: [360, 360]), 
-                                    class:"w-full aspect-[1/1] object-cover"), attachment %>
-                            <% elsif attachment.video? %>
-                                <%= video_tag(url_for(attachment), class:'aspect-video', controls:'') %>
-                            <% elsif attachment.audio? %>
-                                <%= audio_tag(url_for(attachment), controls: '') %>
-                            <% else %>
-                                <div class="w-full">
-                                    <%= link_to image_tag(attachment.representation(resize_to_limit: [360, 360]), class: "aspect-auto mx-auto border-2 border-gray-200 rounded-lg"),
-                                                        rails_blob_path(attachment, disposition: "attachment") %>
-                                </div>
-                            <% end %>
-                            
-                            <div class="flex items-center justify-between text-sm px-4 py-1 text-gray-700">
-                                <%= attachment.filename.to_s.titleize %>
-                                <%= link_to "elimina", remove_attachment_appunto_path(attachment),
-                                    data: { turbo_method: :delete }, class: "hidden group-hover:block text-red-500 text-sm font-semibold" %>
-                            </div>
-                        </div>
-                    </div>
+    <div id="appunto-gallery" class="flex align-start gap" style="scroll-snap-type: x mandatory; overflow-x: auto;">
 
-                <% end %>
+      <% appunto.representables_attachments.each_with_index do |attachment, index| %>
+
+        <div id="<%= dom_id attachment %>" class="group" style="scroll-snap-align: center; min-width: 100%;">
+
+          <div>
+            <% if attachment.image? %>
+              <%= link_to image_tag( attachment.representation(resize_to_limit: [360, 360]),
+                  style: "width: 100%; aspect-ratio: 1/1; object-fit: cover;"), attachment %>
+            <% elsif attachment.video? %>
+              <%= video_tag(url_for(attachment), style: "aspect-ratio: 16/9;", controls: '') %>
+            <% elsif attachment.audio? %>
+              <%= audio_tag(url_for(attachment), controls: '') %>
+            <% else %>
+              <div class="full-width">
+                <%= link_to image_tag(attachment.representation(resize_to_limit: [360, 360]),
+                    class: "border-radius",
+                    style: "aspect-ratio: auto; margin-inline: auto; border: 2px solid var(--color-ink-lighter);"),
+                    rails_blob_path(attachment, disposition: "attachment") %>
+              </div>
+            <% end %>
+
+            <div class="flex align-center justify-space-between txt-small pad-half" style="color: var(--color-ink-light);">
+              <%= attachment.filename.to_s.titleize %>
+              <%= link_to "elimina", remove_attachment_appunto_path(attachment),
+                  data: { turbo_method: :delete },
+                  class: "hidden group-hover:block txt-small font-weight-bold",
+                  style: "color: var(--color-negative);" %>
             </div>
+          </div>
         </div>
 
-    <% end %>
+      <% end %>
+    </div>
+  </div>
 
-    <% if  appunto.file_attachments.any? %>
+<% end %>
 
-        <div class="relative overflow-hiddeno">
-            
-            <div id="file-gallery" class="relative w-full flex gap-8 snap-x snap-mandatory overflow-x-auto">
+<% if appunto.file_attachments.any? %>
 
-                <% appunto.file_attachments.each_with_index do |attachment, index| %>
-                    
+  <div class="overflow-hidden margin-block-start">
 
-                    <div id="<%= dom_id attachment %>" class="w-24 m-2 p-2 flex flex-col items-center">
-                        <%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
-                                                        
-                            <div class="w-10 h-15">
-                                <%= attachment_icon_tag(attachment) %>
-                            </div>
-                                <%#= image_tag "icons8-document-64.png", alt: "Download file", class: "mx-auto" %>
-                        <% end%>
-                        <div class="text-xs text-center">
-                            <%= attachment.filename.to_s.humanize %>
-                        </div>
-                        <div class="text-xs bg-gray-200">
-                            <%= link_to "elimina", remove_attachment_appunto_path(attachment),
-                                data: { turbo_method: :delete }, class: "text-red-500 text-sm font-semibold" %>
-                        </div>
-                    </div>
+    <div id="file-gallery" class="flex gap" style="scroll-snap-type: x mandatory; overflow-x: auto;">
 
-                <% end %>
+      <% appunto.file_attachments.each_with_index do |attachment, index| %>
+
+        <div id="<%= dom_id attachment %>" class="flex flex-column align-center pad-half" style="width: 6rem; margin: 0.5rem;">
+          <%= link_to rails_blob_path(attachment, disposition: "attachment") do %>
+
+            <div style="width: 2.5rem; height: 3.75rem;">
+              <%= attachment_icon_tag(attachment) %>
             </div>
+          <% end%>
+          <div class="txt-xx-small txt-center">
+            <%= attachment.filename.to_s.humanize %>
+          </div>
+          <div class="txt-xx-small fill-shade">
+            <%= link_to "elimina", remove_attachment_appunto_path(attachment),
+                data: { turbo_method: :delete },
+                class: "txt-small font-weight-bold",
+                style: "color: var(--color-negative);" %>
+          </div>
         </div>
 
-	<% end %>	
+      <% end %>
+    </div>
+  </div>
+
+<% end %>

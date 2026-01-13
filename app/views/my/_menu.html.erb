@@ -2,7 +2,7 @@
     data-controller="dialog"
     data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
 
-  <%= tag.button class: "nav__trigger input input--select flex-inline f-align-center txt-normal",
+  <%= tag.button class: "nav__trigger input input--select flex-inline align-center txt-normal",
                  type: "button",
                  data: {
                    controller: "hotkey",
@@ -10,7 +10,7 @@
                  } do %>
     <span style="height: 2.5em; width: 2.5em;"><%= image_tag "scagnozz.png", alt: "" %></span>
     <svg style="height: 2em; max-height: none;" viewBox="0 0 170 44" xmlns="http://www.w3.org/2000/svg"><text x="0" y="34" font-family="system-ui, sans-serif" font-size="34" font-weight="900" fill="currentColor">ScagnoZZ</text></svg>
-    <kbd class="kbd txt-xx-small hide-on-touch" style="margin-inline-start: 0.5em;">M</kbd>
+    <kbd class="kbd txt-xx-small hide-on-touch margin-inline-start-half">M</kbd>
   <% end %>
 
   <%= tag.dialog class: "nav__menu filter popup popup--animated panel margin-block-start-half", data: {

@@ -1,15 +1,13 @@
-<%= form_with model: scuola, class: "space-y-6" do |f| %>
+<%= form_with model: scuola, class: "flex flex-column gap" do |f| %>
   <% if scuola.errors.any? %>
-    <div class="p-4 bg-red-50 border border-red-200 rounded-xl">
-      <div class="flex items-start gap-3">
-        <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
+    <div class="panel pad" style="background: var(--color-negative-lighter); border: 1px solid var(--color-negative);">
+      <div class="flex gap-half">
+        <%= icon_tag "alert-triangle", size: "small", style: "color: var(--color-negative-dark);" %>
         <div>
-          <h3 class="text-sm font-medium text-red-800">
+          <h3 class="txt-small font-weight-bold" style="color: var(--color-negative-dark);">
             <%= pluralize(scuola.errors.count, "errore", "errori") %> <%= scuola.errors.count == 1 ? "impedisce" : "impediscono" %> il salvataggio:
           </h3>
-          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+          <ul class="txt-small margin-block-start-half" style="color: var(--color-negative-dark); padding-inline-start: 1em;">
             <% scuola.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
@@ -19,26 +17,26 @@
     </div>
   <% end %>
 
-  <%# Denominazione %>
-  <div>
-    <%= f.label :denominazione, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Denominazione -->
+  <div class="form-field">
+    <%= f.label :denominazione, class: "form-label" %>
     <%= f.text_field :denominazione,
-        class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+        class: "input",
         placeholder: "Nome della scuola",
         autofocus: true %>
   </div>
 
-  <%# Codice ministeriale e Tipo scuola %>
-  <div class="grid sm:grid-cols-2 gap-4">
-    <div>
-      <%= f.label :codice_ministeriale, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Codice ministeriale e Tipo scuola -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :codice_ministeriale, class: "form-label" %>
       <%= f.text_field :codice_ministeriale,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-mono uppercase focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input mono txt-uppercase",
           placeholder: "es. MIIC123456" %>
     </div>
 
-    <div>
-      <%= f.label :tipo_scuola, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="form-field">
+      <%= f.label :tipo_scuola, class: "form-label" %>
       <%= f.select :tipo_scuola,
           options_for_select([
             ["Seleziona tipo...", ""],
@@ -53,47 +51,47 @@
             ["Altro", "Altro"]
           ], scuola.tipo_scuola),
           {},
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer" %>
+          class: "input input--select" %>
     </div>
   </div>
 
-  <%# Indirizzo %>
-  <div>
-    <%= f.label :indirizzo, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Indirizzo -->
+  <div class="form-field">
+    <%= f.label :indirizzo, class: "form-label" %>
     <%= f.text_field :indirizzo,
-        class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+        class: "input",
         placeholder: "Via/Piazza..." %>
   </div>
 
-  <%# CAP, Comune, Provincia %>
-  <div class="grid sm:grid-cols-4 gap-4">
-    <div>
-      <%= f.label :cap, "CAP", class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- CAP, Comune, Provincia -->
+  <div class="form-grid" style="grid-template-columns: 1fr 2fr 1fr;">
+    <div class="form-field">
+      <%= f.label :cap, "CAP", class: "form-label" %>
       <%= f.text_field :cap,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input",
           placeholder: "00000",
           maxlength: 5 %>
     </div>
 
-    <div class="sm:col-span-2">
-      <%= f.label :comune, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="form-field">
+      <%= f.label :comune, class: "form-label" %>
       <%= f.text_field :comune,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input",
           placeholder: "Comune" %>
     </div>
 
-    <div>
-      <%= f.label :provincia, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="form-field">
+      <%= f.label :provincia, class: "form-label" %>
       <%= f.text_field :provincia,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm uppercase focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input txt-uppercase",
           placeholder: "MI",
           maxlength: 2 %>
     </div>
   </div>
 
-  <%# Regione %>
-  <div>
-    <%= f.label :regione, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Regione -->
+  <div class="form-field">
+    <%= f.label :regione, class: "form-label" %>
     <%= f.select :regione,
         options_for_select([
           ["Seleziona regione...", ""],
@@ -103,38 +101,38 @@
           "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
         ], scuola.regione),
         {},
-        class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer" %>
+        class: "input input--select" %>
   </div>
 
-  <%# Email e PEC %>
-  <div class="grid sm:grid-cols-2 gap-4">
-    <div>
-      <%= f.label :email, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Email e PEC -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :email, class: "form-label" %>
       <%= f.email_field :email,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input",
           placeholder: "email@scuola.edu.it" %>
     </div>
 
-    <div>
-      <%= f.label :pec, "PEC", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="form-field">
+      <%= f.label :pec, "PEC", class: "form-label" %>
       <%= f.email_field :pec,
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+          class: "input",
           placeholder: "email@pec.scuola.edu.it" %>
     </div>
   </div>
 
-  <%# Telefono %>
-  <div>
-    <%= f.label :telefono, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Telefono -->
+  <div class="form-field">
+    <%= f.label :telefono, class: "form-label" %>
     <%= f.telephone_field :telefono,
-        class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all",
+        class: "input",
         placeholder: "02 12345678" %>
   </div>
 
-  <%# Stato e Priorita %>
-  <div class="grid sm:grid-cols-2 gap-4">
-    <div>
-      <%= f.label :stato, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Stato e Priorita -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :stato, class: "form-label" %>
       <%= f.select :stato,
           options_for_select([
             ["Attiva", "attiva"],
@@ -142,34 +140,31 @@
             ["In sospeso", "sospesa"]
           ], scuola.stato || "attiva"),
           {},
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer" %>
+          class: "input input--select" %>
     </div>
 
-    <div>
-      <%= f.label :priorita, "Priorita", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="form-field">
+      <%= f.label :priorita, "Priorita", class: "form-label" %>
       <%= f.select :priorita,
           options_for_select((0..5).map { |n| [n == 0 ? "Nessuna" : "#{'★' * n} (#{n})", n] }, scuola.priorita || 0),
           {},
-          class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer" %>
+          class: "input input--select" %>
     </div>
   </div>
 
-  <%# Note %>
-  <div>
-    <%= f.label :note, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <!-- Note -->
+  <div class="form-field">
+    <%= f.label :note, class: "form-label" %>
     <%= f.text_area :note,
         rows: 3,
-        class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all resize-none",
+        class: "input",
         placeholder: "Note aggiuntive..." %>
   </div>
 
-  <%# Actions %>
-  <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+  <!-- Actions -->
+  <div class="flex align-center justify-end gap margin-block-start" style="border-top: 1px solid var(--color-ink-lighter); padding-top: var(--block-space);">
     <% cancel_path = scuola.persisted? ? scuola_path(scuola) : scuole_path %>
-    <%= link_to "Annulla", cancel_path,
-        class: "px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors" %>
-
-    <%= f.submit scuola.persisted? ? "Salva Modifiche" : "Crea Scuola",
-        class: "px-6 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all cursor-pointer" %>
+    <%= link_to "Annulla", cancel_path, class: "btn" %>
+    <%= f.submit scuola.persisted? ? "Salva Modifiche" : "Crea Scuola", class: "btn btn--primary" %>
   </div>
 <% end %>

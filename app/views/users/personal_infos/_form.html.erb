@@ -1,11 +1,11 @@
 <%= form_with(model: [Current.user, personal_info],
       method: personal_info&.persisted? ? :patch : :post,
       multipart: true,
-      data: { controller: "form upload-preview" }, class: "space-y-6") do |form| %>
+      data: { controller: "form upload-preview" }, class: "flex flex-column gap") do |form| %>
   <% if personal_info.errors.any? %>
-    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-      <h3 class="font-medium"><%= pluralize(personal_info.errors.count, "errore", "errori") %> da correggere:</h3>
-      <ul class="mt-2 list-disc list-inside text-sm">
+    <div class="panel pad border-radius txt-negative fill-shade">
+      <h3 class="font-weight-black"><%= pluralize(personal_info.errors.count, "errore", "errori") %> da correggere:</h3>
+      <ul class="margin-block-start-half txt-small">
         <% personal_info.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -13,68 +13,65 @@
     </div>
   <% end %>
 
-      <div class="avatar__form gap-4 items-center">
-        <span></span>
+  <!-- Avatar -->
+  <section class="panel pad border-radius shadow">
+    <div class="avatar__form flex align-center gap">
+      <div class="relative">
+        <label class="avatar avatar--large cursor-pointer">
+          <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Avatar", class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
+          <%= file_field_tag :avatar, class: "for-screen-reader", accept: "image/jpeg,image/png,image/gif,image/webp",
+                data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+        </label>
+      </div>
 
-        <div class="relative group">
-          <label class="avatar avatar--large cursor-pointer shadow-lg ring-4 ring-coral/30 group-hover:ring-coral/50 transition-all">
-            <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Avatar", class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
-            <%= file_field_tag :avatar, class: "sr-only", accept: "image/jpeg,image/png,image/gif,image/webp",
-                  data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-          </label>
-          <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </div>
-        </div>
-        
-        <% if Current.user.avatar.attached? %>
-          <%= tag.button type: :submit, form: "avatar-delete-form",
-                class: "inline-flex items-center gap-1 p-3 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-colors",
-                data: { turbo_confirm: "Sei sicuro di voler rimuovere il tuo avatar? Non potrai annullare questa azione." } do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-            </svg>
-            <span class="sr-only">Elimina avatar</span>
-          <% end %>
+      <% if Current.user.avatar.attached? %>
+        <%= tag.button type: :submit, form: "avatar-delete-form",
+              class: "btn txt-negative txt-small",
+              data: { turbo_confirm: "Sei sicuro di voler rimuovere il tuo avatar?" } do %>
+          <%= icon_tag "trash" %>
+          <span class="hide-on-mobile">Elimina avatar</span>
         <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Dati personali -->
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Dati personali</h2>
+
+    <div class="flex flex-column gap">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :nome, class: "form-label" %>
+          <%= form.text_field :nome, class: "input", placeholder: "Mario" %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :cognome, class: "form-label" %>
+          <%= form.text_field :cognome, class: "input", placeholder: "Rossi" %>
+        </div>
       </div>
 
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Dati personali</h2>
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :cellulare, class: "form-label" %>
+          <%= form.telephone_field :cellulare, class: "input mono", placeholder: "+39 333 1234567" %>
+        </div>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <%= form.label :nome, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :nome, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Mario" %>
-      </div>
-
-      <div>
-        <%= form.label :cognome, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :cognome, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Rossi" %>
+        <div class="form-field">
+          <%= form.label :email_personale, "Email personale", class: "form-label" %>
+          <%= form.email_field :email_personale, class: "input", placeholder: "mario.rossi@email.com" %>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <%= form.label :cellulare, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.telephone_field :cellulare, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "+39 333 1234567" %>
-      </div>
+  <!-- Preferenze -->
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Preferenze</h2>
 
-      <div>
-        <%= form.label :email_personale, "Email personale", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.email_field :email_personale, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "mario.rossi@email.com" %>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Preferenze</h2>
-
-    <div>
-      <%= form.label :navigator, "Navigatore preferito", class: "block text-sm font-medium text-gray-700" %>
+    <div class="form-field">
+      <%= form.label :navigator, "Navigatore preferito", class: "form-label" %>
       <%= form.select :navigator,
             options_for_select([
               ["Google Maps", "google_maps"],
@@ -82,13 +79,13 @@
               ["Waze", "waze"]
             ], personal_info.navigator),
             { include_blank: "Seleziona..." },
-            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+            class: "input input--select" %>
     </div>
-  </div>
+  </section>
 
-  <div class="flex items-center justify-end space-x-4">
-    <%= link_to "Annulla", user_personal_info_path(Current.user), class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
-    <%= form.submit personal_info.persisted? ? "Aggiorna" : "Salva", class: "rounded-lg py-2 px-4 bg-blue-600 text-white font-medium hover:bg-blue-700 cursor-pointer" %>
+  <div class="flex align-center justify-end gap">
+    <%= link_to "Annulla", user_personal_info_path(Current.user), class: "btn" %>
+    <%= form.submit personal_info.persisted? ? "Aggiorna" : "Salva", class: "btn btn--primary" %>
   </div>
 <% end %>
 

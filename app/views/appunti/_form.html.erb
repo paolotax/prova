@@ -1,168 +1,161 @@
 
 <%= form_with(model: appunto, class: "relative", id: :appunto_form, builder: RailsDesigner::FormBuilder) do |form| %>
 
-	<% if appunto.errors.any? %>
-		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-			<h2>Non posso salvare l'Appunto. <%= t 'misc.errori', count: appunto.errors.count %></h2>
-		</div>
-	<% end %>
+  <% if appunto.errors.any? %>
+    <div id="error_explanation" class="panel pad margin-block-start border-radius" style="background: var(--color-negative-lighter); color: var(--color-negative-dark);">
+      <h2 class="font-weight-bold">Non posso salvare l'Appunto. <%= t 'misc.errori', count: appunto.errors.count %></h2>
+    </div>
+  <% end %>
 
-	<%= form.hidden_field :user_id, value: current_user.id %>
-	<%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
-	<%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
+  <%= form.hidden_field :user_id, value: current_user.id %>
+  <%= form.hidden_field :import_scuola_id, value: @scuola&.id %>
+  <%= form.hidden_field :import_adozione_id, value: @adozione&.id %>
 
+  <%# oggetto anziche nome %>
+  <%= render "shared/inline_fields", form: form, method: :nome_e_import_scuola do %>
+    <div class="full-width margin-block-start flex flex-column">
 
+      <div class="form-field">
+        <%= component "field" do |field| %>
+          <%= form.text_field :nome, placeholder: "titolo o destinatario...", autofocus: :true, class: "input" %>
+        <% end %>
+      </div>
 
+      <div class="margin-block-start cb-tax full-width flex flex-column" data-controller="tax-combobox-select">
+        <%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all,
+            placeholder: "seleziona scuola...",
+            label: "Scuola:",
+            mobile_at: "0px",
+            data: { action: "hw-combobox:selection->tax-combobox-select#change",
+              tax_combobox_select_target: "combobox" } %>
+      </div>
 
-	<%# oggetto anziche nome %>	
-	<%= render "shared/inline_fields", form: form, method: :nome_e_import_scuola do %>
-		<div class="w-full mt-5 flex flex-col">		
-	
-			<%= component "field" do |field| %>
-				<%= form.text_field :nome, placeholder: "titolo o destinatario...", autofocus: :true %>
-			<% end %>    
+      <div class="margin-block-start">
+        <%= form.toggle :active, label: "Attivo", toggle_size: "1rem" %>
+      </div>
 
-			<div class="mt-5 relative peer cb-tax-fancy w-full flex flex-col" data-controller="tax-combobox-select">		
-				<%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all, 
-						placeholder: "seleziona scuola...",
-						label: "Scuola:",
-						mobile_at: "0px",
-						data: { action: "hw-combobox:selection->tax-combobox-select#change",
-							tax_combobox_select_target: "combobox" } %>			
-				<%# <div class="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600" aria-hidden="true"></div> %>
-			</div>
-
-			<div class="mt-5">
-				<%= form.toggle :active, label: "Attivo", toggle_size: "1rem" %>
-			</div>
-		
-			<%= turbo_frame_tag :combo_classi do %>
-				<% if appunto.scuola.nil? %>
-					<%= tag.div class: "min-h-12" %>
-				<% else %>
-					<div class="my-5">
-						<%= render partial: "classi/combobox_classi", 
-							locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
-					</div>
-				<% end %>
-			<% end %>
-		</div>		
-	<% end %>
+      <%= turbo_frame_tag :combo_classi do %>
+        <% if appunto.scuola.nil? %>
+          <%= tag.div style: "min-height: 3rem;" %>
+        <% else %>
+          <div class="margin-block-start">
+            <%= render partial: "classi/combobox_classi",
+              locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 
 
 
-	<%# text area o trix  %>
-	<div class="mt-5">
-		<%= render "shared/inline_fields", form: form, method: :body_or_content do %>			
-			<div class="relative w-full">
-				<% unless appunto.body.blank? %>
-					<%= component "field" do |field| %>
-						<%= form.text_area :body, rows: 5, placeholder: "scrivi..." %>
-					<% end %>
-				<% else %>
-					<%= component "field" do |field| %>
-						<%= form.rich_text_area :content, rows: 5, placeholder: "scrivi...", class: "block resize-none w-full min-h-[150px] sm:min-h-[150px] bg-gray-50 border-0 border-b p-3 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:border-b-2 focus:ring-0" %>
-					<% end %>
-				<% end %>
-			</div>
-		<% end %>
-	</div>  
+  <%# text area o trix  %>
+  <div class="margin-block-start">
+    <%= render "shared/inline_fields", form: form, method: :body_or_content do %>
+      <div class="full-width">
+        <% unless appunto.body.blank? %>
+          <div class="form-field">
+            <%= component "field" do |field| %>
+              <%= form.text_area :body, rows: 5, placeholder: "scrivi...", class: "input" %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="form-field">
+            <%= component "field" do |field| %>
+              <%= form.rich_text_area :content, rows: 5, placeholder: "scrivi...", class: "input", style: "min-height: 150px; resize: none;" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
-	<%= tag.div class: "flex flex-col sm:flex-row sm:items-center sm:justify-between sm:space-x-5" do %>
-		<%# stato %>
-		<div class="relative mt-5 w-1/2">
-			<%= component "field" do |field| %>
-				<%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s}, { include_blank: "" } %>
-			<% end %>
-		</div>
-
-		<%# attachments %>
-		<% if hotwire_native_app? %>
-			<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">	
-				<%= component "field" do |field| %>		
-					<%= form.file_field :attachments, multiple: true,
-							class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
-				<% end %>
-					<%#= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
-			</div>
-
-		<% else %>
-			<div class="mt-5 w-full flex justify-left rounded-lg border border-dashed border-gray-900/25 px-6 py-2">
-				<div class="flex text-sm  text-gray-600">
-					<label for="appunto_attachments" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-							<path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
-						</svg>
-						<input multiple="multiple" id="appunto_attachments" type="file" name="appunto[attachments][]"  class="sr-only"> 
-						<%= form.file_field :attachments, multiple: true, class: "hidden" %>
-					</label>			
-				</div>
-				<% if appunto.attachments.attached? %>
-					<% appunto.attachments.each do |image| %>
-						<%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
-					<% end %>
-					<span class="text-sm italic text-gray-600"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
-
-				<% end %>
-			</div>
-		<% end %>
-	<% end %>
-
-	<%# hidden submit for hotwire native %>
-    <div class="hidden">
-        <%= form.submit data: {
-                controller: "bridge--button",
-                bridge_title: "Salva"
-        } %>
+  <%= tag.div class: "flex flex-column gap margin-block-start" style: "flex-direction: column;" do %>
+    <%# stato %>
+    <div class="form-field" style="max-width: 50%;">
+      <%= component "field" do |field| %>
+        <%= form.select :stato, Appunto::STATO_APPUNTI.map {|s| s}, { include_blank: "" }, class: "input input--select" %>
+      <% end %>
     </div>
 
-<% end %>	
+    <%# attachments %>
+    <% if hotwire_native_app? %>
+      <div class="full-width flex justify-start border-radius pad-half" style="border: 1px dashed var(--color-ink-lighter);">
+        <div class="form-field">
+          <%= form.file_field :attachments, multiple: true,
+              class: "input txt-small" %>
+        </div>
+      </div>
+
+    <% else %>
+      <div class="full-width flex justify-start border-radius pad-half" style="border: 1px dashed var(--color-ink-lighter);">
+        <div class="flex txt-small" style="color: var(--color-ink-light);">
+          <label for="appunto_attachments" class="cursor-pointer font-weight-bold" style="color: var(--color-notice);">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.5rem; height: 1.5rem;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+            </svg>
+            <input multiple="multiple" id="appunto_attachments" type="file" name="appunto[attachments][]" class="sr-only">
+            <%= form.file_field :attachments, multiple: true, class: "hidden" %>
+          </label>
+        </div>
+        <% if appunto.attachments.attached? %>
+          <% appunto.attachments.each do |image| %>
+            <%= form.hidden_field :attachments, multiple: true, value: image.signed_id %>
+          <% end %>
+          <span class="txt-small font-style-italic" style="color: var(--color-ink-light);"><%= pluralize(appunto.attachments.size, "file allegato" , plural: "file allegati") %></span>
+
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%# hidden submit for hotwire native %>
+  <div class="hidden">
+    <%= form.submit data: {
+        controller: "bridge--button",
+        bridge_title: "Salva"
+    } %>
+  </div>
+
+<% end %>
 
 <%# actions %>
-	
-<div class="mt-10 flex items-center justify-between hotwire-native:hidden">
 
-	<div class="flex justify-end items-center ">
-		
-		<%= button_tag type: :submit, form: :appunto_form do %>
-			<div class="inline-flex items-center gap-x-2 rounded-md 
-					bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white 
-					shadow-sm hover:bg-indigo-500 focus-visible:outline 
-					focus-visible:outline-2 focus-visible:outline-offset-2 
-					focus-visible:outline-indigo-600">
+<div class="margin-block-start flex align-center justify-space-between hotwire-native:hidden">
 
-				<svg class="-ml-0.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"></path>
-				</svg>
-				<span class="">Salva</span>
-			</div>
-		<% end %>
+  <div class="flex justify-end align-center gap">
 
-		<div class="ml-6 inline-flex">
-			<%= link_to appunti_path, data: { action: "dialog#close", turbo_frame: "_top" }, 
-				class: "inline-flex text-sm font-semibold gap-x-2 text-gray-500 hover:text-gray-800" do  %>
-				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-				</svg>
-				<span class="">Appunti</span>
-			<% end %>
-		</div>
+    <%= button_tag type: :submit, form: :appunto_form do %>
+      <div class="btn btn--primary flex align-center gap-half">
 
+        <svg style="width: 1.25rem; height: 1.25rem; margin-left: -0.125rem;" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"></path>
+        </svg>
+        <span>Salva</span>
+      </div>
+    <% end %>
 
+    <div>
+      <%= link_to appunti_path, data: { action: "dialog#close", turbo_frame: "_top" },
+        class: "flex align-center gap-half txt-small font-weight-bold txt-subtle" do  %>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.5rem; height: 1.5rem;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+        </svg>
+        <span>Appunti</span>
+      <% end %>
+    </div>
 
+  </div>
 
-	</div>
-
-	<% if action_name != "new" %>
-		<div class="inline-flex">
-			<%= button_to appunto_path(@appunto), method: :delete,
-						data: { turbo_method: "delete"}, # non funziona il contirm nella dialog (???)
-						class: "flex items-center px-2.5 py-2 rounded-md shadow-lg space-x-1 border bg-red-500 text-white text-sm font-semibold" do %> 
-				<%= inline_svg_tag "icon-trash.svg" %>
-				<span class="">Elimina</span> 
-			<% end %>
-		</div> 
-	<% end %>
+  <% if action_name != "new" %>
+    <div>
+      <%= button_to appunto_path(@appunto), method: :delete,
+            data: { turbo_method: "delete"},
+            class: "btn flex align-center gap-half font-weight-bold",
+            style: "background: var(--color-negative); color: white;" do %>
+        <%= inline_svg_tag "icon-trash.svg" %>
+        <span>Elimina</span>
+      <% end %>
+    </div>
+  <% end %>
 </div>
-
-		

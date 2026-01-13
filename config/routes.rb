@@ -108,14 +108,18 @@ Rails.application.routes.draw do
     get 'agenda/:giorno/fogli_scuola_tappe.pdf', to: 'agenda#fogli_scuola_tappe_pdf', as: 'fogli_scuola_tappe_pdf'
 
     get 'ordini_in_corso', to: 'ordini#index'
+    
     get 'cerca', to: 'search#index'
-
     namespace :searches do
       get 'clientable/show'
       get 'clientable/new'
       resources :clientable, only: :index
     end
 
+    resource :search
+    namespace :searches do
+      resources :queries
+    end
     post 'sfascicola', to: 'sfascicolator#generate'
 
     resources :clienti do

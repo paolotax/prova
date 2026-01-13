@@ -1,8 +1,8 @@
-<%= form_with(model: azienda, url: azienda_path, method: azienda&.persisted? ? :patch : :post, class: "space-y-6") do |form| %>
+<%= form_with(model: azienda, url: azienda_path, method: azienda&.persisted? ? :patch : :post, class: "flex flex-column gap") do |form| %>
   <% if azienda.errors.any? %>
-    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-      <h3 class="font-medium"><%= pluralize(azienda.errors.count, "errore", "errori") %> da correggere:</h3>
-      <ul class="mt-2 list-disc list-inside text-sm">
+    <div class="panel pad border-radius txt-negative fill-shade">
+      <h3 class="font-weight-black"><%= pluralize(azienda.errors.count, "errore", "errori") %> da correggere:</h3>
+      <ul class="margin-block-start-half txt-small">
         <% azienda.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,109 +11,117 @@
   <% end %>
 
   <!-- Dati Fiscali -->
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Dati Fiscali</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Dati Fiscali</h2>
 
-    <div>
-      <%= form.label :ragione_sociale, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :ragione_sociale, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Nome Azienda SRL" %>
-    </div>
-
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <%= form.label :partita_iva, "Partita IVA", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :partita_iva, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "12345678901", maxlength: 11 %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= form.label :ragione_sociale, class: "form-label" %>
+        <%= form.text_field :ragione_sociale, class: "input", placeholder: "Nome Azienda SRL" %>
       </div>
 
-      <div>
-        <%= form.label :codice_fiscale, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :codice_fiscale, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase", placeholder: "RSSMRA80A01H501U", maxlength: 16 %>
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :partita_iva, "Partita IVA", class: "form-label" %>
+          <%= form.text_field :partita_iva, class: "input mono", placeholder: "12345678901", maxlength: 11 %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :codice_fiscale, class: "form-label" %>
+          <%= form.text_field :codice_fiscale, class: "input mono txt-uppercase", placeholder: "RSSMRA80A01H501U", maxlength: 16 %>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :regime_fiscale, class: "form-label" %>
+        <%= form.select :regime_fiscale,
+              Azienda.regime_fiscales.map { |k, v| [v, k] },
+              { include_blank: "Seleziona regime fiscale..." },
+              class: "input input--select" %>
       </div>
     </div>
-
-    <div>
-      <%= form.label :regime_fiscale, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.select :regime_fiscale,
-            Azienda.regime_fiscales.map { |k, v| [v, k] },
-            { include_blank: "Seleziona regime fiscale..." },
-            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
-    </div>
-  </div>
+  </section>
 
   <!-- Indirizzo -->
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Sede Legale</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Sede Legale</h2>
 
-    <div>
-      <%= form.label :indirizzo, class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :indirizzo, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Via Roma 1" %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= form.label :indirizzo, class: "form-label" %>
+        <%= form.text_field :indirizzo, class: "input", placeholder: "Via Roma 1" %>
+      </div>
+
+      <div class="form-grid form-grid--3">
+        <div class="form-field">
+          <%= form.label :cap, "CAP", class: "form-label" %>
+          <%= form.text_field :cap, class: "input mono", placeholder: "00100", maxlength: 5 %>
+        </div>
+
+        <div class="form-field" style="grid-column: span 2;">
+          <%= form.label :comune, class: "form-label" %>
+          <%= form.text_field :comune, class: "input", placeholder: "Roma" %>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :provincia, class: "form-label" %>
+          <%= form.text_field :provincia, class: "input mono txt-uppercase", placeholder: "RM", maxlength: 2 %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :nazione, class: "form-label" %>
+          <%= form.text_field :nazione, class: "input mono txt-uppercase", placeholder: "IT", maxlength: 2, value: azienda.nazione || "IT" %>
+        </div>
+      </div>
     </div>
-
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-      <div>
-        <%= form.label :cap, "CAP", class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :cap, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "00100", maxlength: 5 %>
-      </div>
-
-      <div class="sm:col-span-2">
-        <%= form.label :comune, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :comune, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Roma" %>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <%= form.label :provincia, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :provincia, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase", placeholder: "RM", maxlength: 2 %>
-      </div>
-
-      <div>
-        <%= form.label :nazione, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :nazione, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase", placeholder: "IT", maxlength: 2, value: azienda.nazione || "IT" %>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <!-- Contatti -->
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Contatti</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Contatti</h2>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <%= form.label :email, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "info@azienda.it" %>
+    <div class="flex flex-column gap">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :email, class: "form-label" %>
+          <%= form.email_field :email, class: "input", placeholder: "info@azienda.it" %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :telefono, class: "form-label" %>
+          <%= form.telephone_field :telefono, class: "input", placeholder: "+39 06 1234567" %>
+        </div>
       </div>
 
-      <div>
-        <%= form.label :telefono, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.telephone_field :telefono, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "+39 06 1234567" %>
+      <div class="form-field">
+        <%= form.label :indirizzo_telematico, "Codice SDI / PEC", class: "form-label" %>
+        <%= form.text_field :indirizzo_telematico, class: "input mono txt-uppercase", placeholder: "0000000", maxlength: 7 %>
+        <p class="txt-x-small txt-subtle margin-block-start-half">Codice destinatario SDI (7 caratteri)</p>
       </div>
     </div>
-
-    <div>
-      <%= form.label :indirizzo_telematico, "Codice SDI / PEC", class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :indirizzo_telematico, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase", placeholder: "0000000", maxlength: 7 %>
-      <p class="mt-1 text-sm text-gray-500">Codice destinatario SDI (7 caratteri)</p>
-    </div>
-  </div>
+  </section>
 
   <!-- Dati Bancari -->
-  <div class="bg-white shadow rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-medium text-gray-900">Dati Bancari</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end">Dati Bancari</h2>
 
-    <div>
-      <%= form.label :iban, "IBAN", class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :iban, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase", placeholder: "IT60X0542811101000000123456", maxlength: 27 %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= form.label :iban, "IBAN", class: "form-label" %>
+        <%= form.text_field :iban, class: "input mono txt-uppercase", placeholder: "IT60X0542811101000000123456", maxlength: 27 %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :banca, "Nome Banca", class: "form-label" %>
+        <%= form.text_field :banca, class: "input", placeholder: "Banca Esempio" %>
+      </div>
     </div>
+  </section>
 
-    <div>
-      <%= form.label :banca, "Nome Banca", class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :banca, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "Banca Esempio" %>
-    </div>
-  </div>
-
-  <div class="flex items-center justify-end space-x-4">
-    <%= link_to "Annulla", azienda_path, class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
-    <%= form.submit azienda.persisted? ? "Aggiorna" : "Salva", class: "rounded-lg py-2 px-4 bg-blue-600 text-white font-medium hover:bg-blue-700 cursor-pointer" %>
+  <div class="flex f-align-center f-justify-end gap">
+    <%= link_to "Annulla", azienda_path, class: "btn" %>
+    <%= form.submit azienda.persisted? ? "Aggiorna" : "Salva", class: "btn btn--primary" %>
   </div>
 <% end %>

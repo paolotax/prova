@@ -1,87 +1,87 @@
-<div class="space-y-6">
+<div class="flex flex-column gap">
   <!-- Dati Fiscali -->
-  <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Dati Fiscali</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end-half">Dati Fiscali</h2>
 
-    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <dl class="dl-grid">
       <div>
-        <dt class="text-sm font-medium text-gray-500">Ragione Sociale</dt>
-        <dd class="mt-1 text-sm text-gray-900"><%= azienda.ragione_sociale %></dd>
+        <dt class="txt-small txt-subtle">Ragione Sociale</dt>
+        <dd class="txt-small"><%= azienda.ragione_sociale %></dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Regime Fiscale</dt>
-        <dd class="mt-1 text-sm text-gray-900"><%= Azienda.regime_fiscales[azienda.regime_fiscale] %></dd>
+        <dt class="txt-small txt-subtle">Regime Fiscale</dt>
+        <dd class="txt-small"><%= Azienda.regime_fiscales[azienda.regime_fiscale] %></dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Partita IVA</dt>
-        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.partita_iva %></dd>
+        <dt class="txt-small txt-subtle">Partita IVA</dt>
+        <dd class="txt-small mono"><%= azienda.partita_iva %></dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Codice Fiscale</dt>
-        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.codice_fiscale %></dd>
+        <dt class="txt-small txt-subtle">Codice Fiscale</dt>
+        <dd class="txt-small mono"><%= azienda.codice_fiscale %></dd>
       </div>
     </dl>
-  </div>
+  </section>
 
   <!-- Sede Legale -->
-  <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Sede Legale</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end-half">Sede Legale</h2>
 
-    <dl class="grid grid-cols-1 gap-4">
+    <dl>
       <div>
-        <dt class="text-sm font-medium text-gray-500">Indirizzo</dt>
-        <dd class="mt-1 text-sm text-gray-900">
+        <dt class="txt-small txt-subtle">Indirizzo</dt>
+        <dd class="txt-small">
           <%= azienda.indirizzo %><br>
           <%= azienda.cap %> <%= azienda.comune %> (<%= azienda.provincia %>)<br>
           <%= azienda.nazione %>
         </dd>
       </div>
     </dl>
-  </div>
+  </section>
 
   <!-- Contatti -->
-  <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Contatti</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end-half">Contatti</h2>
 
-    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <dl class="dl-grid">
       <div>
-        <dt class="text-sm font-medium text-gray-500">Email</dt>
-        <dd class="mt-1 text-sm text-gray-900">
-          <%= link_to azienda.email, "mailto:#{azienda.email}", class: "text-blue-600 hover:text-blue-500" %>
+        <dt class="txt-small txt-subtle">Email</dt>
+        <dd class="txt-small">
+          <%= link_to azienda.email, "mailto:#{azienda.email}", class: "txt-link" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Telefono</dt>
-        <dd class="mt-1 text-sm text-gray-900">
-          <%= link_to azienda.telefono, "tel:#{azienda.telefono}", class: "text-blue-600 hover:text-blue-500" %>
+        <dt class="txt-small txt-subtle">Telefono</dt>
+        <dd class="txt-small">
+          <%= link_to azienda.telefono, "tel:#{azienda.telefono}", class: "txt-link" %>
         </dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Codice SDI</dt>
-        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.indirizzo_telematico %></dd>
+        <dt class="txt-small txt-subtle">Codice SDI</dt>
+        <dd class="txt-small mono"><%= azienda.indirizzo_telematico %></dd>
       </div>
     </dl>
-  </div>
+  </section>
 
   <!-- Dati Bancari -->
-  <div class="bg-white shadow rounded-lg p-6">
-    <h2 class="text-lg font-medium text-gray-900 mb-4">Dati Bancari</h2>
+  <section class="panel pad border-radius shadow">
+    <h2 class="txt-medium font-weight-black margin-block-end-half">Dati Bancari</h2>
 
-    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="sm:col-span-2">
-        <dt class="text-sm font-medium text-gray-500">IBAN</dt>
-        <dd class="mt-1 text-sm text-gray-900 font-mono"><%= azienda.iban %></dd>
+    <dl class="dl-grid">
+      <div class="full-width">
+        <dt class="txt-small txt-subtle">IBAN</dt>
+        <dd class="txt-small mono"><%= azienda.iban %></dd>
       </div>
 
       <div>
-        <dt class="text-sm font-medium text-gray-500">Banca</dt>
-        <dd class="mt-1 text-sm text-gray-900"><%= azienda.banca %></dd>
+        <dt class="txt-small txt-subtle">Banca</dt>
+        <dd class="txt-small"><%= azienda.banca %></dd>
       </div>
     </dl>
-  </div>
+  </section>
 </div>

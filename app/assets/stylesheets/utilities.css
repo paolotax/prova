@@ -33,14 +33,14 @@
   .font-weight-normal { font-weight: normal; }
 
   /* Flexbox and Grid */
-  .f-justify-end { justify-content: end; }
-  .f-justify-start { justify-content: start; }
-  .f-justify-center { justify-content: center; }
+  .justify-end { justify-content: end; }
+  .justify-start { justify-content: start; }
+  .justify-center { justify-content: center; }
   .justify-space-between { justify-content: space-between; }
 
-  .f-align-center { align-items: center; }
-  .f-align-start { align-items: start; }
-  .f-align-end { align-items: end; }
+  .align-center { align-items: center; }
+  .align-start { align-items: start; }
+  .align-end { align-items: end; }
 
   .align-self-center { align-self: center; }
   .align-self-end { align-self: end; }

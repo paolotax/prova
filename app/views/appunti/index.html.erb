@@ -1,96 +1,93 @@
 <% content_for :title, "Appunti" %>
 
 <% content_for :header do %>
-	<%= render Heading::WithActionsComponent.new do |heading| %>
+  <%= render Heading::WithActionsComponent.new do |heading| %>
 
-		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Excel",
-					svg_file: "icon-excel-bis.svg",
-					color: "green",
-					url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %>
-		<% end %>
-		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Nuovo",
-					svg_file: "icon-plus.svg",
-					color: "blue",
-					url: url_for( controller: "appunti", action: "new", model: @appunto ),
-					data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
-		<% end %>
-		<% heading.with_action do %>
-			<%= tag.div class: "block xl:hidden" do %>
-				<%= component 'tax_button',
-					caption: "Filtra",
-					svg_file: "icon-funnel.svg",
-					color: "white",
-					url: filtra_appunti_path(params: request.query_parameters),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
-			<% end %>
-		<% end %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+          caption: "Excel",
+          svg_file: "icon-excel-bis.svg",
+          color: "green",
+          url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
+          data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %>
+    <% end %>
+    <% heading.with_action do %>
+      <%= component 'tax_button',
+          caption: "Nuovo",
+          svg_file: "icon-plus.svg",
+          color: "blue",
+          url: url_for( controller: "appunti", action: "new", model: @appunto ),
+          data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+    <% end %>
+    <% heading.with_action do %>
+      <div class="hide-on-desktop">
+        <%= component 'tax_button',
+          caption: "Filtra",
+          svg_file: "icon-funnel.svg",
+          color: "white",
+          url: filtra_appunti_path(params: request.query_parameters),
+          data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+      </div>
+    <% end %>
 
-		<%= h1 {"Appunti"} %>
+    <%= h1 {"Appunti"} %>
 
-	<% end %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream_from current_user, "appunti" %>
 
 <% if hotwire_native_app? %>
-	<%= link_to "Nuovo Appunto", new_appunto_path,
-			data: { controller: "bridge--button", bridge_title: "Nuovo" },
-			class: "hidden" %>
+  <%= link_to "Nuovo Appunto", new_appunto_path,
+      data: { controller: "bridge--button", bridge_title: "Nuovo" },
+      class: "hidden" %>
 
-	<%= render "shared/native_search_filter",
-			url: appunti_path,
-			filter_url: filtra_appunti_path(params: request.query_parameters),
-			placeholder: "Cerca appunti..." %>
+  <%= render "shared/native_search_filter",
+      url: appunti_path,
+      filter_url: filtra_appunti_path(params: request.query_parameters),
+      placeholder: "Cerca appunti..." %>
 <% end %>
 
 <%= turbo_frame_tag "search_results" do %>
 
-	<%= tag.div class: "flex flex-col xl:pr-[15rem]", data: { controller: "bulk-actions" }  do %>
+  <%= tag.div class: "flex flex-column", style: "padding-right: 18rem;", data: { controller: "bulk-actions" }  do %>
 
-		<%= render "shared/active_filters", collection: @appunti %>
-		<%= render "appunti/bulk_actions/form" %>
+    <%= render "shared/active_filters", collection: @appunti %>
+    <%= render "appunti/bulk_actions/form" %>
 
-		<%= turbo_frame_tag :appunti,
-				data: { controller: "list-observer",
-						list_observer_counter_id_value: "collection_counter",
-						list_observer_item_selector_value: ".item",
-						list_observer_target: "list"
-					},
-				class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" do %>
+    <%= turbo_frame_tag :appunti,
+        data: { controller: "list-observer",
+            list_observer_counter_id_value: "collection_counter",
+            list_observer_item_selector_value: ".item",
+            list_observer_target: "list"
+          },
+        class: "card-grid" do %>
 
-			<p class="hidden only:block  py-8 px-4 text-center md:col-span-2 4xl:col-span-3">
-				Whoops! Non ci sono appunti.
+      <p class="hidden only:block pad txt-center" style="grid-column: 1 / -1;">
+        Whoops! Non ci sono appunti.
 
-				<% if current_user.user_scuole.blank? %>
-					<%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "underline font-semibold" %>
-				<% end %>
-			</p>
-			<%= render @appunti %>
-		<% end %>
+        <% if current_user.user_scuole.blank? %>
+          <%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "txt-link font-weight-bold" %>
+        <% end %>
+      </p>
+      <%= render @appunti %>
+    <% end %>
 
-		<% if @pagy.next %>
-			<%= turbo_frame_tag :pagination,
-					src: appunti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)),
-					loading: :lazy do %>
-				<div role="status">
-					<div class="flex justify-center col-span-1 md:col-span-2 4xl:col-span-3">
-						<%= icon "bouncing-dots", library: :animated, class: "mx-auto w-8 h-8 text-gray-500 fill-gray-600" %>
-						<span class="sr-only">Loading...</span>
-					</div>
-				</div>
-			<% end %>
-		<% end %>
-	<% end %>
+    <% if @pagy.next %>
+      <%= turbo_frame_tag :pagination,
+          src: appunti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)),
+          loading: :lazy do %>
+        <div role="status" class="flex justify-center" style="grid-column: 1 / -1;">
+          <%= icon "bouncing-dots", library: :animated, class: "txt-subtle", style: "width: 2rem; height: 2rem;" %>
+          <span class="sr-only">Loading...</span>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
 
-	<aside class="fixed inset-y-0 right-0 hidden xl:w-72 overflow-y-auto pt-[184px] lg:px-8 xl:block">
-		<!-- Secondary column (hidden on smaller screens) -->
-		<%= render partial: "filter_form", locals: { reload: true } %>
-	</aside>
+  <aside class="sidebar-right hide-on-mobile">
+    <%= render partial: "filter_form", locals: { reload: true } %>
+  </aside>
 
 <% end %>
 

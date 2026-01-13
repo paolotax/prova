@@ -1,27 +1,21 @@
 <% content_for :title, "Modifica #{@scuola.denominazione}" %>
 
-<% content_for :header do %>
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-    <h1 class="text-2xl font-bold tracking-tight text-gray-900">Modifica Scuola</h1>
-  <% end %>
-<% end %>
-
-<div class="max-w-2xl mx-auto">
-  <nav class="mb-6 flex items-center gap-2 text-sm text-gray-500">
-    <%= link_to scuole_path, class: "hover:text-emerald-600 transition-colors" do %>
+<div class="container pad-block">
+  <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
+    <%= link_to scuole_path, class: "txt-link" do %>
       Scuole
     <% end %>
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-    </svg>
-    <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "hover:text-emerald-600 transition-colors truncate max-w-xs" %>
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-    </svg>
-    <span class="text-gray-900 font-medium">Modifica</span>
+    <%= icon_tag "chevron-right", size: "small" %>
+    <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
+    <%= icon_tag "chevron-right", size: "small" %>
+    <span class="font-weight-bold">Modifica</span>
   </nav>
 
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+  <div class="margin-block-end">
+    <h1 class="txt-x-large font-weight-black">Modifica Scuola</h1>
+  </div>
+
+  <div class="panel shadow pad">
     <%= render "form", scuola: @scuola %>
   </div>
 </div>
