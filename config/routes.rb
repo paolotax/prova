@@ -109,17 +109,19 @@ Rails.application.routes.draw do
 
     get 'ordini_in_corso', to: 'ordini#index'
     
-    get 'cerca', to: 'search#index'
-    namespace :searches do
-      get 'clientable/show'
-      get 'clientable/new'
-      resources :clientable, only: :index
-    end
+    # get 'search', to: 'search#index'
+    # namespace :searches do
+    #   get 'clientable/show'
+    #   get 'clientable/new'
+    #   resources :clientable, only: :index
+    # end
 
     resource :search
     namespace :searches do
       resources :queries
     end
+
+
     post 'sfascicola', to: 'sfascicolator#generate'
 
     resources :clienti do

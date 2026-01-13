@@ -1,5 +1,10 @@
 <% content_for :title, "Libri" %>
 
+<% content_for :head do %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= combobox_style_tag "data-turbo-track": "reload" %>
+<% end %>
+
 <% content_for :header do %>
     <%= component "heading/with_actions" do |heading| %>
         

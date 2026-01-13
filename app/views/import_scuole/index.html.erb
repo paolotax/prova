@@ -1,5 +1,10 @@
 <% content_for :title, "Scuole" %>
 
+<% content_for :head do %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= combobox_style_tag "data-turbo-track": "reload" %>
+<% end %>
+
 <% content_for :header do %>
 	<%= render Heading::WithActionsComponent.new do |heading| %>
 
