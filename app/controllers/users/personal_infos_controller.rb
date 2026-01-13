@@ -1,6 +1,6 @@
 class Users::PersonalInfosController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_personal_info
+  before_action :set_personal_info, :set_user
 
   def show
     # @personal_info can be nil - the view handles this case
@@ -52,6 +52,10 @@ class Users::PersonalInfosController < ApplicationController
   end
 
   private
+
+  def set_user
+    @user = Current.user
+  end
 
   def set_personal_info
     @personal_info = Current.user.personal_info

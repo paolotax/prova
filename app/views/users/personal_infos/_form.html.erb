@@ -14,30 +14,29 @@
   <% end %>
 
   <!-- Avatar -->
-  <section class="panel pad border-radius shadow">
-    <div class="avatar__form flex align-center gap">
-      <div class="relative">
-        <label class="avatar avatar--large cursor-pointer">
-          <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Avatar", class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
-          <%= file_field_tag :avatar, class: "for-screen-reader", accept: "image/jpeg,image/png,image/gif,image/webp",
-                data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-        </label>
-      </div>
+  <section class="flex flex-column gap txt-medium">
+      <div class="align-center center avatar__form gap">
+        <span class="btn btn--placeholder txt-small"></span>
 
-      <% if Current.user.avatar.attached? %>
-        <%= tag.button type: :submit, form: "avatar-delete-form",
-              class: "btn txt-negative txt-small",
-              data: { turbo_confirm: "Sei sicuro di voler rimuovere il tuo avatar?" } do %>
-          <%= icon_tag "trash" %>
-          <span class="hide-on-mobile">Elimina avatar</span>
+        <label class="avatar btn btn--circle input--file txt-xx-large center fill-white">
+          <%= image_tag user_avatar_path(@user), aria: { hidden: "true" }, class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
+          <%= form.file_field :avatar, id: "file", class: "input", accept: User::Avatar::ALLOWED_AVATAR_CONTENT_TYPES.join(","),
+                data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+          <span class="for-screen-reader">Profile avatar for <%= @user.name %></span>
+        </label>
+
+        <% if @user.avatar.attached? %>
+          <%= tag.button type: :submit, form: "avatar-delete-form", class: "btn btn--negative txt-small", data: { turbo_confirm: "Are you sure you want to remove your avatar? This can't be undone." } do %>
+            <%= icon_tag "minus" %>
+            <span class="for-screen-reader">Delete avatar</span>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
   </section>
 
   <!-- Dati personali -->
-  <section class="panel pad border-radius shadow">
-    <h2 class="txt-medium font-weight-black margin-block-end">Dati personali</h2>
+  <section class="flex flex-column gap txt-medium">
+    <strong class="divider txt-large">Dati personali</strong>
 
     <div class="flex flex-column gap">
       <div class="form-grid">
@@ -67,9 +66,9 @@
   </section>
 
   <!-- Preferenze -->
-  <section class="panel pad border-radius shadow">
-    <h2 class="txt-medium font-weight-black margin-block-end">Preferenze</h2>
-
+  <section class="flex flex-column gap txt-medium">
+    <strong class="divider txt-large">Preferenze</strong>
+    
     <div class="form-field">
       <%= form.label :navigator, "Navigatore preferito", class: "form-label" %>
       <%= form.select :navigator,
@@ -83,10 +82,12 @@
     </div>
   </section>
 
-  <div class="flex align-center justify-end gap">
-    <%= link_to "Annulla", user_personal_info_path(Current.user), class: "btn" %>
-    <%= form.submit personal_info.persisted? ? "Aggiorna" : "Salva", class: "btn btn--primary" %>
-  </div>
+  <button type="submit" id="log_in" class="btn btn--reversed center" data-form-target="submit">
+    <span>Salvamodifiche</span>
+  </button>
+
+  <%= link_to "Annulla", user_personal_info_path(@user), data: { form_target: "cancel", turbo_frame: "_top" }, hidden: true %>
+
 <% end %>
 
 <%= form_with url: user_avatar_path(Current.user), method: :delete, id: "avatar-delete-form" %>

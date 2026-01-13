@@ -2,8 +2,21 @@ class ApplicationController < ActionController::Base
 
   include Pundit::Authorization
   include Pagy::Backend
+  
   include PasswordlessAuthentication
   include AccountFromUrl
+
+  include BlockSearchEngineIndexing
+  include CurrentRequest, CurrentTimezone, SetPlatform
+  include RequestForgeryProtection
+  include TurboFlash, ViewTransitions
+  include RoutingHeaders
+
+  # etag { "v1" }
+  # stale_when_importmap_changes
+  # allow_browser versions: :modern
+
+
 
   # allow_browser versions: :modern
 

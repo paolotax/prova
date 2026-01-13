@@ -189,4 +189,13 @@ class User < ApplicationRecord
   def revoke_other_sessions!(current_session)
     sessions.where.not(id: current_session.id).destroy_all
   end
+
+  def active?
+    true
+  end
+
+  def verified?
+    true
+  end
+
 end

@@ -7,31 +7,36 @@
 
 	<%= render "layouts/shared/head" %>
 
-	<body class="">
+	<body class="<%= @body_class %>" 
+		  data-controller="local-time timezone-cookie turbo-navigation theme" 
+		  data-action="turbo:morph@window->local-time#refreshAll turbo:before-visit@document->turbo-navigation#rememberLocation" 
+		  data-platform="<%= platform.type %>">
 		<div id="global-container">
-			<header class="header header--mobile-actions-stack header--events <%= @header_class %>" id="header">
+			<header class="header header--mobile-actions-stack <%= @header_class %>" id="header">
 				<a href="#main" class="header__skip-navigation btn" data-turbo="false">Skip to main content</a>
 				<%= render "my/menu" if Current.user %>
 				<%= yield :header %>
 			</header>
 
 			<%= turbo_frame_tag :modal %>
-			<%# Back to top button %>
 			<%= render partial: "layouts/back_to_top" %>
 
-			<%# Main content with padding for header and bottom bar %>
-			<main class="max-w-7xl mx-auto pt-14 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col" id="main-content" data-turbo-morphing-scope>
+			<main id="main">				
 				<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
 					<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 				</div>
 
 				<%= yield %>
-
 			</main>
-
-			<%# Bottom search bar %>
-			<%= render "layouts/bar" %>
 		</div>
+
+		<% if Current.user && !@hide_footer_frames %>
+			<div id="footer_frames" data-turbo-permanent="true">
+				<%= render "layouts/bar" %>
+				<%#= render "my/pins/tray" %>
+				<%#= render "notifications/tray" %>
+			</div>
+		<% end %>
 
 		<%= turbo_frame_tag "slide-over" %>
   		<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>

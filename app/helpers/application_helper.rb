@@ -3,10 +3,8 @@ module ApplicationHelper
   include Pagy::Frontend
 
   def page_title_tag
-    account_name = if Current.account && Current.session&.identity&.users&.many?
-      Current.account&.name
-    end
-    tag.title [ @page_title, account_name, "Fizzy" ].compact.join(" | ")
+    account_name = Current.account&.name if Current.user&.accounts&.many?
+    tag.title [@page_title, account_name, "Scagnozz"].compact.join(" | ")
   end
 
   def icon_tag(name, **options)
@@ -15,7 +13,7 @@ module ApplicationHelper
 
   def back_link_to(label, url, action, **options)
     link_to url, class: "btn btn--back", data: { controller: "hotkey", action: action }, **options do
-      icon_tag("arrow-left") + tag.strong("Back to #{label}", class: "overflow-ellipsis") + tag.kbd("ESC", class: "txt-x-small hide-on-touch").html_safe
+      icon_tag("arrow-left") + tag.strong("Torna a #{label}", class: "overflow-ellipsis") + tag.kbd("ESC", class: "txt-x-small hide-on-touch").html_safe
     end
   end
 

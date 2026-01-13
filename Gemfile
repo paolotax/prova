@@ -191,6 +191,12 @@ gem "ruby_llm-mcp"
 # Markdown processing
 gem 'redcarpet'
 
-group :development do
-  gem 'claude-on-rails'
-end
+
+# fizzies 
+gem "platform_agent"
+#gem "aws-sdk-s3", require: false
+gem "web-push"
+gem "net-http-persistent"
+gem "rubyzip", require: "zip"
+gem "mittens"
+#gem "useragent", bc: "useragent"

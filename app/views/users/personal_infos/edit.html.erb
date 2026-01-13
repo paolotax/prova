@@ -1,8 +1,12 @@
-<div class="container pad-block">
-  <div class="margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Modifica Informazioni Personali</h1>
-    <p class="txt-small txt-subtle margin-block-start-half">Aggiorna i tuoi dati personali.</p>
-  </div>
+<% @page_title = "Edit your profile" %>
 
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "profilo", user_personal_info_path(Current.user), "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
+<% end %>
+
+
+<div class="panel shadow center" style="--panel-size: 45ch;">
   <%= render "form", personal_info: @personal_info %>
 </div>

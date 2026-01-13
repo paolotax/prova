@@ -1,10 +1,70 @@
-<div class="container pad-block">
-  <div class="flex align-center justify-space-between margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Informazioni Personali</h1>
-    <%= link_to "Modifica", edit_user_personal_info_path(Current.user), class: "btn btn--primary" %>
-  </div>
+<% @page_title = @user.name %>
+<% me_or_you = Current.user == @user ? "me" : @user.first_name %>
 
-  <div id="personal_info">
-    <%= render "users/personal_infos/show", personal_info: @personal_info %>
-  </div>
+<div class="profile-layout">
+  <section class="panel shadow text-align-center" style="--panel-size: 45ch;">    
+    <div class="flex flex-column gap position-relative">
+      <% if Current.user == @user %>
+        <%= link_to edit_user_personal_info_path(@personal_info), class: "user-edit-link btn", data: { controller: "tooltip" } do %>
+          <%= icon_tag "pencil" %>
+          <span class="for-screen-reader">Edit profile</span>
+        <% end %>
+      <% end %>
+
+      <div class="avatar txt-xx-large center fill-white btn--circle hide-focus-ring">
+        <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Profile avatar for #{Current.user.name}", class: "avatar", size: 128 %>
+      </div>
+
+      <div class="flex flex-column gap-half margin-block-end">
+        <h1 class="txt-x-large margin-none"><%= @user.name %></h1>
+        <div class="txt-medium">
+          <% if !@user.active? %>
+            <%= @user.name %> is no longer on this account
+          <% elsif !@user.verified? %>
+            Unverified
+            <div class="txt-small txt-tinted">A sign-in code has been sent to this email address, but the user has not yet logged in to confirm their identity.</div>
+          <% else %>
+            <%= mail_to @user.email %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </section>
+    
+  <% if Current.user == @user %>
+    <section class="panel shadow" style="--panel-size: 45ch;">
+      <strong class="divider txt-large">Dati personali</strong>
+      <dl class="dl-grid">
+        <div>
+          <dt class="txt-small txt-subtle">Nome</dt>
+          <dd class="txt-small"><%= @personal_info.nome %></dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Cognome</dt>
+          <dd class="txt-small"><%= @personal_info.cognome %></dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Cellulare</dt>
+          <dd class="txt-small mono"><%= @personal_info.cellulare || "-" %></dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Email personale</dt>
+          <dd class="txt-small"><%= @personal_info.email_personale || "-" %></dd>
+        </div>
+      </dl>
+
+      <strong class="divider txt-large">Preferenze</strong>
+
+      <dl class="dl-grid">
+        <div>
+          <dt class="txt-small txt-subtle">Navigatore preferito</dt>
+          <dd class="txt-small"><%= @personal_info.navigator&.humanize || "-" %></dd>
+        </div>
+      </dl>
+
+    </section>
+  <% end %>
 </div>
