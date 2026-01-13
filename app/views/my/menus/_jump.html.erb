@@ -1,36 +1,32 @@
 <div class="flex gap">
-    <div class="flex flex-col w-full justify-center gap-half">       
-        <%# Header con close button %>
-        <div class="flex items-center justify-between p-4 border-b border-gray-100">
-            <span class="font-semibold text-gray-900 text-center">Menu</span>
-            <button data-action="dialog#close" class="p-1 rounded hover:bg-gray-100">
-                <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+  <div class="flex flex-column full-width justify-center gap-half">
+    <div class="nav__header">
+      <% if Current.user.accounts.many? %>
+        <div class="nav__header-title max-width">
+          <div class="overflow-ellipsis"><strong><%= Current.account.name %></strong></div>
         </div>
-
-        <%# Search field %>
-        <div class="p-4 border-b border-gray-100">
-            <%= jump_field_tag %>
-        </div>
+      <% end %>
+      <div class="nav__header-actions nav__header-actions--end nav__close">
+        <button class="btn txt-xx-small" data-action="dialog#close">
+          <%= icon_tag "close" %>
+          <span class="for-screen-reader">Chiudi menu</span>
+        </button>
+      </div>
     </div>
+    <%= jump_field_tag %>
+  </div>
 </div>
 
-<%# Scroll container %>
-<div class="nav-scroll-container flex flex-col gap-0.5 -mx-5 pb-0.5 px-5">
-    <%# Hot buttons - orizzontali come fizzy %>
-    <div class="nav-hotkeys" role="list">
-        <%= filter_hotkey_link "Oggi", giorno_path(Current.account, Date.today), 1, "calendar" %>
-        <%= filter_hotkey_link "Appunti", appunti_path(Current.account), 2, "note" %>
-        <%= filter_hotkey_link "Scuole", scuole_path(Current.account), 3, "building-library" %>
-    </div>
+<div class="nav__scroll-container">
+  <div class="nav__hotkeys margin-block-end-half" role="list">
+    <%= filter_hotkey_link "Oggi", giorno_path(Current.account, Date.today), 1, "calendar" %>
+    <%= filter_hotkey_link "Appunti", appunti_path(Current.account), 2, "note" %>
+    <%= filter_hotkey_link "Scuole", scuole_path(Current.account), 3, "building-library" %>
+  </div>
 
-    <%= yield %>
+  <%= yield %>
 
-    <div class="nav-blank-slate hidden border-2 border-dashed border-gray-300 rounded-lg
-                text-gray-700 mx-12 mb-8 py-2 px-4 -rotate-3 font-medium text-center">
-        Nessun risultato
-    </div>
+  <div class="nav__blank-slate blank-slate blank-slate--empty">
+    Nessun risultato
+  </div>
 </div>
-

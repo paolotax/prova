@@ -9,13 +9,10 @@
 
 	<body class="">
 		<div id="global-container">
-			<header class="sticky top-0 z-40 flex flex-col items-center justify-center p-2 bg-gray-300">
-				<div class="flex flex-row items-center justify-between">
-					<%= yield :nav_buttons_left %>
-					<%= render "my/menu" if Current.user %>
-					<%= yield :nav_buttons_right %>
-				<div>
-				<%= content_for(:header) %>
+			<header class="header header--mobile-actions-stack header--events <%= @header_class %>" id="header">
+				<a href="#main" class="header__skip-navigation btn" data-turbo="false">Skip to main content</a>
+				<%= render "my/menu" if Current.user %>
+				<%= yield :header %>
 			</header>
 
 			<%= turbo_frame_tag :modal %>

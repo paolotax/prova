@@ -1,26 +1,25 @@
-<nav class="nav hide-on-native"
+<nav class="nav relative"
     data-controller="dialog"
-    data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside mouseenter->dialog#loadLazyFrames">
-  
-  
-    <%# Logo centrato - apre popup menu %>
-    <button data-controller="hotkey"
-            data-action="click->dialog#toggle keydown.m@document->hotkey#click keydown.meta+m@document->hotkey#click keydown.ctrl+m@document->hotkey#click"
+    data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
 
-            class="nav-menu-trigger relative flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-        <%= image_tag "scagnozz.png", class: "h-8", alt: "Logo" rescue tag.span("ScagnoZZ", class: "font-bold text-xl text-gray-800") %>
-        <span class="mr-6">ScagnoZZ Menu</span>
-        <kbd class="hidden sm:block">M</kbd>
-    </button>
-  
-  <%= tag.dialog class: "nav-popup fixed top-2 left-0 right-0 mx-auto w-full max-w-sm max-h-[calc(100vh-4rem)] p-0 rounded-xl shadow-2xl border-0 bg-white overflow-hidden backdrop:bg-black/50 z-[9999]",
-        data: {
-            action: "turbo:before-cache@document->dialog#close turbo:frame-render->navigable-list#reset keydown->navigable-list#navigate filter:changed->navigable-list#reset filter:changed->nav-section-expander#showWhileFiltering toggle->filter#filter",
-            controller: "filter navigable-list nav-section-expander",
-            dialog_target: "dialog",
-            navigable_list_focus_on_selection_value: false,
-            navigable_list_actionable_items_value: true,
-            turbo_permanent: true } do %>
+  <%= tag.button class: "nav__trigger input input--select flex-inline f-align-center txt-normal",
+                 type: "button",
+                 data: {
+                   controller: "hotkey",
+                   action: "click->dialog#toggle keydown.m@document->hotkey#click"
+                 } do %>
+    <span style="height: 2.5em; width: 2.5em;"><%= image_tag "scagnozz.png", alt: "" %></span>
+    <svg style="height: 2em; max-height: none;" viewBox="0 0 170 44" xmlns="http://www.w3.org/2000/svg"><text x="0" y="34" font-family="system-ui, sans-serif" font-size="34" font-weight="900" fill="currentColor">ScagnoZZ</text></svg>
+    <kbd class="kbd txt-xx-small hide-on-touch" style="margin-inline-start: 0.5em;">M</kbd>
+  <% end %>
+
+  <%= tag.dialog class: "nav__menu filter popup popup--animated panel margin-block-start-half", data: {
+        action: "turbo:before-cache@document->dialog#close turbo:frame-render->navigable-list#reset keydown->navigable-list#navigate filter:changed->navigable-list#reset filter:changed->nav-section-expander#showWhileFiltering toggle->filter#filter",
+        controller: "filter navigable-list nav-section-expander",
+        dialog_target: "dialog",
+        navigable_list_focus_on_selection_value: false,
+        navigable_list_actionable_items_value: true,
+        turbo_permanent: true } do %>
     <%= turbo_frame_tag "my_menu", src: my_menu_path, loading: :lazy, target: "_top" do %>
       <% # Passing empty block to avoid double-render  %>
       <%= render("my/menus/jump") { } %>

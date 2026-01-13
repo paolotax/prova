@@ -1,20 +1,20 @@
-<%# Sezione Navigazione %>
-<%= nav_menu_item "Home", account_root_path(Current.account), "home" %>
+<%# Sezmy_menu_itemione Navigazione %>
+<%= filter_place_menu_item account_root_path(Current.account), "Home", "home" %>
 
 <%= collapsible_nav_section "Adozioni" do %>
-    <%= nav_menu_item "Tutte le adozioni", import_adozioni_path(Current.account), "cash" %>
-    <%= nav_menu_item "Controllo adozioni", adozioni_comunicate_path %>
+    <%= filter_place_menu_item import_adozioni_path(Current.account), "Tutte le adozioni", "cash" %>
+    <%#= filter_place_menu_item adozioni_comunicate_path, "Controllo adozioni" %>
 <% end %>
 
 <%= collapsible_nav_section "Magazzino" do %>
-    <%= nav_menu_item "Documenti", documenti_path(Current.account), "document" %>
-    <%= nav_menu_item "Ordini", ordini_in_corso_path(Current.account) %>
-    <%= nav_menu_item "Clienti", clienti_path(Current.account), "users" %>
-    <%= nav_menu_item "i miei Librini", libri_path(Current.account), "book" %>
-    <%= nav_menu_item "Sconti", sconti_path(Current.account) %>
-    <%= nav_menu_item "Categorie", categorie_path(Current.account) %>
+    <%= filter_place_menu_item documenti_path(Current.account), "Documenti", "document" %>
+    <%#= filter_place_menu_item ordini_in_corso_path(Current.account), "Ordini" %>
+    <%= filter_place_menu_item clienti_path(Current.account), "Clienti", "users" %>
+    <%= filter_place_menu_item libri_path(Current.account), "i miei Librini", "book" %>
+    <%#= filter_place_menu_item sconti_path(Current.account), "Sconti" %>
+    <%#= filter_place_menu_item categorie_path(Current.account), "Categorie" %>
 <% end %>
     
 <%= collapsible_nav_section "Giri" do %>
-    <%= nav_menu_item "Giri", giri_path(Current.account), "truck" %>
+    <%= filter_place_menu_item giri_path(Current.account), "Giri", "truck" %>
 <% end %>

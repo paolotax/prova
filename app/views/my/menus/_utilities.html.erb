@@ -1,10 +1,10 @@
 <%= collapsible_nav_section "Utilities" do %>
-    <%= nav_menu_item "Stats", stats_path(Current.account), "chart" %>
+    <%= filter_place_menu_item stats_path(Current.account), "Stats", "chart" %>
     
     <% if Current.user.admin? %>
-        <%= nav_menu_item "Avo Admin", "/avo", "shield" %>
-        <%= nav_menu_item "Sidekiq", "/sidekiq", "server" %>
-        <%= nav_menu_item "Blazer", "/blazer", "chart" %>
-        <%= nav_menu_item "Performance", "/rails/performance", "speedometer" %>
+        <%= filter_place_menu_item "/avo", "Avo Admin", "shield" %>
+        <%= filter_place_menu_item "/sidekiq", "Sidekiq", "server" %>
+        <%= filter_place_menu_item "/blazer", "Blazer", "chart" %>
+        <%= filter_place_menu_item "/rails/performance", "Performance", "speedometer" %>
     <% end %>
 <% end %>

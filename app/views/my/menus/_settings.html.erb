@@ -1,9 +1,15 @@
 <%# Sezione Impostazioni %>
 <%= collapsible_nav_section "Impostazioni" do %>
-    <%= nav_menu_item "Informazioni Personali", user_personal_info_path(Current.user), "id-card" %>
+    <%= filter_place_menu_item user_personal_info_path(Current.user), "Il mio profilo (utente)", "id-card" %>
     <% if Current.account %>
-        <%= nav_menu_item "Dati Aziendali", azienda_path(Current.account), "briefcase" %>
-        <%= nav_menu_item "la mia Zona", profilo_path(Current.account), "person" %>
+        <%= filter_place_menu_item azienda_path(Current.account), "I miei dati aziendali", "briefcase" %>
+        <%= filter_place_menu_item profilo_path(Current.account), "la mia Zona", "person" %>
     <% end %>
-    <%= nav_menu_item "Esci", logout_path, "logout", method: :delete %>
+    
+    <%= tag.li class: "popup__item", data: { filter_target: "item", navigable_list_target: "item" } do %>
+        <%= icon_tag "logout", class: "popup__icon" %>
+        <%= button_to logout_path, method: :delete, class: "popup__btn btn", data: { turbo: false } do %>
+            <span>Esci</span>
+        <% end %>
+    <% end %>
 <% end %>

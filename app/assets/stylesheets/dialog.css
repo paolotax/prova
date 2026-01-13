@@ -1,0 +1,38 @@
+@layer components {
+  :is(.dialog) {
+    border: 0;
+    opacity: 0;
+    transform: scale(0.2);
+    transform-origin: top center;
+    transition: var(--dialog-duration) allow-discrete;
+    transition-property: display, opacity, overlay, transform;
+
+    &::backdrop {
+      background-color: var(--color-black);
+      opacity: 0;
+      transform: scale(1);
+      transition: var(--dialog-duration) allow-discrete;
+      transition-property: display, opacity, overlay;
+    }
+
+    &[open] {
+      opacity: 1;
+      transform: scale(1);
+
+      &::backdrop {
+        opacity: 0.5;
+      }
+    }
+
+    @starting-style {
+      &[open] {
+        opacity: 0;
+        transform: scale(0.2);
+      }
+
+      &[open]::backdrop {
+        opacity: 0;
+      }
+    }
+  }
+}
