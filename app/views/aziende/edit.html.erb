@@ -1,8 +1,12 @@
-<div class="container pad-block">
-  <div class="margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Modifica Dati Aziendali</h1>
-    <p class="txt-small txt-subtle margin-block-start-half">Aggiorna i dati fiscali e bancari della tua azienda.</p>
-  </div>
+<% @page_title = "Modifica dati aziendali" %>
 
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "azienda", azienda_path(@azienda), "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
+<% end %>
+
+<div class="center">
   <%= render "form", azienda: @azienda %>
 </div>
+

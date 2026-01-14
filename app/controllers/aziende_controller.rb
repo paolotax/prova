@@ -42,6 +42,7 @@ class AziendeController < ApplicationController
 
   private
 
+
   def set_azienda
     @azienda = Current.account.azienda
   end

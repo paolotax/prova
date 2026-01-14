@@ -1,4 +1,5 @@
 @layer components {
+  .azienda-layout, 
   .profile-layout {
     display: flex;
     gap: var(--inline-space);

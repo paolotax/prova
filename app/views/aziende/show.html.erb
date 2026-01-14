@@ -1,15 +1,93 @@
-<div class="container pad-block">
-  <div class="flex f-align-center f-justify-space-between margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Dati Aziendali</h1>
-    <%= link_to "Modifica", edit_azienda_path, class: "btn btn--primary" %>
-  </div>
+<% @page_title = Current.account.name %>
 
-  <% if @azienda.nil? %>
-    <div class="panel pad fill-highlight border-radius">
-      <p>Nessun dato aziendale configurato.</p>
-      <%= link_to "Configura ora", new_azienda_path, class: "txt-link" %>
-    </div>
-  <% else %>
-    <%= render "show", azienda: @azienda %>
-  <% end %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--end">
+      <% if Current.user == Current.user %>
+        <%= link_to edit_azienda_path(@azienda), class: "btn", data: { controller: "tooltip",  turbo_frame: "_top" } do %>
+          <%= icon_tag "pencil" %>
+          <span class="for-screen-reader">Modifica azienda</span>
+        <% end %>
+      <% end %>  
+  </div>
+<% end %>
+
+<div class="azienda-layout">
+  <%#= link_to "Modifica", edit_azienda_path, class: "btn btn--primary" %>
+  <section class="panel shadow" styl_e="--panel-size: 45ch;">
+    <strong class="divider txt-large">Dati fiscali</strong>
+
+    <dl class="dl-grid">
+      <div>
+        <dt class="txt-small txt-subtle">Ragione Sociale</dt>
+        <dd class="txt-small"><%= @azienda.ragione_sociale %></dd>
+      </div>
+
+      <div>
+        <dt class="txt-small txt-subtle">Regime Fiscale</dt>
+        <dd class="txt-small"><%= Azienda.regime_fiscales[@azienda.regime_fiscale] %></dd>
+      </div>
+
+      <div>
+        <dt class="txt-small txt-subtle">Partita IVA</dt>
+        <dd class="txt-small mono"><%= @azienda.partita_iva %></dd>
+      </div>
+
+      <div>
+        <dt class="txt-small txt-subtle">Codice Fiscale</dt>
+        <dd class="txt-small mono"><%= @azienda.codice_fiscale %></dd>
+      </div>
+    </dl>
+
+    <strong class="divider txt-large">Sede legale</strong>
+
+    <dl>
+      <div>
+        <dt class="txt-small txt-subtle">Indirizzo</dt>
+        <dd class="txt-small">
+          <%= @azienda.indirizzo %><br>
+          <%= @azienda.cap %> <%= @azienda.comune %> (<%= @azienda.provincia %>)<br>
+          <%= @azienda.nazione %>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="panel shadow" style="--panel-size: 45ch;">
+    <strong class="divider txt-large">Contatti</strong>
+      <dl class="dl-grid">
+        <div>
+          <dt class="txt-small txt-subtle">Email</dt>
+          <dd class="txt-small">
+            <%= link_to @azienda.email, "mailto:#{@azienda.email}", class: "txt-link" %>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Telefono</dt>
+          <dd class="txt-small">
+            <%= link_to @azienda.telefono, "tel:#{@azienda.telefono}", class: "txt-link" %>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Codice SDI</dt>
+          <dd class="txt-small mono"><%= @azienda.indirizzo_telematico %></dd>
+        </div>
+      </dl>
+
+    <strong class="divider txt-large">Dati bancari</strong>
+
+      <dl class="dl-grid">
+        <div class="full-width">
+          <dt class="txt-small txt-subtle">IBAN</dt>
+          <dd class="txt-small mono"><%= @azienda.iban %></dd>
+        </div>
+
+        <div>
+          <dt class="txt-small txt-subtle">Banca</dt>
+          <dd class="txt-small"><%= @azienda.banca %></dd>
+        </div>
+      </dl>
+  </section>
 </div>
