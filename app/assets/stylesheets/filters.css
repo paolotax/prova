@@ -146,8 +146,16 @@
       }
     }
 
+    /* Checkbox filters highlight when checked */
+    &.quick-filter--checkbox:has(input:checked) {
+      .input--select {
+        --input-background: var(--color-selected);
+      }
+    }
+
     /* Hide a quick filter if there's nothing in it to filter by */
-    &:not(:has(.popup__item)) {
+    /* Exclude checkbox filters (--checkbox) from this rule */
+    &:not(:has(.popup__item)):not(.quick-filter--checkbox) {
       display: none !important;
     }
 
