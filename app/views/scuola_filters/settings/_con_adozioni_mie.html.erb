@@ -1,0 +1,14 @@
+<% filter = user_filtering.filter %>
+
+<%= tag.div class: class_names("quick-filter", { "quick-filter--active": filter.con_adozioni_mie? }),
+      data: { filter_show: true } do %>
+  <label class="btn input input--select flex-inline txt-x-small gap-half">
+    <%= check_box_tag :con_adozioni_mie, "true", filter.con_adozioni_mie?,
+          class: "checkbox",
+          data: {
+            filter_settings_target: "field",
+            action: "change->filter-settings#change change->form#submit"
+          } %>
+    <span>Con adozioni mie</span>
+  </label>
+<% end %>

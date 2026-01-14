@@ -3,18 +3,11 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to scuole_path( format: :xlsx, params: request.query_parameters), class: "btn",
+    <%= link_to scuole_path(format: :xlsx, params: request.query_parameters), class: "btn",
         data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-      <%= icon_tag "document" %> 
+      <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
-    <% end %>    
-    <%#= component 'tax_button',
-            caption: "Filtra",
-            svg_file: "icon-funnel.svg",
-            color: "white",
-            url: filtra_appunti_path(params: request.query_parameters),
-            data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
-
+    <% end %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -23,117 +16,51 @@
 
   <div class="header__actions header__actions--end">
     <%= link_to new_scuola_path, class: "btn" do %>
-      <%= icon_tag "add" %> 
+      <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuova scuola</span>
-    <% end %> 
+    <% end %>
   </div>
 <% end %>
 
-<%= turbo_frame_tag "search_results" do %>
-  <div class="flex gap" style="padding-inline-end: 18rem;">
+<%= render "scuola_filters/settings",
+      filter_url: scuole_path,
+      user_filtering: @user_filtering,
+      no_filtering_url: scuole_path %>
 
-    <div class="full-width">
+<%= turbo_frame_tag "scuole_list" do %>
+  <% if @scuole.any? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @pagy.count %> <%= @pagy.count == 1 ? "scuola trovata" : "scuole trovate" %>
+    </p>
 
-      <!-- Search and filters -->
-      <div class="panel pad margin-block-end">
-        <%= form_with url: scuole_path, method: :get, data: { turbo_frame: "scuole_list", turbo_action: "advance" }, class: "flex flex-wrap gap align-end" do |f| %>
-          <div class="form-field flex-item-grow">
-            <%= f.label :q, "Cerca", class: "form-label" %>
-            <%= text_field_tag :q, params[:q],
-                placeholder: "Cerca per denominazione...",
-                class: "input",
-                autocomplete: "off" %>
-          </div>
-
-          <div class="form-field">
-            <%= label_tag :provincia, "Provincia", class: "form-label" %>
-            <%= select_tag :provincia,
-                options_for_select([["Tutte le province", ""]] + Scuola.distinct.pluck(:provincia).compact.sort.map { |p| [p, p] }, params[:provincia]),
-                class: "input input--select",
-                onchange: "this.form.requestSubmit()" %>
-          </div>
-
-          <div class="form-field">
-            <%= label_tag :comune, "Comune", class: "form-label" %>
-            <%= select_tag :comune,
-                options_for_select([["Tutti i comuni", ""]] + Scuola.distinct.pluck(:comune).compact.sort.map { |c| [c, c] }, params[:comune]),
-                class: "input input--select",
-                onchange: "this.form.requestSubmit()" %>
-          </div>
-
-          <%= submit_tag "Cerca", class: "btn btn--primary" %>
-        <% end %>
-      </div>
-
-      <!-- Results count -->
-      <% if @scuole.any? %>
-        <p class="txt-small txt-subtle margin-block-end-half">
-          <%= @pagy.count %> <%= @pagy.count == 1 ? "scuola trovata" : "scuole trovate" %>
-        </p>
+    <div class="cards cards--list">
+      <% @scuole.each do |scuola| %>
+        <%= render scuola %>
       <% end %>
+    </div>
 
-      <!-- Schools list -->
-      <%= turbo_frame_tag "scuole_list" do %>
-        <% if @scuole.any? %>
-          <div class="flex flex-column gap-half">
-            <% @scuole.each do |scuola| %>
-              <%= render partial: "scuole/scuola", locals: { scuola: scuola } %>
-            <% end %>
-          </div>
-
-          <% if @pagy.pages > 1 %>
-            <nav class="margin-block-start flex justify-center">
-              <%== pagy_nav(@pagy) if defined?(pagy_nav) %>
-            </nav>
-          <% end %>
+    <% if @pagy.pages > 1 %>
+      <nav class="margin-block-start flex justify-center">
+        <%== pagy_nav(@pagy) %>
+      </nav>
+    <% end %>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
         <% else %>
-          <div class="panel pad txt-center">
-            <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
-            <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
-            <p class="txt-small txt-subtle margin-block-end">Inizia aggiungendo la prima scuola al tuo account.</p>
-            <%= link_to new_scuola_path, class: "btn btn--primary" do %>
-              <%= icon_tag "plus", size: "small" %>
-              Aggiungi Scuola
-            <% end %>
-          </div>
+          Inizia aggiungendo la prima scuola al tuo account.
+        <% end %>
+      </p>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_scuola_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Scuola
         <% end %>
       <% end %>
     </div>
-
-  </div>
-
-  <aside class="sidebar-right hide-on-mobile">
-    <!-- Stats card -->
-    <div class="panel pad margin-block-end" style="background: linear-gradient(135deg, var(--color-positive) 0%, var(--color-link) 100%); color: white;">
-      <p class="txt-small" style="opacity: 0.8;">Totale Scuole</p>
-      <p class="txt-xx-large font-weight-black"><%= Current.account.scuole.count %></p>
-      <div class="flex gap margin-block-start" style="border-top: 1px solid rgba(255,255,255,0.3); padding-top: var(--block-space-half);">
-        <div>
-          <p class="txt-xx-small" style="opacity: 0.8;">Province</p>
-          <p class="txt-small font-weight-bold"><%= Current.account.scuole.distinct.count(:provincia) %></p>
-        </div>
-        <div>
-          <p class="txt-xx-small" style="opacity: 0.8;">Comuni</p>
-          <p class="txt-small font-weight-bold"><%= Current.account.scuole.distinct.count(:comune) %></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick filters -->
-    <div class="panel pad">
-      <h3 class="txt-small font-weight-bold margin-block-end-half">Filtri Rapidi</h3>
-      <div class="flex flex-column gap-quarter">
-        <%= link_to scuole_path, class: "dropdown-item border-radius #{'fill-shade font-weight-bold' if params[:stato].blank? && params[:provincia].blank?}" do %>
-          Tutte le scuole
-        <% end %>
-        <% Current.account.scuole.distinct.pluck(:provincia).compact.sort.first(5).each do |provincia| %>
-          <%= link_to scuole_path(provincia: provincia), class: "dropdown-item border-radius #{'fill-shade font-weight-bold' if params[:provincia] == provincia}" do %>
-            <%= provincia %>
-            <span class="txt-subtle">(<%= Current.account.scuole.where(provincia: provincia).count %>)</span>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  </aside>
-
+  <% end %>
 <% end %>

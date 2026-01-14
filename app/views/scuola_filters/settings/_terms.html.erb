@@ -1,0 +1,13 @@
+<%= form.search_field "terms[]", placeholder: "Cerca scuole... [F]", class: "filter__terms input txt-x-small",
+      autofocus: false, autocomplete: :off, autocorrect: "off", data: {
+            "1p-ignore": "true",
+            controller: "hotkey",
+            filter_settings_target: "field",
+            action: "keydown.f@document->hotkey#focus input->filter-settings#resetIfNoFiltering input->form#debouncedSubmit keydown.enter->form#submitToTopTarget blur->form#submitToTopTarget" } %>
+
+<% if filter.terms.present? %>
+  <% filter.terms.each do |term| %>
+    <%= scuola_filter_chip_tag %Q("#{term}"), filter.as_params_without(:terms, term) %>
+    <%= hidden_field_tag "terms[]", term, data: { filter_settings_target: "field" } %>
+  <% end %>
+<% end %>

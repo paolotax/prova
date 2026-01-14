@@ -9,6 +9,7 @@
 #  da_acquistare      :boolean          default(FALSE)
 #  disciplina         :string
 #  editore            :string
+#  mia                :boolean          default(FALSE), not null
 #  note               :text
 #  numero_copie       :integer          default(0)
 #  nuova_adozione     :boolean          default(FALSE)
@@ -25,6 +26,7 @@
 #
 #  index_adozioni_on_account_id                 (account_id)
 #  index_adozioni_on_account_id_and_libro_id    (account_id,libro_id)
+#  index_adozioni_on_account_id_and_mia         (account_id,mia)
 #  index_adozioni_on_classe_id                  (classe_id)
 #  index_adozioni_on_classe_id_and_codice_isbn  (classe_id,codice_isbn) UNIQUE
 #  index_adozioni_on_import_adozione_id         (import_adozione_id)
@@ -54,6 +56,7 @@ class Adozione < ApplicationRecord
   scope :consigliate, -> { where(consigliato: true) }
   scope :per_editore, ->(editore) { where(editore: editore) }
   scope :per_disciplina, ->(disciplina) { where(disciplina: disciplina) }
+  scope :mie, -> { where(mia: true) }
 
   # Crea da ImportAdozione
   def self.create_from_import(import_adozione, classe:, account: Current.account)

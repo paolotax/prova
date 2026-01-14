@@ -8,24 +8,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+**IMPORTANT: All Rails commands must be run inside the Docker container `prova-app-1`**
+
 ```bash
 # Development server (Docker-based)
 bin/dev                                    # Uses Docker Compose with Foreman
 
-# Testing
-bundle exec rails test                     # Run all tests
-bundle exec rails test test/models/        # Run model tests only
-bundle exec rails test test/models/user_test.rb:42  # Run specific test at line
+# Run commands in Docker container
+docker exec -it prova-app-1 bin/rails <command>
 
-# Database
-bundle exec rails db:migrate               # Run migrations
-bundle exec rails db:seed                  # Seed database
+# Testing (in container)
+docker exec -it prova-app-1 bin/rails test                     # Run all tests
+docker exec -it prova-app-1 bin/rails test test/models/        # Run model tests only
+docker exec -it prova-app-1 bin/rails test test/models/user_test.rb:42  # Run specific test
+
+# Database (in container)
+docker exec -it prova-app-1 bin/rails db:migrate               # Run migrations
+docker exec -it prova-app-1 bin/rails db:seed                  # Seed database
+
+# Generate migrations/models (in container)
+docker exec -it prova-app-1 bin/rails generate migration <name>
+docker exec -it prova-app-1 bin/rails generate model <name>
 
 # Performance profiling
-bundle exec log_bench                      # Log benchmarking
+docker exec -it prova-app-1 bundle exec log_bench              # Log benchmarking
 
 # Annotation (auto-updates model schema comments)
-bundle exec annotaterb models              # Annotate models with schema info
+docker exec -it prova-app-1 bundle exec annotaterb models      # Annotate models
 ```
 
 ## Architecture

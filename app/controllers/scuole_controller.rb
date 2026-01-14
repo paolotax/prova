@@ -2,13 +2,16 @@
 # Scoped attraverso Current.account
 class ScuoleController < ApplicationController
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
+  before_action :set_filter, only: [:index]
+  before_action :set_user_filtering, only: [:index]
 
   def index
-    @scuole = Current.account.scuole
-      .includes(:classi, :import_scuola)
-      .order(:denominazione)
+    @pagy, @scuole = pagy(@filter.scuole, items: 25)
 
-    @pagy, @scuole = pagy(@scuole, items: 25)
+    respond_to do |format|
+      format.html
+      format.xlsx { render xlsx: "index", filename: "scuole_#{Date.current}.xlsx" }
+    end
   end
 
   def show
@@ -50,6 +53,22 @@ class ScuoleController < ApplicationController
 
   def set_scuola
     @scuola = Current.account.scuole.find(params[:id])
+  end
+
+  def set_filter
+    @filter = Current.user.scuola_filters.from_params(filter_params)
+  end
+
+  def filter_params
+    params.permit(:sorted_by, :con_appunti, :con_adozioni_mie, comuni: [], terms: [])
+  end
+
+  def set_user_filtering
+    @user_filtering = ScuolaFiltering.new(Current.user, @filter, expanded: expanded_param)
+  end
+
+  def expanded_param
+    ActiveRecord::Type::Boolean.new.cast(params[:expand_all])
   end
 
   def scuola_params

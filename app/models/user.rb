@@ -76,6 +76,7 @@ class User < ApplicationRecord
 
   has_many :voice_notes, dependent: :destroy
 
+  has_many :scuola_filters, foreign_key: :creator_id, dependent: :destroy
 
   enum :role, { scagnozzo: 0, sbocciatore: 1, omaccio: 2, admin: 3 }
 

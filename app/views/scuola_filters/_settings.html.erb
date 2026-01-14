@@ -1,0 +1,22 @@
+<%= tag.aside \
+      class: class_names("filters margin-block-end", { "filters--expanded": user_filtering.expanded? }),
+      data: {
+        controller: "toggle-enable toggle-class filter-settings",
+        toggle_class_toggle_class: "filters--expanded",
+        filter_settings_filters_set_class: "filters--has-filters-set",
+        filter_settings_no_filtering_url_value: no_filtering_url,
+        turbo_permanent: true } do %>
+  <%= form_with url: filter_url, method: :get, class: "display-contents", data: {
+        controller: "form",
+        turbo_frame: "scuole_list",
+        filter_settings_target: "form",
+        action: "turbo:submit-end->filter-settings#resetIfNoFiltering",
+        turbo_action: "advance" } do |form| %>
+    <%= hidden_field_tag :expand_all, true, disabled: !user_filtering.expanded?, data: { toggle_enable_target: "element" } %>
+
+    <%= render "scuola_filters/settings/terms", filter: user_filtering.filter, form: form %>
+    <%= render "scuola_filters/settings/controls", user_filtering: user_filtering, form: form %>
+    <%= render "scuola_filters/settings/toggle", user_filtering: user_filtering %>
+  <% end %>
+  <%= render "scuola_filters/settings/manage", user_filtering: user_filtering, no_filtering_url: no_filtering_url %>
+<% end %>

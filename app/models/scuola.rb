@@ -36,10 +36,16 @@
 #
 class Scuola < ApplicationRecord
   include AccountScoped
+  include PgSearch::Model
+
+  pg_search_scope :search_all_word,
+    against: [:denominazione, :codice_ministeriale, :comune, :provincia],
+    using: { tsearch: { any_word: false, prefix: true } }
 
   belongs_to :import_scuola, optional: true
 
   has_many :classi, dependent: :destroy
+  has_many :adozioni, through: :classi
   has_many :persone, dependent: :destroy
   has_many :appunti, as: :appuntabile, dependent: :destroy
 
