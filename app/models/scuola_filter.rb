@@ -12,9 +12,9 @@
 #
 # Indexes
 #
-#  index_scuola_filters_on_account_id    (account_id)
-#  index_scuola_filters_on_creator_id    (creator_id)
-#  index_scuola_filters_on_params_digest (params_digest) UNIQUE
+#  index_scuola_filters_on_account_id     (account_id)
+#  index_scuola_filters_on_creator_id     (creator_id)
+#  index_scuola_filters_on_params_digest  (params_digest) UNIQUE
 #
 # Foreign Keys
 #
