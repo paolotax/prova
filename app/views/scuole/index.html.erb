@@ -1,20 +1,33 @@
-<% content_for :title, "Scuole" %>
+<% @page_title = "Scuole" %>
+<% @body_class = "contained-scrolling" %>
 
-<div class="sticky top-header z-10">
-  <%= render Heading::WithActionsComponent.new do |heading| %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to scuole_path( format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document" %> 
+      <span class="for-screen-reader">Esporta in excel</span>
+    <% end %>    
+    <%#= component 'tax_button',
+            caption: "Filtra",
+            svg_file: "icon-funnel.svg",
+            color: "white",
+            url: filtra_appunti_path(params: request.query_parameters),
+            data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
 
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-          caption: "Nuova",
-          svg_file: "icon-plus.svg",
-          color: "blue",
-          url: new_scuola_path %>
-    <% end %>
+  </div>
 
-    <%= h1 {"Scuole"} %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Scuole</span>
+  </h1>
 
-  <% end %>
-</div>
+  <div class="header__actions header__actions--end">
+    <%= link_to new_scuola_path, class: "btn" do %>
+      <%= icon_tag "add" %> 
+      <span class="for-screen-reader">Nuova scuola</span>
+    <% end %> 
+  </div>
+<% end %>
 
 <%= turbo_frame_tag "search_results" do %>
   <div class="flex gap" style="padding-inline-end: 18rem;">
