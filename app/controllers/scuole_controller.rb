@@ -60,7 +60,7 @@ class ScuoleController < ApplicationController
   end
 
   def filter_params
-    params.permit(:sorted_by, :con_appunti, :con_adozioni_mie, comuni: [], terms: [])
+    params.permit(:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], terms: [])
   end
 
   def set_user_filtering

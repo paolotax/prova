@@ -79,4 +79,28 @@ module FiltersHelper
       sort_value.humanize
     end
   end
+
+  def appunti_filter_label(value)
+    case value
+    when "tutte"
+      "Tutte"
+    when "con_appunti"
+      "Con appunti"
+    else
+      "Appunti"
+    end
+  end
+
+  def adozioni_filter_label(value)
+    case value
+    when "tutte"
+      "Tutte"
+    when "mie_adozioni"
+      "Con mie adozioni"
+    when "adozioni_concorrenza"
+      "Con adozioni concorrenza"
+    else
+      "Adozioni"
+    end
+  end
 end

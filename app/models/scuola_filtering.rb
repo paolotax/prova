@@ -24,7 +24,8 @@ class ScuolaFiltering
     filter.terms.present? ||
     filter.comuni.present? ||
     filter.con_appunti? ||
-    filter.con_adozioni_mie?
+    filter.con_mie_adozioni? ||
+    filter.con_adozioni_concorrenza?
   end
 
   def cache_key

@@ -2,10 +2,12 @@ module ScuolaFilter::Fields
   extend ActiveSupport::Concern
 
   SORTED_BY = %w[denominazione comune provincia].freeze
+  APPUNTI_OPTIONS = %w[tutte con_appunti].freeze
+  ADOZIONI_OPTIONS = %w[tutte mie_adozioni adozioni_concorrenza].freeze
 
   class_methods do
     def default_values
-      { sorted_by: "denominazione" }
+      { sorted_by: "denominazione", appunti_filter: "tutte", adozioni_filter: "tutte" }
     end
 
     def default_value?(key, value)
@@ -14,7 +16,7 @@ module ScuolaFilter::Fields
   end
 
   included do
-    store_accessor :fields, :sorted_by, :terms, :comuni, :con_appunti, :con_adozioni_mie
+    store_accessor :fields, :sorted_by, :terms, :comuni, :appunti_filter, :adozioni_filter
 
     def sorted_by
       (super || default_sorted_by).inquiry
@@ -36,12 +38,26 @@ module ScuolaFilter::Fields
       super(Array(value).filter(&:present?))
     end
 
-    def con_appunti?
-      con_appunti == "true" || con_appunti == true
+    def appunti_filter
+      value = super
+      APPUNTI_OPTIONS.include?(value) ? value : "tutte"
     end
 
-    def con_adozioni_mie?
-      con_adozioni_mie == "true" || con_adozioni_mie == true
+    def con_appunti?
+      appunti_filter == "con_appunti"
+    end
+
+    def adozioni_filter
+      value = super
+      ADOZIONI_OPTIONS.include?(value) ? value : "tutte"
+    end
+
+    def con_mie_adozioni?
+      adozioni_filter == "mie_adozioni"
+    end
+
+    def con_adozioni_concorrenza?
+      adozioni_filter == "adozioni_concorrenza"
     end
   end
 

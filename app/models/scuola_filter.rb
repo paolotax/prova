@@ -33,7 +33,8 @@ class ScuolaFilter < ApplicationRecord
     result = result.search_all_word(terms.first) if terms.present?
     result = result.where(comune: comuni) if comuni.present?
     result = filter_con_appunti(result) if con_appunti?
-    result = filter_con_adozioni_mie(result) if con_adozioni_mie?
+    result = filter_con_mie_adozioni(result) if con_mie_adozioni?
+    result = filter_con_adozioni_concorrenza(result) if con_adozioni_concorrenza?
     result = result.order(sorted_by.to_s)
     result.distinct
   end
@@ -52,7 +53,11 @@ class ScuolaFilter < ApplicationRecord
     scope.joins(:appunti)
   end
 
-  def filter_con_adozioni_mie(scope)
+  def filter_con_mie_adozioni(scope)
     scope.joins(classi: :adozioni).where(adozioni: { mia: true })
+  end
+
+  def filter_con_adozioni_concorrenza(scope)
+    scope.joins(classi: :adozioni).where(adozioni: { mia: false })
   end
 end

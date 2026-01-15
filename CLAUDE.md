@@ -137,6 +137,15 @@ Docker-based deployment with Kamal. Configuration in `config/deploy.yml`.
 - **LLM Integration**: ruby_llm, ruby-openai (schemas in `app/llm_schemas/`)
 - **Counter Caches**: counter_culture for `adozioni_count`, `fascicoli_count`, `confezioni_count` on Libro
 
+## Git Workflow Rules
+
+**IMPORTANT: Commit only when explicitly requested by the user.**
+
+- NON committare automaticamente dopo aver completato le modifiche
+- Prima di committare, avvisare se ci sono altri file modificati o in sospeso
+- Aspettare conferma esplicita dell'utente prima di eseguire `git commit`
+- Mostrare sempre un riepilogo delle modifiche prima del commit
+
 ## Conventions
 
 - English for code, Italian for domain terms (libro, adozione, scuola, cliente)

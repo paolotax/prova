@@ -1,14 +1,35 @@
 <% filter = user_filtering.filter %>
 
-<%= tag.div class: class_names("quick-filter quick-filter--checkbox", { "quick-filter--active": filter.con_appunti? }),
-      data: { filter_show: true } do %>
-  <label class="btn input input--select flex-inline txt-x-small gap-half">
-    <%= check_box_tag :con_appunti, "true", filter.con_appunti?,
-          class: "checkbox",
-          data: {
-            filter_settings_target: "field",
-            action: "change->filter-settings#change change->form#submit"
-          } %>
-    <span>Con appunti</span>
-  </label>
+<%= tag.div class: class_names("quick-filter", { "quick-filter--with-default": filter.appunti_filter == "tutte" }),
+      data: {
+        controller: "dialog filter combobox",
+        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput",
+        combobox_default_value_value: "tutte",
+        combobox_with_default_class: "quick-filter--with-default" } do %>
+  <button type="button" class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#toggle:stop">
+    <span class="overflow-ellipsis" data-combobox-target="label">
+      <%= appunti_filter_label(filter.appunti_filter) %>
+    </span>
+  </button>
+
+  <template data-combobox-target="hiddenFieldTemplate">
+    <%= hidden_field_tag :appunti_filter, nil, data: { filter_settings_target: "field" } %>
+  </template>
+
+  <%= filter_dialog "Filtra per appunti" do %>
+    <strong class="popup__title">Appunti</strong>
+
+    <ul class="popup__list" data-filter-target="list" role="listbox">
+      <% ScuolaFilter::Fields::APPUNTI_OPTIONS.each do |option| %>
+        <%= tag.li class: "popup__item", data: {
+              navigable_list_target: "item", combobox_target: "item", combobox_value: option, combobox_label: appunti_filter_label(option) },
+              role: "checkbox", aria: { checked: filter.appunti_filter == option } do %>
+          <button type="button" class="btn popup__btn" data-action="dialog#close combobox#change filter-settings#change form#submit">
+            <span class="overflow-ellipsis flex-item-grow"><%= appunti_filter_label(option) %></span>
+            <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+          </button>
+        <% end %>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>

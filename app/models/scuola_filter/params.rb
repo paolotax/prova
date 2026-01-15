@@ -3,8 +3,8 @@ module ScuolaFilter::Params
 
   PERMITTED_PARAMS = [
     :sorted_by,
-    :con_appunti,
-    :con_adozioni_mie,
+    :appunti_filter,
+    :adozioni_filter,
     comuni: [],
     terms: []
   ].freeze
@@ -56,8 +56,8 @@ module ScuolaFilter::Params
       params[:sorted_by] = sorted_by
       params[:terms] = terms
       params[:comuni] = comuni
-      params[:con_appunti] = con_appunti
-      params[:con_adozioni_mie] = con_adozioni_mie
+      params[:appunti_filter] = appunti_filter
+      params[:adozioni_filter] = adozioni_filter
     end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
   end
 
