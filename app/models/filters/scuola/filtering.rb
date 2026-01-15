@@ -29,6 +29,10 @@ module Filters
       filter.con_adozioni_concorrenza?
     end
 
+    def controls
+      %w[comuni con_appunti con_adozioni_mie]
+    end
+
     def cache_key
       [
         "filters/scuola_filtering",

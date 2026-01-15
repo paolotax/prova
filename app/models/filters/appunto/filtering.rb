@@ -33,6 +33,10 @@ module Filters
       filter.terms.present? || filter.statuses.present? || filter.states.present?
     end
 
+    def controls
+      %w[statuses states]
+    end
+
     def cache_key
       [
         "filters/appunto_filtering",

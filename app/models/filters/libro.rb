@@ -39,6 +39,8 @@ module Filters
 
       result = result.where(categoria: categorie) if categorie.present?
       result = result.where(editore: editori) if editori.present?
+      result = result.where(disciplina: discipline) if discipline.present?
+      result = result.where(classe: classi) if classi.present?
       result = result.order(sorted_by.to_s)
       result.distinct
     end

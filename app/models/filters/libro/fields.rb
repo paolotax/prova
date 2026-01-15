@@ -8,7 +8,9 @@ module Filters
       PERMITTED_PARAMS = [
         :sorted_by,
         editori: [],
-        categorie: [], 
+        categorie: [],
+        discipline: [],
+        classi: [],
         terms: []
       ].freeze
 
@@ -19,7 +21,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :sorted_by, :terms, :editori, :categorie
+        store_accessor :fields, :sorted_by, :terms, :editori, :categorie, :discipline, :classi
 
         def sorted_by
           (super || default_sorted_by).inquiry
@@ -40,6 +42,30 @@ module Filters
         def editori=(value)
           super(Array(value).filter(&:present?))
         end
+
+        def categorie
+          Array(super)
+        end
+
+        def categorie=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def discipline
+          Array(super)
+        end
+
+        def discipline=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def classi
+          Array(super)
+        end
+
+        def classi=(value)
+          super(Array(value).filter(&:present?))
+        end
       end
 
       def default_sorted_by
@@ -56,6 +82,8 @@ module Filters
           params[:terms] = terms
           params[:editori] = editori
           params[:categorie] = categorie
+          params[:discipline] = discipline
+          params[:classi] = classi
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
       end
     end

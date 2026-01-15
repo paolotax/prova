@@ -1,7 +1,7 @@
 class LibriController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:sorted_by, editori: [], categorie: [], terms: []].freeze
+  FILTER_PARAMS = [:sorted_by, editori: [], categorie: [], discipline: [], classi: [], terms: []].freeze
 
   before_action :authenticate_user!
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_e_sconto ]

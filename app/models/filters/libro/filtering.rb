@@ -21,10 +21,40 @@ module Filters
       editori_disponibili.any?
     end
 
+    def categorie_disponibili
+      @categorie_disponibili ||= user.libri.joins(:categoria).distinct.pluck(:nome_categoria).compact.sort
+    end
+
+    def show_categorie?
+      categorie_disponibili.any?
+    end
+
+    def discipline_disponibili
+      @discipline_disponibili ||= user.libri.distinct.pluck(:disciplina).compact.sort
+    end
+
+    def show_discipline?
+      discipline_disponibili.any?
+    end
+
+    def classi_disponibili
+      @classi_disponibili ||= user.libri.distinct.pluck(:classe).compact.sort
+    end
+
+    def show_classi?
+      classi_disponibili.any?
+    end
+
     def filters_active?
       filter.terms.present? ||
       filter.editori.present? ||
-      filter.categorie.present?
+      filter.categorie.present? ||
+      filter.discipline.present? ||
+      filter.classi.present?
+    end
+
+    def controls
+      %w[editori categorie discipline classi]
     end
 
     def cache_key
