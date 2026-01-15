@@ -198,7 +198,7 @@
         <div class="flex flex-column gap-half">
           <% @appunti.limit(5).each do |appunto| %>
             <%= link_to appunto_path(appunto), class: "panel pad-half border-radius fill-shade", style: "text-decoration: none;" do %>
-              <p class="txt-small overflow-ellipsis" style="color: var(--color-ink);"><%= truncate(appunto.corpo, length: 80) %></p>
+              <p class="txt-small overflow-ellipsis" style="color: var(--color-ink);"><%= appunto.content %></p>
               <p class="txt-xx-small txt-subtle margin-block-start-quarter"><%= time_ago_in_words(appunto.created_at) %> fa</p>
             <% end %>
           <% end %>
