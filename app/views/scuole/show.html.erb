@@ -1,65 +1,22 @@
-<% content_for :title, @scuola.denominazione %>
+<% @page_title = @scuola.denominazione %>
+<% @body_class = "contained-scrolling" %>
 
-<div class="sticky top-header z-10 margin-block-end">
-  <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Scuole", scuole_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
 
-    <% heading.with_description do %>
-      <div class="flex flex-wrap gap-half align-center">
-        <% if @scuola.tipo_scuola.present? %>
-          <span class="badge badge--positive txt-xx-small"><%= @scuola.tipo_scuola %></span>
-        <% end %>
-        <% if @scuola.stato.present? %>
-          <span class="badge <%= @scuola.stato == 'attiva' ? 'badge--positive' : '' %> txt-xx-small">
-            <%= @scuola.stato.capitalize %>
-          </span>
-        <% end %>
-        <% if @scuola.codice_ministeriale.present? %>
-          <span class="badge mono txt-xx-small"><%= @scuola.codice_ministeriale %></span>
-        <% end %>
-      </div>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @scuola.denominazione %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to edit_scuola_path(@scuola), class: "btn" do %>
+      <%= icon_tag "pencil" %>
+      <span class="for-screen-reader">Modifica scuola</span>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Elimina",
-        svg_file: "icon-trash-real.svg",
-        color: "red",
-        url: scuola_path(@scuola),
-        data_attr: {
-          turbo_method: "delete",
-          turbo_confirm: "Sei sicuro di voler eliminare questa scuola?"
-        } %>
-    <% end %>
-
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Modifica",
-        svg_file: "icon-pencil.svg",
-        color: "yellow",
-        url: edit_scuola_path(@scuola) %>
-    <% end %>
-
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Indietro",
-        svg_file: "icon-arrow-long-left.svg",
-        color: "white",
-        url: scuole_path %>
-    <% end %>
-
-    <%= @scuola.denominazione %>
-
-  <% end %>
-</div>
-
-<!-- Breadcrumb -->
-<nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
-  <%= link_to scuole_path, class: "txt-link" do %>
-    Scuole
-  <% end %>
-  <%= icon_tag "chevron-right", size: "small" %>
-  <span class="font-weight-bold overflow-ellipsis"><%= @scuola.denominazione %></span>
-</nav>
+  </div>
+<% end %>
 
 <!-- Main content grid -->
 <div class="flex gap" style="flex-wrap: wrap;">
@@ -177,7 +134,7 @@
 
     <!-- Priority card -->
     <div class="panel shadow pad margin-block-end">
-      <h3 class="txt-small font-weight-bold margin-block-end-half">Priorita</h3>
+      <h3 class="txt-small font-weight-bold margin-block-end-half">Priorità</h3>
       <div class="flex gap-quarter" style="color: var(--color-warning);">
         <% 5.times do |i| %>
           <%= icon_tag "star", size: "medium", style: i < (@scuola.priorita || 0) ? "" : "opacity: 0.2;" %>
@@ -189,14 +146,14 @@
     <div class="panel shadow pad margin-block-end">
       <div class="flex align-center justify-space-between margin-block-end-half">
         <h3 class="txt-small font-weight-bold">Appunti Recenti</h3>
-        <% if @appunti.any? %>
-          <span class="txt-xx-small txt-subtle"><%= @appunti.count %></span>
+        <% if @appunti.where.missing(:closure).any? %>
+          <span class="txt-xx-small txt-subtle"><%= @appunti.where.missing(:closure).count %></span>
         <% end %>
       </div>
 
       <% if @appunti.any? %>
         <div class="flex flex-column gap-half">
-          <% @appunti.limit(5).each do |appunto| %>
+          <% @appunti.where.missing(:closure).limit(5).each do |appunto| %>
             <%= link_to appunto_path(appunto), class: "panel pad-half border-radius fill-shade", style: "text-decoration: none;" do %>
               <p class="txt-small overflow-ellipsis" style="color: var(--color-ink);"><%= appunto.content %></p>
               <p class="txt-xx-small txt-subtle margin-block-start-quarter"><%= time_ago_in_words(appunto.created_at) %> fa</p>

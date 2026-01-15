@@ -1,19 +1,16 @@
-<% content_for :title, "Nuova Scuola" %>
+<% @page_title = "Nuova scuola" %>
 
-<div class="container pad-block">
-  <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
-    <%= link_to scuole_path, class: "txt-link" do %>
-      Scuole
-    <% end %>
-    <%= icon_tag "chevron-right", size: "small" %>
-    <span class="font-weight-bold">Nuova</span>
-  </nav>
-
-  <div class="margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Nuova Scuola</h1>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to  "Scuole", scuole_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
-  <div class="panel shadow pad">
-    <%= render "form", scuola: @scuola %>
-  </div>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Nuova scuola</span>
+  </h1>
+<% end %>
+
+<div class="panel shadow pad">
+  <%= render "form", scuola: @scuola %>
 </div>
+
