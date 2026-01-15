@@ -9,7 +9,11 @@ module FilterScoped
   private
 
   def set_filter
-    @filter = filter_class.from_params(filter_params)
+    if params[:filter_id].present?
+      @filter = Current.user.filters.find(params[:filter_id])
+    else
+      @filter = filter_class.from_params(filter_params)
+    end
   end
 
   def set_user_filtering
@@ -22,9 +26,9 @@ module FilterScoped
     "Filters::#{controller_name.classify.singularize}".constantize
   end
 
-  # Convention: AppuntiController -> Filters::AppuntoFiltering
+  # Convention: AppuntiController -> Filters::Appunto::Filtering ecc...
   def filtering_class
-    "Filters::#{controller_name.classify.singularize}Filtering".constantize
+    "Filters::#{controller_name.classify.singularize}::Filtering".constantize
   end
 
   def filter_params

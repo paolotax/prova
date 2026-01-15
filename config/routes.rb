@@ -76,6 +76,13 @@ Rails.application.routes.draw do
     # Dashboard account
     root "pages#index", as: :account_root
 
+    # Filtri salvati
+    resources :filters, only: [:create, :destroy]
+
+    namespace :filters do
+      resource :settings_refresh, only: :create
+    end
+
     # Dati aziendali (singular resource - one per account)
     resources :aziende
 

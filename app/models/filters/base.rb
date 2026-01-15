@@ -30,48 +30,50 @@ module Filters
     belongs_to :account, default: -> { Current.account }
 
     # STI: trova record per params normalizzati
-    def self.from_params(params)
-      find_by_params(params) || build_from_params(params)
-    end
+    class << self
+      def from_params(params)
+        find_by_params(params) || build_from_params(params)
+      end
 
-    def self.find_by_params(params)
-      find_by(params_digest: digest_params(params))
-    end
+      def find_by_params(params)
+        find_by(params_digest: digest_params(params))
+      end
 
-    def self.digest_params(params)
-      Digest::MD5.hexdigest(normalize_params(params).to_json)
-    end
+      def digest_params(params)
+        Digest::MD5.hexdigest(normalize_params(params).to_json)
+      end
 
-    def self.normalize_params(params)
-      params
-        .to_h
-        .compact_blank
-        .reject { |k, v| default_value?(k, v) }
-        .transform_values { |v| v.is_a?(Array) ? v.map(&:to_s) : v.to_s }
-        .sort_by { |k, _| k.to_s }
-        .to_h
-    end
+      def normalize_params(params)
+        params
+          .to_h
+          .compact_blank
+          .reject { |k, v| default_value?(k, v) }
+          .transform_values { |v| v.is_a?(Array) ? v.map(&:to_s) : v.to_s }
+          .sort_by { |k, _| k.to_s }
+          .to_h
+      end
 
-    def self.build_from_params(params)
-      new.tap do |filter|
-        params.each do |key, value|
-          filter.public_send("#{key}=", value) if filter.respond_to?("#{key}=")
+      def build_from_params(params)
+        new.tap do |filter|
+          params.each do |key, value|
+            filter.public_send("#{key}=", value) if filter.respond_to?("#{key}=")
+          end
         end
       end
-    end
 
-    def self.default_values
-      {}
-    end
+      def default_values
+        {}
+      end
 
-    def self.default_value?(key, value)
-      default_values[key.to_sym].eql?(value)
-    end
+      def default_value?(key, value)
+        default_values[key.to_sym].eql?(value)
+      end
 
-    def self.remember(attrs)
-      create!(attrs)
-    rescue ActiveRecord::RecordNotUnique
-      find_by_params(attrs).tap(&:touch)
+      def remember(attrs)
+        create!(attrs)
+      rescue ActiveRecord::RecordNotUnique
+        find_by_params(attrs).tap(&:touch)
+      end
     end
 
     before_save { self.params_digest = self.class.digest_params(as_params) }
@@ -102,6 +104,15 @@ module Filters
 
     def empty?
       self.class.normalize_params(as_params).blank?
+    end
+
+    def used?
+      !empty?
+    end
+
+    # Per identificare il tipo di filtro nei form
+    def self.filter_type
+      name.demodulize.underscore
     end
 
     def cacheable?

@@ -1,6 +1,7 @@
 class LibriController < ApplicationController
+  include FilterScoped
 
-  include FilterableController
+  FILTER_PARAMS = [:sorted_by, editori: [], categorie: [], terms: []].freeze
 
   before_action :authenticate_user!
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_e_sconto ]
@@ -20,30 +21,16 @@ class LibriController < ApplicationController
     end
   end
 
-  def index
+  def index        
+    #@pagy, @libri = pagy(@filter.libri, items: 25)
 
-    if params[:q].present?
-
-      @libri = Current.account.libri.order(:titolo).search_all_word(params[:q])
-
-    else
-
-      @import = LibriImporter.new
-
-      @libri = Current.account.libri
-                  .includes(:editore, :categoria, :edizione_titolo)
-                  .order("libri.titolo, libri.classe")
-      @libri = filter(@libri.all)
-
-
-      set_page_and_extract_portion_from @libri
+    set_page_and_extract_portion_from @filter.libri
       
-      respond_to do |format|
-        format.turbo_stream
-        format.html
-        format.xlsx 
-        format.json
-      end
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+      format.xlsx 
+      format.json
     end
   end
 

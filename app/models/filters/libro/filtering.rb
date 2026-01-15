@@ -1,6 +1,6 @@
 module Filters
-  # PORO presenter per gestire lo stato UI dei filtri appunti
-  class AppuntoFiltering
+  # PORO presenter per gestire lo stato UI dei filtri scuole
+  class Libro::Filtering
     attr_reader :user, :filter, :expanded
 
     def initialize(user, filter, expanded: false)
@@ -13,29 +13,23 @@ module Filters
       expanded || filters_active?
     end
 
-    def statuses_disponibili
-      ::Appunto::STATO_APPUNTI
+    def editori_disponibili
+      @editori_disponibili ||= user.libri.joins(:editore).distinct.pluck(:editore).compact.sort
     end
 
-    def states_disponibili
-      ::Appunto::FIZZY_STATES
-    end
-
-    def show_statuses?
-      true
-    end
-
-    def show_states?
-      true
+    def show_editori?
+      editori_disponibili.any?
     end
 
     def filters_active?
-      filter.terms.present? || filter.statuses.present? || filter.states.present?
+      filter.terms.present? ||
+      filter.editori.present? ||
+      filter.categorie.present?
     end
 
     def cache_key
       [
-        "filters/appunto_filtering",
+        "filters/libro_filtering",
         user.id,
         filter.params_digest,
         expanded

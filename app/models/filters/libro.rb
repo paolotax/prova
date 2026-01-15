@@ -23,27 +23,26 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Appunto < Base
-    include Appunto::Fields
-    include Appunto::Summarized
+  class Libro < Base
+    include Libro::Fields
+    #include Libro::Summarized
 
-    def appunti(base_scope = nil)
-      base_scope ||= ::Appunto.where(account: account || Current.account)
-      result = base_scope
+    def libri
+      target_account = account || Current.account
+      result = target_account.libri
 
       if terms.present?
-        # Usa search senza le associazioni problematiche (Action Text con UUID)
-        result = result.where(
-          "appunti.nome ILIKE :q OR appunti.body ILIKE :q OR appunti.stato ILIKE :q",
-          q: "%#{terms.first}%"
-        )
+        # PgSearch non è compatibile con DISTINCT, quindi usiamo una subquery
+        ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
+        result = target_account.libri.where(id: ids).includes(:editore, :categoria)
       end
 
-      result = result.where(stato: statuses) if statuses.present?
-      result = result.with_any_state(states) if states.present?
-      result
+      result = result.where(categoria: categorie) if categorie.present?
+      result = result.where(editore: editori) if editori.present?
+      result = result.order(sorted_by.to_s)
+      result.distinct
     end
 
-    alias_method :results, :appunti
+    alias_method :results, :libri
   end
 end

@@ -25,11 +25,18 @@
 module Filters
   class Scuola < Base
     include Scuola::Fields
+    include Scuola::Summarized
 
     def scuole
       target_account = account || Current.account
       result = target_account.scuole.includes(:classi, :appunti)
-      result = result.search_all_word(terms.first) if terms.present?
+
+      if terms.present?
+        # PgSearch non è compatibile con DISTINCT, quindi usiamo una subquery
+        ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
+        result = target_account.scuole.where(id: ids).includes(:classi, :appunti)
+      end
+
       result = result.where(comune: comuni) if comuni.present?
       result = filter_con_appunti(result) if con_appunti?
       result = filter_con_mie_adozioni(result) if con_mie_adozioni?

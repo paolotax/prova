@@ -22,10 +22,11 @@
   </div>
 <% end %>
 
-<%= render "scuola_filters/settings",
+<%= render "filters/settings",
       filter_url: scuole_path,
       user_filtering: @user_filtering,
-      no_filtering_url: scuole_path %>
+      no_filtering_url: scuole_path,
+      filter_type: "scuola" %>
 
 <%= turbo_frame_tag "scuole_list" do %>
   <% if @scuole.any? %>

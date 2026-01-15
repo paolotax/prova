@@ -80,6 +80,7 @@ class User < ApplicationRecord
   has_many :filters, class_name: "Filters::Base", foreign_key: :creator_id, dependent: :destroy
   has_many :scuola_filters, class_name: "Filters::Scuola", foreign_key: :creator_id, dependent: :destroy
   has_many :appunto_filters, class_name: "Filters::Appunto", foreign_key: :creator_id, dependent: :destroy
+  has_many :libro_filters, class_name: "Filters::Libro", foreign_key: :creator_id, dependent: :destroy
 
   enum :role, { scagnozzo: 0, sbocciatore: 1, omaccio: 2, admin: 3 }
 

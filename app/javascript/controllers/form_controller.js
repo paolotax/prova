@@ -1,14 +1,35 @@
 import { Controller } from "@hotwired/stimulus"
-import debounce from "debounce";
+import { debounce } from "helpers/timing_helpers";
 
-// Connects to data-controller="form"
 export default class extends Controller {
+  static targets = [ "cancel", "submit", "input" ]
+
+  static values = {
+    debounceTimeout: { type: Number, default: 300 }
+  }
 
   initialize() {
-    this.submit = debounce(this.submit.bind(this), 300)
+    this.debouncedSubmit = debounce(this.debouncedSubmit.bind(this), this.debounceTimeoutValue)
   }
 
   submit() {
-    this.element.requestSubmit();
+    this.element.requestSubmit()
+  }
+
+  debouncedSubmit(event) {
+    this.submit(event)
+  }
+
+  submitToTopTarget(event) {
+    this.element.setAttribute("data-turbo-frame", "_top")
+    this.submit()
+  }
+
+  reset() {
+    this.element.reset()
+  }
+
+  cancel() {
+    this.cancelTarget?.click()
   }
 }

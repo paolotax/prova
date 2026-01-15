@@ -192,5 +192,15 @@
       display: none;
     }
   }
+
+  .filters__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+  }
+
+  .saved-filters-dropdown {
+    position: relative;
+  }
 }
 

@@ -5,6 +5,7 @@
         toggle_class_toggle_class: "filters--expanded",
         filter_settings_filters_set_class: "filters--has-filters-set",
         filter_settings_no_filtering_url_value: no_filtering_url,
+        filter_settings_refresh_url_value: filters_settings_refresh_path(filter_type: "appunto"),
         turbo_permanent: true } do %>
   <%= form_with url: filter_url, method: :get, class: "display-contents", data: {
         controller: "form",
@@ -18,5 +19,9 @@
     <%= render "appunto_filters/settings/controls", user_filtering: user_filtering, form: form %>
     <%= render "appunto_filters/settings/toggle", user_filtering: user_filtering %>
   <% end %>
-  <%= render "appunto_filters/settings/manage", user_filtering: user_filtering, no_filtering_url: no_filtering_url %>
+  <div class="filters__actions gap-half">
+    <%= render "filters/saved_filters", filter_type: "appunto" %>
+    <%= render "filters/filter_toggle", filter: user_filtering.filter %>
+    <%= render "appunto_filters/settings/manage", user_filtering: user_filtering, no_filtering_url: no_filtering_url %>
+  </div>
 <% end %>

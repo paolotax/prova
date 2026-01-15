@@ -1,6 +1,6 @@
 module Filters
   # PORO presenter per gestire lo stato UI dei filtri scuole
-  class ScuolaFiltering
+  class Scuola::Filtering
     attr_reader :user, :filter, :expanded
 
     def initialize(user, filter, expanded: false)

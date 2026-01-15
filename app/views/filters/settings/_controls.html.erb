@@ -1,0 +1,12 @@
+<% if controller_name.classify.constantize.model_name == "Scuola" %>
+    <%= render "scuole/filters/settings/comuni", user_filtering: user_filtering %>
+    <%= render "scuole/filters/settings/con_appunti", user_filtering: user_filtering %>
+    <%= render "scuole/filters/settings/con_adozioni_mie", user_filtering: user_filtering %>
+
+<% elsif controller_name.classify.constantize.model_name == "Appunto" %>
+    <%= render "appunto_filters/settings/statuses", user_filtering: user_filtering %>
+    <%= render "appunto_filters/settings/states", user_filtering: user_filtering %>
+
+<% else %>
+    <%= render "filters/settings/editori", user_filtering: user_filtering %>
+<% end %>

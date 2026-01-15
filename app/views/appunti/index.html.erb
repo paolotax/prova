@@ -45,10 +45,11 @@
       placeholder: "Cerca appunti..." %>
 <% end %>
 
-<%= render "appunto_filters/settings",
+<%= render "filters/settings",
       filter_url: appunti_path,
       user_filtering: @user_filtering,
-      no_filtering_url: appunti_path %>
+      no_filtering_url: appunti_path,
+      filter_type: "appunto" %>
 
 <%= turbo_frame_tag "search_results" do %>
   <% if @appunti.any? %>

@@ -1,0 +1,26 @@
+<% saved_filters = Current.user.send("#{filter_type}_filters").order(updated_at: :desc).limit(10) %>
+
+<% if saved_filters.any? %>
+  <%= tag.div class: "saved-filters-dropdown",
+        data: {
+          controller: "dialog",
+          action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside" } do %>
+    <button type="button" class="btn txt-x-small" data-action="click->dialog#toggle:stop" title="Filtri salvati (<%= saved_filters.count %>)">
+      <%= icon_tag "bookmark" %>
+    </button>
+
+    <%= filter_dialog "Filtri salvati" do %>
+      <strong class="popup__title">Filtri salvati</strong>
+
+      <ul class="popup__list" role="listbox">
+        <% saved_filters.each do |saved_filter| %>
+          <li class="popup__item" data-navigable-list-target="item">
+            <%= link_to url_for(filter_id: saved_filter.id), class: "popup__btn btn", data: { action: "dialog#close" } do %>
+              <span class="overflow-ellipsis flex-item-grow txt-small"><%= saved_filter.summary %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+<% end %>

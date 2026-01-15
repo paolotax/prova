@@ -1,13 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 import { debounce } from "helpers/timing_helpers";
+import { post } from "@rails/request.js"
 
 export default class extends Controller {
   static classes = ["filtersSet"]
   static targets = ["field", "form"]
-  static values = { noFilteringUrl: String, frameId: { type: String, default: "scuole_list" } }
+  static values = { noFilteringUrl: String, refreshUrl: String, frameId: { type: String, default: "scuole_list" } }
 
   initialize() {
     this.debouncedToggle = debounce(this.#toggle.bind(this), 50)
+    this.debouncedRefresh = debounce(this.#refreshSaveToggleButton.bind(this), 500)
   }
 
   connect() {
@@ -16,6 +18,13 @@ export default class extends Controller {
 
   change(event) {
     this.#toggle()
+    this.#refreshSaveToggleButton()
+  }
+
+  // Called on search input - debounced refresh
+  searchChange(event) {
+    this.#toggle()
+    this.debouncedRefresh()
   }
 
   resetIfNoFiltering(event) {
@@ -53,5 +62,36 @@ export default class extends Controller {
 
   #showNoFilteringUrl() {
     Turbo.visit(this.noFilteringUrlValue, { frame: this.frameIdValue, action: "advance" })
+  }
+
+  #refreshSaveToggleButton() {
+    if (!this.hasRefreshUrlValue) return
+
+    post(this.refreshUrlValue, {
+      body: this.#collectFilterFormData(),
+      responseKind: "turbo-stream"
+    })
+  }
+
+  #collectFilterFormData() {
+    const formData = new FormData()
+
+    if (this.hasFormTarget) {
+      // Collect all hidden fields (like Fizzy does)
+      const hiddenFields = this.formTarget.querySelectorAll('input[type="hidden"]:not([disabled])[name]')
+      hiddenFields.forEach(field => {
+        formData.append(field.name, field.value)
+      })
+
+      // Also collect search/text fields that have values
+      const textFields = this.formTarget.querySelectorAll('input[type="search"][name], input[type="text"][name]')
+      textFields.forEach(field => {
+        if (field.value?.trim()) {
+          formData.append(field.name, field.value.trim())
+        }
+      })
+    }
+
+    return formData
   }
 }

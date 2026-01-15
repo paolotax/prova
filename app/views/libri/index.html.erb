@@ -1,54 +1,34 @@
-<% content_for :title, "Libri" %>
+<% @page_title = "Libri" %>
+<% @body_class = "contained-scrolling" %>
 
 <% content_for :head do %>
-  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%#= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
   <%= combobox_style_tag "data-turbo-track": "reload" %>
 <% end %>
 
 <% content_for :header do %>
-    <%= component "heading/with_actions" do |heading| %>
-        
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                caption: "Importa",
-                svg_file: "icon-folder-arrow-down.svg",
-                color: "blue",
-                url: new_libri_importer_path %>
-        <% end %>
-            
-        <% heading.with_action do %>    
-            <%= component 'tax_button',
-                caption: "Excel",
-                svg_file: "icon-excel-bis.svg",
-                color: "green",
-                url: url_for( controller: "libri", action: "index", format: :xlsx, params: request.query_parameters ),
-                data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= component 'tax_button',  
-                    caption: "Nuovo",
-                    svg_file: "icon-plus.svg",
-                    color: "blue",
-                    url: url_for( controller: "libri", action: "new", model: @adozione ),
-                    data_attr: { turbo_frame: :modal, action: "click->dialog#open" }
-             %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= tag.div class: "block xl:hidden" do %>
-                <%= component 'tax_button',
-                    caption: "Filtra",
-                    svg_file: "icon-funnel.svg",
-                    color: "white",
-                    url: filtra_libri_path( params: request.query_parameters ),
-                    data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
-            <% end %>
-        <% end %>
-
-        <%= h1 {"Libri"} %>
-
+  <div class="header__actions header__actions--start">
+    <%= link_to libri_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document" %>
+      <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
+    <%= link_to new_libri_importer_path, class: "btn" do %>
+      <%= icon_tag "document" %>
+      <span class="for-screen-reader">Importa Libri</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Libri</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_libro_path, class: "btn" do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuovo appunto</span>
+    <% end %>
+  </div>
 <% end %>
 
 <% if hotwire_native_app? %>
@@ -59,13 +39,18 @@
         placeholder: "Cerca..." %>
 <% end %>
 
+<%= render "filters/settings",
+      filter_url: libri_path,
+      filter_type: "libro",
+      user_filtering: @user_filtering,
+      no_filtering_url: libri_path %>
 
 <%= turbo_frame_tag :search_results do %>
 
     <%= tag.div class: "flex flex-col xl:pr-[15rem]", data: { controller: "bulk-actions" } do %>
 
-        <%= render "shared/active_filters", collection: @libri %>
-        <%= render "libri/bulk_actions/form" %>
+        <%#= render "shared/active_filters", collection: @libri %>
+        <%#= render "libri/bulk_actions/form" %>
 
         <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6" do %>
             <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
@@ -85,7 +70,7 @@
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 xl:block">
         <!-- Secondary column (hidden on smaller screens) -->
-        <%= render partial: "filter_form", locals: { reload: true } %>
+        <%#= render partial: "filter_form", locals: { reload: true } %>
     </aside>
 
 <% end %>

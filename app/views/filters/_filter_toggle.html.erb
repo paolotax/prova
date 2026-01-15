@@ -1,0 +1,13 @@
+<div id="filter-settings-save-toggle">
+  <% if filter.persisted? %>
+    <%= button_to filter_path(filter), method: :delete, class: "btn btn--reversed txt-x-small", data: { controller: "tooltip", tooltip_content_value: "Rimuovi dai salvati" }, form_class: "inline" do %>
+      <%= icon_tag "bookmark" %>
+      <span class="for-screen-reader">Rimuovi filtro salvato</span>
+    <% end %>
+  <% elsif filter.used? %>
+    <%= button_to filters_path(filter.as_params.merge(filter_type: filter.class.filter_type)), method: :post, class: "btn txt-x-small", data: { controller: "tooltip", tooltip_content_value: "Salva filtro" }, form_class: "inline" do %>
+      <%= icon_tag "bookmark-outline" %>
+      <span class="for-screen-reader">Salva filtro</span>
+    <% end %>
+  <% end %>
+</div>

@@ -92,6 +92,17 @@ class Appunto < ApplicationRecord
                     tsearch: { any_word: false, prefix: true }
                   }
 
+  # Scope semplificato per filtri (evita problemi UUID con Action Text)
+  pg_search_scope :search_basic,
+                  against: search_fields,
+                  associated_against: {
+                    import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE],
+                    import_adozione: %i[CODICESCUOLA CODICEISBN EDITORE]
+                  },
+                  using: {
+                    tsearch: { any_word: false, prefix: true }
+                  }
+
   include Searchable
 
   search_on :nome, :body, :email, :telefono, :stato,
@@ -109,8 +120,7 @@ class Appunto < ApplicationRecord
     'closed'     => 'Chiuso',
     'postponed'  => 'Rimandato',
     'consegnato' => 'Consegnato',
-    'pagato'     => 'Pagato',
-    'registrato' => 'Registrato'
+
   }.freeze
 
 
