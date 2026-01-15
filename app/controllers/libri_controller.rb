@@ -149,9 +149,6 @@ class LibriController < ApplicationController
     end
   end
 
-  def filtra  
-  end
-
   private
 
     def set_libro
@@ -160,20 +157,5 @@ class LibriController < ApplicationController
 
     def libro_params
       params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :cm, :prezzo_in_cents, :prezzo, :prezzo_suggerito, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
-    end
-
-    def filter_params
-      {
-        search: params["search"],
-        titolo: params["titolo"],
-        editore: params["editore"],
-        disciplina: params["disciplina"],
-        categoria: params["categoria"],
-        classe: params["classe"],
-        ordini: params["ordini"],
-        incompleti: params["incompleti"],
-        fascicoli: params["fascicoli"],
-        confezioni: params["confezioni"]
-      }
     end
 end

@@ -187,7 +187,6 @@ Rails.application.routes.draw do
 
     resources :libri do
       collection do
-        get 'filtra'
         get 'crosstab'
         get 'scarico_fascicoli'
       end

@@ -35,7 +35,6 @@
 	<%= link_to "Nuovo Libro", new_libro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
     <%= render "shared/native_search_filter",
         url: libri_path,
-        filter_url: filtra_libri_path(params: request.query_parameters),
         placeholder: "Cerca..." %>
 <% end %>
 
@@ -52,7 +51,7 @@
         <%#= render "shared/active_filters", collection: @libri %>
         <%#= render "libri/bulk_actions/form" %>
 
-        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6" do %>
+        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 lg:grid-cols-2 gap-half" do %>
             <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
             
             <%= render @page.records %>

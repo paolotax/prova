@@ -25,7 +25,7 @@
 module Filters
   class Libro < Base
     include Libro::Fields
-    #include Libro::Summarized
+    include Libro::Summarized
 
     def libri
       target_account = account || Current.account
