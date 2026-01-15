@@ -76,3 +76,7 @@ swarm.log
 
 # Playwright
 .playwright-mcp/
+
+# Claude-mem generated CLAUDE.md files (keep only root)
+**/CLAUDE.md
+!/CLAUDE.md
