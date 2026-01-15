@@ -100,10 +100,6 @@ class Appunto < ApplicationRecord
             attachments_blobs: [:filename],
             import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
 
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::AppuntoFilterProxy
-  end
 
   STATO_APPUNTI = ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare', 'completato', 'archiviato']
 
@@ -117,40 +113,23 @@ class Appunto < ApplicationRecord
     'registrato' => 'Registrato'
   }.freeze
 
-  FILTERS = [
-    ['Tutti',  '/appunti'],
-    ['Oggi',   '/appunti?filter=oggi'],
-    ['Domani', '/appunti?filter=domani'],
-    ['In sospeso', '/appunti?stato=in_sospeso'],
-    ['In settimana', '/appunti?stato=in_settimana'],
-    ['Non archiviati', '/appunti?filter=non_archiviati'],
-    ['Archiviati', '/appunti?stato=archiviato']
-  ]
-
-  after_initialize :set_default_stato, if: :new_record?
-
-  def set_default_stato
-    self.stato ||= 'da fare'
-  end
 
   delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
 
-  scope :dell_utente, ->(user) { where(user_id: user.id) }
-
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]) }
 
-  scope :da_fare, -> { where(stato: 'da fare').non_saggi }
-  scope :in_evidenza, -> { where(stato: 'in evidenza').non_saggi }
-  scope :in_settimana, -> { where(stato: 'in settimana').non_saggi }
-  scope :da_pagare, -> { where(stato: 'da pagare').non_saggi }
-  scope :in_visione, -> { where(stato: 'in visione').non_saggi }
-  scope :completati, -> { where(stato: 'completato').non_saggi }
+  # scope :da_fare, -> { where(stato: 'da fare').non_saggi }
+  # scope :in_evidenza, -> { where(stato: 'in evidenza').non_saggi }
+  # scope :in_settimana, -> { where(stato: 'in settimana').non_saggi }
+  # scope :da_pagare, -> { where(stato: 'da pagare').non_saggi }
+  # scope :in_visione, -> { where(stato: 'in visione').non_saggi }
+  # scope :completati, -> { where(stato: 'completato').non_saggi }
 
-  scope :archiviati, -> { where(stato: 'archiviato').non_saggi }
+  # scope :archiviati, -> { where(stato: 'archiviato').non_saggi }
 
-  scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
-  scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
+  # scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
+  # scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
+  # scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
 
   # Scope per filtrare per State Records Fizzy (OR logic tra stati selezionati)
   scope :with_any_state, ->(states) {
@@ -169,15 +148,15 @@ class Appunto < ApplicationRecord
   }
 
   # non includono clienti REFACTOR appunto clientable
-  scope :nel_baule_di_oggi, lambda {
-    where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  }
-  scope :nel_baule_di_domani, lambda {
-    where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  }
-  scope :nel_baule_del_giorno, lambda { |day|
-    where(import_scuola_id: Current.user.tappe.del_giorno(day).where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  }
+  # scope :nel_baule_di_oggi, lambda {
+  #   where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
+  # }
+  # scope :nel_baule_di_domani, lambda {
+  #   where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
+  # }
+  # scope :nel_baule_del_giorno, lambda { |day|
+  #   where(import_scuola_id: Current.user.tappe.del_giorno(day).where(tappable_type: 'ImportScuola').pluck(:tappable_id))
+  # }
 
   # scope :saggi, -> { where(nome: 'saggio').where.not(import_adozione_id: nil) }
   # scope :seguiti, -> { where(nome: 'seguito').where.not(import_adozione_id: nil) }
