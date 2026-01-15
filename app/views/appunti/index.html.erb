@@ -45,46 +45,60 @@
       placeholder: "Cerca appunti..." %>
 <% end %>
 
+<%= render "appunto_filters/settings",
+      filter_url: appunti_path,
+      user_filtering: @user_filtering,
+      no_filtering_url: appunti_path %>
+
 <%= turbo_frame_tag "search_results" do %>
+  <% if @appunti.any? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @pagy.count %> <%= @pagy.count == 1 ? "appunto trovato" : "appunti trovati" %>
+    </p>
 
-  <%= tag.div class: "flex flex-column", style: "padding-right: 18rem;", data: { controller: "bulk-actions" } do %>
+    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+      <%= render "appunti/bulk_actions/form" %>
 
-    <%= render "shared/active_filters", collection: @appunti %>
-    <%= render "appunti/bulk_actions/form" %>
+      <%= turbo_frame_tag :appunti,
+          data: { controller: "list-observer",
+              list_observer_counter_id_value: "collection_counter",
+              list_observer_item_selector_value: ".item",
+              list_observer_target: "list"
+            },
+          class: "cards cards--list",
+          style: "display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;" do %>
 
-    <%= turbo_frame_tag :appunti,
-        data: { controller: "list-observer",
-            list_observer_counter_id_value: "collection_counter",
-            list_observer_item_selector_value: ".item",
-            list_observer_target: "list"
-          },
-        class: "cards cards--list",
-        style: "display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;" do %>
+        <%= render @appunti %>
+      <% end %>
 
-      <p class="hidden only:block pad txt-center" style="grid-column: 1 / -1;">
-        Whoops! Non ci sono appunti.
-
-        <% if current_user.user_scuole.blank? %>
-          <%= link_to " Devi impostare la Zona nel tuo profilo", user_path(current_user), data: { turbo_frame: "_top"}, class: "txt-link font-weight-bold" %>
+      <% if @pagy.next %>
+        <%= turbo_frame_tag :pagination,
+            src: appunti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)),
+            loading: :lazy do %>
+          <div role="status" class="flex justify-center" style="grid-column: 1 / -1;">
+            <%= icon "bouncing-dots", library: :animated, class: "txt-subtle", style: "width: 2rem; height: 2rem;" %>
+            <span class="sr-only">Loading...</span>
+          </div>
         <% end %>
-      </p>
-      <%= render @appunti %>
-    <% end %>
-
-    <% if @pagy.next %>
-      <%= turbo_frame_tag :pagination,
-          src: appunti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)),
-          loading: :lazy do %>
-        <div role="status" class="flex justify-center" style="grid-column: 1 / -1;">
-          <%= icon "bouncing-dots", library: :animated, class: "txt-subtle", style: "width: 2rem; height: 2rem;" %>
-          <span class="sr-only">Loading...</span>
-        </div>
       <% end %>
     <% end %>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "note", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessun appunto trovato</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
+        <% else %>
+          Inizia aggiungendo il primo appunto.
+        <% end %>
+      </p>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_appunto_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Appunto
+        <% end %>
+      <% end %>
+    </div>
   <% end %>
-
-  <aside class="sidebar-right hide-on-mobile">
-    <%= render partial: "filter_form", locals: { reload: true } %>
-  </aside>
-
 <% end %>

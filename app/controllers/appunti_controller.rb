@@ -4,11 +4,12 @@ class AppuntiController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
+  before_action :set_filter, only: [:index]
+  before_action :set_user_filtering, only: [:index]
 
 
 
   def index
-
     @appunti = current_user.appunti.non_saggi
                 .with_attached_attachments
                 .with_attached_image
@@ -22,12 +23,13 @@ class AppuntiController < ApplicationController
       @appunti = @foglio_scuola.appunti_non_archiviati
     end
 
-    @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
+    # Applica filtri dal nuovo sistema Fizzy
+    @appunti = @filter.appunti(@appunti)
 
+    # Legacy filters (mantieni per retrocompatibilità)
+    @appunti = @appunti.search_all_word(params[:search]) if params[:search].present?
     @appunti = @appunti.search(params[:q]) if params[:q]
-
     @appunti = filter_appunti(@appunti)
-
     @appunti = filter(@appunti.all)
 
     # Per il badge del conteggio dei record e pagy_countless
@@ -231,6 +233,22 @@ class AppuntiController < ApplicationController
         statuses: params["statuses"],
         del_giorno: params["del_giorno"]
       }
+    end
+
+    def set_filter
+      @filter = AppuntoFilter.from_params(appunto_filter_params)
+    end
+
+    def appunto_filter_params
+      params.permit(terms: [], statuses: [], states: [])
+    end
+
+    def set_user_filtering
+      @user_filtering = AppuntoFiltering.new(Current.user, @filter, expanded: expanded_param)
+    end
+
+    def expanded_param
+      ActiveRecord::Type::Boolean.new.cast(params[:expand_all])
     end
 
     def filter_appunti(appunti)

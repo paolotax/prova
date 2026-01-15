@@ -107,6 +107,16 @@ class Appunto < ApplicationRecord
 
   STATO_APPUNTI = ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare', 'completato', 'archiviato']
 
+  # State Records Fizzy (chiave => label italiano)
+  FIZZY_STATES = {
+    'golden'     => 'In evidenza',
+    'closed'     => 'Chiuso',
+    'postponed'  => 'Rimandato',
+    'consegnato' => 'Consegnato',
+    'pagato'     => 'Pagato',
+    'registrato' => 'Registrato'
+  }.freeze
+
   FILTERS = [
     ['Tutti',  '/appunti'],
     ['Oggi',   '/appunti?filter=oggi'],
@@ -141,6 +151,22 @@ class Appunto < ApplicationRecord
   scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
   scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
   scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
+
+  # Scope per filtrare per State Records Fizzy (OR logic tra stati selezionati)
+  scope :with_any_state, ->(states) {
+    return all if states.blank?
+
+    subqueries = []
+    subqueries << Goldness.where(goldenable_type: 'Appunto').select(:goldenable_id) if states.include?('golden')
+    subqueries << Closure.where(closeable_type: 'Appunto').select(:closeable_id) if states.include?('closed')
+    subqueries << NotNow.where(not_nowable_type: 'Appunto').select(:not_nowable_id) if states.include?('postponed')
+    subqueries << Consegna.where(consegnabile_type: 'Appunto').select(:consegnabile_id) if states.include?('consegnato')
+    subqueries << Pagamento.where(pagabile_type: 'Appunto').select(:pagabile_id) if states.include?('pagato')
+    subqueries << Registrazione.where(registrabile_type: 'Appunto').select(:registrabile_id) if states.include?('registrato')
+
+    return all if subqueries.empty?
+    where(id: subqueries.reduce { |union, sq| union.union(sq) })
+  }
 
   # non includono clienti REFACTOR appunto clientable
   scope :nel_baule_di_oggi, lambda {
