@@ -6,7 +6,6 @@ class AppuntiController < ApplicationController
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
 
 
-  before_action :ensure_frame_response, only: %i[ new edit ], unless: :hotwire_native_app?
 
   def index
 
@@ -213,10 +212,6 @@ class AppuntiController < ApplicationController
   end
 
   private
-
-    def ensure_frame_response
-      redirect_to root_path unless turbo_frame_request?
-    end
 
     def set_appunto
       @appunto = Appunto.find(params[:id])

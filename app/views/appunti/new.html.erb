@@ -1,13 +1,15 @@
-<% unless hotwire_native_app? %>
-    <%= render "shared/turbo_dialog" do %>
-        <div data-action="turbo:submit-end->old-dialog#submitEnd" class="full-width">
-            <h2 class="font-weight-bold txt-x-large">Crea Appunto</h2>
-            <%= render "form", appunto: @appunto %>
-        </div>
-    <% end %>
-<% else %>
-    <% content_for :title, "Crea Appunto" %>
-    <div class="pad">
-        <%= render "form", appunto: @appunto %>
-    </div>
+<% @page_title = "Nuovo appunto" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Appunti", appunti_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Nuovo appunto</span>
+  </h1>
 <% end %>
+
+<div class="panel shadow pad">
+  <%= render "form", appunto: @appunto %>
+</div>

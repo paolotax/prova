@@ -1,53 +1,53 @@
-<%= render DropdownComponent.new do |dropdown| %>
-  <%= dropdown.with_button do %>
-    <div class="border-radius pad-half fill-shade txt-subtle cursor-pointer" style="margin-right: 0.5rem; margin-bottom: 0.25rem;">
-      <% case appunto.stato %>
-      <% when "da fare" %>
-        <%= inline_svg_tag "icon-da-fare.svg", style: "width: 1.5rem; height: 1.5rem;" %>
-      <% when "in evidenza" %>
-        <%= inline_svg_tag "icon-star.svg", style: "width: 1.5rem; height: 1.5rem; color: var(--color-warning);" %>
-      <% when "in settimana" %>
-        <%= inline_svg_tag "icon-calendar.svg", style: "width: 1.5rem; height: 1.5rem; color: var(--color-link);" %>
-      <% when "in visione" %>
-        <%= inline_svg_tag "icon-eye.svg", style: "width: 1.5rem; height: 1.5rem; color: var(--color-notice);" %>
-      <% when "da pagare" %>
-        <%= inline_svg_tag "icon-credit-card.svg", style: "width: 1.5rem; height: 1.5rem; color: var(--color-positive);" %>
-      <% when "completato" %>
-        <%= inline_svg_tag "icon-check.svg", style: "width: 1.5rem; height: 1.5rem; color: var(--color-positive);" %>
-      <% when "archiviato" %>
-        <%= inline_svg_tag "icon-archive.svg", style: "width: 1.5rem; height: 1.5rem;" %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% Appunto::STATO_APPUNTI.each do |stato| %>
-    <%= dropdown.with_item do %>
-      <%= button_to appunto_path(appunto), method: :put,
-          class: "dropdown-item full-width txt-left #{'fill-shade' if stato == appunto.stato}",
-          data: { turbo_frame: :_top },
-          role: "menuitem",
-          tabindex: "-1" do |f| %>
-        <%= hidden_field_tag "appunto[stato]", stato %>
-        <div class="flex align-center gap-half">
-          <% case stato %>
-          <% when "da fare" %>
-            <%= inline_svg_tag "icon-da-fare.svg", style: "width: 1.25rem; height: 1.25rem;" %>
-          <% when "in evidenza" %>
-            <%= inline_svg_tag "icon-star.svg", style: "width: 1.25rem; height: 1.25rem; color: var(--color-warning);" %>
-          <% when "in settimana" %>
-            <%= inline_svg_tag "icon-calendar.svg", style: "width: 1.25rem; height: 1.25rem; color: var(--color-link);" %>
-          <% when "in visione" %>
-            <%= inline_svg_tag "icon-eye.svg", style: "width: 1.25rem; height: 1.25rem; color: var(--color-notice);" %>
-          <% when "da pagare" %>
-            <%= inline_svg_tag "icon-credit-card.svg", style: "width: 1.25rem; height: 1.25rem; color: var(--color-positive);" %>
-          <% when "completato" %>
-            <%= inline_svg_tag "icon-check.svg", style: "width: 1.25rem; height: 1.25rem; color: var(--color-positive);" %>
-          <% when "archiviato" %>
-            <%= inline_svg_tag "icon-archive.svg", style: "width: 1.25rem; height: 1.25rem;" %>
-          <% end %>
-          <span class="<%= 'font-weight-bold' if stato == appunto.stato %>" style="white-space: nowrap; padding-right: 0.5rem;"><%= stato.titleize %></span>
-        </div>
-      <% end %>
+<div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+  <button type="button" data-action="click->dialog#toggle" class="btn btn--icon fill-shade txt-subtle">
+    <% case appunto.stato %>
+    <% when "da fare" %>
+      <%= icon_tag "circle", style: "color: var(--color-ink-light);" %>
+    <% when "in evidenza" %>
+      <%= icon_tag "star", style: "color: var(--color-warning);" %>
+    <% when "in settimana" %>
+      <%= icon_tag "calendar", style: "color: var(--color-link);" %>
+    <% when "in visione" %>
+      <%= icon_tag "eye", style: "color: var(--color-notice);" %>
+    <% when "da pagare" %>
+      <%= icon_tag "credit-card", style: "color: var(--color-positive);" %>
+    <% when "completato" %>
+      <%= icon_tag "check-circle", style: "color: var(--color-positive);" %>
+    <% when "archiviato" %>
+      <%= icon_tag "archive", style: "color: var(--color-ink);" %>
+    <% else %>
+      <%= icon_tag "circle", style: "color: var(--color-ink-light);" %>
     <% end %>
-  <% end %>
-<% end %>
+  </button>
+
+  <dialog class="popup panel flex-column" data-dialog-target="dialog">
+    <ul class="popup__list">
+      <% Appunto::STATO_APPUNTI.each do |stato| %>
+        <li class="popup__item <%= 'fill-shade' if stato == appunto.stato %>">
+          <%= button_to appunto_path(appunto), method: :put, class: "popup__btn", data: { turbo_frame: :_top } do %>
+            <%= hidden_field_tag "appunto[stato]", stato %>
+            <div class="flex align-center gap-half">
+              <% case stato %>
+              <% when "da fare" %>
+                <%= icon_tag "circle", size: "small", style: "color: var(--color-ink-light);" %>
+              <% when "in evidenza" %>
+                <%= icon_tag "star", size: "small", style: "color: var(--color-warning);" %>
+              <% when "in settimana" %>
+                <%= icon_tag "calendar", size: "small", style: "color: var(--color-link);" %>
+              <% when "in visione" %>
+                <%= icon_tag "eye", size: "small", style: "color: var(--color-notice);" %>
+              <% when "da pagare" %>
+                <%= icon_tag "credit-card", size: "small", style: "color: var(--color-positive);" %>
+              <% when "completato" %>
+                <%= icon_tag "check-circle", size: "small", style: "color: var(--color-positive);" %>
+              <% when "archiviato" %>
+                <%= icon_tag "archive", size: "small", style: "color: var(--color-ink);" %>
+              <% end %>
+              <span class="<%= 'font-weight-bold' if stato == appunto.stato %>"><%= stato.titleize %></span>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </dialog>
+</div>

@@ -2,31 +2,22 @@
 <% @body_class = "contained-scrolling" %>
 
 <% content_for :head do %>
-  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
   <%= combobox_style_tag "data-turbo-track": "reload" %>
 <% end %>
-  
+
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <div class="flex">
+    <%= link_to appunti_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document" %>
+      <span class="for-screen-reader">Esporta in excel</span>
+    <% end %>
 
-      <%= component 'tax_button',
-            caption: "Excel",
-            svg_file: "icon-excel-bis.svg",
-            color: "green",
-            url: url_for( controller: "appunti", action: "index", format: :xlsx, params: request.query_parameters ),
-            data_attr: { controller: "link-modifier", link_modifier_target: "link" }  %>
-
-
-          <%= component 'tax_button',
-            caption: "Filtra",
-            svg_file: "icon-funnel.svg",
-            color: "white",
-            url: filtra_appunti_path(params: request.query_parameters),
-            data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
-
-    </div>
-    <%#= link_to_webhooks(@board) if Current.user.admin? %>
+    <%= link_to filtra_appunti_path(params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
+      <%= icon_tag "filter" %>
+      <span class="for-screen-reader">Filtra</span>
+    <% end %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -34,12 +25,10 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= component 'tax_button',
-          caption: "Nuovo",
-          svg_file: "icon-plus.svg",
-          color: "blue",
-          url: url_for( controller: "appunti", action: "new", model: @appunto ),
-          data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+    <%= link_to new_appunto_path, class: "btn" do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuovo appunto</span>
+    <% end %>
   </div>
 <% end %>
 
@@ -58,7 +47,7 @@
 
 <%= turbo_frame_tag "search_results" do %>
 
-  <%= tag.div class: "flex flex-column", style: "padding-right: 18rem;", data: { controller: "bulk-actions" }  do %>
+  <%= tag.div class: "flex flex-column", style: "padding-right: 18rem;", data: { controller: "bulk-actions" } do %>
 
     <%= render "shared/active_filters", collection: @appunti %>
     <%= render "appunti/bulk_actions/form" %>
@@ -69,7 +58,8 @@
             list_observer_item_selector_value: ".item",
             list_observer_target: "list"
           },
-        class: "card-grid" do %>
+        class: "cards cards--list",
+        style: "display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;" do %>
 
       <p class="hidden only:block pad txt-center" style="grid-column: 1 / -1;">
         Whoops! Non ci sono appunti.
@@ -98,5 +88,3 @@
   </aside>
 
 <% end %>
-
-
