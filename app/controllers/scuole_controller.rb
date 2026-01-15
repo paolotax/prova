@@ -1,9 +1,11 @@
 # Controller per le scuole tenant-specific
 # Scoped attraverso Current.account
 class ScuoleController < ApplicationController
+  include FilterScoped
+
+  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], terms: []].freeze
+
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
-  before_action :set_filter, only: [:index]
-  before_action :set_user_filtering, only: [:index]
 
   def index
     @pagy, @scuole = pagy(@filter.scuole, items: 25)
@@ -53,22 +55,6 @@ class ScuoleController < ApplicationController
 
   def set_scuola
     @scuola = Current.account.scuole.find(params[:id])
-  end
-
-  def set_filter
-    @filter = Current.user.scuola_filters.from_params(filter_params)
-  end
-
-  def filter_params
-    params.permit(:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], terms: [])
-  end
-
-  def set_user_filtering
-    @user_filtering = ScuolaFiltering.new(Current.user, @filter, expanded: expanded_param)
-  end
-
-  def expanded_param
-    ActiveRecord::Type::Boolean.new.cast(params[:expand_all])
   end
 
   def scuola_params

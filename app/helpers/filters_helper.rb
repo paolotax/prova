@@ -90,7 +90,7 @@ module FiltersHelper
   def appunti_filter_label(value)
     case value
     when "tutte"
-      "Tutte"
+      "Tutti gli appunti"
     when "con_appunti"
       "Con appunti"
     else
@@ -101,7 +101,7 @@ module FiltersHelper
   def adozioni_filter_label(value)
     case value
     when "tutte"
-      "Tutte"
+      "Tutte le adozioni"
     when "mie_adozioni"
       "Con mie adozioni"
     when "adozioni_concorrenza"

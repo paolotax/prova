@@ -1,38 +1,20 @@
 class AppuntiController < ApplicationController
+  
+  include FilterScoped
 
-  include FilterableController
+  FILTER_PARAMS = [terms: [], statuses: [], states: []].freeze
 
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
-  before_action :set_filter, only: [:index]
-  before_action :set_user_filtering, only: [:index]
-
-
 
   def index
-    @appunti = current_user.appunti.non_saggi
+    @appunti = current_user.appunti.non_saggi.where.missing(:closure)
                 .with_attached_attachments
                 .with_attached_image
                 .with_rich_text_content
                 .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
 
-    # Filtra per scuola specifica se viene chiamato con import_scuola_id
-    if params[:import_scuola_id].present?
-      @import_scuola = ImportScuola.find(params[:import_scuola_id])
-      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
-      @appunti = @foglio_scuola.appunti_non_archiviati
-    end
-
-    # Applica filtri dal nuovo sistema Fizzy
     @appunti = @filter.appunti(@appunti)
-
-    # Legacy filters (mantieni per retrocompatibilità)
-    @appunti = @appunti.search_all_word(params[:search]) if params[:search].present?
-    @appunti = @appunti.search(params[:q]) if params[:q]
-    @appunti = filter_appunti(@appunti)
-    @appunti = filter(@appunti.all)
-
-    # Per il badge del conteggio dei record e pagy_countless
     @total_count = @appunti.count
 
     @pagy, @appunti =  pagy(@appunti.all, items: 30)
@@ -225,44 +207,4 @@ class AppuntiController < ApplicationController
       params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :stato, :classe_id, :team, :completed_at, :image, :content, attachments: [])
     end
 
-
-    def filter_params
-      {
-        search: params["search"],
-        stato: params["stato"],
-        statuses: params["statuses"],
-        del_giorno: params["del_giorno"]
-      }
-    end
-
-    def set_filter
-      @filter = AppuntoFilter.from_params(appunto_filter_params)
-    end
-
-    def appunto_filter_params
-      params.permit(terms: [], statuses: [], states: [])
-    end
-
-    def set_user_filtering
-      @user_filtering = AppuntoFiltering.new(Current.user, @filter, expanded: expanded_param)
-    end
-
-    def expanded_param
-      ActiveRecord::Type::Boolean.new.cast(params[:expand_all])
-    end
-
-    def filter_appunti(appunti)
-
-      appunti.then { |appunti| params[:filter] == "archiviato" ? appunti.archiviati : appunti }
-          .then { |appunti| params[:filter] == "completato" ? appunti.completato : appunti }
-          .then { |appunti| params[:filter] == "da_pagare" ? appunti.da_pagare : appunti }
-          .then { |appunti| params[:filter] == "in_visione" ? appunti.in_visione : appunti }
-          .then { |appunti| params[:filter] == "in_evidenza" ? appunti.in_evidenza : appunti }
-          .then { |appunti| params[:filter] == "da_fare" ? appunti.da_fare : appunti }
-          .then { |appunti| params[:filter] == "in_sospeso" ? appunti.in_sospeso : appunti }
-          .then { |appunti| params[:filter] == "non_archiviati" ? appunti.non_archiviati : appunti }
-          .then { |appunti| params[:filter] == "oggi" ? appunti.nel_baule_di_oggi : appunti }
-          .then { |appunti| params[:filter] == "domani" ? appunti.nel_baule_di_domani : appunti }
-
-    end
 end

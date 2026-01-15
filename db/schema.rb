@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_065006) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -481,6 +481,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_065006) do
     t.index ["codice_isbn"], name: "index_edizioni_titoli_on_codice_isbn", unique: true
   end
 
+  create_table "filters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "creator_id"
+    t.uuid "account_id"
+    t.jsonb "fields", default: {}
+    t.string "params_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", null: false
+    t.index ["account_id"], name: "index_filters_on_account_id"
+    t.index ["creator_id"], name: "index_filters_on_creator_id"
+    t.index ["type", "params_digest"], name: "index_filters_on_type_and_params_digest", unique: true
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -911,18 +924,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_065006) do
     t.index ["user_id"], name: "index_sconti_on_user_id"
   end
 
-  create_table "scuola_filters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "creator_id"
-    t.uuid "account_id"
-    t.jsonb "fields", default: {}
-    t.string "params_digest"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_scuola_filters_on_account_id"
-    t.index ["creator_id"], name: "index_scuola_filters_on_creator_id"
-    t.index ["params_digest"], name: "index_scuola_filters_on_params_digest", unique: true
-  end
-
   create_table "scuole", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.bigint "import_scuola_id"
@@ -1158,6 +1159,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_065006) do
   add_foreign_key "documenti", "causali", column: "derivato_da_causale_id"
   add_foreign_key "documenti", "documenti", column: "documento_padre_id"
   add_foreign_key "documenti", "users"
+  add_foreign_key "filters", "accounts"
+  add_foreign_key "filters", "users", column: "creator_id"
   add_foreign_key "giri", "accounts"
   add_foreign_key "giri", "users"
   add_foreign_key "goldnesses", "accounts"
@@ -1182,8 +1185,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_065006) do
   add_foreign_key "sconti", "accounts"
   add_foreign_key "sconti", "categorie"
   add_foreign_key "sconti", "users"
-  add_foreign_key "scuola_filters", "accounts"
-  add_foreign_key "scuola_filters", "users", column: "creator_id"
   add_foreign_key "scuole", "accounts"
   add_foreign_key "scuole", "import_scuole"
   add_foreign_key "tappa_giri", "giri"
