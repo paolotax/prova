@@ -1,1 +1,15 @@
-<%= render(Clienti::EditComponent.new(cliente: @cliente)) %>
+<% @page_title = "Modifica cliente" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "a #{@cliente.denominazione}", @cliente, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Modifica cliente</span>
+  </h1>
+<% end %>
+
+<div class="panel shadow pad">
+  <%= render "form", cliente: @cliente %>
+</div>

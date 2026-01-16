@@ -1,63 +1,71 @@
-<% content_for :title, "Clienti" %>
+<% @page_title = "Clienti" %>
+<% @body_class = "contained-scrolling" %>
 
-<div class="sticky top-header z-10">
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-          caption: "Importa",
-          svg_file: "icon-folder-arrow-down.svg",
-          color: "blue",
-          url: new_clienti_importer_path %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to clienti_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document" %>
+      <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-          caption: "Excel",
-          svg_file: "icon-excel-bis.svg",
-          color: "green",
-          url: url_for( controller: "clienti", action: "index", format: :xlsx, params: request.query_parameters ),
-          data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+    <%= link_to new_clienti_importer_path, class: "btn" do %>
+      <%= icon_tag "folder-arrow-down" %>
+      <span class="for-screen-reader">Importa Clienti</span>
     <% end %>
+  </div>
 
-    <% heading.with_action do %>
-      <%= component 'tax_button',
-          caption: "Nuovo",
-          svg_file: "icon-plus.svg",
-          color: "blue",
-          url: url_for( controller: "clienti", action: "new", model: @cliente ) %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Clienti</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_cliente_path, class: "btn" do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuovo cliente</span>
     <% end %>
+  </div>
+<% end %>
 
-    <% heading.with_action do %>
-      <div class="hide-on-desktop">
-        <%= component 'tax_button',
-            caption: "Filtra",
-            svg_file: "icon-funnel.svg",
-            color: "white",
-            url: filtra_clienti_path( params: request.query_parameters ),
-            data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
-      </div>
-    <% end %>
+<%= render "filters/settings",
+      filter_url: clienti_path,
+      filter_type: "cliente",
+      user_filtering: @user_filtering,
+      no_filtering_url: clienti_path %>
 
-    <%= h1 {"Clienti"} %>
+<%= turbo_frame_tag :search_results do %>
+  <% if @clienti.any? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @pagy.count %> <%= @pagy.count == 1 ? "cliente trovato" : "clienti trovati" %>
+    </p>
 
-  <% end %>
-</div>
-
-<%= turbo_frame_tag "search_results" do %>
-
-  <div class="flex gap" style="padding-inline-end: 18rem;">
-
-    <div role="list" class="card-grid full-width">
+    <div class="cards cards--grid">
       <% @clienti.each do |cliente| %>
         <%= render partial: "clienti/cliente", locals: { cliente: cliente } %>
       <% end %>
     </div>
 
-  </div>
-
-  <aside class="sidebar-right hide-on-mobile">
-    <%= render partial: "filter_form", locals: { reload: true } %>
-  </aside>
-
+    <% if @pagy.pages > 1 %>
+      <nav class="margin-block-start flex justify-center">
+        <%== pagy_nav(@pagy) %>
+      </nav>
+    <% end %>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "users", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessun cliente trovato</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
+        <% else %>
+          Inizia aggiungendo il primo cliente al tuo account.
+        <% end %>
+      </p>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_cliente_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Cliente
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>

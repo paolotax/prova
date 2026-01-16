@@ -133,9 +133,6 @@ Rails.application.routes.draw do
 
     resources :clienti do
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
-      collection do
-        get 'filtra'
-      end
     end
 
     resources :documenti do

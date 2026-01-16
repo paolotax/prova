@@ -1,15 +1,20 @@
 class ClientiController < ApplicationController
+  include FilterScoped
 
-  include FilterableController
+  FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
 
   before_action :authenticate_user!
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
     @import = ClientiImporter.new
-    @clienti = Current.account.clienti.order(:denominazione)
-    @clienti = filter(@clienti.all)
-    #set_page_and_extract_portion_from @clienti
+    @pagy, @clienti = pagy(@filter.clienti, items: 25)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+      format.xlsx
+    end
   end
 
   def show
@@ -99,9 +104,6 @@ class ClientiController < ApplicationController
     end
   end
 
-  def filtra  
-  end
-  
   private
 
     def set_cliente
@@ -121,12 +123,4 @@ class ClientiController < ApplicationController
       params.require(:cliente_import).permit(:file)
     end
 
-    def filter_params
-      {
-        ragione_sociale: params["ragione_sociale"],
-        partita_iva: params["partita_iva"],
-        comune: params["comune"],
-        search: params["search"]
-      }
-    end
 end

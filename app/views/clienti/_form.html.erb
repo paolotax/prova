@@ -1,132 +1,246 @@
-<%= form_with(model: cliente, class: "contents") do |form| %>
+<%= form_with model: cliente, class: "flex flex-column gap" do |f| %>
   <% if cliente.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(cliente.errors.count, "error") %> prohibited this cliente from being saved:</h2>
-
-      <ul>
-        <% cliente.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <div class="panel pad" style="background: var(--color-negative-lighter); border: 1px solid var(--color-negative);">
+      <div class="flex gap-half">
+        <%= icon_tag "alert-triangle", size: "small", style: "color: var(--color-negative-dark);" %>
+        <div>
+          <h3 class="txt-small font-weight-bold" style="color: var(--color-negative-dark);">
+            <%= pluralize(cliente.errors.count, "errore", "errori") %> <%= cliente.errors.count == 1 ? "impedisce" : "impediscono" %> il salvataggio:
+          </h3>
+          <ul class="txt-small margin-block-start-half" style="color: var(--color-negative-dark); padding-inline-start: 1em;">
+            <% cliente.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :codice_cliente %>
-    <%= form.text_field :codice_cliente, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Denominazione -->
+  <div class="form-field">
+    <%= f.label :denominazione, class: "form-label" %>
+    <%= f.text_field :denominazione,
+        class: "input",
+        placeholder: "Ragione sociale",
+        autofocus: true %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :tipo_cliente %>
-    <%= form.text_field :tipo_cliente, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Nome e Cognome (per clienti privati) -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :nome, class: "form-label" %>
+      <%= f.text_field :nome,
+          class: "input",
+          placeholder: "Nome" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :cognome, class: "form-label" %>
+      <%= f.text_field :cognome,
+          class: "input",
+          placeholder: "Cognome" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :indirizzo_telematico %>
-    <%= form.text_field :indirizzo_telematico, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Codice cliente e Tipo cliente -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :codice_cliente, class: "form-label" %>
+      <%= f.text_field :codice_cliente,
+          class: "input mono",
+          placeholder: "es. CLI001" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :tipo_cliente, class: "form-label" %>
+      <%= f.text_field :tipo_cliente,
+          class: "input",
+          placeholder: "es. Libreria, Cartolibreria..." %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :email %>
-    <%= form.text_field :email, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Partita IVA e Codice Fiscale -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :partita_iva, "Partita IVA", class: "form-label" %>
+      <%= f.text_field :partita_iva,
+          class: "input mono",
+          placeholder: "01234567890",
+          maxlength: 11 %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :codice_fiscale, "Codice Fiscale", class: "form-label" %>
+      <%= f.text_field :codice_fiscale,
+          class: "input mono txt-uppercase",
+          placeholder: "RSSMRA80A01H501Z",
+          maxlength: 16 %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :pec %>
-    <%= form.text_field :pec, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Indirizzo -->
+  <div class="form-grid" style="grid-template-columns: 3fr 1fr;">
+    <div class="form-field">
+      <%= f.label :indirizzo, class: "form-label" %>
+      <%= f.text_field :indirizzo,
+          class: "input",
+          placeholder: "Via/Piazza..." %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :numero_civico, "N. Civico", class: "form-label" %>
+      <%= f.text_field :numero_civico,
+          class: "input",
+          placeholder: "12/A" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :telefono %>
-    <%= form.text_field :telefono, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- CAP, Comune, Provincia -->
+  <div class="form-grid" style="grid-template-columns: 1fr 2fr 1fr;">
+    <div class="form-field">
+      <%= f.label :cap, "CAP", class: "form-label" %>
+      <%= f.text_field :cap,
+          class: "input",
+          placeholder: "00000",
+          maxlength: 5 %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :comune, class: "form-label" %>
+      <%= f.text_field :comune,
+          class: "input",
+          placeholder: "Comune" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :provincia, class: "form-label" %>
+      <%= f.text_field :provincia,
+          class: "input txt-uppercase",
+          placeholder: "MI",
+          maxlength: 2 %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :id_paese %>
-    <%= form.text_field :id_paese, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Nazione e ID Paese -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :nazione, class: "form-label" %>
+      <%= f.text_field :nazione,
+          class: "input",
+          placeholder: "Italia",
+          value: cliente.nazione.presence || "Italia" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :id_paese, "ID Paese", class: "form-label" %>
+      <%= f.text_field :id_paese,
+          class: "input txt-uppercase",
+          placeholder: "IT",
+          maxlength: 2,
+          value: cliente.id_paese.presence || "IT" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :partita_iva %>
-    <%= form.text_field :partita_iva, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Email e PEC -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :email, class: "form-label" %>
+      <%= f.email_field :email,
+          class: "input",
+          placeholder: "email@cliente.it" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :pec, "PEC", class: "form-label" %>
+      <%= f.email_field :pec,
+          class: "input",
+          placeholder: "email@pec.cliente.it" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :codice_fiscale %>
-    <%= form.text_field :codice_fiscale, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Telefono e Indirizzo telematico -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :telefono, class: "form-label" %>
+      <%= f.telephone_field :telefono,
+          class: "input",
+          placeholder: "02 12345678" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :indirizzo_telematico, "Codice SDI", class: "form-label" %>
+      <%= f.text_field :indirizzo_telematico,
+          class: "input mono txt-uppercase",
+          placeholder: "0000000",
+          maxlength: 7 %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :denominazione %>
-    <%= form.text_field :denominazione, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Condizioni di pagamento -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :condizioni_di_pagamento, class: "form-label" %>
+      <%= f.select :condizioni_di_pagamento,
+          options_for_select([
+            ["Seleziona...", ""],
+            ["Pagamento immediato", "Pagamento immediato"],
+            ["30 giorni", "30 giorni"],
+            ["60 giorni", "60 giorni"],
+            ["90 giorni", "90 giorni"],
+            ["Fine mese", "Fine mese"],
+            ["Rimessa diretta", "Rimessa diretta"]
+          ], cliente.condizioni_di_pagamento),
+          {},
+          class: "input input--select" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :metodo_di_pagamento, class: "form-label" %>
+      <%= f.select :metodo_di_pagamento,
+          options_for_select([
+            ["Seleziona...", ""],
+            ["Contanti", "Contanti"],
+            ["Bonifico bancario", "Bonifico bancario"],
+            ["Assegno", "Assegno"],
+            ["Carta di credito", "Carta di credito"],
+            ["PayPal", "PayPal"],
+            ["Satispay", "Satispay"]
+          ], cliente.metodo_di_pagamento),
+          {},
+          class: "input input--select" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :nome %>
-    <%= form.text_field :nome, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Banca e Beneficiario -->
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :banca, class: "form-label" %>
+      <%= f.text_field :banca,
+          class: "input",
+          placeholder: "Nome banca" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :beneficiario, class: "form-label" %>
+      <%= f.text_field :beneficiario,
+          class: "input",
+          placeholder: "Intestatario conto" %>
+    </div>
   </div>
 
-  <div class="my-5">
-    <%= form.label :cognome %>
-    <%= form.text_field :cognome, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <!-- Codice EORI -->
+  <div class="form-field">
+    <%= f.label :codice_eori, "Codice EORI", class: "form-label" %>
+    <%= f.text_field :codice_eori,
+        class: "input mono txt-uppercase",
+        placeholder: "IT01234567890" %>
   </div>
 
-  <div class="my-5">
-    <%= form.label :codice_eori %>
-    <%= form.text_field :codice_eori, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :nazione %>
-    <%= form.text_field :nazione, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :cap %>
-    <%= form.text_field :cap, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :provincia %>
-    <%= form.text_field :provincia, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :comune %>
-    <%= form.text_field :comune, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :indirizzo %>
-    <%= form.text_field :indirizzo, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :numero_civico %>
-    <%= form.text_field :numero_civico, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :beneficiario %>
-    <%= form.text_field :beneficiario, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :condizioni_di_pagamento %>
-    <%= form.text_field :condizioni_di_pagamento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :metodo_di_pagamento %>
-    <%= form.text_field :metodo_di_pagamento, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :banca %>
-    <%= form.text_field :banca, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  <!-- Actions -->
+  <div class="flex align-center justify-end gap margin-block-start" style="border-top: 1px solid var(--color-ink-lighter); padding-top: var(--block-space);">
+    <% cancel_path = cliente.persisted? ? cliente_path(cliente) : clienti_path %>
+    <%= link_to "Annulla", cancel_path, class: "btn" %>
+    <%= f.submit cliente.persisted? ? "Salva Modifiche" : "Crea Cliente", class: "btn btn--primary" %>
   </div>
 <% end %>

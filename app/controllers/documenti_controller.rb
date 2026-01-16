@@ -1,6 +1,7 @@
 class DocumentiController < ApplicationController
+  include FilterScoped
 
-  include FilterableController
+  FILTER_PARAMS = [:anno, :consegnati, :pagati, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
 
   before_action :authenticate_user!
   before_action :set_documento, only: %i[ show edit update destroy edit_status ]
@@ -9,17 +10,8 @@ class DocumentiController < ApplicationController
     @causali = Causale.all
     @import = DocumentiImporter.new
 
-    @documenti = Current.account.documenti
-        .solo_padri
-        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
-        .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
-        .includes(:causale, :righe, documento_righe: [riga: :libro])
-        .order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
-
-    @documenti = filter(@documenti.all)
-
-    @tutti_documenti = @documenti.all
-    @pagy, @documenti = pagy(@documenti.all, items: 20)
+    @tutti_documenti = @filter.documenti
+    @pagy, @documenti = pagy(@filter.documenti, items: 20)
 
     respond_to do |format|
       format.html
@@ -32,20 +24,14 @@ class DocumentiController < ApplicationController
     @causali = Causale.all
     @import = DocumentiImporter.new
 
-    @documenti = Current.account.documenti
-        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
-        .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
-        .includes(:causale, :righe, documento_righe: [riga: :libro])
-        .order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
-
     # Filtra per scuola specifica se viene chiamato con import_scuola_id
     if params[:import_scuola_id].present?
       @import_scuola = ImportScuola.find(params[:import_scuola_id])
       @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
       @documenti = @foglio_scuola.documenti
+    else
+      @documenti = @filter.documenti
     end
-
-    @documenti = filter(@documenti.all)
 
     respond_to do |format|
       format.html do
@@ -182,24 +168,6 @@ class DocumentiController < ApplicationController
         documento_righe_attributes: [:id, :posizione,
           { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
         ])
-    end
-
-    def filter_params
-      {
-        search: params["search"],
-        search_libro: params["search_libro"],
-        causale: params["causale"],
-        status: params["status"],
-        tipo_pagamento: params["tipo_pagamento"],
-        anno: params["anno"],
-        ordina_per: params["ordina_per"],
-        consegnato_il: params["consegnato_il"],
-        pagato_il: params["pagato_il"],
-        consegnati: params["consegnati"],
-        pagati: params["pagati"],
-        tappe_del_giorno: params["tappe_del_giorno"],
-        nel_baule_del_giorno: params["nel_baule_del_giorno"]
-      }.compact_blank
     end
 
 end

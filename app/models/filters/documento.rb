@@ -1,0 +1,48 @@
+module Filters
+  class Documento < Base
+    include Documento::Fields
+    include Documento::Summarized
+
+    def documenti
+      target_account = account || Current.account
+      result = target_account.documenti
+        .solo_padri
+        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
+        .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
+        .includes(:causale, :righe, documento_righe: [riga: :libro])
+
+      # Text search
+      if terms.present?
+        search_term = "%#{terms.first}%"
+        result = result.where(
+          "import_scuole.nome_scuola ILIKE :term OR clienti.denominazione ILIKE :term OR documenti.referente ILIKE :term",
+          term: search_term
+        )
+      end
+
+      # Causale filter
+      result = result.where(causale_id: causali) if causali.present?
+
+      # Status filter
+      result = result.where(status: statuses) if statuses.present?
+
+      # Tipo pagamento filter
+      result = result.where(tipo_pagamento: tipi_pagamento) if tipi_pagamento.present?
+
+      # Anno filter
+      if anno.present?
+        result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno)
+      end
+
+      # Boolean filters
+      result = result.where.not(consegnato_il: nil) if consegnati.present?
+      result = result.where.not(pagato_il: nil) if pagati.present?
+
+      # Ordering
+      result = result.order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
+      result.distinct
+    end
+
+    alias_method :results, :documenti
+  end
+end
