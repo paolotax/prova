@@ -21,65 +21,61 @@
   </div>
 
   <!-- Content -->
-  <div class="flex-item-grow pad-half flex flex-column justify-space-between gap-quarter">
+  <div class="flex-item-grow pad-half flex flex-column justify-space-between gap-quarter txt-left">
 
     <!-- Header: Title + Price -->
     <div class="flex justify-space-between align-start gap-half">
-      <div class="flex-item-grow txt-left">
+      <div class="flex-item-grow">
         <%= link_to libro_path(libro),
             data: { turbo_frame: "_top", action: "click->bulk-actions#stopPropagation" },
-            class: "txt-large font-weight-bold line-clamp-2 hover:underline",
-            style: "color: white;" do %>
+            class: "font-weight-bold line-clamp-2 hover:underline" do %>
           <%= libro.titolo %>
         <% end %>
-        <div class="txt-small color-secondary"><%= libro.editore&.editore %></div>
+        <div class="txt-small txt-subtle"><%= libro.editore&.editore %></div>
       </div>
-      <div class="flex-item-shrink txt-small font-weight-bold color-accent whitespace-nowrap">
+      <div class="flex-item-shrink txt-small font-weight-bold whitespace-nowrap">
         <%= number_to_currency(libro.prezzo_in_cents / 100.0) %>
       </div>
     </div>
 
     <!-- Meta: ISBN, Categoria, Classe, Disciplina -->
-    <div class="txt-x-small color-secondary flex flex-wrap gap-half txt-left">
-      <span><%= libro.codice_isbn %></span>
+    <div class="txt-x-small txt-subtle">
+      <%= libro.codice_isbn %>
       <% if libro.categoria&.nome_categoria.present? %>
-        <span>&middot; <%= libro.categoria.nome_categoria %></span>
+        &middot; <%= libro.categoria.nome_categoria %>
       <% end %>
       <% if libro.classe.present? %>
-        <span>&middot; Cl. <%= libro.classe %></span>
+        &middot; Cl. <%= libro.classe %>
       <% end %>
       <% if libro.disciplina.present? %>
-        <span>&middot; <%= truncate(libro.disciplina, length: 25) %></span>
+        &middot; <%= truncate(libro.disciplina, length: 25) %>
       <% end %>
     </div>
 
     <!-- Stats Row -->
-    <div class="flex gap-half txt-x-small txt-left">
+    <div class="flex gap-half txt-x-small">
       <% if libro.giacenza&.ordini.to_i > 0 %>
-        <span class="color-danger font-weight-bold">Ord: <%= libro.giacenza.ordini %></span>
+        <span class="font-weight-bold">Ord: <%= libro.giacenza.ordini %></span>
       <% end %>
       <% if libro.adozioni_count > 0 %>
-        <span class="color-success font-weight-bold">Adoz: <%= libro.adozioni_count %></span>
+        <span class="font-weight-bold">Adoz: <%= libro.adozioni_count %></span>
       <% end %>
       <% if libro.giacenza&.vendite.to_i > 0 %>
-        <span class="color-notice font-weight-bold">Vend: <%= libro.giacenza.vendite %></span>
+        <span class="font-weight-bold">Vend: <%= libro.giacenza.vendite %></span>
       <% end %>
       <% if libro.giacenza&.carichi.to_i > 0 %>
-        <span style="color: var(--color-accent);" class="font-weight-bold">Car: <%= libro.giacenza.carichi %></span>
+        <span class="font-weight-bold">Car: <%= libro.giacenza.carichi %></span>
       <% end %>
 
-      <!-- Badges -->
       <% unless libro.fascicoli_count.zero? %>
         <%= link_to libri_path(fascicoli: libro.id),
-            data: { action: "click->bulk-actions#stopPropagation" },
-            class: "inline-flex" do %>
+            data: { action: "click->bulk-actions#stopPropagation" } do %>
           <%= component('badge', text: "#{libro.fascicoli_count} fasc", color: "yellow") %>
         <% end %>
       <% end %>
       <% unless libro.confezioni_count.zero? %>
         <%= link_to libri_path(confezioni: libro.id),
-            data: { action: "click->bulk-actions#stopPropagation" },
-            class: "inline-flex" do %>
+            data: { action: "click->bulk-actions#stopPropagation" } do %>
           <%= component('badge', text: "#{libro.confezioni_count} conf", color: "blue") %>
         <% end %>
       <% end %>
