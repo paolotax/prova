@@ -29,7 +29,7 @@ module Filters
     end
 
     def tipi_pagamento_disponibili
-      ::Documento.tipo_pagamentos.keys
+      ::Documento.tipo_pagamenti.keys
     end
 
     def show_tipi_pagamento?
