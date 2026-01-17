@@ -28,18 +28,18 @@ Plans:
 **Goal**: Users can filter documents by client type (Cliente vs ImportScuola)
 **Depends on**: Phase 1
 **Requirements**: FILT-01, FILT-02, FILT-03, UI-01, UI-02, UI-03
+**Plans:** 4 plans
 **Success Criteria** (what must be TRUE):
   1. User can see clientable_type filter options in the filter sidebar
   2. Selecting a clientable_type filters documents to only that client type
   3. Active filter indicator shows when clientable_type is selected
   4. Filter persists correctly through page interactions
-**Plans**: TBD
 
 Plans:
-- [ ] 02-01: Add clientable_type to Fields (store_accessor, getter/setter)
-- [ ] 02-02: Add clientable_type query logic in Documento.documenti
-- [ ] 02-03: Add clientable_type to FILTER_PARAMS in controller
-- [ ] 02-04: Add UI presenter methods in Filtering
+- [ ] 02-01-PLAN.md — Add clientable_type to Fields (store_accessor, getter/setter)
+- [ ] 02-02-PLAN.md — Add clientable_type query logic in Documento.documenti
+- [ ] 02-03-PLAN.md — Add clientable_type to FILTER_PARAMS in controller
+- [ ] 02-04-PLAN.md — Add UI presenter methods in Filtering (depends on 02-01)
 
 ### Phase 3: Verification
 **Goal**: Confirm all filter functionality works correctly in browser
@@ -59,7 +59,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. View Fix | 1/1 | Complete ✓ | 2026-01-17 |
-| 2. ClientableType Filter | 0/4 | Not started | - |
+| 2. ClientableType Filter | 0/4 | Planned | - |
 | 3. Verification | 0/1 | Not started | - |
 
 ---
