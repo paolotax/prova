@@ -1,52 +1,31 @@
-<% content_for :title, "Documenti" %>
+<% @page_title = "Documenti" %>
+<% @body_class = "contained-scrolling" %>
 
-<% content_for :header do %>
-
-		<%= render Heading::WithActionsComponent.new do |heading| %>
-
-		<% heading.with_action do %>
-			<%= component 'tax_button',
-				caption: "Importa",
-				svg_file: "icon-folder-arrow-down.svg",
-				color: "blue",
-				url: new_documenti_importer_path %>
-		<% end %>
-
-			<% heading.with_action do %>
-				<%= component 'tax_button',
-						caption: "Excel",
-						svg_file: "icon-excel-bis.svg",
-						color: "green",
-						url: url_for( controller: "documenti", action: "index", format: :xlsx, params: request.query_parameters ),
-						data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
-			<% end %>
-
-			<% heading.with_action do %>
-				<%= component 'tax_button',
-						caption: "Documento",
-						svg_file: "icon-plus.svg",
-						color: "blue",
-						url: url_for( controller: "documenti", action: "new", model: @documento ),
-						data_attr: { turbo_prefetch: false } %>
-			<% end %>
-
-			<% heading.with_action do %>
-				<%= tag.div class: "block lg:hidden" do %>
-					<%= component 'tax_button',
-						caption: "Filtra",
-						svg_file: "icon-funnel.svg",
-						color: "white",
-						url: filtra_documenti_path( params: request.query_parameters ),
-						data_attr: { turbo_frame: "slide-over", controller: "link-modifier", link_modifier_target: "link" } %>
-				<% end %>
-			<% end %>
-
-			<%= h1 {"Documenti"} %>
-
-		<% end %>
-
+<% content_for :head do %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= combobox_style_tag "data-turbo-track": "reload" %>
 <% end %>
 
+<% content_for :header do %>
+	<div class="header__actions header__actions--start">
+    <%= link_to documenti_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document" %>
+      <span class="for-screen-reader">Esporta in excel</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Documenti</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_documento_path, class: "btn" do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuova documento</span>
+    <% end %>
+  </div>
+<% end %>
 
 <% if hotwire_native_app? %>
 	<%= link_to new_documento_path, class: "hidden",
@@ -59,47 +38,54 @@
 		placeholder: "Cerca documenti..." %>
 <% end %>
 
-<%= turbo_frame_tag "search_results" do %>
+<%= render "filters/settings",
+      filter_url: documenti_path,
+      user_filtering: @user_filtering,
+      no_filtering_url: documenti_path,
+      filter_type: "documento" %>
 
-	<%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: 'bulk-actions' } do %>
+<%= turbo_frame_tag "search_results", data: { controller: 'bulk-actions' } do %>
+    <%= render "documenti/bulk_actions/form" %>
+    
+    <% if @page.used? %>
+      <p class="txt-small txt-subtle margin-block-end-half center">
+        <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
+      </p>
 
-		<%#= render partial: "documenti_grid_component" %>
-		<%#= render partial: "documenti_table" %>
-
-		<%= render "shared/active_filters", collection: @documenti %>
-		<%= render "documenti/bulk_actions/form" %>
-
-		<%= turbo_frame_tag :documenti, data: { controller: "list-observer",
-						list_observer_counter_id_value: "collection_counter",
-						list_observer_item_selector_value: ".item",
-						list_observer_target: "list"
-					},
-				class: "pb-5 grid grid-cols-1 gap-2 4xl:grid-cols-2" do %>
-			<p class="only:block hidden py-8 px-4 text-center md:col-span-2 4xl:col-span-3">
-				Whoops! Non ci sono documenti.
-			</p>
-			<%= render partial: "documenti/documento_con_figli", collection: @page.records, as: :documento %>
-		<% end %>
-
-		<% if @page.before_last? %>
-			<%= turbo_frame_tag :pagination,
-						src: documenti_path(request.query_parameters.merge(format: :turbo_stream, page: @page.next_param)),
-						loading: :lazy do %>
-				<div role="status">
-					<div class="flex justify-center">
-						<%= icon "bouncing-dots", library: :animated, class: "mx-auto w-8 h-8 text-gray-500 fill-gray-600" %>
-						<span class="sr-only">Loading...</span>
-					</div>
-				</div>
-			<% end %>
-		<% end %>
-	<% end %>
-
-	<aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 lg:block">
-		<%= render "filter_form", reload: true %>
-	</aside>
-
+      <div class="cards--grid" data-controller="bulk-actions">
+        <%= with_automatic_pagination :documenti, @page,
+            id: "libri-lista",
+            class: "cards__list" do %>
+          <%= render @page.records %>
+        <% end %>
+      </div>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "note", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessun documento trovato</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
+        <% else %>
+          Inizia aggiungendo il primo documento.
+        <% end %>
+      </p>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_appunto_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Appunto
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
+
+<div class="flex justify-center">
+  <%= icon "bouncing-dots", library: :animated, class: "mx-auto w-8 h-8 text-gray-500 fill-gray-600" %>
+  <span class="sr-only">Loading...</span>
+</div>
+
+
 
 
 
