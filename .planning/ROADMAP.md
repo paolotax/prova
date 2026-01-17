@@ -36,7 +36,7 @@ Plans:
   4. Filter persists correctly through page interactions
 
 Plans:
-- [ ] 02-01-PLAN.md — Add clientable_type to Fields (store_accessor, getter/setter)
+- [x] 02-01-PLAN.md — Add clientable_type to Fields (store_accessor, getter/setter) ✓
 - [ ] 02-02-PLAN.md — Add clientable_type query logic in Documento.documenti
 - [x] 02-03-PLAN.md — Add clientable_type to FILTER_PARAMS in controller
 - [ ] 02-04-PLAN.md — Add UI presenter methods in Filtering (depends on 02-01)
@@ -59,7 +59,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. View Fix | 1/1 | Complete ✓ | 2026-01-17 |
-| 2. ClientableType Filter | 1/4 | In progress | - |
+| 2. ClientableType Filter | 2/4 | In progress | - |
 | 3. Verification | 0/1 | Not started | - |
 
 ---
