@@ -80,3 +80,4 @@ swarm.log
 # Claude-mem generated CLAUDE.md files (keep only root)
 **/CLAUDE.md
 !/CLAUDE.md
+.planning/
