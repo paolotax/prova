@@ -1,20 +1,6 @@
 module FiltersHelper
   def filter_chip_tag(text, params)
-    link_to cards_path(params), class: "btn txt-x-small btn--remove fill-selected flex-inline" do
-      concat tag.span(text)
-      concat icon_tag("close")
-    end
-  end
-
-  def scuola_filter_chip_tag(text, params)
-    link_to scuole_path(params), class: "btn txt-x-small btn--remove fill-selected flex-inline" do
-      concat tag.span(text)
-      concat icon_tag("close")
-    end
-  end
-
-  def appunto_filter_chip_tag(text, params)
-    link_to appunti_path(params), class: "btn txt-x-small btn--remove fill-selected flex-inline" do
+    link_to url_for(params), class: "btn txt-x-small btn--remove fill-selected flex-inline" do
       concat tag.span(text)
       concat icon_tag("close")
     end
