@@ -36,6 +36,17 @@ module Filters
       tipi_pagamento_disponibili.any?
     end
 
+    def clientable_types_disponibili
+      {
+        "Cliente" => "Cliente",
+        "ImportScuola" => "Scuola"
+      }
+    end
+
+    def show_clientable_types?
+      clientable_types_disponibili.any?
+    end
+
     def anni_disponibili
       @anni_disponibili ||= user.documenti.distinct.pluck(Arel.sql("EXTRACT(YEAR FROM data_documento)::integer")).compact.sort.reverse
     end
@@ -49,13 +60,14 @@ module Filters
       filter.causali.present? ||
       filter.statuses.present? ||
       filter.tipi_pagamento.present? ||
+      filter.clientable_type.present? ||
       filter.anno.present? ||
       filter.consegnati.present? ||
       filter.pagati.present?
     end
 
     def controls
-      %w[causali statuses tipi_pagamento anni]
+      %w[clientable_types causali statuses tipi_pagamento anni]
     end
 
     def cache_key
