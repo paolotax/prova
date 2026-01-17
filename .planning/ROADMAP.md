@@ -6,7 +6,7 @@ Complete the Filter Pattern for Documenti by fixing view URLs, adding clientable
 
 ## Phases
 
-- [ ] **Phase 1: View Fix** - Correct filter URLs pointing to wrong endpoints
+- [x] **Phase 1: View Fix** - Correct filter URLs pointing to wrong endpoints ✓
 - [ ] **Phase 2: ClientableType Filter** - Add clientable_type filter with Fields, Query, Controller, and UI
 - [ ] **Phase 3: Verification** - Manual verification of filter functionality
 
@@ -22,7 +22,7 @@ Complete the Filter Pattern for Documenti by fixing view URLs, adding clientable
   2. Filter partial receives filter_type "documento" (not "appunto")
 
 Plans:
-- [ ] 01-01-PLAN.md — Fix filter_url, no_filtering_url, and filter_type in documenti index view
+- [x] 01-01-PLAN.md — Fix filter_url, no_filtering_url, and filter_type in documenti index view ✓
 
 ### Phase 2: ClientableType Filter
 **Goal**: Users can filter documents by client type (Cliente vs ImportScuola)
@@ -58,7 +58,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. View Fix | 0/1 | Planned | - |
+| 1. View Fix | 1/1 | Complete ✓ | 2026-01-17 |
 | 2. ClientableType Filter | 0/4 | Not started | - |
 | 3. Verification | 0/1 | Not started | - |
 

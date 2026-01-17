@@ -7,8 +7,8 @@
 
 ### View Fix
 
-- [ ] **VIEW-01**: Filter settings punta a documenti_path (non appunti_path)
-- [ ] **VIEW-02**: filter_type è "documento" (non "appunto")
+- [x] **VIEW-01**: Filter settings punta a documenti_path (non appunti_path)
+- [x] **VIEW-02**: filter_type è "documento" (non "appunto")
 
 ### ClientableType Filter
 
@@ -44,8 +44,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VIEW-01 | Phase 1 | Pending |
-| VIEW-02 | Phase 1 | Pending |
+| VIEW-01 | Phase 1 | Complete |
+| VIEW-02 | Phase 1 | Complete |
 | FILT-01 | Phase 2 | Pending |
 | FILT-02 | Phase 2 | Pending |
 | FILT-03 | Phase 2 | Pending |
