@@ -12,15 +12,15 @@
 
 ### ClientableType Filter
 
-- [ ] **FILT-01**: Campo clientable_type in Fields con store_accessor e getter/setter
-- [ ] **FILT-02**: Query in Documento.documenti filtra per clientable_type
-- [ ] **FILT-03**: FILTER_PARAMS nel controller include clientable_type
+- [x] **FILT-01**: Campo clientable_type in Fields con store_accessor e getter/setter
+- [x] **FILT-02**: Query in Documento.documenti filtra per clientable_type
+- [x] **FILT-03**: FILTER_PARAMS nel controller include clientable_type
 
 ### UI Presenter
 
-- [ ] **UI-01**: Metodo clientable_types_disponibili in Filtering
-- [ ] **UI-02**: Metodo show_clientable_types? in Filtering
-- [ ] **UI-03**: filters_active? include controllo clientable_type
+- [x] **UI-01**: Metodo clientable_types_disponibili in Filtering
+- [x] **UI-02**: Metodo show_clientable_types? in Filtering
+- [x] **UI-03**: filters_active? include controllo clientable_type
 
 ### Verification
 
@@ -46,12 +46,12 @@
 |-------------|-------|--------|
 | VIEW-01 | Phase 1 | Complete |
 | VIEW-02 | Phase 1 | Complete |
-| FILT-01 | Phase 2 | Pending |
-| FILT-02 | Phase 2 | Pending |
-| FILT-03 | Phase 2 | Pending |
-| UI-01 | Phase 2 | Pending |
-| UI-02 | Phase 2 | Pending |
-| UI-03 | Phase 2 | Pending |
+| FILT-01 | Phase 2 | Complete |
+| FILT-02 | Phase 2 | Complete |
+| FILT-03 | Phase 2 | Complete |
+| UI-01 | Phase 2 | Complete |
+| UI-02 | Phase 2 | Complete |
+| UI-03 | Phase 2 | Complete |
 | VER-01 | Phase 3 | Pending |
 | VER-02 | Phase 3 | Pending |
 
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-17 after initial definition*
+*Last updated: 2026-01-17 after Phase 2 completion*

@@ -7,7 +7,7 @@ Complete the Filter Pattern for Documenti by fixing view URLs, adding clientable
 ## Phases
 
 - [x] **Phase 1: View Fix** - Correct filter URLs pointing to wrong endpoints ✓
-- [ ] **Phase 2: ClientableType Filter** - Add clientable_type filter with Fields, Query, Controller, and UI
+- [x] **Phase 2: ClientableType Filter** - Add clientable_type filter with Fields, Query, Controller, and UI ✓
 - [ ] **Phase 3: Verification** - Manual verification of filter functionality
 
 ## Phase Details
@@ -37,9 +37,9 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md — Add clientable_type to Fields (store_accessor, getter/setter) ✓
-- [ ] 02-02-PLAN.md — Add clientable_type query logic in Documento.documenti
-- [x] 02-03-PLAN.md — Add clientable_type to FILTER_PARAMS in controller
-- [ ] 02-04-PLAN.md — Add UI presenter methods in Filtering (depends on 02-01)
+- [x] 02-02-PLAN.md — Add clientable_type query logic in Documento.documenti ✓
+- [x] 02-03-PLAN.md — Add clientable_type to FILTER_PARAMS in controller ✓
+- [x] 02-04-PLAN.md — Add UI presenter methods in Filtering (depends on 02-01) ✓
 
 ### Phase 3: Verification
 **Goal**: Confirm all filter functionality works correctly in browser
@@ -59,7 +59,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. View Fix | 1/1 | Complete ✓ | 2026-01-17 |
-| 2. ClientableType Filter | 2/4 | In progress | - |
+| 2. ClientableType Filter | 4/4 | Complete ✓ | 2026-01-17 |
 | 3. Verification | 0/1 | Not started | - |
 
 ---
