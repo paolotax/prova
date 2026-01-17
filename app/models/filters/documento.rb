@@ -29,6 +29,9 @@ module Filters
       # Tipo pagamento filter
       result = result.where(tipo_pagamento: tipi_pagamento) if tipi_pagamento.present?
 
+      # Clientable type filter
+      result = result.where(clientable_type: clientable_type) if clientable_type.present?
+
       # Anno filter
       if anno.present?
         result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno)
