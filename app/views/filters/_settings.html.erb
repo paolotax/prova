@@ -15,13 +15,18 @@
         turbo_action: "advance" } do |form| %>
     <%= hidden_field_tag :expand_all, true, disabled: !user_filtering.expanded?, data: { toggle_enable_target: "element" } %>
 
-    <%= render "filters/settings/terms", filter: user_filtering.filter, form: form %>
+    <%= yield form if block_given? %>
+
+    <%= render "filters/settings/terms", filter: user_filtering.filter, form: form do %>
+      <%= yield form if block_given? %>
+    <% end %>
     <%= render "filters/settings/controls", user_filtering: user_filtering, form: form %>
     <%= render "filters/settings/toggle", user_filtering: user_filtering %>
   <% end %>
   <div class="filters__actions gap-half">
-    <%= render "filters/saved_filters", filter_type: "scuola" %>
-    <%= render "filters/filter_toggle", filter: user_filtering.filter %>
     <%= render "filters/settings/manage", user_filtering: user_filtering, no_filtering_url: no_filtering_url %>
+
+    <%= render "filters/saved_filters", filter_type: filter_type %>
+    <%= render "filters/filter_toggle", filter: user_filtering.filter %>
   </div>
 <% end %>

@@ -60,15 +60,18 @@ class Cliente < ApplicationRecord
   # Relazione con sconti
   has_many :sconti, as: :scontabile, dependent: :destroy 
 
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::ClienteFilterProxy
-  end
 
   include MultistepFormModel
+  
   include Searchable
   search_on :denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome
 
+  include PgSearch::Model
+
+  pg_search_scope :search_all_word,
+    against: [:denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome],
+    using: { tsearch: { any_word: false, prefix: true } }
+  
   #validates :partita_iva, presence: true, numericality: true, length: { is: 11 }, uniqueness: { scope: :user_id }
   validates :denominazione, presence: true
 

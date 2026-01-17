@@ -37,8 +37,8 @@ module Filters
         result = target_account.libri.where(id: ids).includes(:editore, :categoria)
       end
 
-      result = result.where(categoria: categorie) if categorie.present?
-      result = result.where(editore: editori) if editori.present?
+      result = result.joins(:categoria).where("categorie.nome_categoria in (?)", categorie) if categorie.present?
+      result = result.joins(:editore).where("editori.editore in (?)", editori) if editori.present?
       result = result.where(disciplina: discipline) if discipline.present?
       result = result.where(classe: classi) if classi.present?
       result = result.order(sorted_by.to_s)
