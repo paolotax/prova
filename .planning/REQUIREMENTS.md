@@ -24,8 +24,8 @@
 
 ### Verification
 
-- [ ] **VER-01**: UI filtri visibile nella pagina documenti
-- [ ] **VER-02**: Filtro clientable_type funziona (filtra correttamente)
+- [x] **VER-01**: UI filtri visibile nella pagina documenti
+- [x] **VER-02**: Filtro clientable_type funziona (filtra correttamente)
 
 ## v2 Requirements
 
@@ -52,8 +52,8 @@
 | UI-01 | Phase 2 | Complete |
 | UI-02 | Phase 2 | Complete |
 | UI-03 | Phase 2 | Complete |
-| VER-01 | Phase 3 | Pending |
-| VER-02 | Phase 3 | Pending |
+| VER-01 | Phase 3 | Complete |
+| VER-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 10 total
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-17 after Phase 2 completion*
+*Last updated: 2026-01-17 after Phase 3 completion - ALL REQUIREMENTS COMPLETE*
