@@ -20,7 +20,7 @@ class ImportScuoleController < ApplicationController
 
     @stats = Scuole::Stats.new(@import_scuole).stats
 
-    @pagy, @import_scuole = pagy(@import_scuole.all, items: 30)
+    set_page_and_extract_portion_from @import_scuole
 
     respond_to do |format|
       format.html

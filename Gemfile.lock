@@ -729,7 +729,6 @@ DEPENDENCIES
   net-http-persistent
   nokogiri
   open-uri
-  pagy
   pg (~> 1.1)
   pg_search (~> 2.3)
   platform_agent

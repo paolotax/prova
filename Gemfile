@@ -120,9 +120,6 @@ gem "hotwire_combobox"
 
 gem 'resend', '~> 0.10.0'
 
-# da eliminare
-gem "pagy"
-
 gem "geared_pagination", "~> 1.2"
 
 gem "groupdate", "~> 6.4"

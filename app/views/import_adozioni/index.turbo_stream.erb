@@ -1,23 +1,5 @@
 <% if params[:q].present? %>
-      <%= async_combobox_options @import_adozioni, for_id: "adozioni-search",
-            render_in: { partial: "import_adozioni/import_adozione"},
-            next_page: @page.last? ? nil : @page.next_param %>
-
-<% else %>
-
-      <%= turbo_stream.append :import_adozioni do %>
-            <%= render "grouped_adozioni", import_adozioni: @import_adozioni, grouped_by: (params[:grouped_by] || 'titolo').to_sym %>
-      <% end %>
-
-      <%= turbo_stream.replace :pagination do %>
-            <% if @pagy.next.present? %>
-                  <%= turbo_frame_tag :pagination,
-                        loading: :lazy,
-                        src: import_adozioni_path(request.query_parameters.merge(page: @pagy.next)) do %>
-                        <%= render 'shared/lazy_loading' %>
-                  <% end %>
-            <% end %>
-      <% end %>
-
+  <%= async_combobox_options @page.records, for_id: "adozioni-search",
+        render_in: { partial: "import_adozioni/import_adozione"},
+        next_page: @page.last? ? nil : @page.next_param %>
 <% end %>
-

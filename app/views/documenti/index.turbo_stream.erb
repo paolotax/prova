@@ -1,11 +1,11 @@
 <%= turbo_stream.append :documenti do %>
-  <%= render @documenti %>
+  <%= render partial: "documenti/documento_con_figli", collection: @page.records, as: :documento %>
 <% end %>
 <%= turbo_stream.replace :pagination do %>
-  <% if @pagy.next.present? %>
+  <% if @page.before_last? %>
     <%= turbo_frame_tag :pagination,
                 loading: :lazy,
-        src: documenti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)) do %>
+        src: documenti_path(request.query_parameters.merge(format: :turbo_stream, page: @page.next_param)) do %>
         <div role="status">
           <div class="flex justify-center">
             <%= icon "bouncing-dots", library: :animated, class: "mx-auto w-8 h-8 text-gray-500 fill-gray-600" %>

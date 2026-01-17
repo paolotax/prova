@@ -7,7 +7,8 @@ class CategorieController < ApplicationController
   end
 
   def show
-    @pagy, @libri = pagy(@categoria.libri.includes(:editore).order(:titolo), items: 20)
+    @total_count = @categoria.libri.count
+    set_page_and_extract_portion_from @categoria.libri.includes(:editore).order(:titolo)
   end
 
   def new

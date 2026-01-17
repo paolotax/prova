@@ -24,7 +24,7 @@ class ImportAdozioniController < ApplicationController
 
     @import_adozioni = @import_adozioni.per_scuola_classe_sezione_disciplina
 
-    @pagy, @import_adozioni = pagy(@import_adozioni.all, items: 30)
+    set_page_and_extract_portion_from @import_adozioni
 
     respond_to do |format|
       format.html

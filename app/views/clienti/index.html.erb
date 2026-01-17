@@ -33,21 +33,15 @@
       no_filtering_url: clienti_path %>
 
 <%= turbo_frame_tag :search_results do %>
-  <% if @clienti.any? %>
+  <% if @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @pagy.count %> <%= @pagy.count == 1 ? "cliente trovato" : "clienti trovati" %>
+      <%= @total_count %> <%= @total_count == 1 ? "cliente trovato" : "clienti trovati" %>
     </p>
 
-    <div class="cards cards--grid">
-      <% @clienti.each do |cliente| %>
+    <%= with_manual_pagination :clienti, @page, class: "cards cards--grid" do %>
+      <% @page.records.each do |cliente| %>
         <%= render partial: "clienti/cliente", locals: { cliente: cliente } %>
       <% end %>
-    </div>
-
-    <% if @pagy.pages > 1 %>
-      <nav class="margin-block-start flex justify-center">
-        <%== pagy_nav(@pagy) %>
-      </nav>
     <% end %>
   <% else %>
     <div class="blank-slate blank-slate--empty">

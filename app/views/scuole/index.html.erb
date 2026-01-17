@@ -28,40 +28,32 @@
       no_filtering_url: scuole_path,
       filter_type: "scuola" %>
 
-<%= turbo_frame_tag "scuole_list" do %>
-  <% if @scuole.any? %>
-    <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @pagy.count %> <%= @pagy.count == 1 ? "scuola trovata" : "scuole trovate" %>
-    </p>
+<% if @page.used? %>
+  <p class="txt-small txt-subtle margin-block-end-half center">
+    <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
+  </p>
 
-    <div class="cards cards--list">
-      <% @scuole.each do |scuola| %>
-        <%= render scuola %>
-      <% end %>
-    </div>
-
-    <% if @pagy.pages > 1 %>
-      <nav class="margin-block-start flex justify-center">
-        <%== pagy_nav(@pagy) %>
-      </nav>
+  <div class="cards--grid">
+    <%= with_automatic_pagination :scuole, @page, class: "cards__list" do %>
+      <%= render @page.records %>
     <% end %>
-  <% else %>
-    <div class="blank-slate blank-slate--empty">
-      <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
-      <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
-      <p class="txt-small txt-subtle margin-block-end">
-        <% if @user_filtering.filters_active? %>
-          Prova a modificare i filtri di ricerca.
-        <% else %>
-          Inizia aggiungendo la prima scuola al tuo account.
-        <% end %>
-      </p>
-      <% unless @user_filtering.filters_active? %>
-        <%= link_to new_scuola_path, class: "btn btn--primary" do %>
-          <%= icon_tag "plus", size: "small" %>
-          Aggiungi Scuola
-        <% end %>
+  </div>
+<% else %>
+  <div class="blank-slate blank-slate--empty">
+    <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
+    <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
+    <p class="txt-small txt-subtle margin-block-end">
+      <% if @user_filtering.filters_active? %>
+        Prova a modificare i filtri di ricerca.
+      <% else %>
+        Inizia aggiungendo la prima scuola al tuo account.
       <% end %>
-    </div>
-  <% end %>
+    </p>
+    <% unless @user_filtering.filters_active? %>
+      <%= link_to new_scuola_path, class: "btn btn--primary" do %>
+        <%= icon_tag "plus", size: "small" %>
+        Aggiungi Scuola
+      <% end %>
+    <% end %>
+  </div>
 <% end %>

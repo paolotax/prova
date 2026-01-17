@@ -6,6 +6,10 @@
     pointer-events: none;
     text-decoration: none;
 
+    .spinner {
+      display: none;
+    }
+
     &.pagination-link--active-when-observed {
       block-size: 0;
       inline-size: 0;
@@ -14,6 +18,17 @@
 
       turbo-frame:has(&):has(~ turbo-frame) & {
         display: none;
+      }
+
+      &[aria-busy="true"] {
+        block-size: auto;
+        inline-size: auto;
+        overflow: visible;
+        visibility: visible;
+
+        .spinner {
+          display: block;
+        }
       }
     }
 

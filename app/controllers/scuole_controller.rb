@@ -8,7 +8,8 @@ class ScuoleController < ApplicationController
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
 
   def index
-    @pagy, @scuole = pagy(@filter.scuole, items: 25)
+    @total_count = @filter.scuole.count
+    set_page_and_extract_portion_from @filter.scuole
 
     respond_to do |format|
       format.html

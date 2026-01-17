@@ -1,7 +1,4 @@
 module ApplicationHelper
-
-  include Pagy::Frontend
-
   def page_title_tag
     account_name = Current.account&.name if Current.user&.accounts&.many?
     tag.title [@page_title, account_name, "Scagnozz"].compact.join(" | ")

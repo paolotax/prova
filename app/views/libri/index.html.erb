@@ -46,25 +46,39 @@
 
 <%= turbo_frame_tag :search_results do %>
 
-    <%= tag.div class: "flex flex-col xl:pr-[15rem]", data: { controller: "bulk-actions" } do %>
+    <% if @page.used? %>
+      <p class="txt-small txt-subtle margin-block-end-half center">
+        <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
+      </p>
 
+      <div class="cards--grid" data-controller="bulk-actions">
         <%#= render "shared/active_filters", collection: @libri %>
         <%#= render "libri/bulk_actions/form" %>
 
-        <%= tag.div id: "libri-lista", class: "grid grid-cols-1 lg:grid-cols-2 gap-half" do %>
-            <p class="only:block hidden py-32 px-4 text-center col-span-full">Whoops! Non ci sono libri </p>
-            
-            <%= render @page.records %>
-
-            <% unless @page.last? %>
-                <%= turbo_frame_tag "load_more",
-                            src: libri_path(request.query_parameters.merge(page: @page.next_param, format: :turbo_stream)),
-                            loading: :lazy do %>
-                    <%= render 'shared/lazy_loading' %>
-                <% end %>
-            <% end %>
+        <%= with_automatic_pagination :libri, @page,
+            id: "libri-lista",
+            class: "cards__list" do %>
+          <%= render @page.records %>
         <% end %>
-
+      </div>
+    <% else %>
+      <div class="blank-slate blank-slate--empty">
+        <%= icon_tag "book", size: "large", class: "txt-subtle margin-block-end-half" %>
+        <h3 class="txt-large font-weight-bold">Nessun libro trovato</h3>
+        <p class="txt-small txt-subtle margin-block-end">
+          <% if @user_filtering.filters_active? %>
+            Prova a modificare i filtri di ricerca.
+          <% else %>
+            Inizia aggiungendo il primo libro.
+          <% end %>
+        </p>
+        <% unless @user_filtering.filters_active? %>
+          <%= link_to new_libro_path, class: "btn btn--primary" do %>
+            <%= icon_tag "plus", size: "small" %>
+            Aggiungi Libro
+          <% end %>
+        <% end %>
+      </div>
     <% end %>
 
     <aside class="fixed inset-y-0 right-0 hidden w-72 overflow-y-auto pt-[184px] lg:px-8 xl:block">

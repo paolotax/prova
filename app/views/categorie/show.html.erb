@@ -54,14 +54,14 @@
       </div>
     </div>
 
-    <% if @libri.any? %>
+    <% if @page.used? %>
       <div class="px-6 py-5 border-t border-gray-200">
         <div class="flex justify-between items-center mb-4">
           <h4 class="text-md leading-6 font-medium text-gray-900">
             Libri in questa categoria
           </h4>
           <div class="text-sm text-gray-500">
-            Pagina <%= @pagy.page %> di <%= @pagy.pages %> · <%= @pagy.count %> libri
+            <%= @total_count %> libri
           </div>
         </div>
 
@@ -75,8 +75,8 @@
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Prezzo</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <% @libri.each do |libro| %>
+            <%= with_automatic_pagination :categoria_libri, @page, tag_element: :tbody, class: "divide-y divide-gray-200 bg-white" do %>
+              <% @page.records.each do |libro| %>
                 <tr class="hover:bg-gray-50">
                   <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                     <%= link_to libro.titolo, libro_path(libro), class: "text-blue-600 hover:text-blue-900" %>
@@ -86,64 +86,9 @@
                   <td class="px-3 py-4 text-sm text-gray-500"><%= number_to_currency(libro.prezzo, unit: "€ ") %></td>
                 </tr>
               <% end %>
-            </tbody>
+            <% end %>
           </table>
         </div>
-
-        <% if @pagy.pages > 1 %>
-          <div class="flex items-center justify-center gap-2 mt-6 pb-4">
-            <% if @pagy.prev %>
-              <%= link_to categoria_path(@categoria, page: @pagy.prev),
-                class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" do %>
-                ← Precedente
-              <% end %>
-            <% else %>
-              <span class="px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
-                ← Precedente
-              </span>
-            <% end %>
-
-            <div class="flex gap-1">
-              <% if @pagy.page > 3 %>
-                <%= link_to "1", categoria_path(@categoria, page: 1),
-                  class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
-                <% if @pagy.page > 4 %>
-                  <span class="px-3 py-2 text-sm text-gray-500">...</span>
-                <% end %>
-              <% end %>
-
-              <% ([@pagy.page - 2, 1].max..[@pagy.page + 2, @pagy.pages].min).each do |page| %>
-                <% if page == @pagy.page %>
-                  <span class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
-                    <%= page %>
-                  </span>
-                <% else %>
-                  <%= link_to page, categoria_path(@categoria, page: page),
-                    class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
-                <% end %>
-              <% end %>
-
-              <% if @pagy.page < @pagy.pages - 2 %>
-                <% if @pagy.page < @pagy.pages - 3 %>
-                  <span class="px-3 py-2 text-sm text-gray-500">...</span>
-                <% end %>
-                <%= link_to @pagy.pages, categoria_path(@categoria, page: @pagy.pages),
-                  class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
-              <% end %>
-            </div>
-
-            <% if @pagy.next %>
-              <%= link_to categoria_path(@categoria, page: @pagy.next),
-                class: "px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" do %>
-                Successivo →
-              <% end %>
-            <% else %>
-              <span class="px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
-                Successivo →
-              </span>
-            <% end %>
-          </div>
-        <% end %>
       </div>
     <% else %>
       <div class="px-6 py-5 border-t border-gray-200">

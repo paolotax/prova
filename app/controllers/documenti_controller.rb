@@ -11,7 +11,7 @@ class DocumentiController < ApplicationController
     @import = DocumentiImporter.new
 
     @tutti_documenti = @filter.documenti
-    @pagy, @documenti = pagy(@filter.documenti, items: 20)
+    set_page_and_extract_portion_from @filter.documenti
 
     respond_to do |format|
       format.html

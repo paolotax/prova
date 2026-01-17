@@ -21,9 +21,8 @@ class LibriController < ApplicationController
     end
   end
 
-  def index        
-    #@pagy, @libri = pagy(@filter.libri, items: 25)
-
+  def index
+    @total_count = @filter.libri.count
     set_page_and_extract_portion_from @filter.libri
       
     respond_to do |format|

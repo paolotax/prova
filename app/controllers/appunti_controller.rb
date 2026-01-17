@@ -17,7 +17,7 @@ class AppuntiController < ApplicationController
     @appunti = @filter.appunti(@appunti)
     @total_count = @appunti.count
 
-    @pagy, @appunti =  pagy(@appunti.all, items: 30)
+    set_page_and_extract_portion_from @appunti
 
     respond_to do |format|
       format.html do

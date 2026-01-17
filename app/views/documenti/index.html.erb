@@ -78,12 +78,12 @@
 			<p class="only:block hidden py-8 px-4 text-center md:col-span-2 4xl:col-span-3">
 				Whoops! Non ci sono documenti.
 			</p>
-			<%= render partial: "documenti/documento_con_figli", collection: @documenti, as: :documento %>
+			<%= render partial: "documenti/documento_con_figli", collection: @page.records, as: :documento %>
 		<% end %>
 
-		<% if @pagy.next %>
+		<% if @page.before_last? %>
 			<%= turbo_frame_tag :pagination,
-						src: documenti_path(request.query_parameters.merge(format: :turbo_stream, page: @pagy.next)),
+						src: documenti_path(request.query_parameters.merge(format: :turbo_stream, page: @page.next_param)),
 						loading: :lazy do %>
 				<div role="status">
 					<div class="flex justify-center">
