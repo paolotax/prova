@@ -4,7 +4,7 @@ module Filters
       extend ActiveSupport::Concern
 
       def summary
-        parts = [terms_summary, statuses_summary, states_summary].compact
+        parts = [terms_summary, statuses_summary, state_summary].compact
         parts.any? ? parts.to_sentence : "Tutti gli appunti"
       end
 
@@ -22,10 +22,9 @@ module Filters
         end
       end
 
-      def states_summary
-        if states.any?
-          labels = states.map { |s| ::Appunto::FIZZY_STATES[s] }.compact
-          labels.count == 1 ? labels.first : "#{labels.count} filtri"
+      def state_summary
+        if state.present?
+          ::Appunto::FIZZY_STATES[state]
         end
       end
     end

@@ -22,15 +22,15 @@ module Filters
     end
 
     def show_statuses?
-      true
+      false
     end
 
     def show_states?
-      true
+      false
     end
 
     def filters_active?
-      filter.terms.present? || filter.statuses.present? || filter.states.present?
+      filter.terms.present? || filter.statuses.present? || filter.state.present?
     end
 
     def controls

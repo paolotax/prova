@@ -40,7 +40,7 @@ module Filters
       end
 
       result = result.where(stato: statuses) if statuses.present?
-      result = result.with_any_state(states) if states.present?
+      result = result.with_any_state([state]) if state.present?
       result
     end
 
