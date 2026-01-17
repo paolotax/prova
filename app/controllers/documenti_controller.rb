@@ -1,16 +1,17 @@
 class DocumentiController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:anno, :consegnati, :pagati, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
+  FILTER_PARAMS = [:anno, :consegnati, :pagati, :clientable_type, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
 
   before_action :authenticate_user!
   before_action :set_documento, only: %i[ show edit update destroy edit_status ]
 
   def index
-    @causali = Causale.all
-    @import = DocumentiImporter.new
+    # @causali = Causale.all
+    # @import = DocumentiImporter.new
 
     @tutti_documenti = @filter.documenti
+    @total_count = @filter.documenti.count
     set_page_and_extract_portion_from @filter.documenti
 
     respond_to do |format|
