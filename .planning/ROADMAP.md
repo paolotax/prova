@@ -1,0 +1,66 @@
+# Roadmap: Filter Pattern Documenti
+
+## Overview
+
+Complete the Filter Pattern for Documenti by fixing view URLs, adding clientable_type filter capability, and verifying functionality. This follows the established pattern already working for Clienti, Appunti, Libri, and Scuole.
+
+## Phases
+
+- [ ] **Phase 1: View Fix** - Correct filter URLs pointing to wrong endpoints
+- [ ] **Phase 2: ClientableType Filter** - Add clientable_type filter with Fields, Query, Controller, and UI
+- [ ] **Phase 3: Verification** - Manual verification of filter functionality
+
+## Phase Details
+
+### Phase 1: View Fix
+**Goal**: Documenti index page filter settings point to correct endpoints
+**Depends on**: Nothing (first phase)
+**Requirements**: VIEW-01, VIEW-02
+**Success Criteria** (what must be TRUE):
+  1. Filter form submits to documenti_path (not appunti_path)
+  2. Filter partial receives filter_type "documento" (not "appunto")
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: Fix filter_url and filter_type in documenti/index view
+
+### Phase 2: ClientableType Filter
+**Goal**: Users can filter documents by client type (Cliente vs ImportScuola)
+**Depends on**: Phase 1
+**Requirements**: FILT-01, FILT-02, FILT-03, UI-01, UI-02, UI-03
+**Success Criteria** (what must be TRUE):
+  1. User can see clientable_type filter options in the filter sidebar
+  2. Selecting a clientable_type filters documents to only that client type
+  3. Active filter indicator shows when clientable_type is selected
+  4. Filter persists correctly through page interactions
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: Add clientable_type to Fields (store_accessor, getter/setter)
+- [ ] 02-02: Add clientable_type query logic in Documento.documenti
+- [ ] 02-03: Add clientable_type to FILTER_PARAMS in controller
+- [ ] 02-04: Add UI presenter methods in Filtering
+
+### Phase 3: Verification
+**Goal**: Confirm all filter functionality works correctly in browser
+**Depends on**: Phase 2
+**Requirements**: VER-01, VER-02
+**Success Criteria** (what must be TRUE):
+  1. Filter UI is visible and accessible on documenti index page
+  2. Selecting clientable_type correctly filters the document list
+  3. All existing filters (causali, statuses, anno) still work
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: Manual browser verification of filter functionality
+
+## Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. View Fix | 0/1 | Not started | - |
+| 2. ClientableType Filter | 0/4 | Not started | - |
+| 3. Verification | 0/1 | Not started | - |
+
+---
+*Created: 2026-01-17*
