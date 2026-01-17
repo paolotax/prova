@@ -7,6 +7,7 @@ module Filters
         :anno,
         :consegnati,
         :pagati,
+        :clientable_type,
         terms: [],
         causali: [],
         statuses: [],
@@ -20,7 +21,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :terms, :causali, :statuses, :tipi_pagamento, :anno, :consegnati, :pagati
+        store_accessor :fields, :terms, :causali, :statuses, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type
 
         def terms
           Array(super)
@@ -65,6 +66,10 @@ module Filters
         def pagati
           super.presence
         end
+
+        def clientable_type
+          super.presence
+        end
       end
 
       def as_params
@@ -76,6 +81,7 @@ module Filters
           params[:anno] = anno
           params[:consegnati] = consegnati
           params[:pagati] = pagati
+          params[:clientable_type] = clientable_type
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
       end
     end
