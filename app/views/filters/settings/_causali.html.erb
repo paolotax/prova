@@ -18,12 +18,12 @@
     <strong class="popup__title">Filtra per causale...</strong>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
-      <% user_filtering.causali_disponibili.each do |id, descrizione| %>
+      <% user_filtering.causali_disponibili.each do |id, nome| %>
         <%= content_tag(:li, class: "popup__item", data: {
-              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: id, multi_selection_combobox_label: descrizione },
+              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: id, multi_selection_combobox_label: nome },
               role: "checkbox", aria: { checked: filter.causali.include?(id.to_s) }) do %>
           <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change filter-settings#change form#submit">
-            <span class="overflow-ellipsis flex-item-grow"><%= descrizione %></span>
+            <span class="overflow-ellipsis flex-item-grow"><%= nome %></span>
             <%= icon_tag "check", class: "checked flex-item-justify-end" %>
           </button>
         <% end %>

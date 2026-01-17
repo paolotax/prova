@@ -13,7 +13,7 @@ module Filters
     end
 
     def causali_disponibili
-      @causali_disponibili ||= Causale.all.order(:causale).pluck(:id, :descrizione)
+      @causali_disponibili ||= Causale.all.order(:causale).pluck(:id, :causale)
     end
 
     def show_causali?
