@@ -1,83 +1,216 @@
-/* ==========================================================================
-   Documenti Component Styles
-   ==========================================================================
-
-   Foundation CSS for documento components (invoices, orders, credit notes).
-
-   This file provides the infrastructure for phases 5-9 of the documenti
-   refactoring milestone:
-   - Phase 5: Status Badges
-   - Phase 6: Document Card
-   - Phase 7: Detail View
-   - Phase 8: Form Views
-   - Phase 9: Index View
-
-   BEM Naming Convention
-   ---------------------
-   Block: .documento (the main component)
-
-   Elements:
-     __header    - Document header section
-     __body      - Main content area
-     __footer    - Document footer
-     __title     - Document title/number
-     __meta      - Metadata display
-     __badges    - Status badge container
-     __righe     - Document lines container
-     __riga      - Single document line
-     __totals    - Totals section
-     __cliente   - Customer information
-
-   Modifiers:
-     --fattura       - Invoice type styling
-     --ordine        - Order type styling
-     --nota-credito  - Credit note type styling
-     --bozza         - Draft status
-     --consegnato    - Delivered status
-     --pagato        - Paid status
-     --incompleto    - Incomplete status
-
-   Pattern reference: Follow cards.css patterns exactly
-
-   ========================================================================== */
-
 @layer components {
-
   /* Base
   /* ------------------------------------------------------------------------ */
 
   .documento {
-    /* Theming - colors */
-    --doc-bg-color: var(--color-canvas);
-    --doc-border-color: var(--color-ink-lighter);
-    --doc-text-color: var(--color-ink);
-    --doc-text-muted: var(--color-ink-dark);
-    --doc-causale-color: var(--color-ink-medium);
+    --avatar-size: 2.75em;
+    --documento-bg-color: color-mix(in srgb, var(--documento-color) 4%, var(--color-canvas));
+    --documento-content-color: color-mix(in srgb, var(--documento-color) 30%, var(--color-ink));
+    --documento-text-color: color-mix(in srgb, var(--documento-color) 75%, var(--color-ink));
+    --documento-border: 1px solid color-mix(in srgb, var(--documento-color) 33%, var(--color-ink-inverted));
+    --documento-header-space: 1ch;
+    --documento-padding-inline: var(--inline-space-double);
+    --documento-padding-block: var(--block-space);
+    --border-color: transparent;
+    --border-radius: 0.2em;
+    --border-size: 0;
 
-    /* Theming - spacing */
-    --doc-padding-block: var(--block-space);
-    --doc-padding-inline: var(--inline-space-double);
-    --doc-gap: var(--inline-space);
+    aspect-ratio: var(--documento-aspect-ratio, auto);
+    background-color: var(--documento-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    padding: var(--documento-padding-block) var(--documento-padding-inline);
+    position: relative;
+    text-align: start;
+    z-index: 1;
 
-    /* Theming - borders */
-    --doc-border-radius: 0.5em;
-    --doc-border: 1px solid var(--doc-border-color);
+    html[data-theme="dark"] & {
+      box-shadow: 0 0 0 1px var(--color-ink-lighter);
+    }
 
-    /* Theming - status badge colors */
-    --doc-status-positive-bg: oklch(var(--lch-green-lighter));
-    --doc-status-positive-color: oklch(var(--lch-green-dark));
-    --doc-status-pending-bg: oklch(var(--lch-yellow-lighter));
-    --doc-status-pending-color: oklch(var(--lch-yellow-dark));
-    --doc-status-neutral-bg: var(--color-ink-lightest);
-    --doc-status-neutral-color: var(--color-ink-dark);
-    --doc-status-negative-bg: oklch(var(--lch-red-lighter));
-    --doc-status-negative-color: oklch(var(--lch-red-dark));
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) & {
+        box-shadow: 0 0 0 1px var(--color-ink-lighter);
+      }
+    }
+
+    .popup {
+      inline-size: 260px;
+    }
   }
 
-  /* Status Badges - Phase 5
+  /* Header
   /* ------------------------------------------------------------------------ */
 
-  /* Container */
+  .documento__header {
+    align-items: center;
+    border-radius: var(--border-radius) 0 0 0;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--documento-header-space);
+    margin-block-start: calc(-1 * var(--documento-padding-block));
+    margin-inline: calc(-1 * var(--documento-padding-inline)) calc(-0.5 * var(--documento-padding-inline));
+    max-inline-size: unset;
+    min-inline-size: 0;
+  }
+
+  .documento__board {
+    background-color: var(--documento-color);
+    border-radius: var(--border-radius) 0 var(--border-radius) 0;
+    color: var(--color-ink-inverted);
+    display: inline-flex;
+    font-weight: 600;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    padding-block: 0.25lh;
+    padding-inline: var(--documento-padding-inline) 1ch;
+  }
+
+  .documento__id {
+    flex-shrink: 0;
+  }
+
+  .documento__board-name {
+    border-inline-start: 1px solid color-mix(in hsl, transparent 75%, currentColor);
+    color: currentColor;
+    display: flex;
+    margin-inline-start: var(--documento-header-space);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    padding-inline-start: var(--documento-header-space);
+    text-transform: uppercase;
+  }
+
+  /* Body
+  /* ------------------------------------------------------------------------ */
+
+  .documento__body {
+    display: flex;
+    flex-grow: 1;
+    gap: 1ch;
+    inline-size: 100%;
+    padding-block: calc(var(--documento-padding-block) / 2);
+
+    @media (min-width: 640px) {
+      gap: var(--documento-padding-inline);
+    }
+  }
+
+  .documento__content {
+    color: var(--documento-content-color);
+    contain: inline-size;
+    flex: 2 1 auto;
+    max-inline-size: 100%;
+  }
+
+  .documento__title {
+    color: var(--documento-content-color);
+    font-size: var(--text-xx-large);
+    font-weight: 900;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .documento__subtitle {
+    color: var(--documento-text-color);
+    font-size: var(--text-small);
+    text-transform: uppercase;
+  }
+
+  .documento__stages {
+    color: var(--documento-text-color);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--text-small);
+    gap: 0.5ch;
+    margin-block-start: 0.5em;
+  }
+
+  /* Footer
+  /* ------------------------------------------------------------------------ */
+
+  .documento__footer {
+    /* Uses utility classes: flex gap-half */
+  }
+
+  .documento__meta-avatars {
+    align-self: center;
+  }
+
+  /* Causale colors (set --documento-color)
+  /* ------------------------------------------------------------------------ */
+
+  .documento--ordine-entrata { --documento-color: oklch(var(--lch-blue-medium)); }
+  .documento--ordine-uscita { --documento-color: oklch(var(--lch-violet-medium)); }
+  .documento--vendita-entrata { --documento-color: oklch(var(--lch-green-medium)); }
+  .documento--vendita-uscita { --documento-color: oklch(var(--lch-red-medium)); }
+  .documento--carico-entrata { --documento-color: oklch(var(--lch-yellow-medium)); }
+  .documento--carico-uscita { --documento-color: oklch(var(--lch-uncolor-medium)); }
+
+  /* Completato state (like card--postponed)
+  /* ------------------------------------------------------------------------ */
+
+  .documento--completato {
+    --documento-color: var(--color-card-complete) !important;
+  }
+
+  /* Selected state
+  /* ------------------------------------------------------------------------ */
+
+  .documento--selected {
+    --documento-color: oklch(var(--lch-violet-medium));
+  }
+
+  /* Compact variant
+  /* ------------------------------------------------------------------------ */
+
+  .documento--compact {
+    background-color: var(--documento-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: var(--documento-padding-block) var(--documento-padding-inline);
+
+    html[data-theme="dark"] & {
+      box-shadow: 0 0 0 1px var(--color-ink-lighter);
+    }
+  }
+
+  .documento--compact .documento__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .documento--compact .documento__title {
+    font-weight: 600;
+  }
+
+  .documento--compact .documento__cliente {
+    color: var(--documento-text-color);
+    font-size: var(--text-small);
+  }
+
+  .documento--compact .documento__meta {
+    color: var(--documento-text-color);
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .documento--compact.documento--selected {
+    background-color: oklch(var(--lch-violet-medium));
+    color: var(--color-ink-inverted);
+  }
+
+  .documento--compact.documento--selected .documento__cliente,
+  .documento--compact.documento--selected .documento__meta {
+    color: inherit;
+  }
+
+  /* Status Badges
+  /* ------------------------------------------------------------------------ */
+
   .documento-status {
     align-items: center;
     display: flex;
@@ -85,11 +218,9 @@
     gap: 0.5rem;
   }
 
-  /* Base badge */
   .documento-status__badge {
-    /* Local theming variables */
-    --badge-bg: var(--doc-status-neutral-bg);
-    --badge-color: var(--doc-status-neutral-color);
+    --badge-bg: var(--color-ink-lightest);
+    --badge-color: var(--color-ink-dark);
     --badge-ring: var(--color-ink-light);
 
     align-items: center;
@@ -106,302 +237,39 @@
 
     &:hover,
     &:focus-visible {
-      box-shadow: 0 0 0 2px var(--doc-bg-color, var(--color-canvas)),
+      box-shadow: 0 0 0 2px var(--color-canvas),
                   0 0 0 4px var(--badge-ring);
       outline: none;
     }
   }
 
-  /* Positive state (consegnato/pagato) */
   .documento-status__badge--positive {
-    --badge-bg: var(--doc-status-positive-bg);
-    --badge-color: var(--doc-status-positive-color);
+    --badge-bg: oklch(var(--lch-green-lighter));
+    --badge-color: oklch(var(--lch-green-dark));
     --badge-ring: oklch(var(--lch-green-light));
   }
 
-  /* Pending state (for future use) */
   .documento-status__badge--pending {
-    --badge-bg: var(--doc-status-pending-bg);
-    --badge-color: var(--doc-status-pending-color);
+    --badge-bg: oklch(var(--lch-yellow-lighter));
+    --badge-color: oklch(var(--lch-yellow-dark));
     --badge-ring: oklch(var(--lch-yellow-light));
   }
 
-  /* Negative state (for errors/warnings) */
   .documento-status__badge--negative {
-    --badge-bg: var(--doc-status-negative-bg);
-    --badge-color: var(--doc-status-negative-color);
+    --badge-bg: oklch(var(--lch-red-lighter));
+    --badge-color: oklch(var(--lch-red-dark));
     --badge-ring: oklch(var(--lch-red-light));
   }
 
-  /* Icon within badge */
   .documento-status__icon {
     block-size: 1em;
     inline-size: 1em;
     flex-shrink: 0;
   }
 
-  /* Document Card - Phase 6
+  /* Detail View
   /* ------------------------------------------------------------------------ */
 
-  /* Base documento block with causale theming */
-  .documento {
-    --doc-causale-bg: var(--color-ink-lightest);
-    --doc-causale-text: var(--color-ink);
-    --doc-causale-border: var(--color-ink-light);
-
-    position: relative;
-    inline-size: 100%;
-  }
-
-  /* Causale modifier classes */
-  .documento--ordine-entrata {
-    --doc-causale-bg: oklch(var(--lch-blue-lightest));
-    --doc-causale-text: oklch(var(--lch-blue-dark));
-    --doc-causale-border: oklch(var(--lch-blue-light));
-  }
-
-  .documento--ordine-uscita {
-    --doc-causale-bg: oklch(var(--lch-violet-lightest));
-    --doc-causale-text: oklch(var(--lch-violet-dark));
-    --doc-causale-border: oklch(var(--lch-violet-light));
-  }
-
-  .documento--vendita-entrata {
-    --doc-causale-bg: oklch(var(--lch-green-lightest));
-    --doc-causale-text: oklch(var(--lch-green-dark));
-    --doc-causale-border: oklch(var(--lch-green-light));
-  }
-
-  .documento--vendita-uscita {
-    --doc-causale-bg: oklch(var(--lch-red-lightest));
-    --doc-causale-text: oklch(var(--lch-red-dark));
-    --doc-causale-border: oklch(var(--lch-red-light));
-  }
-
-  .documento--carico-entrata {
-    --doc-causale-bg: oklch(var(--lch-yellow-lightest));
-    --doc-causale-text: oklch(var(--lch-yellow-dark));
-    --doc-causale-border: oklch(var(--lch-yellow-light));
-  }
-
-  .documento--carico-uscita {
-    --doc-causale-bg: oklch(var(--lch-uncolor-lightest));
-    --doc-causale-text: oklch(var(--lch-uncolor-dark));
-    --doc-causale-border: oklch(var(--lch-uncolor-light));
-  }
-
-  /* Selected state */
-  .documento--selected {
-    --doc-causale-bg: oklch(var(--lch-violet-medium));
-    --doc-causale-text: var(--color-ink-inverted);
-    --doc-causale-border: oklch(var(--lch-violet-dark));
-  }
-
-  .documento--selected .documento__cliente,
-  .documento--selected .documento__meta,
-  .documento--selected .documento__copies,
-  .documento--selected .documento__amount {
-    color: inherit;
-  }
-
-  /* Header element */
-  .documento__header {
-    align-items: center;
-    background-color: var(--doc-causale-bg);
-    border: var(--doc-border);
-    border-color: var(--doc-causale-border);
-    border-radius: var(--doc-border-radius) var(--doc-border-radius) 0 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 1rem;
-  }
-
-  .documento__header-content {
-    display: block;
-
-    @media (min-width: 640px) {
-      align-items: flex-start;
-      display: flex;
-      gap: 1rem;
-    }
-  }
-
-  .documento__checkbox {
-    align-items: center;
-    display: flex;
-    flex-shrink: 0;
-    gap: 0.5rem;
-    justify-content: flex-start;
-  }
-
-  .documento__cliente {
-    color: var(--doc-text-muted);
-    font-size: var(--text-small);
-  }
-
-  .documento__cliente-card {
-    align-items: center;
-    display: flex;
-    gap: 0.5rem;
-
-    .group.show-scuola & {
-      display: none;
-    }
-  }
-
-  .documento__referente {
-    font-size: var(--text-x-small);
-    margin-block-start: 0.5rem;
-  }
-
-  .documento__notes {
-    font-size: var(--text-x-small);
-    max-block-size: 2rem;
-    overflow: hidden;
-    transition: max-block-size 200ms;
-
-    &:hover {
-      max-block-size: none;
-    }
-  }
-
-  .documento__actions {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-
-    @media (min-width: 640px) {
-      flex-direction: row;
-    }
-  }
-
-  /* Body element */
-  .documento__body {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Footer element */
-  .documento__footer {
-    background-color: var(--doc-causale-bg);
-    border: var(--doc-border);
-    border-color: var(--doc-causale-border);
-    border-top: none;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    margin-block-end: 1rem;
-    padding: 1rem;
-
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(8, 1fr);
-    }
-
-    &:last-child {
-      border-radius: 0 0 var(--doc-border-radius) var(--doc-border-radius);
-      box-shadow: var(--shadow);
-    }
-  }
-
-  /* Footer child elements */
-  .documento__badges {
-    display: flex;
-    gap: 0.5rem;
-    grid-column: 1 / -1;
-    margin-block-end: 0.5rem;
-
-    @media (min-width: 640px) {
-      gap: 1rem;
-    }
-  }
-
-  .documento__avatars {
-    display: flex;
-    gap: 0.5rem;
-    grid-column: span 3;
-
-    @media (min-width: 640px) {
-      gap: 1rem;
-      grid-column: span 2;
-    }
-  }
-
-  .documento__copies {
-    color: var(--doc-text-color);
-    font-size: var(--text-small);
-    font-weight: 700;
-    grid-column: span 1;
-    grid-column-start: 4;
-    line-height: 1.5;
-    padding-inline: 0.75rem;
-    text-align: end;
-
-    @media (min-width: 640px) {
-      grid-column-start: 5;
-    }
-  }
-
-  .documento__amount {
-    color: var(--doc-text-color);
-    font-size: var(--text-small);
-    font-weight: 700;
-    grid-column: span 2;
-    grid-column-start: 5;
-    line-height: 1.5;
-    padding-inline-start: 0.75rem;
-    text-align: end;
-
-    @media (min-width: 640px) {
-      grid-column-start: 7;
-    }
-  }
-
-  /* Compact variant */
-  .documento--compact {
-    background-color: var(--doc-causale-bg);
-    border: var(--doc-border);
-    border-color: var(--doc-causale-border);
-    border-radius: var(--doc-border-radius);
-    box-shadow: var(--shadow);
-    margin-block-end: 1rem;
-    padding: 1rem;
-  }
-
-  .documento--compact .documento__link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .documento--compact .documento__title {
-    font-weight: 600;
-  }
-
-  .documento--compact .documento__cliente,
-  .documento--compact .documento__meta {
-    color: var(--doc-text-muted);
-    font-size: var(--text-small);
-    text-align: end;
-  }
-
-  .documento--compact .documento__meta {
-    font-weight: 600;
-  }
-
-  .documento--compact.documento--selected {
-    background-color: oklch(var(--lch-violet-medium));
-    color: var(--color-ink-inverted);
-  }
-
-  .documento--compact.documento--selected .documento__cliente,
-  .documento--compact.documento--selected .documento__meta {
-    color: inherit;
-  }
-
-  /* Detail View - Phase 7
-  /* ------------------------------------------------------------------------ */
-
-  /* Container */
   .documento-detail {
     display: flex;
     flex-direction: column;
@@ -414,7 +282,6 @@
     }
   }
 
-  /* Header/Client section */
   .documento-detail__info {
     padding-inline: 1rem;
 
@@ -453,7 +320,6 @@
     }
   }
 
-  /* Table container and base styles */
   .documento-detail__table-container {
     margin-block-start: 2rem;
     padding-inline: 0;
@@ -481,7 +347,6 @@
     }
   }
 
-  /* Table header styles */
   .documento-detail__thead {
     border-block-end: 1px solid var(--color-ink-light);
     color: var(--color-ink);
@@ -522,7 +387,6 @@
     }
   }
 
-  /* Riga (row) styles */
   .documento-detail__riga {
     border-block-end: 1px solid var(--color-ink-lighter);
   }
@@ -581,10 +445,9 @@
     }
   }
 
-  /* Section header styles (for derivati/nipoti) */
   .documento-detail__section {
-    background-color: var(--doc-causale-bg);
-    border-block-start: 1px solid var(--doc-causale-border);
+    background-color: var(--color-ink-lightest);
+    border-block-start: 1px solid var(--color-ink-light);
   }
 
   .documento-detail__section td {
@@ -650,7 +513,6 @@
     color: oklch(var(--lch-blue-darker));
   }
 
-  /* Footer totals styles */
   .documento-detail__tfoot tr {
     border: none;
   }
@@ -708,14 +570,12 @@
     }
   }
 
-  /* Scroll navigation */
   .documento-detail__scroll-nav {
     display: flex;
     justify-content: flex-end;
     padding-inline-end: 1rem;
   }
 
-  /* Print styles for detail view */
   @media print {
     .documento-detail {
       inline-size: 100%;
@@ -732,15 +592,13 @@
     }
   }
 
-  /* Form Views - Phase 8
+  /* Form Views
   /* ------------------------------------------------------------------------ */
 
-  /* Form container - uses contents for grid inheritance */
   .documento-form {
     display: contents;
   }
 
-  /* Error display */
   .documento-form__errors {
     background-color: oklch(var(--lch-red-lightest));
     border-radius: 0.5rem;
@@ -750,7 +608,6 @@
     padding: 0.5rem 0.75rem;
   }
 
-  /* Form sections with responsive grid */
   .documento-form__section {
     background-color: var(--color-ink-lighter);
     border: 1px solid var(--color-ink-light);
@@ -764,10 +621,6 @@
     @media (min-width: 640px) {
       grid-template-columns: repeat(8, 1fr);
     }
-  }
-
-  .documento-form__section--header {
-    /* Uses default grid styling */
   }
 
   .documento-form__section--clientable {
@@ -784,7 +637,6 @@
     padding: 0;
   }
 
-  /* Fieldset containers */
   .documento-form__fieldset {
     display: flex;
     flex-direction: column;
@@ -807,7 +659,6 @@
     margin-block: 0.5rem;
   }
 
-  /* Single riga row */
   .documento-form__riga {
     align-items: end;
     background-color: var(--color-canvas);
@@ -857,7 +708,6 @@
     justify-content: center;
   }
 
-  /* Form actions container */
   .documento-form__actions {
     align-items: flex-start;
     display: flex;
@@ -865,7 +715,6 @@
     padding-inline: 1rem;
   }
 
-  /* Submit button */
   .documento-form__submit {
     background-color: oklch(var(--lch-blue-dark));
     border-radius: 0.5rem;
@@ -887,7 +736,6 @@
     }
   }
 
-  /* Delete button for riga rows */
   .documento-form__delete-button {
     align-items: center;
     background-color: oklch(var(--lch-red-dark));
@@ -919,7 +767,6 @@
     }
   }
 
-  /* Inline fields container (status/payment toggles) */
   .documento-form__inline-container {
     align-items: flex-start;
     color: var(--color-ink);
@@ -932,13 +779,11 @@
     }
   }
 
-  /* Inline field group (label + input pair) */
   .documento-form__inline-field {
     display: flex;
     flex-direction: column;
   }
 
-  /* Inline select/date inputs */
   .documento-form__inline-select,
   .documento-form__inline-date {
     background-color: var(--color-canvas);
@@ -955,7 +800,6 @@
     box-shadow: 0 0 0 1px oklch(var(--lch-blue-medium));
   }
 
-  /* Number input base styling */
   .documento-form__input-number {
     background-color: var(--color-canvas);
     border: none;
@@ -966,7 +810,6 @@
     padding: 0.5rem;
     text-align: end;
 
-    /* Hide spinner buttons */
     appearance: textfield;
     -moz-appearance: textfield;
 
@@ -987,16 +830,14 @@
     }
   }
 
-  /* Index View - Phase 9
+  /* Icon and loading
   /* ------------------------------------------------------------------------ */
 
-  /* Native app icon sizing */
   .documento-icon--medium {
     block-size: 1.25rem;
     inline-size: 1.25rem;
   }
 
-  /* Loading indicator */
   .documento-loading {
     display: flex;
     justify-content: center;
@@ -1018,17 +859,16 @@
     position: absolute;
     white-space: nowrap;
   }
+}
 
-  /* Dark mode overrides
-  /* ------------------------------------------------------------------------ */
+/* Grid view overrides (outside @layer for higher priority)
+/* -------------------------------------------------------------------------- */
 
-  html[data-theme="dark"] .documento {
-    /* Dark mode overrides - add as needed */
-  }
-
-  @media (prefers-color-scheme: dark) {
-    html:not([data-theme]) .documento {
-      /* System preference dark mode - add as needed */
-    }
-  }
+.cards--grid .documento {
+  --block-space: 1em !important;
+  --block-space-half: 0.5em !important;
+  --documento-padding-inline: 1em !important;
+  --text-xx-large: 1.6em !important;
+  --text-small: 1em !important;
+  font-size: clamp(0.6rem, 0.85cqi, 100px) !important;
 }

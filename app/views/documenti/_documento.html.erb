@@ -1,104 +1,40 @@
-<%= tag.div id: dom_id(documento), class: class_names("documento", documento_causale_modifier(documento), "documento--selected": @documento == documento), data: { controller: "tax-reveal" } do %>
+<%= tag.article id: dom_id(documento),
+    class: class_names("documento", documento_causale_modifier(documento), "documento--selected": @documento == documento),
+    data: { controller: "tax-reveal" } do %>
 
-	<%= tag.header class: "documento__header" do %>
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <header class="documento__header">
+      <div class="documento__board">
+        <span class="documento__id">
+          <span class="for-screen-reader">Numero documento</span>
+          <%= documento.numero_documento %>
+        </span>
+        <span class="documento__board-name">
+          <span class="overflow-ellipsis"><%= documento.causale.descrizione_causale.upcase %></span>
+        </span>
+      </div>
+    </header>
 
-		<%= tag.div class: "documento__header-content" do %>
+    <div class="documento__body">
+      <div class="documento__content">
+        <%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+        <% if documento.referente.present? || documento.note.present? %>
+          <div class="documento__stages">
+            <%= tag.span documento.referente if documento.referente.present? %>
+            <%= tag.span simple_format(documento.note) if documento.note.present? %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 
-			<%= tag.div class: "documento__checkbox" do %>
-				<%= check_box_tag "documento_ids[]",
-					documento.id,
-					false,
-					id: "documento_#{documento.id}",
-					class: "w-7 h-7 mr-2 rounded-full border-2 border-indigo-300 text-indigo-600 outline-none ring-0 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0",
-					data: {action: "input->bulk-actions#count"} %>
-
-				<%= link_to documento_path(documento), class: "text-sm font-semibold hover:font-bold hover:text-blue-500", data: { turbo_frame: :_top } do %>
-					<%= tag.div documento&.causale&.descrizione_causale %>
-					<%= tag.div "#{documento.numero_documento} del #{documento.data_documento.strftime("%d-%m-%Y")}", class: "text-xs font-semibold text-gray-600 hover:text-blue-500" %>
-				<% end %>
-			<% end %>
-
-			<%= tag.div class: "documento__cliente" do %>
-				<div class="documento__cliente-card">
-					<%#= inline_svg_tag "icon-shopping-cart.svg", class: "flex-shrink-0 size-6 hover:text-green-500" %>
-					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
-				</div>
-
-				<%= tag.p documento.referente, class: "documento__referente" %>
-
-				<%= tag.div class: "documento__notes" do %>
-					<%= simple_format(documento.note) %>
-				<% end %>
-
-			<% end %>
-
-		<% end %>
-
-		<div class="documento__actions">
-			<% if documento.incompleto? %>
-				<%= component 'tax_button',
-						caption: "",
-						svg_file: "icon-trash-real.svg",
-						color: "red",
-						url: documento_path(documento),
-						data_attr: { turbo_method: :delete } %>
-			<% end %>
-
-			<% unless hotwire_native_app? %>
-				<%= component 'tax_button',
-						caption: "",
-						svg_file: "icon-pencil.svg",
-					color: "yellow",
-					url: documento_step_path(documento, Documento.form_steps.keys.first),
-					data_attr: { turbo_frame: :_top} %>
-				<%= component 'tax_button',
-						caption: "",
-						svg_file: "icon-print.svg",
-						color: "white",
-						url: documento_url(documento, format: :pdf),
-						target: "_blank" %>
-				<%= component 'tax_button',
-						svg_file: "icon-chevron-right.svg",
-						color: "transparent",
-						data_attr: { action: "click->tax-reveal#toggle", tax_reveal_target: "chevron"} %>
-			<% else %>
-				<%= component 'tax_button',
-					svg_file: "icon-chevron-right.svg",
-					color: "transparent",
-					url: documento_path(documento),
-					data_attr: { turbo_frame: :_top } %>
-			<% end %>
-		</div>
-	<% end %>
-
-	<% unless hotwire_native_app? %>
-		<ul data-tax-reveal-target="item" class="documento__body hidden">
-			<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
-			<% documento.documento_righe.each do |riga| %>
-				<%= render partial: "righe/riga_item", locals: { riga: riga.riga } %>
-			<% end %>
-		</ul>
-	<% end %>
-
-	<%= tag.footer class: "documento__footer" do %>
-
-		<%= tag.div class: "documento__badges" do %>
-			<%= render "documenti/status_badges", documento: documento %>
-    	<% end %>
-
-		<%= tag.div class: "documento__avatars" do %>
-			<%= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
-		<% end %>
-
-		<div class="documento__copies">
-			<%= documento.totale_copie %>
-		</div>
-
-		<div class="documento__amount">
-			<%= number_to_currency documento.totale_importo, locale: :it %>
-		</div>
-
-	<% end %>
-
+  <footer class="documento__footer flex gap-half">
+    <%= render "documenti/status_badges", documento: documento %>
+    <div class="documento__meta-avatars">
+      <%#= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
+    </div>
+    <span class="txt-small font-weight-black"><%= documento.totale_copie %></span>
+    <span class="txt-small font-weight-black"><%= number_to_currency documento.totale_importo, locale: :it %></span>
+  </footer>
 
 <% end %>

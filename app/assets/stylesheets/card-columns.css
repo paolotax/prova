@@ -300,7 +300,15 @@
       padding: 1ch;
     }
 
-    .card {
+    .card,
+    .documento {
+      --block-space: 1em;
+      --block-space-half: 0.5em;
+      --documento-padding-inline: 1em;
+      --text-xx-large: 1.6em;
+      --text-x-small: 1em;
+
+      font-size: clamp(0.6rem, 0.85cqi, 100px);
       inline-size: calc((100% - var(--cards-gap) * (var(--card-grid-columns) - 1) ) / var(--card-grid-columns));
     }
 
@@ -500,6 +508,7 @@
   /* ------------------------------------------------------------------------ */
 
   .cards .card,
+  .cards .documento,
   .board-tools {
     --block-space: 1em;
     --block-space-half: 0.5em;

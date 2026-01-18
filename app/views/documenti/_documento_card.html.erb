@@ -1,6 +1,18 @@
 <%= tag.div id: dom_id(documento), class: class_names("documento documento--compact", documento_causale_modifier(documento), "documento--selected": @documento == documento) do %>
     <%= link_to documento_path(documento, @filter_params), class: "documento__link" do %>
 
+        <header class="documento__header">
+            <div class="documento__board">
+                <span class="documento__id">
+                    <span class="for-screen-reader">Numero documento</span>
+                    <%= documento.numero_documento %>
+                </span>
+                <span class="documento__board-name">
+                    <span class="overflow-ellipsis"><%= documento.causale.upcase %></span>
+                </span>
+            </div>
+        </header>
+
         <p class="documento__title">
             <%= documento.causale.causale %>
             <br/>
@@ -12,7 +24,6 @@
             <%= documento.referente %>
         <% end %>
 
-
         <%= tag.p class: "documento__meta" do %>
             <%= documento.documento_righe.count %>
             titoli -
@@ -23,7 +34,6 @@
         <%= tag.p class: "documento__meta" do %>
             <%= number_to_currency(documento.righe.sum(&:importo)) %>
         <% end %>
-
 
         <%= tag.p class: "documento__meta" do %>
             <%= documento.status&.humanize %>
