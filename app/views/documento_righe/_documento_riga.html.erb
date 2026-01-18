@@ -36,10 +36,7 @@
                 <%= label_for form: form_riga, field: 'quantita', label: 'Quantità' %>
                 <%= form_riga.number_field :quantita,
                         data: { tax_combobox_libro_target: "quantita" },
-                        class: [
-                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                            ] %>
+                        class: "documento-form__input-number" %>
             </fieldset>
 
             <fieldset class="documento-form__riga-field documento-form__riga-field--prezzo">
@@ -47,10 +44,7 @@
                 <%= form_riga.number_field :prezzo,
                         data: { tax_combobox_libro_target: "prezzo" },
                         step: 0.01,
-                        class: [
-                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                        ] %>
+                        class: "documento-form__input-number" %>
             </fieldset>
 
             <fieldset class="documento-form__riga-field">
@@ -58,10 +52,7 @@
                 <%= form_riga.number_field :sconto,
                         data: { tax_combobox_libro_target: "sconto" },
                         step: 0.01,
-                        class: [
-                            "text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none": true,
-                            "w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600": true
-                        ] %>
+                        class: "documento-form__input-number" %>
             </fieldset>
             <%= form_riga.hidden_field :id %>
 
