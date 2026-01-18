@@ -19,16 +19,15 @@
 			<% end %>
 
 			<%= tag.div class: "documento__cliente" do %>
-				<div class="group-[.show-scuola]:hidden flex items-center gap-2">
+				<div class="documento__cliente-card">
 					<%#= inline_svg_tag "icon-shopping-cart.svg", class: "flex-shrink-0 size-6 hover:text-green-500" %>
 					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
 				</div>
 
-				<%= tag.p documento.referente, class: "mt-2 text-xs" %>
+				<%= tag.p documento.referente, class: "documento__referente" %>
 
-				<%= tag.div class: "text-xs" do %>
-					<%= tag.div simple_format(documento.note), class: "max-h-8 overflow-hidden hover:max-h-none transition-all duration-200" %>
-					<%#= tag.span "...", class: "text-blue-500 hover:text-blue-700 cursor-pointer text-xs" if documento.note.present? %>
+				<%= tag.div class: "documento__notes" do %>
+					<%= simple_format(documento.note) %>
 				<% end %>
 
 			<% end %>

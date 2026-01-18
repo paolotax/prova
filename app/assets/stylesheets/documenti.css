@@ -239,6 +239,32 @@
     font-size: var(--text-small);
   }
 
+  .documento__cliente-card {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+
+    .group.show-scuola & {
+      display: none;
+    }
+  }
+
+  .documento__referente {
+    font-size: var(--text-x-small);
+    margin-block-start: 0.5rem;
+  }
+
+  .documento__notes {
+    font-size: var(--text-x-small);
+    max-block-size: 2rem;
+    overflow: hidden;
+    transition: max-block-size 200ms;
+
+    &:hover {
+      max-block-size: none;
+    }
+  }
+
   .documento__actions {
     display: flex;
     flex-direction: column;
