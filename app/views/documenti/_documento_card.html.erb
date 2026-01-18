@@ -1,32 +1,31 @@
-<%= tag.div id: dom_id(documento), class: ["w-full border rounded-lg shadow-lg p-4 mb-4",
-                "bg-white ": @documento != documento,
-                "bg-indigo-500 text-white": @documento == documento] do %>
-    <%= link_to documento_path(documento, @filter_params) do %>
-        
-        <%= documento.causale.causale %> 
-        <br/>
-        nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
-        <br/>
+<%= tag.div id: dom_id(documento), class: class_names("documento documento--compact", documento_causale_modifier(documento), "documento--selected": @documento == documento) do %>
+    <%= link_to documento_path(documento, @filter_params), class: "documento__link" do %>
 
-        <%= tag.p class: ["text-right text-sm text-gray-500", "text-white": @documento == documento] do %>
+        <p class="documento__title">
+            <%= documento.causale.causale %>
+            <br/>
+            nr. <%= documento.numero_documento %> del <%= documento.data_documento.strftime("%d-%m-%Y") %>
+        </p>
+
+        <%= tag.p class: "documento__cliente" do %>
             <%= documento.clientable&.denominazione %>
-            <%= documento.referente %> 
+            <%= documento.referente %>
         <% end %>
 
 
-        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
-            <%= documento.documento_righe.count %> 
-            titoli - 
-            <%= documento.righe.sum(:quantita) %> 
+        <%= tag.p class: "documento__meta" do %>
+            <%= documento.documento_righe.count %>
+            titoli -
+            <%= documento.righe.sum(:quantita) %>
             copie
         <% end %>
 
-        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
+        <%= tag.p class: "documento__meta" do %>
             <%= number_to_currency(documento.righe.sum(&:importo)) %>
         <% end %>
-        
-        
-        <%= tag.p class: ["text-right text-sm font-semibold text-gray-500", "text-white": @documento == documento] do %>
+
+
+        <%= tag.p class: "documento__meta" do %>
             <%= documento.status&.humanize %>
             <%= documento.tipo_pagamento&.titleize %>
             <%= documento.pagato_il&.to_date&.strftime("%d-%m") %>
