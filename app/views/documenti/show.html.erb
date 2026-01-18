@@ -1,80 +1,41 @@
-<div class="documento-detail">
+<% @page_title = "#{@documento.causale || 'Documento'} ##{@documento.numero_documento || 'BOZZA'}" %>
 
-  <%= tag.div class: "flex flex-col w-full" do%>
-    <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Documenti", documenti_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
 
-        <%# <% heading.with_leader do %>
-            <%# <%= render AvatarComponent.new(user: OpenStruct.new(name: "Ordine Cliente"), size: "xl") %>
-        <%# <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @documento.causale || "Documento Bozza" %></span>
+    <span class="txt-small txt-subtle">nr <%= @documento.numero_documento || 'BOZZA' %> del <%= @documento.data_documento&.strftime('%d-%m-%y') %></span>
+  </h1>
 
-        <% heading.with_description(css: "bg-red-500") {"nr #{@documento.numero_documento || 'BOZZA'} del #{@documento.data_documento&.strftime('%d-%m-%y')}" } %>
-
-        <% heading.with_action do %>
-
-
-          <%= component 'tax_button',
-                  type: :button,
-                  caption: "Elimina",
-                  svg_file: "icon-trash-real.svg",
-                  color: "red",
-                  onclick: "return confirm('Sei sicuro di voler eliminare questo documento?')",
-                  url: url_for( controller: "documenti", action: "destroy", model: @documento, method: :delete ),
-                  data_attr: {
-                    turbo_prefetch: false,
-                    turbo: false,
-                  } %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Stampa",
-                    svg_file: "icon-print.svg",
-                    color: "white",
-                    url: documento_path(@documento, format: :pdf),
-                    target: "_blank" %>
-        <% end %>
-
-        <% heading.with_action do %>
-          <%= component 'tax_button',
-                    caption: "Export",
-                    svg_file: "icon-excel-bis.svg",
-                    color: "green",
-                    url: documento_path(@documento, format: :xlsx),
-                    target: "_blank" %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Modifica",
-                    svg_file: "icon-pencil.svg",
-                    color: "yellow",
-                    url:  documento_step_path(@documento, Documento.form_steps.keys.first) %>
-
-
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Indietro",
-                    svg_file: "icon-arrow-long-left.svg",
-                    color: "white",
-                    url: awesome_back_path(except: /\/steps|\/edit/, fallback: documenti_path) %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Nuovo",
-                    svg_file: "icon-plus.svg",
-                    color: "blue",
-                    url: url_for( controller: "documenti", action: "new", model: @documento ),
-                    data_attr: { turbo_prefetch: false } %>
-        <% end %>
-
-        <%= @documento.causale || "Documento Bozza" %>
-
+  <div class="header__actions header__actions--end">
+    <%= link_to documento_step_path(@documento, Documento.form_steps.keys.first), class: "btn" do %>
+      <%= icon_tag "pencil" %>
+      <span class="for-screen-reader">Modifica</span>
     <% end %>
 
-    <div class="documento-detail__info">
+    <%= link_to documento_path(@documento, format: :pdf), class: "btn", target: "_blank" do %>
+      <%= icon_tag "printer" %>
+      <span class="for-screen-reader">Stampa</span>
+    <% end %>
+
+    <%= link_to documento_path(@documento, format: :xlsx), class: "btn", target: "_blank" do %>
+      <%= icon_tag "table-cells" %>
+      <span class="for-screen-reader">Export Excel</span>
+    <% end %>
+
+    <%= button_to documenti_path(@documento), method: :delete, class: "btn",
+        form: { data: { turbo_confirm: "Sei sicuro di voler eliminare questo documento?" } } do %>
+      <%= icon_tag "trash" %>
+      <span class="for-screen-reader">Elimina</span>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="documento-detail">
+  <div class="documento-detail__info">
 
         <div class="documento-detail__cliente">
             <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>
@@ -98,15 +59,12 @@
         <% end %>
 
         <% if @documento.documento_righe.size > 15 %>
-            <%= tag.div id: "top", class: "w-full flex justify-end -pr-4" do %>
-                <%= component "tax_button",
-                        svg_file: "icon-chevron-double-down",
-                        color: "transparent",
-                        url: "#bottom",
-                        data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
-            <% end  %>
+          <div id="top" class="documento-detail__scroll-nav">
+            <%= link_to "#bottom", class: "btn btn--ghost", data: { controller: "scroll-to", scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } do %>
+              <%= icon_tag "chevron-double-down" %>
+            <% end %>
+          </div>
         <% end %>
-
     </div>
 
     <div class="documento-detail__table-container">
@@ -269,20 +227,15 @@
       </table>
 
       <% if @documento.documento_righe.size > 20 %>
-          <%= tag.div id: "bottom", class: "w-full flex justify-end -pr-4" do %>
-              <%= component "tax_button",
-                      svg_file: "icon-chevron-double-up",
-                      color: "transparent",
-                      url: "#top",
-                      data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
-          <% end  %>
+        <div id="bottom" class="documento-detail__scroll-nav">
+          <%= link_to "#top", class: "btn btn--ghost", data: { controller: "scroll-to", scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } do %>
+            <%= icon_tag "chevron-double-up" %>
+          <% end %>
+        </div>
       <% end %>
 
     </div>
 
     <%= link_to "Esporta XML", esporta_xml_documento_path(@documento, format: :xml),
-                class: "btn btn-primary" %>
-
-  <% end %>
-
+                class: "btn" %>
 </div>

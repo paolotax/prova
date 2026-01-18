@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-18)
 
 **Core value:** Le views documenti devono usare classi BEM semantiche invece di utility Tailwind
-**Current focus:** Phase 9 - Index View (next)
+**Current focus:** Milestone v1.1 COMPLETE
 
 ## Current Position
 
-Phase: 8 of 9 (Form Views)
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-01-18 - Completed 08-02-PLAN.md
+Phase: 9 of 9 (Index View)
+Plan: Complete (executed directly)
+Status: MILESTONE COMPLETE
+Last activity: 2026-01-18 - Completed Phase 9 (Index View)
 
-Progress: [#######   ] 88% - Phase 8 complete (7/8 plans)
+Progress: [##########] 100% - All phases complete
 
 ## Milestone Progress
 
@@ -24,8 +24,8 @@ Progress: [#######   ] 88% - Phase 8 complete (7/8 plans)
 | 5 | Status Badges | Complete |
 | 6 | Document Card | Complete |
 | 7 | Detail View | Complete |
-| 8 | Form Views | Complete |
-| 9 | Index View | Pending |
+| 8 | Form Views | Complete (with gap closure) |
+| 9 | Index View | Complete |
 
 ## Performance Metrics
 
@@ -38,7 +38,8 @@ Progress: [#######   ] 88% - Phase 8 complete (7/8 plans)
 - Phases: 6 (phases 4-9)
 - Requirements: 20
 - Started: 2026-01-18
-- Plans completed: 7 (04-01, 05-01, 06-01, 07-01, 07-02, 08-01, 08-02)
+- Completed: 2026-01-18
+- Plans completed: 9 (04-01, 05-01, 06-01, 07-01, 07-02, 08-01, 08-02, 08-03, 09-direct)
 
 ## Accumulated Context
 
@@ -84,6 +85,16 @@ Phase 8-02 decisions:
 - Keep Tailwind on number_field inputs until dedicated input migration
 - Keep inline_fields block internal Tailwind unchanged
 
+Phase 8-03 decisions:
+- Inline field classes separate from main form grid (documento-form__inline-*)
+- Number input uses inset box-shadow for border effect (matches existing pattern)
+
+Phase 9 decisions:
+- Executed directly (no plan file) due to minimal scope
+- Added documento-loading block for loading indicator
+- Added documento-icon--medium for native app icon sizing
+- Kept `hidden` class in native app block (intentional for bridge component pattern)
+
 ### Pending Todos
 
 None.
@@ -94,11 +105,11 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-18 15:21
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-01-18
+Stopped at: MILESTONE v1.1 COMPLETE
 Resume file: None
-Next: Execute Phase 9 (Index View)
+Next: Start new milestone or archive
 
 ---
 *Created: 2026-01-17*
-*Updated: 2026-01-18 - Phase 8 complete*
+*Updated: 2026-01-18 - Milestone v1.1 complete (all 6 phases)*

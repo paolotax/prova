@@ -44,7 +44,7 @@ module Filters
     end
 
     def show_clientable_types?
-      clientable_types_disponibili.any?
+      false
     end
 
     def anni_disponibili
@@ -52,7 +52,7 @@ module Filters
     end
 
     def show_anni?
-      anni_disponibili.any?
+      false
     end
 
     def filters_active?
@@ -61,13 +61,11 @@ module Filters
       filter.statuses.present? ||
       filter.tipi_pagamento.present? ||
       filter.clientable_type.present? ||
-      filter.anno.present? ||
-      filter.consegnati.present? ||
-      filter.pagati.present?
+      filter.anno.present?
     end
 
     def controls
-      %w[anni clientable_types causali statuses tipi_pagamento]
+      %w[clientable_types causali tipi_pagamento statuses anni]
     end
 
     def cache_key

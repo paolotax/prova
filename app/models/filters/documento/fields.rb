@@ -5,8 +5,6 @@ module Filters
 
       PERMITTED_PARAMS = [
         :anno,
-        :consegnati,
-        :pagati,
         :clientable_type,
         terms: [],
         causali: [],

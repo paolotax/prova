@@ -708,6 +708,13 @@
     }
   }
 
+  /* Scroll navigation */
+  .documento-detail__scroll-nav {
+    display: flex;
+    justify-content: flex-end;
+    padding-inline-end: 1rem;
+  }
+
   /* Print styles for detail view */
   @media print {
     .documento-detail {
@@ -978,6 +985,38 @@
     &::placeholder {
       color: var(--color-ink-medium);
     }
+  }
+
+  /* Index View - Phase 9
+  /* ------------------------------------------------------------------------ */
+
+  /* Native app icon sizing */
+  .documento-icon--medium {
+    block-size: 1.25rem;
+    inline-size: 1.25rem;
+  }
+
+  /* Loading indicator */
+  .documento-loading {
+    display: flex;
+    justify-content: center;
+  }
+
+  .documento-loading__spinner {
+    block-size: 2rem;
+    color: var(--color-ink-medium);
+    fill: var(--color-ink-dark);
+    inline-size: 2rem;
+    margin-inline: auto;
+  }
+
+  .documento-loading__text {
+    block-size: 1px;
+    clip: rect(0, 0, 0, 0);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
   }
 
   /* Dark mode overrides
