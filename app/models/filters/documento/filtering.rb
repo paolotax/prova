@@ -67,7 +67,7 @@ module Filters
     end
 
     def controls
-      %w[clientable_types causali statuses tipi_pagamento anni]
+      %w[anni clientable_types causali statuses tipi_pagamento]
     end
 
     def cache_key

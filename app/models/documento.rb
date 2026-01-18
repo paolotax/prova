@@ -74,11 +74,6 @@ class Documento < ApplicationRecord
 
   delegate :tipo_movimento, :movimento, to: :causale, allow_nil: true
 
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::DocumentoFilterProxy
-  end
-
   attr_accessor :form_step
 
   with_options if: -> { required_for_step?(:tipo_documento) } do
