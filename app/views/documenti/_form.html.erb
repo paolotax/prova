@@ -31,22 +31,22 @@
         <% end %>
 
         <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
-            <%= tag.div class: "sm:mr-4 flex flex-col space-x-2 items-start text-black" do %>
-                <%= tag.div class: "flex flex-col" do %>
+            <%= tag.div class: "documento-form__inline-container" do %>
+                <%= tag.div class: "documento-form__inline-field" do %>
                     <%= form.label :status, "stato:" %>
-                    <%= form.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, documento.status)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                    <%= form.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, documento.status)), {}, class: "documento-form__inline-select" %>
                 <% end %>
-                <%= tag.div class: "flex flex-col" do %>
+                <%= tag.div class: "documento-form__inline-field" do %>
                     <%= form.label :consegnato_il, "consegnato il:" %>
-                    <%= form.date_field :consegnato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                    <%= form.date_field :consegnato_il, class: "documento-form__inline-date" %>
                 <% end %>
-                <%= tag.div class: "flex flex-col" do %>
+                <%= tag.div class: "documento-form__inline-field" do %>
                     <%= form.label :tipo_pagamento, "pagamento:" %>
-                    <%= form.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamenti.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]}, documento.tipo_pagamento)), {}, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                    <%= form.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamenti.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]}, documento.tipo_pagamento)), {}, class: "documento-form__inline-select" %>
                 <% end %>
-                <%= tag.div class: "flex flex-col" do %>
+                <%= tag.div class: "documento-form__inline-field" do %>
                     <%= form.label :pagato_il, "pagato il:" %>
-                    <%= form.date_field :pagato_il, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2" %>
+                    <%= form.date_field :pagato_il, class: "documento-form__inline-date" %>
                 <% end %>
             <% end %>
         <% end %>
