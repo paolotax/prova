@@ -44,4 +44,18 @@ module CausaliHelper
       "border-gray-200"
     end
   end
+
+  # Returns BEM modifier suffix based on causale
+  # e.g., "ordine-entrata", "vendita-uscita", ""
+  # Use with class_names: class_names("documento-detail__section", "documento--#{causale_bem_modifier(causale)}")
+  def causale_bem_modifier(causale)
+    return "" unless causale
+
+    tipo = causale.tipo_movimento
+    mov = causale.movimento
+
+    return "" if tipo.blank? || mov.blank?
+
+    "#{tipo}-#{mov}"
+  end
 end

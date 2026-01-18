@@ -401,6 +401,330 @@
   /* Detail View - Phase 7
   /* ------------------------------------------------------------------------ */
 
+  /* Container */
+  .documento-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-double);
+    inline-size: 100%;
+    margin-inline: auto;
+
+    @media (min-width: 768px) {
+      inline-size: 83.333333%;
+    }
+  }
+
+  /* Header/Client section */
+  .documento-detail__info {
+    padding-inline: 1rem;
+
+    @media (min-width: 640px) {
+      padding-inline: 0;
+    }
+  }
+
+  .documento-detail__cliente {
+    color: var(--color-ink);
+    font-size: var(--text-large);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .documento-detail__referente {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+    margin-block-start: 0.25rem;
+  }
+
+  .documento-detail__notes {
+    color: var(--color-ink-medium);
+    font-size: var(--text-small);
+    margin-block-start: 0.25rem;
+  }
+
+  .documento-detail__status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 0.5rem;
+
+    @media (min-width: 640px) {
+      gap: 1rem;
+    }
+  }
+
+  /* Table container and base styles */
+  .documento-detail__table-container {
+    margin-block-start: 2rem;
+    padding-inline: 0;
+
+    @media (min-width: 640px) {
+      padding-inline: 1rem;
+    }
+  }
+
+  .documento-detail__table {
+    inline-size: 100%;
+  }
+
+  .documento-detail__col--title {
+    inline-size: 100%;
+
+    @media (min-width: 640px) {
+      inline-size: 50%;
+    }
+  }
+
+  .documento-detail__col--numeric {
+    @media (min-width: 640px) {
+      inline-size: 12.5%;
+    }
+  }
+
+  /* Table header styles */
+  .documento-detail__thead {
+    border-block-end: 1px solid var(--color-ink-light);
+    color: var(--color-ink);
+  }
+
+  .documento-detail__th {
+    font-size: var(--text-small);
+    font-weight: 600;
+    padding: 0.875rem 0.75rem;
+    text-align: start;
+  }
+
+  .documento-detail__th--right {
+    text-align: end;
+  }
+
+  .documento-detail__th--first {
+    padding-inline-start: 1rem;
+
+    @media (min-width: 640px) {
+      padding-inline-start: 0;
+    }
+  }
+
+  .documento-detail__th--last {
+    padding-inline-end: 1rem;
+
+    @media (min-width: 640px) {
+      padding-inline-end: 0;
+    }
+  }
+
+  .documento-detail__th--hidden-mobile {
+    display: none;
+
+    @media (min-width: 640px) {
+      display: table-cell;
+    }
+  }
+
+  /* Riga (row) styles */
+  .documento-detail__riga {
+    border-block-end: 1px solid var(--color-ink-lighter);
+  }
+
+  .documento-detail__cell {
+    font-size: var(--text-small);
+    padding: 1.25rem 0.75rem;
+  }
+
+  .documento-detail__cell--title {
+    max-inline-size: 0;
+    padding-inline-start: 1rem;
+
+    @media (min-width: 640px) {
+      padding-inline-start: 0;
+    }
+  }
+
+  .documento-detail__cell-main {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  .documento-detail__cell-main:hover {
+    font-weight: 700;
+  }
+
+  .documento-detail__cell-sub {
+    color: var(--color-ink-medium);
+    margin-block-start: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .documento-detail__cell--numeric {
+    color: var(--color-ink-medium);
+    text-align: end;
+  }
+
+  .documento-detail__cell--amount {
+    color: var(--color-ink);
+    font-weight: 500;
+    padding-inline-end: 1rem;
+    text-align: end;
+
+    @media (min-width: 640px) {
+      padding-inline-end: 0;
+    }
+  }
+
+  .documento-detail__cell--hidden-mobile {
+    display: none;
+
+    @media (min-width: 640px) {
+      display: table-cell;
+    }
+  }
+
+  /* Section header styles (for derivati/nipoti) */
+  .documento-detail__section {
+    background-color: var(--doc-causale-bg);
+    border-block-start: 1px solid var(--doc-causale-border);
+  }
+
+  .documento-detail__section td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .documento-detail__section--derivato {
+    border-block-start-width: 2px;
+  }
+
+  .documento-detail__section--derivato td {
+    font-weight: 700;
+    padding-inline-start: 1rem;
+
+    @media (min-width: 640px) {
+      padding-inline-start: 0;
+    }
+  }
+
+  .documento-detail__section--nipote td {
+    font-weight: 600;
+    padding-inline-start: 2rem;
+
+    @media (min-width: 640px) {
+      padding-inline-start: 1.5rem;
+    }
+  }
+
+  .documento-detail__section-content {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    padding-inline-start: 0.5rem;
+  }
+
+  .documento-detail__section-icon {
+    block-size: 1rem;
+    flex-shrink: 0;
+    inline-size: 1rem;
+  }
+
+  .documento-detail__section-icon--small {
+    block-size: 0.75rem;
+    inline-size: 0.75rem;
+  }
+
+  .documento-detail__section-badge {
+    background-color: oklch(var(--lch-violet-lighter));
+    border-radius: 9999px;
+    color: oklch(var(--lch-violet-dark));
+    font-size: var(--text-x-small);
+    font-weight: 500;
+    padding: 0.125rem 0.5rem;
+  }
+
+  .documento-detail__section-link {
+    color: oklch(var(--lch-blue-dark));
+    font-size: var(--text-x-small);
+    text-decoration: underline;
+  }
+
+  .documento-detail__section-link:hover {
+    color: oklch(var(--lch-blue-darker));
+  }
+
+  /* Footer totals styles */
+  .documento-detail__tfoot tr {
+    border: none;
+  }
+
+  .documento-detail__totals-label {
+    color: var(--color-ink-medium);
+    font-size: var(--text-small);
+    font-weight: 400;
+    padding-block-start: 1rem;
+    padding-inline: 0.75rem 1rem;
+    text-align: end;
+  }
+
+  .documento-detail__totals-label--bold {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .documento-detail__totals-label--hidden-mobile {
+    display: none;
+
+    @media (min-width: 640px) {
+      display: table-cell;
+    }
+  }
+
+  .documento-detail__totals-label--mobile-only {
+    display: table-cell;
+
+    @media (min-width: 640px) {
+      display: none;
+    }
+  }
+
+  .documento-detail__totals-value {
+    color: var(--color-ink-medium);
+    font-size: var(--text-small);
+    padding-block-start: 1rem;
+    padding-inline: 0.75rem;
+    text-align: end;
+  }
+
+  .documento-detail__totals-value--bold {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  @media (min-width: 640px) {
+    .documento-detail__totals-label {
+      padding-inline-start: 0;
+    }
+
+    .documento-detail__totals-value {
+      padding-inline-end: 0;
+    }
+  }
+
+  /* Print styles for detail view */
+  @media print {
+    .documento-detail {
+      inline-size: 100%;
+    }
+
+    .documento-detail__cell--hidden-mobile,
+    .documento-detail__th--hidden-mobile,
+    .documento-detail__totals-label--hidden-mobile {
+      display: table-cell;
+    }
+
+    .documento-detail__totals-label--mobile-only {
+      display: none;
+    }
+  }
+
   /* Form Views - Phase 8
   /* ------------------------------------------------------------------------ */
 
