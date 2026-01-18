@@ -1,4 +1,4 @@
-<div class="mx-auto md:w-10/12 w-full flex gap-8">
+<div class="documento-detail">
 
   <%= tag.div class: "flex flex-col w-full" do%>
     <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
@@ -74,61 +74,58 @@
 
     <% end %>
 
-    <div class="sm:flex sm:items-center">
+    <div class="documento-detail__info">
 
-        <div class="px-4 sm:flex-auto">
-            <h1 class="text-xl font-semibold leading-6 text-gray-900">
-                <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>
-            </h1>
-
-            <div class="mt-1 text-sm text-gray-700">
-                <%= @documento.referente %>
-            </div>
-            <div class="mt-1 text-sm text-gray-500">
-                <%= simple_format @documento.note %>
-            </div>
-
-            <%= tag.div class: "py-2 flex flex-row gap-2 sm:gap-4" do %>
-                <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
-                    <%= tag.div @documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
-                    <%= tag.div l(@documento.consegnato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.consegnato_il %>
-                    <%= tag.div @documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
-                    <%= tag.div l(@documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.pagato_il %>
-                <% end %>
-
-            <% end %>
-
-            <% if @documento.documento_righe.size > 15 %>
-                <%= tag.div id: "top", class: "w-full flex justify-end -pr-4" do %>
-                    <%= component "tax_button",
-                            svg_file: "icon-chevron-double-down",
-                            color: "transparent",
-                            url: "#bottom",
-                            data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
-                <% end  %>
-            <% end %>
-
+        <div class="documento-detail__cliente">
+            <%= render partial: "clientables/#{@documento.clientable.class.name.underscore}_card", locals: { clientable: @documento.clientable } %>
         </div>
+
+        <div class="documento-detail__referente">
+            <%= @documento.referente %>
+        </div>
+        <div class="documento-detail__notes">
+            <%= simple_format @documento.note %>
+        </div>
+
+        <%= tag.div class: "documento-detail__status" do %>
+            <%= render "shared/inline_edit", model: @documento, method: :stato_e_pagamento do %>
+                <%= tag.div @documento.status&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+                <%= tag.div l(@documento.consegnato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.consegnato_il %>
+                <%= tag.div @documento.tipo_pagamento&.titleize, class: "text-sm text-gray-500 font-semibold" %>
+                <%= tag.div l(@documento.pagato_il, format: "%d-%m"), class: "text-sm text-gray-500 font-semibold" if @documento.pagato_il %>
+            <% end %>
+
+        <% end %>
+
+        <% if @documento.documento_righe.size > 15 %>
+            <%= tag.div id: "top", class: "w-full flex justify-end -pr-4" do %>
+                <%= component "tax_button",
+                        svg_file: "icon-chevron-double-down",
+                        color: "transparent",
+                        url: "#bottom",
+                        data_attr: { controller: "scroll-to",  scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } %>
+            <% end  %>
+        <% end %>
 
     </div>
 
-    <div class="px-0 sm:px-4 mt-8 flow-root">
-      <table class="min-w-full">
+    <div class="documento-detail__table-container">
+      <table class="documento-detail__table">
         <colgroup>
-          <col class="w-full sm:w-1/2">
-          <col class="sm:w-1/8">
-          <col class="sm:w-1/8">
-          <col class="sm:w-1/8">
-          <col class="sm:w-1/6">
+          <col class="documento-detail__col--title">
+          <col class="documento-detail__col--numeric">
+          <col class="documento-detail__col--numeric">
+          <col class="documento-detail__col--numeric">
+          <col class="documento-detail__col--numeric">
         </colgroup>
 
-        <thead class="border-b border-gray-300 text-gray-900">
+        <thead class="documento-detail__thead">
           <tr>
-            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Titolo</th>
-            <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">Prezzo</th>
-            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Quantita</th>
-            <th scope="col" class="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-900 sm:table-cell">Sconto</th>
-            <th scope="col" class="py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">Importo</th>
+            <th scope="col" class="documento-detail__th documento-detail__th--first">Titolo</th>
+            <th scope="col" class="documento-detail__th documento-detail__th--right documento-detail__th--hidden-mobile">Prezzo</th>
+            <th scope="col" class="documento-detail__th documento-detail__th--right">Quantita</th>
+            <th scope="col" class="documento-detail__th documento-detail__th--right documento-detail__th--hidden-mobile">Sconto</th>
+            <th scope="col" class="documento-detail__th documento-detail__th--right documento-detail__th--last">Importo</th>
           </tr>
         </thead>
 
@@ -151,13 +148,13 @@
 
           <!-- Righe esclusive del documento (non condivise con derivati) -->
           <% if righe_solo_documento.any? %>
-            <tr class="border-t <%= causale_border_class(@documento.causale) %> <%= causale_bg_class(@documento.causale) %>">
-              <td colspan="5" class="py-2 pl-4 pr-3 text-sm font-bold text-gray-700 sm:pl-0">
-                <div class="flex items-center gap-2 pl-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <tr class="documento-detail__section documento--<%= causale_bem_modifier(@documento.causale) %>">
+              <td colspan="5">
+                <div class="documento-detail__section-content">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="documento-detail__section-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
-                  
+
                 </div>
               </td>
             </tr>
@@ -177,17 +174,17 @@
             <!-- Documenti nipoti (livello 2) -->
             <% if doc_derivato.documenti_derivati.any? %>
               <!-- Header documento derivato di livello 1 (es. DDT) -->
-              <tr class="border-t-2 <%= causale_border_class(doc_derivato.causale) %> <%= causale_bg_class(doc_derivato.causale) %>">
-                <td colspan="5" class="py-2 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-0">
-                  <div class="flex items-center gap-2 pl-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+              <tr class="documento-detail__section documento-detail__section--derivato documento--<%= causale_bem_modifier(doc_derivato.causale) %>">
+                <td colspan="5">
+                  <div class="documento-detail__section-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="documento-detail__section-icon">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
                     <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-200 text-purple-900">
+                    <span class="documento-detail__section-badge">
                       <%= doc_derivato.documenti_derivati.count %> sotto-documenti
                     </span>
-                    <%= link_to "Vedi", documento_path(doc_derivato), class: "text-xs text-blue-700 hover:text-blue-900 underline", data: { turbo_frame: :_top } %>
+                    <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-detail__section-link", data: { turbo_frame: :_top } %>
                   </div>
                 </td>
               </tr>
@@ -202,17 +199,17 @@
 
                 <% if righe_per_nipote.any? %>
                   <!-- Header documento nipote (es. Ordine) -->
-                  <tr class="border-t <%= causale_border_class(doc_nipote.causale) %> <%= causale_section_bg_class(doc_nipote.causale) %>">
-                    <td colspan="5" class="py-2 pl-8 pr-3 text-sm font-semibold text-gray-900 sm:pl-6">
-                      <div class="flex items-center gap-2 pl-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+                  <tr class="documento-detail__section documento-detail__section--nipote documento--<%= causale_bem_modifier(doc_nipote.causale) %>">
+                    <td colspan="5">
+                      <div class="documento-detail__section-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="documento-detail__section-icon documento-detail__section-icon--small">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         </svg>
                         <%= doc_nipote.causale&.causale %> #<%= doc_nipote.numero_documento %> del <%= doc_nipote.data_documento&.strftime("%d-%m-%Y") %>
                         <% if doc_nipote.status.present? %>
-                          <span class="text-xs text-purple-700">[<%= doc_nipote.status.titleize %>]</span>
+                          <span class="documento-detail__section-badge">[<%= doc_nipote.status.titleize %>]</span>
                         <% end %>
-                        <%= link_to "Vedi", documento_path(doc_nipote), class: "text-xs text-purple-700 hover:text-purple-900 underline", data: { turbo_frame: :_top } %>
+                        <%= link_to "Vedi", documento_path(doc_nipote), class: "documento-detail__section-link", data: { turbo_frame: :_top } %>
                       </div>
                     </td>
                   </tr>
@@ -228,17 +225,17 @@
               <!-- Documento derivato senza nipoti - mostra direttamente le sue righe -->
               <% if righe_per_derivato.any? %>
                 <!-- Header documento derivato -->
-                <tr class="border-t-2 <%= causale_border_class(doc_derivato.causale) %> <%= causale_bg_class(doc_derivato.causale) %>">
-                  <td colspan="5" class="py-2 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-0">
-                    <div class="flex items-center gap-2 pl-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <tr class="documento-detail__section documento-detail__section--derivato documento--<%= causale_bem_modifier(doc_derivato.causale) %>">
+                  <td colspan="5">
+                    <div class="documento-detail__section-content">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="documento-detail__section-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                       <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
                       <% if doc_derivato.status.present? %>
-                        <span class="text-xs text-blue-700">[<%= doc_derivato.status.titleize %>]</span>
+                        <span class="documento-detail__section-badge">[<%= doc_derivato.status.titleize %>]</span>
                       <% end %>
-                      <%= link_to "Vedi", documento_path(doc_derivato), class: "text-xs text-blue-700 hover:text-blue-900 underline", data: { turbo_frame: :_top } %>
+                      <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-detail__section-link", data: { turbo_frame: :_top } %>
                     </div>
                   </td>
                 </tr>
@@ -253,18 +250,18 @@
 
         </tbody>
 
-        <tfoot>
+        <tfoot class="documento-detail__tfoot">
           <tr>
-            <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-normal text-gray-500 sm:table-cell sm:pl-0">Totale copie</th>
-            <th scope="row" colspan="2" class="pl-4 pr-3 pt-4 text-left text-sm font-normal text-gray-500 sm:hidden">Totale copie</th>
-            <td class="pl-3 pr-4 pt-4 text-right text-sm text-gray-500 sm:pr-0">
+            <th scope="row" colspan="4" class="documento-detail__totals-label documento-detail__totals-label--hidden-mobile">Totale copie</th>
+            <th scope="row" colspan="2" class="documento-detail__totals-label documento-detail__totals-label--mobile-only">Totale copie</th>
+            <td class="documento-detail__totals-value">
               <%= @documento.righe.sum(&:quantita) %>
             </td>
           </tr>
           <tr>
-            <th scope="row" colspan="4" class="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-900 sm:table-cell sm:pl-0">Totale importo</th>
-            <th scope="row" colspan="2" class="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-900 sm:hidden">Totale importo</th>
-            <td class="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-900 sm:pr-0">
+            <th scope="row" colspan="4" class="documento-detail__totals-label documento-detail__totals-label--bold documento-detail__totals-label--hidden-mobile">Totale importo</th>
+            <th scope="row" colspan="2" class="documento-detail__totals-label documento-detail__totals-label--bold documento-detail__totals-label--mobile-only">Totale importo</th>
+            <td class="documento-detail__totals-value documento-detail__totals-value--bold">
               <%= number_to_currency @documento.righe.sum(&:importo), locale: :it %>
             </td>
           </tr>
@@ -289,4 +286,3 @@
   <% end %>
 
 </div>
-
