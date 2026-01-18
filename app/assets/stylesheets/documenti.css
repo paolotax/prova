@@ -1,0 +1,101 @@
+/* ==========================================================================
+   Documenti Component Styles
+   ==========================================================================
+
+   Foundation CSS for documento components (invoices, orders, credit notes).
+
+   This file provides the infrastructure for phases 5-9 of the documenti
+   refactoring milestone:
+   - Phase 5: Status Badges
+   - Phase 6: Document Card
+   - Phase 7: Detail View
+   - Phase 8: Form Views
+   - Phase 9: Index View
+
+   BEM Naming Convention
+   ---------------------
+   Block: .documento (the main component)
+
+   Elements:
+     __header    - Document header section
+     __body      - Main content area
+     __footer    - Document footer
+     __title     - Document title/number
+     __meta      - Metadata display
+     __badges    - Status badge container
+     __righe     - Document lines container
+     __riga      - Single document line
+     __totals    - Totals section
+     __cliente   - Customer information
+
+   Modifiers:
+     --fattura       - Invoice type styling
+     --ordine        - Order type styling
+     --nota-credito  - Credit note type styling
+     --bozza         - Draft status
+     --consegnato    - Delivered status
+     --pagato        - Paid status
+     --incompleto    - Incomplete status
+
+   Pattern reference: Follow cards.css patterns exactly
+
+   ========================================================================== */
+
+@layer components {
+
+  /* Base
+  /* ------------------------------------------------------------------------ */
+
+  .documento {
+    /* Theming - colors */
+    --doc-bg-color: var(--color-canvas);
+    --doc-border-color: var(--color-ink-lighter);
+    --doc-text-color: var(--color-ink);
+    --doc-text-muted: var(--color-ink-dark);
+    --doc-causale-color: var(--color-ink-medium);
+
+    /* Theming - spacing */
+    --doc-padding-block: var(--block-space);
+    --doc-padding-inline: var(--inline-space-double);
+    --doc-gap: var(--inline-space);
+
+    /* Theming - borders */
+    --doc-border-radius: 0.5em;
+    --doc-border: 1px solid var(--doc-border-color);
+
+    /* Theming - status badge colors */
+    --doc-status-positive-bg: oklch(var(--lch-green-lighter));
+    --doc-status-positive-color: oklch(var(--lch-green-dark));
+    --doc-status-pending-bg: oklch(var(--lch-yellow-lighter));
+    --doc-status-pending-color: oklch(var(--lch-yellow-dark));
+    --doc-status-neutral-bg: var(--color-ink-lightest);
+    --doc-status-neutral-color: var(--color-ink-dark);
+    --doc-status-negative-bg: oklch(var(--lch-red-lighter));
+    --doc-status-negative-color: oklch(var(--lch-red-dark));
+  }
+
+  /* Status Badges - Phase 5
+  /* ------------------------------------------------------------------------ */
+
+  /* Document Card - Phase 6
+  /* ------------------------------------------------------------------------ */
+
+  /* Detail View - Phase 7
+  /* ------------------------------------------------------------------------ */
+
+  /* Form Views - Phase 8
+  /* ------------------------------------------------------------------------ */
+
+  /* Dark mode overrides
+  /* ------------------------------------------------------------------------ */
+
+  html[data-theme="dark"] .documento {
+    /* Dark mode overrides - add as needed */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .documento {
+      /* System preference dark mode - add as needed */
+    }
+  }
+}
