@@ -75,7 +75,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 06-01-document-card-PLAN.md - Add documento card BEM CSS and refactor both card partials
+- [x] 06-01-document-card-PLAN.md - Add documento card BEM CSS and refactor both card partials
 
 **Success Criteria:**
 1. Documento cards display with header, body, and footer sections clearly visible
@@ -150,7 +150,7 @@ Plans:
 |-------|------|--------------|--------|
 | 4 | Foundation | FOUND-01, FOUND-02, FOUND-03 | Complete |
 | 5 | Status Badges | BADGE-01, BADGE-02, BADGE-03 | Complete |
-| 6 | Document Card | CARD-01, CARD-02, CARD-03, CARD-04, CARD-05 | Planned |
+| 6 | Document Card | CARD-01, CARD-02, CARD-03, CARD-04, CARD-05 | Complete |
 | 7 | Detail View | DETAIL-01, DETAIL-02, DETAIL-03, DETAIL-04 | Pending |
 | 8 | Form Views | FORM-01, FORM-02, FORM-03 | Pending |
 | 9 | Index View | INDEX-01, INDEX-02 | Pending |
