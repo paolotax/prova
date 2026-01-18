@@ -912,6 +912,74 @@
     }
   }
 
+  /* Inline fields container (status/payment toggles) */
+  .documento-form__inline-container {
+    align-items: flex-start;
+    color: var(--color-ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @media (min-width: 640px) {
+      margin-inline-end: 1rem;
+    }
+  }
+
+  /* Inline field group (label + input pair) */
+  .documento-form__inline-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Inline select/date inputs */
+  .documento-form__inline-select,
+  .documento-form__inline-date {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-ink-light);
+    border-radius: 0.375rem;
+    box-shadow: var(--shadow);
+    outline: none;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .documento-form__inline-select:focus,
+  .documento-form__inline-date:focus {
+    border-color: oklch(var(--lch-blue-medium));
+    box-shadow: 0 0 0 1px oklch(var(--lch-blue-medium));
+  }
+
+  /* Number input base styling */
+  .documento-form__input-number {
+    background-color: var(--color-canvas);
+    border: none;
+    border-radius: 0.375rem;
+    box-shadow: inset 0 0 0 1px var(--color-ink-light);
+    color: var(--color-ink);
+    inline-size: 100%;
+    padding: 0.5rem;
+    text-align: end;
+
+    /* Hide spinner buttons */
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      appearance: none;
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:focus {
+      box-shadow: inset 0 0 0 2px oklch(var(--lch-blue-medium));
+      outline: none;
+    }
+
+    &::placeholder {
+      color: var(--color-ink-medium);
+    }
+  }
+
   /* Dark mode overrides
   /* ------------------------------------------------------------------------ */
 
