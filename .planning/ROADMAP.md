@@ -124,11 +124,12 @@ Plans:
 - FORM-02: Style form sections (header, clientable, righe)
 - FORM-03: Style inline edit components
 
-**Plans:** 2 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] 08-01-PLAN.md - Add form CSS infrastructure (sections, fieldsets, riga, actions)
-- [ ] 08-02-PLAN.md - Migrate _form.html.erb and _documento_riga.html.erb to BEM classes
+- [x] 08-01-PLAN.md - Add form CSS infrastructure (sections, fieldsets, riga, actions)
+- [x] 08-02-PLAN.md - Migrate _form.html.erb and _documento_riga.html.erb to BEM classes
+- [ ] 08-03-PLAN.md - Gap closure: migrate inline_fields and number inputs to BEM classes
 
 **Success Criteria:**
 1. Form displays with clear section boundaries (header, client, line items)
@@ -164,7 +165,7 @@ Plans:
 | 5 | Status Badges | BADGE-01, BADGE-02, BADGE-03 | Complete |
 | 6 | Document Card | CARD-01, CARD-02, CARD-03, CARD-04, CARD-05 | Complete |
 | 7 | Detail View | DETAIL-01, DETAIL-02, DETAIL-03, DETAIL-04 | Complete |
-| 8 | Form Views | FORM-01, FORM-02, FORM-03 | Pending |
+| 8 | Form Views | FORM-01, FORM-02, FORM-03 | In Progress |
 | 9 | Index View | INDEX-01, INDEX-02 | Pending |
 
 **Coverage:** 20/20 requirements mapped
