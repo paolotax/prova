@@ -1,10 +1,10 @@
-<div id="<%= dom_id documento %>" class="w-full item" data-controller="tax-reveal">
+<%= tag.div id: dom_id(documento), class: class_names("documento", documento_causale_modifier(documento), "documento--selected": @documento == documento), data: { controller: "tax-reveal" } do %>
 
-	<%= tag.header class: ["px-4 py-2 flex items-center justify-between border rounded-tl-lg rounded-tr-lg", documento_header_bg_classes(documento)] do %>
+	<%= tag.header class: "documento__header" do %>
 
-		<%= tag.div class: "block sm:flex gap-4 items-start" do %>
+		<%= tag.div class: "documento__header-content" do %>
 
-			<%= tag.div class: "flex flex-shrink-0 items-center justify-start gap-2" do %>
+			<%= tag.div class: "documento__checkbox" do %>
 				<%= check_box_tag "documento_ids[]",
 					documento.id,
 					false,
@@ -18,14 +18,14 @@
 				<% end %>
 			<% end %>
 
-			<%= tag.div class: ["text-sm text-gray-500 ", "text-white": @documento == documento] do %>
+			<%= tag.div class: "documento__cliente" do %>
 				<div class="group-[.show-scuola]:hidden flex items-center gap-2">
 					<%#= inline_svg_tag "icon-shopping-cart.svg", class: "flex-shrink-0 size-6 hover:text-green-500" %>
 					<%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
 				</div>
 
 				<%= tag.p documento.referente, class: "mt-2 text-xs" %>
-				
+
 				<%= tag.div class: "text-xs" do %>
 					<%= tag.div simple_format(documento.note), class: "max-h-8 overflow-hidden hover:max-h-none transition-all duration-200" %>
 					<%#= tag.span "...", class: "text-blue-500 hover:text-blue-700 cursor-pointer text-xs" if documento.note.present? %>
@@ -35,7 +35,7 @@
 
 		<% end %>
 
-		<div class="flex flex-col sm:flex-row gap-2 wrap">
+		<div class="documento__actions">
 			<% if documento.incompleto? %>
 				<%= component 'tax_button',
 						caption: "",
@@ -73,7 +73,7 @@
 	<% end %>
 
 	<% unless hotwire_native_app? %>
-		<ul data-tax-reveal-target="item" class="hidden">
+		<ul data-tax-reveal-target="item" class="documento__body hidden">
 			<%#= turbo_frame_tag "load_more", src: documento_path( documento ), loading: :lazy do %>
 			<% documento.documento_righe.each do |riga| %>
 				<%= render partial: "righe/riga_item", locals: { riga: riga.riga } %>
@@ -81,26 +81,25 @@
 		</ul>
 	<% end %>
 
-	<%= tag.footer class: ["p-4 border border-t-0 border-gray-300 mb-4 last:rounded-b-lg last:shadow-md grid grid-cols-6 sm:grid-cols-8", documento_footer_bg_classes(documento)] do %>
+	<%= tag.footer class: "documento__footer" do %>
 
-		<%= tag.div class: "col-span-6 sm:col-span-8 flex gap-2 sm:gap-4 mb-2" do %>
+		<%= tag.div class: "documento__badges" do %>
 			<%= render "documenti/status_badges", documento: documento %>
     	<% end %>
 
-		<%= tag.div class: "col-span-3 sm:col-span-2 flex gap-2 sm:gap-4" do %>
+		<%= tag.div class: "documento__avatars" do %>
 			<%= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
 		<% end %>
 
-		<div class="col-start-4 sm:col-start-5 col-span-1 px-3 text-sm font-bold text-right leading-6 text-gray-900">
+		<div class="documento__copies">
 			<%= documento.totale_copie %>
 		</div>
 
-		<div class="col-start-5 sm:col-start-7 col-span-2 pl-3 text-sm font-bold text-right leading-6 text-gray-900">
+		<div class="documento__amount">
 			<%= number_to_currency documento.totale_importo, locale: :it %>
 		</div>
 
 	<% end %>
 
 
-</div>
-
+<% end %>
