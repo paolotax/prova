@@ -77,6 +77,69 @@
   /* Status Badges - Phase 5
   /* ------------------------------------------------------------------------ */
 
+  /* Container */
+  .documento-status {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Base badge */
+  .documento-status__badge {
+    /* Local theming variables */
+    --badge-bg: var(--doc-status-neutral-bg);
+    --badge-color: var(--doc-status-neutral-color);
+    --badge-ring: var(--color-ink-light);
+
+    align-items: center;
+    background-color: var(--badge-bg);
+    border-radius: 9999px;
+    color: var(--badge-color);
+    display: inline-flex;
+    font-size: var(--text-x-small);
+    font-weight: 500;
+    gap: 0.25em;
+    padding: 0.25em 0.75em;
+    text-decoration: none;
+    transition: box-shadow 150ms ease;
+
+    &:hover,
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--doc-bg-color, var(--color-canvas)),
+                  0 0 0 4px var(--badge-ring);
+      outline: none;
+    }
+  }
+
+  /* Positive state (consegnato/pagato) */
+  .documento-status__badge--positive {
+    --badge-bg: var(--doc-status-positive-bg);
+    --badge-color: var(--doc-status-positive-color);
+    --badge-ring: oklch(var(--lch-green-light));
+  }
+
+  /* Pending state (for future use) */
+  .documento-status__badge--pending {
+    --badge-bg: var(--doc-status-pending-bg);
+    --badge-color: var(--doc-status-pending-color);
+    --badge-ring: oklch(var(--lch-yellow-light));
+  }
+
+  /* Negative state (for errors/warnings) */
+  .documento-status__badge--negative {
+    --badge-bg: var(--doc-status-negative-bg);
+    --badge-color: var(--doc-status-negative-color);
+    --badge-ring: oklch(var(--lch-red-light));
+  }
+
+  /* Icon within badge */
+  .documento-status__icon {
+    block-size: 1em;
+    inline-size: 1em;
+    flex-shrink: 0;
+  }
+
   /* Document Card - Phase 6
   /* ------------------------------------------------------------------------ */
 
