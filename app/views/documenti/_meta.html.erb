@@ -6,7 +6,8 @@
 
   <span class="card__meta-text card__meta-text--added">
     <% if documento.consegnato_il.present? %>
-      CONSEGNATO IL <%= documento.consegnato_il.strftime("%d/%m/%y") %>
+      <%= icon_tag "truck" %>
+      <%= documento.consegnato_il.strftime("%d/%m/%y") %>
     <% else %>
       DA CONSEGNARE
     <% end %>
@@ -14,7 +15,8 @@
 
   <span class="card__meta-text card__meta-text--author">
     <% if documento.pagato_il.present? %>
-      PAGATO IL <%= documento.pagato_il.strftime("%d/%m/%y") %>
+      <%= icon_tag "cash" %>
+      <%= documento.pagato_il.strftime("%d/%m/%y") %>
     <% else %>
       DA PAGARE
     <% end %>
