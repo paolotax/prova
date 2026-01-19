@@ -1,25 +1,25 @@
 <%= tag.article id: dom_id(documento),
-    class: class_names("documento", documento_causale_modifier(documento), "documento--selected": @documento == documento),
+    class: class_names("card", documento_causale_modifier(documento), "card--selected": @documento == documento),
     data: { controller: "tax-reveal" } do %>
 
   <div class="flex flex-column flex-item-grow max-inline-size">
-    <header class="documento__header">
-      <div class="documento__board">
-        <span class="documento__id">
+    <header class="card__header">
+      <div class="card__board">
+        <span class="card__id">
           <span class="for-screen-reader">Numero documento</span>
           <%= documento.numero_documento %>
         </span>
-        <span class="documento__board-name">
+        <span class="card__board-name">
           <span class="overflow-ellipsis"><%= documento.causale.descrizione_causale.upcase %></span>
         </span>
       </div>
     </header>
 
-    <div class="documento__body">
-      <div class="documento__content">
+    <div class="card__body justify-space-between">
+      <div class="card__content">
         <%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
         <% if documento.referente.present? || documento.note.present? %>
-          <div class="documento__stages">
+          <div class="card__stages">
             <%= tag.span documento.referente if documento.referente.present? %>
             <%= tag.span simple_format(documento.note) if documento.note.present? %>
           </div>
@@ -28,13 +28,19 @@
     </div>
   </div>
 
-  <footer class="documento__footer flex gap-half">
-    <%= render "documenti/status_badges", documento: documento %>
-    <div class="documento__meta-avatars">
-      <%#= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
-    </div>
-    <span class="txt-small font-weight-black"><%= documento.totale_copie %></span>
-    <span class="txt-small font-weight-black"><%= number_to_currency documento.totale_importo, locale: :it %></span>
+  <footer class="card__footer flex gap-half">
+    <div class="card__meta">
+      <div class="card__meta-avatars">
+        <%#= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
+      </div>
+      
+      
+      <%= render "documenti/status_badges", documento: documento %>
+    
+
+    
+    <span class="font-weight-black"><%= documento.totale_copie %></span>
+    <span class="card-avatar-asseignees"><%= number_to_currency documento.totale_importo, locale: :it %></span>
   </footer>
 
 <% end %>

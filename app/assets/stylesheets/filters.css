@@ -19,7 +19,8 @@
       --input-background: var(--color-canvas);
     }
 
-    &:has([data-controller~="tooltip"]:hover) {
+    &:has([data-controller~="tooltip"]:hover),
+    &:has(dialog[open]) {
       z-index: calc(var(--z-nav) + 1);
     }
   }

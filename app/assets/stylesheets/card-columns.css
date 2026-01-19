@@ -300,8 +300,7 @@
       padding: 1ch;
     }
 
-    .card,
-    .documento {
+    .card {
       --block-space: 1em;
       --block-space-half: 0.5em;
       --documento-padding-inline: 1em;
@@ -508,7 +507,6 @@
   /* ------------------------------------------------------------------------ */
 
   .cards .card,
-  .cards .documento,
   .board-tools {
     --block-space: 1em;
     --block-space-half: 0.5em;

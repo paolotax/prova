@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <!--  <%= "data-hotwire-native-app" if turbo_native_app? %> -->
-<html <%= "data-hotwire-native-app" if turbo_native_app? %> class="<%= [
-			"h-full antialiased",
-			("bg-gray-50" if Rails.env == "production"),
-			("bg-red-50" if Rails.env == "development")].compact.join(" ") %>">
+<html <%= "data-hotwire-native-app" if turbo_native_app? %>
 
 	<%= render "layouts/shared/head" %>
 

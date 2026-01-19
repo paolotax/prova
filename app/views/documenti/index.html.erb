@@ -1,61 +1,6 @@
 <% @page_title = "Documenti" %>
 <% @body_class = "contained-scrolling" %>
 
-<% content_for :head do %>
-  <style>
-    .cards--grid {
-      --cards-gap: 1rem;
-      --card-grid-columns: 1;
-      container-type: inline-size;
-    }
-    @media (min-width: 640px) {
-      .cards--grid { --card-grid-columns: 2; }
-    }
-    @media (min-width: 960px) {
-      .cards--grid { --card-grid-columns: 3; }
-    }
-    .cards--grid .cards__list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--cards-gap);
-      justify-content: center;
-      padding: 1ch;
-    }
-    .cards--grid .documento {
-      --text-xx-large: 1.6em;
-      --text-small: 1em;
-      font-size: clamp(0.6rem, 0.85cqi, 100px);
-      inline-size: calc((100% - var(--cards-gap) * (var(--card-grid-columns) - 1)) / var(--card-grid-columns));
-    }
-    .documento__location {
-      color: var(--documento-content-color);
-      font-size: 0.85em;
-      margin-block-start: 0.1em;
-    }
-    .documento__body {
-      display: block !important;
-      flex-direction: column !important;
-    }
-    .documento__content {
-      inline-size: 100% !important;
-      display: block !important;
-    }
-    .documento__content > a {
-      display: block !important;
-    }
-    .documento__stages {
-      color: var(--documento-text-color);
-      font-size: var(--text-small, 0.9em);
-      margin-block-start: 0.5em;
-      padding-inline-start: 1em;
-      display: block !important;
-      text-align: start !important;
-      justify-self: start !important;
-      max-inline-size: none !important;
-      inline-size: auto !important;
-    }
-  </style>
-<% end %>
 
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">
@@ -81,7 +26,7 @@
 <% if hotwire_native_app? %>
 	<%= link_to new_documento_path, class: "hidden",
 			data: { controller: "bridge--button", bridge_title: "Nuovo" } do %>
-			<%= icon "plus", class: "documento-icon--medium" %>
+			<%= icon "plus", class: "card-icon--medium" %>
 	<% end %>
 	<%= render "shared/native_search_filter",
 		url: documenti_path,
@@ -95,20 +40,32 @@
       no_filtering_url: documenti_path,
       filter_type: "documento" %>
 
-<%= turbo_frame_tag "search_results", data: { controller: 'bulk-actions' } do %>
-    <%= render "documenti/bulk_actions/form" %>
+<%= turbo_frame_tag :documenti_container do %>
+    <%#= render "documenti/bulk_actions/form" %>
 
     <% if @page.used? %>
       <p class="txt-small txt-subtle margin-block-end-half center">
         <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
       </p>
 
-      <div class="cards--grid" data-controller="bulk-actions">
-        <%= with_automatic_pagination :documenti, @page,
-            id: "documenti-lista",
-            class: "cards__list" do %>
-          <%= render @page.records %>
-        <% end %>
+      <div class="card-columns hide-scrollbar">
+        <div class="card-columns__left">
+          <%# Colonne sinistra (es. "Not Now") - per ora vuoto %>
+        </div>
+
+        <section class="cards cards--maybe is-expanded">
+          <div class="cards__transition-container">
+            <%= with_automatic_pagination :documenti, @page,
+                id: "cards-lista",
+                class: "cards__list" do %>
+              <%= render @page.records %>
+            <% end %>
+          </div>
+        </section>
+
+        <div class="card-columns__right">
+          <%# Colonne destra (es. "Doing", "Done") - per ora vuoto %>
+        </div>
       </div>
   <% else %>
     <div class="blank-slate blank-slate--empty">
@@ -124,16 +81,16 @@
       <% unless @user_filtering.filters_active? %>
         <%= link_to new_appunto_path, class: "btn btn--primary" do %>
           <%= icon_tag "plus", size: "small" %>
-          Aggiungi Appunto
+          Aggiungi Documento
         <% end %>
       <% end %>
     </div>
   <% end %>
 <% end %>
 
-<div class="documento-loading">
-  <%= icon "bouncing-dots", library: :animated, class: "documento-loading__spinner" %>
-  <span class="documento-loading__text">Loading...</span>
+<div class="card-loading">
+  <%= icon "bouncing-dots", library: :animated, class: "card-loading__spinner" %>
+  <span class="card-loading__text">Loading...</span>
 </div>
 
 
