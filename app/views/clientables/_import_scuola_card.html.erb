@@ -1,6 +1,6 @@
 <%= link_to polymorphic_path(clientable, selected_tab: "3"),
         data: { turbo_frame: :_top },
-        class: "card__title-link group-[.show-scuola]:hidden" do %>
+        class: "card__title-link" do %>
     <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
     <span class="card__subtitle"><%= clientable.citta&.upcase %></span>
 <% end %>

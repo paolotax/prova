@@ -1,7 +1,5 @@
 <%= tag.article id: dom_id(documento),
-    class: class_names("card", documento_causale_modifier(documento), "card--selected": @documento == documento),
-    data: { controller: "tax-reveal" } do %>
-
+    class: class_names("card", documento_causale_modifier(documento), "card--selected": @documento == documento) do %>
   <div class="flex flex-column flex-item-grow max-inline-size">
     <header class="card__header">
       <div class="card__board">
@@ -17,7 +15,7 @@
 
     <div class="card__body justify-space-between">
       <div class="card__content">
-        <%= render partial: "clientables/#{documento.clientable.class.name.underscore}_card", locals: { clientable: documento.clientable } %>
+        <%= clientable_label_tag documento.clientable %>
         <% if documento.referente.present? || documento.note.present? %>
           <div class="card__stages">
             <%= tag.span documento.referente if documento.referente.present? %>
@@ -29,18 +27,16 @@
   </div>
 
   <footer class="card__footer flex gap-half">
-    <div class="card__meta">
-      <div class="card__meta-avatars">
-        <%#= render Avatar::StackedLibriComponent.new(libri: documento.righe.map(&:libro)) %>
-      </div>
+
+    
+
       
       
-      <%= render "documenti/status_badges", documento: documento %>
+    <%= render "documenti/meta", documento: documento %>
     
 
     
-    <span class="font-weight-black"><%= documento.totale_copie %></span>
-    <span class="card-avatar-asseignees"><%= number_to_currency documento.totale_importo, locale: :it %></span>
+
   </footer>
 
 <% end %>
