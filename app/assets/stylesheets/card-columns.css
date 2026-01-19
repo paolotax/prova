@@ -607,7 +607,7 @@
       --avatar-size: 2.75em;
       --text-small: 1.1em;
 
-      background-color: var(--color-canvas);
+      background-color: var(--card-bg-color);
       line-height: 1.2;
       z-index: 2;
 
@@ -617,8 +617,7 @@
     }
 
     .card__board {
-      background-color: transparent;
-      color: var(--card-content-color);
+      /* Uses --card-color from cards.css */
     }
 
     .card__header {

@@ -175,6 +175,12 @@
     }
   }
 
+  .card__subtitle {
+    color: var(--card-content-color);
+    font-size: var(--text-small);
+    text-transform: uppercase;
+  }
+
   .card__description {
     /* Hide the empty element that Lexical saves when nothing is added to the description <p><br /></p> */
     action-text-content p:only-child:has(br:only-child) {

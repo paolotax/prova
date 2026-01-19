@@ -1,6 +1,6 @@
 <%= link_to polymorphic_path(clientable),
         data: { turbo_frame: :_top },
-        class: "group-[.show-cliente]:hidden" do %>
-    <%= tag.h3 clientable.denominazione, class: "documento__title overflow-line-clamp" %>
-    <%= tag.p clientable.comune&.upcase, class: "documento__location" %>
+        class: "card__title-link group-[.show-cliente]:hidden" do %>
+    <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
+    <span class="card__subtitle"><%= clientable.comune&.upcase %></span>
 <% end %>
