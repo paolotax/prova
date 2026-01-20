@@ -74,7 +74,36 @@ Rails.application.routes.draw do
 
   scope "/:account_id" do
     # Dashboard account
-    root "pages#index", as: :account_root
+    root "dashboard#index", as: :account_root
+
+    # =========================================
+    # TRIAGE SYSTEM
+    # =========================================
+
+    # Unified triage dashboard
+    get "dashboard", to: "dashboard#index"
+
+    # Dashboard columns (for lazy loading with pagination)
+    namespace :dashboard do
+      namespace :columns do
+        resource :postponed, only: :show
+        resource :closed, only: :show
+      end
+      resources :columns, only: :show
+    end
+
+    # Entries (unified triage items)
+    resources :entries, only: [:index, :show] do
+      scope module: :entries do
+        resource :triage,    only: [:create, :destroy]
+        resource :goldness,  only: [:create, :destroy]
+        resource :closure,   only: [:create, :destroy]
+        resource :not_now,   only: [:create, :destroy]
+      end
+    end
+
+    # Columns (triage phases)
+    resources :columns, except: [:show]
 
     # Filtri salvati
     resources :filters, only: [:create, :destroy]

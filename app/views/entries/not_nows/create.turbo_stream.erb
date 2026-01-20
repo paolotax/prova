@@ -1,0 +1,5 @@
+<%# Entry was postponed %>
+<%= turbo_stream.remove dom_id(@entry) %>
+<%= turbo_stream.prepend "postponed_entries" do %>
+  <%= render partial: "entries/entry", locals: { entry: @entry } %>
+<% end %>

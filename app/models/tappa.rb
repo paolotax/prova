@@ -33,6 +33,7 @@
 
 class Tappa < ApplicationRecord
   include AccountScoped
+  include Entryable
 
   belongs_to :user
   

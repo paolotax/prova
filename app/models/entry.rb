@@ -1,0 +1,112 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: entries
+#
+#  id             :uuid             not null, primary key
+#  entryable_type :string           not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  account_id     :uuid             not null
+#  column_id      :uuid
+#  entryable_id   :string           not null
+#  giro_id        :bigint
+#  user_id        :bigint           not null
+#
+# Indexes
+#
+#  index_entries_on_account_id                       (account_id)
+#  index_entries_on_account_id_and_entryable_type    (account_id,entryable_type)
+#  index_entries_on_column_id                        (column_id)
+#  index_entries_on_entryable_type_and_entryable_id  (entryable_type,entryable_id) UNIQUE
+#  index_entries_on_giro_id                          (giro_id)
+#  index_entries_on_user_id                          (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (column_id => columns.id)
+#  fk_rails_...  (giro_id => giri.id)
+#  fk_rails_...  (user_id => users.id)
+#
+
+class Entry < ApplicationRecord
+  include AccountScoped
+
+  # Entry concerns for state management
+  include Entry::Triageable
+  include Entry::Eventable
+  include Entry::Golden
+  include Entry::Closeable
+  include Entry::Postponable
+
+  # Delegated Type
+  delegated_type :entryable, types: %w[Appunto Documento Tappa], dependent: :destroy
+
+  # Associations
+  belongs_to :column, optional: true
+  belongs_to :giro, optional: true
+  belongs_to :user
+
+  has_many :events, dependent: :destroy
+
+  # State records (pointing to Entry now)
+  has_one :goldness, dependent: :destroy
+  has_one :closure, dependent: :destroy
+  has_one :not_now, dependent: :destroy
+
+  # Scopes for triage states
+  scope :awaiting_triage, -> { active.where(column_id: nil) }
+  scope :triaged, -> { active.where.not(column_id: nil) }
+  scope :active, -> { open.where.missing(:not_now) }
+  scope :open, -> { where.missing(:closure) }
+  scope :closed, -> { joins(:closure) }
+  scope :postponed, -> { joins(:not_now) }
+  scope :golden, -> { joins(:goldness) }
+
+  # Convenience scopes per tipo
+  scope :appunti, -> { where(entryable_type: "Appunto") }
+  scope :documenti, -> { where(entryable_type: "Documento") }
+  scope :tappe, -> { where(entryable_type: "Tappa") }
+
+  # Per giro
+  scope :for_giro, ->(giro) { where(giro: giro) }
+  scope :without_giro, -> { where(giro_id: nil) }
+
+  # Order scopes
+  scope :recent, -> { order(updated_at: :desc) }
+  scope :oldest_first, -> { order(created_at: :asc) }
+
+  # For column counts
+  scope :in_column, ->(column) { where(column: column) }
+
+  def awaiting_triage?
+    active? && column_id.nil?
+  end
+
+  def triaged?
+    active? && column_id.present?
+  end
+
+  # Override entryable_id getter/setter for polymorphic support
+  # (handles UUID strings for Appunto and bigint strings for Documento/Tappa)
+  def entryable
+    return @entryable if defined?(@entryable)
+
+    @entryable = case entryable_type
+                 when "Appunto"
+                   Appunto.find_by(id: entryable_id)
+                 when "Documento"
+                   Documento.find_by(id: entryable_id.to_i)
+                 when "Tappa"
+                   Tappa.find_by(id: entryable_id.to_i)
+                 end
+  end
+
+  def entryable=(record)
+    @entryable = record
+    self.entryable_type = record.class.name
+    self.entryable_id = record.id.to_s
+  end
+end

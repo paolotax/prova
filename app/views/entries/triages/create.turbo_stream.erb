@@ -1,0 +1,13 @@
+<% if @action == :triage_into_column %>
+  <%# Entry was triaged into a column %>
+  <%= turbo_stream.remove dom_id(@entry) %>
+  <%= turbo_stream.prepend "column_#{@entry.column_id}_entries" do %>
+    <%= render partial: "entries/entry", locals: { entry: @entry } %>
+  <% end %>
+<% else %>
+  <%# Entry was sent back to triage (no column_id) %>
+  <%= turbo_stream.remove dom_id(@entry) %>
+  <%= turbo_stream.prepend "awaiting_triage_entries" do %>
+    <%= render partial: "entries/entry", locals: { entry: @entry } %>
+  <% end %>
+<% end %>

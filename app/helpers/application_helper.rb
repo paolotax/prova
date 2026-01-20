@@ -14,6 +14,32 @@ module ApplicationHelper
     end
   end
 
+  def referrer_back_info
+    return nil unless request.referrer.present?
+
+    begin
+      uri = URI.parse(request.referrer)
+      route = Rails.application.routes.recognize_path(uri.path)
+
+      label = case route[:controller]
+              when "documenti" then "Documenti"
+              when "appunti"   then "Appunti"
+              when "tappe"     then "Tappe"
+              when "clienti"   then "Clienti"
+              when "scuole"    then "Scuole"
+              when "dashboard" then "Dashboard"
+              when "entries"   then "Kanban"
+              else nil
+              end
+
+      return nil unless label
+
+      { label: label, path: request.referrer }
+    rescue ActionController::RoutingError, URI::InvalidURIError
+      nil
+    end
+  end
+
 
 
 

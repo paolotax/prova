@@ -1,9 +1,18 @@
 @layer components {
+  .card[draggable="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
   .drag-and-drop__dragged-item {
     box-shadow: none;
     filter: grayscale(1) brightness(0.97);
     opacity: 0.6;
     outline: 2px dashed var(--color-selected-dark);
+    cursor: grabbing;
   }
 
   .drag-and-drop__hover-container {

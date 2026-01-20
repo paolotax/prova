@@ -1,5 +1,13 @@
 module AppuntoHelper
 
+  # Returns BEM modifier class based on appunto's stato
+  # e.g., "appunto--da-fare", "appunto--completato"
+  def appunto_stato_modifier(appunto)
+    return "" unless appunto&.stato.present?
+
+    stato_slug = appunto.stato.parameterize
+    "appunto--#{stato_slug}"
+  end
 
   def attachment_icon_tag(attachment)
     

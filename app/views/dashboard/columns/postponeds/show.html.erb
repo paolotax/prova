@@ -1,0 +1,7 @@
+<%= turbo_frame_tag :postponed_column do %>
+  <%= with_automatic_pagination :postponed_column, @page,
+      class: "cards__list",
+      data: { drag_drop_item_container: true } do %>
+    <%= render partial: "entries/entry", collection: @page.records, as: :entry %>
+  <% end %>
+<% end %>

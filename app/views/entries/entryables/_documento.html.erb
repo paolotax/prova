@@ -1,0 +1,38 @@
+<% documento = entry.entryable %>
+<% if documento %>
+  <%= link_to documento_path(documento), class: "card__link", data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= documento.numero_documento %></span>
+  <% end %>
+
+  <div class="card__title">
+    <% if documento.causale.present? %>
+      <span class="overflow-ellipsis"><%= documento.causale.causale %></span>
+    <% end %>
+    <span class="card__id">#<%= documento.numero_documento %></span>
+  </div>
+
+  <% if documento.clientable.present? && !documento.clientable.is_a?(Domain::NessunCliente) %>
+    <%= clientable_label_tag documento.clientable %>
+  <% end %>
+
+  <% if documento.referente.present? || documento.note.present? %>
+    <div class="card__stages txt-small txt-subtle">
+      <%= tag.span documento.referente if documento.referente.present? %>
+      <%= tag.span truncate(documento.note, length: 60) if documento.note.present? %>
+    </div>
+  <% end %>
+
+  <div class="card__meta-text txt-x-small flex gap-quarter flex-wrap margin-block-start-quarter">
+    <% if documento.data_documento.present? %>
+      <span><%= l(documento.data_documento, format: :short) %></span>
+    <% end %>
+    <% if documento.totale_copie.to_i > 0 %>
+      <span><%= documento.totale_copie %> copie</span>
+    <% end %>
+    <% if documento.totale_cents.to_i > 0 %>
+      <span><%= number_to_currency(documento.totale_cents / 100.0, locale: :it) %></span>
+    <% end %>
+  </div>
+<% else %>
+  <p class="txt-subtle txt-small">Documento non trovato</p>
+<% end %>

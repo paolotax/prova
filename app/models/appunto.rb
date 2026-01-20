@@ -45,7 +45,10 @@
 #
 
 class Appunto < ApplicationRecord
-  # State Record concerns
+  # Entryable concern for unified triage system
+  include Entryable
+
+  # State Record concerns (legacy - kept for backward compatibility during migration)
   include Golden         # has_one :goldness
   include Closeable      # has_one :closure
   include Postponable    # has_one :not_now
@@ -120,9 +123,7 @@ class Appunto < ApplicationRecord
     'closed'     => 'Chiuso',
     'postponed'  => 'Rimandato',
     'consegnato' => 'Consegnato',
-
   }.freeze
-
 
   delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
 
@@ -139,7 +140,7 @@ class Appunto < ApplicationRecord
 
   # scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
   # scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  # scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
+  scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
 
   # Scope per filtrare per State Records Fizzy (OR logic tra stati selezionati)
   scope :with_any_state, ->(states) {

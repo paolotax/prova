@@ -50,7 +50,7 @@ module Filters
     private
 
     def filter_con_appunti(scope)
-      scope.joins(:appunti)
+      scope.joins(:appunti).merge(Current.user.appunti.non_saggi.where.missing(:closure))
     end
 
     def filter_con_mie_adozioni(scope)

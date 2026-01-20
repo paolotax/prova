@@ -1,0 +1,7 @@
+<% @body_class = "contained-scrolling" %>
+
+<%= render "shared/kanban_board",
+    columns: @columns,
+    column_counts: @column_counts,
+    postponed_count: @postponed_count,
+    closed_count: @closed_count %>

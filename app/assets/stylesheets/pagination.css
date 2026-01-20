@@ -11,10 +11,10 @@
     }
 
     &.pagination-link--active-when-observed {
-      block-size: 0;
-      inline-size: 0;
+      block-size: 1px;
+      inline-size: 1px;
       overflow: hidden;
-      visibility: hidden;
+      opacity: 0;
 
       turbo-frame:has(&):has(~ turbo-frame) & {
         display: none;

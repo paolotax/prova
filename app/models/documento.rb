@@ -46,6 +46,7 @@
 
 class Documento < ApplicationRecord
   include AccountScoped
+  include Entryable
 
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true

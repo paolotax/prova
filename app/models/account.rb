@@ -24,6 +24,11 @@ class Account < ApplicationRecord
   has_many :libri, dependent: :destroy
   has_many :scuole, dependent: :destroy
 
+  # Triage system
+  has_many :columns, dependent: :destroy
+  has_many :entries, dependent: :destroy
+  has_many :events, dependent: :destroy
+
   validates :name, presence: true
 
   def member?(user)

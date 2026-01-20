@@ -40,7 +40,7 @@
       no_filtering_url: documenti_path,
       filter_type: "documento" %>
 
-<%= turbo_frame_tag :documenti_container do %>
+<%= turbo_frame_tag :search_results do %>
     <%#= render "documenti/bulk_actions/form" %>
 
     <% if @page.used? %>

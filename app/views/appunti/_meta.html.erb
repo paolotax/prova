@@ -1,0 +1,45 @@
+<div class="card__meta" id="<%= dom_id(appunto, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <span>CREATO <%= appunto.created_at.strftime("%d/%m/%y") %></span>
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <% if appunto.completed_at.present? %>
+      <%= icon_tag "check-circle" %>
+      <%= appunto.completed_at.strftime("%d/%m/%y") %>
+    <% else %>
+      DA COMPLETARE
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author">
+    <% if appunto.telefono.present? %>
+      <%= icon_tag "phone" %>
+      <%= appunto.telefono %>
+    <% elsif appunto.email.present? %>
+      <%= icon_tag "mail" %>
+      <%= truncate(appunto.email, length: 20) %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    <% if appunto.totale_copie.to_i > 0 %>
+      <span class="text-align-right">COPIE <%= appunto.totale_copie %></span>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    <% if appunto.totale_cents.to_i > 0 %>
+      <span>IMPORTO <%= number_to_currency appunto.totale, locale: :it %></span>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <div class="card__meta-avatars card__meta-avatars--assignees">
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<% tappa = entry.entryable %>
+<% if tappa %>
+  <%= link_to tappa_path(tappa), class: "card__link", data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= tappa.titolo.presence || "Tappa" %></span>
+  <% end %>
+
+  <div class="card__title">
+    <span class="overflow-ellipsis"><%= tappa.titolo.presence || "Tappa" %></span>
+  </div>
+
+  <% if tappa.tappable.present? %>
+    <div class="card__stages">
+      <% case tappa.tappable_type %>
+      <% when "ImportScuola" %>
+        <strong class="txt-small"><%= tappa.tappable.DENOMINAZIONESCUOLA %></strong>
+        <span class="txt-x-small txt-subtle"><%= tappa.tappable.DESCRIZIONECOMUNE %></span>
+      <% when "Cliente" %>
+        <strong class="txt-small"><%= tappa.tappable.denominazione %></strong>
+        <span class="txt-x-small txt-subtle"><%= tappa.tappable.comune %></span>
+      <% else %>
+        <strong class="txt-small"><%= tappa.tappable_type %></strong>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if tappa.descrizione.present? %>
+    <p class="txt-small txt-subtle margin-block-start-quarter line-clamp-2">
+      <%= truncate(tappa.descrizione, length: 100) %>
+    </p>
+  <% end %>
+
+  <div class="card__meta-text txt-x-small flex gap-quarter flex-wrap margin-block-start-quarter">
+    <% if tappa.data_tappa.present? %>
+      <span><%= l(tappa.data_tappa, format: :short) %></span>
+    <% end %>
+    <% if tappa.entro_il.present? %>
+      <span>Entro: <%= l(tappa.entro_il, format: :short) %></span>
+    <% end %>
+  </div>
+<% else %>
+  <p class="txt-subtle txt-small">Tappa non trovata</p>
+<% end %>

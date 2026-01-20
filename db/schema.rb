@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_20_100006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -394,10 +394,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "entry_id"
     t.index ["account_id"], name: "index_closures_on_account_id"
     t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable"
     t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable_type_and_closeable_id", unique: true
+    t.index ["entry_id"], name: "index_closures_on_entry_id", unique: true
     t.index ["user_id"], name: "index_closures_on_user_id"
+  end
+
+  create_table "columns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "color", default: "#6366f1"
+    t.integer "position", default: 0
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "name"], name: "index_columns_on_account_id_and_name", unique: true
+    t.index ["account_id", "position"], name: "index_columns_on_account_id_and_position"
+    t.index ["account_id"], name: "index_columns_on_account_id"
   end
 
   create_table "confezione_righe", force: :cascade do |t|
@@ -481,6 +495,38 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
     t.index ["codice_isbn"], name: "index_edizioni_titoli_on_codice_isbn", unique: true
   end
 
+  create_table "entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "entryable_type", null: false
+    t.string "entryable_id", null: false
+    t.uuid "column_id"
+    t.bigint "giro_id"
+    t.bigint "user_id", null: false
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "entryable_type"], name: "index_entries_on_account_id_and_entryable_type"
+    t.index ["account_id"], name: "index_entries_on_account_id"
+    t.index ["column_id"], name: "index_entries_on_column_id"
+    t.index ["entryable_type", "entryable_id"], name: "index_entries_on_entryable_type_and_entryable_id", unique: true
+    t.index ["giro_id"], name: "index_entries_on_giro_id"
+    t.index ["user_id"], name: "index_entries_on_user_id"
+  end
+
+  create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "entry_id", null: false
+    t.bigint "user_id"
+    t.uuid "account_id", null: false
+    t.string "action", null: false
+    t.jsonb "particulars", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "action"], name: "index_events_on_account_id_and_action"
+    t.index ["account_id"], name: "index_events_on_account_id"
+    t.index ["entry_id", "created_at"], name: "index_events_on_entry_id_and_created_at"
+    t.index ["entry_id"], name: "index_events_on_entry_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
   create_table "filters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "creator_id"
     t.uuid "account_id"
@@ -528,7 +574,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "entry_id"
     t.index ["account_id"], name: "index_goldnesses_on_account_id"
+    t.index ["entry_id"], name: "index_goldnesses_on_entry_id", unique: true
     t.index ["goldenable_type", "goldenable_id"], name: "index_goldnesses_on_goldenable"
     t.index ["goldenable_type", "goldenable_id"], name: "index_goldnesses_on_goldenable_type_and_goldenable_id", unique: true
     t.index ["user_id"], name: "index_goldnesses_on_user_id"
@@ -776,7 +824,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "entry_id"
     t.index ["account_id"], name: "index_not_nows_on_account_id"
+    t.index ["entry_id"], name: "index_not_nows_on_entry_id", unique: true
     t.index ["not_nowable_type", "not_nowable_id"], name: "index_not_nows_on_not_nowable"
     t.index ["not_nowable_type", "not_nowable_id"], name: "index_not_nows_on_not_nowable_type_and_not_nowable_id", unique: true
     t.index ["user_id"], name: "index_not_nows_on_user_id"
@@ -1152,18 +1202,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
   add_foreign_key "classi", "accounts"
   add_foreign_key "classi", "scuole"
   add_foreign_key "closures", "accounts"
+  add_foreign_key "closures", "entries"
   add_foreign_key "closures", "users"
+  add_foreign_key "columns", "accounts"
   add_foreign_key "consegne", "accounts"
   add_foreign_key "consegne", "users"
   add_foreign_key "documenti", "causali"
   add_foreign_key "documenti", "causali", column: "derivato_da_causale_id"
   add_foreign_key "documenti", "documenti", column: "documento_padre_id"
   add_foreign_key "documenti", "users"
+  add_foreign_key "entries", "accounts"
+  add_foreign_key "entries", "columns"
+  add_foreign_key "entries", "giri"
+  add_foreign_key "entries", "users"
+  add_foreign_key "events", "accounts"
+  add_foreign_key "events", "entries"
+  add_foreign_key "events", "users"
   add_foreign_key "filters", "accounts"
   add_foreign_key "filters", "users", column: "creator_id"
   add_foreign_key "giri", "accounts"
   add_foreign_key "giri", "users"
   add_foreign_key "goldnesses", "accounts"
+  add_foreign_key "goldnesses", "entries"
   add_foreign_key "goldnesses", "users"
   add_foreign_key "libri", "categorie"
   add_foreign_key "libri", "editori"
@@ -1172,6 +1232,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_144338) do
   add_foreign_key "messages", "models"
   add_foreign_key "messages", "tool_calls"
   add_foreign_key "not_nows", "accounts"
+  add_foreign_key "not_nows", "entries"
   add_foreign_key "not_nows", "users"
   add_foreign_key "old_adozioni", "import_scuole"
   add_foreign_key "pagamenti", "accounts"

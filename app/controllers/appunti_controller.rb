@@ -8,13 +8,18 @@ class AppuntiController < ApplicationController
   before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
 
   def index
-    @appunti = current_user.appunti.non_saggi.where.missing(:closure)
-                .with_attached_attachments
-                .with_attached_image
-                .with_rich_text_content
-                .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
+    # @appunti = current_user.appunti.non_saggi.where.missing(:closure)
+    #             .with_attached_attachments
+    #             .with_attached_image
+    #             .with_rich_text_content
+    #             .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
 
-    @appunti = @filter.appunti(@appunti)
+    @appunti = @filter.appunti.non_saggi
+                      .with_attached_attachments
+                      .with_attached_image
+                      .with_rich_text_content
+                      .order(created_at: :desc)
+                      
     @total_count = @appunti.count
 
     set_page_and_extract_portion_from @appunti

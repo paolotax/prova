@@ -28,7 +28,12 @@ export default class extends Controller {
     await delay(DELAY_BEFORE_OBSERVING)
 
     if (this.paginateOnIntersectionValue) {
-      this.observer = new IntersectionObserver(this.#intersect, { rootMargin: "300px", threshold: 1 })
+      // Use the element as root if it has overflow scrolling, otherwise use viewport
+      const hasOverflowScroll = window.getComputedStyle(this.element).overflowY === "auto" ||
+                                window.getComputedStyle(this.element).overflowY === "scroll"
+      const root = hasOverflowScroll ? this.element : null
+
+      this.observer = new IntersectionObserver(this.#intersect, { root, rootMargin: "300px", threshold: 0 })
     }
   }
 
@@ -48,7 +53,7 @@ export default class extends Controller {
   // Private
 
   #intersect = ([ entry ]) => {
-    if (entry?.isIntersecting && entry.intersectionRatio === 1) {
+    if (entry?.isIntersecting) {
       this.#loadPaginationLink(entry.target)
     }
   }

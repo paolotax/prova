@@ -1,0 +1,37 @@
+<% appunto = entry.entryable %>
+<% if appunto %>
+  <%= link_to appunto_path(appunto), class: "card__link", data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= appunto.nome.presence || "Appunto" %></span>
+  <% end %>
+
+  <div class="card__title">
+    <span class="overflow-ellipsis"><%= appunto.nome.presence || "Appunto" %></span>
+  </div>
+
+  <% if appunto.import_scuola.present? %>
+    <div class="card__stages">
+      <strong class="txt-small"><%= appunto.import_scuola.DENOMINAZIONESCUOLA %></strong>
+      <span class="txt-x-small txt-subtle"><%= appunto.import_scuola.DESCRIZIONECOMUNE %></span>
+    </div>
+  <% end %>
+
+  <% if appunto.body.present? %>
+    <p class="txt-small txt-subtle margin-block-start-quarter line-clamp-2">
+      <%= truncate(appunto.body, length: 100) %>
+    </p>
+  <% end %>
+
+  <div class="card__meta-text txt-x-small flex gap-quarter flex-wrap margin-block-start-quarter">
+    <% if appunto.totale_copie.to_i > 0 %>
+      <span><%= appunto.totale_copie %> copie</span>
+    <% end %>
+    <% if appunto.totale_cents.to_i > 0 %>
+      <span><%= number_to_currency(appunto.totale_cents / 100.0, locale: :it) %></span>
+    <% end %>
+    <% if appunto.stato.present? %>
+      <span class="badge badge--<%= appunto.stato %>"><%= appunto.stato %></span>
+    <% end %>
+  </div>
+<% else %>
+  <p class="txt-subtle txt-small">Appunto non trovato</p>
+<% end %>

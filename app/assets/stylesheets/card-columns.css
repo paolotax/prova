@@ -2,23 +2,50 @@
   /* Layout adjustments for contained scrolling
   /* ------------------------------------------------------------------------ */
 
-  /* Scroll columns individually on mobile */
+  /* Contained scrolling for all screen sizes */
+  body.contained-scrolling {
+    block-size: 100dvh;
+    overflow: hidden;
+
+    #global-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+      block-size: 100%;
+    }
+
+    #main {
+      display: grid;
+      grid-template-rows: 1fr;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .card-columns {
+      block-size: 100%;
+      overflow: hidden;
+    }
+
+    .cards.is-expanded .cards__transition-container {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .cards.is-expanded .cards__list {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+
+  /* Mobile-specific adjustments */
   @media (max-width: 639px) {
     body.contained-scrolling {
-      block-size: 100dvh;
       grid-template-rows: 1fr var(--footer-height);
 
-      #global-container {
-        display: grid;
-        grid-template-rows: auto 1fr;
-        overflow: hidden;
-      }
-
       #main {
-        display: grid;
         grid-template-rows: auto auto 1fr;
         overflow: auto;
-        padding: 0;
       }
 
       /* Adapt the grid to public views (no filters or watchers sections) */
@@ -371,7 +398,13 @@
     --gradient-direction: to bottom;
 
     align-items: center;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none;
     border-radius: 99rem;
+    color: inherit;
     cursor: pointer;
     display: flex;
     flex-direction: row-reverse;

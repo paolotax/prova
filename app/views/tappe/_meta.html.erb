@@ -1,0 +1,49 @@
+<div class="card__meta" id="<%= dom_id(tappa, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <% if tappa.data_tappa.present? %>
+      <span><%= l(tappa.data_tappa, format: "%A %d/%m", locale: :it) %></span>
+    <% else %>
+      <span>DA PROGRAMMARE</span>
+    <% end %>
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <% if tappa.giri.any? %>
+      <%= icon_tag "folder" %>
+      <%= tappa.giri.first.titolo %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author">
+    <% if tappa.tappable_type == "ImportScuola" %>
+      <%= icon_tag "building" %>
+      SCUOLA
+    <% elsif tappa.tappable_type == "Cliente" %>
+      <%= icon_tag "user" %>
+      CLIENTE
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    <% if tappa.entro_il.present? %>
+      <span class="text-align-right">ENTRO <%= tappa.entro_il.strftime("%d/%m") %></span>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    <% if tappa.descrizione.present? %>
+      <span><%= truncate(tappa.descrizione, length: 30) %></span>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <div class="card__meta-avatars card__meta-avatars--assignees">
+  </div>
+</div>

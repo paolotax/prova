@@ -1,5 +1,13 @@
 module TappeHelper
 
+  # Returns BEM modifier class based on tappa's tappable_type
+  # e.g., "tappa--import-scuola", "tappa--cliente"
+  def tappa_type_modifier(tappa)
+    return "" unless tappa&.tappable_type.present?
+
+    type_slug = tappa.tappable_type.underscore.parameterize
+    "tappa--#{type_slug}"
+  end
 
   def dates_of_week(date)
     # Ensure the date is a Date object

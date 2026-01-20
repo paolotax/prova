@@ -32,6 +32,11 @@ export default class extends Controller {
     }
   }
 
+  disconnect() {
+    this.#clearSelection()
+    this.currentItem = null
+  }
+
   // Actions
 
   reset(event) {

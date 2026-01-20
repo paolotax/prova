@@ -2,7 +2,8 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to "Documenti", documenti_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+    <% info = referrer_back_info || { label: "Documenti", path: documenti_path } %>
+    <%= back_link_to info[:label], info[:path], "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">

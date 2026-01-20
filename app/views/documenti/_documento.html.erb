@@ -1,11 +1,28 @@
-<%= tag.article id: dom_id(documento),
+<%# locals: (documento:, entry: nil, draggable: false) -%>
+
+<% entry ||= documento.entry rescue nil %>
+<% draggable = local_assigns.fetch(:draggable, false) %>
+
+<% card_data = {
+  navigable_list_target: "item",
+  action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect"
+} %>
+
+<% if entry && draggable %>
+  <% card_data[:id] = entry.id %>
+  <% card_data[:drag_and_drop_target] = "item" %>
+<% end %>
+
+<%= tag.article id: (entry ? dom_id(entry) : dom_id(documento)),
     class: class_names("card", documento_causale_modifier(documento), "card--selected": @documento == documento),
     tabindex: 0,
-    data: {
-      navigable_list_target: "item",
-      action: "click->navigable-list#hoverSelect"
-    } do %>
+    draggable: (draggable && entry.present?),
+    data: card_data do %>
   <div class="flex flex-column flex-item-grow max-inline-size">
+    <%= link_to documento_path(documento), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= documento.numero_documento %></span>
+    <% end %>
+
     <header class="card__header">
       <div class="card__board">
         <span class="card__id">
@@ -32,16 +49,7 @@
   </div>
 
   <footer class="card__footer flex gap-half">
-
-    
-
-      
-      
     <%= render "documenti/meta", documento: documento %>
-    
-
-    
-
   </footer>
 
 <% end %>

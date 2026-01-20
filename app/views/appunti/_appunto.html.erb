@@ -1,131 +1,66 @@
-<%# locals: ( appunto:, mostra_scuola: true ) -%>
+<%# locals: (appunto:, entry: nil, draggable: false) -%>
 
 <% if local_assigns[:appunto].present? && appunto.persisted? %>
-  <%= tag.div id: dom_id(appunto), class: "item panel shadow flex border-radius" do %>
+  <% entry ||= appunto.entry %>
+  <% draggable = local_assigns.fetch(:draggable, false) %>
 
-    <% if appunto.is_ssk? %>
-      <%= render partial: "appunti/appunto_ssk", locals: { appunto: appunto, mostra_scuola: mostra_scuola } %>
-    <% else %>
+  <% card_data = {
+    navigable_list_target: "item",
+    action: "mouseenter->navigable-list#hoverSelect"
+  } %>
 
-      <div class="flex-item-grow pad-half flex flex-column justify-space-between gap-half txt-left">
-        <div class="flex flex-column">
-          <!-- Scuola info -->
-          <div class="flex align-center gap-half">
-            <%= render partial: "appunti/appunto_scuola", locals: { appunto: appunto } %>
-          </div>
+  <% if entry && draggable %>
+    <% card_data[:id] = entry.id %>
+    <% card_data[:drag_and_drop_target] = "item" %>
+  <% end %>
 
-          <!-- Contenuto -->
-          <% if appunto.content.present? %>
-            <div class="margin-block-start-half group">
-              <div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-                <div data-tax-trix-clipboard-target="source" class="overflow-hidden">
-                  <%= appunto.content %>
-                </div>
-                <button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-                  class="txt-xx-small font-weight-bold border-radius copy-btn"
-                  style="background: var(--color-warning-lighter); color: var(--color-warning-dark); padding: 0.125rem 0.5rem;">
-                  copia
-                </button>
-              </div>
-            </div>
-          <% elsif appunto.body.present? %>
-            <div class="margin-block-start-half group">
-              <div data-controller="tax-trix-clipboard" data-tax-trix-clipboard-success-content-value="fatto!">
-                <div data-tax-trix-clipboard-target="source" class="overflow-hidden">
-                  <%= simple_format(appunto.body) %>
-                </div>
-                <button type="button" data-action="tax-trix-clipboard#copy" data-tax-trix-clipboard-target="button"
-                  class="txt-xx-small font-weight-bold border-radius copy-btn"
-                  style="background: var(--color-warning-lighter); color: var(--color-warning-dark); padding: 0.125rem 0.5rem;">
-                  copia
-                </button>
-              </div>
-            </div>
+  <%= tag.article id: (entry ? dom_id(entry) : dom_id(appunto)),
+      class: class_names("card", appunto_stato_modifier(appunto)),
+      tabindex: 0,
+      draggable: (draggable && entry.present?),
+      data: card_data do %>
+    <div class="flex flex-column flex-item-grow max-inline-size">
+      <%= link_to appunto_path(appunto), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
+        <span class="for-screen-reader"><%= appunto.nome %></span>
+      <% end %>
+
+      <header class="card__header">
+        <div class="card__board">
+          <span class="card__id">
+            <span class="for-screen-reader">Tipo</span>
+            <%= appunto.nome&.upcase || "APPUNTO" %>
+          </span>
+          <span class="card__board-name">
+            <span class="overflow-ellipsis"><%= appunto.stato&.upcase || "DA FARE" %></span>
+          </span>
+        </div>
+      </header>
+
+      <div class="card__body justify-space-between">
+        <div class="card__content">
+          <% if appunto.import_scuola.present? %>
+            <h3 class="card__title overflow-line-clamp"><%= appunto.import_scuola.denominazione %></h3>
+            <span class="card__subtitle"><%= appunto.import_scuola.comune&.upcase %></span>
+          <% elsif appunto.appuntabile.present? %>
+            <h3 class="card__title overflow-line-clamp"><%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %></h3>
           <% end %>
 
-          <!-- Telefono -->
-          <% if appunto.telefono.present? %>
-            <div class="margin-block-start-half" style="color: var(--color-notice);">
-              <%= phone_to appunto.telefono %>
-            </div>
-          <% end %>
-
-          <!-- Data completamento -->
-          <% if appunto.completed_at %>
-            <div class="txt-small" style="color: var(--color-notice);">
-              <%= link_to giorno_path(giorno: appunto.completed_at.to_date.to_s), data: { turbo_frame: :_top } do %>
-                <%= l(appunto.completed_at.to_date, format: "%A %d/%m/%Y", locale: :it) %>
+          <% if appunto.content.present? || appunto.body.present? %>
+            <div class="card__stages">
+              <% if appunto.content.present? %>
+                <%= tag.span truncate(appunto.content.to_plain_text, length: 100), class: "overflow-line-clamp" %>
+              <% elsif appunto.body.present? %>
+                <%= tag.span truncate(appunto.body, length: 100), class: "overflow-line-clamp" %>
               <% end %>
             </div>
           <% end %>
-
-          <!-- Allegati -->
-          <%= render partial: "appunti/attachments", locals: { appunto: appunto } %>
-        </div>
-
-        <!-- Footer -->
-        <div class="flex justify-space-between align-center">
-          <!-- Tappe -->
-          <%= tag.div id: "tappa-appunto-#{appunto.id}",
-              class: "tappe-import_scuola-#{appunto.import_scuola_id} flex align-center",
-              style: "margin-left: -0.5rem;" do %>
-            <% if appunto.import_scuola %>
-              <%= render partial: "clientables/lista_tappe", locals: { tappe: appunto.import_scuola.tappe } %>
-            <% end %>
-          <% end %>
-
-          <!-- Creato -->
-          <span class="txt-xx-small txt-subtle font-style-italic">
-            creato <%= time_ago_in_words appunto.created_at %> fa
-          </span>
-
-          <!-- Stato badge -->
-          <span class="txt-xx-small"><%= appunto.stato %></span>
         </div>
       </div>
+    </div>
 
-      <!-- Actions sidebar -->
-      <div class="flex flex-column align-center justify-space-between pad-half">
-        <!-- Menu dropdown -->
-        <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-          <button type="button" data-action="click->dialog#toggle" class="btn btn--icon txt-subtle">
-            <%= icon_tag "more-vertical" %>
-          </button>
+    <footer class="card__footer flex gap-half">
+      <%= render "appunti/meta", appunto: appunto %>
+    </footer>
 
-          <dialog class="popup panel flex-column" data-dialog-target="dialog">
-            <ul class="popup__list">
-              <li class="popup__item">
-                <%= link_to edit_appunto_path(appunto),
-                    class: "popup__btn flex align-center gap-half",
-                    data: { turbo_frame: "_top" } do %>
-                  <%= icon_tag "pencil", size: "small" %>
-                  <span>Modifica</span>
-                <% end %>
-              </li>
-              <li class="popup__item">
-                <%= link_to appunto_path(appunto, format: :pdf),
-                    target: "_blank",
-                    class: "popup__btn flex align-center gap-half" do %>
-                  <%= icon_tag "document", size: "small" %>
-                  <span>Stampa</span>
-                <% end %>
-              </li>
-              <li class="popup__item">
-                <%= button_to appunto_path(appunto), method: :delete,
-                    class: "popup__btn flex align-center gap-half",
-                    style: "color: var(--color-negative);" do %>
-                  <%= icon_tag "trash", size: "small" %>
-                  <span>Elimina</span>
-                <% end %>
-              </li>
-            </ul>
-          </dialog>
-        </div>
-
-        <!-- Stato dropdown -->
-        <%= render partial: "appunti/appunto_stato", locals: { appunto: appunto } %>
-      </div>
-
-    <% end %>
   <% end %>
 <% end %>
