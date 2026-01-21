@@ -1,0 +1,34 @@
+<%# locals: (appunto:) -%>
+
+<section id="<%= dom_id(appunto, :container) %>" class="card-perma" style="--card-color: <%= appunto_color(appunto) %>;">
+  <div class="card-perma__actions card-perma__actions--left">
+    <%= render "appunti/container/stato", appunto: appunto %>
+  </div>
+
+  <div class="card-perma__bg">
+    <article class="card">
+      <header class="card__header">
+        <%= render "appunti/display/perma/board", appunto: appunto %>
+        <%= render "appunti/display/perma/tags", appunto: appunto %>
+      </header>
+
+      <div class="card__body justify-space-between">
+        <div class="card__content">
+          <%= render "appunti/container/content", appunto: appunto %>
+        </div>
+      </div>
+
+      <footer class="card__footer full-width flex align-start gap">
+        <%= render "appunti/display/perma/meta", appunto: appunto %>
+      </footer>
+    </article>
+  </div>
+
+  <div class="card-perma__actions card-perma__actions--right">
+    <%= render "appunti/container/actions", appunto: appunto %>
+  </div>
+
+  <div class="card-perma__notch card-perma__notch--bottom">
+    <%= render "appunti/container/footer", appunto: appunto %>
+  </div>
+</section>

@@ -9,6 +9,31 @@ module AppuntoHelper
     "appunto--#{stato_slug}"
   end
 
+  # Returns CSS color for card-perma based on appunto stato
+  # Uses fizzy color palette conventions
+  def appunto_color(appunto)
+    return "var(--color-card-default)" unless appunto&.stato.present?
+
+    case appunto.stato.downcase
+    when "da fare"
+      "oklch(var(--lch-blue-medium))"
+    when "in evidenza"
+      "var(--color-golden)"
+    when "in settimana"
+      "oklch(var(--lch-purple-medium))"
+    when "in visione"
+      "oklch(var(--lch-yellow-medium))"
+    when "da pagare"
+      "oklch(var(--lch-red-medium))"
+    when "completato"
+      "oklch(var(--lch-green-medium))"
+    when "archiviato"
+      "var(--color-ink-light)"
+    else
+      "var(--color-card-default)"
+    end
+  end
+
   def attachment_icon_tag(attachment)
     
     # suggerito da copilot lo provo

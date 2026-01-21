@@ -1,0 +1,12 @@
+<%# locals: (appunto:) -%>
+
+<div id="<%= dom_id(appunto, :tags) %>" class="card__tags">
+  <% if appunto.import_scuola.present? %>
+    <div class="min-width overflow-ellipsis">
+      <%= link_to import_scuola_path(appunto.import_scuola),
+            class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent" do %>
+        <%= appunto.import_scuola.comune&.upcase %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

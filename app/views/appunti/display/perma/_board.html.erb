@@ -1,0 +1,11 @@
+<%# locals: (appunto:) -%>
+
+<label class="card__board">
+  <span class="card__id">
+    <span class="for-screen-reader">Tipo</span>
+    <%= appunto.nome&.upcase || "APPUNTO" %>
+  </span>
+  <span class="card__board-name">
+    <span class="overflow-ellipsis"><%= appunto.stato&.upcase || "DA FARE" %></span>
+  </span>
+</label>

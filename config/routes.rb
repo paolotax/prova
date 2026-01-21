@@ -273,6 +273,13 @@ Rails.application.routes.draw do
 
     resources :appunti do
       resources :tappe
+      scope module: :appunti do
+        resource :goldness,  only: [:create, :destroy]
+        resource :closure,   only: [:create, :destroy]
+        resource :not_now,   only: [:create, :destroy]
+        resource :consegna,  only: [:create, :destroy]
+        resource :pagamento, only: [:create, :destroy]
+      end
       collection do
         get 'filtra'
         get 'archiviati'

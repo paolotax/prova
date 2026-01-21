@@ -1,0 +1,46 @@
+<%# locals: (appunto:) -%>
+
+<% if appunto.import_scuola.present? %>
+  <h1 class="card__title overflow-line-clamp">
+    <%= link_to appunto.import_scuola.denominazione, import_scuola_path(appunto.import_scuola), class: "card__title-link" %>
+  </h1>
+  <span class="card__subtitle"><%= appunto.import_scuola.comune&.upcase %></span>
+<% elsif appunto.appuntabile.present? %>
+  <h1 class="card__title overflow-line-clamp">
+    <%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %>
+  </h1>
+<% else %>
+  <h1 class="card__title overflow-line-clamp">
+    <%= appunto.nome.presence || "Appunto" %>
+  </h1>
+<% end %>
+
+<% if appunto.content.present? %>
+  <div class="card__description rich-text-content">
+    <%= appunto.content %>
+  </div>
+<% elsif appunto.body.present? %>
+  <div class="card__description">
+    <%= simple_format(appunto.body) %>
+  </div>
+<% end %>
+
+<% if appunto.attachments.attached? %>
+  <div class="card__stages margin-block-start">
+    <%= render "appunti/attachments", appunto: appunto %>
+  </div>
+<% end %>
+
+<% if appunto.righe.any? %>
+  <div class="card__stages margin-block-start">
+    <strong class="txt-small txt-uppercase">Libri (<%= appunto.righe.count %>)</strong>
+    <% appunto.righe.limit(5).each do |riga| %>
+      <div class="txt-small overflow-ellipsis">
+        <%= riga.libro&.titolo || riga.descrizione %>
+      </div>
+    <% end %>
+    <% if appunto.righe.count > 5 %>
+      <div class="txt-small txt-muted">+ altri <%= appunto.righe.count - 5 %></div>
+    <% end %>
+  </div>
+<% end %>
