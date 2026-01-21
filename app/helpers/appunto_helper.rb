@@ -1,37 +1,24 @@
 module AppuntoHelper
 
-  # Returns BEM modifier class based on appunto's stato
-  # e.g., "appunto--da-fare", "appunto--completato"
-  def appunto_stato_modifier(appunto)
-    return "" unless appunto&.stato.present?
-
-    stato_slug = appunto.stato.parameterize
-    "appunto--#{stato_slug}"
+  # Returns golden-effect class if appunto is golden
+  def appunto_golden_class(appunto)
+    appunto.golden? ? "golden-effect" : ""
   end
 
-  # Returns CSS color for card-perma based on appunto stato
-  # Uses fizzy color palette conventions
-  def appunto_color(appunto)
-    return "var(--color-card-default)" unless appunto&.stato.present?
+  # Returns BEM modifier class based on appunto state (from concerns)
+  def appunto_stato_modifier(appunto)
+    return "card--closed" if appunto.closed?
+    return "card--postponed" if appunto.postponed?
+    return "card--golden" if appunto.golden?
+    ""
+  end
 
-    case appunto.stato.downcase
-    when "da fare"
-      "oklch(var(--lch-blue-medium))"
-    when "in evidenza"
-      "var(--color-golden)"
-    when "in settimana"
-      "oklch(var(--lch-purple-medium))"
-    when "in visione"
-      "oklch(var(--lch-yellow-medium))"
-    when "da pagare"
-      "oklch(var(--lch-red-medium))"
-    when "completato"
-      "oklch(var(--lch-green-medium))"
-    when "archiviato"
-      "var(--color-ink-light)"
-    else
-      "var(--color-card-default)"
-    end
+  # Returns CSS color for card-perma based on appunto state (from concerns)
+  def appunto_color(appunto)
+    return "var(--color-golden)" if appunto.golden?
+    return "oklch(var(--lch-green-medium))" if appunto.closed?
+    return "oklch(var(--lch-yellow-medium))" if appunto.postponed?
+    "oklch(var(--lch-blue-medium))"
   end
 
   def attachment_icon_tag(attachment)

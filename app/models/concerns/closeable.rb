@@ -32,6 +32,7 @@ module Closeable
     unless closed?
       transaction do
         not_now&.destroy
+        entry&.update!(column_id: nil) if respond_to?(:entry) && entry&.column_id.present?
         create_closure! user: user
         #track_event :closed, creator: user
       end

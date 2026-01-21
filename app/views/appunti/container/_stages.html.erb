@@ -1,0 +1,24 @@
+<%# locals: (appunto:) -%>
+
+<% if appunto.entry.present? %>
+  <div class="card__stages">
+    <% current_account.columns.ordered.each do |column| %>
+      <%= button_to entry_triage_path(appunto.entry, column_id: column.id),
+          method: :post,
+          class: class_names("btn card__column-name", "card__column-name--current": appunto.entry.column_id == column.id),
+          style: "--btn-color: #{column.color}; --btn-border-color: #{column.color}",
+          disabled: appunto.entry.column_id == column.id do %>
+        <%= column.name %>
+      <% end %>
+    <% end %>
+
+    <% if appunto.entry.column_id.present? %>
+      <%= button_to entry_triage_path(appunto.entry),
+          method: :delete,
+          class: "btn btn--plain card__column-name",
+          data: { turbo_confirm: "Rimuovere dalla colonna?" } do %>
+        Da gestire
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

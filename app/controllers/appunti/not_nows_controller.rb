@@ -2,14 +2,14 @@
 
 module Appunti
   class NotNowsController < ApplicationController
-    before_action :set_appunto
+    include AppuntoScoped
 
     # POST /appunti/:appunto_id/not_now
     def create
       @appunto.postpone
 
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@appunto, :container), partial: "appunti/container", locals: { appunto: @appunto }) }
+        format.turbo_stream { render_appunto_replacement }
         format.html { redirect_back fallback_location: appunti_path }
       end
     end
@@ -19,15 +19,9 @@ module Appunti
       @appunto.resume
 
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@appunto, :container), partial: "appunti/container", locals: { appunto: @appunto }) }
+        format.turbo_stream { render_appunto_replacement }
         format.html { redirect_back fallback_location: appunti_path }
       end
-    end
-
-    private
-
-    def set_appunto
-      @appunto = current_account.appunti.find(params[:appunto_id])
     end
   end
 end

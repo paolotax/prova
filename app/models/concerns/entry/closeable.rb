@@ -12,6 +12,7 @@ module Entry::Closeable
 
     transaction do
       not_now&.destroy
+      update!(column_id: nil) if column_id.present?
       create_closure!(user: user, account: account)
       track_event :closed
     end

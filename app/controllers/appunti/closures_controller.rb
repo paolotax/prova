@@ -2,15 +2,15 @@
 
 module Appunti
   class ClosuresController < ApplicationController
-    before_action :set_appunto
+    include AppuntoScoped
 
     # POST /appunti/:appunto_id/closure
     def create
       @appunto.close
 
       respond_to do |format|
-        format.turbo_stream
-        #format.html { redirect_back fallback_location: appunti_path }
+        format.turbo_stream { render_appunto_replacement }
+        format.html { redirect_back fallback_location: appunti_path }
       end
     end
 
@@ -19,15 +19,9 @@ module Appunti
       @appunto.reopen
 
       respond_to do |format|
-        format.turbo_stream
-        #format.html { redirect_back fallback_location: appunti_path }
+        format.turbo_stream { render_appunto_replacement }
+        format.html { redirect_back fallback_location: appunti_path }
       end
-    end
-
-    private
-
-    def set_appunto
-      @appunto = current_account.appunti.find(params[:appunto_id])
     end
   end
 end

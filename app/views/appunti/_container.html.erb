@@ -5,7 +5,7 @@
     <%= render "appunti/container/stato", appunto: appunto %>
   </div>
 
-  <div class="card-perma__bg">
+  <div class="card-perma__bg <%= appunto_golden_class(appunto) %>">
     <article class="card">
       <header class="card__header">
         <%= render "appunti/display/perma/board", appunto: appunto %>
@@ -16,6 +16,7 @@
         <div class="card__content">
           <%= render "appunti/container/content", appunto: appunto %>
         </div>
+        <%= render "appunti/container/stages", appunto: appunto %>
       </div>
 
       <footer class="card__footer full-width flex align-start gap">
