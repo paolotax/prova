@@ -5,6 +5,7 @@ module Entry::Golden
 
   def gild(user: Current.user)
     return if golden?
+    return if closed?  # Cannot gild closed entries
 
     transaction do
       create_goldness!(user: user, account: account)

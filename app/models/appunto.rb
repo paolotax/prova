@@ -338,6 +338,14 @@ class Appunto < ApplicationRecord
     entry&.resume
   end
 
+  def mark_golden(user: Current.user)
+    entry&.gild(user: user)
+  end
+
+  def unmark_golden
+    entry&.ungild
+  end
+
   private
 
   def set_account_from_current

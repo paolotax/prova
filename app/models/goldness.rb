@@ -3,12 +3,12 @@
 # Table name: goldnesses
 #
 #  id              :uuid             not null, primary key
-#  goldenable_type :string           not null
+#  goldenable_type :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  account_id      :uuid             not null
 #  entry_id        :uuid
-#  goldenable_id   :uuid             not null
+#  goldenable_id   :uuid
 #  user_id         :bigint
 #
 # Indexes
