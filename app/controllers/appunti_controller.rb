@@ -5,7 +5,7 @@ class AppuntiController < ApplicationController
   FILTER_PARAMS = [:state, terms: [], statuses: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_appunto, only: %i[ show edit update destroy modifica_stato ]
+  before_action :set_appunto, only: %i[ show edit update destroy ]
 
   def index
     # @appunti = current_user.appunti.non_saggi.where.missing(:closure)
@@ -53,7 +53,6 @@ class AppuntiController < ApplicationController
 
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
     @appunti = @appunti.search(params[:q]) if params[:q]
-    @appunti = filter_appunti(@appunti)
     @appunti = filter(@appunti.all)
 
     respond_to do |format|
@@ -83,7 +82,6 @@ class AppuntiController < ApplicationController
 
     @appunti = @appunti.search_all_word(params[:search]) if params[:search] && !params[:search].blank?
     @appunti = @appunti.search(params[:q]) if params[:q]
-    @appunti = filter_appunti(@appunti)
     @appunti = filter(@appunti.all)
 
     respond_to do |format|
@@ -182,10 +180,6 @@ class AppuntiController < ApplicationController
     end
   end
 
-  def modifica_stato
-    @appunto.update(stato: params[:stato])
-  end
-
   def remove_attachment
     @attachment = ActiveStorage::Attachment.find(params[:id])
     @attachment.purge_later
@@ -209,7 +203,15 @@ class AppuntiController < ApplicationController
     end
 
     def appunto_params
-      params.require(:appunto).permit(:import_scuola_id, :user_id, :import_adozione_id, :nome, :body, :stato, :classe_id, :team, :completed_at, :image, :content, attachments: [])
+      params.require(:appunto).permit(
+        :nome,
+        :import_scuola_id,
+        :body,
+        :content,
+        :telefono,
+        :email,
+        attachments: []
+      )
     end
 
 end

@@ -2,7 +2,7 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to "Appunti", appunti_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+    <%= back_link_to "appunto", appunto_path(@appunto), "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -10,6 +10,4 @@
   </h1>
 <% end %>
 
-<div class="panel shadow pad">
-  <%= render "form", appunto: @appunto %>
-</div>
+<%= render "form", appunto: @appunto %>

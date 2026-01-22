@@ -1,95 +1,74 @@
-<%= form_with model: appunto, class: "flex flex-column gap" do |f| %>
+<%= form_with(model: appunto, class: "flex flex-column gap") do |form| %>
   <% if appunto.errors.any? %>
-    <div class="panel pad" style="background: var(--color-negative-lighter); border: 1px solid var(--color-negative);">
-      <div class="flex gap-half">
-        <%= icon_tag "alert-triangle", size: "small", style: "color: var(--color-negative-dark);" %>
-        <div>
-          <h3 class="txt-small font-weight-bold" style="color: var(--color-negative-dark);">
-            <%= pluralize(appunto.errors.count, "errore", "errori") %> <%= appunto.errors.count == 1 ? "impedisce" : "impediscono" %> il salvataggio:
-          </h3>
-          <ul class="txt-small margin-block-start-half" style="color: var(--color-negative-dark); padding-inline-start: 1em;">
-            <% appunto.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
+    <div class="panel pad border-radius txt-negative fill-shade">
+      <h3 class="font-weight-black"><%= pluralize(appunto.errors.count, "errore", "errori") %> da correggere:</h3>
+      <ul class="margin-block-start-half txt-small">
+        <% appunto.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
-  <%= f.hidden_field :user_id, value: current_user.id %>
+  <section class="panel shadow center" style="--panel-size: 55ch;">
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= form.text_field :nome, class: "input", placeholder: "Titolo o destinatario...", autofocus: true %>
+      </div>
 
-  <!-- Nome/Titolo -->
-  <div class="form-field">
-    <%= f.label :nome, "Titolo", class: "form-label" %>
-    <%= f.text_field :nome,
-        class: "input",
-        placeholder: "Titolo o destinatario...",
-        autofocus: true %>
-  </div>
+      <div class="form-field">
+        <%= form.label :import_scuola_id, "Scuola", class: "form-label" %>
+        <%= form.collection_select :import_scuola_id,
+            current_user.import_scuole.order(:DENOMINAZIONESCUOLA),
+            :id, :denominazione,
+            { include_blank: "Seleziona scuola..." },
+            { class: "input input--select" } %>
+      </div>
 
-  <!-- Scuola -->
-  <div class="form-field">
-    <%= f.label :import_scuola_id, "Scuola", class: "form-label" %>
-    <%= f.collection_select :import_scuola_id,
-        current_user.import_scuole.order(:DENOMINAZIONESCUOLA),
-        :id, :denominazione,
-        { include_blank: "Seleziona scuola...", selected: appunto.import_scuola_id },
-        { class: "input input--select" } %>
-  </div>
-
-  <!-- Contenuto -->
-  <div class="form-field">
-    <%= f.label :content, "Contenuto", class: "form-label" %>
-    <%= f.rich_text_area :content,
-        placeholder: "Scrivi...",
-        class: "input",
-        style: "min-height: 150px;" %>
-  </div>
-
-  <!-- Stato e Telefono -->
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :stato, class: "form-label" %>
-      <%= f.select :stato,
-          options_for_select(Appunto::STATO_APPUNTI, appunto.stato),
-          { include_blank: "Seleziona stato..." },
-          { class: "input input--select" } %>
+      <div class="form-field">
+        <%= form.label :content, "Contenuto", class: "form-label" %>
+        <%= form.rich_text_area :content, placeholder: "Scrivi...", class: "input", style: "min-height: 150px;" %>
+      </div>
     </div>
 
-    <div class="form-field">
-      <%= f.label :telefono, class: "form-label" %>
-      <%= f.telephone_field :telefono,
-          class: "input",
-          placeholder: "333 1234567" %>
+    <header>
+      <h2 class="divider txt-large margin-block-start">Contatti</strong>
+    </header>
+
+    <div class="flex flex-column gap">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :telefono, class: "form-label" %>
+          <%= form.telephone_field :telefono, class: "input", placeholder: "333 1234567" %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :email, class: "form-label" %>
+          <%= form.email_field :email, class: "input", placeholder: "email@esempio.it" %>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Email -->
-  <div class="form-field">
-    <%= f.label :email, class: "form-label" %>
-    <%= f.email_field :email,
-        class: "input",
-        placeholder: "email@esempio.it" %>
-  </div>
+    <header>
+      <h2 class="divider txt-large margin-block-start">Allegati</strong>
+    </header>
 
-  <!-- Allegati -->
-  <div class="form-field">
-    <%= f.label :attachments, "Allegati", class: "form-label" %>
-    <div class="flex align-center gap-half pad-half border-radius" style="border: 1px dashed var(--color-ink-lighter);">
-      <%= f.file_field :attachments, multiple: true, class: "txt-small" %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <div class="flex align-center gap-half pad-half border-radius" style="border: 1px dashed var(--color-ink-lighter);">
+          <%= form.file_field :attachments, multiple: true, class: "txt-small" %>
+        </div>
+        <% if appunto.attachments.attached? %>
+          <p class="txt-small txt-subtle margin-block-start-half">
+            <%= pluralize(appunto.attachments.size, "file allegato", "file allegati") %>
+          </p>
+        <% end %>
+      </div>
     </div>
-    <% if appunto.attachments.attached? %>
-      <p class="txt-small txt-subtle margin-block-start-quarter">
-        <%= pluralize(appunto.attachments.size, "file allegato", "file allegati") %>
-      </p>
-    <% end %>
-  </div>
+  </section>
 
-  <!-- Actions -->
-  <div class="flex align-center justify-end gap margin-block-start" style="border-top: 1px solid var(--color-ink-lighter); padding-top: var(--block-space);">
-    <% cancel_path = appunto.persisted? ? appunto_path(appunto) : appunti_path %>
-    <%= link_to "Annulla", cancel_path, class: "btn" %>
-    <%= f.submit appunto.persisted? ? "Salva Modifiche" : "Crea Appunto", class: "btn btn--primary" %>
+  <div class="flex align-center justify-end gap center" style="--panel-size: 55ch; inline-size: var(--panel-size); max-inline-size: 100%;">
+    <%= link_to "Annulla", appunto.persisted? ? appunto_path(appunto) : appunti_path, class: "btn" %>
+    <%= form.submit appunto.persisted? ? "Salva Modifiche" : "Crea Appunto", class: "btn btn--primary" %>
   </div>
 <% end %>
