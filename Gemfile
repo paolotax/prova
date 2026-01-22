@@ -5,15 +5,14 @@ source "https://rubygems.org"
 
 ruby "3.2.2"
 
-gem "rails", "~> 8.0.3"
-gem "sprockets-rails"
+gem "rails", "~> 8.1.2"
+gem "propshaft"
 gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
 
-gem "tailwindcss-rails"
 gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
@@ -138,15 +137,9 @@ gem 'smarter_csv'
 gem "acts_as_list"
 
 
-source "https://cGFvbG8udGFzc2luYXJpQGhleS5jb20@get.railsdesigner.com/private" do
-  gem "rails_designer", "~> 1.12.0"
-end
-
 gem "wicked", "~> 2.0"
 
 gem "awesome_back_url"
-
-gem "ranked-model", "~> 0.4.10"
 
 gem "counter_culture", "~> 3.8"
 
