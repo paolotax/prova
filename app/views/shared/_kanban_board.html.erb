@@ -15,6 +15,7 @@
     <section id="postponed" class="cards is-collapsed"
              style="--card-color: oklch(var(--lch-yellow-medium))"
              tabindex="0"
+             data-controller="css-variable-counter"
              data-collapsible-columns-target="column"
              data-drag-and-drop-target="container"
              data-column-name="Rimandati"
@@ -26,6 +27,7 @@
           <button type="button" class="cards__expander"
                   style="--card-count: <%= postponed_count %>"
                   data-collapsible-columns-target="button"
+                  data-css-variable-counter-target="counter"
                   data-action="click->collapsible-columns#toggle"
                   aria-expanded="false">
             <span class="cards__expander-count" data-drag-and-drop-counter><%= postponed_count %></span>
@@ -39,6 +41,7 @@
 
   <section id="triage" class="cards cards--maybe is-expanded"
            tabindex="0"
+           data-controller="css-variable-counter"
            data-collapsible-columns-target="column maybeColumn"
            data-drag-and-drop-target="container"
            data-column-name="Da gestire"
@@ -55,6 +58,7 @@
         <button type="button" class="cards__expander"
                 style="--card-count: <%= @page.records.size %>"
                 data-collapsible-columns-target="button"
+                data-css-variable-counter-target="counter"
                 data-action="click->collapsible-columns#toggle"
                 aria-expanded="true">
           <span class="cards__expander-count" data-drag-and-drop-counter><%= @total_count %></span>
@@ -75,6 +79,7 @@
       <section id="column_<%= column.id %>" class="cards is-collapsed"
                style="--card-color: <%= column.color %>"
                tabindex="0"
+               data-controller="css-variable-counter"
                data-collapsible-columns-target="column"
                data-drag-and-drop-target="container"
                data-column-name="<%= column.name %>"
@@ -86,6 +91,7 @@
             <button type="button" class="cards__expander"
                     style="--card-count: <%= column_counts[column.id] || 0 %>"
                     data-collapsible-columns-target="button"
+                    data-css-variable-counter-target="counter"
                     data-action="click->collapsible-columns#toggle"
                     aria-expanded="false">
               <span class="cards__expander-count" data-drag-and-drop-counter><%= column_counts[column.id] || 0 %></span>
@@ -100,6 +106,7 @@
     <section id="closed" class="cards cards--closed is-collapsed"
              style="--card-color: oklch(var(--lch-green-medium))"
              tabindex="0"
+             data-controller="css-variable-counter"
              data-collapsible-columns-target="column"
              data-drag-and-drop-target="container"
              data-column-name="Chiusi"
@@ -111,6 +118,7 @@
           <button type="button" class="cards__expander"
                   style="--card-count: <%= closed_count %>"
                   data-collapsible-columns-target="button"
+                  data-css-variable-counter-target="counter"
                   data-action="click->collapsible-columns#toggle"
                   aria-expanded="false">
             <span class="cards__expander-count" data-drag-and-drop-counter><%= closed_count %></span>

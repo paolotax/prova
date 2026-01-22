@@ -50,6 +50,7 @@ export default class extends Controller {
     this.#insertDraggedItem(targetContainer, this.dragItem)
     await this.#submitDropRequest(this.dragItem, targetContainer)
     this.#reloadSourceFrame(sourceContainer)
+    this.#reloadTargetFrame(targetContainer)
   }
 
   dragEnd() {
@@ -115,7 +116,8 @@ export default class extends Controller {
 
       if (!/^\d+$/.test(currentValue)) return
 
-      counterElement.textContent = fn(parseInt(currentValue))
+      const newValue = fn(parseInt(currentValue))
+      counterElement.textContent = newValue
     }
   }
 
@@ -145,6 +147,11 @@ export default class extends Controller {
 
   #reloadSourceFrame(sourceContainer) {
     const frame = sourceContainer.querySelector("[data-drag-and-drop-refresh]")
+    if (frame) frame.reload()
+  }
+
+  #reloadTargetFrame(targetContainer) {
+    const frame = targetContainer.querySelector("[data-drag-and-drop-refresh]")
     if (frame) frame.reload()
   }
 }

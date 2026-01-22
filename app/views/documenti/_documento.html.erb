@@ -11,6 +11,7 @@
 <% if entry && draggable %>
   <% card_data[:id] = entry.id %>
   <% card_data[:drag_and_drop_target] = "item" %>
+  <% card_data[:css_variable_counter_target] = "item" %>
 <% end %>
 
 <%= tag.article id: (entry ? dom_id(entry) : dom_id(documento)),
