@@ -2,6 +2,34 @@
 
 <% if appunto.entry.present? %>
   <div class="card__stages">
+    <%# Rimandati (Not Now) - gray %>
+    <% if appunto.entry.postponed? %>
+      <%= button_to entry_not_now_path(appunto.entry),
+          method: :delete,
+          class: "btn card__column-name card__column-name--current",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Rimandato
+      <% end %>
+    <% else %>
+      <%= button_to entry_not_now_path(appunto.entry),
+          method: :post,
+          class: "btn card__column-name",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Rimanda
+      <% end %>
+    <% end %>
+
+    <%# Da gestire (Triage) - blue %>
+    <% is_in_triage = appunto.entry.column_id.nil? && !appunto.entry.postponed? && !appunto.entry.closed? %>
+    <%= button_to entry_triage_path(appunto.entry),
+        method: :delete,
+        class: class_names("btn card__column-name", "card__column-name--current": is_in_triage),
+        style: "--btn-color: oklch(var(--lch-blue-medium)); --btn-border-color: oklch(var(--lch-blue-medium))",
+        disabled: is_in_triage do %>
+      Da gestire
+    <% end %>
+
+    <%# Columns %>
     <% current_account.columns.ordered.each do |column| %>
       <%= button_to entry_triage_path(appunto.entry, column_id: column.id),
           method: :post,
@@ -12,12 +40,20 @@
       <% end %>
     <% end %>
 
-    <% if appunto.entry.column_id.present? %>
-      <%= button_to entry_triage_path(appunto.entry),
+    <%# Completato (Closed) - gray %>
+    <% if appunto.entry.closed? %>
+      <%= button_to entry_closure_path(appunto.entry),
           method: :delete,
-          class: "btn btn--plain card__column-name",
-          data: { turbo_confirm: "Rimuovere dalla colonna?" } do %>
-        Da gestire
+          class: "btn card__column-name card__column-name--current",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Completato
+      <% end %>
+    <% else %>
+      <%= button_to entry_closure_path(appunto.entry),
+          method: :post,
+          class: "btn card__column-name",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Completa
       <% end %>
     <% end %>
   </div>

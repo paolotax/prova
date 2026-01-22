@@ -296,6 +296,48 @@ class Appunto < ApplicationRecord
     totale_cents / 100.0
   end
 
+  # Override legacy Golden/Closeable/Postponable methods to use Entry-based system
+  # These must come after the includes to take precedence
+  def golden?
+    entry&.golden? || false
+  end
+
+  def closed?
+    entry&.closed? || false
+  end
+
+  def postponed?
+    entry&.postponed? || false
+  end
+
+  def open?
+    !closed?
+  end
+
+  def gild(user: Current.user)
+    entry&.gild(user: user)
+  end
+
+  def ungild
+    entry&.ungild
+  end
+
+  def close(user: Current.user)
+    entry&.close(user: user)
+  end
+
+  def reopen(user: Current.user)
+    entry&.reopen(user: user)
+  end
+
+  def postpone(user: Current.user)
+    entry&.postpone(user: user)
+  end
+
+  def resume
+    entry&.resume
+  end
+
   private
 
   def set_account_from_current

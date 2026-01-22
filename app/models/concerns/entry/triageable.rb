@@ -5,7 +5,7 @@ module Entry::Triageable
 
   def triage_into(column)
     transaction do
-      resume if postponed?
+      clear_states_for_triage
       update!(column: column)
       track_event :triaged, particulars: { column: column.name }
     end
@@ -13,7 +13,7 @@ module Entry::Triageable
 
   def send_back_to_triage
     transaction do
-      resume if postponed?
+      clear_states_for_triage
       update!(column: nil)
       track_event :sent_back_to_triage
     end
@@ -23,6 +23,7 @@ module Entry::Triageable
     return if self.column == column
 
     transaction do
+      clear_states_for_triage
       old_column_name = self.column&.name
       update!(column: column)
       track_event :triaged, particulars: {
@@ -30,5 +31,12 @@ module Entry::Triageable
         to_column: column&.name
       }
     end
+  end
+
+  private
+
+  def clear_states_for_triage
+    not_now&.destroy   # resume from postponed
+    closure&.destroy   # reopen from closed
   end
 end

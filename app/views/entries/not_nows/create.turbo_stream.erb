@@ -3,3 +3,11 @@
 <%= turbo_stream.prepend "postponed_entries" do %>
   <%= render partial: "entries/entry", locals: { entry: @entry } %>
 <% end %>
+
+<%# Also update appunto container if viewing from show page %>
+<% if @entry.entryable_type == "Appunto" && @entry.entryable.present? %>
+  <%= turbo_stream.replace [ @entry.entryable, :container ],
+      partial: "appunti/container",
+      method: :morph,
+      locals: { appunto: @entry.entryable } %>
+<% end %>

@@ -14,11 +14,13 @@ module AppuntoHelper
   end
 
   # Returns CSS color for card-perma based on appunto state (from concerns)
+  # Colors aligned with Fizzy: gray for closed/postponed, blue for maybe/triage
   def appunto_color(appunto)
     return "var(--color-golden)" if appunto.golden?
-    return "oklch(var(--lch-green-medium))" if appunto.closed?
-    return "oklch(var(--lch-yellow-medium))" if appunto.postponed?
-    "oklch(var(--lch-blue-medium))"
+    return "oklch(0.6 0.01 0)" if appunto.closed?     # gray
+    return "oklch(0.6 0.01 0)" if appunto.postponed?  # gray
+    return appunto.entry.column.color if appunto.entry&.column&.color.present?  # column color
+    "oklch(var(--lch-blue-medium))"                   # blue (maybe/triage)
   end
 
   def attachment_icon_tag(attachment)

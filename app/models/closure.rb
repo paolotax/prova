@@ -3,11 +3,11 @@
 # Table name: closures
 #
 #  id             :uuid             not null, primary key
-#  closeable_type :string           not null
+#  closeable_type :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  account_id     :uuid             not null
-#  closeable_id   :uuid             not null
+#  closeable_id   :uuid
 #  entry_id       :uuid
 #  user_id        :bigint
 #

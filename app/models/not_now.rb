@@ -3,12 +3,12 @@
 # Table name: not_nows
 #
 #  id               :uuid             not null, primary key
-#  not_nowable_type :string           not null
+#  not_nowable_type :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  account_id       :uuid             not null
 #  entry_id         :uuid
-#  not_nowable_id   :uuid             not null
+#  not_nowable_id   :uuid
 #  user_id          :bigint
 #
 # Indexes

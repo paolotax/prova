@@ -1,12 +1,12 @@
 <%# locals: (appunto:) -%>
 
-<% if appunto.closed? %>
-  <%= button_to appunto_closure_path(appunto), method: :delete, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Riapri" } do %>
+<% if appunto.entry&.closed? %>
+  <%= button_to entry_closure_path(appunto.entry), method: :delete, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Riapri" } do %>
     <%= icon_tag "archive" %>
     <span class="for-screen-reader">Riapri appunto</span>
   <% end %>
 <% else %>
-  <%= button_to appunto_closure_path(appunto), method: :post, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Chiudi" } do %>
+  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Chiudi" } do %>
     <%= icon_tag "check" %>
     <span class="for-screen-reader">Chiudi appunto</span>
   <% end %>

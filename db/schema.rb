@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_20_100006) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_21_130917) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -389,8 +389,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_20_100006) do
 
   create_table "closures", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "closeable_type", null: false
-    t.uuid "closeable_id", null: false
+    t.string "closeable_type"
+    t.uuid "closeable_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -819,8 +819,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_20_100006) do
 
   create_table "not_nows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "not_nowable_type", null: false
-    t.uuid "not_nowable_id", null: false
+    t.string "not_nowable_type"
+    t.uuid "not_nowable_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

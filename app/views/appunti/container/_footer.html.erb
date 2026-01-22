@@ -5,8 +5,8 @@
   Modifica
 <% end %>
 
-<% unless appunto.closed? %>
-  <%= button_to appunto_closure_path(appunto), method: :post, class: "btn btn--reversed" do %>
+<% unless appunto.entry&.closed? %>
+  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn btn--reversed" do %>
     <%= icon_tag "check" %>
     Completa
   <% end %>

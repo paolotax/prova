@@ -7,7 +7,8 @@ module Entry::Postponable
     return if postponed?
 
     transaction do
-      send_back_to_triage
+      closure&.destroy  # reopen if closed
+      update!(column_id: nil) if column_id.present?
       create_not_now!(user: user, account: account)
       track_event :postponed
     end
