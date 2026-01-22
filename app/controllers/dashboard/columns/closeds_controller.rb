@@ -3,6 +3,7 @@
 class Dashboard::Columns::ClosedsController < ApplicationController
   def show
     set_page_and_extract_portion_from current_account.entries
+                                                      .non_ssk
                                                       .closed
                                                       .includes(:goldness, :closure, :not_now)
                                                       .recently_closed_first

@@ -1,10 +1,6 @@
-<%# Entry was closed %>
-<%= turbo_stream.remove dom_id(@entry) %>
-<%= turbo_stream.prepend "closed_entries" do %>
-  <%= render partial: "entries/entry", locals: { entry: @entry } %>
-<% end %>
+<%# Frame reloads handle the column updates - JS reloads both source and target frames %>
+<%# We just need to update the appunto container for show page viewing %>
 
-<%# Also update appunto container if viewing from show page %>
 <% if @entry.entryable_type == "Appunto" && @entry.entryable.present? %>
   <%= turbo_stream.replace [ @entry.entryable, :container ],
       partial: "appunti/container",
