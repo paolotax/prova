@@ -70,6 +70,18 @@ class Entry < ApplicationRecord
   scope :documenti, -> { where(entryable_type: "Documento") }
   scope :tappe, -> { where(entryable_type: "Tappa") }
 
+  # Exclude ssk appunti (saggio, seguito, kit) - these will be moved to a separate model later
+  # Keep: documenti, tappe, and appunti that are NOT ssk
+  scope :non_ssk, -> {
+    ssk_appunto_ids = Appunto.ssk.pluck(:id).map(&:to_s)
+    if ssk_appunto_ids.any?
+      where.not(entryable_type: "Appunto")
+        .or(where(entryable_type: "Appunto").where.not(entryable_id: ssk_appunto_ids))
+    else
+      all
+    end
+  }
+
   # Per giro
   scope :for_giro, ->(giro) { where(giro: giro) }
   scope :without_giro, -> { where(giro_id: nil) }
