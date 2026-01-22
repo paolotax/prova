@@ -325,6 +325,10 @@
       gap: var(--cards-gap);
       justify-content: center;
       padding: 1ch;
+
+      turbo-frame {
+        display: contents;
+      }
     }
 
     .card {

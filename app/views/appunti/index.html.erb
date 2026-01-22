@@ -60,16 +60,17 @@
     <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
       <%= render "appunti/bulk_actions/form" %>
 
-      <%= with_automatic_pagination :appunti, @page,
-          class: "cards cards--list",
-          style: "display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;",
-          data: { controller: "list-observer",
-              list_observer_counter_id_value: "collection_counter",
-              list_observer_item_selector_value: ".item",
-              list_observer_target: "list"
-            } do %>
-        <%= render @page.records %>
-      <% end %>
+      <div class="cards--grid">
+        <%= with_automatic_pagination :appunti, @page,
+            class: "cards__list",
+            data: { controller: "list-observer",
+                list_observer_counter_id_value: "collection_counter",
+                list_observer_item_selector_value: ".item",
+                list_observer_target: "list"
+              } do %>
+          <%= render @page.records %>
+        <% end %>
+      </div>
     <% end %>
   <% else %>
     <div class="blank-slate blank-slate--empty">
