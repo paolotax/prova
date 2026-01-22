@@ -1,13 +1,6 @@
 <%# locals: (appunto:) -%>
 
-<% if appunto.entry&.closed? %>
-  <%= button_to entry_closure_path(appunto.entry), method: :delete, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Riapri" } do %>
-    <%= icon_tag "archive" %>
-    <span class="for-screen-reader">Riapri appunto</span>
-  <% end %>
-<% else %>
-  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn", data: { controller: "tooltip", tooltip_content_value: "Chiudi" } do %>
-    <%= icon_tag "check" %>
-    <span class="for-screen-reader">Chiudi appunto</span>
-  <% end %>
+<%= link_to appunto_path(appunto, format: :pdf), class: "btn", data: { controller: "tooltip", tooltip_content_value: "Riapri" } do %>
+  <%= icon_tag "document" %>
+  <span class="for-screen-reader">Stampa appunto</span>
 <% end %>

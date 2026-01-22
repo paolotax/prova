@@ -104,7 +104,7 @@ class AppuntiController < ApplicationController
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)
-        send_data pdf.render, filename: "appunto_#{@appunto.id}.pdf",
+        send_data pdf.render, filename: "appunto_#{@appunto&.denominazione&.parameterize(separator: "_")}.pdf",
                               type: "application/pdf",
                               disposition: "inline"
       end
