@@ -23,4 +23,23 @@ module DocumentiHelper
       "documento--#{tipo}-#{mov}"
     end
 
+    # Returns CSS color for card based on documento's causale
+    # Colors aligned with causale_bg_class but as oklch values
+    def documento_color(documento)
+      return "oklch(0.7 0.01 0)" unless documento&.causale  # gray
+
+      tipo = documento.causale.tipo_movimento
+      mov = documento.causale.movimento
+
+      case [tipo, mov]
+      when ["ordine", "entrata"]   then "oklch(0.6 0.15 250)"  # blue
+      when ["ordine", "uscita"]    then "oklch(0.55 0.15 280)" # indigo
+      when ["vendita", "entrata"]  then "oklch(0.6 0.15 160)"  # emerald
+      when ["vendita", "uscita"]   then "oklch(0.6 0.15 15)"   # rose
+      when ["carico", "entrata"]   then "oklch(0.7 0.15 85)"   # amber
+      when ["carico", "uscita"]    then "oklch(0.65 0.15 50)"  # orange
+      else "oklch(0.7 0.01 0)"                                 # gray
+      end
+    end
+
 end

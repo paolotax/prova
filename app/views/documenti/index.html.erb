@@ -48,29 +48,18 @@
         <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
       </p>
 
-      <div class="card-columns hide-scrollbar">
-        <div class="card-columns__left">
-          <%# Colonne sinistra (es. "Not Now") - per ora vuoto %>
-        </div>
-
-        <section class="cards cards--maybe is-expanded">
-          <div class="cards__transition-container"
-              data-controller="navigable-list"
-              data-navigable-list-auto-select-value="false"
-              data-navigable-list-actionable-items-value="true"
-              data-navigable-list-prevent-handled-keys-value="true"
-              data-action="keydown->navigable-list#navigate">
-            <%= with_automatic_pagination :documenti, @page,
-                id: "cards-lista",
-                class: "cards__list" do %>
-              <%= render @page.records %>
-            <% end %>
-          </div>
-        </section>
-
-        <div class="card-columns__right">
-          <%# Colonne destra (es. "Doing", "Done") - per ora vuoto %>
-        </div>
+      <div class="cards--grid">
+        <%= with_automatic_pagination :documenti, @page,
+            id: "cards-lista",
+            class: "cards__list",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate"
+              } do %>
+          <%= render @page.records %>
+        <% end %>
       </div>
   <% else %>
     <div class="blank-slate blank-slate--empty">

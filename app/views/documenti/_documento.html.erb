@@ -16,6 +16,7 @@
 
 <%= tag.article id: (entry ? dom_id(entry) : dom_id(documento)),
     class: class_names("card", documento_causale_modifier(documento), "card--selected": @documento == documento),
+    style: "--card-color: #{documento_color(documento)}",
     tabindex: 0,
     draggable: (draggable && entry.present?),
     data: card_data do %>
@@ -40,7 +41,7 @@
       <div class="card__content">
         <%= clientable_label_tag documento.clientable %>
         <% if documento.referente.present? || documento.note.present? %>
-          <div class="card__stages">
+          <div class="margin-block-start-half margin-inline-start">
             <%= tag.span documento.referente if documento.referente.present? %>
             <%= tag.span simple_format(documento.note) if documento.note.present? %>
           </div>
