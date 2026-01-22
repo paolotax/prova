@@ -48,7 +48,7 @@
         <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
       </p>
 
-      <div class="cards--grid">
+      <div class="cards cards--grid">
         <%= with_automatic_pagination :documenti, @page,
             id: "cards-lista",
             class: "cards__list",

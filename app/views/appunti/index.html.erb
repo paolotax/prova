@@ -60,10 +60,14 @@
     <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
       <%= render "appunti/bulk_actions/form" %>
 
-      <div class="cards--grid">
+      <div class="cards cards--grid">
         <%= with_automatic_pagination :appunti, @page,
             class: "cards__list",
-            data: { controller: "list-observer",
+            data: { controller: "navigable-list list-observer",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate",
                 list_observer_counter_id_value: "collection_counter",
                 list_observer_item_selector_value: ".item",
                 list_observer_target: "list"

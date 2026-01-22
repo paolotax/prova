@@ -342,6 +342,14 @@
       inline-size: calc((100% - var(--cards-gap) * (var(--card-grid-columns) - 1) ) / var(--card-grid-columns));
     }
 
+    .card__link {
+      z-index: 1;
+    }
+
+    .card__title {
+      pointer-events: none;
+    }
+
     .card__header .card__column-name--current {
       --btn-padding: 0.1em 0.5em;
 
