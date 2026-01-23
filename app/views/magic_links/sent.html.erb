@@ -1,36 +1,30 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8 text-center">
-    <div>
-      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-        <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      </div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Controlla la tua email
-      </h2>
-      <p class="mt-4 text-center text-gray-600">
-        Se l'indirizzo email esiste nel nostro sistema, riceverai un link per accedere.
-      </p>
-      <p class="mt-2 text-center text-sm text-gray-500">
-        Il link scade tra 15 minuti.
-      </p>
-    </div>
+<% @page_title = "Controlla la tua email" %>
 
-    <div class="mt-8 space-y-4">
-      <%= link_to "Torna al login",
-          new_magic_link_path,
-          class: "text-red-600 hover:text-red-500 font-medium" %>
+<div class="panel panel--centered flex flex-column gap-half">
+  <header>
+    <h1 class="txt-x-large font-weight-black margin-none"><%= @page_title %></h1>
+    <p class="margin-none-block-start txt-medium">
+      Ti abbiamo inviato un link di accesso via email.
+    </p>
+  </header>
 
-      <% if Rails.env.development? %>
-        <div class="pt-4 border-t border-gray-200">
-          <%= link_to "/letter_opener",
-              target: "_blank",
-              class: "text-sm text-gray-500 hover:text-gray-700" do %>
-            Apri Letter Opener →
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+  <p class="txt-small">Il link scade tra 15 minuti.</p>
+
+  <div class="margin-block-start">
+    <%= link_to "Torna al login", new_magic_link_path, class: "txt-link" %>
   </div>
 </div>
+
+<% if Rails.env.development? %>
+  <div class="flex align-center justify-center gap fill-shade border-radius pad margin-block-start full-width position-relative" style="animation: slide-up-fade-in 400ms ease-out both; max-width: 42ch; overflow: hidden;">
+    <span class="txt-uppercase translucent txt-tight-lines">Dev:</span>
+    <%= link_to "Apri Letter Opener", "/letter_opener", target: "_blank", class: "txt-link" %>
+    <span class="txt-xx-small txt-uppercase font-weight-black txt-align-center flex align-center justify-center" style="position: absolute; top: 0; bottom: 0; left: 0; background: var(--color-ink-lighter); padding: 0 0.5em; writing-mode: vertical-rl; transform: rotate(180deg); line-height: 1;">DEV</span>
+  </div>
+<% end %>
+
+<% content_for :footer do %>
+  <div class="pad-inline txt-align-center center margin-block-double txt-subtle txt-small">
+    Hai bisogno di aiuto? <%= mail_to "support@scagnozz.com", "Contattaci", class: "txt-link" %>
+  </div>
+<% end %>

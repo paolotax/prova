@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+  <%= render "layouts/shared/head" %>
+
+  <body class="public <%= @body_class %>" data-controller="local-time timezone-cookie" data-action="turbo:morph@window->local-time#refreshAll">
+    <div id="global-container">
+      <header class="header" id="header">
+        <a href="#main" class="header__skip-navigation btn" data-turbo="false">Vai al contenuto</a>
+        <nav>
+          <%= link_to root_path, class: "header__logo center flex-inline align-center" do %>
+            <span class="txt-x-large font-weight-black">Scagnozz</span>
+          <% end %>
+        </nav>
+
+        <%= yield :header %>
+      </header>
+
+      <%= render "layouts/shared/flash" %>
+
+      <main id="main">
+        <%= yield %>
+      </main>
+    </div>
+
+    <footer id="footer">
+      <%= yield :footer %>
+    </footer>
+  </body>
+</html>

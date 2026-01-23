@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  layout "auth", only: [:index, :new, :create]
+  layout "public", only: [:index, :new, :create]
 
   skip_before_action :set_current_account_from_url, only: [:index, :new, :create]
   skip_before_action :ensure_account_member, only: [:index, :new, :create]

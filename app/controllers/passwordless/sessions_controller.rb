@@ -1,6 +1,6 @@
 module Passwordless
   class SessionsController < ApplicationController
-    layout "auth"
+    layout "public"
 
     skip_before_action :set_current_account_from_url
     skip_before_action :ensure_account_member

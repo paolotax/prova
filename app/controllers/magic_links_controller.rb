@@ -1,5 +1,5 @@
 class MagicLinksController < ApplicationController
-  layout "auth"
+  layout "public"
 
   skip_before_action :authenticate_user!
   skip_before_action :set_current_account_from_url

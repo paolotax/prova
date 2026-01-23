@@ -1,45 +1,41 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Seleziona account
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        Ciao <%= @user.name %>, hai accesso a più account. Seleziona quello con cui vuoi accedere.
-      </p>
-    </div>
+<% @page_title = "Seleziona account" %>
 
-    <div class="mt-8 space-y-3">
-      <% @accounts.each do |account| %>
-        <%= form_with url: select_account_magic_links_path, method: :post, class: "w-full" do |form| %>
-          <%= form.hidden_field :code, value: params[:code] %>
-          <%= form.hidden_field :account_id, value: account.id %>
+<div class="panel panel--centered flex flex-column gap-half">
+  <header>
+    <h1 class="txt-x-large font-weight-black margin-none">Seleziona un account</h1>
+    <p class="margin-none-block-start txt-medium">
+      Ciao <%= @user.name %>, hai accesso a più account.
+    </p>
+  </header>
 
-          <button type="submit" class="w-full flex items-center justify-between px-4 py-4 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                <span class="text-red-600 font-semibold text-lg">
-                  <%= account.name.first.upcase %>
-                </span>
-              </div>
-              <div class="ml-4 text-left">
-                <p class="text-sm font-medium text-gray-900"><%= account.name %></p>
-                <% membership = @user.memberships.find_by(account: account) %>
-                <p class="text-xs text-gray-500"><%= membership&.role&.humanize || "Membro" %></p>
-              </div>
+  <div class="flex flex-column gap-half margin-block-start">
+    <% @accounts.each do |account| %>
+      <%= form_with url: select_account_magic_links_path, method: :post do |form| %>
+        <%= form.hidden_field :code, value: params[:code] %>
+        <%= form.hidden_field :account_id, value: account.id %>
+
+        <button type="submit" class="btn btn--secondary full-width txt-medium flex align-center justify-space-between gap">
+          <div class="flex align-center gap">
+            <span class="circled-text circled-text--small"><%= account.name.first.upcase %></span>
+            <div class="flex flex-column">
+              <span class="font-weight-black"><%= account.name %></span>
+              <% membership = @user.memberships.find_by(account: account) %>
+              <span class="txt-small txt-subtle"><%= membership&.role&.humanize || "Membro" %></span>
             </div>
-            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        <% end %>
+          </div>
+          <%= icon_tag "arrow-right" rescue nil %>
+        </button>
       <% end %>
-    </div>
-
-    <div class="mt-8 text-center">
-      <p class="text-sm text-gray-500">
-        Link valido ancora per pochi minuti.
-      </p>
-    </div>
+    <% end %>
   </div>
+
+  <p class="txt-small txt-subtle margin-block-start">
+    Link valido ancora per pochi minuti.
+  </p>
 </div>
+
+<% content_for :footer do %>
+  <div class="pad-inline txt-align-center center margin-block-double txt-subtle txt-small">
+    Hai bisogno di aiuto? <%= mail_to "support@scagnozz.com", "Contattaci", class: "txt-link" %>
+  </div>
+<% end %>
