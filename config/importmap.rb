@@ -9,7 +9,6 @@ pin_all_from "app/javascript/helpers", under: "helpers"
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/initializers", under: "initializers"
 
-pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/indexzjs"
 
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
