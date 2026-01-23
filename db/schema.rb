@@ -10,49 +10,49 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
   enable_extension "tablefunc"
 
   create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "name", null: false
     t.string "slug"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_accounts_on_slug", unique: true
   end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
-    t.string "name", null: false
     t.text "body"
-    t.string "record_type", null: false
-    t.string "record_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "record_id", null: false
+    t.string "record_type", null: false
     t.datetime "updated_at", null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.string "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "record_id", null: false
+    t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
+    t.string "content_type"
     t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -64,23 +64,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "adozioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.uuid "classe_id", null: false
-    t.bigint "libro_id"
-    t.bigint "import_adozione_id"
-    t.string "codice_isbn"
-    t.string "titolo"
-    t.string "editore"
     t.string "autori"
-    t.string "disciplina"
-    t.integer "prezzo_cents", default: 0
-    t.boolean "nuova_adozione", default: false
-    t.boolean "da_acquistare", default: false
+    t.uuid "classe_id", null: false
+    t.string "codice_isbn"
     t.boolean "consigliato", default: false
-    t.integer "numero_copie", default: 0
-    t.text "note"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "da_acquistare", default: false
+    t.string "disciplina"
+    t.string "editore"
+    t.bigint "import_adozione_id"
+    t.bigint "libro_id"
     t.boolean "mia", default: false, null: false
+    t.text "note"
+    t.integer "numero_copie", default: 0
+    t.boolean "nuova_adozione", default: false
+    t.integer "prezzo_cents", default: 0
+    t.string "titolo"
+    t.datetime "updated_at", null: false
     t.index ["account_id", "libro_id"], name: "index_adozioni_on_account_id_and_libro_id"
     t.index ["account_id", "mia"], name: "index_adozioni_on_account_id_and_mia"
     t.index ["account_id"], name: "index_adozioni_on_account_id"
@@ -91,30 +91,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "adozioni_comunicate", force: :cascade do |t|
-    t.string "cod_agente"
-    t.string "anno_scolastico"
-    t.string "cod_ministeriale"
-    t.string "descrizione_scuola"
-    t.string "indirizzo"
-    t.string "cap"
-    t.string "comune"
-    t.string "provincia"
-    t.string "cod_scuola"
-    t.string "editore"
-    t.string "ean"
-    t.string "titolo"
-    t.string "classe"
-    t.string "sezione"
     t.integer "alunni"
-    t.string "codice_scuola_match"
-    t.string "codice_isbn_match"
     t.string "anno_corso_match"
-    t.string "sezione_anno_match"
-    t.bigint "user_id", null: false
-    t.bigint "import_adozione_id"
+    t.string "anno_scolastico"
+    t.string "cap"
+    t.string "classe"
+    t.string "cod_agente"
+    t.string "cod_ministeriale"
+    t.string "cod_scuola"
+    t.string "codice_isbn_match"
+    t.string "codice_scuola_match"
+    t.string "comune"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "da_acquistare"
+    t.string "descrizione_scuola"
+    t.string "ean"
+    t.string "editore"
+    t.bigint "import_adozione_id"
+    t.string "indirizzo"
+    t.string "provincia"
+    t.string "sezione"
+    t.string "sezione_anno_match"
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["cod_ministeriale"], name: "index_adozioni_comunicate_on_cod_ministeriale"
     t.index ["ean"], name: "index_adozioni_comunicate_on_ean"
     t.index ["import_adozione_id"], name: "index_adozioni_comunicate_on_import_adozione_id"
@@ -124,11 +124,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "ahoy_events", force: :cascade do |t|
-    t.bigint "visit_id"
-    t.bigint "user_id"
     t.string "name"
     t.jsonb "properties"
     t.datetime "time"
+    t.bigint "user_id"
+    t.bigint "visit_id"
     t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
     t.index ["properties"], name: "index_ahoy_events_on_properties", opclass: :jsonb_path_ops, using: :gin
     t.index ["user_id"], name: "index_ahoy_events_on_user_id"
@@ -136,57 +136,57 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "ahoy_visits", force: :cascade do |t|
-    t.string "visit_token"
-    t.string "visitor_token"
-    t.bigint "user_id"
-    t.string "ip"
-    t.text "user_agent"
-    t.text "referrer"
-    t.string "referring_domain"
-    t.text "landing_page"
+    t.string "app_version"
     t.string "browser"
-    t.string "os"
-    t.string "device_type"
-    t.string "country"
-    t.string "region"
     t.string "city"
+    t.string "country"
+    t.string "device_type"
+    t.string "ip"
+    t.text "landing_page"
     t.float "latitude"
     t.float "longitude"
-    t.string "utm_source"
-    t.string "utm_medium"
-    t.string "utm_term"
-    t.string "utm_content"
-    t.string "utm_campaign"
-    t.string "app_version"
+    t.string "os"
     t.string "os_version"
     t.string "platform"
+    t.text "referrer"
+    t.string "referring_domain"
+    t.string "region"
     t.datetime "started_at"
+    t.text "user_agent"
+    t.bigint "user_id"
+    t.string "utm_campaign"
+    t.string "utm_content"
+    t.string "utm_medium"
+    t.string "utm_source"
+    t.string "utm_term"
+    t.string "visit_token"
+    t.string "visitor_token"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
   end
 
   create_table "appunti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "import_scuola_id"
-    t.bigint "user_id", null: false
-    t.bigint "import_adozione_id"
-    t.string "nome"
-    t.text "body"
-    t.string "email"
-    t.string "telefono"
-    t.string "stato"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "completed_at"
-    t.string "team"
-    t.bigint "classe_id"
-    t.bigint "voice_note_id"
-    t.boolean "active"
     t.uuid "account_id"
-    t.string "appuntabile_type"
+    t.boolean "active"
     t.uuid "appuntabile_id"
+    t.string "appuntabile_type"
+    t.text "body"
+    t.bigint "classe_id"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.bigint "import_adozione_id"
+    t.bigint "import_scuola_id"
+    t.string "nome"
+    t.string "stato"
+    t.string "team"
+    t.string "telefono"
     t.integer "totale_cents", default: 0
     t.integer "totale_copie", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "voice_note_id"
     t.index ["account_id", "created_at"], name: "index_appunti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["appuntabile_type", "appuntabile_id"], name: "index_appunti_on_appuntabile_type_and_appuntabile_id"
@@ -199,34 +199,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "appunto_righe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "riga_id", null: false
-    t.integer "posizione", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.uuid "appunto_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "posizione", default: 0
+    t.bigint "riga_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["appunto_id"], name: "index_appunto_righe_on_appunto_id"
     t.index ["riga_id"], name: "index_appunto_righe_on_riga_id"
   end
 
   create_table "aziende", force: :cascade do |t|
-    t.bigint "user_id"
-    t.string "partita_iva", limit: 11, null: false
+    t.uuid "account_id", null: false
+    t.string "banca"
+    t.string "cap", limit: 5, null: false
     t.string "codice_fiscale", limit: 16, null: false
+    t.string "comune", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "iban", limit: 27
+    t.string "indirizzo", null: false
+    t.string "indirizzo_telematico", limit: 7
+    t.string "nazione", limit: 2, default: "IT", null: false
+    t.string "partita_iva", limit: 11, null: false
+    t.string "provincia", limit: 2, null: false
     t.string "ragione_sociale", null: false
     t.string "regime_fiscale", default: "RF19", null: false
-    t.string "indirizzo", null: false
-    t.string "cap", limit: 5, null: false
-    t.string "comune", null: false
-    t.string "provincia", limit: 2, null: false
-    t.string "nazione", limit: 2, default: "IT", null: false
-    t.string "email", null: false
     t.string "telefono"
-    t.string "indirizzo_telematico", limit: 7
-    t.string "iban", limit: 27
-    t.string "banca"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "account_id", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_aziende_on_account_id", unique: true
     t.index ["codice_fiscale"], name: "index_aziende_on_codice_fiscale", unique: true
     t.index ["partita_iva"], name: "index_aziende_on_partita_iva", unique: true
@@ -234,68 +234,68 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "blazer_audits", force: :cascade do |t|
-    t.bigint "user_id"
+    t.datetime "created_at"
+    t.string "data_source"
     t.bigint "query_id"
     t.text "statement"
-    t.string "data_source"
-    t.datetime "created_at"
+    t.bigint "user_id"
     t.index ["query_id"], name: "index_blazer_audits_on_query_id"
     t.index ["user_id"], name: "index_blazer_audits_on_user_id"
   end
 
   create_table "blazer_checks", force: :cascade do |t|
-    t.bigint "creator_id"
-    t.bigint "query_id"
-    t.string "state"
-    t.string "schedule"
-    t.text "emails"
-    t.text "slack_channels"
     t.string "check_type"
-    t.text "message"
-    t.datetime "last_run_at"
     t.datetime "created_at", null: false
+    t.bigint "creator_id"
+    t.text "emails"
+    t.datetime "last_run_at"
+    t.text "message"
+    t.bigint "query_id"
+    t.string "schedule"
+    t.text "slack_channels"
+    t.string "state"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_checks_on_creator_id"
     t.index ["query_id"], name: "index_blazer_checks_on_query_id"
   end
 
   create_table "blazer_dashboard_queries", force: :cascade do |t|
-    t.bigint "dashboard_id"
-    t.bigint "query_id"
-    t.integer "position"
     t.datetime "created_at", null: false
+    t.bigint "dashboard_id"
+    t.integer "position"
+    t.bigint "query_id"
     t.datetime "updated_at", null: false
     t.index ["dashboard_id"], name: "index_blazer_dashboard_queries_on_dashboard_id"
     t.index ["query_id"], name: "index_blazer_dashboard_queries_on_query_id"
   end
 
   create_table "blazer_dashboards", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.bigint "creator_id"
     t.string "name"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_dashboards_on_creator_id"
   end
 
   create_table "blazer_queries", force: :cascade do |t|
-    t.bigint "creator_id"
-    t.string "name"
-    t.text "description"
-    t.text "statement"
-    t.string "data_source"
-    t.string "status"
     t.datetime "created_at", null: false
+    t.bigint "creator_id"
+    t.string "data_source"
+    t.text "description"
+    t.string "name"
+    t.text "statement"
+    t.string "status"
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
   end
 
   create_table "categorie", force: :cascade do |t|
-    t.string "nome_categoria", null: false
-    t.text "descrizione"
+    t.uuid "account_id", null: false
     t.datetime "created_at", null: false
+    t.text "descrizione"
+    t.string "nome_categoria", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.uuid "account_id", null: false
     t.index ["account_id"], name: "index_categorie_on_account_id"
     t.index ["user_id", "nome_categoria"], name: "index_categorie_on_user_id_and_nome_categoria", unique: true
     t.index ["user_id"], name: "index_categorie_on_user_id"
@@ -303,26 +303,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "causali", force: :cascade do |t|
     t.string "causale"
-    t.string "magazzino"
-    t.integer "tipo_movimento"
-    t.integer "movimento"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "clientable_type"
-    t.string "stato_iniziale"
-    t.json "stati_successivi", default: []
-    t.integer "priorita", default: 0
     t.json "causali_successive", default: []
+    t.string "clientable_type"
+    t.datetime "created_at", null: false
+    t.string "magazzino"
+    t.integer "movimento"
+    t.integer "priorita", default: 0
+    t.json "stati_successivi", default: []
+    t.string "stato_iniziale"
+    t.integer "tipo_movimento"
+    t.datetime "updated_at", null: false
     t.index ["priorita"], name: "index_causali_on_priorita"
     t.index ["stato_iniziale"], name: "index_causali_on_stato_iniziale"
   end
 
   create_table "chats", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "model_id"
     t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "model_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_chats_on_account_id"
     t.index ["model_id"], name: "index_chats_on_model_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
@@ -330,18 +330,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "classi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.uuid "scuola_id", null: false
     t.string "anno_corso"
-    t.string "sezione"
-    t.string "combinazione"
-    t.string "tipo_scuola"
-    t.string "codice_ministeriale_origine"
     t.string "classe_origine"
-    t.string "sezione_origine"
+    t.string "codice_ministeriale_origine"
+    t.string "combinazione"
     t.string "combinazione_origine"
+    t.datetime "created_at", null: false
     t.text "note"
     t.integer "numero_alunni"
-    t.datetime "created_at", null: false
+    t.uuid "scuola_id", null: false
+    t.string "sezione"
+    t.string "sezione_origine"
+    t.string "tipo_scuola"
     t.datetime "updated_at", null: false
     t.index ["account_id", "codice_ministeriale_origine", "classe_origine", "sezione_origine"], name: "index_classi_on_origine"
     t.index ["account_id"], name: "index_classi_on_account_id"
@@ -350,37 +350,37 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "clienti", force: :cascade do |t|
-    t.string "codice_cliente"
-    t.string "tipo_cliente"
-    t.string "indirizzo_telematico"
-    t.string "email"
-    t.string "pec"
-    t.string "telefono"
-    t.string "id_paese"
-    t.string "partita_iva"
-    t.string "codice_fiscale"
-    t.string "denominazione"
-    t.string "nome"
-    t.string "cognome"
-    t.string "codice_eori"
-    t.string "nazione"
-    t.string "cap"
-    t.string "provincia"
-    t.string "comune"
-    t.string "indirizzo"
-    t.string "numero_civico"
-    t.string "beneficiario"
-    t.string "condizioni_di_pagamento"
-    t.string "metodo_di_pagamento"
+    t.uuid "account_id", null: false
     t.string "banca"
+    t.string "beneficiario"
+    t.string "cap"
+    t.string "codice_cliente"
+    t.string "codice_eori"
+    t.string "codice_fiscale"
+    t.string "cognome"
+    t.string "comune"
+    t.string "condizioni_di_pagamento"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.string "slug"
+    t.string "denominazione"
+    t.string "email"
+    t.boolean "geocoded"
+    t.string "id_paese"
+    t.string "indirizzo"
+    t.string "indirizzo_telematico"
     t.float "latitude"
     t.float "longitude"
-    t.boolean "geocoded"
-    t.uuid "account_id", null: false
+    t.string "metodo_di_pagamento"
+    t.string "nazione"
+    t.string "nome"
+    t.string "numero_civico"
+    t.string "partita_iva"
+    t.string "pec"
+    t.string "provincia"
+    t.string "slug"
+    t.string "telefono"
+    t.string "tipo_cliente"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id", "created_at"], name: "index_clienti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_clienti_on_account_id"
     t.index ["slug"], name: "index_clienti_on_slug", unique: true
@@ -389,12 +389,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "closures", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "closeable_type"
     t.uuid "closeable_id"
-    t.bigint "user_id"
+    t.string "closeable_type"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.uuid "entry_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_closures_on_account_id"
     t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable"
     t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable_type_and_closeable_id", unique: true
@@ -403,11 +403,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "columns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name", null: false
-    t.string "color", default: "#6366f1"
-    t.integer "position", default: 0
     t.uuid "account_id", null: false
+    t.string "color", default: "var(--color-card-default)"
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0
     t.datetime "updated_at", null: false
     t.index ["account_id", "name"], name: "index_columns_on_account_id_and_name", unique: true
     t.index ["account_id", "position"], name: "index_columns_on_account_id_and_position"
@@ -416,20 +416,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "confezione_righe", force: :cascade do |t|
     t.bigint "confezione_id"
-    t.bigint "fascicolo_id"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "fascicolo_id"
     t.integer "row_order"
+    t.datetime "updated_at", null: false
   end
 
   create_table "consegne", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "consegnabile_type", null: false
     t.uuid "consegnabile_id", null: false
-    t.bigint "user_id"
+    t.string "consegnabile_type", null: false
     t.datetime "consegnato_il"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_consegne_on_account_id"
     t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile"
     t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile_type_and_consegnabile_id", unique: true
@@ -437,28 +437,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "documenti", force: :cascade do |t|
-    t.integer "numero_documento"
-    t.bigint "user_id", null: false
-    t.date "data_documento"
+    t.uuid "account_id", null: false
     t.bigint "causale_id"
-    t.integer "tipo_pagamento"
-    t.date "consegnato_il"
-    t.integer "status"
-    t.bigint "iva_cents"
-    t.bigint "totale_cents"
-    t.bigint "spese_cents"
-    t.integer "totale_copie"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.bigint "clientable_id"
     t.string "clientable_type"
-    t.integer "tipo_documento"
-    t.text "note"
-    t.text "referente"
-    t.datetime "pagato_il"
-    t.integer "documento_padre_id"
+    t.date "consegnato_il"
+    t.datetime "created_at", null: false
+    t.date "data_documento"
     t.integer "derivato_da_causale_id"
-    t.uuid "account_id", null: false
+    t.integer "documento_padre_id"
+    t.bigint "iva_cents"
+    t.text "note"
+    t.integer "numero_documento"
+    t.datetime "pagato_il"
+    t.text "referente"
+    t.bigint "spese_cents"
+    t.integer "status"
+    t.integer "tipo_documento"
+    t.integer "tipo_pagamento"
+    t.bigint "totale_cents"
+    t.integer "totale_copie"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id", "created_at"], name: "index_documenti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_documenti_on_account_id"
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
@@ -469,10 +469,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "documento_righe", force: :cascade do |t|
-    t.bigint "documento_id"
-    t.bigint "riga_id"
-    t.integer "posizione"
     t.datetime "created_at", null: false
+    t.bigint "documento_id"
+    t.integer "posizione"
+    t.bigint "riga_id"
     t.datetime "updated_at", null: false
     t.index ["documento_id", "riga_id"], name: "index_documento_righe_on_documento_id_and_riga_id", unique: true
     t.index ["documento_id"], name: "index_documento_righe_on_documento_id"
@@ -480,30 +480,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "editori", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "editore"
     t.string "gruppo"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "edizioni_titoli", force: :cascade do |t|
-    t.string "codice_isbn"
-    t.string "titolo_originale"
     t.string "autore"
+    t.string "codice_isbn"
     t.datetime "created_at", null: false
+    t.string "titolo_originale"
     t.datetime "updated_at", null: false
     t.index ["codice_isbn"], name: "index_edizioni_titoli_on_codice_isbn", unique: true
   end
 
   create_table "entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "entryable_type", null: false
-    t.string "entryable_id", null: false
-    t.uuid "column_id"
-    t.bigint "giro_id"
-    t.bigint "user_id", null: false
     t.uuid "account_id", null: false
+    t.uuid "column_id"
     t.datetime "created_at", null: false
+    t.string "entryable_id", null: false
+    t.string "entryable_type", null: false
+    t.bigint "giro_id"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id", "entryable_type"], name: "index_entries_on_account_id_and_entryable_type"
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["column_id"], name: "index_entries_on_column_id"
@@ -513,13 +513,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "entry_id", null: false
-    t.bigint "user_id"
     t.uuid "account_id", null: false
     t.string "action", null: false
-    t.jsonb "particulars", default: {}
     t.datetime "created_at", null: false
+    t.uuid "entry_id", null: false
+    t.jsonb "particulars", default: {}
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id", "action"], name: "index_events_on_account_id_and_action"
     t.index ["account_id"], name: "index_events_on_account_id"
     t.index ["entry_id", "created_at"], name: "index_events_on_entry_id_and_created_at"
@@ -528,53 +528,53 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "filters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "creator_id"
     t.uuid "account_id"
+    t.datetime "created_at", null: false
+    t.bigint "creator_id"
     t.jsonb "fields", default: {}
     t.string "params_digest"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "type", null: false
+    t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_filters_on_account_id"
     t.index ["creator_id"], name: "index_filters_on_creator_id"
     t.index ["type", "params_digest"], name: "index_filters_on_type_and_params_digest", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string "scope"
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
-    t.string "scope"
-    t.datetime "created_at"
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
   create_table "giri", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.datetime "iniziato_il"
-    t.datetime "finito_il"
-    t.string "titolo"
-    t.string "descrizione"
-    t.string "stato"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "conditions"
-    t.text "excluded_ids"
     t.uuid "account_id", null: false
+    t.text "conditions"
+    t.datetime "created_at", null: false
+    t.string "descrizione"
+    t.text "excluded_ids"
+    t.datetime "finito_il"
+    t.datetime "iniziato_il"
+    t.string "stato"
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_giri_on_account_id"
     t.index ["user_id"], name: "index_giri_on_user_id"
   end
 
   create_table "goldnesses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "goldenable_type"
-    t.uuid "goldenable_id"
-    t.bigint "user_id"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.uuid "entry_id"
+    t.uuid "goldenable_id"
+    t.string "goldenable_type"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_goldnesses_on_account_id"
     t.index ["entry_id"], name: "index_goldnesses_on_entry_id", unique: true
     t.index ["goldenable_type", "goldenable_id"], name: "index_goldnesses_on_goldenable"
@@ -583,25 +583,25 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "import_adozioni", force: :cascade do |t|
-    t.string "CODICESCUOLA"
     t.string "ANNOCORSO"
-    t.string "SEZIONEANNO"
-    t.string "TIPOGRADOSCUOLA"
-    t.string "COMBINAZIONE"
-    t.string "DISCIPLINA"
-    t.string "CODICEISBN"
     t.string "AUTORI"
-    t.string "TITOLO"
-    t.string "SOTTOTITOLO"
-    t.string "VOLUME"
-    t.string "EDITORE"
-    t.string "PREZZO"
-    t.string "NUOVAADOZ"
-    t.string "DAACQUIST"
+    t.string "CODICEISBN"
+    t.string "CODICESCUOLA"
+    t.string "COMBINAZIONE"
     t.string "CONSIGLIATO"
+    t.string "DAACQUIST"
+    t.string "DISCIPLINA"
+    t.string "EDITORE"
+    t.string "NUOVAADOZ"
+    t.string "PREZZO"
+    t.string "SEZIONEANNO"
+    t.string "SOTTOTITOLO"
+    t.string "TIPOGRADOSCUOLA"
+    t.string "TITOLO"
+    t.string "VOLUME"
+    t.string "anno_scolastico"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "anno_scolastico"
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
@@ -611,30 +611,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   create_table "import_scuole", force: :cascade do |t|
     t.string "ANNOSCOLASTICO"
     t.string "AREAGEOGRAFICA"
-    t.string "REGIONE"
-    t.string "PROVINCIA"
-    t.string "CODICEISTITUTORIFERIMENTO"
-    t.string "DENOMINAZIONEISTITUTORIFERIMENTO"
-    t.string "CODICESCUOLA"
-    t.string "DENOMINAZIONESCUOLA"
-    t.string "INDIRIZZOSCUOLA"
     t.string "CAPSCUOLA"
     t.string "CODICECOMUNESCUOLA"
-    t.string "DESCRIZIONECOMUNE"
+    t.string "CODICEISTITUTORIFERIMENTO"
+    t.string "CODICESCUOLA"
+    t.string "DENOMINAZIONEISTITUTORIFERIMENTO"
+    t.string "DENOMINAZIONESCUOLA"
     t.string "DESCRIZIONECARATTERISTICASCUOLA"
+    t.string "DESCRIZIONECOMUNE"
     t.string "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"
     t.string "INDICAZIONESEDEDIRETTIVO"
     t.string "INDICAZIONESEDEOMNICOMPRENSIVO"
     t.string "INDIRIZZOEMAILSCUOLA"
     t.string "INDIRIZZOPECSCUOLA"
-    t.string "SITOWEBSCUOLA"
+    t.string "INDIRIZZOSCUOLA"
+    t.string "PROVINCIA"
+    t.string "REGIONE"
     t.string "SEDESCOLASTICA"
+    t.string "SITOWEBSCUOLA"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "slug"
+    t.boolean "geocoded"
     t.float "latitude"
     t.float "longitude"
-    t.boolean "geocoded"
+    t.string "slug"
+    t.datetime "updated_at", null: false
     t.index ["CODICESCUOLA"], name: "index_import_scuole_on_CODICESCUOLA", unique: true
     t.index ["DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"], name: "idx_on_DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA_20c3bcb01a"
     t.index ["PROVINCIA"], name: "index_import_scuole_on_PROVINCIA"
@@ -642,45 +642,45 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "imports", force: :cascade do |t|
-    t.string "fornitore"
-    t.string "iva_fornitore"
     t.string "cliente"
-    t.string "iva_cliente"
-    t.string "tipo_documento"
-    t.string "numero_documento"
-    t.date "data_documento"
-    t.float "totale_documento"
-    t.integer "riga"
     t.string "codice_articolo"
+    t.date "data_documento"
     t.string "descrizione"
+    t.string "fornitore"
+    t.float "importo_netto"
+    t.integer "iva"
+    t.string "iva_cliente"
+    t.string "iva_fornitore"
+    t.string "numero_documento"
     t.float "prezzo_unitario"
     t.integer "quantita"
-    t.float "importo_netto"
+    t.integer "riga"
     t.float "sconto"
-    t.integer "iva"
+    t.string "tipo_documento"
+    t.float "totale_documento"
   end
 
   create_table "libri", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "editore_id"
-    t.string "titolo"
-    t.string "codice_isbn"
-    t.integer "prezzo_in_cents"
-    t.integer "classe"
-    t.string "disciplina"
-    t.text "note"
-    t.string "collana"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "numero_fascicoli"
-    t.integer "fascicoli_count", default: 0, null: false
-    t.integer "confezioni_count", default: 0, null: false
-    t.integer "adozioni_count", default: 0, null: false
-    t.string "slug"
-    t.bigint "categoria_id", null: false
-    t.integer "prezzo_suggerito_cents", default: 0
-    t.string "cm"
     t.uuid "account_id", null: false
+    t.integer "adozioni_count", default: 0, null: false
+    t.bigint "categoria_id", null: false
+    t.integer "classe"
+    t.string "cm"
+    t.string "codice_isbn"
+    t.string "collana"
+    t.integer "confezioni_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.string "disciplina"
+    t.bigint "editore_id"
+    t.integer "fascicoli_count", default: 0, null: false
+    t.text "note"
+    t.integer "numero_fascicoli"
+    t.integer "prezzo_in_cents"
+    t.integer "prezzo_suggerito_cents", default: 0
+    t.string "slug"
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id", "created_at"], name: "index_libri_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_libri_on_account_id"
     t.index ["categoria_id"], name: "index_libri_on_categoria_id"
@@ -696,14 +696,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "magic_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.string "code", null: false
-    t.string "purpose", default: "sign_in", null: false
-    t.datetime "expires_at", null: false
-    t.datetime "used_at"
-    t.string "ip_address"
     t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.string "ip_address"
+    t.string "purpose", default: "sign_in", null: false
     t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.bigint "user_id", null: false
     t.index ["code"], name: "index_magic_links_on_code", unique: true
     t.index ["expires_at"], name: "index_magic_links_on_expires_at"
     t.index ["user_id", "purpose"], name: "index_magic_links_on_user_id_and_purpose"
@@ -711,21 +711,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "mandati", primary_key: ["user_id", "editore_id"], force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "editore_id", null: false
     t.text "contratto"
     t.datetime "created_at", null: false
+    t.bigint "editore_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
     t.index ["user_id"], name: "index_mandati_on_user_id"
   end
 
   create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.uuid "account_id", null: false
-    t.integer "role", default: 0, null: false
     t.datetime "created_at", null: false
+    t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_memberships_on_account_id"
     t.index ["user_id", "account_id"], name: "index_memberships_on_user_id_and_account_id", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
@@ -733,15 +733,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "messages", force: :cascade do |t|
     t.bigint "chat_id"
-    t.string "role", default: "0", null: false
     t.text "content"
-    t.integer "response_number", default: 0, null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "input_tokens"
-    t.integer "output_tokens"
     t.bigint "model_id"
+    t.integer "output_tokens"
+    t.integer "response_number", default: 0, null: false
+    t.string "role", default: "0", null: false
     t.bigint "tool_call_id"
+    t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
     t.index ["model_id"], name: "index_messages_on_model_id"
     t.index ["role"], name: "index_messages_on_role"
@@ -749,19 +749,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "models", force: :cascade do |t|
+    t.jsonb "capabilities", default: []
+    t.integer "context_window"
+    t.datetime "created_at", null: false
+    t.string "family"
+    t.date "knowledge_cutoff"
+    t.integer "max_output_tokens"
+    t.jsonb "metadata", default: {}
+    t.jsonb "modalities", default: {}
+    t.datetime "model_created_at"
     t.string "model_id", null: false
     t.string "name", null: false
-    t.string "provider", null: false
-    t.string "family"
-    t.datetime "model_created_at"
-    t.integer "context_window"
-    t.integer "max_output_tokens"
-    t.date "knowledge_cutoff"
-    t.jsonb "modalities", default: {}
-    t.jsonb "capabilities", default: []
     t.jsonb "pricing", default: {}
-    t.jsonb "metadata", default: {}
-    t.datetime "created_at", null: false
+    t.string "provider", null: false
     t.datetime "updated_at", null: false
     t.index ["capabilities"], name: "index_models_on_capabilities", using: :gin
     t.index ["family"], name: "index_models_on_family"
@@ -771,60 +771,60 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "new_adozioni", force: :cascade do |t|
-    t.string "codicescuola"
-    t.string "annocorso"
-    t.string "sezioneanno"
-    t.string "tipogradoscuola"
-    t.string "combinazione"
-    t.string "disciplina"
-    t.string "codiceisbn"
-    t.string "autori"
-    t.string "titolo"
-    t.string "sottotitolo"
-    t.string "volume"
-    t.string "editore"
-    t.string "prezzo"
-    t.string "nuovaadoz"
-    t.string "daacquist"
-    t.string "consigliato"
     t.string "anno_scolastico"
+    t.string "annocorso"
+    t.string "autori"
+    t.string "codiceisbn"
+    t.string "codicescuola"
+    t.string "combinazione"
+    t.string "consigliato"
+    t.string "daacquist"
+    t.string "disciplina"
+    t.string "editore"
     t.bigint "import_scuola_id"
+    t.string "nuovaadoz"
+    t.string "prezzo"
+    t.string "sezioneanno"
+    t.string "sottotitolo"
+    t.string "tipogradoscuola"
+    t.string "titolo"
+    t.string "volume"
     t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_new_adozioni_on_classe", unique: true
   end
 
   create_table "new_scuole", force: :cascade do |t|
     t.string "anno_scolastico"
     t.string "area_geografica"
-    t.string "regione"
-    t.string "provincia"
-    t.string "codice_istituto_riferimento"
-    t.string "denominazione_istituto_riferimento"
-    t.string "codice_scuola"
-    t.string "denominazione"
-    t.string "indirizzo"
     t.string "cap"
     t.string "codice_comune"
+    t.string "codice_istituto_riferimento"
+    t.string "codice_scuola"
     t.string "comune"
+    t.string "denominazione"
+    t.string "denominazione_istituto_riferimento"
     t.string "descrizione_caratteristica"
-    t.string "tipo_scuola"
+    t.string "email"
+    t.bigint "import_scuola_id"
     t.string "indicazione_sede_direttivo"
     t.string "indicazione_sede_omnicomprensivo"
-    t.string "email"
+    t.string "indirizzo"
     t.string "pec"
-    t.string "sito_web"
+    t.string "provincia"
+    t.string "regione"
     t.string "sede_scolastica"
-    t.bigint "import_scuola_id"
+    t.string "sito_web"
+    t.string "tipo_scuola"
     t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
   end
 
   create_table "not_nows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "not_nowable_type"
-    t.uuid "not_nowable_id"
-    t.bigint "user_id"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.uuid "entry_id"
+    t.uuid "not_nowable_id"
+    t.string "not_nowable_type"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_not_nows_on_account_id"
     t.index ["entry_id"], name: "index_not_nows_on_entry_id", unique: true
     t.index ["not_nowable_type", "not_nowable_id"], name: "index_not_nows_on_not_nowable"
@@ -833,38 +833,38 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "old_adozioni", force: :cascade do |t|
-    t.string "codicescuola"
-    t.string "annocorso"
-    t.string "sezioneanno"
-    t.string "tipogradoscuola"
-    t.string "combinazione"
-    t.string "disciplina"
-    t.string "codiceisbn"
-    t.string "autori"
-    t.string "titolo"
-    t.string "sottotitolo"
-    t.string "volume"
-    t.string "editore"
-    t.string "prezzo"
-    t.string "nuovaadoz"
-    t.string "daacquist"
-    t.string "consigliato"
     t.string "anno_scolastico"
-    t.bigint "import_scuola_id"
+    t.string "annocorso"
+    t.string "autori"
+    t.string "codiceisbn"
+    t.string "codicescuola"
+    t.string "combinazione"
+    t.string "consigliato"
     t.datetime "created_at", null: false
+    t.string "daacquist"
+    t.string "disciplina"
+    t.string "editore"
+    t.bigint "import_scuola_id"
+    t.string "nuovaadoz"
+    t.string "prezzo"
+    t.string "sezioneanno"
+    t.string "sottotitolo"
+    t.string "tipogradoscuola"
+    t.string "titolo"
     t.datetime "updated_at", null: false
+    t.string "volume"
     t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_old_adozioni_on_classe", unique: true
     t.index ["import_scuola_id"], name: "index_old_adozioni_on_import_scuola_id"
   end
 
   create_table "pagamenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "pagabile_type", null: false
-    t.uuid "pagabile_id", null: false
-    t.bigint "user_id"
-    t.datetime "pagato_il"
     t.datetime "created_at", null: false
+    t.uuid "pagabile_id", null: false
+    t.string "pagabile_type", null: false
+    t.datetime "pagato_il"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_pagamenti_on_account_id"
     t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile"
     t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile_type_and_pagabile_id", unique: true
@@ -872,28 +872,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "personal_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "nome"
-    t.string "cognome"
     t.string "cellulare"
-    t.string "email_personale"
+    t.string "cognome"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "email_personale"
     t.string "navigator"
+    t.string "nome"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_personal_infos_on_user_id", unique: true
   end
 
   create_table "persone", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.uuid "scuola_id"
-    t.string "nome"
-    t.string "cognome"
-    t.string "ruolo"
-    t.string "email"
-    t.string "telefono"
     t.string "cellulare"
-    t.text "note"
+    t.string "cognome"
     t.datetime "created_at", null: false
+    t.string "email"
+    t.string "nome"
+    t.text "note"
+    t.string "ruolo"
+    t.uuid "scuola_id"
+    t.string "telefono"
     t.datetime "updated_at", null: false
     t.index ["account_id", "cognome", "nome"], name: "index_persone_on_account_id_and_cognome_and_nome"
     t.index ["account_id"], name: "index_persone_on_account_id"
@@ -902,40 +902,40 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "nome"
-    t.string "cognome"
-    t.string "ragione_sociale"
-    t.string "indirizzo"
     t.string "cap"
-    t.string "citta"
     t.string "cellulare"
+    t.string "citta"
+    t.string "cognome"
+    t.datetime "created_at", null: false
     t.string "email"
     t.string "iban"
+    t.string "indirizzo"
+    t.string "nome"
     t.string "nome_banca"
-    t.datetime "created_at", null: false
+    t.string "ragione_sociale"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
   create_table "qrcodes", force: :cascade do |t|
-    t.text "description"
-    t.string "url"
-    t.string "qrcodable_type"
-    t.bigint "qrcodable_id"
     t.datetime "created_at", null: false
+    t.text "description"
+    t.bigint "qrcodable_id"
+    t.string "qrcodable_type"
     t.datetime "updated_at", null: false
+    t.string "url"
     t.index ["qrcodable_type", "qrcodable_id"], name: "index_qrcodes_on_qrcodable"
   end
 
   create_table "registrazioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.string "registrabile_type", null: false
-    t.uuid "registrabile_id", null: false
-    t.bigint "user_id"
-    t.datetime "registrato_il"
     t.datetime "created_at", null: false
+    t.uuid "registrabile_id", null: false
+    t.string "registrabile_type", null: false
+    t.datetime "registrato_il"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_registrazioni_on_account_id"
     t.index ["registrabile_type", "registrabile_id"], name: "index_registrazioni_on_registrabile"
     t.index ["registrabile_type", "registrabile_id"], name: "index_registrazioni_on_registrabile_type_and_registrabile_id", unique: true
@@ -943,30 +943,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "righe", force: :cascade do |t|
-    t.bigint "libro_id", null: false
-    t.integer "quantita", default: 1
-    t.integer "prezzo_copertina_cents", default: 0
-    t.integer "prezzo_cents", default: 0
-    t.decimal "sconto", precision: 5, scale: 2, default: "0.0"
-    t.integer "iva_cents", default: 0
-    t.integer "status"
     t.datetime "created_at", null: false
+    t.integer "iva_cents", default: 0
+    t.bigint "libro_id", null: false
+    t.integer "prezzo_cents", default: 0
+    t.integer "prezzo_copertina_cents", default: 0
+    t.integer "quantita", default: 1
+    t.decimal "sconto", precision: 5, scale: 2, default: "0.0"
+    t.integer "status"
     t.datetime "updated_at", null: false
     t.index ["libro_id"], name: "index_righe_on_libro_id"
   end
 
   create_table "sconti", force: :cascade do |t|
-    t.string "scontabile_type"
-    t.bigint "scontabile_id"
+    t.uuid "account_id", null: false
     t.bigint "categoria_id"
-    t.decimal "percentuale_sconto", precision: 5, scale: 2, null: false
-    t.date "data_inizio", null: false
-    t.date "data_fine"
-    t.integer "tipo_sconto", default: 0, null: false
     t.datetime "created_at", null: false
+    t.date "data_fine"
+    t.date "data_inizio", null: false
+    t.decimal "percentuale_sconto", precision: 5, scale: 2, null: false
+    t.bigint "scontabile_id"
+    t.string "scontabile_type"
+    t.integer "tipo_sconto", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.uuid "account_id", null: false
     t.index ["account_id"], name: "index_sconti_on_account_id"
     t.index ["categoria_id"], name: "index_sconti_on_categoria_id"
     t.index ["scontabile_type", "scontabile_id"], name: "index_sconti_on_scontabile"
@@ -976,22 +976,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
 
   create_table "scuole", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.bigint "import_scuola_id"
-    t.string "codice_ministeriale"
-    t.string "denominazione"
-    t.string "indirizzo"
     t.string "cap"
+    t.string "codice_ministeriale"
     t.string "comune"
+    t.datetime "created_at", null: false
+    t.string "denominazione"
+    t.string "email"
+    t.bigint "import_scuola_id"
+    t.string "indirizzo"
+    t.text "note"
+    t.string "pec"
+    t.integer "priorita", default: 0
     t.string "provincia"
     t.string "regione"
-    t.string "tipo_scuola"
-    t.string "email"
-    t.string "pec"
-    t.string "telefono"
-    t.text "note"
-    t.integer "priorita", default: 0
     t.string "stato", default: "attiva"
-    t.datetime "created_at", null: false
+    t.string "telefono"
+    t.string "tipo_scuola"
     t.datetime "updated_at", null: false
     t.index ["account_id", "codice_ministeriale"], name: "index_scuole_on_account_id_and_codice_ministeriale", unique: true
     t.index ["account_id", "denominazione"], name: "index_scuole_on_account_id_and_denominazione"
@@ -1000,14 +1000,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.uuid "account_id"
-    t.string "token", null: false
-    t.string "ip_address"
-    t.string "user_agent"
-    t.datetime "last_active_at"
     t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "last_active_at"
+    t.string "token", null: false
     t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_sessions_on_account_id"
     t.index ["token"], name: "index_sessions_on_token", unique: true
     t.index ["user_id", "last_active_at"], name: "index_sessions_on_user_id_and_last_active_at"
@@ -1015,56 +1015,56 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "ssk_appunti_backup", force: :cascade do |t|
-    t.bigint "original_appunto_id", null: false
-    t.bigint "user_id", null: false
-    t.string "nome"
-    t.text "body"
-    t.string "email"
-    t.string "telefono"
-    t.string "stato"
-    t.string "team"
     t.boolean "active"
-    t.datetime "completed_at"
-    t.datetime "original_created_at"
-    t.datetime "original_updated_at"
-    t.bigint "import_scuola_id"
-    t.string "codice_scuola"
-    t.string "denominazione_scuola"
-    t.string "descrizione_comune"
-    t.string "descrizione_caratteristica_scuola"
-    t.string "descrizione_tipologia_grado_istruzione_scuola"
-    t.string "codice_istituto_riferimento"
-    t.string "denominazione_istituto_riferimento"
-    t.string "area_geografica"
-    t.string "regione"
-    t.string "provincia"
-    t.bigint "import_adozione_id"
-    t.string "codice_isbn"
-    t.string "autori"
-    t.string "titolo"
-    t.string "sottotitolo"
-    t.string "volume"
-    t.string "editore"
-    t.string "prezzo"
-    t.string "disciplina"
-    t.string "nuova_adozione"
-    t.string "da_acquistare"
-    t.string "consigliato"
-    t.bigint "classe_id"
     t.string "anno_corso"
-    t.string "sezione_anno"
+    t.string "anno_scolastico_backup"
+    t.string "area_geografica"
+    t.string "autori"
+    t.datetime "backup_created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.text "body"
+    t.bigint "classe_id"
+    t.string "codice_isbn"
+    t.string "codice_istituto_riferimento"
+    t.string "codice_scuola"
     t.string "combinazione"
-    t.string "tipo_grado_scuola"
-    t.bigint "libro_id"
-    t.string "libro_titolo"
+    t.datetime "completed_at"
+    t.string "consigliato"
+    t.datetime "created_at", null: false
+    t.string "da_acquistare"
+    t.string "denominazione_istituto_riferimento"
+    t.string "denominazione_scuola"
+    t.string "descrizione_caratteristica_scuola"
+    t.string "descrizione_comune"
+    t.string "descrizione_tipologia_grado_istruzione_scuola"
+    t.string "disciplina"
+    t.string "editore"
+    t.string "email"
+    t.bigint "import_adozione_id"
+    t.bigint "import_scuola_id"
     t.string "libro_categoria"
     t.string "libro_disciplina"
-    t.integer "libro_prezzo_cents"
+    t.bigint "libro_id"
     t.text "libro_note"
-    t.string "anno_scolastico_backup"
-    t.datetime "backup_created_at", default: -> { "CURRENT_TIMESTAMP" }
-    t.datetime "created_at", null: false
+    t.integer "libro_prezzo_cents"
+    t.string "libro_titolo"
+    t.string "nome"
+    t.string "nuova_adozione"
+    t.bigint "original_appunto_id", null: false
+    t.datetime "original_created_at"
+    t.datetime "original_updated_at"
+    t.string "prezzo"
+    t.string "provincia"
+    t.string "regione"
+    t.string "sezione_anno"
+    t.string "sottotitolo"
+    t.string "stato"
+    t.string "team"
+    t.string "telefono"
+    t.string "tipo_grado_scuola"
+    t.string "titolo"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "volume"
     t.index ["anno_scolastico_backup"], name: "index_ssk_appunti_backup_on_anno_scolastico_backup"
     t.index ["codice_isbn"], name: "index_ssk_appunti_backup_on_codice_isbn"
     t.index ["codice_scuola", "anno_corso", "sezione_anno"], name: "idx_on_codice_scuola_anno_corso_sezione_anno_19e7303a3f"
@@ -1076,43 +1076,43 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "stats", force: :cascade do |t|
-    t.string "descrizione"
-    t.string "seleziona_campi"
-    t.string "raggruppa_per"
-    t.string "ordina_per"
-    t.string "condizioni"
-    t.text "testo"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "titolo"
-    t.string "categoria"
     t.string "anno"
-    t.boolean "visible", default: true, null: false
+    t.string "categoria"
+    t.string "condizioni"
+    t.datetime "created_at", null: false
+    t.string "descrizione"
+    t.string "ordina_per"
     t.integer "position"
+    t.string "raggruppa_per"
+    t.string "seleziona_campi"
+    t.text "testo"
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.boolean "visible", default: true, null: false
   end
 
   create_table "tappa_giri", force: :cascade do |t|
-    t.bigint "tappa_id"
-    t.bigint "giro_id"
     t.datetime "created_at", null: false
+    t.bigint "giro_id"
+    t.bigint "tappa_id"
     t.datetime "updated_at", null: false
     t.index ["giro_id"], name: "index_tappa_giri_on_giro_id"
     t.index ["tappa_id"], name: "index_tappa_giri_on_tappa_id"
   end
 
   create_table "tappe", force: :cascade do |t|
-    t.string "titolo"
-    t.string "descrizione"
-    t.date "data_tappa"
-    t.datetime "entro_il"
-    t.string "tappable_type", null: false
-    t.bigint "tappable_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "giro_id"
-    t.bigint "user_id"
-    t.integer "position", null: false
     t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.date "data_tappa"
+    t.string "descrizione"
+    t.datetime "entro_il"
+    t.bigint "giro_id"
+    t.integer "position", null: false
+    t.bigint "tappable_id", null: false
+    t.string "tappable_type", null: false
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_tappe_on_account_id"
     t.index ["giro_id"], name: "index_tappe_on_giro_id"
     t.index ["tappable_type", "tappable_id"], name: "index_tappe_on_tappable"
@@ -1121,63 +1121,63 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_081050) do
   end
 
   create_table "tipi_scuole", force: :cascade do |t|
-    t.string "tipo"
-    t.string "grado"
     t.datetime "created_at", null: false
+    t.string "grado"
+    t.string "tipo"
     t.datetime "updated_at", null: false
   end
 
   create_table "tool_calls", force: :cascade do |t|
-    t.string "tool_call_id", null: false
-    t.string "name", null: false
     t.jsonb "arguments", default: {}
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.bigint "message_id", null: false
+    t.string "name", null: false
+    t.string "tool_call_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["message_id"], name: "index_tool_calls_on_message_id"
     t.index ["name"], name: "index_tool_calls_on_name"
     t.index ["tool_call_id"], name: "index_tool_calls_on_tool_call_id", unique: true
   end
 
   create_table "user_scuole", force: :cascade do |t|
-    t.bigint "import_scuola_id", null: false
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "import_scuola_id", null: false
     t.integer "position"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["import_scuola_id"], name: "index_user_scuole_on_import_scuola_id"
     t.index ["user_id", "position"], name: "index_user_scuole_on_user_id_and_position"
     t.index ["user_id"], name: "index_user_scuole_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "email"
+    t.string "name"
     t.string "navigator"
     t.integer "role", default: 0
     t.string "slug"
+    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 
   create_table "voice_notes", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
     t.text "title"
     t.text "transcription"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_voice_notes_on_user_id"
   end
 
   create_table "zone", force: :cascade do |t|
     t.string "area_geografica"
-    t.string "regione"
-    t.string "provincia"
-    t.string "comune"
     t.string "codice_comune"
+    t.string "comune"
     t.datetime "created_at", null: false
+    t.string "provincia"
+    t.string "regione"
     t.datetime "updated_at", null: false
   end
 

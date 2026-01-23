@@ -42,7 +42,7 @@
                             date_selector_target: "select",
                             current_date: @giorno
                         } %>
-                    <%= icon "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
+                    <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
                 </div>
 
                 <%= component 'tax_button',
@@ -145,7 +145,7 @@
         <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno),
             class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-            <%# <%= icon "academic-cap", variant: :solid, class: "w-6 h-6" %>
+            <%# <%= icon_tag "academic-cap", variant: :solid, class: "w-6 h-6" %>
             <%# <span>Aggiungi scuola</span> %>
         <%# <% end %>
 

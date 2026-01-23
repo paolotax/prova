@@ -26,6 +26,16 @@
       overflow: hidden;
     }
 
+    .card-columns__left,
+    .card-columns__right {
+      block-size: 100%;
+    }
+
+    .cards {
+      block-size: 100%;
+      overflow: hidden;
+    }
+
     .cards.is-expanded .cards__transition-container {
       display: flex;
       flex-direction: column;

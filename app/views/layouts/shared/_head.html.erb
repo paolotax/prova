@@ -1,29 +1,33 @@
 <head>
-    <%= page_title_tag %>
-    
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%# aggiunto per turbo-8 transition %>
-    <%# <meta name="view-transition" content="same-origin" /> %>
+  <%= page_title_tag %>  
+     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+  <% unless @disable_view_transition %>
+    <meta name="view-transition" content="same-origin">
+  <% end %>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d181d" media="(prefers-color-scheme: dark)">
 
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <meta name="theme-color" content="#ffffff">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= tag.meta name: "current-user-id", content: Current.user.id if Current.user %>
+  <%#= tag.meta name: "vapid-public-key", content: Rails.configuration.x.vapid.public_key %>
 
+  <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
+  <%= render "layouts/theme_preference" %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    
     <%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
+    <%= combobox_style_tag "data-turbo-track": "reload" %>
 
-    <%#= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-    <%#= combobox_style_tag "data-turbo-track": "reload" %>
-    
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    
-    <%= javascript_importmap_tags %>
+  <%= javascript_importmap_tags %>
 
-    <%# turbo_refreshes_with method: :morph, scroll: :reset %>
+  <%#= tenanted_action_cable_meta_tag %>
+  <%= render "layouts/shared/user_css" %>
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 

@@ -5,7 +5,7 @@
 # Table name: columns
 #
 #  id         :uuid             not null, primary key
-#  color      :string           default("#6366f1")
+#  color      :string           default("var(--color-card-default)")
 #  name       :string           not null
 #  position   :integer          default(0)
 #  created_at :datetime         not null
@@ -25,6 +25,7 @@
 
 class Column < ApplicationRecord
   include AccountScoped
+  include Colored
 
   has_many :entries, dependent: :nullify
 
@@ -36,10 +37,10 @@ class Column < ApplicationRecord
 
   # Default columns for new accounts
   DEFAULT_COLUMNS = [
-    { name: "Consegna Collana", color: "#22c55e" },
-    { name: "Ritiro Collana", color: "#f97316" },
-    { name: "Consegna Vacanze", color: "#3b82f6" },
-    { name: "Ritiro Vacanze", color: "#8b5cf6" }
+    { name: "Consegna Collana", color: "var(--color-card-4)" },   # Lime
+    { name: "Ritiro Collana", color: "var(--color-card-2)" },     # Tan/Orange
+    { name: "Consegna Vacanze", color: "var(--color-card-default)" }, # Blue
+    { name: "Ritiro Vacanze", color: "var(--color-card-7)" }      # Purple
   ].freeze
 
   def self.create_defaults_for(account)
@@ -53,5 +54,41 @@ class Column < ApplicationRecord
 
   def entries_count
     entries.count
+  end
+
+  def left_column
+    account.columns.where("position < ?", position).ordered.last
+  end
+
+  def right_column
+    account.columns.where("position > ?", position).ordered.first
+  end
+
+  def leftmost?
+    left_column.nil?
+  end
+
+  def rightmost?
+    right_column.nil?
+  end
+
+  def move_left
+    swap_position_with(left_column)
+  end
+
+  def move_right
+    swap_position_with(right_column)
+  end
+
+  private
+
+  def swap_position_with(other_column)
+    return if other_column.nil?
+
+    transaction do
+      old_position = position
+      update_column(:position, other_column.position)
+      other_column.update_column(:position, old_position)
+    end
   end
 end

@@ -1,0 +1,4 @@
+<%= turbo_stream.prepend "columns_list", partial: "columns/column", locals: { column: @column } %>
+<%= turbo_stream.update "new_column_form" do %>
+  <%= render "columns/form", column: current_account.columns.build, submit_label: "Aggiungi colonna" %>
+<% end %>

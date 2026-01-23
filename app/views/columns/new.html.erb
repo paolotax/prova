@@ -1,0 +1,7 @@
+<% @page_title = "Nuova Colonna" %>
+
+<%= render HeadingComponent.new(title: "Nuova Colonna") %>
+
+<section class="panel margin-block padding">
+  <%= render "columns/form", column: @column, submit_label: "Crea colonna" %>
+</section>

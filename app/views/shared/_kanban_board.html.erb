@@ -76,7 +76,7 @@
 
   <div class="card-columns__right">
     <% columns.each do |column| %>
-      <section id="column_<%= column.id %>" class="cards is-collapsed"
+      <section id="column_<%= column.id %>" class="cards cards--doing is-collapsed"
                style="--card-color: <%= column.color %>"
                tabindex="0"
                data-controller="css-variable-counter"
@@ -88,6 +88,7 @@
                data-drag-and-drop-css-variable-value="<%= column.color %>">
         <div class="cards__transition-container">
           <header class="cards__header">
+            <%= render "columns/menu", column: column %>
             <button type="button" class="cards__expander"
                     style="--card-count: <%= column_counts[column.id] || 0 %>"
                     data-collapsible-columns-target="button"

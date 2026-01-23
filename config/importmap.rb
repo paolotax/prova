@@ -7,15 +7,14 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 
 pin_all_from "app/javascript/helpers", under: "helpers"
 pin_all_from "app/javascript/controllers", under: "controllers"
+pin_all_from "app/javascript/initializers", under: "initializers"
 
-
-pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/index.js"
+pin "debounce", to: "https://ga.jspm.io/npm:debounce@2.0.0/indexzjs"
 
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
 
 pin "stimulus-clipboard" # @4.0.1
-pin "tailwindcss-stimulus-components" # @4.0.4
 pin "stimulus-checkbox-select-all" # @5.3.0
 pin "@stimulus-components/reveal", to: "@stimulus-components--reveal.js" # @5.0.0
 

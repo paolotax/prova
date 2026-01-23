@@ -1,0 +1,7 @@
+<% @page_title = "Modifica Colonna" %>
+
+<%= render HeadingComponent.new(title: "Modifica #{@column.name}") %>
+
+<section class="panel margin-block padding">
+  <%= render "columns/form", column: @column, submit_label: "Salva modifiche" %>
+</section>

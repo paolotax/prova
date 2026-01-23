@@ -5,14 +5,9 @@ import RevealController from '@stimulus-components/reveal'
 import ScrollTo from '@stimulus-components/scroll-to'
 import Sortable from '@stimulus-components/sortable'
 
-import { Tabs, Slideover, Dropdown } from 'tailwindcss-stimulus-components'
-
 const application = Application.start()
 
 application.register('clipboard', Clipboard)
-application.register('tabs', Tabs)
-application.register('slideover', Slideover)
-application.register('dropdown', Dropdown)
 application.register('checkbox-select-all', CheckboxSelectAll)
 application.register('reveal', RevealController)
 application.register('sortable', Sortable)

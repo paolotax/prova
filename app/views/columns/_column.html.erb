@@ -1,0 +1,15 @@
+<%# locals: (column:) -%>
+<%= tag.div id: dom_id(column), class: "column-item flex align-center gap", style: "--card-color: #{column.color}" do %>
+  <div class="column-item__color" style="background-color: var(--card-color); width: 1.5em; height: 1.5em; border-radius: 0.25em;"></div>
+  <span class="column-item__name flex-1"><%= column.name %></span>
+  <span class="column-item__count txt-small txt-subtle"><%= column.entries_count %> entries</span>
+  <div class="column-item__actions flex gap-half">
+    <%= link_to edit_column_path(column), class: "btn btn--circle txt-x-small borderless" do %>
+      <%= icon_tag "pencil" %>
+    <% end %>
+    <%= button_to column_path(column), method: :delete, class: "btn btn--circle txt-x-small borderless txt-negative",
+          form: { data: { turbo_confirm: "Eliminare questa colonna?" } } do %>
+      <%= icon_tag "trash" %>
+    <% end %>
+  </div>
+<% end %>

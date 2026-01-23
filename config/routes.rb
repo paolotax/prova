@@ -103,7 +103,10 @@ Rails.application.routes.draw do
     end
 
     # Columns (triage phases)
-    resources :columns, except: [:show]
+    resources :columns, except: [:show] do
+      resource :left_position, only: :create, module: :columns
+      resource :right_position, only: :create, module: :columns
+    end
 
     # Filtri salvati
     resources :filters, only: [:create, :destroy]

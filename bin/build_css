@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+# Build CSS by concatenating all CSS files in the correct order
+# This is needed because Propshaft doesn't process @import statements
+
+set -e
+
+CSS_DIR="app/assets/stylesheets"
+OUTPUT="$CSS_DIR/app.css"
+
+# Define the order of CSS files (same as the @import order)
+CSS_FILES=(
+  "_global.css"
+  "reset.css"
+  "base.css"
+  "layout.css"
+  "header.css"
+  "nav.css"
+  "bar.css"
+  "trays.css"
+  "profile-layout.css"
+  "buttons.css"
+  "inputs.css"
+  "panels.css"
+  "dialog.css"
+  "popup.css"
+  "flash.css"
+  "tooltips.css"
+  "spinners.css"
+  "toggles.css"
+  "knobs.css"
+  "tags.css"
+  "avatars.css"
+  "dividers.css"
+  "separators.css"
+  "icons.css"
+  "circled-text.css"
+  "bubble.css"
+  "blank-slates.css"
+  "filters.css"
+  "search.css"
+  "pagination.css"
+  "color-picker.css"
+  "cards.css"
+  "card-columns.css"
+  "card-perma.css"
+  "entries.css"
+  "drag_and_drop.css"
+  "comments.css"
+  "reactions.css"
+  "events.css"
+  "notifications.css"
+  "steps.css"
+  "pins.css"
+  "golden-effect.css"
+  "lightbox.css"
+  "lexxy.css"
+  "markdown.css"
+  "rich-text-content.css"
+  "qr-codes.css"
+  "settings.css"
+  "welcome-letter.css"
+  "user.css"
+  "autoresize.css"
+  "syntax.css"
+  "chat.css"
+  "chatroom.css"
+  "access-tokens.css"
+  "theme-switcher.css"
+  "utilities.css"
+  "animation.css"
+  "native.css"
+  "pwa.css"
+  "ios.css"
+  "android.css"
+  "print.css"
+)
+
+echo "/* Auto-generated CSS bundle - DO NOT EDIT */" > "$OUTPUT"
+echo "/* Run bin/build_css to regenerate */" >> "$OUTPUT"
+echo "" >> "$OUTPUT"
+
+for file in "${CSS_FILES[@]}"; do
+  if [ -f "$CSS_DIR/$file" ]; then
+    echo "/* === $file === */" >> "$OUTPUT"
+    cat "$CSS_DIR/$file" >> "$OUTPUT"
+    echo "" >> "$OUTPUT"
+  else
+    echo "Warning: $file not found"
+  fi
+done
+
+echo "CSS bundle created: $OUTPUT"

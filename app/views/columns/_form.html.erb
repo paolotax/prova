@@ -1,0 +1,27 @@
+<%# locals: (column:, submit_label: "Salva") -%>
+<%= form_with model: column, data: {
+      controller: "form",
+      action: "turbo:submit-end->dialog#close turbo:submit-end->form#reset"
+    } do |form| %>
+
+  <%= form.text_field :name,
+        class: "input",
+        placeholder: "Nome colonna",
+        required: true,
+        autocomplete: "off",
+        pattern: ".*\\S.*",
+        title: "Il nome della colonna non può essere vuoto",
+        data: { action: "focus->form#select" } %>
+
+  <div class="color-picker__colors">
+    <% Color::COLORS.each do |color| %>
+      <label class="btn txt-small borderless" style="--btn-background: <%= color %>" title="<%= color.name %>">
+        <%= form.radio_button :color, color.value, checked: (column.color == color || (column.new_record? && color == Column::Colored::DEFAULT_COLOR)) %>
+        <%= icon_tag "check", class: "checked" %>
+        <span class="for-screen-reader"><%= color.name %></span>
+      </label>
+    <% end %>
+  </div>
+
+  <%= form.submit submit_label, class: "btn btn--link" %>
+<% end %>

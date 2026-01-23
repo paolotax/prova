@@ -481,7 +481,7 @@ end
 <%# app/views/activities/_activity.html.erb %>
 <div id="<%= dom_id(activity) %>" class="activity">
   <div class="flex items-start gap-3">
-    <%= icon activity.icon, class: "w-5 h-5 text-gray-400" %>
+    <%= icon_tag activity.icon, class: "w-5 h-5 text-gray-400" %>
 
     <div class="flex-1">
       <p class="text-sm">

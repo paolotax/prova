@@ -26,7 +26,7 @@
 <% if hotwire_native_app? %>
 	<%= link_to new_documento_path, class: "hidden",
 			data: { controller: "bridge--button", bridge_title: "Nuovo" } do %>
-			<%= icon "plus", class: "card-icon--medium" %>
+			<%= icon_tag "plus", class: "card-icon--medium" %>
 	<% end %>
 	<%= render "shared/native_search_filter",
 		url: documenti_path,
@@ -81,12 +81,6 @@
     </div>
   <% end %>
 <% end %>
-
-<div class="card-loading">
-  <%= icon "bouncing-dots", library: :animated, class: "card-loading__spinner" %>
-  <span class="card-loading__text">Loading...</span>
-</div>
-
 
 
 

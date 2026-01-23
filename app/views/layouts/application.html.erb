@@ -16,7 +16,7 @@
 			</header>
 
 			<%= turbo_frame_tag :modal %>
-			<%= render partial: "layouts/back_to_top" %>
+			<%#= render partial: "layouts/back_to_top" %>
 
 			<main id="main">				
 				<div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
@@ -36,6 +36,5 @@
 		<% end %>
 
 		<%= turbo_frame_tag "slide-over" %>
-  		<%= render Notification::ContainerComponent.new(flash: flash, position: "bottom-center") %>
 	</body>
 </html>

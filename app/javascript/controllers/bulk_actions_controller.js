@@ -1,5 +1,5 @@
-import CheckboxesController from "./checkboxes_controller";
-import { enter, leave } from "./helpers/transitions";
+import CheckboxesController from "controllers/checkboxes_controller";
+import { enter, leave } from "controllers/helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
   static targets = ["container", "form", "counter", "formContainer", "menuButton"];

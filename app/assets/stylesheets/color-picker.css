@@ -11,6 +11,25 @@
 
       inline-size: 100%;
     }
+
+    label {
+      cursor: pointer;
+      position: relative;
+
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .checked {
+        display: none;
+        color: var(--color-ink-inverted);
+      }
+
+      input[type="radio"]:checked + .checked {
+        display: block;
+      }
+    }
   }
 }
-
