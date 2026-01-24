@@ -17,6 +17,7 @@ class DestinatariController < ApplicationController
   private
 
   def search_appuntabili(query)
+    query = sanitize_query(query)
     return [] if query.blank? || query.length < 2
 
     limit = 6
@@ -57,5 +58,17 @@ class DestinatariController < ApplicationController
       end
 
     results.first(limit * 3)
+  end
+
+  # Rimuove prefisso "[Entity] " e trattini isolati dalla query
+  # Es. "[Classe] DANTE ALIGHIERI - " -> "DANTE ALIGHIERI"
+  def sanitize_query(query)
+    return query if query.blank?
+
+    query.to_s
+      .sub(/\A\[[^\]]+\]\s*/, "")  # Rimuove [Entity]
+      .gsub(/\s*-\s*$/, "")         # Rimuove trattino finale
+      .gsub(/\s+-\s+/, " ")         # Sostituisce " - " con spazio
+      .strip
   end
 end
