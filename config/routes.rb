@@ -160,6 +160,9 @@ Rails.application.routes.draw do
       resources :queries
     end
 
+    # Ricerca unificata destinatari per combobox appunti
+    resources :destinatari, only: [:index]
+
 
     post 'sfascicola', to: 'sfascicolator#generate'
 

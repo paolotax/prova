@@ -102,6 +102,29 @@
     color: oklch(var(--lch-gray-dark, 0.4 0.01 0));
   }
 
+  /* Destinatario Type Badges (combobox multi-entità)
+  /* -------------------------------------------------------------------------- */
+
+  .badge--scuola {
+    background: oklch(var(--lch-blue-light, 0.9 0.05 250));
+    color: oklch(var(--lch-blue-dark, 0.35 0.15 250));
+  }
+
+  .badge--cliente {
+    background: oklch(var(--lch-green-light, 0.9 0.05 150));
+    color: oklch(var(--lch-green-dark, 0.35 0.15 150));
+  }
+
+  .badge--classe {
+    background: oklch(var(--lch-purple-light, 0.9 0.05 300));
+    color: oklch(var(--lch-purple-dark, 0.35 0.15 300));
+  }
+
+  .badge--persona {
+    background: oklch(var(--lch-orange-light, 0.9 0.05 60));
+    color: oklch(var(--lch-orange-dark, 0.35 0.15 60));
+  }
+
   /* Entryable Type Specific Styles
   /* -------------------------------------------------------------------------- */
 

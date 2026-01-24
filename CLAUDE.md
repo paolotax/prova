@@ -146,6 +146,13 @@ Docker-based deployment with Kamal. Configuration in `config/deploy.yml`.
 - Aspettare conferma esplicita dell'utente prima di eseguire `git commit`
 - Mostrare sempre un riepilogo delle modifiche prima del commit
 
+## Reference Application
+
+**Fizzy** è l'applicazione di riferimento per pattern e stili CSS:
+- Path: `/home/paolotax/rails_2023/fizzy`
+- Dev server: `localhost:3006`
+- Usare i pattern Fizzy per: combobox, filtri, dialogs, forms, layout
+
 ## Conventions
 
 - English for code, Italian for domain terms (libro, adozione, scuola, cliente)

@@ -1,0 +1,6 @@
+<%= tag.div class: "flex gap align-center" do %>
+  <%= tag.span destinatario.type,
+      class: "badge badge--small badge--#{destinatario.type.downcase}" %>
+  <%= tag.span destinatario.record.to_combobox_display,
+      class: "txt-small overflow-ellipsis" %>
+<% end %>

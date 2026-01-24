@@ -32,11 +32,11 @@
 #
 class Classe < ApplicationRecord
   include AccountScoped
+  include Appuntabile
 
   belongs_to :scuola
 
   has_many :adozioni, dependent: :destroy
-  has_many :appunti, as: :appuntabile, dependent: :destroy
 
   validates :anno_corso, presence: true
   validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso] }, allow_blank: true

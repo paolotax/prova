@@ -29,10 +29,9 @@
 #
 class Persona < ApplicationRecord
   include AccountScoped
+  include Appuntabile
 
   belongs_to :scuola, optional: true
-
-  has_many :appunti, as: :appuntabile, dependent: :destroy
 
   enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", altro: "altro" }
 

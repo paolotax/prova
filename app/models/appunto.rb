@@ -63,6 +63,25 @@ class Appunto < ApplicationRecord
   belongs_to :classe, class_name: 'Views::Classe', optional: true
   belongs_to :appuntabile, polymorphic: true, optional: true
 
+  # Virtual attribute per combobox multi-entità
+  # Formato: "Scuola:uuid" o "Cliente:id"
+  attr_accessor :appuntabile_value
+
+  def appuntabile_value
+    return nil unless appuntabile.present?
+
+    appuntabile.to_appuntabile_value
+  end
+
+  def appuntabile_value=(value)
+    return if value.blank?
+
+    klass, id = Appuntabile.parse_appuntabile_value(value)
+    if klass && id
+      self.appuntabile = klass.find_by(id: id)
+    end
+  end
+
   # Righe libri (stesso pattern di Documento)
   has_many :appunto_righe, dependent: :destroy
   has_many :righe, through: :appunto_righe

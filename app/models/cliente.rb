@@ -45,6 +45,7 @@
 
 class Cliente < ApplicationRecord
   include AccountScoped
+  include Appuntabile
 
   geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
   after_validation :geocode, if: ->(obj) { (obj.indirizzo_changed? || obj.numero_civico_changed? ||obj.cap_changed? || obj.comune_changed? || obj.provincia_changed?) } 

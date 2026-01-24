@@ -23,6 +23,8 @@ class Account < ApplicationRecord
   has_many :clienti, dependent: :destroy
   has_many :libri, dependent: :destroy
   has_many :scuole, dependent: :destroy
+  has_many :classi, dependent: :destroy
+  has_many :persone, dependent: :destroy
 
   # Triage system
   has_many :columns, dependent: :destroy

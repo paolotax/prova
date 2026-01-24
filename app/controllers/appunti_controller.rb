@@ -203,6 +203,7 @@ class AppuntiController < ApplicationController
       params.require(:appunto).permit(
         :nome,
         :import_scuola_id,
+        :appuntabile_value,
         :body,
         :content,
         :telefono,

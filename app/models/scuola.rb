@@ -36,6 +36,7 @@
 #
 class Scuola < ApplicationRecord
   include AccountScoped
+  include Appuntabile
   include PgSearch::Model
 
   pg_search_scope :search_all_word,
@@ -47,7 +48,6 @@ class Scuola < ApplicationRecord
   has_many :classi, dependent: :destroy
   has_many :adozioni, through: :classi
   has_many :persone, dependent: :destroy
-  has_many :appunti, as: :appuntabile, dependent: :destroy
 
   validates :denominazione, presence: true
   validates :codice_ministeriale, uniqueness: { scope: :account_id }, allow_blank: true

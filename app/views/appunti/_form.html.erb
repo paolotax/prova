@@ -16,25 +16,35 @@
         <%= form.text_field :nome, class: "input", placeholder: "Titolo o destinatario...", autofocus: true %>
       </div>
 
-      <div class="form-field cb-tax" data-controller="tax-combobox-select">
-        <%= form.label :import_scuola_id, "Scuola", class: "form-label" %>
-        <%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all,
-            placeholder: "seleziona scuola...",
-            mobile_at: "0px",
-            data: { action: "hw-combobox:selection->tax-combobox-select#change",
-              tax_combobox_select_target: "combobox" } %>
-      </div>
-
-      <%= turbo_frame_tag :combo_classi do %>
-        <% if appunto.scuola.nil? %>
-          <%= tag.div style: "min-height: 3rem;" %>
-        <% else %>
-          <div class="margin-block-start">
-            <%= render partial: "classi/combobox_classi",
-              locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
+      <div class="form-field cb-tax">
+        <%= form.label :appuntabile_value, "Destinatario", class: "form-label" %>
+        <% if appunto.appuntabile.present? %>
+          <%# Per record esistenti, mostra selezione attuale con possibilità di cambiare %>
+          <div class="flex gap align-center">
+            <span class="badge badge--small badge--<%= appunto.appuntabile.class.name.downcase %>">
+              <%= appunto.appuntabile.class.model_name.human %>
+            </span>
+            <span class="txt-small"><%= appunto.appuntabile.to_combobox_display %></span>
           </div>
+          <%= form.hidden_field :appuntabile_value %>
+          <details class="margin-block-start-half">
+            <summary class="txt-x-small txt-link cursor-pointer">Cambia destinatario</summary>
+            <div class="margin-block-start-half">
+              <%= combobox_tag "appunto[appuntabile_value]", destinatari_index_path,
+                  id: "appunto_appuntabile_value_new",
+                  placeholder: "cerca scuola, cliente, classe o persona...",
+                  mobile_at: "0px" %>
+            </div>
+          </details>
+        <% else %>
+          <%= form.combobox :appuntabile_value, destinatari_index_path,
+              placeholder: "cerca scuola, cliente, classe o persona...",
+              mobile_at: "0px" %>
         <% end %>
-      <% end %>
+        <p class="txt-x-small txt-subtle margin-block-start-quarter">
+          Cerca tra scuole, clienti, classi o persone
+        </p>
+      </div>
 
       <div class="form-field">
         <%= form.label :content, "Contenuto", class: "form-label" %>
