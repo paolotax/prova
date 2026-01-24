@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -172,7 +172,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_170000) do
     t.uuid "appuntabile_id"
     t.string "appuntabile_type"
     t.text "body"
-    t.bigint "classe_id"
+    t.uuid "classe_id"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.string "email"
@@ -1189,6 +1189,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_170000) do
   add_foreign_key "adozioni", "libri"
   add_foreign_key "adozioni_comunicate", "import_adozioni"
   add_foreign_key "adozioni_comunicate", "users"
+  add_foreign_key "appunti", "classi"
   add_foreign_key "appunti", "import_adozioni"
   add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"

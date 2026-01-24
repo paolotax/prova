@@ -18,7 +18,7 @@
 #  updated_at         :datetime         not null
 #  account_id         :uuid
 #  appuntabile_id     :uuid
-#  classe_id          :bigint
+#  classe_id          :uuid
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
 #  user_id            :bigint           not null
@@ -38,6 +38,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (classe_id => classi.id)
 #  fk_rails_...  (import_adozione_id => import_adozioni.id)
 #  fk_rails_...  (import_scuola_id => import_scuole.id)
 #  fk_rails_...  (user_id => users.id)
@@ -60,7 +61,7 @@ class Appunto < ApplicationRecord
   belongs_to :import_scuola, required: false
   belongs_to :user
   belongs_to :import_adozione, required: false
-  belongs_to :classe, class_name: 'Views::Classe', optional: true
+  belongs_to :classe, optional: true
   belongs_to :appuntabile, polymorphic: true, optional: true
 
   # Virtual attribute per combobox multi-entità

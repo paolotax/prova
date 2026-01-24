@@ -19,7 +19,7 @@
 #  updated_at         :datetime         not null
 #  account_id         :uuid
 #  appuntabile_id     :uuid
-#  classe_id          :bigint
+#  classe_id          :uuid
 #  import_adozione_id :bigint
 #  import_scuola_id   :bigint
 #  user_id            :bigint           not null
@@ -39,6 +39,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (classe_id => classi.id)
 #  fk_rails_...  (import_adozione_id => import_adozioni.id)
 #  fk_rails_...  (import_scuola_id => import_scuole.id)
 #  fk_rails_...  (user_id => users.id)
