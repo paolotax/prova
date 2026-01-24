@@ -92,4 +92,8 @@ class Scuola < ApplicationRecord
   def indirizzo_completo
     [indirizzo, cap, comune, provincia].compact.join(', ')
   end
+
+  def indirizzo_formattato
+    [indirizzo, [cap, comune].compact.join(' '), provincia].compact.join("\n")
+  end
 end

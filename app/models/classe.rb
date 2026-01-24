@@ -114,6 +114,10 @@ class Classe < ApplicationRecord
     "#{anno_corso}#{sezione}"
   end
 
+  def classe_e_sezione
+    "#{anno_corso} #{sezione&.titleize}"
+  end
+
   def to_s
     nome_breve
   end
