@@ -40,8 +40,7 @@ class DestinatariController < ApplicationController
 
     # Classi
     Current.account.classi
-      .joins(:scuola)
-      .where("classi.anno_corso || classi.sezione ILIKE :q OR scuole.denominazione ILIKE :q", q: "%#{query}%")
+      .search_all_word(query)
       .includes(:scuola)
       .limit(limit)
       .each do |record|

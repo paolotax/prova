@@ -33,6 +33,29 @@
 class Classe < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include PgSearch::Model
+
+  # Custom search that handles both class codes (2A) and scuola names (Dante)
+  # Splits query into words and ensures ALL words match somewhere across fields
+  scope :search_all_word, ->(query) {
+    return none if query.blank?
+
+    words = query.to_s.split(/\s+/).reject(&:blank?)
+    return none if words.empty?
+
+    scope = joins(:scuola)
+
+    # Each word must match at least one field
+    words.each do |word|
+      sanitized = "%#{sanitize_sql_like(word)}%"
+      scope = scope.where(
+        "classi.anno_corso || classi.sezione ILIKE :q OR scuole.denominazione ILIKE :q OR scuole.comune ILIKE :q",
+        q: sanitized
+      )
+    end
+
+    scope
+  }
 
   belongs_to :scuola
 
