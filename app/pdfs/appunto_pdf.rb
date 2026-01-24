@@ -73,12 +73,8 @@ class AppuntoPdf < Prawn::Document
   def build_titolo_evidenziato(appunto)
     parts = []
 
-    # Classe e sezione se presente
-    if appunto.classe.present?
-      parts << appunto.classe.classe_e_sezione
-    elsif appunto.appuntabile.is_a?(Classe)
-      parts << appunto.appuntabile.classe_e_sezione
-    end
+    # Classe e sezione se appuntabile è Classe
+    parts << appunto.appuntabile.classe_e_sezione if appunto.appuntabile.is_a?(Classe)
 
     # Nome se presente
     parts << appunto.nome if appunto.nome.present?
@@ -115,13 +111,14 @@ class AppuntoPdf < Prawn::Document
     undash        # Ripristina lo stile della linea normale
     move_down 30
 
-    # Classe + nome + scuola
+    # Classe + nome
     parts = []
-    parts << appunto.classe&.nome_breve if appunto.classe.present?
+    parts << appunto.appuntabile.nome_breve if appunto.appuntabile.is_a?(Classe)
     parts << appunto.nome if appunto.nome.present?
     text parts.join(" "), size: 13 if parts.any?
 
-    scuola = appunto.classe&.scuola || (appunto.appuntabile if appunto.appuntabile.is_a?(Scuola))
+    # Scuola (da Classe o direttamente se appuntabile è Scuola)
+    scuola = extract_scuola(appunto.appuntabile)
     text scuola.to_combobox_display, size: 12, style: :bold if scuola.present?
 
     move_down 10
@@ -129,6 +126,16 @@ class AppuntoPdf < Prawn::Document
       text @view.sanitize(appunto.content.body.to_s.gsub(/<br>/, " \r ").gsub(/&nbsp;/,"").gsub(/&NoBreak;/,""), attributes: [], tags: []), :size => 13, inline_format: true
     else
       text appunto.body, :size => 13
+    end
+  end
+
+  # Estrae la scuola dall'appuntabile
+  def extract_scuola(appuntabile)
+    case appuntabile
+    when Scuola then appuntabile
+    when Classe then appuntabile.scuola
+    when Persona then appuntabile.scuola
+    else nil
     end
   end
 
