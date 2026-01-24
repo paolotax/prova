@@ -12,7 +12,7 @@
 #  updated_at         :datetime         not null
 #  account_id         :uuid             not null
 #  categoria_id       :bigint
-#  scontabile_id      :bigint
+#  scontabile_id      :uuid
 #  user_id            :bigint
 #
 # Indexes

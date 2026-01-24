@@ -30,6 +30,8 @@
   </div>
 
   <div class="card-perma__notch card-perma__notch--bottom">
-    <%= render "appunti/container/footer", appunto: appunto %>
+    <%= turbo_frame_tag appunto, :footer do %>
+      <%= render "appunti/container/footer", appunto: appunto %>
+    <% end %>
   </div>
 </section>

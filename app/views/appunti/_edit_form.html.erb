@@ -1,0 +1,42 @@
+<%# locals: (appunto:) -%>
+
+<%= form_with model: appunto, id: dom_id(appunto, :edit_form),
+      data: { controller: "form",
+              action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+
+  <h1 class="card__title" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
+    <% if appunto.appuntabile.present? %>
+      <%# Display mode - stesso formato della show %>
+      <div class="flex gap-half align-center hide-when-editing">
+        <span>
+          <% if appunto.appuntabile.is_a?(Classe) %>
+            <%= appunto.appuntabile.nome_breve %> <%= appunto.appuntabile.scuola.denominazione %>
+          <% else %>
+            <%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %>
+          <% end %>
+        </span>
+        <button type="button" class="btn btn--circle btn--small borderless txt-small" data-action="toggle-class#toggle">
+          <%= icon_tag "pencil", class: "icon--small" %>
+        </button>
+      </div>
+      <%# Edit mode %>
+      <div class="form-field cb-tax show-when-editing">
+        <%= combobox_tag "appunto[appuntabile_value]",
+            destinatari_index_path,
+            id: "appunto_appuntabile_value_edit",
+            placeholder: "cerca scuola, cliente, classe...",
+            mobile_at: "0px" %>
+      </div>
+    <% else %>
+      <div class="form-field cb-tax">
+        <%= form.combobox :appuntabile_value, destinatari_index_path,
+            placeholder: "cerca scuola, cliente, classe...",
+            mobile_at: "0px" %>
+      </div>
+    <% end %>
+  </h1>
+
+  <div class="card__description">
+    <%= form.rich_text_area :content, placeholder: "Scrivi contenuto...", style: "min-height: 100px;" %>
+  </div>
+<% end %>

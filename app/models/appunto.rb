@@ -79,7 +79,14 @@ class Appunto < ApplicationRecord
 
     klass, id = Appuntabile.parse_appuntabile_value(value)
     if klass && id
-      self.appuntabile = klass.find_by(id: id)
+      # Gestisce sia UUID che vecchi ID interi (per backward compatibility)
+      begin
+        self.appuntabile = klass.find_by(id: id)
+      rescue ActiveRecord::StatementInvalid => e
+        # Se l'ID non è compatibile (es. integer su colonna UUID), ignora
+        Rails.logger.warn "Invalid appuntabile_value format: #{value} - #{e.message}"
+        nil
+      end
     end
   end
 
@@ -147,7 +154,7 @@ class Appunto < ApplicationRecord
 
   delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
 
-  scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]) }
+  scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
 
   # scope :da_fare, -> { where(stato: 'da fare').non_saggi }
   # scope :in_evidenza, -> { where(stato: 'in evidenza').non_saggi }
@@ -370,5 +377,10 @@ class Appunto < ApplicationRecord
 
   def set_account_from_current
     self.account ||= Current.account
+  end
+
+  # Override from Entryable - auto-create entry for new appunti
+  def should_auto_create_entry?
+    true
   end
 end

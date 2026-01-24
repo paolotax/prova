@@ -1,6 +1,7 @@
 <%# locals: (appunto:) -%>
 
-<%= link_to edit_appunto_path(appunto), class: "btn" do %>
+<%= link_to edit_appunto_path(appunto), class: "btn",
+    data: { turbo_method: :get, turbo_stream: true } do %>
   <%= icon_tag "pencil" %>
   Modifica
 <% end %>

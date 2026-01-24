@@ -1,0 +1,19 @@
+<%# locals: (appunto:) -%>
+
+<%= form_with model: appunto, id: "new_appunto_form",
+      data: { controller: "form",
+              action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+
+  <h1 class="card__title">
+    <div class="form-field cb-tax">
+      <%= form.combobox :appuntabile_value, destinatari_index_path,
+          placeholder: "cerca scuola, cliente, classe...",
+          autofocus: true,
+          mobile_at: "0px" %>
+    </div>
+  </h1>
+
+  <div class="card__description">
+    <%= form.rich_text_area :content, placeholder: "Scrivi contenuto...", style: "min-height: 100px;" %>
+  </div>
+<% end %>

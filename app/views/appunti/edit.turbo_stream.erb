@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@appunto, :edit] do %>
+  <%= turbo_frame_tag @appunto, :edit do %>
+    <%= render "appunti/edit_form", appunto: @appunto %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@appunto, :footer] do %>
+  <%= turbo_frame_tag @appunto, :footer do %>
+    <%= render "appunti/edit_footer", appunto: @appunto %>
+  <% end %>
+<% end %>

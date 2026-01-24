@@ -1,13 +1,7 @@
-<% @page_title = "Modifica appunto" %>
-
-<% content_for :header do %>
-  <div class="header__actions header__actions--start">
-    <%= back_link_to "appunto", appunto_path(@appunto), "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
-  </div>
-
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Modifica appunto</span>
-  </h1>
+<%= turbo_frame_tag @appunto, :edit do %>
+  <%= render "appunti/edit_form", appunto: @appunto %>
 <% end %>
 
-<%= render "form", appunto: @appunto %>
+<%= turbo_frame_tag @appunto, :footer do %>
+  <%= render "appunti/edit_footer", appunto: @appunto %>
+<% end %>

@@ -13,7 +13,7 @@
 #  updated_at    :datetime         not null
 #  account_id    :uuid             not null
 #  giro_id       :bigint
-#  tappable_id   :bigint           not null
+#  tappable_id   :uuid
 #  user_id       :bigint
 #
 # Indexes

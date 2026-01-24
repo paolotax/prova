@@ -312,4 +312,9 @@
   .cell-rank,
   .cell-rank_2024,
   .cell-diff_2024 { text-align: center; }
+
+  /* Inline editing toggle */
+  .show-when-editing { display: none; }
+  .editing .show-when-editing { display: block; }
+  .editing .hide-when-editing { display: none; }
 }

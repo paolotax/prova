@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_24_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -349,7 +349,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
     t.index ["scuola_id"], name: "index_classi_on_scuola_id"
   end
 
-  create_table "clienti", force: :cascade do |t|
+  create_table "clienti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.string "banca"
     t.string "beneficiario"
@@ -439,7 +439,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
   create_table "documenti", force: :cascade do |t|
     t.uuid "account_id", null: false
     t.bigint "causale_id"
-    t.bigint "clientable_id"
+    t.uuid "clientable_id"
     t.string "clientable_type"
     t.date "consegnato_il"
     t.datetime "created_at", null: false
@@ -462,7 +462,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
     t.index ["account_id", "created_at"], name: "index_documenti_on_account_id_and_created_at"
     t.index ["account_id"], name: "index_documenti_on_account_id"
     t.index ["causale_id"], name: "index_documenti_on_causale_id"
-    t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable_type_and_clientable_id"
+    t.index ["clientable_type", "clientable_id"], name: "index_documenti_on_clientable"
     t.index ["derivato_da_causale_id"], name: "index_documenti_on_derivato_da_causale_id"
     t.index ["documento_padre_id"], name: "index_documenti_on_documento_padre_id"
     t.index ["user_id"], name: "index_documenti_on_user_id"
@@ -962,7 +962,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
     t.date "data_fine"
     t.date "data_inizio", null: false
     t.decimal "percentuale_sconto", precision: 5, scale: 2, null: false
-    t.bigint "scontabile_id"
+    t.uuid "scontabile_id"
     t.string "scontabile_type"
     t.integer "tipo_sconto", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -1108,7 +1108,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_110850) do
     t.datetime "entro_il"
     t.bigint "giro_id"
     t.integer "position", null: false
-    t.bigint "tappable_id", null: false
+    t.uuid "tappable_id"
     t.string "tappable_type", null: false
     t.string "titolo"
     t.datetime "updated_at", null: false

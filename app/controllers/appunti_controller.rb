@@ -97,8 +97,8 @@ class AppuntiController < ApplicationController
 
   def show
     respond_to do |format|
-
       format.html
+      format.turbo_stream unless flash.any? # Skip turbo_stream after redirect (has flash)
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)
@@ -115,10 +115,13 @@ class AppuntiController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
-
     @appunto = current_user.appunti.build(appunto_params)
 
     respond_to do |format|
@@ -126,17 +129,14 @@ class AppuntiController < ApplicationController
         @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
 
         if hotwire_native_app?
-          #  format.html { redirect_to appunto_path(@appunto) }
           format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto inserito.") }
         else
-          format.turbo_stream
-          format.html { redirect_to appunti_url, notice: "Appunto inserito." }
+          format.html { redirect_to @appunto, notice: "Appunto creato.", status: :see_other }
         end
       else
         if hotwire_native_app?
           format.html { render :new, status: :unprocessable_entity }
         else
-          format.turbo_stream { flash.now[:alert] = "Impossibile creare l'appunto." }
           format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @appunto.errors, status: :unprocessable_entity }
         end
@@ -152,12 +152,14 @@ class AppuntiController < ApplicationController
         if hotwire_native_app?
           format.html { redirect_to appunto_path(@appunto) }
         else
+          format.turbo_stream
           format.html { redirect_to appunto_path(@appunto), notice: "Appunto modificato." }
         end
       else
         if hotwire_native_app?
           format.html { render :edit, status: :unprocessable_entity }
         else
+          format.turbo_stream { render :edit, status: :unprocessable_entity }
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @appunto.errors, status: :unprocessable_entity }
         end

@@ -1,2 +1,11 @@
-<%# Resta sulla pagina edit dopo il salvataggio %>
+<%= turbo_stream.replace [@appunto, :edit] do %>
+  <%= turbo_frame_tag @appunto, :edit do %>
+    <%= render "appunti/container/content_display", appunto: @appunto %>
+  <% end %>
+<% end %>
 
+<%= turbo_stream.replace [@appunto, :footer] do %>
+  <%= turbo_frame_tag @appunto, :footer do %>
+    <%= render "appunti/container/footer", appunto: @appunto %>
+  <% end %>
+<% end %>

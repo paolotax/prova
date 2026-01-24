@@ -1,13 +1,53 @@
 <% @page_title = "Nuovo appunto" %>
+<% @header_class = "header--card" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= back_link_to "Appunti", appunti_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
-
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Nuovo appunto</span>
-  </h1>
 <% end %>
 
-<%= render "form", appunto: @appunto %>
+<div class="full-width pad group">
+  <%= form_with model: @appunto, id: "new_appunto_form",
+        data: { controller: "form",
+                action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+    <section class="card-perma" style="--card-color: var(--color-ink-lighter);">
+      <div class="card-perma__bg">
+        <article class="card">
+          <header class="card__header">
+            <div class="card__board">
+              <span class="card__id">NUOVO</span>
+            </div>
+          </header>
+
+          <div class="card__body justify-space-between">
+            <div class="card__content">
+              <h1 class="card__title">
+                <div class="form-field cb-tax">
+                  <%= form.combobox :appuntabile_value, destinatari_index_path,
+                      placeholder: "cerca scuola, cliente, classe...",
+                      autofocus: true,
+                      mobile_at: "0px" %>
+                </div>
+              </h1>
+
+              <div class="card__description">
+                <%= form.rich_text_area :content, placeholder: "Scrivi contenuto...", style: "min-height: 100px;" %>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="card-perma__notch card-perma__notch--bottom">
+        <%= form.button class: "btn btn--positive", type: :submit do %>
+          <%= icon_tag "check" %>
+          <span>Crea</span>
+        <% end %>
+        <%= link_to appunti_path, class: "btn btn--reversed" do %>
+          <span>Annulla</span>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>
