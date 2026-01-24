@@ -30,9 +30,9 @@
             data: { action: "input->bulk-actions#count", bulk_actions_target: "checkbox" } %>
 
         <!-- Avatar normale -->
-        <div class="avatar-circle <%= string_to_tailwind_color(appunto&.import_scuola&.citta_scuola) %>"
+        <div class="avatar-circle <%= string_to_tailwind_color(appunto.appuntabile.try(:comune) || appunto.appuntabile.try(:citta_scuola)) %>"
             style="width: 2.5rem; height: 2.5rem;">
-          <%= scuola_avatar_abbreviation(appunto.import_scuola) if appunto.import_scuola %>
+          <%= appuntabile_avatar_abbreviation(appunto.appuntabile) if appunto.appuntabile %>
         </div>
 
         <!-- Checkmark quando selezionato (gestito via CSS) -->
@@ -48,9 +48,9 @@
       <h3 class="font-weight-bold" style="color: var(--color-ink);">
         <%= appunto.nome_e_classe %>
       </h3>
-      <% if appunto.import_scuola %>
-        <%= link_to appunto.import_scuola.to_combobox_display.titleize,
-            appunto.import_scuola,
+      <% if appunto.appuntabile %>
+        <%= link_to appunto.appuntabile.to_combobox_display.titleize,
+            polymorphic_path(appunto.appuntabile),
             class: "txt-small txt-link",
             data: { turbo_frame: :_top } %>
       <% end %>

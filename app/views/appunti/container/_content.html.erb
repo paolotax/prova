@@ -1,14 +1,14 @@
 <%# locals: (appunto:) -%>
 
-<% if appunto.import_scuola.present? %>
+<% if appunto.appuntabile.present? %>
   <h1 class="card__title overflow-line-clamp">
-    <%= link_to appunto.import_scuola.denominazione, import_scuola_path(appunto.import_scuola), class: "card__title-link" %>
+    <%= link_to appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s,
+        polymorphic_path(appunto.appuntabile),
+        class: "card__title-link" %>
   </h1>
-  <span class="card__subtitle"><%= appunto.import_scuola.comune&.upcase %></span>
-<% elsif appunto.appuntabile.present? %>
-  <h1 class="card__title overflow-line-clamp">
-    <%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %>
-  </h1>
+  <% if appunto.appuntabile.respond_to?(:comune) && appunto.appuntabile.comune.present? %>
+    <span class="card__subtitle"><%= appunto.appuntabile.comune.upcase %></span>
+  <% end %>
 <% else %>
   <h1 class="card__title overflow-line-clamp">
     <%= appunto.nome.presence || "Appunto" %>

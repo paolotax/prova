@@ -40,11 +40,11 @@
 
       <div class="card__body justify-space-between">
         <div class="card__content">
-          <% if appunto.import_scuola.present? %>
-            <h3 class="card__title overflow-line-clamp"><%= appunto.import_scuola.denominazione %></h3>
-            <span class="card__subtitle"><%= appunto.import_scuola.comune&.upcase %></span>
-          <% elsif appunto.appuntabile.present? %>
+          <% if appunto.appuntabile.present? %>
             <h3 class="card__title overflow-line-clamp"><%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %></h3>
+            <% if appunto.appuntabile.respond_to?(:comune) %>
+              <span class="card__subtitle"><%= appunto.appuntabile.comune&.upcase %></span>
+            <% end %>
           <% end %>
 
           <% if appunto.content.present? || appunto.body.present? %>

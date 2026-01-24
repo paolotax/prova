@@ -1,11 +1,15 @@
 <%# locals: (appunto:) -%>
 
 <div id="<%= dom_id(appunto, :tags) %>" class="card__tags">
-  <% if appunto.import_scuola.present? %>
+  <% if appunto.appuntabile.present? %>
     <div class="min-width overflow-ellipsis">
-      <%= link_to import_scuola_path(appunto.import_scuola),
+      <%= link_to polymorphic_path(appunto.appuntabile),
             class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent" do %>
-        <%= appunto.import_scuola.comune&.upcase %>
+        <% if appunto.appuntabile.respond_to?(:comune) && appunto.appuntabile.comune.present? %>
+          <%= appunto.appuntabile.comune.upcase %>
+        <% else %>
+          <%= appunto.appuntabile.class.model_name.human %>
+        <% end %>
       <% end %>
     </div>
   <% end %>

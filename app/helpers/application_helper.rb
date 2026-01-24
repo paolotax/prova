@@ -146,6 +146,39 @@ module ApplicationHelper
     colors[hash % colors.length]
   end
 
+  def appuntabile_avatar_abbreviation(appuntabile)
+    return "" unless appuntabile
+
+    # Ottieni il nome base dell'entità
+    nome = case appuntabile
+           when Scuola
+             appuntabile.denominazione.to_s
+           when Cliente
+             appuntabile.denominazione.to_s
+           when Classe
+             "#{appuntabile.anno_corso}#{appuntabile.sezione}"
+           when Persona
+             "#{appuntabile.cognome} #{appuntabile.nome}".strip
+           else
+             appuntabile.to_s
+           end
+
+    # Rimuovi caratteri speciali e parole non necessarie
+    nome_pulito = nome
+      .gsub(/[^\w\s]/, '')
+      .gsub(/\b(SCUOLA|PRIMARIA)\b/, '')
+      .strip
+
+    # Prendi le prime due lettere
+    prime_lettere = nome_pulito[0..1].to_s.titleize
+
+    # Prendi la prima lettera della città/comune se disponibile
+    citta = appuntabile.try(:comune) || appuntabile.try(:citta_scuola)
+    iniziale_citta = citta.to_s[0].to_s.upcase
+
+    (prime_lettere + iniziale_citta)
+  end
+
   def scuola_avatar_abbreviation(import_scuola)
     return "" unless import_scuola
 
