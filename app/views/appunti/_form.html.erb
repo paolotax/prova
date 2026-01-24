@@ -16,14 +16,25 @@
         <%= form.text_field :nome, class: "input", placeholder: "Titolo o destinatario...", autofocus: true %>
       </div>
 
-      <div class="form-field">
+      <div class="form-field cb-tax" data-controller="tax-combobox-select">
         <%= form.label :import_scuola_id, "Scuola", class: "form-label" %>
-        <%= form.collection_select :import_scuola_id,
-            current_user.import_scuole.order(:DENOMINAZIONESCUOLA),
-            :id, :denominazione,
-            { include_blank: "Seleziona scuola..." },
-            { class: "input input--select" } %>
+        <%= form.combobox :import_scuola_id, current_user.import_scuole.order(:DENOMINAZIONESCUOLA).all,
+            placeholder: "seleziona scuola...",
+            mobile_at: "0px",
+            data: { action: "hw-combobox:selection->tax-combobox-select#change",
+              tax_combobox_select_target: "combobox" } %>
       </div>
+
+      <%= turbo_frame_tag :combo_classi do %>
+        <% if appunto.scuola.nil? %>
+          <%= tag.div style: "min-height: 3rem;" %>
+        <% else %>
+          <div class="margin-block-start">
+            <%= render partial: "classi/combobox_classi",
+              locals: { scuola: appunto.scuola, classe_ids: [appunto.classe_id] } %>
+          </div>
+        <% end %>
+      <% end %>
 
       <div class="form-field">
         <%= form.label :content, "Contenuto", class: "form-label" %>
@@ -67,8 +78,8 @@
     </div>
   </section>
 
-  <div class="flex align-center justify-end gap center" style="--panel-size: 55ch; inline-size: var(--panel-size); max-inline-size: 100%;">
+  <div class="flex align-center justify-center gap center" style="--panel-size: 55ch; inline-size: var(--panel-size); max-inline-size: 100%;">
     <%= link_to "Annulla", appunto.persisted? ? appunto_path(appunto) : appunti_path, class: "btn" %>
-    <%= form.submit appunto.persisted? ? "Salva Modifiche" : "Crea Appunto", class: "btn btn--primary" %>
+    <%= form.submit appunto.persisted? ? "Salva Modifiche" : "Crea Appunto", class: "btn btn--link" %>
   </div>
 <% end %>

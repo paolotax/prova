@@ -1,12 +1,2 @@
-<%= turbo_stream.replace @appunto %>
+<%# Resta sulla pagina edit dopo il salvataggio %>
 
-<%= turbo_stream.replace "appunto-riga-#{dom_id @appunto}" do %>
-    <%= render partial: "appunti/appunto_riga", locals: { appunto: @appunto }  %>
-<% end %>
-
-<%= turbo_stream.replace dom_id(@appunto, "vocale") do %>
-    <%= render partial: "appunti/appunto", locals: { appunto: @appunto }  %>
-<% end %>
-
-<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
-<%= stream_notification "Appunto modificato!", type: "success" %>

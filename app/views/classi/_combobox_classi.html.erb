@@ -1,7 +1,8 @@
  <%# locals: ( scuola:, classe_ids: [] ) -%>
 
 <%= turbo_frame_tag :combo_classi do %>              
-    <%= tag.div class: "mt-5 block cb-tax-fancy flex flex-col" do %>
+    <%= tag.div class: "form-field cb-tax" do %>
+        <%= label_tag "appunto_classe_id", "Classe", class: "form-label" %>
         <%= combobox_tag "appunto[classe_id]", 
                 scuola.classi,
                 value: classe_ids[0],

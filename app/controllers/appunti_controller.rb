@@ -151,16 +151,13 @@ class AppuntiController < ApplicationController
 
         if hotwire_native_app?
           format.html { redirect_to appunto_path(@appunto) }
-          # format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto modificato.") }
         else
-          format.turbo_stream
-          format.html { redirect_to appunti_url, notice: "Appunto modificato." }
+          format.html { redirect_to appunto_path(@appunto), notice: "Appunto modificato." }
         end
       else
         if hotwire_native_app?
           format.html { render :edit, status: :unprocessable_entity }
         else
-          format.turbo_stream { flash.now[:alert] = "Impossibile modificare l'appunto." }
           format.html { render :edit, status: :unprocessable_entity }
           format.json { render json: @appunto.errors, status: :unprocessable_entity }
         end
