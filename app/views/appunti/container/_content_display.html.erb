@@ -3,11 +3,11 @@
 <% if appunto.appuntabile.present? %>
   <h1 class="card__title overflow-line-clamp">
     <% if appunto.appuntabile.is_a?(Classe) %>
-      <%= link_to edit_appunto_path(appunto), class: "card__title-link" do %>
+      <%= link_to polymorphic_path(appunto.appuntabile), class: "card__title-link", data: { turbo_frame: "_top" } do %>
         <%= appunto.appuntabile.nome_breve %> <%= appunto.appuntabile.scuola.denominazione %>
       <% end %>
     <% else %>
-      <%= link_to edit_appunto_path(appunto), class: "card__title-link" do %>
+      <%= link_to polymorphic_path(appunto.appuntabile), class: "card__title-link", data: { turbo_frame: "_top" } do %>
         <%= appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s %>
       <% end %>
     <% end %>
@@ -18,9 +18,7 @@
   <% end %>
 <% else %>
   <h1 class="card__title overflow-line-clamp">
-    <%= link_to edit_appunto_path(appunto), class: "card__title-link txt-muted" do %>
-      <%= appunto.nome.presence || "Aggiungi destinatario..." %>
-    <% end %>
+    <span class="txt-muted"><%= appunto.nome.presence || "Nessun destinatario" %></span>
   </h1>
 <% end %>
 

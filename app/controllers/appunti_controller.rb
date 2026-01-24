@@ -173,7 +173,7 @@ class AppuntiController < ApplicationController
     @appunto.broadcast_remove_to [current_user, "appunti"]
 
     respond_to do |format|
-      # format.html { redirect_to appunti_url, notice: "Appunto eliminato." }
+      format.html { redirect_to appunti_url, notice: "Appunto eliminato.", status: :see_other }
       format.json { head :no_content }
       format.turbo_stream
     end
