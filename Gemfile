@@ -181,6 +181,9 @@ gem "ruby_llm-mcp"
 # Markdown processing
 gem 'redcarpet'
 
+# Rich text editor (Lexxy replaces Trix)
+gem 'lexxy'
+
 
 # fizzies 
 gem "platform_agent"

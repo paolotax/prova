@@ -14,7 +14,7 @@ export default class extends Controller {
     const input = this.hasInputTarget ? this.inputTarget : this.inputElement
 
     // Don't focus if we're already in an input
-    if (event.target.closest("input, textarea, trix-editor")) return
+    if (event.target.closest("input, textarea, lexxy-editor")) return
 
     if (input) {
       event.preventDefault()

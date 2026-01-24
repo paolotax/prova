@@ -3,7 +3,6 @@ import "@hotwired/turbo-rails"
 import "initializers"
 import "controllers"
 
-import "trix"
-import "@rails/actiontext"
+import "lexxy"
 import "mapkick/bundle"
 import "ahoy"

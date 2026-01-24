@@ -41,6 +41,7 @@
     margin-block-start: var(--block-space-half);
     min-block-size: calc(7lh + var(--block-space));
     outline: 0;
+    text-align: start;
 
     /* Allow color highlights to show through a bit */
     ::selection {

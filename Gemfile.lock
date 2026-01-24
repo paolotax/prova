@@ -317,6 +317,8 @@ GEM
       letter_opener (~> 1.9)
       railties (>= 6.1)
       rexml
+    lexxy (0.7.3.beta)
+      rails (>= 8.0.2)
     log_bench (0.1.8)
       curses (~> 1.5)
       lograge (~> 0.14)
@@ -692,6 +694,7 @@ DEPENDENCIES
   kamal
   letter_opener
   letter_opener_web
+  lexxy
   log_bench
   mapkick-rb
   maxminddb
