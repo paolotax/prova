@@ -2,12 +2,19 @@
 
 <% if appunto.appuntabile.present? %>
   <h1 class="card__title overflow-line-clamp">
-    <%= link_to appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s,
-        polymorphic_path(appunto.appuntabile),
-        class: "card__title-link" %>
+    <% if appunto.appuntabile.is_a?(Classe) %>
+      <%= link_to "#{appunto.appuntabile.nome_breve} #{appunto.appuntabile.scuola.denominazione}",
+          polymorphic_path(appunto.appuntabile),
+          class: "card__title-link" %>
+    <% else %>
+      <%= link_to appunto.appuntabile.try(:denominazione) || appunto.appuntabile.to_s,
+          polymorphic_path(appunto.appuntabile),
+          class: "card__title-link" %>
+    <% end %>
   </h1>
-  <% if appunto.appuntabile.respond_to?(:comune) && appunto.appuntabile.comune.present? %>
-    <span class="card__subtitle"><%= appunto.appuntabile.comune.upcase %></span>
+  <% scuola = appunto.appuntabile.is_a?(Classe) ? appunto.appuntabile.scuola : appunto.appuntabile %>
+  <% if scuola.respond_to?(:comune) && scuola.comune.present? %>
+    <span class="card__subtitle"><%= scuola.comune.upcase %></span>
   <% end %>
 <% else %>
   <h1 class="card__title overflow-line-clamp">
