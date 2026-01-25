@@ -5,7 +5,7 @@ class AppuntiController < ApplicationController
   FILTER_PARAMS = [:state, terms: [], statuses: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_appunto, only: %i[ show edit update destroy ]
+  before_action :set_appunto, only: %i[ show edit update destroy publish ]
 
   def index
     # @appunti = current_user.appunti.non_saggi.where.missing(:closure)
@@ -14,7 +14,7 @@ class AppuntiController < ApplicationController
     #             .with_rich_text_content
     #             .includes(:import_scuola, :import_adozione, :classe).order(created_at: :desc)
 
-    @appunti = @filter.appunti.non_saggi
+    @appunti = @filter.appunti.published.non_saggi
                       .with_attached_attachments
                       .with_attached_image
                       .with_rich_text_content
@@ -109,11 +109,6 @@ class AppuntiController < ApplicationController
     end
   end
 
-  def new
-    @scuola   = current_user.import_scuole.find(params[:import_scuola_id]) unless params[:import_scuola_id].nil?
-    @appunto  = current_user.appunti.build(import_scuola_id: params[:import_scuola_id])
-  end
-
   def edit
     respond_to do |format|
       format.html
@@ -122,38 +117,51 @@ class AppuntiController < ApplicationController
   end
 
   def create
-    @appunto = current_user.appunti.build(appunto_params)
-
     respond_to do |format|
-      if @appunto.save
-        @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
-
-        if hotwire_native_app?
-          format.html { refresh_or_redirect_to(appunti_path, notice: "Appunto inserito.") }
-        else
-          format.html { redirect_to @appunto, notice: "Appunto creato.", status: :see_other }
-        end
-      else
-        if hotwire_native_app?
-          format.html { render :new, status: :unprocessable_entity }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @appunto.errors, status: :unprocessable_entity }
-        end
+      format.html do
+        @appunto = Current.user.draft_new_appunto
+        redirect_to @appunto
       end
+    end
+  end
+
+  def publish
+    @appunto.publish
+    @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
+
+    if params[:create_another]
+      new_appunto = current_user.draft_new_appunto
+      redirect_to new_appunto, notice: "Appunto creato."
+    elsif hotwire_native_app?
+      refresh_or_redirect_to(appunti_path, notice: "Appunto creato.")
+    else
+      redirect_to appunti_path, notice: "Appunto creato."
     end
   end
 
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
-        @appunto.broadcast_replace_later_to [current_user, "appunti"]
+        # Se è un publish, pubblica e redirect
+        if params[:publish].present? || params[:publish_and_new].present?
+          @appunto.publish
+          @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
 
-        if hotwire_native_app?
-          format.html { redirect_to appunto_path(@appunto) }
+          if params[:publish_and_new].present?
+            new_appunto = current_user.draft_new_appunto
+            format.html { redirect_to new_appunto, notice: "Appunto creato." }
+          else
+            format.html { redirect_to appunti_path, notice: "Appunto creato." }
+          end
         else
-          format.turbo_stream
-          format.html { redirect_to appunto_path(@appunto), notice: "Appunto modificato." }
+          @appunto.broadcast_replace_later_to [current_user, "appunti"]
+
+          if hotwire_native_app?
+            format.html { redirect_to appunto_path(@appunto) }
+          else
+            format.turbo_stream
+            format.html { redirect_to appunto_path(@appunto), notice: "Appunto modificato." }
+          end
         end
       else
         if hotwire_native_app?

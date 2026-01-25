@@ -1,14 +1,14 @@
 <%# locals: (appunto:) -%>
 
 <%= form_with model: appunto, id: dom_id(appunto, :edit_form),
-      data: { controller: "form",
+      data: { turbo: appunto.published?, controller: "form",
               action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
 
-  <div class="card__board margin-block-end-half">
+  <div class="form-field">
     <%= form.text_field :nome,
-        class: "input input--small txt-uppercase",
-        placeholder: "TIPO APPUNTO",
-        style: "max-width: 20ch;" %>
+        class: "input input--large",
+        style: "margin-top: 1ch;",
+        placeholder: "Titolo o destinatario" %>
   </div>
 
   <h1 class="card__title" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
@@ -44,6 +44,6 @@
   </h1>
 
   <div class="card__description">
-    <%= form.rich_text_area :content, placeholder: "Scrivi contenuto...", style: "min-height: 100px;" %>
+    <%= form.rich_text_area :content, placeholder: "Scrivi contenuto...", style: "min-height: 100px; margin-top: 1ch;" %>
   </div>
 <% end %>

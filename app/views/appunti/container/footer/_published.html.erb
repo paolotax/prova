@@ -1,0 +1,14 @@
+<%# locals: (appunto:) -%>
+
+<%= link_to edit_appunto_path(appunto), class: "btn",
+    data: { turbo_method: :get, turbo_stream: true } do %>
+  <%= icon_tag "pencil" %>
+  Modifica
+<% end %>
+
+<% if appunto.entry.present? && !appunto.entry.closed? %>
+  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn btn--reversed" do %>
+    <%= icon_tag "check" %>
+    Completa
+  <% end %>
+<% end %>

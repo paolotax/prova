@@ -10,7 +10,9 @@
 #  completed_at       :datetime
 #  email              :string
 #  nome               :string
+#  numero             :integer
 #  stato              :string
+#  status             :string           default("drafted"), not null
 #  team               :string
 #  telefono           :string
 #  totale_cents       :integer          default(0)
@@ -27,15 +29,17 @@
 #
 # Indexes
 #
-#  index_appunti_on_account_id                           (account_id)
-#  index_appunti_on_account_id_and_created_at            (account_id,created_at)
-#  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
-#  index_appunti_on_classe_id                            (classe_id)
-#  index_appunti_on_id                                   (id) UNIQUE
-#  index_appunti_on_import_adozione_id                   (import_adozione_id)
-#  index_appunti_on_import_scuola_id                     (import_scuola_id)
-#  index_appunti_on_user_id                              (user_id)
-#  index_appunti_on_voice_note_id                        (voice_note_id)
+#  index_appunti_on_account_id                            (account_id)
+#  index_appunti_on_account_id_and_created_at             (account_id,created_at)
+#  index_appunti_on_account_id_and_numero_and_created_at  (account_id,numero,created_at)
+#  index_appunti_on_account_id_and_status                 (account_id,status)
+#  index_appunti_on_appuntabile_type_and_appuntabile_id   (appuntabile_type,appuntabile_id)
+#  index_appunti_on_classe_id                             (classe_id)
+#  index_appunti_on_id                                    (id) UNIQUE
+#  index_appunti_on_import_adozione_id                    (import_adozione_id)
+#  index_appunti_on_import_scuola_id                      (import_scuola_id)
+#  index_appunti_on_user_id                               (user_id)
+#  index_appunti_on_voice_note_id                         (voice_note_id)
 #
 # Foreign Keys
 #
@@ -181,6 +185,47 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_respond_to @appunto, :resume
     assert_respond_to @appunto, :postponed_at
     assert_respond_to @appunto, :postponed_by
+  end
+
+  # Statuses concern tests
+  test "includes Statuses concern" do
+    assert_respond_to @appunto, :drafted?
+    assert_respond_to @appunto, :published?
+    assert_respond_to @appunto, :publish
+  end
+
+  test "drafted scope returns only drafted appunti" do
+    drafted = appunti(:appunto_drafted)
+    assert drafted.drafted?
+
+    drafts = Appunto.drafted
+    assert drafts.include?(drafted)
+    assert_not drafts.include?(@appunto)
+  end
+
+  test "published scope returns only published appunti" do
+    assert @appunto.published?
+
+    published = Appunto.published
+    assert published.include?(@appunto)
+    assert_not published.include?(appunti(:appunto_drafted))
+  end
+
+  test "publish changes status from drafted to published" do
+    drafted = appunti(:appunto_drafted)
+    assert drafted.drafted?
+
+    freeze_time do
+      drafted.publish
+
+      assert drafted.published?
+      assert_equal Time.current, drafted.created_at
+    end
+  end
+
+  test "new appunti are drafted by default" do
+    appunto = Appunto.new(user: @user, nome: "Test")
+    assert appunto.drafted?
   end
 
   test "mark_golden creates goldness record" do

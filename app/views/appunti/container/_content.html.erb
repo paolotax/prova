@@ -1,7 +1,11 @@
 <%# locals: (appunto:) -%>
 
-<%= turbo_frame_tag appunto, :edit do %>
-  <%= render "appunti/container/content_display", appunto: appunto %>
+<% if appunto.published? %>
+  <%= turbo_frame_tag appunto, :edit do %>
+    <%= render "appunti/container/content_display", appunto: appunto %>
+  <% end %>
+<% else %>
+  <%= render "appunti/edit_form", appunto: appunto %>
 <% end %>
 
 <% if appunto.attachments.attached? %>

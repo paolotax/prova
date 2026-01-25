@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_25_113809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -179,7 +179,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_150000) do
     t.bigint "import_adozione_id"
     t.bigint "import_scuola_id"
     t.string "nome"
+    t.integer "numero"
     t.string "stato"
+    t.string "status", default: "drafted", null: false
     t.string "team"
     t.string "telefono"
     t.integer "totale_cents", default: 0
@@ -188,6 +190,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_150000) do
     t.bigint "user_id", null: false
     t.bigint "voice_note_id"
     t.index ["account_id", "created_at"], name: "index_appunti_on_account_id_and_created_at"
+    t.index ["account_id", "numero", "created_at"], name: "index_appunti_on_account_id_and_numero_and_created_at"
+    t.index ["account_id", "status"], name: "index_appunti_on_account_id_and_status"
     t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["appuntabile_type", "appuntabile_id"], name: "index_appunti_on_appuntabile_type_and_appuntabile_id"
     t.index ["classe_id"], name: "index_appunti_on_classe_id"

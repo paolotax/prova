@@ -172,6 +172,13 @@ class User < ApplicationRecord
     self == other_user || admin_of?(Current.account)
   end
 
+  # Draft pattern for Appunti (Fizzy pattern)
+  def draft_new_appunto
+    appunti.find_or_initialize_by(status: "drafted").tap do |appunto|
+      appunto.update!(created_at: Time.current, updated_at: Time.current)
+    end
+  end
+
   # Passwordless authentication helpers
   def send_magic_link!(purpose: :sign_in, ip_address: nil)
     # Invalidate previous magic links for same purpose

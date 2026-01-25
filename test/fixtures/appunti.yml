@@ -10,7 +10,9 @@
 #  completed_at       :datetime
 #  email              :string
 #  nome               :string
+#  numero             :integer
 #  stato              :string
+#  status             :string           default("drafted"), not null
 #  team               :string
 #  telefono           :string
 #  totale_cents       :integer          default(0)
@@ -27,15 +29,17 @@
 #
 # Indexes
 #
-#  index_appunti_on_account_id                           (account_id)
-#  index_appunti_on_account_id_and_created_at            (account_id,created_at)
-#  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
-#  index_appunti_on_classe_id                            (classe_id)
-#  index_appunti_on_id                                   (id) UNIQUE
-#  index_appunti_on_import_adozione_id                   (import_adozione_id)
-#  index_appunti_on_import_scuola_id                     (import_scuola_id)
-#  index_appunti_on_user_id                              (user_id)
-#  index_appunti_on_voice_note_id                        (voice_note_id)
+#  index_appunti_on_account_id                            (account_id)
+#  index_appunti_on_account_id_and_created_at             (account_id,created_at)
+#  index_appunti_on_account_id_and_numero_and_created_at  (account_id,numero,created_at)
+#  index_appunti_on_account_id_and_status                 (account_id,status)
+#  index_appunti_on_appuntabile_type_and_appuntabile_id   (appuntabile_type,appuntabile_id)
+#  index_appunti_on_classe_id                             (classe_id)
+#  index_appunti_on_id                                    (id) UNIQUE
+#  index_appunti_on_import_adozione_id                    (import_adozione_id)
+#  index_appunti_on_import_scuola_id                      (import_scuola_id)
+#  index_appunti_on_user_id                               (user_id)
+#  index_appunti_on_voice_note_id                         (voice_note_id)
 #
 # Foreign Keys
 #
@@ -51,6 +55,7 @@ appunto_fizzy:
   nome: "Appunto Test Fizzy"
   body: "Contenuto appunto Fizzy"
   stato: "da_fare"
+  status: "published"
   active: true
 
 appunto_acme:
@@ -59,4 +64,13 @@ appunto_acme:
   nome: "Appunto Test Acme"
   body: "Contenuto appunto Acme"
   stato: "da_fare"
+  status: "published"
+  active: true
+
+appunto_drafted:
+  account: fizzy
+  user: one
+  nome: "Appunto Bozza"
+  body: "Contenuto bozza"
+  status: "drafted"
   active: true

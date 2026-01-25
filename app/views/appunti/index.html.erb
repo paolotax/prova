@@ -25,7 +25,7 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_appunto_path, class: "btn" do %>
+    <%= button_to appunti_path, method: :post, class: "btn", form: { data: { turbo: false } } do %>
       <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuovo appunto</span>
     <% end %>
@@ -35,7 +35,8 @@
 <%= turbo_stream_from current_user, "appunti" %>
 
 <% if hotwire_native_app? %>
-  <%= link_to "Nuovo Appunto", new_appunto_path,
+  <%= button_to "Nuovo Appunto", appunti_path, method: :post,
+      form: { data: { turbo: false } },
       data: { controller: "bridge--button", bridge_title: "Nuovo" },
       class: "hidden" %>
 
@@ -88,7 +89,7 @@
         <% end %>
       </p>
       <% unless @user_filtering.filters_active? %>
-        <%= link_to new_appunto_path, class: "btn btn--primary" do %>
+        <%= button_to appunti_path, method: :post, class: "btn btn--primary", form: { data: { turbo: false } } do %>
           <%= icon_tag "plus", size: "small" %>
           Aggiungi Appunto
         <% end %>

@@ -292,6 +292,7 @@ Rails.application.routes.draw do
         get 'saggi'
       end
       member do
+        post 'publish'
         delete 'remove_attachment'
         delete 'remove_image'
       end

@@ -9,7 +9,9 @@
 #  completed_at       :datetime
 #  email              :string
 #  nome               :string
+#  numero             :integer
 #  stato              :string
+#  status             :string           default("drafted"), not null
 #  team               :string
 #  telefono           :string
 #  totale_cents       :integer          default(0)
@@ -26,15 +28,17 @@
 #
 # Indexes
 #
-#  index_appunti_on_account_id                           (account_id)
-#  index_appunti_on_account_id_and_created_at            (account_id,created_at)
-#  index_appunti_on_appuntabile_type_and_appuntabile_id  (appuntabile_type,appuntabile_id)
-#  index_appunti_on_classe_id                            (classe_id)
-#  index_appunti_on_id                                   (id) UNIQUE
-#  index_appunti_on_import_adozione_id                   (import_adozione_id)
-#  index_appunti_on_import_scuola_id                     (import_scuola_id)
-#  index_appunti_on_user_id                              (user_id)
-#  index_appunti_on_voice_note_id                        (voice_note_id)
+#  index_appunti_on_account_id                            (account_id)
+#  index_appunti_on_account_id_and_created_at             (account_id,created_at)
+#  index_appunti_on_account_id_and_numero_and_created_at  (account_id,numero,created_at)
+#  index_appunti_on_account_id_and_status                 (account_id,status)
+#  index_appunti_on_appuntabile_type_and_appuntabile_id   (appuntabile_type,appuntabile_id)
+#  index_appunti_on_classe_id                             (classe_id)
+#  index_appunti_on_id                                    (id) UNIQUE
+#  index_appunti_on_import_adozione_id                    (import_adozione_id)
+#  index_appunti_on_import_scuola_id                      (import_scuola_id)
+#  index_appunti_on_user_id                               (user_id)
+#  index_appunti_on_voice_note_id                         (voice_note_id)
 #
 # Foreign Keys
 #
@@ -48,6 +52,9 @@
 class Appunto < ApplicationRecord
   # Entryable concern for unified triage system
   include Entryable
+
+  # Draft/published status (Fizzy pattern)
+  include Appunto::Statuses
 
   # State Record concerns (legacy - kept for backward compatibility during migration)
   include Golden         # has_one :goldness
@@ -97,6 +104,7 @@ class Appunto < ApplicationRecord
 
   validates :account_id, presence: true
   before_validation :set_account_from_current, on: :create
+  before_create :assegna_numero
 
   has_one_attached :image
   has_many_attached :attachments
@@ -323,6 +331,11 @@ class Appunto < ApplicationRecord
     totale_cents / 100.0
   end
 
+  def numero_formattato
+    return nil unless numero.present?
+    "#{numero}-#{created_at.strftime('%y')}"
+  end
+
   # Override legacy Golden/Closeable/Postponable methods to use Entry-based system
   # These must come after the includes to take precedence
   def golden?
@@ -377,6 +390,20 @@ class Appunto < ApplicationRecord
 
   def set_account_from_current
     self.account ||= Current.account
+  end
+
+  def assegna_numero
+    return if numero.present?
+
+    anno_corrente = Time.current.year
+    inizio_anno = Time.zone.local(anno_corrente, 1, 1).beginning_of_day
+    fine_anno = Time.zone.local(anno_corrente, 12, 31).end_of_day
+
+    ultimo_numero = account.appunti
+      .where(created_at: inizio_anno..fine_anno)
+      .maximum(:numero) || 0
+
+    self.numero = ultimo_numero + 1
   end
 
   # Override from Entryable - auto-create entry for new appunti
