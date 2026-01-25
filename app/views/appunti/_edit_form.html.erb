@@ -4,6 +4,13 @@
       data: { controller: "form",
               action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
 
+  <div class="card__board margin-block-end-half">
+    <%= form.text_field :nome,
+        class: "input input--small txt-uppercase",
+        placeholder: "TIPO APPUNTO",
+        style: "max-width: 20ch;" %>
+  </div>
+
   <h1 class="card__title" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
     <% if appunto.appuntabile.present? %>
       <%# Display mode - stesso formato della show %>

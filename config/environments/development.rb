@@ -86,4 +86,12 @@ Rails.application.configure do
   end
   config.logger ||= ActiveSupport::Logger.new(config.default_log_file)
   config.logger.formatter = LogBench::JsonFormatter.new
+
+  # Allowed hosts for development
+  config.hosts = [
+    "prova.localhost",
+    "localhost",
+    "127.0.0.1",
+    /.*\.nip\.io/  # for mobile/tablet testing
+  ]
 end

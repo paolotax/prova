@@ -16,7 +16,10 @@
         <article class="card">
           <header class="card__header">
             <div class="card__board">
-              <span class="card__id">NUOVO</span>
+              <%= form.text_field :nome,
+                  class: "input input--small txt-uppercase",
+                  placeholder: "TIPO APPUNTO",
+                  style: "max-width: 20ch;" %>
             </div>
           </header>
 
