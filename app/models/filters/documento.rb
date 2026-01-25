@@ -31,7 +31,7 @@ module Filters
       target_account = account || Current.account
       result = target_account.documenti
         .solo_padri
-        .joins("left outer join import_scuole on documenti.clientable_type = 'ImportScuola' and documenti.clientable_id = import_scuole.id")
+        .joins("left outer join scuole on documenti.clientable_type = 'Scuola' and documenti.clientable_id = scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
 
@@ -39,7 +39,7 @@ module Filters
       if terms.present?
         search_term = "%#{terms.first}%"
         result = result.where(
-          "import_scuole.nome_scuola ILIKE :term OR clienti.denominazione ILIKE :term OR documenti.referente ILIKE :term",
+          "scuole.denominazione ILIKE :term OR clienti.denominazione ILIKE :term OR documenti.referente ILIKE :term",
           term: search_term
         )
       end

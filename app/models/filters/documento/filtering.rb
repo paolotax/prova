@@ -39,7 +39,7 @@ module Filters
     def clientable_types_disponibili
       {
         "Cliente" => "Cliente",
-        "ImportScuola" => "Scuola"
+        "Scuola" => "Scuola"
       }
     end
 
