@@ -1,0 +1,14 @@
+<%# locals: (appunto:) -%>
+
+<% if appunto.golden? %>
+  <%= button_to appunto_goldness_path(appunto), method: :delete, class: "btn btn--reversed", data: { controller: "tooltip hotkey", action: "keydown.shift+g@document->hotkey#click" } do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Rimuovi da evidenza (maiusc+g)</span>
+  <% end %>
+<% else %>
+  <%= button_to appunto_goldness_path(appunto), method: :post, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.shift+g@document->hotkey#click" } do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Metti in evidenza (maiusc+g)</span>
+  <% end %>
+<% end %>
+

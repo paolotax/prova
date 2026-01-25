@@ -2,10 +2,10 @@
 
 <label class="card__board">
   <span class="card__id">
-    <span class="for-screen-reader">Tipo</span>
-    <%= appunto.nome&.upcase || "APPUNTO" %>
+    <span class="for-screen-reader">Numero</span>
+    <%= appunto.numero_formattato || "NUOVO" %>
   </span>
   <span class="card__board-name">
-    <span class="overflow-ellipsis"><%= appunto.classe&.classe_e_sezione || "" %></span>
+    <span class="overflow-ellipsis">APPUNTO</span>
   </span>
 </label>

@@ -1,5 +1,9 @@
 <%# locals: (appunto:) -%>
 
+<% if appunto.nome.present? %>
+  <span class="txt-large" style="margin-top: 1ch;"><%= appunto.nome %></span>
+<% end %>
+
 <% if appunto.appuntabile.present? %>
   <h1 class="card__title overflow-line-clamp">
     <% if appunto.appuntabile.is_a?(Classe) %>
