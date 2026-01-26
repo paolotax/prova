@@ -34,6 +34,7 @@
 class Tappa < ApplicationRecord
   include AccountScoped
   include Entryable
+  include Closeable
 
   belongs_to :user
   
