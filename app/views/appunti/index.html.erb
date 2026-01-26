@@ -1,22 +1,12 @@
 <% @page_title = "Appunti" %>
 <% @body_class = "contained-scrolling" %>
 
-<% content_for :head do %>
-  <%= combobox_style_tag "data-turbo-track": "reload" %>
-<% end %>
-
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= link_to appunti_path(format: :xlsx, params: request.query_parameters), class: "btn",
         data: { controller: "link-modifier", link_modifier_target: "link" } do %>
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
-    <% end %>
-
-    <%= link_to filtra_appunti_path(params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
-      <%= icon_tag "filter" %>
-      <span class="for-screen-reader">Filtra</span>
     <% end %>
   </div>
 

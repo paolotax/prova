@@ -7,7 +7,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  account_id     :uuid             not null
-#  closeable_id   :uuid
+#  closeable_id   :string
 #  entry_id       :uuid
 #  user_id        :bigint
 #

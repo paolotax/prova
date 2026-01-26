@@ -13,9 +13,15 @@
     --table-border: 1px solid color-mix(in srgb, var(--card-color, var(--color-ink)) 20%, transparent);
     --table-header-bg: color-mix(in srgb, var(--card-color, var(--color-ink)) 8%, transparent);
 
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    inline-size: 100%;
+
+    @media (min-width: 640px) {
+      margin-block-start: 2ch;
+    }
+  }
+
+  .documento-table__table {
+    border-collapse: collapse;
     inline-size: 100%;
   }
 
@@ -24,13 +30,6 @@
 
   .documento-table__header {
     background-color: var(--table-header-bg);
-    border-block-end: var(--table-border);
-    display: grid;
-    font-size: var(--text-x-small);
-    font-weight: 700;
-    grid-template-columns: 1fr auto auto auto auto auto;
-    padding-block: var(--table-spacer-block);
-    text-transform: uppercase;
 
     @media (max-width: 639px) {
       display: none;
@@ -38,16 +37,16 @@
   }
 
   .documento-table__th {
-    padding-inline: var(--table-spacer-inline);
+    border-block-end: var(--table-border);
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    padding: var(--table-spacer-block) var(--table-spacer-inline);
+    text-align: start;
+    text-transform: uppercase;
+    white-space: nowrap;
 
     &--right {
       text-align: end;
-    }
-
-    &--hidden-mobile {
-      @media (max-width: 639px) {
-        display: none;
-      }
     }
   }
 
@@ -55,49 +54,29 @@
   /* ------------------------------------------------------------------------ */
 
   .documento-table__row {
-    border-block-end: var(--table-border);
-    display: grid;
     font-size: var(--text-small);
-    grid-template-columns: 1fr auto auto auto auto auto;
-    padding-block: var(--table-spacer-block);
-
-    &:last-child {
-      border-block-end: none;
-    }
 
     &:hover {
       background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 5%, transparent);
     }
-
-    @media (max-width: 639px) {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "title"
-        "values";
-      gap: 0.5ch;
-    }
   }
 
   .documento-table__cell {
-    align-items: center;
-    display: flex;
+    border-block-end: var(--table-border);
     line-height: 1.3;
-    padding-inline: var(--table-spacer-inline);
+    padding: var(--table-spacer-block) var(--table-spacer-inline);
+    vertical-align: middle;
+    white-space: nowrap;
   }
 
   .documento-table__cell--title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25ch;
-    min-width: 0; /* Allow text truncation */
-
-    @media (max-width: 639px) {
-      grid-area: title;
-    }
+    max-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .documento-table__cell--right {
-    justify-content: flex-end;
     text-align: end;
     font-variant-numeric: tabular-nums;
   }
@@ -169,23 +148,29 @@
 
   .documento-table__section {
     background-color: var(--table-header-bg);
-    border-block-end: var(--table-border);
-    display: flex;
-    align-items: center;
-    gap: 1ch;
-    font-size: var(--text-x-small);
-    font-weight: 600;
-    padding: var(--table-spacer-block) var(--table-spacer-inline);
-    text-transform: uppercase;
+
+    td {
+      border-block-end: var(--table-border);
+      font-size: var(--text-x-small);
+      font-weight: 600;
+      padding: var(--table-spacer-block) var(--table-spacer-inline);
+      text-transform: uppercase;
+    }
 
     &--derivato {
       background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 12%, transparent);
-      padding-inline-start: 2ch;
+
+      td {
+        padding-inline-start: 2ch;
+      }
     }
 
     &--nipote {
       background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 6%, transparent);
-      padding-inline-start: 4ch;
+
+      td {
+        padding-inline-start: 4ch;
+      }
     }
   }
 

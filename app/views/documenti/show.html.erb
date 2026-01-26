@@ -6,11 +6,6 @@
     <%= back_link_to info[:label], info[:path], "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @documento.causale || "Documento Bozza" %></span>
-    <span class="txt-small txt-subtle">nr <%= @documento.numero_documento || 'BOZZA' %> del <%= @documento.data_documento&.strftime('%d-%m-%y') %></span>
-  </h1>
-
   <div class="header__actions header__actions--end">
   </div>
 <% end %>

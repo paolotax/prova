@@ -12,36 +12,58 @@
   <% end %>
 
   <div class="documento-edit-form">
-    <%# Header: Causale, Numero, Data %>
-    <div class="documento-edit-form__header" data-controller="tax-combobox-causale">
-      <div class="form-field form-field--inline cb-tax">
-        <%= form.label :causale_id, "Tipo", class: "form-label" %>
-        <%= form.combobox :causale_id, Causale.all,
-            placeholder: "seleziona...",
-            data: { action: "hw-combobox:selection->tax-combobox-causale#change",
-                    tax_combobox_causale_target: "combobox" } %>
-      </div>
-
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :numero_documento, "Nr.", class: "form-label" %>
-        <%= form.number_field :numero_documento, class: "input input--small",
-            data: { tax_combobox_causale_target: "prezzo" } %>
-      </div>
-
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :data_documento, "Data", class: "form-label" %>
-        <%= form.date_field :data_documento, class: "input input--small" %>
-      </div>
-    </div>
-
-    <%# Cliente %>
+    <%# Cliente/Scuola/Classe/Persona %>
     <div class="documento-edit-form__cliente">
-      <%= render TaxSelectClientableComponent.new(
-          form: form,
-          type: documento.clientable_type,
-          id: documento.clientable_id
-      ) %>
+      <div class="form-field cb-tax" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
+        <% if documento.clientable.present? && !documento.clientable.is_a?(Domain::NessunCliente) %>
+          <%# Display mode %>
+          <div class="flex gap-half align-center hide-when-editing">
+            <span class="txt-subtle txt-small">[<%= documento.clientable.class.model_name.human %>]</span>
+            <span><%= documento.clientable.to_combobox_display %></span>
+            <button type="button" class="btn btn--circle btn--small borderless txt-small" data-action="toggle-class#toggle">
+              <%= icon_tag "pencil", class: "icon--small" %>
+            </button>
+          </div>
+          <%# Edit mode %>
+          <div class="show-when-editing">
+            <%= combobox_tag "documento[clientable_value]",
+                destinatari_index_path,
+                id: "documento_clientable_value_edit",
+                placeholder: "cerca scuola, cliente, classe...",
+                mobile_at: "0px" %>
+          </div>
+        <% else %>
+          <%= form.combobox :clientable_value, destinatari_index_path,
+              placeholder: "cerca scuola, cliente, classe...",
+              mobile_at: "0px" %>
+        <% end %>
+      </div>
     </div>
+
+    <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>
+
+    <%# Causale, Numero, Data - in una riga %>
+    <div class="flex gap-1 align-end">
+      <div class="form-field" style="flex: 1 1 50%;">
+        <%= form.label :causale_id, "Tipo", class: "form-label" %>
+        <%= form.select :causale_id,
+            options_from_collection_for_select(Causale.all, :id, :causale, documento.causale_id),
+            { include_blank: "seleziona..." },
+            class: "input input--select" %>
+      </div>
+
+      <div class="form-field" style="flex: 1 1 25%;">
+        <%= form.label :numero_documento, "Nr.", class: "form-label" %>
+        <%= form.number_field :numero_documento, class: "input" %>
+      </div>
+
+      <div class="form-field" style="flex: 1 1 25%;">
+        <%= form.label :data_documento, "Data", class: "form-label" %>
+        <%= form.date_field :data_documento, class: "input" %>
+      </div>
+    </div>
+
+    <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>
 
     <%# Referente e Note %>
     <div class="documento-edit-form__details">
@@ -53,33 +75,6 @@
       <div class="form-field">
         <%= form.label :note, "Note", class: "form-label" %>
         <%= form.text_area :note, class: "input", rows: 2, placeholder: "Note..." %>
-      </div>
-    </div>
-
-    <%# Status e Pagamento %>
-    <div class="documento-edit-form__status">
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :status, "Stato", class: "form-label" %>
-        <%= form.select :status,
-            options_for_select(Documento.statuses.map { |k, v| [k.titleize, k] }, documento.status),
-            {}, class: "input input--small" %>
-      </div>
-
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :consegnato_il, "Consegnato", class: "form-label" %>
-        <%= form.date_field :consegnato_il, class: "input input--small" %>
-      </div>
-
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :tipo_pagamento, "Pagamento", class: "form-label" %>
-        <%= form.select :tipo_pagamento,
-            options_for_select(Documento.tipo_pagamenti.map { |k, v| [k.titleize, k] }, documento.tipo_pagamento),
-            { include_blank: true }, class: "input input--small" %>
-      </div>
-
-      <div class="form-field form-field--inline form-field--small">
-        <%= form.label :pagato_il, "Pagato", class: "form-label" %>
-        <%= form.date_field :pagato_il, class: "input input--small" %>
       </div>
     </div>
   </div>

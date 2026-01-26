@@ -1,19 +1,8 @@
 <%# locals: (documento:) -%>
 
-<%= link_to edit_documento_path(documento), class: "btn",
-    data: { turbo_method: :get, turbo_stream: true, controller: "tooltip", tooltip_content_value: "Modifica" } do %>
-  <%= icon_tag "pencil" %>
-  <span class="for-screen-reader">Modifica</span>
-<% end %>
-
 <%= link_to documento_path(documento, format: :pdf), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "PDF" } do %>
-  <%= icon_tag "printer" %>
+  <%= icon_tag "document" %>
   <span class="for-screen-reader">Stampa</span>
-<% end %>
-
-<%= link_to documento_path(documento, format: :xlsx), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "Excel" } do %>
-  <%= icon_tag "table-cells" %>
-  <span class="for-screen-reader">Export Excel</span>
 <% end %>
 
 <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
