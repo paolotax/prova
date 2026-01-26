@@ -1,0 +1,38 @@
+<%# locals: (documento:) -%>
+
+<div class="card__meta" id="<%= dom_id(documento, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <span class="txt-x-small txt-uppercase">DATA</span>
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <strong><%= documento.data_documento.strftime("%d/%m/%y") %></strong>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author overflow-ellipsis">
+    <% if documento.consegnato_il.present? %>
+      <%= icon_tag "truck" %>
+      <%= documento.consegnato_il.strftime("%d/%m/%y") %>
+    <% else %>
+      DA CONSEGNARE
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    <% if documento.pagato_il.present? %>
+      <%= icon_tag "cash" %>
+      <%= documento.pagato_il.strftime("%d/%m/%y") %>
+    <% else %>
+      DA PAGARE
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    COPIE <strong><%= documento.totale_copie %></strong>
+    &middot;
+    <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+  </span>
+
+  <div class="card__meta-avatars card__meta-avatars--assignees">
+  </div>
+</div>

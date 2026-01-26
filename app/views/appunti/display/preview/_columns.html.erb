@@ -1,0 +1,5 @@
+  <div class="card__stages">
+    <% Current.account.columns.each do |column| %>
+      <%= tag.span column.name, class: ["card__column-name btn overflow-ellipsis", { "card__column-name--current": column == appunto.column }] %>
+    <% end %>
+  </div>

@@ -1,0 +1,13 @@
+<%# locals: (id:, name:) -%>
+<%# Base board partial with yield for additional content (dialogs, pickers, etc.) %>
+
+<div class="card__board">
+  <span class="card__id">
+    <span class="for-screen-reader">ID</span>
+    <%= id %>
+  </span>
+  <span class="card__board-name">
+    <span class="overflow-ellipsis"><%= name %></span>
+  </span>
+  <%= yield if block_given? %>
+</div>

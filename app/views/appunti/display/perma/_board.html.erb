@@ -1,11 +1,5 @@
 <%# locals: (appunto:) -%>
 
-<label class="card__board">
-  <span class="card__id">
-    <span class="for-screen-reader">Numero</span>
-    <%= appunto.numero_formattato || "NUOVO" %>
-  </span>
-  <span class="card__board-name">
-    <span class="overflow-ellipsis">APPUNTO</span>
-  </span>
-</label>
+<%= render "shared/cards/display/perma/board",
+    id: appunto.numero_formattato || "NUOVO",
+    name: "APPUNTO" %>

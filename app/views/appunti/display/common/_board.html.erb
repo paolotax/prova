@@ -1,0 +1,8 @@
+<%# locals: (appunto:) -%>
+<%# Appunti-specific common board - delegates to shared %>
+
+<%= render "shared/cards/display/common/board",
+    id: appunto.numero_formattato,
+    name: "APPUNTO" do %>
+  <%= yield if block_given? %>
+<% end %>

@@ -1,0 +1,5 @@
+<%# locals: (documento:) -%>
+
+<%= render "shared/cards/display/perma/board",
+    id: documento.numero_documento || "BOZZA",
+    name: documento.causale&.to_s&.upcase || "DOCUMENTO" %>

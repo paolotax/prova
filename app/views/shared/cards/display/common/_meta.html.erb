@@ -1,0 +1,6 @@
+<%# locals: (record:, dom_id_prefix: nil) -%>
+<%# Base meta partial - entity-specific partials should override this %>
+
+<div class="card__meta" id="<%= dom_id_prefix ? dom_id(record, dom_id_prefix) : dom_id(record, :meta) %>">
+  <%= yield if block_given? %>
+</div>

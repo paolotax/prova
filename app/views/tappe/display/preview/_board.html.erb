@@ -1,0 +1,5 @@
+<%# locals: (tappa:) -%>
+
+<%= render "shared/cards/display/preview/board",
+    id: "TAPPA",
+    name: tappa.data_tappa.present? ? l(tappa.data_tappa, format: "%d/%m") : "DA PROGRAMMARE" %>

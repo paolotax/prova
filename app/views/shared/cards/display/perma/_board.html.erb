@@ -1,0 +1,13 @@
+<%# locals: (id:, name:) -%>
+<%# Perma board - show page version, can include dialogs/pickers %>
+
+<label class="card__board">
+  <span class="card__id">
+    <span class="for-screen-reader">ID</span>
+    <%= id %>
+  </span>
+  <span class="card__board-name">
+    <span class="overflow-ellipsis"><%= name %></span>
+  </span>
+  <%= yield if block_given? %>
+</label>
