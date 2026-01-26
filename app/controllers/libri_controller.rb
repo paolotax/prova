@@ -22,13 +22,19 @@ class LibriController < ApplicationController
   end
 
   def index
-    @total_count = @filter.libri.count
-    set_page_and_extract_portion_from @filter.libri
-      
+    # Combobox search con parametro q
+    if params[:q].present?
+      libri = Current.account.libri.search_all_word(params[:q])
+      set_page_and_extract_portion_from libri
+    else
+      @total_count = @filter.libri.count
+      set_page_and_extract_portion_from @filter.libri
+    end
+
     respond_to do |format|
       format.turbo_stream
       format.html
-      format.xlsx 
+      format.xlsx
       format.json
     end
   end

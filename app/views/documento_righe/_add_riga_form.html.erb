@@ -1,0 +1,55 @@
+<%# locals: (documento:, riga:) -%>
+
+<div id="add_riga_form" class="panel pad-half margin-block-start" data-controller="tax-combobox-libro">
+  <%= form_with url: documento_documento_righe_path(documento), scope: :riga do |f| %>
+    <div class="flex gap align-end flex-wrap">
+      <div class="cb-tax" style="flex: 1 1 200px;">
+        <%= f.combobox :libro_id, libri_path,
+            placeholder: "Cerca libro da aggiungere...",
+            data: {
+              action: "hw-combobox:selection->tax-combobox-libro#change",
+              tax_combobox_libro_target: "combobox"
+            } %>
+      </div>
+
+      <div class="flex gap-half align-end">
+        <div class="flex flex-column">
+          <label class="txt-x-small txt-muted">Copie</label>
+          <%= f.number_field :quantita,
+              value: 1,
+              min: 1,
+              data: { tax_combobox_libro_target: "quantita" },
+              class: "input input--small",
+              style: "width: 5ch; text-align: right;" %>
+        </div>
+
+        <div class="flex flex-column">
+          <label class="txt-x-small txt-muted">Prezzo</label>
+          <%= f.number_field :prezzo,
+              step: 0.01,
+              data: { tax_combobox_libro_target: "prezzo" },
+              class: "input input--small",
+              style: "width: 7ch; text-align: right;" %>
+        </div>
+
+        <div class="flex flex-column">
+          <label class="txt-x-small txt-muted">Sconto%</label>
+          <%= f.number_field :sconto,
+              value: 0,
+              step: 0.01,
+              data: { tax_combobox_libro_target: "sconto" },
+              class: "input input--small",
+              style: "width: 5ch; text-align: right;" %>
+        </div>
+
+        <%= f.submit "Aggiungi", class: "btn btn--small btn--positive" %>
+      </div>
+    </div>
+
+    <% if riga.errors.any? %>
+      <div class="txt-small txt-negative margin-block-start-half">
+        <%= riga.errors.full_messages.join(", ") %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

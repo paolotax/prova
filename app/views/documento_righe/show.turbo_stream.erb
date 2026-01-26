@@ -1,0 +1,4 @@
+<%# Torna alla visualizzazione normale della riga %>
+<%= turbo_stream.replace dom_id(@documento_riga) do %>
+  <%= render "documenti/container/riga_row", riga: @riga, documento: @documento, editing: true %>
+<% end %>

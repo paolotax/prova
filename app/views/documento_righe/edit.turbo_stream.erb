@@ -1,0 +1,4 @@
+<%# Sostituisce la riga con il form di modifica %>
+<%= turbo_stream.replace dom_id(@documento_riga) do %>
+  <%= render "documento_righe/edit_riga_form", documento_riga: @documento_riga, documento: @documento, riga: @riga %>
+<% end %>

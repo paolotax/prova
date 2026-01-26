@@ -1,0 +1,14 @@
+<%# Append new riga to the table %>
+<%= turbo_stream.append "righe_list" do %>
+  <%= render "documenti/container/riga_row", riga: @documento_riga.riga, documento: @documento, editing: true %>
+<% end %>
+
+<%# Reset the add form %>
+<%= turbo_stream.replace "add_riga_form" do %>
+  <%= render "documento_righe/add_riga_form", documento: @documento, riga: Riga.new %>
+<% end %>
+
+<%# Update totals in the meta section %>
+<%= turbo_stream.replace dom_id(@documento, :meta) do %>
+  <%= render "documenti/display/perma/meta", documento: @documento %>
+<% end %>

@@ -1,4 +1,4 @@
-<%# locals: (documento:) -%>
+<%# locals: (documento:, editing: false) -%>
 
 <div class="documento-table">
   <% if documento.documento_righe.size > 15 %>
@@ -18,9 +18,15 @@
         <th class="documento-table__th documento-table__th--right">Qt</th>
         <th class="documento-table__th documento-table__th--right">Sc%</th>
         <th class="documento-table__th documento-table__th--right">Importo</th>
+        <% if editing %>
+          <th class="documento-table__th documento-table__th--right"></th>
+        <% end %>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="righe_list"
+           data-clientable-id="<%= documento.clientable_id %>"
+           data-clientable-type="<%= documento.clientable_type %>"
+           data-documento-id="<%= documento.id %>">
       <%
         # Helper per raccogliere tutte le righe dei documenti derivati
         def collect_all_descendant_righe_recursive(doc, collected = {})
@@ -37,7 +43,7 @@
 
       <%# Righe esclusive del documento %>
       <% righe_solo_documento.each do |riga| %>
-        <%= render "documenti/container/riga_row", riga: riga %>
+        <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
       <% end %>
 
       <%# Righe raggruppate per documento derivato %>
@@ -78,7 +84,7 @@
               </tr>
 
               <% righe_per_nipote.each do |riga| %>
-                <%= render "documenti/container/riga_row", riga: riga %>
+                <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
               <% end %>
             <% end %>
           <% end %>
@@ -97,19 +103,23 @@
             </tr>
 
             <% righe_per_derivato.each do |riga| %>
-              <%= render "documenti/container/riga_row", riga: riga %>
+              <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
             <% end %>
           <% end %>
         <% end %>
       <% end %>
 
-      <% if documento.righe.empty? %>
+      <% if documento.righe.empty? && !editing %>
         <tr>
           <td colspan="6" class="documento-table__empty">Nessuna riga</td>
         </tr>
       <% end %>
     </tbody>
   </table>
+
+  <% if editing %>
+    <%= render "documento_righe/add_riga_form", documento: documento, riga: Riga.new %>
+  <% end %>
 
   <% if documento.documento_righe.size > 20 %>
     <div id="bottom" class="documento-table__scroll-nav">

@@ -1,9 +1,7 @@
-<%= tag.div class: "flex flex-col mmmax-w-[300px]" do %>
-    <%= tag.p libro.titolo, class: "text-wrap text-sm" %>
-
-    <%= tag.div class: "flex flex-row justify-between items-center" do %>
-        <%= tag.div libro.codice_isbn, class: "text-xs font-semibold text-gray-600" %>
-        <%= tag.div number_to_currency(libro.prezzo), class: "text-xs font-semibold text-red-500" %>
-        
-    <% end %>
+<%= tag.div class: "flex flex-column gap-0" do %>
+  <%= tag.div libro.titolo, class: "txt-small", style: "line-height: 1.2;" %>
+  <%= tag.div class: "flex justify-space-between gap txt-xx-small txt-muted", style: "line-height: 1;" do %>
+    <%= tag.span libro.codice_isbn %>
+    <%= tag.span number_to_currency(libro.prezzo, locale: :it) %>
+  <% end %>
 <% end %>

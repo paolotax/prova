@@ -1,0 +1,7 @@
+<%# Remove the row from the table %>
+<%= turbo_stream.remove dom_id(@documento_riga) %>
+
+<%# Update totals in the meta section %>
+<%= turbo_stream.replace dom_id(@documento, :meta) do %>
+  <%= render "documenti/display/perma/meta", documento: @documento %>
+<% end %>

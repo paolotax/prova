@@ -1,6 +1,10 @@
 <%= turbo_stream.replace [@documento, :edit] do %>
   <%= turbo_frame_tag @documento, :edit do %>
     <%= render "documenti/edit_form", documento: @documento %>
+
+    <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
+
+    <%= render "documenti/container/righe_table", documento: @documento, editing: true %>
   <% end %>
 <% end %>
 

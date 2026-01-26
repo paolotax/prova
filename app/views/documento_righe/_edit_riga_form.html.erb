@@ -1,0 +1,58 @@
+<%# locals: (documento_riga:, documento:, riga:) -%>
+
+<tr id="<%= dom_id(documento_riga) %>" class="documento-table__row documento-table__row--editing" data-controller="tax-combobox-libro" style="position: relative; z-index: 10;">
+  <td class="documento-table__cell" colspan="7">
+    <%= form_with model: riga, url: documento_riga_path(documento_riga), method: :patch,
+        id: "#{dom_id(documento_riga)}_form",
+        data: { turbo_frame: "_top" } do |f| %>
+      <div class="flex gap align-center flex-wrap">
+        <div class="cb-tax" style="flex: 1 1 200px; min-width: 150px;">
+          <%= f.combobox :libro_id, libri_path,
+              placeholder: "Cerca libro...",
+              data: {
+                action: "hw-combobox:selection->tax-combobox-libro#change",
+                tax_combobox_libro_target: "combobox"
+              } %>
+        </div>
+        <div class="flex flex-column">
+          <label class="txt-xx-small txt-muted">Prezzo</label>
+          <%= f.number_field :prezzo,
+              step: 0.01,
+              data: { tax_combobox_libro_target: "prezzo" },
+              class: "input input--small",
+              style: "width: 7ch; text-align: right;" %>
+        </div>
+        <div class="flex flex-column">
+          <label class="txt-xx-small txt-muted">Qt</label>
+          <%= f.number_field :quantita,
+              min: 1,
+              data: { tax_combobox_libro_target: "quantita" },
+              class: "input input--small",
+              style: "width: 5ch; text-align: right;" %>
+        </div>
+        <div class="flex flex-column">
+          <label class="txt-xx-small txt-muted">Sc%</label>
+          <%= f.number_field :sconto,
+              step: 0.01,
+              data: { tax_combobox_libro_target: "sconto" },
+              class: "input input--small",
+              style: "width: 5ch; text-align: right;" %>
+        </div>
+        <div class="flex flex-column">
+          <label class="txt-xx-small txt-muted">Importo</label>
+          <span class="txt-small" style="padding: 0.25rem;"><%= number_to_currency riga.importo, locale: :it %></span>
+        </div>
+        <div class="flex gap-quarter align-center">
+          <button type="submit" class="btn btn--circle btn--small borderless txt-positive">
+            <%= icon_tag "check", class: "icon--small" %>
+          </button>
+          <%= link_to documento_riga_path(documento_riga),
+                      data: { turbo_method: :get, turbo_stream: true },
+                      class: "btn btn--circle btn--small borderless" do %>
+            <%= icon_tag "x", class: "icon--small" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </td>
+</tr>

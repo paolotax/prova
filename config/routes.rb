@@ -171,6 +171,7 @@ Rails.application.routes.draw do
     end
 
     resources :documenti do
+      resources :documento_righe, only: [:create], controller: 'documento_righe'
       resources :steps, only: %i[show update], controller: 'steps_controllers/documento_steps'
       collection do
         get 'filtra'
@@ -192,7 +193,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :documento_righe, only: %i[new destroy] do
+    resources :documento_righe, only: %i[new show edit update destroy] do
       member do
         patch 'update_posizione'
       end

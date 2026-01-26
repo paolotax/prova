@@ -1,0 +1,9 @@
+<%# Sostituisce il form con la riga aggiornata %>
+<%= turbo_stream.replace dom_id(@documento_riga) do %>
+  <%= render "documenti/container/riga_row", riga: @riga, documento: @documento, editing: true %>
+<% end %>
+
+<%# Aggiorna i totali %>
+<%= turbo_stream.replace dom_id(@documento, :meta) do %>
+  <%= render "documenti/display/perma/meta", documento: @documento %>
+<% end %>

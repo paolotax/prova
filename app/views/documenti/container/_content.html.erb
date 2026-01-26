@@ -4,10 +4,20 @@
   <%= turbo_frame_tag documento, :edit do %>
     <% if editing %>
       <%= render "documenti/edit_form", documento: documento %>
+
+      <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
+
+      <%= render "documenti/container/righe_table", documento: documento, editing: true %>
     <% else %>
       <%= render "documenti/container/content_display", documento: documento %>
     <% end %>
   <% end %>
 <% else %>
   <%= render "documenti/edit_form", documento: documento %>
+
+  <% if documento.persisted? %>
+    <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
+
+    <%= render "documenti/container/righe_table", documento: documento, editing: true %>
+  <% end %>
 <% end %>

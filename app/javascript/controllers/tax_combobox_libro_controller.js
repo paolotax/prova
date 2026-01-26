@@ -16,12 +16,16 @@ export default class extends Controller {
       return;
     }
 
-    // Trova il clientable_id e type dai data attributes della sezione documento_righe
-    let documentoRigheSection = document.querySelector('#documento_righe');
-    let clientable_id = documentoRigheSection?.dataset.clientableId || null;
-    let clientable_type = documentoRigheSection?.dataset.clientableType || null;
+    // Trova il clientable_id e type dai data attributes della sezione righe
+    let righeSection = document.querySelector('#righe_list') || document.querySelector('#documento_righe');
+    let clientable_id = righeSection?.dataset.clientableId || null;
+    let clientable_type = righeSection?.dataset.clientableType || null;
 
-    let url = `/libri/${id_libro}/get_prezzo_e_sconto`;
+    // Estrai account_id dall'URL corrente (formato: /account_id/...)
+    let pathParts = window.location.pathname.split('/');
+    let accountId = pathParts[1];
+
+    let url = `/${accountId}/libri/${id_libro}/get_prezzo_e_sconto`;
 
     // Aggiungi parametri cliente o scuola se presenti
     if (clientable_id && clientable_type === 'Cliente') {
