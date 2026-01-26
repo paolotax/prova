@@ -189,7 +189,7 @@ class Documento < ApplicationRecord
   end
 
   def tipo_pagamento
-    pagamento&.tipo_pagamento || read_attribute(:tipo_pagamento)&.then { |v| self.class.tipo_pagamentos.key(v) }
+    pagamento&.tipo_pagamento || super
   end
 
   def totale_importo

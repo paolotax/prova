@@ -221,4 +221,20 @@
     padding: var(--block-space);
     text-align: center;
   }
+
+  /* Delete button in row
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__delete {
+    button {
+      color: var(--color-ink-muted);
+      opacity: 0.5;
+      transition: opacity 0.2s, color 0.2s;
+
+      &:hover {
+        color: var(--color-negative);
+        opacity: 1;
+      }
+    }
+  }
 }
