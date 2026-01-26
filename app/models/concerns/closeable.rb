@@ -4,12 +4,26 @@ module Closeable
   included do
     has_one :closure, as: :closeable, dependent: :destroy
 
-     scope :closed, -> { joins(:closure) }
-    scope :open, -> { where.missing(:closure) }
+    # Cast id to text per compatibilità uuid/bigint con closeable_id string
+    scope :closed, -> {
+      where("#{table_name}.id::text IN (SELECT closeable_id FROM closures WHERE closeable_type = ?)", name)
+    }
+    scope :open, -> {
+      where("#{table_name}.id::text NOT IN (SELECT closeable_id FROM closures WHERE closeable_type = ?)", name)
+    }
 
-    scope :recently_closed_first, -> { closed.order(closures: { created_at: :desc }) }
-    scope :closed_at_window, ->(window) { closed.where(closures: { created_at: window }) }
-    scope :closed_by, ->(users) { closed.where(closures: { user_id: Array(users) }) }
+    scope :recently_closed_first, -> {
+      closed.joins("INNER JOIN closures ON closures.closeable_id = #{table_name}.id::text AND closures.closeable_type = '#{name}'")
+            .order("closures.created_at DESC")
+    }
+    scope :closed_at_window, ->(window) {
+      closed.joins("INNER JOIN closures ON closures.closeable_id = #{table_name}.id::text AND closures.closeable_type = '#{name}'")
+            .where(closures: { created_at: window })
+    }
+    scope :closed_by, ->(users) {
+      closed.joins("INNER JOIN closures ON closures.closeable_id = #{table_name}.id::text AND closures.closeable_type = '#{name}'")
+            .where(closures: { user_id: Array(users) })
+    }
   end
 
   def closed?
