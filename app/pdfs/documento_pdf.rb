@@ -31,10 +31,11 @@ class DocumentoPdf < Prawn::Document
     end
 
     # Aggiungo il timbro pagato se il documento è pagato
-    if @documento.pagato_il.present?
+    if @documento.pagato?
       # Calcolo le dimensioni del testo per il box
       testo_pagato = "PAGATO"
-      testo_data = "#{@documento.pagato_il.strftime("%d/%m/%Y")} - #{@documento.tipo_pagamento}"
+      tipo_pag = @documento.tipo_pagamento.present? ? @documento.tipo_pagamento.to_s.humanize : ""
+      testo_data = "#{@documento.pagato_il&.strftime("%d/%m/%Y")} #{tipo_pag}".strip
 
       # Imposto il font per calcolare le dimensioni
       font("Helvetica", style: :bold) do
@@ -174,7 +175,7 @@ class DocumentoPdf < Prawn::Document
         draw_line_left(8.mm)
         draw_text "COD. FISCALE", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text @documento.clientable&.codice_fiscale, :align => :center, :valign => :center, :size => 8
+          text @documento.clientable.try(:codice_fiscale), :align => :center, :valign => :center, :size => 8
         end
       end
       bounding_box [ bounds.left + 44.mm, bounds.top], :width => 28.mm, :height => 8.mm do
@@ -182,7 +183,7 @@ class DocumentoPdf < Prawn::Document
         draw_line_right(8.mm)
         draw_text "PARTITA IVA", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text @documento.clientable&.partita_iva, :align => :center, :valign => :center, :size => 8
+          text @documento.clientable.try(:partita_iva), :align => :center, :valign => :center, :size => 8
         end
       end
     end

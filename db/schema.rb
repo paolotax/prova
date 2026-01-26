@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_25_113809) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_26_141155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -393,7 +393,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_25_113809) do
 
   create_table "closures", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.uuid "closeable_id"
+    t.string "closeable_id"
     t.string "closeable_type"
     t.datetime "created_at", null: false
     t.uuid "entry_id"
@@ -428,7 +428,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_25_113809) do
 
   create_table "consegne", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
-    t.uuid "consegnabile_id", null: false
+    t.string "consegnabile_id", null: false
     t.string "consegnabile_type", null: false
     t.datetime "consegnato_il"
     t.datetime "created_at", null: false
@@ -864,9 +864,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_25_113809) do
   create_table "pagamenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.datetime "created_at", null: false
-    t.uuid "pagabile_id", null: false
+    t.string "pagabile_id", null: false
     t.string "pagabile_type", null: false
     t.datetime "pagato_il"
+    t.string "tipo_pagamento"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["account_id"], name: "index_pagamenti_on_account_id"

@@ -2,34 +2,37 @@
 
 <div class="card__meta" id="<%= dom_id(documento, :meta) %>">
   <div class="card__meta-avatars card__meta-avatars--author">
-    <span class="txt-x-small txt-uppercase">DATA</span>
+
   </div>
 
   <span class="card__meta-text card__meta-text--added">
-    <strong><%= documento.data_documento.strftime("%d/%m/%y") %></strong>
+    <span class="txt-x-small txt-uppercase">DATA</span>
+    <strong><%= documento.data_documento&.strftime("%d/%m/%Y") %></strong>
   </span>
 
-  <span class="card__meta-text card__meta-text--author overflow-ellipsis">
+  <span class="card__meta-text card__meta-text--author">
     <% if documento.consegnato_il.present? %>
       <%= icon_tag "truck" %>
-      <%= documento.consegnato_il.strftime("%d/%m/%y") %>
-    <% else %>
-      DA CONSEGNARE
+      <%= documento.consegnato_il.strftime("%d/%m") %>
     <% end %>
-  </span>
-
-  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    &middot;
     <% if documento.pagato_il.present? %>
       <%= icon_tag "cash" %>
-      <%= documento.pagato_il.strftime("%d/%m/%y") %>
+      <strong><%= documento.pagato_il.strftime("%d/%m") %></strong>
+      <% if documento.tipo_pagamento.present? %>
+        <%= documento.tipo_pagamento.humanize %>
+      <% end %>
     <% else %>
       DA PAGARE
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
     COPIE <strong><%= documento.totale_copie %></strong>
-    &middot;
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    IMPORTO
     <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
   </span>
 

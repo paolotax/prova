@@ -17,6 +17,9 @@
     <% if documento.pagato_il.present? %>
       <%= icon_tag "cash" %>
       <%= documento.pagato_il.strftime("%d/%m/%y") %>
+      <% if documento.tipo_pagamento.present? %>
+        <%= documento.tipo_pagamento.humanize %>
+      <% end %>
     <% else %>
       DA PAGARE
     <% end %>

@@ -47,6 +47,9 @@
 class Documento < ApplicationRecord
   include AccountScoped
   include Entryable
+  include Pagabile
+  include Consegnabile
+  include Closeable
 
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
@@ -66,6 +69,10 @@ class Documento < ApplicationRecord
   after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
   after_destroy :riporta_documenti_orfani_a_stato_precedente
 
+  # Callback per concern: propaga pagamento ai figli e auto-close
+  after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
+  after_save :auto_close_se_completo
+
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
   enum :tipo_pagamento,
        { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
@@ -76,6 +83,28 @@ class Documento < ApplicationRecord
   delegate :tipo_movimento, :movimento, to: :causale, allow_nil: true
 
   attr_accessor :form_step
+
+  # Virtual attribute per combobox multi-entità (stesso pattern di Appunto)
+  # Formato: "Scuola:uuid" o "Cliente:id"
+  def clientable_value
+    return nil unless clientable.present? && !clientable.is_a?(Domain::NessunCliente)
+
+    clientable.to_appuntabile_value
+  end
+
+  def clientable_value=(value)
+    return if value.blank?
+
+    klass, id = Appuntabile.parse_appuntabile_value(value)
+    if klass && id
+      begin
+        self.clientable = klass.find_by(id: id)
+      rescue ActiveRecord::StatementInvalid => e
+        Rails.logger.warn "Invalid clientable_value format: #{value} - #{e.message}"
+        nil
+      end
+    end
+  end
 
   with_options if: -> { required_for_step?(:tipo_documento) } do
     validates :causale_id, presence: true
@@ -142,8 +171,25 @@ class Documento < ApplicationRecord
     %w[TD01 TD04 TD24].include?(causale.causale)
   end
 
+  # Override per retrocompatibilità: legge prima dal concern, poi dal campo legacy
   def pagato?
-    pagato_il.present?
+    pagamento.present? || read_attribute(:pagato_il).present?
+  end
+
+  def pagato_il
+    pagamento&.pagato_il || read_attribute(:pagato_il)
+  end
+
+  def consegnato_il
+    consegna&.consegnato_il || read_attribute(:consegnato_il)
+  end
+
+  def consegnato?
+    consegna.present? || read_attribute(:consegnato_il).present?
+  end
+
+  def tipo_pagamento
+    pagamento&.tipo_pagamento || read_attribute(:tipo_pagamento)&.then { |v| self.class.tipo_pagamentos.key(v) }
   end
 
   def totale_importo
@@ -301,6 +347,28 @@ class Documento < ApplicationRecord
     tutti_i_discendenti.each do |discendente|
       discendente.update_column(:status, status)
     end
+  end
+
+  # Propaga il pagamento a tutti i documenti figli
+  def propaga_pagamento_ai_figli
+    return unless pagamento.present?
+
+    tutti_i_discendenti.each do |figlio|
+      figlio.mark_pagato(
+        user: pagamento.user,
+        tipo_pagamento: pagamento.tipo_pagamento
+      )
+    end
+  end
+
+  # Auto-close quando il documento è sia pagato che consegnato
+  def auto_close_se_completo
+    close if pagato? && consegnato? && !closed?
+  end
+
+  # Verifica se il documento è appena stato marcato come pagato
+  def just_marked_pagato?
+    pagamento.present? && pagamento.previously_new_record?
   end
 
   # Riporta tutti i documenti collegati dello stesso cliente allo stato precedente

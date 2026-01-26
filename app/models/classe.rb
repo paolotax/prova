@@ -69,6 +69,11 @@ class Classe < ApplicationRecord
   delegate :denominazione, to: :scuola, prefix: true
   delegate :comune, :provincia, to: :scuola
 
+  # Per clientable_label_tag: "1A Ada Negri"
+  def denominazione
+    "#{anno_corso}#{sezione} #{scuola&.denominazione}"
+  end
+
   # Crea Classe da Views::Classe
   def self.create_from_view(view_classe, scuola:, account: Current.account)
     create!(

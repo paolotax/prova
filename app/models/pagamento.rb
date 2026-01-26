@@ -2,14 +2,15 @@
 #
 # Table name: pagamenti
 #
-#  id            :uuid             not null, primary key
-#  pagabile_type :string           not null
-#  pagato_il     :datetime
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  account_id    :uuid             not null
-#  pagabile_id   :uuid             not null
-#  user_id       :bigint
+#  id             :uuid             not null, primary key
+#  pagabile_type  :string           not null
+#  pagato_il      :datetime
+#  tipo_pagamento :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  account_id     :uuid             not null
+#  pagabile_id    :string           not null
+#  user_id        :bigint
 #
 # Indexes
 #
@@ -29,4 +30,5 @@ class Pagamento < ApplicationRecord
   belongs_to :user, optional: true, default: -> { Current.user }
 
   validates :pagabile_id, uniqueness: { scope: :pagabile_type }
+  validates :tipo_pagamento, length: { maximum: 50 }, allow_blank: true
 end
