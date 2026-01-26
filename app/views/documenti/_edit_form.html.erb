@@ -1,0 +1,86 @@
+<%# locals: (documento:) -%>
+
+<%= form_with model: documento, id: dom_id(documento, :edit_form),
+      data: { turbo: documento.persisted? && documento.numero_documento.present?,
+              controller: "form",
+              action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+
+  <% if documento.errors.any? %>
+    <div class="flash flash--error margin-block">
+      <%= t('misc.errori', count: documento.errors.count) %>
+    </div>
+  <% end %>
+
+  <div class="documento-edit-form">
+    <%# Header: Causale, Numero, Data %>
+    <div class="documento-edit-form__header" data-controller="tax-combobox-causale">
+      <div class="form-field form-field--inline cb-tax">
+        <%= form.label :causale_id, "Tipo", class: "form-label" %>
+        <%= form.combobox :causale_id, Causale.all,
+            placeholder: "seleziona...",
+            data: { action: "hw-combobox:selection->tax-combobox-causale#change",
+                    tax_combobox_causale_target: "combobox" } %>
+      </div>
+
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :numero_documento, "Nr.", class: "form-label" %>
+        <%= form.number_field :numero_documento, class: "input input--small",
+            data: { tax_combobox_causale_target: "prezzo" } %>
+      </div>
+
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :data_documento, "Data", class: "form-label" %>
+        <%= form.date_field :data_documento, class: "input input--small" %>
+      </div>
+    </div>
+
+    <%# Cliente %>
+    <div class="documento-edit-form__cliente">
+      <%= render TaxSelectClientableComponent.new(
+          form: form,
+          type: documento.clientable_type,
+          id: documento.clientable_id
+      ) %>
+    </div>
+
+    <%# Referente e Note %>
+    <div class="documento-edit-form__details">
+      <div class="form-field">
+        <%= form.label :referente, "Referente", class: "form-label" %>
+        <%= form.text_field :referente, class: "input", placeholder: "Nome referente..." %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :note, "Note", class: "form-label" %>
+        <%= form.text_area :note, class: "input", rows: 2, placeholder: "Note..." %>
+      </div>
+    </div>
+
+    <%# Status e Pagamento %>
+    <div class="documento-edit-form__status">
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :status, "Stato", class: "form-label" %>
+        <%= form.select :status,
+            options_for_select(Documento.statuses.map { |k, v| [k.titleize, k] }, documento.status),
+            {}, class: "input input--small" %>
+      </div>
+
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :consegnato_il, "Consegnato", class: "form-label" %>
+        <%= form.date_field :consegnato_il, class: "input input--small" %>
+      </div>
+
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :tipo_pagamento, "Pagamento", class: "form-label" %>
+        <%= form.select :tipo_pagamento,
+            options_for_select(Documento.tipo_pagamenti.map { |k, v| [k.titleize, k] }, documento.tipo_pagamento),
+            { include_blank: true }, class: "input input--small" %>
+      </div>
+
+      <div class="form-field form-field--inline form-field--small">
+        <%= form.label :pagato_il, "Pagato", class: "form-label" %>
+        <%= form.date_field :pagato_il, class: "input input--small" %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,8 @@
+<%# locals: (documento:) -%>
+
+<%= button_tag type: :submit, name: :publish, value: "1",
+      form: dom_id(documento, :edit_form), class: "btn btn--positive",
+      data: { controller: "clicker", action: "keydown.ctrl+enter@document->clicker#click keydown.meta+enter@document->clicker#click" } do %>
+  <%= icon_tag "check" %>
+  <span>Crea Documento</span>
+<% end %>

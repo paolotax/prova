@@ -50,6 +50,7 @@ class DocumentiController < ApplicationController
   def show
     respond_to do |format|
       format.html
+      format.turbo_stream unless flash.any?
       format.xlsx
       format.pdf do
         pdf = DocumentoPdf.new(@documento, view_context)
@@ -69,14 +70,24 @@ class DocumentiController < ApplicationController
                         .where('EXTRACT(YEAR FROM data_documento) = ?', Date.today.year)
                         .maximum(:numero_documento) || 0).to_i + 1
 
-    @documento = Current.account.documenti.build(numero_documento: numero_documento, data_documento: Date.today, causale: causale, clientable_id: clientable_id, clientable_type: clientable_type)
+    @documento = Current.account.documenti.build(
+      numero_documento: numero_documento,
+      data_documento: Date.today,
+      causale: causale,
+      clientable_id: clientable_id,
+      clientable_type: clientable_type
+    )
     @documento.save! validate: false
     @documento.documento_righe.build.build_riga(sconto: 0.0)
 
-    redirect_to documento_step_path(@documento, Documento.form_steps.keys.first)
+    redirect_to @documento
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -94,13 +105,13 @@ class DocumentiController < ApplicationController
   end
 
   def update
-
     respond_to do |format|
-
       if @documento.update(documento_params)
-        format.html { redirect_to documento_url(@documento), notice: "Documento was successfully updated." }
+        format.turbo_stream
+        format.html { redirect_to documento_url(@documento), notice: "Documento aggiornato." }
         format.json { render :show, status: :ok, location: @documento }
       else
+        format.turbo_stream { render :edit, status: :unprocessable_entity }
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @documento.errors, status: :unprocessable_entity }
       end

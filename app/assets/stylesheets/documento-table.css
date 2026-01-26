@@ -1,0 +1,239 @@
+/* Documento Table - Grid-based table for document rows
+ * Pattern inspired by card__meta with borders and responsive layout
+ * ========================================================================== */
+
+@layer components {
+
+  /* Container
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table {
+    --table-spacer-block: 0.75ch;
+    --table-spacer-inline: 1ch;
+    --table-border: 1px solid color-mix(in srgb, var(--card-color, var(--color-ink)) 20%, transparent);
+    --table-header-bg: color-mix(in srgb, var(--card-color, var(--color-ink)) 8%, transparent);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    inline-size: 100%;
+  }
+
+  /* Header
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__header {
+    background-color: var(--table-header-bg);
+    border-block-end: var(--table-border);
+    display: grid;
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    grid-template-columns: 1fr auto auto auto auto auto;
+    padding-block: var(--table-spacer-block);
+    text-transform: uppercase;
+
+    @media (max-width: 639px) {
+      display: none;
+    }
+  }
+
+  .documento-table__th {
+    padding-inline: var(--table-spacer-inline);
+
+    &--right {
+      text-align: end;
+    }
+
+    &--hidden-mobile {
+      @media (max-width: 639px) {
+        display: none;
+      }
+    }
+  }
+
+  /* Rows
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__row {
+    border-block-end: var(--table-border);
+    display: grid;
+    font-size: var(--text-small);
+    grid-template-columns: 1fr auto auto auto auto auto;
+    padding-block: var(--table-spacer-block);
+
+    &:last-child {
+      border-block-end: none;
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 5%, transparent);
+    }
+
+    @media (max-width: 639px) {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "title"
+        "values";
+      gap: 0.5ch;
+    }
+  }
+
+  .documento-table__cell {
+    align-items: center;
+    display: flex;
+    line-height: 1.3;
+    padding-inline: var(--table-spacer-inline);
+  }
+
+  .documento-table__cell--title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25ch;
+    min-width: 0; /* Allow text truncation */
+
+    @media (max-width: 639px) {
+      grid-area: title;
+    }
+  }
+
+  .documento-table__cell--right {
+    justify-content: flex-end;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .documento-table__cell--hidden-mobile {
+    @media (max-width: 639px) {
+      display: none;
+    }
+  }
+
+  /* Mobile values row */
+  .documento-table__values {
+    display: none;
+
+    @media (max-width: 639px) {
+      display: flex;
+      flex-wrap: wrap;
+      grid-area: values;
+      gap: 0.25ch 1.5ch;
+      padding-inline: var(--table-spacer-inline);
+      font-size: var(--text-x-small);
+      color: var(--color-ink-muted);
+    }
+  }
+
+  .documento-table__value {
+    display: flex;
+    gap: 0.5ch;
+
+    strong {
+      color: var(--color-ink);
+    }
+  }
+
+  .documento-table__value-isbn {
+    flex-basis: 100%;
+    font-size: var(--text-x-small);
+    color: var(--color-ink-muted);
+  }
+
+  .documento-table__title {
+    color: var(--color-ink);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-inline-size: 100%;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .documento-table__subtitle {
+    color: var(--color-ink-muted);
+    font-size: var(--text-x-small);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Section headers (for grouped rows)
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__section {
+    background-color: var(--table-header-bg);
+    border-block-end: var(--table-border);
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+    font-size: var(--text-x-small);
+    font-weight: 600;
+    padding: var(--table-spacer-block) var(--table-spacer-inline);
+    text-transform: uppercase;
+
+    &--derivato {
+      background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 12%, transparent);
+      padding-inline-start: 2ch;
+    }
+
+    &--nipote {
+      background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 6%, transparent);
+      padding-inline-start: 4ch;
+    }
+  }
+
+  .documento-table__section-icon {
+    block-size: 1.25em;
+    inline-size: 1.25em;
+    opacity: 0.6;
+
+    &--small {
+      block-size: 1em;
+      inline-size: 1em;
+    }
+  }
+
+  .documento-table__section-badge {
+    background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 15%, transparent);
+    border-radius: 0.25em;
+    font-size: 0.85em;
+    padding: 0.2em 0.5em;
+  }
+
+  .documento-table__section-link {
+    color: var(--card-color, var(--color-link));
+    font-size: 0.85em;
+    margin-inline-start: auto;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  /* Scroll navigation
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__scroll-nav {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--block-space-half);
+  }
+
+  /* Empty state
+  /* ------------------------------------------------------------------------ */
+
+  .documento-table__empty {
+    color: var(--color-ink-muted);
+    font-style: italic;
+    padding: var(--block-space);
+    text-align: center;
+  }
+}

@@ -1,0 +1,7 @@
+<%# locals: (documento:) -%>
+
+<% if documento.new_record? || documento.numero_documento.blank? %>
+  <%= render "documenti/container/footer/create", documento: documento %>
+<% else %>
+  <%= render "documenti/container/footer/published", documento: documento %>
+<% end %>

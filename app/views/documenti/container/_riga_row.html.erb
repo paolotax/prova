@@ -1,0 +1,35 @@
+<%# locals: (riga:) -%>
+
+<div class="documento-table__row">
+  <div class="documento-table__cell documento-table__cell--title">
+    <span class="documento-table__title">
+      <%= link_to riga.libro&.titolo, libro_path(riga.libro) if riga.libro %>
+    </span>
+  </div>
+  <div class="documento-table__cell documento-table__cell--isbn documento-table__cell--hidden-mobile">
+    <span class="documento-table__subtitle"><%= riga.libro&.codice_isbn %></span>
+  </div>
+  <div class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
+    <%= number_to_currency riga.prezzo_cents/100.0, locale: :it %>
+  </div>
+  <div class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
+    <%= riga.quantita %>
+  </div>
+  <div class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
+    <%= riga.sconto.nil? ? '' : "#{riga.sconto}%" %>
+  </div>
+  <div class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
+    <%= number_to_currency riga.importo, locale: :it %>
+  </div>
+
+  <%# Mobile: titolo + isbn sopra, valori sotto %>
+  <div class="documento-table__values">
+    <span class="documento-table__value-isbn"><%= riga.libro&.codice_isbn %></span>
+    <span class="documento-table__value"><strong><%= riga.quantita %></strong> cp</span>
+    <span class="documento-table__value"><%= number_to_currency riga.prezzo_cents/100.0, locale: :it %></span>
+    <% if riga.sconto.present? && riga.sconto > 0 %>
+      <span class="documento-table__value">-<%= riga.sconto %>%</span>
+    <% end %>
+    <span class="documento-table__value"><strong><%= number_to_currency riga.importo, locale: :it %></strong></span>
+  </div>
+</div>

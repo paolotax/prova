@@ -1,0 +1,19 @@
+<%= turbo_stream.replace [@documento, :edit] do %>
+  <%= turbo_frame_tag @documento, :edit do %>
+    <%= render "documenti/container/content_display", documento: @documento %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@documento, :footer] do %>
+  <%= turbo_frame_tag @documento, :footer do %>
+    <%= render "documenti/container/footer", documento: @documento %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@documento, :meta) do %>
+  <%= render "documenti/display/perma/meta", documento: @documento %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@documento, :tags) do %>
+  <%= render "documenti/display/perma/tags", documento: @documento %>
+<% end %>

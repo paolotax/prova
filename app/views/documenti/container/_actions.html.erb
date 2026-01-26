@@ -1,0 +1,34 @@
+<%# locals: (documento:) -%>
+
+<%= link_to edit_documento_path(documento), class: "btn",
+    data: { turbo_method: :get, turbo_stream: true, controller: "tooltip", tooltip_content_value: "Modifica" } do %>
+  <%= icon_tag "pencil" %>
+  <span class="for-screen-reader">Modifica</span>
+<% end %>
+
+<%= link_to documento_path(documento, format: :pdf), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "PDF" } do %>
+  <%= icon_tag "printer" %>
+  <span class="for-screen-reader">Stampa</span>
+<% end %>
+
+<%= link_to documento_path(documento, format: :xlsx), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "Excel" } do %>
+  <%= icon_tag "table-cells" %>
+  <span class="for-screen-reader">Export Excel</span>
+<% end %>
+
+<div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+  <button type="button" class="btn txt-negative" data-action="dialog#open" data-controller="tooltip" data-tooltip-content-value="Elimina">
+    <%= icon_tag "trash" %>
+    <span class="for-screen-reader">Elimina documento</span>
+  </button>
+  <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch" data-dialog-target="dialog">
+    <h3 class="txt-large txt-bold">Eliminare questo documento?</h3>
+    <p class="txt-medium margin-block-half">Sei sicuro di voler eliminare definitivamente questo documento?</p>
+    <div class="flex gap-half justify-center margin-block-start">
+      <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+      <%= button_to documento_path(documento), method: :delete, class: "btn txt-negative", data: { turbo: false } do %>
+        <span>Elimina</span>
+      <% end %>
+    </div>
+  </dialog>
+</div>

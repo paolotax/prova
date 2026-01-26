@@ -1,0 +1,12 @@
+<%# locals: (documento:) -%>
+
+<%= link_to edit_documento_path(documento), class: "btn",
+    data: { turbo_method: :get, turbo_stream: true } do %>
+  <%= icon_tag "pencil" %>
+  Modifica
+<% end %>
+
+<%= link_to esporta_xml_documento_path(documento, format: :xml), class: "btn" do %>
+  <%= icon_tag "code" %>
+  Esporta XML
+<% end %>

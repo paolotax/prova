@@ -1,7 +1,20 @@
-<div class="mx-auto md:w-10/12 w-full">
-  <h1 class="font-bold text-4xl mb-4">Modifica Documento</h1>
+<% @page_title = "Modifica #{@documento.causale || 'Documento'} ##{@documento.numero_documento || 'BOZZA'}" %>
 
-  <%= render "form", documento: @documento %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <% info = referrer_back_info || { label: "Documenti", path: documenti_path } %>
+    <%= back_link_to info[:label], info[:path], "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+  </div>
 
-  <%= link_to "<- indietro", :back, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Modifica <%= @documento.causale || "Documento" %></span>
+    <span class="txt-small txt-subtle">nr <%= @documento.numero_documento || 'BOZZA' %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+  </div>
+<% end %>
+
+<div class="full-width card-grid pad group show-navigator">
+  <%= render "documenti/container", documento: @documento, editing: true %>
 </div>

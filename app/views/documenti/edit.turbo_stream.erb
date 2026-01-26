@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@documento, :edit] do %>
+  <%= turbo_frame_tag @documento, :edit do %>
+    <%= render "documenti/edit_form", documento: @documento %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@documento, :footer] do %>
+  <%= turbo_frame_tag @documento, :footer do %>
+    <%= render "documenti/edit_footer", documento: @documento %>
+  <% end %>
+<% end %>

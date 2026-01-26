@@ -1,0 +1,41 @@
+<%# locals: (documento:, editing: false) -%>
+
+<section id="<%= dom_id(documento, :container) %>" class="card-perma" style="--card-color: <%= documento_color(documento) %>;">
+  <div class="card-perma__actions card-perma__actions--left">
+  </div>
+
+  <div class="card-perma__bg">
+    <article class="card">
+      <header class="card__header">
+        <%= render "documenti/display/perma/board", documento: documento %>
+        <%= render "documenti/display/perma/tags", documento: documento %>
+      </header>
+
+      <div class="card__body justify-space-between">
+        <div class="card__content full-width">
+          <%= render "documenti/container/content", documento: documento, editing: editing %>
+        </div>
+      </div>
+
+      <footer class="card__footer full-width flex align-start gap">
+        <%= render "documenti/display/perma/meta", documento: documento %>
+      </footer>
+    </article>
+  </div>
+
+  <div class="card-perma__actions card-perma__actions--right">
+    <% if documento.persisted? && documento.numero_documento.present? && !editing %>
+      <%= render "documenti/container/actions", documento: documento %>
+    <% end %>
+  </div>
+
+  <div class="card-perma__notch card-perma__notch--bottom">
+    <%= turbo_frame_tag documento, :footer do %>
+      <% if editing %>
+        <%= render "documenti/edit_footer", documento: documento %>
+      <% else %>
+        <%= render "documenti/container/footer", documento: documento %>
+      <% end %>
+    <% end %>
+  </div>
+</section>

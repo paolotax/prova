@@ -1,0 +1,13 @@
+<%# locals: (documento:, editing: false) -%>
+
+<% if documento.persisted? && documento.numero_documento.present? %>
+  <%= turbo_frame_tag documento, :edit do %>
+    <% if editing %>
+      <%= render "documenti/edit_form", documento: documento %>
+    <% else %>
+      <%= render "documenti/container/content_display", documento: documento %>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= render "documenti/edit_form", documento: documento %>
+<% end %>
