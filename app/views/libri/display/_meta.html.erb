@@ -1,0 +1,17 @@
+<%# locals: (libro:) -%>
+
+<div class="card__meta">
+  <span class="card__meta-text mono">
+    <%= libro.codice_isbn %>
+  </span>
+  <span class="card__meta-text">
+    <% if libro.giacenza&.ordini.to_i.positive? %>
+      <span class="txt-negative">Ord: <strong><%= libro.giacenza.ordini %></strong></span>
+    <% end %>
+  </span>
+  <span class="card__meta-text">
+    <% if libro.adozioni_count.positive? %>
+      <span class="txt-positive">Adoz: <strong><%= libro.adozioni_count %></strong></span>
+    <% end %>
+  </span>
+</div>

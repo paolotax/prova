@@ -1,0 +1,30 @@
+<%# locals: (scuola:) -%>
+
+<article class="panel shadow">
+  <h3 class="txt-medium font-weight-black margin-block-end-half">Riepilogo</h3>
+
+  <div class="flex flex-column gap-half">
+    <div class="flex justify-space-between align-center pad-half fill-shade border-radius">
+      <span class="txt-small txt-subtle">Classi</span>
+      <strong class="txt-large"><%= scuola.classi.count %></strong>
+    </div>
+
+    <div class="flex justify-space-between align-center pad-half fill-shade border-radius">
+      <span class="txt-small txt-subtle">Priorità</span>
+      <div class="flex gap-quarter" style="color: var(--color-warning);">
+        <% if scuola.priorita.to_i.positive? %>
+          <% scuola.priorita.times do %>
+            <%= icon_tag "star", size: "small" %>
+          <% end %>
+        <% else %>
+          <span class="txt-small txt-subtle">—</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex justify-space-between align-center pad-half fill-shade border-radius">
+      <span class="txt-small txt-subtle">Stato</span>
+      <span class="txt-small"><%= scuola.stato&.capitalize || "Attiva" %></span>
+    </div>
+  </div>
+</article>

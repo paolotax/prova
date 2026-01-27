@@ -4,7 +4,7 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= link_to scuole_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
@@ -15,45 +15,53 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_scuola_path, class: "btn" do %>
+    <%= link_to new_scuola_path, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.insert@document->hotkey#click" } do %>
       <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuova scuola</span>
+      <span class="for-screen-reader">Nuova scuola <kbd class="hide-on-touch">Ins</kbd></span>
     <% end %>
   </div>
 <% end %>
 
 <%= render "filters/settings",
       filter_url: scuole_path,
+      filter_type: "scuola",
       user_filtering: @user_filtering,
-      no_filtering_url: scuole_path,
-      filter_type: "scuola" %>
+      no_filtering_url: scuole_path %>
 
-<% if @page.used? %>
-  <p class="txt-small txt-subtle margin-block-end-half center">
-    <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
-  </p>
-
-  <div class="cards--grid">
-    <%= with_automatic_pagination :scuole, @page, class: "cards__list" do %>
-      <%= render @page.records %>
-    <% end %>
-  </div>
-<% else %>
-  <div class="blank-slate blank-slate--empty">
-    <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
-    <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
-    <p class="txt-small txt-subtle margin-block-end">
-      <% if @user_filtering.filters_active? %>
-        Prova a modificare i filtri di ricerca.
-      <% else %>
-        Inizia aggiungendo la prima scuola al tuo account.
-      <% end %>
+<%= turbo_frame_tag :search_results do %>
+  <% if @page.used? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
     </p>
-    <% unless @user_filtering.filters_active? %>
-      <%= link_to new_scuola_path, class: "btn btn--primary" do %>
-        <%= icon_tag "plus", size: "small" %>
-        Aggiungi Scuola
+
+    <div class="cards cards--grid">
+      <%= with_automatic_pagination :scuole, @page,
+          class: "cards__list",
+          data: { controller: "navigable-list",
+              navigable_list_auto_select_value: false,
+              navigable_list_actionable_items_value: true,
+              navigable_list_prevent_handled_keys_value: true,
+              action: "keydown->navigable-list#navigate" } do %>
+        <%= render @page.records %>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "building", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
+        <% else %>
+          Inizia aggiungendo la prima scuola al tuo account.
+        <% end %>
+      </p>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_scuola_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Scuola
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>

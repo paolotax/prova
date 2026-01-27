@@ -1,86 +1,65 @@
-<%= tag.div id: dom_id(libro),
-    class: "item panel shadow flex gap-half border-radius overflow-hidden has-[:checked]:ring-2 has-[:checked]:ring-blue-500",
-    data: { action: "click->bulk-actions#toggle" } do %>
+<%# locals: (libro:) -%>
 
-  <!-- Thumbnail -->
-  <div class="flex-item-shrink relative" style="width: 80px;">
-    <%= image_tag libro.avatar_url,
-        class: "w-full h-full object-cover",
-        style: "aspect-ratio: 3/4;",
-        alt: libro.titolo %>
+<%= tag.article id: dom_id(libro),
+    class: "card",
+    style: "--card-color: #{libro_color(libro)}",
+    tabindex: 0,
+    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
 
-    <!-- Selection Checkbox -->
-    <%= check_box_tag "libro_ids[]", libro.id, nil,
-        class: "peer sr-only",
-        data: { action: "input->bulk-actions#count", bulk_actions_target: "checkbox" } %>
-    <div class="hidden peer-checked:flex absolute top-1 left-1 w-5 h-5 bg-blue-500 rounded-full items-center justify-center">
-      <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
+  <div class="flex gap-half max-inline-size">
+    <!-- Copertina thumbnail -->
+    <div class="flex-item-shrink">
+      <%= image_tag libro.avatar_url,
+          style: "width: 60px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius);",
+          alt: libro.titolo %>
+    </div>
+
+    <div class="flex flex-column flex-item-grow">
+      <%= link_to libro_path(libro), class: "card__link", data: { turbo_frame: "_top" } do %>
+        <span class="for-screen-reader"><%= libro.titolo %></span>
+      <% end %>
+
+      <!-- Header con categoria e prezzo -->
+      <header class="card__header">
+        <div class="card__board">
+          <span class="card__id"><%= libro.categoria&.nome_categoria&.upcase.presence || "LIBRO" %></span>
+          <span class="card__board-name"><%= libro.editore&.editore %></span>
+        </div>
+        <span class="txt-small font-weight-bold txt-negative"><%= number_to_currency(libro.prezzo) %></span>
+      </header>
+
+      <!-- Body con titolo -->
+      <div class="card__body">
+        <div class="card__content">
+          <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+            <%= libro.titolo %>
+          </h3>
+          <% if libro.classe.present? || libro.disciplina.present? %>
+            <p class="txt-xsmall txt-subtle margin-block-end-half" style="margin-top: 0;">
+              <% if libro.classe.present? %>Cl. <%= libro.classe %><% end %>
+              <% if libro.classe.present? && libro.disciplina.present? %> · <% end %>
+              <% if libro.disciplina.present? %><%= truncate(libro.disciplina.upcase, length: 25) %><% end %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <% if libro.fascicoli_count > 0 || libro.confezioni_count > 0 %>
+        <div class="flex gap-quarter margin-block-start-quarter">
+          <% unless libro.fascicoli_count.zero? %>
+            <%= component('badge', text: "#{libro.fascicoli_count} fasc", color: "yellow") %>
+          <% end %>
+          <% unless libro.confezioni_count.zero? %>
+            <%= component('badge', text: "#{libro.confezioni_count} conf", color: "blue") %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Footer con stats -->
+      <footer class="card__footer full-width">
+        <%= render "libri/display/meta", libro: libro %>
+      </footer>
     </div>
   </div>
-
-  <!-- Content -->
-  <div class="flex-item-grow pad-half flex flex-column justify-space-between gap-quarter txt-left">
-
-    <!-- Header: Title + Price -->
-    <div class="flex justify-space-between align-start gap-half">
-      <div class="flex-item-grow">
-        <%= link_to libro_path(libro),
-            data: { turbo_frame: "_top", action: "click->bulk-actions#stopPropagation" },
-            class: "font-weight-bold line-clamp-2 hover:underline" do %>
-          <%= libro.titolo %>
-        <% end %>
-        <div class="txt-small txt-subtle"><%= libro.editore&.editore %></div>
-      </div>
-      <div class="flex-item-shrink txt-small font-weight-bold whitespace-nowrap">
-        <%= number_to_currency(libro.prezzo_in_cents / 100.0) %>
-      </div>
-    </div>
-
-    <!-- Meta: ISBN, Categoria, Classe, Disciplina -->
-    <div class="txt-x-small txt-subtle">
-      <%= libro.codice_isbn %>
-      <% if libro.categoria&.nome_categoria.present? %>
-        &middot; <%= libro.categoria.nome_categoria %>
-      <% end %>
-      <% if libro.classe.present? %>
-        &middot; Cl. <%= libro.classe %>
-      <% end %>
-      <% if libro.disciplina.present? %>
-        &middot; <%= truncate(libro.disciplina, length: 25) %>
-      <% end %>
-    </div>
-
-    <!-- Stats Row -->
-    <div class="flex gap-half txt-x-small">
-      <% if libro.giacenza&.ordini.to_i > 0 %>
-        <span class="font-weight-bold">Ord: <%= libro.giacenza.ordini %></span>
-      <% end %>
-      <% if libro.adozioni_count > 0 %>
-        <span class="font-weight-bold">Adoz: <%= libro.adozioni_count %></span>
-      <% end %>
-      <% if libro.giacenza&.vendite.to_i > 0 %>
-        <span class="font-weight-bold">Vend: <%= libro.giacenza.vendite %></span>
-      <% end %>
-      <% if libro.giacenza&.carichi.to_i > 0 %>
-        <span class="font-weight-bold">Car: <%= libro.giacenza.carichi %></span>
-      <% end %>
-
-      <% unless libro.fascicoli_count.zero? %>
-        <%= link_to libri_path(fascicoli: libro.id),
-            data: { action: "click->bulk-actions#stopPropagation" } do %>
-          <%= component('badge', text: "#{libro.fascicoli_count} fasc", color: "yellow") %>
-        <% end %>
-      <% end %>
-      <% unless libro.confezioni_count.zero? %>
-        <%= link_to libri_path(confezioni: libro.id),
-            data: { action: "click->bulk-actions#stopPropagation" } do %>
-          <%= component('badge', text: "#{libro.confezioni_count} conf", color: "blue") %>
-        <% end %>
-      <% end %>
-    </div>
-
-  </div>
-
 <% end %>

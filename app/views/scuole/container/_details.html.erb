@@ -1,0 +1,61 @@
+<%# locals: (scuola:) -%>
+
+<!-- Dati Identificativi -->
+<article class="panel shadow">
+  <h3 class="txt-medium font-weight-black margin-block-end-half">Dati Scuola</h3>
+  <dl class="dl-grid txt-small">
+    <% if scuola.codice_ministeriale.present? %>
+      <dt class="txt-subtle">Codice Ministeriale</dt>
+      <dd class="mono txt-uppercase font-weight-bold"><%= scuola.codice_ministeriale %></dd>
+    <% end %>
+
+    <% if scuola.tipo_scuola.present? %>
+      <dt class="txt-subtle">Tipo Scuola</dt>
+      <dd><%= scuola.tipo_scuola %></dd>
+    <% end %>
+  </dl>
+</article>
+
+<!-- Indirizzo -->
+<article class="panel shadow">
+  <h3 class="txt-medium font-weight-black margin-block-end-half">Indirizzo</h3>
+  <dl class="dl-grid txt-small">
+    <% if scuola.indirizzo.present? %>
+      <dt class="txt-subtle">Via</dt>
+      <dd><%= scuola.indirizzo %></dd>
+    <% end %>
+
+    <dt class="txt-subtle">CAP / Città</dt>
+    <dd><%= [scuola.cap, scuola.comune].compact_blank.join(" ").presence || "—" %></dd>
+
+    <dt class="txt-subtle">Provincia</dt>
+    <dd><%= scuola.provincia.presence || "—" %></dd>
+
+    <% if scuola.regione.present? %>
+      <dt class="txt-subtle">Regione</dt>
+      <dd><%= scuola.regione %></dd>
+    <% end %>
+  </dl>
+</article>
+
+<!-- Contatti -->
+<article class="panel shadow">
+  <h3 class="txt-medium font-weight-black margin-block-end-half">Contatti</h3>
+  <dl class="dl-grid txt-small">
+    <dt class="txt-subtle">Telefono</dt>
+    <dd><%= scuola.telefono.present? ? link_to(scuola.telefono, "tel:#{scuola.telefono}") : "—" %></dd>
+
+    <dt class="txt-subtle">Email</dt>
+    <dd><%= scuola.email.present? ? mail_to(scuola.email) : "—" %></dd>
+
+    <dt class="txt-subtle">PEC</dt>
+    <dd><%= scuola.pec.present? ? mail_to(scuola.pec) : "—" %></dd>
+  </dl>
+</article>
+
+<% if scuola.note.present? %>
+  <article class="panel shadow">
+    <h3 class="txt-medium font-weight-black margin-block-end-half">Note</h3>
+    <div class="txt-small"><%= simple_format(scuola.note) %></div>
+  </article>
+<% end %>

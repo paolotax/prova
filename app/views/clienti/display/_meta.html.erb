@@ -1,0 +1,20 @@
+<%# locals: (cliente:) -%>
+
+<div class="card__meta">
+  <span class="card__meta-text">
+    P.IVA <strong class="mono"><%= cliente.partita_iva.presence || "—" %></strong>
+  </span>
+  <span class="card__meta-text">
+    <% doc_count = cliente.documenti.count %>
+    <% if doc_count.positive? %>
+      <%= icon_tag "document", class: "icon--small" %>
+      <strong><%= doc_count %></strong> doc
+    <% end %>
+  </span>
+  <span class="card__meta-text">
+    <% totale = cliente.documenti.sum(:totale_cents) / 100.0 %>
+    <% if totale.positive? %>
+      <%= number_to_currency totale, locale: :it %>
+    <% end %>
+  </span>
+</div>

@@ -1,0 +1,39 @@
+<%# locals: (libro:) -%>
+
+<div class="card__meta" id="<%= dom_id(libro, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <span class="txt-x-small txt-uppercase">EDITORE</span>
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <strong><%= libro.editore&.editore || "—" %></strong>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author">
+    <% if libro.classe.present? || libro.disciplina.present? %>
+      <% if libro.classe.present? %>Cl. <%= libro.classe %><% end %>
+      <% if libro.classe.present? && libro.disciplina.present? %> · <% end %>
+      <% if libro.disciplina.present? %><%= truncate(libro.disciplina, length: 20) %><% end %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    <% if libro.cm.present? %>
+      CM: <strong><%= libro.cm %></strong>
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    <% if libro.fascicoli_count.positive? %>
+      <%= libro.fascicoli_count %> fasc
+    <% end %>
+    <% if libro.confezioni_count.positive? %>
+      · <%= libro.confezioni_count %> conf
+    <% end %>
+  </span>
+
+  <div class="card__meta-avatars card__meta-avatars--assignees">
+  </div>
+</div>

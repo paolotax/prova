@@ -19,16 +19,17 @@ class ClientiController < ApplicationController
   end
 
   def show
-    # @situazio = ClienteSituazio.new(clientable: @cliente, user: current_user).execute
+    # Documenti recenti per sidebar
+    @documenti_recenti = @cliente.documenti
+      .where(documento_padre_id: nil)
+      .includes(:causale)
+      .order(data_documento: :desc, numero_documento: :desc)
+      .limit(5)
 
-    # Solo documenti padre (senza documento_padre_id) ordinati per data decrescente
+    # Tutti i documenti per sezione completa
     @documenti = @cliente.documenti
       .where(documento_padre_id: nil)
-      .includes(
-        :causale,
-        :documenti_derivati,
-        documento_righe: [riga: :libro]
-      )
+      .includes(:causale, :documenti_derivati, documento_righe: [riga: :libro])
       .order(data_documento: :desc, numero_documento: :desc)
 
     # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
@@ -38,17 +39,14 @@ class ClientiController < ApplicationController
       .order(created_at: :desc)
 
     # Identifica sconti unici: per ogni categoria, mostra solo lo sconto più specifico
-    # Precedenza: specifico per questo cliente > tutti i clienti > globale
-    # Se esiste 23% parascolastico per questo cliente, non mostrare 20% parascolastico "tutti i clienti"
     @sconti_unici = @sconti_applicabili.group_by(&:categoria_id).flat_map do |_categoria_id, sconti|
-      # Ordina per specificità: 0 = più specifico (cliente dedicato), 1 = tutti i clienti, 2 = globale
       sconti.min_by do |s|
         if s.scontabile_id.present?
-          0  # Sconto specifico per questo cliente (più prioritario)
+          0  # Sconto specifico per questo cliente
         elsif s.scontabile_type.present?
-          1  # Sconto per tutti i clienti/editori/scuole (priorità media)
+          1  # Sconto per tutti i clienti/editori/scuole
         else
-          2  # Sconto globale (meno prioritario)
+          2  # Sconto globale
         end
       end
     end

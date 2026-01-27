@@ -38,11 +38,17 @@
       <%= @total_count %> <%= @total_count == 1 ? "cliente trovato" : "clienti trovati" %>
     </p>
 
-    <%= with_manual_pagination :clienti, @page, class: "cards cards--grid" do %>
-      <% @page.records.each do |cliente| %>
-        <%= render partial: "clienti/cliente", locals: { cliente: cliente } %>
+    <div class="cards cards--grid">
+      <%= with_automatic_pagination :clienti, @page,
+          class: "cards__list",
+          data: { controller: "navigable-list",
+              navigable_list_auto_select_value: false,
+              navigable_list_actionable_items_value: true,
+              navigable_list_prevent_handled_keys_value: true,
+              action: "keydown->navigable-list#navigate" } do %>
+        <%= render @page.records %>
       <% end %>
-    <% end %>
+    </div>
   <% else %>
     <div class="blank-slate blank-slate--empty">
       <%= icon_tag "users", size: "large", class: "txt-subtle margin-block-end-half" %>

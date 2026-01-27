@@ -1,0 +1,105 @@
+<%# locals: (libro:, giacenza:, adozioni:) -%>
+
+<div class="flex gap flex-wrap full-width">
+  <!-- Ordini -->
+  <% if giacenza&.ordini.to_i.positive? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Ordini</h3>
+        <span class="txt-x-large font-weight-black txt-negative"><%= giacenza.ordini %></span>
+      </div>
+      <% ordini_righe = libro.documento_righe.select { |dr| dr.documento.ordine? }.first(5) %>
+      <% if ordini_righe.any? %>
+        <ul class="flex flex-column gap-quarter">
+          <% ordini_righe.each do |documento_riga| %>
+            <li class="flex align-center justify-space-between txt-small">
+              <span class="overflow-ellipsis">
+                <% if documento_riga.documento.clientable.present? %>
+                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
+                <% end %>
+              </span>
+              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </article>
+  <% end %>
+
+  <!-- Vendite -->
+  <% if giacenza&.vendite.to_i.positive? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Vendite</h3>
+        <span class="txt-x-large font-weight-black txt-link"><%= giacenza.vendite %></span>
+      </div>
+      <% vendite_righe = libro.documento_righe.select { |dr| dr.documento.vendita? }.first(5) %>
+      <% if vendite_righe.any? %>
+        <ul class="flex flex-column gap-quarter">
+          <% vendite_righe.each do |documento_riga| %>
+            <li class="flex align-center justify-space-between txt-small">
+              <span class="overflow-ellipsis">
+                <% if documento_riga.documento.clientable.present? %>
+                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
+                <% end %>
+              </span>
+              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </article>
+  <% end %>
+
+  <!-- Carichi -->
+  <% if giacenza&.carichi.to_i.positive? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Carichi</h3>
+        <span class="txt-x-large font-weight-black txt-accent"><%= giacenza.carichi %></span>
+      </div>
+      <% carichi_righe = libro.documento_righe.select { |dr| dr.documento.causale&.carico? }.first(5) %>
+      <% if carichi_righe.any? %>
+        <ul class="flex flex-column gap-quarter">
+          <% carichi_righe.each do |documento_riga| %>
+            <li class="flex align-center justify-space-between txt-small">
+              <span class="overflow-ellipsis">
+                <% if documento_riga.documento.clientable.present? %>
+                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
+                <% end %>
+              </span>
+              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </article>
+  <% end %>
+
+  <!-- Adozioni (solo per libri scolastici) -->
+  <% if libro_adottabile?(libro) && libro.adozioni_count.positive? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 280px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Adozioni</h3>
+        <span class="txt-x-large font-weight-black txt-positive"><%= libro.adozioni_count %></span>
+      </div>
+      <% if adozioni.any? %>
+        <ul class="flex flex-column gap-half">
+          <% adozioni.first(5).each do |adozione| %>
+            <li class="flex align-center justify-space-between txt-small">
+              <div class="overflow-ellipsis">
+                <span class="font-weight-bold"><%= adozione.classe_e_sezione %></span>
+                <span class="txt-subtle">·</span>
+                <%= link_to truncate(adozione.scuola, length: 30), adozione.import_scuola, class: "txt-link" %>
+              </div>
+              <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: adozione } %>
+            </li>
+          <% end %>
+          <% if adozioni.count > 5 %>
+            <li class="txt-small txt-subtle">+ altre <%= adozioni.count - 5 %> adozioni</li>
+          <% end %>
+        </ul>
+      <% end %>
+    </article>
+  <% end %>
+</div>

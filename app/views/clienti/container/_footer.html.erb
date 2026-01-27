@@ -1,0 +1,75 @@
+<%# locals: (cliente:, documenti:, sconti:) -%>
+
+<div class="flex gap flex-wrap full-width">
+  <!-- Riepilogo -->
+  <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 180px;">
+    <div class="flex align-center justify-space-between margin-block-end-half">
+      <h3 class="txt-small font-weight-bold txt-subtle">Riepilogo</h3>
+    </div>
+    <div class="flex flex-column gap-quarter">
+      <div class="flex justify-space-between align-center txt-small">
+        <span>Documenti</span>
+        <strong class="txt-large"><%= cliente.documenti.count %></strong>
+      </div>
+      <div class="flex justify-space-between align-center txt-small">
+        <span>Totale fatturato</span>
+        <strong class="txt-link"><%= number_to_currency cliente.documenti.sum(:totale_cents) / 100.0, locale: :it %></strong>
+      </div>
+      <% ultimo_doc = cliente.documenti.order(data_documento: :desc).first %>
+      <% if ultimo_doc %>
+        <div class="flex justify-space-between align-center txt-small">
+          <span>Ultimo documento</span>
+          <span><%= ultimo_doc.data_documento&.strftime("%d/%m/%y") %></span>
+        </div>
+      <% end %>
+    </div>
+  </article>
+
+  <!-- Sconti (se presenti) -->
+  <% if sconti.present? && sconti.any? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 180px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Sconti Editore</h3>
+      </div>
+      <div class="flex flex-column gap-quarter">
+        <% sconti.first(5).each do |sconto| %>
+          <div class="flex justify-space-between align-center txt-small">
+            <div class="flex align-center gap-quarter">
+              <span><%= sconto.categoria&.nome || "Generale" %></span>
+              <% if sconto.scontabile_id.present? %>
+                <span class="badge badge--small">Dedicato</span>
+              <% end %>
+            </div>
+            <strong class="txt-link"><%= number_to_percentage sconto.sconto, precision: 0 %></strong>
+          </div>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+
+  <!-- Documenti recenti -->
+  <% if documenti.present? && documenti.any? %>
+    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 280px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Documenti recenti</h3>
+        <%= link_to documenti_path(clientable_id: cliente.id, clientable_type: "Cliente"), class: "txt-link txt-x-small" do %>
+          Tutti <%= icon_tag "arrow-right", class: "icon--x-small" %>
+        <% end %>
+      </div>
+      <div class="flex flex-column gap-quarter">
+        <% documenti.each do |doc| %>
+          <%= link_to documento_path(doc), class: "flex justify-space-between align-center txt-small txt-undecorated" do %>
+            <div class="flex align-center gap-half">
+              <%= icon_tag "document", class: "icon--small txt-subtle" %>
+              <span><%= doc.causale&.causale %> #<%= doc.numero_documento %></span>
+            </div>
+            <div class="flex align-center gap-half">
+              <span class="txt-subtle"><%= doc.data_documento&.strftime("%d/%m/%y") %></span>
+              <strong><%= number_to_currency doc.totale_cents / 100.0, locale: :it %></strong>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+</div>

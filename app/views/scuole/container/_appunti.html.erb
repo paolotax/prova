@@ -1,0 +1,24 @@
+<%# locals: (scuola:, appunti:) -%>
+
+<article class="panel shadow">
+  <header class="flex align-center justify-space-between margin-block-end-half">
+    <h3 class="txt-medium font-weight-black margin-none">Appunti Recenti</h3>
+    <% appunti_aperti = appunti.where.missing(:closure) %>
+    <% if appunti_aperti.any? %>
+      <span class="badge badge--warning txt-xx-small"><%= appunti_aperti.count %></span>
+    <% end %>
+  </header>
+
+  <% if appunti.any? %>
+    <div class="flex flex-column gap-half">
+      <% appunti.where.missing(:closure).limit(5).each do |appunto| %>
+        <%= link_to appunto_path(appunto), class: "pad-half border-radius fill-shade txt-undecorated" do %>
+          <p class="txt-small overflow-ellipsis"><%= appunto.content %></p>
+          <p class="txt-xx-small txt-subtle margin-block-start-quarter"><%= time_ago_in_words(appunto.created_at) %> fa</p>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="txt-small txt-subtle margin-none">Nessun appunto</p>
+  <% end %>
+</article>

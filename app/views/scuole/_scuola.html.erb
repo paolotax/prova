@@ -1,62 +1,44 @@
-<%= tag.article id: dom_id(scuola), class: "panel shadow flex gap" do %>
-  <%= link_to scuola_path(scuola), class: "flex gap flex-item-grow", style: "text-decoration: none; color: inherit;", data: { turbo_frame: "_top" } do %>
+<%# locals: (scuola:) -%>
 
-    <!-- School icon -->
-    <div class="flex align-center justify-center border-radius" style="width: 3rem; height: 3rem; background: var(--color-positive-lighter); flex-shrink: 0;">
-      <%= icon_tag "building", size: "medium", style: "color: var(--color-positive-dark);" %>
-    </div>
+<%= tag.article id: dom_id(scuola),
+    class: "card",
+    style: "--card-color: #{scuola_color(scuola)}",
+    tabindex: 0,
+    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
 
-    <!-- School info -->
-    <div class="flex-item-grow" style="min-width: 0;">
-      <h2 class="txt-small font-weight-bold overflow-ellipsis">
-        <%= scuola.denominazione %>
-      </h2>
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <%= link_to scuola_path(scuola), class: "card__link", data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= scuola.denominazione %></span>
+    <% end %>
 
-      <div class="flex flex-wrap gap-half align-center margin-block-start-quarter">
-        <% if scuola.comune.present? %>
-          <span class="txt-small txt-subtle flex align-center gap-quarter">
-            <%= icon_tag "map-pin", size: "small" %>
-            <%= scuola.comune %>
-          </span>
-        <% end %>
-
-        <% if scuola.provincia.present? %>
-          <span class="txt-small txt-subtle">(<%= scuola.provincia %>)</span>
-        <% end %>
-
-        <% if scuola.tipo_scuola.present? %>
-          <span class="badge txt-xx-small"><%= scuola.tipo_scuola %></span>
-        <% end %>
+    <!-- Header con tipo scuola -->
+    <header class="card__header">
+      <div class="card__board">
+        <span class="card__id"><%= scuola.tipo_scuola&.upcase.presence || "SCUOLA" %></span>
+        <span class="card__board-name"><%= [scuola.comune, scuola.provincia].compact_blank.join(", ") %></span>
       </div>
+    </header>
 
-      <% if scuola.codice_ministeriale.present? %>
-        <p class="txt-xx-small txt-subtle mono margin-block-start-quarter">
-          <%= scuola.codice_ministeriale %>
-        </p>
-      <% end %>
-    </div>
-
-    <!-- Right side stats -->
-    <div class="flex flex-column align-end" style="flex-shrink: 0;">
-      <% if scuola.classi.any? %>
-        <span class="badge badge--positive txt-xx-small">
-          <%= scuola.classi.count %> classi
-        </span>
-      <% end %>
-
-      <% if scuola.priorita && scuola.priorita > 0 %>
-        <div class="margin-block-start-quarter" style="color: var(--color-warning);">
-          <% scuola.priorita.times do %>
-            <%= icon_tag "star", size: "small" %>
+    <!-- Body con denominazione -->
+    <div class="card__body">
+      <div class="card__content">
+        <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+          <%= scuola.denominazione %>
+        </h3>
+        <div class="card__stages txt-small txt-subtle flex flex-column gap-quarter">
+          <% if scuola.indirizzo.present? %>
+            <span><%= icon_tag "map-pin", class: "icon--small" %> <%= scuola.indirizzo %></span>
+          <% end %>
+          <% if scuola.telefono.present? %>
+            <span><%= icon_tag "phone", class: "icon--small" %> <%= scuola.telefono %></span>
           <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
 
-    <!-- Arrow indicator -->
-    <div class="flex align-center txt-subtle">
-      <%= icon_tag "chevron-right", size: "small" %>
-    </div>
-
-  <% end %>
+    <!-- Footer con stats -->
+    <footer class="card__footer full-width">
+      <%= render "scuole/display/meta", scuola: scuola %>
+    </footer>
+  </div>
 <% end %>

@@ -1,0 +1,27 @@
+<%# locals: (scuola:) -%>
+
+<article class="panel shadow">
+  <h3 class="txt-medium font-weight-black margin-block-end-half">Azioni</h3>
+
+  <div class="flex flex-column gap-half">
+    <%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: scuola.id),
+        class: "btn btn--link full-width" do %>
+      <%= icon_tag "pencil" %>
+      <span>Nuovo Appunto</span>
+    <% end %>
+
+    <%= link_to edit_scuola_path(scuola), class: "btn full-width" do %>
+      <%= icon_tag "cog" %>
+      <span>Modifica Scuola</span>
+    <% end %>
+  </div>
+
+  <div class="margin-block-start border-top pad-block-start">
+    <%= button_to scuola_path(scuola), method: :delete,
+        class: "btn btn--plain txt-negative full-width",
+        data: { turbo_confirm: "Eliminare #{scuola.denominazione}?" } do %>
+      <%= icon_tag "trash" %>
+      <span>Elimina scuola</span>
+    <% end %>
+  </div>
+</article>

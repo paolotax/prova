@@ -1,0 +1,35 @@
+<%# locals: (cliente:) -%>
+
+<div class="card__meta" id="<%= dom_id(cliente, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <span class="txt-x-small txt-uppercase">P.IVA</span>
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <strong class="mono"><%= cliente.partita_iva.presence || "—" %></strong>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author">
+    <% if cliente.indirizzo_telematico.present? %>
+      SDI: <strong class="mono"><%= cliente.indirizzo_telematico %></strong>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    <% if cliente.condizioni_di_pagamento.present? %>
+      <%= cliente.condizioni_di_pagamento %>
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    <% doc_count = cliente.documenti.count %>
+    <% if doc_count.positive? %>
+      <strong><%= doc_count %></strong> documenti
+    <% end %>
+  </span>
+
+  <div class="card__meta-avatars card__meta-avatars--assignees">
+  </div>
+</div>

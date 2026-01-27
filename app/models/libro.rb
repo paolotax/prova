@@ -268,7 +268,7 @@ class Libro < ApplicationRecord
     else
       # Restituisce le prime due iniziali del titolo
       iniziali = titolo.split.map(&:first).join[0..1].upcase
-      return "https://ui-avatars.com/api/?name=#{iniziali}&color=7F9CF5&background=EBF4FF"
+      return "https://ui-avatars.com/api/?name=#{iniziali}&color=FFFFFF&background=6B7280"
     end
   end
 

@@ -1,0 +1,43 @@
+<%# locals: (scuola:, classi:) -%>
+
+<article class="panel shadow">
+  <header class="flex align-center justify-space-between margin-block-end">
+    <div class="flex align-center gap-half">
+      <h2 class="txt-large font-weight-black margin-none">Classi</h2>
+      <span class="badge txt-xx-small"><%= classi.count %></span>
+    </div>
+
+    <% if scuola.codice_ministeriale.present? %>
+      <%= button_to scuola_classi_path(scuola),
+          method: :post,
+          class: "btn btn--link txt-small" do %>
+        <%= icon_tag "download", size: "small" %>
+        Importa Classi
+      <% end %>
+    <% end %>
+  </header>
+
+  <% if classi.any? %>
+    <div class="flex flex-column gap-half">
+      <% classi.each do |classe| %>
+        <%= render "scuole/classi/classe_card", classe: classe, scuola: scuola %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="txt-center pad">
+      <%= icon_tag "users", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-medium font-weight-bold">Nessuna classe registrata</h3>
+      <p class="txt-small txt-subtle margin-block-end">Importa le classi dal database ministeriale.</p>
+      <% if scuola.codice_ministeriale.present? %>
+        <%= button_to scuola_classi_path(scuola),
+            method: :post,
+            class: "btn btn--primary" do %>
+          <%= icon_tag "download", size: "small" %>
+          Importa Classi
+        <% end %>
+      <% else %>
+        <p class="txt-xx-small txt-warning">Inserisci il codice ministeriale per importare le classi.</p>
+      <% end %>
+    </div>
+  <% end %>
+</article>

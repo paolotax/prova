@@ -1,170 +1,154 @@
-<%= form_with model: scuola, class: "flex flex-column gap" do |f| %>
+<%= form_with model: scuola, class: "flex flex-column gap", data: { controller: "form" } do |f| %>
+
   <% if scuola.errors.any? %>
-    <div class="panel pad" style="background: var(--color-negative-lighter); border: 1px solid var(--color-negative);">
-      <div class="flex gap-half">
-        <%= icon_tag "alert-triangle", size: "small", style: "color: var(--color-negative-dark);" %>
-        <div>
-          <h3 class="txt-small font-weight-bold" style="color: var(--color-negative-dark);">
-            <%= pluralize(scuola.errors.count, "errore", "errori") %> <%= scuola.errors.count == 1 ? "impedisce" : "impediscono" %> il salvataggio:
-          </h3>
-          <ul class="txt-small margin-block-start-half" style="color: var(--color-negative-dark); padding-inline-start: 1em;">
-            <% scuola.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
+    <div class="panel pad border-radius txt-negative fill-shade">
+      <h3 class="font-weight-black"><%= pluralize(scuola.errors.count, "errore", "errori") %> da correggere:</h3>
+      <ul class="margin-block-start-half txt-small">
+        <% scuola.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
-  <!-- Denominazione -->
-  <div class="form-field">
-    <%= f.label :denominazione, class: "form-label" %>
-    <%= f.text_field :denominazione,
-        class: "input",
-        placeholder: "Nome della scuola",
-        autofocus: true %>
-  </div>
+  <section class="panel shadow center" style="--panel-size: 55ch;">
+    <!-- Dati Scuola -->
+    <strong class="divider txt-large">Dati scuola</strong>
 
-  <!-- Codice ministeriale e Tipo scuola -->
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :codice_ministeriale, class: "form-label" %>
-      <%= f.text_field :codice_ministeriale,
-          class: "input mono txt-uppercase",
-          placeholder: "es. MIIC123456" %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= f.label :denominazione, class: "form-label" %>
+        <%= f.text_field :denominazione, class: "input", placeholder: "Nome della scuola", autofocus: true, required: true,
+            data: { action: "keydown.esc@document->form#cancel" } %>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <%= f.label :codice_ministeriale, class: "form-label" %>
+          <%= f.text_field :codice_ministeriale, class: "input mono txt-uppercase", placeholder: "es. MIIC123456" %>
+        </div>
+
+        <div class="form-field">
+          <%= f.label :tipo_scuola, class: "form-label" %>
+          <%= f.select :tipo_scuola,
+              options_for_select([
+                ["—", ""],
+                ["Istituto Comprensivo", "Istituto Comprensivo"],
+                ["Scuola Primaria", "Scuola Primaria"],
+                ["Scuola Secondaria I grado", "Scuola Secondaria I grado"],
+                ["Liceo Scientifico", "Liceo Scientifico"],
+                ["Liceo Classico", "Liceo Classico"],
+                ["Liceo Linguistico", "Liceo Linguistico"],
+                ["Istituto Tecnico", "Istituto Tecnico"],
+                ["Istituto Professionale", "Istituto Professionale"],
+                ["Altro", "Altro"]
+              ], scuola.tipo_scuola),
+              {},
+              class: "input input--select" %>
+        </div>
+      </div>
     </div>
 
-    <div class="form-field">
-      <%= f.label :tipo_scuola, class: "form-label" %>
-      <%= f.select :tipo_scuola,
-          options_for_select([
-            ["Seleziona tipo...", ""],
-            ["Istituto Comprensivo", "Istituto Comprensivo"],
-            ["Scuola Primaria", "Scuola Primaria"],
-            ["Scuola Secondaria I grado", "Scuola Secondaria I grado"],
-            ["Liceo Scientifico", "Liceo Scientifico"],
-            ["Liceo Classico", "Liceo Classico"],
-            ["Liceo Linguistico", "Liceo Linguistico"],
-            ["Istituto Tecnico", "Istituto Tecnico"],
-            ["Istituto Professionale", "Istituto Professionale"],
-            ["Altro", "Altro"]
-          ], scuola.tipo_scuola),
-          {},
-          class: "input input--select" %>
-    </div>
-  </div>
+    <!-- Indirizzo -->
+    <strong class="divider txt-large">Indirizzo</strong>
 
-  <!-- Indirizzo -->
-  <div class="form-field">
-    <%= f.label :indirizzo, class: "form-label" %>
-    <%= f.text_field :indirizzo,
-        class: "input",
-        placeholder: "Via/Piazza..." %>
-  </div>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= f.label :indirizzo, class: "form-label" %>
+        <%= f.text_field :indirizzo, class: "input", placeholder: "Via/Piazza..." %>
+      </div>
 
-  <!-- CAP, Comune, Provincia -->
-  <div class="form-grid" style="grid-template-columns: 1fr 2fr 1fr;">
-    <div class="form-field">
-      <%= f.label :cap, "CAP", class: "form-label" %>
-      <%= f.text_field :cap,
-          class: "input",
-          placeholder: "00000",
-          maxlength: 5 %>
-    </div>
+      <div class="form-grid form-grid--3">
+        <div class="form-field">
+          <%= f.label :cap, "CAP", class: "form-label" %>
+          <%= f.text_field :cap, class: "input mono", placeholder: "00000", maxlength: 5 %>
+        </div>
 
-    <div class="form-field">
-      <%= f.label :comune, class: "form-label" %>
-      <%= f.text_field :comune,
-          class: "input",
-          placeholder: "Comune" %>
+        <div class="form-field" style="grid-column: span 2;">
+          <%= f.label :comune, class: "form-label" %>
+          <%= f.text_field :comune, class: "input", placeholder: "Comune" %>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <%= f.label :provincia, class: "form-label" %>
+          <%= f.text_field :provincia, class: "input txt-uppercase", placeholder: "MI", maxlength: 2 %>
+        </div>
+
+        <div class="form-field">
+          <%= f.label :regione, class: "form-label" %>
+          <%= f.select :regione,
+              options_for_select([
+                ["—", ""],
+                "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
+                "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
+                "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
+                "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
+              ], scuola.regione),
+              {},
+              class: "input input--select" %>
+        </div>
+      </div>
     </div>
 
-    <div class="form-field">
-      <%= f.label :provincia, class: "form-label" %>
-      <%= f.text_field :provincia,
-          class: "input txt-uppercase",
-          placeholder: "MI",
-          maxlength: 2 %>
-    </div>
-  </div>
+    <!-- Contatti -->
+    <strong class="divider txt-large">Contatti</strong>
 
-  <!-- Regione -->
-  <div class="form-field">
-    <%= f.label :regione, class: "form-label" %>
-    <%= f.select :regione,
-        options_for_select([
-          ["Seleziona regione...", ""],
-          "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
-          "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
-          "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
-          "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
-        ], scuola.regione),
-        {},
-        class: "input input--select" %>
-  </div>
+    <div class="flex flex-column gap">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= f.label :telefono, class: "form-label" %>
+          <%= f.telephone_field :telefono, class: "input", placeholder: "02 12345678" %>
+        </div>
 
-  <!-- Email e PEC -->
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :email, class: "form-label" %>
-      <%= f.email_field :email,
-          class: "input",
-          placeholder: "email@scuola.edu.it" %>
+        <div class="form-field">
+          <%= f.label :email, class: "form-label" %>
+          <%= f.email_field :email, class: "input", placeholder: "email@scuola.edu.it" %>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :pec, "PEC", class: "form-label" %>
+        <%= f.email_field :pec, class: "input", placeholder: "email@pec.scuola.edu.it" %>
+      </div>
     </div>
 
-    <div class="form-field">
-      <%= f.label :pec, "PEC", class: "form-label" %>
-      <%= f.email_field :pec,
-          class: "input",
-          placeholder: "email@pec.scuola.edu.it" %>
+    <!-- Stato e Priorità -->
+    <strong class="divider txt-large">Stato e priorità</strong>
+
+    <div class="flex flex-column gap">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= f.label :stato, class: "form-label" %>
+          <%= f.select :stato,
+              options_for_select([
+                ["Attiva", "attiva"],
+                ["Inattiva", "inattiva"],
+                ["In sospeso", "sospesa"]
+              ], scuola.stato || "attiva"),
+              {},
+              class: "input input--select" %>
+        </div>
+
+        <div class="form-field">
+          <%= f.label :priorita, "Priorità", class: "form-label" %>
+          <%= f.select :priorita,
+              options_for_select((0..5).map { |n| [n == 0 ? "Nessuna" : "#{'★' * n} (#{n})", n] }, scuola.priorita || 0),
+              {},
+              class: "input input--select" %>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :note, class: "form-label" %>
+        <%= f.text_area :note, rows: 3, class: "input", placeholder: "Note aggiuntive..." %>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Telefono -->
-  <div class="form-field">
-    <%= f.label :telefono, class: "form-label" %>
-    <%= f.telephone_field :telefono,
-        class: "input",
-        placeholder: "02 12345678" %>
-  </div>
-
-  <!-- Stato e Priorita -->
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :stato, class: "form-label" %>
-      <%= f.select :stato,
-          options_for_select([
-            ["Attiva", "attiva"],
-            ["Inattiva", "inattiva"],
-            ["In sospeso", "sospesa"]
-          ], scuola.stato || "attiva"),
-          {},
-          class: "input input--select" %>
-    </div>
-
-    <div class="form-field">
-      <%= f.label :priorita, "Priorita", class: "form-label" %>
-      <%= f.select :priorita,
-          options_for_select((0..5).map { |n| [n == 0 ? "Nessuna" : "#{'★' * n} (#{n})", n] }, scuola.priorita || 0),
-          {},
-          class: "input input--select" %>
-    </div>
-  </div>
-
-  <!-- Note -->
-  <div class="form-field">
-    <%= f.label :note, class: "form-label" %>
-    <%= f.text_area :note,
-        rows: 3,
-        class: "input",
-        placeholder: "Note aggiuntive..." %>
-  </div>
-
-  <!-- Actions -->
-  <div class="flex align-center justify-end gap margin-block-start" style="border-top: 1px solid var(--color-ink-lighter); padding-top: var(--block-space);">
-    <% cancel_path = scuola.persisted? ? scuola_path(scuola) : scuole_path %>
-    <%= link_to "Annulla", cancel_path, class: "btn" %>
+  <div class="flex align-center justify-end gap">
+    <%= link_to "Annulla", (scuola.persisted? ? scuola_path(scuola) : scuole_path), class: "btn", data: { form_target: "cancel" } %>
     <%= f.submit scuola.persisted? ? "Salva Modifiche" : "Crea Scuola", class: "btn btn--primary" %>
   </div>
 <% end %>

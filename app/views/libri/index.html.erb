@@ -2,19 +2,18 @@
 <% @body_class = "contained-scrolling" %>
 
 <% content_for :head do %>
-  <%#= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
   <%= combobox_style_tag "data-turbo-track": "reload" %>
 <% end %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= link_to libri_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
-    <%= link_to new_libri_importer_path, class: "btn" do %>
-      <%= icon_tag "document" %>
+    <%= link_to new_libri_importer_path, class: "btn", data: { controller: "tooltip" } do %>
+      <%= icon_tag "arrow-down-tray" %>
       <span class="for-screen-reader">Importa Libri</span>
     <% end %>
   </div>
@@ -24,18 +23,18 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_libro_path, class: "btn" do %>
+    <%= link_to new_libro_path, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.insert@document->hotkey#click" } do %>
       <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuovo appunto</span>
+      <span class="for-screen-reader">Nuovo libro <kbd class="hide-on-touch">Ins</kbd></span>
     <% end %>
   </div>
 <% end %>
 
 <% if hotwire_native_app? %>
-	<%= link_to "Nuovo Libro", new_libro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
-    <%= render "shared/native_search_filter",
-        url: libri_path,
-        placeholder: "Cerca..." %>
+  <%= link_to "Nuovo Libro", new_libro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
+  <%= render "shared/native_search_filter",
+      url: libri_path,
+      placeholder: "Cerca..." %>
 <% end %>
 
 <%= render "filters/settings",
@@ -45,49 +44,42 @@
       no_filtering_url: libri_path %>
 
 <%= turbo_frame_tag :search_results do %>
+  <% if @page.used? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
+    </p>
 
-    <% if @page.used? %>
-      <p class="txt-small txt-subtle margin-block-end-half center">
-        <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
+    <div class="cards cards--grid" data-controller="bulk-actions">
+      <%= with_automatic_pagination :libri, @page,
+          id: "libri-lista",
+          class: "cards__list",
+          data: { controller: "navigable-list",
+              navigable_list_auto_select_value: false,
+              navigable_list_actionable_items_value: true,
+              navigable_list_prevent_handled_keys_value: true,
+              action: "keydown->navigable-list#navigate" } do %>
+        <%= render @page.records %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <%= icon_tag "book", size: "large", class: "txt-subtle margin-block-end-half" %>
+      <h3 class="txt-large font-weight-bold">Nessun libro trovato</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if @user_filtering.filters_active? %>
+          Prova a modificare i filtri di ricerca.
+        <% else %>
+          Inizia aggiungendo il primo libro.
+        <% end %>
       </p>
-
-      <div class="cards--grid" data-controller="bulk-actions">
-        <%#= render "shared/active_filters", collection: @libri %>
-        <%#= render "libri/bulk_actions/form" %>
-
-        <%= with_automatic_pagination :libri, @page,
-            id: "libri-lista",
-            class: "cards__list" do %>
-          <%= render @page.records %>
+      <% unless @user_filtering.filters_active? %>
+        <%= link_to new_libro_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Aggiungi Libro
         <% end %>
-      </div>
-    <% else %>
-      <div class="blank-slate blank-slate--empty">
-        <%= icon_tag "book", size: "large", class: "txt-subtle margin-block-end-half" %>
-        <h3 class="txt-large font-weight-bold">Nessun libro trovato</h3>
-        <p class="txt-small txt-subtle margin-block-end">
-          <% if @user_filtering.filters_active? %>
-            Prova a modificare i filtri di ricerca.
-          <% else %>
-            Inizia aggiungendo il primo libro.
-          <% end %>
-        </p>
-        <% unless @user_filtering.filters_active? %>
-          <%= link_to new_libro_path, class: "btn btn--primary" do %>
-            <%= icon_tag "plus", size: "small" %>
-            Aggiungi Libro
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
 <%= render "libri/bulk_actions/form" %>
-
-
-
-
-
-
-
-

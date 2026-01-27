@@ -1,0 +1,5 @@
+<%# locals: (cliente:) -%>
+
+<%= render "shared/cards/display/perma/board",
+    id: cliente.codice_cliente.presence || cliente.partita_iva.presence || "NUOVO",
+    name: cliente.tipo_cliente&.upcase.presence || "CLIENTE" %>

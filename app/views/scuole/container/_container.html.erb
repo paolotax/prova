@@ -1,0 +1,16 @@
+<%# locals: (scuola:) -%>
+
+<div class="flex gap" style="--column-gap: var(--block-space-double);">
+  <!-- Colonna principale -->
+  <div class="flex flex-column gap flex-1" style="flex-basis: 600px;">
+    <%= render "scuole/container/details", scuola: scuola %>
+    <%= render "scuole/container/classi", scuola: scuola, classi: @classi %>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="flex flex-column gap" style="flex-basis: 280px; flex-shrink: 0;">
+    <%= render "scuole/container/stats", scuola: scuola %>
+    <%= render "scuole/container/appunti", scuola: scuola, appunti: @appunti %>
+    <%= render "scuole/container/actions", scuola: scuola %>
+  </aside>
+</div>

@@ -1,0 +1,41 @@
+<%# locals: (libro:, giacenza:, adozioni:) -%>
+
+<section id="<%= dom_id(libro, :container) %>" class="card-perma" style="--card-color: <%= libro_sconto_color(libro) %>;">
+  <div class="card-perma__actions card-perma__actions--left">
+    <%= link_to edit_libro_path(libro), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click", tooltip_content_value: "Modifica" } do %>
+      <%= icon_tag "pencil" %>
+      <span class="for-screen-reader">Modifica</span>
+    <% end %>
+  </div>
+
+  <div class="card-perma__bg">
+    <article class="card">
+      <header class="card__header">
+        <%= render "libri/display/perma/board", libro: libro %>
+      </header>
+
+      <div class="card__body justify-space-between">
+        <div class="card__content">
+          <%= render "libri/container/content", libro: libro %>
+        </div>
+      </div>
+
+      <footer class="card__footer full-width flex align-start gap">
+        <%= render "libri/display/perma/meta", libro: libro %>
+      </footer>
+    </article>
+  </div>
+
+  <div class="card-perma__actions card-perma__actions--right">
+    <% if libro.fascicoli_count.positive? || libro.confezioni_count.positive? %>
+      <button type="button" class="btn" data-controller="tooltip" data-tooltip-content-value="Fascicoli">
+        <%= icon_tag "book-open" %>
+        <span class="for-screen-reader">Fascicoli</span>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="card-perma__notch card-perma__notch--bottom">
+    <%= render "libri/container/footer", libro: libro, giacenza: giacenza, adozioni: adozioni %>
+  </div>
+</section>

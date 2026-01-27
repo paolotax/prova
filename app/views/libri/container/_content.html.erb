@@ -1,0 +1,69 @@
+<%# locals: (libro:) -%>
+
+<div class="flex gap">
+  <!-- Copertina -->
+  <div class="flex-item-shrink">
+    <%= image_tag libro.avatar_url,
+        style: "width: 100px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius);",
+        alt: libro.titolo %>
+  </div>
+
+  <!-- Info principale -->
+  <div class="flex-item-grow flex flex-column gap-half">
+    <h2 class="card__title txt-large margin-none" style="line-height: 1.2;">
+      <%= libro.titolo %>
+    </h2>
+
+    <!-- Prezzi -->
+    <div class="flex align-center gap margin-block-start-half">
+      <span class="txt-x-large font-weight-black">
+        <%= number_to_currency(libro.prezzo) %>
+      </span>
+      <% if libro.prezzo_suggerito_cents.present? && libro.prezzo_suggerito_cents > 0 %>
+        <span class="flex flex-column">
+          <span class="txt-small txt-subtle">Suggerito</span>
+          <span class="txt-medium font-weight-bold txt-link"><%= number_to_currency(libro.prezzo_suggerito) %></span>
+        </span>
+        <% sconto = libro_sconto_percentuale(libro) %>
+        <% if sconto > 0 %>
+          <span class="badge badge--large" style="background: var(--card-color); color: white;">
+            -<%= sconto %>%
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Badges fascicoli/confezioni -->
+    <% if libro.fascicoli_count > 0 || libro.confezioni_count > 0 || libro.has_confezioni? %>
+      <div class="flex gap-half flex-wrap margin-block-start-half">
+        <% unless libro.fascicoli_count.zero? %>
+          <%= component('badge', text: pluralize(libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow") %>
+        <% end %>
+        <% unless libro.confezioni_count.zero? %>
+          <%= component('badge', text: pluralize(libro.confezioni_count, "confezione", "confezioni"), color: "blue") %>
+        <% end %>
+        <% if libro.has_confezioni? %>
+          <% libro.confezioni.each do |c| %>
+            <%= link_to c do %>
+              <%= component('badge', text: truncate(c.titolo, length: 30), color: "blue") %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Note -->
+    <% if libro.note.present? %>
+      <div class="txt-small txt-subtle margin-block-start-half">
+        <%= truncate(libro.note, length: 150) %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Confezionator -->
+<%= turbo_frame_tag "confezione_#{libro.id}",
+    src: fascicoli_libro_path(libro),
+    refresh: "morph",
+    loading: :lazy %>
+<%= render partial: "confezionator/form", locals: { libro: libro } %>

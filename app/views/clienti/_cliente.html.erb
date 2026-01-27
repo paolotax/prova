@@ -1,21 +1,44 @@
-<article class="panel shadow flex flex-column">
-  <div class="flex align-center gap-half margin-block-end-half">
-    <h3 class="txt-small font-weight-bold overflow-ellipsis flex-item-grow">
-      <%= link_to cliente.denominazione, cliente_path(cliente), data: { turbo_frame: "_top" } %>
-    </h3>
-  </div>
+<%# locals: (cliente:) -%>
 
-  <p class="txt-small txt-subtle mono margin-block-end-quarter"><%= cliente.partita_iva %></p>
-  <p class="txt-small txt-subtle mono"><%= cliente.codice_fiscale %></p>
+<%= tag.article id: dom_id(cliente),
+    class: "card",
+    style: "--card-color: #{cliente_color(cliente)}",
+    tabindex: 0,
+    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
 
-  <div class="card-actions margin-block-start-auto">
-    <%= link_to cliente_path(cliente), class: "card-action", data: { turbo_frame: "_top" } do %>
-      <%= icon_tag "eye", size: "small" %>
-      <span class="txt-small">Apri</span>
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <%= link_to cliente_path(cliente), class: "card__link", data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= cliente.denominazione %></span>
     <% end %>
-    <%= link_to edit_cliente_path(cliente), class: "card-action", data: { turbo_frame: "_top" } do %>
-      <%= icon_tag "pencil", size: "small" %>
-      <span class="txt-small">Modifica</span>
-    <% end %>
+
+    <!-- Header con tipo cliente colorato -->
+    <header class="card__header">
+      <div class="card__board">
+        <span class="card__id"><%= cliente.tipo_cliente&.upcase.presence || "CLIENTE" %></span>
+        <span class="card__board-name"><%= [cliente.comune, cliente.provincia].compact_blank.join(", ") %></span>
+      </div>
+    </header>
+
+    <!-- Body con denominazione e contatti -->
+    <div class="card__body">
+      <div class="card__content">
+        <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+          <%= cliente.denominazione %>
+        </h3>
+        <div class="card__stages txt-small txt-subtle flex flex-column gap-quarter">
+          <% if cliente.telefono.present? %>
+            <span><%= icon_tag "phone", class: "icon--small" %> <%= cliente.telefono %></span>
+          <% end %>
+          <% if cliente.email.present? %>
+            <span><%= icon_tag "envelope", class: "icon--small" %> <%= cliente.email %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer con stats -->
+    <footer class="card__footer full-width">
+      <%= render "clienti/display/meta", cliente: cliente %>
+    </footer>
   </div>
-</article>
+<% end %>
