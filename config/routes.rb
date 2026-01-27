@@ -207,7 +207,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :clienti_importer, only: [:new, :create, :show]
+    resource :clienti_importer, only: [:show, :create], controller: 'clienti_importer'
 
     resources :documenti_importer, only: [:new, :create, :show]
 

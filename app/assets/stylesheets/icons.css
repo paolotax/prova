@@ -18,6 +18,8 @@
     background: none;
   }
 
+  .icon--arrow-down-tray { --svg: url("arrow-down-tray.svg"); }
+  .icon--printer { --svg: url("printer.svg"); }
   .icon--cash { --svg: url("cash.svg"); }
   .icon--home { --svg: url("home.svg"); }
   .icon--building-library { --svg: url("building-library.svg"); }

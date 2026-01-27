@@ -1,7 +1,7 @@
 <%# locals: (documento:) -%>
 
 <%= link_to documento_path(documento, format: :pdf), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "PDF" } do %>
-  <%= icon_tag "document" %>
+  <%= icon_tag "printer" %>
   <span class="for-screen-reader">Stampa</span>
 <% end %>
 

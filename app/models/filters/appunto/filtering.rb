@@ -34,7 +34,7 @@ module Filters
     end
 
     def controls
-      %w[statuses states]
+      %w[states]
     end
 
     def cache_key

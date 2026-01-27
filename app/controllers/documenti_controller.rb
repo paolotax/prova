@@ -71,6 +71,7 @@ class DocumentiController < ApplicationController
                         .maximum(:numero_documento) || 0).to_i + 1
 
     @documento = Current.account.documenti.build(
+      user: Current.user,
       numero_documento: numero_documento,
       data_documento: Date.today,
       causale: causale,

@@ -1,7 +1,7 @@
 <%# locals: (appunto:) -%>
 
-<%= link_to appunto_path(appunto, format: :pdf), class: "btn", data: { controller: "tooltip", tooltip_content_value: "PDF" } do %>
-  <%= icon_tag "document" %>
+<%= link_to appunto_path(appunto, format: :pdf), class: "btn", target: "_blank", data: { controller: "tooltip", tooltip_content_value: "PDF" } do %>
+  <%= icon_tag "printer" %>
   <span class="for-screen-reader">Stampa appunto</span>
 <% end %>
 
