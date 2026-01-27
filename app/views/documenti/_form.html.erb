@@ -79,13 +79,12 @@
     <% end %>
 
     <div class="documento-form__actions">
-        <%= render TaxButtonComponent.new(
-                    caption: "",
-                    svg_file: "icon-plus.svg",
-                    color: "blue",
-                    url: url_for( controller: "documento_righe", action: "new", model: @documento ),
-                    data_attr: { turbo_stream: true }
-        ) %>
+        <%= link_to url_for(controller: "documento_righe", action: "new", model: @documento),
+                    class: "btn btn--primary",
+                    data: { turbo_stream: true } do %>
+          <%= icon_tag "add" %>
+          <span>Aggiungi riga</span>
+        <% end %>
     </div>
 
 

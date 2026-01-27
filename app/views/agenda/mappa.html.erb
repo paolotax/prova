@@ -18,13 +18,13 @@
             <% end %>
 
             <% heading.with_action do %>
-                <%= component 'tax_button',
-                    caption: "Google Maps!",
-                    svg_file: "icon-truck.svg",
-                    color: "transparent",
-                    url: create_google_maps_link(@indirizzi),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" },
-                    target: "_blank" %>
+                <%= link_to create_google_maps_link(@indirizzi),
+                    class: "btn btn--ghost",
+                    target: "_blank",
+                    data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                    <%= icon_tag "truck", size: "small" %>
+                    Google Maps!
+                <% end %>
             <% end %>
 
             <%= "Mappa" %>

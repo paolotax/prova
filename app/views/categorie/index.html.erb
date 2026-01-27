@@ -3,12 +3,12 @@
 <% content_for :header do %>
   <%= component "heading/with_actions" do |heading| %>
     <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Nuova Categoria",
-        svg_file: "icon-plus.svg",
-        color: "blue",
-        url: new_categoria_path,
-        data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+      <%= link_to new_categoria_path,
+        class: "btn btn--primary",
+        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+        <%= icon_tag "add", size: "small" %>
+        Nuova Categoria
+      <% end %>
     <% end %>
   <% end %>
 <% end %>

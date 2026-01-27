@@ -8,19 +8,18 @@
         <% end %>
     <% end %>
     <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Elimina",
-                svg_file: "icon-trash-real.svg",
-                color: "red",
-                url: url_for( controller: "stats", action: "destroy", model: @stat ),
-                data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+        <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
+            class: "btn btn--negative",
+            data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
+            <%= icon_tag "trash", size: "small" %>
+            Elimina
+        <% end %>
     <% end %>
     <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Stats...",
-                svg_file: "icon-chart-pie.svg",
-                color: "white",
-                url: url_for( controller: "stats", action: "index" ) %>
+        <%= link_to url_for(controller: "stats", action: "index"), class: "btn" do %>
+            <%= icon_tag "chart-pie", size: "small" %>
+            Stats...
+        <% end %>
     <% end %>
 
     <%= h1 {"Modifica statistica"} %>

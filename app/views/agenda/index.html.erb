@@ -7,17 +7,17 @@
 
         <% heading.with_description do %>
             <div class="flex items-center gap-1 mt-2">
-				<%= component 'tax_button',
-					caption: "Oggi",
-					color: "green",
-					url: agenda_path(giorno:  Date.today.to_s),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-                
-				<%= component 'tax_button',
-					svg_file: "icon-arrow-left.svg",
-					color: "transparent",
-					url: agenda_path(giorno: (@giorno - 7.days).to_s),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+				<%= link_to agenda_path(giorno: Date.today.to_s),
+					class: "btn btn--positive",
+					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+					Oggi
+				<% end %>
+
+				<%= link_to agenda_path(giorno: (@giorno - 7.days).to_s),
+					class: "btn btn--ghost",
+					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+					<%= icon_tag "arrow-left", size: "small" %>
+				<% end %>
                                             
                 <div data-controller="date-selector" class="relative">
                     <%= date_field_tag :giorno, 
@@ -32,25 +32,21 @@
                     <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
                 </div>
 
-				<%= component 'tax_button',
-					svg_file: "icon-arrow-right.svg",
-					color: "transparent",
-					url: agenda_path(giorno: (@giorno + 7.days).to_s),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
+				<%= link_to agenda_path(giorno: (@giorno + 7.days).to_s),
+					class: "btn btn--ghost",
+					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+					<%= icon_tag "arrow-right", size: "small" %>
+				<% end %>
             </div>
         <% end %>
 
 		<% heading.with_action do %>
 			<div class="flex gap-1">
-
-
-				<%= component 'tax_button',
-					caption: "Oggi",
-					color: "white",
-					url: agenda_path(giorno:  Date.today.to_s),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link"} %>
-
-
+				<%= link_to agenda_path(giorno: Date.today.to_s),
+					class: "btn",
+					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+					Oggi
+				<% end %>
 			</div>
 		<% end %>
 

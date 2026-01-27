@@ -23,9 +23,9 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_libro_path, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.insert@document->hotkey#click" } do %>
+    <%= link_to new_libro_path, class: "btn", data: { controller: "tooltip" } do %>
       <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuovo libro <kbd class="hide-on-touch">Ins</kbd></span>
+      <span class="for-screen-reader">Nuovo libro</span>
     <% end %>
   </div>
 <% end %>
@@ -49,7 +49,7 @@
       <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
     </p>
 
-    <div class="cards cards--grid" data-controller="bulk-actions">
+    <div class="cards cards--grid">
       <%= with_automatic_pagination :libri, @page,
           id: "libri-lista",
           class: "cards__list",
@@ -82,4 +82,4 @@
   <% end %>
 <% end %>
 
-<%= render "libri/bulk_actions/form" %>
+<%#= render "libri/bulk_actions/form" %>

@@ -11,26 +11,26 @@
 
         <% if @tappe.size > 1 %>
             <% heading.with_action do %>
-                <%= component 'tax_button',
-                    caption: 'Ricalcola percorso',
-                    color: "transparent",
-                    url: url_for( controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }) %>
+                <%= link_to url_for(controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }),
+                    class: "btn btn--ghost" do %>
+                    Ricalcola percorso
+                <% end %>
             <% end %>
         <% end %>
 
         <% heading.with_description do %>
             <div class="flex items-center gap-1 mt-2">
-                <%= component 'tax_button',
-                    caption: "Settimana",
-                    color: "yellow",
-                    url: agenda_path(giorno: @giorno),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                <%= link_to agenda_path(giorno: @giorno),
+                    class: "btn btn--warning",
+                    data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                    Settimana
+                <% end %>
 
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-left.svg",
-                    color: "transparent",
-                    url: giorno_path(giorno: (@giorno - 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                <%= link_to giorno_path(giorno: (@giorno - 1.day).to_s),
+                    class: "btn btn--ghost",
+                    data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                    <%= icon_tag "arrow-left", size: "small" %>
+                <% end %>
 
                 <div data-controller="date-selector" class="relative">
                     <%= date_field_tag :giorno,
@@ -45,11 +45,11 @@
                     <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
                 </div>
 
-                <%= component 'tax_button',
-                    svg_file: "icon-arrow-right.svg",
-                    color: "transparent",
-                    url: giorno_path(giorno: (@giorno + 1.day).to_s),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+                <%= link_to giorno_path(giorno: (@giorno + 1.day).to_s),
+                    class: "btn btn--ghost",
+                    data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+                    <%= icon_tag "arrow-right", size: "small" %>
+                <% end %>
             </div>
         <% end %>
 
@@ -58,10 +58,9 @@
                 <% if @tappe.any? %>
                     <%= render DropdownComponent.new() do |dropdown| %>
                         <%= dropdown.with_button do %>
-                            <%= component 'tax_button',
-                                svg_file: "icon-print.svg",
-                                color: "pink",
-								type: :dropdown %>
+                            <div class="btn" style="background: var(--color-notice-lighter); color: var(--color-notice-dark);">
+                                <%= icon_tag "printer", size: "small" %>
+                            </div>
                         <% end %>
                         
                         <%= dropdown.with_item do %>
@@ -104,11 +103,11 @@
                     <% end %>
                 <% end %>
                 
-                <%= component 'tax_button',
-                    svg_file: "icon-plus.svg",
-                    color: "blue",
-                    url: slideover_path,
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+                <%= link_to slideover_path,
+                    class: "btn btn--primary",
+                    data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
+                    <%= icon_tag "add", size: "small" %>
+                <% end %>
             </div>
         <% end %>
 

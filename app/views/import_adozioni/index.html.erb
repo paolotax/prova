@@ -11,30 +11,29 @@
 
 		<%# button export excel %>
 		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Excel",
-					svg_file: "icon-excel-bis.svg",
-					color: "green",
-					url: url_for( controller: "import_adozioni", action: "index", format: :xlsx, params: request.query_parameters ),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link" } %>
+			<%= link_to url_for(controller: "import_adozioni", action: "index", format: :xlsx, params: request.query_parameters),
+				class: "btn btn--positive",
+				data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+				<%= icon_tag "document", size: "small" %>
+				Excel
+			<% end %>
 		<% end %>
 
-		<% heading.with_action do %>	
-			<%= component 'tax_button',
-				caption: "Indietro",
-				svg_file: "icon-arrow-long-left.svg",
-				color: "white",
-				url: 'javascript:history.back()' %>
+		<% heading.with_action do %>
+			<%= link_to "javascript:history.back()", class: "btn" do %>
+				<%= icon_tag "arrow-left", size: "small" %>
+				Indietro
+			<% end %>
 		<% end %>
 
         <% heading.with_action do %>
             <%= tag.div class: "block xl:hidden" do %>
-                <%= component 'tax_button',
-                    caption: "Filtra",
-                    svg_file: "icon-funnel.svg",
-                    color: "white",
-                    url: filtra_import_adozioni_path( params: request.query_parameters ),
-                    data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+                <%= link_to filtra_import_adozioni_path(params: request.query_parameters),
+                    class: "btn",
+                    data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
+                    <%= icon_tag "funnel", size: "small" %>
+                    Filtra
+                <% end %>
             <% end %>
         <% end %>
 		

@@ -172,7 +172,6 @@ Rails.application.routes.draw do
 
     resources :documenti do
       resources :documento_righe, only: [:create], controller: 'documento_righe'
-      resources :steps, only: %i[show update], controller: 'steps_controllers/documento_steps'
       collection do
         get 'filtra'
         get 'nuovo_numero_documento'
@@ -267,9 +266,7 @@ Rails.application.routes.draw do
 
     get 'profilo', to: 'profiles#get_user_profile'
 
-    resources :profiles do
-      resources :steps, only: %i[show update], controller: 'steps_controllers/profile_steps'
-    end
+    resources :profiles
 
     resources :stats do
       member do

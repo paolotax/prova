@@ -3,12 +3,12 @@
         <% if current_user.admin? %>
             <% heading.with_action do %>
                 <div class="print-hidden">
-                    <%= component 'tax_button',
-                            caption: "Elimina",
-                            svg_file: "icon-trash-real.svg",
-                            color: "red",
-                            url: url_for( controller: "stats", action: "destroy", model: @stat ),
-                            data_attr: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } %>
+                    <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
+                        class: "btn btn--negative",
+                        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
+                        <%= icon_tag "trash", size: "small" %>
+                        Elimina
+                    <% end %>
                 </div>
             <% end %>
         <% end %>
@@ -16,42 +16,41 @@
         <% if current_user.admin? %>
             <% heading.with_action do %>
                 <div class="print-hidden">
-                    <%= component 'tax_button',
-                            caption: "SQL",
-                            svg_file: "icon-pencil.svg",
-                            color: "yellow",
-                            url: url_for( controller: "stats", action: "edit", model: @stat ) %>
+                    <%= link_to url_for(controller: "stats", action: "edit", model: @stat), class: "btn btn--warning" do %>
+                        <%= icon_tag "pencil", size: "small" %>
+                        SQL
+                    <% end %>
                 </div>
             <% end %>
         <% end %>
 
         <% heading.with_action do %>
             <div class="print-hidden">
-                <%= component 'tax_button',
-                    caption: "Excel",
-                    svg_file: "icon-excel-bis.svg",
-                    color: "green",
-                    url: url_for( controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters ) %>
+                <%= link_to url_for(controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters),
+                    class: "btn btn--positive" do %>
+                    <%= icon_tag "document", size: "small" %>
+                    Excel
+                <% end %>
             </div>
         <% end %>
 
         <% heading.with_action do %>
             <div class="print-hidden">
-                <%= component 'tax_button',
-                    caption: "Stampa",
-                    svg_file: "icon-print.svg",
-                    color: "pink",
-                    url: 'javascript:window.print()' %>
+                <%= link_to "javascript:window.print()",
+                    class: "btn",
+                    style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);" do %>
+                    <%= icon_tag "printer", size: "small" %>
+                    Stampa
+                <% end %>
             </div>
         <% end %>
 
         <% heading.with_action do %>
             <div class="print-hidden">
-                <%= component 'tax_button',
-                    caption: "Stats...",
-                    svg_file: "icon-chart-pie.svg",
-                    color: "white",
-                    url: 'javascript:history.back()' %>
+                <%= link_to "javascript:history.back()", class: "btn" do %>
+                    <%= icon_tag "chart-pie", size: "small" %>
+                    Stats...
+                <% end %>
             </div>
         <% end %>
 

@@ -8,11 +8,10 @@
         <% end %>
     <% end %>
     <% heading.with_action do %>
-        <%= component 'tax_button',
-                caption: "Stats...",
-                svg_file: "icon-chart-pie.svg",
-                color: "white",
-                url: url_for( controller: "stats", action: "index" ) %>
+        <%= link_to url_for(controller: "stats", action: "index"), class: "btn" do %>
+            <%= icon_tag "chart-pie", size: "small" %>
+            Stats...
+        <% end %>
     <% end %>
 
     <%= h1 {"Nuova statistica"} %>

@@ -5,37 +5,35 @@
 		
         <% if @giro.can_delete? %>
             <% heading.with_action do %>
-                <%= component 'tax_button',
-                    caption: "Elimina",
-                    svg_file: "icon-trash-real.svg",
-                    color: "red",
-                    url: url_for( controller: "giri", action: "destroy", model: @giro, method: :delete ),
-				    data_attr: {
+                <%= link_to url_for(controller: "giri", action: "destroy", model: @giro, method: :delete),
+                    class: "btn btn--negative",
+                    data: {
                         turbo_method: "delete",
                         turbo_confirm: "Vuoi veramente eliminare questo Giro?",
                         turbo_confirm_theme: "",
                         turbo_confirm_confirm_label: "Si, eliminalo!",
-                        turbo_confirm_cancel_label: "Oops, no annulla…",
-                    } %>
+                        turbo_confirm_cancel_label: "Oops, no annulla…"
+                    } do %>
+                    <%= icon_tag "trash", size: "small" %>
+                    Elimina
+                <% end %>
             <% end %>
         <% end %>
 
-
 		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Modifica",
-					svg_file: "icon-pencil.svg",
-					color: "yellow",
-					url: edit_giro_path(@giro),
-					data_attr: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } %>
+			<%= link_to edit_giro_path(@giro),
+				class: "btn btn--warning",
+				data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
+				<%= icon_tag "pencil", size: "small" %>
+				Modifica
+			<% end %>
 		<% end %>
 
         <% heading.with_action do %>
-            <%= component 'tax_button',
-                    caption: "Indietro",
-                    svg_file: "icon-arrow-long-left.svg",
-                    color: "white",
-                    url: 'javascript:history.back()' %>
+            <%= link_to "javascript:history.back()", class: "btn" do %>
+                <%= icon_tag "arrow-left", size: "small" %>
+                Indietro
+            <% end %>
         <% end %>
 
         <% heading.with_trailer do %>

@@ -3,12 +3,12 @@
 <% content_for :header do %>
   <%= component "heading/with_actions" do |heading| %>
     <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Modifica",
-        svg_file: "icon-pencil.svg",
-        color: "blue",
-        url: edit_categoria_path(@categoria),
-        data_attr: { turbo_frame: :modal, action: "click->dialog#open" } %>
+      <%= link_to edit_categoria_path(@categoria),
+        class: "btn btn--primary",
+        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+        <%= icon_tag "pencil", size: "small" %>
+        Modifica
+      <% end %>
     <% end %>
 
     <% heading.with_action do %>

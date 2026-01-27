@@ -3,19 +3,17 @@
 <% content_for :header do %>
   <%= render Heading::WithActionsComponent.new do |heading| %>
     <% heading.with_action do %>
-      <%= component 'tax_button',
-            caption: "Visualizza",
-            svg_file: "icon-eye.svg",
-            color: "gray",
-            url: causale_path(@causale) %>
+      <%= link_to causale_path(@causale), class: "btn btn--secondary" do %>
+        <%= icon_tag "eye", size: "small" %>
+        Visualizza
+      <% end %>
     <% end %>
 
     <% heading.with_action do %>
-      <%= component 'tax_button',
-            caption: "Torna alla lista",
-            svg_file: "icon-arrow-left.svg",
-            color: "white",
-            url: causali_path %>
+      <%= link_to causali_path, class: "btn" do %>
+        <%= icon_tag "arrow-left", size: "small" %>
+        Torna alla lista
+      <% end %>
     <% end %>
 
     <%= h1 { "Modifica: #{@causale.causale}" } %>

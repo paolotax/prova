@@ -3,11 +3,10 @@
 <% content_for :header do %>
   <%= render Heading::WithActionsComponent.new do |heading| %>
     <% heading.with_action do %>
-      <%= component 'tax_button',
-            caption: "Nuova Causale",
-            svg_file: "icon-plus.svg",
-            color: "blue",
-            url: new_causale_path %>
+      <%= link_to new_causale_path, class: "btn btn--primary" do %>
+        <%= icon_tag "add", size: "small" %>
+        Nuova Causale
+      <% end %>
     <% end %>
 
     <%= h1 { "Causali" } %>

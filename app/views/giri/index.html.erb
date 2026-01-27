@@ -4,12 +4,12 @@
 	<%= render Heading::WithActionsComponent.new do |heading| %>
 		
 		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Giro",
-					svg_file: "icon-plus.svg",
-					color: "blue",
-					url: url_for( controller: "giri", action: "new", model: nil ),
-					data_attr: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } %>
+			<%= link_to url_for(controller: "giri", action: "new", model: nil),
+				class: "btn btn--primary",
+				data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
+				<%= icon_tag "add", size: "small" %>
+				Giro
+			<% end %>
 		<% end %>
 		
 		<%= h1 {"Giri"} %>

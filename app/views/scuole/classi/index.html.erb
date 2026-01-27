@@ -15,11 +15,10 @@
     <% end %>
 
     <% heading.with_action do %>
-      <%= component 'tax_button',
-        caption: "Indietro",
-        svg_file: "icon-arrow-long-left.svg",
-        color: "white",
-        url: scuola_path(@scuola) %>
+      <%= link_to scuola_path(@scuola), class: "btn" do %>
+        <%= icon_tag "arrow-left", size: "small" %>
+        Indietro
+      <% end %>
     <% end %>
 
     <%= h1 {"Classi di #{@scuola.denominazione}"} %>

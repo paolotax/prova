@@ -65,7 +65,7 @@
             </div>
             <div class="flex align-center gap-half">
               <span class="txt-subtle"><%= doc.data_documento&.strftime("%d/%m/%y") %></span>
-              <strong><%= number_to_currency doc.totale_cents / 100.0, locale: :it %></strong>
+              <strong><%= number_to_currency (doc.totale_cents || 0) / 100.0, locale: :it %></strong>
             </div>
           <% end %>
         <% end %>

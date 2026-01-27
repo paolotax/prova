@@ -19,9 +19,9 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_cliente_path, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.insert@document->hotkey#click" } do %>
+    <%= link_to new_cliente_path, class: "btn", data: { controller: "tooltip" } do %>
       <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuovo cliente <kbd class="hide-on-touch">Ins</kbd></span>
+      <span class="for-screen-reader">Nuovo cliente</span>
     <% end %>
   </div>
 <% end %>

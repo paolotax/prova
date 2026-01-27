@@ -1,11 +1,10 @@
 <%= render Heading::WithActionsComponent.new do |heading| %>
 	<% if current_user.admin? %>
 		<% heading.with_action do %>
-			<%= component 'tax_button',
-					caption: "Nuovo",
-					svg_file: "icon-plus.svg",
-					color: "blue",
-					url: url_for( controller: "stats", action: "new" ) %>
+			<%= link_to url_for(controller: "stats", action: "new"), class: "btn btn--primary" do %>
+				<%= icon_tag "add", size: "small" %>
+				Nuovo
+			<% end %>
 		<% end %>
 	<% end %>
 

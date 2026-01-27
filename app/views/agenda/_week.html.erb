@@ -14,12 +14,11 @@
 					class: "hover:font-semibold" %>
 				
 				
-				<%= component 'tax_button',
-					svg_file: "icon-plus.svg",
-					color: "blue",
-					style: :rounded,
-					url: slideover_path(giorno: giorno),
-					data_attr: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } %>
+				<%= link_to slideover_path(giorno: giorno),
+					class: "btn btn--primary btn--round",
+					data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
+					<%= icon_tag "add", size: "small" %>
+				<% end %>
 			<% end %>
 
 			<%= tag.div id: "giorno-#{giorno.to_s}", 
