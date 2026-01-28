@@ -9,6 +9,6 @@ module User::AvailableFilters
     has_many :libro_filters, class_name: "Filters::Libro", foreign_key: :creator_id, dependent: :destroy
     has_many :cliente_filters, class_name: "Filters::Cliente", foreign_key: :creator_id, dependent: :destroy
     has_many :documento_filters, class_name: "Filters::Documento", foreign_key: :creator_id, dependent: :destroy
-    
+    has_many :entry_filter_filters, class_name: "Filters::EntryFilter", foreign_key: :creator_id, dependent: :destroy
   end
 end

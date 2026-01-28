@@ -1,7 +1,15 @@
 <% @body_class = "contained-scrolling" %>
 
-<%= render "shared/kanban_board",
-    columns: @columns,
-    column_counts: @column_counts,
-    postponed_count: @postponed_count,
-    closed_count: @closed_count %>
+<%= render "filters/settings",
+    filter_url: dashboard_path,
+    user_filtering: @user_filtering,
+    no_filtering_url: dashboard_path,
+    filter_type: "entry_filter" %>
+
+<%= turbo_frame_tag :search_results do %>
+  <%= render "shared/kanban_board",
+      columns: @columns,
+      column_counts: @column_counts,
+      postponed_count: @postponed_count,
+      closed_count: @closed_count %>
+<% end %>

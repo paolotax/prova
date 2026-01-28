@@ -1,0 +1,26 @@
+<% @body_class = "contained-scrolling" %>
+
+<%= render "filters/settings",
+    filter_url: dashboard_path,
+    user_filtering: @user_filtering,
+    no_filtering_url: dashboard_path,
+    filter_type: "entry_filter" %>
+
+<%= turbo_frame_tag :search_results do %>
+  <section class="cards cards--grid">
+    <header class="cards__header">
+      <h3 class="cards__title">Risultati (<%= @total_count %>)</h3>
+    </header>
+    <%= with_automatic_pagination :filtered_entries, @page,
+        class: "cards__list cards__list--grid hide-scrollbar",
+        data: { drag_drop_item_container: false } do %>
+      <% if @page.records.any? %>
+        <%= render partial: "entries/entry", collection: @page.records, as: :entry, locals: { draggable: false } %>
+      <% else %>
+        <div class="blank-slate padding">
+          <p class="txt-light">Nessun risultato per i filtri selezionati</p>
+        </div>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>
