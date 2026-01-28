@@ -1,20 +1,23 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
-    <% heading.with_action do %>
-        <%= button_tag type: 'submit', form: "stat_form", class: "btn btn-indigo" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Salva</span>
-        <% end %>
-    <% end %>
-    <% heading.with_action do %>
-        <%= link_to url_for(controller: "stats", action: "index"), class: "btn" do %>
-            <%= icon_tag "chart-pie", size: "small" %>
-            Stats...
-        <% end %>
-    <% end %>
+<% @page_title = "Nuova statistica" %>
 
-    <%= h1 {"Nuova statistica"} %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to stats_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Nuova statistica</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= button_tag type: 'submit', form: "stat_form", class: "btn btn--primary" do %>
+      <%= icon_tag "check", size: "small" %>
+      <span class="for-screen-reader">Salva</span>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="mx-auto w-full">

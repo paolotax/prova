@@ -1,16 +1,20 @@
-<% content_for :title, "Categorie" %>
+<% @page_title = "Categorie" %>
 
 <% content_for :header do %>
-  <%= component "heading/with_actions" do |heading| %>
-    <% heading.with_action do %>
-      <%= link_to new_categoria_path,
+  <div class="header__actions header__actions--start"></div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Categorie</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_categoria_path,
         class: "btn btn--primary",
         data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
-        <%= icon_tag "add", size: "small" %>
-        Nuova Categoria
-      <% end %>
+      <%= icon_tag "add", size: "small" %>
+      <span class="for-screen-reader">Nuova Categoria</span>
     <% end %>
-  <% end %>
+  </div>
 <% end %>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

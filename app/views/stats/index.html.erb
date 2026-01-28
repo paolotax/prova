@@ -1,14 +1,20 @@
-<%= render Heading::WithActionsComponent.new do |heading| %>
-	<% if current_user.admin? %>
-		<% heading.with_action do %>
-			<%= link_to url_for(controller: "stats", action: "new"), class: "btn btn--primary" do %>
-				<%= icon_tag "add", size: "small" %>
-				Nuovo
-			<% end %>
-		<% end %>
-	<% end %>
+<% @page_title = "Statistiche" %>
 
-	<%= h1 { "Statistiche" } %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start"></div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Statistiche</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <% if current_user.admin? %>
+      <%= link_to url_for(controller: "stats", action: "new"), class: "btn btn--primary" do %>
+        <%= icon_tag "add", size: "small" %>
+        <span class="for-screen-reader">Nuovo</span>
+      <% end %>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="border-b border-gray-200 mb-6">

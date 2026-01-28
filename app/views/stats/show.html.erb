@@ -1,65 +1,43 @@
-<div class="print">
-    <%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
-        <% if current_user.admin? %>
-            <% heading.with_action do %>
-                <div class="print-hidden">
-                    <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
-                        class: "btn btn--negative",
-                        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
-                        <%= icon_tag "trash", size: "small" %>
-                        Elimina
-                    <% end %>
-                </div>
-            <% end %>
-        <% end %>
+<% @page_title = @stat.titolo %>
 
-        <% if current_user.admin? %>
-            <% heading.with_action do %>
-                <div class="print-hidden">
-                    <%= link_to url_for(controller: "stats", action: "edit", model: @stat), class: "btn btn--warning" do %>
-                        <%= icon_tag "pencil", size: "small" %>
-                        SQL
-                    <% end %>
-                </div>
-            <% end %>
-        <% end %>
-
-        <% heading.with_action do %>
-            <div class="print-hidden">
-                <%= link_to url_for(controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters),
-                    class: "btn btn--positive" do %>
-                    <%= icon_tag "document", size: "small" %>
-                    Excel
-                <% end %>
-            </div>
-        <% end %>
-
-        <% heading.with_action do %>
-            <div class="print-hidden">
-                <%= link_to "javascript:window.print()",
-                    class: "btn",
-                    style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);" do %>
-                    <%= icon_tag "printer", size: "small" %>
-                    Stampa
-                <% end %>
-            </div>
-        <% end %>
-
-        <% heading.with_action do %>
-            <div class="print-hidden">
-                <%= link_to "javascript:history.back()", class: "btn" do %>
-                    <%= icon_tag "chart-pie", size: "small" %>
-                    Stats...
-                <% end %>
-            </div>
-        <% end %>
-
-        <% heading.with_description do %>
-            <%= @stat.descrizione %>
-        <% end %>
-
-        <%= @stat.titolo %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start print-hidden">
+    <%= link_to stats_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
     <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @stat.titolo %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end print-hidden">
+    <%= link_to url_for(controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters),
+        class: "btn btn--positive" do %>
+      <%= icon_tag "document", size: "small" %>
+      <span class="for-screen-reader">Excel</span>
+    <% end %>
+    <%= link_to "javascript:window.print()", class: "btn" do %>
+      <%= icon_tag "printer", size: "small" %>
+      <span class="for-screen-reader">Stampa</span>
+    <% end %>
+    <% if current_user.admin? %>
+      <%= link_to url_for(controller: "stats", action: "edit", model: @stat), class: "btn" do %>
+        <%= icon_tag "pencil", size: "small" %>
+        <span class="for-screen-reader">SQL</span>
+      <% end %>
+      <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
+          class: "btn btn--negative",
+          data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
+        <%= icon_tag "trash", size: "small" %>
+        <span class="for-screen-reader">Elimina</span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="print">
 
     <%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
         <%= render 'shared/lazy_loading' %>

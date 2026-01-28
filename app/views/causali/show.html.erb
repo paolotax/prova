@@ -1,32 +1,29 @@
-<% content_for :title, @causale.causale %>
+<% @page_title = @causale.causale %>
 
 <% content_for :header do %>
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-    <% heading.with_action do %>
-      <%= link_to edit_causale_path(@causale), class: "btn btn--secondary" do %>
-        <%= icon_tag "pencil", size: "small" %>
-        Modifica
-      <% end %>
+  <div class="header__actions header__actions--start">
+    <%= link_to causali_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Torna alla lista</span>
     <% end %>
+  </div>
 
-    <% heading.with_action do %>
-      <%= link_to causale_path(@causale),
-          class: "btn btn--negative",
-          data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler eliminare questa causale?" } do %>
-        <%= icon_tag "trash", size: "small" %>
-        Elimina
-      <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @causale.causale %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to edit_causale_path(@causale), class: "btn" do %>
+      <%= icon_tag "pencil", size: "small" %>
+      <span class="for-screen-reader">Modifica</span>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= link_to causali_path, class: "btn" do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-        Torna alla lista
-      <% end %>
+    <%= link_to causale_path(@causale),
+        class: "btn btn--negative",
+        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro di voler eliminare questa causale?" } do %>
+      <%= icon_tag "trash", size: "small" %>
+      <span class="for-screen-reader">Elimina</span>
     <% end %>
-
-    <%= h1 { "Causale: #{@causale.causale}" } %>
-  <% end %>
+  </div>
 <% end %>
 
 <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-6">

@@ -1,52 +1,44 @@
+<% @page_title = @tappable.denominazione %>
+
 <% content_for :head do %>
-  <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>  
+  <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet">
 <% end %>
 
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to "javascript:history.back()", class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
 
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= link_to @tappable.denominazione, @tappable %></span>
+  </h1>
 
-	<%= render Heading::WithActionsComponent.new(level: 'h2') do |heading| %>
-				
-		<% heading.with_description do %>
-			<p>Trascina il puntatore sulla mappa per indicare la posizione esatta.</p>
+  <div class="header__actions header__actions--end">
+    <%= tag.div class: "flex flex-row gap-1" do %>
+      <%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.previous&.id}", class: "btn" do %>
+        <%= icon_tag "arrow-left", size: "small" %>
+        <span class="for-screen-reader">Precedente</span>
+      <% end %>
+      <%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.next&.id}", class: "btn" do %>
+        <span class="for-screen-reader">Successivo</span>
+        <%= icon_tag "arrow-right", size: "small" %>
+      <% end %>
+    <% end %>
+    <%= link_to go_to_tappable_path(@tappable, current_user.navigator),
+        class: "btn",
+        style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);",
+        target: "_blank" do %>
+      <%= icon_tag "map-pin", size: "small" %>
+      <span class="for-screen-reader">Vai</span>
+    <% end %>
+  </div>
+<% end %>
 
-
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= link_to go_to_tappable_path(@tappable, current_user.navigator),
-				class: "btn",
-				style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);",
-				target: "_blank" do %>
-				<%= icon_tag "map-pin", size: "small" %>
-				Vai...
-			<% end %>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= tag.div class: "flex flex-row gap-1" do %>
-				<%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.previous&.id}", class: "btn" do %>
-					<%= icon_tag "arrow-left", size: "small" %>
-					prec
-				<% end %>
-
-				<%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.next&.id}", class: "btn" do %>
-					succ
-					<%= icon_tag "arrow-right", size: "small" %>
-				<% end %>
-			<% end %>
-		<% end %>
-
-		<% heading.with_action do %>
-			<%= link_to "javascript:history.back()", class: "btn" do %>
-				<%= icon_tag "arrow-left", size: "small" %>
-				Indietro
-			<% end %>
-		<% end %>
-
-		<%= link_to @tappable.denominazione, @tappable %>
-	
-	<% end %>
+<p class="text-sm text-gray-500 mb-4">Trascina il puntatore sulla mappa per indicare la posizione esatta.</p>
 
 
 <div class="p-1" 

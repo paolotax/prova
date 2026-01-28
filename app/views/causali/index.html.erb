@@ -1,16 +1,18 @@
-<% content_for :title, "Causali" %>
+<% @page_title = "Causali" %>
 
 <% content_for :header do %>
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-    <% heading.with_action do %>
-      <%= link_to new_causale_path, class: "btn btn--primary" do %>
-        <%= icon_tag "add", size: "small" %>
-        Nuova Causale
-      <% end %>
-    <% end %>
+  <div class="header__actions header__actions--start"></div>
 
-    <%= h1 { "Causali" } %>
-  <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Causali</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_causale_path, class: "btn btn--primary" do %>
+      <%= icon_tag "add", size: "small" %>
+      <span class="for-screen-reader">Nuova Causale</span>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">

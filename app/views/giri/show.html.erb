@@ -1,50 +1,39 @@
 <% content_for :hide_footer, true %>
+<% @page_title = @giro.titolo %>
 
 <%= content_for :header do %>
-	<%= render Heading::WithActionsComponent.new(level: "h2") do |heading| %>
-		
-        <% if @giro.can_delete? %>
-            <% heading.with_action do %>
-                <%= link_to url_for(controller: "giri", action: "destroy", model: @giro, method: :delete),
-                    class: "btn btn--negative",
-                    data: {
-                        turbo_method: "delete",
-                        turbo_confirm: "Vuoi veramente eliminare questo Giro?",
-                        turbo_confirm_theme: "",
-                        turbo_confirm_confirm_label: "Si, eliminalo!",
-                        turbo_confirm_cancel_label: "Oops, no annulla…"
-                    } do %>
-                    <%= icon_tag "trash", size: "small" %>
-                    Elimina
-                <% end %>
-            <% end %>
-        <% end %>
+  <div class="header__actions header__actions--start">
+    <%= link_to giri_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
 
-		<% heading.with_action do %>
-			<%= link_to edit_giro_path(@giro),
-				class: "btn btn--warning",
-				data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
-				<%= icon_tag "pencil", size: "small" %>
-				Modifica
-			<% end %>
-		<% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @giro.titolo %></span>
+  </h1>
 
-        <% heading.with_action do %>
-            <%= link_to "javascript:history.back()", class: "btn" do %>
-                <%= icon_tag "arrow-left", size: "small" %>
-                Indietro
-            <% end %>
-        <% end %>
-
-        <% heading.with_trailer do %>
-            <span class="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
-                <%= @giro.descrizione %>
-            </span>
-        <% end %>
-
-        <%= @giro.titolo %>
-		
-	<% end %>
+  <div class="header__actions header__actions--end">
+    <%= link_to edit_giro_path(@giro),
+        class: "btn",
+        data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
+      <%= icon_tag "pencil", size: "small" %>
+      <span class="for-screen-reader">Modifica</span>
+    <% end %>
+    <% if @giro.can_delete? %>
+      <%= link_to url_for(controller: "giri", action: "destroy", model: @giro, method: :delete),
+          class: "btn btn--negative",
+          data: {
+              turbo_method: "delete",
+              turbo_confirm: "Vuoi veramente eliminare questo Giro?",
+              turbo_confirm_confirm_label: "Si, eliminalo!",
+              turbo_confirm_cancel_label: "Oops, no annulla…"
+          } do %>
+        <%= icon_tag "trash", size: "small" %>
+        <span class="for-screen-reader">Elimina</span>
+      <% end %>
+    <% end %>
+  </div>
 <% end %>
 
 <%= tag.div id: dom_id(@giro, "show"), 

@@ -1,11 +1,18 @@
-<% content_for :title, "Importazione Completata" %>
+<% @page_title = "Importazione Completata" %>
 
 <% content_for :header do %>
-  <div class="max-w-4xl mx-auto">
-    <%= component "heading/with_actions" do |heading| %>
-        <%= h1 {"Importazione Completata"} %>
+  <div class="header__actions header__actions--start">
+    <%= link_to libri_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Torna ai Libri</span>
     <% end %>
   </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Importazione Completata</span>
+  </h1>
+
+  <div class="header__actions header__actions--end"></div>
 <% end %>
 
 <div class="container mx-auto px-4 py-8">

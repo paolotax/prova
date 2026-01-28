@@ -2,35 +2,26 @@
     <div
       data-controller="mappa-directions"
       data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-      data-mappa-directions-waypoints-value="<%= @waypoints %>"    
+      data-mappa-directions-waypoints-value="<%= @waypoints %>"
       data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>">
-      
-            
-        <%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
-            
-            <% heading.with_description do %>	
-                <div class="text-sm text-gray-500">
-                    <p>
-                        <strong>Distanza totale:</strong> <span data-mappa-directions-target="totaleKm"></span> km - 
-                        <strong>Durata totale:</strong> <span data-mappa-directions-target="totaleTempo"></span>
-                    </p>
-                </div>
-            <% end %>
 
-            <% heading.with_action do %>
-                <%= link_to create_google_maps_link(@indirizzi),
-                    class: "btn btn--ghost",
-                    target: "_blank",
-                    data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-                    <%= icon_tag "truck", size: "small" %>
-                    Google Maps!
-                <% end %>
-            <% end %>
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-lg font-semibold">Mappa</h2>
+            <div class="text-sm text-gray-500">
+              <strong>Distanza totale:</strong> <span data-mappa-directions-target="totaleKm"></span> km -
+              <strong>Durata totale:</strong> <span data-mappa-directions-target="totaleTempo"></span>
+            </div>
+          </div>
+          <%= link_to create_google_maps_link(@indirizzi),
+              class: "btn btn--ghost",
+              target: "_blank",
+              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+            <%= icon_tag "truck", size: "small" %>
+            Google Maps!
+          <% end %>
+        </div>
 
-            <%= "Mappa" %>
-
-        <% end %>
-      
         <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
     </div>
 <% end %>

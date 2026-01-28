@@ -1,4 +1,4 @@
-<% content_for :title, "Scuole" %>
+<% @page_title = "Scuole" %>
 
 <% content_for :head do %>
   <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
@@ -6,39 +6,33 @@
 <% end %>
 
 <% content_for :header do %>
-	<%= render Heading::WithActionsComponent.new do |heading| %>
+  <div class="header__actions header__actions--start">
+    <%= link_to "javascript:history.back()", class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
 
-		<%# button export excel %>
-		<% heading.with_action do %>
-			<%= link_to import_scuole_path(format: :xlsx, params: request.query_parameters),
-				class: "btn btn--positive",
-				data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-				<%= icon_tag "document", size: "small" %>
-				Excel
-			<% end %>
-		<% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Scuole</span>
+  </h1>
 
-		<% heading.with_action do %>
-			<%= link_to "javascript:history.back()", class: "btn" do %>
-				<%= icon_tag "arrow-left", size: "small" %>
-				Indietro
-			<% end %>
-		<% end %>
-
-        <% heading.with_action do %>
-            <%= tag.div class: "block lg:hidden" do %>
-                <%= link_to filtra_import_scuole_path(params: request.query_parameters),
-                    class: "btn",
-                    data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
-                    <%= icon_tag "funnel", size: "small" %>
-                    Filtra
-                <% end %>
-            <% end %>
-        <% end %>
-		
-		<%= h1 {"Scuole"} %>
-
-	<% end %>
+  <div class="header__actions header__actions--end">
+    <%= tag.div class: "block lg:hidden" do %>
+      <%= link_to filtra_import_scuole_path(params: request.query_parameters),
+          class: "btn",
+          data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
+        <%= icon_tag "funnel", size: "small" %>
+        <span class="for-screen-reader">Filtra</span>
+      <% end %>
+    <% end %>
+    <%= link_to import_scuole_path(format: :xlsx, params: request.query_parameters),
+        class: "btn btn--positive",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      <%= icon_tag "document", size: "small" %>
+      <span class="for-screen-reader">Excel</span>
+    <% end %>
+  </div>
 <% end %>
 
 

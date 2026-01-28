@@ -1,30 +1,32 @@
-<% content_for :title, @categoria.nome_categoria %>
+<% @page_title = @categoria.nome_categoria %>
 
 <% content_for :header do %>
-  <%= component "heading/with_actions" do |heading| %>
-    <% heading.with_action do %>
-      <%= link_to edit_categoria_path(@categoria),
-        class: "btn btn--primary",
+  <div class="header__actions header__actions--start">
+    <%= link_to categorie_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @categoria.nome_categoria %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to edit_categoria_path(@categoria),
+        class: "btn",
         data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
-        <%= icon_tag "pencil", size: "small" %>
-        Modifica
-      <% end %>
+      <%= icon_tag "pencil", size: "small" %>
+      <span class="for-screen-reader">Modifica</span>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= button_to "Elimina",
-        categoria_path(@categoria),
+    <%= button_to categoria_path(@categoria),
         method: :delete,
-        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700",
-        data: { turbo_confirm: "Sei sicuro di voler eliminare questa categoria?" } %>
+        class: "btn btn--negative",
+        data: { turbo_confirm: "Sei sicuro di voler eliminare questa categoria?" } do %>
+      <%= icon_tag "trash", size: "small" %>
+      <span class="for-screen-reader">Elimina</span>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= link_to "Indietro",
-        categorie_path,
-        class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
-    <% end %>
-  <% end %>
+  </div>
 <% end %>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

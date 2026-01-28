@@ -1,6 +1,19 @@
 <% @page_title = "Nuova Colonna" %>
 
-<%= render HeadingComponent.new(title: "Nuova Colonna") %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to columns_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Nuova Colonna</span>
+  </h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
 
 <section class="panel margin-block padding">
   <%= render "columns/form", column: @column, submit_label: "Crea colonna" %>

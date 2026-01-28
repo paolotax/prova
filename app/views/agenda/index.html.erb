@@ -1,59 +1,49 @@
 <% content_for :hide_footer, true %>
 
-<% content_for :title, "Agenda" %>
+<% @page_title = "Agenda" %>
 
-<div class="">
-	<%= render Heading::WithActionsComponent.new(level: 'h1') do |heading| %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <div class="flex items-center gap-1">
+      <%= link_to agenda_path(giorno: (@giorno - 7.days).to_s),
+          class: "btn btn--ghost",
+          data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+        <%= icon_tag "arrow-left", size: "small" %>
+      <% end %>
 
-        <% heading.with_description do %>
-            <div class="flex items-center gap-1 mt-2">
-				<%= link_to agenda_path(giorno: Date.today.to_s),
-					class: "btn btn--positive",
-					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-					Oggi
-				<% end %>
+      <div data-controller="date-selector" class="relative">
+        <%= date_field_tag :giorno,
+            @giorno,
+            class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
+            style: "width: 2.5rem; color: transparent;",
+            data: {
+                action: "change->date-selector#change",
+                date_selector_target: "select",
+                current_date: @giorno
+            } %>
+        <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
+      </div>
 
-				<%= link_to agenda_path(giorno: (@giorno - 7.days).to_s),
-					class: "btn btn--ghost",
-					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-					<%= icon_tag "arrow-left", size: "small" %>
-				<% end %>
-                                            
-                <div data-controller="date-selector" class="relative">
-                    <%= date_field_tag :giorno, 
-                        @giorno, 
-                        class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
-                        style: "width: 2.5rem; color: transparent;",
-                        data: {
-                            action: "change->date-selector#change",
-                            date_selector_target: "select",
-                            current_date: @giorno
-                        } %>
-                    <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
-                </div>
+      <%= link_to agenda_path(giorno: (@giorno + 7.days).to_s),
+          class: "btn btn--ghost",
+          data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+        <%= icon_tag "arrow-right", size: "small" %>
+      <% end %>
+    </div>
+  </div>
 
-				<%= link_to agenda_path(giorno: (@giorno + 7.days).to_s),
-					class: "btn btn--ghost",
-					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-					<%= icon_tag "arrow-right", size: "small" %>
-				<% end %>
-            </div>
-        <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= I18n.l(@settimana.first, format: :month_calendar, locale: :it).titleize %></span>
+  </h1>
 
-		<% heading.with_action do %>
-			<div class="flex gap-1">
-				<%= link_to agenda_path(giorno: Date.today.to_s),
-					class: "btn",
-					data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-					Oggi
-				<% end %>
-			</div>
-		<% end %>
-
-		<%= I18n.l(@settimana.first, format: :month_calendar, locale: :it).titleize %>
-
-	<% end %>
-</div>
+  <div class="header__actions header__actions--end">
+    <%= link_to agenda_path(giorno: Date.today.to_s),
+        class: "btn btn--positive",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      Oggi
+    <% end %>
+  </div>
+<% end %>
 
 <%= turbo_frame_tag "agenda", class: "w-full flex h-[calc(100vh-230px)]", 
 				data: { controller: "scroll-to-day xxxagenda-scroll",

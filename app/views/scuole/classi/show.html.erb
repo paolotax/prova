@@ -1,28 +1,26 @@
-<% content_for :title, "Classe #{@classe.nome_breve} - #{@scuola.denominazione}" %>
+<% @page_title = "Classe #{@classe.nome_breve} - #{@scuola.denominazione}" %>
 
-<div class="sticky top-header z-10">
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-
-    <% heading.with_action do %>
-      <%= button_to import_adozioni_scuola_classe_path(@scuola, @classe),
-          method: :post,
-          class: "btn btn--primary" do %>
-        <%= icon_tag "download", size: "small" %>
-        Importa Adozioni
-      <% end %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to scuola_path(@scuola), class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
     <% end %>
+  </div>
 
-    <% heading.with_action do %>
-      <%= link_to scuola_path(@scuola), class: "btn" do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-        Indietro
-      <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Classe <%= @classe.nome_breve %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= button_to import_adozioni_scuola_classe_path(@scuola, @classe),
+        method: :post,
+        class: "btn btn--primary" do %>
+      <%= icon_tag "download", size: "small" %>
+      <span class="for-screen-reader">Importa Adozioni</span>
     <% end %>
-
-    <%= h1 {"Classe #{@classe.nome_breve}"} %>
-
-  <% end %>
-</div>
+  </div>
+<% end %>
 
 <!-- Breadcrumb -->
 <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">

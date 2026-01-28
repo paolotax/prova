@@ -1,12 +1,18 @@
 <% @page_title = "Gestione Colonne" %>
 
-<%= render HeadingComponent.new(title: "Gestione Colonne") do |c| %>
-  <% c.with_actions do %>
-    <%= link_to new_column_path, class: "btn", data: { turbo_frame: "modal" } do %>
-      <%= icon_tag "add" %>
-      <span>Nuova colonna</span>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start"></div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Gestione Colonne</span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to new_column_path, class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+      <%= icon_tag "add", size: "small" %>
+      <span class="for-screen-reader">Nuova colonna</span>
     <% end %>
-  <% end %>
+  </div>
 <% end %>
 
 <section class="panel margin-block">

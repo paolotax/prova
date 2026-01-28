@@ -1,30 +1,28 @@
-<% content_for :title, "Classi - #{@scuola.denominazione}" %>
+<% @page_title = "Classi - #{@scuola.denominazione}" %>
 
-<div class="sticky top-header z-10">
-  <%= render Heading::WithActionsComponent.new do |heading| %>
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to scuola_path(@scuola), class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
 
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Classi di <%= @scuola.denominazione %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
     <% if @scuola.codice_ministeriale.present? %>
-      <% heading.with_action do %>
-        <%= button_to scuola_classi_path(@scuola),
-            method: :post,
-            class: "btn btn--primary" do %>
-          <%= icon_tag "download", size: "small" %>
-          Importa Classi
-        <% end %>
+      <%= button_to scuola_classi_path(@scuola),
+          method: :post,
+          class: "btn btn--primary" do %>
+        <%= icon_tag "download", size: "small" %>
+        <span class="for-screen-reader">Importa Classi</span>
       <% end %>
     <% end %>
-
-    <% heading.with_action do %>
-      <%= link_to scuola_path(@scuola), class: "btn" do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-        Indietro
-      <% end %>
-    <% end %>
-
-    <%= h1 {"Classi di #{@scuola.denominazione}"} %>
-
-  <% end %>
-</div>
+  </div>
+<% end %>
 
 <!-- Breadcrumb -->
 <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">

@@ -1,23 +1,23 @@
-<% content_for :title, "Modifica Causale" %>
+<% @page_title = "Modifica Causale" %>
 
 <% content_for :header do %>
-  <%= render Heading::WithActionsComponent.new do |heading| %>
-    <% heading.with_action do %>
-      <%= link_to causale_path(@causale), class: "btn btn--secondary" do %>
-        <%= icon_tag "eye", size: "small" %>
-        Visualizza
-      <% end %>
+  <div class="header__actions header__actions--start">
+    <%= link_to causali_path, class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Torna alla lista</span>
     <% end %>
+  </div>
 
-    <% heading.with_action do %>
-      <%= link_to causali_path, class: "btn" do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-        Torna alla lista
-      <% end %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @causale.causale %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to causale_path(@causale), class: "btn" do %>
+      <%= icon_tag "eye", size: "small" %>
+      <span class="for-screen-reader">Visualizza</span>
     <% end %>
-
-    <%= h1 { "Modifica: #{@causale.causale}" } %>
-  <% end %>
+  </div>
 <% end %>
 
 <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
