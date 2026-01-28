@@ -48,6 +48,14 @@ class DocumentiController < ApplicationController
   end
 
   def show
+    @editing = params[:editing].present?
+
+    if @editing
+      # Prepare JSON data for Stimulus controller
+      @documento_json = documento_json(@documento)
+      @righe_json = righe_json(@documento)
+    end
+
     respond_to do |format|
       format.html
       format.turbo_stream unless flash.any?
@@ -78,30 +86,32 @@ class DocumentiController < ApplicationController
       clientable_id: clientable_id,
       clientable_type: clientable_type
     )
-    @documento.save! validate: false
-    @documento.documento_righe.build.build_riga(sconto: 0.0)
 
-    redirect_to @documento
+    @editing = true
+    @is_new = true
+    @documento_json = documento_json(@documento)
+    @righe_json = '[]'
+
+    render :show
   end
 
   def edit
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
+    # Redirect to show with editing mode
+    redirect_to documento_path(@documento, editing: 1)
   end
 
   def create
+    @documento = Current.account.documenti.build(documento_params)
+    @documento.user = Current.user
 
-    result = DocumentoCreator.new.create_documento(
-                Current.account.documenti.build(documento_params)
-    )
-
-    if result.created?
-      redirect_to documenti_url, notice: "Documento inserito."
+    if @documento.save
+      redirect_to documento_url(@documento), notice: "Documento creato."
     else
-      @documento = result.documento
-      render :new, status: :unprocessable_entity
+      @editing = true
+      @is_new = true
+      @documento_json = documento_json(@documento)
+      @righe_json = righe_json(@documento)
+      render :show, status: :unprocessable_entity
     end
   end
 
@@ -112,8 +122,11 @@ class DocumentiController < ApplicationController
         format.html { redirect_to documento_url(@documento), notice: "Documento aggiornato." }
         format.json { render :show, status: :ok, location: @documento }
       else
-        format.turbo_stream { render :edit, status: :unprocessable_entity }
-        format.html { render :edit, status: :unprocessable_entity }
+        @editing = true
+        @documento_json = documento_json(@documento)
+        @righe_json = righe_json(@documento)
+        format.turbo_stream { render :show, status: :unprocessable_entity }
+        format.html { render :show, status: :unprocessable_entity }
         format.json { render json: @documento.errors, status: :unprocessable_entity }
       end
     end
@@ -178,9 +191,43 @@ class DocumentiController < ApplicationController
 
     def documento_params
       params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :clientable_value, :referente, :note, :numero_documento, :user_id, :data_documento, :causale_id, :tipo_pagamento, :consegnato_il, :pagato_il, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento,
-        documento_righe_attributes: [:id, :posizione,
-          { riga_attributes: [ :id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
+        documento_righe_attributes: [:id, :posizione, :_destroy,
+          { riga_attributes: [:id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
         ])
+    end
+
+    def documento_json(documento)
+      {
+        id: documento.id,
+        causale_id: documento.causale_id,
+        clientable_id: documento.clientable_id,
+        clientable_type: documento.clientable_type,
+        numero_documento: documento.numero_documento,
+        data_documento: documento.data_documento,
+        referente: documento.referente,
+        note: documento.note
+      }.to_json
+    end
+
+    def righe_json(documento)
+      documento.documento_righe.includes(riga: :libro).map do |doc_riga|
+        riga = doc_riga.riga
+        {
+          documento_riga_id: doc_riga.id,
+          riga_id: riga.id,
+          libro_id: riga.libro_id,
+          libro: {
+            id: riga.libro&.id,
+            titolo: riga.libro&.titolo,
+            codice_isbn: riga.libro&.codice_isbn
+          },
+          titolo: riga.libro&.titolo,
+          codice_isbn: riga.libro&.codice_isbn,
+          quantita: riga.quantita,
+          prezzo_cents: riga.prezzo_cents,
+          sconto: riga.sconto
+        }
+      end.to_json
     end
 
 end

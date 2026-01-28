@@ -62,7 +62,9 @@ class Documento < ApplicationRecord
   
   has_many :documenti_derivati, class_name: 'Documento', foreign_key: :documento_padre_id, dependent: :nullify
 
-  accepts_nested_attributes_for :documento_righe # ,  :reject_if => lambda { |a| (a[:riga_id].nil?)}, :allow_destroy => false
+  accepts_nested_attributes_for :documento_righe,
+    allow_destroy: true,
+    reject_if: proc { |attrs| attrs[:riga_attributes].blank? && attrs[:riga_id].blank? }
 
   before_save :imposta_stato_iniziale_da_causale, if: :causale_id_changed?
   before_save :ricalcola_totali_se_necessario

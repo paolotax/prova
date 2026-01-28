@@ -1,14 +1,20 @@
 <%# locals: (documento:, editing: false) -%>
 
-<div class="documento-table">
-  <% if documento.documento_righe.size > 15 %>
-    <div id="top" class="documento-table__scroll-nav">
-      <%= link_to "#bottom", class: "btn btn--ghost", data: { controller: "scroll-to", scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } do %>
-        <%= icon_tag "chevron-double-down" %>
-      <% end %>
-    </div>
-  <% end %>
+<%
+  # Helper per raccogliere tutte le righe dei documenti derivati
+  def collect_all_descendant_righe_recursive(doc, collected = {})
+    doc.documenti_derivati.each do |figlio|
+      figlio.righe.each { |riga| collected[riga.id] = riga }
+      collect_all_descendant_righe_recursive(figlio, collected)
+    end
+    collected
+  end
 
+  tutte_righe_derivati = collect_all_descendant_righe_recursive(documento)
+  righe_solo_documento = documento.righe.reject { |riga| tutte_righe_derivati.key?(riga.id) }
+%>
+
+<div class="documento-table" data-documento-editor-target="tableWrapper">
   <table class="documento-table__table">
     <thead>
       <tr class="documento-table__header">
@@ -18,32 +24,14 @@
         <th class="documento-table__th documento-table__th--right">Qt</th>
         <th class="documento-table__th documento-table__th--right">Sc%</th>
         <th class="documento-table__th documento-table__th--right">Importo</th>
-        <% if editing %>
-          <th class="documento-table__th documento-table__th--right"></th>
-        <% end %>
+        <th class="documento-table__th documento-table__th--right documento-table__th--actions"></th>
       </tr>
     </thead>
-    <tbody id="righe_list"
-           data-clientable-id="<%= documento.clientable_id %>"
-           data-clientable-type="<%= documento.clientable_type %>"
-           data-documento-id="<%= documento.id %>">
-      <%
-        # Helper per raccogliere tutte le righe dei documenti derivati
-        def collect_all_descendant_righe_recursive(doc, collected = {})
-          doc.documenti_derivati.each do |figlio|
-            figlio.righe.each { |riga| collected[riga.id] = riga }
-            collect_all_descendant_righe_recursive(figlio, collected)
-          end
-          collected
-        end
 
-        tutte_righe_derivati = collect_all_descendant_righe_recursive(documento)
-        righe_solo_documento = documento.righe.reject { |riga| tutte_righe_derivati.key?(riga.id) }
-      %>
-
+    <tbody data-documento-editor-target="righeContainer">
       <%# Righe esclusive del documento %>
       <% righe_solo_documento.each do |riga| %>
-        <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
+        <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: false %>
       <% end %>
 
       <%# Righe raggruppate per documento derivato %>
@@ -54,9 +42,8 @@
         %>
 
         <% if doc_derivato.documenti_derivati.any? %>
-          <%# Header documento derivato di livello 1 %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="6">
+            <td colspan="7">
               <%= icon_tag "arrow-right" %>
               <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
               <span class="documento-table__section-badge"><%= doc_derivato.documenti_derivati.count %> sotto-doc</span>
@@ -64,7 +51,6 @@
             </td>
           </tr>
 
-          <%# Documenti nipoti %>
           <% doc_derivato.documenti_derivati.order(:data_documento).each do |doc_nipote| %>
             <%
               righe_nipote_ids = doc_nipote.righe.pluck(:id)
@@ -73,7 +59,7 @@
 
             <% if righe_per_nipote.any? %>
               <tr class="documento-table__section documento-table__section--nipote">
-                <td colspan="6">
+                <td colspan="7">
                   <%= icon_tag "arrow-right" %>
                   <%= doc_nipote.causale&.causale %> #<%= doc_nipote.numero_documento %> del <%= doc_nipote.data_documento&.strftime("%d-%m-%Y") %>
                   <% if doc_nipote.status.present? %>
@@ -84,48 +70,103 @@
               </tr>
 
               <% righe_per_nipote.each do |riga| %>
-                <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
+                <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: false %>
               <% end %>
             <% end %>
           <% end %>
 
-        <% else %>
-          <% if righe_per_derivato.any? %>
-            <tr class="documento-table__section documento-table__section--derivato">
-              <td colspan="6">
-                <%= icon_tag "arrow-right" %>
-                <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-                <% if doc_derivato.status.present? %>
-                  <span class="documento-table__section-badge"><%= doc_derivato.status.titleize %></span>
-                <% end %>
-                <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
-              </td>
-            </tr>
+        <% elsif righe_per_derivato.any? %>
+          <tr class="documento-table__section documento-table__section--derivato">
+            <td colspan="7">
+              <%= icon_tag "arrow-right" %>
+              <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
+              <% if doc_derivato.status.present? %>
+                <span class="documento-table__section-badge"><%= doc_derivato.status.titleize %></span>
+              <% end %>
+              <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
+            </td>
+          </tr>
 
-            <% righe_per_derivato.each do |riga| %>
-              <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: editing %>
-            <% end %>
+          <% righe_per_derivato.each do |riga| %>
+            <%= render "documenti/container/riga_row", riga: riga, documento: documento, editing: false %>
           <% end %>
         <% end %>
       <% end %>
 
-      <% if documento.righe.empty? && !editing %>
+      <% if documento.righe.empty? %>
         <tr>
-          <td colspan="6" class="documento-table__empty">Nessuna riga</td>
+          <td colspan="7" class="documento-table__empty">Nessuna riga</td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <% if editing %>
-    <%= render "documento_righe/add_riga_form", documento: documento, riga: Riga.new %>
-  <% end %>
+  <%# Controlli editing (nascosti di default, mostrati dal JS) %>
+  <div class="margin-block-start flex gap align-center" data-documento-editor-target="editControls" hidden>
+    <button type="button"
+            class="btn btn--small"
+            data-action="documento-editor#openNewDialog">
+      + Nuova riga <kbd class="kbd">Ins</kbd>
+    </button>
+  </div>
 
-  <% if documento.documento_righe.size > 20 %>
-    <div id="bottom" class="documento-table__scroll-nav">
-      <%= link_to "#top", class: "btn btn--ghost", data: { controller: "scroll-to", scroll_to_offset_value: "300", scroll_to_behavior_value: "smooth" } do %>
-        <%= icon_tag "chevron-double-up" %>
-      <% end %>
+  <%# Dialog per nuova/modifica riga %>
+  <dialog class="dialog panel fill-white shadow"
+          style="max-width: 50ch; padding: 1rem; overflow: visible;"
+          data-documento-editor-target="rigaDialog"
+          data-action="close->documento-editor#dialogClosed">
+    <div data-controller="tax-combobox-libro">
+      <header class="flex justify-between align-center margin-block-end">
+        <h3 class="txt-large" data-dialog-title>Nuova riga</h3>
+        <button type="button"
+                class="btn btn--circle btn--small borderless"
+                data-action="documento-editor#closeDialog"
+                aria-label="Chiudi">
+          <%= icon_tag "x", class: "icon--small" %>
+        </button>
+      </header>
+
+      <form data-action="submit->documento-editor#saveRigaFromDialog">
+        <div class="flex flex-column gap">
+          <div class="cb-tax">
+            <label class="txt-small txt-muted margin-block-end-quarter">Libro</label>
+            <%= combobox_tag "libro_id", libri_path,
+                id: "riga_dialog_libro_id",
+                placeholder: "Cerca libro...",
+                data: {
+                  field: "libro_id",
+                  action: "hw-combobox:selection->tax-combobox-libro#change hw-combobox:selection->documento-editor#onLibroSelected",
+                  tax_combobox_libro_target: "combobox"
+                } %>
+          </div>
+
+          <div class="flex gap flex-wrap">
+            <div class="flex flex-column" style="flex: 1 1 80px;">
+              <label class="txt-small txt-muted margin-block-end-quarter">Qt</label>
+              <input type="number" name="quantita" value="1" min="1"
+                     data-field="quantita" data-tax-combobox-libro-target="quantita"
+                     class="input" style="text-align: right;">
+            </div>
+            <div class="flex flex-column" style="flex: 1 1 100px;">
+              <label class="txt-small txt-muted margin-block-end-quarter">Prezzo</label>
+              <input type="number" name="prezzo" step="0.01"
+                     data-field="prezzo" data-tax-combobox-libro-target="prezzo"
+                     class="input" style="text-align: right;">
+            </div>
+            <div class="flex flex-column" style="flex: 1 1 80px;">
+              <label class="txt-small txt-muted margin-block-end-quarter">Sc%</label>
+              <input type="number" name="sconto" value="0" step="0.01"
+                     data-field="sconto" data-tax-combobox-libro-target="sconto"
+                     class="input" style="text-align: right;">
+            </div>
+          </div>
+
+          <div class="flex gap justify-end margin-block-start">
+            <button type="button" class="btn" data-action="documento-editor#closeDialog">Annulla</button>
+            <button type="submit" class="btn btn--positive">Salva</button>
+          </div>
+        </div>
+      </form>
     </div>
-  <% end %>
+  </dialog>
 </div>

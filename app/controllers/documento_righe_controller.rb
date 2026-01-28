@@ -4,10 +4,17 @@ class DocumentoRigheController < ApplicationController
   before_action :set_documento, only: [:create]
 
   def new
-    @documento_riga = DocumentoRiga.build(documento_id: params[:documento_id])
-    @documento_riga.build_riga(sconto: 0.0)
+    @documento = current_user.documenti.find(params[:documento_id])
+    @riga = Riga.new(sconto: 0.0)
 
-    render turbo_stream: turbo_stream.append(:documento_righe, partial: "documento_righe/documento_riga", locals: { documento_riga: @documento_riga})
+    if turbo_frame_request_id == "riga_form_frame"
+      render partial: "documento_righe/dialog_form",
+             locals: { documento: @documento, riga: @riga }
+    else
+      @documento_riga = DocumentoRiga.build(documento_id: params[:documento_id])
+      @documento_riga.build_riga(sconto: 0.0)
+      render turbo_stream: turbo_stream.append(:documento_righe, partial: "documento_righe/documento_riga", locals: { documento_riga: @documento_riga})
+    end
   end
 
   def create
@@ -50,9 +57,20 @@ class DocumentoRigheController < ApplicationController
     @documento = @documento_riga.documento
     @riga = @documento_riga.riga
 
-    respond_to do |format|
-      format.turbo_stream
-      format.html
+    Rails.logger.info "=== EDIT documento_riga ==="
+    Rails.logger.info "turbo_frame_request_id: #{turbo_frame_request_id.inspect}"
+    Rails.logger.info "request.headers['Turbo-Frame']: #{request.headers['Turbo-Frame'].inspect}"
+
+    if turbo_frame_request_id == "riga_form_frame"
+      Rails.logger.info "Rendering dialog_form partial"
+      render partial: "documento_righe/dialog_form",
+             locals: { documento: @documento, documento_riga: @documento_riga, riga: @riga }
+    else
+      Rails.logger.info "Rendering turbo_stream or html"
+      respond_to do |format|
+        format.turbo_stream
+        format.html
+      end
     end
   end
 

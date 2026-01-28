@@ -18,6 +18,17 @@
     @media (min-width: 640px) {
       margin-block-start: 2ch;
     }
+
+    /* Indicatore visivo quando il container ha focus per keyboard nav */
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-link);
+      outline-offset: 2px;
+      border-radius: 0.25rem;
+    }
   }
 
   .documento-table__table {
@@ -59,6 +70,19 @@
     &:hover {
       background-color: color-mix(in srgb, var(--card-color, var(--color-ink)) 5%, transparent);
     }
+  }
+
+  /* Riga selezionata via keyboard */
+  .documento-table__row--selected,
+  .documento-table__row[aria-selected="true"] {
+    background-color: color-mix(in srgb, var(--color-link) 20%, transparent) !important;
+    outline: 2px solid var(--color-link);
+    outline-offset: -2px;
+  }
+
+  .documento-table__row:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: -2px;
   }
 
   .documento-table__cell {

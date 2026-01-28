@@ -1,11 +1,14 @@
-<%# locals: (documento:) -%>
+<%# locals: (documento:, is_new: false) -%>
 
-<%= button_tag class: "btn btn--positive", type: :submit, form: dom_id(documento, :edit_form) do %>
+<button type="button"
+        class="btn btn--positive"
+        data-action="documento-editor#save">
   <%= icon_tag "check" %>
   <span>Salva</span>
-<% end %>
+</button>
 
-<%= link_to documento_path(documento), class: "btn btn--reversed",
-    data: { turbo_method: :get, turbo_stream: true } do %>
+<button type="button"
+        class="btn btn--reversed"
+        data-action="documento-editor#cancel">
   <span>Annulla</span>
-<% end %>
+</button>

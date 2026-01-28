@@ -1,0 +1,88 @@
+<%# locals: (documento:, documento_riga: nil, riga: nil) -%>
+
+<%
+  riga ||= Riga.new(sconto: 0.0)
+  is_edit = documento_riga.present?
+  form_url = is_edit ? documento_riga_path(documento_riga) : documento_documento_righe_path(documento)
+  form_method = is_edit ? :patch : :post
+%>
+
+<turbo-frame id="riga_form_frame">
+  <div data-controller="tax-combobox-libro">
+    <header class="flex justify-between align-center margin-block-end">
+      <h3 class="txt-large">
+        <%= is_edit ? "Modifica riga" : "Nuova riga" %>
+      </h3>
+      <button type="button"
+              class="btn btn--circle btn--small borderless"
+              data-action="righe-table#closeDialog"
+              aria-label="Chiudi">
+        <%= icon_tag "x", class: "icon--small" %>
+      </button>
+    </header>
+
+    <%= form_with model: riga, url: form_url, method: form_method, scope: :riga,
+                  data: { action: "turbo:submit-end->righe-table#formSubmitted" } do |f| %>
+      <div class="flex flex-column gap">
+        <%# Libro combobox %>
+        <div class="cb-tax">
+          <label class="txt-small txt-muted margin-block-end-quarter">Libro</label>
+          <%= f.combobox :libro_id, libri_path,
+              placeholder: "Cerca libro...",
+              data: {
+                action: "hw-combobox:selection->tax-combobox-libro#change",
+                tax_combobox_libro_target: "combobox"
+              } %>
+        </div>
+
+        <%# Fields row %>
+        <div class="flex gap flex-wrap">
+          <div class="flex flex-column" style="flex: 1 1 80px;">
+            <label class="txt-small txt-muted margin-block-end-quarter">Quantit&agrave;</label>
+            <%= f.number_field :quantita,
+                value: riga.quantita || 1,
+                min: 1,
+                data: { tax_combobox_libro_target: "quantita" },
+                class: "input",
+                style: "text-align: right;" %>
+          </div>
+
+          <div class="flex flex-column" style="flex: 1 1 100px;">
+            <label class="txt-small txt-muted margin-block-end-quarter">Prezzo</label>
+            <%= f.number_field :prezzo,
+                step: 0.01,
+                data: { tax_combobox_libro_target: "prezzo" },
+                class: "input",
+                style: "text-align: right;" %>
+          </div>
+
+          <div class="flex flex-column" style="flex: 1 1 80px;">
+            <label class="txt-small txt-muted margin-block-end-quarter">Sconto %</label>
+            <%= f.number_field :sconto,
+                value: riga.sconto || 0,
+                step: 0.01,
+                data: { tax_combobox_libro_target: "sconto" },
+                class: "input",
+                style: "text-align: right;" %>
+          </div>
+        </div>
+
+        <% if riga.errors.any? %>
+          <div class="txt-small txt-negative">
+            <%= riga.errors.full_messages.join(", ") %>
+          </div>
+        <% end %>
+
+        <%# Actions %>
+        <div class="flex gap justify-end margin-block-start">
+          <button type="button"
+                  class="btn"
+                  data-action="righe-table#closeDialog">
+            Annulla
+          </button>
+          <%= f.submit is_edit ? "Salva" : "Aggiungi", class: "btn btn--positive" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</turbo-frame>

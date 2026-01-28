@@ -1,10 +1,9 @@
 <%# locals: (documento:) -%>
 
-<%= link_to edit_documento_path(documento), class: "btn",
-    data: { turbo_method: :get, turbo_stream: true } do %>
+<button type="button" class="btn" data-action="documento-editor#enterEditMode">
   <%= icon_tag "pencil" %>
   Modifica
-<% end %>
+</button>
 
 <% if %w[TD01 TD04 TD24].include?(documento.causale&.causale) %>
   <%= link_to "Esporta XML", esporta_xml_documento_path(documento, format: :xml), class: "btn" %>

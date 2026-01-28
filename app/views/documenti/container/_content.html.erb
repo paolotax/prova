@@ -1,18 +1,108 @@
 <%# locals: (documento:, editing: false) -%>
 
-<% if documento.persisted? && documento.numero_documento.present? %>
-  <%= turbo_frame_tag documento, :edit do %>
-    <% if editing %>
-      <%= render "documenti/edit_form", documento: documento %>
+<% if editing %>
+  <%# Editing mode - transactional editing with form %>
+  <%= form_with model: documento,
+                url: documento.persisted? ? documento_path(documento) : documenti_path,
+                method: documento.persisted? ? :patch : :post,
+                id: dom_id(documento, :edit_form),
+                data: {
+                  turbo: false,
+                  documento_editor_target: "form"
+                } do |form| %>
 
-      <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
-
-      <%= render "documenti/container/righe_table", documento: documento, editing: true %>
-    <% else %>
-      <%= render "documenti/container/content_display", documento: documento %>
+    <% if documento.errors.any? %>
+      <div class="flash flash--error margin-block">
+        <%= t('misc.errori', count: documento.errors.count) %>
+        <ul class="txt-small">
+          <% documento.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
+
+    <div class="documento-edit-form">
+      <%# Cliente/Scuola combobox %>
+      <div class="documento-edit-form__cliente">
+        <div class="form-field cb-tax" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
+          <% if documento.clientable.present? && !documento.clientable.is_a?(Domain::NessunCliente) %>
+            <div class="flex gap-half align-center hide-when-editing">
+              <span class="txt-subtle txt-small">[<%= documento.clientable.class.model_name.human %>]</span>
+              <span><%= documento.clientable.to_combobox_display %></span>
+              <button type="button" class="btn btn--circle btn--small borderless txt-small" data-action="toggle-class#toggle">
+                <%= icon_tag "pencil", class: "icon--small" %>
+              </button>
+            </div>
+            <div class="show-when-editing">
+              <%= combobox_tag "documento[clientable_value]",
+                  destinatari_index_path,
+                  id: "documento_clientable_value_edit",
+                  placeholder: "cerca scuola, cliente, classe...",
+                  mobile_at: "0px" %>
+            </div>
+          <% else %>
+            <%= form.combobox :clientable_value, destinatari_index_path,
+                placeholder: "cerca scuola, cliente, classe...",
+                mobile_at: "0px" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>
+
+      <%# Causale, Numero, Data %>
+      <div class="flex gap-1 align-end">
+        <div class="form-field" style="flex: 1 1 50%;">
+          <%= form.label :causale_id, "Tipo", class: "form-label" %>
+          <%= form.select :causale_id,
+              options_from_collection_for_select(Causale.all, :id, :causale, documento.causale_id),
+              { include_blank: "seleziona..." },
+              class: "input input--select" %>
+        </div>
+
+        <div class="form-field" style="flex: 1 1 25%;">
+          <%= form.label :numero_documento, "Nr.", class: "form-label" %>
+          <%= form.number_field :numero_documento, class: "input" %>
+        </div>
+
+        <div class="form-field" style="flex: 1 1 25%;">
+          <%= form.label :data_documento, "Data", class: "form-label" %>
+          <%= form.date_field :data_documento, class: "input" %>
+        </div>
+      </div>
+
+      <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>
+
+      <%# Referente e Note %>
+      <div class="documento-edit-form__details">
+        <div class="form-field">
+          <%= form.label :referente, "Referente", class: "form-label" %>
+          <%= form.text_field :referente, class: "input", placeholder: "Nome referente..." %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :note, "Note", class: "form-label" %>
+          <%= form.text_area :note, class: "input", rows: 2, placeholder: "Note..." %>
+        </div>
+      </div>
+    </div>
+
+    <%# Hidden fields for nested righe attributes - populated by Stimulus %>
+    <div data-documento-editor-target="hiddenFields"></div>
+  <% end %>
+
+  <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
+
+  <%= render "documenti/container/righe_table", documento: documento, editing: true %>
+
+<% elsif documento.persisted? && documento.numero_documento.present? %>
+  <%# View mode for existing document %>
+  <%= turbo_frame_tag documento, :edit do %>
+    <%= render "documenti/container/content_display", documento: documento %>
   <% end %>
 <% else %>
+  <%# New document without numero (bozza) - legacy flow %>
   <%= render "documenti/edit_form", documento: documento %>
 
   <% if documento.persisted? %>

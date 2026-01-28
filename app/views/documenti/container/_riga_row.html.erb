@@ -4,7 +4,14 @@
   documento_riga = documento && riga.documento_righe.find_by(documento: documento)
 %>
 
-<tr id="<%= dom_id(documento_riga) if documento_riga %>" class="documento-table__row">
+<tr id="<%= dom_id(documento_riga) if documento_riga %>"
+    class="documento-table__row"
+    <% if editing && documento_riga %>
+      data-righe-table-target="item"
+      data-edit-path="<%= edit_documento_riga_path(documento_riga) %>"
+      data-action="click->righe-table#select dblclick->righe-table#openEdit"
+      tabindex="-1"
+    <% end %>>
   <td class="documento-table__cell documento-table__cell--title">
     <span class="documento-table__title">
       <%= link_to riga.libro&.titolo, libro_path(riga.libro) if riga.libro %>
@@ -46,6 +53,7 @@
         <%= button_to documento_riga_path(documento_riga),
                       method: :delete,
                       form: { data: { turbo_confirm: "Eliminare questa riga?" } },
+                      data: { righe_table_delete: true },
                       class: "btn btn--circle btn--small borderless txt-negative" do %>
           <%= icon_tag "trash", class: "icon--small" %>
         <% end %>

@@ -173,7 +173,7 @@ Rails.application.routes.draw do
     end
 
     resources :documenti do
-      resources :documento_righe, only: [:create], controller: 'documento_righe'
+      resources :documento_righe, only: [:new, :create], controller: 'documento_righe'
       collection do
         get 'filtra'
         get 'nuovo_numero_documento'
