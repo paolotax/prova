@@ -142,14 +142,20 @@ class LibriController < ApplicationController
     if scuola.present? && @libro.prezzo_suggerito_cents.present? && @libro.prezzo_suggerito_cents > 0
       render json: {
         prezzo_copertina_cents: @libro.prezzo_suggerito_cents,
-        sconto: 0.0
+        prezzo_suggerito_cents: @libro.prezzo_suggerito_cents,
+        sconto: 0.0,
+        codice_isbn: @libro.codice_isbn,
+        titolo: @libro.titolo
       }
     else
       sconto = Sconto.sconto_per_libro(libro: @libro, cliente: cliente, scuola: scuola, user: current_user)
 
       render json: {
         prezzo_copertina_cents: @libro.prezzo_in_cents,
-        sconto: sconto
+        prezzo_suggerito_cents: @libro.prezzo_suggerito_cents,
+        sconto: sconto,
+        codice_isbn: @libro.codice_isbn,
+        titolo: @libro.titolo
       }
     end
   end

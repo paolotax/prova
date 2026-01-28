@@ -26,7 +26,13 @@ export default class extends Controller {
     "viewFooter",
     "editFooter",
     "tableWrapper",
-    "editControls"
+    "editControls",
+    "dialogTitle",
+    "libroCombobox",
+    "quantitaField",
+    "prezzoField",
+    "scontoField",
+    "isbnDisplay"
   ]
 
   static values = {
@@ -44,10 +50,17 @@ export default class extends Controller {
     this.nextTempId = Date.now()
     this._originalRighe = JSON.parse(JSON.stringify(this.righeValue))
 
+    console.log('documento-editor connected, righeValue:', this.righeValue)
+
     // Se già in editing mode (es. da server), attiva subito
     if (this.editingValue) {
       this.activateEditingUI()
     }
+  }
+
+  // Called automatically when righeValue changes
+  righeValueChanged(newValue, oldValue) {
+    console.log('righeValueChanged:', { newValue, oldValue })
   }
 
   disconnect() {
@@ -256,16 +269,16 @@ export default class extends Controller {
           <span class="documento-table__subtitle">${this.escapeHtml(isbn)}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${this.formatCurrency(prezzo)}
+          <strong>${quantita}</strong>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${quantita}
+          <span class="documento-table__subtitle">${this.formatCurrency(prezzo)}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${sconto > 0 ? `${sconto}%` : ''}
+          <span class="documento-table__subtitle">${sconto > 0 ? `${sconto}%` : ''}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${this.formatCurrency(importo)}
+          <span class="documento-table__subtitle">${this.formatCurrency(importo)}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__actions">
           <div class="flex gap-quarter align-center">
@@ -339,16 +352,16 @@ export default class extends Controller {
           <span class="documento-table__subtitle">${this.escapeHtml(isbn)}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${this.formatCurrency(prezzo)}
+          <strong>${quantita}</strong>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${quantita}
+          <span class="documento-table__subtitle">${this.formatCurrency(prezzo)}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${sconto > 0 ? `${sconto}%` : ''}
+          <span class="documento-table__subtitle">${sconto > 0 ? `${sconto}%` : ''}</span>
         </td>
         <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-          ${this.formatCurrency(importo)}
+          <span class="documento-table__subtitle">${this.formatCurrency(importo)}</span>
         </td>
       </tr>
     `
@@ -508,27 +521,99 @@ export default class extends Controller {
     const dialog = this.rigaDialogTarget
     const isEdit = this.editingRigaIndex !== null
 
-    // Populate dialog fields
-    const titleEl = dialog.querySelector('[data-dialog-title]')
-    if (titleEl) {
-      titleEl.textContent = isEdit ? 'Modifica riga' : 'Nuova riga'
+    // Populate dialog title
+    if (this.hasDialogTitleTarget) {
+      this.dialogTitleTarget.textContent = isEdit ? 'Modifica riga' : 'Nuova riga'
     }
 
     // Set form fields
-    const libroIdField = dialog.querySelector('[data-field="libro_id"]')
-    const quantitaField = dialog.querySelector('[data-field="quantita"]')
-    const prezzoField = dialog.querySelector('[data-field="prezzo"]')
-    const scontoField = dialog.querySelector('[data-field="sconto"]')
+    if (this.hasQuantitaFieldTarget) this.quantitaFieldTarget.value = riga.quantita || 1
+    if (this.hasPrezzoFieldTarget) this.prezzoFieldTarget.value = (riga.prezzo_cents || 0) / 100
+    if (this.hasScontoFieldTarget) this.scontoFieldTarget.value = riga.sconto || 0
 
-    if (libroIdField) libroIdField.value = riga.libro_id || ''
-    if (quantitaField) quantitaField.value = riga.quantita || 1
-    if (prezzoField) prezzoField.value = (riga.prezzo_cents || 0) / 100
-    if (scontoField) scontoField.value = riga.sconto || 0
+    // Set combobox value (libro)
+    if (this.hasLibroComboboxTarget) {
+      // libroComboboxTarget is the hw-combobox element or an element inside it
+      const comboboxEl = this.libroComboboxTarget
+      const hwCombobox = comboboxEl.tagName === 'HW-COMBOBOX'
+        ? comboboxEl
+        : comboboxEl.closest('hw-combobox') || comboboxEl.querySelector('hw-combobox')
 
-    // Store current libro data for display
-    this._currentLibro = riga.libro || { id: riga.libro_id, titolo: riga.titolo, codice_isbn: riga.codice_isbn }
+      // Find inputs - try multiple selectors
+      const hiddenInput = hwCombobox?.querySelector('input[type="hidden"]') ||
+                          dialog.querySelector('input[name="riga[libro_id]"]')
+      const textInput = hwCombobox?.querySelector('input[type="text"]') ||
+                        comboboxEl.querySelector('input[type="text"]')
+      const listbox = hwCombobox?.querySelector('.hw-combobox__listbox')
+
+      // Clear listbox before setting new values
+      if (listbox) listbox.innerHTML = ''
+
+      if (hiddenInput) {
+        hiddenInput.value = riga.libro_id || ''
+      }
+      if (textInput) {
+        textInput.value = riga.titolo || riga.libro?.titolo || ''
+      }
+
+      // Close the listbox if open
+      if (hwCombobox?.close) hwCombobox.close()
+
+      // Set lastLibroId on tax-combobox-libro to avoid unnecessary fetches
+      const taxComboboxEl = dialog.querySelector('[data-controller*="tax-combobox-libro"]')
+      if (taxComboboxEl && riga.libro_id) {
+        taxComboboxEl.dataset.taxComboboxLibroLastLibroIdValue = String(riga.libro_id)
+      }
+    }
+
+    // Store current libro data for display (includes ISBN)
+    const isbn = riga.codice_isbn || riga.libro?.codice_isbn || ''
+    this._currentLibro = {
+      id: riga.libro_id,
+      titolo: riga.titolo || riga.libro?.titolo || '',
+      codice_isbn: isbn
+    }
+
+    // Show ISBN in dialog
+    if (this.hasIsbnDisplayTarget) {
+      this.isbnDisplayTarget.textContent = isbn ? `ISBN: ${isbn}` : ''
+    }
 
     dialog.showModal()
+
+    // Autofocus sulla combobox dopo che il dialog è aperto
+    setTimeout(() => {
+      if (this.hasLibroComboboxTarget) {
+        const input = this.libroComboboxTarget.querySelector('input[type="text"]')
+        if (input) {
+          input.focus()
+          input.select()
+        }
+      }
+    }, 50)
+  }
+
+  /**
+   * Focus next field on Enter
+   */
+  focusNextField(event) {
+    event.preventDefault()
+    const current = event.target
+    const fields = [this.quantitaFieldTarget, this.prezzoFieldTarget, this.scontoFieldTarget]
+    const currentIndex = fields.indexOf(current)
+    if (currentIndex < fields.length - 1) {
+      fields[currentIndex + 1].focus()
+      fields[currentIndex + 1].select()
+    }
+  }
+
+  /**
+   * Submit dialog on Enter from last field
+   */
+  submitDialog(event) {
+    event.preventDefault()
+    const form = this.rigaDialogTarget.querySelector('form')
+    if (form) form.requestSubmit()
   }
 
   closeDialog(event) {
@@ -542,6 +627,36 @@ export default class extends Controller {
 
   dialogClosed() {
     this.editingRigaIndex = null
+    this._selectedLibro = null
+    this._currentLibro = null
+
+    // Clear combobox values and listbox when dialog closes
+    if (this.hasRigaDialogTarget && this.hasLibroComboboxTarget) {
+      const comboboxEl = this.libroComboboxTarget
+      const hwCombobox = comboboxEl.tagName === 'HW-COMBOBOX'
+        ? comboboxEl
+        : comboboxEl.closest('hw-combobox') || comboboxEl.querySelector('hw-combobox')
+
+      const hiddenInput = hwCombobox?.querySelector('input[type="hidden"]')
+      const textInput = hwCombobox?.querySelector('input[type="text"]')
+      const listbox = hwCombobox?.querySelector('.hw-combobox__listbox')
+
+      if (hiddenInput) hiddenInput.value = ''
+      if (textInput) textInput.value = ''
+      if (listbox) listbox.innerHTML = ''
+
+      // Reset lastLibroId on tax-combobox-libro
+      const taxComboboxEl = this.rigaDialogTarget.querySelector('[data-controller*="tax-combobox-libro"]')
+      if (taxComboboxEl) {
+        taxComboboxEl.dataset.taxComboboxLibroLastLibroIdValue = ''
+      }
+    }
+
+    // Clear ISBN display
+    if (this.hasIsbnDisplayTarget) {
+      this.isbnDisplayTarget.textContent = ''
+    }
+
     this.element.focus()
   }
 
@@ -549,21 +664,49 @@ export default class extends Controller {
    * Called when riga dialog form is submitted
    */
   saveRigaFromDialog(event) {
+    console.log('=== saveRigaFromDialog CALLED ===')
     event.preventDefault()
-    const dialog = this.rigaDialogTarget
+    event.stopPropagation()
 
-    const libroIdField = dialog.querySelector('[data-field="libro_id"]')
-    const quantitaField = dialog.querySelector('[data-field="quantita"]')
-    const prezzoField = dialog.querySelector('[data-field="prezzo"]')
-    const scontoField = dialog.querySelector('[data-field="sconto"]')
+    // Get libro_id from combobox - the hidden input created by hotwire-combobox
+    // It's the sibling hidden input next to the text input in the hw-combobox structure
+    let libroId = null
+    if (this.hasLibroComboboxTarget) {
+      // hotwire-combobox creates: hw-combobox > input[type=hidden] + input[type=text]
+      const hwCombobox = this.libroComboboxTarget.closest('hw-combobox')
+      if (hwCombobox) {
+        const hiddenInput = hwCombobox.querySelector('input[type="hidden"]')
+        console.log('Found hw-combobox hidden input:', hiddenInput, 'value:', hiddenInput?.value)
+        libroId = hiddenInput?.value ? parseInt(hiddenInput.value, 10) : null
+      }
+      // Fallback to looking for input by name
+      if (!libroId) {
+        const byName = this.rigaDialogTarget.querySelector('input[name="riga[libro_id]"]')
+        console.log('Fallback input by name:', byName, 'value:', byName?.value)
+        libroId = byName?.value ? parseInt(byName.value, 10) : null
+      }
+    }
 
-    const libroId = libroIdField ? parseInt(libroIdField.value, 10) : null
-    const quantita = quantitaField ? parseInt(quantitaField.value, 10) || 1 : 1
-    const prezzo = prezzoField ? parseFloat(prezzoField.value) || 0 : 0
-    const sconto = scontoField ? parseFloat(scontoField.value) || 0 : 0
+    console.log('quantitaFieldTarget:', this.quantitaFieldTarget)
+    console.log('quantitaFieldTarget.value:', this.quantitaFieldTarget?.value)
+    console.log('prezzoFieldTarget:', this.prezzoFieldTarget)
+    console.log('prezzoFieldTarget.value:', this.prezzoFieldTarget?.value)
 
-    // Get libro data from combobox display (if available)
+    const quantita = this.hasQuantitaFieldTarget ? parseInt(this.quantitaFieldTarget.value, 10) || 1 : 1
+    const prezzo = this.hasPrezzoFieldTarget ? parseFloat(this.prezzoFieldTarget.value) || 0 : 0
+    const sconto = this.hasScontoFieldTarget ? parseFloat(this.scontoFieldTarget.value) || 0 : 0
+
+    console.log('Form values:', { libroId, quantita, prezzo, sconto })
+
+    // Get libro data from selection or current edit data
     const libroData = this._selectedLibro || this._currentLibro || {}
+    console.log('libroData:', libroData)
+
+    // Validate libro selection
+    if (!libroId) {
+      alert('Seleziona un libro')
+      return
+    }
 
     const rigaData = {
       libro_id: libroId,
@@ -575,55 +718,132 @@ export default class extends Controller {
       sconto: sconto
     }
 
+    console.log('rigaData to save:', rigaData)
+    console.log('editingRigaIndex:', this.editingRigaIndex)
+    console.log('current righeValue:', JSON.stringify(this.righeValue))
+
     if (this.editingRigaIndex !== null) {
       // Find the actual index in righeValue (accounting for _destroy)
-      const visibleRighe = this.righeValue.filter(r => !r._destroy)
-      const editedRiga = visibleRighe[this.editingRigaIndex]
-      const actualIndex = this.righeValue.indexOf(editedRiga)
+      // IMPORTANT: Get righeValue once to avoid Stimulus returning different array copies
+      const allRighe = this.righeValue
+      let visibleIndex = 0
+      let actualIndex = -1
+
+      for (let i = 0; i < allRighe.length; i++) {
+        if (!allRighe[i]._destroy) {
+          if (visibleIndex === this.editingRigaIndex) {
+            actualIndex = i
+            break
+          }
+          visibleIndex++
+        }
+      }
+
+      console.log('Updating riga at actualIndex:', actualIndex, 'editingRigaIndex:', this.editingRigaIndex)
       if (actualIndex !== -1) {
         this.updateRiga(actualIndex, rigaData)
       }
     } else {
+      console.log('Adding new riga')
       this.addRiga(rigaData)
+    }
+
+    console.log('righeValue after save:', JSON.stringify(this.righeValue))
+
+    // Determine which row to select after closing
+    let indexToSelect
+    if (this.editingRigaIndex !== null) {
+      // Edited existing row - select same row
+      indexToSelect = this.editingRigaIndex
+    } else {
+      // Added new row - select last visible row
+      const visibleRighe = this.righeValue.filter(r => !r._destroy)
+      indexToSelect = visibleRighe.length - 1
     }
 
     this.closeDialog()
     this._selectedLibro = null
+
+    // Select the row after a short delay to let the DOM update
+    setTimeout(() => {
+      if (indexToSelect >= 0) {
+        this.setCurrentIndex(indexToSelect)
+      }
+    }, 50)
   }
 
   /**
    * Called when libro is selected in combobox
    */
   onLibroSelected(event) {
-    const { value, display } = event.detail || {}
+    console.log('onLibroSelected event:', event)
+    console.log('onLibroSelected event.detail:', event.detail)
 
-    // Parse the libro data from the combobox
-    // The display usually contains the title
-    this._selectedLibro = {
-      id: value ? parseInt(value, 10) : null,
-      titolo: display || '',
-      codice_isbn: ''  // Will be filled if available
+    // hotwire-combobox passa value e display in event.detail
+    const value = event.detail?.value
+    const display = event.detail?.display
+
+    // If cleared, reset
+    if (!value) {
+      this._selectedLibro = null
+      return
     }
 
-    // Try to get prezzo from the selection if available
-    if (event.detail?.dataset?.prezzo) {
-      const prezzoField = this.rigaDialogTarget?.querySelector('[data-field="prezzo"]')
-      if (prezzoField) {
-        prezzoField.value = event.detail.dataset.prezzo
+    const libroId = parseInt(value, 10)
+
+    // If same libro as current, keep the existing ISBN from _currentLibro
+    if (this._currentLibro && String(this._currentLibro.id) === String(libroId)) {
+      this._selectedLibro = {
+        id: libroId,
+        titolo: display || this._currentLibro.titolo || '',
+        codice_isbn: this._currentLibro.codice_isbn || ''
+      }
+    } else {
+      // New libro - ISBN will come from libro:loaded event
+      this._selectedLibro = {
+        id: libroId,
+        titolo: display || '',
+        codice_isbn: '' // Will be updated by onLibroLoaded
       }
     }
+
+    console.log('_selectedLibro set to:', this._selectedLibro)
+  }
+
+  /**
+   * Called when libro data is loaded from server (via tax-combobox-libro)
+   * This provides the ISBN and other details
+   */
+  onLibroLoaded(event) {
+    console.log('onLibroLoaded event:', event.detail)
+
+    const data = event.detail
+    if (!data?.id) return
+
+    const isbn = data.codice_isbn || ''
+
+    // Update _selectedLibro with full data including ISBN
+    this._selectedLibro = {
+      id: parseInt(data.id, 10),
+      titolo: data.titolo || this._selectedLibro?.titolo || '',
+      codice_isbn: isbn
+    }
+
+    // Show ISBN in dialog
+    if (this.hasIsbnDisplayTarget) {
+      this.isbnDisplayTarget.textContent = isbn ? `ISBN: ${isbn}` : ''
+    }
+
+    console.log('_selectedLibro updated with ISBN:', this._selectedLibro)
   }
 
   deleteRow(event) {
     event?.preventDefault()
-    const index = parseInt(event.currentTarget.dataset.rigaIndex, 10)
-    if (isNaN(index)) return
+    const visibleIndex = parseInt(event.currentTarget.dataset.rigaIndex, 10)
+    if (isNaN(visibleIndex)) return
 
     if (confirm('Eliminare questa riga?')) {
-      // Find actual index in righeValue
-      const visibleRighe = this.righeValue.filter(r => !r._destroy)
-      const riga = visibleRighe[index]
-      const actualIndex = this.righeValue.indexOf(riga)
+      const actualIndex = this.findActualIndex(visibleIndex)
       if (actualIndex !== -1) {
         this.removeRiga(actualIndex)
       }
@@ -635,68 +855,117 @@ export default class extends Controller {
     if (this.currentIndex < 0) return
 
     if (confirm('Eliminare questa riga?')) {
-      const visibleRighe = this.righeValue.filter(r => !r._destroy)
-      const riga = visibleRighe[this.currentIndex]
-      const actualIndex = this.righeValue.indexOf(riga)
+      const actualIndex = this.findActualIndex(this.currentIndex)
       if (actualIndex !== -1) {
         this.removeRiga(actualIndex)
       }
     }
   }
 
+  // Helper: find actual index in righeValue from visible index
+  findActualIndex(visibleIndex) {
+    const allRighe = this.righeValue
+    let currentVisible = 0
+
+    for (let i = 0; i < allRighe.length; i++) {
+      if (!allRighe[i]._destroy) {
+        if (currentVisible === visibleIndex) {
+          return i
+        }
+        currentVisible++
+      }
+    }
+    return -1
+  }
+
   // ==================== SAVE / CANCEL ====================
 
   /**
-   * Save all changes to the server
+   * Save all changes to the server via fetch
    */
-  save(event) {
+  async save(event) {
     event?.preventDefault()
+    console.log('=== SAVE CALLED ===')
+    console.log('documentoValue:', this.documentoValue)
+    console.log('righeValue:', this.righeValue)
 
-    // Build hidden fields for nested attributes
-    this.buildHiddenFields()
+    const documentoId = this.documentoValue.id
+    if (!documentoId) {
+      console.error('No documento ID for save')
+      alert('Errore: documento ID mancante')
+      return
+    }
 
-    // Submit the form
-    if (this.hasFormTarget) {
-      this.formTarget.requestSubmit()
+    // Build the payload
+    const payload = this.buildPayload()
+    console.log('Saving payload:', payload)
+
+    // Get account_id from current URL path (format: /account_id/documenti/...)
+    const pathParts = window.location.pathname.split('/')
+    const accountId = pathParts[1]
+
+    // Disable save button during operation
+    const saveBtn = event?.target?.closest('button') || this.element.querySelector('[data-action*="save"]')
+    if (saveBtn) {
+      saveBtn.disabled = true
+      saveBtn.textContent = 'Salvataggio...'
+    }
+
+    try {
+      const response = await fetch(`/${accountId}/documenti/${documentoId}/update_righe`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Save successful:', data)
+
+        // Reload page to show updated data
+        window.location.reload()
+      } else {
+        const errorData = await response.json()
+        console.error('Save failed:', errorData)
+        alert('Errore nel salvataggio: ' + (errorData.error || 'Errore sconosciuto'))
+
+        // Re-enable button
+        if (saveBtn) {
+          saveBtn.disabled = false
+          saveBtn.textContent = 'Salva'
+        }
+      }
+    } catch (error) {
+      console.error('Save error:', error)
+      alert('Errore di connessione')
+
+      // Re-enable button
+      if (saveBtn) {
+        saveBtn.disabled = false
+        saveBtn.textContent = 'Salva'
+      }
     }
   }
 
   /**
-   * Build hidden fields for documento_righe_attributes
+   * Build payload for save
    */
-  buildHiddenFields() {
-    if (!this.hasHiddenFieldsTarget) return
+  buildPayload() {
+    const righePayload = this.righeValue.map(riga => ({
+      documento_riga_id: riga.documento_riga_id || null,
+      riga_id: riga.riga_id || null,
+      libro_id: riga.libro_id,
+      quantita: riga.quantita || 1,
+      prezzo_cents: riga.prezzo_cents || 0,
+      sconto: riga.sconto || 0,
+      _destroy: riga._destroy || false,
+      _isNew: riga._isNew || false
+    }))
 
-    let html = ''
-
-    this.righeValue.forEach((riga, index) => {
-      const prefix = `documento[documento_righe_attributes][${index}]`
-
-      // documento_riga id (if existing)
-      if (riga.documento_riga_id) {
-        html += `<input type="hidden" name="${prefix}[id]" value="${riga.documento_riga_id}">`
-      }
-
-      // _destroy flag
-      if (riga._destroy) {
-        html += `<input type="hidden" name="${prefix}[_destroy]" value="1">`
-      }
-
-      // riga_attributes
-      const rigaPrefix = `${prefix}[riga_attributes]`
-
-      // riga id (if existing)
-      if (riga.riga_id) {
-        html += `<input type="hidden" name="${rigaPrefix}[id]" value="${riga.riga_id}">`
-      }
-
-      html += `<input type="hidden" name="${rigaPrefix}[libro_id]" value="${riga.libro_id || ''}">`
-      html += `<input type="hidden" name="${rigaPrefix}[quantita]" value="${riga.quantita || 1}">`
-      html += `<input type="hidden" name="${rigaPrefix}[prezzo_cents]" value="${riga.prezzo_cents || 0}">`
-      html += `<input type="hidden" name="${rigaPrefix}[sconto]" value="${riga.sconto || 0}">`
-    })
-
-    this.hiddenFieldsTarget.innerHTML = html
+    return { righe: righePayload }
   }
 
   /**

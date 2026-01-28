@@ -101,3 +101,23 @@
     line-height: 1.25rem;
   }
 }
+
+/* Dark mode support for combobox listbox (rendered as portal) */
+@media (prefers-color-scheme: dark) {
+  .hw-combobox__listbox {
+    background-color: var(--color-canvas, #1a1a2e) !important;
+    color: var(--color-ink, #e0e0e0);
+    border-color: var(--color-ink-lighter, #444) !important;
+  }
+
+  .hw-combobox__option {
+    background-color: var(--color-canvas, #1a1a2e) !important;
+    color: var(--color-ink, #e0e0e0) !important;
+  }
+
+  .hw-combobox__option:hover,
+  .hw-combobox__option--navigated,
+  .hw-combobox__option--selected {
+    background-color: var(--color-ink-lightest, #333) !important;
+  }
+}

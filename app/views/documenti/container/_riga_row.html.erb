@@ -14,7 +14,7 @@
     <% end %>>
   <td class="documento-table__cell documento-table__cell--title">
     <span class="documento-table__title">
-      <%= link_to riga.libro&.titolo, libro_path(riga.libro) if riga.libro %>
+      <%= link_to riga.libro&.titolo, libro_path(riga.libro), data: { turbo_frame: :_top } if riga.libro %>
     </span>
     <%# Mobile: valori sotto il titolo %>
     <div class="documento-table__values">
@@ -22,7 +22,7 @@
       <span class="documento-table__value"><strong><%= riga.quantita %></strong> cp</span>
       <span class="documento-table__value"><%= number_to_currency riga.prezzo_cents/100.0, locale: :it %></span>
       <% if riga.sconto.present? && riga.sconto > 0 %>
-        <span class="documento-table__value">-<%= riga.sconto %>%</span>
+        <span class="documento-table__value">-<%= riga.sconto.to_i %>%</span>
       <% end %>
       <span class="documento-table__value"><strong><%= number_to_currency riga.importo, locale: :it %></strong></span>
     </div>
@@ -31,16 +31,16 @@
     <span class="documento-table__subtitle"><%= riga.libro&.codice_isbn %></span>
   </td>
   <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-    <%= number_to_currency riga.prezzo_cents/100.0, locale: :it %>
+    <strong><%= riga.quantita %></strong>
   </td>
   <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-    <%= riga.quantita %>
+    <span class="documento-table__subtitle"><%= number_to_currency riga.prezzo_cents/100.0, locale: :it %></span>
   </td>
   <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-    <%= riga.sconto.nil? ? '' : "#{riga.sconto}%" %>
+    <span class="documento-table__subtitle"><%= riga.sconto.present? && riga.sconto > 0 ? "#{riga.sconto}%" : '' %></span>
   </td>
   <td class="documento-table__cell documento-table__cell--right documento-table__cell--hidden-mobile">
-    <%= number_to_currency riga.importo, locale: :it %>
+    <span class="documento-table__subtitle"><%= number_to_currency riga.importo, locale: :it %></span>
   </td>
   <% if editing && documento_riga %>
     <td class="documento-table__cell documento-table__cell--right documento-table__actions">

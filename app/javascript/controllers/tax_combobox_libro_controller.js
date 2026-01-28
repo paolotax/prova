@@ -4,6 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
 
   static targets = ["combobox", "prezzo", "quantita", "sconto"]
+  static values = { lastLibroId: String }
 
   change(event) {
     let id_libro = this.comboboxTarget.querySelector("input").value;
@@ -13,8 +14,18 @@ export default class extends Controller {
       if (this.hasScontoTarget) {
         this.scontoTarget.value = "0.0";
       }
+      this.lastLibroIdValue = ""
       return;
     }
+
+    // Evita chiamate ripetute se il libro non è cambiato
+    if (id_libro === this.lastLibroIdValue) {
+      this.quantitaTarget.focus();
+      this.quantitaTarget.select();
+      return;
+    }
+
+    this.lastLibroIdValue = id_libro
 
     // Trova il clientable_id e type dai data attributes della sezione righe
     let righeSection = document.querySelector('#righe_list') || document.querySelector('#documento_righe');
@@ -52,6 +63,19 @@ export default class extends Controller {
       if (this.hasScontoTarget) {
         this.scontoTarget.value = sconto;
       }
+
+      // Dispatch custom event with libro data (ISBN, titolo) for documento_editor
+      this.element.dispatchEvent(new CustomEvent('libro:loaded', {
+        bubbles: true,
+        detail: {
+          id: id_libro,
+          codice_isbn: data.codice_isbn,
+          titolo: data.titolo,
+          prezzo_cents: prezzo_copertina_cents,
+          prezzo_suggerito_cents: data.prezzo_suggerito_cents,
+          sconto: sconto
+        }
+      }));
 
       this.quantitaTarget.focus();
       this.quantitaTarget.select();

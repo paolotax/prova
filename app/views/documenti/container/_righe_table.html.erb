@@ -20,8 +20,8 @@
       <tr class="documento-table__header">
         <th class="documento-table__th">Titolo</th>
         <th class="documento-table__th documento-table__th--right">ISBN</th>
-        <th class="documento-table__th documento-table__th--right">Prezzo</th>
         <th class="documento-table__th documento-table__th--right">Qt</th>
+        <th class="documento-table__th documento-table__th--right">Prezzo</th>
         <th class="documento-table__th documento-table__th--right">Sc%</th>
         <th class="documento-table__th documento-table__th--right">Importo</th>
         <th class="documento-table__th documento-table__th--right documento-table__th--actions"></th>
@@ -114,10 +114,11 @@
   <dialog class="dialog panel fill-white shadow"
           style="max-width: 50ch; padding: 1rem; overflow: visible;"
           data-documento-editor-target="rigaDialog"
-          data-action="close->documento-editor#dialogClosed">
-    <div data-controller="tax-combobox-libro">
+          data-action="close->documento-editor#dialogClosed libro:loaded->documento-editor#onLibroLoaded">
+    <div data-controller="tax-combobox-libro dialog-form"
+         data-dialog-form-submit-on-enter-value="true">
       <header class="flex justify-between align-center margin-block-end">
-        <h3 class="txt-large" data-dialog-title>Nuova riga</h3>
+        <h3 class="txt-large" data-documento-editor-target="dialogTitle">Nuova riga</h3>
         <button type="button"
                 class="btn btn--circle btn--small borderless"
                 data-action="documento-editor#closeDialog"
@@ -126,38 +127,41 @@
         </button>
       </header>
 
-      <form data-action="submit->documento-editor#saveRigaFromDialog">
+      <%= form_with model: Riga.new, url: "#", scope: :riga, local: true,
+                    data: { action: "submit->documento-editor#saveRigaFromDialog" } do |f| %>
         <div class="flex flex-column gap">
           <div class="cb-tax">
             <label class="txt-small txt-muted margin-block-end-quarter">Libro</label>
-            <%= combobox_tag "libro_id", libri_path,
-                id: "riga_dialog_libro_id",
+            <%= f.combobox :libro_id, libri_path,
                 placeholder: "Cerca libro...",
+                autofocus: true,
                 data: {
-                  field: "libro_id",
+                  documento_editor_target: "libroCombobox",
                   action: "hw-combobox:selection->tax-combobox-libro#change hw-combobox:selection->documento-editor#onLibroSelected",
                   tax_combobox_libro_target: "combobox"
                 } %>
+            <div class="txt-small txt-muted margin-block-start-quarter"
+                 data-documento-editor-target="isbnDisplay"></div>
           </div>
 
           <div class="flex gap flex-wrap">
             <div class="flex flex-column" style="flex: 1 1 80px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Qt</label>
-              <input type="number" name="quantita" value="1" min="1"
-                     data-field="quantita" data-tax-combobox-libro-target="quantita"
-                     class="input" style="text-align: right;">
+              <%= f.number_field :quantita, value: 1, min: 1,
+                  data: { documento_editor_target: "quantitaField", tax_combobox_libro_target: "quantita", action: "keydown.enter->documento-editor#focusNextField" },
+                  class: "input", style: "text-align: right;" %>
             </div>
             <div class="flex flex-column" style="flex: 1 1 100px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Prezzo</label>
-              <input type="number" name="prezzo" step="0.01"
-                     data-field="prezzo" data-tax-combobox-libro-target="prezzo"
-                     class="input" style="text-align: right;">
+              <%= f.number_field :prezzo, step: 0.01,
+                  data: { documento_editor_target: "prezzoField", tax_combobox_libro_target: "prezzo", action: "keydown.enter->documento-editor#focusNextField" },
+                  class: "input", style: "text-align: right;" %>
             </div>
             <div class="flex flex-column" style="flex: 1 1 80px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Sc%</label>
-              <input type="number" name="sconto" value="0" step="0.01"
-                     data-field="sconto" data-tax-combobox-libro-target="sconto"
-                     class="input" style="text-align: right;">
+              <%= f.number_field :sconto, value: 0, step: 0.01,
+                  data: { documento_editor_target: "scontoField", tax_combobox_libro_target: "sconto", action: "keydown.enter->documento-editor#submitDialog" },
+                  class: "input", style: "text-align: right;" %>
             </div>
           </div>
 
@@ -166,7 +170,7 @@
             <button type="submit" class="btn btn--positive">Salva</button>
           </div>
         </div>
-      </form>
+      <% end %>
     </div>
   </dialog>
 </div>

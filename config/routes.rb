@@ -182,6 +182,7 @@ Rails.application.routes.draw do
       member do
         get :esporta_xml
         get :edit_status
+        patch :update_righe
       end
     end
 
