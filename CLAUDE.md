@@ -159,3 +159,11 @@ Docker-based deployment with Kamal. Configuration in `config/deploy.yml`.
 - FriendlyId slugs on User and Libro models
 - Ransack for advanced querying
 - Raw SQL and crosstab queries for complex inventory analysis
+
+## TODO / Future Work
+
+### Ristrutturazione Mandati e Zone (Multi-tenancy)
+Le tabelle `mandati` e `zone` attualmente sono legate direttamente all'utente. Devono essere ristrutturate per:
+- Supportare il cambio anno in anno per caricare scuole ed adozioni
+- Permettere all'account di assegnare zone diverse (province e tipi scuola) ai vari user
+- Le zone cambiano di anno in anno con scuole diverse

@@ -2,7 +2,7 @@
 <% me_or_you = Current.user == @user ? "me" : @user.first_name %>
 
 <div class="profile-layout">
-  <section class="panel shadow text-align-center" style="--panel-size: 45ch;">    
+  <section class="panel shadow text-align-center" style="--panel-size: 45ch;">
     <div class="flex flex-column gap position-relative">
       <% if Current.user == @user %>
         <%= link_to edit_user_personal_info_path(@personal_info), class: "user-edit-link btn", data: { controller: "tooltip" } do %>
@@ -28,45 +28,58 @@
           <% end %>
         </div>
       </div>
+
+      <% if @personal_info %>
+        <strong class="divider txt-large">Dati personali</strong>
+        <dl class="dl-grid">
+          <div>
+            <dt class="txt-small txt-subtle">Nome</dt>
+            <dd class="txt-small"><%= @personal_info.nome %></dd>
+          </div>
+
+          <div>
+            <dt class="txt-small txt-subtle">Cognome</dt>
+            <dd class="txt-small"><%= @personal_info.cognome %></dd>
+          </div>
+
+          <div>
+            <dt class="txt-small txt-subtle">Cellulare</dt>
+            <dd class="txt-small mono"><%= @personal_info.cellulare || "-" %></dd>
+          </div>
+
+          <div>
+            <dt class="txt-small txt-subtle">Email personale</dt>
+            <dd class="txt-small"><%= @personal_info.email_personale || "-" %></dd>
+          </div>
+        </dl>
+      <% end %>
     </div>
   </section>
-    
+
   <% if Current.user == @user %>
     <section class="panel shadow" style="--panel-size: 45ch;">
-      <strong class="divider txt-large">Dati personali</strong>
-      <dl class="dl-grid">
-        <div>
-          <dt class="txt-small txt-subtle">Nome</dt>
-          <dd class="txt-small"><%= @personal_info.nome %></dd>
-        </div>
-
-        <div>
-          <dt class="txt-small txt-subtle">Cognome</dt>
-          <dd class="txt-small"><%= @personal_info.cognome %></dd>
-        </div>
-
-        <div>
-          <dt class="txt-small txt-subtle">Cellulare</dt>
-          <dd class="txt-small mono"><%= @personal_info.cellulare || "-" %></dd>
-        </div>
-
-        <div>
-          <dt class="txt-small txt-subtle">Email personale</dt>
-          <dd class="txt-small"><%= @personal_info.email_personale || "-" %></dd>
-        </div>
-      </dl>
+      <%= render "users/theme" %>
 
       <strong class="divider txt-large">Preferenze</strong>
 
       <dl class="dl-grid">
         <div>
           <dt class="txt-small txt-subtle">Navigatore preferito</dt>
-          <dd class="txt-small"><%= @personal_info.navigator&.humanize || "-" %></dd>
+          <dd class="txt-small"><%= @personal_info&.navigator&.humanize || "-" %></dd>
         </div>
       </dl>
 
-      <%= render "users/theme" %>
+      <strong class="divider txt-large">La mia zona</strong>
 
+      <%= turbo_frame_tag :zone_list, src: user_zone_path(@user) do %>
+        <%= render 'shared/lazy_loading' %>
+      <% end %>
+
+      <strong class="divider txt-large">I miei editori</strong>
+
+      <%= turbo_frame_tag :mandati_list, src: user_mandati_path(@user) do %>
+        <%= render 'shared/lazy_loading' %>
+      <% end %>
     </section>
   <% end %>
 </div>

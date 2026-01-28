@@ -1,0 +1,26 @@
+@layer components {
+  .dl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1ch;
+    margin: 0;
+    padding-block: 1ch;
+
+    > div {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: span 2;
+    }
+
+    dt {
+      color: var(--color-ink-muted);
+      text-align: right;
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 500;
+      text-align: left;
+    }
+  }
+}

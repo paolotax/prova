@@ -1,0 +1,14 @@
+<%= turbo_frame_tag :zone_list do %>
+  <% if @zone.any? %>
+    <dl class="dl-grid">
+      <% @zone.each do |zona, count| %>
+        <div>
+          <dt class="txt-small txt-subtle"><%= zona[1] %> - <%= zona[2] %></dt>
+          <dd class="txt-small"><%= count %> scuole</dd>
+        </div>
+      <% end %>
+    </dl>
+  <% else %>
+    <p class="txt-small txt-subtle text-align-center padding-block">Nessuna zona assegnata</p>
+  <% end %>
+<% end %>

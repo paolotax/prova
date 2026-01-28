@@ -49,6 +49,8 @@ Rails.application.routes.draw do
     scope module: :users do
       resource :personal_info
       resource :avatar
+      resources :zone, only: [:index]
+      resources :mandati, only: [:index]
     end
   end
   
