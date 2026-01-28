@@ -1,1 +1,6 @@
 <%= turbo_stream.remove(dom_id(@column)) %>
+<% if @moved_entries.any? %>
+  <%= turbo_stream.prepend "entries-pagination-contents-1" do %>
+    <%= render partial: "entries/entry", collection: @moved_entries, as: :entry %>
+  <% end %>
+<% end %>

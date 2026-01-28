@@ -36,6 +36,9 @@ class ColumnsController < ApplicationController
   end
 
   def destroy
+    # Capture entries that will be moved to triage before destroying
+    @moved_entries = @column.entries.active.includes(:goldness, :closure, :not_now).to_a
+
     @column.destroy
 
     respond_to do |format|
