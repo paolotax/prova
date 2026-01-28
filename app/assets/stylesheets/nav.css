@@ -254,12 +254,22 @@
     display: none;
   }
 
+  /* Manual theme override */
+  html[data-theme="dark"] .nav__logo-light {
+    display: none;
+  }
+
+  html[data-theme="dark"] .nav__logo-dark {
+    display: block;
+  }
+
+  /* Fallback to system preference when no explicit theme */
   @media (prefers-color-scheme: dark) {
-    .nav__logo-light {
+    html:not([data-theme]) .nav__logo-light {
       display: none;
     }
 
-    .nav__logo-dark {
+    html:not([data-theme]) .nav__logo-dark {
       display: block;
     }
   }
