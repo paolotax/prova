@@ -24,10 +24,13 @@
     border: 2px dashed var(--color-ink-light);
     border-radius: 1ch;
     color: var(--color-ink-dark);
-    margin-block-start: 2dvh;
-    padding: 1ch 2ch;
+    margin-block-start: 8dvh;
+    margin-inline: auto;
+    padding: 2ch 3ch;
     rotate: -3deg;
     font-weight: 500;
+    width: fit-content;
+    text-align: center;
 
     .cards:has(.card) & {
       display: none;
