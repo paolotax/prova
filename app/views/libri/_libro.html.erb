@@ -48,10 +48,10 @@
       <% if libro.fascicoli_count > 0 || libro.confezioni_count > 0 %>
         <div class="flex gap-quarter margin-block-start-quarter">
           <% unless libro.fascicoli_count.zero? %>
-            <%= component('badge', text: "#{libro.fascicoli_count} fasc", color: "yellow") %>
+            <span class="badge badge--yellow"><%= libro.fascicoli_count %> fasc</span>
           <% end %>
           <% unless libro.confezioni_count.zero? %>
-            <%= component('badge', text: "#{libro.confezioni_count} conf", color: "blue") %>
+            <span class="badge badge--blue"><%= libro.confezioni_count %> conf</span>
           <% end %>
         </div>
       <% end %>

@@ -5,5 +5,7 @@
 <% end %>
 
 <%= turbo_stream.update "badge_#{@libro.id}" do %>
-    <%= component( 'badge', text: pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow" ) unless @libro.fascicoli_count.zero? %>
+    <% unless @libro.fascicoli_count.zero? %>
+      <span class="badge badge--yellow"><%= pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli") %></span>
+    <% end %>
 <% end %>

@@ -37,15 +37,15 @@
     <% if libro.fascicoli_count > 0 || libro.confezioni_count > 0 || libro.has_confezioni? %>
       <div class="flex gap-half flex-wrap margin-block-start-half">
         <% unless libro.fascicoli_count.zero? %>
-          <%= component('badge', text: pluralize(libro.fascicoli_count, "fascicolo", "fascicoli"), color: "yellow") %>
+          <span class="badge badge--yellow"><%= pluralize(libro.fascicoli_count, "fascicolo", "fascicoli") %></span>
         <% end %>
         <% unless libro.confezioni_count.zero? %>
-          <%= component('badge', text: pluralize(libro.confezioni_count, "confezione", "confezioni"), color: "blue") %>
+          <span class="badge badge--blue"><%= pluralize(libro.confezioni_count, "confezione", "confezioni") %></span>
         <% end %>
         <% if libro.has_confezioni? %>
           <% libro.confezioni.each do |c| %>
             <%= link_to c do %>
-              <%= component('badge', text: truncate(c.titolo, length: 30), color: "blue") %>
+              <span class="badge badge--blue"><%= truncate(c.titolo, length: 30) %></span>
             <% end %>
           <% end %>
         <% end %>

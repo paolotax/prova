@@ -1,22 +1,18 @@
-<% @page_title = Current.account.name %>
-
+<% @page_title = "Dati aziendali" %>
 
 <% content_for :header do %>
+  <h1 class="header__title divider divider--fade full-width">Dati aziendali</h1>
   <div class="header__actions header__actions--end">
-      <% if Current.user == Current.user %>
-        <%= link_to edit_azienda_path(@azienda), class: "btn", data: { controller: "tooltip",  turbo_frame: "_top" } do %>
-          <%= icon_tag "pencil" %>
-          <span class="for-screen-reader">Modifica azienda</span>
-        <% end %>
-      <% end %>  
+    <%= link_to edit_azienda_path(@azienda), class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
+      <%= icon_tag "pencil" %>
+      <span class="for-screen-reader">Modifica azienda</span>
+    <% end %>
   </div>
 <% end %>
 
-<div class="azienda-layout">
-  <%#= link_to "Modifica", edit_azienda_path, class: "btn btn--primary" %>
-  <section class="panel shadow" styl_e="--panel-size: 45ch;">
-    <strong class="divider txt-large">Dati fiscali</strong>
-
+<div class="profile-layout">
+  <section class="panel shadow" style="--panel-size: 45ch;">
+    <strong class="divider txt-large">Ragione sociale</strong>
     <dl class="dl-grid">
       <div>
         <dt class="txt-small txt-subtle">Ragione Sociale</dt>
@@ -40,54 +36,54 @@
     </dl>
 
     <strong class="divider txt-large">Sede legale</strong>
-
-    <dl>
+    <dl class="dl-grid">
       <div>
         <dt class="txt-small txt-subtle">Indirizzo</dt>
-        <dd class="txt-small">
-          <%= @azienda.indirizzo %><br>
-          <%= @azienda.cap %> <%= @azienda.comune %> (<%= @azienda.provincia %>)<br>
-          <%= @azienda.nazione %>
-        </dd>
+        <dd class="txt-small"><%= @azienda.indirizzo %></dd>
+      </div>
+
+      <div>
+        <dt class="txt-small txt-subtle">Città</dt>
+        <dd class="txt-small"><%= @azienda.cap %> <%= @azienda.comune %> (<%= @azienda.provincia %>)</dd>
+      </div>
+
+      <div>
+        <dt class="txt-small txt-subtle">Nazione</dt>
+        <dd class="txt-small"><%= @azienda.nazione %></dd>
       </div>
     </dl>
   </section>
 
   <section class="panel shadow" style="--panel-size: 45ch;">
     <strong class="divider txt-large">Contatti</strong>
-      <dl class="dl-grid">
-        <div>
-          <dt class="txt-small txt-subtle">Email</dt>
-          <dd class="txt-small">
-            <%= link_to @azienda.email, "mailto:#{@azienda.email}", class: "txt-link" %>
-          </dd>
-        </div>
+    <dl class="dl-grid">
+      <div>
+        <dt class="txt-small txt-subtle">Email</dt>
+        <dd class="txt-small"><%= link_to @azienda.email, "mailto:#{@azienda.email}", class: "txt-link" %></dd>
+      </div>
 
-        <div>
-          <dt class="txt-small txt-subtle">Telefono</dt>
-          <dd class="txt-small">
-            <%= link_to @azienda.telefono, "tel:#{@azienda.telefono}", class: "txt-link" %>
-          </dd>
-        </div>
+      <div>
+        <dt class="txt-small txt-subtle">Telefono</dt>
+        <dd class="txt-small"><%= link_to @azienda.telefono, "tel:#{@azienda.telefono}", class: "txt-link" %></dd>
+      </div>
 
-        <div>
-          <dt class="txt-small txt-subtle">Codice SDI</dt>
-          <dd class="txt-small mono"><%= @azienda.indirizzo_telematico %></dd>
-        </div>
-      </dl>
+      <div>
+        <dt class="txt-small txt-subtle">Codice SDI</dt>
+        <dd class="txt-small mono"><%= @azienda.indirizzo_telematico %></dd>
+      </div>
+    </dl>
 
     <strong class="divider txt-large">Dati bancari</strong>
+    <dl class="dl-grid">
+      <div>
+        <dt class="txt-small txt-subtle">IBAN</dt>
+        <dd class="txt-small mono"><%= @azienda.iban %></dd>
+      </div>
 
-      <dl class="dl-grid">
-        <div class="full-width">
-          <dt class="txt-small txt-subtle">IBAN</dt>
-          <dd class="txt-small mono"><%= @azienda.iban %></dd>
-        </div>
-
-        <div>
-          <dt class="txt-small txt-subtle">Banca</dt>
-          <dd class="txt-small"><%= @azienda.banca %></dd>
-        </div>
-      </dl>
+      <div>
+        <dt class="txt-small txt-subtle">Banca</dt>
+        <dd class="txt-small"><%= @azienda.banca %></dd>
+      </div>
+    </dl>
   </section>
 </div>
