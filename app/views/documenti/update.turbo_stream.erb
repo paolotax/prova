@@ -10,6 +10,12 @@
   <% end %>
 <% end %>
 
+<%= turbo_stream.replace dom_id(@documento, :board) do %>
+  <div id="<%= dom_id(@documento, :board) %>">
+    <%= render "documenti/display/perma/board", documento: @documento %>
+  </div>
+<% end %>
+
 <%= turbo_stream.replace dom_id(@documento, :meta) do %>
   <%= render "documenti/display/perma/meta", documento: @documento %>
 <% end %>

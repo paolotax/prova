@@ -238,4 +238,29 @@
       font-size: var(--text-x-small);
     }
   }
+
+  /* Logo dark/light mode
+  /* ------------------------------------------------------------------------ */
+
+  .nav__logo {
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .nav__logo-dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .nav__logo-light {
+      display: none;
+    }
+
+    .nav__logo-dark {
+      display: block;
+    }
+  }
 }

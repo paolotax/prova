@@ -93,9 +93,10 @@
 
     @media (max-width: 639px) {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       grid-area: values;
-      gap: 0.25ch 1.5ch;
+      gap: 1.5ch;
+      margin-block-start: 0.5ch;
       padding-inline: var(--table-spacer-inline);
       font-size: var(--text-x-small);
       color: var(--color-ink-muted);

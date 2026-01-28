@@ -6,7 +6,6 @@
   Modifica
 <% end %>
 
-<%= link_to esporta_xml_documento_path(documento, format: :xml), class: "btn" do %>
-  <%= icon_tag "code" %>
-  Esporta XML
+<% if %w[TD01 TD04 TD24].include?(documento.causale&.causale) %>
+  <%= link_to "Esporta XML", esporta_xml_documento_path(documento, format: :xml), class: "btn" %>
 <% end %>

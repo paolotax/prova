@@ -7,7 +7,9 @@
   <div class="card-perma__bg">
     <article class="card">
       <header class="card__header">
-        <%= render "documenti/display/perma/board", documento: documento %>
+        <div id="<%= dom_id(documento, :board) %>">
+          <%= render "documenti/display/perma/board", documento: documento %>
+        </div>
         <%#= render "documenti/display/perma/tags", documento: documento %>
       </header>
 

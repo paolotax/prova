@@ -39,7 +39,8 @@ class Riga < ApplicationRecord
   end
 
   def prezzo=(prezzo)
-    self.prezzo_cents = (BigDecimal(prezzo) * 100).to_i
+    return self.prezzo_cents = nil if prezzo.blank?
+    self.prezzo_cents = (BigDecimal(prezzo.to_s) * 100).to_i
   end
 
   def prezzo_scontato
