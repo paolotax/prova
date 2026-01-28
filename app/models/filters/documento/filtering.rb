@@ -39,7 +39,8 @@ module Filters
     def clientable_types_disponibili
       {
         "Cliente" => "Cliente",
-        "Scuola" => "Scuola"
+        "Scuola" => "Scuola",
+        "Classe" => "Classe"
       }
     end
 
@@ -65,7 +66,7 @@ module Filters
     end
 
     def controls
-      %w[anni clientable_types causali anni]
+      %w[anni clientable_types causali]
     end
 
     def cache_key

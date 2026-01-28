@@ -18,6 +18,8 @@
     background: none;
   }
 
+  .icon--phone { --svg: url("phone.svg"); }
+  .icon--envelope { --svg: url("envelope.svg"); }
   .icon--arrow-down-tray { --svg: url("arrow-down-tray.svg"); }
   .icon--printer { --svg: url("printer.svg"); }
   .icon--cash { --svg: url("cash.svg"); }
