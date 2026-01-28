@@ -29,6 +29,10 @@ export default class extends Controller {
     this.element.reset()
   }
 
+  select(event) {
+    event.target.select()
+  }
+
   cancel() {
     this.cancelTarget?.click()
   }

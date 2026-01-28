@@ -1,0 +1,33 @@
+<div id="new_column_button" class="cards__new-column" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside" data-turbo-permanent>
+  <button class="btn btn--circle txt-x-small borderless" data-action="click->dialog#open:stop" title="Aggiungi colonna">
+    <%= icon_tag "add", class: "translucent" %>
+    <span class="for-screen-reader">Aggiungi colonna</span>
+  </button>
+  <dialog class="popup panel flex-column gap-half fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+    <%= form_with scope: :column, url: columns_path, data: {
+          controller: "form",
+          action: "turbo:submit-end->dialog#close turbo:submit-end->form#reset"
+        } do |form| %>
+      <%= form.text_field :name,
+            class: "input",
+            placeholder: "Nome colonna",
+            required: true,
+            autocomplete: "off",
+            pattern: ".*\\S.*",
+            title: "Il nome della colonna non può essere vuoto",
+            data: { action: "focus->form#select" } %>
+
+      <div class="color-picker__colors">
+        <% Color::COLORS.each do |color| %>
+          <label class="btn txt-small borderless" style="--btn-background: <%= color %>" title="<%= color.name %>">
+            <%= form.radio_button :color, color.value, checked: color == Column::Colored::DEFAULT_COLOR %>
+            <%= icon_tag "check", class: "checked" %>
+            <span class="for-screen-reader"><%= color.name %></span>
+          </label>
+        <% end %>
+      </div>
+
+      <%= form.submit "Aggiungi colonna", class: "btn btn--link" %>
+    <% end %>
+  </dialog>
+</div>

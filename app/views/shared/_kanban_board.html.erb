@@ -64,6 +64,16 @@
           <span class="cards__expander-count" data-drag-and-drop-counter><%= @total_count %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">Da gestire <span class="txt-light">(<%= @total_count %>)</span></h3>
         </button>
+        <div class="cards__actions">
+          <%= link_to new_documento_path, class: "btn btn--circle txt-x-small borderless", title: "Nuovo documento", data: { turbo_frame: "_top" } do %>
+            <%= icon_tag "document-plus", class: "translucent" %>
+            <span class="for-screen-reader">Nuovo documento</span>
+          <% end %>
+          <%= link_to new_appunto_path, class: "btn btn--circle txt-x-small borderless", title: "Nuovo appunto", data: { turbo_frame: "_top" } do %>
+            <%= icon_tag "pencil-square", class: "translucent" %>
+            <span class="for-screen-reader">Nuovo appunto</span>
+          <% end %>
+        </div>
       </header>
       <%= with_automatic_pagination :entries, @page,
           id: "awaiting_triage_entries",
@@ -76,32 +86,7 @@
 
   <div class="card-columns__right">
     <% columns.each do |column| %>
-      <section id="column_<%= column.id %>" class="cards cards--doing is-collapsed"
-               style="--card-color: <%= column.color %>"
-               tabindex="0"
-               data-controller="css-variable-counter"
-               data-collapsible-columns-target="column"
-               data-drag-and-drop-target="container"
-               data-column-name="<%= column.name %>"
-               data-drag-and-drop-url="<%= entry_triage_path('__id__', column_id: column.id) %>"
-               data-drag-and-drop-css-variable-name="--card-color"
-               data-drag-and-drop-css-variable-value="<%= column.color %>">
-        <div class="cards__transition-container">
-          <header class="cards__header">
-            <%= render "columns/menu", column: column %>
-            <button type="button" class="cards__expander"
-                    style="--card-count: <%= column_counts[column.id] || 0 %>"
-                    data-collapsible-columns-target="button"
-                    data-css-variable-counter-target="counter"
-                    data-action="click->collapsible-columns#toggle"
-                    aria-expanded="false">
-              <span class="cards__expander-count" data-drag-and-drop-counter><%= column_counts[column.id] || 0 %></span>
-              <h3 class="cards__expander-title" data-collapsible-columns-target="title"><%= column.name %></h3>
-            </button>
-          </header>
-          <%= turbo_frame_tag dom_id(column, :entries), src: dashboard_column_path(column),  data: { drag_and_drop_refresh: true } %>
-        </div>
-      </section>
+      <%= render "columns/dashboard_column", column: column, count: column_counts[column.id] || 0 %>
     <% end %>
 
     <section id="closed" class="cards cards--closed is-collapsed"
@@ -129,5 +114,7 @@
         <%= turbo_frame_tag :closed_column, src: dashboard_columns_closed_path,  data: { drag_and_drop_refresh: true } %>
       </div>
     </section>
+
+    <%= render "columns/new_column_button" %>
   </div>
 <% end %>

@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 class ColumnsController < ApplicationController
-  before_action :set_column, only: [:edit, :update, :destroy]
+  before_action :set_column, only: [:show, :edit, :update, :destroy]
 
   def index
-    @columns = current_account.columns.positioned
+    @columns = current_account.columns.ordered
+  end
+
+  def show
   end
 
   def new
@@ -12,15 +15,11 @@ class ColumnsController < ApplicationController
   end
 
   def create
-    @column = current_account.columns.build(column_params)
+    @column = current_account.columns.create!(column_params)
 
-    if @column.save
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to columns_path, notice: "Colonna creata con successo." }
-      end
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to columns_path, notice: "Colonna creata con successo." }
     end
   end
 
@@ -28,13 +27,11 @@ class ColumnsController < ApplicationController
   end
 
   def update
-    if @column.update(column_params)
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to columns_path, notice: "Colonna aggiornata con successo." }
-      end
-    else
-      render :edit, status: :unprocessable_entity
+    @column.update!(column_params)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to columns_path, notice: "Colonna aggiornata con successo." }
     end
   end
 

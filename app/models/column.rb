@@ -31,9 +31,9 @@ class Column < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :account_id }
 
-  positioned on: :account, column: :position
-
   scope :ordered, -> { order(:position) }
+
+  before_create :set_position_at_end
 
   # Default columns for new accounts
   DEFAULT_COLUMNS = [
@@ -72,6 +72,10 @@ class Column < ApplicationRecord
     right_column.nil?
   end
 
+  def adjacent_columns
+    account.columns.where(id: [ left_column&.id, right_column&.id ].compact)
+  end
+
   def move_left
     swap_position_with(left_column)
   end
@@ -81,6 +85,11 @@ class Column < ApplicationRecord
   end
 
   private
+
+  def set_position_at_end
+    max_position = account.columns.maximum(:position) || -1
+    self.position = max_position + 1
+  end
 
   def swap_position_with(other_column)
     return if other_column.nil?

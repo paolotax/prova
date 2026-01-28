@@ -350,6 +350,11 @@
       grid-template-columns: var(--column-width-collapsed) 1fr var(--column-width-collapsed);
       padding-inline: var(--column-padding);
     }
+
+    .cards--maybe.is-expanded & {
+      grid-template-areas: "expander maximize";
+      grid-template-columns: 1fr auto;
+    }
   }
 
   .cards__menu .btn--circle,
@@ -377,6 +382,30 @@
 
   .cards__maximize-button {
     grid-area: maximize;
+  }
+
+  .cards__actions {
+    display: flex;
+    gap: 0.25rem;
+    grid-area: maximize;
+
+    .btn--circle {
+      --btn-background: transparent;
+
+      block-size: var(--column-width-collapsed);
+      inline-size: var(--column-width-collapsed);
+      opacity: 0;
+      outline-offset: -2px;
+    }
+
+    .cards:hover & .btn--circle,
+    .btn--circle:focus-visible {
+      opacity: 1;
+    }
+
+    .cards.is-collapsed & {
+      display: none;
+    }
   }
 
   .cards__expander {

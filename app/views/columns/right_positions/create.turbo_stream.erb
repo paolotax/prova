@@ -1,0 +1,5 @@
+<% if @right_column %>
+  <%= turbo_stream.remove(dom_id(@column)) %>
+  <%= turbo_stream.after(@right_column, partial: "columns/dashboard_column", method: :morph, locals: { column: @column }) %>
+  <%= render "columns/refresh_adjacent_columns", column: @column %>
+<% end %>

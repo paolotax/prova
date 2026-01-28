@@ -1,3 +1,1 @@
-<%= turbo_stream.replace @column do %>
-  <%= render "columns/column", column: @column %>
-<% end %>
+<%= turbo_stream.replace(dom_id(@column), partial: "columns/dashboard_column", method: :morph, locals: { column: @column, count: current_account.entries.non_ssk.active.in_column(@column).count }) %>

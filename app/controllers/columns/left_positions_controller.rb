@@ -3,8 +3,7 @@
 class Columns::LeftPositionsController < ApplicationController
   def create
     @column = current_account.columns.find(params[:column_id])
+    @left_column = @column.left_column
     @column.move_left
-
-    redirect_back_or_to dashboard_path
   end
 end

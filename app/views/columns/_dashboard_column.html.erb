@@ -1,0 +1,35 @@
+<%# locals: (column:, count: nil) -%>
+<% count ||= column.entries_count %>
+<section id="<%= dom_id(column) %>" class="cards cards--doing is-collapsed"
+         style="--card-color: <%= column.color %>"
+         tabindex="0"
+         data-controller="css-variable-counter clicker"
+         data-collapsible-columns-target="column"
+         data-drag-and-drop-target="container"
+         data-column-name="<%= column.name %>"
+         data-drag-and-drop-url="<%= entry_triage_path('__id__', column_id: column.id, account_id: column.account_id) %>"
+         data-drag-and-drop-css-variable-name="--card-color"
+         data-drag-and-drop-css-variable-value="<%= column.color %>">
+  <div class="cards__transition-container">
+    <header class="cards__header">
+      <%= render "columns/menu", column: column %>
+      <button type="button" class="cards__expander"
+              style="--card-count: <%= [count, 15].min %>"
+              data-collapsible-columns-target="button"
+              data-css-variable-counter-target="counter"
+              data-action="click->collapsible-columns#toggle"
+              aria-expanded="false">
+        <span class="cards__expander-count" data-drag-and-drop-counter><%= count > 99 ? "99+" : count %></span>
+        <h3 class="cards__expander-title" data-collapsible-columns-target="title">
+          <%= column.name %>
+          <%= icon_tag "collapse" %>
+        </h3>
+      </button>
+      <%= link_to entries_path(column_id: column.id), class: "cards__maximize-button btn btn--circle txt-x-small borderless", data: { turbo_frame: "_top" } do %>
+        <%= icon_tag "grid", class: "translucent" %>
+        <span class="for-screen-reader">Mostra tutte le schede</span>
+      <% end %>
+    </header>
+    <%= turbo_frame_tag dom_id(column, :entries), src: dashboard_column_path(column), data: { drag_and_drop_refresh: true } %>
+  </div>
+</section>
