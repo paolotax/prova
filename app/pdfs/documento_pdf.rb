@@ -105,9 +105,9 @@ class DocumentoPdf < Prawn::Document
       bounding_box [bounds.width / 2.0, bounds.top - 55.mm], :width => bounds.width / 2.0 do
         text 'Spett.le'
         move_down 5
-        text cliente.denominazione,  :size => 14, :style => :bold, :spacing => 4
-        text cliente.indirizzo
-        text cliente.cap + ' ' + cliente.comune + ' ' + cliente.provincia
+        text cliente.try(:denominazione) || cliente.to_s, :size => 14, :style => :bold, :spacing => 4
+        text cliente.try(:indirizzo) || ""
+        text [cliente.try(:cap), cliente.try(:comune), cliente.try(:provincia)].compact.join(" ")
 
       end
     end

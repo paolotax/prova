@@ -44,7 +44,7 @@
     <span class="bulk-bar__form-title">Stampa PDF</span>
     <%= form_with url: appunti_prints_path(format: :pdf),
           method: :post,
-          data: { bulk_actions_target: "form", turbo: false } do |f| %>
+          data: { bulk_actions_target: "form", turbo: false, controller: "pdf-print", action: "submit->pdf-print#submit" } do |f| %>
       <div class="bulk-bar__form-actions">
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
         <%= f.submit "Stampa", class: "btn btn--primary" %>

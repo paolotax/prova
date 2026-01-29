@@ -24,7 +24,7 @@
     <span class="bulk-bar__form-title">Stampa fogli scuola</span>
     <%= form_with url: scuole_prints_path(format: :pdf),
           method: :post,
-          data: { bulk_actions_target: "form", turbo: false } do |f| %>
+          data: { bulk_actions_target: "form", turbo: false, controller: "pdf-print", action: "submit->pdf-print#submit" } do |f| %>
       <div class="bulk-bar__form-row">
         <%= f.select :tipo_stampa,
             [["Tutte le adozioni", "tutte_adozioni"], ["Solo mie adozioni", "mie_adozioni"]],
