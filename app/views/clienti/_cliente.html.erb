@@ -6,10 +6,9 @@
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
 
-  <div class="card__checkbox">
-    <%= check_box_tag "cliente_ids[]", cliente.id, false,
-        data: { action: "change->bulk-actions#toggle", bulk_actions_target: "checkbox" } %>
-  </div>
+  <label class="card__checkbox">
+    <%= check_box_tag "cliente_ids[]", cliente.id, false, data: { action: "change->bulk-actions#count" } %>
+  </label>
 
   <div class="flex flex-column flex-item-grow max-inline-size">
     <%= link_to cliente_path(cliente), class: "card__link", data: { turbo_frame: "_top" } do %>

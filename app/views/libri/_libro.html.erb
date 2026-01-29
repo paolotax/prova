@@ -6,10 +6,9 @@
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
 
-  <div class="card__checkbox">
-    <%= check_box_tag "libro_ids[]", libro.id, false,
-        data: { action: "change->bulk-actions#toggle", bulk_actions_target: "checkbox" } %>
-  </div>
+  <label class="card__checkbox">
+    <%= check_box_tag "libro_ids[]", libro.id, false, data: { action: "change->bulk-actions#count" } %>
+  </label>
 
   <div class="flex gap-half max-inline-size">
     <!-- Copertina thumbnail -->
