@@ -393,11 +393,23 @@ Rails.application.routes.draw do
     end
 
     namespace :tappe do
+      # New CRUD bulk actions
+      resource :duplications, only: [:create]
+      resource :bulk_updates, only: [:update]
+      resource :deletions, only: [:create]
+
+      # Legacy bulk actions (deprecated)
       resources :bulk_actions do
         patch :duplica, on: :collection
         patch :update_all, on: :collection
         delete :destroy_all, on: :collection
       end
+    end
+
+    namespace :scuole do
+      # Bulk actions for scuole
+      resource :prints, only: [:create]
+      resource :bulk_tappe, only: [:create]
     end
 
     namespace :documenti do
