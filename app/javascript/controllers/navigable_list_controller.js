@@ -48,6 +48,14 @@ export default class extends Controller {
   }
 
   navigate(event) {
+    // Skip if event originated outside this controller's element
+    // This prevents the main list from capturing events from dialogs/menus
+    if (!this.element.contains(event.target)) return
+
+    // Skip if there's an open dialog between the event target and this element
+    const openDialog = event.target.closest("dialog[open]")
+    if (openDialog && !this.element.contains(openDialog) && openDialog.contains(event.target)) return
+
     this.#keyHandlers[event.key]?.call(this, event)
   }
 

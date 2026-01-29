@@ -254,6 +254,9 @@ Rails.application.routes.draw do
     namespace :libri do
       resource :prints, only: [:create]
       resource :deletions, only: [:create]
+      resource :carrello, only: [:create, :update]
+      resource :confezioni, only: [:create]
+      resource :bulk_updates, only: [:update]
     end
 
     resources :qrcodes
