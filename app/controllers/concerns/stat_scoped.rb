@@ -10,6 +10,8 @@ module StatScoped
   private
 
   def set_stat
-    @stat = Stat.find(params[:stat_id])
+    # Support both nested resource route (stat_id) and member route (id)
+    stat_id = params[:stat_id] || params[:id]
+    @stat = Stat.find(stat_id)
   end
 end

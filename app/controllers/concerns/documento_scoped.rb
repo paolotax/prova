@@ -10,7 +10,9 @@ module DocumentoScoped
   private
 
   def set_documento
-    @documento = current_account.documenti.find(params[:documento_id])
+    # Support both nested resource route (documento_id) and member route (id)
+    documento_id = params[:documento_id] || params[:id]
+    @documento = current_account.documenti.find(documento_id)
   end
 
   def render_documento_replacement

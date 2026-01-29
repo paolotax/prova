@@ -10,7 +10,9 @@ module GiroScoped
   private
 
   def set_giro
-    @giro = current_account.giri.find(params[:giro_id])
+    # Support both nested resource route (giro_id) and member route (id)
+    giro_id = params[:giro_id] || params[:id]
+    @giro = current_account.giri.find(giro_id)
   end
 
   def render_giro_replacement
