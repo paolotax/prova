@@ -67,9 +67,9 @@ class Stat < ApplicationRecord
 
     normalized = testo.upcase.gsub(/\s+/, " ")
 
-    # Must start with SELECT (after stripping whitespace and comments)
+    # Must start with SELECT or WITH (CTE) after stripping whitespace and comments
     clean_sql = normalized.gsub(/--.*$/, "").gsub(/\/\*.*?\*\//m, "").strip
-    return false unless clean_sql.start_with?("SELECT")
+    return false unless clean_sql.start_with?("SELECT") || clean_sql.start_with?("WITH")
 
     # Check for forbidden keywords
     FORBIDDEN_SQL_KEYWORDS.none? { |keyword| normalized.include?(keyword) }
@@ -84,8 +84,9 @@ class Stat < ApplicationRecord
       errors.add(:testo, "contiene operazioni SQL non permesse. Solo SELECT è consentito.")
     end
 
-    # Validate placeholders
-    placeholders = testo.scan(/:(\w+)/).flatten.map { |p| ":#{p}" }
+    # Validate placeholders (ignore PostgreSQL type casts like ::text, ::integer)
+    # Match :word but not ::word (type casts)
+    placeholders = testo.scan(/(?<!:):(\w+)/).flatten.map { |p| ":#{p}" }
     invalid_placeholders = placeholders - ALLOWED_PLACEHOLDERS
     if invalid_placeholders.any?
       errors.add(:testo, "contiene placeholder non validi: #{invalid_placeholders.join(', ')}. Usa solo: #{ALLOWED_PLACEHOLDERS.join(', ')}")

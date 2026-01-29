@@ -12,23 +12,10 @@
     margin-inline: auto;
     max-inline-size: 900px;
     padding-inline: var(--block-space);
+    text-align: start;
 
     @media (min-width: 640px) {
       padding-inline: var(--block-space-double);
-    }
-
-    /* Form alignment */
-    .label {
-      text-align: start;
-    }
-
-    legend {
-      text-align: start;
-      width: 100%;
-    }
-
-    fieldset {
-      text-align: start;
     }
   }
 

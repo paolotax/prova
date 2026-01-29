@@ -1,12 +1,12 @@
 <%# locals: (stat:) -%>
 
-<%= form_with(model: stat, id: "stat_form", class: "contents") do |form| %>
+<%= form_with(model: stat, id: "stat_form", class: "flex flex-column gap") do |form| %>
   <% if stat.errors.any? %>
-    <div class="panel fill-negative margin-block-end">
-      <h3 class="txt-small font-weight-bold margin-block-end-half">
+    <div class="txt-negative txt-small">
+      <p class="margin-block-none font-weight-bold">
         <%= pluralize(stat.errors.count, "errore", "errori") %> da correggere:
-      </h3>
-      <ul class="txt-small">
+      </p>
+      <ul class="margin-block-none">
         <% stat.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -14,93 +14,102 @@
     </div>
   <% end %>
 
-  <fieldset class="margin-block-end">
-    <legend class="txt-small font-weight-bold txt-subtle margin-block-end-half">Informazioni generali</legend>
+  <%# Informazioni generali %>
+  <section>
+    <strong class="divider txt-small">Informazioni generali</strong>
 
-    <div class="flex flex-wrap gap">
-      <div class="flex flex-column gap-quarter flex-item-grow" style="flex-basis: 250px;">
-        <%= form.label :titolo, "Titolo", class: "label" %>
-        <%= form.text_field :titolo, class: "field", required: true, placeholder: "Nome della statistica" %>
+    <div class="flex flex-column gap margin-block-start-half">
+      <div class="flex gap">
+        <div class="flex flex-column gap-quarter flex-item-grow">
+          <%= form.label :titolo, "Titolo", class: "txt-small txt-subtle" %>
+          <%= form.text_field :titolo, class: "input", required: true, placeholder: "Nome della statistica" %>
+        </div>
+
+        <div class="flex flex-column gap-quarter">
+          <%= form.label :categoria, "Categoria", class: "txt-small txt-subtle" %>
+          <%= form.select :categoria,
+              options_for_select([
+                ["Utenti", "utenti"],
+                ["Titoli", "titoli"],
+                ["Editori", "editori"],
+                ["Province", "province"],
+                ["Altre", "altre"]
+              ], stat.categoria),
+              { include_blank: "Seleziona..." },
+              class: "input", style: "inline-size: auto;" %>
+        </div>
+
+        <div class="flex flex-column gap-quarter">
+          <%= form.label :anno, "Anno", class: "txt-small txt-subtle" %>
+          <%= form.text_field :anno, class: "input", placeholder: "2024", style: "inline-size: 8ch;" %>
+        </div>
       </div>
 
-      <div class="flex flex-column gap-quarter" style="flex-basis: 150px;">
-        <%= form.label :categoria, "Categoria", class: "label" %>
-        <%= form.select :categoria,
-            options_for_select([
-              ["Utenti", "utenti"],
-              ["Titoli", "titoli"],
-              ["Editori", "editori"],
-              ["Province", "province"],
-              ["Altre", "altre"]
-            ], stat.categoria),
-            { include_blank: "Seleziona..." },
-            class: "field" %>
+      <div class="flex flex-column gap-quarter">
+        <%= form.label :descrizione, "Descrizione", class: "txt-small txt-subtle" %>
+        <%= form.text_field :descrizione, class: "input", placeholder: "Breve descrizione della statistica" %>
       </div>
 
-      <div class="flex flex-column gap-quarter" style="flex-basis: 100px;">
-        <%= form.label :anno, "Anno", class: "label" %>
-        <%= form.text_field :anno, class: "field", placeholder: "2024" %>
+      <label class="flex align-center gap-half">
+        <%= form.check_box :visible, class: "input" %>
+        <span class="txt-small">Visibile agli utenti non admin</span>
+      </label>
+    </div>
+  </section>
+
+  <%# Query SQL %>
+  <section>
+    <strong class="divider txt-small">Query SQL</strong>
+
+    <div class="flex flex-column gap margin-block-start-half">
+      <p class="txt-x-small txt-subtle margin-block-none">
+        <strong>Placeholder disponibili:</strong>
+        <code>:user_id</code> (ID utente corrente),
+        <code>:account_id</code> (ID account corrente)
+      </p>
+
+      <div data-controller="codemirror">
+        <%= form.text_area :testo,
+            rows: 12,
+            class: "input mono txt-small",
+            required: true,
+            placeholder: "SELECT ... FROM ... WHERE user_id = :user_id",
+            style: "text-align: start; resize: vertical;",
+            data: { codemirror_target: "input" } %>
       </div>
     </div>
+  </section>
 
-    <div class="flex flex-column gap-quarter margin-block-start">
-      <%= form.label :descrizione, "Descrizione", class: "label" %>
-      <%= form.text_field :descrizione, class: "field", placeholder: "Breve descrizione della statistica" %>
-    </div>
+  <%# Configurazione risultati %>
+  <section>
+    <strong class="divider txt-small">Configurazione risultati</strong>
 
-    <div class="flex align-center gap-half margin-block-start">
-      <%= form.check_box :visible, class: "checkbox" %>
-      <%= form.label :visible, "Visibile agli utenti non admin", class: "txt-small" %>
-    </div>
-  </fieldset>
+    <div class="flex flex-column gap margin-block-start-half">
+      <div class="flex gap">
+        <div class="flex flex-column gap-quarter flex-item-grow">
+          <%= form.label :raggruppa_per, "Raggruppa per", class: "txt-small txt-subtle" %>
+          <%= form.text_field :raggruppa_per, class: "input", placeholder: "colonna1, colonna2" %>
+          <span class="txt-x-small txt-subtle">Colonne per raggruppare (separate da virgola)</span>
+        </div>
 
-  <fieldset class="margin-block-end">
-    <legend class="txt-small font-weight-bold txt-subtle margin-block-end-half">Query SQL</legend>
-
-    <div class="panel fill-shade txt-x-small margin-block-end-half">
-      <strong>Placeholder disponibili:</strong>
-      <code>:user_id</code> (ID utente corrente),
-      <code>:account_id</code> (ID account corrente)
-    </div>
-
-    <div data-controller="codemirror">
-      <%= form.text_area :testo,
-          rows: 10,
-          class: "field mono",
-          required: true,
-          placeholder: "SELECT ... FROM ... WHERE user_id = :user_id",
-          data: { codemirror_target: "input" } %>
-    </div>
-  </fieldset>
-
-  <fieldset>
-    <legend class="txt-small font-weight-bold txt-subtle margin-block-end-half">Configurazione risultati</legend>
-
-    <div class="flex flex-wrap gap">
-      <div class="flex flex-column gap-quarter flex-item-grow" style="flex-basis: 200px;">
-        <%= form.label :raggruppa_per, "Raggruppa per", class: "label" %>
-        <%= form.text_field :raggruppa_per, class: "field", placeholder: "colonna1, colonna2" %>
-        <span class="txt-x-small txt-subtle">Colonne per raggruppare i risultati (separate da virgola)</span>
+        <div class="flex flex-column gap-quarter flex-item-grow">
+          <%= form.label :seleziona_campi, "Colonne totali", class: "txt-small txt-subtle" %>
+          <%= form.text_field :seleziona_campi, class: "input", placeholder: "importo, quantita" %>
+          <span class="txt-x-small txt-subtle">Colonne da sommare nei totali</span>
+        </div>
       </div>
 
-      <div class="flex flex-column gap-quarter flex-item-grow" style="flex-basis: 200px;">
-        <%= form.label :seleziona_campi, "Colonne totali", class: "label" %>
-        <%= form.text_field :seleziona_campi, class: "field", placeholder: "importo, quantita" %>
-        <span class="txt-x-small txt-subtle">Colonne da sommare nei totali (separate da virgola)</span>
+      <div class="flex gap">
+        <div class="flex flex-column gap-quarter flex-item-grow">
+          <%= form.label :ordina_per, "Ordina per", class: "txt-small txt-subtle" %>
+          <%= form.text_field :ordina_per, class: "input", placeholder: "colonna ASC" %>
+        </div>
+
+        <div class="flex flex-column gap-quarter flex-item-grow">
+          <%= form.label :condizioni, "Condizioni aggiuntive", class: "txt-small txt-subtle" %>
+          <%= form.text_field :condizioni, class: "input", placeholder: "status = 'attivo'" %>
+        </div>
       </div>
     </div>
-
-    <div class="flex flex-wrap gap margin-block-start">
-      <div class="flex flex-column gap-quarter flex-item-grow" style="flex-basis: 200px;">
-        <%= form.label :ordina_per, "Ordina per", class: "label" %>
-        <%= form.text_field :ordina_per, class: "field", placeholder: "colonna ASC" %>
-      </div>
-
-      <div class="flex flex-column gap-quarter flex-item-grow" style="flex-basis: 200px;">
-        <%= form.label :condizioni, "Condizioni aggiuntive", class: "label" %>
-        <%= form.text_field :condizioni, class: "field", placeholder: "status = 'attivo'" %>
-      </div>
-    </div>
-  </fieldset>
+  </section>
 <% end %>
-
