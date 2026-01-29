@@ -1,5 +1,5 @@
 module Filters
-  class Cliente < Base
+  class ClienteFilter < Base
     module Summarized
       extend ActiveSupport::Concern
 

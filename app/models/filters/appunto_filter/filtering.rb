@@ -1,6 +1,6 @@
 module Filters
   # PORO presenter per gestire lo stato UI dei filtri appunti
-  class Appunto::Filtering
+  class AppuntoFilter::Filtering
     attr_reader :user, :filter, :expanded
 
     def initialize(user, filter, expanded: false)

@@ -23,9 +23,9 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Scuola < Base
-    include Scuola::Fields
-    include Scuola::Summarized
+  class ScuolaFilter < Base
+    include ScuolaFilter::Fields
+    include ScuolaFilter::Summarized
 
     def scuole
       target_account = account || Current.account

@@ -23,9 +23,9 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Cliente < Base
-    include Cliente::Fields
-    include Cliente::Summarized
+  class ClienteFilter < Base
+    include ClienteFilter::Fields
+    include ClienteFilter::Summarized
 
     def clienti
       target_account = account || Current.account

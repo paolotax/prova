@@ -23,9 +23,9 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Libro < Base
-    include Libro::Fields
-    include Libro::Summarized
+  class LibroFilter < Base
+    include LibroFilter::Fields
+    include LibroFilter::Summarized
 
     def libri
       target_account = account || Current.account

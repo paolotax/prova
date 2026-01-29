@@ -12,7 +12,7 @@
         }, {
             field: :statuses,
             label: "Status",
-            collection: Appunto::STATO_APPUNTI.map(&:itself),
+            collection: AppuntoFilter::STATO_APPUNTI.map(&:itself),
             type: :checkbox_group,
             placeholder: "status..."
         }

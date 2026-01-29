@@ -31,15 +31,15 @@ module Filters
     end
 
     def show_entryable_types?
-      true
+      false
     end
 
     def show_states?
-      true
+      false
     end
 
     def show_golden?
-      true
+      false
     end
 
     def filters_active?

@@ -23,9 +23,9 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Appunto < Base
-    include Appunto::Fields
-    include Appunto::Summarized
+  class AppuntoFilter < Base
+    include AppuntoFilter::Fields
+    include AppuntoFilter::Summarized
 
     def appunti(base_scope = nil)
       base_scope ||= ::Appunto.where(account: account || Current.account)

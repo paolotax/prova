@@ -1,5 +1,5 @@
 module Filters
-  class Cliente::Filtering
+  class ClienteFilter::Filtering
     attr_reader :user, :filter, :expanded
 
     def initialize(user, filter, expanded: false)

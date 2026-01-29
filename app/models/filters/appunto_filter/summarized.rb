@@ -1,5 +1,5 @@
 module Filters
-  class Appunto < Base
+  class AppuntoFilter < Base
     module Summarized
       extend ActiveSupport::Concern
 
@@ -24,7 +24,7 @@ module Filters
 
       def state_summary
         if state.present?
-          ::Appunto::FIZZY_STATES[state]
+          ::AppuntoFilter::FIZZY_STATES[state]
         end
       end
     end

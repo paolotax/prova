@@ -1,5 +1,5 @@
 module Filters
-  class Documento < Base
+  class DocumentoFilter < Base
     module Summarized
       extend ActiveSupport::Concern
 

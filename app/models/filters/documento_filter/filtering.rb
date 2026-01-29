@@ -1,5 +1,5 @@
 module Filters
-  class Documento::Filtering
+  class DocumentoFilter::Filtering
     attr_reader :user, :filter, :expanded
 
     def initialize(user, filter, expanded: false)

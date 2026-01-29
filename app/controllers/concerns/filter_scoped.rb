@@ -23,12 +23,12 @@ module FilterScoped
   # Convention: AppuntiController -> Filters::Appunto
   # Convention: ScuoleController -> Filters::Scuola
   def filter_class
-    "Filters::#{controller_name.classify.singularize}".constantize
+    "Filters::#{controller_name.classify.singularize}Filter".constantize
   end
 
   # Convention: AppuntiController -> Filters::Appunto::Filtering ecc...
   def filtering_class
-    "Filters::#{controller_name.classify.singularize}::Filtering".constantize
+    "Filters::#{controller_name.classify.singularize}Filter::Filtering".constantize
   end
 
   def filter_params

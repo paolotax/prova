@@ -23,9 +23,9 @@
 #  fk_rails_...  (creator_id => users.id)
 #
 module Filters
-  class Documento < Base
-    include Documento::Fields
-    include Documento::Summarized
+  class DocumentoFilter < Base
+    include DocumentoFilter::Fields
+    include DocumentoFilter::Summarized
 
     def documenti
       target_account = account || Current.account

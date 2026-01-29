@@ -1,5 +1,5 @@
 module Filters
-  class Scuola < Base
+  class ScuolaFilter < Base
     module Summarized
       extend ActiveSupport::Concern
 

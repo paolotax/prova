@@ -1,5 +1,5 @@
 module Filters
-  class Libro < Base
+  class LibroFilter < Base
     module Fields
       extend ActiveSupport::Concern
 

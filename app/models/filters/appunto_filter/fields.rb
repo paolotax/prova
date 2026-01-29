@@ -1,5 +1,5 @@
 module Filters
-  class Appunto < Base
+  class AppuntoFilter < Base
     module Fields
       extend ActiveSupport::Concern
 

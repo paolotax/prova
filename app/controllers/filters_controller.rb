@@ -13,13 +13,12 @@ class FiltersController < ApplicationController
   end
 
   private
+    def filter_class
+      type = params[:filter_type]&.classify || "Scuola"
+      "Filters::#{type}".constantize
+    end
 
-  def filter_class
-    type = params[:filter_type]&.classify || "Scuola"
-    "Filters::#{type}".constantize
-  end
-
-  def filter_params
-    filter_class.normalize_params(params.permit(*filter_class::Fields::PERMITTED_PARAMS))
-  end
+    def filter_params
+      filter_class.normalize_params(params.permit(*filter_class::Fields::PERMITTED_PARAMS))
+    end
 end
