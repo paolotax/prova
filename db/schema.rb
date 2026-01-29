@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_26_144913) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_29_102138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -610,6 +610,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_26_144913) do
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"
     t.unique_constraint ["CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "TIPOGRADOSCUOLA", "COMBINAZIONE", "CODICEISBN", "NUOVAADOZ", "DAACQUIST", "CONSIGLIATO"], name: "import_adozioni_pk"
+  end
+
+  create_table "import_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "error_messages", default: [], array: true
+    t.integer "errors_count", default: 0
+    t.integer "import_type", null: false
+    t.integer "imported_count", default: 0
+    t.jsonb "metadata", default: {}
+    t.datetime "started_at"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "updated_count", default: 0
+    t.bigint "user_id", null: false
+    t.index ["account_id", "created_at"], name: "index_import_records_on_account_id_and_created_at"
+    t.index ["account_id"], name: "index_import_records_on_account_id"
+    t.index ["user_id", "import_type"], name: "index_import_records_on_user_id_and_import_type"
+    t.index ["user_id"], name: "index_import_records_on_user_id"
   end
 
   create_table "import_scuole", force: :cascade do |t|
