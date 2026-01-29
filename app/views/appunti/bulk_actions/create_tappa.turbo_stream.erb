@@ -1,9 +1,0 @@
-<% @appunti.each do |appunto| %>
-  <% if appunto.appuntabile.present? && appunto.appuntabile.respond_to?(:tappe) %>
-    <turbo-stream action="update" targets=".tappe-<%= appunto.appuntabile.class.name.underscore %>-<%= appunto.appuntabile_id %>">
-      <template>
-        <%= render partial: "clientables/lista_tappe", formats: :html, locals: { tappe: appunto.appuntabile.tappe } %>
-      </template>
-    </turbo-stream>
-  <% end %>
-<% end %>           

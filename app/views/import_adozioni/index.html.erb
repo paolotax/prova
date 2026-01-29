@@ -49,8 +49,8 @@
 		<%= render partial: "import_adozioni/stats" %>
 	</div>
 	
-	<%= tag.div class: "w-full flex flex-col xl:pr-[17rem]", data: {controller: 'bulk-actions'} do %>
-				
+	<%= tag.div class: "w-full flex flex-col xl:pr-[17rem]" do %>
+
 		<div class="sticky z-20 hotwire-native:top-[calc(5rem+6px)] not-hotwire-native:top-[17rem] mb-2">
 			<div class="flex items-center justify-center gap-3 px-4 pt-1 pb-3">
 				<span class="text-sm font-medium text-gray-700">Raggruppa per:</span>
@@ -68,7 +68,6 @@
 		</div>
 
 		<%= render "shared/active_filters", collection: @import_adozioni %>
-		<%= render "import_adozioni/bulk_actions/form" %>
 
 		<% if @page.used? %>
 			<%= with_automatic_pagination :import_adozioni, @page, class: "w-full" do %>

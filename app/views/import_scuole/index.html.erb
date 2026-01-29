@@ -50,7 +50,6 @@
 	<%= tag.div class: "flex flex-col lg:pr-[15rem]", data: { controller: 'bulk-actions' } do %>			
 
 		<%= render "shared/active_filters", collection: @import_scuole %>
-		<%= render "import_scuole/bulk_actions/form" %>
 
 		<% if @page.used? %>
 			<%= with_automatic_pagination :import_scuole, @page,

@@ -365,45 +365,17 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :import_scuole do
-      resources :bulk_actions, only: [] do
-        collection do
-          patch :print_all, format: 'pdf'
-          patch :create_tappa
-        end
-      end
-    end
-
     namespace :appunti do
-      # New CRUD bulk actions
       resource :prints, only: [:create]
       resource :bulk_tappe, only: [:create]
       resource :bulk_statuses, only: [:update]
       resource :deletions, only: [:create]
-
-      # Legacy bulk actions (deprecated)
-      resources :bulk_actions, only: [] do
-        collection do
-          patch :print_all, format: 'pdf'
-          patch :create_tappa
-          patch :segna_come
-          delete :destroy_all
-        end
-      end
     end
 
     namespace :tappe do
-      # New CRUD bulk actions
       resource :duplications, only: [:create]
       resource :bulk_updates, only: [:update]
       resource :deletions, only: [:create]
-
-      # Legacy bulk actions (deprecated)
-      resources :bulk_actions do
-        patch :duplica, on: :collection
-        patch :update_all, on: :collection
-        delete :destroy_all, on: :collection
-      end
     end
 
     namespace :scuole do
@@ -413,36 +385,16 @@ Rails.application.routes.draw do
     end
 
     namespace :documenti do
-      # New CRUD bulk actions
       resource :prints, only: [:create]
       resource :duplications, only: [:create]
       resource :merges, only: [:create]
       resource :deletions, only: [:create]
       resource :bulk_statuses, only: [:update]
-
-      # Legacy bulk actions (deprecated)
-      resources :bulk_actions, only: [] do
-        collection do
-          patch :print_all
-          post :duplica
-          post :unisci
-          delete :destroy_all
-          patch :update_stato
-        end
-      end
     end
 
     resources :import_adozioni, only: %i[index show] do
       collection do
         get 'filtra'
-      end
-    end
-
-    namespace :import_adozioni do
-      resources :bulk_actions, only: [] do
-        collection do
-          patch :print_all, format: 'pdf'
-        end
       end
     end
 

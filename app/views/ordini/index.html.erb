@@ -102,10 +102,10 @@
 
 <% when 'ordine' %>
     <%= tag.div class: "flex flex-col mt-4", data: { controller: 'bulk-actions' } do %>
-        <%= render "documenti/bulk_actions/form" %>
         <% @documenti.each do |documento| %>
             <%= render "documenti/documento", documento: documento %>
         <% end %>
+        <%= render "documenti/bulk_bar/bar" %>
     <% end %>
 
 <% else %>
