@@ -401,6 +401,14 @@ Rails.application.routes.draw do
     end
 
     namespace :documenti do
+      # New CRUD bulk actions
+      resource :prints, only: [:create]
+      resource :duplications, only: [:create]
+      resource :merges, only: [:create]
+      resource :deletions, only: [:create]
+      resource :bulk_statuses, only: [:update]
+
+      # Legacy bulk actions (deprecated)
       resources :bulk_actions, only: [] do
         collection do
           patch :print_all

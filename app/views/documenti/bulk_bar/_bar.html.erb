@@ -1,0 +1,127 @@
+<% content_for :bulk_bar_buttons do %>
+  <%# Stampa %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="stampa">
+    <%= icon_tag "printer" %>
+    <span>Stampa</span>
+  </button>
+
+  <%# Duplica %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="duplica">
+    <%= icon_tag "copy" %>
+    <span>Duplica</span>
+  </button>
+
+  <%# Unisci %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="unisci">
+    <%= icon_tag "git-merge" %>
+    <span>Unisci</span>
+  </button>
+
+  <%# Stato %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="stato">
+    <%= icon_tag "check-circle" %>
+    <span>Stato</span>
+  </button>
+
+  <%# Elimina %>
+  <button type="button" class="btn txt-negative"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="elimina">
+    <%= icon_tag "trash" %>
+    <span>Elimina</span>
+  </button>
+<% end %>
+
+<% content_for :bulk_bar_forms do %>
+  <%# Form Stampa %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stampa">
+    <span class="bulk-bar__form-title">Stampa PDF</span>
+    <%= form_with url: documenti_prints_path(format: :pdf),
+          method: :post,
+          data: { bulk_actions_target: "form", turbo: false } do |f| %>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Stampa", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Form Duplica %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="duplica">
+    <span class="bulk-bar__form-title">Duplica documenti</span>
+    <%= form_with url: documenti_duplications_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Duplica", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Form Unisci %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="unisci">
+    <span class="bulk-bar__form-title">Unisci documenti</span>
+    <%= form_with url: documenti_merges_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.select :causale_id, Causale.all.map { |c| [c.descrizione, c.id] },
+            { include_blank: "Causale originale" },
+            class: "input input--select" %>
+      </div>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Unisci", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Form Stato %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stato">
+    <span class="bulk-bar__form-title">Cambia stato</span>
+    <%= form_with url: documenti_bulk_statuses_path,
+          method: :patch,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.select :status,
+            Documento.statuses.keys.map { |s| [s.humanize, s] },
+            { include_blank: "Seleziona stato" },
+            class: "input input--select" %>
+      </div>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Applica", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Form Elimina %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="elimina">
+    <span class="bulk-bar__form-title txt-negative">Elimina documenti</span>
+    <%= form_with url: documenti_deletions_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit",
+                  turbo_confirm: "Sei sicuro di voler eliminare i documenti selezionati?" } do |f| %>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Elimina", class: "btn btn--negative" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render "shared/bulk_bar" %>
