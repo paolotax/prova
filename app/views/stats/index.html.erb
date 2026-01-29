@@ -8,76 +8,91 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <% if current_user.admin? %>
-      <%= link_to url_for(controller: "stats", action: "new"), class: "btn btn--primary" do %>
+    <% if policy(Stat).create? %>
+      <%= link_to new_stat_path, class: "btn btn--primary", data: { controller: "tooltip", tooltip_content_value: "Nuova statistica" } do %>
         <%= icon_tag "add", size: "small" %>
-        <span class="for-screen-reader">Nuovo</span>
+        <span class="for-screen-reader">Nuova statistica</span>
       <% end %>
     <% end %>
   </div>
 <% end %>
 
-<div class="border-b border-gray-200 mb-6">
-	<nav class="-mb-px flex flex-wrap gap-2 justify-center sm:justify-center sm:space-x-8" aria-label="Tabs">
-		<%= link_to stats_path,
-				class: "#{params[:categoria].blank? ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "list-bullet", class: "w-5 h-5 mr-2" %>
-			<span>Tutte</span>
-		<% end %>
+<div class="stats-container">
 
-		<%= link_to stats_path(categoria: "utenti"),
-				class: "#{params[:categoria] == 'utenti' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "user", class: "w-5 h-5 mr-2" %>
-			<span>Utente</span>
-		<% end %>
+<nav class="stats-nav" aria-label="Categorie statistiche">
+  <%= link_to stats_path, class: "stats-nav__link #{'is-active' if params[:categoria].blank?}" do %>
+    <%= icon_tag "list-bullet", class: "icon--small" %>
+    <span>Tutte</span>
+  <% end %>
 
-		<%= link_to stats_path(categoria: "titoli"),
-				class: "#{params[:categoria] == 'titoli' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "book-open", class: "w-5 h-5 mr-2" %>
-			<span>Titoli</span>
-		<% end %>
+  <%= link_to stats_path(categoria: "utenti"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'utenti'}" do %>
+    <%= icon_tag "user", class: "icon--small" %>
+    <span>Utente</span>
+  <% end %>
 
-		<%= link_to stats_path(categoria: "editori"),
-				class: "#{params[:categoria] == 'editori' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "building-office", class: "w-5 h-5 mr-2" %>
-			<span>Editori</span>
-		<% end %>
+  <%= link_to stats_path(categoria: "titoli"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'titoli'}" do %>
+    <%= icon_tag "book-open", class: "icon--small" %>
+    <span>Titoli</span>
+  <% end %>
 
-		<%= link_to stats_path(categoria: "province"),
-				class: "#{params[:categoria] == 'province' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "map", class: "w-5 h-5 mr-2" %>
-			<span>Province</span>
-		<% end %>
+  <%= link_to stats_path(categoria: "editori"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'editori'}" do %>
+    <%= icon_tag "building-office", class: "icon--small" %>
+    <span>Editori</span>
+  <% end %>
 
-		<%= link_to stats_path(categoria: "altre"),
-				class: "#{params[:categoria] == 'altre' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm sm:text-base flex items-center" do %>
-			<%= icon_tag "chart-bar", class: "w-5 h-5 mr-2" %>
-			<span>Altre</span>
-		<% end %>
-	</nav>
-</div>
+  <%= link_to stats_path(categoria: "province"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'province'}" do %>
+    <%= icon_tag "map", class: "icon--small" %>
+    <span>Province</span>
+  <% end %>
+
+  <%= link_to stats_path(categoria: "altre"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'altre'}" do %>
+    <%= icon_tag "chart-bar", class: "icon--small" %>
+    <span>Altre</span>
+  <% end %>
+</nav>
 
 <%= turbo_frame_tag "search_results" do %>
-	<div class="sm:mx-0 rounded-lg overflow-hidden border border-gray-300">
-		<table class="min-w-full overflow-x-auto divide-y divide-gray-300">
-			<thead class="bg-black text-white text-left py-2">
-				<tr class="py-4">
-					<th scope="col" class=""></th>
-					<th scope="col" class="">Categoria</th>
-					<th scope="col" class="">Descrizione</th>
-					<th scope="col" class="hidden md:table-cell">Anno</th>
-					<th scope="col" class="hidden md:table-cell">Raggruppa per...</th>
-					<% if current_user.admin? %>
-						<th scope="col" class="text-center"></th>
-						<th scope="col" class="text-center"></th>
-					<% end %>
-				</tr>
-			</thead>
+  <% if @stats.any? %>
+    <div class="stats-table">
+      <table class="stats-table__table">
+        <thead class="stats-table__header">
+          <tr>
+            <th class="stats-table__th"></th>
+            <th class="stats-table__th">Categoria</th>
+            <th class="stats-table__th">Descrizione</th>
+            <th class="stats-table__th stats-table__td--hidden-mobile">Anno</th>
+            <th class="stats-table__th stats-table__td--hidden-mobile">Raggruppa per</th>
+            <% if policy(Stat).update? %>
+              <th class="stats-table__th"></th>
+              <th class="stats-table__th"></th>
+            <% end %>
+          </tr>
+        </thead>
 
-			<tbody data-controller="tax-sortable" data-tax-sortable-group-value="stats">
-				<%= render @stats %>
-			</tbody>
-		</table>
-	</div>
+        <tbody data-controller="tax-sortable" data-tax-sortable-group-value="stats">
+          <%= render @stats %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="blank-slate blank-slate--empty">
+      <h3 class="txt-large font-weight-bold">Nessuna statistica trovata</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        <% if params[:categoria].present? %>
+          Non ci sono statistiche in questa categoria.
+        <% else %>
+          Inizia creando la prima statistica.
+        <% end %>
+      </p>
+      <% if policy(Stat).create? && params[:categoria].blank? %>
+        <%= link_to new_stat_path, class: "btn btn--primary" do %>
+          <%= icon_tag "plus", size: "small" %>
+          Crea Statistica
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
+
+</div>
 

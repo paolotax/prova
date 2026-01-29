@@ -1,78 +1,71 @@
-<%= turbo_frame_tag "stat_results", loading: :lazy do %>
+<%= turbo_frame_tag "stat_results" do %>
+  <div class="stats-result" data-controller="indice-tabella">
 
-    <div class="rounded-lg w-full overflow-auto" data-controller="indice-tabella">
+    <% if @stat.raggruppa.any? %>
+      <div class="stats-result__filter print-hidden">
+        <%= select_tag "group_index_select",
+            options_for_select(@raggruppamento.keys.map { |r| [r.join(" → "), r.join.gsub(" ", "-").downcase] }),
+            data: { action: "change->indice-tabella#changeGroup" },
+            class: "field" %>
+      </div>
+    <% end %>
 
-        <% if @stat.raggruppa.any? %>
-            <div class="bg-gray-900 text-2xl font-bold text-white ">
-                <div class="px-4 py-3 print-hidden" colspan=<%= @stat.raggruppa.size %>>
-                    <%= select_tag "group_index_select", options_for_select(@raggruppamento.keys.map { |r| [r.join(" -> "), r.join.gsub(" ", "-").downcase] }),
-                        data: { action: "change->indice-tabella#changeGroup" },
-                        class: "field" %>
-                </div>
-            </div>
-        <% end %>
+    <table class="stats-result__table">
+      <tbody>
+        <% @raggruppamento.each do |group, group_result| %>
+          <% group_key = group.join.gsub(" ", "-").downcase %>
+          <% columns_count = @result.first.keys.size - @stat.raggruppa.size %>
 
-        <table class="divide-y divide-gray-300">
-            <tbody>
-                <% @raggruppamento.each do |group, group_result| %>
+          <%# Group title %>
+          <tr data-group="<%= group_key %>" class="stats-result__group-title">
+            <th colspan="<%= columns_count %>" class="stats-result__group-name">
+              <%= group.join(" → ") %>
+            </th>
+          </tr>
 
-                    <%# titolo del gruppo %>
-                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>" class="bg-gray-900 text-2xl font-bold text-white ">
-                        <td  class="px-4 py-3" colspan=<%= @result.first.keys.size - @stat.raggruppa.size %> >
-                            <%= group.join(" -> ") %>
-                        </td>
-                    </tr>
+          <%# Column headers %>
+          <tr data-group="<%= group_key %>">
+            <% group_result.first.keys.each do |header| %>
+              <% unless @stat.raggruppa.include?(header) %>
+                <th class="stats-result__th"><%= header.humanize %></th>
+              <% end %>
+            <% end %>
+          </tr>
 
-                    <%# header del gruppo %>
-                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>">
-                        <% group_result.first.keys.each do |header| %>
-                            <% unless @stat.raggruppa.include? header %>
-                                <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"><%= header.humanize %></th>
-                            <% end %>
-                        <% end %>
-                    </tr>
-
-                    <%# righe del gruppo  %>
-                    <% group_result.each do |r| %>
-                        <%= tag.tr class: [
-                                "p-3": true,
-                                "bg-white":   !@miei_editori.include?(r["editore"]),
-                                "bg-yellow-200": @miei_editori.include?(r["editore"])
-                            ], data: {group:  group.join.gsub(" ", "-").downcase } do
-                        %>
-                            <% r.values.each_with_index do |value, index| %>
-                                <% unless @stat.raggruppa.include? r.keys[index] %>
-                                    <td class="cell-<%= r.keys[index]%> border px-4 py-2">
-                                        <% if  value.is_a? BigDecimal %>
-                                            <%= number_to_currency(value, unit: "", separator: ",", delimiter: ".") %>
-                                        <% else %>
-                                            <%= value %>
-                                        <% end %>
-                                    </td>
-                                <% end %>
-                            <% end %>
-                        <% end %>
+          <%# Data rows %>
+          <% group_result.each do |row| %>
+            <%= tag.tr class: ["stats-result__row", ("is-highlighted" if @miei_editori.include?(row["editore"]))],
+                       data: { group: group_key } do %>
+              <% row.each do |key, value| %>
+                <% unless @stat.raggruppa.include?(key) %>
+                  <td class="stats-result__td">
+                    <% if value.is_a?(BigDecimal) || value.is_a?(Numeric) %>
+                      <%= number_to_currency(value, unit: "", separator: ",", delimiter: ".") %>
+                    <% else %>
+                      <%= value %>
                     <% end %>
-
-                    <%# Totali   %>
-                    <tr data-group="<%= group.join.gsub(" ", "-").downcase %>">
-                        <% group_result.first.keys.each do |header| %>
-                            <% unless @stat.raggruppa.include? header %>
-                                <% if @stat.totali.include? header %>
-                                    <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold">
-                                        <%= group_result.map { |r| r[header] }.sum %>
-                                    </th>
-                                <% else %>
-                                    <th class="px-4 py-2 bg-gray-800 text-white text-sm font-semibold"></th>
-                                <% end %>
-                            <% end %>
-                        <% end %>
-                    </tr>
+                  </td>
                 <% end %>
-            </tbody>
-        </table>
-    </div>
+              <% end %>
+            <% end %>
+          <% end %>
 
-    <% @result.clear %>
+          <%# Totals row %>
+          <tr data-group="<%= group_key %>" class="stats-result__footer">
+            <% group_result.first.keys.each do |header| %>
+              <% unless @stat.raggruppa.include?(header) %>
+                <th class="stats-result__th">
+                  <% if @stat.totali.include?(header) %>
+                    <%= number_to_currency(group_result.sum { |r| r[header].to_f }, unit: "", separator: ",", delimiter: ".") %>
+                  <% end %>
+                </th>
+              <% end %>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 
+  <% @result.clear %>
 <% end %>

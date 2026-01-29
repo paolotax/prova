@@ -2,10 +2,7 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start print-hidden">
-    <%= link_to stats_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Indietro</span>
-    <% end %>
+    <%= back_link_to "Statistiche", stats_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -13,23 +10,25 @@
   </h1>
 
   <div class="header__actions header__actions--end print-hidden">
-    <%= link_to url_for(controller: "stats", action: "execute", format: :xlsx, params: request.query_parameters),
-        class: "btn btn--positive" do %>
+    <%= link_to stat_execution_path(@stat, format: :xlsx), class: "btn btn--positive", data: { controller: "tooltip", tooltip_content_value: "Esporta Excel" } do %>
       <%= icon_tag "document", size: "small" %>
-      <span class="for-screen-reader">Excel</span>
+      <span class="for-screen-reader">Esporta Excel</span>
     <% end %>
-    <%= link_to "javascript:window.print()", class: "btn" do %>
+
+    <%= link_to "javascript:window.print()", class: "btn", data: { controller: "tooltip", tooltip_content_value: "Stampa" } do %>
       <%= icon_tag "printer", size: "small" %>
       <span class="for-screen-reader">Stampa</span>
     <% end %>
-    <% if current_user.admin? %>
-      <%= link_to url_for(controller: "stats", action: "edit", model: @stat), class: "btn" do %>
+
+    <% if policy(@stat).update? %>
+      <%= link_to edit_stat_path(@stat), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click", tooltip_content_value: "Modifica SQL" } do %>
         <%= icon_tag "pencil", size: "small" %>
-        <span class="for-screen-reader">SQL</span>
+        <span class="for-screen-reader">Modifica SQL</span>
       <% end %>
-      <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
-          class: "btn btn--negative",
-          data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
+    <% end %>
+
+    <% if policy(@stat).destroy? %>
+      <%= link_to stat_path(@stat), class: "btn btn--negative", data: { turbo_method: :delete, turbo_confirm: "Eliminare questa statistica?", controller: "tooltip", tooltip_content_value: "Elimina" } do %>
         <%= icon_tag "trash", size: "small" %>
         <span class="for-screen-reader">Elimina</span>
       <% end %>
@@ -37,10 +36,10 @@
   </div>
 <% end %>
 
-<div class="print">
-
-    <%= turbo_frame_tag :stat_results, src: stat_execution_path(@stat), loading: :lazy do %>
-        <%= render 'shared/lazy_loading' %>
-    <% end %>
-
+<div class="stats-container">
+  <%= turbo_frame_tag :stat_results, src: stat_execution_path(@stat) do %>
+    <div class="panel" style="padding: var(--block-space); text-align: center;">
+      <span class="txt-subtle">Caricamento risultati...</span>
+    </div>
+  <% end %>
 </div>

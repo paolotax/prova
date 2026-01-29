@@ -4,6 +4,8 @@ class Stats::ExecutionsController < ApplicationController
   include StatScoped
 
   def show
+    authorize @stat, :execute?
+
     @miei_editori = current_user.miei_editori
     @result = @stat.execute(current_user)
     @raggruppamento = @result.group_by do |c|
@@ -19,5 +21,10 @@ class Stats::ExecutionsController < ApplicationController
         response.headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
       end
     end
+  rescue SecurityError => e
+    redirect_to stats_path, alert: "Errore di sicurezza: #{e.message}"
+  rescue StandardError => e
+    Rails.logger.error("Stat execution error: #{e.message}")
+    redirect_to stat_path(@stat), alert: "Errore nell'esecuzione della query: #{e.message}"
   end
 end

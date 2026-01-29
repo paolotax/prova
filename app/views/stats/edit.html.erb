@@ -1,11 +1,8 @@
-<% @page_title = "Modifica statistica" %>
+<% @page_title = "Modifica: #{@stat.titolo}" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to stats_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Indietro</span>
-    <% end %>
+    <%= back_link_to @stat.titolo, stat_path(@stat), "keydown.esc@document->hotkey#click" %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -13,19 +10,22 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= button_tag type: 'submit', form: "stat_form", class: "btn btn--primary" do %>
+    <%= button_tag type: "submit", form: "stat_form", class: "btn btn--primary", data: { controller: "tooltip", tooltip_content_value: "Salva" } do %>
       <%= icon_tag "check", size: "small" %>
       <span class="for-screen-reader">Salva</span>
     <% end %>
-    <%= link_to url_for(controller: "stats", action: "destroy", model: @stat),
-        class: "btn btn--negative",
-        data: { turbo_method: :delete, turbo_confirm: "Sei sicuro?" } do %>
-      <%= icon_tag "trash", size: "small" %>
-      <span class="for-screen-reader">Elimina</span>
+
+    <% if policy(@stat).destroy? %>
+      <%= link_to stat_path(@stat), class: "btn btn--negative", data: { turbo_method: :delete, turbo_confirm: "Eliminare questa statistica?", controller: "tooltip", tooltip_content_value: "Elimina" } do %>
+        <%= icon_tag "trash", size: "small" %>
+        <span class="for-screen-reader">Elimina</span>
+      <% end %>
     <% end %>
   </div>
 <% end %>
 
-<div class="mx-auto w-full">
-  <%= render "form", stat: @stat %>
+<div class="stats-container">
+  <div class="panel" style="--panel-size: 100%;">
+    <%= render "form", stat: @stat %>
+  </div>
 </div>
