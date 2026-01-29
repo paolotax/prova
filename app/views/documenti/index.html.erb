@@ -45,26 +45,28 @@
       filter_type: "documento_filter" %>
 
 <%= turbo_frame_tag :search_results do %>
-    <%#= render "documenti/bulk_actions/form" %>
-
     <% if @page.used? %>
       <p class="txt-small txt-subtle margin-block-end-half center">
         <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
       </p>
 
-      <div class="cards cards--grid">
-        <%= with_automatic_pagination :documenti, @page,
-            id: "cards-lista",
-            class: "cards__list",
-            data: { controller: "navigable-list",
-                navigable_list_auto_select_value: false,
-                navigable_list_actionable_items_value: true,
-                navigable_list_prevent_handled_keys_value: true,
-                action: "keydown->navigable-list#navigate"
-              } do %>
-          <%= render @page.records %>
-        <% end %>
-      </div>
+      <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+        <%= render "documenti/bulk_bar/bar" %>
+
+        <div class="cards cards--grid">
+          <%= with_automatic_pagination :documenti, @page,
+              id: "cards-lista",
+              class: "cards__list",
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate"
+                } do %>
+            <%= render @page.records %>
+          <% end %>
+        </div>
+      <% end %>
   <% else %>
     <div class="blank-slate blank-slate--empty">
       <h3 class="txt-large font-weight-bold">Nessun documento trovato</h3>

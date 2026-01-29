@@ -4,7 +4,7 @@
 
 <% card_data = {
   navigable_list_target: "item",
-  action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect"
+  action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
 } %>
 
 <% if entry && draggable %>
@@ -19,6 +19,9 @@
     tabindex: 0,
     draggable: (draggable && entry.present?),
     data: card_data do %>
+  <label class="card__checkbox">
+    <%= check_box_tag "ids[]", documento.id, false, data: { action: "change->bulk-actions#count" } %>
+  </label>
   <div class="flex flex-column flex-item-grow max-inline-size">
     <%= link_to documento_path(documento), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
       <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>

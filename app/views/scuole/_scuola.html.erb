@@ -4,7 +4,10 @@
     class: "card",
     style: "--card-color: #{scuola_color(scuola)}",
     tabindex: 0,
-    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
+    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
+  <label class="card__checkbox">
+    <%= check_box_tag "ids[]", scuola.id, false, data: { action: "change->bulk-actions#count" } %>
+  </label>
 
   <div class="flex flex-column flex-item-grow max-inline-size">
     <%= link_to scuola_path(scuola), class: "card__link", data: { turbo_frame: "_top" } do %>

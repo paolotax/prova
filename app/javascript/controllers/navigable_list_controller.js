@@ -59,6 +59,18 @@ export default class extends Controller {
     this.selectItem(currentTarget)
   }
 
+  // Right-click to toggle checkbox selection
+  toggleSelection(event) {
+    event.preventDefault()
+    const item = event.currentTarget
+    const checkbox = item.querySelector("input[type=checkbox]")
+
+    if (checkbox && !checkbox.disabled) {
+      checkbox.checked = !checkbox.checked
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+  }
+
   selectCurrentOrReset(event) {
     if (this.currentItem) {
       this.#setCurrentFrom(this.currentItem)
@@ -230,6 +242,10 @@ export default class extends Controller {
       } else {
         this.#clickCurrentItem(event)
       }
+    },
+    " "(event) {
+      // Spacebar toggles checkbox selection
+      this.#toggleCurrentItem(event)
     }
   }
 }

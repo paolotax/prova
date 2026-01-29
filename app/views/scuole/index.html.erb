@@ -34,17 +34,21 @@
       <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
     </p>
 
-    <div class="cards cards--grid">
-      <%= with_automatic_pagination :scuole, @page,
-          class: "cards__list",
-          data: { controller: "navigable-list",
-              navigable_list_auto_select_value: false,
-              navigable_list_actionable_items_value: true,
-              navigable_list_prevent_handled_keys_value: true,
-              action: "keydown->navigable-list#navigate" } do %>
-        <%= render @page.records %>
-      <% end %>
-    </div>
+    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+      <%= render "scuole/bulk_bar/bar" %>
+
+      <div class="cards cards--grid">
+        <%= with_automatic_pagination :scuole, @page,
+            class: "cards__list",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate" } do %>
+          <%= render @page.records %>
+        <% end %>
+      </div>
+    <% end %>
   <% else %>
     <div class="blank-slate blank-slate--empty">
       <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>

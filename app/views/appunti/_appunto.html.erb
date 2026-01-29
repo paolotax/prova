@@ -6,7 +6,7 @@
 
   <% card_data = {
     navigable_list_target: "item",
-    action: "mouseenter->navigable-list#hoverSelect"
+    action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
   } %>
 
   <% if entry && draggable %>
@@ -21,6 +21,9 @@
       tabindex: 0,
       draggable: (draggable && entry.present?),
       data: card_data do %>
+    <label class="card__checkbox">
+      <%= check_box_tag "ids[]", appunto.id, false, data: { action: "change->bulk-actions#count" } %>
+    </label>
     <div class="flex flex-column flex-item-grow max-inline-size">
       <%= link_to appunto_path(appunto), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
         <span class="for-screen-reader"><%= appunto.nome %></span>

@@ -79,7 +79,7 @@
           method: :post,
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
       <div class="bulk-bar__form-row">
-        <%= f.select :causale_id, Causale.all.map { |c| [c.descrizione, c.id] },
+        <%= f.select :causale_id, Causale.all.map { |c| [c.causale, c.id] },
             { include_blank: "Causale originale" },
             class: "input input--select" %>
       </div>

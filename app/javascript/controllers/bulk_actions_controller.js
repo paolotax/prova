@@ -25,7 +25,14 @@ export default class BulkActionsController extends CheckboxesController {
     this.counterTargets.forEach(counter => counter.textContent = this.checkboxesCheckedCount);
 
     this.openValue = this.checkboxesCheckedCount;
-    
+
+    // Toggle data-has-selection on container to show/hide all checkboxes
+    if (this.checkboxesCheckedCount > 0) {
+      this.element.setAttribute("data-has-selection", "");
+    } else {
+      this.element.removeAttribute("data-has-selection");
+    }
+
     this.#syncSelection();
   }
 
