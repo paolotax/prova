@@ -213,6 +213,9 @@ Rails.application.routes.draw do
 
     resources :documenti_importer, only: [:new, :create, :show]
 
+    # New unified imports controller (CRUD)
+    resources :imports, only: [:index, :new, :create, :show]
+
     get 'classi', to: 'classi#index'
     get 'classi/:id', to: 'classi#show', as: 'classe'
 

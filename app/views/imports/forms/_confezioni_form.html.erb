@@ -1,0 +1,55 @@
+<%= turbo_frame_tag :import_form do %>
+  <article class="panel panel--wide shadow center txt-align-start">
+    <%= form_with model: import, url: imports_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
+      <%= f.hidden_field :import_type, value: "confezioni" %>
+
+      <div class="flex align-center gap">
+        <%= icon_tag "cube", class: "txt-alert", size: "large" %>
+        <h2 class="txt-large margin-none font-weight-black">Importa Confezioni</h2>
+      </div>
+
+      <p class="txt-subtle margin-none">
+        Carica un file Excel con le relazioni tra confezioni e fascicoli. I libri devono già esistere nel sistema.
+      </p>
+
+      <div class="flex flex-column gap-half">
+        <strong><%= f.label :file, "Seleziona file" %></strong>
+        <%= f.file_field :file,
+            accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
+            class: "input",
+            required: true,
+            data: { action: "keydown.esc@document->form#cancel" } %>
+      </div>
+
+      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
+        <%= icon_tag "arrow-down-tray" %>
+        <span>Importa Confezioni</span>
+      <% end %>
+
+      <%= link_to "Annulla", imports_path, data: { form_target: "cancel" }, hidden: true %>
+    <% end %>
+  </article>
+
+  <article class="panel panel--wide center txt-align-start margin-block-start">
+    <div class="flex flex-column gap-half txt-small txt-subtle">
+      <strong class="txt-ink">Formato supportato</strong>
+      <p class="margin-none">Excel (.xlsx, .xls)</p>
+
+      <strong class="txt-ink margin-block-start-half">Colonne richieste</strong>
+      <p class="margin-none">confezione_isbn, fascicolo_isbn, row_order</p>
+
+      <strong class="txt-ink margin-block-start-half">Prima di importare</strong>
+      <ul class="margin-none" style="padding-inline-start: 1.5em;">
+        <li>Assicurati che i libri (confezioni e fascicoli) esistano già</li>
+        <li>Usa il file esportato da un altro utente</li>
+        <li>Le relazioni saranno create automaticamente</li>
+      </ul>
+
+      <strong class="txt-ink margin-block-start-half">Esporta confezioni</strong>
+      <p class="margin-none">
+        Per esportare le tue confezioni, vai su
+        <%= link_to "Libri avanzato", new_libri_importer_path, class: "txt-link" %>.
+      </p>
+    </div>
+  </article>
+<% end %>

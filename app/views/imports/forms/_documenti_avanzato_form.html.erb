@@ -1,0 +1,108 @@
+<%= turbo_frame_tag :import_form do %>
+  <article class="panel panel--wide shadow center txt-align-start">
+    <div class="flex flex-column gap">
+      <div class="flex align-center gap">
+        <%= icon_tag "document", class: "txt-feature", size: "large" %>
+        <h2 class="txt-large margin-none font-weight-black">Documenti Avanzato</h2>
+      </div>
+
+      <p class="txt-subtle margin-none">
+        Funzionalità avanzate per l'importazione dei documenti.
+      </p>
+    </div>
+  </article>
+
+  <%# Fattura Elettronica XML %>
+  <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+    <%= form_with model: ImportRecord.new, url: documenti_importer_index_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
+      <div class="flex align-center gap">
+        <%= icon_tag "document-check", class: "txt-link", size: "large" %>
+        <div>
+          <h3 class="txt-medium margin-none font-weight-black">Fattura Elettronica XML</h3>
+          <p class="txt-small txt-subtle margin-none">Importa da file FatturaPA</p>
+        </div>
+      </div>
+
+      <div class="flex flex-column gap-half">
+        <strong><%= f.label :file, "Seleziona file XML" %></strong>
+        <%= f.file_field :file,
+            accept: 'text/xml,application/xml',
+            class: "input",
+            required: true %>
+      </div>
+
+      <div class="flex flex-column gap-half pad fill-shade border-radius">
+        <strong class="txt-small txt-link">Cosa verrà importato:</strong>
+        <ul class="txt-small margin-none" style="padding-inline-start: 1.5em;">
+          <li>Cliente (dalla P.IVA)</li>
+          <li>Tipo e numero documento</li>
+          <li>Righe con articoli e prezzi</li>
+        </ul>
+      </div>
+
+      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
+        <%= icon_tag "arrow-down-tray" %>
+        <span>Importa Fattura XML</span>
+      <% end %>
+    <% end %>
+  </article>
+
+  <%# Import Righe da Excel %>
+  <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+    <%= form_with model: ImportRecord.new, url: documenti_importer_index_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
+      <%= f.hidden_field :import_method, value: "xlsx_csv" %>
+
+      <div class="flex align-center gap">
+        <%= icon_tag "table-cells", class: "txt-positive", size: "large" %>
+        <div>
+          <h3 class="txt-medium margin-none font-weight-black">Righe Documento da Excel</h3>
+          <p class="txt-small txt-subtle margin-none">Aggiungi righe a un documento esistente</p>
+        </div>
+      </div>
+
+      <div class="flex flex-column gap-half">
+        <strong><%= f.label :documento_id, "Documento di destinazione" %></strong>
+        <%= f.collection_select :documento_id,
+            current_account.documenti.order(data_documento: :desc).limit(50),
+            :id,
+            ->(d) { "#{d.numero_documento} - #{d.clientable&.denominazione} (#{d.data_documento.strftime('%d/%m/%Y')})" },
+            { prompt: "Seleziona un documento" },
+            class: "input" %>
+      </div>
+
+      <div class="flex flex-column gap-half">
+        <strong><%= f.label :file, "Seleziona file CSV/Excel" %></strong>
+        <%= f.file_field :file,
+            accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
+            class: "input",
+            required: true %>
+      </div>
+
+      <div class="flex flex-column gap-half pad fill-shade border-radius">
+        <strong class="txt-small txt-positive">Formato richiesto:</strong>
+        <ul class="txt-small margin-none" style="padding-inline-start: 1.5em;">
+          <li>Colonna: codice_isbn / ean / isbn</li>
+          <li>Colonna: quantita / qta</li>
+          <li>Colonna: sconto (opzionale)</li>
+        </ul>
+      </div>
+
+      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
+        <%= icon_tag "arrow-down-tray" %>
+        <span>Importa Righe</span>
+      <% end %>
+    <% end %>
+  </article>
+
+  <article class="panel panel--wide center txt-align-start margin-block-start">
+    <div class="flex flex-column gap-half txt-small txt-subtle">
+      <strong class="txt-ink">Note</strong>
+      <p class="margin-none">
+        Il cliente viene individuato tramite Partita IVA e gli articoli tramite codice ISBN.
+      </p>
+      <p class="margin-none">
+        Per l'import righe, il documento di destinazione deve già esistere.
+      </p>
+    </div>
+  </article>
+<% end %>

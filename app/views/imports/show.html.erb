@@ -1,0 +1,144 @@
+<% @page_title = "Importazione #{@import.import_type.humanize}" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= header_back_link imports_path, label: "Storico" %>
+  </div>
+
+  <h1 class="header__title"><%= @import.import_type.humanize %></h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<% if @import.pending? || @import.processing? %>
+  <%# In Progress %>
+  <article class="panel panel--wide shadow center txt-align-start"
+       data-controller="turbo-frame-load"
+       data-turbo-frame-load-interval-value="3000">
+    <div class="flex flex-column gap align-center txt-align-center">
+      <div class="flex align-center justify-center fill-shade border-radius pad">
+        <svg class="animate-spin" style="width: 3rem; height: 3rem;" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="txt-large font-weight-black margin-none">
+          <%= @import.processing? ? "Importazione in corso..." : "In attesa di elaborazione..." %>
+        </h2>
+        <p class="txt-subtle margin-none margin-block-start-half">
+          La pagina si aggiornerà automaticamente al completamento.
+        </p>
+      </div>
+      <% if @import.started_at %>
+        <p class="txt-small txt-subtle margin-none">
+          Iniziato <%= time_ago_in_words(@import.started_at) %> fa
+        </p>
+      <% end %>
+    </div>
+  </article>
+
+<% elsif @import.completed? || @import.failed? %>
+  <%# Completed/Failed %>
+  <article class="panel panel--wide shadow center txt-align-start">
+    <div class="flex flex-column gap">
+      <div class="flex align-center gap">
+        <% if @import.failed? %>
+          <%= icon_tag "x-circle", class: "txt-negative", size: "large" %>
+          <strong class="txt-large txt-negative">Importazione fallita</strong>
+        <% elsif @import.errors_count > 0 %>
+          <%= icon_tag "alert-triangle", class: "txt-alert", size: "large" %>
+          <strong class="txt-large txt-alert">Completata con avvisi</strong>
+        <% else %>
+          <%= icon_tag "check-circle", class: "txt-positive", size: "large" %>
+          <strong class="txt-large txt-positive">Importazione completata</strong>
+        <% end %>
+      </div>
+
+      <% if @import.duration %>
+        <p class="txt-subtle margin-none">
+          Completata in <%= number_with_precision(@import.duration, precision: 1) %> secondi
+        </p>
+      <% end %>
+
+      <div class="flex gap">
+        <div class="flex-1 pad fill-shade border-radius txt-align-center">
+          <p class="txt-xx-large font-weight-black txt-positive margin-none"><%= @import.imported_count %></p>
+          <p class="txt-small txt-subtle margin-none">Nuovi</p>
+        </div>
+        <div class="flex-1 pad fill-shade border-radius txt-align-center">
+          <p class="txt-xx-large font-weight-black txt-link margin-none"><%= @import.updated_count %></p>
+          <p class="txt-small txt-subtle margin-none">Aggiornati</p>
+        </div>
+        <div class="flex-1 pad fill-shade border-radius txt-align-center">
+          <p class="txt-xx-large font-weight-black <%= @import.errors_count > 0 ? 'txt-negative' : 'txt-subtle' %> margin-none"><%= @import.errors_count %></p>
+          <p class="txt-small txt-subtle margin-none">Errori</p>
+        </div>
+      </div>
+
+      <% if @import.error_messages.present? && @import.error_messages.any? %>
+        <div class="flex flex-column gap-half pad fill-shade border-radius">
+          <strong class="txt-small txt-negative">Errori riscontrati:</strong>
+          <ul class="txt-small margin-none" style="padding-inline-start: 1.5em; max-height: 12rem; overflow-y: auto;">
+            <% @import.error_messages.each do |error| %>
+              <li><%= error %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </article>
+<% end %>
+
+<%# Dettagli %>
+<article class="panel panel--wide center txt-align-start margin-block-start">
+  <div class="flex flex-column gap-half txt-small">
+    <strong class="txt-ink txt-medium">Dettagli</strong>
+
+    <dl class="grid gap-half" style="grid-template-columns: auto 1fr;">
+      <dt class="txt-subtle">Tipo</dt>
+      <dd class="font-weight-bold margin-none"><%= @import.import_type.humanize %></dd>
+
+      <dt class="txt-subtle">Stato</dt>
+      <dd class="font-weight-bold margin-none"><%= @import.status.humanize %></dd>
+
+      <dt class="txt-subtle">Creato</dt>
+      <dd class="font-weight-bold margin-none"><%= l(@import.created_at, format: :long) %></dd>
+
+      <% if @import.completed_at %>
+        <dt class="txt-subtle">Completato</dt>
+        <dd class="font-weight-bold margin-none"><%= l(@import.completed_at, format: :long) %></dd>
+      <% end %>
+
+      <% if @import.file.attached? %>
+        <dt class="txt-subtle">File</dt>
+        <dd class="font-weight-bold margin-none"><%= @import.file.filename %></dd>
+      <% end %>
+    </dl>
+  </div>
+</article>
+
+<%# Azioni %>
+<article class="panel panel--wide center txt-align-start margin-block-start">
+  <div class="flex flex-column gap-half">
+    <strong class="txt-ink txt-medium">Cosa vuoi fare ora?</strong>
+
+    <div class="flex gap-half flex-wrap">
+      <%= link_to new_import_path, class: "btn" do %>
+        <%= icon_tag "arrow-down-tray", size: "small" %>
+        <span>Nuova Importazione</span>
+      <% end %>
+
+      <% target_path = case @import.import_type
+           when "libri" then libri_path
+           when "clienti" then clienti_path
+           when "documenti" then documenti_path
+           else account_root_path
+         end %>
+      <%= link_to target_path, class: "btn" do %>
+        <%= icon_tag "eye", size: "small" %>
+        <span>Visualizza <%= @import.import_type.humanize %></span>
+      <% end %>
+    </div>
+  </div>
+</article>

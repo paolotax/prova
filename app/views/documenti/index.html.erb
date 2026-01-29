@@ -5,9 +5,13 @@
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">
     <%= link_to documenti_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
+    <% end %>
+    <%= link_to new_import_path(type: :documenti), class: "btn", data: { controller: "tooltip" } do %>
+      <%= icon_tag "arrow-down-tray" %>
+      <span class="for-screen-reader">Importa Documenti</span>
     <% end %>
   </div>
 

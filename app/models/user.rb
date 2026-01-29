@@ -77,6 +77,8 @@ class User < ApplicationRecord
 
   has_many :voice_notes, dependent: :destroy
 
+  has_many :import_records, dependent: :destroy
+
   enum :role, { scagnozzo: 0, sbocciatore: 1, omaccio: 2, admin: 3 }
 
   # For avatar SVG initials fallback

@@ -14,6 +14,14 @@ module ApplicationHelper
     end
   end
 
+  # Simple header back link button (for content_for :header)
+  def header_back_link(path, label: nil)
+    link_to path, class: "btn" do
+      icon_tag("arrow-left", size: "small") +
+        tag.span(label || "Indietro", class: "for-screen-reader")
+    end
+  end
+
   def referrer_back_info
     return nil unless request.referrer.present?
 

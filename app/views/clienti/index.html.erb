@@ -8,7 +8,7 @@
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
-    <%= link_to clienti_importer_path, class: "btn", data: { controller: "tooltip" } do %>
+    <%= link_to new_import_path(type: :clienti), class: "btn", data: { controller: "tooltip" } do %>
       <%= icon_tag "arrow-down-tray" %>
       <span class="for-screen-reader">Importa Clienti</span>
     <% end %>

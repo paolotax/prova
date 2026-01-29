@@ -12,7 +12,7 @@
       <%= icon_tag "document" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
-    <%= link_to new_libri_importer_path, class: "btn", data: { controller: "tooltip" } do %>
+    <%= link_to new_import_path(type: :libri), class: "btn", data: { controller: "tooltip" } do %>
       <%= icon_tag "arrow-down-tray" %>
       <span class="for-screen-reader">Importa Libri</span>
     <% end %>

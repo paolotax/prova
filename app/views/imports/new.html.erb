@@ -1,0 +1,49 @@
+<% @page_title = "Importa Dati" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= header_back_link imports_path, label: "Storico" %>
+  </div>
+
+  <h1 class="header__title"><%= @page_title %></h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<div id="import-form-top"></div>
+
+<%= turbo_frame_tag :import_form, data: { turbo_action: "advance" } do %>
+  <%= render "imports/forms/#{@import_form_type}_form", import: @import %>
+<% end %>
+
+<article class="panel panel--wide center txt-align-start margin-block-start">
+  <div class="flex flex-column gap-half">
+    <strong class="txt-ink">Altri tipi di importazione</strong>
+    <div class="flex gap-half flex-wrap">
+      <% import_types = %w[libri clienti documenti confezioni libri_avanzato documenti_avanzato] %>
+      <% current_type = @import_form_type %>
+      <% import_types.each do |type| %>
+        <% next if type == current_type %>
+        <%= link_to new_import_path(type: type),
+            class: "btn btn--small",
+            data: {
+              turbo_frame: :import_form,
+              turbo_action: "advance",
+              action: "turbo:before-fetch->scroll#toTop"
+            } do %>
+          <%= icon_tag import_type_icon(type), size: "small" %>
+          <span><%= import_type_label(type) %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</article>
+
+<script>
+  // Scroll to top when switching import types
+  document.addEventListener("turbo:frame-load", function(event) {
+    if (event.target.id === "import_form") {
+      document.getElementById("import-form-top").scrollIntoView({ behavior: "smooth" });
+    }
+  });
+</script>
