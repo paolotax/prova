@@ -31,15 +31,15 @@ module Filters
     end
 
     def show_entryable_types?
-      false
+      filter.entryable_type.present?
     end
 
     def show_states?
-      false
+      filter.state.present?
     end
 
     def show_golden?
-      false
+      filter.golden == "true"
     end
 
     def filters_active?

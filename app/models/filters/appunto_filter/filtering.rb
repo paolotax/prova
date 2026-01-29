@@ -22,11 +22,11 @@ module Filters
     end
 
     def show_statuses?
-      false
+      filter.statuses.any?
     end
 
     def show_states?
-      false
+      filter.state.present?
     end
 
     def filters_active?

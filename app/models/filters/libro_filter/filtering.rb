@@ -18,7 +18,7 @@ module Filters
     end
 
     def show_editori?
-      editori_disponibili.any?
+      filter.editori.any?
     end
 
     def categorie_disponibili
@@ -26,7 +26,7 @@ module Filters
     end
 
     def show_categorie?
-      categorie_disponibili.any?
+      filter.categorie.any?
     end
 
     def discipline_disponibili
@@ -34,7 +34,7 @@ module Filters
     end
 
     def show_discipline?
-      discipline_disponibili.any?
+      filter.discipline.any?
     end
 
     def classi_disponibili
@@ -42,7 +42,7 @@ module Filters
     end
 
     def show_classi?
-      classi_disponibili.any?
+      filter.classi.any?
     end
 
     def filters_active?

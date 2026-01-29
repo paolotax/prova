@@ -18,7 +18,7 @@ module Filters
     end
 
     def show_comuni?
-      comuni_disponibili.any?
+      filter.comuni.any?
     end
 
     def filters_active?

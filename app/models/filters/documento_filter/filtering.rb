@@ -17,7 +17,7 @@ module Filters
     end
 
     def show_causali?
-      causali_disponibili.any?
+      filter.causali.any?
     end
 
     def statuses_disponibili
@@ -25,7 +25,7 @@ module Filters
     end
 
     def show_statuses?
-      statuses_disponibili.any?
+      filter.statuses.any?
     end
 
     def tipi_pagamento_disponibili
@@ -33,7 +33,7 @@ module Filters
     end
 
     def show_tipi_pagamento?
-      tipi_pagamento_disponibili.any?
+      filter.tipi_pagamento.any?
     end
 
     def clientable_types_disponibili
@@ -45,7 +45,7 @@ module Filters
     end
 
     def show_clientable_types?
-      false
+      filter.clientable_type.present?
     end
 
     def anni_disponibili
@@ -53,7 +53,7 @@ module Filters
     end
 
     def show_anni?
-      false
+      filter.anno.present?
     end
 
     def filters_active?

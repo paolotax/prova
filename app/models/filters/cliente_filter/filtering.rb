@@ -17,7 +17,7 @@ module Filters
     end
 
     def show_comuni?
-      comuni_disponibili.any?
+      filter.comuni.any?
     end
 
     def tipi_disponibili
@@ -25,7 +25,7 @@ module Filters
     end
 
     def show_tipi?
-      tipi_disponibili.any?
+      filter.tipi.any?
     end
 
     def filters_active?
