@@ -5,7 +5,7 @@ class AppuntiController < ApplicationController
   FILTER_PARAMS = [:state, terms: [], statuses: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_appunto, only: %i[ show edit update destroy publish ]
+  before_action :set_appunto, only: %i[show edit update destroy]
 
   def index
     # @appunti = current_user.appunti.non_saggi.where.missing(:closure)
@@ -125,20 +125,6 @@ class AppuntiController < ApplicationController
     end
   end
 
-  def publish
-    @appunto.publish
-    @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
-
-    if params[:create_another]
-      new_appunto = current_user.draft_new_appunto
-      redirect_to new_appunto, notice: "Appunto creato."
-    elsif hotwire_native_app?
-      refresh_or_redirect_to(appunti_path, notice: "Appunto creato.")
-    else
-      redirect_to appunti_path, notice: "Appunto creato."
-    end
-  end
-
   def update
     respond_to do |format|
       if @appunto.update(appunto_params)
@@ -185,17 +171,6 @@ class AppuntiController < ApplicationController
       format.json { head :no_content }
       format.turbo_stream
     end
-  end
-
-  def remove_attachment
-    @attachment = ActiveStorage::Attachment.find(params[:id])
-    @attachment.purge_later
-  end
-
-  def remove_image
-    @appunto = Appunto.find(params[:id])
-    @appunto.image.purge_later
-    redirect_back(fallback_location: request.referer)
   end
 
   def filtra

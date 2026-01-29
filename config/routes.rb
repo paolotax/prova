@@ -302,16 +302,20 @@ Rails.application.routes.draw do
         resource :not_now,   only: [:create, :destroy]
         resource :consegna,  only: [:create, :destroy]
         resource :pagamento, only: [:create, :destroy]
+        resource :publication, only: [:create, :destroy]
+        resource :image, only: [:destroy]
+        resources :attachments, only: [:destroy]
       end
       collection do
-        get 'filtra'
-        get 'archiviati'
-        get 'saggi'
+        get "filtra"
+        get "archiviati"
+        get "saggi"
       end
       member do
-        post 'publish'
-        delete 'remove_attachment'
-        delete 'remove_image'
+        # Legacy routes for compatibility
+        post "publish", to: "appunti/publications#create"
+        delete "remove_attachment", to: "appunti/attachments#destroy"
+        delete "remove_image", to: "appunti/images#destroy"
       end
     end
 
