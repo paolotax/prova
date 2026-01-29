@@ -1,7 +1,7 @@
 class StatsController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :set_stat, only: %i[ show edit update destroy execute sort ]
+  before_action :set_stat, only: %i[show edit update destroy]
 
   def index
     @stats = Stat.order(:categoria, :position, :titolo)
@@ -16,28 +16,6 @@ class StatsController < ApplicationController
   end
 
   def edit
-  end
-
-  def execute
-    @miei_editori = current_user.miei_editori
-
-    @result = @stat.execute current_user
-    @raggruppamento = @result.group_by do |c|
-      fields = @stat.raggruppa
-      fields.map { |f| c[f] }
-    end
-
-    #debugger
-    
-    respond_to do |format|
-      format.html
-      format.xlsx do
-        # Converti il titolo in formato snake_case e rimuovi caratteri speciali
-        safe_titolo = @stat.titolo.to_s.parameterize(separator: '_')
-        filename = "#{@stat.categoria}_#{safe_titolo}.xlsx"
-        response.headers['Content-Disposition'] = "attachment; filename=\"#{filename}\""
-      end
-    end
   end
 
   def create
@@ -72,16 +50,6 @@ class StatsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to stats_url, alert: "Stat eliminata!" }
       format.json { head :no_content }
-    end
-  end
-
-  def sort
-    @stat = Stat.find(params[:id])
-    @stat.update(position: params[:position].to_i)
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { head :ok }
     end
   end
 

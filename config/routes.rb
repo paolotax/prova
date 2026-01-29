@@ -275,9 +275,14 @@ Rails.application.routes.draw do
     resources :profiles
 
     resources :stats do
+      scope module: :stats do
+        resource :execution, only: [:show]
+        resource :position, only: [:update]
+      end
+      # Legacy routes for compatibility
       member do
-        get 'execute'
-        patch :sort
+        get "execute", to: "stats/executions#show"
+        patch :sort, to: "stats/positions#update"
       end
     end
 

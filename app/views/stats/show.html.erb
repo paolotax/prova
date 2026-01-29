@@ -39,7 +39,7 @@
 
 <div class="print">
 
-    <%= turbo_frame_tag :stat_results, src: execute_stat_path(@stat), loading: :lazy do %>
+    <%= turbo_frame_tag :stat_results, src: stat_execution_path(@stat), loading: :lazy do %>
         <%= render 'shared/lazy_loading' %>
     <% end %>
 

@@ -1,0 +1,3 @@
+<%= turbo_stream.replace_all "tr[data-id='#{@stat.id}']" do %>
+  <%= render @stat %>
+<% end %>
