@@ -1,0 +1,32 @@
+<%= tag.div class: "bulk-bar",
+      data: {
+        bulk_actions_target: "container",
+        controller: "bulk-bar"
+      } do %>
+
+  <div class="bulk-bar__header">
+    <span class="bulk-bar__counter">
+      <span data-bulk-actions-target="counter">0</span>
+      <span>selezionati</span>
+    </span>
+  </div>
+
+  <div class="bulk-bar__menu" data-bulk-bar-target="menu">
+    <%= yield :bulk_bar_buttons if content_for?(:bulk_bar_buttons) %>
+
+    <button type="button" class="btn" data-action="bulk-actions#selectAll">
+      <%= icon_tag "check-circle" %>
+      <span>Tutti</span>
+    </button>
+
+    <button type="button" class="btn" data-action="bulk-actions#deselectAll">
+      <%= icon_tag "x" %>
+      <span>Chiudi</span>
+    </button>
+  </div>
+
+  <div class="bulk-bar__forms" data-bulk-bar-target="forms">
+    <%= yield :bulk_bar_forms if content_for?(:bulk_bar_forms) %>
+  </div>
+
+<% end %>

@@ -42,6 +42,19 @@
       no_filtering_url: appunti_path,
       filter_type: "appunto_filter" %>
 
+<%# TEST: Pulsante temporaneo per visualizzare la nuova bulk bar %>
+<div class="margin-block">
+  <button type="button" class="btn btn--primary" onclick="const bar = document.querySelector('.bulk-bar'); bar.setAttribute('data-visible', ''); bar.hidden = false;">
+    Test Bulk Bar (show)
+  </button>
+  <button type="button" class="btn" onclick="const bar = document.querySelector('.bulk-bar'); bar.removeAttribute('data-visible');">
+    Hide
+  </button>
+</div>
+
+<%# Render bulk bar (per test, senza controller) %>
+<%= render "appunti/bulk_bar/bar" %>
+
 <%= turbo_frame_tag "search_results" do %>
   <% if @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">

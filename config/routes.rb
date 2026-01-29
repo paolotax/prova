@@ -375,6 +375,13 @@ Rails.application.routes.draw do
     end
 
     namespace :appunti do
+      # New CRUD bulk actions
+      resource :prints, only: [:create]
+      resource :bulk_tappe, only: [:create]
+      resource :bulk_statuses, only: [:update]
+      resource :deletions, only: [:create]
+
+      # Legacy bulk actions (deprecated)
       resources :bulk_actions, only: [] do
         collection do
           patch :print_all, format: 'pdf'

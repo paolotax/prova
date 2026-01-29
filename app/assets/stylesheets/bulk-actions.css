@@ -1,0 +1,161 @@
+@layer components {
+  /* Bulk Actions Bar - fixed top container (like nav menu)
+  /* ------------------------------------------------------------------------ */
+
+  .bulk-bar {
+    background-color: var(--color-terminal-bg);
+    border: 1px solid var(--color-selected-dark);
+    border-radius: 0.5em;
+    box-shadow: var(--shadow);
+    color: var(--color-terminal-text);
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-half);
+    inline-size: fit-content;
+    inset: var(--block-space) auto auto 50%;
+    max-inline-size: calc(100vw - var(--inline-space) * 2);
+    padding: var(--block-space-half) var(--inline-space);
+    position: fixed;
+    transform: translateX(-50%) translateY(-150%);
+    z-index: var(--z-bar);
+
+    /* Animation */
+    opacity: 0;
+    transition: opacity 200ms ease-out, transform 300ms var(--ease-out-overshoot-subtle);
+  }
+
+  .bulk-bar[data-visible] {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Header with counter */
+  .bulk-bar__header {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space);
+    justify-content: center;
+  }
+
+  .bulk-bar__counter {
+    align-items: center;
+    background: var(--color-ink);
+    border-radius: 0.5em;
+    color: var(--color-canvas);
+    display: inline-flex;
+    font-size: var(--text-small);
+    font-weight: 600;
+    gap: 0.5ch;
+    padding: 0.25em 0.75em;
+  }
+
+  /* Menu buttons row - using nav__hotkeys pattern from Fizzy
+  /* ------------------------------------------------------------------------ */
+
+  .bulk-bar__menu {
+    --gap: 8px;
+
+    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+  }
+
+  .bulk-bar__menu .btn {
+    --btn-border-radius: 0.4em;
+
+    align-content: end;
+    aspect-ratio: 5/3;
+    background-color: var(--color-ink-lightest);
+    border-radius: 0.5em;
+    flex-direction: column;
+    font-size: var(--text-small);
+    line-height: 1;
+    justify-content: center;
+    min-inline-size: 4.5rem;
+    overflow: hidden;
+    position: relative;
+    row-gap: 0.3lh;
+    text-align: center;
+  }
+
+  .bulk-bar__menu .btn .icon {
+    --icon-size: 1.25em;
+  }
+
+  .bulk-bar__menu .btn span {
+    display: flex;
+    justify-content: center;
+    text-wrap: nowrap;
+  }
+
+  .bulk-bar__menu .btn:hover {
+    background-color: var(--color-ink-lighter);
+  }
+
+  .bulk-bar__menu .btn.txt-negative:hover {
+    background-color: oklch(var(--lch-red-medium) / 20%);
+  }
+
+  .bulk-bar__menu .btn[aria-expanded="true"] {
+    background-color: var(--color-ink-light);
+  }
+
+  .bulk-bar__menu .btn[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 639px) {
+    .bulk-bar__menu .btn {
+      font-size: var(--text-x-small);
+      font-weight: 500;
+      min-inline-size: 3.5rem;
+    }
+  }
+
+  /* Form panels
+  /* ------------------------------------------------------------------------ */
+
+  .bulk-bar__forms {
+    display: contents;
+  }
+
+  .bulk-bar__form {
+    background: var(--color-ink-lightest);
+    border-radius: 0.5em;
+    display: none;
+    flex-direction: column;
+    gap: var(--block-space-half);
+    padding: var(--block-space);
+  }
+
+  .bulk-bar__form[data-active] {
+    display: flex;
+  }
+
+  .bulk-bar__form-title {
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .bulk-bar__form-row {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space-half);
+  }
+
+  .bulk-bar__form-row > .btn {
+    flex: 1 1 auto;
+  }
+
+  .bulk-bar__form-actions {
+    display: flex;
+    gap: var(--inline-space-half);
+    justify-content: flex-end;
+    margin-block-start: var(--block-space-half);
+  }
+}
