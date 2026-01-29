@@ -173,18 +173,26 @@ Rails.application.routes.draw do
     end
 
     resources :documenti do
-      resources :documento_righe, only: [:new, :create], controller: 'documento_righe'
+      resources :documento_righe, only: [:new, :create], controller: "documento_righe"
+      scope module: :documenti do
+        resources :righe, only: [:create]
+        resource :export, only: [:show]
+        resource :status, only: [:edit, :update]
+      end
       collection do
-        get 'filtra'
-        get 'nuovo_numero_documento'
-        get 'vendite'
+        get "filtra"
+        get "vendite"
       end
       member do
-        get :esporta_xml
-        get :edit_status
-        patch :update_righe
+        # Legacy routes for compatibility
+        get :esporta_xml, to: "documenti/exports#show"
+        get :edit_status, to: "documenti/statuses#edit"
+        patch :update_righe, to: "documenti/righe#create"
       end
     end
+
+    # Singular resource for next documento number
+    resource :documento_numero, only: [:show], controller: "documenti/numeri"
 
     resources :causali
 

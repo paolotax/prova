@@ -4,7 +4,7 @@ class DocumentiController < ApplicationController
   FILTER_PARAMS = [:anno, :consegnati, :pagati, :clientable_type, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_documento, only: %i[ show edit update destroy edit_status update_righe ]
+  before_action :set_documento, only: %i[show edit update destroy]
 
   def index
     # @causali = Causale.all
@@ -144,97 +144,8 @@ class DocumentiController < ApplicationController
     end
   end
 
-  # JSON endpoint for updating righe via fetch from Stimulus
-  def update_righe
-    righe_params = params.require(:righe)
-
-    ActiveRecord::Base.transaction do
-      righe_params.each do |riga_param|
-        riga_param = riga_param.permit(:documento_riga_id, :riga_id, :libro_id, :quantita, :prezzo_cents, :sconto, :_destroy, :_isNew)
-
-        if riga_param[:_destroy]
-          # Delete existing riga
-          if riga_param[:documento_riga_id].present?
-            doc_riga = @documento.documento_righe.find_by(id: riga_param[:documento_riga_id])
-            doc_riga&.destroy
-          end
-        elsif riga_param[:_isNew] || riga_param[:documento_riga_id].blank?
-          # Create new riga
-          riga = Riga.create!(
-            libro_id: riga_param[:libro_id],
-            quantita: riga_param[:quantita] || 1,
-            prezzo_cents: riga_param[:prezzo_cents] || 0,
-            sconto: riga_param[:sconto] || 0
-          )
-          @documento.documento_righe.create!(riga: riga)
-        else
-          # Update existing riga
-          doc_riga = @documento.documento_righe.find_by(id: riga_param[:documento_riga_id])
-          if doc_riga&.riga
-            doc_riga.riga.update!(
-              libro_id: riga_param[:libro_id],
-              quantita: riga_param[:quantita] || 1,
-              prezzo_cents: riga_param[:prezzo_cents] || 0,
-              sconto: riga_param[:sconto] || 0
-            )
-          end
-        end
-      end
-    end
-
-    # Reload documento to get fresh associations
-    @documento.reload
-
-    # Recalculate totals
-    @documento.ricalcola_totali!
-
-    # Return updated righe
-    render json: {
-      success: true,
-      righe: JSON.parse(righe_json(@documento))
-    }
-  rescue ActiveRecord::RecordInvalid => e
-    render json: { success: false, error: e.message }, status: :unprocessable_entity
-  rescue => e
-    render json: { success: false, error: e.message }, status: :internal_server_error
-  end
-
-  def nuovo_numero_documento
-
-    causale = Causale.find(params[:causale])
-
-    clientable_type = causale.clientable_type&.camelize || "Cliente"
-
-
-    anno_corrente = Date.current.year
-    ultimo_documento = Current.account.documenti.where(causale: params[:causale]).where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente).maximum(:numero_documento)
-    numero_documento = (ultimo_documento || 0) + 1
-    render json: { numero_documento: numero_documento, clientable_type: clientable_type }
-
-  end
-
   def filtra
     @causali = Causale.all
-  end
-
-  def esporta_xml
-    @documento = Documento.find(params[:id])
-    xml_generator = FatturaElettronicaXml.new(@documento)
-
-    respond_to do |format|
-      format.xml do
-        xml_content = xml_generator.genera_xml
-        send_data xml_content,
-                  filename: "IT#{@documento.user.azienda_partita_iva}_#{@documento.numero_documento}.xml",
-                  type: 'application/xml',
-                  disposition: 'attachment'
-      end
-    end
-  end
-
-  def edit_status
-    @field = params[:field]
-    render partial: 'edit_status_modal', locals: { documento: @documento, field: @field }
   end
 
   private
