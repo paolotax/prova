@@ -172,6 +172,12 @@ Rails.application.routes.draw do
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     end
 
+    namespace :clienti do
+      resource :prints, only: [:create]
+      resource :bulk_tappe, only: [:create]
+      resource :deletions, only: [:create]
+    end
+
     resources :documenti do
       resources :documento_righe, only: [:new, :create], controller: "documento_righe"
       scope module: :documenti do
@@ -246,10 +252,8 @@ Rails.application.routes.draw do
     end
 
     namespace :libri do
-      resources :bulk_actions, only: [] do
-        post :carrello, on: :collection
-        post :aggiungi, on: :collection
-      end
+      resource :prints, only: [:create]
+      resource :deletions, only: [:create]
     end
 
     resources :qrcodes

@@ -49,7 +49,7 @@
       <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
     </p>
 
-    <div class="cards cards--grid">
+    <div class="cards cards--grid" data-controller="bulk-actions">
       <%= with_automatic_pagination :libri, @page,
           id: "libri-lista",
           class: "cards__list",
@@ -57,9 +57,10 @@
               navigable_list_auto_select_value: false,
               navigable_list_actionable_items_value: true,
               navigable_list_prevent_handled_keys_value: true,
-              action: "keydown->navigable-list#navigate" } do %>
+              action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
         <%= render @page.records %>
       <% end %>
+      <%= render "libri/bulk_bar/bar" %>
     </div>
   <% else %>
     <div class="blank-slate blank-slate--empty">
@@ -80,5 +81,3 @@
     </div>
   <% end %>
 <% end %>
-
-<%#= render "libri/bulk_actions/form" %>

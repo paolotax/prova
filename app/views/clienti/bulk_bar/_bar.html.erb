@@ -1,0 +1,97 @@
+<%# Clienti Bulk Actions Bar %>
+
+<% content_for :bulk_bar_buttons do %>
+  <%# Stampa %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="stampa">
+    <%= icon_tag "printer" %>
+    <span>Stampa</span>
+  </button>
+
+  <%# Tappa %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="tappa">
+    <%= icon_tag "map-pin" %>
+    <span>Tappa</span>
+  </button>
+
+  <%# Elimina %>
+  <button type="button" class="btn txt-negative"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="elimina">
+    <%= icon_tag "trash" %>
+    <span>Elimina</span>
+  </button>
+<% end %>
+
+<% content_for :bulk_bar_forms do %>
+  <%# Form Stampa %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stampa">
+    <span class="bulk-bar__form-title">Stampa PDF</span>
+    <%= form_with url: clienti_prints_path(format: :pdf),
+          method: :post,
+          data: { bulk_actions_target: "form", turbo: false, controller: "pdf-print", action: "submit->pdf-print#submit" } do |f| %>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Stampa", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Form Tappa %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="tappa">
+    <span class="bulk-bar__form-title">Crea tappa</span>
+
+    <%= form_with url: clienti_bulk_tappe_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <%= f.hidden_field :data_tappa, value: Date.today %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Oggi", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: clienti_bulk_tappe_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <%= f.hidden_field :data_tappa, value: Date.tomorrow %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Domani", class: "btn" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: clienti_bulk_tappe_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.date_field :data_tappa, class: "input" %>
+        <%= f.submit "Crea", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <div class="bulk-bar__form-actions">
+      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+    </div>
+  </div>
+
+  <%# Form Elimina %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="elimina">
+    <span class="bulk-bar__form-title txt-negative">Elimina clienti</span>
+    <%= form_with url: clienti_deletions_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit",
+                  turbo_confirm: "Sei sicuro di voler eliminare i clienti selezionati?" } do |f| %>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <%= f.submit "Elimina", class: "btn btn--negative" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render "shared/bulk_bar" %>
