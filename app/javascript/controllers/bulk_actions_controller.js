@@ -1,5 +1,4 @@
 import CheckboxesController from "controllers/checkboxes_controller";
-import { enter, leave } from "controllers/helpers/transitions";
 
 export default class BulkActionsController extends CheckboxesController {
   static targets = ["container", "form", "counter", "formContainer", "menuButton"];
@@ -31,12 +30,20 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   openValueChanged() {
-    this.openValue ? this.containerTarget.hidden && enter(this.containerTarget) : leave(this.containerTarget);
+    if (this.openValue) {
+      this.containerTarget.hidden = false;
+      this.containerTarget.setAttribute("data-visible", "");
+    } else {
+      this.containerTarget.removeAttribute("data-visible");
+      // Wait for CSS transition to complete before hiding
+      setTimeout(() => {
+        if (!this.openValue) this.containerTarget.hidden = true;
+      }, 300);
+    }
   }
 
   #syncSelection() {
     const name = this.checkboxes[0]?.name || "ids[]";
-    console.log(name);
     this.formTargets.forEach(form => {
       form.querySelectorAll(`input[name="${name}"]`).forEach(input => input.remove());
 
@@ -118,24 +125,28 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   hideAfterSubmit(event) {
-    // Nascondiamo il container con l'animazione
-    leave(this.containerTarget).then(() => {
-      // Dopo che il container è nascosto, resettiamo lo stato
+    // Hide with animation
+    this.containerTarget.removeAttribute("data-visible");
+
+    setTimeout(() => {
+      this.containerTarget.hidden = true;
+
+      // Reset form states
       this.formContainerTargets.forEach(formContainer => {
         formContainer.classList.add('hidden');
         formContainer.classList.remove('flex');
+        formContainer.removeAttribute('data-active');
       });
-      
-      // Mostra tutti i pulsanti
+
+      // Show all buttons
       this.menuButtonTargets.forEach(button => {
         button.classList.remove('hidden');
+        button.hidden = false;
       });
-      
-      // Deseleziona le checkbox e conta quante erano selezionate
-      const selectedCount = this.checkboxes.filter(c => c.checked).length;
-      this.setCheckboxesTo(false);
 
-    });
+      // Deselect all checkboxes
+      this.setCheckboxesTo(false);
+    }, 300);
   }
 
   toggleButtons(show) {
