@@ -20,13 +20,13 @@ module FilterScoped
     @user_filtering = filtering_class.new(Current.user, @filter, expanded: expanded_param)
   end
 
-  # Convention: AppuntiController -> Filters::Appunto
-  # Convention: ScuoleController -> Filters::Scuola
+  # Convention: AppuntiController -> Filters::AppuntoFilter
+  # Convention: ScuoleController -> Filters::ScuolaFilter
   def filter_class
     "Filters::#{controller_name.classify.singularize}Filter".constantize
   end
 
-  # Convention: AppuntiController -> Filters::Appunto::Filtering ecc...
+  # Convention: AppuntiController -> Filters::AppuntoFilter::Filtering
   def filtering_class
     "Filters::#{controller_name.classify.singularize}Filter::Filtering".constantize
   end

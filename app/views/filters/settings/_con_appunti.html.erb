@@ -20,7 +20,7 @@
     <strong class="popup__title">Appunti</strong>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
-      <% Filters::Scuola::Fields::APPUNTI_OPTIONS.each do |option| %>
+      <% Filters::ScuolaFilter::Fields::APPUNTI_OPTIONS.each do |option| %>
         <%= tag.li class: "popup__item", data: {
               navigable_list_target: "item", combobox_target: "item", combobox_value: option, combobox_label: appunti_filter_label(option) },
               role: "checkbox", aria: { checked: filter.appunti_filter == option } do %>
