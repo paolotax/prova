@@ -11,7 +11,7 @@ class DashboardController < ApplicationController
     # Se filtri attivi, mostra risultati filtrati invece di kanban
     if @filter.used?
       filtered_scope = @filter.entries(base_scope)
-                              .includes(:entryable, :column, :goldness, :closure, :not_now)
+                              .includes(:column, :goldness, :closure, :not_now)
                               .recent
       @total_count = filtered_scope.count
       set_page_and_extract_portion_from filtered_scope

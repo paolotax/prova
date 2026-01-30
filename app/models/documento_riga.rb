@@ -6,7 +6,7 @@
 #  posizione    :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  documento_id :bigint
+#  documento_id :uuid
 #  riga_id      :bigint
 #
 # Indexes

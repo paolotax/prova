@@ -6,7 +6,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  giro_id    :bigint
-#  tappa_id   :bigint
+#  tappa_id   :uuid
 #
 # Indexes
 #
@@ -16,7 +16,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (giro_id => giri.id)
-#  fk_rails_...  (tappa_id => tappe.id)
 #
 
 class TappaGiro < ApplicationRecord

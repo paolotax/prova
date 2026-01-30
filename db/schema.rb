@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_30_110138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -440,7 +440,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
     t.index ["user_id"], name: "index_consegne_on_user_id"
   end
 
-  create_table "documenti", force: :cascade do |t|
+  create_table "documenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.bigint "causale_id"
     t.uuid "clientable_id"
@@ -449,7 +449,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
     t.datetime "created_at", null: false
     t.date "data_documento"
     t.integer "derivato_da_causale_id"
-    t.integer "documento_padre_id"
+    t.uuid "documento_padre_id"
     t.bigint "iva_cents"
     t.text "note"
     t.integer "numero_documento"
@@ -474,7 +474,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
 
   create_table "documento_righe", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "documento_id"
+    t.uuid "documento_id"
     t.integer "posizione"
     t.bigint "riga_id"
     t.datetime "updated_at", null: false
@@ -1119,13 +1119,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
   create_table "tappa_giri", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "giro_id"
-    t.bigint "tappa_id"
+    t.uuid "tappa_id"
     t.datetime "updated_at", null: false
     t.index ["giro_id"], name: "index_tappa_giri_on_giro_id"
     t.index ["tappa_id"], name: "index_tappa_giri_on_tappa_id"
   end
 
-  create_table "tappe", force: :cascade do |t|
+  create_table "tappe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.datetime "created_at", null: false
     t.date "data_tappa"
@@ -1275,7 +1275,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_085010) do
   add_foreign_key "scuole", "accounts"
   add_foreign_key "scuole", "import_scuole"
   add_foreign_key "tappa_giri", "giri"
-  add_foreign_key "tappa_giri", "tappe"
   add_foreign_key "tappe", "accounts"
   add_foreign_key "tappe", "giri"
   add_foreign_key "tappe", "users"

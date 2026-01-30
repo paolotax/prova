@@ -56,10 +56,10 @@ class Appunto < ApplicationRecord
   # Draft/published status (Fizzy pattern)
   include Appunto::Statuses
 
-  # State Record concerns (legacy - kept for backward compatibility during migration)
-  include Golden         # has_one :goldness
-  # Closeable rimosso: ora usa Entry::Closeable via Entryable delegation
-  include Postponable    # has_one :not_now
+  # State Record concerns - ora tutti via Entry delegation (Entryable)
+  # Golden rimosso: usa Entry::Golden via gild/ungild
+  # Closeable rimosso: usa Entry::Closeable via close/reopen
+  # Postponable rimosso: usa Entry::Postponable via postpone/resume
   include Consegnabile   # has_one :consegna
   include Pagabile       # has_one :pagamento
   include Registrabile   # has_one :registrazione
@@ -376,14 +376,6 @@ class Appunto < ApplicationRecord
 
   def resume
     entry&.resume
-  end
-
-  def mark_golden(user: Current.user)
-    entry&.gild(user: user)
-  end
-
-  def unmark_golden
-    entry&.ungild
   end
 
   private

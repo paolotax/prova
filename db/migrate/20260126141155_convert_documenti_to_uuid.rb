@@ -59,7 +59,43 @@ class ConvertDocumentiToUuid < ActiveRecord::Migration[8.1]
     # 11. Ricrea foreign key (self-reference)
     add_foreign_key :documenti, :documenti, column: :documento_padre_id
 
-    # 12. Ricrea la view view_giacenze
+    # 12. Aggiorna entries per Documento con i nuovi UUID
+    execute <<-SQL
+      UPDATE entries e
+      SET entryable_id = m.new_uuid::text
+      FROM documenti_id_map m
+      WHERE e.entryable_type = 'Documento'
+        AND e.entryable_id = m.old_id::text
+    SQL
+
+    # 13. Aggiorna closures per Documento con i nuovi UUID
+    execute <<-SQL
+      UPDATE closures c
+      SET closeable_id = m.new_uuid::text
+      FROM documenti_id_map m
+      WHERE c.closeable_type = 'Documento'
+        AND c.closeable_id = m.old_id::text
+    SQL
+
+    # 14. Aggiorna consegne per Documento con i nuovi UUID
+    execute <<-SQL
+      UPDATE consegne c
+      SET consegnabile_id = m.new_uuid::text
+      FROM documenti_id_map m
+      WHERE c.consegnabile_type = 'Documento'
+        AND c.consegnabile_id = m.old_id::text
+    SQL
+
+    # 15. Aggiorna pagamenti per Documento con i nuovi UUID
+    execute <<-SQL
+      UPDATE pagamenti p
+      SET pagabile_id = m.new_uuid::text
+      FROM documenti_id_map m
+      WHERE p.pagabile_type = 'Documento'
+        AND p.pagabile_id = m.old_id::text
+    SQL
+
+    # 16. Ricrea la view view_giacenze
     execute <<-SQL
       CREATE VIEW view_giacenze AS
       SELECT users.id as user_id, libri.id as libro_id, libri.titolo, libri.codice_isbn,
@@ -82,7 +118,7 @@ class ConvertDocumentiToUuid < ActiveRecord::Migration[8.1]
       ORDER BY 3
     SQL
 
-    # 13. Drop la tabella temporanea
+    # 17. Drop la tabella temporanea
     execute "DROP TABLE IF EXISTS documenti_id_map"
   end
 

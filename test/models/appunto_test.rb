@@ -146,11 +146,13 @@ class AppuntoTest < ActiveSupport::TestCase
   end
 
   # State Record Concerns Tests
-  test "includes Golden concern" do
+  test "golden methods via Entry delegation" do
     assert_respond_to @appunto, :golden?
-    assert_respond_to @appunto, :mark_golden
-    assert_respond_to @appunto, :unmark_golden
-    assert_respond_to @appunto, :goldness
+    assert_respond_to @appunto, :gild
+    assert_respond_to @appunto, :ungild
+    # goldness è su Entry, non su Appunto
+    @appunto.ensure_entry!
+    assert_respond_to @appunto.entry, :goldness
   end
 
   test "closeable methods via Entry delegation" do
@@ -181,12 +183,14 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_respond_to @appunto, :registrazione
   end
 
-  test "includes Postponable concern" do
+  test "postponable methods via Entry delegation" do
     assert_respond_to @appunto, :postponed?
     assert_respond_to @appunto, :postpone
     assert_respond_to @appunto, :resume
     assert_respond_to @appunto, :postponed_at
-    assert_respond_to @appunto, :postponed_by
+    # not_now è su Entry, non su Appunto
+    @appunto.ensure_entry!
+    assert_respond_to @appunto.entry, :not_now
   end
 
   # Statuses concern tests
@@ -230,23 +234,25 @@ class AppuntoTest < ActiveSupport::TestCase
     assert appunto.drafted?
   end
 
-  test "mark_golden creates goldness record" do
+  test "gild creates goldness record via entry" do
+    @appunto.ensure_entry!
     assert_not @appunto.golden?
 
     assert_difference -> { Goldness.count }, 1 do
-      @appunto.mark_golden
+      @appunto.gild
     end
 
     assert @appunto.golden?
-    assert_equal @user, @appunto.goldness.user
+    assert_equal @user, @appunto.entry.goldness.user
   end
 
-  test "unmark_golden destroys goldness record" do
-    @appunto.mark_golden
+  test "ungild destroys goldness record via entry" do
+    @appunto.ensure_entry!
+    @appunto.gild
     assert @appunto.golden?
 
     assert_difference -> { Goldness.count }, -1 do
-      @appunto.unmark_golden
+      @appunto.ungild
     end
 
     assert_not @appunto.reload.golden?

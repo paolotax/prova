@@ -2,7 +2,7 @@
 #
 # Table name: tappe
 #
-#  id            :bigint           not null, primary key
+#  id            :uuid             not null, primary key
 #  data_tappa    :date
 #  descrizione   :string
 #  entro_il      :datetime

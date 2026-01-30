@@ -6,7 +6,8 @@ module Appunti
 
     # POST /appunti/:appunto_id/goldness
     def create
-      @appunto.mark_golden
+      @appunto.ensure_entry!
+      @appunto.gild
 
       respond_to do |format|
         format.turbo_stream { render_appunto_replacement }
@@ -16,7 +17,7 @@ module Appunti
 
     # DELETE /appunti/:appunto_id/goldness
     def destroy
-      @appunto.unmark_golden
+      @appunto.ungild
 
       respond_to do |format|
         format.turbo_stream { render_appunto_replacement }

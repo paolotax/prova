@@ -2,7 +2,7 @@
 #
 # Table name: documenti
 #
-#  id                     :bigint           not null, primary key
+#  id                     :uuid             not null, primary key
 #  clientable_type        :string
 #  consegnato_il          :date
 #  data_documento         :date
@@ -23,7 +23,7 @@
 #  causale_id             :bigint
 #  clientable_id          :uuid
 #  derivato_da_causale_id :integer
-#  documento_padre_id     :integer
+#  documento_padre_id     :uuid
 #  user_id                :bigint           not null
 #
 # Indexes

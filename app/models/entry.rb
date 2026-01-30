@@ -102,7 +102,7 @@ class Entry < ApplicationRecord
   end
 
   # Override entryable_id getter/setter for polymorphic support
-  # (handles UUID strings for Appunto and bigint strings for Documento/Tappa)
+  # All entryables now use UUID (Appunto, Documento, Tappa)
   def entryable
     return @entryable if defined?(@entryable)
 
@@ -110,9 +110,9 @@ class Entry < ApplicationRecord
                  when "Appunto"
                    Appunto.find_by(id: entryable_id)
                  when "Documento"
-                   Documento.find_by(id: entryable_id.to_i)
+                   Documento.find_by(id: entryable_id)
                  when "Tappa"
-                   Tappa.find_by(id: entryable_id.to_i)
+                   Tappa.find_by(id: entryable_id)
                  end
   end
 
