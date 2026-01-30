@@ -51,6 +51,11 @@ module Filters
               OR scuole.comune ~* :q
               OR clienti.denominazione ~* :q
               OR clienti.comune ~* :q
+              OR classi.anno_corso::text ~* :q
+              OR classi.sezione ~* :q
+              OR CONCAT(classi.anno_corso, classi.sezione) ~* :q
+              OR scuole_classe.denominazione ~* :q
+              OR scuole_classe.comune ~* :q
               OR action_text_rich_texts.body ~* :q
             SQL
           end
@@ -63,6 +68,12 @@ module Filters
       end
 
       result = result.with_any_state([state]) if state.present?
+
+      # Appuntabile type filter
+      if appuntabile_type.present?
+        result = result.where(appuntabile_type: appuntabile_type)
+      end
+
       result
     end
 

@@ -6,6 +6,7 @@ module Filters
       PERMITTED_PARAMS = [
         :anno,
         :state,
+        :appuntabile_type,
         terms: []
       ].freeze
 
@@ -16,7 +17,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :terms, :anno, :state
+        store_accessor :fields, :terms, :anno, :state, :appuntabile_type
 
         def terms
           Array(super)
@@ -41,6 +42,14 @@ module Filters
         def state=(value)
           super(value.presence)
         end
+
+        def appuntabile_type
+          super.presence
+        end
+
+        def appuntabile_type=(value)
+          super(value.presence)
+        end
       end
 
       def as_params
@@ -48,6 +57,7 @@ module Filters
           params[:terms] = terms
           params[:anno] = anno
           params[:state] = state
+          params[:appuntabile_type] = appuntabile_type
         end.compact_blank
       end
     end

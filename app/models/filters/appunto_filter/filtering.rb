@@ -34,12 +34,24 @@ module Filters
       filter.state.present?
     end
 
+    def appuntabile_types_disponibili
+      {
+        "Scuola" => "Scuola",
+        "Cliente" => "Cliente",
+        "Classe" => "Classe"
+      }
+    end
+
+    def show_appuntabili?
+      filter.appuntabile_type.present?
+    end
+
     def filters_active?
-      filter.terms.present? || filter.anno.present? || filter.state.present?
+      filter.terms.present? || filter.anno.present? || filter.state.present? || filter.appuntabile_type.present?
     end
 
     def controls
-      %w[anni states]
+      %w[anni states appuntabili]
     end
 
     def cache_key

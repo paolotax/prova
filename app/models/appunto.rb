@@ -126,11 +126,13 @@ class Appunto < ApplicationRecord
 
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
 
-  # LEFT JOIN per ricerca su polymorphic appuntabile (Scuola, Cliente) e Action Text content
+  # LEFT JOIN per ricerca su polymorphic appuntabile (Scuola, Cliente, Classe) e Action Text content
   scope :left_joins_appuntabile, -> {
     joins(<<~SQL)
       LEFT JOIN scuole ON appunti.appuntabile_type = 'Scuola' AND appunti.appuntabile_id = scuole.id
       LEFT JOIN clienti ON appunti.appuntabile_type = 'Cliente' AND appunti.appuntabile_id = clienti.id
+      LEFT JOIN classi ON appunti.appuntabile_type = 'Classe' AND appunti.appuntabile_id = classi.id
+      LEFT JOIN scuole AS scuole_classe ON classi.scuola_id = scuole_classe.id
       LEFT JOIN action_text_rich_texts ON action_text_rich_texts.record_type = 'Appunto'
         AND action_text_rich_texts.record_id = appunti.id::text
         AND action_text_rich_texts.name = 'content'
