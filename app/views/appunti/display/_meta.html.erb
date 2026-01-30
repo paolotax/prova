@@ -1,0 +1,26 @@
+<%# locals: (appunto:, compact: false) -%>
+<%# Unified meta partial for appunto cards - shows telefono/email, copie, importo %>
+
+<% date_format = compact ? "%d/%m/%y" : "%d/%m/%Y" %>
+<% items = [] %>
+
+<%# Telefono/email %>
+<% if appunto.telefono.present? %>
+  <% items << { icon: "phone", text: appunto.telefono } %>
+<% elsif appunto.email.present? %>
+  <% items << { icon: "mail", text: truncate(appunto.email, length: compact ? 20 : 25) } %>
+<% end %>
+
+<%# Copie e totale %>
+<% if appunto.totale_copie.to_i > 0 %>
+  <% items << { html: "COPIE <strong>#{appunto.totale_copie}</strong>" } %>
+<% end %>
+<% if appunto.totale_cents.to_i > 0 %>
+  <% items << { html: "<strong>#{number_to_currency(appunto.totale, locale: :it)}</strong>" } %>
+<% end %>
+
+<%= render "shared/cards/display/preview/meta",
+    record: appunto,
+    created_label: "CREATO",
+    created_at: appunto.created_at,
+    items: items %>

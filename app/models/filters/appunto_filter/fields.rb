@@ -4,9 +4,9 @@ module Filters
       extend ActiveSupport::Concern
 
       PERMITTED_PARAMS = [
+        :anno,
         :state,
-        terms: [],
-        statuses: []
+        terms: []
       ].freeze
 
       class_methods do
@@ -16,7 +16,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :terms, :statuses, :state
+        store_accessor :fields, :terms, :anno, :state
 
         def terms
           Array(super)
@@ -26,12 +26,12 @@ module Filters
           super(Array(value).filter(&:present?))
         end
 
-        def statuses
-          Array(super)
+        def anno
+          super.presence
         end
 
-        def statuses=(value)
-          super(Array(value).filter(&:present?))
+        def anno=(value)
+          super(value.presence)
         end
 
         def state
@@ -46,7 +46,7 @@ module Filters
       def as_params
         @as_params ||= {}.tap do |params|
           params[:terms] = terms
-          params[:statuses] = statuses
+          params[:anno] = anno
           params[:state] = state
         end.compact_blank
       end

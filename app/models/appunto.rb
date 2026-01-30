@@ -116,7 +116,7 @@ class Appunto < ApplicationRecord
 
   include PgSearch::Model
 
-  search_fields = %i[nome body email telefono stato]
+  search_fields = %i[nome body email telefono]
 
   pg_search_scope :search_all_word,
                   against: search_fields,
@@ -143,14 +143,12 @@ class Appunto < ApplicationRecord
 
   include Searchable
 
-  search_on :nome, :body, :email, :telefono, :stato,
+  search_on :nome, :body, :email, :telefono,
             import_adozione: %i[CODICESCUOLA CODICEISBN EDITORE],
             rich_text_content: [:body],
             attachments_blobs: [:filename],
             import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
 
-
-  STATO_APPUNTI = ['da fare', 'in evidenza', 'in settimana', 'in visione', 'da pagare', 'completato', 'archiviato']
 
   # State Records Fizzy (chiave => label italiano)
   FIZZY_STATES = {
@@ -175,22 +173,29 @@ class Appunto < ApplicationRecord
 
   # scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
   # scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  scope :non_archiviati, -> { where.not(stato: %w[archiviato]).non_saggi }
-
-  # Scope per filtrare per State Records Fizzy (OR logic tra stati selezionati)
+  # Scope per filtrare per State Records via Entry (unified triage system)
+  # Gli state records (goldness, closure, not_now) sono ora su Entry, non su Appunto
   scope :with_any_state, ->(states) {
     return all if states.blank?
 
-    subqueries = []
-    subqueries << Goldness.where(goldenable_type: 'Appunto').select(:goldenable_id) if states.include?('golden')
-    subqueries << Closure.where(closeable_type: 'Appunto').select(:closeable_id) if states.include?('closed')
-    subqueries << NotNow.where(not_nowable_type: 'Appunto').select(:not_nowable_id) if states.include?('postponed')
-    subqueries << Consegna.where(consegnabile_type: 'Appunto').select(:consegnabile_id) if states.include?('consegnato')
-    subqueries << Pagamento.where(pagabile_type: 'Appunto').select(:pagabile_id) if states.include?('pagato')
-    subqueries << Registrazione.where(registrabile_type: 'Appunto').select(:registrabile_id) if states.include?('registrato')
+    conditions = []
+    # State records via Entry (golden, closed, postponed)
+    if states.include?('golden')
+      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN goldnesses g ON g.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+    end
+    if states.include?('closed')
+      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+    end
+    if states.include?('postponed')
+      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN not_nows n ON n.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+    end
+    # State records diretti su Appunto (consegna, pagamento, registrazione)
+    conditions << "id IN (SELECT consegnabile_id::uuid FROM consegne WHERE consegnabile_type = 'Appunto')" if states.include?('consegnato')
+    conditions << "id IN (SELECT pagabile_id::uuid FROM pagamenti WHERE pagabile_type = 'Appunto')" if states.include?('pagato')
+    conditions << "id IN (SELECT registrabile_id::uuid FROM registrazioni WHERE registrabile_type = 'Appunto')" if states.include?('registrato')
 
-    return all if subqueries.empty?
-    where(id: subqueries.reduce { |union, sq| union.union(sq) })
+    return all if conditions.empty?
+    where(conditions.join(' OR '))
   }
 
   # non includono clienti REFACTOR appunto clientable

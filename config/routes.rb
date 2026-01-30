@@ -375,7 +375,6 @@ Rails.application.routes.draw do
     namespace :appunti do
       resource :prints, only: [:create]
       resource :bulk_tappe, only: [:create]
-      resource :bulk_statuses, only: [:update]
       resource :deletions, only: [:create]
     end
 

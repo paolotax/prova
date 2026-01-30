@@ -50,21 +50,24 @@
             <% end %>
           <% end %>
 
-          <% if appunto.content.present? || appunto.body.present? %>
-            <div class="card__stages">
-              <% if appunto.content.present? %>
-                <%= tag.span truncate(appunto.content.to_plain_text, length: 100), class: "overflow-line-clamp" %>
-              <% elsif appunto.body.present? %>
-                <%= tag.span truncate(appunto.body, length: 100), class: "overflow-line-clamp" %>
-              <% end %>
+          <% if appunto.content.present? %>
+            <div class="txt-x-small margin-inline-start-half overflow-line-clamp" style="margin-top: 0.5ch; --lines: 2; color: var(--card-content-color)"">
+              <%= tag.span appunto.content, class: "" %>
             </div>
           <% end %>
+                    
+          <% if appunto.body.present? %>
+            <div class="txt-small margin-block-start-half overflow-line-clamp" style="--lines: 2; color: var(--card-content-color)"">
+              <%= tag.span appunto.body, class: "overflow-line-clamp" %>
+            </div>
+          <% end %>
+
         </div>
       </div>
     </div>
 
     <footer class="card__footer flex gap-half">
-      <%= render "appunti/meta", appunto: appunto %>
+      <%= render "appunti/display/meta", appunto: appunto, compact: true %>
     </footer>
 
   <% end %>
