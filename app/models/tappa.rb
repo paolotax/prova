@@ -34,7 +34,7 @@
 class Tappa < ApplicationRecord
   include AccountScoped
   include Entryable
-  include Closeable
+  # Closeable rimosso: ora usa Entry::Closeable via Entryable delegation
 
   belongs_to :user
   

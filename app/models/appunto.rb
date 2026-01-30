@@ -58,7 +58,7 @@ class Appunto < ApplicationRecord
 
   # State Record concerns (legacy - kept for backward compatibility during migration)
   include Golden         # has_one :goldness
-  include Closeable      # has_one :closure
+  # Closeable rimosso: ora usa Entry::Closeable via Entryable delegation
   include Postponable    # has_one :not_now
   include Consegnabile   # has_one :consegna
   include Pagabile       # has_one :pagamento

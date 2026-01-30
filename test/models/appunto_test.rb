@@ -153,12 +153,14 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_respond_to @appunto, :goldness
   end
 
-  test "includes Closeable concern" do
+  test "closeable methods via Entry delegation" do
     assert_respond_to @appunto, :closed?
     assert_respond_to @appunto, :open?
     assert_respond_to @appunto, :close
     assert_respond_to @appunto, :reopen
-    assert_respond_to @appunto, :closure
+    # closure è su Entry, non su Appunto
+    @appunto.ensure_entry!
+    assert_respond_to @appunto.entry, :closure
   end
 
   test "includes Consegnabile concern" do
@@ -250,7 +252,8 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_not @appunto.reload.golden?
   end
 
-  test "close creates closure record" do
+  test "close creates closure record via entry" do
+    @appunto.ensure_entry!
     assert @appunto.open?
     assert_not @appunto.closed?
 
@@ -260,10 +263,11 @@ class AppuntoTest < ActiveSupport::TestCase
 
     assert @appunto.closed?
     assert_not @appunto.open?
-    assert_equal @user, @appunto.closure.user
+    assert_equal @user, @appunto.entry.closure.user
   end
 
-  test "reopen destroys closure record" do
+  test "reopen destroys closure record via entry" do
+    @appunto.ensure_entry!
     @appunto.close
     assert @appunto.closed?
 

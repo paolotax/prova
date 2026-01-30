@@ -49,7 +49,7 @@ class Documento < ApplicationRecord
   include Entryable
   include Pagabile
   include Consegnabile
-  include Closeable
+  # Closeable rimosso: ora usa Entry::Closeable via Entryable delegation
 
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
@@ -74,6 +74,7 @@ class Documento < ApplicationRecord
   # Callback per concern: propaga pagamento ai figli e auto-close
   after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
   after_save :auto_close_se_completo
+  after_create :close_if_has_padre
 
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
   enum :tipo_pagamento,
@@ -366,6 +367,14 @@ class Documento < ApplicationRecord
   # Auto-close quando il documento è sia pagato che consegnato
   def auto_close_se_completo
     close if pagato? && consegnato? && !closed?
+  end
+
+  # Chiude automaticamente documenti figli (es. DDT derivato da TD01)
+  def close_if_has_padre
+    return unless documento_padre_id.present?
+
+    ensure_entry!
+    close unless closed?
   end
 
   # Verifica se il documento è appena stato marcato come pagato
