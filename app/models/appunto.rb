@@ -114,53 +114,28 @@ class Appunto < ApplicationRecord
 
   belongs_to :voice_note, optional: true
 
-  include PgSearch::Model
-
-  search_fields = %i[nome body email telefono]
-
-  pg_search_scope :search_all_word,
-                  against: search_fields,
-                  associated_against: {
-                    import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE],
-                    import_adozione: %i[CODICESCUOLA CODICEISBN EDITORE],
-                    rich_text_content: [:body],
-                    attachments_blobs: [:filename]
-                  },
-                  using: {
-                    tsearch: { any_word: false, prefix: true }
-                  }
-
-  # Scope semplificato per filtri (evita problemi UUID con Action Text)
-  pg_search_scope :search_basic,
-                  against: search_fields,
-                  associated_against: {
-                    import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE],
-                    import_adozione: %i[CODICESCUOLA CODICEISBN EDITORE]
-                  },
-                  using: {
-                    tsearch: { any_word: false, prefix: true }
-                  }
-
-  include Searchable
-
-  search_on :nome, :body, :email, :telefono,
-            import_adozione: %i[CODICESCUOLA CODICEISBN EDITORE],
-            rich_text_content: [:body],
-            attachments_blobs: [:filename],
-            import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
-
-
   # State Records Fizzy (chiave => label italiano)
   FIZZY_STATES = {
-    'golden'     => 'In evidenza',
-    'closed'     => 'Chiuso',
-    'postponed'  => 'Rimandato',
-    'consegnato' => 'Consegnato',
+    'attivi'      => 'Attivi',
+    'in_evidenza' => 'In evidenza',
+    'rimandati'   => 'Rimandati',
+    'completati'  => 'Completati',
   }.freeze
 
   delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
 
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
+
+  # LEFT JOIN per ricerca su polymorphic appuntabile (Scuola, Cliente) e Action Text content
+  scope :left_joins_appuntabile, -> {
+    joins(<<~SQL)
+      LEFT JOIN scuole ON appunti.appuntabile_type = 'Scuola' AND appunti.appuntabile_id = scuole.id
+      LEFT JOIN clienti ON appunti.appuntabile_type = 'Cliente' AND appunti.appuntabile_id = clienti.id
+      LEFT JOIN action_text_rich_texts ON action_text_rich_texts.record_type = 'Appunto'
+        AND action_text_rich_texts.record_id = appunti.id::text
+        AND action_text_rich_texts.name = 'content'
+    SQL
+  }
 
   # scope :da_fare, -> { where(stato: 'da fare').non_saggi }
   # scope :in_evidenza, -> { where(stato: 'in evidenza').non_saggi }
@@ -179,20 +154,26 @@ class Appunto < ApplicationRecord
     return all if states.blank?
 
     conditions = []
-    # State records via Entry (golden, closed, postponed)
-    if states.include?('golden')
-      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN goldnesses g ON g.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+
+    # Attivi: hanno entry senza closure
+    if states.include?('attivi')
+      conditions << "appunti.id IN (SELECT e.entryable_id::uuid FROM entries e LEFT JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto' AND c.id IS NULL)"
     end
-    if states.include?('closed')
-      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+
+    # In evidenza: hanno entry con goldness
+    if states.include?('in_evidenza')
+      conditions << "appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN goldnesses g ON g.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
     end
-    if states.include?('postponed')
-      conditions << "id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN not_nows n ON n.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+
+    # Rimandati: hanno entry con not_now
+    if states.include?('rimandati')
+      conditions << "appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN not_nows n ON n.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
     end
-    # State records diretti su Appunto (consegna, pagamento, registrazione)
-    conditions << "id IN (SELECT consegnabile_id::uuid FROM consegne WHERE consegnabile_type = 'Appunto')" if states.include?('consegnato')
-    conditions << "id IN (SELECT pagabile_id::uuid FROM pagamenti WHERE pagabile_type = 'Appunto')" if states.include?('pagato')
-    conditions << "id IN (SELECT registrabile_id::uuid FROM registrazioni WHERE registrabile_type = 'Appunto')" if states.include?('registrato')
+
+    # Completati: hanno entry con closure
+    if states.include?('completati')
+      conditions << "appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto')"
+    end
 
     return all if conditions.empty?
     where(conditions.join(' OR '))

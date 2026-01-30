@@ -2,7 +2,7 @@ class AppuntiController < ApplicationController
   
   include FilterScoped
 
-  FILTER_PARAMS = [:state, terms: [], statuses: []].freeze
+  FILTER_PARAMS = [:anno, :state, terms: []].freeze
 
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[show edit update destroy]

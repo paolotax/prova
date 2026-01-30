@@ -32,11 +32,29 @@ module Filters
       result = base_scope
 
       if terms.present?
-        # Usa search senza le associazioni problematiche (Action Text con UUID)
-        result = result.where(
-          "appunti.nome ILIKE :q OR appunti.body ILIKE :q",
-          q: "%#{terms.first}%"
-        )
+        # Ricerca con prefix matching (come pg_search): "ma ki" trova "martin luther king"
+        # Usa regex \m per word boundary (inizio parola)
+        words = terms.first.split(/\s+/).reject(&:blank?)
+        if words.any?
+          result = result.left_joins_appuntabile
+
+          # Per ogni parola, deve matchare come prefisso di parola in almeno un campo
+          words.each do |word|
+            # \m = word boundary in PostgreSQL regex, ~* = case insensitive
+            pattern = "\\m#{word}"
+            result = result.where(<<~SQL, q: pattern)
+              appunti.nome ~* :q
+              OR appunti.body ~* :q
+              OR appunti.email ~* :q
+              OR appunti.telefono ~* :q
+              OR scuole.denominazione ~* :q
+              OR scuole.comune ~* :q
+              OR clienti.denominazione ~* :q
+              OR clienti.comune ~* :q
+              OR action_text_rich_texts.body ~* :q
+            SQL
+          end
+        end
       end
 
       # Anno filter
