@@ -1,16 +1,23 @@
 <%# locals: (scuola:) -%>
 
-<div class="flex gap" style="--column-gap: var(--block-space-double);">
+<div class="settings margin-block-start-half">
   <!-- Colonna principale -->
-  <div class="flex flex-column gap flex-1" style="flex-basis: 600px;">
+  <div class="flex flex-column gap flex-1">
     <%= render "scuole/container/details", scuola: scuola %>
     <%= render "scuole/container/classi", scuola: scuola, classi: @classi %>
   </div>
 
   <!-- Sidebar -->
-  <aside class="flex flex-column gap" style="flex-basis: 280px; flex-shrink: 0;">
+  <aside class="settings__panel settings__panel--users center">
     <%= render "scuole/container/stats", scuola: scuola %>
-    <%= render "scuole/container/appunti", scuola: scuola, appunti: @appunti %>
+    <%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(scuola), loading: :lazy, style: "display: block; min-height: 120px;" do %>
+      <article class="panel shadow">
+        <header class="flex align-center justify-space-between margin-block-end-half">
+          <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+        </header>
+        <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+      </article>
+    <% end %>
     <%= render "scuole/container/actions", scuola: scuola %>
   </aside>
 </div>

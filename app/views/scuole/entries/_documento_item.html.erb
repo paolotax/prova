@@ -1,0 +1,12 @@
+<%# locals: (documento:) -%>
+<%= link_to documento_path(documento), class: "pad-half border-radius fill-shade txt-undecorated flex gap-half align-center" do %>
+  <%= icon_tag "document", size: "small", class: "txt-subtle" %>
+  <div class="flex-1 overflow-hidden">
+    <p class="txt-small overflow-ellipsis margin-none">
+      <%= documento.causale&.causale %> #<%= documento.numero_documento %>
+    </p>
+    <p class="txt-xx-small txt-subtle margin-none">
+      Documento · <%= time_ago_in_words(documento.updated_at) %> fa
+    </p>
+  </div>
+<% end %>

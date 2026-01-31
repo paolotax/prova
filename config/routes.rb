@@ -432,6 +432,7 @@ Rails.application.routes.draw do
       resources :qrcodes
 
       scope module: :scuole do
+        resource :entries, only: [:show]
         resources :classi, only: [:index, :show, :create, :destroy] do
           member do
             post :import_adozioni

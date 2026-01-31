@@ -1,0 +1,31 @@
+<%# locals: (scuola:, entries:, appunti: [], documenti: []) -%>
+<%= turbo_frame_tag "scuola_entries" do %>
+  <article class="panel shadow">
+    <header class="flex align-center justify-space-between margin-block-end-half">
+      <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+      <% count = entries.any? ? entries.count : (appunti.count + documenti.count) %>
+      <% if count > 0 %>
+        <span class="badge badge--warning txt-xx-small"><%= count %></span>
+      <% end %>
+    </header>
+
+    <% if entries.any? %>
+      <div class="flex flex-column gap-half">
+        <% entries.each do |entry| %>
+          <%= render "scuole/entries/entry", entry: entry %>
+        <% end %>
+      </div>
+    <% elsif appunti.any? || documenti.any? %>
+      <div class="flex flex-column gap-half">
+        <% appunti.each do |appunto| %>
+          <%= render "scuole/entries/appunto_item", appunto: appunto %>
+        <% end %>
+        <% documenti.each do |documento| %>
+          <%= render "scuole/entries/documento_item", documento: documento %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="txt-small txt-subtle margin-none">Nessuna attività</p>
+    <% end %>
+  </article>
+<% end %>
