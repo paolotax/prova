@@ -59,8 +59,8 @@ class Entry < ApplicationRecord
   # Scopes for triage states
   scope :awaiting_triage, -> { active.where(column_id: nil) }
   scope :triaged, -> { active.where.not(column_id: nil) }
-  scope :active, -> { open.where.missing(:not_now) }
-  scope :open, -> { where.missing(:closure) }
+  scope :active, -> { aperti.where.missing(:not_now) }
+  scope :aperti, -> { where.missing(:closure) }
   scope :closed, -> { joins(:closure) }
   scope :postponed, -> { joins(:not_now) }
   scope :golden, -> { joins(:goldness) }

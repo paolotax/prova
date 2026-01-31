@@ -6,10 +6,6 @@
     <%= back_link_to "Scuole", scuole_path, "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @scuola.denominazione %></span>
-  </h1>
-
   <div class="header__actions header__actions--end">
     <%= link_to edit_scuola_path(@scuola), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click" } do %>
       <%= icon_tag "pencil" %>

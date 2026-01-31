@@ -150,8 +150,22 @@ class Appunto < ApplicationRecord
 
   # scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
   # scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  # Scope per filtrare per State Records via Entry (unified triage system)
-  # Gli state records (goldness, closure, not_now) sono ora su Entry, non su Appunto
+  # Scope per stato Entry-based (unified triage system)
+  # Gli state records (goldness, closure, not_now) sono su Entry, non su Appunto
+  # Nomi allineati a FIZZY_STATES per coerenza UI
+  scope :attivi, -> {
+    where("appunti.id IN (SELECT e.entryable_id::uuid FROM entries e LEFT JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto' AND c.id IS NULL)")
+  }
+  scope :completati, -> {
+    where("appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto')")
+  }
+  scope :rimandati, -> {
+    where("appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN not_nows n ON n.entry_id = e.id WHERE e.entryable_type = 'Appunto')")
+  }
+  scope :in_evidenza, -> {
+    where("appunti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN goldnesses g ON g.entry_id = e.id WHERE e.entryable_type = 'Appunto')")
+  }
+
   scope :with_any_state, ->(states) {
     return all if states.blank?
 

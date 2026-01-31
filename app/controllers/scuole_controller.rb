@@ -19,7 +19,6 @@ class ScuoleController < ApplicationController
 
   def show
     @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
-    @appunti = @scuola.appunti.order(created_at: :desc).limit(10)
   end
 
   def new
