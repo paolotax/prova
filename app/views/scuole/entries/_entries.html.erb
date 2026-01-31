@@ -10,18 +10,18 @@
     </header>
 
     <% if entries.any? %>
-      <div class="flex flex-column gap-half">
+      <div class="cards">
         <% entries.each do |entry| %>
-          <%= render "scuole/entries/entry", entry: entry %>
+          <%= render "entries/entry", entry: entry, draggable: false %>
         <% end %>
       </div>
     <% elsif appunti.any? || documenti.any? %>
-      <div class="flex flex-column gap-half">
+      <div class="cards">
         <% appunti.each do |appunto| %>
-          <%= render "scuole/entries/appunto_item", appunto: appunto %>
+          <%= render "appunti/appunto", appunto: appunto, draggable: false %>
         <% end %>
         <% documenti.each do |documento| %>
-          <%= render "scuole/entries/documento_item", documento: documento %>
+          <%= render "documenti/documento", documento: documento, draggable: false %>
         <% end %>
       </div>
     <% else %>

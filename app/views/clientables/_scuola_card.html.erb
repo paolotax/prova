@@ -1,6 +1,11 @@
-<%= link_to polymorphic_path(clientable),
-        data: { turbo_frame: :_top },
-        class: "card__title-link" do %>
-    <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
-    <span class="card__subtitle"><%= clientable.comune&.upcase %></span>
+<% if clientable.account_id == Current.account&.id %>
+  <%= link_to scuola_path(clientable),
+          data: { turbo_frame: :_top },
+          class: "card__title-link" do %>
+      <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
+      <span class="card__subtitle"><%= clientable.comune&.upcase %></span>
+  <% end %>
+<% else %>
+  <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
+  <span class="card__subtitle"><%= clientable.comune&.upcase %></span>
 <% end %>

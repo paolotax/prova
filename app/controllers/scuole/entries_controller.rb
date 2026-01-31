@@ -6,10 +6,19 @@ module Scuole
     before_action :set_scuola
 
     def show
-      # Escludi appunti SSK (saggio, seguito, kit)
-      appunti_non_ssk = @scuola.appunti.where.not(nome: %w[saggio seguito kit])
-      appunto_ids = appunti_non_ssk.pluck(:id).map(&:to_s)
-      documento_ids = Documento.where(clientable: @scuola).pluck(:id).map(&:to_s)
+      # IDs delle classi della scuola
+      classe_ids = @scuola.classi.pluck(:id)
+
+      # Appunti: scuola + classi (escludi SSK)
+      appunti_scuola = @scuola.appunti.where.not(nome: %w[saggio seguito kit])
+      appunti_classi = Appunto.where(appuntabile_type: "Classe", appuntabile_id: classe_ids)
+                              .where.not(nome: %w[saggio seguito kit])
+      appunto_ids = (appunti_scuola.pluck(:id) + appunti_classi.pluck(:id)).map(&:to_s)
+
+      # Documenti: scuola + classi
+      documenti_scuola = Documento.where(clientable: @scuola)
+      documenti_classi = Documento.where(clientable_type: "Classe", clientable_id: classe_ids)
+      documento_ids = (documenti_scuola.pluck(:id) + documenti_classi.pluck(:id)).map(&:to_s)
 
       @entries = Entry.where(account: Current.account)
                       .active
@@ -25,9 +34,8 @@ module Scuole
 
       # Fallback: carica direttamente appunti/documenti se no entries
       if @entries.empty?
-        @appunti = appunti_non_ssk.attivi.order(updated_at: :desc).limit(5)
-        @documenti = Documento.where(clientable: @scuola)
-                              .order(updated_at: :desc).limit(5)
+        @appunti = Appunto.where(id: appunto_ids).attivi.order(updated_at: :desc).limit(5)
+        @documenti = Documento.where(id: documento_ids).order(updated_at: :desc).limit(5)
       end
     end
 

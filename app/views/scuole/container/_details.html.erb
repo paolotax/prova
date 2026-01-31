@@ -2,7 +2,9 @@
 
 <!-- Dati Identificativi -->
 <article class="panel shadow">
-  <h3 class="txt-medium font-weight-black margin-block-end-half">Dati Scuola</h3>
+  <h1 class="txt-large font-weight-black margin-block-end-half">
+    <%= scuola.denominazione %>
+  </h1>
   <dl class="dl-grid txt-small">
     <% if scuola.codice_ministeriale.present? %>
       <dt class="txt-subtle">Codice Ministeriale</dt>
@@ -13,12 +15,15 @@
       <dt class="txt-subtle">Tipo Scuola</dt>
       <dd><%= scuola.tipo_scuola %></dd>
     <% end %>
-  </dl>
-</article>
 
-<!-- Indirizzo -->
-<article class="panel shadow">
-  <h3 class="txt-medium font-weight-black margin-block-end-half">Indirizzo</h3>
+    <% if scuola.import_scuola&.DENOMINAZIONEISTITUTORIFERIMENTO.present? %>
+      <dt class="txt-subtle">Istituto Riferimento</dt>
+      <dd><%= scuola.import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO.titleize %></dd>
+    <% end %>
+  </dl>
+
+  <h3 class="divider txt-medium font-weight-black margin-block-end-half">Indirizzo</h3>
+
   <dl class="dl-grid txt-small">
     <% if scuola.indirizzo.present? %>
       <dt class="txt-subtle">Via</dt>
@@ -36,11 +41,9 @@
       <dd><%= scuola.regione %></dd>
     <% end %>
   </dl>
-</article>
 
-<!-- Contatti -->
-<article class="panel shadow">
-  <h3 class="txt-medium font-weight-black margin-block-end-half">Contatti</h3>
+  <h3 class="divider txt-medium font-weight-black margin-block-end-half">Contatti</h3>
+
   <dl class="dl-grid txt-small">
     <dt class="txt-subtle">Telefono</dt>
     <dd><%= scuola.telefono.present? ? link_to(scuola.telefono, "tel:#{scuola.telefono}") : "—" %></dd>
