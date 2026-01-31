@@ -6,7 +6,7 @@
       <%= truncate(appunto.content.to_plain_text, length: 60) %>
     </p>
     <p class="txt-xx-small txt-subtle margin-none">
-      Appunto · <%= time_ago_in_words(appunto.updated_at) %> fa
+      <% if appunto.nome.present? %><%= appunto.nome %> · <% end %>Appunto · <%= time_ago_in_words(appunto.updated_at) %> fa
     </p>
   </div>
 <% end %>

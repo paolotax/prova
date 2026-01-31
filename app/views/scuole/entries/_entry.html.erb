@@ -15,6 +15,9 @@
       <% end %>
     </p>
     <p class="txt-xx-small txt-subtle margin-none">
+      <% if entryable.is_a?(Appunto) && entryable.nome.present? %>
+        <%= entryable.nome %> ·
+      <% end %>
       <%= entryable.class.model_name.human %> · <%= time_ago_in_words(entry.updated_at) %> fa
     </p>
   </div>
