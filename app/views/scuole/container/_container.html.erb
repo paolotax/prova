@@ -1,14 +1,14 @@
 <%# locals: (scuola:) -%>
 
 <div class="settings margin-block-start-half">
-  <!-- Colonna principale -->
-  <div class="flex flex-column gap flex-1">
+  <!-- Colonna sinistra -->
+  <div class="settings__panel">
     <%= render "scuole/container/details", scuola: scuola %>
     <%= render "scuole/container/classi", scuola: scuola, classi: @classi %>
   </div>
 
-  <!-- Sidebar -->
-  <aside class="settings__panel settings__panel--users center">
+  <!-- Colonna destra -->
+  <div class="settings__panel">
     <%= render "scuole/container/stats", scuola: scuola %>
     <%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(scuola), loading: :lazy, style: "display: block; min-height: 120px;" do %>
       <article class="panel shadow">
@@ -19,5 +19,5 @@
       </article>
     <% end %>
     <%= render "scuole/container/actions", scuola: scuola %>
-  </aside>
+  </div>
 </div>
