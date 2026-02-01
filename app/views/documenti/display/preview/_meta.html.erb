@@ -2,7 +2,6 @@
 
 <div class="card__meta" id="<%= dom_id(documento, :meta) %>">
   <div class="card__meta-avatars card__meta-avatars--author">
-
   </div>
 
   <span class="card__meta-text card__meta-text--added">
@@ -28,14 +27,19 @@
   </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    COPIE <strong><%= documento.totale_copie %></strong>
+    &nbsp;
   </span>
 
   <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    &nbsp;
+  </span>
+
+  <span class="card__meta-text card__meta-text--copie">
+    COPIE <strong><%= documento.totale_copie %></strong>
+  </span>
+
+  <span class="card__meta-text card__meta-text--importo">
     IMPORTO
     <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
   </span>
-
-  <div class="card__meta-avatars card__meta-avatars--assignees">
-  </div>
 </div>
