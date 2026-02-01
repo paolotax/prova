@@ -4,7 +4,7 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% info = referrer_back_info || { label: "Libri", path: libri_path } %>
-    <%= back_link_to info[:label], info[:path], "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click" %>
+    <%= back_link_to info[:label], info[:path] %>
   </div>
 
   <div class="header__actions header__actions--end">

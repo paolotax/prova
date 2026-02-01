@@ -1,3 +1,9 @@
+<%# Aggiorna elemento nella lista (se presente) %>
+<%= turbo_stream.replace @appunto do %>
+  <%= render @appunto %>
+<% end %>
+
+<%# Aggiorna parti della show page %>
 <%= turbo_stream.replace [@appunto, :edit] do %>
   <%= turbo_frame_tag @appunto, :edit do %>
     <%= render "appunti/container/content_display", appunto: @appunto %>

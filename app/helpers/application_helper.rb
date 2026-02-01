@@ -8,7 +8,8 @@ module ApplicationHelper
     tag.span class: class_names("icon icon--#{name}", options.delete(:class)), "aria-hidden": true, **options
   end
 
-  def back_link_to(label, url, action, **options)
+  def back_link_to(label, url, **options)
+    action = "keydown.left@document->hotkey#click keydown.esc@document->hotkey#click click->turbo-navigation#backIfSamePath"
     link_to url, class: "btn btn--back", data: { controller: "hotkey", action: action }, **options do
       icon_tag("arrow-left") + tag.strong("Torna a #{label}", class: "overflow-ellipsis") + tag.kbd("ESC", class: "txt-x-small hide-on-touch").html_safe
     end
