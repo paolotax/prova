@@ -220,10 +220,10 @@
     font-size: var(--text-x-small);
     font-weight: 500;
     grid-template-areas:
-      "avatars-author text-added text-updated avatars-assignees"
-      "avatars-author text-author text-assignees avatars-assignees";
+      "avatars-author text-added text-updated text-copie"
+      "avatars-author text-author text-assignees text-importo";
     grid-template-columns: auto auto 1fr auto;
-    inline-size: fit-content;
+    inline-size: 100%;
     text-transform: uppercase;
 
     strong,
@@ -238,7 +238,18 @@
   .card__meta-text--added { grid-area: text-added; }
   .card__meta-text--author { grid-area: text-author; }
   .card__meta-text--updated { grid-area: text-updated; }
-  .card__meta-text--assignees { grid-area: text-assignees; }
+  .card__meta-text--copie {
+    grid-area: text-copie;
+    text-align: end;
+    border-inline-start: var(--card-border);
+    padding-inline-start: var(--meta-spacer-inline);
+  }
+  .card__meta-text--importo {
+    grid-area: text-importo;
+    text-align: end;
+    border-inline-start: var(--card-border);
+    padding-inline-start: var(--meta-spacer-inline);
+  }
 
   .card__meta-avatars {
     align-self: center;
