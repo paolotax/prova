@@ -1,0 +1,46 @@
+<%# locals: (appunto:) -%>
+
+<div class="card__meta" id="<%= dom_id(appunto, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+  </div>
+
+  <span class="card__meta-text card__meta-text--added">
+    <span>
+      Creato
+      <strong><%= appunto.created_at&.strftime("%d/%m/%Y") %></strong>
+    </span>
+  </span>
+
+  <span class="card__meta-text card__meta-text--author">
+    <span>
+      <% if appunto.telefono.present? %>
+        <%= icon_tag "phone" %>
+        <%= appunto.telefono %>
+      <% end %>
+      <% if appunto.email.present? %>
+        <%= icon_tag "mail" %>
+        <%= appunto.email %>
+      <% end %>
+    </span>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+    &nbsp;
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    &nbsp;
+  </span>
+
+  <span class="card__meta-text card__meta-text--copie txt-align-end">
+    <% if appunto.totale_copie.to_i > 0 %>
+      Copie <strong><%= appunto.totale_copie %></strong>
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--importo txt-align-end">
+    <% if appunto.totale_cents.to_i > 0 %>
+      Importo <strong><%= number_to_currency(appunto.totale, locale: :it) %></strong>
+    <% end %>
+  </span>
+</div>

@@ -1,21 +1,28 @@
-<%# locals: (appunto:, draggable: false) -%>
+<%# locals: (appunto:, entry: nil, draggable: false) -%>
 
+<% entry ||= appunto.entry rescue nil %>
 <% draggable = draggable && appunto.published? %>
 
 <% card_data = {
-  id: appunto.number,
-  drag_and_drop_target: "item",
   navigable_list_target: "item",
-  css_variable_counter_target: "item"
+  action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
 } %>
 
-<% if appunto.open? %>
-  <% card_data[:card_not_now_url] = appunto_not_now_path(appunto) %>
-  <% card_data[:card_closure_url] = appunto_closure_path(appunto) %>
-  <% card_data[:action] = "mouseenter->navigable-list#hoverSelect" %>
+<% if entry && draggable %>
+  <% card_data[:id] = entry.id %>
+  <% card_data[:drag_and_drop_target] = "item" %>
+  <% card_data[:css_variable_counter_target] = "item" %>
 <% end %>
 
-<%= appunto_article_tag appunto, class: "card", draggable: draggable, data: card_data, tabindex: 0 do %>
+<%= tag.article id: dom_id(appunto),
+    class: class_names("card", appunto_stato_modifier(appunto), appunto_golden_class(appunto)),
+    style: "--card-color: #{appunto_color(appunto)};",
+    tabindex: 0,
+    draggable: (draggable && entry.present?),
+    data: card_data do %>
+  <label class="card__checkbox">
+    <%= check_box_tag "ids[]", appunto.id, false, data: { action: "change->bulk-actions#count" } %>
+  </label>
   <div class="flex flex-column flex-item-grow max-inline-size">
     <%= link_to appunto_path(appunto), draggable: false, class: "card__link", data: { action: "dialog#close", turbo_frame: "_top" } do %>
       <span class="for-screen-reader"><%= appunto.nome %></span>
@@ -41,13 +48,25 @@
             <%= appunto.appuntabile.denominazione %>
           </span>
         <% end %>
+
+        <% if appunto.content.present? %>
+          <div class="txt-x-small margin-inline-start-half overflow-line-clamp" style="margin-top: 0.5ch; --lines: 2; color: var(--card-content-color)">
+            <%= tag.span appunto.content %>
+          </div>
+        <% end %>
+
+        <% if appunto.body.present? %>
+          <div class="txt-small margin-block-start-half overflow-line-clamp" style="--lines: 2; color: var(--card-content-color)">
+            <%= tag.span appunto.body, class: "overflow-line-clamp" %>
+          </div>
+        <% end %>
       </div>
 
       <%= render "appunti/display/preview/columns", appunto: appunto %>
     </div>
   </div>
 
-  <footer class="card__footer flex gap-half">
+  <footer class="card__footer">
     <%= render "appunti/display/preview/meta", appunto: appunto %>
   </footer>
 <% end %>
