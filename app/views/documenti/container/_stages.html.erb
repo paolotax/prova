@@ -1,7 +1,7 @@
 <%# locals: (documento:) -%>
 <%# Mostra solo i badge di stato - il pulsante Gestisci è nel footer %>
 
-<div class="flex flex-column gap-quarter">
+<div id="<%= dom_id(documento, :stages) %>" class="flex flex-column gap-quarter">
   <% if documento.consegnato? %>
     <span class="badge badge--small" style="--badge-color: var(--color-positive);">
       <%= icon_tag "truck" %>

@@ -19,6 +19,7 @@ module Documenti
     # DELETE /documenti/:documento_id/consegna
     def destroy
       @documento.unmark_consegnato
+      @documento.reload
 
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
@@ -40,11 +41,18 @@ module Documenti
     end
 
     def render_container_replacement
-      render turbo_stream: turbo_stream.replace(
-        dom_id(@documento, :container),
-        partial: "documenti/container",
-        locals: { documento: @documento }
-      )
+      render turbo_stream: [
+        turbo_stream.replace(
+          dom_id(@documento, :meta),
+          partial: "documenti/display/perma/meta",
+          locals: { documento: @documento }
+        ),
+        turbo_stream.replace(
+          dom_id(@documento, :gestione_dialog),
+          partial: "documenti/container/gestione_dialog_content",
+          locals: { documento: @documento }
+        )
+      ]
     end
   end
 end
