@@ -293,6 +293,40 @@ class Documento < ApplicationRecord
     end
   end
 
+  # Documenti esistenti a cui posso aggiungere le righe
+  # (causale successiva valida, stesso cliente, non chiusi)
+  def documenti_derivabili_esistenti
+    return Documento.none unless causale&.causali_successive_records&.any?
+
+    Documento.where(causale: causale.causali_successive_records)
+      .where(clientable_type: clientable_type, clientable_id: clientable_id)
+      .where(account_id: account_id)
+      .where.not(id: id)
+      .where.not(id: documento_padre_id) # Evita riferimenti circolari
+      .order(data_documento: :desc)
+      .limit(10)
+  end
+
+  # Label per il select nella dialog di derivazione
+  def label_per_select
+    "#{causale&.causale} #{numero_documento} del #{data_documento&.strftime('%d/%m/%Y')}"
+  end
+
+  # Aggiunge le righe di questo documento a uno esistente
+  def aggiungi_righe_a(documento_target)
+    transaction do
+      documento_righe.each do |doc_riga|
+        riga_duplicata = doc_riga.riga.dup
+        riga_duplicata.save!
+        documento_target.documento_righe.create!(riga: riga_duplicata)
+      end
+
+      # Imposta questo documento come figlio del target
+      update!(documento_padre: documento_target)
+    end
+    documento_target
+  end
+
   # Trova lo stato precedente nella gerarchia degli stati_successivi della propria causale
   def trova_stato_precedente_nella_causale
     Rails.logger.debug "    trova_stato_precedente_nella_causale per: #{causale&.causale}"

@@ -5,8 +5,9 @@ module Pagabile
     has_one :pagamento, as: :pagabile, dependent: :destroy
   end
 
-  def mark_pagato(user: Current.user, tipo_pagamento: nil)
-    create_pagamento!(user: user, pagato_il: Time.current, tipo_pagamento: tipo_pagamento) unless pagato?
+  def mark_pagato(user: Current.user, pagato_il: nil, tipo_pagamento: nil)
+    pagato_il ||= Time.current
+    create_pagamento!(user: user, pagato_il: pagato_il, tipo_pagamento: tipo_pagamento, account: Current.account) unless pagato?
   end
 
   def unmark_pagato

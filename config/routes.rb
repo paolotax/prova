@@ -184,6 +184,9 @@ Rails.application.routes.draw do
         resources :righe, only: [:create]
         resource :export, only: [:show]
         resource :status, only: [:edit, :update]
+        resource :consegna, only: [:create, :destroy]
+        resource :pagamento, only: [:create, :destroy]
+        resource :derivazione, only: [:create]
       end
       collection do
         get "filtra"

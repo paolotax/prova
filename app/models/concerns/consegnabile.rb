@@ -5,8 +5,9 @@ module Consegnabile
     has_one :consegna, as: :consegnabile, dependent: :destroy
   end
 
-  def mark_consegnato(user: Current.user)
-    create_consegna!(user: user, consegnato_il: Time.current) unless consegnato?
+  def mark_consegnato(user: Current.user, consegnato_il: nil)
+    consegnato_il ||= Time.current
+    create_consegna!(user: user, consegnato_il: consegnato_il, account: Current.account) unless consegnato?
   end
 
   def unmark_consegnato
