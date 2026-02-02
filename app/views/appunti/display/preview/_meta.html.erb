@@ -5,37 +5,47 @@
   </div>
 
   <span class="card__meta-text card__meta-text--added">
-    <span class="txt-x-small txt-uppercase">Creato</span>
-    <strong><%= appunto.created_at&.strftime("%d/%m/%y") %></strong>
+    <span class="txt-x-small">Creato</span> 
+    <%= local_datetime_tag(appunto.created_at, style: :daysago) %>
   </span>
 
   <span class="card__meta-text card__meta-text--author">
+    <% if appunto.entry&.closed? %>
+      <%= icon_tag "check" %>
+      Chiuso
+      <strong><%= appunto.entry.closed_at&.strftime("%d/%m/%y") %></strong>
+    <% elsif appunto.entry&.postponed? %>
+      <%= icon_tag "clock" %>
+      Rimandato
+      <strong><%= appunto.entry.postponed_at&.strftime("%d/%m/%y") %></strong>
+    <% else %>
+      <%= icon_tag "refresh--meta" %>
+      Modificato
+      <strong><%= appunto.updated_at&.strftime("%d/%m/%y") %></strong>
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
     <% if appunto.telefono.present? %>
       <%= icon_tag "phone" %>
       <%= appunto.telefono %>
-    <% elsif appunto.email.present? %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+    <% if appunto.email.present? %>
       <%= icon_tag "mail" %>
       <%= truncate(appunto.email, length: 20) %>
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    &nbsp;
-  </span>
-
-  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
-    &nbsp;
-  </span>
-
   <span class="card__meta-text card__meta-text--copie">
-    <% if appunto.totale_copie.to_i > 0 %>
-      Copie <strong><%= appunto.totale_copie %></strong>
-    <% end %>
+
   </span>
 
   <span class="card__meta-text card__meta-text--importo">
-    <% if appunto.totale_cents.to_i > 0 %>
-      <strong><%= number_to_currency(appunto.totale, locale: :it) %></strong>
-    <% end %>
+
   </span>
 </div>

@@ -25,7 +25,19 @@
   </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    &nbsp;
+    <% if appunto.entry&.closed? %>
+      <%= icon_tag "check" %>
+      Chiuso
+      <strong><%= appunto.entry.closed_at&.strftime("%d/%m/%Y") %></strong>
+    <% elsif appunto.entry&.postponed? %>
+      <%= icon_tag "clock" %>
+      Rimandato
+      <strong><%= appunto.entry.postponed_at&.strftime("%d/%m/%Y") %></strong>
+    <% else %>
+      <%= icon_tag "refresh--meta" %>
+      Modificato
+      <strong><%= appunto.updated_at&.strftime("%d/%m/%Y") %></strong>
+    <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
