@@ -1,11 +1,10 @@
 <%# locals: (documento:) -%>
 
-<dialog class="dialog panel shadow"
-        style="--panel-size: 45ch;"
-        data-dialog-target="dialog"
-        data-action="keydown.esc->dialog#close">
+<dialog class="dialog panel fill-white shadow gap flex-column"
+        style="max-width: 50ch;"
+        data-dialog-target="dialog">
 
-  <header class="flex justify-space-between align-center margin-block-end">
+  <header class="flex justify-space-between align-center">
     <h3 class="txt-large txt-bold">Gestione Documento</h3>
     <button type="button" class="btn btn--circle btn--small" data-action="dialog#close">
       <%= icon_tag "x" %>
@@ -13,7 +12,7 @@
   </header>
 
   <%# === SEZIONE CONSEGNA === %>
-  <section class="margin-block-end padding-block-end border-block-end">
+  <section class="padding-block border-block-end">
     <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Consegna</h4>
 
     <% if documento.consegnato? %>
@@ -44,7 +43,7 @@
   </section>
 
   <%# === SEZIONE PAGAMENTO === %>
-  <section class="margin-block-end padding-block-end border-block-end">
+  <section class="padding-block border-block-end">
     <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Pagamento</h4>
 
     <% if documento.pagato? %>
@@ -96,7 +95,7 @@
   <%# === SEZIONE REGISTRAZIONE === %>
   <% causali_successive = documento.causale&.causali_successive_records %>
   <% if causali_successive&.any? %>
-    <section>
+    <section class="padding-block-start">
       <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Registrazione</h4>
 
       <%= form_with url: documento_derivazione_path(documento),

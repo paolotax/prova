@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Documenti
-  class DerivazioniController < ApplicationController
+  class DerivazioneController < ApplicationController
     before_action :set_documento
 
     # POST /documenti/:documento_id/derivazione

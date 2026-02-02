@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Documenti
-  class ConsegneController < ApplicationController
+  class ConsegnaController < ApplicationController
+    include ActionView::RecordIdentifier
+
     before_action :set_documento
 
     # POST /documenti/:documento_id/consegna

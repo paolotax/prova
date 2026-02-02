@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Documenti
-  class PagamentiController < ApplicationController
+  class PagamentoController < ApplicationController
+    include ActionView::RecordIdentifier
+
     before_action :set_documento
 
     # POST /documenti/:documento_id/pagamento

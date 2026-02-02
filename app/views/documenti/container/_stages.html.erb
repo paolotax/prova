@@ -1,7 +1,7 @@
 <%# locals: (documento:) -%>
+<%# Mostra solo i badge di stato - il pulsante Gestisci è nel footer %>
 
-<div class="card__stages flex gap-half align-center" data-controller="dialog">
-  <%# Indicatori stato corrente %>
+<div class="flex flex-column gap-quarter">
   <% if documento.consegnato? %>
     <span class="badge badge--small" style="--badge-color: var(--color-positive);">
       <%= icon_tag "truck" %>
@@ -14,17 +14,8 @@
       <%= icon_tag "cash" %>
       <%= documento.pagato_il&.strftime("%d/%m") %>
       <% if documento.tipo_pagamento.present? %>
-        (<%= documento.tipo_pagamento %>)
+        <%= documento.tipo_pagamento %>
       <% end %>
     </span>
   <% end %>
-
-  <%# Pulsante apertura dialog %>
-  <button type="button" class="btn btn--small" data-action="dialog#open">
-    <%= icon_tag "settings" %>
-    <span>Gestisci</span>
-  </button>
-
-  <%# Dialog %>
-  <%= render "documenti/container/gestione_dialog", documento: documento %>
 </div>

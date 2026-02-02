@@ -184,9 +184,9 @@ Rails.application.routes.draw do
         resources :righe, only: [:create]
         resource :export, only: [:show]
         resource :status, only: [:edit, :update]
-        resource :consegna, only: [:create, :destroy]
-        resource :pagamento, only: [:create, :destroy]
-        resource :derivazione, only: [:create]
+        resource :consegna, only: [:create, :destroy], controller: "consegna"
+        resource :pagamento, only: [:create, :destroy], controller: "pagamento"
+        resource :derivazione, only: [:create], controller: "derivazione"
       end
       collection do
         get "filtra"
@@ -310,8 +310,8 @@ Rails.application.routes.draw do
         resource :goldness,  only: [:create, :destroy]
         resource :closure,   only: [:create, :destroy]
         resource :not_now,   only: [:create, :destroy]
-        resource :consegna,  only: [:create, :destroy]
-        resource :pagamento, only: [:create, :destroy]
+        resource :consegna,  only: [:create, :destroy], controller: "consegne"
+        resource :pagamento, only: [:create, :destroy], controller: "pagamenti"
         resource :publication, only: [:create, :destroy]
         resource :image, only: [:destroy]
         resources :attachments, only: [:destroy]
