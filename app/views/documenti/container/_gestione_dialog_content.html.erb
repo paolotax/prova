@@ -25,7 +25,7 @@
           </button>
           <%= button_to documento_consegna_path(documento),
                 method: :delete,
-                class: "btn btn--small btn--negative" do %>
+                class: "btn btn--small btn--reversed txt-negative" do %>
             <%= icon_tag "trash" %>
           <% end %>
         </div>
@@ -42,7 +42,7 @@
           </div>
           <div class="flex gap-quarter">
             <%= f.submit "Salva", class: "btn btn--small" %>
-            <button type="button" class="btn btn--small" data-action="inline-edit#showView">Annulla</button>
+            <button type="button" class="btn btn--small btn--reversed" data-action="inline-edit#showView">Annulla</button>
           </div>
         <% end %>
       </div>
@@ -79,7 +79,7 @@
           </button>
           <%= button_to documento_pagamento_path(documento),
                 method: :delete,
-                class: "btn btn--small btn--negative" do %>
+                class: "btn btn--small btn--reversed txt-negative" do %>
             <%= icon_tag "trash" %>
           <% end %>
         </div>
@@ -112,7 +112,7 @@
           </div>
           <div class="flex gap-quarter justify-end">
             <%= f.submit "Salva", class: "btn btn--small" %>
-            <button type="button" class="btn btn--small" data-action="inline-edit#showView">Annulla</button>
+            <button type="button" class="btn btn--small btn--reversed" data-action="inline-edit#showView">Annulla</button>
           </div>
         <% end %>
       </div>
