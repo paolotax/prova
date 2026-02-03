@@ -18,10 +18,8 @@ class MigrateExistingRecordsToEntries < ActiveRecord::Migration[8.0]
       FROM accounts
       CROSS JOIN (
         VALUES
-          ('Consegna Collana', '#22c55e', 0),
-          ('Ritiro Collana', '#f97316', 1),
-          ('Consegna Vacanze', '#3b82f6', 2),
-          ('Ritiro Vacanze', '#8b5cf6', 3)
+          ('Nel Baule', '#22c55e', 0),
+          ('La prossima settimana', '#f97316', 1)
       ) AS col(name, color, position)
       WHERE NOT EXISTS (
         SELECT 1 FROM columns

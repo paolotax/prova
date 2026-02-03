@@ -37,10 +37,8 @@ class Column < ApplicationRecord
 
   # Default columns for new accounts
   DEFAULT_COLUMNS = [
-    { name: "Consegna Collana", color: "var(--color-card-4)" },   # Lime
-    { name: "Ritiro Collana", color: "var(--color-card-2)" },     # Tan/Orange
-    { name: "Consegna Vacanze", color: "var(--color-card-default)" }, # Blue
-    { name: "Ritiro Vacanze", color: "var(--color-card-7)" }      # Purple
+    { name: "Nel baule", color: "var(--color-card-4)" },   # Lime
+    { name: "La prossima", color: "var(--color-card-2)" }    # Purple
   ].freeze
 
   def self.create_defaults_for(account)
