@@ -30,7 +30,7 @@
             class: "flex gap-half align-end" do |f| %>
         <div class="flex-grow">
           <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-          <%= f.date_field :consegnato_il, value: Date.today, class: "input input--select" %>
+          <%= f.date_field :consegnato_il, value: Date.today, class: "input input--date" %>
         </div>
         <%= f.submit "Segna consegnato", class: "btn txt-small" %>
       <% end %>
@@ -63,7 +63,7 @@
         <div class="flex gap-half">
           <div class="flex-grow">
             <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-            <%= f.date_field :pagato_il, value: Date.today, class: "input input--select" %>
+            <%= f.date_field :pagato_il, value: Date.today, class: "input input--date" %>
           </div>
           <div class="flex-grow">
             <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
