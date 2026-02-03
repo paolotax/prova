@@ -179,6 +179,11 @@ class Documento < ApplicationRecord
     pagamento.present? || read_attribute(:pagato_il).present?
   end
 
+  def unmark_pagato
+    super
+    update_columns(pagato_il: nil, tipo_pagamento: nil)
+  end
+
   def pagato_il
     pagamento&.pagato_il || read_attribute(:pagato_il)
   end
@@ -189,6 +194,11 @@ class Documento < ApplicationRecord
 
   def consegnato?
     consegna.present? || read_attribute(:consegnato_il).present?
+  end
+
+  def unmark_consegnato
+    super
+    update_column(:consegnato_il, nil)
   end
 
   def tipo_pagamento
