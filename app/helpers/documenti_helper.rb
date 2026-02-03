@@ -27,9 +27,15 @@ module DocumentiHelper
     # Colors aligned with causale_bg_class but as oklch values
     def documento_color(documento)
       return "oklch(0.7 0.01 0)" unless documento&.causale  # gray
+      causale_color(documento.causale)
+    end
 
-      tipo = documento.causale.tipo_movimento
-      mov = documento.causale.movimento
+    # Returns CSS color based on causale's tipo_movimento and movimento
+    def causale_color(causale)
+      return "oklch(0.7 0.01 0)" unless causale
+
+      tipo = causale.tipo_movimento
+      mov = causale.movimento
 
       case [tipo, mov]
       when ["ordine", "entrata"]   then "oklch(0.6 0.15 250)"  # blue

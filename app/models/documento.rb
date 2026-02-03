@@ -70,11 +70,13 @@ class Documento < ApplicationRecord
   before_save :ricalcola_totali_se_necessario
   after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
   after_destroy :riporta_documenti_orfani_a_stato_precedente
+  before_destroy :riapri_documenti_figli
 
   # Callback per concern: propaga pagamento ai figli e auto-close
   after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
   after_save :auto_close_se_completo
-  after_create :close_if_has_padre
+  # Rimosso: la chiusura del documento origine viene gestita nel controller
+  # after_create :close_if_has_padre
 
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
   enum :tipo_pagamento,
@@ -259,7 +261,7 @@ class Documento < ApplicationRecord
 
   def genera_documento_derivato(causale_nuova, attributes = {})
     nuovo = self.class.new(
-      documento_padre: self,
+      # Il nuovo documento NON ha padre (è il documento principale)
       derivato_da_causale: self.causale,
       causale: causale_nuova,
       clientable: clientable,
@@ -270,7 +272,7 @@ class Documento < ApplicationRecord
 
     nuovo.assign_attributes(attributes)
 
-    # Copia le righe del documento padre
+    # Copia le righe del documento origine
     documento_righe.each do |doc_riga|
       nuovo.documento_righe.build(
         riga: doc_riga.riga.dup,
@@ -440,6 +442,13 @@ class Documento < ApplicationRecord
   # Verifica se il documento è appena stato marcato come pagato
   def just_marked_pagato?
     pagamento.present? && pagamento.previously_new_record?
+  end
+
+  # Riapre i documenti figli quando il padre viene eliminato
+  def riapri_documenti_figli
+    documenti_derivati.each do |figlio|
+      figlio.reopen if figlio.closed?
+    end
   end
 
   # Riporta tutti i documenti collegati dello stesso cliente allo stato precedente

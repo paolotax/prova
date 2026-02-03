@@ -12,10 +12,7 @@ module Documenti
         crea_nuovo_derivato
       end
 
-      respond_to do |format|
-        format.html { redirect_to documento_path(@derivato), notice: "Documento registrato" }
-        format.turbo_stream { redirect_to documento_path(@derivato) }
-      end
+      redirect_to documento_path(@derivato), notice: "Documento registrato"
     end
 
     private
@@ -25,16 +22,42 @@ module Documenti
     end
 
     def crea_nuovo_derivato
-      causale = current_account.causali.find(params[:causale_id])
+      causale = Causale.find(params[:causale_id])
+      numero = params[:numero_documento].presence || prossimo_numero(causale)
 
-      unless @documento.puo_generare_da_causale?(causale)
-        raise ActiveRecord::RecordInvalid, "Causale non valida per derivazione"
-      end
-
-      @documento.genera_documento_derivato(causale, {
-        numero_documento: params[:numero_documento],
-        data_documento: Date.today
+      derivato = @documento.genera_documento_derivato(causale, {
+        numero_documento: numero,
+        data_documento: Date.today,
+        account: current_account
       })
+
+      derivato.save!
+
+      # Ricalcola i totali (reload per avere le righe aggiornate)
+      derivato.reload
+      derivato.ricalcola_totali!
+
+      # Crea entry per il nuovo documento (aperto)
+      derivato.ensure_entry!
+
+      # Il documento origine diventa "figlio" del nuovo documento
+      @documento.update!(documento_padre_id: derivato.id)
+
+      # Chiude il documento origine
+      @documento.ensure_entry!
+      @documento.close unless @documento.closed?
+
+      derivato
+    end
+
+    def prossimo_numero(causale)
+      anno_corrente = Date.current.year
+      ultimo = current_account.documenti
+        .where(causale: causale)
+        .where("EXTRACT(YEAR FROM data_documento) = ?", anno_corrente)
+        .maximum(:numero_documento)
+
+      (ultimo || 0) + 1
     end
 
     def aggiungi_a_esistente
