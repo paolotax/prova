@@ -26,6 +26,8 @@ class MigrateExistingRecordsToEntries < ActiveRecord::Migration[8.0]
         WHERE columns.account_id = accounts.id
         AND columns.name = col.name
       );
+          ('Consegna Vacanze', '#3b82f6', 2),
+          ('Ritiro Vacanze', '#8b5cf6', 3)
     SQL
 
     # =========================================
