@@ -1,0 +1,14 @@
+<%# Aggiorna le card dei documenti modificati %>
+<% @documenti.each do |documento| %>
+  <% entry = documento.entry rescue nil %>
+  <%= turbo_stream.replace (entry ? dom_id(entry) : dom_id(documento)) do %>
+    <%= render "documenti/documento", documento: documento %>
+  <% end %>
+<% end %>
+
+<%# Mostra notifica %>
+<%= turbo_stream.prepend "flash" do %>
+  <div class="flash flash--notice" data-controller="flash">
+    <%= pluralize(@documenti.count, "documento aggiornato", "documenti aggiornati") %>
+  </div>
+<% end %>

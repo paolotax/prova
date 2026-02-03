@@ -26,6 +26,24 @@
     <span>Unisci</span>
   </button>
 
+  <%# Consegna %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="consegna">
+    <%= icon_tag "truck" %>
+    <span>Consegna</span>
+  </button>
+
+  <%# Pagamento %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="pagamento">
+    <%= icon_tag "banknotes" %>
+    <span>Pagamento</span>
+  </button>
+
   <%# Stato %>
   <button type="button" class="btn"
           data-action="bulk-bar#showForm"
@@ -90,6 +108,89 @@
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
       </div>
     <% end %>
+  </div>
+
+  <%# Form Consegna %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="consegna">
+    <span class="bulk-bar__form-title">Segna come consegnato</span>
+
+    <%= form_with url: documenti_bulk_consegne_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <%= f.hidden_field :consegnato_il, value: Date.today %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Oggi", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: documenti_bulk_consegne_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <%= f.hidden_field :consegnato_il, value: Date.tomorrow %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Domani", class: "btn" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: documenti_bulk_consegne_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.date_field :consegnato_il, class: "input", value: Date.today %>
+        <%= f.submit "Consegna", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: documenti_bulk_consegne_path,
+          method: :delete,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Rimuovi consegna", class: "btn btn--subtle" %>
+      </div>
+    <% end %>
+
+    <div class="bulk-bar__form-actions">
+      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+    </div>
+  </div>
+
+  <%# Form Pagamento %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="pagamento">
+    <span class="bulk-bar__form-title">Segna come pagato</span>
+
+    <%= form_with url: documenti_bulk_pagamenti_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <%= f.hidden_field :pagato_il, value: Date.today %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Oggi", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: documenti_bulk_pagamenti_path,
+          method: :post,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row flex gap-half">
+        <%= f.date_field :pagato_il, class: "input", value: Date.today %>
+        <%= f.select :tipo_pagamento,
+            Documento.tipo_pagamenti.keys.map { |t| [t.humanize, t] },
+            { include_blank: "Tipo pagamento" },
+            class: "input input--select" %>
+        <%= f.submit "Pagato", class: "btn btn--primary" %>
+      </div>
+    <% end %>
+
+    <%= form_with url: documenti_bulk_pagamenti_path,
+          method: :delete,
+          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+      <div class="bulk-bar__form-row">
+        <%= f.submit "Rimuovi pagamento", class: "btn btn--subtle" %>
+      </div>
+    <% end %>
+
+    <div class="bulk-bar__form-actions">
+      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+    </div>
   </div>
 
   <%# Form Stato %>

@@ -185,6 +185,8 @@ Rails.application.routes.draw do
       resource :merges, only: [:create]
       resource :deletions, only: [:create]
       resource :bulk_statuses, only: [:update]
+      resource :bulk_consegne, only: [:create, :destroy]
+      resource :bulk_pagamenti, only: [:create, :destroy]
     end
 
     resources :documenti do
