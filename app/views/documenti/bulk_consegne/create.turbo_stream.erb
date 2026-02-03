@@ -1,14 +1,11 @@
-<%# Aggiorna le card dei documenti modificati %>
-<% @documenti.each do |documento| %>
-  <% entry = documento.entry rescue nil %>
-  <%= turbo_stream.replace (entry ? dom_id(entry) : dom_id(documento)) do %>
-    <%= render "documenti/documento", documento: documento %>
-  <% end %>
+<%# Aggiorna il contenuto della dialog %>
+<%= turbo_stream.update "bulk-gestione-frame" do %>
+  <%= render "documenti/bulk_gestione/content", documenti: @documenti, documenti_per_cliente: @documenti_per_cliente %>
 <% end %>
 
-<%# Mostra notifica %>
-<%= turbo_stream.prepend "flash" do %>
-  <div class="flash flash--notice" data-controller="flash">
-    <%= pluralize(@documenti.count, "documento aggiornato", "documenti aggiornati") %>
-  </div>
+<%# Aggiorna ogni card documento nella lista %>
+<% @documenti.each do |documento| %>
+  <%= turbo_stream.replace dom_id(documento) do %>
+    <%= render "documenti/documento", documento: documento %>
+  <% end %>
 <% end %>

@@ -1,0 +1,176 @@
+<%# locals: (documenti:, documenti_per_cliente:) -%>
+
+<header class="flex justify-space-between align-center margin-block-end">
+  <h4 class="txt-large txt-subtle">Gestione Documenti</h4>
+  <button type="button" tabindex="-1" class="btn btn--circle txt-xx-small borderless btn--reversed" data-action="dialog#close">
+    <%= icon_tag "close" %>
+    <span class="for-screen-reader">Chiudi [esc]</span>
+  </button>
+</header>
+
+<div class="flex flex-column gap">
+  <% documenti_per_cliente.each do |clientable, docs| %>
+    <section class="border rounded padding">
+      <%# Header cliente %>
+      <header class="flex justify-space-between align-center margin-block-end-half">
+        <h5 class="txt-medium font-weight-bold flex align-center gap-half">
+          <% if clientable.is_a?(Scuola) || clientable.class.name.include?("Scuola") %>
+            <%= icon_tag "school", class: "txt-subtle" %>
+          <% else %>
+            <%= icon_tag "user", class: "txt-subtle" %>
+          <% end %>
+          <span class="overflow-ellipsis" style="max-width: 20ch;"><%= clientable&.denominazione || "Cliente non specificato" %></span>
+        </h5>
+        <span class="txt-small txt-subtle">
+          <%= pluralize(docs.size, "documento", "documenti") %>
+        </span>
+      </header>
+
+      <%# Lista documenti %>
+      <div class="flex flex-column gap-quarter">
+        <% docs.each do |documento| %>
+          <div class="flex justify-space-between align-center padding-half rounded" style="background: var(--color-bg-subtle);">
+            <div class="flex align-center gap-half">
+              <span class="badge" style="--badge-color: <%= causale_color(documento.causale) %>;">
+                <%= documento.causale&.causale %>
+              </span>
+              <span class="txt-small">
+                n. <%= documento.numero_documento %>
+              </span>
+              <span class="txt-small txt-subtle">
+                del <%= documento.data_documento&.strftime("%d/%m/%Y") %>
+              </span>
+            </div>
+            <div class="flex align-center gap-half">
+              <% importo_con_segno = documento.causale&.entrata? ? -documento.totale_importo : documento.totale_importo %>
+              <span class="txt-small font-weight-bold <%= 'txt-negative' if documento.causale&.entrata? %>">
+                <%= number_to_currency(importo_con_segno, unit: "€", format: "%n %u") %>
+              </span>
+              <% if documento.consegnato? %>
+                <span class="txt-positive" title="Consegnato il <%= documento.consegnato_il&.strftime('%d/%m/%Y') %>">
+                  <%= icon_tag "truck", size: "small" %>
+                </span>
+              <% end %>
+              <% if documento.pagato? %>
+                <span class="txt-positive" title="Pagato il <%= documento.pagato_il&.strftime('%d/%m/%Y') %><%= " (#{documento.tipo_pagamento})" if documento.tipo_pagamento.present? %>">
+                  <%= icon_tag "cash", size: "small" %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Totale cliente %>
+      <% totale_cliente = docs.sum { |d| d.causale&.entrata? ? -(d.totale_cents || 0) : (d.totale_cents || 0) } / 100.0 %>
+      <footer class="flex justify-end margin-block-start-half padding-block-start-half border-block-start">
+        <span class="txt-medium font-weight-bold <%= 'txt-negative' if totale_cliente < 0 %>">
+          Totale: <%= number_to_currency(totale_cliente, unit: "€", format: "%n %u") %>
+        </span>
+      </footer>
+    </section>
+  <% end %>
+</div>
+
+<%# Riepilogo totale %>
+<% totale_generale = documenti.sum { |d| d.causale&.entrata? ? -(d.totale_cents || 0) : (d.totale_cents || 0) } / 100.0 %>
+<footer class="margin-block-start padding-block-start border-block-start flex justify-space-between align-center">
+  <span class="txt-subtle">
+    <%= pluralize(documenti.size, "documento", "documenti") %> selezionati
+  </span>
+  <span class="txt-large font-weight-bold <%= 'txt-negative' if totale_generale < 0 %>">
+    Totale: <%= number_to_currency(totale_generale, unit: "€", format: "%n %u") %>
+  </span>
+</footer>
+
+<%# === SEZIONE CONSEGNA === %>
+<section class="padding-block border-block-end">
+  <h2 class="divider gap txt-medium txt-subtle">Consegna</h2>
+
+  <% consegnati_count = documenti.count(&:consegnato?) %>
+  <% non_consegnati_count = documenti.size - consegnati_count %>
+
+  <div class="flex flex-column align-center gap-half">
+    <span class="flex align-center gap-half txt-small txt-subtle">
+      <%= icon_tag "truck" %>
+      <%= consegnati_count %> consegnati, <%= non_consegnati_count %> da consegnare
+    </span>
+
+    <div class="flex flex-column align-center">
+      <label for="bulk_consegnato_il" class="txt-small txt-subtle">Data consegna</label>
+      <input type="date" name="consegnato_il" id="bulk_consegnato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_consegne_form">
+    </div>
+
+    <div class="flex gap-half align-center justify-center">
+      <%= form_with url: documenti_bulk_consegne_path,
+            method: :post,
+            id: "bulk_consegne_form",
+            style: "display: contents;" do |f| %>
+        <% documenti.each do |doc| %>
+          <%= hidden_field_tag "ids[]", doc.id %>
+        <% end %>
+        <%= f.submit "Segna consegnati", class: "btn txt-small", style: "--btn-background: var(--color-accent); --btn-border-color: var(--color-accent); --btn-color: var(--color-ink-inverted);" %>
+      <% end %>
+      <% if consegnati_count > 0 %>
+        <%= link_to documenti_bulk_consegne_path(ids: documenti.map(&:id)),
+              class: "btn btn--circle txt-small btn--reversed txt-negative",
+              data: { turbo_method: :delete, controller: "tooltip" } do %>
+          <%= icon_tag "trash" %>
+          <span class="for-screen-reader">Rimuovi consegne</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# === SEZIONE PAGAMENTO === %>
+<section class="padding-block border-block-end">
+  <h2 class="divider gap txt-medium txt-subtle">Pagamento</h2>
+
+  <% pagati_count = documenti.count(&:pagato?) %>
+  <% non_pagati_count = documenti.size - pagati_count %>
+
+  <div class="flex flex-column align-center gap-half">
+    <span class="flex align-center gap-half txt-small txt-subtle">
+      <%= icon_tag "banknotes" %>
+      <%= pagati_count %> pagati, <%= non_pagati_count %> da pagare
+    </span>
+
+    <div class="flex flex-column align-center">
+      <label for="bulk_pagato_il" class="txt-small txt-subtle">Data pagamento</label>
+      <input type="date" name="pagato_il" id="bulk_pagato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_pagamenti_form">
+    </div>
+
+    <div class="flex flex-column align-center">
+      <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
+      <select name="tipo_pagamento" id="bulk_tipo_pagamento" class="input input--select" form="bulk_pagamenti_form">
+        <option value="contanti" selected>Contanti</option>
+        <option value="bonifico">Bonifico</option>
+        <option value="assegno">Assegno</option>
+        <option value="bancomat">Bancomat</option>
+        <option value="carta_di_credito">Carta di credito</option>
+        <option value="cedole">Cedole</option>
+      </select>
+    </div>
+
+    <div class="flex gap-half align-center justify-center">
+      <%= form_with url: documenti_bulk_pagamenti_path,
+            method: :post,
+            id: "bulk_pagamenti_form",
+            style: "display: contents;" do |f| %>
+        <% documenti.each do |doc| %>
+          <%= hidden_field_tag "ids[]", doc.id %>
+        <% end %>
+        <%= f.submit "Segna pagati", class: "btn txt-small", style: "--btn-background: var(--color-accent); --btn-border-color: var(--color-accent); --btn-color: var(--color-ink-inverted);" %>
+      <% end %>
+      <% if pagati_count > 0 %>
+        <%= link_to documenti_bulk_pagamenti_path(ids: documenti.map(&:id)),
+              class: "btn btn--circle txt-small btn--reversed txt-negative",
+              data: { turbo_method: :delete, controller: "tooltip" } do %>
+          <%= icon_tag "trash" %>
+          <span class="for-screen-reader">Rimuovi pagamenti</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>

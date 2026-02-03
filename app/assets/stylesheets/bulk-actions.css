@@ -64,7 +64,7 @@
     margin: 0;
   }
 
-  .bulk-bar__menu .btn {
+  .bulk-bar__menu .btn:where(:not(dialog *)) {
     --btn-border-radius: 0.4em;
 
     align-content: end;
@@ -82,34 +82,34 @@
     text-align: center;
   }
 
-  .bulk-bar__menu .btn .icon {
+  .bulk-bar__menu .btn:where(:not(dialog *)) .icon {
     --icon-size: 1.25em;
   }
 
-  .bulk-bar__menu .btn span {
+  .bulk-bar__menu .btn:where(:not(dialog *)) span {
     display: flex;
     justify-content: center;
     text-wrap: nowrap;
   }
 
-  .bulk-bar__menu .btn:hover {
+  .bulk-bar__menu .btn:where(:not(dialog *)):hover {
     background-color: var(--color-ink-lighter);
   }
 
-  .bulk-bar__menu .btn.txt-negative:hover {
+  .bulk-bar__menu .btn.txt-negative:where(:not(dialog *)):hover {
     background-color: oklch(var(--lch-red-medium) / 20%);
   }
 
-  .bulk-bar__menu .btn[aria-expanded="true"] {
+  .bulk-bar__menu .btn:where(:not(dialog *))[aria-expanded="true"] {
     background-color: var(--color-ink-light);
   }
 
-  .bulk-bar__menu .btn[hidden] {
+  .bulk-bar__menu .btn:where(:not(dialog *))[hidden] {
     display: none;
   }
 
   @media (max-width: 639px) {
-    .bulk-bar__menu .btn {
+    .bulk-bar__menu .btn:where(:not(dialog *)) {
       font-size: var(--text-x-small);
       font-weight: 500;
       min-inline-size: 3.5rem;

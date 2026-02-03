@@ -182,9 +182,8 @@ Rails.application.routes.draw do
     namespace :documenti do
       resource :prints, only: [:create]
       resource :duplications, only: [:create]
-      resource :merges, only: [:create]
       resource :deletions, only: [:create]
-      resource :bulk_statuses, only: [:update]
+      resource :bulk_gestione, only: [:show], controller: "bulk_gestione"
       resource :bulk_consegne, only: [:create, :destroy]
       resource :bulk_pagamenti, only: [:create, :destroy]
     end

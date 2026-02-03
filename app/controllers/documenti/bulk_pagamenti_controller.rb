@@ -1,55 +1,49 @@
-# frozen_string_literal: true
-
 module Documenti
   class BulkPagamentiController < ApplicationController
-    # POST /documenti/bulk_pagamenti
+    before_action :load_documenti
+
     def create
-      @documenti = current_account.documenti.where(id: params[:ids])
-      pagato_il = parsed_date(:pagato_il)
+      pagato_il = Date.parse(params[:pagato_il]) rescue Date.today
       tipo_pagamento = params[:tipo_pagamento].presence
 
       @documenti.each do |documento|
-        if documento.pagamento.present?
-          # Aggiorna il record esistente
-          documento.pagamento.update!(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
-        else
-          # Crea nuovo record di stato (usa il concern)
-          documento.create_pagamento!(
-            user: Current.user,
-            pagato_il: pagato_il,
-            tipo_pagamento: tipo_pagamento,
-            account: current_account
-          )
-        end
+        documento.unmark_pagato if documento.pagato?
+        documento.mark_pagato(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
       end
+
+      reload_documenti
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to documenti_path, notice: "#{@documenti.count} documenti segnati come pagati" }
+        format.html { redirect_back fallback_location: documenti_path, notice: "#{@documenti.size} documenti segnati come pagati" }
       end
     end
 
-    # DELETE /documenti/bulk_pagamenti
     def destroy
-      @documenti = current_account.documenti.where(id: params[:ids])
+      @documenti.each(&:unmark_pagato)
 
-      @documenti.each do |documento|
-        documento.unmark_pagato
-      end
+      reload_documenti
 
       respond_to do |format|
         format.turbo_stream { render :create }
-        format.html { redirect_to documenti_path, notice: "#{@documenti.count} documenti: pagamento rimosso" }
+        format.html { redirect_back fallback_location: documenti_path, notice: "Pagamenti rimossi da #{@documenti.size} documenti" }
       end
     end
 
     private
 
-    def parsed_date(param)
-      return Date.today unless params[param].present?
-      Date.parse(params[param])
-    rescue ArgumentError
-      Date.today
+    def load_documenti
+      @documenti = current_account.documenti
+        .where(id: params[:ids])
+        .includes(:causale, :consegna, :pagamento, :clientable, :righe)
+      @documenti_per_cliente = @documenti.group_by(&:clientable)
+    end
+
+    def reload_documenti
+      @documenti = current_account.documenti
+        .where(id: params[:ids])
+        .includes(:causale, :consegna, :pagamento, :clientable, :righe)
+      @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
   end
 end

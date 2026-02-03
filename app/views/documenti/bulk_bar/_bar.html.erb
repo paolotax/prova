@@ -8,50 +8,24 @@
     <span>Stampa</span>
   </button>
 
-  <%# Duplica %>
-  <button type="button" class="btn"
-          data-action="bulk-bar#showForm"
-          data-bulk-bar-target="menuButton"
-          data-form-id="duplica">
-    <%= icon_tag "copy" %>
-    <span>Duplica</span>
-  </button>
-
-  <%# Unisci %>
-  <button type="button" class="btn"
-          data-action="bulk-bar#showForm"
-          data-bulk-bar-target="menuButton"
-          data-form-id="unisci">
-    <%= icon_tag "git-merge" %>
-    <span>Unisci</span>
-  </button>
-
-  <%# Consegna %>
-  <button type="button" class="btn"
-          data-action="bulk-bar#showForm"
-          data-bulk-bar-target="menuButton"
-          data-form-id="consegna">
-    <%= icon_tag "truck" %>
-    <span>Consegna</span>
-  </button>
-
-  <%# Pagamento %>
-  <button type="button" class="btn"
-          data-action="bulk-bar#showForm"
-          data-bulk-bar-target="menuButton"
-          data-form-id="pagamento">
-    <%= icon_tag "banknotes" %>
-    <span>Pagamento</span>
-  </button>
-
-  <%# Stato %>
-  <button type="button" class="btn"
-          data-action="bulk-bar#showForm"
-          data-bulk-bar-target="menuButton"
-          data-form-id="stato">
-    <%= icon_tag "check-circle" %>
-    <span>Stato</span>
-  </button>
+  <%# Gestione - apre dialog %>
+  <div data-controller="dialog bulk-gestione" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+    <button type="button" class="btn"
+            data-bulk-bar-target="menuButton"
+            data-action="dialog#open bulk-gestione#loadContent">
+      <%= icon_tag "settings" %>
+      <span>Gestione</span>
+    </button>
+    <dialog class="dialog panel fill-white shadow gap flex-column"
+            style="width: min(95vw, 40rem); max-height: 85vh; overflow-y: auto;"
+            data-dialog-target="dialog">
+      <turbo-frame id="bulk-gestione-frame" data-bulk-gestione-target="frame">
+        <div class="flex justify-center padding">
+          <span class="txt-subtle">Caricamento...</span>
+        </div>
+      </turbo-frame>
+    </dialog>
+  </div>
 
   <%# Elimina %>
   <button type="button" class="btn txt-negative"
@@ -73,148 +47,6 @@
       <div class="bulk-bar__form-actions">
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
         <%= f.submit "Stampa", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-  </div>
-
-  <%# Form Duplica %>
-  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="duplica">
-    <span class="bulk-bar__form-title">Duplica documenti</span>
-    <%= form_with url: documenti_duplications_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-actions">
-        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-        <%= f.submit "Duplica", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-  </div>
-
-  <%# Form Unisci %>
-  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="unisci">
-    <span class="bulk-bar__form-title">Unisci documenti</span>
-    <%= form_with url: documenti_merges_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row flex gap-half flex-wrap">
-        <% Causale.vendita.each do |causale| %>
-          <button type="submit" name="causale_id" value="<%= causale.id %>" class="btn"
-                  style="--btn-color: <%= causale_color(causale) %>;">
-            <%= causale.causale %>
-          </button>
-        <% end %>
-      </div>
-      <div class="bulk-bar__form-actions">
-        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-      </div>
-    <% end %>
-  </div>
-
-  <%# Form Consegna %>
-  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="consegna">
-    <span class="bulk-bar__form-title">Segna come consegnato</span>
-
-    <%= form_with url: documenti_bulk_consegne_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <%= f.hidden_field :consegnato_il, value: Date.today %>
-      <div class="bulk-bar__form-row">
-        <%= f.submit "Oggi", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-
-    <%= form_with url: documenti_bulk_consegne_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <%= f.hidden_field :consegnato_il, value: Date.tomorrow %>
-      <div class="bulk-bar__form-row">
-        <%= f.submit "Domani", class: "btn" %>
-      </div>
-    <% end %>
-
-    <%= form_with url: documenti_bulk_consegne_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row">
-        <%= f.date_field :consegnato_il, class: "input", value: Date.today %>
-        <%= f.submit "Consegna", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-
-    <%= form_with url: documenti_bulk_consegne_path,
-          method: :delete,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row">
-        <%= f.submit "Rimuovi consegna", class: "btn btn--subtle" %>
-      </div>
-    <% end %>
-
-    <div class="bulk-bar__form-actions">
-      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-    </div>
-  </div>
-
-  <%# Form Pagamento %>
-  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="pagamento">
-    <span class="bulk-bar__form-title">Segna come pagato</span>
-
-    <%= form_with url: documenti_bulk_pagamenti_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <%= f.hidden_field :pagato_il, value: Date.today %>
-      <div class="bulk-bar__form-row">
-        <%= f.submit "Oggi", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-
-    <%= form_with url: documenti_bulk_pagamenti_path,
-          method: :post,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row flex gap-half">
-        <%= f.date_field :pagato_il, class: "input", value: Date.today %>
-        <%= f.select :tipo_pagamento,
-            options_for_select([
-              ["Contanti", "contanti"],
-              ["Bonifico", "bonifico"],
-              ["Assegno", "assegno"],
-              ["Bancomat", "bancomat"],
-              ["Carta di credito", "carta_di_credito"],
-              ["Cedole", "cedole"]
-            ]),
-            { include_blank: "Tipo pagamento" },
-            class: "input input--select" %>
-        <%= f.submit "Pagato", class: "btn btn--primary" %>
-      </div>
-    <% end %>
-
-    <%= form_with url: documenti_bulk_pagamenti_path,
-          method: :delete,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row">
-        <%= f.submit "Rimuovi pagamento", class: "btn btn--subtle" %>
-      </div>
-    <% end %>
-
-    <div class="bulk-bar__form-actions">
-      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-    </div>
-  </div>
-
-  <%# Form Stato %>
-  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stato">
-    <span class="bulk-bar__form-title">Cambia stato</span>
-    <%= form_with url: documenti_bulk_statuses_path,
-          method: :patch,
-          data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row">
-        <%= f.select :status,
-            Documento.statuses.keys.map { |s| [s.humanize, s] },
-            { include_blank: "Seleziona stato" },
-            class: "input input--select" %>
-      </div>
-      <div class="bulk-bar__form-actions">
-        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-        <%= f.submit "Applica", class: "btn btn--primary" %>
       </div>
     <% end %>
   </div>
