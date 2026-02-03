@@ -201,6 +201,22 @@ class Documento < ApplicationRecord
     update_column(:consegnato_il, nil)
   end
 
+  def update_consegnato(consegnato_il:)
+    if consegna.present?
+      consegna.update!(consegnato_il: consegnato_il)
+    else
+      update_column(:consegnato_il, consegnato_il)
+    end
+  end
+
+  def update_pagato(pagato_il:, tipo_pagamento: nil)
+    if pagamento.present?
+      pagamento.update!(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
+    else
+      update_columns(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
+    end
+  end
+
   def tipo_pagamento
     pagamento&.tipo_pagamento || super
   end

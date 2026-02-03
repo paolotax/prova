@@ -16,6 +16,16 @@ module Documenti
       end
     end
 
+    # PATCH /documenti/:documento_id/consegna
+    def update
+      @documento.update_consegnato(consegnato_il: parsed_date(:consegnato_il))
+
+      respond_to do |format|
+        format.turbo_stream { render_container_replacement }
+        format.html { redirect_back fallback_location: documento_path(@documento) }
+      end
+    end
+
     # DELETE /documenti/:documento_id/consegna
     def destroy
       @documento.unmark_consegnato

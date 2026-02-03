@@ -2,26 +2,48 @@
 
 <div id="<%= dom_id(documento, :gestione_dialog) %>">
   <header class="flex justify-space-between align-center">
-    <h4 class="txt-large txt-subtle">Gestione Documento</h3>
+    <h4 class="txt-large txt-subtle">Gestione Documento</h4>
     <button type="button" class="btn btn--circle btn--small" data-action="dialog#close">
       <%= icon_tag "close" %>
     </button>
   </header>
 
   <%# === SEZIONE CONSEGNA === %>
-  <section class="padding-block border-block-end">
-    <h2 class="divider txt-medium txt-subtle">Consegna</h4>
+  <section class="padding-block border-block-end" data-controller="inline-edit">
+    <h2 class="divider txt-medium txt-subtle">Consegna</h2>
 
     <% if documento.consegnato? %>
-      <div class="flex justify-space-between align-center">
+      <%# View mode %>
+      <div data-inline-edit-target="view" class="flex justify-space-between align-center">
         <span class="flex align-center gap-half">
           <%= icon_tag "truck" %>
           Consegnato il <strong><%= documento.consegnato_il&.strftime("%d/%m/%Y") %></strong>
         </span>
-        <%= button_to documento_consegna_path(documento),
-              method: :delete,
-              class: "btn txt-negative btn--reversed txt-small" do %>
-          <%= icon_tag "trash" %> Rimuovi
+        <div class="flex gap-quarter">
+          <button type="button" class="btn btn--small" data-action="inline-edit#showEdit">
+            <%= icon_tag "pencil" %>
+          </button>
+          <%= button_to documento_consegna_path(documento),
+                method: :delete,
+                class: "btn btn--small btn--negative" do %>
+            <%= icon_tag "trash" %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Edit mode %>
+      <div data-inline-edit-target="edit" hidden>
+        <%= form_with url: documento_consegna_path(documento),
+              method: :patch,
+              class: "flex gap-half align-end" do |f| %>
+          <div class="flex-grow">
+            <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
+            <%= f.date_field :consegnato_il, value: documento.consegnato_il, class: "input input--date" %>
+          </div>
+          <div class="flex gap-quarter">
+            <%= f.submit "Salva", class: "btn btn--small" %>
+            <button type="button" class="btn btn--small" data-action="inline-edit#showView">Annulla</button>
+          </div>
         <% end %>
       </div>
     <% else %>
@@ -38,11 +60,12 @@
   </section>
 
   <%# === SEZIONE PAGAMENTO === %>
-  <section class="padding-block border-block-end">
+  <section class="padding-block border-block-end" data-controller="inline-edit">
     <h4 class="divider txt-medium txt-subtle">Pagamento</h4>
 
     <% if documento.pagato? %>
-      <div class="flex justify-space-between align-center">
+      <%# View mode %>
+      <div data-inline-edit-target="view" class="flex justify-space-between align-center">
         <span class="flex align-center gap-half">
           <%= icon_tag "cash" %>
           Pagato il <strong><%= documento.pagato_il&.strftime("%d/%m/%Y") %></strong>
@@ -50,10 +73,47 @@
             (<%= documento.tipo_pagamento.humanize %>)
           <% end %>
         </span>
-        <%= button_to documento_pagamento_path(documento),
-              method: :delete,
-              class: "btn txt-negative btn--reversed txt-small" do %>
-          <%= icon_tag "trash" %> Rimuovi
+        <div class="flex gap-quarter">
+          <button type="button" class="btn btn--small" data-action="inline-edit#showEdit">
+            <%= icon_tag "pencil" %>
+          </button>
+          <%= button_to documento_pagamento_path(documento),
+                method: :delete,
+                class: "btn btn--small btn--negative" do %>
+            <%= icon_tag "trash" %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Edit mode %>
+      <div data-inline-edit-target="edit" hidden>
+        <%= form_with url: documento_pagamento_path(documento),
+              method: :patch,
+              class: "flex flex-column gap-half" do |f| %>
+          <div class="flex gap-half">
+            <div class="flex-grow">
+              <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
+              <%= f.date_field :pagato_il, value: documento.pagato_il, class: "input input--date" %>
+            </div>
+            <div class="flex-grow">
+              <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
+              <%= f.select :tipo_pagamento,
+                    options_for_select([
+                      ["Contanti", "contanti"],
+                      ["Bonifico", "bonifico"],
+                      ["Assegno", "assegno"],
+                      ["Bancomat", "bancomat"],
+                      ["Carta di credito", "carta_di_credito"],
+                      ["Cedole", "cedole"]
+                    ], documento.tipo_pagamento),
+                    {},
+                    class: "input input--select" %>
+            </div>
+          </div>
+          <div class="flex gap-quarter justify-end">
+            <%= f.submit "Salva", class: "btn btn--small" %>
+            <button type="button" class="btn btn--small" data-action="inline-edit#showView">Annulla</button>
+          </div>
         <% end %>
       </div>
     <% else %>

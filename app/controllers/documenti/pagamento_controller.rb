@@ -19,6 +19,19 @@ module Documenti
       end
     end
 
+    # PATCH /documenti/:documento_id/pagamento
+    def update
+      @documento.update_pagato(
+        pagato_il: parsed_date(:pagato_il),
+        tipo_pagamento: params[:tipo_pagamento]
+      )
+
+      respond_to do |format|
+        format.turbo_stream { render_container_replacement }
+        format.html { redirect_back fallback_location: documento_path(@documento) }
+      end
+    end
+
     # DELETE /documenti/:documento_id/pagamento
     def destroy
       @documento.unmark_pagato

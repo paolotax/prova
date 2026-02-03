@@ -184,8 +184,8 @@ Rails.application.routes.draw do
         resources :righe, only: [:create]
         resource :export, only: [:show]
         resource :status, only: [:edit, :update]
-        resource :consegna, only: [:create, :destroy], controller: "consegna"
-        resource :pagamento, only: [:create, :destroy], controller: "pagamento"
+        resource :consegna, only: [:create, :update, :destroy], controller: "consegna"
+        resource :pagamento, only: [:create, :update, :destroy], controller: "pagamento"
         resource :derivazione, only: [:create], controller: "derivazione"
       end
       collection do
