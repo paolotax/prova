@@ -9,7 +9,7 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  account_id     :uuid             not null
-#  pagabile_id    :string           not null
+#  pagabile_id    :uuid             not null
 #  user_id        :bigint
 #
 # Indexes

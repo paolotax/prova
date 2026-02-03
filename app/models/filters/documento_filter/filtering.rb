@@ -56,17 +56,29 @@ module Filters
       filter.anno.present?
     end
 
+    def stati_documento_disponibili
+      {
+        "da_consegnare" => "Da consegnare",
+        "da_pagare" => "Da pagare"
+      }
+    end
+
+    def show_stato_documento?
+      filter.stato_documento.present?
+    end
+
     def filters_active?
       filter.terms.present? ||
       filter.causali.present? ||
       filter.statuses.present? ||
       filter.tipi_pagamento.present? ||
       filter.clientable_type.present? ||
-      filter.anno.present?
+      filter.anno.present? ||
+      filter.stato_documento.present?
     end
 
     def controls
-      %w[anni clientable_types causali]
+      %w[anni stato_documento clientable_types causali]
     end
 
     def cache_key

@@ -6,6 +6,7 @@ module Filters
       PERMITTED_PARAMS = [
         :anno,
         :clientable_type,
+        :stato_documento,
         terms: [],
         causali: [],
         statuses: [],
@@ -19,7 +20,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :terms, :causali, :statuses, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type
+        store_accessor :fields, :terms, :causali, :statuses, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type, :stato_documento
 
         def terms
           Array(super)
@@ -68,6 +69,10 @@ module Filters
         def clientable_type
           super.presence
         end
+
+        def stato_documento
+          super.presence
+        end
       end
 
       def as_params
@@ -80,6 +85,7 @@ module Filters
           params[:consegnati] = consegnati
           params[:pagati] = pagati
           params[:clientable_type] = clientable_type
+          params[:stato_documento] = stato_documento
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
       end
     end

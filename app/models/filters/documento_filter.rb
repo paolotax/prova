@@ -65,6 +65,14 @@ module Filters
       result = result.joins(:consegna) if consegnati.present?
       result = result.joins(:pagamento) if pagati.present?
 
+      # Stato documento filter (da consegnare/da pagare)
+      case stato_documento
+      when "da_consegnare"
+        result = result.where.missing(:consegna)
+      when "da_pagare"
+        result = result.where.missing(:pagamento)
+      end
+
       # Ordering
       result = result.order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
       result.distinct
