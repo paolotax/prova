@@ -2,7 +2,7 @@
 
 <div id="<%= dom_id(documento, :gestione_dialog) %>">
   <header class="flex justify-space-between align-center">
-    <h3 class="txt-large txt-bold">Gestione Documento</h3>
+    <h4 class="txt-large txt-subtle">Gestione Documento</h3>
     <button type="button" class="btn btn--circle btn--small" data-action="dialog#close">
       <%= icon_tag "close" %>
     </button>
@@ -10,18 +10,18 @@
 
   <%# === SEZIONE CONSEGNA === %>
   <section class="padding-block border-block-end">
-    <h4 class="divider txt-small txt-subtle margin-block-end-half">Consegna</h4>
+    <h2 class="divider txt-medium txt-subtle">Consegna</h4>
 
     <% if documento.consegnato? %>
       <div class="flex justify-space-between align-center">
-        <span class="flex align-center gap-quarter">
+        <span class="flex align-center gap-half">
           <%= icon_tag "truck" %>
           Consegnato il <strong><%= documento.consegnato_il&.strftime("%d/%m/%Y") %></strong>
         </span>
         <%= button_to documento_consegna_path(documento),
               method: :delete,
-              class: "btn btn--small btn--negative" do %>
-          <%= icon_tag "close" %> Rimuovi
+              class: "btn txt-negative btn--reversed txt-small" do %>
+          <%= icon_tag "trash" %> Rimuovi
         <% end %>
       </div>
     <% else %>
@@ -32,18 +32,18 @@
           <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
           <%= f.date_field :consegnato_il, value: Date.today, class: "input" %>
         </div>
-        <%= f.submit "Segna consegnato", class: "btn" %>
+        <%= f.submit "Segna consegnato", class: "btn txt-small" %>
       <% end %>
     <% end %>
   </section>
 
   <%# === SEZIONE PAGAMENTO === %>
   <section class="padding-block border-block-end">
-    <h4 class="divider txt-small txt-subtle margin-block-end-half">Pagamento</h4>
+    <h4 class="divider txt-medium txt-subtle">Pagamento</h4>
 
     <% if documento.pagato? %>
       <div class="flex justify-space-between align-center">
-        <span class="flex align-center gap-quarter">
+        <span class="flex align-center gap-half">
           <%= icon_tag "cash" %>
           Pagato il <strong><%= documento.pagato_il&.strftime("%d/%m/%Y") %></strong>
           <% if documento.tipo_pagamento.present? %>
@@ -52,8 +52,8 @@
         </span>
         <%= button_to documento_pagamento_path(documento),
               method: :delete,
-              class: "btn btn--small btn--negative" do %>
-          <%= icon_tag "close" %> Rimuovi
+              class: "btn txt-negative btn--reversed txt-small" do %>
+          <%= icon_tag "trash" %> Rimuovi
         <% end %>
       </div>
     <% else %>
@@ -80,7 +80,7 @@
                   class: "input" %>
           </div>
         </div>
-        <%= f.submit "Segna pagato", class: "btn" %>
+        <%= f.submit "Segna pagato", class: "btn txt-small" %>
       <% end %>
     <% end %>
   </section>
@@ -89,7 +89,7 @@
   <% causali_successive = documento.causale&.causali_successive_records %>
   <% if causali_successive&.any? %>
     <section class="padding-block-start">
-      <h4 class="txt-small txt-uppercase txt-subtle margin-block-end-half">Registrazione</h4>
+      <h4 class="divider txt-medium txt-subtle margin-block-end-half">Registrazione</h4>
 
       <%= form_with url: documento_derivazione_path(documento),
             method: :post,

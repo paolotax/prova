@@ -49,6 +49,16 @@
       }
     }
 
+    &[type='date'] {
+      cursor: pointer;
+
+      &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 0.2em;
+        margin-inline-start: 0.5em;
+      }
+    }
+
     /* Target mobile Safari only */
     @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
       @media (hover: none) {
