@@ -1,4 +1,4 @@
-<%# locals: (documento:) -%>
+<%# locals: (documento:, editing: false) -%>
 
 <div class="documento-content">
   <div class="documento-content__cliente">
@@ -18,6 +18,9 @@
     <% end %>
   </div>
 
+          <% if documento.persisted? && documento.numero_documento.present? && !editing %>
+          <%= render "documenti/container/stages", documento: documento %>
+        <% end %>
   <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
 
   <%= render "documenti/container/righe_table", documento: documento %>

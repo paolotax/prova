@@ -3,8 +3,9 @@
 <div id="<%= dom_id(documento, :gestione_dialog) %>">
   <header class="flex justify-space-between align-center">
     <h4 class="txt-large txt-subtle">Gestione Documento</h4>
-    <button type="button" class="btn btn--circle btn--small" data-action="dialog#close">
+    <button type="button" class="btn btn--circle txt-small" data-controller="tooltip" data-action="dialog#close" title="Chiudi">
       <%= icon_tag "close" %>
+      <span class="for-screen-reader">Chiudi</span>
     </button>
   </header>
 
@@ -14,19 +15,23 @@
 
     <% if documento.consegnato? %>
       <%# View mode %>
-      <div data-inline-edit-target="view" class="flex justify-space-between align-center">
+      <div data-inline-edit-target="view" class="flex flex-wrap justify-space-between align-center gap-half">
         <span class="flex align-center gap-half">
           <%= icon_tag "truck" %>
           Consegnato il <strong><%= documento.consegnato_il&.strftime("%d/%m/%Y") %></strong>
         </span>
-        <div class="flex gap-quarter">
-          <button type="button" class="btn btn--small" data-action="inline-edit#showEdit">
+        <div class="flex gap-half align-center" style="margin-inline-start: auto;">
+          <button type="button" class="btn btn--circle txt-small" data-controller="tooltip" data-action="inline-edit#showEdit" title="Modifica">
             <%= icon_tag "pencil" %>
+            <span class="for-screen-reader">Modifica</span>
           </button>
           <%= button_to documento_consegna_path(documento),
                 method: :delete,
-                class: "btn btn--small btn--reversed txt-negative" do %>
+                class: "btn btn--circle txt-small btn--reversed txt-negative",
+                data: { controller: "tooltip" },
+                title: "Elimina" do %>
             <%= icon_tag "trash" %>
+            <span class="for-screen-reader">Elimina</span>
           <% end %>
         </div>
       </div>
@@ -35,26 +40,34 @@
       <div data-inline-edit-target="edit" hidden>
         <%= form_with url: documento_consegna_path(documento),
               method: :patch,
-              class: "flex gap-half align-end" do |f| %>
-          <div class="flex-grow">
+              class: "flex flex-column gap-half" do |f| %>
+          <div>
             <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
             <%= f.date_field :consegnato_il, value: documento.consegnato_il, class: "input input--date" %>
           </div>
-          <div class="flex gap-quarter">
-            <%= f.submit "Salva", class: "btn btn--small" %>
-            <button type="button" class="btn btn--small btn--reversed" data-action="inline-edit#showView">Annulla</button>
+          <div class="flex gap-half justify-end">
+            <button type="submit" class="btn btn--circle txt-small" data-controller="tooltip" title="Salva">
+              <%= icon_tag "check" %>
+              <span class="for-screen-reader">Salva</span>
+            </button>
+            <button type="button" class="btn btn--circle txt-small btn--reversed" data-controller="tooltip" data-action="inline-edit#showView" title="Annulla">
+              <%= icon_tag "close" %>
+              <span class="for-screen-reader">Annulla</span>
+            </button>
           </div>
         <% end %>
       </div>
     <% else %>
       <%= form_with url: documento_consegna_path(documento),
             method: :post,
-            class: "flex gap-half align-end" do |f| %>
-        <div class="flex-grow">
+            class: "flex flex-column gap-half" do |f| %>
+        <div>
           <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
           <%= f.date_field :consegnato_il, value: Date.today, class: "input input--date" %>
         </div>
-        <%= f.submit "Segna consegnato", class: "btn txt-small" %>
+        <div class="flex justify-end">
+          <%= f.submit "Segna consegnato", class: "btn txt-small", data: { controller: "tooltip" }, title: "Segna come consegnato" %>
+        </div>
       <% end %>
     <% end %>
   </section>
@@ -65,7 +78,7 @@
 
     <% if documento.pagato? %>
       <%# View mode %>
-      <div data-inline-edit-target="view" class="flex justify-space-between align-center">
+      <div data-inline-edit-target="view" class="flex flex-wrap justify-space-between align-center gap-half">
         <span class="flex align-center gap-half">
           <%= icon_tag "cash" %>
           Pagato il <strong><%= documento.pagato_il&.strftime("%d/%m/%Y") %></strong>
@@ -73,14 +86,18 @@
             (<%= documento.tipo_pagamento.humanize %>)
           <% end %>
         </span>
-        <div class="flex gap-quarter">
-          <button type="button" class="btn btn--small" data-action="inline-edit#showEdit">
+        <div class="flex gap-half align-center" style="margin-inline-start: auto;">
+          <button type="button" class="btn btn--circle txt-small" data-controller="tooltip" data-action="inline-edit#showEdit" title="Modifica">
             <%= icon_tag "pencil" %>
+            <span class="for-screen-reader">Modifica</span>
           </button>
           <%= button_to documento_pagamento_path(documento),
                 method: :delete,
-                class: "btn btn--small btn--reversed txt-negative" do %>
+                class: "btn btn--circle txt-small btn--reversed txt-negative",
+                data: { controller: "tooltip" },
+                title: "Elimina" do %>
             <%= icon_tag "trash" %>
+            <span class="for-screen-reader">Elimina</span>
           <% end %>
         </div>
       </div>
@@ -90,12 +107,12 @@
         <%= form_with url: documento_pagamento_path(documento),
               method: :patch,
               class: "flex flex-column gap-half" do |f| %>
-          <div class="flex gap-half">
-            <div class="flex-grow">
+          <div class="flex flex-wrap gap-half">
+            <div class="flex-grow" style="min-width: 8rem;">
               <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
               <%= f.date_field :pagato_il, value: documento.pagato_il, class: "input input--date" %>
             </div>
-            <div class="flex-grow">
+            <div class="flex-grow" style="min-width: 8rem;">
               <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
               <%= f.select :tipo_pagamento,
                     options_for_select([
@@ -110,9 +127,15 @@
                     class: "input input--select" %>
             </div>
           </div>
-          <div class="flex gap-quarter justify-end">
-            <%= f.submit "Salva", class: "btn btn--small" %>
-            <button type="button" class="btn btn--small btn--reversed" data-action="inline-edit#showView">Annulla</button>
+          <div class="flex gap-half justify-end">
+            <button type="submit" class="btn btn--circle txt-small" data-controller="tooltip" title="Salva">
+              <%= icon_tag "check" %>
+              <span class="for-screen-reader">Salva</span>
+            </button>
+            <button type="button" class="btn btn--circle txt-small btn--reversed" data-controller="tooltip" data-action="inline-edit#showView" title="Annulla">
+              <%= icon_tag "close" %>
+              <span class="for-screen-reader">Annulla</span>
+            </button>
           </div>
         <% end %>
       </div>
@@ -120,12 +143,12 @@
       <%= form_with url: documento_pagamento_path(documento),
             method: :post,
             class: "flex flex-column gap-half" do |f| %>
-        <div class="flex gap-half">
-          <div class="flex-grow">
+        <div class="flex flex-wrap gap-half">
+          <div class="flex-grow" style="min-width: 8rem;">
             <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
             <%= f.date_field :pagato_il, value: Date.today, class: "input input--date" %>
           </div>
-          <div class="flex-grow">
+          <div class="flex-grow" style="min-width: 8rem;">
             <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
             <%= f.select :tipo_pagamento,
                   options_for_select([
@@ -140,7 +163,9 @@
                   class: "input input--select" %>
           </div>
         </div>
-        <%= f.submit "Segna pagato", class: "btn txt-small" %>
+        <div class="flex justify-end">
+          <%= f.submit "Segna pagato", class: "btn txt-small", data: { controller: "tooltip" }, title: "Segna come pagato" %>
+        </div>
       <% end %>
     <% end %>
   </section>
@@ -161,7 +186,7 @@
             } do |f| %>
 
         <%# Radio: nuovo o esistente %>
-        <div class="flex gap margin-block-end-half">
+        <div class="flex flex-wrap gap margin-block-end-half">
           <label class="flex align-center gap-quarter">
             <%= f.radio_button :modalita, "nuovo", checked: true,
                   data: { action: "derivazione-form#toggleModalita" } %>
@@ -176,8 +201,8 @@
 
         <%# Sezione NUOVO %>
         <div data-derivazione-form-target="nuovoSection">
-          <div class="flex gap-half">
-            <div class="flex-grow">
+          <div class="flex flex-wrap gap-half">
+            <div class="flex-grow" style="min-width: 8rem;">
               <%= f.label :causale_id, "Causale", class: "txt-small txt-subtle" %>
               <%= f.select :causale_id,
                     options_from_collection_for_select(causali_successive, :id, :causale),
@@ -208,7 +233,9 @@
           <% end %>
         </div>
 
-        <%= f.submit "Registra", class: "btn margin-block-start-half" %>
+        <div class="flex justify-end">
+          <%= f.submit "Registra", class: "btn", data: { controller: "tooltip" }, title: "Registra documento" %>
+        </div>
       <% end %>
     </section>
   <% end %>

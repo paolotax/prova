@@ -6,6 +6,9 @@
     display: flex;
     gap: var(--inline-space);
 
+    margin-top: 1ch;
+    margin-bottom: 1ch;
+    
     &:before,
     &:after {
       background: var(--divider-color);
