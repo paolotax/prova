@@ -223,11 +223,12 @@ class AgendaController < ApplicationController
     all_clientable_ids = scuole_ids + clienti_ids
     if all_clientable_ids.any?
       documenti_counts = current_user.documenti
+        .left_joins(:consegna, :pagamento)
         .where(
           "(clientable_type = 'ImportScuola' AND clientable_id IN (?)) OR (clientable_type = 'Cliente' AND clientable_id IN (?))",
           scuole_ids, clienti_ids
         )
-        .where("consegnato_il IS NULL OR pagato_il IS NULL")
+        .where("consegne.id IS NULL OR pagamenti.id IS NULL")
         .group(:clientable_type, :clientable_id)
         .count
       
@@ -313,8 +314,9 @@ class AgendaController < ApplicationController
         
         # Documenti pendenti per questa scuola (non consegnati O non pagati)
         documenti_scuola = current_user.documenti
+          .left_joins(:consegna, :pagamento)
           .where(clientable_type: 'ImportScuola', clientable_id: tappa.tappable_id)
-          .where("consegnato_il IS NULL OR pagato_il IS NULL")
+          .where("consegne.id IS NULL OR pagamenti.id IS NULL")
           .includes(:clientable, :causale)
           .order(:data_documento)
         
@@ -329,8 +331,9 @@ class AgendaController < ApplicationController
       elsif tappa.tappable_type == 'Cliente'
         # Documenti pendenti per questo cliente (non consegnati O non pagati)
         documenti_cliente = current_user.documenti
+          .left_joins(:consegna, :pagamento)
           .where(clientable_type: 'Cliente', clientable_id: tappa.tappable_id)
-          .where("consegnato_il IS NULL OR pagato_il IS NULL")
+          .where("consegne.id IS NULL OR pagamenti.id IS NULL")
           .includes(:clientable, :causale)
           .order(:data_documento)
         
@@ -352,7 +355,7 @@ class AgendaController < ApplicationController
     @riassunto_titoli = {}
     @documenti_dettagliati.each do |item|
       documento = item[:documento]
-      next if documento.consegnato_il.present? # Solo documenti non consegnati
+      next if documento.consegnato? # Solo documenti non consegnati
       
       documento.righe.includes(:libro).each do |riga|
         titolo = riga.libro&.titolo || "Titolo N/D"

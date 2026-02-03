@@ -79,9 +79,8 @@ class Documento < ApplicationRecord
   # after_create :close_if_has_padre
 
   enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
-  enum :tipo_pagamento,
-       { contanti: 0, assegno: 1, bonifico: 2, bancomat: 3, carta_di_credito: 4, paypal: 5, satispay: 6, cedole: 7 }
 
+  # tipo_pagamento ora è sul modello Pagamento (concern Pagabile)
   # enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
   # enum movimento: { entrata: 0, uscita: 1 }
 
@@ -135,7 +134,7 @@ class Documento < ApplicationRecord
       dettaglio: [documento_righe_attributes:
                     [:id, :posizione,
                      { riga_attributes: %i[id libro_id quantita prezzo prezzo_cents prezzo_copertina_cents sconto iva_cents status _destroy] }]],
-      stato_documento: %i[status tipo_pagamento consegnato_il pagato_il]
+      stato_documento: %i[status]
     }
   end
 
@@ -176,52 +175,8 @@ class Documento < ApplicationRecord
     %w[TD01 TD04 TD24].include?(causale.causale)
   end
 
-  # Override per retrocompatibilità: legge prima dal concern, poi dal campo legacy
-  def pagato?
-    pagamento.present? || read_attribute(:pagato_il).present?
-  end
-
-  def unmark_pagato
-    super
-    update_columns(pagato_il: nil, tipo_pagamento: nil)
-  end
-
-  def pagato_il
-    pagamento&.pagato_il || read_attribute(:pagato_il)
-  end
-
-  def consegnato_il
-    consegna&.consegnato_il || read_attribute(:consegnato_il)
-  end
-
-  def consegnato?
-    consegna.present? || read_attribute(:consegnato_il).present?
-  end
-
-  def unmark_consegnato
-    super
-    update_column(:consegnato_il, nil)
-  end
-
-  def update_consegnato(consegnato_il:)
-    if consegna.present?
-      consegna.update!(consegnato_il: consegnato_il)
-    else
-      update_column(:consegnato_il, consegnato_il)
-    end
-  end
-
-  def update_pagato(pagato_il:, tipo_pagamento: nil)
-    if pagamento.present?
-      pagamento.update!(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
-    else
-      update_columns(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
-    end
-  end
-
-  def tipo_pagamento
-    pagamento&.tipo_pagamento || super
-  end
+  # I metodi pagato?, pagato_il, consegnato?, consegnato_il, tipo_pagamento
+  # sono ora forniti dai concern Pagabile e Consegnabile
 
   def totale_importo
     return totale_cents / 100.0 if totale_cents.present?

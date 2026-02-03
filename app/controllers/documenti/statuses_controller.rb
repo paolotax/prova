@@ -24,6 +24,6 @@ class Documenti::StatusesController < ApplicationController
   private
 
   def status_params
-    params.require(:documento).permit(:status, :consegnato_il, :pagato_il)
+    params.require(:documento).permit(:status)
   end
 end

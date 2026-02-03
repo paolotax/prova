@@ -50,8 +50,8 @@ module Filters
       # Status filter
       result = result.where(status: statuses) if statuses.present?
 
-      # Tipo pagamento filter
-      result = result.where(tipo_pagamento: tipi_pagamento) if tipi_pagamento.present?
+      # Tipo pagamento filter (via Pagamento state record)
+      result = result.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipi_pagamento }) if tipi_pagamento.present?
 
       # Clientable type filter
       result = result.where(clientable_type: clientable_type) if clientable_type.present?
@@ -61,9 +61,9 @@ module Filters
         result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno)
       end
 
-      # Boolean filters
-      result = result.where.not(consegnato_il: nil) if consegnati.present?
-      result = result.where.not(pagato_il: nil) if pagati.present?
+      # Boolean filters (via state records)
+      result = result.joins(:consegna) if consegnati.present?
+      result = result.joins(:pagamento) if pagati.present?
 
       # Ordering
       result = result.order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)

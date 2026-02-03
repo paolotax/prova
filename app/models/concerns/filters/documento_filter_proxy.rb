@@ -18,20 +18,26 @@ module Filters
     filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%").distinct }
     filter_scope :causale, ->(causale) { joins(:causale).where("causali.causale ILIKE ?", "%#{causale}%") }
     filter_scope :status, ->(status) { where(status: status) }
-    filter_scope :tipo_pagamento, ->(tipo_pagamento) { where(tipo_pagamento: tipo_pagamento) }
+    filter_scope :tipo_pagamento, ->(tipo_pagamento) {
+      joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento })
+    }
 
     filter_scope :ordina_per, ->(ordine) { order_by(ordine) }
 
     filter_scope :anno, ->(anno) { where('EXTRACT(YEAR FROM data_documento) = ?', anno) }
 
-    filter_scope :consegnato_il, ->(data) { where('DATE(consegnato_il) = ?', data.to_date) }
-    filter_scope :pagato_il, ->(data) { where('DATE(pagato_il) = ?', data.to_date) }
+    filter_scope :consegnato_il, ->(data) {
+      joins(:consegna).where('DATE(consegne.consegnato_il) = ?', data.to_date)
+    }
+    filter_scope :pagato_il, ->(data) {
+      joins(:pagamento).where('DATE(pagamenti.pagato_il) = ?', data.to_date)
+    }
 
     filter_scope :consegnati, ->(consegnati) {
-      consegnati == 'si' ? where.not(consegnato_il: nil) : where(consegnato_il: nil)
+      consegnati == 'si' ? joins(:consegna) : left_joins(:consegna).where(consegne: { id: nil })
     }
     filter_scope :pagati, ->(pagati) {
-      pagati == 'si' ? where.not(pagato_il: nil) : where(pagato_il: nil)
+      pagati == 'si' ? joins(:pagamento) : left_joins(:pagamento).where(pagamenti: { id: nil })
     }
 
     filter_scope :nel_baule_del_giorno, ->(data) {
@@ -43,8 +49,12 @@ module Filters
           FROM documenti
           INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
             AND documenti.clientable_type = tappe.tappable_type
+          LEFT JOIN consegne ON documenti.id = consegne.consegnabile_id
+            AND consegne.consegnabile_type = 'Documento'
+          LEFT JOIN pagamenti ON documenti.id = pagamenti.pagabile_id
+            AND pagamenti.pagabile_type = 'Documento'
           WHERE DATE(tappe.data_tappa) = #{sanitized_date}
-            AND ((documenti.consegnato_il IS NULL) OR (documenti.pagato_il IS NULL))
+            AND (consegne.id IS NULL OR pagamenti.id IS NULL)
         )
         UNION
         (
@@ -52,7 +62,11 @@ module Filters
           FROM documenti
           INNER JOIN tappe ON documenti.clientable_id = tappe.tappable_id
             AND documenti.clientable_type = tappe.tappable_type
-          WHERE (DATE(documenti.consegnato_il) = #{sanitized_date} OR DATE(documenti.pagato_il) = #{sanitized_date})
+          LEFT JOIN consegne ON documenti.id = consegne.consegnabile_id
+            AND consegne.consegnabile_type = 'Documento'
+          LEFT JOIN pagamenti ON documenti.id = pagamenti.pagabile_id
+            AND pagamenti.pagabile_type = 'Documento'
+          WHERE (DATE(consegne.consegnato_il) = #{sanitized_date} OR DATE(pagamenti.pagato_il) = #{sanitized_date})
             AND documenti.status in (2, 3, 4, 5)
         )
       SQL

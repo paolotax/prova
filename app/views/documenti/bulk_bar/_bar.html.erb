@@ -173,7 +173,14 @@
       <div class="bulk-bar__form-row flex gap-half">
         <%= f.date_field :pagato_il, class: "input", value: Date.today %>
         <%= f.select :tipo_pagamento,
-            Documento.tipo_pagamenti.keys.map { |t| [t.humanize, t] },
+            options_for_select([
+              ["Contanti", "contanti"],
+              ["Bonifico", "bonifico"],
+              ["Assegno", "assegno"],
+              ["Bancomat", "bancomat"],
+              ["Carta di credito", "carta_di_credito"],
+              ["Cedole", "cedole"]
+            ]),
             { include_blank: "Tipo pagamento" },
             class: "input input--select" %>
         <%= f.submit "Pagato", class: "btn btn--primary" %>

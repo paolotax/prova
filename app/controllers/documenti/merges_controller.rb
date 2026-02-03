@@ -25,11 +25,7 @@ module Documenti
                             .where(causale_id: params[:causale_id] || documento_base.causale_id)
                             .where("EXTRACT(YEAR FROM data_documento) = ?", Date.current.year)
                             .maximum(:numero_documento).to_i + 1,
-          note: "Riferimento documenti:\n #{documenti.map { |d| "#{d.causale} nr.#{d.numero_documento} del #{d.data_documento.strftime('%d/%m/%Y')}" }.join("\n")}",
-          status: params[:status] || documento_base.status,
-          tipo_pagamento: params[:tipo_pagamento] || documento_base.tipo_pagamento,
-          pagato_il: params[:pagato_il] || documento_base.pagato_il,
-          consegnato_il: params[:consegnato_il] || documento_base.consegnato_il
+          note: "Riferimento documenti:\n #{documenti.map { |d| "#{d.causale} nr.#{d.numero_documento} del #{d.data_documento.strftime('%d/%m/%Y')}" }.join("\n")}"
         )
 
         # Usa insert_all per evitare le callback durante il merge

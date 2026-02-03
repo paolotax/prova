@@ -30,23 +30,11 @@
             <%= form.date_field :data_documento, class: "field w-36" %>
         <% end %>
 
-        <%= render "shared/inline_fields", form: form, method: :stato_e_pagamento do %>
+        <%= render "shared/inline_fields", form: form, method: :stato do %>
             <%= tag.div class: "documento-form__inline-container" do %>
                 <%= tag.div class: "documento-form__inline-field" do %>
                     <%= form.label :status, "stato:" %>
                     <%= form.select :status, options_for_select(options_for_select(Documento.statuses.map {|key, value| [key.titleize, Documento.statuses.key(value)]}, documento.status)), {}, class: "documento-form__inline-select" %>
-                <% end %>
-                <%= tag.div class: "documento-form__inline-field" do %>
-                    <%= form.label :consegnato_il, "consegnato il:" %>
-                    <%= form.date_field :consegnato_il, class: "documento-form__inline-date" %>
-                <% end %>
-                <%= tag.div class: "documento-form__inline-field" do %>
-                    <%= form.label :tipo_pagamento, "pagamento:" %>
-                    <%= form.select :tipo_pagamento, options_for_select(options_for_select(Documento.tipo_pagamenti.map {|key, value| [key.titleize, Documento.tipo_pagamenti.key(value)]}, documento.tipo_pagamento)), {}, class: "documento-form__inline-select" %>
-                <% end %>
-                <%= tag.div class: "documento-form__inline-field" do %>
-                    <%= form.label :pagato_il, "pagato il:" %>
-                    <%= form.date_field :pagato_il, class: "documento-form__inline-date" %>
                 <% end %>
             <% end %>
         <% end %>

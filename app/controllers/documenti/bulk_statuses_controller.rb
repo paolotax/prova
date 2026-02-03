@@ -21,7 +21,7 @@ module Documenti
     private
 
     def stato_params
-      params.permit(:status, :tipo_pagamento, :pagato_il, :consegnato_il)
+      params.permit(:status)
     end
   end
 end

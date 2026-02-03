@@ -21,7 +21,7 @@ module Documenti
 
     # PATCH /documenti/:documento_id/pagamento
     def update
-      @documento.update_pagato(
+      @documento.pagamento&.update!(
         pagato_il: parsed_date(:pagato_il),
         tipo_pagamento: params[:tipo_pagamento]
       )

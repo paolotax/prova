@@ -18,7 +18,7 @@ module Documenti
 
     # PATCH /documenti/:documento_id/consegna
     def update
-      @documento.update_consegnato(consegnato_il: parsed_date(:consegnato_il))
+      @documento.consegna&.update!(consegnato_il: parsed_date(:consegnato_il))
 
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
