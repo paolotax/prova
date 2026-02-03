@@ -78,14 +78,16 @@
     <%= form_with url: documenti_merges_path,
           method: :post,
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
-      <div class="bulk-bar__form-row">
-        <%= f.select :causale_id, Causale.all.map { |c| [c.causale, c.id] },
-            { include_blank: "Causale originale" },
-            class: "input input--select" %>
+      <div class="bulk-bar__form-row flex gap-half flex-wrap">
+        <% Causale.vendita.each do |causale| %>
+          <button type="submit" name="causale_id" value="<%= causale.id %>" class="btn"
+                  style="--btn-color: <%= causale_color(causale) %>;">
+            <%= causale.causale %>
+          </button>
+        <% end %>
       </div>
       <div class="bulk-bar__form-actions">
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
-        <%= f.submit "Unisci", class: "btn btn--primary" %>
       </div>
     <% end %>
   </div>

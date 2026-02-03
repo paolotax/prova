@@ -178,6 +178,15 @@ Rails.application.routes.draw do
       resource :deletions, only: [:create]
     end
 
+    # Bulk actions per documenti (deve essere PRIMA di resources :documenti)
+    namespace :documenti do
+      resource :prints, only: [:create]
+      resource :duplications, only: [:create]
+      resource :merges, only: [:create]
+      resource :deletions, only: [:create]
+      resource :bulk_statuses, only: [:update]
+    end
+
     resources :documenti do
       resources :documento_righe, only: [:new, :create], controller: "documento_righe"
       scope module: :documenti do
@@ -391,14 +400,6 @@ Rails.application.routes.draw do
       # Bulk actions for scuole
       resource :prints, only: [:create]
       resource :bulk_tappe, only: [:create]
-    end
-
-    namespace :documenti do
-      resource :prints, only: [:create]
-      resource :duplications, only: [:create]
-      resource :merges, only: [:create]
-      resource :deletions, only: [:create]
-      resource :bulk_statuses, only: [:update]
     end
 
     resources :import_adozioni, only: %i[index show] do

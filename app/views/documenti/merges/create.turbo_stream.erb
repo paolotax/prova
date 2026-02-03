@@ -1,0 +1,19 @@
+<%# Rimuove i documenti originali dalla lista %>
+<% @documenti_originali.each do |documento| %>
+  <% entry = documento.entry rescue nil %>
+  <%= turbo_stream.remove (entry ? dom_id(entry) : dom_id(documento)) %>
+<% end %>
+
+<%# Aggiunge i nuovi documenti in cima alla lista %>
+<% @documenti_creati.each do |documento| %>
+  <%= turbo_stream.prepend "cards-lista" do %>
+    <%= render "documenti/documento", documento: documento %>
+  <% end %>
+<% end %>
+
+<%# Mostra notifica %>
+<%= turbo_stream.prepend "flash" do %>
+  <div class="flash flash--notice" data-controller="flash">
+    <%= pluralize(@documenti_creati.count, "documento generato", "documenti generati") %>
+  </div>
+<% end %>

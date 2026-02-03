@@ -15,7 +15,8 @@ module Documenti
         @documenti_originali.concat(documenti)
         documento_base = documenti.first
 
-        documento_unito = current_account.documenti.create(
+        documento_unito = current_account.documenti.create!(
+          user: Current.user,
           causale_id: params[:causale_id] || documento_base.causale_id,
           clientable: clientable,
           referente: documento_base.referente,
@@ -45,18 +46,23 @@ module Documenti
 
         DocumentoRiga.insert_all(righe_data) if righe_data.any?
 
+        documento_unito.reload
         documento_unito.ricalcola_totali!
 
-        documenti.each do |documento|
-          documento.update(documento_padre_id: documento_unito.id)
-        end
+        # Crea entry per il documento unificato (aperto)
+        documento_unito.ensure_entry!
 
-        documento_unito.send(:propaga_stato_ai_figli)
+        # I documenti originali diventano figli e vengono chiusi
+        documenti.each do |documento|
+          documento.update!(documento_padre_id: documento_unito.id)
+          documento.ensure_entry!
+          documento.close unless documento.closed?
+        end
 
         @documenti_creati << documento_unito
       end
 
-      notice = helpers.pluralize(@documenti_creati.count, "documento generato", "documenti generati")
+      notice = "#{@documenti_creati.count} #{@documenti_creati.count == 1 ? 'documento generato' : 'documenti generati'}"
 
       respond_to do |format|
         format.turbo_stream
