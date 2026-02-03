@@ -6,8 +6,8 @@
     display: flex;
     gap: var(--inline-space);
 
-    margin-top: 1ch;
-    margin-bottom: 1ch;
+    margin-top: 1.5ch;
+    margin-bottom: 1.5ch;
     
     &:before,
     &:after {
