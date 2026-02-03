@@ -10,7 +10,7 @@
 
   <%# === SEZIONE CONSEGNA === %>
   <section class="padding-block border-block-end">
-    <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Consegna</h4>
+    <h4 class="divider txt-small txt-subtle margin-block-end-half">Consegna</h4>
 
     <% if documento.consegnato? %>
       <div class="flex justify-space-between align-center">
@@ -29,7 +29,7 @@
             method: :post,
             class: "flex gap-half align-end" do |f| %>
         <div class="flex-grow">
-          <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-muted" %>
+          <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
           <%= f.date_field :consegnato_il, value: Date.today, class: "input" %>
         </div>
         <%= f.submit "Segna consegnato", class: "btn" %>
@@ -39,7 +39,7 @@
 
   <%# === SEZIONE PAGAMENTO === %>
   <section class="padding-block border-block-end">
-    <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Pagamento</h4>
+    <h4 class="divider txt-small txt-subtle margin-block-end-half">Pagamento</h4>
 
     <% if documento.pagato? %>
       <div class="flex justify-space-between align-center">
@@ -62,11 +62,11 @@
             class: "flex flex-column gap-half" do |f| %>
         <div class="flex gap-half">
           <div class="flex-grow">
-            <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-muted" %>
+            <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
             <%= f.date_field :pagato_il, value: Date.today, class: "input" %>
           </div>
           <div class="flex-grow">
-            <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-muted" %>
+            <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
             <%= f.select :tipo_pagamento,
                   options_for_select([
                     ["Contanti", "contanti"],
@@ -89,7 +89,7 @@
   <% causali_successive = documento.causale&.causali_successive_records %>
   <% if causali_successive&.any? %>
     <section class="padding-block-start">
-      <h4 class="txt-small txt-uppercase txt-muted margin-block-end-half">Registrazione</h4>
+      <h4 class="txt-small txt-uppercase txt-subtle margin-block-end-half">Registrazione</h4>
 
       <%= form_with url: documento_derivazione_path(documento),
             method: :post,
@@ -118,7 +118,7 @@
         <div data-derivazione-form-target="nuovoSection">
           <div class="flex gap-half">
             <div class="flex-grow">
-              <%= f.label :causale_id, "Causale", class: "txt-small txt-muted" %>
+              <%= f.label :causale_id, "Causale", class: "txt-small txt-subtle" %>
               <%= f.select :causale_id,
                     options_from_collection_for_select(causali_successive, :id, :causale),
                     {},
@@ -126,7 +126,7 @@
                     data: { action: "change->derivazione-form#fetchNumero" } %>
             </div>
             <div style="width: 10ch;">
-              <%= f.label :numero_documento, "Numero", class: "txt-small txt-muted" %>
+              <%= f.label :numero_documento, "Numero", class: "txt-small txt-subtle" %>
               <%= f.number_field :numero_documento,
                     class: "input",
                     data: { derivazione_form_target: "numeroField" } %>
@@ -138,13 +138,13 @@
         <div data-derivazione-form-target="esistenteSection" hidden>
           <% documenti_esistenti = documento.documenti_derivabili_esistenti %>
           <% if documenti_esistenti.any? %>
-            <%= f.label :documento_esistente_id, "Documento", class: "txt-small txt-muted" %>
+            <%= f.label :documento_esistente_id, "Documento", class: "txt-small txt-subtle" %>
             <%= f.select :documento_esistente_id,
                   options_from_collection_for_select(documenti_esistenti, :id, :label_per_select),
                   { include_blank: "Seleziona documento..." },
                   class: "input" %>
           <% else %>
-            <p class="txt-small txt-muted">Nessun documento esistente disponibile per questo cliente.</p>
+            <p class="txt-small txt-subtle">Nessun documento esistente disponibile per questo cliente.</p>
           <% end %>
         </div>
 
