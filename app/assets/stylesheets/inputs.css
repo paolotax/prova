@@ -57,6 +57,13 @@
         padding: 0.2em;
         margin-inline-start: 0.5em;
       }
+
+      /* Override input--select appearance to keep calendar picker */
+      &.input--select {
+        appearance: auto;
+        -webkit-appearance: auto;
+        background-image: none;
+      }
     }
 
     /* Target mobile Safari only */
