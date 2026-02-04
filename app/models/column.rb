@@ -83,19 +83,18 @@ class Column < ApplicationRecord
   end
 
   private
-
-  def set_position_at_end
-    max_position = account.columns.maximum(:position) || -1
-    self.position = max_position + 1
-  end
-
-  def swap_position_with(other_column)
-    return if other_column.nil?
-
-    transaction do
-      old_position = position
-      update_column(:position, other_column.position)
-      other_column.update_column(:position, old_position)
+    def set_position_at_end
+      max_position = account.columns.maximum(:position) || -1
+      self.position = max_position + 1
     end
-  end
+
+    def swap_position_with(other_column)
+      return if other_column.nil?
+
+      transaction do
+        old_position = position
+        update_column(:position, other_column.position)
+        other_column.update_column(:position, old_position)
+      end
+    end
 end

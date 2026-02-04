@@ -12,6 +12,7 @@ class DashboardController < ApplicationController
     if @filter.used?
       filtered_scope = @filter.entries(base_scope)
                               .includes(:column, :goldness, :closure, :not_now)
+                              .with_golden_first
                               .recent
       @total_count = filtered_scope.count
       set_page_and_extract_portion_from filtered_scope
@@ -22,6 +23,7 @@ class DashboardController < ApplicationController
 
       awaiting_triage_scope = base_scope.awaiting_triage
                                         .includes(:goldness, :closure, :not_now)
+                                        .with_golden_first
                                         .recent
       @total_count = awaiting_triage_scope.count
       set_page_and_extract_portion_from awaiting_triage_scope

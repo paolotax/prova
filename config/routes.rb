@@ -320,16 +320,9 @@ Rails.application.routes.draw do
         resource :goldness,  only: [:create, :destroy]
         resource :closure,   only: [:create, :destroy]
         resource :not_now,   only: [:create, :destroy]
-        resource :consegna,  only: [:create, :destroy], controller: "consegne"
-        resource :pagamento, only: [:create, :destroy], controller: "pagamenti"
         resource :publication, only: [:create, :destroy]
         resource :image, only: [:destroy]
         resources :attachments, only: [:destroy]
-      end
-      collection do
-        get "filtra"
-        get "archiviati"
-        get "saggi"
       end
       member do
         # Legacy routes for compatibility

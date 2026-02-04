@@ -90,6 +90,11 @@ class Entry < ApplicationRecord
   scope :recent, -> { order(updated_at: :desc) }
   scope :oldest_first, -> { order(created_at: :asc) }
 
+  # Goldness-first ordering: golden items appear first
+  scope :with_golden_first, -> {
+    left_outer_joins(:goldness).order(Arel.sql("goldnesses.id IS NULL"))
+  }
+
   # For column counts
   scope :in_column, ->(column) { where(column: column) }
 

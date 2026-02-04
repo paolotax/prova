@@ -6,6 +6,7 @@ class Dashboard::Columns::ClosedsController < ApplicationController
                                                       .non_ssk
                                                       .closed
                                                       .includes(:goldness, :closure, :not_now)
+                                                      .with_golden_first
                                                       .recently_closed_first
   end
 end

@@ -9,6 +9,7 @@ class Dashboard::ColumnsController < ApplicationController
                                                       .active
                                                       .in_column(@column)
                                                       .includes(:goldness, :closure, :not_now)
+                                                      .with_golden_first
                                                       .recent
   end
 

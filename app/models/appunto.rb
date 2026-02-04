@@ -198,6 +198,20 @@ class Appunto < ApplicationRecord
     where(conditions.join(' OR '))
   }
 
+  # Goldness-first ordering: SQL fragment for ORDER BY
+  # Golden items (NOT EXISTS = false) sort before non-golden (true)
+  GOLDEN_SORT_SQL = <<~SQL.squish
+    (NOT EXISTS (
+      SELECT 1 FROM entries e
+      JOIN goldnesses g ON g.entry_id = e.id
+      WHERE e.entryable_type = 'Appunto' AND e.entryable_id = appunti.id::text
+    ))
+  SQL
+
+  scope :with_golden_first, -> {
+    order(Arel.sql(GOLDEN_SORT_SQL))
+  }
+
   # non includono clienti REFACTOR appunto clientable
   # scope :nel_baule_di_oggi, lambda {
   #   where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id))

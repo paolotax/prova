@@ -127,6 +127,19 @@ class Documento < ApplicationRecord
 
   scope :solo_padri, -> { where(documento_padre_id: nil) }
 
+  # Goldness-first ordering: SQL fragment for ORDER BY
+  # Golden items (NOT EXISTS = false) sort before non-golden (true)
+  GOLDEN_SORT_SQL = <<~SQL.squish
+    (NOT EXISTS (
+      SELECT 1 FROM entries e
+      JOIN goldnesses g ON g.entry_id = e.id
+      WHERE e.entryable_type = 'Documento' AND e.entryable_id = documenti.id::text
+    ))
+  SQL
+
+  # No-op scope - golden ordering is applied in filter's ORDER BY
+  scope :with_golden_first, -> { all }
+
   def self.form_steps
     {
       tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],

@@ -26,7 +26,7 @@ class EntriesController < ApplicationController
     # Filter by column
     @entries = @entries.in_column(params[:column_id]) if params[:column_id].present?
 
-    @entries = @entries.recent.page(params[:page]).per(25)
+    @entries = @entries.with_golden_first.recent.page(params[:page]).per(25)
   end
 
   def show

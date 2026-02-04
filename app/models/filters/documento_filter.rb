@@ -73,9 +73,14 @@ module Filters
         result = result.where.missing(:pagamento)
       end
 
-      # Ordering
-      result = result.order(data_documento: :desc, causale_id: :desc, numero_documento: :desc)
-      result.distinct
+      # Ordering (golden items first via subquery, then by date)
+      result = result.order(
+        Arel.sql(Documento::GOLDEN_SORT_SQL),
+        data_documento: :desc,
+        causale_id: :desc,
+        numero_documento: :desc
+      )
+      result
     end
 
     alias_method :results, :documenti

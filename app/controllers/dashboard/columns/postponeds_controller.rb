@@ -6,6 +6,7 @@ class Dashboard::Columns::PostponedsController < ApplicationController
                                                       .non_ssk
                                                       .postponed
                                                       .includes(:goldness, :closure, :not_now)
+                                                      .with_golden_first
                                                       .recent
   end
 end
