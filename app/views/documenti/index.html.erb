@@ -1,6 +1,7 @@
 <% @page_title = "Documenti" %>
 <% @body_class = "contained-scrolling" %>
 
+<%#= render "documenti/broadcasts", filter: @filter %>
 
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">
@@ -16,7 +17,7 @@
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Documenti</span>
+    <span class="overflow-ellipsis"><%= @page_title %></span>
   </h1>
 
   <div class="header__actions header__actions--end">

@@ -106,7 +106,7 @@
   <%= render "documenti/edit_form", documento: documento %>
 
   <% if documento.persisted? %>
-    <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
+    <div style="margin-block: 1ch; border-block-start: 1px solid var(--color-container);"></div>
 
     <%= render "documenti/container/righe_table", documento: documento, editing: true %>
   <% end %>

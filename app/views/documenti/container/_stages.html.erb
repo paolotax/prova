@@ -1,21 +1,60 @@
 <%# locals: (documento:) -%>
-<%# Mostra solo i badge di stato - il pulsante Gestisci è nel footer %>
 
-<div id="<%= dom_id(documento, :stages) %>" class="flex flex-column gap-quarter">
-  <% if documento.consegnato? %>
-    <span class="badge badge--small" style="--badge-color: var(--color-positive);">
-      <%= icon_tag "truck" %>
-      <%= documento.consegnato_il&.strftime("%d/%m") %>
-    </span>
-  <% end %>
-
-  <% if documento.pagato? %>
-    <span class="badge badge--small" style="--badge-color: var(--color-positive);">
-      <%= icon_tag "cash" %>
-      <%= documento.pagato_il&.strftime("%d/%m") %>
-      <% if documento.tipo_pagamento.present? %>
-        <%= documento.tipo_pagamento %>
+<% if documento.entry.present? %>
+  <div class="card__stages" style="align-self: flex-start;">
+    <%# Rimandati (Not Now) - gray %>
+    <% if documento.entry.postponed? %>
+      <%= button_to entry_not_now_path(documento.entry),
+          method: :delete,
+          class: "btn card__column-name card__column-name--current",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Rimandato
       <% end %>
-    </span>
-  <% end %>
-</div>
+    <% else %>
+      <%= button_to entry_not_now_path(documento.entry),
+          method: :post,
+          class: "btn card__column-name",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Rimanda
+      <% end %>
+    <% end %>
+
+    <%# Da gestire (Triage) - blue %>
+    <% is_in_triage = documento.entry.column_id.nil? && !documento.entry.postponed? && !documento.entry.closed? %>
+    <%= button_to entry_triage_path(documento.entry),
+        method: :delete,
+        class: class_names("btn card__column-name", "card__column-name--current": is_in_triage),
+        style: "--btn-color: oklch(var(--lch-blue-medium)); --btn-border-color: oklch(var(--lch-blue-medium))",
+        disabled: is_in_triage do %>
+      Da gestire
+    <% end %>
+
+    <%# Columns %>
+    <% current_account.columns.ordered.each do |column| %>
+      <%= button_to entry_triage_path(documento.entry, column_id: column.id),
+          method: :post,
+          class: class_names("btn card__column-name", "card__column-name--current": documento.entry.column_id == column.id),
+          style: "--btn-color: #{column.color}; --btn-border-color: #{column.color}",
+          disabled: documento.entry.column_id == column.id do %>
+        <%= column.name %>
+      <% end %>
+    <% end %>
+
+    <%# Completato (Closed) - gray %>
+    <% if documento.entry.closed? %>
+      <%= button_to entry_closure_path(documento.entry),
+          method: :delete,
+          class: "btn card__column-name card__column-name--current",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Completato
+      <% end %>
+    <% else %>
+      <%= button_to entry_closure_path(documento.entry),
+          method: :post,
+          class: "btn card__column-name",
+          style: "--btn-color: oklch(0.6 0.01 0); --btn-border-color: oklch(0.6 0.01 0)" do %>
+        Completa
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
