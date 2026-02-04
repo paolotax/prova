@@ -58,8 +58,11 @@ module Filters
 
     def stati_documento_disponibili
       {
+        "attivi" => "Attivi",
         "da_consegnare" => "Da consegnare",
-        "da_pagare" => "Da pagare"
+        "da_pagare" => "Da pagare",
+        "completati" => "Completati",
+        "tutti" => "Tutti"
       }
     end
 

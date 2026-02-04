@@ -140,6 +140,15 @@ class Documento < ApplicationRecord
   # No-op scope - golden ordering is applied in filter's ORDER BY
   scope :with_golden_first, -> { all }
 
+  # Scope per stato Entry-based (unified triage system)
+  # Attivi = documenti senza closure (non completati)
+  scope :attivi, -> {
+    where("documenti.id IN (SELECT e.entryable_id::uuid FROM entries e LEFT JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Documento' AND c.id IS NULL)")
+  }
+  scope :completati, -> {
+    where("documenti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Documento')")
+  }
+
   def self.form_steps
     {
       tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],

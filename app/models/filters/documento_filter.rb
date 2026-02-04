@@ -65,12 +65,22 @@ module Filters
       result = result.joins(:consegna) if consegnati.present?
       result = result.joins(:pagamento) if pagati.present?
 
-      # Stato documento filter (da consegnare/da pagare)
+      # Stato documento filter (attivi/da consegnare/da pagare/completati/tutti)
       case stato_documento
+      when "attivi"
+        result = result.attivi
       when "da_consegnare"
-        result = result.where.missing(:consegna)
+        result = result.attivi.where.missing(:consegna)
       when "da_pagare"
-        result = result.where.missing(:pagamento)
+        result = result.attivi.where.missing(:pagamento)
+      when "completati"
+        result = result.completati
+      when "tutti"
+        # Nessun filtro su stato closure
+        result
+      else
+        # Default: mostra solo documenti attivi (non chiusi)
+        result = result.attivi
       end
 
       # Ordering (golden items first via subquery, then by date)

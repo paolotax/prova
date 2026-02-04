@@ -67,7 +67,12 @@ module Filters
         result = result.where("EXTRACT(YEAR FROM appunti.created_at) = ?", anno)
       end
 
-      result = result.with_any_state([state]) if state.present?
+      # State filter: default to "attivi" (non chiusi) if no state specified
+      if state.present?
+        result = result.with_any_state([state])
+      else
+        result = result.attivi
+      end
 
       # Appuntabile type filter
       if appuntabile_type.present?
