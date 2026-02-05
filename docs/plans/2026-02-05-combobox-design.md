@@ -1,7 +1,7 @@
 # Design: Combobox Consolidation
 
 **Data:** 2026-02-05
-**Stato:** Analisi completata, cleanup eseguito
+**Stato:** Completato (combobox_libro e entry streams), restano tax_select e cleanup preview
 
 ## Risultato dell'analisi
 
@@ -31,13 +31,11 @@ Questi si combinano nella view: `data-controller="dialog filter combobox"` oppur
 
 ### Layer 3: Controller business-specific (Prova-only)
 
-| Controller | Dominio | Cosa fa |
+| Controller | Dominio | Stato |
 |---|---|---|
-| `tax_combobox_causale_controller.js` | Documenti | Su cambio causale → fetch `/documenti/nuovo_numero_documento` → aggiorna numero + clientable type |
-| `combobox_libro_controller.js` | Righe documento | Su selezione libro → fetch `/libri/:id/get_prezzo_e_sconto` → popola prezzo, sconto, focus quantita |
-| `combobox_select (ELIMINATO)_controller.js` | Appunti/Adozioni | Su selezione scuola → fetch `/import_scuole/:id/combobox_classi` → Turbo Stream per classi |
-
-Questi usano il **componente HW combobox** (non il combobox Fizzy) e aggiungono logica fetch specifica.
+| ~~`tax_combobox_causale_controller.js`~~ | Documenti | Sostituito con `documento_causale_controller.js` ✅ |
+| `combobox_libro_controller.js` | Righe documento | Refactored a composizione ✅ |
+| ~~`combobox_select_controller.js`~~ | Appunti/Adozioni | Eliminato (dead code) ✅ |
 
 ### Layer 4: Controller legacy (da tenere temporaneamente)
 
@@ -51,23 +49,24 @@ Questi usano il **componente HW combobox** (non il combobox Fizzy) e aggiungono 
 I controller `combobox` e `multi_selection_combobox` sono byte-per-byte identici a Fizzy. Le view dei filtri (`filters/settings/*`) usano gia il pattern Fizzy completo con `quick-filter`, `dialog`, `popup__list`, `popup__item`, `navigable-list`.
 
 ### 2. Business-specific: approccio composizione
-I `tax_combobox_*` vengono sostituiti incrementalmente con controller leggeri a composizione:
 
 **Completato:**
 - `tax_combobox_causale_controller.js` → sostituito con `documento_causale_controller.js` (select nativo + fetch numero)
-
-**Da fare:**
-- `combobox_libro_controller.js` — selezione libro nelle righe documento (usa HW combobox, fetch prezzo/sconto)
-- `combobox_select (ELIMINATO)_controller.js` — selezione scuola→classi (usa HW combobox, Turbo Stream)
+- `combobox_libro_controller.js` → refactored a composizione: URL e contesto clientable passati come Stimulus values, usa `event.detail.value` da `hw-combobox:selection`, dispatch `libro:loaded` event
+- `combobox_select_controller.js` → eliminato (dead code, non referenziato)
+- `_dialog_form.html.erb` → eliminato (dead code, `riga_form_frame` non piu' triggerato)
 
 ### 3. Dead code eliminato
-6 file rimossi:
+9 file rimossi:
 - `fancy_select_controller.js` (non referenziato)
 - `tax_select_sort_controller.js` (non referenziato)
 - `tax_select_causale_controller.js` (non referenziato)
 - `tax_combobox_causale_controller.js` (sostituito da documento-causale)
+- `combobox_select_controller.js` (non referenziato)
 - `app/views/documenti/_form.html.erb` (legacy, non usata)
 - `app/views/documenti/_edit_form.html.erb` (legacy, non usata)
+- `app/views/documento_righe/_dialog_form.html.erb` (dead code)
+- `app/views/appunti/display/preview/_columns.html.erb` (rimosso da preview, colonna gia' in header)
 
 ### 4. Date input: controller riutilizzabile
 Creato `date_input_controller.js` per tutte le date dell'app:
@@ -75,6 +74,28 @@ Creato `date_input_controller.js` per tutte le date dell'app:
 - Click sull'icona calendario apre il picker nativo
 - Hidden input manda ISO (yyyy-mm-dd) al server
 - Applicato a: `_content.html.erb` (data_documento), `_gestione_dialog_content.html.erb` (consegnato_il, pagato_il)
+
+### 5. Entry turbo streams: pattern generico per entryable
+Estratto partial condiviso `entries/_replace_entryable_container.turbo_stream.erb` che usa `model_name` per risolvere dinamicamente partial e locals:
+
+```erb
+<% entryable = @entry.entryable %>
+<%= turbo_stream.replace [ entryable, :container ],
+    partial: "#{entryable.model_name.collection}/container",
+    method: :morph,
+    locals: { entryable.model_name.element.to_sym => entryable } %>
+```
+
+Funziona per qualsiasi entryable (Appunto, Documento, Tappa) senza if/elsif. Usato in tutti gli 8 template entry (closures, triages, not_nows, goldnesses).
+
+### 6. Goldness per documenti
+- Aggiunto pulsante goldness (evidenza) nelle left actions del documento container
+- `documento_color` helper gestisce golden, closed, postponed
+- Classe `golden-effect` su article quando documento e' golden
+- Rimossa lista colonne dalla preview appunto (ridondante con badge header)
+
+### 7. Bugfix: UUID quoting in sconti
+`Sconto.sconto_per_libro` usava raw SQL `scontabile_id = #{entity.id}` senza quotes. Con clienti migrati a UUID, PostgreSQL falliva con `PG::SyntaxError`. Fix: `scontabile_id = '#{entity.id}'` nelle clausole ORDER BY.
 
 ## Mappa dei file
 
@@ -91,8 +112,7 @@ app/javascript/controllers/
 ├── date_input_controller.js                  # Nuovo ✅ (date tipizzabili)
 ├── documento_causale_controller.js           # Nuovo ✅ (composizione)
 ├── documento_editor_controller.js            # Refactored ✅ (form submit + targets)
-├── combobox_libro_controller.js          # Business (righe) — da convertire
-├── combobox_select (ELIMINATO)_controller.js         # Business (scuole→classi) — da convertire
+├── combobox_libro_controller.js              # Refactored ✅ (composizione: values per URL e clientable)
 └── tax_select_controller.js                  # Legacy (mandati/zone) — da convertire
 ```
 
@@ -132,8 +152,10 @@ app/javascript/controllers/
 
 ## Prossimi passi
 
-1. **~~Refactoring `tax_combobox_causale`~~** — FATTO: sostituito con `documento_causale_controller.js`
-2. **Convertire `combobox_libro_controller.js`** — selezione libro nelle righe, fetch prezzo/sconto. Approccio: composizione con controller leggero
-3. **Convertire `combobox_select (ELIMINATO)_controller.js`** — selezione scuola→classi. Verifica: usa `import_scuola_id` che potrebbe dover diventare `scuola_id` dopo multi-tenancy
-4. **Convertire `tax_select_controller.js`** — al pattern Fizzy combobox nelle view mandati/zone
-5. **Analisi duplicazioni view Appunto** — confronto con pattern Fizzy card, cleanup parziale iniziato
+1. ~~**Refactoring `tax_combobox_causale`**~~ — FATTO: sostituito con `documento_causale_controller.js`
+2. ~~**Convertire `combobox_libro_controller.js`**~~ — FATTO: composizione con Stimulus values
+3. ~~**Eliminare `combobox_select_controller.js`**~~ — FATTO: dead code rimosso
+4. ~~**Entry turbo streams per documenti**~~ — FATTO: partial generico `_replace_entryable_container`
+5. ~~**Goldness per documenti**~~ — FATTO: pulsante + helper colore + golden-effect
+6. **Convertire `tax_select_controller.js`** — al pattern Fizzy combobox nelle view mandati/zone
+7. **Cleanup preview appunto** — verificare che `_columns.html.erb` non sia usato altrove e rimuoverlo

@@ -698,6 +698,9 @@
     --card-padding-block: var(--block-space);
 
     border: 1px solid var(--border-color);
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 1ch;
     inline-size: auto;
     text-align: center;
 

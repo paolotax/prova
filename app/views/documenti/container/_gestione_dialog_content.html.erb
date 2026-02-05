@@ -42,7 +42,7 @@
               class: "flex flex-column align-center gap-half" do |f| %>
           <div class="flex flex-column align-center" data-controller="date-input">
             <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-            <div class="date-input">
+            <div class="date-input" style="max-width: 16ch;">
               <input type="text"
                      data-date-input-target="display"
                      placeholder="gg/mm/aaaa"
@@ -55,7 +55,7 @@
                      class="date-input__picker"
                      tabindex="-1"
                      data-action="change->date-input#pickerChanged">
-              <%= f.hidden_field :consegnato_il, value: documento.consegnato_il, data: { date_input_target: "hidden" } %>
+              <%= f.hidden_field :consegnato_il, value: documento.consegnato_il&.to_date, data: { date_input_target: "hidden" } %>
               <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
                 <span class="for-screen-reader">Apri calendario</span>
               </button>
@@ -79,7 +79,7 @@
             class: "flex flex-column align-center gap-half" do |f| %>
         <div class="flex flex-column align-center" data-controller="date-input">
           <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-          <div class="date-input">
+          <div class="date-input" style="max-width: 16ch;">
             <input type="text"
                    data-date-input-target="display"
                    placeholder="gg/mm/aaaa"
@@ -141,7 +141,7 @@
               class: "flex flex-column align-center gap-half" do |f| %>
           <div class="flex flex-column align-center" data-controller="date-input">
             <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-            <div class="date-input">
+            <div class="date-input" style="max-width: 16ch;">
               <input type="text"
                      data-date-input-target="display"
                      placeholder="gg/mm/aaaa"
@@ -154,7 +154,7 @@
                      class="date-input__picker"
                      tabindex="-1"
                      data-action="change->date-input#pickerChanged">
-              <%= f.hidden_field :pagato_il, value: documento.pagato_il, data: { date_input_target: "hidden" } %>
+              <%= f.hidden_field :pagato_il, value: documento.pagato_il&.to_date, data: { date_input_target: "hidden" } %>
               <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
                 <span class="for-screen-reader">Apri calendario</span>
               </button>
@@ -192,7 +192,7 @@
             class: "flex flex-column align-center gap-half" do |f| %>
         <div class="flex flex-column align-center" data-controller="date-input">
           <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-          <div class="date-input">
+          <div class="date-input" style="max-width: 16ch;">
             <input type="text"
                    data-date-input-target="display"
                    placeholder="gg/mm/aaaa"

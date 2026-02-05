@@ -64,17 +64,22 @@
           <span class="cards__expander-count" data-drag-and-drop-counter><%= @total_count %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">Da gestire <span class="txt-light">(<%= @total_count %>)</span></h3>
         </button>
-        <div class="cards__actions">
-          <%= link_to new_documento_path, class: "btn btn--circle txt-x-small borderless", title: "Nuovo documento", data: { turbo_frame: "_top" } do %>
-            <%= icon_tag "document-plus", class: "translucent" %>
-            <span class="for-screen-reader">Nuovo documento</span>
-          <% end %>
-          <%= link_to new_appunto_path, class: "btn btn--circle txt-x-small borderless", title: "Nuovo appunto", data: { turbo_frame: "_top" } do %>
-            <%= icon_tag "pencil-square", class: "translucent" %>
-            <span class="for-screen-reader">Nuovo appunto</span>
-          <% end %>
-        </div>
       </header>
+
+      <div class="board-tools card flex">
+        <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+          <%= icon_tag "document" %>
+          <span>Documento</span>
+          <kbd  class="hide-on-touch">D</span>
+        <% end %>
+        
+        <%= link_to new_appunto_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+          <%= icon_tag "note" %>
+          <span>Appunto</span>
+          <kbd  class="hide-on-touch">A</span>
+        <% end %>
+      </div>
+
       <%= with_automatic_pagination :entries, @page,
           id: "awaiting_triage_entries",
           class: "cards__list",
