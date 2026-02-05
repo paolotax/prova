@@ -459,4 +459,9 @@ class Documento < ApplicationRecord
       doc.update_column(:status, Documento.statuses[stato_target])
     end
   end
+
+  # Override from Entryable - auto-create entry for new documenti
+  def should_auto_create_entry?
+    true
+  end
 end

@@ -25,6 +25,8 @@ export default class extends Controller {
     "totaleCopie",
     "viewFooter",
     "editFooter",
+    "viewContent",
+    "editContent",
     "tableWrapper",
     "editControls",
     "dialogTitle",
@@ -102,6 +104,10 @@ export default class extends Controller {
   activateEditingUI() {
     this.element.classList.add('documento-editor--editing')
 
+    // Show edit content, hide view content
+    if (this.hasEditContentTarget) this.editContentTarget.hidden = false
+    if (this.hasViewContentTarget) this.viewContentTarget.hidden = true
+
     // Show edit footer, hide view footer
     if (this.hasViewFooterTarget) this.viewFooterTarget.hidden = true
     if (this.hasEditFooterTarget) this.editFooterTarget.hidden = false
@@ -133,6 +139,10 @@ export default class extends Controller {
   deactivateEditingUI() {
     this.element.classList.remove('documento-editor--editing')
     this.element.classList.remove('documento-editor--dirty')
+
+    // Show view content, hide edit content
+    if (this.hasViewContentTarget) this.viewContentTarget.hidden = false
+    if (this.hasEditContentTarget) this.editContentTarget.hidden = true
 
     // Show view footer, hide edit footer
     if (this.hasViewFooterTarget) this.viewFooterTarget.hidden = false
@@ -881,91 +891,66 @@ export default class extends Controller {
   // ==================== SAVE / CANCEL ====================
 
   /**
-   * Save all changes to the server via fetch
+   * Save documento + righe via form submission.
+   * Populates hidden fields for righe nested attributes,
+   * then submits the form (POST for new, PATCH for existing).
    */
-  async save(event) {
+  save(event) {
     event?.preventDefault()
-    console.log('=== SAVE CALLED ===')
-    console.log('documentoValue:', this.documentoValue)
-    console.log('righeValue:', this.righeValue)
 
-    const documentoId = this.documentoValue.id
-    if (!documentoId) {
-      console.error('No documento ID for save')
-      alert('Errore: documento ID mancante')
-      return
-    }
+    this.populateHiddenFields()
 
-    // Build the payload
-    const payload = this.buildPayload()
-    console.log('Saving payload:', payload)
-
-    // Get account_id from current URL path (format: /account_id/documenti/...)
-    const pathParts = window.location.pathname.split('/')
-    const accountId = pathParts[1]
-
-    // Disable save button during operation
-    const saveBtn = event?.target?.closest('button') || this.element.querySelector('[data-action*="save"]')
-    if (saveBtn) {
-      saveBtn.disabled = true
-      saveBtn.textContent = 'Salvataggio...'
-    }
-
-    try {
-      const response = await fetch(`/${accountId}/documenti/${documentoId}/update_righe`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
-        },
-        body: JSON.stringify(payload)
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        console.log('Save successful:', data)
-
-        // Reload page to show updated data
-        window.location.reload()
-      } else {
-        const errorData = await response.json()
-        console.error('Save failed:', errorData)
-        alert('Errore nel salvataggio: ' + (errorData.error || 'Errore sconosciuto'))
-
-        // Re-enable button
-        if (saveBtn) {
-          saveBtn.disabled = false
-          saveBtn.textContent = 'Salva'
-        }
-      }
-    } catch (error) {
-      console.error('Save error:', error)
-      alert('Errore di connessione')
-
-      // Re-enable button
-      if (saveBtn) {
-        saveBtn.disabled = false
-        saveBtn.textContent = 'Salva'
-      }
+    if (this.hasFormTarget) {
+      this.formTarget.requestSubmit()
     }
   }
 
   /**
-   * Build payload for save
+   * Populate hidden fields with righe as nested attributes
+   * for the documento form. Only sends new, modified, or destroyed righe.
    */
-  buildPayload() {
-    const righePayload = this.righeValue.map(riga => ({
-      documento_riga_id: riga.documento_riga_id || null,
-      riga_id: riga.riga_id || null,
-      libro_id: riga.libro_id,
-      quantita: riga.quantita || 1,
-      prezzo_cents: riga.prezzo_cents || 0,
-      sconto: riga.sconto || 0,
-      _destroy: riga._destroy || false,
-      _isNew: riga._isNew || false
-    }))
+  populateHiddenFields() {
+    if (!this.hasHiddenFieldsTarget) return
 
-    return { righe: righePayload }
+    const container = this.hiddenFieldsTarget
+    container.innerHTML = ''
+
+    let index = 0
+    this.righeValue.forEach(riga => {
+      const prefix = `documento[documento_righe_attributes][${index}]`
+
+      if (riga._isNew) {
+        // New riga
+        this._addHiddenField(container, `${prefix}[riga_attributes][libro_id]`, riga.libro_id)
+        this._addHiddenField(container, `${prefix}[riga_attributes][quantita]`, riga.quantita || 1)
+        this._addHiddenField(container, `${prefix}[riga_attributes][prezzo_cents]`, riga.prezzo_cents || 0)
+        this._addHiddenField(container, `${prefix}[riga_attributes][sconto]`, riga.sconto || 0)
+        index++
+      } else if (riga._destroy) {
+        // Existing riga marked for deletion
+        this._addHiddenField(container, `${prefix}[id]`, riga.documento_riga_id)
+        this._addHiddenField(container, `${prefix}[_destroy]`, '1')
+        index++
+      } else if (riga._modified) {
+        // Existing riga modified
+        this._addHiddenField(container, `${prefix}[id]`, riga.documento_riga_id)
+        this._addHiddenField(container, `${prefix}[riga_attributes][id]`, riga.riga_id)
+        this._addHiddenField(container, `${prefix}[riga_attributes][libro_id]`, riga.libro_id)
+        this._addHiddenField(container, `${prefix}[riga_attributes][quantita]`, riga.quantita || 1)
+        this._addHiddenField(container, `${prefix}[riga_attributes][prezzo_cents]`, riga.prezzo_cents || 0)
+        this._addHiddenField(container, `${prefix}[riga_attributes][sconto]`, riga.sconto || 0)
+        index++
+      }
+      // Unchanged righe: skip — Rails leaves them untouched
+    })
+  }
+
+  _addHiddenField(container, name, value) {
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = name
+    input.value = value ?? ''
+    container.appendChild(input)
   }
 
   /**

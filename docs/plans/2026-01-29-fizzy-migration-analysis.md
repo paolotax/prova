@@ -66,47 +66,35 @@ app/assets/stylesheets/
 
 ---
 
-## 2. COMBOBOX/SELECT - Frammentazione Critica
+## 2. COMBOBOX/SELECT - ✅ Analisi completata (2026-02-05)
 
-### Stato Attuale Prova
-- **11 controller diversi** per combobox/select ancora presenti:
-  - `combobox_controller.js`
-  - `multi_selection_combobox_controller.js`
-  - `tax_combobox_causale_controller.js`
-  - `tax_combobox_libro_controller.js`
-  - `tax_combobox_select_controller.js`
-  - `tax_select_causale_controller.js`
-  - `tax_select_controller.js`
-  - `tax_select_sort_controller.js`
-  - `tax_checkbox_select_all_controller.js`
-  - `fancy_select_controller.js`
+### Stato Attuale (aggiornato)
 
-### Pattern Fizzy
-- **Solo 2 controller**:
-  - `combobox_controller.js` (single selection)
-  - `multi_selection_combobox_controller.js` (multi selection)
-- Configurazione via `data-*-value` attributes
+**Controller generici — identici a Fizzy:**
+- `combobox_controller.js` — identico a Fizzy, usato nei filtri e documenti
+- `multi_selection_combobox_controller.js` — identico a Fizzy, usato nei filtri
 
-### Da Migrare
+**Controller business-specific — da tenere (composizione):**
+- `tax_combobox_causale_controller.js` — fetch numero documento su cambio causale (documenti)
+- `tax_combobox_libro_controller.js` — fetch prezzo/sconto su selezione libro (righe documento)
+- `tax_combobox_select_controller.js` — cascade scuola→classi (appunti, adozioni)
 
-**Azione:** Consolidare gli 11 controller in 2, usando values per la configurazione.
+**Controller legacy — da tenere temporaneamente:**
+- `tax_select_controller.js` — usato in mandati e zone (form con select native)
 
-```javascript
-// Pattern target Fizzy
-data-controller="combobox"
-data-combobox-select-property-name-value="aria-checked"
-data-combobox-default-value-value="latest"
-data-combobox-default-label-value="Sort by..."
-```
+**Eliminati (dead code, 2026-02-05):**
+- ~~`fancy_select_controller.js`~~ — eliminato
+- ~~`tax_select_sort_controller.js`~~ — eliminato
+- ~~`tax_select_causale_controller.js`~~ — eliminato
 
-**File da eliminare/consolidare:**
-- `tax_combobox_causale_controller.js` → Merge in `combobox_controller.js`
-- `tax_combobox_libro_controller.js` → Merge in `combobox_controller.js`
-- `tax_combobox_select_controller.js` → Merge in `combobox_controller.js`
-- `tax_select_causale_controller.js` → Merge in `combobox_controller.js`
-- `tax_select_controller.js` → Merge in `combobox_controller.js`
-- `tax_select_sort_controller.js` → Merge in `combobox_controller.js`
-- `fancy_select_controller.js` → Valutare se necessario
+### Decisioni di design
+- I controller generici (combobox, multi_selection_combobox) sono GIA allineati a Fizzy
+- I `tax_combobox_*` usano il componente HW combobox (pattern diverso) — si tengono
+- I filtri in `filters/settings/*` usano gia il pattern Fizzy completo (quick-filter, dialog, popup, navigable-list)
+- Future refactoring dei `tax_combobox_*`: approccio **composizione** (controller dominio separato dal combobox generico)
+
+### Vedi anche
+- Design doc dettagliato: `docs/plans/2026-02-05-combobox-design.md`
 
 ---
 
@@ -253,10 +241,10 @@ Mantenere ViewComponent per casi complessi, ma preferire:
 3. [x] Migration per correggere documenti con account errato
 4. [ ] Parametrizzare SQL in LibriImporter e FilterProxies
 
-### Sprint 2 - Filtri Core ⏳ PENDING
+### Sprint 2 - Filtri Core ✅ SOSTANZIALMENTE COMPLETATO
 5. [ ] Creare `filter_settings_controller.js` allineato a Fizzy
-6. [ ] Consolidare 11 combobox controllers in 2
-7. [ ] Aggiornare `filter_dialog` helper
+6. [x] Combobox: generici identici a Fizzy, dead code eliminato, business-specific tenuti con approccio composizione
+7. [x] `filter_dialog` helper gia allineato, filtri usano pattern Fizzy completo
 8. [x] Creare `filters.css` con variabili Fizzy
 
 ### Sprint 3 - Dialogs & Forms ⏳ PENDING
@@ -308,15 +296,12 @@ app/views/filters/settings/
 ### Da Eliminare
 ```
 app/javascript/controllers/
-├── tax_combobox_causale_controller.js
-├── tax_combobox_libro_controller.js
-├── tax_combobox_select_controller.js
-├── tax_select_causale_controller.js
-├── tax_select_controller.js
-├── tax_select_sort_controller.js
-├── modal_controller.js
-├── old_dialog_controller.js
-└── openmodal_controller.js
+├── fancy_select_controller.js          ✅ Eliminato (2026-02-05)
+├── tax_select_sort_controller.js       ✅ Eliminato (2026-02-05)
+├── tax_select_causale_controller.js    ✅ Eliminato (2026-02-05)
+├── modal_controller.js                 ⏳ Pending
+├── old_dialog_controller.js            ⏳ Pending
+└── openmodal_controller.js             ⏳ Pending
 
 app/models/concerns/ (dopo verifica non-uso)
 ├── closeable.rb (legacy - verificare)

@@ -1,7 +1,7 @@
 <%# locals: (documento:, editing: false) -%>
 
-<% if editing %>
-  <%# Editing mode - transactional editing with form %>
+<%# Edit mode content - always rendered for persisted docs (toggled client-side), always visible for new docs %>
+<div data-documento-editor-target="editContent" <%= 'hidden' unless editing %>>
   <%= form_with model: documento,
                 url: documento.persisted? ? documento_path(documento) : documenti_path,
                 method: documento.persisted? ? :patch : :post,
@@ -52,23 +52,43 @@
       <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>
 
       <%# Causale, Numero, Data %>
-      <div class="flex gap-1 align-end">
+      <div class="flex gap align-end"
+           data-controller="documento-causale"
+           data-documento-causale-url-value="<%= documento_numero_path %>">
         <div class="form-field" style="flex: 1 1 50%;">
-          <%= form.label :causale_id, "Tipo", class: "form-label" %>
+          <%= form.label :causale_id, "Causale documento", class: "form-label" %>
           <%= form.select :causale_id,
               options_from_collection_for_select(Causale.all, :id, :causale, documento.causale_id),
               { include_blank: "seleziona..." },
-              class: "input input--select" %>
+              class: "input input--select",
+              data: { action: "change->documento-causale#change" } %>
         </div>
 
         <div class="form-field" style="flex: 1 1 25%;">
           <%= form.label :numero_documento, "Nr.", class: "form-label" %>
-          <%= form.number_field :numero_documento, class: "input" %>
+          <%= form.number_field :numero_documento, class: "input",
+              data: { documento_causale_target: "numero" } %>
         </div>
 
-        <div class="form-field" style="flex: 1 1 25%;">
+        <div class="form-field" style="flex: 1 1 25%;" data-controller="date-input">
           <%= form.label :data_documento, "Data", class: "form-label" %>
-          <%= form.date_field :data_documento, class: "input" %>
+          <div class="date-input">
+            <input type="text"
+                   data-date-input-target="display"
+                   placeholder="gg/mm/aaaa"
+                   class="input input--date"
+                   autocomplete="off"
+                   data-action="input->date-input#parseText blur->date-input#formatOnBlur">
+            <input type="date"
+                   data-date-input-target="picker"
+                   class="date-input__picker"
+                   tabindex="-1"
+                   data-action="change->date-input#pickerChanged">
+            <%= form.hidden_field :data_documento, data: { date_input_target: "hidden" } %>
+            <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
+              <span class="for-screen-reader">Apri calendario</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -91,23 +111,13 @@
     <%# Hidden fields for nested righe attributes - populated by Stimulus %>
     <div data-documento-editor-target="hiddenFields"></div>
   <% end %>
+</div>
 
-  <div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
-
-  <%#= render "documenti/container/righe_table", documento: documento, editing: true %>
-
-<% elsif documento.persisted? && documento.numero_documento.present? %>
-  <%# View mode for existing document %>
-  <%= turbo_frame_tag documento, :edit do %>
-    <%= render "documenti/container/content_display", documento: documento %>
-  <% end %>
-<% else %>
-  <%# New document without numero (bozza) - legacy flow %>
-  <%= render "documenti/edit_form", documento: documento %>
-
-  <% if documento.persisted? %>
-    <div style="margin-block: 1ch; border-block-start: 1px solid var(--color-container);"></div>
-
-    <%#= render "documenti/container/righe_table", documento: documento, editing: true %>
-  <% end %>
+<%# View mode content (only for persisted documents) %>
+<% if documento.persisted? %>
+  <div data-documento-editor-target="viewContent" <%= 'hidden' if editing %>>
+    <%= turbo_frame_tag documento, :edit do %>
+      <%= render "documenti/container/content_display", documento: documento %>
+    <% end %>
+  </div>
 <% end %>
