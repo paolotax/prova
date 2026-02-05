@@ -569,10 +569,10 @@ export default class extends Controller {
       // Close the listbox if open
       if (hwCombobox?.close) hwCombobox.close()
 
-      // Set lastLibroId on tax-combobox-libro to avoid unnecessary fetches
-      const taxComboboxEl = dialog.querySelector('[data-controller*="tax-combobox-libro"]')
-      if (taxComboboxEl && riga.libro_id) {
-        taxComboboxEl.dataset.taxComboboxLibroLastLibroIdValue = String(riga.libro_id)
+      // Set lastLibroId on combobox-libro to avoid unnecessary fetches
+      const comboboxLibroEl = dialog.querySelector('[data-controller*="combobox-libro"]')
+      if (comboboxLibroEl && riga.libro_id) {
+        comboboxLibroEl.dataset.comboboxLibroLastLibroIdValue = String(riga.libro_id)
       }
     }
 
@@ -655,10 +655,10 @@ export default class extends Controller {
       if (textInput) textInput.value = ''
       if (listbox) listbox.innerHTML = ''
 
-      // Reset lastLibroId on tax-combobox-libro
-      const taxComboboxEl = this.rigaDialogTarget.querySelector('[data-controller*="tax-combobox-libro"]')
-      if (taxComboboxEl) {
-        taxComboboxEl.dataset.taxComboboxLibroLastLibroIdValue = ''
+      // Reset lastLibroId on combobox-libro
+      const comboboxLibroEl = this.rigaDialogTarget.querySelector('[data-controller*="combobox-libro"]')
+      if (comboboxLibroEl) {
+        comboboxLibroEl.dataset.comboboxLibroLastLibroIdValue = ''
       }
     }
 
@@ -821,7 +821,7 @@ export default class extends Controller {
   }
 
   /**
-   * Called when libro data is loaded from server (via tax-combobox-libro)
+   * Called when libro data is loaded from server (via combobox-libro)
    * This provides the ISBN and other details
    */
   onLibroLoaded(event) {

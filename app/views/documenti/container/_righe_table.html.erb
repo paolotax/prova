@@ -117,7 +117,7 @@
           style="max-width: 50ch; padding: 1rem; overflow: visible;"
           data-documento-editor-target="rigaDialog"
           data-action="close->documento-editor#dialogClosed libro:loaded->documento-editor#onLibroLoaded">
-    <div data-controller="tax-combobox-libro dialog-form"
+    <div data-controller="combobox-libro dialog-form"
          data-dialog-form-submit-on-enter-value="true">
       <header class="flex justify-between align-center margin-block-end">
         <h3 class="txt-large" data-documento-editor-target="dialogTitle">Nuova riga</h3>
@@ -139,8 +139,8 @@
                 autofocus: true,
                 data: {
                   documento_editor_target: "libroCombobox",
-                  action: "hw-combobox:selection->tax-combobox-libro#change hw-combobox:selection->documento-editor#onLibroSelected",
-                  tax_combobox_libro_target: "combobox"
+                  action: "hw-combobox:selection->combobox-libro#change hw-combobox:selection->documento-editor#onLibroSelected",
+                  combobox_libro_target: "combobox"
                 } %>
             <div class="txt-small txt-muted margin-block-start-quarter"
                  data-documento-editor-target="isbnDisplay"></div>
@@ -150,19 +150,19 @@
             <div class="flex flex-column" style="flex: 1 1 80px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Qt</label>
               <%= f.number_field :quantita, value: 1, min: 1,
-                  data: { documento_editor_target: "quantitaField", tax_combobox_libro_target: "quantita", action: "keydown.enter->documento-editor#focusNextField" },
+                  data: { documento_editor_target: "quantitaField", combobox_libro_target: "quantita", action: "keydown.enter->documento-editor#focusNextField" },
                   class: "input", style: "text-align: right;" %>
             </div>
             <div class="flex flex-column" style="flex: 1 1 100px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Prezzo</label>
               <%= f.number_field :prezzo, step: 0.01,
-                  data: { documento_editor_target: "prezzoField", tax_combobox_libro_target: "prezzo", action: "keydown.enter->documento-editor#focusNextField" },
+                  data: { documento_editor_target: "prezzoField", combobox_libro_target: "prezzo", action: "keydown.enter->documento-editor#focusNextField" },
                   class: "input", style: "text-align: right;" %>
             </div>
             <div class="flex flex-column" style="flex: 1 1 80px;">
               <label class="txt-small txt-muted margin-block-end-quarter">Sc%</label>
               <%= f.number_field :sconto, value: 0, step: 0.01,
-                  data: { documento_editor_target: "scontoField", tax_combobox_libro_target: "sconto", action: "keydown.enter->documento-editor#submitDialog" },
+                  data: { documento_editor_target: "scontoField", combobox_libro_target: "sconto", action: "keydown.enter->documento-editor#submitDialog" },
                   class: "input", style: "text-align: right;" %>
             </div>
           </div>

@@ -34,8 +34,8 @@ Questi si combinano nella view: `data-controller="dialog filter combobox"` oppur
 | Controller | Dominio | Cosa fa |
 |---|---|---|
 | `tax_combobox_causale_controller.js` | Documenti | Su cambio causale → fetch `/documenti/nuovo_numero_documento` → aggiorna numero + clientable type |
-| `tax_combobox_libro_controller.js` | Righe documento | Su selezione libro → fetch `/libri/:id/get_prezzo_e_sconto` → popola prezzo, sconto, focus quantita |
-| `tax_combobox_select_controller.js` | Appunti/Adozioni | Su selezione scuola → fetch `/import_scuole/:id/combobox_classi` → Turbo Stream per classi |
+| `combobox_libro_controller.js` | Righe documento | Su selezione libro → fetch `/libri/:id/get_prezzo_e_sconto` → popola prezzo, sconto, focus quantita |
+| `combobox_select (ELIMINATO)_controller.js` | Appunti/Adozioni | Su selezione scuola → fetch `/import_scuole/:id/combobox_classi` → Turbo Stream per classi |
 
 Questi usano il **componente HW combobox** (non il combobox Fizzy) e aggiungono logica fetch specifica.
 
@@ -50,30 +50,31 @@ Questi usano il **componente HW combobox** (non il combobox Fizzy) e aggiungono 
 ### 1. Generici: nessuna modifica necessaria
 I controller `combobox` e `multi_selection_combobox` sono byte-per-byte identici a Fizzy. Le view dei filtri (`filters/settings/*`) usano gia il pattern Fizzy completo con `quick-filter`, `dialog`, `popup__list`, `popup__item`, `navigable-list`.
 
-### 2. Business-specific: approccio composizione (futuro)
-Quando servirà refactoring dei `tax_combobox_*`, l'approccio scelto e **composizione**:
+### 2. Business-specific: approccio composizione
+I `tax_combobox_*` vengono sostituiti incrementalmente con controller leggeri a composizione:
 
-```html
-<!-- Esempio futuro: composizione di controller -->
-<div data-controller="combobox documento-causale"
-     data-action="combobox:change->documento-causale#fetchNumero">
-  <!-- Il combobox gestisce la UI -->
-  <!-- documento-causale gestisce il fetch del numero -->
-</div>
-```
+**Completato:**
+- `tax_combobox_causale_controller.js` → sostituito con `documento_causale_controller.js` (select nativo + fetch numero)
 
-Questo separa la UI (riutilizzabile) dalla logica di dominio (specifica).
-
-**Non prioritario ora** perche i `tax_combobox_*` funzionano e usano un componente HW che piace.
+**Da fare:**
+- `combobox_libro_controller.js` — selezione libro nelle righe documento (usa HW combobox, fetch prezzo/sconto)
+- `combobox_select (ELIMINATO)_controller.js` — selezione scuola→classi (usa HW combobox, Turbo Stream)
 
 ### 3. Dead code eliminato
-3 controller rimossi perche non referenziati in nessuna view:
-- `fancy_select_controller.js`
-- `tax_select_sort_controller.js`
-- `tax_select_causale_controller.js`
+6 file rimossi:
+- `fancy_select_controller.js` (non referenziato)
+- `tax_select_sort_controller.js` (non referenziato)
+- `tax_select_causale_controller.js` (non referenziato)
+- `tax_combobox_causale_controller.js` (sostituito da documento-causale)
+- `app/views/documenti/_form.html.erb` (legacy, non usata)
+- `app/views/documenti/_edit_form.html.erb` (legacy, non usata)
 
-### 4. Causale documento: da affrontare separatamente
-La modifica della causale di un documento esistente e complessa (cambia numero, tipo clientable, ecc.) e richiede un design dedicato. Non in scope ora.
+### 4. Date input: controller riutilizzabile
+Creato `date_input_controller.js` per tutte le date dell'app:
+- Text input per digitare in formato dd/mm/yyyy
+- Click sull'icona calendario apre il picker nativo
+- Hidden input manda ISO (yyyy-mm-dd) al server
+- Applicato a: `_content.html.erb` (data_documento), `_gestione_dialog_content.html.erb` (consegnato_il, pagato_il)
 
 ## Mappa dei file
 
@@ -87,10 +88,12 @@ app/javascript/controllers/
 ├── filter_controller.js                      # Fizzy ✅
 ├── filter_settings_controller.js             # Fizzy ✅
 ├── navigable_list_controller.js              # Fizzy ✅
-├── tax_combobox_causale_controller.js        # Business (documenti)
-├── tax_combobox_libro_controller.js          # Business (righe)
-├── tax_combobox_select_controller.js         # Business (scuole→classi)
-└── tax_select_controller.js                  # Legacy (mandati/zone)
+├── date_input_controller.js                  # Nuovo ✅ (date tipizzabili)
+├── documento_causale_controller.js           # Nuovo ✅ (composizione)
+├── documento_editor_controller.js            # Refactored ✅ (form submit + targets)
+├── combobox_libro_controller.js          # Business (righe) — da convertire
+├── combobox_select (ELIMINATO)_controller.js         # Business (scuole→classi) — da convertire
+└── tax_select_controller.js                  # Legacy (mandati/zone) — da convertire
 ```
 
 ### View pattern per i filtri (gia Fizzy)
@@ -127,8 +130,10 @@ app/javascript/controllers/
 </div>
 ```
 
-## Prossimi passi possibili (non urgenti)
+## Prossimi passi
 
-1. **Convertire `tax_select_controller.js`** al pattern Fizzy combobox nelle view mandati/zone
-2. **Refactoring `tax_combobox_causale`** con approccio composizione quando si affronta la modifica causale
-3. **Verificare `tax_combobox_select`** — usa `import_scuola_id` che potrebbe dover diventare `scuola_id` dopo la migrazione multi-tenancy
+1. **~~Refactoring `tax_combobox_causale`~~** — FATTO: sostituito con `documento_causale_controller.js`
+2. **Convertire `combobox_libro_controller.js`** — selezione libro nelle righe, fetch prezzo/sconto. Approccio: composizione con controller leggero
+3. **Convertire `combobox_select (ELIMINATO)_controller.js`** — selezione scuola→classi. Verifica: usa `import_scuola_id` che potrebbe dover diventare `scuola_id` dopo multi-tenancy
+4. **Convertire `tax_select_controller.js`** — al pattern Fizzy combobox nelle view mandati/zone
+5. **Analisi duplicazioni view Appunto** — confronto con pattern Fizzy card, cleanup parziale iniziato
