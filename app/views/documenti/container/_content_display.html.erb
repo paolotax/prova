@@ -10,21 +10,12 @@
     <% if documento.referente.present? %>
       <%= tag.div documento.referente, class: "documento-content__referente txt-small txt-muted" %>
     <% end %>
-
+    
     <% if documento.note.present? %>
       <%= tag.div class: "documento-content__notes txt-small" do %>
         <%= simple_format documento.note %>
       <% end %>
     <% end %>
   </div>
+
 </div>
-
-  
-
-<% if documento.persisted? && documento.numero_documento.present? && !editing %>
-  <%= render "documenti/container/stages", documento: documento %>
-<% end %>
-
-<div style="margin-block: 1ch; border-block-start: 1px solid var(--card-color);"></div>
-
-<%= render "documenti/container/righe_table", documento: documento %>

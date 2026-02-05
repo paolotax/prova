@@ -598,7 +598,7 @@
 
     .card__stages,
     .card__hide-on-index {
-      display: none;
+      /* display: none; */
     }
 
     .card__body {

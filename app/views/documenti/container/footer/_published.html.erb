@@ -1,18 +1,22 @@
 <%# locals: (documento:) -%>
 
-<button type="button" class="btn" data-action="documento-editor#enterEditMode">
-  <%= icon_tag "pencil" %>
-  Modifica
-</button>
-
-<div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
-  <button type="button" class="btn" data-action="dialog#open">
-    <%= icon_tag "settings" %>
-    Gestisci
+<div class="gap"
+  data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">  
+  <%# i bottoni nello stesso div per allineamento %>
+  <button type="button" class="btn" data-action="documento-editor#enterEditMode">
+    <%= icon_tag "pencil" %>
+    Modifica
   </button>
-  <%= render "documenti/container/gestione_dialog", documento: documento %>
+  
+  <% if !documento.closed? %>
+    <button type="button" class="btn" data-action="dialog#open">
+      <%= icon_tag "settings" %>
+      Gestisci
+    </button>
+    <%= render "documenti/container/gestione_dialog", documento: documento %>
+  <% end %>
 </div>
 
 <% if %w[TD01 TD04 TD24].include?(documento.causale&.causale) %>
-  <%= link_to "Esporta XML", esporta_xml_documento_path(documento, format: :xml), class: "btn" %>
+  <%= link_to "Esporta XML", esporta_xml_documento_path(documento, format: :xml), class: "btn btn--reversed margin-block-start-half" %>
 <% end %>
