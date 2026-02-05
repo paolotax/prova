@@ -32,8 +32,6 @@ class MappeController < ApplicationController
       Current.account.scuole.find(id)
     when "cliente"
       Current.account.clienti.find(id)
-    when "import_scuola"
-      current_user.import_scuole.find(id)
     else
       raise ActiveRecord::RecordNotFound, "Unknown tappable type"
     end

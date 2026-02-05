@@ -1,38 +1,26 @@
 module MappeHelper
 
-  def html_for_scuola(scuola)
-    content_tag(:div, class: "tappable") do
-      content_tag(:h4, class: "font-semibold hover:font-110%") do
-        link_to(scuola.scuola, scuola)
+  def html_for_tappable(tappable)
+    content_tag(:div) do
+      content_tag(:h4, class: "font-semibold") do
+        link_to(tappable.denominazione, tappable)
       end +
-      content_tag(:p, scuola.indirizzo) +
-      content_tag(:p, "#{scuola.cap} #{scuola.comune} (#{scuola.provincia})") 
-    end
-  end
-
-  def html_for_cliente(cliente)
-    content_tag(:div, class: "cliente") do
-      content_tag(:h4, class: "font-semibold hover:font-110%") do
-        link_to(cliente.denominazione, cliente)
-      end +
-      content_tag(:p, cliente.indirizzo) +
-      content_tag(:p, "#{cliente.cap} #{cliente.comune} (#{cliente.provincia})") 
+      content_tag(:p, tappable.indirizzo) +
+      content_tag(:p, "#{tappable.cap} #{tappable.comune} (#{tappable.provincia})")
     end
   end
 
   def get_coordinates(tappe)
-    data = []
-
-    tappe.each do |tappa|
+    data = tappe.filter_map do |tappa|
       tappable = tappa.tappable
-      next if tappable.geocoded.nil? || tappable.geocoded == false 
+      next unless tappable&.geocoded?
 
-      data << {
+      {
         latitude: tappa.latitude,
         longitude: tappa.longitude,
         label: tappa.denominazione,
-        color: tappable.is_a?(ImportScuola) ? "#85C9E6" : "#f84d4d",
-        tooltip: tappable.is_a?(ImportScuola) ? html_for_scuola(tappable) : html_for_cliente(tappable),
+        color: tappable.is_a?(Scuola) ? "#85C9E6" : "#f84d4d",
+        tooltip: html_for_tappable(tappable),
         tipo: tappable.class.name
       }
     end
@@ -46,7 +34,7 @@ module MappeHelper
       }]
     end
 
-    data.compact
+    data
   end
 
   def go_to_tappable_path(tappable, provider = 'waze')
