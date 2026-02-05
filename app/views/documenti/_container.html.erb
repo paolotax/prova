@@ -48,11 +48,11 @@
          tabindex="0"
          style="outline: none;">
   <div class="card-perma__actions card-perma__actions--left">
-    <%# actions left %>
+    <%= render "documenti/container/gild", documento: documento if documento.entry.present? && !documento.closed? %>
   </div>
 
   <div class="card-perma__bg">
-    <article class="card">
+    <article class="card <%= 'golden-effect' if documento.golden? %>">
       <header class="card__header">
         <div id="<%= dom_id(documento, :board) %>">
           <%= render "documenti/display/perma/board", documento: documento %>

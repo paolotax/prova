@@ -1,0 +1,13 @@
+<%# locals: (documento:) -%>
+
+<% if documento.golden? %>
+  <%= button_to entry_goldness_path(documento.entry), method: :delete, class: "btn btn--reversed" do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Rimuovi da evidenza</span>
+  <% end %>
+<% else %>
+  <%= button_to entry_goldness_path(documento.entry), method: :post, class: "btn" do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Metti in evidenza</span>
+  <% end %>
+<% end %>

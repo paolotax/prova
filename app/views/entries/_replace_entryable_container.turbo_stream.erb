@@ -1,0 +1,9 @@
+<%# Replaces the entryable container on show pages (morph) %>
+<%# Works for any entryable type: Appunto, Documento, etc. %>
+<% if @entry.entryable.present? %>
+  <% entryable = @entry.entryable %>
+  <%= turbo_stream.replace [ entryable, :container ],
+      partial: "#{entryable.model_name.collection}/container",
+      method: :morph,
+      locals: { entryable.model_name.element.to_sym => entryable } %>
+<% end %>

@@ -1,9 +1,2 @@
-<%# Frame reloads handle the column updates - JS reloads both source and target frames %>
-<%# We just need to update the appunto container for show page viewing %>
-
-<% if @entry.entryable_type == "Appunto" && @entry.entryable.present? %>
-  <%= turbo_stream.replace [ @entry.entryable, :container ],
-      partial: "appunti/container",
-      method: :morph,
-      locals: { appunto: @entry.entryable } %>
-<% end %>
+<%# Entry was sent back to triage %>
+<%= render "entries/replace_entryable_container" %>

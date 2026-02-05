@@ -2,3 +2,5 @@
 <%= turbo_stream.replace dom_id(@entry) do %>
   <%= render partial: "entries/entry", locals: { entry: @entry } %>
 <% end %>
+
+<%= render "entries/replace_entryable_container" %>
