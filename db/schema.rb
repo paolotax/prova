@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_03_204036) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_05_093608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1009,8 +1009,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_204036) do
     t.string "email"
     t.bigint "import_scuola_id"
     t.string "indirizzo"
+    t.float "latitude"
+    t.float "longitude"
     t.text "note"
     t.string "pec"
+    t.integer "posizione", default: 0
     t.integer "priorita", default: 0
     t.string "provincia"
     t.string "regione"
@@ -1020,6 +1023,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_204036) do
     t.datetime "updated_at", null: false
     t.index ["account_id", "codice_ministeriale"], name: "index_scuole_on_account_id_and_codice_ministeriale", unique: true
     t.index ["account_id", "denominazione"], name: "index_scuole_on_account_id_and_denominazione"
+    t.index ["account_id", "posizione"], name: "index_scuole_on_account_id_and_posizione"
     t.index ["account_id"], name: "index_scuole_on_account_id"
     t.index ["import_scuola_id"], name: "index_scuole_on_import_scuola_id"
   end

@@ -53,6 +53,7 @@ class Scuola < ApplicationRecord
   validates :codice_ministeriale, uniqueness: { scope: :account_id }, allow_blank: true
 
   scope :attive, -> { where(stato: 'attiva') }
+  scope :per_posizione, -> { order(:posizione) }
   scope :per_provincia, ->(provincia) { where(provincia: provincia) }
   scope :per_comune, ->(comune) { where(comune: comune) }
 
@@ -70,7 +71,9 @@ class Scuola < ApplicationRecord
       regione: import_scuola.REGIONE,
       tipo_scuola: import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA,
       email: import_scuola.INDIRIZZOEMAILSCUOLA,
-      pec: import_scuola.INDIRIZZOPECSCUOLA
+      pec: import_scuola.INDIRIZZOPECSCUOLA,
+      latitude: import_scuola.latitude,
+      longitude: import_scuola.longitude
     )
   end
 
@@ -79,6 +82,10 @@ class Scuola < ApplicationRecord
     find_by(account: account, import_scuola: import_scuola) ||
       find_by(account: account, codice_ministeriale: import_scuola.CODICESCUOLA) ||
       create_from_import(import_scuola, account: account)
+  end
+
+  def geocoded?
+    latitude.present? && longitude.present?
   end
 
   def to_s

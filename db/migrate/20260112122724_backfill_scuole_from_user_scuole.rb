@@ -5,7 +5,8 @@ class BackfillScuoleFromUserScuole < ActiveRecord::Migration[8.0]
       INSERT INTO scuole (
         id, account_id, import_scuola_id, codice_ministeriale, denominazione,
         indirizzo, cap, comune, provincia, regione, tipo_scuola,
-        email, pec, telefono, stato, priorita, created_at, updated_at
+        email, pec, telefono, stato, priorita, latitude, longitude,
+        created_at, updated_at
       )
       SELECT DISTINCT ON (m.account_id, i."CODICESCUOLA")
         gen_random_uuid(),
@@ -24,6 +25,8 @@ class BackfillScuoleFromUserScuole < ActiveRecord::Migration[8.0]
         NULL,
         'attiva',
         0,
+        i.latitude,
+        i.longitude,
         NOW(),
         NOW()
       FROM user_scuole us
