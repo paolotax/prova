@@ -144,7 +144,7 @@ class Sconto < ApplicationRecord
         .order(
           Arel.sql(
             "CASE " \
-              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = #{entity.id} THEN 0 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = '#{entity.id}' THEN 0 " \
               "WHEN scontabile_type = '#{entity_type}' AND scontabile_id IS NULL THEN 1 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') THEN 2 " \
               "ELSE 3 " \
@@ -168,7 +168,7 @@ class Sconto < ApplicationRecord
         .order(
           Arel.sql(
             "CASE " \
-              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = #{entity.id} THEN 0 " \
+              "WHEN scontabile_type = '#{entity_type}' AND scontabile_id = '#{entity.id}' THEN 0 " \
               "WHEN scontabile_type = '#{entity_type}' AND scontabile_id IS NULL THEN 1 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') THEN 2 " \
               "ELSE 3 " \

@@ -48,7 +48,6 @@
             <td colspan="7">
               <%= icon_tag "arrow-right" %>
               <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-              <span class="documento-table__section-badge"><%= doc_derivato.documenti_derivati.count %> sotto-doc</span>
               <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
             </td>
           </tr>
@@ -61,12 +60,9 @@
 
             <% if righe_per_nipote.any? %>
               <tr class="documento-table__section documento-table__section--nipote">
-                <td colspan="7">
+                <td colspan="7" class="items-center">
                   <%= icon_tag "arrow-right" %>
                   <%= doc_nipote.causale&.causale %> #<%= doc_nipote.numero_documento %> del <%= doc_nipote.data_documento&.strftime("%d-%m-%Y") %>
-                  <% if doc_nipote.status.present? %>
-                    <span class="documento-table__section-badge"><%= doc_nipote.status.titleize %></span>
-                  <% end %>
                   <%= link_to "Vedi", documento_path(doc_nipote), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
                 </td>
               </tr>
@@ -79,12 +75,9 @@
 
         <% elsif righe_per_derivato.any? %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="7">
+            <td colspan="7" class="align-center">
               <%= icon_tag "arrow-right" %>
               <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-              <% if doc_derivato.status.present? %>
-                <span class="documento-table__section-badge"><%= doc_derivato.status.titleize %></span>
-              <% end %>
               <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
             </td>
           </tr>
@@ -118,6 +111,9 @@
           data-documento-editor-target="rigaDialog"
           data-action="close->documento-editor#dialogClosed libro:loaded->documento-editor#onLibroLoaded">
     <div data-controller="combobox-libro dialog-form"
+         data-combobox-libro-url-value="<%= get_prezzo_e_sconto_libro_path('__ID__') %>"
+         data-combobox-libro-clientable-id-value="<%= documento.clientable_id %>"
+         data-combobox-libro-clientable-type-value="<%= documento.clientable_type %>"
          data-dialog-form-submit-on-enter-value="true">
       <header class="flex justify-between align-center margin-block-end">
         <h3 class="txt-large" data-documento-editor-target="dialogTitle">Nuova riga</h3>

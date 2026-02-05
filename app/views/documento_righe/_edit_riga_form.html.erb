@@ -1,6 +1,6 @@
 <%# locals: (documento_riga:, documento:, riga:) -%>
 
-<tr id="<%= dom_id(documento_riga) %>" class="documento-table__row documento-table__row--editing" data-controller="combobox-libro" style="position: relative; z-index: 10;">
+<tr id="<%= dom_id(documento_riga) %>" class="documento-table__row documento-table__row--editing" data-controller="combobox-libro" data-combobox-libro-url-value="<%= get_prezzo_e_sconto_libro_path('__ID__') %>" data-combobox-libro-clientable-id-value="<%= documento.clientable_id %>" data-combobox-libro-clientable-type-value="<%= documento.clientable_type %>" style="position: relative; z-index: 10;">
   <td class="documento-table__cell" colspan="7">
     <%= form_with model: riga, url: documento_riga_path(documento_riga), method: :patch,
         id: "#{dom_id(documento_riga)}_form",

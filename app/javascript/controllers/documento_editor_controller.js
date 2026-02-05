@@ -52,8 +52,6 @@ export default class extends Controller {
     this.nextTempId = Date.now()
     this._originalRighe = JSON.parse(JSON.stringify(this.righeValue))
 
-    console.log('documento-editor connected, righeValue:', this.righeValue)
-
     // Se già in editing mode (es. da server), attiva subito
     if (this.editingValue) {
       this.activateEditingUI()
@@ -62,7 +60,6 @@ export default class extends Controller {
 
   // Called automatically when righeValue changes
   righeValueChanged(newValue, oldValue) {
-    console.log('righeValueChanged:', { newValue, oldValue })
   }
 
   disconnect() {
@@ -543,21 +540,14 @@ export default class extends Controller {
 
     // Set combobox value (libro)
     if (this.hasLibroComboboxTarget) {
-      // libroComboboxTarget is the hw-combobox element or an element inside it
       const comboboxEl = this.libroComboboxTarget
-      const hwCombobox = comboboxEl.tagName === 'HW-COMBOBOX'
-        ? comboboxEl
-        : comboboxEl.closest('hw-combobox') || comboboxEl.querySelector('hw-combobox')
 
-      // Find inputs - try multiple selectors
-      const hiddenInput = hwCombobox?.querySelector('input[type="hidden"]') ||
-                          dialog.querySelector('input[name="riga[libro_id]"]')
-      const textInput = hwCombobox?.querySelector('input[type="text"]') ||
-                        comboboxEl.querySelector('input[type="text"]')
-      const listbox = hwCombobox?.querySelector('.hw-combobox__listbox')
+      // Clear combobox first
+      this._clearHwCombobox(comboboxEl)
 
-      // Clear listbox before setting new values
-      if (listbox) listbox.innerHTML = ''
+      // Set values for editing
+      const hiddenInput = comboboxEl.querySelector('input[type="hidden"]')
+      const textInput = comboboxEl.querySelector('input[type="text"]')
 
       if (hiddenInput) {
         hiddenInput.value = riga.libro_id || ''
@@ -565,9 +555,6 @@ export default class extends Controller {
       if (textInput) {
         textInput.value = riga.titolo || riga.libro?.titolo || ''
       }
-
-      // Close the listbox if open
-      if (hwCombobox?.close) hwCombobox.close()
 
       // Set lastLibroId on combobox-libro to avoid unnecessary fetches
       const comboboxLibroEl = dialog.querySelector('[data-controller*="combobox-libro"]')
@@ -640,20 +627,9 @@ export default class extends Controller {
     this._selectedLibro = null
     this._currentLibro = null
 
-    // Clear combobox values and listbox when dialog closes
+    // Clear HW combobox when dialog closes
     if (this.hasRigaDialogTarget && this.hasLibroComboboxTarget) {
-      const comboboxEl = this.libroComboboxTarget
-      const hwCombobox = comboboxEl.tagName === 'HW-COMBOBOX'
-        ? comboboxEl
-        : comboboxEl.closest('hw-combobox') || comboboxEl.querySelector('hw-combobox')
-
-      const hiddenInput = hwCombobox?.querySelector('input[type="hidden"]')
-      const textInput = hwCombobox?.querySelector('input[type="text"]')
-      const listbox = hwCombobox?.querySelector('.hw-combobox__listbox')
-
-      if (hiddenInput) hiddenInput.value = ''
-      if (textInput) textInput.value = ''
-      if (listbox) listbox.innerHTML = ''
+      this._clearHwCombobox(this.libroComboboxTarget)
 
       // Reset lastLibroId on combobox-libro
       const comboboxLibroEl = this.rigaDialogTarget.querySelector('[data-controller*="combobox-libro"]')
@@ -674,7 +650,6 @@ export default class extends Controller {
    * Called when riga dialog form is submitted
    */
   saveRigaFromDialog(event) {
-    console.log('=== saveRigaFromDialog CALLED ===')
     event.preventDefault()
     event.stopPropagation()
 
@@ -686,31 +661,21 @@ export default class extends Controller {
       const hwCombobox = this.libroComboboxTarget.closest('hw-combobox')
       if (hwCombobox) {
         const hiddenInput = hwCombobox.querySelector('input[type="hidden"]')
-        console.log('Found hw-combobox hidden input:', hiddenInput, 'value:', hiddenInput?.value)
         libroId = hiddenInput?.value ? parseInt(hiddenInput.value, 10) : null
       }
       // Fallback to looking for input by name
       if (!libroId) {
         const byName = this.rigaDialogTarget.querySelector('input[name="riga[libro_id]"]')
-        console.log('Fallback input by name:', byName, 'value:', byName?.value)
         libroId = byName?.value ? parseInt(byName.value, 10) : null
       }
     }
-
-    console.log('quantitaFieldTarget:', this.quantitaFieldTarget)
-    console.log('quantitaFieldTarget.value:', this.quantitaFieldTarget?.value)
-    console.log('prezzoFieldTarget:', this.prezzoFieldTarget)
-    console.log('prezzoFieldTarget.value:', this.prezzoFieldTarget?.value)
 
     const quantita = this.hasQuantitaFieldTarget ? parseInt(this.quantitaFieldTarget.value, 10) || 1 : 1
     const prezzo = this.hasPrezzoFieldTarget ? parseFloat(this.prezzoFieldTarget.value) || 0 : 0
     const sconto = this.hasScontoFieldTarget ? parseFloat(this.scontoFieldTarget.value) || 0 : 0
 
-    console.log('Form values:', { libroId, quantita, prezzo, sconto })
-
     // Get libro data from selection or current edit data
     const libroData = this._selectedLibro || this._currentLibro || {}
-    console.log('libroData:', libroData)
 
     // Validate libro selection
     if (!libroId) {
@@ -727,10 +692,6 @@ export default class extends Controller {
       prezzo_cents: Math.round(prezzo * 100),
       sconto: sconto
     }
-
-    console.log('rigaData to save:', rigaData)
-    console.log('editingRigaIndex:', this.editingRigaIndex)
-    console.log('current righeValue:', JSON.stringify(this.righeValue))
 
     if (this.editingRigaIndex !== null) {
       // Find the actual index in righeValue (accounting for _destroy)
@@ -749,16 +710,12 @@ export default class extends Controller {
         }
       }
 
-      console.log('Updating riga at actualIndex:', actualIndex, 'editingRigaIndex:', this.editingRigaIndex)
       if (actualIndex !== -1) {
         this.updateRiga(actualIndex, rigaData)
       }
     } else {
-      console.log('Adding new riga')
       this.addRiga(rigaData)
     }
-
-    console.log('righeValue after save:', JSON.stringify(this.righeValue))
 
     // Determine which row to select after closing
     let indexToSelect
@@ -786,9 +743,6 @@ export default class extends Controller {
    * Called when libro is selected in combobox
    */
   onLibroSelected(event) {
-    console.log('onLibroSelected event:', event)
-    console.log('onLibroSelected event.detail:', event.detail)
-
     // hotwire-combobox passa value e display in event.detail
     const value = event.detail?.value
     const display = event.detail?.display
@@ -817,7 +771,6 @@ export default class extends Controller {
       }
     }
 
-    console.log('_selectedLibro set to:', this._selectedLibro)
   }
 
   /**
@@ -825,8 +778,6 @@ export default class extends Controller {
    * This provides the ISBN and other details
    */
   onLibroLoaded(event) {
-    console.log('onLibroLoaded event:', event.detail)
-
     const data = event.detail
     if (!data?.id) return
 
@@ -844,7 +795,6 @@ export default class extends Controller {
       this.isbnDisplayTarget.textContent = isbn ? `ISBN: ${isbn}` : ''
     }
 
-    console.log('_selectedLibro updated with ISBN:', this._selectedLibro)
   }
 
   deleteRow(event) {
@@ -1003,5 +953,25 @@ export default class extends Controller {
     if (event.key === "Escape" && dialogOpen) return false
 
     return isInput || isContentEditable || dialogOpen
+  }
+
+  /**
+   * Clear a HW combobox fieldset: hidden input, text input, listbox
+   * HW combobox 0.3.2 renders as <fieldset data-controller="hw-combobox">
+   */
+  _clearHwCombobox(fieldsetEl) {
+    const hiddenInput = fieldsetEl.querySelector('input[type="hidden"]')
+    const textInput = fieldsetEl.querySelector('input[type="text"]')
+    const listbox = fieldsetEl.querySelector('[data-hw-combobox-target="listbox"]')
+
+    if (hiddenInput) hiddenInput.value = ''
+    if (textInput) textInput.value = ''
+    if (listbox) listbox.innerHTML = ''
+
+    // Close if expanded
+    const hwController = this.application.getControllerForElementAndIdentifier(fieldsetEl, 'hw-combobox')
+    if (hwController) {
+      hwController.expandedValue = false
+    }
   }
 }
