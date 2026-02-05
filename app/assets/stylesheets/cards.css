@@ -418,6 +418,34 @@
     z-index: -1;
   }
 
+  .card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-quarter, 0.25em);
+    inset-block-start: 50%;
+    inset-inline-end: calc(-1 * var(--card-padding-inline));
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    translate: 50% -50%;
+    transition: opacity 150ms ease;
+    z-index: 2;
+  }
+
+  .card:hover .card__actions,
+  .card:focus-within .card__actions,
+  .card__actions:has(:focus-visible) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (hover: none) {
+    .card__actions {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
   .card__checkbox {
     cursor: pointer;
     inset-block-start: 0.5em;

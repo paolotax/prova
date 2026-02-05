@@ -95,6 +95,14 @@ class Cliente < ApplicationRecord
     "#{self.indirizzo} #{self.numero_civico} \n #{self.cap} #{self.comune} #{self.provincia}".strip
   end
 
+  def geocoded?
+    latitude.present? && longitude.present?
+  end
+
+  def indirizzo_navigator
+    [indirizzo, numero_civico, cap, comune, provincia].compact_blank.join(" ")
+  end
+
   def previous
     Current.user.clienti.where("denominazione < ?", denominazione).order(denominazione: :desc).first
   end

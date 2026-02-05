@@ -45,4 +45,18 @@
       <%= render "clienti/display/meta", cliente: cliente %>
     </footer>
   </div>
+
+  <div class="card__actions">
+    <%= link_to mappe_path("cliente-#{cliente.id}"),
+        class: "btn btn--small btn--circle",
+        data: { controller: "tooltip", tooltip_content_value: "Posizione", turbo_frame: "_top" } do %>
+      <%= icon_tag "marker" %>
+    <% end %>
+    <%= link_to go_to_tappable_path(cliente, current_user.effective_navigator),
+        target: "_blank",
+        class: "btn btn--small btn--circle",
+        data: { controller: "tooltip", tooltip_content_value: "Naviga" } do %>
+      <%= icon_tag "globe" %>
+    <% end %>
+  </div>
 <% end %>

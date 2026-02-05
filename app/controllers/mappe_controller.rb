@@ -26,12 +26,14 @@ class MappeController < ApplicationController
   private
 
   def find_tappable(compound_id)
-    type, id = compound_id.split('-')
+    type, id = compound_id.split("-", 2)
     case type
-    when 'import_scuola'
+    when "scuola"
+      Current.account.scuole.find(id)
+    when "cliente"
+      Current.account.clienti.find(id)
+    when "import_scuola"
       current_user.import_scuole.find(id)
-    when 'cliente'
-      current_user.clienti.find(id)
     else
       raise ActiveRecord::RecordNotFound, "Unknown tappable type"
     end

@@ -27,6 +27,17 @@
   </div>
 
   <div class="card-perma__actions card-perma__actions--right">
+    <%= link_to mappe_path("cliente-#{cliente.id}"),
+        class: "btn", data: { controller: "tooltip", tooltip_content_value: "Posizione" } do %>
+      <%= icon_tag "marker" %>
+      <span class="for-screen-reader">Posizione</span>
+    <% end %>
+    <%= link_to go_to_tappable_path(cliente, current_user.effective_navigator),
+        target: "_blank",
+        class: "btn", data: { controller: "tooltip", tooltip_content_value: "Naviga" } do %>
+      <%= icon_tag "globe" %>
+      <span class="for-screen-reader">Naviga</span>
+    <% end %>
     <%= link_to new_documento_path(clientable_id: cliente.id, clientable_type: "Cliente"), class: "btn", data: { controller: "tooltip", tooltip_content_value: "Nuovo documento" } do %>
       <%= icon_tag "plus" %>
       <span class="for-screen-reader">Nuovo documento</span>

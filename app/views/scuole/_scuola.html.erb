@@ -30,7 +30,7 @@
         </h3>
         <div class="card__stages txt-small txt-subtle flex flex-column gap-quarter">
           <% if scuola.indirizzo.present? %>
-            <span><%= icon_tag "map-pin", class: "icon--small" %> <%= scuola.indirizzo %></span>
+            <span><%= icon_tag "marker", class: "icon--small" %> <%= scuola.indirizzo %></span>
           <% end %>
           <% if scuola.telefono.present? %>
             <span><%= icon_tag "phone", class: "icon--small" %> <%= scuola.telefono %></span>
@@ -43,5 +43,19 @@
     <footer class="card__footer full-width">
       <%= render "scuole/display/meta", scuola: scuola %>
     </footer>
+  </div>
+
+  <div class="card__actions">
+    <%= link_to mappe_path("scuola-#{scuola.id}"),
+        class: "btn btn--small btn--circle",
+        data: { controller: "tooltip", tooltip_content_value: "Posizione", turbo_frame: "_top" } do %>
+      <%= icon_tag "marker" %>
+    <% end %>
+    <%= link_to go_to_tappable_path(scuola, current_user.effective_navigator),
+        target: "_blank",
+        class: "btn btn--small btn--circle",
+        data: { controller: "tooltip", tooltip_content_value: "Naviga" } do %>
+      <%= icon_tag "globe" %>
+    <% end %>
   </div>
 <% end %>

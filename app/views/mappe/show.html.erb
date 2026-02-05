@@ -18,21 +18,27 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= tag.div class: "flex flex-row gap-1" do %>
-      <%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.previous&.id}", class: "btn" do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-        <span class="for-screen-reader">Precedente</span>
-      <% end %>
-      <%= link_to "/mappe/#{@tappable.class.name.underscore}-#{@tappable&.next&.id}", class: "btn" do %>
-        <span class="for-screen-reader">Successivo</span>
-        <%= icon_tag "arrow-right", size: "small" %>
+    <% if @tappable.respond_to?(:previous) && @tappable.respond_to?(:next) %>
+      <%= tag.div class: "flex flex-row gap-1" do %>
+        <% if @tappable.previous %>
+          <%= link_to mappe_path("#{@tappable.class.name.underscore}-#{@tappable.previous.id}"), class: "btn" do %>
+            <%= icon_tag "arrow-left", size: "small" %>
+            <span class="for-screen-reader">Precedente</span>
+          <% end %>
+        <% end %>
+        <% if @tappable.next %>
+          <%= link_to mappe_path("#{@tappable.class.name.underscore}-#{@tappable.next.id}"), class: "btn" do %>
+            <span class="for-screen-reader">Successivo</span>
+            <%= icon_tag "arrow-right", size: "small" %>
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
-    <%= link_to go_to_tappable_path(@tappable, current_user.navigator),
+    <%= link_to go_to_tappable_path(@tappable, current_user.effective_navigator),
         class: "btn",
         style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);",
         target: "_blank" do %>
-      <%= icon_tag "map-pin", size: "small" %>
+      <%= icon_tag "marker", size: "small" %>
       <span class="for-screen-reader">Vai</span>
     <% end %>
   </div>
@@ -46,7 +52,10 @@
     data-mappa-posizione-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
     data-mappa-posizione-latitude="<%= @tappable.latitude %>"
     data-mappa-posizione-longitude="<%= @tappable.longitude %>"
-    data-mappa-posizione-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>">
+    data-mappa-posizione-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>"
+    data-mappa-posizione-update-url-value="<%= mappe_path("#{@tappable.class.name.underscore}-#{@tappable.id}") %>"
+    data-mappa-posizione-denominazione-value="<%= @tappable.denominazione %>"
+    data-mappa-posizione-indirizzo-value="<%= @tappable.try(:indirizzo_completo) || @tappable.try(:indirizzo_navigator) || '' %>">
 
 	<div class="relative flex w-44">
 		<select data-action="change->mappa-posizione#changeStyle" class="peer block w-full border-0 bg-transparent py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" >
@@ -61,7 +70,7 @@
 		<%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
 	</div>
 
-  	<div id="map" data-mappa-posizione-target="map" style="height: 500px;" class="mt-4"></div>
+  	<div id="map" data-mappa-posizione-target="map" style="height: calc(100vh - 10rem); min-height: 400px;" class="mt-4"></div>
   
 	<pre id="coordinates" 
 		class="bg-black bg-opacity-50 text-white p-1.5 m-0 text-xs leading-4 rounded-sm" 

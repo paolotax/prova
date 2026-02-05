@@ -88,6 +88,10 @@ class Scuola < ApplicationRecord
     latitude.present? && longitude.present?
   end
 
+  def indirizzo_navigator
+    [indirizzo, cap, comune, provincia].compact_blank.join(" ")
+  end
+
   def to_s
     denominazione
   end

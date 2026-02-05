@@ -85,6 +85,7 @@
   .icon--lifebuoy { --svg: url("lifebuoy.svg "); }
   .icon--lock { --svg: url("lock.svg "); }
   .icon--logout { --svg: url("logout.svg "); }
+  .icon--map-pin { --svg: url("marker.svg "); }
   .icon--marker { --svg: url("marker.svg "); }
   .icon--maximize { --svg: url("maximize.svg "); }
   .icon--menu { --svg: url("menu.svg "); }
