@@ -1,5 +1,6 @@
 <% @page_title = @appunto.nome.presence || "Appunto" %>
 <% @header_class = "header--card" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
@@ -9,6 +10,7 @@
 <% end %>
 
 <%= turbo_stream_from @appunto.entry if @appunto.entry %>
+<%= tag.meta name: "entry-id", content: @appunto.entry&.id if @appunto.entry %>
 
 <div class="full-width pad group">
   <%= render "appunti/container", appunto: @appunto %>

@@ -1,4 +1,5 @@
 <% @page_title = "#{@editing ? 'Modifica ' : ''}#{@documento.causale || 'Documento'} ##{@documento.numero_documento || 'BOZZA'}" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
@@ -18,6 +19,7 @@
 <% end %>
 
 <%= turbo_stream_from @documento.entry if @documento.entry %>
+<%= tag.meta name: "entry-id", content: @documento.entry&.id if @documento.entry %>
 
 <div class="full-width card-grid pad group show-navigator">
   <%= render "documenti/container",

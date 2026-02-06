@@ -30,6 +30,10 @@ class EntriesController < ApplicationController
   end
 
   def show
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   private

@@ -16,8 +16,6 @@
   <%= tag.meta name: "current-user-id", content: Current.user.id if Current.user %>
   <%#= tag.meta name: "vapid-public-key", content: Rails.configuration.x.vapid.public_key %>
 
-  <% turbo_refreshes_with method: :morph, scroll: :preserve %>
-
   <%= render "layouts/theme_preference" %>
   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "lexxy", "data-turbo-track": "reload" %>

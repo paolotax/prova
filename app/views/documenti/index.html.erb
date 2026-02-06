@@ -1,5 +1,6 @@
 <% @page_title = "Documenti" %>
 <% @body_class = "contained-scrolling" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
 <%= turbo_stream_from current_user, "entries" %>
 
