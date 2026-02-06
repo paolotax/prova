@@ -15,3 +15,10 @@
 <div class="full-width pad group">
   <%= render "appunti/container", appunto: @appunto %>
 </div>
+
+<% if @appunto.published? %>
+  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+    <%= render "appunti/container/delete", appunto: @appunto %>
+  </footer>
+<% end %>

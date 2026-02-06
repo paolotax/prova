@@ -5,19 +5,9 @@
   <span class="for-screen-reader">Stampa</span>
 <% end %>
 
-<div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
-  <button type="button" class="btn txt-negative" data-action="dialog#open" data-controller="tooltip" data-tooltip-content-value="Elimina">
-    <%= icon_tag "trash" %>
-    <span class="for-screen-reader">Elimina documento</span>
-  </button>
-  <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch" data-dialog-target="dialog">
-    <h3 class="txt-large txt-bold">Eliminare questo documento?</h3>
-    <p class="txt-medium margin-block-half">Sei sicuro di voler eliminare definitivamente questo documento?</p>
-    <div class="flex gap-half justify-center margin-block-start">
-      <button type="button" class="btn" data-action="dialog#close">Annulla</button>
-      <%= button_to documento_path(documento), method: :delete, class: "btn txt-negative", data: { turbo: false } do %>
-        <span>Elimina</span>
-      <% end %>
-    </div>
-  </dialog>
-</div>
+<% if %w[TD01 TD04 TD24].include?(documento.causale&.causale) %>
+  <%= link_to esporta_xml_documento_path(documento, format: :xml), class: "btn btn--circle", data: { controller: "tooltip", tooltip_content_value: "Esporta XML" } do %>
+    <span class="txt-xx-small font-weight-bold" aria-hidden="true">XML</span>
+    <span class="for-screen-reader">Esporta XML</span>
+  <% end %>
+<% end %>

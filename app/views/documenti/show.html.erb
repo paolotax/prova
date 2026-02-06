@@ -29,3 +29,10 @@
              documento_json: @documento_json,
              righe_json: @righe_json %>
 </div>
+
+<% if @documento.persisted? && @documento.numero_documento.present? %>
+  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+    <%= render "documenti/container/delete", documento: @documento %>
+  </footer>
+<% end %>

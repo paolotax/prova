@@ -328,6 +328,10 @@
       --btn-border-color: var(--color-container);
     }
 
+    > :not([hidden]) {
+      display: contents;
+    }
+
     @media (max-width: 639px) {
       flex-direction: column;
     }

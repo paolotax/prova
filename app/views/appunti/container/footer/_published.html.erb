@@ -1,14 +1,14 @@
 <%# locals: (appunto:) -%>
 
 <%= link_to edit_appunto_path(appunto), class: "btn",
-    data: { turbo_method: :get, turbo_stream: true } do %>
-  <%= icon_tag "pencil" %>
-  Modifica
+    data: { turbo_method: :get, turbo_stream: true,
+            controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
+  Modifica <kbd class="hide-on-touch">E</kbd>
 <% end %>
 
 <% if appunto.entry.present? && !appunto.entry.closed? %>
-  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn btn--reversed" do %>
-    <%= icon_tag "check" %>
-    Completa
+  <%= button_to entry_closure_path(appunto.entry), method: :post, class: "btn btn--reversed",
+      data: { controller: "hotkey", action: "keydown.c@document->hotkey#click" } do %>
+    Completa <kbd class="hide-on-touch">C</kbd>
   <% end %>
 <% end %>

@@ -1,0 +1,18 @@
+<%# locals: (documento:) -%>
+
+<div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+  <button type="button" class="btn txt-negative borderless txt-small" data-action="dialog#open">
+    <%= icon_tag "trash" %>
+    <span>Elimina questo documento</span>
+  </button>
+  <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch" data-dialog-target="dialog">
+    <h3 class="txt-large txt-bold">Eliminare questo documento?</h3>
+    <p class="txt-medium margin-block-half">Sei sicuro di voler eliminare definitivamente questo documento?</p>
+    <div class="flex gap-half justify-center margin-block-start">
+      <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+      <%= button_to documento_path(documento), method: :delete, class: "btn txt-negative", data: { turbo: false } do %>
+        <span>Elimina</span>
+      <% end %>
+    </div>
+  </dialog>
+</div>

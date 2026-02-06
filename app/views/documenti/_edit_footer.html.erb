@@ -2,9 +2,9 @@
 
 <button type="button"
         class="btn btn--positive"
-        data-action="documento-editor#save">
-  <%= icon_tag "check" %>
-  <span>Salva</span>
+        data-controller="hotkey"
+        data-action="documento-editor#save keydown.s@document->hotkey#click">
+  Salva <kbd class="hide-on-touch">S</kbd>
 </button>
 
 <button type="button"

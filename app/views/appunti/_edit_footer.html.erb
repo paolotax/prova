@@ -1,8 +1,8 @@
 <%# locals: (appunto:) -%>
 
-<%= button_tag class: "btn btn--positive", type: :submit, form: dom_id(appunto, :edit_form) do %>
-  <%= icon_tag "check" %>
-  <span>Salva</span>
+<%= button_tag class: "btn btn--positive", type: :submit, form: dom_id(appunto, :edit_form),
+    data: { controller: "hotkey", action: "keydown.s@document->hotkey#click" } do %>
+  Salva <kbd class="hide-on-touch">S</kbd>
 <% end %>
 
 <%= link_to appunto_path(appunto), class: "btn btn--reversed",
