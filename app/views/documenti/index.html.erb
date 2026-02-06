@@ -1,7 +1,7 @@
 <% @page_title = "Documenti" %>
 <% @body_class = "contained-scrolling" %>
 
-<%#= render "documenti/broadcasts", filter: @filter %>
+<%= turbo_stream_from current_user, "entries" %>
 
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">

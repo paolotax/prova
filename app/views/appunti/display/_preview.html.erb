@@ -14,7 +14,7 @@
   <% card_data[:css_variable_counter_target] = "item" %>
 <% end %>
 
-<%= tag.article id: dom_id(appunto),
+<%= tag.article id: (entry ? dom_id(entry) : dom_id(appunto)),
     class: class_names("card", appunto_stato_modifier(appunto), appunto_golden_class(appunto)),
     style: "--card-color: #{appunto_color(appunto)};",
     tabindex: 0,

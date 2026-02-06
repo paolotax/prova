@@ -41,6 +41,9 @@ class Entry < ApplicationRecord
   include Entry::Closeable
   include Entry::Postponable
 
+  # Turbo broadcasts for real-time updates (kanban, show pages)
+  include Entry::Broadcastable
+
   # Delegated Type
   delegated_type :entryable, types: %w[Appunto Documento Tappa], dependent: :destroy
 
@@ -126,4 +129,5 @@ class Entry < ApplicationRecord
     self.entryable_type = record.class.name
     self.entryable_id = record.id.to_s
   end
+
 end

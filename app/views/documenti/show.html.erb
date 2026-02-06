@@ -17,6 +17,8 @@
   </div>
 <% end %>
 
+<%= turbo_stream_from @documento.entry if @documento.entry %>
+
 <div class="full-width card-grid pad group show-navigator">
   <%= render "documenti/container",
              documento: @documento,

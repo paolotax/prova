@@ -8,7 +8,7 @@
   </div>
 <% end %>
 
-<%= turbo_stream_from @appunto %>
+<%= turbo_stream_from @appunto.entry if @appunto.entry %>
 
 <div class="full-width pad group">
   <%= render "appunti/container", appunto: @appunto %>

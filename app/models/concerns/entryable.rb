@@ -18,6 +18,9 @@ module Entryable
 
     # After create callback to auto-create entry if desired
     after_create :create_entry_record, if: :should_auto_create_entry?
+
+    # Touch entry when entryable changes (propagates to Entry broadcasts)
+    after_update_commit :touch_entry, if: :entry_present?
   end
 
   # Delegate triage state methods to entry
@@ -69,6 +72,14 @@ module Entryable
     )
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.warn "Could not create entry for #{self.class.name}##{id}: #{e.message}"
+  end
+
+  def entry_present?
+    entry.present?
+  end
+
+  def touch_entry
+    entry.touch
   end
 
   # Methods to get entry attributes - override in model if attribute names differ

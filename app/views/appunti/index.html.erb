@@ -22,7 +22,7 @@
   </div>
 <% end %>
 
-<%= turbo_stream_from current_user, "appunti" %>
+<%= turbo_stream_from current_user, "entries" %>
 
 <% if hotwire_native_app? %>
   <%= button_to "Nuovo Appunto", appunti_path, method: :post,

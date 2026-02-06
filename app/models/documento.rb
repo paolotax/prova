@@ -49,7 +49,6 @@ class Documento < ApplicationRecord
   include Entryable
   include Pagabile
   include Consegnabile
-  # Closeable rimosso: ora usa Entry::Closeable via Entryable delegation
 
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true

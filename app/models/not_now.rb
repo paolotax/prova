@@ -26,15 +26,9 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class NotNow < ApplicationRecord
-  # Legacy polymorphic association (kept for backward compatibility)
-  belongs_to :not_nowable, polymorphic: true, touch: true, optional: true
-
-  # New Entry association (for unified triage system)
-  belongs_to :entry, optional: true
-
-  belongs_to :account, default: -> { entry&.account || not_nowable&.account }
+  belongs_to :entry, touch: true
+  belongs_to :account, default: -> { entry&.account }
   belongs_to :user, optional: true, default: -> { Current.user }
 
-  validates :not_nowable_id, uniqueness: { scope: :not_nowable_type }, allow_nil: true
-  validates :entry_id, uniqueness: true, allow_nil: true
+  validates :entry_id, uniqueness: true
 end

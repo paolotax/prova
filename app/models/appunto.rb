@@ -56,9 +56,6 @@ class Appunto < ApplicationRecord
   # Draft/published status (Fizzy pattern)
   include Appunto::Statuses
 
-  # Turbo broadcasts for real-time updates
-  include Appunto::Broadcastable
-
   # State Record concerns - ora tutti via Entry delegation (Entryable)
   # Golden rimosso: usa Entry::Golden via gild/ungild
   # Closeable rimosso: usa Entry::Closeable via close/reopen
