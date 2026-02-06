@@ -1,5 +1,10 @@
 module DocumentiHelper
 
+    # Returns golden-effect class if documento is golden
+    def documento_golden_class(documento)
+      documento.golden? ? "golden-effect" : ""
+    end
+
     # Colori per i documenti basati sulla causale
     def documento_header_bg_classes(documento)
       #return "bg-red-200" if documento.incompleto?
