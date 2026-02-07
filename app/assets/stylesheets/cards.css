@@ -609,4 +609,96 @@
       text-align: left;
     }
   }
+
+  /* Classe badge (hidden by default, shown in compact context)
+  /* ------------------------------------------------------------------------ */
+
+  .card__classe-badge {
+    background: none;
+    border: 1.5px solid var(--card-color);
+    border-radius: 0.2em;
+    color: var(--card-color);
+    display: none;
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.15em 0.4em;
+  }
+
+  /* Column summary — 3-column grid for panels
+  /* ------------------------------------------------------------------------ */
+
+  .column-summary__panels {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    margin-inline: auto;
+    max-inline-size: var(--main-width);
+
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 960px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .column-summary__panel {
+    container-type: inline-size;
+
+    .panel__header {
+      padding: 0.5ch 1ch;
+    }
+
+    .cards__list {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 0.4rem;
+      padding: 0.25ch 0.5ch 0.5ch;
+    }
+
+    .card {
+      inline-size: 100%;
+    }
+
+    .card__title,
+    .card__subtitle,
+    .card__stages,
+    .card__closed,
+    .card__column-name {
+      display: none;
+    }
+
+    .card__classe-badge {
+      display: inline-flex;
+    }
+
+    .card__body {
+      padding-block: 0;
+    }
+
+    .card__meta {
+      grid-template-areas: "text-author text-copie";
+      grid-template-columns: 1fr auto;
+    }
+
+    .card__meta-avatars,
+    .card__meta-text--added,
+    .card__meta-text--updated,
+    .card__meta-text--assignees,
+    .card__meta-text--importo {
+      display: none;
+    }
+
+    .card__meta-text--author {
+      border: 0;
+      padding: 0;
+    }
+
+    .card__meta-text--copie {
+      border: 0;
+      padding: 0;
+    }
+  }
 }

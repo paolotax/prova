@@ -40,6 +40,43 @@ class Column::Summary
     end
   end
 
+  # Groups entries by scuola, with entries sorted by classe within each group.
+  # Clienti (non-scuola) get separate groups at the end.
+  # Returns: [[scuola, entries], ..., [cliente_or_nil, entries], ...]
+  def grouped_by_scuola
+    @grouped_by_scuola ||= begin
+      scuola_entries = Hash.new { |h, k| h[k] = [] }
+      altri = Hash.new { |h, k| h[k] = [] }
+
+      entries.each do |entry|
+        dest = entry.destinatario
+        case dest
+        when Scuola
+          scuola_entries[dest] << entry
+        when Classe
+          scuola_entries[dest.scuola] << entry
+        when nil
+          altri[nil] << entry
+        else
+          altri[dest] << entry
+        end
+      end
+
+      # Sort entries within each scuola by classe (anno_corso, sezione)
+      result = scuola_entries.map do |scuola, es|
+        sorted = es.sort_by { |e|
+          d = e.destinatario
+          d.is_a?(Classe) ? [0, d.anno_corso.to_i, d.sezione.to_s] : [1, 0, ""]
+        }
+        [scuola, sorted]
+      end.sort_by { |scuola, _| scuola.denominazione }
+
+      # Clienti: one group per destinatario
+      altri.each { |dest, es| result << [dest, es] }
+      result
+    end
+  end
+
   def entries_count
     entries.size
   end

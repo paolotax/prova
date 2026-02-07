@@ -15,20 +15,25 @@
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
-<%# === SEZIONE 1: Entries per destinatario === %>
-<% @summary.grouped_entries.each do |destinatario, entries| %>
-  <section class="panel margin-block">
-    <header class="panel__header">
-      <h3><%= destinatario&.denominazione || "Senza destinatario" %></h3>
-      <span class="badge"><%= entries.size %></span>
-    </header>
-    <div class="cards-grid padding-block-small">
-      <% entries.each do |entry| %>
-        <%= render "entries/entry", entry: entry, draggable: false %>
-      <% end %>
-    </div>
-  </section>
-<% end %>
+<%# === SEZIONE 1: Entries per scuola === %>
+<div class="column-summary__panels">
+  <% @summary.grouped_by_scuola.each do |destinatario, entries| %>
+    <section class="column-summary__panel cards cards--grid">
+      <header class="panel__header">
+        <h3><%= destinatario&.denominazione || "Senza destinatario" %></h3>
+        <% if destinatario.respond_to?(:comune) && destinatario.comune.present? %>
+          <span class="txt-subtle txt-small"><%= destinatario.comune %></span>
+        <% end %>
+        <span class="badge"><%= entries.size %></span>
+      </header>
+      <div class="cards__list" data-controller="navigable-list">
+        <% entries.each do |entry| %>
+          <%= render "entries/entry", entry: entry, draggable: false %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>
 
 <%# === SEZIONE 2: Volumi da consegnare === %>
 <% if @summary.volumi.any? %>

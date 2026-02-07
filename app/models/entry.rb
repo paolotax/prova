@@ -149,6 +149,11 @@ class Entry < ApplicationRecord
     end
   end
 
+  def classe_label
+    d = destinatario
+    d.is_a?(Classe) ? "#{d.anno_corso}#{d.sezione}" : nil
+  end
+
   def entryable=(record)
     @entryable = record
     self.entryable_type = record.class.name

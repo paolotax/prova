@@ -31,6 +31,10 @@
     <header class="card__header">
       <%= render "appunti/display/preview/board", appunto: appunto %>
 
+      <% if appunto.appuntabile.is_a?(Classe) %>
+        <span class="card__classe-badge"><%= appunto.appuntabile.anno_corso %><%= appunto.appuntabile.sezione %></span>
+      <% end %>
+
       <% if appunto.triaged? %>
         <span class="btn justify-start card__column-name card__column-name--current txt-uppercase min-width max-width">
           <span class="overflow-ellipsis"><%= appunto.column.name %></span>

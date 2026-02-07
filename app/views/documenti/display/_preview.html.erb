@@ -25,24 +25,33 @@
 
   <header class="card__header">
     <%= render "documenti/display/preview/board", documento: documento %>
+
+    <% if documento.clientable.is_a?(Classe) %>
+      <span class="card__classe-badge"><%= documento.clientable.anno_corso %><%= documento.clientable.sezione %></span>
+    <% end %>
   </header>
+
+  <%= link_to documento_path(documento), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
+  <% end %>
 
   <div class="card__body">
     <div class="card__content">
-      <%= link_to documento_path(documento), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
-        <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
-      <% end %>
       <% if documento.clientable.present? %>
-        <%= clientable_label_tag documento.clientable %>
+        <h3 class="card__title overflow-line-clamp"><%= documento.clientable.denominazione %></h3>
+        <% if documento.clientable.respond_to?(:comune) && documento.clientable.comune.present? %>
+          <span class="card__subtitle overflow-ellipsis"><%= documento.clientable.comune.upcase %></span>
+        <% end %>
       <% else %>
         <h3 class="card__title overflow-line-clamp">
           <%= documento.causale&.causale %>
           nr. <%= documento.numero_documento %>
         </h3>
       <% end %>
-      <% if documento.referente.present? || documento.note.present? %>
-        <div class="margin-block-start-half margin-inline-start">
-          <%= tag.span documento.referente if documento.referente.present? %>
+
+      <% if documento.referente.present? %>
+        <div class="card__referente txt-x-small overflow-ellipsis" style="color: var(--card-content-color)">
+          <%= documento.referente %>
         </div>
       <% end %>
     </div>
