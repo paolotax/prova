@@ -32,6 +32,7 @@
 
 <%# === SEZIONE 2: Volumi da consegnare === %>
 <% if @summary.volumi.any? %>
+  <% causali = @summary.volumi_causali %>
   <section class="panel margin-block">
     <header class="panel__header">
       <h3>Volumi da consegnare</h3>
@@ -40,21 +41,32 @@
       <thead>
         <tr>
           <th>Titolo</th>
-          <th class="txt-right">Copie</th>
+          <th class="txt-right">Totale</th>
+          <% causali.each do |causale| %>
+            <th class="txt-right txt-small" style="color: <%= causale_color(causale) %>"><%= causale %></th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
-        <% @summary.volumi.each do |libro, quantita| %>
+        <% @summary.volumi.each do |libro, per_causale| %>
           <tr>
             <td><%= libro&.titolo %></td>
-            <td class="txt-right"><%= quantita %></td>
+            <td class="txt-right"><strong><%= per_causale.values.sum %></strong></td>
+            <% causali.each do |causale| %>
+              <% q = per_causale[causale] %>
+              <td class="txt-right"><%= q != 0 ? q : "" %></td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
       <tfoot>
         <tr>
           <td><strong>Totale</strong></td>
-          <td class="txt-right"><strong><%= @summary.volumi.sum { |_, q| q } %></strong></td>
+          <td class="txt-right"><strong><%= @summary.volumi.sum { |_, pc| pc.values.sum } %></strong></td>
+          <% causali.each do |causale| %>
+            <% tot = @summary.volumi.sum { |_, pc| pc[causale] } %>
+            <td class="txt-right"><strong><%= tot != 0 ? tot : "" %></strong></td>
+          <% end %>
         </tr>
       </tfoot>
     </table>
