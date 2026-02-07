@@ -19,20 +19,30 @@ document.addEventListener("turbo:load", () => {
 })
 
 export default class extends Controller {
-  rememberLocation() {
+  rememberLocation(event) {
+    // Skip same-page refreshes (e.g., broadcast morph after save)
+    const destination = event.detail?.url
+    if (destination && new URL(destination).pathname === window.location.pathname) return
+
     sessionStorage.setItem("referrerUrl", window.location.href)
   }
 
   backIfSamePath(event) {
     if (event.ctrlKey || event.metaKey || event.shiftKey) return
 
-    if (sessionStorage.getItem("referrerUrl")) {
+    const referrerUrl = sessionStorage.getItem("referrerUrl")
+    if (referrerUrl) {
       event.preventDefault()
       const entryId = document.querySelector('meta[name="entry-id"]')?.content
       if (entryId) {
         sessionStorage.setItem("lastViewedEntryId", entryId)
       }
-      history.back()
+      sessionStorage.removeItem("referrerUrl")
+
+      // After documento save (full page reload), history has a duplicate show entry
+      const fullReload = sessionStorage.getItem("fullReloadSave")
+      sessionStorage.removeItem("fullReloadSave")
+      history.go(fullReload ? -2 : -1)
     }
   }
 }

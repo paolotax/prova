@@ -851,6 +851,8 @@ export default class extends Controller {
     this.populateHiddenFields()
 
     if (this.hasFormTarget) {
+      // Flag for turbo_navigation: form submit + redirect adds an extra history entry
+      sessionStorage.setItem("fullReloadSave", "true")
       this.formTarget.requestSubmit()
     }
   }

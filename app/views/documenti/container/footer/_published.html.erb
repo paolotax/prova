@@ -10,7 +10,7 @@
   </button>
 
   <% if !documento.closed? %>
-    <button type="button" class="btn"
+    <button type="button" class="btn btn--reversed"
       data-controller="hotkey"
       data-action="dialog#open keydown.g@document->hotkey#click">
       Gestisci <kbd class="hide-on-touch">G</kbd>
@@ -18,3 +18,10 @@
     <%= render "documenti/container/gestione_dialog", documento: documento %>
   <% end %>
 </div>
+
+<% if documento.entry.present? && !documento.entry.closed? %>
+  <%= button_to entry_closure_path(documento.entry), method: :post, class: "btn btn--reversed",
+      data: { controller: "hotkey", action: "keydown.c@document->hotkey#click" } do %>
+    Completa <kbd class="hide-on-touch">C</kbd>
+  <% end %>
+<% end %>
