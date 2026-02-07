@@ -124,6 +124,31 @@ class Entry < ApplicationRecord
                  end
   end
 
+  # Batch-load entryables to avoid N+1 (entryable_id is string)
+  def self.load_entryables(entries)
+    entries = entries.to_a
+    by_type = entries.group_by(&:entryable_type)
+
+    loaded = {}
+    {
+      "Appunto"   => ->(ids) { Appunto.where(id: ids).includes(:appuntabile, :consegna, righe: :libro) },
+      "Documento" => ->(ids) { Documento.where(id: ids).includes(:clientable, :consegna, righe: :libro) }
+    }.each do |type, loader|
+      next unless by_type[type]
+      loader.call(by_type[type].map(&:entryable_id)).each { |r| loaded[r.id.to_s] = r }
+    end
+
+    entries.each { |e| e.instance_variable_set(:@entryable, loaded[e.entryable_id]) }
+    entries
+  end
+
+  def destinatario
+    case entryable
+    when Appunto then entryable.appuntabile
+    when Documento then entryable.clientable
+    end
+  end
+
   def entryable=(record)
     @entryable = record
     self.entryable_type = record.class.name

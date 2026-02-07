@@ -57,6 +57,7 @@ class Adozione < ApplicationRecord
   scope :per_editore, ->(editore) { where(editore: editore) }
   scope :per_disciplina, ->(disciplina) { where(disciplina: disciplina) }
   scope :mie, -> { where(mia: true) }
+  scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
 
   # Crea da ImportAdozione
   def self.create_from_import(import_adozione, classe:, account: Current.account)

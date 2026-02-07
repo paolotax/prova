@@ -9,14 +9,14 @@
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis" style="color: <%= @column.color %>"><%= @column.name %></span>
-    <span class="badge"><%= @grouped_entries.values.flatten.size %></span>
+    <span class="badge"><%= @summary.entries_count %></span>
   </h1>
 
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
 <%# === SEZIONE 1: Entries per destinatario === %>
-<% @grouped_entries.each do |destinatario, entries| %>
+<% @summary.grouped_entries.each do |destinatario, entries| %>
   <section class="panel margin-block">
     <header class="panel__header">
       <h3><%= destinatario&.denominazione || "Senza destinatario" %></h3>
@@ -31,7 +31,7 @@
 <% end %>
 
 <%# === SEZIONE 2: Volumi da consegnare === %>
-<% if @volumi.any? %>
+<% if @summary.volumi.any? %>
   <section class="panel margin-block">
     <header class="panel__header">
       <h3>Volumi da consegnare</h3>
@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @volumi.each do |libro, quantita| %>
+        <% @summary.volumi.each do |libro, quantita| %>
           <tr>
             <td><%= libro&.titolo %></td>
             <td class="txt-right"><%= quantita %></td>
@@ -54,7 +54,7 @@
       <tfoot>
         <tr>
           <td><strong>Totale</strong></td>
-          <td class="txt-right"><strong><%= @volumi.sum { |_, q| q } %></strong></td>
+          <td class="txt-right"><strong><%= @summary.volumi.sum { |_, q| q } %></strong></td>
         </tr>
       </tfoot>
     </table>
@@ -62,13 +62,13 @@
 <% end %>
 
 <%# === SEZIONE 3: Adozioni === %>
-<% if @adozioni_per_scuola.any? %>
+<% if @summary.adozioni_per_scuola.any? %>
   <section class="panel margin-block">
     <header class="panel__header">
       <h3>Adozioni</h3>
     </header>
 
-    <% @adozioni_per_scuola.each do |scuola, adozioni| %>
+    <% @summary.adozioni_per_scuola.each do |scuola, adozioni| %>
       <div class="padding-block-small padding-inline">
         <h4 class="txt-subtle"><%= scuola.denominazione %> - <%= scuola.comune %></h4>
 
