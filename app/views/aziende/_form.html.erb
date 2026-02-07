@@ -115,8 +115,8 @@
     </div>
   </section>
 
-  <div class="flex f-align-center f-justify-end gap">
+  <div class="flex f-align-center gap center" style="max-inline-size: 55ch;">
+    <%= form.submit azienda.persisted? ? "Aggiorna" : "Salva", class: "btn btn--reversed" %>
     <%= link_to "Annulla", azienda_path, class: "btn" %>
-    <%= form.submit azienda.persisted? ? "Aggiorna" : "Salva", class: "btn btn--primary" %>
   </div>
 <% end %>
