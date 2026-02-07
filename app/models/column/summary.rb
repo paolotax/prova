@@ -16,10 +16,12 @@ class Column::Summary
     @volumi ||= begin
       docs = entries.select { |e| e.entryable_type == "Documento" }
                     .map(&:entryable).compact.reject(&:consegnato?)
-      docs.flat_map(&:righe)
-          .group_by(&:libro)
-          .transform_values { |righe| righe.sum(&:quantita) }
-          .sort_by { |libro, _| libro&.titolo.to_s }
+      totali = Hash.new(0)
+      docs.each do |doc|
+        segno = doc.movimento == "entrata" ? -1 : 1
+        doc.righe.each { |r| totali[r.libro] += r.quantita * segno }
+      end
+      totali.sort_by { |libro, _| libro&.titolo.to_s }
     end
   end
 
