@@ -8,6 +8,65 @@ class ColumnsController < ApplicationController
   end
 
   def show
+    entries = current_account.entries.non_ssk.active
+                .in_column(@column).with_golden_first.recent
+                .includes(:goldness, :closure, :not_now)
+                .to_a
+
+    # Batch-load entryables (entryable_id is string, can't use includes)
+    appunto_ids = entries.select { |e| e.entryable_type == "Appunto" }.map(&:entryable_id)
+    documento_ids = entries.select { |e| e.entryable_type == "Documento" }.map(&:entryable_id)
+
+    appunti_by_id = Appunto.where(id: appunto_ids)
+                           .includes(:appuntabile, :consegna, righe: :libro)
+                           .index_by { |a| a.id.to_s }
+    documenti_by_id = Documento.where(id: documento_ids)
+                               .includes(:clientable, :consegna, righe: :libro)
+                               .index_by { |d| d.id.to_s }
+
+    entries.each do |entry|
+      case entry.entryable_type
+      when "Appunto"
+        entry.instance_variable_set(:@entryable, appunti_by_id[entry.entryable_id])
+      when "Documento"
+        entry.instance_variable_set(:@entryable, documenti_by_id[entry.entryable_id])
+      end
+    end
+
+    # Group entries by destinatario
+    @grouped_entries = entries.group_by do |e|
+      case e.entryable_type
+      when "Appunto" then e.entryable&.appuntabile
+      when "Documento" then e.entryable&.clientable
+      end
+    end
+
+    # Volumi da consegnare: documenti non consegnati
+    non_consegnati = documenti_by_id.values.reject(&:consegnato?)
+    @volumi = non_consegnati.flat_map(&:righe)
+                .group_by(&:libro)
+                .transform_values { |righe| righe.sum(&:quantita) }
+                .sort_by { |libro, _| libro&.titolo.to_s }
+
+    # Adozioni: scuole dai destinatari
+    scuola_ids = @grouped_entries.keys.compact.flat_map do |dest|
+      case dest
+      when Scuola then [dest.id]
+      when Classe then [dest.scuola_id]
+      else []
+      end
+    end.uniq
+
+    @adozioni_per_scuola = if scuola_ids.any?
+      Adozione.where(account: current_account)
+        .mie.da_acquistare_flag
+        .joins(:classe)
+        .where(classi: { scuola_id: scuola_ids })
+        .includes(classe: :scuola)
+        .group_by(&:scuola)
+    else
+      {}
+    end
   end
 
   def new

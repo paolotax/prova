@@ -25,7 +25,7 @@
           <%= icon_tag "collapse" %>
         </h3>
       </button>
-      <%= link_to entries_path(column_id: column.id), class: "cards__maximize-button btn btn--circle txt-x-small borderless", data: { turbo_frame: "_top" } do %>
+      <%= link_to column_path(column), class: "cards__maximize-button btn btn--circle txt-x-small borderless", data: { turbo_frame: "_top" } do %>
         <%= icon_tag "grid", class: "translucent" %>
         <span class="for-screen-reader">Mostra tutte le schede</span>
       <% end %>

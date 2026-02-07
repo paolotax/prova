@@ -1,0 +1,103 @@
+<% @page_title = @column.name %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to dashboard_path, class: "btn btn--circle" do %>
+      <%= icon_tag "back" %>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis" style="color: <%= @column.color %>"><%= @column.name %></span>
+    <span class="badge"><%= @grouped_entries.values.flatten.size %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<%# === SEZIONE 1: Entries per destinatario === %>
+<% @grouped_entries.each do |destinatario, entries| %>
+  <section class="panel margin-block">
+    <header class="panel__header">
+      <h3><%= destinatario&.denominazione || "Senza destinatario" %></h3>
+      <span class="badge"><%= entries.size %></span>
+    </header>
+    <div class="cards-grid padding-block-small">
+      <% entries.each do |entry| %>
+        <%= render "entries/entry", entry: entry, draggable: false %>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<%# === SEZIONE 2: Volumi da consegnare === %>
+<% if @volumi.any? %>
+  <section class="panel margin-block">
+    <header class="panel__header">
+      <h3>Volumi da consegnare</h3>
+    </header>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Titolo</th>
+          <th class="txt-right">Copie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @volumi.each do |libro, quantita| %>
+          <tr>
+            <td><%= libro&.titolo %></td>
+            <td class="txt-right"><%= quantita %></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><strong>Totale</strong></td>
+          <td class="txt-right"><strong><%= @volumi.sum { |_, q| q } %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% end %>
+
+<%# === SEZIONE 3: Adozioni === %>
+<% if @adozioni_per_scuola.any? %>
+  <section class="panel margin-block">
+    <header class="panel__header">
+      <h3>Adozioni</h3>
+    </header>
+
+    <% @adozioni_per_scuola.each do |scuola, adozioni| %>
+      <div class="padding-block-small padding-inline">
+        <h4 class="txt-subtle"><%= scuola.denominazione %> - <%= scuola.comune %></h4>
+
+        <table class="table txt-small">
+          <thead>
+            <tr>
+              <th>Classe</th>
+              <th>Disciplina</th>
+              <th>Titolo</th>
+              <th>Editore</th>
+              <th class="txt-right">Copie</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%# Raggruppa per anno_corso + disciplina + codice_isbn, aggrega sezioni %>
+            <% adozioni.group_by { |a| [a.classe.anno_corso, a.disciplina, a.codice_isbn] }.each do |(anno, disciplina, _isbn), gruppo| %>
+              <% sezioni = gruppo.map { |a| a.classe.sezione }.compact.sort.join("") %>
+              <% copie = gruppo.sum(&:numero_copie) %>
+              <tr>
+                <td><%= anno %> <%= sezioni %></td>
+                <td><%= disciplina %></td>
+                <td><%= gruppo.first.titolo %></td>
+                <td><%= gruppo.first.editore %></td>
+                <td class="txt-right"><%= copie %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+<% end %>
