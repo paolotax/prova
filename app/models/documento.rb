@@ -67,6 +67,7 @@ class Documento < ApplicationRecord
 
   before_save :imposta_stato_iniziale_da_causale, if: :causale_id_changed?
   before_save :ricalcola_totali_se_necessario
+  after_create_commit :ricalcola_totali_dopo_creazione
   after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
   after_destroy :riporta_documenti_orfani_a_stato_precedente
   before_destroy :riapri_documenti_figli
@@ -359,6 +360,12 @@ class Documento < ApplicationRecord
   end
 
   private
+
+  # Ricalcola totali dopo creazione (dopo commit, quando tutte le righe sono nel DB)
+  def ricalcola_totali_dopo_creazione
+    righe.reset
+    ricalcola_totali!
+  end
 
   # Imposta lo stato iniziale dalla causale quando viene creato un documento
   def imposta_stato_iniziale_da_causale

@@ -41,10 +41,10 @@
   </span>
 
   <span class="card__meta-text card__meta-text--copie txt-align-end">
-      Copie <strong><%= documento.totale_copie %></strong>
+      Copie <strong data-documento-editor-target="totaleCopie"><%= documento.totale_copie %></strong>
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
-      Importo <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+      Importo <strong data-documento-editor-target="totaleImporto"><%= number_to_currency documento.totale_importo, locale: :it %></strong>
   </span>
 </div>
