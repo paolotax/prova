@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "global_search_results" do %>
+  <% @results&.each do |group| %>
+    <details class="popup__section" open>
+      <summary class="popup__section-title">
+        <%= icon_tag "caret-down" %><%= group[:label] %>
+      </summary>
+      <ul class="popup__list">
+        <% group[:records].each do |record| %>
+          <li class="popup__item" data-navigable-list-target="item">
+            <%= icon_tag group[:icon], class: "popup__icon" %>
+            <%= link_to search_result_path(record), class: "popup__btn btn", data: { turbo_frame: "_top" } do %>
+              <span class="overflow-ellipsis"><%= search_result_label(record) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+<% end %>

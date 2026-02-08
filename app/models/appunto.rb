@@ -126,6 +126,14 @@ class Appunto < ApplicationRecord
 
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
 
+  scope :search_appunti, ->(query) {
+    left_joins_appuntabile
+      .where(
+        "appunti.nome ILIKE :q OR scuole.denominazione ILIKE :q OR clienti.denominazione ILIKE :q OR scuole_classe.denominazione ILIKE :q",
+        q: "%#{query}%"
+      )
+  }
+
   # LEFT JOIN per ricerca su polymorphic appuntabile (Scuola, Cliente, Classe) e Action Text content
   scope :left_joins_appuntabile, -> {
     joins(<<~SQL)

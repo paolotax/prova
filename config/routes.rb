@@ -157,10 +157,7 @@ Rails.application.routes.draw do
     #   resources :clientable, only: :index
     # end
 
-    resource :search
-    namespace :searches do
-      resources :queries
-    end
+    resource :search, only: [:show], controller: "search"
 
     # Ricerca unificata destinatari per combobox appunti
     resources :destinatari, only: [:index]

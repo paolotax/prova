@@ -39,6 +39,7 @@ class Persona < ApplicationRecord
 
   scope :per_ruolo, ->(ruolo) { where(ruolo: ruolo) }
   scope :per_scuola, ->(scuola) { where(scuola: scuola) }
+  scope :ilike_search, ->(query) { where("cognome ILIKE :q OR nome ILIKE :q", q: "%#{query}%") }
 
   def nome_completo
     "#{cognome} #{nome}".strip

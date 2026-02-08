@@ -1,18 +1,41 @@
-<div class="bar full-width" data-controller="bar" data-bar-dialog-outlet="#bar-modal"
-    data-bar-search-url-value="<%= search_path %>">
-  <div class="flex justify-center bar__placeholder" data-bar-target="buttonsContainer">
-    <%= tag.button class: "btn btn--plain", data: {
-          controller: "hotkey", action: "bar#search keydown.k@document->hotkey#click" } do %>
+<div class="bar" data-controller="dialog"
+     data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+
+  <div class="bar__placeholder flex justify-center">
+    <%= tag.button class: "btn btn--plain", type: "button", data: {
+          controller: "hotkey",
+          action: "click->dialog#toggle keydown.k@document->hotkey#click" } do %>
       <span class="display-contents">Cerca <kbd class="hide-on-touch">K</kbd></span>
     <% end %>
   </div>
 
-  <div class="bar__input" data-bar-target="search" hidden>
-    <%= render "searches/form", query_terms: "", target_turbo_frame: "bar_content" %>
-  </div>
+  <%= tag.dialog class: "bar__search popup popup--animated panel", data: {
+        dialog_target: "dialog",
+        controller: "navigable-list",
+        navigable_list_actionable_items_value: true,
+        navigable_list_focus_on_selection_value: false,
+        action: "turbo:before-cache@document->dialog#close turbo:frame-render->navigable-list#reset dialog:show->navigable-list#reset keydown->navigable-list#navigate" } do %>
 
-  <%= tag.dialog id: "bar-modal", class: "bar__modal", data: {
-        controller: "dialog", dialog_target: "dialog", action: "keydown.esc@document->bar#reset:stop" } do %>
-    <%= turbo_frame_tag "bar_content", data: { bar_target: "turboFrame" } %>
+    <div class="bar__search-header">
+      <%= form_with url: search_path(Current.account), method: :get, data: {
+            controller: "form",
+            turbo_frame: "global_search_results" } do |f| %>
+        <%= hidden_field_tag :context, controller_name %>
+        <%= f.search_field :q, placeholder: "Cerca...",
+              class: "input input--transparent txt-small",
+              autocomplete: "off", autofocus: true,
+              data: {
+                navigable_list_target: "input",
+                action: "input->form#debouncedSubmit" } %>
+      <% end %>
+    </div>
+
+    <div class="nav__scroll-container">
+      <%= turbo_frame_tag "global_search_results" %>
+
+      <div class="nav__blank-slate blank-slate blank-slate--empty">
+        Nessun risultato
+      </div>
+    </div>
   <% end %>
 </div>

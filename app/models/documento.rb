@@ -127,6 +127,23 @@ class Documento < ApplicationRecord
 
   scope :solo_padri, -> { where(documento_padre_id: nil) }
 
+  # LEFT JOIN per ricerca su polymorphic clientable (Scuola, Cliente) + causale
+  scope :left_joins_clientable, -> {
+    joins(<<~SQL)
+      LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id
+      LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id
+    SQL
+  }
+
+  scope :search_docs, ->(query) {
+    left_joins_clientable
+      .left_joins(:causale)
+      .where(
+        "scuole.denominazione ILIKE :q OR clienti.denominazione ILIKE :q OR documenti.referente ILIKE :q OR causali.causale ILIKE :q",
+        q: "%#{query}%"
+      )
+  }
+
   # Goldness-first ordering: SQL fragment for ORDER BY
   # Golden items (NOT EXISTS = false) sort before non-golden (true)
   GOLDEN_SORT_SQL = <<~SQL.squish
