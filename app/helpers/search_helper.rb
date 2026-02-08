@@ -17,7 +17,7 @@ module SearchHelper
     when Libro     then "#{record.titolo} - #{record.editore&.editore}"
     when Cliente   then "#{record.denominazione} - #{record.comune}"
     when Documento then "#{record.numero_documento} #{record.causale&.causale} - #{record.clientable}"
-    when Appunto   then "#{record.nome} - #{record.denominazione}"
+    when Appunto   then [record.nome, record.appuntabile].compact_blank.join(" - ")
     when Classe    then "#{record.denominazione} - #{record.comune}"
     when Persona   then record.to_combobox_display
     end

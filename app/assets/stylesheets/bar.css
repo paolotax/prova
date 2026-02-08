@@ -52,8 +52,13 @@
   }
 
   .bar__search.popup {
+    --panel-border-color: var(--color-selected-dark);
     --popup-display: flex;
 
+    box-shadow: 0 0 0 1px oklch(var(--lch-blue-medium) / 5%),
+                0 0.2em 0.2em oklch(var(--lch-blue-medium) / 5%),
+                0 0.4em 0.4em oklch(var(--lch-blue-medium) / 5%),
+                0 0.8em 0.8em oklch(var(--lch-blue-medium) / 5%);
     position: fixed;
     inset: auto 0 calc(var(--footer-height) + env(safe-area-inset-bottom)) 0;
     flex-direction: column;

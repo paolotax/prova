@@ -50,25 +50,19 @@
 #
 
 class Appunto < ApplicationRecord
-  # Entryable concern for unified triage system
   include Entryable
-
-  # Draft/published status (Fizzy pattern)
   include Appunto::Statuses
-
-  # State Record concerns - ora tutti via Entry delegation (Entryable)
-  # Golden rimosso: usa Entry::Golden via gild/ungild
-  # Closeable rimosso: usa Entry::Closeable via close/reopen
-  # Postponable rimosso: usa Entry::Postponable via postpone/resume
   include Consegnabile   # has_one :consegna
   include Pagabile       # has_one :pagamento
-  include Registrabile   # has_one :registrazione
+  include Registrabile   # has_one :registrazione non usato???
 
   belongs_to :account
-  belongs_to :import_scuola, required: false
   belongs_to :user
-  belongs_to :import_adozione, required: false
-  belongs_to :classe, optional: true
+  
+  # belongs_to :import_scuola, required: false
+  # belongs_to :import_adozione, required: false
+  # belongs_to :classe, optional: true
+
   belongs_to :appuntabile, polymorphic: true, optional: true
 
   # Virtual attribute per combobox multi-entità
@@ -122,8 +116,6 @@ class Appunto < ApplicationRecord
     'completati'  => 'Completati',
   }.freeze
 
-  delegate :denominazione, :comune, to: :import_scuola, allow_nil: true
-
   scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
 
   scope :search_appunti, ->(query) {
@@ -147,20 +139,6 @@ class Appunto < ApplicationRecord
     SQL
   }
 
-  # scope :da_fare, -> { where(stato: 'da fare').non_saggi }
-  # scope :in_evidenza, -> { where(stato: 'in evidenza').non_saggi }
-  # scope :in_settimana, -> { where(stato: 'in settimana').non_saggi }
-  # scope :da_pagare, -> { where(stato: 'da pagare').non_saggi }
-  # scope :in_visione, -> { where(stato: 'in visione').non_saggi }
-  # scope :completati, -> { where(stato: 'completato').non_saggi }
-
-  # scope :archiviati, -> { where(stato: 'archiviato').non_saggi }
-
-  # scope :da_completare, -> { where(stato: ['da fare', 'in evidenza', 'in settimana']).non_saggi }
-  # scope :in_sospeso, -> { where(stato: ['in visione', 'da pagare']).non_saggi }
-  # Scope per stato Entry-based (unified triage system)
-  # Gli state records (goldness, closure, not_now) sono su Entry, non su Appunto
-  # Nomi allineati a FIZZY_STATES per coerenza UI
   scope :attivi, -> {
     where("appunti.id IN (SELECT e.entryable_id::uuid FROM entries e LEFT JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Appunto' AND c.id IS NULL)")
   }
@@ -217,38 +195,10 @@ class Appunto < ApplicationRecord
     order(Arel.sql(GOLDEN_SORT_SQL))
   }
 
-  # non includono clienti REFACTOR appunto clientable
-  # scope :nel_baule_di_oggi, lambda {
-  #   where(import_scuola_id: Current.user.tappe.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  # }
-  # scope :nel_baule_di_domani, lambda {
-  #   where(import_scuola_id: Current.user.tappe.di_domani.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  # }
-  # scope :nel_baule_del_giorno, lambda { |day|
-  #   where(import_scuola_id: Current.user.tappe.del_giorno(day).where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-  # }
-
-  # scope :saggi, -> { where(nome: 'saggio').where.not(import_adozione_id: nil) }
-  # scope :seguiti, -> { where(nome: 'seguito').where.not(import_adozione_id: nil) }
-  # scope :kit, -> { where(nome: 'kit').where.not(import_adozione_id: nil) }
-  # scope :ssk, -> { where(nome: %w[saggio seguito kit]).where.not(import_adozione_id: nil) }
-  
   scope :saggi, -> { where(nome: 'saggio') }
   scope :seguiti, -> { where(nome: 'seguito') }
   scope :kit, -> { where(nome: 'kit') }
   scope :ssk, -> { where(nome: %w[saggio seguito kit]) }
-
-  def self.ransackable_attributes(auth_object = nil)
-    %w[nome body]
-  end
-
-  def self.ransackable_associations(auth_object = nil)
-    %w[nome body]
-  end
-
-  def scuola
-    import_scuola
-  end
 
   def content_to_s
     content.to_s.gsub('<div class="trix-content">', '')
@@ -320,12 +270,6 @@ class Appunto < ApplicationRecord
       end
     end
     file_attachments
-  end
-
-  def self.nel_baule
-    appunti_scuole_di_oggi = Appunto.where(import_scuola_id: Tappa.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id))
-    # appunti_adozioni_di_oggi = Appunto.where(import_adozione_id: Tappa.di_oggi.where(tappable_type: "ImportAdozione").pluck(:tappable_id))
-    # appunti_scuole_di_oggi.or(appunti_adozioni_di_oggi)
   end
 
   def is_saggio?

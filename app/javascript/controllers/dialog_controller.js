@@ -26,6 +26,7 @@ export default class extends Controller {
 
     this.loadLazyFrames()
     this.dialogTarget.setAttribute("aria-hidden", "false")
+    this.dialogTarget.querySelector("[autofocus]")?.focus()
     this.dispatch("show")
   }
 
