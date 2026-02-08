@@ -7,20 +7,29 @@
     filter_type: "entry_filter" %>
 
 <%= turbo_frame_tag :search_results do %>
-  <section class="cards cards--grid">
-    <header class="cards__header">
-      <h3 class="cards__title">Risultati (<%= @total_count %>)</h3>
-    </header>
-    <%= with_automatic_pagination :filtered_entries, @page,
-        class: "cards__list cards__list--grid hide-scrollbar",
-        data: { drag_drop_item_container: false } do %>
-      <% if @page.records.any? %>
-        <%= render partial: "entries/entry", collection: @page.records, as: :entry, locals: { draggable: false } %>
-      <% else %>
-        <div class="blank-slate padding">
-          <p class="txt-light">Nessun risultato per i filtri selezionati</p>
-        </div>
-      <% end %>
+  <% if @page.records.any? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "risultato trovato" : "risultati trovati" %>
+    </p>
+
+    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+      <%= render "shared/bulk_bar" %>
+
+      <div class="cards cards--grid">
+        <%= with_automatic_pagination :filtered_entries, @page,
+            class: "cards__list cards__list--grid hide-scrollbar",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate" } do %>
+          <%= render partial: "entries/entry", collection: @page.records, as: :entry, locals: { draggable: false } %>
+        <% end %>
+      </div>
     <% end %>
-  </section>
+  <% else %>
+    <div class="blank-slate padding">
+      <p class="txt-light">Nessun risultato per i filtri selezionati</p>
+    </div>
+  <% end %>
 <% end %>
