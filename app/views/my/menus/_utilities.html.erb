@@ -2,7 +2,7 @@
     <%= filter_place_menu_item stats_path(Current.account), "Stats", "chart" %>
     
     <% if Current.user.admin? %>
-        <%= filter_place_menu_item "/avo", "Avo Admin", "shield" %>
+        <%= filter_place_menu_item "/motor", "Motor Admin", "shield", turbo: false %>
         <%= filter_place_menu_item "/sidekiq", "Sidekiq", "server" %>
         <%= filter_place_menu_item "/blazer", "Blazer", "chart" %>
         <%= filter_place_menu_item "/rails/performance", "Performance", "speedometer" %>

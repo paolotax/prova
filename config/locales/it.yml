@@ -241,6 +241,4 @@ it:
       long: "%d %B %Y %H:%M"
       short: "%d %b %H:%M"
     pm: pm
-  controllers:
-    avo:
-      unauthorized: 'Non sei autorizzato'
+  controllers: {}

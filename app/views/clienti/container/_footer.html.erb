@@ -35,12 +35,12 @@
         <% sconti.first(5).each do |sconto| %>
           <div class="flex justify-space-between align-center txt-small">
             <div class="flex align-center gap-quarter">
-              <span><%= sconto.categoria&.nome || "Generale" %></span>
+              <span><%= sconto.categoria&.nome_categoria || "Generale" %></span>
               <% if sconto.scontabile_id.present? %>
                 <span class="badge badge--small">Dedicato</span>
               <% end %>
             </div>
-            <strong class="txt-link"><%= number_to_percentage sconto.sconto, precision: 0 %></strong>
+            <strong class="txt-link"><%= number_to_percentage sconto.percentuale_sconto, precision: 0 %></strong>
           </div>
         <% end %>
       </div>

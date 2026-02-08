@@ -145,7 +145,7 @@ gem "counter_culture", "~> 3.8"
 
 gem "positioning"
 
-gem 'avo'
+gem 'motor-admin'
 gem "ransack"
 
 gem "pundit"

@@ -41,5 +41,8 @@ module Prova
     # Add tools directory to autoload paths
     config.autoload_paths << Rails.root.join("app", "tools")
 
+    # ViewComponent 4.x: restore auto-include of helpers
+    config.view_component.include_all_helpers = true
+
   end
 end

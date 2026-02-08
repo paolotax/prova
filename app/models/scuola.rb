@@ -9,8 +9,11 @@
 #  denominazione       :string
 #  email               :string
 #  indirizzo           :string
+#  latitude            :float
+#  longitude           :float
 #  note                :text
 #  pec                 :string
+#  posizione           :integer          default(0)
 #  priorita            :integer          default(0)
 #  provincia           :string
 #  regione             :string
@@ -27,6 +30,7 @@
 #  index_scuole_on_account_id                          (account_id)
 #  index_scuole_on_account_id_and_codice_ministeriale  (account_id,codice_ministeriale) UNIQUE
 #  index_scuole_on_account_id_and_denominazione        (account_id,denominazione)
+#  index_scuole_on_account_id_and_posizione            (account_id,posizione)
 #  index_scuole_on_import_scuola_id                    (import_scuola_id)
 #
 # Foreign Keys

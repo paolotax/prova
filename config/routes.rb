@@ -66,7 +66,7 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: 'blazer' if defined?(Blazer)
     mount RailsPerformance::Engine, at: 'rails/performance' if defined?(RailsPerformance)
     mount Sidekiq::Web => '/sidekiq'
-    mount Avo::Engine, at: Avo.configuration.root_path if defined?(Avo)
+    mount Motor::Admin => '/motor' if defined?(Motor)
     mount RailsDesigner::Engine, at: '/rails_designer' if defined?(RailsDesigner)
   end
 
@@ -74,7 +74,7 @@ Rails.application.routes.draw do
   # ROUTES CON CONTESTO ACCOUNT
   # =========================================
 
-  scope "/:account_id" do
+  scope "/:account_id", constraints: { account_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ } do
     # Dashboard account
     root "dashboard#index", as: :account_root
 
