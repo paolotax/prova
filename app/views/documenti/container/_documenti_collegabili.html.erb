@@ -2,6 +2,7 @@
 
 <% collegabili = documento.documenti_collegabili %>
 <% if collegabili.any? %>
+  <div style="max-inline-size: 1120px; margin-inline: auto; padding-inline: var(--block-space);">
   <h3 class="txt-small txt-subtle txt-uppercase margin-block-end-half">Documenti collegabili</h3>
 
   <% collegabili.each do |doc| %>
@@ -37,13 +38,28 @@
       </footer>
 
       <div class="card__actions">
-        <%= button_to documento_collegamento_path(documento, figlio_id: doc.id),
-            method: :post,
-            class: "btn btn--small btn--circle",
-            data: { controller: "tooltip", tooltip_content_value: "Collega", turbo_confirm: "Collegare #{doc.causale&.causale} ##{doc.numero_documento}?" } do %>
-          <%= icon_tag "plus" %>
-        <% end %>
+        <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+          <button type="button" class="btn btn--small btn--circle"
+                  data-action="dialog#open"
+                  data-controller="tooltip" data-tooltip-content-value="Collega">
+            <%= icon_tag "plus" %>
+          </button>
+          <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch" data-dialog-target="dialog">
+            <h3 class="txt-large txt-bold">Collegare questo documento?</h3>
+            <p class="txt-medium margin-block-half"><%= doc.causale&.causale %> #<%= doc.numero_documento %> del <%= doc.data_documento&.strftime("%d/%m/%Y") %></p>
+            <div class="flex gap-half justify-center margin-block-start">
+              <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+              <%= button_to documento_collegamento_path(documento, figlio_id: doc.id),
+                  method: :post,
+                  class: "btn btn--positive",
+                  data: { action: "click->dialog#close" } do %>
+                <span>Collega</span>
+              <% end %>
+            </div>
+          </dialog>
+        </div>
       </div>
     <% end %>
   <% end %>
+  </div>
 <% end %>

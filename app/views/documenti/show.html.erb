@@ -28,11 +28,9 @@
              is_new: @is_new || false,
              documento_json: @documento_json,
              righe_json: @righe_json %>
-
-  <div class="comments" style="--comment-max: 65ch;">
-    <%= render "documenti/container/documenti_collegabili", documento: @documento %>
-  </div>
 </div>
+
+<%= render "documenti/container/documenti_collegabili", documento: @documento %>
 
 <% if @documento.persisted? && @documento.numero_documento.present? %>
   <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
