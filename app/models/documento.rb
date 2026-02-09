@@ -362,6 +362,34 @@ class Documento < ApplicationRecord
     documento_target
   end
 
+  # Documenti dello stesso cliente con causali predecessori, attivi, senza padre
+  def documenti_collegabili
+    return Documento.none unless causale
+    causali_pred = Causale.predecessori_di(causale)
+    return Documento.none if causali_pred.empty?
+
+    Documento.where(causale: causali_pred)
+      .where(clientable_type: clientable_type, clientable_id: clientable_id)
+      .where(account_id: account_id)
+      .where(documento_padre_id: nil)
+      .where.not(id: id)
+      .attivi
+      .includes(:causale, :entry)
+      .order(data_documento: :desc)
+  end
+
+  # Collega un documento figlio: copia le righe, chiude il figlio, ricalcola totali
+  def collega_documento_figlio(doc_figlio)
+    transaction do
+      doc_figlio.aggiungi_righe_a(self)
+      doc_figlio.close unless doc_figlio.closed?
+      doc_figlio.ensure_entry!
+      reload
+      ricalcola_totali!
+      ensure_entry!
+    end
+  end
+
   # Scollega un documento derivato dal padre: rimuove le righe condivise dal padre e riapre il figlio
   def scollega_documento_derivato(doc_derivato)
     transaction do

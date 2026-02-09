@@ -1,0 +1,49 @@
+<%# locals: (documento:) -%>
+
+<% collegabili = documento.documenti_collegabili %>
+<% if collegabili.any? %>
+  <h3 class="txt-small txt-subtle txt-uppercase margin-block-end-half">Documenti collegabili</h3>
+
+  <% collegabili.each do |doc| %>
+    <%= tag.article class: "card",
+        style: "--card-color: #{documento_color(doc)};",
+        tabindex: 0 do %>
+
+      <header class="card__header">
+        <%= render "documenti/display/preview/board", documento: doc %>
+      </header>
+
+      <%= link_to documento_path(doc), class: "card__link", data: { turbo_frame: "_top" } do %>
+        <span class="for-screen-reader"><%= doc.causale&.causale %> #<%= doc.numero_documento %></span>
+      <% end %>
+
+      <div class="card__body">
+        <div class="card__content">
+          <h3 class="card__title overflow-line-clamp"><%= doc.clientable.denominazione %></h3>
+        </div>
+      </div>
+
+      <footer class="card__footer flex gap-half">
+        <span class="card__meta-text">
+          <span class="txt-x-small txt-uppercase">DATA</span>
+          <strong><%= doc.data_documento&.strftime("%d/%m/%Y") %></strong>
+        </span>
+        <span class="card__meta-text">
+          COPIE <strong><%= doc.totale_copie %></strong>
+        </span>
+        <span class="card__meta-text">
+          <strong><%= number_to_currency doc.totale_importo, locale: :it %></strong>
+        </span>
+      </footer>
+
+      <div class="card__actions">
+        <%= button_to documento_collegamento_path(documento, figlio_id: doc.id),
+            method: :post,
+            class: "btn btn--small btn--circle",
+            data: { controller: "tooltip", tooltip_content_value: "Collega", turbo_confirm: "Collegare #{doc.causale&.causale} ##{doc.numero_documento}?" } do %>
+          <%= icon_tag "plus" %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

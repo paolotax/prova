@@ -56,6 +56,14 @@ class Causale < ApplicationRecord
     end
   end
 
+  # Trova le causali che hanno `causale` tra le loro causali_successive (inverso)
+  def self.predecessori_di(causale)
+    Causale.all.select { |c|
+      c.causali_successive.map(&:to_s).include?(causale.id.to_s) ||
+      c.causali_successive.map(&:to_s).include?(causale.causale.to_s)
+    }
+  end
+
   # Workflow methods
   def causali_successive_records
     return Causale.none if causali_successive.blank?

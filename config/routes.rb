@@ -198,6 +198,7 @@ Rails.application.routes.draw do
         resource :consegna, only: [:create, :update, :destroy], controller: "consegna"
         resource :pagamento, only: [:create, :update, :destroy], controller: "pagamento"
         resource :derivazione, only: [:create, :destroy], controller: "derivazione"
+        resource :collegamento, only: [:create], controller: "collegamento"
       end
       collection do
         get "filtra"
