@@ -1,9 +1,8 @@
-<%# Sezmy_menu_itemione Navigazione %>
-<%= filter_place_menu_item account_root_path(Current.account), "Home", "home" %>
+<%# Sezione Navigazione %>
+<%= filter_place_menu_item account_root_path(Current.account), "Bacheca", "home" %>
 
 <%= collapsible_nav_section "Adozioni" do %>
-    <%= filter_place_menu_item import_adozioni_path(Current.account), "Tutte le adozioni", "cash" %>
-    <%#= filter_place_menu_item adozioni_comunicate_path, "Controllo adozioni" %>
+    <%= filter_place_menu_item adozioni_comunicate_path(Current.account), "Adozioni", "academic-cap" %>
 <% end %>
 
 <%= collapsible_nav_section "Magazzino" do %>
