@@ -7,41 +7,12 @@ class DocumentiController < ApplicationController
   before_action :set_documento, only: %i[show edit update destroy]
 
   def index
-    # @causali = Causale.all
-    # @import = DocumentiImporter.new
-
     @tutti_documenti = @filter.documenti
     @total_count = @filter.documenti.count
     set_page_and_extract_portion_from @filter.documenti
 
     respond_to do |format|
       format.html
-      format.turbo_stream
-      format.xlsx
-    end
-  end
-
-  def vendite
-    @causali = Causale.all
-    @import = DocumentiImporter.new
-
-    # Filtra per scuola specifica se viene chiamato con import_scuola_id
-    if params[:import_scuola_id].present?
-      @import_scuola = ImportScuola.find(params[:import_scuola_id])
-      @foglio_scuola = Scuole::FoglioScuola.new(scuola: @import_scuola)
-      @documenti = @foglio_scuola.documenti
-    else
-      @documenti = @filter.documenti
-    end
-
-    respond_to do |format|
-      format.html do
-        if params[:import_scuola_id].present?
-          render partial: "import_scuole/vendite", layout: false
-        else
-          render :index
-        end
-      end
       format.turbo_stream
       format.xlsx
     end
@@ -144,12 +115,7 @@ class DocumentiController < ApplicationController
     end
   end
 
-  def filtra
-    @causali = Causale.all
-  end
-
   private
-
     def set_documento
       @documento = Current.account.documenti.find(params[:id])
     end
@@ -194,5 +160,4 @@ class DocumentiController < ApplicationController
         }
       end.to_json
     end
-
 end
