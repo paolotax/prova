@@ -45,10 +45,11 @@
 
         <% if doc_derivato.documenti_derivati.any? %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="7">
-              <%= icon_tag "arrow-right" %>
-              <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-              <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
+            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>;">
+              <%= link_to documento_path(doc_derivato), data: { turbo_frame: :_top }, style: "text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 0.5ch;" do %>
+                <%= render "documenti/display/preview/board", documento: doc_derivato %>
+                <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
+              <% end %>
             </td>
           </tr>
 
@@ -60,10 +61,11 @@
 
             <% if righe_per_nipote.any? %>
               <tr class="documento-table__section documento-table__section--nipote">
-                <td colspan="7" class="items-center">
-                  <%= icon_tag "arrow-right" %>
-                  <%= doc_nipote.causale&.causale %> #<%= doc_nipote.numero_documento %> del <%= doc_nipote.data_documento&.strftime("%d-%m-%Y") %>
-                  <%= link_to "Vedi", documento_path(doc_nipote), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
+                <td colspan="7" style="--card-color: <%= causale_color(doc_nipote.causale) %>;">
+                  <%= link_to documento_path(doc_nipote), data: { turbo_frame: :_top }, style: "text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 0.5ch;" do %>
+                    <%= render "documenti/display/preview/board", documento: doc_nipote %>
+                    <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_nipote.data_documento&.strftime("%d/%m/%Y") %></span>
+                  <% end %>
                 </td>
               </tr>
 
@@ -75,10 +77,11 @@
 
         <% elsif righe_per_derivato.any? %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="7" class="align-center">
-              <%= icon_tag "arrow-right" %>
-              <%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d-%m-%Y") %>
-              <%= link_to "Vedi", documento_path(doc_derivato), class: "documento-table__section-link", data: { turbo_frame: :_top } %>
+            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>;">
+              <%= link_to documento_path(doc_derivato), data: { turbo_frame: :_top }, style: "text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 0.5ch;" do %>
+                <%= render "documenti/display/preview/board", documento: doc_derivato %>
+                <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
+              <% end %>
             </td>
           </tr>
 

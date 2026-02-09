@@ -63,8 +63,8 @@ class Causale < ApplicationRecord
   end
 
   def puo_generare?(causale_target)
-    causali_successive.include?(causale_target.id) ||
-      causali_successive.include?(causale_target.causale)
+    causali_successive.map(&:to_s).include?(causale_target.id.to_s) ||
+      causali_successive.map(&:to_s).include?(causale_target.causale.to_s)
   end
 
   def aggiungi_causale_successiva(causale_target)

@@ -287,10 +287,14 @@
       <h4 class="divider gap txt-medium txt-subtle margin-block-end-half">Registra come</h4>
       <div class="flex flex-wrap gap-half justify-center">
         <% causali_successive.each do |causale| %>
-          <button type="button" class="btn"
-                  style="--btn-background: <%= causale_color(causale) %>; --btn-border-color: <%= causale_color(causale) %>;">
+          <%= button_to documenti_bulk_derivazioni_path,
+                method: :post,
+                class: "btn",
+                style: "--btn-background: #{causale_color(causale)}; --btn-border-color: #{causale_color(causale)};",
+                params: { causale_id: causale.id, ids: documenti.map(&:id) },
+                form: { data: { turbo_frame: "_top" } } do %>
             <%= causale.causale %>
-          </button>
+          <% end %>
         <% end %>
       </div>
     </section>

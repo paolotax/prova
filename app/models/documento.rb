@@ -70,7 +70,7 @@ class Documento < ApplicationRecord
   after_create_commit :ricalcola_totali_dopo_creazione
   after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
   after_destroy :riporta_documenti_orfani_a_stato_precedente
-  before_destroy :riapri_documenti_figli
+  before_destroy :riapri_documenti_figli, prepend: true
 
   # Callback per concern: propaga pagamento ai figli e auto-close
   after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
@@ -250,7 +250,8 @@ class Documento < ApplicationRecord
   # Workflow methods
   def puo_generare_da_causale?(causale_target)
     return false unless causale
-    causale.causali_successive.include?(causale_target.id) || causale.causali_successive.include?(causale_target.causale)
+    causale.causali_successive.map(&:to_s).include?(causale_target.id.to_s) ||
+      causale.causali_successive.map(&:to_s).include?(causale_target.causale.to_s)
   end
 
   def genera_documento_derivato(causale_nuova, attributes = {})
@@ -266,15 +267,29 @@ class Documento < ApplicationRecord
 
     nuovo.assign_attributes(attributes)
 
-    # Copia le righe del documento origine
+    # Condividi le righe del documento origine (stesse righe, nuovo DocumentoRiga)
     documento_righe.each do |doc_riga|
       nuovo.documento_righe.build(
-        riga: doc_riga.riga.dup,
+        riga: doc_riga.riga,
         posizione: doc_riga.posizione
       )
     end
 
     nuovo
+  end
+
+  # Eredita consegna e pagamento dai documenti origine (se tutti hanno lo stesso stato)
+  def eredita_stato_da_origini(documenti_origine)
+    if documenti_origine.all?(&:consegnato?)
+      mark_consegnato(consegnato_il: documenti_origine.map(&:consegnato_il).compact.max)
+    end
+
+    if documenti_origine.all?(&:pagato?)
+      mark_pagato(
+        pagato_il: documenti_origine.map(&:pagato_il).compact.max,
+        tipo_pagamento: documenti_origine.first.tipo_pagamento
+      )
+    end
   end
 
   def catena_documenti
@@ -334,13 +349,11 @@ class Documento < ApplicationRecord
     "#{causale&.causale} #{numero_documento} del #{data_documento&.strftime('%d/%m/%Y')}"
   end
 
-  # Aggiunge le righe di questo documento a uno esistente
+  # Aggiunge le righe di questo documento a uno esistente (condivide le stesse righe)
   def aggiungi_righe_a(documento_target)
     transaction do
       documento_righe.each do |doc_riga|
-        riga_duplicata = doc_riga.riga.dup
-        riga_duplicata.save!
-        documento_target.documento_righe.create!(riga: riga_duplicata)
+        documento_target.documento_righe.create!(riga: doc_riga.riga)
       end
 
       # Imposta questo documento come figlio del target

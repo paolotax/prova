@@ -47,6 +47,9 @@ module Documenti
       @documento.ensure_entry!
       @documento.close unless @documento.closed?
 
+      # Eredita consegna/pagamento dal documento origine
+      derivato.eredita_stato_da_origini([@documento])
+
       derivato
     end
 

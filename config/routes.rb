@@ -186,6 +186,7 @@ Rails.application.routes.draw do
       resource :bulk_gestione, only: [:show], controller: "bulk_gestione"
       resource :bulk_consegne, only: [:create, :destroy]
       resource :bulk_pagamenti, only: [:create, :destroy]
+      resource :bulk_derivazioni, only: [:create], controller: "bulk_derivazioni"
     end
 
     resources :documenti do
