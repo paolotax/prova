@@ -1,54 +1,5 @@
 <%# locals: (cliente:) -%>
 
-<div class="flex flex-column gap">
-  <!-- Denominazione -->
-  <h2 class="card__title txt-large margin-none" style="line-height: 1.2;">
-    <%= cliente.denominazione %>
-  </h2>
-
-  <!-- Info griglia -->
-  <div class="flex gap flex-wrap">
-    <!-- Indirizzo -->
-    <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
-      <span class="txt-x-small txt-subtle txt-uppercase">Indirizzo</span>
-      <div class="txt-small">
-        <% if cliente.indirizzo.present? %>
-          <div><%= [cliente.indirizzo, cliente.numero_civico].compact_blank.join(" ") %></div>
-        <% end %>
-        <div><%= [cliente.cap, cliente.comune, cliente.provincia].compact_blank.join(" ") %></div>
-      </div>
-    </div>
-
-    <!-- Contatti -->
-    <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
-      <span class="txt-x-small txt-subtle txt-uppercase">Contatti</span>
-      <div class="txt-small flex flex-column gap-quarter">
-        <% if cliente.telefono.present? %>
-          <span><%= icon_tag "phone", class: "icon--small txt-subtle" %> <%= link_to cliente.telefono, "tel:#{cliente.telefono}", class: "txt-link" %></span>
-        <% end %>
-        <% if cliente.email.present? %>
-          <span><%= icon_tag "envelope", class: "icon--small txt-subtle" %> <%= mail_to cliente.email, cliente.email, class: "txt-link" %></span>
-        <% end %>
-        <% if cliente.pec.present? %>
-          <span><%= icon_tag "shield-check", class: "icon--small txt-subtle" %> <%= mail_to cliente.pec, truncate(cliente.pec, length: 30), class: "txt-link" %></span>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Fatturazione -->
-    <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
-      <span class="txt-x-small txt-subtle txt-uppercase">Fatturazione</span>
-      <div class="txt-small flex flex-column gap-quarter">
-        <% if cliente.codice_fiscale.present? %>
-          <span>CF: <strong class="mono txt-uppercase"><%= cliente.codice_fiscale %></strong></span>
-        <% end %>
-        <% if cliente.metodo_di_pagamento.present? %>
-          <span><%= cliente.metodo_di_pagamento %></span>
-        <% end %>
-        <% if cliente.banca.present? %>
-          <span class="txt-subtle"><%= cliente.banca %></span>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= turbo_frame_tag cliente, :edit do %>
+  <%= render "clienti/container/content_display", cliente: cliente %>
+<% end %>

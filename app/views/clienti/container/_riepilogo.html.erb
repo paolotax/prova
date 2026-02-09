@@ -1,0 +1,49 @@
+<%# locals: (presenter:, sconti:) -%>
+
+<% riepilogo = presenter.riepilogo_per_anno %>
+<% if riepilogo.any? || sconti.present? %>
+  <div class="flex gap">
+    <% if riepilogo.any? %>
+      <article class="panel fill-shade border-radius" style="flex: 1;">
+        <div class="flex align-center justify-space-between margin-block-end-half">
+          <h3 class="txt-small font-weight-bold txt-subtle">Riepilogo</h3>
+        </div>
+        <div class="flex flex-column gap-half">
+          <% riepilogo.each do |anno, importi| %>
+            <div class="flex align-center gap-half txt-small" style="white-space: nowrap;">
+              <strong><%= anno %></strong>
+              <span class="txt-subtle"><%= importi[:count] %> doc</span>
+              <% if importi[:da_pagare] != 0 %>
+                <span>Da pag. <strong class="txt-negative"><%= number_to_currency importi[:da_pagare] / 100.0, locale: :it %></strong></span>
+              <% end %>
+              <% if importi[:pagato] != 0 %>
+                <span>Pag. <strong class="txt-positive"><%= number_to_currency importi[:pagato] / 100.0, locale: :it %></strong></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+
+    <% if sconti.present? && sconti.any? %>
+      <article class="panel fill-shade border-radius" style="flex: 1;">
+        <div class="flex align-center justify-space-between margin-block-end-half">
+          <h3 class="txt-small font-weight-bold txt-subtle">Sconti Editore</h3>
+        </div>
+        <div class="flex flex-column gap-quarter">
+          <% sconti.first(5).each do |sconto| %>
+            <div class="flex justify-space-between align-center txt-small">
+              <div class="flex align-center gap-quarter">
+                <span><%= sconto.categoria&.nome_categoria || "Generale" %></span>
+                <% if sconto.scontabile_id.present? %>
+                  <span class="badge badge--small">Dedicato</span>
+                <% end %>
+              </div>
+              <strong class="txt-link"><%= number_to_percentage sconto.percentuale_sconto, precision: 0 %></strong>
+            </div>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+<% end %>

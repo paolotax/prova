@@ -1,0 +1,21 @@
+<%= turbo_frame_tag "closed_entries", style: "display: block; min-height: 1px;" do %>
+  <% if @closed_entries.any? %>
+    <div style="max-width: var(--comment-max, 65ch); width: 100%;">
+      <header class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-medium font-weight-black margin-none">Completati</h3>
+        <span class="badge txt-xx-small"><%= @closed_entries.size %></span>
+      </header>
+
+      <% @closed_entries.group_by { |e| e.entryable&.try(:data_documento)&.year || e.created_at.year }.sort_by { |anno, _| -anno }.each do |anno, entries| %>
+        <h4 class="txt-small txt-subtle txt-uppercase margin-block-start"><%= anno %></h4>
+        <div class="cards">
+          <% entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="txt-small txt-subtle margin-none">Nessuna attività completata</p>
+  <% end %>
+<% end %>

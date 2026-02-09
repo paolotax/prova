@@ -1,11 +1,7 @@
-<%# locals: (cliente:, documenti:, sconti:) -%>
+<%# locals: (cliente:, presenter:, sconti:) -%>
 
 <section id="<%= dom_id(cliente, :container) %>" class="card-perma" style="--card-color: <%= cliente_color(cliente) %>;">
   <div class="card-perma__actions card-perma__actions--left">
-    <%= link_to edit_cliente_path(cliente), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click", tooltip_content_value: "Modifica" } do %>
-      <%= icon_tag "pencil" %>
-      <span class="for-screen-reader">Modifica</span>
-    <% end %>
   </div>
 
   <div class="card-perma__bg">
@@ -18,6 +14,10 @@
         <div class="card__content">
           <%= render "clienti/container/content", cliente: cliente %>
         </div>
+      </div>
+
+      <div class="card__riepilogo full-width margin-block-end">
+        <%= render "clienti/container/riepilogo", presenter: presenter, sconti: sconti %>
       </div>
 
       <footer class="card__footer full-width flex align-start gap">
@@ -45,6 +45,8 @@
   </div>
 
   <div class="card-perma__notch card-perma__notch--bottom">
-    <%= render "clienti/container/footer", cliente: cliente, documenti: documenti, sconti: sconti %>
+    <%= turbo_frame_tag cliente, :footer do %>
+      <%= render "clienti/container/footer/display", cliente: cliente %>
+    <% end %>
   </div>
 </section>

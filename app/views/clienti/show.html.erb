@@ -12,5 +12,19 @@
 <% end %>
 
 <div class="full-width card-grid pad group show-navigator">
-  <%= render "clienti/container/container", cliente: @cliente, documenti: @documenti_recenti, sconti: @sconti_unici %>
+  <%= render "clienti/container/container", cliente: @cliente, presenter: @presenter, sconti: @sconti_unici %>
+
+  <div class="comments" style="--comment-max: 65ch;">
+    <%= render "clienti/container/entries_list", entries: @active_entries %>
+
+    <%= turbo_frame_tag "closed_entries", src: closed_entries_cliente_path(@cliente), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+      <p class="txt-small txt-subtle margin-none">Mostra completati...</p>
+    <% end %>
+
+    <% if @cliente.can_delete? %>
+      <div class="margin-block-start">
+        <%= render "shared/container/delete", record: @cliente, path: cliente_path(@cliente), label: "questo cliente" %>
+      </div>
+    <% end %>
+  </div>
 </div>

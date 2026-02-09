@@ -1,0 +1,16 @@
+<%# locals: (entries:) -%>
+
+<% if entries.any? %>
+  <div style="max-width: var(--comment-max, 65ch); width: 100%;">
+    <header class="flex align-center justify-space-between margin-block-end-half">
+      <h3 class="txt-medium font-weight-black margin-none">Attivi</h3>
+      <span class="badge badge--warning txt-xx-small"><%= entries.size %></span>
+    </header>
+
+    <div class="cards">
+      <% entries.each do |entry| %>
+        <%= render "entries/entry", entry: entry, draggable: false %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

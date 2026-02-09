@@ -166,6 +166,9 @@ Rails.application.routes.draw do
     post 'sfascicola', to: 'sfascicolator#generate'
 
     resources :clienti do
+      member do
+        get :closed_entries
+      end
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     end
 

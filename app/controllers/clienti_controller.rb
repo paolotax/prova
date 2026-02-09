@@ -4,7 +4,7 @@ class ClientiController < ApplicationController
   FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_cliente, only: %i[ show edit update destroy ]
+  before_action :set_cliente, only: %i[ show edit update destroy closed_entries ]
 
   def index
     @import = ClientiImporter.new
@@ -19,18 +19,8 @@ class ClientiController < ApplicationController
   end
 
   def show
-    # Documenti recenti per sidebar
-    @documenti_recenti = @cliente.documenti
-      .where(documento_padre_id: nil)
-      .includes(:causale)
-      .order(data_documento: :desc, numero_documento: :desc)
-      .limit(5)
-
-    # Tutti i documenti per sezione completa
-    @documenti = @cliente.documenti
-      .where(documento_padre_id: nil)
-      .includes(:causale, :documenti_derivati, documento_righe: [riga: :libro])
-      .order(data_documento: :desc, numero_documento: :desc)
+    @presenter = Clienti::Presenter.new(@cliente)
+    @active_entries = Entry.load_entryables(@presenter.active_entries)
 
     # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
     @sconti_applicabili = Current.user.sconti
@@ -38,17 +28,21 @@ class ClientiController < ApplicationController
       .includes(:categoria)
       .order(created_at: :desc)
 
-    # Identifica sconti unici: per ogni categoria, mostra solo lo sconto più specifico
     @sconti_unici = @sconti_applicabili.group_by(&:categoria_id).flat_map do |_categoria_id, sconti|
       sconti.min_by do |s|
         if s.scontabile_id.present?
-          0  # Sconto specifico per questo cliente
+          0
         elsif s.scontabile_type.present?
-          1  # Sconto per tutti i clienti/editori/scuole
+          1
         else
-          2  # Sconto globale
+          2
         end
       end
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
   end
 
@@ -57,6 +51,10 @@ class ClientiController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -65,29 +63,18 @@ class ClientiController < ApplicationController
     if @cliente.save
       redirect_to(cliente_path(@cliente), notice: "Cliente inserito.") # rubocop:disable Rails/I18nLocaleTexts
     else
-     # raise params.inspect
       response.status = :unprocessable_entity
     end
-
-
-    # result = ClienteCreator.new.create_cliente(
-    #            Current.account.clienti.new(cliente_params)
-    # )
-    # if result.created?
-    #   redirect_to clienti_url, notice: "Cliente inserito."
-    #   #redirect_to cliente_path(result.cliente)
-    # else
-    #   @cliente = result.cliente
-    #   render :new, status: :unprocessable_entity
-    # end
   end
 
   def update
     respond_to do |format|
       if @cliente.update(cliente_params)
-        format.html { redirect_to clienti_url, notice: "Cliente modificato." }
+        format.turbo_stream
+        format.html { redirect_to cliente_path(@cliente), notice: "Cliente modificato." }
         format.json { render :show, status: :ok, location: @cliente }
       else
+        format.turbo_stream { render :edit, status: :unprocessable_entity }
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @cliente.errors, status: :unprocessable_entity }
       end
@@ -103,6 +90,11 @@ class ClientiController < ApplicationController
     end
   end
 
+  def closed_entries
+    @presenter = Clienti::Presenter.new(@cliente)
+    @closed_entries = Entry.load_entryables(@presenter.closed_entries)
+  end
+
   private
 
     def set_cliente
@@ -110,11 +102,11 @@ class ClientiController < ApplicationController
     end
 
     def cliente_params
-      params.require(:cliente).permit(:user, :file, :total_steps, :current_step, :latest_step, :codice_cliente, 
-              :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono, 
-              :id_paese, :partita_iva, :codice_fiscale, :denominazione, 
-              :nome, :cognome, :codice_eori, 
-              :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario, 
+      params.require(:cliente).permit(:user, :file, :total_steps, :current_step, :latest_step, :codice_cliente,
+              :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono,
+              :id_paese, :partita_iva, :codice_fiscale, :denominazione,
+              :nome, :cognome, :codice_eori,
+              :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario,
               :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
     end
 

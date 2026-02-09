@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@cliente, :edit] do %>
+  <%= turbo_frame_tag @cliente, :edit do %>
+    <%= render "clienti/edit_form", cliente: @cliente %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@cliente, :footer] do %>
+  <%= turbo_frame_tag @cliente, :footer do %>
+    <%= render "clienti/edit_footer", cliente: @cliente %>
+  <% end %>
+<% end %>
