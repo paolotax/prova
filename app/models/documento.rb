@@ -362,6 +362,27 @@ class Documento < ApplicationRecord
     documento_target
   end
 
+  # Scollega un documento derivato dal padre: rimuove le righe condivise dal padre e riapre il figlio
+  def scollega_documento_derivato(doc_derivato)
+    transaction do
+      # Rimuovi dal padre le DocumentoRiga che puntano a righe condivise col figlio
+      righe_figlio_ids = doc_derivato.righe.pluck(:id)
+      documento_righe.where(riga_id: righe_figlio_ids).destroy_all
+
+      # Scollega il figlio
+      doc_derivato.update!(documento_padre_id: nil)
+
+      # Riapri il figlio
+      doc_derivato.reopen if doc_derivato.closed?
+      doc_derivato.ensure_entry!
+
+      # Ricalcola totali del padre
+      reload
+      ricalcola_totali!
+      ensure_entry!
+    end
+  end
+
   # Trova lo stato precedente nella gerarchia degli stati_successivi della propria causale
   def trova_stato_precedente_nella_causale
     Rails.logger.debug "    trova_stato_precedente_nella_causale per: #{causale&.causale}"

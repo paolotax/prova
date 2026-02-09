@@ -45,10 +45,15 @@
 
         <% if doc_derivato.documenti_derivati.any? %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>;">
+            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>; display: flex; align-items: center; justify-content: space-between;">
               <%= link_to documento_path(doc_derivato), data: { turbo_frame: :_top }, style: "text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 0.5ch;" do %>
                 <%= render "documenti/display/preview/board", documento: doc_derivato %>
                 <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
+              <% end %>
+              <%= link_to documento_derivazione_path(documento, figlio_id: doc_derivato.id),
+                    class: "btn btn--circle txt-xx-small btn--reversed",
+                    data: { turbo_method: :delete, turbo_confirm: "Scollegare #{doc_derivato.causale&.causale} ##{doc_derivato.numero_documento}?" } do %>
+                <%= icon_tag "unlink" %>
               <% end %>
             </td>
           </tr>
@@ -77,10 +82,15 @@
 
         <% elsif righe_per_derivato.any? %>
           <tr class="documento-table__section documento-table__section--derivato">
-            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>;">
+            <td colspan="7" style="--card-color: <%= causale_color(doc_derivato.causale) %>; display: flex; align-items: center; justify-content: space-between;">
               <%= link_to documento_path(doc_derivato), data: { turbo_frame: :_top }, style: "text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 0.5ch;" do %>
                 <%= render "documenti/display/preview/board", documento: doc_derivato %>
                 <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
+              <% end %>
+              <%= link_to documento_derivazione_path(documento, figlio_id: doc_derivato.id),
+                    class: "btn btn--circle txt-xx-small btn--reversed",
+                    data: { turbo_method: :delete, turbo_confirm: "Scollegare #{doc_derivato.causale&.causale} ##{doc_derivato.numero_documento}?" } do %>
+                <%= icon_tag "unlink" %>
               <% end %>
             </td>
           </tr>

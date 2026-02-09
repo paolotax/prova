@@ -124,6 +124,7 @@
   .icon--tag-outline { --svg: url("tag-outline.svg "); }
   .icon--thumb-up { --svg: url("thumb-up.svg "); }
   .icon--trash { --svg: url("trash.svg "); }
+  .icon--unlink { --svg: url("unlink.svg"); }
   .icon--unpinned { --svg: url("unpinned.svg"); }
   .icon--unseen { --svg: url("unseen.svg"); }
   .icon--world { --svg: url("world.svg"); }

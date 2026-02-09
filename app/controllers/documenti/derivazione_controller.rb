@@ -15,6 +15,14 @@ module Documenti
       redirect_to documento_path(@derivato), notice: "Documento registrato"
     end
 
+    # DELETE /documenti/:documento_id/derivazione?figlio_id=X
+    def destroy
+      figlio = current_account.documenti.find(params[:figlio_id])
+      @documento.scollega_documento_derivato(figlio)
+
+      redirect_to documento_path(@documento), notice: "Documento scollegato"
+    end
+
     private
 
     def set_documento
