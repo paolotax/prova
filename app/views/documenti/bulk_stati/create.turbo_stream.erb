@@ -1,0 +1,6 @@
+<% @documenti.each do |documento| %>
+  <% target_id = documento.entry ? dom_id(documento.entry) : dom_id(documento) %>
+  <%= turbo_stream.replace target_id do %>
+    <%= render "documenti/documento", documento: documento %>
+  <% end %>
+<% end %>

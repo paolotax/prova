@@ -27,6 +27,15 @@
     </dialog>
   </div>
 
+  <%# Stato %>
+  <button type="button" class="btn"
+          data-action="bulk-bar#showForm"
+          data-bulk-bar-target="menuButton"
+          data-form-id="stato">
+    <%= icon_tag "move" %>
+    <span>Stato</span>
+  </button>
+
   <%# Elimina %>
   <button type="button" class="btn txt-negative"
           data-action="bulk-bar#showForm"
@@ -49,6 +58,39 @@
         <%= f.submit "Stampa", class: "btn btn--primary" %>
       </div>
     <% end %>
+  </div>
+
+  <%# Form Stato %>
+  <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stato">
+    <span class="bulk-bar__form-title">Sposta in</span>
+    <div class="bulk-bar__form-actions">
+      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+      <% current_account.columns.ordered.each do |column| %>
+        <%= form_with url: documenti_bulk_stati_path,
+              method: :post,
+              style: "display: contents;",
+              data: { bulk_actions_target: "form" } do |f| %>
+          <%= f.hidden_field :azione, value: "triage" %>
+          <%= f.hidden_field :column_id, value: column.id %>
+          <%= f.submit column.name, class: "btn",
+                style: "--btn-background: #{column.color}; --btn-border-color: #{column.color};" %>
+        <% end %>
+      <% end %>
+      <%= form_with url: documenti_bulk_stati_path,
+            method: :post,
+            style: "display: contents;",
+            data: { bulk_actions_target: "form" } do |f| %>
+        <%= f.hidden_field :azione, value: "completa" %>
+        <%= f.submit "Completa", class: "btn" %>
+      <% end %>
+      <%= form_with url: documenti_bulk_stati_path,
+            method: :post,
+            style: "display: contents;",
+            data: { bulk_actions_target: "form" } do |f| %>
+        <%= f.hidden_field :azione, value: "riapri" %>
+        <%= f.submit "Riapri", class: "btn" %>
+      <% end %>
+    </div>
   </div>
 
   <%# Form Elimina %>
