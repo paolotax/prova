@@ -1,13 +1,13 @@
 <%= turbo_frame_tag "closed_entries", style: "display: block; min-height: 1px;" do %>
   <% if @closed_entries.any? %>
-    <div style="max-width: var(--comment-max, 65ch); width: 100%;">
-      <header class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-medium font-weight-black margin-none">Completati</h3>
-        <span class="badge txt-xx-small"><%= @closed_entries.size %></span>
-      </header>
+    <div>     
+      <h3 class="header__title divider divider--fade txt-medium font-weight-black margin-block-start-double">Completati</h3>
 
       <% @closed_entries.group_by { |e| e.entryable&.try(:data_documento)&.year || e.created_at.year }.sort_by { |anno, _| -anno }.each do |anno, entries| %>
-        <h4 class="txt-small txt-subtle txt-uppercase margin-block-start"><%= anno %></h4>
+        <h4 class="txt-medium txt-subtle txt-uppercase margin-block-start margin-block-end">
+          <%= anno %> <span class="txt-xx-small">(<%= entries.size %>)</span>
+        </h4>
+        
         <div class="cards">
           <% entries.each do |entry| %>
             <%= render "entries/entry", entry: entry, draggable: false %>

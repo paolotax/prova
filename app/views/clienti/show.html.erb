@@ -14,10 +14,10 @@
 <div class="full-width card-grid pad group show-navigator">
   <%= render "clienti/container/container", cliente: @cliente, presenter: @presenter, sconti: @sconti_unici %>
 
-  <div class="comments" style="--comment-max: 65ch;">
+  <div class="comments">
     <%= render "clienti/container/entries_list", entries: @active_entries %>
 
-    <%= turbo_frame_tag "closed_entries", src: closed_entries_cliente_path(@cliente), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+    <%= turbo_frame_tag "closed_entries", src: cliente_closed_entries_path(@cliente), loading: :lazy, style: "display: block; min-height: 1px;" do %>
       <p class="txt-small txt-subtle margin-none">Mostra completati...</p>
     <% end %>
 

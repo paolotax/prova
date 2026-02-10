@@ -51,7 +51,7 @@
                 <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
               <% end %>
               <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop" style="display: inline-flex;">
-                <button type="button" class="btn btn--circle txt-xx-small btn--reversed" data-action="dialog#open">
+                <button type="button" class="btn btn--circle txt-xx-small" data-action="dialog#open">
                   <%= icon_tag "unlink" %>
                 </button>
                 <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">
@@ -101,7 +101,7 @@
                 <span style="color: var(--card-color); font-size: var(--text-x-small);"><%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></span>
               <% end %>
               <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop" style="display: inline-flex;">
-                <button type="button" class="btn btn--circle txt-xx-small btn--reversed" data-action="dialog#open">
+                <button type="button" class="btn btn--circle txt-xx-small" data-action="dialog#open">
                   <%= icon_tag "unlink" %>
                 </button>
                 <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">

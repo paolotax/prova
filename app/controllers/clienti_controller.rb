@@ -4,7 +4,7 @@ class ClientiController < ApplicationController
   FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
 
   before_action :authenticate_user!
-  before_action :set_cliente, only: %i[ show edit update destroy closed_entries ]
+  before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
     @import = ClientiImporter.new
@@ -88,11 +88,6 @@ class ClientiController < ApplicationController
       format.html { redirect_to clienti_url, notice: "Cliente eliminato!" }
       format.json { head :no_content }
     end
-  end
-
-  def closed_entries
-    @presenter = Clienti::Presenter.new(@cliente)
-    @closed_entries = Entry.load_entryables(@presenter.closed_entries)
   end
 
   private

@@ -166,8 +166,8 @@ Rails.application.routes.draw do
     post 'sfascicola', to: 'sfascicolator#generate'
 
     resources :clienti do
-      member do
-        get :closed_entries
+      scope module: :clienti do
+        resource :closed_entries, only: [:show]
       end
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     end
