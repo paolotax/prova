@@ -75,14 +75,14 @@ export default class extends Controller {
     if (direction === "prepend") {
       referenceDate = weekElements[0].dataset.week
       const date = new Date(referenceDate + "T00:00:00")
-      date.setDate(date.getDate() - 14)
-      referenceDate = date.toISOString().slice(0, 10)
+      date.setDate(date.getDate() - 7)
+      referenceDate = this.formatLocalDate(date)
     } else {
       const lastWeek = weekElements[weekElements.length - 1]
       referenceDate = lastWeek.dataset.week
       const date = new Date(referenceDate + "T00:00:00")
       date.setDate(date.getDate() + 7)
-      referenceDate = date.toISOString().slice(0, 10)
+      referenceDate = this.formatLocalDate(date)
     }
 
     const currentPath = window.location.pathname
@@ -121,5 +121,12 @@ export default class extends Controller {
       this.bottomObserver.unobserve(this.sentinelBottomTarget)
       this.bottomObserver.observe(this.sentinelBottomTarget)
     }
+  }
+
+  formatLocalDate(date) {
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, "0")
+    const d = String(date.getDate()).padStart(2, "0")
+    return `${y}-${m}-${d}`
   }
 }

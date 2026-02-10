@@ -186,6 +186,8 @@
     gap: 0.3em;
     min-block-size: 1em;
     min-inline-size: 0;
+    position: relative;
+    z-index: 1;
   }
 
   /* SortableJS drag highlight */
