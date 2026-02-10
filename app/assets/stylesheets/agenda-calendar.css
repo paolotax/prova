@@ -1,0 +1,268 @@
+@layer components {
+  /* Calendar container
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-calendar {
+    inline-size: 100%;
+    margin-inline: auto;
+    position: relative;
+  }
+
+  /* Make header sticky when agenda is present */
+  body:has(.agenda-calendar) #header {
+    background-color: var(--color-canvas);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-nav);
+  }
+
+  .agenda-calendar__sentinel {
+    block-size: 1px;
+  }
+
+  .agenda-calendar__oggi {
+    inset-block-start: var(--block-space);
+    inset-inline-end: var(--inline-space);
+    position: fixed;
+    z-index: var(--z-bar);
+  }
+
+  /* Week row — 6 columns: 5 weekdays + 1 weekend (half width)
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week {
+    --week-border-color: var(--color-ink-lighter);
+
+    border: 1px solid var(--week-border-color);
+    border-radius: 0.4em;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin-block-end: var(--block-space);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Current week highlight
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week--current {
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 1px var(--color-ink);
+  }
+
+  .agenda-week--current .agenda-week__month span {
+    color: var(--color-ink);
+    opacity: 1;
+  }
+
+  /* Month label — overlaid on first column, rotated bottom-to-top
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__month {
+    inset-block-start: 0.5em;
+    inset-inline-start: 0.3em;
+    position: absolute;
+
+    span {
+      color: var(--color-ink-medium);
+      font-size: var(--text-x-small);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+    }
+  }
+
+  /* Day columns
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__day {
+    border-inline-end: 1px solid var(--week-border-color);
+    display: flex;
+    flex-direction: column;
+    min-block-size: 25vh;
+    min-inline-size: 0;
+    padding: var(--block-space-half) var(--inline-space-half);
+  }
+
+  .agenda-week__day--weekend {
+    background-color: color-mix(in srgb, var(--color-ink-lightest) 50%, transparent);
+    min-block-size: 0;
+  }
+
+  .agenda-week__day--today {
+    background-color: color-mix(in srgb, var(--color-selected) 30%, transparent);
+  }
+
+  /* Weekend group — SAB + DOM share one grid column, split 50/50
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__weekend {
+    display: flex;
+    min-inline-size: 0;
+  }
+
+  .agenda-week__weekend .agenda-week__day--weekend {
+    border-inline-end: 1px solid var(--week-border-color);
+    flex: 1;
+    min-block-size: 0;
+    padding: var(--block-space-half) 0.3em;
+
+    &:last-child {
+      border-inline-end: 0;
+    }
+  }
+
+  /* Day header — name + number on same line, right-aligned
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__day-header {
+    margin-block-end: var(--block-space-half);
+  }
+
+  .agenda-week__day-link {
+    align-items: baseline;
+    color: var(--color-ink);
+    display: flex;
+    gap: 0.4em;
+    justify-content: flex-end;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .agenda-week__day-name {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .agenda-week__day-number {
+    font-size: var(--text-medium);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .agenda-week__day-number--today {
+    background-color: oklch(var(--lch-yellow-medium));
+    border-radius: 50%;
+    color: var(--color-ink-inverted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    block-size: 1.6em;
+    inline-size: 1.6em;
+  }
+
+  /* Weekend header — smaller font but same horizontal layout */
+  .agenda-week__weekend .agenda-week__day-name {
+    font-size: var(--text-xx-small);
+  }
+
+  .agenda-week__weekend .agenda-week__day-number {
+    font-size: var(--text-small);
+  }
+
+  /* Tappe list inside day
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__tappe {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.3em;
+    min-block-size: 1em;
+    min-inline-size: 0;
+  }
+
+  /* Drag over highlight */
+  .agenda-week__day.drag-over {
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+    outline: 2px dashed var(--color-link);
+    outline-offset: -2px;
+  }
+
+  /* Compact tappa
+  /* ------------------------------------------------------------------------ */
+
+  .tappa-compact {
+    --tappa-color: var(--color-ink-dark);
+
+    align-items: center;
+    background-color: var(--color-canvas);
+    border-inline-start: 3px solid var(--tappa-color);
+    border-radius: 0.2em;
+    cursor: grab;
+    display: flex;
+    gap: var(--inline-space-half);
+    min-inline-size: 0;
+    padding: 0.25em 0.5em;
+    text-align: start;
+
+    &:hover {
+      background-color: var(--color-ink-lightest);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.dragging {
+      opacity: 0.4;
+    }
+  }
+
+  .tappa-compact.tappa--import-scuola {
+    --tappa-color: oklch(var(--lch-blue-medium));
+  }
+
+  .tappa-compact.tappa--cliente {
+    --tappa-color: oklch(var(--lch-green-medium));
+  }
+
+  .tappa-compact__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.05em;
+    min-inline-size: 0;
+  }
+
+  .tappa-compact__name {
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tappa-compact__city {
+    color: var(--color-ink-dark);
+    font-size: var(--text-xx-small);
+    line-height: 1.3;
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tappa-compact__giro {
+    flex-shrink: 0;
+
+    span {
+      background-color: color-mix(in srgb, var(--tappa-color) 15%, transparent);
+      border-radius: 0.2em;
+      color: var(--tappa-color);
+      font-size: var(--text-xx-small);
+      font-weight: 700;
+      line-height: 1;
+      padding: 0.2em 0.4em;
+      white-space: nowrap;
+    }
+  }
+}

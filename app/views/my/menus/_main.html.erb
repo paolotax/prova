@@ -1,8 +1,11 @@
 <%# Sezione Navigazione %>
-<%= filter_place_menu_item account_root_path(Current.account), "Bacheca", "home" %>
+<%= collapsible_nav_section "Principale" do %>
+    <%= filter_place_menu_item account_root_path(Current.account), "Bacheca", "home" %>
+    <%= filter_place_menu_item column_path(Current.account, Current.account.columns.find_by(name: "Nel Baule")), "Nel Baule", "truck" %>
+<% end %>
 
 <%= collapsible_nav_section "Adozioni" do %>
-    <%= filter_place_menu_item adozioni_comunicate_path(Current.account), "Adozioni", "academic-cap" %>
+    <%= filter_place_menu_item adozioni_comunicate_path(Current.account), "Adozioni", "cash" %>
 <% end %>
 
 <%= collapsible_nav_section "Magazzino" do %>

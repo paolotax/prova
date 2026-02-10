@@ -2,20 +2,25 @@ class AgendaController < ApplicationController
 
   before_action :authenticate_user!
   
-  def index  
+  def index
     @giorno = params[:giorno]&.to_date || Date.today
-    @settimana = helpers.dates_of_week(@giorno)
-    # @settimana_precedente = helpers.dates_of_week(@giorno - 7.days)
-    @tappe_per_giorno = current_user.tappe.della_settimana(@giorno).group_by(&:data_tappa)
-    
+    weeks_count = (params[:weeks] || 5).to_i
+    direction = params[:direction]
+
+    @settimane = build_weeks(@giorno, weeks_count, direction)
+    start_date = @settimane.first.first
+    end_date = @settimane.last.last
+    @tappe_per_giorno = current_user.tappe
+      .where(data_tappa: start_date..end_date)
+      .includes(:tappable, :giri)
+      .group_by(&:data_tappa)
+
     respond_to do |format|
-      format.html # Render the full page initially
+      format.html
       format.turbo_stream do
-        if params[:direction] == 'prepend'
-          render turbo_stream: turbo_stream.prepend("week-container", partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno })
-        else
-          render turbo_stream: turbo_stream.append("week-container", partial: "agenda/week", locals: { settimana: @settimana, tappe_per_giorno: @tappe_per_giorno })
-        end
+        target_action = direction == "prepend" ? :prepend : :append
+        render turbo_stream: turbo_stream.send(target_action, "weeks-container",
+          partial: "agenda/weeks", locals: { settimane: @settimane, tappe_per_giorno: @tappe_per_giorno })
       end
     end
   end
@@ -380,4 +385,23 @@ class AgendaController < ApplicationController
     end
   end
 
+  private
+
+    def build_weeks(giorno, count, direction)
+      monday = giorno.beginning_of_week
+
+      case direction
+      when "append"
+        # Load `count` weeks starting from giorno's week
+        (0...count).map { |i| helpers.dates_of_week(monday + (i * 7).days) }
+      when "prepend"
+        # Load `count` weeks ending at giorno's week
+        (0...count).map { |i| helpers.dates_of_week(monday - ((count - 1 - i) * 7).days) }
+      else
+        # Initial load: 2 past + current + 2 future = 5 weeks
+        offset = (count / 2)
+        start_monday = monday - (offset * 7).days
+        (0...count).map { |i| helpers.dates_of_week(start_monday + (i * 7).days) }
+      end
+    end
 end

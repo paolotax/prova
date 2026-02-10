@@ -1,0 +1,5 @@
+<%# locals: (settimane:, tappe_per_giorno:) -%>
+
+<% settimane.each do |settimana| %>
+  <%= render "agenda/week", settimana: settimana, tappe_per_giorno: tappe_per_giorno %>
+<% end %>
