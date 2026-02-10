@@ -16,22 +16,18 @@ export default class extends Controller {
       onEnd: this.onEnd.bind(this),
       swapThreshold: 0.55,
       group: this.groupValue,
-      handle: '.handle',
       filter: '.filtered'
     })
   }
 
   onEnd(event) {
     var sortableUpdateUrl = event.item.dataset.taxSortableUpdateUrl
+    if (!sortableUpdateUrl) return
 
     var dataTappa = event.to.dataset.taxSortableDataTappa
     var newPosition = event.newIndex + 1
     patch(sortableUpdateUrl, {
-      body: JSON.stringify({position: newPosition, data_tappa: dataTappa}),
-
-      headers: {
-        Accept: "text/vnd.turbo-stream.html"
-      }
+      body: JSON.stringify({ position: newPosition, data_tappa: dataTappa })
     })
   }
 }

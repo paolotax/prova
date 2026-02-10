@@ -9,10 +9,12 @@
      data-week="<%= monday.iso8601 %>"
      <%= "data-agenda-calendar-target=currentWeek" if is_current_week %>>
 
-  <%# Month label — left side, rotated %>
-  <div class="agenda-week__month">
-    <span><%= month_name %></span>
-  </div>
+  <%# Month label — left side, rotated (hide if Monday is 1st, day-month label takes over) %>
+  <% unless monday.day == 1 %>
+    <div class="agenda-week__month">
+      <span><%= month_name %></span>
+    </div>
+  <% end %>
 
   <%# Weekday columns (Mon–Fri) %>
   <% settimana[0..4].each do |giorno| %>
@@ -20,9 +22,7 @@
     <% tappe = tappe_per_giorno[giorno] || [] %>
 
     <div class="agenda-week__day<%= " agenda-week__day--today" if is_today %>"
-         data-giorno="<%= giorno.iso8601 %>"
-         data-controller="tappa-date"
-         data-action="dragover->tappa-date#dragOver dragenter->tappa-date#dragEnter dragleave->tappa-date#dragLeave drop->tappa-date#handleDrop">
+         data-giorno="<%= giorno.iso8601 %>">
 
       <div class="agenda-week__day-header">
         <%= link_to giorno_path(giorno.iso8601), data: { turbo_frame: "_top" }, class: "agenda-week__day-link" do %>
@@ -34,6 +34,12 @@
           <% end %>
         <% end %>
       </div>
+
+      <% if giorno.day == 1 %>
+        <div class="agenda-week__day-month">
+          <span><%= I18n.l(giorno, format: "%B", locale: :it).upcase %> <%= giorno.year %></span>
+        </div>
+      <% end %>
 
       <div class="agenda-week__tappe"
            data-controller="tax-sortable"
@@ -53,9 +59,7 @@
       <% tappe = tappe_per_giorno[giorno] || [] %>
 
       <div class="agenda-week__day--weekend<%= " agenda-week__day--today" if is_today %>"
-           data-giorno="<%= giorno.iso8601 %>"
-           data-controller="tappa-date"
-           data-action="dragover->tappa-date#dragOver dragenter->tappa-date#dragEnter dragleave->tappa-date#dragLeave drop->tappa-date#handleDrop">
+           data-giorno="<%= giorno.iso8601 %>">
 
         <div class="agenda-week__day-header">
           <%= link_to giorno_path(giorno.iso8601), data: { turbo_frame: "_top" }, class: "agenda-week__day-link" do %>
@@ -64,13 +68,20 @@
           <% end %>
         </div>
 
-        <% if tappe.any? %>
-          <div class="agenda-week__tappe">
-            <% tappe.sort_by(&:position).each do |tappa| %>
-              <%= render "tappe/tappa_compact", tappa: tappa %>
-            <% end %>
+        <% if giorno.day == 1 %>
+          <div class="agenda-week__day-month">
+            <span><%= I18n.l(giorno, format: "%B", locale: :it).upcase %> <%= giorno.year %></span>
           </div>
         <% end %>
+
+        <div class="agenda-week__tappe"
+             data-controller="tax-sortable"
+             data-tax-sortable-group-value="calendar"
+             data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
+          <% tappe.sort_by(&:position).each do |tappa| %>
+            <%= render "tappe/tappa_compact", tappa: tappa %>
+          <% end %>
+        </div>
       </div>
     <% end %>
   </div>

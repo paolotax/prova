@@ -84,11 +84,13 @@
     min-block-size: 25vh;
     min-inline-size: 0;
     padding: var(--block-space-half) var(--inline-space-half);
+    position: relative;
   }
 
   .agenda-week__day--weekend {
     background-color: color-mix(in srgb, var(--color-ink-lightest) 50%, transparent);
     min-block-size: 0;
+    position: relative;
   }
 
   .agenda-week__day--today {
@@ -158,14 +160,21 @@
     inline-size: 1.6em;
   }
 
-  /* Weekend header — smaller font but same horizontal layout */
-  .agenda-week__weekend .agenda-week__day-name {
-    font-size: var(--text-xx-small);
+  .agenda-week__day-month {
+    inset-block-start: 0.5em;
+    inset-inline-start: 0.3em;
+    position: absolute;
+
+    span {
+      color: var(--color-ink);
+      font-size: var(--text-x-small);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+    }
   }
 
-  .agenda-week__weekend .agenda-week__day-number {
-    font-size: var(--text-small);
-  }
 
   /* Tappe list inside day
   /* ------------------------------------------------------------------------ */
@@ -179,8 +188,8 @@
     min-inline-size: 0;
   }
 
-  /* Drag over highlight */
-  .agenda-week__day.drag-over {
+  /* SortableJS drag highlight */
+  .agenda-week__tappe.sortable-drag-over {
     background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
     outline: 2px dashed var(--color-link);
     outline-offset: -2px;
@@ -211,7 +220,7 @@
       cursor: grabbing;
     }
 
-    &.dragging {
+    &.sortable-ghost {
       opacity: 0.4;
     }
   }

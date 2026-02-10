@@ -1,43 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Handles school-to-day drag from slideover only.
+// Tappa-to-tappa reordering/moving is handled by tax-sortable controller.
 export default class extends Controller {
   static values = {
     giroId: Number,
     date: String
-  }
-
-  // Drag events on the tappa-compact element (source)
-  dragStart(e) {
-    const tappaEl = e.target.closest("[data-tappa-id]")
-    if (!tappaEl) return
-
-    e.dataTransfer.setData("application/tappa-id", tappaEl.dataset.tappaId)
-    e.dataTransfer.effectAllowed = "move"
-    tappaEl.classList.add("dragging")
-  }
-
-  dragEnd(e) {
-    const tappaEl = e.target.closest("[data-tappa-id]")
-    if (tappaEl) tappaEl.classList.remove("dragging")
-  }
-
-  // Drop zone events on the day cell (target)
-  dragOver(e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    this.element.classList.add("drag-over")
-  }
-
-  dragEnter(e) {
-    e.preventDefault()
-    this.element.classList.add("drag-over")
-  }
-
-  dragLeave(e) {
-    // Only remove if we're actually leaving the drop zone (not entering a child)
-    if (!this.element.contains(e.relatedTarget)) {
-      this.element.classList.remove("drag-over")
-    }
   }
 
   handleDrop(e) {
@@ -46,14 +14,7 @@ export default class extends Controller {
 
     const targetDate = this.element.dataset.giorno
 
-    // Handle tappa-to-day drag (from calendar)
-    const tappaId = e.dataTransfer.getData("application/tappa-id")
-    if (tappaId) {
-      this.updateTappaDate(tappaId, targetDate)
-      return
-    }
-
-    // Handle school-to-day drag (from slideover — legacy)
+    // Handle school-to-day drag (from slideover)
     const schoolId = e.dataTransfer.getData("text/plain")
     const schoolElement = document.querySelector(`[data-school-id="${schoolId}"]`)
     if (!schoolElement) return
@@ -114,10 +75,7 @@ export default class extends Controller {
         })
       })
 
-      if (response.ok) {
-        // Reload to refresh the calendar with updated tappa positions
-        window.location.reload()
-      } else {
+      if (!response.ok) {
         console.error("Errore nell'aggiornamento della tappa")
       }
     } catch (error) {

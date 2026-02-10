@@ -3,9 +3,8 @@
 <% if tappa.present? && tappa.persisted? %>
   <div class="tappa-compact <%= tappa_type_modifier(tappa) %>"
        id="<%= dom_id(tappa) %>"
-       draggable="true"
        data-tappa-id="<%= tappa.id %>"
-       data-action="dragstart->tappa-date#dragStart dragend->tappa-date#dragEnd">
+       data-tax-sortable-update-url="<%= sort_tappa_path(tappa) %>">
 
     <div class="tappa-compact__content">
       <span class="tappa-compact__name"><%= tappa.tappable.denominazione %></span>
