@@ -60,6 +60,7 @@ class Classe < ApplicationRecord
   belongs_to :scuola
 
   has_many :adozioni, dependent: :destroy
+  has_many :consegne_saggio, through: :adozioni
 
   validates :anno_corso, presence: true
   validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso] }, allow_blank: true

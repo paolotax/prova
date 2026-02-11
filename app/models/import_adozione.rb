@@ -44,13 +44,6 @@ class ImportAdozione < ApplicationRecord
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
 
-  has_many :adozioni, foreign_key: :import_adozione_id
-  has_many :consegne_saggio, through: :adozioni, class_name: "ConsegnaSaggio"
-
-  has_many :tappe, as: :tappable
-
-  has_one :libro, -> { where(user_id: Current.user&.id || -1) }, foreign_key: 'codice_isbn', primary_key: 'CODICEISBN'
-
   scope :per_scuola_classe_sezione_disciplina, -> { order(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 
   scope :per_scuola_classe_disciplina_sezione, -> { order(:CODICESCUOLA, :ANNOCORSO, :DISCIPLINA, :SEZIONEANNO) }
@@ -81,22 +74,8 @@ class ImportAdozione < ApplicationRecord
       .select('ARRAY_AGG(import_adozioni.id) AS import_adozioni_ids')
   }
 
-  scope :mie_adozioni, -> { where(EDITORE: Current.user.miei_editori) }
-  scope :nel_baule_di_oggi, lambda {
-    where(CODICESCUOLA: Scuola.select(:codice_ministeriale)
-      .where(id: Current.user.tappe.di_oggi.where(tappable_type: 'Scuola').pluck(:tappable_id)))
-  }
-  scope :nel_baule_di_domani, lambda {
-    where(CODICESCUOLA: Scuola.select(:codice_ministeriale)
-      .where(id: Current.user.tappe.di_domani.where(tappable_type: 'Scuola').pluck(:tappable_id)))
-  }
-
   scope :da_acquistare, -> { where(DAACQUIST: 'Si') }
   scope :da_non_acquistare, -> { where(DAACQUIST: 'No') }
-
-  def mia_adozione?
-    Current.user.miei_editori.include?(self.EDITORE)
-  end
 
   delegate :codice_ministeriale, :scuola, :citta, :tipo_scuola, :tipo_nome, to: :import_scuola
 
@@ -107,10 +86,6 @@ class ImportAdozione < ApplicationRecord
   def anno
     self.ANNOCORSO
   end
-
-  # def classe
-  #   self.ANNOCORSO
-  # end
 
   def codice_scuola
     self.CODICESCUOLA
@@ -175,22 +150,6 @@ class ImportAdozione < ApplicationRecord
 
   def consigliato
     self.CONSIGLIATO
-  end
-
-  def current_adozione
-    adozioni.find { |a| a.account_id == Current.account&.id }
-  end
-
-  def saggi
-    current_adozione&.saggi || ConsegnaSaggio.none
-  end
-
-  def kit
-    current_adozione&.kit_consegne || ConsegnaSaggio.none
-  end
-
-  def seguiti
-    current_adozione&.seguiti || ConsegnaSaggio.none
   end
 
   def self.import_new_adozioni

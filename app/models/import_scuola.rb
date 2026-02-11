@@ -54,24 +54,7 @@ class ImportScuola < ApplicationRecord
 
   has_many :classi, class_name: 'Views::Classe', foreign_key: 'codice_ministeriale', primary_key: 'CODICESCUOLA'
 
-  has_many :appunti, -> { where(user_id: Current.user.id) }
-  has_many :appunti_da_completare, -> { da_completare.where(user_id: Current.user.id) }, class_name: 'Appunto'
-
-  has_many :tappe, lambda {
-    where("tappe.tappable_type = 'Scuola' and tappe.user_id = ?", Current.user.id)
-  }, as: :tappable
-
   has_one :tipo_scuola, primary_key: 'DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA', foreign_key: 'tipo'
-
-  has_many :documenti, -> { where(user_id: Current.user.id) }, as: :clientable
-  has_many :documento_righe, through: :documenti
-  has_many :righe, through: :documento_righe
-
-  has_many :sconti, as: :scontabile, dependent: :destroy
-
-  def mie_adozioni
-    import_adozioni.mie_adozioni
-  end
 
   scope :elementari, lambda {
     where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ['SCUOLA PRIMARIA', 'SCUOLA PRIMARIA NON STATALE', 'ISTITUTO COMPRENSIVO'])
@@ -93,11 +76,7 @@ class ImportScuola < ApplicationRecord
     order(%i[PROVINCIA DESCRIZIONECOMUNE CODICEISTITUTORIFERIMENTO CODICESCUOLA])
   }
 
-  scope :delle_tappe_del_giorno, ->(giorno) { joins(:tappe).where('DATE(tappe.data_tappa) = ?', giorno) }
-  scope :delle_tappe_da_programmare, -> { joins(:tappe).where('DATE(tappe.data_tappa) IS NULL') }
-  scope :delle_tappe_di_oggi, -> { joins(:tappe).where('DATE(tappe.data_tappa) = ?', Date.today) }
-  scope :delle_tappe_di_domani, -> { joins(:tappe).where('DATE(tappe.data_tappa) = ?', Date.tomorrow) }
-
+  
   def to_s
     titleize(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + ' ' + self.DENOMINAZIONESCUOLA + ' - ' + self.DESCRIZIONECOMUNE)
   end
@@ -150,20 +129,11 @@ class ImportScuola < ApplicationRecord
     scoped
   end
 
-  # def self.tipi_scuole
-  #   self.pluck([:DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :DESCRIZIONECARATTERISTICASCUOLA])
-  #               .uniq
-  #               .sort_by{|k| [k[0], k[1]]}
-  # end
-
-  # scope :del_tipo_scuola, -> (tipo_scuola) { where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipo_scuola)}
-
+  
   def latitudine
-    44.70511452961794
   end
 
   def longitudine
-    10.643349039039835
   end
 
   def indirizzo_navigator
