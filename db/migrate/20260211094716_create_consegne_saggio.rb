@@ -1,5 +1,5 @@
 class CreateConsegneSaggio < ActiveRecord::Migration[8.1]
-  def change
+  def up
     create_table :consegne_saggio, id: :uuid do |t|
       t.references :account, type: :uuid, null: false
       t.references :user, null: false, type: :bigint
@@ -14,5 +14,11 @@ class CreateConsegneSaggio < ActiveRecord::Migration[8.1]
 
     add_index :consegne_saggio, [:adozione_id, :tipo]
     add_index :consegne_saggio, [:account_id, :tipo]
+
+    Rake::Task["ssk:migrate"].invoke
+  end
+
+  def down
+    drop_table :consegne_saggio
   end
 end

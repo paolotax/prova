@@ -101,6 +101,15 @@ namespace :ssk do
       errors.first(50).each { |e| puts "  - #{e}" }
       puts "  ... e altri #{errors.size - 50}" if errors.size > 50
     end
+
+    # Pulizia: elimina appunti SSK migrati (solo quelli CON import_adozione_id)
+    ssk_da_eliminare = Appunto.where(nome: %w[saggio seguito kit]).where.not(import_adozione_id: nil)
+    count_eliminati = ssk_da_eliminare.count
+    ssk_da_eliminare.find_each { |a| a.entry&.destroy; a.destroy }
+    puts "\nPulizia: #{count_eliminati} appunti SSK eliminati (con import_adozione_id)"
+
+    ssk_restanti = Appunto.where(nome: %w[saggio seguito kit]).where(import_adozione_id: nil).count
+    puts "  SSK senza import_adozione_id (restano come appunti chiusi): #{ssk_restanti}"
   end
 
   desc "Mostra statistiche pre-migrazione SSK"
