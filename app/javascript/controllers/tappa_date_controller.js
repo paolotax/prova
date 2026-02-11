@@ -19,7 +19,7 @@ export default class extends Controller {
     const schoolElement = document.querySelector(`[data-school-id="${schoolId}"]`)
     if (!schoolElement) return
 
-    const tappableType = schoolElement.dataset.tappableType || "ImportScuola"
+    const tappableType = schoolElement.dataset.tappableType || "Scuola"
     const existingTappaId = schoolElement.dataset.tappaId
 
     if (existingTappaId && existingTappaId !== "null" && existingTappaId !== "") {

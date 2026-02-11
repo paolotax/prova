@@ -65,7 +65,7 @@ class Sconto < ApplicationRecord
   }
 
   scope :applicabili_a_scuola, ->(scuola_id) {
-    where("(scontabile_type = 'ImportScuola' AND scontabile_id = ?) OR (scontabile_type = 'ImportScuola' AND scontabile_id IS NULL)", scuola_id)
+    where("(scontabile_type = 'Scuola' AND scontabile_id = ?) OR (scontabile_type = 'Scuola' AND scontabile_id IS NULL)", scuola_id)
   }
 
   def to_s
@@ -75,7 +75,7 @@ class Sconto < ApplicationRecord
       tipo_text = case scontabile_type
                   when "Cliente" then "Tutti i clienti"
                   when "Editore" then "Tutti gli editori"
-                  when "ImportScuola" then "Tutte le scuole"
+                  when "Scuola" then "Tutte le scuole"
                   else scontabile_type
                   end
       "#{percentuale_sconto}% - #{tipo_text} - #{categoria&.nome_categoria || 'Tutte le categorie'}"
@@ -93,7 +93,7 @@ class Sconto < ApplicationRecord
         { type: "Cliente", name: "Tutti i clienti", scope: :all }
       when "Editore"
         { type: "Editore", name: "Tutti gli editori", scope: :all }
-      when "ImportScuola"
+      when "Scuola"
         { type: "Scuola", name: "Tutte le scuole", scope: :all }
       else
         { type: scontabile_type, name: "Tutti", scope: :all }
@@ -109,7 +109,7 @@ class Sconto < ApplicationRecord
 
   # Trova lo sconto più specifico applicabile per un libro e opzionalmente un'entità (cliente/scuola)
   def self.sconto_per_libro(libro:, cliente: nil, scuola: nil, user:)
-    # Caso speciale: se il cliente è ImportScuola e il libro ha un prezzo_suggerito, usa sconto 0
+    # Caso speciale: se il cliente è Scuola e il libro ha un prezzo_suggerito, usa sconto 0
     if scuola.present? && libro.prezzo_suggerito_cents.present? && libro.prezzo_suggerito_cents > 0
       return 0.0
     end
@@ -118,7 +118,7 @@ class Sconto < ApplicationRecord
 
     # Determina l'entità (cliente o scuola)
     entity = cliente || scuola
-    entity_type = cliente ? 'Cliente' : (scuola ? 'ImportScuola' : nil)
+    entity_type = cliente ? 'Cliente' : (scuola ? 'Scuola' : nil)
 
     if entity && entity_type
       # Con entità: cerca prima con categoria specifica, poi senza categoria
@@ -194,16 +194,16 @@ class Sconto < ApplicationRecord
         .where(
           "(scontabile_type IS NULL OR scontabile_type = '') OR " \
           "(scontabile_type IN (?, ?) AND scontabile_id IS NULL)",
-          'Cliente', 'ImportScuola'
+          'Cliente', 'Scuola'
         )
         .order(
           Arel.sql(
             "CASE " \
               "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 0 " \
-              "WHEN scontabile_type = 'ImportScuola' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 1 " \
+              "WHEN scontabile_type = 'Scuola' AND scontabile_id IS NULL AND categoria_id = #{categoria_id.to_i} THEN 1 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id = #{categoria_id.to_i} THEN 2 " \
               "WHEN scontabile_type = 'Cliente' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 3 " \
-              "WHEN scontabile_type = 'ImportScuola' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 4 " \
+              "WHEN scontabile_type = 'Scuola' AND scontabile_id IS NULL AND categoria_id IS NULL THEN 4 " \
               "WHEN (scontabile_type IS NULL OR scontabile_type = '') AND categoria_id IS NULL THEN 5 " \
               "ELSE 6 " \
             "END"

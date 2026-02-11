@@ -35,7 +35,7 @@ export default class extends Controller {
           this.editoreSelectTarget.classList.remove("hidden")
           this.editoreSelectTarget.querySelector("select").disabled = false
           break
-        case "ImportScuola":
+        case "Scuola":
           this.scuolaSelectTarget.classList.remove("hidden")
           this.scuolaSelectTarget.querySelector("select").disabled = false
           break

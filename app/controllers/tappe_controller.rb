@@ -5,12 +5,12 @@ class TappeController < ApplicationController
 
   def index
 
-    @tappe = current_user.tappe.where(tappable_type: "ImportScuola")
+    @tappe = current_user.tappe.where(tappable_type: "Scuola")
 
     # Filtra per scuola specifica se viene chiamato con import_scuola_id
-    if params[:import_scuola_id].present?
-      @import_scuola = ImportScuola.find(params[:import_scuola_id])
-      @tappe = @tappe.where(tappable_id: @import_scuola.id)
+    if params[:scuola_id].present?
+      @scuola = current_account.scuole.find(params[:scuola_id])
+      @tappe = @tappe.where(tappable_id: @scuola.id)
     end
 
     # Filtro per giri multipli
@@ -56,7 +56,7 @@ class TappeController < ApplicationController
     end
 
     # Determina la settimana corrente o quella richiesta (solo se NON viene chiamato da import_scuola)
-    unless params[:import_scuola_id].present?
+    unless params[:scuola_id].present?
       if params[:week_offset].present?
         week_offset = params[:week_offset].to_i
       else
@@ -81,7 +81,7 @@ class TappeController < ApplicationController
 
     respond_to do |format|
       format.html do
-        if params[:import_scuola_id].present? && params[:sort] == "per_data"
+        if params[:scuola_id].present? && params[:sort] == "per_data"
           render partial: "tappe_scuola", locals: { tappe: @tappe }
         end
       end
@@ -94,7 +94,7 @@ class TappeController < ApplicationController
   end
 
   def new
-    @tappable_type = params[:tappable_type] || "ImportScuola"
+    @tappable_type = params[:tappable_type] || "Scuola"
     @tappable_id = params[:tappable_id] || nil
     @data_tappa = params[:data_tappa] || Date.today
     @tappa = current_user.tappe.build(tappable_id: @tappable_id, tappable_type: @tappable_type, data_tappa: @data_tappa)

@@ -48,6 +48,11 @@ class Adozione < ApplicationRecord
 
   has_one :scuola, through: :classe
 
+  has_many :consegne_saggio, class_name: "ConsegnaSaggio", dependent: :destroy
+  has_many :saggi, -> { where(tipo: "saggio") }, class_name: "ConsegnaSaggio"
+  has_many :kit_consegne, -> { where(tipo: "kit") }, class_name: "ConsegnaSaggio"
+  has_many :seguiti, -> { where(tipo: "seguito") }, class_name: "ConsegnaSaggio"
+
   validates :codice_isbn, presence: true
   validates :codice_isbn, uniqueness: { scope: :classe_id }
 

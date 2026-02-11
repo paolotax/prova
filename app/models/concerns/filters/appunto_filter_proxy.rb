@@ -14,7 +14,7 @@ module Filters
       .with_attached_attachments
       .with_attached_image
       .with_rich_text_content
-      .includes(:import_scuola) 
+      .includes(:import_scuola)
     }
 
     filter_scope :search, ->(search) { search_all_word(search) }

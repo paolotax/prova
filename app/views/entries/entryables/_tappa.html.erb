@@ -11,9 +11,9 @@
   <% if tappa.tappable.present? %>
     <div class="card__stages">
       <% case tappa.tappable_type %>
-      <% when "ImportScuola" %>
-        <strong class="txt-small"><%= tappa.tappable.DENOMINAZIONESCUOLA %></strong>
-        <span class="txt-x-small txt-subtle"><%= tappa.tappable.DESCRIZIONECOMUNE %></span>
+      <% when "Scuola" %>
+        <strong class="txt-small"><%= tappa.tappable.denominazione %></strong>
+        <span class="txt-x-small txt-subtle"><%= tappa.tappable.comune %></span>
       <% when "Cliente" %>
         <strong class="txt-small"><%= tappa.tappable.denominazione %></strong>
         <span class="txt-x-small txt-subtle"><%= tappa.tappable.comune %></span>

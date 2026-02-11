@@ -53,7 +53,7 @@
             ["Nessuno (sconto globale)", ""],
             ["Tutti i clienti", "Cliente"],
             ["Tutti gli editori", "Editore"],
-            ["Tutte le scuole", "ImportScuola"]
+            ["Tutte le scuole", "Scuola"]
           ],
           {},
           { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
@@ -86,9 +86,9 @@
 
       <div data-scontabile-selector-target="scuolaSelect" class="hidden">
         <%= form.collection_select :scontabile_id,
-            Current.user.import_scuole.order(:DENOMINAZIONESCUOLA),
+            Current.account.scuole.order(:denominazione),
             :id,
-            :DENOMINAZIONESCUOLA,
+            :denominazione,
             { include_blank: "Tutte le scuole" },
             class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
         <p class="mt-1 text-sm text-gray-500">Lascia vuoto per applicare a tutte le scuole</p>

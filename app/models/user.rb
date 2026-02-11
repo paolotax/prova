@@ -46,13 +46,6 @@ class User < ApplicationRecord
   has_many :import_scuole, through: :user_scuole
   has_many :import_adozioni, through: :import_scuole
 
-  has_many :classi, through: :import_scuole
-
-  has_many :mie_adozioni, -> {
-      where( EDITORE: Current.user.miei_editori )
-    },
-    through: :import_scuole, source: :import_adozioni
-
   has_many :mandati, dependent: :destroy
   has_many :editori, through: :mandati
 
@@ -128,7 +121,7 @@ class User < ApplicationRecord
   end
 
   def self.stats
-    User.all.collect {|u| { name: u.name, adozioni: u.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
+    User.all.collect {|u| { name: u.name, adozioni: u.import_adozioni.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
   end
 
   def self.create_aziende_from_profiles

@@ -21,9 +21,9 @@ class QrcodesController < ApplicationController
       @qrcode.qrcodable = @libro
       @qrcode.url = libro_url(@libro)
     elsif params[:scuola_id]
-      @scuola = Current.user.import_scuole.find(params[:scuola_id])
+      @scuola = current_account.scuole.find(params[:scuola_id])
       @qrcode.qrcodable = @scuola
-      @qrcode.url = import_scuola_url(@scuola)
+      @qrcode.url = scuola_url(@scuola)
     end
   end
 

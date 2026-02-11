@@ -22,23 +22,14 @@ class Tappe::GroupByDateService
 
   def scuole_senza_tappe
     return {} unless @giro
-    
-    # Prendi tutte le scuole dell'utente che non hanno tappe in questo giro
-    scuole_senza_tappe = Current.user.import_scuole
-                          .where.not(id: @giro.tappe.where(tappable_type: 'ImportScuola').select(:tappable_id))
-                          .includes(:direzione, :user_scuole)
-                          .order('user_scuole.position')
-    
-    scuole_senza_tappe = scuole_senza_tappe.where.not(id: @giro.excluded_ids)
 
-    # Raggruppa per comune della direzione o della scuola e ordina alfabeticamente
-    {nil => scuole_senza_tappe.group_by { |s| 
-      if s.direzione.present?
-        s.direzione.DESCRIZIONECOMUNE
-      else
-        s.DESCRIZIONECOMUNE
-      end
-    }.sort.to_h}
+    scuole = Current.account.scuole
+                      .where.not(id: @giro.tappe.where(tappable_type: 'Scuola').select(:tappable_id))
+                      .order(:posizione)
+
+    scuole = scuole.where.not(id: @giro.excluded_ids)
+
+    {nil => scuole.group_by(&:comune).sort.to_h}
   end
 
   def tappe_programmate
@@ -47,7 +38,7 @@ class Tappe::GroupByDateService
           .includes(:tappable)
           .group_by(&:data_tappa)
           .transform_values do |tappe_del_giorno|
-            tappe_del_giorno.group_by { |t| t.tappable.DESCRIZIONECOMUNE if t.tappable.respond_to?(:DESCRIZIONECOMUNE) }
+            tappe_del_giorno.group_by { |t| t.tappable.comune if t.tappable.respond_to?(:comune) }
           end
   end
 
@@ -57,7 +48,7 @@ class Tappe::GroupByDateService
           .includes(:tappable)
           .group_by(&:data_tappa)
           .transform_values do |tappe_del_giorno|
-            tappe_del_giorno.group_by { |t| t.tappable.DESCRIZIONECOMUNE if t.tappable.respond_to?(:DESCRIZIONECOMUNE) }
+            tappe_del_giorno.group_by { |t| t.tappable.comune if t.tappable.respond_to?(:comune) }
           end
   end
-end 
+end

@@ -39,27 +39,6 @@
 #
 
 class ImportScuola < ApplicationRecord
-  extend FriendlyId
-  friendly_id :slug_candidates, use: :slugged
-  def slug_candidates
-    [
-      :DENOMINAZIONESCUOLA,
-      %i[DENOMINAZIONESCUOLA DESCRIZIONECOMUNE]
-    ]
-  end
-
-  # geocoded_by :indirizzo_navigator
-  # after_validation :geocode, if: ->(obj){ obj.INDIRIZZOSCUOLA.present? and obj.CAPSCUOLA.present? and obj.DESCRIZIONECOMUNE.present? and obj.PROVINCIA.present? and obj.latitude.nil? and obj.longitude.nil? }
-
-  include Searchable
-  search_on :CODICESCUOLA, :DENOMINAZIONESCUOLA, :DESCRIZIONECOMUNE, :DESCRIZIONECARATTERISTICASCUOLA,
-            :DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA, :CODICEISTITUTORIFERIMENTO, :DENOMINAZIONEISTITUTORIFERIMENTO
-
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::ImportScuolaFilterProxy
-  end
-
   has_many :plessi, class_name: 'ImportScuola',
                     primary_key: 'CODICESCUOLA',
                     foreign_key: 'CODICEISTITUTORIFERIMENTO'
@@ -79,7 +58,7 @@ class ImportScuola < ApplicationRecord
   has_many :appunti_da_completare, -> { da_completare.where(user_id: Current.user.id) }, class_name: 'Appunto'
 
   has_many :tappe, lambda {
-    where("tappe.tappable_type = 'ImportScuola' and tappe.user_id = ?", Current.user.id)
+    where("tappe.tappable_type = 'Scuola' and tappe.user_id = ?", Current.user.id)
   }, as: :tappable
 
   has_one :tipo_scuola, primary_key: 'DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA', foreign_key: 'tipo'
@@ -93,22 +72,6 @@ class ImportScuola < ApplicationRecord
   def mie_adozioni
     import_adozioni.mie_adozioni
   end
-
-  include PgSearch::Model
-  search_fields = %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA
-                     DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
-
-  pg_search_scope :search_all_word,
-                  against: search_fields,
-                  using: {
-                    tsearch: { any_word: false, prefix: true }
-                  }
-
-  pg_search_scope :search_any_word,
-                  against: search_fields,
-                  using: {
-                    tsearch: { any_word: true, prefix: true }
-                  }
 
   scope :elementari, lambda {
     where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: ['SCUOLA PRIMARIA', 'SCUOLA PRIMARIA NON STATALE', 'ISTITUTO COMPRENSIVO'])
@@ -138,15 +101,6 @@ class ImportScuola < ApplicationRecord
   def to_s
     titleize(self.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA + ' ' + self.DENOMINAZIONESCUOLA + ' - ' + self.DESCRIZIONECOMUNE)
   end
-
-  def self.ransackable_attributes(auth_object = nil)
-    %w[PROVINCIA CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA
-       DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
-  end
-
-  # def self.ransackable_associations(auth_object = nil)
-  #   %w[PROVINCIA CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
-  # end
 
   def direzione_or_privata
     direzione || '<privata>'.html_safe
@@ -180,30 +134,6 @@ class ImportScuola < ApplicationRecord
 
   def self.joins_direzione
     joins('LEFT JOIN import_scuole direz ON import_scuole."CODICEISTITUTORIFERIMENTO" =  direz."CODICESCUOLA"')
-  end
-
-  def previous
-    Current.user.import_scuole
-           .joins_direzione
-           .where("(direz.\"DESCRIZIONECOMUNE\" < ?)
-              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" < ?)
-              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ? AND import_scuole.\"DENOMINAZIONESCUOLA\" < ?)",
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE,
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO,
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA)
-           .order('direz."DESCRIZIONECOMUNE" DESC, import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" DESC, import_scuole."DENOMINAZIONESCUOLA" DESC').first
-  end
-
-  def next
-    Current.user.import_scuole
-           .joins_direzione
-           .where("(direz.\"DESCRIZIONECOMUNE\" > ?)
-              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" > ?)
-              OR (direz.\"DESCRIZIONECOMUNE\" = ? AND import_scuole.\"DENOMINAZIONEISTITUTORIFERIMENTO\" = ? AND import_scuole.\"DENOMINAZIONESCUOLA\" > ?)",
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE,
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO,
-                  direzione&.DESCRIZIONECOMUNE || self.DESCRIZIONECOMUNE, self.DENOMINAZIONEISTITUTORIFERIMENTO, self.DENOMINAZIONESCUOLA)
-           .order('direz."DESCRIZIONECOMUNE" ASC, import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ASC, import_scuole."DENOMINAZIONESCUOLA" ASC').first
   end
 
   def self.zone
@@ -300,10 +230,6 @@ class ImportScuola < ApplicationRecord
     self.INDIRIZZOEMAILSCUOLA
   end
 
-  def to_combobox_display
-    scuola + ' -> ' + citta
-  end
-
   def combinazioni
     import_adozioni.pluck(:COMBINAZIONE).uniq
                    .sort.map do |c|
@@ -318,11 +244,6 @@ class ImportScuola < ApplicationRecord
                    .distinct
                    .order(:ANNOCORSO, :SEZIONEANNO)
                    .map { |a| "#{a.ANNOCORSO}#{a.SEZIONEANNO}" }
-  end
-
-  def self.con_appunti(relation)
-    ids = relation.pluck(:import_scuola_id).uniq
-    ImportScuola.where('import_scuole.id in (?)', ids)
   end
 
   private

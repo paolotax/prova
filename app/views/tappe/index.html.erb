@@ -112,19 +112,19 @@
                       <div class="flex-1 min-w-0">
                         <!-- Scuola -->
                         <div class="flex items-center space-x-2 mb-2">
-                          <%= link_to import_scuola_path(tappa.tappable, selected_tab: 4),
+                          <%= link_to scuola_path(tappa.tappable),
                               class: "flex items-center space-x-2 group" do %>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-900 flex items-center justify-center ring-2 ring-indigo-500">
                               <span class="text-indigo-300 font-semibold text-sm">
-                                <%= tappa.tappable.DENOMINAZIONESCUOLA.to_s.first(2).upcase %>
+                                <%= tappa.tappable.denominazione.to_s.first(2).upcase %>
                               </span>
                             </div>
                             <div class="min-w-0 flex-1">
                               <p class="text-sm font-semibold text-gray-200 group-hover:text-indigo-400 truncate">
-                                <%= tappa.tappable.DENOMINAZIONESCUOLA %>
+                                <%= tappa.tappable.denominazione %>
                               </p>
                               <p class="text-xs text-gray-500">
-                                <%= tappa.tappable.DESCRIZIONECOMUNE %>
+                                <%= tappa.tappable.comune %>
                               </p>
                             </div>
                           <% end %>

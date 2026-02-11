@@ -34,7 +34,7 @@
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Seleziona Tipo</label>
 
-                <%= form.select :tappable_type, [["tutte le scuole", "ImportScuola"], ["tutti i clienti", "Cliente"]], {},
+                <%= form.select :tappable_type, [["tutte le scuole", "Scuola"], ["tutti i clienti", "Cliente"]], {},
                     data: { 
                         action: "change->clientable-search#updateType",
                         clientable_search_target: "select"

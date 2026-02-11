@@ -362,19 +362,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :import_scuole do
-      resources :tappe
-      resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
-      collection do
-        get 'filtra'
-        get 'appunti'
-      end
-      member do
-        get 'classi_che_adottano'
-        get 'combobox_classi'
-      end
-    end
-
     resources :mappe, only: %i[show update] do
       collection do
         get 'calcola_percorso_ottimale'
@@ -397,12 +384,6 @@ Rails.application.routes.draw do
       # Bulk actions for scuole
       resource :prints, only: [:create]
       resource :bulk_tappe, only: [:create]
-    end
-
-    resources :import_adozioni, only: %i[index show] do
-      collection do
-        get 'filtra'
-      end
     end
 
     resources :adozioni_comunicate do

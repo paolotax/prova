@@ -54,7 +54,7 @@
         <%= label_for form: form, field: 'clientable_type', label: 'Tipo Cliente' %>
         <%= form.select :clientable_type,
                     options_for_select(
-                      [["Scuola", "ImportScuola"], ["Cliente", "Cliente"], ["Nessuno", nil]],
+                      [["Scuola", "Scuola"], ["Cliente", "Cliente"], ["Nessuno", nil]],
                       causale.clientable_type
                     ),
                     { prompt: "Seleziona tipo cliente" } %>

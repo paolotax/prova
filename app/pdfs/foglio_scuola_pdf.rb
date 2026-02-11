@@ -5,7 +5,7 @@ class FoglioScuolaPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(import_scuole, view:, tipo_stampa: 'tutte_adozioni', con_sovrapacchi: false)
+  def initialize(scuole, view:, tipo_stampa: 'tutte_adozioni', con_sovrapacchi: false)
     super(:page_size => "A4", 
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
@@ -26,7 +26,7 @@ class FoglioScuolaPdf < Prawn::Document
     @tipo_stampa = tipo_stampa
     @con_sovrapacchi = con_sovrapacchi
 
-    import_scuole.each_with_index do |scuola, index|
+    scuole.each_with_index do |scuola, index|
       start_new_page if index > 0
       
       @scuola = scuola

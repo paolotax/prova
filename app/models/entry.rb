@@ -73,13 +73,12 @@ class Entry < ApplicationRecord
   scope :documenti, -> { where(entryable_type: "Documento") }
   scope :tappe, -> { where(entryable_type: "Tappa") }
 
-  # Exclude ssk appunti (saggio, seguito, kit) - these will be moved to a separate model later
-  # Keep: documenti, tappe, and appunti that are NOT ssk
+  # Exclude drafted appunti from kanban/dashboard
   scope :non_ssk, -> {
-    excluded_ids = Appunto.where(status: "drafted").or(Appunto.ssk).pluck(:id).map(&:to_s)
-    if excluded_ids.any?
+    drafted_ids = Appunto.where(status: "drafted").pluck(:id).map(&:to_s)
+    if drafted_ids.any?
       where.not(entryable_type: "Appunto")
-        .or(where(entryable_type: "Appunto").where.not(entryable_id: excluded_ids))
+        .or(where(entryable_type: "Appunto").where.not(entryable_id: drafted_ids))
     else
       all
     end

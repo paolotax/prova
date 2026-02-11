@@ -8,7 +8,7 @@ class AppuntiController < ApplicationController
   before_action :set_appunto, only: %i[show edit update destroy]
 
   def index
-    @appunti = @filter.appunti.published.non_saggi
+    @appunti = @filter.appunti.published
                       .with_attached_attachments
                       .with_attached_image
                       .with_rich_text_content

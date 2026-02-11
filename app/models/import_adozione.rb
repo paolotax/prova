@@ -32,15 +32,6 @@
 #
 
 class ImportAdozione < ApplicationRecord
-  include Searchable
-  search_on :TITOLO, :EDITORE, :DISCIPLINA, :CODICEISBN,
-            import_scuola: %i[CODICESCUOLA DENOMINAZIONESCUOLA DESCRIZIONECOMUNE DESCRIZIONECARATTERISTICASCUOLA DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA CODICEISTITUTORIFERIMENTO DENOMINAZIONEISTITUTORIFERIMENTO]
-
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::ImportAdozioneFilterProxy
-  end
-
   belongs_to :import_scuola, foreign_key: 'CODICESCUOLA', primary_key: 'CODICESCUOLA'
   belongs_to :editore,       foreign_key: 'EDITORE',      primary_key: 'EDITORE'
 
@@ -53,46 +44,12 @@ class ImportAdozione < ApplicationRecord
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
 
-  has_many :saggi, -> { where(nome: 'saggio') }, class_name: 'Appunto', foreign_key: 'import_adozione_id'
-  has_many :seguiti, -> { where(nome: 'seguito') }, class_name: 'Appunto', foreign_key: 'import_adozione_id'
-  has_many :kit,     -> { where(nome: 'kit') },     class_name: 'Appunto', foreign_key: 'import_adozione_id'
+  has_many :adozioni, foreign_key: :import_adozione_id
+  has_many :consegne_saggio, through: :adozioni, class_name: "ConsegnaSaggio"
 
   has_many :tappe, as: :tappable
 
-  # has_many :appunti, dependent: :nullify
-  # has_many :adozioni, dependent: :nullify
-
   has_one :libro, -> { where(user_id: Current.user&.id || -1) }, foreign_key: 'codice_isbn', primary_key: 'CODICEISBN'
-
-  include PgSearch::Model
-  search_fields = %i[TITOLO EDITORE DISCIPLINA AUTORI ANNOCORSO CODICEISBN CODICESCUOLA PREZZO]
-
-  pg_search_scope :search_combobox,
-                  against: %i[ANNOCORSO SEZIONEANNO TITOLO EDITORE DISCIPLINA],
-                  associated_against: {
-                    import_scuola: %i[DENOMINAZIONESCUOLA DESCRIZIONECOMUNE]
-                  },
-                  using: {
-                    tsearch: { any_word: false, prefix: true }
-                  }
-
-  pg_search_scope :search_all_word,
-                  against: search_fields,
-                  associated_against: {
-                    import_scuola: %i[DENOMINAZIONESCUOLA DESCRIZIONECOMUNE]
-                  },
-                  using: {
-                    tsearch: { any_word: false, prefix: true }
-                  }
-
-  pg_search_scope :search_any_word,
-                  against: search_fields,
-                  associated_against: {
-                    import_scuola: %i[DENOMINAZIONESCUOLA DESCRIZIONECOMUNE]
-                  },
-                  using: {
-                    tsearch: { any_word: true, prefix: true }
-                  }
 
   scope :per_scuola_classe_sezione_disciplina, -> { order(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :DISCIPLINA) }
 
@@ -126,12 +83,12 @@ class ImportAdozione < ApplicationRecord
 
   scope :mie_adozioni, -> { where(EDITORE: Current.user.miei_editori) }
   scope :nel_baule_di_oggi, lambda {
-    where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct
-      .where(id: Current.user.tappe.di_oggi.where(tappable_type: 'ImportScuola').pluck(:tappable_id)))
+    where(CODICESCUOLA: Scuola.select(:codice_ministeriale)
+      .where(id: Current.user.tappe.di_oggi.where(tappable_type: 'Scuola').pluck(:tappable_id)))
   }
   scope :nel_baule_di_domani, lambda {
-    where(CODICESCUOLA: ImportScuola.select(:CODICESCUOLA).distinct
-      .where(id: Current.user.tappe.di_domani.where(tappable_type: 'ImportScuola').pluck(:tappable_id)))
+    where(CODICESCUOLA: Scuola.select(:codice_ministeriale)
+      .where(id: Current.user.tappe.di_domani.where(tappable_type: 'Scuola').pluck(:tappable_id)))
   }
 
   scope :da_acquistare, -> { where(DAACQUIST: 'Si') }
@@ -220,23 +177,20 @@ class ImportAdozione < ApplicationRecord
     self.CONSIGLIATO
   end
 
-  def to_combobox_display
-    "#{scuola} #{citta} - #{classe_e_sezione} - #{titolo} #{editore}"
+  def current_adozione
+    adozioni.find { |a| a.account_id == Current.account&.id }
   end
 
-  def ssk
-    appunti
-      .joins(:import_adozione)
-      .select("import_adozioni.id,
-        count(CASE WHEN appunti.nome = 'saggio' THEN appunti.nome END ) AS saggi,
-        array_agg(CASE WHEN appunti.nome = 'saggio' THEN appunti.id END) AS saggi_ids,
+  def saggi
+    current_adozione&.saggi || ConsegnaSaggio.none
+  end
 
-        count(CASE WHEN appunti.nome = 'seguito' THEN appunti.nome END ) AS seguiti,
-        array_agg(CASE WHEN appunti.nome = 'seguito' THEN appunti.id END) AS seguiti_ids,
+  def kit
+    current_adozione&.kit_consegne || ConsegnaSaggio.none
+  end
 
-        count(CASE WHEN appunti.nome = 'kit' THEN  appunti.id END ) AS kit,
-        array_agg(CASE WHEN appunti.nome = 'kit' THEN appunti.id END) AS kit_ids")
-      .group('import_adozioni.id')
+  def seguiti
+    current_adozione&.seguiti || ConsegnaSaggio.none
   end
 
   def self.import_new_adozioni

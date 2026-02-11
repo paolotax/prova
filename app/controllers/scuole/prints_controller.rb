@@ -3,7 +3,7 @@
 module Scuole
   class PrintsController < ApplicationController
     def create
-      @scuole = current_account.import_scuole.where(id: params[:ids])
+      @scuole = current_account.scuole.where(id: params[:ids])
 
       respond_to do |format|
         format.pdf do

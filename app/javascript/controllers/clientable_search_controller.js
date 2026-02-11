@@ -25,7 +25,7 @@ export default class extends Controller {
     // Aggiorna il contatore usando getElementById
     const counter = document.getElementById('results-counter')
     const count = this.resultsTarget.querySelectorAll('input[type="checkbox"]').length
-    const label = type === 'ImportScuola' ? 'scuole' : 'clienti'
+    const label = type === 'Scuola' ? 'scuole' : 'clienti'
     counter.textContent = `${count} ${label} trovati`
   }
 } 

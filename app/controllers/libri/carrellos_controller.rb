@@ -13,7 +13,7 @@ class Libri::CarrellosController < ApplicationController
     if @documento.save
       @libri.each do |libro|
         cliente = @documento.clientable if @documento.clientable_type == "Cliente"
-        scuola = @documento.clientable if @documento.clientable_type == "ImportScuola"
+        scuola = @documento.clientable if @documento.clientable_type == "Scuola"
         sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, scuola: scuola, user: current_user)
 
         riga = Riga.create!(
@@ -48,7 +48,7 @@ class Libri::CarrellosController < ApplicationController
 
     @libri.each do |libro|
       cliente = @documento.clientable if @documento.clientable_type == "Cliente"
-      scuola = @documento.clientable if @documento.clientable_type == "ImportScuola"
+      scuola = @documento.clientable if @documento.clientable_type == "Scuola"
       sconto = Sconto.sconto_per_libro(libro: libro, cliente: cliente, scuola: scuola, user: current_user)
 
       riga = Riga.create!(

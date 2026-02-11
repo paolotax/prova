@@ -21,9 +21,6 @@ class Editore < ApplicationRecord
     has_many :mandati, dependent: :destroy
     has_many :users, through: :mandati
 
-    has_many :import_adozioni, foreign_key: "EDITORE", primary_key: "editore"
-    has_many :import_scuole, through: :import_adozioni
-
     # Relazione con sconti
     has_many :sconti, as: :scontabile, dependent: :destroy
 
@@ -36,12 +33,4 @@ class Editore < ApplicationRecord
     def self.ransackable_associations(_auth_object = nil)
         %w[editore gruppo]
     end
-    
-    def self.di_zona(user) 
-        
-        #Editore.joins(:import_adozioni).where("import_adozioni.REGIONE = ?", self.import_adozioni.first.REGIONE).distinct
-
-    end
-
-    
 end

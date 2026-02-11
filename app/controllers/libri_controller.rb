@@ -44,7 +44,7 @@ class LibriController < ApplicationController
     
     @giacenza = @libro.giacenza
 
-    @adozioni = current_user.mie_adozioni.includes(:import_scuola).where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
+    @adozioni = current_user.import_adozioni.mie_adozioni.includes(:import_scuola).where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
   end
 
 
@@ -135,10 +135,10 @@ class LibriController < ApplicationController
     if params[:cliente_id].present?
       cliente = current_user.clienti.find_by(id: params[:cliente_id])
     elsif params[:scuola_id].present?
-      scuola = current_user.import_scuole.find_by(id: params[:scuola_id])
+      scuola = current_account.scuole.find_by(id: params[:scuola_id])
     end
 
-    # Se il cliente è una ImportScuola e il libro ha un prezzo_suggerito, usa quello con sconto 0
+    # Se il cliente è una Scuola e il libro ha un prezzo_suggerito, usa quello con sconto 0
     if scuola.present? && @libro.prezzo_suggerito_cents.present? && @libro.prezzo_suggerito_cents > 0
       render json: {
         prezzo_copertina_cents: @libro.prezzo_suggerito_cents,

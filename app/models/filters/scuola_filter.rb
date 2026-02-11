@@ -51,7 +51,7 @@ module Filters
 
     def filter_con_appunti(scope)
       # Use .aperti scope instead of where.missing(:closure) for uuid/varchar compatibility
-      scope.joins(:appunti).merge(Current.user.appunti.non_saggi.attivi)
+      scope.joins(:appunti).merge(Current.user.appunti.attivi)
     end
 
     def filter_con_mie_adozioni(scope)

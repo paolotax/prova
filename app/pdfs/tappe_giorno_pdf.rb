@@ -126,20 +126,20 @@ class TappeGiornoPdf < Prawn::Document
     table_data = [["#", "Tipo", "Destinazione", "Indirizzo", "Note"]]
     
     tappe.each_with_index do |tappa, index|
-      tipo = tappa.tappable_type == 'ImportScuola' ? 'Scuola' : 'Cliente'
-      
+      tipo = tappa.tappable_type == 'Scuola' ? 'Scuola' : 'Cliente'
+
       destinazione = case tappa.tappable_type
-                     when 'ImportScuola'
-                       "#{tappa.tappable.DENOMINAZIONESCUOLA}"
+                     when 'Scuola'
+                       tappa.tappable.denominazione
                      when 'Cliente'
                        tappa.tappable.denominazione
                      else
                        tappa.tappable.denominazione rescue "N/D"
                      end
-      
+
       indirizzo = case tappa.tappable_type
-                  when 'ImportScuola'
-                    "#{tappa.tappable.INDIRIZZOSCUOLA}\n#{tappa.tappable.CAPSCUOLA} #{tappa.tappable.DESCRIZIONECOMUNE} (#{tappa.tappable.PROVINCIA})"
+                  when 'Scuola'
+                    "#{tappa.tappable.indirizzo}\n#{tappa.tappable.cap} #{tappa.tappable.comune} (#{tappa.tappable.provincia})"
                   when 'Cliente'
                     "#{tappa.tappable.indirizzo}\n#{tappa.tappable.cap} #{tappa.tappable.comune}"
                   else
@@ -225,7 +225,7 @@ class TappeGiornoPdf < Prawn::Document
     move_down 10
     
     # Conta per tipo
-    scuole_count = @tappe.count { |t| t.tappable_type == 'ImportScuola' }
+    scuole_count = @tappe.count { |t| t.tappable_type == 'Scuola' }
     clienti_count = @tappe.count { |t| t.tappable_type == 'Cliente' }
     
     summary_data = [

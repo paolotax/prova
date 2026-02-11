@@ -4,7 +4,7 @@
             <%= form_with model: current_user.tappe.build,
                         class: "" do |f| %>
                 <%= f.hidden_field :tappable_id, value: scuola.id %>
-                <%= f.hidden_field :tappable_type, value: "ImportScuola" %>
+                <%= f.hidden_field :tappable_type, value: "Scuola" %>
                 <%= f.hidden_field :giro_id, value: giro_id %>
                 
                 <%= tag.button class: [

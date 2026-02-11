@@ -51,20 +51,6 @@ class Tappa < ApplicationRecord
   positioned on: [:user, :data_tappa], column: :position
 
   
-  # controllare se filtrare per user_id
-  # NON FUNZIONA TAPPA
-  # belongs_to :import_scuola, -> { where(tappable_type == 'ImportScuola') }, class_name: 'ImportScuola', foreign_key: 'tappable_id'
-  # def import_scuola
-  #   return unless tappable_type == 'ImportScuola'
-  #   super
-  # end
-
-  # # belongs_to :cliente, class_name: 'Cliente', foreign_key: 'tappable_id'
-  # # def cliente
-  # #   return nil unless tappable_type == 'Cliente'
-  # #   super
-  # # end
-  
   scope :ultima, -> { order(created_at: :desc).first }
   
   scope :tappe_future, -> { order(data_tappa: :asc).where("data_tappa >= ?", Date.today) }
@@ -80,8 +66,8 @@ class Tappa < ApplicationRecord
   scope :del_mese, ->(day) { where(data_tappa: day.beginning_of_month..day.end_of_month) } 
   scope :dell_anno, ->(day) { where(data_tappa: day.beginning_of_year..day.end_of_year) }
 
-  scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids, tappable_type: 'ImportScuola') }
-  scope :della_provincia, ->(provincia) { joins(:import_scuola).where('import_scuole."PROVINCIA" = ?', provincia) }
+  scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids, tappable_type: 'Scuola') }
+  scope :della_provincia, ->(provincia) { joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'").where(scuole: { provincia: provincia }) }
 
   scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.zone.now.beginning_of_day) }
   
@@ -90,22 +76,23 @@ class Tappa < ApplicationRecord
   scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
   scope :da_programmare, -> { where(data_tappa: nil) }
 
-  scope :per_ordine_e_data, -> { 
-    joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'")
-    joins("INNER JOIN user_scuole ON tappe.tappable_id = user_scuole.import_scuola_id AND user_scuole.user_id = #{Current.user.id}")
-    .order('user_scuole.position') }
+  scope :per_ordine_e_data, -> {
+    joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
+    .order('scuole.posizione') }
   
   
   
   scope :per_data, -> { order(:data_tappa, :position) }
   scope :per_data_desc, -> { order(data_tappa: :desc, position: :desc) }
     
-  scope :per_comune_e_direzione, -> { joins(:import_scuola).order('import_scuole."PROVINCIA", import_scuole."DESCRIZIONECOMUNE", import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO"') }
+  scope :per_comune_e_direzione, -> {
+    joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
+    .order('scuole.provincia, scuole.comune, scuole.denominazione') }
 
-  scope :search, ->(search) { 
-        joins("INNER JOIN import_scuole ON tappe.tappable_id = import_scuole.id AND tappe.tappable_type = 'ImportScuola'")
-        .where('import_scuole."DENOMINAZIONESCUOLA" ILIKE ? OR import_scuole."DESCRIZIONECOMUNE" ILIKE ? OR import_scuole."DENOMINAZIONEISTITUTORIFERIMENTO" ILIKE ? OR tappe."titolo" ILIKE ?', 
-        "%#{search}%", "%#{search}%","%#{search}%", "%#{search}%") 
+  scope :search, ->(search) {
+    joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
+    .where('scuole.denominazione ILIKE ? OR scuole.comune ILIKE ? OR tappe.titolo ILIKE ?',
+      "%#{search}%", "%#{search}%", "%#{search}%")
   }
 
   delegate :latitude, :longitude, :denominazione, to: :tappable

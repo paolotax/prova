@@ -60,8 +60,8 @@ class ScontiController < ApplicationController
       @scontabile = Current.user.clienti.find(params[:cliente_id])
     elsif params[:editore_id]
       @scontabile = Current.user.editori.find(params[:editore_id])
-    elsif params[:import_scuola_id]
-      @scontabile = Current.user.import_scuole.find(params[:import_scuola_id])
+    elsif params[:scuola_id]
+      @scontabile = current_account.scuole.find(params[:scuola_id])
     end
   end
 
@@ -76,7 +76,7 @@ class ScontiController < ApplicationController
 
   def determine_tipo_sconto
     return :acquisto if @scontabile.is_a?(Editore)
-    return :vendita if @scontabile.is_a?(Cliente) || @scontabile.is_a?(ImportScuola)
+    return :vendita if @scontabile.is_a?(Cliente) || @scontabile.is_a?(Scuola)
     params[:tipo_sconto] || :vendita
   end
 

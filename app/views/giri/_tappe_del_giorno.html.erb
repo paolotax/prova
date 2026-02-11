@@ -38,7 +38,7 @@
               draggable: true,
               data: { 
                 school_id: scuola.id,
-                tappable_type: "ImportScuola",
+                tappable_type: "Scuola",
                 tappa_id: item.respond_to?(:tappable) ? item.id : nil,
                 action: "dragstart->tappa-dropzone#handleDragStart dragend->tappa-dropzone#handleDragEnd"
               } do %>
@@ -49,7 +49,7 @@
               </svg>
             </span>
 
-            <%= link_to import_scuola_path(scuola), class: "mr-2 hover:opacity-75 transition-opacity" do %>
+            <%= link_to scuola_path(scuola), class: "mr-2 hover:opacity-75 transition-opacity" do %>
                 <%= scuola.denominazione %>
             <% end %>
             

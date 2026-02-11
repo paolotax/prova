@@ -27,9 +27,8 @@ class AgendaController < ApplicationController
 
   def show
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
-    @scuole = current_user.import_scuole
-                .includes(:appunti_da_completare)
-                .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "ImportScuola").pluck(:tappable_id))        
+    @scuole = current_account.scuole
+                .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Scuola").pluck(:tappable_id))        
     @clienti = current_user.clienti
                 .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Cliente").pluck(:tappable_id))
     
@@ -54,7 +53,7 @@ class AgendaController < ApplicationController
         indirizzo.latitude,
         indirizzo.tappable.denominazione,
         indirizzo.tappable.comune,
-        indirizzo.tappable_type == "ImportScuola" ? indirizzo.tappable_id : nil
+        indirizzo.tappable_type == "Scuola" ? indirizzo.tappable_id : nil
       ]
     end
   end
@@ -74,47 +73,47 @@ class AgendaController < ApplicationController
               ia."CODICEISBN",
               ia."EDITORE",
               ia."DISCIPLINA",
-              is_scuola."DENOMINAZIONESCUOLA",
-              is_scuola.id as scuola_id,
+              s.denominazione AS "DENOMINAZIONESCUOLA",
+              s.id as scuola_id,
               ia."ANNOCORSO",
               STRING_AGG(DISTINCT ia."SEZIONEANNO", '' ORDER BY ia."SEZIONEANNO") as sezioni_concatenate,
               COUNT(ia.id) as adozioni_per_classe
           FROM import_adozioni ia
-              INNER JOIN import_scuole is_scuola ON ia."CODICESCUOLA" = is_scuola."CODICESCUOLA"
+              INNER JOIN scuole s ON ia."CODICESCUOLA" = s.codice_ministeriale AND s.account_id = $3
               INNER JOIN editori e ON ia."EDITORE" = e.editore
               INNER JOIN mandati m ON e.id = m.editore_id
               INNER JOIN tappe t ON (
-                  t.tappable_type = 'ImportScuola'
-                  AND t.tappable_id = is_scuola.id
+                  t.tappable_type = 'Scuola'
+                  AND t.tappable_id = s.id
                   AND t.data_tappa = $1
                   AND t.user_id = $2
               )
           WHERE m.user_id = $2 AND ia."DAACQUIST" = 'Si'
           GROUP BY
               ia."TITOLO", ia."CODICEISBN", ia."EDITORE", ia."DISCIPLINA",
-              is_scuola."DENOMINAZIONESCUOLA", is_scuola.id, ia."ANNOCORSO"
+              s.denominazione, s.id, ia."ANNOCORSO"
       ), saggi_per_adozione AS (
           SELECT
               ia."TITOLO",
               ia."CODICEISBN",
               ia."EDITORE",
               ia."DISCIPLINA",
-              is_scuola."DENOMINAZIONESCUOLA",
+              s.denominazione AS "DENOMINAZIONESCUOLA",
               ia."ANNOCORSO",
               ia."SEZIONEANNO",
               COUNT(a.id) as numero_saggi
           FROM appunti a
               INNER JOIN import_adozioni ia ON a.import_adozione_id = ia.id
-              INNER JOIN import_scuole is_scuola ON ia."CODICESCUOLA" = is_scuola."CODICESCUOLA"
+              INNER JOIN scuole s ON ia."CODICESCUOLA" = s.codice_ministeriale AND s.account_id = $3
               INNER JOIN tappe t ON (
-                  t.tappable_type = 'ImportScuola'
-                  AND t.tappable_id = is_scuola.id
+                  t.tappable_type = 'Scuola'
+                  AND t.tappable_id = s.id
                   AND t.data_tappa = $1
                   AND t.user_id = $2
               )
           WHERE a.nome = 'saggio' AND a.user_id = $2
           GROUP BY ia."TITOLO", ia."CODICEISBN", ia."EDITORE", ia."DISCIPLINA",
-                   is_scuola."DENOMINAZIONESCUOLA", ia."ANNOCORSO", ia."SEZIONEANNO"
+                   s.denominazione, ia."ANNOCORSO", ia."SEZIONEANNO"
       ), saggi_sommati AS (
           SELECT
               spa."TITOLO",
@@ -168,11 +167,12 @@ class AgendaController < ApplicationController
     SQL
 
     @adozioni = ActiveRecord::Base.connection.exec_query(
-      sql, 
-      'AdozioniTappe', 
+      sql,
+      'AdozioniTappe',
       [
         ActiveRecord::Relation::QueryAttribute.new('data_tappa', @giorno, ActiveRecord::Type::Date.new),
-        ActiveRecord::Relation::QueryAttribute.new('user_id', current_user.id, ActiveRecord::Type::Integer.new)
+        ActiveRecord::Relation::QueryAttribute.new('user_id', current_user.id, ActiveRecord::Type::Integer.new),
+        ActiveRecord::Relation::QueryAttribute.new('account_id', current_account.id, ActiveRecord::Type::String.new)
       ]
     )
 
@@ -200,7 +200,7 @@ class AgendaController < ApplicationController
     @documenti_per_tappa = {}
     
     # Recupera tutte le scuole e clienti delle tappe
-    scuole_ids = @tappe.select { |t| t.tappable_type == 'ImportScuola' }.map(&:tappable_id)
+    scuole_ids = @tappe.select { |t| t.tappable_type == 'Scuola' }.map(&:tappable_id)
     clienti_ids = @tappe.select { |t| t.tappable_type == 'Cliente' }.map(&:tappable_id)
     
     # Query ottimizzata per gli appunti delle scuole
@@ -214,7 +214,7 @@ class AgendaController < ApplicationController
       
       # Mappa i conteggi alle tappe corrispondenti
       @tappe.each do |tappa|
-        if tappa.tappable_type == 'ImportScuola'
+        if tappa.tappable_type == 'Scuola'
           @appunti_per_tappa[tappa.id] = appunti_counts[tappa.tappable_id] || 0
         else
           @appunti_per_tappa[tappa.id] = 0
@@ -230,7 +230,7 @@ class AgendaController < ApplicationController
       documenti_counts = current_user.documenti
         .left_joins(:consegna, :pagamento)
         .where(
-          "(clientable_type = 'ImportScuola' AND clientable_id IN (?)) OR (clientable_type = 'Cliente' AND clientable_id IN (?))",
+          "(clientable_type = 'Scuola' AND clientable_id IN (?)) OR (clientable_type = 'Cliente' AND clientable_id IN (?))",
           scuole_ids, clienti_ids
         )
         .where("consegne.id IS NULL OR pagamenti.id IS NULL")
@@ -264,16 +264,16 @@ class AgendaController < ApplicationController
     
     # Prende le tappe del giorno (solo scuole)
     @tappe = current_user.tappe.del_giorno(@giorno)
-                         .where(tappable_type: 'ImportScuola')
+                         .where(tappable_type: 'Scuola')
                          .includes(:tappable)
                          .order(:position)
     
     # Ottieni le scuole dalle tappe
-    @import_scuole = @tappe.map(&:tappable).uniq
-    
+    @scuole = @tappe.map(&:tappable).uniq
+
     respond_to do |format|
       format.pdf do
-        pdf = FoglioScuolaPdf.new(@import_scuole, view: view_context, tipo_stampa: tipo_stampa, con_sovrapacchi: con_sovrapacchi)
+        pdf = FoglioScuolaPdf.new(@scuole, view: view_context, tipo_stampa: tipo_stampa, con_sovrapacchi: con_sovrapacchi)
         
         filename_suffix = tipo_stampa == 'mie_adozioni' ? '_mie_adozioni' : ''
         sovrapacchi_suffix = con_sovrapacchi ? '_con_sovrapacchi' : ''
@@ -300,7 +300,7 @@ class AgendaController < ApplicationController
     @documenti_dettagliati = []
     
     @tappe.each do |tappa|
-      if tappa.tappable_type == 'ImportScuola'
+      if tappa.tappable_type == 'Scuola'
         # Appunti pendenti per questa scuola (escludendo SSK)
         appunti_scuola = current_user.appunti
           .where(import_scuola_id: tappa.tappable_id)
@@ -320,7 +320,7 @@ class AgendaController < ApplicationController
         # Documenti pendenti per questa scuola (non consegnati O non pagati)
         documenti_scuola = current_user.documenti
           .left_joins(:consegna, :pagamento)
-          .where(clientable_type: 'ImportScuola', clientable_id: tappa.tappable_id)
+          .where(clientable_type: 'Scuola', clientable_id: tappa.tappable_id)
           .where("consegne.id IS NULL OR pagamenti.id IS NULL")
           .includes(:clientable, :causale)
           .order(:data_documento)

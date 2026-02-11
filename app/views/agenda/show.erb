@@ -137,7 +137,7 @@
 
 <%# <div class="flex justify-center gap-4 m-4">
 
-        <%= link_to new_tappa_path(tappable_type: 'ImportScuola', data_tappa: @giorno),
+        <%= link_to new_tappa_path(tappable_type: 'Scuola', data_tappa: @giorno),
             class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
             data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
             <%# <%= icon_tag "academic-cap", variant: :solid, class: "w-6 h-6" %>

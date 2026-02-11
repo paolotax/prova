@@ -21,34 +21,32 @@ module Scuole
     #   #@mie_tappe ||= user.tappe.includes(:giri).where(tappable_id: scuola.id) 
     # end
 
-    # Keep the full association for when we need the actual records
     def import_adozioni
-      @import_adozioni ||= scuola.import_adozioni.includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
+      @import_adozioni ||= scuola.import_scuola&.import_adozioni&.includes(:classe, :libro, :import_scuola) || ImportAdozione.none
     end
 
     # Optimized: Group by classe to avoid N+1 queries in the view
     def mie_adozioni_by_classe
-      @mie_adozioni_by_classe ||= user.mie_adozioni
+      @mie_adozioni_by_classe ||= user.import_adozioni.mie_adozioni
                                       .select('import_adozioni.*')
-                                      .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
-                                      .where(CODICESCUOLA: scuola.CODICESCUOLA)
+                                      .includes(:classe, :libro, :import_scuola)
+                                      .where(CODICESCUOLA: scuola.codice_ministeriale)
                                       .group_by(&:classe)
     end
 
-    # Keep the original method for compatibility
     def mie_adozioni
-      @mie_adozioni ||= user.mie_adozioni
+      @mie_adozioni ||= user.import_adozioni.mie_adozioni
                           .select('import_adozioni.*')
-                          .includes(:classe, :libro, :import_scuola, :saggi, :seguiti, :kit)
-                          .where(CODICESCUOLA: scuola.CODICESCUOLA)
+                          .includes(:classe, :libro, :import_scuola)
+                          .where(CODICESCUOLA: scuola.codice_ministeriale)
     end
 
     def appunti_non_archiviati
-      @appunti_non_archiviati ||= scuola.appunti.non_archiviati.non_saggi
+      @appunti_non_archiviati ||= scuola.appunti.non_archiviati
     end
 
     def appunti_archiviati
-      @appunti_archiviati ||= scuola.appunti.where(stato: 'archiviato').non_saggi
+      @appunti_archiviati ||= scuola.appunti.where(stato: 'archiviato')
     end
 
     def documenti
@@ -56,7 +54,9 @@ module Scuole
     end
 
     def ssk
-      @ssk ||= scuola.appunti.ssk.includes(:import_scuola, :user)
+      @ssk ||= ConsegnaSaggio.joins(adozione: :classe)
+                              .where(classi: { codice_ministeriale_origine: scuola.codice_ministeriale })
+                              .where(consegne_saggio: { account_id: Current.account&.id })
     end
 
   

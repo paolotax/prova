@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_08_095832) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -438,6 +438,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_095832) do
     t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile"
     t.index ["consegnabile_type", "consegnabile_id"], name: "index_consegne_on_consegnabile_type_and_consegnabile_id", unique: true
     t.index ["user_id"], name: "index_consegne_on_user_id"
+  end
+
+  create_table "consegne_saggio", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "adozione_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "libro_id"
+    t.text "note"
+    t.integer "quantita", default: 1, null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id", "tipo"], name: "index_consegne_saggio_on_account_id_and_tipo"
+    t.index ["account_id"], name: "index_consegne_saggio_on_account_id"
+    t.index ["adozione_id", "tipo"], name: "index_consegne_saggio_on_adozione_id_and_tipo"
+    t.index ["adozione_id"], name: "index_consegne_saggio_on_adozione_id"
+    t.index ["libro_id"], name: "index_consegne_saggio_on_libro_id"
+    t.index ["user_id"], name: "index_consegne_saggio_on_user_id"
   end
 
   create_table "documenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

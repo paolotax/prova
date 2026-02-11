@@ -71,9 +71,9 @@
             <% end %>
 
             <div class="max-h-[180px] overflow-y-auto flex flex-wrap gap-2 bg-white border-x border-b border-gray-200 shadow-lg p-4 rounded-b-lg">                
-                <% current_user.import_scuole.where(id: @giro.excluded_ids).order(:position).each do |scuola| %>
+                <% current_account.scuole.where(id: @giro.excluded_ids).order(:posizione).each do |scuola| %>
                     <div class="inline-flex items-center gap-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium px-2.5 py-0.5">
-                        <%= link_to import_scuola_path(scuola), class: "hover:opacity-75 transition-opacity" do %>
+                        <%= link_to scuola_path(scuola), class: "hover:opacity-75 transition-opacity" do %>
                             <%= scuola.denominazione %>
                         <% end %>
 

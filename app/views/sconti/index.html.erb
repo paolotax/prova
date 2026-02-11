@@ -4,8 +4,8 @@
       <h1 class="text-3xl font-bold text-gray-900">
         Sconti
         <% if @scontabile %>
-          <% if @scontabile.is_a?(ImportScuola) %>
-            per Scuola: <span class="text-indigo-600"><%= @scontabile.DENOMINAZIONESCUOLA %></span>
+          <% if @scontabile.is_a?(Scuola) %>
+            per Scuola: <span class="text-indigo-600"><%= @scontabile.denominazione %></span>
           <% elsif @scontabile.is_a?(Cliente) %>
             per Cliente: <span class="text-indigo-600"><%= @scontabile.denominazione %></span>
           <% elsif @scontabile.is_a?(Editore) %>
@@ -68,12 +68,12 @@
                 <% desc = sconto.scontabile_description %>
                 <% case desc[:scope] %>
                 <% when :specific %>
-                  <% if sconto.scontabile.is_a?(ImportScuola) %>
+                  <% if sconto.scontabile.is_a?(Scuola) %>
                     <div class="flex items-center gap-2">
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
                         Scuola
                       </span>
-                      <%= link_to sconto.scontabile.DENOMINAZIONESCUOLA, import_scuola_path(sconto.scontabile), class: "text-indigo-600 hover:text-indigo-900 truncate" %>
+                      <%= link_to sconto.scontabile.denominazione, scuola_path(sconto.scontabile), class: "text-indigo-600 hover:text-indigo-900 truncate" %>
                     </div>
                   <% elsif sconto.scontabile.is_a?(Cliente) %>
                     <div class="flex items-center gap-2">

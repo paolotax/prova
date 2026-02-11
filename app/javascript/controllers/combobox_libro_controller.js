@@ -31,7 +31,7 @@ export default class extends Controller {
     let url = this.urlValue.replace("__ID__", idLibro)
     if (this.clientableIdValue && this.clientableTypeValue === "Cliente") {
       url += `?cliente_id=${this.clientableIdValue}`
-    } else if (this.clientableIdValue && this.clientableTypeValue === "ImportScuola") {
+    } else if (this.clientableIdValue && this.clientableTypeValue === "Scuola") {
       url += `?scuola_id=${this.clientableIdValue}`
     }
 

@@ -52,6 +52,9 @@ class Scuola < ApplicationRecord
   has_many :classi, dependent: :destroy
   has_many :adozioni, through: :classi
   has_many :persone, dependent: :destroy
+  has_many :documenti, as: :clientable
+  has_many :sconti, as: :scontabile, dependent: :destroy
+  has_many :tappe, as: :tappable
 
   validates :denominazione, presence: true
   validates :codice_ministeriale, uniqueness: { scope: :account_id }, allow_blank: true

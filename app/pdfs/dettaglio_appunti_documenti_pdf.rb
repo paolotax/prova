@@ -241,8 +241,8 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         clientable_type: documento.clientable_type,
         clientable_id: documento.clientable_id,
         cliente_nome: case documento.clientable_type
-                      when 'ImportScuola'
-                        documento.clientable&.DENOMINAZIONESCUOLA || "Scuola N/D"
+                      when 'Scuola'
+                        documento.clientable&.denominazione || "Scuola N/D"
                       when 'Cliente'
                         documento.clientable&.denominazione || "Cliente N/D"
                       else
@@ -258,7 +258,7 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         move_down 15
       end
       
-      tipo_cliente = cliente_info[:clientable_type] == 'ImportScuola' ? 'SCUOLA' : 'CLIENTE'
+      tipo_cliente = cliente_info[:clientable_type] == 'Scuola' ? 'SCUOLA' : 'CLIENTE'
       text "#{cliente_info[:tappa].position}. #{tipo_cliente}: #{truncate_text(cliente_info[:cliente_nome], 55)}", 
            size: 12, 
            style: :bold, 
@@ -445,8 +445,8 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
 
   def get_tappa_name(tappa)
     case tappa.tappable_type
-    when 'ImportScuola'
-      truncate_text(tappa.tappable.DENOMINAZIONESCUOLA, 20)
+    when 'Scuola'
+      truncate_text(tappa.tappable.denominazione, 20)
     when 'Cliente'
       truncate_text(tappa.tappable.denominazione, 20)
     else

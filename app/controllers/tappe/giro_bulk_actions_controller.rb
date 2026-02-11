@@ -10,7 +10,7 @@ module Tappe
       @tappe = params[:tappable_ids].map do |tappable_id|
         Tappa.new(
           giro: @giro,
-          tappable_type: "ImportScuola",
+          tappable_type: "Scuola",
           tappable_id: tappable_id,
           data_tappa: @data,
           user: current_user

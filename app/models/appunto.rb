@@ -59,9 +59,9 @@ class Appunto < ApplicationRecord
   belongs_to :account
   belongs_to :user
   
-  # belongs_to :import_scuola, required: false
-  # belongs_to :import_adozione, required: false
-  # belongs_to :classe, optional: true
+  belongs_to :import_scuola, required: false
+  belongs_to :import_adozione, required: false
+  belongs_to :classe, optional: true
 
   belongs_to :appuntabile, polymorphic: true, optional: true
 
@@ -115,8 +115,6 @@ class Appunto < ApplicationRecord
     'rimandati'   => 'Rimandati',
     'completati'  => 'Completati',
   }.freeze
-
-  scope :non_saggi, -> { where.not(nome: %w[saggio seguito kit]).or(where(nome: nil)) }
 
   scope :search_appunti, ->(query) {
     left_joins_appuntabile
@@ -195,11 +193,6 @@ class Appunto < ApplicationRecord
     order(Arel.sql(GOLDEN_SORT_SQL))
   }
 
-  scope :saggi, -> { where(nome: 'saggio') }
-  scope :seguiti, -> { where(nome: 'seguito') }
-  scope :kit, -> { where(nome: 'kit') }
-  scope :ssk, -> { where(nome: %w[saggio seguito kit]) }
-
   def content_to_s
     content.to_s.gsub('<div class="trix-content">', '')
            .gsub('</div>', '')
@@ -270,22 +263,6 @@ class Appunto < ApplicationRecord
       end
     end
     file_attachments
-  end
-
-  def is_saggio?
-    nome == 'saggio' && import_adozione.present?
-  end
-
-  def is_seguito?
-    nome == 'seguito' && import_adozione.present?
-  end
-
-  def is_kit?
-    nome == 'kit' && import_adozione.present?
-  end
-
-  def is_ssk?
-    %w[saggio seguito kit].include?(nome) && import_adozione.present?
   end
 
   # Calcoli totali righe
