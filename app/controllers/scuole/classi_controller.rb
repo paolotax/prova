@@ -10,7 +10,9 @@ module Scuole
     end
 
     def show
-      @adozioni = @classe.adozioni.order(:disciplina, :titolo)
+      @adozioni = @classe.adozioni
+                    .includes(:saggi, :kit_consegne, :seguiti, :libro)
+                    .order(:disciplina, :titolo)
     end
 
     def create

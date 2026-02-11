@@ -22,35 +22,59 @@
   </div>
 <% end %>
 
-<!-- Breadcrumb -->
-<nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
-  <%= link_to scuole_path, class: "txt-link" do %>
-    Scuole
-  <% end %>
-  <%= icon_tag "chevron-right", size: "small" %>
-  <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
-  <%= icon_tag "chevron-right", size: "small" %>
-  <span class="font-weight-bold">Classe <%= @classe.nome_breve %></span>
-</nav>
+<div class="panel center" style="--panel-size: 100ch;">
 
-<!-- Info classe -->
-<section class="panel shadow pad margin-block-end">
+  <!-- Breadcrumb -->
+  <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
+    <%= link_to scuole_path, class: "txt-link" do %>
+      Scuole
+    <% end %>
+    <%= icon_tag "chevron-right", size: "small" %>
+    <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
+    <%= icon_tag "chevron-right", size: "small" %>
+    <span class="font-weight-bold">Classe <%= @classe.nome_breve %></span>
+  </nav>
+
+  <!-- Info classe -->
   <div class="flex align-center gap margin-block-end">
     <div class="flex align-center justify-center border-radius txt-x-large font-weight-black" style="width: 4rem; height: 4rem; background: var(--color-positive-lighter); color: var(--color-positive-dark);">
       <%= @classe.nome_breve %>
     </div>
     <div>
-      <h2 class="txt-medium font-weight-bold"><%= @scuola.denominazione %></h2>
+      <h2 class="txt-medium font-weight-bold margin-none"><%= @scuola.denominazione %></h2>
       <% if @classe.combinazione.present? %>
-        <p class="txt-small txt-subtle"><%= @classe.combinazione %></p>
+        <p class="txt-small txt-subtle margin-none"><%= @classe.combinazione %></p>
       <% end %>
       <% if @classe.tipo_scuola.present? %>
-        <p class="txt-xx-small txt-subtle"><%= @classe.tipo_scuola %></p>
+        <p class="txt-xx-small txt-subtle margin-none"><%= @classe.tipo_scuola %></p>
       <% end %>
     </div>
   </div>
 
-  <div class="flex gap-half flex-wrap">
+  <dl class="dl-grid txt-small">
+    <dt class="txt-subtle">Anno Corso</dt>
+    <dd class="font-weight-bold"><%= @classe.anno_corso %></dd>
+
+    <dt class="txt-subtle">Sezione</dt>
+    <dd class="font-weight-bold"><%= @classe.sezione.presence || "—" %></dd>
+
+    <% if @classe.numero_alunni.present? && @classe.numero_alunni > 0 %>
+      <dt class="txt-subtle">Alunni</dt>
+      <dd class="font-weight-bold"><%= @classe.numero_alunni %></dd>
+    <% end %>
+
+    <% if @classe.comune.present? %>
+      <dt class="txt-subtle">Comune</dt>
+      <dd><%= @classe.comune %></dd>
+    <% end %>
+
+    <% if @classe.provincia.present? %>
+      <dt class="txt-subtle">Provincia</dt>
+      <dd><%= @classe.provincia %></dd>
+    <% end %>
+  </dl>
+
+  <div class="flex gap-half flex-wrap margin-block-start">
     <span class="badge txt-xx-small"><%= @adozioni.count %> adozioni</span>
     <% if @adozioni.da_acquistare_flag.any? %>
       <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
@@ -62,14 +86,15 @@
         <%= @adozioni.nuove.count %> nuove
       </span>
     <% end %>
+    <% if @adozioni.mie.any? %>
+      <span class="badge txt-xx-small" style="background: var(--color-positive-lighter); color: var(--color-positive-dark);">
+        <%= @adozioni.mie.count %> mie
+      </span>
+    <% end %>
   </div>
-</section>
 
-<!-- Tabella adozioni -->
-<section class="panel shadow">
-  <div class="pad" style="border-bottom: 1px solid var(--color-ink-lighter);">
-    <h3 class="txt-medium font-weight-bold">Adozioni</h3>
-  </div>
+  <!-- Adozioni -->
+  <h3 class="divider divider--fade txt-medium font-weight-black">Adozioni</h3>
 
   <% if @adozioni.any? %>
     <div style="overflow-x: auto;">
@@ -77,10 +102,9 @@
         <thead>
           <tr>
             <th class="txt-left">Titolo</th>
-            <th class="txt-left">Editore</th>
             <th class="txt-left">Disciplina</th>
             <th class="txt-right">Prezzo</th>
-            <th class="txt-center">Flags</th>
+            <th class="txt-center">Omaggi</th>
           </tr>
         </thead>
         <tbody>
@@ -90,32 +114,66 @@
                 <div class="txt-small font-weight-bold overflow-ellipsis" style="max-width: 300px;" title="<%= adozione.titolo %>">
                   <%= adozione.titolo %>
                 </div>
-                <div class="txt-xx-small txt-subtle mono"><%= adozione.codice_isbn %></div>
+                <div class="txt-xx-small txt-subtle"><%= adozione.editore %></div>
               </td>
-              <td class="txt-small"><%= adozione.editore %></td>
               <td class="txt-small"><%= adozione.disciplina %></td>
               <td class="txt-small txt-right font-weight-bold">
                 <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
               </td>
               <td class="txt-center">
-                <div class="flex align-center justify-center gap-quarter">
-                  <% if adozione.nuova_adozione %>
-                    <span class="badge txt-xx-small" style="background: var(--color-link-lighter); color: var(--color-link);" title="Nuova adozione">N</span>
-                  <% end %>
-                  <% if adozione.da_acquistare %>
-                    <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);" title="Da acquistare">A</span>
-                  <% end %>
-                  <% if adozione.consigliato %>
-                    <span class="badge txt-xx-small" style="background: var(--color-notice-lighter); color: var(--color-notice-dark);" title="Consigliato">C</span>
-                  <% end %>
-                </div>
+                <% if adozione.mia? %>
+                  <div class="flex align-center justify-center gap-quarter flex-wrap">
+                    <%# Badge consegne esistenti (click = elimina) %>
+                    <% adozione.saggi.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #FF0000; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare saggio?" } do %>S<% end %>
+                    <% end %>
+                    <% adozione.kit_consegne.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #FF1493; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare kit?" } do %>K<% end %>
+                    <% end %>
+                    <% adozione.seguiti.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #0080FF; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare seguito?" } do %>F<% end %>
+                    <% end %>
+
+                    <%# Pulsanti per creare %>
+                    <% if adozione.saggi.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                          params: { adozione_id: adozione.id, tipo: "saggio" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+S<% end %>
+                    <% end %>
+                    <% if adozione.kit_consegne.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                          params: { adozione_id: adozione.id, tipo: "kit" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+K<% end %>
+                    <% end %>
+                    <% if adozione.seguiti.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                          params: { adozione_id: adozione.id, tipo: "seguito" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+F<% end %>
+                    <% end %>
+                  </div>
+                <% end %>
               </td>
             </tr>
           <% end %>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="3" class="txt-small font-weight-bold">Totale</td>
+            <td colspan="2" class="txt-small font-weight-bold">Totale</td>
             <td class="txt-small txt-right font-weight-black">
               <%= number_to_currency(@adozioni.sum(:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %>
             </td>
@@ -125,8 +183,7 @@
       </table>
     </div>
   <% else %>
-    <div class="pad txt-center">
-      <%= icon_tag "book-open", size: "large", class: "txt-subtle margin-block-end-half" %>
+    <div class="txt-center margin-block">
       <h3 class="txt-medium font-weight-bold">Nessuna adozione</h3>
       <p class="txt-small txt-subtle margin-block-end">Questa classe non ha ancora adozioni registrate.</p>
       <%= button_to "Importa Adozioni",
@@ -135,4 +192,19 @@
           class: "btn btn--primary" %>
     </div>
   <% end %>
-</section>
+
+  <!-- Entries attive -->
+  <h3 class="divider divider--fade txt-medium font-weight-black">Attività Recenti</h3>
+
+  <%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 60px;" do %>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+  <% end %>
+
+  <!-- Entries completate -->
+  <h3 class="divider divider--fade txt-medium font-weight-black">Completati</h3>
+
+  <%= turbo_frame_tag "closed_entries", src: scuola_classe_closed_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+  <% end %>
+
+</div>

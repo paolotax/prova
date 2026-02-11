@@ -419,6 +419,11 @@ Rails.application.routes.draw do
           member do
             post :import_adozioni
           end
+          scope module: :classi do
+            resource :entries, only: [:show]
+            resource :closed_entries, only: [:show]
+            resources :consegne_saggio, only: [:create, :destroy]
+          end
         end
       end
     end

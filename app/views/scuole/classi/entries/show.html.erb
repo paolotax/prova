@@ -1,0 +1,20 @@
+<%= turbo_frame_tag "classe_entries" do %>
+  <% if @entries.any? %>
+    <div class="cards">
+      <% @entries.each do |entry| %>
+        <%= render "entries/entry", entry: entry, draggable: false %>
+      <% end %>
+    </div>
+  <% elsif (@appunti || []).any? || (@documenti || []).any? %>
+    <div class="cards">
+      <% (@appunti || []).each do |appunto| %>
+        <%= render "appunti/appunto", appunto: appunto, draggable: false %>
+      <% end %>
+      <% (@documenti || []).each do |documento| %>
+        <%= render "documenti/documento", documento: documento, draggable: false %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="txt-small txt-subtle margin-none">Nessuna attività</p>
+  <% end %>
+<% end %>
