@@ -47,9 +47,6 @@ module Filters
       # Causale filter
       result = result.where(causale_id: causali) if causali.present?
 
-      # Status filter
-      result = result.where(status: statuses) if statuses.present?
-
       # Tipo pagamento filter (via Pagamento state record)
       result = result.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipi_pagamento }) if tipi_pagamento.present?
 

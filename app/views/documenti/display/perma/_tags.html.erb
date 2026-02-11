@@ -1,12 +1,6 @@
 <%# locals: (documento:) -%>
 
 <div id="<%= dom_id(documento, :tags) %>" class="card__tags">
-  <% if documento.status.present? %>
-    <span class="card__tag btn btn--plain txt-uppercase fill-transparent">
-      <%= documento.status.humanize %>
-    </span>
-  <% end %>
-
   <% if documento.tipo_pagamento.present? %>
     <span class="card__tag btn btn--plain txt-uppercase fill-transparent">
       <%= documento.tipo_pagamento.titleize %>

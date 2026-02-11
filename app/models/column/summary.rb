@@ -85,7 +85,7 @@ class Column::Summary
 
   def entries
     @entries ||= Entry.load_entryables(
-      account.entries.non_ssk.active.in_column(column)
+      account.entries.published.active.in_column(column)
              .with_golden_first.recent
              .includes(:goldness, :closure, :not_now)
     )

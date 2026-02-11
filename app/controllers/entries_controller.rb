@@ -4,7 +4,7 @@ class EntriesController < ApplicationController
   before_action :set_entry, only: [:show]
 
   def index
-    @entries = Current.account.entries.non_ssk.includes(:column, :goldness, :closure, :not_now)
+    @entries = Current.account.entries.published.includes(:column, :goldness, :closure, :not_now)
 
     # Filter by type
     @entries = @entries.where(entryable_type: params[:type]) if params[:type].present?

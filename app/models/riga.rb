@@ -60,7 +60,7 @@ class Riga < ApplicationRecord
   end
 
   def ordine
-    documenti.where("status = 0").first || ' nessuno '
+    documenti.joins(:causale).where(causali: { tipo_movimento: :ordine }).first || ' nessuno '
   end
 
   private

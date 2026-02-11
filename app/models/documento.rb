@@ -65,11 +65,8 @@ class Documento < ApplicationRecord
     allow_destroy: true,
     reject_if: proc { |attrs| attrs[:riga_attributes].blank? && attrs[:riga_id].blank? }
 
-  before_save :imposta_stato_iniziale_da_causale, if: :causale_id_changed?
   before_save :ricalcola_totali_se_necessario
   after_create_commit :ricalcola_totali_dopo_creazione
-  after_update :propaga_stato_ai_figli, if: :saved_change_to_status?
-  after_destroy :riporta_documenti_orfani_a_stato_precedente
   before_destroy :riapri_documenti_figli, prepend: true
 
   # Callback per concern: propaga pagamento ai figli e auto-close
@@ -78,11 +75,9 @@ class Documento < ApplicationRecord
   # Rimosso: la chiusura del documento origine viene gestita nel controller
   # after_create :close_if_has_padre
 
-  enum :status, { ordine: 0, in_consegna: 1, da_pagare: 2, da_registrare: 3, corrispettivi: 4, fattura: 5, bozza: 6 }
-
   # tipo_pagamento ora è sul modello Pagamento (concern Pagabile)
-  # enum tipo_movimento: { ordine: 0, vendita: 1, carico: 2 }
-  # enum movimento: { entrata: 0, uscita: 1 }
+  # status, consegnato_il, pagato_il: colonne legacy mantenute nel DB
+  # La gestione stati è nei concern Consegnabile/Pagabile
 
   delegate :tipo_movimento, :movimento, to: :causale, allow_nil: true
 
@@ -172,19 +167,13 @@ class Documento < ApplicationRecord
       cliente: %i[clientable_type clientable_id referente note],
       dettaglio: [documento_righe_attributes:
                     [:id, :posizione,
-                     { riga_attributes: %i[id libro_id quantita prezzo prezzo_cents prezzo_copertina_cents sconto iva_cents status _destroy] }]],
-      stato_documento: %i[status]
+                     { riga_attributes: %i[id libro_id quantita prezzo prezzo_cents prezzo_copertina_cents sconto iva_cents _destroy] }]]
     }
   end
 
   def required_for_step?(step)
-    # Bozza documents don't require validation
-    return false if status == 'bozza'
-
-    # All fields are required if no form step is present
     return true if form_step.nil?
 
-    # All fields from previous steps are required
     ordered_keys = self.class.form_steps.keys.map(&:to_sym)
     !!(ordered_keys.index(step) <= ordered_keys.index(form_step))
   end
@@ -198,16 +187,7 @@ class Documento < ApplicationRecord
   end
 
   def vendita?
-    tipo_movimento == 'vendita' || (tipo_movimento == 'ordine' && status != 'ordine')
-  end
-
-  # poi
-  def ordine_evaso?
-    tipo_movimento == 'ordine' && status != 'ordine'
-  end
-
-  def ordine_in_corso?
-    tipo_movimento == 'ordine' && status == 'ordine'
+    tipo_movimento == 'vendita'
   end
 
   def registrato?
@@ -261,8 +241,7 @@ class Documento < ApplicationRecord
       causale: causale_nuova,
       clientable: clientable,
       user: user,
-      data_documento: Date.today,
-      status: causale_nuova.stato_iniziale || 'bozza'
+      data_documento: Date.today
     )
 
     nuovo.assign_attributes(attributes)
@@ -411,50 +390,12 @@ class Documento < ApplicationRecord
     end
   end
 
-  # Trova lo stato precedente nella gerarchia degli stati_successivi della propria causale
-  def trova_stato_precedente_nella_causale
-    Rails.logger.debug "    trova_stato_precedente_nella_causale per: #{causale&.causale}"
-    Rails.logger.debug "      status corrente: #{status}"
-    Rails.logger.debug "      stati_successivi: #{causale&.stati_successivi.inspect}"
-
-    return nil unless status.present?
-    return nil unless causale&.stati_successivi.present?
-
-    # stati_successivi è un JSON array di stati in ordine per questa causale
-    stati = causale.stati_successivi
-    return nil unless stati.is_a?(Array) && stati.any?
-
-    Rails.logger.debug "      array stati: #{stati.inspect}"
-
-    # Trova l'indice dello stato corrente del documento
-    indice_corrente = stati.index(status.to_s)
-    Rails.logger.debug "      indice_corrente: #{indice_corrente.inspect}"
-
-    return nil unless indice_corrente && indice_corrente > 0
-
-    # Ritorna lo stato precedente nell'array
-    stato_prec = stati[indice_corrente - 1]
-    Rails.logger.debug "      stato precedente: #{stato_prec}"
-    stato_prec
-  end
-
   private
 
   # Ricalcola totali dopo creazione (dopo commit, quando tutte le righe sono nel DB)
   def ricalcola_totali_dopo_creazione
     righe.reset
     ricalcola_totali!
-  end
-
-  # Imposta lo stato iniziale dalla causale quando viene creato un documento
-  def imposta_stato_iniziale_da_causale
-    return if status.present? # Non sovrascrivere se già impostato
-    return unless causale&.stato_iniziale.present?
-
-    # Verifica che lo stato_iniziale sia valido per l'enum status
-    if Documento.statuses.key?(causale.stato_iniziale)
-      self.status = causale.stato_iniziale
-    end
   end
 
   # Ricalcola i totali se ci sono righe ma i totali non sono impostati
@@ -467,13 +408,6 @@ class Documento < ApplicationRecord
 
     self.totale_cents = totale_importo_calcolato
     self.totale_copie = totale_copie_calcolato
-  end
-
-  # Propaga lo stato a tutti i documenti figli quando viene modificato
-  def propaga_stato_ai_figli
-    tutti_i_discendenti.each do |discendente|
-      discendente.update_column(:status, status)
-    end
   end
 
   # Propaga il pagamento a tutti i documenti figli
@@ -510,38 +444,6 @@ class Documento < ApplicationRecord
   def riapri_documenti_figli
     documenti_derivati.each do |figlio|
       figlio.reopen if figlio.closed?
-    end
-  end
-
-  # Riporta tutti i documenti collegati dello stesso cliente allo stato precedente
-  def riporta_documenti_orfani_a_stato_precedente
-    return unless clientable_id && clientable_type
-
-    Rails.logger.debug "=== RIPORTA DOCUMENTI A STATO PRECEDENTE ==="
-    Rails.logger.debug "Documento eliminato: #{id} - #{causale&.causale} - status: #{status} - priorità: #{causale&.priorita}"
-
-    # Lo stato target è lo stato precedente del documento ELIMINATO
-    stato_target = trova_stato_precedente_nella_causale
-
-    unless stato_target
-      Rails.logger.debug "  Nessuno stato precedente trovato per il documento eliminato"
-      return
-    end
-
-    Rails.logger.debug "  Stato target da applicare: #{stato_target}"
-
-    # Trova TUTTI i documenti dello stesso cliente
-    tutti_documenti = Documento.where(
-      clientable_id: clientable_id,
-      clientable_type: clientable_type
-    )
-
-    Rails.logger.debug "  Documenti totali del cliente: #{tutti_documenti.count}"
-
-    # Aggiorna tutti i documenti con lo stato precedente
-    tutti_documenti.each do |doc|
-      Rails.logger.debug "    Aggiorno: #{doc.id} - #{doc.causale&.causale} da #{doc.status} a #{stato_target}"
-      doc.update_column(:status, Documento.statuses[stato_target])
     end
   end
 

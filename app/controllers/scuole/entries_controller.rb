@@ -9,10 +9,9 @@ module Scuole
       # IDs delle classi della scuola
       classe_ids = @scuola.classi.pluck(:id)
 
-      # Appunti: scuola + classi (escludi SSK)
-      appunti_scuola = @scuola.appunti.where.not(nome: %w[saggio seguito kit])
-      appunti_classi = Appunto.where(appuntabile_type: "Classe", appuntabile_id: classe_ids)
-                              .where.not(nome: %w[saggio seguito kit])
+      # Appunti: scuola + classi (solo pubblicati)
+      appunti_scuola = @scuola.appunti.published
+      appunti_classi = Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids)
       appunto_ids = (appunti_scuola.pluck(:id) + appunti_classi.pluck(:id)).map(&:to_s)
 
       # Documenti: scuola + classi

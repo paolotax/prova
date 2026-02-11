@@ -20,14 +20,6 @@ module Filters
       filter.causali.any?
     end
 
-    def statuses_disponibili
-      ::Documento.statuses.keys
-    end
-
-    def show_statuses?
-      filter.statuses.any?
-    end
-
     def tipi_pagamento_disponibili
       ::Documento.tipo_pagamenti.keys
     end
@@ -73,7 +65,6 @@ module Filters
     def filters_active?
       filter.terms.present? ||
       filter.causali.present? ||
-      filter.statuses.present? ||
       filter.tipi_pagamento.present? ||
       filter.clientable_type.present? ||
       filter.anno.present? ||

@@ -7,10 +7,7 @@ module Scuole
       before_action :set_classe
 
       def show
-        # Appunti della classe (escludi SSK)
-        appunto_ids = @classe.appunti
-                             .where.not(nome: %w[saggio seguito kit])
-                             .pluck(:id).map(&:to_s)
+        appunto_ids = @classe.appunti.published.pluck(:id).map(&:to_s)
 
         # Documenti della classe
         documento_ids = Documento.where(clientable: @classe)

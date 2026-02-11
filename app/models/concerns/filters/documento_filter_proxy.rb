@@ -15,7 +15,6 @@ module Filters
 
     filter_scope :search_libro, ->(search) { joins(documento_righe: [riga: :libro]).where("libri.titolo ILIKE ?", "%#{search}%").distinct }
     filter_scope :causale, ->(causale) { joins(:causale).where("causali.causale ILIKE ?", "%#{causale}%") }
-    filter_scope :status, ->(status) { where(status: status) }
     filter_scope :tipo_pagamento, ->(tipo_pagamento) {
       joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento })
     }
@@ -65,7 +64,6 @@ module Filters
           LEFT JOIN pagamenti ON documenti.id = pagamenti.pagabile_id
             AND pagamenti.pagabile_type = 'Documento'
           WHERE (DATE(consegne.consegnato_il) = #{sanitized_date} OR DATE(pagamenti.pagato_il) = #{sanitized_date})
-            AND documenti.status in (2, 3, 4, 5)
         )
       SQL
 

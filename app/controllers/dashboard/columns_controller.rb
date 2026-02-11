@@ -5,7 +5,7 @@ class Dashboard::ColumnsController < ApplicationController
 
   def show
     set_page_and_extract_portion_from current_account.entries
-                                                      .non_ssk
+                                                      .published
                                                       .active
                                                       .in_column(@column)
                                                       .includes(:goldness, :closure, :not_now)

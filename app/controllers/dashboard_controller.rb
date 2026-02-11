@@ -6,7 +6,7 @@ class DashboardController < ApplicationController
   FILTER_PARAMS = ::Filters::EntryFilter::Fields::PERMITTED_PARAMS
 
   def index
-    base_scope = current_account.entries.non_ssk
+    base_scope = current_account.entries.published
 
     # Se filtri attivi, mostra risultati filtrati invece di kanban
     if @filter.used?

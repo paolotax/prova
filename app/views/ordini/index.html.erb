@@ -11,18 +11,6 @@
 <div class="flex flex-col gap-4">
         <%= h1 { "Ordini in corso" } %>
 
-        <div class="flex items-center gap-4">
-            <%= form_with url: request.path, method: :get, data: { turbo_frame: "_top" } do |f| %>
-                <%= select_tag :status,
-                    options_for_select(Documento.statuses.map { |k, v| [k.titleize, v] }, params[:status]),
-                    class: "rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
-                    data: {
-                        controller: "auto-submit",
-                        action: "change->auto-submit#submit"
-                    } %>
-            <% end %>
-        </div>
-
         <div class="flex">
             <%= render StatComponent.new(
                 title: "Totale Copie",
@@ -52,16 +40,16 @@
         </div>
 
     <div class="flex gap-4">
-        <%= link_to "Raggruppa per Titolo", request.path + "?status=#{params[:status]}",
+        <%= link_to "Raggruppa per Titolo", request.path,
             class: "px-4 py-2 rounded-lg #{params[:group_by].nil? || params[:group_by] == 'titolo' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-        <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente&status=#{params[:status]}",
+        <%= link_to "Raggruppa per Cliente", request.path + "?group_by=cliente",
             class: "px-4 py-2 rounded-lg #{params[:group_by] == 'cliente' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-        <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine&status=#{params[:status]}",
+        <%= link_to "Raggruppa per Ordine", request.path + "?group_by=ordine",
             class: "px-4 py-2 rounded-lg #{params[:group_by] == 'ordine' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
 
-        <%= link_to "Mappa", request.path + "?group_by=mappa&status=#{params[:status]}",
+        <%= link_to "Mappa", request.path + "?group_by=mappa",
             class: "px-4 py-2 rounded-lg #{params[:group_by] == 'mappa' ? 'bg-indigo-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}" %>
     </div>
 </div>

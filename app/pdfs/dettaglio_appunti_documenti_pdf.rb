@@ -267,39 +267,37 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
       move_down 5
       
       # Tabella documenti per questo cliente/scuola
-      table_data = [["Tipo Doc.", "N° Doc.", "Data", "Stato", "Consegnato", "Pagato", "Referente", "Note", "Copie", "Importo"]]
-      
+      table_data = [["Tipo Doc.", "N° Doc.", "Data", "Consegnato", "Pagato", "Referente", "Note", "Copie", "Importo"]]
+
       documenti_cliente.each do |item|
         documento = item[:documento]
-        
+
         tipo_doc = documento.causale&.causale || "N/D"
         numero_doc = documento.numero_documento&.to_s || "N/D"
         data_doc = documento.data_documento ? I18n.l(documento.data_documento, format: :short, locale: :it) : "N/D"
-        stato = documento.status&.humanize || "N/D"
-        
+
         # Date di consegna e pagamento
         consegnato = documento.consegnato_il ? I18n.l(documento.consegnato_il.to_date, format: :short, locale: :it) : "NO"
         pagato = documento.pagato_il ? I18n.l(documento.pagato_il.to_date, format: :short, locale: :it) : "NO"
-        
+
         # Referente e note
         referente = documento.referente.present? ? truncate_text(documento.referente, 20) : "-"
         note = documento.note.present? ? truncate_text(documento.note, 25) : "-"
-        
+
         # Totale copie calcolato dalle righe
         totale_copie = documento.totale_copie || 0
-        
+
         # Importo calcolato dalle righe
         importo_calcolato = documento.totale_importo
         importo = importo_calcolato > 0 ? "€ #{sprintf('%.2f', importo_calcolato)}" : "-"
-        
+
         # Tronca i testi
         tipo_doc = truncate_text(tipo_doc, 15)
-        
+
         table_data << [
           tipo_doc,
           numero_doc,
           data_doc,
-          stato,
           consegnato,
           pagato,
           referente,
@@ -308,11 +306,11 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
           importo
         ]
       end
-      
-      table(table_data, 
+
+      table(table_data,
             header: true,
             width: bounds.width,
-            column_widths: [60, 40, 40, 50, 50, 50, 60, 80, 30, bounds.width - 460],
+            column_widths: [60, 40, 40, 50, 50, 60, 80, 30, bounds.width - 410],
             cell_style: { 
               size: 8, 
               padding: [3, 4],
@@ -331,21 +329,20 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
         column(0).align = :left   # Tipo Doc
         column(1).align = :center # N° Doc
         column(2).align = :center # Data
-        column(3).align = :center # Stato
-        column(4).align = :center # Consegnato
-        column(5).align = :center # Pagato
-        column(6).align = :left   # Referente
-        column(7).align = :left   # Note
-        column(8).align = :center # Copie
-        column(9).align = :right  # Importo
-        
+        column(3).align = :center # Consegnato
+        column(4).align = :center # Pagato
+        column(5).align = :left   # Referente
+        column(6).align = :left   # Note
+        column(7).align = :center # Copie
+        column(8).align = :right  # Importo
+
         # Colore alternato per le righe
         (1...row_length).each do |i|
           row(i).background_color = i.odd? ? "FFFFFF" : "F8F8F8"
-          
+
           # Evidenzia documenti pendenti
-          consegnato_val = table_data[i][4] # colonna consegnato
-          pagato_val = table_data[i][5] # colonna pagato
+          consegnato_val = table_data[i][3] # colonna consegnato
+          pagato_val = table_data[i][4] # colonna pagato
           
           if consegnato_val == "NO" && pagato_val == "NO"
             row(i).background_color = "FFE6E6" # Rosso chiaro - né consegnato né pagato

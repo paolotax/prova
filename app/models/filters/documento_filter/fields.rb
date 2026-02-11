@@ -9,7 +9,6 @@ module Filters
         :stato_documento,
         terms: [],
         causali: [],
-        statuses: [],
         tipi_pagamento: []
       ].freeze
 
@@ -20,7 +19,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :terms, :causali, :statuses, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type, :stato_documento
+        store_accessor :fields, :terms, :causali, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type, :stato_documento
 
         def terms
           Array(super)
@@ -35,14 +34,6 @@ module Filters
         end
 
         def causali=(value)
-          super(Array(value).filter(&:present?))
-        end
-
-        def statuses
-          Array(super)
-        end
-
-        def statuses=(value)
           super(Array(value).filter(&:present?))
         end
 
@@ -79,7 +70,6 @@ module Filters
         @as_params ||= {}.tap do |params|
           params[:terms] = terms
           params[:causali] = causali
-          params[:statuses] = statuses
           params[:tipi_pagamento] = tipi_pagamento
           params[:anno] = anno
           params[:consegnati] = consegnati

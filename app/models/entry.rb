@@ -74,7 +74,7 @@ class Entry < ApplicationRecord
   scope :tappe, -> { where(entryable_type: "Tappa") }
 
   # Exclude drafted appunti from kanban/dashboard
-  scope :non_ssk, -> {
+  scope :published, -> {
     drafted_ids = Appunto.where(status: "drafted").pluck(:id).map(&:to_s)
     if drafted_ids.any?
       where.not(entryable_type: "Appunto")
