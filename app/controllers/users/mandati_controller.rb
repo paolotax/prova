@@ -3,6 +3,6 @@ class Users::MandatiController < ApplicationController
 
   def index
     @user = Current.user
-    @mandati = @user.mandati.includes(:editore)
+    @mandati = Current.account.mandati.includes(:editore)
   end
 end
