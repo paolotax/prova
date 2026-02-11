@@ -1,83 +1,57 @@
 class MandatiController < ApplicationController
-    
   before_action :authenticate_user!
   before_action :find_editore
 
-  def index 
+  def index
+    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
   end
 
   def select_editori
-    @gruppi = Editore.order(:gruppo)
-    .select(:gruppo).distinct || []
-
+    @gruppi = Editore.order(:gruppo).select(:gruppo).distinct
     @editori = Editore.where(gruppo: @gruppo&.gruppo)
-          .order(:editore)
-          .select(:id, :editore).distinct || [] 
+                      .order(:editore)
+                      .select(:id, :editore).distinct
   end
 
-      
-  def create     
-    begin
+  def create
+    return if params[:hgruppo].blank?
 
-      unless params[:hgruppo].blank?
-        
-        unless params[:heditore].blank?
-          editore_id = params[:heditore].to_i 
-          @mandato = current_user.mandati.build(editore_id: editore_id)  
-          @mandato.save!  
-          raise @mandato.errors.full_messages unless @mandato.errors.empty?
-
-        else
-          editore_ids = Editore.where(gruppo: params[:hgruppo]).pluck(:id)
-
-          editore_ids.each do |editore_id|
-            if current_user.mandati.where(editore_id: editore_id).empty?
-              @mandato = current_user.mandati.build(editore_id: editore_id)
-              @mandato.save!
-            end
-          end
-        end
+    if params[:heditore].present?
+      @mandato = Current.account.mandati.build(editore_id: params[:heditore].to_i)
+      @mandato.save!
+    else
+      Editore.where(gruppo: params[:hgruppo]).find_each do |editore|
+        Current.account.mandati.find_or_create_by!(editore: editore)
       end
-    rescue ActiveRecord::RecordNotUnique
-      flash[:error] = "Violazione chiave!!"
-      @mandato.reload
     end
 
-    respond_to do |format|           
-      format.turbo_stream             
-      format.html { redirect_to user_url(current_user), notice: "Editore assegnato!" }
-      #format.json { render :show, status: :created, location: @mandato }
-    end   
-  end
-
-  def destroy 
-
-    id = params.extract_value(:id)
-    @mandato = Mandato.find(id)
-    @mandato.destroy!
+    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to user_url, notice: "Editore eliminato." }
-      #format.json { head :no_content }
+      format.html { redirect_to mandati_path, notice: "Editore assegnato!" }
+    end
+  rescue ActiveRecord::RecordNotUnique
+    flash[:error] = "Mandato già esistente!"
+    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+  end
+
+  def destroy
+    @mandato = Current.account.mandati.find(params[:id])
+    @mandato.destroy!
+
+    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to mandati_path, notice: "Editore eliminato." }
     end
   end
 
   private
 
-    def set_user_editori
-      @mandato = Mandato.find([params[:user_id], params[:editore_id]])
-    end
-
-    def mandato_params
-      params.require(:mandato).permit(:editore_id, :user_id)
-    end
-
-
-    def find_editore
-      @gruppo   = Editore.where(gruppo: params[:gruppo].presence).first
-      @editore  = Editore.where(id: params[:id].presence).first
-    end
-  
+  def find_editore
+    @gruppo  = Editore.where(gruppo: params[:gruppo].presence).first
+    @editore = Editore.where(id: params[:id].presence).first
   end
-  
+end

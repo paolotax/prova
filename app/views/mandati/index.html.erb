@@ -2,16 +2,16 @@
 
     <div class="sticky not-hotwire-native:top-16 hotwire-native:top-0 p-2 bg-gray-100 flex items-center justify-between border-b-2 border-gray-300">
         <h2 class="font-semibold">I miei EDITORI </h2>
-        <div id="<%= dom_id(current_user) %>-nr-editori" class="text-sm font-semibold pr-4">
-            <%= current_user.editori.size %>
+        <div id="nr-editori" class="text-sm font-semibold pr-4">
+            <%= @mandati.size %>
         </div>
-    </div>  
+    </div>
 
-    <div id="user-editori" class=""> 
+    <div id="account-editori" class="">
         <p class="only:block hidden py-8 px-4 text-center">
-            Whoops! Non ci sono editori. 
-        </p>                
-        <% current_user.mandati.each do |mandato| %>
+            Whoops! Non ci sono editori.
+        </p>
+        <% @mandati.each do |mandato| %>
             <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
         <% end %>
     </div>

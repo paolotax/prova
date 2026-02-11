@@ -1,90 +1,48 @@
 class ZoneController < ApplicationController
-  
   before_action :authenticate_user!
-  before_action :find_provincia
 
   def index
-    @zone = current_user.zone
+    @account_zone = Current.account.account_zone.order(:provincia, :grado)
+    @regioni = Zona.order(:regione).select(:regione).distinct
+    @province = []
+    @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
   end
 
   def select_zone
-    # il controller Zona si riferisce all'utente non alla tabella Zone (che sono tutte le province e comuni italiani e non quelle assegnate all'utente)
-    @regioni = Zona.order(:regione)
-                   .select(:regione).distinct || []
-    
-    @province = Zona.where(regione: @regione&.regione)
-                    .order(:provincia)
-                    .select(:provincia).distinct || []
-
-    @gradi = TipoScuola.order(:grado)
-                       .select(:grado).distinct || []
-    
-    @tipi  = TipoScuola.where(grado: @grado&.grado)
-                       .order(:tipo)
-                       .select(:tipo).distinct || []
+    @regioni = Zona.order(:regione).select(:regione).distinct
+    @province = Zona.where(regione: params[:regione].presence)
+                    .order(:provincia).select(:provincia).distinct
+    @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
   end
 
   def assegna_scuole
-    
-    if !params[:hregione].blank?
-      
-      @regione   = params[:hregione]
-      @provincia = params[:hprovincia]
-      @tipo      = params[:htipo]
-      @grado     = params[:hgrado]
-      
-      @provincia_tipo = (@provincia + "-" + @tipo).downcase.gsub(" ", "-")
-      
-      @scuole_da_assegnare = ImportScuola.where(REGIONE: @regione)
+    return if params[:hregione].blank?
 
-      if @provincia != "tutte"
-        @scuole_da_assegnare = @scuole_da_assegnare.where(PROVINCIA: @provincia)
-      end
+    @account_zona = Current.account.account_zone.find_or_initialize_by(
+      provincia: params[:hprovincia],
+      grado: params[:hgrado]
+    )
+    @account_zona.regione = params[:hregione]
+    @account_zona.anno_scolastico ||= "2025/2026"
+    @account_zona.save!
 
-      if @grado != "tutti"
-        tipi = TipoScuola.where(grado: @grado).pluck(:tipo)
-        @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipi)
-      end
-      
-      if @tipo != "tutti"
-        @scuole_da_assegnare = @scuole_da_assegnare.where(DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: @tipo)
-      end
-       
-      @scuole_da_assegnare.includes(:direzione).to_a.sort_by { |s| 
-        [
-          s.PROVINCIA.to_s,
-          (s.direzione.present? ? s.direzione.DESCRIZIONECOMUNE.to_s : s.DESCRIZIONECOMUNE.to_s).to_s,
-          s.CODICEISTITUTORIFERIMENTO.to_s,
-          s.CODICESCUOLA.to_s
-        ]
-      }.each do |s|
-        current_user.import_scuole << s unless current_user.import_scuole.include?(s)
-      end
+    @account_zone = Current.account.account_zone.order(:provincia, :grado)
 
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to zone_path, notice: "Zona aggiunta!" }
     end
   end
 
   def rimuovi_scuole
-    #fail
+    @account_zona = Current.account.account_zone.find(params[:id])
+    @account_zona.destroy
 
-    @id_zona = "#{params[:provincia]}-#{params[:grado]}".gsub(" ", "-").downcase
-
-    @scuole_da_rimuovere = ImportScuola.joins(:tipo_scuola).where(PROVINCIA: params[:provincia]).where("tipi_scuole.grado = ?", params[:grado])
-    #raise @scuole_da_rimuovere.inspect
-    @scuole_da_rimuovere.each {|s| current_user.import_scuole.delete(s)}
+    @account_zone = Current.account.account_zone.order(:provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to current_user notice: "Scuole eliminate!"  }
+      format.html { redirect_to zone_path, notice: "Zona rimossa!" }
     end
   end
-
-  private
-
-    def find_provincia
-      @regione   = Zona.where(regione: params[:regione].presence).first
-      @provincia = Zona.where(provincia: params[:provincia].presence).first
-      @grado     = TipoScuola.where(grado: params[:grado].presence).first
-      @tipo      = TipoScuola.where(tipo: params[:tipo].presence).first
-    end
 end

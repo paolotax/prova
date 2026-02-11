@@ -1,18 +1,9 @@
-<%= turbo_stream.update "#{dom_id(current_user)}-nr-scuole-assegnate" do %>
-	<%= current_user.import_scuole.count %>
+<%= turbo_stream.update "nr-zone" do %>
+	<%= @account_zone.size %>
 <% end %>
 
-<%= turbo_stream.replace "user-zone" do %>
-	<%= render partial: "zone/zone_list", locals: { current_user: current_user } %>
+<%= turbo_stream.replace "account-zone" do %>
+	<%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
 <% end %>
 
-<%= turbo_stream.update "user_scuole" do %>
-	<%= turbo_frame_tag :user_scuole, src: user_scuole_path(current_user), loading: :lazy do %>
-		<%= render 'shared/lazy_loading' %>
-	<% end%>
-<% end %>
-
-<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
-<%= stream_notification "Scuole assegnate!", type: "success" %>
-
-
+<%= stream_notification "Zona aggiunta!", type: "success" %>

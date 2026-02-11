@@ -9,6 +9,7 @@
 #  comune              :string
 #  denominazione       :string
 #  email               :string
+#  grado               :string
 #  indirizzo           :string
 #  latitude            :float
 #  longitude           :float
@@ -32,6 +33,7 @@
 #  index_scuole_on_account_id_and_codice_ministeriale  (account_id,codice_ministeriale) UNIQUE
 #  index_scuole_on_account_id_and_denominazione        (account_id,denominazione)
 #  index_scuole_on_account_id_and_posizione            (account_id,posizione)
+#  index_scuole_on_account_provincia_grado             (account_id,provincia,grado)
 #  index_scuole_on_import_scuola_id                    (import_scuola_id)
 #
 # Foreign Keys
@@ -49,6 +51,7 @@ scuola_fizzy:
   provincia: "MI"
   regione: "Lombardia"
   tipo_scuola: "Istituto Comprensivo"
+  grado: "E"
   email: "info@leonardo.edu.it"
   stato: "attiva"
   priorita: 1
@@ -63,6 +66,7 @@ scuola_acme:
   provincia: "RM"
   regione: "Lazio"
   tipo_scuola: "Liceo Scientifico"
+  grado: "N"
   email: "info@galileo.edu.it"
   stato: "attiva"
   priorita: 0

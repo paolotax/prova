@@ -16,6 +16,10 @@ class Account < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
 
+  # Zone e mandati (account-level)
+  has_many :account_zone, class_name: "AccountZona", dependent: :destroy
+  has_many :mandati, dependent: :destroy
+
   # Account-scoped resources
   has_one :azienda, dependent: :destroy
   has_many :appunti, dependent: :destroy

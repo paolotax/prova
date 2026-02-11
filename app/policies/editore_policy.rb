@@ -5,7 +5,7 @@ class EditorePolicy < ApplicationPolicy
       if user.admin?
         scope.all
       else
-        scope.miei_editori(user)
+        scope.joins(:mandati).where(mandati: { account_id: Current.account&.id })
       end
     end
   end

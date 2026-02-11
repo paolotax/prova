@@ -8,6 +8,7 @@
 #  comune              :string
 #  denominazione       :string
 #  email               :string
+#  grado               :string
 #  indirizzo           :string
 #  latitude            :float
 #  longitude           :float
@@ -31,6 +32,7 @@
 #  index_scuole_on_account_id_and_codice_ministeriale  (account_id,codice_ministeriale) UNIQUE
 #  index_scuole_on_account_id_and_denominazione        (account_id,denominazione)
 #  index_scuole_on_account_id_and_posizione            (account_id,posizione)
+#  index_scuole_on_account_provincia_grado             (account_id,provincia,grado)
 #  index_scuole_on_import_scuola_id                    (import_scuola_id)
 #
 # Foreign Keys
@@ -79,6 +81,7 @@ class Scuola < ApplicationRecord
       tipo_scuola: import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA,
       email: import_scuola.INDIRIZZOEMAILSCUOLA,
       pec: import_scuola.INDIRIZZOPECSCUOLA,
+      grado: TipoScuola.find_by(tipo: import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)&.grado,
       latitude: import_scuola.latitude,
       longitude: import_scuola.longitude
     )

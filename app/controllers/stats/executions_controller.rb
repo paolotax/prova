@@ -6,7 +6,7 @@ class Stats::ExecutionsController < ApplicationController
   def show
     authorize @stat, :execute?
 
-    @miei_editori = current_user.miei_editori
+    @miei_editori = Current.account.mandati.includes(:editore).map { |m| m.editore.editore }
     @result = @stat.execute(current_user)
     @raggruppamento = @result.group_by do |c|
       fields = @stat.raggruppa

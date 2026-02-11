@@ -1,3 +1,6 @@
+# test/fixtures/mandati.yml
+# New UUID-based mandati (account-scoped)
+
 # == Schema Information
 #
 # Table name: mandati
@@ -23,24 +26,19 @@
 #  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (editore_id => editori.id)
 #
-class Mandato < ApplicationRecord
-  include AccountScoped
+fizzy_zanichelli:
+  account: fizzy
+  editore: zanichelli
+  anno_scolastico: "2025/2026"
 
-  belongs_to :editore
+fizzy_mondadori:
+  account: fizzy
+  editore: mondadori
+  anno_scolastico: "2025/2026"
 
-  validates :editore_id, uniqueness: { scope: [:account_id, :provincia, :grado, :anno_scolastico] }
-
-  after_commit :update_mie_adozioni_async, on: [:create, :destroy]
-
-  # NULL provincia/grado = copre tutti
-  def copre_scuola?(scuola)
-    (provincia.nil? || provincia == scuola.provincia) &&
-      (grado.nil? || grado == scuola.grado)
-  end
-
-  private
-
-  def update_mie_adozioni_async
-    UpdateMieAdozioniJob.perform_later(account)
-  end
-end
+acme_zanichelli:
+  account: acme
+  editore: zanichelli
+  provincia: "RM"
+  grado: "N"
+  anno_scolastico: "2025/2026"

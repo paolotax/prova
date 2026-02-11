@@ -58,7 +58,7 @@
         <div class="bulk-bar__form-row">
           <%= f.label :editore_id, "Editore", class: "form-label txt-small" %>
           <%= f.collection_select :editore_id,
-              current_user.editori.order(:editore),
+              Editore.joins(:mandati).where(mandati: { account_id: Current.account.id }).order(:editore).distinct,
               :id,
               :editore,
               { include_blank: "— Non modificare —" },

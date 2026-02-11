@@ -1,21 +1,17 @@
 <div id="<%= dom_id(mandato) %>" class="px-2 bg-white py-4 flex justify-between items-center align-center border-b border-gray-300">
-    
+
     <div class="flex flex-row items-baseline justify-between w-full pr-4">
         <div>
             <%= mandato.editore.editore %>
-        </div>    
+        </div>
         <div class="text-right text-sm">
             <%= mandato.editore.gruppo.titleize %>
         </div>
     </div>
 
-    <%= form_with model: mandato, method: "delete" do |f| %>
-        <%= f.hidden_field :editore_id, value: mandato.editore_id %>
-        <%= f.hidden_field :user_id,    value: mandato.user_id %>
-
-        <%= f.button type: "submit", class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" do %>
-            <%= inline_svg_tag "icon-trash.svg" %>
-        <% end %>
+    <%= button_to mandato_path(mandato), method: :delete,
+        class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" do %>
+        <%= inline_svg_tag "icon-trash.svg" %>
     <% end %>
 
 </div>

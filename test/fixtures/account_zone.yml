@@ -1,0 +1,52 @@
+# test/fixtures/account_zone.yml
+
+# == Schema Information
+#
+# Table name: account_zone
+#
+#  id              :uuid             not null, primary key
+#  anno_scolastico :string
+#  grado           :string           not null
+#  provincia       :string           not null
+#  regione         :string
+#  scuole_count    :integer          default(0)
+#  stato           :string           default("attiva")
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  account_id      :uuid             not null
+#
+# Indexes
+#
+#  idx_account_zone_unique           (account_id,provincia,grado,anno_scolastico) UNIQUE
+#  index_account_zone_on_account_id  (account_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#
+fizzy_mi_primaria:
+  account: fizzy
+  provincia: "MI"
+  grado: "E"
+  anno_scolastico: "2025/2026"
+  regione: "Lombardia"
+  scuole_count: 1
+  stato: "attiva"
+
+fizzy_mi_media:
+  account: fizzy
+  provincia: "MI"
+  grado: "M"
+  anno_scolastico: "2025/2026"
+  regione: "Lombardia"
+  scuole_count: 0
+  stato: "attiva"
+
+acme_rm_superiore:
+  account: acme
+  provincia: "RM"
+  grado: "N"
+  anno_scolastico: "2025/2026"
+  regione: "Lazio"
+  scuole_count: 1
+  stato: "attiva"

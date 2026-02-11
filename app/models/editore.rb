@@ -19,12 +19,11 @@ class Editore < ApplicationRecord
     validates :editore, uniqueness: true
 
     has_many :mandati, dependent: :destroy
-    has_many :users, through: :mandati
+    has_many :legacy_mandati, class_name: "LegacyMandato", dependent: :destroy
+    has_many :users, through: :legacy_mandati
 
     # Relazione con sconti
     has_many :sconti, as: :scontabile, dependent: :destroy
-
-    scope :miei_editori, ->(user) { joins(:mandati).where("mandati.user_id = ?", user.id) }
 
     def self.ransackable_attributes(_auth_object = nil)
         %w[editore gruppo]

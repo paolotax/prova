@@ -10,11 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_11_100002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
   enable_extension "tablefunc"
+
+  create_table "account_zone", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "anno_scolastico"
+    t.datetime "created_at", null: false
+    t.string "grado", null: false
+    t.string "provincia", null: false
+    t.string "regione"
+    t.integer "scuole_count", default: 0
+    t.string "stato", default: "attiva"
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "provincia", "grado", "anno_scolastico"], name: "idx_account_zone_unique", unique: true
+    t.index ["account_id"], name: "index_account_zone_on_account_id"
+  end
 
   create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -702,6 +716,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
     t.float "totale_documento"
   end
 
+  create_table "legacy_mandati", primary_key: ["user_id", "editore_id"], force: :cascade do |t|
+    t.text "contratto"
+    t.datetime "created_at", null: false
+    t.bigint "editore_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["editore_id"], name: "index_legacy_mandati_on_editore_id"
+    t.index ["user_id"], name: "index_legacy_mandati_on_user_id"
+  end
+
   create_table "libri", force: :cascade do |t|
     t.uuid "account_id", null: false
     t.integer "adozioni_count", default: 0, null: false
@@ -752,14 +776,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
     t.index ["user_id"], name: "index_magic_links_on_user_id"
   end
 
-  create_table "mandati", primary_key: ["user_id", "editore_id"], force: :cascade do |t|
+  create_table "mandati", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "anno_scolastico"
     t.text "contratto"
     t.datetime "created_at", null: false
     t.bigint "editore_id", null: false
+    t.string "grado"
+    t.string "provincia"
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico"], name: "idx_mandati_unique", unique: true
+    t.index ["account_id"], name: "index_mandati_on_account_id"
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
-    t.index ["user_id"], name: "index_mandati_on_user_id"
   end
 
   create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1218,6 +1246,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
     t.datetime "created_at", null: false
     t.string "denominazione"
     t.string "email"
+    t.string "grado"
     t.bigint "import_scuola_id"
     t.string "indirizzo"
     t.float "latitude"
@@ -1235,6 +1264,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
     t.index ["account_id", "codice_ministeriale"], name: "index_scuole_on_account_id_and_codice_ministeriale", unique: true
     t.index ["account_id", "denominazione"], name: "index_scuole_on_account_id_and_denominazione"
     t.index ["account_id", "posizione"], name: "index_scuole_on_account_id_and_posizione"
+    t.index ["account_id", "provincia", "grado"], name: "index_scuole_on_account_provincia_grado"
     t.index ["account_id"], name: "index_scuole_on_account_id"
     t.index ["import_scuola_id"], name: "index_scuole_on_import_scuola_id"
   end
@@ -1421,6 +1451,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "account_zone", "accounts"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adozioni", "accounts"
@@ -1469,6 +1500,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_094716) do
   add_foreign_key "libri", "categorie"
   add_foreign_key "libri", "editori"
   add_foreign_key "libri", "users"
+  add_foreign_key "mandati", "accounts"
+  add_foreign_key "mandati", "editori"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "models"
   add_foreign_key "messages", "tool_calls"

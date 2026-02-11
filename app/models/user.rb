@@ -46,8 +46,8 @@ class User < ApplicationRecord
   has_many :import_scuole, through: :user_scuole
   has_many :import_adozioni, through: :import_scuole
 
-  has_many :mandati, dependent: :destroy
-  has_many :editori, through: :mandati
+  has_many :legacy_mandati, class_name: "LegacyMandato", dependent: :destroy
+  has_many :editori, through: :legacy_mandati
 
   has_many :clienti, dependent: :destroy
   has_many :documenti, dependent: :destroy
