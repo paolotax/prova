@@ -76,10 +76,10 @@ class Entry < ApplicationRecord
   # Exclude ssk appunti (saggio, seguito, kit) - these will be moved to a separate model later
   # Keep: documenti, tappe, and appunti that are NOT ssk
   scope :non_ssk, -> {
-    ssk_appunto_ids = Appunto.ssk.pluck(:id).map(&:to_s)
-    if ssk_appunto_ids.any?
+    excluded_ids = Appunto.where(status: "drafted").or(Appunto.ssk).pluck(:id).map(&:to_s)
+    if excluded_ids.any?
       where.not(entryable_type: "Appunto")
-        .or(where(entryable_type: "Appunto").where.not(entryable_id: ssk_appunto_ids))
+        .or(where(entryable_type: "Appunto").where.not(entryable_id: excluded_ids))
     else
       all
     end

@@ -33,7 +33,7 @@ class AppuntiController < ApplicationController
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)
-        send_data pdf.render, filename: "appunto_#{@appunto&.denominazione&.parameterize(separator: "_")}.pdf",
+        send_data pdf.render, filename: "appunto_#{@appunto.appuntabile&.denominazione&.parameterize(separator: "_")}_#{@appunto.numero}.pdf",
                               type: "application/pdf",
                               disposition: "inline"
       end
@@ -45,6 +45,11 @@ class AppuntiController < ApplicationController
       format.html
       format.turbo_stream
     end
+  end
+
+  def new
+    @appunto = Current.user.draft_new_appunto
+    redirect_to @appunto
   end
 
   def create
