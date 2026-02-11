@@ -121,7 +121,7 @@ class User < ApplicationRecord
   end
 
   def self.stats
-    User.all.collect {|u| { name: u.name, adozioni: u.import_adozioni.mie_adozioni.size, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
+    User.all.collect {|u| { name: u.name, adozioni: Adozione.where(account_id: u.accounts.pluck(:id)).mie.count, appunti: u.appunti.size, giri: u.giri.size, tappe: u.tappe.size } }
   end
 
   def self.create_aziende_from_profiles

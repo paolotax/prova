@@ -21,24 +21,15 @@ module Scuole
     #   #@mie_tappe ||= user.tappe.includes(:giri).where(tappable_id: scuola.id) 
     # end
 
-    def import_adozioni
-      @import_adozioni ||= scuola.import_scuola&.import_adozioni&.includes(:classe, :libro, :import_scuola) || ImportAdozione.none
-    end
-
-    # Optimized: Group by classe to avoid N+1 queries in the view
     def mie_adozioni_by_classe
-      @mie_adozioni_by_classe ||= user.import_adozioni.mie_adozioni
-                                      .select('import_adozioni.*')
-                                      .includes(:classe, :libro, :import_scuola)
-                                      .where(CODICESCUOLA: scuola.codice_ministeriale)
+      @mie_adozioni_by_classe ||= scuola.adozioni.mie
+                                      .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
                                       .group_by(&:classe)
     end
 
     def mie_adozioni
-      @mie_adozioni ||= user.import_adozioni.mie_adozioni
-                          .select('import_adozioni.*')
-                          .includes(:classe, :libro, :import_scuola)
-                          .where(CODICESCUOLA: scuola.codice_ministeriale)
+      @mie_adozioni ||= scuola.adozioni.mie
+                          .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
     end
 
     def appunti_non_archiviati

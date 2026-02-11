@@ -53,9 +53,11 @@ class LibroInfo
     end
   end
       
-  def count_adozioni 
-   
-    @adozioni = @user.import_adozioni.mie_adozioni.where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si").count
+  def count_adozioni
+    @adozioni = Adozione.where(account_id: Current.account&.id)
+                        .mie.da_acquistare
+                        .where(codice_isbn: @libro.codice_isbn)
+                        .count
   end
 
 end

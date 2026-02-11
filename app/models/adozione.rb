@@ -62,7 +62,26 @@ class Adozione < ApplicationRecord
   scope :per_editore, ->(editore) { where(editore: editore) }
   scope :per_disciplina, ->(disciplina) { where(disciplina: disciplina) }
   scope :mie, -> { where(mia: true) }
+  scope :da_acquistare, -> { where(da_acquistare: true) }
   scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
+
+  delegate :classe_e_sezione, :combinazione, to: :classe, allow_nil: true
+
+  def kit
+    kit_consegne
+  end
+
+  def mia_adozione?
+    mia?
+  end
+
+  def da_acquistare?
+    da_acquistare
+  end
+
+  def classe_e_sezione_e_disciplina
+    "#{classe&.classe_e_sezione} #{disciplina&.downcase}"
+  end
 
   # Crea da ImportAdozione
   def self.create_from_import(import_adozione, classe:, account: Current.account)

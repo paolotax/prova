@@ -83,12 +83,13 @@ class FoglioScuolaPdf < Prawn::Document
   def get_adozioni_per_tipo_stampa(scuola)
     case @tipo_stampa
     when 'mie_adozioni'
-      # Prendo solo le adozioni dell'utente corrente per questa scuola
-      foglio_scuola = Scuole::FoglioScuola.new(scuola: scuola)
-      foglio_scuola.mie_adozioni.da_acquistare.sort_by(&:classe_e_sezione_e_disciplina)
+      scuola.adozioni.mie.da_acquistare
+            .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
+            .sort_by(&:classe_e_sezione_e_disciplina)
     else # 'tutte_adozioni'
-      # Prendo tutte le adozioni della scuola
-      scuola.import_adozioni.sort_by(&:classe_e_sezione_e_disciplina)
+      scuola.adozioni
+            .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
+            .sort_by(&:classe_e_sezione_e_disciplina)
     end
   end
   
@@ -373,10 +374,8 @@ class FoglioScuolaPdf < Prawn::Document
   end
     
   def render_sovrapacchi_per_scuola(scuola)
-    # Ottieni le adozioni per questa scuola che sono da acquistare e sono mie adozioni
-    adozioni_sovrapacchi = scuola.import_adozioni
-                                  .where(EDITORE: current_user.miei_editori)
-                                  .where(DAACQUIST: 'Si')
+    adozioni_sovrapacchi = scuola.adozioni.mie.da_acquistare
+                                  .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
                                   .sort_by(&:classe_e_sezione_e_disciplina)
 
     unless adozioni_sovrapacchi.empty?
