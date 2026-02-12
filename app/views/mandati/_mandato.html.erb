@@ -2,12 +2,19 @@
 
     <div class="flex align-center gap-half flex-1">
         <span class="txt-small"><%= mandato.editore.editore %></span>
-        <span class="txt-x-small txt-subtle"><%= mandato.editore.gruppo.titleize %></span>
+        <% if mandato.provincia.present? %>
+            <span class="txt-x-small txt-subtle"><%= mandato.provincia %> <%= mandato.grado %></span>
+        <% end %>
     </div>
+    <div class="flex align-center gap-half">
+        <% if defined?(conteggi) && conteggi&.dig(mandato.id) %>
+            <span class="txt-x-small txt-subtle"><%= conteggi[mandato.id] %> sez.</span>
+        <% end %>
 
-    <%= button_to mandato_path(mandato), method: :delete,
-        class: "btn btn--circle btn--negative", aria: { label: "Rimuovi editore" } do %>
-        <%= icon_tag "trash" %>
-    <% end %>
+        <%= button_to mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,
+            class: "btn btn--circle btn--negative", aria: { label: "Rimuovi editore" } do %>
+            <%= icon_tag "trash" %>
+        <% end %>
+    </div>
 
 </div>

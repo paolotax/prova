@@ -352,6 +352,7 @@ Rails.application.routes.draw do
     resources :mandati do
       collection do
         get 'select_editori'
+        post 'aggiorna_mie_adozioni'
       end
     end
 

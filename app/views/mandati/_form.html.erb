@@ -1,15 +1,44 @@
 <%= turbo_frame_tag :mandati_form do %>
-    <div class="flex flex-column gap-half margin-block-start">
+    <div class="flex flex-wrap gap-half align-center margin-block-start">
 
-        <%= render partial: "mandati/mandati_select", locals: { gruppi: @gruppi, editori: @editori } %>
+        <%= render partial: "mandati/mandati_select", locals: { gruppi: gruppi, editori: editori } %>
 
-        <%= form_with url: mandati_path, method: :post, class: "flex justify-end margin-block-start-half" do |f| %>
-            <%= hidden_field_tag "hgruppo" %>
-            <%= hidden_field_tag "heditore" %>
+        <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+            <button type="button" class="btn btn--circle btn--link" data-action="click->dialog#open:stop" aria-label="Aggiungi editore">
+                <%= icon_tag "add" %>
+            </button>
+            <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+                <%= form_with url: mandati_path, method: :post do |f| %>
+                    <p><strong>Seleziona le zone</strong></p>
+                    <p class="txt-x-small txt-subtle">Per quali zone hai il mandato?</p>
 
-            <%= f.button type: "submit", class: "btn btn--circle btn--link", aria: { label: "Aggiungi editore" } do %>
-                <%= icon_tag "plus" %>
-            <% end %>
+                    <%= hidden_field_tag "hgruppo" %>
+                    <%= hidden_field_tag "heditore" %>
+
+                    <div class="flex flex-column gap-half margin-block-start">
+                        <% zone_attive.each do |zona| %>
+                            <label class="flex align-center gap-half">
+                                <%= check_box_tag "zone_ids[]", zona.id, false, class: "input" %>
+                                <span><%= zona.provincia %> — <%= zona.grado_label %></span>
+                            </label>
+                        <% end %>
+                    </div>
+
+                    <div class="flex gap-half justify-end margin-block-start">
+                        <button type="button" class="btn txt-small" data-action="click->dialog#close">Annulla</button>
+                        <%= f.button type: "submit", class: "btn btn--link txt-small" do %>
+                            Aggiungi
+                        <% end %>
+                    </div>
+                <% end %>
+            </dialog>
+        </div>
+
+    </div>
+
+    <div class="margin-block-start">
+        <%= button_to aggiorna_mie_adozioni_mandati_path, class: "btn txt-small" do %>
+            Aggiorna mie adozioni
         <% end %>
     </div>
 <% end %>

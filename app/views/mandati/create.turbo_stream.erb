@@ -1,7 +1,3 @@
 <%= turbo_stream.replace "account-editori" do %>
-    <div id="account-editori">
-    	<% @mandati.each do |mandato| %>
-        	<%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
-    	<% end %>
-	</div>
+    <%= render partial: "mandati/mandati_list", locals: { mandati: @mandati, conteggi: {} } %>
 <% end %>

@@ -1,19 +1,20 @@
-<%= turbo_frame_tag :mandati_select do %>
+<%= turbo_frame_tag :mandati_select, class: "flex flex-wrap gap-half" do %>
     <%= form_with url: select_editori_mandati_path, method: :get, data: { controller: "tax-select",
                                                             action: "change->tax-select#submit"
                                                         } do |f| %>
 
         <div class="flex flex-wrap gap-half">
             <div>
-                <%= f.select :gruppo, options_from_collection_for_select(@gruppi, "gruppo", "gruppo", @gruppo&.gruppo),
-                                    { prompt: "scegli il gruppo editoriale" },
+                <%= f.select :gruppo, options_from_collection_for_select(@gruppi, "gruppo", "gruppo", params[:gruppo]),
+                                    { prompt: "scegli il gruppo" },
                                     { class: "input input--select txt-small", data: { tax_select_target: "gruppo" } } %>
             </div>
             <div>
-                <%= f.select :id, options_from_collection_for_select(@editori, "id", "editore", @editore&.id),
-                                { prompt: "scegli l'editore" },
+                <%= f.select :id, options_from_collection_for_select(@editori, "id", "editore"),
+                                { prompt: "tutti" },
                                 { class: "input input--select txt-small", data: { tax_select_target: "editore" } } %>
             </div>
         </div>
+
     <% end %>
 <% end %>

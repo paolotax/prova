@@ -1,0 +1,5 @@
+<div id="account-editori">
+    <% mandati.each do |mandato| %>
+        <%= render partial: "mandati/mandato", locals: { mandato: mandato, conteggi: conteggi } %>
+    <% end %>
+</div>

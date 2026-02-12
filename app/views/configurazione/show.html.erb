@@ -15,13 +15,9 @@
   <div class="settings__panel panel shadow center">
     <strong class="divider txt-large">I miei Editori</strong>
 
-    <%= turbo_frame_tag :mandati_list do %>
-      <% @mandati.each do |mandato| %>
-        <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
-      <% end %>
-    <% end %>
+    <%= render partial: "mandati/mandati_list", locals: { mandati: @mandati, conteggi: {} } %>
 
-    <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
+    <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori, zone_attive: @zone_attive } %>
   </div>
 
 </section>
