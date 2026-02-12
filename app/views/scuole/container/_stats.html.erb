@@ -82,10 +82,10 @@
       <table class="txt-xx-small" style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr>
-            <th class="txt-left txt-uppercase" style="padding: 0.25rem;">Titolo</th>
-            <th class="txt-center txt-uppercase" style="padding: 0.25rem; border-left: 1px solid rgba(0,0,0,0.15);">Classe</th>
-            <th class="txt-center txt-uppercase" style="padding: 0.25rem; border-left: 1px solid rgba(0,0,0,0.15); white-space: nowrap;">Sez</th>
-            <th class="txt-left txt-uppercase" style="padding: 0.25rem; border-left: 1px solid rgba(0,0,0,0.15);">Disciplina</th>
+            <th class="txt-left txt-uppercase">Titolo</th>
+            <th class="txt-center txt-uppercase">Classe</th>
+            <th class="txt-center txt-uppercase">Sez</th>
+            <th class="txt-left txt-uppercase">Disciplina</th>
           </tr>
         </thead>
         <tbody>
@@ -94,10 +94,11 @@
             adozioni_grouped = mie_adozioni.group_by { |a| [a.titolo, a.classe.anno_corso] }
           %>
           <% adozioni_grouped.each do |(titolo, anno), adozioni| %>
-            <tr>
-              <td class="txt-x-small" style="padding: 0.25rem; border-top: 1px solid rgba(0,0,0,0.15);"><%= titolo %></td>
-              <td class="txt-center txt-small font-weight-bold" style="padding: 0.25rem; border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);"><%= anno %></td>
-              <td class="txt-center" style="padding: 0.25rem; border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15); white-space: nowrap;">
+            <% disdetta = adozioni.any?(&:disdetta?) %>
+            <tr<%= ' class="disdetta"'.html_safe if disdetta %>>
+              <td class="txt-x-small"><%= titolo %></td>
+              <td class="txt-center txt-small font-weight-bold no-strike"><%= anno %></td>
+              <td class="txt-center no-strike" style="white-space: nowrap;" >
                 <% adozioni.sort_by { |a| a.classe.sezione.to_s }.each do |adozione| %>
                   <%= link_to adozione.classe.sezione.presence || "•",
                       scuola_classe_path(scuola, adozione.classe),

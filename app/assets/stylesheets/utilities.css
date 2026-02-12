@@ -315,6 +315,11 @@
   .cell-rank_2024,
   .cell-diff_2024 { text-align: center; }
 
+  /* Disdetta */
+  tr.disdetta { opacity: 0.4; }
+  tr.disdetta td { text-decoration: line-through; }
+  tr.disdetta td.no-strike { text-decoration: none; }
+
   /* Inline editing toggle */
   .show-when-editing { display: none; }
   .editing .show-when-editing { display: block; }
