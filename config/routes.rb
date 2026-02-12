@@ -302,6 +302,7 @@ Rails.application.routes.draw do
     end
 
     get 'profilo', to: 'profiles#get_user_profile'
+    resource :configurazione, only: [:show], controller: "configurazione"
 
     resources :profiles
 

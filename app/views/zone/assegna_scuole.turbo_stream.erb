@@ -1,9 +1,3 @@
-<%= turbo_stream.update "nr-zone" do %>
-	<%= @account_zone.size %>
-<% end %>
-
 <%= turbo_stream.replace "account-zone" do %>
 	<%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
 <% end %>
-
-<%= stream_notification "Zona aggiunta!", type: "success" %>

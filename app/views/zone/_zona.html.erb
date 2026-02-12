@@ -1,0 +1,18 @@
+<div id="<%= dom_id(zona) %>" class="flex justify-between align-center padding-block-half" style="border-bottom: var(--border);">
+
+    <div class="flex align-center gap-half flex-1">
+        <span class="txt-small"><%= zona.provincia %></span>
+        <span class="txt-x-small txt-subtle"><%= zona.grado_label %></span>
+    </div>
+    <div class="flex align-center gap-half">
+        <% if zona.stato == "importazione" %>
+            <span class="txt-x-small" style="color: var(--color-negative);">importazione...</span>
+        <% end %>
+        <span class="txt-small txt-subtle"><%= zona.scuole_count %></span>
+
+        <%= button_to rimuovi_scuole_zone_path(id: zona.id), method: :delete,
+                class: "btn btn--circle btn--negative", aria: { label: "Rimuovi zona" } do %>
+            <%= icon_tag "trash" %>
+        <% end %>
+    </div>
+</div>

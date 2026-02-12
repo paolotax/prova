@@ -9,20 +9,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    
-      # per popolare le select box
-      @regioni =  Zona.order(:regione).select(:regione).distinct || []
-      @province = Zona.order(:provincia).select(:provincia).distinct || []
-      
-      @gradi = TipoScuola.order(:grado).select(:grado).distinct || []
-      @tipi  = TipoScuola.order(:tipo).select(:tipo).distinct || []
-
-      @gruppi = Editore.order(:gruppo).select(:gruppo).distinct || []
-      @editori = Editore.order(:editore).select(:id, :editore).distinct || []
-    # else
-    #   redirect_to request.referrer || root_path
-    #   flash[:alert] = "Non hai i permessi per visualizzare questa pagina"
-    # end  
   end
 
   private

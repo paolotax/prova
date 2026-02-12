@@ -3,7 +3,9 @@
     <%= filter_place_menu_item user_personal_info_path(Current.user), "Il mio profilo (utente)", "id-card" %>
     <% if Current.account %>
         <%= filter_place_menu_item azienda_path(Current.account), "I miei dati aziendali", "briefcase" %>
-        <%= filter_place_menu_item profilo_path(Current.account), "la mia Zona", "person" %>
+        <% if Current.admin? %>
+            <%= filter_place_menu_item configurazione_path(Current.account), "Configurazione", "settings" %>
+        <% end %>
     <% end %>
     
     <%= tag.li class: "popup__item", data: { filter_target: "item", navigable_list_target: "item" } do %>

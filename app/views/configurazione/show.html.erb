@@ -1,0 +1,29 @@
+<% @page_title = "Configurazione" %>
+
+<%= turbo_stream_from Current.account, "configurazione" %>
+
+<section class="settings">
+
+  <div class="settings__panel panel shadow center">
+    <strong class="divider txt-large">Le mie Zone</strong>
+
+    <%= turbo_frame_tag :zone_list do %>
+      <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
+    <% end %>
+
+    <%= render partial: "zone/form", locals: { regioni: @regioni, province: @province, gradi: @gradi } %>
+  </div>
+
+  <div class="settings__panel panel shadow center">
+    <strong class="divider txt-large">I miei Editori</strong>
+
+    <%= turbo_frame_tag :mandati_list do %>
+      <% @mandati.each do |mandato| %>
+        <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
+      <% end %>
+    <% end %>
+
+    <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
+  </div>
+
+</section>

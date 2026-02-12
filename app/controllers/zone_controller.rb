@@ -24,6 +24,7 @@ class ZoneController < ApplicationController
     )
     @account_zona.regione = params[:hregione]
     @account_zona.anno_scolastico ||= "2025/2026"
+    @account_zona.stato = "importazione" if @account_zona.new_record?
     @account_zona.save!
 
     @account_zone = Current.account.account_zone.order(:provincia, :grado)

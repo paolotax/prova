@@ -1,29 +1,7 @@
 <%= turbo_frame_tag "account-zone" do %>
 
     <% account_zone.each do |zona| %>
-
-        <div id="<%= dom_id(zona) %>" class="bg-white px-2 py-4 flex justify-between items-center align-center border-b border-gray-300">
-
-            <div class="flex flex-row items-center justify-between w-full pr-4">
-                <div class="">
-                    <span><%= zona.provincia %></span>
-                    <span class="text-sm text-gray-500"><%= zona.grado_label %></span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <% if zona.stato == "importazione" %>
-                        <span class="text-xs text-amber-600">importazione...</span>
-                    <% end %>
-                    <span class="text-sm"><%= zona.scuole_count %></span>
-                </div>
-            </div>
-
-            <div class="">
-                <%= button_to rimuovi_scuole_zone_path(id: zona.id), method: :delete,
-                        class: "mx-2 h-7 w-7 flex text-red-200 justify-center items-center text-center rounded-full bg-red-600 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"  do %>
-                    <%= inline_svg_tag "icon-trash.svg" %>
-                <% end %>
-            </div>
-        </div>
+        <%= render partial: "zone/zona", locals: { zona: zona } %>
     <% end %>
 
 <% end %>

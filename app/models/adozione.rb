@@ -114,7 +114,7 @@ class Adozione < ApplicationRecord
       ANNOCORSO: classe.classe_origine,
       SEZIONEANNO: classe.sezione_origine
     ).find_each do |import|
-      create_from_import(import, classe: classe)
+      create_from_import(import, classe: classe, account: classe.account)
       count += 1
     rescue ActiveRecord::RecordInvalid
       # già importata, skip

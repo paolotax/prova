@@ -1,5 +1,8 @@
 class ImportScuolePerZonaJob < ApplicationJob
   queue_as :default
+  discard_on ActiveJob::DeserializationError
+
+  include ActionView::RecordIdentifier
 
   def perform(account_zona)
     account = account_zona.account
@@ -17,6 +20,18 @@ class ImportScuolePerZonaJob < ApplicationJob
     end
 
     account_zona.update!(scuole_count: count, stato: "attiva")
+    broadcast_zone_update(account_zona)
     UpdateMieAdozioniJob.perform_later(account)
+  end
+
+  private
+
+  def broadcast_zone_update(account_zona)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      [account_zona.account, "configurazione"],
+      target: dom_id(account_zona),
+      partial: "zone/zona",
+      locals: { zona: account_zona }
+    )
   end
 end

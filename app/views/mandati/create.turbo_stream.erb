@@ -1,13 +1,7 @@
-<%= turbo_stream.update "nr-editori" do %>
-  <%= @mandati.size %>
-<% end %>
-
 <%= turbo_stream.replace "account-editori" do %>
-    <div id="account-editori" class="">
+    <div id="account-editori">
     	<% @mandati.each do |mandato| %>
         	<%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
     	<% end %>
 	</div>
 <% end %>
-
-<%= stream_notification "Mandato creato!", type: "success" %>

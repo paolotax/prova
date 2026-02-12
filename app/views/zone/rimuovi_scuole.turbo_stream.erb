@@ -1,7 +1,1 @@
-<%= turbo_stream.update "nr-zone" do %>
-    <%= @account_zone.size %>
-<% end %>
-
 <%= turbo_stream.remove dom_id(@account_zona) %>
-
-<%= stream_notification "Zona rimossa!", type: "success" %>

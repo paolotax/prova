@@ -1,7 +1,1 @@
-<%= turbo_stream.update "nr-editori" do %>
-  <%= @mandati.size %>
-<% end %>
-
 <%= turbo_stream.remove dom_id(@mandato) %>
-
-<%= stream_notification "Mandato eliminato!", type: "success" %>

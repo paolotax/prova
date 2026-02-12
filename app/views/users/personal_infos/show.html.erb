@@ -69,17 +69,6 @@
         </div>
       </dl>
 
-      <strong class="divider txt-large">La mia zona</strong>
-
-      <%= turbo_frame_tag :zone_list, src: user_zone_path(@user) do %>
-        <%= render 'shared/lazy_loading' %>
-      <% end %>
-
-      <strong class="divider txt-large">I miei editori</strong>
-
-      <%= turbo_frame_tag :mandati_list, src: user_mandati_path(@user) do %>
-        <%= render 'shared/lazy_loading' %>
-      <% end %>
     </section>
   <% end %>
 </div>
