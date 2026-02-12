@@ -15,3 +15,12 @@
 <% end %>
 
 <%= render "scuole/container/container", scuola: @scuola %>
+
+<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 120px;" do %>
+  <article class="panel shadow">
+    <header class="flex align-center justify-space-between margin-block-end-half">
+      <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+    </header>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+  </article>
+<% end %>
