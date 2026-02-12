@@ -8,6 +8,7 @@
 #  consigliato        :boolean          default(FALSE)
 #  da_acquistare      :boolean          default(FALSE)
 #  disciplina         :string
+#  disdetta           :boolean          default(FALSE), not null
 #  editore            :string
 #  mia                :boolean          default(FALSE), not null
 #  note               :text
@@ -62,6 +63,8 @@ class Adozione < ApplicationRecord
   scope :per_editore, ->(editore) { where(editore: editore) }
   scope :per_disciplina, ->(disciplina) { where(disciplina: disciplina) }
   scope :mie, -> { where(mia: true) }
+  scope :mie_attive, -> { where(mia: true, disdetta: false) }
+  scope :mie_disdette, -> { where(mia: true, disdetta: true) }
   scope :da_acquistare, -> { where(da_acquistare: true) }
   scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
 

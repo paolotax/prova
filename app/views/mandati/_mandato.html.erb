@@ -1,14 +1,24 @@
-<div id="<%= dom_id(mandato) %>" class="flex justify-between align-center padding-block-half" style="border-bottom: var(--border);">
+<div id="<%= dom_id(mandato) %>" class="flex justify-between align-center pad-block-start-half pad-block-end-half" style="border-bottom: var(--border);<%= " opacity: 0.5;" if mandato.disdetta? %>">
 
     <div class="flex align-center gap-half flex-1">
-        <span class="txt-small"><%= mandato.editore.editore %></span>
+        <span class="txt-small" style="<%= "text-decoration: line-through;" if mandato.disdetta? %>"><%= mandato.editore.editore %></span>
         <% if mandato.provincia.present? %>
             <span class="txt-x-small txt-subtle"><%= mandato.provincia %> <%= mandato.grado %></span>
         <% end %>
+        <% if mandato.disdetta? %>
+            <span class="txt-x-small" style="color: var(--color-negative);">disdetta</span>
+        <% end %>
     </div>
-    <div class="flex align-center gap-half">
-        <% if defined?(conteggi) && conteggi&.dig(mandato.id) %>
-            <span class="txt-x-small txt-subtle"><%= conteggi[mandato.id] %> sez.</span>
+    <div class="flex align-center" style="--btn-size: 2em; gap: 0.25em;">
+        <% if mandato.sezioni_count.to_i > 0 %>
+            <span class="txt-x-small txt-subtle margin-inline-end-half"><%= mandato.sezioni_count %> sez.</span>
+        <% end %>
+
+        <%= button_to toggle_disdetta_mandato_path(account_id: mandato.account_id, id: mandato.id),
+            method: :patch,
+            class: "btn btn--circle #{mandato.disdetta? ? 'btn--link' : 'btn--subtle'}",
+            aria: { label: mandato.disdetta? ? "Riattiva mandato" : "Segna disdetta" } do %>
+            <%= icon_tag mandato.disdetta? ? "refresh" : "close-circle" %>
         <% end %>
 
         <%= button_to mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,

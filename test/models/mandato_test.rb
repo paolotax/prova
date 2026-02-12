@@ -5,8 +5,10 @@
 #  id              :uuid             not null, primary key
 #  anno_scolastico :string
 #  contratto       :text
+#  disdetta        :boolean          default(FALSE), not null
 #  grado           :string
 #  provincia       :string
+#  sezioni_count   :integer          default(0)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  account_id      :uuid             not null

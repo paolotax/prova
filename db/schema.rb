@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_093457) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_152952) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -85,6 +85,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_093457) do
     t.datetime "created_at", null: false
     t.boolean "da_acquistare", default: false
     t.string "disciplina"
+    t.boolean "disdetta", default: false, null: false
     t.string "editore"
     t.bigint "import_adozione_id"
     t.bigint "libro_id"
@@ -781,9 +782,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_093457) do
     t.string "anno_scolastico"
     t.text "contratto"
     t.datetime "created_at", null: false
+    t.boolean "disdetta", default: false, null: false
     t.bigint "editore_id", null: false
     t.string "grado"
     t.string "provincia"
+    t.integer "sezioni_count", default: 0
     t.datetime "updated_at", null: false
     t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico"], name: "idx_mandati_unique", unique: true
     t.index ["account_id"], name: "index_mandati_on_account_id"

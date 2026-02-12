@@ -11,6 +11,7 @@
 #  consigliato        :boolean          default(FALSE)
 #  da_acquistare      :boolean          default(FALSE)
 #  disciplina         :string
+#  disdetta           :boolean          default(FALSE), not null
 #  editore            :string
 #  mia                :boolean          default(FALSE), not null
 #  note               :text

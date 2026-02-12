@@ -350,6 +350,9 @@ Rails.application.routes.draw do
     end
 
     resources :mandati do
+      member do
+        patch 'toggle_disdetta'
+      end
       collection do
         get 'select_editori'
         post 'aggiorna_mie_adozioni'

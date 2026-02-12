@@ -123,6 +123,8 @@
   .pad-block-half { padding-block: var(--block-space-half); }
   .pad-block-start-half { padding-block-start: var(--block-space-half); }
 
+  .pad-block-end-half { padding-block-end: var(--block-space-half); }
+
   .pad-inline { padding-inline: var(--inline-space); }
   .pad-inline-start { padding-inline-start: var(--inline-space); }
   .pad-inline-end { padding-inline-end: var(--inline-space); }

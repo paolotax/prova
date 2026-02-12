@@ -1,7 +1,7 @@
 require "test_helper"
 
 class MandatiControllerTest < ActionDispatch::IntegrationTest
-  fixtures :accounts, :users, :memberships, :editori, :mandati
+  fixtures :accounts, :users, :memberships, :editori, :mandati, :adozioni, :scuole, :classi
 
   setup do
     @account = accounts(:fizzy)
@@ -46,6 +46,25 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
         params: { hgruppo: "Zanichelli Group" },
         as: :turbo_stream
     end
+  end
+
+  test "should toggle disdetta on mandato" do
+    mandato = mandati(:fizzy_zanichelli)
+    assert_not mandato.disdetta?
+
+    patch toggle_disdetta_mandato_path(mandato, account_id: @account.id),
+      as: :turbo_stream
+    assert_response :success
+
+    mandato.reload
+    assert mandato.disdetta?
+
+    patch toggle_disdetta_mandato_path(mandato, account_id: @account.id),
+      as: :turbo_stream
+    assert_response :success
+
+    mandato.reload
+    assert_not mandato.disdetta?
   end
 
   test "should destroy mandato" do

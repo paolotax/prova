@@ -3,14 +3,14 @@
 
         <%= render partial: "mandati/mandati_select", locals: { gruppi: gruppi, editori: editori } %>
 
-        <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-            <button type="button" class="btn btn--circle btn--link" data-action="click->dialog#open:stop" aria-label="Aggiungi editore">
+        <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+            <button type="button" class="btn btn--circle btn--link" data-action="dialog#open" aria-label="Aggiungi editore">
                 <%= icon_tag "add" %>
             </button>
-            <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+            <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 24rem);" data-dialog-target="dialog">
                 <%= form_with url: mandati_path, method: :post do |f| %>
-                    <p><strong>Seleziona le zone</strong></p>
-                    <p class="txt-x-small txt-subtle">Per quali zone hai il mandato?</p>
+                    <h3 class="txt-large txt-bold">Seleziona le zone</h3>
+                    <p class="txt-small txt-subtle">Per quali zone hai il mandato?</p>
 
                     <%= hidden_field_tag "hgruppo" %>
                     <%= hidden_field_tag "heditore" %>
@@ -19,14 +19,14 @@
                         <% zone_attive.each do |zona| %>
                             <label class="flex align-center gap-half">
                                 <%= check_box_tag "zone_ids[]", zona.id, false, class: "input" %>
-                                <span><%= zona.provincia %> — <%= zona.grado_label %></span>
+                                <span class="txt-small"><%= zona.provincia %> — <%= zona.grado_label %></span>
                             </label>
                         <% end %>
                     </div>
 
                     <div class="flex gap-half justify-end margin-block-start">
-                        <button type="button" class="btn txt-small" data-action="click->dialog#close">Annulla</button>
-                        <%= f.button type: "submit", class: "btn btn--link txt-small" do %>
+                        <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+                        <%= f.button type: "submit", class: "btn btn--link" do %>
                             Aggiungi
                         <% end %>
                     </div>

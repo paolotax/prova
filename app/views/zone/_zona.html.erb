@@ -1,11 +1,11 @@
 <% rimossa = zona.stato == "da_rimuovere" %>
-<div id="<%= dom_id(zona) %>" class="flex justify-between align-center padding-block-half" style="border-bottom: var(--border);">
+<div id="<%= dom_id(zona) %>" class="flex justify-between align-center pad-block-start-half pad-block-end-half" style="border-bottom: var(--border);">
 
     <div class="flex align-center gap-half flex-1">
         <span class="txt-small<%= ' txt-subtle' if rimossa %>" <%= 'style="text-decoration: line-through"'.html_safe if rimossa %>><%= zona.provincia %></span>
         <span class="txt-x-small txt-subtle" <%= 'style="text-decoration: line-through"'.html_safe if rimossa %>><%= zona.grado_label %></span>
     </div>
-    <div class="flex align-center gap-half">
+    <div class="flex align-center" style="--btn-size: 2em; gap: 0.8em;">
         <% case zona.stato %>
         <% when "conteggio" %>
             <span class="txt-x-small txt-subtle">conteggio...</span>
@@ -24,7 +24,7 @@
         <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>
             <%= button_to rimuovi_scuole_zone_path(account_id: zona.account_id, id: zona.id), method: :delete,
                     class: "btn btn--circle btn--negative", aria: { label: "Rimuovi zona" } do %>
-                <%= icon_tag "trash" %>
+                <%= icon_tag "trash", class: "icon--small" %>
             <% end %>
         <% end %>
     </div>

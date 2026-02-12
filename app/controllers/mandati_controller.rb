@@ -60,6 +60,18 @@ class MandatiController < ApplicationController
     end
   end
 
+  def toggle_disdetta
+    @mandato = Current.account.mandati.find(params[:id])
+    @mandato.update!(disdetta: !@mandato.disdetta)
+
+    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to configurazione_path }
+    end
+  end
+
   def destroy
     @mandato = Current.account.mandati.find(params[:id])
     @mandato.destroy!
