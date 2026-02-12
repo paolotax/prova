@@ -6,6 +6,7 @@ class ZoneController < ApplicationController
     @regioni = Zona.order(:regione).select(:regione).distinct
     @province = []
     @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
+    @tipi = []
   end
 
   def select_zone
@@ -13,6 +14,11 @@ class ZoneController < ApplicationController
     @province = Zona.where(regione: params[:regione].presence)
                     .order(:provincia).select(:provincia).distinct
     @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
+    @tipi = if params[:grado].present?
+              TipoScuola.where(grado: params[:grado]).order(:tipo).select(:tipo).distinct
+            else
+              []
+            end
   end
 
   def assegna_scuole
@@ -24,25 +30,54 @@ class ZoneController < ApplicationController
     )
     @account_zona.regione = params[:hregione]
     @account_zona.anno_scolastico ||= "2025/2026"
-    @account_zona.stato = "importazione" if @account_zona.new_record?
+    @account_zona.stato = "conteggio" if @account_zona.new_record?
     @account_zona.save!
 
     @account_zone = Current.account.account_zone.order(:provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to zone_path, notice: "Zona aggiunta!" }
+      format.html { redirect_to configurazione_path, notice: "Zona aggiunta!" }
+    end
+  end
+
+  def importa_scuole
+    account = Current.account
+
+    # Cleanup zone da rimuovere
+    account.account_zone.where(stato: "da_rimuovere").find_each do |zona|
+      zona.update!(stato: "pulizia")
+      CleanupZonaJob.perform_later(zona)
+    end
+
+    # Import zone pronte
+    account.account_zone.pronte.find_each do |zona|
+      zona.update!(stato: "importazione")
+      ImportScuolePerZonaJob.perform_later(zona)
+    end
+
+    @account_zone = account.account_zone.order(:provincia, :grado)
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to configurazione_path, notice: "Aggiornamento in corso..." }
     end
   end
 
   def rimuovi_scuole
     @account_zona = Current.account.account_zone.find(params[:id])
-    @account_zona.update!(stato: "pulizia")
-    CleanupZonaJob.perform_later(@account_zona)
+
+    if @account_zona.stato.in?(%w[pronta conteggio])
+      @account_zona.destroy!
+    else
+      @account_zona.update!(stato: "da_rimuovere")
+    end
+
+    @account_zone = Current.account.account_zone.order(:provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to configurazione_path, notice: "Pulizia in corso..." }
+      format.html { redirect_to configurazione_path, notice: "Zona rimossa!" }
     end
   end
 end

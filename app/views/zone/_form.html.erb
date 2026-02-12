@@ -1,17 +1,17 @@
 <%= turbo_frame_tag :zone_form do %>
-    <div class="flex flex-column gap-half margin-block-start">
+    <div class="flex flex-wrap gap-half align-center margin-block-start">
 
-        <%= render partial: "zone/zone_select", locals: { regioni: @regioni, province: @province, gradi: @gradi } %>
+        <%= render partial: "zone/zone_select", locals: { regioni: regioni, province: province, gradi: gradi, tipi: tipi } %>
 
-        <%= form_with url: assegna_scuole_zone_path, class: "flex justify-end margin-block-start-half" do |f| %>
-
+        <%= form_with url: assegna_scuole_zone_path, class: "flex" do |f| %>
             <%= hidden_field_tag "hregione" %>
             <%= hidden_field_tag "hprovincia" %>
             <%= hidden_field_tag "hgrado" %>
-
+            <%= hidden_field_tag "htipo" %>
             <%= f.button type: "submit", class: "btn btn--circle btn--link", aria: { label: "Aggiungi zona" } do %>
-                <%= icon_tag "plus" %>
+                <%= icon_tag "add" %>
             <% end %>
         <% end %>
+
     </div>
 <% end %>

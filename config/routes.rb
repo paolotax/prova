@@ -340,6 +340,7 @@ Rails.application.routes.draw do
       collection do
         get 'select_zone'
         post 'assegna_scuole'
+        post 'importa_scuole'
         delete 'rimuovi_scuole'
       end
     end

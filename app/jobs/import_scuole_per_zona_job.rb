@@ -20,18 +20,20 @@ class ImportScuolePerZonaJob < ApplicationJob
     end
 
     account_zona.update!(scuole_count: count, stato: "attiva")
-    broadcast_zone_update(account_zona)
+    broadcast_zone_panel(account)
     UpdateMieAdozioniJob.perform_later(account)
   end
 
   private
 
-  def broadcast_zone_update(account_zona)
+  def broadcast_zone_panel(account)
+    account_zone = account.account_zone.order(:provincia, :grado)
+
     Turbo::StreamsChannel.broadcast_replace_to(
-      [account_zona.account, "configurazione"],
-      target: dom_id(account_zona),
-      partial: "zone/zona",
-      locals: { zona: account_zona }
+      [account, "configurazione"],
+      target: "zone-panel",
+      partial: "zone/zone_list",
+      locals: { account_zone: account_zone }
     )
   end
 end

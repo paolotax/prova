@@ -1,7 +1,30 @@
-<%= turbo_frame_tag "account-zone" do %>
-
+<div id="zone-panel">
     <% account_zone.each do |zona| %>
         <%= render partial: "zone/zona", locals: { zona: zona } %>
     <% end %>
 
-<% end %>
+    <% if account_zone.any? { |z| z.stato.in?(%w[pronta da_rimuovere]) } %>
+        <div class="margin-block-start" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+            <button class="btn txt-small" data-action="click->dialog#open:stop">
+                Aggiorna scuole
+            </button>
+            <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+                <p><strong>Confermi aggiornamento scuole?</strong></p>
+                <% pronte = account_zone.select { |z| z.stato == "pronta" } %>
+                <% da_rimuovere = account_zone.select { |z| z.stato == "da_rimuovere" } %>
+                <% if pronte.any? %>
+                    <p class="txt-x-small">Importa: <%= pronte.map { |z| "#{z.provincia} #{z.grado_label}" }.join(", ") %></p>
+                <% end %>
+                <% if da_rimuovere.any? %>
+                    <p class="txt-x-small" style="color: var(--color-negative);">Rimuovi: <%= da_rimuovere.map { |z| "#{z.provincia} #{z.grado_label}" }.join(", ") %></p>
+                <% end %>
+                <div class="flex gap-half justify-end">
+                    <button class="btn txt-small" data-action="click->dialog#close">Annulla</button>
+                    <%= button_to importa_scuole_zone_path(account_id: account_zone.first.account_id), class: "btn btn--negative txt-small" do %>
+                        Conferma
+                    <% end %>
+                </div>
+            </dialog>
+        </div>
+    <% end %>
+</div>

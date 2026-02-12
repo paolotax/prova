@@ -1,4 +1,4 @@
-<%= turbo_frame_tag :zone_select do %>
+<%= turbo_frame_tag :zone_select, class: "flex flex-wrap gap-half" do %>
     <%= form_with url: select_zone_zone_path, method: :get, data: { controller: "tax-select",
                                                             action: "change->tax-select#submit"
                                                         } do |f| %>
@@ -19,6 +19,13 @@
                                 { prompt: "tutti" },
                                 { class: "input input--select txt-small", data: { tax_select_target: "grado" } } %>
             </div>
+            <% if tipi.present? %>
+                <div>
+                    <%= f.select :tipo, options_from_collection_for_select(tipi, "tipo", "tipo"),
+                                    { prompt: "tutti" },
+                                    { class: "input input--select txt-small", data: { tax_select_target: "tipo" } } %>
+                </div>
+            <% end %>
         </div>
 
     <% end %>

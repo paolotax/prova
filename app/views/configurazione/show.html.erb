@@ -7,11 +7,9 @@
   <div class="settings__panel panel shadow center">
     <strong class="divider txt-large">Le mie Zone</strong>
 
-    <%= turbo_frame_tag :zone_list do %>
-      <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
-    <% end %>
+    <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
 
-    <%= render partial: "zone/form", locals: { regioni: @regioni, province: @province, gradi: @gradi } %>
+    <%= render partial: "zone/form", locals: { regioni: @regioni, province: @province, gradi: @gradi, tipi: @tipi } %>
   </div>
 
   <div class="settings__panel panel shadow center">

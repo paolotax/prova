@@ -25,13 +25,17 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create zona via assegna_scuole" do
+  test "should create zona with conteggio stato and enqueue count job" do
     assert_difference("AccountZona.count") do
-      post assegna_scuole_zone_path(account_id: @account.id),
-        params: { hregione: "Piemonte", hprovincia: "TO", hgrado: "E" },
-        as: :turbo_stream
+      assert_enqueued_with(job: CountScuolePerZonaJob) do
+        post assegna_scuole_zone_path(account_id: @account.id),
+          params: { hregione: "Piemonte", hprovincia: "TO", hgrado: "E" },
+          as: :turbo_stream
+      end
     end
     assert_response :success
+    zona = AccountZona.find_by(provincia: "TO", grado: "E", account: @account)
+    assert_equal "conteggio", zona.stato
   end
 
   test "should not create duplicate zona" do
@@ -43,15 +47,36 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should mark zona as pulizia and enqueue cleanup job" do
+  test "should destroy pronta zona directly" do
     zona = account_zone(:fizzy_mi_media)
-    assert_no_difference("AccountZona.count") do
-      assert_enqueued_with(job: CleanupZonaJob) do
-        delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
-          as: :turbo_stream
-      end
+    zona.update!(stato: "pronta")
+    assert_difference("AccountZona.count", -1) do
+      delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
+        as: :turbo_stream
     end
-    assert_equal "pulizia", zona.reload.stato
+  end
+
+  test "should mark attiva zona as da_rimuovere" do
+    zona = account_zone(:fizzy_mi_media)
+    zona.update!(stato: "attiva")
+    assert_no_difference("AccountZona.count") do
+      delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
+        as: :turbo_stream
+    end
+    assert_equal "da_rimuovere", zona.reload.stato
+  end
+
+  test "importa_scuole imports pronte and cleans up da_rimuovere" do
+    pronta = account_zone(:fizzy_mi_media)
+    pronta.update!(stato: "pronta")
+
+    da_rimuovere = account_zone(:fizzy_mi_primaria)
+    da_rimuovere.update!(stato: "da_rimuovere")
+
+    post importa_scuole_zone_path(account_id: @account.id), as: :turbo_stream
+
+    assert_equal "importazione", pronta.reload.stato
+    assert_equal "pulizia", da_rimuovere.reload.stato
   end
 
   private

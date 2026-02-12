@@ -33,9 +33,11 @@ class AccountZona < ApplicationRecord
   validates :grado, presence: true
   validates :provincia, uniqueness: { scope: [:account_id, :grado, :anno_scolastico] }
 
-  after_create_commit :import_scuole_async
+  after_create_commit :count_scuole_async
 
   scope :per_anno, ->(anno) { where(anno_scolastico: anno) }
+  scope :pronte, -> { where(stato: "pronta") }
+  scope :da_rimuovere, -> { where(stato: "da_rimuovere") }
 
   def grado_label
     TipoScuola::GRADI.to_h.invert[grado] || grado
@@ -48,7 +50,7 @@ class AccountZona < ApplicationRecord
 
   private
 
-  def import_scuole_async
-    ImportScuolePerZonaJob.perform_later(self)
+  def count_scuole_async
+    CountScuolePerZonaJob.perform_later(self)
   end
 end

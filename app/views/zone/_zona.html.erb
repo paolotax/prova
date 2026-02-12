@@ -1,34 +1,31 @@
+<% rimossa = zona.stato == "da_rimuovere" %>
 <div id="<%= dom_id(zona) %>" class="flex justify-between align-center padding-block-half" style="border-bottom: var(--border);">
 
     <div class="flex align-center gap-half flex-1">
-        <span class="txt-small"><%= zona.provincia %></span>
-        <span class="txt-x-small txt-subtle"><%= zona.grado_label %></span>
+        <span class="txt-small<%= ' txt-subtle' if rimossa %>" <%= 'style="text-decoration: line-through"'.html_safe if rimossa %>><%= zona.provincia %></span>
+        <span class="txt-x-small txt-subtle" <%= 'style="text-decoration: line-through"'.html_safe if rimossa %>><%= zona.grado_label %></span>
     </div>
     <div class="flex align-center gap-half">
-        <% if zona.stato == "importazione" %>
+        <% case zona.stato %>
+        <% when "conteggio" %>
+            <span class="txt-x-small txt-subtle">conteggio...</span>
+        <% when "pronta" %>
+            <span class="txt-x-small" style="color: var(--color-warning);"><%= zona.scuole_count %> scuole</span>
+        <% when "da_rimuovere" %>
+            <span class="txt-x-small" style="color: var(--color-negative);">da rimuovere</span>
+        <% when "importazione" %>
             <span class="txt-x-small" style="color: var(--color-negative);">importazione...</span>
-        <% elsif zona.stato == "pulizia" %>
+        <% when "pulizia" %>
             <span class="txt-x-small" style="color: var(--color-negative);">pulizia...</span>
+        <% when "attiva" %>
+            <span class="txt-small txt-subtle"><%= zona.scuole_count %></span>
         <% end %>
-        <span class="txt-small txt-subtle"><%= zona.scuole_count %></span>
 
-        <% unless zona.stato == "pulizia" %>
-            <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-                <button class="btn btn--circle btn--negative" data-action="click->dialog#open:stop" aria-label="Rimuovi zona">
-                    <%= icon_tag "trash" %>
-                </button>
-                <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
-                    <p>Eliminare <strong><%= zona.provincia %> <%= zona.grado_label %></strong>?</p>
-                    <p class="txt-x-small txt-subtle">Verranno rimosse anche le scuole e le adozioni associate.</p>
-                    <div class="flex gap-half justify-end">
-                        <button class="btn txt-small" data-action="click->dialog#close">Annulla</button>
-                        <%= button_to rimuovi_scuole_zone_path(account_id: zona.account_id, id: zona.id), method: :delete,
-                                class: "btn btn--negative txt-small" do %>
-                            Elimina
-                        <% end %>
-                    </div>
-                </dialog>
-            </div>
+        <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>
+            <%= button_to rimuovi_scuole_zone_path(account_id: zona.account_id, id: zona.id), method: :delete,
+                    class: "btn btn--circle btn--negative", aria: { label: "Rimuovi zona" } do %>
+                <%= icon_tag "trash" %>
+            <% end %>
         <% end %>
     </div>
 </div>
