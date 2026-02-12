@@ -43,12 +43,15 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should destroy zona via rimuovi_scuole" do
+  test "should mark zona as pulizia and enqueue cleanup job" do
     zona = account_zone(:fizzy_mi_media)
-    assert_difference("AccountZona.count", -1) do
-      delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
-        as: :turbo_stream
+    assert_no_difference("AccountZona.count") do
+      assert_enqueued_with(job: CleanupZonaJob) do
+        delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
+          as: :turbo_stream
+      end
     end
+    assert_equal "pulizia", zona.reload.stato
   end
 
   private

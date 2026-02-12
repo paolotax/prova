@@ -37,13 +37,12 @@ class ZoneController < ApplicationController
 
   def rimuovi_scuole
     @account_zona = Current.account.account_zone.find(params[:id])
-    @account_zona.destroy
-
-    @account_zone = Current.account.account_zone.order(:provincia, :grado)
+    @account_zona.update!(stato: "pulizia")
+    CleanupZonaJob.perform_later(@account_zona)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to zone_path, notice: "Zona rimossa!" }
+      format.html { redirect_to configurazione_path, notice: "Pulizia in corso..." }
     end
   end
 end

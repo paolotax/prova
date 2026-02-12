@@ -7,12 +7,28 @@
     <div class="flex align-center gap-half">
         <% if zona.stato == "importazione" %>
             <span class="txt-x-small" style="color: var(--color-negative);">importazione...</span>
+        <% elsif zona.stato == "pulizia" %>
+            <span class="txt-x-small" style="color: var(--color-negative);">pulizia...</span>
         <% end %>
         <span class="txt-small txt-subtle"><%= zona.scuole_count %></span>
 
-        <%= button_to rimuovi_scuole_zone_path(id: zona.id), method: :delete,
-                class: "btn btn--circle btn--negative", aria: { label: "Rimuovi zona" } do %>
-            <%= icon_tag "trash" %>
+        <% unless zona.stato == "pulizia" %>
+            <div data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+                <button class="btn btn--circle btn--negative" data-action="click->dialog#open:stop" aria-label="Rimuovi zona">
+                    <%= icon_tag "trash" %>
+                </button>
+                <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+                    <p>Eliminare <strong><%= zona.provincia %> <%= zona.grado_label %></strong>?</p>
+                    <p class="txt-x-small txt-subtle">Verranno rimosse anche le scuole e le adozioni associate.</p>
+                    <div class="flex gap-half justify-end">
+                        <button class="btn txt-small" data-action="click->dialog#close">Annulla</button>
+                        <%= button_to rimuovi_scuole_zone_path(account_id: zona.account_id, id: zona.id), method: :delete,
+                                class: "btn btn--negative txt-small" do %>
+                            Elimina
+                        <% end %>
+                    </div>
+                </dialog>
+            </div>
         <% end %>
     </div>
 </div>
