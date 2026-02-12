@@ -9,20 +9,13 @@
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Classe <%= @classe.nome_breve %></span>
+    <span class="overflow-ellipsis"><%= @scuola.denominazione %></span>
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= button_to import_adozioni_scuola_classe_path(@scuola, @classe),
-        method: :post,
-        class: "btn btn--primary" do %>
-      <%= icon_tag "download", size: "small" %>
-      <span class="for-screen-reader">Importa Adozioni</span>
-    <% end %>
+
   </div>
 <% end %>
-
-<div class="panel center" style="--panel-size: 100ch;">
 
   <!-- Breadcrumb -->
   <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
@@ -34,6 +27,12 @@
     <%= icon_tag "chevron-right", size: "small" %>
     <span class="font-weight-bold">Classe <%= @classe.nome_breve %></span>
   </nav>
+
+
+
+<div class="panel center" style="--panel-size: 100ch;">
+
+
 
   <!-- Info classe -->
   <div class="flex align-center gap margin-block-end">
@@ -49,49 +48,34 @@
         <p class="txt-xx-small txt-subtle margin-none"><%= @classe.tipo_scuola %></p>
       <% end %>
     </div>
+
+    <dl class="dl-grid txt-small">
+      <% if @classe.numero_alunni.present? && @classe.numero_alunni > 0 %>
+        <dt class="txt-subtle">Alunni</dt>
+        <dd class="font-weight-bold"><%= @classe.numero_alunni %></dd>
+      <% end %>
+    </dl>
+
+    <div class="flex gap-half flex-wrap margin-block-start">
+      <span class="badge txt-xx-small"><%= @adozioni.count %> adozioni</span>
+      <% if @adozioni.da_acquistare_flag.any? %>
+        <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
+          <%= @adozioni.da_acquistare_flag.count %> da acquistare
+        </span>
+      <% end %>
+      <% if @adozioni.nuove.any? %>
+        <span class="badge txt-xx-small" style="background: var(--color-link-lighter); color: var(--color-link);">
+          <%= @adozioni.nuove.count %> nuove
+        </span>
+      <% end %>
+      <% if @adozioni.mie.any? %>
+        <span class="badge txt-xx-small" style="background: var(--color-positive-lighter); color: var(--color-positive-dark);">
+          <%= @adozioni.mie.count %> mie
+        </span>
+      <% end %>
+    </div>
   </div>
 
-  <dl class="dl-grid txt-small">
-    <dt class="txt-subtle">Anno Corso</dt>
-    <dd class="font-weight-bold"><%= @classe.anno_corso %></dd>
-
-    <dt class="txt-subtle">Sezione</dt>
-    <dd class="font-weight-bold"><%= @classe.sezione.presence || "—" %></dd>
-
-    <% if @classe.numero_alunni.present? && @classe.numero_alunni > 0 %>
-      <dt class="txt-subtle">Alunni</dt>
-      <dd class="font-weight-bold"><%= @classe.numero_alunni %></dd>
-    <% end %>
-
-    <% if @classe.comune.present? %>
-      <dt class="txt-subtle">Comune</dt>
-      <dd><%= @classe.comune %></dd>
-    <% end %>
-
-    <% if @classe.provincia.present? %>
-      <dt class="txt-subtle">Provincia</dt>
-      <dd><%= @classe.provincia %></dd>
-    <% end %>
-  </dl>
-
-  <div class="flex gap-half flex-wrap margin-block-start">
-    <span class="badge txt-xx-small"><%= @adozioni.count %> adozioni</span>
-    <% if @adozioni.da_acquistare_flag.any? %>
-      <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
-        <%= @adozioni.da_acquistare_flag.count %> da acquistare
-      </span>
-    <% end %>
-    <% if @adozioni.nuove.any? %>
-      <span class="badge txt-xx-small" style="background: var(--color-link-lighter); color: var(--color-link);">
-        <%= @adozioni.nuove.count %> nuove
-      </span>
-    <% end %>
-    <% if @adozioni.mie.any? %>
-      <span class="badge txt-xx-small" style="background: var(--color-positive-lighter); color: var(--color-positive-dark);">
-        <%= @adozioni.mie.count %> mie
-      </span>
-    <% end %>
-  </div>
 
   <!-- Adozioni -->
   <h3 class="divider divider--fade txt-medium font-weight-black">Adozioni</h3>
