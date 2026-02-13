@@ -11,13 +11,18 @@ module Scuole
         return
       end
 
-      importer = AnarpeImporter.new(file: params[:file], scuola: @scuola)
-      importer.call
+      import = Current.user.import_records.new(
+        import_type: :insegnanti,
+        account: current_account,
+        file: params[:file],
+        metadata: { scuola_id: @scuola.id, scuola_nome: @scuola.denominazione }
+      )
 
-      if importer.errors_list.any?
-        redirect_to @scuola, alert: "Importati #{importer.imported_count} insegnanti, #{importer.errors_list.size} errori."
+      if import.save
+        ImportProcessJob.perform_later(import.id)
+        redirect_to import_path(import), notice: "Importazione insegnanti avviata."
       else
-        redirect_to @scuola, notice: "Importati #{importer.imported_count} insegnanti."
+        redirect_to @scuola, alert: "Errore nell'avvio dell'importazione."
       end
     end
 

@@ -37,7 +37,8 @@ class ImportRecord < ApplicationRecord
     clienti: 1,
     documenti: 2,
     confezioni: 3,
-    ministeriali: 4
+    ministeriali: 4,
+    insegnanti: 5
   }
 
   enum :status, {
@@ -55,7 +56,7 @@ class ImportRecord < ApplicationRecord
   def process!
     update!(status: :processing, started_at: Time.current)
 
-    result = processor_class.new(file, user).call
+    result = processor_class.new(file, user, metadata: metadata).call
 
     update!(
       status: result.success? ? :completed : :failed,

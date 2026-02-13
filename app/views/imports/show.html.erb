@@ -1,5 +1,9 @@
 <% @page_title = "Importazione #{@import.import_type.humanize}" %>
 
+<% if @import.pending? || @import.processing? %>
+  <meta http-equiv="refresh" content="5">
+<% end %>
+
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= header_back_link imports_path, label: "Storico" %>
@@ -12,9 +16,7 @@
 
 <% if @import.pending? || @import.processing? %>
   <%# In Progress %>
-  <article class="panel panel--wide shadow center txt-align-start"
-       data-controller="turbo-frame-load"
-       data-turbo-frame-load-interval-value="3000">
+  <article class="panel panel--wide shadow center txt-align-start">
     <div class="flex flex-column gap align-center txt-align-center">
       <div class="flex align-center justify-center fill-shade border-radius pad">
         <svg class="animate-spin" style="width: 3rem; height: 3rem;" viewBox="0 0 24 24">
@@ -133,6 +135,7 @@
            when "libri" then libri_path
            when "clienti" then clienti_path
            when "documenti" then documenti_path
+           when "insegnanti" then @import.metadata&.dig("scuola_id") ? scuola_path(@import.metadata["scuola_id"]) : account_root_path
            else account_root_path
          end %>
       <%= link_to target_path, class: "btn" do %>
