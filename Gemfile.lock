@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.1)
     action_text-trix (2.1.16)
       railties
     actioncable (8.1.2)
@@ -82,6 +83,7 @@ GEM
       activesupport (>= 6.1)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    afm (1.0.0)
     ahoy_matey (5.2.1)
       activesupport (>= 6.1)
       device_detector (>= 1)
@@ -237,6 +239,7 @@ GEM
       activesupport (>= 6.1)
     groupdate (6.5.1)
       activesupport (>= 7)
+    hashery (2.1.2)
     heapy (0.2.0)
       thor
     herb (0.7.4-aarch64-linux-gnu)
@@ -396,6 +399,12 @@ GEM
     openssl (4.0.0)
     ostruct (0.6.1)
     pdf-core (0.10.0)
+    pdf-reader (2.15.1)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (>= 0.2.1, < 2)
+      hashery (~> 2.0)
+      ruby-rc4
+      ttfunk
     pg (1.5.9)
     pg_search (2.3.7)
       activerecord (>= 6.1)
@@ -690,6 +699,7 @@ DEPENDENCIES
   net-http-persistent
   nokogiri
   open-uri
+  pdf-reader
   pg (~> 1.1)
   pg_search (~> 2.3)
   platform_agent

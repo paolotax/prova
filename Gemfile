@@ -95,6 +95,7 @@ gem 'prawn-svg'
 gem 'prawn-emoji'
 
 gem 'combine_pdf'
+gem "pdf-reader"
 
 gem "pg_search", "~> 2.3"
 gem 'activerecord-import'

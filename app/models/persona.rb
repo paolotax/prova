@@ -33,6 +33,9 @@ class Persona < ApplicationRecord
 
   belongs_to :scuola, optional: true
 
+  has_many :persona_classi, dependent: :destroy
+  has_many :classi, through: :persona_classi
+
   enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", altro: "altro" }
 
   validates :cognome, presence: true

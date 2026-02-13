@@ -59,6 +59,9 @@ class Classe < ApplicationRecord
 
   belongs_to :scuola
 
+  has_many :persona_classi, dependent: :destroy
+  has_many :persone, through: :persona_classi
+
   has_many :adozioni, dependent: :destroy
   has_many :consegne_saggio, through: :adozioni
 

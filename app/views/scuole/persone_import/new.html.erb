@@ -1,0 +1,25 @@
+<% @page_title = "Importa insegnanti" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to @scuola.denominazione, @scuola %>
+  </div>
+<% end %>
+
+<div class="pad">
+  <article class="panel shadow" style="max-width: 40ch;">
+    <%= form_with url: scuola_persone_import_path(@scuola), method: :post, multipart: true, class: "flex flex-column gap" do |form| %>
+      <h2 class="txt-large font-weight-bold">Importa insegnanti</h2>
+      <p class="txt-small txt-subtle">Carica il PDF della scuola in formato ANARPE.</p>
+
+      <label class="flex flex-column gap-quarter">
+        <span class="txt-small font-weight-bold">File PDF</span>
+        <%= form.file_field :file, accept: ".pdf", required: true, class: "input" %>
+      </label>
+
+      <button type="submit" class="btn btn--link">
+        Importa
+      </button>
+    <% end %>
+  </article>
+</div>

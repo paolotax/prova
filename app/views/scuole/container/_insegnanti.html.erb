@@ -1,0 +1,35 @@
+<%# locals: (scuola:) -%>
+
+<% persone = scuola.persone.docente.includes(persona_classi: :classe).order(:cognome, :nome) %>
+
+<article class="panel shadow">
+  <header class="flex align-center justify-space-between margin-block-end-half">
+    <h3 class="txt-medium font-weight-black margin-none">Insegnanti (<%= persone.size %>)</h3>
+    <%= link_to new_scuola_persone_import_path(scuola), class: "btn txt-small" do %>
+      Importa PDF
+    <% end %>
+  </header>
+
+  <% if persone.any? %>
+    <table class="table txt-small full-width">
+      <thead>
+        <tr>
+          <th class="text-align-start">Docente</th>
+          <th class="text-align-start">Materia</th>
+          <th class="text-align-start">Classi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% persone.each do |persona| %>
+          <tr>
+            <td class="font-weight-bold"><%= persona.cognome %> <%= persona.nome %></td>
+            <td class="txt-subtle"><%= persona.persona_classi.first&.materia&.titleize %></td>
+            <td><%= persona.classi.order(:anno_corso, :sezione).map(&:classe_e_sezione).join(", ") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="txt-small txt-subtle margin-none">Nessun insegnante importato. Usa il bottone per caricare un PDF ANARPE.</p>
+  <% end %>
+</article>

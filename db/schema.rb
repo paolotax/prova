@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_174035) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_174835) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1146,6 +1146,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_174035) do
     t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile"
     t.index ["pagabile_type", "pagabile_id"], name: "index_pagamenti_on_pagabile_type_and_pagabile_id", unique: true
     t.index ["user_id"], name: "index_pagamenti_on_user_id"
+  end
+
+  create_table "persona_classi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "classe_id", null: false
+    t.datetime "created_at", null: false
+    t.string "materia"
+    t.uuid "persona_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classe_id"], name: "index_persona_classi_on_classe_id"
+    t.index ["persona_id", "classe_id"], name: "index_persona_classi_on_persona_id_and_classe_id", unique: true
+    t.index ["persona_id"], name: "index_persona_classi_on_persona_id"
   end
 
   create_table "personal_infos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
