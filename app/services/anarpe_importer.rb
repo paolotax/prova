@@ -114,7 +114,7 @@ class AnarpeImporter
     png_path = File.join(tmpdir, "page_#{page_num}.png")
     txt_path = File.join(tmpdir, "page_#{page_num}")
 
-    system("gs", "-dNOPAUSE", "-dBATCH", "-sDEVICE=png16m", "-r300",
+    system("gs", "-dNOPAUSE", "-dBATCH", "-sDEVICE=png16m", "-r400",
            "-dFirstPage=#{page_num}", "-dLastPage=#{page_num}",
            "-sOutputFile=#{png_path}", pdf_path,
            out: File::NULL, err: File::NULL)
