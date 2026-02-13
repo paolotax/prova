@@ -2,18 +2,24 @@ class AnarpeImporter
   include ActiveModel::Model
 
   MATERIE = [
-    "LETTERE", "MATEMATICA E SCIENZE", "INGLESE", "FRANCESE", "SPAGNOLO",
-    "TEDESCO", "TECNOLOGIA", "ARTE E IMMAGINE", "MUSICA", "SCIENZE MOTORIE",
-    "ED. FISICA", "RELIGIONE", "SOSTEGNO", "STRUMENTO MUSICALE",
+    "MATEMATICA E SCIENZE", "ARTE E IMMAGINE", "SCIENZE MOTORIE",
+    "ED. FISICA", "STRUMENTO MUSICALE", "RELIGIONE CATTOLICA",
+    "LETTERE", "INGLESE", "FRANCESE", "SPAGNOLO",
+    "TEDESCO", "TECNOLOGIA", "MUSICA",
+    "RELIGIONE", "SOSTEGNO",
     "ALTERNATIVA", "GEOGRAFIA", "STORIA", "ITALIANO"
   ].freeze
 
-  attr_reader :scuola, :imported_count, :errors_list
+  # Default years when OCR loses digits (middle school = 3 years)
+  DEFAULT_YEARS = %w[1 2 3].freeze
+
+  attr_reader :scuola, :imported_count, :updated_count, :errors_list
 
   def initialize(file:, scuola:)
     @file = file
     @scuola = scuola
     @imported_count = 0
+    @updated_count = 0
     @errors_list = []
   end
 
@@ -33,21 +39,62 @@ class AnarpeImporter
   end
 
   # Parse the compact ANARPE classi format
-  # "12AG 1EH -" => [["1","A"], ["2","A"], ["1","G"], ["2","G"], ["1","E"], ["1","H"]]
-  def self.parse_classi_compact(text)
+  # Handles multiple formats from OCR:
+  #   "3C 2F -"          => [["3","C"], ["2","F"]]
+  #   "1AF 3B -"         => [["1","A"], ["1","F"], ["3","B"]]
+  #   "123 DEF -"        => all combos of 1,2,3 x D,E,F
+  #   "- AG-"            => all default years x A,G (no digits = all years)
+  #   "- BCE -"          => all default years x B,C,E
+  #   "- B1H-"           => extract digits+letters, handle mixed
+  def self.parse_classi_compact(text, default_years: DEFAULT_YEARS)
     return [] if text.blank?
 
+    # Normalize: uppercase, strip OCR noise prefix/suffix
+    clean = text.upcase.gsub(/\A[:\-=\s]+/, "").gsub(/[\-=\s]+\z/, "").strip
+    return [] if clean.blank?
+
     result = []
-    # Extract only tokens that look like class codes: digits followed by uppercase letters
-    tokens = text.scan(/\d+[A-Z]+/)
+    tokens = clean.split(/\s+/)
+    pending_digits = []
+    found_any_digits = false
 
     tokens.each do |token|
-      digits = token.scan(/\d/)
-      letters = token.scan(/[A-Z]/)
+      if token.match?(/\A\d+\z/)
+        # Pure digits token (e.g. "123")
+        pending_digits = token.chars
+        found_any_digits = true
+      elsif token.match?(/\A[A-Z]+\z/)
+        # Pure letters token (e.g. "DEF", "AG")
+        digits_to_use = pending_digits.any? ? pending_digits : nil
+        token.chars.each do |l|
+          if digits_to_use
+            digits_to_use.each { |d| result << [d, l] }
+          else
+            # No digits available — defer, will apply defaults at end
+            result << [nil, l]
+          end
+        end
+        pending_digits = [] if pending_digits.any?
+      elsif token.match?(/\d/) && token.match?(/[A-Z]/)
+        # Mixed token — extract all digits and letters
+        pending_digits = []
+        found_any_digits = true
 
-      letters.each do |l|
-        digits.each do |d|
-          result << [d, l]
+        digits = token.scan(/\d/)
+        letters = token.scan(/[A-Z]/)
+        letters.each do |l|
+          digits.each { |d| result << [d, l] }
+        end
+      end
+    end
+
+    # Replace nil years with defaults (when OCR lost the digits)
+    if result.any? { |r| r[0].nil? }
+      result = result.flat_map do |pair|
+        if pair[0].nil?
+          default_years.map { |d| [d, pair[1]] }
+        else
+          [pair]
         end
       end
     end
@@ -83,25 +130,32 @@ class AnarpeImporter
     lines = text.lines.map(&:strip).reject(&:blank?)
 
     lines.each_with_index do |line, i|
-      # Find lines containing a known subject
+      # Find lines containing a known subject (longer materie checked first)
       materia = MATERIE.find { |m| line.include?(m) }
       next unless materia
 
       # Extract the name: uppercase words before the subject
       before_materia = line.split(materia).first.to_s
 
-      # Keep only uppercase words >= 3 chars or containing a dot (M.PIA)
+      # Keep only uppercase words >= 3 chars or containing a dot (M.PIA, M.CRISTINA)
       # Take last 2 parts — format is always COGNOME NOME, noise is at start
       name_parts = before_materia.scan(/[A-Z][A-Z.']+/).select { |w| w.length >= 3 || w.include?(".") }
-      next if name_parts.size < 2
 
-      cognome = name_parts[-2]
-      nome = name_parts[-1]
+      # Need at least cognome; nome can be missing (e.g. "CARTA TECNOLOGIA")
+      next if name_parts.empty?
+
+      cognome = name_parts.size >= 2 ? name_parts[-2] : name_parts[-1]
+      nome = name_parts.size >= 2 ? name_parts[-1] : ""
 
       # Classes are on the next non-empty line
+      # Accept lines with digits+letters (mixed), or just uppercase letters
+      # ending with dash (ANARPE format: "- AG-", "7 1AF 3B -", ": EF-")
       classi_text = ""
       if i + 1 < lines.size
-        classi_text = lines[i + 1]
+        next_line = lines[i + 1]
+        if next_line.match?(/[A-Z]/) && next_line.match?(/[-–—]/)
+          classi_text = next_line
+        end
       end
 
       classi = self.class.parse_classi_compact(classi_text)
@@ -124,6 +178,7 @@ class AnarpeImporter
         nome: data[:nome],
         account: scuola.account
       )
+      is_new = persona.new_record?
       persona.ruolo = :docente
       persona.save!
 
@@ -140,7 +195,11 @@ class AnarpeImporter
         end
       end
 
-      @imported_count += 1
+      if is_new
+        @imported_count += 1
+      else
+        @updated_count += 1
+      end
     rescue => e
       @errors_list << "#{data[:cognome]} #{data[:nome]}: #{e.message}"
     end

@@ -18,6 +18,7 @@ module Imports
       importer.call
 
       @imported_count = importer.imported_count
+      @updated_count = importer.updated_count
       @errors_count = importer.errors_list.size
       @errors = importer.errors_list.first(50)
     ensure

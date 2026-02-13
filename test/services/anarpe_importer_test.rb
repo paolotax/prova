@@ -17,23 +17,74 @@ class AnarpeImporterTest < ActiveSupport::TestCase
     assert_equal expected, result
   end
 
-  test "parse_classi_compact parses single sezione without anno" do
-    result = AnarpeImporter.parse_classi_compact("E -")
-    assert_equal [["E"]], result
-  end
-
   test "parse_classi_compact parses single class with multiple sezioni" do
     result = AnarpeImporter.parse_classi_compact("1BDE -")
     assert_equal [["1", "B"], ["1", "D"], ["1", "E"]], result
   end
 
   test "parse_classi_compact handles empty string" do
-    result = AnarpeImporter.parse_classi_compact("")
-    assert_equal [], result
+    assert_equal [], AnarpeImporter.parse_classi_compact("")
   end
 
   test "parse_classi_compact handles dash only" do
-    result = AnarpeImporter.parse_classi_compact("-")
-    assert_equal [], result
+    assert_equal [], AnarpeImporter.parse_classi_compact("-")
+  end
+
+  # Separated digits and letters format
+  test "parse_classi_compact parses separated digits and letters" do
+    result = AnarpeImporter.parse_classi_compact(": 123 DEF -")
+    assert_equal 9, result.size
+    assert_includes result, ["1", "D"]
+    assert_includes result, ["3", "F"]
+  end
+
+  test "parse_classi_compact parses all letters separated" do
+    result = AnarpeImporter.parse_classi_compact(": 123 ABCDEF -")
+    assert_equal 18, result.size
+  end
+
+  test "parse_classi_compact parses mixed tokens with noise prefix" do
+    result = AnarpeImporter.parse_classi_compact("7 1AF 3B -")
+    assert_includes result, ["1", "A"]
+    assert_includes result, ["1", "F"]
+    assert_includes result, ["3", "B"]
+  end
+
+  test "parse_classi_compact parses 12C 2F format" do
+    result = AnarpeImporter.parse_classi_compact("- 12C 2F -")
+    assert_includes result, ["1", "C"]
+    assert_includes result, ["2", "C"]
+    assert_includes result, ["2", "F"]
+  end
+
+  # Pure letters — OCR lost digits, default to years 1,2,3
+  test "parse_classi_compact defaults to 123 for pure letters" do
+    result = AnarpeImporter.parse_classi_compact("- AG-")
+    assert_equal 6, result.size
+    assert_includes result, ["1", "A"]
+    assert_includes result, ["2", "A"]
+    assert_includes result, ["3", "A"]
+    assert_includes result, ["1", "G"]
+    assert_includes result, ["2", "G"]
+    assert_includes result, ["3", "G"]
+  end
+
+  test "parse_classi_compact defaults for pure letters with spaces" do
+    result = AnarpeImporter.parse_classi_compact("- BCE -")
+    assert_equal 9, result.size # 3 years x 3 letters
+  end
+
+  test "parse_classi_compact handles lowercase OCR noise" do
+    # ": cD-" → uppercase → "CD" → defaults
+    result = AnarpeImporter.parse_classi_compact(": cD-")
+    assert_includes result, ["1", "C"]
+    assert_includes result, ["1", "D"]
+  end
+
+  test "parse_classi_compact handles mixed with B1H format" do
+    result = AnarpeImporter.parse_classi_compact("- B1H-")
+    # B1H uppercase → "B1H" → mixed token: digits [1], letters [B,H] → 1B, 1H
+    assert_includes result, ["1", "B"]
+    assert_includes result, ["1", "H"]
   end
 end
