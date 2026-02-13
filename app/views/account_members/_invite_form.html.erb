@@ -1,0 +1,7 @@
+<%= form_with url: account_members_path, method: :post, class: "flex gap-half align-end margin-block-start" do |f| %>
+  <div class="flex-1">
+    <%= f.label :email, "Email", class: "txt-x-small txt-subtle" %>
+    <%= f.email_field :email, placeholder: "email@esempio.com", required: true, class: "input", autocomplete: "off" %>
+  </div>
+  <%= f.submit "Invita", class: "btn" %>
+<% end %>

@@ -1,0 +1,74 @@
+<%
+  account_zone = Current.account.account_zone.where(stato: "attiva").order(:provincia, :grado)
+  assigned_ids = membership.scuola_ids.to_set
+  scuole_by_zona = Current.account.scuole.attive.order(:comune, :denominazione).group_by { |s| "#{s.provincia}-#{s.grado}" }
+%>
+
+<div style="overflow-y: auto; max-height: 60vh;" class="flex-column gap">
+  <% account_zone.each do |zona| %>
+    <% key = "#{zona.provincia}-#{zona.grado}" %>
+    <% zone_scuole = scuole_by_zona[key] || [] %>
+    <% next if zone_scuole.empty? %>
+
+    <% assigned_count = zone_scuole.count { |s| assigned_ids.include?(s.id) } %>
+    <% all_assigned = assigned_count == zone_scuole.size %>
+
+    <details class="margin-block-end-half">
+      <summary class="flex justify-between align-center pad-half cursor-pointer" style="border-bottom: var(--border);">
+        <span class="txt-small txt-bold"><%= zona.provincia %> — <%= zona.grado_label %></span>
+        <span class="flex align-center gap-half">
+          <span class="txt-x-small txt-subtle"><%= assigned_count %>/<%= zone_scuole.size %></span>
+          <% if all_assigned %>
+            <%= button_to account_member_bulk_scuole_path(account_member_id: membership.id),
+                  method: :delete,
+                  params: { provincia: zona.provincia, grado: zona.grado },
+                  class: "btn btn--small" do %>
+              Rimuovi tutte
+            <% end %>
+          <% else %>
+            <%= button_to account_member_bulk_scuole_path(account_member_id: membership.id),
+                  params: { provincia: zona.provincia, grado: zona.grado },
+                  class: "btn btn--small" do %>
+              Assegna tutte
+            <% end %>
+          <% end %>
+        </span>
+      </summary>
+
+      <div class="pad-inline-half">
+        <% zone_scuole.group_by(&:comune).each do |comune, scuole_comune| %>
+          <div class="margin-block-start-half">
+            <span class="txt-x-small txt-subtle txt-bold"><%= comune %></span>
+            <% scuole_comune.each do |scuola| %>
+              <div class="flex justify-between align-center pad-block-quarter">
+                <span class="txt-x-small"><%= scuola.denominazione %></span>
+                <% if assigned_ids.include?(scuola.id) %>
+                  <% ms = membership.membership_scuole.find { |ms| ms.scuola_id == scuola.id } %>
+                  <%= button_to account_member_scuola_path(account_member_id: membership.id, id: ms.id),
+                        method: :delete,
+                        class: "btn btn--circle btn--small",
+                        style: "--btn-size: 1.5em;",
+                        title: "Rimuovi" do %>
+                    <%= icon_tag "check", class: "icon--small" %>
+                  <% end %>
+                <% else %>
+                  <%= button_to account_member_scuole_path(account_member_id: membership.id),
+                        params: { scuola_id: scuola.id },
+                        class: "btn btn--circle btn--small btn--ghost",
+                        style: "--btn-size: 1.5em;",
+                        title: "Assegna" do %>
+                    <%= icon_tag "plus", class: "icon--small" %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if account_zone.empty? %>
+    <p class="txt-small txt-subtle pad">Nessuna zona attiva. Aggiungi zone prima di assegnare scuole.</p>
+  <% end %>
+</div>

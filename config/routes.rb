@@ -304,6 +304,13 @@ Rails.application.routes.draw do
     get 'profilo', to: 'profiles#get_user_profile'
     resource :configurazione, only: [:show], controller: "configurazione"
 
+    resources :account_members, only: [:create, :update, :destroy] do
+      scope module: :account_members do
+        resources :scuole, only: [:create, :destroy], controller: "membership_scuole"
+        resource :bulk_scuole, only: [:create, :destroy], controller: "bulk_membership_scuole"
+      end
+    end
+
     resources :profiles
 
     resources :stats do

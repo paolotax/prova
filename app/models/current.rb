@@ -23,6 +23,17 @@ class Current < ActiveSupport::CurrentAttributes
     membership&.owner?
   end
 
+  # Scuole visibili all'utente corrente:
+  # - admin/owner: tutte le scuole dell'account
+  # - member: solo le scuole assegnate (nessuna se non assegnato)
+  def scuole
+    if admin?
+      account.scuole
+    else
+      membership.scuole
+    end
+  end
+
   def session=(value)
     super(value)
 

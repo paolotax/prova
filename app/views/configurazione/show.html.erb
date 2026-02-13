@@ -5,6 +5,12 @@
 <section class="settings">
 
   <div class="settings__panel panel shadow center">
+    <strong class="divider divider--fade txt-large">Utenti</strong>
+    <%= render "account_members/members_list", members: @members %>
+    <%= render "account_members/invite_form" %>
+  </div>
+
+  <div class="settings__panel panel shadow center">
     <strong class="divider divider--fade txt-large">Le mie Zone</strong>
 
     <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>

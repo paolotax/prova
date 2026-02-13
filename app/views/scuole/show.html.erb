@@ -1,26 +1,51 @@
 <% @page_title = @scuola.denominazione %>
 <% @body_class = "contained-scrolling" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
-<% content_for :header do %>
-  <div class="header__actions header__actions--start">
-    <%= back_link_to "Scuole", scuole_path %>
-  </div>
+<%= turbo_stream_from Current.membership, "scuole" %>
 
-  <div class="header__actions header__actions--end">
-    <%= link_to edit_scuola_path(@scuola), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click" } do %>
-      <%= icon_tag "pencil" %>
-      <span class="for-screen-reader">Modifica <kbd class="hide-on-touch">E</kbd></span>
+<% if Current.scuole.where(id: @scuola.id).exists? %>
+
+  <% content_for :header do %>
+    <div class="header__actions header__actions--start">
+      <%= back_link_to "Scuole", scuole_path %>
+    </div>
+
+    <div class="header__actions header__actions--end">
+      <%= link_to edit_scuola_path(@scuola), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click" } do %>
+        <%= icon_tag "pencil" %>
+        <span class="for-screen-reader">Modifica <kbd class="hide-on-touch">E</kbd></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render "scuole/container/container", scuola: @scuola %>
+
+  <%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 120px;" do %>
+    <article class="panel shadow">
+      <header class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+      </header>
+      <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+    </article>
+  <% end %>
+
+<% else %>
+
+  <% content_for :header do %>
+    <div class="header__actions header__actions--start">
+      <%= back_link_to "Scuole", scuole_path %>
+    </div>
+  <% end %>
+
+  <div class="blank-slate blank-slate--empty" style="margin-block-start: 4rem;">
+    <h3 class="txt-large font-weight-bold">Scuola non disponibile</h3>
+    <p class="txt-small txt-subtle margin-block-end">
+      Questa scuola non è più tra quelle a te assegnate.
+    </p>
+    <%= link_to scuole_path, class: "btn" do %>
+      Torna alle scuole
     <% end %>
   </div>
-<% end %>
 
-<%= render "scuole/container/container", scuola: @scuola %>
-
-<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 120px;" do %>
-  <article class="panel shadow">
-    <header class="flex align-center justify-space-between margin-block-end-half">
-      <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
-    </header>
-    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-  </article>
 <% end %>

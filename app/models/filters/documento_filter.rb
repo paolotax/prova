@@ -35,6 +35,12 @@ module Filters
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
         .includes(:causale, :righe, documento_righe: [riga: :libro])
 
+      # Scoping per membership: member vede solo documenti delle sue scuole
+      unless Current.admin?
+        scuola_ids = Current.membership&.scuola_ids || []
+        result = result.where(clientable_type: "Scuola", clientable_id: scuola_ids)
+      end
+
       # Text search
       if terms.present?
         search_term = "%#{terms.first}%"

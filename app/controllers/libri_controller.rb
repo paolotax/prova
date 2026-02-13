@@ -44,7 +44,7 @@ class LibriController < ApplicationController
     
     @giacenza = @libro.giacenza
 
-    @adozioni = current_user.import_adozioni.mie_adozioni.includes(:import_scuola).where(CODICEISBN: @libro.codice_isbn, DAACQUIST: "Si")
+    @adozioni = Current.account.adozioni.mie.da_acquistare.where(codice_isbn: @libro.codice_isbn).includes(classe: :scuola)
   end
 
 

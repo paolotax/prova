@@ -1,5 +1,8 @@
 <% @page_title = "Scuole" %>
 <% @body_class = "contained-scrolling" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
+
+<%= turbo_stream_from Current.membership, "scuole" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">

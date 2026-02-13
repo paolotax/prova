@@ -5,7 +5,7 @@
   <section class="panel shadow text-align-center" style="--panel-size: 45ch;">
     <div class="flex flex-column gap position-relative">
       <% if Current.user == @user %>
-        <%= link_to edit_user_personal_info_path(@personal_info), class: "user-edit-link btn", data: { controller: "tooltip" } do %>
+        <%= link_to edit_user_personal_info_path(@user), class: "user-edit-link btn", data: { controller: "tooltip" } do %>
           <%= icon_tag "pencil" %>
           <span class="for-screen-reader">Edit profile</span>
         <% end %>

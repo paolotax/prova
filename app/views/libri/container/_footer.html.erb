@@ -90,13 +90,12 @@
               <div class="overflow-ellipsis">
                 <span class="font-weight-bold"><%= adozione.classe_e_sezione %></span>
                 <span class="txt-subtle">·</span>
-                <%= link_to truncate(adozione.scuola, length: 30), adozione.import_scuola, class: "txt-link" %>
+                <%= link_to truncate(adozione.scuola.to_s, length: 30), adozione.scuola, class: "txt-link" %>
               </div>
-              <%= render partial: "import_adozioni/card_menu", locals: { import_adozione: adozione } %>
             </li>
           <% end %>
-          <% if adozioni.count > 5 %>
-            <li class="txt-small txt-subtle">+ altre <%= adozioni.count - 5 %> adozioni</li>
+          <% if adozioni.size > 5 %>
+            <li class="txt-small txt-subtle">+ altre <%= adozioni.size - 5 %> adozioni</li>
           <% end %>
         </ul>
       <% end %>

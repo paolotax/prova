@@ -3,6 +3,9 @@ class ConfigurazioneController < ApplicationController
   before_action :require_admin!
 
   def show
+    # Utenti
+    @members = Current.account.memberships.includes(:user, :scuole).order(role: :desc, created_at: :asc)
+
     # Zone
     @account_zone = Current.account.account_zone.order(:provincia, :grado)
     @regioni = Zona.order(:regione).select(:regione).distinct

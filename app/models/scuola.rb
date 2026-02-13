@@ -51,6 +51,9 @@ class Scuola < ApplicationRecord
 
   belongs_to :import_scuola, optional: true
 
+  has_many :membership_scuole, class_name: "MembershipScuola", dependent: :destroy
+  has_many :memberships, through: :membership_scuole
+
   has_many :classi, dependent: :destroy
   has_many :adozioni, through: :classi
   has_many :persone, dependent: :destroy

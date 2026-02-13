@@ -1,5 +1,6 @@
-<%= form_with(model: [Current.user, personal_info],
+<%= form_with(model: personal_info, url: user_personal_info_path(Current.user),
       method: personal_info&.persisted? ? :patch : :post,
+      scope: :personal_info,
       multipart: true,
       data: { controller: "form upload-preview" }, class: "flex flex-column gap") do |form| %>
   <% if personal_info.errors.any? %>

@@ -21,6 +21,9 @@ class Membership < ApplicationRecord
 
   enum :role, { member: 0, admin: 1, owner: 2 }
 
+  has_many :membership_scuole, class_name: "MembershipScuola", dependent: :destroy
+  has_many :scuole, through: :membership_scuole
+
   validates :user_id, uniqueness: { scope: :account_id }
   validates :role, presence: true
 end

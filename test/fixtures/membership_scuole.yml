@@ -1,0 +1,21 @@
+# test/fixtures/membership_scuole.yml
+
+# == Schema Information
+#
+# Table name: membership_scuole
+#
+#  id            :uuid             not null, primary key
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  membership_id :uuid             not null
+#  scuola_id     :uuid             not null
+#
+# Indexes
+#
+#  index_membership_scuole_on_membership_id                (membership_id)
+#  index_membership_scuole_on_membership_id_and_scuola_id  (membership_id,scuola_id) UNIQUE
+#  index_membership_scuole_on_scuola_id                    (scuola_id)
+#
+bob_fizzy_scuola:
+  membership: bob_fizzy
+  scuola: scuola_fizzy
