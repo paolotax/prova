@@ -1,0 +1,52 @@
+<% rows = @analytics.confronto_editori(filtri: @filtri) %>
+<% totale_sezioni = rows.sum { |r| r.sezioni_count.to_i } %>
+
+<div class="analytics-summary">
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value"><%= rows.map(&:EDITORE).uniq.size %></p>
+    <p class="analytics-summary__label">editori</p>
+  </div>
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value"><%= totale_sezioni %></p>
+    <p class="analytics-summary__label">sezioni totali</p>
+  </div>
+</div>
+
+<% if rows.any? %>
+  <% rows.group_by(&:EDITORE).each do |editore, dati| %>
+    <% editore_sezioni = dati.sum { |r| r.sezioni_count.to_i } %>
+    <div class="analytics-group">
+      <div class="analytics-group__header">
+        <h3 class="analytics-group__title"><%= editore %></h3>
+        <span class="analytics-group__badge">
+          <%= editore_sezioni %> sezioni
+          (<%= totale_sezioni > 0 ? number_to_percentage(editore_sezioni.to_f / totale_sezioni * 100, precision: 1) : "-" %>)
+        </span>
+      </div>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Disciplina</th>
+            <th class="analytics-table__right">Cl.</th>
+            <th class="analytics-table__right">Sez.</th>
+            <th class="analytics-table__right">Copie</th>
+            <th class="analytics-table__right">%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% dati.sort_by { |r| -r.sezioni_count.to_i }.each do |row| %>
+            <tr>
+              <td><%= row.DISCIPLINA&.titleize %></td>
+              <td class="analytics-table__right"><%= row.ANNOCORSO %></td>
+              <td class="analytics-table__right font-weight-bold"><%= row.sezioni_count %></td>
+              <td class="analytics-table__right"><%= row.sezioni_count.to_i * 18 %></td>
+              <td class="analytics-table__right txt-subtle"><%= totale_sezioni > 0 ? number_to_percentage(row.sezioni_count.to_f / totale_sezioni * 100, precision: 1) : "-" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% else %>
+  <p class="txt-subtle">Nessun dato disponibile.</p>
+<% end %>

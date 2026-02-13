@@ -303,6 +303,7 @@ Rails.application.routes.draw do
 
     get 'profilo', to: 'profiles#get_user_profile'
     resource :configurazione, only: [:show], controller: "configurazione"
+    resource :adozioni_analytics, only: [:show], controller: "adozioni_analytics"
 
     resources :account_members, only: [:create, :update, :destroy] do
       scope module: :account_members do

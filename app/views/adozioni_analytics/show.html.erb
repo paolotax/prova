@@ -1,0 +1,22 @@
+<% @page_title = "Adozioni" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Dashboard", root_path %>
+  </div>
+<% end %>
+
+<div class="stats-container">
+  <nav class="stats-nav" aria-label="Sezioni adozioni">
+    <% { "mie" => "Le mie", "agenzia" => "Agenzia", "confronto" => "Confronto editori", "dati" => "Provincia / Nazionale" }.each do |key, label| %>
+      <%= link_to adozioni_analytics_path(tab: key, **@filtri),
+            class: "stats-nav__link #{'is-active' if @tab == key}" do %>
+        <%= label %>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <%= render "adozioni_analytics/filtri" %>
+
+  <%= render "adozioni_analytics/tab_#{@tab}" %>
+</div>

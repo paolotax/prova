@@ -1,0 +1,22 @@
+<%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
+  <%= form.hidden_field :tab, value: @tab %>
+
+  <div class="analytics-filters__field">
+    <span class="analytics-filters__label">Disciplina</span>
+    <%= form.select :disciplina, options_for_select(@discipline, @filtri[:disciplina]), { include_blank: "Tutte" }, class: "input input--select" %>
+  </div>
+
+  <div class="analytics-filters__field">
+    <span class="analytics-filters__label">Classe</span>
+    <%= form.select :anno_corso, options_for_select(["1", "2", "3"], @filtri[:anno_corso]), { include_blank: "Tutte" }, class: "input input--select" %>
+  </div>
+
+  <div class="analytics-filters__field">
+    <span class="analytics-filters__label">Editore</span>
+    <%= form.select :editore, options_for_select(@editori, @filtri[:editore]), { include_blank: "Tutti" }, class: "input input--select" %>
+  </div>
+
+  <% if @filtri.any? %>
+    <%= link_to "Reset", adozioni_analytics_path(tab: @tab), class: "btn txt-small" %>
+  <% end %>
+<% end %>

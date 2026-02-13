@@ -1,0 +1,45 @@
+<% rows = @analytics.mie_adozioni(filtri: @filtri) %>
+<% totale_sezioni = rows.sum { |r| r.sezioni_count.to_i } %>
+
+<div class="analytics-summary">
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value txt-positive"><%= totale_sezioni %></p>
+    <p class="analytics-summary__label">sezioni totali</p>
+  </div>
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value"><%= totale_sezioni * 18 %></p>
+    <p class="analytics-summary__label">copie stimate</p>
+  </div>
+</div>
+
+<% if rows.any? %>
+  <% rows.group_by(&:disciplina).each do |disciplina, adozioni| %>
+    <div class="analytics-group">
+      <h3 class="analytics-group__title"><%= disciplina&.titleize %></h3>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Titolo</th>
+            <th>Editore</th>
+            <th class="analytics-table__right">Sez.</th>
+            <th class="analytics-table__right">Copie</th>
+            <th class="analytics-table__right">%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% adozioni.each do |row| %>
+            <tr>
+              <td><%= row.titolo&.titleize %></td>
+              <td class="txt-subtle"><%= row.editore %></td>
+              <td class="analytics-table__right font-weight-bold"><%= row.sezioni_count %></td>
+              <td class="analytics-table__right"><%= row.copie_stimate %></td>
+              <td class="analytics-table__right txt-subtle"><%= totale_sezioni > 0 ? number_to_percentage(row.sezioni_count.to_f / totale_sezioni * 100, precision: 1) : "-" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% else %>
+  <p class="txt-subtle">Nessuna adozione trovata per i filtri selezionati.</p>
+<% end %>

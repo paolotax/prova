@@ -1,0 +1,147 @@
+/* Analytics - Dashboard adozioni analytics
+ * BEM component following stats.css patterns
+ * ========================================================================== */
+
+@layer components {
+
+  /* Summary Cards
+  /* ------------------------------------------------------------------------ */
+
+  .analytics-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--block-space-half);
+    margin-block-end: var(--block-space);
+  }
+
+  .analytics-summary__card {
+    background-color: var(--color-ink-lightest);
+    border-radius: 0.5rem;
+    flex: 1 1 auto;
+    min-inline-size: 6rem;
+    padding: var(--block-space-half) var(--inline-space);
+  }
+
+  .analytics-summary__value {
+    font-size: var(--text-x-large);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+
+  .analytics-summary__label {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+  }
+
+  /* Grouped Section (per disciplina/editore)
+  /* ------------------------------------------------------------------------ */
+
+  .analytics-group {
+    margin-block-end: var(--block-space);
+  }
+
+  .analytics-group__title {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+    font-weight: 700;
+    margin-block-end: var(--block-space-half);
+  }
+
+  .analytics-group__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: var(--block-space-half);
+  }
+
+  .analytics-group__badge {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+  }
+
+  /* Data Table
+  /* ------------------------------------------------------------------------ */
+
+  .analytics-table {
+    --table-spacer-block: 0.5ch;
+    --table-spacer-inline: 0.75ch;
+    --table-border: 1px solid var(--color-ink-lighter);
+
+    border-collapse: collapse;
+    font-size: var(--text-small);
+    inline-size: 100%;
+  }
+
+  .analytics-table th {
+    border-block-end: var(--table-border);
+    font-size: var(--text-x-small);
+    font-weight: 600;
+    padding: var(--table-spacer-block) var(--table-spacer-inline);
+    text-align: start;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: var(--color-ink-dark);
+  }
+
+  .analytics-table td {
+    border-block-end: var(--table-border);
+    padding: var(--table-spacer-block) var(--table-spacer-inline);
+    vertical-align: middle;
+  }
+
+  .analytics-table tr:last-child td {
+    border-block-end: none;
+  }
+
+  .analytics-table tr:hover td {
+    background-color: var(--color-ink-lightest);
+  }
+
+  .analytics-table__right {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  /* Columns layout for provincia/nazionale
+  /* ------------------------------------------------------------------------ */
+
+  .analytics-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--block-space);
+  }
+
+  .analytics-columns__col {
+    flex: 1 1 20rem;
+    min-inline-size: 0;
+  }
+
+  .analytics-columns__heading {
+    font-size: var(--text-medium);
+    font-weight: 700;
+    margin-block-end: var(--block-space-half);
+  }
+
+  /* Filters bar
+  /* ------------------------------------------------------------------------ */
+
+  .analytics-filters {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--inline-space-half);
+    margin-block-end: var(--block-space);
+  }
+
+  .analytics-filters__field {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space-half);
+  }
+
+  .analytics-filters__label {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+  }
+}
