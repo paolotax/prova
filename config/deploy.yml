@@ -21,11 +21,12 @@ builder:
   arch:
     - amd64
 
+deploy_timeout: 120
+
 proxy:
   ssl: true
   host: scagnozz.com
   app_port: 3000
-  deploy_timeout: 120
 
 env:
   clear:
