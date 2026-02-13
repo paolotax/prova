@@ -23,6 +23,6 @@ export default class extends Controller {
   }
 
   get button() {
-    return this.form.querySelector("input[type=submit]")
+    return this.form.querySelector("button[type=submit], input[type=submit]")
   }
 }

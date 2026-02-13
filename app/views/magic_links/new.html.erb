@@ -13,7 +13,7 @@
     <p>Inserisci la tua email e ti invieremo un link per accedere.</p>
 
     <% if ENV["TURNSTILE_SITE_KEY"].present? %>
-      <div class="cf-turnstile" data-sitekey="<%= ENV["TURNSTILE_SITE_KEY"] %>"></div>
+      <div data-controller="turnstile" data-turnstile-site-key-value="<%= ENV["TURNSTILE_SITE_KEY"] %>"></div>
     <% end %>
 
     <button type="submit" class="btn btn--link center txt-medium">
