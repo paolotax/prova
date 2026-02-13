@@ -53,8 +53,12 @@ FROM base
 RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     git \
     ffmpeg \
+    ghostscript \
     libpq5 \
+    poppler-utils \
     postgresql-client \
+    tesseract-ocr \
+    tesseract-ocr-ita \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application

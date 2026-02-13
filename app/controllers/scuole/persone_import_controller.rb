@@ -11,7 +11,7 @@ module Scuole
         return
       end
 
-      importer = AnarpeImporter.new(file: params[:file].tempfile, scuola: @scuola)
+      importer = AnarpeImporter.new(file: params[:file], scuola: @scuola)
       importer.call
 
       if importer.errors_list.any?

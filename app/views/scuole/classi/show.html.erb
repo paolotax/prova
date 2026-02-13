@@ -77,6 +77,20 @@
   </div>
 
 
+  <!-- Insegnanti -->
+  <% docenti = @classe.persone.includes(:persona_classi).order(:cognome, :nome) %>
+  <% if docenti.any? %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Insegnanti</h3>
+    <div class="flex gap-half flex-wrap margin-block-end">
+      <% docenti.each do |persona| %>
+        <div class="flex align-center gap-half txt-small pad-inline pad-block-half fill-shade border-radius">
+          <span class="font-weight-bold"><%= persona.cognome %> <%= persona.nome %></span>
+          <span class="txt-subtle"><%= persona.persona_classi.find { |pc| pc.classe_id == @classe.id }&.materia&.titleize %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- Adozioni -->
   <h3 class="divider divider--fade txt-medium font-weight-black">Adozioni</h3>
 

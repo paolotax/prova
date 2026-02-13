@@ -1,6 +1,13 @@
 class AnarpeImporter
   include ActiveModel::Model
 
+  MATERIE = [
+    "LETTERE", "MATEMATICA E SCIENZE", "INGLESE", "FRANCESE", "SPAGNOLO",
+    "TEDESCO", "TECNOLOGIA", "ARTE E IMMAGINE", "MUSICA", "SCIENZE MOTORIE",
+    "ED. FISICA", "RELIGIONE", "SOSTEGNO", "STRUMENTO MUSICALE",
+    "ALTERNATIVA", "GEOGRAFIA", "STORIA", "ITALIANO"
+  ].freeze
+
   attr_reader :scuola, :imported_count, :errors_list
 
   def initialize(file:, scuola:)
@@ -11,15 +18,17 @@ class AnarpeImporter
   end
 
   def call
-    reader = PDF::Reader.new(@file)
-    insegnanti = []
+    Dir.mktmpdir do |tmpdir|
+      insegnanti = []
 
-    reader.pages.each_with_index do |page, index|
-      next if index == 0 # skip header page
-      insegnanti.concat(parse_insegnanti_page(page.text))
+      page_count = pdf_page_count(@file.path)
+      (2..page_count).each do |page_num|
+        text = ocr_page(@file.path, page_num, tmpdir)
+        insegnanti.concat(parse_insegnanti_from_ocr(text))
+      end
+
+      import_insegnanti(insegnanti)
     end
-
-    import_insegnanti(insegnanti)
     self
   end
 
@@ -29,19 +38,16 @@ class AnarpeImporter
     return [] if text.blank?
 
     result = []
-    groups = text.strip.split(/\s+/).reject { |g| g == "-" }
+    # Extract only tokens that look like class codes: digits followed by uppercase letters
+    tokens = text.scan(/\d+[A-Z]+/)
 
-    groups.each do |group|
-      digits = group.scan(/\d/)
-      letters = group.scan(/[A-Z]/)
+    tokens.each do |token|
+      digits = token.scan(/\d/)
+      letters = token.scan(/[A-Z]/)
 
-      if digits.empty? && letters.any?
-        letters.each { |l| result << [l] }
-      else
-        letters.each do |l|
-          digits.each do |d|
-            result << [d, l]
-          end
+      letters.each do |l|
+        digits.each do |d|
+          result << [d, l]
         end
       end
     end
@@ -51,54 +57,61 @@ class AnarpeImporter
 
   private
 
-  def parse_insegnanti_page(text)
+  def pdf_page_count(path)
+    output = `pdfinfo "#{path}" 2>/dev/null`
+    match = output.match(/Pages:\s+(\d+)/)
+    match ? match[1].to_i : 0
+  end
+
+  def ocr_page(pdf_path, page_num, tmpdir)
+    png_path = File.join(tmpdir, "page_#{page_num}.png")
+    txt_path = File.join(tmpdir, "page_#{page_num}")
+
+    system("gs", "-dNOPAUSE", "-dBATCH", "-sDEVICE=png16m", "-r300",
+           "-dFirstPage=#{page_num}", "-dLastPage=#{page_num}",
+           "-sOutputFile=#{png_path}", pdf_path,
+           out: File::NULL, err: File::NULL)
+
+    system("tesseract", png_path, txt_path, "-l", "ita",
+           out: File::NULL, err: File::NULL)
+
+    File.read("#{txt_path}.txt", encoding: "utf-8") rescue ""
+  end
+
+  def parse_insegnanti_from_ocr(text)
     insegnanti = []
-    lines = text.lines.map(&:strip)
+    lines = text.lines.map(&:strip).reject(&:blank?)
 
-    # Find teacher cards: pattern is NAME (all caps with spaces/dots), followed by MATERIA
-    i = 0
-    while i < lines.size
-      line = lines[i]
+    lines.each_with_index do |line, i|
+      # Find lines containing a known subject
+      materia = MATERIE.find { |m| line.include?(m) }
+      next unless materia
 
-      # Teacher name: all uppercase letters, spaces, dots, apostrophes - at least 2 words
-      if line.match?(/\A[A-Z][A-Z\s.']+\z/) && line.split(/\s+/).size >= 2
-        nome_line = line
-        # Look ahead for materia and classi
-        materia = nil
-        classi_text = nil
+      # Extract the name: uppercase words before the subject
+      before_materia = line.split(materia).first.to_s
 
-        # Skip empty lines and look for materia
-        j = i + 1
-        while j < lines.size && lines[j].blank?
-          j += 1
-        end
+      # Keep only uppercase words >= 3 chars or containing a dot (M.PIA)
+      # Take last 2 parts — format is always COGNOME NOME, noise is at start
+      name_parts = before_materia.scan(/[A-Z][A-Z.']+/).select { |w| w.length >= 3 || w.include?(".") }
+      next if name_parts.size < 2
 
-        if j < lines.size && lines[j].match?(/\A[A-Z][A-Z\s]+\z/) && !lines[j].match?(/\d/)
-          materia = lines[j]
-          j += 1
+      cognome = name_parts[-2]
+      nome = name_parts[-1]
 
-          # Skip empty lines and look for classi
-          while j < lines.size && lines[j].blank?
-            j += 1
-          end
-
-          if j < lines.size && lines[j].match?(/[A-Z0-9]/)
-            classi_text = lines[j]
-          end
-        end
-
-        if materia
-          parts = nome_line.split(/\s+/, 2)
-          insegnanti << {
-            cognome: parts[0]&.strip,
-            nome: parts[1]&.strip,
-            materia: materia.strip,
-            classi: self.class.parse_classi_compact(classi_text || "")
-          }
-        end
+      # Classes are on the next non-empty line
+      classi_text = ""
+      if i + 1 < lines.size
+        classi_text = lines[i + 1]
       end
 
-      i += 1
+      classi = self.class.parse_classi_compact(classi_text)
+
+      insegnanti << {
+        cognome: cognome,
+        nome: nome,
+        materia: materia,
+        classi: classi
+      }
     end
 
     insegnanti

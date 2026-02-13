@@ -24,7 +24,7 @@
           <tr>
             <td class="font-weight-bold"><%= persona.cognome %> <%= persona.nome %></td>
             <td class="txt-subtle"><%= persona.persona_classi.first&.materia&.titleize %></td>
-            <td><%= persona.classi.order(:anno_corso, :sezione).map(&:classe_e_sezione).join(", ") %></td>
+            <td><%= persona.classi.order(:anno_corso, :sezione).map { |c| link_to c.nome_breve, scuola_classe_path(scuola, c), class: "txt-link" }.join(", ").html_safe %></td>
           </tr>
         <% end %>
       </tbody>
