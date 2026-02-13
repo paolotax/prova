@@ -25,6 +25,8 @@ proxy:
   ssl: true
   host: scagnozz.com
   app_port: 3000
+  healthcheck:
+    timeout: 120
 
 env:
   clear:
