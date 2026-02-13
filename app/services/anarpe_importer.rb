@@ -60,9 +60,10 @@ class AnarpeImporter
 
     tokens.each do |token|
       if token.match?(/\A\d+\z/)
-        # Pure digits token (e.g. "123")
-        pending_digits = token.chars
-        found_any_digits = true
+        # Pure digits token (e.g. "123") — only keep valid year digits (1-5)
+        valid = token.chars.select { |d| d.between?("1", "5") }
+        pending_digits = valid
+        found_any_digits = true if valid.any?
       elsif token.match?(/\A[A-Z]+\z/)
         # Pure letters token (e.g. "DEF", "AG")
         digits_to_use = pending_digits.any? ? pending_digits : nil
@@ -76,14 +77,19 @@ class AnarpeImporter
         end
         pending_digits = [] if pending_digits.any?
       elsif token.match?(/\d/) && token.match?(/[A-Z]/)
-        # Mixed token — extract all digits and letters
+        # Mixed token — extract digits (only valid years 1-5) and letters
         pending_digits = []
         found_any_digits = true
 
-        digits = token.scan(/\d/)
+        digits = token.scan(/\d/).select { |d| d.between?("1", "5") }
         letters = token.scan(/[A-Z]/)
-        letters.each do |l|
-          digits.each { |d| result << [d, l] }
+        if digits.any?
+          letters.each do |l|
+            digits.each { |d| result << [d, l] }
+          end
+        else
+          # Digits present but none valid (e.g. "7B") — use defaults
+          letters.each { |l| result << [nil, l] }
         end
       end
     end
@@ -153,7 +159,7 @@ class AnarpeImporter
       classi_text = ""
       if i + 1 < lines.size
         next_line = lines[i + 1]
-        if next_line.match?(/[A-Z]/) && next_line.match?(/[-–—]/)
+        if next_line.match?(/[A-Za-z]/) && next_line.match?(/[-–—]/)
           classi_text = next_line
         end
       end
