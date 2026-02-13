@@ -108,16 +108,16 @@ module Imports
     end
 
     def file_path
-      if @file.respond_to?(:path)
-        @file.path
-      elsif @file.respond_to?(:download)
-        # ActiveStorage attachment
+      if @file.respond_to?(:download)
+        # ActiveStorage attachment — download to tempfile
         tempfile = Tempfile.new(['import', File.extname(@file.filename.to_s)])
         tempfile.binmode
         tempfile.write(@file.download)
         tempfile.rewind
         @tempfile = tempfile # Keep reference to avoid GC
         tempfile.path
+      elsif @file.respond_to?(:path)
+        @file.path
       else
         @file.to_s
       end
