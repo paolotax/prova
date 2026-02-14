@@ -78,7 +78,7 @@
 
 
   <!-- Insegnanti -->
-  <% docenti = @classe.persone.includes(:persona_classi).order(:cognome, :nome) %>
+  <% docenti = @classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
   <% if docenti.any? %>
     <h3 class="divider divider--fade txt-medium font-weight-black">Insegnanti</h3>
     <div class="flex gap-half flex-wrap margin-block-end">

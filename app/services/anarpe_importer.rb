@@ -230,7 +230,7 @@ class AnarpeImporter
   end
 
   def import_insegnanti(insegnanti)
-    insegnanti.each do |data|
+    insegnanti.each_with_index do |data, index|
       persona = scuola.persone.find_or_initialize_by(
         cognome: data[:cognome],
         nome: data[:nome],
@@ -238,6 +238,7 @@ class AnarpeImporter
       )
       is_new = persona.new_record?
       persona.ruolo = :docente
+      persona.posizione = index + 1
       persona.save!
 
       data[:classi].each do |classe_parts|

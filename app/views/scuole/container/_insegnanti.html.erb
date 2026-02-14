@@ -1,6 +1,6 @@
 <%# locals: (scuola:) -%>
 
-<% persone = scuola.persone.docente.includes(persona_classi: :classe).order(:cognome, :nome) %>
+<% persone = scuola.persone.docente.includes(persona_classi: :classe).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
 
 <article class="panel shadow">
   <header class="flex align-center justify-space-between margin-block-end-half">
