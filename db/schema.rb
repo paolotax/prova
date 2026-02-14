@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_071623) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_14_081429) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -318,6 +318,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_071623) do
     t.index ["account_id"], name: "index_categorie_on_account_id"
     t.index ["user_id", "nome_categoria"], name: "index_categorie_on_user_id_and_nome_categoria", unique: true
     t.index ["user_id"], name: "index_categorie_on_user_id"
+  end
+
+  create_table "cattedra_discipline", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "cattedra", null: false
+    t.datetime "created_at", null: false
+    t.string "disciplina", null: false
+    t.string "tipo_scuola", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "cattedra", "disciplina", "tipo_scuola"], name: "idx_cattedra_discipline_unique", unique: true
+    t.index ["account_id"], name: "index_cattedra_discipline_on_account_id"
   end
 
   create_table "causali", force: :cascade do |t|
@@ -1493,6 +1504,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_071623) do
   add_foreign_key "appunto_righe", "righe"
   add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"
+  add_foreign_key "cattedra_discipline", "accounts"
   add_foreign_key "chats", "accounts"
   add_foreign_key "chats", "models"
   add_foreign_key "chats", "users"

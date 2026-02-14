@@ -5,9 +5,14 @@
 <article class="panel shadow">
   <header class="flex align-center justify-space-between margin-block-end-half">
     <h3 class="txt-medium font-weight-black margin-none">Insegnanti (<%= persone.size %>)</h3>
-    <%= link_to new_scuola_persone_import_path(scuola), class: "btn txt-small" do %>
-      Importa PDF
-    <% end %>
+    <div class="flex gap-half">
+      <%= link_to scuola_cattedre_path(scuola), class: "btn btn--ghost txt-small" do %>
+        Collega cattedre
+      <% end %>
+      <%= link_to new_scuola_persone_import_path(scuola), class: "btn txt-small" do %>
+        Importa PDF
+      <% end %>
+    </div>
   </header>
 
   <% if persone.any? %>
