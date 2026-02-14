@@ -8,6 +8,7 @@
 #  email      :string
 #  nome       :string
 #  note       :text
+#  posizione  :integer
 #  ruolo      :string
 #  telefono   :string
 #  created_at :datetime         not null
