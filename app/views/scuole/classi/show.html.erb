@@ -80,9 +80,7 @@
   <!-- Insegnanti -->
   <% docenti = @classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
   <%
-    tipo_scuola = @scuola.classi.joins(:adozioni)
-      .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
-      .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
+    tipo_scuola = @classe.tipo_scuola || "MM"
     cattedra_mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
       .pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
   %>

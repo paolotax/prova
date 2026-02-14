@@ -52,15 +52,12 @@ module Scuole
     end
 
     private
+      def set_scuola
+        @scuola = Scuola.find(params[:scuola_id])
+      end
 
-    def set_scuola
-      @scuola = Scuola.find(params[:scuola_id])
-    end
-
-    def tipo_scuola_for(scuola)
-      scuola.classi.joins(:adozioni)
-            .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
-            .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
-    end
+      def tipo_scuola_for(scuola)
+        scuola.classi.pick(:tipo_scuola) || "MM"
+      end
   end
 end

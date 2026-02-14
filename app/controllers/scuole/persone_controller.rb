@@ -10,7 +10,8 @@ module Scuole
         account: current_account, tipo_scuola: @tipo_scuola, cattedra: cattedra
       ).pluck(:disciplina)
 
-      @classi = @persona.classi.order(:anno_corso, :sezione)
+      @persona_classi = @persona.persona_classi.includes(:classe).order("classi.anno_corso, classi.sezione")
+      @classi = @persona_classi.map(&:classe)
       @adozioni_per_classe = if discipline_miur.any?
         Adozione.where(classe: @classi, disciplina: discipline_miur)
                 .includes(:libro)
@@ -32,9 +33,7 @@ module Scuole
     end
 
     def tipo_scuola_for(scuola)
-      scuola.classi.joins(:adozioni)
-            .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
-            .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
+      scuola.classi.pick(:tipo_scuola) || "MM"
     end
   end
 end

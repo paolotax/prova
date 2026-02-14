@@ -2,27 +2,12 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to scuola_path(@scuola), class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Indietro</span>
-    <% end %>
+    <%= back_link_to @scuola.denominazione.capitalize, scuola_path(@scuola) %>
   </div>
-
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @persona.nome_completo %></span>
-  </h1>
 
   <div class="header__actions header__actions--end">
   </div>
 <% end %>
-
-<nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
-  <%= link_to scuole_path, class: "txt-link" do %>Scuole<% end %>
-  <%= icon_tag "chevron-right", size: "small" %>
-  <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
-  <%= icon_tag "chevron-right", size: "small" %>
-  <span class="font-weight-bold"><%= @persona.nome_completo %></span>
-</nav>
 
 <div class="panel center" style="--panel-size: 100ch;">
 
@@ -46,13 +31,20 @@
   <!-- Classi e Adozioni -->
   <h3 class="divider divider--fade txt-medium font-weight-black">Classi e Adozioni</h3>
 
-  <% if @classi.any? %>
-    <% @classi.each do |classe| %>
+  <% if @persona_classi.any? %>
+    <% @persona_classi.each do |pc| %>
+      <% classe = pc.classe %>
       <div class="margin-block-end">
-        <h4 class="txt-small font-weight-bold margin-block-end-half">
+        <h4 class="flex align-center gap-half txt-small font-weight-bold margin-block-end-half">
           <%= link_to "Classe #{classe.nome_breve}", scuola_classe_path(@scuola, classe), class: "txt-link" %>
           <% if classe.combinazione.present? %>
             <span class="txt-subtle font-weight-normal"><%= classe.combinazione %></span>
+          <% end %>
+          <%= button_to scuola_persona_persona_classe_path(@scuola, @persona, pc),
+              method: :delete,
+              class: "btn btn--ghost txt-xx-small",
+              data: { turbo_confirm: "Scollegare #{@persona.cognome} dalla classe #{classe.nome_breve}?" } do %>
+            <%= icon_tag "x", size: "small" %>
           <% end %>
         </h4>
         <% adozioni = @adozioni_per_classe[classe.id] || [] %>

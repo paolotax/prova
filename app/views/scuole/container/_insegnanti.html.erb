@@ -4,9 +4,7 @@
 
 <%
   # Build cattedra → discipline mapping
-  tipo_scuola = scuola.classi.joins(:adozioni)
-    .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
-    .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
+  tipo_scuola = scuola.classi.pick(:tipo_scuola) || "MM"
   mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
   cattedra_to_discipline = mappings.pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
 
@@ -67,23 +65,3 @@
     <p class="txt-small txt-subtle margin-none">Nessun insegnante importato. Usa il bottone per caricare un PDF ANARPE.</p>
   <% end %>
 </article>
-
-<style>
-  .adozione-libro {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.375rem;
-    line-height: 1.2;
-  }
-  .adozione-libro__titolo {
-    font-size: var(--text-x-small, 0.75rem);
-    font-weight: 600;
-  }
-  .adozione-libro__editore {
-    font-size: var(--text-xx-small, 0.625rem);
-    color: var(--color-ink-dark);
-    font-weight: 400;
-  }
-</style>
