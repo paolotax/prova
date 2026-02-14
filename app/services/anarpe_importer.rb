@@ -2,12 +2,33 @@ class AnarpeImporter
   include ActiveModel::Model
 
   MATERIE = [
-    "MATEMATICA E SCIENZE", "ARTE E IMMAGINE", "SCIENZE MOTORIE",
-    "ED. FISICA", "STRUMENTO MUSICALE", "RELIGIONE CATTOLICA",
-    "LETTERE", "INGLESE", "FRANCESE", "SPAGNOLO",
-    "TEDESCO", "TECNOLOGIA", "MUSICA",
-    "RELIGIONE", "SOSTEGNO",
-    "ALTERNATIVA", "GEOGRAFIA", "STORIA", "ITALIANO"
+    # Longest compound materie first (avoid partial matches)
+    "LAB TECNO E TEC COM MULTIMED.",
+    "TECNO E TEC COM MULTIMEDIALI",
+    "LAB ELETTROT. ELETTRON.",
+    "ELETTRON. ELETTROTEC.",
+    "DISEGNO RAP GRAFICA",
+    "MATEMATICA E SCIENZE",
+    "RELIGIONE CATTOLICA",
+    "SCIENZE NATURALI",
+    "SCIENZE MOTORIE",
+    "ARTE E IMMAGINE",
+    "STRUMENTO MUSICALE",
+    "LAB SCI E TEC INF",
+    "LAB TEC AGRARIE",
+    "LAB CHI E MICRO",
+    "LAB MECCANICA",
+    "TEC AGRARIE",
+    "LAB FISICA",
+    "ED. FISICA",
+    # Single-word materie
+    "ALTERNATIVA", "CHIMICA", "DIRITTO",
+    "FISICA", "FRANCESE", "GEOGRAFIA",
+    "INFORMATICA", "INGLESE", "ITALIANO",
+    "LETTERE", "MATEMATICA", "MECCANICA",
+    "MUSICA", "RELIGIONE", "SOSTEGNO",
+    "SPAGNOLO", "STORIA", "TECNOLOGIA",
+    "TEDESCO"
   ].freeze
 
   # Default years when OCR loses digits (middle school = 3 years)
@@ -44,26 +65,40 @@ class AnarpeImporter
   #   "1AF 3B -"         => [["1","A"], ["1","F"], ["3","B"]]
   #   "123 DEF -"        => all combos of 1,2,3 x D,E,F
   #   "- AG-"            => all default years x A,G (no digits = all years)
-  #   "- BCE -"          => all default years x B,C,E
-  #   "- B1H-"           => extract digits+letters, handle mixed
+  #   "INF.5H -"         => [["5","H"]] (sub-materia prefix stripped)
+  #   "TPI 3G 4GH -"     => [["3","G"], ["4","G"], ["4","H"]]
   def self.parse_classi_compact(text, default_years: DEFAULT_YEARS)
     return [] if text.blank?
 
-    # Normalize: uppercase, strip OCR noise prefix/suffix
-    clean = text.upcase.gsub(/\A[:\-=\s]+/, "").gsub(/[\-=\s]+\z/, "").strip
+    # Normalize: uppercase, fix common OCR substitutions, strip noise
+    clean = text.upcase
+               .gsub("|", "I")
+               .tr("0", "O")
+               .gsub(/\A[:\-=;\s]+/, "")
+               .gsub(/[\-–—=\s]+\z/, "")
+               .strip
+    return [] if clean.blank?
+    return [] if clean.match?(/\A(VARIE|TUTTE)\b/)
+
+    # Strip sub-materia prefix (high school format)
+    # Dotted abbreviations: INF., SIS., TEC.MEC., PROG.MULT., etc.
+    clean = clean.sub(/\A([A-Z]+\.)+\s*/, "")
+    # Short uppercase code (3+ chars) followed by space then content with digit
+    if clean.match?(/\A[A-Z]{3,}\s+\S*\d/)
+      clean = clean.sub(/\A[A-Z]{3,}\s+/, "")
+    end
+
     return [] if clean.blank?
 
     result = []
     tokens = clean.split(/\s+/)
     pending_digits = []
-    found_any_digits = false
 
     tokens.each do |token|
       if token.match?(/\A\d+\z/)
         # Pure digits token (e.g. "123") — only keep valid year digits (1-5)
         valid = token.chars.select { |d| d.between?("1", "5") }
         pending_digits = valid
-        found_any_digits = true if valid.any?
       elsif token.match?(/\A[A-Z]+\z/)
         # Pure letters token (e.g. "DEF", "AG")
         digits_to_use = pending_digits.any? ? pending_digits : nil
@@ -79,7 +114,6 @@ class AnarpeImporter
       elsif token.match?(/\d/) && token.match?(/[A-Z]/)
         # Mixed token — extract digits (only valid years 1-5) and letters
         pending_digits = []
-        found_any_digits = true
 
         digits = token.scan(/\d/).select { |d| d.between?("1", "5") }
         letters = token.scan(/[A-Z]/)
@@ -144,27 +178,17 @@ class AnarpeImporter
       before_materia = line.split(materia).first.to_s
 
       # Keep only uppercase words >= 3 chars or containing a dot (M.PIA, M.CRISTINA)
-      # Take last 2 parts — format is always COGNOME NOME, noise is at start
       name_parts = before_materia.scan(/[A-Z][A-Z.']+/).select { |w| w.length >= 3 || w.include?(".") }
 
-      # Need at least cognome; nome can be missing (e.g. "CARTA TECNOLOGIA")
+      # Need at least cognome; nome can be missing
       next if name_parts.empty?
 
       cognome = name_parts.size >= 2 ? name_parts[-2] : name_parts[-1]
       nome = name_parts.size >= 2 ? name_parts[-1] : ""
 
-      # Classes are on the next non-empty line
-      # Accept lines with digits+letters (mixed), or just uppercase letters
-      # ending with dash (ANARPE format: "- AG-", "7 1AF 3B -", ": EF-")
-      classi_text = ""
-      if i + 1 < lines.size
-        next_line = lines[i + 1]
-        if next_line.match?(/[A-Za-z]/) && next_line.match?(/[-–—]/)
-          classi_text = next_line
-        end
-      end
-
-      classi = self.class.parse_classi_compact(classi_text)
+      # Collect classi from subsequent lines (handles multi-line sub-materie format)
+      classi_lines = collect_classi_lines(lines, i)
+      classi = classi_lines.flat_map { |cl| self.class.parse_classi_compact(cl) }.uniq
 
       insegnanti << {
         cognome: cognome,
@@ -175,6 +199,34 @@ class AnarpeImporter
     end
 
     insegnanti
+  end
+
+  # Collect classi lines after a teacher line
+  # Single-line: ": 2A 3F -"
+  # Multi-line (sub-materie): "INF.5H -", "TPI 3G 4GH -", "GPO 5H -"
+  def collect_classi_lines(lines, teacher_index)
+    result = []
+    j = teacher_index + 1
+
+    while j < lines.size
+      line = lines[j]
+
+      # Stop if this line contains a known materia (next teacher)
+      break if MATERIE.any? { |m| line.include?(m) }
+
+      # A classi line must end with a dash and contain letters
+      if line.match?(/[-–—]\s*$/) && line.match?(/[A-Za-z]/)
+        result << line
+      else
+        # Stop after first non-classi line if we already found some,
+        # or if we've looked too far without finding any
+        break if result.any? || (j - teacher_index) > 3
+      end
+
+      j += 1
+    end
+
+    result
   end
 
   def import_insegnanti(insegnanti)

@@ -87,4 +87,40 @@ class AnarpeImporterTest < ActiveSupport::TestCase
     assert_includes result, ["1", "B"]
     assert_includes result, ["1", "H"]
   end
+
+  # Sub-materia prefix stripping (high school format)
+  test "parse_classi_compact strips dotted sub-materia prefix" do
+    result = AnarpeImporter.parse_classi_compact("INF.5H -")
+    assert_equal [["5", "H"]], result
+  end
+
+  test "parse_classi_compact strips dotted compound prefix" do
+    result = AnarpeImporter.parse_classi_compact("TEC.MEC.3J 4N -")
+    assert_includes result, ["3", "J"]
+    assert_includes result, ["4", "N"]
+  end
+
+  test "parse_classi_compact strips short uppercase code prefix" do
+    result = AnarpeImporter.parse_classi_compact("TPI 3G 4GH -")
+    assert_includes result, ["3", "G"]
+    assert_includes result, ["4", "G"]
+    assert_includes result, ["4", "H"]
+  end
+
+  test "parse_classi_compact handles VARIE" do
+    assert_equal [], AnarpeImporter.parse_classi_compact("- VARIE -")
+    assert_equal [], AnarpeImporter.parse_classi_compact("VARIE -")
+  end
+
+  test "parse_classi_compact substitutes 0 for O" do
+    result = AnarpeImporter.parse_classi_compact(": 40 5N -")
+    assert_includes result, ["4", "O"]
+    assert_includes result, ["5", "N"]
+  end
+
+  test "parse_classi_compact substitutes pipe for I" do
+    result = AnarpeImporter.parse_classi_compact(": 2|J -")
+    assert_includes result, ["2", "I"]
+    assert_includes result, ["2", "J"]
+  end
 end
