@@ -30,6 +30,7 @@
   .txt-link { color: var(--color-link); text-decoration: underline; }
 
   .font-weight-black { font-weight: 900; }
+  .font-weight-bold { font-weight: 700; }
   .font-weight-normal { font-weight: normal; }
 
   /* Flexbox and Grid */
@@ -72,6 +73,11 @@
   .gap-half {
     column-gap: var(--column-gap, var(--inline-space-half));
     row-gap: var(--row-gap, var(--block-space-half));
+  }
+
+  .gap-quarter {
+    column-gap: calc(var(--inline-space) / 4);
+    row-gap: calc(var(--block-space) / 4);
   }
 
   .gap-none {

@@ -1,0 +1,108 @@
+<% @page_title = "#{@persona.nome_completo} — #{@scuola.denominazione}" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to scuola_path(@scuola), class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Indietro</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @persona.nome_completo %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+  </div>
+<% end %>
+
+<nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
+  <%= link_to scuole_path, class: "txt-link" do %>Scuole<% end %>
+  <%= icon_tag "chevron-right", size: "small" %>
+  <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
+  <%= icon_tag "chevron-right", size: "small" %>
+  <span class="font-weight-bold"><%= @persona.nome_completo %></span>
+</nav>
+
+<div class="panel center" style="--panel-size: 100ch;">
+
+  <!-- Info persona -->
+  <div class="flex align-center gap margin-block-end">
+    <div>
+      <h2 class="txt-medium font-weight-bold margin-none"><%= @persona.cognome %> <%= @persona.nome %></h2>
+      <p class="txt-small txt-subtle margin-none">
+        <%= @persona.persona_classi.first&.materia&.titleize %>
+        — <%= @scuola.denominazione %>
+      </p>
+      <% if @persona.cellulare.present? || @persona.email.present? %>
+        <p class="txt-small margin-none">
+          <% if @persona.cellulare.present? %><%= @persona.cellulare %><% end %>
+          <% if @persona.email.present? %> · <%= @persona.email %><% end %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Classi e Adozioni -->
+  <h3 class="divider divider--fade txt-medium font-weight-black">Classi e Adozioni</h3>
+
+  <% if @classi.any? %>
+    <% @classi.each do |classe| %>
+      <div class="margin-block-end">
+        <h4 class="txt-small font-weight-bold margin-block-end-half">
+          <%= link_to "Classe #{classe.nome_breve}", scuola_classe_path(@scuola, classe), class: "txt-link" %>
+          <% if classe.combinazione.present? %>
+            <span class="txt-subtle font-weight-normal"><%= classe.combinazione %></span>
+          <% end %>
+        </h4>
+        <% adozioni = @adozioni_per_classe[classe.id] || [] %>
+        <% if adozioni.any? %>
+          <table class="table txt-small full-width">
+            <% adozioni.each do |adozione| %>
+              <%
+                row_style = if adozione.nuova_adozione?
+                  "background: oklch(var(--lch-red-lighter));"
+                elsif adozione.mia?
+                  "background: oklch(var(--lch-yellow-lighter));"
+                else
+                  ""
+                end
+              %>
+              <tr style="<%= row_style %>"<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
+                <td>
+                  <div class="font-weight-bold"><%= adozione.titolo %></div>
+                  <div class="txt-xx-small txt-subtle"><%= adozione.editore %></div>
+                </td>
+                <td class="txt-subtle"><%= adozione.disciplina %></td>
+                <td class="txt-right font-weight-bold">
+                  <%= number_to_currency(adozione.prezzo, unit: "€", format: "%n %u") %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        <% else %>
+          <p class="txt-xx-small txt-subtle margin-none">Nessuna adozione collegata</p>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="txt-small txt-subtle">Nessuna classe assegnata.</p>
+  <% end %>
+
+  <!-- Appunti -->
+  <% if @appunti.any? %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Appunti (<%= @appunti.size %>)</h3>
+    <% @appunti.each do |appunto| %>
+      <div class="flex gap-half align-start pad-block-half border-bottom">
+        <div class="flex-item-grow">
+          <p class="txt-small margin-none"><%= appunto.body&.truncate(200) %></p>
+          <p class="txt-xx-small txt-subtle margin-none"><%= time_ago_in_words(appunto.created_at) %> fa</p>
+        </div>
+        <% if appunto.entry.present? %>
+          <%= link_to "→", entry_path(appunto.entry), class: "btn btn--ghost txt-small" %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+</div>

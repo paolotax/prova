@@ -431,6 +431,7 @@ Rails.application.routes.draw do
         resource :entries, only: [:show]
         resource :persone_import, only: [:new, :create], controller: "persone_import"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
+        resources :persone, only: [:show]
         resources :classi, only: [:index, :show, :create, :destroy] do
           member do
             post :import_adozioni

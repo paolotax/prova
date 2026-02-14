@@ -9,7 +9,7 @@
       anni_labels = { "1" => "I", "2" => "II", "3" => "III", "4" => "IV", "5" => "V" }
     %>
     <div class="pad-half fill-shade border-radius">
-      <table class="txt-xx-small" style="width: 100%; border-collapse: collapse;">
+      <table class="txt-xx-small full-width" style="border-collapse: collapse;">
         <thead>
           <tr>
             <th class="txt-left txt-subtle" style="padding: 0.25rem;"></th>
@@ -79,7 +79,7 @@
     <h3 class="divider txt-medium font-weight-black margin-block-end-half">Mie adozioni</h3>
 
     <div class="pad-half fill-shade border-radius">
-      <table class="txt-xx-small" style="width: 100%; border-collapse: collapse;">
+      <table class="txt-xx-small full-width" style="border-collapse: collapse;">
         <thead>
           <tr>
             <th class="txt-left txt-uppercase">Titolo</th>
@@ -98,7 +98,7 @@
             <tr<%= ' class="disdetta"'.html_safe if disdetta %>>
               <td class="txt-x-small"><%= titolo %></td>
               <td class="txt-center txt-small font-weight-bold no-strike"><%= anno %></td>
-              <td class="txt-center no-strike" style="white-space: nowrap;" >
+              <td class="txt-center no-strike txt-nowrap">
                 <% adozioni.sort_by { |a| a.classe.sezione.to_s }.each do |adozione| %>
                   <%= link_to adozione.classe.sezione.presence || "•",
                       scuola_classe_path(scuola, adozione.classe),

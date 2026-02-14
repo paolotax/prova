@@ -79,23 +79,42 @@
 
   <!-- Insegnanti -->
   <% docenti = @classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
+  <%
+    tipo_scuola = @scuola.classi.joins(:adozioni)
+      .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
+      .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
+    cattedra_mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
+      .pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  %>
   <% if docenti.any? %>
     <h3 class="divider divider--fade txt-medium font-weight-black">Insegnanti</h3>
-    <div class="flex gap-half flex-wrap margin-block-end">
+    <table class="table txt-small full-width margin-block-end">
       <% docenti.each do |persona| %>
-        <div class="flex align-center gap-half txt-small pad-inline pad-block-half fill-shade border-radius">
-          <span class="font-weight-bold"><%= persona.cognome %> <%= persona.nome %></span>
-          <span class="txt-subtle"><%= persona.persona_classi.find { |pc| pc.classe_id == @classe.id }&.materia&.titleize %></span>
-        </div>
+        <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == @classe.id }&.materia %>
+        <% discipline_miur = cattedra_mappings[cattedra] || [] %>
+        <% libri = discipline_miur.any? ? @adozioni.select { |a| discipline_miur.include?(a.disciplina) } : [] %>
+        <tr>
+          <td class="font-weight-bold txt-nowrap">
+            <%= link_to persona.nome_completo, scuola_persona_path(@scuola, persona), class: "txt-link" %>
+          </td>
+          <td class="txt-subtle txt-nowrap"><%= cattedra&.titleize %></td>
+          <td>
+            <div class="flex gap-quarter flex-wrap">
+              <% libri.uniq { |a| [a.titolo, a.editore] }.each do |adozione| %>
+                <%= adozione_libro_tag(adozione) %>
+              <% end %>
+            </div>
+          </td>
+        </tr>
       <% end %>
-    </div>
+    </table>
   <% end %>
 
   <!-- Adozioni -->
   <h3 class="divider divider--fade txt-medium font-weight-black">Adozioni</h3>
 
   <% if @adozioni.any? %>
-    <div style="overflow-x: auto;">
+    <div class="overflow-x">
       <table class="table full-width">
         <thead>
           <tr>

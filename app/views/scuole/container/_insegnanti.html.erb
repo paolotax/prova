@@ -2,6 +2,24 @@
 
 <% persone = scuola.persone.docente.includes(persona_classi: :classe).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
 
+<%
+  # Build cattedra → discipline mapping
+  tipo_scuola = scuola.classi.joins(:adozioni)
+    .joins("JOIN import_adozioni ON import_adozioni.id = adozioni.import_adozione_id")
+    .pick("import_adozioni.\"TIPOGRADOSCUOLA\"") || "MM"
+  mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
+  cattedra_to_discipline = mappings.pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+
+  # Preload adozioni for this school's classi
+  classe_ids = scuola.classi.pluck(:id)
+  adozioni_by_classe_disciplina = Adozione.where(classe_id: classe_ids)
+    .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione)
+    .group_by { |a| [a.classe_id, a.disciplina] }
+
+  # Group persone by materia (cattedra), maintaining posizione order
+  grouped = persone.group_by { |p| p.persona_classi.first&.materia }.compact_blank
+%>
+
 <article class="panel shadow">
   <header class="flex align-center justify-space-between margin-block-end-half">
     <h3 class="txt-medium font-weight-black margin-none">Insegnanti (<%= persone.size %>)</h3>
@@ -16,25 +34,56 @@
   </header>
 
   <% if persone.any? %>
-    <table class="table txt-small full-width">
-      <thead>
-        <tr>
-          <th class="text-align-start">Docente</th>
-          <th class="text-align-start">Materia</th>
-          <th class="text-align-start">Classi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% persone.each do |persona| %>
-          <tr>
-            <td class="font-weight-bold"><%= persona.cognome %> <%= persona.nome %></td>
-            <td class="txt-subtle"><%= persona.persona_classi.first&.materia&.titleize %></td>
-            <td><%= persona.classi.order(:anno_corso, :sezione).map { |c| link_to c.nome_breve, scuola_classe_path(scuola, c), class: "txt-link" }.join(", ").html_safe %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <% grouped.each do |cattedra, docenti| %>
+      <% discipline_miur = cattedra_to_discipline[cattedra] || [] %>
+
+      <h3 class="divider divider--fade txt-medium font-weight-black txt-align-center"><%= cattedra&.titleize %></h3>
+
+      <% docenti.each do |persona| %>
+        <div class="txt-align-center margin-block-end">
+          <div class="font-weight-bold">
+            <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-link" %>
+          </div>
+
+          <div class="flex gap-quarter flex-wrap justify-center txt-small margin-block-start-half">
+            <%= compact_classi_links(persona.classi.sort_by { |c| [c.sezione, c.anno_corso] }, scuola) %>
+          </div>
+
+          <% if discipline_miur.any? %>
+            <% persona_classe_ids = persona.classi.map(&:id) %>
+            <% libri = discipline_miur.flat_map { |d| persona_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }.uniq { |a| [a.titolo, a.editore] } %>
+            <% if libri.any? %>
+              <div class="flex gap-quarter flex-wrap justify-center margin-block-start-half">
+                <% libri.each do |adozione| %>
+                  <%= adozione_libro_tag(adozione) %>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
   <% else %>
     <p class="txt-small txt-subtle margin-none">Nessun insegnante importato. Usa il bottone per caricare un PDF ANARPE.</p>
   <% end %>
 </article>
+
+<style>
+  .adozione-libro {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.375rem;
+    line-height: 1.2;
+  }
+  .adozione-libro__titolo {
+    font-size: var(--text-x-small, 0.75rem);
+    font-weight: 600;
+  }
+  .adozione-libro__editore {
+    font-size: var(--text-xx-small, 0.625rem);
+    color: var(--color-ink-dark);
+    font-weight: 400;
+  }
+</style>
