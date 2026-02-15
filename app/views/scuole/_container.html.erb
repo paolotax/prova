@@ -1,0 +1,67 @@
+<section class="card-perma" style="--card-color: var(--color-positive);">
+	<div class="card-perma__actions card-perma__actions--right">
+		<%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: @scuola.id),
+				class: "btn", data: { controller: "tooltip" } do %>
+			<%= icon_tag "note" %>
+			<span class="for-screen-reader">Nuovo Appunto</span>
+		<% end %>
+	</div>
+
+	<div class="card-perma__bg">
+		<article class="card">
+			<header class="card__header">
+        <%= render "scuole/display/perma/board", scuola: scuola %>
+        <%#= render "scuole/display/perma/tags", appunto: appunto %>
+      </header>
+			
+			<div class="card__body">
+				<div class="card__content">
+					<%= turbo_frame_tag @scuola, :edit do %>
+						<%= render "scuole/container/content_display", scuola: @scuola %>
+					<% end %>
+				</div>
+			</div>
+
+			<%= render "scuole/container/classi", scuola: @scuola %>
+		
+			<footer>
+				<%= render "scuole/display/perma/meta", scuola: @scuola %>
+			</footer>
+		</article>
+	</div>
+
+	<div class="card-perma__actions card-perma__actions--left">
+		<%= link_to go_to_tappable_path(@scuola, current_user.effective_navigator),
+				target: "_blank", class: "btn", data: { controller: "tooltip" } do %>
+			<%= icon_tag "marker" %>
+			<span class="for-screen-reader">Naviga verso...</span>
+		<% end %>
+
+		<%= link_to mappe_path("scuola-#{@scuola.id}"),
+				class: "btn", data: { controller: "tooltip" } do %>
+			<%= icon_tag "mappa" %>
+			<span class="for-screen-reader">Posizione nella mappa</span>
+		<% end %>
+	</div>
+
+	<div class="card-perma__notch card-perma__notch--bottom">
+		<%= turbo_frame_tag @scuola, :footer do %>
+			<%= render "scuole/container/footer", scuola: @scuola %>
+		<% end %>
+	</div>
+</section>
+
+<div class="scuola-show">
+	<%= render "scuole/container/adozioni", scuola: @scuola %>
+
+	<%= render "scuole/container/insegnanti", scuola: @scuola %>
+
+	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy do %>
+		<article class="panel shadow">
+			<header class="flex align-center justify-space-between margin-block-end-half">
+				<h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+			</header>
+			<p class="txt-small txt-subtle margin-none">Caricamento...</p>
+		</article>
+	<% end %>
+</div>

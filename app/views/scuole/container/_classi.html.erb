@@ -1,43 +1,48 @@
-<%# locals: (scuola:, classi:) -%>
+<%# locals: (scuola:) -%>
 
-<article class="panel shadow">
-  <header class="flex align-center justify-space-between margin-block-end">
-    <div class="flex align-center gap-half">
-      <h2 class="txt-large font-weight-black margin-none">Classi</h2>
-      <span class="badge txt-xx-small"><%= classi.count %></span>
+<section class="group">
+  <% if scuola.classi.any? %>
+    <%
+      classi_grouped = scuola.classi.order(:anno_corso, :sezione).group_by(&:combinazione)
+      anni = scuola.classi.pluck(:anno_corso).uniq.sort
+      anni_labels = { "1" => "I", "2" => "II", "3" => "III", "4" => "IV", "5" => "V" }
+    %>
+    
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end"></h3>
+
+    <div class="pad-half fill-shade border-block border-radius">
+      <table class="classi__table txt-xx-small full-width border">
+        <thead>
+          <tr>
+            <th></th>
+            <% anni.each do |anno| %>
+              <th class="txt-align-center"><%= anni_labels[anno.to_s] || anno %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% classi_grouped.each do |combinazione, classi_comb| %>
+            <% classi_by_anno = classi_comb.group_by(&:anno_corso) %>
+            <tr>
+              <td class="txt-subtle txt-align-end pad-inline-end"><%= combinazione.presence || "—" %></td>
+              <% anni.each do |anno| %>
+                <td class="txt-align-left pad-inline">
+                  <% (classi_by_anno[anno] || []).each do |classe| %>
+                    <%= link_to classe.sezione.presence || "•",
+                        scuola_classe_path(scuola, classe),
+                        class: "txt-undecorated txt-small font-weight-bold",
+                        data: { turbo_frame: :_top },
+                        style: "color: var(--color-positive-dark);" %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
 
-    <% if scuola.codice_ministeriale.present? %>
-      <%= button_to scuola_classi_path(scuola),
-          method: :post,
-          class: "btn btn--link txt-small" do %>
-        <%= icon_tag "download", size: "small" %>
-        Importa Classi
-      <% end %>
-    <% end %>
-  </header>
-
-  <% if classi.any? %>
-    <div class="flex flex-column gap-half">
-      <% classi.each do |classe| %>
-        <%= render "scuole/classi/classe_card", classe: classe, scuola: scuola %>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="txt-center pad">
-      <%= icon_tag "users", size: "large", class: "txt-subtle margin-block-end-half" %>
-      <h3 class="txt-medium font-weight-bold">Nessuna classe registrata</h3>
-      <p class="txt-small txt-subtle margin-block-end">Importa le classi dal database ministeriale.</p>
-      <% if scuola.codice_ministeriale.present? %>
-        <%= button_to scuola_classi_path(scuola),
-            method: :post,
-            class: "btn btn--primary" do %>
-          <%= icon_tag "download", size: "small" %>
-          Importa Classi
-        <% end %>
-      <% else %>
-        <p class="txt-xx-small txt-warning">Inserisci il codice ministeriale per importare le classi.</p>
-      <% end %>
-    </div>
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end"></h3>
   <% end %>
-</article>
+</section>
+

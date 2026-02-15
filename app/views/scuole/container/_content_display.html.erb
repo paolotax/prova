@@ -1,41 +1,37 @@
 <%# locals: (scuola:) -%>
 
 <h1 class="card__title"><%= scuola.denominazione %></h1>
-<span class="card__subtitle">
-  <%= scuola.codice_ministeriale %> — <%= scuola.tipo_scuola %>
-</span>
 
-<% if scuola.import_scuola&.DENOMINAZIONEISTITUTORIFERIMENTO.present? %>
-  <div class="txt-small txt-subtle margin-block-start-half">
-    <%= scuola.import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO.titleize %>
+<div class="flex gap flex-wrap">
+  <!-- Indirizzo -->
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
+    <span class="txt-x-small txt-subtle txt-uppercase">Indirizzo</span>
+    <div class="txt-small">
+      <% if scuola.indirizzo.present? %>
+        <div><%= scuola.indirizzo %></div>
+      <% end %>
+      <div><%= [scuola.cap, scuola.comune, scuola.provincia].compact_blank.join(" ") %></div>
+    </div>
   </div>
-<% end %>
 
-<div class="card__description margin-block-start">
-  <dl class="dl-grid txt-small">
-    <% if scuola.indirizzo.present? %>
-      <dt class="txt-subtle">Indirizzo</dt>
-      <dd><%= scuola.indirizzo %></dd>
-    <% end %>
-
-    <dt class="txt-subtle">Città</dt>
-    <dd><%= [scuola.cap, scuola.comune].compact_blank.join(" ").presence || "—" %> (<%= scuola.provincia %>)</dd>
-
-    <% if scuola.telefono.present? %>
-      <dt class="txt-subtle">Telefono</dt>
-      <dd><%= link_to scuola.telefono, "tel:#{scuola.telefono}" %></dd>
-    <% end %>
-
-    <% if scuola.email.present? %>
-      <dt class="txt-subtle">Email</dt>
-      <dd><%= mail_to scuola.email %></dd>
-    <% end %>
-
-    <% if scuola.pec.present? %>
-      <dt class="txt-subtle">PEC</dt>
-      <dd><%= mail_to scuola.pec %></dd>
-    <% end %>
-  </dl>
+  <!-- Contatti -->
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
+    <span class="txt-x-small txt-subtle txt-uppercase">Contatti</span>
+    <div class="txt-small flex flex-column gap-quarter">
+      <% if scuola.telefono.present? %>
+        <span><%= icon_tag "phone", class: "icon--small txt-subtle" %>
+        <%= link_to scuola.telefono, "tel:#{scuola.telefono}", class: "txt-link" %></span>
+      <% end %>
+      <% if scuola.email.present? %>
+        <span><%= icon_tag "envelope", class: "icon--small txt-subtle" %>
+        <%= mail_to scuola.email, scuola.email.downcase, class: "txt-link" %></span>
+      <% end %>
+      <% if scuola.pec.present? %>
+        <span><%= icon_tag "shield-check", class: "icon--small txt-subtle" %>
+        <%= mail_to scuola.pec, scuola.pec.downcase, class: "txt-link" %></span>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <% if scuola.note.present? %>

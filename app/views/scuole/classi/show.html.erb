@@ -114,7 +114,7 @@
                 <th class="txt-left">Titolo</th>
                 <th class="txt-left">Disciplina</th>
                 <th class="txt-right">Prezzo</th>
-                <th class="txt-center">Omaggi</th>
+                <th class="txt-align-center">Omaggi</th>
               </tr>
             </thead>
             <tbody>
@@ -130,7 +130,7 @@
                   <td class="txt-small txt-right font-weight-bold">
                     <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
                   </td>
-                  <td class="txt-center">
+                  <td class="txt-align-center">
                     <% if adozione.mia? %>
                       <div class="flex align-center justify-center gap-quarter flex-wrap">
                         <% adozione.saggi.each do |cs| %>
@@ -191,7 +191,7 @@
           </table>
         </div>
       <% else %>
-        <div class="txt-center margin-block">
+        <div class="txt-align-center margin-block">
           <p class="txt-small txt-subtle margin-block-end">Nessuna adozione registrata.</p>
           <%= button_to "Importa Adozioni",
               import_adozioni_scuola_classe_path(@scuola, @classe),

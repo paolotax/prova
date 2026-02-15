@@ -1,0 +1,49 @@
+
+<%
+  mie_adozioni = Adozione.joins(:classe)
+                         .where(classe_id: scuola.classi.select(:id))
+                         .where(mia: true, da_acquistare: true)
+                         .order("classi.anno_corso", :titolo)
+%>
+
+<% if mie_adozioni.any? %>
+  <section class="group">
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">Mie adozioni</h3>
+
+    <div class="pad-half fill-shade border-radius">
+      <table class="txt-xx-small full-width" style="border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th class="txt-left txt-uppercase">Titolo</th>
+            <th class="txt-center txt-uppercase">Classe</th>
+            <th class="txt-center txt-uppercase">Sez</th>
+            <th class="txt-left txt-uppercase">Disciplina</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%
+            # Raggruppa per titolo e anno, unendo le sezioni
+            adozioni_grouped = mie_adozioni.group_by { |a| [a.titolo, a.classe.anno_corso] }
+          %>
+          <% adozioni_grouped.each do |(titolo, anno), adozioni| %>
+            <% disdetta = adozioni.any?(&:disdetta?) %>
+            <tr<%= ' class="disdetta"'.html_safe if disdetta %>>
+              <td class="txt-x-small"><%= titolo %></td>
+              <td class="txt-center txt-small font-weight-bold no-strike"><%= anno %></td>
+              <td class="txt-center no-strike txt-nowrap">
+                <% adozioni.sort_by { |a| a.classe.sezione.to_s }.each do |adozione| %>
+                  <%= link_to adozione.classe.sezione.presence || "•",
+                      scuola_classe_path(scuola, adozione.classe),
+                      class: "txt-undecorated txt-small font-weight-bold",
+                      data: { turbo_frame: :_top },
+                      style: "color: var(--color-positive-dark);" %>
+                <% end %>
+              </td>
+              <td class="txt-xx-small txt-subtle" style="padding: 0.25rem; border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);"><%= adozioni.first.disciplina %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>
