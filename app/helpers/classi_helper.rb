@@ -29,6 +29,16 @@ module ClassiHelper
     safe_join(tokens, " ")
   end
 
+  # Badge arrotondate per ogni classe: "1A" "2A" "3A" con link
+  def classi_badge_links(classi, scuola)
+    classi.sort_by { |c| [c.anno_corso, c.sezione] }.map do |classe|
+      link_to classe.nome_breve, scuola_classe_path(scuola, classe),
+        class: "btn txt-small",
+        style: "background: var(--card-color); color: var(--color-ink-inverted);",
+        data: { turbo_frame: "_top" }
+    end.then { |links| safe_join(links, " ") }
+  end
+
   # Display adozione libro as compact chip: titolo troncato + editore sotto
   # Yellow for mia, red for nuova_adozione
   def adozione_libro_tag(adozione)

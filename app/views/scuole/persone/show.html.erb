@@ -1,100 +1,101 @@
 <% @page_title = "#{@persona.nome_completo} — #{@scuola.denominazione}" %>
+<% @header_class = "header--card" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= back_link_to @scuola.denominazione.capitalize, scuola_path(@scuola) %>
   </div>
-
-  <div class="header__actions header__actions--end">
-  </div>
 <% end %>
 
-<div class="panel center" style="--panel-size: 100ch;">
-
-  <!-- Info persona -->
-  <div class="flex align-center gap margin-block-end">
-    <div>
-      <h2 class="txt-medium font-weight-bold margin-none"><%= @persona.cognome %> <%= @persona.nome %></h2>
-      <p class="txt-small txt-subtle margin-none">
-        <%= @persona.persona_classi.first&.materia&.titleize %>
-        — <%= @scuola.denominazione %>
-      </p>
-      <% if @persona.cellulare.present? || @persona.email.present? %>
-        <p class="txt-small margin-none">
-          <% if @persona.cellulare.present? %><%= @persona.cellulare %><% end %>
-          <% if @persona.email.present? %> · <%= @persona.email %><% end %>
-        </p>
+<div class="full-width pad group">
+  <section class="card-perma" style="--card-color: var(--color-positive);">
+    <div class="card-perma__actions card-perma__actions--left">
+      <% if @prev_persona_id %>
+        <%= link_to scuola_persona_path(@scuola, @prev_persona_id), class: "btn",
+            data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
+          <%= icon_tag "arrow-left" %>
+          <span class="for-screen-reader">Precedente (←)</span>
+        <% end %>
       <% end %>
     </div>
-  </div>
 
-  <!-- Classi e Adozioni -->
-  <h3 class="divider divider--fade txt-medium font-weight-black">Classi e Adozioni</h3>
+    <div class="card-perma__bg">
+      <article class="card">
+        <div class="card__body">
+          <div class="card__content">
+            <%= turbo_frame_tag @persona, :edit do %>
+              <%= render "scuole/persone/content_display", persona: @persona, scuola: @scuola %>
+            <% end %>
+          </div>
+        </div>
+      </article>
+    </div>
 
-  <% if @persona_classi.any? %>
-    <% @persona_classi.each do |pc| %>
-      <% classe = pc.classe %>
-      <div class="margin-block-end">
-        <h4 class="flex align-center gap-half txt-small font-weight-bold margin-block-end-half">
-          <%= link_to "Classe #{classe.nome_breve}", scuola_classe_path(@scuola, classe), class: "txt-link" %>
-          <% if classe.combinazione.present? %>
-            <span class="txt-subtle font-weight-normal"><%= classe.combinazione %></span>
-          <% end %>
-          <%= button_to scuola_persona_persona_classe_path(@scuola, @persona, pc),
-              method: :delete,
-              class: "btn btn--ghost txt-xx-small",
-              data: { turbo_confirm: "Scollegare #{@persona.cognome} dalla classe #{classe.nome_breve}?" } do %>
-            <%= icon_tag "x", size: "small" %>
-          <% end %>
-        </h4>
-        <% adozioni = @adozioni_per_classe[classe.id] || [] %>
-        <% if adozioni.any? %>
-          <table class="table txt-small full-width">
-            <% adozioni.each do |adozione| %>
+    <div class="card-perma__actions card-perma__actions--right">
+      <% if @next_persona_id %>
+        <%= link_to scuola_persona_path(@scuola, @next_persona_id), class: "btn",
+            data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
+          <%= icon_tag "arrow-right" %>
+          <span class="for-screen-reader">Successivo (→)</span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="card-perma__notch card-perma__notch--bottom">
+      <%= turbo_frame_tag @persona, :footer do %>
+        <%= render "scuole/persone/footer", persona: @persona, scuola: @scuola %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Adozioni -->
+  <div class="center" style="--card-color: var(--color-positive);">
+
+    <% if @adozioni_per_disciplina.any? %>
+      <% @adozioni_per_disciplina.each do |disciplina, libri| %>
+        <h3 class="divider divider--fade txt-medium font-weight-black txt-align-center"><%= disciplina.capitalize %></h3>
+
+        <div class="adozioni-grid align-center">
+          <% libri.each do |entry| %>
+            <% adozione = entry[:adozione] %>
+            <% classi = entry[:classi] %>
+            <div class="flex align-center gap-half">
               <%
-                row_style = if adozione.nuova_adozione?
-                  "background: oklch(var(--lch-red-lighter));"
+                libro_style = if adozione.nuova_adozione?
+                  "background: #fee2e2; border-color: #fca5a5;"
                 elsif adozione.mia?
-                  "background: oklch(var(--lch-yellow-lighter));"
-                else
-                  ""
+                  "background: #fef9c3; border-color: #fde047;"
                 end
               %>
-              <tr style="<%= row_style %>"<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
-                <td>
-                  <div class="font-weight-bold"><%= adozione.titolo %></div>
-                  <div class="txt-xx-small txt-subtle"><%= adozione.editore %></div>
-                </td>
-                <td class="txt-subtle"><%= adozione.disciplina %></td>
-                <td class="txt-right font-weight-bold">
-                  <%= number_to_currency(adozione.prezzo, unit: "€", format: "%n %u") %>
-                </td>
-              </tr>
-            <% end %>
-          </table>
-        <% else %>
-          <p class="txt-xx-small txt-subtle margin-none">Nessuna adozione collegata</p>
-        <% end %>
-      </div>
-    <% end %>
-  <% else %>
-    <p class="txt-small txt-subtle">Nessuna classe assegnata.</p>
-  <% end %>
-
-  <!-- Appunti -->
-  <% if @appunti.any? %>
-    <h3 class="divider divider--fade txt-medium font-weight-black">Appunti (<%= @appunti.size %>)</h3>
-    <% @appunti.each do |appunto| %>
-      <div class="flex gap-half align-start pad-block-half border-bottom">
-        <div class="flex-item-grow">
-          <p class="txt-small margin-none"><%= appunto.body&.truncate(200) %></p>
-          <p class="txt-xx-small txt-subtle margin-none"><%= time_ago_in_words(appunto.created_at) %> fa</p>
+              <div class="libro-card" <%= "style=\"#{libro_style}\"".html_safe if libro_style %>>
+                <div class="libro-card__titolo"><%= adozione.titolo %></div>
+                <div class="libro-card__editore"><%= adozione.editore %></div>
+              </div>
+              <div class="flex gap-quarter flex-wrap">
+                <%= classi_badge_links(classi, @scuola) %>
+              </div>
+            </div>
+          <% end %>
         </div>
-        <% if appunto.entry.present? %>
-          <%= link_to "→", entry_path(appunto.entry), class: "btn btn--ghost txt-small" %>
-        <% end %>
-      </div>
+      <% end %>
+    <% else %>
+      <p class="txt-small txt-subtle txt-align-center">Nessuna adozione collegata.</p>
     <% end %>
-  <% end %>
 
+    <!-- Appunti -->
+    <% if @appunti.any? %>
+      <h3 class="divider divider--fade txt-medium font-weight-black">Appunti (<%= @appunti.size %>)</h3>
+      <% @appunti.each do |appunto| %>
+        <div class="flex gap-half align-start pad-block-half border-bottom">
+          <div class="flex-item-grow">
+            <p class="txt-small margin-none"><%= appunto.body&.truncate(200) %></p>
+            <p class="txt-xx-small txt-subtle margin-none"><%= time_ago_in_words(appunto.created_at) %> fa</p>
+          </div>
+          <% if appunto.entry.present? %>
+            <%= link_to "→", entry_path(appunto.entry), class: "btn btn--ghost txt-small" %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>

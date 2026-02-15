@@ -1,0 +1,33 @@
+<%# locals: (persona:, scuola:) -%>
+
+<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
+<span class="card__subtitle"><%= persona.persona_classi.first&.materia&.titleize %> — <%= scuola.denominazione %></span>
+
+<div class="flex gap-quarter flex-wrap margin-block-start-half">
+  <%= classi_badge_links(persona.classi, scuola) %>
+</div>
+
+<% if persona.cellulare.present? || persona.email.present? || persona.telefono.present? %>
+  <div class="card__description margin-block-start">
+    <dl class="dl-grid txt-small">
+      <% if persona.cellulare.present? %>
+        <dt class="txt-subtle">Cellulare</dt>
+        <dd><%= persona.cellulare %></dd>
+      <% end %>
+      <% if persona.telefono.present? %>
+        <dt class="txt-subtle">Telefono</dt>
+        <dd><%= persona.telefono %></dd>
+      <% end %>
+      <% if persona.email.present? %>
+        <dt class="txt-subtle">Email</dt>
+        <dd><%= persona.email %></dd>
+      <% end %>
+    </dl>
+  </div>
+<% end %>
+
+<% if persona.note.present? %>
+  <div class="card__description margin-block-start">
+    <p class="txt-small margin-none"><%= simple_format(persona.note) %></p>
+  </div>
+<% end %>

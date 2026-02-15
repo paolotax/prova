@@ -100,6 +100,20 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+
+  .hw-combobox__chip {
+    background: var(--card-color, var(--color-positive));
+    color: var(--color-ink-inverted);
+    border: none;
+    border-radius: 99rem;
+    font-weight: 600;
+    font-size: var(--text-small);
+    padding: 0.25em 0.5em 0.25em 0.75em;
+  }
+
+  .hw-combobox__chip__remover {
+    filter: brightness(0) invert(1);
+  }
 }
 
 /* Dark mode support for combobox listbox (rendered as portal) */

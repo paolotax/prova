@@ -431,8 +431,9 @@ Rails.application.routes.draw do
         resource :entries, only: [:show]
         resource :persone_import, only: [:new, :create], controller: "persone_import"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
-        resources :persone, only: [:show] do
+        resources :persone, only: [:show, :edit, :update] do
           resources :persona_classi, only: [:destroy], module: :persone
+          resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
         end
         resources :classi, only: [:index, :show, :create, :destroy] do
           member do

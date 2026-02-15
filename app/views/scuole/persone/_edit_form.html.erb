@@ -1,0 +1,47 @@
+<%# locals: (persona:, scuola:) -%>
+
+<%= form_with model: persona, url: scuola_persona_path(scuola, persona),
+      id: dom_id(persona, :edit_form),
+      data: { controller: "form",
+              action: "keydown.esc->form#cancel:stop" } do |form| %>
+
+  <div class="form-field">
+    <%= form.label :cognome, class: "label txt-small" %>
+    <%= form.text_field :cognome, class: "input" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :nome, class: "label txt-small" %>
+    <%= form.text_field :nome, class: "input" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :cellulare, class: "label txt-small" %>
+    <%= form.text_field :cellulare, class: "input", type: "tel" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :telefono, class: "label txt-small" %>
+    <%= form.text_field :telefono, class: "input", type: "tel" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :email, class: "label txt-small" %>
+    <%= form.email_field :email, class: "input" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :note, class: "label txt-small" %>
+    <%= form.text_area :note, class: "input", rows: 3 %>
+  </div>
+
+  <div class="form-field cb-tax">
+    <label class="label txt-small">Classi</label>
+    <%= combobox_tag "persona[classe_ids]",
+        hw_combobox_options(scuola.classi.order(:anno_corso, :sezione), display: :nome_breve),
+        value: persona.classe_ids.join(","),
+        multiselect_chip_src: scuola_persona_classe_chips_path(scuola, persona),
+        placeholder: "Aggiungi classe...",
+        mobile_at: "0px" %>
+  </div>
+<% end %>

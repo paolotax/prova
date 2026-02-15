@@ -40,6 +40,10 @@
     text-transform: uppercase;
   }
 
+  .badge--rounded {
+    border-radius: 99rem;
+  }
+
   .badge--large {
     font-size: var(--text-small, 0.875rem);
     padding: 0.3em 0.75em;
