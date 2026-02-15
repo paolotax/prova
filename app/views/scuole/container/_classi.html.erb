@@ -7,11 +7,9 @@
       anni = scuola.classi.pluck(:anno_corso).uniq.sort
       anni_labels = { "1" => "I", "2" => "II", "3" => "III", "4" => "IV", "5" => "V" }
     %>
-    
-    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end"></h3>
 
-    <div class="pad-half fill-shade border-block border-radius">
-      <table class="classi__table txt-xx-small full-width border">
+    <div class="pad-half fill-shade border-block border-radius margin-block-end-double">
+      <table class="classi__table txt-xx-small full-width">
         <thead>
           <tr>
             <th></th>
@@ -24,15 +22,14 @@
           <% classi_grouped.each do |combinazione, classi_comb| %>
             <% classi_by_anno = classi_comb.group_by(&:anno_corso) %>
             <tr>
-              <td class="txt-subtle txt-align-end pad-inline-end"><%= combinazione.presence || "—" %></td>
+              <td class="classi__combinazione txt-align-end pad-inline-end"><%= combinazione.presence || "—" %></td>
               <% anni.each do |anno| %>
                 <td class="txt-align-left pad-inline">
                   <% (classi_by_anno[anno] || []).each do |classe| %>
                     <%= link_to classe.sezione.presence || "•",
                         scuola_classe_path(scuola, classe),
-                        class: "txt-undecorated txt-small font-weight-bold",
-                        data: { turbo_frame: :_top },
-                        style: "color: var(--color-positive-dark);" %>
+                        class: "classi__sezione-link txt-undecorated txt-small font-weight-bold",
+                        data: { turbo_frame: :_top } %>
                   <% end %>
                 </td>
               <% end %>
@@ -41,8 +38,5 @@
         </tbody>
       </table>
     </div>
-
-    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end"></h3>
   <% end %>
 </section>
-

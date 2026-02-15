@@ -42,4 +42,8 @@
     &:before { background: linear-gradient(to right, transparent, var(--divider-color) 50%); }
     &:after  { background: linear-gradient(to left, transparent, var(--divider-color) 50%); }
   }
+
+  .divider--card {
+    --divider-color: color-mix(in srgb, var(--card-color) 33%, var(--color-ink-inverted));
+  }
 }

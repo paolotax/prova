@@ -18,50 +18,62 @@
   grouped = persone.group_by { |p| p.persona_classi.first&.materia }.compact_blank
 %>
 
-<article class="panel shadow">
-  <header class="flex align-center justify-space-between margin-block-end-half">
-    <h3 class="txt-medium font-weight-black margin-none">Insegnanti (<%= persone.size %>)</h3>
-    <div class="flex gap-half">
-      <%= link_to scuola_cattedre_path(scuola), class: "btn btn--ghost txt-small" do %>
-        Collega cattedre
-      <% end %>
-      <%= link_to new_scuola_persone_import_path(scuola), class: "btn txt-small" do %>
-        Importa PDF
-      <% end %>
+<% if persone.any? %>
+  <section class="group">
+    <div class="header margin-none padding-none">
+      <div class="header__actions header__actions--start">
+        <%= link_to "Cattedre", scuola_cattedre_path(scuola), class: "btn txt-small" %>
+      </div>
+      <h3 class="header__title divider divider--fade divider--card txt-medium font-weight-black margin-none">
+        Insegnanti (<%= persone.size %>)
+      </h3>
+      <div class="header__actions header__actions--end">
+        <%= link_to "Importa", new_scuola_persone_import_path(scuola), class: "btn txt-small" %>
+      </div>
     </div>
-  </header>
 
-  <% if persone.any? %>
     <% grouped.each do |cattedra, docenti| %>
       <% discipline_miur = cattedra_to_discipline[cattedra] || [] %>
 
-      <h3 class="divider divider--fade txt-medium font-weight-black txt-align-center"><%= cattedra&.titleize %></h3>
+      <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= cattedra&.titleize %></h4>
 
-      <% docenti.each do |persona| %>
-        <div class="txt-align-center margin-block-end">
-          <div class="font-weight-bold">
-            <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-link" %>
-          </div>
-
-          <div class="flex gap-quarter flex-wrap justify-center txt-small margin-block-start-half">
-            <%= compact_classi_links(persona.classi.sort_by { |c| [c.sezione, c.anno_corso] }, scuola) %>
-          </div>
-
-          <% if discipline_miur.any? %>
-            <% persona_classe_ids = persona.classi.map(&:id) %>
-            <% libri = discipline_miur.flat_map { |d| persona_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }.uniq { |a| [a.titolo, a.editore] } %>
-            <% if libri.any? %>
-              <div class="flex gap-quarter flex-wrap justify-center margin-block-start-half">
-                <% libri.each do |adozione| %>
-                  <%= adozione_libro_tag(adozione) %>
-                <% end %>
-              </div>
+      <% if discipline_miur.any? %>
+        <% all_classe_ids = docenti.flat_map { |p| p.classi.map(&:id) }.uniq %>
+        <% libri_cattedra = discipline_miur.flat_map { |d| all_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }.uniq { |a| [a.titolo, a.editore] } %>
+        <% if libri_cattedra.any? %>
+          <div class="flex gap-quarter flex-wrap margin-block-end-half">
+            <% libri_cattedra.each do |adozione| %>
+              <%= adozione_libro_tag(adozione) %>
             <% end %>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
       <% end %>
+
+      <dl class="dl-grid dl-grid--center txt-small">
+        <% docenti.each do |persona| %>
+          <dt class="txt-x-small">
+            <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-link" %>
+          </dt>
+          <dd>
+            <div class="flex gap-quarter flex-wrap">
+              <%= classi_badge_links(persona.classi.sort_by { |c| [c.sezione, c.anno_corso] }, scuola) %>
+            </div>
+          </dd>
+        <% end %>
+      </dl>
     <% end %>
-  <% else %>
-    <p class="txt-small txt-subtle margin-none">Nessun insegnante importato. Usa il bottone per caricare un PDF ANARPE.</p>
-  <% end %>
-</article>
+  </section>
+<% else %>
+  <section class="group">
+    <div class="header margin-none padding-none">
+      <div class="header__actions header__actions--start"></div>
+      <h3 class="header__title divider divider--fade divider--card txt-medium font-weight-black margin-none">
+        Insegnanti
+      </h3>
+      <div class="header__actions header__actions--end">
+        <%= link_to "Importa", new_scuola_persone_import_path(scuola), class: "btn txt-small" %>
+      </div>
+    </div>
+    <p class="txt-small txt-subtle margin-none">Nessun insegnante importato.</p>
+  </section>
+<% end %>

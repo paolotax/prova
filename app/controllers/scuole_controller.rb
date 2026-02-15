@@ -49,7 +49,10 @@ class ScuoleController < ApplicationController
 
   def update
     if @scuola.update(scuola_params)
-      redirect_to scuola_path(@scuola), notice: "Scuola aggiornata con successo"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to scuola_path(@scuola) }
+      end
     else
       render :edit, status: :unprocessable_entity
     end

@@ -16,6 +16,40 @@
     inline-size: 100%;
   }
 
+  /* Classi table
+  /* ------------------------------------------------------------------------ */
+
+  .classi__table {
+    border-collapse: collapse;
+  }
+
+  .classi__table th,
+  .classi__table td {
+    padding: 0.25rem;
+  }
+
+  .classi__table thead th {
+    border-block-end: 1px solid color-mix(in srgb, var(--card-color) 30%, var(--color-ink-inverted));
+    color: color-mix(in srgb, var(--card-color) 75%, var(--color-ink));
+  }
+
+  .classi__table tbody td {
+    border-block-start: 1px solid color-mix(in srgb, var(--card-color) 15%, var(--color-canvas));
+  }
+
+  .classi__table tbody td + td {
+    border-inline-start: 1px solid color-mix(in srgb, var(--card-color) 15%, var(--color-canvas));
+  }
+
+  .classi__combinazione {
+    color: color-mix(in srgb, var(--card-color) 75%, var(--color-ink));
+  }
+
+  .classi__sezione-link {
+    color: color-mix(in srgb, var(--card-color) 75%, var(--color-ink));
+  }
+
+
   .settings {
     --settings-spacer: var(--block-space);
     --settings-item-padding-inline: 0.5ch;

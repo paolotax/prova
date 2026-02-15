@@ -2,7 +2,7 @@
   .dl-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 1ch;
+    gap: 0.5rem 2ch;
     margin: 0;
     padding-block: 1ch;
 
@@ -10,6 +10,10 @@
       display: grid;
       grid-template-columns: subgrid;
       grid-column: span 2;
+    }
+
+    &.dl-grid--center {
+      align-items: center;
     }
 
     dt {
