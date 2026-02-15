@@ -429,6 +429,7 @@ Rails.application.routes.draw do
 
       scope module: :scuole do
         resource :entries, only: [:show]
+        resource :adozioni, only: [:show], controller: "adozioni"
         resource :persone_import, only: [:new, :create], controller: "persone_import"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
         resources :persone, only: [:show, :edit, :update] do

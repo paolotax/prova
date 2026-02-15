@@ -30,30 +30,55 @@ module ClassiHelper
   end
 
   # Badge arrotondate per ogni classe: "1A" "2A" "3A" con link
-  def classi_badge_links(classi, scuola)
+  # classe_styles: hash { classe_id => :mia | :nuova | nil }
+  def classi_badge_links(classi, scuola, classe_styles: nil, hover_target: false)
     classi.sort_by { |c| [c.anno_corso, c.sezione] }.map do |classe|
+      variant = classe_styles&.dig(classe.id)
+      style = case variant
+      when :nuova_mia
+        "background: var(--color-negative); color: var(--color-ink-inverted);"
+      when :mia
+        "background: var(--card-color); color: var(--color-ink-inverted);"
+      when :nuova_altri
+        "background: transparent; color: var(--color-negative); box-shadow: inset 0 0 0 1px var(--color-negative);"
+      when :grey
+        "background: var(--color-ink-light); color: var(--color-ink-inverted);"
+      when nil
+        if classe_styles
+          "background: transparent; color: var(--card-color); box-shadow: inset 0 0 0 1px var(--card-color);"
+        else
+          "background: var(--card-color); color: var(--color-ink-inverted);"
+        end
+      end
+      link_data = { turbo_frame: "_top" }
+      if hover_target
+        link_data[:libro_hover_target] = "badge"
+        link_data[:classe_id] = classe.id
+      end
       link_to classe.nome_breve, scuola_classe_path(scuola, classe),
         class: "btn txt-small",
-        style: "background: var(--card-color); color: var(--color-ink-inverted);",
-        data: { turbo_frame: "_top" }
+        style: style,
+        data: link_data
     end.then { |links| safe_join(links, " ") }
   end
 
   # Display adozione libro as compact chip: titolo troncato + editore sotto
   # Yellow for mia, red for nuova_adozione
-  def adozione_libro_tag(adozione)
+  def adozione_libro_tag(adozione, data: {})
     bg = if adozione.nuova_adozione?
       "background: #fee2e2; color: #991b1b;"
     elsif adozione.mia?
-      "background: #fef9c3; color: #854d0e;"
+      "background: color-mix(in srgb, var(--card-color) 15%, var(--color-canvas)); color: color-mix(in srgb, var(--card-color) 75%, var(--color-ink));"
     else
       ""
     end
 
-    content_tag(:span, class: "adozione-libro", style: bg, data: { controller: "tooltip" }) do
-      content_tag(:span, truncate(adozione.titolo, length: 20), class: "adozione-libro__titolo") +
-      content_tag(:span, adozione.editore, class: "adozione-libro__editore") +
-      content_tag(:span, adozione.titolo, class: "for-screen-reader")
+    content_tag(:span, class: "adozione-libro", style: bg, data: data) do
+      content_tag(:span, adozione.titolo, class: "adozione-libro__titolo") +
+      content_tag(:span, class: "adozione-libro__footer") do
+        content_tag(:span, adozione.editore, class: "adozione-libro__editore") +
+        content_tag(:span, number_to_currency(adozione.prezzo), class: "adozione-libro__prezzo")
+      end
     end
   end
 end

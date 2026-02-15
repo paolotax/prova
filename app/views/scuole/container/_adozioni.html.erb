@@ -1,38 +1,8 @@
 <%# locals: (scuola:) -%>
 
-<%
-  mie_adozioni = Adozione.joins(:classe)
-                         .where(classe_id: scuola.classi.select(:id))
-                         .where(mia: true, da_acquistare: true)
-                         .includes(:classe)
-                         .order(:disciplina, :titolo, "classi.anno_corso", "classi.sezione")
-%>
-
-<% if mie_adozioni.any? %>
+<%= turbo_frame_tag "scuola_adozioni", src: scuola_adozioni_path(scuola, scope: "mie"), loading: :lazy, style: "display: block; min-height: 4rem;" do %>
   <section class="group">
-    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Mie adozioni</h3>
-
-    <%
-      grouped = mie_adozioni.group_by(&:disciplina)
-    %>
-
-    <% grouped.each do |disciplina, adozioni_disciplina| %>
-      <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= disciplina %></h4>
-
-      <dl class="dl-grid dl-grid--center txt-small">
-        <%
-          per_libro = adozioni_disciplina.group_by { |a| [a.titolo, a.editore] }
-        %>
-        <% per_libro.each do |(titolo, editore), adozioni| %>
-          <% disdetta = adozioni.any?(&:disdetta?) %>
-          <dt class="txt-x-small <%= 'disdetta' if disdetta %>"><%= titolo %></dt>
-          <dd>
-            <div class="flex gap-quarter flex-wrap">
-              <%= classi_badge_links(adozioni.map(&:classe).uniq, scuola) %>
-            </div>
-          </dd>
-        <% end %>
-      </dl>
-    <% end %>
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
   </section>
 <% end %>

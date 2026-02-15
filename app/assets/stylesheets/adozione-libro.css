@@ -15,10 +15,27 @@
     font-weight: 600;
   }
 
+  .adozione-libro__footer {
+    display: flex;
+    justify-content: space-between;
+    align-self: stretch;
+    gap: 1ch;
+  }
+
   .adozione-libro__editore {
     font-size: var(--text-xx-small);
     color: var(--color-ink-dark);
     font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-inline-size: 0;
+  }
+
+  .adozione-libro__prezzo {
+    font-size: var(--text-xx-small);
+    font-weight: 600;
+    white-space: nowrap;
   }
 
   /* Book card for persona show */
@@ -47,6 +64,16 @@
     color: var(--color-ink-light);
     font-weight: 400;
     margin-block-start: 0.125rem;
+  }
+
+  .libro-hover--active {
+    scale: 1.15;
+    transition: scale 0.15s ease;
+  }
+
+  .libro-hover--dim {
+    opacity: 0.25;
+    transition: opacity 0.15s ease;
   }
 
   .adozioni-grid {

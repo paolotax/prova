@@ -1,0 +1,51 @@
+<%= turbo_frame_tag "scuola_adozioni" do %>
+  <section class="group">
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
+      <%= link_to "Mie adozioni", scuola_adozioni_path(@scuola, scope: "mie"),
+          class: "txt-undecorated #{'font-weight-black' if @scope == 'mie'}",
+          style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'mie'}",
+          data: { turbo_frame: "scuola_adozioni" } %>
+      <%= link_to "Tutte", scuola_adozioni_path(@scuola, scope: "tutte"),
+          class: "txt-undecorated #{'font-weight-black' if @scope == 'tutte'}",
+          style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'tutte'}",
+          data: { turbo_frame: "scuola_adozioni" } %>
+    </h3>
+
+    <% if @adozioni.any? %>
+      <% grouped = @adozioni.group_by(&:disciplina) %>
+
+      <% grouped.each do |disciplina, adozioni_disciplina| %>
+        <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= disciplina %></h4>
+
+        <dl class="dl-grid dl-grid--center txt-small">
+          <% per_libro = adozioni_disciplina.group_by { |a| [a.titolo, a.editore] } %>
+          <% per_libro.each do |(titolo, editore), adozioni| %>
+            <% disdetta = adozioni.any?(&:disdetta?) %>
+            <dt class="txt-x-small <%= 'disdetta' if disdetta %>" style="line-height: 1.1;"><span class="font-weight-bold"><%= titolo %></span><br><span class="txt-xx-small txt-subtle"><%= editore %></span></dt>
+            <dd>
+              <div class="flex gap-quarter flex-wrap">
+                <%
+                  adozioni_by_classe = adozioni.group_by(&:classe_id)
+                  styles = adozioni_by_classe.transform_values do |aa|
+                    if aa.none?(&:da_acquistare?)
+                      :grey
+                    elsif aa.any? { |a| a.nuova_adozione? && a.mia? }
+                      :nuova_mia
+                    elsif aa.any?(&:mia?)
+                      :mia
+                    elsif aa.any?(&:nuova_adozione?)
+                      :nuova_altri
+                    end
+                  end
+                %>
+                <%= classi_badge_links(adozioni.map(&:classe).uniq, @scuola, classe_styles: styles) %>
+              </div>
+            </dd>
+          <% end %>
+        </dl>
+      <% end %>
+    <% else %>
+      <p class="txt-small txt-subtle margin-none">Nessuna adozione trovata.</p>
+    <% end %>
+  </section>
+<% end %>

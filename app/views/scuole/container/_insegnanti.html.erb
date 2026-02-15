@@ -10,8 +10,9 @@
 
   # Preload adozioni for this school's classi
   classe_ids = scuola.classi.pluck(:id)
+  classi_by_id = scuola.classi.index_by(&:id)
   adozioni_by_classe_disciplina = Adozione.where(classe_id: classe_ids)
-    .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione)
+    .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione, :prezzo_cents)
     .group_by { |a| [a.classe_id, a.disciplina] }
 
   # Group persone by materia (cattedra), maintaining posizione order
@@ -35,32 +36,64 @@
     <% grouped.each do |cattedra, docenti| %>
       <% discipline_miur = cattedra_to_discipline[cattedra] || [] %>
 
-      <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= cattedra&.titleize %></h4>
+      <div data-controller="libro-hover">
+        <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= cattedra&.titleize %></h4>
 
-      <% if discipline_miur.any? %>
-        <% all_classe_ids = docenti.flat_map { |p| p.classi.map(&:id) }.uniq %>
-        <% libri_cattedra = discipline_miur.flat_map { |d| all_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }.uniq { |a| [a.titolo, a.editore] } %>
-        <% if libri_cattedra.any? %>
-          <div class="flex gap-quarter flex-wrap margin-block-end-half">
-            <% libri_cattedra.each do |adozione| %>
-              <%= adozione_libro_tag(adozione) %>
-            <% end %>
-          </div>
-        <% end %>
-      <% end %>
-
-      <dl class="dl-grid dl-grid--center txt-small">
-        <% docenti.each do |persona| %>
-          <dt class="txt-x-small">
-            <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-link" %>
-          </dt>
-          <dd>
-            <div class="flex gap-quarter flex-wrap">
-              <%= classi_badge_links(persona.classi.sort_by { |c| [c.sezione, c.anno_corso] }, scuola) %>
+        <% if discipline_miur.any? %>
+          <%
+            all_classe_ids = docenti.flat_map { |p| p.classi.map(&:id) }.uniq
+            all_adozioni = discipline_miur.flat_map { |d| all_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }
+            # Build libro → classe_ids map
+            libro_classe_ids = all_adozioni.group_by { |a| [a.titolo, a.editore] }
+              .transform_values { |aa| aa.map(&:classe_id).uniq }
+            libri_per_anno = all_adozioni
+              .group_by { |a| classi_by_id[a.classe_id]&.anno_corso }
+              .transform_values { |aa| aa.uniq { |a| [a.titolo, a.editore] } }
+              .sort_by { |anno, _| anno.to_i }
+          %>
+          <% if libri_per_anno.any? %>
+            <div style="display: grid; grid-template-columns: repeat(<%= libri_per_anno.size %>, minmax(0, 20ch)); gap: 0.5rem; justify-content: center;" class="margin-block-end-half">
+              <% libri_per_anno.each do |anno, adozioni| %>
+                <div class="flex flex-column gap-half">
+                  <span class="txt-xx-small txt-subtle font-weight-bold txt-align-center"><%= anno %>&deg;</span>
+                  <% adozioni.each do |adozione| %>
+                    <% cids = libro_classe_ids[[adozione.titolo, adozione.editore]] || [] %>
+                    <%= adozione_libro_tag(adozione, data: { libro_hover_target: "libro", classe_ids: cids.join(",") }) %>
+                  <% end %>
+                </div>
+              <% end %>
             </div>
-          </dd>
+          <% end %>
         <% end %>
-      </dl>
+
+        <dl class="dl-grid dl-grid--center txt-small">
+          <% docenti.each do |persona| %>
+            <%
+              styles = {}
+              if discipline_miur.any?
+                persona.classi.each do |c|
+                  adozioni = discipline_miur.flat_map { |d| adozioni_by_classe_disciplina[[c.id, d]] || [] }
+                  if adozioni.any? { |a| a.nuova_adozione? && a.mia? }
+                    styles[c.id] = :nuova_mia
+                  elsif adozioni.any?(&:mia?)
+                    styles[c.id] = :mia
+                  elsif adozioni.any?(&:nuova_adozione?)
+                    styles[c.id] = :nuova_altri
+                  end
+                end
+              end
+            %>
+            <dt class="txt-x-small">
+              <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
+            </dt>
+            <dd>
+              <div class="flex gap-quarter flex-wrap">
+                <%= classi_badge_links(persona.classi, scuola, classe_styles: styles, hover_target: true) %>
+              </div>
+            </dd>
+          <% end %>
+        </dl>
+      </div>
     <% end %>
   </section>
 <% else %>
