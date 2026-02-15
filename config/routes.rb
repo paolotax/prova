@@ -435,7 +435,7 @@ Rails.application.routes.draw do
           resources :persona_classi, only: [:destroy], module: :persone
           resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
         end
-        resources :classi, only: [:index, :show, :create, :destroy] do
+        resources :classi, only: [:index, :show, :edit, :update, :create, :destroy] do
           member do
             post :import_adozioni
           end

@@ -1,0 +1,22 @@
+<%# locals: (classe:, scuola:) -%>
+
+<%= form_with model: classe, url: scuola_classe_path(scuola, classe),
+      id: dom_id(classe, :edit_form),
+      data: { controller: "form",
+              action: "keydown.esc->form#cancel:stop" } do |f| %>
+
+  <div class="form-field">
+    <%= f.label :combinazione, class: "label txt-small" %>
+    <%= f.text_field :combinazione, class: "input", autofocus: true %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :numero_alunni, class: "label txt-small" %>
+    <%= f.number_field :numero_alunni, class: "input", min: 0 %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :note, class: "label txt-small" %>
+    <%= f.text_area :note, class: "input", rows: 3 %>
+  </div>
+<% end %>

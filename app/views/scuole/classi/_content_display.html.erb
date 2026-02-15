@@ -1,0 +1,22 @@
+<%# locals: (classe:, scuola:) -%>
+
+<div class="flex align-center gap">
+  <div class="flex align-center justify-center border-radius txt-x-large font-weight-black" style="width: 4rem; height: 4rem; background: var(--color-positive-lighter); color: var(--color-positive-dark);">
+    <%= classe.nome_breve %>
+  </div>
+  <div>
+    <h1 class="card__title margin-none"><%= scuola.denominazione %></h1>
+    <span class="card__subtitle">
+      <%= classe.combinazione.presence || classe.tipo_scuola %>
+      <% if classe.numero_alunni.present? && classe.numero_alunni > 0 %>
+        — <%= classe.numero_alunni %> alunni
+      <% end %>
+    </span>
+  </div>
+</div>
+
+<% if classe.note.present? %>
+  <div class="card__description margin-block-start">
+    <p class="txt-small margin-none"><%= simple_format(classe.note) %></p>
+  </div>
+<% end %>

@@ -1,4 +1,5 @@
 <% @page_title = @scuola.denominazione %>
+<% @header_class = "header--card" %>
 <% @body_class = "contained-scrolling" %>
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
@@ -10,28 +11,65 @@
     <div class="header__actions header__actions--start">
       <%= back_link_to "Scuole", scuole_path %>
     </div>
-
-    <div class="header__actions header__actions--end">
-      <%= link_to edit_scuola_path(@scuola), class: "btn", data: { controller: "tooltip hotkey", action: "keydown.e@document->hotkey#click" } do %>
-        <%= icon_tag "pencil" %>
-        <span class="for-screen-reader">Modifica <kbd class="hide-on-touch">E</kbd></span>
-      <% end %>
-    </div>
   <% end %>
 
-  <div class="scuola-show">
-    <%= render "scuole/container/container", scuola: @scuola %>
+  <div class="full-width pad group">
+    <section class="card-perma" style="--card-color: var(--color-positive);">
+      <div class="card-perma__actions card-perma__actions--left">
+        <%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: @scuola.id),
+            class: "btn", data: { controller: "tooltip" } do %>
+          <%= icon_tag "pencil" %>
+          <span class="for-screen-reader">Nuovo Appunto</span>
+        <% end %>
+      </div>
 
-    <%= render "scuole/container/insegnanti", scuola: @scuola %>
+      <div class="card-perma__bg">
+        <article class="card">
+          <div class="card__body">
+            <div class="card__content">
+              <%= turbo_frame_tag @scuola, :edit do %>
+                <%= render "scuole/container/content_display", scuola: @scuola %>
+              <% end %>
+            </div>
+          </div>
+        </article>
+      </div>
 
-    <%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy do %>
-      <article class="panel shadow">
-        <header class="flex align-center justify-space-between margin-block-end-half">
-          <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
-        </header>
-        <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-      </article>
-    <% end %>
+      <div class="card-perma__actions card-perma__actions--right">
+        <%= link_to mappe_path("scuola-#{@scuola.id}"),
+            class: "btn", data: { controller: "tooltip" } do %>
+          <%= icon_tag "marker" %>
+          <span class="for-screen-reader">Mappa</span>
+        <% end %>
+
+        <%= link_to go_to_tappable_path(@scuola, current_user.effective_navigator),
+            target: "_blank", class: "btn", data: { controller: "tooltip" } do %>
+          <%= icon_tag "globe" %>
+          <span class="for-screen-reader">Naviga</span>
+        <% end %>
+      </div>
+
+      <div class="card-perma__notch card-perma__notch--bottom">
+        <%= turbo_frame_tag @scuola, :footer do %>
+          <%= render "scuole/container/footer", scuola: @scuola %>
+        <% end %>
+      </div>
+    </section>
+
+    <div class="scuola-show">
+      <%= render "scuole/container/stats", scuola: @scuola %>
+
+      <%= render "scuole/container/insegnanti", scuola: @scuola %>
+
+      <%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy do %>
+        <article class="panel shadow">
+          <header class="flex align-center justify-space-between margin-block-end-half">
+            <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
+          </header>
+          <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+        </article>
+      <% end %>
+    </div>
   </div>
 
 <% else %>

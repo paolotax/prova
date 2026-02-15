@@ -19,6 +19,11 @@ class ScuoleController < ApplicationController
 
   def show
     @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def new
@@ -36,6 +41,10 @@ class ScuoleController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html { redirect_to scuola_path(@scuola) }
+      format.turbo_stream
+    end
   end
 
   def update

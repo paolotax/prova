@@ -3,7 +3,7 @@
 module Scuole
   class ClassiController < ApplicationController
     before_action :set_scuola
-    before_action :set_classe, only: [:show, :destroy, :import_adozioni]
+    before_action :set_classe, only: [:show, :edit, :update, :destroy, :import_adozioni]
 
     def index
       @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
@@ -13,6 +13,27 @@ module Scuole
       @adozioni = @classe.adozioni
                     .includes(:saggi, :kit_consegne, :seguiti, :libro)
                     .order(:disciplina, :titolo)
+      load_prev_next
+
+      respond_to do |format|
+        format.html
+        format.turbo_stream
+      end
+    end
+
+    def edit
+      respond_to do |format|
+        format.html { redirect_to scuola_classe_path(@scuola, @classe) }
+        format.turbo_stream
+      end
+    end
+
+    def update
+      if @classe.update(classe_params)
+        redirect_to scuola_classe_path(@scuola, @classe)
+      else
+        render :edit, status: :unprocessable_entity
+      end
     end
 
     def create
@@ -46,6 +67,17 @@ module Scuole
 
     def set_classe
       @classe = @scuola.classi.find(params[:id])
+    end
+
+    def classe_params
+      params.require(:classe).permit(:combinazione, :numero_alunni, :note)
+    end
+
+    def load_prev_next
+      all_ids = @scuola.classi.order(:anno_corso, :sezione).pluck(:id)
+      idx = all_ids.index(@classe.id)
+      @prev_classe_id = idx && idx > 0 ? all_ids[idx - 1] : nil
+      @next_classe_id = idx && idx < all_ids.size - 1 ? all_ids[idx + 1] : nil
     end
 
     def views_classi

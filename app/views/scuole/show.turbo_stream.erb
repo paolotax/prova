@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@scuola, :edit] do %>
+  <%= turbo_frame_tag @scuola, :edit do %>
+    <%= render "scuole/container/content_display", scuola: @scuola %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@scuola, :footer] do %>
+  <%= turbo_frame_tag @scuola, :footer do %>
+    <%= render "scuole/container/footer", scuola: @scuola %>
+  <% end %>
+<% end %>

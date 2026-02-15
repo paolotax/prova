@@ -1,62 +1,56 @@
-<% @page_title = "Classe #{@classe.nome_breve} - #{@scuola.denominazione}" %>
+<% @page_title = "Classe #{@classe.nome_breve} — #{@scuola.denominazione}" %>
+<% @header_class = "header--card" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to scuola_path(@scuola), class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Indietro</span>
-    <% end %>
-  </div>
-
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @scuola.denominazione %></span>
-  </h1>
-
-  <div class="header__actions header__actions--end">
-
+    <%= back_link_to @scuola.denominazione.capitalize, scuola_path(@scuola) %>
   </div>
 <% end %>
 
-  <!-- Breadcrumb -->
-  <nav class="flex align-center gap-half txt-small txt-subtle margin-block-end">
-    <%= link_to scuole_path, class: "txt-link" do %>
-      Scuole
-    <% end %>
-    <%= icon_tag "chevron-right", size: "small" %>
-    <%= link_to @scuola.denominazione, scuola_path(@scuola), class: "txt-link overflow-ellipsis" %>
-    <%= icon_tag "chevron-right", size: "small" %>
-    <span class="font-weight-bold">Classe <%= @classe.nome_breve %></span>
-  </nav>
-
-
-
-<div class="panel center" style="--panel-size: 100ch;">
-
-
-
-  <!-- Info classe -->
-  <div class="flex align-center gap margin-block-end">
-    <div class="flex align-center justify-center border-radius txt-x-large font-weight-black" style="width: 4rem; height: 4rem; background: var(--color-positive-lighter); color: var(--color-positive-dark);">
-      <%= @classe.nome_breve %>
-    </div>
-    <div>
-      <h2 class="txt-medium font-weight-bold margin-none"><%= @scuola.denominazione %></h2>
-      <% if @classe.combinazione.present? %>
-        <p class="txt-small txt-subtle margin-none"><%= @classe.combinazione %></p>
-      <% end %>
-      <% if @classe.tipo_scuola.present? %>
-        <p class="txt-xx-small txt-subtle margin-none"><%= @classe.tipo_scuola %></p>
+<div class="full-width pad group">
+  <section class="card-perma" style="--card-color: var(--color-positive);">
+    <div class="card-perma__actions card-perma__actions--left">
+      <% if @prev_classe_id %>
+        <%= link_to scuola_classe_path(@scuola, @prev_classe_id), class: "btn",
+            data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
+          <%= icon_tag "arrow-left" %>
+          <span class="for-screen-reader">Precedente (&#8592;)</span>
+        <% end %>
       <% end %>
     </div>
 
-    <dl class="dl-grid txt-small">
-      <% if @classe.numero_alunni.present? && @classe.numero_alunni > 0 %>
-        <dt class="txt-subtle">Alunni</dt>
-        <dd class="font-weight-bold"><%= @classe.numero_alunni %></dd>
-      <% end %>
-    </dl>
+    <div class="card-perma__bg">
+      <article class="card">
+        <div class="card__body">
+          <div class="card__content">
+            <%= turbo_frame_tag @classe, :edit do %>
+              <%= render "scuole/classi/content_display", classe: @classe, scuola: @scuola %>
+            <% end %>
+          </div>
+        </div>
+      </article>
+    </div>
 
-    <div class="flex gap-half flex-wrap margin-block-start">
+    <div class="card-perma__actions card-perma__actions--right">
+      <% if @next_classe_id %>
+        <%= link_to scuola_classe_path(@scuola, @next_classe_id), class: "btn",
+            data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
+          <%= icon_tag "arrow-right" %>
+          <span class="for-screen-reader">Successivo (&#8594;)</span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="card-perma__notch card-perma__notch--bottom">
+      <%= turbo_frame_tag @classe, :footer do %>
+        <%= render "scuole/classi/footer", classe: @classe, scuola: @scuola %>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="scuola-show">
+    <!-- Badges riassuntive -->
+    <div class="flex gap-half flex-wrap justify-center">
       <span class="badge txt-xx-small"><%= @adozioni.count %> adozioni</span>
       <% if @adozioni.da_acquistare_flag.any? %>
         <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
@@ -74,152 +68,153 @@
         </span>
       <% end %>
     </div>
-  </div>
 
-
-  <!-- Insegnanti -->
-  <% docenti = @classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
-  <%
-    tipo_scuola = @classe.tipo_scuola || "MM"
-    cattedra_mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
-      .pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
-  %>
-  <% if docenti.any? %>
-    <h3 class="divider divider--fade txt-medium font-weight-black">Insegnanti</h3>
-    <table class="table txt-small full-width margin-block-end">
-      <% docenti.each do |persona| %>
-        <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == @classe.id }&.materia %>
-        <% discipline_miur = cattedra_mappings[cattedra] || [] %>
-        <% libri = discipline_miur.any? ? @adozioni.select { |a| discipline_miur.include?(a.disciplina) } : [] %>
-        <tr>
-          <td class="font-weight-bold txt-nowrap">
-            <%= link_to persona.nome_completo, scuola_persona_path(@scuola, persona), class: "txt-link" %>
-          </td>
-          <td class="txt-subtle txt-nowrap"><%= cattedra&.titleize %></td>
-          <td>
-            <div class="flex gap-quarter flex-wrap">
-              <% libri.uniq { |a| [a.titolo, a.editore] }.each do |adozione| %>
-                <%= adozione_libro_tag(adozione) %>
-              <% end %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  <% end %>
-
-  <!-- Adozioni -->
-  <h3 class="divider divider--fade txt-medium font-weight-black">Adozioni</h3>
-
-  <% if @adozioni.any? %>
-    <div class="overflow-x">
-      <table class="table full-width">
-        <thead>
-          <tr>
-            <th class="txt-left">Titolo</th>
-            <th class="txt-left">Disciplina</th>
-            <th class="txt-right">Prezzo</th>
-            <th class="txt-center">Omaggi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @adozioni.each do |adozione| %>
-            <tr<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
+    <!-- Insegnanti -->
+    <% docenti = @classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
+    <%
+      tipo_scuola = @classe.tipo_scuola || "MM"
+      cattedra_mappings = CattedraDisciplina.where(account: Current.account, tipo_scuola: tipo_scuola)
+        .pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+    %>
+    <% if docenti.any? %>
+      <article class="panel shadow">
+        <h3 class="txt-medium font-weight-black margin-block-end-half">Insegnanti</h3>
+        <table class="table txt-small full-width">
+          <% docenti.each do |persona| %>
+            <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == @classe.id }&.materia %>
+            <% discipline_miur = cattedra_mappings[cattedra] || [] %>
+            <% libri = discipline_miur.any? ? @adozioni.select { |a| discipline_miur.include?(a.disciplina) } : [] %>
+            <tr>
+              <td class="font-weight-bold txt-nowrap">
+                <%= link_to persona.nome_completo, scuola_persona_path(@scuola, persona), class: "txt-link" %>
+              </td>
+              <td class="txt-subtle txt-nowrap"><%= cattedra&.titleize %></td>
               <td>
-                <div class="txt-small font-weight-bold overflow-ellipsis" style="max-width: 300px;" title="<%= adozione.titolo %>">
-                  <%= adozione.titolo %>
+                <div class="flex gap-quarter flex-wrap">
+                  <% libri.uniq { |a| [a.titolo, a.editore] }.each do |adozione| %>
+                    <%= adozione_libro_tag(adozione) %>
+                  <% end %>
                 </div>
-                <div class="txt-xx-small txt-subtle"><%= adozione.editore %></div>
-              </td>
-              <td class="txt-small"><%= adozione.disciplina %></td>
-              <td class="txt-small txt-right font-weight-bold">
-                <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
-              </td>
-              <td class="txt-center">
-                <% if adozione.mia? %>
-                  <div class="flex align-center justify-center gap-quarter flex-wrap">
-                    <%# Badge consegne esistenti (click = elimina) %>
-                    <% adozione.saggi.each do |cs| %>
-                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
-                          method: :delete,
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: #FF0000; color: white; border: none; padding: 2px 6px;",
-                          data: { turbo_confirm: "Eliminare saggio?" } do %>S<% end %>
-                    <% end %>
-                    <% adozione.kit_consegne.each do |cs| %>
-                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
-                          method: :delete,
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: #FF1493; color: white; border: none; padding: 2px 6px;",
-                          data: { turbo_confirm: "Eliminare kit?" } do %>K<% end %>
-                    <% end %>
-                    <% adozione.seguiti.each do |cs| %>
-                      <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
-                          method: :delete,
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: #0080FF; color: white; border: none; padding: 2px 6px;",
-                          data: { turbo_confirm: "Eliminare seguito?" } do %>F<% end %>
-                    <% end %>
-
-                    <%# Pulsanti per creare %>
-                    <% if adozione.saggi.empty? %>
-                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
-                          params: { adozione_id: adozione.id, tipo: "saggio" },
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+S<% end %>
-                    <% end %>
-                    <% if adozione.kit_consegne.empty? %>
-                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
-                          params: { adozione_id: adozione.id, tipo: "kit" },
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+K<% end %>
-                    <% end %>
-                    <% if adozione.seguiti.empty? %>
-                      <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
-                          params: { adozione_id: adozione.id, tipo: "seguito" },
-                          class: "badge txt-xx-small cursor-pointer",
-                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+F<% end %>
-                    <% end %>
-                  </div>
-                <% end %>
               </td>
             </tr>
           <% end %>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" class="txt-small font-weight-bold">Totale</td>
-            <td class="txt-small txt-right font-weight-black">
-              <%= number_to_currency(@adozioni.sum(:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %>
-            </td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  <% else %>
-    <div class="txt-center margin-block">
-      <h3 class="txt-medium font-weight-bold">Nessuna adozione</h3>
-      <p class="txt-small txt-subtle margin-block-end">Questa classe non ha ancora adozioni registrate.</p>
-      <%= button_to "Importa Adozioni",
-          import_adozioni_scuola_classe_path(@scuola, @classe),
-          method: :post,
-          class: "btn btn--primary" %>
-    </div>
-  <% end %>
+        </table>
+      </article>
+    <% end %>
 
-  <!-- Entries attive -->
-  <h3 class="divider divider--fade txt-medium font-weight-black">Attività Recenti</h3>
+    <!-- Adozioni -->
+    <article class="panel shadow">
+      <h3 class="txt-medium font-weight-black margin-block-end-half">Adozioni</h3>
 
-  <%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 60px;" do %>
-    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-  <% end %>
+      <% if @adozioni.any? %>
+        <div class="overflow-x">
+          <table class="table full-width">
+            <thead>
+              <tr>
+                <th class="txt-left">Titolo</th>
+                <th class="txt-left">Disciplina</th>
+                <th class="txt-right">Prezzo</th>
+                <th class="txt-center">Omaggi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @adozioni.each do |adozione| %>
+                <tr<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
+                  <td>
+                    <div class="txt-small font-weight-bold overflow-ellipsis" style="max-width: 300px;" title="<%= adozione.titolo %>">
+                      <%= adozione.titolo %>
+                    </div>
+                    <div class="txt-xx-small txt-subtle"><%= adozione.editore %></div>
+                  </td>
+                  <td class="txt-small"><%= adozione.disciplina %></td>
+                  <td class="txt-small txt-right font-weight-bold">
+                    <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
+                  </td>
+                  <td class="txt-center">
+                    <% if adozione.mia? %>
+                      <div class="flex align-center justify-center gap-quarter flex-wrap">
+                        <% adozione.saggi.each do |cs| %>
+                          <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                              method: :delete,
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: #FF0000; color: white; border: none; padding: 2px 6px;",
+                              data: { turbo_confirm: "Eliminare saggio?" } do %>S<% end %>
+                        <% end %>
+                        <% adozione.kit_consegne.each do |cs| %>
+                          <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                              method: :delete,
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: #FF1493; color: white; border: none; padding: 2px 6px;",
+                              data: { turbo_confirm: "Eliminare kit?" } do %>K<% end %>
+                        <% end %>
+                        <% adozione.seguiti.each do |cs| %>
+                          <%= button_to scuola_classe_consegne_saggio_path(@scuola, @classe, cs),
+                              method: :delete,
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: #0080FF; color: white; border: none; padding: 2px 6px;",
+                              data: { turbo_confirm: "Eliminare seguito?" } do %>F<% end %>
+                        <% end %>
 
-  <!-- Entries completate -->
-  <h3 class="divider divider--fade txt-medium font-weight-black">Completati</h3>
+                        <% if adozione.saggi.empty? %>
+                          <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                              params: { adozione_id: adozione.id, tipo: "saggio" },
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+S<% end %>
+                        <% end %>
+                        <% if adozione.kit_consegne.empty? %>
+                          <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                              params: { adozione_id: adozione.id, tipo: "kit" },
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+K<% end %>
+                        <% end %>
+                        <% if adozione.seguiti.empty? %>
+                          <%= button_to scuola_classe_consegne_saggio_index_path(@scuola, @classe),
+                              params: { adozione_id: adozione.id, tipo: "seguito" },
+                              class: "badge txt-xx-small cursor-pointer",
+                              style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+F<% end %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2" class="txt-small font-weight-bold">Totale</td>
+                <td class="txt-small txt-right font-weight-black">
+                  <%= number_to_currency(@adozioni.sum(:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %>
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      <% else %>
+        <div class="txt-center margin-block">
+          <p class="txt-small txt-subtle margin-block-end">Nessuna adozione registrata.</p>
+          <%= button_to "Importa Adozioni",
+              import_adozioni_scuola_classe_path(@scuola, @classe),
+              method: :post,
+              class: "btn btn--primary" %>
+        </div>
+      <% end %>
+    </article>
 
-  <%= turbo_frame_tag "closed_entries", src: scuola_classe_closed_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
-    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-  <% end %>
+    <!-- Entries attive -->
+    <article class="panel shadow">
+      <h3 class="txt-medium font-weight-black margin-block-end-half">Attività Recenti</h3>
+      <%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 60px;" do %>
+        <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+      <% end %>
+    </article>
 
+    <!-- Entries completate -->
+    <article class="panel shadow">
+      <h3 class="txt-medium font-weight-black margin-block-end-half">Completati</h3>
+      <%= turbo_frame_tag "closed_entries", src: scuola_classe_closed_entries_path(@scuola, @classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+        <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+      <% end %>
+    </article>
+  </div>
 </div>
