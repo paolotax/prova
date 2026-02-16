@@ -1,5 +1,6 @@
 <%# locals: (scuola:) -%>
 
+<div id="<%= dom_id(scuola, :insegnanti) %>">
 <% persone = scuola.persone.docente.includes(persona_classi: :classe).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
 
 <%
@@ -30,6 +31,32 @@
       </h3>
       <div class="header__actions header__actions--end">
         <%= link_to "Importa", new_scuola_persone_import_path(scuola), class: "btn txt-small" %>
+        <div class="position-relative"
+            data-controller="dialog"
+            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+          <button class="btn btn--circle"
+              data-action="click->dialog#toggle:stop"
+              data-controller="tooltip"
+              data-tooltip-content-value="Nuovo insegnante (P)">
+            <%= icon_tag "person-add" %>
+            <span class="for-screen-reader">Nuovo insegnante</span>
+          </button>
+          <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
+              data-dialog-target="dialog"
+              data-action="turbo:submit-end->dialog#close">
+            <strong class="popup__title">Nuovo insegnante</strong>
+            <%= form_with url: scuola_persone_path(scuola), method: :post,
+                class: "flex flex-column gap-quarter full-width" do |f| %>
+              <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small", required: true %>
+              <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
+              <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small" %>
+              <button type="submit" class="btn btn--link full-width margin-block-start-half">
+                <%= icon_tag "add" %>
+                <span>Aggiungi</span>
+              </button>
+            <% end %>
+          </dialog>
+        </div>
       </div>
     </div>
 
@@ -105,8 +132,35 @@
       </h3>
       <div class="header__actions header__actions--end">
         <%= link_to "Importa", new_scuola_persone_import_path(scuola), class: "btn txt-small" %>
+        <div class="position-relative"
+            data-controller="dialog"
+            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+          <button class="btn btn--circle"
+              data-action="click->dialog#toggle:stop"
+              data-controller="tooltip"
+              data-tooltip-content-value="Nuovo insegnante (P)">
+            <%= icon_tag "person-add" %>
+            <span class="for-screen-reader">Nuovo insegnante</span>
+          </button>
+          <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
+              data-dialog-target="dialog"
+              data-action="turbo:submit-end->dialog#close">
+            <strong class="popup__title">Nuovo insegnante</strong>
+            <%= form_with url: scuola_persone_path(scuola), method: :post,
+                class: "flex flex-column gap-quarter full-width" do |f| %>
+              <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small", required: true %>
+              <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
+              <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small" %>
+              <button type="submit" class="btn btn--link full-width margin-block-start-half">
+                <%= icon_tag "add" %>
+                <span>Aggiungi</span>
+              </button>
+            <% end %>
+          </dialog>
+        </div>
       </div>
     </div>
     <p class="txt-small txt-subtle margin-none">Nessun insegnante importato.</p>
   </section>
 <% end %>
+</div>

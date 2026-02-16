@@ -1,7 +1,7 @@
 module Scuole
   class PersoneController < ApplicationController
     before_action :set_scuola
-    before_action :set_persona
+    before_action :set_persona, except: [:create]
 
     def show
       load_prev_next
@@ -10,6 +10,30 @@ module Scuole
       respond_to do |format|
         format.html
         format.turbo_stream
+      end
+    end
+
+    def create
+      @persona = @scuola.persone.new(
+        cognome: params[:cognome],
+        nome: params[:nome],
+        ruolo: :docente,
+        account: Current.account
+      )
+
+      if @persona.save
+        if params[:materia].present?
+          @scuola.classi.each do |classe|
+            @persona.persona_classi.create(classe: classe, materia: params[:materia])
+          end
+        end
+
+        respond_to do |format|
+          format.turbo_stream
+          format.html { redirect_to scuola_path(@scuola), notice: "#{@persona.nome_completo} aggiunto" }
+        end
+      else
+        redirect_to scuola_path(@scuola), alert: @persona.errors.full_messages.join(", ")
       end
     end
 
