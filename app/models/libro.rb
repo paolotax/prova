@@ -252,17 +252,22 @@ class Libro < ApplicationRecord
   # Flag per evitare loop infinito durante la sincronizzazione
   attr_accessor :skip_copertina_sync
 
-  def avatar_url
-    # Prima prova con la copertina condivisa da EdizioneTitolo
-    if edizione_titolo&.copertina&.attached?
-      return edizione_titolo.copertina
-    # Poi fallback sulla copertina locale (per retrocompatibilità)
-    elsif copertina.attached?
-      return copertina
+  def avatar_url(variant: :thumb)
+    blob = if edizione_titolo&.copertina&.attached?
+             edizione_titolo.copertina
+           elsif copertina.attached?
+             copertina
+           end
+
+    if blob
+      case variant
+      when :thumb then blob.variant(resize_to_limit: [200, 267])
+      when :medium then blob.variant(resize_to_limit: [400, 533])
+      else blob
+      end
     else
-      # Restituisce le prime due iniziali del titolo
       iniziali = titolo.split.map(&:first).join[0..1].upcase
-      return "https://ui-avatars.com/api/?name=#{iniziali}&color=FFFFFF&background=6B7280"
+      "https://ui-avatars.com/api/?name=#{iniziali}&color=FFFFFF&background=6B7280"
     end
   end
 
