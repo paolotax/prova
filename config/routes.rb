@@ -444,6 +444,7 @@ Rails.application.routes.draw do
             resource :entries, only: [:show]
             resource :closed_entries, only: [:show]
             resources :consegne_saggio, only: [:create, :destroy]
+            resources :persone, only: [:new, :create, :destroy]
           end
         end
       end

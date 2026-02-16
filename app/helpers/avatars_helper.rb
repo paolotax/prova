@@ -44,4 +44,15 @@ module AvatarsHelper
   def avatar_image_tag(user, **options)
     image_tag user_avatar_url(user, script_name: user.account.slug), aria: { hidden: "true" }, size: 48, title: user.name, **options
   end
+
+  def persona_avatar_tag(persona, **options)
+    color = AVATAR_COLORS[Zlib.crc32(persona.to_param) % AVATAR_COLORS.size]
+    size = options.delete(:size) || "3ch"
+    tag.span class: class_names("avatar", options.delete(:class)),
+      style: "background-color: #{color}; color: white; font-size: 0.6em; font-weight: 700; --avatar-size: #{size};",
+      title: persona.nome_completo,
+      **options do
+      persona.initials
+    end
+  end
 end

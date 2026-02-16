@@ -1,0 +1,33 @@
+<%# locals: (classe:, scuola:) -%>
+
+<% docenti = classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
+
+<div id="<%= dom_id(classe, :docenti) %>" class="flex gap-quarter flex-wrap align-center margin-block-start">
+  <% docenti.sort_by { |p| p.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia.to_s }.each do |persona| %>
+    <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia %>
+    <%= link_to scuola_persona_path(scuola, persona), class: "btn txt-small", style: "color: inherit;", data: { turbo_frame: "_top", controller: "tooltip" } do %>
+      <%= persona_avatar_tag(persona) %>
+      <strong><%= persona.cognome %></strong> <span class="txt-subtle"><%= cattedra&.titleize %></span>
+      <span class="for-screen-reader"><%= persona.nome_completo %></span>
+    <% end %>
+  <% end %>
+
+  <div class="position-relative"
+      data-controller="dialog"
+      data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+    <button class="btn btn--circle" style="--avatar-size: 3ch;"
+        data-action="click->dialog#toggle:stop"
+        data-controller="tooltip">
+      <%= icon_tag "person-add", style: "--icon-size: 1em" %>
+      <span class="for-screen-reader">Aggiungi insegnante</span>
+    </button>
+
+    <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
+        data-dialog-target="dialog"
+        data-action="turbo:submit-end->dialog#close">
+      <%= turbo_frame_tag classe, :assign_persona, src: new_scuola_classe_persona_path(scuola, classe), loading: :lazy do %>
+        <p class="txt-small txt-subtle pad">Caricamento...</p>
+      <% end %>
+    </dialog>
+  </div>
+</div>

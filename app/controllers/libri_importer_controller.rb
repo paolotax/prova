@@ -41,7 +41,14 @@ class LibriImporterController < ApplicationController
   end
 
   def import_confezioni
-    @import = LibriImporter.new(libri_importer_params)
+    import_params = if params[:libri_importer].present?
+                     libri_importer_params
+                   elsif params[:import_record].present?
+                     params.require(:import_record).permit(:file)
+                   else
+                     {}
+                   end
+    @import = LibriImporter.new(import_params)
     @import.import_confezioni_excel!
 
     # Salva sempre i risultati (successo o errore) e mostra la pagina show

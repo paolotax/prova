@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@classe, :docenti) do %>
+  <%= render "scuole/classi/docenti", classe: @classe, scuola: @scuola %>
+<% end %>

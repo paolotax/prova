@@ -31,6 +31,7 @@
 class Persona < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include Persona::Avatar
 
   belongs_to :scuola, optional: true
 

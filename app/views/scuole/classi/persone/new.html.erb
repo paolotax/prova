@@ -1,0 +1,79 @@
+<%= turbo_frame_tag @classe, :assign_persona do %>
+  <%= tag.div class: "max-width full-width",
+      data: {
+        controller: "filter navigable-list",
+        action: "keydown->navigable-list#navigate filter:changed->navigable-list#reset",
+        navigable_list_focus_on_selection_value: false,
+        navigable_list_actionable_items_value: true
+      } do %>
+
+    <div class="flex align-center justify-space-between margin-block-end-half">
+      <strong class="popup__title">Aggiungi insegnante</strong>
+    </div>
+
+    <%= text_field_tag :search, nil,
+        placeholder: "Cerca...",
+        class: "input input--transparent txt-small margin-block-end-half",
+        autofocus: true,
+        type: "search",
+        autocorrect: "off",
+        autocomplete: "off",
+        data: { "1p-ignore": "true", filter_target: "input", action: "input->filter#filter" } %>
+
+    <ul class="popup__list" data-filter-target="list">
+      <% @assigned.each do |persona| %>
+        <% pc = persona.persona_classi.find { |p| p.classe_id == @classe.id } %>
+        <li class="popup__item" data-filter-target="item" data-navigable-list-target="item" aria-checked="true">
+          <%= button_to scuola_classe_persona_path(@scuola, @classe, pc),
+              method: :delete,
+              class: "popup__btn btn",
+              form_class: "max-width flex-item-grow" do %>
+            <%= persona_avatar_tag(persona) %>
+            <span class="overflow-ellipsis flex-item-grow"><%= persona.nome_completo %></span>
+            <span class="txt-xx-small txt-subtle"><%= pc.materia&.titleize %></span>
+            <%= icon_tag "check", size: 18, class: "checked flex-item-no-shrink", style: "--icon-size: 1em" %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% @available.each do |persona| %>
+        <li class="popup__item" data-filter-target="item" data-navigable-list-target="item" aria-checked="false">
+          <%= form_with url: scuola_classe_persone_path(@scuola, @classe),
+              class: "max-width flex-item-grow" do |f| %>
+            <%= f.hidden_field :persona_id, value: persona.id %>
+            <div class="popup__btn btn flex align-center gap-half">
+              <%= persona_avatar_tag(persona) %>
+              <span class="overflow-ellipsis flex-item-grow"><%= persona.nome_completo %></span>
+              <%= f.text_field :materia,
+                  placeholder: "materia",
+                  class: "input input--transparent txt-xx-small",
+                  style: "max-width: 10ch; padding: 2px 4px;" %>
+              <button type="submit" class="btn txt-small" style="--btn-background: transparent;">
+                <%= icon_tag "add", style: "--icon-size: 1em" %>
+              </button>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="popup__footer">
+      <details>
+        <summary class="btn txt-small">Crea nuovo insegnante</summary>
+        <%= form_with url: scuola_classe_persone_path(@scuola, @classe),
+            class: "flex flex-column gap-quarter pad-block-start-half" do |f| %>
+          <div class="flex gap-quarter">
+            <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small", required: true, style: "flex: 1;" %>
+            <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small", style: "flex: 1;" %>
+          </div>
+          <div class="flex gap-quarter">
+            <%= f.text_field :materia, placeholder: "Materia", class: "input txt-small", style: "flex: 1;" %>
+            <button type="submit" class="btn">
+              <%= icon_tag "add" %>
+            </button>
+          </div>
+        <% end %>
+      </details>
+    </div>
+  <% end %>
+<% end %>

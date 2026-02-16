@@ -2,9 +2,9 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to libri_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Torna ai Libri</span>
+    <%= link_to imports_path, class: "btn" do %>
+      <%= icon_tag "arrow-left" %>
+      <span class="for-screen-reader">Torna</span>
     <% end %>
   </div>
 
@@ -15,292 +15,118 @@
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-4xl mx-auto">
-    <p class="text-gray-600 mb-8">Scegli il metodo di importazione più adatto alle tue esigenze.</p>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="center" style="max-width: 70ch;">
+  <p class="txt-small txt-subtle margin-block-end">Scegli il metodo di importazione.</p>
 
-      <!-- Opzione 1: Importa da File CSV/Excel -->
-      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-        <div class="bg-blue-600 text-white px-6 py-4">
-          <div class="flex items-center gap-3">
-            <%= inline_svg_tag "icon-documenti.svg", class: "w-8 h-8" %>
-            <h2 class="text-xl font-bold">Importa da File</h2>
-          </div>
-        </div>
-        
-        <div class="p-6">
-          <p class="text-gray-600 mb-4">
-            Carica un file CSV o Excel contenente i dati dei libri da importare.
-          </p>
-          
-          <%= form_for @import, url: libri_importer_index_path, method: :post, multipart: true do |f| %>
-            <div class="space-y-4">
-              <div>
-                <%= f.label :file, "Seleziona file", class: "block text-sm font-medium text-gray-700 mb-2" %>
-                <%= f.file_field :file, 
-                    accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
-                    class: "block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer border border-gray-300 rounded-lg" %>
-              </div>
-              
-              <div class="w-full">
-                <%= component('button', state: "primary", busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
-                  <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
-                    <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4">
-                      <style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
-                      <g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g>
-                    </svg>
-                  <% end %>
-                  Importa file
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-          
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <h4 class="text-xs font-semibold text-gray-700 mb-2">Formati supportati:</h4>
-            <ul class="text-xs text-gray-600 space-y-1">
-              <li class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-                File CSV (.csv)
-              </li>
-              <li class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-                Excel (.xlsx, .xls)
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Opzione 2: Importa da A.I.E. -->
-      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-        <div class="bg-green-600 text-white px-6 py-4">
-          <div class="flex items-center gap-3">
-            <%= inline_svg_tag "icon-folder-arrow-down.svg", class: "w-8 h-8" %>
-            <h2 class="text-xl font-bold">Importa da A.I.E.</h2>
-          </div>
-        </div>
-        
-        <div class="p-6">
-          <p class="text-gray-600 mb-4">
-            Importa i dati ministeriali direttamente dal database A.I.E. (Associazione Italiana Editori).
-          </p>
-          
-          <%= form_with url: import_ministeriali_libri_importer_index_path, method: :post do |f| %>
-            <div class="space-y-4">
-              <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h4 class="text-sm font-semibold text-green-800 mb-2">Cosa verrà importato:</h4>
-                <ul class="text-sm text-green-700 space-y-1">
-                  <li class="flex items-start gap-2">
-                    <span class="text-green-600 mt-0.5">✓</span>
-                    Catalogo completo dei libri
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-green-600 mt-0.5">✓</span>
-                    ISBN e codici ministeriali
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-green-600 mt-0.5">✓</span>
-                    Prezzi aggiornati
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-green-600 mt-0.5">✓</span>
-                    Informazioni editoriali
-                  </li>
-                </ul>
-              </div>
-              
-              <div class="w-full">
-                <%= component('button', state: "primary", busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
-                  <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
-                    <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4">
-                      <style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
-                      <g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g>
-                    </svg>
-                  <% end %>
-                  <%= inline_svg_tag "icon-folder-arrow-down.svg", class: "w-4 h-4" %>
-                  Avvia importazione A.I.E.
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-          
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <p class="text-xs text-gray-500">
-              <strong>Nota:</strong> L'importazione può richiedere alcuni minuti. I dati saranno integrati con quelli esistenti.
-            </p>
-          </div>
+  <div class="flex flex-column gap">
+
+    <%# Importa da File %>
+    <article class="panel shadow">
+      <div class="flex align-center gap margin-block-end">
+        <%= icon_tag "document", class: "txt-large" %>
+        <div>
+          <h2 class="txt-medium font-weight-black margin-none">Importa da File</h2>
+          <p class="txt-x-small txt-subtle margin-none">CSV o Excel con i dati dei libri</p>
         </div>
       </div>
 
-      <!-- Opzione 3: Importa Confezioni -->
-      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-        <div class="bg-purple-600 text-white px-6 py-4">
-          <div class="flex items-center gap-3">
-            <%= inline_svg_tag "icon-documenti.svg", class: "w-8 h-8" %>
-            <h2 class="text-xl font-bold">Importa Confezioni</h2>
-          </div>
+      <%= form_for @import, url: libri_importer_index_path, method: :post, multipart: true,
+          html: { class: "flex flex-column gap-half" } do |f| %>
+        <div>
+          <strong class="txt-x-small"><%= f.label :file, "Seleziona file" %></strong>
+          <%= f.file_field :file,
+              accept: "text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
+              class: "input", required: true %>
         </div>
+        <button type="submit" class="btn btn--link">
+          <%= icon_tag "arrow-down-tray" %>
+          <span>Importa file</span>
+        </button>
+      <% end %>
 
-        <div class="p-6">
-          <p class="text-gray-600 mb-4">
-            Carica un file Excel con le relazioni tra confezioni e fascicoli basate sui codici ISBN.
-          </p>
+      <p class="txt-xx-small txt-subtle margin-block-start border-top pad-block-start-half margin-none">
+        Formati: CSV (.csv), Excel (.xlsx, .xls)
+      </p>
+    </article>
 
-          <%= form_for @import, url: import_confezioni_libri_importer_index_path, method: :post, multipart: true do |f| %>
-            <div class="space-y-4">
-              <div>
-                <%= f.label :file, "Seleziona file", class: "block text-sm font-medium text-gray-700 mb-2" %>
-                <%= f.file_field :file,
-                    accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
-                    class: "block w-full text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 file:cursor-pointer border border-gray-300 rounded-lg" %>
-              </div>
-
-              <div class="w-full">
-                <%= component('button', state: "primary", busy_content_css: 'flex [[disabled]_&]:opacity-0') do |button| %>
-                  <% button.with_busy_content(css: "absolute inset-0 w-full justify-center items-center") do %>
-                    <svg stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="size-4">
-                      <style>.spinner{transform-origin:center; animation:spinner_outside 2s linear infinite}.spinner circle{stroke-linecap:round;animation:spinner_inside 1.5s ease-in-out infinite}@keyframes spinner_outside{100%{transform:rotate(360deg)}}@keyframes spinner_inside{0%{stroke-dasharray:0 150;stroke-dashoffset:0}47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
-                      <g class="spinner"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2"></circle></g>
-                    </svg>
-                  <% end %>
-                  Importa confezioni
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <h4 class="text-xs font-semibold text-gray-700 mb-2">Prima di importare:</h4>
-            <ul class="text-xs text-gray-600 space-y-1">
-              <li class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
-                Assicurati che i libri esistano già
-              </li>
-              <li class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
-                Usa il file esportato da un altro utente
-              </li>
-              <li class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
-                Le relazioni saranno create automaticamente
-              </li>
-            </ul>
-          </div>
+    <%# Importa da A.I.E. %>
+    <article class="panel shadow">
+      <div class="flex align-center gap margin-block-end">
+        <%= icon_tag "arrow-down-tray", class: "txt-large" %>
+        <div>
+          <h2 class="txt-medium font-weight-black margin-none">Importa da A.I.E.</h2>
+          <p class="txt-x-small txt-subtle margin-none">Dati ministeriali dal database A.I.E.</p>
         </div>
       </div>
 
-      <!-- Opzione 4: Esporta Confezioni -->
-      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-        <div class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-4">
-          <div class="flex items-center gap-3">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
-            </svg>
-            <h2 class="text-xl font-bold">Esporta Confezioni</h2>
+      <%= form_with url: import_ministeriali_libri_importer_index_path, method: :post,
+          html: { class: "flex flex-column gap-half" } do |f| %>
+        <div class="txt-x-small">
+          <p class="margin-none margin-block-end-half font-weight-bold">Cosa verrà importato:</p>
+          <ul class="flex flex-column gap-quarter" style="list-style: none; padding: 0; margin: 0;">
+            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Catalogo completo dei libri</li>
+            <li><%= icon_tag "check", class: "icon--small txt-positive" %> ISBN e codici ministeriali</li>
+            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Prezzi aggiornati</li>
+            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Informazioni editoriali</li>
+          </ul>
+        </div>
+        <button type="submit" class="btn btn--link">
+          <%= icon_tag "arrow-down-tray" %>
+          <span>Avvia importazione A.I.E.</span>
+        </button>
+      <% end %>
+
+      <p class="txt-xx-small txt-subtle margin-block-start border-top pad-block-start-half margin-none">
+        L'importazione può richiedere alcuni minuti.
+      </p>
+    </article>
+
+    <div class="flex gap flex-wrap">
+      <%# Importa Confezioni %>
+      <article class="panel shadow" style="flex: 1; min-width: 25ch;">
+        <div class="flex align-center gap margin-block-end">
+          <%= icon_tag "cube", class: "txt-large" %>
+          <div>
+            <h2 class="txt-medium font-weight-black margin-none">Importa Confezioni</h2>
+            <p class="txt-x-small txt-subtle margin-none">Relazioni confezione-fascicolo</p>
           </div>
         </div>
 
-        <div class="p-6">
-          <p class="text-gray-600 mb-4">
-            Esporta tutte le relazioni tra confezioni e fascicoli in formato Excel basato su codici ISBN.
-          </p>
-
-          <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-            <h4 class="text-sm font-semibold text-orange-800 mb-2">Il file conterrà:</h4>
-            <ul class="text-sm text-orange-700 space-y-1">
-              <li class="flex items-start gap-2">
-                <span class="text-orange-600 mt-0.5">✓</span>
-                Codici ISBN confezione/fascicolo
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-orange-600 mt-0.5">✓</span>
-                Ordine dei fascicoli
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-orange-600 mt-0.5">✓</span>
-                Titoli per riferimento
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-orange-600 mt-0.5">✓</span>
-                Pronto per import su altro utente
-              </li>
-            </ul>
+        <%= form_for @import, url: import_confezioni_libri_importer_index_path, method: :post, multipart: true,
+            html: { class: "flex flex-column gap-half" } do |f| %>
+          <div>
+            <strong class="txt-x-small"><%= f.label :file, "Seleziona file Excel" %></strong>
+            <%= f.file_field :file,
+                accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
+                class: "input", required: true %>
           </div>
+          <button type="submit" class="btn btn--link">
+            <%= icon_tag "arrow-down-tray" %>
+            <span>Importa confezioni</span>
+          </button>
+        <% end %>
+      </article>
 
-          <div class="w-full">
-            <%= link_to export_confezioni_libri_importer_index_path(format: :xlsx),
-                class: "inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors duration-150 shadow-md hover:shadow-lg w-full" do %>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
-              </svg>
-              Scarica File Excel
-            <% end %>
-          </div>
-
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <p class="text-xs text-gray-500">
-              <strong>Nota:</strong> Esporta prima dal primo utente, poi importa sul secondo usando la card "Importa Confezioni" qui sopra.
-            </p>
+      <%# Esporta Confezioni %>
+      <article class="panel shadow" style="flex: 1; min-width: 25ch;">
+        <div class="flex align-center gap margin-block-end">
+          <%= icon_tag "document", class: "txt-large" %>
+          <div>
+            <h2 class="txt-medium font-weight-black margin-none">Esporta Confezioni</h2>
+            <p class="txt-x-small txt-subtle margin-none">Scarica relazioni in Excel</p>
           </div>
         </div>
-      </div>
 
+        <p class="txt-x-small margin-block-end">
+          Esporta le relazioni confezione-fascicolo per trasferirle ad un altro utente.
+        </p>
+
+        <%= link_to export_confezioni_libri_importer_index_path(format: :xlsx), class: "btn btn--link full-width" do %>
+          <%= icon_tag "document" %>
+          <span>Scarica File Excel</span>
+        <% end %>
+      </article>
     </div>
 
-    <!-- Sezione Informazioni Aggiuntive -->
-    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-blue-900 mb-3">
-        ℹ️ Informazioni sull'importazione
-      </h3>
-      
-      <div class="space-y-3">
-        <div>
-          <h4 class="text-sm font-semibold text-blue-800 mb-1">Formato file CSV/Excel</h4>
-          <p class="text-sm text-blue-700">
-            Il file deve contenere le colonne: ISBN/EAN, Titolo, Autore, Editore, Prezzo, Anno.
-          </p>
-        </div>
-        
-        <div>
-          <h4 class="text-sm font-semibold text-blue-800 mb-1">Gestione duplicati</h4>
-          <p class="text-sm text-blue-700">
-            Il sistema aggiorna automaticamente i libri esistenti in base all'ISBN ed aggiunge i nuovi.
-          </p>
-        </div>
-        
-        <div>
-          <h4 class="text-sm font-semibold text-blue-800 mb-1">Importazione A.I.E.</h4>
-          <p class="text-sm text-blue-700">
-            L'importazione da A.I.E. è consigliata per avere dati ufficiali e sempre aggiornati dal Ministero dell'Istruzione.
-          </p>
-        </div>
-
-        <div>
-          <h4 class="text-sm font-semibold text-blue-800 mb-1">Importazione Confezioni</h4>
-          <p class="text-sm text-blue-700">
-            Usa questa opzione per trasferire le relazioni confezione-fascicolo tra utenti diversi. Prima esporta da un utente, poi importa su un altro.
-          </p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Sezione Aiuto -->
-    <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-      <div class="flex gap-3">
-        <div class="text-2xl flex-shrink-0">⚠️</div>
-        <div>
-          <h4 class="text-sm font-semibold text-yellow-800 mb-1">Hai bisogno di aiuto?</h4>
-          <p class="text-sm text-yellow-700">
-            Se riscontri problemi durante l'importazione, verifica che il file sia nel formato corretto e che contenga tutte le colonne richieste.
-            Per supporto tecnico, contatta l'amministratore di sistema.
-          </p>
-        </div>
-      </div>
-    </div>
-    
   </div>
 </div>
-
