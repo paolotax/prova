@@ -2,24 +2,25 @@
 
 <% docenti = classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
 
-<div id="<%= dom_id(classe, :docenti) %>" class="flex gap-quarter flex-wrap align-center margin-block-start">
+<div id="<%= dom_id(classe, :docenti) %>" class="flex gap flex-wrap align-center margin-block-start">
   <% docenti.sort_by { |p| p.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia.to_s }.each do |persona| %>
     <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia %>
-    <%= link_to scuola_persona_path(scuola, persona), class: "btn txt-small", style: "color: inherit;", data: { turbo_frame: "_top", controller: "tooltip" } do %>
-      <%= persona_avatar_tag(persona) %>
-      <strong><%= persona.cognome %></strong> <span class="txt-subtle"><%= cattedra&.titleize %></span>
-      <span class="for-screen-reader"><%= persona.nome_completo %></span>
+    <%= link_to scuola_persona_path(scuola, persona), class: "flex flex-column align-center gap-quarter txt-undecorated", style: "color: inherit;", data: { turbo_frame: "_top" } do %>
+      <%= persona_avatar_tag(persona, size: "4ch") %>
+      <strong class="txt-x-small"><%= persona.cognome %></strong>
+      <span class="txt-xx-small txt-subtle"><%= cattedra&.titleize %></span>
     <% end %>
   <% end %>
 
   <div class="position-relative"
       data-controller="dialog"
       data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-    <button class="btn btn--circle" style="--avatar-size: 3ch;"
-        data-action="click->dialog#toggle:stop"
-        data-controller="tooltip">
-      <%= icon_tag "person-add", style: "--icon-size: 1em" %>
-      <span class="for-screen-reader">Aggiungi insegnante</span>
+    <button class="btn btn--circle" style="--avatar-size: 4ch;"
+        data-action="click->dialog#toggle:stop keydown.p@document->hotkey#click"
+        data-controller="tooltip hotkey"
+        data-tooltip-content-value="Aggiungi insegnante (P)">
+      <%= icon_tag "person-add" %>
+      <span class="for-screen-reader">Aggiungi insegnante (P)</span>
     </button>
 
     <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
