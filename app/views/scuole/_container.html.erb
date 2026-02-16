@@ -1,4 +1,5 @@
-<section class="card-perma" style="--card-color: var(--color-positive);">
+<% scuola_card_color = tipo_scuola_color(scuola.classi.pick(:tipo_scuola)) %>
+<section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
 	<div class="card-perma__actions card-perma__actions--right">
 		<%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: @scuola.id),
 				class: "btn", data: { controller: "tooltip" } do %>
@@ -51,7 +52,7 @@
 	</div>
 </section>
 
-<div class="scuola-show" style="--card-color: var(--color-positive);">
+<div class="scuola-show" style="--card-color: <%= scuola_card_color %>;">
 	<%= render "scuole/container/adozioni", scuola: @scuola %>
 
 	<%= render "scuole/container/insegnanti", scuola: @scuola %>

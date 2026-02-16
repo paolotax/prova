@@ -1,4 +1,23 @@
 module ClassiHelper
+  # Color per tipo_scuola (oklch like causale_color)
+  def tipo_scuola_color(tipo_scuola)
+    key = tipo_scuola.to_s.upcase
+    case key
+    when /PRIMO GRADO/          then "oklch(0.6 0.15 160)"  # emerald — medie
+    when /PRIMARIA/              then "oklch(0.6 0.15 250)"  # blue — elementari
+    when /LICEO SCIENTIFICO/     then "oklch(0.6 0.15 280)"  # indigo
+    when /LICEO CLASSICO/        then "oklch(0.55 0.15 310)" # purple
+    when /LICEO ARTISTICO/       then "oklch(0.6 0.15 340)"  # pink
+    when /MAGISTRALE/            then "oklch(0.6 0.15 320)"  # fuchsia
+    when /TEC.*COMMERC|TEC.*GEOM|TEC.*TURIS/ then "oklch(0.6 0.15 50)" # orange — tecnici commerciali
+    when /TEC.*INDUSTR|TEC.*AGRAR|TEC.*AERON/ then "oklch(0.6 0.15 75)" # amber — tecnici industriali
+    when /PROF.*SERVIZ|PROF.*COMMERC|PROF.*PUBBLIC/ then "oklch(0.6 0.15 15)" # rose — professionali servizi
+    when /PROF.*INDUSTR|PROF.*ARTIG|PROF.*AGRIC/ then "oklch(0.6 0.15 30)" # red-orange — professionali industria
+    when /ARTE/                  then "oklch(0.6 0.15 350)"  # magenta
+    else "oklch(0.6 0.15 160)" # emerald default
+    end
+  end
+
   # Compact classi notation (inverse of ANARPE parser)
   # [1A, 2A, 3F] → "12A 3F"
   # [1E, 2E, 3E] → "123E"

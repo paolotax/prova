@@ -32,3 +32,65 @@
     <% end %>
   </div>
 <% end %>
+
+<%
+  mie_adozioni = Adozione.where(classe: classe, mia: true, da_acquistare: true)
+                         .includes(:libro, :consegne_saggio)
+                         .order(:titolo)
+%>
+<% if mie_adozioni.any? %>
+  <div class="flex gap-half flex-wrap margin-block-start">
+    <% mie_adozioni.each do |adozione| %>
+      <div class="flex flex-column align-center gap-quarter">
+        <% if adozione.libro %>
+          <%= link_to adozione.libro, data: { turbo_frame: "_top", controller: "tooltip" }, title: adozione.titolo do %>
+            <%= image_tag adozione.libro.avatar_url,
+                style: "width: 80px; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.2);",
+                alt: adozione.titolo %>
+          <% end %>
+        <% end %>
+        <div class="flex gap-quarter flex-wrap justify-center">
+          <% adozione.saggi.each do |cs| %>
+            <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                method: :delete,
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: #EAB308; color: white; border: none; padding: 2px 6px;",
+                data: { turbo_confirm: "Eliminare saggio?" } do %>S<% end %>
+          <% end %>
+          <% adozione.kit_consegne.each do |cs| %>
+            <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                method: :delete,
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: #FF1493; color: white; border: none; padding: 2px 6px;",
+                data: { turbo_confirm: "Eliminare kit?" } do %>K<% end %>
+          <% end %>
+          <% adozione.seguiti.each do |cs| %>
+            <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                method: :delete,
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: #0080FF; color: white; border: none; padding: 2px 6px;",
+                data: { turbo_confirm: "Eliminare seguito?" } do %>F<% end %>
+          <% end %>
+          <% if adozione.saggi.empty? %>
+            <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                params: { adozione_id: adozione.id, tipo: "saggio" },
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+S<% end %>
+          <% end %>
+          <% if adozione.kit_consegne.empty? %>
+            <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                params: { adozione_id: adozione.id, tipo: "kit" },
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+K<% end %>
+          <% end %>
+          <% if adozione.seguiti.empty? %>
+            <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                params: { adozione_id: adozione.id, tipo: "seguito" },
+                class: "badge txt-xx-small cursor-pointer",
+                style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+F<% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

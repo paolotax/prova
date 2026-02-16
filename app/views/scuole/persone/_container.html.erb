@@ -1,6 +1,7 @@
 <%# locals: (persona:, scuola:, appunti:) -%>
 
-<section class="card-perma" style="--card-color: var(--color-positive);">
+<% persona_card_color = tipo_scuola_color(scuola.classi.pick(:tipo_scuola)) %>
+<section class="card-perma" style="--card-color: <%= persona_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_persona_id %>
       <%= link_to scuola_persona_path(scuola, @prev_persona_id), class: "btn",
@@ -44,6 +45,6 @@
   </div>
 </section>
 
-<div class="scuola-show" style="--card-color: var(--color-positive);">
+<div class="scuola-show" style="--card-color: <%= persona_card_color %>;">
   <%= render "scuole/persone/container/appunti", appunti: appunti %>
 </div>

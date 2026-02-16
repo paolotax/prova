@@ -1,6 +1,7 @@
 <%# locals: (classe:, scuola:, adozioni:) -%>
 
-<section class="card-perma" style="--card-color: var(--color-positive);">
+<% classe_card_color = tipo_scuola_color(classe.tipo_scuola) %>
+<section class="card-perma" style="--card-color: <%= classe_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_classe_id %>
       <%= link_to scuola_classe_path(scuola, @prev_classe_id), class: "btn",
@@ -46,7 +47,7 @@
   </div>
 </section>
 
-<div class="scuola-show" style="--card-color: var(--color-positive);">
+<div class="scuola-show" style="--card-color: <%= classe_card_color %>;">
   <%= render "scuole/classi/container/adozioni", classe: classe, scuola: scuola, adozioni: adozioni %>
   <%= render "scuole/classi/container/entries", classe: classe, scuola: scuola %>
 </div>
