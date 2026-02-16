@@ -53,21 +53,6 @@
       </div>
     <% end %>
   <% else %>
-    <div class="blank-slate blank-slate--empty">
-      <h3 class="txt-large font-weight-bold">Nessuna scuola trovata</h3>
-      <p class="txt-small txt-subtle margin-block-end">
-        <% if @user_filtering.filters_active? %>
-          Prova a modificare i filtri di ricerca.
-        <% else %>
-          Inizia aggiungendo la prima scuola al tuo account.
-        <% end %>
-      </p>
-      <% unless @user_filtering.filters_active? %>
-        <%= link_to new_scuola_path, class: "btn btn--primary" do %>
-          <%= icon_tag "plus", size: "small" %>
-          Aggiungi Scuola
-        <% end %>
-      <% end %>
-    </div>
+    <%= blank_slate_for(:scuole, filtering: @user_filtering) %>
   <% end %>
 <% end %>

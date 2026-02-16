@@ -70,21 +70,6 @@
       </div>
     <% end %>
   <% else %>
-    <div class="blank-slate blank-slate--empty">
-      <h3 class="txt-large font-weight-bold">Nessun appunto trovato</h3>
-      <p class="txt-small txt-subtle margin-block-end">
-        <% if @user_filtering.filters_active? %>
-          Prova a modificare i filtri di ricerca.
-        <% else %>
-          Inizia aggiungendo il primo appunto.
-        <% end %>
-      </p>
-      <% unless @user_filtering.filters_active? %>
-        <%= button_to appunti_path, method: :post, class: "btn btn--primary", form: { data: { turbo: false } } do %>
-          <%= icon_tag "add", size: "small" %>
-          Aggiungi Appunto
-        <% end %>
-      <% end %>
-    </div>
+    <%= blank_slate_for(:appunti, filtering: @user_filtering) %>
   <% end %>
 <% end %>

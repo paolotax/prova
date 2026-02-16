@@ -59,6 +59,40 @@ module ApplicationHelper
 
 
 
+  BLANK_SLATES = {
+    clienti:   { title: "Nessun cliente trovato",   empty: "il primo cliente",   icon: "users",            label: "Cliente",   path: :new_cliente_path },
+    libri:     { title: "Nessun libro trovato",     empty: "il primo libro",     icon: "book",             label: "Libro",     path: :new_libro_path },
+    scuole:    { title: "Nessuna scuola trovata",   empty: "la prima scuola",    icon: "building-library", label: "Scuola",    path: :new_scuola_path },
+    appunti:   { title: "Nessun appunto trovato",   empty: "il primo appunto",   icon: "note",             label: "Appunto",   path: :appunti_path, method: :post },
+    documenti: { title: "Nessun documento trovato", empty: "il primo documento", icon: "document",         label: "Documento", path: :new_documento_path },
+  }.freeze
+
+  def blank_slate_for(key, filtering: nil)
+    config = BLANK_SLATES[key]
+    return unless config
+
+    filters_active = filtering&.filters_active?
+
+    tag.div(class: "blank-slate blank-slate--empty") do
+      concat tag.h3(config[:title], class: "txt-large font-weight-bold")
+      concat tag.p(class: "txt-small txt-subtle margin-block-end") {
+        filters_active ? "Prova a modificare i filtri di ricerca." : "Inizia aggiungendo #{config[:empty]}."
+      }
+      unless filters_active
+        url = send(config[:path])
+        if config[:method] == :post
+          concat button_to(url, method: :post, class: "btn btn--primary", form: { data: { turbo: false } }) {
+            icon_tag(config[:icon], size: "small") + " Aggiungi #{config[:label]}".html_safe
+          }
+        else
+          concat link_to(url, class: "btn btn--primary", data: { turbo_frame: "_top" }) {
+            icon_tag(config[:icon], size: "small") + " Aggiungi #{config[:label]}".html_safe
+          }
+        end
+      end
+    end
+  end
+
   def turbo_id_for(obj)
     obj.persisted? ? obj.id : obj.hash
   end

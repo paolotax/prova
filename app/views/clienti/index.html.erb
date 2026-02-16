@@ -51,21 +51,6 @@
       <%= render "clienti/bulk_bar/bar" %>
     </div>
   <% else %>
-    <div class="blank-slate blank-slate--empty">
-      <h3 class="txt-large font-weight-bold">Nessun cliente trovato</h3>
-      <p class="txt-small txt-subtle margin-block-end">
-        <% if @user_filtering.filters_active? %>
-          Prova a modificare i filtri di ricerca.
-        <% else %>
-          Inizia aggiungendo il primo cliente al tuo account.
-        <% end %>
-      </p>
-      <% unless @user_filtering.filters_active? %>
-        <%= link_to new_cliente_path, class: "btn btn--primary" do %>
-          <%= icon_tag "plus", size: "small" %>
-          Aggiungi Cliente
-        <% end %>
-      <% end %>
-    </div>
+    <%= blank_slate_for(:clienti, filtering: @user_filtering) %>
   <% end %>
 <% end %>
