@@ -15,11 +15,11 @@
                     <%= hidden_field_tag "hgruppo" %>
                     <%= hidden_field_tag "heditore" %>
 
-                    <div class="flex flex-column gap-half margin-block-start">
+                    <div class="flex flex-column gap-half pad-inline margin-block-start">
                         <% zone_attive.each do |zona| %>
-                            <label class="flex align-center gap-half">
-                                <%= check_box_tag "zone_ids[]", zona.id, false, class: "input" %>
-                                <span class="txt-small"><%= zona.provincia %> — <%= zona.grado_label %></span>
+                            <label class="flex align-center gap-half" style="cursor: pointer;">
+                                <%= check_box_tag "zone_ids[]", zona.id, false %>
+                                <span class="txt-small txt-align-start"><%= zona.provincia %> — <%= zona.grado_label %></span>
                             </label>
                         <% end %>
                     </div>
