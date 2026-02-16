@@ -1,0 +1,78 @@
+<%# locals: (libro:) -%>
+
+<%= form_with model: libro, url: libro_path(libro),
+      id: dom_id(libro, :edit_form),
+      data: { controller: "form",
+              action: "keydown.esc->form#cancel:stop" } do |f| %>
+
+  <div class="form-field">
+    <%= f.label :titolo, class: "label txt-small" %>
+    <%= f.text_field :titolo, class: "input", autofocus: true %>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :editore_id, "Editore", class: "label txt-small" %>
+      <%= f.collection_select :editore_id,
+          Editore.joins(:mandati).where(mandati: { account_id: Current.account.id }).order(:editore).distinct,
+          :id,
+          :editore,
+          { prompt: "Seleziona editore..." },
+          { class: "input input--select" } %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :categoria_id, "Categoria", class: "label txt-small" %>
+      <%= f.collection_select :categoria_id,
+          libro.user.categorie.order(:nome_categoria),
+          :id,
+          :nome_categoria,
+          { prompt: "Seleziona categoria..." },
+          { class: "input input--select" } %>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :prezzo, "Prezzo", class: "label txt-small" %>
+      <%= f.number_field :prezzo, step: 0.01, class: "input" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :prezzo_suggerito, "Prezzo suggerito", class: "label txt-small" %>
+      <%= f.number_field :prezzo_suggerito, step: 0.01, class: "input" %>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :classe, class: "label txt-small" %>
+      <%= f.select :classe,
+          options_for_select([["—", ""], ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"]], libro.classe),
+          {},
+          class: "input input--select" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :disciplina, class: "label txt-small" %>
+      <%= f.text_field :disciplina, class: "input" %>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <%= f.label :cm, "CM", class: "label txt-small" %>
+      <%= f.text_field :cm, class: "input mono" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :codice_isbn, "ISBN", class: "label txt-small" %>
+      <%= f.text_field :codice_isbn, class: "input mono" %>
+    </div>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :note, class: "label txt-small" %>
+    <%= f.text_area :note, rows: 3, class: "input" %>
+  </div>
+<% end %>

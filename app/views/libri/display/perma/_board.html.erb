@@ -1,5 +1,7 @@
 <%# locals: (libro:) -%>
 
-<%= render "shared/cards/display/perma/board",
-    id: libro.codice_isbn || "ISBN",
-    name: libro.categoria&.nome_categoria&.upcase || "LIBRO" %>
+<div id="<%= dom_id(libro, :board) %>">
+  <%= render "shared/cards/display/perma/board",
+      id: libro.codice_isbn || "ISBN",
+      name: libro.categoria&.nome_categoria&.upcase || "LIBRO" %>
+</div>

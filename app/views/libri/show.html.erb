@@ -14,3 +14,8 @@
 <div class="full-width card-grid pad group show-navigator">
   <%= render "libri/container/container", libro: @libro, giacenza: @giacenza, adozioni: @adozioni %>
 </div>
+
+<div class="scuola-show" style="--card-color: <%= libro_sconto_color(@libro) %>;">
+  <%= render "libri/container/footer", libro: @libro, giacenza: @giacenza, adozioni: @adozioni %>
+  <%= render "libri/container/confezionator", libro: @libro %>
+</div>

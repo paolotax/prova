@@ -56,7 +56,7 @@ class LibriImporter
     SQL
 
     result = ActiveRecord::Base.connection.execute(sql)
-    categoria_ministeriali = Categoria.find_or_create_by(nome_categoria: "Ministeriali")
+    categoria_ministeriali = Categoria.find_or_create_by(nome_categoria: "Ministeriali", user_id: Current.user.id)
 
     record_number = 0
     result.each do |row|
@@ -257,13 +257,13 @@ class LibriImporter
       end
 
       # Gestione categoria (dopo il loop per evitare conflitti)
+      # Non sovrascrivere la categoria di libri esistenti che ne hanno già una
       if row[:categoria].present? || row["categoria"].present?
         nome_categoria = row[:categoria] || row["categoria"]
         categoria = Categoria.find_or_create_by(nome_categoria: nome_categoria, user_id: user_id)
-        libro.categoria = categoria
+        libro.categoria = categoria if libro.new_record? || libro.categoria.nil?
       elsif libro.new_record? && libro.categoria.nil?
-        # Crea categoria di default per nuovi libri senza categoria
-        categoria = Categoria.find_or_create_by(nome_categoria: "<nessuna>")
+        categoria = Categoria.find_or_create_by(nome_categoria: "<nessuna>", user_id: user_id)
         libro.categoria = categoria
       end
 

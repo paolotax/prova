@@ -2,26 +2,29 @@
 
 <div class="card__meta" id="<%= dom_id(libro, :meta) %>">
   <div class="card__meta-avatars card__meta-avatars--author">
-    <span class="txt-x-small txt-uppercase">EDITORE</span>
   </div>
 
   <span class="card__meta-text card__meta-text--added">
-    <strong><%= libro.editore&.editore || "—" %></strong>
+    <span>
+      Editore
+      <strong><%= libro.editore&.editore || "—" %></strong>
+    </span>
   </span>
 
   <span class="card__meta-text card__meta-text--author">
-    <% if libro.classe.present? || libro.disciplina.present? %>
-      <% if libro.classe.present? %>Cl. <%= libro.classe %><% end %>
+    <span>
+      <% if libro.classe.present? %>Cl. <strong><%= libro.classe %></strong><% end %>
       <% if libro.classe.present? && libro.disciplina.present? %> · <% end %>
-      <% if libro.disciplina.present? %><%= truncate(libro.disciplina, length: 20) %><% end %>
-    <% else %>
-      &nbsp;
-    <% end %>
+      <% if libro.disciplina.present? %><%= truncate(libro.disciplina, length: 25) %><% end %>
+      <% if libro.classe.blank? && libro.disciplina.blank? %>&nbsp;<% end %>
+    </span>
   </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
     <% if libro.cm.present? %>
-      CM: <strong><%= libro.cm %></strong>
+      CM <strong><%= libro.cm %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 
@@ -31,6 +34,9 @@
     <% end %>
     <% if libro.confezioni_count.positive? %>
       · <%= libro.confezioni_count %> conf
+    <% end %>
+    <% if libro.fascicoli_count.zero? && libro.confezioni_count.zero? %>
+      &nbsp;
     <% end %>
   </span>
 

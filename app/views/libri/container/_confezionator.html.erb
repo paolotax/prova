@@ -1,0 +1,7 @@
+<%# locals: (libro:) -%>
+
+<%= turbo_frame_tag "confezione_#{libro.id}",
+    src: fascicoli_libro_path(libro),
+    refresh: "morph",
+    loading: :lazy %>
+<%= render partial: "confezionator/form", locals: { libro: libro } %>

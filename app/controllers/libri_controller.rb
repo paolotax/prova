@@ -34,17 +34,19 @@ class LibriController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html
-      format.xlsx
+      format.xlsx { @libri = @filter.libri }
       format.json
     end
   end
 
   def show
-    #@situazione = LibroInfo.new(user: current_user, libro: @libro)
-    
     @giacenza = @libro.giacenza
-
     @adozioni = Current.account.adozioni.mie.da_acquistare.where(codice_isbn: @libro.codice_isbn).includes(classe: :scuola)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
 
@@ -53,6 +55,10 @@ class LibriController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html { redirect_to libro_path(@libro) }
+      format.turbo_stream
+    end
   end
 
   def create
@@ -83,36 +89,13 @@ class LibriController < ApplicationController
 
 
   def update
-    #libro_params[:prezzo_in_cents] = Prezzo.new(params[:prezzo_in_cents]).cents    
-    respond_to do |format|
-      if @libro.update(libro_params)
-        
-        # fa schifo
-        @situazio = Libro.crosstab
-        
-        if hotwire_native_app?
-          format.html { redirect_to libro_url(@libro), notice: "Libro modificato!" }
-        else
-          format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.replace(@libro),
-              # Aggiorniamo specificamente l'area della copertina
-              turbo_stream.replace("libro_copertina_#{@libro.id}",
-                partial: "libri/copertina",
-                locals: { libro: @libro })
-            ]
-          end
-          format.html { redirect_to libri_url, notice: "Libro modificato!" }
-          format.json { render :show, status: :ok, location: @libro }
-        end
-      else
-        if hotwire_native_app?
-          format.html { render :edit, status: :unprocessable_entity }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @libro.errors, status: :unprocessable_entity }
-        end
+    if @libro.update(libro_params)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to libro_path(@libro), notice: "Libro modificato!" }
       end
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 

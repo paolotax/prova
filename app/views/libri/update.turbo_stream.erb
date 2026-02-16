@@ -1,0 +1,19 @@
+<%= turbo_stream.replace [@libro, :edit] do %>
+  <%= turbo_frame_tag @libro, :edit do %>
+    <%= render "libri/container/content_display", libro: @libro %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@libro, :footer] do %>
+  <%= turbo_frame_tag @libro, :footer do %>
+    <%= render "libri/container/footer_display", libro: @libro %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@libro, :board) do %>
+  <%= render "libri/display/perma/board", libro: @libro %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@libro, :meta) do %>
+  <%= render "libri/display/perma/meta", libro: @libro %>
+<% end %>

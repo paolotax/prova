@@ -29,7 +29,7 @@ module Imports
         ActiveRecord::Base.sanitize_sql_array([sql, @user.id])
       )
 
-      categoria = Categoria.find_or_create_by(nome_categoria: "Ministeriali")
+      categoria = Categoria.find_or_create_by(nome_categoria: "Ministeriali", user_id: @user.id)
 
       result.each.with_index(1) do |row, record_number|
         libro = assign_from_row(row, categoria)

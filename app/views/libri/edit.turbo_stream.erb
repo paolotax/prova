@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@libro, :edit] do %>
+  <%= turbo_frame_tag @libro, :edit do %>
+    <%= render "libri/container/edit_form", libro: @libro %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@libro, :footer] do %>
+  <%= turbo_frame_tag @libro, :footer do %>
+    <%= render "libri/container/edit_footer", libro: @libro %>
+  <% end %>
+<% end %>

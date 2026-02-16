@@ -20,8 +20,7 @@
       <%= form_with url: search_path(Current.account), method: :get, data: {
             controller: "form",
             turbo_frame: "global_search_results" } do |f| %>
-        <%= hidden_field_tag :context, controller_name %>
-        <%= f.search_field :q, placeholder: "Cerca...",
+        <%= f.search_field :q, placeholder: "Cerca scuole, classi, libri...",
               class: "input input--transparent txt-small",
               autocomplete: "off", autofocus: true,
               data: {

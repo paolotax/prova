@@ -1,0 +1,7 @@
+<%# locals: (libro:) -%>
+
+<%= link_to edit_libro_path(libro), class: "btn",
+    data: { turbo_method: :get, turbo_stream: true,
+            controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
+  Modifica <kbd class="hide-on-touch">E</kbd>
+<% end %>

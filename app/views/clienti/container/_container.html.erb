@@ -5,13 +5,13 @@
     <%= link_to mappe_path("cliente-#{cliente.id}"),
         class: "btn", data: { controller: "tooltip", tooltip_content_value: "Posizione" } do %>
       <%= icon_tag "mappa" %>
-      <span class="for-screen-reader">Posizione</span>
+      <span class="for-screen-reader">Aggiorna Posizione</span>
     <% end %>
     <%= link_to go_to_tappable_path(cliente, current_user.effective_navigator),
         target: "_blank",
         class: "btn", data: { controller: "tooltip", tooltip_content_value: "Naviga" } do %>
-      <%= icon_tag "mappa" %>
-      <span class="for-screen-reader">Naviga</span>
+      <%= icon_tag "marker" %>
+      <span class="for-screen-reader">Naviga...</span>
     <% end %>
   </div>
 
