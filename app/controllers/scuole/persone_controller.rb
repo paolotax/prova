@@ -4,7 +4,6 @@ module Scuole
     before_action :set_persona
 
     def show
-      load_classi_and_adozioni
       load_prev_next
       @appunti = @persona.appunti.includes(:entry).order(created_at: :desc)
 
@@ -74,33 +73,5 @@ module Scuole
       @next_persona_id = idx && idx < all_ids.size - 1 ? all_ids[idx + 1] : nil
     end
 
-    def load_classi_and_adozioni
-      tipo_scuola = @scuola.classi.pick(:tipo_scuola) || "MM"
-      cattedra = @persona.persona_classi.where.not(materia: nil).pick(:materia)
-      discipline_miur = CattedraDisciplina.where(
-        account: current_account, tipo_scuola: tipo_scuola, cattedra: cattedra
-      ).pluck(:disciplina)
-
-      @persona_classi = @persona.persona_classi.includes(:classe).order("classi.anno_corso, classi.sezione")
-      @classi = @persona_classi.map(&:classe)
-
-      adozioni = if discipline_miur.any?
-        Adozione.where(classe: @classi, disciplina: discipline_miur, da_acquistare: true)
-                .includes(:libro, :classe)
-                .order(:disciplina, :titolo)
-      else
-        Adozione.none
-      end
-
-      # { disciplina => [ { adozione:, classi: [classe, ...] }, ... ] }
-      @adozioni_per_disciplina = adozioni
-        .group_by(&:disciplina)
-        .transform_values do |ads|
-          ads.group_by { |a| [a.titolo, a.editore] }
-             .map do |(titolo, editore), group|
-               { adozione: group.first, classi: group.map(&:classe).sort_by { |c| [c.anno_corso, c.sezione] } }
-             end
-        end
-    end
   end
 end

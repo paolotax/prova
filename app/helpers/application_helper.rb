@@ -15,6 +15,13 @@ module ApplicationHelper
     end
   end
 
+  def back_link_to_url(label, url, **options)
+    action = "keydown.esc@document->hotkey#click"
+    link_to url, class: "btn btn--back", data: { controller: "hotkey", action: action }, **options do
+      icon_tag("arrow-left") + tag.strong("Torna a #{label}", class: "overflow-ellipsis") + tag.kbd("ESC", class: "txt-x-small hide-on-touch").html_safe
+    end
+  end
+
   # Simple header back link button (for content_for :header)
   def header_back_link(path, label: nil)
     link_to path, class: "btn" do

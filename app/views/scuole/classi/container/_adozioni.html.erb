@@ -1,0 +1,124 @@
+<%# locals: (classe:, scuola:, adozioni:) -%>
+
+<section class="group">
+  <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
+
+  <% if adozioni.any? %>
+    <%
+      totale_cents = adozioni.select { |a| a.da_acquistare? && !a.consigliato? }.sum(&:prezzo_cents)
+    %>
+    <div class="overflow-x">
+      <table class="table full-width">
+        <thead>
+          <tr>
+            <th class="txt-left">Titolo</th>
+            <th class="txt-left">Disciplina</th>
+            <th class="txt-right">Prezzo</th>
+            <th class="txt-align-center">Omaggi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% adozioni.each do |adozione| %>
+            <%
+              row_style = if adozione.nuova_adozione? && adozione.mia?
+                "background: color-mix(in srgb, var(--color-negative) 15%, var(--color-canvas)); color: var(--color-negative);"
+              elsif adozione.mia?
+                "background: color-mix(in srgb, var(--card-color) 15%, var(--color-canvas)); color: color-mix(in srgb, var(--card-color) 80%, var(--color-ink));"
+              elsif adozione.nuova_adozione?
+                "color: var(--color-negative);"
+              else
+                ""
+              end
+            %>
+            <tr style="<%= row_style %>"<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
+              <td>
+                <div class="txt-small font-weight-bold">
+                  <% if !adozione.da_acquistare? %>
+                    <s class="txt-subtle"><%= adozione.titolo %></s>
+                  <% else %>
+                    <%= adozione.titolo %>
+                  <% end %>
+                  <% if adozione.consigliato? %>
+                    <span class="txt-xx-small txt-subtle font-weight-normal">(consigliato)</span>
+                  <% end %>
+                </div>
+                <div class="txt-xx-small txt-subtle"><% if !adozione.da_acquistare? %><s><%= adozione.editore %></s><% else %><%= adozione.editore %><% end %></div>
+              </td>
+              <td class="txt-small"><% if !adozione.da_acquistare? %><s class="txt-subtle"><%= adozione.disciplina %></s><% else %><%= adozione.disciplina %><% end %></td>
+              <td class="txt-small txt-right font-weight-bold">
+                <% if adozione.consigliato? || !adozione.da_acquistare? %>
+                  <s class="txt-subtle"><%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %></s>
+                <% else %>
+                  <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
+                <% end %>
+              </td>
+              <td class="txt-align-center">
+                <% if adozione.mia? %>
+                  <div class="flex align-center justify-center gap-quarter flex-wrap">
+                    <% adozione.saggi.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #FF0000; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare saggio?" } do %>S<% end %>
+                    <% end %>
+                    <% adozione.kit_consegne.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #FF1493; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare kit?" } do %>K<% end %>
+                    <% end %>
+                    <% adozione.seguiti.each do |cs| %>
+                      <%= button_to scuola_classe_consegne_saggio_path(scuola, classe, cs),
+                          method: :delete,
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: #0080FF; color: white; border: none; padding: 2px 6px;",
+                          data: { turbo_confirm: "Eliminare seguito?" } do %>F<% end %>
+                    <% end %>
+
+                    <% if adozione.saggi.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                          params: { adozione_id: adozione.id, tipo: "saggio" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+S<% end %>
+                    <% end %>
+                    <% if adozione.kit_consegne.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                          params: { adozione_id: adozione.id, tipo: "kit" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+K<% end %>
+                    <% end %>
+                    <% if adozione.seguiti.empty? %>
+                      <%= button_to scuola_classe_consegne_saggio_index_path(scuola, classe),
+                          params: { adozione_id: adozione.id, tipo: "seguito" },
+                          class: "badge txt-xx-small cursor-pointer",
+                          style: "background: var(--color-ink-lightest); color: var(--color-ink-light); border: none; padding: 2px 6px;" do %>+F<% end %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" class="txt-small font-weight-bold">Totale</td>
+            <td class="txt-small txt-right font-weight-black">
+              <%= number_to_currency(totale_cents / 100.0, unit: "\u20AC", format: "%n %u") %>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  <% else %>
+    <div class="txt-align-center margin-block">
+      <p class="txt-small txt-subtle margin-block-end">Nessuna adozione registrata.</p>
+      <%= button_to "Importa Adozioni",
+          import_adozioni_scuola_classe_path(scuola, classe),
+          method: :post,
+          class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</section>

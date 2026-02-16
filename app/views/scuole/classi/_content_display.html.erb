@@ -1,11 +1,10 @@
 <%# locals: (classe:, scuola:) -%>
 
-<div class="flex align-center gap">
-  <div class="flex align-center justify-center border-radius txt-x-large font-weight-black" style="width: 4rem; height: 4rem; background: var(--color-positive-lighter); color: var(--color-positive-dark);">
+<div class="flex align-end gap">
+  <div class="card__title txt-xx-large font-weight-black">
     <%= classe.nome_breve %>
   </div>
   <div>
-    <h1 class="card__title margin-none"><%= scuola.denominazione %></h1>
     <span class="card__subtitle">
       <%= classe.combinazione.presence || classe.tipo_scuola %>
       <% if classe.numero_alunni.present? && classe.numero_alunni > 0 %>
@@ -18,5 +17,18 @@
 <% if classe.note.present? %>
   <div class="card__description margin-block-start">
     <p class="txt-small margin-none"><%= simple_format(classe.note) %></p>
+  </div>
+<% end %>
+
+<% docenti = classe.persone.includes(:persona_classi).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
+<% if docenti.any? %>
+  <div class="flex gap-quarter flex-wrap margin-block-start">
+    <% docenti.sort_by { |p| p.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia.to_s }.each do |persona| %>
+      <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia %>
+      <%= link_to scuola_persona_path(scuola, persona), class: "btn txt-small", style: "color: inherit;", data: { turbo_frame: "_top", controller: "tooltip" } do %>
+        <strong><%= persona.cognome %></strong> <span class="txt-subtle"><%= cattedra&.titleize %></span>
+        <span class="for-screen-reader"><%= persona.nome_completo %></span>
+      <% end %>
+    <% end %>
   </div>
 <% end %>

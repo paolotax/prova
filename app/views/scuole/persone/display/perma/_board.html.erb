@@ -1,0 +1,7 @@
+<%# locals: (persona:, scuola:) -%>
+
+<div id="<%= dom_id(persona, :board) %>">
+  <%= render "shared/cards/display/common/board",
+      id: persona.persona_classi.first&.materia&.titleize,
+      name: scuola.denominazione %>
+</div>

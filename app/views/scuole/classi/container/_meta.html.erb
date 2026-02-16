@@ -1,0 +1,47 @@
+<%# locals: (adozioni:) -%>
+
+<footer>
+  <div class="card__meta">
+    <%# <div class="card__meta-avatars card__meta-avatars--author">
+    </div> %>
+
+    <span class="card__meta-text card__meta-text--added">
+      <strong><%= adozioni.count %></strong> <%= adozioni.count == 1 ? "adozione" : "adozioni" %>
+    </span>
+
+    <span class="card__meta-text card__meta-text--author">
+      <% da_acq = adozioni.select(&:da_acquistare?).count %>
+      <% if da_acq > 0 %>
+        <strong><%= da_acq %></strong> da acquistare
+      <% else %>
+        &nbsp;
+      <% end %>
+    </span>
+
+    <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+      <% nuove = adozioni.select(&:nuova_adozione?).count %>
+      <% if nuove > 0 %>
+        <strong><%= nuove %></strong> <%= nuove == 1 ? "nuova" : "nuove" %>
+      <% else %>
+        &nbsp;
+      <% end %>
+    </span>
+
+    <span class="card__meta-text card__meta-text--updated">
+      &nbsp;
+    </span>
+
+    <span class="card__meta-text card__meta-text--copie txt-align-end">
+      <% mie = adozioni.select(&:mia?).count %>
+      <% if mie > 0 %>
+        <strong><%= mie %></strong> <%= mie == 1 ? "mia adozione" : "mie adozioni" %>
+      <% else %>
+        &nbsp;
+      <% end %>
+    </span>
+
+    <span class="card__meta-text card__meta-text--importo txt-align-end">
+      lista libri <strong><%= number_to_currency(adozioni.select { |a| a.da_acquistare? && !a.consigliato? }.sum(&:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %></strong>
+    </span>
+  </div>
+</footer>

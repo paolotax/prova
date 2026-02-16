@@ -1,10 +1,64 @@
 <%# locals: (persona:, scuola:) -%>
 
-<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
-<span class="card__subtitle"><%= persona.persona_classi.first&.materia&.titleize %> — <%= scuola.denominazione %></span>
+<%
+  tipo_scuola = scuola.classi.pick(:tipo_scuola) || "MM"
+  cattedra = persona.persona_classi.where.not(materia: nil).pick(:materia)
+  discipline_miur = CattedraDisciplina.where(
+    account: Current.account, tipo_scuola: tipo_scuola, cattedra: cattedra
+  ).pluck(:disciplina)
 
-<div class="flex gap-quarter flex-wrap margin-block-start-half">
-  <%= classi_badge_links(persona.classi, scuola) %>
+  classi = persona.classi.sort_by { |c| [c.anno_corso, c.sezione] }
+  adozioni_raw = if discipline_miur.any?
+    Adozione.where(classe: classi, disciplina: discipline_miur)
+            .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione, :prezzo_cents)
+  else
+    Adozione.none
+  end
+
+  # Badge styles per classe
+  adozioni_by_classe = adozioni_raw.group_by(&:classe_id)
+  badge_styles = {}
+  classi.each do |c|
+    aa = adozioni_by_classe[c.id] || []
+    if aa.any? { |a| a.nuova_adozione? && a.mia? }
+      badge_styles[c.id] = :nuova_mia
+    elsif aa.any?(&:mia?)
+      badge_styles[c.id] = :mia
+    elsif aa.any?(&:nuova_adozione?)
+      badge_styles[c.id] = :nuova_altri
+    end
+  end
+
+  # Libri per anno
+  libri_per_anno = adozioni_raw
+    .group_by { |a| classi.find { |c| c.id == a.classe_id }&.anno_corso }
+    .transform_values { |aa| aa.uniq { |a| [a.titolo, a.editore] } }
+    .sort_by { |anno, _| anno.to_i }
+
+  libro_classe_ids = adozioni_raw.group_by { |a| [a.titolo, a.editore] }
+    .transform_values { |aa| aa.map(&:classe_id).uniq }
+%>
+
+<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
+
+<div data-controller="libro-hover">
+  <div class="flex gap-quarter flex-wrap margin-block-start-half">
+    <%= classi_badge_links(classi, scuola, classe_styles: badge_styles, hover_target: true) %>
+  </div>
+
+  <% if libri_per_anno.any? %>
+    <div style="display: grid; grid-template-columns: repeat(<%= libri_per_anno.size %>, minmax(0, 20ch)); gap: 0.5rem; justify-content: center;" class="margin-block-start">
+      <% libri_per_anno.each do |anno, adozioni| %>
+        <div class="flex flex-column gap-half">
+          <span class="txt-xx-small txt-subtle font-weight-bold txt-align-center"><%= anno %>&deg;</span>
+          <% adozioni.each do |adozione| %>
+            <% cids = libro_classe_ids[[adozione.titolo, adozione.editore]] || [] %>
+            <%= adozione_libro_tag(adozione, data: { libro_hover_target: "libro", classe_ids: cids.join(",") }) %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
 <% if persona.cellulare.present? || persona.email.present? || persona.telefono.present? %>

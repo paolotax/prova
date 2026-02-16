@@ -1,0 +1,18 @@
+<%# locals: (appunti:) -%>
+
+<% if appunti.any? %>
+  <section class="group">
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Appunti (<%= appunti.size %>)</h3>
+    <% appunti.each do |appunto| %>
+      <div class="flex gap-half align-start pad-block-half border-bottom">
+        <div class="flex-item-grow">
+          <p class="txt-small margin-none"><%= appunto.body&.truncate(200) %></p>
+          <p class="txt-xx-small txt-subtle margin-none"><%= time_ago_in_words(appunto.created_at) %> fa</p>
+        </div>
+        <% if appunto.entry.present? %>
+          <%= link_to "→", entry_path(appunto.entry), class: "btn btn--ghost txt-small" %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+<% end %>

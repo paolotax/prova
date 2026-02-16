@@ -1,0 +1,52 @@
+<%# locals: (classe:, scuola:, adozioni:) -%>
+
+<section class="card-perma" style="--card-color: var(--color-positive);">
+  <div class="card-perma__actions card-perma__actions--left">
+    <% if @prev_classe_id %>
+      <%= link_to scuola_classe_path(scuola, @prev_classe_id), class: "btn",
+          data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
+        <%= icon_tag "arrow-left" %>
+        <span class="for-screen-reader">Precedente (&#8592;)</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card-perma__bg">
+    <article class="card">
+      <header class="card__header">
+        <%= render "scuole/classi/display/perma/board", classe: classe, scuola: scuola %>
+      </header>
+
+      <div class="card__body">
+        <div class="card__content">
+          <%= turbo_frame_tag classe, :edit do %>
+            <%= render "scuole/classi/content_display", classe: classe, scuola: scuola %>
+          <% end %>
+        </div>
+      </div>
+
+      <%= render "scuole/classi/container/meta", adozioni: adozioni %>
+    </article>
+  </div>
+
+  <div class="card-perma__actions card-perma__actions--right">
+    <% if @next_classe_id %>
+      <%= link_to scuola_classe_path(scuola, @next_classe_id), class: "btn",
+          data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
+        <%= icon_tag "arrow-right" %>
+        <span class="for-screen-reader">Successivo (&#8594;)</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card-perma__notch card-perma__notch--bottom">
+    <%= turbo_frame_tag classe, :footer do %>
+      <%= render "scuole/classi/footer", classe: classe, scuola: scuola %>
+    <% end %>
+  </div>
+</section>
+
+<div class="scuola-show" style="--card-color: var(--color-positive);">
+  <%= render "scuole/classi/container/adozioni", classe: classe, scuola: scuola, adozioni: adozioni %>
+  <%= render "scuole/classi/container/entries", classe: classe, scuola: scuola %>
+</div>
