@@ -64,6 +64,11 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
     mount Motor::Admin => '/motor' if defined?(Motor)
     mount RailsDesigner::Engine, at: '/rails_designer' if defined?(RailsDesigner)
+
+    namespace :admin do
+      root "dashboard#index"
+      resources :extension_mails, only: [:index, :create]
+    end
   end
 
   # =========================================

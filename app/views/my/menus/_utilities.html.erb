@@ -7,4 +7,7 @@
         <%= filter_place_menu_item "/blazer", "Blazer", "chart" %>
         <%= filter_place_menu_item "/rails/performance", "Performance", "speedometer" %>
     <% end %>
+    <% if Current.user.email == "paolo.tassinari@hey.com" %>
+        <%= filter_place_menu_item "/admin", "Admin", "shield" %>
+    <% end %>
 <% end %>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ScagnoZZ Admin</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body style="background: var(--color-canvas); color: var(--color-ink); font-family: var(--font-sans);">
+    <div style="max-width: 960px; margin: 0 auto; padding: 1rem;">
+      <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--color-ink-lighter);">
+        <h1 style="margin: 0; font-size: 1.25rem;">
+          <%= link_to "ScagnoZZ Admin", admin_root_path, style: "text-decoration: none; color: var(--color-ink);" %>
+        </h1>
+        <nav style="display: flex; gap: 1rem; font-size: 0.875rem;">
+          <%= link_to "Dashboard", admin_root_path, style: "color: var(--color-link);" %>
+          <%= link_to "Extension Mail", admin_extension_mails_path, style: "color: var(--color-link);" %>
+          <%= link_to "← App", root_path, style: "color: var(--color-ink-dark);" %>
+        </nav>
+      </header>
+
+      <% if flash[:notice] %>
+        <div style="padding: 0.75rem 1rem; margin-bottom: 1rem; background: oklch(var(--lch-green-lightest)); border-radius: 0.5rem; color: oklch(var(--lch-green-dark));"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div style="padding: 0.75rem 1rem; margin-bottom: 1rem; background: oklch(var(--lch-red-lightest)); border-radius: 0.5rem; color: oklch(var(--lch-red-dark));"><%= flash[:alert] %></div>
+      <% end %>
+
+      <%= yield %>
+    </div>
+  </body>
+</html>

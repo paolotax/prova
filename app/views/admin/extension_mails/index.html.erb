@@ -1,0 +1,33 @@
+<h2>Invia estensione WhatsApp</h2>
+<p style="color: var(--color-ink-dark); margin-bottom: 1.5rem;">
+  Seleziona gli utenti a cui inviare l'estensione Chrome WhatsApp → ScagnoZZ
+</p>
+
+<%= form_with url: admin_extension_mails_path, method: :post do |f| %>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+    <thead>
+      <tr style="border-bottom: 2px solid var(--color-ink-lighter); text-align: left;">
+        <th style="padding: 0.5rem;">
+          <input type="checkbox" id="select-all" onchange="document.querySelectorAll('input[name=\\'user_ids[]\\']').forEach(cb => cb.checked = this.checked)">
+        </th>
+        <th style="padding: 0.5rem;">Nome</th>
+        <th style="padding: 0.5rem;">Email</th>
+        <th style="padding: 0.5rem;">Ruolo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr style="border-bottom: 1px solid var(--color-ink-lighter);">
+          <td style="padding: 0.5rem;">
+            <%= check_box_tag "user_ids[]", user.id, false, id: "user_#{user.id}" %>
+          </td>
+          <td style="padding: 0.5rem;"><%= user.name %></td>
+          <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= user.email %></td>
+          <td style="padding: 0.5rem;"><%= user.role %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= f.submit "Invia estensione", style: "padding: 0.5rem 1.5rem; background: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted); border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;" %>
+<% end %>
