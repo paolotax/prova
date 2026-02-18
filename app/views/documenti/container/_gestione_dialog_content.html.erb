@@ -163,14 +163,7 @@
           <div class="flex flex-column align-center">
             <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
             <%= f.select :tipo_pagamento,
-                  options_for_select([
-                    ["Contanti", "contanti"],
-                    ["Bonifico", "bonifico"],
-                    ["Assegno", "assegno"],
-                    ["Bancomat", "bancomat"],
-                    ["Carta di credito", "carta_di_credito"],
-                    ["Cedole", "cedole"]
-                  ], documento.tipo_pagamento),
+                  options_for_select(tipi_pagamento_options, documento.tipo_pagamento),
                   {},
                   class: "input input--select" %>
           </div>
@@ -214,14 +207,7 @@
         <div class="flex flex-column align-center">
           <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
           <%= f.select :tipo_pagamento,
-                options_for_select([
-                  ["Contanti", "contanti"],
-                  ["Bonifico", "bonifico"],
-                  ["Assegno", "assegno"],
-                  ["Bancomat", "bancomat"],
-                  ["Carta di credito", "carta_di_credito"],
-                  ["Cedole", "cedole"]
-                ], "contanti"),
+                options_for_select(tipi_pagamento_options, "contanti"),
                 {},
                 class: "input input--select" %>
         </div>

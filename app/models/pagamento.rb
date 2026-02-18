@@ -25,6 +25,17 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Pagamento < ApplicationRecord
+  TIPI_PAGAMENTO = {
+    "contanti" => "Contanti",
+    "bonifico" => "Bonifico",
+    "assegno" => "Assegno",
+    "ri.ba" => "Ri.Ba.",
+    "carta_di_credito" => "Carta di credito",
+    "bonus_docente" => "Bonus docente",
+    "bancomat" => "Bancomat",
+    "cedole" => "Cedole"
+  }.freeze
+
   belongs_to :account, default: -> { pagabile.account }
   belongs_to :pagabile, polymorphic: true, touch: true
   belongs_to :user, optional: true, default: -> { Current.user }

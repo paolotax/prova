@@ -206,12 +206,7 @@
       <div class="flex flex-column align-center">
         <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
         <select name="tipo_pagamento" id="bulk_tipo_pagamento" class="input input--select" form="bulk_pagamenti_form">
-          <option value="contanti" selected>Contanti</option>
-          <option value="bonifico">Bonifico</option>
-          <option value="assegno">Assegno</option>
-          <option value="bancomat">Bancomat</option>
-          <option value="carta_di_credito">Carta di credito</option>
-          <option value="cedole">Cedole</option>
+          <%= options_for_select(tipi_pagamento_options, "contanti") %>
         </select>
       </div>
       <div class="flex gap-half align-center">
@@ -246,12 +241,7 @@
       <div class="flex flex-column align-center">
         <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
         <select name="tipo_pagamento" id="bulk_tipo_pagamento" class="input input--select" form="bulk_pagamenti_form">
-          <option value="contanti" selected>Contanti</option>
-          <option value="bonifico">Bonifico</option>
-          <option value="assegno">Assegno</option>
-          <option value="bancomat">Bancomat</option>
-          <option value="carta_di_credito">Carta di credito</option>
-          <option value="cedole">Cedole</option>
+          <%= options_for_select(tipi_pagamento_options, "contanti") %>
         </select>
       </div>
 

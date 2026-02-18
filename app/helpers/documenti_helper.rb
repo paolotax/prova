@@ -56,4 +56,8 @@ module DocumentiHelper
       end
     end
 
+    def tipi_pagamento_options
+      Pagamento::TIPI_PAGAMENTO.map { |value, label| [label, value] }
+    end
+
 end
