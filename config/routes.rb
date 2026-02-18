@@ -8,10 +8,6 @@ Rails.application.routes.draw do
 
   
   namespace :my do
-    #resource :identity, only: :show
-    #resources :access_tokens
-    #resources :pins
-    #resource :timezone
     resource :menu
   end
   
@@ -304,6 +300,7 @@ Rails.application.routes.draw do
 
     get 'profilo', to: 'profiles#get_user_profile'
     resource :configurazione, only: [:show], controller: "configurazione"
+    resources :access_tokens, only: [:index, :show, :new, :create, :destroy], controller: "access_tokens"
     resource :adozioni_analytics, only: [:show], controller: "adozioni_analytics"
 
     resources :account_members, only: [:create, :update, :destroy] do
@@ -424,6 +421,8 @@ Rails.application.routes.draw do
 
     get 'articoli', to: 'articoli#index'
     get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
+
+    resources :persone, only: [:show]
 
     resources :scuole do
       resources :qrcodes

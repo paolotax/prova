@@ -26,4 +26,9 @@
     <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori, zone_attive: @zone_attive } %>
   </div>
 
+  <div class="settings__panel panel shadow center">
+    <strong class="divider divider--fade txt-large">API</strong>
+    <p class="txt-small txt-tertiary">Gestisci <%= link_to "token di accesso", access_tokens_path, class: "btn btn--plain txt-link" %> per collegare servizi esterni come l'estensione WhatsApp.</p>
+  </div>
+
 </section>

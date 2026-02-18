@@ -10,11 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_18_111043) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_140339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
   enable_extension "tablefunc"
+
+  create_table "access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.datetime "last_used_at"
+    t.uuid "membership_id", null: false
+    t.string "token"
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_access_tokens_on_membership_id"
+    t.index ["token"], name: "index_access_tokens_on_token", unique: true
+  end
 
   create_table "account_zone", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false

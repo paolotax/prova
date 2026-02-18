@@ -50,6 +50,8 @@ class Persona < ApplicationRecord
     "#{cognome} #{nome}".strip
   end
 
+  alias_method :denominazione, :nome_completo
+
   def to_s
     nome_completo
   end

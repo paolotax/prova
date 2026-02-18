@@ -35,31 +35,19 @@ module Api
         return render json: { error: "Token mancante" }, status: :unauthorized
       end
 
-      account_id, secret = token.split(":", 2)
+      access_token = AccessToken.includes(membership: [:user, :account]).find_by(token: token)
 
-      if account_id.blank? || secret.blank?
-        return render json: { error: "Formato token non valido" }, status: :unauthorized
+      unless access_token
+        return render json: { error: "Token non valido" }, status: :unauthorized
       end
 
-      expected_token = Rails.application.credentials.dig(:whatsapp_api, :token)
-      expected_account_id = Rails.application.credentials.dig(:whatsapp_api, :account_id)
+      access_token.use!
 
-      # Fallback su ENV se credentials non configurate
-      expected_token ||= ENV["WHATSAPP_API_TOKEN"]
-      expected_account_id ||= ENV["WHATSAPP_API_ACCOUNT_ID"]
-
-      unless ActiveSupport::SecurityUtils.secure_compare(secret, expected_token.to_s) &&
-             ActiveSupport::SecurityUtils.secure_compare(account_id, expected_account_id.to_s)
-        return render json: { error: "Token non autorizzato" }, status: :unauthorized
-      end
-
-      @account = Account.find(account_id)
-      @user = @account.owner
+      @account = access_token.account
+      @user = access_token.user
 
       Current.account = @account
       Current.user = @user
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: "Account non trovato" }, status: :unauthorized
     end
 
     def find_or_create_persona
@@ -68,10 +56,8 @@ module Api
       persona = @account.persone.find_by("cellulare = :tel OR telefono = :tel", tel: telefono) if telefono.present?
 
       if persona.nil?
-        cognome, nome = parse_nome(params[:nome])
         persona = @account.persone.create!(
-          cognome: cognome,
-          nome: nome,
+          cognome: params[:nome].presence || "Sconosciuto",
           cellulare: telefono,
           ruolo: :docente
         )
@@ -98,19 +84,5 @@ module Api
       )
     end
 
-    # Divide "Maria Giulia Rossi" → cognome: "Rossi", nome: "Maria Giulia"
-    # Se una sola parola → cognome
-    def parse_nome(nome_completo)
-      return [nome_completo || "Sconosciuto", nil] if nome_completo.blank?
-
-      parts = nome_completo.strip.split(/\s+/)
-      if parts.length == 1
-        [parts[0], nil]
-      else
-        cognome = parts.last
-        nome = parts[0..-2].join(" ")
-        [cognome, nome]
-      end
-    end
   end
 end
