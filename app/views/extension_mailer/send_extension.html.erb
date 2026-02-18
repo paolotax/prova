@@ -11,14 +11,14 @@
     Ciao <b><%= @user.name %></b>,
   <% end %>
   <%= render Email::Text.new do %>
-    in allegato trovi l'estensione Chrome <b>WhatsApp Web → ScagnoZZ</b> che ti permette di salvare appunti direttamente dalle chat di WhatsApp Web.
+    ecco l'estensione Chrome <b>WhatsApp Web → ScagnoZZ</b> che ti permette di salvare appunti direttamente dalle chat di WhatsApp Web.
   <% end %>
   <%= render Email::Text.new do %>
-    Scarica e decomprimi il file <b>zip</b> allegato. All'interno troverai il file <b>GUIDA-INSTALLAZIONE.html</b> con tutte le istruzioni passo passo.
+    Clicca il bottone qui sotto per scaricare il file <b>zip</b>. All'interno troverai il file <b>GUIDA-INSTALLAZIONE.html</b> con tutte le istruzioni passo passo.
   <% end %>
   <%= render Email::Button.new(
-    text: "Vai a ScagnoZZ →",
-    href: "https://scagnozz.com",
+    text: "Scarica Estensione →",
+    href: @download_url,
   ) %>
   <%= render Email::Colorblock.new(
     color: Email::Colors::RED_50,

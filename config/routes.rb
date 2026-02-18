@@ -71,6 +71,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Download estensione Chrome (link pubblico per email)
+  get "download/extension", to: "downloads#extension", as: :download_extension
+
   # =========================================
   # ROUTES CON CONTESTO ACCOUNT
   # =========================================
