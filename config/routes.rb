@@ -453,6 +453,14 @@ Rails.application.routes.draw do
   end
 
   # =========================================
+  # API
+  # =========================================
+
+  namespace :api do
+    post "whatsapp/contacts", to: "whatsapp#create"
+  end
+
+  # =========================================
   # HEALTH CHECK E ROOT GLOBALE
   # =========================================
 
