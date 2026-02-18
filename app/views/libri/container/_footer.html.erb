@@ -76,6 +76,16 @@
     </article>
   <% end %>
 
+  <!-- Scheda Titolo -->
+  <% if libro.codice_isbn.present? %>
+    <div class="full-width margin-block-start-half">
+      <%= link_to titolo_path(codice_isbn: libro.codice_isbn), class: "btn btn--small btn--ghost" do %>
+        <%= icon_tag "book" %>
+        <span>Scheda titolo e concorrenza</span>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- Adozioni (solo per libri scolastici) -->
   <% if libro_adottabile?(libro) && libro.adozioni_count.positive? %>
     <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 280px;">

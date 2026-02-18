@@ -23,23 +23,6 @@ class LibriImporterController < ApplicationController
     redirect_to libri_importer_path(id: 'result')
   end
 
-  def import_ministeriali
-    @import = LibriImporter.new
-    @import.import_ministeriali!
-
-    # Salva sempre i risultati (successo o errore) e mostra la pagina show
-    # Limita gli errori a max 10 e tronca ogni messaggio a 200 caratteri per evitare cookie overflow
-    session[:import_result] = {
-      imported_count: @import.imported_count,
-      updated_count: @import.updated_count,
-      errors_count: @import.errors_count,
-      errors: @import.errors.full_messages.first(10).map { |msg| msg.truncate(200) },
-      success: @import.errors.none?
-    }
-
-    redirect_to libri_importer_path(id: 'result')
-  end
-
   def import_confezioni
     import_params = if params[:libri_importer].present?
                      libri_importer_params

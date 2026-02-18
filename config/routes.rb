@@ -231,9 +231,10 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :titoli, only: [:show], param: :codice_isbn
+
     resources :libri_importer, only: [:new, :create, :show] do
       collection do
-        post 'import_ministeriali'
         post 'import_confezioni'
         get 'export_confezioni'
       end

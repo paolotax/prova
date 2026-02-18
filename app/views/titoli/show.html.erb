@@ -1,0 +1,166 @@
+<% titolo_display = @import_adozione&.TITOLO || @libro&.titolo || @codice_isbn %>
+<% @page_title = titolo_display %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Indietro", :back %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Scheda Titolo</span>
+  </h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<div class="center" style="max-width: 80ch;">
+
+  <%# Intestazione titolo %>
+  <article class="panel shadow margin-block-end">
+    <div class="flex gap">
+      <%# Copertina %>
+      <div style="flex-shrink: 0; width: 100px;">
+        <% if @edizione&.copertina&.attached? %>
+          <%= image_tag @edizione.copertina.variant(resize_to_limit: [200, 267]), style: "width: 100%; border-radius: var(--border-radius); aspect-ratio: 3/4; object-fit: cover;" %>
+        <% elsif @libro&.copertina&.attached? %>
+          <%= image_tag @libro.copertina.variant(resize_to_limit: [200, 267]), style: "width: 100%; border-radius: var(--border-radius); aspect-ratio: 3/4; object-fit: cover;" %>
+        <% else %>
+          <div class="fill-shade border-radius flex align-center justify-center" style="width: 100%; aspect-ratio: 3/4;">
+            <%= icon_tag "book", class: "txt-subtle txt-x-large" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="flex flex-column gap-quarter" style="flex: 1;">
+        <h2 class="txt-medium font-weight-black margin-none"><%= titolo_display %></h2>
+
+        <% if @import_adozione %>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.EDITORE %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.AUTORI %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.DISCIPLINA %></p>
+        <% elsif @libro %>
+          <p class="txt-small txt-subtle margin-none"><%= @libro.editore&.editore %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @libro.disciplina %></p>
+        <% end %>
+
+        <div class="flex gap-half align-center margin-block-start-half">
+          <span class="txt-small font-weight-bold">ISBN:</span>
+          <code class="txt-small"><%= @codice_isbn %></code>
+        </div>
+
+        <% prezzo = @import_adozione&.PREZZO || (@libro ? number_to_currency(@libro.prezzo) : nil) %>
+        <% if prezzo.present? %>
+          <div class="flex gap-half align-center">
+            <span class="txt-small font-weight-bold">Prezzo:</span>
+            <span class="txt-small txt-negative font-weight-bold"><%= prezzo %></span>
+          </div>
+        <% end %>
+
+        <% if @libro %>
+          <div class="margin-block-start-half">
+            <%= link_to libro_path(@libro), class: "btn btn--small btn--link" do %>
+              <%= icon_tag "book" %>
+              <span>Vai al libro</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </article>
+
+  <div class="flex gap flex-wrap">
+    <%# Le mie adozioni %>
+    <% if @mie_adozioni.any? %>
+      <article class="panel shadow flex-item-grow" style="flex-basis: 300px;">
+        <div class="flex align-center justify-space-between margin-block-end-half">
+          <h3 class="txt-small font-weight-bold txt-subtle">Le mie adozioni</h3>
+          <span class="txt-x-large font-weight-black txt-positive"><%= @mie_adozioni.size %></span>
+        </div>
+
+        <ul class="flex flex-column gap-quarter">
+          <% @mie_adozioni.each do |adozione| %>
+            <li class="flex align-center justify-space-between txt-small">
+              <div class="overflow-ellipsis">
+                <span class="font-weight-bold"><%= adozione.classe_e_sezione %></span>
+                <span class="txt-subtle">&middot;</span>
+                <%= link_to truncate(adozione.scuola.to_s, length: 30), scuola_path(adozione.scuola), class: "txt-link" %>
+              </div>
+              <% if adozione.da_acquistare? %>
+                <span class="txt-xx-small txt-positive">da acquistare</span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </article>
+    <% end %>
+
+    <%# Adozioni nella zona %>
+    <article class="panel shadow flex-item-grow" style="flex-basis: 300px;">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Adozioni nella zona</h3>
+        <span class="txt-x-large font-weight-black txt-link"><%= @adozioni_zona.count %></span>
+      </div>
+      <p class="txt-x-small txt-subtle margin-none">
+        Sezioni che adottano questo titolo nelle scuole della tua zona.
+      </p>
+    </article>
+  </div>
+
+  <%# Concorrenti %>
+  <% if @concorrenti.present? && @concorrenti.any? %>
+    <article class="panel shadow margin-block-start">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">
+          Concorrenti &middot; <%= @import_adozione.DISCIPLINA %> &middot; Classe <%= @import_adozione.ANNOCORSO %>
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table txt-small">
+          <thead>
+            <tr>
+              <th>Titolo</th>
+              <th>Editore</th>
+              <th class="txt-align-end">Sezioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @concorrenti.each do |c| %>
+              <tr>
+                <td class="overflow-ellipsis" style="max-width: 30ch;">
+                  <%= link_to c.TITOLO, titolo_path(codice_isbn: c.CODICEISBN), class: "txt-link" %>
+                </td>
+                <td class="txt-subtle"><%= c.EDITORE %></td>
+                <td class="txt-align-end font-weight-bold"><%= c.sezioni_count %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  <% end %>
+
+  <%# Giacenza (solo se libro presente) %>
+  <% if @libro&.giacenza %>
+    <article class="panel shadow margin-block-start">
+      <div class="flex align-center justify-space-between margin-block-end-half">
+        <h3 class="txt-small font-weight-bold txt-subtle">Giacenza</h3>
+      </div>
+      <div class="flex gap flex-wrap">
+        <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
+          <span class="txt-x-large font-weight-black txt-accent"><%= @libro.giacenza.carichi.to_i %></span>
+          <span class="txt-xx-small txt-subtle">Carichi</span>
+        </div>
+        <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
+          <span class="txt-x-large font-weight-black txt-negative"><%= @libro.giacenza.ordini.to_i %></span>
+          <span class="txt-xx-small txt-subtle">Ordini</span>
+        </div>
+        <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
+          <span class="txt-x-large font-weight-black txt-link"><%= @libro.giacenza.vendite.to_i %></span>
+          <span class="txt-xx-small txt-subtle">Vendite</span>
+        </div>
+      </div>
+    </article>
+  <% end %>
+
+</div>

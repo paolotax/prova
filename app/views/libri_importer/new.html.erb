@@ -49,38 +49,6 @@
       </p>
     </article>
 
-    <%# Importa da A.I.E. %>
-    <article class="panel shadow">
-      <div class="flex align-center gap margin-block-end">
-        <%= icon_tag "arrow-down-tray", class: "txt-large" %>
-        <div>
-          <h2 class="txt-medium font-weight-black margin-none">Importa da A.I.E.</h2>
-          <p class="txt-x-small txt-subtle margin-none">Dati ministeriali dal database A.I.E.</p>
-        </div>
-      </div>
-
-      <%= form_with url: import_ministeriali_libri_importer_index_path, method: :post,
-          html: { class: "flex flex-column gap-half" } do |f| %>
-        <div class="txt-x-small">
-          <p class="margin-none margin-block-end-half font-weight-bold">Cosa verrà importato:</p>
-          <ul class="flex flex-column gap-quarter" style="list-style: none; padding: 0; margin: 0;">
-            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Catalogo completo dei libri</li>
-            <li><%= icon_tag "check", class: "icon--small txt-positive" %> ISBN e codici ministeriali</li>
-            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Prezzi aggiornati</li>
-            <li><%= icon_tag "check", class: "icon--small txt-positive" %> Informazioni editoriali</li>
-          </ul>
-        </div>
-        <button type="submit" class="btn btn--link">
-          <%= icon_tag "arrow-down-tray" %>
-          <span>Avvia importazione A.I.E.</span>
-        </button>
-      <% end %>
-
-      <p class="txt-xx-small txt-subtle margin-block-start border-top pad-block-start-half margin-none">
-        L'importazione può richiedere alcuni minuti.
-      </p>
-    </article>
-
     <div class="flex gap flex-wrap">
       <%# Importa Confezioni %>
       <article class="panel shadow" style="flex: 1; min-width: 25ch;">

@@ -47,6 +47,9 @@ class UpdateMieAdozioniJob < ApplicationJob
       ActiveRecord::Base.sanitize_sql([sql_disdetta, account_id: account.id])
     )
 
+    # Auto-create Libri for mie adozioni da_acquistare
+    create_and_link_libri(account)
+
     # Update sezioni_count on each mandato
     update_sezioni_counts(account)
 
@@ -54,6 +57,96 @@ class UpdateMieAdozioniJob < ApplicationJob
   end
 
   private
+
+  def create_and_link_libri(account)
+    owner = account.owner
+    return unless owner
+
+    categoria = Categoria.find_or_create_by!(nome_categoria: "Scolastica", user_id: owner.id)
+
+    # Find ISBNs with mia+da_acquistare adozioni that have no matching Libro
+    orphan_isbns = account.adozioni
+      .where(mia: true, da_acquistare: true)
+      .where(libro_id: nil)
+      .where.not(codice_isbn: account.libri.select(:codice_isbn))
+      .select(:codice_isbn)
+      .distinct
+      .pluck(:codice_isbn)
+
+    orphan_isbns.each do |isbn|
+      adozione = account.adozioni.where(codice_isbn: isbn, mia: true).first
+      next unless adozione
+
+      editore = Editore.find_by(editore: adozione.editore)
+
+      begin
+        Libro.create!(
+          codice_isbn: isbn,
+          titolo: adozione.titolo.presence || isbn,
+          prezzo_in_cents: adozione.prezzo_cents || 0,
+          disciplina: adozione.disciplina,
+          editore: editore,
+          categoria: categoria,
+          user_id: owner.id,
+          account_id: account.id
+        )
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.warn "CreateLibro skip ISBN #{isbn}: #{e.message}"
+      end
+    end
+
+    # Link all mia adozioni to their Libri by codice_isbn
+    sql_link = <<~SQL
+      UPDATE adozioni SET libro_id = libri.id
+      FROM libri
+      WHERE adozioni.account_id = :account_id
+        AND adozioni.mia = true
+        AND adozioni.codice_isbn = libri.codice_isbn
+        AND libri.account_id = :account_id
+        AND (adozioni.libro_id IS NULL OR adozioni.libro_id != libri.id)
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([sql_link, account_id: account.id])
+    )
+
+    # Update adozioni_count on libri
+    sql_count = <<~SQL
+      UPDATE libri SET adozioni_count = sub.cnt
+      FROM (
+        SELECT a.libro_id, COUNT(*) as cnt
+        FROM adozioni a
+        WHERE a.account_id = :account_id
+          AND a.libro_id IS NOT NULL
+          AND a.mia = true
+          AND a.da_acquistare = true
+        GROUP BY a.libro_id
+      ) sub
+      WHERE libri.id = sub.libro_id
+        AND libri.account_id = :account_id
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([sql_count, account_id: account.id])
+    )
+
+    # Reset count for libri with no matching adozioni
+    sql_reset = <<~SQL
+      UPDATE libri SET adozioni_count = 0
+      WHERE libri.account_id = :account_id
+        AND libri.id NOT IN (
+          SELECT DISTINCT a.libro_id FROM adozioni a
+          WHERE a.account_id = :account_id
+            AND a.libro_id IS NOT NULL
+            AND a.mia = true
+            AND a.da_acquistare = true
+        )
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([sql_reset, account_id: account.id])
+    )
+  end
 
   def update_sezioni_counts(account)
     # Reset all counts

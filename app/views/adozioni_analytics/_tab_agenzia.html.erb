@@ -37,7 +37,7 @@
         <tbody>
           <% adozioni.each do |row| %>
             <tr>
-              <td><%= row.titolo&.titleize %></td>
+              <td><%= link_to row.titolo&.titleize, titolo_path(codice_isbn: row.codice_isbn), class: "txt-link" %></td>
               <td class="txt-subtle"><%= row.editore %></td>
               <td class="analytics-table__right font-weight-bold"><%= row.sezioni_count %></td>
               <td class="analytics-table__right"><%= row.copie_stimate %></td>
