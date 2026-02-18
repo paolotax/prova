@@ -1,7 +1,7 @@
 <%= render Email::Bg::Container.new do |email| %>
   <% email.with_masthead_text(text: "ScagnoZZ", href: "https://scagnozz.com") %>
   <%= render Email::Heading.new(
-    text: "Estensione WhatsApp → ScagnoZZ",
+    text: "Estensione WhatsApp Web → ScagnoZZ",
     size: "26px",
     align: "center",
     margin: "20px auto 30px auto"
@@ -11,7 +11,7 @@
     Ciao <b><%= @user.name %></b>,
   <% end %>
   <%= render Email::Text.new do %>
-    in allegato trovi l'estensione Chrome <b>WhatsApp → ScagnoZZ</b> che ti permette di salvare appunti direttamente dalle chat di WhatsApp.
+    in allegato trovi l'estensione Chrome <b>WhatsApp Web → ScagnoZZ</b> che ti permette di salvare appunti direttamente dalle chat di WhatsApp Web.
   <% end %>
   <%= render Email::Text.new do %>
     Scarica e decomprimi il file <b>zip</b> allegato. All'interno troverai il file <b>GUIDA-INSTALLAZIONE.html</b> con tutte le istruzioni passo passo.
