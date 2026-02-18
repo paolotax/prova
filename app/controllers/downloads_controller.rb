@@ -1,5 +1,5 @@
 class DownloadsController < ApplicationController
-  skip_before_action :authenticate, only: :extension
+  skip_before_action :authenticate_user!, only: :extension
 
   def extension
     send_file Rails.root.join("lib", "assets", "whatsapp-scagnozz-extension.zip"),
