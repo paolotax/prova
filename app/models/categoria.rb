@@ -14,7 +14,7 @@
 #
 #  index_categorie_on_account_id                  (account_id)
 #  index_categorie_on_user_id                     (user_id)
-#  index_categorie_on_user_id_and_nome_categoria  (user_id,nome_categoria) UNIQUE
+#  index_categorie_on_user_id_and_nome_categoria  (user_id, lower(TRIM(BOTH FROM nome_categoria))) UNIQUE
 #
 # Foreign Keys
 #
@@ -25,13 +25,27 @@
 class Categoria < ApplicationRecord
   include AccountScoped
 
+  DEFAULT_NAME = "non classificato"
+
   belongs_to :user
 
   has_many :libri, dependent: :restrict_with_error
   has_many :sconti, dependent: :destroy
 
-  validates :nome_categoria, presence: true, uniqueness: { scope: :user_id }
+  validates :nome_categoria, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
   validates :user_id, presence: true
+
+  before_validation :normalize_nome
+
+  # Trova o crea una categoria normalizzata per l'utente.
+  # Se nome è blank, ritorna la categoria default "non classificato".
+  def self.resolve(nome, user:, account:)
+    nome = nome.to_s.downcase.strip
+    nome = DEFAULT_NAME if nome.blank?
+
+    cat = where(user_id: user.id).where("LOWER(TRIM(nome_categoria)) = ?", nome).first
+    cat || create!(nome_categoria: nome, user: user, account_id: account.id)
+  end
 
   def to_s
     nome_categoria
@@ -39,5 +53,11 @@ class Categoria < ApplicationRecord
 
   def to_combobox_display
     nome_categoria
+  end
+
+  private
+
+  def normalize_nome
+    self.nome_categoria = nome_categoria.to_s.downcase.strip if nome_categoria.present?
   end
 end

@@ -152,7 +152,7 @@ class DocumentiImporter
       # Se il libro non esiste, crealo con dati minimi
       unless libro
         titolo = row_data[:titolo] || row_data[:descrizione] || "Libro #{codice}"
-        categoria = Categoria.find_or_create_by(nome_categoria: "Da completare", user_id: Current.user.id)
+        categoria = Categoria.resolve(nil, user: Current.user, account: Current.account)
 
         libro = Current.user.libri.create(
           codice_isbn: codice,

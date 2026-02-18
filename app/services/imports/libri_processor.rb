@@ -18,6 +18,7 @@ module Imports
       user_id = @user.id
 
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      libro.account_id ||= @account.id if @account
       libro.codice_isbn = codice_isbn if codice_isbn.present?
 
       titolo = row[:titolo] || row[:descrizione]
@@ -41,11 +42,10 @@ module Imports
       # Handle categoria
       # Non sovrascrivere la categoria di libri esistenti che ne hanno già una
       if row[:categoria].present?
-        categoria = Categoria.find_or_create_by(nome_categoria: row[:categoria], user_id: user_id)
+        categoria = Categoria.resolve(row[:categoria], user: @user, account: @account)
         libro.categoria = categoria if libro.new_record? || libro.categoria.nil?
       elsif libro.new_record? && libro.categoria.nil?
-        categoria = Categoria.find_or_create_by(nome_categoria: "<nessuna>", user_id: user_id)
-        libro.categoria = categoria
+        libro.categoria = Categoria.resolve(nil, user: @user, account: @account)
       end
 
       libro

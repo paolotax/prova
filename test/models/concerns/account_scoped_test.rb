@@ -87,7 +87,7 @@ class AccountScopedTest < ActiveSupport::TestCase
     Current.account = nil
     libro = Libro.new(
       user: @user,
-      categoria: categorie(:scolastica),
+      categoria: categorie(:ministeriali),
       titolo: "Test Libro"
     )
 
@@ -98,7 +98,7 @@ class AccountScopedTest < ActiveSupport::TestCase
   test "libro sets account from Current on create" do
     libro = Libro.new(
       user: @user,
-      categoria: categorie(:scolastica),
+      categoria: categorie(:ministeriali),
       titolo: "Test Libro"
     )
     libro.valid? # triggers before_validation callback

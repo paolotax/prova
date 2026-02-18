@@ -159,7 +159,7 @@ module Imports
       return libro if libro
 
       titolo = row[:titolo] || row[:descrizione] || "Libro #{codice}"
-      categoria = Categoria.find_or_create_by(nome_categoria: "Da completare", user_id: @user.id)
+      categoria = Categoria.resolve(nil, user: @user, account: @account)
 
       libro = @user.libri.create(
         codice_isbn: codice,

@@ -6,9 +6,10 @@ module Imports
 
     attr_reader :imported_count, :updated_count, :errors_count, :created_count, :errors
 
-    def initialize(file, user, metadata: nil)
+    def initialize(file, user, metadata: nil, account: nil)
       @file = file
       @user = user
+      @account = account
       @metadata = metadata || {}
       @imported_count = 0
       @updated_count = 0

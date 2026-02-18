@@ -62,7 +62,7 @@ class UpdateMieAdozioniJob < ApplicationJob
     owner = account.owner
     return unless owner
 
-    categoria = Categoria.find_or_create_by!(nome_categoria: "Scolastica", user_id: owner.id)
+    categoria = Categoria.resolve("ministeriali", user: owner, account: account)
 
     # Find ISBNs with mia+da_acquistare adozioni that have no matching Libro
     orphan_isbns = account.adozioni

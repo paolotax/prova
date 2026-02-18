@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_081429) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_111043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -315,8 +315,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_081429) do
     t.string "nome_categoria", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index "user_id, lower(TRIM(BOTH FROM nome_categoria))", name: "index_categorie_on_user_id_and_nome_categoria", unique: true
     t.index ["account_id"], name: "index_categorie_on_account_id"
-    t.index ["user_id", "nome_categoria"], name: "index_categorie_on_user_id_and_nome_categoria", unique: true
     t.index ["user_id"], name: "index_categorie_on_user_id"
   end
 

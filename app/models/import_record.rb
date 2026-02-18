@@ -56,7 +56,7 @@ class ImportRecord < ApplicationRecord
   def process!
     update!(status: :processing, started_at: Time.current)
 
-    result = processor_class.new(file, user, metadata: metadata).call
+    result = processor_class.new(file, user, metadata: metadata, account: account).call
 
     update!(
       status: result.success? ? :completed : :failed,

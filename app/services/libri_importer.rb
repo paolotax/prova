@@ -159,6 +159,7 @@ class LibriImporter
       user_id = Current.user.id
 
       libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
+      libro.account_id ||= Current.account.id
       libro.codice_isbn = codice_isbn if codice_isbn.present?
 
       titolo = row[:titolo] || row["titolo"] || row[:descrizione] || row["descrizione"]
@@ -196,13 +197,12 @@ class LibriImporter
 
       # Gestione categoria (dopo il loop per evitare conflitti)
       # Non sovrascrivere la categoria di libri esistenti che ne hanno già una
-      if row[:categoria].present? || row["categoria"].present?
-        nome_categoria = row[:categoria] || row["categoria"]
-        categoria = Categoria.find_or_create_by(nome_categoria: nome_categoria, user_id: user_id)
+      nome_categoria = row[:categoria] || row["categoria"]
+      if nome_categoria.present?
+        categoria = Categoria.resolve(nome_categoria, user: Current.user, account: Current.account)
         libro.categoria = categoria if libro.new_record? || libro.categoria.nil?
       elsif libro.new_record? && libro.categoria.nil?
-        categoria = Categoria.find_or_create_by(nome_categoria: "<nessuna>", user_id: user_id)
-        libro.categoria = categoria
+        libro.categoria = Categoria.resolve(nil, user: Current.user, account: Current.account)
       end
 
       libro

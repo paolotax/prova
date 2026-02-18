@@ -24,7 +24,7 @@ class ImportsController < ApplicationController
 
     if @import.save
       ImportProcessJob.perform_later(@import.id)
-      redirect_to @import, notice: "Import avviato. Verrai notificato al completamento."
+      redirect_to import_path(@import), notice: "Import avviato. Verrai notificato al completamento."
     else
       @import_form_type = @import.import_type || "libri"
       render :new, status: :unprocessable_entity
