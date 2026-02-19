@@ -34,13 +34,14 @@ module Filters
       if terms.present?
         # PgSearch non è compatibile con DISTINCT, quindi usiamo una subquery
         ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
-        result = target_account.libri.where(id: ids).includes(:editore, :categoria)
+        result = target_account.libri.where(id: ids)
       end
 
       result = result.joins(:categoria).where("categorie.nome_categoria in (?)", categorie) if categorie.present?
       result = result.joins(:editore).where("editori.editore in (?)", editori) if editori.present?
       result = result.where(disciplina: discipline) if discipline.present?
       result = result.where(classe: classi) if classi.present?
+      result = result.includes(:editore, :categoria, edizione_titolo: { copertina_attachment: :blob })
       result = result.order(sorted_by.to_s)
       result.distinct
     end

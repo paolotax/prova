@@ -5,9 +5,6 @@
     <%= libro.codice_isbn %>
   </span>
   <span class="card__meta-text">
-    <% if libro.giacenza&.ordini.to_i.positive? %>
-      <span class="txt-negative">Ord: <strong><%= libro.giacenza.ordini %></strong></span>
-    <% end %>
   </span>
   <span class="card__meta-text">
     <% if libro.adozioni_count.positive? %>
