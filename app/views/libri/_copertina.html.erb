@@ -1,8 +1,8 @@
 <%= tag.div id: "libro_copertina_#{libro.id}" do %>
-  <% if libro.edizione_titolo&.copertina&.attached? %>
-    <%= image_tag libro.edizione_titolo.copertina, class: "w-24 sm:w-32 h-32 sm:h-40 object-scale-down rounded-lg", alt: libro.titolo %>
-  <% elsif libro.copertina.attached? %>
-    <%= image_tag libro.copertina, class: "w-24 sm:w-32 h-32 sm:h-40 object-scale-down rounded-lg", alt: libro.titolo %>
+  <% attachment = libro.edizione_titolo ? ActiveStorage::Attachment.find_by(record_type: "EdizioneTitolo", record_id: libro.edizione_titolo.id.to_s, name: "copertina") : nil %>
+  <% attachment ||= ActiveStorage::Attachment.find_by(record_type: "Libro", record_id: libro.id.to_s, name: "copertina") %>
+  <% if attachment %>
+    <%= image_tag attachment.blob, class: "w-24 sm:w-32 h-32 sm:h-40 object-scale-down rounded-lg", alt: libro.titolo %>
   <% else %>
     <%= render DragDropCoverComponent.new(libro: libro) %>
   <% end %>
