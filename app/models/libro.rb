@@ -253,24 +253,13 @@ class Libro < ApplicationRecord
   attr_accessor :skip_copertina_sync
 
   def avatar_url(variant: :thumb)
-    # Query attachments directly with .to_s to avoid varchar/bigint type mismatch
-    # (active_storage_attachments.record_id is varchar for UUID support)
-    attachment = if edizione_titolo
-                   ActiveStorage::Attachment.find_by(
-                     record_type: "EdizioneTitolo",
-                     record_id: edizione_titolo.id.to_s,
-                     name: "copertina"
-                   )
-                 end
+    blob = if edizione_titolo&.copertina&.attached?
+             edizione_titolo.copertina
+           elsif copertina.attached?
+             copertina
+           end
 
-    attachment ||= ActiveStorage::Attachment.find_by(
-      record_type: "Libro",
-      record_id: id.to_s,
-      name: "copertina"
-    )
-
-    if attachment
-      blob = attachment.blob
+    if blob
       case variant
       when :thumb then blob.variant(resize_to_limit: [200, 267])
       when :medium then blob.variant(resize_to_limit: [400, 533])
