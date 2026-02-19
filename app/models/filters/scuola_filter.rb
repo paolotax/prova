@@ -29,12 +29,12 @@ module Filters
 
     def scuole
       base_scope = Current.scuole
-      result = base_scope.includes(:classi, :appunti)
+      result = base_scope.includes(:import_scuola, :appunti, classi: :adozioni)
 
       if terms.present?
         # PgSearch non è compatibile con DISTINCT, quindi usiamo una subquery
         ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
-        result = base_scope.where(id: ids).includes(:classi, :appunti)
+        result = base_scope.where(id: ids).includes(:import_scuola, :appunti, classi: :adozioni)
       end
 
       result = result.where(comune: comuni) if comuni.present?

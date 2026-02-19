@@ -11,15 +11,15 @@
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--author">    
+  <span class="card__meta-text card__meta-text--author">
     <% if scuola.import_scuola&.DENOMINAZIONEISTITUTORIFERIMENTO.present? %>
       <span><%= scuola.import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO.titleize %></span>
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    <% if scuola.classi.any? %>
-      <span class="txt-positive"><strong><%= scuola.classi.count %></strong> classi</span>
+    <% if scuola.classi.size > 0 %>
+      <span class="txt-positive"><strong><%= scuola.classi.size %></strong> classi</span>
     <% else %>
       &nbsp;
     <% end %>
@@ -40,7 +40,7 @@
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
-    <% mie_count = Adozione.where(classe_id: scuola.classi.select(:id), mia: true, da_acquistare: true).count %>
+    <% mie_count = scuola.classi.flat_map(&:adozioni).count { |a| a.mia? && a.da_acquistare? } %>
     <% if mie_count > 0 %>
       <strong><%= mie_count %></strong> mie adozioni
     <% else %>
