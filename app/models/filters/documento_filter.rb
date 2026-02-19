@@ -33,7 +33,9 @@ module Filters
         .solo_padri
         .joins("left outer join scuole on documenti.clientable_type = 'Scuola' and documenti.clientable_id = scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
-        .includes(:causale, :righe, documento_righe: [riga: :libro])
+        .includes(:causale, :clientable, :consegna, :pagamento, :righe,
+                  entry: [:column, :goldness, :closure, :not_now],
+                  documento_righe: [riga: :libro])
 
       # Scoping per membership: member vede solo documenti delle sue scuole
       unless Current.admin?
