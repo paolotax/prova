@@ -31,7 +31,10 @@
                   data-action="click->collapsible-columns#toggle"
                   aria-expanded="false">
             <span class="cards__expander-count" data-drag-and-drop-counter><%= postponed_count %></span>
-            <h3 class="cards__expander-title" data-collapsible-columns-target="title">Rimandati</h3>
+            <h3 class="cards__expander-title" data-collapsible-columns-target="title">
+              Rimandati
+              <%= icon_tag "collapse" %>
+            </h3>
           </button>
         </header>
         <%= turbo_frame_tag :postponed_column, src: dashboard_columns_postponed_path,  data: { drag_and_drop_refresh: true } %>
@@ -101,7 +104,10 @@
                   data-action="click->collapsible-columns#toggle"
                   aria-expanded="false">
             <span class="cards__expander-count" data-drag-and-drop-counter><%= closed_count %></span>
-            <h3 class="cards__expander-title" data-collapsible-columns-target="title">Chiusi</h3>
+            <h3 class="cards__expander-title" data-collapsible-columns-target="title">
+              Chiusi
+              <%= icon_tag "collapse" %>
+            </h3>
           </button>
         </header>
         <%= turbo_frame_tag :closed_column, src: dashboard_columns_closed_path,  data: { drag_and_drop_refresh: true } %>
