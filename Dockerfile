@@ -55,6 +55,7 @@ RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     ffmpeg \
     ghostscript \
     libpq5 \
+    libvips \
     poppler-utils \
     postgresql-client \
     tesseract-ocr \
