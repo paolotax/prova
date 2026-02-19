@@ -27,6 +27,10 @@
                 navigable_list_target: "input",
                 action: "input->form#debouncedSubmit" } %>
       <% end %>
+      <button type="button" class="btn btn--plain bar__search-close show-on-touch" data-action="dialog#close">
+        <%= icon_tag "close" %>
+        <span class="for-screen-reader">Chiudi</span>
+      </button>
     </div>
 
     <div class="nav__scroll-container">

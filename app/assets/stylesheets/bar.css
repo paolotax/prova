@@ -96,8 +96,17 @@
   }
 
   .bar__search-header {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
     padding: var(--block-space);
     border-block-end: 1px solid var(--color-ink-lighter);
+
+    input { flex: 1; }
+
+    .bar__search-close {
+      flex-shrink: 0;
+    }
   }
 
   .bar__search .nav__scroll-container:has(.popup__section) .blank-slate--empty {
