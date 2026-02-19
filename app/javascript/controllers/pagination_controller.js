@@ -28,12 +28,7 @@ export default class extends Controller {
     await delay(DELAY_BEFORE_OBSERVING)
 
     if (this.paginateOnIntersectionValue) {
-      // Use the element as root if it has overflow scrolling, otherwise use viewport
-      const hasOverflowScroll = window.getComputedStyle(this.element).overflowY === "auto" ||
-                                window.getComputedStyle(this.element).overflowY === "scroll"
-      const root = hasOverflowScroll ? this.element : null
-
-      this.observer = new IntersectionObserver(this.#intersect, { root, rootMargin: "300px", threshold: 0 })
+      this.observer = new IntersectionObserver(this.#intersect, { rootMargin: "300px", threshold: 1 })
     }
   }
 
@@ -53,7 +48,7 @@ export default class extends Controller {
   // Private
 
   #intersect = ([ entry ]) => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && entry.intersectionRatio === 1) {
       this.#loadPaginationLink(entry.target)
     }
   }
@@ -69,7 +64,7 @@ export default class extends Controller {
   }
 
   async #expandPaginationLink(linkElement) {
-    linkElement.setAttribute("aria-busy", "true")
+    const spinner = this.#insertSpinnerAfter(linkElement)
 
     if (this.discardFrameValue) {
       await this.#replacePaginationLinkWithFrameContents(linkElement)
@@ -77,7 +72,7 @@ export default class extends Controller {
       await this.#replacePaginationLinkWithFrame(linkElement)
     }
 
-    linkElement.removeAttribute("aria-busy")
+    spinner.remove()
   }
 
   async #replacePaginationLinkWithFrameContents(linkElement) {
@@ -92,9 +87,10 @@ export default class extends Controller {
     return element ? element.innerHTML.trim() : ""
   }
 
-  #replacePaginationLinkWithFrame(linkElement) {
+  async #replacePaginationLinkWithFrame(linkElement) {
     const turboFrame = this.#buildTurboFrameFor(linkElement)
     this.#insertTurboFrameAtPosition(linkElement, turboFrame)
+    await nextEvent(turboFrame, "turbo:frame-render")
   }
 
   #buildTurboFrameFor(linkElement) {
@@ -114,6 +110,14 @@ export default class extends Controller {
     await nextEvent(turboFrame, "turbo:before-frame-render")
 
     keepingScrollPosition(linkElement, nextEvent(turboFrame, "turbo:frame-render"))
+  }
+
+  #insertSpinnerAfter(linkElement) {
+    const spinner = document.createElement("div")
+    spinner.className = "pagination-spinner"
+    spinner.innerHTML = '<span class="spinner"></span>'
+    linkElement.after(spinner)
+    return spinner
   }
 
   #insertTurboFrameAtPosition(linkElement, turboFrame) {
