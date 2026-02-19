@@ -8,5 +8,6 @@ class Dashboard::Columns::PostponedsController < ApplicationController
                                                       .includes(:goldness, :closure, :not_now)
                                                       .with_golden_first
                                                       .recent
+    Entry.load_entryables(@page.records)
   end
 end

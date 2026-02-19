@@ -16,6 +16,7 @@ class DashboardController < ApplicationController
                               .recent
       @total_count = filtered_scope.count
       set_page_and_extract_portion_from filtered_scope
+      Entry.load_entryables(@page.records)
       render :filtered_results
     else
       # Kanban normale
@@ -27,6 +28,7 @@ class DashboardController < ApplicationController
                                         .recent
       @total_count = awaiting_triage_scope.count
       set_page_and_extract_portion_from awaiting_triage_scope
+      Entry.load_entryables(@page.records)
 
       # Counts only - entries are lazy loaded via turbo frames
       @postponed_count = base_scope.postponed.count

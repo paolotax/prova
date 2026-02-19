@@ -8,5 +8,6 @@ class Dashboard::Columns::ClosedsController < ApplicationController
                                                       .includes(:goldness, :closure, :not_now)
                                                       .with_golden_first
                                                       .recently_closed_first
+    Entry.load_entryables(@page.records)
   end
 end
