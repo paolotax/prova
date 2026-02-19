@@ -70,6 +70,23 @@
     &[open] {
       transform: none;
     }
+
+    @media (any-hover: none) {
+      inline-size: 100vw;
+      max-inline-size: 100vw;
+      max-block-size: 85dvh;
+      border-radius: 0;
+      margin-inline: 0;
+
+      .popup__btn {
+        padding-block: var(--inline-space);
+        font-size: var(--text-small);
+      }
+
+      .bar__search-header {
+        padding: var(--inline-space);
+      }
+    }
   }
 
   .bar__search-header {
