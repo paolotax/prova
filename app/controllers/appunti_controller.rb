@@ -9,7 +9,6 @@ class AppuntiController < ApplicationController
 
   def index
     @appunti = @filter.appunti.published
-                      .includes(:appuntabile, entry: [:column, :goldness, :closure, :not_now])
                       .with_attached_attachments
                       .with_attached_image
                       .with_rich_text_content

@@ -131,7 +131,8 @@ class Entry < ApplicationRecord
     loaded = {}
     {
       "Appunto"   => ->(ids) { Appunto.where(id: ids).includes(:appuntabile, :consegna, righe: :libro) },
-      "Documento" => ->(ids) { Documento.where(id: ids).includes(:causale, :clientable, :consegna, :pagamento, righe: :libro) }
+      "Documento" => ->(ids) { Documento.where(id: ids).includes(:causale, :clientable, :consegna, :pagamento, righe: :libro) },
+      "Tappa"     => ->(ids) { Tappa.where(id: ids).includes(:giri) }
     }.each do |type, loader|
       next unless by_type[type]
       loader.call(by_type[type].map(&:entryable_id)).each { |r| loaded[r.id.to_s] = r }

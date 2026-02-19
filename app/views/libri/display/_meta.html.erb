@@ -5,8 +5,6 @@
     <%= libro.codice_isbn %>
   </span>
   <span class="card__meta-text">
-  </span>
-  <span class="card__meta-text">
     <% if libro.adozioni_count.positive? %>
       <span class="txt-positive">Adoz: <strong><%= libro.adozioni_count %></strong></span>
     <% end %>

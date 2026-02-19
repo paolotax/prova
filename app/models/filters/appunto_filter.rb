@@ -79,7 +79,7 @@ module Filters
         result = result.where(appuntabile_type: appuntabile_type)
       end
 
-      result
+      result.includes(:appuntabile, entry: [:column, :goldness, :closure, :not_now])
     end
 
     alias_method :results, :appunti
