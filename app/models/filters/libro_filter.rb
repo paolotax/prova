@@ -41,7 +41,7 @@ module Filters
       result = result.joins(:editore).where("editori.editore in (?)", editori) if editori.present?
       result = result.where(disciplina: discipline) if discipline.present?
       result = result.where(classe: classi) if classi.present?
-      result = result.includes(:editore, :categoria, edizione_titolo: { copertina_attachment: :blob })
+      result = result.includes(:editore, :categoria).preload(edizione_titolo: { copertina_attachment: :blob })
       result = result.order(sorted_by.to_s)
       result.distinct
     end
