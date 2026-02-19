@@ -10,9 +10,12 @@
     filter_type: "entry_filter" %>
 
 <%= turbo_frame_tag :search_results do %>
-  <%= render "shared/kanban_board",
+  <div id="cards_container">
+    <%= render "shared/board_tools" %>
+    <%= render "shared/kanban_board",
       columns: @columns,
       column_counts: @column_counts,
       postponed_count: @postponed_count,
       closed_count: @closed_count %>
+  </div>
 <% end %>

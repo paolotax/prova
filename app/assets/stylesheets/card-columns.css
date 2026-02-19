@@ -17,7 +17,8 @@
       #main {
         display: grid;
         grid-template-rows: auto auto 1fr;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: clip;
         padding: 0;
       }
 

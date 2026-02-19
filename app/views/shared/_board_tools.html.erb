@@ -1,0 +1,13 @@
+<div class="board-tools card">
+  <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+    <%= icon_tag "document" %>
+    <span>Documento</span>
+    <kbd  class="hide-on-touch">D</span>
+  <% end %>
+
+  <%= link_to new_appunto_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+    <%= icon_tag "note" %>
+    <span>Appunto</span>
+    <kbd  class="hide-on-touch">A</span>
+  <% end %>
+</div>
