@@ -15,7 +15,7 @@ export default class extends Controller {
   }
 
   open() {
-    const modal = this.modalValue
+    const modal = this.modalValue || this.#isTouchDevice
 
     if (modal) {
       this.dialogTarget.showModal()
@@ -63,5 +63,9 @@ export default class extends Controller {
 
   captureKey(event) {
     if (event.key !== "Escape") { event.stopPropagation() }
+  }
+
+  get #isTouchDevice() {
+    return !window.matchMedia("(any-hover: hover)").matches
   }
 }
