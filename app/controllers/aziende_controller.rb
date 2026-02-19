@@ -1,6 +1,7 @@
 class AziendeController < ApplicationController
   before_action :authenticate_user!
   before_action :set_azienda
+  before_action :require_admin, only: [:new, :create, :edit, :update]
 
   def show
     redirect_to new_azienda_path if @azienda.nil?
@@ -45,6 +46,12 @@ class AziendeController < ApplicationController
 
   def set_azienda
     @azienda = Current.account.azienda
+  end
+
+  def require_admin
+    unless Current.admin?
+      redirect_to account_root_path, alert: "Accesso non autorizzato"
+    end
   end
 
   def azienda_params

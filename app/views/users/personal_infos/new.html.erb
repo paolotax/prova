@@ -1,8 +1,10 @@
-<div class="container pad-block">
-  <div class="margin-block-end">
-    <h1 class="txt-x-large font-weight-black">Aggiungi Informazioni Personali</h1>
-    <p class="txt-small txt-subtle margin-block-start-half">Inserisci i tuoi dati personali.</p>
-  </div>
+<% @page_title = "Informazioni Personali" %>
 
-  <%= render "form", personal_info: @personal_info %>
+<div class="profile-layout">
+  <section class="panel shadow center" style="--panel-size: 55ch;">
+    <strong class="divider divider--fade txt-large">Informazioni Personali</strong>
+    <p class="txt-small txt-subtle">Inserisci i tuoi dati personali.</p>
+
+    <%= render "form", personal_info: @personal_info %>
+  </section>
 </div>

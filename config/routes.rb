@@ -122,7 +122,7 @@ Rails.application.routes.draw do
     end
 
     # Dati aziendali (singular resource - one per account)
-    resources :aziende
+    resource :azienda, only: [:show, :new, :create, :edit, :update]
 
     # Chats
     resources :chats do

@@ -19,10 +19,11 @@
       <div class="align-center center avatar__form gap">
         <span class="btn btn--placeholder txt-small"></span>
 
-        <label class="avatar btn btn--circle input--file txt-xx-large center fill-white">
+        <label class="avatar btn btn--circle input--file txt-xx-large center fill-white avatar--editable">
           <%= image_tag user_avatar_path(@user), aria: { hidden: "true" }, class: "avatar", size: 128, data: { upload_preview_target: "image" } %>
           <%= form.file_field :avatar, id: "file", class: "input", accept: User::Avatar::ALLOWED_AVATAR_CONTENT_TYPES.join(","),
                 data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+          <span class="avatar__edit-badge"><%= icon_tag "camera", size: "small" %></span>
           <span class="for-screen-reader">Profile avatar for <%= @user.name %></span>
         </label>
 
@@ -84,7 +85,7 @@
   </section>
 
   <button type="submit" id="log_in" class="btn btn--reversed center" data-form-target="submit">
-    <span>Salvamodifiche</span>
+    <span>Salva modifiche</span>
   </button>
 
   <%= link_to "Annulla", user_personal_info_path(@user), data: { form_target: "cancel", turbo_frame: "_top" }, hidden: true %>

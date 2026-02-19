@@ -69,6 +69,29 @@
         </div>
       </dl>
 
+      <strong class="divider txt-large">Estensione WhatsApp</strong>
+
+      <p class="txt-small">
+        Con l'estensione per Chrome puoi creare appunti su Scagnozz
+        direttamente da WhatsApp Web: seleziona un messaggio, clicca il
+        pulsante e l'appunto viene creato con il testo e il contatto.
+      </p>
+      <p class="txt-small txt-subtle">
+        Per collegare l'estensione al tuo account serve un <strong>token di accesso</strong>.
+      </p>
+
+      <div class="flex f-align-center gap">
+        <%= link_to access_tokens_path, class: "btn btn--reversed" do %>
+          <%= icon_tag "key" %>
+          <span>Gestisci token</span>
+        <% end %>
+
+        <%= link_to download_extension_path, class: "btn" do %>
+          <%= icon_tag "download" %>
+          <span>Scarica estensione (.zip)</span>
+        <% end %>
+      </div>
+
     </section>
   <% end %>
 </div>

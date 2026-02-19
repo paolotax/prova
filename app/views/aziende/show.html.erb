@@ -2,12 +2,14 @@
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">Dati aziendali</h1>
-  <div class="header__actions header__actions--end">
-    <%= link_to edit_azienda_path(@azienda), class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
-      <%= icon_tag "pencil" %>
-      <span class="for-screen-reader">Modifica azienda</span>
-    <% end %>
-  </div>
+  <% if Current.admin? %>
+    <div class="header__actions header__actions--end">
+      <%= link_to edit_azienda_path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
+        <%= icon_tag "pencil" %>
+        <span class="for-screen-reader">Modifica azienda</span>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
 <div class="profile-layout">
