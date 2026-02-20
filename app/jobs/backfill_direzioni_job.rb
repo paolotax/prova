@@ -1,5 +1,5 @@
 class BackfillDirezioniJob < ApplicationJob
-  queue_as :default
+  queue_as :bulk
 
   def perform
     Account.find_each do |account|

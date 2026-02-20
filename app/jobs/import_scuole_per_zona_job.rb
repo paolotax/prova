@@ -1,5 +1,5 @@
 class ImportScuolePerZonaJob < ApplicationJob
-  queue_as :default
+  queue_as :bulk
   discard_on ActiveJob::DeserializationError
 
   include ActionView::RecordIdentifier
