@@ -13,12 +13,31 @@ module Filters
       expanded || filters_active?
     end
 
+    def province_disponibili
+      @province_disponibili ||= user.accounts.first.scuole.distinct.pluck(:provincia).compact.sort
+    end
+
+    def show_province?
+      filter.province.any?
+    end
+
     def comuni_disponibili
-      @comuni_disponibili ||= user.accounts.first.scuole.distinct.pluck(:comune).compact.sort
+      @comuni_disponibili ||= begin
+        scope = user.accounts.first.scuole
+        scope = scope.where(provincia: filter.province) if filter.province.present?
+        scope.distinct.pluck(:comune).compact.sort
+      end
     end
 
     def show_comuni?
       filter.comuni.any?
+    end
+
+    def provincia_per_comune
+      @provincia_per_comune ||= user.accounts.first.scuole
+        .where.not(comune: nil, provincia: nil)
+        .distinct.pluck(:comune, :provincia)
+        .to_h
     end
 
     def tipi_scuola_disponibili
@@ -31,6 +50,7 @@ module Filters
 
     def filters_active?
       filter.terms.present? ||
+      filter.province.present? ||
       filter.comuni.present? ||
       filter.tipi_scuola.present? ||
       filter.con_appunti? ||
@@ -39,7 +59,7 @@ module Filters
     end
 
     def controls
-      %w[ordinamento tipi_scuola comuni con_appunti con_adozioni_mie]
+      %w[ordinamento tipi_scuola province comuni con_appunti con_adozioni_mie]
     end
 
     def cache_key

@@ -4,7 +4,7 @@ module Filters
       extend ActiveSupport::Concern
 
       def summary
-        parts = [terms_summary, tipi_scuola_summary, comuni_summary, appunti_summary, adozioni_summary, sort_summary].compact
+        parts = [terms_summary, tipi_scuola_summary, province_summary, comuni_summary, appunti_summary, adozioni_summary, sort_summary].compact
         parts.any? ? parts.to_sentence : "Tutte le scuole"
       end
 
@@ -19,6 +19,12 @@ module Filters
       def tipi_scuola_summary
         if tipi_scuola.any?
           tipi_scuola.count == 1 ? tipi_scuola.first : "#{tipi_scuola.count} tipi scuola"
+        end
+      end
+
+      def province_summary
+        if province.any?
+          province.count == 1 ? province.first : "#{province.count} province"
         end
       end
 

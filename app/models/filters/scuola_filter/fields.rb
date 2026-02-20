@@ -11,6 +11,7 @@ module Filters
         :sorted_by,
         :appunti_filter,
         :adozioni_filter,
+        province: [],
         comuni: [],
         tipi_scuola: [],
         terms: []
@@ -23,7 +24,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :sorted_by, :terms, :comuni, :tipi_scuola, :appunti_filter, :adozioni_filter
+        store_accessor :fields, :sorted_by, :terms, :province, :comuni, :tipi_scuola, :appunti_filter, :adozioni_filter
 
         def sorted_by
           (super || default_sorted_by).inquiry
@@ -34,6 +35,14 @@ module Filters
         end
 
         def terms=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def province
+          Array(super)
+        end
+
+        def province=(value)
           super(Array(value).filter(&:present?))
         end
 
@@ -88,6 +97,7 @@ module Filters
         @as_params ||= {}.tap do |params|
           params[:sorted_by] = sorted_by
           params[:terms] = terms
+          params[:province] = province
           params[:comuni] = comuni
           params[:tipi_scuola] = tipi_scuola
           params[:appunti_filter] = appunti_filter

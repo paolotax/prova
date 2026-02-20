@@ -2,34 +2,33 @@
 
 <%= tag.div class: "quick-filter",
       data: {
-        controller: "dialog filter multi-selection-combobox",
+        controller: "dialog filter multi-selection-combobox province-filter",
         action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput",
-        filter_show: user_filtering.show_comuni?,
-        multi_selection_combobox_no_selection_label_value: "Comune..." } do %>
+        filter_show: user_filtering.show_province?,
+        multi_selection_combobox_no_selection_label_value: "Provincia..." } do %>
   <button type="button" class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#toggle:stop">
     <span class="overflow-ellipsis" data-multi-selection-combobox-target="label"></span>
   </button>
 
   <template data-multi-selection-combobox-target="hiddenFieldTemplate">
-    <%= hidden_field_tag "comuni[]", nil, data: { filter_settings_target: "field" } %>
+    <%= hidden_field_tag "province[]", nil, data: { filter_settings_target: "field" } %>
   </template>
 
-  <%= filter_dialog "Comune..." do %>
-    <strong class="popup__title">Filtra per comune...</strong>
+  <%= filter_dialog "Provincia..." do %>
+    <strong class="popup__title">Filtra per provincia...</strong>
 
-    <% if user_filtering.comuni_disponibili.many? %>
+    <% if user_filtering.province_disponibili.many? %>
       <%= text_field_tag nil, nil, id: nil, placeholder: "Cerca...", class: "input input--transparent txt-small", autofocus: true,
             type: "search", autocorrect: "off", autocomplete: "off", data: { "1p-ignore": "true", filter_target: "input", action: "input->filter#filter" } %>
     <% end %>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
-      <% user_filtering.comuni_disponibili.each do |comune| %>
+      <% user_filtering.province_disponibili.each do |provincia| %>
         <%= content_tag(:li, class: "popup__item", data: {
-              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: comune, multi_selection_combobox_label: comune,
-              provincia: user_filtering.provincia_per_comune[comune] },
-              role: "checkbox", aria: { checked: filter.comuni.include?(comune) }) do %>
-          <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change filter-settings#change form#submit">
-            <span class="overflow-ellipsis flex-item-grow"><%= comune %></span>
+              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: provincia, multi_selection_combobox_label: provincia },
+              role: "checkbox", aria: { checked: filter.province.include?(provincia) }) do %>
+          <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change province-filter#update filter-settings#change form#submit">
+            <span class="overflow-ellipsis flex-item-grow"><%= provincia %></span>
             <%= icon_tag "check", class: "checked flex-item-justify-end" %>
           </button>
         <% end %>

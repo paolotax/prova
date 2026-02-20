@@ -11,7 +11,9 @@ export default class extends Controller {
 
   filter() {
     this.itemTargets.forEach(item => {
-      if (filterMatches(item.textContent, this.inputTarget.value)) {
+      if (item.hasAttribute("data-province-excluded")) {
+        item.toggleAttribute("hidden", true)
+      } else if (filterMatches(item.textContent, this.inputTarget.value)) {
         item.removeAttribute("hidden")
       } else {
         item.toggleAttribute("hidden", true)

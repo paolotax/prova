@@ -28,40 +28,51 @@ module Filters
     include ScuolaFilter::Summarized
 
     def scuole
-      base_scope = Current.scuole
-      result = base_scope.includes(:import_scuola, :appunti, classi: :adozioni)
-
-      if terms.present?
-        # PgSearch non è compatibile con DISTINCT, quindi usiamo una subquery
-        ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
-        result = base_scope.where(id: ids).includes(:import_scuola, :appunti, classi: :adozioni)
-      end
-
-      result = result.where(comune: comuni) if comuni.present?
-      result = result.where(tipo_scuola: tipi_scuola) if tipi_scuola.present?
-      result = filter_con_appunti(result) if con_appunti?
-      result = filter_con_mie_adozioni(result) if con_mie_adozioni?
-      result = filter_con_adozioni_concorrenza(result) if con_adozioni_concorrenza?
       if sorted_by.per_direzione?
-        # DISTINCT prima, poi join+order sulla subquery (PG non accetta ORDER BY COALESCE con DISTINCT)
-        ids = result.distinct.pluck(:id)
-        Current.scuole.where(id: ids)
-          .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
-          .left_joins(:direzione)
-          .order(
-            Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
-            Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
-            Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
-            :tipo_scuola, :denominazione
-          )
+        per_direzione_scope
       else
-        result.order(sorted_by.to_s).distinct
+        filtered_scope.order(sorted_by.to_s).distinct
       end
+    end
+
+    # IDs di tutte le scuole che passano i filtri (senza ordinamento)
+    def filtered_ids
+      @filtered_ids ||= filtered_scope.distinct.pluck(:id)
     end
 
     alias_method :results, :scuole
 
     private
+
+    def filtered_scope
+      base_scope = Current.scuole
+      result = base_scope.includes(:import_scuola, :appunti, classi: :adozioni)
+
+      if terms.present?
+        ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
+        result = base_scope.where(id: ids).includes(:import_scuola, :appunti, classi: :adozioni)
+      end
+
+      result = result.where(provincia: province) if province.present?
+      result = result.where(comune: comuni) if comuni.present?
+      result = result.where(tipo_scuola: tipi_scuola) if tipi_scuola.present?
+      result = filter_con_appunti(result) if con_appunti?
+      result = filter_con_mie_adozioni(result) if con_mie_adozioni?
+      result = filter_con_adozioni_concorrenza(result) if con_adozioni_concorrenza?
+      result
+    end
+
+    def per_direzione_scope
+      Current.scuole.where(id: filtered_ids)
+        .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
+        .left_joins(:direzione)
+        .order(
+          Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
+          Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
+          Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
+          :tipo_scuola, :denominazione
+        )
+    end
 
     def filter_con_appunti(scope)
       # Use .aperti scope instead of where.missing(:closure) for uuid/varchar compatibility

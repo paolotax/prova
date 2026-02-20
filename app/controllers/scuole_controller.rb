@@ -3,18 +3,49 @@
 class ScuoleController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], tipi_scuola: [], terms: []].freeze
+  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], comuni: [], tipi_scuola: [], terms: []].freeze
 
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
 
   def index
-    @total_count = @filter.scuole.count
     @per_direzione = @filter.sorted_by.per_direzione?
 
     if @per_direzione
-      @scuole = @filter.scuole.includes(:direzione, :plessi)
-      @gruppi_direzione = build_gruppi_direzione(@scuole)
+      filtered_ids = @filter.filtered_ids
+      @total_count = filtered_ids.size
+
+      # Plessi che finiranno nested sotto la loro direzione (non sono capogruppo)
+      nested_plessi = Current.scuole
+        .where(id: filtered_ids)
+        .where.not(direzione_id: nil)
+        .where(direzione_id: filtered_ids)
+
+      nested_ids = nested_plessi.pluck(:id)
+      @direzioni_count = nested_plessi.distinct.count(:direzione_id)
+
+      # Capogruppo = direzioni + scuole isolate + plessi la cui direzione non è nei filtri
+      leaders = Current.scuole
+        .where(id: filtered_ids - nested_ids)
+        .left_joins(:direzione)
+        .order(*per_direzione_order)
+
+      set_page_and_extract_portion_from leaders
+
+      # Carica i dati completi solo per i gruppi della pagina corrente
+      leader_ids = @page.records.map(&:id)
+      plessi_ids = Current.scuole
+        .where(id: filtered_ids, direzione_id: leader_ids)
+        .pluck(:id)
+
+      page_scuole = Current.scuole
+        .where(id: leader_ids + plessi_ids)
+        .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
+        .left_joins(:direzione)
+        .order(*per_direzione_order)
+
+      @gruppi_direzione = build_gruppi_direzione(page_scuole)
     else
+      @total_count = @filter.scuole.count
       set_page_and_extract_portion_from @filter.scuole
     end
 
@@ -110,6 +141,15 @@ class ScuoleController < ApplicationController
     end
 
     ordine.map { |key| gruppi[key] }
+  end
+
+  def per_direzione_order
+    [
+      Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
+      Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
+      Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
+      :tipo_scuola, :denominazione
+    ]
   end
 
   def scuola_params

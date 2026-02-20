@@ -32,15 +32,17 @@
       no_filtering_url: scuole_path %>
 
 <%= turbo_frame_tag :search_results do %>
-  <% if @per_direzione %>
-    <% if @gruppi_direzione.any? %>
-      <p class="txt-small txt-subtle margin-block-end-half">
-        <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
-        &middot; <%= @gruppi_direzione.count { |g| g[:direzione].present? } %> direzioni
-      </p>
+  <% if @page.used? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
+      <% if @per_direzione && @direzioni_count > 0 %>
+        &middot; <%= @direzioni_count %> <%= @direzioni_count == 1 ? "direzione" : "direzioni" %>
+      <% end %>
+    </p>
 
+    <% if @per_direzione %>
       <div class="cards cards--grid">
-        <div class="cards__list">
+        <%= with_automatic_pagination :scuole, @page, class: "cards__list" do %>
           <% provincia_corrente = nil %>
           <% @gruppi_direzione.each do |gruppo| %>
             <% provincia = (gruppo[:direzione] || gruppo[:plessi].first)&.provincia %>
@@ -50,30 +52,24 @@
             <% end %>
             <%= render "scuole/direzione_group", gruppo: gruppo %>
           <% end %>
-        </div>
-      </div>
-    <% else %>
-      <%= blank_slate_for(:scuole, filtering: @user_filtering) %>
-    <% end %>
-  <% elsif @page.used? %>
-    <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
-    </p>
-
-    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
-      <%= render "scuole/bulk_bar/bar" %>
-
-      <div class="cards cards--grid">
-        <%= with_automatic_pagination :scuole, @page,
-            class: "cards__list",
-            data: { controller: "navigable-list",
-                navigable_list_auto_select_value: false,
-                navigable_list_actionable_items_value: true,
-                navigable_list_prevent_handled_keys_value: true,
-                action: "keydown->navigable-list#navigate" } do %>
-          <%= render @page.records %>
         <% end %>
       </div>
+    <% else %>
+      <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+        <%= render "scuole/bulk_bar/bar" %>
+
+        <div class="cards cards--grid">
+          <%= with_automatic_pagination :scuole, @page,
+              class: "cards__list",
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate" } do %>
+            <%= render @page.records %>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   <% else %>
     <%= blank_slate_for(:scuole, filtering: @user_filtering) %>
