@@ -25,6 +25,7 @@ class CleanupZonaJob < ApplicationJob
     account_zona.destroy!
 
     broadcast_zone_panel(account)
+    broadcast_scuole_refresh(account)
   end
 
   private
@@ -38,5 +39,11 @@ class CleanupZonaJob < ApplicationJob
       partial: "zone/zone_list",
       locals: { account_zone: account_zone }
     )
+  end
+
+  def broadcast_scuole_refresh(account)
+    account.memberships.find_each do |membership|
+      Turbo::StreamsChannel.broadcast_refresh_later_to(membership, "scuole")
+    end
   end
 end
