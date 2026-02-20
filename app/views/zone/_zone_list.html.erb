@@ -18,23 +18,39 @@
                         <% gradi_colonne.each do |_code, label| %>
                             <th><%= label %></th>
                         <% end %>
+                        <th>Totale</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% province.each do |prov| %>
                         <tr>
                             <td><%= prov %></td>
+                            <% row_total = 0 %>
                             <% gradi_colonne.each do |code, _label| %>
                                 <td>
                                     <% zona = zone_lookup[[prov, code]] %>
                                     <% if zona %>
+                                        <% row_total += zona.scuole_count if zona.stato.in?(%w[attiva pronta da_rimuovere]) %>
                                         <%= render partial: "zone/zona_cell", locals: { zona: zona } %>
                                     <% end %>
                                 </td>
                             <% end %>
+                            <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
                         </tr>
                     <% end %>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="txt-bold">Totale</td>
+                        <% grand_total = 0 %>
+                        <% gradi_colonne.each do |code, _label| %>
+                            <% col_total = province.sum { |prov| zone_lookup[[prov, code]]&.then { |z| z.stato.in?(%w[attiva pronta da_rimuovere]) ? z.scuole_count : 0 } || 0 } %>
+                            <% grand_total += col_total %>
+                            <td class="txt-center txt-small txt-bold"><%= col_total if col_total > 0 %></td>
+                        <% end %>
+                        <td class="txt-center txt-small txt-bold"><%= grand_total if grand_total > 0 %></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     <% end %>
@@ -56,7 +72,7 @@
                 <% end %>
                 <div class="flex gap-half justify-end margin-block-start">
                     <button class="btn" data-action="dialog#close">Annulla</button>
-                    <%= button_to importazione_path, class: "btn btn--negative" do %>
+                    <%= button_to importazione_path(account_id: account_zone.first.account_id), class: "btn btn--negative" do %>
                         Conferma
                     <% end %>
                 </div>

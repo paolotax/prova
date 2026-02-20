@@ -66,7 +66,7 @@ class Account < ApplicationRecord
     gradi = if grado.present?
               [grado]
             else
-              TipoScuola::GRADI.reject { |g| g[1] == "I" }.map(&:last)
+              TipoScuola::GRADI.reject { |g| g[1].in?(%w[I altro]) }.map(&:last)
             end
 
     province.each do |prov|

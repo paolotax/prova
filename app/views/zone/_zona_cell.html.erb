@@ -16,13 +16,13 @@
 
     <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>
         <% if zona.stato == "da_rimuovere" %>
-            <%= button_to zona_path(zona), method: :delete,
+            <%= button_to zona_path(zona, account_id: zona.account_id), method: :delete,
                     class: "btn btn--circle btn--link", style: "--btn-size: 1.6em;",
                     aria: { label: "Riattiva #{zona.provincia} #{zona.grado_label}" } do %>
                 <%= icon_tag "refresh", class: "icon--small" %>
             <% end %>
         <% else %>
-            <%= button_to zona_path(zona), method: :delete,
+            <%= button_to zona_path(zona, account_id: zona.account_id), method: :delete,
                     class: "btn btn--circle btn--negative", style: "--btn-size: 1.6em;",
                     aria: { label: "Rimuovi #{zona.provincia} #{zona.grado_label}" } do %>
                 <%= icon_tag "close-circle", class: "icon--small" %>

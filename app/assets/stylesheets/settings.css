@@ -98,7 +98,7 @@
   }
 
   .zone-grid th:first-child {
-    text-align: start;
+    text-align: center;
   }
 
   .zone-grid thead th {
@@ -109,10 +109,17 @@
     padding: 0.3em 0.6em;
     border-block-end: 1px solid var(--color-ink-lightest);
     vertical-align: middle;
+    text-align: center;
   }
 
   .zone-grid td:first-child {
     font-weight: 500;
+    text-align: center;
+  }
+
+  .zone-grid tfoot td {
+    border-block-start: 2px solid var(--color-ink-lightest);
+    border-block-end: none;
   }
 
   .zone-grid__cell {
@@ -144,6 +151,7 @@
     font-size: var(--text-small);
     min-width: 2ch;
     text-align: center;
+    margin-inline-start: 2em;
   }
 
   .zone-grid__status {

@@ -17,7 +17,7 @@ export default class extends Controller {
 
     if (this.hasProvinciaTarget) {
       let hprovincia   = document.getElementById("hprovincia");
-      let prov = this.provinciaTarget.options[this.provinciaTarget.selectedIndex].text;
+      let prov = this.provinciaTarget.options[this.provinciaTarget.selectedIndex].value;
       hprovincia.value = prov;
     }
 
