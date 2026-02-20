@@ -1,0 +1,34 @@
+<%# locals: (scuola:) -%>
+
+<article class="card"
+         style="--card-color: <%= scuola_color(scuola) %>"
+         draggable="true"
+         data-drag-and-drop-target="item"
+         data-id="<%= scuola.id %>">
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <header class="card__header">
+      <div class="card__board">
+        <span class="card__id"><%= scuola.tipo_scuola&.upcase.presence || "SCUOLA" %></span>
+        <span class="card__board-name"><%= [scuola.comune, scuola.provincia].compact_blank.join(", ") %></span>
+      </div>
+    </header>
+
+    <div class="card__body">
+      <div class="card__content">
+        <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+          <%= scuola.denominazione %>
+        </h3>
+      </div>
+    </div>
+
+    <% if scuola.plessi.loaded? && scuola.plessi.any? %>
+      <footer class="card__footer full-width">
+        <span class="txt-small txt-subtle"><%= scuola.plessi.size %> plessi</span>
+      </footer>
+    <% elsif scuola.classi.size > 0 %>
+      <footer class="card__footer full-width">
+        <span class="txt-small txt-positive"><%= scuola.classi.size %> classi</span>
+      </footer>
+    <% end %>
+  </div>
+</article>

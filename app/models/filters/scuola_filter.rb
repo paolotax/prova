@@ -38,11 +38,24 @@ module Filters
       end
 
       result = result.where(comune: comuni) if comuni.present?
+      result = result.where(tipo_scuola: tipi_scuola) if tipi_scuola.present?
       result = filter_con_appunti(result) if con_appunti?
       result = filter_con_mie_adozioni(result) if con_mie_adozioni?
       result = filter_con_adozioni_concorrenza(result) if con_adozioni_concorrenza?
-      result = result.order(sorted_by.to_s)
-      result.distinct
+      if sorted_by.per_direzione?
+        # DISTINCT prima, poi join+order sulla subquery (PG non accetta ORDER BY COALESCE con DISTINCT)
+        ids = result.distinct.pluck(:id)
+        Current.scuole.where(id: ids)
+          .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
+          .left_joins(:direzione)
+          .order(
+            Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
+            Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
+            :tipo_scuola, :denominazione
+          )
+      else
+        result.order(sorted_by.to_s).distinct
+      end
     end
 
     alias_method :results, :scuole

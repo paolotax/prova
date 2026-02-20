@@ -1,14 +1,18 @@
 module ScuoleHelper
   def scuola_color(scuola)
-    case scuola.tipo_scuola&.downcase
-    when "istituto comprensivo"      then "oklch(0.6 0.15 250)"  # blue
-    when "scuola primaria"           then "oklch(0.6 0.15 160)"  # emerald
-    when "scuola secondaria i grado" then "oklch(0.6 0.15 45)"   # amber
-    when "liceo scientifico"         then "oklch(0.6 0.15 280)"  # violet
-    when "liceo classico"            then "oklch(0.6 0.15 320)"  # pink
-    when "liceo linguistico"         then "oklch(0.6 0.15 200)"  # cyan
-    when "istituto tecnico"          then "oklch(0.6 0.15 15)"   # rose
-    when "istituto professionale"    then "oklch(0.6 0.15 100)"  # lime
+    case scuola.tipo_scuola
+    when "ISTITUTO COMPRENSIVO"                 then "oklch(0.6 0.15 250)"  # blue
+    when "SCUOLA PRIMARIA", "SCUOLA PRIMARIA NON STATALE"
+                                                then "oklch(0.6 0.15 160)"  # emerald
+    when "SCUOLA PRIMO GRADO", "SCUOLA SEC. PRIMO GRADO NON STATALE"
+                                                then "oklch(0.6 0.15 45)"   # amber
+    when "LICEO SCIENTIFICO"                    then "oklch(0.6 0.15 280)"  # violet
+    when "LICEO CLASSICO"                       then "oklch(0.6 0.15 320)"  # pink
+    when "LICEO LINGUISTICO"                    then "oklch(0.6 0.15 200)"  # cyan
+    when /\AISTITUTO TECNICO/                   then "oklch(0.6 0.15 15)"   # rose
+    when "ISTITUTO PROFESSIONALE"               then "oklch(0.6 0.15 100)"  # lime
+    when "SCUOLA INFANZIA", "SCUOLA INFANZIA NON STATALE"
+                                                then "oklch(0.6 0.15 70)"   # orange
     else "oklch(0.6 0.01 0)"  # gray default
     end
   end
@@ -17,6 +21,14 @@ module ScuoleHelper
     return "badge--positive" if scuola.classi.any?
     return "badge--warning" if scuola.priorita.to_i > 3
     ""
+  end
+
+  def regioni_options
+    ImportScuola.distinct.where.not(REGIONE: [nil, ""]).order(:REGIONE).pluck(:REGIONE).map { |r| [r.titleize, r] }
+  end
+
+  def tipi_scuola_options
+    TipoScuola.where.not(tipo: "Non Disponibile").order(:grado, :tipo).pluck(:tipo).map { |t| [t.titleize, t] }
   end
 
   def priorita_stars(priorita)

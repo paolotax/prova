@@ -1,0 +1,55 @@
+<%# locals: (gruppo:) -%>
+<% direzione = gruppo[:direzione] %>
+<% plessi = gruppo[:plessi] %>
+
+<% if direzione %>
+  <article class="card" style="--card-color: <%= scuola_color(direzione) %>">
+    <div class="flex flex-column flex-item-grow max-inline-size">
+      <header class="card__header">
+        <div class="card__board">
+          <span class="card__id"><%= direzione.tipo_scuola&.upcase.presence || "DIREZIONE" %></span>
+          <span class="card__board-name"><%= [direzione.comune, direzione.provincia].compact_blank.join(", ") %></span>
+        </div>
+      </header>
+
+      <div class="card__body">
+        <div class="card__content">
+          <h3 class="card__title">
+            <%= link_to direzione.denominazione, scuola_path(direzione), data: { turbo_frame: "_top" } %>
+          </h3>
+        </div>
+      </div>
+
+      <% if plessi.any? %>
+        <div class="padding-inline padding-block-end-half">
+          <table class="table table--compact table--borderless txt-small" style="width: 100%;">
+            <tbody>
+              <% plessi.each do |plesso| %>
+                <tr>
+                  <td class="overflow-ellipsis" style="max-width: 200px;">
+                    <%= link_to plesso.denominazione, scuola_path(plesso),
+                        class: "link",
+                        data: { turbo_frame: "_top" } %>
+                  </td>
+                  <td class="txt-subtle txt-align-end" style="white-space: nowrap;">
+                    <% if plesso.classi.size > 0 %>
+                      <span class="txt-positive"><%= plesso.classi.size %>cl</span>
+                    <% end %>
+                  </td>
+                  <td class="txt-align-end" style="white-space: nowrap;">
+                    <%= priorita_stars(plesso.priorita) %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </article>
+<% else %>
+  <%# Scuola isolata (senza direzione) — render come card singola %>
+  <% plessi.each do |scuola| %>
+    <%= render scuola %>
+  <% end %>
+<% end %>

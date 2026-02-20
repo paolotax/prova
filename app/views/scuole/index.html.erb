@@ -32,7 +32,24 @@
       no_filtering_url: scuole_path %>
 
 <%= turbo_frame_tag :search_results do %>
-  <% if @page.used? %>
+  <% if @per_direzione %>
+    <% if @gruppi_direzione.any? %>
+      <p class="txt-small txt-subtle margin-block-end-half">
+        <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
+        &middot; <%= @gruppi_direzione.count { |g| g[:direzione].present? } %> direzioni
+      </p>
+
+      <div class="cards cards--grid">
+        <div class="cards__list">
+          <% @gruppi_direzione.each do |gruppo| %>
+            <%= render "scuole/direzione_group", gruppo: gruppo %>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <%= blank_slate_for(:scuole, filtering: @user_filtering) %>
+    <% end %>
+  <% elsif @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">
       <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
     </p>

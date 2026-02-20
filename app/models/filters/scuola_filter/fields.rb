@@ -3,7 +3,7 @@ module Filters
     module Fields
       extend ActiveSupport::Concern
 
-      SORTED_BY = %w[denominazione comune provincia].freeze
+      SORTED_BY = %w[denominazione comune provincia per_direzione].freeze
       APPUNTI_OPTIONS = %w[tutte con_appunti].freeze
       ADOZIONI_OPTIONS = %w[tutte mie_adozioni adozioni_concorrenza].freeze
 
@@ -12,6 +12,7 @@ module Filters
         :appunti_filter,
         :adozioni_filter,
         comuni: [],
+        tipi_scuola: [],
         terms: []
       ].freeze
 
@@ -22,7 +23,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :sorted_by, :terms, :comuni, :appunti_filter, :adozioni_filter
+        store_accessor :fields, :sorted_by, :terms, :comuni, :tipi_scuola, :appunti_filter, :adozioni_filter
 
         def sorted_by
           (super || default_sorted_by).inquiry
@@ -41,6 +42,14 @@ module Filters
         end
 
         def comuni=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def tipi_scuola
+          Array(super)
+        end
+
+        def tipi_scuola=(value)
           super(Array(value).filter(&:present?))
         end
 
@@ -80,6 +89,7 @@ module Filters
           params[:sorted_by] = sorted_by
           params[:terms] = terms
           params[:comuni] = comuni
+          params[:tipi_scuola] = tipi_scuola
           params[:appunti_filter] = appunti_filter
           params[:adozioni_filter] = adozioni_filter
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }

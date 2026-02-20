@@ -21,16 +21,25 @@ module Filters
       filter.comuni.any?
     end
 
+    def tipi_scuola_disponibili
+      @tipi_scuola_disponibili ||= user.accounts.first.scuole.distinct.pluck(:tipo_scuola).compact.sort
+    end
+
+    def show_tipi_scuola?
+      filter.tipi_scuola.any?
+    end
+
     def filters_active?
       filter.terms.present? ||
       filter.comuni.present? ||
+      filter.tipi_scuola.present? ||
       filter.con_appunti? ||
       filter.con_mie_adozioni? ||
       filter.con_adozioni_concorrenza?
     end
 
     def controls
-      %w[comuni con_appunti con_adozioni_mie]
+      %w[ordinamento tipi_scuola comuni con_appunti con_adozioni_mie]
     end
 
     def cache_key

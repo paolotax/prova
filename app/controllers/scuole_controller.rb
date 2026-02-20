@@ -3,13 +3,20 @@
 class ScuoleController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], terms: []].freeze
+  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, comuni: [], tipi_scuola: [], terms: []].freeze
 
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
 
   def index
     @total_count = @filter.scuole.count
-    set_page_and_extract_portion_from @filter.scuole
+    @per_direzione = @filter.sorted_by.per_direzione?
+
+    if @per_direzione
+      @scuole = @filter.scuole.includes(:direzione, :plessi)
+      @gruppi_direzione = build_gruppi_direzione(@scuole)
+    else
+      set_page_and_extract_portion_from @filter.scuole
+    end
 
     respond_to do |format|
       format.html
@@ -67,6 +74,33 @@ class ScuoleController < ApplicationController
 
   def set_scuola
     @scuola = Current.account.scuole.find(params[:id])
+  end
+
+  # Raggruppa scuole per direzione:
+  # - scuole con direzione: raggruppate sotto la loro direzione
+  # - scuole-direzione senza direzione_id: se hanno plessi, sono capogruppo
+  # - scuole isolate: ogni scuola è il suo gruppo
+  def build_gruppi_direzione(scuole)
+    scuole_by_id = scuole.index_by(&:id)
+    gruppi = {}
+
+    scuole.each do |scuola|
+      if scuola.direzione_id.present?
+        # Plesso: raggruppa sotto la direzione
+        dir = scuole_by_id[scuola.direzione_id]
+        key = scuola.direzione_id
+        gruppi[key] ||= { direzione: dir, plessi: [] }
+        gruppi[key][:plessi] << scuola
+      elsif scuola.plessi.any? { |p| scuole_by_id[p.id] }
+        # Direzione con plessi visibili: crea gruppo solo se non già creato
+        gruppi[scuola.id] ||= { direzione: scuola, plessi: [] }
+      else
+        # Scuola isolata
+        gruppi[scuola.id] ||= { direzione: nil, plessi: [scuola] }
+      end
+    end
+
+    gruppi.values
   end
 
   def scuola_params

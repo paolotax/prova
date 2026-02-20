@@ -24,6 +24,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  account_id          :uuid             not null
+#  direzione_id        :uuid
 #  import_scuola_id    :bigint
 #
 # Indexes
@@ -31,6 +32,7 @@
 #  index_scuole_on_account_id                          (account_id)
 #  index_scuole_on_account_id_and_codice_ministeriale  (account_id,codice_ministeriale) UNIQUE
 #  index_scuole_on_account_id_and_denominazione        (account_id,denominazione)
+#  index_scuole_on_account_id_and_direzione_id         (account_id,direzione_id)
 #  index_scuole_on_account_id_and_posizione            (account_id,posizione)
 #  index_scuole_on_account_provincia_grado             (account_id,provincia,grado)
 #  index_scuole_on_import_scuola_id                    (import_scuola_id)
@@ -50,6 +52,8 @@ class Scuola < ApplicationRecord
     using: { tsearch: { any_word: false, prefix: true } }
 
   belongs_to :import_scuola, optional: true
+  belongs_to :direzione, class_name: "Scuola", optional: true
+  has_many :plessi, class_name: "Scuola", foreign_key: :direzione_id, dependent: :nullify
 
   has_many :membership_scuole, class_name: "MembershipScuola", dependent: :destroy
   has_many :memberships, through: :membership_scuole
@@ -61,6 +65,8 @@ class Scuola < ApplicationRecord
   has_many :sconti, as: :scontabile, dependent: :destroy
   has_many :tappe, as: :tappable
 
+  before_validation :normalize_fields
+
   validates :denominazione, presence: true
   validates :codice_ministeriale, uniqueness: { scope: :account_id }, allow_blank: true
 
@@ -69,11 +75,23 @@ class Scuola < ApplicationRecord
   scope :per_provincia, ->(provincia) { where(provincia: provincia) }
   scope :per_comune, ->(comune) { where(comune: comune) }
 
+  # Scuole che fungono da direzione (hanno almeno un plesso)
+  scope :direzioni, -> { where(id: unscoped.select(:direzione_id).where.not(direzione_id: nil)) }
+  # Scuole che puntano a una direzione
+  scope :con_direzione, -> { where.not(direzione_id: nil) }
+  # Scuole isolate (né direzioni né plessi)
+  scope :senza_direzione, -> {
+    where(direzione_id: nil)
+      .where.not(id: unscoped.select(:direzione_id).where.not(direzione_id: nil))
+  }
+
   # Crea Scuola da ImportScuola
   def self.create_from_import(import_scuola, account: Current.account)
+    direzione = resolve_direzione(import_scuola, account: account)
     create!(
       account: account,
       import_scuola: import_scuola,
+      direzione: direzione,
       codice_ministeriale: import_scuola.CODICESCUOLA,
       denominazione: import_scuola.DENOMINAZIONESCUOLA,
       indirizzo: import_scuola.INDIRIZZOSCUOLA,
@@ -90,11 +108,26 @@ class Scuola < ApplicationRecord
     )
   end
 
+  # Cerca/crea la scuola-direzione se il plesso ha CODICEISTITUTORIFERIMENTO diverso
+  def self.resolve_direzione(import_scuola, account:)
+    codice_rif = import_scuola.CODICEISTITUTORIFERIMENTO
+    return nil if codice_rif.blank? || codice_rif == import_scuola.CODICESCUOLA
+
+    import_dir = ImportScuola.find_by(CODICESCUOLA: codice_rif)
+    return nil unless import_dir
+
+    find_or_create_from_import(import_dir, account: account)
+  end
+
   # Trova o crea da ImportScuola
   def self.find_or_create_from_import(import_scuola, account: Current.account)
     find_by(account: account, import_scuola: import_scuola) ||
       find_by(account: account, codice_ministeriale: import_scuola.CODICESCUOLA) ||
       create_from_import(import_scuola, account: account)
+  end
+
+  def direzione?
+    plessi.any?
   end
 
   def geocoded?
@@ -119,5 +152,14 @@ class Scuola < ApplicationRecord
 
   def indirizzo_formattato
     [indirizzo, [cap, comune].compact.join(' '), provincia].compact.join("\n")
+  end
+
+  private
+
+  def normalize_fields
+    self.tipo_scuola = tipo_scuola.upcase if tipo_scuola.present?
+    self.regione = regione.upcase if regione.present?
+    self.provincia = provincia.upcase if provincia.present?
+    self.pec = nil if pec.present? && pec.downcase.include?("non disponibil")
   end
 end

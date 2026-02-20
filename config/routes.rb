@@ -432,6 +432,10 @@ Rails.application.routes.draw do
 
     resources :persone, only: [:show]
 
+    resource :distribuzione, only: [:show], controller: "distribuzione" do
+      resource :assegnazione, only: [:create], controller: "distribuzione/assegnazioni"
+    end
+
     resources :scuole do
       resources :qrcodes
 

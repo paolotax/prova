@@ -5,7 +5,12 @@
 <section class="settings">
 
   <div class="settings__panel panel shadow center">
-    <strong class="divider divider--fade txt-large">Utenti</strong>
+    <div class="flex flex-justify-between flex-align-center">
+      <strong class="divider divider--fade txt-large">Utenti</strong>
+      <%= link_to distribuzione_path, class: "btn btn--small" do %>
+        Distribuzione scuole
+      <% end %>
+    </div>
     <%= render "account_members/members_list", members: @members %>
     <%= render "account_members/invite_form" %>
   </div>

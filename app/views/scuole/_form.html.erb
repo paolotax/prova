@@ -31,18 +31,10 @@
         <div class="form-field">
           <%= f.label :tipo_scuola, class: "form-label" %>
           <%= f.select :tipo_scuola,
-              options_for_select([
-                ["—", ""],
-                ["Istituto Comprensivo", "Istituto Comprensivo"],
-                ["Scuola Primaria", "Scuola Primaria"],
-                ["Scuola Secondaria I grado", "Scuola Secondaria I grado"],
-                ["Liceo Scientifico", "Liceo Scientifico"],
-                ["Liceo Classico", "Liceo Classico"],
-                ["Liceo Linguistico", "Liceo Linguistico"],
-                ["Istituto Tecnico", "Istituto Tecnico"],
-                ["Istituto Professionale", "Istituto Professionale"],
-                ["Altro", "Altro"]
-              ], scuola.tipo_scuola),
+              options_for_select(
+                [["—", ""]] + tipi_scuola_options,
+                scuola.tipo_scuola
+              ),
               {},
               class: "input input--select" %>
         </div>
@@ -79,13 +71,10 @@
         <div class="form-field">
           <%= f.label :regione, class: "form-label" %>
           <%= f.select :regione,
-              options_for_select([
-                ["—", ""],
-                "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
-                "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
-                "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
-                "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
-              ], scuola.regione),
+              options_for_select(
+                [["—", ""]] + regioni_options,
+                scuola.regione
+              ),
               {},
               class: "input input--select" %>
         </div>
