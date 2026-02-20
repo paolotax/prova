@@ -24,9 +24,9 @@
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
       <% user_filtering.comuni_disponibili.each do |comune| %>
-        <%= content_tag(:li, class: "popup__item", data: {
-              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: comune, multi_selection_combobox_label: comune,
-              provincia: user_filtering.provincia_per_comune[comune] },
+        <% item_data = { filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: comune, multi_selection_combobox_label: comune } %>
+        <% item_data[:provincia] = user_filtering.provincia_per_comune[comune] if user_filtering.respond_to?(:provincia_per_comune) %>
+        <%= content_tag(:li, class: "popup__item", data: item_data,
               role: "checkbox", aria: { checked: filter.comuni.include?(comune) }) do %>
           <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change filter-settings#change form#submit">
             <span class="overflow-ellipsis flex-item-grow"><%= comune %></span>
