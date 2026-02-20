@@ -22,7 +22,7 @@
         <% end %>
 
         <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>
-            <%= button_to rimuovi_scuole_zone_path(account_id: zona.account_id, id: zona.id), method: :delete,
+            <%= button_to zona_path(zona), method: :delete,
                     class: "btn btn--circle btn--negative", aria: { label: "Rimuovi zona" } do %>
                 <%= icon_tag "trash", class: "icon--small" %>
             <% end %>

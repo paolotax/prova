@@ -54,14 +54,12 @@
     --settings-spacer: var(--block-space);
     --settings-item-padding-inline: 0.5ch;
 
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: calc(var(--settings-spacer) * 2);
     margin: 0 auto;
-    max-inline-size: min(100ch, 100%);
-
-    @media (min-width: 960px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    max-inline-size: min(120ch, 100%);
+    padding-inline: var(--inline-space);
   }
 
   .settings__panel {
@@ -77,6 +75,79 @@
     @media (min-width: 960px) {
       --panel-padding: calc(var(--settings-spacer) * 1.5) calc(var(--settings-spacer) * 2);
     }
+  }
+
+  /* Zone grid table
+  /* ------------------------------------------------------------------------ */
+
+  .zone-regione + .zone-regione {
+    margin-block-start: var(--settings-spacer);
+  }
+
+  .zone-grid {
+    border-collapse: collapse;
+    inline-size: 100%;
+  }
+
+  .zone-grid th {
+    font-size: var(--text-small);
+    font-weight: 600;
+    padding: 0.4em 0.6em;
+    text-align: center;
+    color: var(--color-ink-dark);
+  }
+
+  .zone-grid th:first-child {
+    text-align: start;
+  }
+
+  .zone-grid thead th {
+    border-block-end: 2px solid var(--color-ink-lightest);
+  }
+
+  .zone-grid td {
+    padding: 0.3em 0.6em;
+    border-block-end: 1px solid var(--color-ink-lightest);
+    vertical-align: middle;
+  }
+
+  .zone-grid td:first-child {
+    font-weight: 500;
+  }
+
+  .zone-grid__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: 2em;
+  }
+
+  .zone-grid__cell .btn {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .zone-grid td:hover .zone-grid__cell .btn,
+  .zone-grid__cell .btn:focus-visible {
+    opacity: 1;
+  }
+
+  /* Touch devices: always show buttons */
+  @media (any-hover: none) {
+    .zone-grid__cell .btn {
+      opacity: 1;
+    }
+  }
+
+  .zone-grid__count {
+    font-size: var(--text-small);
+    min-width: 2ch;
+    text-align: center;
+  }
+
+  .zone-grid__status {
+    font-size: var(--text-x-small);
   }
 
   .settings__panel--users {

@@ -7,11 +7,8 @@ class ConfigurazioneController < ApplicationController
     @members = Current.account.memberships.includes(:user, :scuole).order(role: :desc, created_at: :asc)
 
     # Zone
-    @account_zone = Current.account.account_zone.order(:provincia, :grado)
+    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
     @regioni = Zona.order(:regione).select(:regione).distinct
-    @province = []
-    @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
-    @tipi = []
 
     # Mandati
     @mandati = Current.account.mandati.includes(:editore).order("editori.editore")

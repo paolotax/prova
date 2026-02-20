@@ -2,38 +2,30 @@ class ZoneController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @account_zone = Current.account.account_zone.order(:provincia, :grado)
-    @regioni = Zona.order(:regione).select(:regione).distinct
-    @province = []
-    @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
-    @tipi = []
+    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
   end
 
-  def select_zone
+  # GET /zone/new — cascading selects (turbo_frame :zone_select)
+  def new
     @regioni = Zona.order(:regione).select(:regione).distinct
-    @province = Zona.where(regione: params[:regione].presence)
-                    .order(:provincia).select(:provincia).distinct
+    @province = if params[:regione].present?
+                  Zona.where(regione: params[:regione]).order(:provincia).select(:provincia).distinct
+                else
+                  []
+                end
     @gradi = TipoScuola::GRADI.reject { |g| g[1] == "I" }
-    @tipi = if params[:grado].present?
-              TipoScuola.where(grado: params[:grado]).order(:tipo).select(:tipo).distinct
-            else
-              []
-            end
   end
 
-  def assegna_scuole
-    return if params[:hregione].blank?
+  def create
+    regione = params[:regione].presence
+    return redirect_to(configurazione_path) if regione.blank?
 
-    @account_zona = Current.account.account_zone.find_or_initialize_by(
-      provincia: params[:hprovincia],
-      grado: params[:hgrado]
+    Current.account.add_zone!(
+      regione: regione,
+      provincia: params[:provincia].presence,
+      grado: params[:grado].presence
     )
-    @account_zona.regione = params[:hregione]
-    @account_zona.anno_scolastico ||= "2025/2026"
-    @account_zona.stato = "conteggio" if @account_zona.new_record?
-    @account_zona.save!
-
-    @account_zone = Current.account.account_zone.order(:provincia, :grado)
+    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream
@@ -41,39 +33,19 @@ class ZoneController < ApplicationController
     end
   end
 
-  def importa_scuole
-    account = Current.account
-
-    # Cleanup zone da rimuovere
-    account.account_zone.where(stato: "da_rimuovere").find_each do |zona|
-      zona.update!(stato: "pulizia")
-      CleanupZonaJob.perform_later(zona)
-    end
-
-    # Import zone pronte
-    account.account_zone.pronte.find_each do |zona|
-      zona.update!(stato: "importazione")
-      ImportScuolePerZonaJob.perform_later(zona)
-    end
-
-    @account_zone = account.account_zone.order(:provincia, :grado)
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to configurazione_path, notice: "Aggiornamento in corso..." }
-    end
-  end
-
-  def rimuovi_scuole
+  def destroy
     @account_zona = Current.account.account_zone.find(params[:id])
 
-    if @account_zona.stato.in?(%w[pronta conteggio])
+    case @account_zona.stato
+    when "pronta", "conteggio"
       @account_zona.destroy!
+    when "da_rimuovere"
+      @account_zona.update!(stato: "attiva")
     else
       @account_zona.update!(stato: "da_rimuovere")
     end
 
-    @account_zone = Current.account.account_zone.order(:provincia, :grado)
+    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream

@@ -1,0 +1,32 @@
+<div id="<%= dom_id(zona) %>" class="zone-grid__cell">
+    <% case zona.stato %>
+    <% when "conteggio" %>
+        <span class="zone-grid__status txt-subtle">conteggio...</span>
+    <% when "pronta" %>
+        <span class="zone-grid__count" style="color: var(--color-warning);"><%= zona.scuole_count %></span>
+    <% when "da_rimuovere" %>
+        <span class="zone-grid__status" style="color: var(--color-negative); text-decoration: line-through;"><%= zona.scuole_count %></span>
+    <% when "importazione" %>
+        <span class="zone-grid__status" style="color: var(--color-negative);">importazione...</span>
+    <% when "pulizia" %>
+        <span class="zone-grid__status" style="color: var(--color-negative);">pulizia...</span>
+    <% when "attiva" %>
+        <span class="zone-grid__count"><%= zona.scuole_count %></span>
+    <% end %>
+
+    <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>
+        <% if zona.stato == "da_rimuovere" %>
+            <%= button_to zona_path(zona), method: :delete,
+                    class: "btn btn--circle btn--link", style: "--btn-size: 1.6em;",
+                    aria: { label: "Riattiva #{zona.provincia} #{zona.grado_label}" } do %>
+                <%= icon_tag "refresh", class: "icon--small" %>
+            <% end %>
+        <% else %>
+            <%= button_to zona_path(zona), method: :delete,
+                    class: "btn btn--circle btn--negative", style: "--btn-size: 1.6em;",
+                    aria: { label: "Rimuovi #{zona.provincia} #{zona.grado_label}" } do %>
+                <%= icon_tag "close-circle", class: "icon--small" %>
+            <% end %>
+        <% end %>
+    <% end %>
+</div>

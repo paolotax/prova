@@ -56,4 +56,27 @@ class Account < ApplicationRecord
   def owner
     memberships.find_by(role: :owner)&.user
   end
+
+  def add_zone!(regione:, provincia: nil, grado: nil)
+    province = if provincia.present?
+                 [provincia]
+               else
+                 Zona.where(regione: regione).distinct.pluck(:provincia).sort
+               end
+    gradi = if grado.present?
+              [grado]
+            else
+              TipoScuola::GRADI.reject { |g| g[1] == "I" }.map(&:last)
+            end
+
+    province.each do |prov|
+      gradi.each do |gr|
+        account_zone.find_or_create_by!(provincia: prov, grado: gr) do |zona|
+          zona.regione = regione
+          zona.anno_scolastico = "2025/2026"
+          zona.stato = "conteggio"
+        end
+      end
+    end
+  end
 end

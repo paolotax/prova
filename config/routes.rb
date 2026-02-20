@@ -350,12 +350,9 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :zone, only: [:index] do
+    resources :zone, only: [:index, :new, :create, :destroy] do
       collection do
-        get 'select_zone'
-        post 'assegna_scuole'
-        post 'importa_scuole'
-        delete 'rimuovi_scuole'
+        resource :importazione, only: [:create], controller: "zone/importazioni"
       end
     end
 

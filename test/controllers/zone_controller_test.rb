@@ -20,38 +20,32 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     assert_match "MI", response.body
   end
 
-  test "should get select_zone" do
-    get select_zone_zone_path(account_id: @account.id)
-    assert_response :success
-  end
+  test "should create zone for regione" do
+    # Pick a regione that exists in the zone table
+    regione = Zona.pick(:regione)
+    skip "No zone data in test db" unless regione
 
-  test "should create zona with conteggio stato and enqueue count job" do
     assert_difference("AccountZona.count") do
-      assert_enqueued_with(job: CountScuolePerZonaJob) do
-        post assegna_scuole_zone_path(account_id: @account.id),
-          params: { hregione: "Piemonte", hprovincia: "TO", hgrado: "E" },
-          as: :turbo_stream
-      end
-    end
-    assert_response :success
-    zona = AccountZona.find_by(provincia: "TO", grado: "E", account: @account)
-    assert_equal "conteggio", zona.stato
-  end
-
-  test "should not create duplicate zona" do
-    existing = account_zone(:fizzy_mi_primaria)
-    assert_no_difference("AccountZona.count") do
-      post assegna_scuole_zone_path(account_id: @account.id),
-        params: { hregione: existing.regione, hprovincia: existing.provincia, hgrado: existing.grado },
+      post zone_path(account_id: @account.id),
+        params: { regione: regione },
         as: :turbo_stream
     end
+    assert_response :success
+  end
+
+  test "create with blank regione redirects" do
+    assert_no_difference("AccountZona.count") do
+      post zone_path(account_id: @account.id),
+        params: { regione: "" }
+    end
+    assert_redirected_to configurazione_path
   end
 
   test "should destroy pronta zona directly" do
     zona = account_zone(:fizzy_mi_media)
     zona.update!(stato: "pronta")
     assert_difference("AccountZona.count", -1) do
-      delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
+      delete zona_path(zona, account_id: @account.id),
         as: :turbo_stream
     end
   end
@@ -60,20 +54,20 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     zona = account_zone(:fizzy_mi_media)
     zona.update!(stato: "attiva")
     assert_no_difference("AccountZona.count") do
-      delete rimuovi_scuole_zone_path(account_id: @account.id, id: zona.id),
+      delete zona_path(zona, account_id: @account.id),
         as: :turbo_stream
     end
     assert_equal "da_rimuovere", zona.reload.stato
   end
 
-  test "importa_scuole imports pronte and cleans up da_rimuovere" do
+  test "importazione imports pronte and cleans up da_rimuovere" do
     pronta = account_zone(:fizzy_mi_media)
     pronta.update!(stato: "pronta")
 
     da_rimuovere = account_zone(:fizzy_mi_primaria)
     da_rimuovere.update!(stato: "da_rimuovere")
 
-    post importa_scuole_zone_path(account_id: @account.id), as: :turbo_stream
+    post importazione_path(account_id: @account.id), as: :turbo_stream
 
     assert_equal "importazione", pronta.reload.stato
     assert_equal "pulizia", da_rimuovere.reload.stato

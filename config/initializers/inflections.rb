@@ -60,6 +60,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'consegna', 'consegne'
   inflect.irregular 'pagamento', 'pagamenti'
   inflect.irregular 'registrazione', 'registrazioni'
+  inflect.irregular 'importazione', 'importazioni'
 
   inflect.irregular 'articolo', 'articoli'
   inflect.irregular 'utente',   'utenti'
