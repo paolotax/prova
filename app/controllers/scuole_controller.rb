@@ -76,31 +76,40 @@ class ScuoleController < ApplicationController
     @scuola = Current.account.scuole.find(params[:id])
   end
 
-  # Raggruppa scuole per direzione:
-  # - scuole con direzione: raggruppate sotto la loro direzione
-  # - scuole-direzione senza direzione_id: se hanno plessi, sono capogruppo
-  # - scuole isolate: ogni scuola è il suo gruppo
+  # Raggruppa scuole per direzione, mantenendo l'ordine del filtro
+  # (provincia, comune, denominazione direzione)
   def build_gruppi_direzione(scuole)
     scuole_by_id = scuole.index_by(&:id)
     gruppi = {}
+    ordine = [] # preserva l'ordine di prima apparizione
 
     scuole.each do |scuola|
-      if scuola.direzione_id.present?
-        # Plesso: raggruppa sotto la direzione
-        dir = scuole_by_id[scuola.direzione_id]
+      if scuola.direzione_id.present? && scuole_by_id[scuola.direzione_id]
+        # Plesso con direzione visibile: raggruppa sotto la direzione
         key = scuola.direzione_id
-        gruppi[key] ||= { direzione: dir, plessi: [] }
+        unless gruppi[key]
+          gruppi[key] = { direzione: scuole_by_id[key], plessi: [] }
+          ordine << key
+        end
         gruppi[key][:plessi] << scuola
+      elsif scuola.direzione_id.present?
+        # Plesso ma la direzione non è nei risultati: mostra come isolata
+        gruppi[scuola.id] = { direzione: nil, plessi: [scuola] }
+        ordine << scuola.id
       elsif scuola.plessi.any? { |p| scuole_by_id[p.id] }
-        # Direzione con plessi visibili: crea gruppo solo se non già creato
-        gruppi[scuola.id] ||= { direzione: scuola, plessi: [] }
+        # Direzione con plessi visibili
+        unless gruppi[scuola.id]
+          gruppi[scuola.id] = { direzione: scuola, plessi: [] }
+          ordine << scuola.id
+        end
       else
         # Scuola isolata
-        gruppi[scuola.id] ||= { direzione: nil, plessi: [scuola] }
+        gruppi[scuola.id] = { direzione: nil, plessi: [scuola] }
+        ordine << scuola.id
       end
     end
 
-    gruppi.values
+    ordine.map { |key| gruppi[key] }
   end
 
   def scuola_params

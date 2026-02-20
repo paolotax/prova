@@ -26,6 +26,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'classe', 'classi'
   inflect.irregular 'adozione', 'adozioni'
   inflect.irregular 'direzione', 'direzioni'
+  inflect.irregular 'plesso', 'plessi'
   
   inflect.irregular 'adozione_comunicata', 'adozioni_comunicate'
   

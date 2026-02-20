@@ -7,8 +7,21 @@ class CleanupZonaJob < ApplicationJob
     provincia = account_zona.provincia
     grado = account_zona.grado
 
-    # Destroy scuole (cascades to classi -> adozioni via dependent: :destroy)
-    account.scuole.where(provincia: provincia, grado: grado).destroy_all
+    # Raccogli le direzioni referenziate dalle scuole che stiamo per eliminare
+    scuole_da_eliminare = account.scuole.where(provincia: provincia, grado: grado)
+    direzione_ids = scuole_da_eliminare.where.not(direzione_id: nil).distinct.pluck(:direzione_id)
+
+    # Destroy scuole della zona (cascades to classi -> adozioni via dependent: :destroy)
+    # has_many :plessi ha dependent: :nullify, quindi le direzioni restano
+    scuole_da_eliminare.destroy_all
+
+    # Elimina direzioni rimaste senza plessi
+    if direzione_ids.any?
+      account.scuole.where(id: direzione_ids).left_joins(:plessi)
+        .where(plessi_scuole: { id: nil })
+        .destroy_all
+    end
+
     account_zona.destroy!
 
     broadcast_zone_panel(account)

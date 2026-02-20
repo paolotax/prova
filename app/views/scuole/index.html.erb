@@ -41,7 +41,13 @@
 
       <div class="cards cards--grid">
         <div class="cards__list">
+          <% provincia_corrente = nil %>
           <% @gruppi_direzione.each do |gruppo| %>
+            <% provincia = (gruppo[:direzione] || gruppo[:plessi].first)&.provincia %>
+            <% if provincia != provincia_corrente %>
+              <% provincia_corrente = provincia %>
+              <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= provincia %></h2>
+            <% end %>
             <%= render "scuole/direzione_group", gruppo: gruppo %>
           <% end %>
         </div>

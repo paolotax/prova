@@ -49,6 +49,7 @@ module Filters
           .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
           .left_joins(:direzione)
           .order(
+            Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
             Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
             Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
             :tipo_scuola, :denominazione

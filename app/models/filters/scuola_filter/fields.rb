@@ -18,7 +18,7 @@ module Filters
 
       class_methods do
         def default_values
-          { sorted_by: "denominazione", appunti_filter: "tutte", adozioni_filter: "tutte" }
+          { sorted_by: "per_direzione", appunti_filter: "tutte", adozioni_filter: "tutte" }
         end
       end
 

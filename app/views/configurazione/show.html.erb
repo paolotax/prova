@@ -5,17 +5,6 @@
 <section class="settings">
 
   <div class="settings__panel panel shadow center">
-    <div class="flex flex-justify-between flex-align-center">
-      <strong class="divider divider--fade txt-large">Utenti</strong>
-      <%= link_to distribuzione_path, class: "btn btn--small" do %>
-        Distribuzione scuole
-      <% end %>
-    </div>
-    <%= render "account_members/members_list", members: @members %>
-    <%= render "account_members/invite_form" %>
-  </div>
-
-  <div class="settings__panel panel shadow center">
     <strong class="divider divider--fade txt-large">Le mie Zone</strong>
 
     <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
@@ -31,5 +20,15 @@
     <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori, zone_attive: @zone_attive } %>
   </div>
 
+  <div class="settings__panel panel shadow center">
+    <div class="flex flex-justify-between flex-align-center">
+      <strong class="divider divider--fade txt-large">Utenti</strong>
+      <%= link_to distribuzione_path, class: "btn btn--small" do %>
+        Distribuzione scuole
+      <% end %>
+    </div>
+    <%= render "account_members/members_list", members: @members %>
+    <%= render "account_members/invite_form" %>
+  </div>
 
 </section>
