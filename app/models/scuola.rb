@@ -45,6 +45,7 @@
 class Scuola < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include ProtectedFromDestroy
   include PgSearch::Model
 
   pg_search_scope :search_all_word,

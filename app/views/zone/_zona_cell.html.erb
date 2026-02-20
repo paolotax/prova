@@ -11,7 +11,8 @@
     <% when "pulizia" %>
         <span class="zone-grid__status" style="color: var(--color-negative);">pulizia...</span>
     <% when "attiva" %>
-        <span class="zone-grid__count"><%= zona.scuole_count %></span>
+        <% importate = local_assigns.fetch(:scuole_importate, zona.scuole_count) %>
+        <span class="zone-grid__count" <%= 'style="color: var(--color-warning);"'.html_safe if importate < zona.scuole_count %>><%= importate %>/<%= zona.scuole_count %></span>
     <% end %>
 
     <% unless zona.stato.in?(%w[pulizia importazione conteggio]) %>

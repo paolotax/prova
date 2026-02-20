@@ -20,6 +20,7 @@ class ImportScuolePerZonaJob < ApplicationJob
     end
 
     account_zona.update!(scuole_count: count, stato: "attiva")
+    BackfillDirezioniJob.perform_later(account)
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
     UpdateMieAdozioniJob.perform_later(account)

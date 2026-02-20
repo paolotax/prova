@@ -71,10 +71,16 @@ class Account < ApplicationRecord
 
     province.each do |prov|
       gradi.each do |gr|
-        account_zone.find_or_create_by!(provincia: prov, grado: gr) do |zona|
-          zona.regione = regione
-          zona.anno_scolastico = "2025/2026"
-          zona.stato = "conteggio"
+        zona = account_zone.find_or_create_by!(provincia: prov, grado: gr) do |z|
+          z.regione = regione
+          z.anno_scolastico = "2025/2026"
+          z.stato = "conteggio"
+        end
+
+        # Zona già esistente e attiva → rilancia conteggio per reimportare scuole mancanti
+        if zona.stato == "attiva"
+          zona.update!(stato: "conteggio")
+          CountScuolePerZonaJob.perform_later(zona)
         end
       end
     end

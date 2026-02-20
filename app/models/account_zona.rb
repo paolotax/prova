@@ -43,6 +43,14 @@ class AccountZona < ApplicationRecord
     TipoScuola::GRADI.to_h.invert[grado] || grado
   end
 
+  def scuole_importate_count
+    account.scuole.where(provincia: provincia, grado: grado).count
+  end
+
+  def parziale?
+    stato == "attiva" && scuole_importate_count < scuole_count
+  end
+
   def import_scuole_per_zona
     tipi = TipoScuola.where(grado: grado).pluck(:tipo)
     ImportScuola.where(PROVINCIA: provincia, DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipi)

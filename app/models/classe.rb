@@ -33,6 +33,7 @@
 class Classe < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include ProtectedFromDestroy
   include PgSearch::Model
 
   # Custom search that handles both class codes (2A) and scuola names (Dante)
@@ -64,6 +65,7 @@ class Classe < ApplicationRecord
 
   has_many :adozioni, dependent: :destroy
   has_many :consegne_saggio, through: :adozioni
+  has_many :documenti, as: :clientable
 
   validates :anno_corso, presence: true
   validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso] }, allow_blank: true
@@ -134,4 +136,5 @@ class Classe < ApplicationRecord
   def to_combobox_display
     nome_completo
   end
+
 end

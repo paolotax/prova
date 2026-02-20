@@ -7,22 +7,36 @@ class CleanupZonaJob < ApplicationJob
     provincia = account_zona.provincia
     grado = account_zona.grado
 
-    # Raccogli le direzioni referenziate dalle scuole che stiamo per eliminare
     scuole_da_eliminare = account.scuole.where(provincia: provincia, grado: grado)
     direzione_ids = scuole_da_eliminare.where.not(direzione_id: nil).distinct.pluck(:direzione_id)
 
-    # Destroy scuole della zona (cascades to classi -> adozioni via dependent: :destroy)
-    # has_many :plessi ha dependent: :nullify, quindi le direzioni restano
-    scuole_da_eliminare.destroy_all
+    # Destroy scuole una per una — quelle con appunti/documenti vengono skippate
+    protette = []
+    scuole_da_eliminare.find_each do |scuola|
+      unless scuola.destroy
+        protette << scuola
+      end
+    end
 
-    # Elimina direzioni rimaste senza plessi
+    # Elimina direzioni rimaste senza plessi (solo se non protette)
     if direzione_ids.any?
       account.scuole.where(id: direzione_ids).left_joins(:plessi)
         .where(plessi_scuole: { id: nil })
-        .destroy_all
+        .find_each do |direzione|
+          unless direzione.destroy
+            protette << direzione
+          end
+        end
     end
 
-    account_zona.destroy!
+    if protette.any?
+      # Scuole protette restano — zona rimane attiva con conteggio aggiornato
+      remaining = account.scuole.where(provincia: provincia, grado: grado).count
+      account_zona.update!(stato: "attiva", scuole_count: remaining)
+      Rails.logger.info "[CleanupZona] #{protette.size} scuole protette (hanno appunti/documenti): #{protette.map(&:denominazione).join(', ')}"
+    else
+      account_zona.destroy!
+    end
 
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
