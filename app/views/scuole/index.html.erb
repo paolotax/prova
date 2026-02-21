@@ -34,9 +34,12 @@
 <%= turbo_frame_tag :search_results do %>
   <% if @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
       <% if @per_direzione && @direzioni_count > 0 %>
+        <% scuole_solo = @total_count - @direzioni_count %>
+        <%= scuole_solo %> <%= scuole_solo == 1 ? "scuola" : "scuole" %>
         &middot; <%= @direzioni_count %> <%= @direzioni_count == 1 ? "direzione" : "direzioni" %>
+      <% else %>
+        <%= @total_count %> <%= @total_count == 1 ? "scuola trovata" : "scuole trovate" %>
       <% end %>
     </p>
 
