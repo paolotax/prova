@@ -4,6 +4,8 @@
     <% province = mandati.filter_map(&:provincia).uniq.sort %>
     <% editori_map = mandati.map(&:editore).uniq.index_by(&:id) %>
     <% account_id = mandati.first&.account_id %>
+    <% grand_totals = Hash.new(0) %>
+    <% grand_total = 0 %>
 
     <% province.each do |provincia| %>
         <% mandati_prov = mandati.select { |m| m.provincia == provincia } %>
@@ -24,11 +26,17 @@
                 </thead>
                 <tbody>
                     <% gruppi.sort_by(&:first).each do |gruppo, editori_gruppo| %>
+                        <% gruppo_eids = editori_gruppo.map(&:id) %>
+                        <% gruppo_mandati = mandati_prov.select { |m| gruppo_eids.include?(m.editore_id) } %>
+                        <% gruppo_totals = Hash.new(0) %>
+                        <% gruppo_mandati.each { |m| gruppo_totals[m.grado] += m.sezioni_count.to_i unless m.disdetta? } %>
+                        <% gruppo_total = gruppo_totals.values.sum %>
+                        <% grand_totals.merge!(gruppo_totals) { |_k, a, b| a + b } %>
+                        <% grand_total += gruppo_total %>
                         <% if editori_gruppo.size > 1 || gruppo != "—" %>
-                            <% gruppo_mandati = mandati_prov.select { |m| editori_gruppo.map(&:id).include?(m.editore_id) } %>
                             <% gruppo_disdetto = gruppo_mandati.all?(&:disdetta?) %>
                             <tr>
-                                <td colspan="<%= gradi_colonne.size + 2 %>" style="text-align: left; padding-block-start: 0.8em;">
+                                <td style="text-align: left; padding-block-start: 0.8em;">
                                     <div class="zone-grid__cell" style="justify-content: flex-start;">
                                         <span class="txt-x-small txt-subtle txt-bold"><%= gruppo %></span>
                                         <% if gruppo_disdetto %>
@@ -57,6 +65,10 @@
                                         <% end %>
                                     </div>
                                 </td>
+                                <% gradi_colonne.each do |code, _label| %>
+                                    <td class="txt-center txt-small txt-bold txt-subtle" style="padding-block-start: 0.8em;"><%= gruppo_totals[code] if gruppo_totals[code] > 0 %></td>
+                                <% end %>
+                                <td class="txt-center txt-small txt-bold" style="padding-block-start: 0.8em;"><%= gruppo_total if gruppo_total > 0 %></td>
                             </tr>
                         <% end %>
                         <% editori_gruppo.each do |editore| %>
@@ -79,6 +91,22 @@
                         <% end %>
                     <% end %>
                 </tbody>
+            </table>
+        </div>
+    <% end %>
+
+    <% if grand_total > 0 %>
+        <div class="pad-block-start">
+            <table class="zone-grid">
+                <tfoot>
+                    <tr class="txt-bold txt-small">
+                        <td style="text-align: left;">Totale</td>
+                        <% gradi_colonne.each do |code, _label| %>
+                            <td class="txt-center"><%= grand_totals[code] if grand_totals[code] > 0 %></td>
+                        <% end %>
+                        <td class="txt-center"><%= grand_total %></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     <% end %>
