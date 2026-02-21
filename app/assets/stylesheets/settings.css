@@ -158,6 +158,22 @@
     font-size: var(--text-x-small);
   }
 
+  .zone-grid--left th,
+  .zone-grid--left th:first-child,
+  .zone-grid--left td,
+  .zone-grid--left td:first-child {
+    text-align: left;
+  }
+
+  .zone-grid--left .zone-grid__cell {
+    justify-content: flex-start;
+  }
+
+  .zone-grid--left .zone-grid__count {
+    text-align: left;
+    margin-inline-start: 0;
+  }
+
   .settings__panel--users {
     max-height: 80dvh;
 

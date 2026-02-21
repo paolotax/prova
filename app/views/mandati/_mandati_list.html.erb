@@ -14,10 +14,10 @@
 
         <div class="zone-regione">
             <strong class="divider divider--fade txt-small"><%= provincia %></strong>
-            <table class="zone-grid">
+            <table class="zone-grid zone-grid--left">
                 <thead>
                     <tr>
-                        <th style="text-align: left;">Editore</th>
+                        <th>Editore</th>
                         <% gradi_colonne.each do |_code, label| %>
                             <th><%= label %></th>
                         <% end %>
@@ -36,8 +36,8 @@
                         <% if editori_gruppo.size > 1 || gruppo != "—" %>
                             <% gruppo_disdetto = gruppo_mandati.all?(&:disdetta?) %>
                             <tr>
-                                <td style="text-align: left; padding-block-start: 0.8em;">
-                                    <div class="zone-grid__cell" style="justify-content: flex-start;">
+                                <td style="padding-block-start: 0.8em;">
+                                    <div class="zone-grid__cell">
                                         <span class="txt-x-small txt-subtle txt-bold"><%= gruppo %></span>
                                         <% if gruppo_disdetto %>
                                             <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
@@ -66,14 +66,14 @@
                                     </div>
                                 </td>
                                 <% gradi_colonne.each do |code, _label| %>
-                                    <td class="txt-center txt-small txt-bold txt-subtle" style="padding-block-start: 0.8em;"><%= gruppo_totals[code] if gruppo_totals[code] > 0 %></td>
+                                    <td class="txt-small txt-bold txt-subtle" style="padding-block-start: 0.8em;"><%= gruppo_totals[code] if gruppo_totals[code] > 0 %></td>
                                 <% end %>
-                                <td class="txt-center txt-small txt-bold" style="padding-block-start: 0.8em;"><%= gruppo_total if gruppo_total > 0 %></td>
+                                <td class="txt-small txt-bold" style="padding-block-start: 0.8em;"><%= gruppo_total if gruppo_total > 0 %></td>
                             </tr>
                         <% end %>
                         <% editori_gruppo.each do |editore| %>
                             <tr>
-                                <td style="text-align: left;">
+                                <td>
                                     <span class="txt-small"><%= editore.editore %></span>
                                 </td>
                                 <% row_total = 0 %>
@@ -86,27 +86,22 @@
                                         <% end %>
                                     </td>
                                 <% end %>
-                                <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                                <td class="txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
                             </tr>
                         <% end %>
                     <% end %>
                 </tbody>
-            </table>
-        </div>
-    <% end %>
-
-    <% if grand_total > 0 %>
-        <div class="pad-block-start">
-            <table class="zone-grid">
-                <tfoot>
-                    <tr class="txt-bold txt-small">
-                        <td style="text-align: left;">Totale</td>
-                        <% gradi_colonne.each do |code, _label| %>
-                            <td class="txt-center"><%= grand_totals[code] if grand_totals[code] > 0 %></td>
-                        <% end %>
-                        <td class="txt-center"><%= grand_total %></td>
-                    </tr>
-                </tfoot>
+                <% if provincia == province.last && grand_total > 0 %>
+                    <tfoot>
+                        <tr class="txt-bold txt-small">
+                            <td>Totale</td>
+                            <% gradi_colonne.each do |code, _label| %>
+                                <td><%= grand_totals[code] if grand_totals[code] > 0 %></td>
+                            <% end %>
+                            <td><%= grand_total %></td>
+                        </tr>
+                    </tfoot>
+                <% end %>
             </table>
         </div>
     <% end %>
