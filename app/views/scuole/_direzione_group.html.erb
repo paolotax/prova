@@ -7,8 +7,8 @@
     <div class="flex flex-column flex-item-grow max-inline-size">
       <header class="card__header">
         <div class="card__board">
-          <span class="card__id"><%= direzione.tipo_scuola&.upcase.presence || "DIREZIONE" %></span>
-          <span class="card__board-name"><%= [direzione.comune, direzione.provincia].compact_blank.join(", ") %></span>
+          <span class="card__id"><%= direzione.codice_ministeriale %></span>
+          <span class="card__board-name"><%= direzione.tipo_scuola&.upcase.presence || "DIREZIONE" %></span>
         </div>
       </header>
 
@@ -17,6 +17,8 @@
           <h3 class="card__title">
             <%= link_to direzione.denominazione, scuola_path(direzione), data: { turbo_frame: "_top" } %>
           </h3>
+          <span class="card__subtitle"><%= [direzione.comune, direzione.provincia].compact_blank.join(", ") %></span>
+
         </div>
       </div>
 
