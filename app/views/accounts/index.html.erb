@@ -1,32 +1,27 @@
-<div class="max-w-2xl mx-auto py-12 px-4">
-  <h1 class="text-2xl font-bold text-gray-900 mb-8">I tuoi Account</h1>
+<% @page_title = "I tuoi Account" %>
 
-  <% if @accounts.empty? %>
-    <div class="text-center py-12">
-      <p class="text-gray-500 mb-4">Non hai ancora nessun account.</p>
-      <%= link_to "Crea il tuo primo account", new_account_path, class: "btn btn-primary" %>
-    </div>
-  <% else %>
-    <div class="space-y-4 mb-8">
+<div class="panel panel--centered flex flex-column gap-half"
+     style="--popup-icon-size: 24px; --popup-item-padding-inline: 0.5rem;">
+  <% if @accounts.any? %>
+    <h1 class="txt-x-large font-weight-black margin-none">I tuoi Account</h1>
+    <menu class="popup__list pad border-radius border">
       <% @accounts.each do |account| %>
-        <%= link_to account_root_path(account), class: "block p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200" do %>
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-lg font-semibold text-gray-900"><%= account.name %></h2>
-              <p class="text-sm text-gray-500">
-                <%= current_user.role_in(account)&.titleize || "Membro" %>
-              </p>
-            </div>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        <% end %>
+        <li class="popup__item txt-medium">
+          <span class="circled-text circled-text--small"><%= account.name.first.upcase %></span>
+          <%= link_to account_root_path(account), class: "btn overflow-ellipsis fill-transparent popup__btn" do %>
+            <strong><%= account.name %></strong>
+          <% end %>
+        </li>
       <% end %>
-    </div>
-
-    <div class="text-center">
-      <%= link_to "Crea nuovo account", new_account_path, class: "text-blue-600 hover:text-blue-800" %>
-    </div>
+    </menu>
+  <% else %>
+    <h1 class="txt-x-large font-weight-black margin-none">Nessun account</h1>
+    <p class="margin-none-block-start">Non hai ancora nessun account.</p>
   <% end %>
+
+  <div class="margin-block-start">
+    <%= link_to new_account_path, class: "btn btn--plain txt-link center txt-small" do %>
+      <span>Crea nuovo account</span>
+    <% end %>
+  </div>
 </div>
