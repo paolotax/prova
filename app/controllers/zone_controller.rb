@@ -2,10 +2,9 @@ class ZoneController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
+    @account_zone = zone_ordinate
   end
 
-  # GET /zone/new — cascading selects (turbo_frame :zone_select)
   def new
     @regioni = Zona.order(:regione).select(:regione).distinct
     @province = if params[:regione].present?
@@ -25,7 +24,7 @@ class ZoneController < ApplicationController
       provincia: params[:provincia].presence,
       grado: params[:grado].presence
     )
-    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
+    @account_zone = zone_ordinate
 
     respond_to do |format|
       format.turbo_stream
@@ -34,22 +33,19 @@ class ZoneController < ApplicationController
   end
 
   def destroy
-    @account_zona = Current.account.account_zone.find(params[:id])
+    Current.account.account_zone.find(params[:id]).toggle_rimozione!
 
-    case @account_zona.stato
-    when "pronta", "conteggio"
-      @account_zona.destroy!
-    when "da_rimuovere"
-      @account_zona.update!(stato: "attiva")
-    else
-      @account_zona.update!(stato: "da_rimuovere")
-    end
-
-    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
+    @account_zone = zone_ordinate
 
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to configurazione_path, notice: "Zona rimossa!" }
     end
+  end
+
+  private
+
+  def zone_ordinate
+    Current.account.account_zone.order(:regione, :provincia, :grado)
   end
 end

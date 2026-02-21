@@ -26,6 +26,7 @@ class AccountZona < ApplicationRecord
   self.table_name = "account_zone"
 
   include AccountScoped
+  include AccountZona::GestioneStato
 
   belongs_to :account
 

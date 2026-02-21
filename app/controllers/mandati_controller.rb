@@ -2,11 +2,11 @@ class MandatiController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+    @mandati = mandati_ordinati
   end
 
   def select_editori
-    editori_con_adozioni = editori_da_adozioni
+    editori_con_adozioni = Current.account.editori_da_adozioni
     @gruppi = editori_con_adozioni.select(:gruppo).distinct.order(:gruppo)
     @editori = if params[:gruppo].present?
                  editori_con_adozioni.where(gruppo: params[:gruppo]).order(:editore)
@@ -18,46 +18,29 @@ class MandatiController < ApplicationController
   def create
     return if params[:hgruppo].blank?
 
-    editore_ids = if params[:heditore].present?
-                    [params[:heditore].to_i]
-                  else
-                    editori_da_adozioni.where(gruppo: params[:hgruppo]).pluck(:id)
-                  end
+    editore_ids = Current.account.editore_ids_per_mandato(
+      gruppo: params[:hgruppo],
+      editore_id: params[:heditore]
+    )
 
-    zone = Current.account.account_zone.where(stato: "attiva")
-    zone_ids = Array(params[:zone_ids]).reject(&:blank?)
+    zone_ids = Array(params[:zone_ids]).reject(&:blank?).presence
 
-    target_zone = if zone_ids.any?
-                     zone.where(id: zone_ids)
-                   else
-                     zone
-                   end
+    Current.account.crea_mandati_per_editori!(editore_ids, zone_ids: zone_ids)
 
-    editore_ids.each do |eid|
-      target_zone.find_each do |zona|
-        Current.account.mandati.find_or_create_by!(
-          editore_id: eid,
-          provincia: zona.provincia,
-          grado: zona.grado
-        )
-      end
-    end
-
-    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+    @mandati = mandati_ordinati
 
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to configurazione_path, notice: "Editore assegnato!" }
     end
   rescue ActiveRecord::RecordNotUnique
-    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+    @mandati = mandati_ordinati
   end
 
   def destroy
-    @mandato = Current.account.mandati.find(params[:id])
-    @mandato.destroy!
+    Current.account.mandati.find(params[:id]).destroy!
 
-    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+    @mandati = mandati_ordinati
 
     respond_to do |format|
       format.turbo_stream
@@ -67,8 +50,7 @@ class MandatiController < ApplicationController
 
   private
 
-  def editori_da_adozioni
-    nomi = Adozione.where(account_id: Current.account.id).select(:editore).distinct.pluck(:editore)
-    Editore.where(editore: nomi)
+  def mandati_ordinati
+    Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
   end
 end

@@ -13,6 +13,9 @@
 #  index_accounts_on_slug  (slug) UNIQUE
 #
 class Account < ApplicationRecord
+  include Account::GestioneMandati
+  include Account::Distribuzione
+
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
 

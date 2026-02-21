@@ -16,6 +16,8 @@
 #  index_memberships_on_user_id_and_account_id  (user_id,account_id) UNIQUE
 #
 class Membership < ApplicationRecord
+  include Membership::ScuoleAssegnabili
+
   belongs_to :user
   belongs_to :account
 

@@ -87,6 +87,25 @@ class Scuola < ApplicationRecord
       .where.not(id: unscoped.select(:direzione_id).where.not(direzione_id: nil))
   }
 
+  # Risolve un param stringa in un array di scuole
+  # Formati: "prov:MI", "dir:<uuid>:<grado>", "group:MI:primaria", "<uuid>"
+  def self.resolve_from_param(param, scope: Current.account.scuole)
+    case param
+    when /\Aprov:(.+)\z/
+      scope.where(provincia: $1).to_a
+    when /\Adir:(.+):(.+)\z/
+      direzione = scope.find($1)
+      [direzione] + direzione.plessi.where(grado: $2).to_a
+    when /\Agroup:(.+):(.+)\z/
+      plessi = scope.where(provincia: $1, grado: $2)
+      dir_ids = plessi.where.not(direzione_id: nil).distinct.pluck(:direzione_id)
+      direzioni = scope.where(id: dir_ids)
+      (plessi.to_a + direzioni.to_a).uniq
+    else
+      [scope.find(param)]
+    end
+  end
+
   # Crea Scuola da ImportScuola
   def self.create_from_import(import_scuola, account: Current.account)
     direzione = resolve_direzione(import_scuola, account: account)
