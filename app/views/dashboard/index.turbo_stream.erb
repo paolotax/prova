@@ -1,4 +1,4 @@
 <%= pagination_frame_tag :entries, @page do %>
-  <%= render partial: "entries/entry", collection: @page.records, as: :entry %>
+  <%= render partial: "entries/entry", formats: [:html], collection: @page.records, as: :entry %>
   <%= link_to_next_page :entries, @page, activate_when_observed: true %>
 <% end %>
