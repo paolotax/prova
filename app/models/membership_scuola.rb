@@ -21,13 +21,4 @@ class MembershipScuola < ApplicationRecord
   belongs_to :scuola
 
   validates :scuola_id, uniqueness: { scope: :membership_id }
-
-  after_create_commit  :broadcast_refresh
-  after_destroy_commit :broadcast_refresh
-
-  private
-
-  def broadcast_refresh
-    membership.broadcast_refresh_later_to(membership, "scuole")
-  end
 end

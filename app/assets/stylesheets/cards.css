@@ -644,6 +644,87 @@
     }
   }
 
+  /* Accordion (distribuzione)
+  /* ------------------------------------------------------------------------ */
+
+  .accordion-provincia,
+  .accordion-grado {
+    border: none;
+  }
+
+  .accordion-summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    font-weight: 600;
+    gap: 0.5ch;
+    list-style: none;
+    padding: 0.4em 0.6em;
+    user-select: none;
+
+    &::-webkit-details-marker { display: none; }
+    &::marker { display: none; }
+  }
+
+  .accordion-summary::before {
+    content: "▸";
+    display: inline-block;
+    font-size: 0.8em;
+    transition: transform 150ms ease;
+  }
+
+  details[open] > .accordion-summary::before {
+    transform: rotate(90deg);
+  }
+
+  .accordion-summary--provincia {
+    background: color-mix(in srgb, var(--card-color) 8%, var(--color-canvas));
+    border-radius: 0.3em;
+    font-size: var(--text-small);
+    margin-block-end: 0.2em;
+  }
+
+  .accordion-summary--grado {
+    border-radius: 0.2em;
+    font-size: var(--text-x-small);
+    margin-inline-start: 0.5em;
+    padding: 0.3em 0.5em;
+
+    &[draggable="true"] {
+      cursor: grab;
+
+      &:hover {
+        background: color-mix(in srgb, var(--card-color) 12%, var(--color-canvas));
+      }
+    }
+  }
+
+  .accordion-count {
+    background: color-mix(in srgb, var(--card-color) 20%, var(--color-canvas));
+    border-radius: 1em;
+    font-size: 0.85em;
+    font-weight: 700;
+    line-height: 1;
+    margin-inline-start: auto;
+    min-inline-size: 2em;
+    padding: 0.15em 0.5em;
+    text-align: center;
+  }
+
+  .accordion-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .accordion-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-inline-start: 1em;
+    padding: 0.3em 0;
+  }
+
   .column-summary__panel {
     container-type: inline-size;
 

@@ -53,16 +53,16 @@
         </button>
       </header>
       <div class="cards__list" data-drag-drop-item-container>
-        <% @non_assegnate.each do |scuola| %>
-          <%= render "distribuzione/scuola_item", scuola: scuola %>
-        <% end %>
+        <%= render "distribuzione/accordion_scuole", grouped: @non_assegnate_grouped %>
       </div>
     </div>
   </section>
 
   <%# Colonne agenti %>
   <% @memberships.each do |membership| %>
-    <% scuole = @scuole_by_membership[membership.id] || [] %>
+    <% data = @scuole_by_membership[membership.id] || { list: [], grouped: {} } %>
+    <% scuole = data[:list] %>
+    <% grouped = data[:grouped] %>
     <section class="cards is-expanded"
              style="--card-color: oklch(0.6 0.15 220)"
              tabindex="0"
@@ -87,9 +87,7 @@
           </button>
         </header>
         <div class="cards__list" data-drag-drop-item-container>
-          <% scuole.each do |scuola| %>
-            <%= render "distribuzione/scuola_item", scuola: scuola %>
-          <% end %>
+          <%= render "distribuzione/accordion_scuole", grouped: grouped %>
         </div>
       </div>
     </section>

@@ -48,6 +48,7 @@ class Scuola < ApplicationRecord
   include ProtectedFromDestroy
   include PgSearch::Model
 
+
   pg_search_scope :search_all_word,
     against: [:denominazione, :codice_ministeriale, :comune, :provincia],
     using: { tsearch: { any_word: false, prefix: true } }

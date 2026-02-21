@@ -1,4 +1,17 @@
 module ScuoleHelper
+  GRADO_LABELS = {
+    "E" => "Primaria",
+    "M" => "Secondaria 1° grado",
+    "N" => "Secondaria 2° grado",
+    "I" => "Infanzia",
+    "IC" => "Istituti Comprensivi",
+    "altro" => "Altro"
+  }.freeze
+
+  def grado_label(grado)
+    GRADO_LABELS[grado] || grado&.capitalize || "Altro"
+  end
+
   def scuola_color(scuola)
     case scuola.tipo_scuola
     when "ISTITUTO COMPRENSIVO"                 then "oklch(0.6 0.15 250)"  # blue

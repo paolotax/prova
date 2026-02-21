@@ -1,0 +1,31 @@
+<%# locals: (grouped:) -%>
+
+<% grouped.keys.map(&:first).uniq.sort.each do |provincia| %>
+  <% gradi = grouped.select { |k, _| k.first == provincia } %>
+  <% prov_count = gradi.values.sum(&:size) %>
+  <details class="accordion-provincia"
+           data-drag-and-drop-target="item"
+           data-id="prov:<%= provincia %>">
+    <summary class="accordion-summary accordion-summary--provincia"
+             draggable="true">
+      <span class="accordion-label"><%= provincia %></span>
+      <span class="accordion-count"><%= prov_count %></span>
+    </summary>
+    <% gradi.sort_by(&:first).each do |(_, grado), units| %>
+      <details class="accordion-grado"
+               data-drag-and-drop-target="item"
+               data-id="group:<%= provincia %>:<%= grado %>">
+        <summary class="accordion-summary accordion-summary--grado"
+                 draggable="true">
+          <span class="accordion-label"><%= grado_label(grado) %></span>
+          <span class="accordion-count"><%= units.size %></span>
+        </summary>
+        <div class="accordion-items">
+          <% units.each do |unit| %>
+            <%= render "distribuzione/scuola_item", unit: unit %>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+  </details>
+<% end %>
