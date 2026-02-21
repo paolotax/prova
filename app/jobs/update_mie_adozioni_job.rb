@@ -16,8 +16,8 @@ class UpdateMieAdozioniJob < ApplicationJob
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = adozioni.account_id
           AND e.editore = adozioni.editore
-          AND (m.provincia IS NULL OR m.provincia = s.provincia)
-          AND (m.grado IS NULL OR m.grado = s.grado)
+          AND m.provincia = s.provincia
+          AND m.grado = s.grado
       )
     SQL
 
@@ -38,8 +38,8 @@ class UpdateMieAdozioniJob < ApplicationJob
         WHERE m.account_id = adozioni.account_id
           AND m.disdetta = true
           AND e.editore = adozioni.editore
-          AND (m.provincia IS NULL OR m.provincia = s.provincia)
-          AND (m.grado IS NULL OR m.grado = s.grado)
+          AND m.provincia = s.provincia
+          AND m.grado = s.grado
       )
     SQL
 
@@ -163,8 +163,8 @@ class UpdateMieAdozioniJob < ApplicationJob
         JOIN classi c ON c.id = a.classe_id
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = :account_id
-          AND (m.provincia IS NULL OR m.provincia = s.provincia)
-          AND (m.grado IS NULL OR m.grado = s.grado)
+          AND m.provincia = s.provincia
+          AND m.grado = s.grado
         GROUP BY m.id
       ) sub
       WHERE mandati.id = sub.id
@@ -176,7 +176,7 @@ class UpdateMieAdozioniJob < ApplicationJob
   end
 
   def broadcast_mandati_update(account)
-    mandati = account.mandati.includes(:editore).order("editori.editore")
+    mandati = account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
 
     Turbo::StreamsChannel.broadcast_replace_to(
       [account, "configurazione"],

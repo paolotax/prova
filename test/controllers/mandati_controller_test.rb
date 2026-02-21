@@ -48,18 +48,23 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should toggle disdetta on mandato" do
+  test "should create disdetta on mandato" do
     mandato = mandati(:fizzy_zanichelli)
     assert_not mandato.disdetta?
 
-    patch toggle_disdetta_mandato_path(mandato, account_id: @account.id),
+    post mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
       as: :turbo_stream
     assert_response :success
 
     mandato.reload
     assert mandato.disdetta?
+  end
 
-    patch toggle_disdetta_mandato_path(mandato, account_id: @account.id),
+  test "should destroy disdetta on mandato" do
+    mandato = mandati(:fizzy_zanichelli)
+    mandato.update!(disdetta: true)
+
+    delete mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
       as: :turbo_stream
     assert_response :success
 

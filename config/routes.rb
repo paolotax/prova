@@ -359,14 +359,18 @@ Rails.application.routes.draw do
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
     end
 
-    resources :mandati do
-      member do
-        patch 'toggle_disdetta'
-      end
+    resources :mandati, only: [:index, :create, :destroy] do
+      resource :disdetta, only: [:create, :destroy], module: :mandati
       collection do
-        get 'select_editori'
-        post 'aggiorna_mie_adozioni'
+        get :select_editori
       end
+    end
+
+    namespace :mandati do
+      resources :gruppi, only: [:destroy], param: :id do
+        resource :disdetta, only: [:create, :destroy], module: :gruppi
+      end
+      resource :sincronizzazione_adozioni, only: [:create]
     end
 
     resources :categorie

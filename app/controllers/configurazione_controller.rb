@@ -11,7 +11,7 @@ class ConfigurazioneController < ApplicationController
     @regioni = Zona.order(:regione).select(:regione).distinct
 
     # Mandati
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
     @gruppi = editori_da_adozioni.select(:gruppo).distinct.order(:gruppo)
     @editori = []
     @zone_attive = Current.account.account_zone.where(stato: "attiva").order(:provincia, :grado)

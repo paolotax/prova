@@ -1,1 +1,3 @@
-<%= turbo_stream.remove dom_id(@mandato) %>
+<%= turbo_stream.replace "account-editori" do %>
+    <%= render partial: "mandati/mandati_list", locals: { mandati: @mandati } %>
+<% end %>

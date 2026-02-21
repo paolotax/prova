@@ -14,11 +14,20 @@
             <span class="txt-x-small txt-subtle margin-inline-end-half"><%= mandato.sezioni_count %> sez.</span>
         <% end %>
 
-        <%= button_to toggle_disdetta_mandato_path(account_id: mandato.account_id, id: mandato.id),
-            method: :patch,
-            class: "btn btn--circle #{mandato.disdetta? ? 'btn--link' : 'btn--subtle'}",
-            aria: { label: mandato.disdetta? ? "Riattiva mandato" : "Segna disdetta" } do %>
-            <%= icon_tag mandato.disdetta? ? "refresh" : "close-circle" %>
+        <% if mandato.disdetta? %>
+            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+                method: :delete,
+                class: "btn btn--circle btn--link",
+                aria: { label: "Riattiva mandato" } do %>
+                <%= icon_tag "refresh" %>
+            <% end %>
+        <% else %>
+            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+                method: :post,
+                class: "btn btn--circle btn--subtle",
+                aria: { label: "Segna disdetta" } do %>
+                <%= icon_tag "close-circle" %>
+            <% end %>
         <% end %>
 
         <%= button_to mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,

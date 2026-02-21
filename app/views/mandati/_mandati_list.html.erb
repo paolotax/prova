@@ -1,5 +1,89 @@
 <div id="account-editori">
-    <% mandati.each do |mandato| %>
-        <%= render partial: "mandati/mandato", locals: { mandato: mandato } %>
+    <% gradi_colonne = [["E", "Primaria"], ["M", "I Grado"], ["N", "II Grado"]] %>
+    <% mandati_lookup = mandati.index_by { |m| [m.provincia, m.editore_id, m.grado] } %>
+    <% province = mandati.filter_map(&:provincia).uniq.sort %>
+    <% editori_map = mandati.map(&:editore).uniq.index_by(&:id) %>
+    <% account_id = mandati.first&.account_id %>
+
+    <% province.each do |provincia| %>
+        <% mandati_prov = mandati.select { |m| m.provincia == provincia } %>
+        <% editori_provincia = mandati_prov.map(&:editore).uniq.sort_by(&:editore) %>
+        <% gruppi = editori_provincia.group_by { |e| e.gruppo.presence || "—" } %>
+
+        <div class="zone-regione">
+            <strong class="divider divider--fade txt-small"><%= provincia %></strong>
+            <table class="zone-grid">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">Editore</th>
+                        <% gradi_colonne.each do |_code, label| %>
+                            <th><%= label %></th>
+                        <% end %>
+                        <th>Totale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% gruppi.sort_by(&:first).each do |gruppo, editori_gruppo| %>
+                        <% if editori_gruppo.size > 1 || gruppo != "—" %>
+                            <% gruppo_mandati = mandati_prov.select { |m| editori_gruppo.map(&:id).include?(m.editore_id) } %>
+                            <% gruppo_disdetto = gruppo_mandati.all?(&:disdetta?) %>
+                            <tr>
+                                <td colspan="<%= gradi_colonne.size + 2 %>" style="text-align: left; padding-block-start: 0.8em;">
+                                    <div class="zone-grid__cell" style="justify-content: flex-start;">
+                                        <span class="txt-x-small txt-subtle txt-bold"><%= gruppo %></span>
+                                        <% if gruppo_disdetto %>
+                                            <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
+                                                method: :delete,
+                                                class: "btn btn--circle btn--link",
+                                                style: "--btn-size: 1.6em;",
+                                                aria: { label: "Riattiva gruppo" } do %>
+                                                <%= icon_tag "refresh", class: "icon--small" %>
+                                            <% end %>
+                                        <% else %>
+                                            <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
+                                                method: :post,
+                                                class: "btn btn--circle btn--subtle",
+                                                style: "--btn-size: 1.6em;",
+                                                aria: { label: "Disdetta gruppo" } do %>
+                                                <%= icon_tag "close-circle", class: "icon--small" %>
+                                            <% end %>
+                                        <% end %>
+                                        <%= button_to mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia),
+                                            method: :delete,
+                                            class: "btn btn--circle btn--negative",
+                                            style: "--btn-size: 1.6em;",
+                                            aria: { label: "Elimina gruppo" } do %>
+                                            <%= icon_tag "trash", class: "icon--small" %>
+                                        <% end %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% end %>
+                        <% editori_gruppo.each do |editore| %>
+                            <tr>
+                                <td style="text-align: left;">
+                                    <span class="txt-small"><%= editore.editore %></span>
+                                </td>
+                                <% row_total = 0 %>
+                                <% gradi_colonne.each do |code, _label| %>
+                                    <td>
+                                        <% mandato = mandati_lookup[[provincia, editore.id, code]] %>
+                                        <% if mandato %>
+                                            <% row_total += mandato.sezioni_count.to_i unless mandato.disdetta? %>
+                                            <%= render partial: "mandati/mandato_cell", locals: { mandato: mandato } %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+                                <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                            </tr>
+                        <% end %>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    <% end %>
+
+    <% if mandati.empty? %>
+        <p class="txt-small txt-subtle pad-block">Nessun editore assegnato</p>
     <% end %>
 </div>

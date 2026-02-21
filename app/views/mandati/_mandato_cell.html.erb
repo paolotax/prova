@@ -1,0 +1,34 @@
+<% if mandato %>
+    <% sez_count = mandato.sezioni_count.to_i %>
+    <div class="zone-grid__cell" style="<%= "opacity: 0.5;" if mandato.disdetta? %>">
+        <% if sez_count > 0 %>
+            <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if mandato.disdetta? %>">
+                <%= sez_count %>
+            </span>
+        <% end %>
+
+        <% if mandato.disdetta? %>
+            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+                method: :delete,
+                class: "btn btn--circle btn--link",
+                style: "--btn-size: 1.6em;",
+                aria: { label: "Riattiva mandato" } do %>
+                <%= icon_tag "refresh", class: "icon--small" %>
+            <% end %>
+        <% else %>
+            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+                method: :post,
+                class: "btn btn--circle btn--subtle",
+                style: "--btn-size: 1.6em;",
+                aria: { label: "Segna disdetta" } do %>
+                <%= icon_tag "close-circle", class: "icon--small" %>
+            <% end %>
+        <% end %>
+
+        <%= button_to mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,
+            class: "btn btn--circle btn--negative", style: "--btn-size: 1.6em;",
+            aria: { label: "Rimuovi editore" } do %>
+            <%= icon_tag "trash", class: "icon--small" %>
+        <% end %>
+    </div>
+<% end %>

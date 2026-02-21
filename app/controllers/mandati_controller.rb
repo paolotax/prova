@@ -2,7 +2,7 @@ class MandatiController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
   end
 
   def select_editori
@@ -27,56 +27,37 @@ class MandatiController < ApplicationController
     zone = Current.account.account_zone.where(stato: "attiva")
     zone_ids = Array(params[:zone_ids]).reject(&:blank?)
 
+    target_zone = if zone_ids.any?
+                     zone.where(id: zone_ids)
+                   else
+                     zone
+                   end
+
     editore_ids.each do |eid|
-      if zone_ids.any?
-        zone.where(id: zone_ids).find_each do |zona|
-          Current.account.mandati.find_or_create_by!(
-            editore_id: eid,
-            provincia: zona.provincia,
-            grado: zona.grado
-          )
-        end
-      else
-        Current.account.mandati.find_or_create_by!(editore_id: eid)
+      target_zone.find_each do |zona|
+        Current.account.mandati.find_or_create_by!(
+          editore_id: eid,
+          provincia: zona.provincia,
+          grado: zona.grado
+        )
       end
     end
 
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
 
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to configurazione_path, notice: "Editore assegnato!" }
     end
   rescue ActiveRecord::RecordNotUnique
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
-  end
-
-  def aggiorna_mie_adozioni
-    UpdateMieAdozioniJob.perform_later(Current.account)
-
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: [] }
-      format.html { redirect_to configurazione_path, notice: "Aggiornamento adozioni in corso..." }
-    end
-  end
-
-  def toggle_disdetta
-    @mandato = Current.account.mandati.find(params[:id])
-    @mandato.update!(disdetta: !@mandato.disdetta)
-
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to configurazione_path }
-    end
+    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
   end
 
   def destroy
     @mandato = Current.account.mandati.find(params[:id])
     @mandato.destroy!
 
-    @mandati = Current.account.mandati.includes(:editore).order("editori.editore")
+    @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
 
     respond_to do |format|
       format.turbo_stream
