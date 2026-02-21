@@ -1,3 +1,4 @@
-<%= turbo_stream_append_page :entries, @page, "awaiting_triage_entries" do %>
+<%= pagination_frame_tag :entries, @page do %>
   <%= render partial: "entries/entry", collection: @page.records, as: :entry %>
+  <%= link_to_next_page :entries, @page, activate_when_observed: true %>
 <% end %>
