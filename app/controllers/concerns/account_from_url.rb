@@ -20,6 +20,11 @@ module AccountFromUrl
 
     Current.account = current_user.accounts.find(params[:account_id])
     Current.membership = current_user.memberships.find_by(account: Current.account)
+
+    # Update session to track last-used account
+    if Current.session && Current.session.account_id != Current.account.id
+      Current.session.update_column(:account_id, Current.account.id)
+    end
   rescue ActiveRecord::RecordNotFound
     redirect_to accounts_path, alert: "Account non trovato o accesso negato"
   end

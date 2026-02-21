@@ -21,7 +21,6 @@ Rails.application.routes.draw do
     collection do
       get :sent
       get 'verify/:code', action: :verify, as: :verify
-      post :select_account
     end
   end
 

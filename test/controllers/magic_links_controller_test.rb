@@ -48,14 +48,15 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
     assert cookies[:session_token].present?
   end
 
-  test "verify with valid code and multiple accounts shows selection" do
+  test "verify with valid code and multiple accounts redirects to account chooser" do
     user = users(:multi_account)
     magic_link = user.magic_links.create!
 
     get verify_magic_links_path(code: magic_link.code)
 
-    assert_response :success
-    assert_select "button[type=submit]", minimum: 2
+    assert_redirected_to accounts_path
+    assert_equal "Accesso effettuato!", flash[:notice]
+    assert cookies[:session_token].present?
   end
 
   test "verify with invalid code redirects with error" do
@@ -102,33 +103,6 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to account_root_path(user.accounts.first)
     assert_equal "Accesso effettuato!", flash[:notice]
-  end
-
-  test "select_account with valid code logs in to selected account" do
-    user = users(:multi_account)
-    magic_link = user.magic_links.create!
-    account = user.accounts.first
-
-    post select_account_magic_links_path, params: {
-      code: magic_link.code,
-      account_id: account.id
-    }
-
-    assert_redirected_to account_root_path(account)
-    assert_equal "Accesso effettuato!", flash[:notice]
-  end
-
-  test "select_account with invalid account redirects with error" do
-    user = users(:multi_account)
-    magic_link = user.magic_links.create!
-
-    post select_account_magic_links_path, params: {
-      code: magic_link.code,
-      account_id: "invalid-uuid"
-    }
-
-    assert_redirected_to new_magic_link_path
-    assert_equal "Account non valido.", flash[:alert]
   end
 
   test "verify creates account for user without accounts" do

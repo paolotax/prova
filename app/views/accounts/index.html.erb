@@ -4,24 +4,22 @@
      style="--popup-icon-size: 24px; --popup-item-padding-inline: 0.5rem;">
   <% if @accounts.any? %>
     <h1 class="txt-x-large font-weight-black margin-none">I tuoi Account</h1>
-    <menu class="popup__list pad border-radius border">
+    <div class="flex flex-column gap-half margin-block-start">
       <% @accounts.each do |account| %>
-        <li class="popup__item txt-medium">
+        <%= link_to account_root_path(account), class: "btn btn--secondary full-width txt-medium flex align-center justify-space-between gap" do %>
           <span class="circled-text circled-text--small"><%= account.name.first.upcase %></span>
-          <%= link_to account_root_path(account), class: "btn overflow-ellipsis fill-transparent popup__btn" do %>
-            <strong><%= account.name %></strong>
-          <% end %>
-        </li>
+          <div class="flex flex-column flex-item-grow">
+            <span class="font-weight-black"><%= account.name %></span>
+            <% membership = current_user.memberships.find_by(account: account) %>
+            <span class="txt-small txt-subtle"><%= membership&.role&.humanize || "Membro" %></span>
+          </div>
+          <%= icon_tag "arrow-right" rescue nil %>
+        <% end %>
       <% end %>
-    </menu>
+    </div>
   <% else %>
     <h1 class="txt-x-large font-weight-black margin-none">Nessun account</h1>
     <p class="margin-none-block-start">Non hai ancora nessun account.</p>
   <% end %>
 
-  <div class="margin-block-start">
-    <%= link_to new_account_path, class: "btn btn--plain txt-link center txt-small" do %>
-      <span>Crea nuovo account</span>
-    <% end %>
-  </div>
 </div>

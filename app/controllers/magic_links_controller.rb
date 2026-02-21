@@ -49,27 +49,8 @@ class MagicLinksController < ApplicationController
       # Single account - auto select
       create_session_and_redirect(@user, @accounts.first)
     else
-      # Multiple accounts - show selection
-      render :select_account
-    end
-  end
-
-  # POST /magic_links/select_account
-  def select_account
-    @magic_link = MagicLink.valid.find_by(code: normalize_code(params[:code]))
-
-    if @magic_link.nil? || !@magic_link.valid_for_use?
-      redirect_to new_magic_link_path, alert: "Codice non valido o scaduto. Richiedi un nuovo codice."
-      return
-    end
-
-    @user = @magic_link.user
-    account = @user.accounts.find_by(id: params[:account_id])
-
-    if account
-      create_session_and_redirect(@user, account)
-    else
-      redirect_to new_magic_link_path, alert: "Account non valido."
+      # Multiple accounts - create session with first, redirect to account chooser
+      create_session_and_redirect(@user, @accounts.first, redirect_to: accounts_path)
     end
   end
 
@@ -92,7 +73,7 @@ class MagicLinksController < ApplicationController
     end
   end
 
-  def create_session_and_redirect(user, account)
+  def create_session_and_redirect(user, account, redirect_to: nil)
     @magic_link.mark_as_used!
 
     session = user.sessions.create!(
@@ -113,6 +94,6 @@ class MagicLinksController < ApplicationController
     Current.account = account
     Current.membership = user.memberships.find_by(account: account)
 
-    redirect_to account_root_path(account), notice: "Accesso effettuato!"
+    redirect_to redirect_to || account_root_path(account), notice: "Accesso effettuato!"
   end
 end

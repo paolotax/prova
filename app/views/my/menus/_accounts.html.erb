@@ -1,0 +1,7 @@
+<% if current_user.accounts.many? %>
+  <%= collapsible_nav_section "Account" do %>
+    <% current_user.accounts.each do |account| %>
+      <%= filter_place_menu_item account_root_path(account), account.name, "marker", current: account == Current.account, turbo: false %>
+    <% end %>
+  <% end %>
+<% end %>
