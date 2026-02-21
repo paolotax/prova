@@ -4,7 +4,8 @@
          style="--card-color: <%= scuola_color(unit[:scuola]) %>"
          draggable="true"
          data-drag-and-drop-target="item"
-         data-id="<%= unit[:id] %>">
+         data-id="<%= unit[:id] %>"
+         data-scuole-count="<%= unit[:plessi].any? ? unit[:plessi].size : 1 %>">
   <div class="flex flex-column flex-item-grow max-inline-size">
     <header class="card__header">
       <div class="card__board">

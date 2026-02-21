@@ -41,12 +41,13 @@
            data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)">
     <div class="cards__transition-container">
       <header class="cards__header">
+        <% non_assegnate_count = @non_assegnate.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
         <button type="button" class="cards__expander"
-                style="--card-count: <%= [@non_assegnate.size, 15].min %>"
+                style="--card-count: <%= [non_assegnate_count, 15].min %>"
                 data-collapsible-columns-target="button"
                 data-action="click->collapsible-columns#toggle"
                 aria-expanded="true">
-          <span class="cards__expander-count" data-drag-and-drop-counter><%= @non_assegnate.size %></span>
+          <span class="cards__expander-count" data-drag-and-drop-counter><%= non_assegnate_count %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">
             Non assegnate
           </h3>
@@ -74,12 +75,13 @@
              data-drag-and-drop-css-variable-value="oklch(0.6 0.15 220)">
       <div class="cards__transition-container">
         <header class="cards__header">
+          <% scuole_count = scuole.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
           <button type="button" class="cards__expander"
-                  style="--card-count: <%= [scuole.size, 15].min %>"
+                  style="--card-count: <%= [scuole_count, 15].min %>"
                   data-collapsible-columns-target="button"
                   data-action="click->collapsible-columns#toggle"
                   aria-expanded="true">
-            <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole.size %></span>
+            <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count %></span>
             <h3 class="cards__expander-title" data-collapsible-columns-target="title">
               <%= membership.user.name %>
               <%= icon_tag "collapse" %>

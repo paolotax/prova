@@ -51,6 +51,10 @@ export default class extends Controller {
     const sourceParentProv = this.dragItem.closest(".accordion-provincia")
     this.#insertDraggedItem(targetContainer, this.dragItem)
     this.#cleanupEmptyProvincia(sourceParentProv)
+
+    // Aggiorna contatori provincia/grado nel target dopo inserimento
+    const targetParentProv = this.dragItem.closest(".accordion-provincia")
+    if (targetParentProv) this.#updateProvinciaCount(targetParentProv)
     await this.#submitDropRequest(this.dragItem, targetContainer)
     this.#reloadSourceFrame(sourceContainer)
     this.#reloadTargetFrame(targetContainer)
@@ -105,8 +109,7 @@ export default class extends Controller {
   }
 
   #itemCount(item) {
-    const cards = item.querySelectorAll("[data-drag-and-drop-target='item']")
-    return cards.length > 0 ? cards.length : 1
+    return this.#scuoleCount(item)
   }
 
   #modifyCounter(container, fn) {
@@ -176,12 +179,27 @@ export default class extends Controller {
     return null
   }
 
+  #scuoleCount(element) {
+    const cards = element.querySelectorAll(".card[data-scuole-count]")
+    if (cards.length === 0) return parseInt(element.dataset.scuoleCount) || 1
+    let total = 0
+    for (const card of cards) total += parseInt(card.dataset.scuoleCount) || 1
+    return total
+  }
+
   #updateProvinciaCount(provDetails) {
+    // Aggiorna contatori dei singoli gradi
+    for (const grado of provDetails.querySelectorAll(":scope > .accordion-grado")) {
+      const gradoCount = grado.querySelector(":scope > summary .accordion-count")
+      if (gradoCount) {
+        gradoCount.textContent = this.#scuoleCount(grado)
+      }
+    }
+
+    // Aggiorna contatore provincia (somma di tutte le scuole)
     const countEl = provDetails.querySelector(":scope > summary .accordion-count")
     if (!countEl) return
-
-    const cards = provDetails.querySelectorAll(".card")
-    countEl.textContent = cards.length
+    countEl.textContent = this.#scuoleCount(provDetails)
   }
 
   #cleanupEmptyProvincia(provDetails) {

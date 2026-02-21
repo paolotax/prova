@@ -2,7 +2,7 @@
 
 <% grouped.keys.map(&:first).uniq.sort.each do |provincia| %>
   <% gradi = grouped.select { |k, _| k.first == provincia } %>
-  <% prov_count = gradi.values.sum(&:size) %>
+  <% prov_count = gradi.values.flatten.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
   <details class="accordion-provincia"
            data-drag-and-drop-target="item"
            data-id="prov:<%= provincia %>">
@@ -18,7 +18,7 @@
         <summary class="accordion-summary accordion-summary--grado"
                  draggable="true">
           <span class="accordion-label"><%= grado_label(grado) %></span>
-          <span class="accordion-count"><%= units.size %></span>
+          <span class="accordion-count"><%= units.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %></span>
         </summary>
         <div class="accordion-items">
           <% units.each do |unit| %>
