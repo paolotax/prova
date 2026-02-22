@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   resources :magic_links, only: [:new, :create] do
     collection do
       get :sent
+      post :authenticate
       get 'verify/:code', action: :verify, as: :verify
     end
   end

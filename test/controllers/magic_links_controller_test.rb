@@ -32,9 +32,38 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should get sent" do
+  test "should get sent after create sets pending auth cookie" do
+    user = users(:one)
+    post magic_links_path, params: { email: user.email }
     get sent_magic_links_path
     assert_response :success
+  end
+
+  test "sent redirects to new without pending auth cookie" do
+    get sent_magic_links_path
+    assert_redirected_to new_magic_link_path
+  end
+
+  test "authenticate with valid code logs in" do
+    user = users(:one)
+    # Create via controller sets pending auth cookie and creates magic link
+    post magic_links_path, params: { email: user.email }
+    magic_link = user.magic_links.valid.last
+
+    post authenticate_magic_links_path, params: { code: magic_link.code }
+
+    assert_redirected_to account_root_path(user.accounts.first)
+    assert_equal "Accesso effettuato!", flash[:notice]
+  end
+
+  test "authenticate with invalid code redirects back with shake" do
+    user = users(:one)
+    post magic_links_path, params: { email: user.email }
+
+    post authenticate_magic_links_path, params: { code: "INVALID" }
+
+    assert_redirected_to sent_magic_links_path
+    assert flash[:shake]
   end
 
   test "verify with valid code and single account logs in" do
