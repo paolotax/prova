@@ -25,7 +25,7 @@ class Mandati::Gruppi::DisdettaController < ApplicationController
     @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace("account-editori", partial: "mandati/mandati_list", locals: { mandati: @mandati }) }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace("account-editori", partial: "mandati/mandati_list", method: :morph, locals: { mandati: @mandati }) }
       format.html { redirect_to configurazione_path }
     end
   end

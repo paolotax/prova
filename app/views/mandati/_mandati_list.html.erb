@@ -14,6 +14,7 @@
 
         <div class="zone-regione">
             <strong class="divider divider--fade txt-small"><%= provincia %></strong>
+            <div style="overflow-x: auto;">
             <table class="zone-grid zone-grid--left">
                 <thead>
                     <tr>
@@ -44,10 +45,10 @@
                             <tr>
                                 <td style="padding-block-start: 0.8em;">
                                     <div class="zone-grid__cell">
-                                        <button type="button" class="btn btn--circle btn--subtle" style="--btn-size: 1.6em;" data-action="gruppo-toggle#toggle" aria-label="Espandi editori">
+                                        <button type="button" class="btn btn--circle btn--plain" style="--btn-size: 1.6em;" data-action="gruppo-toggle#toggle" aria-label="Espandi editori">
                                             <%= icon_tag "caret-down", class: "icon--small zone-grid__toggle", data: { "gruppo-toggle-target": "icon" } %>
                                         </button>
-                                        <span class="txt-small txt-bold"><%= gruppo %></span>
+                                        <span class="txt-small txt-bold" style="text-transform: uppercase;"><%= gruppo %></span>
                                         <% if gruppo_disdetto %>
                                             <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
                                                 method: :delete,
@@ -77,7 +78,7 @@
                                 <% gradi_colonne.each do |code, _label| %>
                                     <% grado_mandati = gruppo_mandati.select { |m| m.grado == code } %>
                                     <% grado_disdetto = grado_mandati.present? && grado_mandati.all?(&:disdetta?) %>
-                                    <% grado_count = gruppo_totals_lordi[code] %>
+                                    <% grado_count = grado_disdetto ? gruppo_totals_lordi[code] : gruppo_totals[code] %>
                                     <td style="padding-block-start: 0.8em;">
                                         <% if grado_mandati.present? %>
                                             <div class="zone-grid__cell" style="<%= "opacity: 0.5;" if grado_disdetto %>">
@@ -115,9 +116,10 @@
                                     </td>
                                 <% end %>
                                 <td style="padding-block-start: 0.8em;">
-                                    <% if gruppo_total_lordo > 0 %>
+                                    <% gruppo_row_total = gruppo_disdetto ? gruppo_total_lordo : gruppo_total %>
+                                    <% if gruppo_row_total > 0 %>
                                         <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if gruppo_disdetto %>">
-                                            <%= gruppo_total_lordo %>
+                                            <%= gruppo_row_total %>
                                         </span>
                                     <% end %>
                                 </td>
@@ -125,8 +127,8 @@
                         <% end %>
                         <% editori_gruppo.each do |editore| %>
                             <tr data-gruppo-toggle-target="row" <%= "hidden" if has_gruppo_row %>>
-                                <td>
-                                    <span class="txt-x-small txt-subtle"><%= editore.editore %></span>
+                                <td<%= " style=\"padding-inline-start: 3.5em;\"".html_safe if has_gruppo_row %>>
+                                    <span class="txt-x-small txt-subtle"><%= editore.editore.humanize %></span>
                                 </td>
                                 <% row_total = 0 %>
                                 <% gradi_colonne.each do |code, _label| %>
@@ -155,6 +157,7 @@
                     </tfoot>
                 <% end %>
             </table>
+            </div>
         </div>
     <% end %>
 

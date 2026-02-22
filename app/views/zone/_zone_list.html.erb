@@ -7,54 +7,56 @@
     <% zone_per_regione.each do |regione, zone_regione| %>
         <div class="zone-regione">
             <% if zone_per_regione.size > 1 || regione.present? %>
-                <h3 class="txt-small txt-subtle margin-block-end-quarter"><%= regione %></h3>
+                <strong class="divider divider--fade txt-small"><%= regione %></strong>
             <% end %>
 
             <% province = zone_regione.map(&:provincia).uniq.sort %>
             <% zone_lookup = zone_regione.index_by { |z| [z.provincia, z.grado] } %>
 
-            <table class="zone-grid">
-                <thead>
-                    <tr>
-                        <th>Provincia</th>
-                        <% gradi_colonne.each do |_code, label| %>
-                            <th><%= label %></th>
-                        <% end %>
-                        <th>Totale</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% province.each do |prov| %>
+            <div style="overflow-x: auto;">
+                <table class="zone-grid">
+                    <thead>
                         <tr>
-                            <td><%= prov %></td>
-                            <% row_total = 0 %>
-                            <% gradi_colonne.each do |code, _label| %>
-                                <td>
-                                    <% zona = zone_lookup[[prov, code]] %>
-                                    <% if zona %>
-                                        <% row_total += zona.scuole_count if zona.stato.in?(%w[attiva pronta da_rimuovere]) %>
-                                        <% importate = importate_per_zona[[zona.provincia, zona.grado]] || 0 %>
-                                        <%= render partial: "zone/zona_cell", locals: { zona: zona, scuole_importate: importate } %>
-                                    <% end %>
-                                </td>
+                            <th>Provincia</th>
+                            <% gradi_colonne.each do |_code, label| %>
+                                <th><%= label %></th>
                             <% end %>
-                            <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                            <th>Totale</th>
                         </tr>
-                    <% end %>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td class="txt-bold">Totale</td>
-                        <% grand_total = 0 %>
-                        <% gradi_colonne.each do |code, _label| %>
-                            <% col_total = province.sum { |prov| zone_lookup[[prov, code]]&.then { |z| z.stato.in?(%w[attiva pronta da_rimuovere]) ? z.scuole_count : 0 } || 0 } %>
-                            <% grand_total += col_total %>
-                            <td class="txt-center txt-small txt-bold"><%= col_total if col_total > 0 %></td>
+                    </thead>
+                    <tbody>
+                        <% province.each do |prov| %>
+                            <tr>
+                                <td><%= prov %></td>
+                                <% row_total = 0 %>
+                                <% gradi_colonne.each do |code, _label| %>
+                                    <td>
+                                        <% zona = zone_lookup[[prov, code]] %>
+                                        <% if zona %>
+                                            <% row_total += zona.scuole_count if zona.stato.in?(%w[attiva pronta da_rimuovere]) %>
+                                            <% importate = importate_per_zona[[zona.provincia, zona.grado]] || 0 %>
+                                            <%= render partial: "zone/zona_cell", locals: { zona: zona, scuole_importate: importate } %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+                                <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                            </tr>
                         <% end %>
-                        <td class="txt-center txt-small txt-bold"><%= grand_total if grand_total > 0 %></td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="txt-bold">Totale</td>
+                            <% grand_total = 0 %>
+                            <% gradi_colonne.each do |code, _label| %>
+                                <% col_total = province.sum { |prov| zone_lookup[[prov, code]]&.then { |z| z.stato.in?(%w[attiva pronta da_rimuovere]) ? z.scuole_count : 0 } || 0 } %>
+                                <% grand_total += col_total %>
+                                <td class="txt-center txt-small txt-bold"><%= col_total if col_total > 0 %></td>
+                            <% end %>
+                            <td class="txt-center txt-small txt-bold"><%= grand_total if grand_total > 0 %></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     <% end %>
 

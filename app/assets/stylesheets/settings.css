@@ -130,19 +130,19 @@
     min-height: 2em;
   }
 
-  .zone-grid__cell .btn {
+  .zone-grid__cell .btn:not(.btn--plain) {
     opacity: 0;
     transition: opacity 0.15s ease;
   }
 
-  .zone-grid td:hover .zone-grid__cell .btn,
-  .zone-grid__cell .btn:focus-visible {
+  .zone-grid td:hover .zone-grid__cell .btn:not(.btn--plain),
+  .zone-grid__cell .btn:not(.btn--plain):focus-visible {
     opacity: 1;
   }
 
   /* Touch devices: always show buttons */
   @media (any-hover: none) {
-    .zone-grid__cell .btn {
+    .zone-grid__cell .btn:not(.btn--plain) {
       opacity: 1;
     }
   }
