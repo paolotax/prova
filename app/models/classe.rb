@@ -20,10 +20,10 @@
 #
 # Indexes
 #
-#  index_classi_on_account_id                            (account_id)
-#  index_classi_on_origine                               (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
-#  index_classi_on_scuola_id                             (scuola_id)
-#  index_classi_on_scuola_id_and_anno_corso_and_sezione  (scuola_id,anno_corso,sezione) UNIQUE
+#  index_classi_on_account_id                        (account_id)
+#  index_classi_on_origine                           (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
+#  index_classi_on_scuola_anno_sezione_combinazione  (scuola_id,anno_corso,sezione,combinazione) UNIQUE
+#  index_classi_on_scuola_id                         (scuola_id)
 #
 # Foreign Keys
 #
@@ -68,7 +68,7 @@ class Classe < ApplicationRecord
   has_many :documenti, as: :clientable
 
   validates :anno_corso, presence: true
-  validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso] }, allow_blank: true
+  validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso, :combinazione] }, allow_blank: true
 
   scope :per_anno, ->(anno) { where(anno_corso: anno) }
 
@@ -102,7 +102,8 @@ class Classe < ApplicationRecord
       account: account,
       scuola: scuola,
       anno_corso: view_classe.classe,
-      sezione: view_classe.sezione
+      sezione: view_classe.sezione,
+      combinazione: view_classe.combinazione
     ) || create_from_view(view_classe, scuola: scuola, account: account)
   end
 

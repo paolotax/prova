@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_21_154509) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_22_084055) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -386,7 +386,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_21_154509) do
     t.datetime "updated_at", null: false
     t.index ["account_id", "codice_ministeriale_origine", "classe_origine", "sezione_origine"], name: "index_classi_on_origine"
     t.index ["account_id"], name: "index_classi_on_account_id"
-    t.index ["scuola_id", "anno_corso", "sezione"], name: "index_classi_on_scuola_id_and_anno_corso_and_sezione", unique: true
+    t.index ["scuola_id", "anno_corso", "sezione", "combinazione"], name: "index_classi_on_scuola_anno_sezione_combinazione", unique: true
     t.index ["scuola_id"], name: "index_classi_on_scuola_id"
   end
 

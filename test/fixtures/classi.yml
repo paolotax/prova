@@ -23,10 +23,10 @@
 #
 # Indexes
 #
-#  index_classi_on_account_id                            (account_id)
-#  index_classi_on_origine                               (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
-#  index_classi_on_scuola_id                             (scuola_id)
-#  index_classi_on_scuola_id_and_anno_corso_and_sezione  (scuola_id,anno_corso,sezione) UNIQUE
+#  index_classi_on_account_id                        (account_id)
+#  index_classi_on_origine                           (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
+#  index_classi_on_scuola_anno_sezione_combinazione  (scuola_id,anno_corso,sezione,combinazione) UNIQUE
+#  index_classi_on_scuola_id                         (scuola_id)
 #
 # Foreign Keys
 #
