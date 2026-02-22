@@ -28,6 +28,9 @@ class MandatiController < ApplicationController
     Current.account.crea_mandati_per_editori!(editore_ids, zone_ids: zone_ids)
 
     @mandati = mandati_ordinati
+    editori_con_adozioni = Current.account.editori_da_adozioni
+    @gruppi = editori_con_adozioni.select(:gruppo).distinct.order(:gruppo)
+    @editori = []
 
     respond_to do |format|
       format.turbo_stream

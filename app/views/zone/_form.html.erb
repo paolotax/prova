@@ -1,4 +1,4 @@
-<div class="flex flex-wrap gap-half align-center margin-block-start">
+<div id="zone-form" class="flex flex-wrap gap-half align-center margin-block-start">
 
     <%= turbo_frame_tag :zone_select, class: "flex flex-wrap gap-half" do %>
         <%= form_with url: new_zona_path, method: :get, data: { controller: "tax-select",
@@ -13,13 +13,27 @@
         <% end %>
     <% end %>
 
-    <%= form_with url: zone_path, method: :post, class: "flex" do |f| %>
-        <%= hidden_field_tag "regione", nil, id: "hregione" %>
-        <%= hidden_field_tag "provincia", nil, id: "hprovincia" %>
-        <%= hidden_field_tag "grado", nil, id: "hgrado" %>
-        <%= f.button type: "submit", class: "btn btn--circle btn--link", aria: { label: "Aggiungi zona" } do %>
+    <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+        <button type="button" class="btn btn--circle btn--link" data-action="dialog#open" aria-label="Aggiungi zona">
             <%= icon_tag "add" %>
-        <% end %>
-    <% end %>
+        </button>
+        <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 20rem);" data-dialog-target="dialog">
+            <%= form_with url: zone_path, method: :post do |f| %>
+                <h3 class="txt-large txt-bold">Conferma zona</h3>
+                <p class="txt-small txt-subtle">Aggiungere la zona selezionata a tutte le province e gradi?</p>
+
+                <%= hidden_field_tag "regione", nil, id: "hregione" %>
+                <%= hidden_field_tag "provincia", nil, id: "hprovincia" %>
+                <%= hidden_field_tag "grado", nil, id: "hgrado" %>
+
+                <div class="flex gap-half justify-end margin-block-start">
+                    <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+                    <%= f.button type: "submit", class: "btn btn--link" do %>
+                        Aggiungi
+                    <% end %>
+                </div>
+            <% end %>
+        </dialog>
+    </div>
 
 </div>

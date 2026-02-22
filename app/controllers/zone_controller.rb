@@ -25,6 +25,7 @@ class ZoneController < ApplicationController
       grado: params[:grado].presence
     )
     @account_zone = zone_ordinate
+    @regioni = Zona.order(:regione).select(:regione).distinct
 
     respond_to do |format|
       format.turbo_stream

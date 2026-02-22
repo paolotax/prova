@@ -137,6 +137,12 @@
     }
   }
 
+  .btn--subtle {
+    --btn-background: transparent;
+    --btn-border-color: transparent;
+    --btn-color: var(--color-ink-light);
+  }
+
   .btn--negative {
     --btn-background: var(--color-negative);
     --btn-border-color: var(--color-negative);

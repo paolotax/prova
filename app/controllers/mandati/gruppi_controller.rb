@@ -9,9 +9,11 @@ class Mandati::GruppiController < ApplicationController
   private
 
   def bulk_scope
-    Current.account.mandati
+    scope = Current.account.mandati
       .joins(:editore)
       .where(provincia: params[:provincia], editori: { gruppo: params[:id] })
+    scope = scope.where(grado: params[:grado]) if params[:grado].present?
+    scope
   end
 
   def replace_mandati_list

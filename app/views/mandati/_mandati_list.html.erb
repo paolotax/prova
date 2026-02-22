@@ -17,28 +17,37 @@
             <table class="zone-grid zone-grid--left">
                 <thead>
                     <tr>
-                        <th>Editore</th>
+                        <th>Gruppo editoriale</th>
                         <% gradi_colonne.each do |_code, label| %>
                             <th><%= label %></th>
                         <% end %>
                         <th>Totale</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <% gruppi.sort_by(&:first).each do |gruppo, editori_gruppo| %>
-                        <% gruppo_eids = editori_gruppo.map(&:id) %>
-                        <% gruppo_mandati = mandati_prov.select { |m| gruppo_eids.include?(m.editore_id) } %>
-                        <% gruppo_totals = Hash.new(0) %>
-                        <% gruppo_mandati.each { |m| gruppo_totals[m.grado] += m.sezioni_count.to_i unless m.disdetta? } %>
-                        <% gruppo_total = gruppo_totals.values.sum %>
-                        <% grand_totals.merge!(gruppo_totals) { |_k, a, b| a + b } %>
-                        <% grand_total += gruppo_total %>
-                        <% if editori_gruppo.size > 1 || gruppo != "—" %>
+                <% gruppi.sort_by(&:first).each do |gruppo, editori_gruppo| %>
+                    <% gruppo_eids = editori_gruppo.map(&:id) %>
+                    <% gruppo_mandati = mandati_prov.select { |m| gruppo_eids.include?(m.editore_id) } %>
+                    <% gruppo_totals = Hash.new(0) %>
+                    <% gruppo_totals_lordi = Hash.new(0) %>
+                    <% gruppo_mandati.each do |m| %>
+                        <% gruppo_totals_lordi[m.grado] += m.sezioni_count.to_i %>
+                        <% gruppo_totals[m.grado] += m.sezioni_count.to_i unless m.disdetta? %>
+                    <% end %>
+                    <% gruppo_total = gruppo_totals.values.sum %>
+                    <% gruppo_total_lordo = gruppo_totals_lordi.values.sum %>
+                    <% grand_totals.merge!(gruppo_totals) { |_k, a, b| a + b } %>
+                    <% grand_total += gruppo_total %>
+                    <% has_gruppo_row = editori_gruppo.size > 1 || gruppo != "—" %>
+                    <tbody data-controller="gruppo-toggle">
+                        <% if has_gruppo_row %>
                             <% gruppo_disdetto = gruppo_mandati.all?(&:disdetta?) %>
                             <tr>
                                 <td style="padding-block-start: 0.8em;">
                                     <div class="zone-grid__cell">
-                                        <span class="txt-x-small txt-subtle txt-bold"><%= gruppo %></span>
+                                        <button type="button" class="btn btn--circle btn--subtle" style="--btn-size: 1.6em;" data-action="gruppo-toggle#toggle" aria-label="Espandi editori">
+                                            <%= icon_tag "caret-down", class: "icon--small zone-grid__toggle", data: { "gruppo-toggle-target": "icon" } %>
+                                        </button>
+                                        <span class="txt-small txt-bold"><%= gruppo %></span>
                                         <% if gruppo_disdetto %>
                                             <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
                                                 method: :delete,
@@ -66,15 +75,58 @@
                                     </div>
                                 </td>
                                 <% gradi_colonne.each do |code, _label| %>
-                                    <td class="txt-small txt-bold txt-subtle" style="padding-block-start: 0.8em;"><%= gruppo_totals[code] if gruppo_totals[code] > 0 %></td>
+                                    <% grado_mandati = gruppo_mandati.select { |m| m.grado == code } %>
+                                    <% grado_disdetto = grado_mandati.present? && grado_mandati.all?(&:disdetta?) %>
+                                    <% grado_count = gruppo_totals_lordi[code] %>
+                                    <td style="padding-block-start: 0.8em;">
+                                        <% if grado_mandati.present? %>
+                                            <div class="zone-grid__cell" style="<%= "opacity: 0.5;" if grado_disdetto %>">
+                                                <% if grado_count > 0 %>
+                                                    <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if grado_disdetto %>">
+                                                        <%= grado_count %>
+                                                    </span>
+                                                <% end %>
+                                                <% if grado_disdetto %>
+                                                    <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
+                                                        method: :delete,
+                                                        class: "btn btn--circle btn--link",
+                                                        style: "--btn-size: 1.6em;",
+                                                        aria: { label: "Riattiva grado" } do %>
+                                                        <%= icon_tag "refresh", class: "icon--small" %>
+                                                    <% end %>
+                                                <% else %>
+                                                    <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
+                                                        method: :post,
+                                                        class: "btn btn--circle btn--subtle",
+                                                        style: "--btn-size: 1.6em;",
+                                                        aria: { label: "Disdetta grado" } do %>
+                                                        <%= icon_tag "close-circle", class: "icon--small" %>
+                                                    <% end %>
+                                                <% end %>
+                                                <%= button_to mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia, grado: code),
+                                                    method: :delete,
+                                                    class: "btn btn--circle btn--negative",
+                                                    style: "--btn-size: 1.6em;",
+                                                    aria: { label: "Elimina grado" } do %>
+                                                    <%= icon_tag "trash", class: "icon--small" %>
+                                                <% end %>
+                                            </div>
+                                        <% end %>
+                                    </td>
                                 <% end %>
-                                <td class="txt-small txt-bold" style="padding-block-start: 0.8em;"><%= gruppo_total if gruppo_total > 0 %></td>
+                                <td style="padding-block-start: 0.8em;">
+                                    <% if gruppo_total_lordo > 0 %>
+                                        <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if gruppo_disdetto %>">
+                                            <%= gruppo_total_lordo %>
+                                        </span>
+                                    <% end %>
+                                </td>
                             </tr>
                         <% end %>
                         <% editori_gruppo.each do |editore| %>
-                            <tr>
+                            <tr data-gruppo-toggle-target="row" <%= "hidden" if has_gruppo_row %>>
                                 <td>
-                                    <span class="txt-small"><%= editore.editore %></span>
+                                    <span class="txt-x-small txt-subtle"><%= editore.editore %></span>
                                 </td>
                                 <% row_total = 0 %>
                                 <% gradi_colonne.each do |code, _label| %>
@@ -86,11 +138,11 @@
                                         <% end %>
                                     </td>
                                 <% end %>
-                                <td class="txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                                <td class="txt-x-small txt-subtle"><%= row_total if row_total > 0 %></td>
                             </tr>
                         <% end %>
-                    <% end %>
-                </tbody>
+                    </tbody>
+                <% end %>
                 <% if provincia == province.last && grand_total > 0 %>
                     <tfoot>
                         <tr class="txt-bold txt-small">

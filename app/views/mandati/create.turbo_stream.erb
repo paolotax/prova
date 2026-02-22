@@ -1,3 +1,7 @@
 <%= turbo_stream.replace "account-editori" do %>
     <%= render partial: "mandati/mandati_list", locals: { mandati: @mandati } %>
 <% end %>
+
+<%= turbo_stream.replace "mandati-form" do %>
+    <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
+<% end %>
