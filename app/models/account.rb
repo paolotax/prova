@@ -80,8 +80,8 @@ class Account < ApplicationRecord
           z.stato = "conteggio"
         end
 
-        # Zona già esistente e attiva → rilancia conteggio per reimportare scuole mancanti
-        if zona.stato == "attiva"
+        # Zona già esistente → rilancia conteggio per reimportare scuole mancanti
+        if zona.stato.in?(%w[attiva importazione pulizia])
           zona.update!(stato: "conteggio")
           CountScuolePerZonaJob.perform_later(zona)
         end
