@@ -17,7 +17,7 @@
   </div>
 
   <div class="settings__panel panel shadow center">
-    <strong class="divider divider--fade txt-large">I miei Editori</strong>
+    <strong class="divider divider--fade txt-large">I miei Mandati</strong>
 
     <%= render partial: "accounts/mandati/mandati_list", locals: { mandati: @mandati } %>
 
@@ -30,9 +30,11 @@
   </div>
 
   <div class="settings__panel settings__panel--users panel shadow center">
-    <strong class="divider divider--fade txt-large">Utenti</strong>
-    <%= render "accounts/members/members_list", members: @members %>
+    <strong class="divider divider--fade txt-large">I miei</strong>
+
     <%= render "accounts/members/invite_form" %>
+
+    <%= render "accounts/members/members_list", members: @members %>
 
     <%= link_to accounts_distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
       <%= icon_tag "users" %>

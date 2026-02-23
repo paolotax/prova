@@ -95,29 +95,9 @@ class User < ApplicationRecord
     personal_info&.navigator || navigator
   end
 
-  # DEPRECATED: Azienda is now associated with Account, not User
-  # Use Current.account.azienda instead
-  # Keeping has_one for backward compatibility during migration
-  has_one :azienda
-
-  # DEPRECATED: Use Current.account.azienda instead
-  delegate :partita_iva, :codice_fiscale, :ragione_sociale, :regime_fiscale,
-          :indirizzo, :cap, :comune, :provincia, :nazione,
-          :email, :telefono, :indirizzo_telematico,
-          :iban, :banca,
-          to: :azienda, allow_nil: true, prefix: true
-
   # Access azienda through primary account (preferred method)
   def account_azienda
     accounts.first&.azienda
-  end
-
-  def miei_editori
-    editori.collect{|e| e.editore}
-  end
-
-  def zone
-    import_scuole.joins(:tipo_scuola).group(:REGIONE, :PROVINCIA, :grado).count
   end
 
   def self.stats

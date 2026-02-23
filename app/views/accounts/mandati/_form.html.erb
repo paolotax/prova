@@ -9,14 +9,14 @@
             </button>
             <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 20rem);" data-dialog-target="dialog">
                 <%= form_with url: accounts_mandati_path, method: :post do |f| %>
-                    <h3 class="txt-large txt-bold">Conferma editore</h3>
+                    <h3 class="txt-large txt-bold">Conferma</h3>
                     <p class="txt-small txt-subtle">Aggiungere il gruppo selezionato a tutte le zone attive?</p>
 
                     <%= hidden_field_tag "hgruppo", nil, id: "hgruppo" %>
                     <%= hidden_field_tag "heditore", nil, id: "heditore" %>
 
                     <div class="flex gap-half justify-end margin-block-start">
-                        <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+                        <button type="button" class="btn btn-link" data-action="dialog#close">Annulla</button>
                         <%= f.button type: "submit", class: "btn btn--link" do %>
                             Aggiungi
                         <% end %>
