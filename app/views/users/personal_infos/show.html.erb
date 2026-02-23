@@ -81,7 +81,7 @@
       </p>
 
       <div class="flex f-align-center gap">
-        <%= link_to access_tokens_path, class: "btn btn--reversed" do %>
+        <%= link_to access_tokens_path(account_id: Current.account), class: "btn btn--reversed" do %>
           <%= icon_tag "key" %>
           <span>Gestisci token</span>
         <% end %>
