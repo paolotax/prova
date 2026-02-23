@@ -31,7 +31,7 @@ module Account::Distribuzione
 
   # Mappa scuola_id => [membership_ids] con un solo pluck
   def load_distribuzione_assignments
-    pairs = MembershipScuola
+    pairs = Accounts::MembershipScuola
       .where(scuola_id: scuole.select(:id))
       .pluck(:scuola_id, :membership_id)
 

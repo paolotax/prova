@@ -16,7 +16,7 @@ class Account < ApplicationRecord
   include Account::GestioneMandati
   include Account::Distribuzione
 
-  has_many :memberships, dependent: :destroy
+  has_many :memberships, class_name: "Accounts::Membership", dependent: :destroy
   has_many :users, through: :memberships
 
   # Zone e mandati (account-level)

@@ -16,7 +16,7 @@
 #  index_access_tokens_on_token          (token) UNIQUE
 #
 class AccessToken < ApplicationRecord
-  belongs_to :membership
+  belongs_to :membership, class_name: "Accounts::Membership"
 
   has_one :user, through: :membership
   has_one :account, through: :membership

@@ -9,7 +9,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
     @azienda = aziende(:fizzy_azienda)
 
     # Create membership if not exists
-    Membership.find_or_create_by!(user: @user, account: @account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: @account) do |m|
       m.role = :owner
     end
 
@@ -25,7 +25,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
   test "show redirects to new when no azienda exists" do
     # Use acme account which has no azienda for this user
     other_account = accounts(:acme)
-    Membership.find_or_create_by!(user: @user, account: other_account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
       m.role = :member
     end
 
@@ -42,7 +42,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
     # Use account without azienda
     other_account = accounts(:acme)
-    Membership.find_or_create_by!(user: @user, account: other_account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
       m.role = :member
     end
     other_account.azienda&.destroy
@@ -61,7 +61,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
   # Create
   test "should create azienda" do
     other_account = accounts(:acme)
-    Membership.find_or_create_by!(user: @user, account: other_account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
       m.role = :member
     end
     other_account.azienda&.destroy
@@ -101,7 +101,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
 
   test "edit redirects to new when no azienda exists" do
     other_account = accounts(:acme)
-    Membership.find_or_create_by!(user: @user, account: other_account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
       m.role = :member
     end
     other_account.azienda&.destroy
@@ -125,7 +125,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
 
   test "update redirects to new when no azienda exists" do
     other_account = accounts(:acme)
-    Membership.find_or_create_by!(user: @user, account: other_account) do |m|
+    Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
       m.role = :member
     end
     other_account.azienda&.destroy

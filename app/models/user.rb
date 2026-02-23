@@ -35,7 +35,7 @@ class User < ApplicationRecord
   has_one :personal_info, dependent: :destroy
 
   # Multi-tenancy
-  has_many :memberships, dependent: :destroy
+  has_many :memberships, class_name: "Accounts::Membership", dependent: :destroy
   has_many :accounts, through: :memberships
 
   # Passwordless authentication

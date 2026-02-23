@@ -14,7 +14,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   test "invite existing user creates membership and sends email" do
     dana = users(:no_account)
 
-    assert_difference("Membership.count") do
+    assert_difference("Accounts::Membership.count") do
       assert_enqueued_emails 1 do
         post account_members_path(account_id: @account.id), params: { email: dana.email }, as: :turbo_stream
       end
@@ -25,7 +25,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "invite new email creates user and membership" do
-    assert_difference(["User.count", "Membership.count"]) do
+    assert_difference(%w[User.count Accounts::Membership.count]) do
       post account_members_path(account_id: @account.id), params: { email: "newuser@example.com" }, as: :turbo_stream
     end
 
@@ -38,7 +38,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   test "invite existing member does not create duplicate" do
     bob = users(:two)  # already member of fizzy
 
-    assert_no_difference("Membership.count") do
+    assert_no_difference("Accounts::Membership.count") do
       post account_members_path(account_id: @account.id), params: { email: bob.email }, as: :turbo_stream
     end
 
@@ -71,7 +71,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   test "remove member destroys membership" do
     membership = memberships(:bob_fizzy)
 
-    assert_difference("Membership.count", -1) do
+    assert_difference("Accounts::Membership.count", -1) do
       delete account_member_path(id: membership.id, account_id: @account.id), as: :turbo_stream
     end
 
@@ -81,7 +81,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   test "cannot remove owner" do
     owner_membership = memberships(:alice_fizzy)
 
-    assert_no_difference("Membership.count") do
+    assert_no_difference("Accounts::Membership.count") do
       delete account_member_path(id: owner_membership.id, account_id: @account.id)
     end
 
@@ -95,7 +95,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
 
     charlie_membership = memberships(:charlie_acme)
 
-    assert_no_difference("Membership.count") do
+    assert_no_difference("Accounts::Membership.count") do
       delete account_member_path(id: charlie_membership.id, account_id: acme.id)
     end
 

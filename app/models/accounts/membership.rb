@@ -15,18 +15,22 @@
 #  index_memberships_on_user_id                 (user_id)
 #  index_memberships_on_user_id_and_account_id  (user_id,account_id) UNIQUE
 #
-class Membership < ApplicationRecord
-  include Membership::ScuoleAssegnabili
+module Accounts
+  class Membership < ApplicationRecord
+    self.table_name = "memberships"
 
-  belongs_to :user
-  belongs_to :account
+    include Accounts::Membership::ScuoleAssegnabili
 
-  enum :role, { member: 0, admin: 1, owner: 2 }
+    belongs_to :user
+    belongs_to :account
 
-  has_many :access_tokens, dependent: :destroy
-  has_many :membership_scuole, class_name: "MembershipScuola", dependent: :destroy
-  has_many :scuole, through: :membership_scuole
+    enum :role, { member: 0, admin: 1, owner: 2 }
 
-  validates :user_id, uniqueness: { scope: :account_id }
-  validates :role, presence: true
+    has_many :access_tokens, dependent: :destroy
+    has_many :membership_scuole, class_name: "Accounts::MembershipScuola", dependent: :destroy
+    has_many :scuole, through: :membership_scuole
+
+    validates :user_id, uniqueness: { scope: :account_id }
+    validates :role, presence: true
+  end
 end

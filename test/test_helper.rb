@@ -13,6 +13,8 @@ module ActiveSupport
     # Map fixture files to namespaced model classes
     set_fixture_class account_zone: "Accounts::Zona"
     set_fixture_class mandati: "Accounts::Mandato"
+    set_fixture_class memberships: "Accounts::Membership"
+    set_fixture_class membership_scuole: "Accounts::MembershipScuola"
 
     # Add more helper methods to be used by all tests here...
   end

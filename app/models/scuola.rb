@@ -57,7 +57,7 @@ class Scuola < ApplicationRecord
   belongs_to :direzione, class_name: "Scuola", optional: true
   has_many :plessi, class_name: "Scuola", foreign_key: :direzione_id, dependent: :nullify
 
-  has_many :membership_scuole, class_name: "MembershipScuola", dependent: :destroy
+  has_many :membership_scuole, class_name: "Accounts::MembershipScuola", dependent: :destroy
   has_many :memberships, through: :membership_scuole
 
   has_many :classi, dependent: :destroy

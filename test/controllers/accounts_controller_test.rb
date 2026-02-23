@@ -43,7 +43,7 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
     login_as @user
 
     assert_difference -> { Account.count }, 1 do
-      assert_difference -> { Membership.count }, 1 do
+      assert_difference -> { Accounts::Membership.count }, 1 do
         post accounts_path, params: { account: { name: "New Team" } }
       end
     end

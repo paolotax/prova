@@ -14,7 +14,7 @@ class AccountMembers::BulkMembershipScuoleController < ApplicationController
       { membership_id: @membership.id, scuola_id: scuola.id, created_at: Time.current, updated_at: Time.current }
     end
 
-    MembershipScuola.insert_all(new_records) if new_records.any?
+    Accounts::MembershipScuola.insert_all(new_records) if new_records.any?
 
     @membership.reload
 

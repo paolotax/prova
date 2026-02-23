@@ -139,7 +139,7 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
     magic_link = user.magic_links.create!
 
     assert_difference "Account.count", 1 do
-      assert_difference "Membership.count", 1 do
+      assert_difference "Accounts::Membership.count", 1 do
         get verify_magic_links_path(code: magic_link.code)
       end
     end

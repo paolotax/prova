@@ -14,11 +14,13 @@
 #  index_membership_scuole_on_membership_id_and_scuola_id  (membership_id,scuola_id) UNIQUE
 #  index_membership_scuole_on_scuola_id                    (scuola_id)
 #
-class MembershipScuola < ApplicationRecord
-  self.table_name = "membership_scuole"
+module Accounts
+  class MembershipScuola < ApplicationRecord
+    self.table_name = "membership_scuole"
 
-  belongs_to :membership
-  belongs_to :scuola
+    belongs_to :membership, class_name: "Accounts::Membership"
+    belongs_to :scuola
 
-  validates :scuola_id, uniqueness: { scope: :membership_id }
+    validates :scuola_id, uniqueness: { scope: :membership_id }
+  end
 end

@@ -9,8 +9,8 @@ class Distribuzione::AssegnazioniController < ApplicationController
       if source
         source.rimuovi_scuole!(scuole)
       else
-        MembershipScuola.where(scuola: scuole).destroy_all
-        Membership.sync_direzioni_for(scuole, account: Current.account)
+        Accounts::MembershipScuola.where(scuola: scuole).destroy_all
+        Accounts::Membership.sync_direzioni_for(scuole, account: Current.account)
       end
     elsif (target = find_membership(params[:membership_id]))
       target.assegna_scuole!(scuole, da: source)
