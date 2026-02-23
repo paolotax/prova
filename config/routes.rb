@@ -183,20 +183,10 @@ Rails.application.routes.draw do
     get 'agenda/:giorno/dettaglio_appunti_documenti.pdf', to: 'agenda#dettaglio_appunti_documenti_pdf', as: 'dettaglio_appunti_documenti_pdf'
     get 'agenda/:giorno/fogli_scuola_tappe.pdf', to: 'agenda#fogli_scuola_tappe_pdf', as: 'fogli_scuola_tappe_pdf'
 
-    get 'ordini_in_corso', to: 'ordini#index'
-    
-    # get 'search', to: 'search#index'
-    # namespace :searches do
-    #   get 'clientable/show'
-    #   get 'clientable/new'
-    #   resources :clientable, only: :index
-    # end
-
     resource :search, only: [:show], controller: "search"
 
     # Ricerca unificata destinatari per combobox appunti
     resources :destinatari, only: [:index]
-
 
     post 'sfascicola', to: 'sfascicolator#generate'
 
