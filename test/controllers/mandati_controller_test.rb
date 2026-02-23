@@ -31,7 +31,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     mandati(:fizzy_mondadori).destroy
 
     # 2 zone attive (MI/E e MI/M) → 2 mandati creati
-    assert_difference("Mandato.count", 2) do
+    assert_difference("Accounts::Mandato.count", 2) do
       post mandati_path(account_id: @account.id),
         params: { hgruppo: "Zanichelli Group", heditore: editori(:zanichelli).id },
         as: :turbo_stream
@@ -43,7 +43,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     mandati(:fizzy_zanichelli).destroy
 
     # 2 zone attive (MI/E e MI/M) → 2 mandati per editore (uno già esiste)
-    assert_difference("Mandato.count", 2) do
+    assert_difference("Accounts::Mandato.count", 2) do
       post mandati_path(account_id: @account.id),
         params: { hgruppo: "Zanichelli Group" },
         as: :turbo_stream
@@ -76,7 +76,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
 
   test "should destroy mandato" do
     mandato = mandati(:fizzy_mondadori)
-    assert_difference("Mandato.count", -1) do
+    assert_difference("Accounts::Mandato.count", -1) do
       delete mandato_path(mandato, account_id: @account.id),
         as: :turbo_stream
     end
