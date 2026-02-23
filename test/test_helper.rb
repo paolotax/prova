@@ -10,6 +10,9 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     # fixtures :all  # Temporarily disabled - many fixtures out of sync with schema
 
+    # Map fixture files to namespaced model classes
+    set_fixture_class account_zone: "Accounts::Zona"
+
     # Add more helper methods to be used by all tests here...
   end
 end

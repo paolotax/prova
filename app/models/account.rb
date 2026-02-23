@@ -20,7 +20,7 @@ class Account < ApplicationRecord
   has_many :users, through: :memberships
 
   # Zone e mandati (account-level)
-  has_many :account_zone, class_name: "AccountZona", dependent: :destroy
+  has_many :zone, class_name: "Accounts::Zona", dependent: :destroy
   has_many :mandati, dependent: :destroy
 
   # Account-scoped resources
@@ -74,7 +74,7 @@ class Account < ApplicationRecord
 
     province.each do |prov|
       gradi.each do |gr|
-        zona = account_zone.find_or_create_by!(provincia: prov, grado: gr) do |z|
+        zona = zone.find_or_create_by!(provincia: prov, grado: gr) do |z|
           z.regione = regione
           z.anno_scolastico = "2025/2026"
           z.stato = "conteggio"

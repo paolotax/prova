@@ -45,7 +45,7 @@ class CleanupZonaJob < ApplicationJob
   private
 
   def broadcast_zone_panel(account)
-    account_zone = account.account_zone.order(:regione, :provincia, :grado)
+    account_zone = account.zone.order(:regione, :provincia, :grado)
 
     Turbo::StreamsChannel.broadcast_replace_to(
       [account, "configurazione"],

@@ -1,5 +1,5 @@
 <%
-  account_zone = Current.account.account_zone.where(stato: "attiva").order(:provincia, :grado)
+  account_zone = Current.account.zone.where(stato: "attiva").order(:provincia, :grado)
   assigned_ids = membership.scuola_ids.to_set
   scuole_by_zona = Current.account.scuole.attive.order(:comune, :denominazione).group_by { |s| "#{s.provincia}-#{s.grado}" }
 %>

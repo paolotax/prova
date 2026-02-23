@@ -14,7 +14,7 @@ class CountScuolePerZonaJob < ApplicationJob
 
   def broadcast_zone_update(account_zona)
     account = account_zona.account
-    account_zone = account.account_zone.order(:regione, :provincia, :grado)
+    account_zone = account.zone.order(:regione, :provincia, :grado)
 
     Turbo::StreamsChannel.broadcast_replace_to(
       [account, "configurazione"],

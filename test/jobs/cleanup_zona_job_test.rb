@@ -16,7 +16,7 @@ class CleanupZonaJobTest < ActiveJob::TestCase
   end
 
   test "destroys the account_zona record" do
-    assert_difference("AccountZona.count", -1) do
+    assert_difference("Accounts::Zona.count", -1) do
       CleanupZonaJob.perform_now(@zona)
     end
   end

@@ -25,7 +25,7 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
     regione = Zona.pick(:regione)
     skip "No zone data in test db" unless regione
 
-    assert_difference("AccountZona.count") do
+    assert_difference("Accounts::Zona.count") do
       post zone_path(account_id: @account.id),
         params: { regione: regione },
         as: :turbo_stream
@@ -34,7 +34,7 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with blank regione redirects" do
-    assert_no_difference("AccountZona.count") do
+    assert_no_difference("Accounts::Zona.count") do
       post zone_path(account_id: @account.id),
         params: { regione: "" }
     end
@@ -44,7 +44,7 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
   test "should destroy pronta zona directly" do
     zona = account_zone(:fizzy_mi_media)
     zona.update!(stato: "pronta")
-    assert_difference("AccountZona.count", -1) do
+    assert_difference("Accounts::Zona.count", -1) do
       delete zona_path(zona, account_id: @account.id),
         as: :turbo_stream
     end
@@ -53,7 +53,7 @@ class ZoneControllerTest < ActionDispatch::IntegrationTest
   test "should mark attiva zona as da_rimuovere" do
     zona = account_zone(:fizzy_mi_media)
     zona.update!(stato: "attiva")
-    assert_no_difference("AccountZona.count") do
+    assert_no_difference("Accounts::Zona.count") do
       delete zona_path(zona, account_id: @account.id),
         as: :turbo_stream
     end

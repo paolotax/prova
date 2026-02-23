@@ -3,7 +3,7 @@ module Account::GestioneMandati
 
   # Crea mandati per gli editori dati, su tutte le zone (o un sottoinsieme)
   def crea_mandati_per_editori!(editore_ids, zone_ids: nil)
-    target_zone = account_zone.where(stato: "attiva")
+    target_zone = zone.where(stato: "attiva")
     target_zone = target_zone.where(id: zone_ids) if zone_ids.present?
 
     editore_ids.each do |eid|

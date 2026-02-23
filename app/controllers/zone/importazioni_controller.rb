@@ -4,17 +4,17 @@ class Zone::ImportazioniController < ApplicationController
   def create
     account = Current.account
 
-    account.account_zone.where(stato: "da_rimuovere").find_each do |zona|
+    account.zone.where(stato: "da_rimuovere").find_each do |zona|
       zona.update!(stato: "pulizia")
       CleanupZonaJob.perform_later(zona)
     end
 
-    account.account_zone.pronte.find_each do |zona|
+    account.zone.pronte.find_each do |zona|
       zona.update!(stato: "importazione")
       ImportScuolePerZonaJob.perform_later(zona)
     end
 
-    @account_zone = account.account_zone.order(:regione, :provincia, :grado)
+    @account_zone = account.zone.order(:regione, :provincia, :grado)
 
     respond_to do |format|
       format.turbo_stream

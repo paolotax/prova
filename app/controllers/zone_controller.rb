@@ -34,7 +34,7 @@ class ZoneController < ApplicationController
   end
 
   def destroy
-    Current.account.account_zone.find(params[:id]).toggle_rimozione!
+    Current.account.zone.find(params[:id]).toggle_rimozione!
 
     @account_zone = zone_ordinate
 
@@ -47,6 +47,6 @@ class ZoneController < ApplicationController
   private
 
   def zone_ordinate
-    Current.account.account_zone.order(:regione, :provincia, :grado)
+    Current.account.zone.order(:regione, :provincia, :grado)
   end
 end

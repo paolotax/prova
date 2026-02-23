@@ -7,7 +7,7 @@ class ConfigurazioneController < ApplicationController
     @members = Current.account.memberships.includes(:user, :scuole).order(role: :desc, created_at: :asc)
 
     # Zone
-    @account_zone = Current.account.account_zone.order(:regione, :provincia, :grado)
+    @account_zone = Current.account.zone.order(:regione, :provincia, :grado)
     @regioni = Zona.order(:regione).select(:regione).distinct
 
     # Mandati
