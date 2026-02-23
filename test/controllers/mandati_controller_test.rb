@@ -20,8 +20,8 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     assert_match "Zanichelli", response.body
   end
 
-  test "should get select_editori" do
-    get select_editori_accounts_mandati_path(account_id: @account.id)
+  test "should get new" do
+    get new_accounts_mandato_path(account_id: @account.id)
     assert_response :success
   end
 

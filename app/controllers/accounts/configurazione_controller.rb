@@ -9,7 +9,7 @@ module Accounts
 
       # Zone
       @account_zone = Current.account.zone.order(:regione, :provincia, :grado)
-      @regioni = Zona.order(:regione).select(:regione).distinct
+      @regioni = ::Zona.order(:regione).select(:regione).distinct
 
       # Mandati
       @mandati = Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")

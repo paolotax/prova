@@ -16,6 +16,7 @@ class ImportScuolePerZonaJob < ApplicationJob
 
     account_zona.update!(scuole_count: codici.size, stato: "attiva")
     BackfillDirezioniJob.perform_later(account)
+    account.estendi_mandati_a_zona!(provincia: account_zona.provincia, grado: account_zona.grado)
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
     UpdateMieAdozioniJob.perform_later(account)

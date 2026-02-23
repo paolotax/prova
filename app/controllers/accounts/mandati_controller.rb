@@ -6,7 +6,7 @@ module Accounts
       @mandati = mandati_ordinati
     end
 
-    def select_editori
+    def new
       editori_con_adozioni = Current.account.editori_da_adozioni
       @gruppi = editori_con_adozioni.select(:gruppo).distinct.order(:gruppo)
       @editori = if params[:gruppo].present?

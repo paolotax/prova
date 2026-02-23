@@ -3,7 +3,7 @@
     <% when "conteggio" %>
         <span class="zone-grid__status txt-subtle">conteggio...</span>
     <% when "pronta" %>
-        <span class="zone-grid__count" style="color: var(--color-warning);"><%= zona.scuole_count %></span>
+        <span class="zone-grid__count" style="color: var(--color-warning);">0/<%= zona.scuole_count %></span>
     <% when "da_rimuovere" %>
         <span class="zone-grid__status" style="color: var(--color-negative); text-decoration: line-through;"><%= zona.scuole_count %></span>
     <% when "importazione" %>

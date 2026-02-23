@@ -7,9 +7,9 @@ module Accounts
     end
 
     def new
-      @regioni = Zona.order(:regione).select(:regione).distinct
+      @regioni = ::Zona.order(:regione).select(:regione).distinct
       @province = if params[:regione].present?
-                    Zona.where(regione: params[:regione]).order(:provincia).select(:provincia).distinct
+                    ::Zona.where(regione: params[:regione]).order(:provincia).select(:provincia).distinct
                   else
                     []
                   end
@@ -26,7 +26,7 @@ module Accounts
         grado: params[:grado].presence
       )
       @account_zone = zone_ordinate
-      @regioni = Zona.order(:regione).select(:regione).distinct
+      @regioni = ::Zona.order(:regione).select(:regione).distinct
 
       respond_to do |format|
         format.turbo_stream

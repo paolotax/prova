@@ -17,6 +17,15 @@ module Account::GestioneMandati
     end
   end
 
+  # Estende i mandati già presenti a una nuova zona (provincia/grado)
+  # Prende tutti gli editore_id distinti dai mandati attivi e crea mandati per la nuova combinazione
+  def estendi_mandati_a_zona!(provincia:, grado:)
+    editore_ids = mandati.attivi.select(:editore_id).distinct.pluck(:editore_id)
+    editore_ids.each do |eid|
+      mandati.find_or_create_by!(editore_id: eid, provincia: provincia, grado: grado)
+    end
+  end
+
   # Risolve editore_ids da params (singolo editore o intero gruppo)
   def editore_ids_per_mandato(gruppo:, editore_id: nil)
     if editore_id.present?

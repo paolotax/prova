@@ -134,11 +134,8 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :mandati, only: [:index, :create, :destroy] do
+      resources :mandati, only: [:index, :new, :create, :destroy] do
         resource :disdetta, only: [:create, :destroy], module: :mandati
-        collection do
-          get :select_editori
-        end
       end
 
       namespace :mandati do

@@ -35,11 +35,13 @@ class CleanupZonaJob < ApplicationJob
       account_zona.update!(stato: "attiva", scuole_count: remaining)
       Rails.logger.info "[CleanupZona] #{protette.size} scuole protette (hanno appunti/documenti): #{protette.map(&:denominazione).join(', ')}"
     else
+      account.mandati.where(provincia: provincia, grado: grado).destroy_all
       account_zona.destroy!
     end
 
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
+    UpdateMieAdozioniJob.perform_later(account)
   end
 
   private
