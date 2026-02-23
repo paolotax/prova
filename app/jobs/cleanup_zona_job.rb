@@ -50,7 +50,7 @@ class CleanupZonaJob < ApplicationJob
     Turbo::StreamsChannel.broadcast_replace_to(
       [account, "configurazione"],
       target: "zone-panel",
-      partial: "zone/zone_list",
+      partial: "accounts/zone/zone_list",
       locals: { account_zone: account_zone }
     )
   end

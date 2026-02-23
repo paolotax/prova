@@ -1,7 +1,7 @@
 <div id="mandati-form">
     <div class="flex flex-wrap gap-half align-center justify-center margin-block-start-double">
 
-        <%= render partial: "mandati/mandati_select", locals: { gruppi: gruppi, editori: editori } %>
+        <%= render partial: "accounts/mandati/mandati_select", locals: { gruppi: gruppi, editori: editori } %>
 
         <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
             <button type="button" class="btn btn--circle btn--link" data-action="dialog#open" aria-label="Aggiungi editore">

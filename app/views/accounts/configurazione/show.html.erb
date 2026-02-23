@@ -6,9 +6,9 @@
   <div class="settings__panel panel shadow center">
     <strong class="divider divider--fade txt-large">Le mie Zone</strong>
 
-    <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
+    <%= render partial: "accounts/zone/zone_list", locals: { account_zone: @account_zone } %>
 
-    <%= render partial: "zone/form", locals: { regioni: @regioni } %>
+    <%= render partial: "accounts/zone/form", locals: { regioni: @regioni } %>
 
     <%= button_to importazione_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
       <%= icon_tag "refresh" %>
@@ -19,9 +19,9 @@
   <div class="settings__panel panel shadow center">
     <strong class="divider divider--fade txt-large">I miei Editori</strong>
 
-    <%= render partial: "mandati/mandati_list", locals: { mandati: @mandati } %>
+    <%= render partial: "accounts/mandati/mandati_list", locals: { mandati: @mandati } %>
 
-    <%= render partial: "mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
+    <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
 
     <%= button_to mandati_sincronizzazione_adozioni_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
       <%= icon_tag "refresh" %>
@@ -31,8 +31,8 @@
 
   <div class="settings__panel settings__panel--users panel shadow center">
     <strong class="divider divider--fade txt-large">Utenti</strong>
-    <%= render "account_members/members_list", members: @members %>
-    <%= render "account_members/invite_form" %>
+    <%= render "accounts/members/members_list", members: @members %>
+    <%= render "accounts/members/invite_form" %>
 
     <%= link_to distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
       <%= icon_tag "users" %>

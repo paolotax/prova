@@ -7,7 +7,7 @@
 <% end %>
 
 <%= turbo_stream.replace "user-zone" do %>
-	<%= render partial: "zone/zone_list" %>
+	<%= render partial: "accounts/zone/zone_list" %>
 <% end %>
 
 <%= turbo_stream.remove @user_scuola %>

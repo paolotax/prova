@@ -136,7 +136,7 @@
                                         <% mandato = mandati_lookup[[provincia, editore.id, code]] %>
                                         <% if mandato %>
                                             <% row_total += mandato.sezioni_count.to_i unless mandato.disdetta? %>
-                                            <%= render partial: "mandati/mandato_cell", locals: { mandato: mandato } %>
+                                            <%= render partial: "accounts/mandati/mandato_cell", locals: { mandato: mandato } %>
                                         <% end %>
                                     </td>
                                 <% end %>

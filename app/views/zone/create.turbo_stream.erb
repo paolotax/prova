@@ -1,7 +1,0 @@
-<%= turbo_stream.replace "zone-panel" do %>
-    <%= render partial: "zone/zone_list", locals: { account_zone: @account_zone } %>
-<% end %>
-
-<%= turbo_stream.replace "zone-form" do %>
-    <%= render partial: "zone/form", locals: { regioni: @regioni } %>
-<% end %>

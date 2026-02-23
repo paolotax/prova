@@ -35,7 +35,7 @@
                                         <% if zona %>
                                             <% row_total += zona.scuole_count if zona.stato.in?(%w[attiva pronta da_rimuovere]) %>
                                             <% importate = importate_per_zona[[zona.provincia, zona.grado]] || 0 %>
-                                            <%= render partial: "zone/zona_cell", locals: { zona: zona, scuole_importate: importate } %>
+                                            <%= render partial: "accounts/zone/zona_cell", locals: { zona: zona, scuole_importate: importate } %>
                                         <% end %>
                                     </td>
                                 <% end %>

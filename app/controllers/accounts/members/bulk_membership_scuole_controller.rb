@@ -66,7 +66,7 @@ module Accounts
 
         render turbo_stream: turbo_stream.replace(
           dom_id(@membership),
-          partial: "account_members/member",
+          partial: "accounts/members/member",
           locals: { membership: @membership }
         )
       end

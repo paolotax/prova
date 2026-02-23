@@ -181,7 +181,7 @@ class UpdateMieAdozioniJob < ApplicationJob
     Turbo::StreamsChannel.broadcast_replace_to(
       [account, "configurazione"],
       target: "account-editori",
-      partial: "mandati/mandati_list",
+      partial: "accounts/mandati/mandati_list",
       locals: { mandati: mandati }
     )
   end

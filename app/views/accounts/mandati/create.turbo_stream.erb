@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "account-editori", partial: "accounts/mandati/mandati_list", method: :morph, locals: { mandati: @mandati } %>
+
+<%= turbo_stream.replace "mandati-form" do %>
+    <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
+<% end %>
