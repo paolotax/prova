@@ -70,6 +70,11 @@
     row-gap: var(--row-gap, var(--block-space));
   }
 
+  .gap-double {
+    column-gap: calc(var(--inline-space) * 2);
+    row-gap: calc(var(--block-space) * 2);
+  }
+
   .gap-half {
     column-gap: var(--column-gap, var(--inline-space-half));
     row-gap: var(--row-gap, var(--block-space-half));

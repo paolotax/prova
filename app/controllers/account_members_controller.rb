@@ -43,7 +43,7 @@ class AccountMembersController < ApplicationController
       return
     end
 
-    @membership.update!(role: params[:role])
+    @membership.update!(role: params.dig(:membership, :role))
 
     respond_to do |format|
       format.turbo_stream

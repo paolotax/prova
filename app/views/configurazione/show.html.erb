@@ -3,7 +3,6 @@
 <%= turbo_stream_from Current.account, "configurazione" %>
 
 <section class="settings">
-
   <div class="settings__panel panel shadow center">
     <strong class="divider divider--fade txt-large">Le mie Zone</strong>
 
@@ -30,15 +29,15 @@
     <% end %>
   </div>
 
-  <div class="settings__panel panel shadow center">
-    <div class="flex flex-justify-between flex-align-center">
-      <strong class="divider divider--fade txt-large">Utenti</strong>
-      <%= link_to distribuzione_path, class: "btn btn--small" do %>
-        Distribuzione scuole
-      <% end %>
-    </div>
+  <div class="settings__panel settings__panel--users panel shadow center">
+    <strong class="divider divider--fade txt-large">Utenti</strong>
     <%= render "account_members/members_list", members: @members %>
     <%= render "account_members/invite_form" %>
+
+    <%= link_to distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
+      <%= icon_tag "users" %>
+      <span>Distribuzione scuole</span>
+    <% end %>
   </div>
 
 </section>

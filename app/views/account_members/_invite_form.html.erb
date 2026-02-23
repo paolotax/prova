@@ -1,7 +1,6 @@
-<%= form_with url: account_members_path, method: :post, class: "flex gap-half align-end margin-block-start" do |f| %>
-  <div class="flex-1">
-    <%= f.label :email, "Email", class: "txt-x-small txt-subtle" %>
-    <%= f.email_field :email, placeholder: "email@esempio.com", required: true, class: "input", autocomplete: "off" %>
-  </div>
-  <%= f.submit "Invita", class: "btn" %>
+<%= form_with url: account_members_path, method: :post, class: "flex gap-half align-center justify-center margin-block-start-double" do |f| %>
+  <%= f.email_field :email, placeholder: "email@esempio.com", required: true, class: "input txt-small", autocomplete: "off", style: "max-width: 20em;" %>
+  <%= f.button type: "submit", class: "btn btn--circle btn--link", style: "--btn-size: 2.5em;", aria: { label: "Invita utente" } do %>
+    <%= icon_tag "add" %>
+  <% end %>
 <% end %>

@@ -1,60 +1,56 @@
-<div id="<%= dom_id(membership) %>" class="flex justify-between align-center pad-block-start-half pad-block-end-half" style="border-bottom: var(--border);">
+<li id="<%= dom_id(membership) %>" class="flex align-center gap-half">
+  <span class="avatar" aria-hidden="true">
+    <%= image_tag user_avatar_url(membership.user, script_name: Current.account.slug), size: 48, title: membership.user.name, aria: { hidden: "true" } %>
+  </span>
+  <div class="txt-align-start overflow-ellipsis min-width">
+    <strong class="txt-small"><%= membership.user.name %></strong>
+    <div class="txt-x-small txt-subtle"><%= membership.user.email %></div>
+  </div>
 
-  <div class="flex align-center gap-half flex-1">
-    <div>
-      <span class="txt-small txt-bold"><%= membership.user.name %></span>
-      <span class="txt-x-small txt-subtle"><%= membership.user.email %></span>
+  <hr class="separator--horizontal flex-item-grow" style="--border-color: var(--color-ink-medium); --border-style: dashed" aria-hidden="true">
+
+  <%# Scuole count + dialog %>
+  <% unless membership.owner? %>
+    <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
+      <button class="btn btn--circle" data-action="dialog#open" title="Assegna scuole" style="--btn-size: 2.5em;">
+        <span class="txt-x-small txt-bold"><%= membership.scuole.count %></span>
+      </button>
+
+      <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 36rem); max-height: 80vh;" data-dialog-target="dialog">
+        <h3 class="txt-large txt-bold">Scuole di <%= membership.user.name %></h3>
+        <%= render "account_members/scuole_dialog", membership: membership %>
+        <div class="flex justify-end margin-block-start">
+          <button class="btn" data-action="dialog#close">Chiudi</button>
+        </div>
+      </dialog>
     </div>
-  </div>
+  <% end %>
 
-  <div class="flex align-center gap-half">
-    <%# Role badge %>
-    <% if membership.owner? %>
-      <span class="badge">owner</span>
-    <% else %>
-      <%= button_to account_member_path(membership),
-            method: :patch,
-            params: { role: membership.admin? ? "member" : "admin" },
-            class: "badge badge--interactive",
-            title: "Clicca per cambiare ruolo" do %>
-        <%= membership.role %>
-      <% end %>
+  <%# Role toggle con corona %>
+  <% if membership.owner? %>
+    <span class="btn btn--circle" style="--btn-size: 2.5em; pointer-events: none;" title="Owner">
+      <%= icon_tag "crown" %>
+    </span>
+  <% else %>
+    <%= form_with model: membership, url: account_member_path(membership), method: :patch do |form| %>
+      <label class="btn btn--circle" for="<%= dom_id(membership, :role) %>" style="--btn-size: 2.5em; cursor: pointer;" title="<%= membership.admin? ? 'Amministratore' : 'Agente' %>">
+        <%= icon_tag "crown" %>
+        <%= form.check_box :role,
+            { data: { controller: "auto-submit", action: "auto-submit#submit" },
+              checked: membership.admin?,
+              hidden: true,
+              id: dom_id(membership, :role) },
+            "admin", "member" %>
+      </label>
     <% end %>
+  <% end %>
 
-    <%# Scuole count + dialog %>
-    <% unless membership.owner? %>
-      <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
-        <button class="badge badge--interactive" data-action="dialog#open" title="Assegna scuole">
-          <%= membership.scuole.count %> scuole
-        </button>
-
-        <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 36rem); max-height: 80vh;" data-dialog-target="dialog">
-          <h3 class="txt-large txt-bold">Scuole di <%= membership.user.name %></h3>
-          <%= render "account_members/scuole_dialog", membership: membership %>
-          <div class="flex justify-end margin-block-start">
-            <button class="btn" data-action="dialog#close">Chiudi</button>
-          </div>
-        </dialog>
-      </div>
+  <%# Remove member %>
+  <% unless membership.owner? %>
+    <%= button_to account_member_path(membership), method: :delete,
+        class: "btn btn--circle btn--negative", style: "--btn-size: 2.5em;",
+        data: { turbo_confirm: "Rimuovere #{membership.user.name} dall'account?" } do %>
+      <%= icon_tag "minus" %>
     <% end %>
-
-    <%# Remove member %>
-    <% unless membership.owner? %>
-      <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
-        <button class="btn btn--circle btn--negative" data-action="dialog#open" aria-label="Rimuovi utente" style="--btn-size: 2em;">
-          <%= icon_tag "trash", class: "icon--small" %>
-        </button>
-        <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 24rem);" data-dialog-target="dialog">
-          <h3 class="txt-large txt-bold">Rimuovere <%= membership.user.name %>?</h3>
-          <p class="txt-small txt-subtle">L'utente perderà l'accesso a questo account e a tutte le scuole assegnate.</p>
-          <div class="flex gap-half justify-end margin-block-start">
-            <button class="btn" data-action="dialog#close">Annulla</button>
-            <%= button_to account_member_path(membership), method: :delete, class: "btn btn--negative" do %>
-              Rimuovi
-            <% end %>
-          </div>
-        </dialog>
-      </div>
-    <% end %>
-  </div>
-</div>
+  <% end %>
+</li>
