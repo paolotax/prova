@@ -18,7 +18,7 @@ class Editore < ApplicationRecord
     validates :editore, presence: true
     validates :editore, uniqueness: true
 
-    has_many :mandati, dependent: :destroy
+    has_many :mandati, class_name: "Accounts::Mandato", dependent: :destroy
     has_many :legacy_mandati, class_name: "LegacyMandato", dependent: :destroy
     has_many :users, through: :legacy_mandati
 
