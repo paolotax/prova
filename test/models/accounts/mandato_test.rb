@@ -18,6 +18,8 @@ class Accounts::MandatoTest < ActiveSupport::TestCase
     mandato = Accounts::Mandato.new(
       account: @fizzy,
       editore: existing.editore,
+      provincia: existing.provincia,
+      grado: existing.grado,
       anno_scolastico: existing.anno_scolastico
     )
     assert_not mandato.valid?
