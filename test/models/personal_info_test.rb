@@ -73,54 +73,9 @@ class PersonalInfoTest < ActiveSupport::TestCase
     assert_equal "DA", info.iniziali
   end
 
-  # Avatar color
-  test "avatar_color returns a valid tailwind color class" do
-    color = @personal_info.avatar_color
-    assert color.start_with?("bg-")
-    assert color.end_with?("-500")
-  end
-
-  test "avatar_color is deterministic for same name" do
-    color1 = @personal_info.avatar_color
-    color2 = @personal_info.avatar_color
-    assert_equal color1, color2
-  end
-
-  test "different names produce different colors" do
-    alice_color = personal_infos(:alice_info).avatar_color
-    bob_color = personal_infos(:bob_info).avatar_color
-    # Different names should (usually) produce different colors
-    # This could occasionally fail if two names happen to hash to same color
-    # but with our test data it should be different
-    assert_not_equal alice_color, bob_color
-  end
-
-  # Avatar helpers
-  test "has_avatar? returns false when no avatar attached" do
-    assert_not @personal_info.has_avatar?
-  end
-
-  test "avatar_url returns nil when no avatar attached" do
-    assert_nil @personal_info.avatar_url
-  end
-
-  # Avatar data
-  test "avatar_data returns hash with all required keys" do
-    data = @personal_info.avatar_data
-
-    assert_includes data.keys, :has_image
-    assert_includes data.keys, :initials
-    assert_includes data.keys, :color
-    assert_includes data.keys, :name
-  end
-
-  test "avatar_data returns correct values" do
-    data = @personal_info.avatar_data
-
-    assert_equal false, data[:has_image]
-    assert_equal "AR", data[:initials]
-    assert_equal "Alice Rossi", data[:name]
-    assert data[:color].start_with?("bg-")
+  # Avatar delegation
+  test "delegates avatar_attached? to user" do
+    assert_not @personal_info.avatar_attached?
   end
 
   # Association

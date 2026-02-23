@@ -34,26 +34,6 @@ class PersonalInfo < ApplicationRecord
     parts.map { |p| p.first.upcase }.join
   end
 
-  # Delegate avatar methods to user
-  delegate :avatar, :avatar_thumbnail, :avatar_medium, :avatar_large,
-           :avatar_color, :display_avatar, to: :user
-
-  # Alias for backwards compatibility
-  alias_method :avatar_data, :display_avatar
-
-  # Backwards compatibility methods
-  def has_avatar?
-    user.avatar.attached?
-  end
-
-  def avatar_url(variant: :thumb)
-    return nil unless has_avatar?
-
-    case variant
-    when :thumb then avatar_thumbnail
-    when :medium then avatar_medium
-    when :large then avatar_large
-    else avatar
-    end
-  end
+  # Avatar is on User, delegate only what exists
+  delegate :avatar, :avatar_thumbnail, :avatar_attached?, to: :user
 end

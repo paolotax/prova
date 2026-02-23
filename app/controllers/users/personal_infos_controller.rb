@@ -14,10 +14,7 @@ class Users::PersonalInfosController < ApplicationController
     @personal_info = Current.user.build_personal_info(personal_info_params)
 
     # Handle avatar upload separately (avatar is on User, not PersonalInfo)
-    if params[:avatar].present?
-      Current.user.avatar.attach(params[:avatar])
-      Current.user.touch  # Invalidate cache
-    end
+    attach_avatar_if_present
 
     if @personal_info.save
       redirect_to user_personal_info_path(Current.user), notice: "Informazioni personali create."
@@ -39,10 +36,7 @@ class Users::PersonalInfosController < ApplicationController
     end
 
     # Handle avatar upload separately (avatar is on User, not PersonalInfo)
-    if params[:avatar].present?
-      Current.user.avatar.attach(params[:avatar])
-      Current.user.touch  # Invalidate cache
-    end
+    attach_avatar_if_present
 
     if @personal_info.update(personal_info_params)
       redirect_to user_personal_info_path(Current.user), notice: "Informazioni personali aggiornate.", status: :see_other
@@ -63,5 +57,13 @@ class Users::PersonalInfosController < ApplicationController
 
   def personal_info_params
     params.require(:personal_info).permit(:nome, :cognome, :cellulare, :email_personale, :navigator)
+  end
+
+  def attach_avatar_if_present
+    avatar_file = params.dig(:personal_info, :avatar) || params[:avatar]
+    return unless avatar_file.present?
+
+    Current.user.avatar.attach(avatar_file)
+    Current.user.touch
   end
 end
