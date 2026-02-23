@@ -29,7 +29,7 @@ module Accounts
 
           respond_to do |format|
             format.turbo_stream { render turbo_stream: turbo_stream.replace("account-editori", partial: "accounts/mandati/mandati_list", method: :morph, locals: { mandati: @mandati }) }
-            format.html { redirect_to configurazione_path }
+            format.html { redirect_to accounts_configurazione_path }
           end
         end
       end

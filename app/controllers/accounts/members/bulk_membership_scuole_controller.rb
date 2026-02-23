@@ -22,7 +22,7 @@ module Accounts
 
         respond_to do |format|
           format.turbo_stream { render_member_replacement }
-          format.html { redirect_to configurazione_path }
+          format.html { redirect_to accounts_configurazione_path }
         end
       end
 
@@ -35,7 +35,7 @@ module Accounts
 
         respond_to do |format|
           format.turbo_stream { render_member_replacement }
-          format.html { redirect_to configurazione_path }
+          format.html { redirect_to accounts_configurazione_path }
         end
       end
 
@@ -48,7 +48,7 @@ module Accounts
       end
 
       def set_membership
-        @membership = Current.account.memberships.find(params[:account_member_id])
+        @membership = Current.account.memberships.find(params[:member_id])
       end
 
       def filtered_scuole

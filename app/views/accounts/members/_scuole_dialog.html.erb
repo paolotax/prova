@@ -21,14 +21,14 @@
           <span class="txt-x-small txt-subtle"><%= assigned_count %>/<%= zone_scuole.size %></span>      
  
           <% if all_assigned %>
-            <%= button_to account_member_bulk_scuole_path(account_member_id: membership.id),
+            <%= button_to accounts_member_bulk_scuole_path(member_id: membership.id),
                   method: :delete,
                   params: { provincia: zona.provincia, grado: zona.grado },
                   class: "btn btn--small" do %>
               Rimuovi tutte
             <% end %>
           <% else %>
-            <%= button_to account_member_bulk_scuole_path(account_member_id: membership.id),
+            <%= button_to accounts_member_bulk_scuole_path(member_id: membership.id),
                   params: { provincia: zona.provincia, grado: zona.grado },
                   class: "btn btn--small" do %>
               Assegna tutte

@@ -16,7 +16,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference("Accounts::Membership.count") do
       assert_enqueued_emails 1 do
-        post account_members_path(account_id: @account.id), params: { email: dana.email }, as: :turbo_stream
+        post accounts_members_path(account_id: @account.id), params: { email: dana.email }, as: :turbo_stream
       end
     end
 
@@ -26,7 +26,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
 
   test "invite new email creates user and membership" do
     assert_difference(%w[User.count Accounts::Membership.count]) do
-      post account_members_path(account_id: @account.id), params: { email: "newuser@example.com" }, as: :turbo_stream
+      post accounts_members_path(account_id: @account.id), params: { email: "newuser@example.com" }, as: :turbo_stream
     end
 
     assert_response :success
@@ -39,7 +39,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     bob = users(:two)  # already member of fizzy
 
     assert_no_difference("Accounts::Membership.count") do
-      post account_members_path(account_id: @account.id), params: { email: bob.email }, as: :turbo_stream
+      post accounts_members_path(account_id: @account.id), params: { email: bob.email }, as: :turbo_stream
     end
 
     assert_response :success
@@ -51,7 +51,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     membership = memberships(:bob_fizzy)
     assert membership.member?
 
-    patch account_member_path(id: membership.id, account_id: @account.id), params: { role: "admin" }, as: :turbo_stream
+    patch accounts_member_path(id: membership.id, account_id: @account.id), params: { membership: { role: "admin" } }, as: :turbo_stream
 
     assert_response :success
     assert membership.reload.admin?
@@ -60,9 +60,9 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
   test "cannot change owner role" do
     owner_membership = memberships(:alice_fizzy)
 
-    patch account_member_path(id: owner_membership.id, account_id: @account.id), params: { role: "member" }
+    patch accounts_member_path(id: owner_membership.id, account_id: @account.id), params: { role: "member" }
 
-    assert_redirected_to configurazione_path(account_id: @account.id)
+    assert_redirected_to accounts_configurazione_path(account_id: @account.id)
     assert owner_membership.reload.owner?
   end
 
@@ -72,7 +72,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     membership = memberships(:bob_fizzy)
 
     assert_difference("Accounts::Membership.count", -1) do
-      delete account_member_path(id: membership.id, account_id: @account.id), as: :turbo_stream
+      delete accounts_member_path(id: membership.id, account_id: @account.id), as: :turbo_stream
     end
 
     assert_response :success
@@ -82,10 +82,10 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     owner_membership = memberships(:alice_fizzy)
 
     assert_no_difference("Accounts::Membership.count") do
-      delete account_member_path(id: owner_membership.id, account_id: @account.id)
+      delete accounts_member_path(id: owner_membership.id, account_id: @account.id)
     end
 
-    assert_redirected_to configurazione_path(account_id: @account.id)
+    assert_redirected_to accounts_configurazione_path(account_id: @account.id)
   end
 
   test "cannot remove self" do
@@ -96,10 +96,10 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     charlie_membership = memberships(:charlie_acme)
 
     assert_no_difference("Accounts::Membership.count") do
-      delete account_member_path(id: charlie_membership.id, account_id: acme.id)
+      delete accounts_member_path(id: charlie_membership.id, account_id: acme.id)
     end
 
-    assert_redirected_to configurazione_path(account_id: acme.id)
+    assert_redirected_to accounts_configurazione_path(account_id: acme.id)
   end
 
   # === AUTHORIZATION ===
@@ -108,7 +108,7 @@ class AccountMembersControllerTest < ActionDispatch::IntegrationTest
     bob = users(:two)
     sign_in_as(bob, @account)
 
-    post account_members_path(account_id: @account.id), params: { email: "test@test.com" }
+    post accounts_members_path(account_id: @account.id), params: { email: "test@test.com" }
     assert_redirected_to account_root_path(account_id: @account.id)
   end
 

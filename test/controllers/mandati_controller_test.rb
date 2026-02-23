@@ -10,18 +10,18 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get mandati_path(account_id: @account.id)
+    get accounts_mandati_path(account_id: @account.id)
     assert_response :success
   end
 
   test "index shows account mandati" do
-    get mandati_path(account_id: @account.id)
+    get accounts_mandati_path(account_id: @account.id)
     assert_response :success
     assert_match "Zanichelli", response.body
   end
 
   test "should get select_editori" do
-    get select_editori_mandati_path(account_id: @account.id)
+    get select_editori_accounts_mandati_path(account_id: @account.id)
     assert_response :success
   end
 
@@ -32,7 +32,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
 
     # 2 zone attive (MI/E e MI/M) → 2 mandati creati
     assert_difference("Accounts::Mandato.count", 2) do
-      post mandati_path(account_id: @account.id),
+      post accounts_mandati_path(account_id: @account.id),
         params: { hgruppo: "Zanichelli Group", heditore: editori(:zanichelli).id },
         as: :turbo_stream
     end
@@ -44,7 +44,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
 
     # 2 zone attive (MI/E e MI/M) → 2 mandati per editore (uno già esiste)
     assert_difference("Accounts::Mandato.count", 2) do
-      post mandati_path(account_id: @account.id),
+      post accounts_mandati_path(account_id: @account.id),
         params: { hgruppo: "Zanichelli Group" },
         as: :turbo_stream
     end
@@ -54,7 +54,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     mandato = mandati(:fizzy_zanichelli)
     assert_not mandato.disdetta?
 
-    post mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
+    post accounts_mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
       as: :turbo_stream
     assert_response :success
 
@@ -66,7 +66,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     mandato = mandati(:fizzy_zanichelli)
     mandato.update!(disdetta: true)
 
-    delete mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
+    delete accounts_mandato_disdetta_path(mandato_id: mandato.id, account_id: @account.id),
       as: :turbo_stream
     assert_response :success
 
@@ -77,7 +77,7 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
   test "should destroy mandato" do
     mandato = mandati(:fizzy_mondadori)
     assert_difference("Accounts::Mandato.count", -1) do
-      delete mandato_path(mandato, account_id: @account.id),
+      delete accounts_mandato_path(mandato, account_id: @account.id),
         as: :turbo_stream
     end
   end

@@ -121,8 +121,44 @@ Rails.application.routes.draw do
       resource :settings_refresh, only: :create
     end
 
-    # Dati aziendali (singular resource - one per account)
-    resource :azienda, only: [:show, :new, :create, :edit, :update]
+    # =========================================
+    # GESTIONE ACCOUNT (namespace accounts)
+    # =========================================
+    namespace :accounts, path: "" do
+      resource :configurazione, only: [:show], controller: "configurazione"
+      resource :azienda, only: [:show, :new, :create, :edit, :update]
+
+      resources :zone, only: [:index, :new, :create, :destroy] do
+        collection do
+          resource :importazione, only: [:create], controller: "zone/importazioni"
+        end
+      end
+
+      resources :mandati, only: [:index, :create, :destroy] do
+        resource :disdetta, only: [:create, :destroy], module: :mandati
+        collection do
+          get :select_editori
+        end
+      end
+
+      namespace :mandati do
+        resources :gruppi, only: [:destroy], param: :id do
+          resource :disdetta, only: [:create, :destroy], module: :gruppi
+        end
+        resource :sincronizzazione_adozioni, only: [:create]
+      end
+
+      resources :members, only: [:create, :update, :destroy] do
+        scope module: :members do
+          resources :scuole, only: [:create, :destroy], controller: "membership_scuole"
+          resource :bulk_scuole, only: [:create, :destroy], controller: "bulk_membership_scuole"
+        end
+      end
+
+      resource :distribuzione, only: [:show], controller: "distribuzione" do
+        resource :assegnazione, only: [:create], controller: "distribuzione/assegnazioni"
+      end
+    end
 
     # Chats
     resources :chats do
@@ -307,16 +343,8 @@ Rails.application.routes.draw do
     end
 
     get 'profilo', to: 'profiles#get_user_profile'
-    resource :configurazione, only: [:show], controller: "configurazione"
     resources :access_tokens, only: [:index, :show, :new, :create, :destroy], controller: "access_tokens"
     resource :adozioni_analytics, only: [:show], controller: "adozioni_analytics"
-
-    resources :account_members, only: [:create, :update, :destroy] do
-      scope module: :account_members do
-        resources :scuole, only: [:create, :destroy], controller: "membership_scuole"
-        resource :bulk_scuole, only: [:create, :destroy], controller: "bulk_membership_scuole"
-      end
-    end
 
     resources :profiles
 
@@ -350,28 +378,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :zone, only: [:index, :new, :create, :destroy] do
-      collection do
-        resource :importazione, only: [:create], controller: "zone/importazioni"
-      end
-    end
-
     resources :editori do
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
-    end
-
-    resources :mandati, only: [:index, :create, :destroy] do
-      resource :disdetta, only: [:create, :destroy], module: :mandati
-      collection do
-        get :select_editori
-      end
-    end
-
-    namespace :mandati do
-      resources :gruppi, only: [:destroy], param: :id do
-        resource :disdetta, only: [:create, :destroy], module: :gruppi
-      end
-      resource :sincronizzazione_adozioni, only: [:create]
     end
 
     resources :categorie
@@ -432,10 +440,6 @@ Rails.application.routes.draw do
     get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
     resources :persone, only: [:show]
-
-    resource :distribuzione, only: [:show], controller: "distribuzione" do
-      resource :assegnazione, only: [:create], controller: "distribuzione/assegnazioni"
-    end
 
     resources :scuole do
       resources :qrcodes

@@ -5,11 +5,11 @@ module Accounts
     before_action :require_admin, only: [:new, :create, :edit, :update]
 
     def show
-      redirect_to new_azienda_path if @azienda.nil?
+      redirect_to new_accounts_azienda_path if @azienda.nil?
     end
 
     def new
-      redirect_to azienda_path if @azienda.present?
+      redirect_to accounts_azienda_path if @azienda.present?
       @azienda = Current.account.build_azienda
     end
 
@@ -17,7 +17,7 @@ module Accounts
       @azienda = Current.account.build_azienda(azienda_params)
 
       if @azienda.save
-        redirect_to azienda_path, notice: "Dati aziendali salvati."
+        redirect_to accounts_azienda_path, notice: "Dati aziendali salvati."
       else
         render :new, status: :unprocessable_entity
       end
@@ -25,18 +25,18 @@ module Accounts
 
     def edit
       if @azienda.nil?
-        redirect_to new_azienda_path
+        redirect_to new_accounts_azienda_path
       end
     end
 
     def update
       if @azienda.nil?
-        redirect_to new_azienda_path, alert: "Devi prima creare i dati aziendali."
+        redirect_to new_accounts_azienda_path, alert: "Devi prima creare i dati aziendali."
         return
       end
 
       if @azienda.update(azienda_params)
-        redirect_to azienda_path, notice: "Dati aziendali aggiornati.", status: :see_other
+        redirect_to accounts_azienda_path, notice: "Dati aziendali aggiornati.", status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end

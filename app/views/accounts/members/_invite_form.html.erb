@@ -1,4 +1,4 @@
-<%= form_with url: account_members_path, method: :post, class: "flex gap-half align-center justify-center margin-block-start-double" do |f| %>
+<%= form_with url: accounts_members_path, method: :post, class: "flex gap-half align-center justify-center margin-block-start-double" do |f| %>
   <%= f.email_field :email, placeholder: "email@esempio.com", required: true, class: "input txt-small", autocomplete: "off", style: "max-width: 20em;" %>
   <%= f.button type: "submit", class: "btn btn--circle btn--link", style: "--btn-size: 2.5em;", aria: { label: "Invita utente" } do %>
     <%= icon_tag "add" %>

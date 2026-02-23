@@ -77,7 +77,7 @@
                 <% end %>
                 <div class="flex gap-half justify-end margin-block-start">
                     <button class="btn" data-action="dialog#close">Annulla</button>
-                    <%= button_to importazione_path(account_id: account_zone.first.account_id), class: "btn btn--negative" do %>
+                    <%= button_to accounts_importazione_path(account_id: account_zone.first.account_id), class: "btn btn--negative" do %>
                         Conferma
                     <% end %>
                 </div>

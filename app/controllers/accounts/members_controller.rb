@@ -32,7 +32,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Invito inviato a #{user.email}" }
+        format.html { redirect_to accounts_configurazione_path, notice: "Invito inviato a #{user.email}" }
       end
     end
 
@@ -40,7 +40,7 @@ module Accounts
       @membership = Current.account.memberships.find(params[:id])
 
       if @membership.owner?
-        redirect_to configurazione_path, alert: "Non puoi modificare il ruolo del proprietario"
+        redirect_to accounts_configurazione_path, alert: "Non puoi modificare il ruolo del proprietario"
         return
       end
 
@@ -48,7 +48,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path }
+        format.html { redirect_to accounts_configurazione_path }
       end
     end
 
@@ -56,12 +56,12 @@ module Accounts
       @membership = Current.account.memberships.find(params[:id])
 
       if @membership.owner?
-        redirect_to configurazione_path, alert: "Non puoi rimuovere il proprietario"
+        redirect_to accounts_configurazione_path, alert: "Non puoi rimuovere il proprietario"
         return
       end
 
       if @membership == Current.membership
-        redirect_to configurazione_path, alert: "Non puoi rimuovere te stesso"
+        redirect_to accounts_configurazione_path, alert: "Non puoi rimuovere te stesso"
         return
       end
 
@@ -69,7 +69,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Utente rimosso" }
+        format.html { redirect_to accounts_configurazione_path, notice: "Utente rimosso" }
       end
     end
 

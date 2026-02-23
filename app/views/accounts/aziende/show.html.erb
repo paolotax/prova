@@ -4,7 +4,7 @@
   <h1 class="header__title divider divider--fade full-width">Dati aziendali</h1>
   <% if Current.admin? %>
     <div class="header__actions header__actions--end">
-      <%= link_to edit_azienda_path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
+      <%= link_to edit_accounts_azienda_path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
         <%= icon_tag "pencil" %>
         <span class="for-screen-reader">Modifica azienda</span>
       <% end %>

@@ -18,7 +18,7 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
 
   # Show
   test "should get show" do
-    get azienda_path(account_id: @account)
+    get accounts_azienda_path(account_id: @account)
     assert_response :success
   end
 
@@ -34,8 +34,8 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
 
     sign_in_as(@user, other_account)
 
-    get azienda_path(account_id: other_account)
-    assert_redirected_to new_azienda_path(account_id: other_account)
+    get accounts_azienda_path(account_id: other_account)
+    assert_redirected_to new_accounts_azienda_path(account_id: other_account)
   end
 
   # New
@@ -43,33 +43,33 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
     # Use account without azienda
     other_account = accounts(:acme)
     Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
-      m.role = :member
+      m.role = :owner
     end
     other_account.azienda&.destroy
 
     sign_in_as(@user, other_account)
 
-    get new_azienda_path(account_id: other_account)
+    get new_accounts_azienda_path(account_id: other_account)
     assert_response :success
   end
 
   test "new redirects to show when azienda exists" do
-    get new_azienda_path(account_id: @account)
-    assert_redirected_to azienda_path(account_id: @account)
+    get new_accounts_azienda_path(account_id: @account)
+    assert_redirected_to accounts_azienda_path(account_id: @account)
   end
 
   # Create
   test "should create azienda" do
     other_account = accounts(:acme)
     Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
-      m.role = :member
+      m.role = :owner
     end
     other_account.azienda&.destroy
 
     sign_in_as(@user, other_account)
 
     assert_difference("Azienda.count") do
-      post azienda_path(account_id: other_account), params: {
+      post accounts_azienda_path(account_id: other_account), params: {
         azienda: {
           ragione_sociale: "Test Company SRL",
           partita_iva: "11111111111",
@@ -89,36 +89,36 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to azienda_path(account_id: other_account)
+    assert_redirected_to accounts_azienda_path(account_id: other_account)
     assert_equal "Dati aziendali salvati.", flash[:notice]
   end
 
   # Edit
   test "should get edit" do
-    get edit_azienda_path(account_id: @account)
+    get edit_accounts_azienda_path(account_id: @account)
     assert_response :success
   end
 
   test "edit redirects to new when no azienda exists" do
     other_account = accounts(:acme)
     Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
-      m.role = :member
+      m.role = :owner
     end
     other_account.azienda&.destroy
 
     sign_in_as(@user, other_account)
 
-    get edit_azienda_path(account_id: other_account)
-    assert_redirected_to new_azienda_path(account_id: other_account)
+    get edit_accounts_azienda_path(account_id: other_account)
+    assert_redirected_to new_accounts_azienda_path(account_id: other_account)
   end
 
   # Update
   test "should update azienda" do
-    patch azienda_path(account_id: @account), params: {
+    patch accounts_azienda_path(account_id: @account), params: {
       azienda: { ragione_sociale: "Updated Company Name" }
     }
 
-    assert_redirected_to azienda_path(account_id: @account)
+    assert_redirected_to accounts_azienda_path(account_id: @account)
     assert_equal "Updated Company Name", @azienda.reload.ragione_sociale
     assert_equal "Dati aziendali aggiornati.", flash[:notice]
   end
@@ -126,17 +126,17 @@ class AziendeControllerTest < ActionDispatch::IntegrationTest
   test "update redirects to new when no azienda exists" do
     other_account = accounts(:acme)
     Accounts::Membership.find_or_create_by!(user: @user, account: other_account) do |m|
-      m.role = :member
+      m.role = :owner
     end
     other_account.azienda&.destroy
 
     sign_in_as(@user, other_account)
 
-    patch azienda_path(account_id: other_account), params: {
+    patch accounts_azienda_path(account_id: other_account), params: {
       azienda: { ragione_sociale: "Test" }
     }
 
-    assert_redirected_to new_azienda_path(account_id: other_account)
+    assert_redirected_to new_accounts_azienda_path(account_id: other_account)
   end
 
   private

@@ -36,7 +36,7 @@
            data-collapsible-columns-target="column maybeColumn"
            data-drag-and-drop-target="container"
            data-column-name="Non assegnate"
-           data-drag-and-drop-url="<%= distribuzione_assegnazione_path(scuola_id: '__id__', rimuovi: true) %>"
+           data-drag-and-drop-url="<%= accounts_distribuzione_assegnazione_path(scuola_id: '__id__', rimuovi: true) %>"
            data-drag-and-drop-css-variable-name="--card-color"
            data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)">
     <div class="cards__transition-container">
@@ -70,7 +70,7 @@
              data-collapsible-columns-target="column"
              data-drag-and-drop-target="container"
              data-column-name="<%= membership.user.name %>"
-             data-drag-and-drop-url="<%= distribuzione_assegnazione_path(scuola_id: '__id__', membership_id: membership.id) %>"
+             data-drag-and-drop-url="<%= accounts_distribuzione_assegnazione_path(scuola_id: '__id__', membership_id: membership.id) %>"
              data-drag-and-drop-css-variable-name="--card-color"
              data-drag-and-drop-css-variable-value="oklch(0.6 0.15 220)">
       <div class="cards__transition-container">

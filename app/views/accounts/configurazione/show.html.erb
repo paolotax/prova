@@ -10,7 +10,7 @@
 
     <%= render partial: "accounts/zone/form", locals: { regioni: @regioni } %>
 
-    <%= button_to importazione_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
+    <%= button_to accounts_importazione_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
       <%= icon_tag "refresh" %>
       <span>Aggiorna zone</span>
     <% end %>
@@ -23,7 +23,7 @@
 
     <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
 
-    <%= button_to mandati_sincronizzazione_adozioni_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
+    <%= button_to accounts_mandati_sincronizzazione_adozioni_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
       <%= icon_tag "refresh" %>
       <span>Aggiorna adozioni</span>
     <% end %>
@@ -34,7 +34,7 @@
     <%= render "accounts/members/members_list", members: @members %>
     <%= render "accounts/members/invite_form" %>
 
-    <%= link_to distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
+    <%= link_to accounts_distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
       <%= icon_tag "users" %>
       <span>Distribuzione scuole</span>
     <% end %>

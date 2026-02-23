@@ -18,7 +18,7 @@ module Accounts
 
     def create
       regione = params[:regione].presence
-      return redirect_to(configurazione_path) if regione.blank?
+      return redirect_to(accounts_configurazione_path) if regione.blank?
 
       Current.account.add_zone!(
         regione: regione,
@@ -30,7 +30,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Zona aggiunta!" }
+        format.html { redirect_to accounts_configurazione_path, notice: "Zona aggiunta!" }
       end
     end
 
@@ -41,7 +41,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Zona rimossa!" }
+        format.html { redirect_to accounts_configurazione_path, notice: "Zona rimossa!" }
       end
     end
 

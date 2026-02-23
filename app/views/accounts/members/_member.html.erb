@@ -32,7 +32,7 @@
       <%= icon_tag "crown" %>
     </span>
   <% else %>
-    <%= form_with model: membership, url: account_member_path(membership), method: :patch do |form| %>
+    <%= form_with model: membership, url: accounts_member_path(membership), method: :patch do |form| %>
       <label class="btn btn--circle" for="<%= dom_id(membership, :role) %>" style="--btn-size: 2.5em; cursor: pointer;" title="<%= membership.admin? ? 'Amministratore' : 'Agente' %>">
         <%= icon_tag "crown" %>
         <%= form.check_box :role,
@@ -47,7 +47,7 @@
 
   <%# Remove member %>
   <% unless membership.owner? %>
-    <%= button_to account_member_path(membership), method: :delete,
+    <%= button_to accounts_member_path(membership), method: :delete,
         class: "btn btn--circle btn--negative", style: "--btn-size: 2.5em;",
         data: { turbo_confirm: "Rimuovere #{membership.user.name} dall'account?" } do %>
       <%= icon_tag "minus" %>

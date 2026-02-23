@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :zone_select, class: "flex flex-wrap gap-half" do %>
-    <%= form_with url: new_zona_path, method: :get, data: { controller: "tax-select",
+    <%= form_with url: new_accounts_zona_path, method: :get, data: { controller: "tax-select",
                                                             action: "change->tax-select#submit" } do |f| %>
         <div class="flex flex-wrap gap-half">
             <div>

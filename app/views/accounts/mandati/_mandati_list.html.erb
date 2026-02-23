@@ -50,7 +50,7 @@
                                         </button>
                                         <span class="txt-small txt-bold" style="text-transform: uppercase;"><%= gruppo %></span>
                                         <% if gruppo_disdetto %>
-                                            <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
+                                            <%= button_to accounts_mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
                                                 method: :delete,
                                                 class: "btn btn--circle btn--link",
                                                 style: "--btn-size: 1.6em;",
@@ -58,7 +58,7 @@
                                                 <%= icon_tag "refresh", class: "icon--small" %>
                                             <% end %>
                                         <% else %>
-                                            <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
+                                            <%= button_to accounts_mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia),
                                                 method: :post,
                                                 class: "btn btn--circle btn--subtle",
                                                 style: "--btn-size: 1.6em;",
@@ -66,7 +66,7 @@
                                                 <%= icon_tag "close-circle", class: "icon--small" %>
                                             <% end %>
                                         <% end %>
-                                        <%= button_to mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia),
+                                        <%= button_to accounts_mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia),
                                             method: :delete,
                                             class: "btn btn--circle btn--negative",
                                             style: "--btn-size: 1.6em;",
@@ -88,7 +88,7 @@
                                                     </span>
                                                 <% end %>
                                                 <% if grado_disdetto %>
-                                                    <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
+                                                    <%= button_to accounts_mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
                                                         method: :delete,
                                                         class: "btn btn--circle btn--link",
                                                         style: "--btn-size: 1.6em;",
@@ -96,7 +96,7 @@
                                                         <%= icon_tag "refresh", class: "icon--small" %>
                                                     <% end %>
                                                 <% else %>
-                                                    <%= button_to mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
+                                                    <%= button_to accounts_mandati_gruppi_disdetta_path(account_id: account_id, gruppi_id: gruppo, provincia: provincia, grado: code),
                                                         method: :post,
                                                         class: "btn btn--circle btn--subtle",
                                                         style: "--btn-size: 1.6em;",
@@ -104,7 +104,7 @@
                                                         <%= icon_tag "close-circle", class: "icon--small" %>
                                                     <% end %>
                                                 <% end %>
-                                                <%= button_to mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia, grado: code),
+                                                <%= button_to accounts_mandati_gruppi_path(account_id: account_id, id: gruppo, provincia: provincia, grado: code),
                                                     method: :delete,
                                                     class: "btn btn--circle btn--negative",
                                                     style: "--btn-size: 1.6em;",

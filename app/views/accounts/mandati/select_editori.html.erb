@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :mandati_select, class: "flex flex-wrap gap-half" do %>
-    <%= form_with url: select_editori_mandati_path, method: :get, data: { controller: "tax-select",
+    <%= form_with url: select_editori_accounts_mandati_path, method: :get, data: { controller: "tax-select",
                                                             action: "change->tax-select#submit"
                                                         } do |f| %>
 

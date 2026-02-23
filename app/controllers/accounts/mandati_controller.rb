@@ -35,7 +35,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Editore assegnato!" }
+        format.html { redirect_to accounts_configurazione_path, notice: "Editore assegnato!" }
       end
     rescue ActiveRecord::RecordNotUnique
       @mandati = mandati_ordinati
@@ -48,7 +48,7 @@ module Accounts
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to configurazione_path, notice: "Editore eliminato." }
+        format.html { redirect_to accounts_configurazione_path, notice: "Editore eliminato." }
       end
     end
 

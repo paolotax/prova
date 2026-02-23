@@ -2,9 +2,9 @@
 <%= collapsible_nav_section "Impostazioni" do %>
     <%= filter_place_menu_item user_personal_info_path(Current.user), "Il mio profilo (utente)", "id-card" %>
     <% if Current.account %>
-        <%= filter_place_menu_item azienda_path(Current.account), "I miei dati aziendali", "briefcase" %>
+        <%= filter_place_menu_item accounts_azienda_path(Current.account), "I miei dati aziendali", "briefcase" %>
         <% if Current.admin? %>
-            <%= filter_place_menu_item configurazione_path(Current.account), "Configurazione", "settings" %>
+            <%= filter_place_menu_item accounts_configurazione_path(Current.account), "Configurazione", "settings" %>
         <% end %>
     <% end %>
     

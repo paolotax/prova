@@ -8,7 +8,7 @@
         <% end %>
 
         <% if mandato.disdetta? %>
-            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+            <%= button_to accounts_mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
                 method: :delete,
                 class: "btn btn--circle btn--link",
                 style: "--btn-size: 1.6em;",
@@ -16,7 +16,7 @@
                 <%= icon_tag "refresh", class: "icon--small" %>
             <% end %>
         <% else %>
-            <%= button_to mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
+            <%= button_to accounts_mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
                 method: :post,
                 class: "btn btn--circle btn--subtle",
                 style: "--btn-size: 1.6em;",
@@ -25,7 +25,7 @@
             <% end %>
         <% end %>
 
-        <%= button_to mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,
+        <%= button_to accounts_mandato_path(account_id: mandato.account_id, id: mandato.id), method: :delete,
             class: "btn btn--circle btn--negative", style: "--btn-size: 1.6em;",
             aria: { label: "Rimuovi editore" } do %>
             <%= icon_tag "trash", class: "icon--small" %>

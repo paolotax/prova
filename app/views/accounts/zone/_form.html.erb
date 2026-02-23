@@ -1,7 +1,7 @@
 <div id="zone-form" class="flex flex-wrap gap-half align-center justify-center margin-block-start-double">
 
     <%= turbo_frame_tag :zone_select, class: "flex flex-wrap gap-half" do %>
-        <%= form_with url: new_zona_path, method: :get, data: { controller: "tax-select",
+        <%= form_with url: new_accounts_zona_path, method: :get, data: { controller: "tax-select",
                                                                 action: "change->tax-select#submit" } do |f| %>
             <div class="flex flex-wrap gap-half">
                 <div>
@@ -18,7 +18,7 @@
             <%= icon_tag "add" %>
         </button>
         <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 20rem);" data-dialog-target="dialog">
-            <%= form_with url: zone_path, method: :post do |f| %>
+            <%= form_with url: accounts_zone_path, method: :post do |f| %>
                 <h3 class="txt-large txt-bold">Conferma zona</h3>
                 <p class="txt-small txt-subtle">Aggiungere la zona selezionata a tutte le province e gradi?</p>
 
