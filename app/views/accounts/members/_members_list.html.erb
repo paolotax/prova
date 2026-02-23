@@ -1,5 +1,5 @@
-<div id="members-panel" class="settings__user-">
-  <ul class="settings__user-" style="max-width: 36rem; margin-inline: auto;">
+<div id="members-panel" class="settings__user-filter">
+  <ul class="settings__user-list margin-block-start center" style="display: flex; flex-direction: column; gap: 0.5em; max-inline-size: min(32rem, 100%);">
     <% members.each do |membership| %>
       <%= render "accounts/members/member", membership: membership %>
     <% end %>

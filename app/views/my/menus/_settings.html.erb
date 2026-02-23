@@ -4,7 +4,7 @@
     <% if Current.account %>
         <%= filter_place_menu_item accounts_azienda_path(Current.account), "I miei dati aziendali", "briefcase" %>
         <% if Current.admin? %>
-            <%= filter_place_menu_item accounts_configurazione_path(Current.account), "Configurazione", "settings" %>
+            <%= filter_place_menu_item accounts_configurazione_path(Current.account), "Zone, Mandati, Colleghi", "settings" %>
         <% end %>
     <% end %>
     

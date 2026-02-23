@@ -1,6 +1,7 @@
-<%= form_with url: accounts_members_path, method: :post, class: "flex gap-half align-center justify-center margin-block-start-double" do |f| %>
+<%= form_with url: accounts_members_path, method: :post, class: "flex gap-half align-center justify-center margin-block-start" do |f| %>
   <%= f.email_field :email, placeholder: "email@esempio.com", required: true, class: "input txt-small", autocomplete: "off", style: "max-width: 20em;" %>
-  <%= f.button type: "submit", class: "btn btn--circle btn--link", style: "--btn-size: 2.5em;", aria: { label: "Invita utente" } do %>
+  <%= f.button type: "submit", class: "btn btn--link txt-small", title: "Aggiungi ed invita" do %>
     <%= icon_tag "add" %>
+    <span class="hide-on-touch">Aggiungi ed invita</span>
   <% end %>
 <% end %>

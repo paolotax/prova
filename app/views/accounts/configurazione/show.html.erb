@@ -30,15 +30,16 @@
   </div>
 
   <div class="settings__panel settings__panel--users panel shadow center">
-    <strong class="divider divider--fade txt-large">I miei</strong>
+    <strong class="divider divider--fade txt-large">I miei Colleghi</strong>
+    <p class="txt-small txt-subtle txt-center">Invita i tuoi colleghi per accedere. Potrai assegnare a ciascuno le scuole di competenza e un ruolo (agente o amministratore).</p>
 
     <%= render "accounts/members/invite_form" %>
 
     <%= render "accounts/members/members_list", members: @members %>
 
-    <%= link_to accounts_distribuzione_path, class: "btn btn--link full-width margin-block-start-double" do %>
+    <%= link_to accounts_distribuzione_path, class: "btn fit-content center margin-block-start-double" do %>
       <%= icon_tag "users" %>
-      <span>Distribuzione scuole</span>
+      <span>Distribusci scuole</span>
     <% end %>
   </div>
 
