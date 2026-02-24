@@ -70,6 +70,7 @@ class Scuola < ApplicationRecord
   has_many :tappe, as: :tappable
 
   before_validation :normalize_fields
+  after_update_commit :propagate_area_to_plessi, if: :saved_change_to_area?
 
   validates :denominazione, presence: true
   validates :codice_ministeriale, uniqueness: { scope: :account_id }, allow_blank: true
@@ -184,5 +185,9 @@ class Scuola < ApplicationRecord
     self.regione = regione.upcase if regione.present?
     self.provincia = provincia.upcase if provincia.present?
     self.pec = nil if pec.present? && pec.downcase.include?("non disponibil")
+  end
+
+  def propagate_area_to_plessi
+    plessi.update_all(area: area) if plessi.any?
   end
 end

@@ -34,7 +34,7 @@ module Accounts
 
     belongs_to :editore
 
-    validates :editore_id, uniqueness: { scope: [:account_id, :provincia, :grado, :anno_scolastico] }
+    validates :editore_id, uniqueness: { scope: [:account_id, :provincia, :grado, :anno_scolastico, :area] }
 
     scope :attivi, -> { where(disdetta: false) }
     scope :disdetti, -> { where(disdetta: true) }
@@ -44,7 +44,8 @@ module Accounts
 
     def copre_scuola?(scuola)
       (provincia.nil? || provincia == scuola.provincia) &&
-        (grado.nil? || grado == scuola.grado)
+        (grado.nil? || grado == scuola.grado) &&
+        (area.nil? || area == scuola.area)
     end
 
     private

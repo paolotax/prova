@@ -105,4 +105,47 @@ class Accounts::MandatoTest < ActiveSupport::TestCase
     mandato = mandati(:fizzy_zanichelli)
     assert_equal editori(:zanichelli), mandato.editore
   end
+
+  test "allows same editore with different area in same provincia" do
+    mandato = Accounts::Mandato.new(
+      account: accounts(:fizzy),
+      editore: editori(:zanichelli),
+      provincia: "MI",
+      grado: "E",
+      area: "Nord",
+      anno_scolastico: "2025/2026"
+    )
+    assert mandato.valid?
+  end
+
+  test "copre_scuola? with nil area covers all schools" do
+    mandato = mandati(:fizzy_zanichelli)
+    scuola = scuole(:scuola_fizzy)
+    scuola.area = "Nord"
+    assert mandato.copre_scuola?(scuola)
+  end
+
+  test "copre_scuola? with matching area" do
+    mandato = mandati(:fizzy_zanichelli)
+    mandato.area = "Nord"
+    scuola = scuole(:scuola_fizzy)
+    scuola.area = "Nord"
+    assert mandato.copre_scuola?(scuola)
+  end
+
+  test "copre_scuola? with non-matching area" do
+    mandato = mandati(:fizzy_zanichelli)
+    mandato.area = "Nord"
+    scuola = scuole(:scuola_fizzy)
+    scuola.area = "Sud"
+    assert_not mandato.copre_scuola?(scuola)
+  end
+
+  test "copre_scuola? mandato with area does not cover school without area" do
+    mandato = mandati(:fizzy_zanichelli)
+    mandato.area = "Nord"
+    scuola = scuole(:scuola_fizzy)
+    scuola.area = nil
+    assert_not mandato.copre_scuola?(scuola)
+  end
 end
