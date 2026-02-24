@@ -127,11 +127,16 @@
   /* ------------------------------------------------------------------------ */
 
   .analytics-filters {
-    align-items: center;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: var(--inline-space-half);
     margin-block-end: var(--block-space);
+  }
+
+  .analytics-filters__row {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space);
   }
 
   .analytics-filters__field {

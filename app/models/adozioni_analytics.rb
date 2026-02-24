@@ -92,26 +92,23 @@ class AdozioniAnalytics
   end
 
   # Available filter options scoped to mie adozioni da_acquistare
-  # Each filter's options are computed with all OTHER filters applied (except itself)
+  # 1 bulk query for all options, then 1 query per active filter (except itself)
   def mie_filter_options(filtri: {})
     base = account.adozioni.mie.where(da_acquistare: true)
       .joins(classe: :scuola)
       .where(classi: { scuola_id: scuola_ids })
 
-    options_for = ->(exclude_key) {
-      apply_filtri(base, filtri.except(exclude_key))
-    }
+    # 1 query: all distinct values from fully-filtered scope
+    filtered = apply_filtri(base, filtri)
+    result = bulk_pluck_options(filtered)
 
-    {
-      discipline: options_for.(:disciplina).distinct.pluck(:disciplina).compact.sort,
-      editori: options_for.(:editore).distinct.pluck(:editore).compact.sort,
-      gruppi: Editore.where(editore: options_for.(:gruppo).distinct.pluck(:editore)).pluck(:gruppo).compact.uniq.sort,
-      province: options_for.(:provincia).joins(classe: :scuola).select("scuole.provincia").distinct.map(&:provincia).compact.sort,
-      gradi: options_for.(:grado).joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort,
-      tipi_scuola: options_for.(:tipo_scuola).joins(classe: :scuola).select("scuole.tipo_scuola").distinct.map(&:tipo_scuola).compact.sort,
-      aree: options_for.(:area).joins(classe: :scuola).select("scuole.area").distinct.map(&:area).compact.reject { |a| a.start_with?("__") }.sort,
-      anni_corso: options_for.(:anno_corso).joins(:classe).distinct.pluck("classi.anno_corso").compact.map(&:to_s).sort
-    }
+    # For each active filter, override its options from except-scope
+    filtri.each_key do |key|
+      except_scope = apply_filtri(base, filtri.except(key))
+      override_filter_option(result, key, except_scope)
+    end
+
+    result
   end
 
   # Available filter options for all adozioni (other tabs)
@@ -124,6 +121,61 @@ class AdozioniAnalytics
   end
 
   private
+
+  OPTION_SQL = {
+    disciplina: "array_agg(DISTINCT adozioni.disciplina)",
+    editore: "array_agg(DISTINCT adozioni.editore)",
+    gruppo: "array_agg(DISTINCT adozioni.editore)",
+    provincia: "array_agg(DISTINCT scuole.provincia)",
+    grado: "array_agg(DISTINCT scuole.grado)",
+    tipo_scuola: "array_agg(DISTINCT scuole.tipo_scuola)",
+    area: "array_agg(DISTINCT scuole.area)",
+    anno_corso: "array_agg(DISTINCT classi.anno_corso::text)"
+  }.freeze
+
+  OPTION_RESULT_KEY = {
+    disciplina: :discipline, editore: :editori, gruppo: :gruppi,
+    provincia: :province, grado: :gradi, tipo_scuola: :tipi_scuola,
+    area: :aree, anno_corso: :anni_corso
+  }.freeze
+
+  def bulk_pluck_options(scope)
+    row = scope.pick(
+      Arel.sql(OPTION_SQL[:disciplina]),
+      Arel.sql(OPTION_SQL[:editore]),
+      Arel.sql(OPTION_SQL[:provincia]),
+      Arel.sql(OPTION_SQL[:grado]),
+      Arel.sql(OPTION_SQL[:tipo_scuola]),
+      Arel.sql(OPTION_SQL[:area]),
+      Arel.sql(OPTION_SQL[:anno_corso])
+    )
+    row ||= Array.new(7)
+
+    editori = (row[1] || []).compact.sort
+    {
+      discipline: (row[0] || []).compact.sort,
+      editori: editori,
+      gruppi: Editore.where(editore: editori).pluck(:gruppo).compact.uniq.sort,
+      province: (row[2] || []).compact.sort,
+      gradi: (row[3] || []).compact.sort,
+      tipi_scuola: (row[4] || []).compact.sort,
+      aree: (row[5] || []).compact.reject { |a| a.start_with?("__") }.sort,
+      anni_corso: (row[6] || []).compact.sort
+    }
+  end
+
+  def override_filter_option(result, key, scope)
+    values = (scope.pick(Arel.sql(OPTION_SQL[key])) || []).compact
+
+    case key
+    when :gruppo
+      result[:gruppi] = Editore.where(editore: values).pluck(:gruppo).compact.uniq.sort
+    when :area
+      result[:aree] = values.reject { |a| a.start_with?("__") }.sort
+    else
+      result[OPTION_RESULT_KEY[key]] = values.sort
+    end
+  end
 
   def apply_filtri(scope, filtri)
     scope = scope.where(disciplina: filtri[:disciplina]) if filtri[:disciplina].present?
