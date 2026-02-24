@@ -153,6 +153,10 @@ Rails.application.routes.draw do
       resource :distribuzione, only: [:show], controller: "distribuzione" do
         resource :assegnazione, only: [:create], controller: "distribuzione/assegnazioni"
       end
+
+      resources :aree, only: [:show], param: :provincia do
+        resource :assegnazione, only: [:create], controller: "aree/assegnazioni"
+      end
     end
 
     # Chats
