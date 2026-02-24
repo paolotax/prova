@@ -68,6 +68,7 @@ class Tappa < ApplicationRecord
 
   scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids, tappable_type: 'Scuola') }
   scope :della_provincia, ->(provincia) { joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'").where(scuole: { provincia: provincia }) }
+  scope :dell_area, ->(area) { joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'").where(scuole: { area: area }) }
 
   scope :attuali, -> { where("data_tappa > ? OR data_tappa IS NULL", Time.zone.now.beginning_of_day) }
   

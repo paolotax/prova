@@ -44,6 +44,7 @@ class TappeController < ApplicationController
 
     @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
     @tappe = @tappe.search(params[:search]) if params[:search].present?
+    @tappe = @tappe.dell_area(params[:area]) if params[:area].present?
 
     # Filtra solo tappe con data
     @tappe = @tappe.where.not(data_tappa: nil)
