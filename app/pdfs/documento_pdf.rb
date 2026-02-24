@@ -23,6 +23,7 @@ class DocumentoPdf < Prawn::Document
     @documento = documento
     @cliente = @documento.clientable
     @view = view
+    @azienda = Current.account&.azienda
 
     repeat :all do
       intestazione_cliente(@cliente)
@@ -92,15 +93,15 @@ class DocumentoPdf < Prawn::Document
       line_width 1
 
       move_down 5
-      text "#{current_user.azienda_ragione_sociale}", :size => 13, :style => :bold
-      text "#{current_user.azienda_indirizzo}"
-      text "#{current_user.azienda_cap} #{current_user.azienda_comune} #{current_user.azienda_provincia}"
+      text "#{@azienda&.ragione_sociale}", :size => 13, :style => :bold
+      text "#{@azienda&.indirizzo}"
+      text "#{@azienda&.cap} #{@azienda&.comune} #{@azienda&.provincia}"
       move_down 5
 
-      text "cell.: #{current_user.azienda_telefono}"
-      text "email: #{current_user.azienda_email}"
-      text "partita iva: #{current_user.azienda_partita_iva}"
-      text "codice fiscale: #{current_user.azienda_codice_fiscale}"
+      text "cell.: #{@azienda&.telefono}"
+      text "email: #{@azienda&.email}"
+      text "partita iva: #{@azienda&.partita_iva}"
+      text "codice fiscale: #{@azienda&.codice_fiscale}"
 
       bounding_box [bounds.width / 2.0, bounds.top - 55.mm], :width => bounds.width / 2.0 do
         text 'Spett.le'
@@ -204,7 +205,7 @@ class DocumentoPdf < Prawn::Document
         draw_line_right(8.mm)
         draw_text "NOSTRO CODICE IBAN PER BONIFICI", :at => [bounds.left + 1, bounds.top - 6], :size => 6
         bounding_box [ bounds.left + 1.mm, bounds.top - 2.mm ], :width => bounds.width - 2.mm, :height => 6.mm do
-          text "#{current_user.azienda_iban}", :align => :center, :valign => :center, :size => 8
+          text "#{@azienda&.iban}", :align => :center, :valign => :center, :size => 8
         end
       end
     end

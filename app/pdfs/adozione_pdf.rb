@@ -28,6 +28,7 @@ class AdozionePdf < Prawn::Document
 
     @adozioni = adozioni
     @view = view
+    @azienda = Current.account&.azienda
 
     @adozioni.each do |a|
       
@@ -163,11 +164,11 @@ class AdozionePdf < Prawn::Document
         stroke_horizontal_rule
       end
       move_down(15)
-      text "Pagamento con Bonifico - Banca di appoggio: #{current_user.nome_banca}", :size => 11, :style => :bold, :spacing => 4
+      text "Pagamento con Bonifico - Banca di appoggio: #{@azienda&.banca}", :size => 11, :style => :bold, :spacing => 4
       move_down(3)
-      text "IBAN: #{current_user.iban}",  :size => 12, :style => :bold, :spacing => 4      
+      text "IBAN: #{@azienda&.iban}",  :size => 12, :style => :bold, :spacing => 4
       move_down(3)
-      text "conto intestato a #{current_user.ragione_sociale}",  :size => 11
+      text "conto intestato a #{@azienda&.ragione_sociale}",  :size => 11
       text "indicare nella causale Scuola, Classe e Numero documento",  :size => 11, :spacing => 4
 
     end
