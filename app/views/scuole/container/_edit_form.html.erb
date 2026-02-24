@@ -121,6 +121,18 @@
   </div>
 
   <div class="form-field">
+    <%= f.label :area, class: "label txt-small" %>
+    <%= f.text_field :area, class: "input",
+        list: dom_id(scuola, :aree_list),
+        autocomplete: "off" %>
+    <datalist id="<%= dom_id(scuola, :aree_list) %>">
+      <% Current.account.scuole.where(provincia: scuola.provincia).where.not(area: [nil, ""]).distinct.pluck(:area).sort.each do |a| %>
+        <option value="<%= a %>">
+      <% end %>
+    </datalist>
+  </div>
+
+  <div class="form-field">
     <%= f.label :note, class: "label txt-small" %>
     <%= f.text_area :note, rows: 3, class: "input" %>
   </div>

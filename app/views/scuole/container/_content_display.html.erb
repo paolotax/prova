@@ -2,6 +2,10 @@
 
 <h1 class="card__title"><%= scuola.denominazione %></h1>
 
+<% if scuola.area.present? %>
+  <span class="badge txt-small"><%= scuola.area %></span>
+<% end %>
+
 <div class="flex gap flex-wrap">
   <!-- Indirizzo -->
   <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">

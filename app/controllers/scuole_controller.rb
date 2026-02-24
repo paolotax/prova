@@ -156,7 +156,7 @@ class ScuoleController < ApplicationController
     params.require(:scuola).permit(
       :denominazione, :codice_ministeriale, :indirizzo, :cap,
       :comune, :provincia, :sigla_provincia, :regione, :tipo_scuola,
-      :email, :pec, :telefono, :note, :stato, :priorita
+      :email, :pec, :telefono, :note, :stato, :priorita, :area
     )
   end
 end
