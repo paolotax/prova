@@ -5,35 +5,27 @@
       data: { controller: "form",
               action: "keydown.esc->form#cancel:stop" } do |f| %>
 
-  <div class="form-field">
-    <%= f.label :denominazione, class: "label txt-small" %>
-    <%= f.text_field :denominazione, class: "input", autofocus: true %>
-  </div>
-
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :codice_ministeriale, class: "label txt-small" %>
-      <%= f.text_field :codice_ministeriale, class: "input mono txt-uppercase" %>
+  <div class="form-row">
+    <div class="form-field" style="--w: 15ch;">
+      <%= f.label :codice_ministeriale, "Codice", class: "label txt-small" %>
+      <%= f.text_field :codice_ministeriale, class: "input mono txt-uppercase", autofocus: true %>
     </div>
 
     <div class="form-field">
       <%= f.label :tipo_scuola, class: "label txt-small" %>
       <%= f.select :tipo_scuola,
-          options_for_select([
-            ["—", ""],
-            ["Istituto Comprensivo", "Istituto Comprensivo"],
-            ["Scuola Primaria", "Scuola Primaria"],
-            ["Scuola Secondaria I grado", "Scuola Secondaria I grado"],
-            ["Liceo Scientifico", "Liceo Scientifico"],
-            ["Liceo Classico", "Liceo Classico"],
-            ["Liceo Linguistico", "Liceo Linguistico"],
-            ["Istituto Tecnico", "Istituto Tecnico"],
-            ["Istituto Professionale", "Istituto Professionale"],
-            ["Altro", "Altro"]
-          ], scuola.tipo_scuola),
+          options_for_select(
+            [["—", ""]] + tipi_scuola_options,
+            scuola.tipo_scuola
+          ),
           {},
           class: "input input--select" %>
     </div>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :denominazione, class: "label txt-small" %>
+    <%= f.text_field :denominazione, class: "input" %>
   </div>
 
   <div class="form-field">
@@ -41,40 +33,55 @@
     <%= f.text_field :indirizzo, class: "input" %>
   </div>
 
-  <div class="form-grid form-grid--3">
-    <div class="form-field">
-      <%= f.label :cap, "CAP", class: "label txt-small" %>
-      <%= f.text_field :cap, class: "input mono", maxlength: 5 %>
+  <div data-controller="provincia-comune" data-provincia-comune-zone-value="<%= zone_data_for_selects.to_json %>">
+    <div class="form-row">
+      <div class="form-field" style="--w: 15ch;">
+        <%= f.label :cap, "CAP", class: "label txt-small" %>
+        <%= f.text_field :cap, class: "input mono", maxlength: 5 %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :comune, class: "label txt-small" %>
+        <%= f.select :comune,
+            options_for_select(
+              [["—", ""]] + Zona.where(provincia: scuola.provincia).order(:comune).distinct.pluck(:comune).map { |c| [c, c] },
+              scuola.comune
+            ),
+            {},
+            class: "input input--select",
+            data: { provincia_comune_target: "comune" } %>
+      </div>
+
+      <div class="form-field" style="--w: 15ch;">
+        <%= f.label :provincia, "Prov.", class: "label txt-small" %>
+        <%= f.select :provincia,
+            options_for_select(
+              [["—", ""]] + province_options,
+              scuola.provincia
+            ),
+            {},
+            class: "input input--select",
+            data: { provincia_comune_target: "provincia",
+                    action: "change->provincia-comune#provinciaChanged" } %>
+        <%= f.hidden_field :sigla_provincia, data: { provincia_comune_target: "sigla" } %>
+      </div>
     </div>
 
-    <div class="form-field" style="grid-column: span 2;">
-      <%= f.label :comune, class: "label txt-small" %>
-      <%= f.text_field :comune, class: "input" %>
-    </div>
+    <% if account_multi_regione? %>
+      <div class="form-field">
+        <%= f.label :regione, class: "label txt-small" %>
+        <%= f.select :regione,
+            options_for_select(
+              [["—", ""]] + regioni_options,
+              scuola.regione
+            ),
+            {},
+            class: "input input--select" %>
+      </div>
+    <% end %>
   </div>
 
-  <div class="form-grid">
-    <div class="form-field">
-      <%= f.label :provincia, class: "label txt-small" %>
-      <%= f.text_field :provincia, class: "input txt-uppercase", maxlength: 2 %>
-    </div>
-
-    <div class="form-field">
-      <%= f.label :regione, class: "label txt-small" %>
-      <%= f.select :regione,
-          options_for_select([
-            ["—", ""],
-            "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
-            "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
-            "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
-            "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
-          ], scuola.regione),
-          {},
-          class: "input input--select" %>
-    </div>
-  </div>
-
-  <div class="form-grid">
+  <div class="form-row">
     <div class="form-field">
       <%= f.label :telefono, class: "label txt-small" %>
       <%= f.telephone_field :telefono, class: "input" %>
@@ -91,7 +98,7 @@
     <%= f.email_field :pec, class: "input" %>
   </div>
 
-  <div class="form-grid">
+  <div class="form-row">
     <div class="form-field">
       <%= f.label :stato, class: "label txt-small" %>
       <%= f.select :stato,

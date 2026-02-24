@@ -10,7 +10,7 @@
       <% if scuola.indirizzo.present? %>
         <div><%= scuola.indirizzo %></div>
       <% end %>
-      <div><%= [scuola.cap, scuola.comune, scuola.provincia].compact_blank.join(" ") %></div>
+      <div><%= [scuola.cap, scuola.comune, scuola.sigla_provincia.presence || scuola.provincia].compact_blank.join(" ") %></div>
     </div>
   </div>
 

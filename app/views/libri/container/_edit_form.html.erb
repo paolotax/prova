@@ -10,7 +10,7 @@
     <%= f.text_field :titolo, class: "input", autofocus: true %>
   </div>
 
-  <div class="form-grid">
+  <div class="form-row">
     <div class="form-field">
       <%= f.label :editore_id, "Editore", class: "label txt-small" %>
       <%= f.collection_select :editore_id,
@@ -32,20 +32,18 @@
     </div>
   </div>
 
-  <div class="form-grid">
-    <div class="form-field">
+  <div class="form-row">
+    <div class="form-field" style="--w: 12ch;">
       <%= f.label :prezzo, "Prezzo", class: "label txt-small" %>
       <%= f.number_field :prezzo, step: 0.01, class: "input" %>
     </div>
 
-    <div class="form-field">
-      <%= f.label :prezzo_suggerito, "Prezzo suggerito", class: "label txt-small" %>
+    <div class="form-field" style="--w: 12ch;">
+      <%= f.label :prezzo_suggerito, "Prezzo sugg.", class: "label txt-small" %>
       <%= f.number_field :prezzo_suggerito, step: 0.01, class: "input" %>
     </div>
-  </div>
 
-  <div class="form-grid">
-    <div class="form-field">
+    <div class="form-field" style="--w: 8ch;">
       <%= f.label :classe, class: "label txt-small" %>
       <%= f.select :classe,
           options_for_select([["—", ""], ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"]], libro.classe),
@@ -59,8 +57,8 @@
     </div>
   </div>
 
-  <div class="form-grid">
-    <div class="form-field">
+  <div class="form-row">
+    <div class="form-field" style="--w: 15ch;">
       <%= f.label :cm, "CM", class: "label txt-small" %>
       <%= f.text_field :cm, class: "input mono" %>
     </div>

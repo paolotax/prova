@@ -1,0 +1,26 @@
+@layer components {
+  .form-row {
+    display: flex;
+    gap: var(--inline-space);
+
+    > .form-field { flex: 1; }
+  }
+
+  .form-row--2 { > .form-field { flex: 1; } }
+  .form-row--3 { > .form-field { flex: 1; } }
+
+  .form-row .form-field[style*="--w"] {
+    flex: none;
+    width: var(--w);
+  }
+
+  @media (max-width: 640px) {
+    .form-row {
+      flex-direction: column;
+    }
+
+    .form-row .form-field[style*="--w"] {
+      width: 100%;
+    }
+  }
+}

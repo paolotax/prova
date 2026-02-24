@@ -18,6 +18,7 @@
 #  priorita            :integer          default(0)
 #  provincia           :string
 #  regione             :string
+#  sigla_provincia     :string(2)
 #  stato               :string           default("attiva")
 #  telefono            :string
 #  tipo_scuola         :string

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_22_084055) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_092924) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1305,6 +1305,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_22_084055) do
     t.integer "priorita", default: 0
     t.string "provincia"
     t.string "regione"
+    t.string "sigla_provincia", limit: 2
     t.string "stato", default: "attiva"
     t.string "telefono"
     t.string "tipo_scuola"
@@ -1497,6 +1498,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_22_084055) do
     t.datetime "created_at", null: false
     t.string "provincia"
     t.string "regione"
+    t.string "sigla", limit: 2
     t.datetime "updated_at", null: false
   end
 
