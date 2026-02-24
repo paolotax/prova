@@ -2,6 +2,7 @@
     <% zone_per_regione = account_zone.group_by(&:regione) %>
     <% gradi_colonne = [["E", "Primaria"], ["M", "I Grado"], ["N", "II Grado"]] %>
     <% account_id = account_zone.first&.account_id %>
+    <% altro_per_provincia = account_id ? Scuola.where(account_id: account_id, grado: "altro").group(:provincia).count : {} %>
     <% importate_per_zona = account_id ? Scuola.where(account_id: account_id).group(:provincia, :grado).count : {} %>
 
     <% zone_per_regione.each do |regione, zone_regione| %>
@@ -21,6 +22,7 @@
                             <% gradi_colonne.each do |_code, label| %>
                                 <th><%= label %></th>
                             <% end %>
+                            <th>Altro</th>
                             <th>Totale</th>
                         </tr>
                     </thead>
@@ -48,7 +50,9 @@
                                         <% end %>
                                     </td>
                                 <% end %>
-                                <td class="txt-center txt-small txt-subtle"><%= row_total if row_total > 0 %></td>
+                                <% altro_count = altro_per_provincia[prov] || 0 %>
+                                <td class="txt-center txt-small txt-subtle"><%= altro_count if altro_count > 0 %></td>
+                                <td class="txt-center txt-small txt-subtle"><%= row_total + altro_count if row_total + altro_count > 0 %></td>
                             </tr>
                         <% end %>
                     </tbody>
@@ -61,6 +65,9 @@
                                 <% grand_total += col_total %>
                                 <td class="txt-center txt-small txt-bold"><%= col_total if col_total > 0 %></td>
                             <% end %>
+                            <% altro_total = altro_per_provincia.values.sum %>
+                            <% grand_total += altro_total %>
+                            <td class="txt-center txt-small txt-bold"><%= altro_total if altro_total > 0 %></td>
                             <td class="txt-center txt-small txt-bold"><%= grand_total if grand_total > 0 %></td>
                         </tr>
                     </tfoot>
