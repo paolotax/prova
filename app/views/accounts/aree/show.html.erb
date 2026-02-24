@@ -64,14 +64,14 @@
     </section>
   </div>
 
-  <%# Centro: colonna "Non assegnate" (sempre espansa) %>
+  <%# Centro: colonna "Senza area" (sempre espansa) %>
   <% unassigned = @scuole_by_area["__unassigned__"] || [] %>
   <section class="cards cards--maybe is-expanded"
            style="--card-color: oklch(0.6 0.01 0)"
            tabindex="0"
            data-collapsible-columns-target="column maybeColumn"
            data-drag-and-drop-target="container"
-           data-column-name="Non assegnate"
+           data-column-name="Senza area"
            data-drag-and-drop-url="<%= accounts_aree_assegnazione_path(aree_provincia: @provincia, scuola_id: '__id__', area: '') %>"
            data-drag-and-drop-css-variable-name="--card-color"
            data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)">
@@ -84,7 +84,7 @@
                 aria-expanded="true">
           <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count.(unassigned) %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">
-            Non assegnate <span class="txt-light">(<%= scuole_count.(unassigned) %>)</span>
+            Senza area <span class="txt-light">(<%= scuole_count.(unassigned) %>)</span>
           </h3>
         </button>
       </header>

@@ -267,24 +267,21 @@
     .badge {
       align-items: center;
       display: inline-flex;
-      gap: 0.25ch;
+      gap: 0.3ch;
+      padding: 0.4em 0.8em;
     }
 
     .badge__remove {
       all: unset;
       cursor: pointer;
       display: inline-flex;
-      margin-inline-start: 0.1ch;
-      opacity: 0;
+      margin-inline-start: 0.2ch;
+      opacity: 0.4;
       transition: opacity 150ms;
     }
 
-    .badge:hover .badge__remove {
-      opacity: 0.7;
-    }
-
     .badge__remove:hover {
-      opacity: 1 !important;
+      opacity: 1;
     }
   }
 
