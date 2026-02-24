@@ -5,7 +5,8 @@ class UpdateMieAdozioniJob < ApplicationJob
     # Reset all
     Adozione.where(account: account).update_all(mia: false, disdetta: false)
 
-    # Set mia = true where a mandato matches (active or disdetto)
+    # Set mia = true where a mandato matches
+    # Area-specific disdette override the wildcard for that area
     sql_mia = <<~SQL
       UPDATE adozioni SET mia = true
       WHERE adozioni.account_id = :account_id
@@ -19,6 +20,20 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND m.provincia = s.provincia
           AND m.grado = s.grado
           AND (m.area IS NULL OR m.area = s.area)
+          AND NOT (m.area IS NOT NULL AND m.disdetta = true)
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM mandati m2
+        JOIN editori e2 ON e2.id = m2.editore_id
+        JOIN classi c2 ON c2.id = adozioni.classe_id
+        JOIN scuole s2 ON s2.id = c2.scuola_id
+        WHERE m2.account_id = adozioni.account_id
+          AND m2.disdetta = true
+          AND m2.area IS NOT NULL
+          AND m2.area = s2.area
+          AND e2.editore = adozioni.editore
+          AND m2.provincia = s2.provincia
+          AND m2.grado = s2.grado
       )
     SQL
 
@@ -26,7 +41,8 @@ class UpdateMieAdozioniJob < ApplicationJob
       ActiveRecord::Base.sanitize_sql([sql_mia, account_id: account.id])
     )
 
-    # Set disdetta = true where matching mandato is disdetto
+    # Set disdetta = true only for wildcard disdette (area IS NULL)
+    # Area-specific disdette just remove mia, they don't mark as disdetta
     sql_disdetta = <<~SQL
       UPDATE adozioni SET disdetta = true
       WHERE adozioni.account_id = :account_id
@@ -38,10 +54,10 @@ class UpdateMieAdozioniJob < ApplicationJob
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = adozioni.account_id
           AND m.disdetta = true
+          AND m.area IS NULL
           AND e.editore = adozioni.editore
           AND m.provincia = s.provincia
           AND m.grado = s.grado
-          AND (m.area IS NULL OR m.area = s.area)
       )
     SQL
 
@@ -154,14 +170,14 @@ class UpdateMieAdozioniJob < ApplicationJob
     # Reset all counts
     account.mandati.update_all(sezioni_count: 0)
 
-    # Set counts from mia adozioni
-    sql = <<~SQL
+    # Set counts for active mandati (adozioni mie da_acquistare)
+    sql_active = <<~SQL
       UPDATE mandati SET sezioni_count = sub.cnt
       FROM (
-        SELECT m.id, COUNT(DISTINCT a.classe_id) as cnt
+        SELECT m.id, COUNT(*) as cnt
         FROM mandati m
         JOIN editori e ON e.id = m.editore_id
-        JOIN adozioni a ON a.account_id = m.account_id AND a.editore = e.editore AND a.mia = true
+        JOIN adozioni a ON a.account_id = m.account_id AND a.editore = e.editore AND a.mia = true AND a.da_acquistare = true
         JOIN classi c ON c.id = a.classe_id
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = :account_id
@@ -174,7 +190,32 @@ class UpdateMieAdozioniJob < ApplicationJob
     SQL
 
     ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql([sql, account_id: account.id])
+      ActiveRecord::Base.sanitize_sql([sql_active, account_id: account.id])
+    )
+
+    # Set counts for area-specific disdetta mandati (count all matching adozioni da_acquistare, not just mia)
+    sql_area_disdette = <<~SQL
+      UPDATE mandati SET sezioni_count = sub.cnt
+      FROM (
+        SELECT m.id, COUNT(*) as cnt
+        FROM mandati m
+        JOIN editori e ON e.id = m.editore_id
+        JOIN adozioni a ON a.account_id = m.account_id AND a.editore = e.editore AND a.da_acquistare = true
+        JOIN classi c ON c.id = a.classe_id
+        JOIN scuole s ON s.id = c.scuola_id
+        WHERE m.account_id = :account_id
+          AND m.disdetta = true
+          AND m.area IS NOT NULL
+          AND m.area = s.area
+          AND m.provincia = s.provincia
+          AND m.grado = s.grado
+        GROUP BY m.id
+      ) sub
+      WHERE mandati.id = sub.id
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([sql_area_disdette, account_id: account.id])
     )
   end
 

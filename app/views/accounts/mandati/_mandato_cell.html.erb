@@ -1,5 +1,5 @@
 <% if mandato %>
-    <% sez_count = defined?(sezioni_netto) && sezioni_netto ? sezioni_netto : mandato.sezioni_count.to_i %>
+    <% sez_count = mandato.sezioni_count.to_i %>
     <div class="zone-grid__cell" style="<%= "opacity: 0.5;" if mandato.disdetta? %>">
         <% if sez_count > 0 %>
             <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if mandato.disdetta? %>">

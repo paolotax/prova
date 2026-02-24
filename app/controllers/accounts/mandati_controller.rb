@@ -27,6 +27,7 @@ module Accounts
       zone_ids = Array(params[:zone_ids]).reject(&:blank?).presence
 
       Current.account.crea_mandati_per_editori!(editore_ids, zone_ids: zone_ids)
+      UpdateMieAdozioniJob.perform_later(Current.account)
 
       @mandati = mandati_ordinati
       editori_con_adozioni = Current.account.editori_da_adozioni

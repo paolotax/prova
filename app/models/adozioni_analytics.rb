@@ -6,21 +6,24 @@ class AdozioniAnalytics
     @scuola_ids = scuola_ids
   end
 
-  # Tab "Le mie" — my active adoptions, member's schools only
+  # Tab "Le mie" — my adoptions (mie, da_acquistare), user's schools only
   def mie_adozioni(filtri: {})
-    scope = account.adozioni.mie_attive
+    scope = account.adozioni.mie
+      .where(da_acquistare: true)
       .joins(classe: :scuola)
       .where(classi: { scuola_id: scuola_ids })
 
     scope = apply_filtri(scope, filtri)
 
-    scope.group(:disciplina, :titolo, :editore, :codice_isbn)
+    scope.group("scuole.grado", :disciplina, :titolo, :editore, :codice_isbn)
       .select(
+        "scuole.grado AS grado",
         :disciplina, :titolo, :editore, :codice_isbn,
         "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
-        "COUNT(DISTINCT adozioni.classe_id) * 18 AS copie_stimate"
+        "COUNT(DISTINCT adozioni.classe_id) * 18 AS copie_stimate",
+        "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
       )
-      .order(:disciplina, Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
+      .order("scuole.grado", :disciplina, Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
   end
 
   # Tab "Agenzia" — all account's mie adozioni (includes disdette)

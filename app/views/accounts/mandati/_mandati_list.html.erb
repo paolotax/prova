@@ -1,11 +1,7 @@
 <div id="account-editori">
     <% gradi_colonne = [["E", "Primaria"], ["M", "I Grado"], ["N", "II Grado"]] %>
     <% wildcard_mandati = mandati.select { |m| m.area.nil? } %>
-    <% area_mandati = mandati.select { |m| m.area.present? } %>
     <% mandati_lookup = wildcard_mandati.index_by { |m| [m.provincia, m.editore_id, m.grado] } %>
-    <%# Sezioni da sottrarre: area-disdetta raggruppate per editore_id/grado/provincia %>
-    <% area_sottrazioni = Hash.new(0) %>
-    <% area_mandati.select(&:disdetta?).each { |m| area_sottrazioni[[m.provincia, m.editore_id, m.grado]] += m.sezioni_count.to_i } %>
     <% province = wildcard_mandati.filter_map(&:provincia).uniq.sort %>
     <% editori_map = wildcard_mandati.map(&:editore).uniq.index_by(&:id) %>
     <% account_id = mandati.first&.account_id %>
@@ -34,15 +30,13 @@
                     <% gruppo_eids = editori_gruppo.map(&:id) %>
                     <% gruppo_mandati = mandati_prov.select { |m| gruppo_eids.include?(m.editore_id) } %>
                     <% gruppo_totals = Hash.new(0) %>
-                    <% gruppo_totals_lordi = Hash.new(0) %>
+                    <% gruppo_totals_all = Hash.new(0) %>
                     <% gruppo_mandati.each do |m| %>
-                        <% lordo = m.sezioni_count.to_i %>
-                        <% netto = lordo - area_sottrazioni[[provincia, m.editore_id, m.grado]] %>
-                        <% gruppo_totals_lordi[m.grado] += lordo %>
-                        <% gruppo_totals[m.grado] += [netto, 0].max unless m.disdetta? %>
+                        <% gruppo_totals_all[m.grado] += m.sezioni_count.to_i %>
+                        <% gruppo_totals[m.grado] += m.sezioni_count.to_i unless m.disdetta? %>
                     <% end %>
                     <% gruppo_total = gruppo_totals.values.sum %>
-                    <% gruppo_total_lordo = gruppo_totals_lordi.values.sum %>
+                    <% gruppo_total_all = gruppo_totals_all.values.sum %>
                     <% grand_totals.merge!(gruppo_totals) { |_k, a, b| a + b } %>
                     <% grand_total += gruppo_total %>
                     <% has_gruppo_row = editori_gruppo.size > 1 || gruppo != "—" %>
@@ -85,7 +79,7 @@
                                 <% gradi_colonne.each do |code, _label| %>
                                     <% grado_mandati = gruppo_mandati.select { |m| m.grado == code } %>
                                     <% grado_disdetto = grado_mandati.present? && grado_mandati.all?(&:disdetta?) %>
-                                    <% grado_count = grado_disdetto ? gruppo_totals_lordi[code] : gruppo_totals[code] %>
+                                    <% grado_count = grado_disdetto ? gruppo_totals_all[code] : gruppo_totals[code] %>
                                     <td style="padding-block-start: 0.8em;">
                                         <% if grado_mandati.present? %>
                                             <div class="zone-grid__cell" style="<%= "opacity: 0.5;" if grado_disdetto %>">
@@ -123,7 +117,7 @@
                                     </td>
                                 <% end %>
                                 <td style="padding-block-start: 0.8em;">
-                                    <% gruppo_row_total = gruppo_disdetto ? gruppo_total_lordo : gruppo_total %>
+                                    <% gruppo_row_total = gruppo_disdetto ? gruppo_total_all : gruppo_total %>
                                     <% if gruppo_row_total > 0 %>
                                         <span class="zone-grid__count" style="<%= "text-decoration: line-through; color: var(--color-negative);" if gruppo_disdetto %>">
                                             <%= gruppo_row_total %>
@@ -142,9 +136,8 @@
                                     <td>
                                         <% mandato = mandati_lookup[[provincia, editore.id, code]] %>
                                         <% if mandato %>
-                                            <% netto = mandato.sezioni_count.to_i - area_sottrazioni[[provincia, editore.id, code]] %>
-                                            <% row_total += [netto, 0].max unless mandato.disdetta? %>
-                                            <%= render partial: "accounts/mandati/mandato_cell", locals: { mandato: mandato, sezioni_netto: [netto, 0].max } %>
+                                            <% row_total += mandato.sezioni_count.to_i unless mandato.disdetta? %>
+                                            <%= render partial: "accounts/mandati/mandato_cell", locals: { mandato: mandato } %>
                                         <% end %>
                                     </td>
                                 <% end %>
