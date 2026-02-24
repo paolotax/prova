@@ -9,16 +9,8 @@ module Accounts
 
       # POST - Assegna scuole in blocco (per zona, comune, o lista)
       def create
-        scuole = filtered_scuole
-        existing_ids = @membership.scuola_ids
-
-        new_records = scuole.reject { |s| existing_ids.include?(s.id) }.map do |scuola|
-          { membership_id: @membership.id, scuola_id: scuola.id, created_at: Time.current, updated_at: Time.current }
-        end
-
-        Accounts::MembershipScuola.insert_all(new_records) if new_records.any?
-
-        @membership.reload
+        scuole = filtered_scuole.to_a
+        @membership.assegna_scuole!(scuole)
 
         respond_to do |format|
           format.turbo_stream { render_member_replacement }
@@ -28,10 +20,8 @@ module Accounts
 
       # DELETE - Rimuovi scuole in blocco
       def destroy
-        scuole = filtered_scuole
-        @membership.membership_scuole.where(scuola: scuole).delete_all
-
-        @membership.reload
+        scuole = filtered_scuole.to_a
+        @membership.rimuovi_scuole!(scuole)
 
         respond_to do |format|
           format.turbo_stream { render_member_replacement }
@@ -56,6 +46,7 @@ module Accounts
         scope = scope.where(provincia: params[:provincia]) if params[:provincia].present?
         scope = scope.where(grado: params[:grado]) if params[:grado].present?
         scope = scope.where(comune: params[:comune]) if params[:comune].present?
+        scope = scope.where(area: params[:area]) if params[:area].present?
         scope = scope.where(id: params[:scuola_ids]) if params[:scuola_ids].present?
         scope
       end

@@ -12,14 +12,15 @@
 
     <% assigned_count = zone_scuole.count { |s| assigned_ids.include?(s.id) } %>
     <% all_assigned = assigned_count == zone_scuole.size %>
+    <% aree = zone_scuole.map(&:area).compact.reject { |a| a.start_with?("__") }.uniq.sort %>
 
-    <details class="pad-block-half"  style="border-bottom: var(--border);">
+    <details class="pad-block-half" style="border-bottom: var(--border);">
       <summary class="list-style-none flex gap justify-space-between align-center pad-half cursor-pointer">
         <span class="txt-small txt-bold"><%= zona.provincia %> — <%= zona.grado_label %></span>
 
         <span class="flex align-center gap-double">
-          <span class="txt-x-small txt-subtle"><%= assigned_count %>/<%= zone_scuole.size %></span>      
- 
+          <span class="txt-x-small txt-subtle"><%= assigned_count %>/<%= zone_scuole.size %></span>
+
           <% if all_assigned %>
             <%= button_to accounts_member_bulk_scuole_path(member_id: membership.id),
                   method: :delete,
@@ -36,6 +37,31 @@
           <% end %>
         </span>
       </summary>
+
+      <% if aree.size > 1 %>
+        <div class="flex flex-wrap gap-half pad-half">
+          <% aree.each do |area| %>
+            <% area_scuole = zone_scuole.select { |s| s.area == area } %>
+            <% area_assigned = area_scuole.count { |s| assigned_ids.include?(s.id) } %>
+            <% area_all_assigned = area_assigned == area_scuole.size %>
+
+            <% if area_all_assigned %>
+              <%= button_to accounts_member_bulk_scuole_path(member_id: membership.id),
+                    method: :delete,
+                    params: { provincia: zona.provincia, grado: zona.grado, area: area },
+                    class: "btn btn--small txt-x-small" do %>
+                <%= area %> (<%= area_assigned %>/<%= area_scuole.size %>) ✓
+              <% end %>
+            <% else %>
+              <%= button_to accounts_member_bulk_scuole_path(member_id: membership.id),
+                    params: { provincia: zona.provincia, grado: zona.grado, area: area },
+                    class: "btn btn--small btn--subtle txt-x-small" do %>
+                <%= area %> (<%= area_assigned %>/<%= area_scuole.size %>)
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     </details>
   <% end %>
 

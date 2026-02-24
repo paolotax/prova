@@ -20,11 +20,19 @@ module Accounts::Membership::ScuoleAssegnabili
     def sync_direzioni_for(scuole, account:)
       scuola_ids = scuole.map(&:id)
 
-      # Trova quali delle scuole coinvolte sono direzioni
-      dir_ids = account.scuole
+      # Direzioni delle scuole coinvolte (plessi → loro direzione)
+      dir_ids_from_plessi = account.scuole
+        .where(id: scuola_ids)
+        .where.not(direzione_id: nil)
+        .distinct.pluck(:direzione_id)
+
+      # Direzioni che sono nella lista (hanno plessi che le referenziano)
+      dir_ids_in_list = account.scuole
         .where.not(direzione_id: nil)
         .where(direzione_id: scuola_ids)
         .distinct.pluck(:direzione_id) & scuola_ids
+
+      dir_ids = (dir_ids_from_plessi + dir_ids_in_list).uniq
 
       dir_ids.each do |dir_id|
         plesso_ids = account.scuole.where(direzione_id: dir_id).pluck(:id)
