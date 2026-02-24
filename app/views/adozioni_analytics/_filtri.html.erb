@@ -1,58 +1,66 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
   <%= form.hidden_field :tab, value: @tab %>
 
-  <% if @province&.size.to_i > 1 %>
-    <div class="analytics-filters__field">
-      <span class="analytics-filters__label">Provincia</span>
-      <%= form.select :provincia, options_for_select(@province, @filtri[:provincia]), { include_blank: "Tutte" }, class: "input input--select" %>
-    </div>
-  <% end %>
+  <div class="analytics-filters__row">
+    <% if @aree&.any? || @filtri[:area].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Area</span>
+        <%= form.select :area, options_for_select(@aree, @filtri[:area]), { include_blank: "Tutte" }, class: "input input--select" %>
+      </div>
+    <% end %>
 
-  <% if @gradi&.size.to_i > 1 %>
-    <div class="analytics-filters__field">
-      <span class="analytics-filters__label">Grado</span>
-      <% grado_labels = TipoScuola::GRADI.to_h.invert %>
-      <%= form.select :grado, options_for_select(@gradi.map { |g| [grado_labels[g]&.capitalize || g, g] }, @filtri[:grado]), { include_blank: "Tutti" }, class: "input input--select" %>
-    </div>
-  <% end %>
-
-  <% if @gruppi&.size.to_i > 1 %>
-    <div class="analytics-filters__field">
-      <span class="analytics-filters__label">Gruppo</span>
-      <%= form.select :gruppo, options_for_select(@gruppi, @filtri[:gruppo]), { include_blank: "Tutti" }, class: "input input--select" %>
-    </div>
-  <% end %>
-
-  <% if @tipi_scuola&.size.to_i > 1 %>
-    <div class="analytics-filters__field">
-      <span class="analytics-filters__label">Tipo scuola</span>
-      <%= form.select :tipo_scuola, options_for_select(@tipi_scuola, @filtri[:tipo_scuola]), { include_blank: "Tutti" }, class: "input input--select" %>
-    </div>
-  <% end %>
-
-  <% if @aree&.any? %>
-    <div class="analytics-filters__field">
-      <span class="analytics-filters__label">Area</span>
-      <%= form.select :area, options_for_select(@aree, @filtri[:area]), { include_blank: "Tutte" }, class: "input input--select" %>
-    </div>
-  <% end %>
-
-  <div class="analytics-filters__field">
-    <span class="analytics-filters__label">Disciplina</span>
-    <%= form.select :disciplina, options_for_select(@discipline, @filtri[:disciplina]), { include_blank: "Tutte" }, class: "input input--select" %>
+    <% if @province&.size.to_i > 1 || @filtri[:provincia].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Provincia</span>
+        <%= form.select :provincia, options_for_select(@province, @filtri[:provincia]), { include_blank: "Tutte" }, class: "input input--select" %>
+      </div>
+    <% end %>
   </div>
 
-  <div class="analytics-filters__field">
-    <span class="analytics-filters__label">Classe</span>
-    <%= form.select :anno_corso, options_for_select(["1", "2", "3","4", "5"], @filtri[:anno_corso]), { include_blank: "Tutte" }, class: "input input--select" %>
+  <div class="analytics-filters__row">
+    <% if @gradi&.size.to_i > 1 || @filtri[:grado].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Grado</span>
+        <% grado_labels = TipoScuola::GRADI.to_h.invert %>
+        <%= form.select :grado, options_for_select(@gradi.map { |g| [grado_labels[g]&.capitalize || g, g] }, @filtri[:grado]), { include_blank: "Tutti" }, class: "input input--select" %>
+      </div>
+    <% end %>
+
+    <% if @tipi_scuola&.size.to_i > 1 || @filtri[:tipo_scuola].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Tipo scuola</span>
+        <%= form.select :tipo_scuola, options_for_select(@tipi_scuola, @filtri[:tipo_scuola]), { include_blank: "Tutti" }, class: "input input--select" %>
+      </div>
+    <% end %>
   </div>
 
-  <div class="analytics-filters__field">
-    <span class="analytics-filters__label">Editore</span>
-    <%= form.select :editore, options_for_select(@editori, @filtri[:editore]), { include_blank: "Tutti" }, class: "input input--select" %>
+  <div class="analytics-filters__row">
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Classe</span>
+      <%= form.select :anno_corso, options_for_select(@anni_corso || ["1", "2", "3", "4", "5"], @filtri[:anno_corso]), { include_blank: "Tutte" }, class: "input input--select" %>
+    </div>
+
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Disciplina</span>
+      <%= form.select :disciplina, options_for_select(@discipline, @filtri[:disciplina]), { include_blank: "Tutte" }, class: "input input--select" %>
+    </div>
   </div>
 
-  <% if @filtri.any? %>
-    <%= link_to "Reset", adozioni_analytics_path(tab: @tab), class: "btn txt-small" %>
-  <% end %>
+  <div class="analytics-filters__row">
+    <% if @gruppi&.size.to_i > 1 || @filtri[:gruppo].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Gruppo</span>
+        <%= form.select :gruppo, options_for_select(@gruppi, @filtri[:gruppo]), { include_blank: "Tutti" }, class: "input input--select" %>
+      </div>
+    <% end %>
+
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Editore</span>
+      <%= form.select :editore, options_for_select(@editori, @filtri[:editore]), { include_blank: "Tutti" }, class: "input input--select" %>
+    </div>
+
+    <% if @filtri.any? %>
+      <%= link_to "Reset", adozioni_analytics_path(tab: @tab), class: "btn txt-small" %>
+    <% end %>
+  </div>
 <% end %>

@@ -21,7 +21,7 @@ class AdozioniAnalyticsController < ApplicationController
 
     # Filter options scoped to current tab context
     if @tab == "mie"
-      opts = @analytics.mie_filter_options
+      opts = @analytics.mie_filter_options(filtri: @filtri)
       @discipline = opts[:discipline]
       @editori = opts[:editori]
       @gruppi = opts[:gruppi]
@@ -29,6 +29,7 @@ class AdozioniAnalyticsController < ApplicationController
       @gradi = opts[:gradi]
       @tipi_scuola = opts[:tipi_scuola]
       @aree = opts[:aree]
+      @anni_corso = opts[:anni_corso]
     else
       @discipline = @analytics.discipline_options
       @editori = @analytics.editori_options

@@ -92,19 +92,25 @@ class AdozioniAnalytics
   end
 
   # Available filter options scoped to mie adozioni da_acquistare
-  def mie_filter_options
+  # Each filter's options are computed with all OTHER filters applied (except itself)
+  def mie_filter_options(filtri: {})
     base = account.adozioni.mie.where(da_acquistare: true)
       .joins(classe: :scuola)
       .where(classi: { scuola_id: scuola_ids })
 
+    options_for = ->(exclude_key) {
+      apply_filtri(base, filtri.except(exclude_key))
+    }
+
     {
-      discipline: base.distinct.pluck(:disciplina).compact.sort,
-      editori: base.distinct.pluck(:editore).compact.sort,
-      gruppi: Editore.where(editore: base.distinct.pluck(:editore)).pluck(:gruppo).compact.uniq.sort,
-      province: base.joins(classe: :scuola).select("scuole.provincia").distinct.map(&:provincia).compact.sort,
-      gradi: base.joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort,
-      tipi_scuola: base.joins(classe: :scuola).select("scuole.tipo_scuola").distinct.map(&:tipo_scuola).compact.sort,
-      aree: base.joins(classe: :scuola).select("scuole.area").distinct.map(&:area).compact.reject { |a| a.start_with?("__") }.sort
+      discipline: options_for.(:disciplina).distinct.pluck(:disciplina).compact.sort,
+      editori: options_for.(:editore).distinct.pluck(:editore).compact.sort,
+      gruppi: Editore.where(editore: options_for.(:gruppo).distinct.pluck(:editore)).pluck(:gruppo).compact.uniq.sort,
+      province: options_for.(:provincia).joins(classe: :scuola).select("scuole.provincia").distinct.map(&:provincia).compact.sort,
+      gradi: options_for.(:grado).joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort,
+      tipi_scuola: options_for.(:tipo_scuola).joins(classe: :scuola).select("scuole.tipo_scuola").distinct.map(&:tipo_scuola).compact.sort,
+      aree: options_for.(:area).joins(classe: :scuola).select("scuole.area").distinct.map(&:area).compact.reject { |a| a.start_with?("__") }.sort,
+      anni_corso: options_for.(:anno_corso).joins(:classe).distinct.pluck("classi.anno_corso").compact.map(&:to_s).sort
     }
   end
 
