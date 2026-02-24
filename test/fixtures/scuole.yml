@@ -74,3 +74,23 @@ scuola_acme:
   email: "info@galileo.edu.it"
   stato: "attiva"
   priorita: 0
+
+scuola_fizzy_nord:
+  account: fizzy
+  denominazione: "I.C. Milano Nord"
+  codice_ministeriale: "MIIC789012"
+  comune: "Sesto San Giovanni"
+  provincia: "MI"
+  grado: "E"
+  area: "Nord"
+  stato: "attiva"
+
+scuola_fizzy_sud:
+  account: fizzy
+  denominazione: "I.C. Milano Sud"
+  codice_ministeriale: "MIIC345678"
+  comune: "Rozzano"
+  provincia: "MI"
+  grado: "E"
+  area: "Sud"
+  stato: "attiva"

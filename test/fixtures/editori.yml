@@ -16,3 +16,7 @@ mondadori:
 zanichelli:
   editore: "Zanichelli"
   gruppo: "Zanichelli Group"
+
+pearson:
+  editore: "Pearson"
+  gruppo: "Pearson Group"

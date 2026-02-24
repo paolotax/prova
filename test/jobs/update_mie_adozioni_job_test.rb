@@ -43,4 +43,20 @@ class UpdateMieAdozioniJobTest < ActiveJob::TestCase
 
     assert adozione_rm.mia?, "Zanichelli adoption in RM should be mia"
   end
+
+  test "mandato with area only matches schools in that area" do
+    UpdateMieAdozioniJob.perform_now(@fizzy)
+
+    assert adozioni(:adozione_nord_pearson).reload.mia?,
+      "Pearson adoption in Nord area should be mia"
+    assert_not adozioni(:adozione_sud_pearson).reload.mia?,
+      "Pearson adoption in Sud area should NOT be mia"
+  end
+
+  test "mandato without area matches all schools in provincia" do
+    UpdateMieAdozioniJob.perform_now(@fizzy)
+
+    assert adozioni(:adozione_italiano_1a).reload.mia?,
+      "Zanichelli adoption should be mia (mandato without area)"
+  end
 end

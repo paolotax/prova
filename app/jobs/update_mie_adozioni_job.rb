@@ -18,6 +18,7 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND e.editore = adozioni.editore
           AND m.provincia = s.provincia
           AND m.grado = s.grado
+          AND (m.area IS NULL OR m.area = s.area)
       )
     SQL
 
@@ -40,6 +41,7 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND e.editore = adozioni.editore
           AND m.provincia = s.provincia
           AND m.grado = s.grado
+          AND (m.area IS NULL OR m.area = s.area)
       )
     SQL
 
@@ -165,6 +167,7 @@ class UpdateMieAdozioniJob < ApplicationJob
         WHERE m.account_id = :account_id
           AND m.provincia = s.provincia
           AND m.grado = s.grado
+          AND (m.area IS NULL OR m.area = s.area)
         GROUP BY m.id
       ) sub
       WHERE mandati.id = sub.id

@@ -49,3 +49,11 @@ acme_zanichelli:
   provincia: "RM"
   grado: "N"
   anno_scolastico: "2025/2026"
+
+fizzy_pearson_nord:
+  account: fizzy
+  editore: pearson
+  provincia: "MI"
+  grado: "E"
+  area: "Nord"
+  anno_scolastico: "2025/2026"

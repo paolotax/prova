@@ -10,7 +10,7 @@ class CleanupZonaJobTest < ActiveJob::TestCase
   end
 
   test "destroys scuole matching provincia and grado" do
-    assert_difference("Scuola.count", -1) do
+    assert_difference("Scuola.count", -3) do
       CleanupZonaJob.perform_now(@zona)
     end
   end
@@ -22,8 +22,8 @@ class CleanupZonaJobTest < ActiveJob::TestCase
   end
 
   test "cascades to classi and adozioni" do
-    assert_difference("Classe.count", -3) do
-      assert_difference("Adozione.count", -5) do
+    assert_difference("Classe.count", -5) do
+      assert_difference("Adozione.count", -7) do
         CleanupZonaJob.perform_now(@zona)
       end
     end

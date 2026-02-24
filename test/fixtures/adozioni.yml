@@ -142,3 +142,31 @@ adozione_matematica_acme:
   da_acquistare: true
   consigliato: false
   numero_copie: 0
+
+adozione_nord_pearson:
+  account: fizzy
+  classe: classe_1a_nord
+  codice_isbn: "9780000000001"
+  titolo: "Math Nord"
+  editore: "Pearson"
+  autori: "Author Nord"
+  disciplina: "Matematica"
+  prezzo_cents: 1500
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+
+adozione_sud_pearson:
+  account: fizzy
+  classe: classe_1a_sud
+  codice_isbn: "9780000000002"
+  titolo: "Math Sud"
+  editore: "Pearson"
+  autori: "Author Sud"
+  disciplina: "Matematica"
+  prezzo_cents: 1500
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0

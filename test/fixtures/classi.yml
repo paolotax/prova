@@ -88,3 +88,25 @@ seconda_b_acme:
   codice_ministeriale_origine: "RMIC654321"
   classe_origine: "2"
   sezione_origine: "B"
+
+classe_1a_nord:
+  account: fizzy
+  scuola: scuola_fizzy_nord
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  codice_ministeriale_origine: "MIIC789012"
+  classe_origine: "1"
+  sezione_origine: "A"
+
+classe_1a_sud:
+  account: fizzy
+  scuola: scuola_fizzy_sud
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  codice_ministeriale_origine: "MIIC345678"
+  classe_origine: "1"
+  sezione_origine: "A"
