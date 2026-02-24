@@ -1,9 +1,12 @@
 <% @page_title = "Aree #{@provincia}" %>
 <% @body_class = "contained-scrolling" %>
 
+<%# Helper: conta scuole totali (direzione conta i suoi plessi, isolata conta 1) %>
+<% scuole_count = ->(list) { list.sum { |s| s.plessi.any? ? s.plessi.size : 1 } } %>
+
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to accounts_zone_path, class: "btn" do %>
+    <%= link_to accounts_configurazione_path, class: "btn" do %>
       <%= icon_tag "arrow-left" %>
     <% end %>
   </div>
@@ -28,8 +31,42 @@
       action: "dragstart->drag-and-drop#dragStart dragover->drag-and-drop#dragOver drop->drag-and-drop#drop dragend->drag-and-drop#dragEnd"
     } do %>
 
-  <%# Column for unassigned schools %>
-  <section class="cards is-expanded"
+  <%# Sinistra: colonna "Da pulire" (rossa) %>
+  <div class="card-columns__left">
+    <% da_pulire = @scuole_by_area["__da_pulire__"] || [] %>
+    <section class="cards is-collapsed"
+             style="--card-color: oklch(0.55 0.2 25)"
+             tabindex="0"
+             data-collapsible-columns-target="column"
+             data-drag-and-drop-target="container"
+             data-column-name="Da pulire"
+             data-drag-and-drop-url="<%= accounts_aree_assegnazione_path(aree_provincia: @provincia, scuola_id: '__id__', area: '__da_pulire__') %>"
+             data-drag-and-drop-css-variable-name="--card-color"
+             data-drag-and-drop-css-variable-value="oklch(0.55 0.2 25)">
+      <div class="cards__transition-container">
+        <header class="cards__header">
+          <button type="button" class="cards__expander"
+                  style="--card-count: <%= [da_pulire.size, 15].min %>"
+                  data-collapsible-columns-target="button"
+                  data-action="click->collapsible-columns#toggle"
+                  aria-expanded="false">
+            <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count.(da_pulire) %></span>
+            <h3 class="cards__expander-title" data-collapsible-columns-target="title">
+              Da pulire
+              <%= icon_tag "trash", class: "icon--small" %>
+            </h3>
+          </button>
+        </header>
+        <div class="cards__list" data-drag-drop-item-container>
+          <%= render partial: "accounts/aree/scuola_card", collection: da_pulire, as: :scuola %>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <%# Centro: colonna "Non assegnate" (sempre espansa) %>
+  <% unassigned = @scuole_by_area["__unassigned__"] || [] %>
+  <section class="cards cards--maybe is-expanded"
            style="--card-color: oklch(0.6 0.01 0)"
            tabindex="0"
            data-collapsible-columns-target="column maybeColumn"
@@ -40,110 +77,94 @@
            data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)">
     <div class="cards__transition-container">
       <header class="cards__header">
-        <% unassigned = @scuole_by_area["__unassigned__"] || [] %>
         <button type="button" class="cards__expander"
                 style="--card-count: <%= [unassigned.size, 15].min %>"
                 data-collapsible-columns-target="button"
                 data-action="click->collapsible-columns#toggle"
                 aria-expanded="true">
-          <span class="cards__expander-count" data-drag-and-drop-counter><%= unassigned.size %></span>
+          <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count.(unassigned) %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">
-            Non assegnate
+            Non assegnate <span class="txt-light">(<%= scuole_count.(unassigned) %>)</span>
           </h3>
         </button>
       </header>
       <div class="cards__list" data-drag-drop-item-container>
-        <% unassigned.each do |scuola| %>
-          <article class="card"
-                   style="--card-color: <%= scuola_color(scuola) %>"
-                   draggable="true"
-                   data-drag-and-drop-target="item"
-                   data-id="<%= scuola.id %>"
-                   data-scuole-count="<%= [scuola.plessi.size, 1].max %>">
-            <div class="flex flex-column flex-item-grow max-inline-size">
-              <header class="card__header">
-                <div class="card__board">
-                  <span class="card__id"><%= scuola.tipo_scuola&.titleize.presence || "SCUOLA" %></span>
-                  <span class="card__board-name"><%= scuola.comune %></span>
-                </div>
-              </header>
-              <div class="card__body">
-                <div class="card__content">
-                  <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
-                    <%= scuola.denominazione %>
-                  </h3>
-                </div>
-              </div>
-              <% if scuola.plessi.any? %>
-                <footer class="card__footer full-width">
-                  <span class="txt-small txt-subtle"><%= scuola.plessi.size %> plessi</span>
-                </footer>
-              <% end %>
-            </div>
-          </article>
-        <% end %>
+        <%= render partial: "accounts/aree/scuola_card", collection: unassigned, as: :scuola %>
       </div>
     </div>
   </section>
 
-  <%# Columns for each area %>
-  <% @aree.each do |area| %>
-    <% scuole = @scuole_by_area[area] || [] %>
-    <section class="cards is-expanded"
-             style="--card-color: oklch(0.6 0.15 160)"
-             tabindex="0"
-             data-collapsible-columns-target="column"
-             data-drag-and-drop-target="container"
-             data-column-name="<%= area %>"
-             data-drag-and-drop-url="<%= accounts_aree_assegnazione_path(aree_provincia: @provincia, scuola_id: '__id__', area: area) %>"
-             data-drag-and-drop-css-variable-name="--card-color"
-             data-drag-and-drop-css-variable-value="oklch(0.6 0.15 160)">
-      <div class="cards__transition-container">
-        <header class="cards__header">
-          <button type="button" class="cards__expander"
-                  style="--card-count: <%= [scuole.size, 15].min %>"
-                  data-collapsible-columns-target="button"
-                  data-action="click->collapsible-columns#toggle"
-                  aria-expanded="true">
-            <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole.size %></span>
-            <h3 class="cards__expander-title" data-collapsible-columns-target="title">
-              <%= area %>
-              <%= icon_tag "collapse" %>
-            </h3>
-          </button>
-        </header>
-        <div class="cards__list" data-drag-drop-item-container>
-          <% scuole.each do |scuola| %>
-            <article class="card"
-                     style="--card-color: <%= scuola_color(scuola) %>"
-                     draggable="true"
-                     data-drag-and-drop-target="item"
-                     data-id="<%= scuola.id %>"
-                     data-scuole-count="<%= [scuola.plessi.size, 1].max %>">
-              <div class="flex flex-column flex-item-grow max-inline-size">
-                <header class="card__header">
-                  <div class="card__board">
-                    <span class="card__id"><%= scuola.tipo_scuola&.titleize.presence || "SCUOLA" %></span>
-                    <span class="card__board-name"><%= scuola.comune %></span>
-                  </div>
-                </header>
-                <div class="card__body">
-                  <div class="card__content">
-                    <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
-                      <%= scuola.denominazione %>
-                    </h3>
-                  </div>
-                </div>
-                <% if scuola.plessi.any? %>
-                  <footer class="card__footer full-width">
-                    <span class="txt-small txt-subtle"><%= scuola.plessi.size %> plessi</span>
-                  </footer>
+  <%# Destra: colonne aree + pulsante "+" %>
+  <div class="card-columns__right">
+    <% @aree.each do |area| %>
+      <% scuole = @scuole_by_area[area] || [] %>
+      <section class="cards is-collapsed"
+               style="--card-color: oklch(0.6 0.15 160)"
+               tabindex="0"
+               data-collapsible-columns-target="column"
+               data-drag-and-drop-target="container"
+               data-column-name="<%= area %>"
+               data-drag-and-drop-url="<%= accounts_aree_assegnazione_path(aree_provincia: @provincia, scuola_id: '__id__', area: area) %>"
+               data-drag-and-drop-css-variable-name="--card-color"
+               data-drag-and-drop-css-variable-value="oklch(0.6 0.15 160)">
+        <div class="cards__transition-container">
+          <header class="cards__header">
+            <button type="button" class="cards__expander"
+                    style="--card-count: <%= [scuole.size, 15].min %>"
+                    data-collapsible-columns-target="button"
+                    data-action="click->collapsible-columns#toggle"
+                    aria-expanded="false">
+              <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count.(scuole) %></span>
+              <h3 class="cards__expander-title" data-collapsible-columns-target="title">
+                <%= area %>
+                <%= icon_tag "collapse" %>
+              </h3>
+            </button>
+          </header>
+            <% gruppi_attivi = @wildcard_gruppi - (@gruppi_esclusi_per_area[area] || []) %>
+            <% if gruppi_attivi.any? %>
+              <div class="area-mandati-badges flex flex-wrap gap-quarter padding-inline txt-xx-small">
+                <% gruppi_attivi.each do |gruppo| %>
+                  <span class="badge badge--rounded" style="background: color-mix(in srgb, var(--card-color) 25%, var(--color-canvas)); color: var(--card-color)">
+                    <%= gruppo %>
+                    <%= button_to accounts_aree_mandato_path(aree_provincia: @provincia, gruppo: gruppo, area: area),
+                          method: :delete,
+                          class: "badge__remove",
+                          data: { turbo_confirm: "Escludi #{gruppo} da #{area}?" } do %>
+                      <%= icon_tag "close", class: "icon--xx-small" %>
+                    <% end %>
+                  </span>
                 <% end %>
               </div>
-            </article>
-          <% end %>
+            <% end %>
+          <div class="cards__list" data-drag-drop-item-container>
+            <%= render partial: "accounts/aree/scuola_card", collection: scuole, as: :scuola %>
+          </div>
         </div>
-      </div>
-    </section>
-  <% end %>
+      </section>
+    <% end %>
+
+    <div id="new_area_button" class="cards__new-column" data-controller="dialog" data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+      <button class="btn btn--circle txt-x-small borderless" data-action="click->dialog#open:stop" title="Aggiungi area">
+        <%= icon_tag "add", class: "translucent" %>
+        <span class="for-screen-reader">Aggiungi area</span>
+      </button>
+      <dialog class="popup panel flex-column gap-half fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+        <%= form_with url: accounts_aree_assegnazione_path(aree_provincia: @provincia), method: :post,
+              data: { controller: "form", action: "turbo:submit-end->dialog#close turbo:submit-end->form#reset" } do |f| %>
+          <%= text_field_tag :area_name, nil,
+                class: "input",
+                placeholder: "Nome area",
+                required: true,
+                autocomplete: "off",
+                pattern: ".*\\S.*",
+                title: "Il nome dell'area non può essere vuoto",
+                data: { action: "focus->form#select" } %>
+          <%= f.button type: "submit", class: "btn btn--link" do %>
+            Aggiungi area
+          <% end %>
+        <% end %>
+      </dialog>
+    </div>
+  </div>
 <% end %>

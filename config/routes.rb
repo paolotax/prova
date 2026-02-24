@@ -156,6 +156,7 @@ Rails.application.routes.draw do
 
       resources :aree, only: [:show], param: :provincia do
         resource :assegnazione, only: [:create], controller: "aree/assegnazioni"
+        resources :mandati, only: [:create, :destroy], controller: "aree/mandati", param: :gruppo
       end
     end
 

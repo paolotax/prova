@@ -141,6 +141,10 @@
       .card {
         display: none;
       }
+
+      .area-mandati-badges {
+        display: none;
+      }
     }
 
     &.drag-and-drop__hover-container {
@@ -255,6 +259,32 @@
           outline-color: oklch(var(--lch-blue-medium));
         }
       }
+    }
+  }
+
+  /* Mandati badges in area headers */
+  .area-mandati-badges {
+    .badge {
+      align-items: center;
+      display: inline-flex;
+      gap: 0.25ch;
+    }
+
+    .badge__remove {
+      all: unset;
+      cursor: pointer;
+      display: inline-flex;
+      margin-inline-start: 0.1ch;
+      opacity: 0;
+      transition: opacity 150ms;
+    }
+
+    .badge:hover .badge__remove {
+      opacity: 0.7;
+    }
+
+    .badge__remove:hover {
+      opacity: 1 !important;
     }
   }
 

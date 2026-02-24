@@ -61,7 +61,8 @@ module Accounts
     private
 
     def mandati_ordinati
-      Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+      Current.account.mandati.includes(:editore)
+        .order("editori.gruppo, editori.editore")
     end
 
     def mandato_params
