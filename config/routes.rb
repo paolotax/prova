@@ -132,7 +132,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :mandati, only: [:index, :new, :create, :destroy] do
+      resources :mandati, only: [:index, :new, :create, :update, :destroy] do
         resource :disdetta, only: [:create, :destroy], module: :mandati
       end
 

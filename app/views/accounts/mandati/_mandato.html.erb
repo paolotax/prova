@@ -4,12 +4,32 @@
         <span class="txt-small" style="<%= "text-decoration: line-through;" if mandato.disdetta? %>"><%= mandato.editore.editore %></span>
         <% if mandato.provincia.present? %>
             <span class="txt-x-small txt-subtle"><%= mandato.provincia %> <%= mandato.grado %></span>
+            <% if mandato.area.present? %>
+                <span class="badge badge--small"><%= mandato.area %></span>
+            <% end %>
         <% end %>
         <% if mandato.disdetta? %>
             <span class="txt-x-small" style="color: var(--color-negative);">disdetta</span>
         <% end %>
     </div>
+
     <div class="flex align-center" style="--btn-size: 2em; gap: 0.25em;">
+        <% if mandato.provincia.present? && !mandato.disdetta? %>
+            <%= form_with model: mandato, url: accounts_mandato_path(mandato), method: :patch,
+                class: "inline-flex gap-quarter align-center" do |f| %>
+                <%= f.text_field :area, class: "input input--small", style: "--w: 12ch;",
+                    placeholder: "Area...",
+                    list: dom_id(mandato, :aree),
+                    autocomplete: "off" %>
+                <datalist id="<%= dom_id(mandato, :aree) %>">
+                    <% Current.account.scuole.where(provincia: mandato.provincia).where.not(area: [nil, ""]).distinct.pluck(:area).sort.each do |a| %>
+                        <option value="<%= a %>">
+                    <% end %>
+                </datalist>
+                <%= f.submit "OK", class: "btn btn--small" %>
+            <% end %>
+        <% end %>
+
         <% if mandato.sezioni_count.to_i > 0 %>
             <span class="txt-x-small txt-subtle margin-inline-end-half"><%= mandato.sezioni_count %> sez.</span>
         <% end %>

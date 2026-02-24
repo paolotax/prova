@@ -7,6 +7,10 @@
             </span>
         <% end %>
 
+        <% if mandato.area.present? %>
+            <span class="txt-xx-small txt-subtle"><%= mandato.area %></span>
+        <% end %>
+
         <% if mandato.disdetta? %>
             <%= button_to accounts_mandato_disdetta_path(account_id: mandato.account_id, mandato_id: mandato.id),
                 method: :delete,

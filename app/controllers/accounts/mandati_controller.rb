@@ -41,6 +41,12 @@ module Accounts
       @mandati = mandati_ordinati
     end
 
+    def update
+      @mandato = Current.account.mandati.find(params[:id])
+      @mandato.update!(mandato_params)
+      redirect_to accounts_mandati_path
+    end
+
     def destroy
       Current.account.mandati.find(params[:id]).destroy!
 
@@ -56,6 +62,10 @@ module Accounts
 
     def mandati_ordinati
       Current.account.mandati.includes(:editore).order("editori.gruppo, editori.editore")
+    end
+
+    def mandato_params
+      params.require(:mandato).permit(:area)
     end
   end
 end
