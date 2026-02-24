@@ -102,7 +102,9 @@ class AdozioniAnalytics
       editori: base.distinct.pluck(:editore).compact.sort,
       gruppi: Editore.where(editore: base.distinct.pluck(:editore)).pluck(:gruppo).compact.uniq.sort,
       province: base.joins(classe: :scuola).select("scuole.provincia").distinct.map(&:provincia).compact.sort,
-      gradi: base.joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort
+      gradi: base.joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort,
+      tipi_scuola: base.joins(classe: :scuola).select("scuole.tipo_scuola").distinct.map(&:tipo_scuola).compact.sort,
+      aree: base.joins(classe: :scuola).select("scuole.area").distinct.map(&:area).compact.reject { |a| a.start_with?("__") }.sort
     }
   end
 
@@ -127,6 +129,8 @@ class AdozioniAnalytics
     end
     scope = scope.joins(classe: :scuola).where(scuole: { provincia: filtri[:provincia] }) if filtri[:provincia].present?
     scope = scope.joins(classe: :scuola).where(scuole: { grado: filtri[:grado] }) if filtri[:grado].present?
+    scope = scope.joins(classe: :scuola).where(scuole: { tipo_scuola: filtri[:tipo_scuola] }) if filtri[:tipo_scuola].present?
+    scope = scope.joins(classe: :scuola).where(scuole: { area: filtri[:area] }) if filtri[:area].present?
     scope
   end
 

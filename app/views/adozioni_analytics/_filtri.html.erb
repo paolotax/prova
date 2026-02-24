@@ -23,6 +23,20 @@
     </div>
   <% end %>
 
+  <% if @tipi_scuola&.size.to_i > 1 %>
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Tipo scuola</span>
+      <%= form.select :tipo_scuola, options_for_select(@tipi_scuola, @filtri[:tipo_scuola]), { include_blank: "Tutti" }, class: "input input--select" %>
+    </div>
+  <% end %>
+
+  <% if @aree&.any? %>
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Area</span>
+      <%= form.select :area, options_for_select(@aree, @filtri[:area]), { include_blank: "Tutte" }, class: "input input--select" %>
+    </div>
+  <% end %>
+
   <div class="analytics-filters__field">
     <span class="analytics-filters__label">Disciplina</span>
     <%= form.select :disciplina, options_for_select(@discipline, @filtri[:disciplina]), { include_blank: "Tutte" }, class: "input input--select" %>

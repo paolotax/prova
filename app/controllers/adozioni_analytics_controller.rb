@@ -11,7 +11,9 @@ class AdozioniAnalyticsController < ApplicationController
       editore: params[:editore],
       gruppo: params[:gruppo],
       provincia: params[:provincia],
-      grado: params[:grado]
+      grado: params[:grado],
+      tipo_scuola: params[:tipo_scuola],
+      area: params[:area]
     }.compact_blank
 
     # For provincia tab
@@ -25,6 +27,8 @@ class AdozioniAnalyticsController < ApplicationController
       @gruppi = opts[:gruppi]
       @province = opts[:province]
       @gradi = opts[:gradi]
+      @tipi_scuola = opts[:tipi_scuola]
+      @aree = opts[:aree]
     else
       @discipline = @analytics.discipline_options
       @editori = @analytics.editori_options
