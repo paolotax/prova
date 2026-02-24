@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_092924) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_111946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -802,6 +802,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_092924) do
   create_table "mandati", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.string "anno_scolastico"
+    t.string "area"
     t.text "contratto"
     t.datetime "created_at", null: false
     t.boolean "disdetta", default: false, null: false
@@ -810,7 +811,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_092924) do
     t.string "provincia"
     t.integer "sezioni_count", default: 0
     t.datetime "updated_at", null: false
-    t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico"], name: "idx_mandati_unique", unique: true
+    t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico", "area"], name: "idx_mandati_unique", unique: true
     t.index ["account_id"], name: "index_mandati_on_account_id"
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
   end
@@ -1287,6 +1288,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_092924) do
 
   create_table "scuole", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
+    t.string "area"
     t.string "cap"
     t.string "codice_ministeriale"
     t.string "comune"

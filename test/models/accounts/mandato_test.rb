@@ -4,6 +4,7 @@
 #
 #  id              :uuid             not null, primary key
 #  anno_scolastico :string
+#  area            :string
 #  contratto       :text
 #  disdetta        :boolean          default(FALSE), not null
 #  grado           :string
@@ -16,7 +17,7 @@
 #
 # Indexes
 #
-#  idx_mandati_unique           (account_id,editore_id,provincia,grado,anno_scolastico) UNIQUE
+#  idx_mandati_unique           (account_id,editore_id,provincia,grado,anno_scolastico,area) UNIQUE
 #  index_mandati_on_account_id  (account_id)
 #  index_mandati_on_editore_id  (editore_id)
 #

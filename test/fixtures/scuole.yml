@@ -4,6 +4,7 @@
 # Table name: scuole
 #
 #  id                  :uuid             not null, primary key
+#  area                :string
 #  cap                 :string
 #  codice_ministeriale :string
 #  comune              :string
