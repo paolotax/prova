@@ -147,6 +147,29 @@
     }
   }
 
+  .zone-grid__provincia {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+  }
+
+  .zone-grid__area-link {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .zone-grid tr:hover .zone-grid__area-link,
+  .zone-regione:hover > .divider .zone-grid__area-link,
+  .zone-grid__area-link:focus-visible {
+    opacity: 1;
+  }
+
+  @media (any-hover: none) {
+    .zone-grid__area-link {
+      opacity: 1;
+    }
+  }
+
   .zone-grid__count {
     font-size: var(--text-small);
     min-width: 2ch;

@@ -1,6 +1,28 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
   <%= form.hidden_field :tab, value: @tab %>
 
+  <% if @province&.size.to_i > 1 %>
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Provincia</span>
+      <%= form.select :provincia, options_for_select(@province, @filtri[:provincia]), { include_blank: "Tutte" }, class: "input input--select" %>
+    </div>
+  <% end %>
+
+  <% if @gradi&.size.to_i > 1 %>
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Grado</span>
+      <% grado_labels = TipoScuola::GRADI.to_h.invert %>
+      <%= form.select :grado, options_for_select(@gradi.map { |g| [grado_labels[g]&.capitalize || g, g] }, @filtri[:grado]), { include_blank: "Tutti" }, class: "input input--select" %>
+    </div>
+  <% end %>
+
+  <% if @gruppi&.size.to_i > 1 %>
+    <div class="analytics-filters__field">
+      <span class="analytics-filters__label">Gruppo</span>
+      <%= form.select :gruppo, options_for_select(@gruppi, @filtri[:gruppo]), { include_blank: "Tutti" }, class: "input input--select" %>
+    </div>
+  <% end %>
+
   <div class="analytics-filters__field">
     <span class="analytics-filters__label">Disciplina</span>
     <%= form.select :disciplina, options_for_select(@discipline, @filtri[:disciplina]), { include_blank: "Tutte" }, class: "input input--select" %>

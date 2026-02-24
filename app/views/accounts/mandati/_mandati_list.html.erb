@@ -14,7 +14,14 @@
         <% gruppi = editori_provincia.group_by { |e| e.gruppo.presence || "—" } %>
 
         <div class="zone-regione">
-            <strong class="divider divider--fade txt-small"><%= provincia %></strong>
+            <strong class="divider divider--fade txt-small">
+                <%= provincia %>
+                <%= link_to accounts_aree_path(account_id: account_id, provincia: provincia),
+                    class: "btn btn--circle btn--link zone-grid__area-link", style: "--btn-size: 1.6em;",
+                    title: "Gestisci aree" do %>
+                  <%= icon_tag "wrench", class: "icon--small" %>
+                <% end %>
+            </strong>
             <div style="overflow-x: auto;">
             <table class="zone-grid zone-grid--left">
                 <thead>

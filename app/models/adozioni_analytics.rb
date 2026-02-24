@@ -91,7 +91,22 @@ class AdozioniAnalytics
       )
   end
 
-  # Available filter options for dropdowns
+  # Available filter options scoped to mie adozioni da_acquistare
+  def mie_filter_options
+    base = account.adozioni.mie.where(da_acquistare: true)
+      .joins(classe: :scuola)
+      .where(classi: { scuola_id: scuola_ids })
+
+    {
+      discipline: base.distinct.pluck(:disciplina).compact.sort,
+      editori: base.distinct.pluck(:editore).compact.sort,
+      gruppi: Editore.where(editore: base.distinct.pluck(:editore)).pluck(:gruppo).compact.uniq.sort,
+      province: base.joins(classe: :scuola).select("scuole.provincia").distinct.map(&:provincia).compact.sort,
+      gradi: base.joins(classe: :scuola).select("scuole.grado").distinct.map(&:grado).compact.sort
+    }
+  end
+
+  # Available filter options for all adozioni (other tabs)
   def discipline_options
     account.adozioni.distinct.pluck(:disciplina).compact.sort
   end
@@ -106,6 +121,12 @@ class AdozioniAnalytics
     scope = scope.where(disciplina: filtri[:disciplina]) if filtri[:disciplina].present?
     scope = scope.joins(:classe).where(classi: { anno_corso: filtri[:anno_corso] }) if filtri[:anno_corso].present?
     scope = scope.where(editore: filtri[:editore]) if filtri[:editore].present?
+    if filtri[:gruppo].present?
+      editore_names = Editore.where(gruppo: filtri[:gruppo]).pluck(:editore)
+      scope = scope.where(editore: editore_names)
+    end
+    scope = scope.joins(classe: :scuola).where(scuole: { provincia: filtri[:provincia] }) if filtri[:provincia].present?
+    scope = scope.joins(classe: :scuola).where(scuole: { grado: filtri[:grado] }) if filtri[:grado].present?
     scope
   end
 
