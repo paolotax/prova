@@ -11,11 +11,7 @@ export default class extends Controller {
   };
 
   connect() {
-    console.log(this.pathsValue);
-
     if (this.#isInvalidParam) { return; }
-
-    console.log("tpippoe");
 
     this.element.src = this.pathsValue[this.#param];
   }

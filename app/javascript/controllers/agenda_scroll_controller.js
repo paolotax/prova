@@ -48,11 +48,9 @@ export default class extends Controller {
         const trigger = entry.target.dataset.trigger;
 
         if (trigger === "previous") {
-          console.log("Fetching previous week...");
           // this.loadPreviousWeek();
-        } else if (trigger === "next") {          
+        } else if (trigger === "next") {
           this.loadNextWeek();
-          console.log("Fetching next week...");
         }
       }
     });

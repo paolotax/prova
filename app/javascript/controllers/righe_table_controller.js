@@ -16,17 +16,6 @@ export default class extends Controller {
 
   connect() {
     this.currentIndex = -1
-    console.log("righe-table controller connected", {
-      items: this.itemTargets.length,
-      hasDialog: this.hasDialogTarget,
-      hasFrame: this.hasFrameTarget,
-      itemTargets: this.itemTargets
-    })
-
-    // Debug: mostra quali elementi sono stati trovati come target
-    this.itemTargets.forEach((item, i) => {
-      console.log(`  item[${i}]:`, item.id, item.dataset.editPath)
-    })
   }
 
   disconnect() {
@@ -34,8 +23,6 @@ export default class extends Controller {
   }
 
   navigate(event) {
-    console.log("navigate key:", event.key, "shouldIgnore:", this.#shouldIgnoreKeyboard(event))
-
     if (this.#shouldIgnoreKeyboard(event)) return
 
     const handlers = {
@@ -49,33 +36,25 @@ export default class extends Controller {
 
     const handler = handlers[event.key]
     if (handler) {
-      console.log("handling key:", event.key)
       handler()
     }
   }
 
   // Row selection
   select(event) {
-    console.log(">>> select() ENTRY", event.target, event.currentTarget)
-
     // Non selezionare se il click è su un link o button
     const clickedElement = event.target
     if (clickedElement.closest('a') || clickedElement.closest('button')) {
-      console.log("Click on link/button, skipping select")
       return
     }
 
     const row = event.currentTarget
     const index = this.itemTargets.indexOf(row)
-    console.log("select() processing", { row, index, itemTargets: this.itemTargets.length })
 
     if (index !== -1) {
       this.#setCurrentIndex(index)
       // Assicura che il container abbia il focus per ricevere i keydown
       this.element.focus()
-      console.log("Row selected, index:", index)
-    } else {
-      console.log("Row not found in itemTargets!")
     }
   }
 
@@ -105,20 +84,11 @@ export default class extends Controller {
   openEdit(event) {
     event?.preventDefault()
 
-    console.log("openEdit called", {
-      currentItem: this.currentItem,
-      currentIndex: this.currentIndex,
-      hasFrame: this.hasFrameTarget,
-      hasDialog: this.hasDialogTarget
-    })
-
     if (!this.currentItem) {
-      console.log("No current item selected")
       return
     }
 
     const editPath = this.currentItem.dataset.editPath
-    console.log("editPath:", editPath)
 
     if (editPath && this.hasFrameTarget && this.hasDialogTarget) {
       // Apri il dialog prima così il frame è visibile
@@ -130,12 +100,6 @@ export default class extends Controller {
 
   openNew(event) {
     event?.preventDefault()
-
-    console.log("openNew called", {
-      newRigaPath: this.newRigaPathValue,
-      hasFrame: this.hasFrameTarget,
-      hasDialog: this.hasDialogTarget
-    })
 
     if (this.hasFrameTarget && this.hasDialogTarget && this.newRigaPathValue) {
       // Apri il dialog prima così il frame è visibile

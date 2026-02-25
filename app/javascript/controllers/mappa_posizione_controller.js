@@ -66,7 +66,6 @@ export default class extends Controller {
       body: JSON.stringify({ latitude: lat, longitude: lng })
     }).then(response => response.json())
       .then(data => {
-        console.log('Success:', data);
       })
       .catch((error) => {
         console.error('Error:', error);

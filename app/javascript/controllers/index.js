@@ -19,7 +19,6 @@ document.addEventListener("turbo:frame-load", () => {
       "map"
     );
     if (mapControllers) {
-        console.log("turbo:frame-load")
       mapControllers.initMap();
     }
   });
@@ -30,7 +29,6 @@ document.addEventListener("turbo:frame-load", () => {
       "map"
     );
     if (mapControllers) {
-        console.log("turbo:load")
       mapControllers.initMap();
     }
   });

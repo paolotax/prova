@@ -16,7 +16,6 @@ export default class extends Controller {
   
   // Callback quando il valore totale cambia
   totalValueChanged() {
-    console.log(`Valore totale cambiato: ${this.totalValue}`)
     this.updateDisplay()
   }
 } 

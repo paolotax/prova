@@ -6,11 +6,9 @@ export default class extends Controller {
   static targets = ["element"];
 
   connect() {
-    console.log("tax-sidebar connected");
   }
 
   toggle(event) {
-    console.log("tax-sidebar toggle");
     event.preventDefault();
 
     this.elementTargets.forEach((element) => {

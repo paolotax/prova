@@ -66,7 +66,6 @@ export default class extends Controller {
       const bounds = new mapboxgl.LngLatBounds();
       // Extend the bounds to include all waypoints
       coordinates.forEach(coord => {
-          console.log(coord);
           bounds.extend(coord);
           this.addMarker(coord);
       });
@@ -82,9 +81,6 @@ export default class extends Controller {
   }
 
   addMarker(coord) {
-    // Aggiungiamo un controllo per debug
-    console.log("Coordinate ricevute:", coord);
-    
     const marker = new mapboxgl.Marker()
       .setLngLat([coord.lng, coord.lat])
       .setPopup(
@@ -148,9 +144,6 @@ export default class extends Controller {
           durationDisplay = `${hoursDisplay} ${minutesDisplay}`;
         }
 
-        console.log(`Total distance: ${distanceInKm} km`);
-        console.log(`Total duration: ${durationDisplay}`);
-        // You can also display this in your UI as needed
         this.totaleKmTarget.textContent = distanceInKm;
         this.totaleTempoTarget.textContent = durationDisplay;
       })

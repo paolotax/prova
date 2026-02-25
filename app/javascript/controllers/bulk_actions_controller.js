@@ -65,7 +65,6 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   showCheckboxes(event) {
-    console.log("showCheckboxes");
     event.preventDefault();
     document.querySelectorAll('.bulk-actions-checkbox').forEach(checkbox => {
       checkbox.classList.toggle('hidden');

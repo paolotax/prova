@@ -6,7 +6,6 @@ export default class extends Controller {
   static values = { giorno: String } // Riceve il parametro "giorno"
 
   connect() {
-    console.log("Connected to scroll-to-day controller");
     if (this.giornoValue) {
       // Trova l'elemento corrispondente
       const giornoElement = document.querySelector(`[data-giorno="${this.giornoValue}"]`);
