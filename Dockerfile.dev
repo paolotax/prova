@@ -12,7 +12,11 @@ RUN apt-get update -qq && \
   libjemalloc2 \
   libvips \
   postgresql-client \
-  ffmpeg && \
+  ffmpeg \
+  ghostscript \
+  poppler-utils \
+  tesseract-ocr \
+  tesseract-ocr-ita && \
   apt-get install watchman libncurses5-dev libncursesw5-dev -y && \
   rm -rf /var/lib/apt/lists /var/cache/apt/archives
 

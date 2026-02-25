@@ -45,13 +45,24 @@ class AnarpeImporter
   end
 
   def call
+    check_dependencies!
+
     Dir.mktmpdir do |tmpdir|
       insegnanti = []
 
       page_count = pdf_page_count(@file.path)
+      if page_count < 2
+        @errors_list << "PDF non valido o vuoto (#{page_count} pagine). Serve un PDF ANARPE con almeno 2 pagine."
+        return self
+      end
+
       (2..page_count).each do |page_num|
         text = ocr_page(@file.path, page_num, tmpdir)
         insegnanti.concat(parse_insegnanti_from_ocr(text))
+      end
+
+      if insegnanti.empty?
+        @errors_list << "Nessun insegnante trovato nel PDF. Verificare che sia in formato ANARPE."
       end
 
       import_insegnanti(insegnanti)
@@ -143,6 +154,17 @@ class AnarpeImporter
   end
 
   private
+
+  def check_dependencies!
+    missing = []
+    missing << "pdfinfo (poppler-utils)" unless system("which pdfinfo > /dev/null 2>&1")
+    missing << "ghostscript (gs)" unless system("which gs > /dev/null 2>&1")
+    missing << "tesseract (tesseract-ocr)" unless system("which tesseract > /dev/null 2>&1")
+
+    if missing.any?
+      raise "Strumenti OCR mancanti: #{missing.join(', ')}. Installare con: apt-get install poppler-utils ghostscript tesseract-ocr tesseract-ocr-ita"
+    end
+  end
 
   def pdf_page_count(path)
     output = `pdfinfo "#{path}" 2>/dev/null`
