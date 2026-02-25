@@ -1,4 +1,5 @@
 <% scuola_card_color = tipo_scuola_color(scuola.classi.pick(:tipo_scuola)) %>
+
 <section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
 	<div class="card-perma__actions card-perma__actions--right">
 		<%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: @scuola.id),
@@ -12,7 +13,7 @@
 		<article class="card">
 			<header class="card__header">
         <%= render "scuole/display/perma/board", scuola: scuola %>
-        <%#= render "scuole/display/perma/tags", appunto: appunto %>
+        <%= render "scuole/display/perma/tags", scuola: scuola %>
       </header>
 			
 			<div class="card__body">
@@ -53,11 +54,8 @@
 </section>
 
 <div class="scuola-show" style="--card-color: <%= scuola_card_color %>;">
-	<%= render "scuole/container/adozioni", scuola: @scuola %>
 
-	<%= render "scuole/container/insegnanti", scuola: @scuola %>
-
-	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola), loading: :lazy do %>
+	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola) do %>
 		<article class="panel shadow">
 			<header class="flex align-center justify-space-between margin-block-end-half">
 				<h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
@@ -65,4 +63,8 @@
 			<p class="txt-small txt-subtle margin-none">Caricamento...</p>
 		</article>
 	<% end %>
+
+	<%= render "scuole/container/adozioni", scuola: @scuola %>
+
+	<%= render "scuole/container/insegnanti", scuola: @scuola %>
 </div>
