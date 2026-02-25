@@ -3,7 +3,7 @@ module Filters
     module Fields
       extend ActiveSupport::Concern
 
-      SORTED_BY = %w[denominazione comune provincia per_direzione].freeze
+      SORTED_BY = %w[per_direzione solo_scuole denominazione].freeze
       APPUNTI_OPTIONS = %w[tutte con_appunti].freeze
       ADOZIONI_OPTIONS = %w[tutte mie_adozioni adozioni_concorrenza].freeze
 

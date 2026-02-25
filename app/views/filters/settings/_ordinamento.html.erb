@@ -1,10 +1,10 @@
 <% filter = user_filtering.filter %>
 
-<%= tag.div class: class_names("quick-filter", { "quick-filter--with-default": filter.sorted_by == "denominazione" }),
+<%= tag.div class: class_names("quick-filter", { "quick-filter--with-default": filter.default_sorted_by? }),
       data: {
         controller: "dialog filter combobox",
         action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput",
-        combobox_default_value_value: "denominazione",
+        combobox_default_value_value: filter.default_sorted_by,
         combobox_with_default_class: "quick-filter--with-default" } do %>
   <button type="button" class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#toggle:stop">
     <span class="overflow-ellipsis" data-combobox-target="label">

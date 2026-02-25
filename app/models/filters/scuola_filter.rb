@@ -28,10 +28,15 @@ module Filters
     include ScuolaFilter::Summarized
 
     def scuole
-      if sorted_by.per_direzione?
+      case sorted_by.to_s
+      when "per_direzione"
         per_direzione_scope
+      when "solo_scuole"
+        solo_scuole_scope
+      when "denominazione"
+        filtered_scope.order(:denominazione).distinct
       else
-        filtered_scope.order(sorted_by.to_s).distinct
+        per_direzione_scope
       end
     end
 
@@ -62,12 +67,22 @@ module Filters
       result
     end
 
+    def solo_scuole_scope
+      Current.scuole.where(id: filtered_ids).where.not(grado: "altro")
+        .order(
+          :provincia,
+          Arel.sql("CASE WHEN scuole.area IS NULL OR scuole.area = '' THEN 0 ELSE 1 END"),
+          :area, :comune, :denominazione
+        )
+    end
+
     def per_direzione_scope
       Current.scuole.where(id: filtered_ids)
         .includes(:import_scuola, :appunti, :direzione, :plessi, classi: :adozioni)
         .left_joins(:direzione)
         .order(
           Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
+          Arel.sql("COALESCE(direzioni_scuole.area, scuole.area) NULLS FIRST"),
           Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
           Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
           :tipo_scuola, :denominazione

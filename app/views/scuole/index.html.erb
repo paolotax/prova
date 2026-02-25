@@ -47,11 +47,19 @@
       <div class="cards cards--grid">
         <%= with_automatic_pagination :scuole, @page, class: "cards__list" do %>
           <% provincia_corrente = nil %>
+          <% area_corrente = nil %>
           <% @gruppi_direzione.each do |gruppo| %>
-            <% provincia = (gruppo[:direzione] || gruppo[:plessi].first)&.provincia %>
+            <% ref = gruppo[:direzione] || gruppo[:plessi].first %>
+            <% provincia = ref&.provincia %>
+            <% area = ref&.area %>
             <% if provincia != provincia_corrente %>
               <% provincia_corrente = provincia %>
+              <% area_corrente = nil %>
               <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= provincia %></h2>
+            <% end %>
+            <% if area.present? && area != area_corrente && !area.start_with?("__") %>
+              <% area_corrente = area %>
+              <h3 class="divider divider--fade txt-small full-width"><%= area %></h3>
             <% end %>
             <%= render "scuole/direzione_group", gruppo: gruppo %>
           <% end %>
@@ -69,7 +77,21 @@
                   navigable_list_actionable_items_value: true,
                   navigable_list_prevent_handled_keys_value: true,
                   action: "keydown->navigable-list#navigate" } do %>
-            <%= render @page.records %>
+            <% show_dividers = @filter.sorted_by.solo_scuole? %>
+            <% provincia_corrente = nil %>
+            <% area_corrente = nil %>
+            <% @page.records.each do |scuola| %>
+              <% if show_dividers && scuola.provincia != provincia_corrente %>
+                <% provincia_corrente = scuola.provincia %>
+                <% area_corrente = nil %>
+                <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= scuola.provincia %></h2>
+              <% end %>
+              <% if show_dividers && scuola.area.present? && scuola.area != area_corrente && !scuola.area.start_with?("__") %>
+                <% area_corrente = scuola.area %>
+                <h3 class="divider divider--fade txt-small full-width"><%= scuola.area %></h3>
+              <% end %>
+              <%= render scuola %>
+            <% end %>
           <% end %>
         </div>
       <% end %>

@@ -62,10 +62,9 @@ module FiltersHelper
 
   def ordinamento_label(sort_value)
     case sort_value.to_s
-    when "denominazione" then "Per nome"
-    when "comune" then "Per comune"
-    when "provincia" then "Per provincia"
     when "per_direzione" then "Per direzione"
+    when "solo_scuole" then "Solo scuole"
+    when "denominazione" then "Per nome"
     else sort_value.humanize
     end
   end

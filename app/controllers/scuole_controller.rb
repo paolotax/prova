@@ -146,6 +146,7 @@ class ScuoleController < ApplicationController
   def per_direzione_order
     [
       Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
+      Arel.sql("COALESCE(direzioni_scuole.area, scuole.area) NULLS FIRST"),
       Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
       Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
       :tipo_scuola, :denominazione
