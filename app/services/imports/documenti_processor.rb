@@ -5,8 +5,8 @@ module Imports
     attr_accessor :documento_id
     attr_reader :documento
 
-    def initialize(file, user, documento_id: nil)
-      super(file, user)
+    def initialize(file, user, documento_id: nil, **kwargs)
+      super(file, user, **kwargs)
       @documento_id = documento_id
     end
 
@@ -101,6 +101,7 @@ module Imports
       end
 
       documento = @user.documenti.create(
+        account: @account,
         clientable_type: "Cliente",
         clientable_id: cliente.id,
         causale_id: causale.id,
@@ -109,6 +110,7 @@ module Imports
       )
 
       righe_saltate = []
+      righe_trovate = 0
 
       doc.xpath('//DettaglioLinee').each do |element|
         quantita = element.xpath("./Quantita").text
@@ -132,7 +134,7 @@ module Imports
             quantita: quantita,
             sconto: element.xpath("./ScontoMaggiorazione/Percentuale").text.presence || 0.0
           )
-          @imported_count += 1
+          righe_trovate += 1
         else
           descrizione = element.xpath("./Descrizione").text
           righe_saltate << "Riga #{posizione}: #{codice_valore} - #{descrizione}"
@@ -143,6 +145,8 @@ module Imports
         add_error("Errore nel salvataggio del documento: #{documento.errors.full_messages.join(', ')}")
         return
       end
+
+      @imported_count = righe_trovate
 
       @documento = documento
       documento.reload.ricalcola_totali!
@@ -162,6 +166,7 @@ module Imports
       categoria = Categoria.resolve(nil, user: @user, account: @account)
 
       libro = @user.libri.create(
+        account: @account,
         codice_isbn: codice,
         titolo: titolo,
         categoria: categoria,
