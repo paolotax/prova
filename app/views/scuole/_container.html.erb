@@ -2,10 +2,15 @@
 
 <section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
 	<div class="card-perma__actions card-perma__actions--right">
-		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, con_sovrapacchi: true),
+		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
 				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
 			<%= icon_tag "printer" %>
 			<span class="for-screen-reader">Foglio scuola PDF</span>
+		<% end %>
+		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, solo_sovrapacchi: true),
+				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
+			<%= icon_tag "tag" %>
+			<span class="for-screen-reader">Sovrapacchi PDF</span>
 		<% end %>
 	</div>
 

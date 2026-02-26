@@ -5,8 +5,8 @@ class FoglioScuolaPdf < Prawn::Document
   
   include LayoutPdf
   
-  def initialize(scuole, view:, tipo_stampa: 'tutte_adozioni', con_sovrapacchi: false)
-    super(:page_size => "A4", 
+  def initialize(scuole, view:, tipo_stampa: 'tutte_adozioni', con_sovrapacchi: false, solo_sovrapacchi: false)
+    super(:page_size => "A4",
           :page_layout => :portrait,
           :margin => [1.cm, 15.mm],
           :info => {
@@ -18,28 +18,26 @@ class FoglioScuolaPdf < Prawn::Document
               :Producer => "Prawn",
               :CreationDate => Time.now
           })
-    
-    # Configura encoding UTF-8 per gestire caratteri speciali
-    # I caratteri emoji verranno comunque sanitizzati dalla funzione sanitize_text_for_pdf
-    
+
     @view = view
     @tipo_stampa = tipo_stampa
     @con_sovrapacchi = con_sovrapacchi
+    @solo_sovrapacchi = solo_sovrapacchi
 
     scuole.each_with_index do |scuola, index|
       start_new_page if index > 0
-      
+
       @scuola = scuola
       @tappe = scuola.tappe.where(user: Current.user)
       @adozioni = get_adozioni_per_tipo_stampa(scuola)
 
-      intestazione_e_tappe
-
-      table_adozioni
-      table_appunti
-      
-      # Render sovrapacchi per questa scuola solo se richiesto
-      render_sovrapacchi_per_scuola(scuola) if @con_sovrapacchi
+      if @solo_sovrapacchi
+        render_sovrapacchi_per_scuola(scuola)
+      else
+        intestazione_e_tappe
+        table_adozioni
+        table_appunti
+      end
     end
   end
   
@@ -389,10 +387,8 @@ class FoglioScuolaPdf < Prawn::Document
                                   .sort_by(&:classe_e_sezione_e_disciplina)
 
     unless adozioni_sovrapacchi.empty?
-      # Inizia una nuova pagina per i sovrapacchi
-      start_new_page
-      
-      # Renderizza 2 sovrapacchi per pagina in verticale, ognuno 1/2 della pagina
+      start_new_page unless @solo_sovrapacchi
+
       render_sovrapacchi_verticale(adozioni_sovrapacchi, scuola)
     end
   end
