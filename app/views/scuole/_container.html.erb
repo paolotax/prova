@@ -2,11 +2,7 @@
 
 <section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
 	<div class="card-perma__actions card-perma__actions--right">
-		<%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: @scuola.id),
-				class: "btn", data: { controller: "tooltip" } do %>
-			<%= icon_tag "note" %>
-			<span class="for-screen-reader">Nuovo Appunto</span>
-		<% end %>
+		<%= new_appunto_link(scuola) %>
 	</div>
 
 	<div class="card-perma__bg">

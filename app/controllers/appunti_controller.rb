@@ -48,7 +48,7 @@ class AppuntiController < ApplicationController
   end
 
   def new
-    @appunto = Current.user.draft_new_appunto
+    @appunto = Current.user.draft_new_appunto(appuntabile: find_appuntabile)
     redirect_to @appunto
   end
 
@@ -113,6 +113,15 @@ class AppuntiController < ApplicationController
 
     def set_appunto
       @appunto = Appunto.find(params[:id])
+    end
+
+    def find_appuntabile
+      return unless params[:appuntabile_type].present? && params[:appuntabile_id].present?
+
+      klass = params[:appuntabile_type].safe_constantize
+      return unless klass && %w[Scuola Cliente Classe Persona].include?(params[:appuntabile_type])
+
+      klass.find_by(id: params[:appuntabile_id])
     end
 
     def appunto_params

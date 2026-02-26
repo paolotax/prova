@@ -148,8 +148,9 @@ class User < ApplicationRecord
   end
 
   # Draft pattern for Appunti (Fizzy pattern)
-  def draft_new_appunto
+  def draft_new_appunto(appuntabile: nil)
     appunti.find_or_initialize_by(status: "drafted").tap do |appunto|
+      appunto.appuntabile = appuntabile if appuntabile
       appunto.update!(created_at: Time.current, updated_at: Time.current)
     end
   end

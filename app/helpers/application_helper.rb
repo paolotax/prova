@@ -59,6 +59,19 @@ module ApplicationHelper
 
 
 
+  def new_appunto_link(appuntabile, style: :icon)
+    path = new_appunto_path(appuntabile_type: appuntabile.class.name, appuntabile_id: appuntabile.id)
+    if style == :button
+      link_to path, class: "btn btn--link full-width", data: { turbo_frame: "_top" } do
+        icon_tag("pencil") + tag.span("Nuovo Appunto")
+      end
+    else
+      link_to path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do
+        icon_tag("note") + tag.span("Nuovo Appunto", class: "for-screen-reader")
+      end
+    end
+  end
+
   BLANK_SLATES = {
     clienti:   { title: "Nessun cliente trovato",   empty: "il primo cliente",   icon: "users",            label: "Cliente",   path: :new_cliente_path },
     libri:     { title: "Nessun libro trovato",     empty: "il primo libro",     icon: "book",             label: "Libro",     path: :new_libro_path },

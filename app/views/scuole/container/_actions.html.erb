@@ -4,11 +4,7 @@
   <h3 class="txt-medium font-weight-black margin-block-end-half">Azioni</h3>
 
   <div class="flex flex-column gap-half">
-    <%= link_to new_appunto_path(appuntabile_type: "Scuola", appuntabile_id: scuola.id),
-        class: "btn btn--link full-width" do %>
-      <%= icon_tag "pencil" %>
-      <span>Nuovo Appunto</span>
-    <% end %>
+    <%= new_appunto_link(scuola, style: :button) %>
 
     <%= link_to edit_scuola_path(scuola), class: "btn full-width" do %>
       <%= icon_tag "settings" %>

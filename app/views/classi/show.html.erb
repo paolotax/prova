@@ -1,8 +1,11 @@
 <%# Fallback view - normally redirects to scuola/classe %>
 <div class="panel shadow pad">
-  <h1 class="txt-large font-weight-black margin-block-end-half">
-    Classe <%= @classe.nome_breve %>
-  </h1>
+  <div class="flex align-center justify-between margin-block-end-half">
+    <h1 class="txt-large font-weight-black">
+      Classe <%= @classe.nome_breve %>
+    </h1>
+    <%= new_appunto_link(@classe) %>
+  </div>
 
   <dl class="dl-grid txt-small">
     <% if @classe.scuola.present? %>
