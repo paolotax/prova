@@ -20,7 +20,7 @@
     <strong class="popup__title">Ordina per</strong>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
-      <% Filters::ScuolaFilter::Fields::SORTED_BY.each do |option| %>
+      <% filter.class::Fields::SORTED_BY.each do |option| %>
         <%= tag.li class: "popup__item", data: {
               navigable_list_target: "item", combobox_target: "item", combobox_value: option, combobox_label: ordinamento_label(option) },
               role: "checkbox", aria: { checked: filter.sorted_by == option } do %>

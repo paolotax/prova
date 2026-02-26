@@ -88,13 +88,24 @@ module Filters
         result = result.attivi
       end
 
-      # Ordering (golden items first via subquery, then by date)
-      result = result.order(
-        Arel.sql(Documento::GOLDEN_SORT_SQL),
-        data_documento: :desc,
-        causale_id: :desc,
-        numero_documento: :desc
-      )
+      # Ordering (golden items first via subquery, then by chosen sort)
+      result = case sorted_by.to_s
+      when "per_cliente"
+        result.order(
+          Arel.sql(Documento::GOLDEN_SORT_SQL),
+          Arel.sql("EXTRACT(YEAR FROM documenti.data_documento) DESC"),
+          Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione)"),
+          data_documento: :desc,
+          numero_documento: :desc
+        )
+      else
+        result.order(
+          Arel.sql(Documento::GOLDEN_SORT_SQL),
+          data_documento: :desc,
+          numero_documento: :desc,
+          causale_id: :desc
+        )
+      end
       result
     end
 

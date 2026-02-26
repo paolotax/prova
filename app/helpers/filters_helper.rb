@@ -65,6 +65,8 @@ module FiltersHelper
     when "per_direzione" then "Per direzione"
     when "solo_scuole" then "Solo scuole"
     when "denominazione" then "Per nome"
+    when "data_documento" then "Per data"
+    when "per_cliente" then "Per cliente"
     else sort_value.humanize
     end
   end

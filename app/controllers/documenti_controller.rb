@@ -1,7 +1,7 @@
 class DocumentiController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:anno, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
+  FILTER_PARAMS = [:anno, :sorted_by, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
 
   before_action :authenticate_user!
   before_action :set_documento, only: %i[show edit update destroy]

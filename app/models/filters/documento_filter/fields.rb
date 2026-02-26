@@ -3,8 +3,11 @@ module Filters
     module Fields
       extend ActiveSupport::Concern
 
+      SORTED_BY = %w[data_documento per_cliente].freeze
+
       PERMITTED_PARAMS = [
         :anno,
+        :sorted_by,
         :clientable_type,
         :stato_documento,
         terms: [],
@@ -14,12 +17,16 @@ module Filters
 
       class_methods do
         def default_values
-          {}
+          { sorted_by: "data_documento" }
         end
       end
 
       included do
-        store_accessor :fields, :terms, :causali, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type, :stato_documento
+        store_accessor :fields, :terms, :causali, :tipi_pagamento, :anno, :consegnati, :pagati, :clientable_type, :stato_documento, :sorted_by
+
+        def sorted_by
+          (super || default_sorted_by).inquiry
+        end
 
         def terms
           Array(super)
@@ -66,8 +73,17 @@ module Filters
         end
       end
 
+      def default_sorted_by
+        self.class.default_values[:sorted_by]
+      end
+
+      def default_sorted_by?
+        self.class.default_value?(:sorted_by, sorted_by)
+      end
+
       def as_params
         @as_params ||= {}.tap do |params|
+          params[:sorted_by] = sorted_by
           params[:terms] = terms
           params[:causali] = causali
           params[:tipi_pagamento] = tipi_pagamento

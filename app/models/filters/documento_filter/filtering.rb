@@ -72,7 +72,7 @@ module Filters
     end
 
     def controls
-      %w[anni stato_documento clientable_types causali]
+      %w[ordinamento anni stato_documento clientable_types causali]
     end
 
     def cache_key

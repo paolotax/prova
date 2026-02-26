@@ -65,7 +65,23 @@
                   navigable_list_prevent_handled_keys_value: true,
                   action: "keydown->navigable-list#navigate"
                 } do %>
-            <%= render @page.records %>
+            <% mese_corrente = nil %>
+            <% @page.records.each do |documento| %>
+              <% if @filter.sorted_by.per_cliente? %>
+                <% chiave = documento.data_documento&.year %>
+                <% if chiave != mese_corrente %>
+                  <% mese_corrente = chiave %>
+                  <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+                <% end %>
+              <% else %>
+                <% chiave = documento.data_documento&.strftime("%B %Y")&.capitalize %>
+                <% if chiave != mese_corrente %>
+                  <% mese_corrente = chiave %>
+                  <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+                <% end %>
+              <% end %>
+              <%= render documento %>
+            <% end %>
           <% end %>
         </div>
       <% end %>
