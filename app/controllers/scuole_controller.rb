@@ -57,6 +57,7 @@ class ScuoleController < ApplicationController
 
   def show
     @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
+    @edit_mode = params[:edit].present?
 
     respond_to do |format|
       format.html
@@ -65,7 +66,8 @@ class ScuoleController < ApplicationController
   end
 
   def new
-    @scuola = Current.account.scuole.build
+    @scuola = Current.account.scuole.create!(denominazione: "Nuova scuola")
+    redirect_to scuola_path(@scuola, edit: true)
   end
 
   def create
@@ -74,7 +76,7 @@ class ScuoleController < ApplicationController
     if @scuola.save
       redirect_to scuola_path(@scuola), notice: "Scuola creata con successo"
     else
-      render :new, status: :unprocessable_entity
+      render :edit, status: :unprocessable_entity
     end
   end
 

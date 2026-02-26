@@ -154,6 +154,14 @@ class Scuola < ApplicationRecord
     plessi.any?
   end
 
+  def deletable?
+    !classi.exists? &&
+      !persone.exists? &&
+      !documenti.exists? &&
+      !tappe.exists? &&
+      !Appunto.where(appuntabile: self).exists?
+  end
+
   def geocoded?
     latitude.present? && longitude.present?
   end

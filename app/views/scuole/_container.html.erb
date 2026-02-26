@@ -15,7 +15,11 @@
 			<div class="card__body">
 				<div class="card__content">
 					<%= turbo_frame_tag @scuola, :edit do %>
-						<%= render "scuole/container/content_display", scuola: @scuola %>
+						<% if @edit_mode %>
+							<%= render "scuole/container/edit_form", scuola: @scuola %>
+						<% else %>
+							<%= render "scuole/container/content_display", scuola: @scuola %>
+						<% end %>
 					<% end %>
 				</div>
 			</div>
@@ -44,7 +48,11 @@
 
 	<div class="card-perma__notch card-perma__notch--bottom">
 		<%= turbo_frame_tag @scuola, :footer do %>
-			<%= render "scuole/container/footer", scuola: @scuola %>
+			<% if @edit_mode %>
+				<%= render "scuole/container/edit_footer", scuola: @scuola %>
+			<% else %>
+				<%= render "scuole/container/footer", scuola: @scuola %>
+			<% end %>
 		<% end %>
 	</div>
 </section>

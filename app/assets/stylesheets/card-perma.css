@@ -192,10 +192,11 @@
   .card-perma__actions {
     display: grid;
     gap: var(--block-space-half);
+    position: relative;
+    z-index: 1;
 
     &:has([open]) {
-      position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     &:has([data-controller~="tooltip"]:hover) {
@@ -271,6 +272,10 @@
     position: relative;
     text-align: center;
     z-index: 0;
+
+    &:has([data-controller~="tooltip"]:hover) {
+      z-index: var(--z-tooltip);
+    }
   }
 
   .card-perma__notch--top {

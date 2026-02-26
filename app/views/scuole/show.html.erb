@@ -16,7 +16,14 @@
   <div class="full-width pad group">
     <%= render "scuole/container", scuola: @scuola %>
   </div>
-  
+
+  <% if @scuola.deletable? %>
+    <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+      <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+      <%= render "scuole/container/delete", scuola: @scuola %>
+    </footer>
+  <% end %>
+
 <% else %>
   <div class="blank-slate blank-slate--empty" style="margin-block-start: 4rem;">
     <h3 class="txt-large font-weight-bold">Scuola non disponibile</h3>
