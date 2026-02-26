@@ -22,7 +22,7 @@
 
 <% completati = appunti.select { |a| a.entry.present? && a.entry.closure.present? } %>
 <% if completati.any? %>
-  <% completati.group_by { |a| [a.entry.updated_at.year, a.entry.updated_at.month] }
+  <% completati.group_by { |a| d = a.entry.closure&.created_at || a.entry.updated_at; [d.year, d.month] }
                .sort_by { |key, _| [-key[0], -key[1]] }
                .each do |key, group| %>
     <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">

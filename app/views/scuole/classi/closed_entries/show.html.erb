@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "closed_entries", style: "display: block; min-height: 1px;" do %>
   <% if @closed_entries.any? %>
     <% months = I18n.t("date.month_names").compact %>
-    <% @closed_entries.group_by { |e| [e.updated_at.year, e.updated_at.month] }
+    <% @closed_entries.group_by { |e| d = e.closure&.created_at || e.updated_at; [d.year, d.month] }
                       .sort_by { |key, _| [-key[0], -key[1]] }
                       .each do |key, group_entries| %>
       <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">
