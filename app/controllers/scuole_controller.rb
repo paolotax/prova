@@ -3,7 +3,7 @@
 class ScuoleController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], comuni: [], tipi_scuola: [], terms: []].freeze
+  FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], aree: [], comuni: [], tipi_scuola: [], terms: []].freeze
 
   before_action :set_scuola, only: [:show, :edit, :update, :destroy]
 

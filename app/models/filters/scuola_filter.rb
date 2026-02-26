@@ -59,6 +59,7 @@ module Filters
       end
 
       result = result.where(provincia: province) if province.present?
+      result = result.where(area: aree) if aree.present?
       result = result.where(comune: comuni) if comuni.present?
       result = result.where(tipo_scuola: tipi_scuola) if tipi_scuola.present?
       result = filter_con_appunti(result) if con_appunti?

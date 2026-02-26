@@ -2,8 +2,6 @@ import { Controller } from "@hotwired/stimulus"
 import { toSentence } from "helpers/text_helpers"
 
 export default class extends Controller {
-  #hiddenField
-
   static targets = [ "label", "item", "hiddenFieldTemplate" ]
   static values = {
     selectPropertyName: { type: String, default: "aria-checked" },
@@ -65,9 +63,6 @@ export default class extends Controller {
     }
 
     this.#updateHiddenFields()
-    if (item.dataset.multiSelectionFieldName) {
-      this.#renameHiddenFields(item.dataset.multiSelectionFieldName)
-    }
     this.labelTarget.textContent = this.#selectedLabel
   }
 
@@ -107,21 +102,18 @@ export default class extends Controller {
     })
   }
 
-  #renameHiddenFields(fieldName) {
-    this.#hiddenFields.forEach(field => {
-      field.setAttribute("name", fieldName)
-    })
-  }
-
   get #hiddenFields() {
     return this.element.querySelectorAll("input[type='hidden']")
   }
 
   #addHiddenFields() {
-    this.#selectedValues().forEach(value => {
+    this.#selectedItems.forEach(item => {
       const [ field ] = this.hiddenFieldTemplateTarget.content.cloneNode(true).children
       field.removeAttribute("id")
-      field.value = value
+      field.value = item.dataset.multiSelectionComboboxValue
+      if (item.dataset.multiSelectionComboboxFieldName) {
+        field.setAttribute("name", item.dataset.multiSelectionComboboxFieldName)
+      }
       this.element.appendChild(field)
     })
   }

@@ -1,4 +1,5 @@
 <% filter = user_filtering.filter %>
+<% aree_per_provincia = user_filtering.respond_to?(:aree_per_provincia) ? user_filtering.aree_per_provincia : {} %>
 
 <%= tag.div class: "quick-filter",
       data: {
@@ -15,7 +16,7 @@
   </template>
 
   <%= filter_dialog "Provincia..." do %>
-    <strong class="popup__title">Filtra per provincia...</strong>
+    <strong class="popup__title">Filtra per provincia e area</strong>
 
     <% if user_filtering.province_disponibili.many? %>
       <%= text_field_tag nil, nil, id: nil, placeholder: "Cerca...", class: "input input--transparent txt-small", autofocus: true,
@@ -24,13 +25,30 @@
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
       <% user_filtering.province_disponibili.each do |provincia| %>
+        <% aree = aree_per_provincia[provincia] || [] %>
         <%= content_tag(:li, class: "popup__item", data: {
               filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: provincia, multi_selection_combobox_label: provincia },
               role: "checkbox", aria: { checked: filter.province.include?(provincia) }) do %>
           <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change province-filter#update filter-settings#change form#submit">
-            <span class="overflow-ellipsis flex-item-grow"><%= provincia %></span>
+            <span class="overflow-ellipsis flex-item-grow font-weight-bold"><%= provincia %></span>
+            <% if aree.any? %>
+              <span class="txt-xx-small txt-subtle"><%= aree.size %></span>
+            <% end %>
             <%= icon_tag "check", class: "checked flex-item-justify-end" %>
           </button>
+        <% end %>
+        <% aree.each do |area| %>
+          <%= content_tag(:li, class: "popup__item", data: {
+                filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item",
+                multi_selection_combobox_value: area, multi_selection_combobox_label: area,
+                multi_selection_combobox_field_name: "aree[]",
+                filter_keywords: provincia },
+                role: "checkbox", aria: { checked: filter.aree.include?(area) }) do %>
+            <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change filter-settings#change form#submit">
+              <span class="overflow-ellipsis flex-item-grow pad-inline-start txt-small"><%= area %></span>
+              <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+            </button>
+          <% end %>
         <% end %>
       <% end %>
     </ul>

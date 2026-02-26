@@ -17,8 +17,17 @@ module Filters
       @province_disponibili ||= user.accounts.first.scuole.distinct.pluck(:provincia).compact.sort
     end
 
+    def aree_per_provincia
+      @aree_per_provincia ||= user.accounts.first.scuole
+        .where.not(area: [nil, ""])
+        .where.not("area LIKE '\\_\\_%'")  # escludi aree interne (__da_pulire__ etc)
+        .distinct.pluck(:provincia, :area)
+        .group_by(&:first)
+        .transform_values { |pairs| pairs.map(&:last).sort }
+    end
+
     def show_province?
-      filter.province.any?
+      filter.province.any? || filter.aree.any?
     end
 
     def comuni_disponibili
@@ -51,6 +60,7 @@ module Filters
     def filters_active?
       filter.terms.present? ||
       filter.province.present? ||
+      filter.aree.present? ||
       filter.comuni.present? ||
       filter.tipi_scuola.present? ||
       filter.con_appunti? ||
