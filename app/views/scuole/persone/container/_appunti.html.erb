@@ -1,18 +1,15 @@
 <%# locals: (appunti:) -%>
 
-<% if appunti.any? %>
-  <section class="group">
-    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Appunti (<%= appunti.size %>)</h3>
-    <% appunti.each do |appunto| %>
-      <div class="flex gap-half align-start pad-block-half border-bottom">
-        <div class="flex-item-grow">
-          <p class="txt-small margin-none"><%= appunto.body&.truncate(200) %></p>
-          <p class="txt-xx-small txt-subtle margin-none"><%= time_ago_in_words(appunto.created_at) %> fa</p>
-        </div>
+<% attivi = appunti.select { |a| a.entry.present? && a.entry.closure.nil? && a.entry.not_now.nil? } %>
+<% if attivi.any? %>
+  <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= attivi.size %>)</h3>
+  <div class="cards cards--grid">
+    <div class="cards__list">
+      <% attivi.each do |appunto| %>
         <% if appunto.entry.present? %>
-          <%= link_to "→", entry_path(appunto.entry), class: "btn btn--ghost txt-small" %>
+          <%= render "entries/entry", entry: appunto.entry, draggable: false %>
         <% end %>
-      </div>
-    <% end %>
-  </section>
+      <% end %>
+    </div>
+  </div>
 <% end %>

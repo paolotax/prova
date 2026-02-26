@@ -1,17 +1,12 @@
 <%# locals: (classe:, scuola:) -%>
 
 <!-- Entries attive -->
-<article class="panel shadow">
-  <h3 class="txt-medium font-weight-black margin-block-end-half">Attività Recenti</h3>
-  <%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(scuola, classe), loading: :lazy, style: "display: block; min-height: 60px;" do %>
-    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-  <% end %>
-</article>
+<%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(scuola, classe), loading: :lazy, style: "display: block; min-height: 60px;" do %>
+  <h3 class="divider divider--fade txt-medium font-weight-black">Aperti</h3>
+  <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+<% end %>
 
 <!-- Entries completate -->
-<article class="panel shadow">
-  <h3 class="txt-medium font-weight-black margin-block-end-half">Completati</h3>
-  <%= turbo_frame_tag "closed_entries", src: scuola_classe_closed_entries_path(scuola, classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
-    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
-  <% end %>
-</article>
+<%= turbo_frame_tag "closed_entries", src: scuola_classe_closed_entries_path(scuola, classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+  <p class="txt-small txt-subtle margin-none"></p>
+<% end %>

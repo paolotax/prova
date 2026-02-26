@@ -30,15 +30,13 @@ class FoglioScuolaPdf < Prawn::Document
       start_new_page if index > 0
       
       @scuola = scuola
-      @tappe = scuola.tappe
+      @tappe = scuola.tappe.where(user: Current.user)
       @adozioni = get_adozioni_per_tipo_stampa(scuola)
 
       intestazione_e_tappe
 
       table_adozioni
       table_appunti
-
-      table_seguiti
       
       # Render sovrapacchi per questa scuola solo se richiesto
       render_sovrapacchi_per_scuola(scuola) if @con_sovrapacchi
@@ -212,13 +210,13 @@ class FoglioScuolaPdf < Prawn::Document
             ], position: :left, width: 38.mm, cell_style: { borders: [], inline_format: true }
         )
 
-        data = adozioni.map do |a| 
-          [ 
-            a.titolo, 
-            a.saggi.size > 0 ? a.saggi.size : nil, 
-            a.kit.size > 0 ? a.kit.size : nil, 
-            a.seguiti.size > 0 ? a.seguiti.size : nil, 
-            nil ] 
+        data = adozioni.map do |a|
+          [
+            a.titolo,
+            a.saggi.size > 0 ? a.saggi.size : nil,
+            a.kit.size > 0 ? a.kit.size : nil,
+            a.seguiti.size > 0 ? a.seguiti.size : nil,
+            nil ]
         end
         data << [ "." ] if data.size > 1
 
@@ -228,6 +226,13 @@ class FoglioScuolaPdf < Prawn::Document
           
           # Color and style title cells only for mie_adozioni
           adozioni.each_with_index do |a, index|
+            if a.disdetta?
+              # Disdettata: tutta la riga in grigio, niente etichette SSK
+              (0..4).each { |col| row(index).column(col).background_color = "E0E0E0" }
+              row(index).column(0).text_color = "999999"
+              next
+            end
+
             if a.mia_adozione?
               if a.da_acquistare?
                 row(index).column(0).background_color = "FFFF00"  # Bright yellow for my adoptions da_acquistare
@@ -236,7 +241,7 @@ class FoglioScuolaPdf < Prawn::Document
                 row(index).column(0).background_color = "FFFFCC"  # Pale yellow for my other adoptions
               end
             end
-            
+
             # Stilizzazione celle SSK
             if a.saggi.size > 0
               row(index).column(1).background_color = "FF0000"  # Rosso per saggi
@@ -302,12 +307,22 @@ class FoglioScuolaPdf < Prawn::Document
         classe_info = sanitize_text_for_pdf(appunto.classe&.to_combobox_display || "")
       end
       
-      # Debug per identificare testo problematico
+      # Stato derivato dall'entry (closure/goldness/not_now)
+      stato_label = if appunto.closed?
+                      "chiuso"
+                    elsif appunto.postponed?
+                      "rimandato"
+                    elsif appunto.golden?
+                      "in evidenza"
+                    else
+                      ""
+                    end
+
       row_data = [
         classe_info,
         titolo_info,
         combined_content,
-        sanitize_text_for_pdf(appunto.stato || ""),
+        stato_label,
         appunto.created_at&.strftime("%d/%m/%Y") || ""
       ]
       
@@ -364,17 +379,12 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def table_appunti
-    appunti = @scuola.appunti.non_archiviati.order(created_at: :desc)
+    appunti = @scuola.appunti.attivi.order(created_at: :desc)
     render_appunti_table(appunti, "APPUNTI", "DDDDDD", "F9F9F9") unless appunti.empty?
   end
 
-  def table_seguiti
-    seguiti = @scuola.appunti.where(nome: 'seguito').includes(:classe).order(created_at: :desc)
-    render_appunti_table(seguiti, "SEGUITI", "CCE5FF", "F0F8FF", use_adozione_data: true) unless seguiti.empty?
-  end
-    
   def render_sovrapacchi_per_scuola(scuola)
-    adozioni_sovrapacchi = scuola.adozioni.mie.da_acquistare
+    adozioni_sovrapacchi = scuola.adozioni.mie.da_acquistare.where(disdetta: false)
                                   .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
                                   .sort_by(&:classe_e_sezione_e_disciplina)
 

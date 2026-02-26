@@ -1,18 +1,23 @@
 <%= turbo_frame_tag "classe_entries" do %>
-  <% if @entries.any? %>
-    <div class="cards">
-      <% @entries.each do |entry| %>
-        <%= render "entries/entry", entry: entry, draggable: false %>
-      <% end %>
-    </div>
-  <% elsif (@appunti || []).any? || (@documenti || []).any? %>
-    <div class="cards">
-      <% (@appunti || []).each do |appunto| %>
-        <%= render "appunti/appunto", appunto: appunto, draggable: false %>
-      <% end %>
-      <% (@documenti || []).each do |documento| %>
-        <%= render "documenti/documento", documento: documento, draggable: false %>
-      <% end %>
+  <% has_content = @entries.any? || (@appunti || []).any? || (@documenti || []).any? %>
+  <% if has_content %>
+    <% count = @entries.any? ? @entries.count : ((@appunti || []).count + (@documenti || []).count) %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= count %>)</h3>
+    <div class="cards cards--grid">
+      <div class="cards__list">
+        <% if @entries.any? %>
+          <% @entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        <% else %>
+          <% (@appunti || []).each do |appunto| %>
+            <%= render "appunti/appunto", appunto: appunto, draggable: false %>
+          <% end %>
+          <% (@documenti || []).each do |documento| %>
+            <%= render "documenti/documento", documento: documento, draggable: false %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
   <% else %>
     <p class="txt-small txt-subtle margin-none">Nessuna attività</p>

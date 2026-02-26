@@ -433,6 +433,7 @@ Rails.application.routes.draw do
 
     resources :scuole do
       resources :qrcodes
+      resource :foglio_scuola, only: [:show], controller: "scuole/foglio_scuola"
 
       scope module: :scuole do
         resource :entries, only: [:show]

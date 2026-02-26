@@ -2,7 +2,11 @@
 
 <section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
 	<div class="card-perma__actions card-perma__actions--right">
-		<%= new_appunto_link(scuola) %>
+		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, con_sovrapacchi: true),
+				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
+			<%= icon_tag "printer" %>
+			<span class="for-screen-reader">Foglio scuola PDF</span>
+		<% end %>
 	</div>
 
 	<div class="card-perma__bg">
@@ -60,15 +64,14 @@
 <div class="scuola-show" style="--card-color: <%= scuola_card_color %>;">
 
 	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola) do %>
-		<article class="panel shadow">
-			<header class="flex align-center justify-space-between margin-block-end-half">
-				<h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
-			</header>
-			<p class="txt-small txt-subtle margin-none">Caricamento...</p>
-		</article>
+		<h3 class="divider divider--fade txt-medium font-weight-black">Aperti</h3>
+		<p class="txt-small txt-subtle margin-none">Caricamento...</p>
 	<% end %>
 
 	<%= render "scuole/container/adozioni", scuola: @scuola %>
 
 	<%= render "scuole/container/insegnanti", scuola: @scuola %>
+
+	<%= turbo_frame_tag "scuola_closed_entries", src: scuola_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+	<% end %>
 </div>

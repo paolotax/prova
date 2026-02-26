@@ -137,7 +137,15 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
       appunti_scuola.each do |item|
         appunto = item[:appunto]
         
-        stato = appunto.stato&.titleize || "N/D"
+        stato = if appunto.closed?
+                   "Chiuso"
+                 elsif appunto.postponed?
+                   "Rimandato"
+                 elsif appunto.golden?
+                   "In Evidenza"
+                 else
+                   "Attivo"
+                 end
         nome_appunto = appunto.nome&.titleize || "Generico"
         
         # Informazioni sulla classe

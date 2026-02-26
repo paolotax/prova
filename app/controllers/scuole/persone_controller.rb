@@ -5,7 +5,7 @@ module Scuole
 
     def show
       load_prev_next
-      @appunti = @persona.appunti.includes(:entry).order(created_at: :desc)
+      @appunti = @persona.appunti.includes(entry: [:goldness, :closure, :not_now]).order(created_at: :desc)
 
       respond_to do |format|
         format.html

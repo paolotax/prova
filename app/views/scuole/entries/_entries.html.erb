@@ -1,31 +1,25 @@
 <%# locals: (scuola:, entries:, appunti: [], documenti: []) -%>
 <%= turbo_frame_tag "scuola_entries" do %>
-  <article class="panel shadow">
-    <header class="flex align-center justify-space-between margin-block-end-half">
-      <h3 class="txt-medium font-weight-black margin-none">Attività Recenti</h3>
-      <% count = entries.any? ? entries.count : (appunti.count + documenti.count) %>
-      <% if count > 0 %>
-        <span class="badge badge--warning txt-xx-small"><%= count %></span>
-      <% end %>
-    </header>
+  <% has_content = entries.any? || appunti.any? || documenti.any? %>
+  <% if has_content %>
+    <% count = entries.any? ? entries.count : (appunti.count + documenti.count) %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= count %>)</h3>
 
-    <% if entries.any? %>
-      <div class="cards">
-        <% entries.each do |entry| %>
-          <%= render "entries/entry", entry: entry, draggable: false %>
+    <div class="cards cards--grid">
+      <div class="cards__list">
+        <% if entries.any? %>
+          <% entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        <% else %>
+          <% appunti.each do |appunto| %>
+            <%= render "appunti/appunto", appunto: appunto, draggable: false %>
+          <% end %>
+          <% documenti.each do |documento| %>
+            <%= render "documenti/documento", documento: documento, draggable: false %>
+          <% end %>
         <% end %>
       </div>
-    <% elsif appunti.any? || documenti.any? %>
-      <div class="cards">
-        <% appunti.each do |appunto| %>
-          <%= render "appunti/appunto", appunto: appunto, draggable: false %>
-        <% end %>
-        <% documenti.each do |documento| %>
-          <%= render "documenti/documento", documento: documento, draggable: false %>
-        <% end %>
-      </div>
-    <% else %>
-      <p class="txt-small txt-subtle margin-none">Nessuna attività</p>
-    <% end %>
-  </article>
+    </div>
+  <% end %>
 <% end %>
