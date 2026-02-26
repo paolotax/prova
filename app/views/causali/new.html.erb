@@ -2,19 +2,14 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to causali_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Torna alla lista</span>
-    <% end %>
+    <%= back_link_to "Causali", causali_path %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Nuova Causale</span>
-  </h1>
+  <h1 class="header__title"><%= @page_title %></h1>
 
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
-<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+<section class="panel panel--wide shadow center">
   <%= render "form", causale: @causale %>
-</div>
+</section>

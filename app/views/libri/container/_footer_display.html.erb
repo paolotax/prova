@@ -1,7 +1,16 @@
 <%# locals: (libro:) -%>
 
-<%= link_to edit_libro_path(libro), class: "btn",
-    data: { turbo_method: :get, turbo_stream: true,
-            controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
-  Modifica <kbd class="hide-on-touch">E</kbd>
-<% end %>
+<div class="flex gap-half">
+  <%= link_to edit_libro_path(libro), class: "btn",
+      data: { turbo_method: :get, turbo_stream: true,
+              controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
+    Modifica <kbd class="hide-on-touch">E</kbd>
+  <% end %>
+
+  <% if libro.adozioni_count.positive? && libro.codice_isbn.present? %>
+    <%= link_to titolo_path(codice_isbn: libro.codice_isbn), class: "btn btn--ghost",
+        data: { turbo_frame: "_top", controller: "hotkey", action: "keydown.a@document->hotkey#click" } do %>
+      Adozioni/Concorrenza <kbd class="hide-on-touch">A</kbd>
+    <% end %>
+  <% end %>
+</div>

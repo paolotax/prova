@@ -41,7 +41,7 @@ class LibriController < ApplicationController
 
   def show
     @giacenza = @libro.giacenza
-    @adozioni = Current.account.adozioni.mie.da_acquistare.where(codice_isbn: @libro.codice_isbn).includes(classe: :scuola)
+    @movimenti = Libro::Movimenti.new(@libro)
 
     respond_to do |format|
       format.html

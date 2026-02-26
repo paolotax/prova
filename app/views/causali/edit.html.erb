@@ -1,25 +1,15 @@
-<% @page_title = "Modifica Causale" %>
+<% @page_title = "Modifica #{@causale.causale}" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to causali_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Torna alla lista</span>
-    <% end %>
+    <%= back_link_to @causale.causale, causale_path(@causale) %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @causale.causale %></span>
-  </h1>
+  <h1 class="header__title"><%= @page_title %></h1>
 
-  <div class="header__actions header__actions--end">
-    <%= link_to causale_path(@causale), class: "btn" do %>
-      <%= icon_tag "eye", size: "small" %>
-      <span class="for-screen-reader">Visualizza</span>
-    <% end %>
-  </div>
+  <div class="header__actions header__actions--end"></div>
 <% end %>
 
-<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+<section class="panel panel--wide shadow center">
   <%= render "form", causale: @causale %>
-</div>
+</section>

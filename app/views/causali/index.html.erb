@@ -3,42 +3,37 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start"></div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Causali</span>
-  </h1>
+  <h1 class="header__title"><%= @page_title %></h1>
 
   <div class="header__actions header__actions--end">
     <%= link_to new_causale_path, class: "btn btn--primary" do %>
       <%= icon_tag "add", size: "small" %>
-      <span class="for-screen-reader">Nuova Causale</span>
+      <span>Nuova</span>
     <% end %>
   </div>
 <% end %>
 
-<div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
-
-  <!-- Header tabella -->
-  <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-3 bg-gray-50 rounded-t-lg border-b border-gray-200 font-semibold text-sm text-gray-600 uppercase tracking-wider">
-    <div class="col-span-2">Causale</div>
-    <div class="col-span-1">Magazzino</div>
-    <div class="col-span-2">Tipo Movimento</div>
-    <div class="col-span-1">Movimento</div>
-    <div class="col-span-1 text-center">Priorità</div>
-    <div class="col-span-2">Stato Iniziale</div>
-    <div class="col-span-2">Causali Successive</div>
-    <div class="col-span-1 text-center">Azioni</div>
-  </div>
-
-  <!-- Lista causali -->
-  <div id="causali" class="bg-white rounded-b-lg shadow-sm border border-gray-200">
-    <% if @causali.any? %>
-      <% @causali.each do |causale| %>
-        <%= render causale %>
-      <% end %>
-    <% else %>
-      <div class="px-4 py-8 text-center text-gray-500">
-        Nessuna causale configurata. Crea la prima causale per iniziare.
-      </div>
-    <% end %>
-  </div>
-</div>
+<section class="panel panel--wide shadow center">
+  <% if @causali.any? %>
+    <table class="txt-small full-width">
+      <thead>
+        <tr class="txt-subtle txt-x-small txt-uppercase">
+          <th class="txt-start">Causale</th>
+          <th class="txt-start">Magazzino</th>
+          <th class="txt-start">Tipo</th>
+          <th class="txt-start">Direzione</th>
+          <th class="txt-end">Priorità</th>
+          <th class="txt-start">Successive</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @causali.each do |causale| %>
+          <%= render causale %>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="txt-subtle txt-small pad">Nessuna causale configurata.</p>
+  <% end %>
+</section>

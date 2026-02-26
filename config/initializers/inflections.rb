@@ -81,6 +81,8 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'ssk_appunto_backup', 'ssk_appunti_backup'
 
+  inflect.irregular 'movimento', 'movimenti'
+
   inflect.irregular 'collana', 'collane'
   inflect.irregular 'categoria', 'categorie'
   inflect.irregular 'sconto', 'sconti'

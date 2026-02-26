@@ -1,114 +1,20 @@
-<%# locals: (libro:, giacenza:, adozioni:) -%>
+<%# locals: (libro:, movimenti:) -%>
 
-<div class="flex gap flex-wrap full-width">
-  <!-- Ordini -->
-  <% if giacenza&.ordini.to_i.positive? %>
-    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">Ordini</h3>
-        <span class="txt-x-large font-weight-black txt-negative"><%= giacenza.ordini %></span>
-      </div>
-      <% ordini_righe = libro.documento_righe.select { |dr| dr.documento.tipo_movimento == 'ordine' }.first(5) %>
-      <% if ordini_righe.any? %>
-        <ul class="flex flex-column gap-quarter">
-          <% ordini_righe.each do |documento_riga| %>
-            <li class="flex align-center justify-space-between txt-small">
-              <span class="overflow-ellipsis">
-                <% if documento_riga.documento.clientable.present? %>
-                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
-                <% end %>
-              </span>
-              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    </article>
+<div class="full-width">
+  <%# Da consegnare — loaded immediately %>
+  <% da_consegnare = movimenti.da_consegnare.to_a %>
+  <% if da_consegnare.any? %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">
+      Da consegnare (<%= da_consegnare.size %>)
+    </h3>
+    <%= render "libri/movimenti/tabella_movimenti", documento_righe: da_consegnare %>
   <% end %>
 
-  <!-- Vendite -->
-  <% if giacenza&.vendite.to_i.positive? %>
-    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">Vendite</h3>
-        <span class="txt-x-large font-weight-black txt-link"><%= giacenza.vendite %></span>
-      </div>
-      <% vendite_righe = libro.documento_righe.select { |dr| dr.documento.vendita? }.first(5) %>
-      <% if vendite_righe.any? %>
-        <ul class="flex flex-column gap-quarter">
-          <% vendite_righe.each do |documento_riga| %>
-            <li class="flex align-center justify-space-between txt-small">
-              <span class="overflow-ellipsis">
-                <% if documento_riga.documento.clientable.present? %>
-                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
-                <% end %>
-              </span>
-              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    </article>
-  <% end %>
-
-  <!-- Carichi -->
-  <% if giacenza&.carichi.to_i.positive? %>
-    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 200px;">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">Carichi</h3>
-        <span class="txt-x-large font-weight-black txt-accent"><%= giacenza.carichi %></span>
-      </div>
-      <% carichi_righe = libro.documento_righe.select { |dr| dr.documento.causale&.carico? }.first(5) %>
-      <% if carichi_righe.any? %>
-        <ul class="flex flex-column gap-quarter">
-          <% carichi_righe.each do |documento_riga| %>
-            <li class="flex align-center justify-space-between txt-small">
-              <span class="overflow-ellipsis">
-                <% if documento_riga.documento.clientable.present? %>
-                  <%= link_to truncate(documento_riga.documento.clientable.denominazione, length: 25), documento_riga.documento.clientable, class: "txt-link" %>
-                <% end %>
-              </span>
-              <span class="font-weight-bold"><%= documento_riga.riga.quantita %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    </article>
-  <% end %>
-
-  <!-- Scheda Titolo -->
-  <% if libro.codice_isbn.present? %>
-    <div class="full-width margin-block-start-half">
-      <%= link_to titolo_path(codice_isbn: libro.codice_isbn), class: "btn btn--small btn--ghost" do %>
-        <%= icon_tag "book" %>
-        <span>Scheda titolo e concorrenza</span>
-      <% end %>
-    </div>
-  <% end %>
-
-  <!-- Adozioni (solo per libri scolastici) -->
-  <% if libro_adottabile?(libro) && libro.adozioni_count.positive? %>
-    <article class="panel fill-shade border-radius flex-item-grow" style="flex-basis: 280px;">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">Adozioni</h3>
-        <span class="txt-x-large font-weight-black txt-positive"><%= libro.adozioni_count %></span>
-      </div>
-      <% if adozioni.any? %>
-        <ul class="flex flex-column gap-half">
-          <% adozioni.first(5).each do |adozione| %>
-            <li class="flex align-center justify-space-between txt-small">
-              <div class="overflow-ellipsis">
-                <span class="font-weight-bold"><%= adozione.classe_e_sezione %></span>
-                <span class="txt-subtle">·</span>
-                <%= link_to truncate(adozione.scuola.to_s, length: 30), adozione.scuola, class: "txt-link" %>
-              </div>
-            </li>
-          <% end %>
-          <% if adozioni.size > 5 %>
-            <li class="txt-small txt-subtle">+ altre <%= adozioni.size - 5 %> adozioni</li>
-          <% end %>
-        </ul>
-      <% end %>
-    </article>
+  <%# Riepilogo + Completati — lazy loaded %>
+  <%= turbo_frame_tag dom_id(libro, :movimenti_lazy),
+      src: libro_movimenti_path(libro),
+      loading: :lazy,
+      style: "min-height: 1px; display: block;" do %>
+    <p class="txt-small txt-subtle">Caricamento movimenti...</p>
   <% end %>
 </div>

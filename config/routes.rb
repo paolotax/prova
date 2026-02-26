@@ -295,6 +295,7 @@ Rails.application.routes.draw do
         post 'fascicoli', to: 'confezionator#create', as: 'confezione'
         delete 'fascicoli', to: 'confezionator#destroy'
       end
+      resource :movimenti, only: [:show], module: :libri
       resources :qrcodes
     end
 
