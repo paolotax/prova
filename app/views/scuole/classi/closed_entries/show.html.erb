@@ -1,17 +1,19 @@
 <%= turbo_frame_tag "closed_entries", style: "display: block; min-height: 1px;" do %>
   <% if @closed_entries.any? %>
-    <% @closed_entries.group_by { |e| e.entryable&.try(:data_documento)&.year || e.created_at.year }.sort_by { |anno, _| -anno }.each do |anno, entries| %>
-      <h4 class="txt-medium txt-subtle txt-uppercase margin-block-start margin-block-end">
-        <%= anno %> <span class="txt-xx-small">(<%= entries.size %>)</span>
+    <% months = I18n.t("date.month_names").compact %>
+    <% @closed_entries.group_by { |e| [e.updated_at.year, e.updated_at.month] }
+                      .sort_by { |key, _| [-key[0], -key[1]] }
+                      .each do |key, group_entries| %>
+      <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">
+        <%= months[key[1] - 1] %> <%= key[0] %> <span class="txt-xx-small">(<%= group_entries.size %>)</span>
       </h4>
-
-      <div class="cards">
-        <% entries.each do |entry| %>
-          <%= render "entries/entry", entry: entry, draggable: false %>
-        <% end %>
+      <div class="cards cards--grid">
+        <div class="cards__list">
+          <% group_entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        </div>
       </div>
     <% end %>
-  <% else %>
-    <p class="txt-small txt-subtle margin-none">Nessuna attività completata</p>
   <% end %>
 <% end %>

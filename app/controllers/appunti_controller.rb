@@ -73,7 +73,7 @@ class AppuntiController < ApplicationController
             new_appunto = current_user.draft_new_appunto
             format.html { redirect_to new_appunto, notice: "Appunto creato." }
           else
-            format.html { redirect_to appunti_path, notice: "Appunto creato." }
+            format.html { redirect_to @appunto, notice: "Appunto creato." }
           end
         else
           @appunto.broadcast_replace_later_to [current_user, "appunti"]

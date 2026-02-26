@@ -1,15 +1,39 @@
 <%# locals: (appunti:) -%>
 
-<% attivi = appunti.select { |a| a.entry.present? && a.entry.closure.nil? && a.entry.not_now.nil? } %>
-<% if attivi.any? %>
-  <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= attivi.size %>)</h3>
-  <div class="cards cards--grid">
-    <div class="cards__list">
-      <% attivi.each do |appunto| %>
-        <% if appunto.entry.present? %>
+<% months = I18n.t("date.month_names").compact %>
+<% aperti = appunti.select { |a| a.entry.present? && a.entry.closure.nil? } %>
+<% if aperti.any? %>
+  <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= aperti.size %>)</h3>
+  <% aperti.group_by { |a| [a.entry.updated_at.year, a.entry.updated_at.month] }
+           .sort_by { |key, _| [-key[0], -key[1]] }
+           .each do |key, group| %>
+    <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">
+      <%= months[key[1] - 1] %> <%= key[0] %> <span class="txt-xx-small">(<%= group.size %>)</span>
+    </h4>
+    <div class="cards cards--grid">
+      <div class="cards__list">
+        <% group.each do |appunto| %>
           <%= render "entries/entry", entry: appunto.entry, draggable: false %>
         <% end %>
-      <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
+<% end %>
+
+<% completati = appunti.select { |a| a.entry.present? && a.entry.closure.present? } %>
+<% if completati.any? %>
+  <% completati.group_by { |a| [a.entry.updated_at.year, a.entry.updated_at.month] }
+               .sort_by { |key, _| [-key[0], -key[1]] }
+               .each do |key, group| %>
+    <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">
+      <%= months[key[1] - 1] %> <%= key[0] %> <span class="txt-xx-small">(<%= group.size %>)</span>
+    </h4>
+    <div class="cards cards--grid">
+      <div class="cards__list">
+        <% group.each do |appunto| %>
+          <%= render "entries/entry", entry: appunto.entry, draggable: false %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 <% end %>

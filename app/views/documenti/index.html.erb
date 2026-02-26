@@ -74,7 +74,7 @@
                   <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
                 <% end %>
               <% else %>
-                <% chiave = documento.data_documento&.strftime("%B %Y")&.capitalize %>
+                <% chiave = documento.data_documento ? I18n.l(documento.data_documento, format: "%B %Y").capitalize : nil %>
                 <% if chiave != mese_corrente %>
                   <% mese_corrente = chiave %>
                   <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>

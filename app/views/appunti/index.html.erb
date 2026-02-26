@@ -65,7 +65,15 @@
                 list_observer_item_selector_value: ".item",
                 list_observer_target: "list"
               } do %>
-          <%= render @page.records %>
+          <% mese_corrente = nil %>
+          <% @page.records.each do |appunto| %>
+            <% chiave = I18n.l(appunto.created_at, format: "%B %Y").capitalize %>
+            <% if chiave != mese_corrente %>
+              <% mese_corrente = chiave %>
+              <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+            <% end %>
+            <%= render appunto %>
+          <% end %>
         <% end %>
       </div>
     <% end %>
