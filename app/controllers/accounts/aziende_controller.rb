@@ -30,6 +30,12 @@ module Accounts
     end
 
     def update
+      if params[:name].present?
+        Current.account.update!(name: params[:name])
+        redirect_to accounts_azienda_path, notice: "Nome account aggiornato.", status: :see_other
+        return
+      end
+
       if @azienda.nil?
         redirect_to new_accounts_azienda_path, alert: "Devi prima creare i dati aziendali."
         return

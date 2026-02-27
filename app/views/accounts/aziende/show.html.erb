@@ -1,20 +1,42 @@
-<% @page_title = "Dati aziendali" %>
+<% @page_title = "Dati Aziendali (account)" %>
 
 <% content_for :header do %>
-  <h1 class="header__title divider divider--fade full-width">Dati aziendali</h1>
-  <% if Current.admin? %>
-    <div class="header__actions header__actions--end">
-      <%= link_to edit_accounts_azienda_path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
-        <%= icon_tag "pencil" %>
-        <span class="for-screen-reader">Modifica azienda</span>
-      <% end %>
-    </div>
-  <% end %>
+  <h1 class="header__title"><%= @page_title %></h1>
+    <% unless Current.user.admin? %>
+      <div class="txt-normal font-weight-normal">Solo gli admin possono modificare.</div>
+    <% end %>
 <% end %>
 
-<div class="profile-layout">
-  <section class="panel shadow" style="--panel-size: 45ch;">
-    <strong class="divider txt-large">Ragione sociale</strong>
+<div class="settings margin-block-start-half">
+  <section class="settings__panel panel shadow">
+    <section class="settings__section">
+      <%= form_with url: accounts_azienda_path, method: :patch, data: { controller: "form" }, class: "flex gap-half" do |form| %>
+        <strong class="full-width"><%= form.text_field :name, value: Current.account.name, required: true, class: "input input--transparent full-width txt-medium", placeholder: "Nome account…", data: { action: "input->form#disableSubmitWhenInvalid" }, readonly: !Current.user.admin? %></strong>
+
+        <% if Current.user.admin? %>
+          <%= form.button class: "btn btn--circle btn--link txt-medium", data: { form_target: "submit" } do %>
+            <%= icon_tag "arrow-right" %>
+            <span class="for-screen-reader">Salva</span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </section>
+  </section>
+
+  <section class="settings__panel panel shadow">    
+    <header>
+      <h2 class="divider">Ragione sociale</h2>
+
+      <div class="header__actions header__actions--end">
+        <% if Current.admin? %>
+          <%= link_to edit_accounts_azienda_path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do %>
+            <%= icon_tag "pencil" %>
+            <span class="for-screen-reader">Modifica azienda</span>
+          <% end %>
+        <% end %>
+      </div>
+    </header>
+
     <dl class="dl-grid">
       <div>
         <dt class="txt-small txt-subtle">Ragione Sociale</dt>
@@ -54,9 +76,7 @@
         <dd class="txt-small"><%= @azienda.nazione %></dd>
       </div>
     </dl>
-  </section>
 
-  <section class="panel shadow" style="--panel-size: 45ch;">
     <strong class="divider txt-large">Contatti</strong>
     <dl class="dl-grid">
       <div>
