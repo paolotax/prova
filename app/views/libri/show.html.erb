@@ -4,10 +4,7 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% info = referrer_back_info || { label: "Libri", path: libri_path } %>
-    <%= back_link_to info[:label], info[:path] %>
-  </div>
-
-  <div class="header__actions header__actions--end">
+    <%= header_back_link info[:path], label: info[:label] %>
   </div>
 <% end %>
 
@@ -18,4 +15,10 @@
 <div class="scuola-show" style="--card-color: <%= libro_sconto_color(@libro) %>;">
   <%= render "libri/container/footer", libro: @libro, movimenti: @movimenti %>
   <%= render "libri/container/confezionator", libro: @libro %>
+
+  <% if @libro.adozioni_count.zero? && @movimenti.da_consegnare.none? && @movimenti.completati.none? %>
+    <div class="margin-block-start">
+      <%= render "libri/container/delete", libro: @libro %>
+    </div>
+  <% end %>
 </div>

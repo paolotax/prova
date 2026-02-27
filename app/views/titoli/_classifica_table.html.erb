@@ -1,0 +1,21 @@
+<%# locals: (rows:, codice_isbn:) -%>
+
+<dl class="dl-grid dl-grid--center txt-small">
+  <% rows.sort_by { |r| -r.sezioni_count }.each do |row| %>
+    <% current = row.CODICEISBN == codice_isbn %>
+    <dt class="txt-x-small" style="line-height: 1.1;">
+      <% if current %>
+        <span class="font-weight-bold"><%= row.TITOLO.titleize %></span>
+      <% else %>
+        <span class="font-weight-bold"><%= link_to row.TITOLO.titleize, titolo_path(codice_isbn: row.CODICEISBN), class: "txt-link" %></span>
+      <% end %>
+      <br><span class="txt-xx-small txt-subtle"><%= row.EDITORE %></span>
+    </dt>
+    <dd class="txt-end font-weight-bold <%= 'txt-positive' if current %>">
+      <%= row.sezioni_count %>
+      <% if row.nuove_count.to_i > 0 %>
+        <span class="txt-negative">(<%= row.nuove_count %>)</span>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>

@@ -68,76 +68,71 @@
     </div>
   </article>
 
-  <div class="flex gap flex-wrap">
-    <%# Le mie adozioni %>
-    <% if @mie_adozioni.any? %>
-      <article class="panel shadow flex-item-grow" style="flex-basis: 300px;">
-        <div class="flex align-center justify-space-between margin-block-end-half">
-          <h3 class="txt-small font-weight-bold txt-subtle">Le mie adozioni</h3>
-          <span class="txt-x-large font-weight-black txt-positive"><%= @mie_adozioni.size %></span>
-        </div>
+  <%# Le mie adozioni %>
+  <% if @mie_adozioni.any? %>
+    <section class="group">
+      <% da_acquistare_count = @mie_adozioni.count(&:da_acquistare?) %>
+      <% nuove_count = @mie_adozioni.count(&:nuova_adozione?) %>
+      <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
+        Le mie adozioni
+        <span class="txt-x-small txt-subtle font-weight-normal">(<%= da_acquistare_count %>)</span>
+        <% if nuove_count > 0 %>
+          <span class="txt-x-small txt-negative font-weight-normal">(<%= nuove_count %> nuove)</span>
+        <% end %>
+      </h3>
 
-        <ul class="flex flex-column gap-quarter">
-          <% @mie_adozioni.each do |adozione| %>
-            <li class="flex align-center justify-space-between txt-small">
-              <div class="overflow-ellipsis">
-                <span class="font-weight-bold"><%= adozione.classe_e_sezione %></span>
-                <span class="txt-subtle">&middot;</span>
-                <%= link_to truncate(adozione.scuola.to_s, length: 30), scuola_path(adozione.scuola), class: "txt-link" %>
-              </div>
-              <% if adozione.da_acquistare? %>
-                <span class="txt-xx-small txt-positive">da acquistare</span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </article>
-    <% end %>
+      <% per_scuola = @mie_adozioni.group_by(&:scuola) %>
+      <dl class="dl-grid dl-grid--center txt-small">
+        <% per_scuola.each do |scuola, adozioni| %>
+          <dt class="txt-x-small" style="line-height: 1.1; --card-color: <%= scuola_color(scuola) %>;">
+            <span class="font-weight-bold"><%= link_to scuola.denominazione, scuola_path(scuola), class: "txt-link" %></span>
+            <br><span class="txt-xx-small txt-subtle"><%= scuola.comune %></span>
+          </dt>
+          <dd style="--card-color: <%= scuola_color(scuola) %>;">
+            <div class="flex gap-quarter flex-wrap">
+              <%
+                adozioni_by_classe = adozioni.group_by(&:classe_id)
+                styles = adozioni_by_classe.transform_values do |aa|
+                  if aa.none?(&:da_acquistare?)
+                    :grey
+                  elsif aa.any? { |a| a.nuova_adozione? && a.mia? }
+                    :nuova_mia
+                  elsif aa.any?(&:mia?)
+                    :mia
+                  elsif aa.any?(&:nuova_adozione?)
+                    :nuova_altri
+                  end
+                end
+              %>
+              <%= classi_badge_links(adozioni.map(&:classe).uniq, scuola, classe_styles: styles) %>
+            </div>
+          </dd>
+        <% end %>
+      </dl>
+    </section>
+  <% end %>
 
-    <%# Adozioni nella zona %>
-    <article class="panel shadow flex-item-grow" style="flex-basis: 300px;">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">Adozioni nella zona</h3>
-        <span class="txt-x-large font-weight-black txt-link"><%= @adozioni_zona.count %></span>
-      </div>
-      <p class="txt-x-small txt-subtle margin-none">
-        Sezioni che adottano questo titolo nelle scuole della tua zona.
-      </p>
-    </article>
-  </div>
+  <%# Classifica %>
+  <% if @classifica.present? && @classifica.any? %>
+    <section class="group">
+      <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
+        Classifica
+        <span class="txt-x-small txt-subtle font-weight-normal">
+          <%= @import_adozione.DISCIPLINA.titleize %> &middot; Classe <%= @import_adozione.ANNOCORSO %>
+        </span>
+      </h3>
 
-  <%# Concorrenti %>
-  <% if @concorrenti.present? && @concorrenti.any? %>
-    <article class="panel shadow margin-block-start">
-      <div class="flex align-center justify-space-between margin-block-end-half">
-        <h3 class="txt-small font-weight-bold txt-subtle">
-          Concorrenti &middot; <%= @import_adozione.DISCIPLINA %> &middot; Classe <%= @import_adozione.ANNOCORSO %>
-        </h3>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="table txt-small">
-          <thead>
-            <tr>
-              <th>Titolo</th>
-              <th>Editore</th>
-              <th class="txt-align-end">Sezioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @concorrenti.each do |c| %>
-              <tr>
-                <td class="overflow-ellipsis" style="max-width: 30ch;">
-                  <%= link_to c.TITOLO, titolo_path(codice_isbn: c.CODICEISBN), class: "txt-link" %>
-                </td>
-                <td class="txt-subtle"><%= c.EDITORE %></td>
-                <td class="txt-align-end font-weight-bold"><%= c.sezioni_count %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </article>
+      <% if @superiore %>
+        <%# Superiori: raggruppati per tipo scuola %>
+        <% @classifica.group_by(&:tipo_scuola_raw).sort_by { |_, rows| -rows.sum(&:sezioni_count) }.each do |tipo, rows| %>
+          <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start"><%= tipo.titleize %></h4>
+          <%= render "titoli/classifica_table", rows: rows, codice_isbn: @codice_isbn %>
+        <% end %>
+      <% else %>
+        <%# Elementari/Medie: tabella unica %>
+        <%= render "titoli/classifica_table", rows: @classifica, codice_isbn: @codice_isbn %>
+      <% end %>
+    </section>
   <% end %>
 
   <%# Giacenza (solo se libro presente) %>
