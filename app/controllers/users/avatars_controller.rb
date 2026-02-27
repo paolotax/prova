@@ -15,8 +15,7 @@ class Users::AvatarsController < ApplicationController
 
   def destroy
     @user.avatar.destroy
-    redirect_to @user
-    #redirect_back fallback_location: @user
+    redirect_to user_personal_info_path(@user)
   end
 
   private
