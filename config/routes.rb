@@ -436,6 +436,10 @@ Rails.application.routes.draw do
       resources :qrcodes
       resource :foglio_scuola, only: [:show], controller: "scuole/foglio_scuola"
 
+      resources :saggi, only: [:index, :create, :update, :destroy], controller: "scuole/saggi" do
+        post :genera_scarico, on: :collection
+      end
+
       scope module: :scuole do
         resource :entries, only: [:show]
         resource :adozioni, only: [:show], controller: "adozioni"
@@ -444,6 +448,7 @@ Rails.application.routes.draw do
         resources :persone, only: [:show, :edit, :update, :create] do
           resources :persona_classi, only: [:destroy], module: :persone
           resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
+          resources :saggi, only: [:create, :update, :destroy], module: :persone
         end
         resources :classi, only: [:index, :show, :edit, :update, :create, :destroy] do
           member do

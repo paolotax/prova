@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_111946) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_27_101638) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1265,6 +1265,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_111946) do
     t.integer "status"
     t.datetime "updated_at", null: false
     t.index ["libro_id"], name: "index_righe_on_libro_id"
+  end
+
+  create_table "saggi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.date "data_consegna"
+    t.date "data_prenotazione"
+    t.string "destinatario_id"
+    t.string "destinatario_type"
+    t.bigint "documento_riga_id"
+    t.bigint "libro_id", null: false
+    t.text "note"
+    t.integer "quantita", default: 1, null: false
+    t.uuid "scuola_id", null: false
+    t.integer "stato", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id", "stato"], name: "index_saggi_on_account_id_and_stato"
+    t.index ["account_id"], name: "index_saggi_on_account_id"
+    t.index ["destinatario_type", "destinatario_id"], name: "idx_saggi_destinatario"
+    t.index ["documento_riga_id"], name: "index_saggi_on_documento_riga_id"
+    t.index ["libro_id"], name: "index_saggi_on_libro_id"
+    t.index ["scuola_id", "stato"], name: "index_saggi_on_scuola_id_and_stato"
+    t.index ["scuola_id"], name: "index_saggi_on_scuola_id"
+    t.index ["user_id"], name: "index_saggi_on_user_id"
   end
 
   create_table "sconti", force: :cascade do |t|

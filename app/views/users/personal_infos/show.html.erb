@@ -1,18 +1,18 @@
 <% @page_title = @user.name %>
 <% me_or_you = Current.user == @user ? "me" : @user.first_name %>
 
-<div class="profile-layout">
-  <section class="panel shadow text-align-center" style="--panel-size: 45ch;">
+<div class="settings settings--profile">
+  <section class="settings__panel panel shadow text-align-center">
     <div class="flex flex-column gap position-relative">
       <% if Current.user == @user %>
         <%= link_to edit_user_personal_info_path(@user), class: "user-edit-link btn", data: { controller: "tooltip" } do %>
           <%= icon_tag "pencil" %>
-          <span class="for-screen-reader">Edit profile</span>
+          <span class="for-screen-reader">Modifica profilo</span>
         <% end %>
       <% end %>
 
       <div class="avatar txt-xx-large center fill-white btn--circle hide-focus-ring">
-        <%= image_tag user_avatar_path(Current.user, v: Current.user.updated_at.to_i), alt: "Profile avatar for #{Current.user.name}", class: "avatar", size: 128 %>
+        <%= image_tag user_avatar_path(Current.user), alt: "Profilo avatar per #{Current.user.name}" %>
       </div>
 
       <div class="flex flex-column gap-half margin-block-end">
@@ -21,8 +21,8 @@
           <% if !@user.active? %>
             <%= @user.name %> is no longer on this account
           <% elsif !@user.verified? %>
-            Unverified
-            <div class="txt-small txt-tinted">A sign-in code has been sent to this email address, but the user has not yet logged in to confirm their identity.</div>
+            Non verificato
+            <div class="txt-small txt-tinted">Un codice di accesso è stato inviato a questo indirizzo email, ma l'utente non ha ancora effettuato l'accesso per confermare la propria identità.</div>
           <% else %>
             <%= mail_to @user.email %>
           <% end %>
@@ -30,7 +30,10 @@
       </div>
 
       <% if @personal_info %>
-        <strong class="divider txt-large">Dati personali</strong>
+
+        <header>
+          <h2 class="divider">Dati personali</h2>
+        </header>
         <dl class="dl-grid">
           <div>
             <dt class="txt-small txt-subtle">Nome</dt>
@@ -54,44 +57,56 @@
         </dl>
       <% end %>
     </div>
+
+    <% if Current.user == @user %>
+      <hr class="separator--horizontal full-width flex-item-grow" style="--border-color: var(--color-ink-light);" aria-hidden="true">
+
+      <%= button_to logout_path, method: :delete, class: "btn txt-x-small center", data: { turbo: false } do %>
+        <span>Esci da ScagnoZZ da questo device</span>
+      <% end %>
+    <% end %>
   </section>
 
   <% if Current.user == @user %>
-    <section class="panel shadow" style="--panel-size: 45ch;">
+    <section class="settings__panel panel shadow hide-on-native">
       <%= render "users/theme" %>
 
-      <strong class="divider txt-large">Preferenze</strong>
+      <section class="settings__section">
+        <header>
+          <h2 class="divider">Preferenze</h2>
+        </header>
+        <dl class="dl-grid">
+          <div>
+            <dt class="txt-small txt-subtle">Navigatore preferito</dt>
+            <dd class="txt-small"><%= @personal_info&.navigator&.humanize || "-" %></dd>
+          </div>
+        </dl>
+      </section>
 
-      <dl class="dl-grid">
-        <div>
-          <dt class="txt-small txt-subtle">Navigatore preferito</dt>
-          <dd class="txt-small"><%= @personal_info&.navigator&.humanize || "-" %></dd>
+      <section class="settings__section">
+        <header>
+          <h2 class="divider">Estensione WhatsApp</h2>
+        </header>
+
+        <p class="txt-small">
+          Con l'estensione per Chrome puoi creare appunti su Scagnozz
+          direttamente da WhatsApp Web: seleziona un messaggio, clicca il
+          pulsante e l'appunto viene creato con il testo e il contatto.
+        </p>
+        <p class="txt-small txt-subtle">
+          Per collegare l'estensione al tuo account serve un <strong>token di accesso</strong>.
+        </p>
+
+        <div class="flex-inline center justify-center flex-wrap gap">
+          <%= link_to access_tokens_path(account_id: Current.account), class: "btn btn--link" do %>
+            <span>Gestisci token</span>
+          <% end %>
+
+          <%= link_to download_extension_path, class: "btn" do %>
+            <span>Scarica estensione (.zip)</span>
+          <% end %>
         </div>
-      </dl>
-
-      <strong class="divider txt-large">Estensione WhatsApp</strong>
-
-      <p class="txt-small">
-        Con l'estensione per Chrome puoi creare appunti su Scagnozz
-        direttamente da WhatsApp Web: seleziona un messaggio, clicca il
-        pulsante e l'appunto viene creato con il testo e il contatto.
-      </p>
-      <p class="txt-small txt-subtle">
-        Per collegare l'estensione al tuo account serve un <strong>token di accesso</strong>.
-      </p>
-
-      <div class="flex f-align-center gap">
-        <%= link_to access_tokens_path(account_id: Current.account), class: "btn btn--reversed" do %>
-          <%= icon_tag "key" %>
-          <span>Gestisci token</span>
-        <% end %>
-
-        <%= link_to download_extension_path, class: "btn" do %>
-          <%= icon_tag "download" %>
-          <span>Scarica estensione (.zip)</span>
-        <% end %>
-      </div>
-
+      </section>
     </section>
   <% end %>
 </div>

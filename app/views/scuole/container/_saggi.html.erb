@@ -1,0 +1,11 @@
+<%# locals: (scuola:) -%>
+
+<%= turbo_frame_tag "scuola_saggi",
+    src: scuola_saggi_path(scuola),
+    loading: :lazy,
+    style: "display: block; min-height: 1px;" do %>
+  <section class="group">
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Saggi</h3>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+  </section>
+<% end %>

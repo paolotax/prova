@@ -1,0 +1,99 @@
+<%= turbo_frame_tag "scuola_saggi" do %>
+  <section class="group">
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
+      Saggi
+      <% if @saggi.any? %>
+        <span class="txt-x-small txt-subtle font-weight-normal">(<%= @saggi.size %>)</span>
+      <% end %>
+      <% if @da_scaricare_count > 0 %>
+        <span class="txt-x-small txt-accent font-weight-normal">
+          <%= @da_scaricare_count %> da scaricare
+        </span>
+      <% end %>
+    </h3>
+
+    <% if @saggi.any? %>
+      <% grouped = @saggi.group_by { |s| s.destinatario || @scuola } %>
+      <% grouped.each do |dest, saggi| %>
+        <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start">
+          <% if dest.is_a?(Persona) %>
+            <%= link_to dest.nome_completo, scuola_persona_path(@scuola, dest), class: "txt-link" %>
+          <% elsif dest.is_a?(Classe) %>
+            Classe <%= dest.nome_breve %>
+          <% else %>
+            Scuola
+          <% end %>
+        </h4>
+        <dl class="dl-grid dl-grid--center txt-small">
+          <% saggi.each do |saggio| %>
+            <dt class="txt-x-small" style="line-height: 1.1;">
+              <span class="font-weight-bold"><%= link_to saggio.libro.titolo, saggio.libro, class: "txt-link" %></span>
+              <br><span class="txt-xx-small txt-subtle"><%= saggio.libro.editore&.editore %></span>
+            </dt>
+            <dd class="flex align-center gap-half">
+              <span class="badge <%= saggio.consegnato? ? 'txt-positive' : 'txt-accent' %>">
+                <%= saggio.stato %>
+              </span>
+              <span class="txt-xx-small txt-subtle">x<%= saggio.quantita %></span>
+              <% if saggio.prenotato? %>
+                <%= button_to scuola_saggio_path(@scuola, saggio),
+                    method: :patch,
+                    params: { saggio: { stato: :consegnato } },
+                    class: "btn btn--small txt-positive borderless",
+                    title: "Segna consegnato" do %>
+                  <%= icon_tag "check", size: "small" %>
+                <% end %>
+              <% end %>
+              <% unless saggio.scaricato? %>
+                <%= button_to scuola_saggio_path(@scuola, saggio),
+                    method: :delete,
+                    class: "btn btn--small txt-negative borderless",
+                    title: "Elimina" do %>
+                  <%= icon_tag "x-mark", size: "small" %>
+                <% end %>
+              <% end %>
+            </dd>
+          <% end %>
+        </dl>
+      <% end %>
+    <% end %>
+
+    <% if @da_scaricare_count > 0 %>
+      <div class="margin-block-start">
+        <%= button_to "Genera scarico campionario (#{@da_scaricare_count})",
+            genera_scarico_scuola_saggi_path(@scuola),
+            method: :post,
+            class: "btn btn--ghost txt-small",
+            data: { turbo_confirm: "Generare il documento di scarico campionario per #{@da_scaricare_count} saggi?" } %>
+      </div>
+    <% end %>
+
+    <%# Inline form %>
+    <%= form_with model: Saggio.new,
+        url: scuola_saggi_path(@scuola),
+        class: "flex gap-half align-end flex-wrap margin-block-start" do |f| %>
+      <fieldset class="flex-item-grow" style="flex-basis: 150px;">
+        <label class="txt-xx-small txt-subtle txt-uppercase">Destinatario</label>
+        <%= text_field_tag :destinatario_value, nil,
+            placeholder: "Persona:uuid o Classe:uuid",
+            class: "input full-width" %>
+      </fieldset>
+      <fieldset class="flex-item-grow" style="flex-basis: 200px;">
+        <label class="txt-xx-small txt-subtle txt-uppercase">Libro</label>
+        <%= f.combobox :libro_id, libri_path,
+            placeholder: "Cerca libro...",
+            name_when_new: "libro_search" %>
+      </fieldset>
+      <fieldset>
+        <label class="txt-xx-small txt-subtle txt-uppercase">Stato</label>
+        <%= f.select :stato, [["Prenotato", "prenotato"], ["Consegnato", "consegnato"]],
+            {}, class: "input" %>
+      </fieldset>
+      <fieldset style="width: 60px;">
+        <label class="txt-xx-small txt-subtle txt-uppercase">Qtà</label>
+        <%= f.number_field :quantita, value: 1, min: 1, class: "input full-width" %>
+      </fieldset>
+      <%= f.submit "Aggiungi", class: "btn btn--primary btn--small" %>
+    <% end %>
+  </section>
+<% end %>

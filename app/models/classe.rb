@@ -65,6 +65,7 @@ class Classe < ApplicationRecord
 
   has_many :adozioni, dependent: :destroy
   has_many :consegne_saggio, through: :adozioni
+  has_many :saggi, class_name: "Saggio", as: :destinatario, dependent: :nullify
   has_many :documenti, as: :clientable
 
   validates :anno_corso, presence: true

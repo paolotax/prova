@@ -37,6 +37,7 @@ class Persona < ApplicationRecord
 
   has_many :persona_classi, dependent: :destroy
   has_many :classi, through: :persona_classi
+  has_many :saggi, class_name: "Saggio", as: :destinatario, dependent: :nullify
 
   enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", altro: "altro" }
 

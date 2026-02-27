@@ -1,23 +1,24 @@
-<div data-controller="theme">
-  <strong class="divider txt-large">Aspetto</strong>
-
+<section data-controller="theme" class="settings__section">
+  <header>
+    <h2 class="divider">Aspetto</strong>
+  </header>
   <div class="theme-switcher flex gap max-width justify-center txt-small margin-block-start-half margin-block-end">
     <label class="btn theme-switcher__btn">
       <%= icon_tag "sun" %>
       <span class="overflow-ellipsis">Sempre chiaro</span>
-      <input type="radio" name="theme" data-action="click->theme#setLight" data-theme-target="lightButton">
+      <input type="radio" name="theme" tabindex="-1" data-action="click->theme#setLight" data-theme-target="lightButton">
     </label>
 
     <label class="btn theme-switcher__btn" >
       <%= icon_tag "moon" %>
       <span class="overflow-ellipsis">Sempre scuro</span>
-      <input type="radio" name="theme" data-action="click->theme#setDark" data-theme-target="darkButton">
+      <input type="radio" name="theme" tabindex="-1" data-action="click->theme#setDark" data-theme-target="darkButton">
     </label>
 
     <label class="btn theme-switcher__btn">
       <%= icon_tag "monitor" %>
       <span class="overflow-ellipsis">Come il sistema</span>
-      <input type="radio" name="theme" data-action="click->theme#setAuto" data-theme-target="autoButton">
+      <input type="radio" name="theme" tabindex="-1" data-action="click->theme#setAuto" data-theme-target="autoButton">
     </label>
   </div>
-</div>
+</section>

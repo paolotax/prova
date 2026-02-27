@@ -68,6 +68,7 @@ class Scuola < ApplicationRecord
   has_many :documenti, as: :clientable
   has_many :sconti, as: :scontabile, dependent: :destroy
   has_many :tappe, as: :tappable
+  has_many :saggi, dependent: :destroy
 
   before_validation :normalize_fields
   after_update_commit :propagate_area_to_plessi, if: :saved_change_to_area?

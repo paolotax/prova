@@ -77,6 +77,8 @@
 
 	<%= render "scuole/container/insegnanti", scuola: @scuola %>
 
+	<%= render "scuole/container/saggi", scuola: @scuola %>
+
 	<%= turbo_frame_tag "scuola_closed_entries", src: scuola_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 1px;" do %>
 	<% end %>
 </div>

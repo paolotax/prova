@@ -299,6 +299,8 @@ class Libro < ApplicationRecord
     Rails.logger.error "Errore sync copertina per libro #{id}: #{e.message}"
   end
 
+  has_many :saggi, dependent: :restrict_with_error
+
   has_many :qrcodes, as: :qrcodable, dependent: :destroy
   
   # Metodo di convenienza per ottenere il primo QR code o crearne uno nuovo
