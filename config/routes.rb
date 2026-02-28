@@ -319,6 +319,7 @@ Rails.application.routes.draw do
 
     resources :giri do
       resources :tappe, only: [:index]
+      post 'tappe', to: 'giri/tappe#create', as: 'generate_tappe'
       member do
         post 'bulk_create_tappe', to: 'tappe/giro_bulk_actions#create'
         delete 'remove_tappa/:tappa_id', to: 'tappe/giro_bulk_actions#remove_tappa', as: 'remove_tappa'
