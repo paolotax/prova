@@ -14,7 +14,7 @@
         <% gruppi = editori_provincia.group_by { |e| e.gruppo.presence || "—" } %>
 
         <div class="zone-regione">
-            <strong class="divider divider--fade txt-small">
+            <strong class="divider txt-small">
                 <%= provincia %>
                 <%= link_to accounts_aree_path(account_id: account_id, provincia: provincia),
                     class: "btn btn--circle btn--link zone-grid__area-link", style: "--btn-size: 1.6em;",

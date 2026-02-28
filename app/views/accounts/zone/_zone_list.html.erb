@@ -8,7 +8,7 @@
     <% zone_per_regione.each do |regione, zone_regione| %>
         <div class="zone-regione">
             <% if zone_per_regione.size > 1 || regione.present? %>
-                <strong class="divider divider--fade txt-small"><%= regione %></strong>
+                <strong class="divider txt-small"><%= regione %></strong>
             <% end %>
 
             <% province = zone_regione.map(&:provincia).uniq.sort %>

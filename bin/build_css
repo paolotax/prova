@@ -59,6 +59,7 @@ CSS_FILES=(
   "rich-text-content.css"
   "qr-codes.css"
   "settings.css"
+  "configurazione.css"
   "welcome-letter.css"
   "user.css"
   "autoresize.css"

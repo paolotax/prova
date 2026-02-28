@@ -2,10 +2,13 @@
 
 <%= turbo_stream_from Current.account, "configurazione" %>
 
-<strong class="divider divider--fade txt-large">Le mie Zone</strong>
 
-<section class="settings">
-  <div class="settings__panel panel shadow center">
+<div class="configurazione">
+
+  <div class="panel shadow center">
+
+    <h2 class="divider divider--fade margin-block-end">Le mie Zone</h2>
+
     <%= render partial: "accounts/zone/zone_list", locals: { account_zone: @account_zone } %>
 
     <%= render partial: "accounts/zone/form", locals: { regioni: @regioni } %>
@@ -16,9 +19,9 @@
     <% end %>
   </div>
 
-  <strong class="divider divider--fade txt-large">I miei Mandati</strong>
+  <div class="panel shadow center">
+    <h2 class="divider divider--fade margin-block-end">I miei Mandati</h2>
 
-  <div class="settings__panel panel shadow center">  
     <%= render partial: "accounts/mandati/mandati_list", locals: { mandati: @mandati } %>
 
     <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
@@ -29,9 +32,8 @@
     <% end %>
   </div>
 
-  <strong class="divider divider--fade txt-large">I miei Colleghi</strong>
-
-  <div class="settings__panel settings__panel--users panel shadow center">
+  <div class="panel shadow center">
+    <h2 class="divider divider--fade">I miei Colleghi</h2>
     <p class="txt-small txt-subtle txt-center">Invita i tuoi colleghi per accedere. Potrai assegnare a ciascuno le scuole di competenza e un ruolo (agente o amministratore).</p>
 
     <%= render "accounts/members/invite_form" %>
@@ -44,4 +46,4 @@
     <% end %>
   </div>
 
-</section>
+</div>
