@@ -2,7 +2,61 @@ import { Controller } from "@hotwired/stimulus"
 import { patch, destroy } from "@rails/request.js"
 
 export default class extends Controller {
-  static targets = ["body", "giroFilter", "trash"]
+  static targets = ["body", "header", "giroFilter", "trash"]
+
+  connect() {
+    this.dragging = false
+    this.offsetX = 0
+    this.offsetY = 0
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.onMouseUp = this.onMouseUp.bind(this)
+  }
+
+  // Panel drag — move planner around the screen
+  panelDragStart(event) {
+    // Don't drag if clicking on select, button, or trash
+    if (event.target.closest("select, button, .agenda-planner__trash")) return
+
+    this.dragging = true
+    const rect = this.element.getBoundingClientRect()
+    this.offsetX = event.clientX - rect.left
+    this.offsetY = event.clientY - rect.top
+
+    // Switch to floating with fit-content width
+    this.element.classList.add("agenda-planner--floating")
+    this.element.style.insetBlockStart = `${rect.top}px`
+    this.element.style.insetInlineStart = `${rect.left}px`
+    this.element.style.inlineSize = "fit-content"
+
+    document.addEventListener("mousemove", this.onMouseMove)
+    document.addEventListener("mouseup", this.onMouseUp)
+    event.preventDefault()
+  }
+
+  onMouseMove(event) {
+    if (!this.dragging) return
+    this.element.style.insetBlockStart = `${event.clientY - this.offsetY}px`
+    this.element.style.insetInlineStart = `${event.clientX - this.offsetX}px`
+  }
+
+  onMouseUp() {
+    this.dragging = false
+    document.removeEventListener("mousemove", this.onMouseMove)
+    document.removeEventListener("mouseup", this.onMouseUp)
+  }
+
+  // Double-click header to dock back
+  panelDock() {
+    this.element.classList.remove("agenda-planner--floating")
+    this.element.style.insetBlockStart = ""
+    this.element.style.insetInlineStart = ""
+    this.element.style.inlineSize = ""
+  }
+
+  disconnect() {
+    document.removeEventListener("mousemove", this.onMouseMove)
+    document.removeEventListener("mouseup", this.onMouseUp)
+  }
 
   // Planner → Calendar: native drag
   dragStart(event) {

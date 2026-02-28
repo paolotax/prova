@@ -29,7 +29,8 @@ class AgendaController < ApplicationController
     tappe = current_user.tappe
       .da_programmare
       .where(tappable_type: "Scuola")
-      .includes(:tappable, :giri)
+      .includes(:giri)
+      .preload(:tappable)
 
     if params[:giro_id].present?
       tappe = tappe.joins(:giri).where(giri: { id: params[:giro_id] }).distinct
@@ -50,7 +51,8 @@ class AgendaController < ApplicationController
     render partial: "agenda/planner", locals: {
       tappe_per_area: tappe_per_area,
       giri: giri,
-      total_count: tappe.size
+      total_count: tappe.size,
+      selected_giro_id: params[:giro_id]
     }
   end
 

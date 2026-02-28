@@ -288,19 +288,39 @@
     background-color: color-mix(in srgb, var(--color-link) 6%, var(--color-canvas));
     border: 1px solid var(--color-link);
     border-radius: 0.6em;
+    box-shadow: 0 0 0 1px oklch(var(--lch-blue-medium) / 5%),
+                0 0.2em 0.2em oklch(var(--lch-blue-medium) / 5%),
+                0 0.4em 0.4em oklch(var(--lch-blue-medium) / 5%),
+                0 0.8em 0.8em oklch(var(--lch-blue-medium) / 5%);
+    inline-size: fit-content;
     margin-block-end: var(--block-space-half);
-    margin-inline: -0.5em;
+    margin-inline: auto;
+    max-inline-size: 60%;
     position: sticky;
-    inset-block-start: 6.5rem;
-    z-index: calc(var(--z-nav) - 1);
+    inset-block-start: 4rem;
+    z-index: var(--z-max, 9999);
+  }
+
+  .agenda-planner--floating {
+    margin: 0;
+    overflow: auto;
+    position: fixed;
+    max-inline-size: 80vw;
+    resize: both;
+    z-index: var(--z-max, 9999);
   }
 
   .agenda-planner__header {
     align-items: center;
     border-block-end: 1px solid var(--color-ink-lighter);
+    cursor: grab;
     display: flex;
     gap: var(--inline-space);
-    padding: var(--block-space-half) var(--inline-space-half);
+    padding: var(--block-space) var(--inline-space);
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   .agenda-planner__toggle {
@@ -350,7 +370,7 @@
     display: flex;
     gap: var(--inline-space-half);
     overflow-x: auto;
-    padding: var(--block-space-half) var(--inline-space-half);
+    padding: var(--block-space-half) var(--inline-space);
   }
 
   /* Area label — vertical, like month label */
