@@ -22,7 +22,9 @@
     <% tappe = tappe_per_giorno[giorno] || [] %>
 
     <div class="agenda-week__day<%= " agenda-week__day--today" if is_today %>"
-         data-giorno="<%= giorno.iso8601 %>">
+         data-giorno="<%= giorno.iso8601 %>"
+         data-controller="tappa-date"
+         data-action="dragover->tappa-date#handleDragOver drop->tappa-date#handleDrop dragleave->tappa-date#handleDragLeave">
 
       <div class="agenda-week__day-header">
         <%= link_to giorno_path(giorno.iso8601), data: { turbo_frame: "_top" }, class: "agenda-week__day-link" do %>
@@ -59,7 +61,9 @@
       <% tappe = tappe_per_giorno[giorno] || [] %>
 
       <div class="agenda-week__day--weekend<%= " agenda-week__day--today" if is_today %>"
-           data-giorno="<%= giorno.iso8601 %>">
+           data-giorno="<%= giorno.iso8601 %>"
+           data-controller="tappa-date"
+           data-action="dragover->tappa-date#handleDragOver drop->tappa-date#handleDrop dragleave->tappa-date#handleDragLeave">
 
         <div class="agenda-week__day-header">
           <%= link_to giorno_path(giorno.iso8601), data: { turbo_frame: "_top" }, class: "agenda-week__day-link" do %>
