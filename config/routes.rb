@@ -179,6 +179,7 @@ Rails.application.routes.draw do
     end
 
     # Agenda
+    get 'agenda/planner', to: 'agenda#planner', as: 'agenda_planner'
     get 'agenda', to: 'agenda#index'
     get 'agenda/:giorno', to: 'agenda#show', as: 'giorno'
     get 'agenda/:giorno/mappa', to: 'agenda#mappa', as: 'mappa_del_giorno'

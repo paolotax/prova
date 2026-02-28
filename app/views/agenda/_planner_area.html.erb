@@ -1,0 +1,47 @@
+<%# locals: (area:, direzioni:) -%>
+
+<% area_count = direzioni.values.flatten.count %>
+
+<details class="agenda-planner__area" open>
+  <summary class="agenda-planner__area-header">
+    <strong><%= area %></strong>
+    <span class="badge"><%= area_count %></span>
+  </summary>
+
+  <div class="agenda-planner__area-body">
+    <% direzioni.sort_by { |dir, _| dir.denominazione }.each do |direzione, tappe| %>
+      <div class="agenda-planner__direzione">
+        <div class="agenda-planner__direzione-header">
+          <label class="agenda-planner__check-label">
+            <input type="checkbox"
+                   data-agenda-planner-target="direzioneCheck"
+                   data-direzione-id="<%= direzione.id %>"
+                   data-action="change->agenda-planner#toggleDirezione">
+            <strong class="txt-small"><%= direzione.denominazione %></strong>
+            <span class="txt-x-small txt-subtle">(<%= tappe.size %>)</span>
+          </label>
+        </div>
+
+        <% tappe.sort_by { |t| t.tappable.denominazione }.each do |tappa| %>
+          <div class="agenda-planner__tappa"
+               draggable="true"
+               data-tappa-id="<%= tappa.id %>"
+               data-school-id="<%= tappa.tappable_id %>"
+               data-direzione-id="<%= tappa.tappable.direzione_id || tappa.tappable_id %>"
+               data-action="dragstart->agenda-planner#dragStart dragend->agenda-planner#dragEnd">
+            <label class="agenda-planner__check-label">
+              <input type="checkbox"
+                     data-agenda-planner-target="tappaCheck"
+                     data-tappa-id="<%= tappa.id %>"
+                     data-action="change->agenda-planner#toggleTappa">
+              <span class="txt-x-small"><%= tappa.tappable.denominazione %></span>
+            </label>
+            <% tappa.giri.each do |giro| %>
+              <span class="agenda-planner__giro-badge"><%= giro.titolo.truncate(10) %></span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</details>

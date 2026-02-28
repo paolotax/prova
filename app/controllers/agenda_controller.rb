@@ -25,6 +25,35 @@ class AgendaController < ApplicationController
     end
   end
 
+  def planner
+    tappe = current_user.tappe
+      .da_programmare
+      .where(tappable_type: "Scuola")
+      .includes(:tappable, :giri)
+
+    if params[:giro_id].present?
+      tappe = tappe.joins(:giri).where(giri: { id: params[:giro_id] }).distinct
+    end
+
+    # Group: area → direzione → plessi
+    tappe_per_area = tappe.group_by { |t|
+      t.tappable.area.presence || "Senza area"
+    }.transform_values { |tappe_area|
+      tappe_area.group_by { |t|
+        t.tappable.direzione || t.tappable
+      }
+    }.sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+
+    giri = current_user.giri.order(created_at: :desc)
+    total_count = tappe.count
+
+    render partial: "agenda/planner", locals: {
+      tappe_per_area: tappe_per_area,
+      giri: giri,
+      total_count: total_count
+    }
+  end
+
   def show
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
     @scuole = current_account.scuole

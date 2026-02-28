@@ -276,4 +276,158 @@
       white-space: nowrap;
     }
   }
+
+  /* Planner panel — unscheduled tappe
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-planner {
+    margin-block-start: var(--block-space);
+  }
+
+  .agenda-planner__header {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space);
+    padding: var(--block-space-half) 0;
+  }
+
+  .agenda-planner__toggle {
+    align-items: center;
+    background: none;
+    border: 0;
+    color: var(--color-ink);
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    gap: 0.5em;
+    padding: 0;
+  }
+
+  .agenda-planner__title {
+    font-size: var(--text-medium);
+    font-weight: 700;
+  }
+
+  .agenda-planner__caret {
+    transition: transform 0.2s;
+  }
+
+  .agenda-planner--collapsed .agenda-planner__caret {
+    transform: rotate(-90deg);
+  }
+
+  .agenda-planner--collapsed .agenda-planner__body {
+    display: none;
+  }
+
+  .agenda-planner__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space);
+  }
+
+  /* Area sections */
+
+  .agenda-planner__area {
+    border: 1px solid var(--color-ink-lighter);
+    border-radius: 0.4em;
+    overflow: hidden;
+  }
+
+  .agenda-planner__area-header {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5em;
+    list-style: none;
+    padding: var(--block-space-half) var(--inline-space-half);
+
+    &::-webkit-details-marker { display: none; }
+    &::marker { content: ""; }
+  }
+
+  .agenda-planner__area-body {
+    padding: 0 var(--inline-space-half) var(--block-space-half);
+  }
+
+  /* Direzione groups */
+
+  .agenda-planner__direzione {
+    margin-block-start: var(--block-space-half);
+  }
+
+  .agenda-planner__check-label {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 0.4em;
+
+    input[type="checkbox"] {
+      flex-shrink: 0;
+    }
+  }
+
+  /* Tappa rows */
+
+  .agenda-planner__tappa {
+    align-items: center;
+    border-radius: 0.2em;
+    cursor: grab;
+    display: flex;
+    gap: 0.4em;
+    padding: 0.15em 0.3em;
+    padding-inline-start: 1.5em;
+
+    &:hover {
+      background-color: var(--color-ink-lightest);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.selected {
+      background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
+    }
+  }
+
+  .agenda-planner__giro-badge {
+    background-color: var(--color-ink-lightest);
+    border-radius: 0.2em;
+    color: var(--color-ink-dark);
+    flex-shrink: 0;
+    font-size: var(--text-xx-small);
+    font-weight: 600;
+    margin-inline-start: auto;
+    padding: 0.1em 0.4em;
+  }
+
+  /* Action bar — mobile fallback */
+
+  .agenda-planner__action-bar {
+    align-items: center;
+    background-color: var(--color-canvas);
+    border-block-start: 1px solid var(--color-ink-lighter);
+    bottom: 0;
+    display: flex;
+    gap: var(--inline-space);
+    inset-inline: 0;
+    padding: var(--block-space-half) var(--inline-space);
+    position: fixed;
+    z-index: var(--z-bar);
+  }
+
+  .agenda-planner__days {
+    display: flex;
+    gap: 0.3em;
+    overflow-x: auto;
+  }
+
+  /* Day cell drag-over highlight */
+
+  .agenda-week__day.drag-over {
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+    outline: 2px dashed var(--color-link);
+    outline-offset: -2px;
+  }
 }

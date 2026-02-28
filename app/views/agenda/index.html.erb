@@ -28,3 +28,11 @@
   <%# Bottom sentinel for loading future weeks %>
   <div data-agenda-calendar-target="sentinelBottom" class="agenda-calendar__sentinel"></div>
 </div>
+
+<%= turbo_frame_tag "agenda-planner", src: agenda_planner_path, loading: :lazy do %>
+  <div class="agenda-planner">
+    <div class="agenda-planner__header">
+      <span class="agenda-planner__title">Da programmare <span class="spinner spinner--small"></span></span>
+    </div>
+  </div>
+<% end %>

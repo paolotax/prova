@@ -1,0 +1,44 @@
+<%# locals: (tappe_per_area:, giri:, total_count:) -%>
+
+<%= turbo_frame_tag "agenda-planner" do %>
+  <div class="agenda-planner" data-controller="agenda-planner">
+    <div class="agenda-planner__header">
+      <button type="button" class="agenda-planner__toggle"
+              data-action="agenda-planner#toggle"
+              data-agenda-planner-target="toggle">
+        <span class="agenda-planner__title">
+          Da programmare
+          <span class="badge"><%= total_count %></span>
+        </span>
+        <%= icon_tag "caret-down", class: "agenda-planner__caret" %>
+      </button>
+
+      <% if giri.any? %>
+        <select data-action="change->agenda-planner#filterGiro"
+                data-agenda-planner-target="giroFilter"
+                class="input input--small">
+          <option value="">Tutti i giri</option>
+          <% giri.each do |giro| %>
+            <option value="<%= giro.id %>"><%= giro.titolo %></option>
+          <% end %>
+        </select>
+      <% end %>
+    </div>
+
+    <div class="agenda-planner__body" data-agenda-planner-target="body">
+      <% if tappe_per_area.empty? %>
+        <p class="txt-small txt-subtle pad-block txt-center">Nessuna tappa da programmare</p>
+      <% else %>
+        <% tappe_per_area.each do |area, direzioni| %>
+          <%= render "agenda/planner_area", area: area, direzioni: direzioni %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Mobile action bar — shows when tappe are selected %>
+    <div class="agenda-planner__action-bar" data-agenda-planner-target="actionBar" hidden>
+      <span class="txt-small txt-bold" data-agenda-planner-target="selectionCount">0 selezionate</span>
+      <div class="agenda-planner__days" data-agenda-planner-target="dayButtons"></div>
+    </div>
+  </div>
+<% end %>
