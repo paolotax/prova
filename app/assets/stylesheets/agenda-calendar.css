@@ -285,11 +285,11 @@
   /* ------------------------------------------------------------------------ */
 
   .agenda-planner {
-    background-color: color-mix(in srgb, var(--color-link) 8%, var(--color-canvas));
-    border: 1px solid var(--color-ink-lighter);
+    background-color: color-mix(in srgb, var(--color-link) 6%, var(--color-canvas));
+    border: 1px solid var(--color-link);
     border-radius: 0.6em;
-    max-inline-size: 100%;
     margin-block-end: var(--block-space-half);
+    margin-inline: -0.5em;
     position: sticky;
     inset-block-start: 6.5rem;
     z-index: calc(var(--z-nav) - 1);
@@ -318,6 +318,24 @@
   .agenda-planner__title {
     font-size: var(--text-medium);
     font-weight: 700;
+  }
+
+  .agenda-planner__trash {
+    align-items: center;
+    border: 2px dashed transparent;
+    border-radius: 0.4em;
+    color: var(--color-ink-medium);
+    display: flex;
+    justify-content: center;
+    margin-inline-start: auto;
+    padding: 0.3em;
+    transition: all 0.15s;
+  }
+
+  .agenda-planner__trash--active {
+    background-color: color-mix(in srgb, var(--color-negative) 10%, transparent);
+    border-color: var(--color-negative);
+    color: var(--color-negative);
   }
 
   .agenda-planner__caret {

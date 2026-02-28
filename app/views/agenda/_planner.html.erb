@@ -18,6 +18,11 @@
           <% end %>
         </select>
       <% end %>
+
+      <div class="agenda-planner__trash" data-agenda-planner-target="trash"
+           data-action="dragover->agenda-planner#trashOver drop->agenda-planner#trashDrop dragleave->agenda-planner#trashLeave">
+        <%= icon_tag "trash", class: "icon--small" %>
+      </div>
     </div>
 
     <div class="agenda-planner__body" data-agenda-planner-target="body"

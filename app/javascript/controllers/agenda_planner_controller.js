@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
-import { patch } from "@rails/request.js"
+import { patch, destroy } from "@rails/request.js"
 
 export default class extends Controller {
-  static targets = ["body", "toggle", "giroFilter"]
+  static targets = ["body", "giroFilter", "trash"]
 
   // Planner → Calendar: native drag
   dragStart(event) {
@@ -27,7 +27,6 @@ export default class extends Controller {
   }
 
   dropzoneLeave(event) {
-    // Only remove if leaving the body entirely
     if (!this.bodyTarget.contains(event.relatedTarget)) {
       this.bodyTarget.classList.remove("agenda-planner__body--drop-target")
     }
@@ -41,26 +40,68 @@ export default class extends Controller {
     if (!raw) return
 
     const items = JSON.parse(raw)
-    const accountMatch = window.location.pathname.match(/^(\/[0-9a-f-]{36})/)
-    const prefix = accountMatch ? accountMatch[1] : ""
+    const prefix = this.accountPrefix
 
     for (const item of items) {
       const tappaId = item.id || item
-
-      // Remove from calendar
       const calendarCard = document.getElementById(`tappa_${tappaId}`)
       if (calendarCard) calendarCard.remove()
 
-      // PATCH with null date
       await patch(`${prefix}/tappe/${tappaId}/sort`, {
         body: JSON.stringify({ data_tappa: null, position: 0 }),
         contentType: "application/json"
       })
     }
 
-    // Reload planner frame
     const frame = this.element.closest("turbo-frame")
     if (frame) frame.reload()
+  }
+
+  // Trash drop zone — delete tappa
+  trashOver(event) {
+    if (event.dataTransfer.types.includes("application/x-tappa-ids")) {
+      event.preventDefault()
+      this.trashTarget.classList.add("agenda-planner__trash--active")
+    }
+  }
+
+  trashLeave() {
+    this.trashTarget.classList.remove("agenda-planner__trash--active")
+  }
+
+  async trashDrop(event) {
+    event.preventDefault()
+    this.trashTarget.classList.remove("agenda-planner__trash--active")
+
+    const raw = event.dataTransfer.getData("application/x-tappa-ids")
+    if (!raw) return
+
+    const items = JSON.parse(raw)
+    const prefix = this.accountPrefix
+
+    for (const item of items) {
+      const tappaId = item.id || item
+
+      // Remove from DOM
+      const plannerCard = document.querySelector(`.agenda-planner__tappa[data-tappa-id="${tappaId}"]`)
+      if (plannerCard) {
+        const direzione = plannerCard.closest(".agenda-planner__direzione")
+        plannerCard.remove()
+        if (direzione && !direzione.querySelector(".agenda-planner__tappa")) {
+          direzione.remove()
+        }
+      }
+
+      await destroy(`${prefix}/tappe/${tappaId}`, {
+        contentType: "application/json"
+      })
+    }
+
+    // Update badge
+    const badge = document.querySelector(".agenda-planner__title .badge")
+    if (badge) {
+      badge.textContent = document.querySelectorAll(".agenda-planner__tappa").length
+    }
   }
 
   filterGiro(event) {
@@ -68,10 +109,14 @@ export default class extends Controller {
     const frame = this.element.closest("turbo-frame")
     if (!frame) return
 
-    const accountMatch = window.location.pathname.match(/^(\/[0-9a-f-]{36})/)
-    const prefix = accountMatch ? accountMatch[1] : ""
+    const prefix = this.accountPrefix
     frame.src = giroId
       ? `${prefix}/agenda/planner?giro_id=${giroId}`
       : `${prefix}/agenda/planner`
+  }
+
+  get accountPrefix() {
+    const match = window.location.pathname.match(/^(\/[0-9a-f-]{36})/)
+    return match ? match[1] : ""
   }
 }
