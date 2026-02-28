@@ -17,7 +17,7 @@
 
 				<!-- Tappe anni precedenti (nascoste di default) -->
 				<div data-tax-reveal-target="item" class="hidden col-span-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1">
-					<%= render partial: "tappe/tappa", collection: tappe_anni_precedenti, as: :tappa, locals: { with_checkbox: false, with_handle: false } %>
+					<%= render partial: "tappe/tappa", collection: tappe_anni_precedenti, as: :tappa, locals: {} %>
 				</div>
 			<% end %>
 
@@ -28,7 +28,7 @@
 						2025 (<%= tappe_anni_precedenti.size %>)
 					</button>
 				</div>
-				<%= render partial: "tappe/tappa", collection: tappe_anno_corrente, as: :tappa, locals: { with_checkbox: false, with_handle: false } %>
+				<%= render partial: "tappe/tappa", collection: tappe_anno_corrente, as: :tappa, locals: {} %>
 			<% end %>
 
 			<% if tappe_anno_corrente.empty? && tappe_anni_precedenti.empty? %>

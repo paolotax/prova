@@ -15,7 +15,7 @@
 				<!-- Colonne 2-12: Tappe dell'anno -->
 				<% tappe_anno.sort_by(&:data_tappa).each do |tappa| %>
 					<div class="<%= tappa.giri.any? ? 'col-span-2' : 'col-span-1' %>">
-						<%= render partial: "tappe/tappa", locals: { tappa: tappa, with_checkbox: false, with_handle: false } %>
+						<%= render partial: "tappe/tappa", locals: { tappa: tappa } %>
 					</div>
 				<% end %>
 			</div>

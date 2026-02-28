@@ -128,7 +128,7 @@
                 <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
             </div>
         <% else %>
-            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { with_checkbox: false } %>
+            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
         <% end %>
     </div>
     <%= render "tappe/bulk_bar/bar" %>

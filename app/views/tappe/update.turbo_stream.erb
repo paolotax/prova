@@ -8,7 +8,7 @@
 
 
 <%= turbo_stream.replace @tappa do %>
-    <%= render partial: "tappe/tappa", locals: { tappa: @tappa.reload, with_checkbox: false, with_handle: true }  %>
+    <%= render partial: "tappe/tappa", locals: { tappa: @tappa.reload }  %>
 <% end %>
 
 <%= turbo_stream.update "flash", partial: "layouts/flash" %>
