@@ -3,6 +3,7 @@
 # Table name: giri
 #
 #  id           :bigint           not null, primary key
+#  color        :string           default("var(--color-card-default)")
 #  conditions   :text
 #  descrizione  :string
 #  excluded_ids :text

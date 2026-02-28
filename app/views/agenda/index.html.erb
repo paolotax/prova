@@ -3,7 +3,24 @@
 <% @page_title = "Agenda" %>
 
 <% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <button type="button" class="btn" onclick="document.querySelector('.agenda-planner')?.classList.toggle('agenda-planner--collapsed')">
+      <%= icon_tag "calendar", size: "small" %>
+      <span class="for-screen-reader">Planner</span>
+    </button>
+  </div>
+
   <h1 class="header__title">Agenda</h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<%= turbo_frame_tag "agenda-planner", src: agenda_planner_path do %>
+  <div class="agenda-planner" data-controller="agenda-planner">
+    <div class="agenda-planner__header">
+      <span class="agenda-planner__title">Da programmare <span class="spinner spinner--small"></span></span>
+    </div>
+  </div>
 <% end %>
 
 <div class="agenda-calendar"
@@ -28,11 +45,3 @@
   <%# Bottom sentinel for loading future weeks %>
   <div data-agenda-calendar-target="sentinelBottom" class="agenda-calendar__sentinel"></div>
 </div>
-
-<%= turbo_frame_tag "agenda-planner", src: agenda_planner_path, loading: :lazy do %>
-  <div class="agenda-planner">
-    <div class="agenda-planner__header">
-      <span class="agenda-planner__title">Da programmare <span class="spinner spinner--small"></span></span>
-    </div>
-  </div>
-<% end %>

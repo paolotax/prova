@@ -1,6 +1,1 @@
-<%= turbo_stream.replace dom_id @giro do %>
-    <%= render partial: "giri/giro", locals: { giro: @giro } %>
-<% end %>
-
-<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
-<%= stream_notification "Giro modificato!", type: "success" %>
+<%= turbo_stream.update "modal" %>

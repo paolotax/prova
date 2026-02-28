@@ -35,22 +35,22 @@ class AgendaController < ApplicationController
       tappe = tappe.joins(:giri).where(giri: { id: params[:giro_id] }).distinct
     end
 
-    # Group: area → direzione → plessi
-    tappe_per_area = tappe.group_by { |t|
-      t.tappable.area.presence || "Senza area"
-    }.transform_values { |tappe_area|
-      tappe_area.group_by { |t|
-        t.tappable.direzione || t.tappable
+    tappe_per_area = tappe
+      .group_by { |t| t.tappable.area.presence || "Senza area" }
+      .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+      .map { |area, area_tappe|
+        direzioni = area_tappe
+          .group_by { |t| t.tappable.direzione || t.tappable }
+          .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
+        [area, direzioni]
       }
-    }.sort_by { |area, _| area == "Senza area" ? "zzz" : area }
 
     giri = current_user.giri.order(created_at: :desc)
-    total_count = tappe.count
 
     render partial: "agenda/planner", locals: {
       tappe_per_area: tappe_per_area,
       giri: giri,
-      total_count: total_count
+      total_count: tappe.size
     }
   end
 

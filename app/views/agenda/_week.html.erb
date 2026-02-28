@@ -68,7 +68,11 @@
         <div class="agenda-week__day-header">
           <%= link_to giorno_path(giorno.iso8601), data: { turbo_frame: "_top" }, class: "agenda-week__day-link" do %>
             <span class="agenda-week__day-name"><%= I18n.l(giorno, format: "%a", locale: :it).upcase %></span>
-            <span class="agenda-week__day-number"><%= giorno.day %></span>
+            <% if is_today %>
+              <span class="agenda-week__day-number agenda-week__day-number--today"><%= giorno.day %></span>
+            <% else %>
+              <span class="agenda-week__day-number"><%= giorno.day %></span>
+            <% end %>
           <% end %>
         </div>
 

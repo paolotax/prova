@@ -1,53 +1,36 @@
-<div id="<%= dom_id giro %>" class="grid grid-cols-6 sm:grid-cols-7 bg-white border-b items-center align-center px-4 py-2.5 rounded-lg shadow-lg">
-  
-    <div class="col-span-4">
-        <div class="text-xl hover:text-indigo-600">
-            <%= link_to giro_path(giro), data: { turbo_frame: "_top"} do %>
-                <%= giro.titolo %>
-            <% end %>
-        </div>
-        <div class="">
-            <%= giro.descrizione %>
-        </div>
-    </div>
+<%# locals: (giro:) -%>
 
-    <div class="col-span-1 hidden sm:block">
-        <%= giro.tappe.completate.size %> di 
-        <%= pluralize giro.tappe.size, "tappa", "tappe" %>
-    </div>
+<div id="<%= dom_id giro %>" class="panel shadow flex gap align-center" style="--panel-padding: var(--block-space-half) var(--block-space);">
 
-  	<div class="col-span-2 flex items-center align-center justify-around ">
-    	<%= link_to "apri", giro_tappe_path(giro), class: "text-xs h-6 w-6 text-center", 
-            data: { turbo_frame: "_top" } %>
-		
+  <div class="flex flex-column flex-grow" style="min-inline-size: 0;">
+    <%= link_to giro_path(giro), data: { turbo_frame: "_top" }, class: "txt-bold" do %>
+      <%= giro.titolo %>
+    <% end %>
+    <% if giro.descrizione.present? %>
+      <span class="txt-x-small txt-subtle overflow-ellipsis"><%= giro.descrizione %></span>
+    <% end %>
+  </div>
 
-		<%= link_to edit_giro_path(giro), 
-			class: "not-hotwire-native:hidden 
-				mx-2 h-7 w-7 flex justify-center items-center text-center text-gray-400 hover:text-gray-500 
-				rounded-full shadow-sm hover:bg-gray-300 
-				focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" do %>
-			<%= inline_svg_tag "icon-pencil.svg" %>
-		<% end %>
+  <span class="txt-x-small txt-subtle hide-on-touch" style="white-space: nowrap;">
+    <%= giro.tappe.completate.size %>/<%= giro.tappe.size %> tappe
+  </span>
 
-		<%= link_to edit_giro_path(giro), 
-			class: "hotwire-native:hidden 
-				mx-2 h-7 w-7 flex justify-center items-center text-center text-gray-400 hover:text-gray-500 
-				rounded-full shadow-sm hover:bg-gray-300 
-				focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
-			data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
-			<%= inline_svg_tag "icon-pencil.svg" %>
-		<% end %>
-		
-		<%= button_to giro_path(giro), 
-				data: { confirm: "Sei sicuro?", turbo_confirm: "Sei sicuro?" }, method: :delete,
-				disabled: !giro.tappe.empty?,  
-				class: [
-					"mx-2 h-7 w-7 flex justify-center items-center text-center rounded-full shadow-sm": true,
-					"bg-red-600 text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600": giro.tappe.empty?,
-					"cursor-not-allowed opacity-50 bg-gray-200 text-gray-400 ": !giro.tappe.empty?
-				] do %>
-			<%= inline_svg_tag "icon-trash.svg" %>
-		<% end %>
-    </div>
+  <div class="flex gap-quarter align-center">
+    <%= link_to edit_giro_path(giro),
+        class: "btn btn--circle btn--plain",
+        style: "--btn-size: 2em;",
+        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+      <%= icon_tag "pencil", class: "icon--small" %>
+    <% end %>
 
+    <% if giro.can_delete? %>
+      <%= button_to giro_path(giro),
+          method: :delete,
+          class: "btn btn--circle btn--negative",
+          style: "--btn-size: 2em;",
+          data: { turbo_confirm: "Eliminare questo giro?" } do %>
+        <%= icon_tag "trash", class: "icon--small" %>
+      <% end %>
+    <% end %>
+  </div>
 </div>

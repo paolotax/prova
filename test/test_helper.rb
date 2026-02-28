@@ -19,11 +19,3 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
-
-# Stub stream_notification helper for turbo_stream views in tests
-module StreamNotificationStub
-  def stream_notification(message, type: "success")
-    ""
-  end
-end
-ActionView::Base.include(StreamNotificationStub)

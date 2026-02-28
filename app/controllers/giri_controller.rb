@@ -134,6 +134,6 @@ class GiriController < ApplicationController
         params[:giro][:excluded_ids] = [params[:giro][:excluded_ids]]
       end
       
-      params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione, :filter, conditions: [], excluded_ids: [])
+      params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione, :color, :filter, conditions: [], excluded_ids: [])
     end
 end

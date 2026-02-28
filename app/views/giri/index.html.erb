@@ -8,7 +8,7 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to url_for(controller: "giri", action: "new", model: nil),
+    <%= link_to new_giro_path,
         class: "btn btn--primary",
         data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
       <%= icon_tag "add", size: "small" %>
@@ -19,21 +19,10 @@
 
 <%= turbo_stream_from current_user, "giri" %>
 
-<%= link_to "Nuovo Giro", new_giro_path, data: { controller: "bridge--button", bridge_title: "Nuovo" }, class: "hidden" %>
-
-<div id="giri-lista" role="list" class="py-5 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-2 xl:gap-x-8">
-	<p class="only:block hidden py-8  px-4 lg:col-span-2 2xl:col-span-3 text-center mx-auto">Whoops! Non ci sono giri organizzati.</p>									
-	<%= render @giri %>
+<div id="giri-lista" role="list" class="flex flex-column gap-half center" style="max-inline-size: min(72ch, 100%);">
+  <% if @giri.empty? %>
+    <p class="txt-subtle txt-center pad-block-double">Nessun giro organizzato</p>
+  <% else %>
+    <%= render @giri %>
+  <% end %>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-

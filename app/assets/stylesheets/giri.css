@@ -1,0 +1,120 @@
+@layer components {
+
+  /* Giro Board — 3-column kanban
+  /* -------------------------------------------------------------------------- */
+
+  .giro-board {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space);
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .giro-board__column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-inline-size: 0;
+
+    @media (min-width: 768px) {
+      max-block-size: calc(100dvh - 8rem);
+    }
+  }
+
+  .giro-board__column-header {
+    align-items: center;
+    border-block-end: 2px solid var(--color-ink-lighter);
+    display: flex;
+    gap: 0.5em;
+    padding-block-end: var(--block-space-half);
+  }
+
+  .giro-board__column-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  /* Day groups */
+
+  .giro-board__day {
+    border-block-end: 1px solid var(--color-ink-lightest);
+    padding: var(--block-space-half) 0;
+  }
+
+  .giro-board__day-header {
+    align-items: center;
+    display: flex;
+    gap: 0.5em;
+    margin-block-end: var(--block-space-half);
+  }
+
+  .giro-board__comune {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    margin-block-end: var(--block-space-half);
+  }
+
+  /* Badge — school chip */
+
+  .giro-board__badge {
+    align-items: center;
+    background-color: var(--color-ink-lightest);
+    border-radius: 2em;
+    cursor: grab;
+    display: inline-flex;
+    gap: 0.3em;
+    padding: 0.15em 0.5em;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    a {
+      color: var(--color-ink);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  /* Dropzone form */
+
+  .giro-board__dropzone-form {
+    border: 1px solid var(--color-ink-lighter);
+    border-radius: 0.5em;
+    margin-block: var(--block-space-half);
+    padding: var(--block-space-half);
+  }
+
+  .giro-board__dropzone {
+    border: 2px dashed var(--color-ink-lighter);
+    border-radius: 0.4em;
+    min-block-size: 4em;
+    padding: var(--block-space-half);
+  }
+
+  /* Excluded schools */
+
+  .giro-board__excluded {
+    border-block-start: 1px solid var(--color-ink-lightest);
+    margin-block-start: var(--block-space-half);
+    padding-block-start: var(--block-space-half);
+
+    summary {
+      cursor: pointer;
+      list-style: none;
+
+      &::marker { content: ""; }
+      &::-webkit-details-marker { display: none; }
+    }
+  }
+}

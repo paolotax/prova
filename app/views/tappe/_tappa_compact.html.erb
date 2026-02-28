@@ -1,10 +1,12 @@
 <%# locals: (tappa:) -%>
 
 <% if tappa.present? && tappa.persisted? %>
+  <% giro_color = tappa.giri.first&.color %>
   <div class="tappa-compact <%= tappa_type_modifier(tappa) %>"
        id="<%= dom_id(tappa) %>"
        data-tappa-id="<%= tappa.id %>"
-       data-tax-sortable-update-url="<%= sort_tappa_path(tappa) %>">
+       data-tax-sortable-update-url="<%= sort_tappa_path(tappa) %>"
+       <%= "style=--tappa-color:#{giro_color}".html_safe if giro_color %>>
 
     <div class="tappa-compact__content">
       <span class="tappa-compact__name"><%= tappa.tappable.denominazione %></span>

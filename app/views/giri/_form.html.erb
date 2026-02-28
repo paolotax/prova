@@ -1,62 +1,35 @@
-<%= form_with(model: giro, builder: RailsDesigner::FormBuilder) do |form| %>
+<%# locals: (giro:) -%>
 
-	<% if giro.errors.any? %>
-		<div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-			<h2>Non posso salvare il Giro. <%= t 'misc.errori', count: giro.errors.count %></h2>
-		</div>
-	<% end %>
+<%= form_with(model: giro, class: "flex flex-column gap") do |form| %>
 
-    <div class="my-5">
-        <%= component "field" do |field| %>
-            <% field.with_label { render FormLabelComponent.new(form: form, field: :titolo, label: "Titolo") } %>
-            <%= form.text_field :titolo, placeholder: "titolo", autofocus: :true %>
-        <% end %>
+  <% if giro.errors.any? %>
+    <div class="txt-negative txt-small">
+      <%= t 'misc.errori', count: giro.errors.count %>
     </div>
-          
-    <div class="my-5">
-        <%= component "field" do |field| %>
-            <% field.with_hint { "Qui puoi segnare le note per il giro" } %>
-            <%= form.text_area :descrizione, rows: 3, placeholder: "descrizione..." %>
-        <% end %>
-    </div>  
+  <% end %>
 
-    <div class="my-5">
-        <%= component "field" do |field| %>
-            <% field.with_label { render FormLabelComponent.new(form: form, field: :conditions, label: "Condizioni") } %>
-            <% field.with_hint { "Seleziona le condizioni per filtrare le scuole" } %>
-            <div class="space-y-3">
-                <div class="flex items-center gap-2">
-                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_adozioni', nil %>
-                    <%= form.label "Tutte le scuole", class: "text-sm text-gray-700" %>
-                </div>
-                <div class="flex items-center gap-2">
-                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_appunti', nil %>
-                    <%= form.label "Scuole con appunti", class: "text-sm text-gray-700" %>
-                </div>
-                <div class="flex items-center gap-2">
-                    <%= form.check_box :conditions, { multiple: true, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600" }, 'with_ordini', nil %>
-                    <%= form.label "Scuole con ordini", class: "text-sm text-gray-700" %>
-                </div>
-            </div>
-        <% end %>
-    </div>
+  <div>
+    <label class="txt-small txt-bold" for="giro_titolo">Titolo</label>
+    <%= form.text_field :titolo, placeholder: "titolo", autofocus: true, class: "input" %>
+  </div>
 
-    <div class="my-5">
-        <%= component "field" do |field| %>
-            <% field.with_label { render FormLabelComponent.new(form: form, field: :excluded_ids, label: "Scuole da escludere") } %>
-            <% field.with_hint { "Inserisci gli ID delle scuole da escludere, separati da virgola" } %>
-            <%= form.text_field :excluded_ids, value: @giro.excluded_ids&.join(','), placeholder: "es: 1,2,3" %>
-        <% end %>
-    </div>
+  <div>
+    <label class="txt-small txt-bold" for="giro_descrizione">Descrizione</label>
+    <%= form.text_area :descrizione, rows: 3, placeholder: "note...", class: "input input--textarea" %>
+  </div>
 
-    <div class="inline hotwire-native:hidden">
-        <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+  <div class="color-picker__colors">
+    <% Color::COLORS.each do |color| %>
+      <label class="btn txt-small borderless" style="--btn-background: <%= color %>" title="<%= color.name %>">
+        <%= form.radio_button :color, color.value, checked: (giro.color == color.value || (giro.new_record? && color.value == "var(--color-card-default)")) %>
+        <%= icon_tag "check", class: "checked" %>
+        <span class="for-screen-reader"><%= color.name %></span>
+      </label>
+    <% end %>
+  </div>
 
-    <div class="hidden">
-        <%= form.submit data: {
-                controller: "bridge--button",
-                bridge_title: "Salva"
-        } %>
-    </div>
+  <div class="flex gap-half justify-end margin-block-start">
+    <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+    <%= form.submit "Salva", class: "btn btn--link" %>
+  </div>
 <% end %>

@@ -97,6 +97,10 @@
     background-color: color-mix(in srgb, var(--color-selected) 30%, transparent);
   }
 
+  .agenda-week__day--weekend.agenda-week__day--today {
+    background-color: color-mix(in srgb, var(--color-selected) 20%, transparent);
+  }
+
   /* Weekend group — SAB + DOM share one grid column, split 50/50
   /* ------------------------------------------------------------------------ */
 
@@ -281,14 +285,22 @@
   /* ------------------------------------------------------------------------ */
 
   .agenda-planner {
-    margin-block-start: var(--block-space);
+    background-color: color-mix(in srgb, var(--color-link) 8%, var(--color-canvas));
+    border: 1px solid var(--color-ink-lighter);
+    border-radius: 0.6em;
+    max-inline-size: 100%;
+    margin-block-end: var(--block-space-half);
+    position: sticky;
+    inset-block-start: 6.5rem;
+    z-index: calc(var(--z-nav) - 1);
   }
 
   .agenda-planner__header {
     align-items: center;
+    border-block-end: 1px solid var(--color-ink-lighter);
     display: flex;
     gap: var(--inline-space);
-    padding: var(--block-space-half) 0;
+    padding: var(--block-space-half) var(--inline-space-half);
   }
 
   .agenda-planner__toggle {
@@ -312,115 +324,81 @@
     transition: transform 0.2s;
   }
 
-  .agenda-planner--collapsed .agenda-planner__caret {
-    transform: rotate(-90deg);
-  }
-
-  .agenda-planner--collapsed .agenda-planner__body {
+  .agenda-planner--collapsed {
     display: none;
   }
 
   .agenda-planner__body {
     display: flex;
-    flex-direction: column;
-    gap: var(--block-space);
-  }
-
-  /* Area sections */
-
-  .agenda-planner__area {
-    border: 1px solid var(--color-ink-lighter);
-    border-radius: 0.4em;
-    overflow: hidden;
-  }
-
-  .agenda-planner__area-header {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    gap: 0.5em;
-    list-style: none;
+    gap: var(--inline-space-half);
+    overflow-x: auto;
     padding: var(--block-space-half) var(--inline-space-half);
-
-    &::-webkit-details-marker { display: none; }
-    &::marker { content: ""; }
   }
 
-  .agenda-planner__area-body {
-    padding: 0 var(--inline-space-half) var(--block-space-half);
-  }
+  /* Area label — vertical, like month label */
 
-  /* Direzione groups */
-
-  .agenda-planner__direzione {
-    margin-block-start: var(--block-space-half);
-  }
-
-  .agenda-planner__check-label {
+  .agenda-planner__area-label {
     align-items: center;
-    cursor: pointer;
     display: flex;
-    gap: 0.4em;
+    flex-shrink: 0;
 
-    input[type="checkbox"] {
-      flex-shrink: 0;
+    span {
+      color: var(--color-ink-medium);
+      font-size: var(--text-xx-small);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
     }
   }
 
-  /* Tappa rows */
+  /* Direzione column */
+
+  .agenda-planner__direzione {
+    flex-shrink: 0;
+    inline-size: 14em;
+  }
+
+  .agenda-planner__direzione-header {
+    border-block-end: 1px solid var(--color-ink-lighter);
+    margin-block-end: 0.3em;
+    padding-block-end: 0.2em;
+  }
+
+  .agenda-planner__direzione-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+  }
+
+  /* Tappa chip */
 
   .agenda-planner__tappa {
-    align-items: center;
+    background-color: var(--color-canvas);
+    border-inline-start: 3px solid var(--giro-color, var(--color-ink-lighter));
     border-radius: 0.2em;
     cursor: grab;
-    display: flex;
-    gap: 0.4em;
-    padding: 0.15em 0.3em;
-    padding-inline-start: 1.5em;
+    padding: 0.15em 0.4em;
 
     &:hover {
-      background-color: var(--color-ink-lightest);
+      background-color: color-mix(in srgb, var(--giro-color, var(--color-ink-lighter)) 10%, var(--color-canvas));
     }
 
     &:active {
       cursor: grabbing;
     }
 
-    &.selected {
-      background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
+    &.dragging {
+      opacity: 0.4;
     }
   }
 
-  .agenda-planner__giro-badge {
-    background-color: var(--color-ink-lightest);
-    border-radius: 0.2em;
-    color: var(--color-ink-dark);
-    flex-shrink: 0;
-    font-size: var(--text-xx-small);
-    font-weight: 600;
-    margin-inline-start: auto;
-    padding: 0.1em 0.4em;
-  }
-
-  /* Action bar — mobile fallback */
-
-  .agenda-planner__action-bar {
-    align-items: center;
-    background-color: var(--color-canvas);
-    border-block-start: 1px solid var(--color-ink-lighter);
-    bottom: 0;
-    display: flex;
-    gap: var(--inline-space);
-    inset-inline: 0;
-    padding: var(--block-space-half) var(--inline-space);
-    position: fixed;
-    z-index: var(--z-bar);
-  }
-
-  .agenda-planner__days {
-    display: flex;
-    gap: 0.3em;
-    overflow-x: auto;
+  /* Planner drop target highlight */
+  .agenda-planner__body--drop-target {
+    background-color: color-mix(in srgb, var(--color-link) 8%, transparent);
+    outline: 2px dashed var(--color-link);
+    outline-offset: -2px;
+    border-radius: 0.4em;
   }
 
   /* Day cell drag-over highlight */

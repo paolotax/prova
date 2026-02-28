@@ -42,8 +42,6 @@
 <% end %>
 
 
-<%#= turbo_stream.replace "notice", partial: "layouts/flash" %>
-<%= stream_notification "Tappa eliminata!", type: "success" %>
 
  <% if @tappa.tappable.is_a?(Scuola) && @tappa.tappable.respond_to?(:appunti) %>
    <% @tappa.tappable.appunti.each do |appunto| %>
