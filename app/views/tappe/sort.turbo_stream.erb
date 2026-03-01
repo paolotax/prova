@@ -1,3 +1,11 @@
-<%= turbo_stream.replace @tappa do %>
-    <%= render partial: "tappe/tappa", locals: { tappa: @tappa.reload }  %>
+<% tappa = @tappa.reload %>
+
+<% if params[:source] == "planner" %>
+  <%= turbo_stream.append "tappe-#{tappa.data_tappa.iso8601}" do %>
+    <%= render partial: "tappe/tappa_compact", locals: { tappa: tappa } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace tappa do %>
+    <%= render partial: "tappe/tappa_compact", locals: { tappa: tappa } %>
+  <% end %>
 <% end %>

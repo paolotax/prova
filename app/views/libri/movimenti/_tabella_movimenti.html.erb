@@ -17,11 +17,11 @@
         <td class="overflow-ellipsis" style="max-width: 200px;">
           <% clientable = dr.documento.clientable %>
           <% if clientable.present? && !clientable.is_a?(Domain::NessunCliente) %>
-            <%= link_to truncate(clientable.denominazione, length: 30), clientable, class: "txt-link" %>
+            <%= link_to truncate(clientable.denominazione, length: 30), clientable, class: "txt-link", data: { turbo_frame: "_top" }  %>
           <% end %>
         </td>
         <td>
-          <%= link_to documento_path(dr.documento), class: "txt-link" do %>
+          <%= link_to documento_path(dr.documento), class: "txt-link", data: { turbo_frame: "_top" }  do %>
             <%= dr.documento.causale %> #<%= dr.documento.numero_documento %>
           <% end %>
         </td>

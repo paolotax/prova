@@ -12,9 +12,9 @@ class Libro::Movimenti
               .merge(Documento.where.missing(:consegna))
   end
 
-  # Righe da documenti con consegna, solo padri o senza padre
+  # Righe da documenti chiusi (con closure), solo padri o senza padre
   def completati
-    righe_base.merge(Documento.where.associated(:consegna))
+    righe_base.merge(Documento.completati)
   end
 
   # Crosstab: { 2024 => { "ordine" => N, "vendita" => N, "carico" => N, importo: N }, ... }

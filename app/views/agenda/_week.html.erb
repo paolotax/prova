@@ -46,6 +46,7 @@
       <div class="agenda-week__tappe"
            data-controller="tax-sortable"
            data-tax-sortable-group-value="calendar"
+           id="tappe-<%= giorno.iso8601 %>"
            data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
         <% tappe.sort_by(&:position).each do |tappa| %>
           <%= render "tappe/tappa_compact", tappa: tappa %>
@@ -85,7 +86,8 @@
         <div class="agenda-week__tappe"
              data-controller="tax-sortable"
              data-tax-sortable-group-value="calendar"
-             data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
+             id="tappe-<%= giorno.iso8601 %>"
+           data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
           <% tappe.sort_by(&:position).each do |tappa| %>
             <%= render "tappe/tappa_compact", tappa: tappa %>
           <% end %>

@@ -34,32 +34,22 @@ export default class extends Controller {
       const tappaId = item.id || item
       const name = item.name || ""
 
-      // Remove from planner
+      // Only handle planner-to-calendar drops.
+      // Calendar-to-calendar drops are handled by tax-sortable.
       const plannerCard = document.querySelector(`.agenda-planner__tappa[data-tappa-id="${tappaId}"]`)
-      if (plannerCard) {
-        // Remove empty direzione if last card
-        const direzione = plannerCard.closest(".agenda-planner__direzione")
-        plannerCard.remove()
-        if (direzione && !direzione.querySelector(".agenda-planner__tappa")) {
-          direzione.remove()
-        }
+      if (!plannerCard) continue
+
+      // Remove from planner
+      const direzione = plannerCard.closest(".agenda-planner__direzione")
+      plannerCard.remove()
+      if (direzione && !direzione.querySelector(".agenda-planner__tappa")) {
+        direzione.remove()
       }
 
-      // Insert compact card in day
-      if (tappeContainer) {
-        const card = document.createElement("div")
-        card.className = "tappa-compact"
-        card.id = `tappa_${tappaId}`
-        card.dataset.tappaId = tappaId
-        card.dataset.taxSortableUpdateUrl = `${prefix}/tappe/${tappaId}/sort`
-        card.innerHTML = `<div class="tappa-compact__content"><span class="tappa-compact__name">${this.escapeHtml(name)}</span></div>`
-        tappeContainer.appendChild(card)
-      }
-
-      // PATCH to server
+      // PATCH to server — turbo stream appends the real card
       await patch(`${prefix}/tappe/${tappaId}/sort`, {
-        body: JSON.stringify({ data_tappa: targetDate, position: 0 }),
-        contentType: "application/json"
+        body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "planner" }),
+        responseKind: "turbo-stream"
       })
     }
 
