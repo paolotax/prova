@@ -10,6 +10,14 @@ export default class extends Controller {
     this.offsetY = 0
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
+
+    // Hide planner when nav menu opens
+    this.onDialogToggle = (e) => {
+      if (e.target.matches(".nav__menu") && e.target.open) {
+        this.element.classList.add("agenda-planner--collapsed")
+      }
+    }
+    document.addEventListener("toggle", this.onDialogToggle, true)
   }
 
   // Panel drag — move planner around the screen
@@ -45,6 +53,10 @@ export default class extends Controller {
     document.removeEventListener("mouseup", this.onMouseUp)
   }
 
+  close() {
+    this.element.classList.add("agenda-planner--collapsed")
+  }
+
   // Double-click header to dock back
   panelDock() {
     this.element.classList.remove("agenda-planner--floating")
@@ -56,6 +68,7 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("mousemove", this.onMouseMove)
     document.removeEventListener("mouseup", this.onMouseUp)
+    document.removeEventListener("toggle", this.onDialogToggle, true)
   }
 
   // Planner → Calendar: single tappa drag
@@ -128,15 +141,31 @@ export default class extends Controller {
       const tappaId = item.id || item
       const calendarCard = document.getElementById(`tappa_${tappaId}`)
       if (calendarCard) calendarCard.remove()
+    }
 
+    // PATCH last item with source=to_planner — server replaces planner body
+    const lastItem = items[items.length - 1]
+    const lastId = lastItem.id || lastItem
+
+    // PATCH all items except last without turbo_stream
+    for (const item of items.slice(0, -1)) {
+      const tappaId = item.id || item
       await patch(`${prefix}/tappe/${tappaId}/sort`, {
-        body: JSON.stringify({ data_tappa: null, position: 0 }),
-        contentType: "application/json"
+        body: JSON.stringify({ data_tappa: null, position: 0 })
       })
     }
 
-    const frame = this.element.closest("turbo-frame")
-    if (frame) frame.reload()
+    // Last PATCH triggers planner body refresh
+    await patch(`${prefix}/tappe/${lastId}/sort`, {
+      body: JSON.stringify({ data_tappa: null, position: 0, source: "to_planner" }),
+      responseKind: "turbo-stream"
+    })
+
+    // Update badge
+    const badge = document.querySelector(".agenda-planner__title .badge")
+    if (badge) {
+      badge.textContent = document.querySelectorAll(".agenda-planner__tappa").length
+    }
   }
 
   // Trash drop zone — delete tappa

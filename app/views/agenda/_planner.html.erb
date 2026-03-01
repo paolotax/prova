@@ -25,42 +25,15 @@
            data-action="dragover->agenda-planner#trashOver drop->agenda-planner#trashDrop dragleave->agenda-planner#trashLeave">
         <%= icon_tag "trash", class: "icon--small" %>
       </div>
+
+      <button type="button" class="agenda-planner__close" data-action="click->agenda-planner#close">
+        <%= icon_tag "close", class: "icon--small" %>
+      </button>
     </div>
 
-    <div class="agenda-planner__body" data-agenda-planner-target="body"
+    <div id="planner-body" class="agenda-planner__body" data-agenda-planner-target="body"
          data-action="dragover->agenda-planner#dropzoneOver drop->agenda-planner#dropzoneDrop dragleave->agenda-planner#dropzoneLeave">
-      <% if tappe_per_area.empty? %>
-        <div class="blank-slate blank-slate--empty margin-block-end">Nessuna tappa da programmare</div>
-      <% else %>
-        <% tappe_per_area.each do |area, direzioni| %>
-          <div class="agenda-planner__area-label">
-            <span><%= area.upcase %></span>
-          </div>
-
-          <% direzioni.each do |direzione, tappe| %>
-            <div class="agenda-planner__direzione">
-              <div class="agenda-planner__direzione-header"
-                   draggable="true"
-                   data-action="dragstart->agenda-planner#direzioneStart dragend->agenda-planner#dragEnd">
-                <span class="txt-xx-small txt-subtle txt-bold"><%= direzione.respond_to?(:denominazione) ? direzione.denominazione : "Senza direzione" %></span>
-              </div>
-              <div class="agenda-planner__direzione-body">
-                <% tappe.sort_by { |t| t.tappable.denominazione }.each do |tappa| %>
-                  <% giro_color = tappa.giri.first&.color || "var(--color-card-default)" %>
-                  <div class="agenda-planner__tappa"
-                       style="--giro-color: <%= giro_color %>"
-                       draggable="true"
-                       data-tappa-id="<%= tappa.id %>"
-                       data-school-id="<%= tappa.tappable_id %>"
-                       data-action="dragstart->agenda-planner#dragStart dragend->agenda-planner#dragEnd">
-                    <span class="txt-x-small"><%= tappa.tappable.denominazione %></span>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      <% end %>
+      <%= render "agenda/planner_body", tappe_per_area: tappe_per_area %>
     </div>
   </div>
 <% end %>

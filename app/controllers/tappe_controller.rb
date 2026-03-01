@@ -162,6 +162,10 @@ class TappeController < ApplicationController
 
     @tappa.update(position: posizione, data_tappa: data_tappa)
 
+    if params[:source] == "to_planner"
+      @planner_tappe_per_area = planner_tappe_per_area
+    end
+
     respond_to do |format|
       format.turbo_stream
       format.html { head :no_content }
@@ -178,9 +182,27 @@ class TappeController < ApplicationController
   end
 
   private
-    
+
     def set_tappa
       @tappa = current_user.tappe.find(params[:id])
+    end
+
+    def planner_tappe_per_area
+      tappe = current_user.tappe
+        .da_programmare
+        .where(tappable_type: "Scuola")
+        .includes(:giri)
+        .preload(:tappable)
+
+      tappe
+        .group_by { |t| t.tappable.area.presence || "Senza area" }
+        .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+        .map { |area, area_tappe|
+          direzioni = area_tappe
+            .group_by { |t| t.tappable.direzione || t.tappable }
+            .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
+          [area, direzioni]
+        }
     end
 
     def find_tappable

@@ -24,7 +24,7 @@
     inset-block-start: var(--block-space);
     inset-inline-end: var(--inline-space);
     position: fixed;
-    z-index: var(--z-bar);
+    z-index: calc(var(--z-nav) + 1);
   }
 
   /* Week row — 6 columns: 5 weekdays + 1 weekend (half width)
@@ -300,7 +300,7 @@
     }
     position: sticky;
     inset-block-start: 4rem;
-    z-index: var(--z-max, 9999);
+    z-index: calc(var(--z-nav) + 1);
   }
 
   .agenda-planner--floating {
@@ -309,7 +309,7 @@
     position: fixed;
     max-inline-size: 80vw;
     resize: both;
-    z-index: var(--z-max, 9999);
+    z-index: calc(var(--z-nav) + 1);
   }
 
   .agenda-planner__header {
@@ -322,6 +322,20 @@
 
     &:active {
       cursor: grabbing;
+    }
+  }
+
+  .agenda-planner__close {
+    align-items: center;
+    background: none;
+    border: 0;
+    color: var(--color-ink-medium);
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+
+    &:hover {
+      color: var(--color-ink);
     }
   }
 
@@ -364,8 +378,23 @@
     transition: transform 0.2s;
   }
 
+  .agenda-planner {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: top center;
+    transition: var(--dialog-duration) allow-discrete;
+    transition-property: display, opacity, transform;
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+  }
+
   .agenda-planner--collapsed {
     display: none;
+    opacity: 0;
+    transform: scale(0.2);
   }
 
   .agenda-planner__body {

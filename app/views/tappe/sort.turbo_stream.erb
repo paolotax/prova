@@ -4,6 +4,10 @@
   <%= turbo_stream.append "tappe-#{tappa.data_tappa.iso8601}" do %>
     <%= render partial: "tappe/tappa_compact", locals: { tappa: tappa } %>
   <% end %>
+<% elsif params[:source] == "to_planner" %>
+  <%= turbo_stream.update "planner-body" do %>
+    <%= render "agenda/planner_body", tappe_per_area: @planner_tappe_per_area %>
+  <% end %>
 <% else %>
   <%= turbo_stream.replace tappa do %>
     <%= render partial: "tappe/tappa_compact", locals: { tappa: tappa } %>
