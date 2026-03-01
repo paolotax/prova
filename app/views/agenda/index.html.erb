@@ -4,13 +4,15 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <button type="button" class="btn" onclick="document.querySelector('.agenda-planner')?.classList.toggle('agenda-planner--collapsed')">
-      <%= icon_tag "calendar", size: "small" %>
-      <span class="for-screen-reader">Planner</span>
+    <button type="button" class="btn btn--back" id="planner-toggle"
+            onclick="document.querySelector('.agenda-planner')?.classList.toggle('agenda-planner--collapsed')">
+      <%= icon_tag "calendar" %>
+      <strong class="overflow-ellipsis">Planner</strong>
+      <kbd class="kbd txt-x-small hide-on-touch">P</kbd>
     </button>
   </div>
 
-  <h1 class="header__title">Agenda</h1>
+  <h1 class="header__title divider divider-fade full-width">Agenda</h1>
 
   <div class="header__actions header__actions--end"></div>
 <% end %>

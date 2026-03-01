@@ -11,6 +11,15 @@ export default class extends Controller {
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
 
+    // Toggle planner with P key
+    this.onKeydown = (e) => {
+      if (e.key === "p" && !e.target.closest("input, textarea, select")) {
+        e.preventDefault()
+        this.element.classList.toggle("agenda-planner--collapsed")
+      }
+    }
+    document.addEventListener("keydown", this.onKeydown)
+
     // Hide planner when nav menu opens
     this.onDialogToggle = (e) => {
       if (e.target.matches(".nav__menu") && e.target.open) {
@@ -68,6 +77,7 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("mousemove", this.onMouseMove)
     document.removeEventListener("mouseup", this.onMouseUp)
+    document.removeEventListener("keydown", this.onKeydown)
     document.removeEventListener("toggle", this.onDialogToggle, true)
   }
 
