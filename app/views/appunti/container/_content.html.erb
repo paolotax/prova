@@ -14,16 +14,3 @@
   </div>
 <% end %>
 
-<% if appunto.righe.any? %>
-  <div class="card__stages margin-block-start">
-    <strong class="txt-small txt-uppercase">Libri (<%= appunto.righe.count %>)</strong>
-    <% appunto.righe.limit(5).each do |riga| %>
-      <div class="txt-small overflow-ellipsis">
-        <%= riga.libro&.titolo || riga.descrizione %>
-      </div>
-    <% end %>
-    <% if appunto.righe.count > 5 %>
-      <div class="txt-small txt-muted">+ altri <%= appunto.righe.count - 5 %></div>
-    <% end %>
-  </div>
-<% end %>

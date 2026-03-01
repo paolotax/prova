@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "scuola_adozioni" do %>
   <section class="group">
-    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
       <%= link_to "Mie adozioni", scuola_adozioni_path(@scuola, scope: "mie"),
           class: "txt-undecorated #{'font-weight-black' if @scope == 'mie'}",
           style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'mie'}",

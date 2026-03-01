@@ -21,12 +21,12 @@
 %>
 
 <% if persone.any? %>
-  <section class="group">
+  <section class="group margin-block-end-double">
     <div class="header margin-none padding-none">
       <div class="header__actions header__actions--start">
         <%= link_to "Cattedre", scuola_cattedre_path(scuola), class: "btn txt-small" %>
       </div>
-      <h3 class="header__title divider divider--fade divider--card txt-medium font-weight-black margin-none">
+      <h3 class="divider divider--fade txt-medium font-weight-black margin-none">
         Insegnanti (<%= persone.size %>)
       </h3>
       <div class="header__actions header__actions--end">
@@ -124,10 +124,10 @@
     <% end %>
   </section>
 <% else %>
-  <section class="group">
+  <section class="group margin-block-end-double">
     <div class="header margin-none padding-none">
       <div class="header__actions header__actions--start"></div>
-      <h3 class="header__title divider divider--fade divider--card txt-medium font-weight-black margin-none">
+      <h3 class="header__title divider divider--fade txt-medium font-weight-black margin-none">
         Insegnanti
       </h3>
       <div class="header__actions header__actions--end">
@@ -160,7 +160,7 @@
         </div>
       </div>
     </div>
-    <p class="txt-small txt-subtle margin-none">Nessun insegnante importato.</p>
+    <p class="txt-small txt-subtle margin-none">Nessun insegnante.</p>
   </section>
 <% end %>
 </div>

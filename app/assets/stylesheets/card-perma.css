@@ -20,6 +20,7 @@
     grid-template-columns: 48px minmax(0, 1120px) 48px;
     inline-size: fit-content;
     margin-block-start: var(--block-space);
+    margin-block-end: var(--block-space);
     max-inline-size: 100%;
     margin-inline: auto;
     position: relative;

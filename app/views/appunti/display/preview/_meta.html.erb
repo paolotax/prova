@@ -2,6 +2,8 @@
 
 <div class="card__meta" id="<%= dom_id(appunto, :meta) %>">
   <div class="card__meta-avatars card__meta-avatars--author">
+    <%= avatar_tag(Current.user) %>
+  
   </div>
 
   <span class="card__meta-text card__meta-text--added">
@@ -39,13 +41,5 @@
       <%= icon_tag "mail" %>
       <%= truncate(appunto.email, length: 20) %>
     <% end %>
-  </span>
-
-  <span class="card__meta-text card__meta-text--copie">
-
-  </span>
-
-  <span class="card__meta-text card__meta-text--importo">
-
   </span>
 </div>
