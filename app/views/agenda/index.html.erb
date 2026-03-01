@@ -4,15 +4,18 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <button type="button" class="btn btn--back" id="planner-toggle"
-            onclick="document.querySelector('.agenda-planner')?.classList.toggle('agenda-planner--collapsed')">
+    <button type="button" class="btn btn--back"
+            data-controller="hotkey toggle-class"
+            data-action="click->toggle-class#toggle keydown.p@document->hotkey#click"
+            data-toggle-class-selector-value=".agenda-planner"
+            data-toggle-class-toggle-class="agenda-planner--collapsed">
       <%= icon_tag "calendar" %>
       <strong class="overflow-ellipsis">Planner</strong>
       <kbd class="kbd txt-x-small hide-on-touch">P</kbd>
     </button>
   </div>
 
-  <h1 class="header__title divider divider-fade full-width">Agenda</h1>
+  <h1 class="header__title divider divider--fade full-width">Agenda</h1>
 
   <div class="header__actions header__actions--end"></div>
 <% end %>

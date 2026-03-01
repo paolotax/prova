@@ -3,17 +3,24 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static classes = [ "toggle" ]
   static targets = [ "checkbox" ]
+  static values = { selector: String }
+
+  get #target() {
+    return this.hasSelectorValue
+      ? document.querySelector(this.selectorValue)
+      : this.element
+  }
 
   toggle() {
-    this.element.classList.toggle(this.toggleClass)
+    this.#target?.classList.toggle(this.toggleClass)
   }
 
   add() {
-    this.element.classList.add(this.toggleClass)
+    this.#target?.classList.add(this.toggleClass)
   }
 
   remove() {
-    this.element.classList.remove(this.toggleClass)
+    this.#target?.classList.remove(this.toggleClass)
   }
 
   checkAll() {
