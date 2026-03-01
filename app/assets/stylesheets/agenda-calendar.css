@@ -208,9 +208,9 @@
     --tappa-color: var(--color-ink-dark);
 
     align-items: center;
-    background-color: var(--color-canvas);
-    border-inline-start: 3px solid var(--tappa-color);
-    border-radius: 0.2em;
+    background-color: var(--tappa-color);
+    border-radius: 0.3em;
+    color: var(--color-ink-inverted);
     cursor: grab;
     display: flex;
     gap: var(--inline-space-half);
@@ -219,7 +219,7 @@
     text-align: start;
 
     &:hover {
-      background-color: var(--color-ink-lightest);
+      filter: brightness(1.1);
     }
 
     &:active {
@@ -257,10 +257,9 @@
   }
 
   .tappa-compact__city {
-    color: var(--color-ink-dark);
     font-size: var(--text-xx-small);
     line-height: 1.3;
-    opacity: 0.7;
+    opacity: 0.8;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -452,14 +451,14 @@
   /* Tappa chip */
 
   .agenda-planner__tappa {
-    background-color: var(--color-canvas);
-    border-inline-start: 3px solid var(--giro-color, var(--color-ink-lighter));
-    border-radius: 0.2em;
+    background-color: var(--giro-color, var(--color-ink-dark));
+    border-radius: 0.3em;
+    color: var(--color-ink-inverted);
     cursor: grab;
     padding: 0.15em 0.4em;
 
     &:hover {
-      background-color: color-mix(in srgb, var(--giro-color, var(--color-ink-lighter)) 10%, var(--color-canvas));
+      filter: brightness(1.1);
     }
 
     &:active {

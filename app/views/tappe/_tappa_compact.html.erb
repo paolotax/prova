@@ -14,11 +14,5 @@
         <span class="tappa-compact__city"><%= tappa.tappable.comune %></span>
       <% end %>
     </div>
-
-    <% if tappa.giri.any? %>
-      <div class="tappa-compact__giro">
-        <span><%= tappa.giri.first.titolo.truncate(8) %></span>
-      </div>
-    <% end %>
   </div>
 <% end %>
