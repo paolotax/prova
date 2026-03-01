@@ -30,7 +30,7 @@
     <div class="agenda-planner__body" data-agenda-planner-target="body"
          data-action="dragover->agenda-planner#dropzoneOver drop->agenda-planner#dropzoneDrop dragleave->agenda-planner#dropzoneLeave">
       <% if tappe_per_area.empty? %>
-        <div class="blank-slate blank-slate--empty">Nessuna tappa da programmare</div>
+        <div class="blank-slate blank-slate--empty margin-block-end">Nessuna tappa da programmare</div>
       <% else %>
         <% tappe_per_area.each do |area, direzioni| %>
           <div class="agenda-planner__area-label">
@@ -39,7 +39,9 @@
 
           <% direzioni.each do |direzione, tappe| %>
             <div class="agenda-planner__direzione">
-              <div class="agenda-planner__direzione-header">
+              <div class="agenda-planner__direzione-header"
+                   draggable="true"
+                   data-action="dragstart->agenda-planner#direzioneStart dragend->agenda-planner#dragEnd">
                 <span class="txt-xx-small txt-subtle txt-bold"><%= direzione.respond_to?(:denominazione) ? direzione.denominazione : "Senza direzione" %></span>
               </div>
               <div class="agenda-planner__direzione-body">

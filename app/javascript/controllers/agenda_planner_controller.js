@@ -58,7 +58,7 @@ export default class extends Controller {
     document.removeEventListener("mouseup", this.onMouseUp)
   }
 
-  // Planner → Calendar: native drag
+  // Planner → Calendar: single tappa drag
   dragStart(event) {
     const el = event.currentTarget
     const tappaId = el.dataset.tappaId
@@ -68,8 +68,36 @@ export default class extends Controller {
     el.classList.add("dragging")
   }
 
+  // Planner → Calendar: entire direzione drag
+  direzioneStart(event) {
+    const header = event.currentTarget
+    const direzione = header.closest(".agenda-planner__direzione")
+    const tappaEls = direzione.querySelectorAll(".agenda-planner__tappa")
+    const items = Array.from(tappaEls).map(el => ({
+      id: el.dataset.tappaId,
+      name: el.querySelector(".txt-x-small")?.textContent?.trim() || ""
+    }))
+    if (items.length === 0) return
+
+    event.dataTransfer.setData("application/x-tappa-ids", JSON.stringify(items))
+    event.dataTransfer.effectAllowed = "move"
+    direzione.classList.add("dragging")
+
+    // Compact drag ghost
+    const ghost = document.createElement("div")
+    const label = header.textContent.trim()
+    ghost.textContent = `${label} (${items.length})`
+    ghost.style.cssText = "position:fixed;top:-999px;padding:0.3em 0.6em;background:var(--color-canvas);border:1px solid var(--color-ink-lighter);border-radius:0.3em;font-size:12px;font-weight:700;white-space:nowrap;"
+    document.body.appendChild(ghost)
+    event.dataTransfer.setDragImage(ghost, 0, 0)
+    requestAnimationFrame(() => ghost.remove())
+  }
+
   dragEnd(event) {
     event.currentTarget.classList.remove("dragging")
+    // Also clean up direzione dragging class
+    const direzione = event.currentTarget.closest(".agenda-planner__direzione")
+    if (direzione) direzione.classList.remove("dragging")
   }
 
   // Calendar → Planner: native drop zone
