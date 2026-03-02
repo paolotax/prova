@@ -4,7 +4,7 @@ module ClassiHelper
     key = tipo_scuola.to_s.upcase
     case key
     when /PRIMO GRADO/          then "oklch(0.6 0.15 160)"  # emerald — medie
-    when /PRIMARIA/              then "oklch(var(--lch-blue-dark)"  # blue — elementari
+    when /PRIMARIA/              then "oklch(0.6 0.15 250)"  # blue — elementari
     when /LICEO SCIENTIFICO/     then "oklch(0.6 0.15 280)"  # indigo
     when /LICEO CLASSICO/        then "oklch(0.55 0.15 310)" # purple
     when /LICEO ARTISTICO/       then "oklch(0.6 0.15 340)"  # pink
