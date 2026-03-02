@@ -1,32 +1,36 @@
 <%= turbo_frame_tag :modal do %>
-  <dialog class="dialog panel" style="--panel-size: 40ch;"
-          data-controller="old-dialog"
-          data-action="click->old-dialog#clickOutside turbo:submit-end->old-dialog#submitEnd">
-    <h3 class="txt-large txt-bold">Copia da giro</h3>
+  <div data-controller="dialog"
+       data-dialog-modal-value="true"
+       data-dialog-auto-open-value="true">
+    <dialog class="dialog panel" style="--panel-size: 40ch;"
+            data-dialog-target="dialog"
+            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+      <h3 class="txt-large txt-bold">Copia da giro</h3>
 
-    <%= form_with url: giro_copia_tappe_path(@giro), method: :post,
-        class: "flex flex-column gap" do |f| %>
+      <%= form_with url: giro_copia_tappe_path(@giro), method: :post,
+          class: "flex flex-column gap" do |f| %>
 
-      <div>
-        <label class="txt-small txt-bold">Giro sorgente</label>
-        <select name="source_giro_id" class="input input--select" required>
-          <option value="">Seleziona un giro...</option>
-          <% @altri_giri.each do |g| %>
-            <option value="<%= g.id %>"><%= g.titolo %> (<%= g.tappe.size %> tappe)</option>
-          <% end %>
-        </select>
-      </div>
+        <div>
+          <label class="txt-small txt-bold">Giro sorgente</label>
+          <select name="source_giro_id" class="input input--select" required>
+            <option value="">Seleziona un giro...</option>
+            <% @altri_giri.each do |g| %>
+              <option value="<%= g.id %>"><%= g.titolo %> (<%= g.tappe.size %> tappe)</option>
+            <% end %>
+          </select>
+        </div>
 
-      <label class="flex align-center gap-half">
-        <input type="checkbox" name="schedule_dates" value="1">
-        <span class="txt-small">Programma date come il giro sorgente</span>
-      </label>
+        <label class="flex align-center gap-half">
+          <input type="checkbox" name="schedule_dates" value="1">
+          <span class="txt-small">Programma date come il giro sorgente</span>
+        </label>
 
-      <div class="flex gap-half justify-end margin-block-start">
-        <button type="button" class="btn" data-action="old-dialog#close">Annulla</button>
-        <%= f.submit "Copia", class: "btn btn--link" %>
-      </div>
-    <% end %>
+        <div class="flex gap-half justify-end margin-block-start">
+          <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+          <%= f.submit "Copia", class: "btn btn--link" %>
+        </div>
+      <% end %>
 
-  </dialog>
+    </dialog>
+  </div>
 <% end %>

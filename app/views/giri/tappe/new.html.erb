@@ -1,91 +1,95 @@
 <%= turbo_frame_tag :modal do %>
-  <dialog class="dialog panel" style="--panel-size: 70ch;"
-          data-controller="old-dialog"
-          data-action="click->old-dialog#clickOutside turbo:submit-end->old-dialog#submitEnd">
-    <h3 class="txt-large txt-bold">Genera tappe</h3>
-    <p class="txt-small txt-subtle margin-block-end">
-      Seleziona le scuole da aggiungere al giro.
-    </p>
+  <div data-controller="dialog"
+       data-dialog-modal-value="true"
+       data-dialog-auto-open-value="true">
+    <dialog class="dialog panel" style="--panel-size: 70ch;"
+            data-dialog-target="dialog"
+            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+      <h3 class="txt-large txt-bold">Genera tappe</h3>
+      <p class="txt-small txt-subtle margin-block-end">
+        Seleziona le scuole da aggiungere al giro.
+      </p>
 
-    <%= form_with url: giro_genera_tappe_path(@giro), method: :post,
-        class: "flex flex-column gap",
-        data: { controller: "cascading-checkboxes" } do |f| %>
+      <%= form_with url: giro_genera_tappe_path(@giro), method: :post,
+          class: "flex flex-column gap",
+          data: { controller: "cascading-checkboxes" } do |f| %>
 
-      <div class="genera-tappe-tree" style="max-block-size: 55vh; overflow-y: auto;">
-        <% @gerarchia.sort.each do |provincia, aree| %>
-          <details class="accordion-provincia">
-            <summary class="accordion-summary accordion-summary--provincia">
-              <input type="checkbox" class="genera-tappe-check"
-                     data-parent-checkbox
-                     data-action="change->cascading-checkboxes#cascadeParent">
-              <span class="accordion-label"><%= provincia %></span>
-              <span class="accordion-count" data-count>0</span>
-            </summary>
+        <div class="genera-tappe-tree" style="max-block-size: 55vh; overflow-y: auto;">
+          <% @gerarchia.sort.each do |provincia, aree| %>
+            <details class="accordion-provincia">
+              <summary class="accordion-summary accordion-summary--provincia">
+                <input type="checkbox" class="genera-tappe-check"
+                       data-parent-checkbox
+                       data-action="change->cascading-checkboxes#cascadeParent">
+                <span class="accordion-label"><%= provincia %></span>
+                <span class="accordion-count" data-count>0</span>
+              </summary>
 
-            <div class="accordion-items">
-              <% aree.sort.each do |area, direzioni| %>
-                <details class="accordion-grado">
-                  <summary class="accordion-summary accordion-summary--grado">
-                    <input type="checkbox" class="genera-tappe-check"
-                           data-parent-checkbox
-                           data-action="change->cascading-checkboxes#cascadeParent">
-                    <span class="accordion-label"><%= area %></span>
-                    <span class="accordion-count" data-count>0</span>
-                  </summary>
+              <div class="accordion-items">
+                <% aree.sort.each do |area, direzioni| %>
+                  <details class="accordion-grado">
+                    <summary class="accordion-summary accordion-summary--grado">
+                      <input type="checkbox" class="genera-tappe-check"
+                             data-parent-checkbox
+                             data-action="change->cascading-checkboxes#cascadeParent">
+                      <span class="accordion-label"><%= area %></span>
+                      <span class="accordion-count" data-count>0</span>
+                    </summary>
 
-                  <div class="accordion-items">
-                    <% direzioni.sort.each do |dir_label, scuole| %>
-                      <% if dir_label == "Autonome" %>
-                        <% scuole.sort_by(&:denominazione).each do |scuola| %>
-                          <label class="genera-tappe-item">
-                            <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
-                                   class="genera-tappe-check"
-                                   data-cascading-checkboxes-target="leaf"
-                                   data-action="change->cascading-checkboxes#cascadeLeaf">
-                            <input type="hidden" name="all_school_ids[]" value="<%= scuola.id %>">
-                            <span class="genera-tappe-item__name"><%= scuola.denominazione %></span>
-                            <span class="genera-tappe-item__city"><%= scuola.comune %></span>
-                          </label>
+                    <div class="accordion-items">
+                      <% direzioni.sort.each do |dir_label, scuole| %>
+                        <% if dir_label == "Autonome" %>
+                          <% scuole.sort_by(&:denominazione).each do |scuola| %>
+                            <label class="genera-tappe-item">
+                              <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
+                                     class="genera-tappe-check"
+                                     data-cascading-checkboxes-target="leaf"
+                                     data-action="change->cascading-checkboxes#cascadeLeaf">
+                              <input type="hidden" name="all_school_ids[]" value="<%= scuola.id %>">
+                              <span class="genera-tappe-item__name"><%= scuola.denominazione %></span>
+                              <span class="genera-tappe-item__city"><%= scuola.comune %></span>
+                            </label>
+                          <% end %>
+                        <% else %>
+                          <details>
+                            <summary class="accordion-summary accordion-summary--direzione">
+                              <input type="checkbox" class="genera-tappe-check"
+                                     data-parent-checkbox
+                                     data-action="change->cascading-checkboxes#cascadeParent">
+                              <span class="accordion-label"><%= dir_label %></span>
+                              <span class="accordion-count" data-count>0</span>
+                            </summary>
+
+                            <div class="accordion-items">
+                              <% scuole.sort_by(&:denominazione).each do |scuola| %>
+                                <label class="genera-tappe-item">
+                                  <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
+                                         class="genera-tappe-check"
+                                         data-cascading-checkboxes-target="leaf"
+                                         data-action="change->cascading-checkboxes#cascadeLeaf">
+                                  <input type="hidden" name="all_school_ids[]" value="<%= scuola.id %>">
+                                  <span class="genera-tappe-item__name"><%= scuola.denominazione %></span>
+                                  <span class="genera-tappe-item__city"><%= scuola.comune %></span>
+                                </label>
+                              <% end %>
+                            </div>
+                          </details>
                         <% end %>
-                      <% else %>
-                        <details>
-                          <summary class="accordion-summary accordion-summary--direzione">
-                            <input type="checkbox" class="genera-tappe-check"
-                                   data-parent-checkbox
-                                   data-action="change->cascading-checkboxes#cascadeParent">
-                            <span class="accordion-label"><%= dir_label %></span>
-                            <span class="accordion-count" data-count>0</span>
-                          </summary>
-
-                          <div class="accordion-items">
-                            <% scuole.sort_by(&:denominazione).each do |scuola| %>
-                              <label class="genera-tappe-item">
-                                <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
-                                       class="genera-tappe-check"
-                                       data-cascading-checkboxes-target="leaf"
-                                       data-action="change->cascading-checkboxes#cascadeLeaf">
-                                <input type="hidden" name="all_school_ids[]" value="<%= scuola.id %>">
-                                <span class="genera-tappe-item__name"><%= scuola.denominazione %></span>
-                                <span class="genera-tappe-item__city"><%= scuola.comune %></span>
-                              </label>
-                            <% end %>
-                          </div>
-                        </details>
                       <% end %>
-                    <% end %>
-                  </div>
-                </details>
-              <% end %>
-            </div>
-          </details>
-        <% end %>
-      </div>
+                    </div>
+                  </details>
+                <% end %>
+              </div>
+            </details>
+          <% end %>
+        </div>
 
-      <div class="flex gap-half justify-end margin-block-start">
-        <button type="button" class="btn" data-action="old-dialog#close">Annulla</button>
-        <%= f.submit "Genera 0 tappe", class: "btn btn--link", disabled: true,
-            data: { cascading_checkboxes_target: "submit" } %>
-      </div>
-    <% end %>
-  </dialog>
+        <div class="flex gap-half justify-end margin-block-start">
+          <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+          <%= f.submit "Genera 0 tappe", class: "btn btn--link", disabled: true,
+              data: { cascading_checkboxes_target: "submit" } %>
+        </div>
+      <% end %>
+    </dialog>
+  </div>
 <% end %>

@@ -183,14 +183,12 @@
   }
 
   .date-input__picker {
-    block-size: 0;
-    inline-size: 0;
     opacity: 0;
-    overflow: hidden;
     position: absolute;
-    inset-block-end: 0;
+    inset-block: 0;
     inset-inline-end: 0;
-    pointer-events: none;
+    inline-size: 2.5em;
+    cursor: pointer;
   }
 
   .date-input__trigger {

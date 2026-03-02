@@ -1,7 +1,7 @@
 <%# locals: (giro:) -%>
 
 <%= form_with(model: giro, class: "flex flex-column gap",
-    data: { action: "turbo:submit-end->old-dialog#submitEnd" }) do |form| %>
+    data: { }) do |form| %>
 
   <% if giro.errors.any? %>
     <div class="txt-negative txt-small">
@@ -19,9 +19,25 @@
     <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input input--textarea" %>
   </div>
 
-  <div>
+  <div data-controller="date-input">
     <label class="txt-small txt-bold">Data inizio</label>
-    <%= form.date_field :iniziato_il, class: "input", value: giro.iniziato_il&.to_date || Date.today %>
+    <div class="date-input">
+      <input type="text"
+             data-date-input-target="display"
+             placeholder="gg/mm/aaaa"
+             class="input input--date"
+             autocomplete="off"
+             data-action="input->date-input#parseText blur->date-input#formatOnBlur">
+      <input type="date"
+             data-date-input-target="picker"
+             class="date-input__picker"
+             tabindex="-1"
+             data-action="change->date-input#pickerChanged">
+      <%= form.hidden_field :iniziato_il, value: (giro.iniziato_il&.to_date || Date.today).iso8601, data: { date_input_target: "hidden" } %>
+      <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
+        <span class="for-screen-reader">Apri calendario</span>
+      </button>
+    </div>
   </div>
 
   <div class="color-picker__colors">
@@ -36,7 +52,7 @@
   </div>
 
   <div class="flex gap-half justify-end margin-block-start">
-    <button type="button" class="btn" data-action="old-dialog#close">Annulla</button>
+    <button type="button" class="btn" data-action="dialog#close">Annulla</button>
     <%= form.submit "Salva", class: "btn btn--link" %>
   </div>
 <% end %>

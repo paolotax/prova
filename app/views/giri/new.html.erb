@@ -1,8 +1,12 @@
 <%= turbo_frame_tag :modal do %>
-  <dialog class="dialog panel" style="--panel-size: 40ch;"
-          data-controller="old-dialog"
-          data-action="click->old-dialog#clickOutside turbo:submit-end->old-dialog#submitEnd">
-    <h3 class="txt-large txt-bold">Nuovo Giro</h3>
-    <%= render "form", giro: @giro %>
-  </dialog>
+  <div data-controller="dialog"
+       data-dialog-modal-value="true"
+       data-dialog-auto-open-value="true">
+    <dialog class="dialog panel" style="--panel-size: 40ch;"
+            data-dialog-target="dialog"
+            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+      <h3 class="txt-large txt-bold">Nuovo Giro</h3>
+      <%= render "form", giro: @giro %>
+    </dialog>
+  </div>
 <% end %>
