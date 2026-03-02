@@ -34,23 +34,37 @@ export default class extends Controller {
       const tappaId = item.id || item
       const name = item.name || ""
 
-      // Only handle planner-to-calendar drops.
-      // Calendar-to-calendar drops are handled by tax-sortable.
+      // Check planner first
       const plannerCard = document.querySelector(`.agenda-planner__tappa[data-tappa-id="${tappaId}"]`)
-      if (!plannerCard) continue
+      if (plannerCard) {
+        // Remove from planner
+        const direzione = plannerCard.closest(".agenda-planner__direzione")
+        plannerCard.remove()
+        if (direzione && !direzione.querySelector(".agenda-planner__tappa")) {
+          direzione.remove()
+        }
 
-      // Remove from planner
-      const direzione = plannerCard.closest(".agenda-planner__direzione")
-      plannerCard.remove()
-      if (direzione && !direzione.querySelector(".agenda-planner__tappa")) {
-        direzione.remove()
+        await patch(`${prefix}/tappe/${tappaId}/sort`, {
+          body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "planner" }),
+          responseKind: "turbo-stream"
+        })
+        continue
       }
 
-      // PATCH to server — turbo stream appends the real card
-      await patch(`${prefix}/tappe/${tappaId}/sort`, {
-        body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "planner" }),
-        responseKind: "turbo-stream"
-      })
+      // Check calendar (day-drag drops entire day)
+      const calendarCard = document.getElementById(`tappa_${tappaId}`)
+      if (calendarCard) {
+        // Skip if already in the target day
+        if (calendarCard.closest(`[data-giorno="${targetDate}"]`)) continue
+
+        calendarCard.remove()
+
+        await patch(`${prefix}/tappe/${tappaId}/sort`, {
+          body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "calendar" }),
+          responseKind: "turbo-stream"
+        })
+        continue
+      }
     }
 
     // Update planner badge

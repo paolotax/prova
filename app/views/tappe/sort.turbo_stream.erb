@@ -1,6 +1,6 @@
 <% tappa = @tappa.reload %>
 
-<% if params[:source] == "planner" %>
+<% if params[:source].in?(%w[planner calendar]) %>
   <%= turbo_stream.append "tappe-#{tappa.data_tappa.iso8601}" do %>
     <%= render partial: "tappe/tappa_compact", locals: { tappa: tappa } %>
   <% end %>
