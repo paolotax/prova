@@ -40,6 +40,7 @@ class GiriController < ApplicationController
 
   def create
     @giro = current_user.giri.build(giro_params)
+    set_default_finito_il(@giro)
 
     if @giro.save
       @giro.broadcast_append_later_to [current_user, "giri"], target: "giri-lista"
@@ -53,7 +54,10 @@ class GiriController < ApplicationController
   end
 
   def update
-    if @giro.update(giro_params)
+    @giro.assign_attributes(giro_params)
+    set_default_finito_il(@giro)
+
+    if @giro.save
       @giro.broadcast_replace_later_to [current_user, "giri"]
       respond_to do |format|
         format.turbo_stream { flash.now[:notice] = "Giro modificato." }
@@ -78,6 +82,13 @@ class GiriController < ApplicationController
 
   def set_giro
     @giro = current_user.giri.find(params[:id])
+  end
+
+  def set_default_finito_il(giro)
+    return unless giro.iniziato_il.present?
+    return if giro.finito_il.present? && giro.finito_il >= giro.iniziato_il
+
+    giro.finito_il = giro.iniziato_il + 4.weeks
   end
 
   def giro_params

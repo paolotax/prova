@@ -10,10 +10,21 @@ export default class extends Controller {
     this.open()
     // needed because ESC key does not trigger close event
     this.element.addEventListener("close", this.enableBodyScroll.bind(this))
+    // Dismiss native date pickers when clicking outside the input
+    this.dismissPicker = this.dismissPicker.bind(this)
+    this.element.addEventListener("mousedown", this.dismissPicker)
   }
 
   disconnect() {
     this.element.removeEventListener("close", this.enableBodyScroll.bind(this))
+    this.element.removeEventListener("mousedown", this.dismissPicker)
+  }
+
+  dismissPicker(event) {
+    const active = document.activeElement
+    if (active && active.type === "date" && active !== event.target) {
+      active.blur()
+    }
   }
 
   // hide modal on successful form submission
@@ -30,6 +41,8 @@ export default class extends Controller {
   }
 
   close() {
+    // Blur active element to dismiss native date pickers
+    document.activeElement?.blur()
     this.element.close()
     // clean up modal content
     const frame = document.getElementById('modal')

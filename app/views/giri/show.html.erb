@@ -47,6 +47,16 @@
               <span>Copia da giro</span>
             <% end %>
           </li>
+          <% if @giro.tappe.any? %>
+            <li class="popup__item">
+              <%= button_to giro_svuota_tappe_path(@giro), method: :delete,
+                  class: "popup__btn btn txt-negative",
+                  data: { turbo_confirm: "Rimuovere tutte le #{@giro.tappe.size} tappe dal giro?" } do %>
+                <%= icon_tag "trash" %>
+                <span>Svuota tappe</span>
+              <% end %>
+            </li>
+          <% end %>
         </ul>
       </dialog>
     </div>

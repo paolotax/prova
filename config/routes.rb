@@ -327,6 +327,7 @@ Rails.application.routes.draw do
       get  'genera_tappe', to: 'giri/tappe#new', as: 'genera_tappe'
       post 'genera_tappe', to: 'giri/tappe#create'
       post 'copia_tappe', to: 'giri/tappe#copy', as: 'copia_tappe'
+      delete 'svuota_tappe', to: 'giri/tappe#destroy_all', as: 'svuota_tappe'
     end
 
     resources :tappe do

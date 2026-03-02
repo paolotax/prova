@@ -17,10 +17,16 @@
         </select>
       </div>
 
+      <label class="flex align-center gap-half">
+        <input type="checkbox" name="schedule_dates" value="1">
+        <span class="txt-small">Programma date come il giro sorgente</span>
+      </label>
+
       <div class="flex gap-half justify-end margin-block-start">
         <button type="button" class="btn" data-action="old-dialog#close">Annulla</button>
         <%= f.submit "Copia", class: "btn btn--link" %>
       </div>
     <% end %>
+
   </dialog>
 <% end %>

@@ -39,25 +39,68 @@ class Giri::TappeController < ApplicationController
   # POST /giri/:giro_id/copia_tappe
   def copy
     source = current_user.giri.find(params[:source_giro_id])
-    existing_ids = @giro.tappe.where(tappable_type: "Scuola").pluck(:tappable_id)
+    existing_codes = @giro.tappe.where(tappable_type: "Scuola")
+      .joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id")
+      .pluck("scuole.codice_ministeriale").compact.to_set
 
-    source_tappe = source.tappe
-      .where(tappable_type: "Scuola")
-      .where.not(tappable_id: existing_ids)
+    # Lookup scuole dell'account corrente per codice_ministeriale
+    scuole_by_codice = Current.scuole.where.not(codice_ministeriale: [nil, ""])
+      .index_by(&:codice_ministeriale)
+
+    schedule = params[:schedule_dates] == "1" && source.iniziato_il.present? && @giro.iniziato_il.present?
+    if schedule
+      source_start = source.iniziato_il.to_date.beginning_of_week
+      dest_start = @giro.iniziato_il.to_date.beginning_of_week
+    end
+
+    source_tappe = source.tappe.where(tappable_type: "Scuola")
+      .joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id")
+      .select("tappe.*, scuole.codice_ministeriale AS source_codice")
 
     count = 0
-    source_tappe.find_each do |source_tappa|
+    max_date = nil
+
+    source_tappe.each do |source_tappa|
+      codice = source_tappa.source_codice
+      next if codice.blank?
+      next if existing_codes.include?(codice)
+
+      target_scuola = scuole_by_codice[codice]
+      next unless target_scuola
+
+      new_date = nil
+      if schedule && source_tappa.data_tappa.present?
+        offset = source_tappa.data_tappa - source_start
+        new_date = dest_start + offset
+        max_date = [max_date, new_date].compact.max
+      end
+
       tappa = current_user.tappe.create!(
         tappable_type: "Scuola",
-        tappable_id: source_tappa.tappable_id,
+        tappable_id: target_scuola.id,
         account: Current.account,
-        data_tappa: nil
+        data_tappa: new_date
       )
       tappa.tappa_giri.create!(giro: @giro)
+      existing_codes << codice
       count += 1
     end
 
+    # Estendi finito_il se le date copiate lo superano
+    if schedule && max_date && (@giro.finito_il.nil? || max_date > @giro.finito_il.to_date)
+      @giro.update!(finito_il: max_date.end_of_week)
+    end
+
     redirect_to giro_path(@giro), notice: "#{count} tappe copiate da #{source.titolo}."
+  end
+
+  # DELETE /giri/:giro_id/svuota_tappe
+  def destroy_all
+    tappe = @giro.tappe
+    count = tappe.size
+    tappe.each(&:destroy!)
+
+    redirect_to giro_path(@giro), alert: "#{count} tappe rimosse."
   end
 
   private

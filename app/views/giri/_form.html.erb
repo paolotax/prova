@@ -19,15 +19,9 @@
     <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input input--textarea" %>
   </div>
 
-  <div class="flex gap-half">
-    <div class="flex-1">
-      <label class="txt-small txt-bold">Dal</label>
-      <%= form.date_field :iniziato_il, class: "input" %>
-    </div>
-    <div class="flex-1">
-      <label class="txt-small txt-bold">Al</label>
-      <%= form.date_field :finito_il, class: "input" %>
-    </div>
+  <div>
+    <label class="txt-small txt-bold">Data inizio</label>
+    <%= form.date_field :iniziato_il, class: "input", value: giro.iniziato_il&.to_date || Date.today %>
   </div>
 
   <div class="color-picker__colors">
