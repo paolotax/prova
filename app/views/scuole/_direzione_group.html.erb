@@ -3,11 +3,11 @@
 <% plessi = gruppo[:plessi] %>
 
 <% if direzione %>
-  <article class="card" style="--card-color: <%= scuola_color(direzione) %>">
+  <article class="card" style="--card-color: <%= tipo_scuola_color(direzione.tipo_scuola) %>">
     <div class="flex flex-column flex-item-grow max-inline-size">
       <header class="card__header">
         <div class="card__board">
-          <span class="card__id"><%= direzione.codice_ministeriale %></span>
+          <span class="card__id"><%= link_to direzione.codice_ministeriale, scuola_path(direzione), data: { turbo_frame: "_top" } %></span>
           <span class="card__board-name"><%= direzione.tipo_scuola&.upcase.presence || "DIREZIONE" %></span>
         </div>
       </header>
@@ -15,7 +15,7 @@
       <div class="card__body">
         <div class="card__content">
           <h3 class="card__title">
-            <%= link_to direzione.denominazione, scuola_path(direzione), data: { turbo_frame: "_top" } %>
+            <%= direzione.denominazione %>
           </h3>
           <span class="card__subtitle"><%= [direzione.comune, direzione.provincia].compact_blank.join(", ") %></span>
 
@@ -29,9 +29,16 @@
               <% plessi.each do |plesso| %>
                 <tr>
                   <td class="overflow-ellipsis" style="max-width: 200px;">
-                    <%= link_to plesso.denominazione, scuola_path(plesso),
-                        class: "link",
-                        data: { turbo_frame: "_top" } %>
+                    <span class="for-screen-reader">Plesso</span>
+                      <%= link_to plesso.denominazione, scuola_path(plesso),
+                      class: "card__board txt-xx-small", style: "--card-color: #{tipo_scuola_color(plesso.tipo_scuola)}",
+                      data: { turbo_frame: "_top" } %>
+                    </span>
+
+                    
+                    
+                    
+
                   </td>
                   <td class="txt-subtle txt-align-end" style="white-space: nowrap;">
                     <% if plesso.classi.size > 0 %>
