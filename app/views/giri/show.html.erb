@@ -1,131 +1,78 @@
 <% content_for :hide_footer, true %>
 <% @page_title = @giro.titolo %>
 
-<%= content_for :header do %>
+<% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to giri_path, class: "btn" do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Indietro</span>
-    <% end %>
+    <button type="button" class="btn btn--back"
+            data-controller="hotkey toggle-class"
+            data-action="click->toggle-class#toggle keydown.p@document->hotkey#click"
+            data-toggle-class-selector-value=".agenda-planner"
+            data-toggle-class-toggle-class="agenda-planner--collapsed">
+      <%= icon_tag "calendar" %>
+      <strong class="overflow-ellipsis">Planner</strong>
+      <kbd class="kbd txt-x-small hide-on-touch">P</kbd>
+    </button>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Giro: <%= @giro.titolo %></span>
-    
+    <span style="background: <%= @giro.color %>; border-radius: 50%; display: inline-block; block-size: 0.6em; inline-size: 0.6em;"></span>
+    <span class="overflow-ellipsis"><%= @giro.titolo %></span>
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to edit_giro_path(@giro),
-        class: "btn",
-        data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
-      <%= icon_tag "pencil", size: "small" %>
-      <span class="for-screen-reader">Modifica</span>
+    <%= link_to edit_giro_path(@giro), class: "btn btn--circle btn--plain",
+        data: { turbo_frame: :modal } do %>
+      <%= icon_tag "pencil", class: "icon--small" %>
     <% end %>
 
-    <%= button_to giro_generate_tappe_path(@giro),
-        method: :post,
-        class: "btn btn--link",
-        data: { turbo_confirm: "Generare tappe per tutte le scuole elementari?" } do %>
-      <%= icon_tag "add", size: "small" %>
-      <span class="hide-on-touch">Genera tappe</span>
-    <% end %>
+    <div style="position: relative"
+         data-controller="dialog"
+         data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+      <button type="button" class="btn btn--circle btn--plain" data-action="dialog#toggle">
+        <%= icon_tag "add" %>
+      </button>
+      <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
+        <ul class="popup__list">
+          <li class="popup__item">
+            <%= link_to giro_genera_tappe_path(@giro), class: "popup__btn btn",
+                data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
+              <%= icon_tag "add" %>
+              <span>Genera tappe</span>
+            <% end %>
+          </li>
+          <li class="popup__item">
+            <%= link_to copia_giro_path(@giro), class: "popup__btn btn",
+                data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
+              <%= icon_tag "copy" %>
+              <span>Copia da giro</span>
+            <% end %>
+          </li>
+        </ul>
+      </dialog>
+    </div>
 
     <% if @giro.can_delete? %>
-      <%= button_to giro_path(@giro),
-          method: :delete,
-          class: "btn btn--negative",
+      <%= button_to giro_path(@giro), method: :delete,
+          class: "btn btn--circle btn--plain txt-negative",
           data: { turbo_confirm: "Eliminare questo giro?" } do %>
-        <%= icon_tag "trash", size: "small" %>
-        <span class="for-screen-reader">Elimina</span>
+        <%= icon_tag "trash", class: "icon--small" %>
       <% end %>
     <% end %>
   </div>
 <% end %>
 
-<div id="<%= dom_id(@giro, "show") %>" class="giro-board"
-     data-controller="tappa-dropzone"
-     data-tappa-dropzone-giro-id-value="<%= @giro.id %>">
+<%= render "giri/planner", giro: @giro, tappe_per_area: @tappe_per_area, total_count: @planner_total %>
 
-  <%# Colonna: Da programmare %>
-  <div class="giro-board__column">
-    <div class="giro-board__column-header">
-      <h2 class="txt-bold">Da programmare</h2>
-      <span class="badge"><%= @conteggio_da_programmare %></span>
-    </div>
-
-    <div class="giro-board__column-body">
-      <% if @tappe_da_programmare&.any? %>
-        <% @tappe_da_programmare.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni %>
-        <% end %>
-      <% end %>
-    </div>
-
-    <% if @giro.excluded_ids.present? %>
-      <details class="giro-board__excluded">
-        <summary class="txt-small txt-subtle">
-          <%= pluralize(@giro.excluded_ids.count, "scuola", "scuole") %> escluse
-        </summary>
-        <div class="flex flex-wrap gap-quarter pad-block-half">
-          <% current_account.scuole.where(id: @giro.excluded_ids).order(:posizione).each do |scuola| %>
-            <div class="giro-board__badge">
-              <%= link_to scuola.denominazione, scuola_path(scuola), class: "txt-x-small" %>
-              <%= button_to include_school_giro_path(@giro, school_id: scuola.id),
-                  method: :post,
-                  class: "btn btn--circle btn--plain",
-                  style: "--btn-size: 1.4em;",
-                  data: { turbo_confirm: "Includere questa scuola nel giro?" } do %>
-                <%= icon_tag "add", class: "icon--small" %>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </details>
-    <% end %>
-  </div>
-
-  <%# Colonna: Programmate %>
-  <div class="giro-board__column">
-    <div class="giro-board__column-header">
-      <h2 class="txt-bold">Programmate</h2>
-      <span class="badge"><%= @tappe_programmate.sum { |_d, c| c.values.flatten.count } %></span>
-    </div>
-
-    <%= form_tag bulk_create_tappe_giro_path(@giro.id),
-        data: { tappa_dropzone_target: "form" },
-        class: "giro-board__dropzone-form" do %>
-      <%= hidden_field_tag :giro_id, @giro.id %>
-      <div class="giro-board__dropzone" data-tappa-dropzone-target="dropzone">
-        <p class="txt-small txt-subtle txt-center">Trascina qui le scuole</p>
-      </div>
-      <div class="flex gap-half margin-block-start-half">
-        <%= date_field_tag :data, nil, class: "input input--date txt-small", required: true, data: { tappa_dropzone_target: "date" } %>
-        <%= button_tag "Crea tappe", type: "submit", class: "btn btn--link txt-small" %>
-      </div>
-    <% end %>
-
-    <div class="giro-board__column-body">
-      <% if @tappe_programmate&.any? %>
-        <% @tappe_programmate.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni %>
-        <% end %>
+<% if @settimane.any? %>
+  <div class="agenda-calendar">
+    <div id="weeks-container">
+      <% @settimane.each do |settimana| %>
+        <%= render "agenda/week", settimana: settimana, tappe_per_giorno: @tappe_per_giorno %>
       <% end %>
     </div>
   </div>
-
-  <%# Colonna: Completate %>
-  <div class="giro-board__column">
-    <div class="giro-board__column-header">
-      <h2 class="txt-bold">Completate</h2>
-      <span class="badge"><%= @tappe_completate.sum { |_d, c| c.values.flatten.count } %></span>
-    </div>
-
-    <div class="giro-board__column-body">
-      <% if @tappe_completate&.any? %>
-        <% @tappe_completate.each do |data, comuni| %>
-          <%= render "tappe_del_giorno", data: data, comuni: comuni %>
-        <% end %>
-      <% end %>
-    </div>
+<% else %>
+  <div class="blank-slate margin-block">
+    Imposta le date del giro (dal/al) per visualizzare il calendario.
   </div>
-</div>
+<% end %>

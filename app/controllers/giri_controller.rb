@@ -1,22 +1,34 @@
 class GiriController < ApplicationController
-
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[ show edit update destroy exclude_school include_school ]
+  before_action :set_giro, only: %i[show edit update destroy planner copia]
 
-  def index    
-    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)       
+  def index
+    @giri = current_user.giri.includes(:tappe).order(created_at: :desc)
   end
 
   def show
-    @tappe = @giro.tappe.where(tappable_type: "Scuola")
-    
-    @tappe_da_programmare = Tappe::GroupByDateService.new(@tappe, 'da programmare', @giro).call
-    @tappe_programmate = Tappe::GroupByDateService.new(@tappe, 'programmate', @giro).call
-    @tappe_completate = Tappe::GroupByDateService.new(@tappe, 'completate', @giro).call
+    @settimane = genera_settimane(@giro.iniziato_il, @giro.finito_il)
+    @tappe_per_giorno = @giro.tappe
+      .con_data_tappa
+      .includes(:tappable, :giri)
+      .group_by(&:data_tappa)
+    @tappe_per_area = planner_tappe_per_area
+    @planner_total = @tappe_per_area.flat_map { |_, dirs| dirs.flat_map(&:last) }.size
+  end
 
-    @conteggio_da_programmare = @tappe_da_programmare.values.first&.values&.flatten&.count || 0
-    @conteggio_programmate = @tappe_programmate.values.flatten(2).count
-    @conteggio_completate = @tappe_completate.values.flatten(2).count
+  def planner
+    tappe_per_area = planner_tappe_per_area
+    total_count = tappe_per_area.flat_map { |_, dirs| dirs.flat_map(&:last) }.size
+
+    render partial: "giri/planner", locals: {
+      giro: @giro,
+      tappe_per_area: tappe_per_area,
+      total_count: total_count
+    }
+  end
+
+  def copia
+    @altri_giri = current_user.giri.where.not(id: @giro.id).order(created_at: :desc)
   end
 
   def new
@@ -29,49 +41,26 @@ class GiriController < ApplicationController
   def create
     @giro = current_user.giri.build(giro_params)
 
-    respond_to do |format|
-      if @giro.save
-
-        @giro.broadcast_append_later_to [current_user, "giri"], target: "giri-lista"
-        
-        if hotwire_native_app?
-          format.html { redirect_to giri_url, notice: "Giro creato." }
-        else
-          format.turbo_stream { flash.now[:notice] = "Giro creato." }
-          format.html { redirect_to giri_url, notice: "Giro creato." }
-        end
-
-      else      
-        if hotwire_native_app?
-          format.html { render :new, status: :unprocessable_entity }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @giro.errors, status: :unprocessable_entity }
-        end
+    if @giro.save
+      @giro.broadcast_append_later_to [current_user, "giri"], target: "giri-lista"
+      respond_to do |format|
+        format.turbo_stream { flash.now[:notice] = "Giro creato." }
+        format.html { redirect_to giri_url, notice: "Giro creato." }
       end
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   def update
-    respond_to do |format|
-      if @giro.update(giro_params)
-        
-        @giro.broadcast_replace_later_to [current_user, "giri"]
-        
-        if hotwire_native_app?
-          format.html { redirect_to giri_url, notice: "Giro modificato." }
-        else
-          format.turbo_stream { flash.now[:notice] = "Giro modificato." }
-          format.html { redirect_to giri_url, notice: "Giro modificato." }
-        end
-      else
-        if hotwire_native_app?
-          format.html { render :edit, status: :unprocessable_entity }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @giro.errors, status: :unprocessable_entity }
-        end
+    if @giro.update(giro_params)
+      @giro.broadcast_replace_later_to [current_user, "giri"]
+      respond_to do |format|
+        format.turbo_stream { flash.now[:notice] = "Giro modificato." }
+        format.html { redirect_to @giro, notice: "Giro modificato." }
       end
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -80,60 +69,51 @@ class GiriController < ApplicationController
     @giro.destroy!
 
     respond_to do |format|
-      if hotwire_native_app?
-        format.html { redirect_to giri_url, alert: "Giro eliminato." }
-      else
-        format.turbo_stream do 
-          flash.now[:alert] = "Giro eliminato."
-        end
-        format.html { redirect_to giri_url, alert: "Giro eliminato." }
-        format.json { head :no_content }
-      end
-    end 
-  end
-
-  def exclude_school
-    school_id = params[:school_id].to_s
-    current_excluded_ids = @giro.excluded_ids || []
-    @giro.excluded_ids = current_excluded_ids + [school_id]
-    
-    if @giro.save
-      respond_to do |format|
-        format.html { redirect_back(fallback_location: giro_path(@giro), notice: "Scuola esclusa dal giro.") }
-        #format.turbo_stream { render turbo_stream: turbo_stream.replace("tappe_da_programmare", partial: "tappe_del_giorno", locals: { data: nil, comuni: @giro.filter_schools(current_user.import_scuole.all).group_by(&:comune) }) }
-      end
-    else
-      redirect_back fallback_location: giro_path(@giro), alert: "Errore nell'esclusione della scuola."
-    end
-  end
-
-  def include_school
-    school_id = params[:school_id].to_s
-    current_excluded_ids = @giro.excluded_ids || []
-    @giro.excluded_ids = current_excluded_ids - [school_id]
-    
-    if @giro.save
-      respond_to do |format|
-        format.html { redirect_back(fallback_location: giro_path(@giro), notice: "Scuola inclusa nel giro.") }
-        #format.turbo_stream { render turbo_stream: turbo_stream.replace("tappe_da_programmare", partial: "tappe_del_giorno", locals: { data: nil, comuni: @giro.filter_schools(current_user.import_scuole.all).group_by(&:comune) }) }
-      end
-    else
-      redirect_back fallback_location: giro_path(@giro), alert: "Errore nell'inclusione della scuola."
+      format.turbo_stream { flash.now[:alert] = "Giro eliminato." }
+      format.html { redirect_to giri_url, alert: "Giro eliminato." }
     end
   end
 
   private
 
-    def set_giro
-      @giro = current_user.giri.find(params[:id])
-    end
+  def set_giro
+    @giro = current_user.giri.find(params[:id])
+  end
 
-    def giro_params
-      # Convertiamo excluded_ids in array se arriva come stringa
-      if params[:giro][:excluded_ids].present? && !params[:giro][:excluded_ids].is_a?(Array)
-        params[:giro][:excluded_ids] = [params[:giro][:excluded_ids]]
-      end
-      
-      params.require(:giro).permit(:user_id, :iniziato_il, :finito_il, :titolo, :descrizione, :color, :filter, conditions: [], excluded_ids: [])
-    end
+  def giro_params
+    params.require(:giro).permit(:titolo, :descrizione, :iniziato_il, :finito_il, :color, conditions: [], excluded_ids: [])
+  end
+
+  def genera_settimane(dal, al)
+    return [] unless dal && al
+    dal_date = dal.to_date
+    al_date = al.to_date
+    return [] if al_date < dal_date || (al_date - dal_date).to_i > 365
+    primo_lunedi = dal_date.beginning_of_week
+    ultimo_dom = al_date.end_of_week
+    (primo_lunedi..ultimo_dom).group_by { |d| d.beginning_of_week }.values
+  end
+
+  def planner_tappe_per_area
+    tappe = @giro.tappe
+      .da_programmare
+      .where(tappable_type: "Scuola")
+      .includes(:giri)
+      .preload(:tappable)
+      .to_a
+
+    # Preload direzione for all Scuola tappables to avoid N+1
+    scuole = tappe.map(&:tappable).compact.uniq
+    ActiveRecord::Associations::Preloader.new(records: scuole, associations: :direzione).call
+
+    tappe
+      .group_by { |t| t.tappable.area.presence || "Senza area" }
+      .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+      .map { |area, area_tappe|
+        direzioni = area_tappe
+          .group_by { |t| t.tappable.direzione || t.tappable }
+          .sort_by { |dir, _| dir.denominazione.to_s }
+        [area, direzioni]
+      }
+  end
 end

@@ -1,8 +1,11 @@
 <%# locals: (giro:) -%>
 
-<div id="<%= dom_id giro %>" class="panel shadow flex gap align-center" style="--panel-padding: var(--block-space-half) var(--block-space);">
+<div id="<%= dom_id giro %>" class="panel shadow flex gap align-center"
+     style="--panel-padding: var(--block-space-half) var(--block-space);">
 
-  <div class="flex flex-column flex-grow" style="min-inline-size: 0;">
+  <span style="background: <%= giro.color %>; border-radius: 50%; flex-shrink: 0; block-size: 0.8em; inline-size: 0.8em;"></span>
+
+  <div class="flex flex-column flex-item-grow" style="min-inline-size: 0;">
     <%= link_to giro_path(giro), data: { turbo_frame: "_top" }, class: "txt-bold" do %>
       <%= giro.titolo %>
     <% end %>
@@ -11,24 +14,27 @@
     <% end %>
   </div>
 
+  <% if giro.iniziato_il.present? %>
+    <span class="txt-xx-small txt-subtle hide-on-touch" style="white-space: nowrap;">
+      <%= l giro.iniziato_il, format: :short %> — <%= l giro.finito_il, format: :short %>
+    </span>
+  <% end %>
+
   <span class="txt-x-small txt-subtle hide-on-touch" style="white-space: nowrap;">
-    <%= giro.tappe.completate.size %>/<%= giro.tappe.size %> tappe
+    <%= giro.tappe.completate.size %>/<%= giro.tappe.size %>
   </span>
 
   <div class="flex gap-quarter align-center">
     <%= link_to edit_giro_path(giro),
-        class: "btn btn--circle btn--plain",
-        style: "--btn-size: 2em;",
+        class: "btn btn--circle btn--plain", style: "--btn-size: 2em;",
         data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
       <%= icon_tag "pencil", class: "icon--small" %>
     <% end %>
 
     <% if giro.can_delete? %>
-      <%= button_to giro_path(giro),
-          method: :delete,
-          class: "btn btn--circle btn--negative",
-          style: "--btn-size: 2em;",
-          data: { turbo_confirm: "Eliminare questo giro?" } do %>
+      <%= button_to giro_path(giro), method: :delete,
+          class: "btn btn--circle btn--negative", style: "--btn-size: 2em;",
+          data: { turbo_confirm: "Eliminare?" } do %>
         <%= icon_tag "trash", class: "icon--small" %>
       <% end %>
     <% end %>

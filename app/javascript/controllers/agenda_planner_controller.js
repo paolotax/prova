@@ -3,6 +3,7 @@ import { patch, destroy } from "@rails/request.js"
 
 export default class extends Controller {
   static targets = ["body", "header", "giroFilter", "trash"]
+  static values = { giroId: String }
 
   connect() {
     this.dragging = false
@@ -156,8 +157,11 @@ export default class extends Controller {
     }
 
     // Last PATCH triggers planner body refresh
+    const toBody = { data_tappa: null, position: 0, source: "to_planner" }
+    if (this.hasGiroIdValue) toBody.giro_id = this.giroIdValue
+
     await patch(`${prefix}/tappe/${lastId}/sort`, {
-      body: JSON.stringify({ data_tappa: null, position: 0, source: "to_planner" }),
+      body: JSON.stringify(toBody),
       responseKind: "turbo-stream"
     })
 

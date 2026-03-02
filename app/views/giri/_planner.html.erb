@@ -1,0 +1,30 @@
+<%# locals: (giro:, tappe_per_area:, total_count:) -%>
+
+<%= turbo_frame_tag "giro-planner" do %>
+  <div class="agenda-planner"
+       data-controller="agenda-planner"
+       data-agenda-planner-giro-id-value="<%= giro.id %>">
+    <div class="agenda-planner__header"
+         data-agenda-planner-target="header"
+         data-action="mousedown->agenda-planner#panelDragStart dblclick->agenda-planner#panelDock">
+      <span class="agenda-planner__title">
+        Da programmare
+        <span class="badge"><%= total_count %></span>
+      </span>
+
+      <div class="agenda-planner__trash" data-agenda-planner-target="trash"
+           data-action="dragover->agenda-planner#trashOver drop->agenda-planner#trashDrop dragleave->agenda-planner#trashLeave">
+        <%= icon_tag "trash", class: "icon--small" %>
+      </div>
+
+      <button type="button" class="agenda-planner__close" data-action="click->agenda-planner#close">
+        <%= icon_tag "close", class: "icon--small" %>
+      </button>
+    </div>
+
+    <div id="planner-body" class="agenda-planner__body" data-agenda-planner-target="body"
+         data-action="dragover->agenda-planner#dropzoneOver drop->agenda-planner#dropzoneDrop dragleave->agenda-planner#dropzoneLeave">
+      <%= render "agenda/planner_body", tappe_per_area: tappe_per_area %>
+    </div>
+  </div>
+<% end %>

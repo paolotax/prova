@@ -1,6 +1,7 @@
 <%# locals: (giro:) -%>
 
-<%= form_with(model: giro, class: "flex flex-column gap") do |form| %>
+<%= form_with(model: giro, class: "flex flex-column gap",
+    data: { action: "turbo:submit-end->old-dialog#submitEnd" }) do |form| %>
 
   <% if giro.errors.any? %>
     <div class="txt-negative txt-small">
@@ -9,19 +10,31 @@
   <% end %>
 
   <div>
-    <label class="txt-small txt-bold" for="giro_titolo">Titolo</label>
-    <%= form.text_field :titolo, placeholder: "titolo", autofocus: true, class: "input" %>
+    <label class="txt-small txt-bold">Titolo</label>
+    <%= form.text_field :titolo, placeholder: "es. Consegna Collane", autofocus: true, class: "input" %>
   </div>
 
   <div>
-    <label class="txt-small txt-bold" for="giro_descrizione">Descrizione</label>
-    <%= form.text_area :descrizione, rows: 3, placeholder: "note...", class: "input input--textarea" %>
+    <label class="txt-small txt-bold">Descrizione</label>
+    <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input input--textarea" %>
+  </div>
+
+  <div class="flex gap-half">
+    <div class="flex-1">
+      <label class="txt-small txt-bold">Dal</label>
+      <%= form.date_field :iniziato_il, class: "input" %>
+    </div>
+    <div class="flex-1">
+      <label class="txt-small txt-bold">Al</label>
+      <%= form.date_field :finito_il, class: "input" %>
+    </div>
   </div>
 
   <div class="color-picker__colors">
     <% Color::COLORS.each do |color| %>
       <label class="btn txt-small borderless" style="--btn-background: <%= color %>" title="<%= color.name %>">
-        <%= form.radio_button :color, color.value, checked: (giro.color == color.value || (giro.new_record? && color.value == "var(--color-card-default)")) %>
+        <%= form.radio_button :color, color.value,
+            checked: (giro.color == color.value || (giro.new_record? && color.value == "var(--color-card-default)")) %>
         <%= icon_tag "check", class: "checked" %>
         <span class="for-screen-reader"><%= color.name %></span>
       </label>
@@ -29,7 +42,7 @@
   </div>
 
   <div class="flex gap-half justify-end margin-block-start">
-    <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+    <button type="button" class="btn" data-action="old-dialog#close">Annulla</button>
     <%= form.submit "Salva", class: "btn btn--link" %>
   </div>
 <% end %>

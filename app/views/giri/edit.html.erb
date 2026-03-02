@@ -1,5 +1,7 @@
 <%= turbo_frame_tag :modal do %>
-  <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch;" data-controller="old-dialog" data-action="click->old-dialog#clickOutside">
+  <dialog class="dialog panel" style="--panel-size: 40ch;"
+          data-controller="old-dialog"
+          data-action="click->old-dialog#clickOutside turbo:submit-end->old-dialog#submitEnd">
     <h3 class="txt-large txt-bold">Modifica Giro</h3>
     <%= render "form", giro: @giro %>
   </dialog>

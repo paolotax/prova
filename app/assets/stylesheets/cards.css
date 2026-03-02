@@ -725,6 +725,51 @@
     padding: 0.3em 0;
   }
 
+  .accordion-summary--direzione {
+    font-size: var(--text-x-small);
+    padding: 0.25em 0.4em;
+  }
+
+  /* Genera Tappe tree
+  /* ------------------------------------------------------------------------ */
+
+  .genera-tappe-tree {
+    --card-color: var(--color-link);
+  }
+
+  .genera-tappe-check {
+    accent-color: var(--color-link);
+    flex-shrink: 0;
+  }
+
+  .genera-tappe-item {
+    align-items: center;
+    border-radius: 0.25em;
+    cursor: pointer;
+    display: flex;
+    font-size: var(--text-x-small);
+    gap: 0.5ch;
+    padding: 0.3em 0.5em;
+    transition: background 80ms ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-link) 6%, var(--color-canvas));
+    }
+  }
+
+  .genera-tappe-item__name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .genera-tappe-item__city {
+    color: var(--color-ink-light);
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+
   .column-summary__panel {
     container-type: inline-size;
 

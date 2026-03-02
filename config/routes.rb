@@ -319,14 +319,14 @@ Rails.application.routes.draw do
     resources :tipi_scuole, only: %i[index update]
 
     resources :giri do
-      resources :tappe, only: [:index]
-      post 'tappe', to: 'giri/tappe#create', as: 'generate_tappe'
       member do
-        post 'bulk_create_tappe', to: 'tappe/giro_bulk_actions#create'
-        delete 'remove_tappa/:tappa_id', to: 'tappe/giro_bulk_actions#remove_tappa', as: 'remove_tappa'
-        post 'exclude_school/:school_id', to: 'giri#exclude_school', as: 'exclude_school'
-        post 'include_school/:school_id', to: 'giri#include_school', as: 'include_school'
+        get 'planner'
+        get 'copia'
       end
+
+      get  'genera_tappe', to: 'giri/tappe#new', as: 'genera_tappe'
+      post 'genera_tappe', to: 'giri/tappe#create'
+      post 'copia_tappe', to: 'giri/tappe#copy', as: 'copia_tappe'
     end
 
     resources :tappe do

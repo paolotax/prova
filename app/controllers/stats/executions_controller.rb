@@ -22,9 +22,17 @@ class Stats::ExecutionsController < ApplicationController
       end
     end
   rescue SecurityError => e
-    redirect_to stats_path, alert: "Errore di sicurezza: #{e.message}"
+    render inline: turbo_frame_error("Errore di sicurezza: #{e.message}"), layout: false
   rescue StandardError => e
     Rails.logger.error("Stat execution error: #{e.message}")
-    redirect_to stat_path(@stat), alert: "Errore nell'esecuzione della query: #{e.message}"
+    render inline: turbo_frame_error("Errore nell'esecuzione della query: #{e.message}"), layout: false
+  end
+
+  private
+
+  def turbo_frame_error(message)
+    %(<turbo-frame id="stat_results">
+      <div class="panel txt-negative" style="padding: var(--block-space);">#{ERB::Util.html_escape(message)}</div>
+    </turbo-frame>)
   end
 end

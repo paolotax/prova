@@ -163,7 +163,11 @@ class TappeController < ApplicationController
     @tappa.update(position: posizione, data_tappa: data_tappa)
 
     if params[:source] == "to_planner"
-      @planner_tappe_per_area = planner_tappe_per_area
+      if params[:giro_id].present?
+        @planner_tappe_per_area = giro_planner_tappe_per_area(params[:giro_id])
+      else
+        @planner_tappe_per_area = planner_tappe_per_area
+      end
     end
 
     respond_to do |format|
@@ -200,6 +204,23 @@ class TappeController < ApplicationController
         .map { |area, area_tappe|
           direzioni = area_tappe
             .group_by { |t| t.tappable.direzione || t.tappable }
+            .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
+          [area, direzioni]
+        }
+    end
+
+    def giro_planner_tappe_per_area(giro_id)
+      giro = current_user.giri.find(giro_id)
+      giro.tappe
+        .da_programmare
+        .where(tappable_type: "Scuola")
+        .includes(:giri)
+        .preload(:tappable)
+        .group_by { |t| t.tappable.respond_to?(:area) ? (t.tappable.area.presence || "Senza area") : "Senza area" }
+        .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+        .map { |area, area_tappe|
+          direzioni = area_tappe
+            .group_by { |t| t.tappable.respond_to?(:direzione) ? (t.tappable.direzione || t.tappable) : t.tappable }
             .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
           [area, direzioni]
         }
