@@ -347,7 +347,7 @@
       z-index: 1;
     }
 
-    .card__title {
+    .card:has(.card__link) .card__title {
       pointer-events: none;
     }
 
@@ -616,7 +616,7 @@
       gap: calc(var(--card-header-space) / 2);
     }
 
-    .card__title {
+    .card:has(.card__link) .card__title {
       pointer-events: none;
     }
 

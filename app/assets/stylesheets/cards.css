@@ -172,6 +172,7 @@
 
     .card__title-link {
       color: inherit;
+      text-decoration: none;
     }
   }
 
@@ -234,10 +235,13 @@
 
   /* Assign grid areas */
   .card__meta-avatars--author { grid-area: avatars-author; }
-  .card__meta-avatars--assignees { grid-area: avatars-assignees; }
-  .card__meta-text--added { grid-area: text-added; }
+  
+  .card__meta-text--added { grid-area: text-added; }  
   .card__meta-text--author { grid-area: text-author; }
+  
   .card__meta-text--updated { grid-area: text-updated; }
+  .card__meta-text--assignees { grid-area: text-assignees; }
+  
   .card__meta-text--copie {
     grid-area: text-copie;
     text-align: end;

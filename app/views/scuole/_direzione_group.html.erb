@@ -7,7 +7,7 @@
     <div class="flex flex-column flex-item-grow max-inline-size">
       <header class="card__header">
         <div class="card__board">
-          <span class="card__id"><%= link_to direzione.codice_ministeriale, scuola_path(direzione), data: { turbo_frame: "_top" } %></span>
+          <span class="card__id"><%= direzione.codice_ministeriale %></span>
           <span class="card__board-name"><%= direzione.tipo_scuola&.upcase.presence || "DIREZIONE" %></span>
         </div>
       </header>
@@ -15,9 +15,9 @@
       <div class="card__body">
         <div class="card__content">
           <h3 class="card__title">
-            <%= direzione.denominazione %>
+            <%= link_to direzione.denominazione, scuola_path(direzione), class: "card__title-link", data: { turbo_frame: "_top" } %>
           </h3>
-          <span class="card__subtitle"><%= [direzione.comune, direzione.provincia].compact_blank.join(", ") %></span>
+          <span class="card__subtitle"><%= [direzione.comune, direzione.sigla_provincia].compact_blank.join(", ") %></span>
 
         </div>
       </div>
@@ -40,9 +40,9 @@
                     
 
                   </td>
-                  <td class="txt-subtle txt-align-end" style="white-space: nowrap;">
+                  <td class="txt-align-end" style="white-space: nowrap;">
                     <% if plesso.classi.size > 0 %>
-                      <span class="txt-positive"><%= plesso.classi.size %>cl</span>
+                      <span class="txt-xx-small" style="color: <%= tipo_scuola_color(plesso.tipo_scuola) %>"><%= plesso.classi.size %>cl</span>
                     <% end %>
                   </td>
                   <td class="txt-align-end" style="white-space: nowrap;">

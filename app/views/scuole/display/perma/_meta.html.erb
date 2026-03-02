@@ -1,48 +1,37 @@
 <%# locals: (scuola:) -%>
 
 <div class="card__meta" id="<%= dom_id(scuola, :meta) %>">  
-  <div class="card__meta-avatars card__meta-avatars--author">
-    <%#= avatar_tag card.creator, tabindex: (local_assigns.key?(:preview) && local_assigns[:preview]) ? -1 : 0 %>
-  </div>
 
-  <span class="card__meta-text card__meta-text--added">
-    <% if scuola.import_scuola&.DENOMINAZIONEISTITUTORIFERIMENTO.present? %>
-      <span class="txt-subtle">Istituto Riferimento:</span>
-    <% end %>
-  </span>
+  <% if scuola.direzione.present? %>
+    <span class="card__meta-text card__meta-text--added">
+      <span>dipende da:</span>
+    </span>
 
-  <span class="card__meta-text card__meta-text--author">
-    <% if scuola.import_scuola&.DENOMINAZIONEISTITUTORIFERIMENTO.present? %>
-      <span><%= scuola.import_scuola.DENOMINAZIONEISTITUTORIFERIMENTO.titleize %></span>
-    <% end %>
-  </span>
+    <span class="card__meta-text card__meta-text--author">
+      <span><%= scuola.direzione.denominazione.titleize %></span>
+    </span>
+  <% end %>
 
-  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    <% if scuola.classi.size > 0 %>
-      <span class="txt-positive"><strong><%= scuola.classi.size %></strong> classi</span>
-    <% else %>
-      &nbsp;
-    <% end %>
-  </span>
-
-  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
+  <span class="card__meta-text card__meta-text--updated">
     &nbsp;
   </span>
 
-  <span class="card__meta-text card__meta-text--copie txt-align-center">
-    <% if scuola.priorita.to_i.positive? %>
-      <% scuola.priorita.times do %>
-        <%= icon_tag "star", size: "small" %>
-      <% end %>
+  <span class="card__meta-text card__meta-text--assignees">
+    &nbsp;
+  </span>
+
+  <span class="card__meta-text card__meta-text--copie txt-align-end">
+    <% if scuola.classi.size > 0 %>
+      <strong><%= scuola.classi.size %></strong> classi
     <% else %>
-      <span class="txt-small txt-subtle">—</span>
+      &nbsp;
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
     <% mie_count = scuola.classi.flat_map(&:adozioni).count { |a| a.mia? && a.da_acquistare? } %>
     <% if mie_count > 0 %>
-      <strong><%= mie_count %></strong> mie adozioni
+      <strong class="txt-positive"><%= pluralize(mie_count, "mia adozione", "mie adozioni") %></strong>
     <% else %>
       &nbsp;
     <% end %>

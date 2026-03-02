@@ -2,7 +2,7 @@
 
 <%= tag.article id: dom_id(scuola),
     class: "card",
-    style: "--card-color: #{scuola_color(scuola)}",
+    style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}",
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
   <label class="card__checkbox">
@@ -17,8 +17,8 @@
     <!-- Header con tipo scuola -->
     <header class="card__header">
       <div class="card__board">
-        <span class="card__id"><%= scuola.tipo_scuola&.upcase.presence || "SCUOLA" %></span>
-        <span class="card__board-name"><%= [scuola.comune, scuola.provincia].compact_blank.join(", ") %></span>
+        <span class="card__id"><%=  scuola.codice_ministeriale %></span>
+        <span class="card__board-name"><%= scuola.tipo_scuola&.upcase.presence || "SCUOLA" %></span>
       </div>
     </header>
 
@@ -28,7 +28,9 @@
         <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
           <%= scuola.denominazione %>
         </h3>
-        <div class="card__stages txt-small txt-subtle flex flex-column gap-quarter">
+        <span class="card__subtitle overflow-ellipsis"><%= [scuola.comune, scuola.sigla_provincia].compact_blank.join(", ") %></span>
+
+        <div class="margin-inline-start-half margin-block-start-half txt-xx-small txt-subtle flex flex-column gap-quarter">
           <% if scuola.indirizzo.present? %>
             <span><%= icon_tag "marker", class: "icon--small" %> <%= scuola.indirizzo %></span>
           <% end %>
@@ -46,11 +48,6 @@
   </div>
 
   <div class="card__actions">
-    <%= link_to mappe_path("scuola-#{scuola.id}"),
-        class: "btn btn--small btn--circle",
-        data: { controller: "tooltip", tooltip_content_value: "Posizione", turbo_frame: "_top" } do %>
-      <%= icon_tag "marker" %>
-    <% end %>
     <%= link_to go_to_tappable_path(scuola, current_user.effective_navigator),
         target: "_blank",
         class: "btn btn--small btn--circle",
