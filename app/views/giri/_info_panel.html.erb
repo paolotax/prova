@@ -1,0 +1,48 @@
+<%# locals: (giro:, giorni_timeline:, tappe_totali:, tappe_completate:) -%>
+
+<div class="panel" style="--panel-padding: var(--block-space-half) var(--block-space); margin-block-end: var(--block-space-half);">
+  <% if giro.descrizione.present? %>
+    <p class="txt-small txt-subtle" style="margin: 0;"><%= giro.descrizione %></p>
+  <% end %>
+
+  <p class="txt-x-small txt-subtle" style="margin: 0; text-align: center;">
+    <strong><%= tappe_completate %></strong>/<%= tappe_totali %> tappe completate
+  </p>
+
+  <% if giorni_timeline.any? %>
+    <div class="flex gap-half align-center" style="margin-block-start: 0.5em;">
+      <span class="txt-xx-small txt-subtle" style="white-space: nowrap;">
+        <%= l giro.iniziato_il.to_date, format: '%-d %b %Y' %>
+      </span>
+      <div class="giro-timeline flex-item-grow">
+        <% giorni_timeline.each_with_index do |giorno, idx| %>
+          <%
+            css_classes = ["giro-timeline__day"]
+            css_classes << "giro-timeline__day--today" if giorno[:today]
+
+            if giorno[:count] > 0
+              if giorno[:past]
+                css_classes << "giro-timeline__day--past"
+              else
+                css_classes << "giro-timeline__day--future"
+              end
+            else
+              css_classes << "giro-timeline__day--empty"
+            end
+          %>
+          <span class="<%= css_classes.join(' ') %>"
+                style="--giro-color: <%= giro.color %>"
+                title="<%= l giorno[:date], format: '%a %-d %b' %> — <%= giorno[:count] %> tappe">
+            <span class="giro-timeline__number"><%= idx + 1 %></span>
+            <% if giorno[:count] > 0 %>
+              <span class="giro-timeline__count"><%= giorno[:count] %>tp</span>
+            <% end %>
+          </span>
+        <% end %>
+      </div>
+      <span class="txt-xx-small txt-subtle" style="white-space: nowrap;">
+        <%= l giro.finito_il.to_date, format: '%-d %b %Y' %>
+      </span>
+    </div>
+  <% end %>
+</div>

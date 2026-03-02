@@ -489,4 +489,64 @@
     outline: 2px dashed var(--color-link);
     outline-offset: -2px;
   }
+
+  /* Giro timeline
+  /* ------------------------------------------------------------------------ */
+
+  .giro-timeline {
+    display: flex;
+    gap: 1px;
+  }
+
+  .giro-timeline__day {
+    align-items: center;
+    border-radius: 2px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.05em;
+    min-inline-size: 0;
+    padding: 0.15em 0;
+  }
+
+  .giro-timeline__number {
+    font-size: var(--text-xx-small);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .giro-timeline__count {
+    font-size: 0.55em;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .giro-timeline__day--empty {
+    background-color: var(--color-ink-lightest);
+  }
+
+  .giro-timeline__day--empty .giro-timeline__number {
+    color: var(--color-ink-medium);
+  }
+
+  .giro-timeline__day--past {
+    background-color: var(--giro-color);
+    color: var(--color-ink-inverted);
+  }
+
+  .giro-timeline__day--future {
+    background-color: color-mix(in srgb, var(--giro-color) 35%, transparent);
+  }
+
+  .giro-timeline__day--future .giro-timeline__number {
+    color: var(--color-ink-dark);
+  }
+
+  .giro-timeline__day--future .giro-timeline__count {
+    color: var(--color-ink-dark);
+  }
+
+  .giro-timeline__day--today {
+    box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--giro-color);
+  }
 }

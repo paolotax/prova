@@ -1,7 +1,7 @@
 <%# locals: (giro:, tappe_per_area:, total_count:) -%>
 
 <%= turbo_frame_tag "giro-planner" do %>
-  <div class="agenda-planner"
+  <div class="agenda-planner agenda-planner--collapsed"
        data-controller="agenda-planner"
        data-agenda-planner-giro-id-value="<%= giro.id %>">
     <div class="agenda-planner__header"

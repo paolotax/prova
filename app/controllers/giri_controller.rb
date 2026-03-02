@@ -14,6 +14,10 @@ class GiriController < ApplicationController
       .group_by(&:data_tappa)
     @tappe_per_area = planner_tappe_per_area
     @planner_total = @tappe_per_area.flat_map { |_, dirs| dirs.flat_map(&:last) }.size
+
+    @tappe_totali = @giro.tappe.size
+    @tappe_completate = @giro.tappe.completate.size
+    @giorni_timeline = genera_giorni_timeline(@tappe_per_giorno)
   end
 
   def planner
@@ -103,6 +107,13 @@ class GiriController < ApplicationController
     primo_lunedi = dal_date.beginning_of_week
     ultimo_dom = al_date.end_of_week
     (primo_lunedi..ultimo_dom).group_by { |d| d.beginning_of_week }.values
+  end
+
+  def genera_giorni_timeline(tappe_per_giorno)
+    oggi = Date.current
+    tappe_per_giorno.transform_keys { |k| k.to_date }.sort.map do |date, tappe|
+      { date: date, count: tappe.size, today: date == oggi, past: date < oggi }
+    end
   end
 
   def planner_tappe_per_area

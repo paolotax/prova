@@ -73,6 +73,8 @@
 
 <%= render "giri/planner", giro: @giro, tappe_per_area: @tappe_per_area, total_count: @planner_total %>
 
+<%= render "giri/info_panel", giro: @giro, giorni_timeline: @giorni_timeline, tappe_totali: @tappe_totali, tappe_completate: @tappe_completate %>
+
 <% if @settimane.any? %>
   <div class="agenda-calendar">
     <div id="weeks-container">
