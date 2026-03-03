@@ -50,7 +50,7 @@
                 aria-expanded="true">
           <span class="cards__expander-count" data-drag-and-drop-counter><%= non_assegnate_count %></span>
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">
-            Non assegnate
+            Non assegnate <span class="txt-light">(<span data-drag-and-drop-counter><%= non_assegnate_count %></span>)</span>
           </h3>
         </button>
       </header>
@@ -84,7 +84,7 @@
                   aria-expanded="true">
             <span class="cards__expander-count" data-drag-and-drop-counter><%= scuole_count %></span>
             <h3 class="cards__expander-title" data-collapsible-columns-target="title">
-              <%= membership.user.name %>
+              <%= membership.user.name %> <span class="txt-light">(<span data-drag-and-drop-counter><%= scuole_count %></span>)</span>
               <%= icon_tag "collapse" %>
             </h3>
           </button>

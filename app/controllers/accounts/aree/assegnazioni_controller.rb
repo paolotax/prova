@@ -5,7 +5,6 @@ module Accounts
         provincia = params[:aree_provincia]
 
         if params[:area_name].present?
-          # Crea nuova area vuota — la salviamo in session per mostrarla come colonna
           session["new_area_#{provincia}"] = params[:area_name].strip
           redirect_to accounts_aree_path(provincia: provincia), status: :see_other
           return
@@ -14,11 +13,13 @@ module Accounts
         scuola = Current.account.scuole.find(params[:scuola_id])
         area = params[:area].presence
 
-        # Se è un plesso, risali alla direzione — nelle aree si sposta sempre il gruppo intero
-        scuola = scuola.direzione if scuola.direzione_id.present?
-
         scuola.update!(area: area)
-        # Plessi updated via after_update_commit callback
+
+        if scuola.direzione_id.present?
+          # Plesso singolo: aggiorna il sommario area sulla direzione
+          sync_direzione_area(scuola.direzione)
+        end
+        # Per direzioni: plessi updated via after_update_commit callback
 
         if area == "__da_pulire__"
           cleanup_scuola(scuola)
@@ -34,12 +35,15 @@ module Accounts
 
       private
 
+      def sync_direzione_area(direzione)
+        plessi_areas = direzione.plessi.pluck(:area).compact_blank.uniq.sort
+        direzione.update_column(:area, plessi_areas.join(", ").presence)
+      end
+
       def cleanup_scuola(scuola)
-        # Elimina plessi senza documenti (se è una direzione)
         if scuola.direzione_id.nil? && scuola.plessi.any?
           scuola.plessi.each { |p| p.destroy unless p.documenti.exists? }
         end
-        # Elimina la scuola stessa se non ha documenti
         scuola.destroy unless scuola.documenti.exists?
       end
 

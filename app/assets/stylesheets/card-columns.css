@@ -545,6 +545,8 @@
     .cards.is-collapsed & {
       max-inline-size: 50vh;
       writing-mode: vertical-rl;
+
+      .txt-light { display: none; }
     }
 
     .cards.is-expanded & {

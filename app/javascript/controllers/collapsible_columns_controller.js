@@ -82,7 +82,8 @@ export default class extends Controller {
   }
 
   #collapseAllExcept(clickedColumn) {
-    const columns = this.#isDesktop ? this.columnTargets.filter(c => c !== this.maybeColumnTarget) : this.columnTargets
+    const maybe = this.hasMaybeColumnTarget ? this.maybeColumnTarget : null
+    const columns = this.#isDesktop && maybe ? this.columnTargets.filter(c => c !== maybe) : this.columnTargets
 
     columns.forEach(column => {
       if (column !== clickedColumn) {
@@ -95,13 +96,15 @@ export default class extends Controller {
     return column.classList.contains(this.collapsedClass)
   }
 
-  #collapse(column) {
-    const key = this.#localStorageKeyFor(column)
-
+  #collapse(column, saveState = true) {
     this.#buttonFor(column)?.setAttribute("aria-expanded", "false")
     column.classList.remove(this.expandedClass)
     column.classList.add(this.collapsedClass)
-    localStorage.removeItem(key)
+
+    if (saveState) {
+      const key = this.#localStorageKeyFor(column)
+      localStorage.setItem(key, "collapsed")
+    }
   }
 
   #expand(column, saveState = true) {
@@ -111,7 +114,7 @@ export default class extends Controller {
 
     if (saveState) {
       const key = this.#localStorageKeyFor(column)
-      localStorage.setItem(key, true)
+      localStorage.setItem(key, "expanded")
     }
 
     if (window.matchMedia('(max-width: 639px)').matches) {
@@ -131,14 +134,19 @@ export default class extends Controller {
 
   #restoreColumn(column) {
     const key = this.#localStorageKeyFor(column)
-    if (localStorage.getItem(key)) {
+    const saved = localStorage.getItem(key)
+
+    if (saved === "expanded") {
       if (this.exclusiveValue) this.#collapseAllExcept(column)
-      this.#expand(column)
+      this.#expand(column, false)
+    } else if (saved === "collapsed") {
+      this.#collapse(column, false)
     }
   }
 
   #localStorageKeyFor(column) {
-    return `expand-${this.boardValue}-${column.getAttribute("id")}`
+    const name = column.dataset.columnName || column.getAttribute("id") || ""
+    return `columns-${this.boardValue}-${name}`
   }
 
   #setupIntersectionObserver() {
@@ -169,11 +177,15 @@ export default class extends Controller {
   }
 
   async #handleDesktopMode() {
+    if (!this.hasMaybeColumnTarget) return
+
     this.#expand(this.maybeColumnTarget, false)
     this.#maybeButton.setAttribute("disabled", true)
   }
 
   #handleMobileMode() {
+    if (!this.hasMaybeColumnTarget) return
+
     this.#maybeButton.removeAttribute("disabled")
 
     const expandedColumn = this.columnTargets.find(column => column !== this.maybeColumnTarget && !this.#isCollapsed(column))

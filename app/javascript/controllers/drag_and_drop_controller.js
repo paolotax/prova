@@ -113,11 +113,11 @@ export default class extends Controller {
   }
 
   #modifyCounter(container, fn) {
-    const counterElement = container.querySelector("[data-drag-and-drop-counter]")
-    if (counterElement) {
+    const counterElements = container.querySelectorAll("[data-drag-and-drop-counter]")
+    for (const counterElement of counterElements) {
       const currentValue = counterElement.textContent.trim()
 
-      if (!/^\d+$/.test(currentValue)) return
+      if (!/^\d+$/.test(currentValue)) continue
 
       const newValue = fn(parseInt(currentValue))
       counterElement.textContent = newValue
@@ -187,7 +187,8 @@ export default class extends Controller {
       return
     }
 
-    itemContainer.append(item)
+    // Flat container (aree): merge or insert sorted
+    this.#mergeCardInto(itemContainer, item)
   }
 
   #insertIntoAccordion(item, targetItemContainer, sourceProv, sourceGrado) {
@@ -301,13 +302,12 @@ export default class extends Controller {
       }
     }
 
-    // 2. No accordion (e.g. aree page) — nothing visual to do, server persists
-    if (!sourceProv || !sourceGrado) return
+    // 2. Determine target container (accordion or flat)
+    const targetItems = (sourceProv && sourceGrado)
+      ? this.#ensureAccordion(targetItemContainer, sourceProv, sourceGrado)
+      : targetItemContainer
 
-    // 3. Find or create accordion structure in target
-    const targetItems = this.#ensureAccordion(targetItemContainer, sourceProv, sourceGrado)
-
-    // 4. Find existing card for this direzione or create one
+    // 3. Find existing card for this direzione or create one
     let targetCard = direzId ? targetItems.querySelector(`article.card[data-id="${direzId}"]`) : null
 
     if (targetCard) {
@@ -321,9 +321,11 @@ export default class extends Controller {
       this.#insertSorted(targetItems, newCard)
     }
 
-    // 5. Update counts
-    const targetProv = targetItemContainer.querySelector(`:scope > [data-id="${sourceProv.dataset.id}"]`)
-    if (targetProv) this.#updateProvinciaCount(targetProv)
+    // 4. Update accordion counts if present
+    if (sourceProv && sourceGrado) {
+      const targetProv = targetItemContainer.querySelector(`:scope > [data-id="${sourceProv.dataset.id}"]`)
+      if (targetProv) this.#updateProvinciaCount(targetProv)
+    }
   }
 
   #findProvincia(itemContainer, provincia) {
