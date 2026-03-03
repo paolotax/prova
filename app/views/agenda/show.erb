@@ -114,23 +114,26 @@
 
 
 <div data-controller="bulk-actions">
-    <div id="giorno-<%= @giorno %>"
-        class="group show-navigator pt-2 pb-4"
-        data-controller="tax-sortable"
-        data-tax-sortable-group-value="calendar"
-        data-tax-sortable-param-name-value="position"
-        data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
+    <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto; container-type: inline-size;">
+      <div class="cards__transition-container">
+        <div id="giorno-<%= @giorno %>"
+            class="cards__list"
+            data-controller="tax-sortable"
+            data-tax-sortable-group-value="calendar"
+            data-tax-sortable-param-name-value="position"
+            data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
 
-        <%# non riordina bene position col css che nasconde quindi lo devo eliminare nel turbo stream %>
-        <% if @tappe.empty? %>
-            <div class="no-tappe text-center py-16 px-4 hidden only:block">
-                <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
-                <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
-            </div>
-        <% else %>
-            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
-        <% end %>
-    </div>
+            <% if @tappe.empty? %>
+                <div class="no-tappe text-center py-16 px-4 hidden only:block">
+                    <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
+                    <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
+                </div>
+            <% else %>
+                <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
+            <% end %>
+        </div>
+      </div>
+    </section>
     <%= render "tappe/bulk_bar/bar" %>
 </div>
 

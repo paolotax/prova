@@ -1,5 +1,13 @@
 module TappeHelper
 
+  def tappa_color(tappa)
+    return "var(--color-golden)" if tappa.golden?
+    return "oklch(0.6 0.01 0)" if tappa.closed?
+    return "oklch(0.6 0.01 0)" if tappa.postponed?
+    return tappa.entry.column.color if tappa.entry&.column&.color.present?
+    "oklch(var(--lch-blue-medium))"
+  end
+
   # Returns BEM modifier class based on tappa's tappable_type
   # e.g., "tappa--import-scuola", "tappa--cliente"
   def tappa_type_modifier(tappa)

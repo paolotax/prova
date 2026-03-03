@@ -1,0 +1,6 @@
+<%# locals: (tappa:) -%>
+
+<%= link_to edit_tappa_path(tappa), class: "btn", data: { controller: "tooltip", tooltip_content_value: "Modifica" } do %>
+  <%= icon_tag "pencil" %>
+  <span class="for-screen-reader">Modifica tappa</span>
+<% end %>

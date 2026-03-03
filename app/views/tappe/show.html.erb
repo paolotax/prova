@@ -1,23 +1,24 @@
 <% @page_title = @tappa.tappable.denominazione %>
+<% @header_class = "header--card" %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% info = referrer_back_info || { label: "Tappe", path: tappe_path } %>
     <%= back_link_to info[:label], info[:path] %>
   </div>
-
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @tappa.tappable.denominazione %></span>
-  </h1>
-
-  <div class="header__actions header__actions--end">
-    <%= link_to edit_tappa_path(@tappa), class: "btn" do %>
-      <%= icon_tag "pencil" %>
-      <span class="for-screen-reader">Modifica tappa</span>
-    <% end %>
-  </div>
 <% end %>
 
-<div class="full-width card-grid pad group show-navigator">
-  <%= render @tappa %>
+<%= turbo_stream_from @tappa.entry if @tappa.entry %>
+<%= tag.meta name: "entry-id", content: @tappa.entry&.id if @tappa.entry %>
+
+<div class="full-width pad group">
+  <%= render "tappe/container", tappa: @tappa %>
 </div>
+
+<% if @tappa.entry.present? %>
+  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+    <%= render "tappe/container/delete", tappa: @tappa %>
+  </footer>
+<% end %>

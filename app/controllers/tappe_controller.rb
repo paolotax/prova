@@ -92,6 +92,29 @@ class TappeController < ApplicationController
   end
 
   def show
+    open_appunto_ids = Entry.aperti.where(entryable_type: "Appunto").select("entryable_id::uuid")
+    open_documento_ids = Entry.aperti.where(entryable_type: "Documento").select("entryable_id::uuid")
+
+    if @tappa.tappable_type == "Scuola"
+      scuola = @tappa.tappable
+      classe_ids = scuola.respond_to?(:classi) ? scuola.classi.pluck(:id) : []
+      base_appunti = current_user.appunti.where(status: "published")
+      @appunti_attivi = base_appunti
+        .where(appuntabile_type: "Scuola", appuntabile_id: scuola.id)
+        .or(base_appunti.where(appuntabile_type: "Classe", appuntabile_id: classe_ids))
+        .where(id: open_appunto_ids)
+      @documenti_attivi = current_user.documenti
+        .where(clientable_type: "Scuola", clientable_id: scuola.id)
+        .where(id: open_documento_ids)
+    elsif @tappa.tappable_type == "Cliente"
+      cliente = @tappa.tappable
+      @appunti_attivi = current_user.appunti.where(status: "published")
+        .where(appuntabile_type: "Cliente", appuntabile_id: cliente.id)
+        .where(id: open_appunto_ids)
+      @documenti_attivi = current_user.documenti
+        .where(clientable_type: "Cliente", clientable_id: cliente.id)
+        .where(id: open_documento_ids)
+    end
   end
 
   def new

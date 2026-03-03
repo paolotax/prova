@@ -1,0 +1,37 @@
+<%# locals: (tappa:) -%>
+
+<section id="<%= dom_id(tappa, :container) %>" class="card-perma" style="--card-color: <%= tappa_color(tappa) %>;">
+  <div class="card-perma__actions card-perma__actions--left">
+    <%= render "tappe/container/gild", tappa: tappa if tappa.entry.present? && !tappa.closed? %>
+  </div>
+
+  <div class="card-perma__bg">
+    <article class="card <%= tappa.golden? ? 'golden-effect' : '' %>">
+      <header class="card__header">
+        <%= render "tappe/display/perma/board", tappa: tappa %>
+        <%= render "tappe/display/perma/tags", tappa: tappa %>
+      </header>
+
+      <div class="card__body justify-space-between">
+        <div class="card__content">
+          <%= render "tappe/container/content", tappa: tappa %>
+        </div>
+        <%= render "tappe/container/stages", tappa: tappa %>
+      </div>
+
+      <footer class="card__footer full-width">
+        <%= render "tappe/display/perma/meta", tappa: tappa %>
+      </footer>
+    </article>
+  </div>
+
+  <div class="card-perma__actions card-perma__actions--right">
+    <%= render "tappe/container/actions", tappa: tappa %>
+  </div>
+
+  <div class="card-perma__notch card-perma__notch--bottom">
+    <%= turbo_frame_tag tappa, :footer do %>
+      <%= render "tappe/container/footer", tappa: tappa %>
+    <% end %>
+  </div>
+</section>

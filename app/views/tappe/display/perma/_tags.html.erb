@@ -1,0 +1,16 @@
+<%# locals: (tappa:) -%>
+
+<div id="<%= dom_id(tappa, :tags) %>" class="card__tags">
+  <% if tappa.tappable.present? %>
+    <div class="min-width overflow-ellipsis">
+      <%= link_to polymorphic_path(tappa.tappable),
+            class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent" do %>
+        <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+          <%= tappa.tappable.comune.upcase %>
+        <% else %>
+          <%= tappa.tappable.class.model_name.human %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

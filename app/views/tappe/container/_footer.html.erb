@@ -1,0 +1,13 @@
+<%# locals: (tappa:) -%>
+
+<%= link_to edit_tappa_path(tappa), class: "btn",
+    data: { controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
+  Modifica <kbd class="hide-on-touch">E</kbd>
+<% end %>
+
+<% if tappa.entry.present? && !tappa.entry.closed? %>
+  <%= button_to entry_closure_path(tappa.entry), method: :post, class: "btn btn--reversed",
+      data: { controller: "hotkey", action: "keydown.c@document->hotkey#click" } do %>
+    Completa <kbd class="hide-on-touch">C</kbd>
+  <% end %>
+<% end %>

@@ -1,0 +1,13 @@
+<%# locals: (tappa:) -%>
+
+<% if tappa.golden? %>
+  <%= button_to entry_goldness_path(tappa.entry), method: :delete, class: "btn btn--reversed", data: { controller: "tooltip hotkey", action: "keydown.shift+g@document->hotkey#click" } do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Rimuovi da evidenza (maiusc+g)</span>
+  <% end %>
+<% else %>
+  <%= button_to entry_goldness_path(tappa.entry), method: :post, class: "btn", data: { controller: "tooltip hotkey", action: "keydown.shift+g@document->hotkey#click" } do %>
+    <%= icon_tag "golden-ticket" %>
+    <span class="for-screen-reader">Metti in evidenza (maiusc+g)</span>
+  <% end %>
+<% end %>
