@@ -112,8 +112,8 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
     # Raggruppa appunti per scuola
     appunti_per_scuola = @appunti_dettagliati.group_by do |item|
       {
-        scuola_id: item[:appunto].import_scuola_id,
-        scuola_nome: item[:appunto].import_scuola&.DENOMINAZIONESCUOLA || "N/D",
+        scuola_id: item[:tappa].tappable_id,
+        scuola_nome: item[:tappa].tappable&.denominazione || "N/D",
         tappa: item[:tappa]
       }
     end
