@@ -19,7 +19,7 @@ module Accounts
         end
 
         respond_to do |format|
-          format.turbo_stream { redirect_to accounts_distribuzione_path, status: :see_other }
+          format.turbo_stream { head :ok }
           format.html { redirect_to accounts_distribuzione_path }
         end
       end

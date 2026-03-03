@@ -58,7 +58,12 @@
           </button>
         </header>
         <div class="cards__list" data-drag-drop-item-container>
-          <%= render partial: "accounts/aree/scuola_card", collection: da_pulire, as: :scuola %>
+          <% da_pulire.each do |scuola| %>
+            <%= render "scuole/direzione_group",
+              gruppo: { direzione: scuola.direzione? ? scuola : nil,
+                        plessi: scuola.direzione? ? scuola.plessi.to_a : [scuola] },
+              draggable: true %>
+          <% end %>
         </div>
       </div>
     </section>
@@ -89,7 +94,12 @@
         </button>
       </header>
       <div class="cards__list" data-drag-drop-item-container>
-        <%= render partial: "accounts/aree/scuola_card", collection: unassigned, as: :scuola %>
+        <% unassigned.each do |scuola| %>
+          <%= render "scuole/direzione_group",
+            gruppo: { direzione: scuola.direzione? ? scuola : nil,
+                      plessi: scuola.direzione? ? scuola.plessi.to_a : [scuola] },
+            draggable: true %>
+        <% end %>
       </div>
     </div>
   </section>
@@ -138,7 +148,12 @@
               </div>
             <% end %>
           <div class="cards__list" data-drag-drop-item-container>
-            <%= render partial: "accounts/aree/scuola_card", collection: scuole, as: :scuola %>
+            <% scuole.each do |scuola| %>
+              <%= render "scuole/direzione_group",
+                gruppo: { direzione: scuola.direzione? ? scuola : nil,
+                          plessi: scuola.direzione? ? scuola.plessi.to_a : [scuola] },
+                draggable: true %>
+            <% end %>
           </div>
         </div>
       </section>

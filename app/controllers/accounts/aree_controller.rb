@@ -15,7 +15,7 @@ module Accounts
       leaders = scuole.where(direzione_id: nil)
         .or(scuole.direzioni)
         .distinct
-        .includes(:plessi)
+        .includes(plessi: :classi)
         .order(:comune, :denominazione)
 
       @scuole_by_area = {}

@@ -128,15 +128,19 @@ export default class extends Controller {
     const itemContainer = container.querySelector("[data-drag-drop-item-container]")
     const id = item.dataset.id || ""
 
-    // Provincia dragged — merge gradi into existing provincia or append
+    // Single plesso <tr> dragged out of a direzione card
+    if (item.tagName === "TR") {
+      this.#moveNestedRow(item, itemContainer)
+      return
+    }
+
+    // Provincia dragged — merge into existing or append
     if (id.startsWith("prov:")) {
-      const provincia = id.split(":")[1]
-      const existing = this.#findProvincia(itemContainer, provincia)
+      const existing = this.#findProvincia(itemContainer, id.split(":")[1])
 
       if (existing) {
-        // Move each grado into the existing provincia
         for (const grado of [...item.querySelectorAll(":scope > .accordion-grado")]) {
-          existing.append(grado)
+          this.#mergeGradoInto(existing, grado)
         }
         item.remove()
         this.#updateProvinciaCount(existing)
@@ -146,7 +150,7 @@ export default class extends Controller {
       return
     }
 
-    // Grado dragged into a column — find or create parent provincia
+    // Grado dragged — merge into existing provincia > grado or create
     if (id.startsWith("group:")) {
       const provincia = id.split(":")[1]
       let provDetails = this.#findProvincia(itemContainer, provincia)
@@ -163,12 +167,163 @@ export default class extends Controller {
         itemContainer.append(provDetails)
       }
 
-      provDetails.append(item)
+      this.#mergeGradoInto(provDetails, item)
       this.#updateProvinciaCount(provDetails)
       return
     }
 
+    // Card inside accordion — insert into matching provincia > grado
+    const sourceGrado = item.closest(".accordion-grado")
+    const sourceProv = item.closest(".accordion-provincia")
+
+    if (sourceProv && sourceGrado) {
+      this.#insertIntoAccordion(item, itemContainer, sourceProv, sourceGrado)
+
+      // Cleanup source grado if empty
+      const remainingCards = sourceGrado.querySelectorAll(".accordion-items > article.card")
+      if (remainingCards.length === 0) {
+        sourceGrado.remove()
+      }
+      return
+    }
+
     itemContainer.append(item)
+  }
+
+  #insertIntoAccordion(item, targetItemContainer, sourceProv, sourceGrado) {
+    const targetItems = this.#ensureAccordion(targetItemContainer, sourceProv, sourceGrado)
+    this.#mergeCardInto(targetItems, item)
+
+    const targetProv = targetItemContainer.querySelector(`:scope > [data-id="${sourceProv.dataset.id}"]`)
+    if (targetProv) this.#updateProvinciaCount(targetProv)
+  }
+
+  // Merge a grado accordion into a provincia — if grado exists, merge cards; otherwise append
+  #mergeGradoInto(targetProv, sourceGrado) {
+    const gradoId = sourceGrado.dataset.id
+    const existingGrado = targetProv.querySelector(`:scope > [data-id="${gradoId}"]`)
+
+    if (existingGrado) {
+      const targetItems = existingGrado.querySelector(".accordion-items")
+      for (const card of [...sourceGrado.querySelectorAll(".accordion-items > article.card")]) {
+        this.#mergeCardInto(targetItems, card)
+      }
+      sourceGrado.remove()
+    } else {
+      targetProv.append(sourceGrado)
+    }
+  }
+
+  // Merge a card into a container — if card with same data-id exists, merge plessi rows; otherwise insert sorted
+  #mergeCardInto(targetItems, card) {
+    const direzId = card.dataset.id
+    const existingCard = direzId ? targetItems.querySelector(`article.card[data-id="${direzId}"]`) : null
+
+    if (existingCard) {
+      const targetTbody = existingCard.querySelector("tbody")
+      const existingIds = new Set([...targetTbody.querySelectorAll("tr[data-id]")].map(r => r.dataset.id))
+      for (const row of [...card.querySelectorAll("tbody tr[data-id]")]) {
+        if (!existingIds.has(row.dataset.id)) {
+          targetTbody.append(row)
+        }
+      }
+      existingCard.dataset.scuoleCount = targetTbody.querySelectorAll("tr").length
+      card.remove()
+    } else {
+      this.#insertSorted(targetItems, card)
+    }
+  }
+
+  #insertSorted(container, item) {
+    const key = this.#cardSortKey(item)
+    if (!key) { container.append(item); return }
+
+    for (const existing of container.children) {
+      const existingKey = this.#cardSortKey(existing)
+      if (existingKey && key.localeCompare(existingKey, "it") < 0) {
+        existing.before(item)
+        return
+      }
+    }
+    container.append(item)
+  }
+
+  #cardSortKey(el) {
+    const comune = el.querySelector(".card__subtitle")?.textContent?.trim() || ""
+    const title = el.querySelector(".card__title")?.textContent?.trim() || ""
+    return comune ? `${comune}\0${title}` : title || null
+  }
+
+  // Find or create provincia > grado accordion in target, returns the .accordion-items container
+  #ensureAccordion(targetItemContainer, sourceProv, sourceGrado) {
+    const provId = sourceProv.dataset.id
+    const gradoId = sourceGrado.dataset.id
+
+    let targetProv = targetItemContainer.querySelector(`:scope > [data-id="${provId}"]`)
+    if (!targetProv) {
+      targetProv = document.createElement("details")
+      targetProv.className = "accordion-provincia"
+      targetProv.dataset.dragAndDropTarget = "item"
+      targetProv.dataset.id = provId
+      targetProv.open = true
+      targetProv.innerHTML = sourceProv.querySelector(":scope > summary").outerHTML
+      targetItemContainer.append(targetProv)
+    }
+
+    let targetGrado = targetProv.querySelector(`:scope > [data-id="${gradoId}"]`)
+    if (!targetGrado) {
+      targetGrado = document.createElement("details")
+      targetGrado.className = "accordion-grado"
+      targetGrado.dataset.dragAndDropTarget = "item"
+      targetGrado.dataset.id = gradoId
+      targetGrado.open = true
+      targetGrado.innerHTML = sourceGrado.querySelector(":scope > summary").outerHTML + '<div class="accordion-items"></div>'
+      targetProv.append(targetGrado)
+    }
+
+    return targetGrado.querySelector(".accordion-items")
+  }
+
+  #moveNestedRow(tr, targetItemContainer) {
+    const sourceCard = tr.closest("article.card")
+    const sourceGrado = tr.closest(".accordion-grado")
+    const sourceProv = tr.closest(".accordion-provincia")
+    const direzId = sourceCard?.dataset.id
+
+    // 1. Remove <tr> from source card, cleanup if empty
+    tr.remove()
+    if (sourceCard) {
+      const remainingRows = sourceCard.querySelectorAll("tbody tr")
+      if (remainingRows.length === 0) {
+        sourceCard.remove()
+      } else {
+        sourceCard.dataset.scuoleCount = remainingRows.length
+      }
+    }
+
+    // 2. No accordion (e.g. aree page) — nothing visual to do, server persists
+    if (!sourceProv || !sourceGrado) return
+
+    // 3. Find or create accordion structure in target
+    const targetItems = this.#ensureAccordion(targetItemContainer, sourceProv, sourceGrado)
+
+    // 4. Find existing card for this direzione or create one
+    let targetCard = direzId ? targetItems.querySelector(`article.card[data-id="${direzId}"]`) : null
+
+    if (targetCard) {
+      targetCard.querySelector("tbody").append(tr)
+      targetCard.dataset.scuoleCount = targetCard.querySelectorAll("tbody tr").length
+    } else if (sourceCard) {
+      const newCard = sourceCard.cloneNode(true)
+      newCard.querySelectorAll("tbody tr").forEach(r => r.remove())
+      newCard.querySelector("tbody").append(tr)
+      newCard.dataset.scuoleCount = "1"
+      this.#insertSorted(targetItems, newCard)
+    }
+
+    // 5. Update counts
+    const targetProv = targetItemContainer.querySelector(`:scope > [data-id="${sourceProv.dataset.id}"]`)
+    if (targetProv) this.#updateProvinciaCount(targetProv)
   }
 
   #findProvincia(itemContainer, provincia) {

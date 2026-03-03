@@ -84,11 +84,11 @@
       <% per_scuola = @mie_adozioni.group_by(&:scuola) %>
       <dl class="dl-grid dl-grid--center txt-small">
         <% per_scuola.each do |scuola, adozioni| %>
-          <dt class="txt-x-small" style="line-height: 1.1; --card-color: <%= scuola_color(scuola) %>;">
+          <dt class="txt-x-small" style="line-height: 1.1; --card-color: <%= tipo_scuola_color(scuola.tipo_scuola) %>;">
             <span class="font-weight-bold"><%= link_to scuola.denominazione, scuola_path(scuola), class: "txt-link" %></span>
             <br><span class="txt-xx-small txt-subtle"><%= scuola.comune %></span>
           </dt>
-          <dd style="--card-color: <%= scuola_color(scuola) %>;">
+          <dd style="--card-color: <%= tipo_scuola_color(scuola.tipo_scuola) %>;">
             <div class="flex gap-quarter flex-wrap">
               <%
                 adozioni_by_classe = adozioni.group_by(&:classe_id)

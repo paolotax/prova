@@ -16,7 +16,7 @@ module Account::Distribuzione
   # - Scuola isolata → una unità singola
   def build_distribuzione_units
     scuole.where(direzione_id: nil)
-      .includes(:plessi)
+      .includes(plessi: :classi)
       .order(:provincia, :comune, :denominazione)
       .flat_map do |scuola|
         if scuola.plessi.any?
@@ -47,15 +47,40 @@ module Account::Distribuzione
     assegnate = Hash.new { |h, k| h[k] = [] }
 
     units.each do |unit|
-      check_ids = unit[:plessi].any? ? unit[:plessi].map(&:id) : [unit[:scuola].id]
-      mids = check_ids.flat_map { |id| assignments[id] }.uniq
+      if unit[:plessi].any?
+        # Splitta i plessi per membership — ogni membership vede solo i suoi
+        plessi_by_mid = Hash.new { |h, k| h[k] = [] }
+        unassigned_plessi = []
 
-      if mids.empty?
-        non_assegnate << unit
-        key = [unit[:scuola].provincia || "—", unit[:grado]]
-        (non_assegnate_grouped[key] ||= []) << unit
+        unit[:plessi].each do |plesso|
+          mids = assignments[plesso.id]
+          if mids.any?
+            mids.each { |mid| plessi_by_mid[mid] << plesso }
+          else
+            unassigned_plessi << plesso
+          end
+        end
+
+        if unassigned_plessi.any?
+          unassigned_unit = unit.merge(plessi: unassigned_plessi)
+          non_assegnate << unassigned_unit
+          key = [unit[:scuola].provincia || "—", unit[:grado]]
+          (non_assegnate_grouped[key] ||= []) << unassigned_unit
+        end
+
+        plessi_by_mid.each do |mid, plessi|
+          assegnate[mid] << unit.merge(plessi: plessi)
+        end
       else
-        mids.each { |mid| assegnate[mid] << unit }
+        # Scuola isolata
+        mids = assignments[unit[:scuola].id]
+        if mids.any?
+          mids.each { |mid| assegnate[mid] << unit }
+        else
+          non_assegnate << unit
+          key = [unit[:scuola].provincia || "—", unit[:grado]]
+          (non_assegnate_grouped[key] ||= []) << unit
+        end
       end
     end
 

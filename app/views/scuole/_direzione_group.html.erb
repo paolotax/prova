@@ -1,9 +1,16 @@
-<%# locals: (gruppo:) -%>
+<%# locals: (gruppo:, draggable: false) -%>
 <% direzione = gruppo[:direzione] %>
 <% plessi = gruppo[:plessi] %>
 
 <% if direzione %>
-  <article class="card" style="--card-color: <%= tipo_scuola_color(direzione.tipo_scuola) %>">
+  <article class="card"
+    style="--card-color: <%= tipo_scuola_color(direzione.tipo_scuola) %>"
+    <% if draggable %>
+      draggable="true"
+      data-drag-and-drop-target="item"
+      data-id="<%= direzione.id %>"
+      data-scuole-count="<%= [plessi.size, 1].max %>"
+    <% end %>>
     <div class="flex flex-column flex-item-grow max-inline-size">
       <header class="card__header">
         <div class="card__board">
@@ -15,7 +22,11 @@
       <div class="card__body">
         <div class="card__content">
           <h3 class="card__title">
-            <%= link_to direzione.denominazione, scuola_path(direzione), class: "card__title-link", data: { turbo_frame: "_top" } %>
+            <% if draggable %>
+              <%= direzione.denominazione %>
+            <% else %>
+              <%= link_to direzione.denominazione, scuola_path(direzione), class: "card__title-link", data: { turbo_frame: "_top" } %>
+            <% end %>
           </h3>
           <span class="card__subtitle"><%= [direzione.comune, direzione.sigla_provincia].compact_blank.join(", ") %></span>
 
@@ -27,18 +38,25 @@
           <table class="table table--compact table--borderless txt-small" style="width: 100%;">
             <tbody>
               <% plessi.each do |plesso| %>
-                <tr>
+                <tr
+                  <% if draggable %>
+                    draggable="true"
+                    data-drag-and-drop-target="item"
+                    data-id="<%= plesso.id %>"
+                    data-scuole-count="1"
+                    data-action="dragstart->drag-and-drop#dragStart:stop"
+                  <% end %>>
                   <td class="overflow-ellipsis" style="max-width: 200px;">
                     <span class="for-screen-reader">Plesso</span>
+                    <% if draggable %>
+                      <span class="card__board txt-xx-small" style="--card-color: <%= tipo_scuola_color(plesso.tipo_scuola) %>">
+                        <%= plesso.denominazione %>
+                      </span>
+                    <% else %>
                       <%= link_to plesso.denominazione, scuola_path(plesso),
-                      class: "card__board txt-xx-small", style: "--card-color: #{tipo_scuola_color(plesso.tipo_scuola)}",
-                      data: { turbo_frame: "_top" } %>
-                    </span>
-
-                    
-                    
-                    
-
+                        class: "card__board txt-xx-small", style: "--card-color: #{tipo_scuola_color(plesso.tipo_scuola)}",
+                        data: { turbo_frame: "_top" } %>
+                    <% end %>
                   </td>
                   <td class="txt-align-end" style="white-space: nowrap;">
                     <% if plesso.classi.size > 0 %>
@@ -59,6 +77,32 @@
 <% else %>
   <%# Scuola isolata (senza direzione) — render come card singola %>
   <% plessi.each do |scuola| %>
-    <%= render scuola %>
+    <% if draggable %>
+      <article class="card"
+        style="--card-color: <%= tipo_scuola_color(scuola.tipo_scuola) %>"
+        draggable="true"
+        data-drag-and-drop-target="item"
+        data-id="<%= scuola.id %>"
+        data-scuole-count="1">
+        <div class="flex flex-column flex-item-grow max-inline-size">
+          <header class="card__header">
+            <div class="card__board">
+              <span class="card__id"><%= scuola.codice_ministeriale %></span>
+              <span class="card__board-name"><%= scuola.tipo_scuola&.upcase.presence || "SCUOLA" %></span>
+            </div>
+          </header>
+          <div class="card__body">
+            <div class="card__content">
+              <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+                <%= scuola.denominazione %>
+              </h3>
+              <span class="card__subtitle"><%= [scuola.comune, scuola.sigla_provincia].compact_blank.join(", ") %></span>
+            </div>
+          </div>
+        </div>
+      </article>
+    <% else %>
+      <%= render scuola %>
+    <% end %>
   <% end %>
 <% end %>

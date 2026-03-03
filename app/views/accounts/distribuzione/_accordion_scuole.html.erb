@@ -22,7 +22,10 @@
         </summary>
         <div class="accordion-items">
           <% units.each do |unit| %>
-            <%= render "accounts/distribuzione/scuola_item", unit: unit %>
+            <%= render "scuole/direzione_group",
+              gruppo: { direzione: unit[:plessi].any? ? unit[:scuola] : nil,
+                        plessi: unit[:plessi].any? ? unit[:plessi] : [unit[:scuola]] },
+              draggable: true %>
           <% end %>
         </div>
       </details>

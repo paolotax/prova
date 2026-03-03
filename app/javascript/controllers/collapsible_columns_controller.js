@@ -6,7 +6,8 @@ export default class extends Controller {
   static targets = [ "column", "button", "title", "maybeColumn" ]
   static values = {
     board: String,
-    desktopBreakpoint: { type: String, default: "(min-width: 640px)" }
+    desktopBreakpoint: { type: String, default: "(min-width: 640px)" },
+    exclusive: { type: Boolean, default: true }
   }
 
   initialize() {
@@ -49,7 +50,7 @@ export default class extends Controller {
 
   focusOnColumn({ target }) {
     if (this.#isDesktop && this.#isCollapsed(target)) {
-      this.#collapseAllExcept(target)
+      if (this.exclusiveValue) this.#collapseAllExcept(target)
       this.#expand(target)
     }
   }
@@ -71,7 +72,7 @@ export default class extends Controller {
   }
 
   #toggleColumn(column) {
-    this.#collapseAllExcept(column)
+    if (this.exclusiveValue) this.#collapseAllExcept(column)
 
     if (this.#isCollapsed(column)) {
       this.#expand(column)
@@ -131,7 +132,7 @@ export default class extends Controller {
   #restoreColumn(column) {
     const key = this.#localStorageKeyFor(column)
     if (localStorage.getItem(key)) {
-      this.#collapseAllExcept(column)
+      if (this.exclusiveValue) this.#collapseAllExcept(column)
       this.#expand(column)
     }
   }
