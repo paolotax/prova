@@ -260,7 +260,12 @@
   }
 
   .card__meta-avatars--author {
+    display: flex;
     margin-inline-end: var(--meta-spacer-inline);
+
+    .avatar {
+      margin-inline-end: calc(-1 * var(--meta-spacer-inline));
+    }
   }
 
   .card__meta-avatars--assignees {

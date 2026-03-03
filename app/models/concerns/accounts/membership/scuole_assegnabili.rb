@@ -4,6 +4,16 @@ module Accounts::Membership::ScuoleAssegnabili
   # Assegna scuole a questo membership (opzionalmente spostandole da source)
   def assegna_scuole!(scuole, da: nil)
     da.rimuovi_scuole!(scuole) if da
+
+    # Per i plessi, rimuovi assegnazioni ad altri membership (esclusiva)
+    plessi = scuole.reject { |s| s.plessi.any? }
+    if plessi.any?
+      Accounts::MembershipScuola
+        .where(scuola: plessi)
+        .where.not(membership_id: id)
+        .destroy_all
+    end
+
     scuole.each { |s| membership_scuole.find_or_create_by!(scuola: s) }
     self.class.sync_direzioni_for(scuole, account: account)
   end
