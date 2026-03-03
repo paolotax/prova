@@ -18,6 +18,7 @@
     background: none;
   }
 
+  .icon--ellipsis-vertical { --svg: url("ellipsis-vertical.svg"); }
   .icon--wrench { --svg: url("wrench.svg"); }
   .icon--appunto { --svg: url("appunto.svg"); }
   .icon--star { --svg: url("star.svg"); }
