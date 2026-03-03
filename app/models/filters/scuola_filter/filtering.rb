@@ -14,11 +14,11 @@ module Filters
     end
 
     def province_disponibili
-      @province_disponibili ||= user.accounts.first.scuole.distinct.pluck(:provincia).compact.sort
+      @province_disponibili ||= Current.scuole.distinct.pluck(:provincia).compact.sort
     end
 
     def aree_per_provincia
-      @aree_per_provincia ||= user.accounts.first.scuole
+      @aree_per_provincia ||= Current.scuole
         .where.not(area: [nil, ""])
         .where.not("area LIKE '\\_\\_%'")  # escludi aree interne (__da_pulire__ etc)
         .distinct.pluck(:provincia, :area)
@@ -32,7 +32,7 @@ module Filters
 
     def comuni_disponibili
       @comuni_disponibili ||= begin
-        scope = user.accounts.first.scuole
+        scope = Current.scuole
         scope = scope.where(provincia: filter.province) if filter.province.present?
         scope.distinct.pluck(:comune).compact.sort
       end
@@ -43,14 +43,14 @@ module Filters
     end
 
     def provincia_per_comune
-      @provincia_per_comune ||= user.accounts.first.scuole
+      @provincia_per_comune ||= Current.scuole
         .where.not(comune: nil, provincia: nil)
         .distinct.pluck(:comune, :provincia)
         .to_h
     end
 
     def tipi_scuola_disponibili
-      @tipi_scuola_disponibili ||= user.accounts.first.scuole.distinct.pluck(:tipo_scuola).compact.sort
+      @tipi_scuola_disponibili ||= Current.scuole.distinct.pluck(:tipo_scuola).compact.sort
     end
 
     def show_tipi_scuola?

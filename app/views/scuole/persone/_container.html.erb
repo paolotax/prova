@@ -1,6 +1,6 @@
 <%# locals: (persona:, scuola:, appunti:) -%>
 
-<% persona_card_color = tipo_scuola_color(scuola.classi.pick(:tipo_scuola)) %>
+<% persona_card_color = tipo_scuola_color(scuola.tipo_scuola) %>
 <section class="card-perma" style="--card-color: <%= persona_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_persona_id %>

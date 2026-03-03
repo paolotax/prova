@@ -3,11 +3,10 @@ module ClassiHelper
   def tipo_scuola_color(tipo_scuola)
     key = tipo_scuola.to_s.upcase
     case key
-    when /PRIMO GRADO/           then "var(--color-card-5)"  # emerald — medie
-    when /COMPRENSIVO|SUPERIORE/ then "var(--color-card-5)"
+    when /COMPRENSIVO|PRIMO GRADO/ then "var(--color-card-5)"      # aqua — medie e comprensivi
     when /PRIMARIA/              then "var(--color-card-default)"  # blue — elementari
     when /LICEO SCIENTIFICO/     then "var(--color-card-6)"  # indigo
-    when /LICEO CLASSICO/        then "var(--color-card-6)" # purple
+    when /LICEO CLASSICO/        then "var(--color-card-6)"  # purple
     when /LICEO ARTISTICO/       then "var(--color-card-6)"  # pink
     when /MAGISTRALE/            then "var(--color-card-6)"  # fuchsia
     when /TEC.*COMMERC|TEC.*GEOM|TEC.*TURIS/ then "var(--color-card-4)" # orange — tecnici commerciali
@@ -15,7 +14,7 @@ module ClassiHelper
     when /PROF.*SERVIZ|PROF.*COMMERC|PROF.*PUBBLIC/ then "var(--color-card-8)" # rose — professionali servizi
     when /PROF.*INDUSTR|PROF.*ARTIG|PROF.*AGRIC/ then "var(--color-card-8)" # red-orange — professionali industria
     when /ARTE/                  then "var(--color-card-6)"  # magenta
-    when /SECONDO/               then "var(--color-card-5)"  # magenta
+    when /SECONDO GRADO|SUPERIORE/ then "var(--color-card-1)" # gray
     else "var(--color-card-1)" # gray default
     end
   end
