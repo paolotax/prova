@@ -1,0 +1,17 @@
+<%# Aggiorna elemento nella lista (se presente) %>
+<%= turbo_stream.replace @tappa do %>
+  <%= render partial: "tappe/tappa", locals: { tappa: @tappa } %>
+<% end %>
+
+<%# Aggiorna parti della show page %>
+<%= turbo_stream.replace [@tappa, :edit] do %>
+  <%= turbo_frame_tag @tappa, :edit do %>
+    <%= render "tappe/container/content", tappa: @tappa %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@tappa, :footer] do %>
+  <%= turbo_frame_tag @tappa, :footer do %>
+    <%= render "tappe/container/footer", tappa: @tappa %>
+  <% end %>
+<% end %>

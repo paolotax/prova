@@ -45,6 +45,27 @@ class Tappa < ApplicationRecord
   
   belongs_to :tappable, polymorphic: true
 
+  # Virtual attribute per combobox multi-entità
+  # Formato: "Scuola:uuid" o "Cliente:id"
+  def tappable_value
+    return nil unless tappable.present?
+    tappable.to_appuntabile_value
+  end
+
+  def tappable_value=(value)
+    return if value.blank?
+
+    klass, id = Appuntabile.parse_appuntabile_value(value)
+    if klass && id
+      begin
+        self.tappable = klass.find_by(id: id)
+      rescue ActiveRecord::StatementInvalid => e
+        Rails.logger.warn "Invalid tappable_value format: #{value} - #{e.message}"
+        nil
+      end
+    end
+  end
+
   accepts_nested_attributes_for :giri
 
   

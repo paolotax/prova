@@ -92,28 +92,11 @@ class TappeController < ApplicationController
   end
 
   def show
-    open_appunto_ids = Entry.aperti.where(entryable_type: "Appunto").select("entryable_id::uuid")
-    open_documento_ids = Entry.aperti.where(entryable_type: "Documento").select("entryable_id::uuid")
+    load_active_entries
 
-    if @tappa.tappable_type == "Scuola"
-      scuola = @tappa.tappable
-      classe_ids = scuola.respond_to?(:classi) ? scuola.classi.pluck(:id) : []
-      base_appunti = current_user.appunti.where(status: "published")
-      @appunti_attivi = base_appunti
-        .where(appuntabile_type: "Scuola", appuntabile_id: scuola.id)
-        .or(base_appunti.where(appuntabile_type: "Classe", appuntabile_id: classe_ids))
-        .where(id: open_appunto_ids)
-      @documenti_attivi = current_user.documenti
-        .where(clientable_type: "Scuola", clientable_id: scuola.id)
-        .where(id: open_documento_ids)
-    elsif @tappa.tappable_type == "Cliente"
-      cliente = @tappa.tappable
-      @appunti_attivi = current_user.appunti.where(status: "published")
-        .where(appuntabile_type: "Cliente", appuntabile_id: cliente.id)
-        .where(id: open_appunto_ids)
-      @documenti_attivi = current_user.documenti
-        .where(clientable_type: "Cliente", clientable_id: cliente.id)
-        .where(id: open_documento_ids)
+    respond_to do |format|
+      format.html
+      format.turbo_stream unless flash.any?
     end
   end
 
@@ -125,6 +108,10 @@ class TappeController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def create
@@ -133,27 +120,11 @@ class TappeController < ApplicationController
 
     respond_to do |format|
       if @tappa.save
-
-        # @tappa.broadcast_append_later_to [current_user, "tappe"], target: "tappe-lista"
         update_tappa_giri(@tappa, params[:tappa][:giro_ids])
-    
-        if hotwire_native_app?
-          format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
-        else
-          format.turbo_stream { flash.now[:notice] = "Tappa creata." }
-          format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
-        end
 
-      else      
-        if hotwire_native_app?
-          format.html { render :new, status: :unprocessable_entity }
-        else
-          format.turbo_stream do 
-            flash.now[:alert] = "Impossibile creare la tappa."   
-          end
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @tappa.errors, status: :unprocessable_entity }
-        end
+        format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
+      else
+        format.html { render :new, status: :unprocessable_entity }
       end
     end
   
@@ -200,11 +171,12 @@ class TappeController < ApplicationController
   end
 
   def destroy
+    giorno = @tappa.data_tappa
     @tappa.destroy
-    
+
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back(fallback_location: root_path, notice: 'Tappa eliminata.') }
+      format.html { redirect_to giorno_path(giorno: giorno), notice: 'Tappa eliminata.' }
     end
   end
 
@@ -212,6 +184,32 @@ class TappeController < ApplicationController
 
     def set_tappa
       @tappa = current_user.tappe.find(params[:id])
+    end
+
+    def load_active_entries
+      open_appunto_ids = Entry.aperti.where(entryable_type: "Appunto").select("entryable_id::uuid")
+      open_documento_ids = Entry.aperti.where(entryable_type: "Documento").select("entryable_id::uuid")
+
+      if @tappa.tappable_type == "Scuola"
+        scuola = @tappa.tappable
+        classe_ids = scuola.respond_to?(:classi) ? scuola.classi.pluck(:id) : []
+        base_appunti = current_user.appunti.where(status: "published")
+        @appunti_attivi = base_appunti
+          .where(appuntabile_type: "Scuola", appuntabile_id: scuola.id)
+          .or(base_appunti.where(appuntabile_type: "Classe", appuntabile_id: classe_ids))
+          .where(id: open_appunto_ids)
+        @documenti_attivi = current_user.documenti
+          .where(clientable_type: "Scuola", clientable_id: scuola.id)
+          .where(id: open_documento_ids)
+      elsif @tappa.tappable_type == "Cliente"
+        cliente = @tappa.tappable
+        @appunti_attivi = current_user.appunti.where(status: "published")
+          .where(appuntabile_type: "Cliente", appuntabile_id: cliente.id)
+          .where(id: open_appunto_ids)
+        @documenti_attivi = current_user.documenti
+          .where(clientable_type: "Cliente", clientable_id: cliente.id)
+          .where(id: open_documento_ids)
+      end
     end
 
     def planner_tappe_per_area
@@ -267,7 +265,7 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :new_giro, :position, :giro_ids)
+      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :tappable_value, :new_giro, :position, :giro_ids)
     end
 
    

@@ -1,61 +1,63 @@
 <%# locals: (tappa:) -%>
 
-<div class="flex flex-column gap-half">
-  <% if tappa.tappable.present? %>
-    <div>
-      <%= link_to polymorphic_path(tappa.tappable), class: "btn btn--plain fill-transparent txt-bold" do %>
-        <%= tappa.tappable.denominazione %>
-        <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
-          <span class="txt-light txt-small"> — <%= tappa.tappable.comune %></span>
+<%= turbo_frame_tag tappa, :edit do %>
+  <div class="flex flex-column gap-half">
+    <% if tappa.tappable.present? %>
+      <div>
+        <%= link_to polymorphic_path(tappa.tappable), class: "btn btn--plain fill-transparent txt-bold" do %>
+          <%= tappa.tappable.denominazione %>
+          <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+            <span class="txt-light txt-small"> — <%= tappa.tappable.comune %></span>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
-  <% end %>
+      </div>
+    <% end %>
 
-  <% if tappa.titolo.present? %>
-    <p class="txt-medium txt-bold"><%= tappa.titolo %></p>
-  <% end %>
+    <% if tappa.titolo.present? %>
+      <p class="txt-medium txt-bold"><%= tappa.titolo %></p>
+    <% end %>
 
-  <% if tappa.descrizione.present? %>
-    <p class="txt-medium"><%= tappa.descrizione %></p>
-  <% end %>
+    <% if tappa.descrizione.present? %>
+      <p class="txt-medium"><%= tappa.descrizione %></p>
+    <% end %>
 
-  <% if tappa.giri.any? %>
-    <div class="flex gap-quarter flex-wrap">
-      <% tappa.giri.each do |giro| %>
-        <span class="badge badge--small"><%= giro.titolo %></span>
-      <% end %>
-    </div>
-  <% end %>
+    <% if tappa.giri.any? %>
+      <div class="flex gap-quarter flex-wrap">
+        <% tappa.giri.each do |giro| %>
+          <span class="badge badge--small"><%= giro.titolo %></span>
+        <% end %>
+      </div>
+    <% end %>
 
-  <% if @appunti_attivi.present? && @appunti_attivi.any? %>
-    <div class="margin-block-start">
-      <h4 class="txt-small txt-bold txt-uppercase txt-light margin-block-half">Appunti attivi</h4>
-      <div class="flex flex-column gap-quarter">
-        <% @appunti_attivi.each do |appunto| %>
-          <%= link_to appunto_path(appunto), class: "btn btn--plain fill-transparent txt-small" do %>
-            <%= icon_tag "file-text" %>
-            <%= appunto.nome.presence || "Appunto" %>
-            <% if appunto.totale_copie.to_i > 0 %>
-              <span class="txt-light">(<%= appunto.totale_copie %> copie)</span>
+    <% if @appunti_attivi.present? && @appunti_attivi.any? %>
+      <div class="margin-block-start">
+        <h4 class="txt-small txt-bold txt-uppercase txt-light margin-block-half">Appunti attivi</h4>
+        <div class="flex flex-column gap-quarter">
+          <% @appunti_attivi.each do |appunto| %>
+            <%= link_to appunto_path(appunto), class: "btn btn--plain fill-transparent txt-small" do %>
+              <%= icon_tag "file-text" %>
+              <%= appunto.nome.presence || "Appunto" %>
+              <% if appunto.totale_copie.to_i > 0 %>
+                <span class="txt-light">(<%= appunto.totale_copie %> copie)</span>
+              <% end %>
             <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @documenti_attivi.present? && @documenti_attivi.any? %>
-    <div class="margin-block-start">
-      <h4 class="txt-small txt-bold txt-uppercase txt-light margin-block-half">Documenti attivi</h4>
-      <div class="flex flex-column gap-quarter">
-        <% @documenti_attivi.each do |documento| %>
-          <%= link_to documento_path(documento), class: "btn btn--plain fill-transparent txt-small" do %>
-            <%= icon_tag "file" %>
-            <%= documento.numero_formattato.presence || "Documento" %>
+    <% if @documenti_attivi.present? && @documenti_attivi.any? %>
+      <div class="margin-block-start">
+        <h4 class="txt-small txt-bold txt-uppercase txt-light margin-block-half">Documenti attivi</h4>
+        <div class="flex flex-column gap-quarter">
+          <% @documenti_attivi.each do |documento| %>
+            <%= link_to documento_path(documento), class: "btn btn--plain fill-transparent txt-small" do %>
+              <%= icon_tag "file" %>
+              <%= documento.numero_documento.present? ? "Doc. #{documento.numero_documento}" : "Documento" %>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
+<% end %>

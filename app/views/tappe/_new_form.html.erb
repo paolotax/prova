@@ -1,0 +1,33 @@
+<%# locals: (tappa:) -%>
+
+<%= form_with model: tappa, id: "new_tappa_form",
+      data: { turbo: true, controller: "form",
+              action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+
+  <div class="form-field cb-tax">
+    <%= combobox_tag "tappa[tappable_value]",
+        destinatari_index_path,
+        id: "tappa_tappable_value_new",
+        placeholder: "cerca scuola, cliente...",
+        mobile_at: "0px" %>
+  </div>
+
+  <div class="form-field" style="margin-top: 1ch;">
+    <%= form.text_area :titolo, rows: 2,
+        class: "input",
+        placeholder: "Note..." %>
+  </div>
+
+  <div class="flex gap-half align-center" style="margin-top: 1ch;">
+    <div class="form-field">
+      <%= form.date_field :data_tappa, class: "input" %>
+    </div>
+
+    <div class="form-field cb-tax" style="flex: 1;">
+      <%= form.combobox :giro_ids,
+          current_user.giri.order(created_at: :desc),
+          multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
+    </div>
+  </div>
+
+<% end %>

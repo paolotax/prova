@@ -1,13 +1,35 @@
-<% unless hotwire_native_app? %>
-    <%= render "shared/turbo_dialog" do %>
-        <div class="w-full">
-            <h2 class="font-bold text-2xl">Crea Tappa</h2>
-            <%= render "form", tappa: @tappa %>
-        </div>
-    <% end %>
-<% else %>
-    <% content_for :title, "Crea Tappa" %>
-    <div class="p-4">
-        <%= render "form", tappa: @tappa %>
-    </div>
+<% @page_title = "Nuova tappa" %>
+<% @header_class = "header--card" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Indietro", :back %>
+  </div>
 <% end %>
+
+<div class="full-width pad group">
+  <section class="card-perma" style="--card-color: oklch(var(--lch-blue-medium));">
+    <div class="card-perma__bg">
+      <article class="card">
+        <div class="card__body">
+          <div class="card__content">
+            <%= render "tappe/new_form", tappa: @tappa %>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="card-perma__notch card-perma__notch--bottom">
+      <div>
+        <%= button_tag class: "btn btn--positive", type: :submit, form: "new_tappa_form",
+            data: { controller: "hotkey", action: "keydown.s@document->hotkey#click" } do %>
+          Salva <kbd class="hide-on-touch">S</kbd>
+        <% end %>
+
+        <%= link_to :back, class: "btn btn--reversed" do %>
+          <span>Annulla</span>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>

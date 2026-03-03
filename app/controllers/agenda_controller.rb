@@ -89,10 +89,6 @@ class AgendaController < ApplicationController
     end
   end
 
-  def slideover
-    @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
-  end
-
   def adozioni_tappe_pdf
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
     

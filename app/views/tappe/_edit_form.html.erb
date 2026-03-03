@@ -1,0 +1,35 @@
+<%# locals: (tappa:) -%>
+
+<%= form_with model: tappa, id: dom_id(tappa, :edit_form),
+      data: { turbo: true, controller: "form",
+              action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
+
+  <% if tappa.tappable.present? %>
+    <h1 class="card__title overflow-line-clamp">
+      <%= link_to polymorphic_path(tappa.tappable), class: "card__title-link", data: { turbo_frame: "_top" } do %>
+        <%= tappa.tappable.denominazione %>
+      <% end %>
+      <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+        <span class="card__subtitle"><%= tappa.tappable.comune.upcase %></span>
+      <% end %>
+    </h1>
+  <% end %>
+
+  <div class="form-field" style="margin-top: 1ch;">
+    <%= form.text_area :titolo, rows: 2,
+        class: "input",
+        placeholder: "Note..." %>
+  </div>
+
+  <div class="flex gap-half align-center" style="margin-top: 1ch;">
+    <div class="form-field">
+      <%= form.date_field :data_tappa, class: "input" %>
+    </div>
+
+    <div class="form-field cb-tax" style="flex: 1;">
+      <%= form.combobox :giro_ids,
+          current_user.giri.order(created_at: :desc),
+          multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
+    </div>
+  </div>
+<% end %>

@@ -10,45 +10,47 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <div class="flex items-center gap-1">
-      <%= link_to agenda_path(giorno: @giorno),
-          class: "btn btn--warning",
-          data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-        Settimana
-      <% end %>
-
-      <%= link_to giorno_path(giorno: (@giorno - 1.day).to_s),
-          class: "btn btn--ghost",
-          data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-        <%= icon_tag "arrow-left", size: "small" %>
-      <% end %>
-
-      <div data-controller="date-selector" class="relative">
-        <%= date_field_tag :giorno,
-            @giorno,
-            class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
-            style: "width: 2.5rem; color: transparent;",
-            data: {
-                action: "change->date-selector#change",
-                date_selector_target: "select",
-                current_date: @giorno
-            } %>
-        <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
-      </div>
-
-      <%= link_to giorno_path(giorno: (@giorno + 1.day).to_s),
-          class: "btn btn--ghost",
-          data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-        <%= icon_tag "arrow-right", size: "small" %>
-      <% end %>
+    <%= link_to agenda_path(giorno: @giorno),
+        class: "btn btn--cricle",
+        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
+      Week
+    <% end %>
+    <div data-controller="date-selector" class="relative">
+      <%= date_field_tag :giorno,
+          @giorno,
+          class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
+          style: "width: 2.5rem; color: transparent;",
+          data: {
+              action: "change->date-selector#change",
+              date_selector_target: "select",
+              current_date: @giorno
+          } %>
+      <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
     </div>
+
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
+  <div class="header__title divider divider--fade full-width">
+    <%= link_to giorno_path(giorno: (@giorno - 1.day).to_s),
+        class: "btn txt-x-small",
+        data: { controller: "link-modifier tooltip hotkey", link_modifier_target: "link", action: "keydown.left@document->hotkey#click" } do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Giorno precedente <kbd class="kbd">&larr;</kbd></span>
+    <% end %>
+
     <span class="overflow-ellipsis"><%= I18n.l(@giorno.to_date, format: :long_with_day, locale: :it) %></span>
-  </h1>
+  
+    <%= link_to giorno_path(giorno: (@giorno + 1.day).to_s),
+        class: "btn txt-x-small",
+        data: { controller: "link-modifier tooltip hotkey", link_modifier_target: "link", action: "keydown.right@document->hotkey#click" } do %>
+      <%= icon_tag "arrow-right", size: "small" %>
+      <span class="for-screen-reader">Giorno successivo <kbd class="kbd">&rarr;</kbd></span>
+    <% end %>
+  
+  </div>
 
   <div class="header__actions header__actions--end">
+
     <% if @tappe.size > 1 %>
       <%= link_to url_for(controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }),
           class: "btn btn--ghost" do %>
@@ -104,17 +106,33 @@
         <% end %>
       <% end %>
     <% end %>
-    <%= link_to slideover_path,
-        class: "btn btn--primary",
-        data: { controller: "link-modifier", link_modifier_target: "link", turbo_frame: "slide-over" } do %>
-      <%= icon_tag "add", size: "small" %>
-    <% end %>
   </div>
 <% end %>
 
 
 <div data-controller="bulk-actions">
     <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto; container-type: inline-size;">
+      <div class="board-tools card" style="flex-wrap: wrap;">
+        <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+          <%= icon_tag "document" %>
+          <span>Documento</span>
+          <kbd class="hide-on-touch">D</kbd>
+        <% end %>
+
+        <%= link_to new_appunto_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+          <%= icon_tag "note" %>
+          <span>Appunto</span>
+          <kbd class="hide-on-touch">A</kbd>
+        <% end %>
+
+        <div style="flex-basis: 100%; text-align: center;">
+          <%= link_to new_tappa_path(data_tappa: @giorno), class: "btn btn--link", data: { turbo_frame: "_top" } do %>
+            <%= icon_tag "add", size: "small" %>
+            <span>Tappa</span>
+          <% end %>
+        </div>
+      </div>
+
       <div class="cards__transition-container">
         <div id="giorno-<%= @giorno %>"
             class="cards__list"

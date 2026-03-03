@@ -1,7 +1,8 @@
 <%# locals: (tappa:) -%>
 
 <%= link_to edit_tappa_path(tappa), class: "btn",
-    data: { controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
+    data: { turbo_method: :get, turbo_stream: true,
+            controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
   Modifica <kbd class="hide-on-touch">E</kbd>
 <% end %>
 

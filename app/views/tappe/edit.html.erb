@@ -1,13 +1,7 @@
-<% unless hotwire_native_app? %>
-    <%= render "shared/turbo_dialog" do %>
-        <div class="w-full">
-           <h2 class="font-bold text-2xl">Aggiorna Tappa</h2>
-            <%= render "form", tappa: @tappa %>
-        </div>
-    <% end %>
-<% else %>
-    <% content_for :title, "Aggiorna Tappa" %>
-    <div class="p-4">
-        <%= render "form", tappa: @tappa %>
-    </div>
+<%= turbo_frame_tag @tappa, :edit do %>
+  <%= render "tappe/edit_form", tappa: @tappa %>
+<% end %>
+
+<%= turbo_frame_tag @tappa, :footer do %>
+  <%= render "tappe/edit_footer", tappa: @tappa %>
 <% end %>

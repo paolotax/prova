@@ -4,8 +4,7 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <% info = referrer_back_info || { label: "Tappe", path: tappe_path } %>
-    <%= back_link_to info[:label], info[:path] %>
+    <%= back_link_to_url I18n.l(@tappa.data_tappa, format: :short, locale: :it), giorno_path(giorno: @tappa.data_tappa) %>
   </div>
 <% end %>
 
@@ -16,9 +15,7 @@
   <%= render "tappe/container", tappa: @tappa %>
 </div>
 
-<% if @tappa.entry.present? %>
-  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
-    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-    <%= render "tappe/container/delete", tappa: @tappa %>
-  </footer>
-<% end %>
+<footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+  <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+  <%= render "tappe/container/delete", tappa: @tappa %>
+</footer>

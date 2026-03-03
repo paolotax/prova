@@ -1,0 +1,11 @@
+<%= turbo_stream.replace [@tappa, :edit] do %>
+  <%= turbo_frame_tag @tappa, :edit do %>
+    <%= render "tappe/edit_form", tappa: @tappa %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace [@tappa, :footer] do %>
+  <%= turbo_frame_tag @tappa, :footer do %>
+    <%= render "tappe/edit_footer", tappa: @tappa %>
+  <% end %>
+<% end %>
