@@ -13,6 +13,11 @@ export default class extends Controller {
     event.dataTransfer.dropEffect = "move"
     event.dataTransfer.setData("37ui/move", event.target)
 
+    // Compact ghost for table rows (plessi)
+    if (event.target.tagName === "TR") {
+      this.#setCompactDragImage(event)
+    }
+
     await nextFrame()
     this.dragItem = this.#itemContaining(event.target)
     this.sourceContainer = this.#containerContaining(this.dragItem)
@@ -55,6 +60,8 @@ export default class extends Controller {
     // Aggiorna contatori provincia/grado nel target dopo inserimento
     const targetParentProv = this.dragItem.closest(".accordion-provincia")
     if (targetParentProv) this.#updateProvinciaCount(targetParentProv)
+    this.#updateCardMeta(this.dragItem, targetContainer)
+    this.#updateCardMeta(sourceContainer)
     await this.#submitDropRequest(this.dragItem, targetContainer)
     this.#reloadSourceFrame(sourceContainer)
     this.#reloadTargetFrame(targetContainer)
@@ -130,7 +137,7 @@ export default class extends Controller {
 
     // Single plesso <tr> dragged out of a direzione card
     if (item.tagName === "TR") {
-      this.#moveNestedRow(item, itemContainer)
+      this.#moveNestedRow(item, itemContainer, container)
       return
     }
 
@@ -285,7 +292,7 @@ export default class extends Controller {
     return targetGrado.querySelector(".accordion-items")
   }
 
-  #moveNestedRow(tr, targetItemContainer) {
+  #moveNestedRow(tr, targetItemContainer, targetSection) {
     const sourceCard = tr.closest("article.card")
     const sourceGrado = tr.closest(".accordion-grado")
     const sourceProv = tr.closest(".accordion-provincia")
@@ -313,15 +320,26 @@ export default class extends Controller {
     if (targetCard) {
       targetCard.querySelector("tbody").append(tr)
       targetCard.dataset.scuoleCount = targetCard.querySelectorAll("tbody tr").length
+      this.#updateCardMetaTotals(targetCard)
     } else if (sourceCard) {
       const newCard = sourceCard.cloneNode(true)
       newCard.querySelectorAll("tbody tr").forEach(r => r.remove())
       newCard.querySelector("tbody").append(tr)
       newCard.dataset.scuoleCount = "1"
       this.#insertSorted(targetItems, newCard)
+      this.#updateCardMetaTotals(newCard)
     }
 
-    // 4. Update accordion counts if present
+    // 4. Update source card meta totals
+    if (sourceCard && sourceCard.isConnected) {
+      this.#updateCardMetaTotals(sourceCard)
+    }
+
+    // 4b. Update avatar on target card
+    const movedCard = targetCard || targetItems.querySelector(`article.card[data-id="${direzId}"]`)
+    if (movedCard && targetSection) this.#updateCardMetaAvatar(movedCard, targetSection)
+
+    // 5. Update accordion counts if present
     if (sourceProv && sourceGrado) {
       const targetProv = targetItemContainer.querySelector(`:scope > [data-id="${sourceProv.dataset.id}"]`)
       if (targetProv) this.#updateProvinciaCount(targetProv)
@@ -395,5 +413,90 @@ export default class extends Controller {
   #reloadTargetFrame(targetContainer) {
     const frame = targetContainer.querySelector("[data-drag-and-drop-refresh]")
     if (frame) frame.reload()
+  }
+
+  // Update card__meta totals and avatar after drag-and-drop
+  #updateCardMeta(cardOrContainer, targetContainer) {
+    // If called with a container (source), update all cards inside it
+    const cards = cardOrContainer.matches?.("article.card")
+      ? [cardOrContainer]
+      : cardOrContainer.querySelectorAll("article.card")
+
+    for (const card of cards) {
+      this.#updateCardMetaTotals(card)
+    }
+
+    // Update avatar only for the moved card (when targetContainer is provided)
+    if (targetContainer) {
+      const card = cardOrContainer.matches?.("article.card") ? cardOrContainer : null
+      if (card) this.#updateCardMetaAvatar(card, targetContainer)
+    }
+  }
+
+  #updateCardMetaTotals(card) {
+    const meta = card.querySelector(".card__meta")
+    if (!meta) return
+
+    const rows = card.querySelectorAll("tbody tr")
+    // Skip isolated schools (no plessi table) — their meta comes from server attributes
+    if (rows.length === 0) return
+
+    let totalClassi = 0
+    let totalAdozioni = 0
+
+    for (const row of rows) {
+      const classiTd = row.querySelector("[data-classi-count]")
+      const adozioniTd = row.querySelector("[data-mie-adozioni-count]")
+      if (classiTd) totalClassi += parseInt(classiTd.dataset.classiCount) || 0
+      if (adozioniTd) totalAdozioni += parseInt(adozioniTd.dataset.mieAdozioniCount) || 0
+    }
+
+    const copieSpan = meta.querySelector(".card__meta-text--copie")
+    if (copieSpan) {
+      copieSpan.innerHTML = totalClassi > 0
+        ? `<strong>${totalClassi}</strong> classi`
+        : ""
+    }
+
+    const importoSpan = meta.querySelector(".card__meta-text--importo")
+    if (importoSpan) {
+      if (totalAdozioni > 0) {
+        const label = totalAdozioni === 1 ? "mia adozione" : "mie adozioni"
+        importoSpan.innerHTML = `<strong class="txt-negative">${totalAdozioni} ${label}</strong>`
+      } else {
+        importoSpan.innerHTML = ""
+      }
+    }
+
+    // Hide meta if both are 0
+    meta.style.display = (totalClassi === 0 && totalAdozioni === 0) ? "none" : ""
+  }
+
+  #setCompactDragImage(event) {
+    const tr = event.target
+    const ghost = document.createElement("div")
+    ghost.style.cssText = "position:absolute;top:-9999px;background:var(--surface-1);padding:2px 8px;border-radius:4px;font-size:var(--text-xx-small);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis"
+
+    // Collect visible text from cells
+    const parts = []
+    for (const td of tr.cells) {
+      const text = td.textContent.trim()
+      if (text) parts.push(text)
+    }
+    ghost.textContent = parts.join(" · ")
+
+    document.body.appendChild(ghost)
+    event.dataTransfer.setDragImage(ghost, 0, 0)
+    requestAnimationFrame(() => ghost.remove())
+  }
+
+  #updateCardMetaAvatar(card, container) {
+    const avatarHtml = container.dataset.dragAndDropAvatar
+    if (!avatarHtml) return
+
+    const avatarDiv = card.querySelector(".card__meta-avatars--author")
+    if (avatarDiv) {
+      avatarDiv.innerHTML = avatarHtml
+    }
   }
 }

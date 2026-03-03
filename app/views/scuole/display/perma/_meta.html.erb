@@ -1,6 +1,11 @@
 <%# locals: (scuola:) -%>
 
-<div class="card__meta" id="<%= dom_id(scuola, :meta) %>">  
+<div class="card__meta" id="<%= dom_id(scuola, :meta) %>">
+  <div class="card__meta-avatars card__meta-avatars--author">
+    <% scuola_assigned_users(scuola).each do |user| %>
+      <%= avatar_tag(user, hidden_for_screen_reader: true) %>
+    <% end %>
+  </div>
 
   <% if scuola.direzione.present? %>
     <span class="card__meta-text card__meta-text--added">
@@ -21,17 +26,16 @@
   </span>
 
   <span class="card__meta-text card__meta-text--copie txt-align-end">
-    <% if scuola.classi.size > 0 %>
-      <strong><%= scuola.classi.size %></strong> classi
+    <% if scuola.classi_count > 0 %>
+      <strong><%= scuola.classi_count %></strong> classi
     <% else %>
       &nbsp;
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
-    <% mie_count = scuola.classi.flat_map(&:adozioni).count { |a| a.mia? && a.da_acquistare? } %>
-    <% if mie_count > 0 %>
-      <strong class="txt-positive"><%= pluralize(mie_count, "mia adozione", "mie adozioni") %></strong>
+    <% if scuola.mie_adozioni_count > 0 %>
+      <strong class="txt-positive"><%= pluralize(scuola.mie_adozioni_count, "mia adozione", "mie adozioni") %></strong>
     <% else %>
       &nbsp;
     <% end %>

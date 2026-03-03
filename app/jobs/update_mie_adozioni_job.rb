@@ -72,6 +72,8 @@ class UpdateMieAdozioniJob < ApplicationJob
     update_sezioni_counts(account)
 
     broadcast_mandati_update(account)
+
+    UpdateScuoleCountersJob.perform_later(account)
   end
 
   private

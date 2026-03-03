@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_02_094813) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_113705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1314,8 +1314,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_02_094813) do
 
   create_table "scuole", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
+    t.integer "adozioni_count", default: 0, null: false
     t.string "area"
     t.string "cap"
+    t.integer "classi_count", default: 0, null: false
     t.string "codice_ministeriale"
     t.string "comune"
     t.datetime "created_at", null: false
@@ -1327,6 +1329,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_02_094813) do
     t.string "indirizzo"
     t.float "latitude"
     t.float "longitude"
+    t.integer "mie_adozioni_count", default: 0, null: false
     t.text "note"
     t.string "pec"
     t.integer "posizione", default: 0

@@ -39,7 +39,8 @@
            data-column-name="Non assegnate"
            data-drag-and-drop-url="<%= accounts_distribuzione_assegnazione_path(scuola_id: '__id__', rimuovi: true) %>"
            data-drag-and-drop-css-variable-name="--card-color"
-           data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)">
+           data-drag-and-drop-css-variable-value="oklch(0.6 0.01 0)"
+           data-drag-and-drop-avatar="<%= escape_once(avatar_tag(Current.account.owner, hidden_for_screen_reader: true)) if Current.account.owner %>">
     <div class="cards__transition-container">
       <header class="cards__header">
         <% non_assegnate_count = @non_assegnate.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
@@ -73,7 +74,8 @@
              data-column-name="<%= membership.user.name %>"
              data-drag-and-drop-url="<%= accounts_distribuzione_assegnazione_path(scuola_id: '__id__', membership_id: membership.id) %>"
              data-drag-and-drop-css-variable-name="--card-color"
-             data-drag-and-drop-css-variable-value="oklch(0.6 0.15 220)">
+             data-drag-and-drop-css-variable-value="oklch(0.6 0.15 220)"
+             data-drag-and-drop-avatar="<%= escape_once(avatar_tag(membership.user, hidden_for_screen_reader: true)) %>">
       <div class="cards__transition-container">
         <header class="cards__header">
           <% scuole_count = scuole.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>

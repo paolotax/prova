@@ -48,4 +48,14 @@ module ScuoleHelper
       safe_join(priorita.to_i.times.map { icon_tag("star", size: "small") })
     end
   end
+
+  def scuola_assigned_users(scuola)
+    users = scuola.memberships.includes(:user).map(&:user)
+    users.presence || [Current.account&.owner].compact
+  end
+
+  def scuole_assigned_users(scuole)
+    users = scuole.flat_map { |s| s.memberships.map(&:user) }.uniq
+    users.presence || [Current.account&.owner].compact
+  end
 end

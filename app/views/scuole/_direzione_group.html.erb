@@ -34,7 +34,7 @@
       </div>
 
       <% if plessi.any? %>
-        <div class="padding-inline padding-block-end-half">
+        <div class="padding-inline margin-block-end-half">
           <table class="table table--compact table--borderless txt-small" style="width: 100%;">
             <tbody>
               <% plessi.each do |plesso| %>
@@ -58,19 +58,49 @@
                         data: { turbo_frame: "_top" } %>
                     <% end %>
                   </td>
-                  <td class="txt-align-end" style="white-space: nowrap;">
-                    <% if plesso.classi.size > 0 %>
-                      <span class="txt-xx-small" style="color: <%= tipo_scuola_color(plesso.tipo_scuola) %>"><%= plesso.classi.size %>cl</span>
+                  <td class="txt-align-end" style="white-space: nowrap; width: 40px;"
+                      data-classi-count="<%= plesso.classi_count %>">
+                    <% if plesso.classi_count > 0 %>
+                      <span class="txt-xx-small" style="color: <%= tipo_scuola_color(plesso.tipo_scuola) %>"><%= plesso.classi_count %>cl</span>
                     <% end %>
                   </td>
-                  <td class="txt-align-end" style="white-space: nowrap;">
-                    <%= priorita_stars(plesso.priorita) %>
+                  <td class="txt-align-end" style="white-space: nowrap; width: 50px;"
+                      data-mie-adozioni-count="<%= plesso.mie_adozioni_count %>">
+                    <% if plesso.mie_adozioni_count > 0 %>
+                      <span class="txt-xx-small txt-negative"><%= plesso.mie_adozioni_count %>ado</span>
+                    <% end %>
                   </td>
                 </tr>
               <% end %>
             </tbody>
           </table>
         </div>
+
+        <% total_classi = plessi.sum(&:classi_count) %>
+        <% total_mie_adozioni = plessi.sum(&:mie_adozioni_count) %>
+        <% if total_classi > 0 || total_mie_adozioni > 0 %>
+          <div class="card__meta" style="margin-block-start: var(--space-2xs);">
+            <div class="card__meta-avatars card__meta-avatars--author">
+              <% scuole_assigned_users(plessi).each do |user| %>
+                <%= avatar_tag(user, hidden_for_screen_reader: true) %>
+              <% end %>
+            </div>
+            <span class="card__meta-text card__meta-text--added">&nbsp;</span>
+            <span class="card__meta-text card__meta-text--author">&nbsp;</span>
+            <span class="card__meta-text card__meta-text--updated">&nbsp;</span>
+            <span class="card__meta-text card__meta-text--assignees">&nbsp;</span>
+            <span class="card__meta-text card__meta-text--copie txt-align-end">
+              <% if total_classi > 0 %>
+                <strong><%= total_classi %></strong> classi
+              <% end %>
+            </span>
+            <span class="card__meta-text card__meta-text--importo txt-align-end">
+              <% if total_mie_adozioni > 0 %>
+                <strong class="txt-negative"><%= pluralize(total_mie_adozioni, "mia adozione", "mie adozioni") %></strong>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </article>
@@ -99,6 +129,10 @@
               <span class="card__subtitle"><%= [scuola.comune, scuola.sigla_provincia].compact_blank.join(", ") %></span>
             </div>
           </div>
+
+          <footer class="card__footer full-width">
+            <%= render "scuole/display/perma/meta", scuola: scuola %>
+          </footer>
         </div>
       </article>
     <% else %>

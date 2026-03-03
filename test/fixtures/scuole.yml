@@ -4,8 +4,10 @@
 # Table name: scuole
 #
 #  id                  :uuid             not null, primary key
+#  adozioni_count      :integer          default(0), not null
 #  area                :string
 #  cap                 :string
+#  classi_count        :integer          default(0), not null
 #  codice_ministeriale :string
 #  comune              :string
 #  denominazione       :string
@@ -14,6 +16,7 @@
 #  indirizzo           :string
 #  latitude            :float
 #  longitude           :float
+#  mie_adozioni_count  :integer          default(0), not null
 #  note                :text
 #  pec                 :string
 #  posizione           :integer          default(0)
