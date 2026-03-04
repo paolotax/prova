@@ -2,12 +2,20 @@
   <%= render partial: "tappe/tappa", locals: { tappa: @tappa.reload } %>
 <% end %>
 
-<%= turbo_stream.replace dom_id(@tappa, :container),
-    partial: "tappe/container",
-    locals: { tappa: @tappa } %>
+<%= turbo_stream.replace [@tappa, :edit] do %>
+  <%= turbo_frame_tag @tappa, :edit do %>
+    <%= render "tappe/container/content", tappa: @tappa %>
+  <% end %>
+<% end %>
 
-<%= turbo_stream.replace dom_id(@tappa, :footer) do %>
-  <%= render "tappe/container/footer", tappa: @tappa %>
+<%= turbo_stream.replace dom_id(@tappa, :tags) do %>
+  <%= render "tappe/display/perma/tags", tappa: @tappa %>
+<% end %>
+
+<%= turbo_stream.replace [@tappa, :footer] do %>
+  <%= turbo_frame_tag @tappa, :footer do %>
+    <%= render "tappe/container/footer", tappa: @tappa %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.update "flash", partial: "layouts/flash" %>

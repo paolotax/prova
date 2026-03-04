@@ -1,14 +1,10 @@
 <%# locals: (tappa:) -%>
 
 <div id="<%= dom_id(tappa, :tags) %>" class="card__tags">
-  <% if tappa.giri.present? %>
-    <% tappa.giri.each do |giro| %>
-      <div class="min-width overflow-ellipsis">
-        <%= link_to giro_path(giro),
-              class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent" do %>
-          <%= giro.titolo %>
-        <% end %>
-      </div>
-    <% end %>
+  <% tappa.giri.each do |giro| %>
+    <span class="card__tag txt-uppercase"
+          style="border: 1px solid <%= giro.color %>; color: <%= giro.color %>; background: transparent; border-radius: var(--radius-small); padding: 0.1em 0.4em;">
+      <%= giro.titolo %>
+    </span>
   <% end %>
 </div>

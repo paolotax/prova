@@ -93,6 +93,7 @@ class TappeController < ApplicationController
 
   def show
     load_active_entries
+    load_prev_next_tappe
 
     respond_to do |format|
       format.html
@@ -133,9 +134,9 @@ class TappeController < ApplicationController
   def update
     respond_to do |format|
       if @tappa.update(tappa_params)
-        
+
         update_tappa_giri(@tappa, params[:tappa][:giro_ids])
-        
+
         format.turbo_stream { flash.now[:notice] = "Tappa aggiornata." }
 
 
@@ -186,30 +187,41 @@ class TappeController < ApplicationController
       @tappa = current_user.tappe.find(params[:id])
     end
 
-    def load_active_entries
-      open_appunto_ids = Entry.aperti.where(entryable_type: "Appunto").select("entryable_id::uuid")
-      open_documento_ids = Entry.aperti.where(entryable_type: "Documento").select("entryable_id::uuid")
+    def load_prev_next_tappe
+      tappe_del_giorno = current_user.tappe
+        .where(data_tappa: @tappa.data_tappa)
+        .order(:position, :id)
+        .pluck(:id)
 
-      if @tappa.tappable_type == "Scuola"
-        scuola = @tappa.tappable
-        classe_ids = scuola.respond_to?(:classi) ? scuola.classi.pluck(:id) : []
-        base_appunti = current_user.appunti.where(status: "published")
-        @appunti_attivi = base_appunti
-          .where(appuntabile_type: "Scuola", appuntabile_id: scuola.id)
-          .or(base_appunti.where(appuntabile_type: "Classe", appuntabile_id: classe_ids))
-          .where(id: open_appunto_ids)
-        @documenti_attivi = current_user.documenti
-          .where(clientable_type: "Scuola", clientable_id: scuola.id)
-          .where(id: open_documento_ids)
-      elsif @tappa.tappable_type == "Cliente"
-        cliente = @tappa.tappable
-        @appunti_attivi = current_user.appunti.where(status: "published")
-          .where(appuntabile_type: "Cliente", appuntabile_id: cliente.id)
-          .where(id: open_appunto_ids)
-        @documenti_attivi = current_user.documenti
-          .where(clientable_type: "Cliente", clientable_id: cliente.id)
-          .where(id: open_documento_ids)
-      end
+      idx = tappe_del_giorno.index(@tappa.id)
+      @prev_tappa_id = idx && idx > 0 ? tappe_del_giorno[idx - 1] : nil
+      @next_tappa_id = idx && idx < tappe_del_giorno.size - 1 ? tappe_del_giorno[idx + 1] : nil
+    end
+
+    def load_active_entries
+      return unless @tappa.tappable_type == "Scuola"
+
+      scuola = @tappa.tappable
+      classe_ids = scuola.classi.pluck(:id)
+
+      appunto_ids = (scuola.appunti.published.pluck(:id) +
+                     Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id))
+                    .map(&:to_s)
+
+      documento_ids = (Documento.where(clientable: scuola).pluck(:id) +
+                       Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id))
+                      .map(&:to_s)
+
+      @entries = Entry.where(account: Current.account)
+                      .aperti
+                      .where(
+                        "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR
+                         (entryable_type = 'Documento' AND entryable_id IN (?))",
+                        appunto_ids.presence || [""],
+                        documento_ids.presence || [""]
+                      )
+                      .includes(:goldness, :closure, :not_now)
+                      .order(updated_at: :desc)
     end
 
     def planner_tappe_per_area

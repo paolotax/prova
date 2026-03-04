@@ -1,8 +1,15 @@
-<%# locals: (tappa:) -%>
+<%# locals: (tappa:, prev_tappa_id: nil, next_tappa_id: nil) -%>
 
 <section id="<%= dom_id(tappa, :container) %>" class="card-perma" style="--card-color: <%= tappa_color(tappa) %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <%= render "tappe/container/gild", tappa: tappa if tappa.entry.present? && !tappa.closed? %>
+    <% if prev_tappa_id %>
+      <%= link_to tappa_path(prev_tappa_id), class: "btn",
+          data: { controller: "hotkey", action: "keydown.left@document->hotkey#click" } do %>
+        <%= icon_tag "arrow-left" %>
+        <span class="for-screen-reader">Tappa precedente</span>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="card-perma__bg">
@@ -20,13 +27,18 @@
       </div>
 
       <footer class="card__footer full-width">
-        <%= render "tappe/display/perma/meta", tappa: tappa %>
       </footer>
     </article>
   </div>
 
   <div class="card-perma__actions card-perma__actions--right">
-    <%= render "tappe/container/actions", tappa: tappa %>
+    <% if next_tappa_id %>
+      <%= link_to tappa_path(next_tappa_id), class: "btn",
+          data: { controller: "hotkey", action: "keydown.right@document->hotkey#click" } do %>
+        <%= icon_tag "arrow-right" %>
+        <span class="for-screen-reader">Tappa successiva</span>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="card-perma__notch card-perma__notch--bottom">
@@ -34,4 +46,5 @@
       <%= render "tappe/container/footer", tappa: tappa %>
     <% end %>
   </div>
+
 </section>

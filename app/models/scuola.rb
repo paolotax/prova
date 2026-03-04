@@ -50,6 +50,7 @@
 class Scuola < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include Navigable
   include ProtectedFromDestroy
   include PgSearch::Model
 

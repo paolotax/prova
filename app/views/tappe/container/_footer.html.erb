@@ -6,6 +6,14 @@
   Modifica <kbd class="hide-on-touch">E</kbd>
 <% end %>
 
+<% if tappa.tappable&.respond_to?(:navigable?) && tappa.tappable.navigable? && current_user.effective_navigator.present? %>
+  <%= link_to go_to_tappable_path(tappa.tappable, current_user.effective_navigator),
+      target: "_blank", class: "btn btn--reversed" do %>
+    <%= icon_tag "marker" %>
+    <span>Naviga</span>
+  <% end %>
+<% end %>
+
 <% if tappa.entry.present? && !tappa.entry.closed? %>
   <%= button_to entry_closure_path(tappa.entry), method: :post, class: "btn btn--reversed",
       data: { controller: "hotkey", action: "keydown.c@document->hotkey#click" } do %>

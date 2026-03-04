@@ -6,14 +6,31 @@
   <div class="header__actions header__actions--start">
     <%= back_link_to_url I18n.l(@tappa.data_tappa, format: :short, locale: :it), giorno_path(giorno: @tappa.data_tappa) %>
   </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= I18n.l(@tappa.data_tappa, format: :long_with_day, locale: :it) %></span>
+  </h1>
 <% end %>
 
 <%= turbo_stream_from @tappa.entry if @tappa.entry %>
 <%= tag.meta name: "entry-id", content: @tappa.entry&.id if @tappa.entry %>
 
 <div class="full-width pad group">
-  <%= render "tappe/container", tappa: @tappa %>
+  <%= render "tappe/container", tappa: @tappa, prev_tappa_id: @prev_tappa_id, next_tappa_id: @next_tappa_id %>
 </div>
+
+<% if @entries&.any? %>
+  <div class="full-width pad group">
+    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= @entries.count %>)</h3>
+    <div class="cards cards--grid">
+      <div class="cards__list">
+        <% @entries.each do |entry| %>
+          <%= render "entries/entry", entry: entry, draggable: false %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
   <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
