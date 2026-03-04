@@ -42,7 +42,6 @@ class Tappa < ApplicationRecord
   has_many :tappa_giri, dependent: :destroy
   has_many :giri, through: :tappa_giri, source: :giro
 
-  
   belongs_to :tappable, polymorphic: true
 
   # Virtual attribute per combobox multi-entità
@@ -67,8 +66,7 @@ class Tappa < ApplicationRecord
   end
 
   accepts_nested_attributes_for :giri
-
-  
+ 
   positioned on: [:user, :data_tappa], column: :position
 
   
@@ -101,8 +99,6 @@ class Tappa < ApplicationRecord
   scope :per_ordine_e_data, -> {
     joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
     .order('scuole.posizione') }
-  
-  
   
   scope :per_data, -> { order(:data_tappa, :position) }
   scope :per_data_desc, -> { order(data_tappa: :desc, position: :desc) }

@@ -1,8 +1,13 @@
 <% @page_title = "Aree #{@provincia}" %>
 <% @body_class = "contained-scrolling" %>
 
-<%# Helper: conta plessi totali nei gruppi %>
-<% scuole_count = ->(gruppi) { gruppi.sum { |g| g[:plessi].size } } %>
+<%# Helper: conta sedi totali nei gruppi (plessi + direzione se ha classi/adozioni proprie) %>
+<% scuole_count = ->(gruppi) {
+  gruppi.sum { |g|
+    dir = g[:direzione]
+    g[:plessi].size + ((dir && (dir.classi_count.to_i > 0 || dir.mie_adozioni_count.to_i > 0)) ? 1 : 0)
+  }
+} %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">

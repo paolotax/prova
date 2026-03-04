@@ -4,7 +4,9 @@
   <div class="flex flex-column gap-half">
     <% if tappa.tappable.present? %>
       <div>
-        <%= link_to polymorphic_path(tappa.tappable), class: "btn btn--plain fill-transparent txt-bold" do %>
+        <%= link_to polymorphic_path(tappa.tappable), 
+              class: "btn btn--plain fill-transparent txt-bold",
+              data: { turbo_frame: "_top" } do %>
           <%= tappa.tappable.denominazione %>
           <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
             <span class="txt-light txt-small"> — <%= tappa.tappable.comune %></span>
@@ -19,14 +21,6 @@
 
     <% if tappa.descrizione.present? %>
       <p class="txt-medium"><%= tappa.descrizione %></p>
-    <% end %>
-
-    <% if tappa.giri.any? %>
-      <div class="flex gap-quarter flex-wrap">
-        <% tappa.giri.each do |giro| %>
-          <span class="badge badge--small"><%= giro.titolo %></span>
-        <% end %>
-      </div>
     <% end %>
 
     <% if @appunti_attivi.present? && @appunti_attivi.any? %>

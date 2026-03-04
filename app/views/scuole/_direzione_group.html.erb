@@ -1,6 +1,7 @@
 <%# locals: (gruppo:, draggable: false) -%>
 <% direzione = gruppo[:direzione] %>
 <% plessi = gruppo[:plessi] %>
+<% all_sedi = direzione && (direzione.classi_count.to_i > 0 || direzione.mie_adozioni_count.to_i > 0) ? [direzione] + plessi : plessi %>
 
 <% if direzione %>
   <article class="card"
@@ -9,7 +10,7 @@
       draggable="true"
       data-drag-and-drop-target="item"
       data-id="<%= direzione.id %>"
-      data-scuole-count="<%= [plessi.size, 1].max %>"
+      data-scuole-count="<%= [all_sedi.size, 1].max %>"
     <% end %>>
     <div class="flex flex-column flex-item-grow max-inline-size">
       <header class="card__header">
@@ -33,11 +34,11 @@
         </div>
       </div>
 
-      <% if plessi.any? %>
+      <% if all_sedi.any? %>
         <div class="padding-inline margin-block-end-half">
           <table class="table table--compact table--borderless txt-small" style="width: 100%;">
             <tbody>
-              <% plessi.each do |plesso| %>
+              <% all_sedi.each do |plesso| %>
                 <tr
                   <% if draggable %>
                     draggable="true"
@@ -76,12 +77,12 @@
           </table>
         </div>
 
-        <% total_classi = plessi.sum(&:classi_count) %>
-        <% total_mie_adozioni = plessi.sum(&:mie_adozioni_count) %>
+        <% total_classi = all_sedi.sum(&:classi_count) %>
+        <% total_mie_adozioni = all_sedi.sum(&:mie_adozioni_count) %>
         <% if total_classi > 0 || total_mie_adozioni > 0 %>
           <div class="card__meta" style="margin-block-start: var(--space-2xs);">
             <div class="card__meta-avatars card__meta-avatars--author">
-              <% scuole_assigned_users(plessi).each do |user| %>
+              <% scuole_assigned_users(all_sedi).each do |user| %>
                 <%= avatar_tag(user, hidden_for_screen_reader: true) %>
               <% end %>
             </div>
