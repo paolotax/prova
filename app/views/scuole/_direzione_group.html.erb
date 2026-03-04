@@ -1,10 +1,11 @@
-<%# locals: (gruppo:, draggable: false) -%>
+<%# locals: (gruppo:, draggable: false, card_id: nil) -%>
 <% direzione = gruppo[:direzione] %>
 <% plessi = gruppo[:plessi] %>
 <% all_sedi = direzione && (direzione.classi_count.to_i > 0 || direzione.mie_adozioni_count.to_i > 0) ? [direzione] + plessi : plessi %>
 
 <% if direzione %>
   <article class="card"
+    id="<%= card_id || dom_id(direzione, :card) %>"
     style="--card-color: <%= tipo_scuola_color(direzione.tipo_scuola) %>"
     <% if draggable %>
       draggable="true"
@@ -65,12 +66,7 @@
                       <span class="txt-xx-small" style="color: <%= tipo_scuola_color(plesso.tipo_scuola) %>"><%= plesso.classi_count %>cl</span>
                     <% end %>
                   </td>
-                  <td class="txt-align-end" style="white-space: nowrap; width: 50px;"
-                      data-mie-adozioni-count="<%= plesso.mie_adozioni_count %>">
-                    <% if plesso.mie_adozioni_count > 0 %>
-                      <span class="txt-xx-small txt-negative"><%= plesso.mie_adozioni_count %>ado</span>
-                    <% end %>
-                  </td>
+                  <%= render "scuole/mie_adozioni_count", scuola: plesso %>
                 </tr>
               <% end %>
             </tbody>
@@ -110,6 +106,7 @@
   <% plessi.each do |scuola| %>
     <% if draggable %>
       <article class="card"
+        id="<%= dom_id(scuola, :card) %>"
         style="--card-color: <%= tipo_scuola_color(scuola.tipo_scuola) %>"
         draggable="true"
         data-drag-and-drop-target="item"

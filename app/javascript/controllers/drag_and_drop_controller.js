@@ -22,6 +22,7 @@ export default class extends Controller {
     this.dragItem = this.#itemContaining(event.target)
     this.sourceContainer = this.#containerContaining(this.dragItem)
     this.originalDraggedItemCssVariable = this.#containerCssVariableFor(this.sourceContainer)
+    this.originalItemCssVariableValue = this.dragItem.style.getPropertyValue("--card-color")
     this.dragItem.classList.add(this.draggedItemClass)
   }
 
@@ -62,6 +63,8 @@ export default class extends Controller {
     if (targetParentProv) this.#updateProvinciaCount(targetParentProv)
     this.#updateCardMeta(this.dragItem, targetContainer)
     this.#updateCardMeta(sourceContainer)
+    this.#updateColumnTotals(targetContainer)
+    this.#updateColumnTotals(sourceContainer)
     await this.#submitDropRequest(this.dragItem, targetContainer)
     this.#reloadSourceFrame(sourceContainer)
     this.#reloadTargetFrame(targetContainer)
@@ -71,14 +74,16 @@ export default class extends Controller {
     this.dragItem.classList.remove(this.draggedItemClass)
     this.#clearContainerHoverClasses()
 
-    if (!this.wasDropped) {
-      this.#restoreOriginalDraggedItemCssVariable()
+    // Ripristina sempre il --card-color originale della card (tipo_scuola)
+    if (this.originalItemCssVariableValue) {
+      this.dragItem.style.setProperty("--card-color", this.originalItemCssVariableValue)
     }
 
     this.sourceContainer = null
     this.dragItem = null
     this.wasDropped = false
     this.originalDraggedItemCssVariable = null
+    this.originalItemCssVariableValue = null
   }
 
   #itemContaining(element) {
@@ -323,6 +328,11 @@ export default class extends Controller {
       this.#updateCardMetaTotals(targetCard)
     } else if (sourceCard) {
       const newCard = sourceCard.cloneNode(true)
+      // Area-specific id to avoid duplicate ids when splitting direzione across areas
+      const areaName = targetSection?.dataset?.columnName
+      if (areaName && newCard.id) {
+        newCard.id = newCard.id + "_" + areaName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")
+      }
       newCard.querySelectorAll("tbody tr").forEach(r => r.remove())
       newCard.querySelector("tbody").append(tr)
       newCard.dataset.scuoleCount = "1"
@@ -490,6 +500,26 @@ export default class extends Controller {
     requestAnimationFrame(() => ghost.remove())
   }
 
+  #updateColumnTotals(container) {
+    const totalsSpan = container.querySelector("[data-drag-and-drop-totals]")
+    if (!totalsSpan) return
+
+    let totalClassi = 0
+    let totalAdozioni = 0
+
+    for (const td of container.querySelectorAll("[data-classi-count]")) {
+      totalClassi += parseInt(td.dataset.classiCount) || 0
+    }
+    for (const td of container.querySelectorAll("[data-mie-adozioni-count]")) {
+      totalAdozioni += parseInt(td.dataset.mieAdozioniCount) || 0
+    }
+
+    let html = ""
+    if (totalClassi > 0) html += `<strong data-drag-and-drop-classi-total>${totalClassi}</strong>cl`
+    if (totalAdozioni > 0) html += ` <strong class="txt-negative" data-drag-and-drop-adozioni-total>${totalAdozioni}</strong>ado`
+    totalsSpan.innerHTML = html
+  }
+
   #updateCardMetaAvatar(card, container) {
     const avatarHtml = container.dataset.dragAndDropAvatar
     if (!avatarHtml) return
@@ -499,4 +529,5 @@ export default class extends Controller {
       avatarDiv.innerHTML = avatarHtml
     }
   }
+
 }

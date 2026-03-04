@@ -1,0 +1,8 @@
+<%# locals: (scuola:) -%>
+<td id="<%= dom_id(scuola, :mie_adozioni) %>"
+    class="txt-align-end" style="white-space: nowrap; width: 50px;"
+    data-mie-adozioni-count="<%= scuola.mie_adozioni_count %>">
+  <% if scuola.mie_adozioni_count.to_i > 0 %>
+    <span class="txt-xx-small txt-negative"><%= scuola.mie_adozioni_count %>ado</span>
+  <% end %>
+</td>
