@@ -16,7 +16,7 @@ module Account::Distribuzione
   # - Scuola isolata → una unità singola
   def build_distribuzione_units
     scuole.where(direzione_id: nil)
-      .includes(plessi: :classi)
+      .includes(:plessi)
       .order(:provincia, :comune, :denominazione)
       .flat_map do |scuola|
         if scuola.plessi.any?

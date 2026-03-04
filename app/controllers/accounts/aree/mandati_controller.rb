@@ -20,7 +20,7 @@ module Accounts
           mandato.save!
         end
 
-        UpdateMieAdozioniJob.perform_later(Current.account)
+        enqueue_area_updates(provincia, area)
         redirect_to accounts_aree_path(provincia: provincia), status: :see_other
       end
 
@@ -32,10 +32,24 @@ module Accounts
 
         Current.account.mandati.joins(:editore)
           .where(provincia: provincia, area: area, disdetta: true, editori: { gruppo: gruppo })
-          .destroy_all
+          .delete_all
 
-        UpdateMieAdozioniJob.perform_later(Current.account)
+        enqueue_area_updates(provincia, area)
         redirect_to accounts_aree_path(provincia: provincia), status: :see_other
+      end
+
+      private
+
+      def enqueue_area_updates(provincia, area)
+        root_ids = Current.account.scuole
+          .where(provincia: provincia, area: area)
+          .pluck(:direzione_id, :id)
+          .map { |dir_id, id| dir_id || id }
+          .uniq
+
+        root_ids.each do |id|
+          UpdateScuolaMieAdozioniJob.perform_later(Current.account, scuola_id: id)
+        end
       end
     end
   end

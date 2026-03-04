@@ -1,15 +1,36 @@
 class UpdateMieAdozioniJob < ApplicationJob
   queue_as :default
 
-  def perform(account)
-    # Reset all
-    Adozione.where(account: account).update_all(mia: false, disdetta: false)
+  def perform(account, provincia: nil)
+    # Reset
+    if provincia
+      Adozione.joins(classe: :scuola)
+        .where(account: account, scuole: { provincia: provincia })
+        .update_all(mia: false, disdetta: false)
+    else
+      Adozione.where(account: account).update_all(mia: false, disdetta: false)
+    end
+
+    provincia_clause = provincia ? "AND s.provincia = :provincia" : ""
+    # Outer clause to scope the UPDATE itself to adozioni in the provincia
+    outer_provincia_clause = if provincia
+      <<~OUTER
+        AND adozioni.classe_id IN (
+          SELECT c.id FROM classi c
+          JOIN scuole s ON s.id = c.scuola_id
+          WHERE s.provincia = :provincia
+        )
+      OUTER
+    else
+      ""
+    end
 
     # Set mia = true where a mandato matches
     # Area-specific disdette override the wildcard for that area
     sql_mia = <<~SQL
       UPDATE adozioni SET mia = true
       WHERE adozioni.account_id = :account_id
+      #{outer_provincia_clause}
       AND EXISTS (
         SELECT 1 FROM mandati m
         JOIN editori e ON e.id = m.editore_id
@@ -21,6 +42,7 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND m.grado = s.grado
           AND (m.area IS NULL OR m.area = s.area)
           AND NOT (m.area IS NOT NULL AND m.disdetta = true)
+          #{provincia_clause}
       )
       AND NOT EXISTS (
         SELECT 1 FROM mandati m2
@@ -34,11 +56,15 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND e2.editore = adozioni.editore
           AND m2.provincia = s2.provincia
           AND m2.grado = s2.grado
+          #{provincia_clause.gsub("s.", "s2.")}
       )
     SQL
 
+    sql_params = { account_id: account.id }
+    sql_params[:provincia] = provincia if provincia
+
     ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql([sql_mia, account_id: account.id])
+      ActiveRecord::Base.sanitize_sql([sql_mia, sql_params])
     )
 
     # Set disdetta = true only for wildcard disdette (area IS NULL)
@@ -47,6 +73,7 @@ class UpdateMieAdozioniJob < ApplicationJob
       UPDATE adozioni SET disdetta = true
       WHERE adozioni.account_id = :account_id
       AND adozioni.mia = true
+      #{outer_provincia_clause}
       AND EXISTS (
         SELECT 1 FROM mandati m
         JOIN editori e ON e.id = m.editore_id
@@ -58,11 +85,12 @@ class UpdateMieAdozioniJob < ApplicationJob
           AND e.editore = adozioni.editore
           AND m.provincia = s.provincia
           AND m.grado = s.grado
+          #{provincia_clause}
       )
     SQL
 
     ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql([sql_disdetta, account_id: account.id])
+      ActiveRecord::Base.sanitize_sql([sql_disdetta, sql_params])
     )
 
     # Auto-create Libri for mie adozioni da_acquistare
@@ -73,7 +101,7 @@ class UpdateMieAdozioniJob < ApplicationJob
 
     broadcast_mandati_update(account)
 
-    UpdateScuoleCountersJob.perform_later(account)
+    UpdateScuoleCountersJob.perform_later(account, provincia: provincia)
   end
 
   private

@@ -18,14 +18,20 @@ module Accounts
         if scuola.direzione_id.present?
           # Plesso singolo: aggiorna il sommario area sulla direzione
           sync_direzione_area(scuola.direzione)
+        elsif scuola.plessi.any?
+          # Direzione trascinata: aggiorna area su tutti i plessi
+          scuola.plessi.update_all(area: area)
         end
-        # Per direzioni: plessi updated via after_update_commit callback
 
         if area == "__da_pulire__"
           cleanup_scuola(scuola)
           cleanup_zone_vuote(provincia)
-          UpdateMieAdozioniJob.perform_later(Current.account)
+          UpdateMieAdozioniJob.perform_later(Current.account, provincia: provincia)
+        else
+          UpdateScuolaMieAdozioniJob.perform_later(Current.account, scuola_id: scuola.id)
         end
+
+        cleanup_mandati_aree_vuote(provincia)
 
         respond_to do |format|
           format.html { redirect_to accounts_aree_path(provincia: provincia), status: :see_other }
@@ -45,6 +51,16 @@ module Accounts
           scuola.plessi.each { |p| p.destroy unless p.documenti.exists? }
         end
         scuola.destroy unless scuola.documenti.exists?
+      end
+
+      # Rimuove mandati disdetti per aree che non hanno più scuole
+      def cleanup_mandati_aree_vuote(provincia)
+        aree_attive = Current.account.scuole.where(provincia: provincia)
+          .where.not(area: [nil, "", "__da_pulire__"])
+          .distinct.pluck(:area)
+        Current.account.mandati.where(provincia: provincia, disdetta: true)
+          .where.not(area: [nil] + aree_attive)
+          .delete_all
       end
 
       def cleanup_zone_vuote(provincia)

@@ -51,7 +51,7 @@ module Accounts
     private
 
     def update_mie_adozioni_async
-      UpdateMieAdozioniJob.perform_later(account)
+      UpdateMieAdozioniJob.perform_later(account, provincia: provincia)
     end
   end
 end

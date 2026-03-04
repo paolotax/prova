@@ -43,7 +43,13 @@
            data-drag-and-drop-avatar="<%= escape_once(avatar_tag(Current.account.owner, hidden_for_screen_reader: true)) if Current.account.owner %>">
     <div class="cards__transition-container">
       <header class="cards__header">
-        <% non_assegnate_count = @non_assegnate.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
+        <% non_assegnate_count = @non_assegnate.sum { |u|
+          if u[:plessi].any?
+            u[:plessi].size + ((u[:scuola].classi_count.to_i > 0 || u[:scuola].mie_adozioni_count.to_i > 0) ? 1 : 0)
+          else
+            1
+          end
+        } %>
         <button type="button" class="cards__expander"
                 style="--card-count: <%= [non_assegnate_count, 15].min %>"
                 data-collapsible-columns-target="button"
@@ -78,7 +84,13 @@
              data-drag-and-drop-avatar="<%= escape_once(avatar_tag(membership.user, hidden_for_screen_reader: true)) %>">
       <div class="cards__transition-container">
         <header class="cards__header">
-          <% scuole_count = scuole.sum { |u| u[:plessi].any? ? u[:plessi].size : 1 } %>
+          <% scuole_count = scuole.sum { |u|
+            if u[:plessi].any?
+              u[:plessi].size + ((u[:scuola].classi_count.to_i > 0 || u[:scuola].mie_adozioni_count.to_i > 0) ? 1 : 0)
+            else
+              1
+            end
+          } %>
           <button type="button" class="cards__expander"
                   style="--card-count: <%= [scuole_count, 15].min %>"
                   data-collapsible-columns-target="button"
@@ -88,6 +100,20 @@
             <h3 class="cards__expander-title" data-collapsible-columns-target="title">
               <%= membership.user.name %> <span class="txt-light">(<span data-drag-and-drop-counter><%= scuole_count %></span>)</span>
               <%= icon_tag "collapse" %>
+              <% total_classi = scuole.sum { |u|
+                sedi = u[:plessi].any? ? u[:plessi] : [u[:scuola]]
+                dir = u[:scuola]
+                sedi.sum(&:classi_count) + ((u[:plessi].any? && dir.classi_count.to_i > 0) ? dir.classi_count : 0)
+              } %>
+              <% total_adozioni = scuole.sum { |u|
+                sedi = u[:plessi].any? ? u[:plessi] : [u[:scuola]]
+                dir = u[:scuola]
+                sedi.sum(&:mie_adozioni_count) + ((u[:plessi].any? && dir.mie_adozioni_count.to_i > 0) ? dir.mie_adozioni_count : 0)
+              } %>
+              <span class="txt-xx-small full-width txt-align-center" style="font-weight: normal;" data-drag-and-drop-totals>
+                <% if total_classi > 0 %><strong data-drag-and-drop-classi-total><%= total_classi %></strong>cl<% end %>
+                <% if total_adozioni > 0 %> <strong class="txt-negative" data-drag-and-drop-adozioni-total><%= total_adozioni %></strong>ado<% end %>
+              </span>
             </h3>
           </button>
         </header>

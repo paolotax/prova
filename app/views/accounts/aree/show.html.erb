@@ -1,3 +1,5 @@
+<%= turbo_refreshes_with method: :morph, scroll: :preserve %>
+<%= turbo_stream_from Current.account, "aree", @provincia %>
 <% @page_title = "Aree #{@provincia}" %>
 <% @body_class = "contained-scrolling" %>
 
@@ -7,6 +9,15 @@
     dir = g[:direzione]
     g[:plessi].size + ((dir && (dir.classi_count.to_i > 0 || dir.mie_adozioni_count.to_i > 0)) ? 1 : 0)
   }
+} %>
+<% column_totals = ->(gruppi) {
+  classi = gruppi.sum { |g|
+    g[:plessi].sum(&:classi_count) + ((g[:direzione] && g[:direzione].classi_count.to_i > 0) ? g[:direzione].classi_count : 0)
+  }
+  adozioni = gruppi.sum { |g|
+    g[:plessi].sum(&:mie_adozioni_count) + ((g[:direzione] && g[:direzione].mie_adozioni_count.to_i > 0) ? g[:direzione].mie_adozioni_count : 0)
+  }
+  [classi, adozioni]
 } %>
 
 <% content_for :header do %>
@@ -41,6 +52,8 @@
   <div class="card-columns__left">
     <% da_pulire = @scuole_by_area["__da_pulire__"] || [] %>
     <section class="cards is-collapsed"
+             id="area-col-da-pulire"
+             data-turbo-permanent
              style="--card-color: oklch(0.55 0.2 25)"
              tabindex="0"
              data-collapsible-columns-target="column"
@@ -60,6 +73,11 @@
             <h3 class="cards__expander-title" data-collapsible-columns-target="title">
               Da pulire <span class="txt-light">(<span data-drag-and-drop-counter><%= scuole_count.(da_pulire) %></span>)</span>
               <%= icon_tag "trash", class: "icon--small" %>
+              <% tc, ta = column_totals.(da_pulire) %>
+              <span class="txt-xx-small full-width txt-align-center" style="font-weight: normal;" data-drag-and-drop-totals>
+                <% if tc > 0 %><strong data-drag-and-drop-classi-total><%= tc %></strong>cl<% end %>
+                <% if ta > 0 %> <strong class="txt-negative" data-drag-and-drop-adozioni-total><%= ta %></strong>ado<% end %>
+              </span>
             </h3>
           </button>
         </header>
@@ -75,6 +93,8 @@
   <%# Centro: colonna "Senza area" (sempre espansa) %>
   <% unassigned = @scuole_by_area["__unassigned__"] || [] %>
   <section class="cards cards--maybe is-expanded"
+           id="area-col-senza-area"
+           data-turbo-permanent
            style="--card-color: oklch(0.6 0.01 0)"
            tabindex="0"
            data-collapsible-columns-target="column"
@@ -94,6 +114,11 @@
           <h3 class="cards__expander-title" data-collapsible-columns-target="title">
             Senza area <span class="txt-light">(<span data-drag-and-drop-counter><%= scuole_count.(unassigned) %></span>)</span>
             <%= icon_tag "collapse" %>
+            <% tc, ta = column_totals.(unassigned) %>
+            <span class="txt-xx-small full-width txt-align-center" style="font-weight: normal;" data-drag-and-drop-totals>
+              <% if tc > 0 %><strong data-drag-and-drop-classi-total><%= tc %></strong>cl<% end %>
+              <% if ta > 0 %> <strong class="txt-negative" data-drag-and-drop-adozioni-total><%= ta %></strong>ado<% end %>
+            </span>
           </h3>
         </button>
       </header>
@@ -110,6 +135,8 @@
     <% @aree.each do |area| %>
       <% gruppi = @scuole_by_area[area] || [] %>
       <section class="cards is-collapsed"
+               id="area-col-<%= area.parameterize %>"
+               data-turbo-permanent
                style="--card-color: oklch(0.6 0.15 160)"
                tabindex="0"
                data-collapsible-columns-target="column"
@@ -129,12 +156,17 @@
               <h3 class="cards__expander-title" data-collapsible-columns-target="title">
                 <%= area %> <span class="txt-light">(<span data-drag-and-drop-counter><%= scuole_count.(gruppi) %></span>)</span>
                 <%= icon_tag "collapse" %>
+                <% tc, ta = column_totals.(gruppi) %>
+                <span class="txt-xx-small full-width txt-align-center" style="font-weight: normal;" data-drag-and-drop-totals>
+                  <% if tc > 0 %><strong data-drag-and-drop-classi-total><%= tc %></strong>cl<% end %>
+                  <% if ta > 0 %> <strong class="txt-negative" data-drag-and-drop-adozioni-total><%= ta %></strong>ado<% end %>
+                </span>
               </h3>
             </button>
           </header>
             <% gruppi_attivi = @wildcard_gruppi - (@gruppi_esclusi_per_area[area] || []) %>
             <% if gruppi_attivi.any? %>
-              <div class="area-mandati-badges flex flex-wrap gap-quarter padding-inline txt-xx-small">
+              <div class="area-mandati-badges flex flex-wrap gap-quarter padding-inline txt-xx-small justify-center">
                 <% gruppi_attivi.each do |gruppo| %>
                   <span class="badge badge--rounded" style="background: color-mix(in srgb, var(--card-color) 25%, var(--color-canvas)); color: var(--card-color)">
                     <%= gruppo %>
