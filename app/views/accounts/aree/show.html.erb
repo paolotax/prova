@@ -168,7 +168,8 @@
             <% if gruppi_attivi.any? %>
               <div class="area-mandati-badges flex flex-wrap gap-quarter padding-inline txt-xx-small justify-center">
                 <% gruppi_attivi.each do |gruppo| %>
-                  <span class="badge badge--rounded" style="background: color-mix(in srgb, var(--card-color) 25%, var(--color-canvas)); color: var(--card-color)">
+                  <span id="mandato-badge-<%= area.parameterize %>-<%= gruppo.parameterize %>"
+                        class="badge badge--rounded" style="background: color-mix(in srgb, var(--card-color) 25%, var(--color-canvas)); color: var(--card-color)">
                     <%= gruppo %>
                     <%= button_to accounts_aree_mandato_path(aree_provincia: @provincia, gruppo: gruppo, area: area),
                           method: :delete,

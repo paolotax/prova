@@ -7,7 +7,10 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
     scuola = account.scuole.find(scuola_id)
 
     # Raccogli tutti gli ID scuola: direzione + plessi, oppure solo la scuola
-    scuola_ids = if scuola.direzione_id.nil? && scuola.plessi.any?
+    scuola_ids = if scuola.direzione_id.present?
+      # Plesso singolo: ricalcola per tutta la direzione
+      [scuola.direzione_id] + scuola.direzione.plessi.pluck(:id)
+    elsif scuola.plessi.any?
       [scuola.id] + scuola.plessi.pluck(:id)
     else
       [scuola.id]

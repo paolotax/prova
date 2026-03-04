@@ -21,7 +21,16 @@ module Accounts
         end
 
         enqueue_area_updates(provincia, area)
-        redirect_to accounts_aree_path(provincia: provincia), status: :see_other
+
+        respond_to do |format|
+          format.html { redirect_to accounts_aree_path(provincia: provincia), status: :see_other }
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.remove("mandato-badge-#{area.parameterize}-#{gruppo.parameterize}"),
+              turbo_stream.refresh
+            ]
+          end
+        end
       end
 
       # POST — rimuovi esclusione (ripristina copertura wildcard per area)
