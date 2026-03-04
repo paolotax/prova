@@ -155,54 +155,23 @@
     <%= render "tappe/bulk_bar/bar" %>
 </div>
 
-
-<%# <div class="flex justify-center gap-4 m-4">
-
-        <%= link_to new_tappa_path(tappable_type: 'Scuola', data_tappa: @giorno),
-            class: "w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
-            data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-            <%# <%= icon_tag "academic-cap", variant: :solid, class: "w-6 h-6" %>
-            <%# <span>Aggiungi scuola</span> %>
-        <%# <% end %>
-
-        <%#= link_to new_tappa_path(tappable_type: 'Cliente', data_tappa: @giorno),
-            class: "w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2",
-            data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open", turbo_prefetch: false } do %>
-
-            <%#= icon "currency-euro", variant: :solid, class: "w-6 h-6" %>
-            <%# <span>Aggiungi cliente</span> %>
-        <%# <% end %>
-
-<%# </div> %>
-
-<% if @tappe.any? %>
-
-
-    <div class="mt-4" data-controller="bulk-actions" >
-        <h2 class="text-lg font-semibold mb-2">Appunti</h2>
-
-        <%= turbo_frame_tag :appunti,
-            src: appunti_path(del_giorno: @giorno),
-            loading: :lazy,
-            class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
-
-        <%= render "appunti/bulk_bar/bar" %>
-    </div>
-
-    <div class="mt-4" data-controller="bulk-actions" >
-        <h2 class="text-lg font-semibold mb-2">Ordini</h2>
-
-        <%= turbo_frame_tag :documenti,
-            src: documenti_path(nel_baule_del_giorno: @giorno, ordina_per: "cliente"),
-            loading: :lazy,
-            class: "pb-5 grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 4xl:grid-cols-3 xl:gap-x-8" %>
-
-        <%= render "documenti/bulk_bar/bar" %>
-    </div>
-
-    <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
-
+<% if @entries_per_tappa&.any? %>
+  <div class="full-width pad group" style="max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto;">
+    <% @entries_per_tappa.each do |tappa, entries| %>
+      <h3 class="divider divider--fade txt-medium font-weight-black">
+        <%= tappa.tappable.denominazione %> (<%= entries.count %>)
+      </h3>
+      <div class="cards cards--grid">
+        <div class="cards__list">
+          <% entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 <% end %>
 
-
-
+<% if @tappe.any? %>
+  <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
+<% end %>

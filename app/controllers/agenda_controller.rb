@@ -59,11 +59,12 @@ class AgendaController < ApplicationController
   def show
     @giorno = params[:giorno] ? Date.parse(params[:giorno]) : Date.today
     @scuole = current_account.scuole
-                .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Scuola").pluck(:tappable_id))        
+                .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Scuola").pluck(:tappable_id))
     @clienti = current_user.clienti
                 .where(id: current_user.tappe.del_giorno(@giorno).where(tappable_type: "Cliente").pluck(:tappable_id))
-    
+
     @tappe = current_user.tappe.del_giorno(@giorno).includes(:tappable, :giri).order(:position)
+    load_giorno_entries
   end
 
   def mappa 
@@ -413,6 +414,44 @@ class AgendaController < ApplicationController
   end
 
   private
+
+    def load_giorno_entries
+      @entries_per_tappa = {}
+
+      @tappe.each do |tappa|
+        tappable = tappa.tappable
+        next unless tappable
+
+        appunto_ids = []
+        documento_ids = []
+
+        if tappable.is_a?(Scuola)
+          classe_ids = tappable.classi.pluck(:id)
+          appunto_ids += Appunto.published.where(appuntabile: tappable).pluck(:id)
+          appunto_ids += Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id) if classe_ids.any?
+          documento_ids += Documento.where(clientable: tappable).pluck(:id)
+          documento_ids += Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id) if classe_ids.any?
+        elsif tappable.is_a?(Cliente)
+          appunto_ids += Appunto.published.where(appuntabile: tappable).pluck(:id)
+          documento_ids += Documento.where(clientable: tappable).pluck(:id)
+        end
+
+        next if appunto_ids.empty? && documento_ids.empty?
+
+        entries = Entry.where(account: Current.account)
+                       .aperti
+                       .where(
+                         "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR
+                          (entryable_type = 'Documento' AND entryable_id IN (?))",
+                         appunto_ids.map(&:to_s).presence || [""],
+                         documento_ids.map(&:to_s).presence || [""]
+                       )
+                       .includes(:goldness, :closure, :not_now)
+                       .order(updated_at: :desc)
+
+        @entries_per_tappa[tappa] = entries if entries.any?
+      end
+    end
 
     def build_weeks(giorno, count, direction)
       monday = giorno.beginning_of_week

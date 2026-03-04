@@ -13,6 +13,7 @@ export default class extends Controller {
   connect() {
     Sortable.create(this.element, {
       animation: 150,
+      handle: ".card__board",
       onEnd: this.onEnd.bind(this),
       setData: this.setData.bind(this),
       swapThreshold: 0.55,
