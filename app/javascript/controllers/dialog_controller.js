@@ -18,11 +18,10 @@ export default class extends Controller {
     const modal = this.modalValue || this.#isTouchDevice
 
     if (modal) {
+      this.#lockBody()
       this.dialogTarget.showModal()
     } else {
-      const scrollY = window.scrollY
       this.dialogTarget.show()
-      window.scrollTo({ top: scrollY, behavior: "instant" })
       orient(this.dialogTarget)
     }
 
@@ -41,6 +40,7 @@ export default class extends Controller {
   }
 
   close() {
+    this.#unlockBody()
     this.dialogTarget.close()
     this.dialogTarget.setAttribute("aria-hidden", "true")
     this.dialogTarget.blur()
@@ -65,6 +65,24 @@ export default class extends Controller {
 
   captureKey(event) {
     if (event.key !== "Escape") { event.stopPropagation() }
+  }
+
+  #lockBody() {
+    this._savedScrollY = window.scrollY
+    document.body.style.position = "fixed"
+    document.body.style.top = `-${this._savedScrollY}px`
+    document.body.style.left = "0"
+    document.body.style.right = "0"
+  }
+
+  #unlockBody() {
+    if (this._savedScrollY == null) return
+    document.body.style.position = ""
+    document.body.style.top = ""
+    document.body.style.left = ""
+    document.body.style.right = ""
+    window.scrollTo(0, this._savedScrollY)
+    this._savedScrollY = null
   }
 
   get #isTouchDevice() {

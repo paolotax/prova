@@ -112,7 +112,8 @@
 
 <div data-controller="bulk-actions swipe"
      data-swipe-left-value="<%= giorno_path(giorno: (@giorno - 1.day).to_s) %>"
-     data-swipe-right-value="<%= giorno_path(giorno: (@giorno + 1.day).to_s) %>">
+     data-swipe-right-value="<%= giorno_path(giorno: (@giorno + 1.day).to_s) %>"
+     style="min-block-size: calc(100dvh - 8rem);">
     <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto; container-type: inline-size;">
       <div class="board-tools card" style="flex-wrap: wrap;">
         <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
@@ -143,17 +144,18 @@
             data-tax-sortable-param-name-value="position"
             data-tax-sortable-data-tappa="<%= @giorno.to_s %>">
 
-            <% if @tappe.empty? %>
-                <div class="no-tappe text-center py-16 px-4 hidden only:block">
-                    <h2 class="text-xl font-bold"> Ops! Nessuna tappa in programma per oggi! 🗺️</h2>
-                    <p> Aggiungi una nuova tappa per iniziare: sono i posti dove devi andare. 🚶‍♂️</p>
-                </div>
-            <% else %>
-                <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
-            <% end %>
+            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
         </div>
       </div>
     </section>
+
+    <% if @tappe.empty? %>
+      <div class="blank-slate blank-slate--empty" style="margin-inline: 2rem;">
+        <h3 class="txt-large font-weight-bold">Nessuna tappa in programma</h3>
+        <p class="txt-small txt-subtle margin-block-end">Aggiungi una tappa per iniziare.</p>
+      </div>
+    <% end %>
+
     <%= render "tappe/bulk_bar/bar" %>
 </div>
 
