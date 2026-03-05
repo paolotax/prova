@@ -294,14 +294,14 @@ export default class extends Controller {
                     data-action="documento-editor#openEditDialogForRow"
                     data-riga-index="${index}"
                     title="Modifica">
-              <kbd class="kbd">&#9166;</kbd>
-            </button>
+              <kbd class="kbd hide-on-touch">&#9166;</kbd>
+         </button>
             <button type="button"
                     class="btn btn--small borderless txt-negative"
                     data-action="documento-editor#deleteRow"
                     data-riga-index="${index}"
                     title="Elimina">
-              <kbd class="kbd">Canc</kbd>
+              <kbd class="kbd hide-on-touch">Canc</kbd>
             </button>
           </div>
         </td>

@@ -140,13 +140,13 @@
     <button type="button"
             class="btn btn--small"
             data-action="documento-editor#openNewDialog">
-      + Nuova riga <kbd class="kbd">Ins</kbd>
+      + Nuova riga <kbd class="kbd hide-on-touch">Ins</kbd>
     </button>
   </div>
 
   <%# Dialog per nuova/modifica riga %>
   <dialog class="dialog panel fill-white shadow"
-          style="max-width: 50ch; padding: 1rem; overflow: visible;"
+          style="max-width: min(50ch, calc(100vw - 2rem)); padding: 1rem; overflow: visible;"
           data-documento-editor-target="rigaDialog"
           data-action="close->documento-editor#dialogClosed libro:loaded->documento-editor#onLibroLoaded">
     <div data-controller="combobox-libro dialog-form"
@@ -182,19 +182,19 @@
           </div>
 
           <div class="flex gap flex-wrap">
-            <div class="flex flex-column" style="flex: 1 1 80px;">
+            <div class="flex flex-column" style="flex: 1 1 60px; min-width: 0;">
               <label class="txt-small txt-muted margin-block-end-quarter">Qt</label>
               <%= f.number_field :quantita, value: 1, min: 1,
                   data: { documento_editor_target: "quantitaField", combobox_libro_target: "quantita", action: "keydown.enter->documento-editor#focusNextField" },
                   class: "input", style: "text-align: right;" %>
             </div>
-            <div class="flex flex-column" style="flex: 1 1 100px;">
+            <div class="flex flex-column" style="flex: 1 1 80px; min-width: 0;">
               <label class="txt-small txt-muted margin-block-end-quarter">Prezzo</label>
               <%= f.number_field :prezzo, step: 0.01,
                   data: { documento_editor_target: "prezzoField", combobox_libro_target: "prezzo", action: "keydown.enter->documento-editor#focusNextField" },
                   class: "input", style: "text-align: right;" %>
             </div>
-            <div class="flex flex-column" style="flex: 1 1 80px;">
+            <div class="flex flex-column" style="flex: 1 1 60px; min-width: 0;">
               <label class="txt-small txt-muted margin-block-end-quarter">Sc%</label>
               <%= f.number_field :sconto, value: 0, step: 0.01,
                   data: { documento_editor_target: "scontoField", combobox_libro_target: "sconto", action: "keydown.enter->documento-editor#submitDialog" },
