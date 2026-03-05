@@ -1,7 +1,7 @@
 <%# locals: (tappe_per_area:, giri:, total_count:, selected_giro_id: nil) -%>
 
 <%= turbo_frame_tag "agenda-planner" do %>
-  <div class="agenda-planner" data-controller="agenda-planner">
+  <div class="agenda-planner agenda-planner--collapsed" data-controller="agenda-planner">
     <div class="agenda-planner__header"
          data-agenda-planner-target="header"
          data-action="mousedown->agenda-planner#panelDragStart dblclick->agenda-planner#panelDock">

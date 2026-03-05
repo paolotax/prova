@@ -20,13 +20,15 @@ export default class extends Controller {
     if (modal) {
       this.dialogTarget.showModal()
     } else {
+      const scrollY = window.scrollY
       this.dialogTarget.show()
+      window.scrollTo({ top: scrollY, behavior: "instant" })
       orient(this.dialogTarget)
     }
 
     this.loadLazyFrames()
     this.dialogTarget.setAttribute("aria-hidden", "false")
-    this.dialogTarget.querySelector("[autofocus]")?.focus()
+    this.dialogTarget.querySelector("[autofocus]")?.focus({ preventScroll: true })
     this.dispatch("show")
   }
 
