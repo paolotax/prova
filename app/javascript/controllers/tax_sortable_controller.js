@@ -11,6 +11,11 @@ export default class extends Controller {
   }
 
   connect() {
+    // iOS native drag requires draggable="true" on items
+    this.element.querySelectorAll(":scope > *").forEach(item => {
+      if (!item.hasAttribute("draggable")) item.setAttribute("draggable", "true")
+    })
+
     Sortable.create(this.element, {
       animation: 150,
       delay: 200,
