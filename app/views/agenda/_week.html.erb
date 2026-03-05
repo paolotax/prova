@@ -49,7 +49,8 @@
            data-controller="tax-sortable"
            data-tax-sortable-group-value="calendar"
            id="tappe-<%= giorno.iso8601 %>"
-           data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
+           data-tax-sortable-data-tappa="<%= giorno.iso8601 %>"
+           data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
         <% tappe.sort_by(&:position).each do |tappa| %>
           <%= render "tappe/tappa_compact", tappa: tappa %>
         <% end %>
@@ -91,7 +92,8 @@
              data-controller="tax-sortable"
              data-tax-sortable-group-value="calendar"
              id="tappe-<%= giorno.iso8601 %>"
-           data-tax-sortable-data-tappa="<%= giorno.iso8601 %>">
+             data-tax-sortable-data-tappa="<%= giorno.iso8601 %>"
+             data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
           <% tappe.sort_by(&:position).each do |tappa| %>
             <%= render "tappe/tappa_compact", tappa: tappa %>
           <% end %>

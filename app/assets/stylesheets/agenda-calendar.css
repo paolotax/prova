@@ -206,8 +206,8 @@
     z-index: 1;
   }
 
-  /* SortableJS drag highlight */
-  .agenda-week__tappe.sortable-drag-over {
+  /* Drag highlight */
+  .agenda-week__tappe.tax-sortable--drop-target {
     background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
     outline: 2px dashed var(--color-link);
     outline-offset: -2px;
@@ -243,8 +243,9 @@
       cursor: grabbing;
     }
 
-    &.sortable-ghost {
+    &.tax-sortable--dragging {
       opacity: 0.4;
+      outline: 2px dashed var(--color-selected-dark);
     }
   }
 
@@ -570,4 +571,5 @@
   .giro-timeline__day--today {
     box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--giro-color);
   }
+
 }

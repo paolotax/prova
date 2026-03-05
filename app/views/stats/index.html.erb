@@ -69,7 +69,8 @@
           </tr>
         </thead>
 
-        <tbody data-controller="tax-sortable" data-tax-sortable-group-value="stats">
+        <tbody data-controller="tax-sortable" data-tax-sortable-group-value="stats"
+               data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
           <%= render @stats %>
         </tbody>
       </table>

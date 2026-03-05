@@ -2,7 +2,8 @@
   <div class="p-4">
     <h1 class="text-xl font-bold mb-4">Le mie scuole</h1>
     
-    <div id="user-scuole" data-controller="tax-sortable" data-tax-sortable-group-value="user-scuole">
+    <div id="user-scuole" data-controller="tax-sortable" data-tax-sortable-group-value="user-scuole"
+         data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
       <%= render partial: "user_scuole/user_scuola", collection: @user_scuole, as: :user_scuola %>
     </div>
   </div>
