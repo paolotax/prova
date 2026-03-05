@@ -14,6 +14,8 @@
     <% card_data[:css_variable_counter_target] = "item" %>
   <% end %>
 
+  <% card_data[:tax_sortable_update_url] = sort_tappa_path(tappa) %>
+
   <%= tag.article id: (entry ? dom_id(entry) : dom_id(tappa)),
       class: class_names("card", tappa_type_modifier(tappa)),
       tabindex: 0,

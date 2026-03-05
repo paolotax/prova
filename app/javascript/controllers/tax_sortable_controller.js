@@ -13,7 +13,12 @@ export default class extends Controller {
   connect() {
     Sortable.create(this.element, {
       animation: 150,
-      handle: ".card__board",
+      delay: 200,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 5,
+      forceFallback: true,
+      fallbackTolerance: 5,
+      fallbackOffset: { x: 0, y: -50 },
       onEnd: this.onEnd.bind(this),
       setData: this.setData.bind(this),
       swapThreshold: 0.55,
@@ -38,6 +43,15 @@ export default class extends Controller {
     var newPosition = event.newIndex + 1
     patch(sortableUpdateUrl, {
       body: JSON.stringify({ position: newPosition, data_tappa: dataTappa ?? null })
+    })
+
+    this.#updateBoardPositions(event.to)
+  }
+
+  #updateBoardPositions(container) {
+    container.querySelectorAll(":scope > *").forEach((item, index) => {
+      const boardId = item.querySelector(".card__id-small")
+      if (boardId) boardId.textContent = index + 1
     })
   }
 }

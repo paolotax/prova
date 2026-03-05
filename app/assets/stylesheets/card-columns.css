@@ -735,8 +735,8 @@
     text-align: center;
 
     @media (max-width: 639px) {
-      /* On mobile, hide the tool card inside the Maybe column */
-      .cards & {
+      /* On mobile, hide the tool card inside the Maybe column (but not in single-column expanded view) */
+      .cards:not(.is-expanded) & {
         display: none;
       }
 

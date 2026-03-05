@@ -155,8 +155,10 @@
     <%= render "tappe/bulk_bar/bar" %>
 </div>
 
+<div class="margin-block-start-double"></div>
+
 <% if @entries_per_tappa&.any? %>
-  <div class="full-width pad group" style="max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto;">
+  <div class="full-width pad group">
     <% @entries_per_tappa.each do |tappa, entries| %>
       <h3 class="divider divider--fade txt-medium font-weight-black">
         <%= tappa.tappable.denominazione %> (<%= entries.count %>)
