@@ -15,7 +15,10 @@
 <%= turbo_stream_from @tappa.entry if @tappa.entry %>
 <%= tag.meta name: "entry-id", content: @tappa.entry&.id if @tappa.entry %>
 
-<div class="full-width pad group">
+<div class="full-width pad group"
+     data-controller="swipe"
+     <%= "data-swipe-left-value=#{tappa_path(@prev_tappa_id)}" if @prev_tappa_id %>
+     <%= "data-swipe-right-value=#{tappa_path(@next_tappa_id)}" if @next_tappa_id %>>
   <%= render "tappe/container", tappa: @tappa, prev_tappa_id: @prev_tappa_id, next_tappa_id: @next_tappa_id %>
 </div>
 

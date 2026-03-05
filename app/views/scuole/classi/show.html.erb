@@ -7,6 +7,9 @@
   </div>
 <% end %>
 
-<div class="full-width pad group">
+<div class="full-width pad group"
+     data-controller="swipe"
+     <%= "data-swipe-left-value=#{scuola_classe_path(@scuola, @prev_classe_id)}" if @prev_classe_id %>
+     <%= "data-swipe-right-value=#{scuola_classe_path(@scuola, @next_classe_id)}" if @next_classe_id %>>
   <%= render "scuole/classi/container", classe: @classe, scuola: @scuola, adozioni: @adozioni %>
 </div>
