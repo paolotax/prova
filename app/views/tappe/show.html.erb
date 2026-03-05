@@ -24,14 +24,7 @@
 
 <% if @entries&.any? %>
   <div class="full-width pad group">
-    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= @entries.count %>)</h3>
-    <div class="cards cards--grid">
-      <div class="cards__list">
-        <% @entries.each do |entry| %>
-          <%= render "entries/entry", entry: entry, draggable: false %>
-        <% end %>
-      </div>
-    </div>
+    <%= render "entries/open_list", entries: @entries %>
   </div>
 <% end %>
 

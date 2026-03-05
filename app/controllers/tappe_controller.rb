@@ -199,29 +199,10 @@ class TappeController < ApplicationController
     end
 
     def load_active_entries
-      return unless @tappa.tappable_type == "Scuola"
+      tappable = @tappa.tappable
+      return unless tappable.respond_to?(:open_entries)
 
-      scuola = @tappa.tappable
-      classe_ids = scuola.classi.pluck(:id)
-
-      appunto_ids = (scuola.appunti.published.pluck(:id) +
-                     Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id))
-                    .map(&:to_s)
-
-      documento_ids = (Documento.where(clientable: scuola).pluck(:id) +
-                       Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id))
-                      .map(&:to_s)
-
-      @entries = Entry.where(account: Current.account)
-                      .aperti
-                      .where(
-                        "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR
-                         (entryable_type = 'Documento' AND entryable_id IN (?))",
-                        appunto_ids.presence || [""],
-                        documento_ids.presence || [""]
-                      )
-                      .includes(:goldness, :closure, :not_now)
-                      .order(updated_at: :desc)
+      @entries = Entry.load_entryables(tappable.open_entries)
     end
 
     def planner_tappe_per_area

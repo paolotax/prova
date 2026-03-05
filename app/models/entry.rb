@@ -84,6 +84,14 @@ class Entry < ApplicationRecord
     end
   }
 
+  scope :for_entryables, ->(appunto_ids, documento_ids) {
+    where(
+      "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR (entryable_type = 'Documento' AND entryable_id IN (?))",
+      appunto_ids.presence || [""],
+      documento_ids.presence || [""]
+    )
+  }
+
   # Per giro
   scope :for_giro, ->(giro) { where(giro: giro) }
   scope :without_giro, -> { where(giro_id: nil) }

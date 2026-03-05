@@ -1,0 +1,35 @@
+<%# locals: (closed_entries:, frame_id: nil, group_by: :month) -%>
+
+<% content = capture do %>
+  <% if closed_entries.any? %>
+    <% months = I18n.t("date.month_names").compact %>
+    <% closed_entries.group_by { |e|
+         d = e.entryable_type == "Documento" && e.entryable&.data_documento ? e.entryable.data_documento : e.created_at
+         group_by == :month ? [d.year, d.month] : [d.year]
+       }
+       .sort_by { |key, _| key.map { |k| -k } }
+       .each do |key, group_entries| %>
+      <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase margin-block-start">
+        <% if group_by == :month %>
+          <%= months[key[1] - 1] %> <%= key[0] %>
+        <% else %>
+          <%= key[0] %>
+        <% end %>
+        <span class="txt-xx-small">(<%= group_entries.size %>)</span>
+      </h4>
+      <div class="cards cards--grid">
+        <div class="cards__list">
+          <% group_entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if frame_id %>
+  <%= turbo_frame_tag frame_id do %><%= content %><% end %>
+<% else %>
+  <%= content %>
+<% end %>

@@ -20,7 +20,6 @@ class ClientiController < ApplicationController
 
   def show
     @presenter = Clienti::Presenter.new(@cliente)
-    @active_entries = Entry.load_entryables(@presenter.active_entries)
 
     # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
     @sconti_applicabili = Current.user.sconti

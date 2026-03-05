@@ -197,6 +197,7 @@ Rails.application.routes.draw do
 
     resources :clienti do
       scope module: :clienti do
+        resource :entries, only: [:show]
         resource :closed_entries, only: [:show]
       end
       resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
@@ -444,6 +445,7 @@ Rails.application.routes.draw do
 
       scope module: :scuole do
         resource :entries, only: [:show]
+        resource :closed_entries, only: [:show]
         resource :adozioni, only: [:show], controller: "adozioni"
         resource :persone_import, only: [:new, :create], controller: "persone_import"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"

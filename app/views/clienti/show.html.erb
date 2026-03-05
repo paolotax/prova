@@ -11,20 +11,23 @@
   </div>
 <% end %>
 
-<div class="full-width card-grid pad group show-navigator">
+<div class="full-width pad group">
   <%= render "clienti/container/container", cliente: @cliente, presenter: @presenter, sconti: @sconti_unici %>
+</div>
 
-  <div class="comments">
-    <%= render "clienti/container/entries_list", entries: @active_entries %>
+<div class="full-width pad group" style="--card-color: <%= cliente_color(@cliente) %>;">
+  <%= turbo_frame_tag "cliente_entries", src: cliente_entries_path(@cliente) do %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti</h3>
+    <p class="txt-small txt-subtle margin-none">Caricamento...</p>
+  <% end %>
 
-    <%= turbo_frame_tag "closed_entries", src: cliente_closed_entries_path(@cliente), loading: :lazy, style: "display: block; min-height: 1px;" do %>
-      <p class="txt-small txt-subtle margin-none">Mostra completati...</p>
-    <% end %>
+  <%= turbo_frame_tag "cliente_closed_entries", src: cliente_closed_entries_path(@cliente), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+  <% end %>
 
-    <% if @cliente.can_delete? %>
-      <div class="margin-block-start">
-        <%= render "shared/container/delete", record: @cliente, path: cliente_path(@cliente), label: "questo cliente" %>
-      </div>
-    <% end %>
-  </div>
+  <% if @cliente.can_delete? %>
+    <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+      <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+      <%= render "shared/container/delete", record: @cliente, path: cliente_path(@cliente), label: "questo cliente" %>
+    </footer>
+  <% end %>
 </div>

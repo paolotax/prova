@@ -33,6 +33,7 @@
 class Classe < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include HasEntries
   include ProtectedFromDestroy
   include PgSearch::Model
 
@@ -139,4 +140,13 @@ class Classe < ApplicationRecord
     nome_completo
   end
 
+  private
+
+  def entry_appunto_ids
+    appunti.published.pluck(:id).map(&:to_s)
+  end
+
+  def entry_documento_ids
+    Documento.where(clientable: self).pluck(:id).map(&:to_s)
+  end
 end

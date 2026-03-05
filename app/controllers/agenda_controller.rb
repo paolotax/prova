@@ -420,35 +420,9 @@ class AgendaController < ApplicationController
 
       @tappe.each do |tappa|
         tappable = tappa.tappable
-        next unless tappable
+        next unless tappable&.respond_to?(:open_entries)
 
-        appunto_ids = []
-        documento_ids = []
-
-        if tappable.is_a?(Scuola)
-          classe_ids = tappable.classi.pluck(:id)
-          appunto_ids += Appunto.published.where(appuntabile: tappable).pluck(:id)
-          appunto_ids += Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id) if classe_ids.any?
-          documento_ids += Documento.where(clientable: tappable).pluck(:id)
-          documento_ids += Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id) if classe_ids.any?
-        elsif tappable.is_a?(Cliente)
-          appunto_ids += Appunto.published.where(appuntabile: tappable).pluck(:id)
-          documento_ids += Documento.where(clientable: tappable).pluck(:id)
-        end
-
-        next if appunto_ids.empty? && documento_ids.empty?
-
-        entries = Entry.where(account: Current.account)
-                       .aperti
-                       .where(
-                         "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR
-                          (entryable_type = 'Documento' AND entryable_id IN (?))",
-                         appunto_ids.map(&:to_s).presence || [""],
-                         documento_ids.map(&:to_s).presence || [""]
-                       )
-                       .includes(:goldness, :closure, :not_now)
-                       .order(updated_at: :desc)
-
+        entries = Entry.load_entryables(tappable.open_entries)
         @entries_per_tappa[tappa] = entries if entries.any?
       end
     end

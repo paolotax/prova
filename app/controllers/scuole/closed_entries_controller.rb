@@ -1,10 +1,10 @@
 module Scuole
-  class EntriesController < ApplicationController
+  class ClosedEntriesController < ApplicationController
     layout false
 
     def show
       @scuola = Current.account.scuole.find(params[:scuola_id])
-      @entries = Entry.load_entryables(@scuola.open_entries)
+      @closed_entries = Entry.load_entryables(@scuola.closed_entries)
     end
   end
 end

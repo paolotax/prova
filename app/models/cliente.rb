@@ -46,6 +46,7 @@
 class Cliente < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include HasEntries
   include Navigable
 
   geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
@@ -129,5 +130,15 @@ class Cliente < ApplicationRecord
   def cliente_id=(cliente_id)
     self.clientable_id = cliente_id
     self.clientable_type = 'Cliente'
-  end 
+  end
+
+  private
+
+  def entry_appunto_ids
+    appunti.published.pluck(:id).map(&:to_s)
+  end
+
+  def entry_documento_ids
+    documenti.where(documento_padre_id: nil).pluck(:id).map(&:to_s)
+  end
 end

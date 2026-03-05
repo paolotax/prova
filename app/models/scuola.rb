@@ -50,6 +50,7 @@
 class Scuola < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include HasEntries
   include Navigable
   include ProtectedFromDestroy
   include PgSearch::Model
@@ -202,5 +203,21 @@ class Scuola < ApplicationRecord
 
   def propagate_area_to_plessi
     plessi.update_all(area: area) if plessi.any?
+  end
+
+  private
+
+  def entry_appunto_ids
+    classe_ids = classi.pluck(:id)
+    (appunti.published.pluck(:id) +
+     Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id))
+    .map(&:to_s)
+  end
+
+  def entry_documento_ids
+    classe_ids = classi.pluck(:id)
+    (Documento.where(clientable: self).pluck(:id) +
+     Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id))
+    .map(&:to_s)
   end
 end

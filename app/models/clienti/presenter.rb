@@ -7,23 +7,6 @@ class Clienti::Presenter
     @cliente = cliente
   end
 
-  def entries
-    doc_ids = cliente.documenti.where(documento_padre_id: nil).pluck(:id).map(&:to_s)
-    appunto_ids = cliente.appunti.pluck(:id).map(&:to_s)
-
-    Entry.where(entryable_type: "Documento", entryable_id: doc_ids)
-         .or(Entry.where(entryable_type: "Appunto", entryable_id: appunto_ids))
-         .recent
-  end
-
-  def active_entries
-    entries.aperti
-  end
-
-  def closed_entries
-    entries.closed
-  end
-
   # Returns { 2025 => { pagato: 12300, da_pagare: 45600, count: 8 }, 2024 => { ... } }
   # Values in cents. Entrate (movimento=1) positive, uscite (movimento=0) negative.
   def riepilogo_per_anno
