@@ -149,12 +149,20 @@
     font-size: var(--text-small);
     font-weight: 600;
     letter-spacing: 0.05em;
+
+    @media (max-width: 639px) {
+      font-size: var(--text-xx-small);
+    }
   }
 
   .agenda-week__day-number {
     font-size: var(--text-medium);
     font-weight: 900;
     line-height: 1;
+
+    @media (max-width: 639px) {
+      font-size: var(--text-small);
+    }
   }
 
   .agenda-week__day-number--today {
@@ -222,6 +230,11 @@
     padding: 0.25em 0.5em;
     text-align: start;
 
+    @media (max-width: 639px) {
+      padding: 0.15em 0.3em;
+      gap: 0.2em;
+    }
+
     &:hover {
       filter: brightness(1.1);
     }
@@ -258,6 +271,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media (max-width: 639px) {
+      font-size: var(--text-xx-small);
+    }
   }
 
   .tappa-compact__city {
@@ -267,6 +284,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media (max-width: 639px) {
+      display: none;
+    }
   }
 
   .tappa-compact__giro {
