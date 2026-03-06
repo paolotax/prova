@@ -1,0 +1,115 @@
+<%= tag.div class: "bulk-bar",
+      data: {
+        bulk_actions_target: "container",
+        controller: "bulk-bar"
+      } do %>
+
+  <button type="button" class="bulk-bar__close" data-action="bulk-actions#deselectAll">
+    <%= icon_tag "remove" %>
+    <span class="for-screen-reader">Chiudi</span>
+  </button>
+
+  <div class="bulk-bar__menu" data-bulk-bar-target="menu">
+    <%# Stampa %>
+    <button type="button" class="btn"
+            data-action="bulk-bar#showForm"
+            data-bulk-bar-target="menuButton"
+            data-form-id="stampa">
+      <%= icon_tag "printer" %>
+      <span>Stampa</span>
+    </button>
+
+    <%# Stato %>
+    <button type="button" class="btn"
+            data-action="bulk-bar#showForm"
+            data-bulk-bar-target="menuButton"
+            data-form-id="stato">
+      <%= icon_tag "move" %>
+      <span>Stato</span>
+    </button>
+
+    <%# Elimina %>
+    <button type="button" class="btn txt-negative"
+            data-action="bulk-bar#showForm"
+            data-bulk-bar-target="menuButton"
+            data-form-id="elimina">
+      <%= icon_tag "trash" %>
+      <span>Elimina</span>
+    </button>
+
+    <button type="button" class="btn" data-action="bulk-actions#selectAll">
+      <%= icon_tag "check-circle" %>
+      <span>Tutti</span>
+    </button>
+  </div>
+
+  <div class="bulk-bar__forms" data-bulk-bar-target="forms">
+    <%# Form Stampa %>
+    <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stampa">
+      <span class="bulk-bar__form-title">Stampa PDF</span>
+      <%= form_with url: entries_prints_path(format: :pdf),
+            method: :post,
+            data: { bulk_actions_target: "form", turbo: false, controller: "pdf-print", action: "submit->pdf-print#submit" } do |f| %>
+        <div class="bulk-bar__form-actions">
+          <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+          <%= f.submit "Stampa", class: "btn btn--primary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Form Stato %>
+    <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stato">
+      <span class="bulk-bar__form-title">Sposta in</span>
+      <div class="bulk-bar__form-actions">
+        <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+        <% current_account.columns.ordered.each do |column| %>
+          <%= form_with url: entries_bulk_stati_path,
+                method: :post,
+                style: "display: contents;",
+                data: { bulk_actions_target: "form" } do |f| %>
+            <%= f.hidden_field :azione, value: "triage" %>
+            <%= f.hidden_field :column_id, value: column.id %>
+            <%= f.submit column.name, class: "btn",
+                  style: "--btn-background: #{column.color}; --btn-border-color: #{column.color};" %>
+          <% end %>
+        <% end %>
+        <%= form_with url: entries_bulk_stati_path,
+              method: :post,
+              style: "display: contents;",
+              data: { bulk_actions_target: "form" } do |f| %>
+          <%= f.hidden_field :azione, value: "completa" %>
+          <%= f.submit "Completa", class: "btn" %>
+        <% end %>
+        <%= form_with url: entries_bulk_stati_path,
+              method: :post,
+              style: "display: contents;",
+              data: { bulk_actions_target: "form" } do |f| %>
+          <%= f.hidden_field :azione, value: "riapri" %>
+          <%= f.submit "Riapri", class: "btn" %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Form Elimina %>
+    <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="elimina">
+      <span class="bulk-bar__form-title txt-negative">Elimina elementi</span>
+      <%= form_with url: entries_deletions_path,
+            method: :post,
+            data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit",
+                    turbo_confirm: "Sei sicuro di voler eliminare gli elementi selezionati?" } do |f| %>
+        <div class="bulk-bar__form-actions">
+          <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+          <%= f.submit "Elimina", class: "btn btn--negative" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bulk-bar__footer">
+    <span class="bulk-bar__counter">
+      <span data-bulk-actions-target="counter">0</span>
+      <span>selezionati</span>
+    </span>
+  </div>
+
+<% end %>

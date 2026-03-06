@@ -4,12 +4,10 @@
         controller: "bulk-bar"
       } do %>
 
-  <div class="bulk-bar__header">
-    <span class="bulk-bar__counter">
-      <span data-bulk-actions-target="counter">0</span>
-      <span>selezionati</span>
-    </span>
-  </div>
+  <button type="button" class="bulk-bar__close" data-action="bulk-actions#deselectAll">
+    <%= icon_tag "remove" %>
+    <span class="for-screen-reader">Chiudi</span>
+  </button>
 
   <div class="bulk-bar__menu" data-bulk-bar-target="menu">
     <%= yield :bulk_bar_buttons if content_for?(:bulk_bar_buttons) %>
@@ -18,15 +16,17 @@
       <%= icon_tag "check-circle" %>
       <span>Tutti</span>
     </button>
-
-    <button type="button" class="btn" data-action="bulk-actions#deselectAll">
-      <%= icon_tag "x" %>
-      <span>Chiudi</span>
-    </button>
   </div>
 
   <div class="bulk-bar__forms" data-bulk-bar-target="forms">
     <%= yield :bulk_bar_forms if content_for?(:bulk_bar_forms) %>
+  </div>
+
+  <div class="bulk-bar__footer">
+    <span class="bulk-bar__counter">
+      <span data-bulk-actions-target="counter">0</span>
+      <span>selezionati</span>
+    </span>
   </div>
 
 <% end %>

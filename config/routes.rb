@@ -96,6 +96,13 @@ Rails.application.routes.draw do
       resources :columns, only: :show
     end
 
+    # Bulk actions per entries
+    namespace :entries do
+      resource :prints, only: [:create]
+      resource :bulk_stati, only: [:create], controller: "bulk_stati"
+      resource :deletions, only: [:create]
+    end
+
     # Entries (unified triage items)
     resources :entries, only: [:index, :show] do
       scope module: :entries do

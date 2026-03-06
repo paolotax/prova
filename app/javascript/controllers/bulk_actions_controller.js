@@ -1,13 +1,34 @@
 import CheckboxesController from "controllers/checkboxes_controller";
 
 export default class BulkActionsController extends CheckboxesController {
-  static targets = ["container", "form", "counter", "formContainer", "menuButton"];
+  static targets = ["container", "form", "counter", "formContainer", "menuButton", "listCounter"];
   static values = { open: Boolean };
 
   toggle(event) {
     super.toggle(event);
-        
+
     this.#syncSelection();
+  }
+
+  enterSelectionMode() {
+    this.element.setAttribute("data-has-selection", "");
+    this.openValue = true;
+  }
+
+  toggleCard(event) {
+    if (!this.element.hasAttribute("data-has-selection")) return
+
+    const card = event.target.closest(".card")
+    if (!card) return
+
+    const checkbox = card.querySelector('.card__checkbox input[type="checkbox"]')
+    if (!checkbox) return
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    checkbox.checked = !checkbox.checked
+    this.count()
   }
 
   hide(event) {
@@ -152,7 +173,18 @@ export default class BulkActionsController extends CheckboxesController {
 
       // Deselect all checkboxes
       this.setCheckboxesTo(false);
+
+      // Update list counter after DOM settles
+      this.#updateListCounter();
     }, 300);
+  }
+
+  #updateListCounter() {
+    if (!this.hasListCounterTarget) return
+
+    // Count remaining cards in the list
+    const count = this.element.querySelectorAll(".card").length
+    this.listCounterTarget.textContent = `(${count})`
   }
 
   toggleButtons(show) {

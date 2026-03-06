@@ -20,7 +20,7 @@
     draggable: (draggable && entry.present?),
     data: card_data do %>
   <label class="card__checkbox">
-    <%= check_box_tag "ids[]", documento.id, false, data: { action: "change->bulk-actions#count" } %>
+    <%= check_box_tag "ids[]", (entry&.id || documento.id), false, data: { action: "change->bulk-actions#count" } %>
   </label>
 
   <header class="card__header">

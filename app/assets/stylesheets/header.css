@@ -144,4 +144,35 @@
       }
     }
   }
+
+  /* Group header: centered title with full-width divider, actions overlaid at edges */
+  .group-header {
+    display: grid;
+    align-items: center;
+  }
+
+  .group-header > * {
+    grid-area: 1 / 1;
+  }
+
+  .group-header__title {
+    inline-size: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  .group-header__actions {
+    display: flex;
+    font-size: var(--text-x-small);
+    gap: 0.5ch;
+    z-index: 1;
+  }
+
+  .group-header__actions--start {
+    justify-self: start;
+  }
+
+  .group-header__actions--end {
+    justify-self: end;
+  }
 }

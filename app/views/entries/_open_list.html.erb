@@ -2,12 +2,26 @@
 
 <% content = capture do %>
   <% if entries.any? %>
-    <h3 class="divider divider--fade txt-medium font-weight-black">Aperti (<%= entries.count %>)</h3>
-    <div class="cards cards--grid cards--in-context">
-      <div class="cards__list">
-        <% entries.each do |entry| %>
-          <%= render "entries/entry", entry: entry, draggable: false %>
-        <% end %>
+    <div data-controller="bulk-actions" data-action="click->bulk-actions#toggleCard">
+      <div class="group-header">
+        <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Aperti <span data-bulk-actions-target="listCounter">(<%= entries.count %>)</span></h3>
+        <div class="group-header__actions group-header__actions--end">
+          <button type="button" class="btn btn--circle" data-action="bulk-actions#enterSelectionMode"
+              data-controller="tooltip" data-tooltip-content-value="Seleziona">
+            <%= icon_tag "check-circle" %>
+            <span class="for-screen-reader">Seleziona</span>
+          </button>
+        </div>
+      </div>
+
+      <%= render "entries/bulk_bar/bar" %>
+
+      <div class="cards cards--grid cards--in-context">
+        <div class="cards__list">
+          <% entries.each do |entry| %>
+            <%= render "entries/entry", entry: entry, draggable: false %>
+          <% end %>
+        </div>
       </div>
     </div>
   <% end %>

@@ -69,7 +69,9 @@
 <div class="scuola-show" style="--card-color: <%= scuola_card_color %>;">
 
 	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola) do %>
-		<h3 class="divider divider--fade txt-medium font-weight-black">Aperti</h3>
+		<div class="group-header">
+			<h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Aperti</h3>
+		</div>
 		<p class="txt-small txt-subtle margin-none">Caricamento...</p>
 	<% end %>
 
