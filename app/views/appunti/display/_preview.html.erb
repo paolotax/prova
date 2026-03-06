@@ -47,12 +47,12 @@
         <% if appunto.nome.present? %>
           <h3 class="card__title overflow-line-clamp"><%= appunto.nome %></h3>
           <% if appunto.appuntabile.present? %>
-            <span class="card__subtitle overflow-ellipsis"><%= appunto.appuntabile.denominazione %></span>
+            <span class="card__subtitle card__hide-on-index overflow-ellipsis"><%= appunto.appuntabile.denominazione %></span>
           <% end %>
         <% elsif appunto.appuntabile.present? %>
-          <h3 class="card__title overflow-line-clamp"><%= appunto.appuntabile.denominazione %></h3>
+          <h3 class="card__title card__hide-on-index"><%= appunto.appuntabile.denominazione %></h3>
           <% if appunto.appuntabile.respond_to?(:comune) && appunto.appuntabile.comune.present? %>
-            <span class="card__subtitle overflow-ellipsis"><%= appunto.appuntabile.comune.upcase %></span>
+            <span class="card__subtitle card__hide-on-index overflow-ellipsis"><%= appunto.appuntabile.comune.upcase %></span>
           <% end %>
         <% end %>
 

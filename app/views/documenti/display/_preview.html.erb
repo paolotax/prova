@@ -37,10 +37,13 @@
 
   <div class="card__body">
     <div class="card__content">
-      <% if documento.clientable.present? %>
-        <h3 class="card__title overflow-line-clamp"><%= documento.clientable.denominazione %></h3>
+      <% if documento.clientable.is_a?(Classe) %>
+        <h3 class="card__title card__hide-on-index"><%= documento.clientable.denominazione %></h3>
+        <h3 class="card__title overflow-line-clamp"><%= documento.clientable.anno_corso %><%= documento.clientable.sezione %></h3>
+      <% elsif documento.clientable.present? %>
+        <h3 class="card__title card__hide-on-index"><%= documento.clientable.denominazione %></h3>
         <% if documento.clientable.respond_to?(:comune) && documento.clientable.comune.present? %>
-          <span class="card__subtitle overflow-ellipsis"><%= documento.clientable.comune.upcase %></span>
+          <span class="card__subtitle card__hide-on-index overflow-ellipsis"><%= documento.clientable.comune.upcase %></span>
         <% end %>
       <% else %>
         <h3 class="card__title overflow-line-clamp">
@@ -52,6 +55,18 @@
       <% if documento.referente.present? %>
         <div class="card__referente txt-x-small overflow-ellipsis" style="color: var(--card-content-color)">
           <%= documento.referente %>
+        </div>
+      <% end %>
+
+      <% righe = documento.documento_righe.sort_by { |dr| dr.posizione || 0 } %>
+      <% if righe.any? %>
+        <div class="card__righe txt-xx-small txt-subtle margin-inline-start margin-block-start-half">
+          <% righe.first(3).each do |dr| %>
+            <div class="overflow-ellipsis"><%= dr.riga.quantita %> - <%= dr.riga.libro.titolo %></div>
+          <% end %>
+          <% if righe.size > 3 %>
+            <div class="txt-subtle" style="font-style: italic;">segue…</div>
+          <% end %>
         </div>
       <% end %>
     </div>

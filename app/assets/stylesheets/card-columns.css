@@ -311,6 +311,10 @@
     margin-inline: auto;
     max-inline-size: var(--main-width);
 
+    .card__hide-on-index {
+      display: none;
+    }
+
     @media (min-width: 640px) {
       --card-grid-columns: 2;
     }
