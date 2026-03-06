@@ -1,0 +1,20 @@
+module Entries
+  class BulkGestioneController < ApplicationController
+    def show
+      entries = current_account.entries.where(id: params[:ids]).includes(:entryable)
+      documento_ids = entries.select { |e| e.entryable_type == "Documento" }.map(&:entryable_id)
+
+      @documenti = current_account.documenti
+        .where(id: documento_ids)
+        .includes(:causale, :consegna, :pagamento, :clientable, :righe)
+        .order(:clientable_type, :clientable_id, :data_documento)
+
+      @documenti_per_cliente = @documenti.group_by(&:clientable)
+
+      respond_to do |format|
+        format.turbo_stream { render "documenti/bulk_gestione/show" }
+        format.html { render "documenti/bulk_gestione/show", layout: false }
+      end
+    end
+  end
+end

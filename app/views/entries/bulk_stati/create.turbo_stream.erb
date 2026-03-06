@@ -1,0 +1,5 @@
+<% @entries.each do |entry| %>
+  <%= turbo_stream.replace dom_id(entry) do %>
+    <%= render "entries/entry", entry: entry, draggable: false %>
+  <% end %>
+<% end %>

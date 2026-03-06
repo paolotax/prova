@@ -178,8 +178,13 @@
 
   .bulk-bar__form-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--inline-space-half);
     justify-content: flex-end;
     margin-block-start: var(--block-space-half);
+
+    @media (max-width: 639px) {
+      flex-direction: column;
+    }
   }
 }

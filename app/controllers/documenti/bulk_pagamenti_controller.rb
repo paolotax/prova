@@ -35,14 +35,14 @@ module Documenti
     def load_documenti
       @documenti = current_account.documenti
         .where(id: params[:ids])
-        .includes(:causale, :consegna, :pagamento, :clientable, :righe)
+        .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
 
     def reload_documenti
       @documenti = current_account.documenti
         .where(id: params[:ids])
-        .includes(:causale, :consegna, :pagamento, :clientable, :righe)
+        .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
   end

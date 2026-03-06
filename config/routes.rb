@@ -99,6 +99,7 @@ Rails.application.routes.draw do
     # Bulk actions per entries
     namespace :entries do
       resource :prints, only: [:create]
+      resource :bulk_gestione, only: [:show], controller: "bulk_gestione"
       resource :bulk_stati, only: [:create], controller: "bulk_stati"
       resource :deletions, only: [:create]
     end

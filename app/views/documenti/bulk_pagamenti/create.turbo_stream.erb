@@ -9,3 +9,12 @@
     <%= render "documenti/documento", documento: documento %>
   <% end %>
 <% end %>
+
+<%# Aggiorna anche le entry card (per contesto entries) %>
+<% @documenti.each do |documento| %>
+  <% if documento.entry.present? %>
+    <%= turbo_stream.replace dom_id(documento.entry) do %>
+      <%= render "entries/entry", entry: documento.entry, draggable: false %>
+    <% end %>
+  <% end %>
+<% end %>

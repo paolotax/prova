@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["frame"]
+  static values = { url: String }
 
   loadContent() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"][name="ids[]"]:checked')
@@ -12,11 +13,11 @@ export default class extends Controller {
     const params = new URLSearchParams()
     ids.forEach(id => params.append("ids[]", id))
 
-    // Get account_id from current URL path
     const pathParts = window.location.pathname.split("/")
     const accountId = pathParts[1]
 
-    const url = `/${accountId}/documenti/bulk_gestione?${params.toString()}`
+    const basePath = this.urlValue || `/${accountId}/documenti/bulk_gestione`
+    const url = `${basePath}?${params.toString()}`
 
     if (this.hasFrameTarget) {
       this.frameTarget.src = url

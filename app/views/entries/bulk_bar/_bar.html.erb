@@ -19,6 +19,28 @@
       <span>Stampa</span>
     </button>
 
+    <%# Gestione - apre dialog %>
+    <div data-controller="dialog bulk-gestione"
+         data-dialog-modal-value="true"
+         data-bulk-gestione-url-value="<%= entries_bulk_gestione_path %>"
+         data-action="keydown.esc->dialog#close:stop">
+      <button type="button" class="btn"
+              data-bulk-bar-target="menuButton"
+              data-action="dialog#open bulk-gestione#loadContent">
+        <%= icon_tag "settings" %>
+        <span>Gestione</span>
+      </button>
+      <dialog class="dialog panel fill-white shadow gap flex-column"
+              style="width: min(95vw, 40rem); max-height: 85vh; overflow-y: auto;"
+              data-dialog-target="dialog">
+        <turbo-frame id="bulk-gestione-frame" data-bulk-gestione-target="frame">
+          <div class="flex justify-center padding">
+            <span class="txt-subtle">Caricamento...</span>
+          </div>
+        </turbo-frame>
+      </dialog>
+    </div>
+
     <%# Stato %>
     <button type="button" class="btn"
             data-action="bulk-bar#showForm"
@@ -66,7 +88,7 @@
           <%= form_with url: entries_bulk_stati_path,
                 method: :post,
                 style: "display: contents;",
-                data: { bulk_actions_target: "form" } do |f| %>
+                data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
             <%= f.hidden_field :azione, value: "triage" %>
             <%= f.hidden_field :column_id, value: column.id %>
             <%= f.submit column.name, class: "btn",
@@ -76,16 +98,16 @@
         <%= form_with url: entries_bulk_stati_path,
               method: :post,
               style: "display: contents;",
-              data: { bulk_actions_target: "form" } do |f| %>
+              data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
           <%= f.hidden_field :azione, value: "completa" %>
           <%= f.submit "Completa", class: "btn" %>
         <% end %>
         <%= form_with url: entries_bulk_stati_path,
               method: :post,
               style: "display: contents;",
-              data: { bulk_actions_target: "form" } do |f| %>
-          <%= f.hidden_field :azione, value: "riapri" %>
-          <%= f.submit "Riapri", class: "btn" %>
+              data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+          <%= f.hidden_field :azione, value: "da_gestire" %>
+          <%= f.submit "Da gestire", class: "btn" %>
         <% end %>
       </div>
     </div>

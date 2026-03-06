@@ -11,12 +11,24 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   enterSelectionMode() {
-    this.element.setAttribute("data-has-selection", "");
-    this.openValue = true;
+    if (this.element.hasAttribute("data-has-selection")) {
+      this.setCheckboxesTo(false);
+      this.element.removeAttribute("data-has-selection");
+      this.openValue = false;
+    } else {
+      this.element.setAttribute("data-has-selection", "");
+      this.openValue = true;
+    }
   }
 
   toggleCard(event) {
     if (!this.element.hasAttribute("data-has-selection")) return
+
+    // Let native checkbox clicks through, then count
+    if (event.target.closest(".card__checkbox")) {
+      requestAnimationFrame(() => this.count())
+      return
+    }
 
     const card = event.target.closest(".card")
     if (!card) return

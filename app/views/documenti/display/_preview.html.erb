@@ -29,6 +29,12 @@
     <% if documento.clientable.is_a?(Classe) %>
       <span class="card__classe-badge"><%= documento.clientable.anno_corso %><%= documento.clientable.sezione %></span>
     <% end %>
+
+    <% if documento.triaged? %>
+      <span class="btn justify-start card__column-name card__column-name--current txt-uppercase min-width max-width">
+        <span class="overflow-ellipsis"><%= documento.column.name %></span>
+      </span>
+    <% end %>
   </header>
 
   <%= link_to documento_path(documento), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
