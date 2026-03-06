@@ -17,7 +17,7 @@
         <% end %>
         <span class="txt-xx-small">(<%= group_entries.size %>)</span>
       </h4>
-      <div class="cards cards--grid">
+      <div class="cards cards--grid cards--in-context">
         <div class="cards__list">
           <% group_entries.each do |entry| %>
             <%= render "entries/entry", entry: entry, draggable: false %>

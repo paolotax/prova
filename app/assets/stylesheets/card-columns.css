@@ -311,7 +311,7 @@
     margin-inline: auto;
     max-inline-size: var(--main-width);
 
-    .card__hide-on-index {
+    &.cards--in-context .card__hide-on-index {
       display: none;
     }
 
