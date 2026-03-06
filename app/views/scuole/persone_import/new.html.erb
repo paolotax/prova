@@ -7,7 +7,7 @@
 <% end %>
 
 <div class="pad">
-  <article class="panel shadow" style="max-width: 40ch;">
+  <article class="panel panel--centered shadow">
     <%= form_with url: scuola_persone_import_path(@scuola), method: :post, multipart: true, class: "flex flex-column gap" do |form| %>
       <h2 class="txt-large font-weight-bold">Importa insegnanti</h2>
       <p class="txt-small txt-subtle">Carica il PDF della scuola in formato ANARPE.</p>

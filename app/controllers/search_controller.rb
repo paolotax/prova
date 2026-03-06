@@ -6,7 +6,7 @@ class SearchController < ApplicationController
     clienti:   { search: :search_all_word,  label: "Clienti",   icon: "users" },
     persone:   { search: :ilike_search,    label: "Persone",   icon: "user" },
     appunti:   { search: :search_appunti,  label: "Appunti",   icon: "note" },
-    classi:    { search: :search_all_word, label: "Classi",    icon: "academic-cap" },
+    classi:    { search: :search_all_word, label: "Classi",    icon: "everyone" },
     documenti: { search: :search_docs,     label: "Documenti", icon: "document" }
   }.freeze
 
