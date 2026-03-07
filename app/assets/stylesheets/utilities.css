@@ -116,6 +116,11 @@
     white-space: normal;
   }
 
+  /* Context visibility */
+  .card__show-in-context { display: none; }
+  .cards--in-context .card__hide-in-context { display: none; }
+  .cards--in-context .card__show-in-context { display: revert; }
+
   /* Mouse pointer */
   .non-clickable {
     cursor: default;

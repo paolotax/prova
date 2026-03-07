@@ -44,8 +44,12 @@
   <div class="card__body">
     <div class="card__content">
       <% if documento.clientable.is_a?(Classe) %>
-        <h3 class="card__title card__hide-on-index"><%= documento.clientable.denominazione %></h3>
-        <h3 class="card__title overflow-line-clamp"><%= documento.clientable.anno_corso %><%= documento.clientable.sezione %></h3>
+        <%# Index: denominazione + comune. In-context (scuola): solo anno+sezione %>
+        <h3 class="card__title card__hide-in-context overflow-line-clamp"><%= documento.clientable.denominazione %></h3>
+        <% if documento.clientable.comune.present? %>
+          <span class="card__subtitle card__hide-in-context overflow-ellipsis"><%= documento.clientable.comune.upcase %></span>
+        <% end %>
+        <h3 class="card__title card__show-in-context overflow-line-clamp"><%= documento.clientable.anno_corso %><%= documento.clientable.sezione %></h3>
       <% elsif documento.clientable.present? %>
         <h3 class="card__title card__hide-on-index"><%= documento.clientable.denominazione %></h3>
         <% if documento.clientable.respond_to?(:comune) && documento.clientable.comune.present? %>

@@ -311,8 +311,13 @@
     margin-inline: auto;
     max-inline-size: var(--main-width);
 
-    &.cards--in-context .card__hide-on-index {
+    &.cards--in-context .card__hide-on-index,
+    &.cards--in-context .card__hide-in-context {
       display: none;
+    }
+
+    &.cards--in-context .card__show-in-context {
+      display: revert;
     }
 
     @media (min-width: 640px) {
@@ -936,4 +941,5 @@
       opacity: 1;
     }
   }
+
 }

@@ -1,20 +1,6 @@
 <%# locals: (cliente:, presenter:, sconti:) -%>
 
 <section id="<%= dom_id(cliente, :container) %>" class="card-perma" style="--card-color: <%= cliente_color(cliente) %>;">
-  <div class="card-perma__actions card-perma__actions--left">
-    <%= link_to mappe_path("cliente-#{cliente.id}"),
-        class: "btn", data: { controller: "tooltip", tooltip_content_value: "Posizione" } do %>
-      <%= icon_tag "mappa" %>
-      <span class="for-screen-reader">Aggiorna Posizione</span>
-    <% end %>
-    <%= link_to go_to_tappable_path(cliente, current_user.effective_navigator),
-        target: "_blank",
-        class: "btn", data: { controller: "tooltip", tooltip_content_value: "Naviga" } do %>
-      <%= icon_tag "marker" %>
-      <span class="for-screen-reader">Naviga...</span>
-    <% end %>
-  </div>
-
   <div class="card-perma__bg">
     <article class="card">
       <header class="card__header">
