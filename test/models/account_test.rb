@@ -47,7 +47,7 @@ class AccountTest < ActiveSupport::TestCase
 
   test "has many documenti" do
     assert_respond_to @account, :documenti
-    assert_equal 1, @account.documenti.count
+    assert_equal 5, @account.documenti.count
   end
 
   test "has many clienti" do

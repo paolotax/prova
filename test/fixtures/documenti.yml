@@ -1,59 +1,13 @@
 # test/fixtures/documenti.yml
-# == Schema Information
-#
-# Table name: documenti
-#
-#  id                     :uuid             not null, primary key
-#  clientable_type        :string
-#  consegnato_il          :date
-#  data_documento         :date
-#  iva_cents              :bigint
-#  note                   :text
-#  numero_documento       :integer
-#  pagato_il              :datetime
-#  referente              :text
-#  spese_cents            :bigint
-#  status                 :integer
-#  tipo_documento         :integer
-#  tipo_pagamento         :integer
-#  totale_cents           :bigint
-#  totale_copie           :integer
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  account_id             :uuid             not null
-#  causale_id             :bigint
-#  clientable_id          :uuid
-#  derivato_da_causale_id :integer
-#  documento_padre_id     :uuid
-#  user_id                :bigint           not null
-#
-# Indexes
-#
-#  index_documenti_on_account_id                 (account_id)
-#  index_documenti_on_account_id_and_created_at  (account_id,created_at)
-#  index_documenti_on_causale_id                 (causale_id)
-#  index_documenti_on_clientable                 (clientable_type,clientable_id)
-#  index_documenti_on_derivato_da_causale_id     (derivato_da_causale_id)
-#  index_documenti_on_documento_padre_id         (documento_padre_id)
-#  index_documenti_on_user_id                    (user_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (causale_id => causali.id)
-#  fk_rails_...  (derivato_da_causale_id => causali.id)
-#  fk_rails_...  (documento_padre_id => documenti.id)
-#  fk_rails_...  (user_id => users.id)
-#
 documento_fizzy:
   account: fizzy
   user: one
   causale: vendita
   numero_documento: 1
   data_documento: <%= Date.today %>
-  status: 0
-  tipo_documento: 0
-  clientable_type: "Cliente"
-  clientable_id: 1
+  clientable: cliente_fizzy (Cliente)
+  totale_cents: 100000
+  totale_copie: 10
 
 documento_acme:
   account: acme
@@ -61,7 +15,48 @@ documento_acme:
   causale: ordine
   numero_documento: 1
   data_documento: <%= Date.today %>
-  status: 0
-  tipo_documento: 0
-  clientable_type: "Cliente"
-  clientable_id: 2
+  clientable: cliente_acme (Cliente)
+  totale_cents: 50000
+  totale_copie: 5
+
+# Documenti per test saldo
+fattura_uno:
+  account: fizzy
+  user: one
+  causale: fattura
+  numero_documento: 100
+  data_documento: <%= Date.today %>
+  clientable: cliente_fizzy (Cliente)
+  totale_cents: 200000
+  totale_copie: 20
+
+fattura_due:
+  account: fizzy
+  user: one
+  causale: fattura
+  numero_documento: 101
+  data_documento: <%= Date.today %>
+  clientable: cliente_fizzy (Cliente)
+  totale_cents: 150000
+  totale_copie: 15
+
+ordine_figlio:
+  account: fizzy
+  user: one
+  causale: ordine
+  numero_documento: 50
+  data_documento: <%= Date.today %>
+  clientable: cliente_fizzy (Cliente)
+  documento_padre: fattura_uno
+  totale_cents: 80000
+  totale_copie: 8
+
+nota_credito_fizzy:
+  account: fizzy
+  user: one
+  causale: nota_credito
+  numero_documento: 200
+  data_documento: <%= Date.today %>
+  clientable: cliente_fizzy (Cliente)
+  totale_cents: 30000
+  totale_copie: 3

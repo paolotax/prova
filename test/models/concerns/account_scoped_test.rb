@@ -116,7 +116,7 @@ class AccountScopedTest < ActiveSupport::TestCase
 
   # Test data isolation
   test "accounts have isolated data" do
-    assert_equal 1, @fizzy.documenti.count
+    assert_equal 5, @fizzy.documenti.count
     assert_equal 1, @acme.documenti.count
 
     assert_equal 1, @fizzy.clienti.count

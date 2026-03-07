@@ -67,7 +67,6 @@ class Documento < ApplicationRecord
 
   before_save :ricalcola_totali_se_necessario
   after_create_commit :ricalcola_totali_dopo_creazione
-  after_create_commit :ricalcola_saldo_clientable
   after_destroy_commit :ricalcola_saldo_clientable
   before_destroy :riapri_documenti_figli, prepend: true
 
@@ -454,7 +453,4 @@ class Documento < ApplicationRecord
     true
   end
 
-  def ricalcola_saldo_clientable
-    clientable&.ricalcola_saldo! if clientable.respond_to?(:ricalcola_saldo!)
-  end
 end

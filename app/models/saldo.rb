@@ -21,30 +21,22 @@ class Saldo < ApplicationRecord
   belongs_to :saldabile, polymorphic: true
 
   def ricalcola!
-    documenti = Documento.where(clientable: saldabile)
+    # Solo documenti "top-level" (senza padre) — i figli sono coperti dal padre
+    documenti = Documento.where(clientable: saldabile, documento_padre_id: nil)
 
-    # Escludi documenti il cui padre è già pagato (es. ordini coperti da fattura)
-    coperti_ids = documenti.where.not(documento_padre_id: nil)
-      .joins("INNER JOIN pagamenti ON pagamenti.pagabile_id = documenti.documento_padre_id AND pagamenti.pagabile_type = 'Documento'")
-      .pluck(:id)
+    da_consegnare = documenti.left_joins(:consegna).where(consegne: { id: nil })
+    da_pagare = documenti.left_joins(:pagamento).where(pagamenti: { id: nil })
 
-    da_consegnare = documenti.left_joins(:consegna).where(consegne: { id: nil }).where.not(id: coperti_ids)
-    da_pagare = documenti.left_joins(:pagamento).where(pagamenti: { id: nil }).where.not(id: coperti_ids)
-
-    # Calcola importo con segno basato sul movimento della causale
-    # uscita = cliente deve (+), entrata = cliente riceve credito (-)
-    importo_pagare = da_pagare.joins(:causale).sum(
-      Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_cents ELSE -documenti.totale_cents END")
-    )
-    importo_consegnare = da_consegnare.joins(:causale).sum(
-      Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_cents ELSE -documenti.totale_cents END")
-    )
+    # Calcola importo e copie con segno basato sul movimento della causale
+    # uscita (1) = cliente deve (+), entrata (0) = cliente riceve credito (-)
+    signed_importo = Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_cents ELSE -documenti.totale_cents END")
+    signed_copie = Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_copie ELSE -documenti.totale_copie END")
 
     update!(
-      copie_da_consegnare: da_consegnare.sum(:totale_copie),
-      importo_da_consegnare_cents: importo_consegnare,
-      copie_da_pagare: da_pagare.sum(:totale_copie),
-      importo_da_pagare_cents: importo_pagare
+      copie_da_consegnare: da_consegnare.joins(:causale).sum(signed_copie),
+      importo_da_consegnare_cents: da_consegnare.joins(:causale).sum(signed_importo),
+      copie_da_pagare: da_pagare.joins(:causale).sum(signed_copie),
+      importo_da_pagare_cents: da_pagare.joins(:causale).sum(signed_importo)
     )
   end
 end

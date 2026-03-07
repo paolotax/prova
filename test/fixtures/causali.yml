@@ -32,3 +32,16 @@ ordine:
   magazzino: "entrata"
   tipo_movimento: 0
   movimento: 0
+
+fattura:
+  causale: "TD01"
+  magazzino: "vendita"
+  tipo_movimento: 1
+  movimento: 1
+  stato_iniziale: "fattura"
+
+nota_credito:
+  causale: "TD04"
+  magazzino: "vendita"
+  tipo_movimento: 1
+  movimento: 0
