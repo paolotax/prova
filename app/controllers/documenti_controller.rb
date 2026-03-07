@@ -8,13 +8,13 @@ class DocumentiController < ApplicationController
 
   def index
     @tutti_documenti = @filter.documenti
-    @total_count = @filter.documenti.count
-    set_page_and_extract_portion_from @filter.documenti
+    @total_count = @tutti_documenti.count
+    set_page_and_extract_portion_from @tutti_documenti
 
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.xlsx
+      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:clientable, righe: { libro: [:editore] }) }
     end
   end
 

@@ -21,8 +21,8 @@ class AppuntiController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.xlsx
       format.turbo_stream
+      format.xlsx { @appunti = @appunti.includes(:appuntabile, entry: [:goldness, :closure, :not_now]) }
     end
   end
 

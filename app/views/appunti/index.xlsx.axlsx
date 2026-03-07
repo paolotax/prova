@@ -1,12 +1,35 @@
 wb = xlsx_package.workbook
 
-fields = [ "id", "nome", "body", "content", "created_at", "updated_at", "destinatario", "tipo_destinatario", "adozione" ]
+fields = %w[destinatario comune_destinatario numero nome body content telefono email stato created_at updated_at id]
 
-wb.add_worksheet(name: "Foglio 1") do |sheet|
-
-  sheet.add_row  fields
+wb.add_worksheet(name: "Appunti") do |sheet|
+  sheet.add_row fields
 
   @appunti.each do |row|
-    sheet.add_row [ row.id, row.nome, row.body, row.content_to_s, row.created_at, row.updated_at, row.appuntabile&.to_combobox_display, row.appuntabile_type, row.import_adozione&.to_s ]
+    entry = row.entry
+    stato = if entry&.closed?
+              "chiuso"
+            elsif entry&.postponed?
+              "rimandato"
+            elsif entry&.golden?
+              "gold"
+            else
+              "aperto"
+            end
+
+    sheet.add_row [
+      row.appuntabile&.to_combobox_display,
+      row.appuntabile&.try(:comune),
+      row.numero,
+      row.nome,
+      row.body,
+      row.content&.to_plain_text,
+      row.telefono,
+      row.email,
+      stato,
+      row.created_at,
+      row.updated_at,
+      row.id
+    ], types: [:string]
   end
 end

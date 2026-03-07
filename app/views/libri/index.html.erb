@@ -7,14 +7,17 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to libri_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
-      <%= icon_tag "document" %>
-      <span class="for-screen-reader">Esporta in excel</span>
-    <% end %>
     <%= link_to new_import_path(type: :libri), class: "btn", data: { controller: "tooltip" } do %>
       <%= icon_tag "arrow-down-tray" %>
       <span class="for-screen-reader">Importa Libri</span>
+    <% end %>
+  </div>
+
+  <div class="header__action--mobile-title">
+    <%= link_to libri_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
+      <%= icon_tag "table-cells" %>
+      <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
   </div>
 
@@ -23,7 +26,7 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_libro_path, class: "btn", data: { controller: "tooltip" } do %>
+    <%= link_to new_libro_path, class: "btn btn--link", data: { controller: "tooltip" } do %>
       <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuovo libro</span>
     <% end %>

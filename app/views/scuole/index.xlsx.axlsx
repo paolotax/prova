@@ -1,0 +1,40 @@
+wb = xlsx_package.workbook
+
+# Raccogli tutti gli anni_corso presenti nelle scuole filtrate
+anni_corso = @scuole_xlsx.flat_map { |s| s.classi.map(&:anno_corso) }.uniq.compact.sort
+
+fields = %w[codice_ministeriale denominazione tipo_scuola grado indirizzo cap comune provincia area email pec telefono note]
+# Aggiungi una colonna per ogni anno_corso
+fields += anni_corso.map { |anno| "Classi #{anno}" }
+
+wb.add_worksheet(name: "Scuole") do |sheet|
+  sheet.add_row fields
+
+  @scuole_xlsx.each do |scuola|
+    classi_per_anno = scuola.classi.group_by(&:anno_corso)
+
+    row = [
+      scuola.codice_ministeriale,
+      scuola.denominazione,
+      scuola.tipo_scuola,
+      scuola.grado,
+      scuola.indirizzo,
+      scuola.cap,
+      scuola.comune,
+      scuola.provincia,
+      scuola.area,
+      scuola.email,
+      scuola.pec,
+      scuola.telefono,
+      scuola.note
+    ]
+
+    # Per ogni anno_corso, aggrega le sezioni: "A, B, C"
+    anni_corso.each do |anno|
+      sezioni = (classi_per_anno[anno] || []).map(&:sezione).compact.sort.join(", ")
+      row << sezioni
+    end
+
+    sheet.add_row row, types: [:string]
+  end
+end

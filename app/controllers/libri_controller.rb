@@ -34,7 +34,7 @@ class LibriController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html
-      format.xlsx { @libri = @filter.libri }
+      format.xlsx { @libri = @filter.libri.includes(:editore, :categoria) }
       format.json
     end
   end

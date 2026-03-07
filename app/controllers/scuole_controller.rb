@@ -51,7 +51,10 @@ class ScuoleController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.xlsx { render xlsx: "index", filename: "scuole_#{Date.current}.xlsx" }
+      format.xlsx {
+        @scuole_xlsx = @filter.scuole.includes(:classi)
+        render xlsx: "index", filename: "scuole_#{Date.current}.xlsx"
+      }
     end
   end
 

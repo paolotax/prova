@@ -1,0 +1,31 @@
+wb = xlsx_package.workbook
+
+fields = %w[codice_cliente denominazione nome cognome tipo_cliente partita_iva codice_fiscale
+            indirizzo numero_civico cap comune provincia email pec telefono
+            condizioni_di_pagamento metodo_di_pagamento]
+
+wb.add_worksheet(name: "Clienti") do |sheet|
+  sheet.add_row fields
+
+  @clienti.each do |cliente|
+    sheet.add_row [
+      cliente.codice_cliente,
+      cliente.denominazione,
+      cliente.nome,
+      cliente.cognome,
+      cliente.tipo_cliente,
+      cliente.partita_iva,
+      cliente.codice_fiscale,
+      cliente.indirizzo,
+      cliente.numero_civico,
+      cliente.cap,
+      cliente.comune,
+      cliente.provincia,
+      cliente.email,
+      cliente.pec,
+      cliente.telefono,
+      cliente.condizioni_di_pagamento,
+      cliente.metodo_di_pagamento
+    ], types: [:string]
+  end
+end

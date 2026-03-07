@@ -8,8 +8,9 @@ class ClientiController < ApplicationController
 
   def index
     @import = ClientiImporter.new
-    @total_count = @filter.clienti.count
-    set_page_and_extract_portion_from @filter.clienti
+    @clienti = @filter.clienti
+    @total_count = @clienti.count
+    set_page_and_extract_portion_from @clienti
 
     respond_to do |format|
       format.html
