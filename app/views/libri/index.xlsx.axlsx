@@ -1,17 +1,15 @@
 wb = xlsx_package.workbook
 
-fields = [ "codice_isbn", "cm", "titolo", "editore", "categoria", "classe", "disciplina", "prezzo", "prezzo_suggerito", "ordini", "vendite", "carichi", "editore_id", "libro_id"]
+fields = %w[codice_isbn cm titolo editore categoria classe disciplina prezzo prezzo_suggerito editore_id libro_id]
 
-wb.add_worksheet(name: "Foglio 1") do |sheet|
-
-    sheet.add_row  fields
+wb.add_worksheet(name: "Libri") do |sheet|
+    sheet.add_row fields
 
     @libri.each do |row|
-        sheet.add_row [ row.codice_isbn, row.cm, row.titolo, row&.editore&.editore,
-                        row.categoria&.nome_categoria, row.classe, row.disciplina,
-                        row.prezzo, row.prezzo_suggerito, row&.giacenza&.ordini, row&.giacenza&.vendite,
-                        row&.giacenza&.carichi, row.editore_id, row.id ],
-                types: [ :string  ]
+        sheet.add_row [
+            row.codice_isbn, row.cm, row.titolo, row.editore&.editore,
+            row.categoria&.nome_categoria, row.classe, row.disciplina,
+            row.prezzo, row.prezzo_suggerito, row.editore_id, row.id
+        ], types: [:string]
     end
-
 end

@@ -1,23 +1,35 @@
 wb = xlsx_package.workbook
 
-header_fields = %w[causale numero data_documento cliente comune referente note tipo_pagamento
+header_fields = %w[causale numero data_documento cliente
+                   stato consegnato_il pagato_il tipo_pagamento
                    codice_isbn titolo editore categoria disciplina classe
                    quantita prezzo sconto
-                   documento_id riga_id libro_id]
+                   comune referente note documento_id riga_id libro_id]
 
 wb.add_worksheet(name: "Documenti") do |sheet|
   sheet.add_row header_fields
 
   @tutti_documenti.each do |documento|
+    entry = documento.entry
+    stato = if entry&.closed?
+              "chiuso"
+            elsif entry&.postponed?
+              "rimandato"
+            elsif entry&.golden?
+              "gold"
+            else
+              "aperto"
+            end
+
     documento.righe.each do |riga|
       sheet.add_row [
         documento.causale&.causale,
         documento.numero_documento,
         documento.data_documento,
         documento.clientable&.denominazione,
-        documento.clientable&.try(:comune),
-        documento.referente,
-        documento.note,
+        stato,
+        documento.consegnato_il,
+        documento.pagato_il,
         documento.tipo_pagamento,
         riga.libro&.codice_isbn,
         riga.libro&.titolo,
@@ -28,6 +40,9 @@ wb.add_worksheet(name: "Documenti") do |sheet|
         riga.quantita,
         riga.prezzo_cents,
         riga.sconto,
+        documento.clientable&.try(:comune),
+        documento.referente,
+        documento.note,
         documento.id,
         riga.id,
         riga.libro_id
