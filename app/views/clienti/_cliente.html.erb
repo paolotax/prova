@@ -29,12 +29,18 @@
         <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
           <%= cliente.denominazione %>
         </h3>
-        <div class="card__stages txt-small txt-subtle flex flex-column gap-quarter">
+        <div class="margin-block-start-half txt-xx-small txt-subtle flex flex-column gap-quarter">
+          <% if cliente.indirizzo.present? || cliente.cap.present? %>
+            <span class="margin-inline-start"><%= icon_tag "marker", class: "icon--small" %> <%= [cliente.cap, cliente.indirizzo].compact_blank.join(" - ") %></span>
+          <% end %>
           <% if cliente.telefono.present? %>
-            <span><%= icon_tag "phone", class: "icon--small" %> <%= cliente.telefono %></span>
+            <span class="margin-inline-start"><%= icon_tag "phone", class: "icon--small" %> <%= cliente.telefono %></span>
           <% end %>
           <% if cliente.email.present? %>
-            <span><%= icon_tag "envelope", class: "icon--small" %> <%= cliente.email %></span>
+            <span class="margin-inline-start"><%= icon_tag "envelope", class: "icon--small" %> <%= cliente.email %></span>
+          <% end %>
+          <% if cliente.pec.present? %>
+            <span class="margin-inline-start"><%= icon_tag "lock", class: "icon--small" %> <%= cliente.pec %></span>
           <% end %>
         </div>
       </div>

@@ -29,4 +29,14 @@ class Consegna < ApplicationRecord
   belongs_to :user, optional: true, default: -> { Current.user }
 
   validates :consegnabile_id, uniqueness: { scope: :consegnabile_type }
+
+  after_create_commit :ricalcola_saldo_clientable
+  after_destroy_commit :ricalcola_saldo_clientable
+
+  private
+
+  def ricalcola_saldo_clientable
+    clientable = consegnabile.try(:clientable)
+    clientable&.ricalcola_saldo! if clientable.respond_to?(:ricalcola_saldo!)
+  end
 end

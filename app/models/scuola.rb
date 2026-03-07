@@ -53,6 +53,7 @@ class Scuola < ApplicationRecord
   include HasEntries
   include Navigable
   include ProtectedFromDestroy
+  include Saldabile
   include PgSearch::Model
 
 

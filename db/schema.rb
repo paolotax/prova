@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_113705) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_162002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1291,6 +1291,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_113705) do
     t.index ["scuola_id", "stato"], name: "index_saggi_on_scuola_id_and_stato"
     t.index ["scuola_id"], name: "index_saggi_on_scuola_id"
     t.index ["user_id"], name: "index_saggi_on_user_id"
+  end
+
+  create_table "saldi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.integer "copie_da_consegnare", default: 0, null: false
+    t.integer "copie_da_pagare", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.bigint "importo_da_consegnare_cents", default: 0, null: false
+    t.bigint "importo_da_pagare_cents", default: 0, null: false
+    t.uuid "saldabile_id", null: false
+    t.string "saldabile_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_saldi_on_account_id"
+    t.index ["saldabile_type", "saldabile_id"], name: "index_saldi_on_saldabile"
+    t.index ["saldabile_type", "saldabile_id"], name: "index_saldi_on_saldabile_type_and_saldabile_id", unique: true
   end
 
   create_table "sconti", force: :cascade do |t|

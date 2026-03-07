@@ -42,4 +42,14 @@ class Pagamento < ApplicationRecord
 
   validates :pagabile_id, uniqueness: { scope: :pagabile_type }
   validates :tipo_pagamento, length: { maximum: 50 }, allow_blank: true
+
+  after_create_commit :ricalcola_saldo_clientable
+  after_destroy_commit :ricalcola_saldo_clientable
+
+  private
+
+  def ricalcola_saldo_clientable
+    clientable = pagabile.try(:clientable)
+    clientable&.ricalcola_saldo! if clientable.respond_to?(:ricalcola_saldo!)
+  end
 end

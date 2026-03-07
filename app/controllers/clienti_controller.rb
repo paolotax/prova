@@ -8,14 +8,14 @@ class ClientiController < ApplicationController
 
   def index
     @import = ClientiImporter.new
-    @clienti = @filter.clienti
+    @clienti = @filter.clienti.includes(:saldo)
     @total_count = @clienti.count
     set_page_and_extract_portion_from @clienti
 
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.xlsx
+      format.xlsx { @clienti = @filter.clienti }
     end
   end
 

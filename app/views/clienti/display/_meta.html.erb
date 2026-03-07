@@ -1,20 +1,52 @@
 <%# locals: (cliente:) -%>
 
-<div class="card__meta">
-  <span class="card__meta-text">
-    P.IVA <strong class="mono"><%= cliente.partita_iva.presence || "—" %></strong>
-  </span>
-  <span class="card__meta-text">
-    <% doc_count = cliente.documenti.count %>
-    <% if doc_count.positive? %>
-      <%= icon_tag "document", class: "icon--small" %>
-      <strong><%= doc_count %></strong> doc
+<div class="card__meta" id="<%= dom_id(cliente, :meta) %>">
+  <span class="card__meta-text card__meta-text--added">
+    <% if cliente.codice_fiscale.present? %>
+      CF <strong class="mono"><%= cliente.codice_fiscale %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
-  <span class="card__meta-text">
-    <% totale = cliente.documenti.sum(:totale_cents) / 100.0 %>
-    <% if totale.positive? %>
-      <%= number_to_currency totale, locale: :it %>
+
+  <span class="card__meta-text card__meta-text--author">
+    <% if cliente.partita_iva.present? %>
+      P.IVA <strong class="mono"><%= cliente.partita_iva %></strong>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--updated">
+    <% if cliente.indirizzo_telematico.present? %>
+      SDI <strong class="mono"><%= cliente.indirizzo_telematico %></strong>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees">
+    <% if cliente.condizioni_di_pagamento.present? %>
+      <%= cliente.condizioni_di_pagamento %>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <% saldo = cliente.saldo %>
+  <span class="card__meta-text card__meta-text--copie txt-align-end">
+    <% if saldo&.copie_da_consegnare&.positive? %>
+      <strong><%= saldo.copie_da_consegnare %></strong> copie
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--importo txt-align-end">
+    <% if saldo&.importo_da_pagare_cents&.positive? %>
+      <strong class="txt-negative"><%= number_to_currency saldo.importo_da_pagare_cents / 100.0, locale: :it %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 </div>

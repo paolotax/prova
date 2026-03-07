@@ -32,7 +32,7 @@
           <%= mail_to cliente.email, cliente.email.downcase, class: "txt-link" %></span>
         <% end %>
         <% if cliente.pec.present? %>
-          <span><%= icon_tag "shield-check", class: "icon--small txt-subtle" %>
+          <span><%= icon_tag "lock", class: "icon--small txt-subtle" %>
           <%= mail_to cliente.pec, cliente.pec.downcase, class: "txt-link" %></span>
         <% end %>
       </div>

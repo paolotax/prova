@@ -84,6 +84,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'movimento', 'movimenti'
 
   inflect.irregular 'saggio', 'saggi'
+  inflect.irregular 'saldo', 'saldi'
 
   inflect.irregular 'collana', 'collane'
   inflect.irregular 'categoria', 'categorie'

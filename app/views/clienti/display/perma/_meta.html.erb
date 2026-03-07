@@ -1,27 +1,31 @@
 <%# locals: (cliente:) -%>
 
 <div class="card__meta" id="<%= dom_id(cliente, :meta) %>">
-
-  <div class="card__meta-avatars card__meta-avatars--author">
-  </div>
-
   <span class="card__meta-text card__meta-text--added">
-    <% if cliente.partita_iva.present? %>
-      P.IVA: <strong class="mono"><%= cliente.partita_iva %></strong>
+    <% if cliente.codice_fiscale.present? %>
+      CF <strong class="mono"><%= cliente.codice_fiscale %></strong>
     <% else %>
       &nbsp;
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--author">
-    <% if cliente.codice_fiscale.present? %>
-      C.F.: <strong class="mono"><%= cliente.codice_fiscale %></strong>
+    <% if cliente.partita_iva.present? %>
+      P.IVA <strong class="mono"><%= cliente.partita_iva %></strong>
     <% else %>
       &nbsp;
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
+  <span class="card__meta-text card__meta-text--updated">
+    <% if cliente.indirizzo_telematico.present? %>
+      SDI <strong class="mono"><%= cliente.indirizzo_telematico %></strong>
+    <% else %>
+      &nbsp;
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--assignees">
     <% if cliente.condizioni_di_pagamento.present? %>
       <%= cliente.condizioni_di_pagamento %>
     <% else %>
@@ -29,25 +33,20 @@
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
-    <% if cliente.indirizzo_telematico.present? %>
-      SDI: <strong class="mono"><%= cliente.indirizzo_telematico %></strong>
+  <% saldo = cliente.saldo %>
+  <span class="card__meta-text card__meta-text--copie txt-align-end">
+    <% if saldo&.copie_da_consegnare&.positive? %>
+      <strong><%= saldo.copie_da_consegnare %></strong> copie
     <% else %>
       &nbsp;
     <% end %>
   </span>
 
-  <span class="card__meta-text card__meta-text--copie txt-align-end">
-    <% doc_count = cliente.documenti.attivi.size %>
-    <% if doc_count.positive? %>
-      <strong><%= doc_count %></strong> doc.attivi
-    <% end %>
-  </span>
-
   <span class="card__meta-text card__meta-text--importo txt-align-end">
-    <% importo = cliente.importo_entrate - cliente.importo_uscite %>
-    <% if importo != 0 %>
-      <strong><%= number_to_currency importo, locale: :it %></strong>
+    <% if saldo&.importo_da_pagare_cents&.positive? %>
+      <strong class="txt-negative"><%= number_to_currency saldo.importo_da_pagare_cents / 100.0, locale: :it %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 </div>
