@@ -119,6 +119,20 @@
     }
   }
 
+  /* Action that moves to the title row on mobile */
+  .header__action--mobile-title {
+    grid-area: actions-start;
+    align-self: center;
+    font-size: var(--text-x-small);
+    margin-inline-start: var(--header-actions-width);
+
+    @media (max-width: 639px) {
+      grid-area: title;
+      justify-self: start;
+      margin-inline-start: 0;
+    }
+  }
+
   /* Optional class to stack header actions on small screens
   /* ------------------------------------------------------------------------ */
 

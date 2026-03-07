@@ -2,11 +2,13 @@
 <% @body_class = "contained-scrolling" %>
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
+<%= turbo_stream_from current_user, "entries" %>
+
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= link_to appunti_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-      <%= icon_tag "document" %>
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
+      <%= icon_tag "table-cells" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
   </div>
@@ -16,14 +18,13 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= button_to appunti_path, method: :post, class: "btn", form: { data: { turbo: false } } do %>
+    <%= button_to appunti_path, method: :post, class: "btn btn--link", 
+        data: { controller:"tooltip" } do %>
       <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuovo appunto</span>
     <% end %>
   </div>
 <% end %>
-
-<%= turbo_stream_from current_user, "entries" %>
 
 <% if hotwire_native_app? %>
   <%= button_to "Nuovo Appunto", appunti_path, method: :post,

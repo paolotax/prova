@@ -6,14 +6,19 @@
 
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">
-    <%= link_to documenti_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
-      <%= icon_tag "document" %>
-      <span class="for-screen-reader">Esporta in excel</span>
-    <% end %>
-    <%= link_to new_import_path(type: :documenti), class: "btn", data: { controller: "tooltip" } do %>
+    <%= link_to new_import_path(type: :documenti),
+        class: "btn",
+        data: { controller: "tooltip" } do %>
       <%= icon_tag "arrow-down-tray" %>
       <span class="for-screen-reader">Importa Documenti</span>
+    <% end %>
+  </div>
+
+  <div class="header__action--mobile-title">
+    <%= link_to documenti_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
+      <%= icon_tag "table-cells" %>
+      <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
   </div>
 
@@ -22,9 +27,9 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to new_documento_path, class: "btn" do %>
+    <%= link_to new_documento_path, class: "btn btn--link" , data: { controller: "tooltip" } do %>
       <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuova documento</span>
+      <span class="for-screen-reader">Nuovo documento</span>
     <% end %>
   </div>
 <% end %>
@@ -41,52 +46,52 @@
 <% end %>
 
 <%= render "filters/settings",
-      filter_url: documenti_path,
-      user_filtering: @user_filtering,
-      no_filtering_url: documenti_path,
-      filter_type: "documento_filter" %>
+    filter_url: documenti_path,
+    user_filtering: @user_filtering,
+    no_filtering_url: documenti_path,
+    filter_type: "documento_filter" %>
 
 <%= turbo_frame_tag :search_results do %>
-    <% if @page.used? %>
-      <p class="txt-small txt-subtle margin-block-end-half center">
-        <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
-      </p>
-
-      <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
-        <%= render "documenti/bulk_bar/bar" %>
-
-        <div class="cards cards--grid">
-          <%= with_automatic_pagination :documenti, @page,
-              id: "cards-lista",
-              class: "cards__list",
-              data: { controller: "navigable-list",
-                  navigable_list_auto_select_value: false,
-                  navigable_list_actionable_items_value: true,
-                  navigable_list_prevent_handled_keys_value: true,
-                  action: "keydown->navigable-list#navigate"
-                } do %>
-            <% mese_corrente = nil %>
-            <% @page.records.each do |documento| %>
-              <% if @filter.sorted_by.per_cliente? %>
-                <% chiave = documento.data_documento&.year %>
-                <% if chiave != mese_corrente %>
-                  <% mese_corrente = chiave %>
-                  <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
-                <% end %>
-              <% else %>
-                <% chiave = documento.data_documento ? I18n.l(documento.data_documento, format: "%B %Y").capitalize : nil %>
-                <% if chiave != mese_corrente %>
-                  <% mese_corrente = chiave %>
-                  <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
-                <% end %>
-              <% end %>
-              <%= render documento %>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-  <% else %>
+  <% unless @page.used? %>      
     <%= blank_slate_for(:documenti, filtering: @user_filtering) %>
+  <% else %>
+    <p class="txt-small txt-subtle margin-block-end-half center">
+      <%= @total_count %> <%= @total_count == 1 ? "documento trovato" : "documenti trovati" %>
+    </p>
+
+    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+      <%= render "documenti/bulk_bar/bar" %>
+
+      <div class="cards cards--grid">
+        <%= with_automatic_pagination :documenti, @page,
+            id: "cards-lista",
+            class: "cards__list",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate"
+              } do %>
+          <% mese_corrente = nil %>
+          <% @page.records.each do |documento| %>
+            <% if @filter.sorted_by.per_cliente? %>
+              <% chiave = documento.data_documento&.year %>
+              <% if chiave != mese_corrente %>
+                <% mese_corrente = chiave %>
+                <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+              <% end %>
+            <% else %>
+              <% chiave = documento.data_documento ? I18n.l(documento.data_documento, format: "%B %Y").capitalize : nil %>
+              <% if chiave != mese_corrente %>
+                <% mese_corrente = chiave %>
+                <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+              <% end %>
+            <% end %>
+            <%= render documento %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 <% end %>
 

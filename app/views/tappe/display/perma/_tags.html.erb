@@ -2,9 +2,10 @@
 
 <div id="<%= dom_id(tappa, :tags) %>" class="card__tags">
   <% tappa.giri.each do |giro| %>
-    <span class="card__tag txt-uppercase"
-          style="border: 1px solid <%= giro.color %>; color: <%= giro.color %>; background: transparent; border-radius: var(--radius-small); padding: 0.1em 0.4em;">
+    <%= link_to giro_path(giro), class: "card__tag txt-uppercase", draggable: false,
+          style: "border: 1px solid #{giro.color}; color: #{giro.color}; background: transparent; border-radius: var(--radius-small); padding: 0.1em 0.4em; cursor: pointer; text-decoration: none;",
+          data: { turbo_frame: "_top" } do %>
       <%= giro.titolo %>
-    </span>
+    <% end %>
   <% end %>
 </div>

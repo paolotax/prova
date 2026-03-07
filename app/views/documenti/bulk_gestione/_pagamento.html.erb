@@ -1,0 +1,99 @@
+<%# locals: (documenti:) -%>
+
+<section class="padding-block margin-block-end" data-controller="inline-edit">
+  <h2 class="divider gap txt-medium txt-subtle">Pagamento</h2>
+
+  <% pagati_count = documenti.count(&:pagato?) %>
+  <% non_pagati_count = documenti.size - pagati_count %>
+
+  <% if pagati_count == documenti.size %>
+    <div data-inline-edit-target="view" class="flex flex-column align-center gap-half">
+      <span class="flex align-center gap-half">
+        <%= icon_tag "cash" %>
+        Pagato il <strong><%= documenti.map(&:pagato_il).compact.max&.strftime("%d/%m/%Y") %></strong>
+      </span>
+      <div class="flex gap-half align-center">
+        <button type="button" class="btn btn--circle btn--positive txt-small" data-controller="tooltip" data-action="inline-edit#showEdit">
+          <%= icon_tag "pencil" %>
+          <span class="for-screen-reader">Modifica</span>
+        </button>
+        <%= link_to documenti_bulk_pagamenti_path(ids: documenti.map(&:id)),
+              class: "btn btn--circle txt-small txt-negative",
+              data: { turbo_method: :delete, controller: "tooltip" } do %>
+          <%= icon_tag "trash" %>
+          <span class="for-screen-reader">Rimuovi pagamenti</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div data-inline-edit-target="edit" hidden class="flex flex-column align-center gap-half">
+      <div class="flex flex-column align-center">
+        <label for="bulk_pagato_il" class="txt-small txt-subtle">Data pagamento</label>
+        <input type="date" name="pagato_il" id="bulk_pagato_il" value="<%= documenti.map(&:pagato_il).compact.max %>" class="input input--date" style="text-align: center;" form="bulk_pagamenti_form">
+      </div>
+      <div class="flex flex-column align-center">
+        <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
+        <select name="tipo_pagamento" id="bulk_tipo_pagamento" class="input input--select" form="bulk_pagamenti_form">
+          <%= options_for_select(tipi_pagamento_options, "contanti") %>
+        </select>
+      </div>
+      <div class="flex gap-half align-center">
+        <%= form_with url: documenti_bulk_pagamenti_path,
+              method: :post,
+              id: "bulk_pagamenti_form",
+              style: "display: contents;" do |f| %>
+          <% documenti.each do |doc| %>
+            <%= hidden_field_tag "ids[]", doc.id %>
+          <% end %>
+          <%= f.submit class: "btn btn--positive btn--circle txt-small", data: { controller: "tooltip" } do %>
+            <%= icon_tag "check" %>
+            <span class="for-screen-reader">Salva</span>
+          <% end %>
+        <% end %>
+        <button type="button" class="btn btn--circle txt-small" data-controller="tooltip" data-action="inline-edit#showView">
+          <%= icon_tag "remove" %>
+          <span class="for-screen-reader">Annulla</span>
+        </button>
+      </div>
+    </div>
+  <% else %>
+    <div class="flex flex-column align-center gap-half">
+      <span class="flex align-center gap-half txt-small txt-subtle">
+        <%= icon_tag "cash" %>
+        <%= pagati_count %> pagati, <%= non_pagati_count %> da pagare
+      </span>
+
+      <div class="flex flex-column align-center">
+        <label for="bulk_pagato_il" class="txt-small txt-subtle">Data pagamento</label>
+        <input type="date" name="pagato_il" id="bulk_pagato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_pagamenti_form">
+      </div>
+
+      <div class="flex flex-column align-center">
+        <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
+        <select name="tipo_pagamento" id="bulk_tipo_pagamento" class="input input--select" form="bulk_pagamenti_form">
+          <%= options_for_select(tipi_pagamento_options, "contanti") %>
+        </select>
+      </div>
+
+      <div class="flex gap-half align-center justify-center">
+        <%= form_with url: documenti_bulk_pagamenti_path,
+              method: :post,
+              id: "bulk_pagamenti_form",
+              style: "display: contents;" do |f| %>
+          <% documenti.each do |doc| %>
+            <%= hidden_field_tag "ids[]", doc.id %>
+          <% end %>
+          <%= f.submit "Segna pagati", class: "btn btn--positive txt-small" %>
+        <% end %>
+        <% if pagati_count > 0 %>
+          <%= link_to documenti_bulk_pagamenti_path(ids: documenti.map(&:id)),
+                class: "btn btn--circle txt-small txt-negative",
+                data: { turbo_method: :delete, controller: "tooltip" } do %>
+            <%= icon_tag "trash" %>
+            <span class="for-screen-reader">Rimuovi pagamenti</span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

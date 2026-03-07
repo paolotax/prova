@@ -7,7 +7,7 @@ module Documenti
       tipo_pagamento = params[:tipo_pagamento].presence
 
       @documenti.each do |documento|
-        documento.unmark_pagato if documento.pagato?
+        next if documento.pagato?
         documento.mark_pagato(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
       end
 

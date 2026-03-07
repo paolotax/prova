@@ -2,65 +2,22 @@
 
 <% collegabili = documento.documenti_collegabili %>
 <% if collegabili.any? %>
-  <div style="max-inline-size: 1120px; margin-inline: auto; padding-inline: var(--block-space);">
-  <h3 class="txt-small txt-subtle txt-uppercase margin-block-end-half">Documenti collegabili</h3>
+  <div class="cards cards--grid cards--in-context cards--collegabili">
+    <h3 class="txt-small txt-subtle txt-uppercase margin-block-end-half">Documenti collegabili</h3>
 
-  <% collegabili.each do |doc| %>
-    <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close:stop">
-      <%= tag.article class: "card",
-          style: "--card-color: #{documento_color(doc)};",
-          tabindex: 0 do %>
-
-        <header class="card__header">
-          <%= render "documenti/display/preview/board", documento: doc %>
-        </header>
-
-        <%= link_to documento_path(doc), class: "card__link", data: { turbo_frame: "_top" } do %>
-          <span class="for-screen-reader"><%= doc.causale&.causale %> #<%= doc.numero_documento %></span>
-        <% end %>
-
-        <div class="card__body">
-          <div class="card__content">
-            <h3 class="card__title overflow-line-clamp"><%= doc.clientable.denominazione %></h3>
-          </div>
-        </div>
-
-        <footer class="card__footer flex gap-half">
-          <span class="card__meta-text">
-            <span class="txt-x-small txt-uppercase">DATA</span>
-            <strong><%= doc.data_documento&.strftime("%d/%m/%Y") %></strong>
-          </span>
-          <span class="card__meta-text">
-            COPIE <strong><%= doc.totale_copie %></strong>
-          </span>
-          <span class="card__meta-text">
-            <strong><%= number_to_currency doc.totale_importo, locale: :it %></strong>
-          </span>
-        </footer>
-
-        <div class="card__actions">
-          <button type="button" class="btn btn--small btn--circle"
-                  data-action="dialog#open"
-                  data-controller="tooltip" data-tooltip-content-value="Collega">
-            <%= icon_tag "plus" %>
-          </button>
-        </div>
-      <% end %>
-
-      <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch" data-dialog-target="dialog">
-        <h3 class="txt-large txt-bold">Collegare questo documento?</h3>
-        <p class="txt-medium margin-block-half"><%= doc.causale&.causale %> #<%= doc.numero_documento %> del <%= doc.data_documento&.strftime("%d/%m/%Y") %></p>
-        <div class="flex gap-half justify-center margin-block-start">
-          <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+    <div class="cards__list">
+      <% collegabili.each do |doc| %>
+        <div class="cards--collegabili__item">
+          <%= render "documenti/documento", documento: doc %>
           <%= button_to documento_collegamento_path(documento, figlio_id: doc.id),
-              method: :post,
-              class: "btn btn--positive",
-              data: { action: "click->dialog#close" } do %>
-            <span>Collega</span>
+                method: :post,
+                form_class: "cards--collegabili__action",
+                class: "btn btn--small btn--circle btn--positive",
+                data: { controller: "tooltip", tooltip_content_value: "Collega" } do %>
+            <%= icon_tag "add" %>
           <% end %>
         </div>
-      </dialog>
+      <% end %>
     </div>
-  <% end %>
   </div>
 <% end %>

@@ -18,6 +18,7 @@
     background: none;
   }
 
+  .icon--table-cells { --svg: url("table-cells.svg"); }
   .icon--ellipsis-vertical { --svg: url("ellipsis-vertical.svg"); }
   .icon--wrench { --svg: url("wrench.svg"); }
   .icon--appunto { --svg: url("appunto.svg"); }

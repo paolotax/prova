@@ -1,0 +1,54 @@
+<%# locals: (clientable:, docs:) -%>
+
+<section class="rounded">
+  <header class="flex justify-space-between align-center">
+    <h5 class="txt-medium font-weight-bold flex align-center gap-half">
+      <% if clientable.is_a?(Scuola) || clientable.class.name.include?("Scuola") %>
+        <%= icon_tag "building-library", class: "txt-subtle" %>
+      <% else %>
+        <%= icon_tag "person", class: "txt-subtle" %>
+      <% end %>
+      <span class="overflow-ellipsis" style="max-width: 20ch;"><%= clientable&.denominazione || "Cliente non specificato" %></span>
+    </h5>
+  </header>
+
+  <div class="flex flex-column">
+    <% docs.each do |documento| %>
+      <div class="card txt-xx-small" style="--card-color: <%= documento_color(documento) %>; flex-direction: row; justify-content: space-between; align-items: center; padding: 0.35em 0.5em; box-shadow: none;">
+        <div class="flex align-center gap-half">
+          <%= render "shared/cards/display/perma/board",
+              id: documento.numero_documento || "...",
+              name: documento.causale&.to_s&.upcase || "..." %>
+
+          <span class="txt-subtle">
+            <%= documento.data_documento&.strftime("%d/%m/%y") %>
+          </span>
+        </div>
+
+        <div class="flex align-center gap-half txt-x-small">
+          <% importo_con_segno = documento.causale&.entrata? ? -documento.totale_importo : documento.totale_importo %>
+          <span class="font-weight-bold <%= 'txt-negative' if documento.causale&.entrata? %>">
+            <%= number_to_currency(importo_con_segno, unit: "€", format: "%n %u") %>
+          </span>
+          <% if documento.consegnato? %>
+            <span class="txt-positive" title="Consegnato il <%= documento.consegnato_il&.strftime('%d/%m/%Y') %>">
+              <%= icon_tag "truck" %>
+            </span>
+          <% end %>
+          <% if documento.pagato? %>
+            <span class="txt-positive" title="Pagato il <%= documento.pagato_il&.strftime('%d/%m/%Y') %><%= " (#{documento.tipo_pagamento})" if documento.tipo_pagamento.present? %>">
+              <%= icon_tag "cash" %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% totale_cliente = docs.sum { |d| d.causale&.entrata? ? -(d.totale_cents || 0) : (d.totale_cents || 0) } / 100.0 %>
+  <footer class="flex justify-end margin-block-start-half padding-block-start-half border-block-start">
+    <span class="txt-small font-weight-bold <%= 'txt-negative' if totale_cliente < 0 %>">
+      Totale: <%= number_to_currency(totale_cliente, unit: "€", format: "%n %u") %>
+    </span>
+  </footer>
+</section>

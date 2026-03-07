@@ -903,4 +903,37 @@
       }
     }
   }
+
+  /* Documenti collegabili
+  /* -------------------------------------------------------------------------- */
+
+  .cards--collegabili__item {
+    inline-size: calc((100% - var(--cards-gap) * (var(--card-grid-columns) - 1)) / var(--card-grid-columns));
+    position: relative;
+
+    .card {
+      inline-size: 100%;
+    }
+  }
+
+  .cards--collegabili__action {
+    font-size: var(--text-xx-small);
+    inset-block-start: 0.5em;
+    inset-inline-end: 0.5em;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 150ms ease;
+    z-index: 2;
+
+    @media (any-hover: hover) {
+      .cards--collegabili__item:hover & {
+        opacity: 1;
+      }
+    }
+
+    /* Always visible on touch devices */
+    @media (any-hover: none) {
+      opacity: 1;
+    }
+  }
 }

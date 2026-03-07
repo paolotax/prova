@@ -1,0 +1,86 @@
+<%# locals: (documenti:) -%>
+
+<section class="padding-block margin-block-end" data-controller="inline-edit">
+  <h2 class="divider gap txt-medium txt-subtle">Consegna</h2>
+
+  <% consegnati_count = documenti.count(&:consegnato?) %>
+  <% non_consegnati_count = documenti.size - consegnati_count %>
+
+  <% if consegnati_count == documenti.size %>
+    <div data-inline-edit-target="view" class="flex flex-column align-center gap-half">
+      <span class="flex align-center gap-half">
+        <%= icon_tag "truck" %>
+        Consegnato il <strong><%= documenti.map(&:consegnato_il).compact.max&.strftime("%d/%m/%Y") %></strong>
+      </span>
+      <div class="flex gap-half align-center">
+        <button type="button" class="btn btn--circle btn--positive txt-small" data-controller="tooltip" data-action="inline-edit#showEdit">
+          <%= icon_tag "pencil" %>
+          <span class="for-screen-reader">Modifica</span>
+        </button>
+        <%= link_to documenti_bulk_consegne_path(ids: documenti.map(&:id)),
+              class: "btn btn--circle txt-small txt-negative",
+              data: { turbo_method: :delete, controller: "tooltip" } do %>
+          <%= icon_tag "trash" %>
+          <span class="for-screen-reader">Rimuovi consegne</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div data-inline-edit-target="edit" hidden class="flex flex-column align-center gap-half">
+      <div class="flex flex-column align-center">
+        <label for="bulk_consegnato_il" class="txt-small txt-subtle">Data consegna</label>
+        <input type="date" name="consegnato_il" id="bulk_consegnato_il" value="<%= documenti.map(&:consegnato_il).compact.max %>" class="input input--date" style="text-align: center;" form="bulk_consegne_form">
+      </div>
+      <div class="flex gap-half align-center">
+        <%= form_with url: documenti_bulk_consegne_path,
+              method: :post,
+              id: "bulk_consegne_form",
+              style: "display: contents;" do |f| %>
+          <% documenti.each do |doc| %>
+            <%= hidden_field_tag "ids[]", doc.id %>
+          <% end %>
+          <%= f.submit class: "btn btn--positive txt-small", data: { controller: "tooltip" } do %>
+            <%= icon_tag "check" %>
+            <span class="for-screen-reader">Salva</span>
+          <% end %>
+        <% end %>
+        <button type="button" class="btn btn--circle txt-small" data-controller="tooltip" data-action="inline-edit#showView">
+          <%= icon_tag "remove" %>
+          <span class="for-screen-reader">Annulla</span>
+        </button>
+      </div>
+    </div>
+  <% else %>
+    <div class="flex flex-column align-center gap-half">
+      <span class="flex align-center gap-half txt-small txt-subtle">
+        <%= icon_tag "truck" %>
+        <%= consegnati_count %> consegnati, <%= non_consegnati_count %> da consegnare
+      </span>
+
+      <div class="flex flex-column align-center">
+        <label for="bulk_consegnato_il" class="txt-small txt-subtle">Data consegna</label>
+        <input type="date" name="consegnato_il" id="bulk_consegnato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_consegne_form">
+      </div>
+
+      <div class="flex gap-half align-center justify-center">
+        <%= form_with url: documenti_bulk_consegne_path,
+              method: :post,
+              id: "bulk_consegne_form",
+              style: "display: contents;" do |f| %>
+          <% documenti.each do |doc| %>
+            <%= hidden_field_tag "ids[]", doc.id %>
+          <% end %>
+          <%= f.submit "Segna consegnati", class: "btn btn--positive txt-small " %>
+        <% end %>
+        <% if consegnati_count > 0 %>
+          <%= link_to documenti_bulk_consegne_path(ids: documenti.map(&:id)),
+                class: "btn btn--circle txt-small txt-negative",
+                data: { turbo_method: :delete, controller: "tooltip" } do %>
+            <%= icon_tag "trash" %>
+            <span class="for-screen-reader">Rimuovi consegne</span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>
