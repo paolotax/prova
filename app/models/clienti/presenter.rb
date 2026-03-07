@@ -8,7 +8,7 @@ class Clienti::Presenter
   end
 
   # Returns { 2025 => { pagato: 12300, da_pagare: 45600, count: 8 }, 2024 => { ... } }
-  # Values in cents. Entrate (movimento=1) positive, uscite (movimento=0) negative.
+  # Values in cents. Uscita (movimento=1) = cliente deve (+), Entrata (movimento=0) = credito (-)
   def riepilogo_per_anno
     docs = cliente.documenti.where(documento_padre_id: nil)
       .includes(:causale, :pagamento)
@@ -17,7 +17,7 @@ class Clienti::Presenter
 
     docs.each do |doc|
       anno = doc.data_documento&.year || 0
-      segno = doc.causale&.movimento == 1 ? -1 : 1
+      segno = doc.causale&.uscita? ? 1 : -1
       importo = (doc.totale_cents || 0) * segno
       key = doc.pagato? ? :pagato : :da_pagare
       result[anno][key] += importo

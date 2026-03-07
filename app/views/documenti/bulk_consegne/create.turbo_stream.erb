@@ -18,3 +18,12 @@
     <% end %>
   <% end %>
 <% end %>
+
+<%# Aggiorna il meta dei clienti coinvolti (saldo) %>
+<% @documenti_per_cliente.each_key do |clientable| %>
+  <% next unless clientable.is_a?(Cliente) %>
+  <% clientable.reload %>
+  <%= turbo_stream.replace dom_id(clientable, :meta) do %>
+    <%= render "clienti/display/meta", cliente: clientable %>
+  <% end %>
+<% end %>
