@@ -3,7 +3,7 @@
 <div id="<%= dom_id(scuola, :tags) %>" class="card__tags">
   <% if scuola.area.present? %>
     <div class="min-width overflow-ellipsis">
-      <%= link_to scuole_path,
+      <%= link_to scuole_path(aree: [scuola.area]),
             class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent" do %>
         <% if scuola.respond_to?(:area) && scuola.area.present? %>
           <%= scuola.area.upcase %>
