@@ -14,7 +14,7 @@ class DocumentiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:clientable, righe: { libro: [:editore] }) }
+      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:causale, :clientable, righe: { libro: [:editore, :categoria] }) }
     end
   end
 

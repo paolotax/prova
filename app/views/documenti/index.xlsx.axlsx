@@ -1,24 +1,37 @@
 wb = xlsx_package.workbook
 
-fields = [ "codice_isbn", "titolo", "editore", "categoria",
-           "quantita", "prezzo_cents", "sconto",
-           "cliente", "comune", "referente", "note",
-           "causale", "numero_documento", "data_documento", "tipo_pagamento",
-           "riga_id", "documento_id", "libro_id",
-           "disciplina", "classe"]
+header_fields = %w[causale numero data_documento cliente comune referente note tipo_pagamento
+                   codice_isbn titolo editore categoria disciplina classe
+                   quantita prezzo sconto
+                   documento_id riga_id libro_id]
 
-wb.add_worksheet(name: "Foglio 1") do |sheet|
- 
-  sheet.add_row  fields
-  
+wb.add_worksheet(name: "Documenti") do |sheet|
+  sheet.add_row header_fields
+
   @tutti_documenti.each do |documento|
-    documento.righe.each do |row|
-        sheet.add_row [ row.libro.codice_isbn, row.libro.titolo, row.libro.editore.editore, row.libro.categoria, 
-        row.quantita, row.prezzo_cents, row.sconto, 
-        documento.clientable.denominazione,  documento.clientable.comune, documento.referente, documento.note, 
-        documento.causale, documento.numero_documento, documento.data_documento, documento.tipo_pagamento,
-        row.id, documento.id, row.libro_id,
-        row.libro.disciplina, row.libro.classe ]
+    documento.righe.each do |riga|
+      sheet.add_row [
+        documento.causale&.causale,
+        documento.numero_documento,
+        documento.data_documento,
+        documento.clientable&.denominazione,
+        documento.clientable&.try(:comune),
+        documento.referente,
+        documento.note,
+        documento.tipo_pagamento,
+        riga.libro&.codice_isbn,
+        riga.libro&.titolo,
+        riga.libro&.editore&.editore,
+        riga.libro&.categoria&.nome_categoria,
+        riga.libro&.disciplina,
+        riga.libro&.classe,
+        riga.quantita,
+        riga.prezzo_cents,
+        riga.sconto,
+        documento.id,
+        riga.id,
+        riga.libro_id
+      ], types: [:string]
     end
   end
 end
