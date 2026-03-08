@@ -1,7 +1,7 @@
 class BolleVisioneController < ApplicationController
   before_action :authenticate_user!
   before_action :set_tappa, only: [:new, :create]
-  before_action :set_bolla_visione, only: [:show]
+  before_action :set_bolla_visione, only: [:show, :destroy]
 
   def index
     @bolle_visione = Current.account.bolle_visione.includes(:scuola, :collana).ordered
@@ -33,11 +33,20 @@ class BolleVisioneController < ApplicationController
     end
   end
 
+  def destroy
+    @bolla_visione.destroy!
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@bolla_visione) }
+      format.html { redirect_to @bolla_visione.tappa ? tappa_path(@bolla_visione.tappa) : bolle_visione_path }
+    end
+  end
+
   def show
-    @righe = @bolla_visione.bolla_visione_righe.includes(libro: :editore)
-              .joins(:libro).order("libri.disciplina, libri.titolo")
-    # Mappa libro_id → classi_target dalla collana
-    @target_per_libro = @bolla_visione.collana.collana_libri.pluck(:libro_id, :classi_target).to_h
+    @righe = @bolla_visione.bolla_visione_righe.includes(libro: :editore).order(:position)
+    # Mappa libro_id → attributi dalla collana
+    collana_libri = @bolla_visione.collana.collana_libri.order(:position)
+    @target_per_libro = collana_libri.pluck(:libro_id, :classi_target).to_h
+    @gruppo_per_libro = collana_libri.pluck(:libro_id, :gruppo).to_h
     scuola = @bolla_visione.scuola
     @classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
     @persone = scuola.persone.order(:cognome)

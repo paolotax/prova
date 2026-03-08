@@ -1,6 +1,6 @@
 <%= tag.li id: dom_id(riga), class: "list-style-none margin-none flex flex-column gap-quarter full-width", style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;" do %>
   <div class="flex align-center gap full-width">
-    <div class="flex flex-column min-width" style="flex: 1;">
+    <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
       <strong class="overflow-ellipsis txt-small"><%= riga.libro.titolo %></strong>
       <span class="txt-x-small txt-subtle"><%= [riga.libro.codice_isbn, riga.libro.editore&.editore].compact.join(" · ") %></span>
     </div>

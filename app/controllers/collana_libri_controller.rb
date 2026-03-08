@@ -43,6 +43,6 @@ class CollanaLibriController < ApplicationController
   end
 
   def collana_libro_params
-    params.require(:collana_libro).permit(:libro_id, :classi_target)
+    params.require(:collana_libro).permit(:libro_id, :classi_target, :gruppo, :position)
   end
 end

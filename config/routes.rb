@@ -349,7 +349,7 @@ Rails.application.routes.draw do
       resources :collana_libri, only: [:create, :destroy, :update]
     end
 
-    resources :bolle_visione, only: [:index, :show] do
+    resources :bolle_visione, only: [:index, :show, :destroy] do
       resources :bolla_visione_righe, only: [:update, :destroy]
       resources :persone, only: [:create], module: :bolle_visione
     end

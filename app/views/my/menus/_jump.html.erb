@@ -19,7 +19,7 @@
 
 <div class="nav__scroll-container">
   <div class="nav__hotkeys margin-block-end-half" role="list">
-    <%= filter_hotkey_link "Agenda", agenda_path(Current.account), 1, "calendar" %>
+    <%= filter_hotkey_link "Oggi", giorno_path(Current.account, Date.today), 1, "calendar" %>
     <%= filter_hotkey_link "Appunti", appunti_path(Current.account), 2, "note" %>
     <%= filter_hotkey_link "Scuole", scuole_path(Current.account), 3, "building-library" %>
   </div>

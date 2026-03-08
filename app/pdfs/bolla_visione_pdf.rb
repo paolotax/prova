@@ -85,17 +85,18 @@ class BollaVisionePdf < Prawn::Document
   end
 
   def tabella_libri
-    righe_per_disciplina = @righe.group_by { |r| r.libro.disciplina.presence || "Altro" }
+    gruppo_per_libro = @bolla.collana.collana_libri.pluck(:libro_id, :gruppo).to_h
+    righe_per_gruppo = @righe.group_by { |r| gruppo_per_libro[r.libro_id].presence || "Altro" }
 
     data = []
 
     # Header
     data << header_row
 
-    righe_per_disciplina.each do |disciplina, righe|
-      # Riga separatore disciplina
+    righe_per_gruppo.each do |gruppo, righe|
+      # Riga separatore gruppo
       data << [{
-        content: disciplina.upcase,
+        content: gruppo.upcase,
         colspan: 4,
         background_color: "E8E8E8",
         font_style: :bold,

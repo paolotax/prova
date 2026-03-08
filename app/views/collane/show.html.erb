@@ -12,8 +12,20 @@
   </div>
 <% end %>
 
-<section class="panel panel--wide shadow center">
+<section class="panel shadow center" style="max-inline-size: 60rem;">
   <h3 class="divider divider--fade txt-medium font-weight-black">Libri nella collana</h3>
+
+  <datalist id="gruppo_list_<%= @collana.id %>">
+    <% CollanaLibro.where(account_id: Current.account.id).where.not(gruppo: [nil, ""]).distinct.pluck(:gruppo).sort.each do |g| %>
+      <option value="<%= g %>">
+    <% end %>
+  </datalist>
+
+  <datalist id="classi_target_list_<%= @collana.id %>">
+    <% CollanaLibro.where(account_id: Current.account.id).where.not(classi_target: [nil, ""]).distinct.pluck(:classi_target).sort.each do |ct| %>
+      <option value="<%= ct %>">
+    <% end %>
+  </datalist>
 
   <div id="collana_libri_list">
     <ul class="flex flex-column gap-half unpad margin-none">

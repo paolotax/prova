@@ -71,14 +71,14 @@
   <% end %>
 
   <div id="bolla_visione_righe_list">
-    <% @righe.group_by { |r| @target_per_libro[r.libro_id] }.each do |target, righe_per_target| %>
-      <% anni = target.to_s.split(",").map(&:strip) %>
-      <% classi = @classi_per_anno.values_at(*anni).compact.flatten %>
+    <% @righe.group_by { |r| @gruppo_per_libro[r.libro_id] }.each do |gruppo, righe_per_gruppo| %>
+      <% targets = righe_per_gruppo.map { |r| @target_per_libro[r.libro_id] }.compact.flat_map { |t| t.split(",").map(&:strip) }.uniq %>
+      <% classi = @classi_per_anno.values_at(*targets).compact.flatten %>
       <% docenti_classe = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none %>
 
       <div class="flex align-center gap-half margin-block-start">
         <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
-          Classe <%= target.presence || "—" %>
+          <%= gruppo.presence || "Senza gruppo" %>
         </h3>
 
         <% if docenti_classe.any? %>
@@ -140,16 +140,11 @@
         </div>
       </div>
 
-      <% righe_per_target.group_by { |r| r.libro.disciplina }.each do |disciplina, righe| %>
-        <% if disciplina.present? %>
-          <div class="txt-x-small txt-subtle txt-uppercase pad-block-start-half pad-block-end-quarter"><%= disciplina %></div>
+      <ul class="flex flex-column unpad margin-none">
+        <% righe_per_gruppo.each do |riga| %>
+          <%= render "bolla_visione_righe/bolla_visione_riga", riga: riga, classi: classi, persone: @persone %>
         <% end %>
-        <ul class="flex flex-column unpad margin-none">
-          <% righe.each do |riga| %>
-            <%= render "bolla_visione_righe/bolla_visione_riga", riga: riga, classi: classi, persone: @persone %>
-          <% end %>
-        </ul>
-      <% end %>
+      </ul>
     <% end %>
   </div>
 

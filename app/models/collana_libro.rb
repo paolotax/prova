@@ -4,6 +4,7 @@
 #
 #  id            :uuid             not null, primary key
 #  classi_target :string
+#  gruppo        :string
 #  position      :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
