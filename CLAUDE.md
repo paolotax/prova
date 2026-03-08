@@ -30,9 +30,6 @@ docker exec -it prova-app-1 bin/rails db:seed                  # Seed database
 docker exec -it prova-app-1 bin/rails generate migration <name>
 docker exec -it prova-app-1 bin/rails generate model <name>
 
-# Performance profiling
-docker exec -it prova-app-1 bundle exec log_bench              # Log benchmarking
-
 # Annotation (auto-updates model schema comments)
 docker exec -it prova-app-1 bundle exec annotaterb models      # Annotate models
 ```

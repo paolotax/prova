@@ -80,7 +80,6 @@ end
 
 group :development do
   gem "foreman", require: false
-  gem "log_bench"
 end
 
 gem "scenic", "~> 1.7"
