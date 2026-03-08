@@ -61,11 +61,6 @@ class Libro < ApplicationRecord
   include Searchable
   search_on :titolo, :codice_isbn, :cm, :disciplina, :note, :collana, editore: :editore, categoria: :nome_categoria
 
-  extend FilterableModel
-  class << self
-    def filter_proxy = Filters::LibroFilterProxy
-  end
-
   include PgSearch::Model
   search_fields =  [ :titolo, :disciplina, :codice_isbn, :collana, :note, :cm ]
   pg_search_scope :search_all_word,
