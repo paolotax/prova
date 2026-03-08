@@ -1,4 +1,4 @@
-<%= form_with url: collana_collana_libri_path(collana), class: "margin-block-start" do |f| %>
+<%= form_with url: collana_collana_libri_path(collana), scope: :collana_libro, class: "margin-block-start" do |f| %>
   <div class="flex gap-half align-center">
     <div class="form-field cb-tax" style="flex: 1;">
       <%= combobox_tag "collana_libro[libro_id]", libri_path,

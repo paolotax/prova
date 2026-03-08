@@ -29,7 +29,7 @@
 
   <div id="collana_libri_list">
     <ul class="flex flex-column gap-half unpad margin-none">
-      <% @collana.collana_libri.includes(:libro).each do |cl| %>
+      <% @collana.collana_libri.includes(:libro).ordered.each do |cl| %>
         <%= render "collana_libri/collana_libro", collana_libro: cl %>
       <% end %>
     </ul>
