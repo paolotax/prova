@@ -2,13 +2,13 @@
 #
 # Table name: prezzi_ministeriali
 #
-#  id               :uuid             not null, primary key
-#  anno_scolastico  :string           not null
-#  classe           :string           not null
-#  disciplina       :string           not null
-#  prezzo_cents     :integer          not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id              :uuid             not null, primary key
+#  anno_scolastico :string           not null
+#  classe          :string           not null
+#  disciplina      :string           not null
+#  prezzo_cents    :integer          not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #

@@ -1,0 +1,14 @@
+<%= tag.li id: dom_id(collana_libro), class: "list-style-none margin-none flex align-center gap full-width" do %>
+  <div class="flex flex-column min-width" style="flex: 1;">
+    <strong class="overflow-ellipsis txt-small"><%= collana_libro.libro.titolo %></strong>
+    <span class="txt-x-small txt-subtle"><%= [collana_libro.libro.codice_isbn, collana_libro.libro.editore&.editore].compact.join(" · ") %></span>
+  </div>
+
+  <%= form_with model: [collana_libro.collana, collana_libro], data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
+    <%= f.text_field :classi_target, class: "input input--small", style: "width: 6ch; text-align: center;", placeholder: "1,2,3", data: { action: "change->form#submit" } %>
+  <% end %>
+
+  <%= button_to collana_collana_libro_path(collana_libro.collana, collana_libro), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
+    <%= icon_tag "minus", size: "small" %>
+  <% end %>
+<% end %>

@@ -34,6 +34,10 @@ class Account < ApplicationRecord
   has_many :adozioni, dependent: :destroy
   has_many :persone, dependent: :destroy
   has_many :import_records, dependent: :destroy
+  has_many :collane, dependent: :destroy
+  has_many :collana_libri, dependent: :destroy
+  has_many :bolle_visione, dependent: :destroy
+  has_many :bolla_visione_righe, dependent: :destroy
 
   # Triage system
   has_many :columns, dependent: :destroy

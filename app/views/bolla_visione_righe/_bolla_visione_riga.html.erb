@@ -1,0 +1,46 @@
+<%= tag.li id: dom_id(riga), class: "list-style-none margin-none flex flex-column gap-quarter full-width", style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;" do %>
+  <div class="flex align-center gap full-width">
+    <div class="flex flex-column min-width" style="flex: 1;">
+      <strong class="overflow-ellipsis txt-small"><%= riga.libro.titolo %></strong>
+      <span class="txt-x-small txt-subtle"><%= [riga.libro.codice_isbn, riga.libro.editore&.editore].compact.join(" · ") %></span>
+    </div>
+
+    <%= form_with model: [riga.bolla_visione, riga], data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
+      <%= f.number_field :quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
+    <% end %>
+
+    <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
+      <%= icon_tag "minus", size: "small" %>
+    <% end %>
+  </div>
+
+  <% if local_assigns[:classi]&.any? || local_assigns[:persone]&.any? %>
+    <% consegna = riga.consegna || {} %>
+    <% classi_ids = Array(consegna["classe_id"]) %>
+    <% persone_ids = Array(consegna["persona_id"]) %>
+
+    <div class="flex gap-quarter flex-wrap">
+      <% if local_assigns[:classi]&.any? %>
+        <% classi.each do |classe| %>
+          <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga),
+                method: :patch,
+                params: { toggle_classe_id: classe.id },
+                class: "classi-chip #{'active' if classi_ids.include?(classe.id.to_s)}" do %>
+            <%= classe.nome_breve %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if local_assigns[:persone]&.any? %>
+        <% persone.each do |persona| %>
+          <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga),
+                method: :patch,
+                params: { toggle_persona_id: persona.id },
+                class: "classi-chip classi-chip--persona #{'active' if persone_ids.include?(persona.id.to_s)}" do %>
+            <%= persona.cognome %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

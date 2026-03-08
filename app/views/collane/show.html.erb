@@ -1,0 +1,27 @@
+<% @page_title = @collana.nome %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Collane", collane_path %>
+  </div>
+  <h1 class="header__title"><%= @page_title %></h1>
+  <div class="header__actions header__actions--end">
+    <%= link_to edit_collana_path(@collana), class: "btn" do %>
+      <%= icon_tag "pencil", size: "small" %>
+    <% end %>
+  </div>
+<% end %>
+
+<section class="panel panel--wide shadow center">
+  <h3 class="divider divider--fade txt-medium font-weight-black">Libri nella collana</h3>
+
+  <div id="collana_libri_list">
+    <ul class="flex flex-column gap-half unpad margin-none">
+      <% @collana.collana_libri.includes(:libro).each do |cl| %>
+        <%= render "collana_libri/collana_libro", collana_libro: cl %>
+      <% end %>
+    </ul>
+  </div>
+
+  <%= render "collana_libri/form", collana: @collana %>
+</section>

@@ -1,0 +1,43 @@
+@layer components {
+  .classi-chip {
+    appearance: none;
+    background: var(--color-canvas);
+    border: 1.5px solid var(--color-ink-light);
+    border-radius: 99rem;
+    color: var(--color-ink-subtle, var(--color-ink-dark));
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 2.25rem;
+    padding: 0.35rem 0.65rem;
+    text-align: center;
+    transition: all 100ms ease-out;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+
+    &.active {
+      background: var(--color-positive);
+      border-color: var(--color-positive);
+      color: var(--color-ink-inverted);
+    }
+
+    &--persona {
+      border-style: dashed;
+
+      &.active {
+        background: var(--color-link);
+        border-color: var(--color-link);
+        border-style: solid;
+        color: var(--color-ink-inverted);
+      }
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(.active) {
+        border-color: var(--color-ink);
+        color: var(--color-ink);
+      }
+    }
+  }
+}

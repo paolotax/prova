@@ -1,0 +1,16 @@
+<%= form_with url: collana_collana_libri_path(collana), class: "margin-block-start" do |f| %>
+  <div class="flex gap-half align-center">
+    <div class="form-field cb-tax" style="flex: 1;">
+      <%= combobox_tag "collana_libro[libro_id]", libri_path,
+          placeholder: "Aggiungi libro...",
+          mobile_at: "0px" %>
+    </div>
+    <div class="form-field" style="width: 6ch;">
+      <%= f.text_field :classi_target, class: "input input--small", placeholder: "1,2,3" %>
+    </div>
+    <%= f.button type: :submit, class: "btn btn--link" do %>
+      <%= icon_tag "add", size: "small" %>
+      <span>Aggiungi</span>
+    <% end %>
+  </div>
+<% end %>

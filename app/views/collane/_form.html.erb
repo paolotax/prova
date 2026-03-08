@@ -1,0 +1,10 @@
+<%= form_with model: collana do |form| %>
+  <div class="form-field">
+    <%= form.label :nome, "Nome collana" %>
+    <%= form.text_field :nome, class: "input", autofocus: true, placeholder: "es. Novità primaria 2026" %>
+  </div>
+
+  <div class="flex gap-half margin-block-start">
+    <%= form.submit class: "btn btn--positive" %>
+  </div>
+<% end %>

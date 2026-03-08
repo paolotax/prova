@@ -28,6 +28,25 @@
   </div>
 <% end %>
 
+<% if @tappa.bolle_visione.any? %>
+  <section class="panel panel--wide shadow center margin-block-start">
+    <h3 class="divider divider--fade txt-medium font-weight-black">Bolle visione</h3>
+    <ul class="flex flex-column gap-half unpad margin-none">
+      <% @tappa.bolle_visione.includes(:collana).ordered.each do |bolla| %>
+        <li class="list-style-none margin-none" style="border-block-end: 1px solid var(--color-ink-lighter);">
+          <%= link_to bolla_visione_path(bolla), class: "txt-ink flex justify-space-between align-center gap pad-block" do %>
+            <div class="flex flex-column min-width">
+              <strong>BV-<%= bolla.numero %></strong>
+              <span class="txt-x-small txt-subtle"><%= bolla.collana.nome %></span>
+            </div>
+            <span class="txt-small txt-subtle flex-item-no-shrink"><%= l(bolla.data_bolla, format: :short) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
 <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
   <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
   <%= render "shared/container/delete", record: @tappa, path: tappa_path(@tappa), label: "questa tappa" %>

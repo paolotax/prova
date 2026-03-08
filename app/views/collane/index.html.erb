@@ -1,0 +1,31 @@
+<% @page_title = "Collane" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+  </div>
+  <h1 class="header__title"><%= @page_title %></h1>
+  <div class="header__actions header__actions--end">
+    <%= link_to new_collana_path, class: "btn" do %>
+      <%= icon_tag "add", size: "small" %>
+      <span>Nuova</span>
+    <% end %>
+  </div>
+<% end %>
+
+<section class="panel panel--wide shadow center">
+  <% if @collane.any? %>
+    <ul class="flex flex-column gap-half unpad margin-none">
+      <% @collane.each do |collana| %>
+        <li class="list-style-none flex align-center gap full-width">
+          <%= link_to collana_path(collana), class: "txt-ink flex gap-half align-center min-width txt-medium" do %>
+            <strong class="overflow-ellipsis"><%= collana.nome %></strong>
+          <% end %>
+          <hr class="separator--horizontal flex-item-grow" style="--border-color: var(--color-ink-medium); --border-style: dashed" aria-hidden="true">
+          <span class="txt-small txt-subtle flex-item-no-shrink"><%= collana.collana_libri.size %> libri</span>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="txt-subtle txt-small">Nessuna collana creata</p>
+  <% end %>
+</section>

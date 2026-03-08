@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_08_114242) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_08_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -319,6 +319,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_08_114242) do
     t.index ["creator_id"], name: "index_blazer_queries_on_creator_id"
   end
 
+  create_table "bolla_visione_righe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "bolla_visione_id", null: false
+    t.string "classi_target"
+    t.jsonb "consegna", default: {}
+    t.datetime "created_at", null: false
+    t.bigint "libro_id", null: false
+    t.integer "position"
+    t.integer "quantita", default: 1, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_bolla_visione_righe_on_account_id"
+    t.index ["bolla_visione_id"], name: "index_bolla_visione_righe_on_bolla_visione_id"
+    t.index ["libro_id"], name: "index_bolla_visione_righe_on_libro_id"
+  end
+
+  create_table "bolle_visione", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.uuid "collana_id", null: false
+    t.datetime "created_at", null: false
+    t.date "data_bolla", null: false
+    t.text "note"
+    t.integer "numero", null: false
+    t.uuid "referente_id"
+    t.uuid "scuola_id", null: false
+    t.uuid "tappa_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id", "numero"], name: "index_bolle_visione_on_account_id_and_numero", unique: true
+    t.index ["account_id"], name: "index_bolle_visione_on_account_id"
+    t.index ["collana_id"], name: "index_bolle_visione_on_collana_id"
+    t.index ["referente_id"], name: "index_bolle_visione_on_referente_id"
+    t.index ["scuola_id"], name: "index_bolle_visione_on_scuola_id"
+    t.index ["tappa_id"], name: "index_bolle_visione_on_tappa_id"
+    t.index ["user_id"], name: "index_bolle_visione_on_user_id"
+  end
+
   create_table "categorie", force: :cascade do |t|
     t.uuid "account_id", null: false
     t.datetime "created_at", null: false
@@ -441,6 +477,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_08_114242) do
     t.index ["closeable_type", "closeable_id"], name: "index_closures_on_closeable_type_and_closeable_id", unique: true
     t.index ["entry_id"], name: "index_closures_on_entry_id", unique: true
     t.index ["user_id"], name: "index_closures_on_user_id"
+  end
+
+  create_table "collana_libri", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "classi_target"
+    t.uuid "collana_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "libro_id", null: false
+    t.integer "position"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_collana_libri_on_account_id"
+    t.index ["collana_id", "libro_id"], name: "index_collana_libri_on_collana_id_and_libro_id", unique: true
+    t.index ["collana_id"], name: "index_collana_libri_on_collana_id"
+    t.index ["libro_id"], name: "index_collana_libri_on_libro_id"
+  end
+
+  create_table "collane", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "nome", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id"], name: "index_collane_on_account_id"
+    t.index ["user_id"], name: "index_collane_on_user_id"
   end
 
   create_table "columns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

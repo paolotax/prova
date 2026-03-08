@@ -342,6 +342,16 @@ Rails.application.routes.draw do
       member do
         patch 'sort'
       end
+      resources :bolle_visione, only: [:new, :create]
+    end
+
+    resources :collane do
+      resources :collana_libri, only: [:create, :destroy, :update]
+    end
+
+    resources :bolle_visione, only: [:index, :show] do
+      resources :bolla_visione_righe, only: [:update, :destroy]
+      resources :persone, only: [:create], module: :bolle_visione
     end
 
     get 'profilo', to: 'profiles#get_user_profile'

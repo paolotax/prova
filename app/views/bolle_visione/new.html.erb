@@ -1,0 +1,44 @@
+<% @page_title = "Scarica collana" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to @tappa.tappable.denominazione, tappa_path(@tappa) %>
+  </div>
+  <h1 class="header__title"><%= @page_title %></h1>
+  <div class="header__actions header__actions--end">
+  </div>
+<% end %>
+
+<section class="panel panel--wide shadow center">
+  <h3 class="divider divider--fade txt-medium font-weight-black"><%= @tappa.tappable.denominazione %></h3>
+
+  <%= form_with model: [@tappa, @bolla_visione] do |form| %>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= form.label :collana_id, "Collana" %>
+        <%= form.collection_select :collana_id, @collane, :id, :nome, { prompt: "Scegli collana..." }, class: "input" %>
+      </div>
+
+      <% if @referenti&.any? %>
+        <div class="form-field">
+          <%= form.label :referente_id, "Referente" %>
+          <%= form.collection_select :referente_id, @referenti, :id, :nome_completo, { include_blank: "Nessun referente" }, class: "input" %>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :data_bolla, "Data" %>
+        <%= date_input(form, :data_bolla) %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :note, "Note" %>
+        <%= form.text_area :note, class: "input", rows: 2 %>
+      </div>
+
+      <div class="flex gap-half margin-block-start">
+        <%= form.submit "Scarica collana", class: "btn btn--positive" %>
+      </div>
+    </div>
+  <% end %>
+</section>

@@ -44,6 +44,8 @@ class Tappa < ApplicationRecord
 
   belongs_to :tappable, polymorphic: true
 
+  has_many :bolle_visione
+
   # Virtual attribute per combobox multi-entità
   # Formato: "Scuola:uuid" o "Cliente:id"
   def tappable_value

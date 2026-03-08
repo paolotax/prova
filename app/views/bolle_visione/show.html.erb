@@ -1,0 +1,160 @@
+<% @page_title = "BV-#{@bolla_visione.numero}" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <% if @bolla_visione.tappa_id.present? %>
+      <%= back_link_to @bolla_visione.scuola.denominazione, tappa_path(@bolla_visione.tappa_id) %>
+    <% else %>
+      <%= back_link_to "Bolle", bolle_visione_path %>
+    <% end %>
+  </div>
+  <h1 class="header__title"><%= @page_title %></h1>
+  <div class="header__actions header__actions--end">
+    <%= link_to bolla_visione_path(@bolla_visione, format: :pdf), target: "_blank", class: "btn" do %>
+      <%= icon_tag "download", size: "small" %>
+    <% end %>
+  </div>
+<% end %>
+
+<section class="panel panel--wide shadow center">
+  <div class="flex align-center gap-half">
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;"><%= @bolla_visione.scuola.denominazione %></h3>
+
+    <div class="position-relative"
+        data-controller="dialog"
+        data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+      <button class="btn btn--circle btn--small"
+          data-action="click->dialog#toggle:stop"
+          data-controller="tooltip"
+          data-tooltip-content-value="Aggiungi referente">
+        <%= icon_tag "person-add", size: "small" %>
+      </button>
+
+      <dialog class="popup panel flex-column gap-half fill-white shadow pad"
+          data-dialog-target="dialog"
+          data-action="turbo:submit-end->dialog#close"
+          style="min-width: 260px; right: 0;">
+        <p class="txt-small font-weight-black margin-none">Nuovo referente</p>
+        <%= form_with url: bolla_visione_persone_path(@bolla_visione), scope: :persona, class: "flex flex-column gap-quarter" do |f| %>
+          <%= f.hidden_field :ruolo, value: "referente" %>
+          <div class="flex gap-quarter">
+            <%= f.text_field :cognome, placeholder: "Cognome", class: "input input--small", required: true, style: "flex: 1;" %>
+            <%= f.text_field :nome, placeholder: "Nome", class: "input input--small", style: "flex: 1;" %>
+          </div>
+          <%= f.email_field :email, placeholder: "Email (per bolla)", class: "input input--small" %>
+          <%= f.telephone_field :cellulare, placeholder: "Cellulare (WhatsApp)", class: "input input--small" %>
+          <%= f.submit "Salva", class: "btn btn--small full-width", style: "--btn-background: var(--color-positive); --btn-color: var(--color-ink-inverted); --btn-border-color: var(--color-positive);" %>
+        <% end %>
+      </dialog>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap full-width">
+    <div class="flex-item-grow" style="flex-basis: 120px;">
+      <span class="txt-x-small txt-subtle txt-uppercase">Data</span>
+      <div class="txt-medium"><%= l(@bolla_visione.data_bolla, format: :short) %></div>
+    </div>
+    <div class="flex-item-grow" style="flex-basis: 120px;">
+      <span class="txt-x-small txt-subtle txt-uppercase">Collana</span>
+      <div class="txt-medium"><%= @bolla_visione.collana.nome %></div>
+    </div>
+    <% if @bolla_visione.referente.present? %>
+      <div class="flex-item-grow" style="flex-basis: 120px;">
+        <span class="txt-x-small txt-subtle txt-uppercase">Referente</span>
+        <div class="txt-medium"><%= @bolla_visione.referente.nome_completo %></div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @bolla_visione.note.present? %>
+    <p class="txt-small txt-subtle margin-block-start-half"><%= @bolla_visione.note %></p>
+  <% end %>
+
+  <div id="bolla_visione_righe_list">
+    <% @righe.group_by { |r| @target_per_libro[r.libro_id] }.each do |target, righe_per_target| %>
+      <% anni = target.to_s.split(",").map(&:strip) %>
+      <% classi = @classi_per_anno.values_at(*anni).compact.flatten %>
+      <% docenti_classe = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none %>
+
+      <div class="flex align-center gap-half margin-block-start">
+        <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+          Classe <%= target.presence || "—" %>
+        </h3>
+
+        <% if docenti_classe.any? %>
+          <div class="flex gap-quarter flex-wrap">
+            <% docenti_classe.each do |docente| %>
+              <span class="classi-chip classi-chip--persona active" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">
+                <%= docente.cognome %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="position-relative"
+            data-controller="dialog"
+            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+          <button class="btn btn--circle btn--small"
+              data-action="click->dialog#toggle:stop"
+              data-controller="tooltip"
+              data-tooltip-content-value="Aggiungi insegnante">
+            <%= icon_tag "person-add", size: "small" %>
+          </button>
+
+          <dialog class="popup panel flex-column gap-half fill-white shadow pad"
+              data-dialog-target="dialog"
+              data-action="turbo:submit-end->dialog#close"
+              style="min-width: 280px; right: 0;">
+            <p class="txt-small font-weight-black margin-none">Nuovo insegnante</p>
+            <%= form_with url: bolla_visione_persone_path(@bolla_visione), scope: :persona, class: "flex flex-column gap-quarter" do |f| %>
+              <%= f.hidden_field :ruolo, value: "docente" %>
+              <div class="flex gap-quarter">
+                <%= f.text_field :cognome, placeholder: "Cognome", class: "input input--small", required: true, style: "flex: 1;" %>
+                <%= f.text_field :nome, placeholder: "Nome", class: "input input--small", style: "flex: 1;" %>
+              </div>
+              <%= f.text_field :materia, placeholder: "Materia", class: "input input--small" %>
+              <div class="flex gap-quarter">
+                <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input input--small", style: "flex: 1;" %>
+                <%= f.email_field :email, placeholder: "Email", class: "input input--small", style: "flex: 1;" %>
+              </div>
+
+              <% scuola_classi = @bolla_visione.scuola.classi.order(:anno_corso, :sezione) %>
+              <% if scuola_classi.any? %>
+                <p class="txt-x-small txt-subtle margin-none margin-block-start-quarter">Classi</p>
+                <div class="flex gap-quarter flex-wrap">
+                  <% scuola_classi.each do |classe| %>
+                    <label class="classi-chip <%= 'active' if classi.map(&:id).include?(classe.id) %>" style="cursor: pointer;">
+                      <input type="checkbox" name="persona[classe_ids][]" value="<%= classe.id %>"
+                             style="display: none;"
+                             onchange="this.closest('label').classList.toggle('active', this.checked)"
+                             <%= "checked" if classi.map(&:id).include?(classe.id) %>>
+                      <%= classe.nome_breve %>
+                    </label>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= f.submit "Salva", class: "btn btn--small full-width margin-block-start-quarter", style: "--btn-background: var(--color-positive); --btn-color: var(--color-ink-inverted); --btn-border-color: var(--color-positive);" %>
+            <% end %>
+          </dialog>
+        </div>
+      </div>
+
+      <% righe_per_target.group_by { |r| r.libro.disciplina }.each do |disciplina, righe| %>
+        <% if disciplina.present? %>
+          <div class="txt-x-small txt-subtle txt-uppercase pad-block-start-half pad-block-end-quarter"><%= disciplina %></div>
+        <% end %>
+        <ul class="flex flex-column unpad margin-none">
+          <% righe.each do |riga| %>
+            <%= render "bolla_visione_righe/bolla_visione_riga", riga: riga, classi: classi, persone: @persone %>
+          <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="flex justify-space-between align-center margin-block-start pad-block txt-medium font-weight-black" style="border-block-start: 2px solid var(--color-ink-light);">
+    <span>Totale copie</span>
+    <span><%= @righe.sum(&:quantita) %></span>
+  </div>
+</section>

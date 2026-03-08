@@ -39,7 +39,7 @@ class Persona < ApplicationRecord
   has_many :classi, through: :persona_classi
   has_many :saggi, class_name: "Saggio", as: :destinatario, dependent: :nullify
 
-  enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", altro: "altro" }
+  enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", referente: "referente", altro: "altro" }
 
   validates :cognome, presence: true
 
