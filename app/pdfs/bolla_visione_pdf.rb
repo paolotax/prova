@@ -5,11 +5,15 @@ class BollaVisionePdf < Prawn::Document
 
   include LayoutPdf
 
+  GRIGIO_CHIARO = "F5F5F5"
+  GRIGIO_BORDO = "DDDDDD"
+  BLU_HEADER = "2C5F8A"
+
   def initialize(bolla_visione, view)
     super(
       page_size: "A4",
       page_layout: :portrait,
-      margin: [1.cm, 15.mm],
+      margin: [1.5.cm, 2.cm],
       info: {
         Title: "Bolla Visione #{bolla_visione.numero}",
         Author: "Prova",
@@ -22,6 +26,8 @@ class BollaVisionePdf < Prawn::Document
     @view = view
     @azienda = Current.account&.azienda
     @righe = bolla_visione.bolla_visione_righe.includes(libro: :editore).order(:position)
+    @classi = @scuola.classi.index_by(&:id)
+    @persone = @scuola.persone.index_by(&:id)
 
     intestazione_azienda
     intestazione_scuola
@@ -33,55 +39,82 @@ class BollaVisionePdf < Prawn::Document
   private
 
   def intestazione_azienda
-    bounding_box [bounds.left, bounds.top], width: bounds.width do
-      font_size 11
-      text @azienda&.ragione_sociale.to_s, size: 13, style: :bold
-      text @azienda&.indirizzo.to_s
-      text [@azienda&.cap, @azienda&.comune, @azienda&.provincia].compact.join(" ")
-      move_down 3
-      text "cell.: #{@azienda&.telefono}" if @azienda&.telefono.present?
-      text "email: #{@azienda&.email}" if @azienda&.email.present?
+    bounding_box [bounds.left, bounds.top], width: bounds.width / 2.0 do
+      text @azienda&.ragione_sociale.to_s, size: 14, style: :bold
+      move_down 2
+      font_size 10 do
+        text @azienda&.indirizzo.to_s, color: "444444"
+        text [@azienda&.cap, @azienda&.comune, @azienda&.provincia].compact.join(" "), color: "444444"
+        if @azienda&.telefono.present?
+          move_down 3
+          text @azienda&.telefono, color: "444444"
+        end
+        text @azienda&.email.to_s, color: "444444" if @azienda&.email.present?
+      end
     end
   end
 
   def intestazione_scuola
-    bounding_box [bounds.width / 2.0, bounds.top - 50.mm], width: bounds.width / 2.0 do
-      text "Spett.le"
-      move_down 3
-      text @scuola.denominazione, size: 13, style: :bold
-      text @scuola.indirizzo.to_s
-      text [@scuola.cap, @scuola.comune, @scuola.provincia].compact.join(" ")
-      if @bolla.referente.present?
+    bounding_box [bounds.width / 2.0, bounds.top], width: bounds.width / 2.0 do
+      font_size 10 do
+        text "Spett.le", color: "888888"
         move_down 3
-        text "Att.ne: #{@bolla.referente.nome_completo}", style: :bold
+        text @scuola.denominazione, size: 14, style: :bold
+        move_down 2
+        text @scuola.indirizzo.to_s, color: "444444"
+        text [@scuola.cap, @scuola.comune, @scuola.provincia].compact.join(" "), color: "444444"
+        if @bolla.referente.present?
+          move_down 4
+          text "Att.ne #{@bolla.referente.nome_completo}", style: :bold
+        end
       end
     end
   end
 
   def intestazione_bolla
-    move_down 10
+    move_down 15
 
-    bounding_box [bounds.left, cursor], width: bounds.width, height: 12.mm do
-      fill_color "4A90D9"
-      fill_rectangle [bounds.left, bounds.top], bounds.width, bounds.height
-      fill_color "FFFFFF"
-      text_box "BOLLA VISIONE",
-        at: [5.mm, bounds.top - 1.mm],
-        width: bounds.width / 2,
-        size: 14, style: :bold, valign: :center
-      text_box "N. #{@bolla.numero}  del #{@bolla.data_bolla.strftime("%d/%m/%Y")}",
-        at: [bounds.width / 2, bounds.top - 1.mm],
-        width: bounds.width / 2 - 5.mm,
-        size: 11, align: :right, valign: :center
-      fill_color "000000"
+    # Linea sottile sopra
+    stroke_color GRIGIO_BORDO
+    stroke_horizontal_rule
+    move_down 8
+
+    # Titolo e numero su una riga
+    y = cursor
+    text_box "Bolla Visione",
+      at: [0, y],
+      width: bounds.width / 2,
+      height: 22,
+      size: 18,
+      style: :bold,
+      color: BLU_HEADER
+    text_box "N. #{@bolla.numero}  —  #{@bolla.data_bolla.strftime("%d/%m/%Y")}",
+      at: [bounds.width / 2, y],
+      width: bounds.width / 2,
+      height: 22,
+      size: 12,
+      align: :right,
+      valign: :center,
+      color: "666666"
+
+    move_cursor_to y - 25
+
+    # Collana e note
+    font_size 10 do
+      text "Collana: #{@bolla.collana.nome}", color: "666666"
     end
 
     if @bolla.note.present?
-      move_down 5
-      text @bolla.note, size: 9, style: :italic
+      move_down 4
+      font_size 9 do
+        text @bolla.note, style: :italic, color: "888888"
+      end
     end
 
-    move_down 5
+    move_down 10
+    stroke_color GRIGIO_BORDO
+    stroke_horizontal_rule
+    move_down 8
   end
 
   def tabella_libri
@@ -89,39 +122,45 @@ class BollaVisionePdf < Prawn::Document
     righe_per_gruppo = @righe.group_by { |r| gruppo_per_libro[r.libro_id].presence || "Altro" }
 
     data = []
-
-    # Header
     data << header_row
 
     righe_per_gruppo.each do |gruppo, righe|
-      # Riga separatore gruppo
       data << [{
-        content: gruppo.upcase,
+        content: gruppo,
         colspan: 4,
-        background_color: "E8E8E8",
+        background_color: GRIGIO_CHIARO,
         font_style: :bold,
-        padding: [3, 5],
-        size: 8
+        padding: [5, 6],
+        size: 9,
+        text_color: "555555"
       }]
 
       righe.each do |riga|
         data << [
-          { content: riga_titolo(riga), size: 7 },
-          { content: riga.quantita.to_s, align: :center, size: 8 },
-          { content: riga.classi_target.to_s, align: :center, size: 8 },
-          { content: riga.libro.editore&.editore.to_s, size: 7 }
+          { content: riga_titolo(riga), size: 9 },
+          { content: riga.quantita.to_s, align: :center, size: 9 },
+          { content: consegna_label(riga), size: 8, text_color: "555555" },
+          { content: riga.libro.editore&.editore.to_s, size: 8, text_color: "555555" }
         ]
       end
     end
 
     table data,
-      cell_style: { border_width: 0.5, padding: [2, 4] },
-      column_widths: { 0 => 95.mm, 1 => 15.mm, 2 => 20.mm, 3 => 50.mm },
+      cell_style: {
+        border_width: 0,
+        border_color: GRIGIO_BORDO,
+        padding: [4, 6],
+        borders: [:bottom],
+        border_widths: [0.5, 0, 0.5, 0]
+      },
+      width: bounds.width,
       header: true do
-        row(0).background_color = "333333"
-        row(0).text_color = "FFFFFF"
+        row(0).border_widths = [0, 0, 1, 0]
+        row(0).border_color = BLU_HEADER
+        row(0).text_color = BLU_HEADER
         row(0).font_style = :bold
-        row(0).size = 8
+        row(0).size = 9
+        row(0).padding = [4, 6, 6, 6]
     end
   end
 
@@ -129,37 +168,70 @@ class BollaVisionePdf < Prawn::Document
     [
       { content: "Titolo", align: :left },
       { content: "Qta", align: :center },
-      { content: "Classi", align: :center },
+      { content: "Consegnato a", align: :left },
       { content: "Editore", align: :left }
     ]
   end
 
+  def consegna_label(riga)
+    consegna = riga.consegna || {}
+    parts = []
+
+    Array(consegna["classe_id"]).each do |cid|
+      classe = @classi[cid]
+      parts << classe.nome_breve if classe
+    end
+
+    Array(consegna["persona_id"]).each do |pid|
+      persona = @persone[pid]
+      parts << persona.cognome if persona
+    end
+
+    if parts.any?
+      parts.join(", ")
+    elsif riga.classi_target.present?
+      "Per classe #{riga.classi_target}"
+    else
+      ""
+    end
+  end
+
   def riga_titolo(riga)
     parts = []
-    parts << riga.libro.codice_isbn if riga.libro.codice_isbn.present?
     parts << riga.libro.titolo
-    parts.join(" - ")
+    parts << riga.libro.codice_isbn if riga.libro.codice_isbn.present?
+    parts.join("\n")
   end
 
   def footer_totali
-    move_down 10
+    move_down 15
 
-    font_size 10
-    text "Totale copie: #{@righe.sum(&:quantita)}", style: :bold
+    # Totale con linea sopra
+    stroke_color BLU_HEADER
+    stroke_horizontal_rule
+    move_down 6
 
-    move_down 20
-    text "Collana: #{@bolla.collana.nome}", size: 9
-
-    move_down 30
-
-    bounding_box [bounds.left, cursor], width: bounds.width / 2.0 do
-      text "Firma per ricevuta", size: 9
-      move_down 15
-      stroke_horizontal_rule
+    font_size 11 do
+      text_box "Totale copie", at: [0, cursor], width: bounds.width / 2, style: :bold
+      text_box @righe.sum(&:quantita).to_s, at: [bounds.width / 2, cursor], width: bounds.width / 2, align: :right, style: :bold
     end
 
-    bounding_box [bounds.width / 2.0, cursor + 25], width: bounds.width / 2.0 do
-      text "Data: ___ / ___ / ______", size: 9
+    move_down 40
+
+    # Firma e data affiancate
+    bounding_box [bounds.left, cursor], width: bounds.width / 2.0 - 10.mm do
+      font_size 10 do
+        text "Firma per ricevuta", color: "888888"
+        move_down 20
+        stroke_color GRIGIO_BORDO
+        stroke_horizontal_rule
+      end
+    end
+
+    bounding_box [bounds.width / 2.0 + 10.mm, cursor + 30], width: bounds.width / 2.0 - 10.mm do
+      font_size 10 do
+        text "Data _____ / _____ / ___________", color: "888888"
+      end
     end
   end
 end
