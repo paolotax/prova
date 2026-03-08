@@ -20,7 +20,7 @@
   <% if @scuola.deletable? %>
     <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
       <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-      <%= render "scuole/container/delete", scuola: @scuola %>
+      <%= render "shared/container/delete", record: @scuola, path: scuola_path(@scuola), label: "questa scuola" %>
     </footer>
   <% end %>
 

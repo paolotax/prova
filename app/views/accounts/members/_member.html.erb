@@ -16,7 +16,7 @@
         <span class="txt-x-small txt-bold"><%= membership.scuole.count %></span>
       </button>
 
-      <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 36rem); max-height: 80vh;" data-dialog-target="dialog">
+      <dialog class="dialog panel fill-white shadow gap flex-column" style="--panel-size: 36rem; max-height: 80vh;" data-dialog-target="dialog">
         <h3 class="txt-large txt-bold">Scuole di <%= membership.user.name %></h3>
         <%= render "accounts/members/scuole_dialog", membership: membership %>
         <div class="flex justify-end margin-block-start">

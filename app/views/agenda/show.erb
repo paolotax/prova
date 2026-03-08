@@ -15,6 +15,18 @@
         data: { controller: "link-modifier", link_modifier_target: "link" } do %>
       Week
     <% end %>
+    <div data-controller="date-selector"
+         data-date-selector-base-path-value="<%= giorno_path(giorno: '__DATE__').sub('__DATE__', '') %>">
+      <input type="date" value="<%= @giorno %>"
+             data-date-selector-target="picker"
+             data-action="change->date-selector#change"
+             class="input--hidden">
+      <button type="button" class="btn btn--circle"
+              data-action="date-selector#open">
+        <%= icon_tag "calendar", size: "small" %>
+        <span class="for-screen-reader">Scegli data</span>
+      </button>
+    </div>
   </div>
 
   <div class="header__title divider divider--fade full-width">

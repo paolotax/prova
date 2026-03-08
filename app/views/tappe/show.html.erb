@@ -30,5 +30,5 @@
 
 <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
   <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-  <%= render "tappe/container/delete", tappa: @tappa %>
+  <%= render "shared/container/delete", record: @tappa, path: tappa_path(@tappa), label: "questa tappa" %>
 </footer>

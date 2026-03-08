@@ -35,6 +35,6 @@
 <% if @documento.persisted? && @documento.numero_documento.present? %>
   <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
     <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-    <%= render "documenti/container/delete", documento: @documento %>
+    <%= render "shared/container/delete", record: @documento, path: documento_path(@documento), label: "questo documento" %>
   </footer>
 <% end %>

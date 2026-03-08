@@ -7,7 +7,7 @@
             <button type="button" class="btn btn--circle btn--link" data-action="dialog#open" aria-label="Aggiungi editore">
                 <%= icon_tag "add" %>
             </button>
-            <dialog class="dialog panel fill-white shadow gap flex-column" style="width: min(90vw, 20rem);" data-dialog-target="dialog">
+            <dialog class="dialog panel fill-white shadow gap flex-column" style="--panel-size: 20rem;" data-dialog-target="dialog">
                 <%= form_with url: accounts_mandati_path, method: :post do |f| %>
                     <h3 class="txt-large txt-bold">Conferma</h3>
                     <p class="txt-small txt-subtle">Aggiungere il gruppo selezionato a tutte le zone attive?</p>

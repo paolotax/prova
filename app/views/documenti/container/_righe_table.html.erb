@@ -54,7 +54,7 @@
                 <button type="button" class="btn btn--circle txt-xx-small" data-action="dialog#open">
                   <%= icon_tag "unlink" %>
                 </button>
-                <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">
+                <dialog class="dialog panel fill-white shadow gap flex-column" style="--panel-size: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">
                   <h3 class="txt-large txt-bold">Scollegare questo documento?</h3>
                   <p class="txt-medium margin-block-half"><%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></p>
                   <div class="flex gap-half justify-center margin-block-start">
@@ -104,7 +104,7 @@
                 <button type="button" class="btn btn--circle txt-xx-small" data-action="dialog#open">
                   <%= icon_tag "unlink" %>
                 </button>
-                <dialog class="dialog panel fill-white shadow gap flex-column" style="max-width: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">
+                <dialog class="dialog panel fill-white shadow gap flex-column" style="--panel-size: 40ch; text-transform: none; font-size: var(--text-medium);" data-dialog-target="dialog">
                   <h3 class="txt-large txt-bold">Scollegare questo documento?</h3>
                   <p class="txt-medium margin-block-half"><%= doc_derivato.causale&.causale %> #<%= doc_derivato.numero_documento %> del <%= doc_derivato.data_documento&.strftime("%d/%m/%Y") %></p>
                   <div class="flex gap-half justify-center margin-block-start">

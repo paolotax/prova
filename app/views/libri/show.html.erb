@@ -18,7 +18,7 @@
 
   <% if @libro.adozioni_count.zero? && @movimenti.da_consegnare.none? && @movimenti.completati.none? %>
     <div class="margin-block-start">
-      <%= render "libri/container/delete", libro: @libro %>
+      <%= render "shared/container/delete", record: @libro, path: libro_path(@libro), label: "questo libro" %>
     </div>
   <% end %>
 </div>

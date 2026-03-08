@@ -19,6 +19,6 @@
 <% if @appunto.published? %>
   <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
     <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-    <%= render "appunti/container/delete", appunto: @appunto %>
+    <%= render "shared/container/delete", record: @appunto, path: appunto_path(@appunto), label: "questo appunto" %>
   </footer>
 <% end %>
