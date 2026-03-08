@@ -49,42 +49,26 @@ class LibriController < ApplicationController
     end
   end
 
-
   def new
-    @libro = Current.account.libri.new
+    @libro = Current.account.libri.create!(
+      user: Current.user,
+      titolo: "Nuovo libro",
+      codice_isbn: "DRAFT-#{SecureRandom.hex(6)}",
+      prezzo_in_cents: 0,
+      categoria: Current.user.categorie.first
+    )
+    redirect_to edit_libro_path(@libro)
   end
 
   def edit
     respond_to do |format|
-      format.html { redirect_to libro_path(@libro) }
+      format.html
       format.turbo_stream
     end
   end
 
   def create
-    @libro = Current.account.libri.build(libro_params)
-
-    respond_to do |format|
-      if @libro.save
-              
-        # fa schifo
-        @situazio = Libro.crosstab
-        
-        if hotwire_native_app?
-          format.html { redirect_to libro_url(@libro), notice: "Libro inserito." }
-        else
-          format.turbo_stream { render turbo_stream: turbo_stream.prepend("libri-lista", partial: "libri/libro", locals: { libro: @libro }) }
-          format.html { redirect_to libri_url, notice: "Libro inserito." }
-        end
-      else
-        if hotwire_native_app?
-          format.html { render :new, status: :unprocessable_entity }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @libro.errors, status: :unprocessable_entity }
-        end
-      end
-    end
+    redirect_to new_libro_path
   end
 
 

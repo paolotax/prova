@@ -1,15 +1,52 @@
-<% @page_title = "Modifica libro" %>
+<% @page_title = @libro.titolo %>
+<% @header_class = "header--card" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to "a #{@libro.titolo}", @libro %>
+    <% info = referrer_back_info || { label: "Libri", path: libri_path } %>
+    <%= header_back_link info[:path], label: info[:label] %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Modifica libro</span>
-  </h1>
+  <div class="header__actions header__actions--end" id="libro-header-actions">
+  </div>
 <% end %>
 
-<article class="center txt-align-start">
-  <%= render "form", libro: @libro %>
-</article>
+<%
+  @giacenza = @libro.giacenza
+  @movimenti = Libro::Movimenti.new(@libro)
+%>
+
+<div class="full-width card-grid pad group show-navigator">
+  <section id="<%= dom_id(@libro, :container) %>" class="card-perma" style="--card-color: <%= libro_sconto_color(@libro) %>;">
+    <div class="card-perma__bg">
+      <article class="card">
+        <header class="card__header">
+          <%= render "libri/display/perma/board", libro: @libro %>
+        </header>
+
+        <div class="card__body justify-space-between">
+          <div class="card__content">
+            <%= turbo_frame_tag @libro, :edit do %>
+              <%= render "libri/container/edit_form", libro: @libro %>
+            <% end %>
+          </div>
+        </div>
+
+        <footer class="card__footer full-width">
+          <%= render "libri/display/perma/meta", libro: @libro %>
+        </footer>
+      </article>
+    </div>
+
+    <div class="card-perma__notch card-perma__notch--bottom">
+      <%= turbo_frame_tag @libro, :footer do %>
+        <%= render "libri/container/edit_footer", libro: @libro %>
+      <% end %>
+    </div>
+  </section>
+</div>
+
+<div class="scuola-show" style="--card-color: <%= libro_sconto_color(@libro) %>;">
+  <%= render "libri/container/footer", libro: @libro, movimenti: @movimenti %>
+  <%= render "libri/container/confezionator", libro: @libro %>
+</div>

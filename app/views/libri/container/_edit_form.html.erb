@@ -2,12 +2,24 @@
 
 <%= form_with model: libro, url: libro_path(libro),
       id: dom_id(libro, :edit_form),
-      data: { controller: "form",
+      multipart: true,
+      data: { controller: "form upload-preview disciplina-select",
+              disciplina_select_options_value: PrezzoMinisteriale.discipline_per_classe.to_json,
               action: "keydown.esc->form#cancel:stop" } do |f| %>
 
-  <div class="form-field">
-    <%= f.label :titolo, class: "label txt-small" %>
-    <%= f.text_field :titolo, class: "input", autofocus: true %>
+  <div class="flex gap">
+    <div class="input--file flex-item-shrink" style="width: 100px;">
+      <%= image_tag libro.avatar_url,
+          style: "width: 100px; aspect-ratio: 3/4; object-fit: cover;",
+          data: { upload_preview_target: "image" } %>
+      <%= f.file_field :copertina, accept: "image/*",
+          data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+    </div>
+
+    <div class="flex-item-grow form-field">
+      <%= f.label :titolo, class: "label txt-small" %>
+      <%= f.text_field :titolo, class: "input", autofocus: true %>
+    </div>
   </div>
 
   <div class="form-row">
@@ -28,7 +40,8 @@
           :id,
           :nome_categoria,
           { prompt: "Seleziona categoria..." },
-          { class: "input input--select" } %>
+          { class: "input input--select",
+            data: { disciplina_select_target: "categoria", action: "disciplina-select#categoriaChanged" } } %>
     </div>
   </div>
 
@@ -48,12 +61,14 @@
       <%= f.select :classe,
           options_for_select([["—", ""], ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"]], libro.classe),
           {},
-          class: "input input--select" %>
+          class: "input input--select",
+          data: { disciplina_select_target: "classe", action: "disciplina-select#classeChanged" } %>
     </div>
 
     <div class="form-field">
       <%= f.label :disciplina, class: "label txt-small" %>
-      <%= f.text_field :disciplina, class: "input" %>
+      <%= f.text_field :disciplina, class: "input",
+          data: { disciplina_select_target: "disciplina" } %>
     </div>
   </div>
 

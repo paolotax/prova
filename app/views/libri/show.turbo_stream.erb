@@ -9,3 +9,10 @@
     <%= render "libri/container/footer_display", libro: @libro %>
   <% end %>
 <% end %>
+
+<%= turbo_stream.update "libro-header-actions" do %>
+  <%= link_to new_libro_path, class: "btn btn--link", data: { controller: "tooltip" } do %>
+    <%= icon_tag "add" %>
+    <span class="for-screen-reader">Nuovo libro</span>
+  <% end %>
+<% end %>

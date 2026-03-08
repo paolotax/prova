@@ -1,2 +1,23 @@
 # test/fixtures/saldi.yml
 # Vuoto - i saldi vengono creati nei test via ricalcola_saldo!
+# == Schema Information
+#
+# Table name: saldi
+#
+#  id                          :uuid             not null, primary key
+#  copie_da_consegnare         :integer          default(0), not null
+#  copie_da_pagare             :integer          default(0), not null
+#  importo_da_consegnare_cents :bigint           default(0), not null
+#  importo_da_pagare_cents     :bigint           default(0), not null
+#  saldabile_type              :string           not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  account_id                  :uuid             not null
+#  saldabile_id                :uuid             not null
+#
+# Indexes
+#
+#  index_saldi_on_account_id                       (account_id)
+#  index_saldi_on_saldabile                        (saldabile_type,saldabile_id)
+#  index_saldi_on_saldabile_type_and_saldabile_id  (saldabile_type,saldabile_id) UNIQUE
+#

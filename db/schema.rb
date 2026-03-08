@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_162002) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_08_114242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1212,6 +1212,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_162002) do
     t.index ["account_id"], name: "index_persone_on_account_id"
     t.index ["scuola_id", "ruolo"], name: "index_persone_on_scuola_id_and_ruolo"
     t.index ["scuola_id"], name: "index_persone_on_scuola_id"
+  end
+
+  create_table "prezzi_ministeriali", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "anno_scolastico", null: false
+    t.string "classe", null: false
+    t.datetime "created_at", null: false
+    t.string "disciplina", null: false
+    t.integer "prezzo_cents", null: false
+    t.datetime "updated_at", null: false
+    t.index ["anno_scolastico", "classe", "disciplina"], name: "idx_prezzi_min_anno_classe_disc", unique: true
   end
 
   create_table "profiles", force: :cascade do |t|

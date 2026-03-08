@@ -13,6 +13,12 @@
 #  account_id                  :uuid             not null
 #  saldabile_id                :uuid             not null
 #
+# Indexes
+#
+#  index_saldi_on_account_id                       (account_id)
+#  index_saldi_on_saldabile                        (saldabile_type,saldabile_id)
+#  index_saldi_on_saldabile_type_and_saldabile_id  (saldabile_type,saldabile_id) UNIQUE
+#
 class Saldo < ApplicationRecord
   self.table_name = "saldi"
 

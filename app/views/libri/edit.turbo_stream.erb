@@ -9,3 +9,6 @@
     <%= render "libri/container/edit_footer", libro: @libro %>
   <% end %>
 <% end %>
+
+<%= turbo_stream.update "libro-header-actions" do %>
+<% end %>

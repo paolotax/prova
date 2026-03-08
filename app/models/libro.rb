@@ -112,6 +112,17 @@ class Libro < ApplicationRecord
     self.prezzo_in_cents ||= 0
   end
 
+  before_save :assegna_prezzo_ministeriale
+  def assegna_prezzo_ministeriale
+    return unless classe_changed? || disciplina_changed?
+    return if prezzo_in_cents.present? && prezzo_in_cents > 0 && !prezzo_in_cents_was&.zero?
+
+    if classe.present? && disciplina.present?
+      prezzo = PrezzoMinisteriale.prezzo_per(classe: classe.to_s, disciplina: disciplina.upcase)
+      self.prezzo_in_cents = prezzo if prezzo
+    end
+  end
+
 
   # before_save :update_numero_fascicoli
   # def update_numero_fascicoli

@@ -6,6 +6,13 @@
     <% info = referrer_back_info || { label: "Libri", path: libri_path } %>
     <%= header_back_link info[:path], label: info[:label] %>
   </div>
+
+  <div class="header__actions header__actions--end" id="libro-header-actions">
+    <%= link_to new_libro_path, class: "btn btn--link", data: { controller: "tooltip" } do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuovo libro</span>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="full-width card-grid pad group show-navigator">
