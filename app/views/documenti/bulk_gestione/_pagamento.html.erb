@@ -28,8 +28,8 @@
 
     <div data-inline-edit-target="edit" hidden class="flex flex-column align-center gap-half">
       <div class="flex flex-column align-center">
-        <label for="bulk_pagato_il" class="txt-small txt-subtle">Data pagamento</label>
-        <input type="date" name="pagato_il" id="bulk_pagato_il" value="<%= documenti.map(&:pagato_il).compact.max %>" class="input input--date" style="text-align: center;" form="bulk_pagamenti_form">
+        <label class="txt-small txt-subtle">Data pagamento</label>
+        <%= date_input_tag :pagato_il, documenti.map(&:pagato_il).compact.max, name: "pagato_il", form: "bulk_pagamenti_form", style: "max-width: 16ch;" %>
       </div>
       <div class="flex flex-column align-center">
         <label for="bulk_tipo_pagamento" class="txt-small txt-subtle">Tipo</label>
@@ -64,8 +64,8 @@
       </span>
 
       <div class="flex flex-column align-center">
-        <label for="bulk_pagato_il" class="txt-small txt-subtle">Data pagamento</label>
-        <input type="date" name="pagato_il" id="bulk_pagato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_pagamenti_form">
+        <label class="txt-small txt-subtle">Data pagamento</label>
+        <%= date_input_tag :pagato_il, Date.today, name: "pagato_il", form: "bulk_pagamenti_form", style: "max-width: 16ch;" %>
       </div>
 
       <div class="flex flex-column align-center">

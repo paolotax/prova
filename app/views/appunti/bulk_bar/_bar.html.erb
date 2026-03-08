@@ -69,7 +69,7 @@
           method: :post,
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
       <div class="bulk-bar__form-row">
-        <%= f.date_field :data_tappa, class: "input" %>
+        <%= date_input_tag :data_tappa, nil, name: "data_tappa" %>
         <%= f.submit "Crea", class: "btn btn--primary" %>
       </div>
     <% end %>

@@ -40,26 +40,9 @@
         <%= form_with url: documento_consegna_path(documento),
               method: :patch,
               class: "flex flex-column align-center gap-half" do |f| %>
-          <div class="flex flex-column align-center" data-controller="date-input">
+          <div class="flex flex-column align-center">
             <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-            <div class="date-input" style="max-width: 16ch;">
-              <input type="text"
-                     data-date-input-target="display"
-                     placeholder="gg/mm/aaaa"
-                     class="input input--date"
-                     style="text-align: center;"
-                     autocomplete="off"
-                     data-action="input->date-input#parseText blur->date-input#formatOnBlur">
-              <input type="date"
-                     data-date-input-target="picker"
-                     class="date-input__picker"
-                     tabindex="-1"
-                     data-action="change->date-input#pickerChanged">
-              <%= f.hidden_field :consegnato_il, value: documento.consegnato_il&.to_date, data: { date_input_target: "hidden" } %>
-              <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
-                <span class="for-screen-reader">Apri calendario</span>
-              </button>
-            </div>
+            <%= date_input(f, :consegnato_il, style: "max-width: 16ch;") %>
           </div>
           <div class="flex gap-half">
             <button type="submit" class="btn btn--circle txt-small" data-controller="tooltip">
@@ -77,26 +60,9 @@
       <%= form_with url: documento_consegna_path(documento),
             method: :post,
             class: "flex flex-column align-center gap-half" do |f| %>
-        <div class="flex flex-column align-center" data-controller="date-input">
+        <div class="flex flex-column align-center">
           <%= f.label :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-          <div class="date-input" style="max-width: 16ch;">
-            <input type="text"
-                   data-date-input-target="display"
-                   placeholder="gg/mm/aaaa"
-                   class="input input--date"
-                   style="text-align: center;"
-                   autocomplete="off"
-                   data-action="input->date-input#parseText blur->date-input#formatOnBlur">
-            <input type="date"
-                   data-date-input-target="picker"
-                   class="date-input__picker"
-                   tabindex="-1"
-                   data-action="change->date-input#pickerChanged">
-            <%= f.hidden_field :consegnato_il, value: Date.today, data: { date_input_target: "hidden" } %>
-            <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
-              <span class="for-screen-reader">Apri calendario</span>
-            </button>
-          </div>
+          <%= date_input(f, :consegnato_il, value: Date.today, style: "max-width: 16ch;") %>
         </div>
         <div class="">
           <%= f.submit "Segna consegnato", class: "btn txt-small" %>
@@ -139,26 +105,9 @@
         <%= form_with url: documento_pagamento_path(documento),
               method: :patch,
               class: "flex flex-column align-center gap-half" do |f| %>
-          <div class="flex flex-column align-center" data-controller="date-input">
+          <div class="flex flex-column align-center">
             <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-            <div class="date-input" style="max-width: 16ch;">
-              <input type="text"
-                     data-date-input-target="display"
-                     placeholder="gg/mm/aaaa"
-                     class="input input--date"
-                     style="text-align: center;"
-                     autocomplete="off"
-                     data-action="input->date-input#parseText blur->date-input#formatOnBlur">
-              <input type="date"
-                     data-date-input-target="picker"
-                     class="date-input__picker"
-                     tabindex="-1"
-                     data-action="change->date-input#pickerChanged">
-              <%= f.hidden_field :pagato_il, value: documento.pagato_il&.to_date, data: { date_input_target: "hidden" } %>
-              <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
-                <span class="for-screen-reader">Apri calendario</span>
-              </button>
-            </div>
+            <%= date_input(f, :pagato_il, style: "max-width: 16ch;") %>
           </div>
           <div class="flex flex-column align-center">
             <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
@@ -183,26 +132,9 @@
       <%= form_with url: documento_pagamento_path(documento),
             method: :post,
             class: "flex flex-column align-center gap-half" do |f| %>
-        <div class="flex flex-column align-center" data-controller="date-input">
+        <div class="flex flex-column align-center">
           <%= f.label :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-          <div class="date-input" style="max-width: 16ch;">
-            <input type="text"
-                   data-date-input-target="display"
-                   placeholder="gg/mm/aaaa"
-                   class="input input--date"
-                   style="text-align: center;"
-                   autocomplete="off"
-                   data-action="input->date-input#parseText blur->date-input#formatOnBlur">
-            <input type="date"
-                   data-date-input-target="picker"
-                   class="date-input__picker"
-                   tabindex="-1"
-                   data-action="change->date-input#pickerChanged">
-            <%= f.hidden_field :pagato_il, value: Date.today, data: { date_input_target: "hidden" } %>
-            <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
-              <span class="for-screen-reader">Apri calendario</span>
-            </button>
-          </div>
+          <%= date_input(f, :pagato_il, value: Date.today, style: "max-width: 16ch;") %>
         </div>
         <div class="flex flex-column align-center">
           <%= f.label :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>

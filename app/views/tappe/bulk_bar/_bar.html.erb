@@ -35,7 +35,7 @@
           method: :post,
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
       <div class="bulk-bar__form-row">
-        <%= f.date_field :data_tappa, value: Date.tomorrow, class: "input" %>
+        <%= date_input_tag :data_tappa, Date.tomorrow, name: "data_tappa" %>
       </div>
       <div class="bulk-bar__form-actions">
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
@@ -51,7 +51,7 @@
           method: :patch,
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
       <div class="bulk-bar__form-row">
-        <%= f.date_field :data_tappa, value: Date.tomorrow, class: "input" %>
+        <%= date_input_tag :data_tappa, Date.tomorrow, name: "data_tappa" %>
       </div>
       <div class="bulk-bar__form-actions">
         <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>

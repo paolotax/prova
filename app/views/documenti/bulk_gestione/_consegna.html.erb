@@ -28,8 +28,8 @@
 
     <div data-inline-edit-target="edit" hidden class="flex flex-column align-center gap-half">
       <div class="flex flex-column align-center">
-        <label for="bulk_consegnato_il" class="txt-small txt-subtle">Data consegna</label>
-        <input type="date" name="consegnato_il" id="bulk_consegnato_il" value="<%= documenti.map(&:consegnato_il).compact.max %>" class="input input--date" style="text-align: center;" form="bulk_consegne_form">
+        <label class="txt-small txt-subtle">Data consegna</label>
+        <%= date_input_tag :consegnato_il, documenti.map(&:consegnato_il).compact.max, name: "consegnato_il", form: "bulk_consegne_form", style: "max-width: 16ch;" %>
       </div>
       <div class="flex gap-half align-center">
         <%= form_with url: documenti_bulk_consegne_path,
@@ -58,8 +58,8 @@
       </span>
 
       <div class="flex flex-column align-center">
-        <label for="bulk_consegnato_il" class="txt-small txt-subtle">Data consegna</label>
-        <input type="date" name="consegnato_il" id="bulk_consegnato_il" value="<%= Date.today %>" class="input input--date" style="text-align: center;" form="bulk_consegne_form">
+        <label class="txt-small txt-subtle">Data consegna</label>
+        <%= date_input_tag :consegnato_il, Date.today, name: "consegnato_il", form: "bulk_consegne_form", style: "max-width: 16ch;" %>
       </div>
 
       <div class="flex gap-half align-center justify-center">

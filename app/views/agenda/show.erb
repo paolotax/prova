@@ -15,19 +15,6 @@
         data: { controller: "link-modifier", link_modifier_target: "link" } do %>
       Week
     <% end %>
-    <div data-controller="date-selector" class="relative">
-      <%= date_field_tag :giorno,
-          @giorno,
-          class: "rounded-md border-0 py-1.5 px-3 text-gray-900 [&::-webkit-calendar-picker-indicator]:bg-transparent [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:opacity-0",
-          style: "width: 2.5rem; color: transparent;",
-          data: {
-              action: "change->date-selector#change",
-              date_selector_target: "select",
-              current_date: @giorno
-          } %>
-      <%= icon_tag "calendar", class: "w-5 h-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none text-gray-500" %>
-    </div>
-
   </div>
 
   <div class="header__title divider divider--fade full-width">

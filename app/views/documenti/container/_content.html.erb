@@ -70,25 +70,9 @@
               data: { documento_causale_target: "numero" } %>
         </div>
 
-        <div class="form-field" style="flex: 1 1 25%;" data-controller="date-input">
+        <div class="form-field" style="flex: 1 1 25%;">
           <%= form.label :data_documento, "Data", class: "form-label" %>
-          <div class="date-input">
-            <input type="text"
-                   data-date-input-target="display"
-                   placeholder="gg/mm/aaaa"
-                   class="input input--date"
-                   autocomplete="off"
-                   data-action="input->date-input#parseText blur->date-input#formatOnBlur">
-            <input type="date"
-                   data-date-input-target="picker"
-                   class="date-input__picker"
-                   tabindex="-1"
-                   data-action="change->date-input#pickerChanged">
-            <%= form.hidden_field :data_documento, data: { date_input_target: "hidden" } %>
-            <button type="button" class="date-input__trigger" data-action="date-input#openPicker" tabindex="-1">
-              <span class="for-screen-reader">Apri calendario</span>
-            </button>
-          </div>
+          <%= date_input(form, :data_documento) %>
         </div>
       </div>
 

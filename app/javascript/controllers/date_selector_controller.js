@@ -3,15 +3,12 @@ import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
   static targets = ["select"]
-
-  connect() {
-    this.selectTarget.value = this.selectTarget.dataset.currentDate
-  }
+  static values = { basePath: { type: String, default: "/agenda" } }
 
   change(event) {
     const selectedDate = event.target.value
     if (selectedDate) {
-      Turbo.visit(`/agenda/${selectedDate}`)
+      Turbo.visit(`${this.basePathValue}/${selectedDate}`)
     }
   }
-} 
+}
