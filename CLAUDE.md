@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Prova** is a Rails 8.0.3 application for managing textbook adoptions (adozioni), school imports, and document/invoice management for the Italian education sector. The application uses PostgreSQL with custom database views, and is configured with Italian as the default locale.
+**Prova** is a Rails 8.1 application for managing textbook adoptions (adozioni), school imports, and document/invoice management for the Italian education sector. The application uses PostgreSQL with custom database views, and is configured with Italian as the default locale.
 
 ## Commands
 
@@ -46,16 +46,17 @@ docker exec -it prova-app-1 bundle exec annotaterb models      # Annotate models
 - **Adozione** - Book adoptions with status workflow
 - **ImportAdozione/ImportScuola** - School and adoption data import management
 - **Cliente** - Customers with polymorphic relationships
+- **Scuola** - Schools with polymorphic relationships
 - **Editore** - Publishers
-- **Account/Membership** - Multi-tenancy (new feature)
+- **Account/Membership** - Multi-tenancy
 
-### Database Views (Scenic)
+### Database Views (Scenic) - Deprecated. Don't use. Should remove but not now.
 
 Read-only models in `app/models/views/` wrapping PostgreSQL views:
-- `Views::Giacenza` - Inventory (carichi, ordini, vendite per book)
-- `Views::Classe` - School classes
-- `Views::Documento`, `Views::Riga`, `Views::Articolo` - Document analysis
-- `Views::Cliente`, `Views::Fornitore` - Customer/supplier views
+- `Views::Giacenza` - Deprecated, ex Inventory (carichi, ordini, vendite per book)
+- `Views::Classe` - Deprecated, ex ImportScuola classes
+- `Views::Documento`, `Views::Riga`, `Views::Articolo` - Deprecated, document analysis
+- `Views::Cliente`, `Views::Fornitore` - Deprecated, customer/supplier views
 
 ### Key Patterns
 
@@ -72,15 +73,26 @@ libro.prezzo_cents  # Integer storage
 libro.prezzo        # Decimal accessor (auto-converts)
 ```
 
-**Filter Proxies** - Custom filtering in `app/models/concerns/filters/`:
-```ruby
-Libro.filter_by(params)  # Uses Filters::LibroFilterProxy
-```
+**Filters** - Uses `Filters::*Filter` classes with `FilterScoped` concern in controllers:
+- Filter classes in `app/models/filters/` (e.g. `ScuolaFilter`, `DocumentoFilter`, `LibroFilter`)
+- Each filter has sub-modules: `Fields`, `Filtering`, `Summarized`
+- Controllers include `FilterScoped` concern for convention-based filter resolution
 
-**Search** - PgSearch with tsearch:
-```ruby
-Libro.search_all_word("query")  # Full-text search with prefix matching
-```
+**State Records** - Business state tracked via separate records, not booleans:
+- `Goldness`, `Closure`, `NotNow` — linked to `Entry` with `touch: true`
+- `Consegna`, `Pagamento` — linked to `Documento` via `Consegnabile`/`Pagabile` concerns
+
+**Broadcasts via Entry** - All real-time updates go through `Entry`:
+- `Entry::Broadcastable` handles `broadcasts_refreshes` and `broadcasts_refreshes_to`
+- Appunto/Documento touch Entry via `Entryable` concern
+- State records trigger Entry broadcast via `touch: true`
+
+**Saldabile** - Denormalized document stats per client/school:
+- `Saldo` model with polymorphic `saldabile` (Cliente, Scuola)
+- Tracks `copie_da_consegnare`, `importo_da_consegnare_cents`, `copie_da_pagare`, `importo_da_pagare_cents`
+- Recalculated via `ricalcola_saldo!` on the saldabile, called from `Pagabile`/`Consegnabile` concerns
+- Excludes child documents (`documento_padre_id`) from calculation
+- Signed amounts based on `causale.movimento`: uscita (+), entrata (-)
 
 ### Services (`app/services/`)
 
@@ -104,8 +116,9 @@ Sidekiq-based jobs in `app/jobs/`:
 - **Importmap** for JavaScript (no Node build step)
 - **Turbo Rails** for async navigation
 - **Stimulus** controllers in `app/javascript/controllers/` (40+ custom controllers)
-- **Tailwind CSS** for styling
-- **ViewComponent** in `app/components/`
+- **CSS** custom classes (copied from Fizzy), loaded with **Propshaft**. Tailwind is deprecated, do not use.
+- **CSS Layers** order: `reset, base, components, modules, utilities, native, platform` (defined in `_global.css`)
+- **ViewComponent** is deprecated, slowly remove when touching related code
 
 ### Admin Interface
 
@@ -150,8 +163,23 @@ Docker-based deployment with Kamal. Configuration in `config/deploy.yml`.
 
 **Fizzy** è l'applicazione di riferimento per pattern e stili CSS:
 - Path: `/home/paolotax/rails_2023/fizzy`
-- Dev server: `localhost:3006`
-- Usare i pattern Fizzy per: combobox, filtri, dialogs, forms, layout
+- Dev server di Fizzy: `localhost:3006`
+- Usare i pattern Fizzy per: combobox, filtri, dialogs, forms, layout, lists, tables, cards
+
+## Skills
+
+When working on this project, use these skills:
+
+- **refactoring-agent** — when refactoring code toward modern Rails patterns
+- **review-agent** — when reviewing code for quality and adherence to conventions
+- **model-agent** — when building models with associations, scopes, and business logic
+- **concerns-agent** — when creating or refactoring model/controller concerns
+- **crud-agent** — when generating CRUD controllers
+- **stimulus-agent** — when building Stimulus controllers
+- **turbo-agent** — when creating Turbo Streams, Frames, and morphing patterns
+- **test-agent** — when writing Minitest tests and fixtures
+- **migration-agent** — when creating migrations (UUIDs, account_id, no foreign keys)
+- **frontend-design** — when building UI components, always reference Fizzy patterns
 
 ## Conventions
 
@@ -159,11 +187,3 @@ Docker-based deployment with Kamal. Configuration in `config/deploy.yml`.
 - FriendlyId slugs on User and Libro models
 - Ransack for advanced querying
 - Raw SQL and crosstab queries for complex inventory analysis
-
-## TODO / Future Work
-
-### Ristrutturazione Mandati e Zone (Multi-tenancy)
-Le tabelle `mandati` e `zone` attualmente sono legate direttamente all'utente. Devono essere ristrutturate per:
-- Supportare il cambio anno in anno per caricare scuole ed adozioni
-- Permettere all'account di assegnare zone diverse (province e tipi scuola) ai vari user
-- Le zone cambiano di anno in anno con scuole diverse
