@@ -58,7 +58,8 @@ class DocumentiImporterController < ApplicationController
   private
 
   def documenti_importer_params
-    params.require(:documenti_importer).permit(:file, :import_method, :documento_id, :documento)
+    key = params.key?(:documenti_importer) ? :documenti_importer : :import_record
+    params.require(key).permit(:file, :import_method, :documento_id, :documento)
   end
   
 end

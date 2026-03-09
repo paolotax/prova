@@ -94,6 +94,43 @@
     <% end %>
   </article>
 
+  <%# Import Nota di Consegna PDF %>
+  <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+    <%= form_with model: ImportRecord.new, url: documenti_importer_index_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
+      <%= f.hidden_field :import_method, value: "ndc_pdf" %>
+
+      <div class="flex align-center gap">
+        <%= icon_tag "truck", class: "txt-notice", size: "large" %>
+        <div>
+          <h3 class="txt-medium margin-none font-weight-black">Nota di Consegna PDF</h3>
+          <p class="txt-small txt-subtle margin-none">Importa NdC da Giunti Scuola</p>
+        </div>
+      </div>
+
+      <div class="flex flex-column gap-half">
+        <strong><%= f.label :file, "Seleziona file PDF" %></strong>
+        <%= f.file_field :file,
+            accept: 'application/pdf',
+            class: "input",
+            required: true %>
+      </div>
+
+      <div class="flex flex-column gap-half pad fill-shade border-radius">
+        <strong class="txt-small txt-notice">Cosa verrà importato:</strong>
+        <ul class="txt-small margin-none" style="padding-inline-start: 1.5em;">
+          <li>Numero e data dalla NdC</li>
+          <li>Righe con quantità e prezzi</li>
+          <li>Articoli cercati per EAN</li>
+        </ul>
+      </div>
+
+      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
+        <%= icon_tag "arrow-down-tray" %>
+        <span>Importa NdC PDF</span>
+      <% end %>
+    <% end %>
+  </article>
+
   <article class="panel panel--wide center txt-align-start margin-block-start">
     <div class="flex flex-column gap-half txt-small txt-subtle">
       <strong class="txt-ink">Note</strong>

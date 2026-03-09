@@ -228,11 +228,137 @@ class DocumentiImporter
     end
   end
 
+  def import_ndc_pdf!
+    reader = PDF::Reader.new(file.path)
+    text = reader.pages.map(&:text).join("\n")
+
+    # Estrai numero e data dalla riga "NOTA DI CONSEGNA N. XXXXX del DD-MM-YYYY"
+    match = text.match(/NOTA DI CONSEGNA N\.\s*(\d+)\s*del\s*(\d{2}-\d{2}-\d{4})/)
+    unless match
+      errors.add(:base, "Formato PDF non riconosciuto: numero/data non trovati")
+      return false
+    end
+
+    numero_documento = match[1].sub(/\A\d{4}/, '').to_i
+    data_documento = Date.parse(match[2])
+
+    # Cerca causale DDT Fornitore (carico merce)
+    causale = Causale.find_by(causale: "DDT Fornitore")
+    unless causale
+      errors.add(:base, "Causale 'DDT Fornitore' non trovata")
+      return false
+    end
+
+    # Cerca il fornitore dalla P.IVA nel PDF (Giunti Scuola)
+    piva_match = text.match(/P\.I\.\s*IT\s*(\d{11})/)
+    partita_iva = piva_match ? piva_match[1] : nil
+
+    cliente = Current.user.clienti.find_by(partita_iva: partita_iva) if partita_iva
+    unless cliente
+      errors.add(:base, "Fornitore non trovato con P.IVA: #{partita_iva || 'non trovata'}")
+      return false
+    end
+
+    # Verifica duplicati
+    if Current.user.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
+      errors.add(:base, "Documento NdC n. #{numero_documento} già presente")
+      return false
+    end
+
+    # Crea il documento
+    documento = Current.user.documenti.create(
+      clientable_type: "Cliente",
+      clientable_id: cliente.id,
+      causale_id: causale.id,
+      numero_documento: numero_documento,
+      data_documento: data_documento
+    )
+
+    unless documento.persisted?
+      errors.add(:base, "Errore creazione documento: #{documento.errors.full_messages.join(', ')}")
+      return false
+    end
+
+    # Parsa le righe dal testo PDF
+    righe_importate = 0
+    righe_saltate = []
+    righe_create = []
+    posizione = 0
+
+    text.each_line do |line|
+      riga_match = line.match(/^\s*(\d+\w+)\s+(.+?)\s{2,}(\d+)\s+([\d]+,\d{2})\s+.*?(97[89]\d{10})\s*$/)
+      next unless riga_match
+
+      descrizione = riga_match[2].strip
+      quantita = riga_match[3].to_i
+      prezzo = riga_match[4].gsub(",", ".").to_f
+      ean = riga_match[5].strip
+
+      next if quantita == 0
+
+      posizione += 1
+
+      # Cerca libro per EAN, se non esiste lo crea
+      libro = Current.user.libri.find_by(codice_isbn: ean)
+      libro_creato = false
+
+      unless libro
+        categoria = Categoria.resolve(nil, user: Current.user, account: Current.account)
+        libro = Current.user.libri.create(
+          codice_isbn: ean,
+          titolo: descrizione,
+          categoria: categoria,
+          prezzo_in_cents: (prezzo * 100).to_i
+        )
+        libro_creato = true
+      end
+
+      if libro.persisted?
+        riga = Riga.create(
+          libro_id: libro.id,
+          prezzo_cents: (prezzo * 100).to_i,
+          quantita: quantita,
+          sconto: 0.0
+        )
+        if riga.persisted?
+          documento.documento_righe.create(posizione: posizione, riga: riga)
+          righe_importate += 1
+          righe_create << "#{ean} - #{descrizione}" if libro_creato
+        else
+          righe_saltate << "#{ean} - #{descrizione} (errore riga: #{riga.errors.full_messages.join(', ')})"
+        end
+      else
+        righe_saltate << "#{ean} - #{descrizione} (qta: #{quantita})"
+      end
+    end
+
+    @imported_count = righe_importate
+    @documento = documento
+    documento.reload
+    documento.ricalcola_totali!
+
+    if righe_create.any?
+      errors.add(:base, "#{righe_create.count} libri creati automaticamente")
+      righe_create.first(5).each { |r| errors.add(:base, r) }
+      if righe_create.count > 5
+        errors.add(:base, "... e altri #{righe_create.count - 5} libri creati")
+      end
+    end
+
+    if righe_saltate.any?
+      errors.add(:base, "#{righe_saltate.count} righe non importate (errore creazione libro)")
+      righe_saltate.each { |r| errors.add(:base, r) }
+    end
+  end
+
   def save
-    unless import_method == "xlsx_csv"
-      process!
-    else
+    case import_method
+    when "xlsx_csv"
       import_excel!
+    when "ndc_pdf"
+      import_ndc_pdf!
+    else
+      process!
     end
     errors.none?
   end
