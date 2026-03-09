@@ -120,10 +120,10 @@ class BollaVisionePdf < Prawn::Document
 
       righe.each do |riga|
         data << [
-          { content: riga_titolo(riga), size: 8 },
-          { content: riga.quantita.to_s, align: :center, size: 8 },
-          { content: consegna_label(riga), size: 7, text_color: "555555" },
-          { content: "", size: 7, text_color: "555555" }
+          { content: riga_titolo(riga), size: 12, inline_format: true },
+          { content: riga.quantita.to_s, align: :center, size: 12 },
+          { content: consegna_label(riga), size: 8, text_color: "555555" },
+          { content: "", size: 8, text_color: "555555" }
         ]
       end
     end
@@ -182,8 +182,8 @@ class BollaVisionePdf < Prawn::Document
   def riga_titolo(riga)
     parts = []
     parts << riga.libro.titolo
-    parts << riga.libro.editore&.editore.to_s if riga.libro.editore.present?
-    parts.join(" — ")
+    parts << "<font size='7'><color rgb='888888'>#{riga.libro.editore&.editore}</color></font>" if riga.libro.editore.present?
+    parts.join("\n")
   end
 
   def footer_totali
