@@ -1,0 +1,12 @@
+<%= tag.div class: "flex gap align-center" do %>
+  <% materia = result.persona.persona_classi.first&.materia %>
+  <div class="flex flex-column" style="line-height: 1.3;">
+    <span class="txt-small font-weight-bold"><%= result.persona.nome_completo %></span>
+    <span class="txt-xx-small txt-subtle">
+      <%= materia&.titleize %>
+      <% unless result.stessa_scuola %>
+        · <%= result.persona.scuola&.denominazione %>
+      <% end %>
+    </span>
+  </div>
+<% end %>

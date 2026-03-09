@@ -41,7 +41,7 @@ class Persona < ApplicationRecord
 
   enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", referente: "referente", altro: "altro" }
 
-  validates :cognome, presence: true
+  validate :cognome_o_nome_presente
 
   scope :per_ruolo, ->(ruolo) { where(ruolo: ruolo) }
   scope :per_scuola, ->(scuola) { where(scuola: scuola) }
@@ -62,6 +62,14 @@ class Persona < ApplicationRecord
       "#{nome_completo} - #{scuola.denominazione}"
     else
       nome_completo
+    end
+  end
+
+  private
+
+  def cognome_o_nome_presente
+    if cognome.blank? && nome.blank?
+      errors.add(:base, "Cognome o nome deve essere presente")
     end
   end
 end

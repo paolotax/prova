@@ -47,11 +47,23 @@ module Scuole
     def update
       sync_classi if params[:persona][:classe_ids].present?
 
+      new_scuola_id = persona_params[:scuola_id]
+      scuola_cambiata = new_scuola_id.present? && new_scuola_id != @scuola.id.to_s
+
       if @persona.update(persona_params.except(:classe_ids))
-        redirect_to scuola_persona_path(@scuola, @persona)
+        if scuola_cambiata
+          redirect_to scuola_persona_path(@persona.scuola, @persona)
+        else
+          redirect_to scuola_persona_path(@scuola, @persona)
+        end
       else
         render :edit, status: :unprocessable_entity
       end
+    end
+
+    def destroy
+      @persona.destroy
+      redirect_to scuola_path(@scuola), notice: "#{@persona.nome_completo} eliminato"
     end
 
     private
@@ -61,11 +73,12 @@ module Scuole
     end
 
     def set_persona
-      @persona = @scuola.persone.find(params[:id])
+      @persona = @scuola.persone.find_by(id: params[:id]) ||
+                 Current.account.persone.find(params[:id])
     end
 
     def persona_params
-      permitted = params.require(:persona).permit(:nome, :cognome, :cellulare, :email, :telefono, :note, :classe_ids)
+      permitted = params.require(:persona).permit(:nome, :cognome, :cellulare, :email, :telefono, :note, :ruolo, :scuola_id, :classe_ids)
       if permitted[:classe_ids].is_a?(String)
         permitted[:classe_ids] = permitted[:classe_ids].split(",").reject(&:blank?)
       end
@@ -89,7 +102,7 @@ module Scuole
     end
 
     def load_prev_next
-      all_ids = @scuola.persone.docente
+      all_ids = @scuola.persone.where(ruolo: [:docente, :referente])
                        .order(Arel.sql("posizione IS NULL, posizione, cognome, nome"))
                        .pluck(:id)
       idx = all_ids.index(@persona.id)

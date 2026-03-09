@@ -5,24 +5,41 @@
       data: { controller: "form",
               action: "keydown.esc->form#cancel:stop" } do |form| %>
 
-  <div class="form-field">
-    <%= form.label :cognome, class: "label txt-small" %>
-    <%= form.text_field :cognome, class: "input" %>
+  <div class="flex gap">
+    <div class="form-field" style="flex: 1;">
+      <%= form.label :cognome, class: "label txt-small" %>
+      <%= form.text_field :cognome, class: "input" %>
+    </div>
+    <div class="form-field" style="flex: 1;">
+      <%= form.label :nome, class: "label txt-small" %>
+      <%= form.text_field :nome, class: "input" %>
+    </div>
   </div>
 
-  <div class="form-field">
-    <%= form.label :nome, class: "label txt-small" %>
-    <%= form.text_field :nome, class: "input" %>
+  <div class="flex gap">
+    <div class="form-field" style="flex: 1;">
+      <%= form.label :ruolo, class: "label txt-small" %>
+      <%= form.select :ruolo, Persona.defined_enums["ruolo"].keys.map { |r| [r.titleize, r] }, {}, class: "input input--select" %>
+    </div>
+    <div class="form-field cb-tax" style="flex: 2;">
+      <label class="label txt-small">Scuola</label>
+      <%= combobox_tag "persona[scuola_id]",
+          hw_combobox_options(Current.account.scuole.order(:denominazione), display: :denominazione),
+          value: persona.scuola_id,
+          placeholder: "Cerca scuola...",
+          mobile_at: "0px" %>
+    </div>
   </div>
 
-  <div class="form-field">
-    <%= form.label :cellulare, class: "label txt-small" %>
-    <%= form.text_field :cellulare, class: "input", type: "tel" %>
-  </div>
-
-  <div class="form-field">
-    <%= form.label :telefono, class: "label txt-small" %>
-    <%= form.text_field :telefono, class: "input", type: "tel" %>
+  <div class="flex gap">
+    <div class="form-field" style="flex: 1;">
+      <%= form.label :cellulare, class: "label txt-small" %>
+      <%= form.text_field :cellulare, class: "input", type: "tel" %>
+    </div>
+    <div class="form-field" style="flex: 1;">
+      <%= form.label :telefono, class: "label txt-small" %>
+      <%= form.text_field :telefono, class: "input", type: "tel" %>
+    </div>
   </div>
 
   <div class="form-field">

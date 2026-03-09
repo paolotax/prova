@@ -92,6 +92,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'bolla_visione_riga', 'bolla_visione_righe'
   inflect.irregular 'categoria', 'categorie'
   inflect.irregular 'sconto', 'sconti'
+  inflect.irregular 'ruolo', 'ruoli'
   inflect.irregular 'titolo', 'titoli'
   inflect.irregular 'edizione_titolo', 'edizioni_titoli'
 

@@ -3,13 +3,17 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% if @bolla_visione.tappa_id.present? %>
-      <%= back_link_to @bolla_visione.scuola.denominazione, tappa_path(@bolla_visione.tappa_id) %>
+      <%= back_link_to "Tappa", tappa_path(@bolla_visione.tappa_id) %>
     <% else %>
       <%= back_link_to "Bolle", bolle_visione_path %>
     <% end %>
   </div>
   <h1 class="header__title"><%= @page_title %></h1>
   <div class="header__actions header__actions--end">
+    <%= button_to rigenera_bolla_visione_path(@bolla_visione), method: :post, class: "btn",
+        data: { turbo_confirm: "Svuota e rigenera le righe dalla collana?" } do %>
+      <%= icon_tag "refresh", size: "small" %>
+    <% end %>
     <%= link_to bolla_visione_path(@bolla_visione, format: :pdf), target: "_blank", class: "btn" do %>
       <%= icon_tag "download", size: "small" %>
     <% end %>
@@ -18,35 +22,9 @@
 
 <section class="panel panel--wide shadow center">
   <div class="flex align-center gap-half">
-    <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;"><%= @bolla_visione.scuola.denominazione %></h3>
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;"><%= link_to @bolla_visione.scuola.denominazione, scuola_path(@bolla_visione.scuola) %></h3>
 
-    <div class="position-relative"
-        data-controller="dialog"
-        data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-      <button class="btn btn--circle btn--small"
-          data-action="click->dialog#toggle:stop"
-          data-controller="tooltip"
-          data-tooltip-content-value="Aggiungi referente">
-        <%= icon_tag "person-add", size: "small" %>
-      </button>
-
-      <dialog class="popup panel flex-column gap-half fill-white shadow pad"
-          data-dialog-target="dialog"
-          data-action="turbo:submit-end->dialog#close"
-          style="min-width: 260px; right: 0;">
-        <p class="txt-small font-weight-black margin-none">Nuovo referente</p>
-        <%= form_with url: bolla_visione_persone_path(@bolla_visione), scope: :persona, class: "flex flex-column gap-quarter" do |f| %>
-          <%= f.hidden_field :ruolo, value: "referente" %>
-          <div class="flex gap-quarter">
-            <%= f.text_field :cognome, placeholder: "Cognome", class: "input input--small", required: true, style: "flex: 1;" %>
-            <%= f.text_field :nome, placeholder: "Nome", class: "input input--small", style: "flex: 1;" %>
-          </div>
-          <%= f.email_field :email, placeholder: "Email (per bolla)", class: "input input--small" %>
-          <%= f.telephone_field :cellulare, placeholder: "Cellulare (WhatsApp)", class: "input input--small" %>
-          <%= f.submit "Salva", class: "btn btn--small full-width", style: "--btn-background: var(--color-positive); --btn-color: var(--color-ink-inverted); --btn-border-color: var(--color-positive);" %>
-        <% end %>
-      </dialog>
-    </div>
+    <%= render "scuole/persone/search_dialog", scuola: @bolla_visione.scuola %>
   </div>
 
   <div class="flex flex-wrap gap full-width">
@@ -61,7 +39,10 @@
     <% if @bolla_visione.referente.present? %>
       <div class="flex-item-grow" style="flex-basis: 120px;">
         <span class="txt-x-small txt-subtle txt-uppercase">Referente</span>
-        <div class="txt-medium"><%= @bolla_visione.referente.nome_completo %></div>
+        <div class="txt-medium"><%= link_to @bolla_visione.referente.nome_completo, scuola_persona_path(@bolla_visione.scuola, @bolla_visione.referente) %></div>
+        <% if @bolla_visione.referente.email.present? %>
+          <div class="txt-x-small txt-subtle"><%= @bolla_visione.referente.email %></div>
+        <% end %>
       </div>
     <% end %>
   </div>
@@ -91,53 +72,7 @@
           </div>
         <% end %>
 
-        <div class="position-relative"
-            data-controller="dialog"
-            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-          <button class="btn btn--circle btn--small"
-              data-action="click->dialog#toggle:stop"
-              data-controller="tooltip"
-              data-tooltip-content-value="Aggiungi insegnante">
-            <%= icon_tag "person-add", size: "small" %>
-          </button>
-
-          <dialog class="popup panel flex-column gap-half fill-white shadow pad"
-              data-dialog-target="dialog"
-              data-action="turbo:submit-end->dialog#close"
-              style="min-width: 280px; right: 0;">
-            <p class="txt-small font-weight-black margin-none">Nuovo insegnante</p>
-            <%= form_with url: bolla_visione_persone_path(@bolla_visione), scope: :persona, class: "flex flex-column gap-quarter" do |f| %>
-              <%= f.hidden_field :ruolo, value: "docente" %>
-              <div class="flex gap-quarter">
-                <%= f.text_field :cognome, placeholder: "Cognome", class: "input input--small", required: true, style: "flex: 1;" %>
-                <%= f.text_field :nome, placeholder: "Nome", class: "input input--small", style: "flex: 1;" %>
-              </div>
-              <%= f.text_field :materia, placeholder: "Materia", class: "input input--small" %>
-              <div class="flex gap-quarter">
-                <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input input--small", style: "flex: 1;" %>
-                <%= f.email_field :email, placeholder: "Email", class: "input input--small", style: "flex: 1;" %>
-              </div>
-
-              <% scuola_classi = @bolla_visione.scuola.classi.order(:anno_corso, :sezione) %>
-              <% if scuola_classi.any? %>
-                <p class="txt-x-small txt-subtle margin-none margin-block-start-quarter">Classi</p>
-                <div class="flex gap-quarter flex-wrap">
-                  <% scuola_classi.each do |classe| %>
-                    <label class="classi-chip <%= 'active' if classi.map(&:id).include?(classe.id) %>" style="cursor: pointer;">
-                      <input type="checkbox" name="persona[classe_ids][]" value="<%= classe.id %>"
-                             style="display: none;"
-                             onchange="this.closest('label').classList.toggle('active', this.checked)"
-                             <%= "checked" if classi.map(&:id).include?(classe.id) %>>
-                      <%= classe.nome_breve %>
-                    </label>
-                  <% end %>
-                </div>
-              <% end %>
-
-              <%= f.submit "Salva", class: "btn btn--small full-width margin-block-start-quarter", style: "--btn-background: var(--color-positive); --btn-color: var(--color-ink-inverted); --btn-border-color: var(--color-positive);" %>
-            <% end %>
-          </dialog>
-        </div>
+        <%= render "scuole/persone/search_dialog", scuola: @bolla_visione.scuola %>
       </div>
 
       <ul class="flex flex-column unpad margin-none">

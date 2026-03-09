@@ -1,0 +1,57 @@
+<%# locals: (scuola:) -%>
+
+<div data-controller="dialog persona-search"
+    data-dialog-modal-value="true"
+    data-persona-search-scuola-url-value="<%= scuola_persona_path(scuola, '__PERSONA_ID__') %>"
+    data-action="keydown.esc->dialog#close:stop">
+  <button type="button" class="btn btn--circle btn--small"
+      data-action="dialog#open"
+      data-controller="tooltip"
+      data-tooltip-content-value="Cerca o aggiungi insegnante">
+    <%= icon_tag "person-add", size: "small" %>
+  </button>
+
+  <dialog class="dialog panel fill-white shadow gap flex-column"
+      style="--panel-size: min(90vw, 24rem);"
+      data-dialog-target="dialog"
+      data-action="turbo:submit-end->dialog#close">
+
+    <h3 class="txt-medium font-weight-black margin-none">Cerca insegnante</h3>
+
+    <%# Combobox ricerca persona %>
+    <div class="form-field cb-tax full-width">
+      <%= combobox_tag "persona_search",
+          scuola_persone_search_index_path(scuola),
+          placeholder: "Cerca per nome o cognome...",
+          mobile_at: "0px",
+          data: { action: "hw-combobox:selection->persona-search#select" } %>
+    </div>
+
+    <div class="divider divider--fade full-width txt-xx-small txt-subtle txt-align-center">oppure aggiungi nuovo</div>
+
+    <%# Form nuovo persona %>
+    <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
+    <%= form_with url: scuola_persone_path(scuola), method: :post,
+        class: "flex flex-column gap-quarter full-width" do |f| %>
+      <div class="flex gap-quarter">
+        <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small" %>
+        <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
+      </div>
+      <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
+          list: "materie_list_#{scuola.id}" %>
+      <div class="flex gap-half justify-center margin-block-start-half">
+        <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+        <button type="submit" class="btn">
+          <%= icon_tag "add" %>
+          <span>Aggiungi</span>
+        </button>
+      </div>
+    <% end %>
+
+    <datalist id="materie_list_<%= scuola.id %>">
+      <% materie_esistenti.each do |m| %>
+        <option value="<%= m %>">
+      <% end %>
+    </datalist>
+  </dialog>
+</div>

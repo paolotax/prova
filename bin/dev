@@ -2,7 +2,7 @@
 
 docker compose up -d
 docker compose exec app sh -c 'until bundle exec rails runner "puts \"Ready\""; do echo "Waiting..."; sleep 2; done'
-docker compose exec -it app bundle exec log_bench
+docker compose exec -it app bin/rails server -b 0.0.0.0
 
 # if ! gem list foreman -i --silent; then
 #   echo "Installing foreman..."

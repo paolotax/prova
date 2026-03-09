@@ -1,7 +1,7 @@
 class BolleVisioneController < ApplicationController
   before_action :authenticate_user!
   before_action :set_tappa, only: [:new, :create]
-  before_action :set_bolla_visione, only: [:show, :destroy]
+  before_action :set_bolla_visione, only: [:show, :destroy, :rigenera]
 
   def index
     @bolle_visione = Current.account.bolle_visione.includes(:scuola, :collana).ordered
@@ -39,6 +39,12 @@ class BolleVisioneController < ApplicationController
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@bolla_visione) }
       format.html { redirect_to @bolla_visione.tappa ? tappa_path(@bolla_visione.tappa) : bolle_visione_path }
     end
+  end
+
+  def rigenera
+    @bolla_visione.bolla_visione_righe.destroy_all
+    @bolla_visione.crea_righe_da_collana!
+    redirect_to bolla_visione_path(@bolla_visione), notice: "Bolla rigenerata con #{@bolla_visione.bolla_visione_righe.count} righe"
   end
 
   def show

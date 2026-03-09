@@ -1,7 +1,7 @@
 <%# locals: (scuola:) -%>
 
 <div id="<%= dom_id(scuola, :insegnanti) %>">
-<% persone = scuola.persone.docente.includes(persona_classi: :classe).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
+<% persone = scuola.persone.where(ruolo: [:docente, :referente]).includes(persona_classi: :classe).order(Arel.sql("posizione IS NULL, posizione, cognome, nome")) %>
 
 <%
   # Build cattedra → discipline mapping
@@ -17,7 +17,9 @@
     .group_by { |a| [a.classe_id, a.disciplina] }
 
   # Group persone by materia (cattedra), maintaining posizione order
-  grouped = persone.group_by { |p| p.persona_classi.first&.materia }.compact_blank
+  all_grouped = persone.group_by { |p| p.persona_classi.first&.materia }
+  senza_materia = all_grouped.delete(nil) || []
+  grouped = all_grouped.compact_blank
 %>
 
 <% if persone.any? %>
@@ -34,32 +36,7 @@
           <%= icon_tag "arrow-down-tray" %>
           <span class="for-screen-reader">Importa insegnanti</span>
         <% end %>
-        <div class="position-relative"
-            data-controller="dialog"
-            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-          <button class="btn btn--circle"
-              data-action="click->dialog#toggle:stop"
-              data-controller="tooltip"
-              data-tooltip-content-value="Nuovo insegnante (P)">
-            <%= icon_tag "person-add" %>
-            <span class="for-screen-reader">Nuovo insegnante</span>
-          </button>
-          <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
-              data-dialog-target="dialog"
-              data-action="turbo:submit-end->dialog#close">
-            <strong class="popup__title">Nuovo insegnante</strong>
-            <%= form_with url: scuola_persone_path(scuola), method: :post,
-                class: "flex flex-column gap-quarter full-width" do |f| %>
-              <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small", required: true %>
-              <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
-              <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small" %>
-              <button type="submit" class="btn btn--link full-width margin-block-start-half">
-                <%= icon_tag "add" %>
-                <span>Aggiungi</span>
-              </button>
-            <% end %>
-          </dialog>
-        </div>
+        <%= render "scuole/persone/search_dialog", scuola: scuola %>
       </div>
     </div>
 
@@ -115,11 +92,35 @@
             %>
             <dt class="txt-x-small">
               <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
+              <% recapiti = [persona.cellulare, persona.telefono, persona.email].compact_blank %>
+              <% if recapiti.any? %>
+                <div class="txt-xx-small txt-subtle"><%= recapiti.join(" · ") %></div>
+              <% end %>
             </dt>
             <dd>
               <div class="flex gap-quarter flex-wrap">
                 <%= classi_badge_links(persona.classi, scuola, classe_styles: styles, hover_target: true) %>
               </div>
+            </dd>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+
+    <% if senza_materia.any? %>
+      <div>
+        <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start">Referenti</h4>
+        <dl class="dl-grid dl-grid--center txt-small">
+          <% senza_materia.each do |persona| %>
+            <dt class="txt-x-small">
+              <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
+              <% recapiti = [persona.cellulare, persona.telefono, persona.email].compact_blank %>
+              <% if recapiti.any? %>
+                <div class="txt-xx-small txt-subtle"><%= recapiti.join(" · ") %></div>
+              <% end %>
+            </dt>
+            <dd>
+              <span class="chip chip--small txt-xx-small"><%= persona.ruolo&.titleize %></span>
             </dd>
           <% end %>
         </dl>
@@ -138,32 +139,7 @@
           <%= icon_tag "arrow-down-tray" %>
           <span class="for-screen-reader">Importa insegnanti</span>
         <% end %>
-        <div class="position-relative"
-            data-controller="dialog"
-            data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-          <button class="btn btn--circle"
-              data-action="click->dialog#toggle:stop"
-              data-controller="tooltip"
-              data-tooltip-content-value="Nuovo insegnante (P)">
-            <%= icon_tag "person-add" %>
-            <span class="for-screen-reader">Nuovo insegnante</span>
-          </button>
-          <dialog class="popup panel flex-column align-start gap-half fill-white shadow"
-              data-dialog-target="dialog"
-              data-action="turbo:submit-end->dialog#close">
-            <strong class="popup__title">Nuovo insegnante</strong>
-            <%= form_with url: scuola_persone_path(scuola), method: :post,
-                class: "flex flex-column gap-quarter full-width" do |f| %>
-              <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small", required: true %>
-              <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
-              <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small" %>
-              <button type="submit" class="btn btn--link full-width margin-block-start-half">
-                <%= icon_tag "add" %>
-                <span>Aggiungi</span>
-              </button>
-            <% end %>
-          </dialog>
-        </div>
+        <%= render "scuole/persone/search_dialog", scuola: scuola %>
       </div>
     </div>
     <p class="txt-small txt-subtle margin-none">Nessun insegnante.</p>

@@ -352,6 +352,9 @@ Rails.application.routes.draw do
     resources :bolle_visione, only: [:index, :show, :destroy] do
       resources :bolla_visione_righe, only: [:update, :destroy]
       resources :persone, only: [:create], module: :bolle_visione
+      member do
+        post :rigenera
+      end
     end
 
     get 'profilo', to: 'profiles#get_user_profile'
@@ -466,8 +469,9 @@ Rails.application.routes.draw do
         resource :closed_entries, only: [:show]
         resource :adozioni, only: [:show], controller: "adozioni"
         resource :persone_import, only: [:new, :create], controller: "persone_import"
+        resources :persone_search, only: [:index], controller: "persone_search"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
-        resources :persone, only: [:show, :edit, :update, :create] do
+        resources :persone, only: [:show, :edit, :update, :create, :destroy] do
           resources :persona_classi, only: [:destroy], module: :persone
           resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
           resources :saggi, only: [:create, :update, :destroy], module: :persone
