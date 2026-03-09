@@ -11,11 +11,28 @@
   <h1 class="header__title"><%= @page_title %></h1>
   <div class="header__actions header__actions--end">
     <%= button_to rigenera_bolla_visione_path(@bolla_visione), method: :post, class: "btn",
-        data: { turbo_confirm: "Svuota e rigenera le righe dalla collana?" } do %>
-      <%= icon_tag "refresh", size: "small" %>
+        data: { turbo_confirm: "Svuota e rigenera le righe dalla collana?", controller: "tooltip" } do %>
+      <%= icon_tag "refresh" %>
+      <span class="for-screen-reader">Rigenera</span>
     <% end %>
-    <%= link_to bolla_visione_path(@bolla_visione, format: :pdf), target: "_blank", class: "btn" do %>
-      <%= icon_tag "download", size: "small" %>
+    <% if @bolla_visione.referente&.email.present? %>
+      <% mail_subject = "Consegna volumi GIUNTI Scuola 2026" %>
+      <% mail_body = "Allego bolla dei testi consegnati in data #{l(@bolla_visione.data_bolla, format: :short)}.\nInvierò nei prossimi giorni un dettaglio delle nostre proposte con i link per visionare i contenuti digitali.\n\nPaolo Tassinari\ncel: 3472371680\nmail: paolo.tassinari@giunti.it" %>
+      <button type="button" class="btn"
+          data-controller="mailto-pdf tooltip"
+          data-mailto-pdf-pdf-url-value="<%= bolla_visione_path(@bolla_visione, format: :pdf) %>"
+          data-mailto-pdf-to-value="<%= @bolla_visione.referente.email %>"
+          data-mailto-pdf-subject-value="<%= mail_subject %>"
+          data-mailto-pdf-body-value="<%= mail_body %>"
+          data-action="click->mailto-pdf#send">
+        <%= icon_tag "envelope" %>
+        <span class="for-screen-reader">Invia al referente</span>
+      </button>
+    <% end %>
+    <%= link_to bolla_visione_path(@bolla_visione, format: :pdf), target: "_blank", class: "btn",
+        data: { controller: "tooltip" } do %>
+      <%= icon_tag "printer" %>
+      <span class="for-screen-reader">Stampa</span>
     <% end %>
   </div>
 <% end %>
@@ -41,7 +58,8 @@
         <span class="txt-x-small txt-subtle txt-uppercase">Referente</span>
         <div class="txt-medium"><%= link_to @bolla_visione.referente.nome_completo, scuola_persona_path(@bolla_visione.scuola, @bolla_visione.referente) %></div>
         <% if @bolla_visione.referente.email.present? %>
-          <div class="txt-x-small txt-subtle"><%= @bolla_visione.referente.email %></div>
+          <% mail_subject = "Bolla visione #{@bolla_visione.collana.nome} - #{@bolla_visione.scuola.denominazione}" %>
+          <div class="txt-x-small"><%= mail_to @bolla_visione.referente.email, @bolla_visione.referente.email, subject: mail_subject %></div>
         <% end %>
       </div>
     <% end %>

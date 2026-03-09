@@ -62,7 +62,7 @@ class BolleVisioneController < ApplicationController
       format.pdf do
         pdf = BollaVisionePdf.new(@bolla_visione, view_context)
         send_data pdf.render,
-          filename: "bolla_visione_#{@bolla_visione.numero}.pdf",
+          filename: "BV-#{@bolla_visione.numero}_#{@bolla_visione.scuola.denominazione.parameterize}.pdf",
           type: "application/pdf",
           disposition: "inline"
       end

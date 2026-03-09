@@ -123,7 +123,7 @@ class BollaVisionePdf < Prawn::Document
           { content: riga_titolo(riga), size: 8 },
           { content: riga.quantita.to_s, align: :center, size: 8 },
           { content: consegna_label(riga), size: 7, text_color: "555555" },
-          { content: riga.libro.editore&.editore.to_s, size: 7, text_color: "555555" }
+          { content: "", size: 7, text_color: "555555" }
         ]
       end
     end
@@ -152,7 +152,7 @@ class BollaVisionePdf < Prawn::Document
       { content: "Titolo", align: :left },
       { content: "Qta", align: :center },
       { content: "Consegnato a", align: :left },
-      { content: "Editore", align: :left }
+      { content: "Note riconsegna", align: :left }
     ]
   end
 
@@ -182,8 +182,8 @@ class BollaVisionePdf < Prawn::Document
   def riga_titolo(riga)
     parts = []
     parts << riga.libro.titolo
-    parts << riga.libro.codice_isbn if riga.libro.codice_isbn.present?
-    parts.join("\n")
+    parts << riga.libro.editore&.editore.to_s if riga.libro.editore.present?
+    parts.join(" — ")
   end
 
   def footer_totali
