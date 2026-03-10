@@ -274,6 +274,12 @@
     }
   }
 
+  .hide-on-desktop {
+    @media (any-hover: hover) {
+      display: none;
+    }
+  }
+
   .show-on-touch {
     display: none;
 

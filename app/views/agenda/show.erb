@@ -1,119 +1,83 @@
 <% @page_title = I18n.l(@giorno.to_date, format: :long_with_day, locale: :it) %>
 
-<% content_for :head do %>
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
-    <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>
-
-    <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
-    <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
-<% end %>
-
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to agenda_path(giorno: @giorno),
-        class: "btn btn--cricle",
-        data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-      Week
+    <%= link_to agenda_path(giorno: @giorno), class: "btn btn--circle",
+        data: { controller: "link-modifier hotkey tooltip",
+                link_modifier_target: "link",
+                action: "keydown.w@document->hotkey#click" } do %>
+      <strong>W</strong>
+      <span class="for-screen-reader">Settimana</span>
     <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <%= link_to giorno_path(giorno: (@giorno - 1.day).to_s),
+        class: "btn txt-x-small",
+        data: { controller: "link-modifier tooltip hotkey",
+                link_modifier_target: "link",
+                action: "keydown.left@document->hotkey#click" } do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Giorno precedente <kbd class="kbd">&larr;</kbd></span>
+    <% end %>
+
+    <span class="overflow-ellipsis"><%= I18n.l(@giorno.to_date, format: :long_with_day, locale: :it) %></span>
+
+    <%= link_to giorno_path(giorno: (@giorno + 1.day).to_s),
+        class: "btn txt-x-small",
+        data: { controller: "link-modifier tooltip hotkey",
+                link_modifier_target: "link",
+                action: "keydown.right@document->hotkey#click" } do %>
+      <%= icon_tag "arrow-right", size: "small" %>
+      <span class="for-screen-reader">Giorno successivo <kbd class="kbd">&rarr;</kbd></span>
+    <% end %>
+  </h1>
+
+  <div class="header__actions header__actions--end">
     <div data-controller="date-selector"
-         data-date-selector-base-path-value="<%= giorno_path(giorno: '__DATE__').sub('__DATE__', '') %>">
+         data-date-selector-base-path-value="<%= giorno_path(giorno: '__DATE__').sub('__DATE__', '') %>"
+         style="display: contents;">
       <input type="date" value="<%= @giorno %>"
              data-date-selector-target="picker"
              data-action="change->date-selector#change"
-             class="input--hidden">
+             class="input--hidden"
+             style="position: absolute;">
       <button type="button" class="btn btn--circle"
+              data-controller="tooltip"
               data-action="date-selector#open">
         <%= icon_tag "calendar", size: "small" %>
         <span class="for-screen-reader">Scegli data</span>
       </button>
     </div>
   </div>
-
-  <div class="header__title divider divider--fade full-width">
-    <%= link_to giorno_path(giorno: (@giorno - 1.day).to_s),
-        class: "btn txt-x-small",
-        data: { controller: "link-modifier tooltip hotkey", link_modifier_target: "link", action: "keydown.left@document->hotkey#click" } do %>
-      <%= icon_tag "arrow-left", size: "small" %>
-      <span class="for-screen-reader">Giorno precedente <kbd class="kbd">&larr;</kbd></span>
-    <% end %>
-
-    <span class="overflow-ellipsis"><%= I18n.l(@giorno.to_date, format: :long_with_day, locale: :it) %></span>
-  
-    <%= link_to giorno_path(giorno: (@giorno + 1.day).to_s),
-        class: "btn txt-x-small",
-        data: { controller: "link-modifier tooltip hotkey", link_modifier_target: "link", action: "keydown.right@document->hotkey#click" } do %>
-      <%= icon_tag "arrow-right", size: "small" %>
-      <span class="for-screen-reader">Giorno successivo <kbd class="kbd">&rarr;</kbd></span>
-    <% end %>
-  
-  </div>
-
-  <div class="header__actions header__actions--end">
-
-    <% if @tappe.size > 1 %>
-      <%= link_to url_for(controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }),
-          class: "btn btn--ghost" do %>
-        Ricalcola
-      <% end %>
-    <% end %>
-    <% if @tappe.any? %>
-      <%= render DropdownComponent.new() do |dropdown| %>
-        <%= dropdown.with_button do %>
-          <div class="btn" style="background: var(--color-notice-lighter); color: var(--color-notice-dark);">
-            <%= icon_tag "printer", size: "small" %>
-          </div>
-        <% end %>
-
-        <%= dropdown.with_item do %>
-          <%= link_to tappe_giorno_pdf_path(giorno: @giorno),
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            Elenco tappe del giorno
-          <% end %>
-        <% end %>
-
-        <%= dropdown.with_item do %>
-          <%= link_to adozioni_tappe_pdf_path(giorno: @giorno),
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            Kit adozioni nel baule
-          <% end %>
-        <% end %>
-
-        <%= dropdown.with_item do %>
-          <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno),
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            Dettaglio appunti e documenti
-          <% end %>
-        <% end %>
-
-        <%= dropdown.with_item do %>
-          <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'),
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            Fogli scuola
-          <% end %>
-        <% end %>
-
-        <%= dropdown.with_item do %>
-          <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true),
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            Fogli scuola + sovrapacchi
-          <% end %>
-        <% end %>
-      <% end %>
-    <% end %>
-  </div>
 <% end %>
 
 
-<div data-controller="bulk-actions swipe"
+<div class="agenda-day" data-controller="bulk-actions swipe"
      data-swipe-left-value="<%= giorno_path(giorno: (@giorno - 1.day).to_s) %>"
      data-swipe-right-value="<%= giorno_path(giorno: (@giorno + 1.day).to_s) %>"
      style="min-block-size: calc(100dvh - 8rem);">
-    <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); margin-inline: auto; container-type: inline-size;">
+
+  <div class="agenda-day__layout">
+    <%# Sinistra — desktop only %>
+    <div class="agenda-day__side agenda-day__side--start hide-on-touch">
+      <% if @tappe.size > 1 %>
+        <%= link_to url_for(controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }),
+            class: "btn btn--circle", data: { controller: "tooltip" } do %>
+          <%= icon_tag "refresh" %>
+          <span class="for-screen-reader">Ricalcola percorso</span>
+        <% end %>
+      <% end %>
+
+      <%= link_to mappa_del_giorno_path(@giorno),
+          class: "btn btn--circle", data: { controller: "tooltip" } do %>
+        <%= icon_tag "mappa" %>
+        <span class="for-screen-reader">Mappa</span>
+      <% end %>
+    </div>
+
+    <%# Centro — lista tappe %>
+    <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); container-type: inline-size;">
       <div class="board-tools card" style="flex-wrap: wrap;">
         <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
           <%= icon_tag "document" %>
@@ -135,6 +99,67 @@
         </div>
       </div>
 
+      <% if @tappe.any? %>
+        <div class="hide-on-desktop flex gap-half justify-center margin-block-half">
+          <% if @tappe.size > 1 %>
+            <%= link_to url_for(controller: "mappe", action: "calcola_percorso_ottimale", method: :get, params: { giorno: @giorno.to_s }),
+                class: "btn btn--circle", data: { controller: "tooltip" } do %>
+              <%= icon_tag "refresh" %>
+              <span class="for-screen-reader">Ricalcola percorso</span>
+            <% end %>
+          <% end %>
+
+          <%= link_to mappa_del_giorno_path(@giorno),
+              class: "btn btn--circle", data: { controller: "tooltip" } do %>
+            <%= icon_tag "mappa" %>
+            <span class="for-screen-reader">Mappa</span>
+          <% end %>
+
+          <div style="position: relative"
+               data-controller="dialog"
+               data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+            <button type="button" class="btn btn--circle" data-action="dialog#toggle" data-controller="tooltip">
+              <%= icon_tag "printer", size: "small" %>
+              <span class="for-screen-reader">Stampe</span>
+            </button>
+            <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
+              <ul class="popup__list">
+                <li class="popup__item">
+                  <%= link_to tappe_giorno_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                      data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                    Elenco tappe del giorno
+                  <% end %>
+                </li>
+                <li class="popup__item">
+                  <%= link_to adozioni_tappe_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                      data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                    Kit adozioni nel baule
+                  <% end %>
+                </li>
+                <li class="popup__item">
+                  <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                      data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                    Dettaglio appunti e documenti
+                  <% end %>
+                </li>
+                <li class="popup__item">
+                  <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'), class: "popup__btn btn",
+                      data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                    Fogli scuola
+                  <% end %>
+                </li>
+                <li class="popup__item">
+                  <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true), class: "popup__btn btn",
+                      data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                    Fogli scuola + sovrapacchi
+                  <% end %>
+                </li>
+              </ul>
+            </dialog>
+          </div>
+        </div>
+      <% end %>
+
       <div class="cards__transition-container">
         <div id="giorno-<%= @giorno %>"
             class="cards__list"
@@ -142,41 +167,97 @@
             data-tax-sortable-group-value="calendar"
             data-tax-sortable-data-tappa="<%= @giorno.to_s %>"
             data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
-
             <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
         </div>
       </div>
     </section>
 
-    <% if @tappe.empty? %>
-      <div class="blank-slate blank-slate--empty" style="margin-inline: auto; text-align: center;">
-        <h3 class="txt-large font-weight-bold">Nessuna tappa in programma</h3>
-        <p class="txt-small txt-subtle margin-block-end">Aggiungi una tappa per iniziare.</p>
+    <%# Destra — desktop only %>
+    <div class="agenda-day__side agenda-day__side--end hide-on-touch">
+      <div style="position: relative"
+           data-controller="dialog"
+           data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+        <button type="button" class="btn btn--circle" data-action="dialog#toggle" data-controller="tooltip">
+          <%= icon_tag "printer", size: "small" %>
+          <span class="for-screen-reader">Stampe</span>
+        </button>
+        <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
+          <ul class="popup__list">
+            <li class="popup__item">
+              <%= link_to tappe_giorno_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                  data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                Elenco tappe del giorno
+              <% end %>
+            </li>
+            <li class="popup__item">
+              <%= link_to adozioni_tappe_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                  data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                Kit adozioni nel baule
+              <% end %>
+            </li>
+            <li class="popup__item">
+              <%= link_to dettaglio_appunti_documenti_pdf_path(giorno: @giorno), class: "popup__btn btn",
+                  data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                Dettaglio appunti e documenti
+              <% end %>
+            </li>
+            <li class="popup__item">
+              <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni'), class: "popup__btn btn",
+                  data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                Fogli scuola
+              <% end %>
+            </li>
+            <li class="popup__item">
+              <%= link_to fogli_scuola_tappe_pdf_path(giorno: @giorno, tipo_stampa: 'mie_adozioni', con_sovrapacchi: true), class: "popup__btn btn",
+                  data: { controller: "link-modifier", link_modifier_target: "link", action: "click->dialog#close" } do %>
+                Fogli scuola + sovrapacchi
+              <% end %>
+            </li>
+          </ul>
+        </dialog>
       </div>
-    <% end %>
+    </div>
+  </div>
 
-    <%= render "tappe/bulk_bar/bar" %>
+  <% if @tappe.empty? %>
+    <div class="blank-slate blank-slate--empty" style="margin-inline: auto; text-align: center;">
+      <h3 class="txt-large font-weight-bold">Nessuna tappa in programma</h3>
+      <p class="txt-small txt-subtle margin-block-end">Aggiungi una tappa per iniziare.</p>
+    </div>
+  <% end %>
+
+  <%= render "tappe/bulk_bar/bar" %>
 </div>
 
-<div class="margin-block-start-double"></div>
-
 <% if @entries_per_tappa&.any? %>
-  <div class="full-width pad group">
+  <div class="full-width pad group" data-controller="bulk-actions" data-action="click->bulk-actions#toggleCard">
+    <div class="group-header">
+      <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Entries del giorno</h3>
+      <div class="group-header__actions group-header__actions--end">
+        <button type="button" class="btn btn--circle" data-action="bulk-actions#enterSelectionMode"
+            data-controller="tooltip" data-tooltip-content-value="Seleziona">
+          <%= icon_tag "check-circle" %>
+          <span class="for-screen-reader">Seleziona</span>
+        </button>
+      </div>
+    </div>
+
+    <%= render "entries/bulk_bar/bar" %>
+
     <% @entries_per_tappa.each do |tappa, entries| %>
+      <% filtered_entries = entries.reject { |e| e.entryable_type == "Tappa" } %>
+      <% next if filtered_entries.empty? %>
+
       <h3 class="divider divider--fade txt-medium font-weight-black">
-        <%= tappa.tappable.denominazione %> (<%= entries.count %>)
+        <%= tappa.tappable.denominazione %> (<%= filtered_entries.count %>)
       </h3>
       <div class="cards cards--grid cards--in-context">
         <div class="cards__list">
-          <% entries.each do |entry| %>
+          <% filtered_entries.each do |entry| %>
             <%= render "entries/entry", entry: entry, draggable: false %>
           <% end %>
         </div>
       </div>
     <% end %>
   </div>
-<% end %>
-
-<% if @tappe.any? %>
-  <%= turbo_frame_tag :mappa, src: mappa_del_giorno_path(@giorno), data: { turbo_cache: false }, loading: :lazy %>
 <% end %>

@@ -572,4 +572,23 @@
     box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--giro-color);
   }
 
+  /* Agenda day — show page layout with side buttons
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-day__layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--inline-space);
+  }
+
+  .agenda-day__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-half);
+    padding-block-start: 4rem;
+    position: sticky;
+    top: 4rem;
+  }
+
 }

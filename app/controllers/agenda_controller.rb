@@ -422,7 +422,9 @@ class AgendaController < ApplicationController
         tappable = tappa.tappable
         next unless tappable&.respond_to?(:open_entries)
 
-        entries = Entry.load_entryables(tappable.open_entries)
+        entries = Entry.load_entryables(
+          tappable.open_entries.where.not(entryable_type: "Tappa")
+        )
         @entries_per_tappa[tappa] = entries if entries.any?
       end
     end
