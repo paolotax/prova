@@ -6,17 +6,16 @@ module BolleVisione
     def create
       @persona = @bolla_visione.scuola.persone.new(persona_params)
       @persona.account = Current.account
+      @persona.ruolo = :docente if @persona.ruolo.blank?
 
       if @persona.save
         if @persona.referente?
           @bolla_visione.update!(referente: @persona)
         end
 
-        if @persona.docente? && params[:persona][:classe_ids].present?
-          classe_ids = params[:persona][:classe_ids].reject(&:blank?)
-          scuola_classi = @bolla_visione.scuola.classi.where(id: classe_ids)
-          materia = params[:persona][:materia]
-          scuola_classi.each do |classe|
+        materia = params.dig(:persona, :materia) || params[:materia]
+        if materia.present?
+          @bolla_visione.scuola.classi.each do |classe|
             @persona.persona_classi.create(classe: classe, materia: materia)
           end
         end
@@ -34,7 +33,11 @@ module BolleVisione
     end
 
     def persona_params
-      params.require(:persona).permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
+      if params.key?(:persona)
+        params.require(:persona).permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
+      else
+        params.permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
+      end
     end
   end
 end

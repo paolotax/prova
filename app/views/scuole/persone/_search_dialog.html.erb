@@ -1,8 +1,11 @@
-<%# locals: (scuola:) -%>
+<%# locals: (scuola:, form_url: nil, select_url: nil, ruolo: nil) -%>
+
+<% form_url ||= scuola_persone_path(scuola) %>
+<% select_url ||= scuola_persona_path(scuola, '__PERSONA_ID__') %>
 
 <div data-controller="dialog persona-search"
     data-dialog-modal-value="true"
-    data-persona-search-scuola-url-value="<%= scuola_persona_path(scuola, '__PERSONA_ID__') %>"
+    data-persona-search-scuola-url-value="<%= select_url %>"
     data-action="keydown.esc->dialog#close:stop">
   <button type="button" class="btn btn--circle btn--small"
       data-action="dialog#open"
@@ -31,14 +34,22 @@
 
     <%# Form nuovo persona %>
     <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
-    <%= form_with url: scuola_persone_path(scuola), method: :post,
+    <%= form_with url: form_url, method: :post,
         class: "flex flex-column gap-quarter full-width" do |f| %>
+      <% if ruolo.present? %>
+        <%= f.hidden_field :ruolo, value: ruolo %>
+      <% end %>
       <div class="flex gap-quarter">
         <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small" %>
         <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
       </div>
-      <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
-          list: "materie_list_#{scuola.id}" %>
+      <% if ruolo.to_s != "referente" %>
+        <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
+            list: "materie_list_#{scuola.id}" %>
+      <% else %>
+        <%= f.email_field :email, placeholder: "Email", class: "input txt-small" %>
+        <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input txt-small" %>
+      <% end %>
       <div class="flex gap-half justify-center margin-block-start-half">
         <button type="button" class="btn" data-action="dialog#close">Annulla</button>
         <button type="submit" class="btn">
