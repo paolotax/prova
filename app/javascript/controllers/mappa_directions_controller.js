@@ -1,9 +1,29 @@
 import { Controller } from "@hotwired/stimulus"
-// import mapboxgl from "mapbox-gl"
-// import MapboxDirections from "@mapbox/mapbox-gl-directions"
+
+const MAPBOX_JS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"
+const MAPBOX_CSS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css"
+
+function loadMapbox() {
+  if (window.mapboxgl) return Promise.resolve()
+
+  if (!document.querySelector(`link[href="${MAPBOX_CSS}"]`)) {
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = MAPBOX_CSS
+    document.head.appendChild(link)
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script")
+    script.src = MAPBOX_JS
+    script.onload = resolve
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
 
 export default class extends Controller {
-  
+
   static targets = ["map", "totaleKm", "totaleTempo"];
 
   static values = {
@@ -11,20 +31,21 @@ export default class extends Controller {
     waypoints: Array
   };
 
-  connect() {
+  async connect() {
+    await loadMapbox()
     this.initMap();
-    document.addEventListener("refresh-map", this.refreshMap.bind(this));
   }
 
-  refreshMap() {
-    this.initMap();
+  disconnect() {
+    if (this.map) {
+      this.map.remove()
+      this.map = null
+    }
   }
 
   initMap() {
-
     if (!this.mapTarget) return;
 
-    // Rimuovi la mappa precedente se esiste (evita sovrapposizioni)
     if (this.map) {
       this.map.remove();
     }
@@ -40,48 +61,23 @@ export default class extends Controller {
       language: 'it-IT'
     })
 
-    // const directions = new MapboxDirections({
-    //   accessToken: mapboxgl.accessToken,
-    //   unit: 'metric',
-    //   profile: 'mapbox/driving',
-    //   interactive: false,
-    //   language: 'it-IT'
-    // })
+    this.map.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
     this.map.on('load', () => {
-
-      // this.map.addControl(directions, 'top-left');
-
-      // directions.setOrigin([coordinates[0].lng, coordinates[0].lat]);
-      // directions.setDestination([coordinates[coordinates.length - 1].lng, coordinates[coordinates.length - 1].lat]);
-      // this.addMarker(coordinates[0]);
-      // this.addMarker(coordinates[coordinates.length - 1]);
-
-      // coordinates.slice(1, -1).forEach((coord, index) => {
-      //     directions.addWaypoint(index, [coord.lng, coord.lat]);
-      //     // Aggiungi un marker sulla mappa
-      //     this.addMarker(coord);
-      // });
-
       const bounds = new mapboxgl.LngLatBounds();
-      // Extend the bounds to include all waypoints
       coordinates.forEach(coord => {
-          bounds.extend(coord);
-          this.addMarker(coord);
+        bounds.extend(coord);
+        this.addMarker(coord);
       });
-      
-      // Fit the map to the bounds with padding
-      this.map.fitBounds(bounds, {
-          padding: 100 // 50 pixels of padding
-      });
-    }); 
+
+      this.map.fitBounds(bounds, { padding: 100 });
+    });
 
     this.fetchAndDrawRoute();
-    
   }
 
   addMarker(coord) {
-    const marker = new mapboxgl.Marker()
+    new mapboxgl.Marker()
       .setLngLat([coord.lng, coord.lat])
       .setPopup(
         new mapboxgl.Popup({ offset: 25 }).setHTML(
@@ -100,10 +96,9 @@ export default class extends Controller {
       .then((response) => response.json())
       .then((data) => {
         const route = data.routes[0].geometry;
-        const distance = data.routes[0].distance; // Distance in meters
-        const duration = data.routes[0].duration; // Duration in seconds
+        const distance = data.routes[0].distance;
+        const duration = data.routes[0].duration;
 
-        // Add the route to the map as a layer
         this.map.addLayer({
           id: "route",
           type: "line",
@@ -126,16 +121,14 @@ export default class extends Controller {
           }
         });
 
-        // Adjust map bounds to fit the route
         const bounds = new mapboxgl.LngLatBounds();
         route.coordinates.forEach((coord) => bounds.extend(coord));
         this.map.fitBounds(bounds, { padding: 50 });
 
-        // Display the total distance
-        const distanceInKm = (distance / 1000).toFixed(1); // Convert to km and round to 2 decimal places
+        const distanceInKm = (distance / 1000).toFixed(1);
         let durationDisplay;
         if (duration < 3600) {
-          durationDisplay = `${(duration / 60).toFixed()} minuti`; // Convert to minutes and round to 2 decimal places
+          durationDisplay = `${(duration / 60).toFixed()} minuti`;
         } else {
           const hours = Math.floor(duration / 3600);
           const minutes = Math.round((duration % 3600) / 60);
@@ -144,11 +137,9 @@ export default class extends Controller {
           durationDisplay = `${hoursDisplay} ${minutesDisplay}`;
         }
 
-        this.totaleKmTarget.textContent = distanceInKm;
-        this.totaleTempoTarget.textContent = durationDisplay;
+        if (this.hasTotaleKmTarget) this.totaleKmTarget.textContent = distanceInKm;
+        if (this.hasTotaleTempoTarget) this.totaleTempoTarget.textContent = durationDisplay;
       })
       .catch((error) => console.error("Error fetching route:", error));
   }
-
-};
-
+}

@@ -1,12 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
 
+const MAPBOX_JS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"
+const MAPBOX_CSS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css"
+
+function loadMapbox() {
+  if (window.mapboxgl) return Promise.resolve()
+
+  // CSS
+  if (!document.querySelector(`link[href="${MAPBOX_CSS}"]`)) {
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = MAPBOX_CSS
+    document.head.appendChild(link)
+  }
+
+  // JS
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script")
+    script.src = MAPBOX_JS
+    script.onload = resolve
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
+
 // Connects to data-controller="mappa-posizione"
 export default class extends Controller {
 
   static targets = [ "map", "coordinates" ]
   static values = { updateUrl: String, denominazione: String, indirizzo: String }
 
-  connect() {
+  async connect() {
+    await loadMapbox()
 
     mapboxgl.accessToken = this.data.get("mapboxAccessToken")
 
@@ -24,6 +49,13 @@ export default class extends Controller {
     this.map.on('load', () => {
       this.addMarkers()
     })
+  }
+
+  disconnect() {
+    if (this.map) {
+      this.map.remove()
+      this.map = null
+    }
   }
 
   addMarkers() {
@@ -77,6 +109,3 @@ export default class extends Controller {
     this.map.setStyle(`mapbox://styles/mapbox/${style}`)
   }
 }
-
-
-

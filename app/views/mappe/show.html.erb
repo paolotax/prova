@@ -1,10 +1,5 @@
 <% @page_title = @tappable.denominazione %>
 
-<% content_for :head do %>
-  <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet">
-<% end %>
-
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <%= link_to "javascript:history.back()", class: "btn" do %>
@@ -14,70 +9,41 @@
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= link_to @tappable.denominazione, @tappable %></span>
+    <span class="overflow-ellipsis"><%= @tappable.denominazione %></span>
   </h1>
 
   <div class="header__actions header__actions--end">
-    <% if @tappable.respond_to?(:previous) && @tappable.respond_to?(:next) %>
-      <%= tag.div class: "flex flex-row gap-1" do %>
-        <% if @tappable.previous %>
-          <%= link_to mappe_path("#{@tappable.class.name.underscore}-#{@tappable.previous.id}"), class: "btn" do %>
-            <%= icon_tag "arrow-left", size: "small" %>
-            <span class="for-screen-reader">Precedente</span>
-          <% end %>
-        <% end %>
-        <% if @tappable.next %>
-          <%= link_to mappe_path("#{@tappable.class.name.underscore}-#{@tappable.next.id}"), class: "btn" do %>
-            <span class="for-screen-reader">Successivo</span>
-            <%= icon_tag "arrow-right", size: "small" %>
-          <% end %>
-        <% end %>
-      <% end %>
-    <% end %>
-    <%= link_to go_to_tappable_path(@tappable, current_user.effective_navigator),
-        class: "btn",
-        style: "background: var(--color-notice-lighter); color: var(--color-notice-dark);",
-        target: "_blank" do %>
-      <%= icon_tag "marker", size: "small" %>
-      <span class="for-screen-reader">Vai</span>
+    <%= link_to go_to_tappable_path(@tappable, 'google'),
+        class: "btn", target: "_blank", data: { controller: "tooltip" } do %>
+      <%= icon_tag "world", size: "small" %>
+      <span class="for-screen-reader">Apri in Google Maps</span>
     <% end %>
   </div>
 <% end %>
 
-<p class="text-sm text-gray-500 mb-4">Trascina il puntatore sulla mappa per indicare la posizione esatta.</p>
+<div data-controller="mappa-posizione"
+     data-mappa-posizione-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+     data-mappa-posizione-latitude="<%= @tappable.latitude %>"
+     data-mappa-posizione-longitude="<%= @tappable.longitude %>"
+     data-mappa-posizione-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>"
+     data-mappa-posizione-update-url-value="<%= mappe_path("#{@tappable.class.name.underscore}-#{@tappable.id}") %>"
+     data-mappa-posizione-denominazione-value="<%= @tappable.denominazione %>"
+     data-mappa-posizione-indirizzo-value="<%= @tappable.try(:indirizzo_completo) || @tappable.try(:indirizzo_navigator) || '' %>"
+     style="position: relative; height: calc(100dvh - 4rem);">
 
+  <div style="position: absolute; top: 0.5rem; left: 0.5rem; z-index: 1;">
+    <select data-action="change->mappa-posizione#changeStyle"
+            class="input txt-small" style="padding: 0.25rem 0.5rem; background-color: oklch(1 0 0 / 0.85); border-radius: 0.25rem;">
+      <option value="satellite-streets-v12">Satellite e strade</option>
+      <option value="streets-v12">Strade</option>
+      <option value="satellite-v9">Satellite</option>
+      <option value="outdoors-v12">Outdoors</option>
+    </select>
+  </div>
 
-<div class="p-1" 
-	data-controller="mappa-posizione"
-    data-mappa-posizione-mapbox-access-token="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-    data-mappa-posizione-latitude="<%= @tappable.latitude %>"
-    data-mappa-posizione-longitude="<%= @tappable.longitude %>"
-    data-mappa-posizione-id="<%= @tappable.class.name.underscore %>-<%= @tappable.id %>"
-    data-mappa-posizione-update-url-value="<%= mappe_path("#{@tappable.class.name.underscore}-#{@tappable.id}") %>"
-    data-mappa-posizione-denominazione-value="<%= @tappable.denominazione %>"
-    data-mappa-posizione-indirizzo-value="<%= @tappable.try(:indirizzo_completo) || @tappable.try(:indirizzo_navigator) || '' %>">
+  <div id="map" data-mappa-posizione-target="map" style="height: 100%;"></div>
 
-	<div class="relative flex w-44">
-		<select data-action="change->mappa-posizione#changeStyle" class="peer block w-full border-0 bg-transparent py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" >
-			<option value="satellite-streets-v12">Satellite e strade</option>
-			
-			<option value="streets-v12">Strade</option>
-			<option value="satellite-v9">Satellite</option>
-			<option value="outdoors-v12">Outdoors</option>
-			<option value="light-v10">Light</option>
-			<option value="dark-v10">Dark</option>
-		</select>
-		<%= tag.div class: "absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-gray-900", aria: { hidden: "true" } %>
-	</div>
-
-  	<div id="map" data-mappa-posizione-target="map" style="height: calc(100vh - 10rem); min-height: 400px;" class="mt-4"></div>
-  
-	<pre id="coordinates" 
-		class="bg-black bg-opacity-50 text-white p-1.5 m-0 text-xs leading-4 rounded-sm" 
-		data-mappa-posizione-target="coordinates">
-	</pre>
+  <pre id="coordinates"
+       data-mappa-posizione-target="coordinates"
+       style="position: absolute; bottom: 0.5rem; left: 0.5rem; z-index: 1; background: oklch(0 0 0 / 0.6); color: white; padding: 0.25rem 0.5rem; margin: 0; font-size: var(--text-x-small); border-radius: 0.25rem;"></pre>
 </div>
-
-
-
-

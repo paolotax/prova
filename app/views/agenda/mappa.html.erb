@@ -1,34 +1,36 @@
-<% content_for :head do %>
-  <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js" %>
-  <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js" %>
-  <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" %>
-  <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" %>
+<% @page_title = "Mappa #{l @giorno.to_date, format: :short}" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= link_to giorno_path(giorno: @giorno), class: "btn" do %>
+      <%= icon_tag "arrow-left", size: "small" %>
+      <span class="for-screen-reader">Torna al giorno</span>
+    <% end %>
+  </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= l @giorno.to_date, format: :long_with_day, locale: :it %></span>
+  </h1>
+
+  <div class="header__actions header__actions--end">
+    <%= link_to create_google_maps_link(@indirizzi),
+        class: "btn", target: "_blank", data: { controller: "tooltip" } do %>
+      <%= icon_tag "world", size: "small" %>
+      <span class="for-screen-reader">Apri in Google Maps</span>
+    <% end %>
+  </div>
 <% end %>
 
-<%= turbo_frame_tag :mappa do %>
-    <div
-      data-controller="mappa-directions"
-      data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
-      data-mappa-directions-waypoints-value="<%= @waypoints %>"
-      data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>">
+<div data-controller="mappa-directions"
+     data-mappa-directions-mapbox-token-value="<%= ENV['MAPBOX_ACCESS_TOKEN'] %>"
+     data-mappa-directions-waypoints-value="<%= @waypoints %>"
+     data-mappa-directions-coordinates="<%= @tappe.map { |tappa| { lng: tappa.longitude, lat: tappa.latitude, name: tappa.denominazione } }.to_json %>"
+     style="position: relative; height: calc(100dvh - 4rem);">
 
-        <div class="flex items-center justify-between mb-2">
-          <div>
-            <h2 class="text-lg font-semibold">Mappa</h2>
-            <div class="text-sm text-gray-500">
-              <strong>Distanza totale:</strong> <span data-mappa-directions-target="totaleKm"></span> km -
-              <strong>Durata totale:</strong> <span data-mappa-directions-target="totaleTempo"></span>
-            </div>
-          </div>
-          <%= link_to create_google_maps_link(@indirizzi),
-              class: "btn btn--ghost",
-              target: "_blank",
-              data: { controller: "link-modifier", link_modifier_target: "link" } do %>
-            <%= icon_tag "truck", size: "small" %>
-            Google Maps!
-          <% end %>
-        </div>
+  <div style="position: absolute; top: 0.5rem; left: 0.5rem; z-index: 1; background: oklch(1 0 0 / 0.85); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: var(--text-x-small);">
+    <strong>Distanza:</strong> <span data-mappa-directions-target="totaleKm"></span> km —
+    <strong>Durata:</strong> <span data-mappa-directions-target="totaleTempo"></span>
+  </div>
 
-        <div id="map" data-mappa-directions-target="map" style="height: 500px;" class="mt-4"></div>
-    </div>
-<% end %>
+  <div id="map" data-mappa-directions-target="map" style="height: 100%;"></div>
+</div>
