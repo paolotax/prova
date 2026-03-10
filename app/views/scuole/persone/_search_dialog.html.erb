@@ -1,4 +1,4 @@
-<%# locals: (scuola:, form_url: nil, select_url: nil, ruolo: nil) -%>
+<%# locals: (scuola:, form_url: nil, select_url: nil, assign_url: nil, ruolo: nil) -%>
 
 <% form_url ||= scuola_persone_path(scuola) %>
 <% select_url ||= scuola_persona_path(scuola, '__PERSONA_ID__') %>
@@ -6,6 +6,7 @@
 <div data-controller="dialog persona-search"
     data-dialog-modal-value="true"
     data-persona-search-scuola-url-value="<%= select_url %>"
+    <%= "data-persona-search-assign-url-value=#{assign_url}" if assign_url.present? %>
     data-action="keydown.esc->dialog#close:stop">
   <button type="button" class="btn btn--circle btn--small"
       data-action="dialog#open"

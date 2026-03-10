@@ -2,6 +2,6 @@
 
 <div id="<%= dom_id(persona, :board) %>">
   <%= render "shared/cards/display/common/board",
-      id: persona.persona_classi.first&.materia&.titleize,
+      id: persona.ruolo&.titleize,
       name: scuola.denominazione %>
 </div>

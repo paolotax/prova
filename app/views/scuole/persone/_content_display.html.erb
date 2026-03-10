@@ -40,6 +40,9 @@
 %>
 
 <h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
+<% if cattedra.present? %>
+  <div class="txt-small txt-subtle"><%= cattedra %></div>
+<% end %>
 
 <div data-controller="libro-hover">
   <div class="flex gap-quarter flex-wrap margin-block-start-half">

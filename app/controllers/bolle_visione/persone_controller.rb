@@ -3,6 +3,12 @@ module BolleVisione
     before_action :authenticate_user!
     before_action :set_bolla_visione
 
+    def update
+      persona = Current.account.persone.find(params[:persona_id])
+      @bolla_visione.update!(referente: persona)
+      redirect_to bolla_visione_path(@bolla_visione)
+    end
+
     def create
       @persona = @bolla_visione.scuola.persone.new(persona_params)
       @persona.account = Current.account
