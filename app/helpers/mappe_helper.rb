@@ -46,15 +46,15 @@ module MappeHelper
       end
     elsif provider == 'google'
       if tappable.geocoded?
-        "https://www.google.com/maps/search/?api=1&query=#{tappable.latitude},#{tappable.longitude}"
+        "https://www.google.com/maps/dir/?api=1&destination=#{tappable.latitude},#{tappable.longitude}"
       else
-        "https://www.google.com/maps/search/?api=1&query=#{url_encode tappable.indirizzo_navigator}"
+        "https://www.google.com/maps/dir/?api=1&destination=#{url_encode tappable.indirizzo_navigator}"
       end
     elsif provider == 'apple'
       if tappable.geocoded?
-        "https://maps.apple.com/?q=#{tappable.latitude},#{tappable.longitude}"
+        "https://maps.apple.com/?daddr=#{tappable.latitude},#{tappable.longitude}&dirflg=d"
       else
-        "https://maps.apple.com/?q=#{url_encode tappable.indirizzo_navigator}"
+        "https://maps.apple.com/?daddr=#{url_encode tappable.indirizzo_navigator}&dirflg=d"
       end
     end
   end
@@ -86,20 +86,6 @@ module MappeHelper
     link = "https://www.google.com/maps/dir/?api=1&origin=#{origin}&destination=#{destination}"
     link += "&waypoints=#{waypoints}" unless waypoints.empty?
   
-    link
-  end
-
-  def create_apple_maps_link(coordinates)
-    if coordinates.length < 2
-      return "Devi fornire almeno due coordinate: partenza e destinazione."
-    end
-  
-    origin = "#{coordinates.first[:latitude]},#{coordinates.first[:longitude]}"
-    destination = "#{coordinates.last[:latitude]},#{coordinates.last[:longitude]}"
-  
-    link = "http://maps.apple.com/?saddr=#{origin}&daddr=#{destination}"
-    
-    # Nota: Apple Maps non supporta direttamente tappe intermedie nei link
     link
   end
 

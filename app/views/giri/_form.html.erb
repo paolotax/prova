@@ -1,6 +1,6 @@
 <%# locals: (giro:) -%>
 
-<%= form_with(model: giro, class: "flex flex-column gap",
+<%= form_with(model: giro, class: "flex flex-column gap-half margin-block-start",
     data: { }) do |form| %>
 
   <% if giro.errors.any? %>
@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <div class="color-picker__colors">
+  <div class="color-picker__colors margin-block-start-half">
     <% Color::COLORS.each do |color| %>
       <label class="btn txt-small borderless" style="--btn-background: <%= color %>" title="<%= color.name %>">
         <%= form.radio_button :color, color.value,
