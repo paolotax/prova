@@ -16,12 +16,19 @@
 
   <div>
     <label class="txt-small txt-bold">Descrizione</label>
-    <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input input--textarea" %>
+    <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input" %>
   </div>
 
-  <div>
-    <label class="txt-small txt-bold">Data inizio</label>
-    <%= date_input(form, :iniziato_il, value: giro.iniziato_il || Date.today) %>
+  <div class="flex gap">
+    <div class="flex-1">
+      <label class="txt-small">Data inizio</label>
+      <%= date_input(form, :iniziato_il, value: giro.iniziato_il || Date.today) %>
+    </div>
+
+    <div class="flex-1">
+      <label class="txt-small">Data fine</label>
+      <%= date_input(form, :finito_il, value: giro.finito_il || Date.today) %>
+    </div>
   </div>
 
   <div class="color-picker__colors">
