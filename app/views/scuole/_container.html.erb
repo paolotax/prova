@@ -79,9 +79,9 @@
 	<% if prossime_visite.any? %>
 		<div class="margin-block-start">
 			<h3 class="divider divider--fade txt-medium font-weight-black">Prossime visite</h3>
-			<ul class="flex flex-column gap-half">
+			<ul class="flex flex-column gap-half txt-align-center">
 				<% prossime_visite.each do |tappa| %>
-					<li class="flex gap align-center txt-small">
+					<li class="txt-small">
 						<span class="txt-subtle"><%= l tappa.data_tappa, format: :short %></span>
 						<span><%= tappa.titolo.presence || tappa.giri.map(&:titolo).join(", ") %></span>
 					</li>
