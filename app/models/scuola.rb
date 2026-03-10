@@ -222,4 +222,8 @@ class Scuola < ApplicationRecord
      Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id))
     .map(&:to_s)
   end
+
+  def entry_tappa_ids
+    tappe.pluck(:id).map(&:to_s)
+  end
 end

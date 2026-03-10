@@ -142,4 +142,8 @@ class Cliente < ApplicationRecord
   def entry_documento_ids
     documenti.where(documento_padre_id: nil).pluck(:id).map(&:to_s)
   end
+
+  def entry_tappa_ids
+    tappe.pluck(:id).map(&:to_s)
+  end
 end

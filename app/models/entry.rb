@@ -84,12 +84,17 @@ class Entry < ApplicationRecord
     end
   }
 
-  scope :for_entryables, ->(appunto_ids, documento_ids) {
-    where(
-      "(entryable_type = 'Appunto' AND entryable_id IN (?)) OR (entryable_type = 'Documento' AND entryable_id IN (?))",
-      appunto_ids.presence || [""],
-      documento_ids.presence || [""]
-    )
+  scope :for_entryables, ->(appunto_ids, documento_ids, tappa_ids = []) {
+    conditions = []
+    conditions << sanitize_sql_array(["(entryable_type = 'Appunto' AND entryable_id IN (?))", appunto_ids]) if appunto_ids.present?
+    conditions << sanitize_sql_array(["(entryable_type = 'Documento' AND entryable_id IN (?))", documento_ids]) if documento_ids.present?
+    conditions << sanitize_sql_array(["(entryable_type = 'Tappa' AND entryable_id IN (?))", tappa_ids]) if tappa_ids.present?
+
+    if conditions.any?
+      where(conditions.join(" OR "))
+    else
+      none
+    end
   }
 
   # Per giro

@@ -26,3 +26,9 @@
       class: AuthCleanupJob
       queue: default
       description: 'Pulisce sessioni e magic link scaduti'
+
+    create_tappa_entries:
+      cron: '0 6 * * *'  # Ogni giorno alle 6:00 AM
+      class: CreateTappaEntriesJob
+      queue: default
+      description: 'Crea entry per le tappe di oggi'

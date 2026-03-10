@@ -69,6 +69,8 @@ class Tappa < ApplicationRecord
 
   accepts_nested_attributes_for :giri
  
+  after_update_commit :manage_entry_on_data_change, if: :saved_change_to_data_tappa?
+
   positioned on: [:user, :data_tappa], column: :position
 
   
@@ -131,6 +133,20 @@ class Tappa < ApplicationRecord
 
   def da_ritirare?
     #data_tappa.nil? && giro.giro_ritiri?
+  end
+
+  private
+
+  def should_auto_create_entry?
+    data_tappa.present? && data_tappa <= Date.today
+  end
+
+  def manage_entry_on_data_change
+    if data_tappa.present? && data_tappa <= Date.today
+      ensure_entry! unless entry.present?
+    else
+      entry&.destroy
+    end
   end
 
   def self.ultima_tappa_passata
