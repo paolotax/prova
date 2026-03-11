@@ -572,6 +572,37 @@
     box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--giro-color);
   }
 
+  /* Route start/end indicators on first/last tappa
+  /* ------------------------------------------------------------------------ */
+
+  [id^="giorno-"] > .card:first-child,
+  [id^="giorno-"] > .card:last-child {
+    position: relative;
+  }
+
+  [id^="giorno-"] > .card:first-child::after,
+  [id^="giorno-"] > .card:last-child::after {
+    font-size: var(--text-small);
+    inset-block-start: 0.25em;
+    inset-inline-end: 0.4em;
+    line-height: 1;
+    position: absolute;
+    z-index: 1;
+  }
+
+  [id^="giorno-"] > .card:first-child::after {
+    content: "\1F6A9"; /* 🚩 */
+  }
+
+  [id^="giorno-"] > .card:last-child::after {
+    content: "\1F3C1"; /* 🏁 */
+  }
+
+  /* Hide when only one tappa */
+  [id^="giorno-"] > .card:first-child:last-child::after {
+    content: none;
+  }
+
   /* Agenda day — show page layout with side buttons
   /* ------------------------------------------------------------------------ */
 

@@ -1,55 +1,75 @@
-require 'geocoder'
-
 class PercorsoOttimale
+  RAD = Math::PI / 180
 
-  attr_accessor :places, :nodo_iniziale, :nodo_finale
-
-  def initialize(places)
-    @places = places
+  def initialize(tappe, start_id: nil, end_id: nil)
+    @tappe = tappe.to_a
+    @start_id = start_id
+    @end_id = end_id
   end
 
   def calcola
-    optimal_route = tsp_greedy(@places)
+    geocoded = @tappe.select { |t| t.latitude.present? && t.longitude.present? }
+    return if geocoded.size < 2
 
-    # Stampa il percorso ottimale e aggiorna la posizione delle tappe
-    puts "Percorso ottimale:"
-    optimal_route.each_with_index do |place, index|
+    # Separa start e end fissi
+    start_tappa = @start_id.present? ? geocoded.find { |t| t.id.to_s == @start_id.to_s } : nil
+    end_tappa = @end_id.present? ? geocoded.find { |t| t.id.to_s == @end_id.to_s } : nil
 
-      puts place.position
-      
-      place.position = index + 1
-      place.save
+    # Rimuovi start e end dal pool da ottimizzare
+    middle = geocoded.dup
+    middle.delete(start_tappa) if start_tappa
+    middle.delete(end_tappa) if end_tappa
 
-      puts "#{place.position}. #{place.denominazione} (#{place.latitude}, #{place.longitude})"
+    # Ottimizza il percorso intermedio
+    if start_tappa && middle.any?
+      ordered_middle = tsp_greedy(middle, from: start_tappa)
+    elsif middle.any?
+      ordered_middle = tsp_greedy(middle)
+    else
+      ordered_middle = []
+    end
+
+    # Assembla il percorso finale
+    ordered = []
+    ordered << start_tappa if start_tappa
+    ordered.concat(ordered_middle)
+    ordered << end_tappa if end_tappa
+
+    # Aggiorna le posizioni (usa valori negativi temporanei per evitare conflitti sul vincolo unique)
+    Tappa.transaction do
+      all_ids = @tappe.map(&:id)
+      Tappa.where(id: all_ids).update_all("position = -position - 1000")
+
+      # Tappe non geocoded vanno in fondo
+      non_geocoded = @tappe - geocoded
+      final_order = ordered + non_geocoded
+
+      final_order.each_with_index do |tappa, index|
+        tappa.update_columns(position: index + 1)
+      end
     end
   end
 
   private
 
-  # Funzione per calcolare la distanza tra due coordinate
-  def distance_between(lat1, lon1, lat2, lon2)
-    Geocoder::Calculations.distance_between([lat1, lon1], [lat2, lon2])
+  def distance(lat1, lon1, lat2, lon2)
+    dlat = (lat2 - lat1) * RAD
+    dlon = (lon2 - lon1) * RAD
+    a = Math.sin(dlat / 2)**2 +
+        Math.cos(lat1 * RAD) * Math.cos(lat2 * RAD) * Math.sin(dlon / 2)**2
+    2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   end
 
-  # Implementazione semplice del TSP usando metodo greedy
-  def tsp_greedy(places)
-    start = places.first
-    visited = [start]
-
-    puts "Nodo iniziale: #{start.denominazione} (#{start.latitude}, #{start.longitude})"
-    
-    unvisited = places[1..-1]
-
-    current_place = start
+  def tsp_greedy(places, from: nil)
+    current = from || places.first
+    unvisited = from ? places.dup : places[1..]
+    visited = from ? [] : [places.first]
 
     while unvisited.any?
-      nearest = unvisited.min_by do |place|
-        distance_between(current_place.latitude, current_place.longitude, place.latitude, place.longitude)
-      end
-
+      nearest = unvisited.min_by { |p| distance(current.latitude, current.longitude, p.latitude, p.longitude) }
       visited << nearest
       unvisited.delete(nearest)
-      current_place = nearest
+      current = nearest
     end
 
     visited
