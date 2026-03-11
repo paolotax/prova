@@ -21,15 +21,15 @@
         placeholder: "Note..." %>
   </div>
 
-  <div class="flex gap-half align-center" style="margin-top: 1ch;">
-    <div class="form-field">
+      <div class="form-field">
       <%= date_input(form, :data_tappa) %>
     </div>
 
-    <div class="form-field cb-tax" style="flex: 1;">
-      <%= form.combobox :giro_ids,
-          current_user.giri.order(created_at: :desc),
-          multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
-    </div>
+
+  <div class="form-field cb-tax margin-block-start-half">
+    <%= form.combobox :giro_ids,
+        current_user.giri.order(created_at: :desc),
+        multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
   </div>
+
 <% end %>

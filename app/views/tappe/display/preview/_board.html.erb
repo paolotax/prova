@@ -1,5 +1,9 @@
 <%# locals: (tappa:) -%>
 
+<% date_label = if tappa.data_tappa.present?
+    tappa.data_tappa.year == Date.today.year ? l(tappa.data_tappa, format: :short) : l(tappa.data_tappa, format: :default)
+  end %>
+
 <%= render "shared/cards/display/preview/board",
     id: tappa.position.present? ? tappa.position.to_s : "—",
-    name: "TAPPA" %>
+    name: ["TAPPA", date_label].compact.join(" — ") %>

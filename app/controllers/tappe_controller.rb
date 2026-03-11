@@ -202,7 +202,7 @@ class TappeController < ApplicationController
       tappable = @tappa.tappable
       return unless tappable.respond_to?(:open_entries)
 
-      @entries = Entry.load_entryables(tappable.open_entries)
+      @entries = Entry.load_entryables(tappable.open_entries.where.not(entryable_type: "Tappa"))
     end
 
     def planner_tappe_per_area
