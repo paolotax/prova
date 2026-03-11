@@ -471,6 +471,7 @@ Rails.application.routes.draw do
         resource :persone_import, only: [:new, :create], controller: "persone_import"
         resources :persone_search, only: [:index], controller: "persone_search"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
+        resources :classe_chips, only: [:create], controller: "classe_chips", param: :combobox_value
         resources :persone, only: [:show, :edit, :update, :create, :destroy] do
           resources :persona_classi, only: [:destroy], module: :persone
           resources :classe_chips, only: [:create], module: :persone, param: :combobox_value

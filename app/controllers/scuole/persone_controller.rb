@@ -10,22 +10,39 @@ module Scuole
       respond_to do |format|
         format.html
         format.turbo_stream
+        format.json do
+          render json: {
+            id: @persona.id,
+            cognome: @persona.cognome,
+            nome: @persona.nome,
+            email: @persona.email,
+            cellulare: @persona.cellulare,
+            ruolo: @persona.ruolo,
+            materia: @persona.persona_classi.where.not(materia: nil).pick(:materia),
+            classe_ids: @persona.classe_ids
+          }
+        end
       end
     end
 
     def create
+      p = params[:persona] || params
       @persona = @scuola.persone.new(
-        cognome: params[:cognome],
-        nome: params[:nome],
-        ruolo: :docente,
+        cognome: p[:cognome],
+        nome: p[:nome],
+        ruolo: p[:ruolo].presence || :docente,
+        email: p[:email],
+        cellulare: p[:cellulare],
         account: Current.account
       )
 
       if @persona.save
-        if params[:materia].present?
-          @scuola.classi.each do |classe|
-            @persona.persona_classi.create(classe: classe, materia: params[:materia])
-          end
+        classe_ids = params[:classe_ids].to_s.split(",").reject(&:blank?)
+        target_classi = classe_ids.any? ? @scuola.classi.where(id: classe_ids) : @scuola.classi
+        materia = (p[:materia] || params[:materia]).presence
+
+        target_classi.each do |classe|
+          @persona.persona_classi.create(classe: classe, materia: materia)
         end
 
         respond_to do |format|
@@ -45,13 +62,27 @@ module Scuole
     end
 
     def update
-      sync_classi if params[:persona][:classe_ids].present?
+      sync_classi if params[:classe_ids].present? || params.dig(:persona, :classe_ids).present?
+      materia_val = params.dig(:persona, :materia) || params[:materia]
+      update_materia(materia_val) if materia_val.present?
 
       new_scuola_id = persona_params[:scuola_id]
       scuola_cambiata = new_scuola_id.present? && new_scuola_id != @scuola.id.to_s
 
-      if @persona.update(persona_params.except(:classe_ids))
-        if scuola_cambiata
+      if @persona.update(persona_params.except(:classe_ids, :materia))
+        if params[:return_to] == "scuola"
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.replace(
+                ActionView::RecordIdentifier.dom_id(@scuola, :insegnanti),
+                partial: "scuole/container/insegnanti",
+                locals: { scuola: @scuola.reload }
+              )
+            end
+            format.html { redirect_to scuola_path(@scuola), notice: "#{@persona.nome_completo} aggiornato" }
+          end
+          return
+        elsif scuola_cambiata
           redirect_to scuola_persona_path(@persona.scuola, @persona)
         else
           redirect_to scuola_persona_path(@scuola, @persona)
@@ -78,15 +109,20 @@ module Scuole
     end
 
     def persona_params
-      permitted = params.require(:persona).permit(:nome, :cognome, :cellulare, :email, :telefono, :note, :ruolo, :scuola_id, :classe_ids)
+      permitted = params.require(:persona).permit(:nome, :cognome, :cellulare, :email, :telefono, :note, :ruolo, :scuola_id, :classe_ids, :materia)
       if permitted[:classe_ids].is_a?(String)
         permitted[:classe_ids] = permitted[:classe_ids].split(",").reject(&:blank?)
       end
       permitted
     end
 
+    def update_materia(materia)
+      @persona.persona_classi.update_all(materia: materia)
+    end
+
     def sync_classi
-      new_ids = params[:persona][:classe_ids].to_s.split(",").reject(&:blank?)
+      raw = params[:classe_ids] || params.dig(:persona, :classe_ids)
+      new_ids = raw.to_s.split(",").reject(&:blank?)
       current_ids = @persona.classe_ids.map(&:to_s)
       cattedra = @persona.persona_classi.where.not(materia: nil).pick(:materia)
 

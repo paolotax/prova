@@ -31,31 +31,44 @@
           data: { action: "hw-combobox:selection->persona-search#select" } %>
     </div>
 
-    <div class="divider divider--fade full-width txt-xx-small txt-subtle txt-align-center">oppure aggiungi nuovo</div>
+    <div class="divider divider--fade full-width txt-xx-small txt-subtle txt-align-center"
+        data-persona-search-target="divider">oppure aggiungi nuovo</div>
 
-    <%# Form nuovo persona %>
+    <%# Form nuovo/aggiorna persona %>
     <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
-    <%= form_with url: form_url, method: :post,
-        class: "flex flex-column gap-quarter full-width" do |f| %>
+    <%= form_with url: form_url, method: :post, scope: :persona,
+        class: "flex flex-column gap-quarter full-width",
+        data: { persona_search_target: "form" } do |f| %>
       <% if ruolo.present? %>
         <%= f.hidden_field :ruolo, value: ruolo %>
       <% end %>
+      <input type="hidden" name="_method" value="post" data-persona-search-target="method">
+      <input type="hidden" name="return_to" value="scuola">
       <div class="flex gap-quarter">
-        <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small" %>
-        <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small" %>
+        <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small",
+            data: { persona_search_target: "cognome" } %>
+        <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small",
+            data: { persona_search_target: "nome" } %>
       </div>
-      <% if ruolo.to_s != "referente" %>
-        <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
-            list: "materie_list_#{scuola.id}" %>
-      <% else %>
-        <%= f.email_field :email, placeholder: "Email", class: "input txt-small" %>
-        <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input txt-small" %>
-      <% end %>
+      <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
+          list: "materie_list_#{scuola.id}",
+          data: { persona_search_target: "materia" } %>
+      <%= f.email_field :email, placeholder: "Email", class: "input txt-small",
+          data: { persona_search_target: "email" } %>
+      <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input txt-small",
+          data: { persona_search_target: "cellulare" } %>
+      <div class="form-field cb-tax full-width txt-small" style="--hw-combobox-width--multiple: 100%; --hw-listbox-height: calc(var(--hw-line-height) * 6);">
+        <%= combobox_tag "classe_ids",
+            hw_combobox_options(scuola.classi.order(:anno_corso, :sezione), display: :nome_breve),
+            multiselect_chip_src: scuola_classe_chips_path(scuola),
+            placeholder: "Classi...",
+            mobile_at: "0px" %>
+      </div>
       <div class="flex gap-half justify-center margin-block-start-half">
         <button type="button" class="btn" data-action="dialog#close">Annulla</button>
-        <button type="submit" class="btn">
+        <button type="submit" class="btn" data-persona-search-target="submitBtn">
           <%= icon_tag "add" %>
-          <span>Aggiungi</span>
+          <span data-persona-search-target="submitLabel">Aggiungi</span>
         </button>
       </div>
     <% end %>

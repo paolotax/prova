@@ -47,9 +47,16 @@
     <%= form.email_field :email, class: "input" %>
   </div>
 
+  <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
+  <% cattedra_attuale = persona.persona_classi.where.not(materia: nil).pick(:materia) %>
   <div class="form-field">
-    <%= form.label :note, class: "label txt-small" %>
-    <%= form.text_area :note, class: "input", rows: 3 %>
+    <label class="label txt-small">Disciplina</label>
+    <%= text_field_tag :materia, cattedra_attuale, placeholder: "Disciplina", class: "input", list: "materie_edit_#{persona.id}" %>
+    <datalist id="materie_edit_<%= persona.id %>">
+      <% materie_esistenti.each do |m| %>
+        <option value="<%= m %>">
+      <% end %>
+    </datalist>
   </div>
 
   <div class="form-field cb-tax">
@@ -60,5 +67,10 @@
         multiselect_chip_src: scuola_persona_classe_chips_path(scuola, persona),
         placeholder: "Aggiungi classe...",
         mobile_at: "0px" %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :note, class: "label txt-small" %>
+    <%= form.text_area :note, class: "input", rows: 3 %>
   </div>
 <% end %>
