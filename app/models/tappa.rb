@@ -144,8 +144,16 @@ class Tappa < ApplicationRecord
   def manage_entry_on_data_change
     if data_tappa.present? && data_tappa <= Date.today
       ensure_entry! unless entry.present?
-    else
-      entry&.destroy
+    elsif entry.present?
+      # Use delete (not destroy) to avoid Entry's delegated_type dependent: :destroy
+      # which would cascade back and delete this Tappa
+      e = entry
+      e.goldness&.delete
+      e.closure&.delete
+      e.not_now&.delete
+      e.events.delete_all
+      e.delete
+      reload_entry
     end
   end
 

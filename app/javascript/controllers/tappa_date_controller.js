@@ -30,9 +30,10 @@ export default class extends Controller {
     const prefix = accountMatch ? accountMatch[1] : ""
     const tappeContainer = this.element.querySelector(".agenda-week__tappe")
 
-    for (const item of items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
       const tappaId = item.id || item
-      const name = item.name || ""
+      const position = i + 1
 
       // Check planner first
       const plannerCard = document.querySelector(`.agenda-planner__tappa[data-tappa-id="${tappaId}"]`)
@@ -45,7 +46,7 @@ export default class extends Controller {
         }
 
         await patch(`${prefix}/tappe/${tappaId}/sort`, {
-          body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "planner" }),
+          body: JSON.stringify({ data_tappa: targetDate, position, source: "planner" }),
           responseKind: "turbo-stream"
         })
         continue
@@ -60,7 +61,7 @@ export default class extends Controller {
         calendarCard.remove()
 
         await patch(`${prefix}/tappe/${tappaId}/sort`, {
-          body: JSON.stringify({ data_tappa: targetDate, position: 0, source: "calendar" }),
+          body: JSON.stringify({ data_tappa: targetDate, position, source: "calendar" }),
           responseKind: "turbo-stream"
         })
         continue
