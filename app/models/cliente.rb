@@ -54,7 +54,7 @@ class Cliente < ApplicationRecord
   after_validation :geocode, if: ->(obj) { (obj.indirizzo_changed? || obj.numero_civico_changed? ||obj.cap_changed? || obj.comune_changed? || obj.provincia_changed?) } 
 
 
-  belongs_to :user
+  belongs_to :user, optional: true
   has_many :documenti, -> { where("documenti.clientable_type = 'Cliente' and documenti.user_id = ?", Current.user.id) },
            as: :clientable, dependent: :destroy
   has_many :righe, through: :documenti

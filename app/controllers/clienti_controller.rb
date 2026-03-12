@@ -21,6 +21,7 @@ class ClientiController < ApplicationController
 
   def show
     @presenter = Clienti::Presenter.new(@cliente)
+    @edit_mode = params[:edit].present?
 
     # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
     @sconti_applicabili = Current.user.sconti
@@ -47,7 +48,8 @@ class ClientiController < ApplicationController
   end
 
   def new
-    @cliente = Current.account.clienti.new
+    @cliente = Current.account.clienti.create!(denominazione: "Nuovo cliente")
+    redirect_to cliente_path(@cliente, edit: true)
   end
 
   def edit
@@ -58,13 +60,7 @@ class ClientiController < ApplicationController
   end
 
   def create
-    @cliente = Current.account.clienti.new(cliente_params)
-
-    if @cliente.save
-      redirect_to(cliente_path(@cliente), notice: "Cliente inserito.") # rubocop:disable Rails/I18nLocaleTexts
-    else
-      response.status = :unprocessable_entity
-    end
+    redirect_to new_cliente_path
   end
 
   def update
@@ -97,7 +93,7 @@ class ClientiController < ApplicationController
     end
 
     def cliente_params
-      params.require(:cliente).permit(:user, :file, :total_steps, :current_step, :latest_step, :codice_cliente,
+      params.require(:cliente).permit(:codice_cliente,
               :tipo_cliente, :indirizzo_telematico, :email, :pec, :telefono,
               :id_paese, :partita_iva, :codice_fiscale, :denominazione,
               :nome, :cognome, :codice_eori,

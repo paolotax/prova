@@ -9,7 +9,13 @@
 
       <div class="card__body justify-space-between">
         <div class="card__content">
-          <%= render "clienti/container/content", cliente: cliente %>
+          <%= turbo_frame_tag cliente, :edit do %>
+            <% if @edit_mode %>
+              <%= render "clienti/edit_form", cliente: cliente %>
+            <% else %>
+              <%= render "clienti/container/content_display", cliente: cliente %>
+            <% end %>
+          <% end %>
         </div>
       </div>
 
@@ -32,7 +38,11 @@
 
   <div class="card-perma__notch card-perma__notch--bottom">
     <%= turbo_frame_tag cliente, :footer do %>
-      <%= render "clienti/container/footer/display", cliente: cliente %>
+      <% if @edit_mode %>
+        <%= render "clienti/edit_footer", cliente: cliente %>
+      <% else %>
+        <%= render "clienti/container/footer/display", cliente: cliente %>
+      <% end %>
     <% end %>
   </div>
 </section>
