@@ -18,7 +18,7 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= button_to appunti_path, method: :post, class: "btn btn--link", 
+    <%= link_to new_appunto_path, class: "btn btn--link",
         data: { controller:"tooltip" } do %>
       <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuovo appunto</span>

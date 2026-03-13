@@ -53,12 +53,8 @@ class AppuntiController < ApplicationController
   end
 
   def create
-    respond_to do |format|
-      format.html do
-        @appunto = Current.user.draft_new_appunto
-        redirect_to @appunto
-      end
-    end
+    @appunto = Current.user.draft_new_appunto(appuntabile: find_appuntabile)
+    redirect_to @appunto
   end
 
   def update
