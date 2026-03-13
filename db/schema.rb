@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_232506) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_173408) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -556,6 +556,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_232506) do
     t.index ["user_id"], name: "index_consegne_saggio_on_user_id"
   end
 
+  create_table "disponibilita", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.date "data"
+    t.integer "giorno_settimana"
+    t.time "ora_fine"
+    t.time "ora_inizio"
+    t.boolean "ricorrente", default: false
+    t.uuid "scuola_id", null: false
+    t.string "tipo", null: false
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["account_id"], name: "index_disponibilita_on_account_id"
+    t.index ["scuola_id", "tipo", "giorno_settimana"], name: "idx_disponibilita_scuola_tipo_giorno"
+    t.index ["scuola_id", "tipo"], name: "index_disponibilita_on_scuola_id_and_tipo"
+    t.index ["scuola_id"], name: "index_disponibilita_on_scuola_id"
+    t.index ["user_id"], name: "index_disponibilita_on_user_id"
+  end
+
   create_table "documenti", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.bigint "causale_id"
@@ -673,6 +693,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_232506) do
 
   create_table "giri", force: :cascade do |t|
     t.uuid "account_id", null: false
+    t.uuid "collana_id"
     t.string "color", default: "var(--color-card-default)"
     t.text "conditions"
     t.datetime "created_at", null: false
@@ -681,10 +702,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_232506) do
     t.datetime "finito_il"
     t.datetime "iniziato_il"
     t.string "stato"
+    t.string "tipo_giro"
     t.string "titolo"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_giri_on_account_id"
+    t.index ["collana_id"], name: "index_giri_on_collana_id"
     t.index ["user_id"], name: "index_giri_on_user_id"
   end
 
@@ -1377,6 +1400,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_232506) do
     t.index ["account_id"], name: "index_saldi_on_account_id"
     t.index ["saldabile_type", "saldabile_id"], name: "index_saldi_on_saldabile"
     t.index ["saldabile_type", "saldabile_id"], name: "index_saldi_on_saldabile_type_and_saldabile_id", unique: true
+  end
+
+  create_table "scartate", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.uuid "scuola_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id"], name: "index_scartate_on_account_id"
+    t.index ["scuola_id", "user_id"], name: "index_scartate_on_scuola_id_and_user_id", unique: true
+    t.index ["scuola_id"], name: "index_scartate_on_scuola_id"
+    t.index ["user_id"], name: "index_scartate_on_user_id"
   end
 
   create_table "sconti", force: :cascade do |t|

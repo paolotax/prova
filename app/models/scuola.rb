@@ -54,6 +54,8 @@ class Scuola < ApplicationRecord
   include Navigable
   include ProtectedFromDestroy
   include Saldabile
+  include Scartabile
+  include HasDisponibilita
   include PgSearch::Model
 
 

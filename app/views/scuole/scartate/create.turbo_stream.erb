@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@scuola, :scartata) do %>
+  <%= render "scuole/scartata_toggle", scuola: @scuola.reload %>
+<% end %>

@@ -1,0 +1,12 @@
+<%# locals: (scuola:) -%>
+<div id="<%= dom_id(scuola, :scartata) %>">
+  <% if scuola.scartata? %>
+    <%= button_to scuola_scartata_path(scuola), method: :delete, class: "btn btn--small btn--warning" do %>
+      <%= icon_tag "close" %> Scartata
+    <% end %>
+  <% else %>
+    <%= button_to scuola_scartata_path(scuola), method: :post, class: "btn btn--small btn--plain" do %>
+      Scarta
+    <% end %>
+  <% end %>
+</div>
