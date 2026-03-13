@@ -1,0 +1,27 @@
+<%= turbo_frame_tag "wizard_riepilogo" do %>
+  <h3 class="txt-large margin-block-end">Riepilogo</h3>
+
+  <div class="card padding">
+    <dl class="flex flex-column gap-half">
+      <div class="flex gap">
+        <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Tipo</dt>
+        <dd class="txt-small"><%= t("giri.tipi.#{@tipo_giro}", default: @tipo_giro.humanize) %></dd>
+      </div>
+      <div class="flex gap">
+        <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Titolo</dt>
+        <dd class="txt-small"><%= @titolo %></dd>
+      </div>
+      <% if @collana.present? %>
+        <div class="flex gap">
+          <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Collana</dt>
+          <dd class="txt-small"><%= @collana.nome %></dd>
+        </div>
+      <% end %>
+      <div class="flex gap">
+        <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Scuole</dt>
+        <dd class="txt-small"><%= @conteggio %> scuole</dd>
+      </div>
+    </dl>
+  </div>
+
+<% end %>

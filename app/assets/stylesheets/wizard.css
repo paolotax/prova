@@ -1,0 +1,237 @@
+@layer modules {
+  .wizard-page #header {
+    display: none;
+  }
+
+  .wizard {
+    display: flex;
+    flex-direction: column;
+    block-size: 100dvh;
+    overflow: hidden;
+  }
+
+  @media (min-width: 640px) {
+    .wizard {
+      display: grid;
+      grid-template-columns: 16rem 1fr;
+      block-size: 100dvh;
+    }
+  }
+
+  .wizard__sidebar {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+    padding: var(--space-half) var(--space);
+    background: var(--color-surface-alt);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .wizard__sidebar > h2 {
+    display: none;
+  }
+
+  .wizard__sidebar > div:last-child {
+    margin-inline-start: auto;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__sidebar {
+      flex-direction: column;
+      align-items: stretch;
+      padding: var(--space);
+      border-block-end: none;
+      border-inline-end: 1px solid var(--color-border);
+    }
+
+    .wizard__sidebar > h2 {
+      display: block;
+    }
+
+    .wizard__sidebar > div:last-child {
+      margin-inline-start: 0;
+      margin-block-start: auto;
+      padding-block-start: var(--space);
+    }
+  }
+
+  .wizard__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: var(--space-quarter);
+  }
+
+  @media (min-width: 640px) {
+    .wizard__steps {
+      flex-direction: column;
+      gap: var(--space-half);
+    }
+  }
+
+  .wizard__step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-half);
+    padding: var(--space-quarter);
+    border-radius: var(--radius);
+    color: var(--color-txt-subtle);
+    font-size: var(--font-size-small);
+  }
+
+  .wizard__step-label {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__step {
+      padding: var(--space-half);
+    }
+
+    .wizard__step-label {
+      display: inline;
+    }
+  }
+
+  .wizard__step--active {
+    background: var(--color-surface);
+    color: var(--color-txt);
+    font-weight: 600;
+  }
+
+  .wizard__step--completed {
+    color: var(--color-positive);
+  }
+
+  .wizard__step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: 50%;
+    background: var(--color-border);
+    font-size: var(--font-size-x-small);
+    font-weight: 600;
+  }
+
+  .wizard__step--active .wizard__step-number {
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .wizard__step--completed .wizard__step-number {
+    background: var(--color-positive);
+    color: white;
+  }
+
+  .wizard__content {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space);
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__content {
+      padding: var(--space-double);
+      max-inline-size: 60rem;
+    }
+  }
+
+  .wizard__panel {
+    flex: 1;
+  }
+
+  .wizard__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+    padding-block-start: var(--space);
+    border-block-start: 1px solid var(--color-border);
+    margin-block-start: auto;
+  }
+
+  /* Step 1: Tipo cards */
+  .wizard__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-half);
+  }
+
+  @media (min-width: 640px) {
+    .wizard__grid {
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+      gap: var(--space);
+    }
+  }
+
+  .wizard__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-quarter);
+    padding: var(--space-half);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.15s;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__card {
+      gap: var(--space-half);
+      padding: var(--space);
+    }
+  }
+
+  .wizard__card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .wizard__card--selected {
+    border-color: var(--color-accent);
+    background: color-mix(in oklch, var(--color-accent) 15%, transparent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .wizard__card-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 640px) {
+    .wizard__card-icon {
+      font-size: 2rem;
+    }
+  }
+
+  .wizard__card-desc {
+    display: none;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__card-desc {
+      display: block;
+    }
+  }
+
+  /* Step 3: School list */
+  .wizard__school-list {
+    max-block-size: 50vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-half);
+  }
+
+  @media (min-width: 640px) {
+    .wizard__school-list {
+      max-block-size: 60vh;
+    }
+  }
+}

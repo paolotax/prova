@@ -1,0 +1,128 @@
+<% content_for :hide_footer, true %>
+<% @page_title = "Nuovo giro" %>
+
+<%= form_tag create_wizard_giri_path, method: :post, id: "wizard-form",
+    data: { controller: "wizard", wizard_step_value: "tipo" } do %>
+
+  <div class="wizard">
+    <!-- Sidebar -->
+    <aside class="wizard__sidebar">
+      <h2 class="txt-large txt-bold padding-block-end">Nuovo giro</h2>
+      <ol class="wizard__steps">
+        <li class="wizard__step" data-wizard-target="stepIndicator" data-step="tipo">
+          <span class="wizard__step-number">1</span> <span class="wizard__step-label">Tipo giro</span>
+        </li>
+        <li class="wizard__step" data-wizard-target="stepIndicator" data-step="info">
+          <span class="wizard__step-number">2</span> <span class="wizard__step-label">Dettagli</span>
+        </li>
+        <li class="wizard__step" data-wizard-target="stepIndicator" data-step="scuole">
+          <span class="wizard__step-number">3</span> <span class="wizard__step-label">Scuole</span>
+        </li>
+        <li class="wizard__step" data-wizard-target="stepIndicator" data-step="riepilogo">
+          <span class="wizard__step-number">4</span> <span class="wizard__step-label">Riepilogo</span>
+        </li>
+      </ol>
+      <div class="margin-block-start-auto padding-block-start">
+        <%= link_to "Annulla", giri_path, class: "btn btn--plain" %>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="wizard__content">
+      <!-- Step 1: Tipo giro -->
+      <div class="wizard__panel" data-wizard-target="panel" data-step="tipo">
+        <h3 class="txt-large margin-block-end">Che tipo di giro vuoi creare?</h3>
+        <div class="wizard__grid">
+          <% [
+            ["kit_adozioni", "Kit adozioni", "Consegna kit nelle scuole con le tue adozioni", "book"],
+            ["collane", "Consegna collane", "Porta le collane in visione nelle scuole", "stack"],
+            ["ritiro_collane", "Ritiro collane", "Ritira le collane date in visione", "return"],
+            ["consegne", "Consegne", "Consegna documenti e DDT", "truck"],
+            ["visite", "Visite", "Giro di visite commerciali", "route"]
+          ].each do |value, label, desc, icon_name| %>
+            <label class="wizard__card" data-action="click->wizard#selectTipo">
+              <%= radio_button_tag :tipo_giro, value, false,
+                  data: { wizard_target: "tipoInput" }, class: "for-screen-reader" %>
+              <div class="wizard__card-icon"><%= icon_tag icon_name %></div>
+              <div class="wizard__card-label txt-bold"><%= label %></div>
+              <div class="wizard__card-desc txt-small txt-subtle"><%= desc %></div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Step 2: Info giro -->
+      <div class="wizard__panel" data-wizard-target="panel" data-step="info" hidden>
+        <h3 class="txt-large margin-block-end">Dettagli del giro</h3>
+        <div class="flex flex-column gap">
+          <div>
+            <label class="txt-small txt-bold">Titolo</label>
+            <%= text_field_tag :titolo, "", class: "input", data: { wizard_target: "titoloInput" } %>
+          </div>
+
+          <div data-wizard-target="collanaField" hidden>
+            <label class="txt-small txt-bold">Collana</label>
+            <%= select_tag :collana_id,
+                options_from_collection_for_select(@collane, :id, :nome),
+                include_blank: "Seleziona collana...",
+                class: "input" %>
+          </div>
+
+          <div class="flex gap">
+            <div class="flex-item-grow">
+              <label class="txt-small txt-bold">Data inizio</label>
+              <%= date_field_tag :iniziato_il, nil, class: "input" %>
+            </div>
+            <div class="flex-item-grow">
+              <label class="txt-small txt-bold">Data fine</label>
+              <%= date_field_tag :finito_il, nil, class: "input" %>
+            </div>
+          </div>
+
+          <div>
+            <label class="txt-small txt-bold margin-block-end-half">Colore</label>
+            <div class="flex gap-half flex-wrap">
+              <% Color::COLORS.each do |color| %>
+                <label class="btn btn--icon" style="--btn-background: <%= color.value %>;">
+                  <%= radio_button_tag :color, color.value, color.value == "var(--color-card-default)", class: "for-screen-reader" %>
+                  <%= icon_tag "check", class: "icon--small" %>
+                </label>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Scuole (loaded via Turbo Frame) -->
+      <div class="wizard__panel" data-wizard-target="panel" data-step="scuole" hidden>
+        <%= turbo_frame_tag "wizard_scuole" do %>
+          <p class="txt-subtle">Caricamento scuole...</p>
+        <% end %>
+      </div>
+
+      <!-- Step 4: Riepilogo (loaded via Turbo Frame) -->
+      <div class="wizard__panel" data-wizard-target="panel" data-step="riepilogo" hidden>
+        <%= turbo_frame_tag "wizard_riepilogo" do %>
+          <p class="txt-subtle">Caricamento riepilogo...</p>
+        <% end %>
+      </div>
+
+      <!-- Footer navigation -->
+      <div class="wizard__footer">
+        <button type="button" class="btn btn--plain" data-action="wizard#prevStep"
+                data-wizard-target="prevBtn" hidden>
+          Indietro
+        </button>
+        <div class="flex-item-grow"></div>
+        <button type="button" class="btn btn--primary" data-action="wizard#nextStep"
+                data-wizard-target="nextBtn">
+          Avanti
+        </button>
+        <button type="submit" class="btn btn--primary" data-wizard-target="submitBtn" hidden
+                data-turbo-submits-with="Creazione in corso...">
+          Crea giro
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -332,6 +332,13 @@ Rails.application.routes.draw do
         get 'copia'
       end
 
+      collection do
+        get  'wizard',            to: 'giri/wizard#new',       as: 'wizard'
+        get  'wizard/scuole',     to: 'giri/wizard#scuole',    as: 'wizard_scuole'
+        get  'wizard/riepilogo',  to: 'giri/wizard#riepilogo', as: 'wizard_riepilogo'
+        post 'wizard',            to: 'giri/wizard#create',    as: 'create_wizard'
+      end
+
       get  'genera_tappe', to: 'giri/tappe#new', as: 'genera_tappe'
       post 'genera_tappe', to: 'giri/tappe#create'
       post 'copia_tappe', to: 'giri/tappe#copy', as: 'copia_tappe'
@@ -463,6 +470,10 @@ Rails.application.routes.draw do
       resources :saggi, only: [:index, :create, :update, :destroy], controller: "scuole/saggi" do
         post :genera_scarico, on: :collection
       end
+
+      resource :scartata, only: [:create, :destroy], controller: "scuole/scartate"
+
+      resources :disponibilita, only: [:create, :destroy], controller: "scuole/disponibilita"
 
       scope module: :scuole do
         resource :entries, only: [:show]

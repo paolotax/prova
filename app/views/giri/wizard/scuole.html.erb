@@ -1,0 +1,35 @@
+<%= turbo_frame_tag "wizard_scuole" do %>
+  <h3 class="txt-large margin-block-end">
+    Scuole selezionate
+    <span class="badge" data-wizard-target="schoolCount"><%= @conteggio %></span>
+  </h3>
+
+  <div class="flex gap-half margin-block-end">
+    <button type="button" class="btn btn--small btn--plain" data-action="wizard#selectAllSchools">
+      Seleziona tutte
+    </button>
+    <button type="button" class="btn btn--small btn--plain" data-action="wizard#deselectAllSchools">
+      Deseleziona tutte
+    </button>
+  </div>
+
+  <div class="wizard__school-list" data-wizard-target="schoolList">
+    <% @scuole.group_by(&:provincia).each do |provincia, scuole_prov| %>
+      <details open>
+        <summary class="txt-bold txt-small padding-block-half">
+          <%= provincia %> (<%= scuole_prov.size %>)
+        </summary>
+        <div class="flex flex-column gap-quarter padding-inline-start">
+          <% scuole_prov.each do |scuola| %>
+            <label class="flex align-center gap-half padding-block-quarter">
+              <%= check_box_tag "school_ids[]", scuola.id, true,
+                  data: { wizard_target: "schoolCheckbox" } %>
+              <span class="txt-small"><%= scuola.denominazione %></span>
+              <span class="txt-xx-small txt-subtle"><%= scuola.comune %></span>
+            </label>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+  </div>
+<% end %>

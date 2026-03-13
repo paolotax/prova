@@ -8,6 +8,9 @@
   </h1>
 
   <div class="header__actions header__actions--end">
+    <%= link_to wizard_giri_path, class: "btn btn--plain" do %>
+      <%= icon_tag "wand" %> Wizard
+    <% end %>
     <%= link_to new_giro_path,
         class: "btn btn--primary",
         data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
