@@ -1,0 +1,69 @@
+<%# locals: (scuola:) -%>
+<%= form_with model: Disponibilita.new, url: scuola_disponibilita_index_path(scuola),
+    class: "card padding", data: { controller: "disponibilita-form",
+    action: "turbo:submit-end->disponibilita-form#reset" } do |f| %>
+
+  <div class="form-row margin-block-end-half">
+    <div class="form-field">
+      <%= f.label :tipo, "Tipo", class: "label txt-small" %>
+      <%= f.select :tipo,
+          options_for_select([
+            ["Orario lezioni", "orario"],
+            ["Chiusura", "chiusura"],
+            ["Santo patrono", "patrono"],
+            ["Sede di seggio", "seggio"],
+            ["Riunione/Programmazione", "riunione"],
+            ["Nota personale", "nota"]
+          ]),
+          {},
+          class: "input input--select", data: { action: "change->disponibilita-form#tipoChanged",
+                                              disponibilita_form_target: "tipoSelect" } %>
+    </div>
+  </div>
+
+  <%# Campi giorno settimana (per orario, riunione) %>
+  <div class="form-row margin-block-end-half" data-disponibilita-form-target="giornoField" hidden>
+    <div class="form-field">
+      <%= f.label :giorno_settimana, "Giorno", class: "label txt-small" %>
+      <%= f.select :giorno_settimana,
+          options_for_select([
+            ["Lunedì", 1], ["Martedì", 2], ["Mercoledì", 3],
+            ["Giovedì", 4], ["Venerdì", 5], ["Sabato", 6]
+          ]),
+          { include_blank: "Seleziona..." },
+          class: "input input--select" %>
+    </div>
+  </div>
+
+  <%# Campi orario (per orario, riunione) %>
+  <div class="form-row margin-block-end-half" data-disponibilita-form-target="orarioFields" hidden>
+    <div class="form-field" style="--w: 10ch;">
+      <%= f.label :ora_inizio, "Dalle", class: "label txt-small" %>
+      <%= f.time_field :ora_inizio, class: "input" %>
+    </div>
+    <div class="form-field" style="--w: 10ch;">
+      <%= f.label :ora_fine, "Alle", class: "label txt-small" %>
+      <%= f.time_field :ora_fine, class: "input" %>
+    </div>
+  </div>
+
+  <%# Campo data (per chiusura, patrono) %>
+  <div class="form-row margin-block-end-half" data-disponibilita-form-target="dataField" hidden>
+    <div class="form-field">
+      <%= f.label :data, "Data", class: "label txt-small" %>
+      <%= f.date_field :data, class: "input" %>
+    </div>
+  </div>
+
+  <%# Campo titolo (per chiusura, patrono, riunione, nota) %>
+  <div class="form-row margin-block-end-half" data-disponibilita-form-target="titoloField" hidden>
+    <div class="form-field">
+      <%= f.label :titolo, "Descrizione", class: "label txt-small" %>
+      <%= f.text_field :titolo, class: "input", placeholder: "es. S. Ambrogio, Programmazione..." %>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <%= f.submit "Aggiungi", class: "btn btn--small btn--primary" %>
+  </div>
+<% end %>

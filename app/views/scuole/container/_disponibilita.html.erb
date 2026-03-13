@@ -1,0 +1,102 @@
+<%# locals: (scuola:) -%>
+<div id="<%= dom_id(scuola, :disponibilita) %>" class="margin-block-start">
+  <div class="group-header">
+    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Disponibilità</h3>
+    <div class="group-header__actions group-header__actions--end">
+      <button type="button" class="btn btn--circle"
+              data-controller="toggle tooltip" data-action="toggle#toggle"
+              data-toggle-target-value="<%= dom_id(scuola, :disponibilita_form) %>"
+              data-tooltip-content-value="Aggiungi disponibilità">
+        <%= icon_tag "add" %>
+        <span class="for-screen-reader">Aggiungi disponibilità</span>
+      </button>
+    </div>
+  </div>
+
+  <%# Form aggiunta (nascosto) %>
+  <div id="<%= dom_id(scuola, :disponibilita_form) %>" hidden class="margin-block-end">
+    <%= render "scuole/container/disponibilita_form", scuola: scuola %>
+  </div>
+
+  <%# Orario settimanale %>
+  <% orari = scuola.disponibilita.orari %>
+  <% riunioni = scuola.disponibilita.riunioni %>
+  <% if orari.any? %>
+    <div class="margin-block-end">
+      <h4 class="txt-small txt-bold txt-subtle margin-block-end-quarter">Orario</h4>
+      <div class="flex flex-column gap-quarter">
+        <% (1..5).each do |wday| %>
+          <% orario_giorno = orari.select { |o| o.giorno_settimana == wday } %>
+          <% riunione_giorno = riunioni.select { |r| r.giorno_settimana == wday } %>
+          <% next unless orario_giorno.any? %>
+          <div class="flex align-center gap-half txt-small">
+            <span class="txt-bold" style="min-inline-size: 3rem;"><%= Disponibilita::GIORNI[wday]&.first(3) %></span>
+            <span><%= orario_giorno.map(&:orario_label).join(", ") %></span>
+            <% if riunione_giorno.any? %>
+              <span class="txt-subtle txt-xx-small">
+                — <%= riunione_giorno.map { |r| "#{r.titolo || 'Riunione'} #{r.orario_label}" }.join(", ") %>
+              </span>
+            <% end %>
+            <% (orario_giorno + riunione_giorno).each do |d| %>
+              <%= button_to scuola_disponibilita_path(scuola, d), method: :delete,
+                  class: "btn btn--icon btn--xx-small btn--plain", data: { turbo_confirm: "Eliminare?" } do %>
+                <%= icon_tag "close", class: "icon--xx-small" %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Info fisse: seggio e patrono %>
+  <% seggi = scuola.disponibilita.seggi %>
+  <% patroni = scuola.disponibilita.patroni %>
+  <% if seggi.any? || patroni.any? %>
+    <div class="flex flex-wrap gap-half margin-block-end">
+      <% seggi.each do |s| %>
+        <span class="badge badge--warning flex align-center gap-quarter">
+          Sede di seggio
+          <%= button_to scuola_disponibilita_path(scuola, s), method: :delete,
+              class: "btn btn--icon btn--xx-small btn--plain" do %>
+            <%= icon_tag "close", class: "icon--xx-small" %>
+          <% end %>
+        </span>
+      <% end %>
+      <% patroni.each do |p| %>
+        <span class="badge flex align-center gap-quarter">
+          <%= p.titolo %> (<%= p.data&.strftime("%-d %b") %>)
+          <%= button_to scuola_disponibilita_path(scuola, p), method: :delete,
+              class: "btn btn--icon btn--xx-small btn--plain" do %>
+            <%= icon_tag "close", class: "icon--xx-small" %>
+          <% end %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Chiusure future %>
+  <% chiusure = scuola.disponibilita.chiusure_future %>
+  <% if chiusure.any? %>
+    <div class="margin-block-end">
+      <h4 class="txt-small txt-bold txt-subtle margin-block-end-quarter">Chiusure</h4>
+      <div class="flex flex-column gap-quarter">
+        <% chiusure.each do |c| %>
+          <div class="flex align-center gap-half txt-small">
+            <span><%= l c.data, format: :short %></span>
+            <span class="txt-subtle"><%= c.titolo %></span>
+            <%= button_to scuola_disponibilita_path(scuola, c), method: :delete,
+                class: "btn btn--icon btn--xx-small btn--plain" do %>
+              <%= icon_tag "close", class: "icon--xx-small" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Messaggio vuoto %>
+  <% if orari.empty? && seggi.empty? && patroni.empty? && chiusure.empty? && riunioni.empty? %>
+    <p class="txt-small txt-subtle">Nessuna disponibilità configurata.</p>
+  <% end %>
+</div>
