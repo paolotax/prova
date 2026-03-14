@@ -390,10 +390,9 @@ Rails.application.routes.draw do
       end
     end
 
+    get "appunti/bozze", to: "appunti/bozze#index", as: :bozze
+
     resources :appunti do
-      collection do
-        get :bozze
-      end
       resources :tappe
       scope module: :appunti do
         resource :goldness,  only: [:create, :destroy]
