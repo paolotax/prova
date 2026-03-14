@@ -32,14 +32,13 @@
       <div class="card__body justify-space-between">
         <div class="card__content">
           <%= render "tappe/container/content", tappa: tappa %>
+          <%= render "tappe/container/bolle_visione", tappa: tappa %>
         </div>
         <%= render "tappe/container/stages", tappa: tappa %>
       </div>
 
       <footer class="card__footer full-width">
-        <% if tappa.bolle_visione.any? %>
-          <%= render "tappe/container/bolle_visione", tappa: tappa %>
-        <% end %>
+        <%= render "tappe/display/perma/meta", tappa: tappa %>
       </footer>
     </article>
   </div>

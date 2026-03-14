@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_173408) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_073530) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -337,11 +337,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_173408) do
   create_table "bolle_visione", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.uuid "collana_id", null: false
+    t.uuid "contatto_id"
     t.datetime "created_at", null: false
     t.date "data_bolla", null: false
     t.text "note"
     t.integer "numero", null: false
-    t.uuid "referente_id"
     t.uuid "scuola_id", null: false
     t.uuid "tappa_id"
     t.datetime "updated_at", null: false
@@ -349,7 +349,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_173408) do
     t.index ["account_id", "numero"], name: "index_bolle_visione_on_account_id_and_numero", unique: true
     t.index ["account_id"], name: "index_bolle_visione_on_account_id"
     t.index ["collana_id"], name: "index_bolle_visione_on_collana_id"
-    t.index ["referente_id"], name: "index_bolle_visione_on_referente_id"
+    t.index ["contatto_id"], name: "index_bolle_visione_on_contatto_id"
     t.index ["scuola_id"], name: "index_bolle_visione_on_scuola_id"
     t.index ["tappa_id"], name: "index_bolle_visione_on_tappa_id"
     t.index ["user_id"], name: "index_bolle_visione_on_user_id"

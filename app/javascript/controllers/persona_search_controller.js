@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus"
 // Altrimenti compila il form nel dialog per aggiornare la persona.
 export default class extends Controller {
   static values = { scuolaUrl: String, assignUrl: String, createUrl: String }
-  static targets = ["form", "method", "cognome", "nome", "email", "cellulare", "materia", "divider", "submitLabel"]
+  static targets = ["form", "method", "cognome", "nome", "email", "cellulare", "materia", "divider", "submitLabel", "personaId"]
 
   select(event) {
     const personaId = event.detail?.value
@@ -42,6 +42,9 @@ export default class extends Controller {
     if (!this.hasCreateUrlValue) {
       this.createUrlValue = this.formTarget.action
     }
+
+    // Setta l'id della persona esistente
+    if (this.hasPersonaIdTarget) this.personaIdTarget.value = personaId
 
     // Compila i campi
     if (this.hasCognomeTarget) this.cognomeTarget.value = data.cognome || ""

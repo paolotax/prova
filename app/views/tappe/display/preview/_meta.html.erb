@@ -46,6 +46,16 @@
     <% end %>
   </span>
 
-  <div class="card__meta-avatars card__meta-avatars--assignees">
-  </div>
+  <span class="card__meta-text card__meta-text--copie txt-align-end">
+    <% if tappa.bolle_visione.any? %>
+      Bolle <strong><%= tappa.bolle_visione.size %></strong>
+    <% end %>
+  </span>
+
+  <span class="card__meta-text card__meta-text--importo txt-align-end">
+    <% libri_count = tappa.bolle_visione.joins(:bolla_visione_righe).count %>
+    <% if libri_count > 0 %>
+      Libri <strong><%= libri_count %></strong>
+    <% end %>
+  </span>
 </div>

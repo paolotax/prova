@@ -184,7 +184,7 @@ class TappeController < ApplicationController
   private
 
     def set_tappa
-      @tappa = current_user.tappe.find(params[:id])
+      @tappa = current_user.tappe.includes(bolle_visione: [:collana, :bolla_visione_righe, { contatto: :classi }]).find(params[:id])
     end
 
     def load_prev_next_tappe

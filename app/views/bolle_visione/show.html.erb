@@ -3,7 +3,7 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% if @bolla_visione.tappa_id.present? %>
-      <%= back_link_to "Tappa", tappa_path(@bolla_visione.tappa_id) %>
+      <%= back_link_to_url "Tappa", tappa_path(@bolla_visione.tappa_id) %>
     <% else %>
       <%= back_link_to "Bolle", bolle_visione_path %>
     <% end %>
@@ -15,18 +15,18 @@
       <%= icon_tag "refresh" %>
       <span class="for-screen-reader">Rigenera</span>
     <% end %>
-    <% if @bolla_visione.referente&.email.present? %>
+    <% if @bolla_visione.contatto&.email.present? %>
       <% mail_subject = "Consegna volumi GIUNTI Scuola 2026" %>
       <% mail_body = "Allego bolla dei testi consegnati in data #{l(@bolla_visione.data_bolla, format: :short)}.\nInvierò nei prossimi giorni un dettaglio delle nostre proposte con i link per visionare i contenuti digitali.\n\nPaolo Tassinari\ncel: 3472371680\nmail: paolo.tassinari@giunti.it" %>
       <button type="button" class="btn"
           data-controller="mailto-pdf tooltip"
           data-mailto-pdf-pdf-url-value="<%= bolla_visione_path(@bolla_visione, format: :pdf) %>"
-          data-mailto-pdf-to-value="<%= @bolla_visione.referente.email %>"
+          data-mailto-pdf-to-value="<%= @bolla_visione.contatto.email %>"
           data-mailto-pdf-subject-value="<%= mail_subject %>"
           data-mailto-pdf-body-value="<%= mail_body %>"
           data-action="click->mailto-pdf#send">
         <%= icon_tag "envelope" %>
-        <span class="for-screen-reader">Invia al referente</span>
+        <span class="for-screen-reader">Invia al contatto</span>
       </button>
     <% end %>
     <%= link_to bolla_visione_path(@bolla_visione, format: :pdf), target: "_blank", class: "btn",
@@ -57,13 +57,16 @@
       <span class="txt-x-small txt-subtle txt-uppercase">Collana</span>
       <div class="txt-medium"><%= @bolla_visione.collana.nome %></div>
     </div>
-    <% if @bolla_visione.referente.present? %>
+    <% if @bolla_visione.contatto.present? %>
       <div class="flex-item-grow" style="flex-basis: 120px;">
-        <span class="txt-x-small txt-subtle txt-uppercase">Referente</span>
-        <div class="txt-medium"><%= link_to @bolla_visione.referente.nome_completo, scuola_persona_path(@bolla_visione.scuola, @bolla_visione.referente) %></div>
-        <% if @bolla_visione.referente.email.present? %>
+        <span class="txt-x-small txt-subtle txt-uppercase">Contatto</span>
+        <div class="txt-medium"><%= link_to @bolla_visione.contatto.nome_completo, scuola_persona_path(@bolla_visione.scuola, @bolla_visione.contatto) %></div>
+        <% if @bolla_visione.contatto.classi.any? %>
+          <div class="txt-x-small txt-subtle"><%= @bolla_visione.contatto.classi.map(&:nome_breve).join(", ") %></div>
+        <% end %>
+        <% if @bolla_visione.contatto.email.present? %>
           <% mail_subject = "Bolla visione #{@bolla_visione.collana.nome} - #{@bolla_visione.scuola.denominazione}" %>
-          <div class="txt-x-small"><%= mail_to @bolla_visione.referente.email, @bolla_visione.referente.email, subject: mail_subject %></div>
+          <div class="txt-x-small"><%= mail_to @bolla_visione.contatto.email, @bolla_visione.contatto.email, subject: mail_subject %></div>
         <% end %>
       </div>
     <% end %>
@@ -81,7 +84,7 @@
 
       <div class="flex align-center gap-half margin-block-start">
         <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
-          <%= gruppo.presence || "Senza gruppo" %>
+          <%= gruppo.presence || "Altro" %>
         </h3>
 
         <% if docenti_classe.any? %>
@@ -107,8 +110,24 @@
     <% end %>
   </div>
 
-  <div class="flex justify-space-between align-center margin-block-start pad-block txt-medium font-weight-black" style="border-block-start: 2px solid var(--color-ink-light);">
+  <div id="bolla_visione_righe_form">
+    <%= form_with url: bolla_visione_bolla_visione_righe_path(@bolla_visione), scope: :bolla_visione_riga, class: "margin-block-start" do |f| %>
+      <div class="flex gap-half align-center">
+        <div class="form-field cb-tax" style="flex: 1;">
+          <%= combobox_tag "bolla_visione_riga[libro_id]", libri_path,
+              placeholder: "Aggiungi libro...",
+              mobile_at: "0px" %>
+        </div>
+        <%= f.button type: :submit, class: "btn btn--link" do %>
+          <%= icon_tag "add", size: "small" %>
+          <span>Aggiungi</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="bolla_visione_totale" class="flex justify-space-between align-center margin-block-start pad-block txt-medium font-weight-black" style="border-block-start: 2px solid var(--color-ink-light);">
     <span>Totale copie</span>
-    <span><%= @righe.sum(&:quantita) %></span>
+    <span><%= @bolla_visione.bolla_visione_righe.sum(:quantita) %></span>
   </div>
 </section>

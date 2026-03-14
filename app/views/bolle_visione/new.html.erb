@@ -3,7 +3,7 @@
 <% content_for :header do %>
   <% if @tappa.data_tappa.present? %>
     <div class="header__actions header__actions--start">
-      <%= back_link_to @tappa.tappable.denominazione, tappa_path(@tappa) %>
+      <%= back_link_to_url "Tappa", tappa_path(@tappa) %>
     </div>
   <% end %>
   <h1 class="header__title"><%= @page_title %></h1>

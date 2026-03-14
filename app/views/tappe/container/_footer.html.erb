@@ -14,10 +14,6 @@
   <% end %>
 <% end %>
 
-<%= link_to new_tappa_bolla_visione_path(tappa), class: "btn", data: { turbo_frame: "_top" } do %>
-  Scarica collana
-<% end %>
-
 <% if tappa.entry.present? && !tappa.entry.closed? %>
   <%= button_to entry_closure_path(tappa.entry), method: :post, class: "btn btn--reversed",
       data: { controller: "hotkey", action: "keydown.c@document->hotkey#click" } do %>

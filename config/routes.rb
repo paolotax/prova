@@ -358,7 +358,7 @@ Rails.application.routes.draw do
     end
 
     resources :bolle_visione, only: [:index, :show, :destroy] do
-      resources :bolla_visione_righe, only: [:update, :destroy]
+      resources :bolla_visione_righe, only: [:create, :update, :destroy]
       resource :persone, only: [:create, :update], controller: "bolle_visione/persone"
       member do
         post :rigenera

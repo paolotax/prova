@@ -58,9 +58,9 @@ class BollaVisionePdf < Prawn::Document
         text @scuola.denominazione, size: 11, style: :bold
         text @scuola.indirizzo.to_s, color: "444444"
         text [@scuola.cap, @scuola.comune, @scuola.provincia].compact.join(" "), color: "444444"
-        if @bolla.referente.present?
+        if @bolla.contatto.present?
           move_down 2
-          text "Att.ne #{@bolla.referente.nome_completo}", style: :bold
+          text "Att.ne #{@bolla.contatto.nome_completo}", style: :bold
         end
       end
     end

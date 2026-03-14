@@ -1,27 +1,40 @@
 <%# locals: (tappa:) -%>
 
-<div class="flex flex-column gap-half full-width">
-  <h4 class="txt-small font-weight-black txt-subtle margin-none">Bolle visione</h4>
-  <% tappa.bolle_visione.includes(:collana, :referente, :bolla_visione_righe).ordered.each do |bolla| %>
-    <div class="flex align-center gap-half full-width" style="border-block-end: 1px solid var(--color-border);">
-      <%= link_to bolla_visione_path(bolla), class: "txt-ink flex flex-column gap-quarter pad-block-half", style: "flex: 1; min-width: 0;" do %>
-        <div class="flex align-center gap-half">
-          <strong class="txt-small">BV-<%= bolla.numero %></strong>
-          <span class="txt-x-small txt-subtle"><%= bolla.collana.nome %></span>
-          <span class="txt-x-small txt-subtle flex-item-no-shrink"><%= bolla.bolla_visione_righe.sum(:quantita) %> libri</span>
-        </div>
-        <% if bolla.referente.present? %>
-          <div class="txt-x-small txt-subtle overflow-ellipsis">
-            <%= bolla.referente.nome %> <%= bolla.referente.cognome %>
-            <% if bolla.referente.email.present? %>
-              &middot; <%= bolla.referente.email %>
+<% collane_giro = tappa.giri.filter_map(&:collana).uniq %>
+
+<div id="<%= dom_id(tappa, :bolle) %>" class="flex flex-column gap-quarter full-width margin-block-start margin-inline-start">
+  <h4 class="txt-x-small font-weight-bold txt-subtle" style="margin: 0 0 0.5em 0;">
+    <% if collane_giro.any? %><% collane_giro.each_with_index do |collana, i| %><%= ", " if i > 0 %><%= link_to collana.nome, collana_path(collana), class: "txt-subtle" %><% end %><% else %>Bolle<% end %>
+  </h4>
+  <div class="flex flex-wrap gap-half" style="align-items: stretch;">
+    <% tappa.bolle_visione.sort_by { |b| [-b.data_bolla.to_time.to_i, -b.numero] }.each do |bolla| %>
+      <div id="<%= dom_id(bolla) %>" class="flex flex-column justify-space-between" style="border-inline-start: 2px solid var(--card-color);  padding-inline-start: 0.5em;">
+        <%= link_to bolla_visione_path(bolla), class: "txt-ink flex flex-column gap-none", style: "min-width: 0; text-decoration: none;" do %>
+          <strong class="txt-x-small">BV-<%= bolla.numero %> (<%= bolla.bolla_visione_righe.size %>)</strong>
+          <% if bolla.gruppi.any? %>
+            <span class="txt-xx-small txt-subtle overflow-ellipsis"><%= bolla.gruppi.join(", ") %></span>
+          <% end %>
+          <% if bolla.contatto.present? %>
+            <span class="txt-xx-small txt-subtle overflow-ellipsis"><%= bolla.contatto.nome_completo %></span>
+            <% if bolla.contatto.classi.any? %>
+              <span class="txt-xx-small txt-subtle overflow-ellipsis"><%= bolla.contatto.classi.map(&:nome_breve).join(", ") %></span>
             <% end %>
-          </div>
+          <% end %>
         <% end %>
-      <% end %>
-      <%= button_to bolla_visione_path(bolla), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink", data: { turbo_confirm: "Eliminare BV-#{bolla.numero}?" } do %>
-        <%= icon_tag "minus", size: "small" %>
-      <% end %>
-    </div>
-  <% end %>
+        <%= button_to bolla_visione_path(bolla), method: :delete,
+            class: "btn btn--circle btn--small txt-negative borderless",
+            style: "font-size: var(--text-xx-small); align-self: end;",
+            data: { turbo_stream: true, turbo_confirm: "Eliminare BV-#{bolla.numero}?" } do %>
+          <%= icon_tag "trash" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= link_to new_tappa_bolla_visione_path(tappa),
+        class: "btn btn--circle btn--small",
+        style: "align-self: center; margin-inline-start: 0.5em;",
+        data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Crea bolla" } do %>
+      <%= icon_tag "add", size: "small" %>
+    <% end %>
+  </div>
 </div>

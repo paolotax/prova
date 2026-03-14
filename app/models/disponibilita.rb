@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: disponibilita
+#
+#  id               :uuid             not null, primary key
+#  data             :date
+#  giorno_settimana :integer
+#  ora_fine         :time
+#  ora_inizio       :time
+#  ricorrente       :boolean          default(FALSE)
+#  tipo             :string           not null
+#  titolo           :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  account_id       :uuid             not null
+#  scuola_id        :uuid             not null
+#  user_id          :bigint
+#
+# Indexes
+#
+#  idx_disponibilita_scuola_tipo_giorno       (scuola_id,tipo,giorno_settimana)
+#  index_disponibilita_on_account_id          (account_id)
+#  index_disponibilita_on_scuola_id           (scuola_id)
+#  index_disponibilita_on_scuola_id_and_tipo  (scuola_id,tipo)
+#  index_disponibilita_on_user_id             (user_id)
+#
 class Disponibilita < ApplicationRecord
   include AccountScoped
 

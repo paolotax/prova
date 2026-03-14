@@ -33,7 +33,7 @@ class BolleVisioneController < ApplicationController
     @bolla_visione.tappa = @tappa
 
     # Crea o assegna persona inline
-    assign_or_create_referente
+    assign_or_create_contatto
 
     if @bolla_visione.save
       target_filter = params[:target_ids].to_a.reject(&:blank?)
@@ -108,7 +108,7 @@ class BolleVisioneController < ApplicationController
     @classi = @scuola.classi.order(:anno_corso, :sezione) if @scuola.respond_to?(:classi)
   end
 
-  def assign_or_create_referente
+  def assign_or_create_contatto
     persona_params = params[:persona]
     return unless persona_params.present?
 
@@ -116,16 +116,22 @@ class BolleVisioneController < ApplicationController
 
     # Se c'è un id, è una persona esistente selezionata dal combobox
     if persona_params[:id].present?
-      @bolla_visione.referente = scuola.persone.find_by(id: persona_params[:id])
+      @bolla_visione.contatto = scuola.persone.find_by(id: persona_params[:id])
       return
     end
 
-    # Se c'è cognome, crea nuova persona
-    return unless persona_params[:cognome].present?
+    # Crea persona se c'è almeno un campo compilato (nome, cognome, classe, materia, etc.)
+    has_any_data = %i[cognome nome email cellulare materia].any? { |k| persona_params[k].present? } ||
+                   persona_params[:classe_ids].to_a.reject(&:blank?).any?
+    return unless has_any_data
+
+    cognome = persona_params[:cognome].presence
+    nome = persona_params[:nome].presence
+    cognome = "Da compilare" if cognome.blank? && nome.blank?
 
     persona = scuola.persone.create!(
-      cognome: persona_params[:cognome],
-      nome: persona_params[:nome],
+      cognome: cognome,
+      nome: nome,
       email: persona_params[:email],
       cellulare: persona_params[:cellulare],
       ruolo: persona_params[:ruolo].presence || :docente,
@@ -141,10 +147,10 @@ class BolleVisioneController < ApplicationController
       end
     end
 
-    @bolla_visione.referente = persona
+    @bolla_visione.contatto = persona
   end
 
   def bolla_visione_params
-    params.require(:bolla_visione).permit(:collana_id, :referente_id, :data_bolla, :note)
+    params.require(:bolla_visione).permit(:collana_id, :contatto_id, :data_bolla, :note)
   end
 end

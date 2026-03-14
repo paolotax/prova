@@ -5,7 +5,7 @@ module BolleVisione
 
     def update
       persona = Current.account.persone.find(params[:persona_id])
-      @bolla_visione.update!(referente: persona)
+      @bolla_visione.update!(contatto: persona)
       redirect_to bolla_visione_path(@bolla_visione)
     end
 
@@ -16,7 +16,7 @@ module BolleVisione
 
       if @persona.save
         if @persona.referente?
-          @bolla_visione.update!(referente: @persona)
+          @bolla_visione.update!(contatto: @persona)
         end
 
         materia = params.dig(:persona, :materia) || params[:materia]

@@ -2,25 +2,25 @@
 #
 # Table name: bolle_visione
 #
-#  id           :uuid             not null, primary key
-#  data_bolla   :date             not null
-#  note         :text
-#  numero       :integer          not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  account_id   :uuid             not null
-#  collana_id   :uuid             not null
-#  referente_id :uuid
-#  scuola_id    :uuid             not null
-#  tappa_id     :uuid
-#  user_id      :bigint           not null
+#  id          :uuid             not null, primary key
+#  data_bolla  :date             not null
+#  note        :text
+#  numero      :integer          not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  account_id  :uuid             not null
+#  collana_id  :uuid             not null
+#  contatto_id :uuid
+#  scuola_id   :uuid             not null
+#  tappa_id    :uuid
+#  user_id     :bigint           not null
 #
 # Indexes
 #
 #  index_bolle_visione_on_account_id             (account_id)
 #  index_bolle_visione_on_account_id_and_numero  (account_id,numero) UNIQUE
 #  index_bolle_visione_on_collana_id             (collana_id)
-#  index_bolle_visione_on_referente_id           (referente_id)
+#  index_bolle_visione_on_contatto_id            (contatto_id)
 #  index_bolle_visione_on_scuola_id              (scuola_id)
 #  index_bolle_visione_on_tappa_id               (tappa_id)
 #  index_bolle_visione_on_user_id                (user_id)
@@ -32,7 +32,7 @@ class BollaVisione < ApplicationRecord
   belongs_to :collana
   belongs_to :scuola
   belongs_to :tappa, optional: true
-  belongs_to :referente, class_name: "Persona", optional: true
+  belongs_to :contatto, class_name: "Persona", optional: true
 
   has_many :bolla_visione_righe, dependent: :destroy
   has_many :libri, through: :bolla_visione_righe
@@ -43,6 +43,15 @@ class BollaVisione < ApplicationRecord
 
   scope :ordered, -> { order(data_bolla: :desc, numero: :desc) }
   scope :per_scuola, ->(scuola) { where(scuola: scuola) }
+
+  def gruppi
+    collana.collana_libri
+      .where(libro_id: bolla_visione_righe.select(:libro_id))
+      .where.not(gruppo: [nil, ""])
+      .ordered
+      .pluck(:gruppo)
+      .uniq
+  end
 
   def crea_righe_da_collana!(target_filter: [])
     collana.collana_libri.ordered.each do |cl|
