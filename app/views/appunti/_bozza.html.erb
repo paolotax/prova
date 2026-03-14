@@ -2,7 +2,7 @@
 
 <div class="tray__item tray__item--bozza" id="<%= dom_id bozza, :bozza %>" data-navigable-list-target="item">
   <%= render partial: "appunti/appunto", locals: { appunto: bozza, entry: bozza.entry, draggable: false } %>
-  <%= button_to appunto_path(bozza), method: :delete, class: "tray__remove-btn btn btn--circle borderless txt-negative", data: { turbo_confirm: "Eliminare questa bozza?" } do %>
+  <%= button_to appunto_path(bozza), method: :delete, class: "tray__remove-btn btn btn--circle borderless txt-negative" do %>
     <%= icon_tag "trash" %> <span class="for-screen-reader">Elimina bozza</span>
   <% end %>
 </div>
