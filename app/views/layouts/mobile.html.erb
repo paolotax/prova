@@ -7,9 +7,6 @@
       <header class="header" id="header">
         <nav class="flex align-center justify-between padding-inline">
           <span class="txt-large font-weight-black">Scagnozz</span>
-          <% if Current.user %>
-            <%= link_to "Le mie bozze", bozze_appunti_path(account_id: Current.account.id), class: "btn btn--small" %>
-          <% end %>
         </nav>
       </header>
 

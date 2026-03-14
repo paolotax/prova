@@ -1,89 +1,91 @@
-<div class="stack" data-controller="mobile-form">
-  <h2 class="txt-large font-weight-bold">Nuovo appunto</h2>
-
 <%= form_with model: @appunto,
         url: mobile_appunti_path,
-        class: "stack",
-        data: { mobile_form_target: "form" } do |f| %>
+        class: "flex flex-column gap",
+        data: { controller: "mobile-form", mobile_form_target: "form" } do |f| %>
 
-    <%# Destinatario %>
-    <div class="form-field">
-      <label class="label">Destinatario</label>
-      <div class="cb-tax">
-        <%= combobox_tag "appunto[appuntabile_value]",
-            destinatari_index_path(account_id: Current.account.id),
-            placeholder: "cerca scuola, cliente, classe...",
-            mobile_at: "0px" %>
+  <strong class="divider txt-large">Nuovo appunto</strong>
+
+  <section class="panel shadow center" style="--panel-size: 55ch;">
+    <strong class="divider txt-medium margin-block">Contenuto</strong>
+
+    <div class="flex flex-column gap" data-controller="speech">
+      <div class="form-field">
+        <%= f.text_area :content,
+            class: "input input--textarea",
+            rows: 5,
+            placeholder: "Scrivi o detta...",
+            data: { speech_target: "output" } %>
+      </div>
+
+      <div class="flex align-center justify-center gap-half">
+        <button type="button"
+                class="btn btn--small"
+                data-speech-target="button"
+                data-action="speech#toggle"
+                hidden>
+          <span data-speech-target="label">Microfono</span>
+        </button>
       </div>
     </div>
 
-    <%# Nome %>
-    <div class="form-field">
-      <%= f.text_field :nome,
-          class: "input",
-          placeholder: "Titolo o destinatario" %>
+
+    <strong class="divider txt-medium margin-block">Destinatario</strong>
+
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <div class="cb-tax">
+          <%= combobox_tag "appunto[appuntabile_value]",
+              destinatari_index_path(account_id: Current.account.id),
+              placeholder: "cerca scuola, cliente, classe...",
+              mobile_at: "0px" %>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="label">Titolo</label>
+        <%= f.text_field :nome, class: "input", placeholder: "Titolo o destinatario" %>
+      </div>
     </div>
 
-    <%# Testo con speech %>
-    <div class="form-field" data-controller="speech">
-      <label class="label">Contenuto</label>
-      <%= f.text_area :content,
-          class: "input",
-          rows: 5,
-          placeholder: "Scrivi o detta...",
-          data: { speech_target: "output" } %>
-      <button type="button"
-              class="btn btn--small margin-block-start-half"
-              data-speech-target="button"
-              data-action="speech#toggle"
-              hidden>
-        <span data-speech-target="label">Microfono</span>
-      </button>
+    <div class="flex flex-column gap">
+      <div class="form-field">
+        <%= f.telephone_field :telefono, class: "input", placeholder: "Telefono" %>
+      </div>
+      <div class="form-field">
+        <%= f.email_field :email, class: "input", placeholder: "Email" %>
+      </div>
     </div>
 
-    <%# Barra azioni: registra vocale + foto %>
-    <div data-controller="audio-recorder">
-      <div class="flex gap">
+    <strong class="divider txt-medium margin-block">Allegati</strong>
+
+    <div class="flex align-center justify-center gap-half">
+
+      <div data-controller="audio-recorder">
         <button type="button"
                 class="btn btn--small"
                 data-action="audio-recorder#toggle"
                 data-audio-recorder-target="button">
           <span data-audio-recorder-target="label">Registra vocale</span>
         </button>
-
-        <label class="btn btn--small">
-          Foto / File
-          <%= f.file_field :attachments,
-              multiple: true,
-              class: "visually-hidden",
-              direct_upload: true,
-              data: { mobile_form_target: "fileInput" } %>
-        </label>
+        <div data-audio-recorder-target="recordings" class="stack-half margin-block-start-half"></div>
       </div>
 
-      <%# Preview allegati audio %>
-      <div data-audio-recorder-target="recordings" class="stack-half"></div>
+      <label class="btn btn--small">
+        Foto / File
+        <%= f.file_field :attachments,
+            multiple: true,
+            class: "visually-hidden",
+            direct_upload: true,
+            data: { mobile_form_target: "fileInput" } %>
+      </label>
+      <div data-mobile-form-target="previews" class="flex gap-half flex-wrap"></div>
     </div>
+  </section>
 
-    <%# Preview allegati file %>
-    <div data-mobile-form-target="previews" class="flex gap-half flex-wrap"></div>
+  
 
-    <%# Contatti (collapsible) %>
-    <details>
-      <summary class="txt-small color-subdued">Contatti (opzionale)</summary>
-      <div class="stack-half padding-block-start-half">
-        <%= f.telephone_field :telefono,
-            class: "input",
-            placeholder: "Telefono" %>
-        <%= f.email_field :email,
-            class: "input",
-            placeholder: "Email" %>
-      </div>
-    </details>
-
-    <%# Invio %>
-    <%= f.submit "Salva bozza",
-        class: "btn btn--primary btn--large full-width",
-        data: { mobile_form_target: "submit" } %>
-  <% end %>
-</div>
+  <div class="flex align-center justify-center gap">
+    <%= link_to "Annulla", root_path, class: "btn" %>
+    <%= f.submit "Salva bozza", class: "btn btn--primary", data: { mobile_form_target: "submit" } %>
+  </div>
+<% end %>
