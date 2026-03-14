@@ -3,6 +3,6 @@
 
 <%= render "shared/cards/display/common/board",
     id: appunto.numero_formattato,
-    name: "APPUNTO" do %>
+    name: appunto.drafted? ? "BOZZA" : "APPUNTO" do %>
   <%= yield if block_given? %>
 <% end %>

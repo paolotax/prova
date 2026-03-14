@@ -7,6 +7,7 @@ module AppuntoHelper
 
   # Returns BEM modifier class based on appunto state (from concerns)
   def appunto_stato_modifier(appunto)
+    return "card--drafted" if appunto.drafted?
     return "card--closed" if appunto.closed?
     return "card--postponed" if appunto.postponed?
     return "card--golden" if appunto.golden?
@@ -16,6 +17,7 @@ module AppuntoHelper
   # Returns CSS color for card-perma based on appunto state (from concerns)
   # Colors aligned with Fizzy: gray for closed/postponed, blue for maybe/triage
   def appunto_color(appunto)
+    return "oklch(var(--lch-red-medium))" if appunto.drafted?
     return "var(--color-golden)" if appunto.golden?
     return "oklch(0.6 0.01 0)" if appunto.closed?     # gray
     return "oklch(0.6 0.01 0)" if appunto.postponed?  # gray

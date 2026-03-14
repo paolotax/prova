@@ -4,7 +4,8 @@
         controller: "navigable-list",
         dialog_target: "dialog",
         navigable_list_actionable_items_value: "true",
-        navigable_list_reverse_navigation_value: "true" } do %>
+        navigable_list_reverse_navigation_value: "true" },
+        turbo_permanent: true do %>
     <%= turbo_frame_tag "bozze", src: bozze_appunti_path, data: {
           controller: "frame",
           action: "turbo:morph@document->frame#reload" } %>
@@ -13,7 +14,7 @@
   <button class="tray__toggle" data-action="dialog#toggle keydown.b@document->hotkey#click" data-controller="hotkey" aria-label="Mostra bozze appunti" aria-haspopup="true">
     <div class="tray__toggle-btn txt-uppercase btn btn--reversed txt-x-small center full-width">
       <%= icon_tag "appunto" %>
-      <span class="tray__toggle-text">Bozze <kbd class="hide-on-touch">B</kbd></span>
+      <span class="tray__toggle-text">Bozza <kbd class="hide-on-touch">B</kbd></span>
     </div>
   </button>
 </section>

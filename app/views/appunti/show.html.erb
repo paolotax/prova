@@ -16,9 +16,7 @@
   <%= render "appunti/container", appunto: @appunto %>
 </div>
 
-<% if @appunto.published? %>
-  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
-    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
-    <%= render "shared/container/delete", record: @appunto, path: appunto_path(@appunto), label: "questo appunto" %>
-  </footer>
-<% end %>
+<footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+  <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+  <%= render "shared/container/delete", record: @appunto, path: appunto_path(@appunto), label: @appunto.drafted? ? "questa bozza" : "questo appunto" %>
+</footer>

@@ -2,4 +2,4 @@
 
 <%= render "shared/cards/display/perma/board",
     id: appunto.numero_formattato || "NUOVO",
-    name: "APPUNTO" %>
+    name: appunto.drafted? ? "BOZZA" : "APPUNTO" %>
