@@ -18,6 +18,7 @@
 
   <%= tag.article id: (entry ? dom_id(entry) : dom_id(tappa)),
       class: class_names("card", tappa_type_modifier(tappa)),
+      style: "--card-color: #{tappa_color(tappa)};",
       tabindex: 0,
       draggable: (draggable && entry.present?),
       data: card_data do %>

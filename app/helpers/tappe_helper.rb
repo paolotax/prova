@@ -4,8 +4,15 @@ module TappeHelper
     return "var(--color-golden)" if tappa.golden?
     return "oklch(0.6 0.01 0)" if tappa.closed?
     return "oklch(0.6 0.01 0)" if tappa.postponed?
-    return tappa.entry.column.color if tappa.entry&.column&.color.present?
-    "oklch(var(--lch-blue-medium))"
+
+    today = Date.current
+    data = tappa.data_tappa
+
+    return "oklch(0.6 0.15 350)"  unless data                # rosa - da programmare
+    return "oklch(0.6 0.15 160)"  if data == today            # verde - oggi
+    return "oklch(0.7 0.15 85)"   if data == today + 1        # gialla - domani
+    return "oklch(0.6 0.15 350)"  if data > today + 1         # rosa - futura
+    "oklch(0.6 0.01 0)"                                       # grigia - passata
   end
 
   # Returns BEM modifier class based on tappa's tappable_type

@@ -1,0 +1,8 @@
+<li class="popup__item" data-filter-target="item" data-navigable-list-target="item" aria-checked="<%= checked %>">
+  <%= button_to tappa_tappa_giri_path(tappa, params: { giro_titolo: giro.titolo }), method: :post,
+      class: "popup__btn btn",
+      form_class: "max-width flex-item-grow" do %>
+    <span class="overflow-ellipsis flex-item-grow" style="color: <%= giro.color %>"><%= giro.titolo %></span>
+    <%= icon_tag "check", size: 18, class: "checked flex-item-no-shrink flex-item-justify-end", style: "--icon-size: 1em" %>
+  <% end %>
+</li>

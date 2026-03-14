@@ -1,8 +1,17 @@
 <%# locals: (tappa:, prev_tappa_id: nil, next_tappa_id: nil) -%>
 
+<%
+  # Calcola prev/next se non passati come locals (es. da turbo_stream replace)
+  if prev_tappa_id.nil? && next_tappa_id.nil? && tappa.persisted?
+    tappe_ids = current_user.tappe.where(data_tappa: tappa.data_tappa).order(:position, :id).pluck(:id)
+    idx = tappe_ids.index(tappa.id)
+    prev_tappa_id = idx && idx > 0 ? tappe_ids[idx - 1] : nil
+    next_tappa_id = idx && idx < tappe_ids.size - 1 ? tappe_ids[idx + 1] : nil
+  end
+%>
+
 <section id="<%= dom_id(tappa, :container) %>" class="card-perma" style="--card-color: <%= tappa_color(tappa) %>;">
   <div class="card-perma__actions card-perma__actions--left">
-    <%= render "tappe/container/gild", tappa: tappa if tappa.entry.present? && !tappa.closed? %>
     <% if prev_tappa_id %>
       <%= link_to tappa_path(prev_tappa_id), class: "btn",
           data: { controller: "hotkey", action: "keydown.left@document->hotkey#click" } do %>
@@ -10,6 +19,7 @@
         <span class="for-screen-reader">Tappa precedente</span>
       <% end %>
     <% end %>
+    <%= render "tappe/container/gild", tappa: tappa if tappa.entry.present? && !tappa.closed? %>
   </div>
 
   <div class="card-perma__bg">
@@ -27,6 +37,9 @@
       </div>
 
       <footer class="card__footer full-width">
+        <% if tappa.bolle_visione.any? %>
+          <%= render "tappe/container/bolle_visione", tappa: tappa %>
+        <% end %>
       </footer>
     </article>
   </div>

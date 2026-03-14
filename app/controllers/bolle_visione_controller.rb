@@ -8,13 +8,22 @@ class BolleVisioneController < ApplicationController
   end
 
   def new
+    # Collana: da param (cambio dinamico) o dal primo giro della tappa
+    collana = if params[:collana_id].present?
+      Current.account.collane.find_by(id: params[:collana_id])
+    else
+      @tappa.giri.first&.collana
+    end
+
     @bolla_visione = BollaVisione.new(
       scuola: @tappa.tappable,
       tappa: @tappa,
-      data_bolla: Date.current
+      data_bolla: @tappa.data_tappa,
+      collana: collana
     )
     @collane = Current.account.collane.ordered
-    @referenti = @tappa.tappable.persone.per_ruolo(:referente) if @tappa.tappable.respond_to?(:persone)
+    @scuola = @tappa.tappable
+    load_target_e_classi(collana)
   end
 
   def create
@@ -23,12 +32,17 @@ class BolleVisioneController < ApplicationController
     @bolla_visione.scuola = @tappa.tappable
     @bolla_visione.tappa = @tappa
 
+    # Crea o assegna persona inline
+    assign_or_create_referente
+
     if @bolla_visione.save
-      @bolla_visione.crea_righe_da_collana!
+      target_filter = params[:target_ids].to_a.reject(&:blank?)
+      @bolla_visione.crea_righe_da_collana!(target_filter: target_filter)
       redirect_to bolla_visione_path(@bolla_visione)
     else
       @collane = Current.account.collane.ordered
-      @referenti = @tappa.tappable.persone.per_ruolo(:referente) if @tappa.tappable.respond_to?(:persone)
+      @scuola = @tappa.tappable
+      load_target_e_classi(@bolla_visione.collana)
       render :new, status: :unprocessable_entity
     end
   end
@@ -77,6 +91,57 @@ class BolleVisioneController < ApplicationController
 
   def set_bolla_visione
     @bolla_visione = Current.account.bolle_visione.find(params[:id])
+  end
+
+  def load_target_e_classi(collana)
+    if collana
+      # Estrai tutti i tag unici dai classi_target della collana
+      @target_disponibili = collana.collana_libri
+        .where.not(classi_target: [nil, ""])
+        .pluck(:classi_target)
+        .flat_map { |t| t.split(",").map(&:strip) }
+        .uniq
+        .sort
+    else
+      @target_disponibili = []
+    end
+    @classi = @scuola.classi.order(:anno_corso, :sezione) if @scuola.respond_to?(:classi)
+  end
+
+  def assign_or_create_referente
+    persona_params = params[:persona]
+    return unless persona_params.present?
+
+    scuola = @tappa.tappable
+
+    # Se c'è un id, è una persona esistente selezionata dal combobox
+    if persona_params[:id].present?
+      @bolla_visione.referente = scuola.persone.find_by(id: persona_params[:id])
+      return
+    end
+
+    # Se c'è cognome, crea nuova persona
+    return unless persona_params[:cognome].present?
+
+    persona = scuola.persone.create!(
+      cognome: persona_params[:cognome],
+      nome: persona_params[:nome],
+      email: persona_params[:email],
+      cellulare: persona_params[:cellulare],
+      ruolo: persona_params[:ruolo].presence || :docente,
+      account: Current.account
+    )
+
+    # Assegna classi se selezionate
+    classe_ids = persona_params[:classe_ids].to_a.reject(&:blank?)
+    materia = persona_params[:materia]
+    if classe_ids.any?
+      scuola.classi.where(id: classe_ids).each do |classe|
+        persona.persona_classi.create(classe: classe, materia: materia)
+      end
+    end
+
+    @bolla_visione.referente = persona
   end
 
   def bolla_visione_params

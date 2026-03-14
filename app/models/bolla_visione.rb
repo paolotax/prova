@@ -44,8 +44,14 @@ class BollaVisione < ApplicationRecord
   scope :ordered, -> { order(data_bolla: :desc, numero: :desc) }
   scope :per_scuola, ->(scuola) { where(scuola: scuola) }
 
-  def crea_righe_da_collana!
+  def crea_righe_da_collana!(target_filter: [])
     collana.collana_libri.ordered.each do |cl|
+      # Se c'è un filtro target, includi solo libri che matchano almeno un tag
+      if target_filter.any? && cl.classi_target.present?
+        libro_tags = cl.classi_target.split(",").map(&:strip)
+        next unless (libro_tags & target_filter).any?
+      end
+
       bolla_visione_righe.create!(
         libro: cl.libro,
         classi_target: cl.classi_target,

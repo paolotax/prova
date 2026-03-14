@@ -1,0 +1,27 @@
+<%# locals: (tappa:) -%>
+
+<div class="flex flex-column gap-half full-width">
+  <h4 class="txt-small font-weight-black txt-subtle margin-none">Bolle visione</h4>
+  <% tappa.bolle_visione.includes(:collana, :referente, :bolla_visione_righe).ordered.each do |bolla| %>
+    <div class="flex align-center gap-half full-width" style="border-block-end: 1px solid var(--color-border);">
+      <%= link_to bolla_visione_path(bolla), class: "txt-ink flex flex-column gap-quarter pad-block-half", style: "flex: 1; min-width: 0;" do %>
+        <div class="flex align-center gap-half">
+          <strong class="txt-small">BV-<%= bolla.numero %></strong>
+          <span class="txt-x-small txt-subtle"><%= bolla.collana.nome %></span>
+          <span class="txt-x-small txt-subtle flex-item-no-shrink"><%= bolla.bolla_visione_righe.sum(:quantita) %> libri</span>
+        </div>
+        <% if bolla.referente.present? %>
+          <div class="txt-x-small txt-subtle overflow-ellipsis">
+            <%= bolla.referente.nome %> <%= bolla.referente.cognome %>
+            <% if bolla.referente.email.present? %>
+              &middot; <%= bolla.referente.email %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+      <%= button_to bolla_visione_path(bolla), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink", data: { turbo_confirm: "Eliminare BV-#{bolla.numero}?" } do %>
+        <%= icon_tag "minus", size: "small" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

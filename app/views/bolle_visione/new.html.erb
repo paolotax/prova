@@ -1,42 +1,133 @@
 <% @page_title = "Scarica collana" %>
 
 <% content_for :header do %>
-  <div class="header__actions header__actions--start">
-    <%= back_link_to @tappa.tappable.denominazione, tappa_path(@tappa) %>
-  </div>
+  <% if @tappa.data_tappa.present? %>
+    <div class="header__actions header__actions--start">
+      <%= back_link_to @tappa.tappable.denominazione, tappa_path(@tappa) %>
+    </div>
+  <% end %>
   <h1 class="header__title"><%= @page_title %></h1>
-  <div class="header__actions header__actions--end">
-  </div>
+  
+  <div class="header__actions header__actions--end"></div>
 <% end %>
 
-<section class="panel panel--wide shadow center">
+<section class="panel panel--wide shadow center"
+    data-controller="bolla-form"
+    data-bolla-form-classi-value="<%= @classi&.map { |c| { id: c.id, anno_corso: c.anno_corso, nome_breve: c.nome_breve } }.to_json %>">
+
   <h3 class="divider divider--fade txt-medium font-weight-black"><%= @tappa.tappable.denominazione %></h3>
 
   <%= form_with model: [@tappa, @bolla_visione] do |form| %>
+    <%= form.hidden_field :data_bolla, value: @tappa.data_tappa %>
+
     <div class="flex flex-column gap">
-      <div class="form-field">
-        <%= form.label :collana_id, "Collana" %>
-        <%= form.collection_select :collana_id, @collane, :id, :nome, { prompt: "Scegli collana..." }, class: "input" %>
-      </div>
-
-      <% if @referenti&.any? %>
-        <div class="form-field">
-          <%= form.label :referente_id, "Referente" %>
-          <%= form.collection_select :referente_id, @referenti, :id, :nome_completo, { include_blank: "Nessun referente" }, class: "input" %>
+      <%# 1. Collana + Target sulla stessa riga %>
+      <div class="flex align-center justify-center gap margin-block-start">
+        <div class="form-field" style="flex: 0 0 auto;">
+          <%= form.label :collana_id, "Collana" %>
+          <%= form.collection_select :collana_id, @collane, :id, :nome,
+              { prompt: "Scegli collana..." },
+              class: "input input--select",
+              data: { bolla_form_target: "collanaSelect", action: "bolla-form#collanaChanged" } %>
         </div>
-      <% end %>
 
-      <div class="form-field">
-        <%= form.label :data_bolla, "Data" %>
-        <%= date_input(form, :data_bolla) %>
+        <% if @target_disponibili.any? %>
+          <div class="form-field" style="flex: 0 0 auto;" data-bolla-form-target="targetContainer">
+            <label>Target</label>
+            <div class="flex flex-wrap gap-quarter">
+            <% @target_disponibili.each do |target| %>
+              <label class="btn btn--small"
+                  style="--btn-border-size: 1px;"
+                  data-bolla-form-target="targetChip"
+                  data-target-value="<%= target %>">
+                <input type="checkbox" name="target_ids[]" value="<%= target %>"
+                    class="for-screen-reader"
+                    data-action="bolla-form#targetChanged">
+                <%= target %>
+              </label>
+            <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
 
+      <div class="divider divider--fade full-width txt-small font-weight-bold margin-block-start">Insegnante / Referente</div>
+
+      <%# 3. Persona inline %>
+      <div data-controller="persona-search"
+          data-persona-search-scuola-url-value="<%= scuola_persona_path(@scuola, '__PERSONA_ID__') %>">
+
+        <%# Combobox ricerca persona %>
+        <div class="form-field cb-tax full-width margin-block-start-half">
+          <%= combobox_tag "persona_search",
+              scuola_persone_search_index_path(@scuola),
+              placeholder: "Cerca per nome o cognome...",
+              mobile_at: "0px",
+              data: { action: "hw-combobox:selection->persona-search#select" } %>
+        </div>
+
+        <div class="divider divider--fade full-width txt-xx-small txt-align-center margin-block"
+            data-persona-search-target="divider">oppure aggiungi nuovo</div>
+
+        <%# Form campi persona (inline, non dialog) %>
+        <% materie_esistenti = @scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
+
+        <div class="flex flex-column gap-quarter" data-persona-search-target="form">
+          <input type="hidden" name="persona[id]" data-persona-search-target="personaId">
+          <div class="flex gap-quarter">
+            <input type="text" name="persona[nome]" placeholder="Nome" class="input txt-small"
+                data-persona-search-target="nome">
+            <input type="text" name="persona[cognome]" placeholder="Cognome" class="input txt-small"
+                data-persona-search-target="cognome">
+          </div>
+          <input type="email" name="persona[email]" placeholder="Email" class="input txt-small"
+              data-persona-search-target="email">
+          <input type="tel" name="persona[cellulare]" placeholder="Cellulare" class="input txt-small"
+              data-persona-search-target="cellulare">
+          <div class="flex gap-quarter">
+            <%= select_tag "persona[ruolo]",
+                options_for_select(Persona.ruoli.keys.map { |r| [r.capitalize, r] }, "docente"),
+                class: "input input--select txt-small",
+                data: { persona_search_target: "ruolo" } %>
+            <input type="text" name="persona[materia]" placeholder="Disciplina" class="input txt-small"
+                list="materie_list"
+                data-persona-search-target="materia">
+          </div>
+
+          <%# Classi toggle (filtrate per target) %>
+          <% if @classi&.any? %>
+            <div data-bolla-form-target="classiContainer" class="margin-block-start-half">
+              <label class="txt-x-small txt-subtle">Classi</label>
+              <div class="flex flex-wrap gap-quarter justify-center" data-bolla-form-target="classiChips">
+                <% @classi.each do |classe| %>
+                  <label class="btn btn--small"
+                      style="--btn-border-size: 1px;"
+                      data-bolla-form-target="classeChip"
+                      data-anno="<%= classe.anno_corso %>">
+                    <input type="checkbox" name="persona[classe_ids][]" value="<%= classe.id %>"
+                        class="for-screen-reader">
+                    <%= classe.nome_breve %>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <datalist id="materie_list">
+          <% materie_esistenti.each do |m| %>
+            <option value="<%= m %>">
+          <% end %>
+        </datalist>
+      </div>
+
+      <%# 4. Note %>
       <div class="form-field">
         <%= form.label :note, "Note" %>
         <%= form.text_area :note, class: "input", rows: 2 %>
       </div>
 
-      <div class="flex gap-half margin-block-start">
+      <div class="flex gap-half center margin-block-start">
         <%= form.submit "Scarica collana", class: "btn btn--positive" %>
       </div>
     </div>

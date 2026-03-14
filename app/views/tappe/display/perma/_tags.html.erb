@@ -1,11 +1,32 @@
 <%# locals: (tappa:) -%>
 
 <div id="<%= dom_id(tappa, :tags) %>" class="card__tags">
-  <% tappa.giri.each do |giro| %>
-    <%= link_to giro_path(giro), class: "card__tag txt-uppercase", draggable: false,
-          style: "border: 1px solid #{giro.color}; color: #{giro.color}; background: transparent; border-radius: var(--radius-small); padding: 0.1em 0.4em; cursor: pointer; text-decoration: none;",
-          data: { turbo_frame: "_top" } do %>
-      <%= giro.titolo %>
-    <% end %>
+  <div data-controller="dialog"
+        data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside mouseenter->dialog#loadLazyFrames" <%= "hidden" if tappa.closed? %>>
+    <button class="card__tag-picker-button btn" style="--btn-background: var(--card-bg-color);"
+        data-controller="tooltip" data-action="click->dialog#open:stop">
+      <%= icon_tag "tag" %>
+      <span class="for-screen-reader">Aggiungi giro</span>
+    </button>
+
+    <dialog class="popup panel flex-column align-start justify-start fill-white shadow txt-small"
+        data-dialog-target="dialog"
+        data-action="turbo:before-morph-attribute->dialog#preventCloseOnMorphing turbo:submit-end->dialog#close">
+      <%= turbo_frame_tag tappa, :tappa_giro, src: new_tappa_tappa_giro_path(tappa), loading: :lazy, refresh: :morph %>
+    </dialog>
+  </div>
+
+  <% if tappa.giri.any? %>
+    <div class="card__tags-list min-width">
+      <% tappa.giri.each_with_index do |giro, index| %>
+        <%= link_to giro_path(giro),
+              class: "card__tag btn btn--plain min-width txt-uppercase fill-transparent",
+              style: "color: #{giro.color}",
+              draggable: false,
+              data: { turbo_frame: "_top" } do %>
+          <%= giro.titolo %>
+        <% end %><%= "," unless index == tappa.giri.size - 1 %>
+      <% end %>
+    </div>
   <% end %>
 </div>

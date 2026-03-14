@@ -119,6 +119,10 @@
     min-inline-size: 0;
   }
 
+  .card__tag-picker-button {
+    font-size: 0.6em;
+  }
+
   .card__tag {
     color: inherit;
     font-weight: 600;

@@ -1,0 +1,32 @@
+<%= turbo_frame_tag @tappa, :tappa_giro do %>
+  <div class="flex-column full-width"
+    data-controller="form filter navigable-list"
+    data-navigable-list-focus-on-selection-value="false"
+    data-navigable-list-actionable-items-value="true"
+    data-action="keydown->navigable-list#navigate filter:changed->navigable-list#reset"
+  >
+    <div class="flex align-start justify-space-between">
+      <strong class="popup__title">Giri</strong>
+    </div>
+
+    <%= form_with url: tappa_tappa_giri_path(@tappa),
+          id: dom_id(@tappa, :giri_form),
+          data: { controller: "form", action: "submit->form#preventEmptySubmit submit->form#preventComposingSubmit" },
+          class: "flex flex-column gap-half full-width margin-block-half" do |form| %>
+      <%= form.text_field :giro_titolo, placeholder: @giri.any? ? "Nuovo giro o filtra..." : "Nome del giro...", class: "input txt-small full-width",
+            autocomplete: "off", autofocus: true, data: { filter_target: "input", form_target: "input", action: "input->filter#filter compositionstart->form#compositionStart compositionend->form#compositionEnd" } %>
+    <% end %>
+
+    <ul class="popup__list" data-filter-target="list">
+      <%= render partial: "tappe/tappa_giri/giro", collection: @tagged_with, as: :giro, locals: { tappa: @tappa, checked: true } %>
+      <%= render partial: "tappe/tappa_giri/giro", collection: @giri, as: :giro, locals: { tappa: @tappa, checked: false } %>
+
+      <li class="popup__item" data-navigable-list-target="item">
+        <%= button_tag "Crea giro", type: "submit", form: dom_id(@tappa, :giri_form), class: "btn popup__btn", data: { form_target: "submit" } do %>
+          <%= icon_tag "add" %>
+          <span>Crea giro</span>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+<% end %>
