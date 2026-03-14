@@ -1,0 +1,13 @@
+<% unless turbo_frame_request? %>
+  <h2 class="txt-large font-weight-bold margin-block-end">Le mie bozze</h2>
+<% end %>
+
+<%= turbo_frame_tag "bozze" do %>
+  <% if @bozze.any? %>
+    <% @bozze.each do |bozza| %>
+      <%= render "appunti/bozza", bozza: bozza %>
+    <% end %>
+  <% else %>
+    <p class="color-subdued">Nessuna bozza</p>
+  <% end %>
+<% end %>

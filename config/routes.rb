@@ -73,6 +73,13 @@ Rails.application.routes.draw do
   get "download/extension", to: "downloads#extension", as: :download_extension
 
   # =========================================
+  # MOBILE (sessione, senza account scope in URL)
+  # =========================================
+  namespace :mobile, path: "m" do
+    resources :appunti, only: [:new, :create], path_names: { new: "nuovo" }
+  end
+
+  # =========================================
   # ROUTES CON CONTESTO ACCOUNT
   # =========================================
 
@@ -384,6 +391,9 @@ Rails.application.routes.draw do
     end
 
     resources :appunti do
+      collection do
+        get :bozze
+      end
       resources :tappe
       scope module: :appunti do
         resource :goldness,  only: [:create, :destroy]
@@ -510,6 +520,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     post "whatsapp/contacts", to: "whatsapp#create"
+
+    namespace :v1 do
+      resources :appunti, only: [:create]
+    end
   end
 
   # =========================================

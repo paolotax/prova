@@ -1,0 +1,27 @@
+<%# locals: (bozza:) -%>
+
+<div class="tray__item tray__item--bozza" id="<%= dom_id bozza, :bozza %>" data-navigable-list-target="item">
+  <%= tag.article class: "card card--bozza", tabindex: 0 do %>
+    <%= link_to appunto_path(bozza), class: "card__link", data: { action: "dialog#close", turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= bozza.nome.presence || "Bozza" %></span>
+    <% end %>
+
+    <div class="card__body">
+      <div class="card__content">
+        <h3 class="card__title overflow-line-clamp"><%= bozza.nome.presence || "Senza titolo" %></h3>
+        <% if bozza.appuntabile.present? %>
+          <span class="card__subtitle overflow-ellipsis"><%= bozza.appuntabile.denominazione %></span>
+        <% end %>
+        <% if bozza.content.present? %>
+          <div class="txt-x-small overflow-line-clamp" style="margin-top: 0.5ch; --lines: 2; opacity: 0.7;">
+            <%= strip_tags(bozza.content.to_s).truncate(100) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <footer class="card__footer">
+      <span class="txt-x-small color-subdued"><%= time_ago_in_words(bozza.created_at) %> fa</span>
+    </footer>
+  <% end %>
+</div>

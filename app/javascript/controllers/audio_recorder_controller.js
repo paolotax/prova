@@ -1,139 +1,112 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["startControl", "recordingControls", "uploadControls", "countdown"];
-  static values = {
-    recordingTimeout: { type: Number, default: 30000 } // 30 secondi in millisecondi
-  }
+  static targets = ["button", "label", "recordings"]
 
   connect() {
-    this.mediaRecorder = null;
-    this.audioChunks = [];
-    this.recordingTimer = null;
-    this.initializeMediaRecorder();
-    // this.showStartControls(); // Mostra solo i controlli di inizio all'avvio
+    this.recording = false
+    this.mediaRecorder = null
+    this.chunks = []
+    this.counter = 0
   }
 
-  async initializeMediaRecorder() {
-    try {
-      // Richiede l'accesso al microfono
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Controlla il tipo MIME supportato
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-      // Configura MediaRecorder
-      this.mediaRecorder = new MediaRecorder(stream, { mimeType });
+  async toggle() {
+    this.recording ? this.stop() : await this.start()
+  }
 
-      this.mediaRecorder.ondataavailable = (event) => {
-        this.audioChunks.push(event.data);
-      };
+  async start() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      this.mediaRecorder = new MediaRecorder(stream)
+      this.chunks = []
+
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) this.chunks.push(e.data)
+      }
 
       this.mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(this.audioChunks, { type: mimeType });
-        this.audioChunks = [];
-        
-        const file = new File([audioBlob], `recording.${mimeType.split("/")[1]}`, { type: mimeType });
-        const formData = new FormData();
-        formData.append('audio_file', file);
+        stream.getTracks().forEach(track => track.stop())
+        const blob = new Blob(this.chunks, { type: "audio/webm" })
+        this.addRecording(blob)
+      }
 
-        fetch('/voice_notes', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'text/vnd.turbo-stream.html'
-          }
-        })
-        .then(response => {
-          if (response.ok) {
-            return response.text();
-          }
-          throw new Error('Errore durante il salvataggio');
-        })
-        .then(html => {
-          Turbo.renderStreamMessage(html);
-          this.showStartControls();
-        })
-        .catch(error => {
-          console.error('Errore:', error);
-        });
-      };
-    } catch (error) {
-      console.error("Errore nell'accesso al microfono:", error);
-      alert("Impossibile accedere al microfono. Controlla le impostazioni del dispositivo.");
+      this.mediaRecorder.start()
+      this.recording = true
+      this.buttonTarget.classList.add("btn--danger")
+      this.labelTarget.textContent = "Stop registrazione"
+      this.startTimer()
+    } catch (e) {
+      console.error("Microphone access denied:", e)
     }
   }
 
-  startRecording() {
-    if (this.mediaRecorder) {
-      this.audioChunks = [];
-      this.mediaRecorder.start();
-
-      // Passa ai controlli di registrazione
-      this.showRecordingControls();
-      
-      // Inizializza il countdown
-      let secondsLeft = this.recordingTimeoutValue / 1000;
-      this.updateCountdown(secondsLeft);
-      
-      // Aggiorna il countdown ogni secondo
-      this.countdownTimer = setInterval(() => {
-        secondsLeft -= 1;
-        this.updateCountdown(secondsLeft);
-      }, 1000);
-
-      // Imposta il timer per lo stop automatico
-      this.recordingTimer = setTimeout(() => {
-        clearInterval(this.countdownTimer);
-        this.stopRecording();
-      }, this.recordingTimeoutValue);
-    }
-  }
-
-  stopRecording() {
+  stop() {
     if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
-      clearTimeout(this.recordingTimer);
-      clearInterval(this.countdownTimer);
-      this.mediaRecorder.stop();
+      this.mediaRecorder.stop()
+    }
+    this.recording = false
+    this.buttonTarget.classList.remove("btn--danger")
+    this.labelTarget.textContent = "Registra vocale"
+    this.stopTimer()
+  }
+
+  addRecording(blob) {
+    this.counter++
+    const url = URL.createObjectURL(blob)
+    const name = `vocale_${this.counter}.webm`
+
+    const wrapper = document.createElement("div")
+    wrapper.classList.add("flex", "align-center", "gap-half")
+
+    const audio = document.createElement("audio")
+    audio.src = url
+    audio.controls = true
+    audio.classList.add("flex-grow")
+
+    const removeBtn = document.createElement("button")
+    removeBtn.type = "button"
+    removeBtn.classList.add("btn", "btn--small", "btn--ghost")
+    removeBtn.textContent = "×"
+    removeBtn.addEventListener("click", () => {
+      wrapper.remove()
+      URL.revokeObjectURL(url)
+    })
+
+    wrapper.appendChild(audio)
+    wrapper.appendChild(removeBtn)
+    this.recordingsTarget.appendChild(wrapper)
+
+    // Add file to the form's file input
+    const form = this.element.closest("form")
+    if (form) {
+      const file = new File([blob], name, { type: "audio/webm" })
+      const dt = new DataTransfer()
+
+      const existingInput = form.querySelector('input[name="appunto[attachments][]"]')
+      if (existingInput && existingInput.files) {
+        for (const f of existingInput.files) dt.items.add(f)
+      }
+
+      dt.items.add(file)
+      if (existingInput) existingInput.files = dt.files
     }
   }
 
-  updateCountdown(seconds) {
-    this.countdownTarget.innerHTML = `Registrazione in corso</br> ${seconds} secondi rimanenti`;
+  startTimer() {
+    this.seconds = 0
+    this.timerInterval = setInterval(() => {
+      this.seconds++
+      const mins = Math.floor(this.seconds / 60).toString().padStart(2, "0")
+      const secs = (this.seconds % 60).toString().padStart(2, "0")
+      this.labelTarget.textContent = `Stop ${mins}:${secs}`
+    }, 1000)
+  }
+
+  stopTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval)
   }
 
   disconnect() {
-    if (this.recordingTimer) {
-      clearTimeout(this.recordingTimer);
-    }
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-    }
-  }
-
-  resetForm(event) {
-    if (event.detail.success) {
-      this.showStartControls(); // Torna ai controlli di inizio
-    } else {
-      console.error("Errore durante il salvataggio della nota vocale.");
-    }
-  }
-
-  // Gestione della visibilità dei controlli
-  showStartControls() {
-    this.startControlTarget.classList.remove("hidden");
-    this.recordingControlsTarget.classList.add("hidden");
-    // this.uploadControlsTarget.classList.add("hidden");
-  }
-
-  showRecordingControls() {
-    this.startControlTarget.classList.add("hidden");
-    this.recordingControlsTarget.classList.remove("hidden");
-    // this.uploadControlsTarget.classList.add("hidden");
-  }
-
-  showUploadControls() {
-    this.startControlTarget.classList.add("hidden");
-    this.recordingControlsTarget.classList.add("hidden");
-    // this.uploadControlsTarget.classList.remove("hidden");
+    if (this.recording) this.stop()
   }
 }

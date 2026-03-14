@@ -1,0 +1,10 @@
+<section class="tray tray--new-appunto">
+  <%= link_to new_mobile_appunto_path, class: "tray__toggle",
+        title: "Nuovo appunto rapido",
+        data: { controller: "hotkey", action: "keydown.n@document->hotkey#click" } do %>
+    <div class="tray__toggle-btn txt-uppercase btn btn--reversed txt-x-small center full-width">
+      <%= icon_tag "add" %>
+      <span class="tray__toggle-text">Nuovo <kbd class="hide-on-touch">N</kbd></span>
+    </div>
+  <% end %>
+</section>

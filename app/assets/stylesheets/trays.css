@@ -514,6 +514,128 @@
     z-index: 100;
   }
 
+  /* Bozze tray (left side, red accent)
+  /* ------------------------------------------------------------------------ */
+
+  .tray--bozze {
+    inset-inline: var(--tray-margin) auto;
+
+    .tray__toggle-btn {
+      --btn-color: oklch(var(--lch-red-medium));
+    }
+
+    /* Override: don't shift toggle up on desktop like pins do */
+    .tray__toggle {
+      block-size: auto;
+      translate: none;
+    }
+
+    /* Disable toggle if no bozze */
+    .tray__dialog:not(:has(.tray__item)) ~ .tray__toggle {
+      opacity: 0.5;
+      pointer-events: none;
+
+      .tray__toggle-btn {
+        pointer-events: none;
+      }
+    }
+
+    /* On mobile, collapse to icon only */
+    @media (max-width: 799px) {
+      .tray__dialog:not([open]) ~ .tray__toggle {
+        border-inline-end: 1px dashed var(--color-ink-light);
+        translate: calc(-1 * var(--tray-margin)) 0;
+      }
+    }
+  }
+
+  .tray__item--bozza {
+    position: relative;
+
+    .tray__dialog:not([open]) & {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card--bozza {
+      --card-padding-block: 1.5ch;
+      --card-padding-inline: 1.5ch;
+
+      background-color: var(--color-canvas);
+      block-size: var(--tray-item-height);
+      border-inline-start: 3px solid oklch(var(--lch-red-medium));
+      color: var(--color-ink);
+      padding: var(--card-padding-inline);
+
+      .tray__dialog[open] & {
+        box-shadow: 0 0 0 1px var(--color-ink-lighter);
+        border-radius: 0;
+      }
+    }
+
+    .card__body {
+      margin-block-start: 0.2em;
+      padding-block-end: 0;
+    }
+
+    .card__title {
+      --lines: 1;
+      font-size: var(--text-small);
+      font-weight: bold;
+      min-block-size: 0;
+    }
+
+    .card__subtitle {
+      font-size: var(--text-x-small);
+    }
+
+    .card__footer {
+      margin-block: -0.2em 0;
+    }
+
+    [aria-selected] & {
+      outline: 0;
+      z-index: calc(var(--tray-item-z) + 2);
+
+      .card--bozza {
+        border-radius: 0.25ch;
+        outline: var(--focus-ring-size) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+      }
+    }
+  }
+
+  /* New appunto tray (right side, simple link)
+  /* ------------------------------------------------------------------------ */
+
+  .tray--new-appunto {
+    inset-inline: auto var(--tray-margin);
+
+    /* Override: keep toggle aligned with bar */
+    .tray__toggle {
+      block-size: auto;
+      translate: none;
+    }
+
+    @media (max-width: 799px) {
+      .tray__toggle {
+        inline-size: var(--footer-height);
+
+        .tray__toggle-btn {
+          border: 0;
+        }
+
+        .icon {
+          display: block;
+        }
+
+        .tray__toggle-text {
+          display: none;
+        }
+      }
+    }
+  }
+
   /* Notification-specific styles
   /* ------------------------------------------------------------------------ */
 

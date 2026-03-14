@@ -1,0 +1,19 @@
+<section class="tray tray--bozze" data-controller="dialog">
+  <%= tag.dialog id: "bozze-tray", class: "tray__dialog", data: {
+        action: "keydown->navigable-list#navigate dialog:show@document->navigable-list#reset keydown.esc->dialog#close:stop click@document->dialog#closeOnClickOutside",
+        controller: "navigable-list",
+        dialog_target: "dialog",
+        navigable_list_actionable_items_value: "true",
+        navigable_list_reverse_navigation_value: "true" } do %>
+    <%= turbo_frame_tag "bozze", src: bozze_appunti_path, data: {
+          controller: "frame",
+          action: "turbo:morph@document->frame#reload" } %>
+  <% end %>
+
+  <button class="tray__toggle" data-action="dialog#toggle keydown.b@document->hotkey#click" data-controller="hotkey" aria-label="Mostra bozze appunti" aria-haspopup="true">
+    <div class="tray__toggle-btn txt-uppercase btn btn--reversed txt-x-small center full-width">
+      <%= icon_tag "appunto" %>
+      <span class="tray__toggle-text">Bozze <kbd class="hide-on-touch">B</kbd></span>
+    </div>
+  </button>
+</section>

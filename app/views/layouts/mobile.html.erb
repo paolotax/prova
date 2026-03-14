@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="it">
+  <%= render "layouts/shared/head" %>
+
+  <body class="mobile <%= @body_class %>" data-controller="local-time timezone-cookie">
+    <div id="global-container">
+      <header class="header" id="header">
+        <nav class="flex align-center justify-between padding-inline">
+          <span class="txt-large font-weight-black">Scagnozz</span>
+          <% if Current.user %>
+            <%= link_to "Le mie bozze", bozze_appunti_path(account_id: Current.account.id), class: "btn btn--small" %>
+          <% end %>
+        </nav>
+      </header>
+
+      <%= render "layouts/shared/flash" if lookup_context.template_exists?("layouts/shared/flash", [], true) %>
+
+      <main id="main" class="padding">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

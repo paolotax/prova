@@ -25,7 +25,9 @@
 
 		<% if Current.user && !@hide_footer_frames %>
 			<div id="footer_frames" data-turbo-permanent="true">
+				<%= render "layouts/bozze_tray" %>
 				<%= render "layouts/bar" %>
+				<%= render "layouts/new_appunto_tray" %>
 				<%#= render "my/pins/tray" %>
 				<%#= render "notifications/tray" %>
 			</div>
