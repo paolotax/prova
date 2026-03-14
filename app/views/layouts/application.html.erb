@@ -8,6 +8,7 @@
 		  data-controller="local-time timezone-cookie turbo-navigation theme" 
 		  data-action="turbo:morph@window->local-time#refreshAll turbo:before-visit@document->turbo-navigation#rememberLocation" 
 		  data-platform="<%= platform.type %>">
+		
 		<div id="global-container">
 			<header class="header header--mobile-actions-stack <%= @header_class %>" id="header">
 				<a href="#main" class="header__skip-navigation btn" data-turbo="false">Skip to main content</a>
@@ -23,15 +24,18 @@
 			</main>
 		</div>
 
-		<% if Current.user && !@hide_footer_frames %>
-			<div id="footer_frames" data-turbo-permanent="true">
-				<%= render "layouts/bozze_tray" %>
-				<%= render "layouts/bar" %>
-				<%= render "layouts/new_appunto_tray" %>
-				<%#= render "my/pins/tray" %>
-				<%#= render "notifications/tray" %>
-			</div>
-		<% end %>
+		<footer id="footer" class="hide-on-native">
+			<%= yield :footer %>
+			
+			<% if Current.user && !@hide_footer_frames %>
+				<div id="footer_frames" data-turbo-permanent="true">
+					<%= render "layouts/bar" %>
+					<%= render "layouts/bozze_tray" %>
+					<%= render "layouts/new_appunto_tray" %>
+					<%#= render "my/pins/tray" %>
+					<%#= render "notifications/tray" %>
+				</div>
+			<% end %>
 
 		<%= turbo_frame_tag "slide-over" %>
 	</body>
