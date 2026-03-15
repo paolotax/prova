@@ -15,10 +15,9 @@ export default class extends Controller {
   }
 
   open() {
-    const modal = this.modalValue || this.#isTouchDevice
+    const modal = this.modalValue
 
     if (modal) {
-      this.#lockBody()
       this.dialogTarget.showModal()
     } else {
       this.dialogTarget.show()
@@ -40,7 +39,6 @@ export default class extends Controller {
   }
 
   close() {
-    this.#unlockBody()
     this.dialogTarget.close()
     this.dialogTarget.setAttribute("aria-hidden", "true")
     this.dialogTarget.blur()
@@ -67,25 +65,4 @@ export default class extends Controller {
     if (event.key !== "Escape") { event.stopPropagation() }
   }
 
-  #lockBody() {
-    this._savedScrollY = window.scrollY
-    document.body.style.position = "fixed"
-    document.body.style.top = `-${this._savedScrollY}px`
-    document.body.style.left = "0"
-    document.body.style.right = "0"
-  }
-
-  #unlockBody() {
-    if (this._savedScrollY == null) return
-    document.body.style.position = ""
-    document.body.style.top = ""
-    document.body.style.left = ""
-    document.body.style.right = ""
-    window.scrollTo(0, this._savedScrollY)
-    this._savedScrollY = null
-  }
-
-  get #isTouchDevice() {
-    return !window.matchMedia("(any-hover: hover)").matches
-  }
 }
