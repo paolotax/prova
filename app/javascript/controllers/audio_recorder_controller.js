@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { DirectUpload } from "@rails/activestorage"
 
 export default class extends Controller {
   static targets = ["button", "label", "recordings"]
@@ -80,29 +81,41 @@ export default class extends Controller {
     removeBtn.type = "button"
     removeBtn.classList.add("btn", "btn--small", "btn--ghost")
     removeBtn.textContent = "×"
-    removeBtn.addEventListener("click", () => {
-      wrapper.remove()
-      URL.revokeObjectURL(url)
-    })
 
     wrapper.appendChild(audio)
     wrapper.appendChild(removeBtn)
     this.recordingsTarget.appendChild(wrapper)
 
-    // Add file to the form's file input
-    const form = this.element.closest("form")
-    if (form) {
-      const file = new File([blob], name, { type: blob.type })
-      const dt = new DataTransfer()
+    // Direct upload to Active Storage
+    // Strip codec params from content type (e.g. "audio/webm;codecs=opus" → "audio/webm")
+    // to avoid 422 from Active Storage disk service
+    const contentType = blob.type.split(";")[0]
+    const file = new File([blob], name, { type: contentType })
+    const uploadUrl = "/rails/active_storage/direct_uploads"
+    const upload = new DirectUpload(file, uploadUrl)
 
-      const existingInput = form.querySelector('input[name="appunto[attachments][]"]')
-      if (existingInput && existingInput.files) {
-        for (const f of existingInput.files) dt.items.add(f)
+    upload.create((error, uploadedBlob) => {
+      if (error) {
+        console.error("Direct upload failed:", error)
+        return
       }
 
-      dt.items.add(file)
-      if (existingInput) existingInput.files = dt.files
-    }
+      // Add hidden input with signed_id for the form
+      const form = this.element.closest("form")
+      if (form) {
+        const hidden = document.createElement("input")
+        hidden.type = "hidden"
+        hidden.name = "appunto[attachments][]"
+        hidden.value = uploadedBlob.signed_id
+        hidden.dataset.recordingWrapper = "true"
+        wrapper.appendChild(hidden)
+      }
+
+      removeBtn.addEventListener("click", () => {
+        wrapper.remove()
+        URL.revokeObjectURL(url)
+      })
+    })
   }
 
   startTimer() {

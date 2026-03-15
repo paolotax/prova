@@ -81,23 +81,25 @@
 
     <strong class="divider txt-medium margin-block">Allegati</strong>
 
-    <div class="flex align-center justify-center gap-half flex-wrap">
-      <button type="button"
-              class="btn btn--small"
-              data-controller="audio-recorder"
-              data-action="audio-recorder#toggle"
-              data-audio-recorder-target="button">
-        <span data-audio-recorder-target="label">Registra vocale</span>
-      </button>
+    <div data-controller="audio-recorder">
+      <div class="flex align-center justify-center gap-half flex-wrap">
+        <button type="button"
+                class="btn btn--small"
+                data-action="audio-recorder#toggle"
+                data-audio-recorder-target="button">
+          <span data-audio-recorder-target="label">Registra vocale</span>
+        </button>
 
-      <label class="btn btn--small">
-        Foto / File
-        <%= f.file_field :attachments,
-            multiple: true,
-            class: "visually-hidden",
-            direct_upload: true,
-            data: { mobile_form_target: "fileInput" } %>
-      </label>
+        <label class="btn btn--small">
+          Foto / File
+          <%= f.file_field :attachments,
+              multiple: true,
+              class: "visually-hidden",
+              direct_upload: true,
+              data: { mobile_form_target: "fileInput" } %>
+        </label>
+      </div>
+      <div data-audio-recorder-target="recordings" class="stack-half margin-block-start-half"></div>
     </div>
 
     <div data-mobile-form-target="previews" class="flex gap-half flex-wrap margin-block-start-half"></div>
@@ -106,7 +108,7 @@
 
 
   <div class="flex align-center justify-center gap">
-    <%= link_to "Annulla", root_path, class: "btn" %>
-    <%= f.submit "Salva bozza", class: "btn btn--reversed", data: { mobile_form_target: "submit" } %>
+    <%= link_to "Torna a ScagnoZZ", root_path, class: "btn" %>
+    <%= f.submit "Salva Bozza", class: "btn btn--reversed", data: { mobile_form_target: "submit" } %>
   </div>
 <% end %>
