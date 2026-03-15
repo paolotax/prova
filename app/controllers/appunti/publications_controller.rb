@@ -8,7 +8,9 @@ class Appunti::PublicationsController < ApplicationController
     @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
 
     if params[:create_another]
-      new_appunto = current_user.draft_new_appunto
+      creator = Appunti::AppuntoCreator.new
+      creator.create
+      new_appunto = creator.appunto
       redirect_to new_appunto, notice: "Appunto creato."
     elsif hotwire_native_app?
       refresh_or_redirect_to(appunti_path, notice: "Appunto creato.")

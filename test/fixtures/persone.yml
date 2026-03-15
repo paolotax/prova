@@ -1,0 +1,41 @@
+# == Schema Information
+#
+# Table name: persone
+#
+#  id         :uuid             not null, primary key
+#  cellulare  :string
+#  cognome    :string
+#  email      :string
+#  nome       :string
+#  note       :text
+#  posizione  :integer
+#  ruolo      :string
+#  telefono   :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :uuid             not null
+#  scuola_id  :uuid
+#
+
+persona_fizzy:
+  account: fizzy
+  nome: Mario
+  cognome: Rossi
+  cellulare: "3331234567"
+  email: mario.rossi@example.com
+  scuola: scuola_fizzy
+
+persona_fizzy_no_scuola:
+  account: fizzy
+  nome: Luca
+  cognome: Bianchi
+  cellulare: "3339876543"
+  email: luca.bianchi@example.com
+
+persona_acme:
+  account: acme
+  nome: Anna
+  cognome: Verdi
+  cellulare: "3335551234"
+  email: anna.verdi@example.com
+  scuola: scuola_acme

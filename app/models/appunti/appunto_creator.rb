@@ -1,0 +1,95 @@
+# frozen_string_literal: true
+
+class Appunti::AppuntoCreator
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  # Parametri appunto
+  attribute :nome, :string
+  attribute :content, :string
+  attribute :appuntabile_value, :string
+  attribute :telefono, :string
+  attribute :email, :string
+  attribute :publish, :boolean, default: false
+
+  # Parametri persona
+  attribute :persona_nome, :string
+  attribute :persona_cognome, :string
+  attribute :persona_cellulare, :string
+  attribute :persona_email, :string
+  attribute :persona_scuola_nome, :string
+
+  attr_accessor :attachments
+  attr_reader :appunto, :persona
+
+  def create
+    find_or_build_persona
+    resolve_appuntabile
+    build_appunto
+    return false unless appunto.save
+
+    maybe_publish
+    appunto
+  end
+
+  private
+
+  def find_or_build_persona
+    return unless persona_params_present?
+
+    @persona = find_persona_by_cellulare if persona_cellulare.present?
+
+    @persona ||= Current.account.persone.build(
+      nome: persona_nome,
+      cognome: persona_cognome,
+      cellulare: persona_cellulare,
+      email: persona_email
+    )
+
+    link_persona_to_scuola if persona_scuola_nome.present? && @persona.scuola.blank?
+
+    @persona.save! if @persona.new_record? || @persona.changed?
+  end
+
+  def find_persona_by_cellulare
+    cleaned = persona_cellulare.gsub(/\s/, "")
+    Current.account.persone.find_by("cellulare = :tel OR telefono = :tel", tel: cleaned)
+  end
+
+  def link_persona_to_scuola
+    scuola = Current.account.scuole.search_all_word(persona_scuola_nome).first
+    @persona.scuola = scuola if scuola
+  rescue PgSearch::EmptyQueryError
+    nil
+  end
+
+  def resolve_appuntabile
+    @resolved_appuntabile = if appuntabile_value.present?
+      Appuntabile.find_appuntabile(appuntabile_value)
+    elsif @persona&.scuola.present?
+      @persona.scuola
+    elsif @persona.present?
+      @persona
+    end
+  end
+
+  def build_appunto
+    @appunto = Current.account.appunti.build(
+      user: Current.user,
+      nome: nome,
+      content: content,
+      telefono: telefono,
+      email: email,
+      appuntabile: @resolved_appuntabile
+    )
+    @appunto.attachments.attach(attachments) if attachments.present?
+  end
+
+  def maybe_publish
+    appunto.publish if publish && appunto.persisted?
+  end
+
+  def persona_params_present?
+    persona_cellulare.present? || persona_nome.present? || persona_cognome.present?
+  end
+end

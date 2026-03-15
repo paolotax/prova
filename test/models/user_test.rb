@@ -32,29 +32,4 @@ class UserTest < ActiveSupport::TestCase
     Current.reset
   end
 
-  test "draft_new_appunto creates new draft if none exists" do
-    # Delete existing drafts
-    @user.appunti.drafted.destroy_all
-
-    freeze_time do
-      appunto = @user.draft_new_appunto
-
-      assert appunto.persisted?
-      assert appunto.drafted?
-      assert_equal @user, appunto.user
-      assert_equal Time.current, appunto.created_at
-    end
-  end
-
-  test "draft_new_appunto returns existing draft if one exists" do
-    # Use the fixture's draft instead of creating a new one
-    existing_draft = appunti(:appunto_drafted)
-
-    freeze_time do
-      appunto = @user.draft_new_appunto
-
-      assert_equal existing_draft.id, appunto.id
-      assert_equal Time.current, appunto.created_at
-    end
-  end
 end

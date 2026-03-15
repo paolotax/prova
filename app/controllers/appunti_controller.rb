@@ -48,13 +48,15 @@ class AppuntiController < ApplicationController
   end
 
   def new
-    @appunto = Current.user.draft_new_appunto(appuntabile: find_appuntabile)
-    redirect_to @appunto
+    creator = Appunti::AppuntoCreator.new(appuntabile_value: find_appuntabile&.to_appuntabile_value)
+    creator.create
+    redirect_to creator.appunto
   end
 
   def create
-    @appunto = Current.user.draft_new_appunto(appuntabile: find_appuntabile)
-    redirect_to @appunto
+    creator = Appunti::AppuntoCreator.new(appuntabile_value: find_appuntabile&.to_appuntabile_value)
+    creator.create
+    redirect_to creator.appunto
   end
 
   def update
@@ -66,7 +68,9 @@ class AppuntiController < ApplicationController
           @appunto.broadcast_prepend_later_to [current_user, "appunti"], target: "appunti"
 
           if params[:publish_and_new].present?
-            new_appunto = current_user.draft_new_appunto
+            creator = Appunti::AppuntoCreator.new
+            creator.create
+            new_appunto = creator.appunto
             format.html { redirect_to new_appunto, notice: "Appunto creato." }
           else
             format.html { redirect_to @appunto, notice: "Appunto creato." }
