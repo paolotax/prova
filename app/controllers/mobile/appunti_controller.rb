@@ -11,43 +11,34 @@ module Mobile
 
     # POST /m/appunti
     def create
-      @appunto = Current.account.appunti.build(appunto_params)
-      @appunto.user = Current.user
+      creator = Appunti::AppuntoCreator.new(creator_params)
+      creator.create
 
-      create_persona_if_present
-
-      if @appunto.save
+      if creator.appunto.persisted?
         redirect_to new_mobile_appunto_path, notice: "Appunto salvato come bozza!"
       else
+        @appunto = creator.appunto
         render :new, status: :unprocessable_entity
       end
     end
 
     private
 
-    def appunto_params
-      params.require(:appunto).permit(
-        :nome,
-        :content,
-        :appuntabile_value,
-        :telefono,
-        :email,
-        attachments: []
+    def creator_params
+      permitted = params.fetch(:appunto, {}).permit(
+        :nome, :content, :appuntabile_value, :telefono, :email, attachments: []
       )
+      permitted.merge(persona_params).to_h
     end
 
-    def create_persona_if_present
-      return if params[:persona].blank?
-      return if params[:persona][:cognome].blank? && params[:persona][:nome].blank?
-      return if @appunto.appuntabile.present?
-
-      persona = Current.account.persone.create!(
-        cognome: params[:persona][:cognome],
-        nome: params[:persona][:nome],
-        cellulare: params[:persona][:cellulare],
-        email: params[:persona][:email]
-      )
-      @appunto.appuntabile = persona
+    def persona_params
+      return {} unless params[:persona].present?
+      {
+        persona_nome: params.dig(:persona, :nome),
+        persona_cognome: params.dig(:persona, :cognome),
+        persona_cellulare: params.dig(:persona, :cellulare),
+        persona_email: params.dig(:persona, :email)
+      }.compact
     end
 
     def require_account!

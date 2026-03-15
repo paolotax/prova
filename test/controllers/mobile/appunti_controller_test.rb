@@ -31,10 +31,12 @@ class Mobile::AppuntiControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Test mobile", appunto.nome
   end
 
-  test "POST /m/appunti with invalid params re-renders form" do
-    # appunto requires params.require(:appunto), so omitting it should fail
-    post mobile_appunti_path, params: {}
-    assert_response :bad_request
+  test "POST /m/appunti with empty params still creates draft appunto" do
+    # AppuntoCreator uses params.fetch(:appunto, {}), so empty params creates a minimal draft
+    assert_difference "Appunto.count", 1 do
+      post mobile_appunti_path, params: {}
+    end
+    assert_redirected_to new_mobile_appunto_path
   end
 
   test "redirects to login when not authenticated" do
