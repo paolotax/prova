@@ -1,3 +1,4 @@
+<%= turbo_stream_from current_user, "bozze" %>
 <section class="tray tray--pins" data-controller="dialog">
   <%= tag.dialog id: "bozze-tray", class: "tray__dialog", data: {
         action: "keydown->navigable-list#navigate dialog:show@document->navigable-list#reset keydown.esc->dialog#close:stop click@document->dialog#closeOnClickOutside",
