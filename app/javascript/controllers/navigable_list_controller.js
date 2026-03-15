@@ -57,6 +57,7 @@ export default class extends Controller {
     if (openDialog && !this.element.contains(openDialog) && openDialog.contains(event.target)) return
 
     this.#keyHandlers[event.key]?.call(this, event)
+    this.#relayNavigationToParentNavigableList(event)
   }
 
   select({ target }) {
@@ -106,6 +107,8 @@ export default class extends Controller {
   // Public
 
   async selectItem(item, skipFocus = false) {
+    await this.#selectCurrentElementInParent()
+
     this.#clearSelection()
     item.setAttribute(this.selectionAttributeValue, "true")
     this.currentItem = item
@@ -114,6 +117,7 @@ export default class extends Controller {
     await nextFrame()
 
     if (this.autoScrollValue) { this.currentItem.scrollIntoView({ block: "nearest", inline: "nearest" }) }
+    if (this.hasNestedNavigationValue) { this.#activateNestedNavigableList() }
 
     if (!skipFocus && this.focusOnSelectionValue) { this.currentItem.focus({ preventScroll: !this.autoScrollValue }) }
   }
@@ -130,6 +134,50 @@ export default class extends Controller {
     if (selectedItem) {
       await this.selectItem(selectedItem)
     }
+  }
+
+  get #parentNavigableListController() {
+    const parentNavigableList = this.element.parentElement?.closest("[data-controller~='navigable-list']")
+    if (parentNavigableList) {
+      return this.application.getControllerForElementAndIdentifier(parentNavigableList, "navigable-list")
+    }
+    return null
+  }
+
+  async #selectCurrentElementInParent() {
+    const parentController = this.#parentNavigableListController
+    if (parentController) {
+      const parentItem = this.element.closest("[data-navigable-list-target~='item']")
+      const isAlreadySelected = parentController.isSelected(parentItem)
+      if (!isAlreadySelected) {
+        await parentController.selectItem(parentItem, true)
+      }
+    }
+  }
+
+  #relayNavigationToParentNavigableList(event) {
+    const parentController = this.#parentNavigableListController
+    if (parentController) {
+      parentController.element.focus({ preventScroll: !parentController.autoScrollValue })
+      parentController.navigate(event)
+    }
+  }
+
+  #activateNestedNavigableList() {
+    const nestedController = this.#nestedNavigableListController()
+    if (nestedController) {
+      nestedController.selectCurrentOrReset()
+      return true
+    }
+    return false
+  }
+
+  #nestedNavigableListController() {
+    const nestedElement = this.currentItem?.querySelector('[data-controller~="navigable-list"]')
+    if (nestedElement) {
+      return this.application.getControllerForElementAndIdentifier(nestedElement, "navigable-list")
+    }
+    return null
   }
 
   #clearSelection() {

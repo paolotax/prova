@@ -1,7 +1,7 @@
 <%# locals: (columns:, column_counts:, postponed_count:, closed_count:) -%>
 
 <%= tag.div class: "card-columns hide-scrollbar", data: {
-      controller: "collapsible-columns drag-and-drop",
+      controller: "collapsible-columns drag-and-drop navigable-list",
       collapsible_columns_board_value: "dashboard",
       collapsible_columns_collapsed_class: "is-collapsed",
       collapsible_columns_expanded_class: "is-expanded",
@@ -9,14 +9,21 @@
       collapsible_columns_title_not_visible_class: "is-off-screen",
       drag_and_drop_dragged_item_class: "drag-and-drop__dragged-item",
       drag_and_drop_hover_container_class: "drag-and-drop__hover-container",
-      action: "dragstart->drag-and-drop#dragStart dragover->drag-and-drop#dragOver drop->drag-and-drop#drop dragend->drag-and-drop#dragEnd"
+      navigable_list_has_nested_navigation_value: "true",
+      navigable_list_auto_select_value: "false",
+      navigable_list_supports_vertical_navigation_value: "false",
+      navigable_list_supports_horizontal_navigation_value: "true",
+      navigable_list_prevent_handled_keys_value: "true",
+      action: "dragstart->drag-and-drop#dragStart dragover->drag-and-drop#dragOver drop->drag-and-drop#drop dragend->drag-and-drop#dragEnd keydown->navigable-list#navigate"
     } do %>
   <div class="card-columns__left">
     <section id="postponed" class="cards is-collapsed"
              style="--card-color: oklch(var(--lch-yellow-medium))"
              tabindex="0"
              data-controller="css-variable-counter"
+             data-navigable-list-target="item"
              data-collapsible-columns-target="column"
+             data-action="focus->collapsible-columns#focusOnColumn"
              data-drag-and-drop-target="container"
              data-column-name="Rimandati"
              data-drag-and-drop-url="<%= entry_not_now_path('__id__') %>"
@@ -45,7 +52,9 @@
   <section id="triage" class="cards cards--maybe is-expanded"
            tabindex="0"
            data-controller="css-variable-counter"
+           data-navigable-list-target="item"
            data-collapsible-columns-target="column maybeColumn"
+           data-action="focus->collapsible-columns#focusOnColumn"
            data-drag-and-drop-target="container"
            data-column-name="Da gestire"
            data-drag-and-drop-url="<%= entry_triage_path('__id__') %>"
@@ -89,7 +98,9 @@
              style="--card-color: oklch(var(--lch-green-medium))"
              tabindex="0"
              data-controller="css-variable-counter"
+             data-navigable-list-target="item"
              data-collapsible-columns-target="column"
+             data-action="focus->collapsible-columns#focusOnColumn"
              data-drag-and-drop-target="container"
              data-column-name="Chiusi"
              data-drag-and-drop-url="<%= entry_closure_path('__id__') %>"

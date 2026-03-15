@@ -67,7 +67,6 @@ export default class extends Controller {
     this.#updateColumnTotals(sourceContainer)
     await this.#submitDropRequest(this.dragItem, targetContainer)
     this.#reloadSourceFrame(sourceContainer)
-    this.#reloadTargetFrame(targetContainer)
   }
 
   dragEnd() {
@@ -420,10 +419,6 @@ export default class extends Controller {
     if (frame) frame.reload()
   }
 
-  #reloadTargetFrame(targetContainer) {
-    const frame = targetContainer.querySelector("[data-drag-and-drop-refresh]")
-    if (frame) frame.reload()
-  }
 
   // Update card__meta totals and avatar after drag-and-drop
   #updateCardMeta(cardOrContainer, targetContainer) {

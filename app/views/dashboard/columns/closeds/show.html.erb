@@ -1,7 +1,14 @@
 <%= turbo_frame_tag :closed_column do %>
   <%= with_automatic_pagination :closed_column, @page,
       class: "cards__list",
-      data: { drag_drop_item_container: true } do %>
+      data: {
+        drag_drop_item_container: true,
+        controller: "navigable-list",
+        navigable_list_auto_select_value: "false",
+        navigable_list_actionable_items_value: "true",
+        navigable_list_prevent_handled_keys_value: "true",
+        action: "keydown->navigable-list#navigate"
+      } do %>
     <%= render partial: "entries/entry", collection: @page.records, as: :entry %>
   <% end %>
 <% end %>
