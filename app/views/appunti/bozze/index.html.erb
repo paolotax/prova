@@ -3,11 +3,7 @@
 <% end %>
 
 <%= turbo_frame_tag "bozze" do %>
-  <% if @bozze.any? %>
-    <% @bozze.each do |bozza| %>
-      <%= render "appunti/bozza", bozza: bozza %>
-    <% end %>
-  <% else %>
-    <p class="color-subdued">Nessuna bozza</p>
+  <% @bozze.each do |bozza| %>
+    <%= render "appunti/bozza", bozza: bozza %>
   <% end %>
 <% end %>
