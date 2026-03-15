@@ -8,7 +8,6 @@ class Appunti::BozzeController < ApplicationController
                .order(created_at: :desc)
                .limit(10)
 
-    fresh_when etag: @bozze
     render layout: !turbo_frame_request?
   end
 end
