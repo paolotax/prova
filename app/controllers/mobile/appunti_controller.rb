@@ -37,7 +37,9 @@ module Mobile
         persona_nome: params.dig(:persona, :nome),
         persona_cognome: params.dig(:persona, :cognome),
         persona_cellulare: params.dig(:persona, :cellulare),
-        persona_email: params.dig(:persona, :email)
+        persona_email: params.dig(:persona, :email),
+        persona_ruolo: params.dig(:persona, :ruolo),
+        persona_materia: params.dig(:persona, :materia)
       }.compact
     end
 

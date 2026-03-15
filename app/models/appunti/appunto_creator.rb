@@ -17,6 +17,8 @@ class Appunti::AppuntoCreator
   attribute :persona_cognome, :string
   attribute :persona_cellulare, :string
   attribute :persona_email, :string
+  attribute :persona_ruolo, :string
+  attribute :persona_materia, :string
   attribute :persona_scuola_nome, :string
 
   attr_accessor :attachments
@@ -43,7 +45,8 @@ class Appunti::AppuntoCreator
       nome: persona_nome,
       cognome: persona_cognome,
       cellulare: persona_cellulare,
-      email: persona_email
+      email: persona_email,
+      ruolo: persona_ruolo.presence
     )
 
     link_persona_to_scuola if persona_scuola_nome.present? && @persona.scuola.blank?
@@ -80,7 +83,9 @@ class Appunti::AppuntoCreator
       @persona.scuola ||= appuntabile
     when Classe
       @persona.scuola ||= appuntabile.scuola
-      @persona.classi << appuntabile unless @persona.classi.include?(appuntabile)
+      unless @persona.classi.include?(appuntabile)
+        @persona.persona_classi.build(classe: appuntabile, materia: persona_materia.presence)
+      end
     end
 
     @persona.save! if @persona.changed? || @persona.persona_classi.any?(&:new_record?)

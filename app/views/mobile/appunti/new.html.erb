@@ -3,10 +3,14 @@
         class: "flex flex-column gap",
         data: { controller: "mobile-form", mobile_form_target: "form" } do |f| %>
 
-  <strong class="divider txt-large">Nuovo appunto</strong>
+  <section class="panel shadow center" style="--panel-size: 55ch;"
+           data-controller="conditional-field">
+    <strong class="divider txt-medium margin-block">Appunto</strong>
 
-  <section class="panel shadow center" style="--panel-size: 55ch;">
-    <strong class="divider txt-medium margin-block">Contenuto</strong>
+    <div class="form-field margin-block-end">
+      <label class="label">Titolo</label>
+      <%= f.text_field :nome, class: "input", placeholder: "Titolo" %>
+    </div>
 
     <div class="flex flex-column gap" data-controller="speech">
       <div class="form-field">
@@ -19,7 +23,7 @@
 
       <div class="flex align-center justify-center gap-half">
         <button type="button"
-                class="btn btn--small"
+                class="btn btn--small btn--reversed"
                 data-speech-target="button"
                 data-action="speech#toggle"
                 hidden>
@@ -36,14 +40,12 @@
         <div class="cb-tax">
           <%= combobox_tag "appunto[appuntabile_value]",
               destinatari_index_path(account_id: Current.account.id),
-              placeholder: "cerca scuola, cliente, classe...",
-              mobile_at: "0px" %>
+              placeholder: "cerca scuola, cliente, classe o persona...",
+              mobile_at: "0px",
+              data: {
+                action: "hw-combobox:selection->conditional-field#update"
+              } %>
         </div>
-      </div>
-
-      <div class="form-field">
-        <label class="label">Titolo</label>
-        <%= f.text_field :nome, class: "input", placeholder: "Titolo o destinatario" %>
       </div>
     </div>
 
@@ -52,10 +54,20 @@
     <div class="flex flex-column gap">
       <div class="form-row">
         <div class="form-field">
-          <%= text_field_tag "persona[cognome]", nil, class: "input", placeholder: "Cognome" %>
+          <%= text_field_tag "persona[nome]", nil, class: "input", placeholder: "Nome" %>
         </div>
         <div class="form-field">
-          <%= text_field_tag "persona[nome]", nil, class: "input", placeholder: "Nome" %>
+          <%= text_field_tag "persona[cognome]", nil, class: "input", placeholder: "Cognome" %>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <%= select_tag "persona[ruolo]",
+              options_for_select([["Docente", "docente"], ["Dirigente", "dirigente"], ["Segretario", "segretario"], ["Referente", "referente"], ["Altro", "altro"]]),
+              class: "input input--select", include_blank: "Ruolo" %>
+        </div>
+        <div class="form-field" data-conditional-field-target="item" hidden>
+          <%= text_field_tag "persona[materia]", nil, class: "input", placeholder: "Materia" %>
         </div>
       </div>
       <div class="form-field">
@@ -69,17 +81,14 @@
 
     <strong class="divider txt-medium margin-block">Allegati</strong>
 
-    <div class="flex align-center justify-center gap-half">
-
-      <div data-controller="audio-recorder">
-        <button type="button"
-                class="btn btn--small"
-                data-action="audio-recorder#toggle"
-                data-audio-recorder-target="button">
-          <span data-audio-recorder-target="label">Registra vocale</span>
-        </button>
-        <div data-audio-recorder-target="recordings" class="stack-half margin-block-start-half"></div>
-      </div>
+    <div class="flex align-center justify-center gap-half flex-wrap">
+      <button type="button"
+              class="btn btn--small"
+              data-controller="audio-recorder"
+              data-action="audio-recorder#toggle"
+              data-audio-recorder-target="button">
+        <span data-audio-recorder-target="label">Registra vocale</span>
+      </button>
 
       <label class="btn btn--small">
         Foto / File
@@ -89,14 +98,15 @@
             direct_upload: true,
             data: { mobile_form_target: "fileInput" } %>
       </label>
-      <div data-mobile-form-target="previews" class="flex gap-half flex-wrap"></div>
     </div>
+
+    <div data-mobile-form-target="previews" class="flex gap-half flex-wrap margin-block-start-half"></div>
   </section>
 
-  
+
 
   <div class="flex align-center justify-center gap">
     <%= link_to "Annulla", root_path, class: "btn" %>
-    <%= f.submit "Salva bozza", class: "btn btn--primary", data: { mobile_form_target: "submit" } %>
+    <%= f.submit "Salva bozza", class: "btn btn--reversed", data: { mobile_form_target: "submit" } %>
   </div>
 <% end %>
