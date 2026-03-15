@@ -361,6 +361,17 @@
         translate: calc(-1 * var(--tray-margin)) 0;
       }
     }
+    
+    /* pallino aggiunto */
+    .tray__dialog:not([open]):has(.tray__item--pin) ~ .tray__toggle:after {
+      background: oklch(var(--lch-red-medium));
+      block-size: 0.8ch;
+      border-radius: 50%;
+      content: "";
+      inline-size: 0.8ch;
+      inset: 25% 25% auto auto;
+      position: absolute;
+    } 
   }
 
   .tray__item--pin {
@@ -413,6 +424,8 @@
     .tray__remove-pin-btn {
       --btn-icon-size: 1.25em;
       --btn-size: 2em;
+
+      --btn-color: oklch(var(--lch-red-medium));
 
       background-color: var(--card-bg-color);
       inset: 0 0 auto auto;
@@ -514,127 +527,6 @@
     z-index: 100;
   }
 
-  /* Bozze tray (left side, red accent)
-  /* ------------------------------------------------------------------------ */
-
-  .tray--bozze {
-    inset-inline: var(--tray-margin) auto;
-
-    .tray__toggle-btn {
-      --btn-color: oklch(var(--lch-red-medium));
-    }
-
-    /* Disable toggle if no bozze */
-    .tray__dialog:not(:has(.tray__item--bozza)) ~ .tray__toggle {
-      opacity: 0.5;
-
-      &, .tray__toggle-btn {
-        pointer-events: none;
-      }
-    }
-
-    /* On mobile, collapse to icon only + border */
-    @media (max-width: 799px) {
-      .tray__dialog:not([open]) ~ .tray__toggle {
-        border-inline-end: 1px dashed var(--color-ink-light);
-        translate: calc(-1 * var(--tray-margin)) 0;
-      }
-
-      /* Red dot when there are bozze */
-      .tray__dialog:not([open]):has(.tray__item--bozza) ~ .tray__toggle:after {
-        background: oklch(var(--lch-red-medium));
-        block-size: 1ch;
-        border-radius: 50%;
-        content: "";
-        inline-size: 1ch;
-        inset: 25% 25% auto auto;
-        position: absolute;
-      }
-    }
-
-    /* On desktop, shift toggle up when there are items (stacked preview) */
-    @media (min-width: 800px) {
-      .tray__dialog:not([open]):has(.tray__item--bozza) ~ .tray__toggle {
-        block-size: var(--tray-item-height);
-        translate: 0 -1.85rem;
-        opacity: 0;
-      }
-    }
-  }
-
-  .tray__item--bozza {
-    --tray-item-z: calc(10 - var(--tray-item-index));
-
-    position: relative;
-
-    [open] &[aria-selected] {
-      outline: 0;
-      z-index: calc(var(--tray-item-z) + 2);
-
-      .card {
-        border-radius: 0.25ch;
-        outline: var(--focus-ring-size) solid var(--focus-ring-color);
-        outline-offset: var(--focus-ring-offset);
-      }
-    }
-
-    &:not([aria-selected]) .card__link:focus-visible,
-    .tray__dialog:not([open]) & .card__link:focus-visible {
-      --focus-ring-size: 0;
-    }
-
-    /* Hide elements not needed in tray */
-    .card__checkbox,
-    .card__classe-badge,
-    .card__column-name,
-    .card__meta-avatars,
-    .card__meta-text--author,
-    .card__meta-text--updated,
-    .card__meta-text--assignees {
-      display: none;
-    }
-
-    .card__header {
-      margin-block-start: calc(var(--card-padding-block) * -1.1);
-      margin-inline: calc(-1 * var(--card-padding-inline));
-      max-inline-size: unset;
-    }
-
-    .card__body {
-      display: block;
-      margin-block-start: 0.3em;
-    }
-
-    .card__footer {
-      margin-block: -0.2em 2em;
-
-      .icon { display: none; }
-    }
-
-    .card__link {
-      z-index: 1;
-    }
-
-    .tray__remove-btn {
-      --btn-icon-size: 1.25em;
-      --btn-size: 2em;
-
-      background-color: var(--color-canvas);
-      inset: 0 0 auto auto;
-      opacity: 0.66;
-      position: absolute;
-      z-index: 1;
-
-      &:hover {
-        opacity: 1;
-      }
-
-      .tray__dialog:not([open]) & {
-        opacity: 0;
-        pointer-events: none;
-      }
-    }
-  }
 
   /* New appunto tray (right side, simple link)
   /* ------------------------------------------------------------------------ */
