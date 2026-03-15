@@ -47,14 +47,25 @@
       </div>
     </div>
 
+    <strong class="divider txt-medium margin-block">Nuova persona</strong>
+
     <div class="flex flex-column gap">
-      <div class="form-field">
-        <%= f.telephone_field :telefono, class: "input", placeholder: "Telefono" %>
+      <div class="form-row">
+        <div class="form-field">
+          <%= text_field_tag "persona[cognome]", nil, class: "input", placeholder: "Cognome" %>
+        </div>
+        <div class="form-field">
+          <%= text_field_tag "persona[nome]", nil, class: "input", placeholder: "Nome" %>
+        </div>
       </div>
       <div class="form-field">
-        <%= f.email_field :email, class: "input", placeholder: "Email" %>
+        <%= telephone_field_tag "persona[cellulare]", nil, class: "input", placeholder: "Cellulare" %>
+      </div>
+      <div class="form-field">
+        <%= email_field_tag "persona[email]", nil, class: "input", placeholder: "Email" %>
       </div>
     </div>
+
 
     <strong class="divider txt-medium margin-block">Allegati</strong>
 

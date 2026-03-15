@@ -14,6 +14,8 @@ module Mobile
       @appunto = Current.account.appunti.build(appunto_params)
       @appunto.user = Current.user
 
+      create_persona_if_present
+
       if @appunto.save
         redirect_to new_mobile_appunto_path, notice: "Appunto salvato come bozza!"
       else
@@ -32,6 +34,20 @@ module Mobile
         :email,
         attachments: []
       )
+    end
+
+    def create_persona_if_present
+      return if params[:persona].blank?
+      return if params[:persona][:cognome].blank? && params[:persona][:nome].blank?
+      return if @appunto.appuntabile.present?
+
+      persona = Current.account.persone.create!(
+        cognome: params[:persona][:cognome],
+        nome: params[:persona][:nome],
+        cellulare: params[:persona][:cellulare],
+        email: params[:persona][:email]
+      )
+      @appunto.appuntabile = persona
     end
 
     def require_account!

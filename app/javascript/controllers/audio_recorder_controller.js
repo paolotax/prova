@@ -8,6 +8,17 @@ export default class extends Controller {
     this.mediaRecorder = null
     this.chunks = []
     this.counter = 0
+    this.mimeType = this.detectMimeType()
+  }
+
+  detectMimeType() {
+    const types = ["audio/webm", "audio/mp4", "audio/ogg", "audio/wav"]
+    return types.find(t => MediaRecorder.isTypeSupported(t)) || ""
+  }
+
+  get fileExtension() {
+    const map = { "audio/webm": "webm", "audio/mp4": "m4a", "audio/ogg": "ogg", "audio/wav": "wav" }
+    return map[this.mimeType] || "audio"
   }
 
   async toggle() {
@@ -17,7 +28,8 @@ export default class extends Controller {
   async start() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      this.mediaRecorder = new MediaRecorder(stream)
+      const options = this.mimeType ? { mimeType: this.mimeType } : {}
+      this.mediaRecorder = new MediaRecorder(stream, options)
       this.chunks = []
 
       this.mediaRecorder.ondataavailable = (e) => {
@@ -26,7 +38,8 @@ export default class extends Controller {
 
       this.mediaRecorder.onstop = () => {
         stream.getTracks().forEach(track => track.stop())
-        const blob = new Blob(this.chunks, { type: "audio/webm" })
+        const type = this.mediaRecorder.mimeType || this.mimeType
+        const blob = new Blob(this.chunks, { type })
         this.addRecording(blob)
       }
 
@@ -53,7 +66,7 @@ export default class extends Controller {
   addRecording(blob) {
     this.counter++
     const url = URL.createObjectURL(blob)
-    const name = `vocale_${this.counter}.webm`
+    const name = `vocale_${this.counter}.${this.fileExtension}`
 
     const wrapper = document.createElement("div")
     wrapper.classList.add("flex", "align-center", "gap-half")
@@ -79,7 +92,7 @@ export default class extends Controller {
     // Add file to the form's file input
     const form = this.element.closest("form")
     if (form) {
-      const file = new File([blob], name, { type: "audio/webm" })
+      const file = new File([blob], name, { type: blob.type })
       const dt = new DataTransfer()
 
       const existingInput = form.querySelector('input[name="appunto[attachments][]"]')
