@@ -194,8 +194,8 @@ class Appunti::AppuntoCreatorTest < ActiveSupport::TestCase
     assert_equal scuola, creator.persona.scuola
   end
 
-  # 11. Resolves appuntabile to persona's scuola when no explicit appuntabile
-  test "resolves appuntabile to persona scuola when no explicit appuntabile_value" do
+  # 11. When persona exists, appuntabile is always persona
+  test "appuntabile is persona even when persona has scuola" do
     existing = persone(:persona_fizzy)
     creator = Appunti::AppuntoCreator.new(
       nome: "Test",
@@ -203,7 +203,7 @@ class Appunti::AppuntoCreatorTest < ActiveSupport::TestCase
     )
     result = creator.create
 
-    assert_equal existing.scuola, result.appuntabile
+    assert_equal existing, result.appuntabile
   end
 
   # 12. Falls back to persona as appuntabile when persona has no scuola
@@ -218,20 +218,21 @@ class Appunti::AppuntoCreatorTest < ActiveSupport::TestCase
     assert_equal existing, result.appuntabile
   end
 
-  # 13. Explicit appuntabile_value takes precedence over persona's scuola
-  test "explicit appuntabile_value takes precedence over persona scuola" do
-    existing = persone(:persona_fizzy) # has scuola_fizzy
-    other_scuola = scuole(:scuola_fizzy_nord)
+  # 13. Persona is appuntabile, but scuola from combobox is linked to persona
+  test "persona is appuntabile and linked to scuola from appuntabile_value" do
+    existing = persone(:persona_fizzy_no_scuola)
+    scuola = scuole(:scuola_fizzy_nord)
 
     creator = Appunti::AppuntoCreator.new(
       nome: "Test",
       persona_cellulare: existing.cellulare,
-      appuntabile_value: "Scuola:#{other_scuola.id}"
+      appuntabile_value: "Scuola:#{scuola.id}"
     )
     result = creator.create
 
-    assert_equal other_scuola, result.appuntabile
-    assert_not_equal existing.scuola, result.appuntabile
+    assert_equal existing, result.appuntabile
+    existing.reload
+    assert_equal scuola, existing.scuola
   end
 
   # 14. Passes telefono and email to appunto

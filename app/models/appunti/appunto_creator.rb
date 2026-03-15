@@ -64,13 +64,26 @@ class Appunti::AppuntoCreator
   end
 
   def resolve_appuntabile
-    @resolved_appuntabile = if appuntabile_value.present?
-      Appuntabile.find_appuntabile(appuntabile_value)
-    elsif @persona&.scuola.present?
-      @persona.scuola
-    elsif @persona.present?
-      @persona
+    explicit = Appuntabile.find_appuntabile(appuntabile_value) if appuntabile_value.present?
+
+    if @persona
+      link_persona_to_appuntabile(explicit) if explicit
+      @resolved_appuntabile = @persona
+    elsif explicit
+      @resolved_appuntabile = explicit
     end
+  end
+
+  def link_persona_to_appuntabile(appuntabile)
+    case appuntabile
+    when Scuola
+      @persona.scuola ||= appuntabile
+    when Classe
+      @persona.scuola ||= appuntabile.scuola
+      @persona.classi << appuntabile unless @persona.classi.include?(appuntabile)
+    end
+
+    @persona.save! if @persona.changed? || @persona.persona_classi.any?(&:new_record?)
   end
 
   def build_appunto
