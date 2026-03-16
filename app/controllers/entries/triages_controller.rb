@@ -7,13 +7,15 @@ module Entries
     # POST /entries/:entry_id/triage
     # Triage entry into a column, or send back to triage if no column_id
     def create
-      if params[:column_id].present?
-        @column = current_account.columns.find(params[:column_id])
-        @entry.triage_into(@column)
-        @action = :triage_into_column
-      else
-        @entry.send_back_to_triage
-        @action = :send_back_to_triage
+      Entry.suppressing_turbo_broadcasts do
+        if params[:column_id].present?
+          @column = current_account.columns.find(params[:column_id])
+          @entry.triage_into(@column)
+          @action = :triage_into_column
+        else
+          @entry.send_back_to_triage
+          @action = :send_back_to_triage
+        end
       end
 
       respond_to do |format|
@@ -25,7 +27,9 @@ module Entries
     # DELETE /entries/:entry_id/triage
     # Send entry back to triage (remove from column)
     def destroy
-      @entry.send_back_to_triage
+      Entry.suppressing_turbo_broadcasts do
+        @entry.send_back_to_triage
+      end
 
       respond_to do |format|
         format.turbo_stream

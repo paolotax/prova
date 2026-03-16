@@ -7,7 +7,9 @@ module Entries
     # POST /entries/:entry_id/not_now
     # Postpone the entry
     def create
-      @entry.postpone
+      Entry.suppressing_turbo_broadcasts do
+        @entry.postpone
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -18,7 +20,9 @@ module Entries
     # DELETE /entries/:entry_id/not_now
     # Resume the entry (remove postpone)
     def destroy
-      @entry.resume
+      Entry.suppressing_turbo_broadcasts do
+        @entry.resume
+      end
 
       respond_to do |format|
         format.turbo_stream

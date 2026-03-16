@@ -1,8 +1,9 @@
 <% @page_title = @scuola.denominazione %>
 <% @header_class = "header--card" %>
 <% @body_class = "contained-scrolling" %>
-
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
+
 
 <%= turbo_stream_from Current.account, "scuole" %>
 

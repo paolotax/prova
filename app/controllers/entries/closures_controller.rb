@@ -7,7 +7,9 @@ module Entries
     # POST /entries/:entry_id/closure
     # Close the entry
     def create
-      @entry.close
+      Entry.suppressing_turbo_broadcasts do
+        @entry.close
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -18,7 +20,9 @@ module Entries
     # DELETE /entries/:entry_id/closure
     # Reopen the entry
     def destroy
-      @entry.reopen
+      Entry.suppressing_turbo_broadcasts do
+        @entry.reopen
+      end
 
       respond_to do |format|
         format.turbo_stream
