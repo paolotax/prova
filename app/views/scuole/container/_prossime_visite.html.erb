@@ -1,0 +1,16 @@
+<%# locals: (scuola:) -%>
+
+<% prossime_visite = scuola.tappe.programmate.per_data.limit(10) %>
+<% if prossime_visite.any? %>
+	<div class="margin-block-start">
+		<div class="group-header">
+			<h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Prossime visite (<%= prossime_visite.size %>)</h3>
+		</div>
+
+		<div class="cards cards--grid cards--in-context">
+			<div class="cards__list">
+				<%= render partial: "tappe/display/preview", collection: prossime_visite, as: :tappa %>
+			</div>
+		</div>
+	</div>
+<% end %>

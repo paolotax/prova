@@ -75,20 +75,7 @@
 		<p class="txt-small txt-subtle margin-none">Caricamento...</p>
 	<% end %>
 
-	<% prossime_visite = @scuola.tappe.programmate.per_data.limit(10) %>
-	<% if prossime_visite.any? %>
-		<div class="margin-block-start">
-			<h3 class="divider divider--fade txt-medium font-weight-black">Prossime visite</h3>
-			<ul class="flex flex-column gap-half txt-align-center">
-				<% prossime_visite.each do |tappa| %>
-					<li class="txt-small">
-						<span class="txt-subtle"><%= l tappa.data_tappa, format: :short %></span>
-						<span><%= tappa.titolo.presence || tappa.giri.map(&:titolo).join(", ") %></span>
-					</li>
-				<% end %>
-			</ul>
-		</div>
-	<% end %>
+	<%= render "scuole/container/prossime_visite", scuola: @scuola %>
 
 	<%= render "scuole/container/disponibilita", scuola: @scuola %>
 

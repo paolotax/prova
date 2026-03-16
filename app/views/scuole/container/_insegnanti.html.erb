@@ -26,7 +26,10 @@
   <section class=" margin-block-end-double">
     <div class="group-header">
       <div class="group-header__actions group-header__actions--start">
-        <%= link_to "Cattedre", scuola_cattedre_path(scuola), class: "btn txt-small" %>
+        <%= link_to scuola_cattedre_path(scuola), class: "btn btn-circle" do %>
+          <%= icon_tag "gear" %>
+          <span class="for-screen-reader">Collega cattedre a discipline"</span>
+        <% end %>
       </div>
       <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
         Insegnanti (<%= persone.size %>)

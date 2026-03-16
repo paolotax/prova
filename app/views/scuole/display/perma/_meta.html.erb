@@ -13,7 +13,7 @@
     </span>
 
     <span class="card__meta-text card__meta-text--author">
-      <span><%= scuola.direzione.denominazione.titleize %></span>
+      <%= link_to scuola.direzione.denominazione.titleize, scuola_path(scuola.direzione), data: { turbo_frame: "_top" } %>
     </span>
   <% end %>
 
@@ -25,17 +25,25 @@
     &nbsp;
   </span>
 
+  <% if scuola.direzione? %>
+    <% total_classi = scuola.classi_count + scuola.plessi.sum(:classi_count) %>
+    <% total_adozioni = scuola.mie_adozioni_count + scuola.plessi.sum(:mie_adozioni_count) %>
+  <% else %>
+    <% total_classi = scuola.classi_count %>
+    <% total_adozioni = scuola.mie_adozioni_count %>
+  <% end %>
+
   <span class="card__meta-text card__meta-text--copie txt-align-end">
-    <% if scuola.classi_count > 0 %>
-      <strong><%= scuola.classi_count %></strong> classi
+    <% if total_classi > 0 %>
+      <strong><%= total_classi %></strong> classi
     <% else %>
       &nbsp;
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
-    <% if scuola.mie_adozioni_count > 0 %>
-      <strong class="txt-positive"><%= pluralize(scuola.mie_adozioni_count, "mia adozione", "mie adozioni") %></strong>
+    <% if total_adozioni > 0 %>
+      <strong class="txt-positive"><%= pluralize(total_adozioni, "mia adozione", "mie adozioni") %></strong>
     <% else %>
       &nbsp;
     <% end %>

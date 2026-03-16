@@ -34,6 +34,31 @@
   </div>
 </div>
 
+<% if scuola.direzione? %>
+  <div class="margin-block-start margin-block-end">
+    <span class="txt-x-small txt-subtle txt-uppercase">Plessi</span>
+    <table class="table table--compact table--borderless txt-small" style="width: 100%;">
+      <tbody>
+        <% scuola.plessi.each do |plesso| %>
+          <tr>
+            <td class="overflow-ellipsis" style="max-width: 200px;">
+              <%= link_to plesso.denominazione, scuola_path(plesso),
+                class: "card__board txt-xx-small", style: "--card-color: #{tipo_scuola_color(plesso.tipo_scuola)}",
+                data: { turbo_frame: "_top" } %>
+            </td>
+            <td class="txt-align-end" style="white-space: nowrap; width: 40px;">
+              <% if plesso.classi_count > 0 %>
+                <span class="txt-xx-small" style="color: <%= tipo_scuola_color(plesso.tipo_scuola) %>"><%= plesso.classi_count %>cl</span>
+              <% end %>
+            </td>
+            <%= render "scuole/mie_adozioni_count", scuola: plesso %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
 <% if scuola.note.present? %>
   <div class="card__description margin-block-start">
     <p class="txt-small margin-none"><%= simple_format(scuola.note) %></p>
