@@ -1,6 +1,5 @@
 <% @page_title = @appunto.nome.presence || "Appunto" %>
 <% @header_class = "header--card" %>
-<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 
 <% content_for :header do %>

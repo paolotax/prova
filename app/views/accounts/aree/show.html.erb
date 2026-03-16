@@ -1,4 +1,3 @@
-<%= turbo_refreshes_with method: :morph, scroll: :preserve %>
 <%= turbo_stream_from Current.account, "aree", @provincia %>
 <% @page_title = "Aree #{@provincia}" %>
 <% @body_class = "contained-scrolling" %>

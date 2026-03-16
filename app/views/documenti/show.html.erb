@@ -1,5 +1,4 @@
 <% @page_title = "#{@editing ? 'Modifica ' : ''}#{@documento.causale || 'Documento'} ##{@documento.numero_documento || 'BOZZA'}" %>
-<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 
 <% content_for :header do %>

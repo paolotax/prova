@@ -9,6 +9,8 @@
 		  data-action="turbo:morph@window->local-time#refreshAll turbo:before-visit@document->turbo-navigation#rememberLocation" 
 		  data-platform="<%= platform.type %>">
 		
+		<%= turbo_stream_from current_user, "entries" if Current.user %>
+
 		<div id="global-container">
 			<header class="header header--mobile-actions-stack <%= @header_class %>" id="header">
 				<a href="#main" class="header__skip-navigation btn" data-turbo="false">Skip to main content</a>
