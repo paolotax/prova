@@ -2,7 +2,7 @@
 
 <% collane_giro = tappa.giri.filter_map(&:collana).uniq %>
 
-<div id="<%= dom_id(tappa, :bolle) %>" class="flex flex-column gap-quarter full-width margin-block-start margin-inline-start">
+<div id="<%= dom_id(tappa, :bolle) %>" class="flex flex-column gap-quarter full-width margin-block-end margin-inline-start">
   <h4 class="txt-x-small font-weight-bold txt-subtle" style="margin: 0 0 0.5em 0;">
     <% if collane_giro.any? %><% collane_giro.each_with_index do |collana, i| %><%= ", " if i > 0 %><%= link_to collana.nome, collana_path(collana), class: "txt-subtle" %><% end %><% else %>Bolle<% end %>
   </h4>

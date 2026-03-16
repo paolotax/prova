@@ -16,7 +16,7 @@
         <div class="card__content">
           <%= render "appunti/container/content", appunto: appunto %>
         </div>
-        <%= render "appunti/container/stages", appunto: appunto %>
+        <%= render "appunti/container/stages", appunto: appunto unless appunto.drafted? %>
       </div>
 
       <footer class="card__footer full-width">

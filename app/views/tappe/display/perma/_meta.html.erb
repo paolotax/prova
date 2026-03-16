@@ -1,71 +1,31 @@
 <%# locals: (tappa:) -%>
 
 <div class="card__meta" id="<%= dom_id(tappa, :meta) %>">
-  <div class="card__meta-avatars card__meta-avatars--author">
-    <% if tappa.data_tappa.present? %>
-      <span><%= l(tappa.data_tappa, format: "%A %d/%m", locale: :it) %></span>
-    <% else %>
-      <span>DA PROGRAMMARE</span>
-    <% end %>
-  </div>
 
-  <span class="card__meta-text card__meta-text--added overflow-ellipsis">
-    <% if tappa.giri.any? %>
-      <%= icon_tag "folder" %>
-      <%= tappa.giri.first.titolo %>
-    <% else %>
-      &nbsp;
-    <% end %>
-  </span>
 
-  <span class="card__meta-text card__meta-text--author overflow-ellipsis">
-    <% if tappa.tappable_type == "Scuola" %>
-      <%= icon_tag "building" %>
-      SCUOLA
-    <% elsif tappa.tappable_type == "Cliente" %>
-      <%= icon_tag "user" %>
-      CLIENTE
-    <% else %>
-      &nbsp;
-    <% end %>
-  </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-    <% if tappa.entry&.closed? %>
-      <%= icon_tag "check" %>
-      Completata
-      <strong><%= tappa.entry.closed_at&.strftime("%d/%m/%Y") %></strong>
-    <% elsif tappa.entry&.postponed? %>
-      <%= icon_tag "clock" %>
-      Rimandata
-      <strong><%= tappa.entry.postponed_at&.strftime("%d/%m/%Y") %></strong>
-    <% elsif tappa.entro_il.present? %>
-      ENTRO <strong><%= tappa.entro_il.strftime("%d/%m") %></strong>
-    <% else %>
-      <%= icon_tag "refresh--meta" %>
-      Modificata
-      <strong><%= tappa.updated_at&.strftime("%d/%m/%Y") %></strong>
-    <% end %>
+    &nbsp;
   </span>
 
   <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
-    <% if tappa.descrizione.present? %>
-      <span><%= truncate(tappa.descrizione, length: 30) %></span>
-    <% else %>
-      &nbsp;
-    <% end %>
+    &nbsp;
   </span>
 
   <span class="card__meta-text card__meta-text--copie txt-align-end">
     <% if tappa.bolle_visione.any? %>
-      Bolle <strong><%= tappa.bolle_visione.size %></strong>
+      <strong><%= pluralize(tappa.bolle_visione.size, "Bolla", "Bolle") %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--importo txt-align-end">
     <% libri_count = tappa.bolle_visione.joins(:bolla_visione_righe).count %>
     <% if libri_count > 0 %>
-      Libri <strong><%= libri_count %></strong>
+      <strong><%= pluralize(libri_count, "Libro", "Libri") %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 </div>
