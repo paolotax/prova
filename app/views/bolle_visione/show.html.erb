@@ -41,7 +41,7 @@
   <div class="flex align-center gap-half">
     <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;"><%= link_to @bolla_visione.scuola.denominazione, scuola_path(@bolla_visione.scuola) %></h3>
 
-    <%= render "scuole/persone/search_dialog", scuola: @bolla_visione.scuola,
+    <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
         form_url: bolla_visione_persone_path(@bolla_visione),
         select_url: bolla_visione_path(@bolla_visione),
         assign_url: bolla_visione_persone_path(@bolla_visione),
@@ -97,7 +97,7 @@
           </div>
         <% end %>
 
-        <%= render "scuole/persone/search_dialog", scuola: @bolla_visione.scuola,
+        <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
         form_url: bolla_visione_persone_path(@bolla_visione),
         select_url: bolla_visione_path(@bolla_visione) %>
       </div>
