@@ -17,7 +17,7 @@
     <% end %>
     <% if @bolla_visione.contatto&.email.present? %>
       <% mail_subject = "Consegna volumi GIUNTI Scuola 2026" %>
-      <% mail_body = "Allego bolla dei testi consegnati in data #{l(@bolla_visione.data_bolla, format: :short)}.\nInvierò nei prossimi giorni un dettaglio delle nostre proposte con i link per visionare i contenuti digitali.\n\nPaolo Tassinari\ncel: 3472371680\nmail: paolo.tassinari@giunti.it" %>
+      <% mail_body = "Buongiorno, \n\nallego la lista dei testi consegnati in visione in data #{l(@bolla_visione.data_bolla, format: :short)}.\nInvierò nei prossimi giorni un dettaglio delle nostre proposte con i link per visionare i contenuti digitali.\n\nGrazie.\n\nPaolo Tassinari\ncel: 347 2371680\nmail: p.tassinari@giunti-ag.it" %>
       <button type="button" class="btn"
           data-controller="mailto-pdf tooltip"
           data-mailto-pdf-pdf-url-value="<%= bolla_visione_path(@bolla_visione, format: :pdf) %>"
