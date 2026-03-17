@@ -2,6 +2,7 @@
 <%= collapsible_nav_section "Principale" do %>
     <%= filter_place_menu_item account_root_path(Current.account), "Bacheca", "home" %>
     <%= filter_place_menu_item agenda_path(Current.account), "Agenda", "calendar" %>
+    <%= filter_place_menu_item persone_path(Current.account), "Contatti", "person" %>
     <% if (baule = Current.account.columns.find_by(name: "Nel Baule")) %>
       <%= filter_place_menu_item column_path(Current.account, baule), "Nel Baule", "truck" %>
     <% end %>

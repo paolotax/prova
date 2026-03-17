@@ -39,7 +39,7 @@
           <%= icon_tag "arrow-down-tray" %>
           <span class="for-screen-reader">Importa insegnanti</span>
         <% end %>
-        <%= render "scuole/persone/search_dialog", scuola: scuola %>
+        <%= render "persone/search_dialog", scuola: scuola %>
       </div>
     </div>
 
@@ -94,7 +94,7 @@
               end
             %>
             <dt class="txt-x-small">
-              <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
+              <%= link_to persona.nome_completo, persona_path(persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
               <% recapiti = [persona.cellulare, persona.telefono, persona.email].compact_blank %>
               <% if recapiti.any? %>
                 <div class="txt-xx-small txt-subtle"><%= recapiti.join(" · ") %></div>
@@ -116,7 +116,7 @@
         <dl class="dl-grid dl-grid--center txt-small">
           <% senza_materia.each do |persona| %>
             <dt class="txt-x-small">
-              <%= link_to persona.nome_completo, scuola_persona_path(scuola, persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
+              <%= link_to persona.nome_completo, persona_path(persona), class: "txt-undecorated font-weight-bold", style: "color: inherit;" %>
               <% recapiti = [persona.cellulare, persona.telefono, persona.email].compact_blank %>
               <% if recapiti.any? %>
                 <div class="txt-xx-small txt-subtle"><%= recapiti.join(" · ") %></div>
@@ -142,7 +142,7 @@
           <%= icon_tag "arrow-down-tray" %>
           <span class="for-screen-reader">Importa insegnanti</span>
         <% end %>
-        <%= render "scuole/persone/search_dialog", scuola: scuola %>
+        <%= render "persone/search_dialog", scuola: scuola %>
       </div>
     </div>
     <p class="txt-small txt-subtle margin-none">Nessun insegnante.</p>

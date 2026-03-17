@@ -3,45 +3,14 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to_url "Dashboard", account_root_path(Current.account) %>
+    <% if @persona.scuola.present? %>
+      <%= back_link_to_url @persona.scuola.denominazione.capitalize, scuola_path(@persona.scuola) %>
+    <% else %>
+      <%= back_link_to_url "Persone", persone_path %>
+    <% end %>
   </div>
 <% end %>
 
 <div class="full-width pad group">
-  <section class="card-perma">
-    <div class="card-perma__actions card-perma__actions--right">
-      <%= new_appunto_link(@persona) %>
-    </div>
-    <div class="card-perma__bg">
-      <article class="card">
-        <div class="card__body">
-          <div class="card__content">
-            <h3 class="card__title"><%= @persona.nome_completo %></h3>
-            <% if @persona.cellulare.present? %>
-              <span class="card__subtitle"><%= @persona.cellulare %></span>
-            <% end %>
-            <% if @persona.email.present? %>
-              <span class="card__subtitle"><%= @persona.email %></span>
-            <% end %>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <% if @appunti.any? %>
-    <div class="scuola-show">
-      <div class="panel shadow">
-        <strong class="divider divider--fade txt-large">Appunti</strong>
-        <% @appunti.each do |appunto| %>
-          <div class="flex flex-column gap-half pad-block-half border-block-end">
-            <%= link_to appunto.nome, appunto_path(appunto), class: "txt-link" %>
-            <% if appunto.body.present? %>
-              <span class="txt-small txt-tertiary overflow-line-clamp" style="--lines: 2"><%= appunto.body %></span>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+  <%= render "persone/container", persona: @persona, appunti: @appunti %>
 </div>

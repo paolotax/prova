@@ -1,6 +1,7 @@
-<%# locals: (persona:, scuola:) -%>
+<%# locals: (persona:) -%>
 
-<%= form_with model: persona, url: scuola_persona_path(scuola, persona),
+<% scuola = persona.scuola %>
+<%= form_with model: persona, url: persona_path(persona),
       id: dom_id(persona, :edit_form),
       data: { controller: "form",
               action: "keydown.esc->form#cancel:stop" } do |form| %>
@@ -47,7 +48,7 @@
     <%= form.email_field :email, class: "input" %>
   </div>
 
-  <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
+  <% materie_esistenti = scuola ? scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank : [] %>
   <% cattedra_attuale = persona.persona_classi.where.not(materia: nil).pick(:materia) %>
   <div class="form-field">
     <label class="label txt-small">Disciplina</label>
@@ -62,9 +63,9 @@
   <div class="form-field cb-tax">
     <label class="label txt-small">Classi</label>
     <%= combobox_tag "persona[classe_ids]",
-        hw_combobox_options(scuola.classi.order(:anno_corso, :sezione), display: :nome_breve),
+        hw_combobox_options(scuola ? scuola.classi.order(:anno_corso, :sezione) : Classe.none, display: :nome_breve),
         value: persona.classe_ids.join(","),
-        multiselect_chip_src: scuola_persona_classe_chips_path(scuola, persona),
+        multiselect_chip_src: persona_classe_chips_path(persona),
         placeholder: "Aggiungi classe...",
         mobile_at: "0px" %>
   </div>

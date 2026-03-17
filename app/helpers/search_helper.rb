@@ -7,7 +7,7 @@ module SearchHelper
     when Documento then documento_path(Current.account, record)
     when Appunto   then appunto_path(Current.account, record)
     when Classe    then scuola_classe_path(Current.account, record.scuola, record)
-    when Persona   then record.scuola ? scuola_persona_path(Current.account, record.scuola, record) : scuole_path(Current.account)
+    when Persona   then persona_path(Current.account, record)
     end
   end
 

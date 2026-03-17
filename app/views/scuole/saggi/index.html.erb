@@ -17,7 +17,7 @@
       <% grouped.each do |dest, saggi| %>
         <h4 class="txt-x-small txt-subtle txt-uppercase margin-block-start">
           <% if dest.is_a?(Persona) %>
-            <%= link_to dest.nome_completo, scuola_persona_path(@scuola, dest), class: "txt-link" %>
+            <%= link_to dest.nome_completo, persona_path(dest), class: "txt-link" %>
           <% elsif dest.is_a?(Classe) %>
             Classe <%= dest.nome_breve %>
           <% else %>

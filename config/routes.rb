@@ -471,7 +471,11 @@ Rails.application.routes.draw do
     get 'articoli', to: 'articoli#index'
     get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
-    resources :persone, only: [:show]
+    resources :persone, only: [:index, :show, :edit, :update, :create, :destroy] do
+      resources :persona_classi, only: [:destroy], module: :persone
+      resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
+      resources :saggi, only: [:create, :update, :destroy], module: :persone
+    end
 
     resources :scuole do
       resources :qrcodes
@@ -493,11 +497,7 @@ Rails.application.routes.draw do
         resources :persone_search, only: [:index], controller: "persone_search"
         resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
         resources :classe_chips, only: [:create], controller: "classe_chips", param: :combobox_value
-        resources :persone, only: [:show, :edit, :update, :create, :destroy] do
-          resources :persona_classi, only: [:destroy], module: :persone
-          resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
-          resources :saggi, only: [:create, :update, :destroy], module: :persone
-        end
+        resources :persone, only: [:show, :create]
         resources :classi, only: [:index, :show, :edit, :update, :create, :destroy] do
           member do
             post :import_adozioni

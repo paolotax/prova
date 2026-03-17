@@ -5,7 +5,7 @@
 <div id="<%= dom_id(classe, :docenti) %>" class="flex gap flex-wrap align-center margin-block-start">
   <% docenti.sort_by { |p| p.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia.to_s }.each do |persona| %>
     <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia %>
-    <%= link_to scuola_persona_path(scuola, persona), class: "flex flex-column align-center gap-quarter txt-undecorated", style: "color: inherit;", data: { turbo_frame: "_top" } do %>
+    <%= link_to persona_path(persona), class: "flex flex-column align-center gap-quarter txt-undecorated", style: "color: inherit;", data: { turbo_frame: "_top" } do %>
       <%= persona_avatar_tag(persona, size: "4ch") %>
       <strong class="txt-x-small"><%= persona.cognome %></strong>
       <span class="txt-xx-small txt-subtle"><%= cattedra&.titleize %></span>

@@ -1,9 +1,10 @@
-<%# locals: (persona:, scuola:) -%>
+<%# locals: (persona:) -%>
 
+<% scuola = persona.scuola %>
 <section class="group">
   <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
     Saggi
-    <% saggi = persona.saggi.per_scuola(scuola).includes(:libro).order(created_at: :desc) %>
+    <% saggi = scuola ? persona.saggi.per_scuola(scuola).includes(:libro).order(created_at: :desc) : persona.saggi.includes(:libro).order(created_at: :desc) %>
     <% if saggi.any? %>
       <span class="txt-x-small txt-subtle font-weight-normal">(<%= saggi.size %>)</span>
     <% end %>
@@ -22,7 +23,7 @@
           </span>
           <span class="txt-xx-small txt-subtle">x<%= saggio.quantita %></span>
           <% if saggio.prenotato? %>
-            <%= button_to scuola_persona_saggio_path(scuola, persona, saggio),
+            <%= button_to persona_saggio_path(persona, saggio),
                 method: :patch,
                 params: { saggio: { stato: :consegnato } },
                 class: "btn btn--small txt-positive borderless",
@@ -31,7 +32,7 @@
             <% end %>
           <% end %>
           <% unless saggio.scaricato? %>
-            <%= button_to scuola_persona_saggio_path(scuola, persona, saggio),
+            <%= button_to persona_saggio_path(persona, saggio),
                 method: :delete,
                 class: "btn btn--small txt-negative borderless",
                 title: "Elimina" do %>
@@ -45,7 +46,7 @@
 
   <%# Inline form %>
   <%= form_with model: Saggio.new,
-      url: scuola_persona_saggi_path(scuola, persona),
+      url: persona_saggi_path(persona),
       class: "flex gap-half align-end flex-wrap margin-block-start-half" do |f| %>
     <fieldset class="flex-item-grow" style="flex-basis: 200px;">
       <%= f.combobox :libro_id, libri_path,
@@ -57,7 +58,7 @@
           {}, class: "input" %>
     </fieldset>
     <fieldset style="width: 60px;">
-      <%= f.number_field :quantita, value: 1, min: 1, class: "input full-width", placeholder: "Qt\u00E0" %>
+      <%= f.number_field :quantita, value: 1, min: 1, class: "input full-width", placeholder: "Qtà" %>
     </fieldset>
     <%= f.submit "Aggiungi", class: "btn btn--primary btn--small" %>
   <% end %>

@@ -1,6 +1,6 @@
-<%# locals: (persona:, scuola:) -%>
+<%# locals: (persona:) -%>
 
-<%= link_to edit_scuola_persona_path(scuola, persona), class: "btn",
+<%= link_to edit_persona_path(persona), class: "btn",
     data: { turbo_method: :get, turbo_stream: true,
             controller: "hotkey", action: "keydown.e@document->hotkey#click" } do %>
   Modifica <kbd class="hide-on-touch">E</kbd>

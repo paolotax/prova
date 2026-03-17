@@ -1,11 +1,11 @@
-<%# locals: (persona:, scuola:) -%>
+<%# locals: (persona:) -%>
 
 <%= button_tag class: "btn btn--positive", type: :submit, form: dom_id(persona, :edit_form),
     data: { controller: "hotkey", action: "keydown.s@document->hotkey#click" } do %>
   Salva <kbd class="hide-on-touch">S</kbd>
 <% end %>
 
-<%= link_to scuola_persona_path(scuola, persona), class: "btn btn--reversed",
+<%= link_to persona_path(persona), class: "btn btn--reversed",
     data: { turbo_method: :get, turbo_stream: true } do %>
   Annulla
 <% end %>

@@ -1,10 +1,11 @@
-<%# locals: (persona:, scuola:, appunti:) -%>
+<%# locals: (persona:, appunti:) -%>
 
-<% persona_card_color = tipo_scuola_color(scuola.tipo_scuola) %>
+<% scuola = persona.scuola %>
+<% persona_card_color = scuola ? tipo_scuola_color(scuola.tipo_scuola) : "var(--color-card-1)" %>
 <section class="card-perma" style="--card-color: <%= persona_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_persona_id %>
-      <%= link_to scuola_persona_path(scuola, @prev_persona_id), class: "btn",
+      <%= link_to persona_path(@prev_persona_id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
         <%= icon_tag "arrow-left" %>
         <span class="for-screen-reader">Precedente (&#8592;)</span>
@@ -15,13 +16,13 @@
   <div class="card-perma__bg">
     <article class="card">
       <header class="card__header">
-        <%= render "scuole/persone/display/perma/board", persona: persona, scuola: scuola %>
+        <%= render "persone/display/perma/board", persona: persona %>
       </header>
 
       <div class="card__body">
         <div class="card__content">
           <%= turbo_frame_tag persona, :edit do %>
-            <%= render "scuole/persone/content_display", persona: persona, scuola: scuola %>
+            <%= render "persone/content_display", persona: persona %>
           <% end %>
         </div>
       </div>
@@ -30,7 +31,7 @@
 
   <div class="card-perma__actions card-perma__actions--right">
     <% if @next_persona_id %>
-      <%= link_to scuola_persona_path(scuola, @next_persona_id), class: "btn",
+      <%= link_to persona_path(@next_persona_id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
         <%= icon_tag "arrow-right" %>
         <span class="for-screen-reader">Successivo (&#8594;)</span>
@@ -40,13 +41,13 @@
 
   <div class="card-perma__notch card-perma__notch--bottom">
     <%= turbo_frame_tag persona, :footer do %>
-      <%= render "scuole/persone/footer", persona: persona, scuola: scuola %>
+      <%= render "persone/footer", persona: persona %>
     <% end %>
   </div>
 </section>
 
 <div class="scuola-show" style="--card-color: <%= persona_card_color %>;">
-  <%= render "scuole/persone/container/appunti", appunti: appunti %>
-  <%= render "scuole/persone/container/saggi", persona: persona, scuola: scuola %>
-  <%= render "shared/container/delete", record: persona, path: scuola_persona_path(scuola, persona), label: persona.nome_completo %>
+  <%= render "persone/container/appunti", appunti: appunti %>
+  <%= render "persone/container/saggi", persona: persona %>
+  <%= render "shared/container/delete", record: persona, path: persona_path(persona), label: persona.nome_completo %>
 </div>

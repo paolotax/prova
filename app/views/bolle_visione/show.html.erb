@@ -60,7 +60,7 @@
     <% if @bolla_visione.contatto.present? %>
       <div class="flex-item-grow" style="flex-basis: 120px;">
         <span class="txt-x-small txt-subtle txt-uppercase">Contatto</span>
-        <div class="txt-medium"><%= link_to @bolla_visione.contatto.nome_completo, scuola_persona_path(@bolla_visione.scuola, @bolla_visione.contatto) %></div>
+        <div class="txt-medium"><%= link_to @bolla_visione.contatto.nome_completo, persona_path(@bolla_visione.contatto) %></div>
         <% if @bolla_visione.contatto.classi.any? %>
           <div class="txt-x-small txt-subtle"><%= @bolla_visione.contatto.classi.map(&:nome_breve).join(", ") %></div>
         <% end %>

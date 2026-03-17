@@ -1,5 +1,10 @@
-<%# locals: (persona:, scuola:) -%>
+<%# locals: (persona:) -%>
 
+<% scuola = persona.scuola %>
+
+<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
+
+<% if scuola %>
 <%
   tipo_scuola = scuola.classi.pick(:tipo_scuola) || "MM"
   cattedra = persona.persona_classi.where.not(materia: nil).pick(:materia)
@@ -39,7 +44,6 @@
     .transform_values { |aa| aa.map(&:classe_id).uniq }
 %>
 
-<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
 <% if cattedra.present? %>
   <div class="txt-small txt-subtle"><%= cattedra %></div>
 <% end %>
@@ -63,6 +67,7 @@
     </div>
   <% end %>
 </div>
+<% end %>
 
 <% if persona.cellulare.present? || persona.email.present? || persona.telefono.present? %>
   <div class="card__description margin-block-start">

@@ -1,0 +1,30 @@
+<% @page_title = "Persone" %>
+<% @body_class = "contained-scrolling" %>
+
+<% content_for :header do %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Persone</span>
+  </h1>
+<% end %>
+
+<%= turbo_frame_tag :search_results do %>
+  <% if @page.used? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "persona trovata" : "persone trovate" %>
+    </p>
+
+    <div class="cards cards--grid">
+      <%= with_automatic_pagination :persone, @page,
+          class: "cards__list",
+          data: { controller: "navigable-list",
+              navigable_list_auto_select_value: false,
+              navigable_list_actionable_items_value: true,
+              navigable_list_prevent_handled_keys_value: true,
+              action: "keydown->navigable-list#navigate" } do %>
+        <%= render @page.records %>
+      <% end %>
+    </div>
+  <% else %>
+    <%= blank_slate_for(:persone) %>
+  <% end %>
+<% end %>
