@@ -77,7 +77,7 @@
     </div>
 
     <%# Centro — lista tappe %>
-    <section class="cards is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); container-type: inline-size;">
+    <section class="cards cards--grid is-expanded" style="--card-color: oklch(var(--lch-blue-medium)); --cards-gap: 0.6rem; inline-size: 100%; max-inline-size: var(--column-width-expanded, 450px); container-type: inline-size;">
       <div class="board-tools card" style="flex-wrap: wrap;">
         <%= link_to new_documento_path, class: "btn btn--link", data: { turbo_frame: "_top" } do %>
           <%= icon_tag "document" %>

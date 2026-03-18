@@ -30,6 +30,12 @@
       <header class="card__header">
         <%= render "tappe/display/preview/board", tappa: tappa %>
         <%= render "tappe/display/perma/tags", tappa: tappa %>
+
+        <% if tappa.entry.triaged? %>
+        <span class="btn justify-start card__column-name card__column-name--current txt-uppercase min-width max-width">
+          <span class="overflow-ellipsis"><%= tappa.entry.column.name %></span>
+        </span>
+      <% end %>
       </header>
 
       <div class="card__body justify-space-between">
