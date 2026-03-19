@@ -478,6 +478,7 @@ Rails.application.routes.draw do
     end
 
     resources :scuole do
+      get :email_pattern, on: :member
       resources :qrcodes
       resource :foglio_scuola, only: [:show], controller: "scuole/foglio_scuola"
 

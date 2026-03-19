@@ -41,6 +41,8 @@ class Persona < ApplicationRecord
 
   enum :ruolo, { docente: "docente", dirigente: "dirigente", segretario: "segretario", referente: "referente", altro: "altro" }
 
+  normalizes :nome, :cognome, with: ->(val) { val.strip.gsub(/\s+/, " ").downcase.gsub(/(?<=\A|[ '])\w/, &:upcase) }
+
   validate :cognome_o_nome_presente
 
   scope :per_ruolo, ->(ruolo) { where(ruolo: ruolo) }

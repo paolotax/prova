@@ -5,7 +5,7 @@ class ScuoleController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], aree: [], comuni: [], tipi_scuola: [], terms: []].freeze
 
-  before_action :set_scuola, only: [:show, :edit, :update, :destroy]
+  before_action :set_scuola, only: [:show, :edit, :update, :destroy, :email_pattern]
 
   def index
     @per_direzione = @filter.sorted_by.per_direzione?
@@ -99,6 +99,14 @@ class ScuoleController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def email_pattern
+    source = @scuola.email_pattern.present? ? @scuola : @scuola.direzione
+    render json: {
+      pattern: source&.email_pattern,
+      dominio: source&.email_dominio
+    }
   end
 
   def destroy

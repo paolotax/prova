@@ -4,7 +4,8 @@
         data: { controller: "mobile-form", mobile_form_target: "form" } do |f| %>
 
   <section class="panel shadow center" style="--panel-size: 55ch;"
-           data-controller="conditional-field">
+           data-controller="conditional-field email-suggest"
+           data-email-suggest-url-value="<%= email_pattern_scuola_path(Current.account, "__ID__") %>">
     <strong class="divider txt-medium margin-block">Appunto</strong>
 
     <div class="form-field margin-block-end">
@@ -43,7 +44,7 @@
               placeholder: "cerca scuola, cliente, classe o persona...",
               mobile_at: "0px",
               data: {
-                action: "hw-combobox:selection->conditional-field#update"
+                action: "hw-combobox:selection->conditional-field#update hw-combobox:selection->email-suggest#fetchPattern"
               } %>
         </div>
       </div>
@@ -54,10 +55,12 @@
     <div class="flex flex-column gap">
       <div class="form-row">
         <div class="form-field">
-          <%= text_field_tag "persona[nome]", nil, class: "input", placeholder: "Nome" %>
+          <%= text_field_tag "persona[nome]", nil, class: "input", placeholder: "Nome",
+              data: { email_suggest_target: "nome", action: "input->email-suggest#clearManual" } %>
         </div>
         <div class="form-field">
-          <%= text_field_tag "persona[cognome]", nil, class: "input", placeholder: "Cognome" %>
+          <%= text_field_tag "persona[cognome]", nil, class: "input", placeholder: "Cognome",
+              data: { email_suggest_target: "cognome", action: "input->email-suggest#clearManual" } %>
         </div>
       </div>
       <div class="form-row">
@@ -74,7 +77,8 @@
         <%= telephone_field_tag "persona[cellulare]", nil, class: "input", placeholder: "Cellulare" %>
       </div>
       <div class="form-field">
-        <%= email_field_tag "persona[email]", nil, class: "input", placeholder: "Email" %>
+        <%= email_field_tag "persona[email]", nil, class: "input", placeholder: "Email",
+            data: { email_suggest_target: "email", action: "input->email-suggest#markManual" } %>
       </div>
     </div>
 

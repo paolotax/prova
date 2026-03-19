@@ -98,6 +98,43 @@
     <%= f.email_field :pec, class: "input" %>
   </div>
 
+  <div data-controller="email-pattern">
+    <div class="form-row">
+      <div class="form-field">
+        <%= f.label :email_pattern, "Formato email", class: "label txt-small" %>
+        <%= f.select :email_pattern,
+            options_for_select(
+              [["—", ""]] +
+              Scuola::EMAIL_PATTERNS.keys.map { |p| [p, p] } +
+              [["Altro...", "custom"]],
+              scuola.email_pattern.presence&.then { |p| Scuola::EMAIL_PATTERNS.key?(p) ? p : "custom" }
+            ),
+            {},
+            class: "input input--select",
+            data: { email_pattern_target: "select", action: "email-pattern#update" } %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :email_dominio, "Dominio", class: "label txt-small" %>
+        <%= f.text_field :email_dominio, class: "input",
+            placeholder: "es. ickennedy.istruzione.it",
+            data: { email_pattern_target: "dominio", action: "input->email-pattern#update" } %>
+      </div>
+    </div>
+
+    <div class="form-field" data-email-pattern-target="customField" style="<%= 'display:none' unless scuola.email_pattern.present? && !Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>">
+      <label class="label txt-small">Pattern personalizzato</label>
+      <input type="text" class="input"
+             placeholder="es. cognome.n"
+             value="<%= scuola.email_pattern unless Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>"
+             data-email-pattern-target="customInput"
+             data-action="input->email-pattern#update"
+             <%= 'name="scuola[email_pattern]"'.html_safe if scuola.email_pattern.present? && !Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>>
+    </div>
+
+    <p class="txt-small txt-muted" data-email-pattern-target="preview"></p>
+  </div>
+
   <div class="form-row">
     <div class="form-field">
       <%= f.label :stato, class: "label txt-small" %>
