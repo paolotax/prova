@@ -1,19 +1,24 @@
 <%# locals: (persona:) -%>
 
 <% scuola = persona.scuola %>
+<% email_source = scuola&.then { |s| s.email_pattern.present? ? s : s.direzione } %>
 <%= form_with model: persona, url: persona_path(persona),
       id: dom_id(persona, :edit_form),
-      data: { controller: "form",
-              action: "keydown.esc->form#cancel:stop" } do |form| %>
+      data: { controller: "form email-suggest",
+              action: "keydown.esc->form#cancel:stop",
+              email_suggest_pattern_value: email_source&.email_pattern,
+              email_suggest_dominio_value: email_source&.email_dominio } do |form| %>
 
   <div class="flex gap">
     <div class="form-field" style="flex: 1;">
       <%= form.label :cognome, class: "label txt-small" %>
-      <%= form.text_field :cognome, class: "input" %>
+      <%= form.text_field :cognome, class: "input",
+    data: { email_suggest_target: "cognome", action: "input->email-suggest#clearManual" } %>
     </div>
     <div class="form-field" style="flex: 1;">
       <%= form.label :nome, class: "label txt-small" %>
-      <%= form.text_field :nome, class: "input" %>
+      <%= form.text_field :nome, class: "input",
+    data: { email_suggest_target: "nome", action: "input->email-suggest#clearManual" } %>
     </div>
   </div>
 
@@ -45,7 +50,8 @@
 
   <div class="form-field">
     <%= form.label :email, class: "label txt-small" %>
-    <%= form.email_field :email, class: "input" %>
+    <%= form.email_field :email, class: "input",
+    data: { email_suggest_target: "email", action: "input->email-suggest#markManual" } %>
   </div>
 
   <% materie_esistenti = scuola ? scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank : [] %>
