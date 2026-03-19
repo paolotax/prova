@@ -36,9 +36,13 @@
 
     <%# Form nuovo/aggiorna persona %>
     <% materie_esistenti = scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
+    <% email_source = scuola.email_pattern.present? ? scuola : scuola.direzione %>
     <%= form_with url: form_url, method: :post, scope: :persona,
         class: "flex flex-column gap-quarter full-width",
-        data: { persona_search_target: "form" } do |f| %>
+        data: { persona_search_target: "form",
+                controller: "email-suggest",
+                email_suggest_pattern_value: email_source&.email_pattern,
+                email_suggest_dominio_value: email_source&.email_dominio } do |f| %>
       <% if ruolo.present? %>
         <%= f.hidden_field :ruolo, value: ruolo %>
       <% end %>
@@ -46,15 +50,18 @@
       <input type="hidden" name="return_to" value="scuola">
       <div class="flex gap-quarter">
         <%= f.text_field :cognome, placeholder: "Cognome", class: "input txt-small",
-            data: { persona_search_target: "cognome" } %>
+            data: { persona_search_target: "cognome",
+                    email_suggest_target: "cognome", action: "input->email-suggest#clearManual" } %>
         <%= f.text_field :nome, placeholder: "Nome", class: "input txt-small",
-            data: { persona_search_target: "nome" } %>
+            data: { persona_search_target: "nome",
+                    email_suggest_target: "nome", action: "input->email-suggest#clearManual" } %>
       </div>
       <%= f.text_field :materia, placeholder: "Disciplina", class: "input txt-small",
           list: "materie_list_#{scuola.id}",
           data: { persona_search_target: "materia" } %>
       <%= f.email_field :email, placeholder: "Email", class: "input txt-small",
-          data: { persona_search_target: "email" } %>
+          data: { persona_search_target: "email",
+                  email_suggest_target: "email", action: "input->email-suggest#markManual" } %>
       <%= f.telephone_field :cellulare, placeholder: "Cellulare", class: "input txt-small",
           data: { persona_search_target: "cellulare" } %>
       <div class="form-field cb-tax full-width txt-small" style="--hw-combobox-width--multiple: 100%; --hw-listbox-height: calc(var(--hw-line-height) * 6);">

@@ -72,16 +72,25 @@
         <%# Form campi persona (inline, non dialog) %>
         <% materie_esistenti = @scuola.persone.joins(:persona_classi).where.not(persona_classi: { materia: nil }).distinct.pluck("persona_classi.materia").compact_blank %>
 
-        <div class="flex flex-column gap-quarter" data-persona-search-target="form">
+        <%
+          email_source = @scuola.email_pattern.present? ? @scuola : @scuola.direzione
+        %>
+        <div class="flex flex-column gap-quarter" data-persona-search-target="form"
+             data-controller="email-suggest"
+             data-email-suggest-pattern-value="<%= email_source&.email_pattern %>"
+             data-email-suggest-dominio-value="<%= email_source&.email_dominio %>">
           <input type="hidden" name="persona[id]" data-persona-search-target="personaId">
           <div class="flex gap-quarter">
             <input type="text" name="persona[nome]" placeholder="Nome" class="input txt-small"
-                data-persona-search-target="nome">
+                data-persona-search-target="nome"
+                data-email-suggest-target="nome" data-action="input->email-suggest#clearManual">
             <input type="text" name="persona[cognome]" placeholder="Cognome" class="input txt-small"
-                data-persona-search-target="cognome">
+                data-persona-search-target="cognome"
+                data-email-suggest-target="cognome" data-action="input->email-suggest#clearManual">
           </div>
           <input type="email" name="persona[email]" placeholder="Email" class="input txt-small"
-              data-persona-search-target="email">
+              data-persona-search-target="email"
+              data-email-suggest-target="email" data-action="input->email-suggest#markManual">
           <input type="tel" name="persona[cellulare]" placeholder="Cellulare" class="input txt-small"
               data-persona-search-target="cellulare">
           <div class="flex gap-quarter">
