@@ -103,6 +103,50 @@
       </div>
     </div>
 
+    <!-- Email docenti -->
+    <strong class="divider txt-large">Email docenti</strong>
+
+    <div class="flex flex-column gap"
+         data-controller="email-pattern"
+         data-email-pattern-patterns-value="<%= Scuola::EMAIL_PATTERNS.keys.to_json %>">
+      <div class="form-grid">
+        <div class="form-field">
+          <%= f.label :email_pattern, "Formato", class: "form-label" %>
+          <%= f.select :email_pattern,
+              options_for_select(
+                [["—", ""]] +
+                Scuola::EMAIL_PATTERNS.keys.map { |p| [p, p] } +
+                [["Altro...", "custom"]],
+                scuola.email_pattern.presence&.then { |p| Scuola::EMAIL_PATTERNS.key?(p) ? p : "custom" }
+              ),
+              {},
+              class: "input input--select",
+              data: { email_pattern_target: "select", action: "email-pattern#update" } %>
+        </div>
+
+        <div class="form-field">
+          <%= f.label :email_dominio, "Dominio", class: "form-label" %>
+          <%= f.text_field :email_dominio, class: "input",
+              placeholder: "es. ickennedy.istruzione.it",
+              data: { email_pattern_target: "dominio", action: "input->email-pattern#update" } %>
+        </div>
+      </div>
+
+      <div class="form-field" data-email-pattern-target="customField" style="<%= 'display:none' unless scuola.email_pattern.present? && !Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>">
+        <label class="form-label">Pattern personalizzato</label>
+        <input type="text" class="input"
+               placeholder="es. cognome.n"
+               value="<%= scuola.email_pattern unless Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>"
+               data-email-pattern-target="customInput"
+               data-action="input->email-pattern#update"
+               <% if scuola.email_pattern.present? && !Scuola::EMAIL_PATTERNS.key?(scuola.email_pattern) %>
+                 name="scuola[email_pattern]"
+               <% end %>>
+      </div>
+
+      <p class="txt-small txt-muted" data-email-pattern-target="preview"></p>
+    </div>
+
     <!-- Stato e Priorità -->
     <strong class="divider txt-large">Stato e priorità</strong>
 

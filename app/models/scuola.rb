@@ -248,8 +248,6 @@ class Scuola < ApplicationRecord
     plessi.update_all(area: area) if plessi.any?
   end
 
-  private
-
   def entry_appunto_ids
     classe_ids = classi.pluck(:id)
     (appunti.published.pluck(:id) +
