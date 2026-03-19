@@ -198,7 +198,44 @@ class Scuola < ApplicationRecord
     [indirizzo, [cap, comune].compact.join(' '), provincia].compact.join("\n")
   end
 
+  EMAIL_PATTERNS = {
+    "nome.cognome" => "nome.cognome",
+    "n.cognome" => "n.cognome",
+    "cognome.nome" => "cognome.nome",
+    "nomecognome" => "nomecognome",
+    "cognomenome" => "cognomenome"
+  }.freeze
+
+  def genera_email_docente(nome, cognome)
+    pattern = email_pattern.presence || direzione&.email_pattern
+    dominio = email_dominio.presence || direzione&.email_dominio
+    return nil if pattern.blank? || dominio.blank?
+
+    nome_norm = normalize_email_part(nome)
+    cognome_norm = normalize_email_part(cognome)
+    return nil if nome_norm.blank? || cognome_norm.blank?
+
+    local_part = case pattern
+    when "nome.cognome" then "#{nome_norm}.#{cognome_norm}"
+    when "n.cognome" then "#{nome_norm[0]}.#{cognome_norm}"
+    when "cognome.nome" then "#{cognome_norm}.#{nome_norm}"
+    when "nomecognome" then "#{nome_norm}#{cognome_norm}"
+    when "cognomenome" then "#{cognome_norm}#{nome_norm}"
+    else pattern
+    end
+
+    "#{local_part}@#{dominio}"
+  end
+
   private
+
+  def normalize_email_part(str)
+    return "" if str.blank?
+    str.unicode_normalize(:nfkd)
+       .gsub(/[\u0300-\u036f]/, "")
+       .gsub(/[^a-zA-Z]/, "")
+       .downcase
+  end
 
   def normalize_fields
     self.tipo_scuola = tipo_scuola.upcase if tipo_scuola.present?

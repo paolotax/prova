@@ -78,3 +78,58 @@ class ScuolaTest < ActiveSupport::TestCase
     assert_equal "Nord", plesso.area
   end
 end
+
+class ScuolaEmailPatternTest < ActiveSupport::TestCase
+  fixtures :accounts, :scuole
+
+  setup do
+    @scuola = scuole(:scuola_fizzy)
+  end
+
+  test "genera_email_docente with nome.cognome pattern" do
+    @scuola.update!(email_pattern: "nome.cognome", email_dominio: "ickennedy.istruzione.it")
+    assert_equal "mario.rossi@ickennedy.istruzione.it", @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente with n.cognome pattern" do
+    @scuola.update!(email_pattern: "n.cognome", email_dominio: "icdavinci.edu.it")
+    assert_equal "m.rossi@icdavinci.edu.it", @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente with cognome.nome pattern" do
+    @scuola.update!(email_pattern: "cognome.nome", email_dominio: "icmanzoni.edu.it")
+    assert_equal "rossi.mario@icmanzoni.edu.it", @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente with nomecognome pattern" do
+    @scuola.update!(email_pattern: "nomecognome", email_dominio: "ickennedy.istruzione.it")
+    assert_equal "mariorossi@ickennedy.istruzione.it", @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente with cognomenome pattern" do
+    @scuola.update!(email_pattern: "cognomenome", email_dominio: "icdavinci.edu.it")
+    assert_equal "rossimario@icdavinci.edu.it", @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente returns nil without pattern or dominio" do
+    @scuola.update!(email_pattern: nil, email_dominio: nil)
+    assert_nil @scuola.genera_email_docente("Mario", "Rossi")
+  end
+
+  test "genera_email_docente handles accented names" do
+    @scuola.update!(email_pattern: "nome.cognome", email_dominio: "ickennedy.istruzione.it")
+    assert_equal "nicolo.deandre@ickennedy.istruzione.it", @scuola.genera_email_docente("Nicolò", "De André")
+  end
+
+  test "genera_email_docente handles spaces in names" do
+    @scuola.update!(email_pattern: "nome.cognome", email_dominio: "ickennedy.istruzione.it")
+    assert_equal "maria.deluca@ickennedy.istruzione.it", @scuola.genera_email_docente("Maria", "De Luca")
+  end
+
+  test "plesso delegates to direzione for email pattern" do
+    @scuola.update!(email_pattern: "nome.cognome", email_dominio: "ickennedy.istruzione.it")
+    plesso = scuole(:scuola_fizzy_nord)
+    plesso.update!(direzione: @scuola, email_pattern: nil, email_dominio: nil)
+    assert_equal "mario.rossi@ickennedy.istruzione.it", plesso.genera_email_docente("Mario", "Rossi")
+  end
+end
