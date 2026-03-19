@@ -31,7 +31,7 @@
         <%= render "tappe/display/preview/board", tappa: tappa %>
         <%= render "tappe/display/perma/tags", tappa: tappa %>
 
-        <% if tappa.entry.triaged? %>
+        <% if tappa.entry&.triaged? %>
         <span class="btn justify-start card__column-name card__column-name--current txt-uppercase min-width max-width">
           <span class="overflow-ellipsis"><%= tappa.entry.column.name %></span>
         </span>

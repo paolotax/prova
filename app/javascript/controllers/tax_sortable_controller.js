@@ -8,12 +8,6 @@ export default class extends Controller {
     group: String
   }
 
-  connect() {
-    this.element.querySelectorAll(":scope > *").forEach(item => {
-      item.setAttribute("draggable", "true")
-    })
-  }
-
   // Wired via data-action on the container element in the view
   dragStart(event) {
     const item = event.target.closest("[draggable='true']")

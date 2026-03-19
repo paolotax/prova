@@ -4,6 +4,7 @@
   <% giro_color = tappa.giri.first&.color %>
   <div class="tappa-compact <%= tappa_type_modifier(tappa) %>"
        id="<%= dom_id(tappa) %>"
+       draggable="true"
        data-tappa-id="<%= tappa.id %>"
        data-tax-sortable-update-url="<%= sort_tappa_path(tappa) %>"
        <%= "style=--tappa-color:#{giro_color}".html_safe if giro_color %>>
