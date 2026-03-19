@@ -12,6 +12,8 @@
 #  comune              :string
 #  denominazione       :string
 #  email               :string
+#  email_dominio       :string
+#  email_pattern       :string
 #  grado               :string
 #  indirizzo           :string
 #  latitude            :float
