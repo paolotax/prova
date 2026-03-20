@@ -30,6 +30,9 @@
         <span><%= icon_tag "shield-check", class: "icon--small txt-subtle" %>
         <%= mail_to scuola.pec, scuola.pec.downcase, class: "txt-link" %></span>
       <% end %>
+      <% if scuola.email_pattern.present? && scuola.email_dominio.present? %>
+        <span class="txt-xx-small txt-subtle"><%= scuola.email_pattern %>@<%= scuola.email_dominio %></span>
+      <% end %>
     </div>
   </div>
 </div>
