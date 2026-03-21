@@ -15,6 +15,7 @@
         <%= l giro.iniziato_il.to_date, format: '%-d %b %Y' %>
       </span>
       <div class="giro-timeline flex-item-grow">
+        <% today = Date.current %>
         <% giorni_timeline.each_with_index do |giorno, idx| %>
           <%
             css_classes = ["giro-timeline__day"]
@@ -29,9 +30,21 @@
             else
               css_classes << "giro-timeline__day--empty"
             end
+
+            day_color = if giorno[:count] == 0
+              "oklch(0.4 0.01 0)"
+            elsif giorno[:date] == today
+              "oklch(0.6 0.15 160)"
+            elsif giorno[:date] == today + 1
+              "oklch(0.7 0.15 85)"
+            elsif giorno[:past]
+              "oklch(0.6 0.01 0)"
+            else
+              "oklch(0.6 0.15 350)"
+            end
           %>
           <span class="<%= css_classes.join(' ') %>"
-                style="--giro-color: <%= giro.color %>"
+                style="--day-color: <%= day_color %>"
                 title="<%= l giorno[:date], format: '%a %-d %b' %> — <%= giorno[:count] %> tappe">
             <span class="giro-timeline__number"><%= idx + 1 %></span>
             <% if giorno[:count] > 0 %>

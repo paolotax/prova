@@ -575,24 +575,17 @@
   }
 
   .giro-timeline__day--past {
-    background-color: var(--giro-color);
+    background-color: var(--day-color);
     color: var(--color-ink-inverted);
   }
 
   .giro-timeline__day--future {
-    background-color: color-mix(in srgb, var(--giro-color) 35%, transparent);
-  }
-
-  .giro-timeline__day--future .giro-timeline__number {
-    color: var(--color-ink-dark);
-  }
-
-  .giro-timeline__day--future .giro-timeline__count {
-    color: var(--color-ink-dark);
+    background-color: var(--day-color);
+    color: var(--color-ink-inverted);
   }
 
   .giro-timeline__day--today {
-    box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--giro-color);
+    box-shadow: 0 0 0 1.5px var(--color-canvas), 0 0 0 3px var(--day-color);
   }
 
   /* Route start/end indicators on first/last tappa
