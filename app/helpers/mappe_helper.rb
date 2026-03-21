@@ -44,13 +44,13 @@ module MappeHelper
       else
         "https://waze.com/ul?q=#{url_encode tappable.indirizzo_navigator}"
       end
-    elsif provider == 'google'
+    elsif provider.in?(['google', 'google_maps'])
       if tappable.geocoded?
-        "https://www.google.com/maps/dir/?api=1&destination=#{tappable.latitude},#{tappable.longitude}"
+        "https://www.google.com/maps/dir/?api=1&destination=#{tappable.latitude},#{tappable.longitude}&travelmode=driving"
       else
-        "https://www.google.com/maps/dir/?api=1&destination=#{url_encode tappable.indirizzo_navigator}"
+        "https://www.google.com/maps/dir/?api=1&destination=#{url_encode tappable.indirizzo_navigator}&travelmode=driving"
       end
-    elsif provider == 'apple'
+    elsif provider.in?(['apple', 'apple_maps'])
       if tappable.geocoded?
         "https://maps.apple.com/?daddr=#{tappable.latitude},#{tappable.longitude}&dirflg=d"
       else

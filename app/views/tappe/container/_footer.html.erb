@@ -24,7 +24,8 @@
 <% if tappa.tappable&.respond_to?(:navigable?) && tappa.tappable.navigable? && current_user.effective_navigator.present? %>
   <%= link_to go_to_tappable_path(tappa.tappable, current_user.effective_navigator),
       target: "_blank", class: "btn",
-      style: "background-color: oklch(var(--lch-red-dark)); border-color: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted);" do %>
+      style: "background-color: oklch(var(--lch-red-dark)); border-color: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted);",
+      data: { turbo: false } do %>
     <%= icon_tag "marker" %>
     <span>Naviga</span>
   <% end %>

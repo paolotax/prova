@@ -45,7 +45,7 @@
 		<%= link_to go_to_tappable_path(@scuola, current_user.effective_navigator),
 				target: "_blank", class: "btn",
 				style: "background-color: oklch(var(--lch-red-dark)); border-color: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted);",
-				data: { controller: "tooltip" } do %>
+				data: { controller: "tooltip", turbo: false } do %>
 			<%= icon_tag "marker" %>
 			<span class="for-screen-reader">Naviga verso...</span>
 		<% end %>
