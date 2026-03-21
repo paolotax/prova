@@ -183,6 +183,13 @@
     --focus-ring-color: var(--color-ink);
   }
 
+  .btn--navigate {
+    --btn-background: var(--color-negative);
+    --btn-border-color: var(--color-negative);
+    --btn-color: var(--color-ink-inverted);
+    --focus-ring-color: var(--color-negative);
+  }
+
   /* Toggleable buttons
   /* ------------------------------------------------------------------------ */
 

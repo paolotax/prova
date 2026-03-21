@@ -355,6 +355,7 @@ Rails.application.routes.draw do
     resources :tappe do
       member do
         patch 'sort'
+        post 'rimanda'
       end
       resources :bolle_visione, only: [:new, :create]
       resources :tappa_giri, only: [:new, :create, :index], controller: "tappe/tappa_giri"

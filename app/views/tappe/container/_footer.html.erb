@@ -6,9 +6,25 @@
   Modifica <kbd class="hide-on-touch">E</kbd>
 <% end %>
 
+<% if tappa.data_tappa.present? && !tappa.closed? %>
+  <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close">
+    <button type="button" class="btn" data-action="dialog#open">Rimanda</button>
+
+    <dialog class="dialog panel shadow" data-dialog-target="dialog" style="--panel-size: 24rem;">
+      <p class="margin-none">Rimuovere la data e rimandare questa tappa?</p>
+      <div class="flex gap justify-center">
+        <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+        <%= button_to "Rimanda", rimanda_tappa_path(tappa), method: :post, class: "btn btn--reversed",
+            form: { data: { turbo: false } } %>
+      </div>
+    </dialog>
+  </div>
+<% end %>
+
 <% if tappa.tappable&.respond_to?(:navigable?) && tappa.tappable.navigable? && current_user.effective_navigator.present? %>
   <%= link_to go_to_tappable_path(tappa.tappable, current_user.effective_navigator),
-      target: "_blank", class: "btn btn--reversed" do %>
+      target: "_blank", class: "btn",
+      style: "background-color: oklch(var(--lch-red-dark)); border-color: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted);" do %>
     <%= icon_tag "marker" %>
     <span>Naviga</span>
   <% end %>

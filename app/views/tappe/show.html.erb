@@ -4,7 +4,11 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to_url I18n.l(@tappa.data_tappa, format: :short, locale: :it), giorno_path(giorno: @tappa.data_tappa) %>
+    <% if @tappa.data_tappa.present? %>
+      <%= back_link_to_url I18n.l(@tappa.data_tappa, format: :short, locale: :it), giorno_path(giorno: @tappa.data_tappa) %>
+    <% else %>
+      <%= back_link_to_url "Tappe", tappe_path %>
+    <% end %>
   </div>
 <% end %>
 
