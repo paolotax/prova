@@ -121,7 +121,7 @@ class Classe < ApplicationRecord
   end
 
   def nome_completo
-    "#{scuola.denominazione} - #{anno_corso}#{sezione}"
+    "#{anno_corso}#{sezione} - #{scuola.denominazione}"
   end
 
   def nome_breve
