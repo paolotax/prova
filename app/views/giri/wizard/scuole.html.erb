@@ -1,32 +1,66 @@
 <%= turbo_frame_tag "wizard_scuole" do %>
-  <h3 class="txt-large margin-block-end">
-    Scuole selezionate
-    <span class="badge" data-wizard-target="schoolCount"><%= @conteggio %></span>
-  </h3>
+  <div class="wizard__panel-header">
+    <h3 class="wizard__heading">
+      Scuole
+      <span class="badge" data-wizard-target="schoolCount"><%= @conteggio %></span>
+    </h3>
+    <p class="wizard__subheading">Seleziona le scuole da includere nel giro</p>
+  </div>
 
-  <div class="flex gap-half margin-block-end">
-    <button type="button" class="btn btn--small btn--plain" data-action="wizard#selectAllSchools">
-      Seleziona tutte
+  <div class="flex gap-half margin-block-end justify-center">
+    <button type="button" class="btn" data-action="wizard#selectAllSchools">
+      <%= icon_tag "check-all" %> Tutte
     </button>
-    <button type="button" class="btn btn--small btn--plain" data-action="wizard#deselectAllSchools">
-      Deseleziona tutte
+    <button type="button" class="btn" data-action="wizard#deselectAllSchools">
+      <%= icon_tag "close" %> Nessuna
     </button>
   </div>
 
   <div class="wizard__school-list" data-wizard-target="schoolList">
-    <% @scuole.group_by(&:provincia).each do |provincia, scuole_prov| %>
-      <details open>
-        <summary class="txt-bold txt-small padding-block-half">
-          <%= provincia %> (<%= scuole_prov.size %>)
+    <% @scuole_per_provincia.each do |provincia, gruppi_area, count| %>
+      <details open class="wizard__provincia">
+        <summary class="wizard__provincia-header">
+          <span class="txt-bold"><%= provincia %></span>
+          <span class="badge"><%= count %></span>
+          <span class="wizard__provincia-actions">
+            <button type="button" class="btn btn--plain txt-xx-small"
+                    data-action="wizard#selectProvincia"
+                    data-provincia="<%= provincia %>">tutte</button>
+            <button type="button" class="btn btn--plain txt-xx-small"
+                    data-action="wizard#deselectProvincia"
+                    data-provincia="<%= provincia %>">nessuna</button>
+          </span>
         </summary>
-        <div class="flex flex-column gap-quarter padding-inline-start">
-          <% scuole_prov.each do |scuola| %>
-            <label class="flex align-center gap-half padding-block-quarter">
-              <%= check_box_tag "school_ids[]", scuola.id, true,
-                  data: { wizard_target: "schoolCheckbox" } %>
-              <span class="txt-small"><%= scuola.denominazione %></span>
-              <span class="txt-xx-small txt-subtle"><%= scuola.comune %></span>
-            </label>
+
+        <div class="wizard__provincia-content">
+          <% gruppi_area.each do |area, gruppi_dir| %>
+            <% unless area == "Senza area" && gruppi_area.size == 1 %>
+              <div class="wizard__area-label">
+                <span><%= area %></span>
+                <span class="wizard__area-actions">
+                  <button type="button" class="btn btn--plain txt-xx-small"
+                          data-action="wizard#selectArea"
+                          data-area="<%= area %>"
+                          data-provincia="<%= provincia %>">tutte</button>
+                  <button type="button" class="btn btn--plain txt-xx-small"
+                          data-action="wizard#deselectArea"
+                          data-area="<%= area %>"
+                          data-provincia="<%= provincia %>">nessuna</button>
+                </span>
+              </div>
+            <% end %>
+
+            <% gruppi_dir.each do |direzione, scuole| %>
+              <div class="wizard__direzione-spacer"></div>
+              <% scuole.each do |scuola| %>
+                <label class="wizard__school-row" data-provincia="<%= provincia %>" data-area="<%= area %>">
+                  <%= check_box_tag "school_ids[]", scuola.id, true,
+                      data: { wizard_target: "schoolCheckbox", action: "wizard#updateSchoolCount" } %>
+                  <span class="wizard__school-name"><%= scuola.denominazione %></span>
+                  <span class="wizard__school-comune"><%= scuola.comune %></span>
+                </label>
+              <% end %>
+            <% end %>
           <% end %>
         </div>
       </details>

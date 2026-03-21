@@ -1,7 +1,6 @@
 module Giri
   class WizardController < ApplicationController
     before_action { @hide_footer_frames = true }
-    before_action { @body_class = "wizard-page" }
 
     # GET /giri/wizard — Step 1 (tipo) + Step 2 (info)
     def new
@@ -17,8 +16,9 @@ module Giri
       @iniziato_il = params[:iniziato_il]
       @finito_il = params[:finito_il]
 
-      @scuole = scuole_per_tipo(@tipo_giro, @collana_id)
-      @conteggio = @scuole.size
+      scuole = scuole_per_tipo(@tipo_giro, @collana_id)
+      @conteggio = scuole.size
+      @scuole_per_provincia = build_scuole_raggruppate(scuole)
 
       respond_to do |format|
         format.html
@@ -45,6 +45,7 @@ module Giri
 
       giro = current_user.giri.new(
         titolo: params[:titolo],
+        descrizione: params[:descrizione],
         tipo_giro: params[:tipo_giro],
         color: params[:color].presence || "var(--color-card-default)",
         collana_id: params[:collana_id].presence,
@@ -100,6 +101,27 @@ module Giri
       Current.scuole.where.not(
         id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil)
       )
+    end
+
+    # Raggruppa scuole: provincia > area > direzione > plessi
+    def build_scuole_raggruppate(scuole)
+      loaded = scuole.includes(:direzione).order(:provincia, :area, :denominazione).to_a
+
+      loaded
+        .group_by(&:provincia)
+        .sort_by { |prov, _| prov.to_s }
+        .map do |provincia, scuole_prov|
+          gruppi_area = scuole_prov
+            .group_by { |s| s.area.presence || "Senza area" }
+            .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+            .map do |area, scuole_area|
+              gruppi_dir = scuole_area
+                .group_by { |s| s.direzione || s }
+                .sort_by { |dir, _| dir.denominazione.to_s }
+              [area, gruppi_dir]
+            end
+          [provincia, gruppi_area, scuole_prov.size]
+        end
     end
   end
 end

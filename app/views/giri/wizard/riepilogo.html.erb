@@ -1,5 +1,8 @@
 <%= turbo_frame_tag "wizard_riepilogo" do %>
-  <h3 class="txt-large margin-block-end">Riepilogo</h3>
+  <div class="wizard__panel-header">
+    <h3 class="wizard__heading">Riepilogo</h3>
+    <p class="wizard__subheading">Verifica i dettagli prima di creare il giro</p>
+  </div>
 
   <div class="card padding">
     <dl class="flex flex-column gap-half">
@@ -23,5 +26,4 @@
       </div>
     </dl>
   </div>
-
 <% end %>

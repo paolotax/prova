@@ -1,57 +1,23 @@
 @layer modules {
-  .wizard-page #header {
-    display: none;
-  }
 
   .wizard {
     display: flex;
     flex-direction: column;
-    block-size: 100dvh;
-    overflow: hidden;
+    padding-block-end: var(--block-space-double);
   }
 
-  @media (min-width: 640px) {
-    .wizard {
-      display: grid;
-      grid-template-columns: 16rem 1fr;
-      block-size: 100dvh;
-    }
-  }
-
-  .wizard__sidebar {
+  /* ── Steps bar ── */
+  .wizard__steps-bar {
     display: flex;
-    align-items: center;
-    gap: var(--space);
-    padding: var(--space-half) var(--space);
-    background: var(--color-surface-alt);
+    justify-content: center;
+    padding: var(--block-space) var(--inline-space);
     border-block-end: 1px solid var(--color-border);
-  }
-
-  .wizard__sidebar > h2 {
-    display: none;
-  }
-
-  .wizard__sidebar > div:last-child {
-    margin-inline-start: auto;
+    margin-block-end: var(--block-space);
   }
 
   @media (min-width: 640px) {
-    .wizard__sidebar {
-      flex-direction: column;
-      align-items: stretch;
-      padding: var(--space);
-      border-block-end: none;
-      border-inline-end: 1px solid var(--color-border);
-    }
-
-    .wizard__sidebar > h2 {
-      display: block;
-    }
-
-    .wizard__sidebar > div:last-child {
-      margin-inline-start: 0;
-      margin-block-start: auto;
-      padding-block-start: var(--space);
+    .wizard__steps-bar {
+      margin-block-end: var(--block-space-double);
     }
   }
 
@@ -60,24 +26,25 @@
     padding: 0;
     margin: 0;
     display: flex;
-    gap: var(--space-quarter);
+    align-items: center;
+    gap: var(--inline-space-half);
   }
 
   @media (min-width: 640px) {
     .wizard__steps {
-      flex-direction: column;
-      gap: var(--space-half);
+      gap: var(--inline-space);
     }
   }
 
   .wizard__step {
     display: flex;
     align-items: center;
-    gap: var(--space-half);
-    padding: var(--space-quarter);
-    border-radius: var(--radius);
-    color: var(--color-txt-subtle);
-    font-size: var(--font-size-small);
+    gap: var(--inline-space-half);
+    padding: var(--block-space-half) var(--inline-space-half);
+    border-radius: var(--radius, 0.3rem);
+    color: var(--color-ink-medium);
+    font-size: var(--text-small);
+    transition: all 150ms ease;
   }
 
   .wizard__step-label {
@@ -86,7 +53,7 @@
 
   @media (min-width: 640px) {
     .wizard__step {
-      padding: var(--space-half);
+      padding: var(--block-space-half) var(--inline-space);
     }
 
     .wizard__step-label {
@@ -94,144 +61,380 @@
     }
   }
 
+  .wizard__step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.6rem;
+    block-size: 1.6rem;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    background: transparent;
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 150ms ease;
+  }
+
   .wizard__step--active {
-    background: var(--color-surface);
-    color: var(--color-txt);
+    color: var(--color-ink);
     font-weight: 600;
+  }
+
+  .wizard__step--active .wizard__step-number {
+    background: var(--color-link);
+    border-color: var(--color-link);
+    color: white;
   }
 
   .wizard__step--completed {
     color: var(--color-positive);
   }
 
-  .wizard__step-number {
-    display: inline-flex;
+  .wizard__step--completed .wizard__step-number {
+    background: var(--color-positive);
+    border-color: var(--color-positive);
+    color: white;
+  }
+
+  /* ── Content area ── */
+  .wizard__content {
+    display: flex;
+    flex-direction: column;
+    padding-inline: var(--inline-space);
+    max-inline-size: 36rem;
+    margin-inline: auto;
+    inline-size: 100%;
+  }
+
+  /* ── Panels ── */
+  .wizard__panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wizard__panel-header {
+    margin-block-end: var(--block-space);
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .wizard__panel-header {
+      margin-block-end: var(--block-space-double);
+    }
+  }
+
+  .wizard__heading {
+    font-size: var(--text-large);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .wizard__subheading {
+    font-size: var(--text-small);
+    color: var(--color-ink-medium);
+    margin: var(--block-space-half) 0 0;
+  }
+
+  /* ── Step 1: Option cards ── */
+  .wizard__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-half);
+  }
+
+  .wizard__option {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space);
+    padding: var(--block-space) var(--inline-space-double);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+
+  .wizard__option:hover {
+    border-color: var(--color-ink-light);
+    background: color-mix(in oklch, var(--color-ink) 3%, transparent);
+  }
+
+  .wizard__option--selected {
+    border-color: var(--color-link);
+    background: color-mix(in oklch, var(--color-link) 8%, transparent);
+    box-shadow: 0 0 0 1px var(--color-link);
+  }
+
+  .wizard__option--selected:hover {
+    border-color: var(--color-link);
+    background: color-mix(in oklch, var(--color-link) 12%, transparent);
+  }
+
+  .wizard__option-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: 0.4rem;
+    background: color-mix(in oklch, var(--color-link) 12%, transparent);
+    color: var(--color-link);
+    flex-shrink: 0;
+    --icon-size: 1.2rem;
+  }
+
+  .wizard__option--selected .wizard__option-icon {
+    background: var(--color-link);
+    color: white;
+  }
+
+  .wizard__option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .wizard__option-label {
+    font-weight: 700;
+    font-size: var(--text-normal);
+  }
+
+  .wizard__option-desc {
+    font-size: var(--text-small);
+    color: var(--color-ink-medium);
+    line-height: 1.3;
+  }
+
+  .wizard__option-check {
+    display: flex;
     align-items: center;
     justify-content: center;
     inline-size: 1.5rem;
     block-size: 1.5rem;
     border-radius: 50%;
-    background: var(--color-border);
-    font-size: var(--font-size-x-small);
-    font-weight: 600;
-  }
-
-  .wizard__step--active .wizard__step-number {
-    background: var(--color-accent);
-    color: white;
-  }
-
-  .wizard__step--completed .wizard__step-number {
-    background: var(--color-positive);
-    color: white;
-  }
-
-  .wizard__content {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space);
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  @media (min-width: 640px) {
-    .wizard__content {
-      padding: var(--space-double);
-      max-inline-size: 60rem;
-    }
-  }
-
-  .wizard__panel {
-    flex: 1;
-  }
-
-  .wizard__footer {
-    display: flex;
-    align-items: center;
-    gap: var(--space);
-    padding-block-start: var(--space);
-    border-block-start: 1px solid var(--color-border);
-    margin-block-start: auto;
-  }
-
-  /* Step 1: Tipo cards */
-  .wizard__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-half);
-  }
-
-  @media (min-width: 640px) {
-    .wizard__grid {
-      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-      gap: var(--space);
-    }
-  }
-
-  .wizard__card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-quarter);
-    padding: var(--space-half);
     border: 2px solid var(--color-border);
-    border-radius: var(--radius);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: all 150ms ease;
+    --icon-size: 0.8rem;
+  }
+
+  .wizard__option--selected .wizard__option-check {
+    opacity: 1;
+    background: var(--color-link);
+    border-color: var(--color-link);
+    color: white;
+  }
+
+  /* ── Step 2: Form fields ── */
+  .wizard__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space);
+  }
+
+  .wizard__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--block-space-half);
+  }
+
+  .wizard__field-row {
+    display: flex;
+    gap: var(--inline-space);
+  }
+
+  .wizard__field-row > .wizard__field {
+    flex: 1;
+  }
+
+  .wizard__label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink-dark);
+  }
+
+  .wizard__colors {
+    display: flex;
+    gap: var(--inline-space-half);
+    flex-wrap: wrap;
+  }
+
+  .wizard__color-swatch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: 50%;
+    background: var(--swatch-color);
     cursor: pointer;
-    text-align: center;
-    transition: border-color 0.15s;
+    border: 2px solid transparent;
+    transition: all 150ms ease;
+    --icon-size: 0.9rem;
   }
 
-  @media (min-width: 640px) {
-    .wizard__card {
-      gap: var(--space-half);
-      padding: var(--space);
-    }
+  .wizard__color-swatch:hover {
+    scale: 1.15;
   }
 
-  .wizard__card:hover {
-    border-color: var(--color-accent);
+  .wizard__color-swatch:has(input:checked) {
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 2px var(--color-canvas), 0 0 0 4px var(--swatch-color);
   }
 
-  .wizard__card--selected {
-    border-color: var(--color-accent);
-    background: color-mix(in oklch, var(--color-accent) 15%, transparent);
-    box-shadow: 0 0 0 1px var(--color-accent);
+  .wizard__color-check {
+    color: white;
+    opacity: 0;
+    transition: opacity 100ms ease;
   }
 
-  .wizard__card-icon {
-    font-size: 1.5rem;
-    color: var(--color-accent);
+  .wizard__color-swatch:has(input:checked) .wizard__color-check {
+    opacity: 1;
   }
 
-  @media (min-width: 640px) {
-    .wizard__card-icon {
-      font-size: 2rem;
-    }
-  }
-
-  .wizard__card-desc {
-    display: none;
-    line-height: 1.3;
-  }
-
-  @media (min-width: 640px) {
-    .wizard__card-desc {
-      display: block;
-    }
-  }
-
-  /* Step 3: School list */
+  /* ── Step 3: School list ── */
   .wizard__school-list {
-    max-block-size: 50vh;
+    max-block-size: 60vh;
     overflow-y: auto;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: var(--space-half);
+    border-radius: 0.4rem;
+    padding: var(--block-space-half);
   }
 
   @media (min-width: 640px) {
     .wizard__school-list {
-      max-block-size: 60vh;
+      max-block-size: 65vh;
     }
+  }
+
+  .wizard__provincia {
+    margin-block-end: var(--block-space-half);
+  }
+
+  .wizard__provincia-header {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+    padding: var(--block-space-half);
+    cursor: pointer;
+    font-size: var(--text-small);
+    border-radius: var(--radius, 0.3rem);
+  }
+
+  .wizard__provincia-header:hover {
+    background: color-mix(in oklch, var(--color-ink) 5%, transparent);
+  }
+
+  .wizard__provincia-actions {
+    margin-inline-start: auto;
+    display: flex;
+    gap: var(--inline-space-half);
+  }
+
+  .wizard__provincia-content {
+    padding-inline-start: var(--inline-space);
+  }
+
+  .wizard__area-label {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    color: var(--color-link);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--block-space-half) 0 var(--block-space-half) var(--inline-space-half);
+    margin-block-start: var(--block-space-half);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .wizard__area-label:first-child {
+    margin-block-start: 0;
+    border-block-start: none;
+  }
+
+  .wizard__area-actions {
+    margin-inline-start: auto;
+    display: flex;
+    gap: var(--inline-space-half);
+  }
+
+  .wizard__direzione-spacer {
+    block-size: var(--block-space);
+  }
+
+  .wizard__direzione-spacer:first-child {
+    display: none;
+  }
+
+  .wizard__school-row {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+    padding: var(--block-space-half) var(--inline-space-half);
+    padding-inline-start: var(--inline-space-double);
+    cursor: pointer;
+    border-radius: var(--radius, 0.3rem);
+    font-size: var(--text-small);
+  }
+
+  .wizard__school-row:hover {
+    background: color-mix(in oklch, var(--color-ink) 3%, transparent);
+  }
+
+  .wizard__school-row input[type="checkbox"] {
+    appearance: none;
+    background: var(--color-canvas);
+    block-size: 1.4em;
+    inline-size: 1.4em;
+    border: 2px solid var(--color-ink-light);
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 150ms ease;
+  }
+
+  .wizard__school-row input[type="checkbox"]:checked {
+    background: oklch(65% 0.25 250);
+    border-color: oklch(65% 0.25 250);
+  }
+
+  .wizard__school-row input[type="checkbox"]:checked::after {
+    color: white;
+    content: "✓";
+    display: block;
+    font-size: 0.9em;
+    font-weight: bold;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .wizard__school-name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wizard__school-comune {
+    font-size: var(--text-xx-small);
+    color: var(--color-ink-medium);
+    flex-shrink: 0;
+  }
+
+  /* ── Footer navigation ── */
+  .wizard__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--inline-space);
+    padding-block-start: var(--block-space-double);
+    margin-block-start: var(--block-space);
   }
 }

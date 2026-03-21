@@ -19,15 +19,15 @@ export default class extends Controller {
     // Labels generate duplicate click events — ignore the one from the radio
     if (e.target.type === "radio") return
 
-    const card = e.currentTarget
-    const input = card.querySelector("input[type=radio]")
+    const option = e.currentTarget
+    const input = option.querySelector("input[type=radio]")
     if (!input) return
 
     input.checked = true
 
     // Visual selection
-    this.element.querySelectorAll(".wizard__card").forEach(c => c.classList.remove("wizard__card--selected"))
-    card.classList.add("wizard__card--selected")
+    this.element.querySelectorAll(".wizard__option").forEach(c => c.classList.remove("wizard__option--selected"))
+    option.classList.add("wizard__option--selected")
 
     // Precompile titolo
     const labels = {
@@ -152,6 +152,34 @@ export default class extends Controller {
 
   deselectAllSchools() {
     this.schoolCheckboxTargets.forEach(cb => cb.checked = false)
+    this.updateSchoolCount()
+  }
+
+  selectArea(e) {
+    const { area, provincia } = e.currentTarget.dataset
+    this.element.querySelectorAll(`label[data-provincia="${provincia}"][data-area="${area}"] input[type=checkbox]`)
+      .forEach(cb => cb.checked = true)
+    this.updateSchoolCount()
+  }
+
+  deselectArea(e) {
+    const { area, provincia } = e.currentTarget.dataset
+    this.element.querySelectorAll(`label[data-provincia="${provincia}"][data-area="${area}"] input[type=checkbox]`)
+      .forEach(cb => cb.checked = false)
+    this.updateSchoolCount()
+  }
+
+  selectProvincia(e) {
+    const provincia = e.currentTarget.dataset.provincia
+    this.element.querySelectorAll(`label[data-provincia="${provincia}"] input[type=checkbox]`)
+      .forEach(cb => cb.checked = true)
+    this.updateSchoolCount()
+  }
+
+  deselectProvincia(e) {
+    const provincia = e.currentTarget.dataset.provincia
+    this.element.querySelectorAll(`label[data-provincia="${provincia}"] input[type=checkbox]`)
+      .forEach(cb => cb.checked = false)
     this.updateSchoolCount()
   }
 

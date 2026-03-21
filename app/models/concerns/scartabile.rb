@@ -2,7 +2,7 @@ module Scartabile
   extend ActiveSupport::Concern
 
   included do
-    has_many :scartate, dependent: :destroy
+    has_many :scartate, class_name: "Scartata", foreign_key: :scuola_id, dependent: :destroy
 
     scope :non_scartate, -> {
       where.not(id: Scartata.where(user_id: Current.user&.id).select(:scuola_id))
