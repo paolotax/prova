@@ -297,6 +297,33 @@
   }
 
   /* ── Step 3: School list ── */
+
+  .wizard__group-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--block-space-half) var(--inline-space-half);
+    cursor: pointer;
+    border-radius: var(--radius, 0.3rem);
+  }
+
+  .wizard__group-bar:hover {
+    background: color-mix(in oklch, var(--color-ink) 5%, transparent);
+  }
+
+  .wizard__group-bar--area {
+    color: var(--color-link);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-start: var(--block-space-half);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .wizard__group-bar--area:first-child {
+    margin-block-start: 0;
+    border-block-start: none;
+  }
+
   .wizard__school-list {
     max-block-size: 60vh;
     overflow-y: auto;
@@ -315,53 +342,8 @@
     margin-block-end: var(--block-space-half);
   }
 
-  .wizard__provincia-header {
-    display: flex;
-    align-items: center;
-    gap: var(--inline-space-half);
-    padding: var(--block-space-half);
-    cursor: pointer;
-    font-size: var(--text-small);
-    border-radius: var(--radius, 0.3rem);
-  }
-
-  .wizard__provincia-header:hover {
-    background: color-mix(in oklch, var(--color-ink) 5%, transparent);
-  }
-
-  .wizard__provincia-actions {
-    margin-inline-start: auto;
-    display: flex;
-    gap: var(--inline-space-half);
-  }
-
   .wizard__provincia-content {
-    padding-inline-start: var(--inline-space);
-  }
-
-  .wizard__area-label {
-    display: flex;
-    align-items: center;
-    gap: var(--inline-space-half);
-    font-size: var(--text-x-small);
-    font-weight: 700;
-    color: var(--color-link);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: var(--block-space-half) 0 var(--block-space-half) var(--inline-space-half);
-    margin-block-start: var(--block-space-half);
-    border-block-start: 1px solid var(--color-border);
-  }
-
-  .wizard__area-label:first-child {
-    margin-block-start: 0;
-    border-block-start: none;
-  }
-
-  .wizard__area-actions {
-    margin-inline-start: auto;
-    display: flex;
-    gap: var(--inline-space-half);
+    padding-inline-start: var(--inline-space-half);
   }
 
   .wizard__direzione-spacer {
@@ -377,7 +359,6 @@
     align-items: center;
     gap: var(--inline-space-half);
     padding: var(--block-space-half) var(--inline-space-half);
-    padding-inline-start: var(--inline-space-double);
     cursor: pointer;
     border-radius: var(--radius, 0.3rem);
     font-size: var(--text-small);
@@ -414,9 +395,14 @@
     text-align: center;
   }
 
-  .wizard__school-name {
+  .wizard__school-text {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-inline-size: 0;
+  }
+
+  .wizard__school-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -425,7 +411,6 @@
   .wizard__school-comune {
     font-size: var(--text-xx-small);
     color: var(--color-ink-medium);
-    flex-shrink: 0;
   }
 
   /* ── Footer navigation ── */

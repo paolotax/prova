@@ -7,46 +7,32 @@
     <p class="wizard__subheading">Seleziona le scuole da includere nel giro</p>
   </div>
 
-  <div class="flex gap-half margin-block-end justify-center">
-    <button type="button" class="btn" data-action="wizard#selectAllSchools">
-      <%= icon_tag "check-all" %> Tutte
-    </button>
-    <button type="button" class="btn" data-action="wizard#deselectAllSchools">
-      <%= icon_tag "close" %> Nessuna
-    </button>
-  </div>
-
   <div class="wizard__school-list" data-wizard-target="schoolList">
     <% @scuole_per_provincia.each do |provincia, gruppi_area, count| %>
       <details open class="wizard__provincia">
-        <summary class="wizard__provincia-header">
-          <span class="txt-bold"><%= provincia %></span>
-          <span class="badge"><%= count %></span>
-          <span class="wizard__provincia-actions">
-            <button type="button" class="btn btn--plain txt-xx-small"
-                    data-action="wizard#selectProvincia"
-                    data-provincia="<%= provincia %>">tutte</button>
-            <button type="button" class="btn btn--plain txt-xx-small"
-                    data-action="wizard#deselectProvincia"
-                    data-provincia="<%= provincia %>">nessuna</button>
-          </span>
+        <summary class="wizard__group-bar">
+          <button type="button" class="btn btn--plain txt-xx-small"
+                  data-action="wizard#selectProvincia"
+                  data-provincia="<%= provincia %>">tutte</button>
+          <span class="txt-bold txt-small"><%= provincia %></span>
+          <button type="button" class="btn btn--plain txt-xx-small"
+                  data-action="wizard#deselectProvincia"
+                  data-provincia="<%= provincia %>">nessuna</button>
         </summary>
 
         <div class="wizard__provincia-content">
           <% gruppi_area.each do |area, gruppi_dir| %>
             <% unless area == "Senza area" && gruppi_area.size == 1 %>
-              <div class="wizard__area-label">
-                <span><%= area %></span>
-                <span class="wizard__area-actions">
-                  <button type="button" class="btn btn--plain txt-xx-small"
-                          data-action="wizard#selectArea"
-                          data-area="<%= area %>"
-                          data-provincia="<%= provincia %>">tutte</button>
-                  <button type="button" class="btn btn--plain txt-xx-small"
-                          data-action="wizard#deselectArea"
-                          data-area="<%= area %>"
-                          data-provincia="<%= provincia %>">nessuna</button>
-                </span>
+              <div class="wizard__group-bar wizard__group-bar--area">
+                <button type="button" class="btn btn--plain txt-xx-small"
+                        data-action="wizard#selectArea"
+                        data-area="<%= area %>"
+                        data-provincia="<%= provincia %>">tutte</button>
+                <span class="txt-x-small txt-bold"><%= area %></span>
+                <button type="button" class="btn btn--plain txt-xx-small"
+                        data-action="wizard#deselectArea"
+                        data-area="<%= area %>"
+                        data-provincia="<%= provincia %>">nessuna</button>
               </div>
             <% end %>
 
@@ -56,8 +42,10 @@
                 <label class="wizard__school-row" data-provincia="<%= provincia %>" data-area="<%= area %>">
                   <%= check_box_tag "school_ids[]", scuola.id, true,
                       data: { wizard_target: "schoolCheckbox", action: "wizard#updateSchoolCount" } %>
-                  <span class="wizard__school-name"><%= scuola.denominazione %></span>
-                  <span class="wizard__school-comune"><%= scuola.comune %></span>
+                  <span class="wizard__school-text">
+                    <span class="wizard__school-name"><%= scuola.denominazione %></span>
+                    <span class="wizard__school-comune"><%= scuola.comune %></span>
+                  </span>
                 </label>
               <% end %>
             <% end %>
