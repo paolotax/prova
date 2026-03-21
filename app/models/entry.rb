@@ -152,6 +152,16 @@ class Entry < ApplicationRecord
     end
 
     entries.each { |e| e.instance_variable_set(:@entryable, loaded[e.entryable_id]) }
+
+    # Preload scuola for Persona appuntabili (polymorphic, can't use includes)
+    persone = loaded.values
+      .select { |r| r.is_a?(Appunto) && r.appuntabile.is_a?(Persona) }
+      .map(&:appuntabile)
+    if persone.any?
+      scuole = Scuola.where(id: persone.map(&:scuola_id).compact.uniq).index_by(&:id)
+      persone.each { |p| p.association(:scuola).target = scuole[p.scuola_id] if scuole[p.scuola_id] }
+    end
+
     entries
   end
 

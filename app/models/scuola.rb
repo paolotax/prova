@@ -250,15 +250,19 @@ class Scuola < ApplicationRecord
 
   def entry_appunto_ids
     classe_ids = classi.pluck(:id)
+    persona_ids = persone.pluck(:id)
     (appunti.published.pluck(:id) +
-     Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id))
+     Appunto.published.where(appuntabile_type: "Classe", appuntabile_id: classe_ids).pluck(:id) +
+     Appunto.published.where(appuntabile_type: "Persona", appuntabile_id: persona_ids).pluck(:id))
     .map(&:to_s)
   end
 
   def entry_documento_ids
     classe_ids = classi.pluck(:id)
+    persona_ids = persone.pluck(:id)
     (Documento.where(clientable: self).pluck(:id) +
-     Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id))
+     Documento.where(clientable_type: "Classe", clientable_id: classe_ids).pluck(:id) +
+     Documento.where(clientable_type: "Persona", clientable_id: persona_ids).pluck(:id))
     .map(&:to_s)
   end
 
