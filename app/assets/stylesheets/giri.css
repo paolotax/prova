@@ -102,6 +102,110 @@
     padding: var(--block-space-half);
   }
 
+  /* Giro Item — index list card
+  /* -------------------------------------------------------------------------- */
+
+  .giro-item {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.4rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background: color-mix(in oklch, var(--giro-color) 8%, var(--color-canvas));
+    transition: background 150ms ease;
+    padding: var(--block-space-half) var(--inline-space);
+    gap: 0.25rem;
+  }
+
+  .giro-item:hover {
+    background: color-mix(in oklch, var(--giro-color) 14%, var(--color-canvas));
+  }
+
+  .giro-item--complete {
+    opacity: 0.5;
+  }
+
+  .giro-item__main {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+    min-inline-size: 0;
+  }
+
+  .giro-item__dot {
+    inline-size: 1.4em;
+    block-size: 1.4em;
+    border-radius: 0.25em;
+    background: var(--giro-color);
+    flex-shrink: 0;
+  }
+
+  .giro-item__title {
+    font-size: var(--text-normal);
+    font-weight: 700;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .giro-item__count {
+    font-size: var(--text-x-small);
+    font-weight: 600;
+    color: var(--color-ink-medium);
+    flex-shrink: 0;
+  }
+
+  .giro-item__desc {
+    font-size: var(--text-small);
+    color: var(--color-ink-dark);
+    margin: 0;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .giro-item__sub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--inline-space);
+    font-size: var(--text-x-small);
+    color: var(--color-ink-medium);
+    min-inline-size: 0;
+  }
+
+  .giro-item__tipo {
+    font-size: var(--text-xx-small);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .giro-item__collana {
+    padding: 0.05em 0.5em;
+    background: color-mix(in oklch, var(--giro-color) 20%, transparent);
+    border-radius: 99rem;
+    font-size: var(--text-xx-small);
+  }
+
+  .giro-item__progress-bar {
+    block-size: 3px;
+    background: color-mix(in oklch, var(--giro-color) 20%, transparent);
+    border-radius: 99rem;
+    overflow: hidden;
+    margin-block-start: auto;
+  }
+
+  .giro-item__progress-fill {
+    block-size: 100%;
+    background: var(--giro-color);
+    border-radius: 99rem;
+  }
+
   /* Excluded schools */
 
   .giro-board__excluded {

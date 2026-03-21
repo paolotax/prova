@@ -37,9 +37,11 @@ class GiriController < ApplicationController
 
   def new
     @giro = current_user.giri.build
+    @collane = Current.account.collane.ordered
   end
 
   def edit
+    @collane = Current.account.collane.ordered
   end
 
   def create
@@ -96,7 +98,7 @@ class GiriController < ApplicationController
   end
 
   def giro_params
-    params.require(:giro).permit(:titolo, :descrizione, :iniziato_il, :finito_il, :color, conditions: [], excluded_ids: [])
+    params.require(:giro).permit(:titolo, :descrizione, :collana_id, :iniziato_il, :finito_il, :color, conditions: [], excluded_ids: [])
   end
 
   def genera_settimane(dal, al)

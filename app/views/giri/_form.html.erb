@@ -1,4 +1,4 @@
-<%# locals: (giro:) -%>
+<%# locals: (giro:, collane: []) -%>
 
 <%= form_with(model: giro, class: "flex flex-column gap-half margin-block-start",
     data: { }) do |form| %>
@@ -18,6 +18,16 @@
     <label class="txt-small txt-bold">Descrizione</label>
     <%= form.text_area :descrizione, rows: 2, placeholder: "note...", class: "input" %>
   </div>
+
+  <% if collane.any? %>
+    <div>
+      <label class="txt-small txt-bold">Collana</label>
+      <%= form.select :collana_id,
+          options_from_collection_for_select(collane, :id, :nome, giro.collana_id),
+          { include_blank: "Nessuna collana" },
+          class: "input input--select" %>
+    </div>
+  <% end %>
 
   <div class="flex gap">
     <div class="flex-1">

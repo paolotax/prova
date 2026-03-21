@@ -3,15 +3,10 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <button type="button" class="btn btn--back"
-            data-controller="hotkey toggle-class"
-            data-action="click->toggle-class#toggle keydown.p@document->hotkey#click"
-            data-toggle-class-selector-value=".agenda-planner"
-            data-toggle-class-toggle-class="agenda-planner--collapsed">
-      <%= icon_tag "calendar" %>
-      <strong class="overflow-ellipsis">Planner</strong>
-      <kbd class="kbd txt-x-small hide-on-touch">P</kbd>
-    </button>
+    <%= link_to giri_path, class: "btn btn--back" do %>
+      <%= icon_tag "arrow-left" %>
+      <span>Giri</span>
+    <% end %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
@@ -25,43 +20,6 @@
       <%= icon_tag "pencil", class: "icon--small" %>
       <span class="for-screen-reader">Modifica giro</span>
     <% end %>
-
-    <div style="position: relative"
-         data-controller="dialog"
-         data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-      <button type="button" class="btn btn--circle" data-action="dialog#toggle" data-controller="tooltip">
-        <%= icon_tag "menu-dots-vertical" %>
-        <span class="for-screen-reader">Aggiungi/Elimina tappe</span>
-      </button>
-      <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
-        <ul class="popup__list">
-          <li class="popup__item">
-            <%= link_to giro_genera_tappe_path(@giro), class: "popup__btn btn",
-                data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
-              <%= icon_tag "add" %>
-              <span>Genera tappe</span>
-            <% end %>
-          </li>
-          <li class="popup__item">
-            <%= link_to copia_giro_path(@giro), class: "popup__btn btn",
-                data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
-              <%= icon_tag "copy" %>
-              <span>Copia da giro</span>
-            <% end %>
-          </li>
-          <% if @giro.tappe.any? %>
-            <li class="popup__item">
-              <%= button_to giro_svuota_tappe_path(@giro), method: :delete,
-                  class: "popup__btn btn txt-negative",
-                  data: { turbo_confirm: "Rimuovere tutte le #{@giro.tappe.size} tappe dal giro?" } do %>
-                <%= icon_tag "trash" %>
-                <span>Svuota tappe</span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </dialog>
-    </div>
 
     <% if @giro.can_delete? %>
       <%= button_to giro_path(@giro), method: :delete,

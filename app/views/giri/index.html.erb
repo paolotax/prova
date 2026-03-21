@@ -8,12 +8,7 @@
   </h1>
 
   <div class="header__actions header__actions--end">
-    <%= link_to wizard_giri_path, class: "btn btn--plain" do %>
-      <%= icon_tag "wand" %> Wizard
-    <% end %>
-    <%= link_to new_giro_path,
-        class: "btn btn--primary",
-        data: hotwire_native_app? ? {} : { turbo_frame: :modal, action: "click->dialog#open" } do %>
+    <%= link_to wizard_giri_path, class: "btn btn--link", data: { controller: "tooltip" } do %>
       <%= icon_tag "add", size: "small" %>
       <span class="for-screen-reader">Nuovo Giro</span>
     <% end %>
@@ -22,10 +17,17 @@
 
 <%= turbo_stream_from current_user, "giri" %>
 
-<div id="giri-lista" role="list" class="flex flex-column gap-half center" style="max-inline-size: min(72ch, 100%);">
+<div id="giri-lista" class="flex flex-column gap center" style="max-inline-size: min(50ch, 100%);">
   <% if @giri.empty? %>
     <p class="txt-subtle txt-center pad-block-double">Nessun giro organizzato</p>
   <% else %>
-    <%= render @giri %>
+    <% @giri.group_by { |g| g.iniziato_il&.year || g.created_at.year }.each do |anno, giri_anno| %>
+      <div class="group-header">
+        <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none"><%= anno %></h3>
+      </div>
+      <div class="flex flex-column gap-half">
+        <%= render giri_anno %>
+      </div>
+    <% end %>
   <% end %>
 </div>

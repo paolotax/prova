@@ -2,11 +2,11 @@
   <div data-controller="dialog"
        data-dialog-modal-value="true"
        data-dialog-auto-open-value="true">
-    <dialog class="dialog panel" style="--panel-size: 40ch;"
+    <dialog class="dialog panel shadow" style="--panel-size: 28rem;"
             data-dialog-target="dialog"
             data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
-      <h3 class="txt-large txt-bold">Nuovo Giro</h3>
-      <%= render "form", giro: @giro %>
+      <h3 class="txt-medium txt-bold margin-block-end-half">Nuovo Giro</h3>
+      <%= render "form", giro: @giro, collane: @collane %>
     </dialog>
   </div>
 <% end %>

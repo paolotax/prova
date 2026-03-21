@@ -115,6 +115,8 @@
 
   .agenda-week__weekend .agenda-week__day--weekend {
     border-inline-end: 1px solid var(--week-border-color);
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-block-size: 0;
     padding: var(--block-space-half) 0.3em;
@@ -198,9 +200,9 @@
   .agenda-week__tappe {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
     gap: 0.3em;
-    min-block-size: 1em;
+    min-block-size: 3em;
     min-inline-size: 0;
     position: relative;
     z-index: 1;
@@ -304,6 +306,27 @@
       padding: 0.2em 0.4em;
       white-space: nowrap;
     }
+  }
+
+  .tappa-compact__giro-dots {
+    display: flex;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin: -0.25em -0.5em -0.25em 0;
+    overflow: hidden;
+
+    @media (max-width: 639px) {
+      margin: -0.15em -0.3em -0.15em 0;
+    }
+  }
+
+  .tappa-compact__giro-dot {
+    inline-size: 0.4em;
+    align-self: stretch;
+  }
+
+  .tappa-compact__giro-dot:last-child {
+    border-radius: 0 0.3em 0.3em 0;
   }
 
   /* Planner panel — unscheduled tappe

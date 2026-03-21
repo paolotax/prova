@@ -1,42 +1,42 @@
 <%# locals: (giro:) -%>
 
-<div id="<%= dom_id giro %>" class="panel shadow flex gap align-center"
-     style="--panel-padding: var(--block-space-half) var(--block-space);">
+<% totali = giro.tappe.size %>
+<% completate = giro.tappe.completate.size %>
+<% percentuale = totali > 0 ? (completate * 100.0 / totali).round : 0 %>
+<% completo = totali > 0 && completate == totali %>
 
-  <span style="background: <%= giro.color %>; border-radius: 50%; flex-shrink: 0; block-size: 0.8em; inline-size: 0.8em;"></span>
+<%= link_to giro_path(giro), id: dom_id(giro),
+    class: class_names("giro-item", "giro-item--complete": completo),
+    style: "--giro-color: #{giro.color};",
+    data: { turbo_frame: "_top" } do %>
 
-  <div class="flex flex-column flex-item-grow" style="min-inline-size: 0;">
-    <%= link_to giro_path(giro), data: { turbo_frame: "_top" }, class: "txt-bold" do %>
-      <%= giro.titolo %>
-    <% end %>
-    <% if giro.descrizione.present? %>
-      <span class="txt-x-small txt-subtle overflow-ellipsis"><%= giro.descrizione %></span>
+  <div class="giro-item__main">
+    <span class="giro-item__dot"></span>
+    <h3 class="giro-item__title"><%= giro.titolo %></h3>
+    <% if totali > 0 %>
+      <span class="giro-item__count"><%= completate %>/<%= totali %></span>
     <% end %>
   </div>
 
-  <% if giro.iniziato_il.present? %>
-    <span class="txt-xx-small txt-subtle hide-on-touch" style="white-space: nowrap;">
-      <%= l giro.iniziato_il, format: :short %> — <%= l giro.finito_il, format: :short %>
-    </span>
+  <% if giro.descrizione.present? %>
+    <p class="giro-item__desc"><%= giro.descrizione %></p>
   <% end %>
 
-  <span class="txt-x-small txt-subtle hide-on-touch" style="white-space: nowrap;">
-    <%= giro.tappe.completate.size %>/<%= giro.tappe.size %>
-  </span>
-
-  <div class="flex gap-quarter align-center">
-    <%= link_to edit_giro_path(giro),
-        class: "btn btn--circle btn--plain", style: "--btn-size: 2em;",
-        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
-      <%= icon_tag "pencil", class: "icon--small" %>
+  <div class="giro-item__sub">
+    <% if giro.iniziato_il.present? %>
+      <span><%= l giro.iniziato_il, format: "%-d %b" %> — <%= l giro.finito_il, format: "%-d %b" %></span>
     <% end %>
-
-    <% if giro.can_delete? %>
-      <%= button_to giro_path(giro), method: :delete,
-          class: "btn btn--circle btn--negative", style: "--btn-size: 2em;",
-          data: { turbo_confirm: "Eliminare?" } do %>
-        <%= icon_tag "trash", class: "icon--small" %>
-      <% end %>
+    <% if giro.tipo_giro.present? %>
+      <span class="giro-item__tipo"><%= t("giri.tipi.#{giro.tipo_giro}", default: giro.tipo_giro.humanize) %></span>
+    <% end %>
+    <% if giro.collana.present? %>
+      <span class="giro-item__collana"><%= giro.collana.nome %></span>
     <% end %>
   </div>
-</div>
+
+  <% if totali > 0 %>
+    <div class="giro-item__progress-bar">
+      <div class="giro-item__progress-fill" style="inline-size: <%= percentuale %>%;"></div>
+    </div>
+  <% end %>
+<% end %>
