@@ -48,14 +48,16 @@ class DestinatariController < ApplicationController
         results << Destinatario.new(record, "Classe")
       end
 
-    # Persone
-    Current.account.persone
-      .where("cognome ILIKE :q OR nome ILIKE :q", q: "%#{query}%")
-      .includes(:scuola)
-      .limit(limit)
-      .each do |record|
-        results << Destinatario.new(record, "Persona")
-      end
+    # Persone — ogni parola deve matchare nome, cognome o scuola
+    persone_scope = Current.account.persone.left_joins(:scuola).includes(:scuola)
+    query.split(/\s+/).each do |word|
+      persone_scope = persone_scope.where(
+        "persone.cognome ILIKE :q OR persone.nome ILIKE :q OR scuole.denominazione ILIKE :q", q: "%#{word}%"
+      )
+    end
+    persone_scope.limit(limit).each do |record|
+      results << Destinatario.new(record, "Persona")
+    end
 
     results.first(limit * 3)
   end

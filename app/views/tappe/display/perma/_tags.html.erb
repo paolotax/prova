@@ -2,7 +2,7 @@
 
 <div id="<%= dom_id(tappa, :tags) %>" class="card__tags">
   <div data-controller="dialog"
-        data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside mouseenter->dialog#loadLazyFrames" <%= "hidden" if tappa.closed? %>>
+        data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside mouseenter->dialog#loadLazyFrames">
     <button class="card__tag-picker-button btn" style="--btn-background: var(--card-bg-color);"
         data-controller="tooltip" data-action="click->dialog#open:stop">
       <%= icon_tag "tag" %>

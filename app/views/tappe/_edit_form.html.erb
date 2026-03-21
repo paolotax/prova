@@ -26,10 +26,4 @@
     </div>
 
 
-  <div class="form-field cb-tax margin-block-start-half">
-    <%= form.combobox :giro_ids,
-        current_user.giri.order(created_at: :desc),
-        multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
-  </div>
-
 <% end %>
