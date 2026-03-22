@@ -128,7 +128,8 @@ class PersoneController < ApplicationController
   end
 
   def load_prev_next
-    scope = Current.account.persone.order(:cognome, :nome)
+    @scuola_scope = Current.account.scuole.find_by(id: params[:scuola_id]) if params[:scuola_id].present?
+    scope = @scuola_scope ? @scuola_scope.persone.order(:cognome, :nome) : Current.account.persone.order(:cognome, :nome)
     all_ids = scope.pluck(:id)
     idx = all_ids.index(@persona.id)
     @prev_persona_id = idx && idx > 0 ? all_ids[idx - 1] : nil

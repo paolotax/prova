@@ -5,7 +5,7 @@
 <section class="card-perma" style="--card-color: <%= persona_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_persona_id %>
-      <%= link_to persona_path(@prev_persona_id), class: "btn",
+      <%= link_to persona_path(@prev_persona_id, scuola_id: @scuola_scope&.id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
         <%= icon_tag "arrow-left" %>
         <span class="for-screen-reader">Precedente (&#8592;)</span>
@@ -31,7 +31,7 @@
 
   <div class="card-perma__actions card-perma__actions--right">
     <% if @next_persona_id %>
-      <%= link_to persona_path(@next_persona_id), class: "btn",
+      <%= link_to persona_path(@next_persona_id, scuola_id: @scuola_scope&.id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
         <%= icon_tag "arrow-right" %>
         <span class="for-screen-reader">Successivo (&#8594;)</span>

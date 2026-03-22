@@ -75,13 +75,8 @@ class GiriController < ApplicationController
   end
 
   def destroy
-    @giro.broadcast_remove_to [current_user, "giri"]
     @giro.destroy!
-
-    respond_to do |format|
-      format.turbo_stream { flash.now[:alert] = "Giro eliminato." }
-      format.html { redirect_to giri_url, alert: "Giro eliminato." }
-    end
+    redirect_to giri_path, notice: "Giro eliminato."
   end
 
   private

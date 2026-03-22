@@ -405,6 +405,13 @@
     font-weight: 700;
   }
 
+  .agenda-planner__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space-half);
+    margin-inline-start: auto;
+  }
+
   .agenda-planner__trash {
     align-items: center;
     border: 2px dashed transparent;
@@ -412,7 +419,6 @@
     color: var(--color-ink-medium);
     display: flex;
     justify-content: center;
-    margin-inline-start: auto;
     padding: 0.3em;
     transition: all 0.15s;
   }
@@ -452,6 +458,7 @@
     overflow-x: auto;
     padding: var(--block-space-half) var(--inline-space);
   }
+
 
   /* Area label — vertical, like month label */
 

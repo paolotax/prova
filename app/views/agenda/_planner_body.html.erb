@@ -1,8 +1,6 @@
 <%# locals: (tappe_per_area:) -%>
 
-<% if tappe_per_area.empty? %>
-  <div class="blank-slate blank-slate--empty margin-block-end">Nessuna tappa da programmare</div>
-<% else %>
+<% if tappe_per_area.any? %>
   <% tappe_per_area.each do |area, direzioni| %>
     <div class="agenda-planner__area-label">
       <span><%= area.upcase %></span>
