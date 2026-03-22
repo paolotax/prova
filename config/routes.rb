@@ -333,6 +333,8 @@ Rails.application.routes.draw do
 
     resources :tipi_scuole, only: %i[index update]
 
+    resources :propaganda, only: [:index]
+
     resources :giri do
       member do
         get 'planner'

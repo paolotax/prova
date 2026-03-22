@@ -1,0 +1,72 @@
+<% @page_title = "Propaganda" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start"></div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Propaganda</span>
+  </h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<div class="pad">
+  <turbo-frame id="propaganda-table">
+    <%= form_with url: propaganda_index_path, method: :get, data: { turbo_frame: "propaganda-table" } do |f| %>
+      <div class="flex gap-half align-center margin-block-end">
+        <% current_user.giri.order(created_at: :desc).each do |giro| %>
+          <label class="flex gap-quarter align-center txt-small">
+            <%= check_box_tag "giro_ids[]", giro.id,
+                @giri.map(&:id).include?(giro.id),
+                onchange: "this.form.requestSubmit()" %>
+            <span style="color: <%= giro.color %>;">&#9679;</span>
+            <%= giro.titolo %>
+          </label>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @giri.any? %>
+      <div style="overflow-x: auto;">
+        <table class="table" style="white-space: nowrap; font-size: var(--font-size-small);">
+          <thead>
+            <tr>
+              <th class="txt-left" style="position: sticky; left: 0; background: var(--color-bg); z-index: 1;">Provincia</th>
+              <th class="txt-left">Area</th>
+              <th class="txt-left">Scuola</th>
+              <% @giri.each do |giro| %>
+                <th class="txt-center">
+                  <%= link_to giro, data: { turbo_frame: "_top" } do %>
+                    <span style="color: <%= giro.color %>;">&#9679;</span>
+                    <%= giro.titolo %>
+                  <% end %>
+                </th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% @scuole.each do |scuola| %>
+              <tr>
+                <td class="txt-subtle" style="position: sticky; left: 0; background: var(--color-bg);"><%= scuola.sigla_provincia %></td>
+                <td class="txt-subtle"><%= scuola.area %></td>
+                <td><%= link_to scuola.denominazione, scuola, data: { turbo_frame: "_top" } %></td>
+                <% @giri.each do |giro| %>
+                  <% tappa = @tappe_map[[scuola.id, giro.id]] %>
+                  <td style="<%= "background: #{tappa_color(tappa)}; color: #{tappa_text_color(tappa)};" if tappa %> padding: 0.25rem 0.5rem;">
+                    <% if tappa %>
+                      <%= link_to tappa, style: "color: inherit; text-decoration: none;", data: { turbo_frame: "_top" } do %>
+                        <%= render "propaganda/cella", tappa: tappa %>
+                      <% end %>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="txt-subtle txt-center pad-block-double">Nessun giro aperto</p>
+    <% end %>
+  </turbo-frame>
+</div>
