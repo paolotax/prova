@@ -1,0 +1,25 @@
+module Filters
+  class PropagandaFilter < Base
+    include PropagandaFilter::Fields
+    include PropagandaFilter::Summarized
+
+    def scuole
+      result = Current.scuole
+        .where.not(id: Scuola.where.not(direzione_id: nil).select(:direzione_id))
+
+      if terms.present?
+        ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
+        result = result.where(id: ids)
+      end
+
+      result = result.where(provincia: province) if province.present?
+      result = result.where(area: aree) if aree.present?
+
+      result
+        .left_joins(:direzione)
+        .order(:provincia, :area, Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"), :denominazione)
+    end
+
+    alias_method :results, :scuole
+  end
+end

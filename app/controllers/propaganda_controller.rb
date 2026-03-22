@@ -1,21 +1,28 @@
 class PropagandaController < ApplicationController
-  before_action :authenticate_user!
+  include FilterScoped
+
+  FILTER_PARAMS = [province: [], aree: [], giro_ids: [], terms: []].freeze
 
   def index
+    @scuole = @filter.scuole
     @giri = load_giri
-    @scuole = Current.scuole
-      .where.not(id: Scuola.where.not(direzione_id: nil).select(:direzione_id))
-      .left_joins(:direzione)
-      .order(:provincia, :area, Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"), :denominazione)
-
     @tappe_map = build_tappe_map
   end
 
   private
 
+  # Override FilterScoped convention: PropagandaController -> PropagandumFilter
+  def filter_class
+    ::Filters::PropagandaFilter
+  end
+
+  def filtering_class
+    ::Filters::PropagandaFilter::Filtering
+  end
+
   def load_giri
-    if params[:giro_ids].present?
-      current_user.giri.where(id: params[:giro_ids])
+    if @filter.giro_ids.present?
+      current_user.giri.where(id: @filter.giro_ids)
     else
       current_user.giri.where(finito_il: nil).or(current_user.giri.where(finito_il: Date.current..))
     end

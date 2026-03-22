@@ -1,0 +1,35 @@
+<% filter = user_filtering.filter %>
+
+<%= tag.div class: "quick-filter",
+      data: {
+        controller: "dialog filter multi-selection-combobox",
+        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput",
+        filter_show: user_filtering.show_giri?,
+        multi_selection_combobox_no_selection_label_value: "Giri..." } do %>
+  <button type="button" class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#toggle:stop">
+    <span class="overflow-ellipsis" data-multi-selection-combobox-target="label"></span>
+  </button>
+
+  <template data-multi-selection-combobox-target="hiddenFieldTemplate">
+    <%= hidden_field_tag "giro_ids[]", nil, data: { filter_settings_target: "field" } %>
+  </template>
+
+  <%= filter_dialog "Giri..." do %>
+    <strong class="popup__title">Filtra per giro</strong>
+
+    <ul class="popup__list" data-filter-target="list" role="listbox">
+      <% user_filtering.giri_disponibili.each do |giro| %>
+        <%= content_tag(:li, class: "popup__item", data: {
+              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item",
+              multi_selection_combobox_value: giro.id, multi_selection_combobox_label: giro.titolo },
+              role: "checkbox", aria: { checked: filter.giro_ids.include?(giro.id.to_s) }) do %>
+          <button type="button" class="btn popup__btn" data-action="dialog#close multi-selection-combobox#change filter-settings#change form#submit">
+            <span style="color: <%= giro.color %>;">&#9679;</span>
+            <span class="overflow-ellipsis flex-item-grow"><%= giro.titolo %></span>
+            <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+          </button>
+        <% end %>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
