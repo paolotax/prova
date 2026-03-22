@@ -5,11 +5,14 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% if @tappa.data_tappa.present? %>
-      <%= back_link_to_url I18n.l(@tappa.data_tappa, format: :short, locale: :it), giorno_path(giorno: @tappa.data_tappa) %>
-    <% else %>
-      <%= back_link_to_url "Tappe", tappe_path %>
+      <% info = referrer_back_info || { label: "", path:  giorno_path(giorno: @tappa.data_tappa) } %>
+      <%= back_link_to info[:label], info[:path] %>
     <% end %>
   </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Tappa</span>
+  </h1>
 <% end %>
 
 <%= turbo_stream_from @tappa.entry if @tappa.entry %>

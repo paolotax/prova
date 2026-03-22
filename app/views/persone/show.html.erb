@@ -1,5 +1,6 @@
 <% @page_title = @persona.nome_completo %>
 <% @header_class = "header--card" %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">

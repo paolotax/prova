@@ -7,7 +7,8 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= header_back_link scuole_path, label: "Scuole" %>
+    <% info = referrer_back_info || { label: "", path: scuole_path } %>
+    <%= back_link_to info[:label], info[:path] %>
   </div>
 <% end %>
 

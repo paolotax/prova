@@ -93,7 +93,7 @@
     flex-shrink: 0;
 
     .card-perma &:before {
-      content: "No.";
+      content: "";
       opacity: 0.5;
     }
   }
