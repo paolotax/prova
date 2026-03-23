@@ -16,6 +16,7 @@ module Filters
       result = result.where(area: aree) if aree.present?
 
       result
+        .includes(:direzione)
         .left_joins(:direzione)
         .order(:provincia, :area, Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"), :denominazione)
     end

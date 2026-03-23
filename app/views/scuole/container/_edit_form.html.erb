@@ -81,6 +81,17 @@
     <% end %>
   </div>
 
+  <div class="form-field">
+    <%= f.label :direzione_id, "Direzione", class: "label txt-small" %>
+    <%= f.select :direzione_id,
+        options_for_select(
+          [["—", ""]] + Current.account.scuole.direzioni.order(:denominazione).map { |d| [d.denominazione, d.id] },
+          scuola.direzione_id
+        ),
+        {},
+        class: "input input--select" %>
+  </div>
+
   <div class="form-row">
     <div class="form-field">
       <%= f.label :telefono, class: "label txt-small" %>

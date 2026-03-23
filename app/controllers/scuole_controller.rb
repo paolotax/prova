@@ -171,7 +171,7 @@ class ScuoleController < ApplicationController
       :denominazione, :codice_ministeriale, :indirizzo, :cap,
       :comune, :provincia, :sigla_provincia, :regione, :tipo_scuola,
       :email, :pec, :telefono, :note, :stato, :priorita, :area,
-      :email_pattern, :email_dominio
+      :email_pattern, :email_dominio, :direzione_id
     )
   end
 end

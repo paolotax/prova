@@ -19,7 +19,7 @@
 <turbo-frame id="search_results">
   <% if @giri.any? %>
     <div style="overflow-x: auto;">
-      <table class="table" style="white-space: nowrap; font-size: var(--font-size-small);">
+      <table class="table center" style="white-space: nowrap; font-size: var(--font-size-small);">
         <thead>
           <tr>
             <th class="txt-align-end pad-inline-double">Scuola</th>
@@ -37,7 +37,7 @@
           <% @scuole.each do |scuola| %>
             <tr>
               <td class="txt-align-end pad-inline-double">
-                <%= link_to scuola, data: { turbo_frame: "_top" } do %>
+                <%= link_to scuola, style: "color: inherit; text-decoration: none;", data: { turbo_frame: "_top" } do %>
                   <%= scuola.denominazione %>
                 <% end %>
               </td>
