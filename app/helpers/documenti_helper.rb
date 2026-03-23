@@ -31,7 +31,6 @@ module DocumentiHelper
     # Returns CSS color for card based on documento's causale
     # Colors aligned with causale_bg_class but as oklch values
     def documento_color(documento)
-      return "var(--color-golden)" if documento.golden?
       return "oklch(0.6 0.01 0)" if documento.closed?
       return "oklch(0.6 0.01 0)" if documento.postponed?
       return "oklch(0.7 0.01 0)" unless documento&.causale  # gray

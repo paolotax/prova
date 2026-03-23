@@ -18,7 +18,6 @@ module AppuntoHelper
   # Colors aligned with Fizzy: gray for closed/postponed, blue for maybe/triage
   def appunto_color(appunto)
     return "oklch(var(--lch-red-medium))" if appunto.drafted?
-    return "var(--color-golden)" if appunto.golden?
     return "oklch(0.6 0.01 0)" if appunto.closed?     # gray
     return "oklch(0.6 0.01 0)" if appunto.postponed?  # gray
     return appunto.entry.column.color if appunto.entry&.column&.color.present?  # column color

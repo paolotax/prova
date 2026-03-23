@@ -1,7 +1,6 @@
 module TappeHelper
 
   def tappa_color(tappa)
-    return "var(--color-golden)" if tappa.golden?
     return "oklch(0.6 0.01 0)" if tappa.closed?
     return "oklch(0.6 0.01 0)" if tappa.postponed?
 
@@ -16,7 +15,6 @@ module TappeHelper
   end
 
   def tappa_text_color(tappa)
-    return "oklch(0.3 0.05 85)" if tappa.golden?        # scuro su dorato
     return "white" if tappa.closed?
     return "white" if tappa.postponed?
 
