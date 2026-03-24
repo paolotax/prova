@@ -209,7 +209,7 @@ class Documento < ApplicationRecord
   end
 
   def ricalcola_totali!
-    totale_importo_calcolato = righe.sum(&:importo_cents)
+    totale_importo_calcolato = righe.sum(&:importo_cents).round
     totale_copie_calcolato = righe.sum(&:quantita)
 
     update_columns(

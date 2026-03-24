@@ -3,6 +3,8 @@ wb = xlsx_package.workbook
 fields = ["titolo", "codice_isbn", "cm", "editore", "classe", "disciplina", "prezzo", "quantita", "sconto", "importo"]
 
 wb.add_worksheet(name: "Documento #{@documento.numero_documento}") do |sheet|
+  importo_fmt = sheet.styles.add_style(format_code: '#,##0.0000')
+  prezzo_fmt = sheet.styles.add_style(format_code: '#,##0.00')
 
   sheet.add_row fields
 
@@ -19,12 +21,15 @@ wb.add_worksheet(name: "Documento #{@documento.numero_documento}") do |sheet|
       riga.quantita,
       riga.sconto,
       riga.importo
-    ], types: [:string]
+    ], types: [:string, :string, :string, :string, :string, :string, :float, :integer, :float, :float],
+       style: [nil, nil, nil, nil, nil, nil, prezzo_fmt, nil, nil, importo_fmt]
   end
 
   # Riga totali
   sheet.add_row []
-  sheet.add_row ["", "", "", "", "", "", "", "Totale copie:", @documento.righe.sum(&:quantita)], types: [:string]
-  sheet.add_row ["", "", "", "", "", "", "", "Totale importo:", @documento.righe.sum(&:importo)], types: [:string]
+  sheet.add_row ["", "", "", "", "", "", "", "Totale copie:", @documento.righe.sum(&:quantita)]
+  sheet.add_row ["", "", "", "", "", "", "", "Totale importo:", @documento.totale_importo],
+    types: [nil, nil, nil, nil, nil, nil, nil, nil, :float],
+    style: [nil, nil, nil, nil, nil, nil, nil, nil, prezzo_fmt]
 
 end

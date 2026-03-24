@@ -123,7 +123,7 @@ class FatturaElettronicaXml
             xml.Tipo 'SC'
             xml.Percentuale format('%.2f', riga.sconto)
           }
-          xml.PrezzoTotale format('%.2f', riga.importo)
+          xml.PrezzoTotale format('%.4f', riga.importo)
           xml.AliquotaIVA '0.00'
           xml.Natura 'N2.2'
         }

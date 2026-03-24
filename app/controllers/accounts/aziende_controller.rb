@@ -66,7 +66,8 @@ module Accounts
         :ragione_sociale, :partita_iva, :codice_fiscale, :regime_fiscale,
         :indirizzo, :cap, :comune, :provincia, :nazione,
         :email, :telefono, :indirizzo_telematico,
-        :iban, :banca
+        :iban, :banca,
+        :sconto_defiscalizzato
       )
     end
   end

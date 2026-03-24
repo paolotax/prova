@@ -258,7 +258,7 @@ class DocumentoPdf < Prawn::Document
               riga.quantita,
               currency(riga.prezzo),
               riga.sconto,
-              currency(riga.importo),
+              currency(riga.importo, decimals: 4),
               "VA"
             ]
           end
@@ -304,7 +304,7 @@ class DocumentoPdf < Prawn::Document
                     riga.quantita,
                     currency(riga.prezzo),
                     riga.sconto,
-                    currency(riga.importo),
+                    currency(riga.importo, decimals: 4),
                     "VA"
                   ]
                 end
@@ -330,7 +330,7 @@ class DocumentoPdf < Prawn::Document
                   riga.quantita,
                   currency(riga.prezzo),
                   riga.sconto,
-                  currency(riga.importo),
+                  currency(riga.importo, decimals: 4),
                   "VA"
                 ]
               end
@@ -580,9 +580,9 @@ class DocumentoPdf < Prawn::Document
 
   private
 
-  def currency(number)
+  def currency(number, decimals: 2)
     return "€ 0,00" if number.nil?
-    sprintf("€ %.2f", number.to_f).gsub(".", ",")
+    sprintf("€ %.#{decimals}f", number.to_f).gsub(".", ",")
   end
 
   def height_of_text(text, options = {})

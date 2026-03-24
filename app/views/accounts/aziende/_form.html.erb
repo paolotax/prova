@@ -38,6 +38,11 @@
               { include_blank: "Seleziona regime fiscale..." },
               class: "input input--select" %>
       </div>
+
+      <label class="flex gap-half align-center">
+        <%= form.check_box :sconto_defiscalizzato, class: "input" %>
+        <span class="txt-small">Sconto sul defiscalizzato (Art. 74.1.c — cessioni editoriali)</span>
+      </label>
     </div>
 
     <!-- Indirizzo -->

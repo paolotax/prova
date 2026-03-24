@@ -31,6 +31,8 @@ class DocumentoRiga < ApplicationRecord
   private
 
   def aggiorna_totali_documento
-    documento&.ricalcola_totali!
+    return unless documento
+    documento.righe.reset unless documento.previously_new_record?
+    documento.ricalcola_totali!
   end
 end

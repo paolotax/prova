@@ -44,7 +44,8 @@ export default class extends Controller {
     editing: Boolean,
     libriPath: String,
     documentoPath: String,
-    documentiPath: String
+    documentiPath: String,
+    scontoDefiscalizzato: Boolean
   }
 
   connect() {
@@ -247,7 +248,8 @@ export default class extends Controller {
     const prezzo = (riga.prezzo_cents || 0) / 100
     const sconto = riga.sconto || 0
     const quantita = riga.quantita || 1
-    const prezzoScontato = prezzo - (prezzo * sconto / 100)
+    const divisore = this.scontoDefiscalizzatoValue ? 104 : 100
+    const prezzoScontato = prezzo - (prezzo * sconto / divisore)
     const importo = prezzoScontato * quantita
 
     const rowId = riga.id ? `documento_riga_${riga.id}` : `temp_riga_${riga._tempId}`
@@ -337,7 +339,8 @@ export default class extends Controller {
     const prezzo = (riga.prezzo_cents || 0) / 100
     const sconto = riga.sconto || 0
     const quantita = riga.quantita || 1
-    const prezzoScontato = prezzo - (prezzo * sconto / 100)
+    const divisore = this.scontoDefiscalizzatoValue ? 104 : 100
+    const prezzoScontato = prezzo - (prezzo * sconto / divisore)
     const importo = prezzoScontato * quantita
 
     const titolo = riga.libro?.titolo || riga.titolo || 'Libro non specificato'
@@ -387,8 +390,9 @@ export default class extends Controller {
       const prezzo = (riga.prezzo_cents || 0) / 100
       const sconto = riga.sconto || 0
       const quantita = riga.quantita || 1
-      const prezzoScontato = prezzo - (prezzo * sconto / 100)
-      totalImporto += prezzoScontato * quantita
+      const divisore = this.scontoDefiscalizzatoValue ? 104 : 100
+    const prezzoScontato = prezzo - (prezzo * sconto / divisore)
+      totalImporto += Math.round(prezzoScontato * quantita * 100) / 100
       totalCopie += quantita
     })
 

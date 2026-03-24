@@ -45,18 +45,18 @@ class Riga < ApplicationRecord
 
   def prezzo_scontato
     return 0 if prezzo_cents.nil?
-    (prezzo_cents - (prezzo_cents * (sconto || 0.0)) / 100.0)
+    divisore = Current.account&.azienda&.sconto_defiscalizzato? ? 104.0 : 100.0
+    (prezzo_cents - (prezzo_cents * (sconto || 0.0)) / divisore)
   end
 
   def importo
     return 0.0 if prezzo_cents.nil? || quantita.nil?
-    (prezzo_scontato * quantita) / 100.0
+    prezzo_scontato * quantita / 100.0
   end
 
   def importo_cents
     return 0 if prezzo_cents.nil? || quantita.nil?
-    sconto_cents = ((prezzo_cents * (sconto || 0.0)) / 100.0)
-    (prezzo_cents - sconto_cents) * quantita
+    prezzo_scontato * quantita
   end
 
   def ordine
