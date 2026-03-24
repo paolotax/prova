@@ -2,25 +2,26 @@
 #
 # Table name: aziende
 #
-#  id                   :bigint           not null, primary key
-#  banca                :string
-#  cap                  :string(5)        not null
-#  codice_fiscale       :string(16)       not null
-#  comune               :string           not null
-#  email                :string           not null
-#  iban                 :string(27)
-#  indirizzo            :string           not null
-#  indirizzo_telematico :string(7)
-#  nazione              :string(2)        default("IT"), not null
-#  partita_iva          :string(11)       not null
-#  provincia            :string(2)        not null
-#  ragione_sociale      :string           not null
-#  regime_fiscale       :string           default(NULL), not null
-#  telefono             :string
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  account_id           :uuid             not null
-#  user_id              :bigint
+#  id                    :bigint           not null, primary key
+#  banca                 :string
+#  cap                   :string(5)        not null
+#  codice_fiscale        :string(16)       not null
+#  comune                :string           not null
+#  email                 :string           not null
+#  iban                  :string(27)
+#  indirizzo             :string           not null
+#  indirizzo_telematico  :string(7)
+#  nazione               :string(2)        default("IT"), not null
+#  partita_iva           :string(11)       not null
+#  provincia             :string(2)        not null
+#  ragione_sociale       :string           not null
+#  regime_fiscale        :string           default(NULL), not null
+#  sconto_defiscalizzato :boolean          default(FALSE), not null
+#  telefono              :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  account_id            :uuid             not null
+#  user_id               :bigint
 #
 # Indexes
 #
