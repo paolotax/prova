@@ -167,7 +167,7 @@
             data-tax-sortable-group-value="calendar"
             data-tax-sortable-data-tappa="<%= @giorno.to_s %>"
             data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
-            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa %>
+            <%= render partial: "tappe/tappa", collection: @tappe, as: :tappa, locals: { draggable: true } %>
         </div>
       </div>
     </section>
