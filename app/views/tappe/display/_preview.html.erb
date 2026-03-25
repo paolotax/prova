@@ -8,8 +8,8 @@
     action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect"
   } %>
 
-  <% if entry && draggable %>
-    <% card_data[:id] = entry.id %>
+  <% if draggable %>
+    <% card_data[:id] = entry&.id || tappa.id %>
     <% card_data[:drag_and_drop_target] = "item" %>
     <% card_data[:css_variable_counter_target] = "item" %>
   <% end %>
@@ -20,7 +20,7 @@
       class: class_names("card", tappa_type_modifier(tappa)),
       style: "--card-color: #{tappa_color(tappa)};",
       tabindex: 0,
-      draggable: (draggable && entry.present?),
+      draggable: draggable,
       data: card_data do %>
     <div class="flex flex-column flex-item-grow max-inline-size">
       <%= link_to tappa_path(tappa), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
