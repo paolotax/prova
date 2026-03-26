@@ -52,8 +52,8 @@
 
   <%= form_with model: Saggio.new,
       url: persona_saggi_path(persona),
-      class: "flex gap align-center margin-block-start" do |f| %>
-    <div class="flex-item-grow cb-tax">
+      class: "flex flex-wrap gap-half align-center margin-block-start" do |f| %>
+    <div class="cb-tax" style="flex: 1 1 100%;">
       <%= f.combobox :libro_id, libri_path,
           placeholder: "Cerca libro...",
           name_when_new: "libro_search" %>

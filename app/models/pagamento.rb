@@ -33,6 +33,7 @@ class Pagamento < ApplicationRecord
     "carta_di_credito" => "Carta di credito",
     "bonus_docente" => "Bonus docente",
     "bancomat" => "Bancomat",
+    "satispay" => "Satispay",
     "cedole" => "Cedole"
   }.freeze
 
