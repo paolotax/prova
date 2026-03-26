@@ -60,6 +60,8 @@ class Scuola < ApplicationRecord
   include HasDisponibilita
   include PgSearch::Model
 
+  geocoded_by :address
+  after_validation :geocode, if: ->(obj) { obj.indirizzo_changed? || obj.cap_changed? || obj.comune_changed? || obj.provincia_changed? }
 
   pg_search_scope :search_all_word,
     against: [:denominazione, :codice_ministeriale, :comune, :provincia],
@@ -172,6 +174,10 @@ class Scuola < ApplicationRecord
       !documenti.exists? &&
       !tappe.exists? &&
       !Appunto.where(appuntabile: self).exists?
+  end
+
+  def address
+    [indirizzo, cap, comune, provincia].compact_blank.join(" ")
   end
 
   def geocoded?
