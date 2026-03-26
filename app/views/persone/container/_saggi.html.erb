@@ -1,65 +1,71 @@
 <%# locals: (persona:) -%>
 
 <% scuola = persona.scuola %>
+<% saggi = scuola ? persona.saggi.per_scuola(scuola).includes(:libro).order(created_at: :desc) : persona.saggi.includes(:libro).order(created_at: :desc) %>
+
+<div id="<%= dom_id(persona, :saggi) %>">
 <section class="group">
-  <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
+  <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
     Saggi
-    <% saggi = scuola ? persona.saggi.per_scuola(scuola).includes(:libro).order(created_at: :desc) : persona.saggi.includes(:libro).order(created_at: :desc) %>
     <% if saggi.any? %>
       <span class="txt-x-small txt-subtle font-weight-normal">(<%= saggi.size %>)</span>
     <% end %>
   </h3>
 
   <% if saggi.any? %>
-    <dl class="dl-grid dl-grid--center txt-small">
+    <ul class="popup__list gap-quarter">
       <% saggi.each do |saggio| %>
-        <dt class="txt-x-small" style="line-height: 1.1;">
-          <span class="font-weight-bold"><%= link_to saggio.libro.titolo, saggio.libro, class: "txt-link" %></span>
-          <br><span class="txt-xx-small txt-subtle"><%= saggio.libro.editore&.editore %></span>
-        </dt>
-        <dd class="flex align-center gap-half">
-          <span class="badge <%= saggio.consegnato? ? 'txt-positive' : 'txt-accent' %>">
+        <li class="popup__item flex align-center gap-half padding-block-quarter padding-inline-half">
+          <div class="flex-item-grow" style="min-width: 0;">
+            <div class="font-weight-bold txt-small overflow-ellipsis"><%= link_to saggio.libro.titolo, saggio.libro, class: "txt-link" %></div>
+            <div class="txt-xx-small txt-subtle"><%= saggio.libro.editore&.editore %></div>
+          </div>
+
+          <span class="txt-xx-small txt-subtle">x<%= saggio.quantita %></span>
+
+          <span class="badge <%= saggio.consegnato? ? 'txt-positive' : 'txt-accent' %> txt-xx-small">
             <%= saggio.stato %>
           </span>
-          <span class="txt-xx-small txt-subtle">x<%= saggio.quantita %></span>
+
           <% if saggio.prenotato? %>
             <%= button_to persona_saggio_path(persona, saggio),
                 method: :patch,
-                params: { saggio: { stato: :consegnato } },
-                class: "btn btn--small txt-positive borderless",
+                params: { saggio: { stato: :consegnato, data_consegna: Date.today } },
+                class: "btn btn--circle txt-positive borderless fill-transparent txt-x-small",
                 title: "Segna consegnato" do %>
               <%= icon_tag "check", size: "small" %>
             <% end %>
           <% end %>
+
           <% unless saggio.scaricato? %>
             <%= button_to persona_saggio_path(persona, saggio),
                 method: :delete,
-                class: "btn btn--small txt-negative borderless",
+                class: "btn btn--circle txt-negative borderless fill-transparent txt-x-small",
                 title: "Elimina" do %>
-              <%= icon_tag "x-mark", size: "small" %>
+              <%= icon_tag "trash", size: "small" %>
             <% end %>
           <% end %>
-        </dd>
+        </li>
       <% end %>
-    </dl>
+    </ul>
   <% end %>
 
-  <%# Inline form %>
   <%= form_with model: Saggio.new,
       url: persona_saggi_path(persona),
-      class: "flex gap-half align-end flex-wrap margin-block-start-half" do |f| %>
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
+      class: "flex gap align-center margin-block-start" do |f| %>
+    <div class="flex-item-grow cb-tax">
       <%= f.combobox :libro_id, libri_path,
           placeholder: "Cerca libro...",
           name_when_new: "libro_search" %>
-    </fieldset>
-    <fieldset>
+    </div>
+    <div>
       <%= f.select :stato, [["Prenotato", "prenotato"], ["Consegnato", "consegnato"]],
-          {}, class: "input" %>
-    </fieldset>
-    <fieldset style="width: 60px;">
-      <%= f.number_field :quantita, value: 1, min: 1, class: "input full-width", placeholder: "Qtà" %>
-    </fieldset>
+          {}, class: "input input--select txt-small" %>
+    </div>
+    <div style="inline-size: 3.5em;">
+      <%= f.number_field :quantita, value: 1, min: 1, class: "input txt-small", placeholder: "Qt" %>
+    </div>
     <%= f.submit "Aggiungi", class: "btn btn--primary btn--small" %>
   <% end %>
 </section>
+</div>

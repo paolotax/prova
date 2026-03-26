@@ -8,7 +8,10 @@ class Persone::SaggiController < ApplicationController
     @saggio.scuola = @persona.scuola
 
     if @saggio.save
-      redirect_to persona_path(@persona)
+      respond_to do |format|
+        format.turbo_stream { render_saggi_stream }
+        format.html { redirect_to persona_path(@persona) }
+      end
     else
       redirect_to persona_path(@persona), alert: @saggio.errors.full_messages.join(", ")
     end
@@ -16,7 +19,10 @@ class Persone::SaggiController < ApplicationController
 
   def update
     if @saggio.update(saggio_params)
-      redirect_to persona_path(@persona)
+      respond_to do |format|
+        format.turbo_stream { render_saggi_stream }
+        format.html { redirect_to persona_path(@persona) }
+      end
     else
       redirect_to persona_path(@persona), alert: @saggio.errors.full_messages.join(", ")
     end
@@ -24,7 +30,10 @@ class Persone::SaggiController < ApplicationController
 
   def destroy
     @saggio.destroy
-    redirect_to persona_path(@persona)
+    respond_to do |format|
+      format.turbo_stream { render_saggi_stream }
+      format.html { redirect_to persona_path(@persona) }
+    end
   end
 
   private
@@ -38,6 +47,15 @@ class Persone::SaggiController < ApplicationController
   end
 
   def saggio_params
-    params.require(:saggio).permit(:libro_id, :quantita, :stato, :note)
+    params.require(:saggio).permit(:libro_id, :quantita, :stato, :note, :data_consegna, :data_prenotazione)
+  end
+
+  def render_saggi_stream
+    @persona.reload
+    render turbo_stream: turbo_stream.replace(
+      helpers.dom_id(@persona, :saggi),
+      partial: "persone/container/saggi",
+      locals: { persona: @persona }
+    )
   end
 end
