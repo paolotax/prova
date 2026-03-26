@@ -14,7 +14,7 @@
         controller: "navigable-list",
         navigable_list_actionable_items_value: true,
         navigable_list_focus_on_selection_value: false,
-        action: "turbo:before-cache@document->dialog#close turbo:frame-render->navigable-list#reset dialog:show@document->navigable-list#reset keydown->navigable-list#navigate" } do %>
+        action: "turbo:before-cache@document->dialog#close turbo:load@document->dialog#close turbo:frame-render->navigable-list#reset dialog:show@document->navigable-list#reset keydown->navigable-list#navigate" } do %>
 
     <div class="bar__search-header">
       <%= form_with url: search_path(Current.account), method: :get, data: {
