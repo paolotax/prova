@@ -149,9 +149,12 @@ class Documenti::Creator
                      rp[:prezzo_cents].to_i
                    end
 
+    isbn = rp[:codice_isbn].presence || "TEMP-#{SecureRandom.hex(6).upcase}"
+    titolo = rp[:titolo] || rp[:descrizione] || "ISBN #{isbn}"
+
     Current.account.libri.create!(
-      codice_isbn: rp[:codice_isbn],
-      titolo: rp[:titolo] || rp[:descrizione] || "ISBN #{rp[:codice_isbn]}",
+      codice_isbn: isbn,
+      titolo: titolo,
       prezzo_in_cents: prezzo_cents,
       editore: editore,
       categoria: Categoria.find_by(nome_categoria: "non classificato") || Categoria.first,
