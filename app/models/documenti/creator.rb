@@ -58,20 +58,8 @@ class Documenti::Creator
   end
 
   def build_documento
-    numero = (Current.account.documenti
-                .where(causale: @causale)
-                .where("EXTRACT(YEAR FROM data_documento) = ?", Date.current.year)
-                .maximum(:numero_documento) || 0).to_i + 1
-
     data = @data_documento.present? ? Date.parse(@data_documento.to_s) : Date.current
-    num = if @numero_documento.present?
-            # Rimuovi prefisso anno se il numero è troppo lungo (es. 2026400149 → 400149)
-            n = @numero_documento.to_s
-            n = n[4..] if n.length > 7
-            n.to_i
-          else
-            numero
-          end
+    num = parse_numero_documento
 
     @documento = Current.account.documenti.build(
       user: Current.user,
@@ -82,6 +70,19 @@ class Documenti::Creator
       numero_documento: num
     )
     true
+  end
+
+  def parse_numero_documento
+    if @numero_documento.present?
+      n = @numero_documento.to_s
+      n = n[4..] if n.length > 7
+      n.to_i
+    else
+      (Current.account.documenti
+        .where(causale: @causale)
+        .where("EXTRACT(YEAR FROM data_documento) = ?", Date.current.year)
+        .maximum(:numero_documento) || 0).to_i + 1
+    end
   end
 
   def add_righe
