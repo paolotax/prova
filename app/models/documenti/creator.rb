@@ -25,14 +25,16 @@ class Documenti::Creator
 
   def result
     if ok?
+      totale = (documento.totale_cents || 0) + (documento.spese_cents || 0)
       result = {
         ok: true,
         documento_id: documento.id,
         numero_documento: documento.numero_documento,
         causale: @causale.causale,
         clientable: documento.clientable&.denominazione,
-        totale_cents: documento.totale_cents,
-        totale: documento.totale_cents ? "%.2f" % (documento.totale_cents / 100.0) : nil,
+        totale_cents: totale,
+        totale: "%.2f" % (totale / 100.0),
+        spese_cents: documento.spese_cents,
         totale_copie: documento.totale_copie,
         righe_count: documento.righe.size
       }
