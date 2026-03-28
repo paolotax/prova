@@ -31,7 +31,8 @@ module Api
         end
 
         limit = (params[:limit] || 50).to_i.clamp(1, 200)
-        persone = scope.order(:cognome, :nome).limit(limit)
+        order = params[:sort] == "recenti" ? { created_at: :desc } : { cognome: :asc, nome: :asc }
+        persone = scope.order(order).limit(limit)
 
         render json: {
           results: persone.map { |p| format_persona(p) },
