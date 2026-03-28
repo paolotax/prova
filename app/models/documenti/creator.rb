@@ -141,6 +141,31 @@ class Documenti::Creator
     end
   end
 
+  def create_libro_from_riga(rp)
+    editore = resolve_editore
+    prezzo_cents = if rp[:prezzo_unitario].present?
+                     (BigDecimal(rp[:prezzo_unitario].to_s) * 100).to_i
+                   elsif rp[:prezzo_cents].present?
+                     rp[:prezzo_cents].to_i
+                   end
+
+    Current.account.libri.create!(
+      codice_isbn: rp[:codice_isbn],
+      titolo: rp[:titolo] || rp[:descrizione] || "ISBN #{rp[:codice_isbn]}",
+      prezzo_in_cents: prezzo_cents,
+      editore: editore,
+      user: Current.user
+    )
+  end
+
+  def resolve_editore
+    return @resolved_editore if defined?(@resolved_editore)
+
+    # Cerca editore dal clientable (fornitore)
+    nome = @clientable&.denominazione.to_s
+    @resolved_editore = Editore.where("editore ILIKE ?", "%#{nome.split.first}%").first
+  end
+
   def parse_numero_documento
     if @numero_documento.present?
       n = @numero_documento.to_s
@@ -164,7 +189,11 @@ class Documenti::Creator
     @righe_params.each_with_index do |rp, i|
       libro = resolve_libro(rp, i) or return false
 
-      prezzo_copertina = libro.prezzo_in_cents || 0
+      prezzo_copertina = if rp[:prezzo_unitario].present?
+                           (BigDecimal(rp[:prezzo_unitario].to_s) * 100).to_i
+                         else
+                           libro.prezzo_in_cents || 0
+                         end
       sconto = (rp[:sconto] || 0).to_f
       prezzo = if rp[:prezzo_cents].present?
                  rp[:prezzo_cents].to_i
@@ -192,11 +221,11 @@ class Documenti::Creator
       libro
     elsif rp[:codice_isbn].present?
       libro = Current.account.libri.find_by(codice_isbn: rp[:codice_isbn])
-      return fail!("riga #{index + 1}: libro non trovato (ISBN: #{rp[:codice_isbn]})") unless libro
+      libro ||= create_libro_from_riga(rp)
       libro
     elsif rp[:titolo].present?
-      libro = Current.account.libri.search_all_word(rp[:titolo]).first
-      return fail!("riga #{index + 1}: libro non trovato (titolo: #{rp[:titolo]})") unless libro
+      libro = Current.account.libri.search_all_word(rp[:titolo]).first rescue nil
+      libro ||= create_libro_from_riga(rp)
       libro
     else
       fail!("riga #{index + 1}: specificare libro_id, codice_isbn o titolo")

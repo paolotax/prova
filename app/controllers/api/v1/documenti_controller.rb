@@ -29,7 +29,7 @@ module Api
           ddt_numero: params[:ddt_numero],
           spese_cents: params[:spese_cents],
           righe_params: Array(params[:righe]).map { |r|
-            r.permit(:libro_id, :quantita, :sconto, :prezzo_cents, :titolo, :codice_isbn).to_h.symbolize_keys
+            r.permit(:libro_id, :quantita, :sconto, :prezzo_cents, :prezzo_unitario, :titolo, :descrizione, :codice_isbn).to_h.symbolize_keys
           }
         }
       end
