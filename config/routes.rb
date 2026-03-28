@@ -525,6 +525,7 @@ Rails.application.routes.draw do
     post "whatsapp/contacts", to: "whatsapp#create"
 
     namespace :v1 do
+      resource :me, only: [:show], controller: "me"
       resources :appunti, only: [:create]
       resources :search, only: [:index]
     end
