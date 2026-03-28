@@ -1,0 +1,218 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Scagnozz API",
+    "description": "API per gestione ordini scuola, clienti e appunti. Cerca scuole, clienti, classi e persone, crea appunti e verifica la tua identità.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://scagnozz.com",
+      "description": "Produzione"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Verifica identità",
+        "description": "Restituisce le informazioni dell'utente e dell'account associati al token.",
+        "responses": {
+          "200": {
+            "description": "Utente autenticato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string", "example": "mario@example.com" },
+                    "name": { "type": "string", "example": "Mario Rossi" },
+                    "account": { "type": "string", "example": "Libreria Rossi" },
+                    "account_id": { "type": "string", "format": "uuid" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token non valido o mancante"
+          }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "get": {
+        "operationId": "search",
+        "summary": "Cerca scuole, clienti, classi e persone",
+        "description": "Cerca nel database Scagnozz per nome. Restituisce risultati con appuntabile_value da usare per creare appunti.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Testo di ricerca (minimo 2 caratteri)",
+            "schema": { "type": "string", "minLength": 2 },
+            "example": "zibordi"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Tipi da cercare, separati da virgola",
+            "schema": { "type": "string", "default": "scuola,cliente,classe,persona" },
+            "example": "scuola"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Numero massimo di risultati per tipo (1-20)",
+            "schema": { "type": "integer", "default": 6, "minimum": 1, "maximum": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Risultati della ricerca",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SearchResult"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token non valido o mancante"
+          }
+        }
+      }
+    },
+    "/api/v1/appunti": {
+      "post": {
+        "operationId": "createAppunto",
+        "summary": "Crea un nuovo appunto",
+        "description": "Crea un appunto (nota/ordine) associato a una scuola, cliente o classe. Usa appuntabile_value ottenuto dalla ricerca.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["appuntabile_value"],
+                "properties": {
+                  "appuntabile_value": {
+                    "type": "string",
+                    "description": "Destinatario nel formato Tipo:UUID (es. Scuola:e6a78e43-...)",
+                    "example": "Scuola:e6a78e43-2ce2-49cc-a273-6a86f3d41950"
+                  },
+                  "nome": {
+                    "type": "string",
+                    "description": "Titolo dell'appunto",
+                    "example": "Visita programmata"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Contenuto testuale dell'appunto",
+                    "example": "Passare lunedi per cataloghi"
+                  },
+                  "telefono": {
+                    "type": "string",
+                    "description": "Numero di telefono di riferimento"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email di riferimento"
+                  },
+                  "publish": {
+                    "type": "boolean",
+                    "description": "Se true, pubblica subito l'appunto",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appunto creato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "appunto_id": { "type": "string", "format": "uuid" },
+                    "nome": { "type": "string" },
+                    "status": { "type": "string", "enum": ["drafted", "published"] }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token non valido o mancante"
+          },
+          "422": {
+            "description": "Dati non validi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "errors": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Access Token generato dalla web app Scagnozz (Impostazioni > Token API)"
+      }
+    },
+    "schemas": {
+      "SearchResult": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "type": { "type": "string", "enum": ["Scuola", "Cliente", "Classe", "Persona"] },
+          "appuntabile_value": {
+            "type": "string",
+            "description": "Valore da usare per creare appunti (formato Tipo:UUID)",
+            "example": "Scuola:e6a78e43-2ce2-49cc-a273-6a86f3d41950"
+          },
+          "display": {
+            "type": "string",
+            "description": "Nome leggibile del risultato",
+            "example": "G. ZIBORDI - REGGIO NELL'EMILIA"
+          }
+        }
+      }
+    }
+  }
+}
