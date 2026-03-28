@@ -1,4 +1,4 @@
-<%= turbo_stream.update "flash", partial: "shared/flash" %>
+<%= turbo_stream.update "flash", partial: "layouts/shared/flash" %>
 <% @libri.includes(:editore, :categoria).each do |libro| %>
   <%= turbo_stream.replace dom_id(libro) do %>
     <%= render "libri/libro", libro: libro %>
