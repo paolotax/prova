@@ -100,6 +100,74 @@
         }
       }
     },
+    "/api/v1/persone": {
+      "get": {
+        "operationId": "listPersone",
+        "summary": "Lista insegnanti e persone con filtri",
+        "description": "Elenca persone filtrando per anno corso delle classi, presenza email, scuola o nome. Utile per estrarre liste di insegnanti.",
+        "parameters": [
+          {
+            "name": "anno_corso",
+            "in": "query",
+            "required": false,
+            "description": "Filtra per anno corso delle classi, separati da virgola (es. 3 o 3,5)",
+            "schema": { "type": "string" },
+            "example": "3,5"
+          },
+          {
+            "name": "con_email",
+            "in": "query",
+            "required": false,
+            "description": "Se presente, restituisce solo persone con email",
+            "schema": { "type": "string" },
+            "example": "true"
+          },
+          {
+            "name": "scuola_id",
+            "in": "query",
+            "required": false,
+            "description": "Filtra per scuola (UUID)",
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Cerca per nome o cognome",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Numero massimo di risultati (1-200, default 50)",
+            "schema": { "type": "integer", "default": 50, "minimum": 1, "maximum": 200 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista persone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Persona" }
+                    },
+                    "count": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token non valido o mancante"
+          }
+        }
+      }
+    },
     "/api/v1/appunti": {
       "post": {
         "operationId": "createAppunto",
@@ -196,6 +264,31 @@
       }
     },
     "schemas": {
+      "Persona": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "cognome": { "type": "string", "example": "Rossi" },
+          "nome": { "type": "string", "example": "Maria" },
+          "email": { "type": "string", "example": "maria.rossi@scuola.edu.it" },
+          "cellulare": { "type": "string" },
+          "telefono": { "type": "string" },
+          "scuola": { "type": "string", "description": "Nome della scuola" },
+          "scuola_id": { "type": "string", "format": "uuid" },
+          "classi": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string", "format": "uuid" },
+                "display": { "type": "string", "example": "3A - G. ZIBORDI" },
+                "anno_corso": { "type": "string" }
+              }
+            }
+          },
+          "appuntabile_value": { "type": "string", "example": "Persona:uuid" }
+        }
+      },
       "SearchResult": {
         "type": "object",
         "properties": {

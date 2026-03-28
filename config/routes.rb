@@ -527,6 +527,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :me, only: [:show], controller: "me"
       resources :appunti, only: [:create]
+      resources :persone, only: [:index]
       resources :search, only: [:index]
     end
   end
