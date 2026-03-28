@@ -15,6 +15,8 @@ module Api
         else
           render json: creator.result, status: :unprocessable_entity
         end
+      rescue => e
+        render json: { ok: false, error: e.message }, status: :unprocessable_entity
       end
 
       private
