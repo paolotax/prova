@@ -81,6 +81,3 @@ swarm.log
 **/CLAUDE.md
 !/CLAUDE.md
 .planning/
-
-# Scagnozz CLI binaries (built from scagnozz-cli/)
-/public/cli/
