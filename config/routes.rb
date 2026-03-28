@@ -300,6 +300,14 @@ Rails.application.routes.draw do
     resources :libro_chips,  only: :create, param: :combobox_value
     resources :giro_chips, only: :create, param: :combobox_value
 
+    namespace :libri do
+      resource :prints, only: [:create]
+      resource :deletions, only: [:create]
+      resource :carrello, only: [:create, :update]
+      resource :confezioni, only: [:create]
+      resource :bulk_updates, only: [:update]
+    end
+
     resources :libri do
       collection do
         get 'crosstab'
@@ -313,14 +321,6 @@ Rails.application.routes.draw do
       end
       resource :movimenti, only: [:show], module: :libri
       resources :qrcodes
-    end
-
-    namespace :libri do
-      resource :prints, only: [:create]
-      resource :deletions, only: [:create]
-      resource :carrello, only: [:create, :update]
-      resource :confezioni, only: [:create]
-      resource :bulk_updates, only: [:update]
     end
 
     resources :qrcodes
