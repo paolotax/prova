@@ -5,7 +5,7 @@ class Libri::BulkUpdatesController < ApplicationController
   def update
     @libri = current_account.libri.where(id: params[:libro_ids])
 
-    update_params = libro_params.compact_blank
+    update_params = libro_params.to_h.compact_blank
 
     if update_params.empty?
       redirect_to libri_path, alert: "Nessun campo da aggiornare"
