@@ -6,6 +6,9 @@
   Modifica <kbd class="hide-on-touch">E</kbd>
 <% end %>
 
+<%= new_appunto_link(tappa.tappable) %>
+
+
 <% if tappa.data_tappa.present? && !tappa.closed? %>
   <div data-controller="dialog" data-dialog-modal-value="true" data-action="keydown.esc->dialog#close">
     <button type="button" class="btn" data-action="dialog#open">Rimanda</button>
