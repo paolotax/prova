@@ -3,10 +3,12 @@ class Documenti::Creator
 
   attr_reader :documento, :error
 
-  def initialize(clientable_value:, causale_nome:, note: nil, righe_params: [])
+  def initialize(clientable_value:, causale_nome:, note: nil, data_documento: nil, numero_documento: nil, righe_params: [])
     @clientable_value = clientable_value
     @causale_nome = causale_nome
     @note = note
+    @data_documento = data_documento
+    @numero_documento = numero_documento
     @righe_params = righe_params
   end
 
@@ -61,13 +63,23 @@ class Documenti::Creator
                 .where("EXTRACT(YEAR FROM data_documento) = ?", Date.current.year)
                 .maximum(:numero_documento) || 0).to_i + 1
 
+    data = @data_documento.present? ? Date.parse(@data_documento.to_s) : Date.current
+    num = if @numero_documento.present?
+            # Rimuovi prefisso anno se il numero è troppo lungo (es. 2026400149 → 400149)
+            n = @numero_documento.to_s
+            n = n[4..] if n.length > 7
+            n.to_i
+          else
+            numero
+          end
+
     @documento = Current.account.documenti.build(
       user: Current.user,
       causale: @causale,
       clientable: @clientable,
       note: @note,
-      data_documento: Date.current,
-      numero_documento: numero
+      data_documento: data,
+      numero_documento: num
     )
     true
   end
