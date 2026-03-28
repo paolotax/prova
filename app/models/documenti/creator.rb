@@ -154,6 +154,7 @@ class Documenti::Creator
       titolo: rp[:titolo] || rp[:descrizione] || "ISBN #{rp[:codice_isbn]}",
       prezzo_in_cents: prezzo_cents,
       editore: editore,
+      categoria: Categoria.find_by(nome_categoria: "non classificato") || Categoria.first,
       user: Current.user
     )
   end
