@@ -200,7 +200,7 @@ class Documento < ApplicationRecord
 
   def totale_importo
     return totale_cents / 100.0 if totale_cents.present?
-    righe.sum(&:importo)
+    righe.sum(&:importo) + (spese_cents || 0) / 100.0
   end
 
   def totale_copie
@@ -209,7 +209,7 @@ class Documento < ApplicationRecord
   end
 
   def ricalcola_totali!
-    totale_importo_calcolato = righe.sum(&:importo_cents).round
+    totale_importo_calcolato = righe.sum(&:importo_cents).round + (spese_cents || 0)
     totale_copie_calcolato = righe.sum(&:quantita)
 
     update_columns(
@@ -404,7 +404,7 @@ class Documento < ApplicationRecord
     return if documento_righe.empty?
     return if totale_cents.present? && totale_cents > 0
 
-    totale_importo_calcolato = righe.sum(&:importo_cents)
+    totale_importo_calcolato = righe.sum(&:importo_cents) + (spese_cents || 0)
     totale_copie_calcolato = righe.sum(&:quantita)
 
     self.totale_cents = totale_importo_calcolato
