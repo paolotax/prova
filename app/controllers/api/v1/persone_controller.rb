@@ -39,7 +39,27 @@ module Api
         }
       end
 
+      # POST /api/v1/persone/import
+      def import
+        importer = Persone::Importer.new(**import_params).import
+
+        status = importer.ok? ? :ok : :unprocessable_entity
+        render json: importer.result, status: status
+      end
+
+      # POST /api/v1/persone/import_batch
+      def import_batch
+        persone_data = params.require(:persone).map { |p| p.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, classi: []).to_h }
+        result = Persone::Importer.import_batch(persone_data)
+
+        render json: result
+      end
+
       private
+
+      def import_params
+        params.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, classi: []).to_h.symbolize_keys
+      end
 
       def format_persona(persona)
         {

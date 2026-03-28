@@ -527,7 +527,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :me, only: [:show], controller: "me"
       resources :appunti, only: [:create]
-      resources :persone, only: [:index]
+      resources :persone, only: [:index] do
+        collection do
+          post :import
+          post :import_batch
+        end
+      end
       resources :search, only: [:index]
     end
   end
