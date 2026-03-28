@@ -13,6 +13,7 @@ class Libri::BulkUpdatesController < ApplicationController
     end
 
     updated_count = @libri.update_all(update_params)
+    @libri.reload
 
     respond_to do |format|
       format.turbo_stream do
