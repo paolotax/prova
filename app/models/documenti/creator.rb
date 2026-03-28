@@ -81,7 +81,7 @@ class Documenti::Creator
       prezzo = if rp[:prezzo_cents].present?
                  rp[:prezzo_cents].to_i
                else
-                 (prezzo_copertina * (1 - sconto / 100.0)).round
+                 prezzo_copertina
                end
 
       riga = Riga.new(
@@ -117,7 +117,7 @@ class Documenti::Creator
 
   def save_documento
     @documento.totale_copie = @documento.righe.sum(&:quantita)
-    @documento.totale_cents = @documento.righe.sum { |r| r.prezzo_cents * r.quantita }
+    @documento.totale_cents = @documento.righe.sum(&:importo_cents)
 
     unless @documento.save
       return fail!(@documento.errors.full_messages.join(", "))
