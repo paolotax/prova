@@ -3,12 +3,13 @@ class Documenti::Creator
 
   attr_reader :documento, :error
 
-  def initialize(clientable_value:, causale_nome:, note: nil, data_documento: nil, numero_documento: nil, righe_params: [])
+  def initialize(clientable_value:, causale_nome:, note: nil, data_documento: nil, numero_documento: nil, ddt_numero: nil, righe_params: [])
     @clientable_value = clientable_value
     @causale_nome = causale_nome
     @note = note
     @data_documento = data_documento
     @numero_documento = numero_documento
+    @ddt_numero = ddt_numero
     @righe_params = righe_params
   end
 
@@ -96,12 +97,44 @@ class Documenti::Creator
     predecessori = Causale.select { |c| Array(c.causali_successive).include?(@causale.id.to_s) }
     return nil if predecessori.empty?
 
-    # Cerca documenti aperti dello stesso clientable
-    Current.account.documenti
+    scope = Current.account.documenti
       .where(clientable: @clientable, causale: predecessori)
       .where(documento_padre_id: nil)
-      .order(data_documento: :desc)
-      .first
+
+    if @ddt_numero.present?
+      # Cerca per numero DDT (strip prefisso anno se lungo)
+      num = parse_ddt_numero
+      scope.find_by(numero_documento: num)
+    else
+      scope.order(data_documento: :desc).first
+    end
+  end
+
+  def parse_ddt_numero
+    n = @ddt_numero.to_s
+    n = n[4..] if n.length > 7
+    n.to_i
+  end
+
+  def update_righe_from_fattura
+    @righe_params.each do |rp|
+      libro = resolve_libro_for_update(rp) or next
+      riga = @from_padre.righe.find_by(libro: libro) or next
+
+      riga.sconto = rp[:sconto].to_f if rp[:sconto].present?
+      riga.prezzo_cents = rp[:prezzo_cents].to_i if rp[:prezzo_cents].present?
+      riga.save! if riga.changed?
+    end
+  end
+
+  def resolve_libro_for_update(rp)
+    if rp[:libro_id].present?
+      Current.account.libri.find_by(id: rp[:libro_id])
+    elsif rp[:codice_isbn].present?
+      Current.account.libri.find_by(codice_isbn: rp[:codice_isbn])
+    elsif rp[:titolo].present?
+      Current.account.libri.search_all_word(rp[:titolo]).first
+    end
   end
 
   def parse_numero_documento
@@ -118,8 +151,11 @@ class Documenti::Creator
   end
 
   def add_righe
-    # Se derivato dal padre, le righe sono già condivise
-    return true if @from_padre
+    # Se derivato dal padre, aggiorna le righe condivise con sconti/prezzi dalla fattura
+    if @from_padre
+      update_righe_from_fattura if @righe_params.any?
+      return true
+    end
 
     @righe_params.each_with_index do |rp, i|
       libro = resolve_libro(rp, i) or return false

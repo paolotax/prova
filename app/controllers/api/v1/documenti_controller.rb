@@ -26,6 +26,7 @@ module Api
           note: params[:note],
           data_documento: params[:data_documento],
           numero_documento: params[:numero_documento],
+          ddt_numero: params[:ddt_numero],
           righe_params: Array(params[:righe]).map { |r|
             r.permit(:libro_id, :quantita, :sconto, :prezzo_cents, :titolo, :codice_isbn).to_h.symbolize_keys
           }
