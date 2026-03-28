@@ -93,7 +93,7 @@ class Documenti::Creator
 
   def find_documento_padre
     # Cerca causali che hanno questa causale come successiva
-    predecessori = Causale.where("? = ANY(causali_successive)", @causale.id.to_s)
+    predecessori = Causale.select { |c| Array(c.causali_successive).include?(@causale.id.to_s) }
     return nil if predecessori.empty?
 
     # Cerca documenti aperti dello stesso clientable
