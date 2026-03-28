@@ -33,7 +33,9 @@
   </span>
 
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
-   &nbsp;
+    <% if documento.spese_cents.to_i > 0 %>
+      Spese <strong><%= number_to_currency documento.spese_cents / 100.0, locale: :it %></strong>
+    <% end %>
   </span>
 
   <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
