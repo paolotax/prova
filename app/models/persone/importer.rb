@@ -3,7 +3,7 @@ class Persone::Importer
 
   attr_reader :persona, :matched_scuola, :matched_classi, :action, :changes, :error, :suggestions
 
-  def initialize(cognome:, nome: nil, email: nil, cellulare: nil, telefono: nil, scuola: nil, classi: nil)
+  def initialize(cognome:, nome: nil, email: nil, cellulare: nil, telefono: nil, scuola: nil, classi: nil, ruolo: "docente")
     @cognome = cognome
     @nome = nome
     @email = email
@@ -11,6 +11,7 @@ class Persone::Importer
     @telefono = telefono
     @scuola_query = scuola
     @classi_input = Array(classi)
+    @ruolo = ruolo
     @changes = []
     @matched_classi = []
   end
@@ -122,7 +123,7 @@ class Persone::Importer
       @persona.cellulare = @cellulare
       @persona.telefono = @telefono
       @persona.scuola = matched_scuola
-      @persona.ruolo = :docente
+      @persona.ruolo = @ruolo
       @persona.save!
       @action = "created"
     else
