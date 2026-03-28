@@ -28,10 +28,9 @@ module Api
       private
 
       def creator_params
-        permitted = params.fetch(:appunto, {}).permit(
-          :nome, :content, :appuntabile_value, :telefono, :email, attachments: []
+        permitted = params.permit(
+          :nome, :content, :appuntabile_value, :telefono, :email, :publish, attachments: []
         )
-        permitted[:publish] = params[:publish] if params[:publish].present?
         permitted.to_h
       end
     end
