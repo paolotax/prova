@@ -50,18 +50,24 @@ class Documenti::Creator
   def resolve_causale
     return fail!("causale obbligatoria") if @causale_nome.blank?
 
-    @causale = Current.account.causali.find_by("causale ILIKE ?", @causale_nome.strip)
+    @causale = Causale.find_by("causale ILIKE ?", @causale_nome.strip)
     return fail!("causale '#{@causale_nome}' non trovata") unless @causale
     true
   end
 
   def build_documento
+    numero = (Current.account.documenti
+                .where(causale: @causale)
+                .where("EXTRACT(YEAR FROM data_documento) = ?", Date.current.year)
+                .maximum(:numero_documento) || 0).to_i + 1
+
     @documento = Current.account.documenti.build(
       user: Current.user,
       causale: @causale,
       clientable: @clientable,
       note: @note,
-      data_documento: Date.current
+      data_documento: Date.current,
+      numero_documento: numero
     )
     true
   end
