@@ -122,6 +122,7 @@ class Persone::Importer
       @persona.cellulare = @cellulare
       @persona.telefono = @telefono
       @persona.scuola = matched_scuola
+      @persona.ruolo = :docente
       @persona.save!
       @action = "created"
     else
