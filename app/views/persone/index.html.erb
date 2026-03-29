@@ -7,6 +7,12 @@
   </h1>
 <% end %>
 
+<%= render "filters/settings",
+      filter_url: persone_path,
+      filter_type: "persona_filter",
+      user_filtering: @user_filtering,
+      no_filtering_url: persone_path %>
+
 <%= turbo_frame_tag :search_results do %>
   <% if @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">
@@ -25,6 +31,6 @@
       <% end %>
     </div>
   <% else %>
-    <%= blank_slate_for(:persone) %>
+    <%= blank_slate_for(:persone, filtering: @user_filtering) %>
   <% end %>
 <% end %>

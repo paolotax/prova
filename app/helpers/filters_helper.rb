@@ -67,6 +67,9 @@ module FiltersHelper
     when "denominazione" then "Per nome"
     when "data_documento" then "Per data"
     when "per_cliente" then "Per cliente"
+    when "cognome" then "Per cognome"
+    when "scuola" then "Per scuola"
+    when "recenti" then "Più recenti"
     else sort_value.humanize
     end
   end

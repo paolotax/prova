@@ -1,12 +1,13 @@
 class PersoneController < ApplicationController
+  include FilterScoped
+
   before_action :set_persona, except: [:index, :create]
 
+  FILTER_PARAMS = [:sorted_by, :stato_contatto, terms: [], classi: [], materie: [], ruoli: []].freeze
+
   def index
-    @persone = Current.account.persone
-                               .includes(:scuola, :classi)
-                               .order(:cognome, :nome)
-    @total_count = @persone.count
-    set_page_and_extract_portion_from @persone
+    @total_count = @filter.persone.count
+    set_page_and_extract_portion_from @filter.persone
   end
 
   def show
