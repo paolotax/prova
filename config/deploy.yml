@@ -2,6 +2,9 @@ service: prova
 
 image: paolotax/prova
 
+volumes:
+  - "/root/cli:/rails/public/cli"
+
 servers:
   web:
     hosts:
