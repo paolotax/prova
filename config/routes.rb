@@ -279,19 +279,15 @@ Rails.application.routes.draw do
 
     resources :titoli, only: [:show], param: :codice_isbn
 
-    resources :libri_importer, only: [:new, :create, :show] do
+    # Unified imports
+    resources :imports, only: [:new, :create, :show]
+
+    # Temporary: keep export_confezioni until fully migrated
+    resources :libri_importer, only: [] do
       collection do
-        post 'import_confezioni'
         get 'export_confezioni'
       end
     end
-
-    resource :clienti_importer, only: [:show, :create], controller: 'clienti_importer'
-
-    resources :documenti_importer, only: [:new, :create, :show]
-
-    # New unified imports controller (CRUD)
-    resources :imports, only: [:index, :new, :create, :show]
 
     get 'classi', to: 'classi#index'
     get 'classi/:id', to: 'classi#show', as: 'classe'

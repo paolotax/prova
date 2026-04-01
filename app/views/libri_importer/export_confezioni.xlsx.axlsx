@@ -1,5 +1,7 @@
 wb = xlsx_package.workbook
 
+text_format = wb.styles.add_style(format_code: '@')
+
 fields = ["confezione_isbn", "confezione_titolo", "fascicolo_isbn", "fascicolo_titolo", "row_order"]
 
 wb.add_worksheet(name: "Confezioni") do |sheet|
@@ -13,7 +15,8 @@ wb.add_worksheet(name: "Confezioni") do |sheet|
       row["fascicolo_isbn"],
       row["fascicolo_titolo"],
       row["row_order"]
-    ], types: [:string, :string, :string, :string, :integer]
+    ], types: [:string, :string, :string, :string, :integer],
+       style: [text_format, nil, text_format, nil, nil]
   end
 
 end

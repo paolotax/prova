@@ -1,8 +1,8 @@
-<% @page_title = "Importa Dati" %>
+<% @page_title = "Importazioni" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= header_back_link imports_path, label: "Storico" %>
+    <%= header_back_link account_root_path, label: "Dashboard" %>
   </div>
 
   <h1 class="header__title"><%= @page_title %></h1>
@@ -12,38 +12,47 @@
 
 <div id="import-form-top"></div>
 
-<%= turbo_frame_tag :import_form, data: { turbo_action: "advance" } do %>
-  <%= render "imports/forms/#{@import_form_type}_form", import: @import %>
-<% end %>
-
-<article class="panel panel--wide center txt-align-start margin-block-start">
-  <div class="flex flex-column gap-half">
-    <strong class="txt-ink">Altri tipi di importazione</strong>
-    <div class="flex gap-half flex-wrap">
-      <% import_types = %w[libri clienti documenti confezioni libri_avanzato documenti_avanzato] %>
-      <% current_type = @import_form_type %>
-      <% import_types.each do |type| %>
-        <% next if type == current_type %>
-        <%= link_to new_import_path(type: type),
-            class: "btn btn--small",
-            data: {
-              turbo_frame: :import_form,
-              turbo_action: "advance",
-              action: "turbo:before-fetch->scroll#toTop"
-            } do %>
-          <%= icon_tag import_type_icon(type), size: "small" %>
-          <span><%= import_type_label(type) %></span>
-        <% end %>
+<article class="panel panel--wide center txt-align-start">
+  <div class="flex gap-half">
+    <% %w[libri clienti documenti].each do |type| %>
+      <%= link_to new_import_path(type: type),
+          class: "btn #{@import_type == type ? 'btn--link' : ''}" do %>
+        <%= icon_tag import_type_icon(type), size: "small" %>
+        <span><%= import_type_label(type) %></span>
       <% end %>
-    </div>
+    <% end %>
   </div>
 </article>
 
-<script>
-  // Scroll to top when switching import types
-  document.addEventListener("turbo:frame-load", function(event) {
-    if (event.target.id === "import_form") {
-      document.getElementById("import-form-top").scrollIntoView({ behavior: "smooth" });
-    }
-  });
-</script>
+<%= turbo_frame_tag :import_form, data: { turbo_action: "advance" } do %>
+  <%= render "imports/forms/#{@import_type}_form",
+             import: @import,
+             subtype: @import_subtype %>
+<% end %>
+
+<% recent_imports = current_account.import_records.where(user: Current.user).recent.limit(10) %>
+<% if recent_imports.any? %>
+  <article class="panel panel--wide center txt-align-start margin-block-start">
+    <strong class="txt-ink txt-small">Importazioni recenti</strong>
+    <div class="flex flex-column gap-half margin-block-start-half">
+      <% recent_imports.each do |import| %>
+        <%= link_to import_path(import), class: "flex align-center justify-between gap pad-half border-radius" do %>
+          <div class="flex align-center gap-half">
+            <%= icon_tag import_type_icon(import.import_type), size: "small", class: import_type_text_class(import.import_type) %>
+            <span class="txt-small font-weight-bold"><%= import.import_type.humanize %></span>
+            <span class="txt-x-small txt-subtle"><%= time_ago_in_words(import.created_at) %> fa</span>
+          </div>
+          <div class="flex gap-half txt-x-small">
+            <% if import.completed? || import.failed? %>
+              <span class="txt-positive"><%= import.imported_count %></span>
+              <span class="txt-link"><%= import.updated_count %></span>
+              <span class="<%= import.errors_count > 0 ? 'txt-negative' : 'txt-subtle' %>"><%= import.errors_count %></span>
+            <% else %>
+              <span class="txt-subtle">In corso...</span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </article>
+<% end %>

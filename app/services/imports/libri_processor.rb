@@ -2,16 +2,29 @@
 
 module Imports
   class LibriProcessor < BaseProcessor
+    include ActionView::Helpers::SanitizeHelper
+
     protected
 
     def process_file
-      parse_excel do |row, line|
-        libro = assign_from_row(row)
-        track_result(libro, line: line)
+      if csv_file?
+        parse_csv do |row, line|
+          libro = assign_from_row(row)
+          track_result(libro, line: line)
+        end
+      else
+        parse_excel do |row, line|
+          libro = assign_from_row(row)
+          track_result(libro, line: line)
+        end
       end
     end
 
     private
+
+    def csv_file?
+      file_path.to_s.end_with?('.csv')
+    end
 
     def assign_from_row(row)
       codice_isbn = row[:codice_isbn] || row[:isbn] || row[:ean]

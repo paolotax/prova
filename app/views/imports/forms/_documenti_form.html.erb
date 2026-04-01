@@ -1,48 +1,95 @@
 <%= turbo_frame_tag :import_form do %>
-  <article class="panel panel--wide shadow center txt-align-start">
-    <%= form_with model: import, url: imports_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
+  <article class="panel panel--wide center txt-align-start margin-block-start">
+    <div class="flex gap-half">
+      <% subtypes = [["xml", "Fattura XML", "document-check"], ["excel", "Righe Excel", "table-cells"], ["pdf", "NdC PDF", "truck"]] %>
+      <% current_subtype = local_assigns[:subtype] || "xml" %>
+      <% subtypes.each do |key, label, icon| %>
+        <%= link_to new_import_path(type: "documenti", subtype: key),
+            class: "btn btn--small #{current_subtype == key ? 'btn--link' : ''}",
+            data: { turbo_frame: :import_form } do %>
+          <%= icon_tag icon, size: "small" %>
+          <span><%= label %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </article>
+
+  <% doc_subtype = local_assigns[:subtype] || "xml" %>
+
+  <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+    <%= form_with model: import, url: imports_path, method: :post,
+        class: "flex flex-column gap",
+        data: { controller: "form upload-preview", turbo_frame: "_top" }, multipart: true do |f| %>
       <%= f.hidden_field :import_type, value: "documenti" %>
+      <%= f.hidden_field "import_record[metadata][format]", value: doc_subtype %>
 
-      <div class="flex align-center gap">
-        <%= icon_tag "document", class: "txt-feature", size: "large" %>
-        <h2 class="txt-large margin-none font-weight-black">Importa Documenti</h2>
-      </div>
+      <% case doc_subtype %>
+      <% when "xml" %>
+        <h2 class="txt-large margin-none font-weight-black">Fattura Elettronica XML</h2>
+        <p class="txt-subtle margin-none txt-small">Importa da file FatturaPA. Crea documento con righe.</p>
 
-      <p class="txt-subtle margin-none">
-        Carica un file XML (fattura elettronica) o Excel contenente righe documento con ISBN e quantità.
-      </p>
+        <label class="btn input--upload">
+          <div data-upload-preview-target="placeholder">Scegli un file XML...</div>
+          <div data-upload-preview-target="fileName" hidden></div>
+          <%= f.file_field :file, accept: ".xml", required: true,
+              data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+        </label>
 
-      <div class="flex flex-column gap-half">
-        <strong><%= f.label :file, "Seleziona file" %></strong>
-        <%= f.file_field :file,
-            accept: 'text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            class: "input",
-            required: true,
-            data: { action: "keydown.esc@document->form#cancel" } %>
-      </div>
+      <% when "excel" %>
+        <h2 class="txt-large margin-none font-weight-black">Righe Documento da Excel</h2>
+        <p class="txt-subtle margin-none txt-small">Aggiungi righe a un documento esistente.</p>
 
-      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
-        <%= icon_tag "arrow-down-tray" %>
-        <span>Importa Documenti</span>
+        <div class="flex flex-column gap-half">
+          <strong class="txt-small">Documento di destinazione</strong>
+          <%= f.select "import_record[metadata][documento_id]",
+              options_from_collection_for_select(
+                current_account.documenti.order(data_documento: :desc).limit(50),
+                :id,
+                ->(d) { "#{d.numero_documento} - #{d.clientable&.denominazione} (#{d.data_documento&.strftime('%d/%m/%Y')})" }
+              ),
+              { prompt: "Seleziona un documento" },
+              class: "input input--select", required: true %>
+        </div>
+
+        <label class="btn input--upload">
+          <div data-upload-preview-target="placeholder">Scegli un file CSV/Excel...</div>
+          <div data-upload-preview-target="fileName" hidden></div>
+          <%= f.file_field :file, accept: ".csv,.xlsx,.xls", required: true,
+              data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+        </label>
+
+      <% when "pdf" %>
+        <h2 class="txt-large margin-none font-weight-black">Nota di Consegna PDF</h2>
+        <p class="txt-subtle margin-none txt-small">Importa NdC da PDF (es. Giunti Scuola).</p>
+
+        <label class="btn input--upload">
+          <div data-upload-preview-target="placeholder">Scegli un file PDF...</div>
+          <div data-upload-preview-target="fileName" hidden></div>
+          <%= f.file_field :file, accept: ".pdf", required: true,
+              data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+        </label>
       <% end %>
 
-      <%= link_to "Annulla", imports_path, data: { form_target: "cancel" }, hidden: true %>
+      <%= f.button type: :submit, class: "btn btn--link center" do %>
+        <span>Importa</span>
+      <% end %>
     <% end %>
   </article>
 
   <article class="panel panel--wide center txt-align-start margin-block-start">
     <div class="flex flex-column gap-half txt-small txt-subtle">
-      <strong class="txt-ink">Formati supportati</strong>
-      <p class="margin-none">XML fattura elettronica, Excel (.xlsx)</p>
-
-      <strong class="txt-ink margin-block-start-half">Per file XML</strong>
-      <p class="margin-none">Viene parsata la fattura elettronica e creato automaticamente il documento con le righe.</p>
-
-      <strong class="txt-ink margin-block-start-half">Per file Excel</strong>
-      <p class="margin-none">Colonne: codice_isbn, quantita, prezzo_unitario</p>
-
-      <strong class="txt-ink margin-block-start-half">Nota</strong>
-      <p class="margin-none">I libri devono già esistere nel sistema. Il cliente viene cercato tramite P.IVA presente nella fattura.</p>
+      <% case doc_subtype %>
+      <% when "xml" %>
+        <div><strong class="txt-ink">Input:</strong> file FatturaPA XML</div>
+        <div><strong class="txt-ink">Crea:</strong> documento + righe. Cliente trovato via P.IVA</div>
+        <div><strong class="txt-ink">Nota:</strong> i libri devono esistere nel catalogo</div>
+      <% when "excel" %>
+        <div><strong class="txt-ink">Colonne:</strong> codice_isbn (o ean/isbn), quantita (o qta), sconto (opzionale)</div>
+        <div><strong class="txt-ink">Nota:</strong> il documento deve già esistere. Libri creati se mancanti</div>
+      <% when "pdf" %>
+        <div><strong class="txt-ink">Formato:</strong> PDF con "NOTA DI CONSEGNA N. XXXXX del DD-MM-YYYY"</div>
+        <div><strong class="txt-ink">Crea:</strong> documento DDT Fornitore + righe. Libri creati se mancanti</div>
+      <% end %>
     </div>
   </article>
 <% end %>

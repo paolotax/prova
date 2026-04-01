@@ -7,7 +7,6 @@ class ClientiController < ApplicationController
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
-    @import = ClientiImporter.new
     @clienti = @filter.clienti.includes(:saldo)
     @total_count = @clienti.count
     set_page_and_extract_portion_from @clienti

@@ -28,6 +28,7 @@
 #
 class ImportRecord < ApplicationRecord
   include AccountScoped
+  broadcasts_refreshes
 
   belongs_to :user
   has_one_attached :file
@@ -54,25 +55,29 @@ class ImportRecord < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
 
   def process!
-    update!(status: :processing, started_at: Time.current)
+    update_columns(status: self.class.statuses[:processing], started_at: Time.current)
 
-    result = processor_class.new(file, user, metadata: metadata, account: account).call
+    result = processor_class.new(file, user, metadata: metadata&.stringify_keys, account: account).call
 
-    update!(
-      status: result.success? ? :completed : :failed,
+    update_columns(
+      status: result.success? ? self.class.statuses[:completed] : self.class.statuses[:failed],
       completed_at: Time.current,
       imported_count: result.imported_count,
       updated_count: result.updated_count,
       errors_count: result.errors_count,
-      error_messages: result.errors.first(50)
+      error_messages: result.errors.first(50),
+      updated_at: Time.current
     )
   rescue StandardError => e
-    update!(
-      status: :failed,
+    update_columns(
+      status: self.class.statuses[:failed],
       completed_at: Time.current,
-      error_messages: [e.message]
+      error_messages: [e.message],
+      updated_at: Time.current
     )
     raise
+  ensure
+    broadcast_refresh rescue nil
   end
 
   def total_records

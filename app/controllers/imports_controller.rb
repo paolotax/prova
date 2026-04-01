@@ -3,19 +3,10 @@
 class ImportsController < ApplicationController
   before_action :set_import, only: [:show]
 
-  def index
-    @imports = current_account.import_records
-                              .where(user: Current.user)
-                              .recent
-                              .limit(50)
-  end
-
   def new
-    # Advanced types don't have a corresponding enum value
-    type = params[:type]
-    enum_type = type.in?(%w[libri_avanzato documenti_avanzato]) ? nil : type
-    @import = ImportRecord.new(import_type: enum_type)
-    @import_form_type = type || "libri"
+    @import = ImportRecord.new
+    @import_type = params[:type] || "libri"
+    @import_subtype = params[:subtype]
   end
 
   def create
@@ -24,9 +15,10 @@ class ImportsController < ApplicationController
 
     if @import.save
       ImportProcessJob.perform_later(@import.id)
-      redirect_to import_path(@import), notice: "Import avviato. Verrai notificato al completamento."
+      redirect_to import_path(@import)
     else
-      @import_form_type = @import.import_type || "libri"
+      @import_type = @import.import_type || "libri"
+      @import_subtype = params.dig(:import_record, :metadata, :subtype)
       render :new, status: :unprocessable_entity
     end
   end

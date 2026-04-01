@@ -1,48 +1,100 @@
 <%= turbo_frame_tag :import_form do %>
-  <article class="panel panel--wide shadow center txt-align-start">
-    <%= form_with model: import, url: imports_path, method: :post, html: { class: "flex flex-column gap", multipart: true }, data: { controller: "form", turbo: false } do |f| %>
-      <%= f.hidden_field :import_type, value: "libri" %>
-
-      <div class="flex align-center gap">
-        <%= icon_tag "book", class: "txt-link", size: "large" %>
-        <h2 class="txt-large margin-none font-weight-black">Importa Libri</h2>
-      </div>
-
-      <p class="txt-subtle margin-none">
-        Carica un file CSV o Excel contenente i dati dei libri. Il sistema aggiorna automaticamente i libri esistenti in base all'ISBN.
-      </p>
-
-      <div class="flex flex-column gap-half">
-        <strong><%= f.label :file, "Seleziona file" %></strong>
-        <%= f.file_field :file,
-            accept: 'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel',
-            class: "input",
-            required: true,
-            data: { action: "keydown.esc@document->form#cancel" } %>
-      </div>
-
-      <%= f.button type: :submit, class: "btn btn--link center txt-medium" do %>
-        <%= icon_tag "arrow-down-tray" %>
-        <span>Importa Libri</span>
-      <% end %>
-
-      <%= link_to "Annulla", imports_path, data: { form_target: "cancel" }, hidden: true %>
-    <% end %>
-  </article>
-
   <article class="panel panel--wide center txt-align-start margin-block-start">
-    <div class="flex flex-column gap-half txt-small txt-subtle">
-      <strong class="txt-ink">Formati supportati</strong>
-      <p class="margin-none">CSV (.csv), Excel (.xlsx, .xls)</p>
-
-      <strong class="txt-ink margin-block-start-half">Colonne richieste</strong>
-      <p class="margin-none">codice_isbn, titolo, editore, prezzo</p>
-
-      <strong class="txt-ink margin-block-start-half">Colonne opzionali</strong>
-      <p class="margin-none">sottotitolo, autore, anno, materia, categoria</p>
-
-      <strong class="txt-ink margin-block-start-half">Gestione duplicati</strong>
-      <p class="margin-none">Il sistema cerca libri esistenti tramite ISBN. Se trova un match, aggiorna i dati; altrimenti crea un nuovo libro.</p>
+    <div class="flex gap-half">
+      <% subtypes = [["standard", "Catalogo", "book"], ["confezioni", "Confezioni", "cube"]] %>
+      <% current_subtype = local_assigns[:subtype] || "standard" %>
+      <% subtypes.each do |key, label, icon| %>
+        <%= link_to new_import_path(type: "libri", subtype: key),
+            class: "btn btn--small #{current_subtype == key ? 'btn--link' : ''}",
+            data: { turbo_frame: :import_form } do %>
+          <%= icon_tag icon, size: "small" %>
+          <span><%= label %></span>
+        <% end %>
+      <% end %>
     </div>
   </article>
+
+  <% if (local_assigns[:subtype] || "standard") == "confezioni" %>
+    <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+      <%= form_with model: import, url: imports_path, method: :post,
+          class: "flex flex-column gap",
+          data: { controller: "form upload-preview", turbo_frame: "_top" }, multipart: true do |f| %>
+        <%= f.hidden_field :import_type, value: "confezioni" %>
+
+        <h2 class="txt-large margin-none font-weight-black">Importa Confezioni</h2>
+
+        <p class="txt-subtle margin-none txt-small">
+          Relazioni confezione-fascicolo da file Excel. I libri devono esistere nel sistema.
+        </p>
+
+        <label class="btn input--upload">
+          <div data-upload-preview-target="placeholder">Scegli un file Excel...</div>
+          <div data-upload-preview-target="fileName" hidden></div>
+          <%= f.file_field :file,
+              accept: ".xlsx,.xls",
+              required: true,
+              data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+        </label>
+
+        <%= f.button type: :submit, class: "btn btn--link center" do %>
+          <span>Importa Confezioni</span>
+        <% end %>
+      <% end %>
+    </article>
+
+    <article class="panel panel--wide center txt-align-start margin-block-start">
+      <div class="flex align-center justify-between">
+        <div>
+          <strong class="txt-small">Esporta confezioni</strong>
+          <p class="txt-x-small txt-subtle margin-none">Scarica le relazioni come Excel</p>
+        </div>
+        <%= link_to export_confezioni_libri_importer_index_path(format: :xlsx), class: "btn btn--small" do %>
+          <%= icon_tag "arrow-up-tray", size: "small" %>
+          <span>Esporta .xlsx</span>
+        <% end %>
+      </div>
+    </article>
+
+    <article class="panel panel--wide center txt-align-start margin-block-start">
+      <div class="txt-small txt-subtle">
+        <strong class="txt-ink">Colonne richieste:</strong> confezione_isbn, fascicolo_isbn, row_order
+      </div>
+    </article>
+
+  <% else %>
+    <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+      <%= form_with model: import, url: imports_path, method: :post,
+          class: "flex flex-column gap",
+          data: { controller: "form upload-preview", turbo_frame: "_top" }, multipart: true do |f| %>
+        <%= f.hidden_field :import_type, value: "libri" %>
+
+        <h2 class="txt-large margin-none font-weight-black">Importa Libri</h2>
+
+        <p class="txt-subtle margin-none txt-small">
+          Carica un file CSV o Excel. I libri esistenti vengono aggiornati in base all'ISBN.
+        </p>
+
+        <label class="btn input--upload">
+          <div data-upload-preview-target="placeholder">Scegli un file...</div>
+          <div data-upload-preview-target="fileName" hidden></div>
+          <%= f.file_field :file,
+              accept: ".csv,.xlsx,.xls",
+              required: true,
+              data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+        </label>
+
+        <%= f.button type: :submit, class: "btn btn--link center" do %>
+          <span>Importa Libri</span>
+        <% end %>
+      <% end %>
+    </article>
+
+    <article class="panel panel--wide center txt-align-start margin-block-start">
+      <div class="flex flex-column gap-half txt-small txt-subtle">
+        <div><strong class="txt-ink">Colonne richieste:</strong> codice_isbn, titolo, editore, prezzo</div>
+        <div><strong class="txt-ink">Opzionali:</strong> sottotitolo, autore, anno, materia, categoria, prezzo_suggerito</div>
+        <div><strong class="txt-ink">Deduplica:</strong> per ISBN</div>
+      </div>
+    </article>
+  <% end %>
 <% end %>

@@ -13,8 +13,8 @@ module Imports
     private
 
     def process_confezione_row(row, line)
-      confezione_isbn = row[:confezione_isbn]
-      fascicolo_isbn = row[:fascicolo_isbn]
+      confezione_isbn = normalize_isbn(row[:confezione_isbn])
+      fascicolo_isbn = normalize_isbn(row[:fascicolo_isbn])
       row_order = row[:row_order].to_i
 
       confezione = Libro.find_by(codice_isbn: confezione_isbn, user_id: @user.id)
@@ -48,11 +48,16 @@ module Imports
 
         if confezione_riga.save
           confezione_riga.update_column(:row_order, row_order) if row_order.present?
-          @created_count += 1
+          @imported_count += 1
         else
           add_error(confezione_riga.errors.full_messages.join(", "), line: line)
         end
       end
+    end
+    def normalize_isbn(value)
+      isbn = value.to_s.strip.gsub(/\.0\z/, '')
+      isbn = isbn.ljust(13, '0') if isbn.match?(/\A\d{10,12}\z/)
+      isbn
     end
   end
 end
