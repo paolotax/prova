@@ -23,7 +23,7 @@ module Api
         end
 
         def import_params
-          params.except(:controller, :action, :libro_id, :libri, :format, :on_conflict)
+          params.except(:controller, :action, :libro_id, :libri, :format, :on_conflict, :import)
                 .permit!.to_h.symbolize_keys
                 .merge(on_conflict: on_conflict)
         end
