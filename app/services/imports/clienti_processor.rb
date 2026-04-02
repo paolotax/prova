@@ -42,9 +42,9 @@ module Imports
 
     def assign_from_row(row)
       cliente = if row[:partita_iva].nil?
-        @user.clienti.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize
+        @account.clienti.where(codice_fiscale: row[:codice_fiscale]).first_or_initialize
       else
-        @user.clienti.where(partita_iva: row[:partita_iva]).first_or_initialize
+        @account.clienti.where(partita_iva: row[:partita_iva]).first_or_initialize
       end
 
       cliente.account_id ||= @account&.id if @account

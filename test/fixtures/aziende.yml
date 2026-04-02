@@ -25,10 +25,10 @@
 #
 # Indexes
 #
-#  index_aziende_on_account_id      (account_id) UNIQUE
-#  index_aziende_on_codice_fiscale  (codice_fiscale) UNIQUE
-#  index_aziende_on_partita_iva     (partita_iva) UNIQUE
-#  index_aziende_on_user_id         (user_id)
+#  index_aziende_on_account_id                     (account_id) UNIQUE
+#  index_aziende_on_account_id_and_codice_fiscale  (account_id,codice_fiscale) UNIQUE
+#  index_aziende_on_account_id_and_partita_iva     (account_id,partita_iva) UNIQUE
+#  index_aziende_on_user_id                        (user_id)
 #
 
 fizzy_azienda:

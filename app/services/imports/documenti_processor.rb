@@ -30,7 +30,7 @@ module Imports
     end
 
     def process_excel
-      documento = @user.documenti.find(@metadata["documento_id"])
+      documento = @account.documenti.find(@metadata["documento_id"])
       righe_con_errori = []
 
       parse_excel do |row, line|
@@ -76,7 +76,7 @@ module Imports
       end
 
       partita_iva = doc.xpath('//CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice').text
-      cliente = @user.clienti.find_by(partita_iva: partita_iva)
+      cliente = @account.clienti.find_by(partita_iva: partita_iva)
 
       unless cliente
         add_error("Cliente non trovato con P.IVA: #{partita_iva}")
@@ -98,7 +98,7 @@ module Imports
         return
       end
 
-      if @user.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
+      if @account.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
         add_error("Documento n. #{numero_documento} già presente per questo cliente")
         return
       end
@@ -128,7 +128,7 @@ module Imports
           codice_articoli.xpath("./CodiceValore").text
         end
 
-        libro = @user.libri.find_by(codice_isbn: codice_valore)
+        libro = @account.libri.find_by(codice_isbn: codice_valore)
 
         if libro
           documento.documento_righe.build(posizione: posizione).build_riga(
@@ -186,14 +186,14 @@ module Imports
       piva_match = text.match(/P\.I\.\s*IT\s*(\d{11})/)
       partita_iva = piva_match ? piva_match[1] : nil
 
-      cliente = @user.clienti.find_by(partita_iva: partita_iva) if partita_iva
+      cliente = @account.clienti.find_by(partita_iva: partita_iva) if partita_iva
       unless cliente
         add_error("Fornitore non trovato con P.IVA: #{partita_iva || 'non trovata'}")
         return
       end
 
       # Verifica duplicati
-      if @user.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
+      if @account.documenti.find_by(numero_documento: numero_documento, causale_id: causale.id, clientable_id: cliente.id)
         add_error("Documento NdC n. #{numero_documento} già presente")
         return
       end
@@ -232,7 +232,7 @@ module Imports
         posizione += 1
 
         # Cerca libro per EAN, se non esiste lo crea
-        libro = @user.libri.find_by(codice_isbn: ean)
+        libro = @account.libri.find_by(codice_isbn: ean)
         libro_creato = false
 
         unless libro
@@ -282,7 +282,7 @@ module Imports
     end
 
     def find_or_create_libro(row, codice, line)
-      libro = @user.libri.find_by(codice_isbn: codice)
+      libro = @account.libri.find_by(codice_isbn: codice)
       return libro if libro
 
       titolo = row[:titolo] || row[:descrizione] || "Libro #{codice}"

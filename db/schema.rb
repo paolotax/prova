@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_171824) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_225246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -258,9 +258,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_171824) do
     t.string "telefono"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["account_id", "codice_fiscale"], name: "index_aziende_on_account_id_and_codice_fiscale", unique: true
+    t.index ["account_id", "partita_iva"], name: "index_aziende_on_account_id_and_partita_iva", unique: true
     t.index ["account_id"], name: "index_aziende_on_account_id", unique: true
-    t.index ["codice_fiscale"], name: "index_aziende_on_codice_fiscale", unique: true
-    t.index ["partita_iva"], name: "index_aziende_on_partita_iva", unique: true
     t.index ["user_id"], name: "index_aziende_on_user_id"
   end
 
