@@ -39,6 +39,15 @@ class Libri::Importer
     end
   end
 
+  def batch_result
+    {
+      imported: action == "created" ? 1 : 0,
+      updated: action == "updated" ? 1 : 0,
+      skipped: action == "skipped" ? 1 : 0,
+      errors: ok? ? [] : [result[:error]]
+    }
+  end
+
   # Batch import
   def self.import_batch(items, on_conflict: "update")
     counters = { imported: 0, updated: 0, skipped: 0, errors: [] }
@@ -92,7 +101,7 @@ class Libri::Importer
   end
 
   def find_or_create_libro
-    @libro = Current.user.libri.find_by(codice_isbn: @isbn)
+    @libro = Current.account.libri.find_by(codice_isbn: @isbn)
 
     if @libro
       if @on_conflict == "skip"
@@ -104,8 +113,7 @@ class Libri::Importer
       @libro.save!
       @action = "updated"
     else
-      @libro = Current.user.libri.build(codice_isbn: @isbn)
-      @libro.account = Current.account
+      @libro = Current.account.libri.build(codice_isbn: @isbn, user: Current.user)
       assign_attributes
       @libro.categoria ||= resolve_categoria
       @libro.save!
