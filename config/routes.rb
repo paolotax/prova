@@ -523,13 +523,15 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :me, only: [:show], controller: "me"
       resources :appunti, only: [:create]
-      resources :libri, only: [:index]
+      resources :libri, only: [:index] do
+        resources :imports, only: [:create], controller: "libri/imports"
+      end
       resources :documenti, only: [:create]
       resources :persone, only: [:index] do
-        collection do
-          post :import
-          post :import_batch
-        end
+        resources :imports, only: [:create], controller: "persone/imports"
+      end
+      resources :clienti, only: [] do
+        resources :imports, only: [:create], controller: "clienti/imports"
       end
       resources :search, only: [:index]
     end

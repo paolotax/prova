@@ -28,10 +28,9 @@ module Imports
 
     def assign_from_row(row)
       codice_isbn = row[:codice_isbn] || row[:isbn] || row[:ean]
-      user_id = @user.id
 
-      libro = Libro.where(codice_isbn: codice_isbn, user_id: user_id).first_or_initialize
-      libro.account_id ||= @account.id if @account
+      libro = @account.libri.where(codice_isbn: codice_isbn).first_or_initialize
+      libro.user_id ||= @user.id
       libro.codice_isbn = codice_isbn if codice_isbn.present?
 
       titolo = row[:titolo] || row[:descrizione]
