@@ -77,6 +77,9 @@ swarm.log
 # Playwright
 .playwright-mcp/
 
+# Scagnozz CLI binaries (served via bind mount)
+/public/cli/
+
 # Claude-mem generated CLAUDE.md files (keep only root)
 **/CLAUDE.md
 !/CLAUDE.md
