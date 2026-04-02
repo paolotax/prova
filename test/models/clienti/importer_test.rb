@@ -13,7 +13,7 @@ class Clienti::ImporterTest < ActiveSupport::TestCase
   end
 
   test "creates cliente with fuzzy input" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       nome: "Libreria Roma Srl",
       piva: "  001122334-45 ",
       citta: "Roma",
@@ -21,17 +21,19 @@ class Clienti::ImporterTest < ActiveSupport::TestCase
       email: "INFO@Libreria.IT"
     ).import
 
-    assert result.ok?, "Expected ok? but got error: #{result.error}"
-    assert_equal "created", result.action
-    assert_equal "Libreria Roma Srl", result.cliente.denominazione
-    assert_equal "00112233445", result.cliente.partita_iva
-    assert_equal "Roma", result.cliente.comune
-    assert_equal "ABCDEFG", result.cliente.indirizzo_telematico
-    assert_equal "info@libreria.it", result.cliente.email
+    assert importer.ok?, "Expected ok? but got error: #{importer.error}"
+    assert_equal "created", importer.action
+
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal "Libreria Roma Srl", cliente.denominazione
+    assert_equal "00112233445", cliente.partita_iva
+    assert_equal "Roma", cliente.comune
+    assert_equal "ABCDEFG", cliente.indirizzo_telematico
+    assert_equal "info@libreria.it", cliente.email
   end
 
   test "creates cliente with rigid input" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Cartolibreria Milano Srl",
       partita_iva: "55667788990",
       comune: "Milano",
@@ -41,45 +43,47 @@ class Clienti::ImporterTest < ActiveSupport::TestCase
       provincia: "MI"
     ).import
 
-    assert result.ok?
-    assert_equal "created", result.action
-    assert_equal "Cartolibreria Milano Srl", result.cliente.denominazione
-    assert_equal "55667788990", result.cliente.partita_iva
-    assert_equal "Milano", result.cliente.comune
-    assert_equal "Via Roma", result.cliente.indirizzo
-    assert_equal "10", result.cliente.numero_civico
-    assert_equal "20100", result.cliente.cap
-    assert_equal "MI", result.cliente.provincia
+    assert importer.ok?
+    assert_equal "created", importer.action
+
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal "Cartolibreria Milano Srl", cliente.denominazione
+    assert_equal "55667788990", cliente.partita_iva
+    assert_equal "Milano", cliente.comune
+    assert_equal "Via Roma", cliente.indirizzo
+    assert_equal "10", cliente.numero_civico
+    assert_equal "20100", cliente.cap
+    assert_equal "MI", cliente.provincia
   end
 
   test "updates existing cliente by partita_iva with on_conflict update" do
     existing = clienti(:cliente_fizzy)
 
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Cliente Fizzy Aggiornato",
       partita_iva: existing.partita_iva,
       comune: "Firenze"
     ).import
 
-    assert result.ok?
-    assert_equal "updated", result.action
-    assert_equal existing.id, result.cliente.id
-    assert_equal "Cliente Fizzy Aggiornato", result.cliente.reload.denominazione
-    assert_equal "Firenze", result.cliente.comune
+    assert importer.ok?
+    assert_equal "updated", importer.action
+    assert_equal existing.id, importer.result[:id]
+    assert_equal "Cliente Fizzy Aggiornato", existing.reload.denominazione
+    assert_equal "Firenze", existing.comune
   end
 
   test "skips existing cliente when on_conflict skip" do
     existing = clienti(:cliente_fizzy)
     original_denominazione = existing.denominazione
 
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Nome Diverso",
       partita_iva: existing.partita_iva,
       on_conflict: "skip"
     ).import
 
-    assert result.ok?
-    assert_equal "skipped", result.action
+    assert importer.ok?
+    assert_equal "skipped", importer.action
     assert_equal original_denominazione, existing.reload.denominazione
   end
 
@@ -87,25 +91,25 @@ class Clienti::ImporterTest < ActiveSupport::TestCase
     existing = clienti(:cliente_fizzy)
     existing.update!(codice_fiscale: "RSSMRA85M01H501Z", partita_iva: nil)
 
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Aggiornato via CF",
       cf: " rssmra85m01h501z "
     ).import
 
-    assert result.ok?
-    assert_equal "updated", result.action
-    assert_equal existing.id, result.cliente.id
-    assert_equal "RSSMRA85M01H501Z", result.cliente.codice_fiscale
+    assert importer.ok?
+    assert_equal "updated", importer.action
+    assert_equal existing.id, importer.result[:id]
+    assert_equal "RSSMRA85M01H501Z", existing.reload.codice_fiscale
   end
 
   test "fails without denominazione or nome" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       partita_iva: "11111111111",
       comune: "Roma"
     ).import
 
-    assert_not result.ok?
-    assert_match(/denominazione/i, result.error)
+    assert_not importer.ok?
+    assert_match(/denominazione/i, importer.error)
   end
 
   test "import_batch creates multiple clienti" do
@@ -138,46 +142,50 @@ class Clienti::ImporterTest < ActiveSupport::TestCase
   end
 
   test "maps ragione_sociale to denominazione" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       ragione_sociale: "Test Ragione Sociale",
       piva: "44444444444"
     ).import
 
-    assert result.ok?
-    assert_equal "Test Ragione Sociale", result.cliente.denominazione
+    assert importer.ok?
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal "Test Ragione Sociale", cliente.denominazione
   end
 
   test "maps nome_persona and cognome correctly" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Rossi Mario Cartolibreria",
       cognome: "Rossi",
       nome_persona: "Mario",
       piva: "55555555555"
     ).import
 
-    assert result.ok?
-    assert_equal "Rossi", result.cliente.cognome
-    assert_equal "Mario", result.cliente.nome
+    assert importer.ok?
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal "Rossi", cliente.cognome
+    assert_equal "Mario", cliente.nome
   end
 
   test "downcases pec" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Test PEC",
       piva: "66666666666",
       pec: "INFO@PEC.IT"
     ).import
 
-    assert result.ok?
-    assert_equal "info@pec.it", result.cliente.pec
+    assert importer.ok?
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal "info@pec.it", cliente.pec
   end
 
   test "new clienti get current user" do
-    result = Clienti::Importer.new(
+    importer = Clienti::Importer.new(
       denominazione: "Test User Assignment",
       piva: "77777777777"
     ).import
 
-    assert result.ok?
-    assert_equal Current.user, result.cliente.user
+    assert importer.ok?
+    cliente = Cliente.find(importer.result[:id])
+    assert_equal Current.user, cliente.user
   end
 end

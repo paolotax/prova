@@ -46,7 +46,7 @@ class Clienti::Importer
 
   def result
     if ok?
-      { ok: true, action: action, cliente: cliente }
+      { ok: true, action: action, id: cliente.id }
     else
       { ok: false, error: error }
     end
@@ -64,7 +64,7 @@ class Clienti::Importer
   def self.import_batch(items, on_conflict: "update")
     counters = { imported: 0, updated: 0, skipped: 0, errors: [] }
 
-    items.each do |data|
+    items.each_with_index do |data, i|
       importer = new(**data.symbolize_keys, on_conflict: on_conflict).import
       if importer.ok?
         case importer.action
@@ -73,7 +73,7 @@ class Clienti::Importer
         when "skipped"  then counters[:skipped] += 1
         end
       else
-        counters[:errors] << importer.error
+        counters[:errors] << "riga #{i + 1}: #{importer.error}"
       end
     end
 
@@ -109,9 +109,6 @@ class Clienti::Importer
     else
       @cliente = Current.account.clienti.build(user: Current.user)
       assign_attributes
-      @cliente.denominazione = @denominazione
-      @cliente.partita_iva = @partita_iva if @partita_iva.present?
-      @cliente.codice_fiscale = @codice_fiscale if @codice_fiscale.present?
       @cliente.save!
       @action = "created"
     end
