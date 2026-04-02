@@ -77,11 +77,15 @@ class Libri::Importer
   end
 
   def resolve_prezzo(prezzo_string, prezzo_cents)
-    return prezzo_cents if prezzo_cents.present?
+    return prezzo_cents unless prezzo_cents.nil?
     return nil if prezzo_string.blank?
 
     normalized = prezzo_string.to_s.gsub(",", ".")
-    (BigDecimal(normalized) * 100).to_i
+    begin
+      (BigDecimal(normalized) * 100).to_i
+    rescue ArgumentError
+      nil
+    end
   end
 
   def resolve_editore(editore_input, editore_id_input)
@@ -126,7 +130,7 @@ class Libri::Importer
 
   def assign_attributes
     @libro.titolo = @titolo if @titolo.present?
-    @libro.prezzo_in_cents = @prezzo_in_cents if @prezzo_in_cents.present?
+    @libro.prezzo_in_cents = @prezzo_in_cents unless @prezzo_in_cents.nil?
     @libro.editore_id = @editore_id if @editore_id.present?
     @libro.classe = @classe if @classe.present?
     @libro.disciplina = @disciplina if @disciplina.present?

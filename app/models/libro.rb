@@ -96,7 +96,7 @@ class Libro < ApplicationRecord
   
   validates :prezzo_in_cents, presence: true
   
-  validates :codice_isbn, presence: true, uniqueness: { scope: :user_id }
+  validates :codice_isbn, presence: true, uniqueness: { scope: :account_id }
 
   belongs_to :edizione_titolo, primary_key: :codice_isbn, foreign_key: :codice_isbn, optional: true
   
