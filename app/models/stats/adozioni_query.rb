@@ -22,7 +22,9 @@ module Stats
       "disciplina"   => 'ia."DISCIPLINA" ILIKE ?',
       "titolo"       => 'ia."TITOLO" ILIKE ?',
       "isbn"         => 'ia."CODICEISBN" = ?',
-      "combinazione" => 'ia."COMBINAZIONE" = ?'
+      "combinazione" => 'ia."COMBINAZIONE" = ?',
+      "scuola"       => 'isc."DENOMINAZIONESCUOLA" ILIKE ?',
+      "codice_scuola" => 'isc."CODICESCUOLA" = ?'
     }.freeze
 
     ORDER_COLUMNS = %w[classi_count scuole_count adozioni_count copie_stimate importo percentuale].freeze
@@ -61,7 +63,7 @@ module Stats
       @filters.each do |key, value|
         next unless FILTERS.key?(key)
         conditions << FILTERS[key]
-        binds << (%w[titolo editore disciplina].include?(key) ? "%#{value}%" : value)
+        binds << (%w[titolo editore disciplina scuola].include?(key) ? "%#{value}%" : value)
       end
       [conditions.join(" AND "), binds]
     end
