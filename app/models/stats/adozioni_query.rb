@@ -18,7 +18,7 @@ module Stats
       "provincia"    => 'isc."PROVINCIA" = ?',
       "regione"      => 'isc."REGIONE" = ?',
       "classe"       => 'ia."ANNOCORSO" = ?',
-      "editore"      => 'ia."EDITORE" = ?',
+      "editore"      => 'ia."EDITORE" ILIKE ?',
       "disciplina"   => 'ia."DISCIPLINA" = ?',
       "titolo"       => 'ia."TITOLO" ILIKE ?',
       "isbn"         => 'ia."CODICEISBN" = ?',
@@ -61,7 +61,7 @@ module Stats
       @filters.each do |key, value|
         next unless FILTERS.key?(key)
         conditions << FILTERS[key]
-        binds << (key == "titolo" ? "%#{value}%" : value)
+        binds << (%w[titolo editore].include?(key) ? "%#{value}%" : value)
       end
       [conditions.join(" AND "), binds]
     end
