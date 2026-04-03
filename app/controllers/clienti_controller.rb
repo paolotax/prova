@@ -3,39 +3,50 @@ class ClientiController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
 
+  skip_before_action :set_filter, :set_user_filtering, if: -> { request.format.json? }
+
   before_action :authenticate_user!
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
-    @clienti = @filter.clienti.includes(:saldo)
-    @total_count = @clienti.count
-    set_page_and_extract_portion_from @clienti
+    if request.format.json?
+      @clienti = Current.account.clienti.order(denominazione: :asc)
+      @clienti = @clienti.search_all_word(params[:q]) if params[:q].present?
+      @clienti = @clienti.limit(params[:limit] || 50)
+    else
+      @clienti = @filter.clienti.includes(:saldo)
+      @total_count = @clienti.count
+      set_page_and_extract_portion_from @clienti
+    end
 
     respond_to do |format|
       format.html
       format.turbo_stream
+      format.json
       format.xlsx { @clienti = @filter.clienti }
     end
   end
 
   def show
-    @presenter = Clienti::Presenter.new(@cliente)
-    @edit_mode = params[:edit].present?
+    unless request.format.json?
+      @presenter = Clienti::Presenter.new(@cliente)
+      @edit_mode = params[:edit].present?
 
-    # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
-    @sconti_applicabili = Current.user.sconti
-      .applicabili_a_cliente(@cliente.id)
-      .includes(:categoria)
-      .order(created_at: :desc)
+      # Sconti applicabili: specifici per questo cliente + sconti per tutti i clienti
+      @sconti_applicabili = Current.user.sconti
+        .applicabili_a_cliente(@cliente.id)
+        .includes(:categoria)
+        .order(created_at: :desc)
 
-    @sconti_unici = @sconti_applicabili.group_by(&:categoria_id).flat_map do |_categoria_id, sconti|
-      sconti.min_by do |s|
-        if s.scontabile_id.present?
-          0
-        elsif s.scontabile_type.present?
-          1
-        else
-          2
+      @sconti_unici = @sconti_applicabili.group_by(&:categoria_id).flat_map do |_categoria_id, sconti|
+        sconti.min_by do |s|
+          if s.scontabile_id.present?
+            0
+          elsif s.scontabile_type.present?
+            1
+          else
+            2
+          end
         end
       end
     end
@@ -43,6 +54,7 @@ class ClientiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
+      format.json
     end
   end
 
@@ -59,7 +71,17 @@ class ClientiController < ApplicationController
   end
 
   def create
-    redirect_to new_cliente_path
+    respond_to do |format|
+      format.html { redirect_to new_cliente_path }
+      format.json do
+        @cliente = Current.account.clienti.build(cliente_params)
+        if @cliente.save
+          render :show, status: :created, location: @cliente
+        else
+          render json: @cliente.errors, status: :unprocessable_entity
+        end
+      end
+    end
   end
 
   def update

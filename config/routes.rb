@@ -530,7 +530,7 @@ Rails.application.routes.draw do
       resources :persone, only: [:index] do
         resources :imports, only: [:create], controller: 'persone/imports'
       end
-      resources :clienti, only: %i[index show update] do
+      resources :clienti, only: [] do
         resources :imports, only: [:create], controller: 'clienti/imports'
       end
       resources :search, only: [:index]
