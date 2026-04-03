@@ -66,6 +66,7 @@ Rails.application.routes.draw do
     namespace :admin do
       root "dashboard#index"
       resources :extension_mails, only: [:index, :create]
+      resources :cli_mails, only: [:index, :create]
     end
   end
 
