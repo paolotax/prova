@@ -97,10 +97,18 @@
         </div>
       </div>
 
-      <div class="form-field">
-        <%= form.label :indirizzo_telematico, "Codice SDI / PEC", class: "form-label" %>
-        <%= form.text_field :indirizzo_telematico, class: "input mono txt-uppercase", placeholder: "0000000", maxlength: 7 %>
-        <p class="txt-x-small txt-subtle margin-block-start-half">Codice destinatario SDI (7 caratteri)</p>
+      <div class="form-grid">
+        <div class="form-field">
+          <%= form.label :indirizzo_telematico, "Codice SDI / PEC", class: "form-label" %>
+          <%= form.text_field :indirizzo_telematico, class: "input mono txt-uppercase", placeholder: "0000000", maxlength: 7 %>
+          <p class="txt-x-small txt-subtle margin-block-start-half">Codice destinatario SDI (7 caratteri)</p>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :codice_intermediario, "Codice intermediario", class: "form-label" %>
+          <%= form.text_field :codice_intermediario, class: "input mono", placeholder: "01879020517" %>
+          <p class="txt-x-small txt-subtle margin-block-start-half">P.IVA intermediario trasmissione (es. Aruba)</p>
+        </div>
       </div>
     </div>
 

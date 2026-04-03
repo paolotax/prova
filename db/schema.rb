@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_01_225246) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -243,6 +243,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_225246) do
     t.string "banca"
     t.string "cap", limit: 5, null: false
     t.string "codice_fiscale", limit: 16, null: false
+    t.string "codice_intermediario", default: "01879020517"
     t.string "comune", null: false
     t.datetime "created_at", null: false
     t.string "email", null: false

@@ -67,7 +67,8 @@ module Accounts
         :indirizzo, :cap, :comune, :provincia, :nazione,
         :email, :telefono, :indirizzo_telematico,
         :iban, :banca,
-        :sconto_defiscalizzato
+        :sconto_defiscalizzato,
+        :codice_intermediario
       )
     end
   end

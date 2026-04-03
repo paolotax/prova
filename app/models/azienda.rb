@@ -6,6 +6,7 @@
 #  banca                 :string
 #  cap                   :string(5)        not null
 #  codice_fiscale        :string(16)       not null
+#  codice_intermediario  :string           default("01879020517")
 #  comune                :string           not null
 #  email                 :string           not null
 #  iban                  :string(27)

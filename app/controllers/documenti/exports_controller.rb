@@ -10,7 +10,7 @@ class Documenti::ExportsController < ApplicationController
         xml_generator = FatturaElettronicaXml.new(@documento)
         xml_content = xml_generator.genera_xml
         send_data xml_content,
-                  filename: "IT#{@documento.user.azienda_partita_iva}_#{@documento.numero_documento}.xml",
+                  filename: "IT#{@documento.account.azienda&.partita_iva}_#{@documento.numero_documento}.xml",
                   type: "application/xml",
                   disposition: "attachment"
       end

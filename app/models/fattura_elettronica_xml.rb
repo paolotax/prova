@@ -30,11 +30,15 @@ class FatturaElettronicaXml
 
   private
 
+  def azienda
+    @azienda ||= @documento.account&.azienda
+  end
+
   def genera_dati_trasmissione(xml)
     xml.DatiTrasmissione {
       xml.IdTrasmittente {
         xml.IdPaese 'IT'
-        xml.IdCodice "01879020517"
+        xml.IdCodice azienda&.codice_intermediario || "01879020517"
       }
       xml.ProgressivoInvio @documento.numero_documento
       xml.FormatoTrasmissione 'FPR12'
@@ -47,23 +51,23 @@ class FatturaElettronicaXml
       xml.DatiAnagrafici {
         xml.IdFiscaleIVA {
           xml.IdPaese 'IT'
-          xml.IdCodice @documento.user&.azienda_partita_iva
+          xml.IdCodice azienda&.partita_iva
         }
-        xml.CodiceFiscale @documento.user&.azienda_codice_fiscale
+        xml.CodiceFiscale azienda&.codice_fiscale
         xml.Anagrafica {
-          xml.Denominazione @documento.user&.azienda_ragione_sociale
+          xml.Denominazione azienda&.ragione_sociale
         }
-        xml.RegimeFiscale @documento.user&.azienda_regime_fiscale.upcase
+        xml.RegimeFiscale azienda&.regime_fiscale&.upcase
       }
       xml.Sede {
-        xml.Indirizzo @documento.user&.azienda_indirizzo
-        xml.CAP @documento.user&.azienda_cap
-        xml.Comune @documento.user&.azienda_comune
-        xml.Provincia @documento.user&.azienda_provincia
+        xml.Indirizzo azienda&.indirizzo
+        xml.CAP azienda&.cap
+        xml.Comune azienda&.comune
+        xml.Provincia azienda&.provincia
         xml.Nazione 'IT'
       }
       xml.Contatti {
-        xml.Email @documento.user&.azienda_email
+        xml.Email azienda&.email
       }
     }
   end
@@ -146,8 +150,8 @@ class FatturaElettronicaXml
         xml.ModalitaPagamento 'MP05'
         xml.DataScadenzaPagamento @documento.data_documento.strftime('%Y-%m-%d')
         xml.ImportoPagamento format('%.2f', @documento.totale_importo)
-        xml.IstitutoFinanziario @documento.user&.azienda_banca
-        xml.IBAN @documento.user&.azienda_iban
+        xml.IstitutoFinanziario azienda&.banca
+        xml.IBAN azienda&.iban
       }
     }
   end
