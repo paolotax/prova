@@ -534,6 +534,10 @@ Rails.application.routes.draw do
         resources :imports, only: [:create], controller: "clienti/imports"
       end
       resources :search, only: [:index]
+
+      namespace :stats do
+        get :adozioni, to: "adozioni#index"
+      end
     end
   end
 
