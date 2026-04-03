@@ -83,7 +83,7 @@ module Stats
     end
 
     def prezzo_sum_expr
-      'SUM(CAST(REPLACE(ia."PREZZO", \',\', \'.\') AS numeric))'
+      'SUM(CAST(NULLIF(REGEXP_REPLACE(REPLACE(ia."PREZZO", \',\', \'.\'), \'[^0-9.]\', \'\', \'g\'), \'\') AS numeric))'
     end
 
     def totals
