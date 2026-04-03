@@ -4,20 +4,18 @@ require 'sidekiq-scheduler/web'
 
 Rails.application.routes.draw do
   # Letter opener web for viewing emails in development
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if defined?(LetterOpenerWeb)
+  mount LetterOpenerWeb::Engine, at: '/letter_opener' if defined?(LetterOpenerWeb)
 
-  
   namespace :my do
     resource :menu
   end
-  
-  
+
   # =========================================
   # AUTENTICAZIONE (senza contesto account)
   # =========================================
 
   # Passwordless authentication
-  resources :magic_links, only: [:new, :create] do
+  resources :magic_links, only: %i[new create] do
     collection do
       get :sent
       post :authenticate
@@ -26,7 +24,7 @@ Rails.application.routes.draw do
   end
 
   namespace :passwordless do
-    resources :sessions, only: [:index, :destroy] do
+    resources :sessions, only: %i[index destroy] do
       collection do
         delete :destroy_all
       end
@@ -39,7 +37,7 @@ Rails.application.routes.draw do
   # SELEZIONE ACCOUNT
   # =========================================
 
-  resources :accounts, only: [:index, :new, :create]
+  resources :accounts, only: %i[index new create]
 
   resources :users do
     scope module: :users do
@@ -47,12 +45,12 @@ Rails.application.routes.draw do
       resource :avatar
     end
   end
-  
+
   # =========================================
   # ADMIN ROUTES (con autenticazione admin)
   # =========================================
 
-  constraints ->(request) {
+  constraints lambda { |request|
     token = request.cookie_jar.signed[:session_token]
     session = Session.active.find_by(token: token) if token.present?
     session&.user&.admin?
@@ -64,36 +62,36 @@ Rails.application.routes.draw do
     mount RailsDesigner::Engine, at: '/rails_designer' if defined?(RailsDesigner)
 
     namespace :admin do
-      root "dashboard#index"
-      resources :extension_mails, only: [:index, :create]
-      resources :cli_mails, only: [:index, :create]
+      root 'dashboard#index'
+      resources :extension_mails, only: %i[index create]
+      resources :cli_mails, only: %i[index create]
     end
   end
 
   # Download estensione Chrome (link pubblico per email)
-  get "download/extension", to: "downloads#extension", as: :download_extension
+  get 'download/extension', to: 'downloads#extension', as: :download_extension
 
   # =========================================
   # MOBILE (sessione, senza account scope in URL)
   # =========================================
-  namespace :mobile, path: "m" do
-    resources :appunti, only: [:new, :create], path_names: { new: "nuovo" }
+  namespace :mobile, path: 'm' do
+    resources :appunti, only: %i[new create], path_names: { new: 'nuovo' }
   end
 
   # =========================================
   # ROUTES CON CONTESTO ACCOUNT
   # =========================================
 
-  scope "/:account_id", constraints: { account_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ } do
+  scope '/:account_id', constraints: { account_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ } do
     # Dashboard account
-    root "dashboard#index", as: :account_root
+    root 'dashboard#index', as: :account_root
 
     # =========================================
     # TRIAGE SYSTEM
     # =========================================
 
     # Unified triage dashboard
-    get "dashboard", to: "dashboard#index"
+    get 'dashboard', to: 'dashboard#index'
 
     # Dashboard columns (for lazy loading with pagination)
     namespace :dashboard do
@@ -107,18 +105,18 @@ Rails.application.routes.draw do
     # Bulk actions per entries
     namespace :entries do
       resource :prints, only: [:create]
-      resource :bulk_gestione, only: [:show], controller: "bulk_gestione"
-      resource :bulk_stati, only: [:create], controller: "bulk_stati"
+      resource :bulk_gestione, only: [:show], controller: 'bulk_gestione'
+      resource :bulk_stati, only: [:create], controller: 'bulk_stati'
       resource :deletions, only: [:create]
     end
 
     # Entries (unified triage items)
-    resources :entries, only: [:index, :show] do
+    resources :entries, only: %i[index show] do
       scope module: :entries do
-        resource :triage,    only: [:create, :destroy]
-        resource :goldness,  only: [:create, :destroy]
-        resource :closure,   only: [:create, :destroy]
-        resource :not_now,   only: [:create, :destroy]
+        resource :triage,    only: %i[create destroy]
+        resource :goldness,  only: %i[create destroy]
+        resource :closure,   only: %i[create destroy]
+        resource :not_now,   only: %i[create destroy]
       end
     end
 
@@ -129,7 +127,7 @@ Rails.application.routes.draw do
     end
 
     # Filtri salvati
-    resources :filters, only: [:create, :destroy]
+    resources :filters, only: %i[create destroy]
 
     namespace :filters do
       resource :settings_refresh, only: :create
@@ -138,41 +136,41 @@ Rails.application.routes.draw do
     # =========================================
     # GESTIONE ACCOUNT (namespace accounts)
     # =========================================
-    namespace :accounts, path: "" do
-      resource :configurazione, only: [:show], controller: "configurazione"
-      resource :azienda, only: [:show, :new, :create, :edit, :update]
+    namespace :accounts, path: '' do
+      resource :configurazione, only: [:show], controller: 'configurazione'
+      resource :azienda, only: %i[show new create edit update]
 
-      resources :zone, only: [:index, :new, :create, :destroy] do
+      resources :zone, only: %i[index new create destroy] do
         collection do
-          resource :importazione, only: [:create], controller: "zone/importazioni"
+          resource :importazione, only: [:create], controller: 'zone/importazioni'
         end
       end
 
-      resources :mandati, only: [:index, :new, :create, :update, :destroy] do
-        resource :disdetta, only: [:create, :destroy], module: :mandati
+      resources :mandati, only: %i[index new create update destroy] do
+        resource :disdetta, only: %i[create destroy], module: :mandati
       end
 
       namespace :mandati do
         resources :gruppi, only: [:destroy], param: :id do
-          resource :disdetta, only: [:create, :destroy], module: :gruppi
+          resource :disdetta, only: %i[create destroy], module: :gruppi
         end
         resource :sincronizzazione_adozioni, only: [:create]
       end
 
-      resources :members, only: [:create, :update, :destroy] do
+      resources :members, only: %i[create update destroy] do
         scope module: :members do
-          resources :scuole, only: [:create, :destroy], controller: "membership_scuole"
-          resource :bulk_scuole, only: [:create, :destroy], controller: "bulk_membership_scuole"
+          resources :scuole, only: %i[create destroy], controller: 'membership_scuole'
+          resource :bulk_scuole, only: %i[create destroy], controller: 'bulk_membership_scuole'
         end
       end
 
-      resource :distribuzione, only: [:show], controller: "distribuzione" do
-        resource :assegnazione, only: [:create], controller: "distribuzione/assegnazioni"
+      resource :distribuzione, only: [:show], controller: 'distribuzione' do
+        resource :assegnazione, only: [:create], controller: 'distribuzione/assegnazioni'
       end
 
       resources :aree, only: [:show], param: :provincia do
-        resource :assegnazione, only: [:create], controller: "aree/assegnazioni"
-        resources :mandati, only: [:create, :destroy], controller: "aree/mandati", param: :gruppo
+        resource :assegnazione, only: [:create], controller: 'aree/assegnazioni'
+        resources :mandati, only: %i[create destroy], controller: 'aree/mandati', param: :gruppo
       end
     end
 
@@ -181,7 +179,7 @@ Rails.application.routes.draw do
       resources :messages, only: [:create]
     end
 
-    resources :models, only: [:index, :show] do
+    resources :models, only: %i[index show] do
       collection do
         post :refresh
       end
@@ -201,10 +199,11 @@ Rails.application.routes.draw do
     get 'agenda/:giorno/mappa', to: 'agenda#mappa', as: 'mappa_del_giorno'
     get 'agenda/:giorno/adozioni_tappe.pdf', to: 'agenda#adozioni_tappe_pdf', as: 'adozioni_tappe_pdf'
     get 'agenda/:giorno/tappe_giorno.pdf', to: 'agenda#tappe_giorno_pdf', as: 'tappe_giorno_pdf'
-    get 'agenda/:giorno/dettaglio_appunti_documenti.pdf', to: 'agenda#dettaglio_appunti_documenti_pdf', as: 'dettaglio_appunti_documenti_pdf'
+    get 'agenda/:giorno/dettaglio_appunti_documenti.pdf', to: 'agenda#dettaglio_appunti_documenti_pdf',
+                                                          as: 'dettaglio_appunti_documenti_pdf'
     get 'agenda/:giorno/fogli_scuola_tappe.pdf', to: 'agenda#fogli_scuola_tappe_pdf', as: 'fogli_scuola_tappe_pdf'
 
-    resource :search, only: [:show], controller: "search"
+    resource :search, only: [:show], controller: 'search'
 
     # Ricerca unificata destinatari per combobox appunti
     resources :destinatari, only: [:index]
@@ -216,7 +215,7 @@ Rails.application.routes.draw do
         resource :entries, only: [:show]
         resource :closed_entries, only: [:show]
       end
-      resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
+      resources :sconti, only: %i[index new create edit update destroy]
     end
 
     namespace :clienti do
@@ -230,38 +229,38 @@ Rails.application.routes.draw do
       resource :prints, only: [:create]
       resource :duplications, only: [:create]
       resource :deletions, only: [:create]
-      resource :bulk_gestione, only: [:show], controller: "bulk_gestione"
-      resource :bulk_consegne, only: [:create, :destroy]
-      resource :bulk_pagamenti, only: [:create, :destroy]
-      resource :bulk_derivazioni, only: [:create], controller: "bulk_derivazioni"
-      resource :bulk_stati, only: [:create], controller: "bulk_stati"
+      resource :bulk_gestione, only: [:show], controller: 'bulk_gestione'
+      resource :bulk_consegne, only: %i[create destroy]
+      resource :bulk_pagamenti, only: %i[create destroy]
+      resource :bulk_derivazioni, only: [:create], controller: 'bulk_derivazioni'
+      resource :bulk_stati, only: [:create], controller: 'bulk_stati'
     end
 
     resources :documenti do
-      resources :documento_righe, only: [:new, :create], controller: "documento_righe"
+      resources :documento_righe, only: %i[new create], controller: 'documento_righe'
       scope module: :documenti do
         resources :righe, only: [:create]
         resource :export, only: [:show]
-        resource :status, only: [:edit, :update]
-        resource :consegna, only: [:create, :update, :destroy], controller: "consegna"
-        resource :pagamento, only: [:create, :update, :destroy], controller: "pagamento"
-        resource :derivazione, only: [:create, :destroy], controller: "derivazione"
-        resource :collegamento, only: [:create], controller: "collegamento"
+        resource :status, only: %i[edit update]
+        resource :consegna, only: %i[create update destroy], controller: 'consegna'
+        resource :pagamento, only: %i[create update destroy], controller: 'pagamento'
+        resource :derivazione, only: %i[create destroy], controller: 'derivazione'
+        resource :collegamento, only: [:create], controller: 'collegamento'
       end
       collection do
-        get "filtra"
-        get "vendite"
+        get 'filtra'
+        get 'vendite'
       end
       member do
         # Legacy routes for compatibility
-        get :esporta_xml, to: "documenti/exports#show"
-        get :edit_status, to: "documenti/statuses#edit"
-        patch :update_righe, to: "documenti/righe#create"
+        get :esporta_xml, to: 'documenti/exports#show'
+        get :edit_status, to: 'documenti/statuses#edit'
+        patch :update_righe, to: 'documenti/righe#create'
       end
     end
 
     # Singular resource for next documento number
-    resource :documento_numero, only: [:show], controller: "documenti/numeri"
+    resource :documento_numero, only: [:show], controller: 'documenti/numeri'
 
     resources :causali
 
@@ -281,7 +280,7 @@ Rails.application.routes.draw do
     resources :titoli, only: [:show], param: :codice_isbn
 
     # Unified imports
-    resources :imports, only: [:new, :create, :show]
+    resources :imports, only: %i[new create show]
 
     # Temporary: keep export_confezioni until fully migrated
     resources :libri_importer, only: [] do
@@ -300,7 +299,7 @@ Rails.application.routes.draw do
     namespace :libri do
       resource :prints, only: [:create]
       resource :deletions, only: [:create]
-      resource :carrello, only: [:create, :update]
+      resource :carrello, only: %i[create update]
       resource :confezioni, only: [:create]
       resource :bulk_updates, only: [:update]
     end
@@ -356,25 +355,25 @@ Rails.application.routes.draw do
         patch 'sort'
         post 'rimanda'
       end
-      resources :bolle_visione, only: [:new, :create]
-      resources :tappa_giri, only: [:new, :create, :index], controller: "tappe/tappa_giri"
+      resources :bolle_visione, only: %i[new create]
+      resources :tappa_giri, only: %i[new create index], controller: 'tappe/tappa_giri'
     end
 
     resources :collane do
-      resources :collana_libri, only: [:create, :destroy, :update]
+      resources :collana_libri, only: %i[create destroy update]
     end
 
-    resources :bolle_visione, only: [:index, :show, :destroy] do
-      resources :bolla_visione_righe, only: [:create, :update, :destroy]
-      resource :persone, only: [:create, :update], controller: "bolle_visione/persone"
+    resources :bolle_visione, only: %i[index show destroy] do
+      resources :bolla_visione_righe, only: %i[create update destroy]
+      resource :persone, only: %i[create update], controller: 'bolle_visione/persone'
       member do
         post :rigenera
       end
     end
 
     get 'profilo', to: 'profiles#get_user_profile'
-    resources :access_tokens, only: [:index, :show, :new, :create, :destroy], controller: "access_tokens"
-    resource :adozioni_analytics, only: [:show], controller: "adozioni_analytics"
+    resources :access_tokens, only: %i[index show new create destroy], controller: 'access_tokens'
+    resource :adozioni_analytics, only: [:show], controller: 'adozioni_analytics'
 
     resources :profiles
 
@@ -385,33 +384,33 @@ Rails.application.routes.draw do
       end
       # Legacy routes for compatibility
       member do
-        get "execute", to: "stats/executions#show"
-        patch :sort, to: "stats/positions#update"
+        get 'execute', to: 'stats/executions#show'
+        patch :sort, to: 'stats/positions#update'
       end
     end
 
-    get "appunti/bozze", to: "appunti/bozze#index", as: :bozze
+    get 'appunti/bozze', to: 'appunti/bozze#index', as: :bozze
 
     resources :appunti do
       resources :tappe
       scope module: :appunti do
-        resource :goldness,  only: [:create, :destroy]
-        resource :closure,   only: [:create, :destroy]
-        resource :not_now,   only: [:create, :destroy]
-        resource :publication, only: [:create, :destroy]
+        resource :goldness,  only: %i[create destroy]
+        resource :closure,   only: %i[create destroy]
+        resource :not_now,   only: %i[create destroy]
+        resource :publication, only: %i[create destroy]
         resource :image, only: [:destroy]
         resources :attachments, only: [:destroy]
       end
       member do
         # Legacy routes for compatibility
-        post "publish", to: "appunti/publications#create"
-        delete "remove_attachment", to: "appunti/attachments#destroy"
-        delete "remove_image", to: "appunti/images#destroy"
+        post 'publish', to: 'appunti/publications#create'
+        delete 'remove_attachment', to: 'appunti/attachments#destroy'
+        delete 'remove_image', to: 'appunti/images#destroy'
       end
     end
 
     resources :editori do
-      resources :sconti, only: [:index, :new, :create, :edit, :update, :destroy]
+      resources :sconti, only: %i[index new create edit update destroy]
     end
 
     resources :categorie
@@ -471,43 +470,43 @@ Rails.application.routes.draw do
     get 'articoli', to: 'articoli#index'
     get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
-    resources :persone, only: [:index, :show, :edit, :update, :create, :destroy] do
+    resources :persone, only: %i[index show edit update create destroy] do
       resources :persona_classi, only: [:destroy], module: :persone
       resources :classe_chips, only: [:create], module: :persone, param: :combobox_value
-      resources :saggi, only: [:create, :update, :destroy], module: :persone
+      resources :saggi, only: %i[create update destroy], module: :persone
     end
 
     resources :scuole do
       get :email_pattern, on: :member
       resources :qrcodes
-      resource :foglio_scuola, only: [:show], controller: "scuole/foglio_scuola"
+      resource :foglio_scuola, only: [:show], controller: 'scuole/foglio_scuola'
 
-      resources :saggi, only: [:index, :create, :update, :destroy], controller: "scuole/saggi" do
+      resources :saggi, only: %i[index create update destroy], controller: 'scuole/saggi' do
         post :genera_scarico, on: :collection
       end
 
-      resource :scartata, only: [:create, :destroy], controller: "scuole/scartate"
+      resource :scartata, only: %i[create destroy], controller: 'scuole/scartate'
 
-      resources :disponibilita, only: [:create, :destroy], controller: "scuole/disponibilita"
+      resources :disponibilita, only: %i[create destroy], controller: 'scuole/disponibilita'
 
       scope module: :scuole do
         resource :entries, only: [:show]
         resource :closed_entries, only: [:show]
-        resource :adozioni, only: [:show], controller: "adozioni"
-        resource :persone_import, only: [:new, :create], controller: "persone_import"
-        resources :persone_search, only: [:index], controller: "persone_search"
-        resource :cattedre, only: [:show, :create, :destroy], controller: "cattedre"
-        resources :classe_chips, only: [:create], controller: "classe_chips", param: :combobox_value
-        resources :persone, only: [:show, :create]
-        resources :classi, only: [:index, :show, :edit, :update, :create, :destroy] do
+        resource :adozioni, only: [:show], controller: 'adozioni'
+        resource :persone_import, only: %i[new create], controller: 'persone_import'
+        resources :persone_search, only: [:index], controller: 'persone_search'
+        resource :cattedre, only: %i[show create destroy], controller: 'cattedre'
+        resources :classe_chips, only: [:create], controller: 'classe_chips', param: :combobox_value
+        resources :persone, only: %i[show create]
+        resources :classi, only: %i[index show edit update create destroy] do
           member do
             post :import_adozioni
           end
           scope module: :classi do
             resource :entries, only: [:show]
             resource :closed_entries, only: [:show]
-            resources :consegne_saggio, only: [:create, :destroy]
-            resources :persone, only: [:new, :create, :destroy]
+            resources :consegne_saggio, only: %i[create destroy]
+            resources :persone, only: %i[new create destroy]
           end
         end
       end
@@ -519,25 +518,25 @@ Rails.application.routes.draw do
   # =========================================
 
   namespace :api do
-    post "whatsapp/contacts", to: "whatsapp#create"
+    post 'whatsapp/contacts', to: 'whatsapp#create'
 
     namespace :v1 do
-      resource :me, only: [:show], controller: "me"
+      resource :me, only: [:show], controller: 'me'
       resources :appunti, only: [:create]
       resources :libri, only: [:index] do
-        resources :imports, only: [:create], controller: "libri/imports"
+        resources :imports, only: [:create], controller: 'libri/imports'
       end
       resources :documenti, only: [:create]
       resources :persone, only: [:index] do
-        resources :imports, only: [:create], controller: "persone/imports"
+        resources :imports, only: [:create], controller: 'persone/imports'
       end
-      resources :clienti, only: [] do
-        resources :imports, only: [:create], controller: "clienti/imports"
+      resources :clienti, only: %i[index show update] do
+        resources :imports, only: [:create], controller: 'clienti/imports'
       end
       resources :search, only: [:index]
 
       namespace :stats do
-        get :adozioni, to: "adozioni#index"
+        get :adozioni, to: 'adozioni#index'
       end
     end
   end
@@ -549,5 +548,5 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   # Root globale: redirect alla selezione account
-  root "accounts#index"
+  root 'accounts#index'
 end
