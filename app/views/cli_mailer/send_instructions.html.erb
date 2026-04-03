@@ -207,8 +207,42 @@
   <% end %>
 
   <%= render Email::Text.new(margin: "16px auto 0 auto") do %>
-    Riavvia il programma AI e sei pronto! Prova a scrivere nella chat:<br>
-    <i>"Quali sono gli editori più adottati in provincia di Torino?"</i>
+    Riavvia il programma AI e sei pronto!
+  <% end %>
+
+  <%= render Email::Text.new(margin: "16px auto 8px auto") do %>
+    Per iniziare, prova a chiedere all'AI:
+  <% end %>
+
+  <%= render Email::Colorblock.new(
+    color: "#F0FDF4",
+    border_color: "#86EFAC",
+    border_width: "1px",
+    border_radius: "12px",
+    margin: "8px auto 32px auto",
+    padding: "16px 24px"
+  ) do %>
+    <%= render Email::Text.new(bold: true, margin: "8px auto 12px auto") do %>
+      Cosa posso chiedere?
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto", color: Email::Colors::GRAY_700) do %>
+      <i>"Cosa mi permette di fare Scagnozz?"</i>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto", color: Email::Colors::GRAY_700) do %>
+      <i>"Quali sono gli editori più adottati in provincia di Torino?"</i>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto", color: Email::Colors::GRAY_700) do %>
+      <i>"Cerca la scuola Zibordi"</i>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto", color: Email::Colors::GRAY_700) do %>
+      <i>"Fammi vedere gli insegnanti di terza e quinta con email"</i>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto", color: Email::Colors::GRAY_700) do %>
+      <i>"Confronta le adozioni di matematica tra Torino e Milano"</i>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "8px auto 4px auto", color: Email::Colors::GRAY_600) do %>
+      Parla in italiano, come faresti con un collega. L'AI capisce cosa vuoi e usa Scagnozz per te.
+    <% end %>
   <% end %>
 
   <%# ===== BOX AGGIORNAMENTO ===== %>
