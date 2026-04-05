@@ -4,17 +4,24 @@ class AppuntiController < ApplicationController
 
   FILTER_PARAMS = [:anno, :state, :appuntabile_type, terms: []].freeze
 
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   before_action :authenticate_user!
   before_action :set_appunto, only: %i[show edit update destroy]
 
   def index
+    if request.format.json?
+      @appunti = @filter.appunti.published.order(created_at: :desc).limit(params[:limit] || 50)
+      return respond_to { |format| format.json }
+    end
+
     @appunti = @filter.appunti.published
                       .with_attached_attachments
                       .with_attached_image
                       .with_rich_text_content
                       .with_golden_first
                       .order(created_at: :desc)
-                      
+
     @total_count = @appunti.count
 
     set_page_and_extract_portion_from @appunti
@@ -30,6 +37,7 @@ class AppuntiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream unless flash.any? # Skip turbo_stream after redirect (has flash)
+      format.json
       format.pdf do
         @appunti = Array(@appunto)
         pdf = AppuntoPdf.new(@appunti, view_context)

@@ -3,6 +3,8 @@ class LibriController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, editori: [], categorie: [], discipline: [], classi: [], terms: []].freeze
 
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   before_action :authenticate_user!
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_e_sconto ]
 
@@ -22,6 +24,11 @@ class LibriController < ApplicationController
   end
 
   def index
+    if request.format.json?
+      @libri = @filter.libri.includes(:editore).limit(params[:limit] || 50)
+      return respond_to { |format| format.json }
+    end
+
     # Combobox search con parametro q
     if params[:q].present?
       libri = Current.account.libri.search_all_word(params[:q])
@@ -35,7 +42,6 @@ class LibriController < ApplicationController
       format.turbo_stream
       format.html
       format.xlsx { @libri = @filter.libri.includes(:editore, :categoria) }
-      format.json
     end
   end
 
@@ -46,6 +52,7 @@ class LibriController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
+      format.json
     end
   end
 

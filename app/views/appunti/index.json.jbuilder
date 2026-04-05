@@ -1,1 +1,6 @@
-json.array! @appunti, partial: "appunti/appunto", as: :appunto
+json.ok true
+json.count @appunti.size
+json.data @appunti do |appunto|
+  json.partial! "appunti/appunto", appunto: appunto
+end
+json.actions []

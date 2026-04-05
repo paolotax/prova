@@ -1,0 +1,861 @@
+openapi: 3.0.3
+info:
+  title: Scagnozz API
+  description: API per gestione adozioni scolastiche, clienti, scuole, libri, persone e appunti.
+  version: "1.0"
+
+servers:
+  - url: https://prova.fly.dev
+    description: Production
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        query:
+          type: string
+          nullable: true
+        count:
+          type: integer
+        data:
+          type: array
+          items: {}
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
+
+    Action:
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        params:
+          type: object
+
+    Persona:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        cognome:
+          type: string
+        nome:
+          type: string
+        email:
+          type: string
+        cellulare:
+          type: string
+        telefono:
+          type: string
+        ruolo:
+          type: string
+        note:
+          type: string
+        scuola_id:
+          type: string
+          format: uuid
+        scuola:
+          type: string
+        classi:
+          type: array
+          items:
+            type: object
+        appuntabile_value:
+          type: string
+        url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        denominazione:
+          type: string
+        partita_iva:
+          type: string
+        codice_fiscale:
+          type: string
+        indirizzo:
+          type: string
+        cap:
+          type: string
+        comune:
+          type: string
+        provincia:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        pec:
+          type: string
+        url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Scuola:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        denominazione:
+          type: string
+        codice_ministeriale:
+          type: string
+        indirizzo:
+          type: string
+        cap:
+          type: string
+        comune:
+          type: string
+        provincia:
+          type: string
+        regione:
+          type: string
+        tipo_scuola:
+          type: string
+        email:
+          type: string
+        pec:
+          type: string
+        telefono:
+          type: string
+        note:
+          type: string
+        classi_count:
+          type: integer
+        adozioni_count:
+          type: integer
+        url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Libro:
+      type: object
+      properties:
+        id:
+          type: integer
+        titolo:
+          type: string
+        codice_isbn:
+          type: string
+        classe:
+          type: integer
+        disciplina:
+          type: string
+        categoria:
+          type: string
+        note:
+          type: string
+        prezzo_cents:
+          type: integer
+        editore:
+          type: string
+        editore_id:
+          type: integer
+        url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Appunto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        body:
+          type: string
+        appuntabile_type:
+          type: string
+        appuntabile_id:
+          type: string
+        appuntabile_display:
+          type: string
+        url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SearchResult:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [Scuola, Cliente, Classe, Persona]
+        appuntabile_value:
+          type: string
+        display:
+          type: string
+
+paths:
+  # --- Persone ---
+  /{account_id}/persone.json:
+    get:
+      operationId: listPersone
+      summary: Lista persone con filtri
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: terms[]
+          in: query
+          schema:
+            type: string
+          description: Ricerca per nome/cognome/scuola
+        - name: ruoli[]
+          in: query
+          schema:
+            type: string
+            enum: [docente, dirigente, segretario, referente, altro]
+        - name: stato_contatto
+          in: query
+          schema:
+            type: string
+            enum: [con_email, con_telefono, con_scuola, senza_scuola]
+        - name: sorted_by
+          in: query
+          schema:
+            type: string
+            enum: [cognome, scuola, recenti]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con lista persone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+    post:
+      operationId: createPersona
+      summary: Crea una persona
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                persona:
+                  type: object
+                  properties:
+                    cognome:
+                      type: string
+                    nome:
+                      type: string
+                    email:
+                      type: string
+                    cellulare:
+                      type: string
+                    ruolo:
+                      type: string
+                    scuola_id:
+                      type: string
+                      format: uuid
+      responses:
+        "201":
+          description: Persona creata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+
+  /{account_id}/persone/{id}.json:
+    get:
+      operationId: showPersona
+      summary: Dettagli persona
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Persona
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+    patch:
+      operationId: updatePersona
+      summary: Aggiorna persona
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                persona:
+                  type: object
+      responses:
+        "200":
+          description: Persona aggiornata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+    delete:
+      operationId: deletePersona
+      summary: Elimina persona
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Eliminata
+
+  # --- Clienti ---
+  /{account_id}/clienti.json:
+    get:
+      operationId: listClienti
+      summary: Lista clienti con filtri
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: terms[]
+          in: query
+          schema:
+            type: string
+          description: Ricerca per denominazione, partita IVA, comune
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con lista clienti
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+    post:
+      operationId: createCliente
+      summary: Crea un cliente
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cliente:
+                  type: object
+                  properties:
+                    denominazione:
+                      type: string
+                    partita_iva:
+                      type: string
+                    comune:
+                      type: string
+                    provincia:
+                      type: string
+              required:
+                - cliente
+      responses:
+        "201":
+          description: Cliente creato
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+
+  /{account_id}/clienti/{id}.json:
+    get:
+      operationId: showCliente
+      summary: Dettagli cliente
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+    patch:
+      operationId: updateCliente
+      summary: Aggiorna cliente
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cliente:
+                  type: object
+      responses:
+        "200":
+          description: Cliente aggiornato
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+    delete:
+      operationId: deleteCliente
+      summary: Elimina cliente
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Eliminato
+
+  # --- Scuole ---
+  /{account_id}/scuole.json:
+    get:
+      operationId: listScuole
+      summary: Lista scuole con filtri
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: terms[]
+          in: query
+          schema:
+            type: string
+          description: Ricerca per denominazione, codice, comune, provincia
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con lista scuole
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+
+  /{account_id}/scuole/{id}.json:
+    get:
+      operationId: showScuola
+      summary: Dettagli scuola
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Scuola
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scuola"
+
+  # --- Libri ---
+  /{account_id}/libri.json:
+    get:
+      operationId: listLibri
+      summary: Lista libri con filtri
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: terms[]
+          in: query
+          schema:
+            type: string
+          description: Ricerca per titolo o ISBN
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con lista libri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+
+  /{account_id}/libri/{id}.json:
+    get:
+      operationId: showLibro
+      summary: Dettagli libro
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Libro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Libro"
+
+  # --- Appunti ---
+  /{account_id}/appunti.json:
+    get:
+      operationId: listAppunti
+      summary: Lista appunti con filtri
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con lista appunti
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+
+  /{account_id}/appunti/{id}.json:
+    get:
+      operationId: showAppunto
+      summary: Dettagli appunto
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Appunto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appunto"
+
+  # --- Search ---
+  /api/v1/search:
+    get:
+      operationId: search
+      summary: Cerca scuole, clienti, classi e persone
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Testo di ricerca (minimo 2 caratteri)
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [scuola, cliente, classe, persona]
+          description: Filtra per tipo
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 6
+            minimum: 1
+            maximum: 20
+      responses:
+        "200":
+          description: Envelope con risultati ricerca
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  query:
+                    type: string
+                  count:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SearchResult"
+                  actions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Action"
+
+  # --- Stats Adozioni ---
+  /api/v1/stats/adozioni:
+    get:
+      operationId: statsAdozioni
+      summary: Statistiche adozioni elementari con aggregamenti flessibili
+      parameters:
+        - name: group_by
+          in: query
+          schema:
+            type: string
+          description: "Dimensioni: editore,disciplina,classe,provincia,titolo,scuola"
+        - name: provincia
+          in: query
+          schema:
+            type: string
+          description: Codice provincia (TO, MI, ...)
+        - name: classe
+          in: query
+          schema:
+            type: string
+          description: Anno corso (1-5)
+        - name: editore
+          in: query
+          schema:
+            type: string
+          description: Nome editore
+        - name: disciplina
+          in: query
+          schema:
+            type: string
+          description: Materia
+        - name: titolo
+          in: query
+          schema:
+            type: string
+          description: Ricerca parziale nel titolo
+        - name: isbn
+          in: query
+          schema:
+            type: string
+        - name: scuola
+          in: query
+          schema:
+            type: string
+          description: Ricerca parziale nome scuola
+        - name: codice_scuola
+          in: query
+          schema:
+            type: string
+          description: Codice ministeriale scuola
+        - name: coefficiente
+          in: query
+          schema:
+            type: integer
+            default: 18
+        - name: order_by
+          in: query
+          schema:
+            type: string
+            enum: [classi_count, adozioni_count, percentuale, importo]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Envelope con statistiche adozioni
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  query:
+                    type: object
+                  count:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          type: object
+                      totals:
+                        type: object
+                  actions:
+                    type: array
+
+  # --- Me ---
+  /api/v1/me:
+    get:
+      operationId: me
+      summary: Informazioni utente autenticato
+      responses:
+        "200":
+          description: Utente corrente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  account:
+                    type: string
+                  account_id:
+                    type: string
+                    format: uuid

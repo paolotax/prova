@@ -10,7 +10,7 @@ module Api
         query = sanitize_query(params[:q])
 
         if query.blank? || query.length < 2
-          return render json: { results: [] }
+          return render json: { ok: true, query: params[:q], count: 0, data: [], actions: [] }
         end
 
         results = []
@@ -22,7 +22,19 @@ module Api
         results += search_classi(query, limit) if types.include?("classe")
         results += search_persone(query, limit) if types.include?("persona")
 
-        render json: { results: results }
+        render json: {
+          ok: true,
+          query: params[:q],
+          count: results.size,
+          data: results,
+          actions: results.first(3).map { |r|
+            {
+              name: "crea_appunto",
+              label: "Crea appunto per #{r[:display]}",
+              params: { appuntabile_type: r[:type], appuntabile_id: r[:id] }
+            }
+          }
+        }
       end
 
       private

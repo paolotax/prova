@@ -5,9 +5,16 @@ class ScuoleController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], aree: [], comuni: [], tipi_scuola: [], terms: []].freeze
 
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   before_action :set_scuola, only: [:show, :edit, :update, :destroy, :email_pattern]
 
   def index
+    if request.format.json?
+      @scuole = @filter.scuole.limit(params[:limit] || 50)
+      return respond_to { |format| format.json }
+    end
+
     @per_direzione = @filter.sorted_by.per_direzione?
 
     if @per_direzione
@@ -65,6 +72,7 @@ class ScuoleController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
+      format.json
     end
   end
 

@@ -15,7 +15,15 @@ module Api
             limit: params.fetch(:limit, 50).to_i
           )
 
-          render json: query.call
+          result = query.call
+
+          render json: {
+            ok: true,
+            query: filter_params.to_h.compact_blank,
+            count: result[:results]&.size || 0,
+            data: result,
+            actions: []
+          }
         end
 
         private
