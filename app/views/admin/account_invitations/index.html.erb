@@ -5,6 +5,10 @@
     <label for="email" style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-ink-dark);">Email</label>
     <%= f.email_field :email, placeholder: "nome@esempio.it", required: true, class: "input", style: "width: 320px;" %>
   </div>
+  <div>
+    <label for="account_name" style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-ink-dark);">Nome account <span style="color: var(--color-ink-light);">(opzionale)</span></label>
+    <%= f.text_field :account_name, placeholder: "es. Giunti - Bacherini", class: "input", style: "width: 320px;" %>
+  </div>
   <%= f.submit "Crea account e invia invito", class: "btn btn--primary" %>
 <% end %>
 

@@ -31,12 +31,13 @@ class Admin::AccountInvitationsController < Admin::BaseController
       user.save!
     end
 
-    account = Account.create!(name: user.name)
+    account_name = params[:account_name].presence || user.name
+    account = Account.create!(name: account_name)
     account.memberships.create!(user: user, role: :owner)
 
     user.magic_links.where(purpose: :sign_in).valid.update_all(expires_at: Time.current)
     magic_link = user.magic_links.create!(purpose: :sign_in)
-    MagicLinkMailer.invitation(user, magic_link, account).deliver_later
+    MagicLinkMailer.invitation(user, magic_link, account).deliver_now
 
     redirect_to admin_account_invitations_path, notice: "Account creato e invito inviato a #{email}"
   end
