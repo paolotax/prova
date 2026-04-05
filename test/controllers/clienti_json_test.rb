@@ -26,18 +26,22 @@ class ClientiJsonTest < ActionDispatch::IntegrationTest
 
   # Index
 
-  test "index returns JSON array" do
+  test "index returns envelope JSON" do
     get clienti_path(account_id: @account.id), as: :json, headers: @headers
 
     assert_response :success
     json = JSON.parse(response.body)
-    assert_kind_of Array, json
+    assert_equal true, json["ok"]
+    assert_kind_of Array, json["data"]
+    assert json["count"].is_a?(Integer)
   end
 
-  test "index supports search with q param" do
-    get clienti_path(account_id: @account.id, q: @cliente.denominazione.first(4)), as: :json, headers: @headers
+  test "index supports search with terms param" do
+    get clienti_path(account_id: @account.id, terms: [@cliente.denominazione.first(4)]), as: :json, headers: @headers
 
     assert_response :success
+    json = JSON.parse(response.body)
+    assert json["data"].any? { |c| c["id"] == @cliente.id }
   end
 
   test "index supports limit param" do
@@ -45,7 +49,7 @@ class ClientiJsonTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    assert json.length <= 1
+    assert json["data"].length <= 1
   end
 
   # Show

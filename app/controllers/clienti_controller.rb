@@ -3,16 +3,14 @@ class ClientiController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
 
-  skip_before_action :set_filter, :set_user_filtering, if: -> { request.format.json? }
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
 
   before_action :authenticate_user!
   before_action :set_cliente, only: %i[ show edit update destroy ]
 
   def index
     if request.format.json?
-      @clienti = Current.account.clienti.order(denominazione: :asc)
-      @clienti = @clienti.search_all_word(params[:q]) if params[:q].present?
-      @clienti = @clienti.limit(params[:limit] || 50)
+      @clienti = @filter.clienti.limit(params[:limit] || 50)
     else
       @clienti = @filter.clienti.includes(:saldo)
       @total_count = @clienti.count

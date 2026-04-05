@@ -5,9 +5,21 @@ class PersoneController < ApplicationController
 
   FILTER_PARAMS = [:sorted_by, :stato_contatto, terms: [], classi: [], materie: [], ruoli: []].freeze
 
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   def index
-    @total_count = @filter.persone.count
-    set_page_and_extract_portion_from @filter.persone
+    if request.format.json?
+      @persone = @filter.persone.limit(params[:limit] || 50)
+    else
+      @total_count = @filter.persone.count
+      set_page_and_extract_portion_from @filter.persone
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+      format.json
+    end
   end
 
   def show
@@ -17,36 +29,21 @@ class PersoneController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.json do
-        render json: {
-          id: @persona.id,
-          cognome: @persona.cognome,
-          nome: @persona.nome,
-          email: @persona.email,
-          cellulare: @persona.cellulare,
-          ruolo: @persona.ruolo,
-          materia: @persona.persona_classi.where.not(materia: nil).pick(:materia),
-          classe_ids: @persona.classe_ids
-        }
-      end
+      format.json
     end
   end
 
   def create
-    p = params[:persona] || params
-    @persona = Current.account.persone.new(
-      cognome: p[:cognome],
-      nome: p[:nome],
-      ruolo: p[:ruolo].presence || :docente,
-      email: p[:email],
-      cellulare: p[:cellulare],
-      scuola_id: p[:scuola_id]
-    )
+    @persona = Current.account.persone.new(persona_params.except(:classe_ids, :materia))
 
-    if @persona.save
-      redirect_to persona_path(@persona), notice: "#{@persona.nome_completo} aggiunto"
-    else
-      redirect_back fallback_location: persone_path, alert: @persona.errors.full_messages.join(", ")
+    respond_to do |format|
+      if @persona.save
+        format.html { redirect_to persona_path(@persona), notice: "#{@persona.nome_completo} aggiunto" }
+        format.json { render :show, status: :created, location: @persona }
+      else
+        format.html { redirect_back fallback_location: persone_path, alert: @persona.errors.full_messages.join(", ") }
+        format.json { render json: @persona.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -63,23 +60,30 @@ class PersoneController < ApplicationController
     update_materia(materia_val) if materia_val.present?
 
     if @persona.update(persona_params.except(:classe_ids, :materia))
-      if params[:return_to] == "scuola" && @persona.scuola.present?
-        respond_to do |format|
-          format.turbo_stream do
+      respond_to do |format|
+        format.json { render :show, status: :ok, location: @persona }
+        format.turbo_stream do
+          if params[:return_to] == "scuola" && @persona.scuola.present?
             render turbo_stream: turbo_stream.replace(
               ActionView::RecordIdentifier.dom_id(@persona.scuola, :insegnanti),
               partial: "scuole/container/insegnanti",
               locals: { scuola: @persona.scuola.reload }
             )
           end
-          format.html { redirect_to scuola_path(@persona.scuola), notice: "#{@persona.nome_completo} aggiornato" }
         end
-        return
+        format.html do
+          if params[:return_to] == "scuola" && @persona.scuola.present?
+            redirect_to scuola_path(@persona.scuola), notice: "#{@persona.nome_completo} aggiornato"
+          else
+            redirect_to persona_path(@persona)
+          end
+        end
       end
-
-      redirect_to persona_path(@persona)
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.json { render json: @persona.errors, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -88,10 +92,13 @@ class PersoneController < ApplicationController
     scuola = @persona.scuola
     @persona.destroy
 
-    if scuola.present?
-      redirect_to scuola_path(scuola), notice: "#{nome} eliminato"
-    else
-      redirect_to persone_path, notice: "#{nome} eliminato"
+    respond_to do |format|
+      format.json { head :no_content }
+      if scuola.present?
+        format.html { redirect_to scuola_path(scuola), notice: "#{nome} eliminato" }
+      else
+        format.html { redirect_to persone_path, notice: "#{nome} eliminato" }
+      end
     end
   end
 
