@@ -177,6 +177,7 @@ When working on this project, use these skills:
 - **test-agent** — when writing Minitest tests and fixtures
 - **migration-agent** — when creating migrations (UUIDs, account_id, no foreign keys)
 - **frontend-design** — when building UI components, always reference Fizzy patterns
+- **scagnozz** — when interacting with Scagnozz CLI for searching schools, clients, people, creating notes and orders
 
 ## Conventions
 
