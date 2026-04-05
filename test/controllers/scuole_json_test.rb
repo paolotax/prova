@@ -71,4 +71,25 @@ class ScuoleJsonTest < ActionDispatch::IntegrationTest
     assert json.key?("url")
     assert json.key?("codice_ministeriale")
   end
+
+  # Update
+
+  test "update modifies scuola" do
+    patch scuola_path(@scuola, account_id: @account.id), as: :json,
+      params: { scuola: { email: "nuova@scuola.it", telefono: "02 1234567" } },
+      headers: @headers
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal "nuova@scuola.it", json["email"]
+    assert_equal "02 1234567", json["telefono"]
+  end
+
+  test "update returns errors for invalid data" do
+    patch scuola_path(@scuola, account_id: @account.id), as: :json,
+      params: { scuola: { denominazione: "" } },
+      headers: @headers
+
+    assert_response :unprocessable_entity
+  end
 end

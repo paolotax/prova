@@ -103,9 +103,13 @@ class ScuoleController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to scuola_path(@scuola) }
+        format.json { render :show }
       end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @scuola.errors, status: :unprocessable_entity }
+      end
     end
   end
 
