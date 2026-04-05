@@ -5,7 +5,7 @@ info:
   version: "1.0"
 
 servers:
-  - url: https://prova.fly.dev
+  - url: https://scagnozz.com
     description: Production
 
 security:
