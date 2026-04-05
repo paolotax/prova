@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       root 'dashboard#index'
       resources :extension_mails, only: %i[index create]
       resources :cli_mails, only: %i[index create]
+      resources :account_invitations, only: %i[index create]
     end
   end
 

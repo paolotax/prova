@@ -40,3 +40,9 @@ no_account:
   email: dana@example.com
   role: scagnozzo
   slug: dana
+
+superadmin:
+  name: paolo
+  email: paolo.tassinari@hey.com
+  role: admin
+  slug: paolo

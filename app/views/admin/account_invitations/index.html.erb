@@ -1,0 +1,31 @@
+<h2>Invita nuovo account</h2>
+
+<%= form_with url: admin_account_invitations_path, method: :post, style: "margin-bottom: 2rem; display: flex; gap: 0.5rem; align-items: end;" do |f| %>
+  <div>
+    <label for="email" style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-ink-dark);">Email</label>
+    <%= f.email_field :email, placeholder: "nome@esempio.it", required: true, class: "input", style: "width: 320px;" %>
+  </div>
+  <%= f.submit "Crea account e invia invito", class: "btn btn--primary" %>
+<% end %>
+
+<h3>Account creati</h3>
+<table style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr style="border-bottom: 2px solid var(--color-ink-lighter); text-align: left;">
+      <th style="padding: 0.5rem;">Nome</th>
+      <th style="padding: 0.5rem;">Email</th>
+      <th style="padding: 0.5rem;">Account</th>
+      <th style="padding: 0.5rem;">Creato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @invitations.each do |user| %>
+      <tr style="border-bottom: 1px solid var(--color-ink-lighter);">
+        <td style="padding: 0.5rem;"><%= user.name %></td>
+        <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= user.email %></td>
+        <td style="padding: 0.5rem;"><%= user.accounts.map(&:name).join(", ") %></td>
+        <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= l(user.created_at, format: :short) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
