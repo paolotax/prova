@@ -69,6 +69,8 @@ class PersoneController < ApplicationController
               partial: "scuole/container/insegnanti",
               locals: { scuola: @persona.scuola.reload }
             )
+          else
+            render :show
           end
         end
         format.html do

@@ -3,7 +3,7 @@ class Persone::Importer
 
   attr_reader :persona, :matched_scuola, :matched_classi, :action, :changes, :error, :suggestions
 
-  def initialize(cognome:, nome: nil, email: nil, cellulare: nil, telefono: nil, scuola: nil, classi: nil, ruolo: "docente")
+  def initialize(cognome:, nome: nil, email: nil, cellulare: nil, telefono: nil, scuola: nil, classi: nil, ruolo: "docente", materia: nil)
     @cognome = cognome
     @nome = nome
     @email = email
@@ -12,6 +12,7 @@ class Persone::Importer
     @scuola_query = scuola
     @classi_input = Array(classi)
     @ruolo = ruolo
+    @materia = materia
     @changes = []
     @matched_classi = []
   end
@@ -146,10 +147,14 @@ class Persone::Importer
 
   def assign_classi
     matched_classi.each do |classe|
-      next if @persona.classi.include?(classe)
-
-      PersonaClasse.find_or_create_by!(persona: @persona, classe: classe)
-      @changes << "classe #{classe.nome_breve} aggiunta"
+      pc = PersonaClasse.find_or_create_by!(persona: @persona, classe: classe)
+      if pc.previously_new_record?
+        @changes << "classe #{classe.nome_breve} aggiunta"
+      end
+      if @materia.present? && pc.materia != @materia
+        pc.update!(materia: @materia)
+        @changes << "materia #{@materia} assegnata a #{classe.nome_breve}"
+      end
     end
     @action = "updated" if @action == "unchanged" && @changes.any?
     true

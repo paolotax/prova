@@ -7,7 +7,7 @@ module Api
 
         def create
           if params[:persone].present?
-            items = params[:persone].map { |p| p.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, :ruolo, classi: []).to_h }
+            items = params[:persone].map { |p| p.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, :ruolo, :materia, classi: []).to_h }
             result = ::Persone::Importer.import_batch(items)
           else
             importer = ::Persone::Importer.new(**import_params).import
@@ -20,7 +20,7 @@ module Api
         private
 
         def import_params
-          params.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, :ruolo, classi: []).to_h.symbolize_keys
+          params.permit(:cognome, :nome, :email, :cellulare, :telefono, :scuola, :ruolo, :materia, classi: []).to_h.symbolize_keys
         end
       end
     end
