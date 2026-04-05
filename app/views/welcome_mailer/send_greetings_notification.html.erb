@@ -13,26 +13,10 @@
   <%= render Email::Text.new(text: "ScagnoZZ stà muovendo i suoi primi passi. ") %>
   <%# Section 1 %>
   
-  <%= render Email::Text.new(text: "Intanto imposta le scuole e i tuoi editori nella pagina del tuo profilo. Al momento puoi inserire appunti di ogni tipo, consultare al volo gli elenchi adozioni e prepararti il giro.") %>
+  <%= render Email::Text.new(text: "Intanto imposta le scuole e i tuoi editori nella pagina del tuo profilo. Al momento puoi inserire appunti di ogni tipo, consultare al volo gli elenchi adozioni e prepararti il giro") %>
+  <%#= render Email::Text.new(text: "Intanto imposta le scuole e gli tuoi editori nella pagina del tuo profilo. Poi si vedrà") %>
 
-  <%= render Email::Heading.new(
-    text: "Scagnozz CLI",
-    size: "22px",
-    align: "left",
-    margin: "30px auto 10px auto"
-  ) %>
-  <%= render Email::Text.new do %>
-    Puoi usare ScagnoZZ anche dal terminale con il <b>CLI</b>: cerca scuole, clienti, libri e crea appunti direttamente dalla riga di comando.
-  <% end %>
-  <%= render Email::Text.new do %>
-    <b>Mac / Linux:</b><br>
-    <code>curl -fsSL https://scagnozz.com/cli/install.sh | bash</code>
-  <% end %>
-  <%= render Email::Text.new do %>
-    <b>Windows</b> (PowerShell):<br>
-    <code>irm https://scagnozz.com/cli/install.ps1 | iex</code>
-  <% end %>
-  <%= render Email::Text.new(text: "Dopo l'installazione esegui 'scagnozz setup' per configurare il tuo account.") %>
+  <%# Section 1 %>
     
   <%= render Email::Colorblock.new(
     color: Email::Colors::RED_50,

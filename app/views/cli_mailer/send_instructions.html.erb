@@ -91,18 +91,30 @@
     Su Windows:
   <% end %>
   <%= render Email::Text.new do %>
-    1. Scarica il programma da questo link:
+    1. Apri <b>PowerShell</b> — cerca "PowerShell" nel menu Start
+  <% end %>
+  <%= render Email::Text.new do %>
+    2. Copia e incolla questo comando e premi Invio:
   <% end %>
 
-  <%= render Email::Button.new(
-    text: "Scarica per Windows",
-    href: "https://scagnozz.com/cli/scagnozz-windows-amd64.exe",
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::GRAY_100,
+    border_radius: "8px",
+    padding: "12px 16px",
     margin: "8px auto 16px auto"
-  ) %>
+  ) do %>
+    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
+      irm https://scagnozz.com/cli/install.ps1 | iex
+    <% end %>
+  <% end %>
 
   <%= render Email::Text.new do %>
-    2. Sposta il file scaricato in una cartella comoda (es. <code>C:\Programmi\scagnozz\</code>)<br>
-    3. Rinomina il file in <code>scagnozz.exe</code>
+    3. Chiudi e riapri PowerShell. Scrivi <code>scagnozz</code> e premi Invio.
+  <% end %>
+
+  <%= render Email::Text.new(size: "14px", margin: "8px auto 16px auto", color: Email::Colors::GRAY_600) do %>
+    In alternativa puoi <%= link_to "scaricare il file direttamente", "https://scagnozz.com/cli/scagnozz-windows-amd64.exe" %>,
+    rinominarlo in <code>scagnozz.exe</code> e metterlo in una cartella nel PATH.
   <% end %>
 
   <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
@@ -272,7 +284,7 @@
       <% end %>
     <% end %>
     <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
-      Su Windows, riscarica il file dallo stesso link qui sopra.
+      Su Windows, riesegui in PowerShell: <code>irm https://scagnozz.com/cli/install.ps1 | iex</code>
     <% end %>
   <% end %>
 
