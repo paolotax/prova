@@ -2,7 +2,7 @@
   <% email.with_masthead_text(text: "ScagnoZZ", href: "https://scagnozz.com") %>
 
   <%= render Email::Heading.new(
-    text: "Scagnozz CLI",
+    text: "Scagnozz AI",
     size: "26px",
     align: "center",
     margin: "20px auto 8px auto"
@@ -18,9 +18,13 @@
   <% end %>
 
   <%= render Email::Text.new do %>
-    Scagnozz CLI è un piccolo programma che installi sul tuo computer e ti permette di usare
-    l'intelligenza artificiale (Claude, Cursor, OpenCode) per lavorare direttamente con i tuoi dati
-    su Scagnozz — senza aprire il browser.
+    Scagnozz AI ti permette di usare l'intelligenza artificiale per lavorare con i tuoi dati
+    su Scagnozz — adozioni, scuole, clienti, ordini e contatti. Parli in italiano e l'AI fa il resto.
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    Puoi collegarlo in due modi: dal <b>telefono o browser</b> (il più semplice e veloce),
+    oppure installando il <b>CLI sul computer</b> (per chi preferisce lavorare dal terminale).
   <% end %>
 
   <%# ===== COSA PUO FARE ===== %>
@@ -49,106 +53,18 @@
     <b>Importare libri e clienti</b> — importa cataloghi e anagrafiche da qualsiasi formato
   <% end %>
   <%= render Email::Text.new(margin: "8px auto 32px auto", color: Email::Colors::GRAY_600) do %>
-    Tutto questo lo fai parlando in italiano all'AI, che usa Scagnozz CLI dietro le quinte.
+    Tutto questo lo fai parlando in italiano all'AI, che usa Scagnozz dietro le quinte.
   <% end %>
 
   <%= render Email::Divider.new(color: Email::Colors::GRAY_300) %>
 
-  <%# ===== INSTALLAZIONE ===== %>
+  <%# ===== GENERA TOKEN ===== %>
 
-  <%= render Email::Heading.new(text: "Come installare", size: "20px", margin: "32px auto 16px auto") %>
-
-  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
-    Su Mac o Linux:
-  <% end %>
-  <%= render Email::Text.new do %>
-    1. Apri il <b>Terminale</b><br>
-    &nbsp;&nbsp;&nbsp;Su Mac: cerca "Terminale" con Spotlight (la lente in alto a destra),
-    oppure lo trovi in Applicazioni → Utility<br>
-    &nbsp;&nbsp;&nbsp;Su Linux: cerca "Terminal" nel menu applicazioni
-  <% end %>
-  <%= render Email::Text.new do %>
-    2. Copia e incolla questo comando e premi Invio:
-  <% end %>
-
-  <%= render Email::Colorblock.new(
-    color: Email::Colors::GRAY_100,
-    border_radius: "8px",
-    padding: "12px 16px",
-    margin: "8px auto 16px auto"
-  ) do %>
-    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
-      curl -fsSL https://scagnozz.com/cli/install.sh | bash
-    <% end %>
-  <% end %>
+  <%= render Email::Heading.new(text: "Prima di tutto: genera il tuo token", size: "20px", margin: "32px auto 16px auto") %>
 
   <%= render Email::Text.new do %>
-    3. Chiudi e riapri il Terminale. Scrivi <code>scagnozz</code> e premi Invio.
-    Se vedi un messaggio di benvenuto, è tutto ok!
-  <% end %>
-
-  <%= render Email::Text.new(bold: true, margin: "24px auto 8px auto") do %>
-    Su Windows:
-  <% end %>
-  <%= render Email::Text.new do %>
-    1. Apri <b>PowerShell</b> — cerca "PowerShell" nel menu Start
-  <% end %>
-  <%= render Email::Text.new do %>
-    2. Copia e incolla questo comando e premi Invio:
-  <% end %>
-
-  <%= render Email::Colorblock.new(
-    color: Email::Colors::GRAY_100,
-    border_radius: "8px",
-    padding: "12px 16px",
-    margin: "8px auto 16px auto"
-  ) do %>
-    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
-      irm https://scagnozz.com/cli/install.ps1 | iex
-    <% end %>
-  <% end %>
-
-  <%= render Email::Text.new do %>
-    3. Chiudi e riapri PowerShell. Scrivi <code>scagnozz</code> e premi Invio.
-  <% end %>
-
-  <%= render Email::Text.new(size: "14px", margin: "8px auto 16px auto", color: Email::Colors::GRAY_600) do %>
-    In alternativa puoi <%= link_to "scaricare il file direttamente", "https://scagnozz.com/cli/scagnozz-windows-amd64.exe" %>,
-    rinominarlo in <code>scagnozz.exe</code> e metterlo in una cartella nel PATH.
-  <% end %>
-
-  <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
-
-  <%# ===== PRIMO SETUP ===== %>
-
-  <%= render Email::Heading.new(text: "Primo accesso", size: "20px", margin: "0 auto 16px auto") %>
-
-  <%= render Email::Text.new do %>
-    Dopo l'installazione, scrivi nel terminale:
-  <% end %>
-
-  <%= render Email::Colorblock.new(
-    color: Email::Colors::GRAY_100,
-    border_radius: "8px",
-    padding: "12px 16px",
-    margin: "8px auto 16px auto"
-  ) do %>
-    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
-      scagnozz setup
-    <% end %>
-  <% end %>
-
-  <%= render Email::Text.new do %>
-    Ti chiederà due cose:
-  <% end %>
-
-  <%= render Email::Text.new do %>
-    <b>1. URL del server</b> — scrivi: <code>https://scagnozz.com</code>
-  <% end %>
-
-  <%= render Email::Text.new do %>
-    <b>2. Access Token</b> — è una chiave personale che collega il CLI al tuo account.
-    Per generarla:
+    Per collegare Scagnozz all'AI ti serve un <b>Access Token</b> — una chiave personale
+    che collega il tuo account. Serve sia per il metodo semplice che per il CLI.
   <% end %>
 
   <%= render Email::Colorblock.new(
@@ -177,25 +93,183 @@
       4. Clicca <b>"Genera un nuovo token"</b>
     <% end %>
     <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
-      5. Come descrizione scrivi <i>"Scagnozz CLI"</i> e clicca <b>"Genera token"</b>
+      5. Come descrizione scrivi <i>"Scagnozz AI"</i> e clicca <b>"Genera token"</b>
     <% end %>
     <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
       6. <b>Copia il token</b> che appare — clicca il pulsante "Copia" accanto al token
     <% end %>
     <%= render Email::Text.new(size: "14px", margin: "8px auto 4px auto", color: Email::Colors::GRAY_600) do %>
-      Incolla il token nel terminale quando <code>scagnozz setup</code> te lo chiede.<br>
-      Se qualcosa va storto, o vuoi collegare un altro computer, puoi generare nuovi token tutte le volte che vuoi.
+      Conserva il token — ti servirà nel prossimo passaggio.
+      Se lo perdi, puoi generarne uno nuovo tutte le volte che vuoi.
     <% end %>
   <% end %>
 
   <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
 
-  <%# ===== CONFIGURAZIONE MCP ===== %>
+  <%# ===== METODO 1: CLAUDE WEB / MOBILE ===== %>
 
-  <%= render Email::Heading.new(text: "Collegare l'intelligenza artificiale", size: "20px", margin: "0 auto 16px auto") %>
+  <%= render Email::Colorblock.new(
+    color: "#F0FDF4",
+    border_color: "#86EFAC",
+    border_width: "2px",
+    border_radius: "12px",
+    margin: "0 auto 32px auto",
+    padding: "16px 24px"
+  ) do %>
+    <%= render Email::Text.new(size: "12px", bold: true, margin: "8px auto 4px auto", color: Email::Colors::GRAY_500) do %>
+      CONSIGLIATO
+    <% end %>
+    <%= render Email::Heading.new(text: "Metodo 1: Da telefono o browser", size: "20px", margin: "0 auto 12px auto") %>
+
+    <%= render Email::Text.new do %>
+      Il modo più semplice e veloce. Non devi installare nulla — funziona subito
+      dal telefono, tablet o computer. Ideale per chi lavora in mobilità.
+    <% end %>
+
+    <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
+      Su Claude (claude.ai o app mobile):
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      1. Vai su <b>Personalizza</b> (icona ingranaggio o menu)
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      2. Nella sezione <b>"Autorizzazioni strumenti"</b> clicca <b>"Aggiungi connettore personalizzato"</b>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      3. Come nome scrivi <b>Scagnozz</b>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      4. Come URL incolla (sostituendo IL_TUO_TOKEN con il token che hai generato):
+    <% end %>
+
+    <%= render Email::Colorblock.new(
+      color: Email::Colors::GRAY_100,
+      border_radius: "8px",
+      padding: "12px 16px",
+      margin: "8px auto 12px auto"
+    ) do %>
+      <%= render Email::Text.new(size: "13px", font: "monospace") do %>
+        https://scagnozz.com/api/mcp?api_key=IL_TUO_TOKEN
+      <% end %>
+    <% end %>
+
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      5. Clicca <b>"Aggiungi"</b> — i tool verranno caricati automaticamente
+    <% end %>
+
+    <%= render Email::Text.new(size: "14px", margin: "12px auto 4px auto", color: Email::Colors::GRAY_600) do %>
+      Fatto! Ora apri una nuova chat su Claude e prova a chiedere
+      <i>"Cerca la scuola Zibordi"</i> o <i>"Quali editori sono più adottati a Torino?"</i>
+    <% end %>
+
+    <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
+      Su ChatGPT:
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      1. Vai su <b>Settings → Apps → Developer Mode</b>
+    <% end %>
+    <%= render Email::Text.new(size: "14px", margin: "4px auto") do %>
+      2. Clicca <b>"Create app"</b> e incolla lo stesso URL
+    <% end %>
+  <% end %>
+
+  <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
+
+  <%# ===== METODO 2: CLI ===== %>
+
+  <%= render Email::Heading.new(text: "Metodo 2: Installare il CLI sul computer", size: "20px", margin: "0 auto 12px auto") %>
 
   <%= render Email::Text.new do %>
-    Dopo il setup, esegui questi due comandi nel terminale:
+    Se usi <b>Claude Desktop</b>, <b>Claude Code</b>, <b>Cursor</b> o <b>OpenCode</b> sul computer,
+    puoi installare Scagnozz CLI per un'integrazione più profonda. Il CLI si collega
+    direttamente al tuo programma AI e permette anche di importare file dal disco.
+  <% end %>
+
+  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
+    Installazione — Mac o Linux:
+  <% end %>
+  <%= render Email::Text.new do %>
+    1. Apri il <b>Terminale</b><br>
+    &nbsp;&nbsp;&nbsp;Su Mac: cerca "Terminale" con Spotlight (la lente in alto a destra),
+    oppure lo trovi in Applicazioni → Utility<br>
+    &nbsp;&nbsp;&nbsp;Su Linux: cerca "Terminal" nel menu applicazioni
+  <% end %>
+  <%= render Email::Text.new do %>
+    2. Copia e incolla questo comando e premi Invio:
+  <% end %>
+
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::GRAY_100,
+    border_radius: "8px",
+    padding: "12px 16px",
+    margin: "8px auto 16px auto"
+  ) do %>
+    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
+      curl -fsSL https://scagnozz.com/cli/install.sh | bash
+    <% end %>
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    3. Chiudi e riapri il Terminale. Scrivi <code>scagnozz</code> e premi Invio.
+    Se vedi un messaggio di benvenuto, è tutto ok!
+  <% end %>
+
+  <%= render Email::Text.new(bold: true, margin: "24px auto 8px auto") do %>
+    Installazione — Windows:
+  <% end %>
+  <%= render Email::Text.new do %>
+    1. Apri <b>PowerShell</b> — cerca "PowerShell" nel menu Start
+  <% end %>
+  <%= render Email::Text.new do %>
+    2. Copia e incolla questo comando e premi Invio:
+  <% end %>
+
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::GRAY_100,
+    border_radius: "8px",
+    padding: "12px 16px",
+    margin: "8px auto 16px auto"
+  ) do %>
+    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
+      irm https://scagnozz.com/cli/install.ps1 | iex
+    <% end %>
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    3. Chiudi e riapri PowerShell. Scrivi <code>scagnozz</code> e premi Invio.
+  <% end %>
+
+  <%= render Email::Text.new(size: "14px", margin: "8px auto 16px auto", color: Email::Colors::GRAY_600) do %>
+    In alternativa puoi <%= link_to "scaricare il file direttamente", "https://scagnozz.com/cli/scagnozz-windows-amd64.exe" %>,
+    rinominarlo in <code>scagnozz.exe</code> e metterlo in una cartella nel PATH.
+  <% end %>
+
+  <%= render Email::Text.new(bold: true, margin: "24px auto 8px auto") do %>
+    Primo accesso:
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    Dopo l'installazione, scrivi nel terminale:
+  <% end %>
+
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::GRAY_100,
+    border_radius: "8px",
+    padding: "12px 16px",
+    margin: "8px auto 16px auto"
+  ) do %>
+    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
+      scagnozz setup
+    <% end %>
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    Ti chiederà l'<b>URL del server</b> (scrivi <code>https://scagnozz.com</code>)
+    e l'<b>Access Token</b> (incolla il token che hai generato prima).
+  <% end %>
+
+  <%= render Email::Text.new(margin: "16px auto 8px auto") do %>
+    Poi collega Scagnozz al tuo programma AI:
   <% end %>
 
   <%= render Email::Colorblock.new(
@@ -213,25 +287,21 @@
   <% end %>
 
   <%= render Email::Text.new do %>
-    Il primo collega Scagnozz al tuo programma AI (Claude Desktop, Claude Code, Cursor o OpenCode).
-    Ti mostrerà un menu dove scegliere quale programma usi.<br><br>
+    Il primo collega Scagnozz al tuo programma AI — ti mostrerà un menu dove scegliere quale usi.
     Il secondo installa le istruzioni che insegnano all'AI come usare Scagnozz.
-  <% end %>
-
-  <%= render Email::Text.new(margin: "16px auto 0 auto") do %>
     Riavvia il programma AI e sei pronto!
   <% end %>
 
-  <%= render Email::Text.new(margin: "16px auto 8px auto") do %>
-    Per iniziare, prova a chiedere all'AI:
-  <% end %>
+  <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
+
+  <%# ===== COSA POSSO CHIEDERE ===== %>
 
   <%= render Email::Colorblock.new(
     color: "#F0FDF4",
     border_color: "#86EFAC",
     border_width: "1px",
     border_radius: "12px",
-    margin: "8px auto 32px auto",
+    margin: "0 auto 32px auto",
     padding: "16px 24px"
   ) do %>
     <%= render Email::Text.new(bold: true, margin: "8px auto 12px auto") do %>
@@ -255,62 +325,6 @@
     <%= render Email::Text.new(size: "14px", margin: "8px auto 4px auto", color: Email::Colors::GRAY_600) do %>
       Parla in italiano, come faresti con un collega. L'AI capisce cosa vuoi e usa Scagnozz per te.
     <% end %>
-  <% end %>
-
-  <%# ===== CLAUDE WEB / MOBILE / CHATGPT ===== %>
-
-  <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
-
-  <%= render Email::Heading.new(text: "Usare Scagnozz da Claude web, mobile o ChatGPT", size: "20px", margin: "0 auto 16px auto") %>
-
-  <%= render Email::Text.new do %>
-    Se preferisci non installare nulla, puoi collegare Scagnozz direttamente da
-    <b>Claude web</b>, <b>Claude mobile</b> o <b>ChatGPT</b> — funziona dal browser o dall'app del telefono.
-  <% end %>
-
-  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
-    Su Claude (claude.ai o app mobile):
-  <% end %>
-  <%= render Email::Text.new do %>
-    1. Vai su <b>Personalizza</b> (icona ingranaggio o menu)
-  <% end %>
-  <%= render Email::Text.new do %>
-    2. Nella sezione <b>"Autorizzazioni strumenti"</b> clicca <b>"Aggiungi connettore personalizzato"</b>
-  <% end %>
-  <%= render Email::Text.new do %>
-    3. Come nome scrivi <b>Scagnozz</b>
-  <% end %>
-  <%= render Email::Text.new do %>
-    4. Come URL incolla:
-  <% end %>
-
-  <%= render Email::Colorblock.new(
-    color: Email::Colors::GRAY_100,
-    border_radius: "8px",
-    padding: "12px 16px",
-    margin: "8px auto 16px auto"
-  ) do %>
-    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
-      https://scagnozz.com/api/mcp?api_key=IL_TUO_TOKEN
-    <% end %>
-  <% end %>
-
-  <%= render Email::Text.new do %>
-    5. Clicca <b>"Aggiungi"</b> — i tool verranno caricati automaticamente
-  <% end %>
-
-  <%= render Email::Text.new(size: "14px", margin: "8px auto 16px auto", color: Email::Colors::GRAY_600) do %>
-    Sostituisci <code>IL_TUO_TOKEN</code> con il tuo Access Token (lo stesso del CLI — vedi sopra come generarlo).
-  <% end %>
-
-  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
-    Su ChatGPT:
-  <% end %>
-  <%= render Email::Text.new do %>
-    1. Vai su <b>Settings → Apps → Developer Mode</b>
-  <% end %>
-  <%= render Email::Text.new do %>
-    2. Clicca <b>"Create app"</b> e incolla lo stesso URL
   <% end %>
 
   <%# ===== BOX AGGIORNAMENTO ===== %>
