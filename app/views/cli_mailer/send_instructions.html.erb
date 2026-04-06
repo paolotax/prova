@@ -257,6 +257,62 @@
     <% end %>
   <% end %>
 
+  <%# ===== CLAUDE WEB / MOBILE / CHATGPT ===== %>
+
+  <%= render Email::Divider.new(color: Email::Colors::GRAY_300, margin: "32px auto") %>
+
+  <%= render Email::Heading.new(text: "Usare Scagnozz da Claude web, mobile o ChatGPT", size: "20px", margin: "0 auto 16px auto") %>
+
+  <%= render Email::Text.new do %>
+    Se preferisci non installare nulla, puoi collegare Scagnozz direttamente da
+    <b>Claude web</b>, <b>Claude mobile</b> o <b>ChatGPT</b> — funziona dal browser o dall'app del telefono.
+  <% end %>
+
+  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
+    Su Claude (claude.ai o app mobile):
+  <% end %>
+  <%= render Email::Text.new do %>
+    1. Vai su <b>Personalizza</b> (icona ingranaggio o menu)
+  <% end %>
+  <%= render Email::Text.new do %>
+    2. Nella sezione <b>"Autorizzazioni strumenti"</b> clicca <b>"Aggiungi connettore personalizzato"</b>
+  <% end %>
+  <%= render Email::Text.new do %>
+    3. Come nome scrivi <b>Scagnozz</b>
+  <% end %>
+  <%= render Email::Text.new do %>
+    4. Come URL incolla:
+  <% end %>
+
+  <%= render Email::Colorblock.new(
+    color: Email::Colors::GRAY_100,
+    border_radius: "8px",
+    padding: "12px 16px",
+    margin: "8px auto 16px auto"
+  ) do %>
+    <%= render Email::Text.new(size: "14px", font: "monospace") do %>
+      https://scagnozz.com/api/mcp?api_key=IL_TUO_TOKEN
+    <% end %>
+  <% end %>
+
+  <%= render Email::Text.new do %>
+    5. Clicca <b>"Aggiungi"</b> — i tool verranno caricati automaticamente
+  <% end %>
+
+  <%= render Email::Text.new(size: "14px", margin: "8px auto 16px auto", color: Email::Colors::GRAY_600) do %>
+    Sostituisci <code>IL_TUO_TOKEN</code> con il tuo Access Token (lo stesso del CLI — vedi sopra come generarlo).
+  <% end %>
+
+  <%= render Email::Text.new(bold: true, margin: "16px auto 8px auto") do %>
+    Su ChatGPT:
+  <% end %>
+  <%= render Email::Text.new do %>
+    1. Vai su <b>Settings → Apps → Developer Mode</b>
+  <% end %>
+  <%= render Email::Text.new do %>
+    2. Clicca <b>"Create app"</b> e incolla lo stesso URL
+  <% end %>
+
   <%# ===== BOX AGGIORNAMENTO ===== %>
 
   <%= render Email::Colorblock.new(
