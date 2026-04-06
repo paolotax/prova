@@ -177,6 +177,7 @@ gem "reactionview", "~> 0.1.2"
 gem 'ruby_llm'
 gem "ruby_llm-schema"
 gem "ruby_llm-mcp"
+gem "mcp"
 
 # Markdown processing
 gem 'redcarpet'

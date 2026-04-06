@@ -38,8 +38,9 @@ module Prova
 
     config.beginning_of_week = :monday
 
-    # Add tools directory to autoload paths
+    # Add tools directory to autoload and eager load paths
     config.autoload_paths << Rails.root.join("app", "tools")
+    config.eager_load_paths << Rails.root.join("app", "tools")
 
     # ViewComponent 4.x: restore auto-include of helpers
     config.view_component.include_all_helpers = true

@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     scope module: :users do
       resource :personal_info
       resource :avatar
+      post :send_setup_mail, controller: "setup_mails"
     end
   end
 
@@ -517,6 +518,8 @@ Rails.application.routes.draw do
   # =========================================
   # API
   # =========================================
+
+  post "api/mcp", to: "mcp#handle"
 
   namespace :api do
     post 'whatsapp/contacts', to: 'whatsapp#create'
