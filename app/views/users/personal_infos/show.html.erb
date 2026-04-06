@@ -85,26 +85,42 @@
 
       <section class="settings__section">
         <header>
-          <h2 class="divider">Estensione WhatsApp</h2>
+          <h2 class="divider">Token di accesso</h2>
         </header>
 
         <p class="txt-small">
-          Con l'estensione per Chrome puoi creare appunti su Scagnozz
-          direttamente da WhatsApp Web: seleziona un messaggio, clicca il
-          pulsante e l'appunto viene creato con il testo e il contatto.
-        </p>
-        <p class="txt-small txt-subtle">
-          Per collegare l'estensione al tuo account serve un <strong>token di accesso</strong>.
+          I token di accesso permettono di collegare strumenti AI e
+          integrazioni esterne al tuo account Scagnozz.
         </p>
 
         <div class="flex-inline center justify-center flex-wrap gap">
           <%= link_to access_tokens_path(account_id: Current.account), class: "btn btn--link" do %>
             <span>Gestisci token</span>
           <% end %>
+        </div>
+      </section>
 
-          <%= link_to download_extension_path, class: "btn" do %>
-            <span>Scarica estensione (.zip)</span>
-          <% end %>
+      <section class="settings__section">
+        <header>
+          <h2 class="divider">Integrazioni</h2>
+        </header>
+
+        <div class="flex flex-column gap">
+          <div>
+            <h3 class="txt-small txt-bold">Estensione WhatsApp per Chrome</h3>
+            <p class="txt-small txt-subtle">Crea appunti su Scagnozz direttamente da WhatsApp Web: seleziona un messaggio, clicca il pulsante e l'appunto viene creato con il testo e il contatto.</p>
+            <%= button_to user_send_setup_mail_path(Current.user, type: "extension"), method: :post, class: "btn txt-x-small" do %>
+              <span>Inviami le istruzioni via email</span>
+            <% end %>
+          </div>
+
+          <div>
+            <h3 class="txt-small txt-bold">Claude Desktop / Claude Code</h3>
+            <p class="txt-small txt-subtle">Collega Scagnozz al tuo assistente AI per cercare scuole, adozioni, clienti e creare appunti direttamente dalla chat.</p>
+            <%= button_to user_send_setup_mail_path(Current.user, type: "cli"), method: :post, class: "btn txt-x-small" do %>
+              <span>Inviami le istruzioni via email</span>
+            <% end %>
+          </div>
         </div>
       </section>
     </section>

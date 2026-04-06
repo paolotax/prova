@@ -2,14 +2,14 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to_url "Configurazione", accounts_configurazione_path %>
+    <%= back_link_to_url "Profilo", user_personal_info_path(Current.user) %>
   </div>
   <h1 class="header__title"><%= @page_title %></h1>
 <% end %>
 
 <section class="panel panel--wide shadow center">
   <% if @access_tokens.any? %>
-    <p class="txt-small txt-tertiary">Token generati per accedere alle API di Scagnozz (es. estensione WhatsApp).</p>
+    <p class="txt-small txt-tertiary">Token generati per accedere alle API di Scagnozz (es. strumenti AI e integrazioni esterne).</p>
     <table class="access_tokens_table margin-block-end-double max-width txt-small">
       <thead>
         <tr>
@@ -36,7 +36,7 @@
       </tbody>
     </table>
   <% else %>
-    <p class="txt-small txt-tertiary">I token di accesso possono essere usati per collegare servizi esterni a Scagnozz, come l'estensione WhatsApp per Chrome. Puoi generare più token e revocarli in qualsiasi momento.</p>
+    <p class="txt-small txt-tertiary">I token di accesso permettono di collegare strumenti AI e integrazioni esterne a Scagnozz. Puoi generare più token e revocarli in qualsiasi momento.</p>
   <% end %>
 
   <%= link_to new_access_token_path, class: "btn btn--link" do %>
