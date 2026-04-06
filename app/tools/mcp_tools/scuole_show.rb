@@ -1,7 +1,7 @@
 module MCPTools
   class ScuoleShow < Base
     tool_name "scuole_show"
-    description "Mostra dettagli completi di una scuola (denominazione, codice ministeriale, indirizzo, contatti)"
+    description "Mostra dettagli completi di una scuola del tuo account. L'ID è un UUID interno (ottenuto da scuole_list o search), NON il codice ministeriale."
 
     annotations(
       read_only_hint: true,

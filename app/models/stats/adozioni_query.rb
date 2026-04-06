@@ -5,13 +5,15 @@ module Stats
       "disciplina" => 'ia."DISCIPLINA"',
       "classe"     => 'ia."ANNOCORSO"',
       "provincia"  => 'isc."PROVINCIA"',
+      "comune"     => 'isc."DESCRIZIONECOMUNE"',
       "titolo"     => 'ia."TITOLO"',
       "scuola"     => 'isc."CODICESCUOLA"'
     }.freeze
 
     EXTRA_COLUMNS = {
       "titolo" => ['ia."CODICEISBN" as isbn', 'ia."AUTORI" as autori', 'ia."PREZZO" as prezzo'],
-      "scuola" => ['isc."DENOMINAZIONESCUOLA" as denominazione', 'isc."PROVINCIA" as provincia']
+      "scuola" => ['isc."DENOMINAZIONESCUOLA" as denominazione', 'isc."PROVINCIA" as provincia'],
+      "comune" => ['isc."PROVINCIA" as provincia']
     }.freeze
 
     FILTERS = {
@@ -24,17 +26,54 @@ module Stats
       "isbn"         => 'ia."CODICEISBN" = ?',
       "combinazione" => 'ia."COMBINAZIONE" = ?',
       "scuola"       => 'isc."DENOMINAZIONESCUOLA" ILIKE ?',
-      "codice_scuola" => 'isc."CODICESCUOLA" = ?'
+      "codice_scuola" => 'isc."CODICESCUOLA" = ?',
+      "comune"       => 'isc."DESCRIZIONECOMUNE" ILIKE ?'
     }.freeze
 
     ORDER_COLUMNS = %w[classi_count scuole_count adozioni_count copie_stimate importo percentuale].freeze
 
+    SIGLA_TO_PROVINCIA = {
+      "AG" => "AGRIGENTO", "AL" => "ALESSANDRIA", "AN" => "ANCONA", "AO" => "AOSTA",
+      "AR" => "AREZZO", "AP" => "ASCOLI PICENO", "AT" => "ASTI", "AV" => "AVELLINO",
+      "BA" => "BARI", "BT" => "BARLETTA-ANDRIA-TRANI", "BL" => "BELLUNO", "BN" => "BENEVENTO",
+      "BG" => "BERGAMO", "BI" => "BIELLA", "BO" => "BOLOGNA", "BZ" => "BOLZANO",
+      "BS" => "BRESCIA", "BR" => "BRINDISI", "CA" => "CAGLIARI", "CL" => "CALTANISSETTA",
+      "CB" => "CAMPOBASSO", "CE" => "CASERTA", "CT" => "CATANIA", "CZ" => "CATANZARO",
+      "CH" => "CHIETI", "CO" => "COMO", "CS" => "COSENZA", "CR" => "CREMONA",
+      "KR" => "CROTONE", "CN" => "CUNEO", "EN" => "ENNA", "FM" => "FERMO",
+      "FE" => "FERRARA", "FI" => "FIRENZE", "FG" => "FOGGIA", "FC" => "FORLI'-CESENA",
+      "FR" => "FROSINONE", "GE" => "GENOVA", "GO" => "GORIZIA", "GR" => "GROSSETO",
+      "IM" => "IMPERIA", "IS" => "ISERNIA", "SP" => "LA SPEZIA", "AQ" => "L'AQUILA",
+      "LT" => "LATINA", "LE" => "LECCE", "LC" => "LECCO", "LI" => "LIVORNO",
+      "LO" => "LODI", "LU" => "LUCCA", "MC" => "MACERATA", "MN" => "MANTOVA",
+      "MS" => "MASSA-CARRARA", "MT" => "MATERA", "ME" => "MESSINA", "MI" => "MILANO",
+      "MO" => "MODENA", "MB" => "MONZA E DELLA BRIANZA", "NA" => "NAPOLI", "NO" => "NOVARA",
+      "NU" => "NUORO", "OR" => "ORISTANO", "PD" => "PADOVA", "PA" => "PALERMO",
+      "PR" => "PARMA", "PV" => "PAVIA", "PG" => "PERUGIA", "PU" => "PESARO E URBINO",
+      "PE" => "PESCARA", "PC" => "PIACENZA", "PI" => "PISA", "PT" => "PISTOIA",
+      "PN" => "PORDENONE", "PZ" => "POTENZA", "PO" => "PRATO", "RG" => "RAGUSA",
+      "RA" => "RAVENNA", "RC" => "REGGIO CALABRIA", "RE" => "REGGIO EMILIA",
+      "RI" => "RIETI", "RN" => "RIMINI", "RM" => "ROMA", "RO" => "ROVIGO",
+      "SA" => "SALERNO", "SS" => "SASSARI", "SV" => "SAVONA", "SI" => "SIENA",
+      "SR" => "SIRACUSA", "SO" => "SONDRIO", "SU" => "SUD SARDEGNA", "TA" => "TARANTO",
+      "TE" => "TERAMO", "TR" => "TERNI", "TO" => "TORINO", "TP" => "TRAPANI",
+      "TN" => "TRENTO", "TV" => "TREVISO", "TS" => "TRIESTE", "UD" => "UDINE",
+      "VA" => "VARESE", "VE" => "VENEZIA", "VB" => "VERBANO-CUSIO-OSSOLA",
+      "VC" => "VERCELLI", "VR" => "VERONA", "VV" => "VIBO VALENTIA", "VI" => "VICENZA",
+      "VT" => "VITERBO"
+    }.freeze
+
     def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50)
-      @filters = filters.to_h.stringify_keys.select { |_, v| v.present? }
+      @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
       @order_by = ORDER_COLUMNS.include?(order_by.to_s) ? order_by.to_s : "classi_count"
       @limit = [limit, 500].min
+    end
+
+    def self.expand_provincia(value)
+      upper = value.to_s.strip.upcase
+      SIGLA_TO_PROVINCIA[upper] || upper
     end
 
     def call
@@ -48,6 +87,12 @@ module Stats
     end
 
     private
+
+    def normalize_filters(filters)
+      h = filters.to_h.stringify_keys.select { |_, v| v.present? }
+      h["provincia"] = self.class.expand_provincia(h["provincia"]) if h["provincia"].present?
+      h
+    end
 
     def base_from
       <<~SQL
@@ -63,7 +108,7 @@ module Stats
       @filters.each do |key, value|
         next unless FILTERS.key?(key)
         conditions << FILTERS[key]
-        binds << (%w[titolo editore disciplina scuola].include?(key) ? "%#{value}%" : value)
+        binds << (%w[titolo editore disciplina scuola comune].include?(key) ? "%#{value}%" : value)
       end
       [conditions.join(" AND "), binds]
     end

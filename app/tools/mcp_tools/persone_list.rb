@@ -1,7 +1,7 @@
 module MCPTools
   class PersoneList < Base
     tool_name "persone"
-    description "Elenca le persone (docenti, dirigenti, segretari) con filtri per ruolo, classe, materia, stato contatto."
+    description "Elenca le persone (docenti, dirigenti, segretari) del tuo account Scagnozz. Filtri per ruolo, classe, materia, stato contatto."
 
     annotations(
       read_only_hint: true,

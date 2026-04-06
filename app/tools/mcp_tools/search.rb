@@ -1,7 +1,7 @@
 module MCPTools
   class Search < Base
     tool_name "search"
-    description "Cerca scuole, clienti, classi e persone nel database. Restituisce risultati con appuntabile_value da usare per creare appunti o documenti."
+    description "Cerca scuole, clienti, classi e persone nel database dell'utente (dati del tuo account Scagnozz). Restituisce risultati con appuntabile_value da usare per creare appunti o documenti. NON cerca nel database nazionale adozioni — per quello usa stats_adozioni."
 
     annotations(
       read_only_hint: true,

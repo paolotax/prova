@@ -1,7 +1,7 @@
 module MCPTools
   class ClientiList < Base
     tool_name "clienti_list"
-    description "Lista clienti con ricerca opzionale per denominazione, partita IVA, comune."
+    description "Lista clienti del tuo account Scagnozz. Ricerca opzionale per denominazione, partita IVA, comune."
 
     annotations(
       read_only_hint: true,

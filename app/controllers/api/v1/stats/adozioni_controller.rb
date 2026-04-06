@@ -31,7 +31,7 @@ module Api
         def filter_params
           params.permit(:provincia, :regione, :classe, :editore,
                         :disciplina, :titolo, :isbn, :combinazione,
-                        :scuola, :codice_scuola)
+                        :scuola, :codice_scuola, :comune)
         end
       end
     end

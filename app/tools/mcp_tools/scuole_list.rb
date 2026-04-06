@@ -1,7 +1,7 @@
 module MCPTools
   class ScuoleList < Base
     tool_name "scuole_list"
-    description "Lista scuole con ricerca per denominazione, codice ministeriale, comune o provincia."
+    description "Lista scuole dell'utente (solo quelle nel tuo account Scagnozz, non il database nazionale). Cerca per denominazione, codice ministeriale, comune o provincia. Gli ID restituiti sono UUID interni, NON codici ministeriali."
 
     annotations(
       read_only_hint: true,
