@@ -1,0 +1,8 @@
+<%= link_to persona_path(clientable),
+        data: { turbo_frame: :_top },
+        class: "card__title-link" do %>
+    <%= tag.h3 clientable.denominazione, class: "card__title overflow-line-clamp" %>
+    <% if clientable.scuola.present? %>
+      <span class="card__subtitle"><%= clientable.scuola.denominazione.upcase %></span>
+    <% end %>
+<% end %>
