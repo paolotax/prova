@@ -26,12 +26,13 @@ module MCPTools
         combinazione: { type: "string", description: "Combinazione" },
         coefficiente: { type: "integer", description: "Alunni per classe per stima copie (default 18)" },
         order_by: { type: "string", description: "Ordinamento: classi_count (default), adozioni_count, percentuale, importo" },
-        limit: { type: "integer", description: "Max risultati (default 50)" }
+        limit: { type: "integer", description: "Max risultati (default 50)" },
+        solo_144: { type: "boolean", description: "Se true, filtra solo le discipline che determinano il mercato (libro della prima, sussidiario linguaggi, sussidiario discipline di classe 1 e 4) e calcola sezioni_144 pesate (peso 1 per unico, 0.5 per fascicolo)." }
       },
       required: ["group_by"]
     )
 
-    def self.call(group_by:, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 18, order_by: "classi_count", limit: 50, server_context:, **_params)
+    def self.call(group_by:, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 18, order_by: "classi_count", limit: 50, solo_144: false, server_context:, **_params)
       with_current(server_context) do
         filters = {
           provincia: provincia, comune: comune, regione: regione, classe: classe,
@@ -44,7 +45,8 @@ module MCPTools
           group_by: group_by.split(",").map(&:strip),
           coefficiente: coefficiente.to_i,
           order_by: order_by.to_sym,
-          limit: limit.to_i
+          limit: limit.to_i,
+          solo_144: solo_144 == true || solo_144 == "true"
         )
 
         result = query.call

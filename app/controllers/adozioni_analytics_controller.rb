@@ -13,7 +13,8 @@ class AdozioniAnalyticsController < ApplicationController
       provincia: params[:provincia],
       grado: params[:grado],
       tipo_scuola: params[:tipo_scuola],
-      area: params[:area]
+      area: params[:area],
+      adozioni_tipo: params[:adozioni_tipo].presence
     }.compact_blank
 
     # For provincia tab

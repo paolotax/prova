@@ -173,4 +173,75 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
     assert_equal 0, result[:totals][:classi_count]
     assert_empty result[:results]
   end
+
+  # 12. solo_144 returns sezioni_144 in totals and results
+  test "solo_144 returns sezioni_144 in totals and results" do
+    # Insert 144-eligible adozioni (classe 1, SUSSIDIARIO discipline)
+    conn = ActiveRecord::Base.connection
+    conn.execute <<~SQL
+      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", created_at, updated_at)
+      VALUES
+        ('TOEE12345A', '1', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901099', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
+        ('TOEE12345A', '1', 'B', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901098', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
+        ('MIEE67890B', '1', 'A', 'IL LIBRO DELLA PRIMA CLASSE', '9788891901097', 'VERDI', 'PRIMA CLASSE', 'MONDADORI', '12,00', 'Si', 'Si', 'No', 'TN', 'EE', NOW(), NOW())
+    SQL
+
+    query = Stats::AdozioniQuery.new(
+      filters: {},
+      group_by: ["editore"],
+      solo_144: true,
+      limit: 5
+    )
+    result = query.call
+
+    assert result[:totals].key?(:sezioni_144), "totals should have sezioni_144"
+    assert result[:results].any?
+    result[:results].each do |r|
+      assert r.key?(:sezioni_144), "each result should have sezioni_144"
+    end
+
+    # SUSSIDIARIO DEI LINGUAGGI has peso 1.0, IL LIBRO DELLA PRIMA CLASSE has peso 1.0
+    # PEARSON: 2 adozioni x 1.0 = 2.0, MONDADORI: 1 adozione x 1.0 = 1.0
+    assert_in_delta 3.0, result[:totals][:sezioni_144], 0.1
+  end
+
+  # 13. without solo_144 does not include sezioni_144
+  test "without solo_144 does not include sezioni_144" do
+    query = Stats::AdozioniQuery.new(
+      filters: {},
+      group_by: ["editore"],
+      limit: 3
+    )
+    result = query.call
+
+    refute result[:totals].key?(:sezioni_144)
+    result[:results].each do |r|
+      refute r.key?(:sezioni_144)
+    end
+  end
+
+  # 14. solo_144 filters only 144-eligible adozioni and weights correctly
+  test "solo_144 filters only 144-eligible and peso 0.5 for AMBITO" do
+    conn = ActiveRecord::Base.connection
+    conn.execute <<~SQL
+      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", created_at, updated_at)
+      VALUES
+        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)', '9788891901096', 'BIANCHI', 'SCIENZE 4', 'PEARSON', '18,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
+        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901095', 'BIANCHI', 'LING 4', 'PEARSON', '20,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW())
+    SQL
+
+    query = Stats::AdozioniQuery.new(
+      filters: { editore: "PEARSON" },
+      group_by: ["editore"],
+      solo_144: true,
+      order_by: :sezioni_144,
+      limit: 1
+    )
+    result = query.call
+    top = result[:results].first
+
+    assert_equal "PEARSON", top[:editore]
+    # AMBITO SCIENTIFICO peso 0.5 + SUSSIDIARIO DEI LINGUAGGI peso 1.0 = 1.5
+    assert_in_delta 1.5, top[:sezioni_144], 0.1
+  end
 end

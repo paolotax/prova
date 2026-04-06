@@ -104,6 +104,7 @@ class AdozioniAnalytics
 
     # For each active filter, override its options from except-scope
     filtri.each_key do |key|
+      next unless OPTION_SQL.key?(key)
       except_scope = apply_filtri(base, filtri.except(key))
       override_filter_option(result, key, except_scope)
     end
@@ -178,6 +179,12 @@ class AdozioniAnalytics
   end
 
   def apply_filtri(scope, filtri)
+    case filtri[:adozioni_tipo]
+    when "144"
+      scope = scope.adozioni_144
+    when "235"
+      scope = scope.scorrimenti_235
+    end
     scope = scope.where(disciplina: filtri[:disciplina]) if filtri[:disciplina].present?
     scope = scope.joins(:classe).where(classi: { anno_corso: filtri[:anno_corso] }) if filtri[:anno_corso].present?
     scope = scope.where(editore: filtri[:editore]) if filtri[:editore].present?
@@ -193,6 +200,12 @@ class AdozioniAnalytics
   end
 
   def apply_filtri_import(scope, filtri)
+    case filtri[:adozioni_tipo]
+    when "144"
+      scope = scope.adozioni_144
+    when "235"
+      scope = scope.scorrimenti_235
+    end
     scope = scope.where(DISCIPLINA: filtri[:disciplina]) if filtri[:disciplina].present?
     scope = scope.where(ANNOCORSO: filtri[:anno_corso]) if filtri[:anno_corso].present?
     scope = scope.where(EDITORE: filtri[:editore]) if filtri[:editore].present?

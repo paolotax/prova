@@ -1,0 +1,71 @@
+libro_prima:
+  anno_scolastico: "2025/2026"
+  classe: "1"
+  disciplina: "IL LIBRO DELLA PRIMA CLASSE"
+  prezzo_cents: 1334
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+inglese_1:
+  anno_scolastico: "2025/2026"
+  classe: "1"
+  disciplina: "LINGUA INGLESE"
+  prezzo_cents: 402
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+religione_1:
+  anno_scolastico: "2025/2026"
+  classe: "1"
+  disciplina: "RELIGIONE"
+  prezzo_cents: 819
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+sussidiario_linguaggi:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "SUSSIDIARIO DEI LINGUAGGI"
+  prezzo_cents: 1728
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+sussidiario_discipline:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "SUSSIDIARIO DELLE DISCIPLINE"
+  prezzo_cents: 2146
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+sussidiario_ambito_scientifico:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)"
+  prezzo_cents: 1073
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+sussidiario_ambito_antropologico:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)"
+  prezzo_cents: 1073
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+inglese_4:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "LINGUA INGLESE"
+  prezzo_cents: 806
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+religione_4:
+  anno_scolastico: "2025/2026"
+  classe: "4"
+  disciplina: "RELIGIONE"
+  prezzo_cents: 819
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

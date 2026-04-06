@@ -12,7 +12,8 @@ module Api
             group_by: params[:group_by]&.split(","),
             coefficiente: params.fetch(:coefficiente, 18).to_i,
             order_by: params.fetch(:order_by, :classi_count).to_sym,
-            limit: params.fetch(:limit, 50).to_i
+            limit: params.fetch(:limit, 50).to_i,
+            solo_144: params[:solo_144] == "true"
           )
 
           result = query.call

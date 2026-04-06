@@ -67,6 +67,15 @@ class Adozione < ApplicationRecord
   scope :mie_disdette, -> { where(mia: true, disdetta: true) }
   scope :da_acquistare, -> { where(da_acquistare: true) }
   scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
+  scope :adozioni_144, -> {
+    joins(:classe).where(
+      classi: { anno_corso: Stats::Calcolo144::CLASSI_144 },
+      disciplina: Stats::Calcolo144.discipline_names
+    )
+  }
+  scope :scorrimenti_235, -> {
+    joins(:classe).where(classi: { anno_corso: Stats::Calcolo144::CLASSI_235 })
+  }
 
   delegate :classe_e_sezione, :combinazione, to: :classe, allow_nil: true
 

@@ -76,6 +76,12 @@ class ImportAdozione < ApplicationRecord
 
   scope :da_acquistare, -> { where(DAACQUIST: 'Si') }
   scope :da_non_acquistare, -> { where(DAACQUIST: 'No') }
+  scope :adozioni_144, -> {
+    where(ANNOCORSO: Stats::Calcolo144::CLASSI_144, DISCIPLINA: Stats::Calcolo144.discipline_names)
+  }
+  scope :scorrimenti_235, -> {
+    where(ANNOCORSO: Stats::Calcolo144::CLASSI_235)
+  }
 
   delegate :codice_ministeriale, :scuola, :citta, :tipo_scuola, :tipo_nome, to: :import_scuola
 

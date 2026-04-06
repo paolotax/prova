@@ -30,7 +30,7 @@ module Stats
       "comune"       => 'isc."DESCRIZIONECOMUNE" ILIKE ?'
     }.freeze
 
-    ORDER_COLUMNS = %w[classi_count scuole_count adozioni_count copie_stimate importo percentuale].freeze
+    ORDER_COLUMNS = %w[classi_count scuole_count adozioni_count copie_stimate importo percentuale sezioni_144].freeze
 
     SIGLA_TO_PROVINCIA = {
       "AG" => "AGRIGENTO", "AL" => "ALESSANDRIA", "AN" => "ANCONA", "AO" => "AOSTA",
@@ -63,12 +63,13 @@ module Stats
       "VT" => "VITERBO"
     }.freeze
 
-    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50)
+    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false)
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
       @order_by = ORDER_COLUMNS.include?(order_by.to_s) ? order_by.to_s : "classi_count"
       @limit = [limit, 500].min
+      @solo_144 = solo_144
     end
 
     def self.expand_provincia(value)
@@ -81,9 +82,10 @@ module Stats
         filters_applied: @filters,
         group_by: @group_by,
         coefficiente: @coefficiente,
+        solo_144: @solo_144 || nil,
         totals: totals,
         results: results
-      }
+      }.compact
     end
 
     private
@@ -110,6 +112,9 @@ module Stats
         conditions << FILTERS[key]
         binds << (%w[titolo editore disciplina scuola comune].include?(key) ? "%#{value}%" : value)
       end
+      if @solo_144
+        conditions << Stats::Calcolo144.where_clause('ia."DISCIPLINA"', 'ia."ANNOCORSO"')
+      end
       [conditions.join(" AND "), binds]
     end
 
@@ -126,7 +131,9 @@ module Stats
     end
 
     def select_aggregates
-      "#{classi_count_expr} as classi_count, COUNT(DISTINCT ia.\"CODICESCUOLA\") as scuole_count, COUNT(*) as adozioni_count"
+      agg = "#{classi_count_expr} as classi_count, COUNT(DISTINCT ia.\"CODICESCUOLA\") as scuole_count, COUNT(*) as adozioni_count"
+      agg += ", SUM(#{Stats::Calcolo144.peso_case_sql('ia."DISCIPLINA"')}) as sezioni_144" if @solo_144
+      agg
     end
 
     def prezzo_sum_expr
@@ -144,13 +151,15 @@ module Stats
       adozioni = row["adozioni_count"].to_i
       prezzo_avg = adozioni > 0 ? row["prezzo_sum"].to_f / adozioni : 0
 
-      {
+      result = {
         classi_count: classi,
         scuole_count: row["scuole_count"].to_i,
         adozioni_count: adozioni,
         copie_stimate: classi * @coefficiente,
         importo_cents: (prezzo_avg * classi * @coefficiente * 100).round
       }
+      result[:sezioni_144] = row["sezioni_144"].to_f.round(1) if @solo_144
+      result
     end
 
     def results
@@ -198,6 +207,7 @@ module Stats
         entry[:copie_stimate] = classi * @coefficiente
         entry[:importo_cents] = (prezzo_avg * classi * @coefficiente * 100).round
         entry[:percentuale] = (classi.to_f / total_classi * 100).round(2)
+        entry[:sezioni_144] = row["sezioni_144"].to_f.round(1) if @solo_144
         entry
       end
     end
