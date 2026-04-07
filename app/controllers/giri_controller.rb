@@ -4,9 +4,17 @@ class GiriController < ApplicationController
 
   def index
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 
   def show
+    if request.format.json?
+      return respond_to { |format| format.json }
+    end
+
     @settimane = genera_settimane(@giro.iniziato_il, @giro.finito_il)
     @tappe_per_giorno = @giro.tappe
       .con_data_tappa
@@ -53,9 +61,13 @@ class GiriController < ApplicationController
       respond_to do |format|
         format.turbo_stream { flash.now[:notice] = "Giro creato." }
         format.html { redirect_to giri_url, notice: "Giro creato." }
+        format.json { render :show, status: :created, location: @giro }
       end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @giro.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -68,15 +80,22 @@ class GiriController < ApplicationController
       respond_to do |format|
         format.turbo_stream { flash.now[:notice] = "Giro modificato." }
         format.html { redirect_to @giro, notice: "Giro modificato." }
+        format.json { render :show, status: :ok, location: @giro }
       end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @giro.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def destroy
     @giro.destroy!
-    redirect_to giri_path, notice: "Giro eliminato."
+    respond_to do |format|
+      format.html { redirect_to giri_path, notice: "Giro eliminato." }
+      format.json { head :no_content }
+    end
   end
 
   private

@@ -62,9 +62,23 @@ class AppuntiController < ApplicationController
   end
 
   def create
-    creator = Appunti::AppuntoCreator.new(appuntabile_value: find_appuntabile&.to_appuntabile_value)
-    creator.create
-    redirect_to creator.appunto
+    respond_to do |format|
+      format.html do
+        creator = Appunti::AppuntoCreator.new(appuntabile_value: find_appuntabile&.to_appuntabile_value)
+        creator.create
+        redirect_to creator.appunto
+      end
+      format.json do
+        creator = Appunti::AppuntoCreator.new(json_creator_params)
+        creator.create
+        if creator.appunto&.persisted?
+          @appunto = creator.appunto
+          render :show, status: :created, location: @appunto
+        else
+          render json: { errors: creator.appunto&.errors&.full_messages || ["Errore nella creazione"] }, status: :unprocessable_entity
+        end
+      end
+    end
   end
 
   def update
@@ -92,6 +106,7 @@ class AppuntiController < ApplicationController
             format.turbo_stream
             format.html { redirect_to appunto_path(@appunto), notice: "Appunto modificato." }
           end
+          format.json { render :show, status: :ok, location: @appunto }
         end
       else
         if hotwire_native_app?
@@ -120,7 +135,7 @@ class AppuntiController < ApplicationController
   private
 
     def set_appunto
-      @appunto = Appunto.find(params[:id])
+      @appunto = Current.account.appunti.find(params[:id])
     end
 
     def find_appuntabile
@@ -130,6 +145,10 @@ class AppuntiController < ApplicationController
       return unless klass && %w[Scuola Cliente Classe Persona].include?(params[:appuntabile_type])
 
       klass.find_by(id: params[:appuntabile_id])
+    end
+
+    def json_creator_params
+      params.permit(:nome, :content, :appuntabile_value, :telefono, :email, :publish).to_h
     end
 
     def appunto_params

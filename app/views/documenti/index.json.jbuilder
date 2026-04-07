@@ -1,1 +1,7 @@
-json.array! @documenti, partial: "documenti/documento", as: :documento
+json.ok true
+json.query params[:terms]&.first || params[:q]
+json.count @documenti.size
+json.data @documenti do |documento|
+  json.partial! "documenti/documento", documento: documento
+end
+json.actions []

@@ -3,10 +3,20 @@ class DocumentiController < ApplicationController
 
   FILTER_PARAMS = [:anno, :sorted_by, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
 
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   before_action :authenticate_user!
   before_action :set_documento, only: %i[show edit update destroy]
 
   def index
+    if request.format.json?
+      scope = Current.account.documenti.includes(:causale, :clientable)
+      scope = scope.search_docs(params[:q]) if params[:q].present?
+      scope = scope.joins(:causale).where(causali: { causale: params[:causale] }) if params[:causale].present?
+      @documenti = scope.order(created_at: :desc).limit(params[:limit] || 50)
+      return respond_to { |format| format.json }
+    end
+
     @tutti_documenti = @filter.documenti
     @total_count = @tutti_documenti.count
     set_page_and_extract_portion_from @tutti_documenti
@@ -30,6 +40,7 @@ class DocumentiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream unless flash.any?
+      format.json
       format.xlsx
       format.pdf do
         pdf = DocumentoPdf.new(@documento, view_context)
@@ -72,17 +83,31 @@ class DocumentiController < ApplicationController
   end
 
   def create
-    @documento = Current.account.documenti.build(documento_params)
-    @documento.user = Current.user
+    respond_to do |format|
+      format.html do
+        @documento = Current.account.documenti.build(documento_params)
+        @documento.user = Current.user
 
-    if @documento.save
-      redirect_to documento_url(@documento), notice: "Documento creato."
-    else
-      @editing = true
-      @is_new = true
-      @documento_json = documento_json(@documento)
-      @righe_json = righe_json(@documento)
-      render :show, status: :unprocessable_entity
+        if @documento.save
+          redirect_to documento_url(@documento), notice: "Documento creato."
+        else
+          @editing = true
+          @is_new = true
+          @documento_json = documento_json(@documento)
+          @righe_json = righe_json(@documento)
+          render :show, status: :unprocessable_entity
+        end
+      end
+      format.json do
+        creator = Documenti::Creator.new(**json_creator_params)
+        creator.create
+        if creator.ok?
+          @documento = creator.documento
+          render :show, status: :created, location: @documento
+        else
+          render json: { ok: false, error: creator.error }, status: :unprocessable_entity
+        end
+      end
     end
   end
 
@@ -112,6 +137,7 @@ class DocumentiController < ApplicationController
         render turbo_stream: turbo_stream.remove(@documento)
       end
       format.html { redirect_to documenti_url, notice: "Documento eliminato.", status: :see_other }
+      format.json { head :no_content }
     end
   end
 
@@ -138,6 +164,26 @@ class DocumentiController < ApplicationController
         referente: documento.referente,
         note: documento.note
       }.to_json
+    end
+
+    def json_creator_params
+      righe = if params[:righe].is_a?(String)
+                JSON.parse(params[:righe]).map(&:symbolize_keys)
+              elsif params[:righe].is_a?(Array)
+                params[:righe].map { |r| r.permit(:libro_id, :quantita, :sconto, :prezzo_cents, :prezzo_unitario, :titolo, :descrizione, :codice_isbn).to_h.symbolize_keys }
+              else
+                []
+              end
+      {
+        clientable_value: params[:clientable_value],
+        causale_nome: params[:causale],
+        note: params[:note],
+        data_documento: params[:data_documento],
+        numero_documento: params[:numero_documento],
+        ddt_numero: params[:ddt_numero],
+        spese_cents: params[:spese_cents],
+        righe_params: righe
+      }
     end
 
     def righe_json(documento)

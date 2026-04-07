@@ -4,6 +4,21 @@ class TappeController < ApplicationController
   before_action :set_tappa, only: %i[ show edit update destroy rimanda ]
 
   def index
+    if request.format.json?
+      scope = current_user.tappe.includes(:tappable, :giri)
+      scope = scope.search(params[:search]) if params[:search].present?
+      case params[:filter]
+      when "oggi" then scope = scope.di_oggi
+      when "domani" then scope = scope.di_domani
+      when "settimana" then scope = scope.della_settimana
+      when "mese" then scope = scope.del_mese
+      when "programmate" then scope = scope.programmate
+      when "completate" then scope = scope.completate
+      when "da_programmare" then scope = scope.da_programmare
+      end
+      @tappe = scope.order(data_tappa: :asc, position: :asc).limit(params[:limit] || 50)
+      return respond_to { |format| format.json }
+    end
 
     @tappe = current_user.tappe.where(tappable_type: "Scuola")
 
@@ -98,6 +113,7 @@ class TappeController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream unless flash.any?
+      format.json
     end
   end
 
@@ -124,8 +140,10 @@ class TappeController < ApplicationController
         update_tappa_giri(@tappa, params[:tappa][:giro_ids])
 
         format.html { redirect_to tappa_url(@tappa), notice: "Tappa creata." }
+        format.json { render :show, status: :created, location: @tappa }
       else
         format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @tappa.errors, status: :unprocessable_entity }
       end
     end
   
@@ -188,6 +206,7 @@ class TappeController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to giorno_path(giorno: giorno), notice: 'Tappa eliminata.' }
+      format.json { head :no_content }
     end
   end
 
