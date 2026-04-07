@@ -6,4 +6,6 @@ json.tappe @giro.tappe.includes(:tappable).order(:data_tappa, :position) do |tap
   json.tappable_type tappa.tappable_type
   json.tappable_display tappa.tappable&.to_s
   json.position tappa.position
+  json.latitude tappa.latitude
+  json.longitude tappa.longitude
 end

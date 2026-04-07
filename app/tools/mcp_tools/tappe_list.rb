@@ -40,6 +40,7 @@ module MCPTools
         tappable_type: tappa.tappable_type, tappable_display: tappa.tappable&.to_s,
         tappable_value: tappa.tappable ? "#{tappa.tappable_type}:#{tappa.tappable_id}" : nil,
         comune: tappa.tappable.respond_to?(:comune) ? tappa.tappable.comune : nil,
+        latitude: tappa.latitude, longitude: tappa.longitude,
         giri: tappa.giri.map { |g| { id: g.id, titolo: g.titolo } }
       }
     end

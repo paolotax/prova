@@ -16,7 +16,7 @@ module MCPTools
         giro = Current.user.giri.includes(tappe: :tappable).find(id)
         result = GiriList.format_giro(giro).merge(
           tappe: giro.tappe.order(:data_tappa, :position).map { |t|
-            { id: t.id, titolo: t.titolo, data_tappa: t.data_tappa, tappable_display: t.tappable&.to_s, position: t.position }
+            { id: t.id, titolo: t.titolo, data_tappa: t.data_tappa, tappable_display: t.tappable&.to_s, position: t.position, latitude: t.latitude, longitude: t.longitude }
           },
           created_at: giro.created_at, updated_at: giro.updated_at
         )
