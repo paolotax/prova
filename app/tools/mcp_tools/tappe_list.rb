@@ -36,7 +36,7 @@ module MCPTools
 
     def self.format_tappa(tappa)
       {
-        id: tappa.id, titolo: tappa.titolo, data_tappa: tappa.data_tappa, note: tappa.note, position: tappa.position,
+        id: tappa.id, titolo: tappa.titolo, data_tappa: tappa.data_tappa, descrizione: tappa.descrizione, position: tappa.position,
         tappable_type: tappa.tappable_type, tappable_display: tappa.tappable&.to_s,
         tappable_value: tappa.tappable ? "#{tappa.tappable_type}:#{tappa.tappable_id}" : nil,
         comune: tappa.tappable.respond_to?(:comune) ? tappa.tappable.comune : nil,

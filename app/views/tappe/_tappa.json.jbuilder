@@ -1,4 +1,4 @@
-json.extract! tappa, :id, :titolo, :data_tappa, :note, :position, :created_at, :updated_at
+json.extract! tappa, :id, :titolo, :data_tappa, :descrizione, :position, :created_at, :updated_at
 json.tappable_type tappa.tappable_type
 json.tappable_id tappa.tappable_id
 json.tappable_display tappa.tappable&.to_s

@@ -11,19 +11,19 @@ module MCPTools
         tappable_value: { type: "string", description: "Destinazione nel formato Tipo:UUID (es. Scuola:uuid)" },
         data_tappa: { type: "string", description: "Data della visita YYYY-MM-DD" },
         titolo: { type: "string", description: "Titolo/nota breve" },
-        note: { type: "string", description: "Note aggiuntive" }
+        descrizione: { type: "string", description: "Note/descrizione" }
       },
       required: ["tappable_value"]
     )
 
-    def self.call(tappable_value:, data_tappa: nil, titolo: nil, note: nil, server_context:, **_params)
+    def self.call(tappable_value:, data_tappa: nil, titolo: nil, descrizione: nil, server_context:, **_params)
       with_current(server_context) do
         tappa = Current.user.tappe.build(
           account: Current.account,
           tappable_value: tappable_value,
           data_tappa: data_tappa.present? ? Date.parse(data_tappa) : nil,
           titolo: titolo,
-          note: note
+          descrizione: descrizione
         )
         tappa.save!
 

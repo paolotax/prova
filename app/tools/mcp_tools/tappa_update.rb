@@ -11,16 +11,16 @@ module MCPTools
         id: { type: "string", description: "UUID della tappa" },
         data_tappa: { type: "string", description: "Nuova data YYYY-MM-DD (vuoto per rimuovere)" },
         titolo: { type: "string", description: "Titolo" },
-        note: { type: "string", description: "Note" },
+        descrizione: { type: "string", description: "Note/descrizione" },
         position: { type: "integer", description: "Posizione nell'ordine del giorno" }
       },
       required: ["id"]
     )
 
-    def self.call(id:, data_tappa: nil, titolo: nil, note: nil, position: nil, server_context:, **_params)
+    def self.call(id:, data_tappa: nil, titolo: nil, descrizione: nil, position: nil, server_context:, **_params)
       with_current(server_context) do
         tappa = Current.user.tappe.find(id)
-        attrs = { titolo: titolo, note: note, position: position }.compact
+        attrs = { titolo: titolo, descrizione: descrizione, position: position }.compact
         attrs[:data_tappa] = data_tappa.present? ? Date.parse(data_tappa) : nil if data_tappa != nil
         tappa.update!(attrs)
 
