@@ -13,10 +13,17 @@ class SearchController < ApplicationController
   def show
     return head(:no_content) if params[:q].blank? || params[:q].length < 2
 
-    @results = SEARCHABLES.filter_map do |key, config|
+    searchables = if params[:type].present?
+      types = params[:type].split(",").map { |t| t.strip.downcase.pluralize.to_sym }
+      SEARCHABLES.slice(*types)
+    else
+      SEARCHABLES
+    end
+
+    @results = searchables.filter_map do |key, config|
       records = Current.account.public_send(key)
                   .public_send(config[:search], params[:q])
-                  .limit(6)
+                  .limit(params[:limit]&.to_i || 6)
       next if records.empty?
 
       { key:, records:, **config }
