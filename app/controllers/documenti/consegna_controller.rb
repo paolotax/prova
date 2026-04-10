@@ -13,6 +13,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, consegnato: true, consegnato_il: @documento.consegnato_il } }
       end
     end
 
@@ -23,6 +24,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, consegnato: true, consegnato_il: @documento.consegna&.consegnato_il } }
       end
     end
 
@@ -34,6 +36,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, consegnato: false } }
       end
     end
 

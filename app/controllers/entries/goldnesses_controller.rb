@@ -12,6 +12,7 @@ module Entries
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: dashboard_path }
+        format.json { head :no_content }
       end
     end
 
@@ -23,6 +24,7 @@ module Entries
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: dashboard_path }
+        format.json { head :no_content }
       end
     end
 

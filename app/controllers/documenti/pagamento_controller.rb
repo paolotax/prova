@@ -16,6 +16,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, pagato: true, pagato_il: @documento.pagato_il, tipo_pagamento: @documento.tipo_pagamento } }
       end
     end
 
@@ -29,6 +30,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, pagato: true, pagato_il: @documento.pagamento&.pagato_il, tipo_pagamento: @documento.pagamento&.tipo_pagamento } }
       end
     end
 
@@ -40,6 +42,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
+        format.json { render json: { ok: true, pagato: false } }
       end
     end
 
