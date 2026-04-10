@@ -216,6 +216,10 @@ class Appunto < ApplicationRecord
            .gsub('</div />', '')
   end
 
+  def to_combobox_display
+    nome
+  end
+
   def nome_e_classe
     if nome.present? && classe.present?
       "#{nome} - #{classe.to_combobox_display}"

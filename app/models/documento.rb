@@ -162,6 +162,10 @@ class Documento < ApplicationRecord
     where("documenti.id IN (SELECT e.entryable_id::uuid FROM entries e INNER JOIN closures c ON c.entry_id = e.id WHERE e.entryable_type = 'Documento')")
   }
 
+  def to_combobox_display
+    [causale&.causale, referente].compact.join(" - ")
+  end
+
   def self.form_steps
     {
       tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],
