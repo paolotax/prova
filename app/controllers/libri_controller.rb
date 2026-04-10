@@ -75,7 +75,18 @@ class LibriController < ApplicationController
   end
 
   def create
-    redirect_to new_libro_path
+    respond_to do |format|
+      format.html { redirect_to new_libro_path }
+      format.json do
+        @libro = Current.account.libri.build(libro_params)
+        @libro.user = Current.user
+        if @libro.save
+          render :show, status: :created, location: @libro
+        else
+          render json: @libro.errors, status: :unprocessable_entity
+        end
+      end
+    end
   end
 
 
@@ -84,9 +95,13 @@ class LibriController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to libro_path(@libro), notice: "Libro modificato!" }
+        format.json { render :show, status: :ok, location: @libro }
       end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @libro.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -99,6 +114,7 @@ class LibriController < ApplicationController
         render turbo_stream: turbo_stream.remove(@libro)
       end
       format.html { redirect_to libri_url, notice: "Libro eliminato.", status: :see_other }
+      format.json { head :no_content }
     end
   end
 

@@ -524,25 +524,13 @@ Rails.application.routes.draw do
   namespace :api do
     post 'whatsapp/contacts', to: 'whatsapp#create'
 
-    namespace :v1 do
-      resource :me, only: [:show], controller: 'me'
-      resources :appunti, only: [:create]
-      resources :libri, only: [:index] do
-        resources :imports, only: [:create], controller: 'libri/imports'
-      end
-      resources :documenti, only: [:create]
-      resources :persone, only: [:index] do
-        resources :imports, only: [:create], controller: 'persone/imports'
-      end
-      resources :clienti, only: [] do
-        resources :imports, only: [:create], controller: 'clienti/imports'
-      end
-      resources :search, only: [:index]
-
-      namespace :stats do
-        get :adozioni, to: 'adozioni#index'
-      end
+    # Non-versioned API endpoints
+    resource :me, only: [:show], controller: 'me'
+    resources :search, only: [:index]
+    namespace :stats do
+      get :adozioni, to: 'adozioni#index'
     end
+
   end
 
   # =========================================

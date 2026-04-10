@@ -21,5 +21,10 @@ class SearchController < ApplicationController
 
       { key:, records:, **config }
     end
+
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 end
