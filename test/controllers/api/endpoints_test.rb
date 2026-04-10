@@ -28,33 +28,6 @@ class Api::EndpointsTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  # === /api/search ===
-
-  test "GET /api/search returns results" do
-    scuola = scuole(:scuola_fizzy)
-    get api_search_index_path(q: scuola.denominazione.first(6)), headers: @headers
-
-    assert_response :success
-    json = JSON.parse(response.body)
-    assert_equal true, json["ok"]
-    assert json["count"] > 0
-    assert_kind_of Array, json["data"]
-  end
-
-  test "GET /api/search returns empty with short query" do
-    get api_search_index_path(q: "x"), headers: @headers
-
-    assert_response :success
-    json = JSON.parse(response.body)
-    assert_equal 0, json["count"]
-    assert_equal [], json["data"]
-  end
-
-  test "GET /api/search returns 401 without token" do
-    get api_search_index_path(q: "test")
-    assert_response :unauthorized
-  end
-
   # === /api/stats/adozioni ===
 
   test "GET /api/stats/adozioni returns stats" do

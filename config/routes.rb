@@ -526,7 +526,6 @@ Rails.application.routes.draw do
 
     # Non-versioned API endpoints
     resource :me, only: [:show], controller: 'me'
-    resources :search, only: [:index]
     namespace :stats do
       get :adozioni, to: 'adozioni#index'
     end
