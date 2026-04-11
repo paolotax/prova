@@ -70,13 +70,13 @@ module MCPTools
             "libri.titolo",
             "libri.codice_isbn",
             "SUM(righe.quantita) AS totale_copie",
-            "SUM(righe.importo_cents) AS totale_importo_cents",
+            "SUM((righe.prezzo_cents - righe.prezzo_cents * COALESCE(righe.sconto, 0) / 100.0) * righe.quantita)::bigint AS totale_importo_cents",
             "COUNT(DISTINCT documento_righe.documento_id) AS documenti_count"
           )
 
         # Ordinamento
         aggregated = case sorted_by.to_s
-                     when "importo" then aggregated.order(Arel.sql("SUM(righe.importo_cents) DESC"))
+                     when "importo" then aggregated.order(Arel.sql("SUM((righe.prezzo_cents - righe.prezzo_cents * COALESCE(righe.sconto, 0) / 100.0) * righe.quantita) DESC"))
                      when "titolo"  then aggregated.order("libri.titolo")
                      else aggregated.order(Arel.sql("SUM(righe.quantita) DESC"))
                      end

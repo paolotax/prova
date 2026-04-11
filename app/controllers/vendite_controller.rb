@@ -43,13 +43,13 @@ class VenditeController < ApplicationController
         "libri.titolo",
         "libri.codice_isbn",
         "SUM(righe.quantita) AS totale_copie",
-        "SUM(righe.importo_cents) AS totale_importo_cents",
+        "SUM((righe.prezzo_cents - righe.prezzo_cents * COALESCE(righe.sconto, 0) / 100.0) * righe.quantita)::bigint AS totale_importo_cents",
         "COUNT(DISTINCT documento_righe.documento_id) AS documenti_count"
       )
 
     # Ordinamento
     @vendite = case params[:sorted_by].to_s
-               when "importo" then @vendite.order(Arel.sql("SUM(righe.importo_cents) DESC"))
+               when "importo" then @vendite.order(Arel.sql("SUM((righe.prezzo_cents - righe.prezzo_cents * COALESCE(righe.sconto, 0) / 100.0) * righe.quantita) DESC"))
                when "titolo"  then @vendite.order("libri.titolo")
                else @vendite.order(Arel.sql("SUM(righe.quantita) DESC"))
                end
