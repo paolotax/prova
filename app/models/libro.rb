@@ -146,6 +146,14 @@ class Libro < ApplicationRecord
     Categoria.order(:nome_categoria).pluck(:nome_categoria)
   end
 
+  def categoria=(value)
+    if value.is_a?(String)
+      super(Categoria.resolve(value, user: user || Current.user, account: account || Current.account))
+    else
+      super
+    end
+  end
+
   def to_combobox_display
     self.titolo
   end

@@ -37,9 +37,7 @@ module MCPTools
         if editore.present?
           attrs[:editore_id] = Editore.find_or_create_by!(editore: editore, account: Current.account).id
         end
-        if categoria.present?
-          attrs[:categoria_id] = Categoria.resolve(categoria, user: Current.user, account: Current.account).id
-        end
+        attrs[:categoria] = categoria if categoria.present?
 
         libro.update!(attrs)
 
