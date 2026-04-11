@@ -306,6 +306,8 @@ Rails.application.routes.draw do
       resource :bulk_updates, only: [:update]
     end
 
+    resources :vendite, only: [:index]
+
     resources :libri do
       collection do
         get 'crosstab'
