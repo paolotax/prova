@@ -19,12 +19,13 @@ module MCPTools
         stato_contatto: { type: "string", description: "Filtra per: con_email, con_telefono, con_scuola, senza_scuola" },
         scuola_id: { type: "string", description: "Filtra per scuola (UUID)" },
         sorted_by: { type: "string", description: "Ordinamento: cognome (default), scuola, recenti" },
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 50)" }
       }
     )
 
     def self.call(query: nil, ruolo: nil, anno_corso: nil, materia: nil, stato_contatto: nil,
-                  scuola_id: nil, sorted_by: nil, limit: nil, server_context:, **_params)
+                  scuola_id: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         scope = Current.account.persone.includes(:scuola, :classi)
         scope = scope.where(ruolo: ruolo) if ruolo.present?
@@ -60,7 +61,7 @@ module MCPTools
                 else { cognome: :asc, nome: :asc }
                 end
 
-        persone = scope.order(order).limit((limit || 50).to_i.clamp(1, 200))
+        persone = scope.order(order).offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
         response = {
           results: persone.map { |p| format_persona(p) },

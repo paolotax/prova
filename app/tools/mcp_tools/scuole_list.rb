@@ -20,12 +20,13 @@ module MCPTools
         appunti_filter: { type: "string", description: "Filtra per appunti: tutte (default), con_appunti" },
         adozioni_filter: { type: "string", description: "Filtra per adozioni: tutte (default), mie_adozioni, adozioni_concorrenza" },
         sorted_by: { type: "string", description: "Ordinamento: per_direzione (default), solo_scuole, denominazione" },
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 50)" }
       }
     )
 
     def self.call(query: nil, provincia: nil, area: nil, comune: nil, tipo_scuola: nil,
-                  appunti_filter: nil, adozioni_filter: nil, sorted_by: nil, limit: nil,
+                  appunti_filter: nil, adozioni_filter: nil, sorted_by: nil, offset: nil, limit: nil,
                   server_context:, **_params)
       with_current(server_context) do
         scope = Current.scuole
@@ -54,7 +55,7 @@ module MCPTools
                 else Arel.sql("provincia, area NULLS FIRST, comune, denominazione")
                 end
 
-        scuole = scope.order(order).distinct.limit((limit || 50).to_i.clamp(1, 200))
+        scuole = scope.order(order).distinct.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
         response = {
           results: scuole.map { |s| format_scuola(s) },

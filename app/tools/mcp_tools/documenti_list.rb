@@ -15,11 +15,12 @@ module MCPTools
         anno: { type: "integer", description: "Filtra per anno documento (es. 2026)" },
         tipo_pagamento: { type: "string", description: "Filtra per tipo pagamento" },
         sorted_by: { type: "string", description: "Ordinamento: data_documento (default), per_cliente" },
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Max risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(search: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, tipo_pagamento: nil, sorted_by: nil, limit: nil, server_context:, **_params)
+    def self.call(search: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, tipo_pagamento: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         scope = Current.account.documenti.solo_padri.includes(:causale, :clientable, entry: [:goldness, :closure])
         scope = scope.search_docs(search) if search.present?
@@ -46,7 +47,7 @@ module MCPTools
                   scope.order(data_documento: :desc, numero_documento: :desc)
                 end
 
-        documenti = scope.limit((limit || 50).to_i.clamp(1, 200))
+        documenti = scope.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
         response = { results: documenti.map { |d| format_documento(d) }, count: documenti.size }
         MCP::Tool::Response.new([{ type: "text", text: response.to_json }])

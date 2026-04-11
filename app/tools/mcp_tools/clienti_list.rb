@@ -16,11 +16,12 @@ module MCPTools
         comune: { type: "string", description: "Filtra per comune" },
         tipo_cliente: { type: "string", description: "Filtra per tipo cliente" },
         sorted_by: { type: "string", description: "Ordinamento: denominazione (default), comune, created_at" },
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(query: nil, comune: nil, tipo_cliente: nil, sorted_by: nil, limit: nil, server_context:, **_params)
+    def self.call(query: nil, comune: nil, tipo_cliente: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         scope = Current.account.clienti
         scope = scope.search_all_word(query) if query.present?
@@ -33,7 +34,7 @@ module MCPTools
                 else { denominazione: :asc }
                 end
 
-        clienti = scope.order(order).limit((limit || 50).to_i.clamp(1, 200))
+        clienti = scope.order(order).offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
         response = {
           results: clienti.map { |c| format_cliente(c) },

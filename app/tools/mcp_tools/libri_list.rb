@@ -14,13 +14,15 @@ module MCPTools
         disciplina: { type: "string", description: "Filtra per disciplina" },
         classe: { type: "integer", description: "Filtra per classe (1-5)" },
         sorted_by: { type: "string", description: "Ordinamento: titolo (default), editore, categoria" },
-        limit: { type: "integer", description: "Numero massimo di risultati (1-50, default 20)" }
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
+        limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(query: nil, categoria: nil, editore: nil, disciplina: nil, classe: nil, sorted_by: nil, limit: nil, server_context:, **_params)
+    def self.call(query: nil, categoria: nil, editore: nil, disciplina: nil, classe: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
-        max = (limit || 20).to_i.clamp(1, 50)
+        max = (limit || 50).to_i.clamp(1, 200)
+        skip = (offset || 0).to_i
         scope = Current.account.libri.includes(:editore, :categoria)
         scope = scope.search_all_word(query) if query.present?
         scope = scope.joins(:categoria).where(categorie: { nome_categoria: categoria.downcase }) if categoria.present?
@@ -39,7 +41,7 @@ module MCPTools
         else
           result = result.order("libri.titolo")
         end
-        libri = result.limit(max)
+        libri = result.offset(skip).limit(max)
 
         response = {
           results: libri.map { |l| format_libro(l) },

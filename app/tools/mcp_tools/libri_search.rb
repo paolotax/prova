@@ -13,12 +13,13 @@ module MCPTools
       type: "object",
       properties: {
         query: { type: "string", description: "Titolo o codice ISBN da cercare" },
-        limit: { type: "integer", description: "Numero massimo di risultati (1-50)" }
+        offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
+        limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 10)" }
       },
       required: [ "query" ]
     )
 
-    def self.call(query:, limit: nil, server_context:, **_params)
+    def self.call(query:, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         sanitized = query.to_s.strip
 
@@ -26,8 +27,9 @@ module MCPTools
           return MCP::Tool::Response.new([{ type: "text", text: { results: [], count: 0 }.to_json }])
         end
 
-        max = (limit || 10).to_i.clamp(1, 50)
-        libri = Current.account.libri.search_all_word(sanitized).limit(max)
+        max = (limit || 10).to_i.clamp(1, 200)
+        skip = (offset || 0).to_i
+        libri = Current.account.libri.search_all_word(sanitized).offset(skip).limit(max)
 
         response = {
           results: libri.map { |l| format_libro(l) },
