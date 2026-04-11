@@ -16,12 +16,13 @@ module MCPTools
       properties: {
         query: { type: "string", description: "Testo di ricerca (minimo 2 caratteri)" },
         type: { type: "string", description: "Filtra per tipo: #{ALL_TYPES.join(', ')} (default: tutti)" },
-        limit: { type: "integer", description: "Numero massimo di risultati per tipo (1-20)" }
+        offset: { type: "integer", description: "Salta i primi N risultati per tipo (per paginazione)" },
+        limit: { type: "integer", description: "Numero massimo di risultati per tipo (1-200, default 6)" }
       },
       required: [ "query" ]
     )
 
-    def self.call(query:, type: nil, limit: nil, server_context:, **_params)
+    def self.call(query:, type: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         sanitized = sanitize_query(query)
 
@@ -30,16 +31,17 @@ module MCPTools
         end
 
         types = (type || ALL_TYPES.join(",")).split(",").map(&:strip).map(&:downcase)
-        max = (limit || 6).to_i.clamp(1, 20)
+        max = (limit || 6).to_i.clamp(1, 200)
+        skip = (offset || 0).to_i
 
         results = []
-        results += search_scuole(sanitized, max) if types.include?("scuola")
-        results += search_libri(sanitized, max) if types.include?("libro")
-        results += search_clienti(sanitized, max) if types.include?("cliente")
-        results += search_persone(sanitized, max) if types.include?("persona")
-        results += search_appunti(sanitized, max) if types.include?("appunto")
-        results += search_classi(sanitized, max) if types.include?("classe")
-        results += search_documenti(sanitized, max) if types.include?("documento")
+        results += search_scuole(sanitized, skip, max) if types.include?("scuola")
+        results += search_libri(sanitized, skip, max) if types.include?("libro")
+        results += search_clienti(sanitized, skip, max) if types.include?("cliente")
+        results += search_persone(sanitized, skip, max) if types.include?("persona")
+        results += search_appunti(sanitized, skip, max) if types.include?("appunto")
+        results += search_classi(sanitized, skip, max) if types.include?("classe")
+        results += search_documenti(sanitized, skip, max) if types.include?("documento")
 
         MCP::Tool::Response.new([{ type: "text", text: results.to_json }])
       end
@@ -47,56 +49,56 @@ module MCPTools
 
     private
 
-    def self.search_scuole(query, limit)
+    def self.search_scuole(query, offset, limit)
       Current.account.scuole
         .search_all_word(query)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_result(r, "Scuola") }
     end
 
-    def self.search_libri(query, limit)
+    def self.search_libri(query, offset, limit)
       Current.account.libri
         .search_all_word(query)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_libro(r) }
     end
 
-    def self.search_clienti(query, limit)
+    def self.search_clienti(query, offset, limit)
       Current.account.clienti
         .search_all_word(query)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_result(r, "Cliente") }
     end
 
-    def self.search_persone(query, limit)
+    def self.search_persone(query, offset, limit)
       scope = Current.account.persone.left_joins(:scuola).includes(:scuola)
       query.split(/\s+/).each do |word|
         scope = scope.where(
           "persone.cognome ILIKE :q OR persone.nome ILIKE :q OR scuole.denominazione ILIKE :q", q: "%#{word}%"
         )
       end
-      scope.limit(limit).map { |r| format_result(r, "Persona") }
+      scope.offset(offset).limit(limit).map { |r| format_result(r, "Persona") }
     end
 
-    def self.search_appunti(query, limit)
+    def self.search_appunti(query, offset, limit)
       Current.account.appunti
         .search_appunti(query)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_appunto(r) }
     end
 
-    def self.search_classi(query, limit)
+    def self.search_classi(query, offset, limit)
       Current.account.classi
         .search_all_word(query)
         .includes(:scuola)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_result(r, "Classe") }
     end
 
-    def self.search_documenti(query, limit)
+    def self.search_documenti(query, offset, limit)
       Current.account.documenti
         .search_docs(query)
-        .limit(limit)
+        .offset(offset).limit(limit)
         .map { |r| format_documento(r) }
     end
 
