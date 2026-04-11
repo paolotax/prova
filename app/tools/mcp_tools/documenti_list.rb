@@ -20,13 +20,14 @@ module MCPTools
         libro_id: { type: "integer", description: "Filtra documenti che contengono questo libro (ID)" },
         libro_isbn: { type: "string", description: "Filtra documenti che contengono un libro per ISBN" },
         libro_categoria: { type: "string", description: "Filtra documenti con libri di questa categoria (es. vacanze, parascolastico)" },
+        include_righe: { type: "boolean", description: "Se true, include le righe di ogni documento (default: false)" },
         sorted_by: { type: "string", description: "Ordinamento: data_documento (default), per_cliente" },
         offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Max risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(search: nil, numero_documento: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, data_inizio: nil, data_fine: nil, tipo_pagamento: nil, libro_id: nil, libro_isbn: nil, libro_categoria: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
+    def self.call(search: nil, numero_documento: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, data_inizio: nil, data_fine: nil, tipo_pagamento: nil, libro_id: nil, libro_isbn: nil, libro_categoria: nil, include_righe: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         scope = Current.account.documenti.solo_padri.includes(:causale, :clientable, entry: [:goldness, :closure])
         scope = scope.search_docs(search) if search.present?
@@ -60,7 +61,9 @@ module MCPTools
 
         # Subquery per DISTINCT (evita duplicati da join righe/libri)
         ids = scope.reorder(nil).select("documenti.id").distinct
-        result = Current.account.documenti.where(id: ids).includes(:causale, :clientable, :consegna, :pagamento, entry: [:goldness, :closure])
+        eager = [:causale, :clientable, :consegna, :pagamento, entry: [:goldness, :closure]]
+        eager << { documento_righe: { riga: :libro } } if include_righe
+        result = Current.account.documenti.where(id: ids).includes(*eager)
 
         result = case sorted_by.to_s
                  when "per_cliente"
@@ -73,13 +76,13 @@ module MCPTools
 
         documenti = result.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
-        response = { results: documenti.map { |d| format_documento(d) }, count: documenti.size }
+        response = { results: documenti.map { |d| format_documento(d, include_righe: include_righe) }, count: documenti.size }
         MCP::Tool::Response.new([{ type: "text", text: response.to_json }])
       end
     end
 
-    def self.format_documento(doc)
-      {
+    def self.format_documento(doc, include_righe: false)
+      result = {
         id: doc.id, numero_documento: doc.numero_documento, data_documento: doc.data_documento,
         causale: doc.causale&.causale, totale_cents: doc.totale_cents, totale_copie: doc.totale_copie,
         clientable_type: doc.clientable_type, clientable_display: doc.clientable&.denominazione,
@@ -88,6 +91,14 @@ module MCPTools
         consegnato: doc.consegnato_il.present?, consegnato_il: doc.consegnato_il,
         pagato: doc.pagato_il.present?, pagato_il: doc.pagato_il, tipo_pagamento: doc.tipo_pagamento
       }
+      if include_righe
+        result[:righe] = doc.documento_righe.map { |dr|
+          r = dr.riga
+          { libro_id: r.libro_id, codice_isbn: r.libro&.codice_isbn, titolo: r.libro&.titolo,
+            quantita: r.quantita, prezzo_cents: r.prezzo_cents, sconto: r.sconto, importo_cents: r.importo_cents }
+        }
+      end
+      result
     end
   end
 end
