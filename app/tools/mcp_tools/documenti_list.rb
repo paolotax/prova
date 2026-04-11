@@ -38,12 +38,15 @@ module MCPTools
         scope = scope.where("data_documento <= ?", data_fine) if data_fine.present?
         scope = scope.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento }) if tipo_pagamento.present?
 
-        # Filtri per libro (join documento_righe → righe → libri)
-        if libro_id.present? || libro_isbn.present? || libro_categoria.present?
-          scope = scope.joins(righe: :libro)
-          scope = scope.where(libri: { id: libro_id }) if libro_id.present?
-          scope = scope.where(libri: { codice_isbn: libro_isbn }) if libro_isbn.present?
-          scope = scope.joins(righe: { libro: :categoria }).where(categorie: { nome_categoria: libro_categoria }) if libro_categoria.present?
+        # Filtri per libro (subquery per evitare conflitto con eager loading :clientable)
+        if libro_id.present?
+          scope = scope.where(id: DocumentoRiga.where(riga: Riga.where(libro_id: libro_id)).select(:documento_id))
+        end
+        if libro_isbn.present?
+          scope = scope.where(id: DocumentoRiga.joins(riga: :libro).where(libri: { codice_isbn: libro_isbn }).select(:documento_id))
+        end
+        if libro_categoria.present?
+          scope = scope.where(id: DocumentoRiga.joins(riga: { libro: :categoria }).where(categorie: { nome_categoria: libro_categoria }).select(:documento_id))
         end
 
         case stato.to_s
