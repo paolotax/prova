@@ -9,6 +9,12 @@ class VenditeController < ApplicationController
     doc_scope = doc_scope.where("data_documento >= ?", params[:data_inizio]) if params[:data_inizio].present?
     doc_scope = doc_scope.where("data_documento <= ?", params[:data_fine]) if params[:data_fine].present?
     doc_scope = doc_scope.joins(:causale).where(causali: { causale: params[:causale] }) if params[:causale].present?
+
+    # Default: solo causali con tipo_movimento = vendita
+    unless params[:include_non_vendite].present?
+      doc_scope = doc_scope.joins(:causale).where(causali: { tipo_movimento: :vendita })
+    end
+
     doc_scope = doc_scope.where(clientable_type: params[:clientable_type]) if params[:clientable_type].present?
 
     case params[:stato].to_s

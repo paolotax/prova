@@ -16,6 +16,7 @@ module MCPTools
         libro_categoria: { type: "string", description: "Filtra per categoria libro (es. vacanze, parascolastico)" },
         libro_editore: { type: "string", description: "Filtra per editore (es. GIUNTI SCUOLA)" },
         causale: { type: "string", description: "Filtra per causale documento (es. Ordine Scuola)" },
+        include_non_vendite: { type: "boolean", description: "Se true, include anche campionari, saggi, carichi (default: solo vendite)" },
         clientable_type: { type: "string", description: "Filtra per tipo destinatario: Scuola, Cliente" },
         stato: { type: "string", description: "Filtra per stato documento: attivi (default), completati, da_consegnare, da_pagare, tutti" },
         sorted_by: { type: "string", description: "Ordinamento: copie (default), importo, titolo" },
@@ -25,8 +26,9 @@ module MCPTools
     )
 
     def self.call(anno: nil, data_inizio: nil, data_fine: nil, libro_id: nil, libro_isbn: nil,
-                  libro_categoria: nil, libro_editore: nil, causale: nil, clientable_type: nil,
-                  stato: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
+                  libro_categoria: nil, libro_editore: nil, causale: nil, include_non_vendite: nil,
+                  clientable_type: nil, stato: nil, sorted_by: nil, offset: nil, limit: nil,
+                  server_context:, **_params)
       with_current(server_context) do
         # Base: documenti dell'account, solo padri
         doc_scope = Current.account.documenti.solo_padri
@@ -36,6 +38,12 @@ module MCPTools
         doc_scope = doc_scope.where("data_documento >= ?", data_inizio) if data_inizio.present?
         doc_scope = doc_scope.where("data_documento <= ?", data_fine) if data_fine.present?
         doc_scope = doc_scope.joins(:causale).where(causali: { causale: causale }) if causale.present?
+
+        # Default: solo causali con tipo_movimento = vendita (esclude campionari, saggi, carichi)
+        unless include_non_vendite
+          doc_scope = doc_scope.joins(:causale).where(causali: { tipo_movimento: :vendita })
+        end
+
         doc_scope = doc_scope.where(clientable_type: clientable_type) if clientable_type.present?
 
         case stato.to_s
