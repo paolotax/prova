@@ -11,19 +11,42 @@ module MCPTools
         search: { type: "string", description: "Cerca per cliente, referente" },
         causale: { type: "string", description: "Filtra per causale: Ordine Scuola, Ordine Cliente, TD01, TD04, DDT, Campionario, saggi" },
         clientable_type: { type: "string", description: "Filtra per tipo: Scuola, Cliente" },
-        stato: { type: "string", description: "Filtra per stato: attivi, completati" },
+        stato: { type: "string", description: "Filtra per stato: attivi (default), completati, da_consegnare, da_pagare, tutti" },
+        anno: { type: "integer", description: "Filtra per anno documento (es. 2026)" },
+        tipo_pagamento: { type: "string", description: "Filtra per tipo pagamento" },
+        sorted_by: { type: "string", description: "Ordinamento: data_documento (default), per_cliente" },
         limit: { type: "integer", description: "Max risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(search: nil, causale: nil, clientable_type: nil, stato: nil, limit: nil, server_context:, **_params)
+    def self.call(search: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, tipo_pagamento: nil, sorted_by: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
-        scope = Current.account.documenti.includes(:causale, :clientable, entry: [:goldness, :closure])
+        scope = Current.account.documenti.solo_padri.includes(:causale, :clientable, entry: [:goldness, :closure])
         scope = scope.search_docs(search) if search.present?
         scope = scope.joins(:causale).where(causali: { causale: causale }) if causale.present?
         scope = scope.where(clientable_type: clientable_type) if clientable_type.present?
-        scope = scope.send(stato) if stato.present? && %w[attivi completati].include?(stato)
-        documenti = scope.order(created_at: :desc).limit((limit || 50).to_i.clamp(1, 200))
+        scope = scope.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
+        scope = scope.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento }) if tipo_pagamento.present?
+
+        case stato.to_s
+        when "attivi"        then scope = scope.attivi
+        when "completati"    then scope = scope.completati
+        when "da_consegnare" then scope = scope.attivi.where.missing(:consegna)
+        when "da_pagare"     then scope = scope.attivi.where.missing(:pagamento)
+        when "tutti"         then nil
+        else scope = scope.attivi
+        end
+
+        scope = case sorted_by.to_s
+                when "per_cliente"
+                  scope.joins("LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id")
+                       .joins("LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id")
+                       .order(Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione)"), data_documento: :desc)
+                else
+                  scope.order(data_documento: :desc, numero_documento: :desc)
+                end
+
+        documenti = scope.limit((limit || 50).to_i.clamp(1, 200))
 
         response = { results: documenti.map { |d| format_documento(d) }, count: documenti.size }
         MCP::Tool::Response.new([{ type: "text", text: response.to_json }])

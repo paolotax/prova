@@ -13,19 +13,48 @@ module MCPTools
       type: "object",
       properties: {
         query: { type: "string", description: "Cerca per denominazione, codice ministeriale, comune o provincia" },
+        provincia: { type: "string", description: "Filtra per provincia (sigla es. MO, BO oppure nome completo es. MODENA)" },
+        area: { type: "string", description: "Filtra per area" },
+        comune: { type: "string", description: "Filtra per comune" },
+        tipo_scuola: { type: "string", description: "Filtra per tipo scuola" },
+        appunti_filter: { type: "string", description: "Filtra per appunti: tutte (default), con_appunti" },
+        adozioni_filter: { type: "string", description: "Filtra per adozioni: tutte (default), mie_adozioni, adozioni_concorrenza" },
+        sorted_by: { type: "string", description: "Ordinamento: per_direzione (default), solo_scuole, denominazione" },
         limit: { type: "integer", description: "Numero massimo di risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(query: nil, limit: nil, server_context:, **_params)
+    def self.call(query: nil, provincia: nil, area: nil, comune: nil, tipo_scuola: nil,
+                  appunti_filter: nil, adozioni_filter: nil, sorted_by: nil, limit: nil,
+                  server_context:, **_params)
       with_current(server_context) do
         scope = Current.scuole
+        scope = scope.search_all_word(query) if query.present?
+        if provincia.present?
+          scope = provincia.length <= 2 ? scope.where(sigla_provincia: provincia.upcase) : scope.where(provincia: provincia)
+        end
+        scope = scope.where(area: area) if area.present?
+        scope = scope.where(comune: comune) if comune.present?
+        scope = scope.where(tipo_scuola: tipo_scuola) if tipo_scuola.present?
 
-        if query.present?
-          scope = scope.search_all_word(query)
+        if appunti_filter == "con_appunti"
+          scope = scope.joins(:appunti).merge(Current.user.appunti.attivi)
         end
 
-        scuole = scope.limit((limit || 50).to_i.clamp(1, 200))
+        case adozioni_filter
+        when "mie_adozioni"
+          scope = scope.joins(classi: :adozioni).where(adozioni: { mia: true })
+        when "adozioni_concorrenza"
+          scope = scope.joins(classi: :adozioni).where(adozioni: { mia: false })
+        end
+
+        order = case sorted_by.to_s
+                when "denominazione" then { denominazione: :asc }
+                when "solo_scuole"   then Arel.sql("provincia, comune, denominazione")
+                else Arel.sql("provincia, area NULLS FIRST, comune, denominazione")
+                end
+
+        scuole = scope.order(order).distinct.limit((limit || 50).to_i.clamp(1, 200))
 
         response = {
           results: scuole.map { |s| format_scuola(s) },
@@ -40,7 +69,7 @@ module MCPTools
       {
         id: scuola.id,
         denominazione: scuola.denominazione,
-        codice: scuola.codice,
+        codice: scuola.codice_ministeriale,
         comune: scuola.comune,
         provincia: scuola.provincia,
         email: scuola.email,

@@ -13,11 +13,12 @@ module MCPTools
         editore: { type: "string", description: "Filtra per editore (es. GIUNTI SCUOLA)" },
         disciplina: { type: "string", description: "Filtra per disciplina" },
         classe: { type: "integer", description: "Filtra per classe (1-5)" },
+        sorted_by: { type: "string", description: "Ordinamento: titolo (default), editore, categoria" },
         limit: { type: "integer", description: "Numero massimo di risultati (1-50, default 20)" }
       }
     )
 
-    def self.call(query: nil, categoria: nil, editore: nil, disciplina: nil, classe: nil, limit: nil, server_context:, **_params)
+    def self.call(query: nil, categoria: nil, editore: nil, disciplina: nil, classe: nil, sorted_by: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         max = (limit || 20).to_i.clamp(1, 50)
         scope = Current.account.libri.includes(:editore, :categoria)
@@ -26,7 +27,19 @@ module MCPTools
         scope = scope.joins(:editore).where("editori.editore ILIKE ?", "%#{editore}%") if editore.present?
         scope = scope.where("libri.disciplina ILIKE ?", "%#{disciplina}%") if disciplina.present?
         scope = scope.where(classe: classe) if classe.present?
-        libri = scope.limit(max)
+        # Subquery per evitare DISTINCT + ORDER BY su colonne joined
+        ids = scope.reorder(nil).distinct.pluck(:id)
+        result = Current.account.libri.where(id: ids).includes(:editore, :categoria)
+
+        case sorted_by.to_s
+        when "editore"
+          result = result.left_joins(:editore).order("editori.editore", "libri.titolo")
+        when "categoria"
+          result = result.left_joins(:categoria).order("categorie.nome_categoria", "libri.titolo")
+        else
+          result = result.order("libri.titolo")
+        end
+        libri = result.limit(max)
 
         response = {
           results: libri.map { |l| format_libro(l) },
