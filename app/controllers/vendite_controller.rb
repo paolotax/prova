@@ -89,14 +89,49 @@ class VenditeController < ApplicationController
       .joins(:documento, :riga)
       .joins("LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id")
       .joins("LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id")
+      .joins("LEFT JOIN consegne ON consegne.consegnabile_type = 'Documento' AND consegne.consegnabile_id = documenti.id")
+      .joins("LEFT JOIN pagamenti ON pagamenti.pagabile_type = 'Documento' AND pagamenti.pagabile_id = documenti.id")
       .where(documento_id: doc_scope.select(:id))
       .where(righe: { libro_id: libro_ids })
+      .group("righe.libro_id", "documenti.id", "scuole.denominazione", "clienti.denominazione",
+             "documenti.clientable_type", "documenti.clientable_id",
+             "documenti.numero_documento", "documenti.referente", "documenti.note",
+             "consegne.consegnato_il", "pagamenti.pagato_il", "pagamenti.tipo_pagamento")
       .select(
         "righe.libro_id",
-        "COALESCE(scuole.denominazione, clienti.denominazione) AS destinatario"
+        "documenti.id AS documento_id",
+        "COALESCE(scuole.denominazione, clienti.denominazione) AS nome",
+        "documenti.clientable_type || ':' || documenti.clientable_id AS clientable_value",
+        "documenti.numero_documento",
+        "documenti.referente",
+        "documenti.note",
+        "SUM(righe.quantita) AS copie",
+        "SUM((righe.prezzo_cents - righe.prezzo_cents * COALESCE(righe.sconto, 0) / 100.0) * righe.quantita)::bigint AS importo_cents",
+        "consegne.consegnato_il IS NOT NULL AS consegnato",
+        "consegne.consegnato_il",
+        "pagamenti.pagato_il IS NOT NULL AS pagato",
+        "pagamenti.pagato_il",
+        "pagamenti.tipo_pagamento"
       )
-      .distinct
 
-    rows.group_by(&:libro_id).transform_values { |rs| rs.map(&:destinatario).compact.sort }
+    rows.group_by(&:libro_id).transform_values do |rs|
+      rs.map do |r|
+        {
+          nome: r.nome,
+          clientable_value: r.clientable_value,
+          documento_id: r.documento_id,
+          numero_documento: r.numero_documento,
+          copie: r.copie.to_i,
+          importo_cents: r.importo_cents.to_i,
+          referente: r.referente,
+          note: r.note,
+          consegnato: r.consegnato,
+          consegnato_il: r.consegnato_il,
+          pagato: r.pagato,
+          pagato_il: r.pagato_il,
+          tipo_pagamento: r.tipo_pagamento
+        }
+      end.sort_by { |d| d[:nome].to_s }
+    end
   end
 end
