@@ -21,7 +21,7 @@ class VenditeController < ApplicationController
     end
 
     # Righe dei documenti filtrati
-    righe_scope = Riga.joins(:documento_riga)
+    righe_scope = Riga.joins(:documento_righe)
                       .where(documento_righe: { documento_id: doc_scope.select(:id) })
                       .joins(:libro)
 
