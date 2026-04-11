@@ -1,7 +1,7 @@
 module MCPTools
   class LibriUpdate < Base
     tool_name "libri_update"
-    description "Aggiorna un libro: titolo, ISBN, prezzo, prezzo_suggerito, editore, disciplina, classe, note, collana."
+    description "Aggiorna un libro: titolo, ISBN, prezzo, prezzo_suggerito, editore, categoria, disciplina, classe, note, collana."
 
     annotations(read_only_hint: false, destructive_hint: false, idempotent_hint: true)
 
@@ -14,6 +14,7 @@ module MCPTools
         prezzo: { type: "string", description: "Prezzo di vendita (es. '12.50')" },
         prezzo_suggerito: { type: "string", description: "Prezzo suggerito/consigliato (es. '14.90')" },
         editore: { type: "string", description: "Nome editore (cerca per nome)" },
+        categoria: { type: "string", description: "Nome categoria (es. parascolastico, adozionale)" },
         disciplina: { type: "string", description: "Disciplina" },
         classe: { type: "string", description: "Classe" },
         note: { type: "string", description: "Note" },
@@ -22,7 +23,7 @@ module MCPTools
       required: ["id"]
     )
 
-    def self.call(id:, titolo: nil, codice_isbn: nil, prezzo: nil, prezzo_suggerito: nil, editore: nil, disciplina: nil, classe: nil, note: nil, collana: nil, server_context:, **_params)
+    def self.call(id:, titolo: nil, codice_isbn: nil, prezzo: nil, prezzo_suggerito: nil, editore: nil, categoria: nil, disciplina: nil, classe: nil, note: nil, collana: nil, server_context:, **_params)
       with_current(server_context) do
         libro = Current.account.libri.find(id)
 
@@ -35,6 +36,9 @@ module MCPTools
         end
         if editore.present?
           attrs[:editore_id] = Editore.find_or_create_by!(editore: editore, account: Current.account).id
+        end
+        if categoria.present?
+          attrs[:categoria_id] = Categoria.resolve(categoria, user: Current.user, account: Current.account).id
         end
 
         libro.update!(attrs)
