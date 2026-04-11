@@ -60,7 +60,8 @@ module MCPTools
         clientable_type: doc.clientable_type, clientable_display: doc.clientable&.denominazione,
         clientable_value: doc.clientable ? "#{doc.clientable_type}:#{doc.clientable_id}" : nil,
         golden: doc.golden?, closed: doc.closed?,
-        consegnato: doc.consegnato_il.present?, pagato: doc.pagato_il.present?
+        consegnato: doc.consegnato_il.present?, consegnato_il: doc.consegnato_il,
+        pagato: doc.pagato_il.present?, pagato_il: doc.pagato_il, tipo_pagamento: doc.tipo_pagamento
       }
     end
   end

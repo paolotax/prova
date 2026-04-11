@@ -23,6 +23,7 @@ module MCPTools
           codice_isbn: libro.codice_isbn,
           prezzo_cents: libro.prezzo_in_cents,
           prezzo: libro.prezzo_in_cents ? "%.2f" % (libro.prezzo_in_cents / 100.0) : nil,
+          prezzo_suggerito: libro.prezzo_suggerito_cents ? "%.2f" % (libro.prezzo_suggerito_cents / 100.0) : nil,
           editore: libro.editore&.editore,
           editore_id: libro.editore_id,
           disciplina: libro.disciplina,
