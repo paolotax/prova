@@ -17,13 +17,16 @@ module MCPTools
         data_inizio: { type: "string", description: "Data inizio range (YYYY-MM-DD)" },
         data_fine: { type: "string", description: "Data fine range (YYYY-MM-DD)" },
         tipo_pagamento: { type: "string", description: "Filtra per tipo pagamento" },
+        libro_id: { type: "integer", description: "Filtra documenti che contengono questo libro (ID)" },
+        libro_isbn: { type: "string", description: "Filtra documenti che contengono un libro per ISBN" },
+        libro_categoria: { type: "string", description: "Filtra documenti con libri di questa categoria (es. vacanze, parascolastico)" },
         sorted_by: { type: "string", description: "Ordinamento: data_documento (default), per_cliente" },
         offset: { type: "integer", description: "Salta i primi N risultati (per paginazione)" },
         limit: { type: "integer", description: "Max risultati (1-200, default 50)" }
       }
     )
 
-    def self.call(search: nil, numero_documento: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, data_inizio: nil, data_fine: nil, tipo_pagamento: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
+    def self.call(search: nil, numero_documento: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, data_inizio: nil, data_fine: nil, tipo_pagamento: nil, libro_id: nil, libro_isbn: nil, libro_categoria: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
         scope = Current.account.documenti.solo_padri.includes(:causale, :clientable, entry: [:goldness, :closure])
         scope = scope.search_docs(search) if search.present?
@@ -35,6 +38,14 @@ module MCPTools
         scope = scope.where("data_documento <= ?", data_fine) if data_fine.present?
         scope = scope.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento }) if tipo_pagamento.present?
 
+        # Filtri per libro (join documento_righe → righe → libri)
+        if libro_id.present? || libro_isbn.present? || libro_categoria.present?
+          scope = scope.joins(righe: :libro)
+          scope = scope.where(libri: { id: libro_id }) if libro_id.present?
+          scope = scope.where(libri: { codice_isbn: libro_isbn }) if libro_isbn.present?
+          scope = scope.joins(righe: { libro: :categoria }).where(categorie: { nome_categoria: libro_categoria }) if libro_categoria.present?
+        end
+
         case stato.to_s
         when "attivi"        then scope = scope.attivi
         when "completati"    then scope = scope.completati
@@ -44,16 +55,20 @@ module MCPTools
         else scope = scope.attivi
         end
 
-        scope = case sorted_by.to_s
-                when "per_cliente"
-                  scope.joins("LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id")
-                       .joins("LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id")
-                       .order(Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione)"), data_documento: :desc)
-                else
-                  scope.order(data_documento: :desc, numero_documento: :desc)
-                end
+        # Subquery per DISTINCT (evita duplicati da join righe/libri)
+        ids = scope.reorder(nil).select("documenti.id").distinct
+        result = Current.account.documenti.where(id: ids).includes(:causale, :clientable, :consegna, :pagamento, entry: [:goldness, :closure])
 
-        documenti = scope.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
+        result = case sorted_by.to_s
+                 when "per_cliente"
+                   result.joins("LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id")
+                        .joins("LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id")
+                        .order(Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione)"), data_documento: :desc)
+                 else
+                   result.order(data_documento: :desc, numero_documento: :desc)
+                 end
+
+        documenti = result.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
 
         response = { results: documenti.map { |d| format_documento(d) }, count: documenti.size }
         MCP::Tool::Response.new([{ type: "text", text: response.to_json }])
