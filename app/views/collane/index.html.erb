@@ -3,16 +3,16 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
   </div>
-  <h1 class="header__title"><%= @page_title %></h1>
+  <h1 class="header__title divider divider--fade full-width"><%= @page_title %></h1>
   <div class="header__actions header__actions--end">
-    <%= link_to new_collana_path, class: "btn" do %>
-      <%= icon_tag "add", size: "small" %>
-      <span>Nuova</span>
+    <%= link_to new_collana_path, class: "btn btn--link", data: { controller: "tooltip" }  do %>
+      <%= icon_tag "add" %>
+      <span class="for-screen-reader">Nuova Collana</span>
     <% end %>
   </div>
 <% end %>
 
-<section class="panel panel--wide shadow center">
+<section class="panel panel--wide shadow center margin-block-start">
   <% if @collane.any? %>
     <ul class="flex flex-column gap-half unpad margin-none">
       <% @collane.each do |collana| %>
