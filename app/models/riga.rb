@@ -27,9 +27,6 @@ class Riga < ApplicationRecord
   has_many :documento_righe
   has_many :documenti, through: :documento_righe
 
-  has_many :appunto_righe
-  has_many :appunti, through: :appunto_righe
-
   before_validation :set_default_value
   after_save :aggiorna_totali_documenti
   after_destroy :aggiorna_totali_documenti
@@ -74,8 +71,6 @@ class Riga < ApplicationRecord
     def aggiorna_totali_documenti
       # Aggiorna i totali di tutti i documenti che contengono questa riga
       documenti.each(&:ricalcola_totali!)
-      # Aggiorna anche i totali degli appunti
-      appunti.each(&:ricalcola_totali!)
     end
 
 end

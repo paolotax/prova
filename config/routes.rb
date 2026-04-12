@@ -291,7 +291,6 @@ Rails.application.routes.draw do
       end
     end
 
-    get 'classi', to: 'classi#index'
     get 'classi/:id', to: 'classi#show', as: 'classe'
 
     resources :classe_chips, only: :create, param: :combobox_value

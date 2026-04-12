@@ -154,7 +154,6 @@ class AppuntiController < ApplicationController
     def appunto_params
       params.require(:appunto).permit(
         :nome,
-        :import_scuola_id,
         :appuntabile_value,
         :body,
         :content,

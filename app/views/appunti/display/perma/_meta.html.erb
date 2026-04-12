@@ -43,16 +43,4 @@
   <span class="card__meta-text card__meta-text--assignees overflow-ellipsis">
     &nbsp;
   </span>
-
-  <span class="card__meta-text card__meta-text--copie txt-align-end">
-    <% if appunto.totale_copie.to_i > 0 %>
-      Copie <strong><%= appunto.totale_copie %></strong>
-    <% end %>
-  </span>
-
-  <span class="card__meta-text card__meta-text--importo txt-align-end">
-    <% if appunto.totale_cents.to_i > 0 %>
-      Importo <strong><%= number_to_currency(appunto.totale, locale: :it) %></strong>
-    <% end %>
-  </span>
 </div>

@@ -133,13 +133,16 @@ class CreateAppuntoFromTranscriptionJob
       scuola_body = body
     end
 
+    scuola = if scuola_match&.dig(:import_scuola_id)
+               chat.user.accounts.flat_map(&:scuole).find { |s| s.import_scuola_id == scuola_match[:import_scuola_id] }
+             end
+
     appunto = chat.user.appunti.build(
-      nome: nome, 
-      content: scuola_body, 
+      nome: nome,
+      content: scuola_body,
       telefono: telefono,
       email: email,
-      completed_at: parsed_date,
-      import_scuola_id: scuola_match&.dig(:import_scuola_id),
+      appuntabile: scuola,
       voice_note_id: @voice_note_id
     )
     

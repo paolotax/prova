@@ -296,14 +296,9 @@ class FoglioScuolaPdf < Prawn::Document
       
       combined_content = body_content.join("\n")
     
-      # Use different data sources based on use_adozione_data flag
-      if use_adozione_data && appunto.import_adozione
-        titolo_info = sanitize_text_for_pdf(appunto.import_adozione.titolo)
-        classe_info = sanitize_text_for_pdf("#{appunto.import_adozione.ANNOCORSO} #{appunto.import_adozione.SEZIONEANNO}")
-      else
-        titolo_info = sanitize_text_for_pdf(appunto.nome || "")
-        classe_info = sanitize_text_for_pdf(appunto.classe&.to_combobox_display || "")
-      end
+      titolo_info = sanitize_text_for_pdf(appunto.nome || "")
+      classe = appunto.appuntabile if appunto.appuntabile.is_a?(Classe)
+      classe_info = sanitize_text_for_pdf(classe&.to_combobox_display || "")
       
       # Stato derivato dall'entry (closure/goldness/not_now)
       stato_label = if appunto.closed?

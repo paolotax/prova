@@ -5,8 +5,8 @@ class Appunti::BulkTappeController < ApplicationController
   # Create tappe for selected appunti's scuole
   def create
     @appunti = current_account.appunti.where(id: params[:ids])
-    import_scuola_ids = @appunti.map(&:import_scuola_id).compact.uniq
-    scuole = current_account.scuole.where(import_scuola_id: import_scuola_ids)
+    scuola_ids = @appunti.where(appuntabile_type: "Scuola").pluck(:appuntabile_id).uniq
+    scuole = current_account.scuole.where(id: scuola_ids)
 
     created_count = 0
     scuole.each do |scuola|

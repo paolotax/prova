@@ -18,7 +18,6 @@ module MCPTools
           id: appunto.id, nome: appunto.nome, numero: appunto.numero, status: appunto.status,
           content: appunto.content&.to_plain_text,
           telefono: appunto.telefono, email: appunto.email,
-          totale_cents: appunto.totale_cents, totale_copie: appunto.totale_copie,
           appuntabile_type: appunto.appuntabile_type, appuntabile_display: appunto.appuntabile&.to_s,
           appuntabile_value: appunto.appuntabile ? "#{appunto.appuntabile_type}:#{appunto.appuntabile_id}" : nil,
           golden: appunto.golden?, closed: appunto.closed?, postponed: appunto.postponed?,

@@ -79,8 +79,6 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'azienda', 'aziende'
 
-  inflect.irregular 'ssk_appunto_backup', 'ssk_appunti_backup'
-
   inflect.irregular 'movimento', 'movimenti'
 
   inflect.irregular 'saggio', 'saggi'

@@ -2,29 +2,23 @@
 #
 # Table name: appunti
 #
-#  id                 :uuid             not null, primary key
-#  active             :boolean
-#  appuntabile_type   :string
-#  body               :text
-#  completed_at       :datetime
-#  email              :string
-#  nome               :string
-#  numero             :integer
-#  stato              :string
-#  status             :string           default("drafted"), not null
-#  team               :string
-#  telefono           :string
-#  totale_cents       :integer          default(0)
-#  totale_copie       :integer          default(0)
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  account_id         :uuid
-#  appuntabile_id     :uuid
-#  classe_id          :uuid
-#  import_adozione_id :bigint
-#  import_scuola_id   :bigint
-#  user_id            :bigint           not null
-#  voice_note_id      :bigint
+#  id               :uuid             not null, primary key
+#  active           :boolean
+#  appuntabile_type :string
+#  body             :text
+#  email            :string
+#  nome             :string
+#  numero           :integer
+#  stato            :string
+#  status           :string           default("drafted"), not null
+#  team             :string
+#  telefono         :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  account_id       :uuid
+#  appuntabile_id   :uuid
+#  user_id          :bigint           not null
+#  voice_note_id    :bigint
 #
 # Indexes
 #
@@ -33,18 +27,12 @@
 #  index_appunti_on_account_id_and_numero_and_created_at  (account_id,numero,created_at)
 #  index_appunti_on_account_id_and_status                 (account_id,status)
 #  index_appunti_on_appuntabile_type_and_appuntabile_id   (appuntabile_type,appuntabile_id)
-#  index_appunti_on_classe_id                             (classe_id)
 #  index_appunti_on_id                                    (id) UNIQUE
-#  index_appunti_on_import_adozione_id                    (import_adozione_id)
-#  index_appunti_on_import_scuola_id                      (import_scuola_id)
 #  index_appunti_on_user_id                               (user_id)
 #  index_appunti_on_voice_note_id                         (voice_note_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (classe_id => classi.id)
-#  fk_rails_...  (import_adozione_id => import_adozioni.id)
-#  fk_rails_...  (import_scuola_id => import_scuole.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (voice_note_id => voice_notes.id)
 #
@@ -58,10 +46,6 @@ class Appunto < ApplicationRecord
 
   belongs_to :account
   belongs_to :user
-  
-  belongs_to :import_scuola, required: false
-  belongs_to :import_adozione, required: false
-  belongs_to :classe, optional: true
 
   belongs_to :appuntabile, polymorphic: true, optional: true
 
@@ -90,11 +74,6 @@ class Appunto < ApplicationRecord
       end
     end
   end
-
-  # Righe libri (stesso pattern di Documento)
-  has_many :appunto_righe, dependent: :destroy
-  has_many :righe, through: :appunto_righe
-  accepts_nested_attributes_for :appunto_righe, allow_destroy: true
 
   validates :account_id, presence: true
   before_validation :set_account_from_current, on: :create
@@ -221,6 +200,7 @@ class Appunto < ApplicationRecord
   end
 
   def nome_e_classe
+    classe = appuntabile if appuntabile.is_a?(Classe)
     if nome.present? && classe.present?
       "#{nome} - #{classe.to_combobox_display}"
     elsif nome.present?
@@ -267,17 +247,6 @@ class Appunto < ApplicationRecord
       end
     end
     file_attachments
-  end
-
-  # Calcoli totali righe
-  def ricalcola_totali!
-    self.totale_copie = righe.sum(:quantita)
-    self.totale_cents = righe.sum(&:importo_cents)
-    save!
-  end
-
-  def totale
-    totale_cents / 100.0
   end
 
   def numero_formattato

@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: prezzi_ministeriali
+#
+#  id              :uuid             not null, primary key
+#  anno_scolastico :string           not null
+#  classe          :string           not null
+#  disciplina      :string           not null
+#  prezzo_cents    :integer          not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  idx_prezzi_min_anno_classe_disc  (anno_scolastico,classe,disciplina) UNIQUE
+#
 libro_prima:
   anno_scolastico: "2025/2026"
   classe: "1"

@@ -148,16 +148,12 @@ class DettaglioAppuntiDocumentiPdf < Prawn::Document
                  end
         nome_appunto = appunto.nome&.titleize || "Generico"
         
-        # Informazioni sulla classe
-        classe_info = ""
-        if appunto.classe.present?
-          classe_info = "#{appunto.classe.classe} #{appunto.classe.sezione}"
-        elsif appunto.import_adozione.present?
-          adozione = appunto.import_adozione
-          classe_info = "#{adozione.ANNOCORSO} #{adozione.SEZIONEANNO}"
-        else
-          classe_info = "-"
-        end
+        # Informazioni sulla classe (solo se appuntabile è una Classe)
+        classe_info = if appunto.appuntabile.is_a?(Classe)
+                        "#{appunto.appuntabile.classe} #{appunto.appuntabile.sezione}"
+                      else
+                        "-"
+                      end
         
         # Descrizione completa dell'appunto (body + content)
         descrizione_parts = []

@@ -120,45 +120,6 @@ class AgendaController < ApplicationController
           GROUP BY
               ia."TITOLO", ia."CODICEISBN", ia."EDITORE", ia."DISCIPLINA",
               s.denominazione, s.id, ia."ANNOCORSO"
-      ), saggi_per_adozione AS (
-          SELECT
-              ia."TITOLO",
-              ia."CODICEISBN",
-              ia."EDITORE",
-              ia."DISCIPLINA",
-              s.denominazione AS "DENOMINAZIONESCUOLA",
-              ia."ANNOCORSO",
-              ia."SEZIONEANNO",
-              COUNT(a.id) as numero_saggi
-          FROM appunti a
-              INNER JOIN import_adozioni ia ON a.import_adozione_id = ia.id
-              INNER JOIN scuole s ON ia."CODICESCUOLA" = s.codice_ministeriale AND s.account_id = $3
-              INNER JOIN tappe t ON (
-                  t.tappable_type = 'Scuola'
-                  AND t.tappable_id = s.id
-                  AND t.data_tappa = $1
-                  AND t.user_id = $2
-              )
-          WHERE a.nome = 'saggio' AND a.user_id = $2
-          GROUP BY ia."TITOLO", ia."CODICEISBN", ia."EDITORE", ia."DISCIPLINA",
-                   s.denominazione, ia."ANNOCORSO", ia."SEZIONEANNO"
-      ), saggi_sommati AS (
-          SELECT
-              spa."TITOLO",
-              spa."CODICEISBN",
-              spa."EDITORE",
-              spa."DISCIPLINA",
-              spa."DENOMINAZIONESCUOLA",
-              spa."ANNOCORSO",
-              SUM(spa.numero_saggi) AS totale_saggi
-          FROM saggi_per_adozione spa
-          GROUP BY
-              spa."TITOLO",
-              spa."CODICEISBN",
-              spa."EDITORE",
-              spa."DISCIPLINA",
-              spa."DENOMINAZIONESCUOLA",
-              spa."ANNOCORSO"
       )
       SELECT
           SUM(sr.adozioni_per_classe) as numero_adozioni,
@@ -168,21 +129,9 @@ class AgendaController < ApplicationController
           sr."DISCIPLINA" as disciplina,
           STRING_AGG(DISTINCT sr."DENOMINAZIONESCUOLA", ', ') as scuole,
           STRING_AGG(DISTINCT
-              CONCAT(sr."DENOMINAZIONESCUOLA", ', ', sr."ANNOCORSO", ' ', sr.sezioni_concatenate,
-                     CASE
-                         WHEN COALESCE(ss.totale_saggi, 0) > 0 THEN CONCAT('(', ss.totale_saggi, ')')
-                         ELSE ''
-                     END),
+              CONCAT(sr."DENOMINAZIONESCUOLA", ', ', sr."ANNOCORSO", ' ', sr.sezioni_concatenate),
               '; ') as classi
       FROM sezioni_raggruppate sr
-      LEFT JOIN saggi_sommati ss ON (
-          sr."TITOLO" = ss."TITOLO"
-          AND sr."CODICEISBN" = ss."CODICEISBN"
-          AND sr."EDITORE" = ss."EDITORE"
-          AND sr."DISCIPLINA" = ss."DISCIPLINA"
-          AND sr."DENOMINAZIONESCUOLA" = ss."DENOMINAZIONESCUOLA"
-          AND sr."ANNOCORSO" = ss."ANNOCORSO"
-      )
       GROUP BY
           sr."TITOLO",
           sr."CODICEISBN",

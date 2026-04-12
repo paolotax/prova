@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_12_222458) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -198,20 +198,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
     t.uuid "appuntabile_id"
     t.string "appuntabile_type"
     t.text "body"
-    t.uuid "classe_id"
-    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.string "email"
-    t.bigint "import_adozione_id"
-    t.bigint "import_scuola_id"
     t.string "nome"
     t.integer "numero"
     t.string "stato"
     t.string "status", default: "drafted", null: false
     t.string "team"
     t.string "telefono"
-    t.integer "totale_cents", default: 0
-    t.integer "totale_copie", default: 0
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.bigint "voice_note_id"
@@ -220,22 +214,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
     t.index ["account_id", "status"], name: "index_appunti_on_account_id_and_status"
     t.index ["account_id"], name: "index_appunti_on_account_id"
     t.index ["appuntabile_type", "appuntabile_id"], name: "index_appunti_on_appuntabile_type_and_appuntabile_id"
-    t.index ["classe_id"], name: "index_appunti_on_classe_id"
     t.index ["id"], name: "index_appunti_on_id", unique: true
-    t.index ["import_adozione_id"], name: "index_appunti_on_import_adozione_id"
-    t.index ["import_scuola_id"], name: "index_appunti_on_import_scuola_id"
     t.index ["user_id"], name: "index_appunti_on_user_id"
     t.index ["voice_note_id"], name: "index_appunti_on_voice_note_id"
-  end
-
-  create_table "appunto_righe", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "appunto_id", null: false
-    t.datetime "created_at", null: false
-    t.integer "posizione", default: 0
-    t.bigint "riga_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appunto_id"], name: "index_appunto_righe_on_appunto_id"
-    t.index ["riga_id"], name: "index_appunto_righe_on_riga_id"
   end
 
   create_table "aziende", force: :cascade do |t|
@@ -1490,67 +1471,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "ssk_appunti_backup", force: :cascade do |t|
-    t.boolean "active"
-    t.string "anno_corso"
-    t.string "anno_scolastico_backup"
-    t.string "area_geografica"
-    t.string "autori"
-    t.datetime "backup_created_at", default: -> { "CURRENT_TIMESTAMP" }
-    t.text "body"
-    t.bigint "classe_id"
-    t.string "codice_isbn"
-    t.string "codice_istituto_riferimento"
-    t.string "codice_scuola"
-    t.string "combinazione"
-    t.datetime "completed_at"
-    t.string "consigliato"
-    t.datetime "created_at", null: false
-    t.string "da_acquistare"
-    t.string "denominazione_istituto_riferimento"
-    t.string "denominazione_scuola"
-    t.string "descrizione_caratteristica_scuola"
-    t.string "descrizione_comune"
-    t.string "descrizione_tipologia_grado_istruzione_scuola"
-    t.string "disciplina"
-    t.string "editore"
-    t.string "email"
-    t.bigint "import_adozione_id"
-    t.bigint "import_scuola_id"
-    t.string "libro_categoria"
-    t.string "libro_disciplina"
-    t.bigint "libro_id"
-    t.text "libro_note"
-    t.integer "libro_prezzo_cents"
-    t.string "libro_titolo"
-    t.string "nome"
-    t.string "nuova_adozione"
-    t.bigint "original_appunto_id", null: false
-    t.datetime "original_created_at"
-    t.datetime "original_updated_at"
-    t.string "prezzo"
-    t.string "provincia"
-    t.string "regione"
-    t.string "sezione_anno"
-    t.string "sottotitolo"
-    t.string "stato"
-    t.string "team"
-    t.string "telefono"
-    t.string "tipo_grado_scuola"
-    t.string "titolo"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.string "volume"
-    t.index ["anno_scolastico_backup"], name: "index_ssk_appunti_backup_on_anno_scolastico_backup"
-    t.index ["codice_isbn"], name: "index_ssk_appunti_backup_on_codice_isbn"
-    t.index ["codice_scuola", "anno_corso", "sezione_anno"], name: "idx_on_codice_scuola_anno_corso_sezione_anno_19e7303a3f"
-    t.index ["codice_scuola"], name: "index_ssk_appunti_backup_on_codice_scuola"
-    t.index ["nome"], name: "index_ssk_appunti_backup_on_nome"
-    t.index ["original_appunto_id"], name: "index_ssk_appunti_backup_on_original_appunto_id"
-    t.index ["user_id", "anno_scolastico_backup"], name: "index_ssk_appunti_backup_on_user_id_and_anno_scolastico_backup"
-    t.index ["user_id"], name: "index_ssk_appunti_backup_on_user_id"
-  end
-
   create_table "stats", force: :cascade do |t|
     t.string "anno"
     t.string "categoria"
@@ -1667,12 +1587,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_060102) do
   add_foreign_key "adozioni", "libri"
   add_foreign_key "adozioni_comunicate", "import_adozioni"
   add_foreign_key "adozioni_comunicate", "users"
-  add_foreign_key "appunti", "classi"
-  add_foreign_key "appunti", "import_adozioni"
-  add_foreign_key "appunti", "import_scuole"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
-  add_foreign_key "appunto_righe", "righe"
   add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"
   add_foreign_key "cattedra_discipline", "accounts"
