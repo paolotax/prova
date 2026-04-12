@@ -1,5 +1,11 @@
 class CleanupAppuntoLegacy < ActiveRecord::Migration[8.1]
   def up
+    # Delete orphan appunti: had import_scuola_id but never got linked to an appuntabile
+    execute <<~SQL
+      DELETE FROM appunti
+      WHERE appuntabile_id IS NULL AND import_scuola_id IS NOT NULL;
+    SQL
+
     # Drop appunto_righe join table (never used — libri are linked only to documents)
     drop_table :appunto_righe
 
