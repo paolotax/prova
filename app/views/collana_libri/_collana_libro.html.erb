@@ -1,19 +1,37 @@
-<%= tag.li id: dom_id(collana_libro), class: "list-style-none margin-none flex align-center gap full-width" do %>
-  <%= form_with model: [collana_libro.collana, collana_libro], data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
-    <%= f.number_field :position, class: "input input--small", style: "width: 4ch;", data: { action: "change->form#submit" } %>
-  <% end %>
+<%= tag.li id: dom_id(collana_libro),
+       class: "collana-libro-row",
+       draggable: "true",
+       data: {
+         tax_sortable_update_url: collana_collana_libro_path(collana_libro.collana, collana_libro)
+       } do %>
 
-  <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
+  <span class="collana-libro-row__handle margin-inline-end-half" title="Trascina per riordinare">⋮⋮</span>
+
+  <div class="collana-libro-row__title">
     <strong class="overflow-ellipsis txt-small"><%= collana_libro.libro.titolo %></strong>
-    <span class="txt-x-small txt-subtle"><%= [collana_libro.libro.codice_isbn, collana_libro.libro.editore&.editore].compact.join(" · ") %></span>
+    <span class="overflow-ellipsis txt-x-small txt-subtle"><%= [collana_libro.libro.codice_isbn, collana_libro.libro.editore&.editore].compact.join(" · ") %></span>
   </div>
 
-  <%= form_with model: [collana_libro.collana, collana_libro], data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
-    <%= f.text_field :gruppo, class: "input input--small", style: "width: 20ch;", list: "gruppo_list_#{collana_libro.collana_id}", placeholder: "Gruppo", data: { action: "change->form#submit" } %>
-    <%= f.text_field :classi_target, class: "input input--small", style: "width: 8ch;", list: "classi_target_list_#{collana_libro.collana_id}", placeholder: "Classi", data: { action: "change->form#submit" } %>
-  <% end %>
+  <div class="collana-libro-row__actions">
+    <%= form_with model: [collana_libro.collana, collana_libro],
+                  data: { controller: "form" },
+                  class: "collana-libro-row__edit-form" do |f| %>
+      <%= f.text_field :gruppo,
+          class: "input input--small collana-input-gruppo",
+          list: "gruppo_list_#{collana_libro.collana_id}",
+          placeholder: "Gruppo",
+          data: { action: "change->form#submit keydown.enter->form#submitAndFocusNext" } %>
+      <%= f.text_field :classi_target,
+          class: "input input--small collana-input-classi",
+          list: "classi_target_list_#{collana_libro.collana_id}",
+          placeholder: "Classi",
+          data: { action: "change->form#submit keydown.enter->form#submitAndFocusNext" } %>
+    <% end %>
 
-  <%= button_to collana_collana_libro_path(collana_libro.collana, collana_libro), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
-    <%= icon_tag "minus", size: "small" %>
-  <% end %>
+    <%= button_to collana_collana_libro_path(collana_libro.collana, collana_libro),
+                  method: :delete,
+                  class: "btn btn--circle btn--small txt-negative borderless" do %>
+      <%= icon_tag "trash", size: "small" %>
+    <% end %>
+  </div>
 <% end %>

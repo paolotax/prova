@@ -1,0 +1,116 @@
+@layer components {
+  /* Panel della show collana: max 60rem su desktop, full-width su mobile */
+  .panel.collana-panel {
+    --panel-size: 100%;
+
+    max-inline-size: 60rem;
+  }
+
+  .collana-libro-row {
+    align-items: center;
+    border-block-end: 1px solid var(--color-ink-lighter);
+    column-gap: var(--inline-space-half);
+    display: flex;
+    inline-size: 100%;
+    list-style: none;
+    margin: 0;
+    min-inline-size: 0;
+    padding-block: var(--block-space-half);
+    row-gap: var(--block-space-half);
+  }
+
+  .collana-libro-row__handle {
+    color: var(--color-ink-dark);
+    cursor: grab;
+    flex-shrink: 0;
+    font-size: var(--text-medium);
+    user-select: none;
+  }
+
+  .collana-libro-row__title {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-inline-size: 0;
+    text-align: start;
+  }
+
+  .collana-libro-row__actions {
+    align-items: center;
+    column-gap: var(--inline-space-quarter, 0.25rem);
+    display: flex;
+    flex-shrink: 0;
+    min-inline-size: 0;
+  }
+
+  .collana-libro-row__edit-form {
+    align-items: center;
+    column-gap: var(--inline-space-quarter, 0.25rem);
+    display: flex;
+    min-inline-size: 0;
+  }
+
+  /* Input gruppo/classi_target — larghezza fissa in tutte le viewport */
+  .input.collana-input-gruppo,
+  .input.collana-input-classi {
+    flex: 0 0 auto;
+    min-inline-size: 0;
+  }
+
+  .input.collana-input-gruppo {
+    inline-size: 16ch;
+  }
+
+  .input.collana-input-classi {
+    inline-size: 8ch;
+  }
+
+  /* Form di aggiunta libro in fondo alla collana */
+  .collana-add-form {
+    align-items: center;
+    column-gap: var(--inline-space-half);
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: var(--block-space-half);
+  }
+
+  .collana-add-form__combobox {
+    flex: 1 1 12rem;
+    min-inline-size: 0;
+  }
+
+  .collana-add-form__meta {
+    align-items: center;
+    column-gap: var(--inline-space-quarter, 0.25rem);
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  /* Su iPad e inferiori il blocco azioni scende sotto al titolo */
+  @media (max-width: 799px) {
+    .collana-libro-row {
+      flex-wrap: wrap;
+    }
+
+    .collana-libro-row__actions {
+      flex-basis: 100%;
+      inline-size: 100%;
+    }
+
+    .collana-libro-row__edit-form {
+      flex: 0 0 auto;
+      margin-inline-start: auto;
+    }
+
+    /* Form di aggiunta su mobile: combobox su una riga, meta su un'altra */
+    .collana-add-form__combobox {
+      flex: 1 1 100%;
+    }
+
+    .collana-add-form__meta {
+      flex: 1 1 100%;
+      flex-shrink: 1;
+      min-inline-size: 0;
+    }
+  }
+}

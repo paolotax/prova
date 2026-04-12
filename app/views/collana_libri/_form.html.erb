@@ -1,17 +1,13 @@
-<%= form_with url: collana_collana_libri_path(collana), scope: :collana_libro, class: "margin-block-start" do |f| %>
-  <div class="flex gap-half align-center">
-    <div class="form-field cb-tax" style="flex: 1;">
-      <%= combobox_tag "collana_libro[libro_id]", libri_path,
-          placeholder: "Aggiungi libro...",
-          mobile_at: "0px" %>
-    </div>
-    <div class="form-field">
-      <%= f.text_field :gruppo, class: "input input--small", style: "width: 20ch; text-align: left;", list: "gruppo_list_#{collana.id}", placeholder: "Gruppo" %>
-    </div>
-    <div class="form-field">
-      <%= f.text_field :classi_target, class: "input input--small", style: "width: 8ch; text-align: left;", list: "classi_target_list_#{collana.id}", placeholder: "Classi" %>
-    </div>
-    <%= f.button type: :submit, class: "btn btn--link" do %>
+<%= form_with url: collana_collana_libri_path(collana), scope: :collana_libro, class: "collana-add-form margin-block-start" do |f| %>
+  <div class="collana-add-form__combobox form-field cb-tax">
+    <%= combobox_tag "collana_libro[libro_id]", libri_path,
+        placeholder: "Aggiungi libro...",
+        mobile_at: "0px" %>
+  </div>
+  <div class="collana-add-form__meta">
+    <%= f.text_field :gruppo, class: "input input--small collana-input-gruppo", list: "gruppo_list_#{collana.id}", placeholder: "Gruppo" %>
+    <%= f.text_field :classi_target, class: "input input--small collana-input-classi", list: "classi_target_list_#{collana.id}", placeholder: "Classi" %>
+    <%= f.button type: :submit, class: "btn btn--link btn--circle-mobile" do %>
       <%= icon_tag "add", size: "small" %>
       <span>Aggiungi</span>
     <% end %>

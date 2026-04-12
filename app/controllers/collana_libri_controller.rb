@@ -21,7 +21,8 @@ class CollanaLibriController < ApplicationController
     @collana_libro.update!(collana_libro_params)
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace(@collana_libro, partial: "collana_libri/collana_libro", locals: { collana_libro: @collana_libro }) }
+      # No re-render: i valori sono già nel DOM (preserva focus durante editing inline)
+      format.turbo_stream { head :no_content }
       format.html { redirect_to @collana }
     end
   end

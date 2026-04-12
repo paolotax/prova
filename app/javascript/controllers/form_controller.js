@@ -16,6 +16,20 @@ export default class extends Controller {
     this.element.requestSubmit()
   }
 
+  // Submit + focus al prossimo input focusabile nella pagina.
+  // Usa con: data-action="keydown.enter->form#submitAndFocusNext"
+  submitAndFocusNext(event) {
+    event.preventDefault()
+    this.submit()
+    const current = event.target
+    const focusable = Array.from(
+      document.querySelectorAll('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])')
+    ).filter(el => el.offsetParent !== null)
+    const idx = focusable.indexOf(current)
+    const next = focusable[idx + 1]
+    if (next) next.focus()
+  }
+
   debouncedSubmit(event) {
     this.submit(event)
   }
