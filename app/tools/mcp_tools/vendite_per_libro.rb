@@ -102,12 +102,16 @@ module MCPTools
       scope
     end
 
+    # Esegue la relation come SQL grezzo, restituisce array di hash (bypassa model materialization)
+    def self.exec_rows(relation)
+      ActiveRecord::Base.connection.select_all(relation.to_sql).to_a
+    end
+
     # Aggregazione per dimensioni (group_by)
     def self.aggregate_by_dimensions(righe_scope, group_by_str, sorted_by, skip, max)
       dims = group_by_str.split(",").map(&:strip) & GROUP_DIMENSIONS.keys
       return [] if dims.empty?
 
-      # Aggiungi i join necessari
       dims.each do |dim|
         join = GROUP_DIMENSIONS[dim][:joins]
         righe_scope = righe_scope.joins(join) if join
@@ -132,14 +136,14 @@ module MCPTools
                    else aggregated.order(Arel.sql("SUM(righe.quantita) DESC"))
                    end
 
-      rows = aggregated.offset(skip).limit(max)
+      rows = exec_rows(aggregated.offset(skip).limit(max))
 
       rows.map do |row|
-        result = dims.each_with_object({}) { |d, h| h[d.to_sym] = row.send(d) }
-        result[:copie] = row.copie.to_i
-        result[:importo_cents] = row.importo_cents.to_i
-        result[:libri_count] = row.libri_count.to_i
-        result[:documenti_count] = row.documenti_count.to_i
+        result = dims.each_with_object({}) { |d, h| h[d.to_sym] = row[d] }
+        result[:copie] = row["copie"].to_i
+        result[:importo_cents] = row["importo_cents"].to_i
+        result[:libri_count] = row["libri_count"].to_i
+        result[:documenti_count] = row["documenti_count"].to_i
         result
       end
     end
@@ -150,8 +154,8 @@ module MCPTools
         .group("libri.id", "libri.titolo", "libri.codice_isbn")
         .select(
           "libri.id AS libro_id",
-          "libri.titolo",
-          "libri.codice_isbn",
+          "libri.titolo AS libro_titolo",
+          "libri.codice_isbn AS libro_codice_isbn",
           "SUM(righe.quantita) AS totale_copie",
           "#{IMPORTO_SQL}::bigint AS totale_importo_cents",
           "COUNT(DISTINCT documento_righe.documento_id) AS documenti_count"
@@ -163,19 +167,19 @@ module MCPTools
                    else aggregated.order(Arel.sql("SUM(righe.quantita) DESC"))
                    end
 
-      rows = aggregated.offset(skip).limit(max)
-      libro_ids = rows.map(&:libro_id)
+      rows = exec_rows(aggregated.offset(skip).limit(max))
+      libro_ids = rows.map { |r| r["libro_id"] }
       destinatari = fetch_destinatari(doc_scope, libro_ids)
 
       rows.map do |row|
         {
-          libro_id: row.libro_id,
-          titolo: row.titolo,
-          codice_isbn: row.codice_isbn,
-          totale_copie: row.totale_copie.to_i,
-          totale_importo_cents: row.totale_importo_cents.to_i,
-          documenti_count: row.documenti_count.to_i,
-          destinatari: destinatari[row.libro_id] || []
+          libro_id: row["libro_id"],
+          titolo: row["libro_titolo"],
+          codice_isbn: row["libro_codice_isbn"],
+          totale_copie: row["totale_copie"].to_i,
+          totale_importo_cents: row["totale_importo_cents"].to_i,
+          documenti_count: row["documenti_count"].to_i,
+          destinatari: destinatari[row["libro_id"]] || []
         }
       end
     end
@@ -184,7 +188,7 @@ module MCPTools
     def self.fetch_destinatari(doc_scope, libro_ids)
       return {} if libro_ids.empty?
 
-      rows = DocumentoRiga
+      relation = DocumentoRiga
         .joins(:documento, :riga)
         .joins("LEFT JOIN scuole ON documenti.clientable_type = 'Scuola' AND documenti.clientable_id = scuole.id")
         .joins("LEFT JOIN clienti ON documenti.clientable_type = 'Cliente' AND documenti.clientable_id = clienti.id")
@@ -213,22 +217,24 @@ module MCPTools
           "pagamenti.tipo_pagamento"
         )
 
-      rows.group_by(&:libro_id).transform_values do |rs|
+      rows = exec_rows(relation)
+
+      rows.group_by { |r| r["libro_id"] }.transform_values do |rs|
         rs.map do |r|
           {
-            nome: r.nome,
-            clientable_value: r.clientable_value,
-            documento_id: r.documento_id,
-            numero_documento: r.numero_documento,
-            copie: r.copie.to_i,
-            importo_cents: r.importo_cents.to_i,
-            referente: r.referente,
-            note: r.note,
-            consegnato: r.consegnato,
-            consegnato_il: r.consegnato_il,
-            pagato: r.pagato,
-            pagato_il: r.pagato_il,
-            tipo_pagamento: r.tipo_pagamento
+            nome: r["nome"],
+            clientable_value: r["clientable_value"],
+            documento_id: r["documento_id"],
+            numero_documento: r["numero_documento"],
+            copie: r["copie"].to_i,
+            importo_cents: r["importo_cents"].to_i,
+            referente: r["referente"],
+            note: r["note"],
+            consegnato: r["consegnato"],
+            consegnato_il: r["consegnato_il"],
+            pagato: r["pagato"],
+            pagato_il: r["pagato_il"],
+            tipo_pagamento: r["tipo_pagamento"]
           }
         end.sort_by { |d| d[:nome].to_s }
       end
