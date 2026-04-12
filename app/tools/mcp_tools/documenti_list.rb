@@ -61,9 +61,10 @@ module MCPTools
 
         # Subquery per DISTINCT (evita duplicati da join righe/libri)
         ids = scope.reorder(nil).select("documenti.id").distinct
-        eager = [:causale, :clientable, :consegna, :pagamento, entry: [:goldness, :closure]]
+        eager = [:causale, :consegna, :pagamento, entry: [:goldness, :closure]]
         eager << { documento_righe: { riga: :libro } } if include_righe
-        result = Current.account.documenti.where(id: ids).includes(*eager)
+        # preload (NON includes) per :clientable: polymorphic non supporta eager_load JOIN
+        result = Current.account.documenti.where(id: ids).includes(*eager).preload(:clientable)
 
         result = case sorted_by.to_s
                  when "per_cliente"
