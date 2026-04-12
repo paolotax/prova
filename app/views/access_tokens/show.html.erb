@@ -18,7 +18,7 @@
     <%= tag.button class: "btn btn--link center", data: {
       controller: "copy-to-clipboard", action: "copy-to-clipboard#copy",
       copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: @access_token.token } do %>
-      <%= icon_tag "copy" %>
+      <%= icon_tag "copy-paste" %>
       <span>Copia token</span>
     <% end %>
   </div>
