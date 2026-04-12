@@ -79,8 +79,8 @@
   <div id="bolla_visione_righe_list">
     <% @righe.group_by { |r| @gruppo_per_libro[r.libro_id] }.each do |gruppo, righe_per_gruppo| %>
       <% targets = righe_per_gruppo.map { |r| @target_per_libro[r.libro_id] }.compact.flat_map { |t| t.split(",").map(&:strip) }.uniq %>
-      <% classi = @classi_per_anno.values_at(*targets).compact.flatten %>
-      <% docenti_classe = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none %>
+      <% classi_gruppo = @classi_per_anno.values_at(*targets).compact.flatten %>
+      <% docenti_classe = classi_gruppo.any? ? Persona.docente.joins(:classi).where(classi: { id: classi_gruppo.map(&:id) }).distinct.order(:cognome) : Persona.none %>
 
       <div class="flex align-center gap-half margin-block-start">
         <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
@@ -104,7 +104,10 @@
 
       <ul class="flex flex-column unpad margin-none">
         <% righe_per_gruppo.each do |riga| %>
-          <%= render "bolla_visione_righe/bolla_visione_riga", riga: riga, classi: classi, persone: @persone %>
+          <% riga_targets = @target_per_libro[riga.libro_id].to_s.split(",").map(&:strip) %>
+          <% riga_classi = @classi_per_anno.values_at(*riga_targets).compact.flatten %>
+          <% riga_persone = riga_classi.any? ? Persona.docente.joins(:classi).where(classi: { id: riga_classi.map(&:id) }).distinct.order(:cognome) : Persona.none %>
+          <%= render "bolla_visione_righe/bolla_visione_riga", riga: riga, classi: riga_classi, persone: riga_persone %>
         <% end %>
       </ul>
     <% end %>
@@ -118,7 +121,7 @@
               placeholder: "Aggiungi libro...",
               mobile_at: "0px" %>
         </div>
-        <%= f.button type: :submit, class: "btn btn--link" do %>
+        <%= f.button type: :submit, class: "btn btn--link btn--circle-mobile" do %>
           <%= icon_tag "add", size: "small" %>
           <span>Aggiungi</span>
         <% end %>

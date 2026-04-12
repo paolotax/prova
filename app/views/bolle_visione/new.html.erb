@@ -21,9 +21,9 @@
     <%= form.hidden_field :data_bolla, value: @tappa.data_tappa %>
 
     <div class="flex flex-column gap">
-      <%# 1. Collana + Target sulla stessa riga %>
-      <div class="flex align-center justify-center gap margin-block-start">
-        <div class="form-field" style="flex: 0 0 auto;">
+      <%# 1. Collana + Target sulla stessa riga (stack su mobile) %>
+      <div class="flex flex-wrap align-center justify-center gap margin-block-start">
+        <div class="form-field">
           <%= form.label :collana_id, "Collana" %>
           <%= form.collection_select :collana_id, @collane, :id, :nome,
               { prompt: "Scegli collana..." },
@@ -32,7 +32,7 @@
         </div>
 
         <% if @target_disponibili.any? %>
-          <div class="form-field" style="flex: 0 0 auto;" data-bolla-form-target="targetContainer">
+          <div class="form-field" data-bolla-form-target="targetContainer">
             <label>Target</label>
             <div class="flex flex-wrap gap-quarter">
             <% @target_disponibili.each do |target| %>

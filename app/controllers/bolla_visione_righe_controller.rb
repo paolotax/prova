@@ -38,13 +38,20 @@ class BollaVisioneRigheController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         scuola = @bolla_visione.scuola
+        # Stessa logica del show: classi e persone filtrate per target del libro
+        collana_libro = @bolla_visione.collana.collana_libri.find_by(libro_id: @riga.libro_id)
+        targets = collana_libro&.classi_target.to_s.split(",").map(&:strip)
+        classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
+        classi = classi_per_anno.values_at(*targets).compact.flatten
+        persone = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none
+
         render turbo_stream: [
           turbo_stream.replace(@riga,
             partial: "bolla_visione_righe/bolla_visione_riga",
             locals: {
               riga: @riga,
-              classi: scuola.classi.where(anno_corso: @riga.classi_target.to_s.split(",").map(&:strip)).order(:anno_corso, :sezione),
-              persone: scuola.persone.order(:cognome)
+              classi: classi,
+              persone: persone
             }),
           turbo_stream_totale
         ]
