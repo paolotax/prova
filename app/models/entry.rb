@@ -143,7 +143,7 @@ class Entry < ApplicationRecord
 
     loaded = {}
     {
-      "Appunto"   => ->(ids) { Appunto.where(id: ids).includes(:appuntabile, :consegna, righe: :libro) },
+      "Appunto"   => ->(ids) { Appunto.where(id: ids).includes(:appuntabile) },
       "Documento" => ->(ids) { Documento.where(id: ids).includes(:causale, :clientable, :consegna, :pagamento, righe: :libro) },
       "Tappa"     => ->(ids) { Tappa.where(id: ids).includes(:giri) }
     }.each do |type, loader|

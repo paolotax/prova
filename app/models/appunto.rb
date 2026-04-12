@@ -40,9 +40,6 @@
 class Appunto < ApplicationRecord
   include Entryable
   include Appunto::Statuses
-  include Consegnabile   # has_one :consegna
-  include Pagabile       # has_one :pagamento
-  include Registrabile   # has_one :registrazione non usato???
 
   belongs_to :account
   belongs_to :user
