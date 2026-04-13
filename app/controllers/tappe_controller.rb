@@ -119,9 +119,14 @@ class TappeController < ApplicationController
 
   def new
     @tappable_type = params[:tappable_type] || "Scuola"
-    @tappable_id = params[:tappable_id] || nil
-    @data_tappa = params[:data_tappa] || Date.today
-    @tappa = current_user.tappe.build(tappable_id: @tappable_id, tappable_type: @tappable_type, data_tappa: @data_tappa)
+    @tappable_id   = params[:tappable_id]
+    @data_tappa    = params[:data_tappa] || Date.today
+    @tappa = current_user.tappe.build(
+      tappable_id: @tappable_id,
+      tappable_type: @tappable_type,
+      data_tappa: @data_tappa,
+      titolo: params[:source_titolo]
+    )
   end
 
   def edit
