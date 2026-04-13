@@ -31,6 +31,7 @@
 class Persona < ApplicationRecord
   include AccountScoped
   include Appuntabile
+  include Pianificabile
   include Persona::Avatar
 
   belongs_to :scuola, optional: true
@@ -57,6 +58,14 @@ class Persona < ApplicationRecord
 
   def to_s
     nome_completo
+  end
+
+  def tappa_target
+    scuola
+  end
+
+  def default_titolo_tappa
+    [ruolo&.capitalize, nome_completo.presence].compact.join(" ").presence
   end
 
   def to_combobox_display
