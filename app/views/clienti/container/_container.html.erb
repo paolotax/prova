@@ -23,6 +23,10 @@
         <%= render "clienti/container/riepilogo", presenter: presenter, sconti: sconti %>
       </div>
 
+      <div class="full-width margin-block-end padding-inline">
+        <%= render "tappe/pianifica", source: cliente %>
+      </div>
+
       <footer class="card__footer full-width flex align-start gap">
         <%= render "clienti/display/perma/meta", cliente: cliente %>
       </footer>

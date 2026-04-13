@@ -47,6 +47,7 @@
 </section>
 
 <div class="scuola-show" style="--card-color: <%= persona_card_color %>;">
+  <%= render "tappe/pianifica", source: persona %>
   <%= render "persone/container/appunti", appunti: appunti %>
   <%= render "persone/container/saggi", persona: persona %>
   <%= render "shared/container/delete", record: persona, path: persona_path(persona), label: persona.nome_completo %>

@@ -21,6 +21,22 @@ class TappeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'textarea[name="tappa[titolo]"]', text: /Visita speciale/
   end
 
+  test "creates tappa from scuola with data oggi" do
+    assert_difference -> { @user.tappe.count }, 1 do
+      post tappe_path(account_id: @account.id), params: {
+        tappa: {
+          tappable_type: "Scuola",
+          tappable_id: @scuola.id,
+          data_tappa: Date.current,
+          titolo: "Visita test"
+        }
+      }
+    end
+    tappa = @user.tappe.order(:created_at).last
+    assert_equal @scuola, tappa.tappable
+    assert_equal Date.current, tappa.data_tappa
+  end
+
   private
 
   def sign_in_as(user, account)
