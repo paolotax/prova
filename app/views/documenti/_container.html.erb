@@ -50,6 +50,8 @@
          style="outline: none;">
   <div class="card-perma__actions card-perma__actions--left">
     <%= render "documenti/container/gild", documento: documento if documento.entry.present? && !documento.closed? %>
+    
+    <%= render "tappe/pianifica", source: documento %>
   </div>
 
   <div class="card-perma__bg">

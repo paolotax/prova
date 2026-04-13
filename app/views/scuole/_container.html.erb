@@ -1,25 +1,23 @@
 <% scuola_card_color = tipo_scuola_color(scuola.tipo_scuola) %>
 
 <section class="card-perma" style="--card-color: <%= scuola_card_color %>;">
-	<div class="card-perma__actions card-perma__actions--right">
-		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
-				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
-			<%= icon_tag "printer" %>
-			<span class="for-screen-reader">Foglio scuola PDF</span>
+	<div class="card-perma__actions card-perma__actions--left">
+		<%= render "tappe/pianifica", source: scuola %>		
+
+		<%= link_to mappe_path("scuola-#{@scuola.id}"),
+				class: "btn", data: { controller: "tooltip" } do %>
+			<%= icon_tag "mappa" %>
+			<span class="for-screen-reader">Posizione nella mappa</span>
 		<% end %>
-		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, solo_sovrapacchi: true),
-				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
-			<%= icon_tag "tag" %>
-			<span class="for-screen-reader">Sovrapacchi PDF</span>
-		<% end %>
+
 	</div>
 
 	<div class="card-perma__bg">
 		<article class="card">
 			<header class="card__header">
-        <%= render "scuole/display/perma/board", scuola: scuola %>
-        <%= render "scuole/display/perma/tags", scuola: scuola %>
-      </header>
+				<%= render "scuole/display/perma/board", scuola: scuola %>
+				<%= render "scuole/display/perma/tags", scuola: scuola %>
+			</header>
 			
 			<div class="card__body">
 				<div class="card__content">
@@ -41,19 +39,16 @@
 		</article>
 	</div>
 
-	<div class="card-perma__actions card-perma__actions--left">
-		<%= link_to go_to_tappable_path(@scuola, current_user.effective_navigator),
-				target: "_blank", class: "btn",
-				style: "background-color: oklch(var(--lch-red-dark)); border-color: oklch(var(--lch-red-dark)); color: var(--color-ink-inverted);",
-				data: { controller: "tooltip", turbo: false } do %>
-			<%= icon_tag "marker" %>
-			<span class="for-screen-reader">Naviga verso...</span>
+	<div class="card-perma__actions card-perma__actions--right">
+		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
+				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
+			<%= icon_tag "printer" %>
+			<span class="for-screen-reader">Foglio scuola PDF</span>
 		<% end %>
-
-		<%= link_to mappe_path("scuola-#{@scuola.id}"),
-				class: "btn", data: { controller: "tooltip" } do %>
-			<%= icon_tag "mappa" %>
-			<span class="for-screen-reader">Posizione nella mappa</span>
+		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, solo_sovrapacchi: true),
+				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
+			<%= icon_tag "tag" %>
+			<span class="for-screen-reader">Sovrapacchi PDF</span>
 		<% end %>
 	</div>
 
@@ -77,8 +72,6 @@
 	<% end %>
 
 	<%= render "scuole/container/insegnanti", scuola: @scuola %>
-
-	<%= render "tappe/pianifica", source: @scuola %>
 
 	<%= render "scuole/container/prossime_visite", scuola: @scuola %>
 

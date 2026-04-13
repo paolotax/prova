@@ -3,6 +3,7 @@
 <section id="<%= dom_id(appunto, :container) %>" class="card-perma" style="--card-color: <%= appunto_color(appunto) %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <%= render "appunti/container/gild", appunto: appunto if appunto.published? && !appunto.closed? %>
+    <%= render "tappe/pianifica", source: appunto %>
   </div>
 
   <div class="card-perma__bg">
