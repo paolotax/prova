@@ -7,7 +7,7 @@
      data-controller="dialog"
      data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
   <button type="button" class="btn btn--circle" data-action="dialog#toggle"
-          style="--btn-size: 2em;" aria-label="Pianifica visita">
+          aria-label="Pianifica visita">
     <%= icon_tag "menu-dots-vertical" %>
   </button>
   <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
@@ -34,7 +34,7 @@
               tappable_id:   target.id,
               source_titolo: source.default_titolo_tappa
             ), class: "popup__btn btn",
-            data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
+            data: { turbo_frame: :_top, action: "click->dialog#close" } do %>
           <%= icon_tag "calendar" %>
           <span>Scegli giorno…</span>
         <% end %>
