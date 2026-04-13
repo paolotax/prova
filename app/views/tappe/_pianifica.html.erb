@@ -1,0 +1,23 @@
+<%# locals: (source:) -%>
+
+<% target = source.tappa_target %>
+<% return unless target %>
+
+<div class="btn-group" aria-label="Pianifica visita">
+  <% [["Oggi", Date.current], ["Domani", Date.tomorrow]].each do |label, date| %>
+    <%= button_to label, tappe_path, method: :post, params: {
+          tappa: {
+            tappable_type: target.class.name,
+            tappable_id:   target.id,
+            data_tappa:    date,
+            titolo:        source.default_titolo_tappa
+          }
+        }, class: "btn", form: { data: { turbo: true } } %>
+  <% end %>
+
+  <%= link_to "Scegli giorno…", new_tappa_path(
+        tappable_type: target.class.name,
+        tappable_id:   target.id,
+        source_titolo: source.default_titolo_tappa
+      ), class: "btn" %>
+</div>
