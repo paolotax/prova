@@ -80,22 +80,11 @@
     <% @righe.group_by { |r| @gruppo_per_libro[r.libro_id] }.each do |gruppo, righe_per_gruppo| %>
       <% targets = righe_per_gruppo.map { |r| @target_per_libro[r.libro_id] }.compact.flat_map { |t| t.split(",").map(&:strip) }.uniq %>
       <% classi_gruppo = @classi_per_anno.values_at(*targets).compact.flatten %>
-      <% docenti_classe = classi_gruppo.any? ? Persona.docente.joins(:classi).where(classi: { id: classi_gruppo.map(&:id) }).distinct.order(:cognome) : Persona.none %>
 
       <div class="flex align-center gap-half margin-block-start">
         <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
           <%= gruppo.presence || "Altro" %>
         </h3>
-
-        <% if docenti_classe.any? %>
-          <div class="flex gap-quarter flex-wrap">
-            <% docenti_classe.each do |docente| %>
-              <span class="classi-chip classi-chip--persona active" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;">
-                <%= docente.cognome %>
-              </span>
-            <% end %>
-          </div>
-        <% end %>
 
         <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
         form_url: bolla_visione_persone_path(@bolla_visione),
