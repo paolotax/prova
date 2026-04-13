@@ -49,6 +49,7 @@ class Documento < ApplicationRecord
   include Entryable
   include Pagabile
   include Consegnabile
+  include Pianificabile
 
   belongs_to :user
   belongs_to :clientable, polymorphic: true, optional: true
@@ -189,6 +190,15 @@ class Documento < ApplicationRecord
 
   def incompleto?
     causale.blank? || clientable.is_a?(Domain::NessunCliente)
+  end
+
+  def tappa_target
+    return nil if clientable.is_a?(Domain::NessunCliente)
+    clientable
+  end
+
+  def default_titolo_tappa
+    [causale&.causale, numero_documento].compact.join(" ").strip.presence
   end
 
   def vendita?
