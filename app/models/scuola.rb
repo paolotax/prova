@@ -54,6 +54,7 @@ class Scuola < ApplicationRecord
   include Appuntabile
   include HasEntries
   include Navigable
+  include Pianificabile
   include ProtectedFromDestroy
   include Saldabile
   include Scartabile

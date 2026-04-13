@@ -62,6 +62,11 @@ class ScuolaTest < ActiveSupport::TestCase
     Current.account = nil
   end
 
+  test "scuola is its own tappa_target" do
+    scuola = scuole(:scuola_fizzy)
+    assert_equal scuola, scuola.tappa_target
+  end
+
   test "plessi inherit area from direzione on save" do
     direzione = scuole(:scuola_fizzy)
     plesso = Scuola.create!(

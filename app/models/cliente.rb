@@ -48,6 +48,7 @@ class Cliente < ApplicationRecord
   include Appuntabile
   include HasEntries
   include Navigable
+  include Pianificabile
   include Saldabile
 
   geocoded_by :address   # Assumi che il modello Cliente abbia un campo address
