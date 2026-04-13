@@ -35,6 +35,8 @@
   <span class="card__meta-text card__meta-text--updated overflow-ellipsis">
     <% if documento.spese_cents.to_i > 0 %>
       Spese <strong><%= number_to_currency documento.spese_cents / 100.0, locale: :it %></strong>
+    <% else %>
+      &nbsp;
     <% end %>
   </span>
 
