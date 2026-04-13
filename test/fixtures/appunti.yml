@@ -62,3 +62,13 @@ appunto_drafted:
   body: "Contenuto bozza"
   status: "drafted"
   active: true
+
+appunto_with_target:
+  account: fizzy
+  user: one
+  nome: "Appunto con target"
+  body: "Appunto associato a una scuola"
+  stato: "da_fare"
+  status: "published"
+  active: true
+  appuntabile: scuola_fizzy (Scuola)

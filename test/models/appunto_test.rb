@@ -40,7 +40,7 @@
 require "test_helper"
 
 class AppuntoTest < ActiveSupport::TestCase
-  fixtures :accounts, :users, :memberships, :appunti
+  fixtures :accounts, :users, :memberships, :appunti, :scuole
 
   setup do
     @fizzy = accounts(:fizzy)
@@ -293,6 +293,17 @@ class AppuntoTest < ActiveSupport::TestCase
 
     assert @appunto.pagato?
     assert_not_nil @appunto.pagamento.pagato_il
+  end
+
+  test "tappa_target is the appuntabile" do
+    appunto = appunti(:appunto_with_target)
+    assert_equal appunto.appuntabile, appunto.tappa_target
+  end
+
+  test "default_titolo_tappa contains date" do
+    appunto = appunti(:appunto_with_target)
+    assert_match Regexp.new(Regexp.escape(I18n.l(appunto.created_at.to_date))),
+                 appunto.default_titolo_tappa.to_s
   end
 
   test "mark_registrato creates registrazione record" do

@@ -39,6 +39,7 @@
 
 class Appunto < ApplicationRecord
   include Entryable
+  include Pianificabile
   include Appunto::Statuses
 
   belongs_to :account
@@ -249,6 +250,14 @@ class Appunto < ApplicationRecord
   def numero_formattato
     return nil unless numero.present?
     "#{numero}-#{created_at.strftime('%y')}"
+  end
+
+  def tappa_target
+    appuntabile
+  end
+
+  def default_titolo_tappa
+    "Appunto del #{I18n.l(created_at.to_date)}"
   end
 
   # Override legacy Golden/Closeable/Postponable methods to use Entry-based system
