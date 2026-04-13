@@ -34,8 +34,17 @@ class Classe < ApplicationRecord
   include AccountScoped
   include Appuntabile
   include HasEntries
+  include Pianificabile
   include ProtectedFromDestroy
   include PgSearch::Model
+
+  def tappa_target
+    scuola
+  end
+
+  def default_titolo_tappa
+    "Classe #{anno_corso}#{sezione}".strip.presence
+  end
 
   # Custom search that handles both class codes (2A) and scuola names (Dante)
   # Splits query into words and ensures ALL words match somewhere across fields
