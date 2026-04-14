@@ -253,7 +253,7 @@ class Appunto < ApplicationRecord
   end
 
   def tappa_target
-    appuntabile
+    appuntabile.respond_to?(:tappa_target) ? appuntabile.tappa_target : nil
   end
 
   def default_titolo_tappa

@@ -194,7 +194,7 @@ class Documento < ApplicationRecord
 
   def tappa_target
     return nil if clientable.is_a?(Domain::NessunCliente)
-    clientable
+    clientable.respond_to?(:tappa_target) ? clientable.tappa_target : nil
   end
 
   def default_titolo_tappa
