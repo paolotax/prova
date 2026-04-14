@@ -10,7 +10,7 @@ class Tappe::TappaGiriController < ApplicationController
 
   def new
     @tagged_with = @tappa.giri
-    @giri = current_user.giri.where.not(id: @tagged_with.select(:id)).order(:titolo)
+    @giri = current_user.giri.where.not(id: @tagged_with.select(:id)).order(created_at: :desc)
   end
 
   def create

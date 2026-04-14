@@ -1,33 +1,38 @@
 <%# locals: (tappa:) -%>
 
 <%= form_with model: tappa, id: "new_tappa_form",
+      class: "flex flex-column gap",
+      style: "min-inline-size: 0; inline-size: 100%;",
       data: { turbo: true, controller: "form",
               action: "keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent keydown.esc->form#cancel:stop" } do |form| %>
 
-  <div class="form-field cb-tax">
-    <%= combobox_tag "tappa[tappable_value]",
+  <div class="form-field cb-tax" style="min-inline-size: 0; inline-size: 100%;">
+    <%= form.label :tappable_value, "Destinazione", class: "form-label" %>
+    <%= form.combobox :tappable_value,
         destinatari_index_path,
+        association_name: :tappable,
         id: "tappa_tappable_value_new",
         placeholder: "cerca scuola, cliente...",
         mobile_at: "0px" %>
   </div>
 
-  <div class="form-field" style="margin-top: 1ch;">
+  <div class="form-field" style="inline-size: 100%;">
+    <%= form.label :titolo, "Note", class: "form-label" %>
     <%= form.text_area :titolo, rows: 2,
         class: "input",
         placeholder: "Note..." %>
   </div>
 
-  <div class="flex gap-half align-center" style="margin-top: 1ch;">
-    <div class="form-field">
-      <%= date_input(form, :data_tappa) %>
-    </div>
+  <div class="form-field" style="max-inline-size: max-content;">
+    <%= form.label :data_tappa, "Data", class: "form-label" %>
+    <%= date_input(form, :data_tappa) %>
+  </div>
 
-    <div class="form-field cb-tax" style="flex: 1;">
-      <%= form.combobox :giro_ids,
-          current_user.giri.order(created_at: :desc),
-          multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
-    </div>
+  <div class="form-field cb-tax" style="min-inline-size: 0; inline-size: 100%;">
+    <%= form.label :giro_ids, "Giri", class: "form-label" %>
+    <%= form.combobox :giro_ids,
+        current_user.giri.order(created_at: :desc),
+        multiselect_chip_src: giro_chips_path, mobile_at: "0px" %>
   </div>
 
 <% end %>
