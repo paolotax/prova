@@ -12,6 +12,24 @@
   </button>
   <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
     <ul class="popup__list">
+      <% future = Current.user.tappe
+           .where(tappable: target)
+           .where("data_tappa >= ?", Date.current)
+           .includes(:giri)
+           .order(:data_tappa) %>
+      <% if future.any? %>
+        <li class="popup__item popup__item--info">
+          <div class="txt-small fg-muted padding-inline-3 padding-block-2">
+            <div class="font-weight-bold">Già pianificata:</div>
+            <% future.each do |t| %>
+              <div>
+                <%= l(t.data_tappa, format: :short) %>
+                <% if t.giri.any? %> — <%= t.giri.map(&:titolo).join(", ") %><% end %>
+              </div>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
       <% [["Oggi", Date.current], ["Domani", Date.tomorrow]].each do |label, date| %>
         <li class="popup__item">
           <%= button_to tappe_path, method: :post, params: {
