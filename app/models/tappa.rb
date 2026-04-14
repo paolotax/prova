@@ -161,6 +161,34 @@ class Tappa < ApplicationRecord
     order(data_tappa: :desc).where("data_tappa < ?", Date.today).first
   end
 
+  # Upsert helper: pianifica una tappa per `tappable` nel `giro`.
+  # Se esiste già una tappa dello stesso user, tappable e giro con
+  # `data_tappa: nil` (da programmare) la aggiorna con la nuova data
+  # (e titolo opzionale, preservando quello esistente se il nuovo è blank).
+  # Altrimenti crea una nuova tappa + tappa_giro.
+  def self.schedule_in_giro!(user:, tappable:, giro:, data_tappa:, titolo: nil)
+    existing = user.tappe
+      .where(tappable: tappable, data_tappa: nil)
+      .joins(:tappa_giri).where(tappa_giri: { giro_id: giro.id })
+      .first
+
+    if existing
+      existing.update!(
+        data_tappa: data_tappa,
+        titolo: titolo.presence || existing.titolo
+      )
+      existing
+    else
+      tappa = user.tappe.create!(
+        tappable: tappable,
+        data_tappa: data_tappa,
+        titolo: titolo
+      )
+      tappa.tappa_giri.create!(giro: giro)
+      tappa
+    end
+  end
+
 
   def new_giro=(new_giro)
     giro = Current.user.giri.find_or_create_by(titolo: new_giro)
