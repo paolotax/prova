@@ -19,21 +19,55 @@ module MCPTools
 
     def self.call(tappable_value:, data_tappa: nil, titolo: nil, descrizione: nil, giro_id: nil, server_context:, **_params)
       with_current(server_context) do
-        tappa = Current.user.tappe.build(
-          account: Current.account,
-          tappable_value: tappable_value,
-          data_tappa: data_tappa.present? ? Date.parse(data_tappa) : nil,
-          titolo: titolo,
-          descrizione: descrizione
-        )
-        tappa.save!
+        updated = false
 
-        if giro_id.present?
+        if giro_id.present? && data_tappa.present?
           giro = Current.user.giri.find(giro_id)
-          tappa.tappa_giri.create!(giro: giro)
+          klass, id = Appuntabile.parse_appuntabile_value(tappable_value)
+          tappable = klass.find(id)
+
+          existing_count = Current.user.tappe
+            .where(tappable: tappable, data_tappa: nil)
+            .joins(:tappa_giri).where(tappa_giri: { giro_id: giro.id })
+            .count
+
+          tappa = Tappa.schedule_in_giro!(
+            user: Current.user,
+            tappable: tappable,
+            giro: giro,
+            data_tappa: Date.parse(data_tappa),
+            titolo: titolo
+          )
+          updated = existing_count.positive?
+
+          if descrizione.present?
+            tappa.update!(descrizione: descrizione)
+          end
+        else
+          tappa = Current.user.tappe.build(
+            account: Current.account,
+            tappable_value: tappable_value,
+            data_tappa: data_tappa.present? ? Date.parse(data_tappa) : nil,
+            titolo: titolo,
+            descrizione: descrizione
+          )
+          tappa.save!
+
+          if giro_id.present?
+            giro = Current.user.giri.find(giro_id)
+            tappa.tappa_giri.create!(giro: giro)
+          end
         end
 
-        result = { success: true, id: tappa.id, titolo: tappa.titolo, data_tappa: tappa.data_tappa, tappable_display: tappa.tappable&.to_s, giro_id: giro_id }
+        result = {
+          success: true,
+          id: tappa.id,
+          titolo: tappa.titolo,
+          data_tappa: tappa.data_tappa,
+          tappable_display: tappa.tappable&.to_s,
+          giro_id: giro_id,
+          updated: updated
+        }
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
       rescue ActiveRecord::RecordInvalid => e
         MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
