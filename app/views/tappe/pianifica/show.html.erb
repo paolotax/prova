@@ -1,0 +1,52 @@
+<% frame_id = "pianifica_#{@source.class.name}_#{@source.id}" %>
+
+<%= turbo_frame_tag frame_id do %>
+  <strong class="popup__title">Pianifica visita</strong>
+  <ul class="popup__list">
+    <% [["Oggi", Date.current], ["Domani", Date.tomorrow]].each do |label, date| %>
+      <li class="popup__item">
+        <%= button_to tappe_path, method: :post, params: {
+              tappa: {
+                tappable_type: @target.class.name,
+                tappable_id:   @target.id,
+                data_tappa:    date,
+                titolo:        @source.default_titolo_tappa
+              }
+            }, class: "popup__btn btn",
+            form: { data: { turbo_frame: "_top", action: "click->dialog#close" } } do %>
+          <%= icon_tag "calendar" %>
+          <span><%= label %></span>
+        <% end %>
+      </li>
+    <% end %>
+    <li class="popup__item">
+      <%= link_to new_tappa_path(
+            tappable_type: @target.class.name,
+            tappable_id:   @target.id,
+            source_titolo: @source.default_titolo_tappa
+          ), class: "popup__btn btn",
+          data: { turbo_frame: :_top, action: "click->dialog#close" } do %>
+        <%= icon_tag "calendar" %>
+        <span>Scegli giorno…</span>
+      <% end %>
+    </li>
+    <% if @future.any? %>
+      <li class="popup__item popup__item--info">
+        <div class="txt-small fg-muted txt-align-center font-weight-bold padding-inline-3 padding-block-2 full-width">
+          Già pianificata
+        </div>
+      </li>
+      <% @future.each do |t| %>
+        <li class="popup__item">
+          <%= link_to tappa_path(t), class: "popup__btn btn",
+              data: { turbo_frame: "_top", action: "click->dialog#close" } do %>
+            <%= icon_tag "calendar-days" %>
+            <span>
+              <%= l(t.data_tappa, format: :short) %><% if t.giri.any? %> — <%= t.giri.map(&:titolo).join(", ") %><% end %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

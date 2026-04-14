@@ -1,63 +1,21 @@
 <%# locals: (source:) -%>
 
-<% target = source.tappa_target %>
-<% return unless target %>
+<% return unless source.tappa_target %>
+
+<% frame_id = "pianifica_#{source.class.name}_#{source.id}" %>
 
 <div style="position: relative;"
      data-controller="dialog"
-     data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-  <button type="button" class="btn btn--circle" data-action="dialog#toggle"
-          aria-label="Pianifica visita">
-    <%= icon_tag "menu-dots-vertical" %>
+     data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside mouseenter->dialog#loadLazyFrames">
+  <button type="button" class="btn btn--circle"
+          data-controller="tooltip"
+          data-action="dialog#toggle">
+    <%= icon_tag "calendar-days" %>
+    <span class="for-screen-reader">Pianifica visita</span>
   </button>
-  <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
-    <ul class="popup__list">
-      <% future = Current.user.tappe
-           .where(tappable: target)
-           .where("data_tappa >= ?", Date.current)
-           .includes(:giri)
-           .order(:data_tappa) %>
-
-      <% [["Oggi", Date.current], ["Domani", Date.tomorrow]].each do |label, date| %>
-        <li class="popup__item">
-          <%= button_to tappe_path, method: :post, params: {
-                tappa: {
-                  tappable_type: target.class.name,
-                  tappable_id:   target.id,
-                  data_tappa:    date,
-                  titolo:        source.default_titolo_tappa
-                }
-              }, class: "popup__btn btn",
-              form: { data: { action: "click->dialog#close" } } do %>
-            <%= icon_tag "calendar" %>
-            <span><%= label %></span>
-          <% end %>
-        </li>
-      <% end %>
-      <li class="popup__item">
-        <%= link_to new_tappa_path(
-              tappable_type: target.class.name,
-              tappable_id:   target.id,
-              source_titolo: source.default_titolo_tappa
-            ), class: "popup__btn btn",
-            data: { turbo_frame: :_top, action: "click->dialog#close" } do %>
-          <%= icon_tag "calendar" %>
-          <span>Scegli giorno…</span>
-        <% end %>
-      </li>
-      <% if future.any? %>
-        <li class="popup__item popup__item--info">
-          <div class="txt-small fg-muted padding-inline-3 padding-block-2">
-            <div class="font-weight-bold">Già pianificata:</div>
-            <% future.each do |t| %>
-              <div>
-                <%= l(t.data_tappa, format: :short) %>
-                <% if t.giri.any? %> — <%= t.giri.map(&:titolo).join(", ") %><% end %>
-              </div>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
+  <dialog class="popup panel flex-column align-start justify-start fill-white shadow txt-small" data-dialog-target="dialog">
+    <%= turbo_frame_tag frame_id,
+          src: pianifica_tappe_path(source_type: source.class.name, source_id: source.id),
+          loading: :lazy %>
   </dialog>
 </div>

@@ -354,6 +354,9 @@ Rails.application.routes.draw do
     end
 
     resources :tappe do
+      collection do
+        get 'pianifica', to: 'tappe/pianifica#show'
+      end
       member do
         patch 'sort'
         post 'rimanda'
