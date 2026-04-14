@@ -48,7 +48,7 @@
 </section>
 
 <div class="scuola-show" style="--card-color: <%= classe_card_color %>;">
-  <%= render "tappe/pianifica", source: classe %>
+  <%= render "tappe/pianifica", source: classe.scuola %>
 
   <%= turbo_frame_tag "classe_entries", src: scuola_classe_entries_path(scuola, classe), loading: :lazy, style: "display: block; min-height: 1px;" do %>
     <p class="txt-small txt-subtle margin-none">Caricamento...</p>
