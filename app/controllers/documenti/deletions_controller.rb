@@ -3,12 +3,14 @@
 module Documenti
   class DeletionsController < ApplicationController
     def create
-      @ids = params[:ids]
-      @figli_ids = current_account.documenti.where(documento_padre_id: @ids).pluck(:id).uniq
-      @documenti = current_account.documenti.where(id: @ids)
+      @entries = current_account.entries.documenti.where(id: params[:ids])
+      @entry_ids = @entries.pluck(:id)
+      documento_ids = @entries.pluck(:entryable_id)
 
-      count = @documenti.count
-      @documenti.destroy_all
+      @figli_ids = current_account.documenti.where(documento_padre_id: documento_ids).pluck(:id).uniq
+
+      count = @entries.count
+      @entries.destroy_all
 
       notice = helpers.pluralize(count, "documento eliminato", "documenti eliminati")
 

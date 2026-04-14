@@ -18,6 +18,8 @@
 				<%= yield :header %>
 			</header>
 
+			<%= render "layouts/shared/flash" %>
+
 			<%= turbo_frame_tag :modal %>
 			<%= render partial: "layouts/back_to_top" %>
 

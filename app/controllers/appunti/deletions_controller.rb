@@ -2,22 +2,19 @@
 
 class Appunti::DeletionsController < ApplicationController
   # POST /appunti/deletions
-  # Bulk delete selected appunti
+  # Bulk delete selected appunti (ids are entry ids from bulk checkboxes)
   def create
-    @appunti = current_account.appunti.where(id: params[:ids])
-    count = @appunti.count
-    ids = @appunti.pluck(:id)
+    @entries = current_account.entries.appunti.where(id: params[:ids])
+    @ids = @entries.pluck(:id)
+    count = @entries.count
 
-    @appunti.destroy_all
+    @entries.destroy_all
+
+    notice = helpers.pluralize(count, "appunto eliminato", "appunti eliminati")
 
     respond_to do |format|
-      format.turbo_stream do
-        streams = ids.map { |id| turbo_stream.remove("appunto_#{id}") }
-        streams << turbo_stream.append("flash", partial: "shared/flash_message",
-          locals: { message: "#{helpers.pluralize(count, 'appunto eliminato', 'appunti eliminati')}", type: :notice })
-        render turbo_stream: streams
-      end
-      format.html { redirect_to appunti_path, notice: helpers.pluralize(count, "appunto eliminato", "appunti eliminati") }
+      format.turbo_stream { flash.now[:notice] = notice }
+      format.html { redirect_to appunti_path, notice: notice }
     end
   end
 end
