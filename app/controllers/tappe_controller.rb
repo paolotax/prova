@@ -137,8 +137,16 @@ class TappeController < ApplicationController
   end
 
   def create
-
     @tappa = current_user.tappe.build(tappa_params)
+
+    existing = find_duplicate_tappa(@tappa)
+    if existing
+      respond_to do |format|
+        format.html { redirect_to tappa_url(existing), notice: "Tappa già pianificata per questa destinazione." }
+        format.json { render :show, status: :ok, location: existing }
+      end
+      return
+    end
 
     respond_to do |format|
       if @tappa.save
@@ -151,7 +159,6 @@ class TappeController < ApplicationController
         format.json { render json: @tappa.errors, status: :unprocessable_entity }
       end
     end
-  
   end
 
   def update
@@ -276,6 +283,16 @@ class TappeController < ApplicationController
 
     def find_tappable
       params[:tappable_type].constantize.find(params[:tappable_id])
+    end
+
+    def find_duplicate_tappa(tappa)
+      return nil unless tappa.data_tappa.present? && tappa.tappable_type.present? && tappa.tappable_id.present?
+
+      current_user.tappe.find_by(
+        tappable_type: tappa.tappable_type,
+        tappable_id:   tappa.tappable_id,
+        data_tappa:    tappa.data_tappa
+      )
     end
 
     def update_tappa_giri(tappa, giro_ids)

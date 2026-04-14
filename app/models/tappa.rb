@@ -68,7 +68,12 @@ class Tappa < ApplicationRecord
   end
 
   accepts_nested_attributes_for :giri
- 
+
+  validates :data_tappa,
+    uniqueness: { scope: [:user_id, :tappable_type, :tappable_id],
+                  message: "è già pianificata per questa destinazione" },
+    if: -> { data_tappa.present? }
+
   after_update_commit :manage_entry_on_data_change, if: :saved_change_to_data_tappa?
 
   positioned on: [:user, :data_tappa], column: :position
