@@ -4,6 +4,13 @@
     tappa.data_tappa.year == Date.today.year ? l(tappa.data_tappa, format: :short) : l(tappa.data_tappa, format: :default)
   end %>
 
+<% id_content = if tappa.data_tappa.present?
+    link_to("TAPPA - #{date_label}", giorno_path(giorno: tappa.data_tappa),
+      class: "txt-undecorated", style: "color: inherit;", data: { turbo_frame: "_top" })
+  else
+    "TAPPA"
+  end %>
+
 <%= render "shared/cards/display/perma/board",
     name: tappa.position.present? ? tappa.position.to_s : " - ",
-    id: ["TAPPA", date_label].compact.join(" - ") %>
+    id: id_content %>

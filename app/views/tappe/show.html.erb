@@ -4,10 +4,10 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <% if @tappa.data_tappa.present? %>
-      <%= back_link_to l(@tappa.data_tappa, format: :short), giorno_path(giorno: @tappa.data_tappa) %>
-    <% elsif (info = referrer_back_info) %>
+    <% if (info = referrer_back_info) %>
       <%= back_link_to info[:label], info[:path] %>
+    <% elsif @tappa.data_tappa.present? %>
+      <%= back_link_to l(@tappa.data_tappa, format: :short), giorno_path(giorno: @tappa.data_tappa) %>
     <% end %>
   </div>
 

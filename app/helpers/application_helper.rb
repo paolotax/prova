@@ -45,6 +45,8 @@ module ApplicationHelper
               when "scuole"    then "Scuole"
               when "dashboard" then "Dashboard"
               when "entries"   then "Kanban"
+              when "agenda"    then "Agenda"
+              when "giri"      then "Giro"
               else nil
               end
 
