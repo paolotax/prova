@@ -1,0 +1,50 @@
+require "test_helper"
+
+module Filters
+  class TappaFilterTest < ActiveSupport::TestCase
+    fixtures :accounts, :users, :memberships, :scuole
+
+    setup do
+      @fizzy  = accounts(:fizzy)
+      @user   = users(:one)
+      @scuola = scuole(:scuola_fizzy)
+      Current.account = @fizzy
+      Current.user = @user
+
+      @t_oggi   = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current)
+      @t_domani = @user.tappe.create!(tappable: @scuola, data_tappa: Date.tomorrow)
+      @t_nulla  = @user.tappe.create!(tappable: @scuola, data_tappa: nil)
+    end
+
+    teardown { Current.reset }
+
+    test "results returns all user tappe when no filter given" do
+      filter = TappaFilter.from_params({})
+      assert_equal 3, filter.results(@user.tappe).count
+    end
+
+    test "filter 'oggi' returns only today's tappe" do
+      filter = TappaFilter.from_params(filter: "oggi")
+      result = filter.results(@user.tappe)
+      assert_includes result, @t_oggi
+      assert_not_includes result, @t_domani
+    end
+
+    test "filter 'da_programmare' returns tappe without data_tappa" do
+      filter = TappaFilter.from_params(filter: "da_programmare")
+      result = filter.results(@user.tappe)
+      assert_includes result, @t_nulla
+      assert_not_includes result, @t_oggi
+    end
+
+    test "scuola_id narrows to one school" do
+      other_scuola = Scuola.create!(account: @fizzy, denominazione: "Other", codice_ministeriale: "ZZZ999")
+      other_tappa  = @user.tappe.create!(tappable: other_scuola, data_tappa: Date.current)
+
+      filter = TappaFilter.from_params(scuola_id: other_scuola.id)
+      result = filter.results(@user.tappe)
+      assert_includes result, other_tappa
+      assert_not_includes result, @t_oggi
+    end
+  end
+end
