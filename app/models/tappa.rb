@@ -116,6 +116,23 @@ class Tappa < ApplicationRecord
     joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
     .order('scuole.provincia, scuole.comune, scuole.denominazione') }
 
+  scope :raggruppate_per_area, -> {
+    tappe = where(tappable_type: "Scuola").includes(:giri).preload(:tappable).to_a
+
+    scuole = tappe.map(&:tappable).compact.uniq
+    ActiveRecord::Associations::Preloader.new(records: scuole, associations: :direzione).call
+
+    tappe
+      .group_by { |t| t.tappable.area.presence || "Senza area" }
+      .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+      .map { |area, area_tappe|
+        direzioni = area_tappe
+          .group_by { |t| t.tappable.direzione || t.tappable }
+          .sort_by { |dir, _| dir.denominazione.to_s }
+        [area, direzioni]
+      }
+  }
+
   scope :search, ->(search) {
     joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id AND tappe.tappable_type = 'Scuola'")
     .where('scuole.denominazione ILIKE ? OR scuole.comune ILIKE ? OR tappe.titolo ILIKE ?',

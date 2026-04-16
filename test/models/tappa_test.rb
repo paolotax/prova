@@ -147,4 +147,44 @@ class TappaTest < ActiveSupport::TestCase
     assert_equal "Titolo originale", existing.titolo
     assert_equal Date.tomorrow, existing.data_tappa
   end
+
+  # Task 2 — Tappa.raggruppate_per_area
+
+  test "raggruppate_per_area groups tappe by area and direzione" do
+    scuola_a = scuole(:scuola_fizzy)
+    scuola_a.update!(area: "Area Nord")
+    tappa_a = @user.tappe.create!(tappable: scuola_a, data_tappa: nil)
+    tappa_a.tappa_giri.create!(giro: @giro)
+
+    result = @user.tappe.da_programmare.raggruppate_per_area
+
+    assert_equal 1, result.size
+    area, direzioni = result.first
+    assert_equal "Area Nord", area
+    assert_equal 1, direzioni.size
+    _direzione, tappe = direzioni.first
+    assert_includes tappe, tappa_a
+  end
+
+  test "raggruppate_per_area uses 'Senza area' when scuola area is blank" do
+    scuola = scuole(:scuola_fizzy)
+    scuola.update!(area: nil)
+    tappa = @user.tappe.create!(tappable: scuola, data_tappa: nil)
+
+    result = @user.tappe.da_programmare.raggruppate_per_area
+
+    assert_equal "Senza area", result.first.first
+  end
+
+  test "raggruppate_per_area sorts 'Senza area' last" do
+    scuola_a = scuole(:scuola_fizzy)
+    scuola_a.update!(area: "Area A")
+    scuola_b = Scuola.create!(account: @fizzy, denominazione: "S-B", codice_ministeriale: "B123", area: nil)
+
+    @user.tappe.create!(tappable: scuola_a, data_tappa: nil)
+    @user.tappe.create!(tappable: scuola_b, data_tappa: nil)
+
+    aree = @user.tappe.da_programmare.raggruppate_per_area.map(&:first)
+    assert_equal ["Area A", "Senza area"], aree
+  end
 end
