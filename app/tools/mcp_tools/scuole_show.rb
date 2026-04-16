@@ -21,10 +21,20 @@ module MCPTools
       with_current(server_context) do
         scuola = Current.scuole.find(id)
 
+        classi = scuola.classi.order(:anno_corso, :sezione).map do |classe|
+          {
+            id: classe.id,
+            anno_corso: classe.anno_corso,
+            sezione: classe.sezione,
+            combinazione: classe.combinazione,
+            tipo_scuola: classe.tipo_scuola
+          }
+        end
+
         result = {
           id: scuola.id,
           denominazione: scuola.denominazione,
-          codice: scuola.codice,
+          codice_ministeriale: scuola.codice_ministeriale,
           indirizzo: scuola.indirizzo,
           cap: scuola.cap,
           comune: scuola.comune,
@@ -33,7 +43,8 @@ module MCPTools
           pec: scuola.pec,
           telefono: scuola.telefono,
           note: scuola.note,
-          appuntabile_value: "Scuola:#{scuola.id}"
+          appuntabile_value: "Scuola:#{scuola.id}",
+          classi: classi
         }
 
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
