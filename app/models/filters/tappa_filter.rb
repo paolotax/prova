@@ -1,6 +1,7 @@
 module Filters
   class TappaFilter < Base
     include TappaFilter::Fields
+    include TappaFilter::Summarized
 
     def results(base_scope = nil)
       scope = base_scope || ::Tappa.where(account: account || Current.account)
