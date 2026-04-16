@@ -11,7 +11,6 @@ class Searches::ClientableController < ApplicationController
                 if giro_id.present?
                   scuole = current_account.scuole
                     .where.not(id: Tappa.joins(:giri).where(giri: { id: giro_id }).where(tappable_type: 'Scuola').select(:tappable_id))
-                    .where.not(id: Giro.find(giro_id).excluded_ids)
                 end
                 scuole.search_all_word(params[:query]).order(:posizione)
               end

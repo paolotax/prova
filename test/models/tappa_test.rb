@@ -1,3 +1,35 @@
+# == Schema Information
+#
+# Table name: tappe
+#
+#  id            :uuid             not null, primary key
+#  data_tappa    :date
+#  descrizione   :string
+#  entro_il      :datetime
+#  position      :integer          not null
+#  tappable_type :string           not null
+#  titolo        :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  account_id    :uuid             not null
+#  giro_id       :bigint
+#  tappable_id   :uuid
+#  user_id       :bigint
+#
+# Indexes
+#
+#  index_tappe_on_account_id                           (account_id)
+#  index_tappe_on_giro_id                              (giro_id)
+#  index_tappe_on_tappable                             (tappable_type,tappable_id)
+#  index_tappe_on_user_id                              (user_id)
+#  index_tappe_on_user_id_and_data_tappa_and_position  (user_id,data_tappa,position) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (giro_id => giri.id)
+#  fk_rails_...  (user_id => users.id)
+#
 require "test_helper"
 
 class TappaTest < ActiveSupport::TestCase

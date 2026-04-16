@@ -2,23 +2,17 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["submit"]
-  selectGroup(e) {
-    e.preventDefault()
-    e.stopPropagation()
-    const details = e.currentTarget.closest("details")
-    details.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.checked = true
-    })
-    this.notifyChange()
-  }
 
-  deselectGroup(e) {
+  toggleGroup(e) {
     e.preventDefault()
     e.stopPropagation()
-    const details = e.currentTarget.closest("details")
-    details.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.checked = false
-    })
+    const button = e.currentTarget
+    const details = button.closest("details")
+    const checkboxes = details.querySelectorAll('input[name="school_ids[]"]:not(:disabled)')
+    const allChecked = [...checkboxes].every(cb => cb.checked)
+
+    checkboxes.forEach(cb => { cb.checked = !allChecked })
+    button.textContent = allChecked ? "seleziona" : "deseleziona"
     this.notifyChange()
   }
 

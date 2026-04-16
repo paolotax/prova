@@ -301,14 +301,56 @@
   .wizard__group-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: var(--inline-space-half);
     padding: var(--block-space-half) var(--inline-space-half);
-    cursor: pointer;
     border-radius: var(--radius, 0.3rem);
+    list-style: none;
+    cursor: default;
+  }
+
+  .wizard__group-bar::-webkit-details-marker {
+    display: none;
   }
 
   .wizard__group-bar:hover {
     background: color-mix(in oklch, var(--color-ink) 5%, transparent);
+  }
+
+  .wizard__group-label {
+    flex: 1;
+    text-align: center;
+  }
+
+  .wizard__group-select {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+    flex-shrink: 0;
+  }
+
+  .wizard__group-bar:hover .wizard__group-select {
+    opacity: 1;
+  }
+
+  .wizard__group-expand {
+    all: unset;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    opacity: 0;
+    flex-shrink: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  .wizard__group-bar:hover .wizard__group-expand {
+    opacity: 1;
+  }
+
+  .wizard__group-expand .icon--collapse {
+    transition: transform 150ms ease-out;
+  }
+
+  details[open] > .wizard__group-bar .icon--collapse {
+    transform: rotate(180deg);
   }
 
   .wizard__group-bar--area {

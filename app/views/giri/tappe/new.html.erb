@@ -4,7 +4,7 @@
        data-dialog-auto-open-value="true">
     <dialog class="dialog panel shadow" style="--panel-size: 36rem;"
             data-dialog-target="dialog"
-            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+            data-action="keydown.esc->dialog#close:stop">
       <h3 class="txt-medium txt-bold margin-block-end-half">Genera tappe</h3>
       <p class="txt-small txt-subtle margin-block-end">
         Seleziona le scuole da aggiungere al giro.
@@ -12,47 +12,69 @@
 
       <%= form_with url: giro_genera_tappe_path(@giro), method: :post,
           class: "flex flex-column gap",
-          data: { controller: "genera-tappe-ui" } do |f| %>
+          data: { controller: "genera-tappe-ui", action: "turbo:submit-end->dialog#close" } do |f| %>
 
         <div class="wizard__school-list" style="max-block-size: 55vh;">
           <% @gerarchia.sort.each do |provincia, aree| %>
+            <% provincia_count = aree.sum { |_, dirs| dirs.sum { |_, s| s.size } } %>
             <details open class="wizard__provincia">
-              <summary class="wizard__group-bar">
-                <button type="button" class="btn btn--plain txt-xx-small"
-                        data-action="genera-tappe-ui#selectGroup">tutte</button>
-                <span class="txt-bold txt-small"><%= provincia %></span>
-                <button type="button" class="btn btn--plain txt-xx-small"
-                        data-action="genera-tappe-ui#deselectGroup">nessuna</button>
+              <summary class="wizard__group-bar" >
+                <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+                        data-action="click->genera-tappe-ui#toggleGroup:stop">seleziona</button>
+                <span class="wizard__group-label">
+                  <span class="txt-bold txt-small"><%= provincia %></span>
+                  <span class="badge txt-xx-small"><%= provincia_count %></span>
+                </span>
+                <span class="wizard__group-expand">
+                  <%= icon_tag "collapse" %>
+                </span>
               </summary>
 
               <div class="wizard__provincia-content">
                 <% aree.sort.each do |area, direzioni| %>
+                  <% area_count = direzioni.sum { |_, s| s.size } %>
                   <details open class="wizard__provincia">
-                    <summary class="wizard__group-bar wizard__group-bar--area">
-                      <button type="button" class="btn btn--plain txt-xx-small"
-                              data-action="genera-tappe-ui#selectGroup">tutte</button>
-                      <span class="txt-x-small txt-bold"><%= area %></span>
-                      <button type="button" class="btn btn--plain txt-xx-small"
-                              data-action="genera-tappe-ui#deselectGroup">nessuna</button>
+                    <summary class="wizard__group-bar" >
+                      <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+                              data-action="click->genera-tappe-ui#toggleGroup:stop">seleziona</button>
+                      <span class="wizard__group-label">
+                        <span class="txt-x-small txt-bold"><%= area %></span>
+                        <span class="badge txt-xx-small"><%= area_count %></span>
+                      </span>
+                      <button type="button" class="wizard__group-expand"
+                              data-action="click->genera-tappe-ui#toggleDetails:stop">
+                        <%= icon_tag "collapse" %>
+                      </button>
                     </summary>
 
                     <div class="wizard__provincia-content">
                       <% direzioni.sort.each do |dir_label, scuole| %>
                         <div class="wizard__direzione-spacer"></div>
                         <% scuole.sort_by(&:denominazione).each do |scuola| %>
-                          <label class="wizard__school-row">
-                            <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
-                                   data-action="change->genera-tappe-ui#notifyChange">
-                            <input type="hidden" name="all_school_ids[]" value="<%= scuola.id %>">
-                            <span class="wizard__school-text">
-                              <span class="wizard__school-name"><%= scuola.denominazione %></span>
-                              <span class="wizard__school-comune"><%= scuola.comune %></span>
-                            </span>
-                          </label>
+                          <%= render "giri/tappe/school_row", scuola: scuola %>
                         <% end %>
                       <% end %>
                     </div>
                   </details>
+                <% end %>
+              </div>
+            </details>
+          <% end %>
+
+          <% if @scuole_scartate.any? %>
+            <details class="wizard__provincia">
+              <summary class="wizard__group-bar" >
+                <span class="wizard__group-label">
+                  <span class="txt-bold txt-small txt-subtle">Scartate</span>
+                  <span class="badge txt-xx-small"><%= @scuole_scartate.size %></span>
+                </span>
+                <span class="wizard__group-expand">
+                  <%= icon_tag "collapse" %>
+                </span>
+              </summary>
+              <div class="wizard__provincia-content">
+                <% @scuole_scartate.sort_by(&:denominazione).each do |scuola| %>
+                  <%= render "giri/tappe/school_row", scuola: scuola %>
                 <% end %>
               </div>
             </details>

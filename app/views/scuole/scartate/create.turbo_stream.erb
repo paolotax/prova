@@ -1,3 +1,7 @@
+<% @scuola.reload %>
 <%= turbo_stream.replace dom_id(@scuola, :scartata) do %>
-  <%= render "scuole/scartata_toggle", scuola: @scuola.reload %>
+  <%= render "scuole/scartata_toggle", scuola: @scuola %>
+<% end %>
+<%= turbo_stream.replace dom_id(@scuola, :genera_row) do %>
+  <%= render "giri/tappe/school_row", scuola: @scuola %>
 <% end %>

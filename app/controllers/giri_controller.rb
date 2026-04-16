@@ -112,7 +112,7 @@ class GiriController < ApplicationController
   end
 
   def giro_params
-    params.require(:giro).permit(:titolo, :descrizione, :collana_id, :iniziato_il, :finito_il, :color, conditions: [], excluded_ids: [])
+    params.require(:giro).permit(:titolo, :descrizione, :collana_id, :iniziato_il, :finito_il, :color, conditions: [])
   end
 
   def genera_settimane(dal, al)

@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "giro-planner" do %>
+  <%= render "giri/planner", giro: @giro, tappe_per_area: @tappe_per_area, total_count: @planner_total %>
+<% end %>

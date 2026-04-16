@@ -4,23 +4,22 @@ class Giri::TappeController < ApplicationController
 
   # GET /giri/:giro_id/genera_tappe
   def new
-    all_scuole = scuole_filtrate
     existing_ids = @giro.tappe.where(tappable_type: "Scuola").pluck(:tappable_id).map(&:to_s).to_set
-    @scuole = all_scuole.reject { |s| existing_ids.include?(s.id.to_s) }
+    base_scuole = Current.scuole
+      .where.not(id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil))
+      .where.not(id: existing_ids)
+      .includes(:direzione)
+      .order(:posizione)
+
+    @scuole = base_scuole.non_scartate
+    @scuole_scartate = base_scuole.scartate_da_utente
     @gerarchia = build_gerarchia(@scuole)
   end
 
   # POST /giri/:giro_id/genera_tappe
   def create
     selected_ids = Array(params[:school_ids]).map(&:to_s)
-    all_ids = Array(params[:all_school_ids]).map(&:to_s)
 
-    # Aggiorna excluded_ids con le scuole deselezionate
-    deselected = all_ids - selected_ids
-    new_excluded = ((@giro.excluded_ids || []) + deselected).uniq
-    @giro.update!(excluded_ids: new_excluded)
-
-    # Crea tappe solo per le selezionate
     count = 0
     selected_ids.each do |school_id|
       tappa = current_user.tappe.create!(
@@ -33,7 +32,13 @@ class Giri::TappeController < ApplicationController
       count += 1
     end
 
-    redirect_to giro_path(@giro), notice: "#{count} tappe generate."
+    @tappe_per_area = planner_tappe_per_area
+    @planner_total = @tappe_per_area.flat_map { |_, dirs| dirs.flat_map(&:last) }.size
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to giro_path(@giro), notice: "#{count} tappe generate." }
+    end
   end
 
   # POST /giri/:giro_id/copia_tappe
@@ -110,13 +115,33 @@ class Giri::TappeController < ApplicationController
   end
 
   def scuole_filtrate
-    scuole = Current.scuole
-    excluded = @giro.excluded_ids || []
-    scuole = scuole.where.not(id: excluded) if excluded.any?
-    # Solo plessi (scuole con direzione) e scuole autonome, mai le direzioni stesse
-    scuole.where.not(id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil))
-          .includes(:direzione)
-          .order(:posizione)
+    Current.scuole
+      .non_scartate
+      .where.not(id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil))
+      .includes(:direzione)
+      .order(:posizione)
+  end
+
+  def planner_tappe_per_area
+    tappe = @giro.tappe
+      .da_programmare
+      .where(tappable_type: "Scuola")
+      .includes(:giri)
+      .preload(:tappable)
+      .to_a
+
+    scuole = tappe.map(&:tappable).compact.uniq
+    ActiveRecord::Associations::Preloader.new(records: scuole, associations: :direzione).call
+
+    tappe
+      .group_by { |t| t.tappable.area.presence || "Senza area" }
+      .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
+      .map { |area, area_tappe|
+        direzioni = area_tappe
+          .group_by { |t| t.tappable.direzione || t.tappable }
+          .sort_by { |dir, _| dir.denominazione.to_s }
+        [area, direzioni]
+      }
   end
 
   # Costruisce hash annidato: { provincia => { area => { direzione => [plessi] } } }
