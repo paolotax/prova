@@ -15,12 +15,12 @@ module MCPTools
       with_current(server_context) do
         giro = Current.user.giri.find(id)
         unless giro.can_delete?
-          return MCP::Tool::Response.new([{ type: "text", text: { error: "Non puoi eliminare un giro con tappe associate" }.to_json }], is_error: true)
+          return MCP::Tool::Response.new([{ type: "text", text: { error: "Non puoi eliminare un giro con tappe associate" }.to_json }], error: true)
         end
         giro.destroy!
         MCP::Tool::Response.new([{ type: "text", text: { deleted: true, id: id }.to_json }])
       rescue ActiveRecord::RecordNotFound
-        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], error: true)
       end
     end
   end

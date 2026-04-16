@@ -16,7 +16,7 @@ module MCPTools
         Current.account.appunti.find(id).destroy!
         MCP::Tool::Response.new([{ type: "text", text: { deleted: true, id: id }.to_json }])
       rescue ActiveRecord::RecordNotFound
-        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], error: true)
       end
     end
   end

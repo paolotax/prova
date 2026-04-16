@@ -3,10 +3,11 @@ class Documenti::Creator
 
   attr_reader :documento, :error
 
-  def initialize(clientable_value:, causale_nome:, note: nil, data_documento: nil, numero_documento: nil, ddt_numero: nil, spese_cents: nil, righe_params: [])
+  def initialize(clientable_value:, causale_nome:, note: nil, referente: nil, data_documento: nil, numero_documento: nil, ddt_numero: nil, spese_cents: nil, righe_params: [])
     @clientable_value = clientable_value
     @causale_nome = causale_nome
     @note = note
+    @referente = referente
     @data_documento = data_documento
     @numero_documento = numero_documento
     @ddt_numero = ddt_numero
@@ -78,6 +79,7 @@ class Documenti::Creator
         numero_documento: num,
         data_documento: data,
         note: @note,
+        referente: @referente,
         spese_cents: @spese_cents.to_i,
         account: Current.account
       })
@@ -88,6 +90,7 @@ class Documenti::Creator
         causale: @causale,
         clientable: @clientable,
         note: @note,
+        referente: @referente,
         data_documento: data,
         numero_documento: num,
         spese_cents: @spese_cents.to_i

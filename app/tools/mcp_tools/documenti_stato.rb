@@ -49,14 +49,14 @@ module MCPTools
           doc.ungild
           result = { ok: true, azione: "ungold", golden: false }
         else
-          return MCP::Tool::Response.new([{ type: "text", text: { error: "Azione non valida: #{azione}" }.to_json }], is_error: true)
+          return MCP::Tool::Response.new([{ type: "text", text: { error: "Azione non valida: #{azione}" }.to_json }], error: true)
         end
 
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
       rescue ActiveRecord::RecordNotFound
-        MCP::Tool::Response.new([{ type: "text", text: { error: "Documento non trovato" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "Documento non trovato" }.to_json }], error: true)
       rescue => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
   end

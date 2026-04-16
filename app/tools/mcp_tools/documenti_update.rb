@@ -30,11 +30,11 @@ module MCPTools
 
         MCP::Tool::Response.new([{ type: "text", text: { id: doc.id, totale_cents: doc.totale_cents, totale_copie: doc.totale_copie }.to_json }])
       rescue ActiveRecord::RecordNotFound
-        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], error: true)
       rescue JSON::ParserError => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: "JSON righe non valido: #{e.message}" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "JSON righe non valido: #{e.message}" }.to_json }], error: true)
       rescue => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
 

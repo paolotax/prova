@@ -36,10 +36,10 @@ module MCPTools
         if importer.ok?
           MCP::Tool::Response.new([{ type: "text", text: importer.result.to_json }])
         else
-          MCP::Tool::Response.new([{ type: "text", text: importer.result.to_json }], is_error: true)
+          MCP::Tool::Response.new([{ type: "text", text: importer.result.to_json }], error: true)
         end
       rescue ActiveRecord::RecordInvalid => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
   end

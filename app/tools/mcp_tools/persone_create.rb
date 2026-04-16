@@ -32,7 +32,7 @@ module MCPTools
 
         MCP::Tool::Response.new([{ type: "text", text: persona.as_json.to_json }])
       rescue ActiveRecord::RecordInvalid => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
   end

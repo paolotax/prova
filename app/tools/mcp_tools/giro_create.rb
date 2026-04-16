@@ -33,7 +33,7 @@ module MCPTools
         result = { success: true, id: giro.id, titolo: giro.titolo, iniziato_il: giro.iniziato_il, finito_il: giro.finito_il }
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
       rescue ActiveRecord::RecordInvalid => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
   end

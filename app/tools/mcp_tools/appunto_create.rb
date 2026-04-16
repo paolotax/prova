@@ -43,10 +43,10 @@ module MCPTools
             success: false,
             errors: creator.appunto&.errors&.full_messages || [ "Errore nella creazione dell'appunto" ]
           }
-          MCP::Tool::Response.new([{ type: "text", text: result.to_json }], is_error: true)
+          MCP::Tool::Response.new([{ type: "text", text: result.to_json }], error: true)
         end
       rescue => e
-        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: e.message }.to_json }], error: true)
       end
     end
   end

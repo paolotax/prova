@@ -38,7 +38,7 @@ module MCPTools
 
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
       rescue ActiveRecord::RecordNotFound
-        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], is_error: true)
+        MCP::Tool::Response.new([{ type: "text", text: { error: "Record non trovato" }.to_json }], error: true)
       end
     end
   end
