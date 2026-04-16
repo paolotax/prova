@@ -217,6 +217,27 @@ class TappaTest < ActiveSupport::TestCase
     assert_equal ["Alpha", "Beta"], nomi
   end
 
+  # Task 2 — Tappa.per_settimana
+
+  test "per_settimana filters tappe within current week by default" do
+    monday = Date.current.beginning_of_week
+    friday = monday + 4
+    in_week = @user.tappe.create!(tappable: @scuola, data_tappa: friday)
+    next_week = @user.tappe.create!(tappable: @scuola, data_tappa: monday + 10)
+
+    result = @user.tappe.per_settimana
+    assert_includes result, in_week
+    assert_not_includes result, next_week
+  end
+
+  test "per_settimana accepts offset in weeks" do
+    monday_next = Date.current.beginning_of_week + 1.week
+    tappa = @user.tappe.create!(tappable: @scuola, data_tappa: monday_next + 2)
+
+    assert_includes @user.tappe.per_settimana(1), tappa
+    assert_not_includes @user.tappe.per_settimana(0), tappa
+  end
+
   test "raggruppate_per_area filters out non-Scuola tappables" do
     # A Scuola tappa in an area
     scuola = scuole(:scuola_fizzy)

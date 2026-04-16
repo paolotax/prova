@@ -91,7 +91,11 @@ class Tappa < ApplicationRecord
   
   scope :del_giorno, ->(day) { where(data_tappa: day.to_date.all_day) }
   scope :della_settimana, ->(day) { where(data_tappa: day.to_date.beginning_of_week..day.to_date.end_of_week) } 
-  scope :del_mese, ->(day) { where(data_tappa: day.beginning_of_month..day.end_of_month) } 
+  scope :del_mese, ->(day) { where(data_tappa: day.beginning_of_month..day.end_of_month) }
+  scope :per_settimana, ->(offset = 0) {
+    start_of_week = Date.current.beginning_of_week + offset.to_i.weeks
+    where(data_tappa: start_of_week..start_of_week.end_of_week)
+  }
   scope :dell_anno, ->(day) { where(data_tappa: day.beginning_of_year..day.end_of_year) }
 
   scope :delle_scuole_di, ->(scuole_ids) { where(tappable_id: scuole_ids, tappable_type: 'Scuola') }
