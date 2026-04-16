@@ -31,7 +31,6 @@ class GiriController < ApplicationController
     @giro = current_user.giri.build(giro_params)
 
     if @giro.save
-      @giro.broadcast_append_later_to [current_user, "giri"], target: "giri-lista"
       respond_to do |format|
         format.turbo_stream { flash.now[:notice] = "Giro creato." }
         format.html { redirect_to giri_url, notice: "Giro creato." }
@@ -49,7 +48,6 @@ class GiriController < ApplicationController
     @giro.assign_attributes(giro_params)
 
     if @giro.save
-      @giro.broadcast_replace_later_to [current_user, "giri"]
       respond_to do |format|
         format.turbo_stream { flash.now[:notice] = "Giro modificato." }
         format.html { redirect_to @giro, notice: "Giro modificato." }
