@@ -355,8 +355,8 @@ Rails.application.routes.draw do
       collection do
         get 'pianifica', to: 'tappe/pianifica#show'
       end
+      resource :sort, module: :tappe, only: :update, controller: "sorts"
       member do
-        patch 'sort'
         post 'rimanda'
       end
       resources :bolle_visione, only: %i[new create]

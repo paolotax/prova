@@ -112,25 +112,6 @@ class TappeController < ApplicationController
     end
   end
 
-  def sort
-    @tappa = current_user.tappe.find(params[:id])
-
-    posizione = params[:position].to_i
-    data_tappa = params[:data_tappa]
-
-    @tappa.update(position: posizione, data_tappa: data_tappa)
-
-    if params[:source] == "to_planner"
-      scope = params[:giro_id].present? ? current_user.giri.find(params[:giro_id]).tappe : current_user.tappe
-      @planner_tappe_per_area = scope.da_programmare.raggruppate_per_area
-    end
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { head :no_content }
-    end
-  end
-
   def rimanda
     giorno = @tappa.data_tappa
     @tappa.update!(data_tappa: nil)
