@@ -335,8 +335,8 @@ Rails.application.routes.draw do
     resources :propaganda, only: [:index]
 
     resources :giri do
+      resource :planner, module: :giri, only: :show, controller: "planners"
       member do
-        get 'planner'
         get 'copia'
       end
 

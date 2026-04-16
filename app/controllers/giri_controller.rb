@@ -1,6 +1,6 @@
 class GiriController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_giro, only: %i[show edit update destroy planner copia]
+  before_action :set_giro, only: %i[show edit update destroy copia]
 
   def index
     @giri = current_user.giri.includes(:tappe).order(created_at: :desc)
@@ -16,17 +16,6 @@ class GiriController < ApplicationController
     @tappe_per_giorno  = @giro.tappe_per_giorno
     @tappe_per_area    = @giro.tappe.da_programmare.raggruppate_per_area
     @planner_total     = @tappe_per_area.sum { |_, dirs| dirs.sum { |_, t| t.size } }
-  end
-
-  def planner
-    tappe_per_area = @giro.tappe.da_programmare.raggruppate_per_area
-    total_count    = tappe_per_area.sum { |_, dirs| dirs.sum { |_, t| t.size } }
-
-    render partial: "giri/planner", locals: {
-      giro: @giro,
-      tappe_per_area: tappe_per_area,
-      total_count: total_count
-    }
   end
 
   def copia
