@@ -2,7 +2,10 @@
 
 <% scuola = persona.scuola %>
 
-<h1 class="card__title"><%= persona.cognome %> <%= persona.nome %></h1>
+<h1 class="card__title flex align-center gap-half">
+  <%= persona_avatar_tag(persona, size: "1.5em") %>
+  <%= persona.cognome %> <%= persona.nome %>
+</h1>
 
 <% if scuola %>
 <%

@@ -46,13 +46,44 @@ module AvatarsHelper
   end
 
   def persona_avatar_tag(persona, **options)
-    color = AVATAR_COLORS[Zlib.crc32(persona.to_param) % AVATAR_COLORS.size]
+    size = options.delete(:size) || "3ch"
+    if persona.avatar_attached?
+      tag.span class: class_names("avatar", options.delete(:class)),
+        style: "--avatar-size: #{size};",
+        title: persona.nome_completo,
+        **options do
+        image_tag persona.avatar_thumbnail, aria: { hidden: "true" }
+      end
+    else
+      tag.span class: class_names("avatar", options.delete(:class)),
+        style: "background-color: #{persona.avatar_background_color}; color: white; font-size: 0.6em; font-weight: 700; --avatar-size: #{size};",
+        title: persona.nome_completo,
+        **options do
+        persona.initials
+      end
+    end
+  end
+
+  def appuntabile_avatar_tag(appuntabile, **options)
+    return unless appuntabile
+
+    case appuntabile
+    when Persona
+      persona_avatar_tag(appuntabile, **options)
+    when Scuola
+      entity_icon_avatar_tag("building-library", appuntabile.denominazione, **options)
+    when Cliente
+      entity_icon_avatar_tag("briefcase", appuntabile.denominazione, **options)
+    end
+  end
+
+  def entity_icon_avatar_tag(icon_name, title, **options)
     size = options.delete(:size) || "3ch"
     tag.span class: class_names("avatar", options.delete(:class)),
-      style: "background-color: #{color}; color: white; font-size: 0.6em; font-weight: 700; --avatar-size: #{size};",
-      title: persona.nome_completo,
+      style: "background-color: var(--color-bg-secondary); --avatar-size: #{size};",
+      title: title,
       **options do
-      persona.initials
+      icon_tag(icon_name)
     end
   end
 end

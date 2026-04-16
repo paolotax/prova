@@ -1,6 +1,9 @@
 <%# locals: (scuola:) -%>
 
-<h1 class="card__title"><%= scuola.denominazione %></h1>
+<h1 class="card__title flex align-center gap-half">
+  <%= icon_tag "building-library" %>
+  <%= scuola.denominazione %>
+</h1>
 
 <div class="flex gap flex-wrap">
   <!-- Indirizzo -->

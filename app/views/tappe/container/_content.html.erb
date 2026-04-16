@@ -2,14 +2,27 @@
 
 <%= turbo_frame_tag tappa, :edit do %>
   <% if tappa.tappable.present? %>
-    <h1 class="card__title overflow-line-clamp">
-      <%= link_to polymorphic_path(tappa.tappable), class: "card__title-link", data: { turbo_frame: "_top" } do %>
-        <%= tappa.tappable.denominazione %>
+    <div class="flex align-center gap">
+      <% if tappa.tappable.respond_to?(:navigable?) && tappa.tappable.navigable? && current_user.effective_navigator.present? %>
+        <%= link_to go_to_tappable_path(tappa.tappable, current_user.effective_navigator),
+            target: "_blank",
+            style: "color: oklch(var(--lch-red-dark)); flex-shrink: 0; font-size: 2em;",
+            title: "Naviga",
+            data: { turbo: false } do %>
+          <%= icon_tag "marker" %>
+        <% end %>
       <% end %>
-    </h1>
-    <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
-      <span class="card__subtitle"><%= tappa.tappable.comune.upcase %></span>
-    <% end %>
+      <div>
+        <h1 class="card__title overflow-line-clamp">
+          <%= link_to polymorphic_path(tappa.tappable), class: "card__title-link", data: { turbo_frame: "_top" } do %>
+            <%= tappa.tappable.denominazione %>
+          <% end %>
+        </h1>
+        <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+          <span class="card__subtitle"><%= tappa.tappable.comune.upcase %></span>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 
   <% if tappa.titolo.present? %>
