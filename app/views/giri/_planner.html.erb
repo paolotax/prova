@@ -33,7 +33,7 @@
                 <% end %>
               </li>
               <li class="popup__item">
-                <%= link_to copia_giro_path(giro), class: "popup__btn btn",
+                <%= link_to new_giro_copia_path(giro), class: "popup__btn btn",
                     data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
                   <%= icon_tag "copy-paste" %>
                   <span>Copia da giro</span>

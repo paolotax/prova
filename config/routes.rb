@@ -336,9 +336,7 @@ Rails.application.routes.draw do
 
     resources :giri do
       resource :planner, module: :giri, only: :show, controller: "planners"
-      member do
-        get 'copia'
-      end
+      resource :copia,   module: :giri, only: :new, controller: "copie"
 
       collection do
         get  'wizard',            to: 'giri/wizard#new',       as: 'wizard'
