@@ -33,12 +33,12 @@
 
 <%= render "giri/planner", giro: @giro, tappe_per_area: @tappe_per_area, total_count: @planner_total %>
 
-<%= render "giri/info_panel", giro: @giro, giorni_timeline: @giorni_timeline, tappe_totali: @tappe_totali, tappe_completate: @tappe_completate %>
+<%= render "giri/info_panel", giro: @giro, giorni_timeline: @giro.giorni_timeline(@tappe_per_giorno), tappe_totali: @giro.tappe_totali, tappe_completate: @giro.tappe_completate %>
 
-<% if @settimane.any? %>
+<% if @giro.settimane.any? %>
   <div class="agenda-calendar">
     <div id="weeks-container">
-      <% @settimane.each do |settimana| %>
+      <% @giro.settimane.each do |settimana| %>
         <%= render "agenda/week", settimana: settimana, tappe_per_giorno: @tappe_per_giorno %>
       <% end %>
     </div>
