@@ -148,7 +148,7 @@ class TappaTest < ActiveSupport::TestCase
     assert_equal Date.tomorrow, existing.data_tappa
   end
 
-  # Task 2 — Tappa.raggruppate_per_area
+  # Task 1 — Tappa.raggruppate_per_area
 
   test "raggruppate_per_area groups tappe by area and direzione" do
     scuola_a = scuole(:scuola_fizzy)
@@ -186,5 +186,51 @@ class TappaTest < ActiveSupport::TestCase
 
     aree = @user.tappe.da_programmare.raggruppate_per_area.map(&:first)
     assert_equal ["Area A", "Senza area"], aree
+  end
+
+  test "raggruppate_per_area sorts multiple aree alphabetically" do
+    scuola_c = Scuola.create!(account: @fizzy, denominazione: "S-C", codice_ministeriale: "C001", area: "Area C")
+    scuola_a = Scuola.create!(account: @fizzy, denominazione: "S-A", codice_ministeriale: "A001", area: "Area A")
+    scuola_b = Scuola.create!(account: @fizzy, denominazione: "S-B", codice_ministeriale: "B001", area: "Area B")
+
+    @user.tappe.create!(tappable: scuola_c, data_tappa: nil)
+    @user.tappe.create!(tappable: scuola_a, data_tappa: nil)
+    @user.tappe.create!(tappable: scuola_b, data_tappa: nil)
+
+    aree = @user.tappe.da_programmare.raggruppate_per_area.map(&:first)
+    assert_equal ["Area A", "Area B", "Area C"], aree
+  end
+
+  test "raggruppate_per_area groups multiple direzioni within one area sorted alphabetically" do
+    # Two standalone scuole in the same area (each is its own direzione fallback via `|| t.tappable`)
+    scuola_alpha = Scuola.create!(account: @fizzy, denominazione: "Alpha", codice_ministeriale: "A999", area: "Area Unica")
+    scuola_beta  = Scuola.create!(account: @fizzy, denominazione: "Beta",  codice_ministeriale: "B999", area: "Area Unica")
+
+    t_beta  = @user.tappe.create!(tappable: scuola_beta,  data_tappa: nil)
+    t_alpha = @user.tappe.create!(tappable: scuola_alpha, data_tappa: nil)
+
+    result = @user.tappe.da_programmare.raggruppate_per_area
+    assert_equal 1, result.size
+    _area, direzioni = result.first
+
+    nomi = direzioni.map { |dir, _| dir.denominazione }
+    assert_equal ["Alpha", "Beta"], nomi
+  end
+
+  test "raggruppate_per_area filters out non-Scuola tappables" do
+    # A Scuola tappa in an area
+    scuola = scuole(:scuola_fizzy)
+    scuola.update!(area: "Solo Scuola")
+    scuola_tappa = @user.tappe.create!(tappable: scuola, data_tappa: nil)
+
+    # A Cliente tappa (should be excluded)
+    cliente = Cliente.create!(account: @fizzy, denominazione: "Cli Test")
+    @user.tappe.create!(tappable: cliente, data_tappa: nil)
+
+    result = @user.tappe.da_programmare.raggruppate_per_area
+    all_tappe = result.flat_map { |_, direzioni| direzioni.flat_map { |_, tappe| tappe } }
+
+    assert_includes all_tappe, scuola_tappa
+    assert all_tappe.none? { |t| t.tappable_type == "Cliente" }
   end
 end
