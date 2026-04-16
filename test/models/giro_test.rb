@@ -1,7 +1,7 @@
 require "test_helper"
 
 class GiroTest < ActiveSupport::TestCase
-  fixtures :accounts, :users, :memberships
+  fixtures :accounts, :users, :memberships, :scuole
 
   setup do
     @fizzy = accounts(:fizzy)
@@ -39,5 +39,79 @@ class GiroTest < ActiveSupport::TestCase
     giro = @user.giri.new(titolo: "G4")
     giro.valid?
     assert_nil giro.finito_il
+  end
+
+  # Task 4 — presentation methods
+
+  test "#settimane returns array of weeks covering iniziato_il to finito_il" do
+    giro = @user.giri.create!(
+      titolo: "G",
+      iniziato_il: Date.new(2026, 1, 5),  # Monday
+      finito_il:   Date.new(2026, 1, 18)  # Sunday (2 weeks later)
+    )
+    weeks = giro.settimane
+    assert_equal 2, weeks.size
+    assert_equal Date.new(2026, 1, 5), weeks.first.first
+    assert_equal Date.new(2026, 1, 18), weeks.last.last
+  end
+
+  test "#settimane returns [] when dates blank" do
+    giro = @user.giri.new(titolo: "G")
+    assert_equal [], giro.settimane
+  end
+
+  test "#settimane returns [] when range > 365 days" do
+    giro = @user.giri.new(
+      titolo: "G",
+      iniziato_il: Date.current,
+      finito_il: Date.current + 400
+    )
+    assert_equal [], giro.settimane
+  end
+
+  test "#giorni_timeline marks today and past" do
+    giro = @user.giri.new(titolo: "G")
+    tappe_per_giorno = {
+      Date.current - 1 => [1, 2],
+      Date.current     => [3],
+      Date.current + 1 => [4, 5, 6]
+    }
+    timeline = giro.giorni_timeline(tappe_per_giorno)
+    assert_equal 3, timeline.size
+    assert timeline[0][:past]
+    assert timeline[1][:today]
+    refute timeline[2][:past]
+    refute timeline[2][:today]
+    assert_equal 3, timeline[2][:count]
+  end
+
+  test "#tappe_per_giorno groups tappe by data_tappa" do
+    giro = @user.giri.create!(titolo: "Gx")
+    scuola = scuole(:scuola_fizzy)
+    monday = Date.current.beginning_of_week
+    t1 = @user.tappe.create!(tappable: scuola, data_tappa: monday)
+    t2 = @user.tappe.create!(tappable: scuola, data_tappa: monday + 1)
+    [t1, t2].each { |t| t.tappa_giri.create!(giro: giro) }
+
+    result = giro.tappe_per_giorno
+    assert_equal [t1], result[monday]
+    assert_equal [t2], result[monday + 1]
+  end
+
+  test "#tappe_totali returns count of all tappe" do
+    giro = @user.giri.create!(titolo: "Gtot")
+    scuola = scuole(:scuola_fizzy)
+    t = @user.tappe.create!(tappable: scuola, data_tappa: Date.current)
+    t.tappa_giri.create!(giro: giro)
+    assert_equal 1, giro.tappe_totali
+  end
+
+  test "#tappe_completate counts tappe with past data_tappa" do
+    giro = @user.giri.create!(titolo: "Gcomp")
+    scuola = scuole(:scuola_fizzy)
+    t_past   = @user.tappe.create!(tappable: scuola, data_tappa: Date.current - 1)
+    t_future = @user.tappe.create!(tappable: scuola, data_tappa: Date.current + 1)
+    [t_past, t_future].each { |t| t.tappa_giri.create!(giro: giro) }
+    assert_equal 1, giro.tappe_completate
   end
 end

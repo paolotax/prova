@@ -74,6 +74,38 @@ class Giro < ApplicationRecord
     schools.to_a
   end
 
+  def settimane
+    return [] unless iniziato_il && finito_il
+    dal = iniziato_il.to_date
+    al  = finito_il.to_date
+    return [] if al < dal || (al - dal).to_i > 365
+
+    (dal.beginning_of_week..al.end_of_week)
+      .group_by(&:beginning_of_week)
+      .values
+  end
+
+  def giorni_timeline(tappe_per_giorno)
+    oggi = Date.current
+    tappe_per_giorno.transform_keys { |k| k.to_date }.sort.map do |date, tappe|
+      { date: date, count: tappe.size, today: date == oggi, past: date < oggi }
+    end
+  end
+
+  def tappe_per_giorno
+    tappe.con_data_tappa
+      .includes(:tappable, :giri)
+      .group_by(&:data_tappa)
+  end
+
+  def tappe_totali
+    tappe.size
+  end
+
+  def tappe_completate
+    tappe.completate.size
+  end
+
   private
 
   def normalize_arrays
