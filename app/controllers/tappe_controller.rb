@@ -1,103 +1,36 @@
 class TappeController < ApplicationController
-  
+
+  include FilterScoped
+
+  FILTER_PARAMS = ::Filters::TappaFilter::Fields::PERMITTED_PARAMS
+
+  skip_before_action :set_user_filtering, if: -> { request.format.json? }
+
   before_action :authenticate_user!
   before_action :set_tappa, only: %i[ show edit update destroy rimanda ]
 
   def index
+    base = current_user.tappe
+
     if request.format.json?
-      scope = current_user.tappe.includes(:tappable, :giri)
-      scope = scope.search(params[:search]) if params[:search].present?
-      case params[:filter]
-      when "oggi" then scope = scope.di_oggi
-      when "domani" then scope = scope.di_domani
-      when "settimana" then scope = scope.della_settimana
-      when "mese" then scope = scope.del_mese
-      when "programmate" then scope = scope.programmate
-      when "completate" then scope = scope.completate
-      when "da_programmare" then scope = scope.da_programmare
-      end
-      @tappe = scope.order(data_tappa: :asc, position: :asc).limit(params[:limit] || 50)
+      @tappe = @filter.results(base).order(data_tappa: :asc, position: :asc)
+                     .limit(params[:limit] || 50)
       return respond_to { |format| format.json }
     end
 
-    @tappe = current_user.tappe.where(tappable_type: "Scuola")
+    @tappe = @filter.results(base).where.not(data_tappa: nil)
 
-    # Filtra per scuola specifica se viene chiamato con import_scuola_id
-    if params[:scuola_id].present?
-      @scuola = current_account.scuole.find(params[:scuola_id])
-      @tappe = @tappe.where(tappable_id: @scuola.id)
-    end
+    @scuola = current_account.scuole.find(@filter.scuola_id) if @filter.scuola_id.present?
+    @giro   = current_user.giri.find(@filter.giro_id)        if @filter.giro_id.present?
 
-    # Filtro per giri multipli
-    if params[:giro_ids].present?
-      giro_ids = params[:giro_ids].reject(&:blank?).map(&:to_i)
-      if giro_ids.any?
-        @tappe = @tappe.joins(:giri).where(giri: { id: giro_ids }).distinct
-      end
-    elsif params[:giro_id].present?
-      @tappe = @tappe.joins(:giri).where(giri: { id: params[:giro_id] }).distinct
-    end
+    @current_week_start, @current_week_end, @week_offset = @filter.settimana_info
 
-    @giro = current_user.giri.find(params[:giro_id]) if params[:giro_id].present?
-
-    # Filtro per range di date
-    if params[:data_inizio].present? && params[:data_fine].present?
-      @tappe = @tappe.where(data_tappa: params[:data_inizio]..params[:data_fine])
-    end
-
-    if params[:filter]  == 'programmate'
-      @tappe = @tappe.programmate
-    elsif params[:filter]  == 'oggi'
-      @tappe = @tappe.di_oggi
-    elsif params[:filter]  == 'domani'
-      @tappe = @tappe.di_domani
-    elsif params[:filter]  == 'completate'
-      @tappe = @tappe.completate
-    elsif params[:filter]  == 'da programmare'
-      @tappe = @tappe.da_programmare
-    end
-
-    @tappe = @tappe.del_giorno(params[:giorno]) if params[:giorno].present?
-    @tappe = @tappe.search(params[:search]) if params[:search].present?
-    @tappe = @tappe.dell_area(params[:area]) if params[:area].present?
-
-    # Filtra solo tappe con data
-    @tappe = @tappe.where.not(data_tappa: nil)
-
-    # Applica ordinamento prima del distinct per evitare errori SQL
-    if params[:sort].presence.in? ["per_data", "per_data_desc","per_ordine_e_data"]
-      @tappe = @tappe.send(params[:sort])
-    else
-      @tappe = @tappe.order(data_tappa: :asc, position: :asc)
-    end
-
-    # Determina la settimana corrente o quella richiesta (solo se NON viene chiamato da import_scuola)
-    unless params[:scuola_id].present?
-      if params[:week_offset].present?
-        week_offset = params[:week_offset].to_i
-      else
-        week_offset = 0
-      end
-
-      start_of_week = Date.today.beginning_of_week + week_offset.weeks
-      end_of_week = start_of_week.end_of_week
-
-      # Filtra le tappe per la settimana corrente
-      @tappe = @tappe.where(data_tappa: start_of_week..end_of_week)
-
-      # Informazioni sulla settimana
-      @current_week_start = start_of_week
-      @current_week_end = end_of_week
-      @week_offset = week_offset
-    end
-
-    # Raggruppa le tappe per data
-    @tappe_raggruppate = @tappe.group_by { |t| t.data_tappa }
-    @giri_disponibili = current_user.giri.order(created_at: :desc)
+    @tappe_raggruppate = @tappe.group_by(&:data_tappa)
+    @giri_disponibili  = current_user.giri.order(created_at: :desc)
 
     respond_to do |format|
       format.html do
-        if params[:scuola_id].present? && params[:sort] == "per_data"
+        if @filter.scuola_id.present? && @filter.sort == "per_data"
           render partial: "tappe_scuola", locals: { tappe: @tappe }
         end
       end
@@ -188,11 +121,8 @@ class TappeController < ApplicationController
     @tappa.update(position: posizione, data_tappa: data_tappa)
 
     if params[:source] == "to_planner"
-      if params[:giro_id].present?
-        @planner_tappe_per_area = giro_planner_tappe_per_area(params[:giro_id])
-      else
-        @planner_tappe_per_area = planner_tappe_per_area
-      end
+      scope = params[:giro_id].present? ? current_user.giri.find(params[:giro_id]).tappe : current_user.tappe
+      @planner_tappe_per_area = scope.da_programmare.raggruppate_per_area
     end
 
     respond_to do |format|
@@ -244,41 +174,6 @@ class TappeController < ApplicationController
       return unless tappable.respond_to?(:open_entries)
 
       @entries = Entry.load_entryables(tappable.open_entries.where.not(entryable_type: "Tappa"))
-    end
-
-    def planner_tappe_per_area
-      tappe = current_user.tappe
-        .da_programmare
-        .where(tappable_type: "Scuola")
-        .includes(:giri)
-        .preload(:tappable)
-
-      tappe
-        .group_by { |t| t.tappable.area.presence || "Senza area" }
-        .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
-        .map { |area, area_tappe|
-          direzioni = area_tappe
-            .group_by { |t| t.tappable.direzione || t.tappable }
-            .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
-          [area, direzioni]
-        }
-    end
-
-    def giro_planner_tappe_per_area(giro_id)
-      giro = current_user.giri.find(giro_id)
-      giro.tappe
-        .da_programmare
-        .where(tappable_type: "Scuola")
-        .includes(:giri)
-        .preload(:tappable)
-        .group_by { |t| t.tappable.respond_to?(:area) ? (t.tappable.area.presence || "Senza area") : "Senza area" }
-        .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
-        .map { |area, area_tappe|
-          direzioni = area_tappe
-            .group_by { |t| t.tappable.respond_to?(:direzione) ? (t.tappable.direzione || t.tappable) : t.tappable }
-            .sort_by { |dir, _| dir.respond_to?(:denominazione) ? dir.denominazione : "" }
-          [area, direzioni]
-        }
     end
 
     def find_tappable
