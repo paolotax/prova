@@ -42,7 +42,9 @@ class Giro < ApplicationRecord
 
   validates :titolo, presence: true
   validates :tipo_giro, inclusion: { in: TIPI_GIRO }, allow_nil: true
-  
+
+  before_validation :set_default_finito_il
+
   broadcasts_to ->(giro) { [giro.user, "giri"] }
 
   serialize :conditions, coder: YAML
@@ -76,6 +78,13 @@ class Giro < ApplicationRecord
 
   def normalize_arrays
     self.conditions = [] if conditions.nil?
+  end
+
+  def set_default_finito_il
+    return unless iniziato_il.present?
+    return if finito_il.present? && finito_il >= iniziato_il
+
+    self.finito_il = iniziato_il + 4.weeks
   end
 
 end
