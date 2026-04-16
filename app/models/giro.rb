@@ -45,7 +45,7 @@ class Giro < ApplicationRecord
 
   before_validation :set_default_finito_il
 
-  broadcasts_to ->(giro) { [giro.user, "giri"] }
+  broadcasts_to ->(giro) { [giro.user, "giri"] }, target: "giri-lista", inserts_by: :append
 
   serialize :conditions, coder: YAML
   before_save :normalize_arrays
