@@ -84,3 +84,6 @@ swarm.log
 **/CLAUDE.md
 !/CLAUDE.md
 .planning/
+
+# Git worktrees
+.worktrees/
