@@ -7,7 +7,7 @@ class TappeController < ApplicationController
   skip_before_action :set_user_filtering, if: -> { request.format.json? }
 
   before_action :authenticate_user!
-  before_action :set_tappa, only: %i[ show edit update destroy rimanda ]
+  before_action :set_tappa, only: %i[ show edit update destroy ]
 
   def index
     base = current_user.tappe
@@ -109,16 +109,6 @@ class TappeController < ApplicationController
         format.json { render json: @tappa.errors, status: :unprocessable_entity }
         format.html { render :edit, status: :unprocessable_entity }
       end
-    end
-  end
-
-  def rimanda
-    giorno = @tappa.data_tappa
-    @tappa.update!(data_tappa: nil)
-
-    respond_to do |format|
-      format.turbo_stream { redirect_to giorno_path(giorno: giorno || Date.current), notice: "Tappa rimandata.", status: :see_other }
-      format.html { redirect_to giorno_path(giorno: giorno || Date.current), notice: "Tappa rimandata." }
     end
   end
 

@@ -17,7 +17,7 @@
       <p class="margin-none">Rimuovere la data e rimandare questa tappa?</p>
       <div class="flex gap justify-center">
         <button type="button" class="btn" data-action="dialog#close">Annulla</button>
-        <%= button_to "Rimanda", rimanda_tappa_path(tappa), method: :post, class: "btn btn--reversed",
+        <%= button_to "Rimanda", tappa_rimando_path(tappa), method: :post, class: "btn btn--reversed",
             form: { data: { turbo: false } } %>
       </div>
     </dialog>

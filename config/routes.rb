@@ -355,10 +355,8 @@ Rails.application.routes.draw do
       collection do
         get 'pianifica', to: 'tappe/pianifica#show'
       end
-      resource :sort, module: :tappe, only: :update, controller: "sorts"
-      member do
-        post 'rimanda'
-      end
+      resource :sort,    module: :tappe, only: :update, controller: "sorts"
+      resource :rimando, module: :tappe, only: :create, controller: "rimandi"
       resources :bolle_visione, only: %i[new create]
       resources :tappa_giri, only: %i[new create index], controller: 'tappe/tappa_giri'
     end
