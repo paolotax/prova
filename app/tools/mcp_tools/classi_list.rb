@@ -28,18 +28,19 @@ module MCPTools
                   server_context:, **_params)
       with_current(server_context) do
         scope = Classe.where(account: Current.account)
-          .joins(:scuola)
-          .where(scuola: { id: Current.scuole.select(:id) })
+          .joins("INNER JOIN scuole ON scuole.id = classi.scuola_id")
+          .where(scuole: { id: Current.scuole.select(:id) })
 
         scope = scope.where("classi.combinazione ILIKE ?", "%#{combinazione}%") if combinazione.present?
         if provincia.present?
           scope = provincia.length <= 2 ? scope.where(scuole: { sigla_provincia: provincia.upcase }) : scope.where(scuole: { provincia: provincia })
         end
         scope = scope.where(scuole: { comune: comune }) if comune.present?
-        scope = scope.where(tipo_scuola: tipo_scuola) if tipo_scuola.present?
-        scope = scope.where(anno_corso: anno_corso) if anno_corso.present?
+        scope = scope.where(classi: { tipo_scuola: tipo_scuola }) if tipo_scuola.present?
+        scope = scope.where(classi: { anno_corso: anno_corso }) if anno_corso.present?
 
-        scope = scope.includes(:scuola).order("scuole.provincia, scuole.comune, scuole.denominazione, classi.anno_corso, classi.sezione")
+        scope = scope.preload(:scuola)
+          .order("scuole.provincia, scuole.comune, scuole.denominazione, classi.anno_corso, classi.sezione")
 
         total = scope.count
         classi = scope.offset((offset || 0).to_i).limit((limit || 50).to_i.clamp(1, 200))
