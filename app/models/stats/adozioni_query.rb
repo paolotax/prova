@@ -97,12 +97,13 @@ module Stats
 
     DEFAULT_GRADI = %w[E M N].freeze
 
-    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
+    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, offset: 0, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
       @order_by = ORDER_COLUMNS.include?(order_by.to_s) ? order_by.to_s : "classi_count"
-      @limit = [limit, 500].min
+      @limit = limit.to_i.clamp(1, 200)
+      @offset = [offset.to_i, 0].max
       @grado = self.class.expand_gradi(grado)
       @solo_144 = solo_144 && @grado == ["E"]
       @include_sezioni = include_sezioni
@@ -127,6 +128,7 @@ module Stats
     end
 
     def call
+      rows = results
       {
         filters_applied: @filters,
         grado: @grado,
@@ -134,8 +136,9 @@ module Stats
         group_by: @group_by,
         coefficiente: @coefficiente,
         solo_144: @solo_144 || nil,
+        pagination: @group_by.empty? ? nil : { offset: @offset, limit: @limit, total_groups: total_groups, returned: rows.size },
         totals: totals,
-        results: results
+        results: rows
       }.compact
     end
 
@@ -260,7 +263,7 @@ module Stats
       all_group = (gc + ec_raw).uniq.join(", ")
 
       order_col = @order_by == "percentuale" ? "classi_count" : @order_by
-      sql = "SELECT #{select_parts} #{base_from} WHERE #{conditions} GROUP BY #{all_group} ORDER BY #{order_col} DESC LIMIT #{@limit}"
+      sql = "SELECT #{select_parts} #{base_from} WHERE #{conditions} GROUP BY #{all_group} ORDER BY #{order_col} DESC LIMIT #{@limit} OFFSET #{@offset}"
 
       rows = exec_query_all(sql, binds)
       total_classi = total[:classi_count]
@@ -292,6 +295,16 @@ module Stats
         entry[:sezioni] = parse_sezioni(row["sezioni"]) if @include_sezioni
         entry
       end
+    end
+
+    def total_groups
+      return 0 if @group_by.empty?
+      conditions, binds = base_where
+      gc = group_columns
+      ec_raw = extra_columns.map { |col| col.split(" as ").first.strip }
+      all_group = (gc + ec_raw).uniq.join(", ")
+      sql = "SELECT COUNT(*) as n FROM (SELECT 1 #{base_from} WHERE #{conditions} GROUP BY #{all_group}) sub"
+      exec_query(sql, binds)["n"].to_i
     end
 
     def parse_sezioni(raw)
