@@ -223,14 +223,15 @@ module Stats
 
       classi = row["classi_count"].to_i
       adozioni = row["adozioni_count"].to_i
-      prezzo_avg = adozioni > 0 ? row["prezzo_sum"].to_f / adozioni : 0
+      prezzo_sum = row["prezzo_sum"].to_f
 
       result = {
         classi_count: classi,
         scuole_count: row["scuole_count"].to_i,
         adozioni_count: adozioni,
-        copie_stimate: classi * @coefficiente,
-        importo_cents: (prezzo_avg * classi * @coefficiente * 100).round
+        studenti_stimati: classi * @coefficiente,
+        copie_stimate: adozioni * @coefficiente,
+        importo_cents: (prezzo_sum * @coefficiente * 100).round
       }
       result[:sezioni_144] = row["sezioni_144"].to_f.round(1) if @solo_144
       result
@@ -273,13 +274,14 @@ module Stats
 
         classi = row["classi_count"].to_i
         adozioni = row["adozioni_count"].to_i
-        prezzo_avg = adozioni > 0 ? row["prezzo_sum"].to_f / adozioni : 0
+        prezzo_sum = row["prezzo_sum"].to_f
 
         entry[:classi_count] = classi
         entry[:scuole_count] = row["scuole_count"].to_i
         entry[:adozioni_count] = adozioni
-        entry[:copie_stimate] = classi * @coefficiente
-        entry[:importo_cents] = (prezzo_avg * classi * @coefficiente * 100).round
+        entry[:studenti_stimati] = classi * @coefficiente
+        entry[:copie_stimate] = adozioni * @coefficiente
+        entry[:importo_cents] = (prezzo_sum * @coefficiente * 100).round
         entry[:percentuale] = (classi.to_f / total_classi * 100).round(2)
         entry[:sezioni_144] = row["sezioni_144"].to_f.round(1) if @solo_144
         entry[:sezioni] = parse_sezioni(row["sezioni"]) if @include_sezioni
