@@ -1,7 +1,7 @@
 class MCPController < ActionController::API
   include Api::TokenAuthenticatable
 
-  before_action :authenticate_api!
+  before_action :authenticate_api!, except: :probe
 
   def handle
     if request.raw_post.blank?
@@ -10,6 +10,14 @@ class MCPController < ActionController::API
     end
 
     render json: mcp_server.handle_json(request.raw_post)
+  end
+
+  # Claude.ai probes GET (for optional SSE stream) before POSTing JSON-RPC.
+  # This server is stateless/request-response, so we reply per MCP spec:
+  # 405 on GET (no stream), 204 on OPTIONS (CORS preflight).
+  def probe
+    response.headers["Allow"] = "POST, OPTIONS"
+    head request.options? ? :no_content : :method_not_allowed
   end
 
   private

@@ -519,7 +519,8 @@ Rails.application.routes.draw do
   # API
   # =========================================
 
-  post "api/mcp", to: "mcp#handle"
+  post  "api/mcp", to: "mcp#handle"
+  match "api/mcp", to: "mcp#probe", via: [:get, :options]
 
   namespace :api do
     post 'whatsapp/contacts', to: 'whatsapp#create'
