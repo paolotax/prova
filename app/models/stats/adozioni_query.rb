@@ -13,9 +13,12 @@ module Stats
       "editore"     => 'ia."EDITORE"',
       "disciplina"  => 'ia."DISCIPLINA"',
       "classe"      => 'ia."ANNOCORSO"',
+      "regione"     => 'isc."REGIONE"',
+      "area"        => 'isc."AREAGEOGRAFICA"',
       "provincia"   => 'isc."PROVINCIA"',
       "comune"      => 'isc."DESCRIZIONECOMUNE"',
       "titolo"      => 'ia."TITOLO"',
+      "isbn"        => 'ia."CODICEISBN"',
       "scuola"      => 'isc."CODICESCUOLA"',
       "grado"       => 'ts.grado',
       "tipo_scuola" => 'ts.tipo',
@@ -39,6 +42,7 @@ module Stats
 
     EXTRA_COLUMNS = {
       "titolo" => ['ia."CODICEISBN" as isbn', 'ia."AUTORI" as autori', 'ia."PREZZO" as prezzo'],
+      "isbn"   => ['ia."TITOLO" as titolo', 'ia."AUTORI" as autori', 'ia."EDITORE" as editore', 'ia."DISCIPLINA" as disciplina', 'ia."PREZZO" as prezzo'],
       "scuola" => ['isc."DENOMINAZIONESCUOLA" as denominazione', 'isc."PROVINCIA" as provincia'],
       "comune" => ['isc."PROVINCIA" as provincia']
     }.freeze
@@ -46,6 +50,7 @@ module Stats
     FILTERS = {
       "provincia"    => 'isc."PROVINCIA" = ?',
       "regione"      => 'isc."REGIONE" = ?',
+      "area"         => 'isc."AREAGEOGRAFICA" = ?',
       "classe"       => 'ia."ANNOCORSO" = ?',
       "editore"      => 'ia."EDITORE" ILIKE ?',
       "disciplina"   => 'ia."DISCIPLINA" ILIKE ?',

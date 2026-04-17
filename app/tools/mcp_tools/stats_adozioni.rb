@@ -1,7 +1,7 @@
 module MCPTools
   class StatsAdozioni < Base
     tool_name "stats_adozioni"
-    description "Statistiche adozioni dal database nazionale MIUR (dati pubblici, non legati al tuo account). Di default interroga tutti i gradi (elementari + medie + superiori); restringi con il filtro `grado` (E=elementari, M=medie, N=superiori, virgola-separati). Il filtro `filiera` (liceo|tecnico|professionale|altro, virgola-separati) distingue le scuole superiori per tipologia. Filtra per provincia, comune, classe, editore, disciplina, titolo, isbn. Aggrega con group_by: editore, disciplina, classe, provincia, comune, titolo, scuola, grado, tipo_scuola, filiera. La provincia accetta sia il nome completo (PRATO) che la sigla (PO). Con `include_sezioni: true` ogni riga riporta anche l'array delle sezioni coinvolte (es. \"5A [C]\", \"5B\") — utile soprattutto per l'analisi di una singola scuola."
+    description "Statistiche adozioni dal database nazionale MIUR (dati pubblici, non legati al tuo account). Di default interroga tutti i gradi (elementari + medie + superiori); restringi con il filtro `grado` (E=elementari, M=medie, N=superiori, virgola-separati). Il filtro `filiera` (liceo|tecnico|professionale|altro, virgola-separati) distingue le scuole superiori per tipologia. Filtra per area (NORD OVEST|NORD EST|CENTRO|SUD|ISOLE), regione, provincia, comune, classe, editore, disciplina, titolo, isbn. Aggrega con group_by: editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera. La provincia accetta sia il nome completo (PRATO) che la sigla (PO). Con `include_sezioni: true` ogni riga riporta anche l'array delle sezioni coinvolte (es. \"5A [C]\", \"5B\") — utile soprattutto per l'analisi di una singola scuola."
 
     annotations(
       read_only_hint: true,
@@ -12,9 +12,10 @@ module MCPTools
     input_schema(
       type: "object",
       properties: {
-        group_by: { type: "string", description: "Dimensioni di aggregamento (virgola-separati): editore, disciplina, classe, provincia, comune, titolo, scuola, grado, tipo_scuola" },
+        group_by: { type: "string", description: "Dimensioni di aggregamento (virgola-separati): editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera" },
         grado: { type: "string", description: "Grado scolastico: E (elementari), M (medie), N (superiori). Accetta anche gli alias: elementari, medie, superiori. Virgola-separati per più gradi (es. 'M,N'). Se omesso, include tutti e tre." },
         filiera: { type: "string", description: "Filiera superiori: liceo, tecnico, professionale, altro. Virgola-separati (es. 'tecnico,professionale'). Match sul testo di tipi_scuole.tipo (LICEO%, IST PROF%, ISTITUTO TECNICO%/IST TEC%)." },
+        area: { type: "string", description: "Macroarea geografica MIUR (esatta): NORD OVEST, NORD EST, CENTRO, SUD, ISOLE." },
         provincia: { type: "string", description: "Provincia — nome completo (es. PRATO, MODENA) o sigla (es. PO, MO). Viene convertita automaticamente." },
         comune: { type: "string", description: "Nome del comune (es. MILANO, FIRENZE). Ricerca parziale." },
         regione: { type: "string", description: "Nome regione (es. PIEMONTE, TOSCANA)" },
@@ -35,10 +36,10 @@ module MCPTools
       required: ["group_by"]
     )
 
-    def self.call(group_by:, grado: nil, filiera: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 18, order_by: "classi_count", limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
+    def self.call(group_by:, grado: nil, filiera: nil, area: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 18, order_by: "classi_count", limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
       with_current(server_context) do
         filters = {
-          provincia: provincia, comune: comune, regione: regione, classe: classe,
+          area: area, provincia: provincia, comune: comune, regione: regione, classe: classe,
           editore: editore, disciplina: disciplina, titolo: titolo, isbn: isbn,
           combinazione: combinazione, scuola: scuola, codice_scuola: codice_scuola
         }.compact_blank
