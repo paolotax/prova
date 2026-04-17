@@ -12,7 +12,10 @@ module Api
           coefficiente: params.fetch(:coefficiente, 18).to_i,
           order_by: params.fetch(:order_by, :classi_count).to_sym,
           limit: params.fetch(:limit, 50).to_i,
-          solo_144: params[:solo_144] == "true"
+          solo_144: params[:solo_144] == "true",
+          grado: params[:grado],
+          filiera: params[:filiera],
+          include_sezioni: params[:include_sezioni] == "true"
         )
 
         result = query.call
