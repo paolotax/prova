@@ -1,14 +1,34 @@
 module Stats
   class AdozioniQuery
+    FILIERA_CASE_SQL = <<~SQL.squish.freeze
+      CASE
+        WHEN ts.tipo ILIKE 'LICEO%' THEN 'liceo'
+        WHEN ts.tipo ILIKE 'IST PROF%' THEN 'professionale'
+        WHEN ts.tipo ILIKE 'ISTITUTO TECNICO%' OR ts.tipo ILIKE 'IST TEC%' OR ts.tipo ILIKE 'IST TECNICO%' THEN 'tecnico'
+        ELSE 'altro'
+      END
+    SQL
+
     DIMENSIONS = {
-      "editore"    => 'ia."EDITORE"',
-      "disciplina" => 'ia."DISCIPLINA"',
-      "classe"     => 'ia."ANNOCORSO"',
-      "provincia"  => 'isc."PROVINCIA"',
-      "comune"     => 'isc."DESCRIZIONECOMUNE"',
-      "titolo"     => 'ia."TITOLO"',
-      "scuola"     => 'isc."CODICESCUOLA"',
-      "grado"      => 'ts.grado'
+      "editore"     => 'ia."EDITORE"',
+      "disciplina"  => 'ia."DISCIPLINA"',
+      "classe"      => 'ia."ANNOCORSO"',
+      "provincia"   => 'isc."PROVINCIA"',
+      "comune"      => 'isc."DESCRIZIONECOMUNE"',
+      "titolo"      => 'ia."TITOLO"',
+      "scuola"      => 'isc."CODICESCUOLA"',
+      "grado"       => 'ts.grado',
+      "tipo_scuola" => 'ts.tipo',
+      "filiera"     => FILIERA_CASE_SQL
+    }.freeze
+
+    FILIERA_VALUES = %w[liceo tecnico professionale altro].freeze
+
+    FILIERA_WHERE = {
+      "liceo"         => "ts.tipo ILIKE 'LICEO%'",
+      "professionale" => "ts.tipo ILIKE 'IST PROF%'",
+      "tecnico"       => "(ts.tipo ILIKE 'ISTITUTO TECNICO%' OR ts.tipo ILIKE 'IST TEC%' OR ts.tipo ILIKE 'IST TECNICO%')",
+      "altro"         => "NOT (ts.tipo ILIKE 'LICEO%' OR ts.tipo ILIKE 'IST PROF%' OR ts.tipo ILIKE 'ISTITUTO TECNICO%' OR ts.tipo ILIKE 'IST TEC%' OR ts.tipo ILIKE 'IST TECNICO%')"
     }.freeze
 
     GRADO_ALIASES = {
@@ -70,7 +90,9 @@ module Stats
       "VT" => "VITERBO"
     }.freeze
 
-    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false, grado: "E")
+    DEFAULT_GRADI = %w[E M N].freeze
+
+    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
@@ -78,6 +100,8 @@ module Stats
       @limit = [limit, 500].min
       @grado = self.class.expand_gradi(grado)
       @solo_144 = solo_144 && @grado == ["E"]
+      @include_sezioni = include_sezioni
+      @filiera = self.class.expand_filiera(filiera)
     end
 
     def self.expand_provincia(value)
@@ -87,14 +111,21 @@ module Stats
 
     def self.expand_gradi(value)
       list = Array(value).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
-      list = ["E"] if list.empty?
+      list = DEFAULT_GRADI.dup if list.empty?
       list.map { |g| GRADO_ALIASES[g.upcase] || g.upcase }.uniq
+    end
+
+    def self.expand_filiera(value)
+      list = Array(value).flat_map { |v| v.to_s.split(",") }.map { |s| s.strip.downcase }.reject(&:blank?)
+      return nil if list.empty?
+      list.select { |f| FILIERA_VALUES.include?(f) }.presence
     end
 
     def call
       {
         filters_applied: @filters,
         grado: @grado,
+        filiera: @filiera,
         group_by: @group_by,
         coefficiente: @coefficiente,
         solo_144: @solo_144 || nil,
@@ -128,6 +159,9 @@ module Stats
         conditions << FILTERS[key]
         binds << (%w[titolo editore disciplina scuola comune].include?(key) ? "%#{value}%" : value)
       end
+      if @filiera
+        conditions << "(#{@filiera.map { |f| FILIERA_WHERE.fetch(f) }.join(' OR ')})"
+      end
       if @solo_144
         conditions << Stats::Calcolo144.where_clause('ia."DISCIPLINA"', 'ia."ANNOCORSO"')
       end
@@ -136,6 +170,19 @@ module Stats
 
     def group_columns
       @group_by.map { |d| DIMENSIONS[d] }
+    end
+
+    def select_dimensions
+      @group_by.map do |d|
+        sql = DIMENSIONS[d]
+        # Simple column refs (schema.col or schema."Col") go as-is
+        # Complex expressions (CASE, ...) need an explicit AS alias for row access
+        if sql.match?(/\A\w+\.(?:"[^"]+"|\w+)\z/)
+          sql
+        else
+          "(#{sql}) AS #{column_alias(d)}"
+        end
+      end
     end
 
     def extra_columns
@@ -149,7 +196,18 @@ module Stats
     def select_aggregates
       agg = "#{classi_count_expr} as classi_count, COUNT(DISTINCT ia.\"CODICESCUOLA\") as scuole_count, COUNT(*) as adozioni_count"
       agg += ", SUM(#{Stats::Calcolo144.peso_case_sql('ia."DISCIPLINA"')}) as sezioni_144" if @solo_144
+      agg += ", #{sezioni_agg_expr} as sezioni" if @include_sezioni
       agg
+    end
+
+    def sezioni_agg_expr
+      <<~SQL.squish
+        array_agg(DISTINCT
+          ia."ANNOCORSO" || ia."SEZIONEANNO"
+          || CASE WHEN NULLIF(ia."COMBINAZIONE", '') IS NOT NULL
+                  THEN ' [' || ia."COMBINAZIONE" || ']' ELSE '' END
+        )
+      SQL
     end
 
     def prezzo_sum_expr
@@ -185,12 +243,12 @@ module Stats
 
       conditions, binds = base_where
       gc = group_columns
+      sd = select_dimensions
       ec = extra_columns
 
-      select_parts = (gc + ec + [select_aggregates]).join(", ")
+      select_parts = (sd + ec + [select_aggregates]).join(", ")
       select_parts += ", #{prezzo_sum_expr} as prezzo_sum"
 
-      group_expr = gc.join(", ")
       # Extra columns that aren't already in group_columns need to be in GROUP BY too
       ec_raw = ec.map { |col| col.split(" as ").first.strip }
       all_group = (gc + ec_raw).uniq.join(", ")
@@ -224,13 +282,19 @@ module Stats
         entry[:importo_cents] = (prezzo_avg * classi * @coefficiente * 100).round
         entry[:percentuale] = (classi.to_f / total_classi * 100).round(2)
         entry[:sezioni_144] = row["sezioni_144"].to_f.round(1) if @solo_144
+        entry[:sezioni] = parse_sezioni(row["sezioni"]) if @include_sezioni
         entry
       end
     end
 
+    def parse_sezioni(raw)
+      return [] if raw.blank?
+      return raw if raw.is_a?(Array)
+      raw.to_s.delete("{}").split(",").map { |s| s.strip.delete('"') }.reject(&:blank?).sort
+    end
+
     def column_alias(dimension)
-      # Extract the PostgreSQL column name from the dimension expression
-      # e.g., 'ia."EDITORE"' -> "EDITORE", 'ts.grado' -> "grado"
+      return "filiera" if dimension == "filiera"
       expr = DIMENSIONS[dimension]
       expr.match(/"([^"]+)"/)&.captures&.first || expr.split(".").last
     end
