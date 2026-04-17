@@ -12,79 +12,21 @@
 
       <%= form_with url: giro_tappe_generazione_path(@giro), method: :post,
           class: "flex flex-column gap",
-          data: { controller: "genera-tappe-ui", action: "turbo:submit-end->dialog#close" } do |f| %>
+          data: { controller: "scuole-tree",
+                  scuole_tree_submit_template_value: "Genera {count} tappe",
+                  action: "turbo:submit-end->dialog#close" } do |f| %>
 
         <div class="wizard__school-list" style="max-block-size: 55vh;">
-          <% @gerarchia.sort.each do |provincia, aree| %>
-            <% provincia_count = aree.sum { |_, dirs| dirs.sum { |_, s| s.size } } %>
-            <details open class="wizard__provincia">
-              <summary class="wizard__group-bar" >
-                <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
-                        data-action="click->genera-tappe-ui#toggleGroup:stop">seleziona</button>
-                <span class="wizard__group-label">
-                  <span class="txt-bold txt-small"><%= provincia %></span>
-                  <span class="badge txt-xx-small"><%= provincia_count %></span>
-                </span>
-                <span class="wizard__group-expand">
-                  <%= icon_tag "collapse" %>
-                </span>
-              </summary>
-
-              <div class="wizard__provincia-content">
-                <% aree.sort.each do |area, direzioni| %>
-                  <% area_count = direzioni.sum { |_, s| s.size } %>
-                  <details open class="wizard__provincia">
-                    <summary class="wizard__group-bar" >
-                      <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
-                              data-action="click->genera-tappe-ui#toggleGroup:stop">seleziona</button>
-                      <span class="wizard__group-label">
-                        <span class="txt-x-small txt-bold"><%= area %></span>
-                        <span class="badge txt-xx-small"><%= area_count %></span>
-                      </span>
-                      <button type="button" class="wizard__group-expand"
-                              data-action="click->genera-tappe-ui#toggleDetails:stop">
-                        <%= icon_tag "collapse" %>
-                      </button>
-                    </summary>
-
-                    <div class="wizard__provincia-content">
-                      <% direzioni.sort.each do |dir_label, scuole| %>
-                        <div class="wizard__direzione-spacer"></div>
-                        <% scuole.sort_by(&:denominazione).each do |scuola| %>
-                          <%= render "giri/tappe/school_row", scuola: scuola %>
-                        <% end %>
-                      <% end %>
-                    </div>
-                  </details>
-                <% end %>
-              </div>
-            </details>
-          <% end %>
-
-          <% if @scuole_scartate.any? %>
-            <details class="wizard__provincia">
-              <summary class="wizard__group-bar" >
-                <span class="wizard__group-label">
-                  <span class="txt-bold txt-small txt-subtle">Scartate</span>
-                  <span class="badge txt-xx-small"><%= @scuole_scartate.size %></span>
-                </span>
-                <span class="wizard__group-expand">
-                  <%= icon_tag "collapse" %>
-                </span>
-              </summary>
-              <div class="wizard__provincia-content">
-                <% @scuole_scartate.sort_by(&:denominazione).each do |scuola| %>
-                  <%= render "giri/tappe/school_row", scuola: scuola %>
-                <% end %>
-              </div>
-            </details>
-          <% end %>
+          <%= render "giri/scuole_tree",
+              gerarchia: @gerarchia,
+              scuole_scartate: @scuole_scartate,
+              initial_checked: false %>
         </div>
 
         <div class="flex gap-half justify-center margin-block-start">
           <button type="button" class="btn" data-action="dialog#close">Annulla</button>
           <%= f.submit "Genera 0 tappe", class: "btn btn--link", disabled: true,
-              data: { genera_tappe_ui_target: "submit" } %>
+              data: { scuole_tree_target: "submit" } %>
         </div>
       <% end %>
     </dialog>

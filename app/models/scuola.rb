@@ -105,6 +105,20 @@ class Scuola < ApplicationRecord
       .where.not(id: unscoped.select(:direzione_id).where.not(direzione_id: nil))
   }
 
+  # Raggruppa una collezione di scuole in { provincia => { area => { direzione => [plessi] } } }
+  def self.to_gerarchia(scuole)
+    scuole.each_with_object({}) do |scuola, result|
+      prov = scuola.provincia.presence || "Senza provincia"
+      area = scuola.area.presence || "Senza area"
+      dir_label = scuola.direzione&.denominazione || "Autonome"
+
+      result[prov] ||= {}
+      result[prov][area] ||= {}
+      result[prov][area][dir_label] ||= []
+      result[prov][area][dir_label] << scuola
+    end
+  end
+
   # Risolve un param stringa in un array di scuole
   # Formati: "prov:MI", "dir:<uuid>:<grado>", "group:MI:primaria", "<uuid>"
   def self.resolve_from_param(param, scope: Current.account.scuole)

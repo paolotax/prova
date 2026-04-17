@@ -1,0 +1,69 @@
+<%# locals: (gerarchia:, scuole_scartate: [], initial_checked: false) -%>
+
+<% gerarchia.sort.each do |provincia, aree| %>
+  <% provincia_count = aree.sum { |_, dirs| dirs.sum { |_, s| s.size } } %>
+  <details open class="wizard__provincia">
+    <summary class="wizard__group-bar">
+      <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+              data-action="click->scuole-tree#toggleGroup:stop">
+        <%= initial_checked ? "deseleziona" : "seleziona" %>
+      </button>
+      <span class="wizard__group-label">
+        <span class="txt-bold txt-small"><%= provincia %></span>
+        <span class="badge txt-xx-small"><%= provincia_count %></span>
+      </span>
+      <span class="wizard__group-expand">
+        <%= icon_tag "collapse" %>
+      </span>
+    </summary>
+
+    <div class="wizard__provincia-content">
+      <% aree.sort.each do |area, direzioni| %>
+        <% area_count = direzioni.sum { |_, s| s.size } %>
+        <details open class="wizard__provincia">
+          <summary class="wizard__group-bar">
+            <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+                    data-action="click->scuole-tree#toggleGroup:stop">
+              <%= initial_checked ? "deseleziona" : "seleziona" %>
+            </button>
+            <span class="wizard__group-label">
+              <span class="txt-x-small txt-bold"><%= area %></span>
+              <span class="badge txt-xx-small"><%= area_count %></span>
+            </span>
+            <span class="wizard__group-expand">
+              <%= icon_tag "collapse" %>
+            </span>
+          </summary>
+
+          <div class="wizard__provincia-content">
+            <% direzioni.sort.each do |_dir_label, scuole| %>
+              <div class="wizard__direzione-spacer"></div>
+              <% scuole.sort_by(&:denominazione).each do |scuola| %>
+                <%= render "giri/school_row", scuola: scuola, checked: initial_checked %>
+              <% end %>
+            <% end %>
+          </div>
+        </details>
+      <% end %>
+    </div>
+  </details>
+<% end %>
+
+<% if scuole_scartate.any? %>
+  <details class="wizard__provincia">
+    <summary class="wizard__group-bar">
+      <span class="wizard__group-label">
+        <span class="txt-bold txt-small txt-subtle">Scartate</span>
+        <span class="badge txt-xx-small"><%= scuole_scartate.size %></span>
+      </span>
+      <span class="wizard__group-expand">
+        <%= icon_tag "collapse" %>
+      </span>
+    </summary>
+    <div class="wizard__provincia-content">
+      <% scuole_scartate.sort_by(&:denominazione).each do |scuola| %>
+        <%= render "giri/school_row", scuola: scuola, checked: false %>
+      <% end %>
+    </div>
+  </details>
+<% end %>

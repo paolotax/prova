@@ -17,8 +17,10 @@ module Giri
       @finito_il = params[:finito_il]
 
       scuole = scuole_per_tipo(@tipo_giro, @collana_id)
-      @conteggio = scuole.size
-      @scuole_per_provincia = build_scuole_raggruppate(scuole)
+      non_scartate = scuole.non_scartate.to_a
+      @scuole_scartate = scuole.scartate_da_utente.to_a
+      @conteggio = non_scartate.size
+      @gerarchia = Scuola.to_gerarchia(non_scartate)
 
       respond_to do |format|
         format.html
@@ -34,9 +36,8 @@ module Giri
       @collana_id = params[:collana_id]
       @iniziato_il = params[:iniziato_il]
       @finito_il = params[:finito_il]
-      @school_ids = Array(params[:school_ids])
       @collana = Collana.find_by(id: @collana_id) if @collana_id.present?
-      @conteggio = @school_ids.size
+      @conteggio = params[:scuole_count].to_i
     end
 
     # POST /giri/wizard — Crea giro + tappe
@@ -56,16 +57,7 @@ module Giri
 
       ActiveRecord::Base.transaction do
         giro.save!
-
-        school_ids.each do |school_id|
-          tappa = current_user.tappe.create!(
-            tappable_type: "Scuola",
-            tappable_id: school_id,
-            account: Current.account,
-            data_tappa: nil
-          )
-          tappa.tappa_giri.create!(giro: giro)
-        end
+        giro.genera_tappe_per(school_ids: school_ids, user: current_user)
       end
 
       redirect_to giro_path(giro), notice: "Giro creato con #{school_ids.size} tappe."
@@ -83,17 +75,13 @@ module Giri
         base.joins(classi: :adozioni)
             .where(adozioni: { mia: true })
             .distinct
-      when "collane"
-        base.non_scartate
       when "ritiro_collane"
         base.joins(:bolle_visione)
             .where(bolle_visione: { collana_id: collana_id, user_id: current_user.id })
             .distinct
-      when "consegne", "visite"
-        base.non_scartate
       else
         base
-      end.order(:posizione)
+      end.includes(:direzione).order(:provincia, :area, :denominazione)
     end
 
     # Solo plessi e scuole autonome, mai le direzioni
@@ -101,27 +89,6 @@ module Giri
       Current.scuole.where.not(
         id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil)
       )
-    end
-
-    # Raggruppa scuole: provincia > area > direzione > plessi
-    def build_scuole_raggruppate(scuole)
-      loaded = scuole.includes(:direzione).order(:provincia, :area, :denominazione).to_a
-
-      loaded
-        .group_by(&:provincia)
-        .sort_by { |prov, _| prov.to_s }
-        .map do |provincia, scuole_prov|
-          gruppi_area = scuole_prov
-            .group_by { |s| s.area.presence || "Senza area" }
-            .sort_by { |area, _| area == "Senza area" ? "zzz" : area }
-            .map do |area, scuole_area|
-              gruppi_dir = scuole_area
-                .group_by { |s| s.direzione || s }
-                .sort_by { |dir, _| dir.denominazione.to_s }
-              [area, gruppi_dir]
-            end
-          [provincia, gruppi_area, scuole_prov.size]
-        end
     end
   end
 end

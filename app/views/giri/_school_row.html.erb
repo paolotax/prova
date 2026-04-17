@@ -1,8 +1,9 @@
-<%# locals: (scuola:) -%>
+<%# locals: (scuola:, checked: false) -%>
 <div id="<%= dom_id(scuola, :genera_row) %>" class="wizard__school-row flex align-center <%= 'txt-subtle' if scuola.scartata? %>">
   <label class="flex align-center gap-half flex-item-grow" style="<%= 'opacity: 0.5; text-decoration: line-through;' if scuola.scartata? %>">
     <input type="checkbox" name="school_ids[]" value="<%= scuola.id %>"
-           data-action="change->genera-tappe-ui#notifyChange"
+           <%= 'checked' if checked && !scuola.scartata? %>
+           data-action="change->scuole-tree#notifyChange"
            <%= 'disabled' if scuola.scartata? %>>
     <span class="wizard__school-text">
       <span class="wizard__school-name"><%= scuola.denominazione %></span>
