@@ -7,7 +7,14 @@ module Stats
       "provincia"  => 'isc."PROVINCIA"',
       "comune"     => 'isc."DESCRIZIONECOMUNE"',
       "titolo"     => 'ia."TITOLO"',
-      "scuola"     => 'isc."CODICESCUOLA"'
+      "scuola"     => 'isc."CODICESCUOLA"',
+      "grado"      => 'ts.grado'
+    }.freeze
+
+    GRADO_ALIASES = {
+      "E" => "E", "ELEMENTARI" => "E", "PRIMARIA" => "E",
+      "M" => "M", "MEDIE" => "M", "SECONDARIA_I" => "M", "SECONDARIA I" => "M",
+      "N" => "N", "S" => "N", "SUPERIORI" => "N", "SECONDARIA_II" => "N", "SECONDARIA II" => "N"
     }.freeze
 
     EXTRA_COLUMNS = {
@@ -63,13 +70,14 @@ module Stats
       "VT" => "VITERBO"
     }.freeze
 
-    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false)
+    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, solo_144: false, grado: "E")
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
       @order_by = ORDER_COLUMNS.include?(order_by.to_s) ? order_by.to_s : "classi_count"
       @limit = [limit, 500].min
-      @solo_144 = solo_144
+      @grado = self.class.expand_gradi(grado)
+      @solo_144 = solo_144 && @grado == ["E"]
     end
 
     def self.expand_provincia(value)
@@ -77,9 +85,16 @@ module Stats
       SIGLA_TO_PROVINCIA[upper] || upper
     end
 
+    def self.expand_gradi(value)
+      list = Array(value).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
+      list = ["E"] if list.empty?
+      list.map { |g| GRADO_ALIASES[g.upcase] || g.upcase }.uniq
+    end
+
     def call
       {
         filters_applied: @filters,
+        grado: @grado,
         group_by: @group_by,
         coefficiente: @coefficiente,
         solo_144: @solo_144 || nil,
@@ -105,8 +120,9 @@ module Stats
     end
 
     def base_where
-      conditions = ['ts.grado = ?', 'ia."DAACQUIST" = ?']
-      binds = ["E", "Si"]
+      placeholders = Array.new(@grado.size, "?").join(",")
+      conditions = ["ts.grado IN (#{placeholders})", 'ia."DAACQUIST" = ?']
+      binds = @grado + ["Si"]
       @filters.each do |key, value|
         next unless FILTERS.key?(key)
         conditions << FILTERS[key]
@@ -214,8 +230,9 @@ module Stats
 
     def column_alias(dimension)
       # Extract the PostgreSQL column name from the dimension expression
-      # e.g., 'ia."EDITORE"' -> "EDITORE", 'isc."PROVINCIA"' -> "PROVINCIA"
-      DIMENSIONS[dimension].match(/"([^"]+)"/)&.captures&.first
+      # e.g., 'ia."EDITORE"' -> "EDITORE", 'ts.grado' -> "grado"
+      expr = DIMENSIONS[dimension]
+      expr.match(/"([^"]+)"/)&.captures&.first || expr.split(".").last
     end
 
     def exec_query(sql, binds)
