@@ -1,6 +1,6 @@
 <%# locals: (giro:, giorni_timeline:, tappe_totali:, tappe_completate:) -%>
 
-<div class="panel" style="--panel-padding: var(--block-space-half) var(--block-space); margin-block-end: var(--block-space-half);">
+<div id="giro-info-panel" class="panel" style="--panel-padding: var(--block-space-half) var(--block-space); margin-block-end: var(--block-space-half);">
   <% if giro.descrizione.present? %>
     <p class="txt-small txt-subtle" style="margin: 0;"><%= giro.descrizione %></p>
   <% end %>

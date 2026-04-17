@@ -336,7 +336,6 @@ Rails.application.routes.draw do
 
     resources :giri do
       resource :planner, module: :giri, only: :show, controller: "planners"
-      resource :copia,   module: :giri, only: :new, controller: "copie"
 
       collection do
         get  'wizard',            to: 'giri/wizard#new',       as: 'wizard'
@@ -345,10 +344,11 @@ Rails.application.routes.draw do
         post 'wizard',            to: 'giri/wizard#create',    as: 'create_wizard'
       end
 
-      get  'genera_tappe', to: 'giri/tappe#new', as: 'genera_tappe'
-      post 'genera_tappe', to: 'giri/tappe#create'
-      post 'copia_tappe', to: 'giri/tappe#copy', as: 'copia_tappe'
-      delete 'svuota_tappe', to: 'giri/tappe#destroy_all', as: 'svuota_tappe'
+      scope module: "giri/tappe" do
+        resource :generazione, only: [:new, :create], controller: "generazione", path: "tappe/generazione", as: "tappe_generazione"
+        resource :copia,       only: [:new, :create], controller: "copia",       path: "tappe/copia",       as: "tappe_copia"
+        resource :svuotamento, only: :destroy,        controller: "svuotamento", path: "tappe/svuotamento", as: "tappe_svuotamento"
+      end
     end
 
     resources :tappe do

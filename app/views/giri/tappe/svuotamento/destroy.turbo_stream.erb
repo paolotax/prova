@@ -1,0 +1,17 @@
+<%= turbo_stream.replace "giro-planner" do %>
+  <%= render "giri/planner", giro: @giro, tappe_per_area: @tappe_per_area, total_count: @planner_total %>
+<% end %>
+
+<%= turbo_stream.replace "giro-info-panel" do %>
+  <%= render "giri/info_panel",
+      giro: @giro,
+      giorni_timeline: @giro.giorni_timeline(@tappe_per_giorno),
+      tappe_totali: @giro.tappe_totali,
+      tappe_completate: @giro.tappe_completate %>
+<% end %>
+
+<%= turbo_stream.update "weeks-container" do %>
+  <% @giro.settimane.each do |settimana| %>
+    <%= render "agenda/week", settimana: settimana, tappe_per_giorno: @tappe_per_giorno %>
+  <% end %>
+<% end %>

@@ -106,6 +106,88 @@ class Giro < ApplicationRecord
     tappe.completate.size
   end
 
+  def scuole_disponibili_per_tappe
+    existing_ids = tappe.where(tappable_type: "Scuola").pluck(:tappable_id).map(&:to_s)
+    Current.scuole
+      .where.not(id: Scuola.unscoped.select(:direzione_id).where.not(direzione_id: nil))
+      .where.not(id: existing_ids)
+      .includes(:direzione)
+      .order(:posizione)
+  end
+
+  def genera_tappe_per(school_ids:, user:)
+    Array(school_ids).map(&:to_s).each do |school_id|
+      tappa = user.tappe.create!(
+        tappable_type: "Scuola",
+        tappable_id: school_id,
+        account: account,
+        data_tappa: nil
+      )
+      tappa.tappa_giri.create!(giro: self)
+    end.size
+  end
+
+  def copia_tappe_da(source:, user:, schedule_dates: false)
+    existing_codes = tappe.where(tappable_type: "Scuola")
+      .joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id")
+      .pluck("scuole.codice_ministeriale").compact.to_set
+
+    scuole_by_codice = Current.scuole.where.not(codice_ministeriale: [nil, ""])
+      .index_by(&:codice_ministeriale)
+
+    schedule = schedule_dates && source.iniziato_il.present? && iniziato_il.present?
+    if schedule
+      source_start = source.iniziato_il.to_date.beginning_of_week
+      dest_start = iniziato_il.to_date.beginning_of_week
+    end
+
+    source_tappe = source.tappe.where(tappable_type: "Scuola")
+      .joins("INNER JOIN scuole ON tappe.tappable_id = scuole.id")
+      .select("tappe.*, scuole.codice_ministeriale AS source_codice")
+
+    count = 0
+    max_date = nil
+
+    source_tappe.each do |source_tappa|
+      codice = source_tappa.source_codice
+      next if codice.blank?
+      next if existing_codes.include?(codice)
+
+      target_scuola = scuole_by_codice[codice]
+      next unless target_scuola
+
+      new_date = nil
+      if schedule && source_tappa.data_tappa.present?
+        offset = source_tappa.data_tappa - source_start
+        new_date = dest_start + offset
+        max_date = [max_date, new_date].compact.max
+      end
+
+      tappa = user.tappe.create!(
+        tappable_type: "Scuola",
+        tappable_id: target_scuola.id,
+        account: account,
+        data_tappa: new_date
+      )
+      tappa.tappa_giri.create!(giro: self)
+      existing_codes << codice
+      count += 1
+    end
+
+    if schedule && max_date && (finito_il.nil? || max_date > finito_il.to_date)
+      update!(finito_il: max_date.end_of_week)
+    end
+
+    count
+  end
+
+  def svuota_tappe!
+    to_destroy = tappe.to_a
+    to_destroy.each(&:destroy!)
+    tappe.reset
+    to_destroy.size
+  end
+
   private
 
   def normalize_arrays

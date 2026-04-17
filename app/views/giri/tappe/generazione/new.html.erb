@@ -10,7 +10,7 @@
         Seleziona le scuole da aggiungere al giro.
       </p>
 
-      <%= form_with url: giro_genera_tappe_path(@giro), method: :post,
+      <%= form_with url: giro_tappe_generazione_path(@giro), method: :post,
           class: "flex flex-column gap",
           data: { controller: "genera-tappe-ui", action: "turbo:submit-end->dialog#close" } do |f| %>
 

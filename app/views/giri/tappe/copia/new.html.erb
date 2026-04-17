@@ -7,8 +7,9 @@
             data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
       <h3 class="txt-large txt-bold">Copia da giro</h3>
 
-      <%= form_with url: giro_copia_tappe_path(@giro), method: :post,
-          class: "flex flex-column gap" do |f| %>
+      <%= form_with url: giro_tappe_copia_path(@giro), method: :post,
+          class: "flex flex-column gap",
+          data: { turbo_frame: "_top" } do |f| %>
 
         <div>
           <label class="txt-small txt-bold">Giro sorgente</label>
