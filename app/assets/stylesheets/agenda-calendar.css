@@ -513,6 +513,10 @@
     color: var(--color-ink-inverted);
     cursor: grab;
     padding: 0.15em 0.4em;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    min-inline-size: 0;
 
     &:hover {
       filter: brightness(1.1);
@@ -524,6 +528,18 @@
 
     &.dragging {
       opacity: 0.4;
+    }
+
+    & > .txt-x-small {
+      flex: 1;
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    & .tappa-compact__giro-dots {
+      margin: -0.15em -0.4em -0.15em 0;
     }
   }
 
@@ -644,6 +660,32 @@
     padding-block-start: 4rem;
     position: sticky;
     top: 4rem;
+  }
+
+  /* Ghost tappe — tappe di altri giri nella show del giro corrente
+  /* ------------------------------------------------------------------------ */
+
+  .agenda-week__tappe-ghosts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    margin-block-start: 0.5em;
+    padding-block-start: 0.5em;
+    border-block-start: 1px dashed var(--color-ink-lighter);
+  }
+
+  .tappa-compact--ghost {
+    opacity: 0.55;
+    filter: grayscale(0.6);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.15s, filter 0.15s;
+  }
+
+  .tappa-compact--ghost:hover {
+    opacity: 0.85;
+    filter: grayscale(0.2);
   }
 
 }

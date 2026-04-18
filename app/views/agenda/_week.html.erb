@@ -1,4 +1,4 @@
-<%# locals: (settimana:, tappe_per_giorno:) -%>
+<%# locals: (settimana:, tappe_per_giorno:, altre_tappe_per_giorno: {}) -%>
 
 <% monday = settimana.first %>
 <% month_name = I18n.l(monday, format: "%B", locale: :it).upcase %>
@@ -55,6 +55,15 @@
           <%= render "tappe/tappa_compact", tappa: tappa %>
         <% end %>
       </div>
+
+      <% altre = altre_tappe_per_giorno[giorno] || [] %>
+      <% if altre.any? %>
+        <div class="agenda-week__tappe-ghosts">
+          <% altre.sort_by(&:position).each do |tappa| %>
+            <%= render "tappe/tappa_compact", tappa: tappa, ghost: true %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
@@ -98,6 +107,15 @@
             <%= render "tappe/tappa_compact", tappa: tappa %>
           <% end %>
         </div>
+
+        <% altre = altre_tappe_per_giorno[giorno] || [] %>
+        <% if altre.any? %>
+          <div class="agenda-week__tappe-ghosts">
+            <% altre.sort_by(&:position).each do |tappa| %>
+              <%= render "tappe/tappa_compact", tappa: tappa, ghost: true %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>

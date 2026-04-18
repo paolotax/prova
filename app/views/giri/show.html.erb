@@ -9,9 +9,33 @@
     <% end %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
-    <span style="background: <%= @giro.color %>; border-radius: 50%; display: inline-block; block-size: 0.6em; inline-size: 0.6em;"></span>
-    <span class="overflow-ellipsis"><%= @giro.titolo %></span>
+  <h1 class="header__title divider divider--fade full-width" style="min-inline-size: 0;">
+    <div style="position: relative;"
+         data-controller="dialog"
+         data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+      <button type="button"
+              style="background: transparent; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5em; max-inline-size: 100%;"
+              data-action="dialog#toggle">
+        <span style="background: <%= @giro.color %>; border-radius: 50%; display: inline-block; block-size: 0.6em; inline-size: 0.6em; flex-shrink: 0;"></span>
+        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-inline-size: 0;"><%= @giro.titolo %></span>
+        <%= icon_tag "caret-down", style: "--icon-size: 0.6em;" %>
+      </button>
+
+      <dialog class="popup panel fill-white shadow txt-small" data-dialog-target="dialog">
+        <ul class="popup__list">
+          <% current_user.giri.attivi.where.not(id: @giro.id).order(created_at: :desc).each do |g| %>
+            <li class="popup__item">
+              <%= link_to giro_path(g),
+                  class: "popup__btn btn flex align-center gap-half",
+                  data: { turbo_frame: "_top", action: "click->dialog#close" } do %>
+                <span style="background: <%= g.color %>; border-radius: 50%; display: inline-block; block-size: 0.6em; inline-size: 0.6em; flex-shrink: 0;"></span>
+                <span class="overflow-ellipsis"><%= g.titolo %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </dialog>
+    </div>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -39,7 +63,10 @@
   <div class="agenda-calendar">
     <div id="weeks-container">
       <% @giro.settimane.each do |settimana| %>
-        <%= render "agenda/week", settimana: settimana, tappe_per_giorno: @tappe_per_giorno %>
+        <%= render "agenda/week",
+            settimana: settimana,
+            tappe_per_giorno: @tappe_per_giorno,
+            altre_tappe_per_giorno: @altre_tappe_per_giorno %>
       <% end %>
     </div>
   </div>

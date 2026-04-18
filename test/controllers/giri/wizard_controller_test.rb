@@ -117,6 +117,55 @@ class Giri::WizardControllerTest < ActionDispatch::IntegrationTest
     assert_nil tappa.descrizione
   end
 
+  test "POST wizard mergia tappa esistente di altro giro" do
+    giro_a = @user.giri.create!(titolo: "Giro A", account: @account)
+    tappa_esistente = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current, account: @account)
+    tappa_esistente.tappa_giri.create!(giro: giro_a)
+
+    assert_no_difference "Tappa.count" do
+      assert_difference "Giro.count", 1 do
+        post create_wizard_giri_path(account_id: @account.id), params: {
+          tipo_giro: "visite",
+          titolo: "Nuovo",
+          iniziato_il: Date.current - 1.week,
+          finito_il: Date.current + 1.week,
+          school_ids: [@scuola.id]
+        }
+      end
+    end
+
+    giro_b = Giro.last
+    tappa_esistente.reload
+    assert_includes tappa_esistente.giri, giro_a
+    assert_includes tappa_esistente.giri, giro_b
+    assert_equal Date.current, tappa_esistente.data_tappa
+  end
+
+  test "POST wizard kit_adozioni non sovrascrive descrizione preesistente al merge" do
+    crea_mia_adozione(classe: @classe, libro: @libro)
+
+    giro_a = @user.giri.create!(titolo: "Giro A", account: @account)
+    tappa_esistente = @user.tappe.create!(
+      tappable: @scuola,
+      data_tappa: Date.current,
+      account: @account,
+      descrizione: "nota precedente"
+    )
+    tappa_esistente.tappa_giri.create!(giro: giro_a)
+
+    post create_wizard_giri_path(account_id: @account.id), params: {
+      tipo_giro: "kit_adozioni",
+      titolo: "Nuovo Kit",
+      iniziato_il: Date.current - 1.week,
+      finito_il: Date.current + 1.week,
+      school_ids: [@scuola.id],
+      libro_ids: [@libro.id]
+    }
+
+    tappa_esistente.reload
+    assert_equal "nota precedente", tappa_esistente.descrizione
+  end
+
   private
 
   def crea_mia_adozione(classe:, libro:)

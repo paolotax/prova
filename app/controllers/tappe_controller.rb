@@ -74,8 +74,9 @@ class TappeController < ApplicationController
 
     existing = find_duplicate_tappa(@tappa)
     if existing
+      merge_tappa_giri(existing, params[:tappa][:giro_ids])
       respond_to do |format|
-        format.html { redirect_to tappa_url(existing), notice: "Tappa già pianificata per questa destinazione." }
+        format.html { redirect_to tappa_url(existing), notice: "Tappa già pianificata, giri uniti a quella esistente." }
         format.json { render :show, status: :ok, location: existing }
       end
       return
@@ -163,14 +164,22 @@ class TappeController < ApplicationController
 
     def update_tappa_giri(tappa, giro_ids)
       return if giro_ids.blank?
-      
+
       # Converte la stringa di ID in un array di interi
       giro_ids_array = giro_ids.split(',').map(&:to_i)
-      
+
       # Rimuove tutte le associazioni esistenti e crea quelle nuove
       tappa.tappa_giri.destroy_all
       giro_ids_array.each do |giro_id|
         tappa.tappa_giri.create(giro_id: giro_id)
+      end
+    end
+
+    # Additive: aggiunge i giri passati senza rimuovere quelli esistenti.
+    def merge_tappa_giri(tappa, giro_ids)
+      return if giro_ids.blank?
+      giro_ids.split(',').map(&:to_i).each do |giro_id|
+        tappa.tappa_giri.find_or_create_by(giro_id: giro_id)
       end
     end
 

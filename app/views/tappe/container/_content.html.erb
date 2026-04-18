@@ -28,4 +28,8 @@
   <% if tappa.titolo.present? %>
     <div class="card__description"><%= tappa.titolo %></div>
   <% end %>
+
+  <% if tappa.descrizione.present? %>
+    <div class="card__description txt-subtle" style="white-space: pre-line;"><%= tappa.descrizione %></div>
+  <% end %>
 <% end %>

@@ -187,11 +187,43 @@ class Tappa < ApplicationRecord
     order(data_tappa: :desc).where("data_tappa < ?", Date.today).first
   end
 
-  # Upsert helper: pianifica una tappa per `tappable` nel `giro`.
-  # Se esiste già una tappa dello stesso user, tappable e giro con
-  # `data_tappa: nil` (da programmare) la aggiorna con la nuova data
-  # (e titolo opzionale, preservando quello esistente se il nuovo è blank).
-  # Altrimenti crea una nuova tappa + tappa_giro.
+  # Merge-or-create: aggiunge `giro` a una tappa esistente di `user` per
+  # `tappable` se questa è eleggibile, altrimenti crea una tappa nuova nel
+  # planner. Regole di eleggibilità:
+  #
+  # - Tappa in planner (data_tappa: nil): sempre eleggibile.
+  # - Tappa schedulata: eleggibile solo se data_tappa è dentro la finestra
+  #   iniziato_il..finito_il del giro. Fuori finestra (passata o oltre) →
+  #   nuova tappa.
+  # - Se il giro non ha finestra, solo le tappe in planner sono eleggibili.
+  #
+  # Precedenza: se c'è sia una schedulata in finestra sia una in planner, si
+  # mergia sulla schedulata.
+  def self.merge_or_create_in_giro!(user:, tappable:, giro:, account:)
+    scope = user.tappe.where(tappable: tappable)
+    scope = if giro.iniziato_il.present? && giro.finito_il.present?
+      scope.where("data_tappa IS NULL OR data_tappa BETWEEN ? AND ?",
+                  giro.iniziato_il.to_date, giro.finito_il.to_date)
+    else
+      scope.where(data_tappa: nil)
+    end
+
+    existing = scope.order(Arel.sql("data_tappa IS NULL"), data_tappa: :asc).first
+
+    if existing
+      existing.tappa_giri.find_or_create_by!(giro: giro)
+      existing
+    else
+      tappa = user.tappe.create!(
+        tappable: tappable,
+        account: account,
+        data_tappa: nil
+      )
+      tappa.tappa_giri.create!(giro: giro)
+      tappa
+    end
+  end
+
   def self.schedule_in_giro!(user:, tappable:, giro:, data_tappa:, titolo: nil)
     existing = user.tappe
       .where(tappable: tappable, data_tappa: nil)

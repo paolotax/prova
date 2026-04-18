@@ -144,4 +144,84 @@ class GiroTest < ActiveSupport::TestCase
     [t_past, t_future].each { |t| t.tappa_giri.create!(giro: giro) }
     assert_equal 1, giro.tappe_completate
   end
+
+  # Task — genera_tappe_per con merge
+
+  test "#genera_tappe_per mergia una tappa esistente invece di duplicare" do
+    scuola = scuole(:scuola_fizzy)
+    giro_a = @user.giri.create!(titolo: "Giro A")
+    giro_b = @user.giri.create!(
+      titolo: "Giro B",
+      iniziato_il: Date.current - 1.week, finito_il: Date.current + 1.week
+    )
+
+    tappa_esistente = @user.tappe.create!(tappable: scuola, data_tappa: Date.current)
+    tappa_esistente.tappa_giri.create!(giro: giro_a)
+
+    assert_no_difference "Tappa.count" do
+      giro_b.genera_tappe_per(school_ids: [scuola.id], user: @user)
+    end
+
+    tappa_esistente.reload
+    assert_includes tappa_esistente.giri, giro_a
+    assert_includes tappa_esistente.giri, giro_b
+    assert_equal Date.current, tappa_esistente.data_tappa
+  end
+
+  test "#genera_tappe_per crea tappa nuova quando scuola non ha tappe" do
+    scuola = scuole(:scuola_fizzy_nord)
+    giro = @user.giri.create!(titolo: "Giro nuovo")
+
+    assert_difference "Tappa.count", 1 do
+      giro.genera_tappe_per(school_ids: [scuola.id], user: @user)
+    end
+
+    tappa = giro.tappe.last
+    assert_equal scuola, tappa.tappable
+    assert_nil tappa.data_tappa
+  end
+
+  test "#genera_tappe_per è idempotente: non duplica l'associazione" do
+    scuola = scuole(:scuola_fizzy)
+    giro = @user.giri.create!(titolo: "Giro")
+
+    giro.genera_tappe_per(school_ids: [scuola.id], user: @user)
+    assert_no_difference ["Tappa.count", "TappaGiro.count"] do
+      giro.genera_tappe_per(school_ids: [scuola.id], user: @user)
+    end
+  end
+
+  # svuota_tappe! — preserva tappe multi-giro
+
+  test "#svuota_tappe! elimina le tappe appartenenti solo a questo giro" do
+    scuola = scuole(:scuola_fizzy)
+    giro = @user.giri.create!(titolo: "Solo")
+    tappa = @user.tappe.create!(tappable: scuola, data_tappa: nil)
+    tappa.tappa_giri.create!(giro: giro)
+
+    assert_difference "Tappa.count", -1 do
+      count = giro.svuota_tappe!
+      assert_equal 1, count
+    end
+  end
+
+  test "#svuota_tappe! mantiene le tappe condivise con altri giri" do
+    scuola = scuole(:scuola_fizzy)
+    giro_a = @user.giri.create!(titolo: "A")
+    giro_b = @user.giri.create!(titolo: "B")
+    tappa = @user.tappe.create!(tappable: scuola, data_tappa: nil)
+    tappa.tappa_giri.create!(giro: giro_a)
+    tappa.tappa_giri.create!(giro: giro_b)
+
+    assert_no_difference "Tappa.count" do
+      assert_difference "TappaGiro.count", -1 do
+        count = giro_b.svuota_tappe!
+        assert_equal 1, count
+      end
+    end
+
+    tappa.reload
+    assert_includes tappa.giri, giro_a
+    refute_includes tappa.giri, giro_b
+  end
 end

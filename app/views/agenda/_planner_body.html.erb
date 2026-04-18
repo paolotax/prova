@@ -23,6 +23,13 @@
                  data-school-id="<%= tappa.tappable_id %>"
                  data-action="dragstart->agenda-planner#dragStart dragend->agenda-planner#dragEnd">
               <span class="txt-x-small"><%= tappa.tappable.denominazione %></span>
+              <% if tappa.giri.any? %>
+                <span class="tappa-compact__giro-dots">
+                  <% tappa.giri.each do |giro| %>
+                    <span class="tappa-compact__giro-dot" style="background: <%= giro.color %>;"></span>
+                  <% end %>
+                </span>
+              <% end %>
             </div>
           <% end %>
         </div>

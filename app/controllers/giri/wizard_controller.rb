@@ -166,6 +166,7 @@ module Giri
       giro.tappe.reload.includes(:tappable).each do |tappa|
         scuola = tappa.tappable
         next unless scuola.is_a?(Scuola)
+        next if tappa.descrizione.present?
 
         righe = righe_kit_per(scuola, libro_ids)
         next if righe.empty?

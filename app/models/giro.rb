@@ -40,6 +40,8 @@ class Giro < ApplicationRecord
 
   TIPI_GIRO = %w[kit_adozioni collane ritiro_collane consegne visite].freeze
 
+  scope :attivi, -> { where("finito_il IS NULL OR finito_il >= ?", Date.current.beginning_of_year) }
+
   validates :titolo, presence: true
   validates :tipo_giro, inclusion: { in: TIPI_GIRO }, allow_nil: true
 
@@ -116,14 +118,11 @@ class Giro < ApplicationRecord
   end
 
   def genera_tappe_per(school_ids:, user:)
+    scuole = Scuola.where(id: Array(school_ids).map(&:to_s)).index_by { |s| s.id.to_s }
     Array(school_ids).map(&:to_s).each do |school_id|
-      tappa = user.tappe.create!(
-        tappable_type: "Scuola",
-        tappable_id: school_id,
-        account: account,
-        data_tappa: nil
-      )
-      tappa.tappa_giri.create!(giro: self)
+      scuola = scuole[school_id]
+      next unless scuola
+      Tappa.merge_or_create_in_giro!(user: user, tappable: scuola, giro: self, account: account)
     end.size
   end
 
@@ -182,10 +181,23 @@ class Giro < ApplicationRecord
   end
 
   def svuota_tappe!
-    to_destroy = tappe.to_a
-    to_destroy.each(&:destroy!)
+    tappe_correnti = tappe.includes(:tappa_giri).to_a
+    count = 0
+
+    tappe_correnti.each do |tappa|
+      link = tappa.tappa_giri.find { |tg| tg.giro_id == id }
+      next unless link
+
+      if tappa.tappa_giri.size > 1
+        link.destroy!
+      else
+        tappa.destroy!
+      end
+      count += 1
+    end
+
     tappe.reset
-    to_destroy.size
+    count
   end
 
   private

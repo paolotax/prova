@@ -42,8 +42,14 @@ class TappaTest < ActiveSupport::TestCase
     Current.account = @fizzy
     Current.user = @user
 
-    @giro = Giro.create!(user: @user, titolo: "Giro Test")
-    @altro_giro = Giro.create!(user: @user, titolo: "Altro Giro")
+    @giro = Giro.create!(
+      user: @user, titolo: "Giro Test",
+      iniziato_il: Date.current - 2.weeks, finito_il: Date.current + 2.weeks
+    )
+    @altro_giro = Giro.create!(
+      user: @user, titolo: "Altro Giro",
+      iniziato_il: Date.current - 2.weeks, finito_il: Date.current + 2.weeks
+    )
   end
 
   teardown do
@@ -253,5 +259,88 @@ class TappaTest < ActiveSupport::TestCase
 
     assert_includes all_tappe, scuola_tappa
     assert all_tappe.none? { |t| t.tappable_type == "Cliente" }
+  end
+
+  # merge_or_create_in_giro!
+
+  test "merge_or_create_in_giro! crea tappa nuova quando non esiste" do
+    scuola_nuova = scuole(:scuola_fizzy_nord)
+    assert_difference ["Tappa.count", "TappaGiro.count"], 1 do
+      tappa = Tappa.merge_or_create_in_giro!(user: @user, tappable: scuola_nuova, giro: @giro, account: @fizzy)
+      assert_nil tappa.data_tappa
+      assert_includes tappa.giri, @giro
+    end
+  end
+
+  test "merge_or_create_in_giro! mergia su tappa esistente senza duplicare" do
+    tappa = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current)
+    tappa.tappa_giri.create!(giro: @giro)
+
+    assert_no_difference "Tappa.count" do
+      assert_difference "TappaGiro.count", 1 do
+        result = Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: @altro_giro, account: @fizzy)
+        assert_equal tappa, result
+      end
+    end
+
+    tappa.reload
+    assert_includes tappa.giri, @giro
+    assert_includes tappa.giri, @altro_giro
+  end
+
+  test "merge_or_create_in_giro! è idempotente se giro già associato" do
+    tappa = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current)
+    tappa.tappa_giri.create!(giro: @giro)
+
+    assert_no_difference ["Tappa.count", "TappaGiro.count"] do
+      Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: @giro, account: @fizzy)
+    end
+  end
+
+  test "merge_or_create_in_giro! preferisce tappa schedulata quando ci sono duplicati nil" do
+    tappa_nil = @user.tappe.create!(tappable: @scuola, data_tappa: nil)
+    tappa_schedulata = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current)
+    tappa_nil.tappa_giri.create!(giro: @giro)
+
+    result = Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: @altro_giro, account: @fizzy)
+    assert_equal tappa_schedulata, result
+  end
+
+  test "merge_or_create_in_giro! ignora tappe passate e crea una nuova nel planner" do
+    tappa_passata = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current - 1.month)
+    tappa_passata.tappa_giri.create!(giro: @giro)
+
+    assert_difference "Tappa.count", 1 do
+      result = Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: @altro_giro, account: @fizzy)
+      assert_nil result.data_tappa
+      assert_includes result.giri, @altro_giro
+      refute_equal tappa_passata, result
+    end
+  end
+
+  test "merge_or_create_in_giro! ignora tappe oltre la finestra del giro" do
+    giro_breve = Giro.create!(
+      user: @user, titolo: "Giro breve",
+      iniziato_il: Date.current, finito_il: Date.current + 1.week
+    )
+    tappa_oltre = @user.tappe.create!(tappable: @scuola, data_tappa: Date.current + 2.months)
+    tappa_oltre.tappa_giri.create!(giro: @giro)
+
+    assert_difference "Tappa.count", 1 do
+      result = Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: giro_breve, account: @fizzy)
+      assert_nil result.data_tappa
+      refute_equal tappa_oltre, result
+    end
+  end
+
+  test "merge_or_create_in_giro! mergia tappa in planner anche se giro non ha finestra" do
+    giro_senza_date = Giro.create!(user: @user, titolo: "Senza date")
+    tappa_planner = @user.tappe.create!(tappable: @scuola, data_tappa: nil)
+    tappa_planner.tappa_giri.create!(giro: @giro)
+
+    assert_no_difference "Tappa.count" do
+      result = Tappa.merge_or_create_in_giro!(user: @user, tappable: @scuola, giro: giro_senza_date, account: @fizzy)
+      assert_equal tappa_planner, result
+    end
   end
 end

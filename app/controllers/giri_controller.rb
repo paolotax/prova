@@ -16,6 +16,7 @@ class GiriController < ApplicationController
     @tappe_per_giorno  = @giro.tappe_per_giorno
     @tappe_per_area    = @giro.tappe.da_programmare.raggruppate_per_area
     @planner_total     = @tappe_per_area.sum { |_, dirs| dirs.sum { |_, t| t.size } }
+    @altre_tappe_per_giorno = altre_tappe_per_giorno(@giro)
   end
 
   def new
@@ -73,6 +74,18 @@ class GiriController < ApplicationController
 
   def set_giro
     @giro = current_user.giri.find(params[:id])
+  end
+
+  def altre_tappe_per_giorno(giro)
+    settimane = giro.settimane
+    return {} if settimane.empty?
+
+    window = settimane.first.first..settimane.last.last
+    current_user.tappe
+      .where(data_tappa: window)
+      .where.not(id: giro.tappe.select(:id))
+      .includes(:tappable, :giri)
+      .group_by(&:data_tappa)
   end
 
   def giro_params

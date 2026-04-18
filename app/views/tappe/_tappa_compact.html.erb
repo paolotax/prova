@@ -1,25 +1,47 @@
-<%# locals: (tappa:) -%>
+<%# locals: (tappa:, ghost: false) -%>
 
 <% if tappa.present? && tappa.persisted? %>
-  <div class="tappa-compact <%= tappa_type_modifier(tappa) %>"
-       id="<%= dom_id(tappa) %>"
-       draggable="true"
-       data-tappa-id="<%= tappa.id %>"
-       data-tax-sortable-update-url="<%= tappa_sort_path(tappa) %>"
-       style="--tappa-color: <%= tappa_color(tappa) %>">
+  <% if ghost %>
+    <%= link_to tappa_path(tappa),
+        class: "tappa-compact tappa-compact--ghost #{tappa_type_modifier(tappa)}",
+        id: dom_id(tappa, :ghost),
+        style: "--tappa-color: #{tappa_color(tappa)}",
+        data: { turbo_frame: "_top" } do %>
+      <div class="tappa-compact__content">
+        <span class="tappa-compact__name"><%= tappa.tappable.denominazione %></span>
+        <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+          <span class="tappa-compact__city"><%= tappa.tappable.comune %></span>
+        <% end %>
+      </div>
+      <% if tappa.giri.any? %>
+        <span class="tappa-compact__giro-dots">
+          <% tappa.giri.each do |giro| %>
+            <span class="tappa-compact__giro-dot" style="background: <%= giro.color %>;"></span>
+          <% end %>
+        </span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="tappa-compact <%= tappa_type_modifier(tappa) %>"
+         id="<%= dom_id(tappa) %>"
+         draggable="true"
+         data-tappa-id="<%= tappa.id %>"
+         data-tax-sortable-update-url="<%= tappa_sort_path(tappa) %>"
+         style="--tappa-color: <%= tappa_color(tappa) %>">
 
-    <div class="tappa-compact__content">
-      <span class="tappa-compact__name"><%= tappa.tappable.denominazione %></span>
-      <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
-        <span class="tappa-compact__city"><%= tappa.tappable.comune %></span>
+      <div class="tappa-compact__content">
+        <span class="tappa-compact__name"><%= tappa.tappable.denominazione %></span>
+        <% if tappa.tappable.respond_to?(:comune) && tappa.tappable.comune.present? %>
+          <span class="tappa-compact__city"><%= tappa.tappable.comune %></span>
+        <% end %>
+      </div>
+      <% if tappa.giri.any? %>
+        <span class="tappa-compact__giro-dots">
+          <% tappa.giri.each do |giro| %>
+            <span class="tappa-compact__giro-dot" style="background: <%= giro.color %>;"></span>
+          <% end %>
+        </span>
       <% end %>
     </div>
-    <% if tappa.giri.any? %>
-      <span class="tappa-compact__giro-dots">
-        <% tappa.giri.each do |giro| %>
-          <span class="tappa-compact__giro-dot" style="background: <%= giro.color %>;"></span>
-        <% end %>
-      </span>
-    <% end %>
-  </div>
+  <% end %>
 <% end %>
