@@ -24,6 +24,16 @@
         <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Scuole</dt>
         <dd class="txt-small"><%= @conteggio %> scuole</dd>
       </div>
+      <% if @libri_riepilogo.any? %>
+        <div class="flex gap">
+          <dt class="txt-bold txt-small" style="min-inline-size: 8rem;">Libri</dt>
+          <dd class="txt-small flex flex-column gap-half">
+            <% @libri_riepilogo.each do |libro, adozioni_count| %>
+              <span><%= libro.titolo %> — <%= adozioni_count %> <%= 'adozione'.pluralize(adozioni_count) %></span>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
     </dl>
   </div>
 <% end %>

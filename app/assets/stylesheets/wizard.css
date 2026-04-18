@@ -296,7 +296,7 @@
     opacity: 1;
   }
 
-  /* ── Step 3: School list ── */
+  /* ── Tree list (scuole, libri, ...) ── */
 
   .wizard__group-bar {
     display: flex;
@@ -366,7 +366,7 @@
     border-block-start: none;
   }
 
-  .wizard__school-list {
+  .wizard__tree {
     max-block-size: 60vh;
     overflow-y: auto;
     border: 1px solid var(--color-border);
@@ -375,28 +375,28 @@
   }
 
   @media (min-width: 640px) {
-    .wizard__school-list {
+    .wizard__tree {
       max-block-size: 65vh;
     }
   }
 
-  .wizard__provincia {
+  .wizard__tree-group {
     margin-block-end: var(--block-space-half);
   }
 
-  .wizard__provincia-content {
+  .wizard__tree-group-content {
     padding-inline-start: var(--inline-space-half);
   }
 
-  .wizard__direzione-spacer {
+  .wizard__tree-spacer {
     block-size: var(--block-space);
   }
 
-  .wizard__direzione-spacer:first-child {
+  .wizard__tree-spacer:first-child {
     display: none;
   }
 
-  .wizard__school-row {
+  .wizard__tree-item {
     display: flex;
     align-items: center;
     gap: var(--inline-space-half);
@@ -406,11 +406,11 @@
     font-size: var(--text-small);
   }
 
-  .wizard__school-row:hover {
+  .wizard__tree-item:hover {
     background: color-mix(in oklch, var(--color-ink) 3%, transparent);
   }
 
-  .wizard__school-row input[type="checkbox"] {
+  .wizard__tree-item input[type="checkbox"] {
     appearance: none;
     background: var(--color-canvas);
     block-size: 1.4em;
@@ -422,12 +422,12 @@
     transition: all 150ms ease;
   }
 
-  .wizard__school-row input[type="checkbox"]:checked {
+  .wizard__tree-item input[type="checkbox"]:checked {
     background: oklch(65% 0.25 250);
     border-color: oklch(65% 0.25 250);
   }
 
-  .wizard__school-row input[type="checkbox"]:checked::after {
+  .wizard__tree-item input[type="checkbox"]:checked::after {
     color: white;
     content: "✓";
     display: block;
@@ -437,20 +437,20 @@
     text-align: center;
   }
 
-  .wizard__school-text {
+  .wizard__tree-item-text {
     display: flex;
     flex-direction: column;
     flex: 1;
     min-inline-size: 0;
   }
 
-  .wizard__school-name {
+  .wizard__tree-item-title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .wizard__school-comune {
+  .wizard__tree-item-sub {
     font-size: var(--text-xx-small);
     color: var(--color-ink-medium);
   }

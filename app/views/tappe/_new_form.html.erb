@@ -17,10 +17,17 @@
   </div>
 
   <div class="form-field" style="inline-size: 100%;">
-    <%= form.label :titolo, "Note", class: "form-label" %>
+    <%= form.label :titolo, "Titolo / note", class: "form-label" %>
     <%= form.text_area :titolo, rows: 2,
         class: "input",
-        placeholder: "Note..." %>
+        placeholder: "Titolo / note..." %>
+  </div>
+
+  <div class="form-field" style="inline-size: 100%;">
+    <%= form.label :descrizione, "Descrizione", class: "form-label" %>
+    <%= form.text_area :descrizione, rows: 2,
+        class: "input",
+        placeholder: "Descrizione..." %>
   </div>
 
   <div class="form-field" style="max-inline-size: max-content;">

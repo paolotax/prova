@@ -16,7 +16,7 @@
                   scuole_tree_submit_template_value: "Genera {count} tappe",
                   action: "turbo:submit-end->dialog#close" } do |f| %>
 
-        <div class="wizard__school-list" style="max-block-size: 55vh;">
+        <div class="wizard__tree" style="max-block-size: 55vh;">
           <%= render "giri/scuole_tree",
               gerarchia: @gerarchia,
               scuole_scartate: @scuole_scartate,

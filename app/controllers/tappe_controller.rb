@@ -175,7 +175,7 @@ class TappeController < ApplicationController
     end
 
     def tappa_params
-      params.require(:tappa).permit(:tappable, :titolo, :data_tappa, :giro_id, :tappable_id, :tappable_type, :tappable_value, :new_giro, :position, :giro_ids)
+      params.require(:tappa).permit(:tappable, :titolo, :descrizione, :data_tappa, :giro_id, :tappable_id, :tappable_type, :tappable_value, :new_giro, :position, :giro_ids)
     end
 
    

@@ -1,0 +1,52 @@
+<%# locals: (gerarchia:, selected_ids: [], sezioni_per_libro: {}) -%>
+<% selected_ids = Array(selected_ids).map(&:to_s) %>
+<% sezioni_per_libro ||= {} %>
+
+<% gerarchia.each do |classe, discipline| %>
+  <% classe_count = discipline.sum { |_, libri| libri.size } %>
+  <% classe_label = classe.to_i.zero? ? "Senza classe" : "Classe #{classe}" %>
+  <details open class="wizard__tree-group">
+    <summary class="wizard__group-bar">
+      <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+              data-action="click->libri-tree#toggleGroup:stop">
+        seleziona
+      </button>
+      <span class="wizard__group-label">
+        <span class="txt-bold txt-small"><%= classe_label %></span>
+        <span class="badge txt-xx-small"><%= classe_count %></span>
+      </span>
+      <span class="wizard__group-expand">
+        <%= icon_tag "collapse" %>
+      </span>
+    </summary>
+
+    <div class="wizard__tree-group-content">
+      <% discipline.each do |disciplina, libri| %>
+        <details open class="wizard__tree-group">
+          <summary class="wizard__group-bar">
+            <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
+                    data-action="click->libri-tree#toggleGroup:stop">
+              seleziona
+            </button>
+            <span class="wizard__group-label">
+              <span class="txt-x-small txt-bold"><%= disciplina %></span>
+              <span class="badge txt-xx-small"><%= libri.size %></span>
+            </span>
+            <span class="wizard__group-expand">
+              <%= icon_tag "collapse" %>
+            </span>
+          </summary>
+
+          <div class="wizard__tree-group-content">
+            <% libri.each do |libro| %>
+              <%= render "giri/libro_row",
+                  libro: libro,
+                  checked: selected_ids.include?(libro.id.to_s),
+                  sezioni_count: sezioni_per_libro[libro.id].to_i %>
+            <% end %>
+          </div>
+        </details>
+      <% end %>
+    </div>
+  </details>
+<% end %>

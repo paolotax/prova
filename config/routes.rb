@@ -339,6 +339,7 @@ Rails.application.routes.draw do
 
       collection do
         get  'wizard',            to: 'giri/wizard#new',       as: 'wizard'
+        get  'wizard/libri',      to: 'giri/wizard#libri',     as: 'wizard_libri'
         get  'wizard/scuole',     to: 'giri/wizard#scuole',    as: 'wizard_scuole'
         get  'wizard/riepilogo',  to: 'giri/wizard#riepilogo', as: 'wizard_riepilogo'
         post 'wizard',            to: 'giri/wizard#create',    as: 'create_wizard'

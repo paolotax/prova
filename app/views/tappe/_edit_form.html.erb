@@ -18,12 +18,18 @@
   <div class="form-field" style="margin-top: 1ch;">
     <%= form.text_area :titolo, rows: 2,
         class: "input",
-        placeholder: "Note..." %>
+        placeholder: "Titolo / note..." %>
   </div>
 
-      <div class="form-field">
-      <%= date_input(form, :data_tappa) %>
-    </div>
+  <div class="form-field">
+    <%= form.text_area :descrizione, rows: 2,
+        class: "input",
+        placeholder: "Descrizione..." %>
+  </div>
+
+  <div class="form-field">
+    <%= date_input(form, :data_tappa) %>
+  </div>
 
 
 <% end %>

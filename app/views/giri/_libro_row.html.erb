@@ -1,0 +1,20 @@
+<%# locals: (libro:, checked: false, sezioni_count: 0) -%>
+<div class="wizard__tree-item flex align-center">
+  <label class="flex align-center gap-half flex-item-grow">
+    <input type="checkbox" name="libro_ids[]" value="<%= libro.id %>"
+           <%= 'checked' if checked %>
+           data-action="change->libri-tree#notifyChange">
+    <span class="wizard__tree-item-text">
+      <span class="wizard__tree-item-title"><%= libro.titolo %></span>
+      <% if libro.editore&.editore.present? %>
+        <span class="wizard__tree-item-sub"><%= libro.editore.editore %></span>
+      <% end %>
+    </span>
+  </label>
+  <% if sezioni_count.positive? %>
+    <span class="badge txt-xx-small" style="white-space: nowrap;"
+          title="sezioni adottate">
+      <%= sezioni_count %> <%= 'sezione'.pluralize(sezioni_count) %>
+    </span>
+  <% end %>
+</div>

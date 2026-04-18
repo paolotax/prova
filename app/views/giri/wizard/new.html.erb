@@ -30,6 +30,10 @@
           <span class="wizard__step-number">2</span>
           <span class="wizard__step-label">Dettagli</span>
         </li>
+        <li class="wizard__step" data-wizard-target="stepIndicator" data-step="libri" hidden>
+          <span class="wizard__step-number">3</span>
+          <span class="wizard__step-label">Libri</span>
+        </li>
         <li class="wizard__step" data-wizard-target="stepIndicator" data-step="scuole">
           <span class="wizard__step-number">3</span>
           <span class="wizard__step-label">Scuole</span>
@@ -119,6 +123,16 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Step libri (loaded via Turbo Frame, solo per kit_adozioni) -->
+      <div class="wizard__panel" data-wizard-target="panel" data-step="libri" hidden>
+        <%= turbo_frame_tag "wizard_libri" do %>
+          <div class="wizard__panel-header">
+            <h3 class="wizard__heading">Libri adottati</h3>
+            <p class="wizard__subheading">Caricamento...</p>
+          </div>
+        <% end %>
       </div>
 
       <!-- Step 3: Scuole (loaded via Turbo Frame) -->

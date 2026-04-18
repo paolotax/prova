@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "wizard_libri" do %>
+  <div data-controller="libri-tree">
+    <div class="wizard__panel-header">
+      <h3 class="wizard__heading">
+        Libri adottati
+        <span class="badge" data-libri-tree-target="selectedCount">0</span>
+        / <span class="badge"><%= @conteggio %></span>
+      </h3>
+      <p class="wizard__subheading">Seleziona i libri per cui preparare il kit</p>
+    </div>
+
+    <div class="wizard__tree">
+      <%= render "giri/libri_tree",
+          gerarchia: @libri_gerarchia,
+          selected_ids: @libro_ids,
+          sezioni_per_libro: @sezioni_per_libro %>
+    </div>
+  </div>
+<% end %>

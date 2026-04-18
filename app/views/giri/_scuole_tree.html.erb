@@ -2,7 +2,7 @@
 
 <% gerarchia.sort.each do |provincia, aree| %>
   <% provincia_count = aree.sum { |_, dirs| dirs.sum { |_, s| s.size } } %>
-  <details open class="wizard__provincia">
+  <details open class="wizard__tree-group">
     <summary class="wizard__group-bar">
       <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
               data-action="click->scuole-tree#toggleGroup:stop">
@@ -17,10 +17,10 @@
       </span>
     </summary>
 
-    <div class="wizard__provincia-content">
+    <div class="wizard__tree-group-content">
       <% aree.sort.each do |area, direzioni| %>
         <% area_count = direzioni.sum { |_, s| s.size } %>
-        <details open class="wizard__provincia">
+        <details open class="wizard__tree-group">
           <summary class="wizard__group-bar">
             <button type="button" class="wizard__group-select btn btn--plain txt-xx-small"
                     data-action="click->scuole-tree#toggleGroup:stop">
@@ -35,9 +35,9 @@
             </span>
           </summary>
 
-          <div class="wizard__provincia-content">
+          <div class="wizard__tree-group-content">
             <% direzioni.sort.each do |_dir_label, scuole| %>
-              <div class="wizard__direzione-spacer"></div>
+              <div class="wizard__tree-spacer"></div>
               <% scuole.sort_by(&:denominazione).each do |scuola| %>
                 <%= render "giri/school_row", scuola: scuola, checked: initial_checked %>
               <% end %>
@@ -50,7 +50,7 @@
 <% end %>
 
 <% if scuole_scartate.any? %>
-  <details class="wizard__provincia">
+  <details class="wizard__tree-group">
     <summary class="wizard__group-bar">
       <span class="wizard__group-label">
         <span class="txt-bold txt-small txt-subtle">Scartate</span>
@@ -60,7 +60,7 @@
         <%= icon_tag "collapse" %>
       </span>
     </summary>
-    <div class="wizard__provincia-content">
+    <div class="wizard__tree-group-content">
       <% scuole_scartate.sort_by(&:denominazione).each do |scuola| %>
         <%= render "giri/school_row", scuola: scuola, checked: false %>
       <% end %>

@@ -50,6 +50,12 @@
               <%= tag.span tappa.titolo %>
             </div>
           <% end %>
+
+          <% if tappa.descrizione.present? %>
+            <div class="txt-xx-small margin-inline-start-half overflow-line-clamp txt-subtle" style="margin-top: 0.25ch; --lines: 6; white-space: pre-line;">
+              <%= tag.span tappa.descrizione %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>

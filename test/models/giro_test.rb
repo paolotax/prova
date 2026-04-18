@@ -1,3 +1,33 @@
+# == Schema Information
+#
+# Table name: giri
+#
+#  id          :bigint           not null, primary key
+#  color       :string           default("var(--color-card-default)")
+#  conditions  :text
+#  descrizione :string
+#  finito_il   :datetime
+#  iniziato_il :datetime
+#  stato       :string
+#  tipo_giro   :string
+#  titolo      :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  account_id  :uuid             not null
+#  collana_id  :uuid
+#  user_id     :bigint           not null
+#
+# Indexes
+#
+#  index_giri_on_account_id  (account_id)
+#  index_giri_on_collana_id  (collana_id)
+#  index_giri_on_user_id     (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (user_id => users.id)
+#
 require "test_helper"
 
 class GiroTest < ActiveSupport::TestCase
