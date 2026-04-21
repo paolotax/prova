@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_080000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1750,4 +1750,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_220000) do
     GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
     ORDER BY libri.titolo;
   SQL
+  create_view "mercato_nazionale_libri", materialized: true, sql_definition: <<-SQL
+      SELECT import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+      import_adozioni."DISCIPLINA" AS disciplina,
+      import_adozioni."ANNOCORSO" AS anno_corso,
+      import_adozioni."CODICEISBN" AS codice_isbn,
+      count(DISTINCT (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text)) AS sezioni
+     FROM import_adozioni
+    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
+    GROUP BY import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."CODICEISBN";
+  SQL
+  add_index "mercato_nazionale_libri", ["tipo_grado_scuola", "disciplina", "anno_corso", "codice_isbn"], name: "idx_mercato_naz_libri_pk", unique: true
+
+  create_view "mercato_nazionale_mercati", materialized: true, sql_definition: <<-SQL
+      SELECT import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+      import_adozioni."DISCIPLINA" AS disciplina,
+      import_adozioni."ANNOCORSO" AS anno_corso,
+      count(DISTINCT (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text)) AS sezioni
+     FROM import_adozioni
+    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
+    GROUP BY import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO";
+  SQL
+  add_index "mercato_nazionale_mercati", ["tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_naz_mercati_pk", unique: true
+
 end

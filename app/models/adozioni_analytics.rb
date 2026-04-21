@@ -94,26 +94,69 @@ class AdozioniAnalytics
       )
   end
 
-  # Sezioni per ciascun libro nel mercato (tipo_scuola, disciplina, anno_corso, ISBN)
-  # Se codici_ministeriali è passato, limita alle scuole indicate (zona); altrimenti calcola su tutta Italia.
-  # Ritorna hash: { [tipo_scuola, disciplina, anno_corso, codice_isbn] => sezioni }
+  # national_* leggono dalle materialized view rollup.
+  # Hash: { [grado, disciplina, anno_corso, codice_isbn] => sezioni }
   def national_book_shares(rows)
-    book_shares(rows)
+    tuples = rows.flat_map { |r|
+      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
+    }.uniq.reject { |t| t.any?(&:blank?) }
+    return {} if tuples.empty?
+
+    sql = <<~SQL
+      WITH m (tg, disciplina, anno_corso, codice_isbn) AS (VALUES #{tuples_sql(tuples)})
+      SELECT r.tipo_grado_scuola, r.disciplina, r.anno_corso, r.codice_isbn, r.sezioni
+      FROM mercato_nazionale_libri r
+      JOIN m ON m.tg          = r.tipo_grado_scuola
+            AND m.disciplina  = r.disciplina
+            AND m.anno_corso  = r.anno_corso
+            AND m.codice_isbn = r.codice_isbn
+    SQL
+
+    result = Hash.new(0)
+    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
+      tg, disc, anno, isbn, sez = row
+      grado = TG_TO_GRADO[tg] or next
+      result[[grado, disc, anno, isbn]] += sez.to_i
+    end
+    result
+  end
+
+  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni }
+  def national_market_totals(rows)
+    tuples = rows.flat_map { |r|
+      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
+    }.uniq.reject { |t| t.any?(&:blank?) }
+    return {} if tuples.empty?
+
+    sql = <<~SQL
+      WITH m (tg, disciplina, anno_corso) AS (VALUES #{tuples_sql(tuples)})
+      SELECT r.tipo_grado_scuola, r.disciplina, r.anno_corso, r.sezioni
+      FROM mercato_nazionale_mercati r
+      JOIN m ON m.tg         = r.tipo_grado_scuola
+            AND m.disciplina = r.disciplina
+            AND m.anno_corso = r.anno_corso
+    SQL
+
+    result = Hash.new(0)
+    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
+      tg, disc, anno, sez = row
+      grado = TG_TO_GRADO[tg] or next
+      result[[grado, disc, anno]] += sez.to_i
+    end
+    result
   end
 
   def zone_book_shares(rows, codici_ministeriali:)
     book_shares(rows, codici_ministeriali: codici_ministeriali)
   end
 
-  # Totale sezioni per ciascun mercato (tipo_scuola, disciplina, anno_corso) presente nelle righe mie.
-  # Se codici_ministeriali è passato, limita alle scuole indicate (zona); altrimenti calcola su tutta Italia.
-  # Ritorna hash: { [tipo_scuola, disciplina, anno_corso] => totale_sezioni }
-  def national_market_totals(rows)
-    market_totals(rows)
-  end
-
   def zone_market_totals(rows, codici_ministeriali:)
     market_totals(rows, codici_ministeriali: codici_ministeriali)
+  end
+
+  def self.refresh_rollup!
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_nazionale_libri")
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_nazionale_mercati")
   end
 
   # Available filter options scoped to mie adozioni da_acquistare
