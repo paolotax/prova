@@ -12,8 +12,8 @@
   </div>
 <% end %>
 
-<section class="panel panel--wide shadow center margin-block-start">
-  <% if @collane.any? %>
+<% if @collane.any? %>
+  <section class="panel panel--wide shadow center margin-block-start">
     <ul class="flex flex-column gap-half unpad margin-none">
       <% @collane.each do |collana| %>
         <li class="list-style-none flex align-center gap full-width">
@@ -25,7 +25,7 @@
         </li>
       <% end %>
     </ul>
-  <% else %>
-    <%= blank_slate_for(:collane, filtering: @user_filtering) %>
-  <% end %>
-</section>
+  </section>
+<% else %>
+  <%= blank_slate_for(:collane, filtering: @user_filtering) %>
+<% end %>
