@@ -31,6 +31,19 @@ class AdozioniAnalyticsController < ApplicationController
       @tipi_scuola = opts[:tipi_scuola]
       @aree = opts[:aree]
       @anni_corso = opts[:anni_corso]
+
+      @rows = @analytics.mie_adozioni(filtri: @filtri).to_a
+      scuole_scope = Current.account.scuole.where(id: scuola_ids)
+                            .where.not(codice_ministeriale: [nil, ""])
+      scuole_scope = scuole_scope.where(provincia: @filtri[:provincia])     if @filtri[:provincia].present?
+      scuole_scope = scuole_scope.where(grado: @filtri[:grado])             if @filtri[:grado].present?
+      scuole_scope = scuole_scope.where(tipo_scuola: @filtri[:tipo_scuola]) if @filtri[:tipo_scuola].present?
+      scuole_scope = scuole_scope.where(area: @filtri[:area])               if @filtri[:area].present?
+      codici_ministeriali = scuole_scope.pluck(:codice_ministeriale)
+
+      @zone_totals     = @analytics.zone_market_totals(@rows, codici_ministeriali: codici_ministeriali)
+      @national_book   = @analytics.national_book_shares(@rows)
+      @national_totals = @analytics.national_market_totals(@rows)
     else
       @discipline = @analytics.discipline_options
       @editori = @analytics.editori_options

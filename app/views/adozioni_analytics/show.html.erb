@@ -8,12 +8,13 @@
 
 <div class="stats-container">
   <nav class="stats-nav" aria-label="Sezioni adozioni">
-    <% { "mie" => "Le mie", "agenzia" => "Agenzia", "confronto" => "Confronto editori", "dati" => "Provincia / Nazionale" }.each do |key, label| %>
+    <% { "mie" => "Le mie" }.each do |key, label| %>
       <%= link_to adozioni_analytics_path(tab: key, **@filtri),
             class: "stats-nav__link #{'is-active' if @tab == key}" do %>
         <%= label %>
       <% end %>
     <% end %>
+    <%# Tab temporaneamente nascosti: "agenzia" => "Agenzia", "confronto" => "Confronto editori", "dati" => "Provincia / Nazionale" %>
   </nav>
 
   <%= render "adozioni_analytics/filtri" %>

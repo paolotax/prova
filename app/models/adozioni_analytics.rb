@@ -15,15 +15,18 @@ class AdozioniAnalytics
 
     scope = apply_filtri(scope, filtri)
 
-    scope.group("scuole.grado", :disciplina, :titolo, :editore, :codice_isbn)
+    scope.group("scuole.grado", "classi.anno_corso",
+                :disciplina, :titolo, :editore, :codice_isbn)
       .select(
         "scuole.grado AS grado",
+        "classi.anno_corso AS anno_corso",
         :disciplina, :titolo, :editore, :codice_isbn,
         "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
         "COUNT(DISTINCT adozioni.classe_id) * 18 AS copie_stimate",
         "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
       )
-      .order("scuole.grado", :disciplina, Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
+      .order("scuole.grado", :disciplina, "classi.anno_corso",
+             Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
   end
 
   # Tab "Agenzia" — all account's mie adozioni (includes disdette)
@@ -91,6 +94,28 @@ class AdozioniAnalytics
       )
   end
 
+  # Sezioni per ciascun libro nel mercato (tipo_scuola, disciplina, anno_corso, ISBN)
+  # Se codici_ministeriali è passato, limita alle scuole indicate (zona); altrimenti calcola su tutta Italia.
+  # Ritorna hash: { [tipo_scuola, disciplina, anno_corso, codice_isbn] => sezioni }
+  def national_book_shares(rows)
+    book_shares(rows)
+  end
+
+  def zone_book_shares(rows, codici_ministeriali:)
+    book_shares(rows, codici_ministeriali: codici_ministeriali)
+  end
+
+  # Totale sezioni per ciascun mercato (tipo_scuola, disciplina, anno_corso) presente nelle righe mie.
+  # Se codici_ministeriali è passato, limita alle scuole indicate (zona); altrimenti calcola su tutta Italia.
+  # Ritorna hash: { [tipo_scuola, disciplina, anno_corso] => totale_sezioni }
+  def national_market_totals(rows)
+    market_totals(rows)
+  end
+
+  def zone_market_totals(rows, codici_ministeriali:)
+    market_totals(rows, codici_ministeriali: codici_ministeriali)
+  end
+
   # Available filter options scoped to mie adozioni da_acquistare
   # 1 bulk query for all options, then 1 query per active filter (except itself)
   def mie_filter_options(filtri: {})
@@ -122,6 +147,68 @@ class AdozioniAnalytics
   end
 
   private
+
+  def book_shares(rows, codici_ministeriali: nil)
+    tuples = rows.map { |r| [r.grado, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
+                 .uniq.reject { |t| t.any?(&:blank?) }
+    return {} if tuples.empty?
+
+    sql = <<~SQL
+      SELECT ts.grado AS grado,
+             im_ad."DISCIPLINA" AS disciplina,
+             im_ad."ANNOCORSO"  AS anno_corso,
+             im_ad."CODICEISBN" AS codice_isbn,
+             COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
+      FROM import_adozioni im_ad
+      JOIN import_scuole   im_sc ON im_sc."CODICESCUOLA" = im_ad."CODICESCUOLA"
+      JOIN tipi_scuole     ts    ON ts.tipo = UPPER(im_sc."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")
+      WHERE im_ad."DAACQUIST" = 'Si'
+        #{scuola_filter_sql(codici_ministeriali)}
+        AND (ts.grado, im_ad."DISCIPLINA", im_ad."ANNOCORSO", im_ad."CODICEISBN") IN (#{tuples_sql(tuples)})
+      GROUP BY 1, 2, 3, 4
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql).rows.each_with_object({}) do |row, h|
+      grado, disc, anno, isbn, sez = row
+      h[[grado, disc, anno, isbn]] = sez.to_i
+    end
+  end
+
+  def market_totals(rows, codici_ministeriali: nil)
+    tuples = rows.map { |r| [r.grado, r.disciplina, r.anno_corso.to_s] }
+                 .uniq.reject { |t| t.any?(&:blank?) }
+    return {} if tuples.empty?
+
+    sql = <<~SQL
+      SELECT ts.grado AS grado,
+             im_ad."DISCIPLINA" AS disciplina,
+             im_ad."ANNOCORSO"  AS anno_corso,
+             COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
+      FROM import_adozioni im_ad
+      JOIN import_scuole   im_sc ON im_sc."CODICESCUOLA" = im_ad."CODICESCUOLA"
+      JOIN tipi_scuole     ts    ON ts.tipo = UPPER(im_sc."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")
+      WHERE im_ad."DAACQUIST" = 'Si'
+        #{scuola_filter_sql(codici_ministeriali)}
+        AND (ts.grado, im_ad."DISCIPLINA", im_ad."ANNOCORSO") IN (#{tuples_sql(tuples)})
+      GROUP BY 1, 2, 3
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql).rows.each_with_object({}) do |row, h|
+      grado, disc, anno, sez = row
+      h[[grado, disc, anno]] = sez.to_i
+    end
+  end
+
+  def tuples_sql(tuples)
+    tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
+  end
+
+  def scuola_filter_sql(codici_ministeriali)
+    return "" if codici_ministeriali.blank?
+
+    list = codici_ministeriali.map { |c| ActiveRecord::Base.connection.quote(c) }.join(", ")
+    "AND im_ad.\"CODICESCUOLA\" IN (#{list})"
+  end
 
   OPTION_SQL = {
     disciplina: "array_agg(DISTINCT adozioni.disciplina)",
