@@ -19,7 +19,7 @@
 
 <div id="giri-lista" class="flex flex-column gap center" style="max-inline-size: min(50ch, 100%);">
   <% if @giri.empty? %>
-    <p class="txt-subtle txt-center pad-block-double">Nessun giro organizzato</p>
+    <%= blank_slate_for(:giri, filtering: @user_filtering) %>
   <% else %>
     <% @giri.group_by { |g| g.iniziato_il&.year || g.created_at.year }.each do |anno, giri_anno| %>
       <div class="group-header">

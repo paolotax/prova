@@ -80,6 +80,8 @@ module ApplicationHelper
     scuole:    { title: "Nessuna scuola trovata",   empty: "la prima scuola",    icon: "building-library", label: "Scuola",    path: :new_scuola_path },
     appunti:   { title: "Nessun appunto trovato",   empty: "il primo appunto",   icon: "note",             label: "Appunto",   path: :appunti_path, method: :post },
     documenti: { title: "Nessun documento trovato", empty: "il primo documento", icon: "document",         label: "Documento", path: :new_documento_path },
+    giri:      { title: "Nessun giro organizzato",  empty: "il primo giro",      icon: "map",              label: "Giro",      path: :wizard_giri_path },
+    collane:   { title: "Nessuna collana creata",   empty: "la prima collana",   icon: "book-open",        label: "Collana",   path: :new_collana_path },
   }.freeze
 
   def blank_slate_for(key, filtering: nil)

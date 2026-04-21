@@ -26,6 +26,6 @@
       <% end %>
     </ul>
   <% else %>
-    <p class="txt-subtle txt-small">Nessuna collana creata</p>
+    <%= blank_slate_for(:collane, filtering: @user_filtering) %>
   <% end %>
 </section>
