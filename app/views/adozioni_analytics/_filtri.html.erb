@@ -1,6 +1,4 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
-  <%= form.hidden_field :tab, value: @tab %>
-
   <div class="analytics-filters__row">
     <% if @aree&.any? || @filtri[:area].present? %>
       <div class="analytics-filters__field">
@@ -65,7 +63,7 @@
     </div>
 
     <% if @filtri.any? %>
-      <%= link_to "Reset", adozioni_analytics_path(tab: @tab), class: "btn txt-small" %>
+      <%= link_to "Reset", adozioni_analytics_path, class: "btn txt-small" %>
     <% end %>
   </div>
 <% end %>

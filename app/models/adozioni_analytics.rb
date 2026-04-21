@@ -6,7 +6,8 @@ class AdozioniAnalytics
     @scuola_ids = scuola_ids
   end
 
-  # Tab "Le mie" — my adoptions (mie, da_acquistare), user's schools only
+  # My adoptions (mie, da_acquistare), user's schools only,
+  # aggregated by (grado, disciplina, anno_corso, titolo/isbn/editore).
   def mie_adozioni(filtri: {})
     scope = account.adozioni.mie
       .where(da_acquistare: true)
@@ -27,71 +28,6 @@ class AdozioniAnalytics
       )
       .order("scuole.grado", :disciplina, "classi.anno_corso",
              Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
-  end
-
-  # Tab "Agenzia" — all account's mie adozioni (includes disdette)
-  def agenzia(filtri: {})
-    scope = account.adozioni.mie
-
-    scope = apply_filtri(scope, filtri)
-
-    scope.group(:disciplina, :titolo, :editore, :codice_isbn)
-      .select(
-        :disciplina, :titolo, :editore, :codice_isbn,
-        "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
-        "COUNT(DISTINCT adozioni.classe_id) * 18 AS copie_stimate",
-        "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
-      )
-      .order(:disciplina, Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
-  end
-
-  # Tab "Confronto editori" — from import_adozioni, account's schools
-  def confronto_editori(filtri: {})
-    codici = account.scuole.where(id: scuola_ids)
-      .where.not(codice_ministeriale: [nil, ""])
-      .pluck(:codice_ministeriale)
-
-    return [] if codici.empty?
-
-    scope = ImportAdozione.where(CODICESCUOLA: codici, DAACQUIST: "Si")
-    scope = apply_filtri_import(scope, filtri)
-
-    scope.group(:EDITORE, :DISCIPLINA, :ANNOCORSO)
-      .order(Arel.sql('COUNT(DISTINCT "CODICESCUOLA" || \'_\' || "ANNOCORSO" || \'_\' || "SEZIONEANNO") DESC'))
-      .select(
-        :EDITORE, :DISCIPLINA, :ANNOCORSO,
-        'COUNT(DISTINCT "CODICESCUOLA" || \'_\' || "ANNOCORSO" || \'_\' || "SEZIONEANNO") AS sezioni_count'
-      )
-  end
-
-  # Tab "Dati provincia" — from import_adozioni, entire province
-  def dati_provincia(provincia:, filtri: {})
-    scope = ImportAdozione
-      .joins("JOIN import_scuole ON import_scuole.\"CODICESCUOLA\" = import_adozioni.\"CODICESCUOLA\"")
-      .where(import_scuole: { PROVINCIA: provincia })
-      .where(DAACQUIST: "Si")
-
-    scope = apply_filtri_import(scope, filtri)
-
-    scope.group(:EDITORE, :DISCIPLINA, :ANNOCORSO)
-      .order(Arel.sql('COUNT(DISTINCT import_adozioni."CODICESCUOLA" || \'_\' || import_adozioni."ANNOCORSO" || \'_\' || import_adozioni."SEZIONEANNO") DESC'))
-      .select(
-        'import_adozioni."EDITORE"', 'import_adozioni."DISCIPLINA"', 'import_adozioni."ANNOCORSO"',
-        'COUNT(DISTINCT import_adozioni."CODICESCUOLA" || \'_\' || import_adozioni."ANNOCORSO" || \'_\' || import_adozioni."SEZIONEANNO") AS sezioni_count'
-      )
-  end
-
-  # Tab "Dati nazionali" — from import_adozioni, all Italy
-  def dati_nazionali(filtri: {})
-    scope = ImportAdozione.where(DAACQUIST: "Si")
-    scope = apply_filtri_import(scope, filtri)
-
-    scope.group(:EDITORE, :DISCIPLINA, :ANNOCORSO)
-      .order(Arel.sql('COUNT(DISTINCT "CODICESCUOLA" || \'_\' || "ANNOCORSO" || \'_\' || "SEZIONEANNO") DESC'))
-      .select(
-        :EDITORE, :DISCIPLINA, :ANNOCORSO,
-        'COUNT(DISTINCT "CODICESCUOLA" || \'_\' || "ANNOCORSO" || \'_\' || "SEZIONEANNO") AS sezioni_count'
-      )
   end
 
   # national_* leggono dalle materialized view rollup.
@@ -207,15 +143,6 @@ class AdozioniAnalytics
     end
 
     result
-  end
-
-  # Available filter options for all adozioni (other tabs)
-  def discipline_options
-    account.adozioni.distinct.pluck(:disciplina).compact.sort
-  end
-
-  def editori_options
-    account.adozioni.distinct.pluck(:editore).compact.sort
   end
 
   private
@@ -390,16 +317,4 @@ class AdozioniAnalytics
     scope
   end
 
-  def apply_filtri_import(scope, filtri)
-    case filtri[:adozioni_tipo]
-    when "144"
-      scope = scope.adozioni_144
-    when "235"
-      scope = scope.scorrimenti_235
-    end
-    scope = scope.where(DISCIPLINA: filtri[:disciplina]) if filtri[:disciplina].present?
-    scope = scope.where(ANNOCORSO: filtri[:anno_corso]) if filtri[:anno_corso].present?
-    scope = scope.where(EDITORE: filtri[:editore]) if filtri[:editore].present?
-    scope
-  end
 end
