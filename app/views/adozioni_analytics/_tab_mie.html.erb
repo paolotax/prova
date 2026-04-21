@@ -23,13 +23,14 @@
   </div>
   <% if mercato_zona_tot > 0 %>
     <div class="analytics-summary__card">
-      <p class="analytics-summary__value"><%= number_to_percentage(quota_totale, precision: 1) %></p>
+      <p class="analytics-summary__value">
+        <%= number_to_percentage(quota_totale, precision: 1) %><% if mercato_naz_tot > 0 %>
+          <span class="txt-small <%= quota_delta_cls %>" style="font-weight: normal;">
+            <%= "#{quota_delta_tot >= 0 ? '+' : ''}#{number_with_precision(quota_delta_tot, precision: 1)}" %>
+          </span>
+        <% end %>
+      </p>
       <p class="analytics-summary__label">quota mercato zona</p>
-      <% if mercato_naz_tot > 0 %>
-        <p class="analytics-summary__label <%= quota_delta_cls %>">
-          <%= "#{quota_delta_tot >= 0 ? '+' : ''}#{number_with_precision(quota_delta_tot, precision: 1)}" %> vs naz
-        </p>
-      <% end %>
     </div>
   <% end %>
   <% if totale_disdette > 0 %>
