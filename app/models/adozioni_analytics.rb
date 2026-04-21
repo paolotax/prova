@@ -150,13 +150,42 @@ class AdozioniAnalytics
     book_shares(rows, codici_ministeriali: codici_ministeriali)
   end
 
+  # Usa la matview mercato_scuola_mercati: aggrega le sezioni delle sole scuole indicate.
+  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni_in_zona }
   def zone_market_totals(rows, codici_ministeriali:)
-    market_totals(rows, codici_ministeriali: codici_ministeriali)
+    return {} if codici_ministeriali.blank?
+
+    tuples = rows.flat_map { |r|
+      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
+    }.uniq.reject { |t| t.any?(&:blank?) }
+    return {} if tuples.empty?
+
+    quoted_codici = codici_ministeriali.map { |c| ActiveRecord::Base.connection.quote(c) }.join(", ")
+
+    sql = <<~SQL
+      WITH m (tg, disciplina, anno_corso) AS (VALUES #{tuples_sql(tuples)})
+      SELECT r.tipo_grado_scuola, r.disciplina, r.anno_corso, SUM(r.sezioni) AS sezioni
+      FROM mercato_scuola_mercati r
+      JOIN m ON m.tg         = r.tipo_grado_scuola
+            AND m.disciplina = r.disciplina
+            AND m.anno_corso = r.anno_corso
+      WHERE r.codice_scuola IN (#{quoted_codici})
+      GROUP BY 1, 2, 3
+    SQL
+
+    result = Hash.new(0)
+    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
+      tg, disc, anno, sez = row
+      grado = TG_TO_GRADO[tg] or next
+      result[[grado, disc, anno]] += sez.to_i
+    end
+    result
   end
 
   def self.refresh_rollup!
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_nazionale_libri")
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_nazionale_mercati")
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_scuola_mercati")
   end
 
   # Available filter options scoped to mie adozioni da_acquistare

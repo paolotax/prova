@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_22_080000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1772,5 +1772,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_080000) do
     GROUP BY import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO";
   SQL
   add_index "mercato_nazionale_mercati", ["tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_naz_mercati_pk", unique: true
+
+  create_view "mercato_scuola_mercati", materialized: true, sql_definition: <<-SQL
+      SELECT import_adozioni."CODICESCUOLA" AS codice_scuola,
+      import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+      import_adozioni."DISCIPLINA" AS disciplina,
+      import_adozioni."ANNOCORSO" AS anno_corso,
+      count(DISTINCT import_adozioni."SEZIONEANNO") AS sezioni
+     FROM import_adozioni
+    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
+    GROUP BY import_adozioni."CODICESCUOLA", import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO";
+  SQL
+  add_index "mercato_scuola_mercati", ["codice_scuola", "tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_scuola_mercati_pk", unique: true
+  add_index "mercato_scuola_mercati", ["codice_scuola"], name: "idx_mercato_scuola_mercati_scuola"
 
 end
