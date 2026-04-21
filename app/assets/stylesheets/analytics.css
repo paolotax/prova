@@ -76,15 +76,15 @@
 
   /* Column widths: Titolo / Editore / Sez / Mia% / Naz% / Δ / Copie / Disd */
   .analytics-table th:nth-child(1),
-  .analytics-table td:nth-child(1) { inline-size: 34%; }
+  .analytics-table td:nth-child(1) { inline-size: 32%; }
   .analytics-table th:nth-child(2),
-  .analytics-table td:nth-child(2) { inline-size: 18%; }
+  .analytics-table td:nth-child(2) { inline-size: 17%; }
   .analytics-table th:nth-child(3),
   .analytics-table td:nth-child(3) { inline-size: 7%; }
   .analytics-table th:nth-child(4),
-  .analytics-table td:nth-child(4) { inline-size: 8%; }
+  .analytics-table td:nth-child(4) { inline-size: 9%; }
   .analytics-table th:nth-child(5),
-  .analytics-table td:nth-child(5) { inline-size: 8%; }
+  .analytics-table td:nth-child(5) { inline-size: 10%; }
   .analytics-table th:nth-child(6),
   .analytics-table td:nth-child(6) { inline-size: 7%; }
   .analytics-table th:nth-child(7),
