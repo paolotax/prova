@@ -1,6 +1,9 @@
 <% grado_labels  = TipoScuola::GRADI.to_h.invert %>
 <% totale_sezioni  = @rows.sum { |r| r.sezioni_count.to_i } %>
 <% totale_disdette = @rows.sum { |r| r.disdette_count.to_i } %>
+<% mercati_keys    = @rows.map { |r| [r.grado, r.disciplina, r.anno_corso] }.uniq %>
+<% mercato_zona_tot = mercati_keys.sum { |k| @zone_totals[k].to_i } %>
+<% quota_totale    = mercato_zona_tot > 0 ? 100.0 * totale_sezioni / mercato_zona_tot : 0 %>
 
 <div class="analytics-summary">
   <div class="analytics-summary__card">
@@ -11,6 +14,12 @@
     <p class="analytics-summary__value"><%= totale_sezioni * 18 %></p>
     <p class="analytics-summary__label">copie stimate</p>
   </div>
+  <% if mercato_zona_tot > 0 %>
+    <div class="analytics-summary__card">
+      <p class="analytics-summary__value"><%= number_to_percentage(quota_totale, precision: 1) %></p>
+      <p class="analytics-summary__label">quota mercato zona</p>
+    </div>
+  <% end %>
   <% if totale_disdette > 0 %>
     <div class="analytics-summary__card">
       <p class="analytics-summary__value txt-negative"><%= totale_disdette %></p>
