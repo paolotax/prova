@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_16_092043) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_21_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -728,6 +728,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_092043) do
     t.string "anno_scolastico"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["DISCIPLINA", "ANNOCORSO", "TIPOGRADOSCUOLA"], name: "idx_import_adozioni_disc_anno_tg"
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
     t.index ["TITOLO"], name: "index_import_adozioni_on_TITOLO"

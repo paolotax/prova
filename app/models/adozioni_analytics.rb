@@ -148,55 +148,87 @@ class AdozioniAnalytics
 
   private
 
+  # Mappa grado (scuole.grado) → TIPOGRADOSCUOLA in import_adozioni:
+  # EE=primaria, MM=medie, NT/NO=superiori (due varianti per lo stesso grado "N")
+  GRADO_TO_TG = {
+    "E" => %w[EE],
+    "M" => %w[MM],
+    "N" => %w[NT NO]
+  }.freeze
+
+  TG_TO_GRADO = { "EE" => "E", "MM" => "M", "NT" => "N", "NO" => "N" }.freeze
+
   def book_shares(rows, codici_ministeriali: nil)
-    tuples = rows.map { |r| [r.grado, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
-                 .uniq.reject { |t| t.any?(&:blank?) }
+    tuples = rows.flat_map { |r|
+      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
+    }.uniq.reject { |t| t.any?(&:blank?) }
     return {} if tuples.empty?
 
+    # VALUES CTE: consente hash join efficiente invece di nested-loop su tuple IN
+    values_rows = tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
+    discipline  = tuples.map { |t| t[1] }.uniq
+    disc_list   = discipline.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")
+
     sql = <<~SQL
-      SELECT ts.grado AS grado,
-             im_ad."DISCIPLINA" AS disciplina,
-             im_ad."ANNOCORSO"  AS anno_corso,
-             im_ad."CODICEISBN" AS codice_isbn,
+      WITH m (tg, disciplina, anno_corso, codice_isbn) AS (VALUES #{values_rows})
+      SELECT im_ad."TIPOGRADOSCUOLA" AS tg,
+             im_ad."DISCIPLINA"      AS disciplina,
+             im_ad."ANNOCORSO"       AS anno_corso,
+             im_ad."CODICEISBN"      AS codice_isbn,
              COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
       FROM import_adozioni im_ad
-      JOIN import_scuole   im_sc ON im_sc."CODICESCUOLA" = im_ad."CODICESCUOLA"
-      JOIN tipi_scuole     ts    ON ts.tipo = UPPER(im_sc."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")
+      JOIN m ON m.tg         = im_ad."TIPOGRADOSCUOLA"
+            AND m.disciplina = im_ad."DISCIPLINA"
+            AND m.anno_corso = im_ad."ANNOCORSO"
+            AND m.codice_isbn = im_ad."CODICEISBN"
       WHERE im_ad."DAACQUIST" = 'Si'
+        AND im_ad."DISCIPLINA" IN (#{disc_list})
         #{scuola_filter_sql(codici_ministeriali)}
-        AND (ts.grado, im_ad."DISCIPLINA", im_ad."ANNOCORSO", im_ad."CODICEISBN") IN (#{tuples_sql(tuples)})
       GROUP BY 1, 2, 3, 4
     SQL
 
-    ActiveRecord::Base.connection.exec_query(sql).rows.each_with_object({}) do |row, h|
-      grado, disc, anno, isbn, sez = row
-      h[[grado, disc, anno, isbn]] = sez.to_i
+    result = Hash.new(0)
+    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
+      tg, disc, anno, isbn, sez = row
+      grado = TG_TO_GRADO[tg] or next
+      result[[grado, disc, anno, isbn]] += sez.to_i
     end
+    result
   end
 
   def market_totals(rows, codici_ministeriali: nil)
-    tuples = rows.map { |r| [r.grado, r.disciplina, r.anno_corso.to_s] }
-                 .uniq.reject { |t| t.any?(&:blank?) }
+    tuples = rows.flat_map { |r|
+      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
+    }.uniq.reject { |t| t.any?(&:blank?) }
     return {} if tuples.empty?
 
+    values_rows = tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
+    discipline  = tuples.map { |t| t[1] }.uniq
+    disc_list   = discipline.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")
+
     sql = <<~SQL
-      SELECT ts.grado AS grado,
-             im_ad."DISCIPLINA" AS disciplina,
-             im_ad."ANNOCORSO"  AS anno_corso,
+      WITH m (tg, disciplina, anno_corso) AS (VALUES #{values_rows})
+      SELECT im_ad."TIPOGRADOSCUOLA" AS tg,
+             im_ad."DISCIPLINA"      AS disciplina,
+             im_ad."ANNOCORSO"       AS anno_corso,
              COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
       FROM import_adozioni im_ad
-      JOIN import_scuole   im_sc ON im_sc."CODICESCUOLA" = im_ad."CODICESCUOLA"
-      JOIN tipi_scuole     ts    ON ts.tipo = UPPER(im_sc."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA")
+      JOIN m ON m.tg         = im_ad."TIPOGRADOSCUOLA"
+            AND m.disciplina = im_ad."DISCIPLINA"
+            AND m.anno_corso = im_ad."ANNOCORSO"
       WHERE im_ad."DAACQUIST" = 'Si'
+        AND im_ad."DISCIPLINA" IN (#{disc_list})
         #{scuola_filter_sql(codici_ministeriali)}
-        AND (ts.grado, im_ad."DISCIPLINA", im_ad."ANNOCORSO") IN (#{tuples_sql(tuples)})
       GROUP BY 1, 2, 3
     SQL
 
-    ActiveRecord::Base.connection.exec_query(sql).rows.each_with_object({}) do |row, h|
-      grado, disc, anno, sez = row
-      h[[grado, disc, anno]] = sez.to_i
+    result = Hash.new(0)
+    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
+      tg, disc, anno, sez = row
+      grado = TG_TO_GRADO[tg] or next
+      result[[grado, disc, anno]] += sez.to_i
     end
+    result
   end
 
   def tuples_sql(tuples)
