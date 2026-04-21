@@ -2,8 +2,16 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to "Dashboard", root_path %>
+    <%= link_to adozioni_analytics_path(format: :xlsx, params: request.query_parameters), class: "btn",
+        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
+      <%= icon_tag "table-cells" %>
+      <span class="for-screen-reader">Esporta in excel</span>
+    <% end %>
   </div>
+
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Adozioni</span>
+  </h1>
 <% end %>
 
 <div class="stats-container">

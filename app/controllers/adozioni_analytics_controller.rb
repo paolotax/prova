@@ -38,5 +38,10 @@ class AdozioniAnalyticsController < ApplicationController
     @zone_totals     = @analytics.zone_market_totals(@rows, codici_ministeriali: codici_ministeriali)
     @national_book   = @analytics.national_book_shares(@rows)
     @national_totals = @analytics.national_market_totals(@rows)
+
+    respond_to do |format|
+      format.html
+      format.xlsx { response.headers["Content-Disposition"] = 'attachment; filename="adozioni.xlsx"' }
+    end
   end
 end
