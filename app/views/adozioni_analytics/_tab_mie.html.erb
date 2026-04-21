@@ -1,9 +1,16 @@
 <% grado_labels  = TipoScuola::GRADI.to_h.invert %>
 <% totale_sezioni  = @rows.sum { |r| r.sezioni_count.to_i } %>
 <% totale_disdette = @rows.sum { |r| r.disdette_count.to_i } %>
-<% mercati_keys    = @rows.map { |r| [r.grado, r.disciplina, r.anno_corso] }.uniq %>
+<% mercati_keys     = @rows.map { |r| [r.grado, r.disciplina, r.anno_corso] }.uniq %>
 <% mercato_zona_tot = mercati_keys.sum { |k| @zone_totals[k].to_i } %>
-<% quota_totale    = mercato_zona_tot > 0 ? 100.0 * totale_sezioni / mercato_zona_tot : 0 %>
+<% mercato_naz_tot  = mercati_keys.sum { |k| @national_totals[k].to_i } %>
+<% naz_sez_tot      = @rows.sum { |r| @national_book[[r.grado, r.disciplina, r.anno_corso, r.codice_isbn]].to_i } %>
+<% quota_totale     = mercato_zona_tot > 0 ? 100.0 * totale_sezioni / mercato_zona_tot : 0 %>
+<% quota_naz_tot    = mercato_naz_tot  > 0 ? 100.0 * naz_sez_tot    / mercato_naz_tot  : 0 %>
+<% quota_delta_tot  = quota_totale - quota_naz_tot %>
+<% quota_delta_cls  = if mercato_naz_tot.zero? || quota_delta_tot.abs < 0.5 then "txt-subtle"
+                      elsif quota_delta_tot > 0 then "txt-positive"
+                      else "txt-negative" end %>
 
 <div class="analytics-summary">
   <div class="analytics-summary__card">
@@ -18,6 +25,11 @@
     <div class="analytics-summary__card">
       <p class="analytics-summary__value"><%= number_to_percentage(quota_totale, precision: 1) %></p>
       <p class="analytics-summary__label">quota mercato zona</p>
+      <% if mercato_naz_tot > 0 %>
+        <p class="analytics-summary__label <%= quota_delta_cls %>">
+          <%= "#{quota_delta_tot >= 0 ? '+' : ''}#{number_with_precision(quota_delta_tot, precision: 1)}" %> vs naz
+        </p>
+      <% end %>
     </div>
   <% end %>
   <% if totale_disdette > 0 %>
