@@ -13,7 +13,7 @@ servers:
   job:
     hosts:
       - 116.203.224.90
-    cmd: bundle exec sidekiq -q default -q mailers -q ahoy -q bulk
+    cmd: bundle exec sidekiq
 
 registry:
   username: paolotax
