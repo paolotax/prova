@@ -124,6 +124,15 @@ class AccountTest < ActiveSupport::TestCase
     assert_not @account.aggiornamento_adozioni_in_corso?
   end
 
+  test "aggiornamento_adozioni_in_corso? true when started_at set and aggiornate_at nil" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 1.minute.ago,
+      adozioni_aggiornate_at: nil
+    )
+
+    assert @account.aggiornamento_adozioni_in_corso?
+  end
+
   # --- adozioni_stale? ------------------------------------------------------
 
   test "adozioni_stale? true when adozioni_aggiornate_at is nil" do
@@ -153,6 +162,17 @@ class AccountTest < ActiveSupport::TestCase
     zona.update_columns(updated_at: 1.minute.ago)
 
     assert @account.adozioni_stale?
+  end
+
+  test "adozioni_stale? false when zone and mandati untouched since last update" do
+    @account.zone.update_all(updated_at: 1.hour.ago)
+    @account.mandati.update_all(updated_at: 1.hour.ago)
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 30.minutes.ago,
+      adozioni_aggiornate_at: 5.minutes.ago
+    )
+
+    assert_not @account.adozioni_stale?
   end
 
   # --- zone_tutte_attive? ---------------------------------------------------
