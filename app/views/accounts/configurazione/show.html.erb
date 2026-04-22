@@ -26,10 +26,7 @@
 
     <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
 
-    <%= button_to accounts_mandati_sincronizzazione_adozioni_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
-      <%= icon_tag "refresh" %>
-      <span>Aggiorna adozioni</span>
-    <% end %>
+    <%= render "accounts/configurazione/pulsante_aggiorna_adozioni", account: Current.account %>
   </div>
 
   <div class="panel shadow center">

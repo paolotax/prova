@@ -1,12 +1,12 @@
 require "test_helper"
 
-# Silent subclass: overrides broadcast methods so tests don't depend on partials
-# that land in later tasks (pulsante_aggiorna_adozioni).
+# Silent subclass: overrides broadcast methods that require view rendering/jobs.
+# pulsante_aggiorna_adozioni partial now exists (Task 4), so broadcast_pulsante_stato
+# runs for real.
 class CleanupZonaJobSilent < CleanupZonaJob
   private
   def broadcast_zone_panel(account); end
   def broadcast_scuole_refresh(account); end
-  def broadcast_pulsante_stato(account); end
 end
 
 class CleanupZonaJobTest < ActiveJob::TestCase

@@ -1,10 +1,10 @@
 require "test_helper"
 
-# Silent subclass: overrides broadcast methods so tests don't depend on partials
-# that land in later tasks (pulsante_aggiorna_adozioni, shared/toast).
+# Silent subclass: overrides broadcast_notifica_completamento so tests don't depend
+# on the shared/toast partial that lands in Task 5. The pulsante partial now exists
+# (Task 4), so broadcast_pulsante_stato runs for real.
 class UpdateMieAdozioniJobSilent < UpdateMieAdozioniJob
   private
-  def broadcast_pulsante_stato(account); end
   def broadcast_notifica_completamento(account); end
 end
 

@@ -10,7 +10,6 @@ class ImportScuolePerZonaJobSilent < ImportScuolePerZonaJob
   def import_adozioni_batch(_account, _codici) = nil
   def broadcast_zone_panel(_account) = nil
   def broadcast_scuole_refresh(_account) = nil
-  def broadcast_pulsante_stato(_account) = nil
 end
 
 class ImportScuolePerZonaJobTest < ActiveJob::TestCase

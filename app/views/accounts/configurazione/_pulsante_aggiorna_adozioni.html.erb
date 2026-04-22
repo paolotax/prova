@@ -1,0 +1,30 @@
+<%= turbo_frame_tag "pulsante-aggiorna-adozioni" do %>
+  <% if account.aggiornamento_adozioni_in_corso? %>
+    <button class="btn margin-block-start-double"
+            style="--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));"
+            disabled>
+      <%= icon_tag "refresh" %>
+      <span>Aggiornamento in corso…</span>
+    </button>
+  <% elsif !account.zone_tutte_attive? %>
+    <button class="btn margin-block-start-double"
+            style="--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));"
+            disabled
+            title="Attendi la fine dell'importazione zone">
+      <%= icon_tag "refresh" %>
+      <span>Aggiorna adozioni</span>
+    </button>
+  <% else %>
+    <%= button_to accounts_mandati_sincronizzazione_adozioni_path(account_id: account.id),
+          class: "btn margin-block-start-double #{'btn--accent' if account.adozioni_stale?}".strip,
+          style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
+      <%= icon_tag "refresh" %>
+      <span><%= account.adozioni_stale? ? "Aggiorna adozioni (modifiche in attesa)" : "Aggiorna adozioni" %></span>
+    <% end %>
+    <% if account.adozioni_aggiornate_at.present? %>
+      <p class="txt-x-small txt-subtle margin-block-start">
+        Ultimo aggiornamento: <%= time_ago_in_words(account.adozioni_aggiornate_at) %> fa
+      </p>
+    <% end %>
+  <% end %>
+<% end %>
