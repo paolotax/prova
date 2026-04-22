@@ -9,6 +9,7 @@ class AdozioniAnalyticsController < ApplicationController
       anno_corso: params[:anno_corso],
       editore: params[:editore],
       gruppo: params[:gruppo],
+      regione: params[:regione],
       provincia: params[:provincia],
       grado: params[:grado],
       tipo_scuola: params[:tipo_scuola],
@@ -20,6 +21,7 @@ class AdozioniAnalyticsController < ApplicationController
     @discipline  = opts[:discipline]
     @editori     = opts[:editori]
     @gruppi      = opts[:gruppi]
+    @regioni     = opts[:regioni]
     @province    = opts[:province]
     @gradi       = opts[:gradi]
     @tipi_scuola = opts[:tipi_scuola]
@@ -29,6 +31,7 @@ class AdozioniAnalyticsController < ApplicationController
     @rows = @analytics.mie_adozioni(filtri: @filtri).to_a
     scuole_scope = Current.account.scuole.where(id: scuola_ids)
                           .where.not(codice_ministeriale: [nil, ""])
+    scuole_scope = scuole_scope.where(regione: @filtri[:regione])         if @filtri[:regione].present?
     scuole_scope = scuole_scope.where(provincia: @filtri[:provincia])     if @filtri[:provincia].present?
     scuole_scope = scuole_scope.where(grado: @filtri[:grado])             if @filtri[:grado].present?
     scuole_scope = scuole_scope.where(tipo_scuola: @filtri[:tipo_scuola]) if @filtri[:tipo_scuola].present?

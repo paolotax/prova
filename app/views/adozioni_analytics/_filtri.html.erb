@@ -1,5 +1,12 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
   <div class="analytics-filters__row">
+    <% if @regioni&.size.to_i > 1 || @filtri[:regione].present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Regione</span>
+        <%= form.select :regione, options_for_select(@regioni, @filtri[:regione]), { include_blank: "Tutte" }, class: "input input--select" %>
+      </div>
+    <% end %>
+
     <% if @aree&.any? || @filtri[:area].present? %>
       <div class="analytics-filters__field">
         <span class="analytics-filters__label">Area</span>

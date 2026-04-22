@@ -245,6 +245,7 @@ class AdozioniAnalytics
     disciplina: "array_agg(DISTINCT adozioni.disciplina)",
     editore: "array_agg(DISTINCT adozioni.editore)",
     gruppo: "array_agg(DISTINCT adozioni.editore)",
+    regione: "array_agg(DISTINCT scuole.regione)",
     provincia: "array_agg(DISTINCT scuole.provincia)",
     grado: "array_agg(DISTINCT scuole.grado)",
     tipo_scuola: "array_agg(DISTINCT scuole.tipo_scuola)",
@@ -254,32 +255,34 @@ class AdozioniAnalytics
 
   OPTION_RESULT_KEY = {
     disciplina: :discipline, editore: :editori, gruppo: :gruppi,
-    provincia: :province, grado: :gradi, tipo_scuola: :tipi_scuola,
-    area: :aree, anno_corso: :anni_corso
+    regione: :regioni, provincia: :province, grado: :gradi,
+    tipo_scuola: :tipi_scuola, area: :aree, anno_corso: :anni_corso
   }.freeze
 
   def bulk_pluck_options(scope)
     row = scope.pick(
       Arel.sql(OPTION_SQL[:disciplina]),
       Arel.sql(OPTION_SQL[:editore]),
+      Arel.sql(OPTION_SQL[:regione]),
       Arel.sql(OPTION_SQL[:provincia]),
       Arel.sql(OPTION_SQL[:grado]),
       Arel.sql(OPTION_SQL[:tipo_scuola]),
       Arel.sql(OPTION_SQL[:area]),
       Arel.sql(OPTION_SQL[:anno_corso])
     )
-    row ||= Array.new(7)
+    row ||= Array.new(8)
 
     editori = (row[1] || []).compact.sort
     {
       discipline: (row[0] || []).compact.sort,
       editori: editori,
       gruppi: Editore.where(editore: editori).pluck(:gruppo).compact.uniq.sort,
-      province: (row[2] || []).compact.sort,
-      gradi: (row[3] || []).compact.sort,
-      tipi_scuola: (row[4] || []).compact.sort,
-      aree: (row[5] || []).compact.reject { |a| a.start_with?("__") }.sort,
-      anni_corso: (row[6] || []).compact.sort
+      regioni: (row[2] || []).compact.sort,
+      province: (row[3] || []).compact.sort,
+      gradi: (row[4] || []).compact.sort,
+      tipi_scuola: (row[5] || []).compact.sort,
+      aree: (row[6] || []).compact.reject { |a| a.start_with?("__") }.sort,
+      anni_corso: (row[7] || []).compact.sort
     }
   end
 
@@ -310,6 +313,7 @@ class AdozioniAnalytics
       editore_names = Editore.where(gruppo: filtri[:gruppo]).pluck(:editore)
       scope = scope.where(editore: editore_names)
     end
+    scope = scope.joins(classe: :scuola).where(scuole: { regione: filtri[:regione] }) if filtri[:regione].present?
     scope = scope.joins(classe: :scuola).where(scuole: { provincia: filtri[:provincia] }) if filtri[:provincia].present?
     scope = scope.joins(classe: :scuola).where(scuole: { grado: filtri[:grado] }) if filtri[:grado].present?
     scope = scope.joins(classe: :scuola).where(scuole: { tipo_scuola: filtri[:tipo_scuola] }) if filtri[:tipo_scuola].present?
