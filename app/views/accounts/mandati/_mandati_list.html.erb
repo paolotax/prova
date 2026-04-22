@@ -8,6 +8,8 @@
     <% account = Account.find_by(id: account_id) %>
     <% regione_per_provincia = account ? account.zone.pluck(:provincia, :regione).to_h : {} %>
     <% mandati_per_regione = wildcard_mandati.group_by { |m| regione_per_provincia[m.provincia] || "—" } %>
+    <% ordered_province = mandati_per_regione.sort_by { |r, _| r.to_s }.flat_map { |_, mr| mr.filter_map(&:provincia).uniq.sort } %>
+    <% last_iterated_provincia = ordered_province.last %>
     <% grand_totals = Hash.new(0) %>
     <% grand_total = 0 %>
 
@@ -162,7 +164,7 @@
                         <% end %>
                     </tbody>
                 <% end %>
-                <% if provincia == province.last && grand_total > 0 %>
+                <% if provincia == last_iterated_provincia && grand_total > 0 %>
                     <tfoot>
                         <tr class="txt-bold txt-small">
                             <td>Totale</td>
