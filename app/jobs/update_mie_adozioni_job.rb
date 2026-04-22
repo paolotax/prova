@@ -1,6 +1,8 @@
 class UpdateMieAdozioniJob < ApplicationJob
   queue_as :default
 
+  include BroadcastsPulsanteAggiornaAdozioni
+
   def perform(account, provincia: nil)
     lock_key = Zlib.crc32("update_mie_adozioni:#{account.id}")
     conn = ActiveRecord::Base.connection
@@ -281,15 +283,6 @@ class UpdateMieAdozioniJob < ApplicationJob
       target: "account-editori",
       partial: "accounts/mandati/mandati_list",
       locals: { mandati: mandati }
-    )
-  end
-
-  def broadcast_pulsante_stato(account)
-    Turbo::StreamsChannel.broadcast_replace_to(
-      [account, "configurazione"],
-      target: "pulsante-aggiorna-adozioni",
-      partial: "accounts/configurazione/pulsante_aggiorna_adozioni",
-      locals: { account: account.reload }
     )
   end
 

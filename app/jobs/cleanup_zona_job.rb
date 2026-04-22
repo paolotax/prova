@@ -2,6 +2,8 @@ class CleanupZonaJob < ApplicationJob
   queue_as :bulk
   discard_on ActiveJob::DeserializationError
 
+  include BroadcastsPulsanteAggiornaAdozioni
+
   def perform(account_zona)
     account = account_zona.account
     provincia = account_zona.provincia
@@ -41,7 +43,7 @@ class CleanupZonaJob < ApplicationJob
 
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
-    UpdateMieAdozioniJob.perform_later(account)
+    broadcast_pulsante_stato(account)
   end
 
   private

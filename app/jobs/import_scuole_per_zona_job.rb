@@ -3,6 +3,7 @@ class ImportScuolePerZonaJob < ApplicationJob
   discard_on ActiveJob::DeserializationError
 
   include ActionView::RecordIdentifier
+  include BroadcastsPulsanteAggiornaAdozioni
 
   def perform(account_zona)
     account = account_zona.account
@@ -19,7 +20,7 @@ class ImportScuolePerZonaJob < ApplicationJob
     account.estendi_mandati_a_zona!(provincia: account_zona.provincia, grado: account_zona.grado)
     broadcast_zone_panel(account)
     broadcast_scuole_refresh(account)
-    UpdateMieAdozioniJob.perform_later(account)
+    broadcast_pulsante_stato(account)
   end
 
   private
