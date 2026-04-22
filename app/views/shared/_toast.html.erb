@@ -1,0 +1,4 @@
+<div class="toast toast--<%= level %>" data-controller="toast" data-toast-timeout-value="5000">
+  <%= icon_tag(level == :success ? "check" : "lifebuoy") %>
+  <span><%= message %></span>
+</div>

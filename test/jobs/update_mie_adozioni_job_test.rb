@@ -1,15 +1,11 @@
 require "test_helper"
 
-# Silent subclass: overrides broadcast_notifica_completamento so tests don't depend
-# on the shared/toast partial that lands in Task 5. The pulsante partial now exists
-# (Task 4), so broadcast_pulsante_stato runs for real.
-class UpdateMieAdozioniJobSilent < UpdateMieAdozioniJob
-  private
-  def broadcast_notifica_completamento(account); end
-end
+# Alias kept so existing tests can keep using the Silent name; the shared/toast
+# partial now exists (Task 5), so no override is needed — the real broadcast runs.
+UpdateMieAdozioniJobSilent = UpdateMieAdozioniJob
 
 # Forces the body to raise so we can verify the advisory lock is released in ensure.
-class UpdateMieAdozioniJobRaising < UpdateMieAdozioniJobSilent
+class UpdateMieAdozioniJobRaising < UpdateMieAdozioniJob
   private
   def esegui_aggiornamento(account, provincia)
     raise "boom"
