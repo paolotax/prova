@@ -5,25 +5,34 @@
     <% province = wildcard_mandati.filter_map(&:provincia).uniq.sort %>
     <% editori_map = wildcard_mandati.map(&:editore).uniq.index_by(&:id) %>
     <% account_id = mandati.first&.account_id %>
+    <% account = Account.find_by(id: account_id) %>
+    <% regione_per_provincia = account ? account.zone.pluck(:provincia, :regione).to_h : {} %>
+    <% mandati_per_regione = wildcard_mandati.group_by { |m| regione_per_provincia[m.provincia] || "—" } %>
     <% grand_totals = Hash.new(0) %>
     <% grand_total = 0 %>
 
-    <% province.each do |provincia| %>
-        <% mandati_prov = wildcard_mandati.select { |m| m.provincia == provincia } %>
-        <% editori_provincia = mandati_prov.map(&:editore).uniq.sort_by(&:editore) %>
-        <% gruppi = editori_provincia.group_by { |e| e.gruppo.presence || "—" } %>
-
+    <% mandati_per_regione.sort_by { |r, _| r.to_s }.each do |regione, mandati_regione| %>
         <div class="zone-regione">
-            <strong class="divider txt-small">
-                <%= provincia %>
-                <%= link_to accounts_aree_path(account_id: account_id, provincia: provincia),
-                    class: "btn btn--circle btn--link zone-grid__area-link", style: "--btn-size: 1.6em;",
-                    title: "Gestisci aree" do %>
-                  <%= icon_tag "wrench", class: "icon--small" %>
-                <% end %>
-            </strong>
-            <div style="overflow-x: auto;">
-            <table class="zone-grid zone-grid--left">
+            <% if mandati_per_regione.size > 1 || regione.present? %>
+                <strong class="divider txt-small"><%= regione %></strong>
+            <% end %>
+
+            <% province_regione = mandati_regione.filter_map(&:provincia).uniq.sort %>
+            <% province_regione.each do |provincia| %>
+                <% mandati_prov = mandati_regione.select { |m| m.provincia == provincia } %>
+                <% editori_provincia = mandati_prov.map(&:editore).uniq.sort_by(&:editore) %>
+                <% gruppi = editori_provincia.group_by { |e| e.gruppo.presence || "—" } %>
+
+                <strong class="divider txt-small">
+                    <%= provincia %>
+                    <%= link_to accounts_aree_path(account_id: account_id, provincia: provincia),
+                        class: "btn btn--circle btn--link zone-grid__area-link", style: "--btn-size: 1.6em;",
+                        title: "Gestisci aree" do %>
+                      <%= icon_tag "wrench", class: "icon--small" %>
+                    <% end %>
+                </strong>
+                <div style="overflow-x: auto;">
+                <table class="zone-grid zone-grid--left">
                 <thead>
                     <tr>
                         <th>Gruppo editoriale</th>
@@ -164,8 +173,9 @@
                         </tr>
                     </tfoot>
                 <% end %>
-            </table>
-            </div>
+                </table>
+                </div>
+            <% end %>
         </div>
     <% end %>
 
