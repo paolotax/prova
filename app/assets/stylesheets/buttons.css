@@ -166,6 +166,20 @@
     }
   }
 
+  .btn--accent {
+    animation: btn-accent-pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 0 2px oklch(var(--lch-yellow-dark) / 0.6);
+  }
+
+  @keyframes btn-accent-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px oklch(var(--lch-yellow-dark) / 0.6); }
+    50%      { box-shadow: 0 0 0 6px oklch(var(--lch-yellow-dark) / 0.2); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn--accent { animation: none; }
+  }
+
   /* Fake button used to help space things out */
   .btn--placeholder {
     pointer-events: none;
