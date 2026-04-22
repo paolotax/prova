@@ -2,6 +2,33 @@ class UpdateMieAdozioniJob < ApplicationJob
   queue_as :default
 
   def perform(account, provincia: nil)
+    lock_key = Zlib.crc32("update_mie_adozioni:#{account.id}")
+    conn = ActiveRecord::Base.connection
+
+    acquired = conn.exec_query("SELECT pg_try_advisory_lock(#{lock_key}) AS got").first["got"]
+    unless acquired
+      Rails.logger.info "[UpdateMieAdozioni] skip account #{account.id}: già in corso"
+      return
+    end
+
+    account.update_columns(adozioni_aggiornamento_started_at: Time.current)
+    broadcast_pulsante_stato(account)
+    notifica = false
+
+    begin
+      esegui_aggiornamento(account, provincia)
+      account.update_columns(adozioni_aggiornate_at: Time.current)
+      notifica = true
+    ensure
+      conn.exec_query("SELECT pg_advisory_unlock(#{lock_key})")
+      broadcast_pulsante_stato(account)
+      broadcast_notifica_completamento(account) if notifica
+    end
+  end
+
+  private
+
+  def esegui_aggiornamento(account, provincia)
     # Reset
     if provincia
       Adozione.joins(classe: :scuola)
@@ -103,8 +130,6 @@ class UpdateMieAdozioniJob < ApplicationJob
 
     UpdateScuoleCountersJob.perform_later(account, provincia: provincia)
   end
-
-  private
 
   def create_and_link_libri(account)
     owner = account.owner
@@ -258,5 +283,25 @@ class UpdateMieAdozioniJob < ApplicationJob
       partial: "accounts/mandati/mandati_list",
       locals: { mandati: mandati }
     )
+  end
+
+  def broadcast_pulsante_stato(account)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      [account, "configurazione"],
+      target: "pulsante-aggiorna-adozioni",
+      partial: "accounts/configurazione/pulsante_aggiorna_adozioni",
+      locals: { account: account.reload }
+    )
+  end
+
+  def broadcast_notifica_completamento(account)
+    account.memberships.find_each do |membership|
+      Turbo::StreamsChannel.broadcast_append_to(
+        [membership.user, "entries"],
+        target: "toasts",
+        partial: "shared/toast",
+        locals: { message: "Adozioni aggiornate", level: :success }
+      )
+    end
   end
 end
