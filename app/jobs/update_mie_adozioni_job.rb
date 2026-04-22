@@ -11,18 +11,17 @@ class UpdateMieAdozioniJob < ApplicationJob
       return
     end
 
-    account.update_columns(adozioni_aggiornamento_started_at: Time.current)
-    broadcast_pulsante_stato(account)
     notifica = false
-
     begin
+      account.update_columns(adozioni_aggiornamento_started_at: Time.current)
+      broadcast_pulsante_stato(account)
       esegui_aggiornamento(account, provincia)
       account.update_columns(adozioni_aggiornate_at: Time.current)
       notifica = true
     ensure
-      conn.exec_query("SELECT pg_advisory_unlock(#{lock_key})")
-      broadcast_pulsante_stato(account)
-      broadcast_notifica_completamento(account) if notifica
+      conn.execute("SELECT pg_advisory_unlock(#{lock_key})") rescue nil
+      broadcast_pulsante_stato(account) rescue nil
+      (broadcast_notifica_completamento(account) rescue nil) if notifica
     end
   end
 
