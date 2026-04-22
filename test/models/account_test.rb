@@ -3,11 +3,13 @@
 #
 # Table name: accounts
 #
-#  id         :uuid             not null, primary key
-#  name       :string           not null
-#  slug       :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                                :uuid             not null, primary key
+#  adozioni_aggiornamento_started_at :datetime
+#  adozioni_aggiornate_at            :datetime
+#  name                              :string           not null
+#  slug                              :string
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
 #
 # Indexes
 #
@@ -17,7 +19,7 @@ require "test_helper"
 
 class AccountTest < ActiveSupport::TestCase
   fixtures :accounts, :users, :memberships, :documenti, :clienti, :libri, :appunti,
-           :causali, :categorie, :editori
+           :causali, :categorie, :editori, :account_zone, :mandati
 
   setup do
     @account = accounts(:fizzy)
@@ -91,5 +93,80 @@ class AccountTest < ActiveSupport::TestCase
     end
 
     assert_not @account.member?(@user)
+  end
+
+  # --- aggiornamento_adozioni_in_corso? -------------------------------------
+
+  test "aggiornamento_adozioni_in_corso? false when never started" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: nil,
+      adozioni_aggiornate_at: nil
+    )
+
+    assert_not @account.aggiornamento_adozioni_in_corso?
+  end
+
+  test "aggiornamento_adozioni_in_corso? true when started_at > aggiornate_at" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 1.minute.ago,
+      adozioni_aggiornate_at: 1.hour.ago
+    )
+
+    assert @account.aggiornamento_adozioni_in_corso?
+  end
+
+  test "aggiornamento_adozioni_in_corso? false when aggiornate_at > started_at" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 1.hour.ago,
+      adozioni_aggiornate_at: 1.minute.ago
+    )
+
+    assert_not @account.aggiornamento_adozioni_in_corso?
+  end
+
+  # --- adozioni_stale? ------------------------------------------------------
+
+  test "adozioni_stale? true when adozioni_aggiornate_at is nil" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: nil,
+      adozioni_aggiornate_at: nil
+    )
+
+    assert @account.adozioni_stale?
+  end
+
+  test "adozioni_stale? false when currently in progress" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 1.minute.ago,
+      adozioni_aggiornate_at: 1.hour.ago
+    )
+
+    assert_not @account.adozioni_stale?
+  end
+
+  test "adozioni_stale? true when a zona was modified after last update" do
+    @account.update_columns(
+      adozioni_aggiornamento_started_at: 2.hours.ago,
+      adozioni_aggiornate_at: 1.hour.ago
+    )
+    zona = @account.zone.first
+    zona.update_columns(updated_at: 1.minute.ago)
+
+    assert @account.adozioni_stale?
+  end
+
+  # --- zone_tutte_attive? ---------------------------------------------------
+
+  test "zone_tutte_attive? true when all zones in state attiva" do
+    @account.zone.update_all(stato: "attiva")
+
+    assert @account.zone_tutte_attive?
+  end
+
+  test "zone_tutte_attive? false when at least one zone in state importazione" do
+    @account.zone.update_all(stato: "attiva")
+    @account.zone.first.update_columns(stato: "importazione")
+
+    assert_not @account.zone_tutte_attive?
   end
 end

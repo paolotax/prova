@@ -2,11 +2,13 @@
 #
 # Table name: accounts
 #
-#  id         :uuid             not null, primary key
-#  name       :string           not null
-#  slug       :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                                :uuid             not null, primary key
+#  adozioni_aggiornamento_started_at :datetime
+#  adozioni_aggiornate_at            :datetime
+#  name                              :string           not null
+#  slug                              :string
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
 #
 # Indexes
 #
@@ -91,5 +93,22 @@ class Account < ApplicationRecord
         end
       end
     end
+  end
+
+  def aggiornamento_adozioni_in_corso?
+    adozioni_aggiornamento_started_at.present? &&
+      (adozioni_aggiornate_at.nil? || adozioni_aggiornate_at < adozioni_aggiornamento_started_at)
+  end
+
+  def adozioni_stale?
+    return false if aggiornamento_adozioni_in_corso?
+    return true  if adozioni_aggiornate_at.nil?
+
+    ultima_modifica = [zone.maximum(:updated_at), mandati.maximum(:updated_at)].compact.max
+    ultima_modifica.present? && ultima_modifica > adozioni_aggiornate_at
+  end
+
+  def zone_tutte_attive?
+    zone.where.not(stato: "attiva").none?
   end
 end
