@@ -10,10 +10,20 @@ class DocumentiController < ApplicationController
 
   def index
     if request.format.json?
-      scope = Current.account.documenti.includes(:causale, :clientable)
-      scope = scope.search_docs(params[:q]) if params[:q].present?
-      scope = scope.joins(:causale).where(causali: { causale: params[:causale] }) if params[:causale].present?
-      @documenti = paginate_json(scope.order(created_at: :desc))
+      scope = @filter.documenti
+      scope = scope.where(numero_documento: params[:numero_documento]) if params[:numero_documento].present?
+      scope = scope.where("data_documento >= ?", params[:data_inizio]) if params[:data_inizio].present?
+      scope = scope.where("data_documento <= ?", params[:data_fine])   if params[:data_fine].present?
+
+      if params[:libro_isbn].present? || params[:libro_categoria].present? || params[:libro_id].present?
+        scope = scope.joins(righe: :libro).distinct
+        scope = scope.where(libri: { codice_isbn: params[:libro_isbn] })  if params[:libro_isbn].present?
+        scope = scope.where(libri: { id: params[:libro_id] })             if params[:libro_id].present?
+        scope = scope.joins("INNER JOIN categorie ON categorie.id = libri.categoria_id")
+                     .where("categorie.nome_categoria ILIKE ?", "%#{params[:libro_categoria]}%") if params[:libro_categoria].present?
+      end
+
+      @documenti = paginate_json(scope)
       return respond_to { |format| format.json }
     end
 
