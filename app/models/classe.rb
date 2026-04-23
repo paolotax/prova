@@ -83,6 +83,21 @@ class Classe < ApplicationRecord
 
   scope :per_anno, ->(anno) { where(anno_corso: anno) }
 
+  def self.search_scope(combinazione: nil, provincia: nil, comune: nil, tipo_scuola: nil, anno_corso: nil)
+    scope = joins("INNER JOIN scuole ON scuole.id = classi.scuola_id")
+      .where(scuole: { id: Current.scuole.select(:id) })
+
+    scope = scope.where("classi.combinazione ILIKE ?", "%#{combinazione}%") if combinazione.present?
+    if provincia.present?
+      scope = provincia.length <= 2 ? scope.where(scuole: { sigla_provincia: provincia.upcase }) : scope.where(scuole: { provincia: provincia })
+    end
+    scope = scope.where(scuole: { comune: comune }) if comune.present?
+    scope = scope.where(classi: { tipo_scuola: tipo_scuola }) if tipo_scuola.present?
+    scope = scope.where(classi: { anno_corso: anno_corso }) if anno_corso.present?
+
+    scope.preload(:scuola).order("scuole.provincia, scuole.comune, scuole.denominazione, classi.anno_corso, classi.sezione")
+  end
+
   delegate :denominazione, to: :scuola, prefix: true
   delegate :comune, :provincia, to: :scuola
 

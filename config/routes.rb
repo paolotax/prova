@@ -292,6 +292,9 @@ Rails.application.routes.draw do
     end
 
     get 'classi/:id', to: 'classi#show', as: 'classe'
+    get 'classi',     to: 'classi#index', as: 'classi', defaults: { format: :json }
+
+    get 'filter_options/:resource', to: 'filter_options#show', as: 'filter_options', defaults: { format: :json }
 
     resources :classe_chips, only: :create, param: :combobox_value
     resources :libro_chips,  only: :create, param: :combobox_value
