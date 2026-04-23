@@ -10,4 +10,12 @@ json.giri tappa.giri do |giro|
   json.id giro.id
   json.titolo giro.titolo
 end
+json.entry_id tappa.entry&.id
+json.stato do
+  json.golden tappa.golden?
+  json.closed tappa.closed?
+  json.postponed tappa.postponed?
+  json.column tappa.column&.name
+  json.column_id tappa.column&.id
+end
 json.url tappa_url(tappa, format: :json)

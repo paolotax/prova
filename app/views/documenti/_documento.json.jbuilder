@@ -9,6 +9,9 @@ json.entry_id documento.entry&.id
 json.stato do
   json.golden documento.golden?
   json.closed documento.closed?
+  json.postponed documento.postponed?
+  json.column documento.column&.name
+  json.column_id documento.column&.id
   json.consegnato documento.consegnato?
   json.consegnato_il documento.consegnato_il
   json.pagato documento.pagato?

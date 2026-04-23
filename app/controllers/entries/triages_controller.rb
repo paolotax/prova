@@ -5,11 +5,12 @@ module Entries
     before_action :set_entry
 
     # POST /entries/:entry_id/triage
-    # Triage entry into a column, or send back to triage if no column_id
+    # Triage entry into a column, or send back to triage if no column given.
+    # Accepts column_id, column (UUID or name).
     def create
       Entry.suppressing_turbo_broadcasts do
-        if params[:column_id].present?
-          @column = current_account.columns.find(params[:column_id])
+        @column = find_column
+        if @column
           @entry.triage_into(@column)
           @action = :triage_into_column
         else
@@ -21,6 +22,7 @@ module Entries
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: dashboard_path }
+        format.json { render json: { ok: true, column: @column&.name, column_id: @column&.id } }
       end
     end
 
@@ -34,6 +36,7 @@ module Entries
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: dashboard_path }
+        format.json { render json: { ok: true, column: nil, column_id: nil } }
       end
     end
 
@@ -41,6 +44,17 @@ module Entries
 
     def set_entry
       @entry = current_account.entries.find(params[:entry_id])
+    end
+
+    def find_column
+      identifier = params[:column_id].presence || params[:column].presence
+      return nil if identifier.blank?
+
+      if identifier.to_s.match?(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i)
+        current_account.columns.find(identifier)
+      else
+        current_account.columns.find_by!(name: identifier)
+      end
     end
 
     def dashboard_path
