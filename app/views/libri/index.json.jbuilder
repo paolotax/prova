@@ -1,5 +1,6 @@
 json.ok true
 json.query params[:terms]&.first
+json.total @total if @total
 json.count @libri.size
 json.data @libri do |libro|
   json.partial! "libri/libro", libro: libro

@@ -13,8 +13,7 @@ class TappeController < ApplicationController
     base = current_user.tappe
 
     if request.format.json?
-      @tappe = @filter.results(base).order(data_tappa: :asc, position: :asc)
-                     .limit(params[:limit] || 50)
+      @tappe = paginate_json(@filter.results(base).order(data_tappa: :asc, position: :asc))
       return respond_to { |format| format.json }
     end
 

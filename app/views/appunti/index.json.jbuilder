@@ -1,5 +1,6 @@
 json.ok true
 json.query params[:terms]&.first || params[:q]
+json.total @total if @total
 json.count @appunti.size
 json.data @appunti do |appunto|
   json.partial! "appunti/appunto", appunto: appunto

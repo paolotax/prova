@@ -11,7 +11,7 @@ class ScuoleController < ApplicationController
 
   def index
     if request.format.json?
-      @scuole = @filter.scuole.limit(params[:limit] || 50)
+      @scuole = paginate_json(@filter.scuole)
       return respond_to { |format| format.json }
     end
 

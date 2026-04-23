@@ -1,5 +1,6 @@
 json.ok true
 json.query params[:terms]&.first
+json.total @total if @total
 json.count @scuole.size
 json.data @scuole do |scuola|
   json.partial! "scuole/scuola", scuola: scuola

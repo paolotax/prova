@@ -11,7 +11,7 @@ class AppuntiController < ApplicationController
 
   def index
     if request.format.json?
-      @appunti = @filter.appunti.published.order(created_at: :desc).limit(params[:limit] || 50)
+      @appunti = paginate_json(@filter.appunti.published.order(created_at: :desc))
       return respond_to { |format| format.json }
     end
 

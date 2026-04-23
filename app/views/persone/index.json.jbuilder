@@ -1,5 +1,6 @@
 json.ok true
 json.query params[:q]
+json.total @total if @total
 json.count @persone.size
 json.data @persone do |persona|
   json.partial! "persone/persona", persona: persona

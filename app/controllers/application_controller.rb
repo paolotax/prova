@@ -38,6 +38,13 @@ class ApplicationController < ActionController::Base
       Current.request_id = request.request_id
     end
 
+    def paginate_json(scope, default_limit: 50, max_limit: 200)
+      @total = scope.size
+      limit = (params[:limit].presence || default_limit).to_i.clamp(1, max_limit)
+      offset = [params[:offset].to_i, 0].max
+      scope.offset(offset).limit(limit)
+    end
+
     def remember_page
         session[:previous_pages] ||= []
         new_page = url_for(params.to_unsafe_h)

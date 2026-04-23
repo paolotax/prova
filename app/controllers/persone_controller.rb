@@ -9,7 +9,7 @@ class PersoneController < ApplicationController
 
   def index
     if request.format.json?
-      @persone = @filter.persone.limit(params[:limit] || 50)
+      @persone = paginate_json(@filter.persone)
     else
       @total_count = @filter.persone.count
       set_page_and_extract_portion_from @filter.persone

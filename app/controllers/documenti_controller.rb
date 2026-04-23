@@ -13,7 +13,7 @@ class DocumentiController < ApplicationController
       scope = Current.account.documenti.includes(:causale, :clientable)
       scope = scope.search_docs(params[:q]) if params[:q].present?
       scope = scope.joins(:causale).where(causali: { causale: params[:causale] }) if params[:causale].present?
-      @documenti = scope.order(created_at: :desc).limit(params[:limit] || 50)
+      @documenti = paginate_json(scope.order(created_at: :desc))
       return respond_to { |format| format.json }
     end
 

@@ -25,7 +25,7 @@ class LibriController < ApplicationController
 
   def index
     if request.format.json?
-      @libri = @filter.libri.includes(:editore).limit(params[:limit] || 50)
+      @libri = paginate_json(@filter.libri.includes(:editore))
       return respond_to { |format| format.json }
     end
 

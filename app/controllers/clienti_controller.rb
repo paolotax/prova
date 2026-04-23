@@ -10,7 +10,7 @@ class ClientiController < ApplicationController
 
   def index
     if request.format.json?
-      @clienti = @filter.clienti.limit(params[:limit] || 50)
+      @clienti = paginate_json(@filter.clienti)
     else
       @clienti = @filter.clienti.includes(:saldo)
       @total_count = @clienti.count
