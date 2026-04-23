@@ -14,11 +14,8 @@
     <% grand_total = 0 %>
 
     <% mandati_per_regione.sort_by { |r, _| r.to_s }.each do |regione, mandati_regione| %>
-        <div class="zone-regione">
-            <% if mandati_per_regione.size > 1 || regione.present? %>
-                <strong class="divider txt-small"><%= regione %></strong>
-            <% end %>
-
+        <% show_regione_header = mandati_per_regione.size > 1 || regione.present? %>
+        <% regione_body = capture do %>
             <% province_regione = mandati_regione.filter_map(&:provincia).uniq.sort %>
             <% province_regione.each do |provincia| %>
                 <% mandati_prov = mandati_regione.select { |m| m.provincia == provincia } %>
@@ -178,7 +175,21 @@
                 </table>
                 </div>
             <% end %>
-        </div>
+        <% end %>
+
+        <% if show_regione_header %>
+            <details class="zone-regione" open
+                     data-controller="details-persist"
+                     data-details-persist-key-value="configurazione:mandati-region:<%= regione %>">
+                <summary class="accordion-summary accordion-summary--provincia">
+                    <span class="accordion-label"><%= regione %></span>
+                    <span class="accordion-count"><%= mandati_regione.size %></span>
+                </summary>
+                <%= regione_body %>
+            </details>
+        <% else %>
+            <div class="zone-regione"><%= regione_body %></div>
+        <% end %>
     <% end %>
 
     <% if mandati.empty? %>

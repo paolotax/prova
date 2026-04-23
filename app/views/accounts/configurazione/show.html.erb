@@ -9,24 +9,40 @@
 
     <h2 class="divider divider--fade margin-block-end">Le mie Zone</h2>
 
-    <%= render partial: "accounts/zone/zone_list", locals: { account_zone: @account_zone } %>
-
     <%= render partial: "accounts/zone/form", locals: { regioni: @regioni } %>
 
     <%= button_to accounts_importazione_path, class: "btn margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
       <%= icon_tag "refresh" %>
       <span>Aggiorna zone</span>
     <% end %>
+
+    <details class="margin-block-start-double"
+             data-controller="details-persist"
+             data-details-persist-key-value="configurazione:zone-list">
+      <summary class="accordion-summary">
+        <span class="accordion-label">Elenco zone</span>
+        <span class="accordion-count"><%= @account_zone.size %></span>
+      </summary>
+      <%= render partial: "accounts/zone/zone_list", locals: { account_zone: @account_zone } %>
+    </details>
   </div>
 
   <div class="panel shadow center">
     <h2 class="divider divider--fade margin-block-end">I miei Mandati</h2>
 
-    <%= render partial: "accounts/mandati/mandati_list", locals: { mandati: @mandati } %>
-
     <%= render partial: "accounts/mandati/form", locals: { gruppi: @gruppi, editori: @editori } %>
 
     <%= render "accounts/configurazione/pulsante_aggiorna_adozioni", account: Current.account %>
+
+    <details class="margin-block-start-double"
+             data-controller="details-persist"
+             data-details-persist-key-value="configurazione:mandati-list">
+      <summary class="accordion-summary">
+        <span class="accordion-label">Elenco mandati</span>
+        <span class="accordion-count"><%= @mandati.size %></span>
+      </summary>
+      <%= render partial: "accounts/mandati/mandati_list", locals: { mandati: @mandati } %>
+    </details>
   </div>
 
   <div class="panel shadow center">

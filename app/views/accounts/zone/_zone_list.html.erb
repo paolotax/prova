@@ -6,14 +6,10 @@
     <% importate_per_zona = account_id ? Scuola.where(account_id: account_id).group(:provincia, :grado).count : {} %>
 
     <% zone_per_regione.each do |regione, zone_regione| %>
-        <div class="zone-regione">
-            <% if zone_per_regione.size > 1 || regione.present? %>
-                <strong class="divider txt-small"><%= regione %></strong>
-            <% end %>
-
-            <% province = zone_regione.map(&:provincia).uniq.sort %>
-            <% zone_lookup = zone_regione.index_by { |z| [z.provincia, z.grado] } %>
-
+        <% province = zone_regione.map(&:provincia).uniq.sort %>
+        <% zone_lookup = zone_regione.index_by { |z| [z.provincia, z.grado] } %>
+        <% show_regione_header = zone_per_regione.size > 1 || regione.present? %>
+        <% regione_body = capture do %>
             <div style="overflow-x: auto;">
                 <table class="zone-grid">
                     <thead>
@@ -73,7 +69,21 @@
                     </tfoot>
                 </table>
             </div>
-        </div>
+        <% end %>
+
+        <% if show_regione_header %>
+            <details class="zone-regione" open
+                     data-controller="details-persist"
+                     data-details-persist-key-value="configurazione:zone-region:<%= regione %>">
+                <summary class="accordion-summary accordion-summary--provincia">
+                    <span class="accordion-label"><%= regione %></span>
+                    <span class="accordion-count"><%= zone_regione.size %></span>
+                </summary>
+                <%= regione_body %>
+            </details>
+        <% else %>
+            <div class="zone-regione"><%= regione_body %></div>
+        <% end %>
     <% end %>
 
 </div>
