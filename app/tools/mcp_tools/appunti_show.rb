@@ -13,9 +13,10 @@ module MCPTools
 
     def self.call(id:, server_context:, **_params)
       with_current(server_context) do
-        appunto = Current.account.appunti.find(id)
+        appunto = Current.account.appunti.includes(:entry).find(id)
         result = {
-          id: appunto.id, nome: appunto.nome, numero: appunto.numero, status: appunto.status,
+          id: appunto.id, entry_id: appunto.entry&.id,
+          nome: appunto.nome, numero: appunto.numero, status: appunto.status,
           content: appunto.content&.to_plain_text,
           telefono: appunto.telefono, email: appunto.email,
           appuntabile_type: appunto.appuntabile_type, appuntabile_display: appunto.appuntabile&.to_s,

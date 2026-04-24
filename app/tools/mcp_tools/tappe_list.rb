@@ -16,7 +16,7 @@ module MCPTools
 
     def self.call(filter: nil, search: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
-        scope = Current.user.tappe.includes(:tappable, :giri)
+        scope = Current.user.tappe.includes(:tappable, :giri, :entry)
         scope = scope.search(search) if search.present?
         case filter
         when "oggi" then scope = scope.di_oggi
@@ -36,7 +36,8 @@ module MCPTools
 
     def self.format_tappa(tappa)
       {
-        id: tappa.id, titolo: tappa.titolo, data_tappa: tappa.data_tappa, descrizione: tappa.descrizione, position: tappa.position,
+        id: tappa.id, entry_id: tappa.entry&.id,
+        titolo: tappa.titolo, data_tappa: tappa.data_tappa, descrizione: tappa.descrizione, position: tappa.position,
         tappable_type: tappa.tappable_type, tappable_display: tappa.tappable&.to_s,
         tappable_value: tappa.tappable ? "#{tappa.tappable_type}:#{tappa.tappable_id}" : nil,
         comune: tappa.tappable.respond_to?(:comune) ? tappa.tappable.comune : nil,

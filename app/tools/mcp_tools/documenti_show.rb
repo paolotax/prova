@@ -13,9 +13,10 @@ module MCPTools
 
     def self.call(id:, server_context:, **_params)
       with_current(server_context) do
-        doc = Current.account.documenti.includes(:causale, :clientable, documento_righe: { riga: :libro }).find(id)
+        doc = Current.account.documenti.includes(:causale, :clientable, :entry, documento_righe: { riga: :libro }).find(id)
         result = {
-          id: doc.id, numero_documento: doc.numero_documento, data_documento: doc.data_documento,
+          id: doc.id, entry_id: doc.entry&.id,
+          numero_documento: doc.numero_documento, data_documento: doc.data_documento,
           causale: doc.causale&.causale, note: doc.note, referente: doc.referente,
           totale_cents: doc.totale_cents, spese_cents: doc.spese_cents, totale_copie: doc.totale_copie,
           clientable_type: doc.clientable_type, clientable_display: doc.clientable&.denominazione,

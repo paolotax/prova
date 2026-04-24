@@ -84,7 +84,8 @@ module MCPTools
 
     def self.format_documento(doc, include_righe: false)
       result = {
-        id: doc.id, numero_documento: doc.numero_documento, data_documento: doc.data_documento,
+        id: doc.id, entry_id: doc.entry&.id,
+        numero_documento: doc.numero_documento, data_documento: doc.data_documento,
         causale: doc.causale&.causale, totale_cents: doc.totale_cents, totale_copie: doc.totale_copie,
         clientable_type: doc.clientable_type, clientable_display: doc.clientable&.denominazione,
         clientable_value: doc.clientable ? "#{doc.clientable_type}:#{doc.clientable_id}" : nil,

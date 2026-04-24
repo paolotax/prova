@@ -13,7 +13,7 @@ module MCPTools
 
     def self.call(id:, server_context:, **_params)
       with_current(server_context) do
-        tappa = Current.user.tappe.includes(:tappable, :giri).find(id)
+        tappa = Current.user.tappe.includes(:tappable, :giri, :entry).find(id)
         result = TappeList.format_tappa(tappa).merge(created_at: tappa.created_at, updated_at: tappa.updated_at)
         MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
       rescue ActiveRecord::RecordNotFound
