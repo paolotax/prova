@@ -1,6 +1,6 @@
 <%# locals: (source:) -%>
 
-<% return unless source.tappa_target %>
+<% return unless source&.tappa_target %>
 
 <% frame_id = "pianifica_#{source.class.name}_#{source.id}" %>
 

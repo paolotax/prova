@@ -2,11 +2,12 @@
 
 class DashboardController < ApplicationController
   include FilterScoped
+  include ScopesOwnTappe
 
   FILTER_PARAMS = ::Filters::EntryFilter::Fields::PERMITTED_PARAMS
 
   def index
-    base_scope = current_account.entries.published
+    base_scope = current_account.entries.published.then { |s| filter_own_tappe(s) }
 
     # Se filtri attivi, mostra risultati filtrati invece di kanban
     if @filter.used?
