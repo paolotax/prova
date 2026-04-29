@@ -4,6 +4,8 @@ class AdozioniAnalyticsController < ApplicationController
   def show
     scuola_ids = Current.admin? ? Current.account.scuola_ids : Current.membership.scuola_ids
     @analytics = AdozioniAnalytics.new(account: Current.account, scuola_ids: scuola_ids)
+    @tab = %w[mie tutte editori].include?(params[:tab]) ? params[:tab] : "mie"
+    solo_mie = @tab == "mie"
     @filtri = {
       disciplina: params[:disciplina],
       anno_corso: params[:anno_corso],
@@ -17,7 +19,7 @@ class AdozioniAnalyticsController < ApplicationController
       adozioni_tipo: params[:adozioni_tipo].presence
     }.compact_blank
 
-    opts = @analytics.mie_filter_options(filtri: @filtri)
+    opts = @analytics.filter_options(filtri: @filtri, solo_mie: solo_mie)
     @discipline  = opts[:discipline]
     @editori     = opts[:editori]
     @gruppi      = opts[:gruppi]
@@ -28,7 +30,7 @@ class AdozioniAnalyticsController < ApplicationController
     @aree        = opts[:aree]
     @anni_corso  = opts[:anni_corso]
 
-    @rows = @analytics.mie_adozioni(filtri: @filtri).to_a
+    @rows = @analytics.adozioni(filtri: @filtri, solo_mie: solo_mie).to_a
     scuole_scope = Current.account.scuole.where(id: scuola_ids)
                           .where.not(codice_ministeriale: [nil, ""])
     scuole_scope = scuole_scope.where(regione: @filtri[:regione])         if @filtri[:regione].present?

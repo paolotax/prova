@@ -97,7 +97,7 @@ module Stats
 
     DEFAULT_GRADI = %w[E M N].freeze
 
-    def initialize(filters:, group_by:, coefficiente: 18, order_by: :classi_count, limit: 50, offset: 0, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
+    def initialize(filters:, group_by:, coefficiente: 17, order_by: :classi_count, limit: 50, offset: 0, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente

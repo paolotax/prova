@@ -27,7 +27,7 @@ module MCPTools
         scuola: { type: "string", description: "Ricerca parziale nel nome della scuola" },
         codice_scuola: { type: "string", description: "Codice ministeriale esatto (es. MOEE804012)" },
         combinazione: { type: "string", description: "Combinazione" },
-        coefficiente: { type: "integer", description: "Alunni per classe per stima copie (default 18)" },
+        coefficiente: { type: "integer", description: "Alunni per classe per stima copie (default 17)" },
         order_by: { type: "string", description: "Ordinamento: classi_count (default), adozioni_count, percentuale, importo" },
         offset: { type: "integer", description: "Salta i primi N gruppi (per paginazione). Default 0." },
         limit: { type: "integer", description: "Max risultati (1-200, default 50). La response include pagination.total_groups per sapere quante pagine esistono." },
@@ -37,7 +37,7 @@ module MCPTools
       required: ["group_by"]
     )
 
-    def self.call(group_by:, grado: nil, filiera: nil, area: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 18, order_by: "classi_count", offset: 0, limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
+    def self.call(group_by:, grado: nil, filiera: nil, area: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 17, order_by: "classi_count", offset: 0, limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
       with_current(server_context) do
         filters = {
           area: area, provincia: provincia, comune: comune, regione: regione, classe: classe,

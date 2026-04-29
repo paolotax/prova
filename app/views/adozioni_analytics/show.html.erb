@@ -2,10 +2,12 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to adozioni_analytics_path(format: :xlsx, params: request.query_parameters), class: "btn",
-        data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
-      <%= icon_tag "table-cells" %>
-      <span class="for-screen-reader">Esporta in excel</span>
+    <% if @tab != "editori" %>
+      <%= link_to adozioni_analytics_path(format: :xlsx, params: request.query_parameters), class: "btn",
+          data: { controller: "link-modifier tooltip", link_modifier_target: "link" } do %>
+        <%= icon_tag "table-cells" %>
+        <span class="for-screen-reader">Esporta in excel</span>
+      <% end %>
     <% end %>
   </div>
 
@@ -15,6 +17,20 @@
 <% end %>
 
 <div class="stats-container">
+  <nav class="analytics-tabs">
+    <% query = request.query_parameters %>
+    <%= link_to "Mie adozioni", adozioni_analytics_path(query.merge(tab: "mie")),
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'mie'}" %>
+    <%= link_to "Tutte le adozioni", adozioni_analytics_path(query.merge(tab: "tutte")),
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'tutte'}" %>
+    <%= link_to "Editori", adozioni_analytics_path(query.merge(tab: "editori")),
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'editori'}" %>
+  </nav>
+
   <%= render "adozioni_analytics/filtri" %>
-  <%= render "adozioni_analytics/tab_mie" %>
+  <% if @tab == "editori" %>
+    <%= render "adozioni_analytics/tab_editori" %>
+  <% else %>
+    <%= render "adozioni_analytics/tab" %>
+  <% end %>
 </div>

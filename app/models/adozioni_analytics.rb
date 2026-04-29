@@ -6,13 +6,15 @@ class AdozioniAnalytics
     @scuola_ids = scuola_ids
   end
 
-  # My adoptions (mie, da_acquistare), user's schools only,
+  # Adoptions (da_acquistare), user's schools only,
   # aggregated by (grado, disciplina, anno_corso, titolo/isbn/editore).
-  def mie_adozioni(filtri: {})
-    scope = account.adozioni.mie
-      .where(da_acquistare: true)
-      .joins(classe: :scuola)
-      .where(classi: { scuola_id: scuola_ids })
+  # solo_mie: true → only mia=true (mie adozioni). false → all in scope (mie + concorrenza).
+  def adozioni(filtri: {}, solo_mie: true)
+    scope = account.adozioni
+    scope = scope.mie if solo_mie
+    scope = scope.where(da_acquistare: true)
+                 .joins(classe: :scuola)
+                 .where(classi: { scuola_id: scuola_ids })
 
     scope = apply_filtri(scope, filtri)
 
@@ -23,7 +25,7 @@ class AdozioniAnalytics
         "classi.anno_corso AS anno_corso",
         :disciplina, :titolo, :editore, :codice_isbn,
         "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
-        "COUNT(DISTINCT adozioni.classe_id) * 18 AS copie_stimate",
+        "COUNT(DISTINCT adozioni.classe_id) * 17 AS copie_stimate",
         "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
       )
       .order("scuole.grado", :disciplina, "classi.anno_corso",
@@ -124,12 +126,14 @@ class AdozioniAnalytics
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mercato_scuola_mercati")
   end
 
-  # Available filter options scoped to mie adozioni da_acquistare
+  # Available filter options scoped to adozioni da_acquistare in user's schools
   # 1 bulk query for all options, then 1 query per active filter (except itself)
-  def mie_filter_options(filtri: {})
-    base = account.adozioni.mie.where(da_acquistare: true)
-      .joins(classe: :scuola)
-      .where(classi: { scuola_id: scuola_ids })
+  def filter_options(filtri: {}, solo_mie: true)
+    base = account.adozioni
+    base = base.mie if solo_mie
+    base = base.where(da_acquistare: true)
+               .joins(classe: :scuola)
+               .where(classi: { scuola_id: scuola_ids })
 
     # 1 query: all distinct values from fully-filtered scope
     filtered = apply_filtri(base, filtri)
