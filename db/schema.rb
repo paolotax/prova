@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_22_142901) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_29_185901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -109,6 +109,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_142901) do
     t.integer "prezzo_cents", default: 0
     t.string "titolo"
     t.datetime "updated_at", null: false
+    t.index ["account_id", "classe_id"], name: "index_adozioni_on_account_classe_da_acquistare", where: "(da_acquistare = true)"
     t.index ["account_id", "libro_id"], name: "index_adozioni_on_account_id_and_libro_id"
     t.index ["account_id", "mia"], name: "index_adozioni_on_account_id_and_mia"
     t.index ["account_id"], name: "index_adozioni_on_account_id"

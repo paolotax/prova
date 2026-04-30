@@ -25,13 +25,14 @@
 #
 # Indexes
 #
-#  index_adozioni_on_account_id                 (account_id)
-#  index_adozioni_on_account_id_and_libro_id    (account_id,libro_id)
-#  index_adozioni_on_account_id_and_mia         (account_id,mia)
-#  index_adozioni_on_classe_id                  (classe_id)
-#  index_adozioni_on_classe_id_and_codice_isbn  (classe_id,codice_isbn) UNIQUE
-#  index_adozioni_on_import_adozione_id         (import_adozione_id)
-#  index_adozioni_on_libro_id                   (libro_id)
+#  index_adozioni_on_account_classe_da_acquistare  (account_id,classe_id) WHERE (da_acquistare = true)
+#  index_adozioni_on_account_id                    (account_id)
+#  index_adozioni_on_account_id_and_libro_id       (account_id,libro_id)
+#  index_adozioni_on_account_id_and_mia            (account_id,mia)
+#  index_adozioni_on_classe_id                     (classe_id)
+#  index_adozioni_on_classe_id_and_codice_isbn     (classe_id,codice_isbn) UNIQUE
+#  index_adozioni_on_import_adozione_id            (import_adozione_id)
+#  index_adozioni_on_libro_id                      (libro_id)
 #
 # Foreign Keys
 #
