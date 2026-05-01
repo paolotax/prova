@@ -17,14 +17,17 @@
 <% end %>
 
 <div class="stats-container">
-  <nav class="analytics-tabs">
+  <nav class="analytics-tabs" data-controller="tab-loading">
     <% query = request.query_parameters %>
     <%= link_to "Mie adozioni", adozioni_analytics_path(query.merge(tab: "mie")),
-        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'mie'}" %>
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'mie'}",
+        data: { action: "click->tab-loading#loading" } %>
     <%= link_to "Tutte le adozioni", adozioni_analytics_path(query.merge(tab: "tutte")),
-        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'tutte'}" %>
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'tutte'}",
+        data: { action: "click->tab-loading#loading" } %>
     <%= link_to "Editori", adozioni_analytics_path(query.merge(tab: "editori")),
-        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'editori'}" %>
+        class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'editori'}",
+        data: { action: "click->tab-loading#loading" } %>
   </nav>
 
   <%= render "adozioni_analytics/filtri" %>
