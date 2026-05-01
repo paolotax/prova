@@ -84,10 +84,6 @@ class AdozioniAnalytics
     result
   end
 
-  def zone_book_shares(rows, codici_ministeriali:)
-    book_shares(rows, codici_ministeriali: codici_ministeriali)
-  end
-
   # Usa la matview mercato_scuola_mercati: aggrega le sezioni delle sole scuole indicate.
   # Hash: { [grado, disciplina, anno_corso] => totale_sezioni_in_zona }
   def zone_market_totals(rows, codici_ministeriali:)
@@ -161,88 +157,8 @@ class AdozioniAnalytics
 
   TG_TO_GRADO = { "EE" => "E", "MM" => "M", "NT" => "N", "NO" => "N" }.freeze
 
-  def book_shares(rows, codici_ministeriali: nil)
-    tuples = rows.flat_map { |r|
-      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
-    }.uniq.reject { |t| t.any?(&:blank?) }
-    return {} if tuples.empty?
-
-    # VALUES CTE: consente hash join efficiente invece di nested-loop su tuple IN
-    values_rows = tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
-    discipline  = tuples.map { |t| t[1] }.uniq
-    disc_list   = discipline.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")
-
-    sql = <<~SQL
-      WITH m (tg, disciplina, anno_corso, codice_isbn) AS (VALUES #{values_rows})
-      SELECT im_ad."TIPOGRADOSCUOLA" AS tg,
-             im_ad."DISCIPLINA"      AS disciplina,
-             im_ad."ANNOCORSO"       AS anno_corso,
-             im_ad."CODICEISBN"      AS codice_isbn,
-             COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
-      FROM import_adozioni im_ad
-      JOIN m ON m.tg         = im_ad."TIPOGRADOSCUOLA"
-            AND m.disciplina = im_ad."DISCIPLINA"
-            AND m.anno_corso = im_ad."ANNOCORSO"
-            AND m.codice_isbn = im_ad."CODICEISBN"
-      WHERE im_ad."DAACQUIST" = 'Si'
-        AND im_ad."DISCIPLINA" IN (#{disc_list})
-        #{scuola_filter_sql(codici_ministeriali)}
-      GROUP BY 1, 2, 3, 4
-    SQL
-
-    result = Hash.new(0)
-    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
-      tg, disc, anno, isbn, sez = row
-      grado = TG_TO_GRADO[tg] or next
-      result[[grado, disc, anno, isbn]] += sez.to_i
-    end
-    result
-  end
-
-  def market_totals(rows, codici_ministeriali: nil)
-    tuples = rows.flat_map { |r|
-      (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
-    }.uniq.reject { |t| t.any?(&:blank?) }
-    return {} if tuples.empty?
-
-    values_rows = tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
-    discipline  = tuples.map { |t| t[1] }.uniq
-    disc_list   = discipline.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")
-
-    sql = <<~SQL
-      WITH m (tg, disciplina, anno_corso) AS (VALUES #{values_rows})
-      SELECT im_ad."TIPOGRADOSCUOLA" AS tg,
-             im_ad."DISCIPLINA"      AS disciplina,
-             im_ad."ANNOCORSO"       AS anno_corso,
-             COUNT(DISTINCT im_ad."CODICESCUOLA" || '_' || im_ad."ANNOCORSO" || '_' || im_ad."SEZIONEANNO") AS sezioni
-      FROM import_adozioni im_ad
-      JOIN m ON m.tg         = im_ad."TIPOGRADOSCUOLA"
-            AND m.disciplina = im_ad."DISCIPLINA"
-            AND m.anno_corso = im_ad."ANNOCORSO"
-      WHERE im_ad."DAACQUIST" = 'Si'
-        AND im_ad."DISCIPLINA" IN (#{disc_list})
-        #{scuola_filter_sql(codici_ministeriali)}
-      GROUP BY 1, 2, 3
-    SQL
-
-    result = Hash.new(0)
-    ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
-      tg, disc, anno, sez = row
-      grado = TG_TO_GRADO[tg] or next
-      result[[grado, disc, anno]] += sez.to_i
-    end
-    result
-  end
-
   def tuples_sql(tuples)
     tuples.map { |t| "(#{t.map { |v| ActiveRecord::Base.connection.quote(v) }.join(", ")})" }.join(", ")
-  end
-
-  def scuola_filter_sql(codici_ministeriali)
-    return "" if codici_ministeriali.blank?
-
-    list = codici_ministeriali.map { |c| ActiveRecord::Base.connection.quote(c) }.join(", ")
-    "AND im_ad.\"CODICESCUOLA\" IN (#{list})"
   end
 
   OPTION_SQL = {
