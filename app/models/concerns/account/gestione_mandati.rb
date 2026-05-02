@@ -21,9 +21,14 @@ module Account::GestioneMandati
   # Prende tutti gli editore_id distinti dai mandati attivi e crea mandati per la nuova combinazione
   def estendi_mandati_a_zona!(provincia:, grado:)
     editore_ids = mandati.attivi.select(:editore_id).distinct.pluck(:editore_id)
-    editore_ids.each do |eid|
-      mandati.find_or_create_by!(editore_id: eid, provincia: provincia, grado: grado)
+    return if editore_ids.empty?
+
+    now = Time.current
+    records = editore_ids.map do |eid|
+      { id: SecureRandom.uuid, account_id: id, editore_id: eid,
+        provincia: provincia, grado: grado, created_at: now, updated_at: now }
     end
+    Accounts::Mandato.insert_all(records, unique_by: :idx_mandati_unique)
   end
 
   # Risolve editore_ids da params (singolo editore o intero gruppo)

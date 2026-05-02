@@ -189,4 +189,35 @@ class AccountTest < ActiveSupport::TestCase
 
     assert_not @account.zone_tutte_attive?
   end
+
+  # --- estendi_mandati_a_zona! ----------------------------------------------
+
+  test "estendi_mandati_a_zona! creates a mandato per editore attivo" do
+    editori_attivi = @account.mandati.attivi.select(:editore_id).distinct.pluck(:editore_id)
+    assert editori_attivi.any?, "fixture deve avere almeno un mandato attivo"
+
+    assert_difference -> { @account.mandati.where(provincia: "BO", grado: "E").count },
+                      editori_attivi.size do
+      @account.estendi_mandati_a_zona!(provincia: "BO", grado: "E")
+    end
+  end
+
+  test "estendi_mandati_a_zona! is idempotent on second call" do
+    @account.estendi_mandati_a_zona!(provincia: "BO", grado: "E")
+    count_after_first = @account.mandati.where(provincia: "BO", grado: "E").count
+
+    assert_no_difference -> { @account.mandati.where(provincia: "BO", grado: "E").count } do
+      @account.estendi_mandati_a_zona!(provincia: "BO", grado: "E")
+    end
+
+    assert count_after_first > 0
+  end
+
+  test "estendi_mandati_a_zona! is a noop when no mandati attivi" do
+    @account.mandati.update_all(disdetta: true)
+
+    assert_no_difference -> { @account.mandati.count } do
+      @account.estendi_mandati_a_zona!(provincia: "BO", grado: "E")
+    end
+  end
 end
