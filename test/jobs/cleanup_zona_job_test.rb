@@ -10,7 +10,7 @@ class CleanupZonaJobSilent < CleanupZonaJob
 end
 
 class CleanupZonaJobTest < ActiveJob::TestCase
-  fixtures :accounts, :users, :memberships, :account_zone, :scuole, :classi, :adozioni
+  fixtures :accounts, :users, :memberships, :account_zone, :scuole, :classi, :adozioni, :causali
 
   setup do
     @fizzy = accounts(:fizzy)
@@ -49,5 +49,29 @@ class CleanupZonaJobTest < ActiveJob::TestCase
     assert_no_enqueued_jobs(only: UpdateMieAdozioniJob) do
       CleanupZonaJobSilent.perform_now(@zona)
     end
+  end
+
+  test "enqueues RebuildAccountAdozioniJob once" do
+    assert_enqueued_jobs(1, only: RebuildAccountAdozioniJob) do
+      CleanupZonaJobSilent.perform_now(@zona)
+    end
+  end
+
+  test "scuole con documenti restano e zona resta attiva" do
+    scuola = scuole(:scuola_fizzy_nord)
+    Documento.create!(
+      account: @fizzy,
+      user: users(:one),
+      causale: causali(:vendita),
+      clientable: scuola,
+      data_documento: Date.current,
+      numero_documento: 1
+    )
+
+    assert_no_difference -> { Scuola.where(id: scuola.id).count } do
+      CleanupZonaJobSilent.perform_now(@zona)
+    end
+
+    assert_equal "attiva", @zona.reload.stato
   end
 end
