@@ -1,6 +1,8 @@
 require "test_helper"
 
 class MandatiControllerTest < ActionDispatch::IntegrationTest
+  include ActiveJob::TestHelper
+
   fixtures :accounts, :users, :memberships, :editori, :mandati, :adozioni, :scuole, :classi
 
   setup do
@@ -78,6 +80,17 @@ class MandatiControllerTest < ActionDispatch::IntegrationTest
     mandato = mandati(:fizzy_mondadori)
     assert_difference("Accounts::Mandato.count", -1) do
       delete accounts_mandato_path(mandato, account_id: @account.id),
+        as: :turbo_stream
+    end
+  end
+
+  test "create enqueues exactly one UpdateMieAdozioniJob" do
+    mandati(:fizzy_zanichelli).destroy
+    mandati(:fizzy_mondadori).destroy
+
+    assert_enqueued_jobs 1, only: UpdateMieAdozioniJob do
+      post accounts_mandati_path(account_id: @account.id),
+        params: { hgruppo: "Zanichelli Group", heditore: editori(:zanichelli).id },
         as: :turbo_stream
     end
   end
