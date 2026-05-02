@@ -24,4 +24,10 @@ class ImportScuolePerZonaJobTest < ActiveJob::TestCase
       ImportScuolePerZonaJobSilent.perform_now(@zona)
     end
   end
+
+  test "does not enqueue BackfillDirezioniJob (delegated to RebuildAccountAdozioniJob)" do
+    assert_no_enqueued_jobs(only: BackfillDirezioniJob) do
+      ImportScuolePerZonaJobSilent.perform_now(@zona)
+    end
+  end
 end
