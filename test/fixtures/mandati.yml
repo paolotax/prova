@@ -20,7 +20,7 @@
 #
 # Indexes
 #
-#  idx_mandati_unique           (account_id,editore_id,provincia,grado,anno_scolastico,area) UNIQUE
+#  idx_mandati_unique           (account_id,editore_id,provincia,grado,anno_scolastico,area) UNIQUE NULLS NOT DISTINCT
 #  index_mandati_on_account_id  (account_id)
 #  index_mandati_on_editore_id  (editore_id)
 #

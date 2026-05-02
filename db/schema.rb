@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_29_185901) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_02_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -882,7 +882,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_185901) do
     t.string "provincia"
     t.integer "sezioni_count", default: 0
     t.datetime "updated_at", null: false
-    t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico", "area"], name: "idx_mandati_unique", unique: true
+    t.index ["account_id", "editore_id", "provincia", "grado", "anno_scolastico", "area"], name: "idx_mandati_unique", unique: true, nulls_not_distinct: true
     t.index ["account_id"], name: "index_mandati_on_account_id"
     t.index ["editore_id"], name: "index_mandati_on_editore_id"
   end
