@@ -39,7 +39,7 @@ module Accounts
     scope :attivi, -> { where(disdetta: false) }
     scope :disdetti, -> { where(disdetta: true) }
 
-    after_commit :update_mie_adozioni_async, on: [:create, :destroy]
+    after_commit :update_mie_adozioni_async, on: :destroy
     after_update_commit :update_mie_adozioni_async, if: :saved_change_to_disdetta?
 
     def copre_scuola?(scuola)
