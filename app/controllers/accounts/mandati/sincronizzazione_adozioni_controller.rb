@@ -4,7 +4,7 @@ module Accounts
       before_action :authenticate_user!
 
       def create
-        UpdateMieAdozioniJob.perform_later(Current.account)
+        RebuildAccountAdozioniJob.perform_later(Current.account)
 
         respond_to do |format|
           format.turbo_stream { render turbo_stream: [] }
