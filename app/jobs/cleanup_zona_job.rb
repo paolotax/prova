@@ -9,7 +9,15 @@ class CleanupZonaJob < ApplicationJob
     provincia = account_zona.provincia
     grado = account_zona.grado
 
-    target_ids = account.scuole.where(provincia: provincia, grado: grado).pluck(:id)
+    target_scope = account.scuole.where(provincia: provincia, grado: grado)
+    target_ids = target_scope.pluck(:id)
+
+    # Direzioni dei plessi in target che non sono esse stesse in target
+    # (cross-provincia / cross-grado): da pulire se restano senza plessi
+    direzioni_esterne = target_scope
+      .where.not(direzione_id: nil)
+      .distinct
+      .pluck(:direzione_id) - target_ids
 
     if target_ids.empty?
       account_zona.destroy!
@@ -21,6 +29,8 @@ class CleanupZonaJob < ApplicationJob
     non_protette_ids = target_ids - protette_ids.to_a
 
     bulk_delete_non_protette(non_protette_ids) if non_protette_ids.any?
+
+    cleanup_direzioni_orfane(account, direzioni_esterne) if direzioni_esterne.any?
 
     if protette_ids.any?
       remaining = account.scuole.where(provincia: provincia, grado: grado).count
@@ -39,6 +49,23 @@ class CleanupZonaJob < ApplicationJob
   end
 
   private
+
+  # Cancella le direzioni che, dopo aver eliminato i plessi della zona,
+  # restano senza plessi. Solo se non protette.
+  def cleanup_direzioni_orfane(account, direzione_ids)
+    orfane_ids = account.scuole
+      .where(id: direzione_ids)
+      .left_joins(:plessi)
+      .where(plessi_scuole: { id: nil })
+      .pluck(:id)
+
+    return if orfane_ids.empty?
+
+    protette = scuole_protette_ids(orfane_ids)
+    da_cancellare = orfane_ids - protette.to_a
+
+    bulk_delete_non_protette(da_cancellare) if da_cancellare.any?
+  end
 
   # Replica la semantica effettiva di ProtectedFromDestroy:
   # gli appunti diretti su Scuola/Persona NON proteggono (Appuntabile li

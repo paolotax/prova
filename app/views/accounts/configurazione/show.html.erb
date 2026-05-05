@@ -16,15 +16,9 @@
       <span>Aggiorna zone</span>
     <% end %>
 
-    <details class="margin-block-start-double"
-             data-controller="details-persist"
-             data-details-persist-key-value="configurazione:zone-list">
-      <summary class="accordion-summary">
-        <span class="accordion-label">Elenco zone</span>
-        <span class="accordion-count"><%= @account_zone.size %></span>
-      </summary>
+    <div class="margin-block-start-double">
       <%= render partial: "accounts/zone/zone_list", locals: { account_zone: @account_zone } %>
-    </details>
+    </div>
   </div>
 
   <div class="panel shadow center">

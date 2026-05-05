@@ -9,26 +9,35 @@
         <% province = zone_regione.map(&:provincia).uniq.sort %>
         <% zone_lookup = zone_regione.index_by { |z| [z.provincia, z.grado] } %>
         <% show_regione_header = zone_per_regione.size > 1 || regione.present? %>
+
+        <% regione_totali = Hash.new(0) %>
+        <% province.each do |prov| %>
+            <% gradi_colonne.each do |code, _label| %>
+                <% z = zone_lookup[[prov, code]] %>
+                <% regione_totali[code] += z.scuole_count if z && z.stato.in?(%w[attiva pronta da_rimuovere]) %>
+            <% end %>
+            <% regione_totali["altro"] += altro_per_provincia[prov] || 0 %>
+        <% end %>
+        <% regione_grand = regione_totali.values.sum %>
+
         <% regione_body = capture do %>
             <div style="overflow-x: auto;">
                 <table class="zone-grid">
-                    <thead>
-                        <tr>
-                            <th>Provincia</th>
-                            <% gradi_colonne.each do |_code, label| %>
-                                <th><%= label %></th>
-                            <% end %>
-                            <th>Altro</th>
-                            <th>Totale</th>
-                        </tr>
-                    </thead>
+                    <colgroup>
+                        <col class="zone-grid__col-provincia">
+                        <col class="zone-grid__col-grado">
+                        <col class="zone-grid__col-grado">
+                        <col class="zone-grid__col-grado">
+                        <col class="zone-grid__col-altro">
+                        <col class="zone-grid__col-tot">
+                    </colgroup>
                     <tbody>
                         <% province.each do |prov| %>
                             <tr>
                                 <td>
                                     <div class="zone-grid__provincia">
                                         <%= prov %>
-                                        <%= link_to accounts_aree_path(account_id: account_id, provincia: prov),
+                                        <%= link_to "/#{account_id}/aree/#{prov}",
                                             class: "btn btn--circle btn--link zone-grid__area-link", style: "--btn-size: 1.6em;",
                                             title: "Gestisci aree" do %>
                                           <%= icon_tag "wrench", class: "icon--small" %>
@@ -52,32 +61,33 @@
                             </tr>
                         <% end %>
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td class="txt-bold">Totale</td>
-                            <% grand_total = 0 %>
-                            <% gradi_colonne.each do |code, _label| %>
-                                <% col_total = province.sum { |prov| zone_lookup[[prov, code]]&.then { |z| z.stato.in?(%w[attiva pronta da_rimuovere]) ? z.scuole_count : 0 } || 0 } %>
-                                <% grand_total += col_total %>
-                                <td class="txt-center txt-small txt-bold"><%= col_total if col_total > 0 %></td>
-                            <% end %>
-                            <% altro_total = altro_per_provincia.values.sum %>
-                            <% grand_total += altro_total %>
-                            <td class="txt-center txt-small txt-bold"><%= altro_total if altro_total > 0 %></td>
-                            <td class="txt-center txt-small txt-bold"><%= grand_total if grand_total > 0 %></td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
         <% end %>
 
         <% if show_regione_header %>
-            <details class="zone-regione" open
+            <details class="zone-regione"
                      data-controller="details-persist"
                      data-details-persist-key-value="configurazione:zone-region:<%= regione %>">
-                <summary class="accordion-summary accordion-summary--provincia">
-                    <span class="accordion-label"><%= regione %></span>
-                    <span class="accordion-count"><%= zone_regione.size %></span>
+                <summary class="zone-regione__summary zone-regione__summary--zone">
+                    <span class="zone-regione__label">
+                        <%= icon_tag "caret-down", class: "icon--small zone-regione__caret" %>
+                        <%= regione %>
+                    </span>
+                    <% gradi_colonne.each do |code, label| %>
+                        <span class="zone-regione__count" title="<%= label %>">
+                            <span class="zone-regione__count-label"><%= label %></span>
+                            <span class="zone-regione__count-value"><%= regione_totali[code] if regione_totali[code] > 0 %></span>
+                        </span>
+                    <% end %>
+                    <span class="zone-regione__count zone-regione__count--altro" title="Altro">
+                        <span class="zone-regione__count-label">Altro</span>
+                        <span class="zone-regione__count-value"><%= regione_totali["altro"] if regione_totali["altro"] > 0 %></span>
+                    </span>
+                    <span class="zone-regione__count zone-regione__count--total" title="Totale">
+                        <span class="zone-regione__count-label">Tot</span>
+                        <span class="zone-regione__count-value"><%= regione_grand if regione_grand > 0 %></span>
+                    </span>
                 </summary>
                 <%= regione_body %>
             </details>
