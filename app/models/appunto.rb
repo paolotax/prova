@@ -73,7 +73,10 @@ class Appunto < ApplicationRecord
     end
   end
 
+  APPUNTABLE_TYPES = %w[Scuola Cliente Classe Persona].freeze
+
   validates :account_id, presence: true
+  validates :appuntabile_type, inclusion: { in: APPUNTABLE_TYPES, message: "%{value} non è un tipo valido (ammessi: #{APPUNTABLE_TYPES.join(', ')})" }, allow_nil: true
   before_validation :set_account_from_current, on: :create
   before_create :assegna_numero
 
