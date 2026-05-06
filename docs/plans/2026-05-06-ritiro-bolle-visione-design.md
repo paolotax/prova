@@ -213,6 +213,19 @@ Lo show della bolla mostra righe aperte e chiuse insieme (chiuse con badge esito
 - `app/views/bolla_visione_righe/_bolla_visione_riga.html.erb` (badge esito + Riapri)
 - `test/models/bolla_visione_riga_test.rb`, `test/controllers/ritiri_controller_test.rb`, system test
 
+## Mobile-first
+
+Il flusso viene usato **dal cellulare in scuola**: tutta la UI è mobile-first.
+
+- Layout verticale, full-width, font ≥ 16px
+- Touch target ≥ 44×44px (label cliccabili, bottoni con altezza 40px+)
+- Bottoni con icona **e testo** — niente icone-only sulle azioni primarie
+- Niente hover-only: tutto deve essere visibile/accessibile via tap
+- Bulk bar: posizione fissa (top center sul desktop, sticky bottom su mobile via media query a 640px)
+- Dialog `<dialog>` `<= 640px`: full-width o quasi (≥ 90vw), bottoni "Annulla/Conferma" su riga propria
+- Lista righe ritiro: prezzo inline al titolo (non colonna separata, scarsa su mobile), bottoni "Rientro/Fascicoli" sotto la label
+- Test a `375×812` (iPhone SE) prima di ogni commit UI; idealmente smoke test su Safari iOS reale
+
 ## Decisioni di design
 
 - **Una sola BollaVisioneRiga = un solo esito**: niente jsonb di stato, fascicoli mancanti come righe distinte (split). Modello pulito, query semplici, audit naturale.
