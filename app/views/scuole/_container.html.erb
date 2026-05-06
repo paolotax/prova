@@ -10,6 +10,18 @@
 			<span class="for-screen-reader">Posizione nella mappa</span>
 		<% end %>
 
+		<% bolle_aperte_count = scuola.bolle_visione
+				.joins(:bolla_visione_righe)
+				.where(bolla_visione_righe: { processato_at: nil })
+				.distinct.count %>
+		<% if bolle_aperte_count.positive? %>
+			<%= link_to scuola_ritiro_path(scuola), class: "btn btn--primary",
+					data: { controller: "tooltip" }, title: "Ritiro libri da bolle visione" do %>
+				<%= icon_tag "package" %>
+				<span>Ritiro (<%= bolle_aperte_count %>)</span>
+			<% end %>
+		<% end %>
+
 	</div>
 
 	<div class="card-perma__bg">

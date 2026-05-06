@@ -33,6 +33,12 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-form-id='mancante']"
   end
 
+  test "scuola show mostra link Ritiro quando ci sono bolle aperte" do
+    get scuola_path(@scuola, account_id: @account.id)
+    assert_response :success
+    assert_select "a[href=?]", scuola_ritiro_path(@scuola, account_id: @account.id), text: /Ritiro/
+  end
+
   test "rientro chiude la riga senza creare documento" do
     riga = bolla_visione_righe(:aperta)
     assert_no_difference -> { Documento.count } do
