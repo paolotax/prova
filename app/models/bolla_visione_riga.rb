@@ -34,8 +34,20 @@ class BollaVisioneRiga < ApplicationRecord
 
   belongs_to :bolla_visione
   belongs_to :libro
+  belongs_to :documento_riga, optional: true
 
   positioned on: [:bolla_visione_id], column: :position
+
+  enum :esito, {
+    in_saggio: 0,
+    venduto_fattura: 1,
+    venduto_corrispettivi: 2,
+    mancante: 3,
+    rientrato: 4
+  }
+
+  scope :aperte, -> { where(processato_at: nil) }
+  scope :chiuse, -> { where.not(processato_at: nil) }
 
   validates :quantita, numericality: { greater_than: 0 }
 

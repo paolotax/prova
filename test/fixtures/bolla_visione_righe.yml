@@ -1,0 +1,13 @@
+aperta:
+  account: fizzy
+  bolla_visione: bv_fizzy_uno
+  libro: libro_fizzy
+  quantita: 1
+
+chiusa_in_saggio:
+  account: fizzy
+  bolla_visione: bv_fizzy_uno
+  libro: libro_fizzy
+  quantita: 1
+  esito: 0
+  processato_at: <%= 1.day.ago %>

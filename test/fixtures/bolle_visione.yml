@@ -1,0 +1,7 @@
+bv_fizzy_uno:
+  account: fizzy
+  user: one
+  collana: collana_fizzy
+  scuola: scuola_fizzy
+  data_bolla: <%= 1.week.ago.to_date %>
+  numero: 1
