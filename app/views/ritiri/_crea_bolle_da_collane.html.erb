@@ -1,1 +1,23 @@
-<%# placeholder, vedi Task 12 %>
+<%= form_with url: scuola_ritiro_bolle_da_collane_path(scuola), method: :post,
+              class: "panel panel--inset margin-block-start" do |f| %>
+  <h3 class="txt-medium font-weight-black">Crea bolle da collane</h3>
+
+  <% collane = Current.account.collane.ordered %>
+  <% if collane.empty? %>
+    <p class="txt-subtle">Nessuna collana disponibile.</p>
+  <% else %>
+    <div class="flex flex-column gap-half">
+      <% collane.each do |collana| %>
+        <label class="flex align-center gap-half pad-block-half" style="min-height: 44px;">
+          <%= check_box_tag "collana_ids[]", collana.id, false,
+                class: "input input--checkbox",
+                style: "min-width: 24px; min-height: 24px;" %>
+          <span><%= collana.nome %></span>
+        </label>
+      <% end %>
+    </div>
+    <div class="flex justify-end margin-block-start-half">
+      <%= f.submit "Crea bolle", class: "btn btn--primary", style: "min-height: 40px;" %>
+    </div>
+  <% end %>
+<% end %>
