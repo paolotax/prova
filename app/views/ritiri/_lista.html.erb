@@ -1,0 +1,10 @@
+<% righe_per_bolla.each do |bolla, righe| %>
+  <h3>BV-<%= bolla.numero %> &mdash; <%= bolla.collana.nome %></h3>
+  <ul>
+    <% righe.each do |riga| %>
+      <li data-bolla-visione-riga-id="<%= riga.id %>">
+        <%= riga.libro_titolo %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

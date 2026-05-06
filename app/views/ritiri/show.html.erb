@@ -1,0 +1,17 @@
+<% @page_title = "Ritiro #{@scuola.denominazione}" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Scuola", scuola_path(@scuola) %>
+  </div>
+  <h1 class="header__title"><%= @page_title %></h1>
+<% end %>
+
+<section class="panel panel--wide shadow center">
+  <% if @bolle.empty? %>
+    <p class="txt-subtle">Nessuna bolla visione aperta.</p>
+    <%= render "crea_bolle_da_collane", scuola: @scuola %>
+  <% else %>
+    <%= render "ritiri/lista", righe_per_bolla: @righe_per_bolla, gruppo_per_libro_e_collana: @gruppo_per_libro_e_collana %>
+  <% end %>
+</section>
