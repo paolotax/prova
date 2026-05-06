@@ -19,9 +19,9 @@
     <div class="flex flex-column gap-half margin-block-start">
       <% riga.libro.fascicoli.each do |f| %>
         <label class="flex align-center gap-half pad-block-half" style="min-height: 44px;">
+          <%# `form` attribute lega il checkbox al form Mancante anche se sta fuori da esso %>
           <%= check_box_tag "fascicoli_per_riga[#{riga.id}][fascicolo_ids][]", f.id, false,
-                class: "input input--checkbox",
-                style: "min-width: 24px; min-height: 24px;" %>
+                form: "ritiro-form-mancante" %>
           <span><%= f.titolo %></span>
         </label>
       <% end %>
@@ -34,7 +34,8 @@
               ["Rientrata", "rientrato"],
               ["In saggio", "in_saggio"]
             ], "rientrato"),
-            class: "input input--select" %>
+            class: "input input--select",
+            form: "ritiro-form-mancante" %>
     </label>
 
     <div class="flex gap-half justify-center margin-block-start">

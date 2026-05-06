@@ -1,9 +1,6 @@
-<%= form_with url: scuola_ritiro_documenti_path(@scuola),
-      method: :post,
-      data: {
-        controller: "bulk-actions",
-        bulk_actions_open_value: false
-      } do |f| %>
+<%# Container bulk-actions: i form vivono dentro `_bulk_bar` e ricevono via #syncSelection %>
+<%# gli ID dei checkbox selezionati come hidden inputs `bolla_visione_riga_ids[]`. %>
+<%= tag.div data: { controller: "bulk-actions" } do %>
 
   <% righe_per_bolla.each do |bolla, righe| %>
     <div class="ritiro__bolla margin-block-start">
@@ -18,7 +15,7 @@
       <% gruppi.each do |gruppo, righe_g| %>
         <div class="ritiro__gruppo">
           <h4 class="divider txt-small txt-uppercase txt-subtle"><%= gruppo %></h4>
-          <ul class="flex flex-column unpad margin-none">
+          <ul class="cards cards--list unpad margin-none">
             <% righe_g.each do |riga| %>
               <%= render "ritiri/riga", riga: riga, scuola: @scuola %>
             <% end %>

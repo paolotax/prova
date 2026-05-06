@@ -31,6 +31,7 @@
       <span class="bulk-bar__form-title"><%= causale.causale %></span>
       <%= form_with url: scuola_ritiro_documenti_path(scuola),
             method: :post,
+            id: "ritiro-form-#{form_id}",
             data: { bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
         <%= f.hidden_field :causale_id, value: causale.id %>

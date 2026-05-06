@@ -1,36 +1,38 @@
-<li class="ritiro__riga" id="<%= dom_id(riga) %>"
-    data-bolla-visione-riga-id="<%= riga.id %>">
-  <label class="ritiro__riga-label flex align-center gap pad-block-half pad-inline-half"
-         style="min-height: 56px;">
+<%= tag.li id: dom_id(riga),
+    class: "card ritiro__riga",
+    data: { bolla_visione_riga_id: riga.id } do %>
+  <label class="card__checkbox">
     <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
-          class: "input input--checkbox",
-          style: "min-width: 24px; min-height: 24px;",
-          data: { action: "bulk-actions#toggle", bulk_actions_target: "checkbox" } %>
-
-    <div class="flex-item-grow flex flex-column gap-quarter">
-      <strong class="txt-medium"><%= riga.libro_titolo %></strong>
-      <div class="txt-x-small txt-subtle flex flex-wrap gap-half">
-        <span>ISBN <%= riga.libro_codice_isbn %></span>
-        <% if riga.libro.fascicoli.any? %>
-          <span>&middot; <%= riga.libro.fascicoli.size %> fasc.</span>
-        <% end %>
-        <span class="font-weight-black txt-ink">
-          <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "&euro;") %>
-        </span>
-      </div>
-    </div>
+          data: { action: "change->bulk-actions#count" } %>
   </label>
 
-  <div class="ritiro__riga-actions flex gap-half pad-inline-half pad-block-half">
-    <%= button_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
-          method: :patch,
-          class: "btn btn--small",
-          style: "min-height: 40px;",
-          form: { data: { turbo_frame: "_top" } } do %>
-      <span>Rientro</span>
-    <% end %>
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <strong class="txt-medium overflow-ellipsis"><%= riga.libro_titolo %></strong>
+    <div class="txt-x-small txt-subtle flex flex-wrap gap-half align-center">
+      <span><%= riga.libro_codice_isbn %></span>
+      <% if riga.libro.fascicoli.any? %>
+        <span>&middot; <%= riga.libro.fascicoli.size %> fasc.</span>
+      <% end %>
+      <% if riga.quantita > 1 %>
+        <span class="badge">x<%= riga.quantita %></span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card__actions flex gap-half align-center flex-item-no-shrink">
+    <span class="txt-medium font-weight-black">
+      <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "&euro;") %>
+    </span>
+
     <% if riga.libro.fascicoli.any? %>
       <%= render "ritiri/dialog_fascicoli", riga: riga %>
     <% end %>
+
+    <%= link_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
+          class: "btn btn--small",
+          data: { turbo_method: :patch, turbo_frame: "_top" } do %>
+      <%= icon_tag "arrow-uturn-left", size: "small" %>
+      <span>Rientro</span>
+    <% end %>
   </div>
-</li>
+<% end %>
