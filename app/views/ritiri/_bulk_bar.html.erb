@@ -29,8 +29,7 @@
     <% next if causale.nil? %>
     <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="<%= form_id %>">
       <span class="bulk-bar__form-title"><%= causale.causale %></span>
-      <%# TODO Task 8: passa a scuola_ritiri_documenti_path appena la rotta esiste %>
-      <%= form_with url: "#",
+      <%= form_with url: scuola_ritiro_documenti_path(scuola),
             method: :post,
             data: { bulk_actions_target: "form",
                     action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>

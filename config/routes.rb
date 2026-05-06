@@ -486,7 +486,9 @@ Rails.application.routes.draw do
       get :email_pattern, on: :member
       resources :qrcodes
       resource :foglio_scuola, only: [:show], controller: 'scuole/foglio_scuola'
-      resource :ritiro, only: [:show], controller: 'ritiri'
+      resource :ritiro, only: [:show], controller: 'ritiri' do
+        resources :documenti, only: [:create], controller: 'ritiri_documenti', as: 'documenti'
+      end
 
       resources :saggi, only: %i[index create update destroy], controller: 'scuole/saggi' do
         post :genera_scarico, on: :collection
