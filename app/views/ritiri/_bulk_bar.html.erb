@@ -1,0 +1,50 @@
+<%# Bulk bar per pagina Ritiro: 4 azioni standard per la causale scelta. %>
+<%# Riusa shared/bulk_bar partial (content_for :bulk_bar_buttons + :bulk_bar_forms). %>
+
+<% causali_map = {
+  "scarico_saggi" => Causale.find_by(causale: "Scarico saggi"),
+  "td01"          => Causale.find_by(causale: "TD01"),
+  "ordine_scuola" => Causale.find_by(causale: "Ordine Scuola"),
+  "mancante"      => Causale.find_by(causale: "Mancante")
+} %>
+
+<% content_for :bulk_bar_buttons do %>
+  <% [["scarico_saggi", "Scarico Saggi", "gift"],
+      ["td01",          "Fattura TD01",  "receipt"],
+      ["ordine_scuola", "Ordine Scuola", "shopping-cart"],
+      ["mancante",      "Mancante",      "alert-triangle"]].each do |form_id, label, icon| %>
+    <% next if causali_map[form_id].nil? %>
+    <button type="button" class="btn bulk-bar__btn"
+            data-action="bulk-bar#showForm"
+            data-bulk-bar-target="menuButton"
+            data-form-id="<%= form_id %>">
+      <%= icon_tag icon %>
+      <span><%= label %></span>
+    </button>
+  <% end %>
+<% end %>
+
+<% content_for :bulk_bar_forms do %>
+  <% causali_map.each do |form_id, causale| %>
+    <% next if causale.nil? %>
+    <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="<%= form_id %>">
+      <span class="bulk-bar__form-title"><%= causale.causale %></span>
+      <%# TODO Task 8: passa a scuola_ritiri_documenti_path appena la rotta esiste %>
+      <%= form_with url: "#",
+            method: :post,
+            data: { bulk_actions_target: "form",
+                    action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
+        <%= f.hidden_field :causale_id, value: causale.id %>
+        <%= f.hidden_field :clientable_type, value: "Scuola" %>
+        <%= f.hidden_field :clientable_id, value: scuola.id %>
+        <%= f.hidden_field :data_documento, value: Date.current %>
+        <div class="bulk-bar__form-actions">
+          <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+          <%= f.submit "Crea documento", class: "btn btn--primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= render "shared/bulk_bar" %>
