@@ -15,8 +15,10 @@ module Ritiro
     end
 
     def call
-      raise ActiveRecord::RecordInvalid.new(Documento.new) if @causale.nil?
+      raise ArgumentError, "causale è obbligatoria" if @causale.nil?
 
+      # Single transaction: if any record creation fails, all writes (Documento, Riga,
+      # DocumentoRiga, BV update) rollback.
       Documento.transaction do
         documento = build_documento
         documento.save!
@@ -37,6 +39,8 @@ module Ritiro
       )
     end
 
+    # TODO race: MAX+1 has a TOCTOU race under concurrent calls. Acceptable for now (single-user mobile flow);
+    # add a unique index on (account_id, causale_id, numero_documento) + retry-on-conflict before scaling.
     def prossimo_numero
       max = Current.account.documenti.where(causale: @causale).maximum(:numero_documento) || 0
       max + 1

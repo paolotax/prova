@@ -31,9 +31,9 @@ class Ritiro::CreaDocumentoTest < ActiveSupport::TestCase
     assert_equal @riga1.libro_id, @riga1.documento_riga.riga.libro_id
   end
 
-  test "rollback se causale non valida" do
+  test "raises ArgumentError quando causale è nil; nessun documento creato; riga non chiusa" do
     assert_no_difference "Documento.count" do
-      assert_raises ActiveRecord::RecordInvalid do
+      assert_raises ArgumentError do
         Ritiro::CreaDocumento.new(
           righe: [@riga1], causale: nil, clientable: @scuola, data: Date.current
         ).call
@@ -41,5 +41,37 @@ class Ritiro::CreaDocumentoTest < ActiveSupport::TestCase
     end
     @riga1.reload
     assert_nil @riga1.processato_at
+  end
+
+  test "rollback se Riga.create! fallisce a metà; nessun Documento creato; @riga1 non chiusa" do
+    call_count = 0
+    original_create = Riga.method(:create!)
+
+    Riga.singleton_class.send(:alias_method, :__orig_create_bang!, :create!)
+    Riga.define_singleton_method(:create!) do |*args, **kwargs|
+      call_count += 1
+      raise ActiveRecord::RecordInvalid.new(Riga.new) if call_count == 2
+      original_create.call(*args, **kwargs)
+    end
+
+    begin
+      assert_no_difference ["Documento.count", "DocumentoRiga.count", "Riga.count"] do
+        assert_raises ActiveRecord::RecordInvalid do
+          Ritiro::CreaDocumento.new(
+            righe: [@riga1, @riga2],
+            causale: causali(:scarico_saggi),
+            clientable: @scuola,
+            data: Date.current
+          ).call
+        end
+      end
+    ensure
+      Riga.singleton_class.send(:alias_method, :create!, :__orig_create_bang!)
+      Riga.singleton_class.send(:remove_method, :__orig_create_bang!)
+    end
+
+    @riga1.reload
+    assert_nil @riga1.processato_at, "la prima BV riga non deve risultare processata dopo rollback"
+    assert_nil @riga1.documento_riga_id
   end
 end
