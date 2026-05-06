@@ -4,6 +4,12 @@ aperta:
   libro: libro_fizzy
   quantita: 1
 
+aperta_due:
+  account: fizzy
+  bolla_visione: bv_fizzy_uno
+  libro: libro_fizzy
+  quantita: 2
+
 chiusa_in_saggio:
   account: fizzy
   bolla_visione: bv_fizzy_uno
