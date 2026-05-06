@@ -6,7 +6,7 @@ class RitiriController < ApplicationController
     @bolle = @scuola.bolle_visione
       .joins(:bolla_visione_righe)
       .where(bolla_visione_righe: { processato_at: nil })
-      .includes(:collana, bolla_visione_righe: :libro)
+      .includes(:collana)
       .distinct
       .ordered
 
@@ -14,6 +14,7 @@ class RitiriController < ApplicationController
       h[bv] = bv.bolla_visione_righe.aperte.includes(:libro).order(:position)
     end
 
+    # Letto da _lista (Task 6) e _crea_bolle_da_collane (Task 12) per raggruppare per CollanaLibro.gruppo
     @gruppo_per_libro_e_collana = build_gruppo_lookup(@bolle)
   end
 
