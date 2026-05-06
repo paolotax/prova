@@ -9,8 +9,25 @@
       <%= f.number_field :quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
     <% end %>
 
-    <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
-      <%= icon_tag "minus", size: "small" %>
+    <% if riga.processato_at.present? %>
+      <span class="badge badge--<%= riga.esito %> txt-x-small flex-item-no-shrink"
+            title="<%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>">
+        <%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>
+      </span>
+      <% if riga.documento_riga.present? %>
+        <%= link_to "Doc.", documento_path(riga.documento_riga.documento),
+              class: "txt-x-small flex-item-no-shrink" %>
+      <% end %>
+      <%= button_to riga_riapri_scuola_ritiro_path(scuola_id: riga.bolla_visione.scuola_id, id: riga.id),
+            method: :patch,
+            class: "btn btn--small txt-x-small flex-item-no-shrink",
+            data: { turbo_confirm: "Riaprire la riga?" } do %>
+        Riapri
+      <% end %>
+    <% else %>
+      <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
+        <%= icon_tag "minus", size: "small" %>
+      <% end %>
     <% end %>
   </div>
 

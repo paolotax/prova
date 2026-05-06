@@ -32,6 +32,27 @@
   </div>
 <% end %>
 
+<% if @tappa.tappable.is_a?(Scuola) &&
+      (bolle_aperte_count = @tappa.tappable.bolle_visione
+                              .joins(:bolla_visione_righe)
+                              .where(bolla_visione_righe: { processato_at: nil })
+                              .distinct.count).positive? %>
+  <div class="full-width pad group">
+    <div class="panel panel--inset">
+      <h3 class="txt-medium font-weight-black">Bolle visione da ritirare</h3>
+      <p class="txt-small txt-subtle margin-block-end-half">
+        <%= pluralize(bolle_aperte_count, "bolla aperta", plural: "bolle aperte") %>.
+      </p>
+      <%= link_to scuola_ritiro_path(@tappa.tappable),
+            class: "btn btn--primary",
+            style: "min-height: 40px;" do %>
+        <%= icon_tag "package" %>
+        <span>Vai al ritiro</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 
 <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
   <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">

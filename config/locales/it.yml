@@ -241,4 +241,11 @@ it:
       long: "%d %B %Y %H:%M"
       short: "%d %b %H:%M"
     pm: pm
+  bolla_visione_riga:
+    esiti:
+      in_saggio: In saggio
+      venduto_fattura: Venduto (TD01)
+      venduto_corrispettivi: Ordine scuola
+      mancante: Mancante
+      rientrato: Rientrato
   controllers: {}
