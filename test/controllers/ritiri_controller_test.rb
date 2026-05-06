@@ -18,6 +18,13 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-bolla-visione-riga-id=?]", bolla_visione_righe(:chiusa_in_saggio).id, count: 0
   end
 
+  test "show raggruppa righe per bolla e per gruppo collana" do
+    get scuola_ritiro_path(@scuola, account_id: @account.id)
+    assert_select ".ritiro__bolla", minimum: 1
+    assert_select ".ritiro__bolla .ritiro__gruppo", minimum: 1
+    assert_select ".ritiro__riga", minimum: 1
+  end
+
   private
 
   def sign_in_as(user, account)

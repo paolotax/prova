@@ -1,0 +1,39 @@
+<li class="ritiro__riga"
+    data-bolla-visione-riga-id="<%= riga.id %>">
+  <label class="ritiro__riga-label flex align-center gap pad-block-half pad-inline-half"
+         style="min-height: 56px;">
+    <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
+          class: "input input--checkbox",
+          style: "min-width: 24px; min-height: 24px;",
+          data: { action: "bulk-actions#toggle", bulk_actions_target: "checkbox" } %>
+
+    <div class="flex-item-grow flex flex-column gap-quarter">
+      <strong class="txt-medium"><%= riga.libro_titolo %></strong>
+      <div class="txt-x-small txt-subtle flex flex-wrap gap-half">
+        <span>ISBN <%= riga.libro_codice_isbn %></span>
+        <% if riga.libro.fascicoli.any? %>
+          <span>&middot; <%= riga.libro.fascicoli.size %> fasc.</span>
+        <% end %>
+        <span class="font-weight-black txt-ink">
+          <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "&euro;") %>
+        </span>
+      </div>
+    </div>
+  </label>
+
+  <div class="ritiro__riga-actions flex gap-half pad-inline-half pad-block-half">
+    <%# Rientro button: route added in Task 9 — placeholder for now to keep test/markup green %>
+    <button type="button" class="btn btn--small" style="min-height: 40px;" disabled
+            title="Disponibile dopo Task 9">
+      <span>Rientro</span>
+    </button>
+    <% if riga.libro.fascicoli.any? %>
+      <button type="button" class="btn btn--small"
+              style="min-height: 40px;"
+              data-action="dialog#open"
+              data-dialog-id="fascicoli-<%= riga.id %>">
+        <span>Fascicoli</span>
+      </button>
+    <% end %>
+  </div>
+</li>

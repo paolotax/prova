@@ -1,10 +1,33 @@
-<% righe_per_bolla.each do |bolla, righe| %>
-  <h3>BV-<%= bolla.numero %> &mdash; <%= bolla.collana.nome %></h3>
-  <ul>
-    <% righe.each do |riga| %>
-      <li data-bolla-visione-riga-id="<%= riga.id %>">
-        <%= riga.libro_titolo %>
-      </li>
-    <% end %>
-  </ul>
+<%# TODO Task 8: punta a scuola_ritiri_documenti_path quando la rotta verra` aggiunta %>
+<%= form_with url: "#",
+      method: :post,
+      data: {
+        controller: "bulk-actions",
+        bulk_actions_open_value: false
+      } do |f| %>
+
+  <% righe_per_bolla.each do |bolla, righe| %>
+    <div class="ritiro__bolla margin-block-start">
+      <h3 class="divider divider--fade txt-medium font-weight-black">
+        BV-<%= bolla.numero %> &mdash; <%= bolla.collana.nome %>
+        <span class="txt-x-small txt-subtle">
+          <%= l(bolla.data_bolla, format: :short) %>
+        </span>
+      </h3>
+
+      <% gruppi = righe.group_by { |r| gruppo_per_libro_e_collana[[bolla.collana_id, r.libro_id]].presence || "Altro" } %>
+      <% gruppi.each do |gruppo, righe_g| %>
+        <div class="ritiro__gruppo">
+          <h4 class="divider txt-small txt-uppercase txt-subtle"><%= gruppo %></h4>
+          <ul class="flex flex-column unpad margin-none">
+            <% righe_g.each do |riga| %>
+              <%= render "ritiri/riga", riga: riga, scuola: @scuola %>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# bulk_bar partial wired in Task 7 %>
 <% end %>
