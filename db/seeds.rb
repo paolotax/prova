@@ -11,6 +11,15 @@
 require 'faker'
 
 
+# Causali
+Causale.find_or_create_by!(causale: "Mancante") do |c|
+  c.tipo_movimento = :carico
+  c.movimento = :uscita
+  c.magazzino = "campionario"
+  c.clientable_type = "Scuola"
+  c.priorita = 50
+end
+
 u = User.find_by_name("paolotax")
 
 # if u

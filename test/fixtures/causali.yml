@@ -45,3 +45,26 @@ nota_credito:
   magazzino: "vendita"
   tipo_movimento: 1
   movimento: 0
+
+mancante:
+  causale: "Mancante"
+  magazzino: "campionario"
+  tipo_movimento: 2
+  movimento: 1
+  clientable_type: "Scuola"
+  priorita: 50
+
+scarico_saggi:
+  causale: "Scarico saggi"
+  magazzino: "campionario"
+  tipo_movimento: 2
+  movimento: 1
+  clientable_type: "Scuola"
+  priorita: 40
+
+ordine_scuola:
+  causale: "Ordine Scuola"
+  magazzino: "vendita"
+  tipo_movimento: 1
+  movimento: 1
+  priorita: 70
