@@ -1,6 +1,12 @@
 <%# Container bulk-actions: i form vivono dentro `_bulk_bar` e ricevono via #syncSelection %>
 <%# gli ID dei checkbox selezionati come hidden inputs `bolla_visione_riga_ids[]`. %>
-<%= tag.div data: { controller: "bulk-actions" } do %>
+<%# `data-has-selection` statico: nella pagina ritiro la selezione e' sempre attiva, %>
+<%# percio' i .card__checkbox sono sempre visibili (vedi cards.css:500). %>
+<%= tag.div "data-has-selection": "",
+            data: {
+              controller: "bulk-actions",
+              action: "click->bulk-actions#toggleCard"
+            } do %>
 
   <% righe_per_bolla.each do |bolla, righe| %>
     <div class="ritiro__bolla margin-block-start">

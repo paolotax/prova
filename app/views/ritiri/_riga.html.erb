@@ -29,7 +29,9 @@
     </div>
   </div>
 
-  <div class="card__actions flex gap-half align-center flex-item-no-shrink">
+  <%# Stop click propagation: i bottoni qui dentro non devono attivare toggleCard del container %>
+  <div class="card__actions flex gap-half align-center flex-item-no-shrink"
+       data-action="click->bulk-actions#stopPropagation">
     <span class="txt-medium font-weight-black">
       <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "&euro;") %>
     </span>
