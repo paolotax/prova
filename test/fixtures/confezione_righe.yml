@@ -1,0 +1,14 @@
+confezione_fascicolo_uno:
+  confezione: confezione_fizzy
+  fascicolo: fascicolo_uno
+  row_order: 1
+
+confezione_fascicolo_due:
+  confezione: confezione_fizzy
+  fascicolo: fascicolo_due
+  row_order: 2
+
+confezione_fascicolo_tre:
+  confezione: confezione_fizzy
+  fascicolo: fascicolo_tre
+  row_order: 3

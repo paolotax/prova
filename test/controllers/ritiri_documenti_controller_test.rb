@@ -2,7 +2,7 @@ require "test_helper"
 
 class RitiriDocumentiControllerTest < ActionDispatch::IntegrationTest
   fixtures :accounts, :users, :memberships, :editori, :categorie, :libri, :scuole,
-           :collane, :bolle_visione, :bolla_visione_righe, :causali
+           :collane, :bolle_visione, :bolla_visione_righe, :causali, :confezione_righe
 
   setup do
     @account = accounts(:fizzy)
@@ -41,6 +41,32 @@ class RitiriDocumentiControllerTest < ActionDispatch::IntegrationTest
     }
     assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
     assert_match(/seleziona/i, flash[:alert])
+  end
+
+  test "create Mancante su confezione: splitta fascicoli e crea documento con righe-fascicolo" do
+    confezione = bolla_visione_righe(:aperta_confezione)
+    fascicoli_ids = confezione.libro.fascicoli.first(2).map(&:id)
+
+    assert_difference -> { BollaVisioneRiga.count } => 2,
+                      -> { Documento.count } => 1 do
+      post scuola_ritiro_documenti_path(@scuola, account_id: @account.id), params: {
+        causale_id: causali(:mancante).id,
+        clientable_type: "Scuola",
+        clientable_id: @scuola.id,
+        data_documento: Date.current,
+        bolla_visione_riga_ids: [confezione.id],
+        fascicoli_per_riga: {
+          confezione.id.to_s => { fascicolo_ids: fascicoli_ids, esito_confezione: "rientrato" }
+        }
+      }
+    end
+
+    documento = Documento.where(causale: causali(:mancante)).order(:created_at).last
+    assert_not_nil documento, "Atteso: un Documento Mancante creato"
+    assert_equal 2, documento.documento_righe.count
+    confezione.reload
+    assert_equal "rientrato", confezione.esito
+    assert_not_nil confezione.processato_at
   end
 
   test "create con causale_id non valida ridireziona con flash di errore" do

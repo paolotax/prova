@@ -30,12 +30,7 @@
       <span>Rientro</span>
     <% end %>
     <% if riga.libro.fascicoli.any? %>
-      <button type="button" class="btn btn--small"
-              style="min-height: 40px;"
-              data-action="dialog#open"
-              data-dialog-id="fascicoli-<%= riga.id %>">
-        <span>Fascicoli</span>
-      </button>
+      <%= render "ritiri/dialog_fascicoli", riga: riga %>
     <% end %>
   </div>
 </li>

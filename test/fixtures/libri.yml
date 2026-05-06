@@ -67,3 +67,47 @@ libro_acme:
   prezzo_in_cents: 2000
   classe: 2
   disciplina: "Matematica"
+
+confezione_fizzy:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: ministeriali
+  titolo: "Confezione Atlante 1+2+3"
+  codice_isbn: "9788800000010"
+  prezzo_in_cents: 3000
+  classe: 1
+  disciplina: "Storia"
+
+fascicolo_uno:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: ministeriali
+  titolo: "Atlante Fascicolo 1"
+  codice_isbn: "9788800000011"
+  prezzo_in_cents: 1000
+  classe: 1
+  disciplina: "Storia"
+
+fascicolo_due:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: ministeriali
+  titolo: "Atlante Fascicolo 2"
+  codice_isbn: "9788800000012"
+  prezzo_in_cents: 1000
+  classe: 1
+  disciplina: "Storia"
+
+fascicolo_tre:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: ministeriali
+  titolo: "Atlante Fascicolo 3"
+  codice_isbn: "9788800000013"
+  prezzo_in_cents: 1000
+  classe: 1
+  disciplina: "Storia"

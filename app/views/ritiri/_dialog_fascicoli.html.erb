@@ -1,0 +1,45 @@
+<%# Dialog per scegliere quali fascicoli mancano della confezione `riga`. %>
+<%# I checkbox emettono input nascosti `fascicoli_per_riga[<id>][fascicolo_ids][]`, %>
+<%# raccolti dal form-with parent quando si invia "Mancante" dalla bulk bar. %>
+
+<div data-controller="dialog" data-dialog-modal-value="true">
+  <button type="button" class="btn btn--small"
+          style="min-height: 40px;"
+          data-action="dialog#open">
+    <%= icon_tag "alert-triangle", size: "small" %>
+    <span>Fascicoli</span>
+  </button>
+
+  <dialog class="dialog panel fill-white shadow gap flex-column"
+          style="--panel-size: 50ch"
+          data-dialog-target="dialog">
+    <h3 class="txt-large txt-bold">Fascicoli mancanti</h3>
+    <p class="txt-small txt-subtle margin-none"><%= riga.libro_titolo %></p>
+
+    <div class="flex flex-column gap-half margin-block-start">
+      <% riga.libro.fascicoli.each do |f| %>
+        <label class="flex align-center gap-half pad-block-half" style="min-height: 44px;">
+          <%= check_box_tag "fascicoli_per_riga[#{riga.id}][fascicolo_ids][]", f.id, false,
+                class: "input input--checkbox",
+                style: "min-width: 24px; min-height: 24px;" %>
+          <span><%= f.titolo %></span>
+        </label>
+      <% end %>
+    </div>
+
+    <label class="flex flex-column gap-quarter margin-block-start">
+      <span class="txt-x-small txt-subtle txt-uppercase">Esito confezione originale</span>
+      <%= select_tag "fascicoli_per_riga[#{riga.id}][esito_confezione]",
+            options_for_select([
+              ["Rientrata", "rientrato"],
+              ["In saggio", "in_saggio"]
+            ], "rientrato"),
+            class: "input input--select" %>
+    </label>
+
+    <div class="flex gap-half justify-center margin-block-start">
+      <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+      <button type="button" class="btn btn--primary" data-action="dialog#close">Conferma</button>
+    </div>
+  </dialog>
+</div>

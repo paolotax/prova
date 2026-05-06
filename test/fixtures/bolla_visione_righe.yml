@@ -10,6 +10,12 @@ aperta_due:
   libro: libro_fizzy
   quantita: 2
 
+aperta_confezione:
+  account: fizzy
+  bolla_visione: bv_fizzy_uno
+  libro: confezione_fizzy
+  quantita: 1
+
 chiusa_in_saggio:
   account: fizzy
   bolla_visione: bv_fizzy_uno
