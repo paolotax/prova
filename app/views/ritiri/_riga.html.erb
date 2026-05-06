@@ -1,4 +1,4 @@
-<li class="ritiro__riga"
+<li class="ritiro__riga" id="<%= dom_id(riga) %>"
     data-bolla-visione-riga-id="<%= riga.id %>">
   <label class="ritiro__riga-label flex align-center gap pad-block-half pad-inline-half"
          style="min-height: 56px;">
@@ -22,11 +22,13 @@
   </label>
 
   <div class="ritiro__riga-actions flex gap-half pad-inline-half pad-block-half">
-    <%# Rientro button: route added in Task 9 — placeholder for now to keep test/markup green %>
-    <button type="button" class="btn btn--small" style="min-height: 40px;" disabled
-            title="Disponibile dopo Task 9">
+    <%= button_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
+          method: :patch,
+          class: "btn btn--small",
+          style: "min-height: 40px;",
+          form: { data: { turbo_frame: "_top" } } do %>
       <span>Rientro</span>
-    </button>
+    <% end %>
     <% if riga.libro.fascicoli.any? %>
       <button type="button" class="btn btn--small"
               style="min-height: 40px;"

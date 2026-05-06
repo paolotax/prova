@@ -488,6 +488,8 @@ Rails.application.routes.draw do
       resource :foglio_scuola, only: [:show], controller: 'scuole/foglio_scuola'
       resource :ritiro, only: [:show], controller: 'ritiri' do
         resources :documenti, only: [:create], controller: 'ritiri_documenti', as: 'documenti'
+        patch 'righe/:id/rientro', to: 'ritiri#rientro', as: 'riga_rientro'
+        patch 'righe/:id/riapri',  to: 'ritiri#riapri',  as: 'riga_riapri'
       end
 
       resources :saggi, only: %i[index create update destroy], controller: 'scuole/saggi' do
