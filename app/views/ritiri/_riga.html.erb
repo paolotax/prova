@@ -1,10 +1,17 @@
 <%= tag.li id: dom_id(riga),
-    class: "card ritiro__riga",
+    class: class_names("card", "ritiro__riga", "ritiro__riga--rientrato": riga.rientrato?),
     data: { bolla_visione_riga_id: riga.id } do %>
-  <label class="card__checkbox">
-    <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
-          data: { action: "change->bulk-actions#count" } %>
-  </label>
+
+  <% if riga.rientrato? %>
+    <span class="card__checkbox" aria-hidden="true">
+      <%= icon_tag "arrow-uturn-left", size: "small" %>
+    </span>
+  <% else %>
+    <label class="card__checkbox">
+      <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
+            data: { action: "change->bulk-actions#count" } %>
+    </label>
+  <% end %>
 
   <div class="flex flex-column flex-item-grow max-inline-size">
     <strong class="txt-medium overflow-ellipsis"><%= riga.libro_titolo %></strong>
@@ -16,6 +23,9 @@
       <% if riga.quantita > 1 %>
         <span class="badge">x<%= riga.quantita %></span>
       <% end %>
+      <% if riga.rientrato? %>
+        <span class="badge badge--rientrato txt-uppercase">Rientrato</span>
+      <% end %>
     </div>
   </div>
 
@@ -24,15 +34,25 @@
       <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "&euro;") %>
     </span>
 
-    <% if riga.libro.fascicoli.any? %>
-      <%= render "ritiri/dialog_fascicoli", riga: riga %>
-    <% end %>
+    <% if riga.rientrato? %>
+      <%= link_to riga_riapri_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id, return_to: "ritiro"),
+            class: "btn btn--small",
+            data: { turbo_method: :patch, turbo_frame: "_top",
+                    turbo_confirm: "Annullare il rientro e riaprire la riga?" } do %>
+        <%= icon_tag "refresh", size: "small" %>
+        <span>Annulla rientro</span>
+      <% end %>
+    <% else %>
+      <% if riga.libro.fascicoli.any? %>
+        <%= render "ritiri/dialog_fascicoli", riga: riga %>
+      <% end %>
 
-    <%= link_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
-          class: "btn btn--small",
-          data: { turbo_method: :patch, turbo_frame: "_top" } do %>
-      <%= icon_tag "arrow-uturn-left", size: "small" %>
-      <span>Rientro</span>
+      <%= link_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
+            class: "btn btn--small",
+            data: { turbo_method: :patch, turbo_frame: "_top" } do %>
+        <%= icon_tag "arrow-uturn-left", size: "small" %>
+        <span>Rientro</span>
+      <% end %>
     <% end %>
   </div>
 <% end %>

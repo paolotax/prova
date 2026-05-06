@@ -51,6 +51,30 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
   end
 
+  test "show mostra anche le righe rientrate evidenziate (con classe modifier)" do
+    riga = bolla_visione_righe(:aperta)
+    riga.update!(esito: :rientrato, processato_at: Time.current)
+
+    get scuola_ritiro_path(@scuola, account_id: @account.id)
+    assert_response :success
+    assert_select ".ritiro__riga--rientrato[data-bolla-visione-riga-id=?]", riga.id
+    assert_select "a[href*=?]", riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
+  end
+
+  test "show non mostra righe gia' processate via documento (saggio/venduto/mancante)" do
+    riga = bolla_visione_righe(:chiusa_in_saggio)
+    get scuola_ritiro_path(@scuola, account_id: @account.id)
+    assert_select "[data-bolla-visione-riga-id=?]", riga.id, count: 0
+  end
+
+  test "riapri da pagina ritiro torna in pagina ritiro" do
+    riga = bolla_visione_righe(:aperta)
+    riga.update!(esito: :rientrato, processato_at: Time.current)
+
+    patch riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
+    assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
+  end
+
   test "riapri ripristina la riga rientrata (no documento da cancellare)" do
     riga = bolla_visione_righe(:aperta)
     riga.update!(esito: :rientrato, processato_at: Time.current)

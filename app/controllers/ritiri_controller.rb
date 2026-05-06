@@ -3,28 +3,33 @@ class RitiriController < ApplicationController
   before_action :set_scuola
 
   def show
+    # Visibili nel ritiro: righe ancora aperte + rientrate (cosi' le rientrate
+    # restano evidenziate e ripristinabili). Le altre chiuse (saggio/venduto/
+    # mancante) sono "consumate" dal documento generato e vivono solo nello
+    # show della BollaVisione.
+    visibili_sql = "bolla_visione_righe.processato_at IS NULL OR bolla_visione_righe.esito = ?"
+
     @bolle = @scuola.bolle_visione
       .joins(:bolla_visione_righe)
-      .where(bolla_visione_righe: { processato_at: nil })
+      .where(visibili_sql, BollaVisioneRiga.esiti[:rientrato])
       .includes(:collana)
       .distinct
       .ordered
 
     @righe_per_bolla = @bolle.each_with_object({}) do |bv, h|
-      h[bv] = bv.bolla_visione_righe.aperte.includes(:libro).order(:position)
+      h[bv] = bv.bolla_visione_righe
+        .where(visibili_sql, BollaVisioneRiga.esiti[:rientrato])
+        .includes(:libro)
+        .order(:position)
     end
 
-    # Letto da _lista (Task 6) e _crea_bolle_da_collane (Task 12) per raggruppare per CollanaLibro.gruppo
     @gruppo_per_libro_e_collana = build_gruppo_lookup(@bolle)
   end
 
   def rientro
     riga = find_riga
     riga.update!(esito: :rientrato, processato_at: Time.current)
-    respond_to do |format|
-      format.html { redirect_to scuola_ritiro_path(@scuola) }
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(riga)) }
-    end
+    redirect_to scuola_ritiro_path(@scuola)
   end
 
   def riapri
@@ -38,7 +43,8 @@ class RitiriController < ApplicationController
         documento.destroy if documento.documento_righe.reload.empty?
       end
     end
-    redirect_to bolla_visione_path(riga.bolla_visione)
+    target = (params[:return_to] == "ritiro") ? scuola_ritiro_path(@scuola) : bolla_visione_path(riga.bolla_visione)
+    redirect_to target
   end
 
   private
