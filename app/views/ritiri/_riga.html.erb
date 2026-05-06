@@ -37,8 +37,7 @@
     <% if riga.rientrato? %>
       <%= link_to riga_riapri_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id, return_to: "ritiro"),
             class: "btn btn--small",
-            data: { turbo_method: :patch, turbo_frame: "_top",
-                    turbo_confirm: "Annullare il rientro e riaprire la riga?" } do %>
+            data: { turbo_method: :patch, turbo_frame: "_top" } do %>
         <%= icon_tag "refresh", size: "small" %>
         <span>Annulla rientro</span>
       <% end %>
