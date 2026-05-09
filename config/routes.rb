@@ -490,9 +490,8 @@ Rails.application.routes.draw do
         scope module: :ritiri do
           resources :documenti, only: :create
           resources :bolle,     only: :create
+          resources :righe,     only: :update
         end
-        patch 'righe/:id/rientro', to: 'ritiri#rientro', as: :riga_rientro
-        patch 'righe/:id/riapri',  to: 'ritiri#riapri',  as: :riga_riapri
       end
 
       resources :saggi, only: %i[index create update destroy], controller: 'scuole/saggi' do

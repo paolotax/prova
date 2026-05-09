@@ -34,8 +34,9 @@
     <div class="ritiro__riga-actions flex gap-quarter flex-item-no-shrink"
          data-action="click->bulk-actions#stopPropagation">
       <% if riga.rientrato? %>
-        <%= button_to riga_riapri_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id, return_to: "ritiro"),
+        <%= button_to scuola_ritiro_riga_path(scuola_id: scuola.id, id: riga.id),
               method: :patch,
+              params: { esito: "" },
               class: "btn btn--small txt-x-small",
               form: { data: { turbo_frame: "_top" } } do %>
           <%= icon_tag "refresh", size: "small" %>
@@ -46,8 +47,9 @@
           <%= render "ritiri/dialog_fascicoli", riga: riga %>
         <% end %>
 
-        <%= button_to riga_rientro_scuola_ritiro_path(scuola_id: scuola.id, id: riga.id),
+        <%= button_to scuola_ritiro_riga_path(scuola_id: scuola.id, id: riga.id),
               method: :patch,
+              params: { esito: "rientrato" },
               class: "btn btn--small txt-x-small",
               form: { data: { turbo_frame: "_top" } } do %>
           <%= icon_tag "arrow-left-from-line", size: "small" %>

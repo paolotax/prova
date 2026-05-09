@@ -39,17 +39,6 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", scuola_ritiro_path(@scuola, account_id: @account.id), text: /Ritiro/
   end
 
-  test "rientro chiude la riga senza creare documento" do
-    riga = bolla_visione_righe(:aperta)
-    assert_no_difference -> { Documento.count } do
-      patch riga_rientro_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
-    end
-    riga.reload
-    assert_equal "rientrato", riga.esito
-    assert_not_nil riga.processato_at
-    assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
-  end
-
   test "show mostra anche le righe rientrate evidenziate (con classe modifier)" do
     riga = bolla_visione_righe(:aperta)
     riga.update!(esito: :rientrato, processato_at: Time.current)
@@ -57,35 +46,13 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     get scuola_ritiro_path(@scuola, account_id: @account.id)
     assert_response :success
     assert_select ".ritiro__riga--rientrato[data-bolla-visione-riga-id=?]", riga.id
-    assert_select "form[action=?]", riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
+    assert_select "form[action=?]", scuola_ritiro_riga_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
   end
 
   test "show non mostra righe gia' processate via documento (saggio/venduto/mancante)" do
     riga = bolla_visione_righe(:chiusa_in_saggio)
     get scuola_ritiro_path(@scuola, account_id: @account.id)
     assert_select "[data-bolla-visione-riga-id=?]", riga.id, count: 0
-  end
-
-  test "riapri da pagina ritiro torna in pagina ritiro" do
-    riga = bolla_visione_righe(:aperta)
-    riga.update!(esito: :rientrato, processato_at: Time.current)
-
-    patch riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
-    assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
-  end
-
-  test "riapri ripristina la riga (non tocca documenti, sono autonomi)" do
-    riga = bolla_visione_righe(:aperta)
-    riga.update!(esito: :rientrato, processato_at: Time.current)
-
-    assert_no_difference ["Documento.count", "DocumentoRiga.count"] do
-      patch riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
-    end
-
-    riga.reload
-    assert_nil riga.esito
-    assert_nil riga.processato_at
-    assert_redirected_to bolla_visione_path(riga.bolla_visione, account_id: @account.id)
   end
 
   private

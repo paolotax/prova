@@ -14,8 +14,9 @@
             title="<%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>">
         <%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>
       </span>
-      <%= button_to riga_riapri_scuola_ritiro_path(scuola_id: riga.bolla_visione.scuola_id, id: riga.id),
+      <%= button_to scuola_ritiro_riga_path(scuola_id: riga.bolla_visione.scuola_id, id: riga.id),
             method: :patch,
+            params: { esito: "", return_to: "bolla" },
             class: "btn btn--small txt-x-small flex-item-no-shrink",
             data: { turbo_confirm: "Riaprire la riga?" } do %>
         Riapri
