@@ -5,8 +5,8 @@
       <span class="txt-x-small txt-subtle"><%= [riga.libro.codice_isbn, riga.libro.editore&.editore].compact.join(" · ") %></span>
     </div>
 
-    <%= form_with model: [riga.bolla_visione, riga], data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
-      <%= f.number_field :quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
+    <%= form_with url: bolla_visione_riga_path(riga.bolla_visione, riga), method: :patch, scope: :bolla_visione_riga, data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
+      <%= f.number_field :quantita, value: riga.quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
     <% end %>
 
     <% if riga.processato_at.present? %>
