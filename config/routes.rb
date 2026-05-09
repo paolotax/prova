@@ -370,10 +370,10 @@ Rails.application.routes.draw do
     end
 
     resources :bolle_visione, only: %i[index show destroy] do
-      resources :bolla_visione_righe, only: %i[create update destroy]
-      resource :persone, only: %i[create update], controller: 'bolle_visione/persone'
-      member do
-        post :rigenera
+      member { post :rigenera }
+      scope module: :bolle_visione do
+        resources :righe,   only: %i[create update destroy]
+        resource  :persone, only: %i[create update]
       end
     end
 

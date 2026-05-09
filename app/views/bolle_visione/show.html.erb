@@ -107,7 +107,7 @@
   </div>
 
   <div id="bolla_visione_righe_form">
-    <%= form_with url: bolla_visione_bolla_visione_righe_path(@bolla_visione), scope: :bolla_visione_riga, class: "margin-block-start" do |f| %>
+    <%= form_with url: bolla_visione_righe_path(@bolla_visione), scope: :bolla_visione_riga, class: "margin-block-start" do |f| %>
       <div class="flex gap-half align-center">
         <div class="form-field cb-tax" style="flex: 1;">
           <%= combobox_tag "bolla_visione_riga[libro_id]", libri_path,

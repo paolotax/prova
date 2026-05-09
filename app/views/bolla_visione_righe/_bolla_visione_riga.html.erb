@@ -22,7 +22,7 @@
         Riapri
       <% end %>
     <% else %>
-      <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
+      <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
         <%= icon_tag "minus", size: "small" %>
       <% end %>
     <% end %>
@@ -36,7 +36,7 @@
     <div class="flex gap-quarter flex-wrap">
       <% if local_assigns[:classi]&.any? %>
         <% classi.each do |classe| %>
-          <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga),
+          <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga),
                 method: :patch,
                 params: { toggle_classe_id: classe.id },
                 class: "classi-chip #{'active' if classi_ids.include?(classe.id.to_s)}" do %>
@@ -47,7 +47,7 @@
 
       <% if local_assigns[:persone]&.any? %>
         <% persone.each do |persona| %>
-          <%= button_to bolla_visione_bolla_visione_riga_path(riga.bolla_visione, riga),
+          <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga),
                 method: :patch,
                 params: { toggle_persona_id: persona.id },
                 class: "classi-chip classi-chip--persona #{'active' if persone_ids.include?(persona.id.to_s)}" do %>

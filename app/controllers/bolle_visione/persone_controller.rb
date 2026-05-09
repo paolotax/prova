@@ -1,49 +1,40 @@
-module BolleVisione
-  class PersoneController < ApplicationController
-    before_action :authenticate_user!
-    before_action :set_bolla_visione
+class BolleVisione::PersoneController < BolleVisione::BaseController
+  def update
+    persona = Current.account.persone.find(params[:persona_id])
+    @bolla_visione.update!(contatto: persona)
+    redirect_to bolla_visione_path(@bolla_visione)
+  end
 
-    def update
-      persona = Current.account.persone.find(params[:persona_id])
-      @bolla_visione.update!(contatto: persona)
+  def create
+    @persona = @bolla_visione.scuola.persone.new(persona_params)
+    @persona.account = Current.account
+    @persona.ruolo = :docente if @persona.ruolo.blank?
+
+    if @persona.save
+      if @persona.referente?
+        @bolla_visione.update!(contatto: @persona)
+      end
+
+      materia = params.dig(:persona, :materia) || params[:materia]
+      if materia.present?
+        @bolla_visione.scuola.classi.each do |classe|
+          @persona.persona_classi.create(classe: classe, materia: materia)
+        end
+      end
+
       redirect_to bolla_visione_path(@bolla_visione)
+    else
+      redirect_to bolla_visione_path(@bolla_visione), alert: @persona.errors.full_messages.join(", ")
     end
+  end
 
-    def create
-      @persona = @bolla_visione.scuola.persone.new(persona_params)
-      @persona.account = Current.account
-      @persona.ruolo = :docente if @persona.ruolo.blank?
+  private
 
-      if @persona.save
-        if @persona.referente?
-          @bolla_visione.update!(contatto: @persona)
-        end
-
-        materia = params.dig(:persona, :materia) || params[:materia]
-        if materia.present?
-          @bolla_visione.scuola.classi.each do |classe|
-            @persona.persona_classi.create(classe: classe, materia: materia)
-          end
-        end
-
-        redirect_to bolla_visione_path(@bolla_visione)
-      else
-        redirect_to bolla_visione_path(@bolla_visione), alert: @persona.errors.full_messages.join(", ")
-      end
-    end
-
-    private
-
-    def set_bolla_visione
-      @bolla_visione = Current.account.bolle_visione.find(params[:bolla_visione_id])
-    end
-
-    def persona_params
-      if params.key?(:persona)
-        params.require(:persona).permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
-      else
-        params.permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
-      end
+  def persona_params
+    if params.key?(:persona)
+      params.require(:persona).permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
+    else
+      params.permit(:cognome, :nome, :ruolo, :email, :cellulare, :telefono)
     end
   end
 end
