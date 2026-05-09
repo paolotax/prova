@@ -33,12 +33,19 @@ class Ritiro
     end
   end
 
-  def bolle
-    @bolle ||= scuola.bolle_visione
-      .joins(:bolla_visione_righe)
-      .where(visibili_sql, BollaVisioneRiga.esiti[:rientrato])
+  def bolle_aperte
+    @bolle_aperte ||= scuola.bolle_visione
+      .where(id: righe_aperte_ids)
       .includes(:collana)
-      .distinct.ordered
+      .ordered
+  end
+  alias bolle bolle_aperte
+
+  def bolle_chiuse
+    @bolle_chiuse ||= scuola.bolle_visione
+      .where.not(id: righe_aperte_ids)
+      .includes(:collana)
+      .ordered
   end
 
   def righe(bolla)
@@ -61,7 +68,7 @@ class Ritiro
   end
 
   def empty?
-    bolle.empty?
+    bolle_aperte.empty? && bolle_chiuse.empty?
   end
 
   private
@@ -88,8 +95,15 @@ class Ritiro
     "bolla_visione_righe.processato_at IS NULL OR bolla_visione_righe.esito = ?"
   end
 
+  def righe_aperte_ids
+    BollaVisioneRiga
+      .where(bolla_visione_id: scuola.bolle_visione.select(:id))
+      .where(processato_at: nil)
+      .select(:bolla_visione_id)
+  end
+
   def righe_per_bolla
-    @righe_per_bolla ||= bolle.each_with_object({}) do |bv, h|
+    @righe_per_bolla ||= bolle_aperte.each_with_object({}) do |bv, h|
       h[bv] = bv.bolla_visione_righe
         .where(visibili_sql, BollaVisioneRiga.esiti[:rientrato])
         .includes(:libro)
@@ -98,13 +112,13 @@ class Ritiro
   end
 
   def gruppo_lookup
-    @gruppo_lookup ||= CollanaLibro.where(collana_id: bolle.map(&:collana_id).uniq)
+    @gruppo_lookup ||= CollanaLibro.where(collana_id: bolle_aperte.map(&:collana_id).uniq)
       .pluck(:collana_id, :libro_id, :gruppo)
       .each_with_object({}) { |(c, l, g), h| h[[c, l]] = g }
   end
 
   def target_lookup
-    @target_lookup ||= CollanaLibro.where(collana_id: bolle.map(&:collana_id).uniq)
+    @target_lookup ||= CollanaLibro.where(collana_id: bolle_aperte.map(&:collana_id).uniq)
       .pluck(:collana_id, :libro_id, :classi_target)
       .each_with_object({}) { |(c, l, t), h| h[[c, l]] = t }
   end

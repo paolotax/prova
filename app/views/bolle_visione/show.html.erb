@@ -2,10 +2,13 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <% if @bolla_visione.tappa_id.present? %>
-      <%= back_link_to_url "Tappa", tappa_path(@bolla_visione.tappa_id) %>
-    <% else %>
-      <%= back_link_to "Bolle", bolle_visione_path %>
+    <% fallback = @bolla_visione.tappa_id.present? ? tappa_path(@bolla_visione.tappa_id) : bolle_visione_path %>
+    <%= link_to fallback, class: "btn btn--back",
+          data: { controller: "hotkey turbo-navigation",
+                  action: "keydown.esc@document->hotkey#click click->turbo-navigation#backIfSamePath" } do %>
+      <%= icon_tag "arrow-left" %>
+      <strong class="overflow-ellipsis">Torna indietro</strong>
+      <kbd class="txt-x-small hide-on-touch">ESC</kbd>
     <% end %>
   </div>
   

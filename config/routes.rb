@@ -490,9 +490,8 @@ Rails.application.routes.draw do
       resource :foglio_scuola, only: [:show], controller: 'scuole/foglio_scuola'
       resource :ritiro, only: :show, controller: 'ritiri' do
         scope module: :ritiri do
-          resources :documenti, only: :create
-          resources :bolle,     only: :create
-          resources :righe,     only: :update
+          resources :bolle, only: :create
+          resources :righe, only: :update
         end
       end
 
