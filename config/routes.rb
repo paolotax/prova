@@ -486,11 +486,13 @@ Rails.application.routes.draw do
       get :email_pattern, on: :member
       resources :qrcodes
       resource :foglio_scuola, only: [:show], controller: 'scuole/foglio_scuola'
-      resource :ritiro, only: [:show], controller: 'ritiri' do
-        resources :documenti, only: [:create], controller: 'ritiri_documenti', as: 'documenti'
-        resources :bolle_da_collane, only: [:create], controller: 'bolle_visione_da_collane'
-        patch 'righe/:id/rientro', to: 'ritiri#rientro', as: 'riga_rientro'
-        patch 'righe/:id/riapri',  to: 'ritiri#riapri',  as: 'riga_riapri'
+      resource :ritiro, only: :show, controller: 'ritiri' do
+        scope module: :ritiri do
+          resources :documenti, only: :create
+          resources :bolle,     only: :create
+        end
+        patch 'righe/:id/rientro', to: 'ritiri#rientro', as: :riga_rientro
+        patch 'righe/:id/riapri',  to: 'ritiri#riapri',  as: :riga_riapri
       end
 
       resources :saggi, only: %i[index create update destroy], controller: 'scuole/saggi' do

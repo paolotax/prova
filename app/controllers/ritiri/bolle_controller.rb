@@ -1,6 +1,4 @@
-class BolleVisioneDaCollaneController < ApplicationController
-  before_action :set_scuola
-
+class Ritiri::BolleController < Ritiri::BaseController
   def create
     collana_ids = Array(params[:collana_ids]).reject(&:blank?)
     if collana_ids.empty?
@@ -23,11 +21,5 @@ class BolleVisioneDaCollaneController < ApplicationController
 
     redirect_to scuola_ritiro_path(@scuola),
                 notice: "#{collana_ids.size} bolle create."
-  end
-
-  private
-
-  def set_scuola
-    @scuola = Current.account.scuole.find(params[:scuola_id])
   end
 end

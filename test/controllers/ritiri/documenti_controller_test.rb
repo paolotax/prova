@@ -1,6 +1,6 @@
 require "test_helper"
 
-class RitiriDocumentiControllerTest < ActionDispatch::IntegrationTest
+class Ritiri::DocumentiControllerTest < ActionDispatch::IntegrationTest
   fixtures :accounts, :users, :memberships, :editori, :categorie, :libri, :scuole,
            :collane, :bolle_visione, :bolla_visione_righe, :causali, :confezione_righe
 

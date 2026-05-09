@@ -1,6 +1,4 @@
-class RitiriDocumentiController < ApplicationController
-  before_action :set_scuola
-
+class Ritiri::DocumentiController < Ritiri::BaseController
   def create
     if righe.empty?
       redirect_to scuola_ritiro_path(@scuola), alert: "Seleziona almeno una riga." and return
@@ -22,10 +20,6 @@ class RitiriDocumentiController < ApplicationController
 
   private
 
-  def set_scuola
-    @scuola = Current.account.scuole.find(params[:scuola_id])
-  end
-
   def righe
     @righe ||= begin
       ids = Array(params[:bolla_visione_riga_ids]).reject(&:blank?)
@@ -44,10 +38,6 @@ class RitiriDocumentiController < ApplicationController
     klass.find(params[:clientable_id])
   end
 
-  # Per il caso "Mancante" su confezione: per ogni riga selezionata che e' una
-  # confezione con fascicoli specificati nei params, splitta in N righe-fascicolo
-  # mancanti e chiude la confezione con l'esito scelto. Le righe-fascicolo nuove
-  # sostituiscono la riga-confezione nel documento.
   def applica_split_fascicoli(righe_iniziali)
     return righe_iniziali if causale&.causale != "Mancante"
     return righe_iniziali if params[:fascicoli_per_riga].blank?

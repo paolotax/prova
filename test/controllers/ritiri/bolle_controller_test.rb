@@ -1,6 +1,6 @@
 require "test_helper"
 
-class BolleVisioneDaCollaneControllerTest < ActionDispatch::IntegrationTest
+class Ritiri::BolleControllerTest < ActionDispatch::IntegrationTest
   fixtures :accounts, :users, :memberships, :editori, :categorie, :libri, :scuole,
            :collane
 
@@ -15,7 +15,7 @@ class BolleVisioneDaCollaneControllerTest < ActionDispatch::IntegrationTest
     collana = collane(:collana_fizzy)
 
     assert_difference -> { BollaVisione.count } => 1 do
-      post scuola_ritiro_bolle_da_collane_path(@scuola, account_id: @account.id), params: {
+      post scuola_ritiro_bolle_path(@scuola, account_id: @account.id), params: {
         collana_ids: [collana.id]
       }
     end
@@ -23,7 +23,7 @@ class BolleVisioneDaCollaneControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create senza collana_ids torna in show con flash" do
-    post scuola_ritiro_bolle_da_collane_path(@scuola, account_id: @account.id), params: {
+    post scuola_ritiro_bolle_path(@scuola, account_id: @account.id), params: {
       collana_ids: []
     }
     assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
