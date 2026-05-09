@@ -1,27 +1,30 @@
 <%# Container bulk-actions: i form vivono dentro `_bulk_bar` e ricevono via #syncSelection %>
 <%# gli ID dei checkbox selezionati come hidden inputs `bolla_visione_riga_ids[]`. %>
-<%# `data-has-selection` statico: nella pagina ritiro la selezione e' sempre attiva, %>
-<%# percio' i .card__checkbox sono sempre visibili (vedi cards.css:500). %>
-<%= tag.div "data-has-selection": "",
-            data: {
-              controller: "bulk-actions",
-              action: "click->bulk-actions#toggleCard"
-            } do %>
+<%= tag.div data: { controller: "bulk-actions" } do %>
 
-  <% righe_per_bolla.each do |bolla, righe| %>
-    <div class="ritiro__bolla margin-block-start">
-      <h3 class="divider divider--fade txt-medium font-weight-black">
-        BV-<%= bolla.numero %> &mdash; <%= bolla.collana.nome %>
-        <span class="txt-x-small txt-subtle">
-          <%= l(bolla.data_bolla, format: :short) %>
-        </span>
-      </h3>
+  <% ritiro.bolle.each do |bolla| %>
+    <% righe = ritiro.righe(bolla) %>
+    <div class="ritiro__bolla">
 
-      <% gruppi = righe.group_by { |r| gruppo_per_libro_e_collana[[bolla.collana_id, r.libro_id]].presence || "Altro" } %>
+      <div class="flex align-center gap-half margin-block-start">
+        <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+          <%= link_to "BV-#{bolla.numero}", bolla_visione_path(bolla) %>
+        </h3>
+      </div>
+
+      <span class="txt-small txt-subtle font-weight-normal"><%= bolla.collana.nome %>&middot;</span>
+      <span class="txt-x-small txt-subtle flex-item-no-shrink">
+        <%= l(bolla.data_bolla, format: :short) %>
+      </span>
+      <% gruppi = righe.group_by { |r| ritiro.gruppo_per(r.libro_id, bolla.collana_id).presence || "Altro" } %>
       <% gruppi.each do |gruppo, righe_g| %>
-        <div class="ritiro__gruppo">
-          <h4 class="divider txt-small txt-uppercase txt-subtle"><%= gruppo %></h4>
-          <ul class="cards cards--list unpad margin-none">
+
+        <div class="ritiro__gruppo flex-colunms align-center gap-half margin-block-start">
+          <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+            <%= gruppo.presence || "Altro" %>
+          </h3>
+
+          <ul class="flex flex-column unpad margin-none">
             <% righe_g.each do |riga| %>
               <%= render "ritiri/riga", riga: riga, scuola: @scuola %>
             <% end %>
