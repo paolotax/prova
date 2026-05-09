@@ -59,6 +59,16 @@
     color: oklch(var(--lch-blue-dark, 0.35 0.15 250));
   }
 
+  .badge--in_saggio {
+    background: oklch(var(--lch-green-lighter, 0.92 0.05 145));
+    color: oklch(var(--lch-green-darker, 0.4 0.12 148));
+  }
+
+  .badge--mancante {
+    background: oklch(var(--lch-red-lighter, 0.92 0.03 44));
+    color: oklch(var(--lch-red-darker, 0.4 0.154 36));
+  }
+
   /* Entry Type Badges
   /* -------------------------------------------------------------------------- */
 

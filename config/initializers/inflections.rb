@@ -85,6 +85,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'saldo', 'saldi'
 
   inflect.irregular 'bolla', 'bolle'
+  inflect.irregular 'rientro', 'rientri'
   inflect.irregular 'collana', 'collane'
   inflect.irregular 'collana_libro', 'collana_libri'
   inflect.irregular 'bolla_visione', 'bolle_visione'

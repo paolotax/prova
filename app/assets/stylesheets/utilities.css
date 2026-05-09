@@ -346,4 +346,9 @@
   .show-when-editing { display: none; }
   .editing .show-when-editing { display: block; }
   .editing .hide-when-editing { display: none; }
+
+  /* Responsive visibility */
+  .hide-on-mobile {
+    @media (max-width: 639px) { display: none; }
+  }
 }

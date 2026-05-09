@@ -20,9 +20,8 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
 
   test "show raggruppa righe per bolla e per gruppo collana" do
     get scuola_ritiro_path(@scuola, account_id: @account.id)
-    assert_select ".ritiro__bolla", minimum: 1
-    assert_select ".ritiro__bolla .ritiro__gruppo", minimum: 1
-    assert_select ".ritiro__riga", minimum: 1
+    assert_select "h3", text: /BV-/, minimum: 1
+    assert_select "[data-bolla-visione-riga-id]", minimum: 1
   end
 
   test "show contiene bulk bar con i 4 form di azione" do
@@ -39,13 +38,13 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", scuola_ritiro_path(@scuola, account_id: @account.id), text: /Ritiro/
   end
 
-  test "show mostra anche le righe rientrate evidenziate (con classe modifier)" do
+  test "show mostra anche le righe rientrate con bottone Annulla rientro" do
     riga = bolla_visione_righe(:aperta)
     riga.update!(esito: :rientrato, processato_at: Time.current)
 
     get scuola_ritiro_path(@scuola, account_id: @account.id)
     assert_response :success
-    assert_select ".ritiro__riga--rientrato[data-bolla-visione-riga-id=?]", riga.id
+    assert_select "[data-bolla-visione-riga-id=?]", riga.id
     assert_select "form[action=?]", scuola_ritiro_riga_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
   end
 

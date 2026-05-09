@@ -372,8 +372,10 @@ Rails.application.routes.draw do
     resources :bolle_visione, only: %i[index show destroy] do
       member { post :rigenera }
       scope module: :bolle_visione do
-        resources :righe,   only: %i[create update destroy]
-        resource  :persone, only: %i[create update]
+        resources :righe,     only: %i[create update destroy]
+        resources :documenti, only: :create
+        resource  :persone,   only: %i[create update]
+        resource  :rientro,   only: %i[create destroy]
       end
     end
 

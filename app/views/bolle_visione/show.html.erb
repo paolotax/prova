@@ -39,17 +39,35 @@
   </div>
 <% end %>
 
-<section class="panel panel--wide shadow center">
+<section class="panel panel--wide shadow center" data-controller="chip-bulk-actions">
   <div class="flex align-center gap-half">
-    <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
-      <%= link_to @bolla_visione.scuola.denominazione, scuola_path(@bolla_visione.scuola) %>
-    </h3>
-
     <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
         form_url: bolla_visione_persone_path(@bolla_visione),
         select_url: bolla_visione_path(@bolla_visione),
         assign_url: bolla_visione_persone_path(@bolla_visione),
         ruolo: "referente" %>
+
+    <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+      <%= link_to @bolla_visione.scuola.denominazione, scuola_path(@bolla_visione.scuola) %>
+    </h3>
+
+    <% if @righe.any? { |r| r.processato_at.nil? } %>
+      <%= button_to bolla_visione_rientro_path(@bolla_visione),
+            method: :post,
+            class: "btn btn--circle btn--small flex-item-no-shrink",
+            data: { controller: "tooltip", tooltip_content_value: "Rientra tutta la bolla" } do %>
+        <%= icon_tag "arrow-left-from-line", size: "small" %>
+        <span class="for-screen-reader">Rientra tutta la bolla</span>
+      <% end %>
+    <% elsif @righe.any?(&:rientrato?) %>
+      <%= button_to bolla_visione_rientro_path(@bolla_visione),
+            method: :delete,
+            class: "btn btn--circle btn--small flex-item-no-shrink",
+            data: { controller: "tooltip", tooltip_content_value: "Riapri tutta la bolla" } do %>
+        <%= icon_tag "refresh", size: "small" %>
+        <span class="for-screen-reader">Riapri tutta la bolla</span>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="flex flex-wrap gap full-width">
@@ -86,13 +104,31 @@
       <% classi_gruppo = @classi_per_anno.values_at(*targets).compact.flatten %>
 
       <div class="flex align-center gap-half margin-block-start">
+        <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
+            form_url: bolla_visione_persone_path(@bolla_visione),
+            select_url: bolla_visione_path(@bolla_visione) %>
+
         <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
           <%= gruppo.presence || "Altro" %>
         </h3>
 
-        <%= render "persone/search_dialog", scuola: @bolla_visione.scuola,
-        form_url: bolla_visione_persone_path(@bolla_visione),
-        select_url: bolla_visione_path(@bolla_visione) %>
+        <% if righe_per_gruppo.any? { |r| r.processato_at.nil? } %>
+          <%= button_to bolla_visione_rientro_path(@bolla_visione, gruppo: gruppo),
+                method: :post,
+                class: "btn btn--circle btn--small flex-item-no-shrink",
+                data: { controller: "tooltip", tooltip_content_value: "Rientra il gruppo" } do %>
+            <%= icon_tag "arrow-left-from-line", size: "small" %>
+            <span class="for-screen-reader">Rientra il gruppo</span>
+          <% end %>
+        <% elsif righe_per_gruppo.any?(&:rientrato?) %>
+          <%= button_to bolla_visione_rientro_path(@bolla_visione, gruppo: gruppo),
+                method: :delete,
+                class: "btn btn--circle btn--small flex-item-no-shrink",
+                data: { controller: "tooltip", tooltip_content_value: "Riapri il gruppo" } do %>
+            <%= icon_tag "refresh", size: "small" %>
+            <span class="for-screen-reader">Riapri il gruppo</span>
+          <% end %>
+        <% end %>
       </div>
 
       <ul class="flex flex-column unpad margin-none">
@@ -126,4 +162,6 @@
     <span>Totale copie</span>
     <span><%= @bolla_visione.bolla_visione_righe.sum(:quantita) %></span>
   </div>
+
+  <%= render "bolle_visione/bulk_bar", bolla: @bolla_visione %>
 </section>

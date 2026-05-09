@@ -1,0 +1,69 @@
+<%# Bulk bar per pagina BollaVisione: 4 azioni standard, una per causale. %>
+<%# Si attiva quando una chip è in stato `negative` (selection nel chip-bulk-actions controller). %>
+
+<% causali_map = {
+  "scarico_saggi" => Causale.find_by(causale: "Scarico saggi"),
+  "td01"          => Causale.find_by(causale: "TD01"),
+  "ordine_scuola" => Causale.find_by(causale: "Ordine Scuola"),
+  "mancante"      => Causale.find_by(causale: "Mancante")
+} %>
+
+<% submit_label = {
+  "scarico_saggi" => "Crea scarichi saggi",
+  "td01"          => "Crea fatture",
+  "ordine_scuola" => "Crea vendite",
+  "mancante"      => "Crea mancanti"
+} %>
+
+<div class="bulk-bar" hidden data-controller="bulk-bar" data-chip-bulk-actions-target="bar">
+  <button type="button" class="bulk-bar__close" data-action="chip-bulk-actions#hideAfterSubmit">
+    <%= icon_tag "remove" %>
+    <span class="for-screen-reader">Chiudi</span>
+  </button>
+
+  <div class="bulk-bar__menu" data-bulk-bar-target="menu">
+    <% [["scarico_saggi", "Saggi",     "gift"],
+        ["td01",          "Fattura",   "receipt"],
+        ["ordine_scuola", "Vendita",   "shopping-cart"],
+        ["mancante",      "Mancanti",  "alert-triangle"]].each do |form_id, label, icon| %>
+      <% next if causali_map[form_id].nil? %>
+      <button type="button" class="btn bulk-bar__btn"
+              data-action="bulk-bar#showForm"
+              data-bulk-bar-target="menuButton"
+              data-form-id="<%= form_id %>">
+        <%= icon_tag icon %>
+        <span><%= label %></span>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="bulk-bar__forms" data-bulk-bar-target="forms">
+    <% causali_map.each do |form_id, causale| %>
+      <% next if causale.nil? %>
+      <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="<%= form_id %>">
+        <span class="bulk-bar__form-title">
+          <%= causale.causale %> · <span data-chip-bulk-actions-target="counter">0</span> righe
+        </span>
+        <%= form_with url: bolla_visione_documenti_path(bolla),
+              method: :post,
+              id: "bv-form-#{form_id}",
+              data: { chip_bulk_actions_target: "form",
+                      action: "turbo:submit-end->chip-bulk-actions#hideAfterSubmit" } do |f| %>
+          <%= f.hidden_field :causale_id, value: causale.id %>
+          <%= f.hidden_field :data_documento, value: Date.current %>
+          <div class="bulk-bar__form-actions">
+            <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+            <%= f.submit submit_label[form_id], class: "btn btn--primary" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="bulk-bar__footer">
+    <span class="bulk-bar__counter">
+      <span data-chip-bulk-actions-target="counter">0</span>
+      <span>selezionati</span>
+    </span>
+  </div>
+</div>

@@ -22,6 +22,12 @@
       color: var(--color-ink-inverted);
     }
 
+    &.negative {
+      background: var(--color-negative);
+      border-color: var(--color-negative);
+      color: var(--color-ink-inverted);
+    }
+
     &--persona {
       border-style: dashed;
 

@@ -1,12 +1,34 @@
-<%= tag.li id: dom_id(riga), class: "list-style-none margin-none flex flex-column gap-quarter full-width", style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;" do %>
+<%= tag.li id: dom_id(riga), class: "list-style-none margin-none flex flex-column gap-quarter full-width", style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;", data: { bolla_visione_riga_id: riga.id } do %>
   <div class="flex align-center gap full-width">
+    <% if local_assigns[:bulk] && riga.processato_at.nil? %>
+      <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
+            class: "flex-item-no-shrink",
+            data: { action: "change->bulk-actions#count" } %>
+    <% end %>
+
     <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
       <strong class="overflow-ellipsis txt-small"><%= riga.libro.titolo %></strong>
-      <span class="txt-x-small txt-subtle"><%= [riga.libro.codice_isbn, riga.libro.editore&.editore].compact.join(" · ") %></span>
+      <span class="txt-x-small txt-subtle">
+        <%= [riga.libro.codice_isbn, riga.libro.editore&.editore].compact.join(" · ") %>
+        <% if riga.libro.fascicoli.any? %>
+          &middot; <%= pluralize(riga.libro.fascicoli.size, "fasc.") %>
+        <% end %>
+        <% if local_assigns[:bulk] && riga.quantita > 1 %>
+          &middot; <span class="badge">x<%= riga.quantita %></span>
+        <% end %>
+      </span>
     </div>
 
-    <%= form_with url: bolla_visione_riga_path(riga.bolla_visione, riga), method: :patch, scope: :bolla_visione_riga, data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
-      <%= f.number_field :quantita, value: riga.quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
+    <% if riga.processato_at.nil? %>
+      <span class="txt-small font-weight-black flex-item-no-shrink hide-on-mobile">
+        <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "€", format: "%n %u") %>
+      </span>
+
+      <% unless local_assigns[:bulk] %>
+        <%= form_with url: bolla_visione_riga_path(riga.bolla_visione, riga), method: :patch, scope: :bolla_visione_riga, data: { controller: "form" }, class: "flex gap-quarter align-center flex-item-no-shrink" do |f| %>
+          <%= f.number_field :quantita, value: riga.quantita, class: "input input--small", style: "width: 4ch; text-align: center;", min: 1, data: { action: "change->form#submit" } %>
+        <% end %>
+      <% end %>
     <% end %>
 
     <% if riga.processato_at.present? %>
@@ -14,16 +36,35 @@
             title="<%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>">
         <%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>
       </span>
+      <% riapri_label = riga.rientrato? ? "Annulla rientro" : "Riapri" %>
       <%= button_to scuola_ritiro_riga_path(scuola_id: riga.bolla_visione.scuola_id, id: riga.id),
             method: :patch,
-            params: { esito: "", return_to: "bolla" },
-            class: "btn btn--small txt-x-small flex-item-no-shrink",
-            data: { turbo_confirm: "Riaprire la riga?" } do %>
-        Riapri
+            params: { esito: "", return_to: local_assigns[:bulk] ? "ritiro" : "bolla" },
+            class: "btn btn--circle btn--small flex-item-no-shrink",
+            data: { controller: "tooltip", tooltip_content_value: riapri_label },
+            form: { data: { turbo_frame: "_top" } } do %>
+        <%= icon_tag "refresh", size: "small" %>
+        <span class="for-screen-reader"><%= riapri_label %></span>
       <% end %>
     <% else %>
-      <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga), method: :delete, class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink" do %>
-        <%= icon_tag "minus", size: "small" %>
+      <% unless local_assigns[:bulk] %>
+        <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga),
+              method: :delete,
+              class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink",
+              data: { controller: "tooltip", tooltip_content_value: "Rimuovi" } do %>
+          <%= icon_tag "minus", size: "small" %>
+          <span class="for-screen-reader">Rimuovi</span>
+        <% end %>
+      <% end %>
+
+      <%= button_to scuola_ritiro_riga_path(scuola_id: riga.bolla_visione.scuola_id, id: riga.id),
+            method: :patch,
+            params: { esito: "rientrato", return_to: local_assigns[:bulk] ? "ritiro" : "bolla" },
+            class: "btn btn--circle btn--small flex-item-no-shrink",
+            data: { controller: "tooltip", tooltip_content_value: "Rientro" },
+            form: { data: { turbo_frame: "_top" } } do %>
+        <%= icon_tag "arrow-left-from-line", size: "small" %>
+        <span class="for-screen-reader">Rientro</span>
       <% end %>
     <% end %>
   </div>
@@ -36,23 +77,29 @@
     <div class="flex gap-quarter flex-wrap">
       <% if local_assigns[:classi]&.any? %>
         <% classi.each do |classe| %>
-          <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga),
-                method: :patch,
-                params: { toggle_classe_id: classe.id },
-                class: "classi-chip #{'active' if classi_ids.include?(classe.id.to_s)}" do %>
+          <button type="button"
+                  class="classi-chip <%= 'active' if classi_ids.include?(classe.id.to_s) %>"
+                  data-action="chip-bulk-actions#toggleChip"
+                  data-clientable-type="Classe"
+                  data-clientable-id="<%= classe.id %>"
+                  data-bolla-visione-riga-id="<%= riga.id %>"
+                  data-toggle-url="<%= bolla_visione_riga_path(riga.bolla_visione, riga, toggle_classe_id: classe.id) %>">
             <%= classe.nome_breve %>
-          <% end %>
+          </button>
         <% end %>
       <% end %>
 
       <% if local_assigns[:persone]&.any? %>
         <% persone.each do |persona| %>
-          <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga),
-                method: :patch,
-                params: { toggle_persona_id: persona.id },
-                class: "classi-chip classi-chip--persona #{'active' if persone_ids.include?(persona.id.to_s)}" do %>
+          <button type="button"
+                  class="classi-chip classi-chip--persona <%= 'active' if persone_ids.include?(persona.id.to_s) %>"
+                  data-action="chip-bulk-actions#toggleChip"
+                  data-clientable-type="Persona"
+                  data-clientable-id="<%= persona.id %>"
+                  data-bolla-visione-riga-id="<%= riga.id %>"
+                  data-toggle-url="<%= bolla_visione_riga_path(riga.bolla_visione, riga, toggle_persona_id: persona.id) %>">
             <%= persona.cognome %>
-          <% end %>
+          </button>
         <% end %>
       <% end %>
     </div>

@@ -6,6 +6,10 @@ class Ritiro
     "Mancante"      => :mancante
   }.freeze
 
+  CAUSALE_TO_SCONTO = {
+    "Scarico saggi" => 100.0
+  }.freeze
+
   attr_reader :scuola
 
   def initialize(scuola)
@@ -24,6 +28,7 @@ class Ritiro
         user: Current.user
       )
       righe.each_with_index { |riga, i| processa_riga(riga, documento, i, causale) }
+      documento.mark_consegnato if causale.carico?
       documento
     end
   end
@@ -44,6 +49,17 @@ class Ritiro
     gruppo_lookup[[collana_id, libro_id]]
   end
 
+  def classi_per(libro_id, collana_id)
+    targets = target_lookup[[collana_id, libro_id]].to_s.split(",").map(&:strip)
+    classi_per_anno.values_at(*targets).compact.flatten
+  end
+
+  def persone_per(libro_id, collana_id)
+    classi = classi_per(libro_id, collana_id)
+    return Persona.none if classi.empty?
+    Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome)
+  end
+
   def empty?
     bolle.empty?
   end
@@ -58,7 +74,8 @@ class Ritiro
     riga = Riga.create!(
       libro: bv_riga.libro,
       quantita: bv_riga.quantita,
-      prezzo_cents: bv_riga.libro.prezzo_in_cents
+      prezzo_cents: bv_riga.libro.prezzo_in_cents,
+      sconto: CAUSALE_TO_SCONTO.fetch(causale.causale, 0.0)
     )
     documento.documento_righe.create!(riga: riga, posizione: idx)
     bv_riga.update!(
@@ -84,5 +101,15 @@ class Ritiro
     @gruppo_lookup ||= CollanaLibro.where(collana_id: bolle.map(&:collana_id).uniq)
       .pluck(:collana_id, :libro_id, :gruppo)
       .each_with_object({}) { |(c, l, g), h| h[[c, l]] = g }
+  end
+
+  def target_lookup
+    @target_lookup ||= CollanaLibro.where(collana_id: bolle.map(&:collana_id).uniq)
+      .pluck(:collana_id, :libro_id, :classi_target)
+      .each_with_object({}) { |(c, l, t), h| h[[c, l]] = t }
+  end
+
+  def classi_per_anno
+    @classi_per_anno ||= scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
   end
 end

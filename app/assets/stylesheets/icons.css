@@ -19,6 +19,10 @@
   }
 
   .icon--arrow-left-from-line { --svg: url("arrow-left-from-line.svg"); }
+  .icon--gift { --svg: url("gift.svg"); }
+  .icon--receipt { --svg: url("receipt.svg"); }
+  .icon--shopping-cart { --svg: url("shopping-cart.svg"); }
+  .icon--alert-triangle { --svg: url("alert-triangle.svg"); }
   .icon--table-cells { --svg: url("table-cells.svg"); }
   .icon--ellipsis-vertical { --svg: url("ellipsis-vertical.svg"); }
   .icon--wrench { --svg: url("wrench.svg"); }
