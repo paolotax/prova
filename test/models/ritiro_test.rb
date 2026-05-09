@@ -48,4 +48,72 @@ class RitiroTest < ActiveSupport::TestCase
     @scuola.bolle_visione.destroy_all
     assert Ritiro.new(@scuola).empty?
   end
+
+  # --- crea_documento -------------------------------------------------------
+
+  test "crea_documento crea documento con causale, clientable e righe; chiude bolle_visione_righe" do
+    riga1 = bolla_visione_righe(:aperta)
+    riga2 = bolla_visione_righe(:aperta_due)
+
+    documento = @ritiro.crea_documento(
+      righe: [riga1, riga2],
+      causale: causali(:scarico_saggi),
+      clientable: @scuola,
+      data: Date.current
+    )
+
+    assert_equal causali(:scarico_saggi), documento.causale
+    assert_equal @scuola, documento.clientable
+    assert_equal 2, documento.documento_righe.count
+
+    riga1.reload
+    assert_equal "in_saggio", riga1.esito
+    assert_not_nil riga1.processato_at
+    assert_includes documento.documento_righe.map { |dr| dr.riga.libro_id }, riga1.libro_id
+  end
+
+  test "crea_documento raises ArgumentError quando causale è nil; nessun documento creato" do
+    riga = bolla_visione_righe(:aperta)
+    assert_no_difference "Documento.count" do
+      assert_raises ArgumentError do
+        @ritiro.crea_documento(righe: [riga], causale: nil, clientable: @scuola, data: Date.current)
+      end
+    end
+    riga.reload
+    assert_nil riga.processato_at
+  end
+
+  test "crea_documento rollback se Riga.create! fallisce a metà; nessun Documento; riga non chiusa" do
+    riga1 = bolla_visione_righe(:aperta)
+    riga2 = bolla_visione_righe(:aperta_due)
+
+    call_count = 0
+    original_create = Riga.method(:create!)
+
+    Riga.singleton_class.send(:alias_method, :__orig_create_bang!, :create!)
+    Riga.define_singleton_method(:create!) do |*args, **kwargs|
+      call_count += 1
+      raise ActiveRecord::RecordInvalid.new(Riga.new) if call_count == 2
+      original_create.call(*args, **kwargs)
+    end
+
+    begin
+      assert_no_difference ["Documento.count", "DocumentoRiga.count", "Riga.count"] do
+        assert_raises ActiveRecord::RecordInvalid do
+          @ritiro.crea_documento(
+            righe: [riga1, riga2],
+            causale: causali(:scarico_saggi),
+            clientable: @scuola,
+            data: Date.current
+          )
+        end
+      end
+    ensure
+      Riga.singleton_class.send(:alias_method, :create!, :__orig_create_bang!)
+      Riga.singleton_class.send(:remove_method, :__orig_create_bang!)
+    end
+
+    riga1.reload
+    assert_nil riga1.processato_at, "la prima BV riga non deve risultare processata dopo rollback"
+  end
 end

@@ -47,7 +47,6 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     riga.reload
     assert_equal "rientrato", riga.esito
     assert_not_nil riga.processato_at
-    assert_nil riga.documento_riga_id
     assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
   end
 
@@ -58,7 +57,7 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     get scuola_ritiro_path(@scuola, account_id: @account.id)
     assert_response :success
     assert_select ".ritiro__riga--rientrato[data-bolla-visione-riga-id=?]", riga.id
-    assert_select "a[href*=?]", riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
+    assert_select "form[action=?]", riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id, return_to: "ritiro")
   end
 
   test "show non mostra righe gia' processate via documento (saggio/venduto/mancante)" do
@@ -75,39 +74,18 @@ class RitiriControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to scuola_ritiro_path(@scuola, account_id: @account.id)
   end
 
-  test "riapri ripristina la riga rientrata (no documento da cancellare)" do
+  test "riapri ripristina la riga (non tocca documenti, sono autonomi)" do
     riga = bolla_visione_righe(:aperta)
     riga.update!(esito: :rientrato, processato_at: Time.current)
 
-    patch riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
-
-    riga.reload
-    assert_nil riga.esito
-    assert_nil riga.processato_at
-    assert_nil riga.documento_riga_id
-    assert_redirected_to bolla_visione_path(riga.bolla_visione, account_id: @account.id)
-  end
-
-  test "riapri cancella DocumentoRiga e Documento se vuoto" do
-    riga = bolla_visione_righe(:aperta)
-    documento = Ritiro::CreaDocumento.new(
-      righe: [riga],
-      causale: causali(:scarico_saggi),
-      clientable: @scuola,
-      data: Date.current
-    ).call
-    doc_riga = riga.reload.documento_riga
-    assert_not_nil doc_riga
-
-    assert_difference -> { Documento.count } => -1,
-                      -> { DocumentoRiga.count } => -1 do
+    assert_no_difference ["Documento.count", "DocumentoRiga.count"] do
       patch riga_riapri_scuola_ritiro_path(scuola_id: @scuola.id, id: riga.id, account_id: @account.id)
     end
 
     riga.reload
     assert_nil riga.esito
     assert_nil riga.processato_at
-    assert_nil riga.documento_riga_id
+    assert_redirected_to bolla_visione_path(riga.bolla_visione, account_id: @account.id)
   end
 
   private

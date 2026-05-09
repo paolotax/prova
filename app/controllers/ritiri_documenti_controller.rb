@@ -6,16 +6,13 @@ class RitiriDocumentiController < ApplicationController
       redirect_to scuola_ritiro_path(@scuola), alert: "Seleziona almeno una riga." and return
     end
 
-    Documento.transaction do
-      righe_finali = applica_split_fascicoli(righe)
-
-      @documento = Ritiro::CreaDocumento.new(
-        righe: righe_finali,
-        causale: causale,
-        clientable: clientable,
-        data: params[:data_documento]
-      ).call
-    end
+    righe_finali = applica_split_fascicoli(righe)
+    @documento = Ritiro.new(@scuola).crea_documento(
+      righe: righe_finali,
+      causale: causale,
+      clientable: clientable,
+      data: params[:data_documento]
+    )
 
     redirect_to scuola_ritiro_path(@scuola),
                 notice: "Documento #{@documento.causale.causale} creato (#{@documento.documento_righe.count} righe)."

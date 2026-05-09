@@ -28,7 +28,6 @@ class RitiriDocumentiControllerTest < ActionDispatch::IntegrationTest
     @riga.reload
     assert_equal "in_saggio", @riga.esito
     assert_not_nil @riga.processato_at
-    assert_not_nil @riga.documento_riga_id
   end
 
   test "create con nessuna riga selezionata torna in show con flash" do

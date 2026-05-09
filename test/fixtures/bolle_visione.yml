@@ -1,3 +1,30 @@
+# == Schema Information
+#
+# Table name: bolle_visione
+#
+#  id          :uuid             not null, primary key
+#  data_bolla  :date             not null
+#  note        :text
+#  numero      :integer          not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  account_id  :uuid             not null
+#  collana_id  :uuid             not null
+#  contatto_id :uuid
+#  scuola_id   :uuid             not null
+#  tappa_id    :uuid
+#  user_id     :bigint           not null
+#
+# Indexes
+#
+#  index_bolle_visione_on_account_id             (account_id)
+#  index_bolle_visione_on_account_id_and_numero  (account_id,numero) UNIQUE
+#  index_bolle_visione_on_collana_id             (collana_id)
+#  index_bolle_visione_on_contatto_id            (contatto_id)
+#  index_bolle_visione_on_scuola_id              (scuola_id)
+#  index_bolle_visione_on_tappa_id               (tappa_id)
+#  index_bolle_visione_on_user_id                (user_id)
+#
 bv_fizzy_uno:
   account: fizzy
   user: one

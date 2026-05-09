@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_06_072210) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_06_115637) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -311,7 +311,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_072210) do
     t.string "classi_target"
     t.jsonb "consegna", default: {}
     t.datetime "created_at", null: false
-    t.bigint "documento_riga_id"
     t.integer "esito"
     t.bigint "libro_id", null: false
     t.integer "position"
@@ -321,7 +320,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_072210) do
     t.index ["account_id"], name: "index_bolla_visione_righe_on_account_id"
     t.index ["bolla_visione_id", "esito"], name: "index_bolla_visione_righe_on_bolla_visione_id_and_esito"
     t.index ["bolla_visione_id"], name: "index_bolla_visione_righe_on_bolla_visione_id"
-    t.index ["documento_riga_id"], name: "index_bolla_visione_righe_on_documento_riga_id"
     t.index ["libro_id"], name: "index_bolla_visione_righe_on_libro_id"
     t.index ["processato_at"], name: "index_bolla_visione_righe_on_processato_at"
   end
@@ -1598,7 +1596,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_072210) do
   add_foreign_key "adozioni_comunicate", "users"
   add_foreign_key "appunti", "users"
   add_foreign_key "appunti", "voice_notes"
-  add_foreign_key "bolla_visione_righe", "documento_righe"
   add_foreign_key "categorie", "accounts"
   add_foreign_key "categorie", "users"
   add_foreign_key "cattedra_discipline", "accounts"

@@ -1,0 +1,87 @@
+@layer components {
+  /* Ritiro lista — stile coerente con BollaVisione show: righe flat,
+  /* solo bordo inferiore e stati selezionato/rientrato come accenti.
+  /* ------------------------------------------------------------------------ */
+
+  .ritiro__bolla {
+    margin-block-start: var(--block-space);
+  }
+
+  .ritiro__riga {
+    border-block-end: 1px solid var(--color-ink-lighter);
+    padding-block: 0.5rem;
+    transition: background 150ms ease, box-shadow 150ms ease;
+  }
+
+  /* Stato selezionato: highlight discreto con accent line a sinistra */
+  .ritiro__riga:has(.ritiro__riga-check:checked) {
+    background: oklch(98% 0.02 250);
+    box-shadow: inset 3px 0 0 oklch(65% 0.25 250);
+  }
+
+  /* Stato rientrato: visivamente sopito, ripristinabile */
+  .ritiro__riga--rientrato {
+    background: oklch(98% 0.01 80);
+  }
+
+  .ritiro__riga--rientrato .overflow-ellipsis,
+  .ritiro__riga--rientrato .ritiro__riga-prezzo {
+    opacity: 0.65;
+  }
+
+  /* Checkbox custom — touch-friendly (24px) e in linea con il testo */
+  .ritiro__riga-check {
+    appearance: none;
+    background: var(--color-canvas);
+    block-size: 1.25rem;
+    border: 2px solid var(--color-ink-light);
+    border-radius: 4px;
+    cursor: pointer;
+    inline-size: 1.25rem;
+    margin: 0;
+    transition: all 150ms ease;
+  }
+
+  .ritiro__riga-check:checked {
+    background: oklch(65% 0.25 250);
+    border-color: oklch(65% 0.25 250);
+  }
+
+  .ritiro__riga-check:checked::after {
+    color: white;
+    content: "✓";
+    display: block;
+    font-size: 0.85rem;
+    font-weight: bold;
+    line-height: 1;
+    margin-block-start: 0.1rem;
+    text-align: center;
+  }
+
+  /* Spacer per allineare le righe rientrate (senza checkbox) alle altre */
+  .ritiro__riga-check-spacer {
+    display: inline-block;
+    inline-size: 1.25rem;
+  }
+
+  /* Badge "Rientrato" inline nel meta */
+  .badge--rientrato {
+    background: oklch(85% 0.10 80);
+    color: oklch(40% 0.10 80);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  /* Mobile: actions a capo per evitare scroll orizzontale */
+  @media (max-width: 639px) {
+    .ritiro__riga > .flex {
+      flex-wrap: wrap;
+      row-gap: 0.5rem;
+    }
+
+    .ritiro__riga-actions {
+      flex-basis: 100%;
+      justify-content: flex-end;
+    }
+  }
+}
