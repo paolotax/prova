@@ -87,3 +87,7 @@ swarm.log
 
 # Git worktrees
 .worktrees/
+
+# Claude Code session artifacts (handoffs + superpowers plans/specs)
+/docs/handoffs/
+/docs/superpowers/
