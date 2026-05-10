@@ -28,7 +28,7 @@ class DocumentoRiga < ApplicationRecord
 
   after_save :aggiorna_totali_documento
   after_destroy :aggiorna_totali_documento
-  after_destroy_commit :riapri_bolla_visione_riga
+  after_destroy_commit :rientra_bolla_visione_riga
 
   private
 
@@ -38,7 +38,10 @@ class DocumentoRiga < ApplicationRecord
     documento.ricalcola_totali!
   end
 
-  def riapri_bolla_visione_riga
-    bolla_visione_riga&.update_columns(esito: nil, processato_at: nil, documento_riga_id: nil)
+  def rientra_bolla_visione_riga
+    bolla_visione_riga&.update_columns(
+      esito: BollaVisioneRiga.esiti[:rientrato],
+      documento_riga_id: nil
+    )
   end
 end

@@ -104,7 +104,7 @@ class RitiroTest < ActiveSupport::TestCase
 
   # --- rollback bv_riga al delete ------------------------------------------
 
-  test "destroy documento riapre tutte le bv_riga collegate (esito, processato_at, documento_riga_id → nil)" do
+  test "destroy documento marca le bv_riga collegate come rientrate (esito: rientrato, documento_riga_id: nil)" do
     riga1 = bolla_visione_righe(:aperta)
     riga2 = bolla_visione_righe(:aperta_due)
 
@@ -119,13 +119,13 @@ class RitiroTest < ActiveSupport::TestCase
 
     [riga1, riga2].each do |riga|
       riga.reload
-      assert_nil riga.esito,             "esito di #{riga.id} non azzerato"
-      assert_nil riga.processato_at,     "processato_at di #{riga.id} non azzerato"
-      assert_nil riga.documento_riga_id, "documento_riga_id di #{riga.id} non azzerato"
+      assert_equal "rientrato", riga.esito,        "esito di #{riga.id} deve diventare rientrato"
+      assert_not_nil riga.processato_at,           "processato_at di #{riga.id} deve restare valorizzato"
+      assert_nil riga.documento_riga_id,           "documento_riga_id di #{riga.id} deve essere azzerato"
     end
   end
 
-  test "destroy di una singola documento_riga riapre solo la bv_riga collegata" do
+  test "destroy di una singola documento_riga marca solo la bv_riga collegata come rientrata" do
     riga1 = bolla_visione_righe(:aperta)
     riga2 = bolla_visione_righe(:aperta_due)
 
@@ -140,8 +140,8 @@ class RitiroTest < ActiveSupport::TestCase
     dr1.destroy
 
     riga1.reload
-    assert_nil riga1.esito
-    assert_nil riga1.processato_at
+    assert_equal "rientrato", riga1.esito
+    assert_not_nil riga1.processato_at
     assert_nil riga1.documento_riga_id
 
     riga2.reload
