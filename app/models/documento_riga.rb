@@ -22,11 +22,13 @@ class DocumentoRiga < ApplicationRecord
 
   belongs_to :documento
   belongs_to :riga
+  has_one :bolla_visione_riga
 
   accepts_nested_attributes_for :riga #, :reject_if => lambda { |a| (a[:quantita].blank? || a[:libro_id].blank?)}, :allow_destroy => false
 
   after_save :aggiorna_totali_documento
   after_destroy :aggiorna_totali_documento
+  after_destroy_commit :riapri_bolla_visione_riga
 
   private
 
@@ -34,5 +36,9 @@ class DocumentoRiga < ApplicationRecord
     return unless documento
     documento.righe.reset unless documento.previously_new_record?
     documento.ricalcola_totali!
+  end
+
+  def riapri_bolla_visione_riga
+    bolla_visione_riga&.update_columns(esito: nil, processato_at: nil, documento_riga_id: nil)
   end
 end

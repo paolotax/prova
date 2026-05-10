@@ -84,10 +84,11 @@ class Ritiro
       prezzo_cents: bv_riga.libro.prezzo_in_cents,
       sconto: CAUSALE_TO_SCONTO.fetch(causale.causale, 0.0)
     )
-    documento.documento_righe.create!(riga: riga, posizione: idx)
+    documento_riga = documento.documento_righe.create!(riga: riga, posizione: idx)
     bv_riga.update!(
       esito: CAUSALE_TO_ESITO.fetch(causale.causale),
-      processato_at: Time.current
+      processato_at: Time.current,
+      documento_riga: documento_riga
     )
   end
 

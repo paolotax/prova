@@ -83,6 +83,73 @@ class RitiroTest < ActiveSupport::TestCase
     assert_nil riga.processato_at
   end
 
+  test "crea_documento collega ogni documento_riga alla bolla_visione_riga di provenienza" do
+    riga1 = bolla_visione_righe(:aperta)
+    riga2 = bolla_visione_righe(:aperta_due)
+
+    documento = @ritiro.crea_documento(
+      righe: [riga1, riga2],
+      causale: causali(:scarico_saggi),
+      clientable: @scuola,
+      data: Date.current
+    )
+
+    [riga1, riga2].each do |bv_riga|
+      bv_riga.reload
+      assert_not_nil bv_riga.documento_riga, "bv_riga #{bv_riga.id} senza documento_riga"
+      assert_equal documento, bv_riga.documento_riga.documento
+      assert_equal bv_riga.libro_id, bv_riga.documento_riga.riga.libro_id
+    end
+  end
+
+  # --- rollback bv_riga al delete ------------------------------------------
+
+  test "destroy documento riapre tutte le bv_riga collegate (esito, processato_at, documento_riga_id → nil)" do
+    riga1 = bolla_visione_righe(:aperta)
+    riga2 = bolla_visione_righe(:aperta_due)
+
+    documento = @ritiro.crea_documento(
+      righe: [riga1, riga2],
+      causale: causali(:scarico_saggi),
+      clientable: @scuola,
+      data: Date.current
+    )
+
+    documento.destroy
+
+    [riga1, riga2].each do |riga|
+      riga.reload
+      assert_nil riga.esito,             "esito di #{riga.id} non azzerato"
+      assert_nil riga.processato_at,     "processato_at di #{riga.id} non azzerato"
+      assert_nil riga.documento_riga_id, "documento_riga_id di #{riga.id} non azzerato"
+    end
+  end
+
+  test "destroy di una singola documento_riga riapre solo la bv_riga collegata" do
+    riga1 = bolla_visione_righe(:aperta)
+    riga2 = bolla_visione_righe(:aperta_due)
+
+    documento = @ritiro.crea_documento(
+      righe: [riga1, riga2],
+      causale: causali(:scarico_saggi),
+      clientable: @scuola,
+      data: Date.current
+    )
+
+    dr1 = riga1.reload.documento_riga
+    dr1.destroy
+
+    riga1.reload
+    assert_nil riga1.esito
+    assert_nil riga1.processato_at
+    assert_nil riga1.documento_riga_id
+
+    riga2.reload
+    assert_equal "in_saggio", riga2.esito
+    assert_not_nil riga2.processato_at
+    assert_not_nil riga2.documento_riga_id
+  end
+
   test "crea_documento rollback se Riga.create! fallisce a metà; nessun Documento; riga non chiusa" do
     riga1 = bolla_visione_righe(:aperta)
     riga2 = bolla_visione_righe(:aperta_due)
