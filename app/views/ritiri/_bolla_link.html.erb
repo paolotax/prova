@@ -1,5 +1,5 @@
 <li class="list-style-none margin-none flex align-center gap full-width" style="border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;">
-  <div class="flex flex-column min-width" style="flex: 1;">
+  <div class="flex flex-column min-width align-start" style="flex: 1;">
     <%= link_to "BV-#{bolla.numero}", bolla_visione_path(bolla), class: "txt-small font-weight-black" %>
     <span class="txt-x-small txt-subtle">
       <%= bolla.collana.nome %> · <%= l(bolla.data_bolla, format: :short) %>
