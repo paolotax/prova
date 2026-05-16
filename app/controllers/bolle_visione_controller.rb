@@ -67,6 +67,32 @@ class BolleVisioneController < ApplicationController
     collana_libri = @bolla_visione.collana.collana_libri.order(:position)
     @target_per_libro = collana_libri.pluck(:libro_id, :classi_target).to_h
     @gruppo_per_libro = collana_libri.pluck(:libro_id, :gruppo).to_h
+
+    # Propaga gruppo/target dai confezione ai fascicoli presenti in bolla ma non in collana,
+    # risalendo la catena (scatole cinesi). Un fascicolo puo' avere piu' confezioni padre:
+    # cerco quella (diretta o transitiva) presente nella collana.
+    (@righe.map(&:libro_id).uniq - @gruppo_per_libro.keys).each do |orfano|
+      visited = { orfano => true }
+      queue = [orfano]
+      mapped_parent = nil
+      while (current = queue.shift)
+        parents = ConfezioneRiga.where(fascicolo_id: current).pluck(:confezione_id)
+        if (direct = parents.find { |p| @gruppo_per_libro.key?(p) })
+          mapped_parent = direct
+          break
+        end
+        parents.each do |p|
+          next if visited[p]
+          visited[p] = true
+          queue << p
+        end
+      end
+      if mapped_parent
+        @gruppo_per_libro[orfano] = @gruppo_per_libro[mapped_parent]
+        @target_per_libro[orfano] ||= @target_per_libro[mapped_parent]
+      end
+    end
+
     scuola = @bolla_visione.scuola
     @classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
     @persone = scuola.persone.order(:cognome)
