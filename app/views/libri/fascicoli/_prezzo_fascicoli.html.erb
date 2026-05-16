@@ -1,0 +1,10 @@
+<%# locals: (libro:) -%>
+<% libro.reload %>
+<% unless libro.fascicoli_count.zero? %>
+  <div id="prezzo_fascicoli_<%= libro.id %>"
+       class="flex justify-space-between align-center margin-block-start pad-block txt-medium font-weight-black"
+       style="border-block-start: 2px solid var(--color-ink-light);">
+    <span>Totale fascicoli</span>
+    <span><%= number_to_currency libro.fascicoli.sum(&:prezzo) %></span>
+  </div>
+<% end %>

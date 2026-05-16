@@ -1,0 +1,26 @@
+<%# Lista lineare dei fascicoli (turbo_frame lazy) %>
+<%= turbo_stream.append "confezione_#{@libro.id}_fascicoli" do %>
+  <%= render "libri/fascicoli/fascicolo", libro: @libro, pivot: @pivot %>
+<% end %>
+
+<%= turbo_stream.replace "prezzo_fascicoli_#{@libro.id}" do %>
+  <%= render "libri/fascicoli/prezzo_fascicoli", libro: @libro %>
+<% end %>
+
+<%# Tile fascicoli nella scheda libro (NON tocca la dialog wrapper, resta aperta) %>
+<%= turbo_stream.replace dom_id(@libro, :fascicoli_tiles) do %>
+  <%= render "libri/container/fascicoli_tiles", libro: @libro %>
+<% end %>
+
+<%# Suggeriti dentro la dialog (aggiorna lista, dialog resta aperta) %>
+<%= turbo_stream.replace dom_id(@libro, :suggeriti_fascicoli) do %>
+  <div id="<%= dom_id(@libro, :suggeriti_fascicoli) %>" class="flex flex-column gap-quarter">
+    <%= render "libri/fascicoli/suggeriti", libro: @libro, suggeriti: @suggeriti %>
+  </div>
+<% end %>
+
+<%= turbo_stream.update "badge_#{@libro.id}" do %>
+  <% unless @libro.fascicoli_count.zero? %>
+    <span class="badge badge--yellow"><%= pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli") %></span>
+  <% end %>
+<% end %>

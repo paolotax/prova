@@ -1,0 +1,25 @@
+<%# locals: (libro:, pivot:) -%>
+<%= tag.li id: dom_id(pivot),
+    class: "list-style-none flex align-center gap full-width",
+    style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;" do %>
+
+  <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
+    <%= link_to pivot.fascicolo.titolo, libro_path(pivot.fascicolo),
+          data: { turbo_frame: :_top }, class: "txt-small font-weight-black overflow-ellipsis" %>
+    <span class="txt-x-small txt-subtle">
+      <%= [pivot.fascicolo.codice_isbn, pivot.fascicolo.editore&.editore].compact.join(" · ") %>
+    </span>
+  </div>
+
+  <span class="txt-small font-weight-black flex-item-no-shrink">
+    <%= number_to_currency pivot.fascicolo.prezzo %>
+  </span>
+
+  <%= button_to libro_fascicolo_path(libro, pivot),
+        method: :delete,
+        class: "btn btn--circle btn--small txt-negative borderless flex-item-no-shrink",
+        data: { controller: "tooltip", tooltip_content_value: "Rimuovi fascicolo" } do %>
+    <%= icon_tag "trash", size: "small" %>
+    <span class="for-screen-reader">Rimuovi</span>
+  <% end %>
+<% end %>

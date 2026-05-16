@@ -1,4 +1,4 @@
-<%# locals: (libro:) -%>
+<%# locals: (libro:, suggeriti: nil) -%>
 
 <div class="flex gap">
   <!-- Copertina -->
@@ -42,7 +42,15 @@
   </div>
 </div>
 
-<% if libro.fascicoli_count.positive? %>
+<% if suggeriti %>
+  <div class="margin-block-start" data-controller="dialog" data-dialog-modal-value="true">
+    <span class="txt-x-small txt-subtle txt-uppercase">Fascicoli</span>
+    <div class="margin-block-start-quarter">
+      <%= render "libri/container/fascicoli_tiles", libro: libro %>
+    </div>
+    <%= render "libri/fascicoli/dialog", libro: libro, suggeriti: suggeriti %>
+  </div>
+<% elsif libro.fascicoli_count.positive? %>
   <div class="margin-block-start">
     <span class="txt-x-small txt-subtle txt-uppercase">Fascicoli</span>
     <div class="flex gap-half flex-wrap margin-block-start-quarter">

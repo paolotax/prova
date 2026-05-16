@@ -1,0 +1,23 @@
+<%= turbo_stream.remove @pivot %>
+
+<%= turbo_stream.replace "prezzo_fascicoli_#{@libro.id}" do %>
+  <%= render "libri/fascicoli/prezzo_fascicoli", libro: @libro %>
+<% end %>
+
+<%# Tile dei fascicoli nella scheda libro %>
+<%= turbo_stream.replace dom_id(@libro, :fascicoli_tiles) do %>
+  <%= render "libri/container/fascicoli_tiles", libro: @libro %>
+<% end %>
+
+<%# Suggeriti dentro la dialog (il libro appena rimosso torna disponibile) %>
+<%= turbo_stream.replace dom_id(@libro, :suggeriti_fascicoli) do %>
+  <div id="<%= dom_id(@libro, :suggeriti_fascicoli) %>" class="flex flex-column gap-quarter">
+    <%= render "libri/fascicoli/suggeriti", libro: @libro, suggeriti: @suggeriti %>
+  </div>
+<% end %>
+
+<%= turbo_stream.update "badge_#{@libro.id}" do %>
+  <% unless @libro.fascicoli_count.zero? %>
+    <span class="badge badge--yellow"><%= pluralize(@libro.fascicoli_count, "fascicolo", "fascicoli") %></span>
+  <% end %>
+<% end %>

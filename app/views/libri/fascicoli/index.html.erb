@@ -1,0 +1,11 @@
+<%= turbo_frame_tag "confezione_#{@libro.id}", refresh: "morph" do %>
+  <ul id="confezione_<%= @libro.id %>_fascicoli" class="flex flex-column unpad margin-none">
+    <% @libro.confezione_righe.order(:row_order).each do |pivot| %>
+      <%= render "libri/fascicoli/fascicolo", libro: @libro, pivot: pivot %>
+    <% end %>
+  </ul>
+
+  <%= render "libri/fascicoli/form", libro: @libro %>
+
+  <%= render "libri/fascicoli/prezzo_fascicoli", libro: @libro %>
+<% end %>

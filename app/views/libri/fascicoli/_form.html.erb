@@ -1,0 +1,14 @@
+<%# locals: (libro:) -%>
+<%= form_with url: libro_fascicoli_path(libro), method: :post, scope: :confezione_riga, class: "margin-block-start" do |f| %>
+  <div class="flex gap-half align-center">
+    <div class="form-field cb-tax" style="flex: 1;">
+      <%= combobox_tag "confezione_riga[fascicolo_id]", libri_path,
+            placeholder: "Aggiungi fascicolo...",
+            mobile_at: "0px" %>
+    </div>
+    <%= f.button type: :submit, class: "btn btn--link btn--circle-mobile" do %>
+      <%= icon_tag "add", size: "small" %>
+      <span>Aggiungi</span>
+    <% end %>
+  </div>
+<% end %>

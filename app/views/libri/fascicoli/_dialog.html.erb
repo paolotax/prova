@@ -1,0 +1,24 @@
+<%# locals: (libro:, suggeriti:) -%>
+<dialog id="<%= dom_id(libro, :aggiungi_fascicolo_dialog) %>"
+        class="dialog panel fill-white shadow gap flex-column"
+        style="--panel-size: 60ch;"
+        data-dialog-target="dialog">
+  <header class="flex align-center gap">
+    <h3 class="txt-large txt-bold margin-none" style="flex: 1;">Aggiungi fascicolo</h3>
+    <button type="button" class="btn btn--circle btn--small" data-action="dialog#close">
+      <%= icon_tag "close", size: "small" %>
+    </button>
+  </header>
+
+  <%= form_with url: libro_fascicoli_path(libro), method: :post, scope: :confezione_riga do |f| %>
+    <div class="form-field cb-tax">
+      <%= combobox_tag "confezione_riga[fascicolo_id]", libri_path,
+            placeholder: "Cerca libro...",
+            mobile_at: "0px" %>
+    </div>
+  <% end %>
+
+  <div id="<%= dom_id(libro, :suggeriti_fascicoli) %>" class="flex flex-column gap-quarter">
+    <%= render "libri/fascicoli/suggeriti", libro: libro, suggeriti: suggeriti %>
+  </div>
+</dialog>

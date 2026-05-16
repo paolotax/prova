@@ -210,8 +210,6 @@ Rails.application.routes.draw do
     # Ricerca unificata destinatari per combobox appunti
     resources :destinatari, only: [:index]
 
-    post 'sfascicola', to: 'sfascicolator#generate'
-
     resources :clienti do
       scope module: :clienti do
         resource :entries, only: [:show]
@@ -317,21 +315,15 @@ Rails.application.routes.draw do
       end
       member do
         get 'get_prezzo_e_sconto'
-        get 'fascicoli', to: 'confezionator#index'
-        post 'fascicoli', to: 'confezionator#create', as: 'confezione'
-        delete 'fascicoli', to: 'confezionator#destroy'
+      end
+      scope module: :libri do
+        resources :fascicoli, only: %i[index create destroy]
       end
       resource :movimenti, only: [:show], module: :libri
       resources :qrcodes
     end
 
     resources :qrcodes
-
-    resources :confezione do
-      member do
-        patch 'sort', to: 'confezionator#sort'
-      end
-    end
 
     resources :tipi_scuole, only: %i[index update]
 

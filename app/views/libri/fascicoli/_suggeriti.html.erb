@@ -1,0 +1,35 @@
+<%# locals: (libro:, suggeriti:) -%>
+<% if suggeriti.any? %>
+  <span class="txt-x-small txt-subtle txt-uppercase">Suggeriti per titolo</span>
+  <ul class="flex flex-column unpad margin-none">
+    <% suggeriti.each do |s| %>
+      <li class="list-style-none flex align-center gap-half full-width"
+          style="border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;">
+        <%= image_tag s.avatar_url,
+            style: "width: 32px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius); flex-shrink: 0;",
+            alt: s.titolo %>
+
+        <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
+          <strong class="overflow-ellipsis txt-small"><%= s.titolo %></strong>
+          <span class="txt-x-small txt-subtle">
+            <%= [s.disciplina, s.codice_isbn].compact_blank.join(" · ") %>
+          </span>
+        </div>
+
+        <span class="txt-small font-weight-black flex-item-no-shrink">
+          <%= number_to_currency(s.prezzo) %>
+        </span>
+
+        <%= button_to libro_fascicoli_path(libro, confezione_riga: { fascicolo_id: s.id }),
+              method: :post,
+              class: "btn btn--circle btn--small flex-item-no-shrink",
+              data: { controller: "tooltip", tooltip_content_value: "Aggiungi" } do %>
+          <%= icon_tag "add", size: "small" %>
+          <span class="for-screen-reader">Aggiungi</span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="txt-small txt-subtle margin-none">Nessun suggerimento per titolo.</p>
+<% end %>

@@ -1,6 +1,6 @@
 <%= turbo_stream.replace [@libro, :edit] do %>
   <%= turbo_frame_tag @libro, :edit do %>
-    <%= render "libri/container/content_display", libro: @libro %>
+    <%= render "libri/container/content_display", libro: @libro, suggeriti: @suggeriti_fascicoli %>
   <% end %>
 <% end %>
 

@@ -46,8 +46,9 @@ class LibriController < ApplicationController
   end
 
   def show
-    @giacenza = @libro.giacenza
+    @giacenza  = @libro.giacenza
     @movimenti = Libro::Movimenti.new(@libro)
+    @suggeriti_fascicoli = current_account.libri.potenziali_fascicoli_di(@libro).order(:titolo).limit(20)
 
     respond_to do |format|
       format.html

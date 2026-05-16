@@ -79,11 +79,13 @@ class Libro < ApplicationRecord
   
   has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
   
-  has_many :confezione_righe, foreign_key: "confezione_id", class_name: "ConfezioneRiga"
-  has_many :fascicoli, through: :confezione_righe, dependent: :destroy
+  has_many :confezione_righe, foreign_key: :confezione_id, class_name: "ConfezioneRiga",
+           dependent: :destroy, inverse_of: :confezione
+  has_many :fascicoli, through: :confezione_righe
 
-  has_many :fascicolo_righe, foreign_key: "fascicolo_id", class_name: "ConfezioneRiga"
-  has_many :confezioni, through: :fascicolo_righe, dependent: :destroy
+  has_many :fascicolo_righe, foreign_key: :fascicolo_id, class_name: "ConfezioneRiga",
+           dependent: :destroy, inverse_of: :fascicolo
+  has_many :confezioni, through: :fascicolo_righe
   
   accepts_nested_attributes_for :confezione_righe
 
@@ -106,6 +108,14 @@ class Libro < ApplicationRecord
   scope :with_confezioni, -> { where("confezioni_count > 0") }
 
   scope :lista, -> { where("confezioni_count = 0 or fascicoli_count > 0") }
+
+  scope :potenziali_fascicoli_di, ->(libro) {
+    prefisso = libro.titolo.to_s.split.first(3).join(" ")
+    next none if prefisso.blank?
+
+    esclusi = [libro.id, *libro.fascicoli.pluck(:id)]
+    no_fascicoli.where("titolo ILIKE ?", "%#{prefisso}%").where.not(id: esclusi)
+  }
   
   before_save :init
   def init

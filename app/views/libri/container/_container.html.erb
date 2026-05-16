@@ -1,4 +1,4 @@
-<%# locals: (libro:, giacenza: nil) -%>
+<%# locals: (libro:, giacenza: nil, suggeriti: nil) -%>
 
 <section id="<%= dom_id(libro, :container) %>" class="card-perma" style="--card-color: <%= libro_sconto_color(libro) %>;">
   <div class="card-perma__bg">
@@ -10,7 +10,7 @@
       <div class="card__body justify-space-between">
         <div class="card__content">
           <%= turbo_frame_tag libro, :edit do %>
-            <%= render "libri/container/content_display", libro: libro %>
+            <%= render "libri/container/content_display", libro: libro, suggeriti: local_assigns[:suggeriti] %>
           <% end %>
         </div>
       </div>
