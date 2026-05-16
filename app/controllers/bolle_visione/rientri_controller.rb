@@ -32,6 +32,19 @@ class BolleVisione::RientriController < BolleVisione::BaseController
     libri_ids = CollanaLibro
       .where(collana_id: @bolla_visione.collana_id, gruppo: params[:gruppo])
       .pluck(:libro_id)
-    righe.where(libro_id: libri_ids)
+    righe.where(libro_id: espandi_con_fascicoli(libri_ids))
+  end
+
+  # Espande la lista includendo i fascicoli (anche transitivi) delle confezioni passate,
+  # cosi' anche le righe esplose vengono raggiunte dal filtro per gruppo.
+  def espandi_con_fascicoli(libri_ids)
+    result = libri_ids.dup
+    frontier = libri_ids
+    until frontier.empty?
+      children = ConfezioneRiga.where(confezione_id: frontier).pluck(:fascicolo_id).uniq - result
+      result.concat(children)
+      frontier = children
+    end
+    result
   end
 end
