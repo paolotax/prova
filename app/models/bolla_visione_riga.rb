@@ -49,39 +49,22 @@ class BollaVisioneRiga < ApplicationRecord
 
   delegate :titolo, :codice_isbn, to: :libro, prefix: true
 
-  # Quando questa riga e' una confezione e l'utente segnala alcuni fascicoli mancanti:
-  # - crea N nuove righe-fascicolo con esito :mancante e processato_at corrente
-  # - chiude la riga-confezione originale con l'esito scelto per i fascicoli rimanenti
-  # Ritorna le nuove righe-fascicolo (per appenderle al documento Mancante).
-  def splitta_in_fascicoli!(fascicoli, esito_confezione:)
-    raise ArgumentError, "fascicoli vuoti" if fascicoli.blank?
+  def esplodi_in_fascicoli!
+    return self if libro.fascicoli.empty?
 
     transaction do
-      nuove = fascicoli.map do |fascicolo|
-        bolla_visione.bolla_visione_righe.create!(
-          libro: fascicolo,
-          quantita: 1,
-          account: account,
-          esito: :mancante,
-          processato_at: Time.current
-        )
-      end
-      update!(esito: esito_confezione, processato_at: Time.current)
-      nuove
-    end
-  end
-
-  def splitta!
-    return self if quantita <= 1
-
-    transaction do
-      quantita.times do
-        bolla_visione.bolla_visione_righe.create!(
-          libro: libro,
-          classi_target: classi_target,
-          quantita: 1,
-          account: account
-        )
+      libro.fascicoli.each do |fascicolo|
+        quantita.times do
+          bolla_visione.bolla_visione_righe.create!(
+            libro: fascicolo,
+            quantita: 1,
+            classi_target: classi_target,
+            consegna: consegna,
+            esito: esito,
+            processato_at: processato_at,
+            account: account
+          )
+        end
       end
       destroy!
     end

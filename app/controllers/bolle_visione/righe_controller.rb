@@ -25,7 +25,10 @@ class BolleVisione::RigheController < BolleVisione::BaseController
   end
 
   def update
-    if params[:toggle_classe_id].present?
+    if params[:esplodi].present?
+      @riga.esplodi_in_fascicoli!
+      redirect_to @bolla_visione and return
+    elsif params[:toggle_classe_id].present?
       toggle_consegna!(:classe_id, params[:toggle_classe_id])
     elsif params[:toggle_persona_id].present?
       toggle_consegna!(:persona_id, params[:toggle_persona_id])

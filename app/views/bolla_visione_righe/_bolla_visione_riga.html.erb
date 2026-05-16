@@ -19,6 +19,17 @@
       </span>
     </div>
 
+    <% if riga.libro.fascicoli.any? %>
+      <%= button_to bolla_visione_riga_path(riga.bolla_visione, riga, esplodi: 1),
+            method: :patch,
+            class: "btn btn--circle btn--small flex-item-no-shrink",
+            data: { controller: "tooltip", tooltip_content_value: "Esplodi in #{riga.libro.fascicoli.size} fascicoli" },
+            form: { data: { turbo_frame: "_top" } } do %>
+        <%= icon_tag "bolt", size: "small" %>
+        <span class="for-screen-reader">Esplodi in fascicoli</span>
+      <% end %>
+    <% end %>
+
     <% if riga.processato_at.nil? %>
       <span class="txt-small font-weight-black flex-item-no-shrink hide-on-mobile">
         <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "€", format: "%n %u") %>

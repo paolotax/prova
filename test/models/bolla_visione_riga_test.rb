@@ -47,36 +47,57 @@ class BollaVisioneRigaTest < ActiveSupport::TestCase
                    "mancante" => 3, "rientrato" => 4 }, BollaVisioneRiga.esiti)
   end
 
-  test "splitta_in_fascicoli! genera N righe-fascicolo mancanti e chiude la confezione" do
+  test "esplodi_in_fascicoli! sostituisce la confezione con N righe fascicolo che ereditano lo stato" do
     riga = bolla_visione_righe(:aperta_confezione)
-    fascicoli = riga.libro.fascicoli.first(2)
-    assert_equal 2, fascicoli.size
+    fascicoli_ids = riga.libro.fascicoli.pluck(:id)
+    bolla = riga.bolla_visione
 
-    nuove = nil
-    assert_difference -> { BollaVisioneRiga.count } => 2 do
-      nuove = riga.splitta_in_fascicoli!(fascicoli, esito_confezione: :rientrato)
-    end
-
-    assert_equal 2, nuove.size
-    assert_equal fascicoli.map(&:id).sort, nuove.map(&:libro_id).sort
-    assert nuove.all?(&:mancante?)
-    assert nuove.all? { |r| r.processato_at.present? }
-
-    riga.reload
-    assert_equal "rientrato", riga.esito
-    assert_not_nil riga.processato_at
-  end
-
-  test "splitta! divide riga quantita N in N righe quantita 1" do
-    riga = bolla_visione_righe(:aperta_due)
-    assert_equal 2, riga.quantita
-
-    assert_difference -> { BollaVisioneRiga.count } => 1 do
-      riga.splitta!
+    assert_difference -> { BollaVisioneRiga.count } => fascicoli_ids.size - 1 do
+      riga.esplodi_in_fascicoli!
     end
     assert_raises(ActiveRecord::RecordNotFound) { riga.reload }
 
-    nuove = BollaVisioneRiga.where(libro_id: riga.libro_id, bolla_visione_id: riga.bolla_visione_id, quantita: 1)
-    assert nuove.count >= 2
+    nuove = bolla.bolla_visione_righe.where(libro_id: fascicoli_ids)
+    assert_equal fascicoli_ids.size, nuove.count
+    assert nuove.all? { |r| r.quantita == 1 }
+    assert nuove.all? { |r| r.esito.nil? && r.processato_at.nil? }
+  end
+
+  test "esplodi_in_fascicoli! eredita esito e processato_at quando la riga e' chiusa" do
+    riga = bolla_visione_righe(:aperta_confezione)
+    riga.update!(esito: :rientrato, processato_at: 1.hour.ago)
+    fascicoli_ids = riga.libro.fascicoli.pluck(:id)
+    bolla = riga.bolla_visione
+
+    riga.esplodi_in_fascicoli!
+
+    nuove = bolla.bolla_visione_righe.where(libro_id: fascicoli_ids)
+    assert nuove.all?(&:rientrato?)
+    assert nuove.all? { |r| r.processato_at.present? }
+  end
+
+  test "esplodi_in_fascicoli! moltiplica le righe per la quantita della confezione" do
+    riga = bolla_visione_righe(:aperta_confezione)
+    riga.update!(quantita: 2)
+    fascicoli_count = riga.libro.fascicoli.size
+    bolla = riga.bolla_visione
+
+    assert_difference -> { BollaVisioneRiga.count } => (fascicoli_count * 2) - 1 do
+      riga.esplodi_in_fascicoli!
+    end
+
+    riga.libro.fascicoli.each do |f|
+      assert_equal 2, bolla.bolla_visione_righe.where(libro_id: f.id).count
+    end
+  end
+
+  test "esplodi_in_fascicoli! e' no-op su libro senza fascicoli" do
+    riga = bolla_visione_righe(:aperta)
+    assert riga.libro.fascicoli.empty?
+
+    assert_no_difference -> { BollaVisioneRiga.count } do
+      assert_equal riga, riga.esplodi_in_fascicoli!
+    end
+    assert_nothing_raised { riga.reload }
   end
 end
