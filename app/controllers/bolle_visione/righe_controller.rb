@@ -39,8 +39,7 @@ class BolleVisione::RigheController < BolleVisione::BaseController
     respond_to do |format|
       format.turbo_stream do
         scuola = @bolla_visione.scuola
-        collana_libro = @bolla_visione.collana.collana_libri.find_by(libro_id: @riga.libro_id)
-        targets = collana_libro&.classi_target.to_s.split(",").map(&:strip)
+        targets = risolvi_targets(@riga.libro_id)
         classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
         classi = classi_per_anno.values_at(*targets).compact.flatten
         persone = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none
@@ -79,6 +78,24 @@ class BolleVisione::RigheController < BolleVisione::BaseController
     totale = @bolla_visione.bolla_visione_righe.sum(:quantita)
     turbo_stream.replace("bolla_visione_totale",
       html: %(<div id="bolla_visione_totale" class="flex justify-space-between align-center margin-block-start pad-block txt-medium font-weight-black" style="border-block-start: 2px solid var(--color-ink-light);"><span>Totale copie</span><span>#{totale}</span></div>).html_safe)
+  end
+
+  # Risolve i classi_target per un libro presente in bolla: prima cerca direttamente
+  # nella collana, poi (per i fascicoli esplosi) risale la catena fascicolo→confezione.
+  def risolvi_targets(libro_id)
+    target_per_libro = @bolla_visione.collana.collana_libri.pluck(:libro_id, :classi_target).to_h
+    return target_per_libro[libro_id].to_s.split(",").map(&:strip) if target_per_libro.key?(libro_id)
+
+    queue = [libro_id]
+    visited = { libro_id => true }
+    while (current = queue.shift)
+      parents = ConfezioneRiga.where(fascicolo_id: current).pluck(:confezione_id)
+      if (mapped = parents.find { |p| target_per_libro.key?(p) })
+        return target_per_libro[mapped].to_s.split(",").map(&:strip)
+      end
+      parents.each { |p| next if visited[p]; visited[p] = true; queue << p }
+    end
+    []
   end
 
   def toggle_consegna!(key, value)
