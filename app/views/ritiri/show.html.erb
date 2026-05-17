@@ -24,10 +24,30 @@
       <div class="txt-medium"><%= @ritiro.bolle_chiuse.size %></div>
     </div>
     <div class="flex-item-grow" style="flex-basis: 120px;">
-      <span class="txt-x-small txt-subtle txt-uppercase">Data</span>
-      <div class="txt-medium"><%= l(Date.current, format: :short) %></div>
+      <span class="txt-x-small txt-subtle txt-uppercase">Copie totali</span>
+      <div class="txt-medium"><%= @ritiro.copie_totali %></div>
     </div>
   </div>
+
+  <% esiti_brevi = { "in_saggio" => "In saggio", "venduto_fattura" => "Vendute",
+                     "venduto_corrispettivi" => "Ordine", "mancante" => "Mancanti",
+                     "rientrato" => "Rientrate" } %>
+  <% copie_aperte = @ritiro.copie_per_esito[nil].to_i %>
+  <% breakdown = esiti_brevi.filter_map { |k, label|
+       copie = @ritiro.copie_per_esito[k].to_i
+       "#{label} #{copie}" if copie.positive?
+     } %>
+  <% if copie_aperte.positive? || breakdown.any? %>
+    <p class="txt-small margin-block-start-half margin-block-end-none">
+      <% if copie_aperte.positive? %>
+        <strong class="font-weight-black">Aperte <%= copie_aperte %></strong>
+      <% end %>
+      <% if breakdown.any? %>
+        <% if copie_aperte.positive? %><span class="txt-subtle"> · </span><% end %>
+        <span class="txt-subtle"><%= breakdown.join(" · ") %></span>
+      <% end %>
+    </p>
+  <% end %>
 
   <% if @ritiro.bolle_aperte.any? %>
     <div class="flex align-center gap-half margin-block-start">

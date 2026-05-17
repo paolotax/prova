@@ -5,7 +5,10 @@
       <%= bolla.collana.nome %> · <%= l(bolla.data_bolla, format: :short) %>
     </span>
   </div>
-  <span class="txt-x-small txt-subtle flex-item-no-shrink">
-    <%= pluralize(bolla.bolla_visione_righe.sum(:quantita), "copia", plural: "copie") %>
-  </span>
+  <% aperte = @ritiro.copie_aperte_per_bolla[bolla.id].to_i %>
+  <% if aperte.positive? %>
+    <span class="txt-x-small txt-subtle flex-item-no-shrink">
+      <%= pluralize(aperte, "copia aperta", plural: "copie aperte") %>
+    </span>
+  <% end %>
 </li>

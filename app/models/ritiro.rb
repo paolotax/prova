@@ -71,6 +71,25 @@ class Ritiro
     bolle_aperte.empty? && bolle_chiuse.empty?
   end
 
+  def copie_per_esito
+    @copie_per_esito ||= BollaVisioneRiga
+      .where(bolla_visione_id: scuola.bolle_visione.select(:id))
+      .group(:esito)
+      .sum(:quantita)
+  end
+
+  def copie_totali
+    copie_per_esito.values.sum
+  end
+
+  def copie_aperte_per_bolla
+    @copie_aperte_per_bolla ||= BollaVisioneRiga
+      .where(bolla_visione_id: scuola.bolle_visione.select(:id))
+      .aperte
+      .group(:bolla_visione_id)
+      .sum(:quantita)
+  end
+
   private
 
   def prossimo_numero(causale)
