@@ -54,7 +54,7 @@
       <%= link_to @bolla_visione.scuola.denominazione, scuola_path(@bolla_visione.scuola) %>
     </h3>
 
-    <% if @righe.any? { |r| r.processato_at.nil? } %>
+    <% if @righe.any? { |r| r.esito.nil? } %>
       <%= button_to bolla_visione_rientro_path(@bolla_visione),
             method: :post,
             class: "btn btn--circle btn--small flex-item-no-shrink",
@@ -97,6 +97,14 @@
     <% end %>
   </div>
 
+  <% if @righe.any? %>
+    <% copie_aperte = @righe.reject(&:esito).sum(&:quantita) %>
+    <% copie_chiuse = @righe.select(&:esito).sum(&:quantita) %>
+    <p class="txt-small txt-subtle margin-block-start-half margin-block-end-none">
+      Copie: <%= copie_aperte %> aperte · <%= copie_chiuse %> chiuse
+    </p>
+  <% end %>
+
   <% if @bolla_visione.note.present? %>
     <p class="txt-small txt-subtle margin-block-start-half"><%= @bolla_visione.note %></p>
   <% end %>
@@ -115,7 +123,7 @@
           <%= gruppo.presence || "Altro" %>
         </h3>
 
-        <% if righe_per_gruppo.any? { |r| r.processato_at.nil? } %>
+        <% if righe_per_gruppo.any? { |r| r.esito.nil? } %>
           <%= button_to bolla_visione_rientro_path(@bolla_visione, gruppo: gruppo),
                 method: :post,
                 class: "btn btn--circle btn--small flex-item-no-shrink",

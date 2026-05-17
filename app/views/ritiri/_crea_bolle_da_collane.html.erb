@@ -1,5 +1,5 @@
 <%= form_with url: scuola_ritiro_bolle_path(scuola), method: :post,
-              class: "panel panel--inset margin-block-start" do |f| %>
+              class: "panel panel--wide shadow center margin-block-start" do |f| %>
   <h3 class="txt-medium font-weight-black">Crea bolle da collane</h3>
 
   <% collane = Current.account.collane.ordered %>
@@ -17,7 +17,7 @@
       <% end %>
     </div>
     <div class="flex justify-end margin-block-start-half">
-      <%= f.submit "Crea bolle", class: "btn btn--primary", style: "min-height: 40px;" %>
+      <%= f.submit "Crea bolle", class: "btn btn--positive center", style: "min-height: 40px;" %>
     </div>
   <% end %>
 <% end %>

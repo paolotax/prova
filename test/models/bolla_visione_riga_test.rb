@@ -30,13 +30,13 @@ require "test_helper"
 class BollaVisioneRigaTest < ActiveSupport::TestCase
   fixtures :accounts, :users, :editori, :categorie, :libri, :scuole, :collane, :bolle_visione, :bolla_visione_righe, :confezione_righe
 
-  test "scope aperte ritorna righe senza processato_at" do
+  test "scope aperte ritorna righe senza esito" do
     riga = bolla_visione_righe(:aperta)
     assert_includes BollaVisioneRiga.aperte, riga
     assert_not_includes BollaVisioneRiga.chiuse, riga
   end
 
-  test "scope chiuse ritorna righe con processato_at" do
+  test "scope chiuse ritorna righe con esito" do
     riga = bolla_visione_righe(:chiusa_in_saggio)
     assert_includes BollaVisioneRiga.chiuse, riga
     assert_not_includes BollaVisioneRiga.aperte, riga

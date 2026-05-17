@@ -35,7 +35,7 @@
 <% if @tappa.tappable.is_a?(Scuola) &&
       (bolle_aperte_count = @tappa.tappable.bolle_visione
                               .joins(:bolla_visione_righe)
-                              .where(bolla_visione_righe: { processato_at: nil })
+                              .where(bolla_visione_righe: { esito: nil })
                               .distinct.count).positive? %>
   <div class="full-width pad group">
     <div class="panel panel--inset">

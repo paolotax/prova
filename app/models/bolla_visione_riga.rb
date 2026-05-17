@@ -42,8 +42,8 @@ class BollaVisioneRiga < ApplicationRecord
     rientrato: 4
   }
 
-  scope :aperte, -> { where(processato_at: nil) }
-  scope :chiuse, -> { where.not(processato_at: nil) }
+  scope :aperte, -> { where(esito: nil) }
+  scope :chiuse, -> { where.not(esito: nil) }
 
   validates :quantita, numericality: { greater_than: 0 }
 

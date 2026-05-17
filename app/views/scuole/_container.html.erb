@@ -52,7 +52,7 @@
 
 		<% bolle_aperte_count = scuola.bolle_visione
 				.joins(:bolla_visione_righe)
-				.where(bolla_visione_righe: { processato_at: nil })
+				.where(bolla_visione_righe: { esito: nil })
 				.distinct.count %>
 		<% if bolle_aperte_count.positive? %>
 			<%= link_to scuola_ritiro_path(scuola), class: "btn btn--negative",

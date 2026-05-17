@@ -93,13 +93,13 @@ class Ritiro
   end
 
   def visibili_sql
-    "bolla_visione_righe.processato_at IS NULL OR bolla_visione_righe.esito = ?"
+    "bolla_visione_righe.esito IS NULL OR bolla_visione_righe.esito = ?"
   end
 
   def righe_aperte_ids
     BollaVisioneRiga
       .where(bolla_visione_id: scuola.bolle_visione.select(:id))
-      .where(processato_at: nil)
+      .aperte
       .select(:bolla_visione_id)
   end
 

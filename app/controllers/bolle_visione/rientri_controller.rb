@@ -1,6 +1,6 @@
 class BolleVisione::RientriController < BolleVisione::BaseController
   def create
-    righe = @bolla_visione.bolla_visione_righe.where(processato_at: nil)
+    righe = @bolla_visione.bolla_visione_righe.aperte
     righe = filtra_per_gruppo(righe) if params[:gruppo].present?
 
     count = BollaVisioneRiga.transaction do

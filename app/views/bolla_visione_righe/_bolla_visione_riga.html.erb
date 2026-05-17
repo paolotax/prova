@@ -1,6 +1,6 @@
 <%= tag.li id: dom_id(riga), class: "list-style-none margin-none flex flex-column gap-quarter full-width", style: "border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;", data: { bolla_visione_riga_id: riga.id } do %>
   <div class="flex align-center gap full-width">
-    <% if local_assigns[:bulk] && riga.processato_at.nil? %>
+    <% if local_assigns[:bulk] && riga.esito.nil? %>
       <%= check_box_tag "bolla_visione_riga_ids[]", riga.id, false,
             class: "flex-item-no-shrink",
             data: { action: "change->bulk-actions#count" } %>
@@ -30,7 +30,7 @@
       <% end %>
     <% end %>
 
-    <% if riga.processato_at.nil? %>
+    <% if riga.esito.nil? %>
       <span class="txt-small font-weight-black flex-item-no-shrink hide-on-mobile">
         <%= number_to_currency(riga.libro.prezzo_in_cents.to_f / 100, unit: "€", format: "%n %u") %>
       </span>
@@ -42,7 +42,7 @@
       <% end %>
     <% end %>
 
-    <% if riga.processato_at.present? %>
+    <% if riga.esito.present? %>
       <span class="badge badge--<%= riga.esito %> txt-x-small flex-item-no-shrink"
             title="<%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>">
         <%= t("bolla_visione_riga.esiti.#{riga.esito}", default: riga.esito) %>
