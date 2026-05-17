@@ -1,8 +1,9 @@
 module Documenti
   class BulkGestioneController < ApplicationController
+    include Documenti::BulkResolvable
+
     def show
-      @documenti = current_account.documenti
-        .where(id: params[:ids])
+      @documenti = bulk_documenti
         .includes(:causale, :consegna, :pagamento, :clientable, :righe)
         .order(:clientable_type, :clientable_id, :data_documento)
 

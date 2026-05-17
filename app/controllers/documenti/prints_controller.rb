@@ -4,10 +4,12 @@ require "combine_pdf"
 
 module Documenti
   class PrintsController < ApplicationController
+    include Documenti::BulkResolvable
+
     def create
       combined_pdf = CombinePDF.new
 
-      current_account.documenti.where(id: params[:ids]).find_each do |documento|
+      bulk_documenti.find_each do |documento|
         pdf = DocumentoPdf.new(documento, view_context)
         temp_file = Tempfile.new(["documento", ".pdf"])
         pdf.render_file(temp_file.path)

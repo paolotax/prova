@@ -1,8 +1,9 @@
 module Documenti
   class BulkStatiController < ApplicationController
+    include Documenti::BulkResolvable
+
     def create
-      @documenti = current_account.documenti
-        .where(id: params[:ids])
+      @documenti = bulk_documenti
         .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
 
       case params[:azione]

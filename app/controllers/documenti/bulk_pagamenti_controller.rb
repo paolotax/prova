@@ -1,5 +1,7 @@
 module Documenti
   class BulkPagamentiController < ApplicationController
+    include Documenti::BulkResolvable
+
     before_action :load_documenti
 
     def create
@@ -33,15 +35,13 @@ module Documenti
     private
 
     def load_documenti
-      @documenti = current_account.documenti
-        .where(id: params[:ids])
+      @documenti = bulk_documenti
         .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
 
     def reload_documenti
-      @documenti = current_account.documenti
-        .where(id: params[:ids])
+      @documenti = bulk_documenti
         .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end

@@ -2,10 +2,11 @@
 
 module Documenti
   class BulkDerivazioniController < ApplicationController
+    include Documenti::BulkResolvable
+
     def create
       @causale = Causale.find(params[:causale_id])
-      @documenti = current_account.documenti
-        .where(id: params[:ids])
+      @documenti = bulk_documenti
         .includes(:causale, :consegna, :pagamento, :clientable, :righe, documento_righe: :riga)
 
       # Filtra solo i documenti la cui causale prevede la causale scelta come successiva
