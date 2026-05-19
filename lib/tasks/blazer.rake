@@ -17,6 +17,8 @@ namespace :blazer do
       INNER JOIN libri l ON l.id = r.libro_id
       LEFT JOIN scuole s ON d.clientable_type = 'Scuola' AND d.clientable_id = s.id
       LEFT JOIN clienti c ON d.clientable_type = 'Cliente' AND d.clientable_id = c.id
+      LEFT JOIN classi cls ON d.clientable_type = 'Classe' AND d.clientable_id = cls.id
+      LEFT JOIN scuole cls_s ON cls_s.id = cls.scuola_id
       WHERE d.account_id = '#{account.id}'
         AND ca.causale IN ('Ordine Scuola', 'Ordine Cliente')
         AND NOT EXISTS (
@@ -30,9 +32,17 @@ namespace :blazer do
         )
     SQL
 
+    cliente_expr = <<~SQL.strip
+      COALESCE(
+        s.denominazione,
+        c.denominazione,
+        cls_s.denominazione || ' - ' || COALESCE(cls.anno_corso, '') || COALESCE(cls.sezione, '')
+      )
+    SQL
+
     long_sql = <<~SQL
       SELECT
-        COALESCE(s.denominazione, c.denominazione) AS cliente,
+        #{cliente_expr} AS cliente,
         d.clientable_type AS tipo,
         l.titolo AS libro,
         SUM(r.quantita)::int AS copie
@@ -63,7 +73,11 @@ namespace :blazer do
       FROM crosstab(
         $ct$
           SELECT
-            COALESCE(s.denominazione, c.denominazione) AS cliente,
+            COALESCE(
+              s.denominazione,
+              c.denominazione,
+              cls_s.denominazione || ' - ' || COALESCE(cls.anno_corso, '') || COALESCE(cls.sezione, '')
+            ) AS cliente,
             l.titolo AS libro,
             SUM(r.quantita)::int AS copie
           FROM documenti d
@@ -73,6 +87,8 @@ namespace :blazer do
           INNER JOIN libri l ON l.id = r.libro_id
           LEFT JOIN scuole s ON d.clientable_type = 'Scuola' AND d.clientable_id = s.id
           LEFT JOIN clienti c ON d.clientable_type = 'Cliente' AND d.clientable_id = c.id
+          LEFT JOIN classi cls ON d.clientable_type = 'Classe' AND d.clientable_id = cls.id
+          LEFT JOIN scuole cls_s ON cls_s.id = cls.scuola_id
           WHERE d.account_id = '#{account.id}'
             AND ca.causale IN ('Ordine Scuola', 'Ordine Cliente')
             AND NOT EXISTS (
