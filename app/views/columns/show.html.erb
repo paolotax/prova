@@ -2,53 +2,84 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= link_to dashboard_path, class: "btn btn--circle" do %>
-      <%= icon_tag "back" %>
-    <% end %>
+    <% info = referrer_back_info || { label: "Dashboard", path: dashboard_path } %>
+    <%= back_link_to info[:label], info[:path] %>
   </div>
 
-  <h1 class="header__title divider divider--fade full-width">
+  <h1 class="header__title full-width">
     <span class="overflow-ellipsis" style="color: <%= @column.color %>"><%= @column.name %></span>
-    <span class="badge"><%= @summary.entries_count %></span>
   </h1>
 
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
 <%# === SEZIONE 1: Entries per scuola === %>
-<div class="column-summary__panels">
-  <% @summary.grouped_by_scuola.each do |destinatario, entries| %>
-    <section class="column-summary__panel cards cards--grid">
-      <header class="panel__header">
-        <h3><%= destinatario&.denominazione || "Senza destinatario" %></h3>
-        <% if destinatario.respond_to?(:comune) && destinatario.comune.present? %>
-          <span class="txt-subtle txt-small"><%= destinatario.comune %></span>
-        <% end %>
-        <span class="badge"><%= entries.size %></span>
-      </header>
-      <div class="cards__list" data-controller="navigable-list">
-        <% entries.each do |entry| %>
-          <%= render "entries/entry", entry: entry, draggable: false %>
-        <% end %>
-      </div>
-    </section>
-  <% end %>
+<div data-controller="bulk-actions" data-action="click->bulk-actions#toggleCard">
+  <div class="group-header margin-block-start-double margin-block-end">
+    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+      <span data-bulk-actions-target="listCounter">(<%= @summary.entries_count %>)</span>
+    </h3>
+    <div class="group-header__actions group-header__actions--end">
+      <button type="button" class="btn btn--circle"
+              data-action="bulk-actions#enterSelectionMode"
+              data-controller="tooltip" data-tooltip-content-value="Seleziona">
+        <%= icon_tag "check-circle" %>
+        <span class="for-screen-reader">Seleziona</span>
+      </button>
+    </div>
+  </div>
+
+  <%= render "entries/bulk_bar/bar" %>
+
+  <div class="column-summary__rows">
+    <% @summary.grouped_by_scuola.each do |destinatario, entries| %>
+      <article class="column-summary__row">
+        <header class="column-summary__row__header">
+          <h3 class="overflow-ellipsis">
+            <% if destinatario %>
+              <%= link_to destinatario.denominazione, polymorphic_path(destinatario), data: { turbo_frame: "_top" } %>
+            <% else %>
+              Senza destinatario
+            <% end %>
+          </h3>
+          <% if destinatario.respond_to?(:comune) && destinatario.comune.present? %>
+            <span class="txt-subtle txt-small"><%= destinatario.comune %></span>
+          <% end %>
+          <span class="badge"><%= entries.size %></span>
+          <% if destinatario %>
+            <div class="column-summary__row__header__action">
+              <%= render "tappe/pianifica", source: destinatario %>
+            </div>
+          <% end %>
+        </header>
+
+        <div class="cards cards--grid cards--in-context column-summary__row__cards">
+          <div class="cards__list" data-controller="navigable-list">
+            <% entries.each do |entry| %>
+              <%= render "entries/entry", entry: entry, draggable: false %>
+            <% end %>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </div>
 </div>
 
 <%# === SEZIONE 2: Volumi da consegnare === %>
 <% if @summary.volumi.any? %>
   <% causali = @summary.volumi_causali %>
-  <section class="panel margin-block">
-    <header class="panel__header">
-      <h3>Volumi da consegnare</h3>
-    </header>
-    <table class="table">
+  <section class="margin-block-start">
+    <h2 class="divider divider--fade txt-medium font-weight-black full-width margin-block-start">
+      Volumi da consegnare
+    </h2>
+
+    <table class="column-summary__table">
       <thead>
         <tr>
           <th>Titolo</th>
-          <th class="txt-right">Totale</th>
+          <th class="txt-align-end">Totale</th>
           <% causali.each do |causale| %>
-            <th class="txt-right txt-small" style="color: <%= causale_color(causale) %>"><%= causale %></th>
+            <th class="txt-align-end" style="color: <%= causale_color(causale) %>"><%= causale %></th>
           <% end %>
         </tr>
       </thead>
@@ -56,21 +87,21 @@
         <% @summary.volumi.each do |libro, per_causale| %>
           <tr>
             <td><%= libro&.titolo %></td>
-            <td class="txt-right"><strong><%= per_causale.values.sum %></strong></td>
+            <td class="txt-align-end"><strong><%= per_causale.values.sum %></strong></td>
             <% causali.each do |causale| %>
               <% q = per_causale[causale] %>
-              <td class="txt-right"><%= q != 0 ? q : "" %></td>
+              <td class="txt-align-end txt-subtle"><%= q != 0 ? q : "" %></td>
             <% end %>
           </tr>
         <% end %>
       </tbody>
       <tfoot>
         <tr>
-          <td><strong>Totale</strong></td>
-          <td class="txt-right"><strong><%= @summary.volumi.sum { |_, pc| pc.values.sum } %></strong></td>
+          <td>Totale</td>
+          <td class="txt-align-end"><%= @summary.volumi.sum { |_, pc| pc.values.sum } %></td>
           <% causali.each do |causale| %>
             <% tot = @summary.volumi.sum { |_, pc| pc[causale] } %>
-            <td class="txt-right"><strong><%= tot != 0 ? tot : "" %></strong></td>
+            <td class="txt-align-end"><%= tot != 0 ? tot : "" %></td>
           <% end %>
         </tr>
       </tfoot>
@@ -80,41 +111,43 @@
 
 <%# === SEZIONE 3: Adozioni === %>
 <% if @summary.adozioni_per_scuola.any? %>
-  <section class="panel margin-block">
-    <header class="panel__header">
-      <h3>Adozioni</h3>
-    </header>
+  <section class="margin-block-start">
+    <h2 class="divider divider--fade txt-medium font-weight-black full-width margin-block-start">
+      Adozioni
+    </h2>
 
-    <% @summary.adozioni_per_scuola.each do |scuola, adozioni| %>
-      <div class="padding-block-small padding-inline">
-        <h4 class="txt-subtle"><%= scuola.denominazione %> - <%= scuola.comune %></h4>
+    <div class="column-summary__rows">
+      <% @summary.adozioni_per_scuola.each do |scuola, adozioni| %>
+        <article class="column-summary__row">
+          <header class="column-summary__row__header">
+            <h3 class="overflow-ellipsis">
+              <%= link_to scuola.denominazione, polymorphic_path(scuola), data: { turbo_frame: "_top" } %>
+            </h3>
+            <% if scuola.comune.present? %>
+              <span class="txt-subtle txt-small"><%= scuola.comune %></span>
+            <% end %>
+            <span class="badge"><%= adozioni.sum(&:numero_copie) %></span>
+            <div class="column-summary__row__header__action">
+              <%= render "tappe/pianifica", source: scuola %>
+            </div>
+          </header>
 
-        <table class="table txt-small">
-          <thead>
-            <tr>
-              <th>Classe</th>
-              <th>Disciplina</th>
-              <th>Titolo</th>
-              <th>Editore</th>
-              <th class="txt-right">Copie</th>
-            </tr>
-          </thead>
-          <tbody>
+          <table class="column-summary__table column-summary__table--compact">
             <%# Raggruppa per anno_corso + disciplina + codice_isbn, aggrega sezioni %>
             <% adozioni.group_by { |a| [a.classe.anno_corso, a.disciplina, a.codice_isbn] }.each do |(anno, disciplina, _isbn), gruppo| %>
               <% sezioni = gruppo.map { |a| a.classe.sezione }.compact.sort.join("") %>
               <% copie = gruppo.sum(&:numero_copie) %>
               <tr>
-                <td><%= anno %> <%= sezioni %></td>
-                <td><%= disciplina %></td>
+                <td class="txt-nowrap"><%= anno %><%= sezioni %></td>
+                <td class="txt-subtle"><%= disciplina %></td>
                 <td><%= gruppo.first.titolo %></td>
-                <td><%= gruppo.first.editore %></td>
-                <td class="txt-right"><%= copie %></td>
+                <td class="txt-subtle"><%= gruppo.first.editore %></td>
+                <td class="txt-align-end"><%= copie %></td>
               </tr>
             <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% end %>
+          </table>
+        </article>
+      <% end %>
+    </div>
   </section>
 <% end %>

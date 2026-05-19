@@ -638,23 +638,115 @@
     padding: 0.15em 0.4em;
   }
 
-  /* Column summary — 3-column grid for panels
+  /* Column summary — rows: destinatario sx, entries inline-wrap dx
   /* ------------------------------------------------------------------------ */
 
-  .column-summary__panels {
+  .column-summary__rows {
+    display: flex;
+    flex-direction: column;
+    margin-inline: auto;
+    max-inline-size: var(--main-width);
+  }
+
+  .column-summary__row {
+    align-items: start;
+    border-block-end: var(--border);
     display: grid;
-    gap: 0.75rem;
-    grid-template-columns: 1fr;
+    gap: 1rem;
+    grid-template-columns: minmax(180px, 220px) 1fr;
+    padding-block: 1.4rem;
+
+    &:first-child { padding-block-start: 0.6rem; }
+    &:last-child  { border-block-end: 0; padding-block-end: 0.6rem; }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+
+  .column-summary__row__header {
+    align-items: baseline;
+    column-gap: 0.5ch;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.1rem;
+
+    h3 {
+      font-size: var(--text-small);
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .column-summary__row__header__action {
+    align-self: center;
+    margin-inline-start: auto;
+  }
+
+  /* Column summary — tables (Volumi, Adozioni). Fizzy-style: borderless
+     outside, divider per row, uppercase thin headers. */
+  .column-summary__table {
+    border-collapse: collapse;
+    inline-size: 100%;
     margin-inline: auto;
     max-inline-size: var(--main-width);
 
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(2, 1fr);
+    th, td {
+      border-block-end: 1px solid var(--color-ink-light);
+      padding: 0.5em 0.75em;
+      text-align: start;
     }
 
-    @media (min-width: 960px) {
-      grid-template-columns: repeat(3, 1fr);
+    th {
+      color: var(--color-ink-dark);
+      font-size: var(--text-x-small);
+      font-weight: 600;
+      text-transform: uppercase;
     }
+
+    tbody tr:nth-of-type(even) {
+      background-color: var(--color-ink-lightest);
+    }
+
+    tbody tr:hover {
+      background-color: color-mix(in srgb, var(--color-link) 6%, transparent);
+    }
+
+    tfoot td {
+      border-block-end: 0;
+      border-block-start: 2px solid var(--color-ink-light);
+      font-weight: 700;
+    }
+  }
+
+  /* Compact variant — used inline inside .column-summary__row cells.
+     No outer max-inline-size, smaller padding, smaller font, no zebra. */
+  .column-summary__table--compact {
+    font-size: var(--text-small);
+    max-inline-size: none;
+
+    th, td { padding: 0.3em 0.6em; }
+
+    tr:nth-of-type(even) { background-color: transparent; }
+
+    tr:last-child td { border-block-end: 0; }
+  }
+
+  /* Override .cards--grid defaults inside a row: tighter gap, more columns
+     once the cell has enough room (container query, since .cards--grid sets
+     container-type: inline-size). */
+  .column-summary__row__cards {
+    --cards-gap: 0.4rem;
+
+    .cards__list {
+      justify-content: flex-start;
+      padding: 0;
+    }
+
+    @container (min-inline-size: 480px) { --card-grid-columns: 3; }
+    @container (min-inline-size: 720px) { --card-grid-columns: 4; }
+    @container (min-inline-size: 960px) { --card-grid-columns: 5; }
   }
 
   /* Accordion (distribuzione)
@@ -783,61 +875,4 @@
     white-space: nowrap;
   }
 
-  .column-summary__panel {
-    container-type: inline-size;
-
-    .panel__header {
-      padding: 0.5ch 1ch;
-    }
-
-    .cards__list {
-      flex-direction: column;
-      flex-wrap: nowrap;
-      gap: 0.4rem;
-      padding: 0.25ch 0.5ch 0.5ch;
-    }
-
-    .card {
-      inline-size: 100%;
-    }
-
-    .card__title,
-    .card__subtitle,
-    .card__stages,
-    .card__closed,
-    .card__column-name {
-      display: none;
-    }
-
-    .card__classe-badge {
-      display: inline-flex;
-    }
-
-    .card__body {
-      padding-block: 0;
-    }
-
-    .card__meta {
-      grid-template-areas: "text-author text-copie";
-      grid-template-columns: 1fr auto;
-    }
-
-    .card__meta-avatars,
-    .card__meta-text--added,
-    .card__meta-text--updated,
-    .card__meta-text--assignees,
-    .card__meta-text--importo {
-      display: none;
-    }
-
-    .card__meta-text--author {
-      border: 0;
-      padding: 0;
-    }
-
-    .card__meta-text--copie {
-      border: 0;
-      padding: 0;
-    }
-  }
 }
