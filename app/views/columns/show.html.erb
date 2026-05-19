@@ -45,9 +45,9 @@
           <% if destinatario.respond_to?(:comune) && destinatario.comune.present? %>
             <span class="txt-subtle txt-small"><%= destinatario.comune %></span>
           <% end %>
-          <span class="badge"><%= entries.size %></span>
+
           <% if destinatario %>
-            <div class="column-summary__row__header__action">
+            <div class="column-summary__row__header__action margin-block-start">
               <%= render "tappe/pianifica", source: destinatario %>
             </div>
           <% end %>

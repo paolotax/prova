@@ -680,8 +680,9 @@
   }
 
   .column-summary__row__header__action {
-    align-self: center;
-    margin-inline-start: auto;
+    flex-basis: 100%;
+
+    .btn--circle { --btn-size: 1.8em; }
   }
 
   /* Column summary — tables (Volumi, Adozioni). Fizzy-style: borderless
