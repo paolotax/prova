@@ -188,9 +188,6 @@ namespace :scrape do
 
   desc "Elimina i file CSV nella directory tmp/_miur/adozioni"
   task :delete_adozioni, [:force] => :environment do |t, args|
-    include ActionView::Helpers
-    include ApplicationHelper
-
     Rails.logger.info "Inizio eliminazione file CSV"
 
     # Define the directory path
@@ -238,9 +235,6 @@ namespace :scrape do
 
   desc "Rimuove i file CSV da Git e dal filesystem"
   task remove_from_git: :environment do
-    include ActionView::Helpers
-    include ApplicationHelper
-
     # Define the directory path
     adozioni_dir = Rails.root.join('tmp', '_miur', 'adozioni')
 

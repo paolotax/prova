@@ -94,15 +94,16 @@ module Miur
     end
 
     def process_imports
-      Rake::Task['import:splitta_adozioni'].reenable
+      if @regioni_aggiornate.empty? && @regioni_nuove.empty?
+        Rails.logger.info "Nessuna regione aggiornata o nuova, skip import"
+        return
+      end
+
       Rake::Task['import:new_adozioni'].reenable
       Rake::Task['import:cambia_religione'].reenable
-      Rake::Task['scrape:delete_adozioni'].reenable
 
-      Rake::Task['import:splitta_adozioni'].invoke
       Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
-      Rake::Task['scrape:delete_adozioni'].invoke("true")
     end
 
     def notify

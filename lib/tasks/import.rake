@@ -36,9 +36,6 @@ namespace :import do
   desc "EDITORI da adozioni"
   task editori: :environment do
 
-    include ActionView::Helpers
-    include ApplicationHelper
-
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       Editore.destroy_all
@@ -52,9 +49,6 @@ namespace :import do
 
   desc "EDITORI CSV"
   task gruppi_editoriali: :environment do
-
-    include ActionView::Helpers
-    include ApplicationHelper
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
@@ -86,9 +80,6 @@ namespace :import do
 
   desc "TIPI SCUOLE da adozioni"
   task tipi_scuole: :environment do
-
-    include ActionView::Helpers
-    include ApplicationHelper
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
@@ -123,9 +114,6 @@ namespace :import do
   desc "ZONE"
   task zone: :environment do
 
-    include ActionView::Helpers
-    include ApplicationHelper
-
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       Zona.destroy_all
@@ -145,9 +133,6 @@ namespace :import do
 
   desc "ADOZIONI"
   task miur_adozioni: :environment do
-
-    include ActionView::Helpers
-    include ApplicationHelper
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
@@ -234,9 +219,6 @@ namespace :import do
 
   desc "SCUOLE"
   task miur_scuole: :environment do
-
-    include ActionView::Helpers
-    include ApplicationHelper
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
@@ -420,18 +402,14 @@ namespace :import do
 
 
 
-  desc "Importa nuove ADOZIONI 2025/6"
+  desc "Importa nuove ADOZIONI"
   task :new_adozioni, [:force] => :environment do |t, args|
 
-    include ActionView::Helpers
-    include ApplicationHelper
+    Rails.logger.info "Inizio importazione nuove adozioni"
 
-    Rails.logger.info "Inizio importazione nuove adozioni 2025/6"
-
-    answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI 2025/6 Vuoi cancellare tutti i dati esistenti? (y/n)")
+    answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
-      NewAdozione.delete_all
-      NewAdozione.connection.execute('ALTER SEQUENCE new_adozioni_id_seq RESTART WITH 1')
+      NewAdozione.connection.execute('TRUNCATE TABLE new_adozioni RESTART IDENTITY')
     end
 
     map_adozioni = {
@@ -453,20 +431,37 @@ namespace :import do
       "VOLUME" => "volume",
     }
 
-    csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
+    batch_size = 10_000
+    total = 0
 
-    Dir.glob(csv_dir).each do |file|
-      import_csv(file, NewAdozione, map_adozioni)
+    Dir.glob(Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')).each do |file|
+      items = []
+      file_count = 0
+
+      Benchmark.bm do |x|
+        x.report("importo #{File.basename(file)}") do
+          CSV.foreach(file, headers: true, col_sep: ',', encoding: 'UTF-8') do |row|
+            items << row.to_h.transform_keys(map_adozioni)
+            file_count += 1
+            if items.size >= batch_size
+              NewAdozione.import items, validate: false, on_duplicate_key_ignore: true
+              items.clear
+            end
+          end
+          NewAdozione.import items, validate: false, on_duplicate_key_ignore: true unless items.empty?
+        end
+      end
+
+      puts "righe inserite #{file_count} da #{File.basename(file)}"
+      total += file_count
     end
 
-    puts "Totale: #{NewAdozione.count} NewAdozioni inserite"
+    puts "Totale: #{total} NewAdozioni inserite"
+    Rails.logger.info "Importazione nuove adozioni completata"
   end
 
   desc "NewScuole SCUOLE 2025/6"
   task new_scuole: :environment do
-
-    include ActionView::Helpers
-    include ApplicationHelper
 
     answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
@@ -519,21 +514,10 @@ namespace :import do
 
 
 
-  desc "Splitta file adozioni"
+  desc "[DEPRECATO] Splitta file adozioni — no-op, import:new_adozioni ora gestisce il batching internamente"
   task splitta_adozioni: :environment do
-
-    Rails.logger.info "Inizio splitta file adozioni"
-
-    csv_dir = Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')
-    Dir.glob(csv_dir).each do |file|
-      #puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
-      if File.size(file) > 5 * 1024 * 1024 # 7MB in bytes
-        split_csv(file, File.size(file) / (3 * 1024 * 1024))
-        FileUtils.rm(file)
-      end
-    end
-
-    Rails.logger.info "Splitta file adozioni completata"
+    Rails.logger.info "splitta_adozioni: deprecato, no-op"
+    puts "splitta_adozioni: deprecato, import:new_adozioni ora batcha direttamente i CSV"
   end
 
 
@@ -569,25 +553,6 @@ namespace :import do
 
 
   private
-
-    def split_csv(original, file_count)
-      header_lines = 1
-      lines = Integer(`cat #{original} | wc -l`) - header_lines
-      lines_per_file = (lines / file_count.to_f).ceil + header_lines
-      header = `head -n #{header_lines} #{original}`
-
-      start = header_lines
-      file_count.times.map do |i|
-        finish = start + lines_per_file
-        file = "#{original}-#{i}.csv"
-
-        File.write(file, header)
-        sh "tail -n #{lines - start} #{original} | head -n #{lines_per_file} >> #{file}"
-
-        start = finish
-        file
-      end
-    end
 
     def self.import_csv(file, model, mappings, options = { col_sep: ',', headers: true, encoding: 'UTF-8' })
 
