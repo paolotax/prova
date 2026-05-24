@@ -39,7 +39,9 @@
               <% row.each do |key, value| %>
                 <% unless @stat.raggruppa.include?(key) %>
                   <td class="stats-result__td">
-                    <% if value.is_a?(BigDecimal) || value.is_a?(Numeric) %>
+                    <% if value.is_a?(Integer) %>
+                      <%= number_with_delimiter(value, delimiter: ".") %>
+                    <% elsif value.is_a?(Numeric) %>
                       <%= number_to_currency(value, unit: "", separator: ",", delimiter: ".") %>
                     <% else %>
                       <%= value %>
@@ -56,7 +58,12 @@
               <% unless @stat.raggruppa.include?(header) %>
                 <th class="stats-result__th">
                   <% if @stat.totali.include?(header) %>
-                    <%= number_to_currency(group_result.sum { |r| r[header].to_f }, unit: "", separator: ",", delimiter: ".") %>
+                    <% all_integer = group_result.all? { |r| r[header].is_a?(Integer) } %>
+                    <% if all_integer %>
+                      <%= number_with_delimiter(group_result.sum { |r| r[header].to_i }, delimiter: ".") %>
+                    <% else %>
+                      <%= number_to_currency(group_result.sum { |r| r[header].to_f }, unit: "", separator: ",", delimiter: ".") %>
+                    <% end %>
                   <% end %>
                 </th>
               <% end %>
