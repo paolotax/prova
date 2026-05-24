@@ -231,4 +231,54 @@
       text-transform: none;
     }
   }
+
+  /* Admin bar + chip filtri stato
+  /* ------------------------------------------------------------------------ */
+
+  .stats-admin-bar {
+    margin-block-end: 1rem;
+  }
+
+  .chip {
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid var(--color-ink-light);
+    border-radius: 999px;
+    color: var(--color-ink);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: var(--text-small);
+    gap: 0.35rem;
+    line-height: 1;
+    padding: 0.3rem 0.7rem;
+    text-decoration: none;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .chip:hover {
+    background-color: var(--color-ink-lightest);
+    border-color: var(--color-ink-medium);
+  }
+
+  .chip--selected {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-canvas);
+  }
+
+  .chip--selected:hover {
+    background-color: var(--color-ink-darker);
+    border-color: var(--color-ink-darker);
+  }
+
+  .chip--selected .txt-subtle {
+    color: var(--color-canvas);
+    opacity: 0.85;
+  }
+
+  .chip--stato-produzione { border-left: 4px solid oklch(70% 0.18 145); }
+  .chip--stato-lab        { border-left: 4px solid oklch(75% 0.15 70); }
+  .chip--stato-archiviata { border-left: 4px solid var(--color-ink-medium); }
+
+  .txt-danger { color: oklch(60% 0.20 25); }
 }

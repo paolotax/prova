@@ -4,8 +4,25 @@ class StatsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_stat, only: %i[show edit update destroy]
 
+  CATEGORIE_VISIBILI = %w[utenti editori province titoli operativo].freeze
+
   def index
-    @stats = policy_scope(Stat).order(:categoria, :position, :titolo)
+    base = policy_scope(Stat)
+
+    if current_user.admin?
+      stati = Array(params[:stati]).presence || %w[produzione lab]
+      stati &= Stat::STATI
+      @stati_filtro = stati
+      base = base.where(stato: stati) if stati.any?
+    else
+      @stati_filtro = %w[produzione]
+    end
+
+    @counts_per_stato = current_user.admin? ? Stat.group(:stato).count : nil
+    @counts_per_categoria = base.group(:categoria).count
+    @stats_in_errore = current_user.admin? ? Stat.produzione.con_errore.count : 0
+
+    @stats = base.order(:categoria, :position, :titolo)
     @stats = @stats.where(categoria: params[:categoria]) if params[:categoria].present?
   end
 

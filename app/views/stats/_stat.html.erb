@@ -34,6 +34,36 @@
   </td>
 
   <% if policy(stat).update? %>
+    <td class="stats-table__td stats-table__td--hidden-mobile">
+      <span class="chip chip--stato-<%= stat.stato %>"><%= stat.stato.capitalize %></span>
+    </td>
+
+    <td class="stats-table__td stats-table__td--hidden-mobile">
+      <% usa_new = stat.testo.to_s.match?(/\bnew_adozioni\b/i) %>
+      <% usa_import = stat.testo.to_s.match?(/\bimport_adozioni\b/i) %>
+      <% sorgente_label, sorgente_icon =
+           if usa_new && usa_import then ["mix", "🟡"]
+           elsif usa_new            then ["new", "🟢"]
+           elsif usa_import         then ["import", "⚪"]
+           else                          ["—", ""]
+           end %>
+      <span class="txt-small txt-subtle" title="<%= sorgente_label %>">
+        <%= sorgente_icon %> <%= sorgente_label %>
+      </span>
+    </td>
+
+    <td class="stats-table__td stats-table__td--hidden-mobile">
+      <% if stat.ultima_verifica %>
+        <span class="txt-small <%= 'txt-danger' if stat.ultimo_errore.present? %>"
+              title="<%= l(stat.ultima_verifica, format: :long) %><%= " — #{stat.ultimo_errore.to_s.truncate(200)}" if stat.ultimo_errore.present? %>">
+          <%= stat.ultimo_errore.present? ? "✗" : "✓" %>
+          <%= time_ago_in_words(stat.ultima_verifica) %> fa
+        </span>
+      <% else %>
+        <span class="txt-small txt-subtle">mai</span>
+      <% end %>
+    </td>
+
     <td class="stats-table__td stats-table__td--actions">
       <%= link_to edit_stat_path(stat), class: "btn btn--small", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Modifica SQL" } do %>
         <%= icon_tag "pencil", class: "icon--small" %>

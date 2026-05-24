@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_10_083008) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_24_080611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1490,10 +1490,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_10_083008) do
     t.integer "position"
     t.string "raggruppa_per"
     t.string "seleziona_campi"
+    t.string "stato", default: "lab", null: false
     t.text "testo"
     t.string "titolo"
+    t.datetime "ultima_verifica"
+    t.text "ultimo_errore"
     t.datetime "updated_at", null: false
     t.boolean "visible", default: true, null: false
+    t.index ["stato"], name: "index_stats_on_stato"
   end
 
   create_table "tappa_giri", force: :cascade do |t|

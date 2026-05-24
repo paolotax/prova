@@ -19,35 +19,50 @@
 
 <div class="stats-container">
 
+<% if current_user.admin? %>
+  <%= render "stats/admin_bar",
+      stati_filtro: @stati_filtro,
+      counts_per_stato: @counts_per_stato,
+      stats_in_errore: @stats_in_errore %>
+<% end %>
+
 <nav class="stats-nav" aria-label="Categorie statistiche">
-  <%= link_to stats_path, class: "stats-nav__link #{'is-active' if params[:categoria].blank?}" do %>
-    <%= icon_tag "list-bullet", class: "icon--small" %>
-    <span>Tutte</span>
+  <% admin_extra = current_user.admin? ? { stati: @stati_filtro } : {} %>
+
+  <% if current_user.admin? %>
+    <%= link_to stats_path(admin_extra), class: "stats-nav__link #{'is-active' if params[:categoria].blank?}" do %>
+      <%= icon_tag "list-bullet", class: "icon--small" %>
+      <span>Tutte</span>
+    <% end %>
   <% end %>
 
-  <%= link_to stats_path(categoria: "utenti"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'utenti'}" do %>
-    <%= icon_tag "user", class: "icon--small" %>
-    <span>Utente</span>
+  <% [
+       ["utenti",    "Le mie adozioni", "user"],
+       ["editori",   "Per editore",     "building-office"],
+       ["province",  "Per provincia",   "map"],
+       ["titoli",    "Per titolo",      "book-open"],
+       ["operativo", "Operativo",       "chart-bar"]
+     ].each do |cat, label, icon| %>
+    <% next if (@counts_per_categoria[cat].to_i.zero?) && !current_user.admin? %>
+    <%= link_to stats_path(admin_extra.merge(categoria: cat)),
+                class: "stats-nav__link #{'is-active' if params[:categoria] == cat}" do %>
+      <%= icon_tag icon, class: "icon--small" %>
+      <span><%= label %></span>
+      <% if (n = @counts_per_categoria[cat].to_i) > 0 %>
+        <span class="txt-small txt-subtle">(<%= n %>)</span>
+      <% end %>
+    <% end %>
   <% end %>
 
-  <%= link_to stats_path(categoria: "titoli"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'titoli'}" do %>
-    <%= icon_tag "book-open", class: "icon--small" %>
-    <span>Titoli</span>
-  <% end %>
-
-  <%= link_to stats_path(categoria: "editori"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'editori'}" do %>
-    <%= icon_tag "building-office", class: "icon--small" %>
-    <span>Editori</span>
-  <% end %>
-
-  <%= link_to stats_path(categoria: "province"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'province'}" do %>
-    <%= icon_tag "map", class: "icon--small" %>
-    <span>Province</span>
-  <% end %>
-
-  <%= link_to stats_path(categoria: "altre"), class: "stats-nav__link #{'is-active' if params[:categoria] == 'altre'}" do %>
-    <%= icon_tag "chart-bar", class: "icon--small" %>
-    <span>Altre</span>
+  <% if current_user.admin? %>
+    <%= link_to stats_path(admin_extra.merge(categoria: "altre")),
+                class: "stats-nav__link #{'is-active' if params[:categoria] == 'altre'}" do %>
+      <%= icon_tag "chart-bar", class: "icon--small" %>
+      <span>Altre</span>
+      <% if (n = @counts_per_categoria['altre'].to_i) > 0 %>
+        <span class="txt-small txt-subtle">(<%= n %>)</span>
+      <% end %>
+    <% end %>
   <% end %>
 </nav>
 
@@ -62,7 +77,10 @@
             <th class="stats-table__th">Descrizione</th>
             <th class="stats-table__th stats-table__td--hidden-mobile">Anno</th>
             <th class="stats-table__th stats-table__td--hidden-mobile">Raggruppa per</th>
-            <% if policy(Stat).update? %>
+            <% if current_user.admin? %>
+              <th class="stats-table__th stats-table__td--hidden-mobile">Stato</th>
+              <th class="stats-table__th stats-table__td--hidden-mobile">Sorgente</th>
+              <th class="stats-table__th stats-table__td--hidden-mobile">Verifica</th>
               <th class="stats-table__th"></th>
               <th class="stats-table__th"></th>
             <% end %>
@@ -96,4 +114,3 @@
 <% end %>
 
 </div>
-

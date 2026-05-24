@@ -6,7 +6,7 @@ class StatPolicy < ApplicationPolicy
       if user.admin?
         scope.all
       else
-        scope.where(visible: true)
+        scope.produzione
       end
     end
   end
@@ -16,7 +16,7 @@ class StatPolicy < ApplicationPolicy
   end
 
   def show?
-    user.admin? || record.visible?
+    user.admin? || record.produzione?
   end
 
   def create?
@@ -33,6 +33,6 @@ class StatPolicy < ApplicationPolicy
 
   # Custom action for executing stats
   def execute?
-    user.admin? || record.visible?
+    user.admin? || record.produzione?
   end
 end

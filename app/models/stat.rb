@@ -11,11 +11,18 @@
 #  position        :integer
 #  raggruppa_per   :string
 #  seleziona_campi :string
+#  stato           :string           default("lab"), not null
 #  testo           :text
 #  titolo          :string
+#  ultima_verifica :datetime
+#  ultimo_errore   :text
 #  visible         :boolean          default(TRUE), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  index_stats_on_stato  (stato)
 #
 
 class Stat < ApplicationRecord
@@ -28,22 +35,36 @@ class Stat < ApplicationRecord
   # Allowed placeholder patterns for parameter binding
   ALLOWED_PLACEHOLDERS = %w[:user_id :account_id].freeze
 
+  STATI = %w[produzione lab archiviata].freeze
+
   positioned on: [:categoria], column: :position
 
   validates :titolo, presence: true
   validates :testo, presence: true
+  validates :stato, inclusion: { in: STATI }
   validate :validate_sql_safety
 
-  def test_execution
-    test_user = User.first
-    return false unless test_user
+  scope :produzione,  -> { where(stato: "produzione") }
+  scope :lab,         -> { where(stato: "lab") }
+  scope :archiviata,  -> { where(stato: "archiviata") }
+  scope :visibili_a, ->(user) { user.admin? ? all : produzione }
+  scope :con_errore,  -> { where.not(ultimo_errore: nil) }
 
-    execute(test_user)
-    update_column(:visible, true)
+  def produzione?  = stato == "produzione"
+  def lab?         = stato == "lab"
+  def archiviata?  = stato == "archiviata"
+
+  # Esegue la query con l'utente passato (default: primo utente disponibile)
+  # e popola ultima_verifica/ultimo_errore. NON cambia stato.
+  def test_execution(user = User.first)
+    return false unless user
+
+    execute(user)
+    update_columns(ultima_verifica: Time.current, ultimo_errore: nil)
     true
-  rescue StandardError => e
-    Rails.logger.error("Stat execution failed: #{e.message}")
-    update_column(:visible, false)
+  rescue SecurityError, StandardError => e
+    Rails.logger.error("Stat ##{id} execution failed: #{e.message}")
+    update_columns(ultima_verifica: Time.current, ultimo_errore: e.message.to_s.truncate(2000))
     false
   end
 

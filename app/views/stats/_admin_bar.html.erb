@@ -1,0 +1,29 @@
+<%# locals: (stati_filtro:, counts_per_stato:, stats_in_errore:) -%>
+
+<div class="stats-admin-bar flex flex-column gap-half margin-block-end">
+  <% if stats_in_errore.to_i > 0 %>
+    <div class="alert alert--danger flex align-center gap">
+      <%= icon_tag "exclamation-triangle", class: "icon--small" %>
+      <span>
+        <strong><%= stats_in_errore %></strong>
+        <%= stats_in_errore == 1 ? "query in produzione ha un errore" : "query in produzione hanno errori" %> dall'ultimo healthcheck.
+      </span>
+      <%= link_to "Vedi solo produzione rotte",
+                  stats_path(stati: %w[produzione], errore: "1"),
+                  class: "txt-link" %>
+    </div>
+  <% end %>
+
+  <div class="flex align-center gap wrap">
+    <span class="txt-small txt-subtle txt-uppercase">Stato:</span>
+    <% Stat::STATI.each do |s| %>
+      <% selected = stati_filtro.include?(s) %>
+      <% next_stati = (selected ? stati_filtro - [s] : stati_filtro + [s]).uniq %>
+      <%= link_to stats_path(stati: next_stati, categoria: params[:categoria]),
+                  class: "chip #{'chip--selected' if selected} chip--stato-#{s}" do %>
+        <%= s.capitalize %>
+        <span class="txt-small txt-subtle">(<%= counts_per_stato[s].to_i %>)</span>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -33,3 +33,10 @@
       class: CreateTappaEntriesJob
       queue: default
       description: 'Crea entry per le tappe di oggi'
+
+    stats_healthcheck:
+      cron: '15 4 * * *'  # Ogni giorno alle 4:15 AM (dopo auth_cleanup)
+      class: Stats::HealthcheckJob
+      queue: default
+      unique: true
+      description: 'Verifica esecuzione delle Stat e popola ultima_verifica/ultimo_errore'
