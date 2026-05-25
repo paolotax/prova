@@ -1,8 +1,9 @@
 class ScrapingMailer < ApplicationMailer
-  def scraping_completed(regioni_aggiornate, regioni_saltate, regioni_nuove)
+  def scraping_completed(regioni_aggiornate, regioni_saltate, regioni_nuove, regioni_fallite = [])
     @regioni_aggiornate = regioni_aggiornate
     @regioni_saltate = regioni_saltate
     @regioni_nuove = regioni_nuove
+    @regioni_fallite = regioni_fallite
 
     mail(
       to: Rails.application.credentials.dig(:email, :admin) || 'paolo.tassinari@hey.com',

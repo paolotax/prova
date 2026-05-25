@@ -27,6 +27,18 @@
       <% end %>
     </ul>
 
+    <% if @regioni_fallite&.any? %>
+      <h2 style="color: #c00;">Regioni Fallite (<%= @regioni_fallite.count %>)</h2>
+      <ul>
+        <% @regioni_fallite.each do |regione| %>
+          <li><%= regione %></li>
+        <% end %>
+      </ul>
+      <p style="color: #c00;">
+        Le regioni fallite verranno ritentate al prossimo run dello scraper.
+      </p>
+    <% end %>
+
     <p>Totale adozioni nel database: <%= NewAdozione.count %></p>
   </body>
 </html>
