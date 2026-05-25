@@ -18,6 +18,7 @@
     background: none;
   }
 
+  .icon--chart { --svg: url("chart.svg"); }
   .icon--arrow-left-from-line { --svg: url("arrow-left-from-line.svg"); }
   .icon--gift { --svg: url("gift.svg"); }
   .icon--receipt { --svg: url("receipt.svg"); }

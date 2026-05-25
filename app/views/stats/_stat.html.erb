@@ -34,8 +34,18 @@
   </td>
 
   <% if policy(stat).update? %>
-    <td class="stats-table__td stats-table__td--hidden-mobile">
-      <span class="chip chip--stato-<%= stat.stato %>"><%= stat.stato.capitalize %></span>
+    <td class="stats-table__td stats-table__td--hidden-mobile stats-table__td--stato">
+      <div class="stats-stato-actions">
+        <span class="chip chip--stato-<%= stat.stato %>"><%= stat.stato.capitalize %></span>
+        <% (Stat::STATI - [stat.stato]).each do |s| %>
+          <%= button_to stat_stato_path(stat), method: :patch, params: { stato: s },
+                        class: "btn btn--small",
+                        form_class: "inline-block",
+                        data: { controller: "tooltip", tooltip_content_value: "Sposta in #{s.capitalize}" } do %>
+            <%= { "produzione" => "→ Prod", "lab" => "→ Lab", "archiviata" => "→ Arch" }[s] %>
+          <% end %>
+        <% end %>
+      </div>
     </td>
 
     <td class="stats-table__td stats-table__td--hidden-mobile">

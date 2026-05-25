@@ -71,7 +71,7 @@
     border: var(--table-border);
     border-radius: 0.5rem;
     inline-size: 100%;
-    overflow: hidden;
+    overflow-x: auto;
   }
 
   .stats-table__table {
@@ -123,6 +123,16 @@
     @media (max-width: 767px) {
       display: none;
     }
+  }
+
+  .stats-table__td--stato {
+    white-space: nowrap;
+  }
+
+  .stats-stato-actions {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.35rem;
   }
 
   /* Stats Execute Button */

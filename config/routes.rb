@@ -381,6 +381,7 @@ Rails.application.routes.draw do
       scope module: :stats do
         resource :execution, only: [:show]
         resource :position, only: [:update]
+        resource :stato, only: [:update], controller: "stati"
       end
       # Legacy routes for compatibility
       member do

@@ -10,6 +10,18 @@
   </h1>
 
   <div class="header__actions header__actions--end print-hidden">
+    <% if policy(@stat).update? %>
+      <span class="chip chip--stato-<%= @stat.stato %>"><%= @stat.stato.capitalize %></span>
+      <% (Stat::STATI - [@stat.stato]).each do |s| %>
+        <%= button_to stat_stato_path(@stat), method: :patch, params: { stato: s },
+                      class: "btn btn--small",
+                      form_class: "inline-block",
+                      data: { controller: "tooltip", tooltip_content_value: "Sposta in #{s.capitalize}" } do %>
+          → <%= s.capitalize %>
+        <% end %>
+      <% end %>
+    <% end %>
+
     <%= link_to stat_execution_path(@stat, format: :xlsx), class: "btn btn--positive", data: { controller: "tooltip", tooltip_content_value: "Esporta Excel" } do %>
       <%= icon_tag "document", size: "small" %>
       <span class="for-screen-reader">Esporta Excel</span>
