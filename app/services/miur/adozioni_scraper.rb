@@ -7,6 +7,7 @@ module Miur
   class AdozioniScraper
     DOWNLOAD_DIR = Rails.root.join('tmp', '_miur', 'adozioni')
     BASE_URL = 'https://dati.istruzione.it/opendata/opendata/catalogo/elements1'
+    USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'.freeze
 
     attr_reader :regioni_aggiornate, :regioni_saltate, :regioni_nuove
 
@@ -34,7 +35,7 @@ module Miur
     end
 
     def scrape_adozioni
-      doc = Nokogiri::HTML(URI.open("#{BASE_URL}/?area=Adozioni%20libri%20di%20testo"))
+      doc = Nokogiri::HTML(URI.open("#{BASE_URL}/?area=Adozioni%20libri%20di%20testo", "User-Agent" => USER_AGENT))
       cards = doc.css('.card')
       downloaded_files = {}
 
@@ -89,7 +90,7 @@ module Miur
     end
 
     def download_file(url, path)
-      response = URI.open(url)
+      response = URI.open(url, "User-Agent" => USER_AGENT)
       File.open(path, 'wb') { |f| f.write(response.read) }
     end
 

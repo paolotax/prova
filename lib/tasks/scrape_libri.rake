@@ -34,7 +34,7 @@ namespace :scrape do
     begin
       puts "Inizio download della pagina..."
       # Scarica la pagina
-      doc = Nokogiri::HTML(URI.open('https://dati.istruzione.it/opendata/opendata/catalogo/elements1/?area=Adozioni%20libri%20di%20testo'))
+      doc = Nokogiri::HTML(URI.open('https://dati.istruzione.it/opendata/opendata/catalogo/elements1/?area=Adozioni%20libri%20di%20testo', "User-Agent" => Miur::AdozioniScraper::USER_AGENT))
       puts "Pagina scaricata con successo"
 
       # Trova tutte le card
@@ -134,7 +134,7 @@ namespace :scrape do
         begin
           # Scarica il file
           puts "Tentativo di download da #{csv_url}..."
-          response = URI.open(csv_url)
+          response = URI.open(csv_url, "User-Agent" => Miur::AdozioniScraper::USER_AGENT)
           puts "Download completato, dimensione: #{response.size} bytes"
 
           puts "Tentativo di salvataggio in #{filepath}..."
