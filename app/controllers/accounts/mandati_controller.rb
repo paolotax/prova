@@ -17,17 +17,17 @@ module Accounts
     end
 
     def create
-      return if params[:hgruppo].blank?
+      if params[:hgruppo].present?
+        editore_ids = Current.account.editore_ids_per_mandato(
+          gruppo: params[:hgruppo],
+          editore_id: params[:heditore]
+        )
 
-      editore_ids = Current.account.editore_ids_per_mandato(
-        gruppo: params[:hgruppo],
-        editore_id: params[:heditore]
-      )
+        zone_ids = Array(params[:zone_ids]).reject(&:blank?).presence
 
-      zone_ids = Array(params[:zone_ids]).reject(&:blank?).presence
-
-      Current.account.crea_mandati_per_editori!(editore_ids, zone_ids: zone_ids)
-      UpdateMieAdozioniJob.perform_later(Current.account)
+        Current.account.crea_mandati_per_editori!(editore_ids, zone_ids: zone_ids)
+        UpdateMieAdozioniJob.perform_later(Current.account)
+      end
 
       @mandati = mandati_ordinati
       editori_con_adozioni = Current.account.editori_da_adozioni
@@ -40,6 +40,9 @@ module Accounts
       end
     rescue ActiveRecord::RecordNotUnique
       @mandati = mandati_ordinati
+      @gruppi = Current.account.editori_da_adozioni.select(:gruppo).distinct.order(:gruppo)
+      @editori = []
+      render :create
     end
 
     def update
