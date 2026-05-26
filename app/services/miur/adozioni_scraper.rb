@@ -135,7 +135,7 @@ module Miur
 
     def find_existing_file(filename)
       Dir.glob(File.join(DOWNLOAD_DIR, "*.csv")).each do |f|
-        next unless File.basename(f).start_with?(filename.split('0000').first)
+        next unless File.basename(f).start_with?(region_prefix(filename))
 
         if File.size(f) < MIN_VALID_SIZE
           Rails.logger.warn("[MIUR] rimuovo file precedente vuoto: #{File.basename(f)}")
@@ -150,11 +150,15 @@ module Miur
     end
 
     def find_archived_csv(filename_pattern)
-      prefix = filename_pattern.split("0000").first
-      Dir.glob(File.join(DOWNLOAD_DIR, "*", "*.csv")).each do |archived|
-        return archived if File.basename(archived).start_with?(prefix) && File.size(archived) >= MIN_VALID_SIZE
+      prefix = region_prefix(filename_pattern)
+      candidates = Dir.glob(File.join(DOWNLOAD_DIR, "*", "*.csv")).select do |archived|
+        File.basename(archived).start_with?(prefix) && File.size(archived) >= MIN_VALID_SIZE
       end
-      nil
+      candidates.max_by { |f| File.basename(f) }
+    end
+
+    def region_prefix(filename)
+      filename.split("0000").first
     end
 
     def archive_file(file, date)
@@ -182,6 +186,9 @@ module Miur
     end
 
     def process_imports
+      # NOTE: regioni_stale (fallback CSV) non triggera import: il file è già a disco
+      # e verrà incluso dal task import:new_adozioni quando ci sono comunque aggiornate/nuove.
+      # Vedi Task 10 del piano: process_imports avrà anche un check di soglia MIN_CSV_FOR_IMPORT.
       if @regioni_aggiornate.empty? && @regioni_nuove.empty?
         Rails.logger.info "Nessuna regione aggiornata o nuova, skip import"
         return

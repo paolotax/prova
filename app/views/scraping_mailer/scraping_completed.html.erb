@@ -39,6 +39,18 @@
       </p>
     <% end %>
 
+    <% if @regioni_stale&.any? %>
+      <h2 style="color: #b80;">Regioni con dati stale (<%= @regioni_stale.count %>)</h2>
+      <ul>
+        <% @regioni_stale.each do |regione| %>
+          <li><%= regione %></li>
+        <% end %>
+      </ul>
+      <p style="color: #b80;">
+        Per queste regioni il MIUR non risponde: stiamo usando l'ultimo CSV archiviato.
+      </p>
+    <% end %>
+
     <p>Totale adozioni nel database: <%= NewAdozione.count %></p>
   </body>
 </html>

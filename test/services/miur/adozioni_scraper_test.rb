@@ -18,12 +18,13 @@ module Miur
       Miur::AdozioniScraper.const_set(:DOWNLOAD_DIR, @original_dir)
     end
 
-    test "smoke: scraper instance esiste e ha 4 contatori vuoti" do
+    test "smoke: scraper instance esiste e ha 5 contatori vuoti" do
       scraper = Miur::AdozioniScraper.new
       assert_equal [], scraper.regioni_aggiornate
       assert_equal [], scraper.regioni_saltate
       assert_equal [], scraper.regioni_nuove
       assert_equal [], scraper.regioni_fallite
+      assert_equal [], scraper.regioni_stale
     end
 
     test "skip regione se CSV già presente e data MIUR uguale" do
