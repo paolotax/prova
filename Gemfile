@@ -27,6 +27,11 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 gem "image_processing", "~> 1.2"
 
+# Error tracking
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
+
 group :production do
   # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
   gem "kamal", require: false

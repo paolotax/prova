@@ -45,6 +45,7 @@ env:
     - TURNSTILE_SECRET_KEY
     - TURNSTILE_SITE_KEY
     - OPENAI_ACCESS_TOKEN
+    - SENTRY_DSN
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
