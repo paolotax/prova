@@ -25,5 +25,28 @@ module Miur
       assert_equal [], scraper.regioni_nuove
       assert_equal [], scraper.regioni_fallite
     end
+
+    test "skip regione se CSV già presente e data MIUR uguale" do
+      filename = "ALTUMBRIA000020260525.csv"
+      filepath = @tmp_dir.join(filename)
+      File.write(filepath, "x" * (Miur::AdozioniScraper::MIN_VALID_SIZE + 1))
+
+      catalog_html = <<~HTML
+        <div class="card">
+          <h3>Adozioni libri di testo scolastici. Regione Umbria.</h3>
+          <span class="dettaglio-data">Modified: 25/05/2026</span>
+          <a class="csv" href="#{filename}">CSV</a>
+        </div>
+      HTML
+
+      stub_request(:get, %r{dati\.istruzione\.it.*Adozioni}).to_return(body: catalog_html, status: 200)
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.send(:scrape_adozioni)
+
+      assert_includes scraper.regioni_saltate, "UMBRIA"
+      assert_empty scraper.regioni_aggiornate
+      assert_empty scraper.regioni_fallite
+    end
   end
 end
