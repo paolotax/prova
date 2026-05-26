@@ -110,6 +110,13 @@ module Miur
       assert_requested :get, %r{ALTMOLISE}, times: 3
     end
 
+    test "notify passa regioni_stale al job di notifica" do
+      ScrapingNotificationJob.expects(:perform_async).with([], [], [], [], includes("MOLISE"))
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_stale, ["MOLISE"])
+      scraper.send(:notify)
+    end
+
     test "fallback: usa CSV archiviato se download fallisce definitivamente" do
       archive_dir = @tmp_dir.join("20260520")
       FileUtils.mkdir_p(archive_dir)

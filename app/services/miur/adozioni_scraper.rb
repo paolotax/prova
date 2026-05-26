@@ -15,13 +15,14 @@ module Miur
     MAX_ATTEMPTS = 3
     RETRY_SLEEP_SECONDS = [10, 30, 60].freeze
 
-    attr_reader :regioni_aggiornate, :regioni_saltate, :regioni_nuove, :regioni_fallite
+    attr_reader :regioni_aggiornate, :regioni_saltate, :regioni_nuove, :regioni_fallite, :regioni_stale
 
     def initialize
       @regioni_aggiornate = []
       @regioni_saltate = []
       @regioni_nuove = []
       @regioni_fallite = []
+      @regioni_stale = []
     end
 
     def call
@@ -107,7 +108,17 @@ module Miur
       end
 
       Rails.logger.error("[MIUR] #{region}: fallita dopo #{MAX_ATTEMPTS} tentativi — ultimo errore: #{last_error}")
-      @regioni_fallite << region
+
+      filename = File.basename(filepath)
+      archived = find_archived_csv(filename)
+      if archived
+        target = File.join(DOWNLOAD_DIR, File.basename(archived))
+        FileUtils.cp(archived, target) unless File.exist?(target)
+        Rails.logger.warn("[MIUR] #{region}: uso CSV archiviato come fallback (#{File.basename(archived)})")
+        @regioni_stale << region
+      else
+        @regioni_fallite << region
+      end
     end
 
     def retry_sleep(attempt_index)
@@ -136,6 +147,14 @@ module Miur
         return [f, match[1]]
       end
       [nil, nil]
+    end
+
+    def find_archived_csv(filename_pattern)
+      prefix = filename_pattern.split("0000").first
+      Dir.glob(File.join(DOWNLOAD_DIR, "*", "*.csv")).each do |archived|
+        return archived if File.basename(archived).start_with?(prefix) && File.size(archived) >= MIN_VALID_SIZE
+      end
+      nil
     end
 
     def archive_file(file, date)
@@ -176,7 +195,7 @@ module Miur
     end
 
     def notify
-      ScrapingNotificationJob.perform_async(@regioni_aggiornate, @regioni_saltate, @regioni_nuove, @regioni_fallite)
+      ScrapingNotificationJob.perform_async(@regioni_aggiornate, @regioni_saltate, @regioni_nuove, @regioni_fallite, @regioni_stale)
     end
   end
 end
