@@ -48,5 +48,24 @@ module Miur
       assert_empty scraper.regioni_aggiornate
       assert_empty scraper.regioni_fallite
     end
+
+    test "regione finisce in fallite se il download HTTP solleva" do
+      catalog_html = <<~HTML
+        <div class="card">
+          <h3>Adozioni libri di testo scolastici. Regione Lombardia.</h3>
+          <span class="dettaglio-data">Modified: 25/05/2026</span>
+          <a class="csv" href="ALTLOMBARDIA000020260525.csv">CSV</a>
+        </div>
+      HTML
+
+      stub_request(:get, %r{Adozioni}).to_return(body: catalog_html, status: 200)
+      stub_request(:get, %r{ALTLOMBARDIA}).to_timeout
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.send(:scrape_adozioni)
+
+      assert_includes scraper.regioni_fallite, "LOMBARDIA"
+      assert_empty scraper.regioni_aggiornate
+    end
   end
 end
