@@ -407,6 +407,18 @@ namespace :import do
 
     Rails.logger.info "Inizio importazione nuove adozioni"
 
+    min_csv_threshold = 18
+    csv_files = Dir.glob(Rails.root.join('tmp', '_miur', 'adozioni', '*.csv').to_s)
+
+    if csv_files.size < min_csv_threshold
+      msg = "ABORT import:new_adozioni — solo #{csv_files.size}/#{min_csv_threshold} CSV presenti. " \
+            "TRUNCATE non eseguito per non distruggere dati esistenti. " \
+            "Rilancia lo scraper o copia manualmente i CSV mancanti."
+      Rails.logger.error(msg)
+      puts msg
+      abort msg
+    end
+
     answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI Vuoi cancellare tutti i dati esistenti? (y/n)")
     if answer == true
       NewAdozione.connection.execute('TRUNCATE TABLE new_adozioni RESTART IDENTITY')
