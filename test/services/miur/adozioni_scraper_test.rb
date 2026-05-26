@@ -109,5 +109,31 @@ module Miur
       assert_empty scraper.regioni_nuove
       assert_requested :get, %r{ALTMOLISE}, times: 3
     end
+
+    test "fallback: usa CSV archiviato se download fallisce definitivamente" do
+      archive_dir = @tmp_dir.join("20260520")
+      FileUtils.mkdir_p(archive_dir)
+      archive_file = archive_dir.join("ALTMOLISE000020260520.csv")
+      File.write(archive_file, "x" * (Miur::AdozioniScraper::MIN_VALID_SIZE + 1))
+
+      catalog_html = <<~HTML
+        <div class="card">
+          <h3>Adozioni libri di testo scolastici. Regione Molise.</h3>
+          <span class="dettaglio-data">Modified: 25/05/2026</span>
+          <a class="csv" href="ALTMOLISE000020260525.csv">CSV</a>
+        </div>
+      HTML
+
+      stub_request(:get, %r{Adozioni}).to_return(body: catalog_html, status: 200)
+      stub_request(:get, %r{ALTMOLISE}).to_timeout
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.stubs(:retry_sleep).returns(0)
+      scraper.send(:scrape_adozioni)
+
+      assert_includes scraper.regioni_stale, "MOLISE"
+      assert_not_includes scraper.regioni_fallite, "MOLISE"
+      assert File.exist?(@tmp_dir.join("ALTMOLISE000020260520.csv")), "il CSV archiviato deve essere ricopiato nella root"
+    end
   end
 end
