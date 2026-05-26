@@ -1,4 +1,5 @@
 require "test_helper"
+require "rake"
 require "webmock/minitest"
 require "fileutils"
 
@@ -142,6 +143,29 @@ module Miur
       assert_includes scraper.regioni_stale, "MOLISE"
       assert_not_includes scraper.regioni_fallite, "MOLISE"
       assert File.exist?(@tmp_dir.join("ALTMOLISE000020260520.csv")), "il CSV archiviato deve essere ricopiato nella root"
+    end
+
+    test "process_imports parte se >= 18 CSV in DOWNLOAD_DIR" do
+      18.times { |i| File.write(@tmp_dir.join("ALTREG#{i}000020260525.csv"), "x") }
+
+      task_double = mock("rake_task")
+      task_double.expects(:reenable).at_least_once
+      task_double.expects(:invoke).at_least_once
+      Rake::Task.expects(:[]).with("import:new_adozioni").returns(task_double).at_least_once
+      Rake::Task.expects(:[]).with("import:cambia_religione").returns(task_double).at_least_once
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_aggiornate, ["A", "B"])
+      scraper.send(:process_imports)
+    end
+
+    test "process_imports salta import se < 18 CSV in DOWNLOAD_DIR" do
+      5.times { |i| File.write(@tmp_dir.join("ALTREG#{i}.csv"), "x") }
+      Rake::Task.expects(:[]).never
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_aggiornate, ["A"])
+      scraper.send(:process_imports)
     end
   end
 end

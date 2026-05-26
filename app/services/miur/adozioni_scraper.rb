@@ -14,6 +14,7 @@ module Miur
     MIN_VALID_SIZE = 1024
     MAX_ATTEMPTS = 3
     RETRY_SLEEP_SECONDS = [10, 30, 60].freeze
+    MIN_CSV_FOR_IMPORT = 18
 
     attr_reader :regioni_aggiornate, :regioni_saltate, :regioni_nuove, :regioni_fallite, :regioni_stale
 
@@ -188,15 +189,19 @@ module Miur
     def process_imports
       # NOTE: regioni_stale (fallback CSV) non triggera import: il file è già a disco
       # e verrà incluso dal task import:new_adozioni quando ci sono comunque aggiornate/nuove.
-      # Vedi Task 10 del piano: process_imports avrà anche un check di soglia MIN_CSV_FOR_IMPORT.
       if @regioni_aggiornate.empty? && @regioni_nuove.empty?
         Rails.logger.info "Nessuna regione aggiornata o nuova, skip import"
         return
       end
 
+      csv_count = Dir.glob(File.join(DOWNLOAD_DIR, "*.csv")).size
+      if csv_count < MIN_CSV_FOR_IMPORT
+        Rails.logger.error "[MIUR] SKIP IMPORT: solo #{csv_count}/#{MIN_CSV_FOR_IMPORT} CSV presenti. Non eseguo TRUNCATE."
+        return
+      end
+
       Rake::Task['import:new_adozioni'].reenable
       Rake::Task['import:cambia_religione'].reenable
-
       Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
     end
