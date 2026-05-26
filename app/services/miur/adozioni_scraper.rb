@@ -12,6 +12,8 @@ module Miur
     CSV_OPEN_TIMEOUT = 30
     CSV_READ_TIMEOUT = 1800
     MIN_VALID_SIZE = 1024
+    MAX_ATTEMPTS = 3
+    RETRY_SLEEP_SECONDS = [10, 30, 60].freeze
 
     attr_reader :regioni_aggiornate, :regioni_saltate, :regioni_nuove, :regioni_fallite
 
@@ -69,31 +71,47 @@ module Miur
     end
 
     def process_region(region, csv_url, filepath, existing_file, existing_date)
-      Rails.logger.info("[MIUR] #{region}: download start")
-      started_at = Time.current
+      attempts = 0
+      last_error = nil
 
-      bytes = download_file(csv_url, filepath)
+      MAX_ATTEMPTS.times do |i|
+        attempts = i + 1
+        Rails.logger.info("[MIUR] #{region}: download start (tentativo #{attempts}/#{MAX_ATTEMPTS})")
+        started_at = Time.current
 
-      if bytes < MIN_VALID_SIZE
-        File.delete(filepath) if File.exist?(filepath)
-        Rails.logger.warn("[MIUR] #{region}: scaricati solo #{bytes} byte, file rimosso")
-        @regioni_fallite << region
+        bytes = download_file(csv_url, filepath)
+
+        if bytes < MIN_VALID_SIZE
+          File.delete(filepath) if File.exist?(filepath)
+          last_error = "bytes < MIN_VALID_SIZE (#{bytes})"
+          Rails.logger.warn("[MIUR] #{region}: tentativo #{attempts} scaricati solo #{bytes} byte")
+          retry_sleep(i) if i < MAX_ATTEMPTS - 1
+          next
+        end
+
+        if existing_file
+          archive_file(existing_file, existing_date)
+          @regioni_aggiornate << region
+        else
+          @regioni_nuove << region
+        end
+
+        elapsed = (Time.current - started_at).round(1)
+        Rails.logger.info("[MIUR] #{region}: ok #{bytes} byte in #{elapsed}s (tentativo #{attempts})")
         return
+      rescue => e
+        File.delete(filepath) if File.exist?(filepath) && File.size(filepath) < MIN_VALID_SIZE
+        last_error = "#{e.class}: #{e.message}"
+        Rails.logger.error("[MIUR] #{region}: tentativo #{attempts} errore — #{last_error}")
+        retry_sleep(i) if i < MAX_ATTEMPTS - 1
       end
 
-      if existing_file
-        archive_file(existing_file, existing_date)
-        @regioni_aggiornate << region
-      else
-        @regioni_nuove << region
-      end
-
-      elapsed = (Time.current - started_at).round(1)
-      Rails.logger.info("[MIUR] #{region}: ok #{bytes} byte in #{elapsed}s")
-    rescue => e
-      File.delete(filepath) if File.exist?(filepath) && File.size(filepath) < MIN_VALID_SIZE
-      Rails.logger.error("[MIUR] #{region}: errore download — #{e.class}: #{e.message}")
+      Rails.logger.error("[MIUR] #{region}: fallita dopo #{MAX_ATTEMPTS} tentativi — ultimo errore: #{last_error}")
       @regioni_fallite << region
+    end
+
+    def retry_sleep(attempt_index)
+      sleep(RETRY_SLEEP_SECONDS[attempt_index])
     end
 
     def clean_region_name(text)
