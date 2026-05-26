@@ -111,6 +111,43 @@ Sidekiq-based jobs in `app/jobs/`:
 **Persistence:**
 - I CSV scaricati dal MIUR vivono in `/rails/tmp/_miur/adozioni/` montato dal volume host `/root/miur_data`. Persistono tra deploy. Backup: rsync di `/root/miur_data/` su un altro host se serve.
 
+### MIUR scraping — recovery procedure
+
+CSV vivono in volume host `/root/miur_data` (persistente tra deploy).
+
+**Funzionamento del flusso resiliente** (cron 6 ore, `AdozioniScraperJob`):
+- `Miur::AdozioniScraper` tenta 3 download per regione con backoff (10s, 30s, 60s)
+- Se tutti i 3 tentativi falliscono, cerca un CSV in archivio (`tmp/_miur/adozioni/<YYYYMMDD>/`) e lo ricopia in root: la regione va in `regioni_stale` (dati di N giorni fa) — segnalata nell'email di notifica
+- Se mancano archivi pure, la regione va in `regioni_fallite`
+- Prima del TRUNCATE: doppia barriera (`process_imports` nel service + pre-check nel task rake). Soglia: minimo 18 CSV nella root, altrimenti l'import salta e mantiene il DB com'è
+
+**Se vedi nei log "SKIP IMPORT: N/18 CSV presenti":**
+1. SSH sul server prod
+2. Verifica CSV: `ls /root/miur_data/adozioni/*.csv | wc -l`
+3. Re-lancia lo scraper a mano:
+   ```bash
+   docker exec prova-job-<sha> bin/rails runner 'AdozioniScraperJob.new.perform'
+   ```
+4. Se il MIUR è giù, lancia solo lo scraping senza import:
+   ```bash
+   docker exec prova-job-<sha> bin/rails runner '
+     s = Miur::AdozioniScraper.new
+     s.send(:prepare_directory)
+     s.send(:scrape_adozioni)
+     puts "Aggiornate: #{s.regioni_aggiornate.size}"
+     puts "Stale (fallback): #{s.regioni_stale.size}"
+     puts "Fallite: #{s.regioni_fallite.inspect}"
+   '
+   ```
+
+**Recovery da container Docker stopped** (es. CSV persi prima del volume Docker, oggi protetto):
+```bash
+docker ps -a | grep prova-job
+docker cp prova-job-<sha-vecchio>:/rails/tmp/_miur/adozioni/. /root/miur_data/adozioni/
+```
+
+`docker cp` funziona anche su container stopped. NON usare `docker start` sul container vecchio — riavvierebbe Sidekiq con codice obsoleto.
+
 ### Frontend
 
 - **Importmap** for JavaScript (no Node build step)
