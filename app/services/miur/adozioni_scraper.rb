@@ -111,7 +111,7 @@ module Miur
     end
 
     def retry_sleep(attempt_index)
-      sleep(RETRY_SLEEP_SECONDS[attempt_index])
+      sleep(RETRY_SLEEP_SECONDS.fetch(attempt_index, RETRY_SLEEP_SECONDS.last))
     end
 
     def clean_region_name(text)

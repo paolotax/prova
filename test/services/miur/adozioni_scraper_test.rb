@@ -88,5 +88,26 @@ module Miur
       assert_includes scraper.regioni_nuove, "SICILIA"
       assert_empty scraper.regioni_fallite
     end
+
+    test "retry: dopo 3 tentativi falliti la regione finisce in fallite" do
+      catalog_html = <<~HTML
+        <div class="card">
+          <h3>Adozioni libri di testo scolastici. Regione Molise.</h3>
+          <span class="dettaglio-data">Modified: 25/05/2026</span>
+          <a class="csv" href="ALTMOLISE000020260525.csv">CSV</a>
+        </div>
+      HTML
+
+      stub_request(:get, %r{Adozioni}).to_return(body: catalog_html, status: 200)
+      stub_request(:get, %r{ALTMOLISE}).to_timeout
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.stubs(:retry_sleep).returns(0)
+      scraper.send(:scrape_adozioni)
+
+      assert_includes scraper.regioni_fallite, "MOLISE"
+      assert_empty scraper.regioni_nuove
+      assert_requested :get, %r{ALTMOLISE}, times: 3
+    end
   end
 end
