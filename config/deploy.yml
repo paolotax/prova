@@ -4,6 +4,7 @@ image: paolotax/prova
 
 volumes:
   - "/root/cli:/rails/public/cli"
+  - "/root/miur_data:/rails/tmp/_miur"
 
 servers:
   web:

@@ -108,6 +108,9 @@ Sidekiq-based jobs in `app/jobs/`:
 - Geocoding jobs for schools and clients
 - Scraping jobs for adoption data
 
+**Persistence:**
+- I CSV scaricati dal MIUR vivono in `/rails/tmp/_miur/adozioni/` montato dal volume host `/root/miur_data`. Persistono tra deploy. Backup: rsync di `/root/miur_data/` su un altro host se serve.
+
 ### Frontend
 
 - **Importmap** for JavaScript (no Node build step)
