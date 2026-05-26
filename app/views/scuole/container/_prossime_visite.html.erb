@@ -1,6 +1,6 @@
 <%# locals: (scuola:) -%>
 
-<% prossime_visite = scuola.tappe.programmate.per_data.limit(10) %>
+<% prossime_visite = scuola.tappe.where("data_tappa >= ?", Date.current.tomorrow).per_data.limit(10) %>
 <% if prossime_visite.any? %>
 	<div class="margin-block-start">
 		<div class="group-header">
