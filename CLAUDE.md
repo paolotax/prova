@@ -110,6 +110,13 @@ Sidekiq-based jobs in `app/jobs/`:
 
 **Persistence:**
 - I CSV scaricati dal MIUR vivono in `/rails/tmp/_miur/adozioni/` montato dal volume host `/root/miur_data`. Persistono tra deploy. Backup: rsync di `/root/miur_data/` su un altro host se serve.
+- **PRIMO deploy con questo volume (one-time):** prima di `kamal deploy`, copia i CSV attuali dal container running al volume host, altrimenti il volume sarà vuoto e l'import salterà:
+  ```bash
+  mkdir -p /root/miur_data/adozioni
+  docker cp prova-job-$(docker ps --filter name=prova-job --format "{{.ID}}"):/rails/tmp/_miur/adozioni/. /root/miur_data/adozioni/
+  ls /root/miur_data/adozioni/*.csv | wc -l   # deve essere >= 20
+  ```
+  Poi `kamal deploy`.
 
 ### MIUR scraping — recovery procedure
 

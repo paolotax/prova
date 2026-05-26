@@ -64,6 +64,7 @@ module Miur
       stub_request(:get, %r{ALTLOMBARDIA}).to_timeout
 
       scraper = Miur::AdozioniScraper.new
+      scraper.stubs(:retry_sleep).returns(0)
       scraper.send(:scrape_adozioni)
 
       assert_includes scraper.regioni_fallite, "LOMBARDIA"
