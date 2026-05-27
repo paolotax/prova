@@ -31,17 +31,17 @@
 
   <% if current_user.admin? %>
     <%= link_to stats_path(admin_extra), class: "stats-nav__link #{'is-active' if params[:categoria].blank?}" do %>
-      <%= icon_tag "list-bullet", class: "icon--small" %>
+      <%= icon_tag "globe", class: "icon--small" %>
       <span>Tutte</span>
     <% end %>
   <% end %>
 
   <% [
-       ["utenti",    "Le mie adozioni", "user"],
-       ["editori",   "Per editore",     "building-office"],
-       ["province",  "Per provincia",   "map"],
-       ["titoli",    "Per titolo",      "book-open"],
-       ["operativo", "Operativo",       "chart-bar"]
+       ["utenti",    "Le mie adozioni", "cash"],
+       ["editori",   "Per editore",     "building-library"],
+       ["province",  "Per provincia",   "mappa"],
+       ["titoli",    "Per titolo",      "book"],
+       ["operativo", "Operativo",       "chart"]
      ].each do |cat, label, icon| %>
     <% next if (@counts_per_categoria[cat].to_i.zero?) && !current_user.admin? %>
     <%= link_to stats_path(admin_extra.merge(categoria: cat)),
@@ -57,7 +57,7 @@
   <% if current_user.admin? %>
     <%= link_to stats_path(admin_extra.merge(categoria: "altre")),
                 class: "stats-nav__link #{'is-active' if params[:categoria] == 'altre'}" do %>
-      <%= icon_tag "chart-bar", class: "icon--small" %>
+      <%= icon_tag "bell", class: "icon--small" %>
       <span>Altre</span>
       <% if (n = @counts_per_categoria['altre'].to_i) > 0 %>
         <span class="txt-small txt-subtle">(<%= n %>)</span>
@@ -87,7 +87,7 @@
           </tr>
         </thead>
 
-        <tbody data-controller="tax-sortable" data-tax-sortable-group-value="stats"
+        <tbody data-controller="tax-sortable anchor-highlight" data-tax-sortable-group-value="stats"
                data-action="dragstart->tax-sortable#dragStart dragover->tax-sortable#dragOver dragenter->tax-sortable#dragEnter dragleave->tax-sortable#dragLeave drop->tax-sortable#drop dragend->tax-sortable#dragEnd">
           <%= render @stats %>
         </tbody>

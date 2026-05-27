@@ -7,6 +7,7 @@ class StatsController < ApplicationController
   CATEGORIE_VISIBILI = %w[utenti editori province titoli operativo].freeze
 
   def index
+    session[:stats_index_url] = request.fullpath
     base = policy_scope(Stat)
 
     if current_user.admin?

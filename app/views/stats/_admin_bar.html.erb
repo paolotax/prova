@@ -1,6 +1,6 @@
 <%# locals: (stati_filtro:, counts_per_stato:, stats_in_errore:) -%>
 
-<div class="stats-admin-bar flex flex-column gap-half margin-block-end">
+<div class="stats-admin-bar center flex flex-column gap-half margin-block-end">
   <% if stats_in_errore.to_i > 0 %>
     <div class="alert alert--danger flex align-center gap">
       <%= icon_tag "exclamation-triangle", class: "icon--small" %>
@@ -14,7 +14,7 @@
     </div>
   <% end %>
 
-  <div class="flex align-center gap wrap">
+  <div class="flex center align-center gap wrap margin-block-start">
     <span class="txt-small txt-subtle txt-uppercase">Stato:</span>
     <% Stat::STATI.each do |s| %>
       <% selected = stati_filtro.include?(s) %>

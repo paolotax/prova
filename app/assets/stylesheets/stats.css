@@ -98,6 +98,7 @@
   .stats-table__row {
     background-color: var(--color-canvas);
     border-block-end: var(--table-border);
+    scroll-margin-block-start: 5rem;
 
     &:last-child {
       border-block-end: none;
@@ -105,6 +106,20 @@
 
     &:hover {
       background-color: var(--color-canvas-tinted);
+    }
+
+    &:target,
+    &.is-flashing {
+      animation: stats-row-flash 2.5s ease-out;
+    }
+  }
+
+  @keyframes stats-row-flash {
+    0%, 40% {
+      background-color: color-mix(in srgb, var(--color-positive) 25%, var(--color-canvas));
+    }
+    100% {
+      background-color: var(--color-canvas);
     }
   }
 
