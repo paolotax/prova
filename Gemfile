@@ -63,9 +63,10 @@ group :development do
   gem "bullet"
 
   gem "derailed_benchmarks"
-  gem "stackprof"
 
 end
+
+gem "stackprof"
 
 group :development, :production do
   gem "rails_performance"
