@@ -13,6 +13,9 @@ class Stats::ExecutionsController < ApplicationController
       fields.map { |f| c[f] }
     end
 
+    pct_of_total_cols = @stat.aggregazioni.select { |a| a[:kind] == :extra && a[:op] == :pct_of_total }.map { |a| a[:col] }
+    @grand_totals = Stats::Aggregator.sums_by_col(@result, pct_of_total_cols)
+
     respond_to do |format|
       format.html
       format.xlsx do

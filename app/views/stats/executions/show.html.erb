@@ -1,4 +1,31 @@
 <%= turbo_frame_tag "stat_results" do %>
+  <%
+    extras_by_label = @stat.aggregazioni.select { |a| a[:kind] == :extra }.index_by { |a| a[:label] }
+
+    format_extra = ->(value, format) do
+      if value.nil?
+        "—"
+      elsif format == :pct
+        number_to_percentage(value, precision: 1, separator: ",", delimiter: ".")
+      else
+        number_with_precision(value, precision: 3, separator: ",", delimiter: ".")
+      end
+    end
+
+    format_cell = ->(value) do
+      if value.is_a?(Integer)
+        number_with_delimiter(value, delimiter: ".")
+      elsif value.is_a?(Numeric)
+        number_to_currency(value, unit: "", separator: ",", delimiter: ".")
+      else
+        value
+      end
+    end
+
+    base_headers = (@result.first&.keys || []).reject { |h| @stat.raggruppa.include?(h) }
+    columns_count = base_headers.size
+  %>
+
   <div class="stats-result" data-controller="indice-tabella">
 
     <% if @stat.raggruppa.any? %>
@@ -14,7 +41,8 @@
       <tbody>
         <% @raggruppamento.each do |group, group_result| %>
           <% group_key = group.join.gsub(" ", "-").downcase %>
-          <% columns_count = @result.first.keys.size - @stat.raggruppa.size %>
+          <% agg = Stats::Aggregator.call(group_result, @stat.aggregazioni, grand_totals: @grand_totals) %>
+          <% extras_by_label_in_agg = agg.extras.index_by(&:label) %>
 
           <%# Group title %>
           <tr data-group="<%= group_key %>" class="stats-result__group-title">
@@ -25,52 +53,57 @@
 
           <%# Column headers %>
           <tr data-group="<%= group_key %>">
-            <% group_result.first.keys.each do |header| %>
-              <% unless @stat.raggruppa.include?(header) %>
-                <th class="stats-result__th"><%= header.humanize %></th>
-              <% end %>
+            <% base_headers.each do |header| %>
+              <th class="stats-result__th"><%= header.humanize %></th>
             <% end %>
           </tr>
 
-          <%# Data rows %>
+          <%# Data rows (valori dal SQL, niente sovrascritture) %>
           <% group_result.each do |row| %>
             <%= tag.tr class: ["stats-result__row", ("is-highlighted" if @miei_editori.include?(row["editore"]))],
                        data: { group: group_key } do %>
-              <% row.each do |key, value| %>
-                <% unless @stat.raggruppa.include?(key) %>
-                  <td class="stats-result__td">
-                    <% if value.is_a?(Integer) %>
-                      <%= number_with_delimiter(value, delimiter: ".") %>
-                    <% elsif value.is_a?(Numeric) %>
-                      <%= number_to_currency(value, unit: "", separator: ",", delimiter: ".") %>
-                    <% else %>
-                      <%= value %>
-                    <% end %>
-                  </td>
-                <% end %>
+              <% base_headers.each do |header| %>
+                <td class="stats-result__td"><%= format_cell.call(row[header]) %></td>
               <% end %>
             <% end %>
           <% end %>
 
-          <%# Totals row %>
+          <%# Totals row: :extra ha priorità su :col, fallback vuoto %>
           <tr data-group="<%= group_key %>" class="stats-result__footer">
-            <% group_result.first.keys.each do |header| %>
-              <% unless @stat.raggruppa.include?(header) %>
-                <th class="stats-result__th">
-                  <% if @stat.totali.include?(header) %>
-                    <% all_integer = group_result.all? { |r| r[header].is_a?(Integer) } %>
-                    <% if all_integer %>
-                      <%= number_with_delimiter(group_result.sum { |r| r[header].to_i }, delimiter: ".") %>
-                    <% else %>
-                      <%= number_to_currency(group_result.sum { |r| r[header].to_f }, unit: "", separator: ",", delimiter: ".") %>
-                    <% end %>
-                  <% end %>
-                </th>
-              <% end %>
+            <% base_headers.each do |header| %>
+              <th class="stats-result__th">
+                <% if (extra = extras_by_label_in_agg[header]) %>
+                  <%= format_extra.call(extra.value, extra.format) %>
+                <% elsif (value = agg.cells[header]) %>
+                  <%= format_cell.call(value) %>
+                <% end %>
+              </th>
             <% end %>
           </tr>
         <% end %>
       </tbody>
+
+      <%# Grand total — fuori dal tbody, non viene filtrato da indice-tabella %>
+      <% if @raggruppamento.any? %>
+        <% grand_agg = Stats::Aggregator.call(@result, @stat.aggregazioni, grand_totals: @grand_totals) %>
+        <% grand_extras_by_label = grand_agg.extras.index_by(&:label) %>
+        <tfoot class="stats-result__grand">
+          <tr class="stats-result__group-title">
+            <th colspan="<%= columns_count %>" class="stats-result__group-name">Totale generale</th>
+          </tr>
+          <tr class="stats-result__footer">
+            <% base_headers.each do |header| %>
+              <th class="stats-result__th">
+                <% if (extra = grand_extras_by_label[header]) %>
+                  <%= format_extra.call(extra.value, extra.format) %>
+                <% elsif (value = grand_agg.cells[header]) %>
+                  <%= format_cell.call(value) %>
+                <% end %>
+              </th>
+            <% end %>
+          </tr>
+        </tfoot>
+      <% end %>
     </table>
   </div>
 

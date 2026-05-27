@@ -94,8 +94,13 @@
 
         <div class="flex flex-column gap-quarter flex-item-grow">
           <%= form.label :seleziona_campi, "Colonne totali", class: "txt-small txt-subtle" %>
-          <%= form.text_field :seleziona_campi, class: "input", placeholder: "importo, quantita" %>
-          <span class="txt-x-small txt-subtle">Colonne da sommare nei totali</span>
+          <%= form.text_field :seleziona_campi, class: "input", placeholder: "totale_scuole, scuole_rilevate, percentuale_rilevate=scuole_rilevate/totale_scuole:pct" %>
+          <span class="txt-x-small txt-subtle">
+            Aggregazioni separate da virgola, applicate al footer/totale (le celle nelle righe restano dal SELECT).
+            Per colonna del SELECT: <code>col</code> (somma), <code>col:avg</code>, <code>:min</code>, <code>:max</code>, <code>:count</code>.
+            Per riempire il totale di una colonna esistente con un calcolo:
+            <code>nome_colonna=a/b:pct</code>, <code>nome_colonna=a/b:ratio</code>, <code>nome_colonna=col:pct_of_total</code>.
+          </span>
         </div>
       </div>
 

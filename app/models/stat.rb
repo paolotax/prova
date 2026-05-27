@@ -79,8 +79,20 @@ class Stat < ApplicationRecord
     raggruppa_per.to_s.split(",").map(&:strip).reject(&:blank?)
   end
 
+  # Parsed declarations from seleziona_campi.
+  #
+  # Sintassi item:
+  #   col                       → {kind: :col, op: :sum, col: ...}        (default)
+  #   col:sum|avg|min|max|count → {kind: :col, op: ..., col: ...}
+  #   col:pct_of_total          → {kind: :extra, op: :pct_of_total, col: ..., label: "..."}
+  #   a/b:pct|ratio             → {kind: :extra, op: ..., a: ..., b: ..., label: "a/b"}
+  def aggregazioni
+    seleziona_campi.to_s.split(",").map(&:strip).reject(&:blank?).filter_map { |item| parse_aggregazione(item) }
+  end
+
+  # Backward compat: nomi delle colonne con aggregazione "per cella" (sum/avg/...).
   def totali
-    seleziona_campi.to_s.split(",").map(&:strip).reject(&:blank?)
+    aggregazioni.select { |a| a[:kind] == :col }.map { |a| a[:col] }
   end
 
   def sql_safe?
@@ -97,6 +109,33 @@ class Stat < ApplicationRecord
   end
 
   private
+
+  def parse_aggregazione(item)
+    # Opzionale: alias "nome=espressione[:op]"
+    alias_name, rest =
+      if item.include?("=")
+        n, r = item.split("=", 2).map(&:strip)
+        [n.presence, r]
+      else
+        [nil, item]
+      end
+
+    expr, op = rest.split(":", 2).map(&:strip)
+    op = (op.presence || "sum").to_sym
+    return nil if expr.blank?
+
+    if expr.include?("/")
+      a, b = expr.split("/", 2).map(&:strip)
+      return nil if a.blank? || b.blank?
+      return nil unless %i[pct ratio].include?(op)
+
+      { kind: :extra, op: op, a: a, b: b, label: alias_name || "#{a}/#{b}" }
+    elsif op == :pct_of_total
+      { kind: :extra, op: :pct_of_total, col: expr, label: alias_name || "% #{expr} sul totale" }
+    elsif %i[sum avg min max count].include?(op)
+      { kind: :col, op: op, col: expr }
+    end
+  end
 
   def validate_sql_safety
     return if testo.blank?
