@@ -29,12 +29,12 @@
 <nav class="stats-nav" aria-label="Categorie statistiche">
   <% admin_extra = current_user.admin? ? { stati: @stati_filtro } : {} %>
 
-  <% if current_user.admin? %>
+
     <%= link_to stats_path(admin_extra), class: "stats-nav__link #{'is-active' if params[:categoria].blank?}" do %>
       <%= icon_tag "globe", class: "icon--small" %>
       <span>Tutte</span>
     <% end %>
-  <% end %>
+
 
   <% [
        ["utenti",    "Le mia zona", "cash"],
