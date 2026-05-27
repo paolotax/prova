@@ -2,6 +2,7 @@
 
 <tr id="<%= dom_id stat %>"
     class="stats-table__row"
+    draggable="<%= policy(stat).update? %>"
     data-tax-sortable-target="item"
     data-id="<%= stat.id %>"
     data-tax-sortable-update-url="<%= stat_position_path(stat) %>">

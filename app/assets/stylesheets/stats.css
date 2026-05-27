@@ -112,6 +112,17 @@
     &.is-flashing {
       animation: stats-row-flash 2.5s ease-out;
     }
+
+    &[draggable="true"] .handle {
+      cursor: grab;
+    }
+
+    &.tax-sortable--dragging {
+      background-color: var(--color-canvas-tinted);
+      opacity: 0.4;
+      outline: 2px dashed var(--color-selected-dark, var(--color-accent));
+      outline-offset: -2px;
+    }
   }
 
   @keyframes stats-row-flash {
