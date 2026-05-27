@@ -14,7 +14,7 @@
     </div>
   <% end %>
 
-  <div class="flex center align-center gap wrap margin-block-start">
+  <div class="flex center align-center gap flex-wrap margin-block-start">
     <span class="txt-small txt-subtle txt-uppercase">Stato:</span>
     <% Stat::STATI.each do |s| %>
       <% selected = stati_filtro.include?(s) %>
