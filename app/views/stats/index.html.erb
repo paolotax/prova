@@ -37,11 +37,12 @@
   <% end %>
 
   <% [
-       ["utenti",    "Le mie adozioni", "cash"],
+       ["utenti",    "Le mia zona", "cash"],
        ["editori",   "Per editore",     "building-library"],
        ["province",  "Per provincia",   "mappa"],
        ["titoli",    "Per titolo",      "book"],
-       ["operativo", "Operativo",       "chart"]
+       ["operativo", "Operativo",       "chart"],
+       ["altre", "Altre", "bell"]
      ].each do |cat, label, icon| %>
     <% next if (@counts_per_categoria[cat].to_i.zero?) && !current_user.admin? %>
     <%= link_to stats_path(admin_extra.merge(categoria: cat)),
@@ -49,17 +50,6 @@
       <%= icon_tag icon, class: "icon--small" %>
       <span><%= label %></span>
       <% if (n = @counts_per_categoria[cat].to_i) > 0 %>
-        <span class="txt-small txt-subtle">(<%= n %>)</span>
-      <% end %>
-    <% end %>
-  <% end %>
-
-  <% if current_user.admin? %>
-    <%= link_to stats_path(admin_extra.merge(categoria: "altre")),
-                class: "stats-nav__link #{'is-active' if params[:categoria] == 'altre'}" do %>
-      <%= icon_tag "bell", class: "icon--small" %>
-      <span>Altre</span>
-      <% if (n = @counts_per_categoria['altre'].to_i) > 0 %>
         <span class="txt-small txt-subtle">(<%= n %>)</span>
       <% end %>
     <% end %>
