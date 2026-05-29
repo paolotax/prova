@@ -31,9 +31,12 @@
     <% if @stat.raggruppa.any? %>
       <div class="stats-result__filter print-hidden">
         <%= select_tag "group_index_select",
-            options_for_select(@raggruppamento.keys.map { |r| [r.join(" → "), r.join.gsub(" ", "-").downcase] }),
+            options_for_select(
+              [["Tutti", "all"]] + @raggruppamento.keys.map { |r| [r.join(" → "), r.join.gsub(" ", "-").downcase] },
+              "all"
+            ),
             data: { action: "change->indice-tabella#changeGroup" },
-            class: "field" %>
+            class: "input input--select" %>
       </div>
     <% end %>
 

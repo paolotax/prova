@@ -9,7 +9,7 @@
 
   <div class="header__actions header__actions--end">
     <% if policy(Stat).create? %>
-      <%= link_to new_stat_path, class: "btn btn--primary", data: { controller: "tooltip", tooltip_content_value: "Nuova statistica" } do %>
+      <%= link_to new_stat_path, class: "btn btn--link", data: { controller: "tooltip", tooltip_content_value: "Nuova statistica" } do %>
         <%= icon_tag "add", size: "small" %>
         <span class="for-screen-reader">Nuova statistica</span>
       <% end %>
