@@ -2,9 +2,10 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="indice-tabella"
 export default class extends Controller {
+  static targets = ["grandTotal"]
 
   changeGroup(event) {
-    
+
     // Get the selected value
     const selectedValue = event.target.value
 
@@ -22,7 +23,12 @@ export default class extends Controller {
         row.style.display = "none"
       }
     })
+
+    // Totale generale visibile solo senza filtro (tutti i raggruppamenti)
+    if (this.hasGrandTotalTarget) {
+      this.grandTotalTarget.style.display = selectedValue === "all" ? "" : "none"
+    }
   }
-    
+
 
 }

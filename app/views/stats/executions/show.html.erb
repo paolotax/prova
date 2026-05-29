@@ -90,7 +90,7 @@
       <% if @raggruppamento.any? %>
         <% grand_agg = Stats::Aggregator.call(@result, @stat.aggregazioni, grand_totals: @grand_totals) %>
         <% grand_extras_by_label = grand_agg.extras.index_by(&:label) %>
-        <tfoot class="stats-result__grand">
+        <tfoot class="stats-result__grand" data-indice-tabella-target="grandTotal">
           <tr class="stats-result__group-title">
             <th colspan="<%= columns_count %>" class="stats-result__group-name">Totale generale</th>
           </tr>

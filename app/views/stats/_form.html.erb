@@ -50,10 +50,6 @@
         <%= form.text_field :descrizione, class: "input", placeholder: "Breve descrizione della statistica" %>
       </div>
 
-      <label class="flex align-center gap-half">
-        <%= form.check_box :visible, class: "input" %>
-        <span class="txt-small">Visibile agli utenti non admin</span>
-      </label>
     </div>
   </section>
 
@@ -85,7 +81,7 @@
     <strong class="divider txt-small">Configurazione risultati</strong>
 
     <div class="flex flex-column gap margin-block-start-half">
-      <div class="flex gap">
+   
         <div class="flex flex-column gap-quarter flex-item-grow">
           <%= form.label :raggruppa_per, "Raggruppa per", class: "txt-small txt-subtle" %>
           <%= form.text_field :raggruppa_per, class: "input", placeholder: "colonna1, colonna2" %>
@@ -101,7 +97,7 @@
             Per riempire il totale di una colonna esistente con un calcolo:
             <code>nome_colonna=a/b:pct</code>, <code>nome_colonna=a/b:ratio</code>, <code>nome_colonna=col:pct_of_total</code>.
           </span>
-        </div>
+
       </div>
 
       <div class="flex gap">
