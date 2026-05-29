@@ -47,12 +47,14 @@
           <% agg = Stats::Aggregator.call(group_result, @stat.aggregazioni, grand_totals: @grand_totals) %>
           <% extras_by_label_in_agg = agg.extras.index_by(&:label) %>
 
-          <%# Group title %>
-          <tr data-group="<%= group_key %>" class="stats-result__group-title">
-            <th colspan="<%= columns_count %>" class="stats-result__group-name">
-              <%= group.join(" → ") %>
-            </th>
-          </tr>
+          <%# Group title — omesso senza raggruppamenti (sarebbe vuoto) %>
+          <% if @stat.raggruppa.any? %>
+            <tr data-group="<%= group_key %>" class="stats-result__group-title">
+              <th colspan="<%= columns_count %>" class="stats-result__group-name">
+                <%= group.join(" → ") %>
+              </th>
+            </tr>
+          <% end %>
 
           <%# Column headers %>
           <tr data-group="<%= group_key %>">
@@ -87,7 +89,8 @@
       </tbody>
 
       <%# Grand total — fuori dal tbody, non viene filtrato da indice-tabella %>
-      <% if @raggruppamento.any? %>
+      <%# Invisibile se non ci sono raggruppamenti (il totale è già nella riga unica) %>
+      <% if @stat.raggruppa.any? %>
         <% grand_agg = Stats::Aggregator.call(@result, @stat.aggregazioni, grand_totals: @grand_totals) %>
         <% grand_extras_by_label = grand_agg.extras.index_by(&:label) %>
         <tfoot class="stats-result__grand" data-indice-tabella-target="grandTotal">

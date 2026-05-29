@@ -4,18 +4,24 @@
 
 @layer components {
 
-  /* Container - Centered narrow layout
+  /* Container - Centered, fit-content (cresce con la tabella, max viewport)
   /* ------------------------------------------------------------------------ */
 
   .stats-container {
-    inline-size: 100%;
+    inline-size: fit-content;
     margin-inline: auto;
-    max-inline-size: 900px;
+    max-inline-size: 100%;
     padding-inline: var(--block-space);
     text-align: start;
 
     @media (min-width: 640px) {
       padding-inline: var(--block-space-double);
+    }
+
+    /* Il turbo-frame deve essere block perché la larghezza fit-content
+       del container segua quella naturale della tabella */
+    #stat_results {
+      display: block;
     }
   }
 
@@ -229,6 +235,12 @@
     text-align: start;
     text-transform: uppercase;
     letter-spacing: 0.025em;
+
+    /* Titoli colonna lunghi: vanno a capo (solo tra parole) invece di allargare la colonna */
+    max-inline-size: 18ch;
+    text-wrap: balance;
+    vertical-align: bottom;
+    white-space: normal;
   }
 
   .stats-result__row {
@@ -265,6 +277,10 @@
       border-block-end: none;
       font-size: var(--text-small);
       text-transform: none;
+
+      /* I totali restano su una riga */
+      max-inline-size: none;
+      white-space: nowrap;
     }
   }
 
