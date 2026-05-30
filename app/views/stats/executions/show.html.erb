@@ -89,18 +89,17 @@
       </tbody>
 
       <%# Grand total — fuori dal tbody, non viene filtrato da indice-tabella %>
-      <%# Invisibile se non ci sono raggruppamenti (il totale è già nella riga unica) %>
-      <% if @stat.raggruppa.any? %>
-        <% grand_agg = Stats::Aggregator.call(@result, @stat.aggregazioni, grand_totals: @grand_totals) %>
+      <%# Omesso senza raggruppamenti (il totale è già nella riga unica) o senza totali definiti %>
+      <% grand_agg = @stat.raggruppa.any? ? Stats::Aggregator.call(@result, @stat.aggregazioni, grand_totals: @grand_totals) : nil %>
+      <% if grand_agg && (grand_agg.cells.any? || grand_agg.extras.any?) %>
         <% grand_extras_by_label = grand_agg.extras.index_by(&:label) %>
         <tfoot class="stats-result__grand" data-indice-tabella-target="grandTotal">
-          <tr class="stats-result__group-title">
-            <th colspan="<%= columns_count %>" class="stats-result__group-name">Totale generale</th>
-          </tr>
           <tr class="stats-result__footer">
-            <% base_headers.each do |header| %>
+            <% base_headers.each_with_index do |header, i| %>
               <th class="stats-result__th">
-                <% if (extra = grand_extras_by_label[header]) %>
+                <% if i.zero? %>
+                  Totale generale
+                <% elsif (extra = grand_extras_by_label[header]) %>
                   <%= format_extra.call(extra.value, extra.format) %>
                 <% elsif (value = grand_agg.cells[header]) %>
                   <%= format_cell.call(value) %>
