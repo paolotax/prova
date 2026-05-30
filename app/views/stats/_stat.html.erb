@@ -7,6 +7,14 @@
     data-id="<%= stat.id %>"
     data-tax-sortable-update-url="<%= stat_position_path(stat) %>">
 
+  <% if policy(stat).update? %>
+    <td class="stats-table__td stats-table__td--actions">
+      <div class="handle" style="cursor: move;">
+        <%= icon_tag "drag-handle", class: "icon--small txt-subtle" %>
+      </div>
+    </td>
+  <% end %>
+
   <td class="stats-table__td stats-table__td--actions">
     <%= link_to stat_path(stat), class: "stats-table__execute", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Esegui" } do %>
       <%= icon_tag "bolt", class: "icon--small" %>
@@ -71,12 +79,6 @@
       <%= link_to edit_stat_path(stat), class: "btn btn--small", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Modifica SQL" } do %>
         <%= icon_tag "pencil", class: "icon--small" %>
       <% end %>
-    </td>
-
-    <td class="stats-table__td stats-table__td--actions">
-      <div class="handle" style="cursor: move;">
-        <%= icon_tag "bars-3", class: "icon--small txt-subtle" %>
-      </div>
     </td>
   <% end %>
 </tr>

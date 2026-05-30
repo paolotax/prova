@@ -62,6 +62,9 @@
       <table class="stats-table__table">
         <thead class="stats-table__header">
           <tr>
+            <% if current_user.admin? %>
+              <th class="stats-table__th"></th>
+            <% end %>
             <th class="stats-table__th"></th>
             <th class="stats-table__th">Categoria</th>
             <th class="stats-table__th">Descrizione</th>
@@ -71,7 +74,6 @@
               <th class="stats-table__th stats-table__td--hidden-mobile">Stato</th>
               <th class="stats-table__th stats-table__td--hidden-mobile">Sorgente</th>
               <th class="stats-table__th stats-table__td--hidden-mobile">Verifica</th>
-              <th class="stats-table__th"></th>
               <th class="stats-table__th"></th>
             <% end %>
           </tr>
