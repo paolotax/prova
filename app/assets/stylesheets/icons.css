@@ -107,6 +107,10 @@
   .icon--moon { --svg: url("moon.svg "); }
   .icon--move { --svg: url("move.svg "); }
   .icon--drag-handle { --svg: url("drag-handle.svg"); }
+  .icon--shield { --svg: url("shield.svg"); }
+  .icon--server { --svg: url("server.svg"); }
+  .icon--speedometer { --svg: url("speedometer.svg"); }
+  .icon--table { --svg: url("table.svg"); }
   .icon--notification-bell-access-only { --svg: url("bell.svg "); }
   .icon--notification-bell-watching { --svg: url("bell-off.svg "); }
   .icon--notification-bell-reverse-access-only { --svg: url("bell-off.svg "); }
