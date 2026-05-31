@@ -1,0 +1,4 @@
+<%# Sostituisce la card del libro nella lista index dopo back-navigation. %>
+<%= turbo_stream.replace dom_id(@libro) do %>
+  <%= render "libri/libro", libro: @libro %>
+<% end %>

@@ -52,7 +52,7 @@ class LibriController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.turbo_stream
+      format.turbo_stream { render :card if params[:card] }
       format.json
     end
   end

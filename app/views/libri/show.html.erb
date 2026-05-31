@@ -1,10 +1,11 @@
 <% @page_title = @libro.titolo %>
 <% @header_class = "header--card" %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% info = referrer_back_info || { label: "Libri", path: libri_path } %>
-    <%= header_back_link info[:path], label: info[:label] %>
+    <%= back_link_to info[:label], info[:path] %>
   </div>
 
   <div class="header__actions header__actions--end" id="libro-header-actions">
@@ -14,6 +15,8 @@
     <% end %>
   </div>
 <% end %>
+
+<%= tag.meta name: "back-refresh-url", content: libro_path(@libro, card: true) %>
 
 <div class="full-width card-grid pad group show-navigator">
   <%= render "libri/container/container", libro: @libro, giacenza: @giacenza, suggeriti: @suggeriti_fascicoli %>
