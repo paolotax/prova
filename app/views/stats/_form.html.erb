@@ -41,7 +41,7 @@
 
         <div class="flex flex-column gap-quarter">
           <%= form.label :anno, "Anno", class: "txt-small txt-subtle" %>
-          <%= form.text_field :anno, class: "input", placeholder: "2024", style: "inline-size: 8ch;" %>
+          <%= form.text_field :anno, class: "input", placeholder: "2026", style: "inline-size: 8ch;" %>
         </div>
       </div>
 
@@ -49,7 +49,6 @@
         <%= form.label :descrizione, "Descrizione", class: "txt-small txt-subtle" %>
         <%= form.text_field :descrizione, class: "input", placeholder: "Breve descrizione della statistica" %>
       </div>
-
     </div>
   </section>
 
@@ -80,8 +79,7 @@
   <section>
     <strong class="divider txt-small">Configurazione risultati</strong>
 
-    <div class="flex flex-column gap margin-block-start-half">
-   
+    <div class="flex flex-column gap margin-block-start-half">   
         <div class="flex flex-column gap-quarter flex-item-grow">
           <%= form.label :raggruppa_per, "Raggruppa per", class: "txt-small txt-subtle" %>
           <%= form.text_field :raggruppa_per, class: "input", placeholder: "colonna1, colonna2" %>
