@@ -120,7 +120,7 @@ class Libro < ApplicationRecord
 
   # Parole che NON identificano la serie ma il tipo/qualifica di confezione.
   NOISE_TITOLO = %w[CL CONF VEND CONFVEND CONFEZIONE VOL TOMO PACK KIT SET
-                    METODO EDIZIONE ED PROP NUOVA NUOVO].freeze
+                    METODO EDIZIONE ED PROP].freeze
 
   # Token-serie: le parole iniziali significative del titolo, fino al primo
   # numero / abbreviazione / parola-rumore. Es: "BOSCO ALLEGRO CL. 1 CONF.
