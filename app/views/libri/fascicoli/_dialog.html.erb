@@ -13,7 +13,7 @@
   <%= form_with url: libro_fascicoli_path(libro), method: :post, scope: :confezione_riga do |f| %>
     <div class="flex gap-half align-center">
       <div class="form-field cb-tax" style="flex: 1;">
-        <%= combobox_tag "confezione_riga[fascicolo_id]", libri_path,
+        <%= combobox_tag "confezione_riga[fascicolo_id]", libro_fascicoli_path(libro),
               placeholder: "Cerca libro...",
               mobile_at: "0px" %>
       </div>

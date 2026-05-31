@@ -1,0 +1,4 @@
+<% if params[:q] %>
+  <%= hw_async_combobox_options @page.records,
+      render_in: { partial: "libri/librino", formats: [:html], as: :libro } %>
+<% end %>

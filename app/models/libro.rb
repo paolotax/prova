@@ -109,12 +109,40 @@ class Libro < ApplicationRecord
 
   scope :lista, -> { where("confezioni_count = 0 or fascicoli_count > 0") }
 
-  scope :potenziali_fascicoli_di, ->(libro) {
-    prefisso = libro.titolo.to_s.split.first(3).join(" ")
-    next none if prefisso.blank?
-
+  # Libri eleggibili a fascicolo di questa confezione: non confezioni essi stessi,
+  # esclusa la confezione corrente e i fascicoli GIA' presenti in QUESTA confezione.
+  # NB: un fascicolo puo' appartenere a piu' confezioni, quindi NON si escludono
+  # i libri gia' fascicoli di altre confezioni.
+  scope :fascicoli_candidati_per, ->(libro) {
     esclusi = [libro.id, *libro.fascicoli.pluck(:id)]
-    no_fascicoli.where("titolo ILIKE ?", "%#{prefisso}%").where.not(id: esclusi)
+    no_fascicoli.where.not(id: esclusi)
+  }
+
+  # Parole che NON identificano la serie ma il tipo/qualifica di confezione.
+  NOISE_TITOLO = %w[CL CONF VEND CONFVEND CONFEZIONE VOL TOMO PACK KIT SET
+                    METODO EDIZIONE ED PROP NUOVA NUOVO].freeze
+
+  # Token-serie: le parole iniziali significative del titolo, fino al primo
+  # numero / abbreviazione / parola-rumore. Es: "BOSCO ALLEGRO CL. 1 CONF.
+  # VEND. METODO 4 CARATTERI" => ["BOSCO", "ALLEGRO"].
+  def self.serie_tokens(titolo)
+    tokens = []
+    titolo.to_s.upcase.split(/[\s\-]+/).each do |parola|
+      pulita = parola.gsub(/[^[:alnum:]]/, "")
+      break if pulita.match?(/\d/) || NOISE_TITOLO.include?(pulita)
+      next  if pulita.length < 3
+      tokens << pulita
+    end
+    tokens
+  end
+
+  scope :potenziali_fascicoli_di, ->(libro) {
+    tokens = serie_tokens(libro.titolo)
+    next none if tokens.empty?
+
+    rel = fascicoli_candidati_per(libro)
+    tokens.each { |t| rel = rel.where("titolo ILIKE ?", "%#{t}%") }
+    rel
   }
   
   before_save :init

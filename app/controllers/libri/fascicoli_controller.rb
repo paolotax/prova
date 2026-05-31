@@ -3,6 +3,13 @@ class Libri::FascicoliController < ApplicationController
   before_action :set_libro
 
   def index
+    # Ricerca combobox: cerca tra i candidati a fascicolo di QUESTA confezione
+    if params[:q].present?
+      candidati = current_account.libri.fascicoli_candidati_per(@libro).search_all_word(params[:q])
+      set_page_and_extract_portion_from candidati
+      return render :index, formats: [:turbo_stream]
+    end
+
     @fascicoli = @libro.fascicoli
     respond_to do |format|
       format.html
