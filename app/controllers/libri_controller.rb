@@ -117,6 +117,13 @@ class LibriController < ApplicationController
       format.html { redirect_to libri_url, notice: "Libro eliminato.", status: :see_other }
       format.json { head :no_content }
     end
+  rescue ActiveRecord::InvalidForeignKey
+    message = "Impossibile eliminare \"#{@libro.titolo}\": è ancora referenziato da ordini, vendite o altri documenti."
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream_flash(alert: message) }
+      format.html { redirect_to libro_url(@libro), alert: message, status: :see_other }
+      format.json { render json: { error: message }, status: :unprocessable_entity }
+    end
   end
 
   def get_prezzo_e_sconto

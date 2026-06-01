@@ -16,4 +16,25 @@
       <% end %>
     <% end %>
   <% end %>
+
+  <%# Movimenti contati nel riepilogo ma non in da consegnare/completati
+      (es. vendite consegnate ma non ancora chiuse). %>
+  <% altri = @movimenti.altri.to_a %>
+  <% if altri.any? %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">
+      Altri movimenti (<%= altri.size %>)
+    </h3>
+    <% altri.group_by { |dr| dr.documento.data_documento&.year }
+            .sort_by { |anno, _| -anno.to_i }
+            .each do |anno, drs| %>
+      <h4 class="divider divider--fade txt-small txt-subtle txt-uppercase">
+        <%= anno %> <span class="txt-xx-small">(<%= drs.size %>)</span>
+      </h4>
+      <% drs.group_by { |dr| dr.documento.causale&.tipo_movimento || "altro" }
+            .each do |tipo, tipo_drs| %>
+        <h5 class="txt-x-small txt-subtle txt-uppercase margin-block-start-half"><%= tipo %></h5>
+        <%= render "libri/movimenti/tabella_movimenti", documento_righe: tipo_drs %>
+      <% end %>
+    <% end %>
+  <% end %>
 <% end %>

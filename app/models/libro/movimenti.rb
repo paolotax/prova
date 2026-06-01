@@ -17,6 +17,14 @@ class Libro::Movimenti
     righe_base.merge(Documento.completati)
   end
 
+  # Righe contate nel riepilogo ma non mostrate nelle altre liste:
+  # es. vendite gia consegnate ma non ancora chiuse (hanno consegna, niente closure).
+  # Rete di sicurezza: tutto cio che e in righe_base deve comparire da qualche parte.
+  def altri
+    esclusi = (da_consegnare.to_a + completati.to_a).map(&:id).to_set
+    righe_base.to_a.reject { |dr| esclusi.include?(dr.id) }
+  end
+
   # Crosstab: { 2024 => { "ordine" => N, "vendita" => N, "carico" => N, importo: N }, ... }
   def riepilogo_per_anno
     all_righe = righe_base.to_a

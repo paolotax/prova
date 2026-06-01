@@ -26,7 +26,7 @@
   <%= render "libri/container/footer", libro: @libro, movimenti: @movimenti %>
   <%= render "libri/container/fascicoli", libro: @libro %>
 
-  <% if @libro.adozioni_count.zero? && @movimenti.da_consegnare.none? && @movimenti.completati.none? %>
+  <% if @libro.adozioni_count.zero? && @libro.righe.none? %>
     <div class="margin-block-start">
       <%= render "shared/container/delete", record: @libro, path: libro_path(@libro), label: "questo libro" %>
     </div>
