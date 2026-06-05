@@ -469,6 +469,14 @@ namespace :import do
     end
 
     puts "Totale: #{total} NewAdozioni inserite"
+
+    # Le stats si azzerano col TRUNCATE: senza ANALYZE il planner sceglie piani
+    # ciechi sulle query Stats (vedi idx_new_adoz_ee). ANALYZE è leggero e sicuro
+    # (niente shm/VACUUM). Aggiorna anche new_scuole se presente.
+    NewAdozione.connection.execute('ANALYZE new_adozioni')
+    NewAdozione.connection.execute('ANALYZE new_scuole')
+    puts "ANALYZE new_adozioni/new_scuole eseguito"
+
     Rails.logger.info "Importazione nuove adozioni completata"
   end
 
