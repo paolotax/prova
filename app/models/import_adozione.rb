@@ -25,6 +25,7 @@
 #
 # Indexes
 #
+#  idx_import_adoz_ee                   (CODICESCUOLA) WHERE (("TIPOGRADOSCUOLA")::text = 'EE'::text)
 #  idx_import_adozioni_disc_anno_tg     (DISCIPLINA,ANNOCORSO,TIPOGRADOSCUOLA)
 #  import_adozioni_pk                   (CODICESCUOLA,ANNOCORSO,SEZIONEANNO,TIPOGRADOSCUOLA,COMBINAZIONE,CODICEISBN,NUOVAADOZ,DAACQUIST,CONSIGLIATO) UNIQUE
 #  index_import_adozioni_on_DISCIPLINA  (DISCIPLINA)

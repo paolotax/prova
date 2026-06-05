@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_24_080611) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_05_044000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -737,6 +737,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_080611) do
     t.string "anno_scolastico"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["CODICESCUOLA"], name: "idx_import_adoz_ee", where: "((\"TIPOGRADOSCUOLA\")::text = 'EE'::text)", include: ["EDITORE", "ANNOCORSO", "DISCIPLINA"]
     t.index ["DISCIPLINA", "ANNOCORSO", "TIPOGRADOSCUOLA"], name: "idx_import_adozioni_disc_anno_tg"
     t.index ["DISCIPLINA"], name: "index_import_adozioni_on_DISCIPLINA"
     t.index ["EDITORE"], name: "index_import_adozioni_on_EDITORE"
@@ -1166,6 +1167,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_080611) do
     t.string "titolo"
     t.string "volume"
     t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_new_adozioni_on_classe", unique: true
+    t.index ["codicescuola"], name: "idx_new_adoz_ee", where: "((tipogradoscuola)::text = 'EE'::text)", include: ["editore", "annocorso", "disciplina"]
   end
 
   create_table "new_scuole", force: :cascade do |t|
@@ -1191,6 +1193,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_080611) do
     t.string "sito_web"
     t.string "tipo_scuola"
     t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
+    t.index ["codice_scuola"], name: "idx_new_scuole_cod", include: ["regione", "provincia"]
   end
 
   create_table "not_nows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

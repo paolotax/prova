@@ -24,6 +24,7 @@
 #
 # Indexes
 #
+#  idx_new_adoz_ee               (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
 #  index_new_adozioni_on_classe  (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
 #
 
