@@ -22,8 +22,8 @@ module MCPTools
           clientable_type: doc.clientable_type, clientable_display: doc.clientable&.denominazione,
           clientable_value: doc.clientable ? "#{doc.clientable_type}:#{doc.clientable_id}" : nil,
           golden: doc.golden?, closed: doc.closed?,
-          consegnato: doc.consegnato_il.present?, consegnato_il: doc.consegnato_il,
-          pagato: doc.pagato_il.present?, pagato_il: doc.pagato_il, tipo_pagamento: doc.tipo_pagamento,
+          consegnato: doc.consegnato_il.present?, consegnato_il: doc.consegnato_il&.in_time_zone("Europe/Rome")&.to_date,
+          pagato: doc.pagato_il.present?, pagato_il: doc.pagato_il&.in_time_zone("Europe/Rome")&.to_date, tipo_pagamento: doc.tipo_pagamento,
           righe: doc.documento_righe.map { |dr|
             r = dr.riga
             { libro_id: r.libro_id, codice_isbn: r.libro&.codice_isbn, titolo: r.libro&.titolo,

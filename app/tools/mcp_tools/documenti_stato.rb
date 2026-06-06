@@ -26,13 +26,13 @@ module MCPTools
         case azione.downcase
         when "consegna"
           doc.mark_consegnato(consegnato_il: parsed_date)
-          result = { ok: true, azione: "consegna", consegnato: true, consegnato_il: doc.consegnato_il }
+          result = { ok: true, azione: "consegna", consegnato: true, consegnato_il: doc.consegnato_il&.in_time_zone("Europe/Rome")&.to_date }
         when "unconsegna"
           doc.unmark_consegnato
           result = { ok: true, azione: "unconsegna", consegnato: false }
         when "pagamento"
           doc.mark_pagato(pagato_il: parsed_date, tipo_pagamento: tipo_pagamento)
-          result = { ok: true, azione: "pagamento", pagato: true, pagato_il: doc.pagato_il, tipo_pagamento: doc.tipo_pagamento }
+          result = { ok: true, azione: "pagamento", pagato: true, pagato_il: doc.pagato_il&.in_time_zone("Europe/Rome")&.to_date, tipo_pagamento: doc.tipo_pagamento }
         when "unpagamento"
           doc.unmark_pagato
           result = { ok: true, azione: "unpagamento", pagato: false }
