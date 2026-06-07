@@ -3,7 +3,11 @@
 <% base_params = request.query_parameters.except("page") %>
 
 <nav class="doc-stato-tabs" role="tablist" aria-label="Stato documenti">
-  <% { "tutti" => "Tutti", "attivi" => "Attivi", "da_consegnare" => "Da consegnare", "da_pagare" => "Da pagare", "completati" => "Completati" }.each do |key, label| %>
+  <% { "tutti" => "Tutti", 
+       "attivi" => "Attivi", 
+       "da_consegnare" => "Da consegnare", 
+       "da_pagare" => "Da pagare", 
+       "completati" => "Completati" }.each do |key, label| %>
     <%= link_to documenti_path(base_params.merge("stato_documento" => key)),
           role: "tab",
           aria: { selected: current == key },
