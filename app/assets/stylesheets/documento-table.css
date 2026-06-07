@@ -282,6 +282,7 @@
   .doc-stato-tabs {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5ch;
     margin-block-end: var(--block-space-half);
   }
@@ -299,8 +300,10 @@
     white-space: nowrap;
     transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 
-    &:hover {
-      background-color: var(--color-canvas-inset);
+    &:not(.doc-stato-tab--active):hover {
+      background-color: color-mix(in srgb, var(--color-ink) 10%, transparent);
+      border-color: color-mix(in srgb, var(--color-ink) 25%, transparent);
+      color: var(--color-ink);
     }
   }
 
