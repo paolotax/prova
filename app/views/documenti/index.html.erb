@@ -1,5 +1,6 @@
 <% @page_title = "Documenti" %>
 <% @body_class = "contained-scrolling" %>
+
 <% content_for :header do %>
 	<div class="header__actions header__actions--start">
     <%= link_to new_import_path(type: :documenti),
@@ -16,20 +17,18 @@
       <%= icon_tag "table-cells" %>
       <span class="for-screen-reader">Esporta in excel</span>
     <% end %>
-
-    <%# Toggle vista card/tabella %>
-    <% vista_alt = @vista == "tabella" ? "card" : "tabella" %>
-    <%= link_to documenti_path(request.query_parameters.merge(vista: vista_alt)),
-        class: "btn",
-        data: { turbo_action: "advance", controller: "tooltip",
-                tooltip_content_value: vista_alt == "card" ? "Vista a card" : "Vista a tabella" } do %>
-      <%= icon_tag(@vista == "tabella" ? "grid" : "table") %>
-      <span class="for-screen-reader">Cambia vista</span>
-    <% end %>
   </div>
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis"><%= @page_title %></span>
+    <%# Toggle vista card/tabella %>
+    <% vista_alt = @vista == "tabella" ? "card" : "tabella" %>
+    <%= link_to documenti_path(request.query_parameters.merge(vista: vista_alt)),
+        class: "btn",
+        data: { turbo_action: "advance", controller: "tooltip vista-toggle", vista_toggle_to_value: vista_alt } do %>
+      <%= icon_tag(@vista == "tabella" ? "grid" : "table") %>
+      <span class="for-screen-reader"><%= vista_alt == "card" ? "Vista a card" : "Vista a tabella" %></span>
+    <% end %>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -50,6 +49,8 @@
 		filter_url: filtra_documenti_path(params: request.query_parameters),
 		placeholder: "Cerca documenti..." %>
 <% end %>
+
+
 
 <%= render "filters/settings",
     filter_url: documenti_path,

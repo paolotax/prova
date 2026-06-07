@@ -1,7 +1,7 @@
 class DocumentiController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:anno, :sorted_by, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], statuses: [], tipi_pagamento: []].freeze
+  FILTER_PARAMS = [:anno, :sorted_by, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], tipi_pagamento: []].freeze
 
   skip_before_action :set_user_filtering, if: -> { request.format.json? }
 

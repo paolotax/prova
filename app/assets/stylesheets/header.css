@@ -71,6 +71,13 @@
     text-align: center;
   }
 
+  /* Un eventuale pulsante dentro il titolo (es. toggle vista) non deve ereditare
+     il font grande dell'h1: lo riporta alla dimensione degli altri btn header */
+  .header__title .btn {
+    font-size: var(--text-x-small);
+    vertical-align: middle;
+  }
+
   .header__skip-navigation {
     --left-offset: -999em;
 
