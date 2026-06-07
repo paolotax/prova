@@ -1,9 +1,13 @@
-<%# locals: (entry:, draggable: true) -%>
+<%# locals: (entry:, draggable: true, as: nil) -%>
 <% if entry.entryable %>
   <% if entry.entryable_type == "Appunto" %>
     <%= render partial: "appunti/appunto", locals: { appunto: entry.entryable, entry: entry, draggable: draggable } %>
   <% elsif entry.entryable_type == "Documento" %>
-    <%= render partial: "documenti/documento", locals: { documento: entry.entryable, entry: entry, draggable: draggable } %>
+    <% if as.to_s == "row" %>
+      <%= render partial: "documenti/table/row", locals: { documento: entry.entryable, entry: entry } %>
+    <% else %>
+      <%= render partial: "documenti/documento", locals: { documento: entry.entryable, entry: entry, draggable: draggable } %>
+    <% end %>
   <% elsif entry.entryable_type == "Tappa" %>
     <%= render partial: "tappe/tappa", locals: { tappa: entry.entryable, entry: entry, draggable: draggable } %>
   <% end %>

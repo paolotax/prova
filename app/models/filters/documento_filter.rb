@@ -28,14 +28,44 @@ module Filters
     include DocumentoFilter::Summarized
 
     def documenti
+      scope = filtered_scope
+      scope = apply_stato_documento(scope)
+      apply_ordering(scope)
+    end
+
+    alias_method :results, :documenti
+
+    # Conteggi per i tab di stato sopra la tabella.
+    # Calcolati sullo scope già filtrato dagli altri filtri (ricerca, causale...)
+    # ma PRIMA del filtro di stato, così i numeri riflettono cosa si vedrebbe
+    # cliccando ciascun tab.
+    def stato_counts
+      base = filtered_scope
+      {
+        "attivi"        => base.attivi.count,
+        "da_consegnare" => base.attivi.where.missing(:consegna).count,
+        "da_pagare"     => base.attivi.where.missing(:pagamento).count,
+        "completati"    => base.completati.count,
+        "tutti"         => base.count
+      }
+    end
+
+    private
+
+    # Scope con tutti i filtri tranne stato_documento e ordinamento.
+    def filtered_scope
       target_account = account || Current.account
       result = target_account.documenti
         .solo_padri
         .joins("left outer join scuole on documenti.clientable_type = 'Scuola' and documenti.clientable_id = scuole.id")
         .joins("left outer join clienti on documenti.clientable_type = 'Cliente' and documenti.clientable_id = clienti.id")
+        .joins("left outer join classi on documenti.clientable_type = 'Classe' and documenti.clientable_id = classi.id")
+        .joins("left outer join persone on documenti.clientable_type = 'Persona' and documenti.clientable_id = persone.id")
+        .joins("left outer join scuole scuole_clientable on scuole_clientable.id = coalesce(classi.scuola_id, persone.scuola_id)")
         .includes(:causale, :clientable, :consegna, :pagamento, :righe,
                   entry: [:column, :goldness, :closure, :not_now],
-                  documento_righe: [riga: :libro])
+                  documento_righe: [riga: :libro],
+                  documenti_derivati: :causale)
 
       # Scoping per membership: member vede solo documenti delle sue scuole
       unless Current.admin?
@@ -43,72 +73,73 @@ module Filters
         result = result.where(clientable_type: "Scuola", clientable_id: scuola_ids)
       end
 
-      # Text search
-      if terms.present?
-        search_term = "%#{terms.first}%"
-        result = result.where(
-          "scuole.denominazione ILIKE :term OR clienti.denominazione ILIKE :term OR documenti.referente ILIKE :term",
-          term: search_term
-        )
-      end
+      result = apply_terms(result)
 
-      # Causale filter
       result = result.where(causale_id: causali) if causali.present?
-
-      # Tipo pagamento filter (via Pagamento state record)
       result = result.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipi_pagamento }) if tipi_pagamento.present?
-
-      # Clientable type filter
       result = result.where(clientable_type: clientable_type) if clientable_type.present?
-
-      # Anno filter
-      if anno.present?
-        result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno)
-      end
-
-      # Boolean filters (via state records)
+      result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
       result = result.joins(:consegna) if consegnati.present?
       result = result.joins(:pagamento) if pagati.present?
 
-      # Stato documento filter (attivi/da consegnare/da pagare/completati/tutti)
-      case stato_documento
-      when "attivi"
-        result = result.attivi
-      when "da_consegnare"
-        result = result.attivi.where.missing(:consegna)
-      when "da_pagare"
-        result = result.attivi.where.missing(:pagamento)
-      when "completati"
-        result = result.completati
-      when "tutti"
-        # Nessun filtro su stato closure
-        result
-      else
-        # Default: mostra solo documenti attivi (non chiusi)
-        result = result.attivi
+      result
+    end
+
+    # Ricerca testuale estesa: denominazione cliente/scuola, referente,
+    # numero documento (se il termine è numerico) e titolo/ISBN libro nelle righe.
+    def apply_terms(scope)
+      return scope unless terms.present?
+
+      term = terms.first
+      like = "%#{term}%"
+      clauses = [
+        "scuole.denominazione ILIKE :like OR clienti.denominazione ILIKE :like OR documenti.referente ILIKE :like " \
+          "OR scuole_clientable.denominazione ILIKE :like " \
+          "OR persone.nome ILIKE :like OR persone.cognome ILIKE :like",
+        "EXISTS (SELECT 1 FROM documento_righe dr " \
+          "JOIN righe r ON r.id = dr.riga_id " \
+          "JOIN libri l ON l.id = r.libro_id " \
+          "WHERE dr.documento_id = documenti.id " \
+          "AND (l.titolo ILIKE :like OR l.codice_isbn ILIKE :like))"
+      ]
+      binds = { like: like }
+
+      if term.match?(/\A\d+\z/)
+        clauses << "documenti.numero_documento = :num"
+        binds[:num] = term.to_i
       end
 
-      # Ordering (golden items first via subquery, then by chosen sort)
-      result = case sorted_by.to_s
+      scope.where(clauses.join(" OR "), binds)
+    end
+
+    def apply_stato_documento(scope)
+      case stato_documento
+      when "da_consegnare" then scope.attivi.where.missing(:consegna)
+      when "da_pagare"     then scope.attivi.where.missing(:pagamento)
+      when "completati"    then scope.completati
+      when "tutti"         then scope
+      else                      scope.attivi # "attivi" e default
+      end
+    end
+
+    def apply_ordering(scope)
+      case sorted_by.to_s
       when "per_cliente"
-        result.order(
+        scope.order(
           Arel.sql(Documento::GOLDEN_SORT_SQL),
           Arel.sql("EXTRACT(YEAR FROM documenti.data_documento) DESC"),
-          Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione)"),
+          Arel.sql("COALESCE(scuole.denominazione, clienti.denominazione, scuole_clientable.denominazione)"),
           data_documento: :desc,
           numero_documento: :desc
         )
       else
-        result.order(
+        scope.order(
           Arel.sql(Documento::GOLDEN_SORT_SQL),
           data_documento: :desc,
           numero_documento: :desc,
           causale_id: :desc
         )
       end
-      result
     end
-
-    alias_method :results, :documenti
   end
 end

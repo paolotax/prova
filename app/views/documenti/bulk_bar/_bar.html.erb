@@ -63,8 +63,7 @@
   <%# Form Stato %>
   <div class="bulk-bar__form" data-bulk-bar-target="form" data-form-id="stato">
     <span class="bulk-bar__form-title">Sposta in</span>
-    <div class="bulk-bar__form-actions">
-      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
+    <div class="bulk-bar__form-options">
       <% current_account.columns.ordered.each do |column| %>
         <%= form_with url: documenti_bulk_stati_path,
               method: :post,
@@ -80,6 +79,13 @@
             method: :post,
             style: "display: contents;",
             data: { bulk_actions_target: "form" } do |f| %>
+        <%= f.hidden_field :azione, value: "rimanda" %>
+        <%= f.submit "Rimanda", class: "btn" %>
+      <% end %>
+      <%= form_with url: documenti_bulk_stati_path,
+            method: :post,
+            style: "display: contents;",
+            data: { bulk_actions_target: "form" } do |f| %>
         <%= f.hidden_field :azione, value: "completa" %>
         <%= f.submit "Completa", class: "btn" %>
       <% end %>
@@ -87,9 +93,12 @@
             method: :post,
             style: "display: contents;",
             data: { bulk_actions_target: "form" } do |f| %>
-        <%= f.hidden_field :azione, value: "riapri" %>
-        <%= f.submit "Riapri", class: "btn" %>
+        <%= f.hidden_field :azione, value: "da_gestire" %>
+        <%= f.submit "Da gestire", class: "btn" %>
       <% end %>
+    </div>
+    <div class="bulk-bar__form-actions">
+      <button type="button" class="btn" data-action="bulk-bar#hideForm">Annulla</button>
     </div>
   </div>
 

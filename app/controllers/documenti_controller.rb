@@ -27,8 +27,10 @@ class DocumentiController < ApplicationController
       return respond_to { |format| format.json }
     end
 
+    @vista = resolve_vista
     @tutti_documenti = @filter.documenti
     @total_count = @tutti_documenti.count
+    @stato_counts = @filter.stato_counts
     set_page_and_extract_portion_from @tutti_documenti
 
     respond_to do |format|
@@ -152,6 +154,21 @@ class DocumentiController < ApplicationController
   end
 
   private
+    # Vista index: "tabella" (default) o "card". Scelta persistita in cookie.
+    # Il cookie viene sempre riscritto col valore risolto così che il JS di
+    # back-navigation possa leggerlo e chiedere la variante giusta (row/card).
+    def resolve_vista
+      vista =
+        if %w[tabella card].include?(params[:vista])
+          params[:vista]
+        else
+          cookies[:documenti_vista].presence_in(%w[tabella card]) || "tabella"
+        end
+
+      cookies[:documenti_vista] = { value: vista, expires: 1.year }
+      vista
+    end
+
     def set_documento
       @documento = Current.account.documenti.find(params[:id])
     end

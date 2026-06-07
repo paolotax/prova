@@ -67,12 +67,13 @@ module Filters
       filter.causali.present? ||
       filter.tipi_pagamento.present? ||
       filter.clientable_type.present? ||
-      filter.anno.present? ||
-      filter.stato_documento.present?
+      filter.anno.present?
+      # stato_documento escluso: ha i suoi tab sopra la tabella
     end
 
     def controls
-      %w[ordinamento anni stato_documento clientable_types causali]
+      # stato_documento è reso come tab sopra la tabella, non nel pannello.
+      %w[ordinamento anni clientable_types causali]
     end
 
     def cache_key

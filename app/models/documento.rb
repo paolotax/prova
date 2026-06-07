@@ -437,9 +437,15 @@ class Documento < ApplicationRecord
     end
   end
 
-  # Auto-close quando il documento è sia pagato che consegnato
+  # Auto-close quando il documento diventa sia pagato che consegnato.
+  # Solo quando consegna o pagamento sono appena stati creati in questo save:
+  # modificare una riga di un documento già consegnato+pagato (es. riaperto)
+  # NON deve richiuderlo.
   def auto_close_se_completo
-    close if pagato? && consegnato? && !closed?
+    return unless pagato? && consegnato? && !closed?
+    return unless consegna&.previously_new_record? || pagamento&.previously_new_record?
+
+    close
   end
 
   # Chiude automaticamente documenti figli (es. DDT derivato da TD01)

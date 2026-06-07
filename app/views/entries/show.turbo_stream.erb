@@ -1,3 +1,4 @@
-<%= turbo_stream.replace dom_id(@entry) do %>
-  <%= render partial: "entries/entry", locals: { entry: @entry } %>
+<%# method: :morph così al ritorno cambia solo ciò che differisce (no sfarfallio) %>
+<%= turbo_stream.replace dom_id(@entry), method: :morph do %>
+  <%= render partial: "entries/entry", locals: { entry: @entry, as: @as } %>
 <% end %>

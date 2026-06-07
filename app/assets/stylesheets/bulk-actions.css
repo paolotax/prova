@@ -187,4 +187,16 @@
       flex-direction: column;
     }
   }
+
+  /* Stati in verticale: una scelta per riga, a tutta larghezza */
+  .bulk-bar__form-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--inline-space-half);
+  }
+
+  .bulk-bar__form-options > .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

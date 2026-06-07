@@ -12,9 +12,15 @@ module Documenti
           entry = d.ensure_entry!
           entry.close unless entry.closed?
         end
-      when "riapri"
+      when "da_gestire"
         @documenti.each do |d|
-          d.entry&.reopen if d.entry&.closed?
+          entry = d.ensure_entry!
+          entry.send_back_to_triage unless entry.awaiting_triage?
+        end
+      when "rimanda"
+        @documenti.each do |d|
+          entry = d.ensure_entry!
+          entry.postpone unless entry.postponed?
         end
       when "triage"
         column = current_account.columns.find(params[:column_id])

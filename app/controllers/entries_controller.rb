@@ -30,6 +30,7 @@ class EntriesController < ApplicationController
   end
 
   def show
+    @as = resolve_entry_variant
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -40,5 +41,20 @@ class EntriesController < ApplicationController
 
   def set_entry
     @entry = current_account.entries.find(params[:id])
+  end
+
+  # Variante di rendering per il refresh dell'entry (es. back-navigation).
+  # "row" quando si torna sull'index documenti in vista tabella, "card" altrove.
+  # Usa il param :as (passato dal JS); in fallback deduce dal referer + cookie,
+  # così funziona anche col JS in cache che non passa ancora :as.
+  def resolve_entry_variant
+    return params[:as] if params[:as].present?
+    return nil unless @entry&.entryable_type == "Documento"
+
+    ref_path = (URI(request.referer.to_s).path rescue "")
+    on_documenti_index = ref_path.match?(%r{/documenti/?\z})
+    return "row" if on_documenti_index && cookies[:documenti_vista] != "card"
+
+    nil
   end
 end

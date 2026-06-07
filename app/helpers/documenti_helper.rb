@@ -59,4 +59,38 @@ module DocumentiHelper
       Pagamento::TIPI_PAGAMENTO.map { |value, label| [label, value] }
     end
 
+    # Variante con cui rendere un documento nella lista index: :row in vista
+    # tabella (default), :card in vista card. Letta dal cookie impostato dal
+    # DocumentiController. Usata dai turbo_stream dei bulk per non rerenderizzare
+    # una card dentro la tabella.
+    def documento_list_variant
+      cookies[:documenti_vista] == "card" ? :card : :row
+    end
+
+    # Rende un singolo elemento-lista del documento nella variante corrente.
+    def render_documento_list_item(documento, entry: nil)
+      if documento_list_variant == :row
+        render "documenti/table/row", documento: documento, entry: entry
+      else
+        render "documenti/documento", documento: documento, entry: entry
+      end
+    end
+
+    # Badge di stato per la index a tabella: mostra la colonna triage,
+    # "Da gestire", "Rimandato" o "Completato".
+    def documento_stato_badge(documento)
+      label, color =
+        if documento.closed?
+          ["Completato", "var(--color-ink-light)"]
+        elsif documento.postponed?
+          ["Rimandato", "var(--color-card-2)"]
+        elsif documento.triaged?
+          [documento.column.name, documento.column.color]
+        else
+          ["Da gestire", "var(--color-link)"]
+        end
+
+      tag.span(label, class: "doc-badge", style: "--badge-color: #{color};")
+    end
+
 end

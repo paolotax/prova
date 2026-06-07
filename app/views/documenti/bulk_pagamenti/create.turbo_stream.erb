@@ -3,19 +3,11 @@
   <%= render "documenti/bulk_gestione/content", documenti: @documenti, documenti_per_cliente: @documenti_per_cliente %>
 <% end %>
 
-<%# Aggiorna ogni card documento nella lista %>
+<%# Aggiorna ogni documento nella lista, nella variante corrente (row/card) %>
 <% @documenti.each do |documento| %>
-  <%= turbo_stream.replace dom_id(documento) do %>
-    <%= render "documenti/documento", documento: documento %>
-  <% end %>
-<% end %>
-
-<%# Aggiorna anche le entry card (per contesto entries) %>
-<% @documenti.each do |documento| %>
-  <% if documento.entry.present? %>
-    <%= turbo_stream.replace dom_id(documento.entry) do %>
-      <%= render "entries/entry", entry: documento.entry, draggable: false %>
-    <% end %>
+  <% target_id = documento.entry ? dom_id(documento.entry) : dom_id(documento) %>
+  <%= turbo_stream.replace target_id do %>
+    <%= render_documento_list_item(documento, entry: documento.entry) %>
   <% end %>
 <% end %>
 
