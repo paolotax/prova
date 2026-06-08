@@ -28,6 +28,7 @@
 # Indexes
 #
 #  idx_new_scuole_cod                 (codice_scuola)
+#  idx_new_scuole_tipo                (tipo_scuola)
 #  index_new_scuole_on_codice_scuola  (anno_scolastico,codice_scuola) UNIQUE
 #
 

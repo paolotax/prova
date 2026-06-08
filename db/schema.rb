@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_044000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_08_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1168,6 +1168,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_044000) do
     t.string "volume"
     t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_new_adozioni_on_classe", unique: true
     t.index ["codicescuola"], name: "idx_new_adoz_ee", where: "((tipogradoscuola)::text = 'EE'::text)", include: ["editore", "annocorso", "disciplina"]
+    t.index ["disciplina", "annocorso", "tipogradoscuola"], name: "idx_new_adozioni_disc_anno_tg"
   end
 
   create_table "new_scuole", force: :cascade do |t|
@@ -1194,6 +1195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_044000) do
     t.string "tipo_scuola"
     t.index ["anno_scolastico", "codice_scuola"], name: "index_new_scuole_on_codice_scuola", unique: true
     t.index ["codice_scuola"], name: "idx_new_scuole_cod", include: ["regione", "provincia"]
+    t.index ["tipo_scuola"], name: "idx_new_scuole_tipo"
   end
 
   create_table "not_nows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
