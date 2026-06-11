@@ -534,6 +534,7 @@ Rails.application.routes.draw do
     resource :me, only: [:show], controller: 'me'
     namespace :stats do
       get :adozioni, to: 'adozioni#index'
+      get :new_adozioni, to: 'new_adozioni#index'
     end
 
   end
