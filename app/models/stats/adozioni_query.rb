@@ -22,7 +22,8 @@ module Stats
       "scuola"      => 'isc."CODICESCUOLA"',
       "grado"       => 'ts.grado',
       "tipo_scuola" => 'ts.tipo',
-      "filiera"     => FILIERA_CASE_SQL
+      "filiera"     => FILIERA_CASE_SQL,
+      "nuova_adozione" => 'ia."NUOVAADOZ"'
     }.freeze
 
     FILIERA_VALUES = %w[liceo tecnico professionale altro].freeze
@@ -59,7 +60,8 @@ module Stats
       "combinazione" => 'ia."COMBINAZIONE" = ?',
       "scuola"       => 'isc."DENOMINAZIONESCUOLA" ILIKE ?',
       "codice_scuola" => 'isc."CODICESCUOLA" = ?',
-      "comune"       => 'isc."DESCRIZIONECOMUNE" ILIKE ?'
+      "comune"       => 'isc."DESCRIZIONECOMUNE" ILIKE ?',
+      "nuova_adozione" => 'ia."NUOVAADOZ" = ?'
     }.freeze
 
     ORDER_COLUMNS = %w[classi_count scuole_count adozioni_count copie_stimate importo percentuale sezioni_144].freeze
@@ -115,6 +117,16 @@ module Stats
       SIGLA_TO_PROVINCIA[upper] || upper
     end
 
+    # Normalizza il filtro nuova_adozione verso i valori del MIUR ("Si"/"No").
+    # Accetta booleani e i sinonimi più comuni; lascia invariato il resto.
+    def self.normalize_nuova_adozione(value)
+      case value.to_s.strip.downcase
+      when "true", "si", "sì", "s", "yes", "y", "1" then "Si"
+      when "false", "no", "n", "0"                  then "No"
+      else value.to_s.strip
+      end
+    end
+
     def self.expand_gradi(value)
       list = Array(value).flat_map { |v| v.to_s.split(",") }.map(&:strip).reject(&:blank?)
       list = DEFAULT_GRADI.dup if list.empty?
@@ -145,7 +157,11 @@ module Stats
     private
 
     def normalize_filters(filters)
-      h = filters.to_h.stringify_keys.select { |_, v| v.present? }
+      h = filters.to_h.stringify_keys
+      # Normalizza nuova_adozione prima del filtro present?: il booleano false è un
+      # valore valido ("No") ma false.present? è false e verrebbe scartato.
+      h["nuova_adozione"] = self.class.normalize_nuova_adozione(h["nuova_adozione"]) unless h["nuova_adozione"].nil?
+      h = h.select { |_, v| v.present? }
       h["provincia"] = self.class.expand_provincia(h["provincia"]) if h["provincia"].present?
       h
     end

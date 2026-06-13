@@ -1,7 +1,7 @@
 module MCPTools
   class StatsAdozioni < Base
     tool_name "stats_adozioni"
-    description "Statistiche adozioni dal database nazionale MIUR (dati pubblici, non legati al tuo account). Di default interroga tutti i gradi (elementari + medie + superiori); restringi con il filtro `grado` (E=elementari, M=medie, N=superiori, virgola-separati). Il filtro `filiera` (liceo|tecnico|professionale|altro, virgola-separati) distingue le scuole superiori per tipologia. Filtra per area (NORD OVEST|NORD EST|CENTRO|SUD|ISOLE), regione, provincia, comune, classe, editore, disciplina, titolo, isbn. Aggrega con group_by: editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera. La provincia accetta sia il nome completo (PRATO) che la sigla (PO). Con `include_sezioni: true` ogni riga riporta anche l'array delle sezioni coinvolte (es. \"5A [C]\", \"5B\") — utile soprattutto per l'analisi di una singola scuola."
+    description "Statistiche adozioni dal database nazionale MIUR (dati pubblici, non legati al tuo account). Di default interroga tutti i gradi (elementari + medie + superiori); restringi con il filtro `grado` (E=elementari, M=medie, N=superiori, virgola-separati). Il filtro `filiera` (liceo|tecnico|professionale|altro, virgola-separati) distingue le scuole superiori per tipologia. Filtra per area (NORD OVEST|NORD EST|CENTRO|SUD|ISOLE), regione, provincia, comune, classe, editore, disciplina, titolo, isbn. Il filtro `nuova_adozione` (true/false) isola i libri adottati nuovi quest'anno nella scuola (NUOVAADOZ del MIUR): rilevante per medie/superiori, dove le nuove adozioni non hanno mercato dell'usato. Aggrega con group_by: editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera, nuova_adozione. La provincia accetta sia il nome completo (PRATO) che la sigla (PO). Con `include_sezioni: true` ogni riga riporta anche l'array delle sezioni coinvolte (es. \"5A [C]\", \"5B\") — utile soprattutto per l'analisi di una singola scuola."
 
     annotations(
       read_only_hint: true,
@@ -12,7 +12,7 @@ module MCPTools
     input_schema(
       type: "object",
       properties: {
-        group_by: { type: "string", description: "Dimensioni di aggregamento (virgola-separati): editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera" },
+        group_by: { type: "string", description: "Dimensioni di aggregamento (virgola-separati): editore, disciplina, classe, area, regione, provincia, comune, titolo, isbn (source of truth), scuola, grado, tipo_scuola, filiera, nuova_adozione (Si/No)" },
         grado: { type: "string", description: "Grado scolastico: E (elementari), M (medie), N (superiori). Accetta anche gli alias: elementari, medie, superiori. Virgola-separati per più gradi (es. 'M,N'). Se omesso, include tutti e tre." },
         filiera: { type: "string", description: "Filiera superiori: liceo, tecnico, professionale, altro. Virgola-separati (es. 'tecnico,professionale'). Match sul testo di tipi_scuole.tipo (LICEO%, IST PROF%, ISTITUTO TECNICO%/IST TEC%)." },
         area: { type: "string", description: "Macroarea geografica MIUR (esatta): NORD OVEST, NORD EST, CENTRO, SUD, ISOLE." },
@@ -27,6 +27,7 @@ module MCPTools
         scuola: { type: "string", description: "Ricerca parziale nel nome della scuola" },
         codice_scuola: { type: "string", description: "Codice ministeriale esatto (es. MOEE804012)" },
         combinazione: { type: "string", description: "Combinazione" },
+        nuova_adozione: { type: "string", description: "Nuova adozione MIUR (NUOVAADOZ): true/Si = adottato nuovo quest'anno nella scuola (niente usato); false/No = riconfermato dall'anno prima. Soprattutto per medie/superiori." },
         coefficiente: { type: "integer", description: "Alunni per classe per stima copie (default 17)" },
         order_by: { type: "string", description: "Ordinamento: classi_count (default), adozioni_count, percentuale, importo" },
         offset: { type: "integer", description: "Salta i primi N gruppi (per paginazione). Default 0." },
@@ -37,12 +38,13 @@ module MCPTools
       required: ["group_by"]
     )
 
-    def self.call(group_by:, grado: nil, filiera: nil, area: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, coefficiente: 17, order_by: "classi_count", offset: 0, limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
+    def self.call(group_by:, grado: nil, filiera: nil, area: nil, provincia: nil, comune: nil, regione: nil, classe: nil, editore: nil, disciplina: nil, titolo: nil, isbn: nil, scuola: nil, codice_scuola: nil, combinazione: nil, nuova_adozione: nil, coefficiente: 17, order_by: "classi_count", offset: 0, limit: 50, solo_144: false, include_sezioni: false, server_context:, **_params)
       with_current(server_context) do
         filters = {
           area: area, provincia: provincia, comune: comune, regione: regione, classe: classe,
           editore: editore, disciplina: disciplina, titolo: titolo, isbn: isbn,
-          combinazione: combinazione, scuola: scuola, codice_scuola: codice_scuola
+          combinazione: combinazione, scuola: scuola, codice_scuola: codice_scuola,
+          nuova_adozione: nuova_adozione
         }.compact_blank
 
         query = ::Stats::AdozioniQuery.new(

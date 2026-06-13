@@ -244,4 +244,32 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
     # AMBITO SCIENTIFICO peso 0.5 + SUSSIDIARIO DEI LINGUAGGI peso 1.0 = 1.5
     assert_in_delta 1.5, top[:sezioni_144], 0.1
   end
+
+  # 15. nuova_adozione filter — solo le adozioni nuove (NUOVAADOZ=Si)
+  test "filter nuova_adozione true returns only new adoptions" do
+    # NUOVAADOZ=Si e DAACQUIST=Si: TO-1A, TO-1B, MI-3A = 3 classi
+    result = Stats::AdozioniQuery.new(filters: { nuova_adozione: true }, group_by: ["editore"]).call
+
+    assert_equal 3, result[:totals][:classi_count]
+    assert_equal({ "nuova_adozione" => "Si" }, result[:filters_applied])
+  end
+
+  # 16. nuova_adozione false (booleano) — solo le riconfermate, non scartato da present?
+  test "filter nuova_adozione false returns only reconfirmed adoptions" do
+    # NUOVAADOZ=No e DAACQUIST=Si: TO-3C (Mondadori) = 1 classe (la riga NUOVAADOZ=No esclusa è DAACQUIST=No)
+    result = Stats::AdozioniQuery.new(filters: { nuova_adozione: false }, group_by: ["editore"]).call
+
+    assert_equal 1, result[:totals][:classi_count]
+    assert_equal "MONDADORI", result[:results].first[:editore]
+    assert_equal({ "nuova_adozione" => "No" }, result[:filters_applied])
+  end
+
+  # 17. group_by nuova_adozione — splitta nuove vs riconfermate
+  test "group by nuova_adozione splits new vs reconfirmed" do
+    result = Stats::AdozioniQuery.new(filters: {}, group_by: ["nuova_adozione"]).call
+
+    by_flag = result[:results].index_by { |r| r[:nuova_adozione] }
+    assert_equal 3, by_flag["Si"][:classi_count]
+    assert_equal 1, by_flag["No"][:classi_count]
+  end
 end
