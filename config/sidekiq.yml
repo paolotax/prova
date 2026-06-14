@@ -10,7 +10,7 @@
 :scheduler:
   :schedule:
     adozioni_scraper:
-      cron: '0 */6 * * *'  # Esegue ogni 6 ore
+      cron: '0 5,11,17,23 * * *'  # Esegue ogni 6 ore (05/11/17/23 UTC = 07/13/19/01 CEST)
       class: AdozioniScraperJob
       queue: default
       unique: true
