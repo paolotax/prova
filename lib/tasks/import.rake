@@ -402,82 +402,133 @@ namespace :import do
 
 
 
-  desc "Importa nuove ADOZIONI"
+  # Import blue-green: carica i CSV in una tabella di staging e poi la scambia
+  # atomicamente con quella live. Per tutta la durata del caricamento (minuti) le
+  # query continuano a leggere la tabella live, completa e con stats valide → niente
+  # maintenance mode, niente finestra di dati parziali, niente planner cieco (era la
+  # causa dell'OOM su db con shm 64MB). Se il job muore a metà la live resta intatta.
+  STG_TABLE = 'new_adozioni_stg'.freeze
+  ADOZIONI_LOCK_KEY = 198_706_14 # arbitrario ma stabile: serializza import concorrenti
+
+  desc "Importa nuove ADOZIONI (blue-green swap, no maintenance)"
   task :new_adozioni, [:force] => :environment do |t, args|
 
-    Rails.logger.info "Inizio importazione nuove adozioni"
+    Rails.logger.info "Inizio importazione nuove adozioni (blue-green swap)"
 
     min_csv_threshold = 18
-    csv_files = Dir.glob(Rails.root.join('tmp', '_miur', 'adozioni', '*.csv').to_s)
+    csv_files = Dir.glob(Rails.root.join('tmp', '_miur', 'adozioni', '*.csv').to_s).sort
 
     if csv_files.size < min_csv_threshold
       msg = "ABORT import:new_adozioni — solo #{csv_files.size}/#{min_csv_threshold} CSV presenti. " \
-            "TRUNCATE non eseguito per non distruggere dati esistenti. " \
+            "Swap non eseguito per non degradare i dati esistenti. " \
             "Rilancia lo scraper o copia manualmente i CSV mancanti."
       Rails.logger.error(msg)
       puts msg
       abort msg
     end
 
-    answer = args[:force] == 'true' ? true : HighLine.agree("ADOZIONI Vuoi cancellare tutti i dati esistenti? (y/n)")
-    if answer == true
-      NewAdozione.connection.execute('TRUNCATE TABLE new_adozioni RESTART IDENTITY')
+    conn = NewAdozione.connection
+
+    unless conn.select_value("SELECT pg_try_advisory_lock(#{ADOZIONI_LOCK_KEY})")
+      msg = "ABORT import:new_adozioni — un altro import è già in corso (advisory lock occupato)."
+      Rails.logger.error(msg)
+      puts msg
+      abort msg
     end
 
-    map_adozioni = {
-      "ANNOCORSO" => "annocorso",
-      "AUTORI" => "autori",
-      "CODICEISBN" => "codiceisbn",
-      "CODICESCUOLA" => "codicescuola",
-      "COMBINAZIONE" => "combinazione",
-      "CONSIGLIATO" => "consigliato",
-      "DAACQUIST" => "daacquist",
-      "DISCIPLINA" => "disciplina",
-      "EDITORE" => "editore",
-      "NUOVAADOZ" => "nuovaadoz",
-      "PREZZO" => "prezzo",
-      "SEZIONEANNO" => "sezioneanno",
-      "SOTTOTITOLO" => "sottotitolo",
-      "TIPOGRADOSCUOLA" => "tipogradoscuola",
-      "TITOLO" => "titolo",
-      "VOLUME" => "volume",
-    }
+    begin
+      map_adozioni = {
+        "ANNOCORSO" => "annocorso",
+        "AUTORI" => "autori",
+        "CODICEISBN" => "codiceisbn",
+        "CODICESCUOLA" => "codicescuola",
+        "COMBINAZIONE" => "combinazione",
+        "CONSIGLIATO" => "consigliato",
+        "DAACQUIST" => "daacquist",
+        "DISCIPLINA" => "disciplina",
+        "EDITORE" => "editore",
+        "NUOVAADOZ" => "nuovaadoz",
+        "PREZZO" => "prezzo",
+        "SEZIONEANNO" => "sezioneanno",
+        "SOTTOTITOLO" => "sottotitolo",
+        "TIPOGRADOSCUOLA" => "tipogradoscuola",
+        "TITOLO" => "titolo",
+        "VOLUME" => "volume",
+      }
 
-    batch_size = 10_000
-    total = 0
+      # 1. Staging pulita: stesse colonne e default (id da new_adozioni_id_seq), NESSUN
+      #    indice → load più veloce (gli indici si costruiscono dopo, in blocco).
+      conn.execute("DROP TABLE IF EXISTS #{STG_TABLE}")
+      conn.execute("CREATE TABLE #{STG_TABLE} (LIKE new_adozioni INCLUDING DEFAULTS)")
 
-    Dir.glob(Rails.root.join('tmp', '_miur', 'adozioni', '*.csv')).each do |file|
-      items = []
-      file_count = 0
-
-      Benchmark.bm do |x|
-        x.report("importo #{File.basename(file)}") do
-          CSV.foreach(file, headers: true, col_sep: ',', encoding: 'UTF-8') do |row|
-            items << row.to_h.transform_keys(map_adozioni)
-            file_count += 1
-            if items.size >= batch_size
-              NewAdozione.import items, validate: false, on_duplicate_key_ignore: true
-              items.clear
-            end
-          end
-          NewAdozione.import items, validate: false, on_duplicate_key_ignore: true unless items.empty?
-        end
+      # Modello con nome per la staging: activerecord-import rifiuta le classi anonime.
+      # Definito qui (non in cima al file) perché ApplicationRecord è disponibile solo
+      # dopo il caricamento dell'environment.
+      unless defined?(NewAdozioneStaging)
+        Object.const_set(:NewAdozioneStaging, Class.new(ApplicationRecord) { self.table_name = STG_TABLE })
       end
+      stg_model = NewAdozioneStaging
+      stg_model.reset_column_information
 
-      puts "righe inserite #{file_count} da #{File.basename(file)}"
-      total += file_count
+      # 2. Carica i CSV nella staging (la live non viene toccata)
+      batch_size = 10_000
+      total = 0
+      csv_files.each do |file|
+        items = []
+        file_count = 0
+
+        Benchmark.bm do |x|
+          x.report("importo #{File.basename(file)}") do
+            CSV.foreach(file, headers: true, col_sep: ',', encoding: 'UTF-8') do |row|
+              items << row.to_h.transform_keys(map_adozioni)
+              file_count += 1
+              if items.size >= batch_size
+                stg_model.import items, validate: false
+                items.clear
+              end
+            end
+            stg_model.import items, validate: false unless items.empty?
+          end
+        end
+
+        puts "righe inserite #{file_count} da #{File.basename(file)}"
+        total += file_count
+      end
+      puts "Totale: #{total} righe caricate in staging"
+
+      # 3. Indici identici alla live (nomi temporanei) + PK + ANALYZE: le stats sono
+      #    pronte PRIMA dello swap, così non c'è la finestra di planner cieco.
+      conn.execute("ALTER TABLE #{STG_TABLE} ADD CONSTRAINT #{STG_TABLE}_pkey PRIMARY KEY (id)")
+      conn.execute("CREATE UNIQUE INDEX #{STG_TABLE}_classe ON #{STG_TABLE} (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione, codiceisbn)")
+      conn.execute("CREATE INDEX #{STG_TABLE}_ee ON #{STG_TABLE} (codicescuola) INCLUDE (editore, annocorso, disciplina) WHERE tipogradoscuola = 'EE'")
+      conn.execute("CREATE INDEX #{STG_TABLE}_cod ON #{STG_TABLE} (codicescuola)")
+      conn.execute("CREATE INDEX #{STG_TABLE}_disc ON #{STG_TABLE} (disciplina, annocorso, tipogradoscuola)")
+      conn.execute("ANALYZE #{STG_TABLE}")
+      puts "Indici + PK + ANALYZE su staging completati"
+
+      # 4. Swap atomico: la live viene sostituita in una sola transazione (lock
+      #    ACCESS EXCLUSIVE di millisecondi). La sequence viene preservata staccandola
+      #    dalla vecchia tabella prima del DROP e riagganciandola alla nuova.
+      conn.transaction do
+        conn.execute("ALTER SEQUENCE new_adozioni_id_seq OWNED BY NONE")
+        conn.execute("DROP TABLE new_adozioni")
+        conn.execute("ALTER TABLE #{STG_TABLE} RENAME TO new_adozioni")
+        conn.execute("ALTER SEQUENCE new_adozioni_id_seq OWNED BY new_adozioni.id")
+        conn.execute("ALTER INDEX #{STG_TABLE}_pkey RENAME TO new_adozioni_pkey")
+        conn.execute("ALTER INDEX #{STG_TABLE}_classe RENAME TO index_new_adozioni_on_classe")
+        conn.execute("ALTER INDEX #{STG_TABLE}_ee RENAME TO idx_new_adoz_ee")
+        conn.execute("ALTER INDEX #{STG_TABLE}_cod RENAME TO idx_new_adozioni_codicescuola")
+        conn.execute("ALTER INDEX #{STG_TABLE}_disc RENAME TO idx_new_adozioni_disc_anno_tg")
+      end
+      conn.execute("SELECT setval('new_adozioni_id_seq', GREATEST((SELECT COALESCE(MAX(id), 1) FROM new_adozioni), 1))")
+      conn.execute('ANALYZE new_scuole')
+
+      NewAdozione.reset_column_information
+      puts "Swap completato: new_adozioni ora ha #{NewAdozione.count} righe"
+      Rails.logger.info "Importazione nuove adozioni completata (swap ok)"
+    ensure
+      conn.execute("SELECT pg_advisory_unlock(#{ADOZIONI_LOCK_KEY})")
     end
-
-    puts "Totale: #{total} NewAdozioni inserite"
-
-    # Le stats si azzerano col TRUNCATE: senza ANALYZE il planner sceglie piani
-    # ciechi sulle query Stats (vedi idx_new_adoz_ee). ANALYZE è leggero e sicuro
-    # (niente shm/VACUUM). Aggiorna anche new_scuole se presente.
-    NewAdozione.connection.execute('ANALYZE new_adozioni')
-    NewAdozione.connection.execute('ANALYZE new_scuole')
-    puts "ANALYZE new_adozioni/new_scuole eseguito"
-
-    Rails.logger.info "Importazione nuove adozioni completata"
   end
 
   desc "NewScuole SCUOLE 2025/6"
