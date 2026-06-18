@@ -21,28 +21,34 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Scuola</th>
-        <th>Comune</th>
-        <th>Provincia</th>
-        <th class="align-right">N° anomalie</th>
+        <th class="pad-inline">Scuola</th>
+        <th class="pad-inline">Comune</th>
+        <th class="pad-inline">Provincia</th>
+        <th class="pad-inline">Tipi anomalia</th>
+        <th class="pad-inline txt-align-end">N° anomalie</th>
       </tr>
     </thead>
     <tbody>
       <% @scuole.each do |s| %>
         <tr>
-          <td>
+          <td class="pad-inline">
             <%= link_to controllo_adozioni_path(s.codicescuola, account_id: params[:account_id]) do %>
               <strong><%= s.denominazione.presence || "—" %></strong>
               <span class="txt-subtle"><%= s.codicescuola %></span>
             <% end %>
           </td>
-          <td><%= s.comune %></td>
-          <td><%= s.provincia %></td>
-          <td class="align-right"><%= s.n_anomalie %></td>
+          <td class="pad-inline"><%= s.comune %></td>
+          <td class="pad-inline"><%= s.provincia %></td>
+          <td class="pad-inline">
+            <% s.tipi.to_s.split(",").each do |tipo| %>
+              <span class="badge <%= anomalia_badge_colore(tipo) %>"><%= tipo %></span>
+            <% end %>
+          </td>
+          <td class="pad-inline txt-align-end"><%= s.n_anomalie %></td>
         </tr>
       <% end %>
       <% if @scuole.empty? %>
-        <tr><td colspan="4" class="txt-subtle">Nessuna scuola con anomalie.</td></tr>
+        <tr><td colspan="5" class="txt-subtle">Nessuna scuola con anomalie.</td></tr>
       <% end %>
     </tbody>
   </table>

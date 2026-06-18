@@ -22,9 +22,22 @@ class ControlloAdozioniController < ApplicationController
                            .group_by { |a| [a.annocorso, a.sezioneanno, a.combinazione] }
     @scuola_mancante = @anomalie.per_tipo("scuola_mancante").exists?
     @denominazione = @anomalie.where.not(denominazione: nil).first&.denominazione
+    @libri_per_classe = libri_per_classe
   end
 
   private
+
+  # Tutti i libri da acquistare (EE) della scuola, raggruppati per classe come @per_classe.
+  # Serve a dettagliare i libri+prezzi sotto le classi con anomalie. Alternativa alla
+  # religione e parascolastica restano visibili ma escluse dal totale spesa
+  # (vedi NewAdozione#escluso_dal_tetto?).
+  def libri_per_classe
+    NewAdozione
+      .where(codicescuola: @codicescuola, tipogradoscuola: "EE")
+      .where("coalesce(daacquist, '') ILIKE 'S%'")
+      .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)
+      .group_by { |na| [na.annocorso, na.sezioneanno, na.combinazione] }
+  end
 
   def codici_account
     scuole = Current.account.scuole.where.not(codice_ministeriale: [nil, ""])

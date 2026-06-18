@@ -55,6 +55,20 @@ module ControlloAdozioni
       PER_CLASSE.fetch(annocorso.to_s, [])
     end
 
+    # Etichetta leggibile per la chiave di un requisito (usata nelle anomalie disciplina_mancante).
+    LABELS = {
+      "inglese" => "Lingua inglese",
+      "religione_alt" => "Religione (o alternativa)",
+      "libro_prima_classe" => "Libro della prima classe",
+      "sussidiario_1biennio" => "Sussidiario (1° biennio)",
+      "sussidiario_linguaggi" => "Sussidiario dei linguaggi",
+      "sussidiario_discipline" => "Sussidiario delle discipline",
+    }.freeze
+
+    def self.label(chiave)
+      LABELS.fetch(chiave.to_s, chiave.to_s.humanize)
+    end
+
     # Tetto in cents per una classe, dato un hash {disciplina => prezzo_cents} di PrezzoMinisteriale.
     # Somma un solo prezzo di riferimento per requisito (evita il doppio conteggio della coppia ambiti).
     def self.tetto_cents(annocorso, prezzi_pm)

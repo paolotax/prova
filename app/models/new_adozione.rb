@@ -36,6 +36,20 @@ class NewAdozione < ApplicationRecord
     validates :codicescuola, :annocorso, :sezioneanno, :combinazione, :codiceisbn, presence: true
     validates :codicescuola, uniqueness: { scope: [:annocorso, :sezioneanno, :combinazione, :codiceisbn] }
     
+    # Disciplina esclusa dal totale spesa e dal confronto col tetto ministeriale,
+    # pur restando visibile nell'elenco: alternativa alla religione (mutuamente
+    # esclusiva con religione) e parascolastica (libri facoltativi).
+    def escluso_dal_tetto?
+        disciplina.to_s.match?(/\A(ADOZIONE ALTERNATIVA|PARASCOLASTIC)/i)
+    end
+
+    # Prezzo (stringa "12,34") convertito in euro come BigDecimal, nil se non numerico.
+    def prezzo_euro
+        normalizzato = prezzo.to_s.tr(",", ".")
+        return unless normalizzato.match?(/\A[0-9]+(\.[0-9]+)?\z/)
+        BigDecimal(normalizzato)
+    end
+
     def self.assign_from_row(row)
         new_adozione = NewAdozione.where(
             codicescuola: row[:codicescuola], 

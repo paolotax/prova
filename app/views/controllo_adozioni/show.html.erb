@@ -27,11 +27,52 @@
   <% @per_classe.each do |(annocorso, sezioneanno, combinazione), anomalie| %>
     <section class="classe-block">
       <h2 class="classe-block__title">Classe <%= annocorso %><%= sezioneanno %></h2>
-      <ul class="anomalie-list">
+      <ul class="anomalie-list list-style-none">
         <% anomalie.each do |anomalia| %>
           <%= render "controllo_adozioni/anomalia", anomalia: anomalia %>
         <% end %>
       </ul>
+
+      <% if anomalie.any? { |a| %w[tetto_superato disciplina_mancante].include?(a.tipo) } %>
+        <% libri = @libri_per_classe[[annocorso, sezioneanno, combinazione]] || [] %>
+        <% if libri.any? %>
+          <table class="libri-table txt-small">
+            <thead>
+              <tr>
+                <th class="pad-inline">Disciplina</th>
+                <th class="pad-inline">Titolo</th>
+                <th class="pad-inline">Editore</th>
+                <th class="pad-inline txt-align-end">Prezzo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% libri.each do |libro| %>
+                <tr class="<%= "txt-subtle" if libro.escluso_dal_tetto? %>">
+                  <td class="pad-inline"><%= libro.disciplina %></td>
+                  <td class="pad-inline">
+                    <%= libro.titolo %><%= " #{libro.volume}" if libro.volume.present? %>
+                    <% if libro.escluso_dal_tetto? %>
+                      <span class="txt-small">(esclusa dal totale)</span>
+                    <% end %>
+                  </td>
+                  <td class="pad-inline"><%= libro.editore %></td>
+                  <td class="pad-inline txt-align-end">
+                    <%= libro.prezzo_euro ? number_to_currency(libro.prezzo_euro) : "—" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="3" class="pad-inline txt-align-end">Totale spesa classe</th>
+                <th class="pad-inline txt-align-end">
+                  <%= number_to_currency(libri.reject(&:escluso_dal_tetto?).sum { |l| l.prezzo_euro || 0 }) %>
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        <% end %>
+      <% end %>
     </section>
   <% end %>
 

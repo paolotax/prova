@@ -1,15 +1,22 @@
 <li class="anomalia">
-  <span class="badge"><%= anomalia.tipo %></span>
+  <span class="badge badge--large <%= anomalia_badge_colore(anomalia.tipo) %>"><%= anomalia.tipo %></span>
   <% if anomalia.disciplina.present? %>
     <span class="anomalia__disciplina"><%= anomalia.disciplina %></span>
   <% end %>
   <% if anomalia.titolo.present? %>
     <span class="anomalia__titolo"><%= anomalia.titolo %></span>
   <% end %>
-  <% if anomalia.tipo.to_s.start_with?("prezzo") %>
+  <% if anomalia.tipo == "disciplina_mancante" %>
+    <span class="anomalia__titolo">
+      manca: <%= ControlloAdozioni::Requisiti.label(anomalia.dettaglio["requisito"]) %>
+    </span>
+  <% end %>
+  <% if anomalia.tipo.to_s.start_with?("prezzo") || anomalia.tipo == "tetto_superato" %>
     <span class="anomalia__prezzi">
+      <% if anomalia.tipo == "tetto_superato" %>spesa <% end %>
       <%= anomalia.prezzo_cents ? number_to_currency(anomalia.prezzo_cents / 100.0) : "—" %>
       vs
+      <% if anomalia.tipo == "tetto_superato" %>tetto <% end %>
       <%= anomalia.prezzo_atteso_cents ? number_to_currency(anomalia.prezzo_atteso_cents / 100.0) : "—" %>
       <% if anomalia.delta_cents %>
         (Δ <%= number_to_currency(anomalia.delta_cents / 100.0) %>)

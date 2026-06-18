@@ -54,7 +54,9 @@ module ControlloAdozioni
       SQL
     end
 
-    # 2. prezzo della riga != PrezzoMinisteriale(annocorso, disciplina)
+    # 2. prezzo della riga != PrezzoMinisteriale(annocorso, disciplina).
+    #    La religione si adotta solo in 1a (libro 1-2-3) e 4a (libro 4-5): in 2a/3a/5a
+    #    e' lo stesso libro che prosegue, non si riacquista -> niente controllo prezzo.
     def prezzo_disciplina(conn)
       anno = conn.quote(@anno_prezzi)
       conn.execute(<<~SQL)
@@ -76,6 +78,7 @@ module ControlloAdozioni
         WHERE na.tipogradoscuola = 'EE'
           AND (#{PREZZO_CENTS}) IS NOT NULL
           AND (#{PREZZO_CENTS}) <> pm.prezzo_cents
+          AND NOT (na.disciplina ILIKE 'RELIGIONE%' AND na.annocorso IN ('2','3','5'))
       SQL
     end
 
@@ -192,6 +195,9 @@ module ControlloAdozioni
     end
 
     # Una riga per classe EE (daacquist), con la spesa totale in cents.
+    # Esclude dalla spesa le discipline fuori dal tetto ministeriale:
+    # - alternativa alla religione: mutuamente esclusiva con religione (il tetto conta solo RELIGIONE)
+    # - parascolastica: libri facoltativi, non concorrono al tetto
     def classi_con_spesa(conn)
       conn.select_all(<<~SQL)
         SELECT na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione,
@@ -203,6 +209,8 @@ module ControlloAdozioni
         WHERE na.tipogradoscuola = 'EE'
           AND coalesce(na.daacquist, '') ILIKE 'S%'
           AND na.annocorso IN ('1','2','3','4','5')
+          AND na.disciplina NOT ILIKE 'ADOZIONE ALTERNATIVA%'
+          AND na.disciplina NOT ILIKE 'PARASCOLASTIC%'
         GROUP BY na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione
       SQL
     end
