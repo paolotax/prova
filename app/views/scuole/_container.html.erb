@@ -75,6 +75,23 @@
 </section>
 
 <div class="scuola-show" style="--card-color: <%= scuola_card_color %>;">
+	<% propaganda = Propaganda.corrente(user: current_user) %>
+	<% cs = propaganda && propaganda.andamento([scuola]).first %>
+	<% if cs&.collane&.any? %>
+		<div class="margin-block-start">
+			<div class="group-header">
+				<h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+					<%= propaganda.nome %> — <%= cs.completata? ? "ritiri completati" : "#{cs.da_ritirare} da ritirare" %>
+				</h3>
+			</div>
+			<div class="flex flex-column gap-half">
+				<% cs.collane.each do |collana| %>
+					<%= render "propaganda/collana", collana: collana %>
+				<% end %>
+			</div>
+		</div>
+	<% end %>
+
 	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola) do %>
 		<div class="group-header">
 			<h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Aperti</h3>

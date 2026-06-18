@@ -1,12 +1,10 @@
-<% @page_title = "Propaganda" %>
+<% @page_title = @propaganda ? @propaganda.nome : "Propaganda" %>
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start"></div>
-
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Propaganda</span>
+    <span class="overflow-ellipsis"><%= @page_title %></span>
   </h1>
-
   <div class="header__actions header__actions--end"></div>
 <% end %>
 
@@ -17,46 +15,21 @@
       no_filtering_url: propaganda_index_path %>
 
 <turbo-frame id="search_results">
-  <% if @giri.any? %>
-    <div style="overflow-x: auto;">
-      <table class="table center" style="white-space: nowrap; font-size: var(--font-size-small);">
-        <thead>
-          <tr>
-            <th class="txt-align-end pad-inline-double">Scuola</th>
-            <% @giri.each do |giro| %>
-              <th class="txt-center">
-                <%= link_to giro, data: { turbo_frame: "_top" } do %>
-                  <span style="color: <%= giro.color %>;">&#9679;</span>
-                  <%= giro.titolo %>
-                <% end %>
-              </th>
-            <% end %>
-          </tr>
-        </thead>
-        <tbody>
-          <% @scuole.each do |scuola| %>
-            <tr>
-              <td class="txt-align-end pad-inline-double">
-                <%= link_to scuola, style: "color: inherit; text-decoration: none;", data: { turbo_frame: "_top" } do %>
-                  <%= scuola.denominazione %>
-                <% end %>
-              </td>
-              <% @giri.each do |giro| %>
-                <% tappa = @tappe_map[[scuola.id, giro.id]] %>
-                <td style="<%= "background: #{tappa_color(tappa)}; color: #{tappa_text_color(tappa)};" if tappa %> padding: 0.25rem 0.5rem;">
-                  <% if tappa %>
-                    <%= link_to tappa, style: "color: inherit; text-decoration: none;", data: { turbo_frame: "_top" } do %>
-                      <%= render "propaganda/cella", tappa: tappa %>
-                    <% end %>
-                  <% end %>
-                </td>
-              <% end %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+  <% if @propaganda %>
+    <div class="panel panel--wide center flex flex-column gap">
+      <%= render "propaganda/riepilogo", riepilogo: @riepilogo %>
+
+      <% @andamento.each do |cs| %>
+        <%= render "propaganda/scuola", cs: cs %>
+      <% end %>
+
+      <% if @andamento.empty? %>
+        <p class="txt-subtle txt-center pad-block-double">Nessuna scuola con bolle in visione.</p>
+      <% end %>
     </div>
   <% else %>
-    <p class="txt-subtle txt-center pad-block-double">Nessun giro aperto</p>
+    <p class="txt-subtle txt-center pad-block-double">
+      Nessuna propaganda. Crea una Propaganda e assegnale i giri (es. Collane, Vacanze, Ritiri).
+    </p>
   <% end %>
 </turbo-frame>

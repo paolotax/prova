@@ -89,6 +89,6 @@ class GiriController < ApplicationController
   end
 
   def giro_params
-    params.require(:giro).permit(:titolo, :descrizione, :collana_id, :iniziato_il, :finito_il, :color, conditions: [])
+    params.require(:giro).permit(:titolo, :descrizione, :collana_id, :propaganda_id, :iniziato_il, :finito_il, :color, conditions: [])
   end
 end

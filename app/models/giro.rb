@@ -2,26 +2,28 @@
 #
 # Table name: giri
 #
-#  id          :bigint           not null, primary key
-#  color       :string           default("var(--color-card-default)")
-#  conditions  :text
-#  descrizione :string
-#  finito_il   :datetime
-#  iniziato_il :datetime
-#  stato       :string
-#  tipo_giro   :string
-#  titolo      :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  account_id  :uuid             not null
-#  collana_id  :uuid
-#  user_id     :bigint           not null
+#  id            :bigint           not null, primary key
+#  color         :string           default("var(--color-card-default)")
+#  conditions    :text
+#  descrizione   :string
+#  finito_il     :datetime
+#  iniziato_il   :datetime
+#  stato         :string
+#  tipo_giro     :string
+#  titolo        :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  account_id    :uuid             not null
+#  collana_id    :uuid
+#  propaganda_id :uuid
+#  user_id       :bigint           not null
 #
 # Indexes
 #
-#  index_giri_on_account_id  (account_id)
-#  index_giri_on_collana_id  (collana_id)
-#  index_giri_on_user_id     (user_id)
+#  index_giri_on_account_id     (account_id)
+#  index_giri_on_collana_id     (collana_id)
+#  index_giri_on_propaganda_id  (propaganda_id)
+#  index_giri_on_user_id        (user_id)
 #
 # Foreign Keys
 #
@@ -34,6 +36,7 @@ class Giro < ApplicationRecord
 
   belongs_to :user
   belongs_to :collana, optional: true
+  belongs_to :propaganda, optional: true
 
   has_many :tappa_giri
   has_many :tappe, through: :tappa_giri

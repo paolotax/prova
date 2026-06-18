@@ -1,0 +1,31 @@
+<%# locals: (collana:) %>
+<details class="propaganda-collana" style="border-radius: 0.4rem; overflow: hidden;">
+  <summary class="flex align-center gap justify-space-between cursor-pointer" style="<%= propaganda_collana_style(collana) %>">
+    <span class="font-weight-bold txt-small"><%= collana.nome %></span>
+    <span class="txt-x-small font-weight-bold" style="white-space: nowrap;">
+      <% if collana.completata? %>
+        ✓ <%= collana.totale %> rientrate
+      <% else %>
+        <%= collana.da_ritirare %>/<%= collana.totale %> da ritirare<% if collana.mancanti.positive? %> · ⚠ <%= collana.mancanti %><% end %>
+      <% end %>
+    </span>
+  </summary>
+
+  <div class="flex flex-column gap-half" style="padding: 0.4rem 0.5rem;">
+    <% collana.gruppi.each do |gruppo, righe| %>
+      <div>
+        <div class="txt-xx-small txt-uppercase txt-subtle font-weight-bold"><%= gruppo %></div>
+        <ul class="flex flex-column unpad margin-none" style="list-style: none;">
+          <% righe.each do |riga| %>
+            <% esito = propaganda_riga_esito(riga) %>
+            <li class="flex align-center gap-half txt-small" style="color: <%= esito[:color] %>;">
+              <span style="inline-size: 1.2em; text-align: center;"><%= esito[:icon] %></span>
+              <span class="overflow-ellipsis" style="flex: 1;"><%= riga.titolo %></span>
+              <span class="txt-x-small txt-subtle" style="white-space: nowrap;">×<%= riga.quantita %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</details>

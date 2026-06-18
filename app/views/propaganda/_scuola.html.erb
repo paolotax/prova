@@ -1,0 +1,21 @@
+<%# locals: (cs:) %>
+<article class="card" style="--card-color: <%= cs.completata? ? "oklch(0.58 0.02 250)" : "oklch(0.63 0.15 70)" %>; --card-padding-block: 0.6rem; --card-padding-inline: 0.8rem; --border-radius: 0.6rem; inline-size: 100%;">
+  <header class="flex align-center gap justify-space-between">
+    <%= link_to cs.scuola, class: "font-weight-black", style: "color: var(--card-text-color); text-decoration: none;", data: { turbo_frame: "_top" } do %>
+      <%= cs.scuola.denominazione %>
+    <% end %>
+    <span class="txt-small font-weight-bold" style="white-space: nowrap; color: var(--card-text-color);">
+      <% if cs.completata? %>
+        ✓ completata
+      <% else %>
+        <%= cs.da_ritirare %> da ritirare<%= " · ⚠ #{cs.mancanti}" if cs.mancanti.positive? %>
+      <% end %>
+    </span>
+  </header>
+
+  <div class="flex flex-column gap-half margin-block-start-half">
+    <% cs.collane.each do |collana| %>
+      <%= render "propaganda/collana", collana: collana %>
+    <% end %>
+  </div>
+</article>

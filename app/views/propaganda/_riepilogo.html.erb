@@ -1,0 +1,15 @@
+<%# locals: (riepilogo:) -%>
+<div class="analytics-summary">
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value txt-positive">
+      <%= riepilogo[:consegne][:completate] %><span class="txt-subtle">/<%= riepilogo[:consegne][:totale] %></span>
+    </p>
+    <p class="analytics-summary__label">consegne completate</p>
+  </div>
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value <%= riepilogo[:ritiri][:completate] < riepilogo[:ritiri][:totale] ? "txt-negative" : "txt-positive" %>">
+      <%= riepilogo[:ritiri][:completate] %><span class="txt-subtle">/<%= riepilogo[:ritiri][:totale] %></span>
+    </p>
+    <p class="analytics-summary__label">ritiri completati</p>
+  </div>
+</div>

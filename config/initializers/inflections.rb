@@ -54,6 +54,7 @@ ActiveSupport::Inflector.inflections do |inflect|
 
 
   inflect.irregular 'causale', 'causali'
+  inflect.irregular 'propaganda', 'propagande'
   inflect.irregular 'documento', 'documenti'
   inflect.irregular 'editore', 'editori'
 

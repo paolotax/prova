@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_08_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -548,6 +548,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_160000) do
     t.index ["user_id"], name: "index_consegne_saggio_on_user_id"
   end
 
+  create_table "controllo_anomalie", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "anno_scolastico"
+    t.string "annocorso"
+    t.string "codiceisbn"
+    t.string "codicescuola", null: false
+    t.string "combinazione"
+    t.string "comune"
+    t.datetime "created_at", null: false
+    t.integer "delta_cents"
+    t.string "denominazione"
+    t.jsonb "dettaglio", default: {}, null: false
+    t.string "disciplina"
+    t.string "editore"
+    t.integer "prezzo_atteso_cents"
+    t.integer "prezzo_cents"
+    t.string "provincia"
+    t.string "regione"
+    t.string "sezioneanno"
+    t.string "tipo", null: false
+    t.string "titolo"
+    t.datetime "updated_at", null: false
+    t.index ["anno_scolastico", "codicescuola"], name: "index_controllo_anomalie_on_anno_scolastico_and_codicescuola"
+    t.index ["codicescuola"], name: "index_controllo_anomalie_on_codicescuola"
+    t.index ["provincia"], name: "index_controllo_anomalie_on_provincia"
+    t.index ["tipo"], name: "index_controllo_anomalie_on_tipo"
+  end
+
   create_table "disponibilita", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.datetime "created_at", null: false
@@ -692,6 +719,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_160000) do
     t.string "descrizione"
     t.datetime "finito_il"
     t.datetime "iniziato_il"
+    t.uuid "propaganda_id"
     t.string "stato"
     t.string "tipo_giro"
     t.string "titolo"
@@ -699,6 +727,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_160000) do
     t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_giri_on_account_id"
     t.index ["collana_id"], name: "index_giri_on_collana_id"
+    t.index ["propaganda_id"], name: "index_giri_on_propaganda_id"
     t.index ["user_id"], name: "index_giri_on_user_id"
   end
 
@@ -1321,6 +1350,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_160000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "propagande", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "nome", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id"], name: "index_propagande_on_account_id"
+    t.index ["user_id"], name: "index_propagande_on_user_id"
   end
 
   create_table "qrcodes", force: :cascade do |t|

@@ -29,6 +29,17 @@
     </div>
   <% end %>
 
+  <% propagande = current_user.propagande.order(created_at: :desc) %>
+  <% if propagande.any? %>
+    <div>
+      <label class="txt-small txt-bold">Propaganda</label>
+      <%= form.select :propaganda_id,
+          options_from_collection_for_select(propagande, :id, :nome, giro.propaganda_id),
+          { include_blank: "Nessuna propaganda" },
+          class: "input input--select" %>
+    </div>
+  <% end %>
+
   <div class="flex gap">
     <div class="flex-1">
       <label class="txt-small">Data inizio</label>
