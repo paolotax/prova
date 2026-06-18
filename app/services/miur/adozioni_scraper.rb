@@ -202,8 +202,10 @@ module Miur
 
       Rake::Task['import:new_adozioni'].reenable
       Rake::Task['import:cambia_religione'].reenable
+      Rake::Task['controllo_adozioni:rebuild'].reenable
       Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
+      Rake::Task['controllo_adozioni:rebuild'].invoke
     end
 
     def notify

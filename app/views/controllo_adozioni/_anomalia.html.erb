@@ -1,0 +1,19 @@
+<li class="anomalia">
+  <span class="badge"><%= anomalia.tipo %></span>
+  <% if anomalia.disciplina.present? %>
+    <span class="anomalia__disciplina"><%= anomalia.disciplina %></span>
+  <% end %>
+  <% if anomalia.titolo.present? %>
+    <span class="anomalia__titolo"><%= anomalia.titolo %></span>
+  <% end %>
+  <% if anomalia.tipo.to_s.start_with?("prezzo") %>
+    <span class="anomalia__prezzi">
+      <%= anomalia.prezzo_cents ? number_to_currency(anomalia.prezzo_cents / 100.0) : "—" %>
+      vs
+      <%= anomalia.prezzo_atteso_cents ? number_to_currency(anomalia.prezzo_atteso_cents / 100.0) : "—" %>
+      <% if anomalia.delta_cents %>
+        (Δ <%= number_to_currency(anomalia.delta_cents / 100.0) %>)
+      <% end %>
+    </span>
+  <% end %>
+</li>

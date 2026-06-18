@@ -154,6 +154,7 @@ module Miur
       task_double.expects(:invoke).at_least_once
       Rake::Task.expects(:[]).with("import:new_adozioni").returns(task_double).at_least_once
       Rake::Task.expects(:[]).with("import:cambia_religione").returns(task_double).at_least_once
+      Rake::Task.expects(:[]).with("controllo_adozioni:rebuild").returns(task_double).at_least_once
 
       scraper = Miur::AdozioniScraper.new
       scraper.instance_variable_set(:@regioni_aggiornate, ["A", "B"])

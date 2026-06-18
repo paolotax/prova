@@ -175,6 +175,7 @@ namespace :scrape do
       Rake::Task['import:splitta_adozioni'].invoke
       Rake::Task['import:new_adozioni'].invoke("true")
       Rake::Task['import:cambia_religione'].invoke
+      Rake::Task['controllo_adozioni:rebuild'].invoke
       Rake::Task['scrape:delete_adozioni'].invoke("true")
 
       # Invia email di notifica

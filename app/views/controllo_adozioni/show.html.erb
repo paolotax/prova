@@ -1,0 +1,41 @@
+<% @page_title = @denominazione.presence || @codicescuola %>
+
+<% content_for :header do %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis"><%= @denominazione.presence || @codicescuola %></span>
+  </h1>
+<% end %>
+
+<div class="stats-container">
+  <p class="txt-subtle">
+    <%= link_to "← Tutte le scuole", controllo_adozioni_index_path(account_id: params[:account_id]) %>
+    &middot; <%= @codicescuola %>
+  </p>
+
+  <% if @scuola_mancante %>
+    <p class="notice notice--warning">
+      Scuola assente da new_scuole (adozioni orfane)
+    </p>
+  <% end %>
+
+  <div class="badges">
+    <% @per_tipo.each do |tipo, count| %>
+      <span class="badge"><%= tipo %>: <%= count %></span>
+    <% end %>
+  </div>
+
+  <% @per_classe.each do |(annocorso, sezioneanno, combinazione), anomalie| %>
+    <section class="classe-block">
+      <h2 class="classe-block__title">Classe <%= annocorso %><%= sezioneanno %></h2>
+      <ul class="anomalie-list">
+        <% anomalie.each do |anomalia| %>
+          <%= render "controllo_adozioni/anomalia", anomalia: anomalia %>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <% if @anomalie.empty? %>
+    <p class="txt-subtle">Nessuna anomalia per questa scuola.</p>
+  <% end %>
+</div>

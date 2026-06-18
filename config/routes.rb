@@ -374,6 +374,9 @@ Rails.application.routes.draw do
     get 'profilo', to: 'profiles#get_user_profile'
     resources :access_tokens, only: %i[index show new create destroy], controller: 'access_tokens'
     resource :adozioni_analytics, only: [:show], controller: 'adozioni_analytics'
+    # Nomi route espliciti (non dipendono dall'inflector: evita l'initializer uncountable)
+    get 'controllo_adozioni', to: 'controllo_adozioni#index', as: :controllo_adozioni_index
+    get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
 
     resources :profiles
 

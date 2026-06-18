@@ -1,0 +1,49 @@
+<% @page_title = "Controllo adozioni primaria" %>
+
+<% content_for :header do %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Controllo adozioni primaria</span>
+  </h1>
+<% end %>
+
+<div class="stats-container">
+  <%= form_with url: controllo_adozioni_index_path(account_id: params[:account_id]), method: :get,
+                class: "filters" do |f| %>
+    <div class="filters__row">
+      <%= f.text_field :q, value: @q, placeholder: "Codice, scuola, comune, provincia…",
+                       class: "input" %>
+      <%= f.text_field :provincia, value: params[:provincia], placeholder: "Provincia",
+                       class: "input" %>
+      <%= f.submit "Cerca", class: "btn" %>
+    </div>
+  <% end %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Scuola</th>
+        <th>Comune</th>
+        <th>Provincia</th>
+        <th class="align-right">N° anomalie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @scuole.each do |s| %>
+        <tr>
+          <td>
+            <%= link_to controllo_adozioni_path(s.codicescuola, account_id: params[:account_id]) do %>
+              <strong><%= s.denominazione.presence || "—" %></strong>
+              <span class="txt-subtle"><%= s.codicescuola %></span>
+            <% end %>
+          </td>
+          <td><%= s.comune %></td>
+          <td><%= s.provincia %></td>
+          <td class="align-right"><%= s.n_anomalie %></td>
+        </tr>
+      <% end %>
+      <% if @scuole.empty? %>
+        <tr><td colspan="4" class="txt-subtle">Nessuna scuola con anomalie.</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
