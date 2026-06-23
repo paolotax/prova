@@ -138,13 +138,21 @@ class GiroTest < ActiveSupport::TestCase
     assert_equal 1, giro.tappe_totali
   end
 
-  test "#tappe_completate counts tappe with past data_tappa" do
+  test "#tappe_completate counts past tappe and today's closed tappe" do
     giro = @user.giri.create!(titolo: "Gcomp")
     scuola = scuole(:scuola_fizzy)
-    t_past   = @user.tappe.create!(tappable: scuola, data_tappa: Date.current - 1)
-    t_future = @user.tappe.create!(tappable: scuola, data_tappa: Date.current + 1)
-    [t_past, t_future].each { |t| t.tappa_giri.create!(giro: giro) }
-    assert_equal 1, giro.tappe_completate
+    altra  = scuole(:scuola_acme)
+    t_past        = @user.tappe.create!(tappable: scuola, data_tappa: Date.current - 1)
+    t_future      = @user.tappe.create!(tappable: scuola, data_tappa: Date.current + 1)
+    t_oggi_aperta = @user.tappe.create!(tappable: altra,  data_tappa: Date.current)
+    t_oggi_chiusa = @user.tappe.create!(tappable: scuola, data_tappa: Date.current)
+    [t_past, t_future, t_oggi_aperta, t_oggi_chiusa].each { |t| t.tappa_giri.create!(giro: giro) }
+
+    t_oggi_chiusa.ensure_entry!
+    t_oggi_chiusa.close
+
+    # passata + oggi chiusa = 2; oggi aperta e futura non contano
+    assert_equal 2, giro.tappe_completate
   end
 
   # Task — genera_tappe_per con merge

@@ -106,7 +106,13 @@ class Tappa < ApplicationRecord
   
   scope :programmate, -> { where("data_tappa >= ?", Time.zone.now.beginning_of_day) }  
   
-  scope :completate,  -> { where("data_tappa < ?", Time.zone.now.beginning_of_day) }
+  # Completate: tappe di giorni passati, più quelle di oggi già chiuse (entry closed).
+  # entries.entryable_id è una stringa → cast di tappe.id a text per il join polimorfico.
+  scope :completate, -> {
+    joins("LEFT JOIN entries ON entries.entryable_type = 'Tappa' AND entries.entryable_id = tappe.id::text")
+      .joins("LEFT JOIN closures ON closures.entry_id = entries.id")
+      .where("tappe.data_tappa < :oggi OR (tappe.data_tappa = :oggi AND closures.id IS NOT NULL)", oggi: Date.current)
+  }
   scope :da_programmare, -> { where(data_tappa: nil) }
 
   scope :per_ordine_e_data, -> {
