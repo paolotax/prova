@@ -15,6 +15,13 @@
       queue: default
       unique: true
 
+    scuole_scraper:
+      cron: '30 3 1 * *'  # Il 1° di ogni mese alle 3:30 UTC (anagrafe MIUR aggiornata ~1 volta l'anno)
+      class: ScuoleScraperJob
+      queue: default
+      unique: true
+      description: 'Scarica i 4 CSV anagrafica scuole MIUR e fa import:new_scuole (blue-green)'
+
     clean_orphaned_righe:
       cron: '0 3 1 * *'  # Esegue il 1° di ogni mese alle 3:00 AM
       class: CleanOrphanedRigheJob

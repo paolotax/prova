@@ -531,52 +531,149 @@ namespace :import do
     end
   end
 
-  desc "NewScuole SCUOLE 2025/6"
-  task new_scuole: :environment do
+  # Import blue-green dell'anagrafica SCUOLE (4 dataset MIUR). Stessa logica di
+  # import:new_adozioni: carica i CSV in staging, costruisce indici + ANALYZE e poi
+  # scambia atomicamente con la live. Le query su new_scuole non vedono mai la tabella
+  # vuota; se il job muore a metà la live resta intatta.
+  STG_TABLE_SCUOLE = 'new_scuole_stg'.freeze
+  SCUOLE_LOCK_KEY = 198_706_15 # arbitrario ma stabile: serializza import scuole concorrenti
 
-    answer = HighLine.agree("Vuoi cancellare tutti i dati esistenti? (y/n)")
-    if answer == true
-      NewScuola.delete_all
+  desc "Importa anagrafica SCUOLE (blue-green swap, no maintenance)"
+  task :new_scuole, [:force] => :environment do |t, args|
+
+    Rails.logger.info "Inizio importazione anagrafica scuole (blue-green swap)"
+
+    min_csv_threshold = 4
+    csv_files = Dir.glob(Rails.root.join('tmp', '_miur', 'scuole', '*.csv').to_s).sort
+
+    if csv_files.size < min_csv_threshold
+      msg = "ABORT import:new_scuole — solo #{csv_files.size}/#{min_csv_threshold} CSV presenti. " \
+            "Swap non eseguito per non degradare l'anagrafica esistente. " \
+            "Rilancia lo scraper o copia manualmente i CSV mancanti."
+      Rails.logger.error(msg)
+      puts msg
+      abort msg
     end
 
-    csv_dir = Rails.root.join('_miur', 'scuole', '*.csv')
+    conn = NewScuola.connection
 
-    map_scuole = {
-      "ANNOSCOLASTICO" => "anno_scolastico",
-      "AREAGEOGRAFICA" => "area_geografica",
-      "REGIONE" => "regione",
-      "PROVINCIA" => "provincia",
-      "CODICEISTITUTORIFERIMENTO" => "codice_istituto_riferimento",
-      "DENOMINAZIONEISTITUTORIFERIMENTO" => "denominazione_istituto_riferimento",
-      "CODICESCUOLA" => "codice_scuola",
-      "DENOMINAZIONESCUOLA" => "denominazione",
-      "INDIRIZZOSCUOLA" => "indirizzo",
-      "CAPSCUOLA" => "cap",
-      "CODICECOMUNESCUOLA" => "codice_comune",
-      "DESCRIZIONECOMUNE" => "comune",
-      "DESCRIZIONECARATTERISTICASCUOLA" => "descrizione_caratteristica",
-      "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" => "tipo_scuola",
-      "INDICAZIONESEDEDIRETTIVO" => "indicazione_sede_direttivo",
-      "INDICAZIONESEDEOMNICOMPRENSIVO" => "indicazione_sede_omnicomprensivo",
-      "INDIRIZZOEMAILSCUOLA" => "email",
-      "INDIRIZZOPECSCUOLA" => "pec",
-      "SITOWEBSCUOLA" => "sito_web",
-      "SEDESCOLASTICA" => "sede_scolastica"
-    }
-
-    Dir.glob(csv_dir).each do |file|
-      puts "name: #{file} size: #{File.size(file)} chunks: #{File.size(file) / (3 * 1024 * 1024)}"
-      import_csv(file, NewScuola, map_scuole)
+    unless conn.select_value("SELECT pg_try_advisory_lock(#{SCUOLE_LOCK_KEY})")
+      msg = "ABORT import:new_scuole — un altro import è già in corso (advisory lock occupato)."
+      Rails.logger.error(msg)
+      puts msg
+      abort msg
     end
 
-    puts "Totale NewScuola: #{NewScuola.count}"
+    begin
+      map_scuole = {
+        "ANNOSCOLASTICO" => "anno_scolastico",
+        "AREAGEOGRAFICA" => "area_geografica",
+        "REGIONE" => "regione",
+        "PROVINCIA" => "provincia",
+        "CODICEISTITUTORIFERIMENTO" => "codice_istituto_riferimento",
+        "DENOMINAZIONEISTITUTORIFERIMENTO" => "denominazione_istituto_riferimento",
+        "CODICESCUOLA" => "codice_scuola",
+        "DENOMINAZIONESCUOLA" => "denominazione",
+        "INDIRIZZOSCUOLA" => "indirizzo",
+        "CAPSCUOLA" => "cap",
+        "CODICECOMUNESCUOLA" => "codice_comune",
+        "DESCRIZIONECOMUNE" => "comune",
+        "DESCRIZIONECARATTERISTICASCUOLA" => "descrizione_caratteristica",
+        "DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" => "tipo_scuola",
+        "INDICAZIONESEDEDIRETTIVO" => "indicazione_sede_direttivo",
+        "INDICAZIONESEDEOMNICOMPRENSIVO" => "indicazione_sede_omnicomprensivo",
+        "INDIRIZZOEMAILSCUOLA" => "email",
+        "INDIRIZZOPECSCUOLA" => "pec",
+        "SITOWEBSCUOLA" => "sito_web",
+        "SEDESCOLASTICA" => "sede_scolastica"
+      }
+      cols = map_scuole.values
 
-    sql = 'UPDATE new_scuole SET import_scuola_id = import_scuole.id FROM import_scuole WHERE import_scuole."CODICESCUOLA" = new_scuole.codice_scuola'
-    ActiveRecord::Base.connection.execute(sql)
+      # 1. Staging pulita: stesse colonne e default (id da new_scuole_id_seq), NESSUN
+      #    indice → load più veloce.
+      conn.execute("DROP TABLE IF EXISTS #{STG_TABLE_SCUOLE}")
+      conn.execute("CREATE TABLE #{STG_TABLE_SCUOLE} (LIKE new_scuole INCLUDING DEFAULTS)")
 
-    puts "Totale NewScuola con import_scuola_id: #{NewScuola.where.not(import_scuola_id: nil).count}"
+      unless defined?(NewScuolaStaging)
+        Object.const_set(:NewScuolaStaging, Class.new(ApplicationRecord) { self.table_name = STG_TABLE_SCUOLE })
+      end
+      stg_model = NewScuolaStaging
+      stg_model.reset_column_information
 
-    Rails.logger.info "Importazione nuove adozioni 2025/6 completata"
+      # 2. Carica i 4 CSV nella staging. slice(*cols) scarta eventuali colonne extra
+      #    (i file delle province autonome possono avere header diversi); salta le
+      #    righe senza codice_scuola.
+      batch_size = 10_000
+      total = 0
+      csv_files.each do |file|
+        items = []
+        file_count = 0
+
+        Benchmark.bm do |x|
+          x.report("importo #{File.basename(file)}") do
+            CSV.foreach(file, headers: true, col_sep: ',', encoding: 'UTF-8') do |row|
+              attrs = row.to_h.transform_keys(map_scuole).slice(*cols)
+              next if attrs["codice_scuola"].blank?
+
+              items << attrs
+              file_count += 1
+              if items.size >= batch_size
+                stg_model.import items, validate: false
+                items.clear
+              end
+            end
+            stg_model.import items, validate: false unless items.empty?
+          end
+        end
+
+        puts "righe inserite #{file_count} da #{File.basename(file)}"
+        total += file_count
+      end
+      puts "Totale: #{total} righe caricate in staging"
+
+      # 3. Dedup difensivo su (anno_scolastico, codice_scuola): i 4 dataset sono
+      #    disgiunti per codice, ma se il MIUR duplicasse una riga l'indice unique
+      #    fallirebbe. Tiene una riga per chiave.
+      conn.execute(<<~SQL)
+        DELETE FROM #{STG_TABLE_SCUOLE} a
+        USING #{STG_TABLE_SCUOLE} b
+        WHERE a.ctid < b.ctid
+          AND a.codice_scuola = b.codice_scuola
+          AND a.anno_scolastico IS NOT DISTINCT FROM b.anno_scolastico
+      SQL
+
+      # 4. Indici identici alla live (nomi temporanei) + PK + ANALYZE.
+      conn.execute("ALTER TABLE #{STG_TABLE_SCUOLE} ADD CONSTRAINT #{STG_TABLE_SCUOLE}_pkey PRIMARY KEY (id)")
+      conn.execute("CREATE UNIQUE INDEX #{STG_TABLE_SCUOLE}_cs ON #{STG_TABLE_SCUOLE} (anno_scolastico, codice_scuola)")
+      conn.execute("CREATE INDEX #{STG_TABLE_SCUOLE}_cod ON #{STG_TABLE_SCUOLE} (codice_scuola) INCLUDE (regione, provincia)")
+      conn.execute("CREATE INDEX #{STG_TABLE_SCUOLE}_tipo ON #{STG_TABLE_SCUOLE} (tipo_scuola)")
+      conn.execute("ANALYZE #{STG_TABLE_SCUOLE}")
+      puts "Indici + PK + ANALYZE su staging completati"
+
+      # 5. Swap atomico: la sequence viene staccata prima del DROP e riagganciata dopo.
+      conn.transaction do
+        conn.execute("ALTER SEQUENCE new_scuole_id_seq OWNED BY NONE")
+        conn.execute("DROP TABLE new_scuole")
+        conn.execute("ALTER TABLE #{STG_TABLE_SCUOLE} RENAME TO new_scuole")
+        conn.execute("ALTER SEQUENCE new_scuole_id_seq OWNED BY new_scuole.id")
+        conn.execute("ALTER INDEX #{STG_TABLE_SCUOLE}_pkey RENAME TO new_scuole_pkey")
+        conn.execute("ALTER INDEX #{STG_TABLE_SCUOLE}_cs RENAME TO index_new_scuole_on_codice_scuola")
+        conn.execute("ALTER INDEX #{STG_TABLE_SCUOLE}_cod RENAME TO idx_new_scuole_cod")
+        conn.execute("ALTER INDEX #{STG_TABLE_SCUOLE}_tipo RENAME TO idx_new_scuole_tipo")
+      end
+      conn.execute("SELECT setval('new_scuole_id_seq', GREATEST((SELECT COALESCE(MAX(id), 1) FROM new_scuole), 1))")
+
+      # 6. Collega a import_scuole via CODICESCUOLA (come il task legacy).
+      conn.execute('UPDATE new_scuole SET import_scuola_id = import_scuole.id FROM import_scuole WHERE import_scuole."CODICESCUOLA" = new_scuole.codice_scuola')
+      conn.execute('ANALYZE new_scuole')
+
+      NewScuola.reset_column_information
+      con_import = NewScuola.where.not(import_scuola_id: nil).count
+      puts "Swap completato: new_scuole ora ha #{NewScuola.count} righe (#{con_import} con import_scuola_id)"
+      Rails.logger.info "Importazione anagrafica scuole completata (swap ok)"
+    ensure
+      conn.execute("SELECT pg_advisory_unlock(#{SCUOLE_LOCK_KEY})")
+    end
   end
 
 
