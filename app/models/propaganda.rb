@@ -47,6 +47,19 @@ class Propaganda < ApplicationRecord
     BollaVisione.where(tappa_id: tappe.select(:id))
   end
 
+  # Tappe (Scuola) dei giri la cui scuola non ha ALCUNA bolla nella propaganda:
+  # sono i "buchi" da colmare — cliccando la tappa si aggiunge la bolla. Sono le
+  # tappe che gonfiano il riepilogo (conta tappe) ma mancano dalla lista (bolle).
+  def tappe_senza_bolla
+    scuole_con_bolla = bolle_visione.distinct.pluck(:scuola_id)
+    Tappa.joins(:tappa_giri)
+      .where(tappa_giri: { giro_id: giri.select(:id) }, tappable_type: "Scuola")
+      .where.not(tappable_id: scuole_con_bolla)
+      .includes(:tappable)
+      .order(:data_tappa)
+      .distinct
+  end
+
   # Scuole che hanno ricevuto bolle nella propaganda.
   def scuole
     Current.scuole
@@ -61,8 +74,8 @@ class Propaganda < ApplicationRecord
     ritiro_ids   = giri.select { |g| g.titolo.to_s.match?(/ritir/i) }.map(&:id)
     consegna_ids = giri.map(&:id) - ritiro_ids
     {
-      consegne: conteggio_scuole(consegna_ids),
-      ritiri:   conteggio_scuole(ritiro_ids)
+      consegne: conteggio_scuole(consegna_ids).merge(senza_bolla: scuole_senza_bolla(consegna_ids)),
+      ritiri:   conteggio_scuole(ritiro_ids).merge(senza_bolla: scuole_senza_bolla(ritiro_ids))
     }
   end
 
@@ -99,6 +112,21 @@ class Propaganda < ApplicationRecord
       totale:     base.distinct.count("scuole.codice_ministeriale"),
       completate: base.completate.distinct.count("scuole.codice_ministeriale")
     }
+  end
+
+  # Scuole con una tappa nei giri dati ma senza alcuna bolla nella propaganda:
+  # contano nell'avanzamento (basato sulle tappe) ma NON compaiono nella lista
+  # (basata sulle bolle). È lo scarto che spiega i numeri diversi.
+  def scuole_senza_bolla(giro_ids)
+    return 0 if giro_ids.empty?
+
+    scuola_ids = Tappa.joins(:tappa_giri)
+      .where(tappa_giri: { giro_id: giro_ids }, tappable_type: "Scuola")
+      .distinct.pluck(:tappable_id)
+    return 0 if scuola_ids.empty?
+
+    con_bolla = bolle_visione.where(scuola_id: scuola_ids).distinct.pluck(:scuola_id)
+    (scuola_ids - con_bolla).size
   end
 
   def righe_per(scuola_ids)

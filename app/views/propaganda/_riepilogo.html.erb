@@ -1,15 +1,26 @@
 <%# locals: (riepilogo:) -%>
-<div class="analytics-summary">
-  <div class="analytics-summary__card">
-    <p class="analytics-summary__value txt-positive">
-      <%= riepilogo[:consegne][:completate] %><span class="txt-subtle">/<%= riepilogo[:consegne][:totale] %></span>
-    </p>
-    <p class="analytics-summary__label">consegne completate</p>
-  </div>
-  <div class="analytics-summary__card">
-    <p class="analytics-summary__value <%= riepilogo[:ritiri][:completate] < riepilogo[:ritiri][:totale] ? "txt-negative" : "txt-positive" %>">
-      <%= riepilogo[:ritiri][:completate] %><span class="txt-subtle">/<%= riepilogo[:ritiri][:totale] %></span>
-    </p>
-    <p class="analytics-summary__label">ritiri completati</p>
+<div class="flex flex-column gap-half">
+  <p class="txt-xx-small txt-uppercase txt-subtle font-weight-bold txt-center" style="letter-spacing: 0.04em;">
+    Avanzamento giri · per tappa
+  </p>
+  <div class="analytics-summary">
+    <div class="analytics-summary__card">
+      <p class="analytics-summary__value txt-positive">
+        <%= riepilogo[:consegne][:completate] %><span class="txt-subtle">/<%= riepilogo[:consegne][:totale] %></span>
+      </p>
+      <p class="analytics-summary__label">consegne completate</p>
+      <% if riepilogo[:consegne][:senza_bolla].to_i.positive? %>
+        <p class="analytics-summary__label txt-alert txt-small">⚠ <%= riepilogo[:consegne][:senza_bolla] %> senza bolla</p>
+      <% end %>
+    </div>
+    <div class="analytics-summary__card">
+      <p class="analytics-summary__value <%= riepilogo[:ritiri][:completate] < riepilogo[:ritiri][:totale] ? "txt-negative" : "txt-positive" %>">
+        <%= riepilogo[:ritiri][:completate] %><span class="txt-subtle">/<%= riepilogo[:ritiri][:totale] %></span>
+      </p>
+      <p class="analytics-summary__label">ritiri completati</p>
+      <% if riepilogo[:ritiri][:senza_bolla].to_i.positive? %>
+        <p class="analytics-summary__label txt-alert txt-small">⚠ <%= riepilogo[:ritiri][:senza_bolla] %> senza bolla</p>
+      <% end %>
+    </div>
   </div>
 </div>

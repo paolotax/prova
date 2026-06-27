@@ -19,12 +19,18 @@
     <div class="panel panel--wide center flex flex-column gap">
       <%= render "propaganda/riepilogo", riepilogo: @riepilogo %>
 
+      <%= render "propaganda/stato_tabs", stato: @stato, conteggi: @conteggi_stato %>
+
+      <%= render "propaganda/tappe_senza_bolla", tappe: @tappe_senza_bolla %>
+
       <% @andamento.each do |cs| %>
         <%= render "propaganda/scuola", cs: cs %>
       <% end %>
 
       <% if @andamento.empty? %>
-        <p class="txt-subtle txt-center pad-block-double">Nessuna scuola con bolle in visione.</p>
+        <p class="txt-subtle txt-center pad-block-double">
+          <%= @stato == "da_completare" ? "Nessuna scuola da completare: tutti i ritiri sono a posto." : "Nessuna scuola con bolle in visione." %>
+        </p>
       <% end %>
     </div>
   <% else %>

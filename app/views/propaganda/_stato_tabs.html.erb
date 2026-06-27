@@ -1,0 +1,20 @@
+<%# locals: (stato:, conteggi:) -%>
+<% current = stato.presence || "tutte" %>
+<% base_params = request.query_parameters.except("stato") %>
+
+<nav class="doc-stato-tabs" role="tablist" aria-label="Stato ritiri">
+  <% { "tutte" => "Tutte",
+       "da_avviare" => "Da ritirare",
+       "parziale" => "Parziali",
+       "completate" => "Completate" }.each do |key, label| %>
+    <% tab_params = key == "tutte" ? base_params : base_params.merge("stato" => key) %>
+    <%= link_to propaganda_index_path(tab_params),
+          role: "tab",
+          aria: { selected: current == key },
+          class: class_names("doc-stato-tab", "doc-stato-tab--active": current == key),
+          data: { turbo_frame: "search_results", turbo_action: "advance" } do %>
+      <span class="doc-stato-tab__label"><%= label %></span>
+      <span class="doc-stato-tab__count"><%= conteggi[key] %></span>
+    <% end %>
+  <% end %>
+</nav>

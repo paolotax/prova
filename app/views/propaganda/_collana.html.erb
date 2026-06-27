@@ -6,7 +6,7 @@
       <% if collana.completata? %>
         ✓ <%= collana.totale %> rientrate
       <% else %>
-        <%= collana.da_ritirare %>/<%= collana.totale %> da ritirare<% if collana.mancanti.positive? %> · ⚠ <%= collana.mancanti %><% end %>
+        <%= collana.da_ritirare %> da ritirare<% if collana.mancanti.positive? %> · ⚠ <%= collana.mancanti %><% end %>
       <% end %>
     </span>
   </summary>

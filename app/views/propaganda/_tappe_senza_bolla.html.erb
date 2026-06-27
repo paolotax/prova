@@ -1,0 +1,22 @@
+<%# locals: (tappe:) -%>
+<% return if tappe.blank? %>
+<article class="card" style="--card-color: oklch(0.58 0.16 35); --card-padding-block: 0.6rem; --card-padding-inline: 0.8rem; --border-radius: 0.6rem; inline-size: 100%;">
+  <header class="flex align-center gap justify-space-between">
+    <span class="font-weight-black" style="color: var(--card-text-color);">⚠ Tappe senza bolla</span>
+    <span class="txt-small font-weight-bold" style="white-space: nowrap; color: var(--card-text-color);"><%= tappe.size %> da sistemare</span>
+  </header>
+
+  <div class="flex flex-column gap-half margin-block-start-half">
+    <% tappe.each do |tappa| %>
+      <%= link_to tappa_path(tappa),
+            class: "flex align-center gap justify-space-between txt-small",
+            style: "color: var(--card-text-color); text-decoration: none; background: oklch(1 0 0 / 0.15); border-radius: 0.4rem; padding: 0.35rem 0.5rem;",
+            data: { turbo_frame: "_top" } do %>
+        <span class="overflow-ellipsis font-weight-bold"><%= tappa.tappable&.denominazione %></span>
+        <span class="txt-x-small" style="white-space: nowrap;">
+          <%= tappa.data_tappa&.strftime("%d/%m") %> · aggiungi bolla ›
+        </span>
+      <% end %>
+    <% end %>
+  </div>
+</article>

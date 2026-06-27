@@ -83,7 +83,7 @@ class PropagandaTest < ActiveSupport::TestCase
     r = @propaganda.riepilogo
     assert_equal 1, r[:consegne][:totale]
     assert_equal 0, r[:consegne][:completate], "tappa di oggi non è ancora completata"
-    assert_equal({ totale: 0, completate: 0 }, r[:ritiri], "nessun giro di ritiro")
+    assert_equal({ totale: 0, completate: 0, senza_bolla: 0 }, r[:ritiri], "nessun giro di ritiro")
 
     # aggiungo un giro di ritiro con tappa passata sulla stessa scuola
     ritiro = @user.giri.create!(titolo: "Ritiri '26", propaganda: @propaganda)
@@ -94,6 +94,29 @@ class PropagandaTest < ActiveSupport::TestCase
     r = @propaganda.riepilogo
     assert_equal 1, r[:ritiri][:totale]
     assert_equal 1, r[:ritiri][:completate], "tappa di ieri è completata"
+  end
+
+  test "#riepilogo segnala le scuole con tappa ma senza bolla" do
+    # @scuola ha bolle (fixture); aggiungo una seconda scuola con tappa ma niente bolla.
+    altra = scuole(:scuola_fizzy_nord)
+    tappa = @user.tappe.create!(tappable: altra, data_tappa: Date.current)
+    tappa.tappa_giri.create!(giro: @giro)
+    @propaganda.giri.reload
+
+    r = @propaganda.riepilogo
+    assert_equal 1, r[:consegne][:senza_bolla],
+      "la scuola con tappa ma senza bolla va segnalata, non sparisce silenziosamente"
+  end
+
+  test "#tappe_senza_bolla elenca le tappe la cui scuola non ha bolle" do
+    altra = scuole(:scuola_fizzy_nord)
+    tappa = @user.tappe.create!(tappable: altra, data_tappa: Date.current)
+    tappa.tappa_giri.create!(giro: @giro)
+    @propaganda.giri.reload
+
+    tappe = @propaganda.tappe_senza_bolla
+    assert_includes tappe, tappa, "la tappa senza bolla deve comparire"
+    refute_includes tappe, @tappa, "@scuola ha una bolla: la sua tappa non va elencata"
   end
 
   test "i titoli di una collana sono ordinati per position del CollanaLibro" do
