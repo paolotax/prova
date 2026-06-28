@@ -171,3 +171,20 @@ adozione_sud_pearson:
   da_acquistare: true
   consigliato: false
   numero_copie: 0
+
+# Adozione snapshot 202526 sulla prima della primaria_attiva (BOEE000001)
+adozione_pa_1a_202526:
+  account: fizzy
+  classe: pa_1a
+  codice_isbn: "9788800000010"
+  titolo: "Letture Vecchia Prima"
+  editore: "Editore Test"
+  autori: "Rossi M."
+  disciplina: "ITALIANO"
+  prezzo_cents: 1000
+  nuova_adozione: false
+  da_acquistare: true
+  consigliato: false
+  numero_copie: 0
+  anno_scolastico: "202526"
+  codicescuola: "BOEE000001"

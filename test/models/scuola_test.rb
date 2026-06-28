@@ -84,6 +84,66 @@ class ScuolaTest < ActiveSupport::TestCase
   end
 end
 
+class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
+  fixtures :accounts, :scuole, :classi, :adozioni, :new_adozioni, :persone, :persona_classi
+
+  setup do
+    Current.account = accounts(:fizzy)
+  end
+
+  teardown do
+    Current.account = nil
+  end
+
+  test "promuovi_primaria! avanza le classi e archivia la quinta" do
+    scuola = scuole(:primaria_attiva)
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+    assert_equal "archiviata", scuola.classi.find_by(anno_corso: "5", sezione: "A", anno_scolastico: "202526").stato
+    seconda = scuola.classi.attive.find_by(sezione: "A", anno_scolastico: "202627", anno_corso: "2")
+    assert seconda, "la ex-prima è ora seconda 202627"
+    assert_equal scuola.codice_ministeriale, seconda.codice_ministeriale_origine
+  end
+
+  test "promuovi_primaria! snapshotta le vecchie adozioni con anno 202526 e crea le 202627" do
+    scuola = scuole(:primaria_attiva)
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    assert scuola.adozioni.where(anno_scolastico: "202526").exists?
+    assert scuola.adozioni.where(anno_scolastico: "202627").exists?
+  end
+
+  test "promuovi_primaria! crea le nuove prime da new_adozioni" do
+    scuola = scuole(:primaria_attiva)
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    assert scuola.classi.attive.where(anno_corso: "1", anno_scolastico: "202627").exists?
+  end
+
+  test "promuovi_primaria! è idempotente (doppio run non riavanza)" do
+    scuola = scuole(:primaria_attiva)
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    conteggio = scuola.classi.attive.count
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    assert_equal conteggio, scuola.reload.classi.attive.count
+  end
+
+  test "promuovi_primaria! sposta gli insegnanti indicati sulle nuove prime" do
+    scuola = scuole(:primaria_attiva)
+    pc = persona_classi(:maestra_quinta)
+    persona = pc.persona
+
+    # Primo run: crea le nuove prime (la destinazione dello spostamento)
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    nuova_prima = scuola.classi.attive.find_by(anno_corso: "1", sezione: "A", anno_scolastico: "202627")
+    assert nuova_prima, "la nuova prima è stata creata"
+
+    # Secondo run: la guardia di idempotenza salta l'avanzamento ma applica gli spostamenti
+    assert_difference -> { PersonaClasse.where(classe_id: nuova_prima.id).count }, 1 do
+      scuola.promuovi_primaria!(da: "202526", a: "202627", spostamenti_insegnanti: { pc.id => nuova_prima.id })
+    end
+    assert PersonaClasse.exists?(persona_id: persona.id, classe_id: nuova_prima.id)
+  end
+end
+
 class ScuolaEmailPatternTest < ActiveSupport::TestCase
   fixtures :accounts, :scuole
 

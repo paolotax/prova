@@ -83,7 +83,7 @@ class Classe < ApplicationRecord
 
   validates :anno_corso, presence: true
   validates :sezione,
-    uniqueness: { scope: %i[scuola_id anno_corso combinazione] },
+    uniqueness: { scope: %i[scuola_id anno_corso combinazione], conditions: -> { where(stato: "attiva") } },
     allow_blank: true,
     if: -> { stato == "attiva" }
 

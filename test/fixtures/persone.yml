@@ -68,3 +68,11 @@ persona_acme:
   cellulare: "3335551234"
   email: anna.verdi@example.com
   scuola: scuola_acme
+
+maestra_primaria:
+  account: fizzy
+  nome: Giulia
+  cognome: Neri
+  cellulare: "3337778899"
+  email: giulia.neri@example.com
+  scuola: primaria_attiva

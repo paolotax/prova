@@ -1,0 +1,17 @@
+# == Schema Information
+#
+# Table name: persona_classi
+#
+#  id         :uuid             not null, primary key
+#  materia    :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  classe_id  :uuid             not null
+#  persona_id :uuid             not null
+#
+
+# Maestra sulla quinta uscente della primaria_attiva: viene spostata sulla nuova prima
+maestra_quinta:
+  persona: maestra_primaria
+  classe: pa_5a
+  materia: "ITALIANO"

@@ -248,7 +248,71 @@ class Scuola < ApplicationRecord
     "#{local_part}@#{dominio}"
   end
 
+  # Scorrimento d'anno per la PRIMARIA (EE). Idempotente sul target `a`.
+  # spostamenti_insegnanti: { persona_classe_uscente_id => classe_destinazione_id }
+  def promuovi_primaria!(da:, a:, spostamenti_insegnanti: {})
+    transaction do
+      unless classi.attive.per_anno(a).exists?
+        # EE-only: anno_corso 1–5, numerico; gradi non numerici (licei 45/123) su un futuro path medie/superiori, non qui.
+        classi.attive.per_anno(da).order(Arel.sql("anno_corso::int DESC")).each do |classe|
+          if classe.anno_corso.to_i >= 5
+            classe.update!(stato: "archiviata")
+          else
+            nuovo = (classe.anno_corso.to_i + 1).to_s
+            classe.update!(
+              anno_corso: nuovo,
+              classe_origine: nuovo,
+              anno_scolastico: a,
+              codice_ministeriale_origine: codice_ministeriale
+            )
+          end
+        end
+
+        classi.attive.per_anno(a).find_each { |c| c.costruisci_adozioni!(anno_scolastico: a) }
+        crea_classi_prime!(anno_scolastico: a)
+      end
+
+      applica_spostamenti_insegnanti!(spostamenti_insegnanti)
+    end
+
+    UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
+  end
+
   private
+
+  def crea_classi_prime!(anno_scolastico:)
+    gruppi = NewAdozione
+      .where(codicescuola: codice_ministeriale, annocorso: "1", tipogradoscuola: "EE")
+      .group(:sezioneanno, :combinazione).count.keys
+
+    gruppi.each do |sezione, combinazione|
+      classe = classi.find_or_create_by!(
+        anno_corso: "1", sezione: sezione, combinazione: combinazione,
+        anno_scolastico: anno_scolastico, stato: "attiva"
+      ) do |c|
+        c.account_id = account_id
+        c.tipo_scuola = "EE"
+        c.codice_ministeriale_origine = codice_ministeriale
+        c.classe_origine = "1"
+        c.sezione_origine = sezione
+        c.combinazione_origine = combinazione
+      end
+      classe.costruisci_adozioni!(anno_scolastico: anno_scolastico)
+    end
+  end
+
+  def applica_spostamenti_insegnanti!(mappa)
+    return if mappa.blank?
+    mappa.each do |persona_classe_id, classe_destinazione_id|
+      pc = PersonaClasse.joins(:classe)
+                        .where(classi: { account_id: account_id })
+                        .find_by(id: persona_classe_id)
+      next unless pc && classi.exists?(id: classe_destinazione_id)
+      PersonaClasse.find_or_create_by!(persona_id: pc.persona_id, classe_id: classe_destinazione_id) do |nuovo|
+        nuovo.materia = pc.materia
+      end
+    end
+  end
 
   def normalize_email_part(str)
     return "" if str.blank?

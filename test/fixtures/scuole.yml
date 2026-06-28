@@ -99,3 +99,15 @@ scuola_fizzy_sud:
   grado: "E"
   area: "Sud"
   stato: "attiva"
+
+# Primaria (EE) per il passaggio anno / scorrimento classi
+primaria_attiva:
+  account: fizzy
+  denominazione: "Scuola Primaria Bologna Centro"
+  codice_ministeriale: "BOEE000001"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"

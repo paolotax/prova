@@ -138,3 +138,74 @@ quinta_a:
   codice_ministeriale_origine: "MIIC123456"
   classe_origine: "5"
   sezione_origine: "A"
+
+# Classi EE per scuola primaria_attiva (BOEE000001) — scorrimento d'anno
+pa_1a:
+  account: fizzy
+  scuola: primaria_attiva
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000001"
+  classe_origine: "1"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+pa_2a:
+  account: fizzy
+  scuola: primaria_attiva
+  anno_corso: "2"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000001"
+  classe_origine: "2"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+pa_3a:
+  account: fizzy
+  scuola: primaria_attiva
+  anno_corso: "3"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000001"
+  classe_origine: "3"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+pa_4a:
+  account: fizzy
+  scuola: primaria_attiva
+  anno_corso: "4"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000001"
+  classe_origine: "4"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+pa_5a:
+  account: fizzy
+  scuola: primaria_attiva
+  anno_corso: "5"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000001"
+  classe_origine: "5"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
