@@ -2,6 +2,11 @@ class ImportScuolePerZonaJob < ApplicationJob
   queue_as :bulk
   discard_on ActiveJob::DeserializationError
 
+  # Anno scolastico del dataset import_adozioni (set ministeriale stabile dell'anno scorso).
+  # ImportAdozione.anno_scolastico e' attualmente nil, quindi lo stampiamo qui esplicitamente.
+  # BUMPARE quando il dataset import_adozioni passa all'anno scolastico successivo.
+  ANNO_SCOLASTICO = "202526"
+
   include ActionView::RecordIdentifier
   include BroadcastsPulsanteAggiornaAdozioni
 
@@ -110,6 +115,8 @@ class ImportScuolePerZonaJob < ApplicationJob
         anno_corso: anno,
         sezione: sezione,
         combinazione: combinazione,
+        anno_scolastico: ANNO_SCOLASTICO,
+        stato: "attiva",
         tipo_scuola: tipo_map[codice],
         codice_ministeriale_origine: codice,
         classe_origine: anno,
@@ -120,7 +127,7 @@ class ImportScuolePerZonaJob < ApplicationJob
       }
     end
 
-    Classe.insert_all(records, unique_by: %i[scuola_id anno_corso sezione combinazione]) if records.any?
+    Classe.insert_all(records, unique_by: :index_classi_attive_on_scuola_anno_sezione_combinazione) if records.any?
   end
 
   # Fase 3: insert adozioni
@@ -146,6 +153,8 @@ class ImportScuolePerZonaJob < ApplicationJob
         import_adozione_id: ia.id,
         libro_id: libro_map[ia.CODICEISBN],
         codice_isbn: ia.CODICEISBN,
+        anno_scolastico: ANNO_SCOLASTICO,
+        codicescuola: ia.CODICESCUOLA,
         titolo: ia.TITOLO,
         editore: ia.EDITORE,
         autori: ia.AUTORI,
@@ -160,7 +169,7 @@ class ImportScuolePerZonaJob < ApplicationJob
     end
 
     records.each_slice(5000) do |batch|
-      Adozione.insert_all(batch, unique_by: %i[classe_id codice_isbn])
+      Adozione.insert_all(batch, unique_by: :index_adozioni_on_classe_isbn_anno)
     end
   end
 
