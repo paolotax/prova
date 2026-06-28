@@ -1,0 +1,18 @@
+# test/fixtures/new_adozioni.yml
+# Sorgente MIUR anno corrente (colonne LOWERCASE).
+# anno_scolastico lasciato nil per rispecchiare la produzione (bug noto).
+prima_a_matematica:
+  codicescuola: "MIIC123456"
+  annocorso: "1"
+  sezioneanno: "A"
+  combinazione: "MQ"
+  codiceisbn: "9788812345678"
+  titolo: "Matematica Facile 1"
+  editore: "Editore Test"
+  autori: "Rossi M."
+  disciplina: "MATEMATICA"
+  prezzo: "12,50"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"

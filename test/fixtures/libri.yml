@@ -111,3 +111,15 @@ fascicolo_tre:
   prezzo_in_cents: 1000
   classe: 1
   disciplina: "Storia"
+
+# ISBN allineato a new_adozioni(:prima_a_matematica) per testare il link libro_id in costruisci_adozioni!
+matematica_facile_1:
+  account: fizzy
+  user: one
+  editore: mondadori
+  categoria: ministeriali
+  titolo: "Matematica Facile 1"
+  codice_isbn: "9788812345678"
+  prezzo_in_cents: 1250
+  classe: 1
+  disciplina: "Matematica"

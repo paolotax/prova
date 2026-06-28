@@ -82,9 +82,14 @@ class Classe < ApplicationRecord
   has_many :documenti, as: :clientable
 
   validates :anno_corso, presence: true
-  validates :sezione, uniqueness: { scope: [:scuola_id, :anno_corso, :combinazione] }, allow_blank: true
+  validates :sezione,
+    uniqueness: { scope: %i[scuola_id anno_corso combinazione] },
+    allow_blank: true,
+    if: -> { stato == "attiva" }
 
-  scope :per_anno, ->(anno) { where(anno_corso: anno) }
+  scope :attive,     -> { where(stato: "attiva") }
+  scope :archiviate, -> { where(stato: "archiviata") }
+  scope :per_anno,   ->(anno_scolastico) { where(anno_scolastico: anno_scolastico) }
 
   def self.search_scope(combinazione: nil, provincia: nil, comune: nil, tipo_scuola: nil, anno_corso: nil)
     scope = joins("INNER JOIN scuole ON scuole.id = classi.scuola_id")
@@ -145,6 +150,55 @@ class Classe < ApplicationRecord
       ANNOCORSO: classe_origine,
       SEZIONEANNO: sezione_origine
     )
+  end
+
+  # Righe new_adozioni (sorgente MIUR anno corrente) per questa classe.
+  # NB: non si filtra per anno_scolastico (NULL in produzione), solo per origine.
+  def new_adozioni
+    return NewAdozione.none unless codice_ministeriale_origine.present?
+
+    NewAdozione.where(
+      codicescuola: codice_ministeriale_origine,
+      annocorso: classe_origine,
+      sezioneanno: sezione_origine,
+      combinazione: combinazione_origine
+    )
+  end
+
+  # Costruisce gli snapshot Adozione per l'anno indicato a partire da new_adozioni.
+  # Idempotente: l'indice unico (classe_id, codice_isbn, anno_scolastico) evita duplicati.
+  def costruisci_adozioni!(anno_scolastico:)
+    sorgenti = new_adozioni.to_a
+    return 0 if sorgenti.empty?
+
+    # Risolve i Libro per ISBN in un'unica query (no N+1), scopata per account
+    # come in Adozione.create_from_import (account.libri.find_by(codice_isbn:)).
+    isbns = sorgenti.map(&:codiceisbn).compact.uniq
+    libro_id_per_isbn = Libro.where(account_id: account_id, codice_isbn: isbns)
+      .pluck(:codice_isbn, :id).to_h
+
+    righe = sorgenti.map do |na|
+      {
+        account_id: account_id,
+        classe_id: id,
+        libro_id: libro_id_per_isbn[na.codiceisbn],
+        codice_isbn: na.codiceisbn,
+        titolo: na.titolo,
+        editore: na.editore,
+        autori: na.autori,
+        disciplina: na.disciplina,
+        prezzo_cents: ((na.prezzo_euro || 0) * 100).round,
+        nuova_adozione: na.nuovaadoz.to_s.match?(/\As/i),
+        da_acquistare:  na.daacquist.to_s.match?(/\As/i),
+        consigliato:    na.consigliato.to_s.match?(/\As/i),
+        anno_scolastico: anno_scolastico,
+        codicescuola: codice_ministeriale_origine,
+        created_at: Time.current,
+        updated_at: Time.current
+      }
+    end
+
+    Adozione.insert_all(righe, unique_by: :index_adozioni_on_classe_isbn_anno).count
   end
 
   def nome_completo

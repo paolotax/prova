@@ -33,7 +33,7 @@
 require "test_helper"
 
 class ClasseTest < ActiveSupport::TestCase
-  fixtures :classi, :scuole, :accounts
+  fixtures :classi, :scuole, :accounts, :new_adozioni, :libri, :editori, :categorie, :users
 
   test "tappa_target delegates to scuola" do
     classe = classi(:prima_a_fizzy)
@@ -43,5 +43,41 @@ class ClasseTest < ActiveSupport::TestCase
   test "default_titolo_tappa references the sezione" do
     classe = classi(:prima_a_fizzy)
     assert_match(/Classe/, classe.default_titolo_tappa)
+  end
+
+  test "attive esclude le archiviate e include le attive" do
+    attiva = classi(:prima_a)
+    da_archiviare = classi(:quinta_a)
+    da_archiviare.update!(stato: "archiviata")
+    assert_includes Classe.attive, attiva
+    assert_not_includes Classe.attive, da_archiviare
+  end
+
+  test "new_adozioni trova le righe per origine" do
+    classe = classi(:prima_a)
+    isbn = classe.new_adozioni.pluck(:codiceisbn)
+    assert_includes isbn, new_adozioni(:prima_a_matematica).codiceisbn
+  end
+
+  test "costruisci_adozioni! crea snapshot taggati per anno" do
+    classe = classi(:prima_a)
+    assert_difference -> { classe.adozioni.where(anno_scolastico: "202627").count }, 1 do
+      classe.costruisci_adozioni!(anno_scolastico: "202627")
+    end
+    ad = classe.adozioni.find_by(anno_scolastico: "202627")
+    assert_equal classe.codice_ministeriale_origine, ad.codicescuola
+    assert_equal new_adozioni(:prima_a_matematica).codiceisbn, ad.codice_isbn
+    assert_equal 1250, ad.prezzo_cents                    # fixture prezzo "12,50"
+    assert ad.da_acquistare                               # fixture daacquist "Si"
+    assert_not ad.nuova_adozione                          # fixture nuovaadoz "No"
+    assert_equal libri(:matematica_facile_1).id, ad.libro_id  # link per codice_isbn, scopato per account
+  end
+
+  test "costruisci_adozioni! è idempotente" do
+    classe = classi(:prima_a)
+    classe.costruisci_adozioni!(anno_scolastico: "202627")
+    assert_no_difference -> { Adozione.count } do
+      classe.costruisci_adozioni!(anno_scolastico: "202627")
+    end
   end
 end

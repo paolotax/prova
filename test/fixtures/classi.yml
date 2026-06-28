@@ -110,3 +110,31 @@ classe_1a_sud:
   codice_ministeriale_origine: "MIIC345678"
   classe_origine: "1"
   sezione_origine: "A"
+
+# Classi EE (primaria) per il passaggio anno / costruisci_adozioni!
+prima_a:
+  account: fizzy
+  scuola: scuola_fizzy
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "Primaria"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "MIIC123456"
+  classe_origine: "1"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+quinta_a:
+  account: fizzy
+  scuola: scuola_fizzy
+  anno_corso: "5"
+  sezione: "A"
+  combinazione: ""
+  tipo_scuola: "Primaria"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "MIIC123456"
+  classe_origine: "5"
+  sezione_origine: "A"
