@@ -74,7 +74,7 @@ module Scuole
     end
 
     def load_prev_next
-      all_ids = @scuola.classi.order(:anno_corso, :sezione).pluck(:id)
+      all_ids = @scuola.classi.attive.order(:anno_corso, :sezione).pluck(:id)
       idx = all_ids.index(@classe.id)
       @prev_classe_id = idx && idx > 0 ? all_ids[idx - 1] : nil
       @next_classe_id = idx && idx < all_ids.size - 1 ? all_ids[idx + 1] : nil
