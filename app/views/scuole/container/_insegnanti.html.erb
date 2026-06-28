@@ -51,7 +51,7 @@
 
         <% if discipline_miur.any? %>
           <%
-            all_classe_ids = docenti.flat_map { |p| p.classi.map(&:id) }.uniq
+            all_classe_ids = docenti.flat_map { |p| p.classi.attive.map(&:id) }.uniq
             all_adozioni = discipline_miur.flat_map { |d| all_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }
             # Build libro → classe_ids map
             libro_classe_ids = all_adozioni.group_by { |a| [a.titolo, a.editore] }
@@ -81,7 +81,7 @@
             <%
               styles = {}
               if discipline_miur.any?
-                persona.classi.each do |c|
+                persona.classi.attive.each do |c|
                   adozioni = discipline_miur.flat_map { |d| adozioni_by_classe_disciplina[[c.id, d]] || [] }
                   if adozioni.any? { |a| a.nuova_adozione? && a.mia? }
                     styles[c.id] = :nuova_mia
@@ -102,7 +102,7 @@
             </dt>
             <dd>
               <div class="flex gap-quarter flex-wrap">
-                <%= classi_badge_links(persona.classi, scuola, classe_styles: styles, hover_target: true) %>
+                <%= classi_badge_links(persona.classi.attive, scuola, classe_styles: styles, hover_target: true) %>
               </div>
             </dd>
           <% end %>
