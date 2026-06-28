@@ -10,7 +10,7 @@ module Scuole
     end
 
     def show
-      @adozioni = @classe.adozioni
+      @adozioni = @classe.adozioni.correnti
                     .includes(:saggi, :kit_consegne, :seguiti, :libro)
                     .order(:disciplina, :titolo)
       load_prev_next

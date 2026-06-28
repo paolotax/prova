@@ -69,7 +69,7 @@
   <div class="form-field cb-tax">
     <label class="label txt-small">Classi</label>
     <%= combobox_tag "persona[classe_ids]",
-        hw_combobox_options(scuola ? scuola.classi.order(:anno_corso, :sezione) : Classe.none, display: :nome_breve),
+        hw_combobox_options(scuola ? scuola.classi.attive.order(:anno_corso, :sezione) : Classe.none, display: :nome_breve),
         value: persona.classe_ids.join(","),
         multiselect_chip_src: persona_classe_chips_path(persona),
         placeholder: "Aggiungi classe...",

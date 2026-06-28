@@ -15,9 +15,9 @@
     account: Current.account, tipo_scuola: tipo_scuola, cattedra: cattedra
   ).pluck(:disciplina)
 
-  classi = persona.classi.sort_by { |c| [c.anno_corso, c.sezione] }
+  classi = persona.classi.attive.sort_by { |c| [c.anno_corso, c.sezione] }
   adozioni_raw = if discipline_miur.any?
-    Adozione.where(classe: classi, disciplina: discipline_miur)
+    Adozione.correnti.where(classe: classi, disciplina: discipline_miur)
             .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione, :prezzo_cents)
   else
     Adozione.none

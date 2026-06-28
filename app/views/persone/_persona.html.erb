@@ -30,8 +30,8 @@
           <% if persona.email.present? %>
             <span class="margin-inline-start"><%= icon_tag "envelope", class: "icon--small" %> <%= persona.email %></span>
           <% end %>
-          <% if persona.classi.any? %>
-            <span class="margin-inline-start"><%= icon_tag "academic-cap", class: "icon--small" %> <%= persona.classi.size %> classi</span>
+          <% if persona.classi.attive.any? %>
+            <span class="margin-inline-start"><%= icon_tag "academic-cap", class: "icon--small" %> <%= persona.classi.attive.size %> classi</span>
           <% end %>
         </div>
       </div>
