@@ -3,8 +3,10 @@
 # Table name: adozioni
 #
 #  id                 :uuid             not null, primary key
+#  anno_scolastico    :string
 #  autori             :string
 #  codice_isbn        :string
+#  codicescuola       :string
 #  consigliato        :boolean          default(FALSE)
 #  da_acquistare      :boolean          default(FALSE)
 #  disciplina         :string
@@ -25,14 +27,15 @@
 #
 # Indexes
 #
-#  index_adozioni_on_account_classe_da_acquistare  (account_id,classe_id) WHERE (da_acquistare = true)
-#  index_adozioni_on_account_id                    (account_id)
-#  index_adozioni_on_account_id_and_libro_id       (account_id,libro_id)
-#  index_adozioni_on_account_id_and_mia            (account_id,mia)
-#  index_adozioni_on_classe_id                     (classe_id)
-#  index_adozioni_on_classe_id_and_codice_isbn     (classe_id,codice_isbn) UNIQUE
-#  index_adozioni_on_import_adozione_id            (import_adozione_id)
-#  index_adozioni_on_libro_id                      (libro_id)
+#  index_adozioni_on_account_classe_da_acquistare    (account_id,classe_id) WHERE (da_acquistare = true)
+#  index_adozioni_on_account_id                      (account_id)
+#  index_adozioni_on_account_id_and_anno_scolastico  (account_id,anno_scolastico)
+#  index_adozioni_on_account_id_and_libro_id         (account_id,libro_id)
+#  index_adozioni_on_account_id_and_mia              (account_id,mia)
+#  index_adozioni_on_classe_id                       (classe_id)
+#  index_adozioni_on_classe_isbn_anno                (classe_id,codice_isbn,anno_scolastico) UNIQUE
+#  index_adozioni_on_import_adozione_id              (import_adozione_id)
+#  index_adozioni_on_libro_id                        (libro_id)
 #
 # Foreign Keys
 #

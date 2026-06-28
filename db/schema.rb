@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_28_175900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -91,9 +91,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
 
   create_table "adozioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
+    t.string "anno_scolastico"
     t.string "autori"
     t.uuid "classe_id", null: false
     t.string "codice_isbn"
+    t.string "codicescuola"
     t.boolean "consigliato", default: false
     t.datetime "created_at", null: false
     t.boolean "da_acquistare", default: false
@@ -109,11 +111,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
     t.integer "prezzo_cents", default: 0
     t.string "titolo"
     t.datetime "updated_at", null: false
+    t.index ["account_id", "anno_scolastico"], name: "index_adozioni_on_account_id_and_anno_scolastico"
     t.index ["account_id", "classe_id"], name: "index_adozioni_on_account_classe_da_acquistare", where: "(da_acquistare = true)"
     t.index ["account_id", "libro_id"], name: "index_adozioni_on_account_id_and_libro_id"
     t.index ["account_id", "mia"], name: "index_adozioni_on_account_id_and_mia"
     t.index ["account_id"], name: "index_adozioni_on_account_id"
-    t.index ["classe_id", "codice_isbn"], name: "index_adozioni_on_classe_id_and_codice_isbn", unique: true
+    t.index ["classe_id", "codice_isbn", "anno_scolastico"], name: "index_adozioni_on_classe_isbn_anno", unique: true
     t.index ["classe_id"], name: "index_adozioni_on_classe_id"
     t.index ["import_adozione_id"], name: "index_adozioni_on_import_adozione_id"
     t.index ["libro_id"], name: "index_adozioni_on_libro_id"
@@ -400,6 +403,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
   create_table "classi", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
     t.string "anno_corso"
+    t.string "anno_scolastico"
     t.string "classe_origine"
     t.string "codice_ministeriale_origine"
     t.string "combinazione"
@@ -410,11 +414,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
     t.uuid "scuola_id", null: false
     t.string "sezione"
     t.string "sezione_origine"
+    t.string "stato", default: "attiva", null: false
     t.string "tipo_scuola"
     t.datetime "updated_at", null: false
+    t.index ["account_id", "anno_scolastico"], name: "index_classi_on_account_id_and_anno_scolastico"
     t.index ["account_id", "codice_ministeriale_origine", "classe_origine", "sezione_origine"], name: "index_classi_on_origine"
     t.index ["account_id"], name: "index_classi_on_account_id"
-    t.index ["scuola_id", "anno_corso", "sezione", "combinazione"], name: "index_classi_on_scuola_anno_sezione_combinazione", unique: true
+    t.index ["scuola_id", "anno_corso", "sezione", "combinazione"], name: "index_classi_attive_on_scuola_anno_sezione_combinazione", unique: true, where: "((stato)::text = 'attiva'::text)"
     t.index ["scuola_id"], name: "index_classi_on_scuola_id"
   end
 

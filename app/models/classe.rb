@@ -4,6 +4,7 @@
 #
 #  id                          :uuid             not null, primary key
 #  anno_corso                  :string
+#  anno_scolastico             :string
 #  classe_origine              :string
 #  codice_ministeriale_origine :string
 #  combinazione                :string
@@ -12,6 +13,7 @@
 #  numero_alunni               :integer
 #  sezione                     :string
 #  sezione_origine             :string
+#  stato                       :string           default("attiva"), not null
 #  tipo_scuola                 :string
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
@@ -20,10 +22,11 @@
 #
 # Indexes
 #
-#  index_classi_on_account_id                        (account_id)
-#  index_classi_on_origine                           (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
-#  index_classi_on_scuola_anno_sezione_combinazione  (scuola_id,anno_corso,sezione,combinazione) UNIQUE
-#  index_classi_on_scuola_id                         (scuola_id)
+#  index_classi_attive_on_scuola_anno_sezione_combinazione  (scuola_id,anno_corso,sezione,combinazione) UNIQUE WHERE ((stato)::text = 'attiva'::text)
+#  index_classi_on_account_id                               (account_id)
+#  index_classi_on_account_id_and_anno_scolastico           (account_id,anno_scolastico)
+#  index_classi_on_origine                                  (account_id,codice_ministeriale_origine,classe_origine,sezione_origine)
+#  index_classi_on_scuola_id                                (scuola_id)
 #
 # Foreign Keys
 #
