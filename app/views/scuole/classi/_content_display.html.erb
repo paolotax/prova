@@ -23,7 +23,7 @@
 <%= render "scuole/classi/docenti", classe: classe, scuola: scuola %>
 
 <%
-  mie_adozioni = Adozione.where(classe: classe, mia: true, da_acquistare: true)
+  mie_adozioni = Adozione.correnti.where(classe: classe, mia: true, da_acquistare: true)
                          .includes(:libro, :consegne_saggio)
                          .order(:titolo)
 %>

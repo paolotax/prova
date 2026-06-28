@@ -561,10 +561,13 @@ migration storicizzazione deploy-safe → `Classe#costruisci_adozioni!` → `Scu
 (spostamento maestri **per sezione**) → test integrazione → hardening (dedup `create_from_import` +
 scoping counter `stato='attiva'`/anno corrente). Suite intera: zero regressioni nuove.
 
-### Follow-up aperti (da fare PRIMA del primo rollover in produzione)
-1. **Scoping dei reader di `scuola.adozioni`** (`has_many through: :classi`, oggi tutti gli anni/stati):
-   `app/pdfs/foglio_scuola_pdf.rb`, `scuole_controller#show` + `views/scuole/container/_classi*`.
-   Valutare associazione `adozioni_correnti` (`classi.stato='attiva' AND adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico`).
+### Follow-up
+1. ~~**Scoping dei reader di `scuola.adozioni`**~~ — **FATTO** (commit e4376ba3/e38188e9/86db1ffe/ef7aa1c4).
+   Primitiva `Adozione.correnti` (`joins(:classe).where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")`) + `Classe.attive`.
+   Scopati: schede scuola/classe/docente, foglio scuola PDF+model, sovrapacchi, export xlsx, bolle_visione (selezione/assegnazione). NO-OP pre-rollover.
+   Lasciati apposta: `bolla_visione_pdf` `index_by` (risolve `classe_id` STORICI sulle righe — non filtrare), `_scuola.json` (counter cached, già corretti dai job), `scuola_filter` (solo `includes` di preload), importer/servizi/MCP (dati, non display).
+
+### Follow-up ancora aperti (da fare PRIMA del primo rollover in produzione)
 2. **Retention adozioni anno precedente** sulle classi promosse (mutate in-place): purgare o storicizzare le classi (riga/anno).
 3. **`Classe.create_from_view`/`find_or_create_from_view`**: creano classi con `anno_scolastico NULL`, find-clause senza `stato`.
 4. **Single source of truth per `anno_scolastico`**: oggi 3 costanti da bumpare a mano
