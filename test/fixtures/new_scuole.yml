@@ -11,3 +11,13 @@ calamandrei_nuovo:
   regione: "Emilia-Romagna"
   tipo_scuola: "SCUOLA PRIMARIA"
   anno_scolastico: "202627"
+
+# Anagrafe del nuovo anno per primaria_attiva (codice invariato): la rende promuovibile.
+primaria_attiva_nuovo_anno:
+  codice_scuola: "BOEE000001"
+  denominazione: "Scuola Primaria Malaguzzi"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "SCUOLA PRIMARIA"
+  anno_scolastico: "202627"

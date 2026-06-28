@@ -39,6 +39,14 @@
 	</div>
 
 	<div class="card-perma__actions card-perma__actions--right">
+		<% if scuola.promuovibile? %>
+			<%= link_to new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale),
+					class: "btn", data: { turbo_frame: :modal, controller: "tooltip" } do %>
+				<%= icon_tag "academic-cap" %>
+				<span class="for-screen-reader">Passaggio anno</span>
+			<% end %>
+		<% end %>
+
 		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
 				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
 			<%= icon_tag "printer" %>

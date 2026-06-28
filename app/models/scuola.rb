@@ -195,6 +195,14 @@ class Scuola < ApplicationRecord
     [indirizzo, cap, comune, provincia].compact_blank.join(" ")
   end
 
+  # Promuovibile all'anno successivo (passaggio anno EE) quando l'anagrafe MIUR
+  # del nuovo anno è disponibile e la scuola non è ancora stata fatta scorrere.
+  def promuovibile?(anno_target = NewScuola.maximum(:anno_scolastico))
+    return false if anno_target.blank?
+    return false if classi.attive.maximum(:anno_scolastico).to_s >= anno_target
+    NewScuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno_target).exists?
+  end
+
   def geocoded?
     latitude.present? && longitude.present?
   end

@@ -13,8 +13,7 @@ class ControlloAdozioni::PromozioniController < ApplicationController
 
   def create
     if params[:a].blank?
-      redirect_to controllo_adozioni_path(@scuola.codice_ministeriale),
-                  alert: "Anno scolastico target mancante."
+      redirect_to scuola_path(@scuola), alert: "Anno scolastico target mancante."
       return
     end
     nuovo_codice = params[:codice_nuovo].presence
@@ -26,7 +25,8 @@ class ControlloAdozioni::PromozioniController < ApplicationController
     spostamenti = params.fetch(:spostamenti, {}).permit!.to_h
     ScuolaPromuoviClassiJob.perform_later(@scuola, da: params[:da], a: params[:a],
                                           spostamenti_insegnanti: spostamenti)
-    redirect_to controllo_adozioni_path(@scuola.codice_ministeriale),
+    # La card scuola si aggiorna via broadcast quando il job completa (UpdateScuolaMieAdozioniJob).
+    redirect_to scuola_path(@scuola),
                 notice: "Passaggio anno avviato per #{@scuola.denominazione}."
   end
 

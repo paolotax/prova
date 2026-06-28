@@ -24,7 +24,7 @@ class ControlloAdozioni::PromozioniControllerTest < ActionDispatch::IntegrationT
       post controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: @account.id),
            params: { da: "202526", a: "202627" }
     end
-    assert_redirected_to controllo_adozioni_path(scuola.codice_ministeriale, account_id: @account.id)
+    assert_redirected_to scuola_path(scuola, account_id: @account.id)
   end
 
   test "create with new code updates scuola and annotates the old one" do

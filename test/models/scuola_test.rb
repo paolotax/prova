@@ -144,6 +144,27 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
   end
 end
 
+class ScuolaPromuovibileTest < ActiveSupport::TestCase
+  fixtures :accounts, :scuole, :classi, :new_scuole
+
+  test "promuovibile? quando new_scuole ha il nuovo anno e la scuola non è ancora scorsa" do
+    scuola = scuole(:primaria_attiva) # classi attive 202526, presente in new_scuole 202627
+    assert scuola.promuovibile?
+  end
+
+  test "non promuovibile? se già scorsa all'anno target" do
+    scuola = scuole(:primaria_attiva)
+    scuola.classi.attive.update_all(anno_scolastico: "202627")
+    assert_not scuola.promuovibile?
+  end
+
+  test "non promuovibile? se la scuola non è in new_scuole per il nuovo anno" do
+    scuola = scuole(:primaria_attiva)
+    NewScuola.where(codice_scuola: scuola.codice_ministeriale).delete_all
+    assert_not scuola.promuovibile?
+  end
+end
+
 class ScuolaEmailPatternTest < ActiveSupport::TestCase
   fixtures :accounts, :scuole
 
