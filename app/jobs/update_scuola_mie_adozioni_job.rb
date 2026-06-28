@@ -102,6 +102,8 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
           AND a.account_id = :account_id
           AND a.mia = true
           AND a.da_acquistare = true
+          AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
         GROUP BY c.scuola_id
       ) sub
       WHERE scuole.id = sub.scuola_id
@@ -119,6 +121,8 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
           WHERE a.account_id = :account_id
             AND a.mia = true
             AND a.da_acquistare = true
+            AND c.stato = 'attiva'
+            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
             AND c.scuola_id IN (:scuola_ids)
         )
     SQL

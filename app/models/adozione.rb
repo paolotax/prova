@@ -108,6 +108,8 @@ class Adozione < ApplicationRecord
       classe: classe,
       libro: libro,
       import_adozione: import_adozione,
+      anno_scolastico: classe.anno_scolastico,
+      codicescuola: classe.codice_ministeriale_origine,
       codice_isbn: import_adozione.CODICEISBN,
       titolo: import_adozione.TITOLO,
       editore: import_adozione.EDITORE,

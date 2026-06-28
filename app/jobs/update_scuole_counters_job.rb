@@ -23,6 +23,7 @@ class UpdateScuoleCountersJob < ApplicationJob
         FROM classi c
         JOIN scuole s ON s.id = c.scuola_id
         WHERE s.account_id = :account_id
+          AND c.stato = 'attiva'
           #{@provincia_clause}
         GROUP BY c.scuola_id
       ) sub
@@ -43,6 +44,8 @@ class UpdateScuoleCountersJob < ApplicationJob
         JOIN scuole s ON s.id = c.scuola_id
         WHERE s.account_id = :account_id
           AND a.da_acquistare = true
+          AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
           #{@provincia_clause}
         GROUP BY c.scuola_id
       ) sub
@@ -64,6 +67,8 @@ class UpdateScuoleCountersJob < ApplicationJob
         WHERE s.account_id = :account_id
           AND a.mia = true
           AND a.da_acquistare = true
+          AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
           #{@provincia_clause}
         GROUP BY c.scuola_id
       ) sub
@@ -84,6 +89,7 @@ class UpdateScuoleCountersJob < ApplicationJob
           SELECT DISTINCT c.scuola_id FROM classi c
           JOIN scuole s ON s.id = c.scuola_id
           WHERE s.account_id = :account_id
+            AND c.stato = 'attiva'
             #{@provincia_clause}
         )
     SQL
@@ -99,6 +105,8 @@ class UpdateScuoleCountersJob < ApplicationJob
           JOIN scuole s ON s.id = c.scuola_id
           WHERE s.account_id = :account_id
             AND a.da_acquistare = true
+            AND c.stato = 'attiva'
+            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
             #{@provincia_clause}
         )
     SQL
@@ -115,6 +123,8 @@ class UpdateScuoleCountersJob < ApplicationJob
           WHERE s.account_id = :account_id
             AND a.mia = true
             AND a.da_acquistare = true
+            AND c.stato = 'attiva'
+            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
             #{@provincia_clause}
         )
     SQL

@@ -276,6 +276,7 @@ class Scuola < ApplicationRecord
     end
 
     UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
+    UpdateScuoleCountersJob.perform_later(account, provincia: provincia)
   end
 
   private
