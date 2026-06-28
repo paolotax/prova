@@ -471,6 +471,15 @@ namespace :import do
       stg_model.reset_column_information
 
       # 2. Carica i CSV nella staging (la live non viene toccata)
+      #    Il CSV MIUR delle adozioni NON contiene la colonna ANNOSCOLASTICO (solo 16
+      #    colonne): la deriviamo dall'anagrafica scuole appena importata (new_scuole,
+      #    formato compatto "202627") e la timbriamo su ogni riga. Calcolata UNA volta.
+      source_year = NewScuola.maximum(:anno_scolastico).presence || begin
+        y = Date.current.year
+        Date.current.month >= 2 ? "#{y}#{(y + 1).to_s[-2..]}" : "#{y - 1}#{y.to_s[-2..]}"
+      end
+      puts "anno_scolastico timbrato sulle adozioni: #{source_year}"
+
       batch_size = 10_000
       total = 0
       csv_files.each do |file|
@@ -480,7 +489,7 @@ namespace :import do
         Benchmark.bm do |x|
           x.report("importo #{File.basename(file)}") do
             CSV.foreach(file, headers: true, col_sep: ',', encoding: 'UTF-8') do |row|
-              items << row.to_h.transform_keys(map_adozioni)
+              items << row.to_h.transform_keys(map_adozioni).merge("anno_scolastico" => source_year)
               file_count += 1
               if items.size >= batch_size
                 stg_model.import items, validate: false
