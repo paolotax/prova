@@ -285,6 +285,9 @@ class Scuola < ApplicationRecord
 
     UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
     UpdateScuoleCountersJob.perform_later(account, provincia: provincia)
+
+    # Rinfresca (morph) le pagine scuola aperte: la show mostra le nuove classi/adozioni.
+    Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")
   end
 
   private

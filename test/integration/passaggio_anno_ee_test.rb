@@ -95,7 +95,7 @@ class PassaggioAnnoEeTest < ActionDispatch::IntegrationTest
       post controllo_adozioni_promozione_path(codicescuola: vecchio, account_id: @account.id),
            params: { da: "202526", a: "202627", codice_nuovo: "BOEE999999" }
     end
-    assert_redirected_to controllo_adozioni_path("BOEE999999", account_id: @account.id)
+    assert_redirected_to scuola_path(scuola, account_id: @account.id)
 
     scuola.reload
     assert_equal "BOEE999999", scuola.codice_ministeriale
