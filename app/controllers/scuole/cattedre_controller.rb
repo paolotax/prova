@@ -8,7 +8,8 @@ module Scuole
                          .order(Arel.sql("MIN(persone.posizione)"))
                          .group("persona_classi.materia")
                          .pluck("persona_classi.materia").compact
-      all_discipline = @scuola.classi.joins(:adozioni)
+      all_discipline = @scuola.classi.attive.joins(:adozioni)
+                              .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
                               .distinct.pluck("adozioni.disciplina").compact
       @mappings = CattedraDisciplina.where(account: current_account, tipo_scuola: @tipo_scuola)
 

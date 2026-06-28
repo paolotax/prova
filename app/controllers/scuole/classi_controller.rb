@@ -6,7 +6,7 @@ module Scuole
     before_action :set_classe, only: [:show, :edit, :update, :destroy, :import_adozioni]
 
     def index
-      @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
+      @classi = @scuola.classi.attive.includes(:adozioni).order(:anno_corso, :sezione)
     end
 
     def show

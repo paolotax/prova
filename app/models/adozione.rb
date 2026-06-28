@@ -71,6 +71,8 @@ class Adozione < ApplicationRecord
   scope :mie_disdette, -> { where(mia: true, disdetta: true) }
   scope :da_acquistare, -> { where(da_acquistare: true) }
   scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
+  # Solo le adozioni dello snapshot dell'anno corrente della loro classe (esclude gli anni passati).
+  scope :correnti, -> { joins(:classe).where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico") }
   scope :adozioni_144, -> {
     joins(:classe).where(
       classi: { anno_corso: Stats::Calcolo144::CLASSI_144 },

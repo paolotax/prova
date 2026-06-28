@@ -66,7 +66,7 @@ class ScuoleController < ApplicationController
   end
 
   def show
-    @classi = @scuola.classi.includes(:adozioni).order(:anno_corso, :sezione)
+    @classi = @scuola.classi.attive.includes(:adozioni).order(:anno_corso, :sezione)
     @edit_mode = params[:edit].present?
 
     respond_to do |format|

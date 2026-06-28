@@ -13,7 +13,7 @@ module ScuoleHelper
   end
 
   def scuola_badge_class(scuola)
-    return "badge--positive" if scuola.classi.any?
+    return "badge--positive" if scuola.classi.attive.any?
     return "badge--warning" if scuola.priorita.to_i > 3
     ""
   end

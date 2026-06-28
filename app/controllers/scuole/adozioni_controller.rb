@@ -5,8 +5,8 @@ module Scuole
 
     def show
       @scope = params[:scope] || "mie"
-      base = Adozione.joins(:classe)
-                      .where(classe_id: @scuola.classi.select(:id))
+      base = Adozione.correnti
+                      .where(classe_id: @scuola.classi.attive.select(:id))
                       .includes(:classe)
                       .order(:disciplina, :titolo, "classi.anno_corso", "classi.sezione")
 

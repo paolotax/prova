@@ -14,13 +14,14 @@
   </div>
 
   <div class="flex align-center gap-half">
-    <% if classe.adozioni.any? %>
+    <% adozioni_correnti = classe.adozioni.correnti %>
+    <% if adozioni_correnti.any? %>
       <span class="badge badge--positive txt-xx-small">
-        <%= classe.adozioni.count %> adozioni
+        <%= adozioni_correnti.count %> adozioni
       </span>
     <% end %>
 
-    <% da_acquistare_count = classe.adozioni.da_acquistare_flag.count %>
+    <% da_acquistare_count = adozioni_correnti.da_acquistare_flag.count %>
     <% if da_acquistare_count > 0 %>
       <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
         <%= da_acquistare_count %> da acquistare

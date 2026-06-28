@@ -10,9 +10,9 @@
   cattedra_to_discipline = mappings.pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
 
   # Preload adozioni for this school's classi
-  classe_ids = scuola.classi.pluck(:id)
-  classi_by_id = scuola.classi.index_by(&:id)
-  adozioni_by_classe_disciplina = Adozione.where(classe_id: classe_ids)
+  classe_ids = scuola.classi.attive.pluck(:id)
+  classi_by_id = scuola.classi.attive.index_by(&:id)
+  adozioni_by_classe_disciplina = Adozione.correnti.where(classe_id: classe_ids)
     .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione, :prezzo_cents)
     .group_by { |a| [a.classe_id, a.disciplina] }
 

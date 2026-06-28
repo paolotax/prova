@@ -1,10 +1,11 @@
 <%# locals: (scuola:) -%>
 
 <section class="group">
-  <% if scuola.classi.any? %>
+  <% classi_attive = scuola.classi.attive %>
+  <% if classi_attive.any? %>
     <%
-      classi_grouped = scuola.classi.order(:anno_corso, :sezione).group_by(&:combinazione)
-      anni = scuola.classi.pluck(:anno_corso).uniq.sort
+      classi_grouped = classi_attive.order(:anno_corso, :sezione).group_by(&:combinazione)
+      anni = classi_attive.pluck(:anno_corso).uniq.sort
       anni_labels = { "1" => "I", "2" => "II", "3" => "III", "4" => "IV", "5" => "V" }
     %>
 
