@@ -94,7 +94,7 @@ class BolleVisioneController < ApplicationController
     end
 
     scuola = @bolla_visione.scuola
-    @classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
+    @classi_per_anno = scuola.classi.attive.order(:anno_corso, :sezione).group_by(&:anno_corso)
     @persone = scuola.persone.order(:cognome)
 
     respond_to do |format|
@@ -131,7 +131,7 @@ class BolleVisioneController < ApplicationController
     else
       @target_disponibili = []
     end
-    @classi = @scuola.classi.order(:anno_corso, :sezione) if @scuola.respond_to?(:classi)
+    @classi = @scuola.classi.attive.order(:anno_corso, :sezione) if @scuola.respond_to?(:classi)
   end
 
   def assign_or_create_contatto
@@ -168,7 +168,7 @@ class BolleVisioneController < ApplicationController
     classe_ids = persona_params[:classe_ids].to_a.reject(&:blank?)
     materia = persona_params[:materia]
     if classe_ids.any?
-      scuola.classi.where(id: classe_ids).each do |classe|
+      scuola.classi.attive.where(id: classe_ids).each do |classe|
         persona.persona_classi.create(classe: classe, materia: materia)
       end
     end

@@ -12,7 +12,7 @@ class BolleVisione::RigheController < BolleVisione::BaseController
     respond_to do |format|
       format.turbo_stream do
         scuola = @bolla_visione.scuola
-        classi = scuola.classi.where(anno_corso: @riga.classi_target.to_s.split(",").map(&:strip)).order(:anno_corso, :sezione)
+        classi = scuola.classi.attive.where(anno_corso: @riga.classi_target.to_s.split(",").map(&:strip)).order(:anno_corso, :sezione)
         render turbo_stream: [
           turbo_stream.before("bolla_visione_righe_form",
             partial: "bolla_visione_righe/bolla_visione_riga",
@@ -40,7 +40,7 @@ class BolleVisione::RigheController < BolleVisione::BaseController
       format.turbo_stream do
         scuola = @bolla_visione.scuola
         targets = risolvi_targets(@riga.libro_id)
-        classi_per_anno = scuola.classi.order(:anno_corso, :sezione).group_by(&:anno_corso)
+        classi_per_anno = scuola.classi.attive.order(:anno_corso, :sezione).group_by(&:anno_corso)
         classi = classi_per_anno.values_at(*targets).compact.flatten
         persone = classi.any? ? Persona.docente.joins(:classi).where(classi: { id: classi.map(&:id) }).distinct.order(:cognome) : Persona.none
 

@@ -17,7 +17,7 @@ class BolleVisione::PersoneController < BolleVisione::BaseController
 
       materia = params.dig(:persona, :materia) || params[:materia]
       if materia.present?
-        @bolla_visione.scuola.classi.each do |classe|
+        @bolla_visione.scuola.classi.attive.each do |classe|
           @persona.persona_classi.create(classe: classe, materia: materia)
         end
       end
