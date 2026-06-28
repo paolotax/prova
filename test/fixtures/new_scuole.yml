@@ -1,0 +1,13 @@
+# test/fixtures/new_scuole.yml
+# Sorgente MIUR anagrafe scuole (anno corrente).
+
+# Plesso candidato per il passaggio anno: stesso comune di primaria_attiva,
+# codice MIUR diverso, anno target, con adozioni EE e non ancora tracciato.
+calamandrei_nuovo:
+  codice_scuola: "BOEE999999"
+  denominazione: "Scuola Primaria Calamandrei"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "SCUOLA PRIMARIA"
+  anno_scolastico: "202627"

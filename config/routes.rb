@@ -377,6 +377,10 @@ Rails.application.routes.draw do
     # Nomi route espliciti (non dipendono dall'inflector: evita l'initializer uncountable)
     get 'controllo_adozioni', to: 'controllo_adozioni#index', as: :controllo_adozioni_index
     get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
+    scope module: "controllo_adozioni" do
+      resource :promozione, only: %i[new create], controller: "promozioni",
+               path: "controllo_adozioni/:codicescuola/promozione", as: :controllo_adozioni_promozione
+    end
 
     resources :profiles
 

@@ -138,7 +138,7 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
 
     # Secondo run: la guardia di idempotenza salta l'avanzamento ma applica gli spostamenti
     assert_difference -> { PersonaClasse.where(classe_id: nuova_prima.id).count }, 1 do
-      scuola.promuovi_primaria!(da: "202526", a: "202627", spostamenti_insegnanti: { pc.id => nuova_prima.id })
+      scuola.promuovi_primaria!(da: "202526", a: "202627", spostamenti_insegnanti: { pc.id => "A" })
     end
     assert PersonaClasse.exists?(persona_id: persona.id, classe_id: nuova_prima.id)
   end

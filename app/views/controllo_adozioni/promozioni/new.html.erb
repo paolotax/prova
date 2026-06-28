@@ -1,0 +1,55 @@
+<%= turbo_frame_tag :modal do %>
+  <div data-controller="dialog"
+       data-dialog-modal-value="true"
+       data-dialog-auto-open-value="true">
+    <dialog class="dialog panel" style="--panel-size: 48ch;"
+            data-dialog-target="dialog"
+            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+      <h3 class="txt-large txt-bold">Passaggio anno — <%= @scuola.denominazione %></h3>
+
+      <%= form_with url: controllo_adozioni_promozione_path(@scuola.codice_ministeriale), method: :post,
+          class: "flex flex-column gap",
+          data: { turbo_frame: "_top" } do |f| %>
+
+        <%= hidden_field_tag :da, @anno_corrente %>
+        <%= hidden_field_tag :a, @anno_target %>
+
+        <div>
+          <label class="txt-small txt-bold" for="codice_nuovo">Nuovo codice MIUR</label>
+          <p class="txt-small txt-subtle">
+            La scuola ha cambiato codice ministeriale. Conferma o correggi il codice <%= @anno_target %>.
+          </p>
+          <%= text_field_tag :codice_nuovo, @codice_suggerito.presence || @scuola.codice_ministeriale,
+              class: "input", id: "codice_nuovo" %>
+        </div>
+
+        <% maestri = @quinte_uscenti.flat_map(&:persona_classi) %>
+        <% if maestri.any? %>
+          <div class="flex flex-column gap-half">
+            <label class="txt-small txt-bold">Spostamento maestri di 5ª uscente</label>
+            <% maestri.each do |pc| %>
+              <div class="flex align-center gap-half justify-between">
+                <span class="txt-small">
+                  Sposta <strong><%= pc.persona %></strong><%= " (#{pc.materia})" if pc.materia.present? %> su 1ª:
+                </span>
+                <select name="spostamenti[<%= pc.id %>]" class="input input--select"
+                        aria-label="Sposta <%= pc.persona %> su 1ª">
+                  <option value="">— non spostare —</option>
+                  <% @sezioni_prime.each do |sezione| %>
+                    <option value="<%= sezione %>"><%= sezione %></option>
+                  <% end %>
+                </select>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="flex gap-half justify-end margin-block-start">
+          <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+          <%= f.submit "Avvia passaggio anno", class: "btn btn--link" %>
+        </div>
+      <% end %>
+
+    </dialog>
+  </div>
+<% end %>

@@ -97,3 +97,21 @@ pa_anno_5:
   nuovaadoz: "No"
   consigliato: "No"
   tipogradoscuola: "EE"
+
+# Adozione EE per il plesso candidato BOEE999999 (new_scuola calamandrei_nuovo):
+# alimenta sia la EXISTS del suggeritore sia @sezioni_prime (prima B).
+calamandrei_prima_b:
+  codicescuola: "BOEE999999"
+  annocorso: "1"
+  sezioneanno: "B"
+  combinazione: "MQ"
+  codiceisbn: "9788800000201"
+  titolo: "Sussidiario Prima Calamandrei"
+  editore: "Editore Test"
+  autori: "Bianchi C."
+  disciplina: "ITALIANO"
+  prezzo: "10,00"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"

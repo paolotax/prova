@@ -249,7 +249,7 @@ class Scuola < ApplicationRecord
   end
 
   # Scorrimento d'anno per la PRIMARIA (EE). Idempotente sul target `a`.
-  # spostamenti_insegnanti: { persona_classe_uscente_id => classe_destinazione_id }
+  # spostamenti_insegnanti: { persona_classe_uscente_id => sezione_destinazione_string }
   def promuovi_primaria!(da:, a:, spostamenti_insegnanti: {})
     transaction do
       unless classi.attive.per_anno(a).exists?
@@ -272,7 +272,7 @@ class Scuola < ApplicationRecord
         crea_classi_prime!(anno_scolastico: a)
       end
 
-      applica_spostamenti_insegnanti!(spostamenti_insegnanti)
+      applica_spostamenti_insegnanti!(spostamenti_insegnanti, a: a)
     end
 
     UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
@@ -301,14 +301,15 @@ class Scuola < ApplicationRecord
     end
   end
 
-  def applica_spostamenti_insegnanti!(mappa)
+  def applica_spostamenti_insegnanti!(mappa, a:)
     return if mappa.blank?
-    mappa.each do |persona_classe_id, classe_destinazione_id|
-      pc = PersonaClasse.joins(:classe)
-                        .where(classi: { account_id: account_id })
-                        .find_by(id: persona_classe_id)
-      next unless pc && classi.exists?(id: classe_destinazione_id)
-      PersonaClasse.find_or_create_by!(persona_id: pc.persona_id, classe_id: classe_destinazione_id) do |nuovo|
+    mappa.each do |persona_classe_id, sezione_destinazione|
+      pc = PersonaClasse.joins(:classe).where(classi: { account_id: account_id }).find_by(id: persona_classe_id)
+      next unless pc && sezione_destinazione.present?
+      # NB: se una sezione copre piu combinazioni esistono piu prime omonime; find_by ne sceglie la prima (accettabile per EE).
+      destinazione = classi.attive.find_by(anno_corso: "1", sezione: sezione_destinazione, anno_scolastico: a)
+      next unless destinazione
+      PersonaClasse.find_or_create_by!(persona_id: pc.persona_id, classe_id: destinazione.id) do |nuovo|
         nuovo.materia = pc.materia
       end
     end

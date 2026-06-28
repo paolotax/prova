@@ -17,7 +17,7 @@ class ScuolaPromuoviClassiJobTest < ActiveJob::TestCase
     pc = persona_classi(:maestra_quinta)
     assert_difference -> { PersonaClasse.where(classe_id: nuova_prima.id).count }, 1 do
       ScuolaPromuoviClassiJob.perform_now(scuola, da: "202526", a: "202627",
-                                          spostamenti_insegnanti: { pc.id => nuova_prima.id })
+                                          spostamenti_insegnanti: { pc.id => "A" })
     end
   end
 end

@@ -7,9 +7,14 @@
 <% end %>
 
 <div class="stats-container">
-  <p class="txt-subtle">
-    <%= link_to "← Tutte le scuole", controllo_adozioni_index_path(account_id: params[:account_id]) %>
-    &middot; <%= @codicescuola %>
+  <p class="txt-subtle flex align-center gap-half justify-between">
+    <span>
+      <%= link_to "← Tutte le scuole", controllo_adozioni_index_path(account_id: params[:account_id]) %>
+      &middot; <%= @codicescuola %>
+    </span>
+    <%= link_to "Passaggio anno",
+        new_controllo_adozioni_promozione_path(codicescuola: @codicescuola, account_id: params[:account_id]),
+        class: "btn btn--small", data: { turbo_frame: :modal } %>
   </p>
 
   <% if @scuola_mancante %>
