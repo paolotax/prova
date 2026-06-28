@@ -1,7 +1,7 @@
 wb = xlsx_package.workbook
 
 # Raccogli tutti gli anni_corso presenti nelle scuole filtrate
-anni_corso = @scuole_xlsx.flat_map { |s| s.classi.map(&:anno_corso) }.uniq.compact.sort
+anni_corso = @scuole_xlsx.flat_map { |s| s.classi.attive.map(&:anno_corso) }.uniq.compact.sort
 
 fields = %w[codice_ministeriale denominazione tipo_scuola grado indirizzo cap comune provincia area email pec telefono note]
 # Aggiungi una colonna per ogni anno_corso
@@ -11,7 +11,7 @@ wb.add_worksheet(name: "Scuole") do |sheet|
   sheet.add_row fields
 
   @scuole_xlsx.each do |scuola|
-    classi_per_anno = scuola.classi.group_by(&:anno_corso)
+    classi_per_anno = scuola.classi.attive.group_by(&:anno_corso)
 
     row = [
       scuola.codice_ministeriale,

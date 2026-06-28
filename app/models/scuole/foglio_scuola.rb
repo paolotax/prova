@@ -14,7 +14,7 @@ module Scuole
 
     # Optimized: Only include necessary associations for classi
     def classi
-      @classi ||= scuola.classi.includes(:import_adozioni)  
+      @classi ||= scuola.classi.attive.includes(:import_adozioni)
     end
 
     # def mie_tappe
@@ -22,13 +22,13 @@ module Scuole
     # end
 
     def mie_adozioni_by_classe
-      @mie_adozioni_by_classe ||= scuola.adozioni.mie
+      @mie_adozioni_by_classe ||= scuola.adozioni.correnti.mie
                                       .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
                                       .group_by(&:classe)
     end
 
     def mie_adozioni
-      @mie_adozioni ||= scuola.adozioni.mie
+      @mie_adozioni ||= scuola.adozioni.correnti.mie
                           .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
     end
 

@@ -79,11 +79,11 @@ class FoglioScuolaPdf < Prawn::Document
   def get_adozioni_per_tipo_stampa(scuola)
     case @tipo_stampa
     when 'mie_adozioni'
-      scuola.adozioni.mie.da_acquistare
+      scuola.adozioni.correnti.mie.da_acquistare
             .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
             .sort_by(&:classe_e_sezione_e_disciplina)
     else # 'tutte_adozioni'
-      scuola.adozioni
+      scuola.adozioni.correnti
             .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
             .sort_by(&:classe_e_sezione_e_disciplina)
     end
@@ -377,7 +377,7 @@ class FoglioScuolaPdf < Prawn::Document
   end
 
   def render_sovrapacchi_per_scuola(scuola)
-    adozioni_sovrapacchi = scuola.adozioni.mie.da_acquistare.where(disdetta: false)
+    adozioni_sovrapacchi = scuola.adozioni.correnti.mie.da_acquistare.where(disdetta: false)
                                   .includes(:classe, :libro, :saggi, :kit_consegne, :seguiti)
                                   .sort_by(&:classe_e_sezione_e_disciplina)
 
