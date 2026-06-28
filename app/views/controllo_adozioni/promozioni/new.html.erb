@@ -14,10 +14,15 @@
         <%= hidden_field_tag :da, @anno_corrente %>
         <%= hidden_field_tag :a, @anno_target %>
 
+        <% anno_label = "#{@anno_target[0..3]}/20#{@anno_target[4..5]}" if @anno_target.to_s.length == 6 %>
         <div>
-          <label class="txt-small txt-bold" for="codice_nuovo">Nuovo codice MIUR</label>
+          <label class="txt-small txt-bold" for="codice_nuovo">Codice MIUR per l'a.s. <%= anno_label || @anno_target %></label>
           <p class="txt-small txt-subtle">
-            La scuola ha cambiato codice ministeriale. Conferma o correggi il codice <%= @anno_target %>.
+            <% if @codice_suggerito.present? %>
+              La scuola sembra aver cambiato codice ministeriale: suggerito <strong><%= @codice_suggerito %></strong> (era <%= @scuola.codice_ministeriale %>). Conferma o correggi.
+            <% else %>
+              Lascia invariato se la scuola non ha cambiato codice; altrimenti inserisci il nuovo codice ministeriale.
+            <% end %>
           </p>
           <%= text_field_tag :codice_nuovo, @codice_suggerito.presence || @scuola.codice_ministeriale,
               class: "input", id: "codice_nuovo" %>
