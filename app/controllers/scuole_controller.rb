@@ -46,7 +46,7 @@ class ScuoleController < ApplicationController
 
       page_scuole = Current.scuole
         .where(id: leader_ids + plessi_ids)
-        .includes(:appunti, :direzione, :plessi, classi: :adozioni)
+        .includes(:appunti, :direzione, :plessi)
         .left_joins(:direzione)
         .order(*per_direzione_order)
 
