@@ -209,3 +209,105 @@ pa_5a:
   classe_origine: "5"
   sezione_origine: "A"
   combinazione_origine: "MQ"
+
+# --- Split: BOEE000002 ha solo 1A; new_adozioni anno target ha 2A + 2B ---
+split_1a:
+  account: fizzy
+  scuola: primaria_split
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000002"
+  classe_origine: "1"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+# --- Merge: BOEE000003 ha 1A e 1B; new_adozioni anno target ha solo 2A ---
+merge_1a:
+  account: fizzy
+  scuola: primaria_merge
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000003"
+  classe_origine: "1"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+merge_1b:
+  account: fizzy
+  scuola: primaria_merge
+  anno_corso: "1"
+  sezione: "B"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000003"
+  classe_origine: "1"
+  sezione_origine: "B"
+  combinazione_origine: "MQ"
+
+# --- Roster vuoto: BOEE000004 ha 1A e 2A; nessuna riga in new_adozioni ---
+no_roster_1a:
+  account: fizzy
+  scuola: primaria_no_roster
+  anno_corso: "1"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000004"
+  classe_origine: "1"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+no_roster_2a:
+  account: fizzy
+  scuola: primaria_no_roster
+  anno_corso: "2"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000004"
+  classe_origine: "2"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+# --- Guardia per-grado: BOEE000005 ha 2A e 4A; new_adozioni copre solo grado 3 ---
+guardia_2a:
+  account: fizzy
+  scuola: primaria_guardia
+  anno_corso: "2"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000005"
+  classe_origine: "2"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"
+
+guardia_4a:
+  account: fizzy
+  scuola: primaria_guardia
+  anno_corso: "4"
+  sezione: "A"
+  combinazione: "MQ"
+  tipo_scuola: "EE"
+  stato: "attiva"
+  anno_scolastico: "202526"
+  codice_ministeriale_origine: "BOEE000005"
+  classe_origine: "4"
+  sezione_origine: "A"
+  combinazione_origine: "MQ"

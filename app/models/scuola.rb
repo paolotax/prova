@@ -261,12 +261,28 @@ class Scuola < ApplicationRecord
   def promuovi_primaria!(da:, a:, spostamenti_insegnanti: {})
     transaction do
       unless classi.attive.per_anno(a).exists?
+        # La verità sul roster dell'anno target è new_adozioni. roster = terne che
+        # DOVREBBERO esistere; gradi_coperti = rete di sicurezza per-grado (un grado
+        # assente da new_adozioni = dato mancante, non grado svuotato → niente archive).
+        roster        = roster_new_adozioni
+        gradi_coperti = roster.map(&:first).to_set
+
         # EE-only: anno_corso 1–5, numerico; gradi non numerici (licei 45/123) su un futuro path medie/superiori, non qui.
+        # Decisione a tre vie per ogni classe (DESC per evitare la collisione 5ª-archiviata vs 4ª-promossa).
         classi.attive.per_anno(da).order(Arel.sql("anno_corso::int DESC")).each do |classe|
           if classe.anno_corso.to_i >= 5
+            classe.update!(stato: "archiviata") # la 5ª si diploma, resta tombstone storico
+            next
+          end
+
+          nuovo             = (classe.anno_corso.to_i + 1).to_s
+          identita_avanzata = [nuovo, classe.sezione.to_s, classe.combinazione.to_s]
+
+          if gradi_coperti.include?(nuovo) && roster.exclude?(identita_avanzata)
+            # Grado coperto ma sezione non più nel roster → perdente (accorpamento/soppressa):
+            # archivia nell'identità STORICA, NON avanzare (storico per-libro coerente).
             classe.update!(stato: "archiviata")
           else
-            nuovo = (classe.anno_corso.to_i + 1).to_s
             classe.update!(
               anno_corso: nuovo,
               classe_origine: nuovo,
@@ -277,7 +293,7 @@ class Scuola < ApplicationRecord
         end
 
         classi.attive.per_anno(a).find_each { |c| c.costruisci_adozioni!(anno_scolastico: a) }
-        crea_classi_prime!(anno_scolastico: a)
+        crea_classi_mancanti!(anno_scolastico: a, roster: roster)
       end
 
       applica_spostamenti_insegnanti!(spostamenti_insegnanti, a: a)
@@ -292,20 +308,34 @@ class Scuola < ApplicationRecord
 
   private
 
-  def crea_classi_prime!(anno_scolastico:)
-    gruppi = NewAdozione
-      .where(codicescuola: codice_ministeriale, annocorso: "1", tipogradoscuola: "EE")
-      .group(:sezioneanno, :combinazione).count.keys
+  # Terne (annocorso, sezione, combinazione) che il roster MIUR (new_adozioni) prevede
+  # per la scuola, indipendenti dall'anno target. Normalizzate a stringa per il confronto.
+  def roster_new_adozioni
+    NewAdozione
+      .where(codicescuola: codice_ministeriale, tipogradoscuola: "EE")
+      .distinct
+      .pluck(:annocorso, :sezioneanno, :combinazione)
+      .map { |annocorso, sezione, combinazione| [annocorso.to_s, sezione.to_s, combinazione.to_s] }
+      .to_set
+  end
 
-    gruppi.each do |sezione, combinazione|
+  # Crea le classi presenti nel roster ma non ancora attive nell'anno target: copre
+  # sia lo sdoppiamento (la 2B accanto alla 2A avanzata) sia le nuove prime (annocorso "1").
+  def crea_classi_mancanti!(anno_scolastico:, roster:)
+    esistenti = classi.attive.per_anno(anno_scolastico)
+      .pluck(:anno_corso, :sezione, :combinazione)
+      .map { |annocorso, sezione, combinazione| [annocorso.to_s, sezione.to_s, combinazione.to_s] }
+      .to_set
+
+    (roster - esistenti).each do |annocorso, sezione, combinazione|
       classe = classi.find_or_create_by!(
-        anno_corso: "1", sezione: sezione, combinazione: combinazione,
+        anno_corso: annocorso, sezione: sezione, combinazione: combinazione,
         anno_scolastico: anno_scolastico, stato: "attiva"
       ) do |c|
         c.account_id = account_id
         c.tipo_scuola = "EE"
         c.codice_ministeriale_origine = codice_ministeriale
-        c.classe_origine = "1"
+        c.classe_origine = annocorso
         c.sezione_origine = sezione
         c.combinazione_origine = combinazione
       end

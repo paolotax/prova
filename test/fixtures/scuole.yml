@@ -111,3 +111,48 @@ primaria_attiva:
   tipo_scuola: "EE"
   grado: "E"
   stato: "attiva"
+
+# Scuole EE per i casi split/merge/guardia/roster-vuoto del passaggio anno
+primaria_split:
+  account: fizzy
+  denominazione: "Scuola Primaria Split"
+  codice_ministeriale: "BOEE000002"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"
+
+primaria_merge:
+  account: fizzy
+  denominazione: "Scuola Primaria Merge"
+  codice_ministeriale: "BOEE000003"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"
+
+primaria_no_roster:
+  account: fizzy
+  denominazione: "Scuola Primaria Senza Roster"
+  codice_ministeriale: "BOEE000004"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"
+
+primaria_guardia:
+  account: fizzy
+  denominazione: "Scuola Primaria Guardia Per Grado"
+  codice_ministeriale: "BOEE000005"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"

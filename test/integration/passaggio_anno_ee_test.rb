@@ -86,6 +86,91 @@ class PassaggioAnnoEeTest < ActionDispatch::IntegrationTest
                  "lo spostamento insegnanti non deve duplicarsi"
   end
 
+  test "split: la 1A avanza in-place a 2A (stesso id) e la 2B nasce nuova da new_adozioni" do
+    scuola = scuole(:primaria_split)
+    uno_a_id = classi(:split_1a).id
+
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+
+    # La 1A è ora 2A, attiva, STESSA riga (continuità documenti/appunti/persone)
+    due_a = scuola.classi.attive.find_by(anno_corso: "2", sezione: "A", anno_scolastico: "202627")
+    assert due_a, "la ex 1A deve essere ora 2A attiva 202627"
+    assert_equal uno_a_id, due_a.id, "la 2A deve essere la STESSA riga della 1A (in-place)"
+
+    # La 2B è una classe NUOVA (id diverso) creata dal roster new_adozioni
+    due_b = scuola.classi.attive.find_by(anno_corso: "2", sezione: "B", anno_scolastico: "202627")
+    assert due_b, "la 2B deve essere creata da new_adozioni (sdoppiamento)"
+    assert_not_equal uno_a_id, due_b.id, "la 2B deve essere una riga nuova, non la 1A"
+    assert scuola.adozioni.where(classe_id: due_b.id, anno_scolastico: "202627").exists?,
+           "la 2B deve avere le sue adozioni 202627"
+
+    # Idempotenza: il secondo run non duplica la 2B
+    attive = scuola.classi.attive.count
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    assert_equal attive, scuola.reload.classi.attive.count
+  end
+
+  test "merge: la 1A vince e avanza a 2A, la 1B perde e resta 1B archiviata nell'identità storica" do
+    scuola = scuole(:primaria_merge)
+    uno_a_id = classi(:merge_1a).id
+    uno_b_id = classi(:merge_1b).id
+
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+
+    # La 1A avanza a 2A (vincitrice, in roster), stessa riga
+    due_a = Classe.find(uno_a_id)
+    assert_equal "2", due_a.anno_corso
+    assert_equal "attiva", due_a.stato
+    assert_equal "202627", due_a.anno_scolastico
+
+    # La 1B perde: archiviata, NON avanzata, identità storica intatta (1/B/202526)
+    uno_b = Classe.find(uno_b_id)
+    assert_equal "archiviata", uno_b.stato, "la 1B accorpata deve essere archiviata"
+    assert_equal "1", uno_b.anno_corso, "la 1B non deve avanzare"
+    assert_equal "B", uno_b.sezione
+    assert_equal "202526", uno_b.anno_scolastico, "deve restare nell'anno storico"
+
+    # Nessuna 2B attiva creata (il roster ha solo 2A)
+    assert_nil scuola.classi.attive.find_by(anno_corso: "2", sezione: "B", anno_scolastico: "202627")
+  end
+
+  test "guardia per-grado: una classe il cui grado avanzato manca da new_adozioni avanza comunque, non viene archiviata" do
+    scuola = scuole(:primaria_guardia)
+    due_a_id    = classi(:guardia_2a).id # grado 3 È coperto → avanza normale a 3A
+    quattro_a_id = classi(:guardia_4a).id # grado 5 NON è coperto → avanza per guardia, non archivia
+
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+
+    tre_a = Classe.find(due_a_id)
+    assert_equal "3", tre_a.anno_corso
+    assert_equal "attiva", tre_a.stato
+
+    cinque_a = Classe.find(quattro_a_id)
+    assert_equal "5", cinque_a.anno_corso, "deve avanzare anche se il grado 5 manca da new_adozioni"
+    assert_equal "attiva", cinque_a.stato, "grado mancante = dato assente, non grado svuotato: niente archive"
+    assert_equal "202627", cinque_a.anno_scolastico
+  end
+
+  test "roster vuoto: nessuna riga in new_adozioni → puro N+1, niente archive né creazioni" do
+    scuola = scuole(:primaria_no_roster)
+    uno_a_id = classi(:no_roster_1a).id
+    due_a_id = classi(:no_roster_2a).id
+
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+
+    assert_equal "2", Classe.find(uno_a_id).anno_corso
+    assert_equal "attiva", Classe.find(uno_a_id).stato
+    assert_equal "3", Classe.find(due_a_id).anno_corso
+    assert_equal "attiva", Classe.find(due_a_id).stato
+
+    # Nessuna classe creata: restano esattamente le due attive avanzate
+    assert_equal 2, scuola.classi.attive.count
+  end
+
   test "cambio codice via controller: aggiorna la scuola, annota il vecchio codice e accoda il job" do
     sign_in_as(@user, @account)
     scuola = scuole(:primaria_attiva)
