@@ -10,8 +10,8 @@
   cattedra_to_discipline = mappings.pluck(:cattedra, :disciplina).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
 
   # Preload adozioni for this school's classi
-  classe_ids = scuola.classi.attive.pluck(:id)
   classi_by_id = scuola.classi.attive.index_by(&:id)
+  classe_ids = classi_by_id.keys
   adozioni_by_classe_disciplina = Adozione.correnti.where(classe_id: classe_ids)
     .select(:classe_id, :disciplina, :titolo, :editore, :mia, :nuova_adozione, :prezzo_cents)
     .group_by { |a| [a.classe_id, a.disciplina] }
@@ -51,7 +51,7 @@
 
         <% if discipline_miur.any? %>
           <%
-            all_classe_ids = docenti.flat_map { |p| p.classi.attive.map(&:id) }.uniq
+            all_classe_ids = docenti.flat_map { |p| p.persona_classi.filter_map { |pc| pc.classe_id if classi_by_id.key?(pc.classe_id) } }.uniq
             all_adozioni = discipline_miur.flat_map { |d| all_classe_ids.flat_map { |cid| adozioni_by_classe_disciplina[[cid, d]] || [] } }
             # Build libro → classe_ids map
             libro_classe_ids = all_adozioni.group_by { |a| [a.titolo, a.editore] }
@@ -81,7 +81,7 @@
             <%
               styles = {}
               if discipline_miur.any?
-                persona.classi.attive.each do |c|
+                persona.persona_classi.filter_map { |pc| classi_by_id[pc.classe_id] }.each do |c|
                   adozioni = discipline_miur.flat_map { |d| adozioni_by_classe_disciplina[[c.id, d]] || [] }
                   if adozioni.any? { |a| a.nuova_adozione? && a.mia? }
                     styles[c.id] = :nuova_mia
@@ -102,7 +102,7 @@
             </dt>
             <dd>
               <div class="flex gap-quarter flex-wrap">
-                <%= classi_badge_links(persona.classi.attive, scuola, classe_styles: styles, hover_target: true) %>
+                <%= classi_badge_links(persona.persona_classi.filter_map { |pc| classi_by_id[pc.classe_id] }, scuola, classe_styles: styles, hover_target: true) %>
               </div>
             </dd>
           <% end %>
