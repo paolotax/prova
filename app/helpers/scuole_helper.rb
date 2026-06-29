@@ -49,13 +49,19 @@ module ScuoleHelper
     end
   end
 
+  # Usa le memberships già precaricate (memberships: :user) se presenti — 0 query;
+  # altrimenti fallback con .includes(:user) batched (mai N+1 sugli user).
+  def scuola_memberships(scuola)
+    scuola.memberships.loaded? ? scuola.memberships : scuola.memberships.includes(:user)
+  end
+
   def scuola_assigned_users(scuola)
-    users = scuola.memberships.includes(:user).map(&:user)
+    users = scuola_memberships(scuola).map(&:user)
     users.presence || [Current.account&.owner].compact
   end
 
   def scuole_assigned_users(scuole)
-    users = scuole.flat_map { |s| s.memberships.map(&:user) }.uniq
+    users = scuole.flat_map { |s| scuola_memberships(s).map(&:user) }.uniq
     users.presence || [Current.account&.owner].compact
   end
 end

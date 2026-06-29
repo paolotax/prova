@@ -51,11 +51,11 @@ module Filters
 
     def filtered_scope
       base_scope = Current.scuole
-      result = base_scope.includes(:appunti)
+      result = base_scope.includes(:appunti, memberships: :user)
 
       if terms.present?
         ids = result.reorder(nil).search_all_word(terms.first).pluck(:id)
-        result = base_scope.where(id: ids).includes(:appunti)
+        result = base_scope.where(id: ids).includes(:appunti, memberships: :user)
       end
 
       result = result.where(provincia: province) if province.present?
@@ -79,7 +79,7 @@ module Filters
 
     def per_direzione_scope
       Current.scuole.where(id: filtered_ids)
-        .includes(:appunti, :direzione, :plessi)
+        .includes(:appunti, :direzione, :plessi, memberships: :user)
         .left_joins(:direzione)
         .order(
           Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
