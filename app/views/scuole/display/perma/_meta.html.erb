@@ -26,8 +26,9 @@
   </span>
 
   <% if scuola.direzione? %>
-    <% total_classi = scuola.classi_count + scuola.plessi.sum(:classi_count) %>
-    <% total_adozioni = scuola.mie_adozioni_count + scuola.plessi.sum(:mie_adozioni_count) %>
+    <%# sum in Ruby sui plessi precaricati (evita N+1 nelle liste) %>
+    <% total_classi = scuola.classi_count + scuola.plessi.to_a.sum { |p| p.classi_count.to_i } %>
+    <% total_adozioni = scuola.mie_adozioni_count + scuola.plessi.to_a.sum { |p| p.mie_adozioni_count.to_i } %>
   <% else %>
     <% total_classi = scuola.classi_count %>
     <% total_adozioni = scuola.mie_adozioni_count %>

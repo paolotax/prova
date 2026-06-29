@@ -14,14 +14,15 @@
   </div>
 
   <div class="flex align-center gap-half">
-    <% adozioni_correnti = classe.adozioni.correnti %>
+    <%# adozioni precaricate dal controller (includes :adozioni); filtro all'anno corrente in Ruby per evitare N+1 %>
+    <% adozioni_correnti = classe.adozioni.select { |a| a.anno_scolastico == classe.anno_scolastico } %>
     <% if adozioni_correnti.any? %>
       <span class="badge badge--positive txt-xx-small">
-        <%= adozioni_correnti.count %> adozioni
+        <%= adozioni_correnti.size %> adozioni
       </span>
     <% end %>
 
-    <% da_acquistare_count = adozioni_correnti.da_acquistare_flag.count %>
+    <% da_acquistare_count = adozioni_correnti.count(&:da_acquistare?) %>
     <% if da_acquistare_count > 0 %>
       <span class="badge txt-xx-small" style="background: var(--color-warning-lighter); color: var(--color-warning-dark);">
         <%= da_acquistare_count %> da acquistare
