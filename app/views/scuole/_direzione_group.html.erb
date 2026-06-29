@@ -1,4 +1,4 @@
-<%# locals: (gruppo:, draggable: false, card_id: nil) -%>
+<%# locals: (gruppo:, draggable: false, card_id: nil, card_drag_id: nil) -%>
 <% direzione = gruppo[:direzione] %>
 <% plessi = gruppo[:plessi] %>
 <% all_sedi = direzione && (direzione.classi_count.to_i > 0 || direzione.mie_adozioni_count.to_i > 0) ? [direzione] + plessi : plessi %>
@@ -10,7 +10,7 @@
     <% if draggable %>
       draggable="true"
       data-drag-and-drop-target="item"
-      data-id="<%= direzione.id %>"
+      data-id="<%= card_drag_id || direzione.id %>"
       data-scuole-count="<%= [all_sedi.size, 1].max %>"
     <% end %>>
     <div class="flex flex-column flex-item-grow max-inline-size">

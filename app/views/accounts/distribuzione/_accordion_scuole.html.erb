@@ -37,7 +37,8 @@
             <%= render "scuole/direzione_group",
               gruppo: { direzione: unit[:plessi].any? ? unit[:scuola] : nil,
                         plessi: unit[:plessi].any? ? unit[:plessi] : [unit[:scuola]] },
-              draggable: true %>
+              draggable: true,
+              card_drag_id: unit[:id] %>
           <% end %>
         </div>
       </details>
