@@ -5,7 +5,10 @@
       <div class="analytics-filters__field">
         <span class="analytics-filters__label">Agente</span>
         <%= form.select :agente_id,
-              options_for_select(@agenti.map { |m| [m.user.name.presence || m.user.email, m.id] } + [["— Non assegnate —", "none"]], params[:agente_id]),
+              options_for_select(
+                @agenti.map { |m| ["#{m.user.name.presence || m.user.email} (#{@conteggi_agenti[m.id].to_i})", m.id] } +
+                  [["— Non assegnate — (#{@conteggi_agenti[:none].to_i})", "none"]],
+                params[:agente_id]),
               { include_blank: "Tutti gli agenti" }, class: "input input--select" %>
       </div>
     <% end %>

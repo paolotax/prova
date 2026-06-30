@@ -9,6 +9,12 @@ class AdozioniAnalyticsController < ApplicationController
       @agenti = Current.account.memberships
                        .where(id: Accounts::MembershipScuola.select(:membership_id))
                        .includes(:user)
+      membership_scuole = Accounts::MembershipScuola
+                            .where(membership_id: Current.account.memberships.select(:id))
+                            .where(scuola_id: Current.account.scuole.select(:id))
+      @conteggi_agenti = membership_scuole.group(:membership_id).count
+      @conteggi_agenti[:none] = Current.account.scuole.count -
+                                membership_scuole.distinct.count(:scuola_id)
       if params[:agente_id] == "none"
         @agente = :none
         assegnate_ids = Accounts::MembershipScuola
