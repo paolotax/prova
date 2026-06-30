@@ -3,6 +3,24 @@ class AdozioniAnalyticsController < ApplicationController
 
   def show
     scuola_ids = Current.admin? ? Current.account.scuola_ids : Current.membership.scuola_ids
+
+    # Owner/admin: restringe lo scope alle scuole assegnate a un singolo agente
+    if Current.admin?
+      @agenti = Current.account.memberships
+                       .where(id: Accounts::MembershipScuola.select(:membership_id))
+                       .includes(:user)
+      if params[:agente_id] == "none"
+        @agente = :none
+        assegnate_ids = Accounts::MembershipScuola
+                          .where(membership_id: Current.account.memberships.select(:id))
+                          .select(:scuola_id)
+        scuola_ids = Current.account.scuole.where.not(id: assegnate_ids).pluck(:id)
+      elsif params[:agente_id].present?
+        @agente = @agenti.find_by(id: params[:agente_id])
+        scuola_ids = @agente.scuola_ids if @agente
+      end
+    end
+
     @analytics = AdozioniAnalytics.new(account: Current.account, scuola_ids: scuola_ids)
     @tab = %w[mie tutte editori].include?(params[:tab]) ? params[:tab] : "mie"
     solo_mie = @tab == "mie"

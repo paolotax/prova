@@ -1,6 +1,15 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
   <%= form.hidden_field :tab, value: @tab %>
   <div class="analytics-filters__row">
+    <% if Current.admin? && @agenti.present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Agente</span>
+        <%= form.select :agente_id,
+              options_for_select(@agenti.map { |m| [m.user.name.presence || m.user.email, m.id] } + [["— Non assegnate —", "none"]], params[:agente_id]),
+              { include_blank: "Tutti gli agenti" }, class: "input input--select" %>
+      </div>
+    <% end %>
+
     <% if @regioni&.size.to_i > 1 || @filtri[:regione].present? %>
       <div class="analytics-filters__field">
         <span class="analytics-filters__label">Regione</span>
@@ -70,7 +79,7 @@
       <%= form.select :editore, options_for_select(@editori, @filtri[:editore]), { include_blank: "Tutti" }, class: "input input--select" %>
     </div>
 
-    <% if @filtri.any? %>
+    <% if @filtri.any? || @agente %>
       <%= link_to "Reset", adozioni_analytics_path(tab: @tab),
           class: "btn btn--negative txt-small",
           data: { action: "click->tab-loading#resetClicked" } %>
