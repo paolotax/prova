@@ -192,6 +192,7 @@ class Classe < ApplicationRecord
         da_acquistare:  na.daacquist.to_s.match?(/\As/i),
         consigliato:    na.consigliato.to_s.match?(/\As/i),
         anno_scolastico: anno_scolastico,
+        anno_corso: anno_corso,
         codicescuola: codice_ministeriale_origine,
         created_at: Time.current,
         updated_at: Time.current

@@ -154,6 +154,7 @@ class ImportScuolePerZonaJob < ApplicationJob
         libro_id: libro_map[ia.CODICEISBN],
         codice_isbn: ia.CODICEISBN,
         anno_scolastico: ANNO_SCOLASTICO,
+        anno_corso: ia.ANNOCORSO,
         codicescuola: ia.CODICESCUOLA,
         titolo: ia.TITOLO,
         editore: ia.EDITORE,

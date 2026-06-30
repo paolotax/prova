@@ -3,6 +3,7 @@
 # Table name: adozioni
 #
 #  id                 :uuid             not null, primary key
+#  anno_corso         :string
 #  anno_scolastico    :string
 #  autori             :string
 #  codice_isbn        :string
@@ -111,6 +112,7 @@ class Adozione < ApplicationRecord
       libro: libro,
       import_adozione: import_adozione,
       anno_scolastico: classe.anno_scolastico,
+      anno_corso: classe.anno_corso,
       codicescuola: classe.codice_ministeriale_origine,
       codice_isbn: import_adozione.CODICEISBN,
       titolo: import_adozione.TITOLO,

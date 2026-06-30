@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_28_175900) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_30_071728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -91,6 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_28_175900) do
 
   create_table "adozioni", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "account_id", null: false
+    t.string "anno_corso"
     t.string "anno_scolastico"
     t.string "autori"
     t.uuid "classe_id", null: false

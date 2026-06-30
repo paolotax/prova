@@ -19,17 +19,17 @@ class AdozioniAnalytics
 
     scope = apply_filtri(scope, filtri)
 
-    scope.group("scuole.grado", "classi.anno_corso",
+    scope.group("scuole.grado", "adozioni.anno_corso",
                 :disciplina, :titolo, :editore, :codice_isbn)
       .select(
         "scuole.grado AS grado",
-        "classi.anno_corso AS anno_corso",
+        "adozioni.anno_corso AS anno_corso",
         :disciplina, :titolo, :editore, :codice_isbn,
         "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
         "COUNT(DISTINCT adozioni.classe_id) * 17 AS copie_stimate",
         "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
       )
-      .order("scuole.grado", :disciplina, "classi.anno_corso",
+      .order("scuole.grado", :disciplina, "adozioni.anno_corso",
              Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
   end
 
@@ -192,7 +192,7 @@ class AdozioniAnalytics
     grado: "array_agg(DISTINCT scuole.grado)",
     tipo_scuola: "array_agg(DISTINCT scuole.tipo_scuola)",
     area: "array_agg(DISTINCT scuole.area)",
-    anno_corso: "array_agg(DISTINCT classi.anno_corso::text)"
+    anno_corso: "array_agg(DISTINCT adozioni.anno_corso)"
   }.freeze
 
   OPTION_RESULT_KEY = {
@@ -249,7 +249,7 @@ class AdozioniAnalytics
       scope = scope.scorrimenti_235
     end
     scope = scope.where(disciplina: filtri[:disciplina]) if filtri[:disciplina].present?
-    scope = scope.joins(:classe).where(classi: { anno_corso: filtri[:anno_corso] }) if filtri[:anno_corso].present?
+    scope = scope.where(adozioni: { anno_corso: filtri[:anno_corso] }) if filtri[:anno_corso].present?
     scope = scope.where(editore: filtri[:editore]) if filtri[:editore].present?
     if filtri[:gruppo].present?
       editore_names = Editore.where(gruppo: filtri[:gruppo]).pluck(:editore)
