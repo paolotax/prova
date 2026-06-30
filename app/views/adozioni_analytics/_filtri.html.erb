@@ -1,6 +1,15 @@
 <%= form_with url: adozioni_analytics_path, method: :get, class: "analytics-filters", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |form| %>
   <%= form.hidden_field :tab, value: @tab %>
   <div class="analytics-filters__row">
+    <% if @anni_scolastici.to_a.size > 1 || @anno_scolastico.present? %>
+      <div class="analytics-filters__field">
+        <span class="analytics-filters__label">Anno scolastico</span>
+        <%= form.select :anno_scolastico,
+              options_for_select(@anni_scolastici.map { |a| ["#{a[0, 4]}/#{a[4, 2]}", a] }, @anno_scolastico),
+              { include_blank: "Corrente" }, class: "input input--select" %>
+      </div>
+    <% end %>
+
     <% if Current.admin? && @agenti.present? %>
       <div class="analytics-filters__field">
         <span class="analytics-filters__label">Agente</span>
@@ -82,7 +91,7 @@
       <%= form.select :editore, options_for_select(@editori, @filtri[:editore]), { include_blank: "Tutti" }, class: "input input--select" %>
     </div>
 
-    <% if @filtri.any? || @agente %>
+    <% if @filtri.any? || @agente || @anno_scolastico %>
       <%= link_to "Reset", adozioni_analytics_path(tab: @tab),
           class: "btn btn--negative txt-small",
           data: { action: "click->tab-loading#resetClicked" } %>

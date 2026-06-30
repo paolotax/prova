@@ -9,13 +9,13 @@ class AdozioniAnalytics
   # Adoptions (da_acquistare), user's schools only,
   # aggregated by (grado, disciplina, anno_corso, titolo/isbn/editore).
   # solo_mie: true → only mia=true (mie adozioni). false → all in scope (mie + concorrenza).
-  def adozioni(filtri: {}, solo_mie: true)
+  def adozioni(filtri: {}, solo_mie: true, anno_scolastico: nil)
     scope = account.adozioni
     scope = scope.mie if solo_mie
     scope = scope.where(da_acquistare: true)
                  .joins(classe: :scuola)
                  .where(classi: { scuola_id: scuola_ids })
-                 .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+    scope = scope_anno(scope, anno_scolastico)
 
     scope = apply_filtri(scope, filtri)
 
@@ -125,13 +125,13 @@ class AdozioniAnalytics
 
   # Available filter options scoped to adozioni da_acquistare in user's schools
   # 1 bulk query for all options, then 1 query per active filter (except itself)
-  def filter_options(filtri: {}, solo_mie: true)
+  def filter_options(filtri: {}, solo_mie: true, anno_scolastico: nil)
     base = account.adozioni
     base = base.mie if solo_mie
     base = base.where(da_acquistare: true)
                .joins(classe: :scuola)
                .where(classi: { scuola_id: scuola_ids })
-               .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+    base = scope_anno(base, anno_scolastico)
 
     # 1 query: all distinct values from fully-filtered scope
     filtered = apply_filtri(base, filtri)
@@ -144,10 +144,30 @@ class AdozioniAnalytics
       override_filter_option(result, key, except_scope)
     end
 
+    # Anni scolastici disponibili: indipendenti dall'anno selezionato (per poter switchare)
+    result[:anni_scolastici] = anni_scolastici_disponibili(solo_mie)
+
     result
   end
 
   private
+
+  # Anno corrente della classe (default) oppure snapshot di un anno specifico.
+  def scope_anno(scope, anno_scolastico)
+    if anno_scolastico.present?
+      scope.where(adozioni: { anno_scolastico: anno_scolastico })
+    else
+      scope.where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+    end
+  end
+
+  def anni_scolastici_disponibili(solo_mie)
+    s = account.adozioni
+    s = s.mie if solo_mie
+    s.where(da_acquistare: true)
+     .joins(:classe).where(classi: { scuola_id: scuola_ids })
+     .distinct.pluck(:anno_scolastico).compact.reject(&:blank?).sort.reverse
+  end
 
   # Mappa grado (scuole.grado) → TIPOGRADOSCUOLA in import_adozioni:
   # EE=primaria, MM=medie, NT/NO=superiori (due varianti per lo stesso grado "N")
