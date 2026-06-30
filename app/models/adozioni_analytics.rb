@@ -15,6 +15,7 @@ class AdozioniAnalytics
     scope = scope.where(da_acquistare: true)
                  .joins(classe: :scuola)
                  .where(classi: { scuola_id: scuola_ids })
+                 .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
 
     scope = apply_filtri(scope, filtri)
 
@@ -130,6 +131,7 @@ class AdozioniAnalytics
     base = base.where(da_acquistare: true)
                .joins(classe: :scuola)
                .where(classi: { scuola_id: scuola_ids })
+               .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
 
     # 1 query: all distinct values from fully-filtered scope
     filtered = apply_filtri(base, filtri)
