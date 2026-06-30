@@ -1,6 +1,37 @@
 # test/fixtures/new_adozioni.yml
 # Sorgente MIUR anno corrente (colonne LOWERCASE).
 # anno_scolastico lasciato nil per rispecchiare la produzione (bug noto).
+# == Schema Information
+#
+# Table name: new_adozioni
+#
+#  id               :bigint           not null, primary key
+#  anno_scolastico  :string
+#  annocorso        :string
+#  autori           :string
+#  codiceisbn       :string
+#  codicescuola     :string
+#  combinazione     :string
+#  consigliato      :string
+#  daacquist        :string
+#  disciplina       :string
+#  editore          :string
+#  nuovaadoz        :string
+#  prezzo           :string
+#  sezioneanno      :string
+#  sottotitolo      :string
+#  tipogradoscuola  :string
+#  titolo           :string
+#  volume           :string
+#  import_scuola_id :bigint
+#
+# Indexes
+#
+#  idx_new_adoz_ee                (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
+#  idx_new_adozioni_codicescuola  (codicescuola)
+#  idx_new_adozioni_disc_anno_tg  (disciplina,annocorso,tipogradoscuola)
+#  index_new_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
+#
 prima_a_matematica:
   codicescuola: "MIIC123456"
   annocorso: "1"
@@ -157,6 +188,24 @@ merge_anno_2a:
   combinazione: "MQ"
   codiceisbn: "9788800000402"
   titolo: "Sussidiario Seconda Merge"
+  editore: "Editore Test"
+  autori: "Verdi A."
+  disciplina: "ITALIANO"
+  prezzo: "10,00"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"
+
+# --- Cambio combinazione BOEE000006: il roster del grado 2 sez A ha una combinazione
+#     piu' verbosa di quella memorizzata sulla classe ("27 ORE SETTIMANALI") ---
+comb_anno_2a:
+  codicescuola: "BOEE000006"
+  annocorso: "2"
+  sezioneanno: "A"
+  combinazione: "27 ORE SETTIMANALI CON ADOZIONE ALTERNATIVA"
+  codiceisbn: "9788800000602"
+  titolo: "Sussidiario Seconda Combinazione"
   editore: "Editore Test"
   autori: "Verdi A."
   disciplina: "ITALIANO"

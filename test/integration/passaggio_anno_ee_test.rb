@@ -154,7 +154,7 @@ class PassaggioAnnoEeTest < ActionDispatch::IntegrationTest
     assert_equal "202627", cinque_a.anno_scolastico
   end
 
-  test "roster vuoto: nessuna riga in new_adozioni → puro N+1, niente archive né creazioni" do
+  test "roster vuoto: nessuna riga in new_adozioni → nessuna promozione (no-op), niente avanza/archivia/crea" do
     scuola = scuole(:primaria_no_roster)
     uno_a_id = classi(:no_roster_1a).id
     due_a_id = classi(:no_roster_2a).id
@@ -162,13 +162,48 @@ class PassaggioAnnoEeTest < ActionDispatch::IntegrationTest
     scuola.promuovi_primaria!(da: "202526", a: "202627")
     scuola.reload
 
-    assert_equal "2", Classe.find(uno_a_id).anno_corso
-    assert_equal "attiva", Classe.find(uno_a_id).stato
-    assert_equal "3", Classe.find(due_a_id).anno_corso
-    assert_equal "attiva", Classe.find(due_a_id).stato
+    # Senza source-of-truth (new_adozioni) non avanziamo nulla: le classi restano com'erano.
+    uno_a = Classe.find(uno_a_id)
+    assert_equal "1", uno_a.anno_corso
+    assert_equal "attiva", uno_a.stato
+    assert_equal "202526", uno_a.anno_scolastico
 
-    # Nessuna classe creata: restano esattamente le due attive avanzate
+    due_a = Classe.find(due_a_id)
+    assert_equal "2", due_a.anno_corso
+    assert_equal "attiva", due_a.stato
+    assert_equal "202526", due_a.anno_scolastico
+
+    # Niente archiviazioni, niente creazioni: restano esattamente le due classi originali
     assert_equal 2, scuola.classi.attive.count
+    assert_equal 0, scuola.classi.where(stato: "archiviata").count
+    assert_equal 0, scuola.classi.attive.per_anno("202627").count
+  end
+
+  test "cambio combinazione: la classe avanza in-place (stesso id), sincronizza la combinazione dal roster e i documenti la seguono" do
+    scuola = scuole(:primaria_combinazione)
+    classe = classi(:comb_1a)
+    id = classe.id
+
+    scuola.promuovi_primaria!(da: "202526", a: "202627")
+    scuola.reload
+
+    # Stessa riga Classe avanzata in-place: i documenti/appunti agganciati la seguono.
+    c = Classe.find(id)
+    assert_equal "2", c.anno_corso
+    assert_equal "A", c.sezione
+    assert_equal "attiva", c.stato
+    assert_equal "202627", c.anno_scolastico
+
+    # La combinazione viene allineata al roster (era "27 ORE SETTIMANALI")
+    assert_equal "27 ORE SETTIMANALI CON ADOZIONE ALTERNATIVA", c.combinazione
+    assert_equal "27 ORE SETTIMANALI CON ADOZIONE ALTERNATIVA", c.combinazione_origine
+
+    # Le adozioni del nuovo anno vengono costruite dal roster (match su combinazione_origine)
+    assert c.adozioni.where(anno_scolastico: "202627").exists?, "adozioni 202627 costruite dal roster"
+
+    # Nessun archive/recreate: niente classi archiviate, una sola attiva nel nuovo anno
+    assert_equal 0, scuola.classi.where(stato: "archiviata").count
+    assert_equal 1, scuola.classi.attive.per_anno("202627").count
   end
 
   test "cambio codice via controller: aggiorna la scuola, annota il vecchio codice e accoda il job" do

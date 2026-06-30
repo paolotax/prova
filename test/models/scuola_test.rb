@@ -145,11 +145,16 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
 end
 
 class ScuolaPromuovibileTest < ActiveSupport::TestCase
-  fixtures :accounts, :scuole, :classi, :new_scuole
+  fixtures :accounts, :scuole, :classi, :new_scuole, :new_adozioni
 
   test "promuovibile? quando new_scuole ha il nuovo anno e la scuola non è ancora scorsa" do
     scuola = scuole(:primaria_attiva) # classi attive 202526, presente in new_scuole 202627
     assert scuola.promuovibile?
+  end
+
+  test "non promuovibile? se manca il roster new_adozioni (anche con anagrafe new_scuole)" do
+    scuola = scuole(:primaria_no_roster) # in new_scuole 202627 ma senza new_adozioni
+    assert_not scuola.promuovibile?
   end
 
   test "non promuovibile? se già scorsa all'anno target" do

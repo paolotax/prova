@@ -156,3 +156,16 @@ primaria_guardia:
   tipo_scuola: "EE"
   grado: "E"
   stato: "attiva"
+
+# Scuola dove la combinazione del roster differisce da quella memorizzata sulla
+# classe (caso reale: "27 ORE" -> "27 ORE ... CON ADOZIONE ALTERNATIVA").
+primaria_combinazione:
+  account: fizzy
+  denominazione: "Scuola Primaria Cambio Combinazione"
+  codice_ministeriale: "BOEE000006"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"

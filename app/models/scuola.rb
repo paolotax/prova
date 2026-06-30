@@ -200,7 +200,9 @@ class Scuola < ApplicationRecord
   def promuovibile?(anno_target = NewScuola.maximum(:anno_scolastico))
     return false if anno_target.blank?
     return false if classi.attive.maximum(:anno_scolastico).to_s >= anno_target
-    NewScuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno_target).exists?
+    return false unless NewScuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno_target).exists?
+    # Serve anche il roster (new_adozioni): senza, promuovere è un no-op → non offrirlo.
+    NewAdozione.where(codicescuola: codice_ministeriale, tipogradoscuola: "EE").exists?
   end
 
   def geocoded?
@@ -264,36 +266,58 @@ class Scuola < ApplicationRecord
         # La verità sul roster dell'anno target è new_adozioni. roster = terne che
         # DOVREBBERO esistere; gradi_coperti = rete di sicurezza per-grado (un grado
         # assente da new_adozioni = dato mancante, non grado svuotato → niente archive).
+        # roster: { [annocorso, sezione] => combinazione }. L'identità di continuità è
+        # (anno_corso, sezione): la combinazione NON fa parte della chiave perché cambia
+        # spesso d'anno in anno nei dati MIUR (es. "27 ORE" → "27 ORE … CON ADOZIONE
+        # ALTERNATIVA") e usarla nel match farebbe archiviare+ricreare ogni classe,
+        # orfanando i documenti collegati.
         roster        = roster_new_adozioni
-        gradi_coperti = roster.map(&:first).to_set
+        gradi_coperti = roster.keys.map(&:first).to_set
 
-        # EE-only: anno_corso 1–5, numerico; gradi non numerici (licei 45/123) su un futuro path medie/superiori, non qui.
-        # Decisione a tre vie per ogni classe (DESC per evitare la collisione 5ª-archiviata vs 4ª-promossa).
-        classi.attive.per_anno(da).order(Arel.sql("anno_corso::int DESC")).each do |classe|
-          if classe.anno_corso.to_i >= 5
-            classe.update!(stato: "archiviata") # la 5ª si diploma, resta tombstone storico
-            next
+        # Roster totalmente assente = nessun source-of-truth MIUR per questa scuola
+        # (es. dato non pubblicato / scuola fuori dallo snapshot). Promuovere alla cieca
+        # creerebbe classi senza adozioni e archivierebbe la 5ª senza conferma → no-op.
+        # NB: un singolo grado mancante (roster parziale) resta gestito dalla guardia
+        # per-grado sotto; qui blocchiamo solo l'assenza totale.
+        if roster.present?
+          # EE-only: anno_corso 1–5, numerico; gradi non numerici (licei 45/123) su un futuro path medie/superiori, non qui.
+          # Decisione a tre vie per ogni classe (DESC per evitare la collisione 5ª-archiviata vs 4ª-promossa).
+          classi.attive.per_anno(da).order(Arel.sql("anno_corso::int DESC")).each do |classe|
+            if classe.anno_corso.to_i >= 5
+              classe.update!(stato: "archiviata") # la 5ª si diploma, resta tombstone storico
+              next
+            end
+
+            nuovo = (classe.anno_corso.to_i + 1).to_s
+            sez   = classe.sezione.to_s
+            chiave = [nuovo, sez]
+
+            if gradi_coperti.include?(nuovo) && !roster.key?(chiave)
+              # Grado coperto ma sezione non più nel roster → perdente (accorpamento/soppressa):
+              # archivia nell'identità STORICA, NON avanzare (storico per-libro coerente).
+              classe.update!(stato: "archiviata")
+            else
+              attrs = {
+                anno_corso: nuovo,
+                classe_origine: nuovo,
+                sezione_origine: sez,
+                anno_scolastico: a,
+                codice_ministeriale_origine: codice_ministeriale
+              }
+              # Allinea la combinazione al roster del nuovo anno, così costruisci_adozioni!
+              # (match su *_origine) trova le adozioni. Se il grado non è coperto (guardia
+              # per-grado), il roster non ha la chiave → si mantiene la combinazione attuale.
+              if (combinazione_roster = roster[chiave])
+                attrs[:combinazione] = combinazione_roster
+                attrs[:combinazione_origine] = combinazione_roster
+              end
+              classe.update!(attrs)
+            end
           end
 
-          nuovo             = (classe.anno_corso.to_i + 1).to_s
-          identita_avanzata = [nuovo, classe.sezione.to_s, classe.combinazione.to_s]
-
-          if gradi_coperti.include?(nuovo) && roster.exclude?(identita_avanzata)
-            # Grado coperto ma sezione non più nel roster → perdente (accorpamento/soppressa):
-            # archivia nell'identità STORICA, NON avanzare (storico per-libro coerente).
-            classe.update!(stato: "archiviata")
-          else
-            classe.update!(
-              anno_corso: nuovo,
-              classe_origine: nuovo,
-              anno_scolastico: a,
-              codice_ministeriale_origine: codice_ministeriale
-            )
-          end
+          classi.attive.per_anno(a).find_each { |c| c.costruisci_adozioni!(anno_scolastico: a) }
+          crea_classi_mancanti!(anno_scolastico: a, roster: roster)
         end
-
-        classi.attive.per_anno(a).find_each { |c| c.costruisci_adozioni!(anno_scolastico: a) }
-        crea_classi_mancanti!(anno_scolastico: a, roster: roster)
       end
 
       applica_spostamenti_insegnanti!(spostamenti_insegnanti, a: a)
@@ -308,32 +332,37 @@ class Scuola < ApplicationRecord
 
   private
 
-  # Terne (annocorso, sezione, combinazione) che il roster MIUR (new_adozioni) prevede
-  # per la scuola, indipendenti dall'anno target. Normalizzate a stringa per il confronto.
+  # Roster MIUR (new_adozioni) della scuola come { [annocorso, sezione] => combinazione },
+  # indipendente dall'anno target. La chiave è (annocorso, sezione): la combinazione è un
+  # attributo (variabile d'anno in anno), non parte dell'identità. Se la stessa sezione
+  # compare con più combinazioni, l'ultima vince (caso raro in EE).
   def roster_new_adozioni
     NewAdozione
       .where(codicescuola: codice_ministeriale, tipogradoscuola: "EE")
       .distinct
       .pluck(:annocorso, :sezioneanno, :combinazione)
-      .map { |annocorso, sezione, combinazione| [annocorso.to_s, sezione.to_s, combinazione.to_s] }
-      .to_set
+      .each_with_object({}) do |(annocorso, sezione, combinazione), h|
+        h[[annocorso.to_s, sezione.to_s]] = combinazione.to_s
+      end
   end
 
   # Crea le classi presenti nel roster ma non ancora attive nell'anno target: copre
   # sia lo sdoppiamento (la 2B accanto alla 2A avanzata) sia le nuove prime (annocorso "1").
   def crea_classi_mancanti!(anno_scolastico:, roster:)
     esistenti = classi.attive.per_anno(anno_scolastico)
-      .pluck(:anno_corso, :sezione, :combinazione)
-      .map { |annocorso, sezione, combinazione| [annocorso.to_s, sezione.to_s, combinazione.to_s] }
+      .pluck(:anno_corso, :sezione)
+      .map { |annocorso, sezione| [annocorso.to_s, sezione.to_s] }
       .to_set
 
-    (roster - esistenti).each do |annocorso, sezione, combinazione|
+    (roster.keys.to_set - esistenti).each do |annocorso, sezione|
+      combinazione = roster[[annocorso, sezione]]
       classe = classi.find_or_create_by!(
-        anno_corso: annocorso, sezione: sezione, combinazione: combinazione,
+        anno_corso: annocorso, sezione: sezione,
         anno_scolastico: anno_scolastico, stato: "attiva"
       ) do |c|
         c.account_id = account_id
         c.tipo_scuola = "EE"
+        c.combinazione = combinazione
         c.codice_ministeriale_origine = codice_ministeriale
         c.classe_origine = annocorso
         c.sezione_origine = sezione
