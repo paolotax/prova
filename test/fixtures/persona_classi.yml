@@ -9,6 +9,12 @@
 #  classe_id  :uuid             not null
 #  persona_id :uuid             not null
 #
+# Indexes
+#
+#  index_persona_classi_on_classe_id                 (classe_id)
+#  index_persona_classi_on_persona_id                (persona_id)
+#  index_persona_classi_on_persona_id_and_classe_id  (persona_id,classe_id) UNIQUE
+#
 
 # Maestra sulla quinta uscente della primaria_attiva: viene spostata sulla nuova prima
 maestra_quinta:

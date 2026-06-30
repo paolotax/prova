@@ -1,3 +1,36 @@
+# == Schema Information
+#
+# Table name: controllo_anomalie
+#
+#  id                  :uuid             not null, primary key
+#  anno_scolastico     :string
+#  annocorso           :string
+#  codiceisbn          :string
+#  codicescuola        :string           not null
+#  combinazione        :string
+#  comune              :string
+#  delta_cents         :integer
+#  denominazione       :string
+#  dettaglio           :jsonb            not null
+#  disciplina          :string
+#  editore             :string
+#  prezzo_atteso_cents :integer
+#  prezzo_cents        :integer
+#  provincia           :string
+#  regione             :string
+#  sezioneanno         :string
+#  tipo                :string           not null
+#  titolo              :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
+# Indexes
+#
+#  index_controllo_anomalie_on_anno_scolastico_and_codicescuola  (anno_scolastico,codicescuola)
+#  index_controllo_anomalie_on_codicescuola                      (codicescuola)
+#  index_controllo_anomalie_on_provincia                         (provincia)
+#  index_controllo_anomalie_on_tipo                              (tipo)
+#
 class ControlloAnomalia < ApplicationRecord
   self.table_name = "controllo_anomalie"
 

@@ -45,6 +45,35 @@
 #  account_id :uuid             not null
 #  scuola_id  :uuid
 #
+# Indexes
+#
+#  index_persone_on_account_id                       (account_id)
+#  index_persone_on_account_id_and_cognome_and_nome  (account_id,cognome,nome)
+#  index_persone_on_scuola_id                        (scuola_id)
+#  index_persone_on_scuola_id_and_ruolo              (scuola_id,ruolo)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (account_id => accounts.id)
+#  fk_rails_...  (scuola_id => scuole.id)
+#
+#
+# Table name: persone
+#
+#  id         :uuid             not null, primary key
+#  cellulare  :string
+#  cognome    :string
+#  email      :string
+#  nome       :string
+#  note       :text
+#  posizione  :integer
+#  ruolo      :string
+#  telefono   :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :uuid             not null
+#  scuola_id  :uuid
+#
 
 persona_fizzy:
   account: fizzy
