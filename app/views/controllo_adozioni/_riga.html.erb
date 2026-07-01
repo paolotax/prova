@@ -1,0 +1,34 @@
+<% scuola = riga.scuola %>
+<%= tag.article id: dom_id(scuola, :controllo),
+      class: "flex align-center gap txt-small",
+      style: "padding: .35rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius);" do %>
+  <div class="flex align-center justify-center" style="inline-size: 1.8rem; flex: 0 0 auto;">
+    <% if riga.promuovibile? %>
+      <%= link_to new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: scuola.account_id),
+            class: "btn btn--small", data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Promuovi" } do %>
+        <%= icon_tag "academic-cap" %>
+      <% end %>
+    <% elsif riga.promossa? %>
+      <span style="color: var(--color-positive);" data-controller="tooltip" data-tooltip-content-value="Già promossa">
+        <%= icon_tag "check" %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="flex-item-grow max-inline-size">
+    <%= link_to scuola_path(scuola, account_id: scuola.account_id), style: "color: inherit;" do %>
+      <div class="overflow-ellipsis"><strong><%= scuola.denominazione.presence || "—" %></strong></div>
+      <div class="txt-subtle overflow-ellipsis">
+        <%= scuola.comune %> (<%= scuola.sigla_provincia %>) · <%= scuola.codice_ministeriale %>
+      </div>
+    <% end %>
+    <% if riga.anomalie? %>
+      <% riga.anomalie_tipi.split(",").each do |tipo| %><%= link_to tipo, controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id), class: "badge #{anomalia_badge_colore(tipo)}" %><% end %>
+    <% end %>
+  </div>
+
+  <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
+    <span class="txt-subtle">Corr <%= riga.correnti_classi %>/<%= riga.correnti_adozioni %></span>
+    <span <%= 'style="color: var(--color-negative);"'.html_safe if riga.disallineata? %>>· MIUR <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong></span>
+  </div>
+<% end %>

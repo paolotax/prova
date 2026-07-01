@@ -5,7 +5,8 @@ class ControlloAdozioni::PromozioniController < ApplicationController
   def new
     @anno_target  = anno_target
     @anno_corrente = @scuola.classi.attive.maximum(:anno_scolastico) || precedente(@anno_target)
-    @codice_suggerito = codice_nuovo_suggerito
+    # Codice target esplicito (dal flusso cambi-codice di controllo_adozioni) o auto-suggerito.
+    @codice_suggerito = params[:codice_nuovo].presence || codice_nuovo_suggerito
     @quinte_uscenti = @scuola.classi.attive.where(anno_corso: "5").includes(persona_classi: :persona)
     @sezioni_prime = NewAdozione.where(codicescuola: @codice_suggerito.presence || @scuola.codice_ministeriale,
                                        annocorso: "1", tipogradoscuola: "EE").distinct.pluck(:sezioneanno).compact.sort
@@ -33,7 +34,13 @@ class ControlloAdozioni::PromozioniController < ApplicationController
   private
 
   def set_scuola
-    @scuola = current_account.scuole.find_by!(codice_ministeriale: params[:codicescuola])
+    @scuola = current_account.scuole.find_by(codice_ministeriale: params[:codicescuola])
+    return if @scuola
+
+    # Codice non più in account: tipicamente una card cambio-codice ormai obsoleta
+    # (il predecessore è già stato aggiornato). Nessun 500: torna alla panoramica.
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+                alert: "Scuola #{params[:codicescuola]} non trovata: codice già aggiornato o rimosso."
   end
 
   def anno_target

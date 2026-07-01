@@ -1,0 +1,13 @@
+<%# Bottone "Promuovi tutte (N)" — target stabile per aggiornamento via stream. %>
+<%= tag.div id: "controllo_adozioni_promuovi_tutte" do %>
+  <% if panoramica.promuovibili_count.positive? %>
+    <div class="margin-block-end">
+      <%= button_to controllo_adozioni_promuovi_tutte_path(account_id: account_id),
+            class: "btn btn--link",
+            data: { turbo_confirm: "Promuovere tutte le #{panoramica.promuovibili_count} scuole promuovibili all'anno corrente?" } do %>
+        <%= icon_tag "academic-cap" %>
+        <span>Promuovi tutte (<%= panoramica.promuovibili_count %>)</span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

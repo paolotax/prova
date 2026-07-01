@@ -1,0 +1,43 @@
+<% m = cambio %>
+<%= tag.article id: "cambio_codice_#{m.codice}",
+      class: "flex align-center gap txt-small",
+      style: "padding: .35rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius);" do %>
+  <div class="flex-item-grow max-inline-size flex flex-column gap-quarter">
+    <%# Riga 1: scuola nuova (dal ministeriale) — codice nuovo %>
+    <div class="overflow-ellipsis">
+      <strong><%= m.denominazione.presence || "—" %></strong>
+      <span class="txt-subtle">· <%= m.comune %> (<%= m.provincia %>) · <%= m.codice %></span>
+    </div>
+
+    <%# Riga 2: predecessore (cambio codice) — codice vecchio %>
+    <% if (p = m.predecessore) %>
+      <div class="overflow-ellipsis txt-subtle">
+        ← <strong><%= p.denominazione&.truncate(40) %></strong>
+        · <%= p.comune %> (<%= p.sigla_provincia %>) · <%= p.codice_ministeriale %>
+      </div>
+    <% elsif m.candidati.present? %>
+      <div class="flex align-center gap-half" data-controller="frame-src">
+        <span class="txt-subtle">←</span>
+        <select class="input input--select txt-small" data-frame-src-target="select" aria-label="Scegli scuola predecessore">
+          <option value="">Scegli predecessore…</option>
+          <% m.candidati.each do |s| %>
+            <option value="<%= new_controllo_adozioni_promozione_path(codicescuola: s.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id) %>">
+              <%= s.denominazione %> — <%= s.comune %> (<%= s.codice_ministeriale %>)
+            </option>
+          <% end %>
+        </select>
+        <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
+      </div>
+    <% else %>
+      <div class="txt-subtle">— nuova scuola —</div>
+    <% end %>
+  </div>
+
+  <% if p = m.predecessore %>
+    <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
+      <%= link_to "Aggiorna codice",
+            new_controllo_adozioni_promozione_path(codicescuola: p.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id),
+            class: "btn btn--small", data: { turbo_frame: :modal } %>
+    </div>
+  <% end %>
+<% end %>

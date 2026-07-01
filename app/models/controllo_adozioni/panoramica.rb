@@ -1,0 +1,271 @@
+module ControlloAdozioni
+  # Panoramica owner/admin di controllo_adozioni:
+  #  - `gruppi`: tutte le scuole dell'account CON adozioni (correnti o in new_adozioni),
+  #    raggruppate per direzione didattica e ordinate come scuole index, con il confronto
+  #    fra i conteggi correnti (account) e quelli dello snapshot MIUR (new_adozioni).
+  #  - `cambi_codice`: codici presenti in new_scuole+new_adozioni nella zona dell'account
+  #    ma assenti da account.scuole (nuove o cambi codice), con eventuale predecessore.
+  class Panoramica
+    # grado scuola → tipogradoscuola in new_adozioni (E=primaria, M=medie, N=superiori NT/NO)
+    TG = { "E" => %w[EE], "M" => %w[MM], "N" => %w[NT NO] }.freeze
+
+    Riga = Struct.new(:scuola, :correnti_classi, :correnti_adozioni, :new_classi, :new_adozioni,
+                      :promuovibile, :promossa, :nel_miur, :anomalie_count, :anomalie_tipi, keyword_init: true) do
+      def disallineata?  = correnti_classi != new_classi || correnti_adozioni != new_adozioni
+      def promuovibile?  = promuovibile
+      def promossa?      = promossa
+      def mancante_miur? = !nel_miur
+      def anomalie?      = anomalie_count.to_i.positive?
+    end
+
+    Mancante = Struct.new(:codice, :denominazione, :comune, :provincia, :predecessore, :candidati,
+                          keyword_init: true)
+
+    def initialize(account:, scuole: nil)
+      @account = account
+      @scuole_scope = scuole || account.scuole
+    end
+
+    # [{ direzione: Scuola|nil, scuole: [Scuola, ...] }] — `scuole` sono le righe da mostrare
+    # (plessi con adozioni + la direzione se ne ha); `direzione` resta come header del gruppo.
+    def gruppi
+      @gruppi ||= build_gruppi
+    end
+
+    # live: true calcola i conteggi correnti dal vivo (per il broadcast post-promozione,
+    # quando i counter cache non sono ancora stati aggiornati dai job async).
+    def riga(scuola, live: false)
+      cl, ad = new_counts.fetch(scuola.codice_ministeriale, [0, 0])
+      a = anomalie_by_codice[scuola.codice_ministeriale]
+      cor_cl, cor_ad = live ? correnti_live(scuola) : [scuola.classi_count, scuola.adozioni_count]
+      Riga.new(scuola: scuola, correnti_classi: cor_cl, correnti_adozioni: cor_ad,
+               new_classi: cl, new_adozioni: ad,
+               promuovibile: promuovibili_codici.include?(scuola.codice_ministeriale),
+               promossa: promossa?(scuola),
+               nel_miur: new_counts.key?(scuola.codice_ministeriale),
+               anomalie_count: a&.n_anomalie.to_i, anomalie_tipi: a&.tipi.to_s)
+    end
+
+    def cambi_codice
+      @cambi_codice ||= build_cambi_codice
+    end
+
+    def promuovibili_count = promuovibili_codici.size
+
+    FILTRI = %w[promosse da_promuovere mancanti_miur anomalie].freeze
+
+    # Gruppi con le sole righe che matchano il filtro (nil = tutte). Scarta i gruppi vuoti.
+    def gruppi_filtrati(filtro)
+      return gruppi if filtro.blank? || !FILTRI.include?(filtro)
+
+      gruppi.filter_map do |g|
+        scuole = g[:scuole].select { |s| match_filtro?(riga(s), filtro) }
+        next if scuole.empty?
+        g.merge(scuole: scuole)
+      end
+    end
+
+    def conteggi_stati
+      @conteggi_stati ||= {
+        "promosse"      => righe_tutte.count(&:promossa?),
+        "da_promuovere" => righe_tutte.count(&:promuovibile?),
+        "mancanti_miur" => righe_tutte.count(&:mancante_miur?),
+        "anomalie"      => righe_tutte.count(&:anomalie?)
+      }
+    end
+
+    private
+
+    def righe_tutte
+      @righe_tutte ||= gruppi.flat_map { |g| g[:scuole] }.map { |s| riga(s) }
+    end
+
+    def match_filtro?(r, filtro)
+      case filtro
+      when "promosse"      then r.promossa?
+      when "da_promuovere" then r.promuovibile?
+      when "mancanti_miur" then r.mancante_miur?
+      when "anomalie"      then r.anomalie?
+      else true
+      end
+    end
+
+    attr_reader :account, :scuole_scope
+
+    def anno = @anno ||= NewScuola.maximum(:anno_scolastico)
+
+    # Anno_scolastico max delle classi attive per codice scuola (bulk).
+    def max_anno_attive
+      @max_anno_attive ||= scuole_scope.joins(:classi).where(classi: { stato: "attiva" })
+                                       .group("scuole.codice_ministeriale").maximum("classi.anno_scolastico")
+    end
+
+    # Gia' promossa: ha classi attive all'anno dello snapshot MIUR corrente.
+    def promossa?(scuola)
+      anno.present? && max_anno_attive[scuola.codice_ministeriale].to_s >= anno
+    end
+
+    # Conteggi da new_adozioni per codicescuola: [classi_distinte, righe_daacquist]
+    def new_counts
+      @new_counts ||= begin
+        codici = scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
+        return {} if codici.empty?
+
+        NewAdozione.where(codicescuola: codici).group(:codicescuola).pluck(
+          :codicescuola,
+          Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,''))"),
+          Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,'') || '|' || COALESCE(codiceisbn,'')) FILTER (WHERE daacquist ILIKE 'S%')")
+        ).each_with_object({}) { |(cod, cl, ad), h| h[cod] = [cl.to_i, ad.to_i] }
+      end
+    end
+
+    # Conteggi correnti dal vivo, allineati alla definizione dei counter cache
+    # (classi attive; adozioni da_acquistare su classi attive, anno coerente).
+    def correnti_live(scuola)
+      classi = scuola.classi.attive.count
+      adoz = scuola.adozioni.joins(:classe)
+                   .where(classi: { stato: "attiva" }, da_acquistare: true)
+                   .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+                   .count
+      [classi, adoz]
+    end
+
+    # Anomalie per codicescuola (riuso ControlloAnomalia.classifica), in bulk.
+    def anomalie_by_codice
+      @anomalie_by_codice ||= begin
+        codici = scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
+        if codici.empty?
+          {}
+        else
+          ControlloAnomalia.classifica.where(codicescuola: codici).index_by(&:codicescuola)
+        end
+      end
+    end
+
+    def promuovibili_codici
+      @promuovibili_codici ||= begin
+        a = anno
+        if a.blank?
+          Set.new
+        else
+          codici = scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
+          ns = NewScuola.where(codice_scuola: codici, anno_scolastico: a).pluck(:codice_scuola).to_set
+          na = NewAdozione.where(codicescuola: codici, tipogradoscuola: "EE").distinct.pluck(:codicescuola).to_set
+          codici.select { |c| ns.include?(c) && na.include?(c) && max_anno_attive[c].to_s < a }.to_set
+        end
+      end
+    end
+
+    def con_adozioni?(scuola)
+      scuola.adozioni_count.to_i.positive? || new_counts.key?(scuola.codice_ministeriale)
+    end
+
+    def build_gruppi
+      scuole = scuole_scope
+                      .left_joins(:direzione)
+                      .includes(:direzione, :plessi)
+                      .order(*per_direzione_order)
+                      .to_a
+      by_id = scuole.index_by(&:id)
+      incluse = scuole.select { |s| con_adozioni?(s) }.to_set
+
+      gruppi = {}
+      ordine = []
+      senza_direzione = []
+      scuole.each do |scuola|
+        if scuola.direzione_id.present? && by_id[scuola.direzione_id]
+          key = scuola.direzione_id
+          (gruppi[key] ||= (ordine << key; { direzione: by_id[key], plessi: [] }))[:plessi] << scuola
+        elsif scuola.direzione_id.present?
+          senza_direzione << scuola
+        elsif scuola.plessi.any? { |p| by_id[p.id] }
+          gruppi[scuola.id] ||= (ordine << scuola.id; { direzione: scuola, plessi: [] })
+        else
+          senza_direzione << scuola
+        end
+      end
+
+      # Righe = plessi con adozioni (+ la direzione stessa se ha adozioni).
+      # La direzione resta come header anche se non ha adozioni proprie.
+      result = ordine.filter_map do |key|
+        g = gruppi[key]
+        dir = g[:direzione]
+        righe = []
+        righe << dir if dir && incluse.include?(dir)
+        righe.concat(g[:plessi].select { |p| incluse.include?(p) })
+        next if righe.empty?
+        { direzione: dir, scuole: righe }
+      end
+
+      # Un unico gruppo "Scuole private" in coda per le scuole senza direzione.
+      private_scuole = senza_direzione.select { |s| incluse.include?(s) }
+      result << { direzione: nil, private: true, scuole: private_scuole } if private_scuole.any?
+      result
+    end
+
+    def per_direzione_order
+      [
+        Arel.sql("COALESCE(direzioni_scuole.provincia, scuole.provincia)"),
+        Arel.sql("COALESCE(direzioni_scuole.area, scuole.area) NULLS FIRST"),
+        Arel.sql("COALESCE(direzioni_scuole.comune, scuole.comune)"),
+        Arel.sql("COALESCE(direzioni_scuole.denominazione, scuole.denominazione)"),
+        :tipo_scuola, :denominazione
+      ]
+    end
+
+    def paritaria?(tipo) = tipo.to_s.upcase.include?("NON STATALE")
+
+    def denom_norm(s) = s.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").squeeze(" ").strip
+
+    # Denominazioni "simili": uguali dopo normalizzazione o una contenuta nell'altra
+    # (es. "CALAMANDREI" ⊂ "PIERO CALAMANDREI").
+    def denom_simili?(a, b)
+      na = denom_norm(a)
+      nb = denom_norm(b)
+      return false if na.blank? || nb.blank?
+      na == nb || na.include?(nb) || nb.include?(na)
+    end
+
+    # Codici in new_scuole+new_adozioni (zona account) assenti da account.scuole.
+    def build_cambi_codice
+      righe = []
+      # Le direzioni non possono essere predecessore di un cambio codice (una scuola non
+      # diventa direzione): le escludiamo dai candidati.
+      direzione_ids = account.scuole.where.not(direzione_id: nil).distinct.pluck(:direzione_id).to_set
+      account.zone.order(:provincia, :grado).each do |zona|
+        tipi = TipoScuola.where(grado: zona.grado).pluck(:tipo)
+        tg = TG[zona.grado] || []
+        next if tg.empty?
+
+        in_account = account.scuole.where(provincia: zona.provincia, grado: zona.grado)
+        account_codici = in_account.pluck(:codice_ministeriale).to_set
+        codici_con_adoz = NewAdozione.where(tipogradoscuola: tg).distinct.pluck(:codicescuola).to_set
+
+        # Scuole account "orfane" (codice non piu' in new_adozioni) → possibili predecessori.
+        # Escludi le direzioni.
+        orfane_per_comune = in_account
+          .reject { |s| codici_con_adoz.include?(s.codice_ministeriale) || direzione_ids.include?(s.id) }
+          .group_by(&:comune)
+
+        NewScuola.where(provincia: zona.provincia, tipo_scuola: tipi, anno_scolastico: anno)
+                 .pluck(:codice_scuola, :denominazione, :comune, :tipo_scuola).each do |codice, denom, comune, tipo|
+          next if account_codici.include?(codice) || !codici_con_adoz.include?(codice)
+
+          # Candidati predecessore: orfane dello stesso comune E stessa natura
+          # (statale ↔ statale, paritaria ↔ paritaria).
+          paritaria = paritaria?(tipo)
+          candidati = (orfane_per_comune[comune] || []).select { |s| paritaria?(s.tipo_scuola) == paritaria }
+
+          # Auto-suggerimento solo se una sola candidata ha denominazione simile.
+          simili = candidati.select { |s| denom_simili?(s.denominazione, denom) }
+          predecessore = simili.size == 1 ? simili.first : nil
+
+          righe << Mancante.new(codice: codice, denominazione: denom, comune: comune,
+                                provincia: zona.provincia, predecessore: predecessore,
+                                candidati: candidati)
+        end
+      end
+      righe
+    end
+  end
+end

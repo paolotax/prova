@@ -89,8 +89,64 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
 
   private
 
+  # Ricalcola i tre counter cache (classi_count, adozioni_count, mie_adozioni_count)
+  # per le sole scuole coinvolte (direzione + plessi). Scoped su :scuola_ids: tocca
+  # poche righe e non contende con gli altri job di promozione (a differenza della
+  # vecchia UpdateScuoleCountersJob province-wide, che in blocco andava in deadlock).
   def update_counters(account, scuola_ids)
     sql_params = { account_id: account.id, scuola_ids: scuola_ids }
+
+    sql_classi = <<~SQL
+      UPDATE scuole SET classi_count = sub.cnt
+      FROM (
+        SELECT c.scuola_id, COUNT(*) as cnt
+        FROM classi c
+        WHERE c.scuola_id IN (:scuola_ids)
+          AND c.stato = 'attiva'
+        GROUP BY c.scuola_id
+      ) sub
+      WHERE scuole.id = sub.scuola_id
+    SQL
+
+    sql_classi_reset = <<~SQL
+      UPDATE scuole SET classi_count = 0
+      WHERE scuole.id IN (:scuola_ids)
+        AND scuole.id NOT IN (
+          SELECT DISTINCT c.scuola_id FROM classi c
+          WHERE c.stato = 'attiva'
+            AND c.scuola_id IN (:scuola_ids)
+        )
+    SQL
+
+    sql_adozioni = <<~SQL
+      UPDATE scuole SET adozioni_count = sub.cnt
+      FROM (
+        SELECT c.scuola_id, COUNT(*) as cnt
+        FROM adozioni a
+        JOIN classi c ON c.id = a.classe_id
+        WHERE c.scuola_id IN (:scuola_ids)
+          AND a.account_id = :account_id
+          AND a.da_acquistare = true
+          AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
+        GROUP BY c.scuola_id
+      ) sub
+      WHERE scuole.id = sub.scuola_id
+    SQL
+
+    sql_adozioni_reset = <<~SQL
+      UPDATE scuole SET adozioni_count = 0
+      WHERE scuole.id IN (:scuola_ids)
+        AND scuole.id NOT IN (
+          SELECT DISTINCT c.scuola_id FROM adozioni a
+          JOIN classi c ON c.id = a.classe_id
+          WHERE a.account_id = :account_id
+            AND a.da_acquistare = true
+            AND c.stato = 'attiva'
+            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
+            AND c.scuola_id IN (:scuola_ids)
+        )
+    SQL
 
     sql_mie = <<~SQL
       UPDATE scuole SET mie_adozioni_count = sub.cnt
@@ -109,10 +165,8 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
       WHERE scuole.id = sub.scuola_id
     SQL
 
-    execute(sql_mie, sql_params)
-
     # Reset per scuole senza adozioni mia
-    sql_reset = <<~SQL
+    sql_mie_reset = <<~SQL
       UPDATE scuole SET mie_adozioni_count = 0
       WHERE scuole.id IN (:scuola_ids)
         AND scuole.id NOT IN (
@@ -127,7 +181,12 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
         )
     SQL
 
-    execute(sql_reset, sql_params)
+    execute(sql_classi, sql_params)
+    execute(sql_classi_reset, sql_params)
+    execute(sql_adozioni, sql_params)
+    execute(sql_adozioni_reset, sql_params)
+    execute(sql_mie, sql_params)
+    execute(sql_mie_reset, sql_params)
   end
 
   def broadcast_card(account, scuola)

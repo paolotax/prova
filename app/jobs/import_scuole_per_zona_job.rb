@@ -17,8 +17,13 @@ class ImportScuolePerZonaJob < ApplicationJob
     codici = import_codici(account_zona)
 
     import_scuole_batch(account, account_zona, codici)
-    import_classi_batch(account, codici)
-    import_adozioni_batch(account, codici)
+
+    # I dati import_scuole/import_adozioni sono a #{ANNO_SCOLASTICO}. Sulle scuole gia'
+    # promosse a un anno successivo NON reimportare classi/adozioni: reinserirebbe classi
+    # 202526 attive in doppione accanto alle 202627. Solo l'anagrafe (fase 1) e' sicura.
+    codici_importabili = codici - codici_gia_avanzati(account)
+    import_classi_batch(account, codici_importabili)
+    import_adozioni_batch(account, codici_importabili)
 
     account_zona.update!(scuole_count: codici.size, stato: "attiva")
     account.estendi_mandati_a_zona!(provincia: account_zona.provincia, grado: account_zona.grado)
@@ -31,6 +36,13 @@ class ImportScuolePerZonaJob < ApplicationJob
 
   def import_codici(account_zona)
     account_zona.import_scuole_per_zona.pluck(:CODICESCUOLA)
+  end
+
+  # Codici (codice_ministeriale_origine) di scuole con classi attive gia' a un anno
+  # successivo a #{ANNO_SCOLASTICO} (gia' promosse): da escludere dall'import classi/adozioni.
+  def codici_gia_avanzati(account)
+    account.classi.attive.where("anno_scolastico > ?", ANNO_SCOLASTICO)
+           .distinct.pluck(:codice_ministeriale_origine)
   end
 
   # Fase 1: upsert scuole

@@ -376,6 +376,7 @@ Rails.application.routes.draw do
     resource :adozioni_analytics, only: [:show], controller: 'adozioni_analytics'
     # Nomi route espliciti (non dipendono dall'inflector: evita l'initializer uncountable)
     get 'controllo_adozioni', to: 'controllo_adozioni#index', as: :controllo_adozioni_index
+    post 'controllo_adozioni/promuovi_tutte', to: 'controllo_adozioni#promuovi_tutte', as: :controllo_adozioni_promuovi_tutte
     get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
     scope module: "controllo_adozioni" do
       resource :promozione, only: %i[new create], controller: "promozioni",

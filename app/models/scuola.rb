@@ -281,8 +281,21 @@ class Scuola < ApplicationRecord
         # per-grado sotto; qui blocchiamo solo l'assenza totale.
         if roster.present?
           # EE-only: anno_corso 1–5, numerico; gradi non numerici (licei 45/123) su un futuro path medie/superiori, non qui.
-          # Decisione a tre vie per ogni classe (DESC per evitare la collisione 5ª-archiviata vs 4ª-promossa).
-          classi.attive.per_anno(da).order(Arel.sql("anno_corso::int DESC")).each do |classe|
+          # Ordine: anno_corso DESC (evita collisione 5ª-archiviata vs 4ª-promossa) e, a
+          # parità, prima le classi la cui combinazione coincide già col roster: se due classi
+          # sorgente convergono sulla stessa identità target (sezioni doppie con combinazione
+          # diversa che il MIUR unifica), sopravvive la continuazione "reale".
+          da_promuovere = classi.attive.per_anno(da).to_a.sort_by do |c|
+            nuovo = c.anno_corso.to_i + 1
+            match = roster[[nuovo.to_s, c.sezione.to_s]] == c.combinazione ? 0 : 1
+            [-c.anno_corso.to_i, match]
+          end
+
+          # Identità target già occupate in questo anno (anno_corso, sezione, combinazione):
+          # una seconda classe che vi converge va archiviata (merge), non fa crashare il job.
+          identita_viste = Set.new
+
+          da_promuovere.each do |classe|
             if classe.anno_corso.to_i >= 5
               classe.update!(stato: "archiviata") # la 5ª si diploma, resta tombstone storico
               next
@@ -297,6 +310,19 @@ class Scuola < ApplicationRecord
               # archivia nell'identità STORICA, NON avanzare (storico per-libro coerente).
               classe.update!(stato: "archiviata")
             else
+              # Allinea la combinazione al roster del nuovo anno, così costruisci_adozioni!
+              # (match su *_origine) trova le adozioni. Se il grado non è coperto (guardia
+              # per-grado), il roster non ha la chiave → si mantiene la combinazione attuale.
+              combinazione_target = roster[chiave] || classe.combinazione
+              identita = [nuovo, sez, combinazione_target]
+
+              if identita_viste.include?(identita)
+                # Due classi sorgente convergono sulla stessa identità target → merge.
+                classe.update!(stato: "archiviata")
+                next
+              end
+              identita_viste << identita
+
               attrs = {
                 anno_corso: nuovo,
                 classe_origine: nuovo,
@@ -304,12 +330,9 @@ class Scuola < ApplicationRecord
                 anno_scolastico: a,
                 codice_ministeriale_origine: codice_ministeriale
               }
-              # Allinea la combinazione al roster del nuovo anno, così costruisci_adozioni!
-              # (match su *_origine) trova le adozioni. Se il grado non è coperto (guardia
-              # per-grado), il roster non ha la chiave → si mantiene la combinazione attuale.
-              if (combinazione_roster = roster[chiave])
-                attrs[:combinazione] = combinazione_roster
-                attrs[:combinazione_origine] = combinazione_roster
+              if roster.key?(chiave)
+                attrs[:combinazione] = combinazione_target
+                attrs[:combinazione_origine] = combinazione_target
               end
               classe.update!(attrs)
             end
@@ -323,8 +346,11 @@ class Scuola < ApplicationRecord
       applica_spostamenti_insegnanti!(spostamenti_insegnanti, a: a)
     end
 
+    # UpdateScuolaMieAdozioniJob ricalcola i tre counter cache (classi/adozioni/mie)
+    # scoped alla scuola+direzione. Niente più UpdateScuoleCountersJob province-wide:
+    # in promozione di massa accodava un UPDATE per-provincia identico per ogni scuola,
+    # con deadlock/timeout PG e migliaia di retry.
     UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
-    UpdateScuoleCountersJob.perform_later(account, provincia: provincia)
 
     # Rinfresca (morph) le pagine scuola aperte: la show mostra le nuove classi/adozioni.
     Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")

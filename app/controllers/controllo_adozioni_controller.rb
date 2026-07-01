@@ -2,16 +2,17 @@ class ControlloAdozioniController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @q = params[:q].to_s.strip
-    scope = ControlloAnomalia.classifica
-    scope = if @q.present?
-      scope.where("codicescuola ILIKE :q OR denominazione ILIKE :q OR comune ILIKE :q OR provincia ILIKE :q",
-                  q: "%#{@q}%")
-    else
-      scope.where(codicescuola: codici_account)
-    end
-    scope = scope.where(provincia: params[:provincia]) if params[:provincia].present?
-    @scuole = scope.limit(200)
+    @filtro = params[:filtro].presence
+    @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: Current.scuole)
+  end
+
+  # Promuove in blocco tutte le scuole promuovibili dell'account (fan-out per scuola).
+  def promuovi_tutte
+    return head(:forbidden) unless Current.admin?
+
+    PromuoviScuolePromuovibiliJob.perform_later(Current.account)
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+                notice: "Promozione delle scuole promuovibili avviata."
   end
 
   def show
@@ -37,11 +38,5 @@ class ControlloAdozioniController < ApplicationController
       .where("coalesce(daacquist, '') ILIKE 'S%'")
       .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)
       .group_by { |na| [na.annocorso, na.sezioneanno, na.combinazione] }
-  end
-
-  def codici_account
-    scuole = Current.account.scuole.where.not(codice_ministeriale: [nil, ""])
-    scuole = scuole.where(id: Current.membership.scuola_ids) if Current.membership && !Current.admin?
-    scuole.pluck(:codice_ministeriale)
   end
 end

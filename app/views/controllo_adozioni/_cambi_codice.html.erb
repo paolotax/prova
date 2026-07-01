@@ -1,0 +1,16 @@
+<%# Sezione "Da rilevare / cambi codice" — target stabile per aggiornamento via stream. %>
+<%= tag.div id: "controllo_adozioni_cambi" do %>
+  <% mancanti = panoramica.cambi_codice %>
+  <% if mancanti.any? %>
+    <section class="margin-block-end">
+      <h2 class="txt-medium">Da rilevare / cambi codice (<%= mancanti.size %>)</h2>
+      <p class="txt-subtle txt-small">
+        Codici presenti nel ministeriale (new_scuole + new_adozioni) della tua zona ma non in account.
+      </p>
+      <div class="flex flex-column gap-quarter">
+        <%= render partial: "controllo_adozioni/cambio_codice", collection: mancanti, as: :cambio,
+              locals: { account_id: account_id } %>
+      </div>
+    </section>
+  <% end %>
+<% end %>

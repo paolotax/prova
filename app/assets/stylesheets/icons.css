@@ -36,6 +36,7 @@
   .icon--cash { --svg: url("cash.svg"); }
   .icon--home { --svg: url("home.svg"); }
   .icon--building-library { --svg: url("building-library.svg"); }
+  .icon--academic-cap { --svg: url("academic-cap.svg"); }
   .icon--calendar { --svg: url("calendar.svg"); }
   .icon--calendar-days { --svg: url("calendar-days.svg"); }
   .icon--note { --svg: url("note.svg"); }

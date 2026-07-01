@@ -1,55 +1,48 @@
-<% @page_title = "Controllo adozioni primaria" %>
+<% @page_title = "Controllo adozioni" %>
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Controllo adozioni primaria</span>
+    <span class="overflow-ellipsis">Controllo adozioni</span>
   </h1>
 <% end %>
 
+<%= turbo_stream_from Current.account, "controllo_adozioni" %>
+
 <div class="stats-container">
-  <%= form_with url: controllo_adozioni_index_path(account_id: params[:account_id]), method: :get,
-                class: "filters" do |f| %>
-    <div class="filters__row">
-      <%= f.text_field :q, value: @q, placeholder: "Codice, scuola, comune, provincia…",
-                       class: "input" %>
-      <%= f.text_field :provincia, value: params[:provincia], placeholder: "Provincia",
-                       class: "input" %>
-      <%= f.submit "Cerca", class: "btn" %>
-    </div>
+  <% if Current.admin? %>
+    <%= render "controllo_adozioni/cambi_codice", panoramica: @panoramica, account_id: params[:account_id] %>
   <% end %>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th class="pad-inline">Scuola</th>
-        <th class="pad-inline">Comune</th>
-        <th class="pad-inline">Provincia</th>
-        <th class="pad-inline">Tipi anomalia</th>
-        <th class="pad-inline txt-align-end">N° anomalie</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @scuole.each do |s| %>
-        <tr>
-          <td class="pad-inline">
-            <%= link_to controllo_adozioni_path(s.codicescuola, account_id: params[:account_id]) do %>
-              <strong><%= s.denominazione.presence || "—" %></strong>
-              <span class="txt-subtle"><%= s.codicescuola %></span>
-            <% end %>
-          </td>
-          <td class="pad-inline"><%= s.comune %></td>
-          <td class="pad-inline"><%= s.provincia %></td>
-          <td class="pad-inline">
-            <% s.tipi.to_s.split(",").each do |tipo| %>
-              <span class="badge <%= anomalia_badge_colore(tipo) %>"><%= tipo %></span>
-            <% end %>
-          </td>
-          <td class="pad-inline txt-align-end"><%= s.n_anomalie %></td>
-        </tr>
+  <%# ===== Panoramica scuole per direzione ===== %>
+  <% if @panoramica.gruppi.empty? %>
+    <p class="txt-subtle">Nessuna scuola con adozioni.</p>
+  <% else %>
+    <%= render "controllo_adozioni/filtri", panoramica: @panoramica, account_id: params[:account_id], filtro: @filtro %>
+  <% end %>
+
+  <% if Current.admin? %>
+    <%= render "controllo_adozioni/promuovi_tutte", panoramica: @panoramica, account_id: params[:account_id] %>
+  <% end %>
+
+  <% gruppi = @panoramica.gruppi_filtrati(@filtro) %>
+  <% if gruppi.empty? && @filtro.present? %>
+    <p class="txt-subtle">Nessuna scuola per questo filtro.</p>
+  <% end %>
+
+  <% gruppi.each do |gruppo| %>
+    <section class="margin-block-end">
+      <% if (dir = gruppo[:direzione]) %>
+        <h3 class="txt-small txt-subtle">
+          <%= dir.denominazione %> · <%= dir.comune %> (<%= dir.provincia %>)
+        </h3>
+      <% elsif gruppo[:private] %>
+        <h3 class="txt-small txt-subtle">Scuole private</h3>
       <% end %>
-      <% if @scuole.empty? %>
-        <tr><td colspan="5" class="txt-subtle">Nessuna scuola con anomalie.</td></tr>
-      <% end %>
-    </tbody>
-  </table>
+
+      <div class="flex flex-column gap-quarter">
+        <%= render partial: "controllo_adozioni/riga",
+              collection: gruppo[:scuole].map { |s| @panoramica.riga(s) }, as: :riga %>
+      </div>
+    </section>
+  <% end %>
 </div>
