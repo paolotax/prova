@@ -140,6 +140,24 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert_equal 2, @scuola.adozioni_count
   end
 
+  test "call archivia le attive di anni precedenti prima di creare il corrente" do
+    # scuola non ancora promossa: stessa tupla attiva sul 202526 — l'indice
+    # unico parziale sulle attive NON include anno_scolastico
+    vecchia = @account.classi.create!(scuola: @scuola, anno_scolastico: "202526",
+      anno_corso: "1", sezione: "A", combinazione: "TN", stato: "attiva",
+      codice_ministeriale_origine: "XXEE00001A", classe_origine: "1", sezione_origine: "A")
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
+    ])
+
+    reconciler.call
+
+    assert_equal "archiviata", vecchia.reload.stato
+    nuova = @scuola.classi.find_by(anno_scolastico: "202627", anno_corso: "1", sezione: "A")
+    assert_equal "attiva", nuova.stato
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato

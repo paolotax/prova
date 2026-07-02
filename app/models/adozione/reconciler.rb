@@ -48,6 +48,7 @@ class Adozione::Reconciler
     ApplicationRecord.transaction do
       exec_sql("SELECT pg_advisory_xact_lock(hashtext(:lock_key))",
                lock_key: "reconcile/#{account.id}/#{provincia}/#{anno}")
+      archivia_anni_precedenti
       riattiva_classi
       upsert_classi
       archivia_classi_orfane
@@ -69,6 +70,25 @@ class Adozione::Reconciler
     ActiveRecord::Base.connection.execute(
       ActiveRecord::Base.sanitize_sql([sql, params.merge(extra)])
     )
+  end
+
+  # L'indice unico parziale sulle attive NON include anno_scolastico: "attiva"
+  # esiste una sola volta per (scuola, anno_corso, sezione, combinazione)
+  # attraverso gli anni. Le attive di anni precedenti (scuole mai promosse, o
+  # legacy senza anno) vanno archiviate PRIMA di costruire il corrente — è ciò
+  # che faceva la promozione per-scuola. Solo UPDATE di stato: reversibile,
+  # nessuna cancellazione.
+  def archivia_anni_precedenti
+    return unless source.stato == "attiva"
+
+    exec_sql(<<~SQL)
+      UPDATE classi cl SET stato = 'archiviata', updated_at = now()
+      FROM scuole sc
+      WHERE cl.scuola_id = sc.id
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+        AND cl.stato = 'attiva'
+        AND cl.anno_scolastico IS DISTINCT FROM :anno
+    SQL
   end
 
   # Le fasi riattiva/archivia girano solo per l'anno corrente: lo storico
