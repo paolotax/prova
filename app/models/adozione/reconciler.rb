@@ -74,13 +74,17 @@ class Adozione::Reconciler
 
   # L'indice unico parziale sulle attive NON include anno_scolastico: "attiva"
   # esiste una sola volta per (scuola, anno_corso, sezione, combinazione)
-  # attraverso gli anni. Le attive di anni precedenti (scuole mai promosse, o
-  # legacy senza anno) vanno archiviate PRIMA di costruire il corrente — è ciò
-  # che faceva la promozione per-scuola. Solo UPDATE di stato: reversibile,
-  # nessuna cancellazione.
+  # attraverso gli anni. Le attive di anni precedenti vanno archiviate PRIMA di
+  # costruire il corrente — ma SOLO per le scuole presenti nella sorgente, come
+  # faceva la promozione per-scuola (promuovibile ⇒ nel MIUR). Le scuole in
+  # attesa del rilascio cumulativo MIUR tengono le classi vecchie attive:
+  # azzerarle le farebbe sparire dalla panoramica (con_adozioni? richiede
+  # adozioni_count > 0 o presenza in new_adozioni). Solo UPDATE di stato:
+  # reversibile, nessuna cancellazione.
   def archivia_anni_precedenti
     return unless source.stato == "attiva"
 
+    c = source.col
     exec_sql(<<~SQL)
       UPDATE classi cl SET stato = 'archiviata', updated_at = now()
       FROM scuole sc
@@ -88,6 +92,10 @@ class Adozione::Reconciler
         AND sc.account_id = :account_id AND sc.provincia = :provincia
         AND cl.stato = 'attiva'
         AND cl.anno_scolastico IS DISTINCT FROM :anno
+        AND EXISTS (
+          SELECT 1 FROM #{source.table} src_p
+          WHERE src_p.#{c[:codicescuola]} = sc.codice_ministeriale
+        )
     SQL
   end
 

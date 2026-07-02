@@ -158,6 +158,25 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert_equal "attiva", nuova.stato
   end
 
+  test "call NON archivia le classi di scuole assenti dalla sorgente corrente" do
+    # scuola in attesa del MIUR (rilascio cumulativo): niente righe in new_adozioni.
+    # Le sue classi vecchie restano attive, altrimenti sparisce dalla panoramica
+    # (con_adozioni? richiede adozioni_count > 0 o presenza nel MIUR)
+    in_attesa = @account.scuole.create!(codice_ministeriale: "XXEE00009Z",
+      provincia: "XX", denominazione: "In Attesa", tipo_scuola: "SCUOLA PRIMARIA", grado: "E")
+    vecchia = @account.classi.create!(scuola: in_attesa, anno_scolastico: "202526",
+      anno_corso: "3", sezione: "C", stato: "attiva",
+      codice_ministeriale_origine: "XXEE00009Z", classe_origine: "3", sezione_origine: "C")
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
+    ])
+
+    reconciler.call
+
+    assert_equal "attiva", vecchia.reload.stato
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato

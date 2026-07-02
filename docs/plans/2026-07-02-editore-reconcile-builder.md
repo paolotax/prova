@@ -63,6 +63,11 @@ Minitest + fixtures. Comandi in Docker: `docker exec prova-app-1 bin/rails ...`.
   `archivia_anni_precedenti` (prima di tutte, solo anno corrente): archivia le
   attive scoped con `anno_scolastico IS DISTINCT FROM :anno` — è ciò che
   faceva la promozione per-scuola. In BOLOGNA erano 588.
+  **MA solo per le scuole presenti nella sorgente corrente** (scoperto su
+  REEE813027): le scuole in attesa del rilascio cumulativo MIUR (assenti da
+  `new_adozioni`) tengono le classi vecchie attive, altrimenti `adozioni_count`
+  va a 0 e spariscono dalla panoramica (`con_adozioni?` richiede counter > 0 o
+  presenza nel MIUR). Stessa semantica della promozione: promuovibile ⇒ nel MIUR.
 - **Classi che ricompaiono:** il rilascio MIUR è cumulativo — una classe archiviata
   come orfana può ritornare in sorgente. Serve la fase `riattiva_classi` (solo anno
   corrente), PRIMA dell'upsert, così il `NOT EXISTS` la trova già attiva e non duplica.
