@@ -57,6 +57,12 @@ Minitest + fixtures. Comandi in Docker: `docker exec prova-app-1 bin/rails ...`.
   `dependent: :destroy` su `consegne_saggio` (`adozione.rb`). Un'adozione orfana
   si cancella SOLO se: nessuna `consegne_saggio` collegata, `numero_copie` 0/NULL,
   `note` NULL. Le protette restano e si logga il conteggio (no silent cap).
+- **Attive di anni precedenti (scoperto sul run pilota):** l'indice unico
+  parziale sulle attive NON include `anno_scolastico` → una classe attiva
+  202526 di una scuola mai promossa collide con l'insert della 202627. Fase
+  `archivia_anni_precedenti` (prima di tutte, solo anno corrente): archivia le
+  attive scoped con `anno_scolastico IS DISTINCT FROM :anno` — è ciò che
+  faceva la promozione per-scuola. In BOLOGNA erano 588.
 - **Classi che ricompaiono:** il rilascio MIUR è cumulativo — una classe archiviata
   come orfana può ritornare in sorgente. Serve la fase `riattiva_classi` (solo anno
   corrente), PRIMA dell'upsert, così il `NOT EXISTS` la trova già attiva e non duplica.
