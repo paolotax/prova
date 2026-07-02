@@ -4,7 +4,7 @@ module ControlloAdozioni
   # Niente materializzazione delle scuole: una query GROUP BY per le righe.
   class Dashboard
     Riga = Struct.new(:provincia, :scuole, :promosse, :da_promuovere, :mancanti_miur, :anomalie,
-                      :da_rilevare, keyword_init: true)
+                      :codici_nuovi, keyword_init: true)
     Agente = Struct.new(:membership, :scuole_count, keyword_init: true)
 
     def initialize(account:)
@@ -17,25 +17,25 @@ module ControlloAdozioni
 
     def righe
       @righe ||= begin
-        dr = da_rilevare_per_provincia
+        dr = codici_nuovi_per_provincia
         rows = ActiveRecord::Base.connection.select_all(
           ActiveRecord::Base.sanitize_sql([sql_righe, account_id: account.id, anno: anno.to_s])
         ).map do |r|
           Riga.new(provincia: r["provincia"], scuole: r["scuole"].to_i, promosse: r["promosse"].to_i,
                    da_promuovere: r["da_promuovere"].to_i, mancanti_miur: r["mancanti_miur"].to_i,
-                   anomalie: r["anomalie"].to_i, da_rilevare: dr[r["provincia"]])
+                   anomalie: r["anomalie"].to_i, codici_nuovi: dr[r["provincia"]])
         end
         # Province con soli codici nuovi (zona appena creata, anagrafe non ancora importata).
         (dr.keys - rows.map(&:provincia)).each do |provincia|
           rows << Riga.new(provincia: provincia, scuole: 0, promosse: 0, da_promuovere: 0,
-                           mancanti_miur: 0, anomalie: 0, da_rilevare: dr[provincia])
+                           mancanti_miur: 0, anomalie: 0, codici_nuovi: dr[provincia])
         end
         rows.sort_by(&:provincia)
       end
     end
 
     def totali
-      @totali ||= %i[scuole promosse da_promuovere mancanti_miur anomalie da_rilevare]
+      @totali ||= %i[scuole promosse da_promuovere mancanti_miur anomalie codici_nuovi]
         .index_with { |k| righe.sum(&k) }
     end
 
@@ -58,10 +58,10 @@ module ControlloAdozioni
 
     private
 
-    # "Da rilevare": codici in new_scuole (anno corrente, zone dell'account) con adozioni
+    # "Codici nuovi": codici in new_scuole (anno corrente, zone dell'account) con adozioni
     # nel grado della zona ma assenti dall'anagrafe account — la versione contata di
     # Panoramica#cambi_codice, senza matching predecessori. Una query per grado di zona.
-    def da_rilevare_per_provincia
+    def codici_nuovi_per_provincia
       counts = Hash.new(0)
       return counts if anno.blank?
 
