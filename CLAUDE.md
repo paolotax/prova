@@ -232,3 +232,5 @@ When working on this project, use these skills:
 - FriendlyId slugs on User and Libro models
 - Ransack for advanced querying
 - Raw SQL and crosstab queries for complex inventory analysis
+- New domain POROs go in `app/models/`, namespaced under the model or domain concept (e.g. `Adozione::Reconciler`, `ControlloAdozioni::Rebuild`) — never in `app/services`
+- `app/services/` is legacy: don't add to it; migrate a service to `app/models/` only when substantially modifying it (boy-scout rule, not a mass refactor). Exception: `Miur::*` scrapers stay put — they're referenced by production runbooks in this file
