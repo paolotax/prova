@@ -10,7 +10,7 @@
       <% con_predecessore = mancanti.count(&:predecessore) %>
       <% if con_predecessore.positive? %>
         <div class="margin-block-end">
-          <%= button_to controllo_adozioni_aggiorna_cambi_codice_path(account_id: account_id),
+          <%= button_to controllo_adozioni_aggiorna_cambi_codice_path(account_id: account_id, provincia: local_assigns[:provincia]),
                 class: "btn btn--small btn--accent",
                 data: { turbo_confirm: "Aggiornare i #{con_predecessore} cambi codice con predecessore suggerito?" } do %>
             Aggiorna tutti i cambi codice (<%= con_predecessore %>)

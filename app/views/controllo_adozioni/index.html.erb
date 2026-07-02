@@ -9,19 +9,28 @@
 <%= turbo_stream_from Current.account, "controllo_adozioni" %>
 
 <div class="stats-container">
+  <% if Current.admin? && @provincia.present? %>
+    <p class="margin-block-end-half">
+      <%= link_to controllo_adozioni_index_path(account_id: params[:account_id]), class: "btn btn--small" do %>
+        ← Tutte le province
+      <% end %>
+      <span class="txt-medium margin-inline-start-half"><%= @provincia %></span>
+    </p>
+  <% end %>
+
   <% if Current.admin? %>
-    <%= render "controllo_adozioni/cambi_codice", panoramica: @panoramica, account_id: params[:account_id] %>
+    <%= render "controllo_adozioni/cambi_codice", panoramica: @panoramica, account_id: params[:account_id], provincia: @provincia %>
   <% end %>
 
   <%# ===== Panoramica scuole per direzione ===== %>
   <% if @panoramica.gruppi.empty? %>
     <p class="txt-subtle">Nessuna scuola con adozioni.</p>
   <% else %>
-    <%= render "controllo_adozioni/filtri", panoramica: @panoramica, account_id: params[:account_id], filtro: @filtro %>
+    <%= render "controllo_adozioni/filtri", panoramica: @panoramica, account_id: params[:account_id], filtro: @filtro, provincia: @provincia %>
   <% end %>
 
   <% if Current.admin? %>
-    <%= render "controllo_adozioni/promuovi_tutte", panoramica: @panoramica, account_id: params[:account_id] %>
+    <%= render "controllo_adozioni/promuovi_tutte", panoramica: @panoramica, account_id: params[:account_id], provincia: @provincia %>
   <% end %>
 
   <% if @page.used? %>

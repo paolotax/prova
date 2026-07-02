@@ -1,9 +1,21 @@
 class ControlloAdozioniController < ApplicationController
   before_action :authenticate_user!
 
+  # Admin senza provincia: dashboard di soli aggregati (niente lista scuole).
+  # Member, o admin in drill-down su una provincia: vista operativa (Panoramica).
   def index
     @filtro = params[:filtro].presence
-    @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: Current.scuole)
+    @provincia = params[:provincia].presence
+
+    if Current.admin? && @provincia.blank?
+      @dashboard = ControlloAdozioni::Dashboard.new(account: Current.account)
+      return render :dashboard
+    end
+
+    scuole = Current.scuole
+    scuole = scuole.where(provincia: @provincia) if @provincia
+    @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: scuole,
+                                                    provincia: @provincia)
 
     # Pagina i capogruppo (come scuole#index): ogni record e' un gruppo direzione.
     gruppi = @panoramica.gruppi_filtrati(@filtro)

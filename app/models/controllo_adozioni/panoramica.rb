@@ -21,9 +21,10 @@ module ControlloAdozioni
     Mancante = Struct.new(:codice, :denominazione, :comune, :provincia, :predecessore, :candidati,
                           keyword_init: true)
 
-    def initialize(account:, scuole: nil)
+    def initialize(account:, scuole: nil, provincia: nil)
       @account = account
       @scuole_scope = scuole || account.scuole
+      @provincia = provincia
     end
 
     # [{ direzione: Scuola|nil, scuole: [Scuola, ...] }] — `scuole` sono le righe da mostrare
@@ -239,7 +240,9 @@ module ControlloAdozioni
       # Le direzioni non possono essere predecessore di un cambio codice (una scuola non
       # diventa direzione): le escludiamo dai candidati.
       direzione_ids = account.scuole.where.not(direzione_id: nil).distinct.pluck(:direzione_id).to_set
-      account.zone.order(:provincia, :grado).each do |zona|
+      zone = account.zone.order(:provincia, :grado)
+      zone = zone.where(provincia: @provincia) if @provincia
+      zone.each do |zona|
         tipi = TipoScuola.where(grado: zona.grado).pluck(:tipo)
         tg = TG[zona.grado] || []
         next if tg.empty?
