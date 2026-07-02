@@ -213,6 +213,13 @@ module ControlloAdozioni
       ]
     end
 
+    # Codici new_adozioni per tipogradoscuola (nazionale, distinct). Memoizzato per grado:
+    # invariante rispetto alla provincia, quindi calcolato una volta sola per tg.
+    def codici_con_adoz_per_tg(tg)
+      (@codici_con_adoz_per_tg ||= {})[tg] ||=
+        NewAdozione.where(tipogradoscuola: tg).distinct.pluck(:codicescuola).to_set
+    end
+
     def paritaria?(tipo) = tipo.to_s.upcase.include?("NON STATALE")
 
     def denom_norm(s) = s.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").squeeze(" ").strip
@@ -239,7 +246,9 @@ module ControlloAdozioni
 
         in_account = account.scuole.where(provincia: zona.provincia, grado: zona.grado)
         account_codici = in_account.pluck(:codice_ministeriale).to_set
-        codici_con_adoz = NewAdozione.where(tipogradoscuola: tg).distinct.pluck(:codicescuola).to_set
+        # Dipende solo dal grado (tg), non dalla provincia: memoizza per non ripetere la
+        # stessa distinct nazionale una volta per zona (per un editore = decine di zone EE).
+        codici_con_adoz = codici_con_adoz_per_tg(tg)
 
         # Scuole account "orfane" (codice non piu' in new_adozioni) → possibili predecessori.
         # Escludi le direzioni.
