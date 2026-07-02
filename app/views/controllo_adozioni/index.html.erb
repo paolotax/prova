@@ -24,25 +24,31 @@
     <%= render "controllo_adozioni/promuovi_tutte", panoramica: @panoramica, account_id: params[:account_id] %>
   <% end %>
 
-  <% gruppi = @panoramica.gruppi_filtrati(@filtro) %>
-  <% if gruppi.empty? && @filtro.present? %>
-    <p class="txt-subtle">Nessuna scuola per questo filtro.</p>
-  <% end %>
+  <% if @page.used? %>
+    <p class="txt-small txt-subtle margin-block-end-half">
+      <%= @total_count %> <%= @total_count == 1 ? "scuola" : "scuole" %>
+    </p>
 
-  <% gruppi.each do |gruppo| %>
-    <section class="margin-block-end">
-      <% if (dir = gruppo[:direzione]) %>
-        <h3 class="txt-small txt-subtle">
-          <%= dir.denominazione %> · <%= dir.comune %> (<%= dir.provincia %>)
-        </h3>
-      <% elsif gruppo[:private] %>
-        <h3 class="txt-small txt-subtle">Scuole private</h3>
+    <%= with_automatic_pagination :controllo_adozioni, @page do %>
+      <% @page.records.each do |leader| %>
+        <% gruppo = @gruppi_per_leader[leader.id] %>
+        <section class="margin-block-end">
+          <% if (dir = gruppo[:direzione]) %>
+            <h3 class="txt-small txt-subtle">
+              <%= dir.denominazione %> · <%= dir.comune %> (<%= dir.provincia %>)
+            </h3>
+          <% elsif gruppo[:private] %>
+            <h3 class="txt-small txt-subtle">Scuole private</h3>
+          <% end %>
+
+          <div class="flex flex-column gap-quarter">
+            <%= render partial: "controllo_adozioni/riga",
+                  collection: gruppo[:scuole].map { |s| @panoramica.riga(s) }, as: :riga %>
+          </div>
+        </section>
       <% end %>
-
-      <div class="flex flex-column gap-quarter">
-        <%= render partial: "controllo_adozioni/riga",
-              collection: gruppo[:scuole].map { |s| @panoramica.riga(s) }, as: :riga %>
-      </div>
-    </section>
+    <% end %>
+  <% elsif @filtro.present? && @panoramica.gruppi.any? %>
+    <p class="txt-subtle">Nessuna scuola per questo filtro.</p>
   <% end %>
 </div>

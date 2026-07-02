@@ -14,10 +14,11 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
-  test "index con ?q mostra la scuola in classifica" do
-    get controllo_adozioni_index_path(account_id: @account.id, q: "MIEE12345")
+  test "index mostra la panoramica paginata delle scuole" do
+    get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
-    assert_match "Scuola Test", @response.body
+    assert_match "I.C. Leonardo da Vinci", @response.body
+    assert_match "controllo_adozioni-pagination-list", @response.body
   end
 
   test "show elenca le anomalie della scuola" do

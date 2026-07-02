@@ -4,6 +4,14 @@ class ControlloAdozioniController < ApplicationController
   def index
     @filtro = params[:filtro].presence
     @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: Current.scuole)
+
+    # Pagina i capogruppo (come scuole#index): ogni record e' un gruppo direzione.
+    gruppi = @panoramica.gruppi_filtrati(@filtro)
+    @total_count = gruppi.sum { |g| g[:scuole].size }
+    @gruppi_per_leader = gruppi.index_by { |g| (g[:direzione] || g[:scuole].first).id }
+
+    leader_ids = @gruppi_per_leader.keys
+    set_page_and_extract_portion_from Current.scuole.where(id: leader_ids).in_order_of(:id, leader_ids)
   end
 
   # Promuove in blocco tutte le scuole promuovibili dell'account (fan-out per scuola).
