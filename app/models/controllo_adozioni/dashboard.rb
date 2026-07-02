@@ -4,7 +4,7 @@ module ControlloAdozioni
   # Niente materializzazione delle scuole: una query GROUP BY per le righe.
   class Dashboard
     Riga = Struct.new(:provincia, :scuole, :promosse, :da_promuovere, :mancanti_miur, :anomalie,
-                      keyword_init: true)
+                      :da_rilevare, keyword_init: true)
     Agente = Struct.new(:membership, :scuole_count, keyword_init: true)
 
     def initialize(account:)
@@ -16,17 +16,26 @@ module ControlloAdozioni
     def anno = @anno ||= NewScuola.maximum(:anno_scolastico)
 
     def righe
-      @righe ||= ActiveRecord::Base.connection.select_all(
-        ActiveRecord::Base.sanitize_sql([sql_righe, account_id: account.id, anno: anno.to_s])
-      ).map do |r|
-        Riga.new(provincia: r["provincia"], scuole: r["scuole"].to_i, promosse: r["promosse"].to_i,
-                 da_promuovere: r["da_promuovere"].to_i, mancanti_miur: r["mancanti_miur"].to_i,
-                 anomalie: r["anomalie"].to_i)
+      @righe ||= begin
+        dr = da_rilevare_per_provincia
+        rows = ActiveRecord::Base.connection.select_all(
+          ActiveRecord::Base.sanitize_sql([sql_righe, account_id: account.id, anno: anno.to_s])
+        ).map do |r|
+          Riga.new(provincia: r["provincia"], scuole: r["scuole"].to_i, promosse: r["promosse"].to_i,
+                   da_promuovere: r["da_promuovere"].to_i, mancanti_miur: r["mancanti_miur"].to_i,
+                   anomalie: r["anomalie"].to_i, da_rilevare: dr[r["provincia"]])
+        end
+        # Province con soli codici nuovi (zona appena creata, anagrafe non ancora importata).
+        (dr.keys - rows.map(&:provincia)).each do |provincia|
+          rows << Riga.new(provincia: provincia, scuole: 0, promosse: 0, da_promuovere: 0,
+                           mancanti_miur: 0, anomalie: 0, da_rilevare: dr[provincia])
+        end
+        rows.sort_by(&:provincia)
       end
     end
 
     def totali
-      @totali ||= %i[scuole promosse da_promuovere mancanti_miur anomalie]
+      @totali ||= %i[scuole promosse da_promuovere mancanti_miur anomalie da_rilevare]
         .index_with { |k| righe.sum(&k) }
     end
 
@@ -48,6 +57,39 @@ module ControlloAdozioni
     end
 
     private
+
+    # "Da rilevare": codici in new_scuole (anno corrente, zone dell'account) con adozioni
+    # nel grado della zona ma assenti dall'anagrafe account — la versione contata di
+    # Panoramica#cambi_codice, senza matching predecessori. Una query per grado di zona.
+    def da_rilevare_per_provincia
+      counts = Hash.new(0)
+      return counts if anno.blank?
+
+      account.zone.group_by(&:grado).each do |grado, zone|
+        tg = Panoramica::TG[grado] || []
+        tipi = TipoScuola.where(grado: grado).pluck(:tipo)
+        next if tg.empty? || tipi.empty?
+
+        sql = <<~SQL
+          SELECT ns.provincia, COUNT(*) AS n
+          FROM new_scuole ns
+          WHERE ns.anno_scolastico = :anno
+            AND ns.provincia IN (:province)
+            AND ns.tipo_scuola IN (:tipi)
+            AND EXISTS (SELECT 1 FROM new_adozioni na
+                        WHERE na.codicescuola = ns.codice_scuola AND na.tipogradoscuola IN (:tg))
+            AND NOT EXISTS (SELECT 1 FROM scuole sc
+                            WHERE sc.account_id = :account_id
+                              AND sc.codice_ministeriale = ns.codice_scuola)
+          GROUP BY ns.provincia
+        SQL
+        ActiveRecord::Base.connection.select_all(
+          ActiveRecord::Base.sanitize_sql([sql, account_id: account.id, anno: anno,
+                                           province: zone.map(&:provincia), tipi: tipi, tg: tg])
+        ).each { |r| counts[r["provincia"]] += r["n"].to_i }
+      end
+      counts
+    end
 
     # promosse/da_promuovere hanno senso solo con uno snapshot MIUR presente.
     def sql_righe

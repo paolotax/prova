@@ -23,6 +23,12 @@ module ControlloAdozioni
       Dashboard.new(account: @account).righe.find { |r| r.provincia == "XX" }
     end
 
+    # TipoScuola valida belongs_to :import_scuola (lookup legacy): bypass in test.
+    def crea_tipo_primaria
+      TipoScuola.find_by(tipo: "SCUOLA PRIMARIA") ||
+        TipoScuola.new(tipo: "SCUOLA PRIMARIA", grado: "E").tap { |t| t.save!(validate: false) }
+    end
+
     test "riga provincia conta scuole, da_promuovere e mancanti" do
       xx = riga_xx
 
@@ -69,6 +75,29 @@ module ControlloAdozioni
 
       assert_equal d.righe.sum(&:scuole), d.totali[:scuole]
       assert_equal d.righe.sum(&:da_promuovere), d.totali[:da_promuovere]
+    end
+
+    test "da_rilevare conta i codici MIUR con adozioni non in anagrafe" do
+      crea_tipo_primaria
+      @account.zone.create!(provincia: "XX", grado: "E", regione: "TESTLANDIA", stato: "attiva")
+      NewScuola.create!(codice_scuola: "XXEE00099B", anno_scolastico: @anno, provincia: "XX",
+        comune: "TESTVILLE", denominazione: "PRIMARIA NUOVA", tipo_scuola: "SCUOLA PRIMARIA")
+      NewAdozione.create!(codicescuola: "XXEE00099B", tipogradoscuola: "EE",
+        annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "9880000000029", daacquist: "Si")
+
+      xx = riga_xx
+      assert_equal 1, xx.da_rilevare, "XXEE00099B e' nel MIUR con adozioni ma non in account"
+      assert_equal 1, Dashboard.new(account: @account).totali[:da_rilevare]
+    end
+
+    test "da_rilevare ignora i codici MIUR senza adozioni" do
+      crea_tipo_primaria
+      @account.zone.create!(provincia: "XX", grado: "E", regione: "TESTLANDIA", stato: "attiva")
+      NewScuola.create!(codice_scuola: "XXEE00099C", anno_scolastico: @anno, provincia: "XX",
+        comune: "TESTVILLE", denominazione: "PRIMARIA VUOTA", tipo_scuola: "SCUOLA PRIMARIA")
+
+      assert_equal 0, riga_xx.da_rilevare
     end
 
     test "agenti con conteggio scuole assegnate e non assegnate" do

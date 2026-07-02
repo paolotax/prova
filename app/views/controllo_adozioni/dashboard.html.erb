@@ -30,6 +30,10 @@
       <p class="analytics-summary__value"><%= totali[:anomalie] %></p>
       <p class="analytics-summary__label">con anomalie</p>
     </div>
+    <div class="analytics-summary__card">
+      <p class="analytics-summary__value"><%= totali[:da_rilevare] %></p>
+      <p class="analytics-summary__label">da rilevare</p>
+    </div>
   </div>
 
   <p class="txt-subtle txt-small margin-block-end">
@@ -48,6 +52,7 @@
           <th class="txt-end">Da promuovere</th>
           <th class="txt-end">Mancanti MIUR</th>
           <th class="txt-end">Anomalie</th>
+          <th class="txt-end">Da rilevare</th>
         </tr>
       </thead>
       <tbody>
@@ -73,6 +78,11 @@
               <%= link_to_if r.anomalie.positive?, r.anomalie,
                     controllo_adozioni_index_path(provincia: r.provincia, filtro: "anomalie", account_id: params[:account_id]) %>
             </td>
+            <td class="txt-end">
+              <%# I cambi codice/nuove scuole si gestiscono nel drill-down della provincia. %>
+              <%= link_to_if r.da_rilevare.positive?, r.da_rilevare,
+                    controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
+            </td>
           </tr>
         <% end %>
       </tbody>
@@ -84,6 +94,7 @@
           <td class="txt-end"><%= totali[:da_promuovere] %></td>
           <td class="txt-end"><%= totali[:mancanti_miur] %></td>
           <td class="txt-end"><%= totali[:anomalie] %></td>
+          <td class="txt-end"><%= totali[:da_rilevare] %></td>
         </tr>
       </tfoot>
     </table>
