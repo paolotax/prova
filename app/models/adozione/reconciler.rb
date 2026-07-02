@@ -147,7 +147,46 @@ class Adozione::Reconciler
     SQL
     exec_sql(sql)
   end
-  def upsert_adozioni          = nil
+  # La subquery src normalizza i nomi colonna (lower/UPPER) una volta sola; da lì
+  # in poi il SQL è identico per le due sorgenti. ON CONFLICT DO NOTHING preserva
+  # le righe esistenti (note, numero_copie, mia, libro_id): il reconcile non
+  # riscrive lo snapshot di righe già presenti.
+  def upsert_adozioni
+    s = source
+    c = s.col
+    sql = <<~SQL
+      INSERT INTO adozioni
+        (id, account_id, classe_id, codice_isbn, anno_scolastico, anno_corso, codicescuola,
+         titolo, editore, autori, disciplina, prezzo_cents,
+         nuova_adozione, da_acquistare, consigliato, created_at, updated_at)
+      SELECT gen_random_uuid(), :account_id, cl.id, src.codiceisbn, :anno, src.annocorso, src.codicescuola,
+         src.titolo, src.editore, src.autori, src.disciplina,
+         #{PREZZO_CENTS},
+         #{s.si.call('src.nuovaadoz')},
+         #{s.si.call('src.daacquist')},
+         #{s.si.call('src.consigliato')},
+         now(), now()
+      FROM (
+        SELECT #{c[:codicescuola]} AS codicescuola, #{c[:annocorso]} AS annocorso,
+               #{c[:sezioneanno]} AS sezioneanno, #{c[:combinazione]} AS combinazione,
+               #{c[:codiceisbn]} AS codiceisbn, #{c[:daacquist]} AS daacquist,
+               #{c[:titolo]} AS titolo, #{c[:editore]} AS editore,
+               #{c[:autori]} AS autori, #{c[:disciplina]} AS disciplina,
+               #{c[:prezzo]} AS prezzo, #{c[:nuovaadoz]} AS nuovaadoz,
+               #{c[:consigliato]} AS consigliato
+        FROM #{s.table}
+      ) src
+      JOIN scuole sc ON sc.codice_ministeriale = src.codicescuola
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+      JOIN classi cl ON cl.scuola_id = sc.id AND cl.anno_scolastico = :anno
+        AND cl.anno_corso IS NOT DISTINCT FROM src.annocorso
+        AND cl.sezione IS NOT DISTINCT FROM src.sezioneanno
+        AND cl.combinazione IS NOT DISTINCT FROM src.combinazione
+      WHERE src.codiceisbn IS NOT NULL
+      ON CONFLICT (classe_id, codice_isbn, anno_scolastico) DO NOTHING
+    SQL
+    exec_sql(sql)
+  end
   def cancella_adozioni_orfane = nil
   def ricalcola                = nil
 end

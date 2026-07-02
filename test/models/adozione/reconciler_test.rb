@@ -68,6 +68,33 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert_equal "attiva", ricomparsa.reload.stato
   end
 
+  test "call crea snapshot adozioni con anno_scolastico+codicescuola, idempotente" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", nuovaadoz: "Si", consigliato: "No",
+        titolo: "Libro Uno", editore: "Giunti", prezzo: "12,50" },
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "222", daacquist: "No", titolo: "Libro Due", editore: "Giunti", prezzo: "n.d." }
+    ])
+
+    assert_difference -> { @account.adozioni.where(anno_scolastico: "202627").count }, 2 do
+      reconciler.call
+    end
+    a = @account.adozioni.find_by(codice_isbn: "111", anno_scolastico: "202627")
+    assert_equal "XXEE00001A", a.codicescuola
+    assert a.da_acquistare
+    assert a.nuova_adozione
+    assert_not a.consigliato
+    assert_equal 1250, a.prezzo_cents
+
+    b = @account.adozioni.find_by(codice_isbn: "222", anno_scolastico: "202627")
+    assert_equal 0, b.prezzo_cents   # prezzo non numerico -> 0, non crash
+
+    assert_no_difference -> { @account.adozioni.where(anno_scolastico: "202627").count } do
+      reconciler.call
+    end
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato
