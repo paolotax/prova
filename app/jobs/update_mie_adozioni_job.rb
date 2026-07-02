@@ -222,6 +222,9 @@ class UpdateMieAdozioniJob < ApplicationJob
     )
   end
 
+  # Conta solo l'anno corrente: classi attive con adozioni della stessa annata
+  # (stesso criterio dei counter scuole). Con la storicizzazione le annate
+  # coesistono in adozioni: senza il filtro il counter sommerebbe anche lo storico.
   def update_sezioni_counts(account)
     # Reset all counts
     account.mandati.update_all(sezioni_count: 0)
@@ -234,7 +237,8 @@ class UpdateMieAdozioniJob < ApplicationJob
         FROM mandati m
         JOIN editori e ON e.id = m.editore_id
         JOIN adozioni a ON a.account_id = m.account_id AND a.editore = e.editore AND a.mia = true AND a.da_acquistare = true
-        JOIN classi c ON c.id = a.classe_id
+        JOIN classi c ON c.id = a.classe_id AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = :account_id
           AND m.provincia = s.provincia
@@ -257,7 +261,8 @@ class UpdateMieAdozioniJob < ApplicationJob
         FROM mandati m
         JOIN editori e ON e.id = m.editore_id
         JOIN adozioni a ON a.account_id = m.account_id AND a.editore = e.editore AND a.da_acquistare = true
-        JOIN classi c ON c.id = a.classe_id
+        JOIN classi c ON c.id = a.classe_id AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
         JOIN scuole s ON s.id = c.scuola_id
         WHERE m.account_id = :account_id
           AND m.disdetta = true

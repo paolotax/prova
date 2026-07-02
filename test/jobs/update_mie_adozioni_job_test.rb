@@ -72,6 +72,35 @@ class UpdateMieAdozioniJobTest < ActiveJob::TestCase
       "Zanichelli adoption should be mia (mandato without area)"
   end
 
+  test "sezioni_count conta solo l'anno corrente (classi attive)" do
+    UpdateMieAdozioniJobSilent.perform_now(@fizzy)
+    mandato = mandati(:fizzy_zanichelli)
+    base = mandato.reload.sezioni_count
+
+    scuola = scuole(:scuola_fizzy)
+    archiviata = @fizzy.classi.create!(scuola: scuola, anno_scolastico: "202425",
+      anno_corso: "4", sezione: "Z", stato: "archiviata",
+      codice_ministeriale_origine: scuola.codice_ministeriale,
+      classe_origine: "4", sezione_origine: "Z")
+    @fizzy.adozioni.create!(classe: archiviata, codice_isbn: "9999990001",
+      anno_scolastico: "202425", editore: "Zanichelli", da_acquistare: true)
+
+    UpdateMieAdozioniJobSilent.perform_now(@fizzy)
+    assert_equal base, mandato.reload.sezioni_count,
+      "l'annata archiviata non deve contare nel counter del mandato"
+
+    attiva = @fizzy.classi.create!(scuola: scuola, anno_scolastico: "202526",
+      anno_corso: "5", sezione: "Z", stato: "attiva",
+      codice_ministeriale_origine: scuola.codice_ministeriale,
+      classe_origine: "5", sezione_origine: "Z")
+    @fizzy.adozioni.create!(classe: attiva, codice_isbn: "9999990002",
+      anno_scolastico: "202526", editore: "Zanichelli", da_acquistare: true)
+
+    UpdateMieAdozioniJobSilent.perform_now(@fizzy)
+    assert_equal base + 1, mandato.reload.sezioni_count,
+      "l'annata corrente su classe attiva deve contare"
+  end
+
   test "sets adozioni_aggiornamento_started_at on entry and adozioni_aggiornate_at at end" do
     @fizzy.update_columns(adozioni_aggiornamento_started_at: nil, adozioni_aggiornate_at: nil)
 
