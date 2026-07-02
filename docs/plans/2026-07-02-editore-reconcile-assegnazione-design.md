@@ -120,12 +120,18 @@ Mandati/Colleghi esistente.
 
 ## Sezione 4 — Fork per ruolo + dashboard admin
 
-- `ControlloAdozioniController#index`: `if Current.admin?` → dashboard analytics
-  (aggregati `GROUP BY`: totali, assegnate/non assegnate, per agente, per
-  provincia; tabella agenti con conteggi + azioni assegna) + strumento
-  assegnazione; `else` → vista operativa attuale.
-- Elimina per l'admin: render 16k righe, "Promuovi tutte" nazionale,
-  `cambi_codice`/`conteggi_stati`/`promuovibili` calcolati su tutto l'account.
+**FATTA 2026-07-02** — piano e dettagli in
+`docs/plans/2026-07-02-controllo-adozioni-dashboard.md`.
+
+- `ControlloAdozioniController#index`: admin senza `provincia` →
+  `ControlloAdozioni::Dashboard` (una query GROUP BY: totali + per provincia +
+  agenti/non assegnate), `render :dashboard`; member o admin con `?provincia=`
+  → vista operativa (`Panoramica`) scoped.
+- Le azioni bulk (`promuovi_tutte`, `aggiorna_cambi_codice`) sono scoped per
+  provincia dal drill-down; niente più bottoni nazionali nella dashboard.
+- Misurato su Giunti-Bacherini (24.325 scuole): dashboard 0,49s a freddo vs
+  ~5s della vecchia pagina.
+- Lo strumento di assegnazione dalla tabella agenti resta per la Sezione 3.
 
 ## Rollout in produzione (ordine)
 
