@@ -19,178 +19,14 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
       [scuola.id]
     end
 
-    classe_scope = "classe_id IN (SELECT id FROM classi WHERE scuola_id IN (:scuola_ids))"
-    sql_params = { account_id: account.id, scuola_ids: scuola_ids }
-
-    # Reset
-    Adozione.where(account: account)
-      .where("classe_id IN (SELECT id FROM classi WHERE scuola_id IN (?))", scuola_ids)
-      .update_all(mia: false, disdetta: false)
-
-    # Set mia = true
-    sql_mia = <<~SQL
-      UPDATE adozioni SET mia = true
-      WHERE adozioni.account_id = :account_id
-      AND #{classe_scope}
-      AND EXISTS (
-        SELECT 1 FROM mandati m
-        JOIN editori e ON e.id = m.editore_id
-        JOIN classi c ON c.id = adozioni.classe_id
-        JOIN scuole s ON s.id = c.scuola_id
-        WHERE m.account_id = adozioni.account_id
-          AND e.editore = adozioni.editore
-          AND m.provincia = s.provincia
-          AND m.grado = s.grado
-          AND (m.area IS NULL OR m.area = s.area)
-          AND NOT (m.area IS NOT NULL AND m.disdetta = true)
-      )
-      AND NOT EXISTS (
-        SELECT 1 FROM mandati m2
-        JOIN editori e2 ON e2.id = m2.editore_id
-        JOIN classi c2 ON c2.id = adozioni.classe_id
-        JOIN scuole s2 ON s2.id = c2.scuola_id
-        WHERE m2.account_id = adozioni.account_id
-          AND m2.disdetta = true
-          AND m2.area IS NOT NULL
-          AND m2.area = s2.area
-          AND e2.editore = adozioni.editore
-          AND m2.provincia = s2.provincia
-          AND m2.grado = s2.grado
-      )
-    SQL
-
-    execute(sql_mia, sql_params)
-
-    # Set disdetta = true (solo wildcard disdette)
-    sql_disdetta = <<~SQL
-      UPDATE adozioni SET disdetta = true
-      WHERE adozioni.account_id = :account_id
-      AND adozioni.mia = true
-      AND #{classe_scope}
-      AND EXISTS (
-        SELECT 1 FROM mandati m
-        JOIN editori e ON e.id = m.editore_id
-        JOIN classi c ON c.id = adozioni.classe_id
-        JOIN scuole s ON s.id = c.scuola_id
-        WHERE m.account_id = adozioni.account_id
-          AND m.disdetta = true
-          AND m.area IS NULL
-          AND e.editore = adozioni.editore
-          AND m.provincia = s.provincia
-          AND m.grado = s.grado
-      )
-    SQL
-
-    execute(sql_disdetta, sql_params)
-
-    # Aggiorna counter solo per queste scuole
-    update_counters(account, scuola_ids)
+    # Flag mia/disdetta + counter cache: logica set-based estratta in Adozione::Ricalcolo
+    Adozione::Ricalcolo.new(account: account, scuola_ids: scuola_ids).call
 
     # Broadcast replace della card intera (con totali ricalcolati)
     broadcast_card(account, scuola)
   end
 
   private
-
-  # Ricalcola i tre counter cache (classi_count, adozioni_count, mie_adozioni_count)
-  # per le sole scuole coinvolte (direzione + plessi). Scoped su :scuola_ids: tocca
-  # poche righe e non contende con gli altri job di promozione (a differenza della
-  # vecchia UpdateScuoleCountersJob province-wide, che in blocco andava in deadlock).
-  def update_counters(account, scuola_ids)
-    sql_params = { account_id: account.id, scuola_ids: scuola_ids }
-
-    sql_classi = <<~SQL
-      UPDATE scuole SET classi_count = sub.cnt
-      FROM (
-        SELECT c.scuola_id, COUNT(*) as cnt
-        FROM classi c
-        WHERE c.scuola_id IN (:scuola_ids)
-          AND c.stato = 'attiva'
-        GROUP BY c.scuola_id
-      ) sub
-      WHERE scuole.id = sub.scuola_id
-    SQL
-
-    sql_classi_reset = <<~SQL
-      UPDATE scuole SET classi_count = 0
-      WHERE scuole.id IN (:scuola_ids)
-        AND scuole.id NOT IN (
-          SELECT DISTINCT c.scuola_id FROM classi c
-          WHERE c.stato = 'attiva'
-            AND c.scuola_id IN (:scuola_ids)
-        )
-    SQL
-
-    sql_adozioni = <<~SQL
-      UPDATE scuole SET adozioni_count = sub.cnt
-      FROM (
-        SELECT c.scuola_id, COUNT(*) as cnt
-        FROM adozioni a
-        JOIN classi c ON c.id = a.classe_id
-        WHERE c.scuola_id IN (:scuola_ids)
-          AND a.account_id = :account_id
-          AND a.da_acquistare = true
-          AND c.stato = 'attiva'
-          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
-        GROUP BY c.scuola_id
-      ) sub
-      WHERE scuole.id = sub.scuola_id
-    SQL
-
-    sql_adozioni_reset = <<~SQL
-      UPDATE scuole SET adozioni_count = 0
-      WHERE scuole.id IN (:scuola_ids)
-        AND scuole.id NOT IN (
-          SELECT DISTINCT c.scuola_id FROM adozioni a
-          JOIN classi c ON c.id = a.classe_id
-          WHERE a.account_id = :account_id
-            AND a.da_acquistare = true
-            AND c.stato = 'attiva'
-            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
-            AND c.scuola_id IN (:scuola_ids)
-        )
-    SQL
-
-    sql_mie = <<~SQL
-      UPDATE scuole SET mie_adozioni_count = sub.cnt
-      FROM (
-        SELECT c.scuola_id, COUNT(*) as cnt
-        FROM adozioni a
-        JOIN classi c ON c.id = a.classe_id
-        WHERE c.scuola_id IN (:scuola_ids)
-          AND a.account_id = :account_id
-          AND a.mia = true
-          AND a.da_acquistare = true
-          AND c.stato = 'attiva'
-          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
-        GROUP BY c.scuola_id
-      ) sub
-      WHERE scuole.id = sub.scuola_id
-    SQL
-
-    # Reset per scuole senza adozioni mia
-    sql_mie_reset = <<~SQL
-      UPDATE scuole SET mie_adozioni_count = 0
-      WHERE scuole.id IN (:scuola_ids)
-        AND scuole.id NOT IN (
-          SELECT DISTINCT c.scuola_id FROM adozioni a
-          JOIN classi c ON c.id = a.classe_id
-          WHERE a.account_id = :account_id
-            AND a.mia = true
-            AND a.da_acquistare = true
-            AND c.stato = 'attiva'
-            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
-            AND c.scuola_id IN (:scuola_ids)
-        )
-    SQL
-
-    execute(sql_classi, sql_params)
-    execute(sql_classi_reset, sql_params)
-    execute(sql_adozioni, sql_params)
-    execute(sql_adozioni_reset, sql_params)
-    execute(sql_mie, sql_params)
-    execute(sql_mie_reset, sql_params)
-  end
 
   def broadcast_card(account, scuola)
     # Risali alla direzione se è un plesso
@@ -246,11 +82,5 @@ class UpdateScuolaMieAdozioniJob < ApplicationJob
         locals: { gruppo: gruppo, draggable: true, card_id: card_id }
       )
     end
-  end
-
-  def execute(sql, params)
-    ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql([sql, params])
-    )
   end
 end

@@ -229,5 +229,9 @@ class Adozione::Reconciler
       WHERE #{orfana} AND NOT #{protetta}
     SQL
   end
-  def ricalcola                = nil
+  # Fuori dalla transazione del reconcile: tocca scuole/adozioni con lock propri.
+  def ricalcola
+    scuola_ids = account.scuole.where(provincia: provincia).pluck(:id)
+    Adozione::Ricalcolo.new(account: account, scuola_ids: scuola_ids).call
+  end
 end

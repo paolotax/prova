@@ -127,6 +127,19 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert Adozione.exists?(id: con_copie.id)
   end
 
+  test "call end-to-end aggiorna i counter della scuola" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" },
+      { codicescuola: "XXEE00001A", annocorso: "2", sezioneanno: "B", combinazione: "TN",
+        codiceisbn: "222", daacquist: "Si", prezzo: "10,00" }
+    ])
+    reconciler.call
+    @scuola.reload
+    assert_equal 2, @scuola.classi_count
+    assert_equal 2, @scuola.adozioni_count
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato
