@@ -950,6 +950,10 @@ account) — il reconcile cancella adozioni orfane, il backup rende reversibile.
    le province × 2 anni sulla coda `bulk`).
 5. Monitor coda `bulk` + temperatura (decine di job, non 16k).
 6. `ANALYZE classi; ANALYZE adozioni;`.
+6b. **`UpdateMieAdozioniJob.perform_later(account)`** — il reconcile imposta i
+   flag `mia` e i counter delle scuole, ma NON `mandati.sezioni_count`
+   (i counter di Zone/Mandati/Colleghi) né la creazione/link dei `Libro`:
+   quelli li fa solo questo job. Senza, le province nuove restano senza counter.
 7. **Dopo la validazione**: smettere di usare `PromuoviScuolePromuovibiliJob` per
    l'editore (la sostituzione UI è nella Sezione 4 del design).
 
