@@ -40,6 +40,34 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     end
   end
 
+  test "call archivia le classi attive non piu in sorgente (solo 202627)" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" }
+    ])
+    # classe attiva non presente in sorgente
+    orfana = @account.classi.create!(scuola: @scuola, anno_scolastico: "202627",
+      anno_corso: "5", sezione: "Z", stato: "attiva",
+      codice_ministeriale_origine: "XXEE00001A", classe_origine: "5", sezione_origine: "Z")
+
+    reconciler.call
+    assert_equal "archiviata", orfana.reload.stato
+    assert_equal "attiva", @scuola.classi.find_by(anno_corso: "1", sezione: "A").stato
+  end
+
+  test "call riattiva una classe archiviata che ricompare in sorgente" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" }
+    ])
+    ricomparsa = @account.classi.create!(scuola: @scuola, anno_scolastico: "202627",
+      anno_corso: "1", sezione: "A", combinazione: "TN", stato: "archiviata",
+      codice_ministeriale_origine: "XXEE00001A", classe_origine: "1", sezione_origine: "A")
+
+    assert_no_difference -> { @scuola.classi.count } do   # riattiva, non duplica
+      reconciler.call
+    end
+    assert_equal "attiva", ricomparsa.reload.stato
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato

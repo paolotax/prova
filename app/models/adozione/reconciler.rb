@@ -71,7 +71,49 @@ class Adozione::Reconciler
     )
   end
 
-  def riattiva_classi          = nil
+  # Le fasi riattiva/archivia girano solo per l'anno corrente: lo storico
+  # (import_adozioni) nasce e resta archiviato. Il rilascio MIUR è cumulativo:
+  # una classe archiviata come orfana può ricomparire in sorgente → si riattiva
+  # PRIMA dell'upsert, così il NOT EXISTS la trova e non duplica.
+  def riattiva_classi
+    return unless source.stato == "attiva"
+
+    exec_sql(<<~SQL)
+      UPDATE classi cl SET stato = 'attiva', updated_at = now()
+      FROM scuole sc
+      WHERE cl.scuola_id = sc.id
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+        AND cl.anno_scolastico = :anno
+        AND cl.stato = 'archiviata'
+        AND EXISTS (#{sorgente_match_classe})
+    SQL
+  end
+
+  def archivia_classi_orfane
+    return unless source.stato == "attiva"
+
+    exec_sql(<<~SQL)
+      UPDATE classi cl SET stato = 'archiviata', updated_at = now()
+      FROM scuole sc
+      WHERE cl.scuola_id = sc.id
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+        AND cl.anno_scolastico = :anno
+        AND cl.stato = 'attiva'
+        AND NOT EXISTS (#{sorgente_match_classe})
+    SQL
+  end
+
+  # Subquery riusata da riattiva/archivia: la classe cl esiste in sorgente?
+  def sorgente_match_classe
+    c = source.col
+    <<~SQL
+      SELECT 1 FROM #{source.table} src_m
+      WHERE src_m.#{c[:codicescuola]} = cl.codice_ministeriale_origine
+        AND src_m.#{c[:annocorso]}    IS NOT DISTINCT FROM cl.anno_corso
+        AND src_m.#{c[:sezioneanno]}  IS NOT DISTINCT FROM cl.sezione
+        AND src_m.#{c[:combinazione]} IS NOT DISTINCT FROM cl.combinazione
+    SQL
+  end
 
   def upsert_classi
     s = source
@@ -105,7 +147,6 @@ class Adozione::Reconciler
     SQL
     exec_sql(sql)
   end
-  def archivia_classi_orfane   = nil
   def upsert_adozioni          = nil
   def cancella_adozioni_orfane = nil
   def ricalcola                = nil
