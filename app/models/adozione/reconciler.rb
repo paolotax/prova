@@ -187,6 +187,47 @@ class Adozione::Reconciler
     SQL
     exec_sql(sql)
   end
-  def cancella_adozioni_orfane = nil
+  # DELETE raw: bypassa dependent: :destroy — per questo le orfane con dati
+  # utente (consegne_saggio, numero_copie, note) NON si toccano. Il match
+  # sorgente passa dalla classe (sezione/combinazione comprese), non dal solo
+  # codicescuola+annocorso: un ISBN rimosso dalla 1B ma presente in 1A deve
+  # sparire dalla 1B.
+  def cancella_adozioni_orfane
+    s = source
+    c = s.col
+    orfana = <<~SQL
+      a.classe_id = cl.id AND cl.scuola_id = sc.id
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+        AND a.anno_scolastico = :anno
+        AND NOT EXISTS (
+          SELECT 1 FROM #{s.table} src_m
+          WHERE src_m.#{c[:codicescuola]} = cl.codice_ministeriale_origine
+            AND src_m.#{c[:annocorso]}    IS NOT DISTINCT FROM cl.anno_corso
+            AND src_m.#{c[:sezioneanno]}  IS NOT DISTINCT FROM cl.sezione
+            AND src_m.#{c[:combinazione]} IS NOT DISTINCT FROM cl.combinazione
+            AND src_m.#{c[:codiceisbn]}   = a.codice_isbn
+        )
+    SQL
+    protetta = <<~SQL
+      (EXISTS (SELECT 1 FROM consegne_saggio cs WHERE cs.adozione_id = a.id)
+        OR COALESCE(a.numero_copie, 0) <> 0
+        OR a.note IS NOT NULL)
+    SQL
+
+    protette = exec_sql(<<~SQL).first["cnt"]
+      SELECT COUNT(*) AS cnt FROM adozioni a, classi cl, scuole sc
+      WHERE #{orfana} AND #{protetta}
+    SQL
+    if protette.positive?
+      Rails.logger.info("[Adozione::Reconciler] #{account.id} #{provincia} #{anno}: " \
+                        "#{protette} adozioni orfane protette (dati utente), non cancellate")
+    end
+
+    exec_sql(<<~SQL)
+      DELETE FROM adozioni a
+      USING classi cl, scuole sc
+      WHERE #{orfana} AND NOT #{protetta}
+    SQL
+  end
   def ricalcola                = nil
 end

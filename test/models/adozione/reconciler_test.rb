@@ -95,6 +95,38 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     end
   end
 
+  test "call rimuove le adozioni dell'anno non piu in sorgente" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
+    ])
+    reconciler.call
+    classe = @scuola.classi.find_by(anno_corso: "1", sezione: "A")
+    orfana = @account.adozioni.create!(classe: classe, codice_isbn: "999",
+      anno_scolastico: "202627", codicescuola: "XXEE00001A", anno_corso: "1", da_acquistare: true)
+
+    reconciler.call
+    assert_nil Adozione.find_by(id: orfana.id)
+    assert @account.adozioni.exists?(codice_isbn: "111", anno_scolastico: "202627")
+  end
+
+  test "call NON rimuove orfane con dati utente (note, copie)" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
+    ])
+    reconciler.call
+    classe = @scuola.classi.find_by(anno_corso: "1", sezione: "A")
+    con_note = @account.adozioni.create!(classe: classe, codice_isbn: "888",
+      anno_scolastico: "202627", codicescuola: "XXEE00001A", anno_corso: "1", note: "vista a scuola")
+    con_copie = @account.adozioni.create!(classe: classe, codice_isbn: "777",
+      anno_scolastico: "202627", codicescuola: "XXEE00001A", anno_corso: "1", numero_copie: 3)
+
+    reconciler.call
+    assert Adozione.exists?(id: con_note.id)
+    assert Adozione.exists?(id: con_copie.id)
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato
