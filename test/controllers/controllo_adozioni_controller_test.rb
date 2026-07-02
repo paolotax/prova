@@ -7,6 +7,9 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     @account = accounts(:fizzy)
     @user = users(:one)
     sign_in_as(@user, @account)
+    # La panoramica include solo scuole "con adozioni": rendilo vero per la fixture MI
+    # senza dipendere da new_adozioni (tabella fuori dalle fixture dichiarate).
+    scuole(:scuola_fizzy).update_columns(adozioni_count: 1)
     @anomalia = ControlloAnomalia.create!(
       codicescuola: "MIEE12345", tipo: "doppione", disciplina: "LINGUA INGLESE",
       denominazione: "Scuola Test", provincia: "MI", comune: "Milano",
