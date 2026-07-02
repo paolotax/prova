@@ -57,7 +57,7 @@ module Accounts
           .uniq
 
         root_ids.each do |id|
-          UpdateScuolaMieAdozioniJob.perform_later(Current.account, scuola_id: id)
+          UpdateScuolaMieAdozioniJob.set(queue: :default).perform_later(Current.account, scuola_id: id)
         end
       end
     end

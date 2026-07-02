@@ -7,6 +7,16 @@
       <p class="txt-subtle txt-small">
         Codici presenti nel ministeriale (new_scuole + new_adozioni) della tua zona ma non in account.
       </p>
+      <% con_predecessore = mancanti.count(&:predecessore) %>
+      <% if con_predecessore.positive? %>
+        <div class="margin-block-end">
+          <%= button_to controllo_adozioni_aggiorna_cambi_codice_path(account_id: account_id),
+                class: "btn btn--small btn--accent",
+                data: { turbo_confirm: "Aggiornare i #{con_predecessore} cambi codice con predecessore suggerito?" } do %>
+            Aggiorna tutti i cambi codice (<%= con_predecessore %>)
+          <% end %>
+        </div>
+      <% end %>
       <div class="flex flex-column gap-quarter">
         <%= render partial: "controllo_adozioni/cambio_codice", collection: mancanti, as: :cambio,
               locals: { account_id: account_id } %>

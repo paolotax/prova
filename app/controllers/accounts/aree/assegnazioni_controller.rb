@@ -28,7 +28,7 @@ module Accounts
           cleanup_zone_vuote(provincia)
           UpdateMieAdozioniJob.perform_later(Current.account, provincia: provincia)
         else
-          UpdateScuolaMieAdozioniJob.perform_later(Current.account, scuola_id: scuola.id)
+          UpdateScuolaMieAdozioniJob.set(queue: :default).perform_later(Current.account, scuola_id: scuola.id)
         end
 
         cleanup_mandati_aree_vuote(provincia)

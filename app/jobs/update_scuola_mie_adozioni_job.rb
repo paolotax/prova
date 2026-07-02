@@ -1,5 +1,8 @@
 class UpdateScuolaMieAdozioniJob < ApplicationJob
-  queue_as :default
+  # :bulk di default perché in promozione di massa ne viene accodato uno per scuola
+  # (da promuovi_primaria!). Le chiamate interattive (assegnazioni/mandati) lo lanciano
+  # esplicitamente con .set(queue: :default) per restare reattive.
+  queue_as :bulk
 
   def perform(account, scuola_id:)
     Current.account = account

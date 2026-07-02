@@ -15,6 +15,15 @@ class ControlloAdozioniController < ApplicationController
                 notice: "Promozione delle scuole promuovibili avviata."
   end
 
+  # Applica in blocco tutti i cambi codice con predecessore suggerito (fan-out per scuola).
+  def aggiorna_cambi_codice
+    return head(:forbidden) unless Current.admin?
+
+    AggiornaCambiCodiceJob.perform_later(Current.account)
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+                notice: "Aggiornamento dei cambi codice con predecessore avviato."
+  end
+
   def show
     @codicescuola = params[:codicescuola]
     @anomalie = ControlloAnomalia.per_scuola(@codicescuola)

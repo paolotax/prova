@@ -24,11 +24,21 @@ class ControlloAdozioni::PromozioniController < ApplicationController
                       note: [@scuola.note.presence, "ex codice #{vecchio} (#{params[:da]})"].compact.join("\n"))
     end
     spostamenti = params.fetch(:spostamenti, {}).permit!.to_h
-    ScuolaPromuoviClassiJob.perform_later(@scuola, da: params[:da], a: params[:a],
-                                          spostamenti_insegnanti: spostamenti)
-    # La card scuola si aggiorna via broadcast quando il job completa (UpdateScuolaMieAdozioniJob).
-    redirect_to scuola_path(@scuola),
-                notice: "Passaggio anno avviato per #{@scuola.denominazione}."
+    # Promozione singola interattiva → coda :default (reattiva), mentre i fan-out di
+    # massa girano in :bulk.
+    ScuolaPromuoviClassiJob.set(queue: :default).perform_later(@scuola, da: params[:da], a: params[:a],
+                                                              spostamenti_insegnanti: spostamenti)
+    # La card scuola/riga si aggiorna via broadcast quando il job completa.
+    # Rispondiamo in turbo_stream (flash + chiusura modal) invece del redirect: la
+    # promozione parte dalla show della scuola stessa, e un redirect alla stessa URL
+    # con morph non mostrerebbe il flash (appare solo a refresh manuale).
+    notice = "Passaggio anno avviato per #{@scuola.denominazione}."
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [turbo_stream_flash(notice: notice), turbo_stream.update("modal", "")]
+      end
+      format.html { redirect_to scuola_path(@scuola), notice: notice }
+    end
   end
 
   private

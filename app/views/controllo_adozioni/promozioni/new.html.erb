@@ -8,8 +8,7 @@
       <h3 class="txt-large txt-bold">Passaggio anno — <%= @scuola.denominazione %></h3>
 
       <%= form_with url: controllo_adozioni_promozione_path(@scuola.codice_ministeriale), method: :post,
-          class: "flex flex-column gap",
-          data: { turbo_frame: "_top" } do |f| %>
+          class: "flex flex-column gap" do |f| %>
 
         <%= hidden_field_tag :da, @anno_corrente %>
         <%= hidden_field_tag :a, @anno_target %>
