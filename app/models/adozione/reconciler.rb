@@ -72,7 +72,39 @@ class Adozione::Reconciler
   end
 
   def riattiva_classi          = nil
-  def upsert_classi            = nil
+
+  def upsert_classi
+    s = source
+    c = s.col
+    sql = <<~SQL
+      INSERT INTO classi
+        (id, account_id, scuola_id, anno_corso, sezione, combinazione,
+         anno_scolastico, stato, tipo_scuola,
+         codice_ministeriale_origine, classe_origine, sezione_origine, combinazione_origine,
+         created_at, updated_at)
+      SELECT gen_random_uuid(), :account_id, sc.id,
+             src.annocorso, src.sezioneanno, src.combinazione,
+             :anno, '#{s.stato}', sc.tipo_scuola,
+             src.codicescuola, src.annocorso, src.sezioneanno, src.combinazione,
+             now(), now()
+      FROM (
+        SELECT DISTINCT #{c[:codicescuola]} AS codicescuola, #{c[:annocorso]} AS annocorso,
+               #{c[:sezioneanno]} AS sezioneanno, #{c[:combinazione]} AS combinazione
+        FROM #{s.table}
+      ) src
+      JOIN scuole sc ON sc.codice_ministeriale = src.codicescuola
+        AND sc.account_id = :account_id AND sc.provincia = :provincia
+      WHERE NOT EXISTS (
+        SELECT 1 FROM classi cl
+        WHERE cl.scuola_id = sc.id
+          AND cl.anno_scolastico = :anno
+          AND cl.anno_corso IS NOT DISTINCT FROM src.annocorso
+          AND cl.sezione IS NOT DISTINCT FROM src.sezioneanno
+          AND cl.combinazione IS NOT DISTINCT FROM src.combinazione
+      )
+    SQL
+    exec_sql(sql)
+  end
   def archivia_classi_orfane   = nil
   def upsert_adozioni          = nil
   def cancella_adozioni_orfane = nil

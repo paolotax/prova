@@ -20,6 +20,26 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     Adozione::Reconciler.new(account: @account, provincia: "XX", anno: anno)
   end
 
+  test "call crea le classi distinte e non duplica su re-run" do
+    seed_new_adozioni([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" },
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "222", daacquist: "Si" },
+      { codicescuola: "XXEE00001A", annocorso: "2", sezioneanno: "B", combinazione: "TN", codiceisbn: "333", daacquist: "No" }
+    ])
+
+    assert_difference -> { @scuola.classi.where(anno_scolastico: "202627").count }, 2 do
+      reconciler.call
+    end
+    c = @scuola.classi.find_by(anno_scolastico: "202627", anno_corso: "1", sezione: "A")
+    assert_equal "attiva", c.stato
+    assert_equal "XXEE00001A", c.codice_ministeriale_origine
+
+    # idempotente
+    assert_no_difference -> { @scuola.classi.count } do
+      reconciler.call
+    end
+  end
+
   test "source mappa anno su tabella e stato" do
     assert_equal "new_adozioni", reconciler.source.table
     assert_equal "attiva", reconciler.source.stato
