@@ -26,21 +26,25 @@ class ControlloAdozioniController < ApplicationController
     set_page_and_extract_portion_from Current.scuole.where(id: leader_ids).in_order_of(:id, leader_ids)
   end
 
-  # Promuove in blocco tutte le scuole promuovibili dell'account (fan-out per scuola).
+  # Promuove in blocco le scuole promuovibili dell'account, opzionalmente di una sola
+  # provincia (drill-down admin). Fan-out per scuola.
   def promuovi_tutte
     return head(:forbidden) unless Current.admin?
 
-    PromuoviScuolePromuovibiliJob.perform_later(Current.account)
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+    provincia = params[:provincia].presence
+    PromuoviScuolePromuovibiliJob.perform_later(Current.account, provincia: provincia)
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
                 notice: "Promozione delle scuole promuovibili avviata."
   end
 
-  # Applica in blocco tutti i cambi codice con predecessore suggerito (fan-out per scuola).
+  # Applica in blocco i cambi codice con predecessore suggerito, opzionalmente di una
+  # sola provincia (drill-down admin). Fan-out per scuola.
   def aggiorna_cambi_codice
     return head(:forbidden) unless Current.admin?
 
-    AggiornaCambiCodiceJob.perform_later(Current.account)
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+    provincia = params[:provincia].presence
+    AggiornaCambiCodiceJob.perform_later(Current.account, provincia: provincia)
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
                 notice: "Aggiornamento dei cambi codice con predecessore avviato."
   end
 

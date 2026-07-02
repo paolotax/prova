@@ -2,14 +2,18 @@ class AggiornaCambiCodiceJob < ApplicationJob
   queue_as :bulk
 
   # Applica in blocco tutti i cambi codice della panoramica che hanno un predecessore
-  # suggerito: aggiorna il codice_ministeriale della scuola predecessore al nuovo codice
-  # MIUR e ne avvia il passaggio anno. Fan-out: una ScuolaPromuoviClassiJob per scuola,
-  # così i fallimenti sono isolati e le righe si aggiornano man mano.
-  def perform(account)
+  # suggerito, opzionalmente limitati a una provincia (drill-down admin): aggiorna il
+  # codice_ministeriale della scuola predecessore al nuovo codice MIUR e ne avvia il
+  # passaggio anno. Fan-out: una ScuolaPromuoviClassiJob per scuola, così i fallimenti
+  # sono isolati e le righe si aggiornano man mano.
+  def perform(account, provincia: nil)
     anno = NewScuola.maximum(:anno_scolastico)
     return if anno.blank?
 
-    ControlloAdozioni::Panoramica.new(account: account).cambi_codice.each do |m|
+    scuole = provincia ? account.scuole.where(provincia: provincia) : nil
+    panoramica = ControlloAdozioni::Panoramica.new(account: account, scuole: scuole,
+                                                   provincia: provincia)
+    panoramica.cambi_codice.each do |m|
       pred = m.predecessore
       next unless pred
       next if m.codice == pred.codice_ministeriale
