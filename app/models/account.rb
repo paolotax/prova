@@ -95,6 +95,13 @@ class Account < ApplicationRecord
     end
   end
 
+  # Ricostruzione set-based classi/adozioni storicizzate (fan-out per
+  # provincia × anno sulla coda bulk). Sostituisce la promozione per-scuola
+  # per il caso editore.
+  def reconcile_adozioni_later
+    ReconcileAccountJob.perform_later(self)
+  end
+
   def aggiornamento_adozioni_in_corso?
     adozioni_aggiornamento_started_at.present? &&
       (adozioni_aggiornate_at.nil? || adozioni_aggiornate_at < adozioni_aggiornamento_started_at)
