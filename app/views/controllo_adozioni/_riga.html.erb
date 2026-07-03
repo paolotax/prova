@@ -16,14 +16,20 @@
   </div>
 
   <div class="flex-item-grow max-inline-size">
-    <%= link_to scuola_path(scuola, account_id: scuola.account_id), style: "color: inherit;" do %>
+    <%= link_to scuola_path(scuola, account_id: scuola.account_id), 
+      style: "color: inherit;", 
+      data: { turbo_frame:"_top" } do %>
       <div class="overflow-ellipsis"><strong><%= scuola.denominazione.presence || "—" %></strong></div>
       <div class="txt-subtle overflow-ellipsis">
         <%= scuola.comune %> (<%= scuola.sigla_provincia %>) · <%= scuola.codice_ministeriale %>
       </div>
     <% end %>
     <% if riga.anomalie? %>
-      <% riga.anomalie_tipi.split(",").each do |tipo| %><%= link_to tipo, controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id), class: "badge #{anomalia_badge_colore(tipo)}" %><% end %>
+      <% riga.anomalie_tipi.split(",").each do |tipo| %>
+        <%= link_to tipo, controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id), 
+            class: "badge #{anomalia_badge_colore(tipo)}",
+            data: { turbo_frame: "_top" } %>
+      <% end %>
     <% end %>
   </div>
 

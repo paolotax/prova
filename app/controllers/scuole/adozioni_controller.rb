@@ -8,7 +8,7 @@ module Scuole
       base = Adozione.correnti
                       .where(classe_id: @scuola.classi.attive.select(:id))
                       .includes(:classe)
-                      .order(:disciplina, :titolo, "classi.anno_corso", "classi.sezione")
+                      .order(:disciplina, "classi.anno_corso", "classi.sezione", :titolo)
 
       @adozioni = @scope == "mie" ? base.where(mia: true, da_acquistare: true) : base
     end
