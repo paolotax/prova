@@ -505,10 +505,29 @@ namespace :import do
       end
       puts "Totale: #{total} righe caricate in staging"
 
+      # 2b. Dedup dei duplicati ESATTI del MIUR (stessa riga ripetuta identica,
+      #     disciplina compresa): errore di data-entry ministeriale. Le righe con
+      #     stesso ISBN ma disciplina DIVERSA (Sussidiari delle Discipline adottati
+      #     su più ambiti) NON sono duplicati e vanno conservate: le stats ambito
+      #     (144ant/144mat) ci contano sopra. Perciò la chiave di dedup include
+      #     disciplina. Va fatto PRIMA dell'indice unique, che ora include disciplina.
+      deleted = conn.execute(<<~SQL).cmd_tuples
+        DELETE FROM #{STG_TABLE} a USING #{STG_TABLE} b
+        WHERE a.id > b.id
+          AND a.anno_scolastico IS NOT DISTINCT FROM b.anno_scolastico
+          AND a.codicescuola   IS NOT DISTINCT FROM b.codicescuola
+          AND a.annocorso      IS NOT DISTINCT FROM b.annocorso
+          AND a.sezioneanno    IS NOT DISTINCT FROM b.sezioneanno
+          AND a.combinazione   IS NOT DISTINCT FROM b.combinazione
+          AND a.codiceisbn     IS NOT DISTINCT FROM b.codiceisbn
+          AND a.disciplina     IS NOT DISTINCT FROM b.disciplina
+      SQL
+      puts "Duplicati esatti MIUR rimossi dalla staging: #{deleted}"
+
       # 3. Indici identici alla live (nomi temporanei) + PK + ANALYZE: le stats sono
       #    pronte PRIMA dello swap, così non c'è la finestra di planner cieco.
       conn.execute("ALTER TABLE #{STG_TABLE} ADD CONSTRAINT #{STG_TABLE}_pkey PRIMARY KEY (id)")
-      conn.execute("CREATE UNIQUE INDEX #{STG_TABLE}_classe ON #{STG_TABLE} (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione, codiceisbn)")
+      conn.execute("CREATE UNIQUE INDEX #{STG_TABLE}_classe ON #{STG_TABLE} (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione, codiceisbn, disciplina)")
       conn.execute("CREATE INDEX #{STG_TABLE}_ee ON #{STG_TABLE} (codicescuola) INCLUDE (editore, annocorso, disciplina) WHERE tipogradoscuola = 'EE'")
       conn.execute("CREATE INDEX #{STG_TABLE}_cod ON #{STG_TABLE} (codicescuola)")
       conn.execute("CREATE INDEX #{STG_TABLE}_disc ON #{STG_TABLE} (disciplina, annocorso, tipogradoscuola)")
