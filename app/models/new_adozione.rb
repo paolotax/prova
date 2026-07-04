@@ -34,7 +34,7 @@ class NewAdozione < ApplicationRecord
     
     #belongs_to :import_scuola, class_name: 'Import::Scuola', foreign_key: 'import_scuola_id'
     validates :codicescuola, :annocorso, :sezioneanno, :combinazione, :codiceisbn, presence: true
-    validates :codicescuola, uniqueness: { scope: [:annocorso, :sezioneanno, :combinazione, :codiceisbn] }
+    validates :codicescuola, uniqueness: { scope: [:anno_scolastico, :annocorso, :sezioneanno, :combinazione, :codiceisbn, :disciplina] }
     
     # Disciplina esclusa dal totale spesa e dal confronto col tetto ministeriale,
     # pur restando visibile nell'elenco: alternativa alla religione (mutuamente

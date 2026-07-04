@@ -63,12 +63,12 @@ class AdozioniAnalyticsTest < ActiveSupport::TestCase
     NewAdozione.create!(
       anno_scolastico: "202627", codicescuola: "TESTXX001", tipogradoscuola: "EE",
       disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)", annocorso: "4",
-      sezioneanno: "A", combinazione: "", codiceisbn: "9785555555555", daacquist: "Si"
+      sezioneanno: "A", combinazione: "SCUOLA PRIMARIA", codiceisbn: "9785555555555", daacquist: "Si"
     )
     NewAdozione.create!(
       anno_scolastico: "202526", codicescuola: "TESTXX001", tipogradoscuola: "EE",
       disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)", annocorso: "4",
-      sezioneanno: "A", combinazione: "", codiceisbn: "9785555555555", daacquist: "Si"
+      sezioneanno: "A", combinazione: "SCUOLA PRIMARIA", codiceisbn: "9785555555555", daacquist: "Si"
     )
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW mercato_nazionale_mercati")
 

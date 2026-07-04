@@ -7,6 +7,10 @@ class Stats::Calcolo144Test < ActiveSupport::TestCase
     Stats::Calcolo144.reset!
   end
 
+  teardown do
+    Stats::Calcolo144.reset!
+  end
+
   test "discipline_144 loads from prezzi_ministeriali" do
     disc = Stats::Calcolo144.discipline_144
     assert disc.is_a?(Hash)
