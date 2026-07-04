@@ -1,9 +1,10 @@
 <% grado_labels  = TipoScuola::GRADI.to_h.invert %>
-<% totale_sezioni  = @rows.sum { |r| r.sezioni_count.to_i } %>
+<% totale_sezioni  = @rows.sum { |r| r.sezioni_pesate.to_f } %>
+<% totale_copie    = @rows.sum { |r| r.copie_stimate.to_i } %>
 <% mercati_keys     = @rows.map { |r| [r.grado, r.disciplina, r.anno_corso] }.uniq %>
-<% mercato_zona_tot = mercati_keys.sum { |k| @zone_totals[k].to_i } %>
-<% mercato_naz_tot  = mercati_keys.sum { |k| @national_totals[k].to_i } %>
-<% naz_sez_tot      = @rows.sum { |r| @national_book[[r.grado, r.disciplina, r.anno_corso, r.codice_isbn]].to_i } %>
+<% mercato_zona_tot = mercati_keys.sum { |k| @zone_totals[k].to_f } %>
+<% mercato_naz_tot  = mercati_keys.sum { |k| @national_totals[k].to_f } %>
+<% naz_sez_tot      = @rows.sum { |r| @national_book[[r.grado, r.disciplina, r.anno_corso, r.codice_isbn]].to_f } %>
 <% quota_totale     = mercato_zona_tot > 0 ? 100.0 * totale_sezioni / mercato_zona_tot : 0 %>
 <% quota_naz_tot    = mercato_naz_tot  > 0 ? 100.0 * naz_sez_tot    / mercato_naz_tot  : 0 %>
 <% quota_delta_tot  = quota_totale - quota_naz_tot %>
@@ -13,11 +14,11 @@
 
 <div class="analytics-summary">
   <div class="analytics-summary__card">
-    <p class="analytics-summary__value txt-positive"><%= totale_sezioni %></p>
+    <p class="analytics-summary__value txt-positive"><%= sezioni_fmt(totale_sezioni) %></p>
     <p class="analytics-summary__label">sezioni totali</p>
   </div>
   <div class="analytics-summary__card">
-    <p class="analytics-summary__value"><%= totale_sezioni * 17 %></p>
+    <p class="analytics-summary__value"><%= totale_copie %></p>
     <p class="analytics-summary__label">copie stimate</p>
   </div>
   <% if mercato_zona_tot > 0 %>
@@ -36,21 +37,22 @@
 
 <% if @rows.any? %>
   <% @rows.group_by(&:grado).each do |grado, rows_grado| %>
-    <% grado_sezioni = rows_grado.sum { |r| r.sezioni_count.to_i } %>
+    <% grado_sezioni = rows_grado.sum { |r| r.sezioni_pesate.to_f } %>
     <h2 class="divider divider--fade txt-small" style="margin-block: 1em 0.5em;">
       <%= grado_labels[grado]&.capitalize || grado %>
-      <span class="txt-subtle">(<%= grado_sezioni %> sez.)</span>
+      <span class="txt-subtle">(<%= sezioni_fmt(grado_sezioni) %> sez.)</span>
     </h2>
 
     <% rows_grado.group_by { |r| [r.disciplina, r.anno_corso] }.each do |(disciplina, anno_corso), adozioni| %>
       <% mercato_key  = [grado, disciplina, anno_corso] %>
-      <% mercato_zona = @zone_totals[mercato_key].to_i %>
-      <% mercato_naz  = @national_totals[mercato_key].to_i %>
+      <% mercato_zona = @zone_totals[mercato_key].to_f %>
+      <% mercato_naz  = @national_totals[mercato_key].to_f %>
       <% per_editore  = adozioni.group_by(&:editore).map do |editore, books| %>
-        <% sez = books.sum { |r| r.sezioni_count.to_i } %>
-        <% naz = books.sum { |r| @national_book[mercato_key + [r.codice_isbn]].to_i } %>
+        <% sez = books.sum { |r| r.sezioni_pesate.to_f } %>
+        <% naz = books.sum { |r| @national_book[mercato_key + [r.codice_isbn]].to_f } %>
         <% disd = books.sum { |r| r.disdette_count.to_i } %>
-        <% [editore, sez, naz, disd, books.size] %>
+        <% copie = books.sum { |r| r.copie_stimate.to_i } %>
+        <% [editore, sez, naz, disd, books.size, copie] %>
       <% end %>
       <% per_editore = per_editore.sort_by { |_, sez, *| -sez } %>
       <div class="analytics-group">
@@ -71,7 +73,7 @@
             </tr>
           </thead>
           <tbody>
-            <% per_editore.each do |editore, sez, naz, disd, titoli| %>
+            <% per_editore.each do |editore, sez, naz, disd, titoli, copie| %>
               <% mia_pct = mercato_zona > 0 ? 100.0 * sez / mercato_zona : 0 %>
               <% naz_pct = mercato_naz > 0 ? 100.0 * naz / mercato_naz : 0 %>
               <% delta   = mia_pct - naz_pct %>
@@ -81,21 +83,22 @@
               <tr>
                 <td><%= editore.presence || "—" %></td>
                 <td class="analytics-table__right txt-subtle"><%= titoli %></td>
-                <td class="analytics-table__right font-weight-bold"><%= sez %></td>
+                <td class="analytics-table__right font-weight-bold"><%= sezioni_fmt(sez) %></td>
                 <td class="analytics-table__right"><%= mercato_zona > 0 ? number_to_percentage(mia_pct, precision: 1) : "—" %></td>
                 <td class="analytics-table__right txt-subtle"><%= mercato_naz > 0 ? number_to_percentage(naz_pct, precision: 1) : "—" %></td>
                 <td class="analytics-table__right <%= delta_cls %>">
                   <%= mercato_naz > 0 && mercato_zona > 0 ? "#{delta >= 0 ? '+' : ''}#{number_with_precision(delta, precision: 1)}" : "—" %>
                 </td>
-                <td class="analytics-table__right"><%= sez * 17 %></td>
+                <td class="analytics-table__right"><%= copie %></td>
                 <td class="analytics-table__right <%= 'txt-negative' if disd > 0 %>"><%= disd > 0 ? disd : "" %></td>
               </tr>
             <% end %>
           </tbody>
-          <% tot_sez     = adozioni.sum { |r| r.sezioni_count.to_i } %>
+          <% tot_sez     = adozioni.sum { |r| r.sezioni_pesate.to_f } %>
+          <% tot_copie   = adozioni.sum { |r| r.copie_stimate.to_i } %>
           <% tot_titoli  = adozioni.map(&:codice_isbn).uniq.size %>
           <% tot_disd    = adozioni.sum { |r| r.disdette_count.to_i } %>
-          <% tot_naz_sez = adozioni.sum { |r| @national_book[mercato_key + [r.codice_isbn]].to_i } %>
+          <% tot_naz_sez = adozioni.sum { |r| @national_book[mercato_key + [r.codice_isbn]].to_f } %>
           <% tot_mia_pct = mercato_zona > 0 ? 100.0 * tot_sez / mercato_zona : 0 %>
           <% tot_naz_pct = mercato_naz  > 0 ? 100.0 * tot_naz_sez / mercato_naz  : 0 %>
           <% tot_delta   = tot_mia_pct - tot_naz_pct %>
@@ -106,13 +109,13 @@
             <tr class="font-weight-bold">
               <td>Totale</td>
               <td class="analytics-table__right txt-subtle"><%= tot_titoli %></td>
-              <td class="analytics-table__right"><%= tot_sez %></td>
+              <td class="analytics-table__right"><%= sezioni_fmt(tot_sez) %></td>
               <td class="analytics-table__right"><%= mercato_zona > 0 ? number_to_percentage(tot_mia_pct, precision: 1) : "—" %></td>
               <td class="analytics-table__right txt-subtle"><%= mercato_naz > 0 ? number_to_percentage(tot_naz_pct, precision: 1) : "—" %></td>
               <td class="analytics-table__right <%= tot_delta_cls %>">
                 <%= mercato_naz > 0 && mercato_zona > 0 ? "#{tot_delta >= 0 ? '+' : ''}#{number_with_precision(tot_delta, precision: 1)}" : "—" %>
               </td>
-              <td class="analytics-table__right"><%= tot_sez * 17 %></td>
+              <td class="analytics-table__right"><%= tot_copie %></td>
               <td class="analytics-table__right <%= 'txt-negative' if tot_disd > 0 %>"><%= tot_disd > 0 ? tot_disd : "" %></td>
             </tr>
           </tfoot>

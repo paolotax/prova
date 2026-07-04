@@ -5,8 +5,9 @@
       <div class="analytics-filters__field">
         <span class="analytics-filters__label">Anno scolastico</span>
         <%= form.select :anno_scolastico,
-              options_for_select(@anni_scolastici.map { |a| ["#{a[0, 4]}/#{a[4, 2]}", a] }, @anno_scolastico),
-              { include_blank: "Corrente" }, class: "input input--select" %>
+              options_for_select(@anni_scolastici.map { |a| [anno_scolastico_label(a), a] }, @anno_scolastico),
+              { include_blank: "Corrente#{" (#{anno_scolastico_label(@anno_effettivo)})" if @anno_effettivo}" },
+              class: "input input--select" %>
       </div>
     <% end %>
 

@@ -3,7 +3,7 @@ grado_labels = TipoScuola::GRADI.to_h.invert
 bold = wb.styles.add_style(b: true)
 
 wb.add_worksheet(name: "Adozioni") do |sheet|
-  sheet.add_row ["Export adozioni - #{Time.current.strftime('%d/%m/%Y %H:%M')}"], style: bold
+  sheet.add_row ["Export adozioni #{anno_scolastico_label(@anno_effettivo)} - #{Time.current.strftime('%d/%m/%Y %H:%M')}"], style: bold
   if @filtri.any?
     filtri_testo = @filtri.map { |k, v| "#{k}: #{v}" }.join(" · ")
     sheet.add_row ["Filtri attivi — #{filtri_testo}"]
@@ -15,10 +15,10 @@ wb.add_worksheet(name: "Adozioni") do |sheet|
 
   @rows.each do |row|
     mercato_key  = [row.grado, row.disciplina, row.anno_corso]
-    mercato_zona = @zone_totals[mercato_key].to_i
-    mercato_naz  = @national_totals[mercato_key].to_i
-    naz_sez      = @national_book[mercato_key + [row.codice_isbn]].to_i
-    mia_pct      = mercato_zona > 0 ? 100.0 * row.sezioni_count.to_i / mercato_zona : nil
+    mercato_zona = @zone_totals[mercato_key].to_f
+    mercato_naz  = @national_totals[mercato_key].to_f
+    naz_sez      = @national_book[mercato_key + [row.codice_isbn]].to_f
+    mia_pct      = mercato_zona > 0 ? 100.0 * row.sezioni_pesate.to_f / mercato_zona : nil
     naz_pct      = mercato_naz  > 0 ? 100.0 * naz_sez / mercato_naz : nil
     delta        = (mia_pct && naz_pct) ? mia_pct - naz_pct : nil
 
@@ -29,7 +29,7 @@ wb.add_worksheet(name: "Adozioni") do |sheet|
       row.titolo&.titleize,
       row.editore,
       row.codice_isbn,
-      row.sezioni_count.to_i,
+      row.sezioni_pesate.to_f,
       row.copie_stimate.to_i,
       row.disdette_count.to_i,
       mia_pct&.round(1),

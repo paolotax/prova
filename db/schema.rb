@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_071728) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_04_080000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1202,10 +1202,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_071728) do
     t.string "tipogradoscuola"
     t.string "titolo"
     t.string "volume"
-    t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn"], name: "index_new_adozioni_on_classe", unique: true
+    t.index ["anno_scolastico", "codicescuola", "annocorso", "sezioneanno", "combinazione", "codiceisbn", "disciplina"], name: "index_new_adozioni_on_classe", unique: true
     t.index ["codicescuola"], name: "idx_new_adoz_ee", where: "((tipogradoscuola)::text = 'EE'::text)", include: ["editore", "annocorso", "disciplina"]
     t.index ["codicescuola"], name: "idx_new_adozioni_codicescuola"
     t.index ["disciplina", "annocorso", "tipogradoscuola"], name: "idx_new_adozioni_disc_anno_tg"
+  end
+
+  create_table "new_adozioni_stg", id: false, force: :cascade do |t|
+    t.string "anno_scolastico"
+    t.string "annocorso"
+    t.string "autori"
+    t.string "codiceisbn"
+    t.string "codicescuola"
+    t.string "combinazione"
+    t.string "consigliato"
+    t.string "daacquist"
+    t.string "disciplina"
+    t.string "editore"
+    t.bigint "id", default: -> { "nextval('new_adozioni_id_seq'::regclass)" }, null: false
+    t.bigint "import_scuola_id"
+    t.string "nuovaadoz"
+    t.string "prezzo"
+    t.string "sezioneanno"
+    t.string "sottotitolo"
+    t.string "tipogradoscuola"
+    t.string "titolo"
+    t.string "volume"
   end
 
   create_table "new_scuole", force: :cascade do |t|
@@ -1725,42 +1747,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_071728) do
   add_foreign_key "user_scuole", "users"
   add_foreign_key "voice_notes", "users"
 
-  create_view "mercato_nazionale_libri", materialized: true, sql_definition: <<-SQL
-      SELECT import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-      import_adozioni."DISCIPLINA" AS disciplina,
-      import_adozioni."ANNOCORSO" AS anno_corso,
-      import_adozioni."CODICEISBN" AS codice_isbn,
-      count(DISTINCT (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text)) AS sezioni
-     FROM import_adozioni
-    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
-    GROUP BY import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO", import_adozioni."CODICEISBN";
-  SQL
-  add_index "mercato_nazionale_libri", ["tipo_grado_scuola", "disciplina", "anno_corso", "codice_isbn"], name: "idx_mercato_naz_libri_pk", unique: true
-
-  create_view "mercato_nazionale_mercati", materialized: true, sql_definition: <<-SQL
-      SELECT import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-      import_adozioni."DISCIPLINA" AS disciplina,
-      import_adozioni."ANNOCORSO" AS anno_corso,
-      count(DISTINCT (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text)) AS sezioni
-     FROM import_adozioni
-    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
-    GROUP BY import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO";
-  SQL
-  add_index "mercato_nazionale_mercati", ["tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_naz_mercati_pk", unique: true
-
-  create_view "mercato_scuola_mercati", materialized: true, sql_definition: <<-SQL
-      SELECT import_adozioni."CODICESCUOLA" AS codice_scuola,
-      import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-      import_adozioni."DISCIPLINA" AS disciplina,
-      import_adozioni."ANNOCORSO" AS anno_corso,
-      count(DISTINCT import_adozioni."SEZIONEANNO") AS sezioni
-     FROM import_adozioni
-    WHERE ((import_adozioni."DAACQUIST")::text = 'Si'::text)
-    GROUP BY import_adozioni."CODICESCUOLA", import_adozioni."TIPOGRADOSCUOLA", import_adozioni."DISCIPLINA", import_adozioni."ANNOCORSO";
-  SQL
-  add_index "mercato_scuola_mercati", ["codice_scuola", "tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_scuola_mercati_pk", unique: true
-  add_index "mercato_scuola_mercati", ["codice_scuola"], name: "idx_mercato_scuola_mercati_scuola"
-
   create_view "view_adozioni144ant_editori", materialized: true, sql_definition: <<-SQL
       SELECT DISTINCT import_scuole."REGIONE" AS regione,
       import_scuole."PROVINCIA" AS provincia,
@@ -1851,4 +1837,86 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_071728) do
     GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
     ORDER BY libri.titolo;
   SQL
+  create_view "mercato_nazionale_libri", materialized: true, sql_definition: <<-SQL
+      SELECT adozioni_annate.anno_scolastico,
+      adozioni_annate.tipo_grado_scuola,
+      adozioni_annate.disciplina,
+      adozioni_annate.anno_corso,
+      adozioni_annate.codice_isbn,
+      count(DISTINCT adozioni_annate.sezione_key) AS sezioni
+     FROM ( SELECT import_adozioni.anno_scolastico,
+              import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+              import_adozioni."DISCIPLINA" AS disciplina,
+              import_adozioni."ANNOCORSO" AS anno_corso,
+              import_adozioni."CODICEISBN" AS codice_isbn,
+              (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text) AS sezione_key
+             FROM import_adozioni
+            WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
+          UNION ALL
+           SELECT new_adozioni.anno_scolastico,
+              new_adozioni.tipogradoscuola,
+              new_adozioni.disciplina,
+              new_adozioni.annocorso,
+              new_adozioni.codiceisbn,
+              (((((new_adozioni.codicescuola)::text || '_'::text) || (new_adozioni.annocorso)::text) || '_'::text) || (new_adozioni.sezioneanno)::text)
+             FROM new_adozioni
+            WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+    GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso, adozioni_annate.codice_isbn;
+  SQL
+  add_index "mercato_nazionale_libri", ["anno_scolastico", "tipo_grado_scuola", "disciplina", "anno_corso", "codice_isbn"], name: "idx_mercato_naz_libri_pk", unique: true
+
+  create_view "mercato_nazionale_mercati", materialized: true, sql_definition: <<-SQL
+      SELECT adozioni_annate.anno_scolastico,
+      adozioni_annate.tipo_grado_scuola,
+      adozioni_annate.disciplina,
+      adozioni_annate.anno_corso,
+      count(DISTINCT adozioni_annate.sezione_key) AS sezioni
+     FROM ( SELECT import_adozioni.anno_scolastico,
+              import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+              import_adozioni."DISCIPLINA" AS disciplina,
+              import_adozioni."ANNOCORSO" AS anno_corso,
+              (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text) AS sezione_key
+             FROM import_adozioni
+            WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
+          UNION ALL
+           SELECT new_adozioni.anno_scolastico,
+              new_adozioni.tipogradoscuola,
+              new_adozioni.disciplina,
+              new_adozioni.annocorso,
+              (((((new_adozioni.codicescuola)::text || '_'::text) || (new_adozioni.annocorso)::text) || '_'::text) || (new_adozioni.sezioneanno)::text)
+             FROM new_adozioni
+            WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+    GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso;
+  SQL
+  add_index "mercato_nazionale_mercati", ["anno_scolastico", "tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_naz_mercati_pk", unique: true
+
+  create_view "mercato_scuola_mercati", materialized: true, sql_definition: <<-SQL
+      SELECT adozioni_annate.anno_scolastico,
+      adozioni_annate.codice_scuola,
+      adozioni_annate.tipo_grado_scuola,
+      adozioni_annate.disciplina,
+      adozioni_annate.anno_corso,
+      count(DISTINCT adozioni_annate.sezione) AS sezioni
+     FROM ( SELECT import_adozioni.anno_scolastico,
+              import_adozioni."CODICESCUOLA" AS codice_scuola,
+              import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
+              import_adozioni."DISCIPLINA" AS disciplina,
+              import_adozioni."ANNOCORSO" AS anno_corso,
+              import_adozioni."SEZIONEANNO" AS sezione
+             FROM import_adozioni
+            WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
+          UNION ALL
+           SELECT new_adozioni.anno_scolastico,
+              new_adozioni.codicescuola,
+              new_adozioni.tipogradoscuola,
+              new_adozioni.disciplina,
+              new_adozioni.annocorso,
+              new_adozioni.sezioneanno
+             FROM new_adozioni
+            WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+    GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.codice_scuola, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso;
+  SQL
+  add_index "mercato_scuola_mercati", ["anno_scolastico", "codice_scuola", "tipo_grado_scuola", "disciplina", "anno_corso"], name: "idx_mercato_scuola_mercati_pk", unique: true
+  add_index "mercato_scuola_mercati", ["codice_scuola"], name: "idx_mercato_scuola_mercati_scuola"
+
 end

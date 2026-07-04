@@ -57,6 +57,35 @@ class Stats::Calcolo144Test < ActiveSupport::TestCase
     assert_includes sql, "ELSE 0"
   end
 
+  test "fascicoli_names returns only the two ambiti" do
+    names = Stats::Calcolo144.fascicoli_names
+    assert_equal 2, names.size
+    assert_includes names, "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)"
+    assert_includes names, "SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)"
+  end
+
+  test "peso_mercato_for weighs fascicoli 0.5 and everything else 1" do
+    assert_equal 0.5, Stats::Calcolo144.peso_mercato_for("SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)")
+    assert_equal 0.5, Stats::Calcolo144.peso_mercato_for("SUSSIDIARIO DELLE DISCIPLINE (AMBITO ANTROPOLOGICO)")
+    assert_equal 1.0, Stats::Calcolo144.peso_mercato_for("SUSSIDIARIO DELLE DISCIPLINE")
+    assert_equal 1.0, Stats::Calcolo144.peso_mercato_for("LINGUA INGLESE")
+    assert_equal 1.0, Stats::Calcolo144.peso_mercato_for("PARASCOLASTICA (AMBITO UMANISTICO)")
+  end
+
+  test "peso_mercato_case_sql defaults to 1" do
+    sql = Stats::Calcolo144.peso_mercato_case_sql("my_col")
+    assert_includes sql, "CASE WHEN my_col IN ("
+    assert_includes sql, "AMBITO SCIENTIFICO"
+    assert_includes sql, "THEN 0.5 ELSE 1 END"
+    refute_includes sql, "'SUSSIDIARIO DELLE DISCIPLINE'"
+  end
+
+  test "peso_mercato_case_sql without prezzi returns constant 1" do
+    PrezzoMinisteriale.delete_all
+    Stats::Calcolo144.reset!
+    assert_equal "1", Stats::Calcolo144.peso_mercato_case_sql("my_col")
+  end
+
   test "each discipline has prezzo_cents" do
     Stats::Calcolo144.discipline_144.each do |name, info|
       assert info[:prezzo_cents].present?, "#{name} should have prezzo_cents"

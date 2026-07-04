@@ -27,7 +27,7 @@
 #  idx_new_adoz_ee                (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
 #  idx_new_adozioni_codicescuola  (codicescuola)
 #  idx_new_adozioni_disc_anno_tg  (disciplina,annocorso,tipogradoscuola)
-#  index_new_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn) UNIQUE
+#  index_new_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn,disciplina) UNIQUE
 #
 
 class NewAdozione < ApplicationRecord

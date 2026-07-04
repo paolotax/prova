@@ -554,6 +554,10 @@ namespace :import do
       NewAdozione.reset_column_information
       puts "Swap completato: new_adozioni ora ha #{NewAdozione.count} righe"
       Rails.logger.info "Importazione nuove adozioni completata (swap ok)"
+
+      # Le matview di mercato aggregano anche new_adozioni: refresh async
+      # così AdozioniAnalytics vede subito la campagna appena importata.
+      RefreshMercatoNazionaleRollupJob.perform_later
     ensure
       conn.execute("SELECT pg_advisory_unlock(#{ADOZIONI_LOCK_KEY})")
     end

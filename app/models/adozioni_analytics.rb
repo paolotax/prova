@@ -26,6 +26,7 @@ class AdozioniAnalytics
         "adozioni.anno_corso AS anno_corso",
         :disciplina, :titolo, :editore, :codice_isbn,
         "COUNT(DISTINCT adozioni.classe_id) AS sezioni_count",
+        "COUNT(DISTINCT adozioni.classe_id) * #{Stats::Calcolo144.peso_mercato_case_sql('adozioni.disciplina')} AS sezioni_pesate",
         "COUNT(DISTINCT adozioni.classe_id) * 17 AS copie_stimate",
         "SUM(CASE WHEN adozioni.disdetta THEN 1 ELSE 0 END) AS disdette_count"
       )
@@ -33,9 +34,12 @@ class AdozioniAnalytics
              Arel.sql("COUNT(DISTINCT adozioni.classe_id) DESC"))
   end
 
-  # national_* leggono dalle materialized view rollup.
-  # Hash: { [grado, disciplina, anno_corso, codice_isbn] => sezioni }
-  def national_book_shares(rows)
+  # national_* leggono dalle materialized view rollup, filtrate sull'anno
+  # scolastico richiesto e pesate (fascicoli AMBITO = 0.5 sezioni).
+  # Hash: { [grado, disciplina, anno_corso, codice_isbn] => sezioni_pesate }
+  def national_book_shares(rows, anno_scolastico:)
+    return {} if anno_scolastico.blank?
+
     tuples = rows.flat_map { |r|
       (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s, r.codice_isbn] }
     }.uniq.reject { |t| t.any?(&:blank?) }
@@ -49,19 +53,22 @@ class AdozioniAnalytics
             AND m.disciplina  = r.disciplina
             AND m.anno_corso  = r.anno_corso
             AND m.codice_isbn = r.codice_isbn
+      WHERE r.anno_scolastico = #{ActiveRecord::Base.connection.quote(anno_scolastico)}
     SQL
 
     result = Hash.new(0)
     ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
       tg, disc, anno, isbn, sez = row
       grado = TG_TO_GRADO[tg] or next
-      result[[grado, disc, anno, isbn]] += sez.to_i
+      result[[grado, disc, anno, isbn]] += sez.to_i * Stats::Calcolo144.peso_mercato_for(disc)
     end
     result
   end
 
-  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni }
-  def national_market_totals(rows)
+  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni_pesate }
+  def national_market_totals(rows, anno_scolastico:)
+    return {} if anno_scolastico.blank?
+
     tuples = rows.flat_map { |r|
       (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
     }.uniq.reject { |t| t.any?(&:blank?) }
@@ -74,21 +81,22 @@ class AdozioniAnalytics
       JOIN m ON m.tg         = r.tipo_grado_scuola
             AND m.disciplina = r.disciplina
             AND m.anno_corso = r.anno_corso
+      WHERE r.anno_scolastico = #{ActiveRecord::Base.connection.quote(anno_scolastico)}
     SQL
 
     result = Hash.new(0)
     ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
       tg, disc, anno, sez = row
       grado = TG_TO_GRADO[tg] or next
-      result[[grado, disc, anno]] += sez.to_i
+      result[[grado, disc, anno]] += sez.to_i * Stats::Calcolo144.peso_mercato_for(disc)
     end
     result
   end
 
   # Usa la matview mercato_scuola_mercati: aggrega le sezioni delle sole scuole indicate.
-  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni_in_zona }
-  def zone_market_totals(rows, codici_ministeriali:)
-    return {} if codici_ministeriali.blank?
+  # Hash: { [grado, disciplina, anno_corso] => totale_sezioni_pesate_in_zona }
+  def zone_market_totals(rows, codici_ministeriali:, anno_scolastico:)
+    return {} if codici_ministeriali.blank? || anno_scolastico.blank?
 
     tuples = rows.flat_map { |r|
       (GRADO_TO_TG[r.grado] || []).map { |tg| [tg, r.disciplina, r.anno_corso.to_s] }
@@ -105,6 +113,7 @@ class AdozioniAnalytics
             AND m.disciplina = r.disciplina
             AND m.anno_corso = r.anno_corso
       WHERE r.codice_scuola IN (#{quoted_codici})
+        AND r.anno_scolastico = #{ActiveRecord::Base.connection.quote(anno_scolastico)}
       GROUP BY 1, 2, 3
     SQL
 
@@ -112,7 +121,7 @@ class AdozioniAnalytics
     ActiveRecord::Base.connection.exec_query(sql).rows.each do |row|
       tg, disc, anno, sez = row
       grado = TG_TO_GRADO[tg] or next
-      result[[grado, disc, anno]] += sez.to_i
+      result[[grado, disc, anno]] += sez.to_i * Stats::Calcolo144.peso_mercato_for(disc)
     end
     result
   end
@@ -150,15 +159,23 @@ class AdozioniAnalytics
     result
   end
 
+  # Annata più recente presente tra le adozioni in scope: è il default quando
+  # l'utente non seleziona un anno. Con classi/adozioni di due campagne in
+  # tabella, "corrente" deve essere UN anno preciso, mai un mix.
+  def anno_corrente
+    return @anno_corrente if defined?(@anno_corrente)
+
+    @anno_corrente = account.adozioni
+                            .where(da_acquistare: true)
+                            .joins(:classe).where(classi: { scuola_id: scuola_ids })
+                            .maximum(:anno_scolastico)
+  end
+
   private
 
-  # Anno corrente della classe (default) oppure snapshot di un anno specifico.
+  # Snapshot dell'anno richiesto, oppure dell'anno corrente (il più recente).
   def scope_anno(scope, anno_scolastico)
-    if anno_scolastico.present?
-      scope.where(adozioni: { anno_scolastico: anno_scolastico })
-    else
-      scope.where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
-    end
+    scope.where(adozioni: { anno_scolastico: anno_scolastico.presence || anno_corrente })
   end
 
   def anni_scolastici_disponibili(solo_mie)

@@ -31,6 +31,7 @@ class AdozioniAnalyticsController < ApplicationController
     @tab = %w[mie tutte editori].include?(params[:tab]) ? params[:tab] : "mie"
     solo_mie = @tab == "mie"
     @anno_scolastico = params[:anno_scolastico].presence
+    @anno_effettivo  = @anno_scolastico || @analytics.anno_corrente
     @filtri = {
       disciplina: params[:disciplina],
       anno_corso: params[:anno_corso],
@@ -66,9 +67,10 @@ class AdozioniAnalyticsController < ApplicationController
     scuole_scope = scuole_scope.where(area: @filtri[:area])               if @filtri[:area].present?
     codici_ministeriali = scuole_scope.pluck(:codice_ministeriale)
 
-    @zone_totals     = @analytics.zone_market_totals(@rows, codici_ministeriali: codici_ministeriali)
-    @national_book   = @analytics.national_book_shares(@rows)
-    @national_totals = @analytics.national_market_totals(@rows)
+    @zone_totals     = @analytics.zone_market_totals(@rows, codici_ministeriali: codici_ministeriali,
+                                                            anno_scolastico: @anno_effettivo)
+    @national_book   = @analytics.national_book_shares(@rows, anno_scolastico: @anno_effettivo)
+    @national_totals = @analytics.national_market_totals(@rows, anno_scolastico: @anno_effettivo)
 
     respond_to do |format|
       format.html

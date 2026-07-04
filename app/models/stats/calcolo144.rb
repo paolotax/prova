@@ -31,6 +31,25 @@ module Stats
         "#{classe_col} IN ('1', '4') AND #{discipline_col} IN (#{names_sql})"
       end
 
+      # Pesatura di mercato: i fascicoli AMBITO valgono 0.5 (la coppia
+      # antropologico+scientifico equivale a un sussidiario unico), tutte le
+      # altre discipline 1. A differenza di peso_case_sql (ELSE 0, solo 144),
+      # qui il default è 1: serve per pesare interi elenchi di adozioni.
+      def fascicoli_names
+        discipline_144.select { |_, info| info[:peso] < 1 }.keys
+      end
+
+      def peso_mercato_for(disciplina)
+        fascicoli_names.include?(disciplina) ? 0.5 : 1.0
+      end
+
+      def peso_mercato_case_sql(discipline_col)
+        return "1" if fascicoli_names.empty?
+
+        names_sql = fascicoli_names.map { |d| "'#{d}'" }.join(", ")
+        "CASE WHEN #{discipline_col} IN (#{names_sql}) THEN 0.5 ELSE 1 END"
+      end
+
       def reset!
         @discipline_144 = nil
       end
