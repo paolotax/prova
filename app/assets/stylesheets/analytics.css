@@ -20,6 +20,34 @@
     flex: 1 1 auto;
     min-inline-size: 6rem;
     padding: var(--block-space-half) var(--inline-space);
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    transition: outline-color 100ms ease-out, background-color 100ms ease-out;
+  }
+
+  /* Area cliccabile (valore + label): filtra la tabella province. */
+  .analytics-summary__toggle {
+    background: none;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    display: block;
+    font: inherit;
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: start;
+  }
+
+  .analytics-summary__toggle:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  .analytics-summary__card--active {
+    background-color: var(--color-ink-lighter);
+    outline-color: var(--color-ink);
   }
 
   .analytics-summary__value {

@@ -378,6 +378,7 @@ Rails.application.routes.draw do
     get 'controllo_adozioni', to: 'controllo_adozioni#index', as: :controllo_adozioni_index
     post 'controllo_adozioni/promuovi_tutte', to: 'controllo_adozioni#promuovi_tutte', as: :controllo_adozioni_promuovi_tutte
     post 'controllo_adozioni/aggiorna_cambi_codice', to: 'controllo_adozioni#aggiorna_cambi_codice', as: :controllo_adozioni_aggiorna_cambi_codice
+    post 'controllo_adozioni/aggiungi_scuole_nuove', to: 'controllo_adozioni#aggiungi_scuole_nuove', as: :controllo_adozioni_aggiungi_scuole_nuove
     get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
     scope module: "controllo_adozioni" do
       resource :promozione, only: %i[new create], controller: "promozioni",

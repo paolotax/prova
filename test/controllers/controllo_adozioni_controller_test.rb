@@ -24,6 +24,16 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "controllo_adozioni-pagination-list", @response.body
   end
 
+  test "dashboard: le card sono cliccabili e le righe portano i conteggi per il filtro JS" do
+    get controllo_adozioni_index_path(account_id: @account.id)
+    assert_response :success
+    assert_select "[data-controller='dashboard-filter']"
+    assert_select ".analytics-summary__card[data-metric='da_promuovere'][data-filtro='da_promuovere']"
+    assert_select ".analytics-summary__card[data-metric='scuole']:not([data-filtro])"
+    assert_select "tr[data-dashboard-filter-target='row'][data-counts]", minimum: 1
+    assert_select "a[data-dashboard-filter-target='provinciaLink'][data-base-href]", minimum: 1
+  end
+
   test "index admin con provincia mostra la panoramica paginata di quella provincia" do
     get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
     assert_response :success

@@ -48,6 +48,17 @@ class ControlloAdozioniController < ApplicationController
                 notice: "Aggiornamento dei cambi codice con predecessore avviato."
   end
 
+  # Aggiunge in blocco all'anagrafe le "nuove scuole" (codici nuovi senza candidati),
+  # opzionalmente di una sola provincia (drill-down admin).
+  def aggiungi_scuole_nuove
+    return head(:forbidden) unless Current.admin?
+
+    provincia = params[:provincia].presence
+    AggiungiScuoleNuoveJob.perform_later(Current.account, provincia: provincia)
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
+                notice: "Aggiunta delle nuove scuole avviata."
+  end
+
   def show
     @codicescuola = params[:codicescuola]
     @anomalie = ControlloAnomalia.per_scuola(@codicescuola)

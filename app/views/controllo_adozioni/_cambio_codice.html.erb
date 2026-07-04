@@ -2,15 +2,23 @@
 <%= tag.article id: "cambio_codice_#{m.codice}",
       class: "flex align-center gap txt-small",
       style: "padding: .35rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius);" do %>
-  <div class="flex-item-grow max-inline-size flex flex-column gap-quarter">
-    <%# Riga 1: scuola nuova (dal ministeriale) — codice nuovo %>
-    <div class="overflow-ellipsis">
-      <strong><%= m.denominazione.presence || "—" %></strong>
-      <span class="txt-subtle">· <%= m.comune %> (<%= m.provincia %>) · <%= m.codice %></span>
+  <div class="flex align-center justify-center" style="inline-size: 1.8rem; flex: 0 0 auto;">
+    <% if (p = m.predecessore) %>
+      <%= link_to new_controllo_adozioni_promozione_path(codicescuola: p.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id),
+            class: "btn btn--small", data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Aggiorna codice" } do %>
+        <%= icon_tag "academic-cap" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="flex-item-grow max-inline-size">
+    <div class="overflow-ellipsis"><strong><%= m.denominazione.presence || "—" %></strong></div>
+    <div class="txt-subtle overflow-ellipsis">
+      <%= m.comune %> (<%= m.provincia %>) · <%= m.codice %>
     </div>
 
-    <%# Riga 2: predecessore (cambio codice) — codice vecchio %>
-    <% if (p = m.predecessore) %>
+    <%# Predecessore (match) / candidati da scegliere (suggerimento) / nuova scuola %>
+    <% if p %>
       <div class="overflow-ellipsis txt-subtle">
         ← <strong><%= p.denominazione&.truncate(40) %></strong>
         · <%= p.comune %> (<%= p.sigla_provincia %>) · <%= p.codice_ministeriale %>
@@ -21,23 +29,19 @@
         <select class="input input--select txt-small" data-frame-src-target="select" aria-label="Scegli scuola predecessore">
           <option value="">Scegli predecessore…</option>
           <% m.candidati.each do |s| %>
+            <% n_classi, sezioni = panoramica.classi_sezioni(s) %>
             <option value="<%= new_controllo_adozioni_promozione_path(codicescuola: s.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id) %>">
               <%= s.denominazione %> — <%= s.comune %> (<%= s.codice_ministeriale %>)
+              · <%= n_classi %> <%= n_classi == 1 ? "classe" : "classi" %><%= " · sez. #{sezioni}" if sezioni %>
             </option>
           <% end %>
         </select>
         <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
       </div>
-    <% else %>
-      <div class="txt-subtle">— nuova scuola —</div>
     <% end %>
   </div>
 
-  <% if p = m.predecessore %>
-    <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
-      <%= link_to "Aggiorna codice",
-            new_controllo_adozioni_promozione_path(codicescuola: p.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id),
-            class: "btn btn--small", data: { turbo_frame: :modal } %>
-    </div>
-  <% end %>
+  <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
+    <span class="txt-subtle">MIUR</span> <strong><%= m.classi.to_i %>/<%= m.adozioni.to_i %></strong>
+  </div>
 <% end %>

@@ -1,44 +1,46 @@
-<% @page_title = "Controllo adozioni" %>
+<% @page_title = "Dashboard - Controllo adozioni" %>
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Controllo adozioni</span>
+    <span class="overflow-ellipsis"><%= @page_title %></span>
   </h1>
 <% end %>
 
-<div class="stats-container">
+<%# Refresh (morph) della dashboard man mano che il fan-out promozioni/cambi codice avanza. %>
+<%= turbo_stream_from Current.account, "controllo_adozioni_dashboard" %>
+
+<div class="stats-container" data-controller="dashboard-filter">
   <% totali = @dashboard.totali %>
+  <% cards = [
+       { metric: "scuole",        label: "scuole con adozioni" },
+       { metric: "promosse",      label: "promosse",       filtro: "promosse",      value_class: "txt-positive" },
+       { metric: "da_promuovere", label: "da promuovere",  filtro: "da_promuovere" },
+       { metric: "mancanti_miur", label: "mancanti MIUR",  filtro: "mancanti_miur", value_class: "txt-negative" },
+       { metric: "anomalie",      label: "con anomalie",   filtro: "anomalie" },
+       { metric: "codici_nuovi",  label: "codici nuovi" }
+     ] %>
 
   <div class="analytics-summary">
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value"><%= totali[:scuole] %></p>
-      <p class="analytics-summary__label">scuole con adozioni</p>
-    </div>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value txt-positive"><%= totali[:promosse] %></p>
-      <p class="analytics-summary__label">promosse</p>
-    </div>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value"><%= totali[:da_promuovere] %></p>
-      <p class="analytics-summary__label">da promuovere</p>
-    </div>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value txt-negative"><%= totali[:mancanti_miur] %></p>
-      <p class="analytics-summary__label">mancanti MIUR</p>
-    </div>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value"><%= totali[:anomalie] %></p>
-      <p class="analytics-summary__label">con anomalie</p>
-    </div>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value"><%= totali[:codici_nuovi] %></p>
-      <p class="analytics-summary__label">codici nuovi</p>
-    </div>
+    <% cards.each do |c| %>
+      <%= tag.div class: "analytics-summary__card", data: { dashboard_filter_target: "card", metric: c[:metric], filtro: c[:filtro] }.compact do %>
+        <button type="button" class="analytics-summary__toggle" data-action="dashboard-filter#toggle">
+          <p class="analytics-summary__value <%= c[:value_class] %>"><%= totali[c[:metric].to_sym] %></p>
+          <p class="analytics-summary__label"><%= c[:label] %></p>
+        </button>
+        <% if c[:metric] == "codici_nuovi" && totali[:codici_nuovi].positive? %>
+          <%= button_to controllo_adozioni_aggiorna_cambi_codice_path(account_id: params[:account_id]),
+                class: "btn btn--small btn--accent margin-block-start-half",
+                data: { turbo_confirm: "Aggiornare tutti i cambi codice con predecessore suggerito, in tutte le province?" } do %>
+            Promuovi i match
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 
   <p class="txt-subtle txt-small margin-block-end">
     Snapshot MIUR <%= @dashboard.anno %> · <%= @dashboard.righe.size %> province.
-    Apri una provincia per la vista operativa (promozioni, cambi codice, anomalie).
+    Clicca una card per filtrare le province, poi apri quella che ti serve.
   </p>
 
   <section class="margin-block-end">
@@ -57,9 +59,12 @@
       </thead>
       <tbody>
         <% @dashboard.righe.each do |r| %>
-          <tr>
+          <% counts = { scuole: r.scuole, promosse: r.promosse, da_promuovere: r.da_promuovere,
+                        mancanti_miur: r.mancanti_miur, anomalie: r.anomalie, codici_nuovi: r.codici_nuovi } %>
+          <tr data-dashboard-filter-target="row" data-counts="<%= counts.to_json %>">
             <td class="txt-start">
-              <%= link_to r.provincia, controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
+              <% base = controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
+              <%= link_to r.provincia, base, data: { dashboard_filter_target: "provinciaLink", base_href: base } %>
             </td>
             <td class="txt-end"><%= r.scuole %></td>
             <td class="txt-end">

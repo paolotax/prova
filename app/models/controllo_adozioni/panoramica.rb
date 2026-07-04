@@ -18,8 +18,18 @@ module ControlloAdozioni
       def anomalie?      = anomalie_count.to_i.positive?
     end
 
+    # tipo: :match (predecessore certo) | :suggerimento (candidati da scegliere) | :nuova
     Mancante = Struct.new(:codice, :denominazione, :comune, :provincia, :predecessore, :candidati,
-                          keyword_init: true)
+                          :classi, :adozioni, keyword_init: true) do
+      def tipo
+        if predecessore        then :match
+        elsif candidati.present? then :suggerimento
+        else :nuova
+        end
+      end
+    end
+
+    ORDINE_TIPO = { match: 0, suggerimento: 1, nuova: 2 }.freeze
 
     def initialize(account:, scuole: nil, provincia: nil)
       @account = account
@@ -49,6 +59,12 @@ module ControlloAdozioni
 
     def cambi_codice
       @cambi_codice ||= build_cambi_codice
+    end
+
+    # [n_classi_attive, "A/B"] di una scuola candidata predecessore (bulk in build_cambi_codice).
+    def classi_sezioni(scuola)
+      cambi_codice
+      (@classi_sezioni || {}).fetch(scuola.id, [0, nil])
     end
 
     def promuovibili_count = promuovibili_codici.size
@@ -108,16 +124,17 @@ module ControlloAdozioni
 
     # Conteggi da new_adozioni per codicescuola: [classi_distinte, righe_daacquist]
     def new_counts
-      @new_counts ||= begin
-        codici = scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
-        return {} if codici.empty?
+      @new_counts ||= conta_miur(scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale))
+    end
 
-        NewAdozione.where(codicescuola: codici).group(:codicescuola).pluck(
-          :codicescuola,
-          Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,''))"),
-          Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,'') || '|' || COALESCE(codiceisbn,'')) FILTER (WHERE daacquist ILIKE 'S%')")
-        ).each_with_object({}) { |(cod, cl, ad), h| h[cod] = [cl.to_i, ad.to_i] }
-      end
+    def conta_miur(codici)
+      return {} if codici.empty?
+
+      NewAdozione.where(codicescuola: codici).group(:codicescuola).pluck(
+        :codicescuola,
+        Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,''))"),
+        Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,'') || '|' || COALESCE(codiceisbn,'')) FILTER (WHERE daacquist ILIKE 'S%')")
+      ).each_with_object({}) { |(cod, cl, ad), h| h[cod] = [cl.to_i, ad.to_i] }
     end
 
     # Conteggi correnti dal vivo, allineati alla definizione dei counter cache
@@ -277,7 +294,18 @@ module ControlloAdozioni
                                 candidati: candidati)
         end
       end
-      righe
+
+      conteggi = conta_miur(righe.map(&:codice))
+      righe.each { |m| m.classi, m.adozioni = conteggi.fetch(m.codice, [0, 0]) }
+
+      # Classi attive e sezioni dei candidati predecessore, per riconoscerli nella select.
+      candidati_ids = righe.flat_map { |m| m.candidati.map(&:id) }.uniq
+      @classi_sezioni = Classe.attive.where(scuola_id: candidati_ids).group(:scuola_id).pluck(
+        :scuola_id, Arel.sql("COUNT(*)"),
+        Arel.sql("STRING_AGG(DISTINCT COALESCE(sezione, ''), '/' ORDER BY COALESCE(sezione, ''))")
+      ).each_with_object({}) { |(id, n, sez), h| h[id] = [n.to_i, sez.presence] }
+
+      righe.sort_by { |m| [ORDINE_TIPO.fetch(m.tipo), m.provincia.to_s, m.comune.to_s, m.denominazione.to_s] }
     end
   end
 end
