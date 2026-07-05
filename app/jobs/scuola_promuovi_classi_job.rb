@@ -12,7 +12,6 @@ class ScuolaPromuoviClassiJob < ApplicationJob
 
   RIEPILOGHI = {
     "controllo_adozioni_promuovi_tutte" => "controllo_adozioni/promuovi_tutte",
-    "controllo_adozioni_filtri"         => "controllo_adozioni/filtri",
     "controllo_adozioni_cambi"          => "controllo_adozioni/cambi_codice"
   }.freeze
 

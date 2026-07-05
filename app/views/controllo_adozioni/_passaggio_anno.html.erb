@@ -1,0 +1,38 @@
+<%# Sequenza guidata del passaggio anno: 4 step con stato derivato dai contatori
+    (ControlloAdozioni::PassaggioAnno). Con provincia i job partono scoped. %>
+<% if passaggio.disponibile? %>
+  <section class="passaggio-anno margin-block-end">
+    <h2 class="txt-medium">
+      Passaggio anno <%= anno_scolastico_label(passaggio.anno) %><%= " · #{provincia}" if provincia %>
+    </h2>
+    <ol class="passaggio-anno__steps">
+      <% passaggio.steps.each do |step| %>
+        <li class="passaggio-anno__step <%= "passaggio-anno__step--done" if step.done? %>">
+          <span class="passaggio-anno__numero"><%= step.done? ? "✓" : step.numero %></span>
+          <p class="passaggio-anno__value"><%= step.count %></p>
+          <p class="passaggio-anno__label"><%= step.titolo %></p>
+          <p class="passaggio-anno__hint txt-x-small txt-subtle"><%= step.descrizione %></p>
+          <% if step.azionabile? %>
+            <%= button_to send("controllo_adozioni_#{step.job}_path", account_id: account_id, provincia: provincia),
+                  class: "btn btn--small btn--accent",
+                  data: { turbo_confirm: "#{step.titolo} (#{step.count})#{" — #{provincia}" if provincia}: avviare?" } do %>
+              Avvia
+            <% end %>
+          <% elsif step.key == :rifinitura %>
+            <div class="flex gap-half flex-wrap">
+              <% if step.count.positive? %>
+                <%= link_to "Vedi anomalie",
+                      controllo_adozioni_index_path(account_id: account_id, provincia: provincia, filtro: "anomalie"),
+                      class: "btn btn--small" %>
+              <% end %>
+              <%= button_to "Ricalcola",
+                    controllo_adozioni_ricalcola_anomalie_path(account_id: account_id),
+                    class: "btn btn--small",
+                    data: { turbo_confirm: "Ricostruire tutte le anomalie dallo snapshot MIUR corrente? Il ricalcolo è globale, non solo per questo account." } %>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+<% end %>

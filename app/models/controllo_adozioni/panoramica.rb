@@ -82,20 +82,7 @@ module ControlloAdozioni
       end
     end
 
-    def conteggi_stati
-      @conteggi_stati ||= {
-        "promosse"      => righe_tutte.count(&:promossa?),
-        "da_promuovere" => righe_tutte.count(&:promuovibile?),
-        "mancanti_miur" => righe_tutte.count(&:mancante_miur?),
-        "anomalie"      => righe_tutte.count(&:anomalie?)
-      }
-    end
-
     private
-
-    def righe_tutte
-      @righe_tutte ||= gruppi.flat_map { |g| g[:scuole] }.map { |s| riga(s) }
-    end
 
     def match_filtro?(r, filtro)
       case filtro

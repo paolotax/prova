@@ -17,6 +17,9 @@
       <% end %>
       <span class="txt-medium margin-inline-start-half"><%= @provincia %></span>
     </p>
+
+    <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
+          account_id: params[:account_id], provincia: @provincia %>
   <% end %>
 
   <% if Current.admin? %>
@@ -26,8 +29,12 @@
   <%# ===== Panoramica scuole per direzione ===== %>
   <% if @panoramica.gruppi.empty? %>
     <p class="txt-subtle">Nessuna scuola con adozioni.</p>
-  <% else %>
-    <%= render "controllo_adozioni/filtri", panoramica: @panoramica, account_id: params[:account_id], filtro: @filtro, provincia: @provincia %>
+  <% elsif @filtro.present? && ControlloAdozioni::Panoramica::FILTRI.include?(@filtro) %>
+    <p class="margin-block-end-half">
+      <span class="txt-medium">Filtro: <%= @filtro.humanize %></span>
+      <%= link_to "mostra tutte", controllo_adozioni_index_path(account_id: params[:account_id], provincia: @provincia, filtro: (@provincia ? nil : "tutte")),
+            class: "btn btn--small margin-inline-start-half" %>
+    </p>
   <% end %>
 
   <% if Current.admin? %>

@@ -262,4 +262,60 @@
     color: var(--color-ink-dark);
     font-size: var(--text-small);
   }
+
+  /* Passaggio anno — sequenza guidata (controllo adozioni)
+  /* ------------------------------------------------------------------------ */
+
+  .passaggio-anno__steps {
+    display: grid;
+    gap: var(--inline-space);
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    list-style: none;
+    margin-block: var(--block-space-half);
+    padding: 0;
+  }
+
+  .passaggio-anno__step {
+    background-color: var(--color-ink-lightest);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: var(--block-space-half) var(--inline-space);
+  }
+
+  .passaggio-anno__step--done {
+    opacity: 0.6;
+  }
+
+  .passaggio-anno__step--done .passaggio-anno__numero {
+    background-color: var(--color-positive);
+    color: var(--color-canvas);
+  }
+
+  .passaggio-anno__numero {
+    background-color: var(--color-ink-lighter);
+    block-size: 1.5rem;
+    border-radius: 50%;
+    display: grid;
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    inline-size: 1.5rem;
+    place-items: center;
+  }
+
+  .passaggio-anno__value {
+    font-size: var(--text-x-large);
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .passaggio-anno__label {
+    font-weight: 600;
+  }
+
+  .passaggio-anno__hint {
+    flex-grow: 1;
+  }
 }

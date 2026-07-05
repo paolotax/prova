@@ -7,10 +7,15 @@ class ControlloAdozioniController < ApplicationController
     @filtro = params[:filtro].presence
     @provincia = params[:provincia].presence
 
-    if Current.admin? && @provincia.blank?
+    # Admin con un filtro attivo (link dalle card) e senza provincia: lista scuole
+    # account-wide, non la dashboard.
+    if Current.admin? && @provincia.blank? && @filtro.blank?
       @dashboard = ControlloAdozioni::Dashboard.new(account: Current.account)
+      @passaggio = ControlloAdozioni::PassaggioAnno.new(account: Current.account)
       return render :dashboard
     end
+
+    @passaggio = ControlloAdozioni::PassaggioAnno.new(account: Current.account, provincia: @provincia) if Current.admin?
 
     scuole = Current.scuole
     scuole = scuole.where(provincia: @provincia) if @provincia
@@ -57,6 +62,15 @@ class ControlloAdozioniController < ApplicationController
     AggiungiScuoleNuoveJob.perform_later(Current.account, provincia: provincia)
     redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
                 notice: "Aggiunta delle nuove scuole avviata."
+  end
+
+  # Ricostruisce da zero controllo_anomalie (tabella globale) dallo snapshot MIUR corrente.
+  def ricalcola_anomalie
+    return head(:forbidden) unless Current.admin?
+
+    RicalcolaAnomalieJob.perform_later
+    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
+                notice: "Ricalcolo delle anomalie avviato."
   end
 
   def show

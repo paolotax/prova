@@ -17,6 +17,33 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
+  test "dashboard admin mostra la sequenza passaggio anno" do
+    crea_snapshot_miur
+    get controllo_adozioni_index_path(account_id: @account.id)
+    assert_response :success
+    assert_select ".passaggio-anno"
+    assert_select ".passaggio-anno__step", 4
+  end
+
+  test "drill-down provincia mostra la sequenza scoped" do
+    crea_snapshot_miur
+    get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
+    assert_response :success
+    assert_select ".passaggio-anno"
+    # I job del passaggio sono scoped per provincia; il ricalcolo anomalie e' globale.
+    css_select(".passaggio-anno form").reject { |f| f["action"].include?("ricalcola_anomalie") }.each do |form|
+      assert_includes form["action"], "provincia=MI"
+    end
+  end
+
+  test "member non vede la sequenza passaggio anno" do
+    crea_snapshot_miur
+    sign_in_as(users(:two), @account)
+    get controllo_adozioni_index_path(account_id: @account.id)
+    assert_response :success
+    assert_select ".passaggio-anno", count: 0
+  end
+
   test "index admin senza provincia mostra la dashboard aggregata" do
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
@@ -24,14 +51,35 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "controllo_adozioni-pagination-list", @response.body
   end
 
-  test "dashboard: le card sono cliccabili e le righe portano i conteggi per il filtro JS" do
+  test "dashboard: le card linkano la lista scuole account-wide filtrata" do
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
-    assert_select "[data-controller='dashboard-filter']"
-    assert_select ".analytics-summary__card[data-metric='da_promuovere'][data-filtro='da_promuovere']"
-    assert_select ".analytics-summary__card[data-metric='scuole']:not([data-filtro])"
-    assert_select "tr[data-dashboard-filter-target='row'][data-counts]", minimum: 1
-    assert_select "a[data-dashboard-filter-target='provinciaLink'][data-base-href]", minimum: 1
+    assert_select ".analytics-summary__card", 3
+    assert_select ".analytics-summary a[href*='filtro=tutte']"
+    assert_select ".analytics-summary a[href*='filtro=promosse']"
+    assert_select ".analytics-summary a[href*='filtro=mancanti_miur']"
+  end
+
+  test "admin con filtro e senza provincia vede la lista scuole, non la dashboard" do
+    get controllo_adozioni_index_path(account_id: @account.id, filtro: "tutte")
+    assert_response :success
+    assert_no_match "Per provincia", @response.body
+    assert_match "controllo_adozioni-pagination-list", @response.body
+  end
+
+  test "ricalcola_anomalie accoda il job per l'admin" do
+    assert_enqueued_with(job: RicalcolaAnomalieJob) do
+      post controllo_adozioni_ricalcola_anomalie_path(account_id: @account.id)
+    end
+    assert_redirected_to controllo_adozioni_index_path(account_id: @account.id)
+  end
+
+  test "ricalcola_anomalie vietato ai member" do
+    sign_in_as(users(:two), @account)
+    assert_no_enqueued_jobs only: RicalcolaAnomalieJob do
+      post controllo_adozioni_ricalcola_anomalie_path(account_id: @account.id)
+    end
+    assert_response :forbidden
   end
 
   test "index admin con provincia mostra la panoramica paginata di quella provincia" do
@@ -55,6 +103,13 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  # Snapshot MIUR minimo: rende disponibile la sequenza passaggio anno.
+  def crea_snapshot_miur
+    NewScuola.create!(codice_scuola: "MIEE99999X", anno_scolastico: "202627",
+      provincia: "MI", comune: "Milano", denominazione: "PRIMARIA TEST",
+      tipo_scuola: "SCUOLA PRIMARIA")
+  end
 
   def sign_in_as(user, account)
     session = user.sessions.create!(account: account)

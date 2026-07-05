@@ -558,6 +558,9 @@ namespace :import do
       # Le matview di mercato aggregano anche new_adozioni: refresh async
       # così AdozioniAnalytics vede subito la campagna appena importata.
       RefreshMercatoNazionaleRollupJob.perform_later
+
+      # Le anomalie derivano da new_adozioni: ricostruzione completa sul nuovo snapshot.
+      RicalcolaAnomalieJob.perform_later
     ensure
       conn.execute("SELECT pg_advisory_unlock(#{ADOZIONI_LOCK_KEY})")
     end

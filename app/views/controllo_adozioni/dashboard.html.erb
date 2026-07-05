@@ -9,38 +9,33 @@
 <%# Refresh (morph) della dashboard man mano che il fan-out promozioni/cambi codice avanza. %>
 <%= turbo_stream_from Current.account, "controllo_adozioni_dashboard" %>
 
-<div class="stats-container" data-controller="dashboard-filter">
+<div class="stats-container">
+  <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
+        account_id: params[:account_id], provincia: nil %>
+
   <% totali = @dashboard.totali %>
+  <%# "Da promuovere", "codici nuovi" e "anomalie" vivono negli step del passaggio anno. %>
   <% cards = [
-       { metric: "scuole",        label: "scuole con adozioni" },
+       { metric: "scuole",        label: "scuole con adozioni", filtro: "tutte" },
        { metric: "promosse",      label: "promosse",       filtro: "promosse",      value_class: "txt-positive" },
-       { metric: "da_promuovere", label: "da promuovere",  filtro: "da_promuovere" },
-       { metric: "mancanti_miur", label: "mancanti MIUR",  filtro: "mancanti_miur", value_class: "txt-negative" },
-       { metric: "anomalie",      label: "con anomalie",   filtro: "anomalie" },
-       { metric: "codici_nuovi",  label: "codici nuovi" }
+       { metric: "mancanti_miur", label: "mancanti MIUR",  filtro: "mancanti_miur", value_class: "txt-negative" }
      ] %>
 
   <div class="analytics-summary">
     <% cards.each do |c| %>
-      <%= tag.div class: "analytics-summary__card", data: { dashboard_filter_target: "card", metric: c[:metric], filtro: c[:filtro] }.compact do %>
-        <button type="button" class="analytics-summary__toggle" data-action="dashboard-filter#toggle">
+      <div class="analytics-summary__card">
+        <%= link_to controllo_adozioni_index_path(account_id: params[:account_id], filtro: c[:filtro]),
+              class: "analytics-summary__toggle" do %>
           <p class="analytics-summary__value <%= c[:value_class] %>"><%= totali[c[:metric].to_sym] %></p>
           <p class="analytics-summary__label"><%= c[:label] %></p>
-        </button>
-        <% if c[:metric] == "codici_nuovi" && totali[:codici_nuovi].positive? %>
-          <%= button_to controllo_adozioni_aggiorna_cambi_codice_path(account_id: params[:account_id]),
-                class: "btn btn--small btn--accent margin-block-start-half",
-                data: { turbo_confirm: "Aggiornare tutti i cambi codice con predecessore suggerito, in tutte le province?" } do %>
-            Promuovi i match
-          <% end %>
         <% end %>
-      <% end %>
+      </div>
     <% end %>
   </div>
 
   <p class="txt-subtle txt-small margin-block-end">
     Snapshot MIUR <%= @dashboard.anno %> · <%= @dashboard.righe.size %> province.
-    Clicca una card per filtrare le province, poi apri quella che ti serve.
+    Clicca una card per vedere le scuole, o una provincia per il dettaglio.
   </p>
 
   <section class="margin-block-end">
@@ -52,41 +47,53 @@
           <th class="txt-end">Scuole</th>
           <th class="txt-end">Promosse</th>
           <th class="txt-end">Da promuovere</th>
+          <th class="txt-end">Codici nuovi</th>
           <th class="txt-end">Mancanti MIUR</th>
           <th class="txt-end">Anomalie</th>
-          <th class="txt-end">Codici nuovi</th>
         </tr>
       </thead>
       <tbody>
         <% @dashboard.righe.each do |r| %>
-          <% counts = { scuole: r.scuole, promosse: r.promosse, da_promuovere: r.da_promuovere,
-                        mancanti_miur: r.mancanti_miur, anomalie: r.anomalie, codici_nuovi: r.codici_nuovi } %>
-          <tr data-dashboard-filter-target="row" data-counts="<%= counts.to_json %>">
+          <tr>
             <td class="txt-start">
-              <% base = controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
-              <%= link_to r.provincia, base, data: { dashboard_filter_target: "provinciaLink", base_href: base } %>
+              <%= link_to r.provincia, controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
             </td>
             <td class="txt-end"><%= r.scuole %></td>
             <td class="txt-end">
-              <%= link_to_if r.promosse.positive?, r.promosse,
-                    controllo_adozioni_index_path(provincia: r.provincia, filtro: "promosse", account_id: params[:account_id]) %>
+              <% if r.promosse.positive? %>
+                <%= link_to r.promosse, controllo_adozioni_index_path(provincia: r.provincia, filtro: "promosse", account_id: params[:account_id]) %>
+              <% else %>
+                &ndash;
+              <% end %>
             </td>
             <td class="txt-end">
-              <%= link_to_if r.da_promuovere.positive?, r.da_promuovere,
-                    controllo_adozioni_index_path(provincia: r.provincia, filtro: "da_promuovere", account_id: params[:account_id]) %>
-            </td>
-            <td class="txt-end">
-              <%= link_to_if r.mancanti_miur.positive?, r.mancanti_miur,
-                    controllo_adozioni_index_path(provincia: r.provincia, filtro: "mancanti_miur", account_id: params[:account_id]) %>
-            </td>
-            <td class="txt-end">
-              <%= link_to_if r.anomalie.positive?, r.anomalie,
-                    controllo_adozioni_index_path(provincia: r.provincia, filtro: "anomalie", account_id: params[:account_id]) %>
+              <% if r.da_promuovere.positive? %>
+                <%= link_to r.da_promuovere, controllo_adozioni_index_path(provincia: r.provincia, filtro: "da_promuovere", account_id: params[:account_id]) %>
+              <% else %>
+                &ndash;
+              <% end %>
             </td>
             <td class="txt-end">
               <%# I cambi codice/nuove scuole si gestiscono nel drill-down della provincia. %>
-              <%= link_to_if r.codici_nuovi.positive?, r.codici_nuovi,
-                    controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
+              <% if r.codici_nuovi.positive? %>
+                <%= link_to r.codici_nuovi, controllo_adozioni_index_path(provincia: r.provincia, account_id: params[:account_id]) %>
+              <% else %>
+                &ndash;
+              <% end %>
+            </td>
+            <td class="txt-end">
+              <% if r.mancanti_miur.positive? %>
+                <%= link_to r.mancanti_miur, controllo_adozioni_index_path(provincia: r.provincia, filtro: "mancanti_miur", account_id: params[:account_id]) %>
+              <% else %>
+                &ndash;
+              <% end %>
+            </td>
+            <td class="txt-end">
+              <% if r.anomalie.positive? %>
+                <%= link_to r.anomalie, controllo_adozioni_index_path(provincia: r.provincia, filtro: "anomalie", account_id: params[:account_id]) %>
+              <% else %>
+                &ndash;
+              <% end %>
             </td>
           </tr>
         <% end %>
@@ -97,9 +104,9 @@
           <td class="txt-end"><%= totali[:scuole] %></td>
           <td class="txt-end"><%= totali[:promosse] %></td>
           <td class="txt-end"><%= totali[:da_promuovere] %></td>
+          <td class="txt-end"><%= totali[:codici_nuovi] %></td>
           <td class="txt-end"><%= totali[:mancanti_miur] %></td>
           <td class="txt-end"><%= totali[:anomalie] %></td>
-          <td class="txt-end"><%= totali[:codici_nuovi] %></td>
         </tr>
       </tfoot>
     </table>
