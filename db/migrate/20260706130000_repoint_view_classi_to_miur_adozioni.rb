@@ -1,21 +1,17 @@
-# Task 17 (Fase 1 MIUR): le viste ponte new_adozioni/new_scuole hanno esaurito
-# il loro scopo — tutti i consumer (produzione + test) leggono ormai
-# Miur::Adozione/Miur::Scuola. Le rimuoviamo.
+# Fase 1 MIUR: ripunta view_classi (materializzata) direttamente su
+# miur_adozioni WHERE anno_scolastico='202526', invece che sulla vista ponte
+# import_adozioni — rimuove un livello di indirezione. Contenuto, colonne e
+# indici restano identici (import_adozioni e' esattamente miur_adozioni della
+# partizione 202526).
 #
-# import_adozioni RESTA (scelta A): Adozione e AdozioneComunicata mantengono
-# belongs_to :import_adozione (id-only, risolto nella partizione 202526 dove
-# gli id sono preservati) e differenze_con_import_adozione legge le colonne
-# UPPERCASE via l'associazione. La rimozione completa + il repunta delle
-# associazioni su Miur::Adozione (PK composita) e' rinviata alla Fase 2.
-#
-# view_classi (materializzata) veniva ricostruita leggendo la vista ponte
-# import_adozioni: la ripuntiamo direttamente su miur_adozioni WHERE
-# anno_scolastico='202526', rimuovendo un livello di indirezione. Contenuto,
-# colonne e indici restano identici (import_adozioni e' esattamente
-# miur_adozioni della partizione 202526).
-class DropNewBridgeViews < ActiveRecord::Migration[8.1]
+# NOTA (2026-07-06, revisione): questa migrazione NON droppa piu' le viste
+# ponte new_adozioni/new_scuole. Non sono impalcatura interna: sono
+# l'interfaccia pubblica su cui gli utenti scrivono l'SQL a mano delle Stat
+# (classifiche). 49/60 stat referenziano new_adozioni, 41 new_scuole. Restano
+# permanenti, come import_adozioni. Il codice applicativo legge Miur::*; le
+# tre viste ponte servono solo alle query utente.
+class RepointViewClassiToMiurAdozioni < ActiveRecord::Migration[8.1]
   def up
-    # 1. Ripunta view_classi su miur_adozioni (stessa definizione, stessi indici).
     execute "DROP MATERIALIZED VIEW view_classi"
     execute <<~SQL
       CREATE MATERIALIZED VIEW view_classi AS
@@ -45,10 +41,6 @@ class DropNewBridgeViews < ActiveRecord::Migration[8.1]
     SQL
     execute "CREATE INDEX index_view_classi_on_codice_ministeriale ON view_classi (codice_ministeriale)"
     execute "CREATE INDEX index_view_classi_on_provincia ON view_classi (provincia)"
-
-    # 2. Drop viste ponte non piu' usate.
-    execute "DROP VIEW new_adozioni"
-    execute "DROP VIEW new_scuole"
   end
 
   def down

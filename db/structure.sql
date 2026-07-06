@@ -2598,6 +2598,68 @@ ALTER SEQUENCE public.motor_tags_id_seq OWNED BY public.motor_tags.id;
 
 
 --
+-- Name: new_adozioni; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.new_adozioni AS
+ SELECT miur_adozioni.id,
+    miur_adozioni.anno_scolastico,
+    miur_adozioni.annocorso,
+    miur_adozioni.autori,
+    miur_adozioni.codiceisbn,
+    miur_adozioni.codicescuola,
+    miur_adozioni.combinazione,
+    miur_adozioni.consigliato,
+    miur_adozioni.daacquist,
+    miur_adozioni.disciplina,
+    miur_adozioni.editore,
+    miur_adozioni.nuovaadoz,
+    miur_adozioni.prezzo,
+    miur_adozioni.sezioneanno,
+    miur_adozioni.sottotitolo,
+    miur_adozioni.tipogradoscuola,
+    miur_adozioni.titolo,
+    miur_adozioni.volume,
+    miur_adozioni.import_scuola_id
+   FROM public.miur_adozioni
+  WHERE ((miur_adozioni.anno_scolastico)::text = COALESCE(( SELECT max((miur_scuole.anno_scolastico)::text) AS max
+           FROM public.miur_scuole), ( SELECT max((miur_adozioni_1.anno_scolastico)::text) AS max
+           FROM public.miur_adozioni miur_adozioni_1)));
+
+
+--
+-- Name: new_scuole; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.new_scuole AS
+ SELECT miur_scuole.id,
+    miur_scuole.anno_scolastico,
+    miur_scuole.area_geografica,
+    miur_scuole.cap,
+    miur_scuole.codice_comune,
+    miur_scuole.codice_istituto_riferimento,
+    miur_scuole.codice_scuola,
+    miur_scuole.comune,
+    miur_scuole.denominazione,
+    miur_scuole.denominazione_istituto_riferimento,
+    miur_scuole.descrizione_caratteristica,
+    miur_scuole.email,
+    miur_scuole.indicazione_sede_direttivo,
+    miur_scuole.indicazione_sede_omnicomprensivo,
+    miur_scuole.indirizzo,
+    miur_scuole.pec,
+    miur_scuole.provincia,
+    miur_scuole.regione,
+    miur_scuole.sede_scolastica,
+    miur_scuole.sito_web,
+    miur_scuole.tipo_scuola,
+    miur_scuole.import_scuola_id
+   FROM public.miur_scuole
+  WHERE ((miur_scuole.anno_scolastico)::text = ( SELECT max((miur_scuole_1.anno_scolastico)::text) AS max
+           FROM public.miur_scuole miur_scuole_1));
+
+
+--
 -- Name: not_nows; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3698,6 +3760,20 @@ ALTER TABLE ONLY public.motor_taggable_tags ALTER COLUMN id SET DEFAULT nextval(
 --
 
 ALTER TABLE ONLY public.motor_tags ALTER COLUMN id SET DEFAULT nextval('public.motor_tags_id_seq'::regclass);
+
+
+--
+-- Name: new_adozioni id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.new_adozioni ALTER COLUMN id SET DEFAULT nextval('public.miur_adozioni_id_seq'::regclass);
+
+
+--
+-- Name: new_scuole id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.new_scuole ALTER COLUMN id SET DEFAULT nextval('public.miur_scuole_id_seq'::regclass);
 
 
 --
