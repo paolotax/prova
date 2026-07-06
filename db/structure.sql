@@ -1907,9 +1907,9 @@ CREATE TABLE public.miur_import_runs (
     dataset character varying DEFAULT 'adozioni'::character varying NOT NULL,
     righe_totali integer,
     delta_righe integer,
-    regioni_aggiornate jsonb DEFAULT '[]'::jsonb,
-    regioni_stale jsonb DEFAULT '[]'::jsonb,
-    regioni_fallite jsonb DEFAULT '[]'::jsonb,
+    regioni_aggiornate jsonb DEFAULT '[]'::jsonb NOT NULL,
+    regioni_stale jsonb DEFAULT '[]'::jsonb NOT NULL,
+    regioni_fallite jsonb DEFAULT '[]'::jsonb NOT NULL,
     completed_at timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -8187,6 +8187,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260706104439'),
 ('20260706103351'),
 ('20260704080000'),
 ('20260630071728'),

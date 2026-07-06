@@ -1,0 +1,88 @@
+# test/fixtures/miur/adozioni.yml
+# Adozioni MIUR sulla tabella partizionata miur_adozioni.
+# anno_scolastico SEMPRE esplicito: deve corrispondere a una partizione
+# esistente ('202425', '202526', '202627'), altrimenti PG solleva
+# "no partition of relation found".
+
+# == Schema Information
+#
+# Table name: miur_adozioni
+#
+#  id               :bigint           not null, primary key
+#  anno_scolastico  :string           not null, primary key
+#  annocorso        :string
+#  autori           :string
+#  codiceisbn       :string
+#  codicescuola     :string
+#  combinazione     :string
+#  consigliato      :string
+#  daacquist        :string
+#  disciplina       :string
+#  editore          :string
+#  nuovaadoz        :string
+#  prezzo           :string
+#  sezioneanno      :string
+#  sottotitolo      :string
+#  tipogradoscuola  :string
+#  titolo           :string
+#  volume           :string
+#  import_scuola_id :bigint
+#
+# Indexes
+#
+#  idx_miur_adoz_ee                (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
+#  idx_miur_adozioni_codicescuola  (codicescuola)
+#  idx_miur_adozioni_disc_anno_tg  (disciplina,annocorso,tipogradoscuola)
+#  index_miur_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn,disciplina) UNIQUE
+#
+prima_a_matematica:
+  anno_scolastico: "202627"
+  codicescuola: "MIIC123456"
+  annocorso: "1"
+  sezioneanno: "A"
+  combinazione: "MQ"
+  codiceisbn: "9788812345678"
+  titolo: "Matematica Facile 1"
+  editore: "Editore Test"
+  autori: "Rossi M."
+  disciplina: "MATEMATICA"
+  prezzo: "12,50"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"
+
+pa_anno_1:
+  anno_scolastico: "202627"
+  codicescuola: "BOEE000001"
+  annocorso: "1"
+  sezioneanno: "A"
+  combinazione: "MQ"
+  codiceisbn: "9788800000101"
+  titolo: "Sussidiario Prima"
+  editore: "Editore Test"
+  autori: "Verdi A."
+  disciplina: "ITALIANO"
+  prezzo: "10,00"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"
+
+# Stessa classe dell'anno precedente: verifica che per_anno separi le partizioni.
+pa_anno_1_precedente:
+  anno_scolastico: "202526"
+  codicescuola: "BOEE000001"
+  annocorso: "1"
+  sezioneanno: "A"
+  combinazione: "MQ"
+  codiceisbn: "9788800000100"
+  titolo: "Sussidiario Prima (ed. precedente)"
+  editore: "Editore Test"
+  autori: "Verdi A."
+  disciplina: "ITALIANO"
+  prezzo: "9,50"
+  daacquist: "Si"
+  nuovaadoz: "No"
+  consigliato: "No"
+  tipogradoscuola: "EE"

@@ -62,6 +62,8 @@ class CreateMiurTables < ActiveRecord::Migration[8.1]
 
   def down
     drop_table :miur_import_runs
+    # CASCADE elimina silenziosamente anche gli oggetti dipendenti creati da
+    # migration successive (matview, bridge view) in caso di rollback out-of-order.
     execute "DROP TABLE miur_adozioni CASCADE"
     execute "DROP TABLE miur_scuole CASCADE"
   end
