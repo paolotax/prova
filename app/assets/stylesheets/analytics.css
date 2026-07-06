@@ -318,4 +318,39 @@
   .passaggio-anno__hint {
     flex-grow: 1;
   }
+
+  /* Anteprima adozioni MIUR
+  /* ------------------------------------------------------------------------ */
+
+  .anteprima-adozioni__intestazione {
+    background-color: var(--color-ink-lightest);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--block-space-half);
+    justify-content: space-between;
+    margin-block-end: var(--block-space);
+    padding: var(--block-space-half) var(--inline-space);
+  }
+
+  .anteprima-adozioni__classe {
+    margin-block-end: var(--block-space);
+  }
+
+  .anteprima-adozioni__table {
+    border-collapse: collapse;
+  }
+
+  .anteprima-adozioni__table th,
+  .anteprima-adozioni__table td {
+    border: 1px solid var(--color-border);
+    padding: 0.35rem 0.6rem;
+  }
+
+  .anteprima-adozioni__table th {
+    background-color: var(--color-ink-lightest);
+    font-size: var(--text-x-small);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 }

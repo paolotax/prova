@@ -6,9 +6,9 @@
       Passaggio anno <%= anno_scolastico_label(passaggio.anno) %><%= " · #{provincia}" if provincia %>
     </h2>
     <ol class="passaggio-anno__steps">
-      <% passaggio.steps.each do |step| %>
-        <li class="passaggio-anno__step <%= "passaggio-anno__step--done" if step.done? %>">
-          <span class="passaggio-anno__numero"><%= step.done? ? "✓" : step.numero %></span>
+      <% passaggio.steps.reject(&:done?).each do |step| %>
+        <li class="passaggio-anno__step">
+          <span class="passaggio-anno__numero"><%= step.numero %></span>
           <p class="passaggio-anno__value"><%= step.count %></p>
           <p class="passaggio-anno__label"><%= step.titolo %></p>
           <p class="passaggio-anno__hint txt-x-small txt-subtle"><%= step.descrizione %></p>

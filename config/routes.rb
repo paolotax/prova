@@ -380,6 +380,7 @@ Rails.application.routes.draw do
     post 'controllo_adozioni/aggiorna_cambi_codice', to: 'controllo_adozioni#aggiorna_cambi_codice', as: :controllo_adozioni_aggiorna_cambi_codice
     post 'controllo_adozioni/aggiungi_scuole_nuove', to: 'controllo_adozioni#aggiungi_scuole_nuove', as: :controllo_adozioni_aggiungi_scuole_nuove
     post 'controllo_adozioni/ricalcola_anomalie', to: 'controllo_adozioni#ricalcola_anomalie', as: :controllo_adozioni_ricalcola_anomalie
+    get 'controllo_adozioni/:codicescuola/anteprima', to: 'controllo_adozioni#anteprima', as: :controllo_adozioni_anteprima
     get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
     scope module: "controllo_adozioni" do
       resource :promozione, only: %i[new create], controller: "promozioni",

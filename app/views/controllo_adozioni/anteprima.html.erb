@@ -1,0 +1,84 @@
+<% @page_title = "Anteprima adozioni MIUR" %>
+
+<% content_for :header do %>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Anteprima adozioni MIUR · <%= @anteprima.codicescuola %></span>
+  </h1>
+<% end %>
+
+<div class="stats-container">
+  <p class="margin-block-end-half">
+    <%= link_to controllo_adozioni_path(@anteprima.codicescuola, account_id: params[:account_id]),
+          class: "btn btn--small", data: { turbo_frame: "_top" } do %>
+      ← Torna alla scuola
+    <% end %>
+  </p>
+
+  <% if @anteprima.disponibile? %>
+    <% intestazione = @anteprima.intestazione %>
+    <div class="anteprima-adozioni__intestazione">
+      <div>
+        <p class="txt-medium font-weight-black"><%= intestazione.denominazione.presence || "—" %></p>
+        <% intestazione.indirizzo_formattato.each do |riga| %>
+          <p class="txt-subtle"><%= riga %></p>
+        <% end %>
+      </div>
+      <div class="txt-align-end">
+        <p class="txt-subtle">Tipo Scuola: <%= intestazione.tipo_scuola %></p>
+        <p class="txt-subtle">Anno Scolastico <%= anno_scolastico_label(intestazione.anno_scolastico) %></p>
+        <p class="txt-subtle txt-x-small"><%= @anteprima.fonte_label %></p>
+      </div>
+    </div>
+
+    <% @anteprima.classi.each do |classe| %>
+      <section class="anteprima-adozioni__classe">
+        <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">
+          Classe: <%= classe.annocorso %> <%= classe.sezioneanno %> · Corso: <%= classe.combinazione %>
+        </h3>
+        <div class="overflow-x">
+          <table class="anteprima-adozioni__table full-width">
+            <thead>
+              <tr>
+                <th class="txt-left">Materia / Disciplina</th>
+                <th class="txt-left">Codice Volume</th>
+                <th class="txt-left">Autore / Curatore / Traduttore</th>
+                <th class="txt-left">Titolo / Sottotitolo</th>
+                <th class="txt-left">Vol.</th>
+                <th class="txt-left">Editore</th>
+                <th class="txt-align-end">Prezzo</th>
+                <th class="txt-align-center">Nuova Adoz.</th>
+                <th class="txt-align-center">Da Acq.</th>
+                <th class="txt-align-center">Cons.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% classe.righe.each do |riga| %>
+                <tr>
+                  <td class="txt-small"><%= riga.disciplina %></td>
+                  <td class="txt-small"><%= riga.codice_isbn %></td>
+                  <td class="txt-small"><%= riga.autori %></td>
+                  <td class="txt-small">
+                    <%= riga.titolo %>
+                    <% if riga.sottotitolo.present? %>
+                      <div class="txt-subtle txt-x-small"><%= riga.sottotitolo %></div>
+                    <% end %>
+                  </td>
+                  <td class="txt-small"><%= riga.volume %></td>
+                  <td class="txt-small"><%= riga.editore %></td>
+                  <td class="txt-small txt-align-end">
+                    <%= number_to_currency(riga.prezzo, unit: "€", format: "%n %u") if riga.prezzo %>
+                  </td>
+                  <td class="txt-small txt-align-center"><%= riga.nuova_adozione %></td>
+                  <td class="txt-small txt-align-center"><%= riga.da_acquistare %></td>
+                  <td class="txt-small txt-align-center"><%= riga.consigliato %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <% end %>
+  <% else %>
+    <p class="txt-subtle">Nessuna adozione trovata per questa scuola (<%= @anteprima.fonte_label %>).</p>
+  <% end %>
+</div>

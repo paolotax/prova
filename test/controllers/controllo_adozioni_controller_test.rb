@@ -17,19 +17,42 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
-  test "dashboard admin mostra la sequenza passaggio anno" do
+  test "dashboard admin mostra solo gli step con contatore positivo" do
+    crea_snapshot_miur
+    # Anomalia sulla scuola reale dell'account (non su un codice MIUR estraneo):
+    # fa salire a 1 il contatore dello step 4, gli altri restano a 0 e spariscono.
+    ControlloAnomalia.create!(
+      codicescuola: "MIIC123456", tipo: "doppione", disciplina: "MATEMATICA",
+      denominazione: "I.C. Leonardo da Vinci", provincia: "MI", comune: "Milano",
+      annocorso: "1", sezioneanno: "1A", combinazione: "X"
+    )
+    get controllo_adozioni_index_path(account_id: @account.id)
+    assert_response :success
+    assert_select ".passaggio-anno"
+    assert_select ".passaggio-anno__step", 1
+    assert_match "Rifinitura manuale", @response.body
+    assert_no_match "Aggiungi le scuole nuove", @response.body
+  end
+
+  test "dashboard admin senza contatori positivi non mostra nessuno step" do
     crea_snapshot_miur
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
     assert_select ".passaggio-anno"
-    assert_select ".passaggio-anno__step", 4
+    assert_select ".passaggio-anno__step", 0
   end
 
   test "drill-down provincia mostra la sequenza scoped" do
     crea_snapshot_miur
+    ControlloAnomalia.create!(
+      codicescuola: "MIIC123456", tipo: "doppione", disciplina: "MATEMATICA",
+      denominazione: "I.C. Leonardo da Vinci", provincia: "MI", comune: "Milano",
+      annocorso: "1", sezioneanno: "1A", combinazione: "X"
+    )
     get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
     assert_response :success
     assert_select ".passaggio-anno"
+    assert_select ".passaggio-anno__step", 1
     # I job del passaggio sono scoped per provincia; il ricalcolo anomalie e' globale.
     css_select(".passaggio-anno form").reject { |f| f["action"].include?("ricalcola_anomalie") }.each do |form|
       assert_includes form["action"], "provincia=MI"
@@ -94,6 +117,29 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
     assert_no_match "Per provincia", @response.body
+  end
+
+  test "anteprima mostra le adozioni new_adozioni raggruppate per classe" do
+    NewScuola.create!(codice_scuola: "MIEE12345", anno_scolastico: "202627",
+      denominazione: "PRIMARIA TEST", indirizzo: "VIA TEST, 1", cap: "20100",
+      comune: "Milano", tipo_scuola: "SCUOLA PRIMARIA")
+    NewAdozione.create!(codicescuola: "MIEE12345", anno_scolastico: "202627", tipogradoscuola: "EE",
+      annocorso: "1", sezioneanno: "A", combinazione: "TEMPO PIENO",
+      disciplina: "LINGUA INGLESE", codiceisbn: "9788847251540", autori: "AA VV",
+      titolo: "HELLO WORLD GOLD 1", editore: "CELTIC PUBLISHING", prezzo: "4,08",
+      nuovaadoz: "Si", daacquist: "Si", consigliato: "No")
+
+    get controllo_adozioni_anteprima_path("MIEE12345", account_id: @account.id, fonte: "new")
+    assert_response :success
+    assert_match "PRIMARIA TEST", @response.body
+    assert_match "LINGUA INGLESE", @response.body
+    assert_match "HELLO WORLD GOLD 1", @response.body
+  end
+
+  test "anteprima senza dati mostra il messaggio di assenza" do
+    get controllo_adozioni_anteprima_path("MIEE00000", account_id: @account.id, fonte: "new")
+    assert_response :success
+    assert_match "Nessuna adozione trovata", @response.body
   end
 
   test "show elenca le anomalie della scuola" do

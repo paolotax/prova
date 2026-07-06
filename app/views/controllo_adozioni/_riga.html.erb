@@ -20,10 +20,11 @@
       style: "color: inherit;", 
       data: { turbo_frame:"_top" } do %>
       <div class="overflow-ellipsis"><strong><%= scuola.denominazione.presence || "—" %></strong></div>
-      <div class="txt-subtle overflow-ellipsis">
-        <%= scuola.comune %> (<%= scuola.sigla_provincia %>) · <%= scuola.codice_ministeriale %>
-      </div>
     <% end %>
+    <div class="txt-subtle overflow-ellipsis">
+      <%= scuola.comune %> (<%= scuola.sigla_provincia %>) · <%= scuola.codice_ministeriale %>
+    </div>
+    
     <% if riga.anomalie? %>
       <% riga.anomalie_tipi.split(",").each do |tipo| %>
         <%= link_to tipo, controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id), 
@@ -34,7 +35,14 @@
   </div>
 
   <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
-    <span class="txt-subtle">Corr <%= riga.correnti_classi %>/<%= riga.correnti_adozioni %></span>
-    <span <%= 'style="color: var(--color-negative);"'.html_safe if riga.disallineata? %>>· MIUR <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong></span>
+    <span class="txt-subtle">Scagnozz <%= riga.correnti_classi %>/<%= riga.correnti_adozioni %></span>
+    <%= link_to controllo_adozioni_anteprima_path(scuola.codice_ministeriale, fonte: "new", account_id: scuola.account_id),
+          style: (riga.disallineata? ? "color: var(--color-negative);" : nil),
+          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (anno nuovo MIUR)" } do %>
+      · 2026/27 <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong>
+    <% end %>
+    <%= link_to "2025/26", controllo_adozioni_anteprima_path(scuola.codice_ministeriale, fonte: "import", account_id: scuola.account_id),
+          class: "txt-x-small txt-subtle", style: "margin-inline-start: .25rem;",
+          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (anno corrente importato)" } %>
   </div>
 <% end %>

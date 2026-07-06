@@ -73,6 +73,13 @@ class ControlloAdozioniController < ApplicationController
                 notice: "Ricalcolo delle anomalie avviato."
   end
 
+  # Anteprima delle adozioni MIUR per classe, nel formato del PDF ufficiale
+  # "Elenco dei libri di testo adottati o consigliati". fonte: "new" (new_adozioni,
+  # anno nuovo) o "import" (import_adozioni, anno corrente gia' importato).
+  def anteprima
+    @anteprima = ControlloAdozioni::Anteprima.new(codicescuola: params[:codicescuola], fonte: params[:fonte])
+  end
+
   def show
     @codicescuola = params[:codicescuola]
     @anomalie = ControlloAnomalia.per_scuola(@codicescuola)
