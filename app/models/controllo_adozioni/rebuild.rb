@@ -29,9 +29,11 @@ module ControlloAdozioni
     def run!
       conn = ControlloAnomalia.connection
       # Anno di campagna MIUR corrente ("202627"), formato partizione di
-      # miur_adozioni/miur_scuole. Diverso da @anno_prezzi ("2025/2026"), che
-      # indicizza PrezzoMinisteriale. Le vecchie viste ponte (new_adozioni/
+      # miur_adozioni/miur_scuole. Le vecchie viste ponte (new_adozioni/
       # new_scuole) filtravano questo anno implicitamente: ora e' esplicito.
+      # Nella pipeline standard coincide con @anno_prezzi (PrezzoMinisteriale
+      # e' ormai indicizzato con lo stesso formato MIUR); @anno_prezzi resta
+      # un parametro a se' perche' sovrascrivibile per backfillare un altro anno.
       @anno_miur = Miur.anno_corrente
       @anno = conn.quote(@anno_miur)
       conn.transaction do

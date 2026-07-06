@@ -18,14 +18,8 @@ require "test_helper"
 
 class PrezzoMinisterialeTest < ActiveSupport::TestCase
   setup do
-    NewAdozione.delete_all
+    Miur::Adozione.delete_all
     PrezzoMinisteriale.delete_all
-  end
-
-  test "anno_scolastico_corrente da febbraio in poi e' anno/anno+1" do
-    assert_equal "2026/2027", PrezzoMinisteriale.anno_scolastico_corrente(Date.new(2026, 6, 17))
-    assert_equal "2026/2027", PrezzoMinisteriale.anno_scolastico_corrente(Date.new(2026, 2, 1))
-    assert_equal "2025/2026", PrezzoMinisteriale.anno_scolastico_corrente(Date.new(2026, 1, 15))
   end
 
   test "popola! estrae il prezzo dominante per classe+disciplina" do
@@ -50,15 +44,28 @@ class PrezzoMinisterialeTest < ActiveSupport::TestCase
     assert_equal 0, n
   end
 
+  test "popola! filtra per anno: ignora le adozioni di altri anni" do
+    # 202627 (target): dominante 4,08. 202526 (altro anno): dominante 9,99.
+    150.times { |i| adoz(anno: "202627", sezioneanno: "N#{i}", prezzo: "4,08") }
+    150.times { |i| adoz(anno: "202526", sezioneanno: "O#{i}", prezzo: "9,99") }
+
+    n = PrezzoMinisteriale.popola!(anno: "202627")
+
+    assert_equal 1, n
+    assert_equal 1, PrezzoMinisteriale.where(anno_scolastico: "202627").count
+    assert_equal 0, PrezzoMinisteriale.where(anno_scolastico: "202526").count
+    pm = PrezzoMinisteriale.find_by(anno_scolastico: "202627", classe: "1", disciplina: "LINGUA INGLESE")
+    assert_equal 408, pm.prezzo_cents # prezzo del 202627, non 999 del 202526
+  end
+
   private
 
-  # Anno di campagna MIUR usato dai writer di test (default di NewAdozione con
-  # anagrafe scuole vuota): coincide con la partizione su cui popola! legge.
+  # Anno di campagna MIUR corrente su cui i test seminano le adozioni.
   ANNO_MIUR = "202627"
 
-  def adoz(sezioneanno:, prezzo:, disciplina: "LINGUA INGLESE", annocorso: "1")
-    NewAdozione.create!(
-      anno_scolastico: ANNO_MIUR,
+  def adoz(sezioneanno:, prezzo:, anno: ANNO_MIUR, disciplina: "LINGUA INGLESE", annocorso: "1")
+    Miur::Adozione.create!(
+      anno_scolastico: anno,
       codicescuola: "S#{sezioneanno}", annocorso: annocorso, sezioneanno: sezioneanno,
       combinazione: "X", codiceisbn: "I-#{sezioneanno}", disciplina: disciplina,
       titolo: "T", editore: "E", prezzo: prezzo, daacquist: "Sì", tipogradoscuola: "EE"

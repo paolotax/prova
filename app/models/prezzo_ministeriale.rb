@@ -39,14 +39,6 @@ class PrezzoMinisteriale < ApplicationRecord
     order(anno_scolastico: :desc).pick(:anno_scolastico)
   end
 
-  # Anno scolastico (formato "AAAA/AAAA") a cui si riferiscono le adozioni appena
-  # importate. Le adozioni per l'anno Y/Y+1 escono in primavera dell'anno Y, quindi
-  # da febbraio di Y il dataset corrente è Y/Y+1.
-  def self.anno_scolastico_corrente(today = Date.current)
-    y = today.year
-    today.month >= 2 ? "#{y}/#{y + 1}" : "#{y - 1}/#{y}"
-  end
-
   def self.prezzo_per(classe:, disciplina:, anno: nil)
     anno ||= anno_corrente
     find_by(anno_scolastico: anno, classe: classe, disciplina: disciplina)&.prezzo_cents
