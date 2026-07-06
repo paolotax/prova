@@ -190,20 +190,46 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert_equal "archiviata", reconciler(anno: "202526").stato
   end
 
-  test "call su anno passato crea classi/adozioni archiviate, filtrando per anno" do
+  # Semina DUE anni per la stessa scuola e riconcilia solo il passato: le righe
+  # 202627 devono restare intatte. È il test che smaschera un filtro anno
+  # dimenticato in una qualsiasi delle 5 subquery su miur_adozioni (upsert,
+  # match, archivia, cancella orfane): senza filtro il reconcile 202526
+  # toccherebbe anche il 202627.
+  test "call su un anno non tocca le righe di un altro anno (isolamento partizioni)" do
     seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "555", daacquist: "Si", prezzo: "10,00" }
     ], anno: "202526")
+    seed_miur([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "666", daacquist: "Si", prezzo: "10,00" }
+    ], anno: "202627")
+
+    # prima costruisco il 202627 (attiva), poi riconcilio il 202526
+    reconciler(anno: "202627").call
+    classe_corrente = @scuola.classi.find_by(anno_scolastico: "202627", anno_corso: "1", sezione: "A")
+    ad_corrente = @account.adozioni.find_by(codice_isbn: "666", anno_scolastico: "202627")
+    assert_equal "attiva", classe_corrente.stato
 
     reconciler(anno: "202526").call
 
-    classe = @scuola.classi.find_by(anno_scolastico: "202526", anno_corso: "1", sezione: "A")
-    assert_equal "archiviata", classe.stato
-    ad = @account.adozioni.find_by(codice_isbn: "555", anno_scolastico: "202526")
-    assert_equal "202526", ad.anno_scolastico
-    # il filtro anno isola le partizioni: nessuna classe/adozione 202627 creata
-    assert_empty @scuola.classi.where(anno_scolastico: "202627")
-    assert_not @account.adozioni.exists?(anno_scolastico: "202627")
+    # il 202526 è stato costruito come archiviato...
+    classe_passata = @scuola.classi.find_by(anno_scolastico: "202526", anno_corso: "1", sezione: "A")
+    assert_equal "archiviata", classe_passata.stato
+    assert @account.adozioni.exists?(codice_isbn: "555", anno_scolastico: "202526")
+
+    # ...e il 202627 è rimasto intatto: stessa classe attiva, stessa adozione
+    assert Adozione.exists?(id: ad_corrente.id)
+    assert_equal "attiva", classe_corrente.reload.stato
+    assert_equal "202627", classe_corrente.anno_scolastico
+    assert_equal 1, @scuola.classi.where(anno_scolastico: "202627").count
+  end
+
+  # Guardia fail-fast: con miur_scuole vuota Miur.anno_corrente è nil e lo stato
+  # collasserebbe ad "archiviata" anche per l'anno corrente. Meglio crashare.
+  test "call solleva Miur::ImportError se anno_corrente e nil" do
+    Miur::Scuola.delete_all   # anagrafe vuota -> Miur.anno_corrente nil
+    assert_nil Miur.anno_corrente
+    assert_raises(Miur::ImportError) { reconciler.call }
   end
 end

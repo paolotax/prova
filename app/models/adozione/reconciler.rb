@@ -2,6 +2,9 @@ class Adozione::Reconciler
   # Ricostruzione set-based idempotente di classi/adozioni storicizzate per
   # (account, provincia, anno). Sostituisce il fan-out per-scuola della promozione.
   # Stesso pattern di ControlloAdozioni::Rebuild: transazione + advisory lock.
+  #
+  # ATTENZIONE: ogni nuova subquery su miur_adozioni DEVE filtrare
+  # anno_scolastico = :anno (tabella unica partizionata, non più una per anno).
 
   # Prezzo stringa "12,34" -> cents int (0 se non numerico). Idioma da
   # ControlloAdozioni::Rebuild::PREZZO_CENTS: classi POSIX, round su numeric.
@@ -27,6 +30,11 @@ class Adozione::Reconciler
   end
 
   def call
+    # Fail-fast: con miur_scuole vuota Miur.anno_corrente è nil, lo stato
+    # collasserebbe ad "archiviata" anche per l'anno corrente etichettando in
+    # silenzio l'intera provincia. Meglio un crash retry-safe.
+    raise Miur::ImportError, "anno_corrente nil (miur_scuole vuota): reconcile abortito" if Miur.anno_corrente.nil?
+
     ApplicationRecord.transaction do
       exec_sql("SELECT pg_advisory_xact_lock(hashtext(:lock_key))",
                lock_key: "reconcile/#{account.id}/#{provincia}/#{anno}")
@@ -175,20 +183,15 @@ class Adozione::Reconciler
          #{si('src.daacquist')},
          #{si('src.consigliato')},
          now(), now()
-      FROM (
-        SELECT codicescuola, annocorso, sezioneanno, combinazione,
-               codiceisbn, daacquist, titolo, editore,
-               autori, disciplina, prezzo, nuovaadoz, consigliato
-        FROM miur_adozioni
-        WHERE anno_scolastico = :anno
-      ) src
+      FROM miur_adozioni src
       JOIN scuole sc ON sc.codice_ministeriale = src.codicescuola
         AND sc.account_id = :account_id AND sc.provincia = :provincia
       JOIN classi cl ON cl.scuola_id = sc.id AND cl.anno_scolastico = :anno
         AND cl.anno_corso IS NOT DISTINCT FROM src.annocorso
         AND cl.sezione IS NOT DISTINCT FROM src.sezioneanno
         AND cl.combinazione IS NOT DISTINCT FROM src.combinazione
-      WHERE src.codiceisbn IS NOT NULL
+      WHERE src.anno_scolastico = :anno
+        AND src.codiceisbn IS NOT NULL
       ON CONFLICT (classe_id, codice_isbn, anno_scolastico) DO NOTHING
     SQL
     exec_sql(sql)
