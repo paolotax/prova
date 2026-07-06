@@ -535,6 +535,8 @@ end
 
 Il `down`: irreversibile senza i dati (raise `ActiveRecord::IrreversibleMigration`).
 
+⚠️ **Nello stesso commit: eliminare il task `miur:backfill` da `lib/tasks/miur.rake`** (rilievo della code review Task 4): dopo questa migration le "sorgenti" del backfill sono viste ponte che leggono le partizioni stesse — un rilancio farebbe TRUNCATE + INSERT-da-se-stessa = **perdita silenziosa e irreversibile dei dati storici** (in particolare 202425, che non ha altra fonte). Il backfill è consumato: si rimuove.
+
 **Step 3:** `db:migrate`, poi **GATE: suite completa**:
 
 ```bash
