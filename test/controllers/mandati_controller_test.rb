@@ -3,7 +3,7 @@ require "test_helper"
 class MandatiControllerTest < ActionDispatch::IntegrationTest
   include ActiveJob::TestHelper
 
-  fixtures :accounts, :users, :memberships, :editori, :mandati, :adozioni, :scuole, :classi
+  fixtures :accounts, :users, :memberships, :editori, :mandati, :adozioni, :scuole, :classi, :account_zone
 
   setup do
     @account = accounts(:fizzy)

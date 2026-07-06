@@ -7,7 +7,7 @@
 #
 # Table name: new_scuole
 #
-#  id                                 :bigint           not null, primary key
+#  id                                 :bigint           primary key
 #  anno_scolastico                    :string
 #  area_geografica                    :string
 #  cap                                :string
@@ -29,12 +29,6 @@
 #  sito_web                           :string
 #  tipo_scuola                        :string
 #  import_scuola_id                   :bigint
-#
-# Indexes
-#
-#  idx_new_scuole_cod                 (codice_scuola)
-#  idx_new_scuole_tipo                (tipo_scuola)
-#  index_new_scuole_on_codice_scuola  (anno_scolastico,codice_scuola) UNIQUE
 #
 calamandrei_nuovo:
   codice_scuola: "BOEE999999"

@@ -2,7 +2,7 @@
 #
 # Table name: import_adozioni
 #
-#  id              :bigint           not null, primary key
+#  id              :bigint           primary key
 #  ANNOCORSO       :string
 #  AUTORI          :string
 #  CODICEISBN      :string
@@ -20,20 +20,15 @@
 #  TITOLO          :string
 #  VOLUME          :string
 #  anno_scolastico :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#
-# Indexes
-#
-#  idx_import_adoz_ee                   (CODICESCUOLA) WHERE (("TIPOGRADOSCUOLA")::text = 'EE'::text)
-#  idx_import_adozioni_disc_anno_tg     (DISCIPLINA,ANNOCORSO,TIPOGRADOSCUOLA)
-#  import_adozioni_pk                   (CODICESCUOLA,ANNOCORSO,SEZIONEANNO,TIPOGRADOSCUOLA,COMBINAZIONE,CODICEISBN,NUOVAADOZ,DAACQUIST,CONSIGLIATO) UNIQUE
-#  index_import_adozioni_on_DISCIPLINA  (DISCIPLINA)
-#  index_import_adozioni_on_EDITORE     (EDITORE)
-#  index_import_adozioni_on_TITOLO      (TITOLO)
 #
 
 class ImportAdozione < ApplicationRecord
+  # import_adozioni e' una vista ponte sulla partizione 202526 di miur_adozioni:
+  # le viste non dichiarano PK ne' ereditano la sequenza dell'id, quindi vanno
+  # esplicitate (activerecord-import ne ha bisogno per popolare l'id nei bulk).
+  self.primary_key = "id"
+  self.sequence_name = "miur_adozioni_id_seq"
+
   belongs_to :import_scuola, foreign_key: 'CODICESCUOLA', primary_key: 'CODICESCUOLA'
   belongs_to :editore,       foreign_key: 'EDITORE',      primary_key: 'EDITORE'
 

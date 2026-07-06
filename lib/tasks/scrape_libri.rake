@@ -172,9 +172,8 @@ namespace :scrape do
 
       Rails.logger.info "Download completato! I file sono stati salvati in: #{download_dir}"
 
-      Rake::Task['import:splitta_adozioni'].invoke
-      Rake::Task['import:new_adozioni'].invoke("true")
-      Rake::Task['import:cambia_religione'].invoke
+      Rake::Task['miur:importa_adozioni'].invoke("true")
+      Rake::Task['miur:cambia_religione'].invoke
       Rake::Task['controllo_adozioni:rebuild'].invoke
       Rake::Task['scrape:delete_adozioni'].invoke("true")
 

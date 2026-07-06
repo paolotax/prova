@@ -2,7 +2,7 @@
 #
 # Table name: new_scuole
 #
-#  id                                 :bigint           not null, primary key
+#  id                                 :bigint           primary key
 #  anno_scolastico                    :string
 #  area_geografica                    :string
 #  cap                                :string
@@ -25,12 +25,10 @@
 #  tipo_scuola                        :string
 #  import_scuola_id                   :bigint
 #
-# Indexes
-#
-#  idx_new_scuole_cod                 (codice_scuola)
-#  idx_new_scuole_tipo                (tipo_scuola)
-#  index_new_scuole_on_codice_scuola  (anno_scolastico,codice_scuola) UNIQUE
-#
 
 class NewScuola < ApplicationRecord
+  # new_scuole e' una vista ponte su miur_scuole (anno corrente):
+  # le viste non dichiarano PK ne' ereditano la sequenza dell'id.
+  self.primary_key = "id"
+  self.sequence_name = "miur_scuole_id_seq"
 end

@@ -2,7 +2,7 @@
 #
 # Table name: new_adozioni
 #
-#  id               :bigint           not null, primary key
+#  id               :bigint           primary key
 #  anno_scolastico  :string
 #  annocorso        :string
 #  autori           :string
@@ -22,16 +22,17 @@
 #  volume           :string
 #  import_scuola_id :bigint
 #
-# Indexes
-#
-#  idx_new_adoz_ee                (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
-#  idx_new_adozioni_codicescuola  (codicescuola)
-#  idx_new_adozioni_disc_anno_tg  (disciplina,annocorso,tipogradoscuola)
-#  index_new_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn,disciplina) UNIQUE
-#
 
 class NewAdozione < ApplicationRecord
-    
+    # new_adozioni e' una vista ponte su miur_adozioni (anno corrente):
+    # le viste non dichiarano PK, quindi va esplicitata. anno_scolastico
+    # e' la chiave di partizione: default per i writer legacy che non
+    # lo valorizzavano (la tabella swing lo lasciava NULL) — l'anno
+    # dell'anagrafe scuole, cioe' quello che la vista ponte rende visibile.
+    self.primary_key = "id"
+    self.sequence_name = "miur_adozioni_id_seq"
+    attribute :anno_scolastico, :string, default: -> { Miur.anno_corrente || "202627" }
+
     #belongs_to :import_scuola, class_name: 'Import::Scuola', foreign_key: 'import_scuola_id'
     validates :codicescuola, :annocorso, :sezioneanno, :combinazione, :codiceisbn, presence: true
     validates :codicescuola, uniqueness: { scope: [:anno_scolastico, :annocorso, :sezioneanno, :combinazione, :codiceisbn, :disciplina] }

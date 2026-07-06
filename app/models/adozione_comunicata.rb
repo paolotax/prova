@@ -39,7 +39,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (import_adozione_id => import_adozioni.id)
 #  fk_rails_...  (user_id => users.id)
 #
 

@@ -1,11 +1,12 @@
 # test/fixtures/new_adozioni.yml
 # Sorgente MIUR anno corrente (colonne LOWERCASE).
-# anno_scolastico lasciato nil per rispecchiare la produzione (bug noto).
+# anno_scolastico obbligatorio: la vista ponte new_adozioni scrive su
+# miur_adozioni, partizionata per anno (senza valore PG rifiuta la riga).
 # == Schema Information
 #
 # Table name: new_adozioni
 #
-#  id               :bigint           not null, primary key
+#  id               :bigint           primary key
 #  anno_scolastico  :string
 #  annocorso        :string
 #  autori           :string
@@ -25,14 +26,8 @@
 #  volume           :string
 #  import_scuola_id :bigint
 #
-# Indexes
-#
-#  idx_new_adoz_ee                (codicescuola) WHERE ((tipogradoscuola)::text = 'EE'::text)
-#  idx_new_adozioni_codicescuola  (codicescuola)
-#  idx_new_adozioni_disc_anno_tg  (disciplina,annocorso,tipogradoscuola)
-#  index_new_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn,disciplina) UNIQUE
-#
 prima_a_matematica:
+  anno_scolastico: "202627"
   codicescuola: "MIIC123456"
   annocorso: "1"
   sezioneanno: "A"
@@ -50,6 +45,7 @@ prima_a_matematica:
 
 # Sorgente MIUR anno corrente per primaria_attiva (BOEE000001), sezione A, combinazione MQ
 pa_anno_1:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000001"
   annocorso: "1"
   sezioneanno: "A"
@@ -66,6 +62,7 @@ pa_anno_1:
   tipogradoscuola: "EE"
 
 pa_anno_2:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000001"
   annocorso: "2"
   sezioneanno: "A"
@@ -82,6 +79,7 @@ pa_anno_2:
   tipogradoscuola: "EE"
 
 pa_anno_3:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000001"
   annocorso: "3"
   sezioneanno: "A"
@@ -98,6 +96,7 @@ pa_anno_3:
   tipogradoscuola: "EE"
 
 pa_anno_4:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000001"
   annocorso: "4"
   sezioneanno: "A"
@@ -114,6 +113,7 @@ pa_anno_4:
   tipogradoscuola: "EE"
 
 pa_anno_5:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000001"
   annocorso: "5"
   sezioneanno: "A"
@@ -132,6 +132,7 @@ pa_anno_5:
 # Adozione EE per il plesso candidato BOEE999999 (new_scuola calamandrei_nuovo):
 # alimenta sia la EXISTS del suggeritore sia @sezioni_prime (prima B).
 calamandrei_prima_b:
+  anno_scolastico: "202627"
   codicescuola: "BOEE999999"
   annocorso: "1"
   sezioneanno: "B"
@@ -149,6 +150,7 @@ calamandrei_prima_b:
 
 # --- Split BOEE000002: il grado 2 dell'anno target ha DUE sezioni (A e B) ---
 split_anno_2a:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000002"
   annocorso: "2"
   sezioneanno: "A"
@@ -165,6 +167,7 @@ split_anno_2a:
   tipogradoscuola: "EE"
 
 split_anno_2b:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000002"
   annocorso: "2"
   sezioneanno: "B"
@@ -182,6 +185,7 @@ split_anno_2b:
 
 # --- Merge BOEE000003: il grado 2 dell'anno target ha SOLO la sezione A ---
 merge_anno_2a:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000003"
   annocorso: "2"
   sezioneanno: "A"
@@ -200,6 +204,7 @@ merge_anno_2a:
 # --- Cambio combinazione BOEE000006: il roster del grado 2 sez A ha una combinazione
 #     piu' verbosa di quella memorizzata sulla classe ("27 ORE SETTIMANALI") ---
 comb_anno_2a:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000006"
   annocorso: "2"
   sezioneanno: "A"
@@ -217,6 +222,7 @@ comb_anno_2a:
 
 # --- Guardia per-grado BOEE000005: new_adozioni copre SOLO il grado 3 (sez A) ---
 guardia_anno_3a:
+  anno_scolastico: "202627"
   codicescuola: "BOEE000005"
   annocorso: "3"
   sezioneanno: "A"

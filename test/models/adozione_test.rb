@@ -42,7 +42,6 @@
 #
 #  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (classe_id => classi.id)
-#  fk_rails_...  (import_adozione_id => import_adozioni.id)
 #  fk_rails_...  (libro_id => libri.id)
 #
 require "test_helper"
@@ -60,9 +59,12 @@ class AdozioneTest < ActiveSupport::TestCase
 
   # Sorgente ImportAdozione che combacia con la classe `prima_a`
   # (origine MIIC123456 / 1 / A), anno_scolastico 202526.
-  # insert_all per saltare l'autosave del belongs_to :editore (come ImportAdozione.import in produzione).
+  # insert_all! per saltare l'autosave del belongs_to :editore (come ImportAdozione.import
+  # in produzione); la variante ! evita ON CONFLICT, che sulla vista ponte import_adozioni
+  # non ha indici univoci su cui appoggiarsi.
   def crea_import_adozione(isbn:)
-    ImportAdozione.insert_all([{
+    ImportAdozione.insert_all!([{
+      anno_scolastico: "202526",
       CODICESCUOLA: "MIIC123456",
       ANNOCORSO: "1",
       SEZIONEANNO: "A",
@@ -76,9 +78,7 @@ class AdozioneTest < ActiveSupport::TestCase
       PREZZO: "10,00",
       NUOVAADOZ: "No",
       DAACQUIST: "Si",
-      CONSIGLIATO: "No",
-      created_at: Time.current,
-      updated_at: Time.current
+      CONSIGLIATO: "No"
     }])
     ImportAdozione.find_by(CODICEISBN: isbn)
   end

@@ -21,13 +21,13 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
 
     # TO: 3 classi matematica + MI: 1 classe italiano + 1 excluded
     conn.execute <<~SQL
-      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", created_at, updated_at)
+      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", anno_scolastico)
       VALUES
-        ('TOEE12345A', '1', 'A', 'MATEMATICA', '9788891901001', 'ROSSI MARIO', 'PEPPER 1 STAMPATO', 'PEARSON', '10,50', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('TOEE12345A', '1', 'B', 'MATEMATICA', '9788891901002', 'ROSSI MARIO', 'PEPPER 1 4CARATTERI', 'PEARSON', '12,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('TOEE12345A', '3', 'C', 'MATEMATICA', '9788804701003', 'BIANCHI LUCA', 'MONDO MATEMATICA 3', 'MONDADORI', '15,00', 'Si', 'No', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('MIEE67890B', '3', 'A', 'ITALIANO', '9788891902001', 'VERDI ANNA', 'LEGGERE E SCRIVERE 3', 'PEARSON', '8,00', 'Si', 'Si', 'No', 'TN', 'EE', NOW(), NOW()),
-        ('TOEE12345A', '1', 'A', 'ITALIANO', '9788891909999', 'NERI PAOLO', 'LIBRO ESCLUSO', 'ZANICHELLI', '20,00', 'No', 'No', 'No', 'TP', 'EE', NOW(), NOW())
+        ('TOEE12345A', '1', 'A', 'MATEMATICA', '9788891901001', 'ROSSI MARIO', 'PEPPER 1 STAMPATO', 'PEARSON', '10,50', 'Si', 'Si', 'No', 'TP', 'EE', '202526'),
+        ('TOEE12345A', '1', 'B', 'MATEMATICA', '9788891901002', 'ROSSI MARIO', 'PEPPER 1 4CARATTERI', 'PEARSON', '12,00', 'Si', 'Si', 'No', 'TP', 'EE', '202526'),
+        ('TOEE12345A', '3', 'C', 'MATEMATICA', '9788804701003', 'BIANCHI LUCA', 'MONDO MATEMATICA 3', 'MONDADORI', '15,00', 'Si', 'No', 'No', 'TP', 'EE', '202526'),
+        ('MIEE67890B', '3', 'A', 'ITALIANO', '9788891902001', 'VERDI ANNA', 'LEGGERE E SCRIVERE 3', 'PEARSON', '8,00', 'Si', 'Si', 'No', 'TN', 'EE', '202526'),
+        ('TOEE12345A', '1', 'A', 'ITALIANO', '9788891909999', 'NERI PAOLO', 'LIBRO ESCLUSO', 'ZANICHELLI', '20,00', 'No', 'No', 'No', 'TP', 'EE', '202526')
     SQL
   end
 
@@ -179,11 +179,11 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
     # Insert 144-eligible adozioni (classe 1, SUSSIDIARIO discipline)
     conn = ActiveRecord::Base.connection
     conn.execute <<~SQL
-      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", created_at, updated_at)
+      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", anno_scolastico)
       VALUES
-        ('TOEE12345A', '1', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901099', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('TOEE12345A', '1', 'B', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901098', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('MIEE67890B', '1', 'A', 'IL LIBRO DELLA PRIMA CLASSE', '9788891901097', 'VERDI', 'PRIMA CLASSE', 'MONDADORI', '12,00', 'Si', 'Si', 'No', 'TN', 'EE', NOW(), NOW())
+        ('TOEE12345A', '1', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901099', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', '202526'),
+        ('TOEE12345A', '1', 'B', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901098', 'ROSSI', 'SUSS LING 1', 'PEARSON', '15,00', 'Si', 'Si', 'No', 'TP', 'EE', '202526'),
+        ('MIEE67890B', '1', 'A', 'IL LIBRO DELLA PRIMA CLASSE', '9788891901097', 'VERDI', 'PRIMA CLASSE', 'MONDADORI', '12,00', 'Si', 'Si', 'No', 'TN', 'EE', '202526')
     SQL
 
     query = Stats::AdozioniQuery.new(
