@@ -1,3 +1,6 @@
+# miur_scuole e' partizionata per LIST (anno_scolastico) con PK composita:
+# INSERIRE sempre attraverso la tabella padre, mai direttamente in una
+# partizione (le partizioni PG15 non ereditano la generazione identity dell'id).
 # == Schema Information
 #
 # Table name: miur_scuole

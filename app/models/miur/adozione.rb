@@ -2,6 +2,8 @@
 # (anno_scolastico, id): le righe vanno INSERITE sempre attraverso la tabella
 # padre miur_adozioni, mai direttamente in una partizione (le partizioni PG15
 # non ereditano la generazione identity dell'id).
+# I lookup per id vanno sempre scopati anche su anno_scolastico: gli id NON
+# sono globalmente unici tra le partizioni (il backfill preserva gli id originali).
 # == Schema Information
 #
 # Table name: miur_adozioni

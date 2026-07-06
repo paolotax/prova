@@ -40,12 +40,23 @@ class Miur::AdozioneTest < ActiveSupport::TestCase
   end
 
   test "anno_corrente deriva dal massimo di miur_scuole" do
-    assert_equal Miur::Scuola.maximum(:anno_scolastico), Miur.anno_corrente
     assert_equal "202627", Miur.anno_corrente
+  end
+
+  test "correnti segue l'anno corrente dell'anagrafe scuole" do
+    assert Miur::Adozione.correnti.any?
+    assert Miur::Adozione.correnti.all? { |a| a.anno_scolastico == "202627" }
+  end
+
+  test "correnti e' silenziosamente vuota senza anagrafe scuole" do
+    Miur::Scuola.delete_all
+    assert_nil Miur.anno_corrente
+    assert_empty Miur::Adozione.correnti
   end
 
   test "escluso_dal_tetto? per alternativa e parascolastica" do
     assert Miur::Adozione.new(disciplina: "ADOZIONE ALTERNATIVA ALLA RELIGIONE C.").escluso_dal_tetto?
+    assert Miur::Adozione.new(disciplina: "PARASCOLASTICO").escluso_dal_tetto?
     refute Miur::Adozione.new(disciplina: "ITALIANO").escluso_dal_tetto?
   end
 
