@@ -1,7 +1,7 @@
 require "test_helper"
 
 class ReconcileAdozioniJobTest < ActiveJob::TestCase
-  fixtures :accounts
+  fixtures :accounts, "miur/scuole"
 
   test "usa la coda bulk" do
     assert_equal "bulk", ReconcileAdozioniJob.new.queue_name

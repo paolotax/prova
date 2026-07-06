@@ -1,7 +1,7 @@
 require "test_helper"
 
 class ScuolaPromuoviClassiJobTest < ActiveJob::TestCase
-  fixtures :accounts, :scuole, :classi, :adozioni, :new_adozioni, :persone, :persona_classi
+  fixtures :accounts, :scuole, :classi, :adozioni, :new_adozioni, :persone, :persona_classi, "miur/scuole"
 
   test "promuove la scuola all'anno target" do
     scuola = scuole(:primaria_attiva)
