@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_api!
 
       def index
-        query = ::Stats::NewAdozioniQuery.new(
+        query = ::Stats::MiurAdozioniQuery.new(
           filters: filter_params,
           group_by: params[:group_by]&.split(","),
           coefficiente: params.fetch(:coefficiente, 18).to_i,

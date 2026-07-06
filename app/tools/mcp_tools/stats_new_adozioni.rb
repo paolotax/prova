@@ -47,7 +47,7 @@ module MCPTools
           nuova_adozione: nuova_adozione
         }.compact_blank
 
-        query = ::Stats::NewAdozioniQuery.new(
+        query = ::Stats::MiurAdozioniQuery.new(
           filters: filters,
           group_by: group_by.split(",").map(&:strip),
           coefficiente: coefficiente.to_i,

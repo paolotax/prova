@@ -1,5 +1,5 @@
 module Stats
-  class NewAdozioniQuery
+  class MiurAdozioniQuery
     FILIERA_CASE_SQL = <<~SQL.squish.freeze
       CASE
         WHEN ts.tipo ILIKE 'LICEO%' THEN 'liceo'
@@ -70,7 +70,8 @@ module Stats
 
     DEFAULT_GRADI = %w[E M N].freeze
 
-    def initialize(filters:, group_by:, coefficiente: 17, order_by: :classi_count, limit: 50, offset: 0, solo_144: false, grado: nil, include_sezioni: false, filiera: nil)
+    def initialize(filters:, group_by:, coefficiente: 17, order_by: :classi_count, limit: 50, offset: 0, solo_144: false, grado: nil, include_sezioni: false, filiera: nil, anno: Miur.anno_corrente)
+      @anno = anno
       @filters = normalize_filters(filters)
       @group_by = Array(group_by).map(&:to_s).select { |d| DIMENSIONS.key?(d) }
       @coefficiente = coefficiente
@@ -139,16 +140,18 @@ module Stats
 
     def base_from
       <<~SQL
-        FROM new_adozioni na
-        INNER JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
+        FROM miur_adozioni na
+        INNER JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = na.anno_scolastico
         INNER JOIN tipi_scuole ts ON ts.tipo = ns.tipo_scuola
       SQL
     end
 
     def base_where
       placeholders = Array.new(@grado.size, "?").join(",")
-      conditions = ["ts.grado IN (#{placeholders})", "na.daacquist = ?"]
-      binds = @grado + ["Si"]
+      # miur_adozioni/miur_scuole coprono 3 anni: filtro anno esplicito (le vecchie
+      # swing tables new_adozioni/new_scuole filtravano l'anno implicitamente).
+      conditions = ["na.anno_scolastico = ?", "ts.grado IN (#{placeholders})", "na.daacquist = ?"]
+      binds = [@anno] + @grado + ["Si"]
       @filters.each do |key, value|
         next unless FILTERS.key?(key)
         conditions << FILTERS[key]
