@@ -681,6 +681,7 @@ Poi a occhio in browser: dashboard controllo_adozioni, una show scuola, un'antep
 
 ## Note per il deploy in produzione (fuori scope del piano, da concordare)
 
+0. **Pulizia `prezzi_ministeriali` formato misto** (rilievo review Task 10): dopo la migrazione, `PrezzoMinisteriale.popola!` scrive `anno_scolastico` in formato MIUR (`202627`) invece del vecchio slash (`2025/2026`). In dev le due forme coesistono e funziona solo perché `anno_corrente` (MAX stringa) ordina `202627` dopo `2025/2026` per collation ASCII — fragile. Al primo `popola!` in prod, eseguire una pulizia one-time delle righe vecchie: `DELETE FROM prezzi_ministeriali WHERE anno_scolastico LIKE '%/%'`.
 1. Mettere in pausa il cron `adozioni_scraper` (già fatto in dev; in prod: commentare in `config/sidekiq.yml` o disabilitare via UI sidekiq-cron) PRIMA del deploy.
 2. Il deploy porta tutte le migration: la finestra critica è il backfill (`miur:backfill`, ~10M righe, minuti) da lanciare A MANO dopo il deploy delle prime migration e PRIMA della migration del Task 9 — valutare se spezzare in due deploy (Task 1-8, poi 9-17).
 3. Riattivare il cron a fine verifica.
