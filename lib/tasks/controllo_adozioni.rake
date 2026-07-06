@@ -2,9 +2,9 @@ namespace :controllo_adozioni do
   desc "Ricostruisce controllo_anomalie (scuola primaria EE). " \
        "Ripopola prima i prezzi di riferimento PrezzoMinisteriale dal dataset corrente."
   task rebuild: :environment do
-    anno = PrezzoMinisteriale.anno_scolastico_corrente
-    Rails.logger.info "controllo_adozioni:rebuild — popola PrezzoMinisteriale #{anno} da new_adozioni"
-    n = PrezzoMinisteriale.popola_da_new_adozioni!(anno_scolastico: anno)
+    anno = Miur.anno_corrente
+    Rails.logger.info "controllo_adozioni:rebuild — popola PrezzoMinisteriale #{anno} da miur_adozioni"
+    n = PrezzoMinisteriale.popola!(anno: anno)
     Rails.logger.info "PrezzoMinisteriale #{anno}: #{n} prezzi di riferimento"
 
     tot = ControlloAdozioni::Rebuild.run!

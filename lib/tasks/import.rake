@@ -384,10 +384,10 @@ namespace :import do
 
 
 
-  desc "[DEPRECATO] Splitta file adozioni — no-op, import:new_adozioni ora gestisce il batching internamente"
+  desc "[DEPRECATO] Splitta file adozioni — no-op, la pipeline MIUR gestisce il batching internamente"
   task splitta_adozioni: :environment do
     Rails.logger.info "splitta_adozioni: deprecato, no-op"
-    puts "splitta_adozioni: deprecato, import:new_adozioni ora batcha direttamente i CSV"
+    puts "splitta_adozioni: deprecato, no-op (la pipeline MIUR batcha direttamente i CSV)"
   end
 
 

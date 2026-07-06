@@ -52,64 +52,22 @@ class PrezzoMinisteriale < ApplicationRecord
     find_by(anno_scolastico: anno, classe: classe, disciplina: disciplina)&.prezzo_cents
   end
 
-  def self.popola_da_import_adozioni!(anno_scolastico:, tipogrado: "EE")
-    sql = <<~SQL
-      WITH prezzi AS (
-        SELECT "ANNOCORSO" as classe,
-               "DISCIPLINA" as disciplina,
-               ROUND(REPLACE("PREZZO", ',', '.')::numeric * 100)::integer as prezzo_cents,
-               COUNT(*) as freq
-        FROM import_adozioni
-        WHERE "TIPOGRADOSCUOLA" = #{connection.quote(tipogrado)}
-          AND "PREZZO" IS NOT NULL
-          AND "PREZZO" != ''
-          AND REPLACE("PREZZO", ',', '.') ~ '^\\d+(\\.\\d+)?$'
-        GROUP BY "ANNOCORSO", "DISCIPLINA", ROUND(REPLACE("PREZZO", ',', '.')::numeric * 100)::integer
-      ),
-      ranked AS (
-        SELECT classe, disciplina, prezzo_cents, freq,
-               ROW_NUMBER() OVER (PARTITION BY classe, disciplina ORDER BY freq DESC) as rn,
-               SUM(freq) OVER (PARTITION BY classe, disciplina) as totale
-        FROM prezzi
-      )
-      SELECT classe, disciplina, prezzo_cents, freq, totale
-      FROM ranked
-      WHERE rn = 1
-        AND totale > 100
-        AND freq::float / totale::float > 0.9
-      ORDER BY classe::int, totale DESC
-    SQL
-
-    results = connection.execute(sql)
-    count = 0
-
-    transaction do
-      results.each do |row|
-        record = find_or_initialize_by(
-          anno_scolastico: anno_scolastico,
-          classe: row["classe"],
-          disciplina: row["disciplina"]
-        )
-        record.update!(prezzo_cents: row["prezzo_cents"])
-        count += 1
-      end
-    end
-
-    count
-  end
-
-  # Come popola_da_import_adozioni! ma legge dal dataset corrente new_adozioni
-  # (colonne minuscole). Usato dalla pipeline di import per tenere i prezzi di
-  # riferimento allineati all'anno scolastico appena importato.
-  def self.popola_da_new_adozioni!(anno_scolastico:, tipogrado: "EE")
+  # Estrae il prezzo di riferimento (modale dominante per classe+disciplina) dalle
+  # adozioni MIUR dell'anno indicato e lo salva in prezzi_ministeriali con lo stesso
+  # anno. `anno` e' il formato partizione di miur_adozioni ("202627"): sorgente e
+  # destinazione condividono la chiave. Unifica i due vecchi metodi
+  # popola_da_new_adozioni!/popola_da_import_adozioni! (differivano solo per tabella
+  # sorgente e casing delle colonne, ora entrambe risolte su miur_adozioni).
+  def self.popola!(anno:, tipogrado: "EE")
     sql = <<~SQL
       WITH prezzi AS (
         SELECT annocorso as classe,
                disciplina,
                ROUND(REPLACE(prezzo, ',', '.')::numeric * 100)::integer as prezzo_cents,
                COUNT(*) as freq
-        FROM new_adozioni
-        WHERE tipogradoscuola = #{connection.quote(tipogrado)}
+        FROM miur_adozioni
+        WHERE anno_scolastico = #{connection.quote(anno)}
+          AND tipogradoscuola = #{connection.quote(tipogrado)}
           AND prezzo IS NOT NULL
           AND prezzo != ''
           AND REPLACE(prezzo, ',', '.') ~ '^[0-9]+([.][0-9]+)?$'
@@ -135,7 +93,7 @@ class PrezzoMinisteriale < ApplicationRecord
     transaction do
       results.each do |row|
         record = find_or_initialize_by(
-          anno_scolastico: anno_scolastico,
+          anno_scolastico: anno,
           classe: row["classe"],
           disciplina: row["disciplina"]
         )

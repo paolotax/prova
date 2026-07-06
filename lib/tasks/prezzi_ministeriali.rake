@@ -1,10 +1,10 @@
 namespace :prezzi_ministeriali do
-  desc "Popola prezzi ministeriali dalle import_adozioni. Uso: rails prezzi_ministeriali:popola[2025-2026]"
+  desc "Popola prezzi ministeriali dalle adozioni MIUR. Uso: rails prezzi_ministeriali:popola[202526]"
   task :popola, [:anno] => :environment do |_t, args|
-    anno = args[:anno] || raise("Specificare anno scolastico, es: rails prezzi_ministeriali:popola[2025-2026]")
+    anno = args[:anno] || raise("Specificare anno scolastico MIUR, es: rails prezzi_ministeriali:popola[202526]")
 
-    puts "Estraggo prezzi ministeriali per #{anno} dalle import_adozioni..."
-    count = PrezzoMinisteriale.popola_da_import_adozioni!(anno_scolastico: anno)
+    puts "Estraggo prezzi ministeriali per #{anno} da miur_adozioni..."
+    count = PrezzoMinisteriale.popola!(anno: anno)
     puts "Inseriti/aggiornati #{count} prezzi ministeriali."
 
     puts "\nRiepilogo:"

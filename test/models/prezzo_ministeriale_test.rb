@@ -28,32 +28,37 @@ class PrezzoMinisterialeTest < ActiveSupport::TestCase
     assert_equal "2025/2026", PrezzoMinisteriale.anno_scolastico_corrente(Date.new(2026, 1, 15))
   end
 
-  test "popola_da_new_adozioni! estrae il prezzo dominante per classe+disciplina" do
+  test "popola! estrae il prezzo dominante per classe+disciplina" do
     # 150 righe a 4,08 (dominante) + 5 righe a 5,00 per inglese cl.1 (totale 155 > 100, dominanza > 0.9)
     150.times { |i| adoz(sezioneanno: "S#{i}", prezzo: "4,08") }
     5.times   { |i| adoz(sezioneanno: "D#{i}", prezzo: "5,00") }
 
-    n = PrezzoMinisteriale.popola_da_new_adozioni!(anno_scolastico: "2026/2027")
+    n = PrezzoMinisteriale.popola!(anno: ANNO_MIUR)
 
     assert_equal 1, n
-    pm = PrezzoMinisteriale.find_by(anno_scolastico: "2026/2027", classe: "1", disciplina: "LINGUA INGLESE")
+    pm = PrezzoMinisteriale.find_by(anno_scolastico: ANNO_MIUR, classe: "1", disciplina: "LINGUA INGLESE")
     assert_equal 408, pm.prezzo_cents
   end
 
-  test "popola_da_new_adozioni! ignora discipline senza prezzo dominante" do
+  test "popola! ignora discipline senza prezzo dominante" do
     # 60/40 split: nessun prezzo supera il 90% di dominanza -> niente PM
     60.times { |i| adoz(sezioneanno: "A#{i}", prezzo: "4,00") }
     40.times { |i| adoz(sezioneanno: "B#{i}", prezzo: "5,00") }
 
-    n = PrezzoMinisteriale.popola_da_new_adozioni!(anno_scolastico: "2026/2027")
+    n = PrezzoMinisteriale.popola!(anno: ANNO_MIUR)
 
     assert_equal 0, n
   end
 
   private
 
+  # Anno di campagna MIUR usato dai writer di test (default di NewAdozione con
+  # anagrafe scuole vuota): coincide con la partizione su cui popola! legge.
+  ANNO_MIUR = "202627"
+
   def adoz(sezioneanno:, prezzo:, disciplina: "LINGUA INGLESE", annocorso: "1")
     NewAdozione.create!(
+      anno_scolastico: ANNO_MIUR,
       codicescuola: "S#{sezioneanno}", annocorso: annocorso, sezioneanno: sezioneanno,
       combinazione: "X", codiceisbn: "I-#{sezioneanno}", disciplina: disciplina,
       titolo: "T", editore: "E", prezzo: prezzo, daacquist: "Sì", tipogradoscuola: "EE"

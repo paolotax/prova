@@ -1,7 +1,8 @@
 module ControlloAdozioni
   # Ricostruisce la tabella controllo_anomalie analizzando le adozioni della scuola
-  # primaria (tipogradoscuola = 'EE') in new_adozioni. Rebuild transazionale e atomico:
-  # DELETE + INSERT in una sola transazione (i lettori vedono i vecchi dati fino al COMMIT).
+  # primaria (tipogradoscuola = 'EE') in miur_adozioni per l'anno di campagna corrente
+  # (Miur.anno_corrente). Rebuild transazionale e atomico: DELETE + INSERT in una sola
+  # transazione (i lettori vedono i vecchi dati fino al COMMIT).
   class Rebuild
     LOCK_KEY = 198_706_17 # arbitrario ma stabile: serializza rebuild concorrenti
     DEFAULT_MIN_TOTALE_ISBN = 50
@@ -27,6 +28,12 @@ module ControlloAdozioni
 
     def run!
       conn = ControlloAnomalia.connection
+      # Anno di campagna MIUR corrente ("202627"), formato partizione di
+      # miur_adozioni/miur_scuole. Diverso da @anno_prezzi ("2025/2026"), che
+      # indicizza PrezzoMinisteriale. Le vecchie viste ponte (new_adozioni/
+      # new_scuole) filtravano questo anno implicitamente: ora e' esplicito.
+      @anno_miur = Miur.anno_corrente
+      @anno = conn.quote(@anno_miur)
       conn.transaction do
         conn.execute("SELECT pg_advisory_xact_lock(#{LOCK_KEY})")
         conn.execute("DELETE FROM controllo_anomalie")
@@ -42,14 +49,15 @@ module ControlloAdozioni
 
     private
 
-    # 6. codicescuola presente in new_adozioni (EE) ma assente da new_scuole
+    # 6. codicescuola presente in miur_adozioni (EE) ma assente da miur_scuole
     def scuola_mancante(conn)
       conn.execute(<<~SQL)
-        INSERT INTO controllo_anomalie (codicescuola, tipo, dettaglio, created_at, updated_at)
-        SELECT DISTINCT na.codicescuola, 'scuola_mancante', '{}'::jsonb, now(), now()
-        FROM new_adozioni na
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
-        WHERE na.tipogradoscuola = 'EE'
+        INSERT INTO controllo_anomalie (anno_scolastico, codicescuola, tipo, dettaglio, created_at, updated_at)
+        SELECT DISTINCT #{@anno}, na.codicescuola, 'scuola_mancante', '{}'::jsonb, now(), now()
+        FROM miur_adozioni na
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = #{@anno}
+        WHERE na.anno_scolastico = #{@anno}
+          AND na.tipogradoscuola = 'EE'
           AND ns.id IS NULL
       SQL
     end
@@ -60,22 +68,23 @@ module ControlloAdozioni
     def prezzo_disciplina(conn)
       anno = conn.quote(@anno_prezzi)
       conn.execute(<<~SQL)
-        INSERT INTO controllo_anomalie (codicescuola, annocorso, sezioneanno, combinazione,
+        INSERT INTO controllo_anomalie (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione,
           regione, provincia, comune, denominazione,
           tipo, disciplina, codiceisbn, titolo, editore,
           prezzo_cents, prezzo_atteso_cents, delta_cents, dettaglio, created_at, updated_at)
-        SELECT na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione,
+        SELECT #{@anno}, na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione,
           ns.regione, ns.provincia, ns.comune, ns.denominazione,
           'prezzo_disciplina', na.disciplina, na.codiceisbn, na.titolo, na.editore,
           (#{PREZZO_CENTS}), pm.prezzo_cents, (#{PREZZO_CENTS}) - pm.prezzo_cents,
           '{}'::jsonb, now(), now()
-        FROM new_adozioni na
+        FROM miur_adozioni na
         JOIN prezzi_ministeriali pm
           ON pm.anno_scolastico = #{anno}
          AND pm.classe = na.annocorso
          AND pm.disciplina = na.disciplina
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
-        WHERE na.tipogradoscuola = 'EE'
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = #{@anno}
+        WHERE na.anno_scolastico = #{@anno}
+          AND na.tipogradoscuola = 'EE'
           AND (#{PREZZO_CENTS}) IS NOT NULL
           AND (#{PREZZO_CENTS}) <> pm.prezzo_cents
           AND NOT (na.disciplina ILIKE 'RELIGIONE%' AND na.annocorso IN ('2','3','5'))
@@ -88,8 +97,9 @@ module ControlloAdozioni
       conn.execute(<<~SQL)
         WITH ee AS (
           SELECT na.*, (#{PREZZO_CENTS}) AS prezzo_cents
-          FROM new_adozioni na
-          WHERE na.tipogradoscuola = 'EE' AND (#{PREZZO_CENTS}) IS NOT NULL
+          FROM miur_adozioni na
+          WHERE na.anno_scolastico = #{@anno}
+            AND na.tipogradoscuola = 'EE' AND (#{PREZZO_CENTS}) IS NOT NULL
         ),
         ref AS (
           SELECT codiceisbn, prezzo_cents FROM (
@@ -102,18 +112,18 @@ module ControlloAdozioni
             AND totale >= #{@min_totale_isbn}
             AND freq::float / totale > #{@min_dominanza_isbn}
         )
-        INSERT INTO controllo_anomalie (codicescuola, annocorso, sezioneanno, combinazione,
+        INSERT INTO controllo_anomalie (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione,
           regione, provincia, comune, denominazione,
           tipo, disciplina, codiceisbn, titolo, editore,
           prezzo_cents, prezzo_atteso_cents, delta_cents, dettaglio, created_at, updated_at)
-        SELECT ee.codicescuola, ee.annocorso, ee.sezioneanno, ee.combinazione,
+        SELECT #{@anno}, ee.codicescuola, ee.annocorso, ee.sezioneanno, ee.combinazione,
           ns.regione, ns.provincia, ns.comune, ns.denominazione,
           'prezzo_isbn', ee.disciplina, ee.codiceisbn, ee.titolo, ee.editore,
           ee.prezzo_cents, ref.prezzo_cents, ee.prezzo_cents - ref.prezzo_cents,
           '{}'::jsonb, now(), now()
         FROM ee
         JOIN ref USING (codiceisbn)
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = ee.codicescuola
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = ee.codicescuola AND ns.anno_scolastico = #{@anno}
         WHERE ee.prezzo_cents <> ref.prezzo_cents
           AND NOT (ee.disciplina ILIKE 'RELIGIONE%' OR ee.disciplina ILIKE 'ADOZIONE ALTERNATIVA%')
       SQL
@@ -123,18 +133,19 @@ module ControlloAdozioni
     #    Ignora i volumi (raggruppa per titolo+editore, non per ISBN). Esclude religione/alt.
     def doppione(conn)
       conn.execute(<<~SQL)
-        INSERT INTO controllo_anomalie (codicescuola, annocorso, sezioneanno, combinazione,
+        INSERT INTO controllo_anomalie (anno_scolastico, codicescuola, annocorso, sezioneanno, combinazione,
           regione, provincia, comune, denominazione, tipo, disciplina, dettaglio,
           created_at, updated_at)
-        SELECT na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione,
+        SELECT #{@anno}, na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione,
           max(ns.regione), max(ns.provincia), max(ns.comune), max(ns.denominazione),
           'doppione', na.disciplina,
           jsonb_build_object('n_titoli',
             count(DISTINCT coalesce(na.titolo,'') || '|' || coalesce(na.editore,''))),
           now(), now()
-        FROM new_adozioni na
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
-        WHERE na.tipogradoscuola = 'EE'
+        FROM miur_adozioni na
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = #{@anno}
+        WHERE na.anno_scolastico = #{@anno}
+          AND na.tipogradoscuola = 'EE'
           AND coalesce(na.daacquist, '') ILIKE 'S%'
           AND NOT (na.disciplina ILIKE 'RELIGIONE%' OR na.disciplina ILIKE 'ADOZIONE ALTERNATIVA%')
         GROUP BY na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione, na.disciplina
@@ -185,9 +196,10 @@ module ControlloAdozioni
                max(ns.regione) AS regione, max(ns.provincia) AS provincia,
                max(ns.comune) AS comune, max(ns.denominazione) AS denominazione,
                string_agg(DISTINCT na.disciplina, '||') AS discipline
-        FROM new_adozioni na
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
-        WHERE na.tipogradoscuola = 'EE'
+        FROM miur_adozioni na
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = #{@anno}
+        WHERE na.anno_scolastico = #{@anno}
+          AND na.tipogradoscuola = 'EE'
           AND coalesce(na.daacquist, '') ILIKE 'S%'
           AND na.annocorso IN ('1','2','3','4','5')
         GROUP BY na.codicescuola, na.annocorso, na.sezioneanno, na.combinazione
@@ -204,9 +216,10 @@ module ControlloAdozioni
                max(ns.regione) AS regione, max(ns.provincia) AS provincia,
                max(ns.comune) AS comune, max(ns.denominazione) AS denominazione,
                sum(#{PREZZO_CENTS}) AS spesa
-        FROM new_adozioni na
-        LEFT JOIN new_scuole ns ON ns.codice_scuola = na.codicescuola
-        WHERE na.tipogradoscuola = 'EE'
+        FROM miur_adozioni na
+        LEFT JOIN miur_scuole ns ON ns.codice_scuola = na.codicescuola AND ns.anno_scolastico = #{@anno}
+        WHERE na.anno_scolastico = #{@anno}
+          AND na.tipogradoscuola = 'EE'
           AND coalesce(na.daacquist, '') ILIKE 'S%'
           AND na.annocorso IN ('1','2','3','4','5')
           AND na.disciplina NOT ILIKE 'ADOZIONE ALTERNATIVA%'
@@ -226,6 +239,7 @@ module ControlloAdozioni
 
     def base_classe(r)
       {
+        anno_scolastico: @anno_miur,
         codicescuola: r["codicescuola"], annocorso: r["annocorso"],
         sezioneanno: r["sezioneanno"], combinazione: r["combinazione"],
         regione: r["regione"], provincia: r["provincia"],
