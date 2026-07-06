@@ -1,7 +1,10 @@
 require "test_helper"
 
 class Adozione::ReconcilerTest < ActiveSupport::TestCase
-  fixtures :accounts
+  # miur/scuole fissa Miur.anno_corrente = "202627" (max anno_scolastico in
+  # anagrafe): senza queste righe anno_corrente sarebbe nil e lo stato derivato
+  # collasserebbe sempre a "archiviata".
+  fixtures :accounts, "miur/scuole"
 
   setup do
     @account = accounts(:fizzy)
@@ -11,9 +14,12 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   # Righe sorgente con codice sintetico "XX...": non collidono con le fixture
-  # new_adozioni condivise, e la provincia "XX" isola il reconcile.
-  def seed_new_adozioni(rows)
-    rows.each { |r| NewAdozione.create!({ tipogradoscuola: "EE" }.merge(r)) }
+  # miur/adozioni condivise, e la provincia "XX" isola il reconcile. anno_scolastico
+  # esplicito: deve corrispondere a una partizione esistente di miur_adozioni.
+  def seed_miur(rows, anno: "202627")
+    rows.each do |r|
+      Miur::Adozione.create!({ tipogradoscuola: "EE", anno_scolastico: anno }.merge(r))
+    end
   end
 
   def reconciler(anno: "202627")
@@ -21,7 +27,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call crea le classi distinte e non duplica su re-run" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" },
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "222", daacquist: "Si" },
       { codicescuola: "XXEE00001A", annocorso: "2", sezioneanno: "B", combinazione: "TN", codiceisbn: "333", daacquist: "No" }
@@ -41,7 +47,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call archivia le classi attive non piu in sorgente (solo 202627)" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" }
     ])
     # classe attiva non presente in sorgente
@@ -55,7 +61,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call riattiva una classe archiviata che ricompare in sorgente" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si" }
     ])
     ricomparsa = @account.classi.create!(scuola: @scuola, anno_scolastico: "202627",
@@ -69,7 +75,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call crea snapshot adozioni con anno_scolastico+codicescuola, idempotente" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", nuovaadoz: "Si", consigliato: "No",
         titolo: "Libro Uno", editore: "Giunti", prezzo: "12,50" },
@@ -96,7 +102,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call rimuove le adozioni dell'anno non piu in sorgente" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
     ])
@@ -111,7 +117,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call NON rimuove orfane con dati utente (note, copie)" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
     ])
@@ -128,7 +134,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call end-to-end aggiorna i counter della scuola" do
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", prezzo: "10,00" },
       { codicescuola: "XXEE00001A", annocorso: "2", sezioneanno: "B", combinazione: "TN",
@@ -146,7 +152,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     vecchia = @account.classi.create!(scuola: @scuola, anno_scolastico: "202526",
       anno_corso: "1", sezione: "A", combinazione: "TN", stato: "attiva",
       codice_ministeriale_origine: "XXEE00001A", classe_origine: "1", sezione_origine: "A")
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
     ])
@@ -159,7 +165,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   end
 
   test "call NON archivia le classi di scuole assenti dalla sorgente corrente" do
-    # scuola in attesa del MIUR (rilascio cumulativo): niente righe in new_adozioni.
+    # scuola in attesa del MIUR (rilascio cumulativo): niente righe in miur_adozioni.
     # Le sue classi vecchie restano attive, altrimenti sparisce dalla panoramica
     # (con_adozioni? richiede adozioni_count > 0 o presenza nel MIUR)
     in_attesa = @account.scuole.create!(codice_ministeriale: "XXEE00009Z",
@@ -167,7 +173,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     vecchia = @account.classi.create!(scuola: in_attesa, anno_scolastico: "202526",
       anno_corso: "3", sezione: "C", stato: "attiva",
       codice_ministeriale_origine: "XXEE00009Z", classe_origine: "3", sezione_origine: "C")
-    seed_new_adozioni([
+    seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
     ])
@@ -177,11 +183,27 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert_equal "attiva", vecchia.reload.stato
   end
 
-  test "source mappa anno su tabella e stato" do
-    assert_equal "new_adozioni", reconciler.source.table
-    assert_equal "attiva", reconciler.source.stato
-    src = reconciler(anno: "202526").source
-    assert_equal "import_adozioni", src.table
-    assert_equal "archiviata", src.stato
+  # Lo stato deriva dall'anno: corrente (== Miur.anno_corrente) → attiva,
+  # passato → archiviata. Stessa tabella miur_adozioni, filtrata per anno.
+  test "stato deriva dall'anno corrente vs passato" do
+    assert_equal "attiva", reconciler.stato
+    assert_equal "archiviata", reconciler(anno: "202526").stato
+  end
+
+  test "call su anno passato crea classi/adozioni archiviate, filtrando per anno" do
+    seed_miur([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "555", daacquist: "Si", prezzo: "10,00" }
+    ], anno: "202526")
+
+    reconciler(anno: "202526").call
+
+    classe = @scuola.classi.find_by(anno_scolastico: "202526", anno_corso: "1", sezione: "A")
+    assert_equal "archiviata", classe.stato
+    ad = @account.adozioni.find_by(codice_isbn: "555", anno_scolastico: "202526")
+    assert_equal "202526", ad.anno_scolastico
+    # il filtro anno isola le partizioni: nessuna classe/adozione 202627 creata
+    assert_empty @scuola.classi.where(anno_scolastico: "202627")
+    assert_not @account.adozioni.exists?(anno_scolastico: "202627")
   end
 end

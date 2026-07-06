@@ -3,36 +3,11 @@ class Adozione::Reconciler
   # (account, provincia, anno). Sostituisce il fan-out per-scuola della promozione.
   # Stesso pattern di ControlloAdozioni::Rebuild: transazione + advisory lock.
 
-  # col: nome_logico → identificatore SQL (già quotato per import_adozioni).
-  # si: espressione booleana "vale sì" per la colonna passata.
-  Source = Struct.new(:table, :col, :stato, :si, keyword_init: true)
-
   # Prezzo stringa "12,34" -> cents int (0 se non numerico). Idioma da
   # ControlloAdozioni::Rebuild::PREZZO_CENTS: classi POSIX, round su numeric.
   PREZZO_CENTS = "CASE WHEN replace(src.prezzo, ',', '.') ~ '^[0-9]+([.][0-9]+)?$' " \
                  "THEN round(replace(src.prezzo, ',', '.')::numeric * 100)::int " \
                  "ELSE 0 END".freeze
-
-  NEW = Source.new(
-    table: "new_adozioni", stato: "attiva",
-    si: ->(expr) { "COALESCE(#{expr}, '') ILIKE 'S%'" },
-    col: { codicescuola: "codicescuola", annocorso: "annocorso",
-           sezioneanno: "sezioneanno", combinazione: "combinazione",
-           codiceisbn: "codiceisbn", daacquist: "daacquist", titolo: "titolo",
-           editore: "editore", autori: "autori", disciplina: "disciplina",
-           prezzo: "prezzo", nuovaadoz: "nuovaadoz", consigliato: "consigliato" }
-  ).freeze
-
-  IMPORT = Source.new(
-    table: "import_adozioni", stato: "archiviata",
-    si: ->(expr) { "#{expr} = 'Si'" },
-    col: { codicescuola: %q{"CODICESCUOLA"}, annocorso: %q{"ANNOCORSO"},
-           sezioneanno: %q{"SEZIONEANNO"}, combinazione: %q{"COMBINAZIONE"},
-           codiceisbn: %q{"CODICEISBN"}, daacquist: %q{"DAACQUIST"},
-           titolo: %q{"TITOLO"}, editore: %q{"EDITORE"}, autori: %q{"AUTORI"},
-           disciplina: %q{"DISCIPLINA"}, prezzo: %q{"PREZZO"},
-           nuovaadoz: %q{"NUOVAADOZ"}, consigliato: %q{"CONSIGLIATO"} }
-  ).freeze
 
   def initialize(account:, provincia:, anno:)
     @account = account
@@ -40,8 +15,15 @@ class Adozione::Reconciler
     @anno = anno.to_s
   end
 
-  def source
-    @anno == "202627" ? NEW : IMPORT
+  # Sorgente unica: la tabella partizionata miur_adozioni. Ogni subquery che la
+  # legge DEVE filtrare anno_scolastico = :anno — con una tabella sola il filtro
+  # anno non è più implicito nella scelta della tabella.
+  #
+  # Stato derivato dall'anno: l'anno corrente (max pubblicato in anagrafe MIUR)
+  # nasce attivo; gli anni passati nascono archiviati (storico). Le fasi
+  # riattiva/archivia girano solo per l'anno corrente.
+  def stato
+    @stato ||= (anno == Miur.anno_corrente ? "attiva" : "archiviata")
   end
 
   def call
@@ -72,6 +54,11 @@ class Adozione::Reconciler
     )
   end
 
+  # "vale sì" robusto a "Si"/"S"/"SI" e a null (COALESCE). Unico per la sorgente
+  # miur_adozioni: le vecchie grafie (new = ILIKE 'S%', import = "= 'Si'")
+  # sono entrambe coperte.
+  def si(expr) = "COALESCE(#{expr}, '') ILIKE 'S%'"
+
   # L'indice unico parziale sulle attive NON include anno_scolastico: "attiva"
   # esiste una sola volta per (scuola, anno_corso, sezione, combinazione)
   # attraverso gli anni. Le attive di anni precedenti vanno archiviate PRIMA di
@@ -79,12 +66,11 @@ class Adozione::Reconciler
   # faceva la promozione per-scuola (promuovibile ⇒ nel MIUR). Le scuole in
   # attesa del rilascio cumulativo MIUR tengono le classi vecchie attive:
   # azzerarle le farebbe sparire dalla panoramica (con_adozioni? richiede
-  # adozioni_count > 0 o presenza in new_adozioni). Solo UPDATE di stato:
+  # adozioni_count > 0 o presenza in miur_adozioni). Solo UPDATE di stato:
   # reversibile, nessuna cancellazione.
   def archivia_anni_precedenti
-    return unless source.stato == "attiva"
+    return unless stato == "attiva"
 
-    c = source.col
     exec_sql(<<~SQL)
       UPDATE classi cl SET stato = 'archiviata', updated_at = now()
       FROM scuole sc
@@ -93,18 +79,19 @@ class Adozione::Reconciler
         AND cl.stato = 'attiva'
         AND cl.anno_scolastico IS DISTINCT FROM :anno
         AND EXISTS (
-          SELECT 1 FROM #{source.table} src_p
-          WHERE src_p.#{c[:codicescuola]} = sc.codice_ministeriale
+          SELECT 1 FROM miur_adozioni src_p
+          WHERE src_p.codicescuola = sc.codice_ministeriale
+            AND src_p.anno_scolastico = :anno
         )
     SQL
   end
 
   # Le fasi riattiva/archivia girano solo per l'anno corrente: lo storico
-  # (import_adozioni) nasce e resta archiviato. Il rilascio MIUR è cumulativo:
+  # (anni passati) nasce e resta archiviato. Il rilascio MIUR è cumulativo:
   # una classe archiviata come orfana può ricomparire in sorgente → si riattiva
   # PRIMA dell'upsert, così il NOT EXISTS la trova e non duplica.
   def riattiva_classi
-    return unless source.stato == "attiva"
+    return unless stato == "attiva"
 
     exec_sql(<<~SQL)
       UPDATE classi cl SET stato = 'attiva', updated_at = now()
@@ -118,7 +105,7 @@ class Adozione::Reconciler
   end
 
   def archivia_classi_orfane
-    return unless source.stato == "attiva"
+    return unless stato == "attiva"
 
     exec_sql(<<~SQL)
       UPDATE classi cl SET stato = 'archiviata', updated_at = now()
@@ -133,19 +120,17 @@ class Adozione::Reconciler
 
   # Subquery riusata da riattiva/archivia: la classe cl esiste in sorgente?
   def sorgente_match_classe
-    c = source.col
     <<~SQL
-      SELECT 1 FROM #{source.table} src_m
-      WHERE src_m.#{c[:codicescuola]} = cl.codice_ministeriale_origine
-        AND src_m.#{c[:annocorso]}    IS NOT DISTINCT FROM cl.anno_corso
-        AND src_m.#{c[:sezioneanno]}  IS NOT DISTINCT FROM cl.sezione
-        AND src_m.#{c[:combinazione]} IS NOT DISTINCT FROM cl.combinazione
+      SELECT 1 FROM miur_adozioni src_m
+      WHERE src_m.codicescuola = cl.codice_ministeriale_origine
+        AND src_m.anno_scolastico = :anno
+        AND src_m.annocorso    IS NOT DISTINCT FROM cl.anno_corso
+        AND src_m.sezioneanno  IS NOT DISTINCT FROM cl.sezione
+        AND src_m.combinazione IS NOT DISTINCT FROM cl.combinazione
     SQL
   end
 
   def upsert_classi
-    s = source
-    c = s.col
     sql = <<~SQL
       INSERT INTO classi
         (id, account_id, scuola_id, anno_corso, sezione, combinazione,
@@ -154,13 +139,13 @@ class Adozione::Reconciler
          created_at, updated_at)
       SELECT gen_random_uuid(), :account_id, sc.id,
              src.annocorso, src.sezioneanno, src.combinazione,
-             :anno, '#{s.stato}', sc.tipo_scuola,
+             :anno, '#{stato}', sc.tipo_scuola,
              src.codicescuola, src.annocorso, src.sezioneanno, src.combinazione,
              now(), now()
       FROM (
-        SELECT DISTINCT #{c[:codicescuola]} AS codicescuola, #{c[:annocorso]} AS annocorso,
-               #{c[:sezioneanno]} AS sezioneanno, #{c[:combinazione]} AS combinazione
-        FROM #{s.table}
+        SELECT DISTINCT codicescuola, annocorso, sezioneanno, combinazione
+        FROM miur_adozioni
+        WHERE anno_scolastico = :anno
       ) src
       JOIN scuole sc ON sc.codice_ministeriale = src.codicescuola
         AND sc.account_id = :account_id AND sc.provincia = :provincia
@@ -175,13 +160,9 @@ class Adozione::Reconciler
     SQL
     exec_sql(sql)
   end
-  # La subquery src normalizza i nomi colonna (lower/UPPER) una volta sola; da lì
-  # in poi il SQL è identico per le due sorgenti. ON CONFLICT DO NOTHING preserva
-  # le righe esistenti (note, numero_copie, mia, libro_id): il reconcile non
-  # riscrive lo snapshot di righe già presenti.
+  # ON CONFLICT DO NOTHING preserva le righe esistenti (note, numero_copie, mia,
+  # libro_id): il reconcile non riscrive lo snapshot di righe già presenti.
   def upsert_adozioni
-    s = source
-    c = s.col
     sql = <<~SQL
       INSERT INTO adozioni
         (id, account_id, classe_id, codice_isbn, anno_scolastico, anno_corso, codicescuola,
@@ -190,19 +171,16 @@ class Adozione::Reconciler
       SELECT gen_random_uuid(), :account_id, cl.id, src.codiceisbn, :anno, src.annocorso, src.codicescuola,
          src.titolo, src.editore, src.autori, src.disciplina,
          #{PREZZO_CENTS},
-         #{s.si.call('src.nuovaadoz')},
-         #{s.si.call('src.daacquist')},
-         #{s.si.call('src.consigliato')},
+         #{si('src.nuovaadoz')},
+         #{si('src.daacquist')},
+         #{si('src.consigliato')},
          now(), now()
       FROM (
-        SELECT #{c[:codicescuola]} AS codicescuola, #{c[:annocorso]} AS annocorso,
-               #{c[:sezioneanno]} AS sezioneanno, #{c[:combinazione]} AS combinazione,
-               #{c[:codiceisbn]} AS codiceisbn, #{c[:daacquist]} AS daacquist,
-               #{c[:titolo]} AS titolo, #{c[:editore]} AS editore,
-               #{c[:autori]} AS autori, #{c[:disciplina]} AS disciplina,
-               #{c[:prezzo]} AS prezzo, #{c[:nuovaadoz]} AS nuovaadoz,
-               #{c[:consigliato]} AS consigliato
-        FROM #{s.table}
+        SELECT codicescuola, annocorso, sezioneanno, combinazione,
+               codiceisbn, daacquist, titolo, editore,
+               autori, disciplina, prezzo, nuovaadoz, consigliato
+        FROM miur_adozioni
+        WHERE anno_scolastico = :anno
       ) src
       JOIN scuole sc ON sc.codice_ministeriale = src.codicescuola
         AND sc.account_id = :account_id AND sc.provincia = :provincia
@@ -221,19 +199,18 @@ class Adozione::Reconciler
   # codicescuola+annocorso: un ISBN rimosso dalla 1B ma presente in 1A deve
   # sparire dalla 1B.
   def cancella_adozioni_orfane
-    s = source
-    c = s.col
     orfana = <<~SQL
       a.classe_id = cl.id AND cl.scuola_id = sc.id
         AND sc.account_id = :account_id AND sc.provincia = :provincia
         AND a.anno_scolastico = :anno
         AND NOT EXISTS (
-          SELECT 1 FROM #{s.table} src_m
-          WHERE src_m.#{c[:codicescuola]} = cl.codice_ministeriale_origine
-            AND src_m.#{c[:annocorso]}    IS NOT DISTINCT FROM cl.anno_corso
-            AND src_m.#{c[:sezioneanno]}  IS NOT DISTINCT FROM cl.sezione
-            AND src_m.#{c[:combinazione]} IS NOT DISTINCT FROM cl.combinazione
-            AND src_m.#{c[:codiceisbn]}   = a.codice_isbn
+          SELECT 1 FROM miur_adozioni src_m
+          WHERE src_m.codicescuola = cl.codice_ministeriale_origine
+            AND src_m.anno_scolastico = :anno
+            AND src_m.annocorso    IS NOT DISTINCT FROM cl.anno_corso
+            AND src_m.sezioneanno  IS NOT DISTINCT FROM cl.sezione
+            AND src_m.combinazione IS NOT DISTINCT FROM cl.combinazione
+            AND src_m.codiceisbn   = a.codice_isbn
         )
     SQL
     protetta = <<~SQL
