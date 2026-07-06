@@ -127,17 +127,17 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Per provincia", @response.body
   end
 
-  test "anteprima mostra le adozioni new_adozioni raggruppate per classe" do
-    NewScuola.create!(codice_scuola: "MIEE12345", anno_scolastico: "202627",
+  test "anteprima mostra le adozioni MIUR raggruppate per classe" do
+    Miur::Scuola.create!(codice_scuola: "MIEE12345", anno_scolastico: "202627",
       denominazione: "PRIMARIA TEST", indirizzo: "VIA TEST, 1", cap: "20100",
       comune: "Milano", tipo_scuola: "SCUOLA PRIMARIA")
-    NewAdozione.create!(codicescuola: "MIEE12345", anno_scolastico: "202627", tipogradoscuola: "EE",
+    Miur::Adozione.create!(codicescuola: "MIEE12345", anno_scolastico: "202627", tipogradoscuola: "EE",
       annocorso: "1", sezioneanno: "A", combinazione: "TEMPO PIENO",
       disciplina: "LINGUA INGLESE", codiceisbn: "9788847251540", autori: "AA VV",
       titolo: "HELLO WORLD GOLD 1", editore: "CELTIC PUBLISHING", prezzo: "4,08",
       nuovaadoz: "Si", daacquist: "Si", consigliato: "No")
 
-    get controllo_adozioni_anteprima_path("MIEE12345", account_id: @account.id, fonte: "new")
+    get controllo_adozioni_anteprima_path("MIEE12345", account_id: @account.id, anno: "202627")
     assert_response :success
     assert_match "PRIMARIA TEST", @response.body
     assert_match "LINGUA INGLESE", @response.body
@@ -145,7 +145,7 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "anteprima senza dati mostra il messaggio di assenza" do
-    get controllo_adozioni_anteprima_path("MIEE00000", account_id: @account.id, fonte: "new")
+    get controllo_adozioni_anteprima_path("MIEE00000", account_id: @account.id, anno: "202627")
     assert_response :success
     assert_match "Nessuna adozione trovata", @response.body
   end

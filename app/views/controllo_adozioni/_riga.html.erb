@@ -34,15 +34,17 @@
     <% end %>
   </div>
 
+  <% anno_corrente = Miur.anno_corrente %>
+  <% anno_precedente = anno_corrente && format("%d%02d", anno_corrente[0, 4].to_i - 1, anno_corrente[0, 4].to_i % 100) %>
   <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
     <span class="txt-subtle">Scagnozz <%= riga.correnti_classi %>/<%= riga.correnti_adozioni %></span>
-    <%= link_to controllo_adozioni_anteprima_path(scuola.codice_ministeriale, fonte: "new", account_id: scuola.account_id),
+    <%= link_to controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_corrente, account_id: scuola.account_id),
           style: (riga.disallineata? ? "color: var(--color-negative);" : nil),
-          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (anno nuovo MIUR)" } do %>
-      · 2026/27 <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong>
+          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (#{anno_scolastico_label(anno_corrente)})" } do %>
+      · <%= anno_scolastico_label(anno_corrente) %> <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong>
     <% end %>
-    <%= link_to "2025/26", controllo_adozioni_anteprima_path(scuola.codice_ministeriale, fonte: "import", account_id: scuola.account_id),
+    <%= link_to anno_scolastico_label(anno_precedente), controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_precedente, account_id: scuola.account_id),
           class: "txt-x-small txt-subtle", style: "margin-inline-start: .25rem;",
-          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (anno corrente importato)" } %>
+          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (#{anno_scolastico_label(anno_precedente)})" } %>
   </div>
 <% end %>

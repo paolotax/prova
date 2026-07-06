@@ -2,12 +2,12 @@ require "test_helper"
 
 module ControlloAdozioni
   class AnteprimaTest < ActiveSupport::TestCase
-    test "fonte new: intestazione dalla anagrafica NewScuola" do
-      NewScuola.create!(codice_scuola: "XXEE1111A1", anno_scolastico: "202627",
+    test "anno corrente: intestazione dalla anagrafe Miur::Scuola" do
+      Miur::Scuola.create!(codice_scuola: "XXEE1111A1", anno_scolastico: "202627",
         denominazione: "PRIMARIA R. PEZZANI", indirizzo: "VIA WYBICKI, 30",
         cap: "42122", comune: "Reggio nell'Emilia", tipo_scuola: "SCUOLA PRIMARIA")
 
-      intestazione = Anteprima.new(codicescuola: "XXEE1111A1", fonte: "new").intestazione
+      intestazione = Anteprima.new(codicescuola: "XXEE1111A1", anno: "202627").intestazione
 
       assert_equal "PRIMARIA R. PEZZANI", intestazione.denominazione
       assert_equal "VIA WYBICKI, 30", intestazione.indirizzo
@@ -16,24 +16,24 @@ module ControlloAdozioni
       assert_equal "202627", intestazione.anno_scolastico
     end
 
-    test "fonte new: righe raggruppate per classe, ordinate come il PDF MIUR" do
-      NewAdozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
+    test "righe raggruppate per classe, ordinate come il PDF MIUR" do
+      Miur::Adozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "40 ORE A TEMPO PIENO",
         disciplina: "LINGUA INGLESE", codiceisbn: "9788847251540", autori: "AA VV",
         titolo: "HELLO WORLD GOLD 1", volume: "1", editore: "CELTIC PUBLISHING",
         prezzo: "4,08", nuovaadoz: "Si", daacquist: "Si", consigliato: "No")
-      NewAdozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "40 ORE A TEMPO PIENO",
         disciplina: "IL LIBRO DELLA PRIMA CLASSE", codiceisbn: "9791257530181", autori: "GOTTARDI GINEVRA",
         titolo: "UN ANNO CON LUCE E BRIO 1", volume: "1", editore: "ERICKSON",
         prezzo: "13,54", nuovaadoz: "Si", daacquist: "Si", consigliato: "no")
-      NewAdozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: "XXEE1111A1", anno_scolastico: "202627", tipogradoscuola: "EE",
         annocorso: "2", sezioneanno: "A", combinazione: "24 ORE SETTIMANALI",
         disciplina: "MATEMATICA", codiceisbn: "9780000000001", autori: "ROSSI",
         titolo: "MATEMATICA 2", volume: "U", editore: "GIUNTI",
         prezzo: "10", nuovaadoz: "No", daacquist: "Si", consigliato: "Si")
 
-      classi = Anteprima.new(codicescuola: "XXEE1111A1", fonte: "new").classi
+      classi = Anteprima.new(codicescuola: "XXEE1111A1", anno: "202627").classi
 
       assert_equal 2, classi.size
       prima = classi.first
@@ -51,23 +51,20 @@ module ControlloAdozioni
       assert_equal "2", seconda.annocorso
     end
 
-    test "fonte import: intestazione da ImportScuola e righe dai valori grezzi" do
+    test "anno precedente: intestazione con fallback su ImportScuola e righe grezze" do
+      # miur_scuole non ha snapshot per l'anno precedente: l'intestazione ricade
+      # sull'anagrafe durevole ImportScuola.
       ImportScuola.create!(CODICESCUOLA: "XXEE2222B1", ANNOSCOLASTICO: "202526",
         DENOMINAZIONESCUOLA: "PRIMARIA R. PEZZANI", INDIRIZZOSCUOLA: "VIA WYBICKI, 30",
         CAPSCUOLA: "42122", DESCRIZIONECOMUNE: "Reggio nell'Emilia",
         DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: "SCUOLA PRIMARIA", slug: "xxee2222b1")
-      # .import (bulk, come ImportAdozione.import_new_adozioni in produzione): il
-      # metodo "editore" definito sul modello ombreggia l'association belongs_to
-      # :editore e rompe l'autosave callback di .create!.
-      ImportAdozione.import([
-        ImportAdozione.new(CODICESCUOLA: "XXEE2222B1", anno_scolastico: "202526",
-          ANNOCORSO: "1", SEZIONEANNO: "A", COMBINAZIONE: "40 ORE A TEMPO PIENO",
-          DISCIPLINA: "RELIGIONE", CODICEISBN: "9788846845283", AUTORI: "PICARIELLO CARMINE",
-          TITOLO: "MIO LIBRO DI RELIGIONE (IL)", VOLUME: "U", EDITORE: "LA SPIGA",
-          PREZZO: "8,31", NUOVAADOZ: "Si", DAACQUIST: "Si", CONSIGLIATO: "No")
-      ])
+      Miur::Adozione.create!(codicescuola: "XXEE2222B1", anno_scolastico: "202526",
+        tipogradoscuola: "EE", annocorso: "1", sezioneanno: "A", combinazione: "40 ORE A TEMPO PIENO",
+        disciplina: "RELIGIONE", codiceisbn: "9788846845283", autori: "PICARIELLO CARMINE",
+        titolo: "MIO LIBRO DI RELIGIONE (IL)", volume: "U", editore: "LA SPIGA",
+        prezzo: "8,31", nuovaadoz: "Si", daacquist: "Si", consigliato: "No")
 
-      anteprima = Anteprima.new(codicescuola: "XXEE2222B1", fonte: "import")
+      anteprima = Anteprima.new(codicescuola: "XXEE2222B1", anno: "202526")
       intestazione = anteprima.intestazione
 
       assert_equal "PRIMARIA R. PEZZANI", intestazione.denominazione
@@ -80,13 +77,12 @@ module ControlloAdozioni
       assert_equal BigDecimal("8.31"), riga.prezzo
     end
 
-    test "fonte non riconosciuta ricade su new" do
-      anteprima = Anteprima.new(codicescuola: "XXEE0000ZZ", fonte: "boh")
-      assert_equal "new", anteprima.fonte
+    test "anno_label formatta l'anno scolastico" do
+      assert_equal "2026/27", Anteprima.new(codicescuola: "X", anno: "202627").anno_label
     end
 
     test "senza dati non e' disponibile" do
-      anteprima = Anteprima.new(codicescuola: "XXEE0000ZZ", fonte: "new")
+      anteprima = Anteprima.new(codicescuola: "XXEE0000ZZ", anno: "202627")
       refute anteprima.disponibile?
       assert_equal [], anteprima.classi
     end

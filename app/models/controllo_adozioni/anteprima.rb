@@ -3,13 +3,11 @@ module ControlloAdozioni
   # stesso formato del PDF ufficiale "Elenco dei libri di testo adottati o
   # consigliati" scaricabile dal sito del MIUR.
   #
-  # fonte "new" legge da new_adozioni (snapshot dell'anno nuovo, non ancora
-  # promosso); fonte "import" legge da import_adozioni (l'anno gia' importato).
-  # I valori delle righe sono quelli grezzi MIUR (maiuscolo, non titleizzati):
-  # il PDF ufficiale non li presenta, li riporta cosi' come scaricati.
+  # Parametrizzata per anno scolastico (es. "202627"): le righe vengono lette da
+  # Miur::Adozione.per_anno(anno). I valori sono quelli grezzi MIUR (maiuscolo,
+  # non titleizzati): il PDF ufficiale non li presenta, li riporta cosi' come
+  # scaricati.
   class Anteprima
-    FONTI = %w[new import].freeze
-
     Riga = Struct.new(
       :disciplina, :codice_isbn, :autori, :titolo, :sottotitolo, :volume,
       :editore, :prezzo, :nuova_adozione, :da_acquistare, :consigliato,
@@ -27,23 +25,30 @@ module ControlloAdozioni
       end
     end
 
-    attr_reader :codicescuola, :fonte
+    attr_reader :codicescuola, :anno
 
-    def initialize(codicescuola:, fonte: "new")
+    def initialize(codicescuola:, anno: Miur.anno_corrente)
       @codicescuola = codicescuola.to_s
-      @fonte = FONTI.include?(fonte.to_s) ? fonte.to_s : "new"
+      @anno = anno.to_s
     end
 
-    def fonte_label
-      fonte == "import" ? "Anno corrente (import_adozioni)" : "Anno nuovo (MIUR, non ancora promosso)"
+    # Etichetta leggibile dell'anno scolastico, es. "202627" -> "2026/27".
+    def anno_label
+      return if anno.blank?
+
+      "#{anno[0, 4]}/#{anno[4, 2]}"
     end
 
     def intestazione
-      @intestazione ||= fonte == "import" ? intestazione_da_import : intestazione_da_new
+      @intestazione ||= intestazione_da_miur || intestazione_da_import
     end
 
     def classi
-      @classi ||= fonte == "import" ? classi_da_import : classi_da_new
+      @classi ||= adozioni.group_by { |a| [a.annocorso, a.sezioneanno, a.combinazione] }
+                          .map do |(annocorso, sezioneanno, combinazione), righe|
+        ClasseGruppo.new(annocorso: annocorso, sezioneanno: sezioneanno, combinazione: combinazione,
+                         righe: righe.map { |a| riga_da(a) })
+      end
     end
 
     def disponibile?
@@ -52,18 +57,27 @@ module ControlloAdozioni
 
     private
 
-    def intestazione_da_new
-      scuola = NewScuola.where(codice_scuola: codicescuola).order(anno_scolastico: :desc).first
-      anno = NewAdozione.where(codicescuola: codicescuola).maximum(:anno_scolastico) || scuola&.anno_scolastico
+    def adozioni
+      @adozioni ||= Miur::Adozione.per_anno(anno)
+                                  .where(codicescuola: codicescuola)
+                                  .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)
+                                  .to_a
+    end
+
+    # Intestazione dallo snapshot MIUR dell'anno richiesto (miur_scuole).
+    def intestazione_da_miur
+      scuola = Miur::Scuola.per_anno(anno).find_by(codice_scuola: codicescuola)
+      return unless scuola
+
       Intestazione.new(
-        denominazione: scuola&.denominazione, indirizzo: scuola&.indirizzo, cap: scuola&.cap,
-        comune: scuola&.comune, tipo_scuola: scuola&.tipo_scuola, anno_scolastico: anno
+        denominazione: scuola.denominazione, indirizzo: scuola.indirizzo, cap: scuola.cap,
+        comune: scuola.comune, tipo_scuola: scuola.tipo_scuola, anno_scolastico: anno
       )
     end
 
+    # Fallback sull'anagrafe durevole per gli anni senza snapshot in miur_scuole.
     def intestazione_da_import
       scuola = ImportScuola.find_by(CODICESCUOLA: codicescuola)
-      anno = ImportAdozione.where(CODICESCUOLA: codicescuola).maximum(:anno_scolastico) || scuola&.ANNOSCOLASTICO
       Intestazione.new(
         denominazione: scuola&.DENOMINAZIONESCUOLA, indirizzo: scuola&.INDIRIZZOSCUOLA, cap: scuola&.CAPSCUOLA,
         comune: scuola&.DESCRIZIONECOMUNE, tipo_scuola: scuola&.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA,
@@ -71,55 +85,18 @@ module ControlloAdozioni
       )
     end
 
-    def classi_da_new
-      NewAdozione.where(codicescuola: codicescuola)
-                 .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)
-                 .group_by { |na| [na.annocorso, na.sezioneanno, na.combinazione] }
-                 .map do |(annocorso, sezioneanno, combinazione), righe|
-        ClasseGruppo.new(annocorso: annocorso, sezioneanno: sezioneanno, combinazione: combinazione,
-                         righe: righe.map { |na| riga_da_new(na) })
-      end
-    end
-
-    def riga_da_new(na)
+    def riga_da(a)
       Riga.new(
-        disciplina: na.disciplina, codice_isbn: na.codiceisbn, autori: na.autori,
-        titolo: na.titolo, sottotitolo: na.sottotitolo, volume: na.volume,
-        editore: na.editore, prezzo: na.prezzo_euro,
-        nuova_adozione: si_no(na.nuovaadoz), da_acquistare: si_no(na.daacquist),
-        consigliato: si_no(na.consigliato)
-      )
-    end
-
-    def classi_da_import
-      ImportAdozione.where(CODICESCUOLA: codicescuola)
-                    .order(:ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE, :DISCIPLINA, :TITOLO)
-                    .group_by { |ia| [ia.ANNOCORSO, ia.SEZIONEANNO, ia.COMBINAZIONE] }
-                    .map do |(annocorso, sezioneanno, combinazione), righe|
-        ClasseGruppo.new(annocorso: annocorso, sezioneanno: sezioneanno, combinazione: combinazione,
-                         righe: righe.map { |ia| riga_da_import(ia) })
-      end
-    end
-
-    def riga_da_import(ia)
-      Riga.new(
-        disciplina: ia.DISCIPLINA, codice_isbn: ia.CODICEISBN, autori: ia.AUTORI,
-        titolo: ia.TITOLO, sottotitolo: ia.SOTTOTITOLO, volume: ia.VOLUME,
-        editore: ia.EDITORE, prezzo: parse_prezzo(ia.PREZZO),
-        nuova_adozione: si_no(ia.NUOVAADOZ), da_acquistare: si_no(ia.DAACQUIST),
-        consigliato: si_no(ia.CONSIGLIATO)
+        disciplina: a.disciplina, codice_isbn: a.codiceisbn, autori: a.autori,
+        titolo: a.titolo, sottotitolo: a.sottotitolo, volume: a.volume,
+        editore: a.editore, prezzo: a.prezzo_euro,
+        nuova_adozione: si_no(a.nuovaadoz), da_acquistare: si_no(a.daacquist),
+        consigliato: si_no(a.consigliato)
       )
     end
 
     def si_no(value)
       value.to_s.match?(/\As/i) ? "Si" : "No"
-    end
-
-    def parse_prezzo(value)
-      normalizzato = value.to_s.tr(",", ".")
-      return unless normalizzato.match?(/\A[0-9]+(\.[0-9]+)?\z/)
-
-      BigDecimal(normalizzato)
     end
   end
 end

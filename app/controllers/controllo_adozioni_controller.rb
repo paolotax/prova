@@ -74,10 +74,11 @@ class ControlloAdozioniController < ApplicationController
   end
 
   # Anteprima delle adozioni MIUR per classe, nel formato del PDF ufficiale
-  # "Elenco dei libri di testo adottati o consigliati". fonte: "new" (new_adozioni,
-  # anno nuovo) o "import" (import_adozioni, anno corrente gia' importato).
+  # "Elenco dei libri di testo adottati o consigliati". Parametrizzata per anno
+  # scolastico (?anno=202627); default all'anno corrente pubblicato dal MIUR.
   def anteprima
-    @anteprima = ControlloAdozioni::Anteprima.new(codicescuola: params[:codicescuola], fonte: params[:fonte])
+    @anteprima = ControlloAdozioni::Anteprima.new(codicescuola: params[:codicescuola],
+                                                  anno: params[:anno].presence || Miur.anno_corrente)
   end
 
   def show

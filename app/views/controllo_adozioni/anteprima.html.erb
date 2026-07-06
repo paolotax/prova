@@ -26,7 +26,7 @@
       <div class="txt-align-end">
         <p class="txt-subtle">Tipo Scuola: <%= intestazione.tipo_scuola %></p>
         <p class="txt-subtle">Anno Scolastico <%= anno_scolastico_label(intestazione.anno_scolastico) %></p>
-        <p class="txt-subtle txt-x-small"><%= @anteprima.fonte_label %></p>
+        <p class="txt-subtle txt-x-small"><%= @anteprima.anno_label %></p>
       </div>
     </div>
 
@@ -79,6 +79,6 @@
       </section>
     <% end %>
   <% else %>
-    <p class="txt-subtle">Nessuna adozione trovata per questa scuola (<%= @anteprima.fonte_label %>).</p>
+    <p class="txt-subtle">Nessuna adozione trovata per questa scuola (<%= @anteprima.anno_label %>).</p>
   <% end %>
 </div>
