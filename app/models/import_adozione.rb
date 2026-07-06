@@ -23,11 +23,10 @@
 #
 
 class ImportAdozione < ApplicationRecord
-  # import_adozioni e' una vista ponte sulla partizione 202526 di miur_adozioni:
-  # le viste non dichiarano PK ne' ereditano la sequenza dell'id, quindi vanno
-  # esplicitate (activerecord-import ne ha bisogno per popolare l'id nei bulk).
+  # import_adozioni e' una vista ponte READ-ONLY sulla partizione 202526 di
+  # miur_adozioni: le viste non dichiarano PK, quindi la esplicitiamo perche'
+  # Adozione/AdozioneComunicata la risolvono via belongs_to :import_adozione (per id).
   self.primary_key = "id"
-  self.sequence_name = "miur_adozioni_id_seq"
 
   belongs_to :import_scuola, foreign_key: 'CODICESCUOLA', primary_key: 'CODICESCUOLA'
   belongs_to :editore,       foreign_key: 'EDITORE',      primary_key: 'EDITORE'
