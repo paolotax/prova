@@ -13,8 +13,8 @@ class Scuole::Stats
     
     @conteggio_scuole   = @scuole.load.count
     @conteggio_classi   = Views::Classe.where(codice_ministeriale: @scuole.map(&:CODICESCUOLA)).load.count
-    @conteggio_adozioni = ImportAdozione.where(CODICESCUOLA: @scuole.map(&:CODICESCUOLA)).load.count
-    @conteggio_marchi   = ImportAdozione.select(:EDITORE).where(CODICESCUOLA: @scuole.map(&:CODICESCUOLA)).distinct.count
+    @conteggio_adozioni = Miur::Adozione.per_anno("202526").where(codicescuola: @scuole.map(&:CODICESCUOLA)).load.count
+    @conteggio_marchi   = Miur::Adozione.per_anno("202526").select(:editore).where(codicescuola: @scuole.map(&:CODICESCUOLA)).distinct.count
     
     self
   end

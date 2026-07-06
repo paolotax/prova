@@ -74,20 +74,20 @@ class AdozioneComunicata < ApplicationRecord
   # Metodi per il confronto
   def trova_corrispondenza_import_adozione
     # Cerca corrispondenza per ISBN/EAN
-    corrispondenza = ImportAdozione.mie_adozioni
-                                  .where(CODICEISBN: ean)
-                                  .where(CODICESCUOLA: cod_ministeriale)
-                                  .where(ANNOCORSO: classe)
-                                  .where(SEZIONEANNO: sezione)
+    corrispondenza = Miur::Adozione.per_anno("202526").mie_adozioni
+                                  .where(codiceisbn: ean)
+                                  .where(codicescuola: cod_ministeriale)
+                                  .where(annocorso: classe)
+                                  .where(sezioneanno: sezione)
                                   .first
-    
+
     if corrispondenza
       update!(
-        import_adozione: corrispondenza,
-        codice_scuola_match: corrispondenza.CODICESCUOLA,
-        codice_isbn_match: corrispondenza.CODICEISBN,
-        anno_corso_match: corrispondenza.ANNOCORSO,
-        sezione_anno_match: corrispondenza.SEZIONEANNO
+        import_adozione_id: corrispondenza.id,
+        codice_scuola_match: corrispondenza.codicescuola,
+        codice_isbn_match: corrispondenza.codiceisbn,
+        anno_corso_match: corrispondenza.annocorso,
+        sezione_anno_match: corrispondenza.sezioneanno
       )
     end
     
@@ -235,14 +235,15 @@ class AdozioneComunicata < ApplicationRecord
         end
 
         # FASE 1: RICERCA CORRISPONDENZA PRIMA DI TUTTO
-        import_adozione_corrispondente = ImportAdozione.where(CODICEISBN: row_data['Ean'])
-                                                       .where(CODICESCUOLA: row_data['CodMinisteriale'])
-                                                       .where(ANNOCORSO: classe)
-                                                       .where(SEZIONEANNO: sezione)
+        import_adozione_corrispondente = Miur::Adozione.per_anno("202526")
+                                                       .where(codiceisbn: row_data['Ean'])
+                                                       .where(codicescuola: row_data['CodMinisteriale'])
+                                                       .where(annocorso: classe)
+                                                       .where(sezioneanno: sezione)
                                                        .first
 
         # FASE 2: COMPILAZIONE CAMPI VUOTI DAL DATABASE DESTINAZIONE
-        # Gestisce la descrizione scuola: priorità a Excel, poi ImportScuola, poi ImportAdozione
+        # Gestisce la descrizione scuola: priorità a Excel, poi ImportScuola, poi Miur::Adozione
         descrizione_scuola = row_data['Descrizione']
         if descrizione_scuola.nil? || descrizione_scuola.to_s.strip.empty?
           scuola_corrispondente = ImportScuola.find_by(CODICESCUOLA: row_data['CodMinisteriale'])
@@ -253,9 +254,9 @@ class AdozioneComunicata < ApplicationRecord
           end
         end
 
-        # Gestisce l'editore: priorità a ImportAdozione
+        # Gestisce l'editore: priorità a Miur::Adozione
         if import_adozione_corrispondente
-          editore = import_adozione_corrispondente.EDITORE
+          editore = import_adozione_corrispondente.editore
         else
           editore = row_data['Editore']
         end
@@ -267,16 +268,16 @@ class AdozioneComunicata < ApplicationRecord
           next  # Salta questo record se l'editore non è tra quelli autorizzati
         end
 
-        # Gestisce da_acquistare: priorità a Excel, poi ImportAdozione
+        # Gestisce da_acquistare: priorità a Excel, poi Miur::Adozione
         da_acquistare = row_data['da_acquistare'] || row_data['DAACQUIST']
         if da_acquistare.nil? || da_acquistare.to_s.strip.empty?
-          da_acquistare = import_adozione_corrispondente&.DAACQUIST
+          da_acquistare = import_adozione_corrispondente&.daacquist
         end
 
-        # Gestisce il titolo: priorità a Excel, poi ImportAdozione
+        # Gestisce il titolo: priorità a Excel, poi Miur::Adozione
         titolo = row_data['Titolo']
         if titolo.nil? || titolo.to_s.strip.empty?
-          titolo = import_adozione_corrispondente&.TITOLO
+          titolo = import_adozione_corrispondente&.titolo
         end
 
         # FASE 3: INSERIMENTO (anche senza corrispondenza)
@@ -304,11 +305,11 @@ class AdozioneComunicata < ApplicationRecord
             titolo: titolo.present? ? titolo : adozione_esistente.titolo,
             alunni: row_data['Alunni'].to_i,
             da_acquistare: da_acquistare.present? ? da_acquistare : adozione_esistente.da_acquistare,
-            import_adozione: import_adozione_corrispondente,
-            codice_scuola_match: import_adozione_corrispondente&.CODICESCUOLA,
-            codice_isbn_match: import_adozione_corrispondente&.CODICEISBN,
-            anno_corso_match: import_adozione_corrispondente&.ANNOCORSO,
-            sezione_anno_match: import_adozione_corrispondente&.SEZIONEANNO
+            import_adozione_id: import_adozione_corrispondente&.id,
+            codice_scuola_match: import_adozione_corrispondente&.codicescuola,
+            codice_isbn_match: import_adozione_corrispondente&.codiceisbn,
+            anno_corso_match: import_adozione_corrispondente&.annocorso,
+            sezione_anno_match: import_adozione_corrispondente&.sezioneanno
           )
           adozione = adozione_esistente
           aggiornati += 1
@@ -332,11 +333,11 @@ class AdozioneComunicata < ApplicationRecord
             sezione: sezione,
             alunni: row_data['Alunni'].to_i,
             da_acquistare: da_acquistare,
-            import_adozione: import_adozione_corrispondente,
-            codice_scuola_match: import_adozione_corrispondente&.CODICESCUOLA,
-            codice_isbn_match: import_adozione_corrispondente&.CODICEISBN,
-            anno_corso_match: import_adozione_corrispondente&.ANNOCORSO,
-            sezione_anno_match: import_adozione_corrispondente&.SEZIONEANNO
+            import_adozione_id: import_adozione_corrispondente&.id,
+            codice_scuola_match: import_adozione_corrispondente&.codicescuola,
+            codice_isbn_match: import_adozione_corrispondente&.codiceisbn,
+            anno_corso_match: import_adozione_corrispondente&.annocorso,
+            sezione_anno_match: import_adozione_corrispondente&.sezioneanno
           )
           importati += 1
         end

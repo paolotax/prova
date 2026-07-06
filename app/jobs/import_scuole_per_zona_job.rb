@@ -2,15 +2,16 @@ class ImportScuolePerZonaJob < ApplicationJob
   queue_as :bulk
   discard_on ActiveJob::DeserializationError
 
-  # Anno scolastico del dataset import_adozioni (set ministeriale stabile dell'anno scorso).
-  # ImportAdozione.anno_scolastico e' attualmente nil, quindi lo stampiamo qui esplicitamente.
-  # BUMPARE quando il dataset import_adozioni passa all'anno scolastico successivo.
+  # Anno scolastico del set ministeriale stabile (partizione miur_adozioni) da cui
+  # derivare classi e adozioni. Default all'anno scorso; esplicitabile via `anno:`
+  # (Fase 2 lo collega ad AnnoScolastico).
   ANNO_SCOLASTICO = "202526"
 
   include ActionView::RecordIdentifier
   include BroadcastsPulsanteAggiornaAdozioni
 
-  def perform(account_zona)
+  def perform(account_zona, anno: ANNO_SCOLASTICO)
+    @anno = anno
     account = account_zona.account
     account_zona.update!(stato: "importazione")
 
@@ -18,7 +19,7 @@ class ImportScuolePerZonaJob < ApplicationJob
 
     import_scuole_batch(account, account_zona, codici)
 
-    # I dati import_scuole/import_adozioni sono a #{ANNO_SCOLASTICO}. Sulle scuole gia'
+    # I dati import_scuole/miur_adozioni sono a #{@anno}. Sulle scuole gia'
     # promosse a un anno successivo NON reimportare classi/adozioni: reinserirebbe classi
     # 202526 attive in doppione accanto alle 202627. Solo l'anagrafe (fase 1) e' sicura.
     codici_importabili = codici - codici_gia_avanzati(account)
@@ -39,9 +40,9 @@ class ImportScuolePerZonaJob < ApplicationJob
   end
 
   # Codici (codice_ministeriale_origine) di scuole con classi attive gia' a un anno
-  # successivo a #{ANNO_SCOLASTICO} (gia' promosse): da escludere dall'import classi/adozioni.
+  # successivo a #{@anno} (gia' promosse): da escludere dall'import classi/adozioni.
   def codici_gia_avanzati(account)
-    account.classi.attive.where("anno_scolastico > ?", ANNO_SCOLASTICO)
+    account.classi.attive.where("anno_scolastico > ?", @anno)
            .distinct.pluck(:codice_ministeriale_origine)
   end
 
@@ -103,17 +104,17 @@ class ImportScuolePerZonaJob < ApplicationJob
     }
   end
 
-  # Fase 2: insert classi (derivate da ImportAdozione, senza Views::Classe)
+  # Fase 2: insert classi (derivate da miur_adozioni, senza Views::Classe)
   def import_classi_batch(account, codici)
     scuola_map = account.scuole.where(codice_ministeriale: codici).pluck(:codice_ministeriale, :id).to_h
 
     # Tipo scuola per ogni codice ministeriale (dalla scuola già importata)
     tipo_map = account.scuole.where(codice_ministeriale: codici).pluck(:codice_ministeriale, :tipo_scuola).to_h
 
-    # Classi distinte direttamente da import_adozioni
-    distinct_classi = ImportAdozione.where(CODICESCUOLA: codici)
+    # Classi distinte direttamente da miur_adozioni
+    distinct_classi = Miur::Adozione.per_anno(@anno).where(codicescuola: codici)
       .distinct
-      .pluck(:CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO, :COMBINAZIONE)
+      .pluck(:codicescuola, :annocorso, :sezioneanno, :combinazione)
 
     now = Time.current
     records = distinct_classi.filter_map do |codice, anno, sezione, combinazione|
@@ -127,7 +128,7 @@ class ImportScuolePerZonaJob < ApplicationJob
         anno_corso: anno,
         sezione: sezione,
         combinazione: combinazione,
-        anno_scolastico: ANNO_SCOLASTICO,
+        anno_scolastico: @anno,
         stato: "attiva",
         tipo_scuola: tipo_map[codice],
         codice_ministeriale_origine: codice,
@@ -151,11 +152,11 @@ class ImportScuolePerZonaJob < ApplicationJob
 
     libro_map = account.libri.pluck(:codice_isbn, :id).to_h
 
-    import_adozioni = ImportAdozione.where(CODICESCUOLA: codici).to_a
+    import_adozioni = Miur::Adozione.per_anno(@anno).where(codicescuola: codici).to_a
     now = Time.current
 
     records = import_adozioni.filter_map do |ia|
-      classe_id = classe_map[[ia.CODICESCUOLA, ia.ANNOCORSO, ia.SEZIONEANNO, ia.COMBINAZIONE]]
+      classe_id = classe_map[[ia.codicescuola, ia.annocorso, ia.sezioneanno, ia.combinazione]]
       next unless classe_id
 
       {
@@ -163,19 +164,19 @@ class ImportScuolePerZonaJob < ApplicationJob
         account_id: account.id,
         classe_id: classe_id,
         import_adozione_id: ia.id,
-        libro_id: libro_map[ia.CODICEISBN],
-        codice_isbn: ia.CODICEISBN,
-        anno_scolastico: ANNO_SCOLASTICO,
-        anno_corso: ia.ANNOCORSO,
-        codicescuola: ia.CODICESCUOLA,
-        titolo: ia.TITOLO,
-        editore: ia.EDITORE,
-        autori: ia.AUTORI,
-        disciplina: ia.DISCIPLINA,
-        prezzo_cents: (ia.PREZZO.to_s.gsub(",", ".").to_f * 100).to_i,
-        nuova_adozione: ia.NUOVAADOZ == "Si",
-        da_acquistare: ia.DAACQUIST == "Si",
-        consigliato: ia.CONSIGLIATO == "Si",
+        libro_id: libro_map[ia.codiceisbn],
+        codice_isbn: ia.codiceisbn,
+        anno_scolastico: @anno,
+        anno_corso: ia.annocorso,
+        codicescuola: ia.codicescuola,
+        titolo: ia.titolo,
+        editore: ia.editore,
+        autori: ia.autori,
+        disciplina: ia.disciplina,
+        prezzo_cents: (ia.prezzo.to_s.gsub(",", ".").to_f * 100).to_i,
+        nuova_adozione: ia.nuovaadoz == "Si",
+        da_acquistare: ia.daacquist == "Si",
+        consigliato: ia.consigliato == "Si",
         created_at: now,
         updated_at: now
       }

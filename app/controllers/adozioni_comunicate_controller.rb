@@ -44,19 +44,19 @@ class AdozioniComunicateController < ApplicationController
     
     # Trova le mie_adozioni che NON hanno corrispondenza nelle adozioni comunicate
     # Il confronto deve essere fatto per: ISBN, scuola, classe, sezione
-    mie_adozioni_tutte = ImportAdozione.mie_adozioni
-      .where(CODICESCUOLA: mie_scuole_codes)
-      .where(DAACQUIST: 'Si')
+    mie_adozioni_tutte = Miur::Adozione.per_anno("202526").mie_adozioni
+      .where(codicescuola: mie_scuole_codes)
+      .where(daacquist: 'Si')
       .includes(:import_scuola)
-      .order(:EDITORE, :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO)
-    
+      .order(:editore, :codicescuola, :annocorso, :sezioneanno)
+
     # Filtra le adozioni senza corrispondenza
     mie_adozioni_senza_corrispondenza = mie_adozioni_tutte.reject do |adozione_import|
       adozioni_comunicate_details.any? do |ean, cod_min, classe, sezione|
-        adozione_import.CODICEISBN == ean &&
-        adozione_import.CODICESCUOLA == cod_min &&
-        adozione_import.ANNOCORSO == classe &&
-        adozione_import.SEZIONEANNO == sezione
+        adozione_import.codiceisbn == ean &&
+        adozione_import.codicescuola == cod_min &&
+        adozione_import.annocorso == classe &&
+        adozione_import.sezioneanno == sezione
       end
     end
     
@@ -208,19 +208,19 @@ class AdozioniComunicateController < ApplicationController
     mie_scuole_codes = current_user.user_scuole.joins(:import_scuola).pluck('import_scuole.CODICESCUOLA').compact
     mie_adozioni_ean = @adozioni_comunicate.con_corrispondenza.pluck(:ean).compact
     
-    @mie_adozioni_senza_corrispondenza = ImportAdozione.mie_adozioni
-      .where.not(CODICEISBN: mie_adozioni_ean)
-      .where(CODICESCUOLA: mie_scuole_codes)
-      .where(DAACQUIST: 'Si')
+    @mie_adozioni_senza_corrispondenza = Miur::Adozione.per_anno("202526").mie_adozioni
+      .where.not(codiceisbn: mie_adozioni_ean)
+      .where(codicescuola: mie_scuole_codes)
+      .where(daacquist: 'Si')
       .includes(:import_scuola)
-      .order(:EDITORE, :CODICESCUOLA, :ANNOCORSO, :SEZIONEANNO)
-    
+      .order(:editore, :codicescuola, :annocorso, :sezioneanno)
+
     # Statistiche per le mie_adozioni (solo per la mia zona)
-    @totale_mie_adozioni = ImportAdozione.mie_adozioni.where(CODICESCUOLA: mie_scuole_codes, DAACQUIST: 'Si').count
-    @mie_adozioni_con_corrispondenza = ImportAdozione.mie_adozioni
-      .where(CODICEISBN: mie_adozioni_ean)
-      .where(CODICESCUOLA: mie_scuole_codes)
-      .where(DAACQUIST: 'Si')
+    @totale_mie_adozioni = Miur::Adozione.per_anno("202526").mie_adozioni.where(codicescuola: mie_scuole_codes, daacquist: 'Si').count
+    @mie_adozioni_con_corrispondenza = Miur::Adozione.per_anno("202526").mie_adozioni
+      .where(codiceisbn: mie_adozioni_ean)
+      .where(codicescuola: mie_scuole_codes)
+      .where(daacquist: 'Si')
       .count
     @mie_adozioni_senza_corrispondenza_count = @mie_adozioni_senza_corrispondenza.count
   end

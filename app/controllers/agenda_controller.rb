@@ -97,18 +97,18 @@ class AgendaController < ApplicationController
     sql = <<~SQL
       WITH sezioni_raggruppate AS (
           SELECT
-              ia."TITOLO",
-              ia."CODICEISBN",
-              ia."EDITORE",
-              ia."DISCIPLINA",
+              ia.titolo,
+              ia.codiceisbn,
+              ia.editore,
+              ia.disciplina,
               s.denominazione AS "DENOMINAZIONESCUOLA",
               s.id as scuola_id,
-              ia."ANNOCORSO",
-              STRING_AGG(DISTINCT ia."SEZIONEANNO", '' ORDER BY ia."SEZIONEANNO") as sezioni_concatenate,
+              ia.annocorso,
+              STRING_AGG(DISTINCT ia.sezioneanno, '' ORDER BY ia.sezioneanno) as sezioni_concatenate,
               COUNT(ia.id) as adozioni_per_classe
-          FROM import_adozioni ia
-              INNER JOIN scuole s ON ia."CODICESCUOLA" = s.codice_ministeriale AND s.account_id = $3
-              INNER JOIN editori e ON ia."EDITORE" = e.editore
+          FROM miur_adozioni ia
+              INNER JOIN scuole s ON ia.codicescuola = s.codice_ministeriale AND s.account_id = $3
+              INNER JOIN editori e ON ia.editore = e.editore
               INNER JOIN mandati m ON e.id = m.editore_id
               INNER JOIN tappe t ON (
                   t.tappable_type = 'Scuola'
@@ -116,31 +116,31 @@ class AgendaController < ApplicationController
                   AND t.data_tappa = $1
                   AND t.user_id = $2
               )
-          WHERE m.user_id = $2 AND ia."DAACQUIST" = 'Si'
+          WHERE m.user_id = $2 AND ia.daacquist = 'Si' AND ia.anno_scolastico = '202526'
           GROUP BY
-              ia."TITOLO", ia."CODICEISBN", ia."EDITORE", ia."DISCIPLINA",
-              s.denominazione, s.id, ia."ANNOCORSO"
+              ia.titolo, ia.codiceisbn, ia.editore, ia.disciplina,
+              s.denominazione, s.id, ia.annocorso
       )
       SELECT
           SUM(sr.adozioni_per_classe) as numero_adozioni,
-          sr."TITOLO" as titolo,
-          sr."CODICEISBN" as codice_isbn,
-          sr."EDITORE" as editore,
-          sr."DISCIPLINA" as disciplina,
+          sr.titolo as titolo,
+          sr.codiceisbn as codice_isbn,
+          sr.editore as editore,
+          sr.disciplina as disciplina,
           STRING_AGG(DISTINCT sr."DENOMINAZIONESCUOLA", ', ') as scuole,
           STRING_AGG(DISTINCT
-              CONCAT(sr."DENOMINAZIONESCUOLA", ', ', sr."ANNOCORSO", ' ', sr.sezioni_concatenate),
+              CONCAT(sr."DENOMINAZIONESCUOLA", ', ', sr.annocorso, ' ', sr.sezioni_concatenate),
               '; ') as classi
       FROM sezioni_raggruppate sr
       GROUP BY
-          sr."TITOLO",
-          sr."CODICEISBN",
-          sr."EDITORE",
-          sr."DISCIPLINA"
+          sr.titolo,
+          sr.codiceisbn,
+          sr.editore,
+          sr.disciplina
       ORDER BY
-          sr."EDITORE",
-          sr."DISCIPLINA",
-          sr."TITOLO";
+          sr.editore,
+          sr.disciplina,
+          sr.titolo;
     SQL
 
     @adozioni = ActiveRecord::Base.connection.exec_query(

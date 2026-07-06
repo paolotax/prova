@@ -7,7 +7,7 @@ class TitoliController < ApplicationController
     @libro = Current.account.libri.find_by(codice_isbn: @codice_isbn)
 
     # Info base dal primo record disponibile
-    @import_adozione = ImportAdozione.find_by(CODICEISBN: @codice_isbn)
+    @import_adozione = Miur::Adozione.per_anno("202526").find_by(codiceisbn: @codice_isbn)
 
     # Le mie adozioni: admin vede tutto l'account, member solo le sue scuole
     scuola_ids = Current.admin? ? Current.account.scuola_ids : Current.membership.scuola_ids
@@ -24,23 +24,23 @@ class TitoliController < ApplicationController
 
     # Classifica: stesso ISBN + concorrenti, raggruppati per classe/disciplina/tipo_scuola
     if @import_adozione
-      @classifica = ImportAdozione
+      @classifica = Miur::Adozione.per_anno("202526")
         .joins(:import_scuola)
         .where(
-          DISCIPLINA: @import_adozione.DISCIPLINA,
-          ANNOCORSO: @import_adozione.ANNOCORSO,
-          CODICESCUOLA: codici_scuola,
-          DAACQUIST: "Si"
+          disciplina: @import_adozione.disciplina,
+          annocorso: @import_adozione.annocorso,
+          codicescuola: codici_scuola,
+          daacquist: "Si"
         )
-        .group(:CODICEISBN, :TITOLO, :EDITORE,
+        .group(:codiceisbn, :titolo, :editore,
           Arel.sql('import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA"'))
-        .select(:CODICEISBN, :TITOLO, :EDITORE,
+        .select(:codiceisbn, :titolo, :editore,
           Arel.sql('import_scuole."DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA" AS tipo_scuola_raw'),
-          Arel.sql('COUNT(DISTINCT import_adozioni."CODICESCUOLA" || \'_\' || import_adozioni."ANNOCORSO" || \'_\' || import_adozioni."SEZIONEANNO") AS sezioni_count'),
-          Arel.sql('COUNT(DISTINCT CASE WHEN import_adozioni."NUOVAADOZ" = \'Si\' THEN import_adozioni."CODICESCUOLA" || \'_\' || import_adozioni."ANNOCORSO" || \'_\' || import_adozioni."SEZIONEANNO" END) AS nuove_count'))
+          Arel.sql('COUNT(DISTINCT miur_adozioni.codicescuola || \'_\' || miur_adozioni.annocorso || \'_\' || miur_adozioni.sezioneanno) AS sezioni_count'),
+          Arel.sql('COUNT(DISTINCT CASE WHEN miur_adozioni.nuovaadoz = \'Si\' THEN miur_adozioni.codicescuola || \'_\' || miur_adozioni.annocorso || \'_\' || miur_adozioni.sezioneanno END) AS nuove_count'))
         .order(Arel.sql('sezioni_count DESC'))
 
-      @superiore = !%w[EE MM].include?(@import_adozione.TIPOGRADOSCUOLA)
+      @superiore = !%w[EE MM].include?(@import_adozione.tipogradoscuola)
     end
   end
 end

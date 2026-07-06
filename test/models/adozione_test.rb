@@ -57,30 +57,29 @@ class AdozioneTest < ActiveSupport::TestCase
     Current.account = nil
   end
 
-  # Sorgente ImportAdozione che combacia con la classe `prima_a`
-  # (origine MIIC123456 / 1 / A), anno_scolastico 202526.
-  # insert_all! per saltare l'autosave del belongs_to :editore (come ImportAdozione.import
-  # in produzione); la variante ! evita ON CONFLICT, che sulla vista ponte import_adozioni
-  # non ha indici univoci su cui appoggiarsi.
+  # Sorgente ministeriale (Miur::Adozione, partizione 202526) che combacia con
+  # la classe `prima_a` (origine MIIC123456 / 1 / A).
+  # insert_all! per il bulk load senza validazioni AR (come il backfill/importa);
+  # la variante ! evita ON CONFLICT.
   def crea_import_adozione(isbn:)
-    ImportAdozione.insert_all!([{
+    Miur::Adozione.insert_all!([{
       anno_scolastico: "202526",
-      CODICESCUOLA: "MIIC123456",
-      ANNOCORSO: "1",
-      SEZIONEANNO: "A",
-      TIPOGRADOSCUOLA: "EE",
-      COMBINAZIONE: "MQ",
-      CODICEISBN: isbn,
-      TITOLO: "Libro Test #{isbn}",
-      EDITORE: "Editore Test",
-      AUTORI: "Rossi M.",
-      DISCIPLINA: "ITALIANO",
-      PREZZO: "10,00",
-      NUOVAADOZ: "No",
-      DAACQUIST: "Si",
-      CONSIGLIATO: "No"
+      codicescuola: "MIIC123456",
+      annocorso: "1",
+      sezioneanno: "A",
+      tipogradoscuola: "EE",
+      combinazione: "MQ",
+      codiceisbn: isbn,
+      titolo: "Libro Test #{isbn}",
+      editore: "Editore Test",
+      autori: "Rossi M.",
+      disciplina: "ITALIANO",
+      prezzo: "10,00",
+      nuovaadoz: "No",
+      daacquist: "Si",
+      consigliato: "No"
     }])
-    ImportAdozione.find_by(CODICEISBN: isbn)
+    Miur::Adozione.per_anno("202526").find_by(codiceisbn: isbn)
   end
 
   test "create_from_import stampa anno_scolastico e codicescuola dalla classe" do

@@ -101,27 +101,27 @@ class Adozione < ApplicationRecord
     "#{classe&.classe_e_sezione} #{disciplina&.downcase}"
   end
 
-  # Crea da ImportAdozione
+  # Crea da una riga ministeriale (Miur::Adozione, partizione 202526)
   def self.create_from_import(import_adozione, classe:, account: Current.account)
-    libro = account.libri.find_by(codice_isbn: import_adozione.CODICEISBN)
+    libro = account.libri.find_by(codice_isbn: import_adozione.codiceisbn)
 
     create!(
       account: account,
       classe: classe,
       libro: libro,
-      import_adozione: import_adozione,
+      import_adozione_id: import_adozione.id,
       anno_scolastico: classe.anno_scolastico,
       anno_corso: classe.anno_corso,
       codicescuola: classe.codice_ministeriale_origine,
-      codice_isbn: import_adozione.CODICEISBN,
-      titolo: import_adozione.TITOLO,
-      editore: import_adozione.EDITORE,
-      autori: import_adozione.AUTORI,
-      disciplina: import_adozione.DISCIPLINA,
-      prezzo_cents: (import_adozione.PREZZO.to_s.gsub(',', '.').to_f * 100).to_i,
-      nuova_adozione: import_adozione.NUOVAADOZ == "Si",
-      da_acquistare: import_adozione.DAACQUIST == "Si",
-      consigliato: import_adozione.CONSIGLIATO == "Si"
+      codice_isbn: import_adozione.codiceisbn,
+      titolo: import_adozione.titolo,
+      editore: import_adozione.editore,
+      autori: import_adozione.autori,
+      disciplina: import_adozione.disciplina,
+      prezzo_cents: (import_adozione.prezzo.to_s.gsub(',', '.').to_f * 100).to_i,
+      nuova_adozione: import_adozione.nuovaadoz == "Si",
+      da_acquistare: import_adozione.daacquist == "Si",
+      consigliato: import_adozione.consigliato == "Si"
     )
   end
 
@@ -130,10 +130,10 @@ class Adozione < ApplicationRecord
     return 0 unless classe.codice_ministeriale_origine.present?
 
     count = 0
-    ImportAdozione.where(
-      CODICESCUOLA: classe.codice_ministeriale_origine,
-      ANNOCORSO: classe.classe_origine,
-      SEZIONEANNO: classe.sezione_origine
+    Miur::Adozione.per_anno("202526").where(
+      codicescuola: classe.codice_ministeriale_origine,
+      annocorso: classe.classe_origine,
+      sezioneanno: classe.sezione_origine
     ).find_each do |import|
       create_from_import(import, classe: classe, account: classe.account)
       count += 1

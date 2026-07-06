@@ -36,8 +36,21 @@
 #  index_miur_adozioni_on_classe   (anno_scolastico,codicescuola,annocorso,sezioneanno,combinazione,codiceisbn,disciplina) UNIQUE
 #
 class Miur::Adozione < ApplicationRecord
+  # Anagrafe della scuola per codice ministeriale. Le partizioni storiche
+  # (es. 202526) non hanno import_scuola_id popolato: il join durevole e'
+  # sul codicescuola (come faceva ImportAdozione).
+  belongs_to :import_scuola, class_name: "ImportScuola",
+                             foreign_key: :codicescuola, primary_key: "CODICESCUOLA",
+                             optional: true
+
   scope :per_anno, ->(anno) { where(anno_scolastico: anno) }
   scope :correnti, -> { per_anno(Miur.anno_corrente) }
+
+  # Adozioni degli editori sotto mandato dell'account corrente (ex
+  # ImportAdozione.mie_adozioni, che filtrava per Current.user.miei_editori).
+  scope :mie_adozioni, -> {
+    where(editore: Current.account.mandati.joins(:editore).select("editori.editore"))
+  }
 
   # Disciplina esclusa dal totale spesa e dal confronto col tetto ministeriale,
   # pur restando visibile nell'elenco: alternativa alla religione (mutuamente

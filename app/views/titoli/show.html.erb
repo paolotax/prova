@@ -1,4 +1,4 @@
-<% titolo_display = @import_adozione&.TITOLO || @libro&.titolo || @codice_isbn %>
+<% titolo_display = @import_adozione&.titolo || @libro&.titolo || @codice_isbn %>
 <% @page_title = titolo_display %>
 
 <% content_for :header do %>
@@ -35,9 +35,9 @@
         <h2 class="txt-medium font-weight-black margin-none"><%= titolo_display %></h2>
 
         <% if @import_adozione %>
-          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.EDITORE %></p>
-          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.AUTORI %></p>
-          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.DISCIPLINA %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.editore %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.autori %></p>
+          <p class="txt-small txt-subtle margin-none"><%= @import_adozione.disciplina %></p>
         <% elsif @libro %>
           <p class="txt-small txt-subtle margin-none"><%= @libro.editore&.editore %></p>
           <p class="txt-small txt-subtle margin-none"><%= @libro.disciplina %></p>
@@ -48,7 +48,7 @@
           <code class="txt-small"><%= @codice_isbn %></code>
         </div>
 
-        <% prezzo = @import_adozione&.PREZZO || (@libro ? number_to_currency(@libro.prezzo) : nil) %>
+        <% prezzo = @import_adozione&.prezzo || (@libro ? number_to_currency(@libro.prezzo) : nil) %>
         <% if prezzo.present? %>
           <div class="flex gap-half align-center">
             <span class="txt-small font-weight-bold">Prezzo:</span>
@@ -118,7 +118,7 @@
       <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
         Classifica
         <span class="txt-x-small txt-subtle font-weight-normal">
-          <%= @import_adozione.DISCIPLINA.titleize %> &middot; Classe <%= @import_adozione.ANNOCORSO %>
+          <%= @import_adozione.disciplina.titleize %> &middot; Classe <%= @import_adozione.annocorso %>
         </span>
       </h3>
 

@@ -87,10 +87,10 @@
                     <div class="max-w-xs truncate" title="<%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>">
                       <%= adozione.import_scuola&.DENOMINAZIONESCUOLA %>
                     </div>
-                    <div class="text-xs text-gray-500"><%= adozione.CODICESCUOLA %></div>
+                    <div class="text-xs text-gray-500"><%= adozione.codicescuola %></div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <%= adozione.classe_e_sezione %>
+                    <%= "#{adozione.annocorso} #{adozione.sezioneanno}" %>
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-900">
                     <div class="max-w-xs truncate" title="<%= adozione.titolo %>">
@@ -98,7 +98,7 @@
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <%= adozione.CODICEISBN %>
+                    <%= adozione.codiceisbn %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <%= adozione.disciplina %>
