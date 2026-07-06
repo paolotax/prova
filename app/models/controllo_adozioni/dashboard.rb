@@ -13,7 +13,7 @@ module ControlloAdozioni
 
     attr_reader :account
 
-    def anno = @anno ||= NewScuola.maximum(:anno_scolastico)
+    def anno = @anno ||= Miur.anno_corrente
 
     def righe
       @righe ||= begin
@@ -58,7 +58,7 @@ module ControlloAdozioni
 
     private
 
-    # "Codici nuovi": codici in new_scuole (anno corrente, zone dell'account) con adozioni
+    # "Codici nuovi": codici in miur_scuole (anno corrente, zone dell'account) con adozioni
     # nel grado della zona ma assenti dall'anagrafe account — la versione contata di
     # Panoramica#cambi_codice, senza matching predecessori. Una query per grado di zona.
     def codici_nuovi_per_provincia
@@ -72,12 +72,13 @@ module ControlloAdozioni
 
         sql = <<~SQL
           SELECT ns.provincia, COUNT(*) AS n
-          FROM new_scuole ns
+          FROM miur_scuole ns
           WHERE ns.anno_scolastico = :anno
             AND ns.provincia IN (:province)
             AND ns.tipo_scuola IN (:tipi)
-            AND EXISTS (SELECT 1 FROM new_adozioni na
-                        WHERE na.codicescuola = ns.codice_scuola AND na.tipogradoscuola IN (:tg))
+            AND EXISTS (SELECT 1 FROM miur_adozioni na
+                        WHERE na.codicescuola = ns.codice_scuola AND na.anno_scolastico = :anno
+                          AND na.tipogradoscuola IN (:tg))
             AND NOT EXISTS (SELECT 1 FROM scuole sc
                             WHERE sc.account_id = :account_id
                               AND sc.codice_ministeriale = ns.codice_scuola)
@@ -98,10 +99,10 @@ module ControlloAdozioni
                 AND c.stato = 'attiva' AND c.anno_scolastico >= :anno)
       SQL
       promuovibile = anno.present? ? <<~SQL.strip : "FALSE"
-        EXISTS (SELECT 1 FROM new_scuole ns WHERE ns.codice_scuola = sc.codice_ministeriale
+        EXISTS (SELECT 1 FROM miur_scuole ns WHERE ns.codice_scuola = sc.codice_ministeriale
                 AND ns.anno_scolastico = :anno)
-        AND EXISTS (SELECT 1 FROM new_adozioni nae WHERE nae.codicescuola = sc.codice_ministeriale
-                    AND nae.tipogradoscuola = 'EE')
+        AND EXISTS (SELECT 1 FROM miur_adozioni nae WHERE nae.codicescuola = sc.codice_ministeriale
+                    AND nae.anno_scolastico = :anno AND nae.tipogradoscuola = 'EE')
         AND NOT EXISTS (SELECT 1 FROM classi c2 WHERE c2.scuola_id = sc.id
                         AND c2.stato = 'attiva' AND c2.anno_scolastico >= :anno)
       SQL
@@ -115,8 +116,9 @@ module ControlloAdozioni
                COUNT(*) FILTER (WHERE con_anomalie)  AS anomalie
         FROM (
           SELECT sc.provincia,
-                 EXISTS (SELECT 1 FROM new_adozioni na
-                         WHERE na.codicescuola = sc.codice_ministeriale)          AS nel_miur,
+                 EXISTS (SELECT 1 FROM miur_adozioni na
+                         WHERE na.codicescuola = sc.codice_ministeriale
+                           AND na.anno_scolastico = :anno)                        AS nel_miur,
                  EXISTS (SELECT 1 FROM controllo_anomalie ca
                          WHERE ca.codicescuola = sc.codice_ministeriale)          AS con_anomalie,
                  #{promossa}     AS promossa,
@@ -125,8 +127,9 @@ module ControlloAdozioni
           WHERE sc.account_id = :account_id
             AND COALESCE(sc.codice_ministeriale, '') <> ''
             AND (sc.adozioni_count > 0 OR EXISTS (
-                   SELECT 1 FROM new_adozioni nac
-                   WHERE nac.codicescuola = sc.codice_ministeriale))
+                   SELECT 1 FROM miur_adozioni nac
+                   WHERE nac.codicescuola = sc.codice_ministeriale
+                     AND nac.anno_scolastico = :anno))
         ) s
         GROUP BY provincia
         ORDER BY provincia

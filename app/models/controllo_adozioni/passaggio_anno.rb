@@ -16,7 +16,7 @@ module ControlloAdozioni
 
     attr_reader :account, :provincia
 
-    def anno = @anno ||= NewScuola.maximum(:anno_scolastico)
+    def anno = @anno ||= Miur.anno_corrente
 
     def disponibile? = anno.present?
 
@@ -69,10 +69,10 @@ module ControlloAdozioni
         0
       else
         scuole_scope
-          .where(NewScuola.where("new_scuole.codice_scuola = scuole.codice_ministeriale")
-                          .where(anno_scolastico: anno).arel.exists)
-          .where(NewAdozione.where("new_adozioni.codicescuola = scuole.codice_ministeriale")
-                            .where(tipogradoscuola: "EE").arel.exists)
+          .where(Miur::Scuola.where("miur_scuole.codice_scuola = scuole.codice_ministeriale")
+                             .where(anno_scolastico: anno).arel.exists)
+          .where(Miur::Adozione.where("miur_adozioni.codicescuola = scuole.codice_ministeriale")
+                               .where(tipogradoscuola: "EE", anno_scolastico: anno).arel.exists)
           .where.not(
             Classe.where("classi.scuola_id = scuole.id")
                   .where(stato: "attiva").where("classi.anno_scolastico >= ?", anno).arel.exists
@@ -109,7 +109,7 @@ module ControlloAdozioni
     NORM = "btrim(regexp_replace(regexp_replace(upper(COALESCE(%s, '')), " \
            "'[^A-Z0-9 ]', ' ', 'g'), ' +', ' ', 'g'))".freeze
 
-    # Per ogni codice nuovo (new_scuole+new_adozioni della zona, assente dall'account)
+    # Per ogni codice nuovo (miur_scuole+miur_adozioni della zona, assente dall'account)
     # conta le orfane candidate (stesso comune/provincia, stessa natura) e quelle con
     # denominazione simile; classifica come Panoramica: 1 sola simile → match,
     # candidate > 0 → suggerimento, altrimenti nuova.
@@ -122,8 +122,9 @@ module ControlloAdozioni
         WHERE sc.account_id = :account_id
           AND sc.provincia IN (:province)
           AND sc.grado = :grado
-          AND NOT EXISTS (SELECT 1 FROM new_adozioni na
+          AND NOT EXISTS (SELECT 1 FROM miur_adozioni na
                           WHERE na.codicescuola = sc.codice_ministeriale
+                            AND na.anno_scolastico = :anno
                             AND na.tipogradoscuola IN (:tg))
           AND NOT EXISTS (SELECT 1 FROM scuole fig
                           WHERE fig.account_id = :account_id AND fig.direzione_id = sc.id)
@@ -132,12 +133,13 @@ module ControlloAdozioni
         SELECT ns.codice_scuola, ns.provincia, ns.comune,
                COALESCE(ns.tipo_scuola, '') ILIKE '%NON STATALE%' AS paritaria,
                #{NORM % "ns.denominazione"} AS denom
-        FROM new_scuole ns
+        FROM miur_scuole ns
         WHERE ns.anno_scolastico = :anno
           AND ns.provincia IN (:province)
           AND ns.tipo_scuola IN (:tipi)
-          AND EXISTS (SELECT 1 FROM new_adozioni na
+          AND EXISTS (SELECT 1 FROM miur_adozioni na
                       WHERE na.codicescuola = ns.codice_scuola
+                        AND na.anno_scolastico = :anno
                         AND na.tipogradoscuola IN (:tg))
           AND NOT EXISTS (SELECT 1 FROM scuole sc
                           WHERE sc.account_id = :account_id

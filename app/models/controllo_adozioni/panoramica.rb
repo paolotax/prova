@@ -1,12 +1,12 @@
 module ControlloAdozioni
   # Panoramica owner/admin di controllo_adozioni:
-  #  - `gruppi`: tutte le scuole dell'account CON adozioni (correnti o in new_adozioni),
+  #  - `gruppi`: tutte le scuole dell'account CON adozioni (correnti o in miur_adozioni),
   #    raggruppate per direzione didattica e ordinate come scuole index, con il confronto
-  #    fra i conteggi correnti (account) e quelli dello snapshot MIUR (new_adozioni).
-  #  - `cambi_codice`: codici presenti in new_scuole+new_adozioni nella zona dell'account
+  #    fra i conteggi correnti (account) e quelli dello snapshot MIUR (miur_adozioni).
+  #  - `cambi_codice`: codici presenti in miur_scuole+miur_adozioni nella zona dell'account
   #    ma assenti da account.scuole (nuove o cambi codice), con eventuale predecessore.
   class Panoramica
-    # grado scuola → tipogradoscuola in new_adozioni (E=primaria, M=medie, N=superiori NT/NO)
+    # grado scuola → tipogradoscuola in miur_adozioni (E=primaria, M=medie, N=superiori NT/NO)
     TG = { "E" => %w[EE], "M" => %w[MM], "N" => %w[NT NO] }.freeze
 
     Riga = Struct.new(:scuola, :correnti_classi, :correnti_adozioni, :new_classi, :new_adozioni,
@@ -96,7 +96,7 @@ module ControlloAdozioni
 
     attr_reader :account, :scuole_scope
 
-    def anno = @anno ||= NewScuola.maximum(:anno_scolastico)
+    def anno = @anno ||= Miur.anno_corrente
 
     # Anno_scolastico max delle classi attive per codice scuola (bulk).
     def max_anno_attive
@@ -109,7 +109,7 @@ module ControlloAdozioni
       anno.present? && max_anno_attive[scuola.codice_ministeriale].to_s >= anno
     end
 
-    # Conteggi da new_adozioni per codicescuola: [classi_distinte, righe_daacquist]
+    # Conteggi da miur_adozioni per codicescuola: [classi_distinte, righe_daacquist]
     def new_counts
       @new_counts ||= conta_miur(scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale))
     end
@@ -117,7 +117,7 @@ module ControlloAdozioni
     def conta_miur(codici)
       return {} if codici.empty?
 
-      NewAdozione.where(codicescuola: codici).group(:codicescuola).pluck(
+      Miur::Adozione.where(codicescuola: codici, anno_scolastico: anno).group(:codicescuola).pluck(
         :codicescuola,
         Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,''))"),
         Arel.sql("COUNT(DISTINCT COALESCE(annocorso,'') || '|' || COALESCE(sezioneanno,'') || '|' || COALESCE(codiceisbn,'')) FILTER (WHERE daacquist ILIKE 'S%')")
@@ -154,8 +154,8 @@ module ControlloAdozioni
           Set.new
         else
           codici = scuole_scope.where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
-          ns = NewScuola.where(codice_scuola: codici, anno_scolastico: a).pluck(:codice_scuola).to_set
-          na = NewAdozione.where(codicescuola: codici, tipogradoscuola: "EE").distinct.pluck(:codicescuola).to_set
+          ns = Miur::Scuola.where(codice_scuola: codici, anno_scolastico: a).pluck(:codice_scuola).to_set
+          na = Miur::Adozione.where(codicescuola: codici, tipogradoscuola: "EE", anno_scolastico: a).distinct.pluck(:codicescuola).to_set
           codici.select { |c| ns.include?(c) && na.include?(c) && max_anno_attive[c].to_s < a }.to_set
         end
       end
@@ -218,11 +218,11 @@ module ControlloAdozioni
       ]
     end
 
-    # Codici new_adozioni per tipogradoscuola (nazionale, distinct). Memoizzato per grado:
+    # Codici miur_adozioni per tipogradoscuola (nazionale, distinct). Memoizzato per grado:
     # invariante rispetto alla provincia, quindi calcolato una volta sola per tg.
     def codici_con_adoz_per_tg(tg)
       (@codici_con_adoz_per_tg ||= {})[tg] ||=
-        NewAdozione.where(tipogradoscuola: tg).distinct.pluck(:codicescuola).to_set
+        Miur::Adozione.where(tipogradoscuola: tg, anno_scolastico: anno).distinct.pluck(:codicescuola).to_set
     end
 
     def paritaria?(tipo) = tipo.to_s.upcase.include?("NON STATALE")
@@ -238,7 +238,7 @@ module ControlloAdozioni
       na == nb || na.include?(nb) || nb.include?(na)
     end
 
-    # Codici in new_scuole+new_adozioni (zona account) assenti da account.scuole.
+    # Codici in miur_scuole+miur_adozioni (zona account) assenti da account.scuole.
     def build_cambi_codice
       righe = []
       # Le direzioni non possono essere predecessore di un cambio codice (una scuola non
@@ -257,13 +257,13 @@ module ControlloAdozioni
         # stessa distinct nazionale una volta per zona (per un editore = decine di zone EE).
         codici_con_adoz = codici_con_adoz_per_tg(tg)
 
-        # Scuole account "orfane" (codice non piu' in new_adozioni) → possibili predecessori.
+        # Scuole account "orfane" (codice non piu' in miur_adozioni) → possibili predecessori.
         # Escludi le direzioni.
         orfane_per_comune = in_account
           .reject { |s| codici_con_adoz.include?(s.codice_ministeriale) || direzione_ids.include?(s.id) }
           .group_by(&:comune)
 
-        NewScuola.where(provincia: zona.provincia, tipo_scuola: tipi, anno_scolastico: anno)
+        Miur::Scuola.where(provincia: zona.provincia, tipo_scuola: tipi, anno_scolastico: anno)
                  .pluck(:codice_scuola, :denominazione, :comune, :tipo_scuola).each do |codice, denom, comune, tipo|
           next if account_codici.include?(codice) || !codici_con_adoz.include?(codice)
 
