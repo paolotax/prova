@@ -5,7 +5,7 @@ require 'fileutils'
 
 module Miur
   # Scarica i 4 CSV di anagrafica scuole dal portale MIUR open data e triggera
-  # import:new_scuole (blue-green swap). Speculare a Miur::AdozioniScraper, ma con
+  # miur:importa_scuole (swap di partizione). Speculare a Miur::AdozioniScraper, ma con
   # 4 dataset fissi invece di ~20 regioni: per ciascun dataset tiene solo l'anno
   # più recente (il filename embedda AAAAAA = anno + AAAAMMGG = data pubblicazione,
   # quindi il massimo lessicografico è il file più nuovo).
@@ -211,8 +211,30 @@ module Miur
         return
       end
 
-      Rake::Task['import:new_scuole'].reenable
-      Rake::Task['import:new_scuole'].invoke("true")
+      # Watermark PRIMA dell'invoke: gli esiti dataset vanno agganciati solo al
+      # run creato in QUESTO ciclo, mai a un run stale di un giro precedente.
+      last_run_id = Miur::ImportRun.scuole.maximum(:id)
+
+      begin
+        Rake::Task['miur:importa_scuole'].reenable
+        Rake::Task['miur:importa_scuole'].invoke
+      rescue Miur::ImportError => e
+        Rails.logger.error("[MIUR scuole] import fallito: #{e.message}")
+        return
+      end
+
+      attach_esiti_to_run(last_run_id)
+    end
+
+    # Le colonne jsonb del run si chiamano regioni_* ma sono liste generiche:
+    # qui ci finiscono i dataset di anagrafica.
+    def attach_esiti_to_run(last_run_id)
+      run = Miur::ImportRun.scuole.where("id > ?", last_run_id || 0).order(:completed_at).last
+      run&.update!(
+        regioni_aggiornate: @dataset_aggiornati,
+        regioni_stale: @dataset_stale,
+        regioni_fallite: @dataset_falliti
+      )
     end
 
     def notify

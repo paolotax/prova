@@ -137,12 +137,53 @@ module Miur
 
       task_double = mock("rake_task")
       task_double.expects(:reenable).at_least_once
-      task_double.expects(:invoke).with("true").at_least_once
-      Rake::Task.expects(:[]).with("import:new_scuole").returns(task_double).at_least_once
+      task_double.expects(:invoke).at_least_once
+      Rake::Task.expects(:[]).with("miur:importa_scuole").returns(task_double).at_least_once
 
       scraper = Miur::ScuoleScraper.new
       scraper.instance_variable_set(:@dataset_nuovi, Miur::ScuoleScraper::DATASETS.dup)
       scraper.send(:process_imports)
+    end
+
+    test "process_imports aggancia gli esiti dataset al run creato dall'import" do
+      Miur::ScuoleScraper::DATASETS.each do |ds|
+        File.write(@tmp_dir.join("#{ds}20262720260901.csv"), "x")
+      end
+
+      creating_task = Object.new
+      def creating_task.reenable; end
+      def creating_task.invoke(*)
+        Miur::ImportRun.create!(dataset: "scuole", anno_scolastico: "202627", completed_at: Time.current)
+      end
+      Rake::Task.stubs(:[]).with("miur:importa_scuole").returns(creating_task)
+
+      scraper = Miur::ScuoleScraper.new
+      scraper.instance_variable_set(:@dataset_aggiornati, ["SCUANAGRAFESTAT"])
+      scraper.instance_variable_set(:@dataset_stale, ["SCUANAAUTPAR"])
+      scraper.send(:process_imports)
+
+      run = Miur::ImportRun.scuole.order(:id).last
+      assert_equal ["SCUANAGRAFESTAT"], run.regioni_aggiornate
+      assert_equal ["SCUANAAUTPAR"], run.regioni_stale
+      assert_equal [], run.regioni_fallite
+    end
+
+    test "process_imports cattura Miur::ImportError senza sollevare e non tocca run stale" do
+      Miur::ScuoleScraper::DATASETS.each do |ds|
+        File.write(@tmp_dir.join("#{ds}20262720260901.csv"), "x")
+      end
+      stale_run = Miur::ImportRun.create!(dataset: "scuole", anno_scolastico: "202627", completed_at: 1.day.ago)
+
+      failing_task = Object.new
+      def failing_task.reenable; end
+      def failing_task.invoke(*) = raise(Miur::ImportError, "lock occupato")
+      Rake::Task.stubs(:[]).with("miur:importa_scuole").returns(failing_task)
+
+      scraper = Miur::ScuoleScraper.new
+      scraper.instance_variable_set(:@dataset_nuovi, Miur::ScuoleScraper::DATASETS.dup)
+      assert_nothing_raised { scraper.send(:process_imports) }
+
+      assert_equal [], stale_run.reload.regioni_aggiornate
     end
 
     test "process_imports salta import se < 4 CSV" do

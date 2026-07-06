@@ -152,13 +152,74 @@ module Miur
       task_double = mock("rake_task")
       task_double.expects(:reenable).at_least_once
       task_double.expects(:invoke).at_least_once
-      Rake::Task.expects(:[]).with("import:new_adozioni").returns(task_double).at_least_once
-      Rake::Task.expects(:[]).with("import:cambia_religione").returns(task_double).at_least_once
+      Rake::Task.expects(:[]).with("miur:importa_adozioni").returns(task_double).at_least_once
+      Rake::Task.expects(:[]).with("miur:cambia_religione").returns(task_double).at_least_once
       Rake::Task.expects(:[]).with("controllo_adozioni:rebuild").returns(task_double).at_least_once
 
       scraper = Miur::AdozioniScraper.new
       scraper.instance_variable_set(:@regioni_aggiornate, ["A", "B"])
       scraper.send(:process_imports)
+    end
+
+    test "process_imports aggancia gli esiti regione al run creato dall'import" do
+      18.times { |i| File.write(@tmp_dir.join("ALTREG#{i}000020260525.csv"), "x") }
+
+      creating_task = Object.new
+      def creating_task.reenable; end
+      def creating_task.invoke(*)
+        Miur::ImportRun.create!(dataset: "adozioni", anno_scolastico: "202627", completed_at: Time.current)
+      end
+      noop_task = Object.new
+      def noop_task.reenable; end
+      def noop_task.invoke(*); end
+
+      Rake::Task.stubs(:[]).with("miur:importa_adozioni").returns(creating_task)
+      Rake::Task.stubs(:[]).with("miur:cambia_religione").returns(noop_task)
+      Rake::Task.stubs(:[]).with("controllo_adozioni:rebuild").returns(noop_task)
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_aggiornate, ["UMBRIA"])
+      scraper.instance_variable_set(:@regioni_stale, ["MOLISE"])
+      scraper.send(:process_imports)
+
+      run = Miur::ImportRun.adozioni.order(:id).last
+      assert_equal ["UMBRIA"], run.regioni_aggiornate
+      assert_equal ["MOLISE"], run.regioni_stale
+      assert_equal [], run.regioni_fallite
+    end
+
+    test "process_imports non aggancia gli esiti a un run stale se l'import non crea un nuovo run" do
+      18.times { |i| File.write(@tmp_dir.join("ALTREG#{i}000020260525.csv"), "x") }
+      stale_run = Miur::ImportRun.create!(dataset: "adozioni", anno_scolastico: "202627", completed_at: 1.day.ago)
+
+      noop_task = Object.new
+      def noop_task.reenable; end
+      def noop_task.invoke(*); end
+      Rake::Task.stubs(:[]).returns(noop_task)
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_aggiornate, ["UMBRIA"])
+      scraper.send(:process_imports)
+
+      assert_equal [], stale_run.reload.regioni_aggiornate
+    end
+
+    test "process_imports cattura Miur::ImportError e notify la include tra le fallite" do
+      18.times { |i| File.write(@tmp_dir.join("ALTREG#{i}000020260525.csv"), "x") }
+
+      failing_task = Object.new
+      def failing_task.reenable; end
+      def failing_task.invoke(*) = raise(Miur::ImportError, "soglia CSV non raggiunta")
+      Rake::Task.stubs(:[]).returns(failing_task)
+
+      scraper = Miur::AdozioniScraper.new
+      scraper.instance_variable_set(:@regioni_aggiornate, ["UMBRIA"])
+      assert_nothing_raised { scraper.send(:process_imports) }
+
+      ScrapingNotificationJob.expects(:perform_async).with do |_agg, _salt, _nuove, fallite, _stale|
+        fallite.any? { |f| f.include?("IMPORT FALLITO") && f.include?("soglia CSV non raggiunta") }
+      end
+      scraper.send(:notify)
     end
 
     test "process_imports salta import se < 18 CSV in DOWNLOAD_DIR" do

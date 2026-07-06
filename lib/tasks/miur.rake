@@ -10,6 +10,19 @@ namespace :miur do
   # se il task muore a metà la live resta intatta. Le matview di mercato
   # leggono la tabella padre miur_adozioni: nessun drop/recreate, basta il
   # REFRESH asincrono a valle.
+  #
+  # Staging orfana = run morto: la lascia in place, il run successivo la droppa
+  # (DROP TABLE IF EXISTS in testa).
+  #
+  # ROLLOVER CAMPAGNA: al cambio anno scolastico miur:importa_scuole DEVE girare
+  # PRIMA di miur:importa_adozioni — l'anno timbrato sulle adozioni viene
+  # dall'anagrafe scuole (Miur.anno_corrente); con anagrafe vecchia i CSV della
+  # campagna nuova finirebbero nella partizione dell'anno passato. Il tripwire
+  # anti-rollover (calo >30% di righe sullo stesso anno) blocca lo swap; per
+  # forzare consapevolmente: miur:importa_adozioni[force].
+  # Le condizioni non risolvibili (soglia CSV, lock, tripwire, anni misti)
+  # sollevano Miur::ImportError, non abort/SystemExit: così i rescue degli
+  # scraper le catturano e Sidekiq non ritenta a vuoto.
   MIUR_ADOZIONI_STG = "miur_adozioni_stg".freeze
   MIUR_SCUOLE_STG = "miur_scuole_stg".freeze
   # Stessi valori dei lock di import:new_adozioni/new_scuole: serializzano
@@ -18,10 +31,10 @@ namespace :miur do
   MIUR_SCUOLE_LOCK_KEY = 198_706_15
 
   desc "Importa ADOZIONI MIUR nella partizione dell'anno corrente (swap di partizione)"
-  task importa_adozioni: :environment do
+  task :importa_adozioni, [:force] => :environment do |t, args|
     Rails.logger.info "Inizio miur:importa_adozioni (swap di partizione)"
 
-    min_csv_threshold = 18
+    min_csv_threshold = Miur::AdozioniScraper::MIN_CSV_FOR_IMPORT
     csv_files = Dir.glob(Rails.root.join("tmp", "_miur", "adozioni", "*.csv").to_s).sort
 
     if csv_files.size < min_csv_threshold
@@ -29,8 +42,7 @@ namespace :miur do
             "Swap non eseguito per non degradare i dati esistenti. " \
             "Rilancia lo scraper o copia manualmente i CSV mancanti."
       Rails.logger.error(msg)
-      puts msg
-      abort msg
+      raise Miur::ImportError, msg
     end
 
     conn = Miur::Adozione.connection
@@ -38,8 +50,7 @@ namespace :miur do
     unless conn.select_value("SELECT pg_try_advisory_lock(#{MIUR_ADOZIONI_LOCK_KEY})")
       msg = "ABORT miur:importa_adozioni — un altro import è già in corso (advisory lock occupato)."
       Rails.logger.error(msg)
-      puts msg
-      abort msg
+      raise Miur::ImportError, msg
     end
 
     begin
@@ -64,7 +75,8 @@ namespace :miur do
 
       # Il CSV MIUR delle adozioni NON contiene ANNOSCOLASTICO: l'anno campagna
       # viene dall'anagrafe scuole (Miur.anno_corrente), fallback sulla data
-      # corrente se miur_scuole è vuota.
+      # corrente se miur_scuole è vuota (cutoff febbraio: la campagna nuova
+      # viene pubblicata dal MIUR a partire da febbraio).
       anno = Miur.anno_corrente.presence || begin
         y = Date.current.year
         Date.current.month >= 2 ? "#{y}#{(y + 1).to_s[-2..]}" : "#{y - 1}#{y.to_s[-2..]}"
@@ -133,6 +145,23 @@ namespace :miur do
       SQL
       puts "Duplicati esatti MIUR rimossi dalla staging: #{deleted}"
 
+      # 2c. Tripwire anti-rollover: se al cambio campagna l'anagrafe scuole non
+      #     è ancora aggiornata, l'anno timbrato è quello VECCHIO e lo swap
+      #     sovrascriverebbe la partizione dell'anno passato con i CSV nuovi
+      #     (tipicamente molti meno all'inizio della campagna). Un calo >30%
+      #     di righe sullo stesso anno è il segnale: blocca lo swap.
+      totale = conn.select_value("SELECT count(*) FROM #{MIUR_ADOZIONI_STG}").to_i
+      prev = Miur::ImportRun.adozioni.where(anno_scolastico: anno).order(:completed_at).last
+      if prev&.righe_totali && totale < prev.righe_totali * 0.7 && args[:force] != "true"
+        msg = "ABORT miur:importa_adozioni — staging con #{totale} righe vs #{prev.righe_totali} " \
+              "dell'ultimo run per l'anno #{anno}: calo >30% per lo stesso anno, possibile rollover " \
+              "con anagrafe scuole non aggiornata. Esegui prima miur:importa_scuole, " \
+              "o rilancia con miur:importa_adozioni[force] se il calo è atteso. " \
+              "Staging #{MIUR_ADOZIONI_STG} lasciata in place per ispezione."
+        Rails.logger.error(msg)
+        raise Miur::ImportError, msg
+      end
+
       # 3. PK composita + indici IDENTICI a quelli partizionati del padre
       #    (stesse colonne/INCLUDE/predicati): all'ATTACH PostgreSQL li aggancia
       #    alle partitioned indexes senza ricostruirli. ANALYZE prima dello
@@ -167,11 +196,9 @@ namespace :miur do
         conn.execute("ALTER INDEX #{MIUR_ADOZIONI_STG}_disc RENAME TO #{part}_disc")
       end
 
-      totale = conn.select_value("SELECT count(*) FROM #{part}").to_i
       puts "Swap completato: #{part} ha #{totale} righe"
       Rails.logger.info "miur:importa_adozioni completato (swap ok, #{totale} righe)"
 
-      prev = Miur::ImportRun.adozioni.where(anno_scolastico: anno).order(:completed_at).last
       Miur::ImportRun.create!(
         dataset: "adozioni", anno_scolastico: anno,
         righe_totali: totale, delta_righe: prev&.righe_totali ? totale - prev.righe_totali : nil,
@@ -191,7 +218,7 @@ namespace :miur do
   task importa_scuole: :environment do
     Rails.logger.info "Inizio miur:importa_scuole (swap di partizione)"
 
-    min_csv_threshold = 4
+    min_csv_threshold = Miur::ScuoleScraper::MIN_CSV_FOR_IMPORT
     csv_files = Dir.glob(Rails.root.join("tmp", "_miur", "scuole", "*.csv").to_s).sort
 
     if csv_files.size < min_csv_threshold
@@ -199,8 +226,7 @@ namespace :miur do
             "Swap non eseguito per non degradare l'anagrafica esistente. " \
             "Rilancia lo scraper o copia manualmente i CSV mancanti."
       Rails.logger.error(msg)
-      puts msg
-      abort msg
+      raise Miur::ImportError, msg
     end
 
     conn = Miur::Scuola.connection
@@ -208,8 +234,7 @@ namespace :miur do
     unless conn.select_value("SELECT pg_try_advisory_lock(#{MIUR_SCUOLE_LOCK_KEY})")
       msg = "ABORT miur:importa_scuole — un altro import è già in corso (advisory lock occupato)."
       Rails.logger.error(msg)
-      puts msg
-      abort msg
+      raise Miur::ImportError, msg
     end
 
     begin
@@ -287,8 +312,7 @@ namespace :miur do
         msg = "ABORT miur:importa_scuole — i CSV contengono #{anni.size} anni scolastici distinti (#{anni.join(', ')}). " \
               "Swap non eseguito; staging #{MIUR_SCUOLE_STG} lasciata in place per ispezione."
         Rails.logger.error(msg)
-        puts msg
-        abort msg
+        raise Miur::ImportError, msg
       end
       anno = anni.first
       puts "anno_scolastico dai CSV: #{anno}"

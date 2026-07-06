@@ -24,6 +24,7 @@ module Miur
       @regioni_nuove = []
       @regioni_fallite = []
       @regioni_stale = []
+      @import_error = nil
     end
 
     def call
@@ -188,7 +189,7 @@ module Miur
 
     def process_imports
       # NOTE: regioni_stale (fallback CSV) non triggera import: il file è già a disco
-      # e verrà incluso dal task import:new_adozioni quando ci sono comunque aggiornate/nuove.
+      # e verrà incluso dal task miur:importa_adozioni quando ci sono comunque aggiornate/nuove.
       if @regioni_aggiornate.empty? && @regioni_nuove.empty?
         Rails.logger.info "Nessuna regione aggiornata o nuova, skip import"
         return
@@ -196,20 +197,44 @@ module Miur
 
       csv_count = Dir.glob(File.join(DOWNLOAD_DIR, "*.csv")).size
       if csv_count < MIN_CSV_FOR_IMPORT
-        Rails.logger.error "[MIUR] SKIP IMPORT: solo #{csv_count}/#{MIN_CSV_FOR_IMPORT} CSV presenti. Non eseguo TRUNCATE."
+        Rails.logger.error "[MIUR] SKIP IMPORT: solo #{csv_count}/#{MIN_CSV_FOR_IMPORT} CSV presenti. Non eseguo lo swap."
         return
       end
 
-      Rake::Task['import:new_adozioni'].reenable
-      Rake::Task['import:cambia_religione'].reenable
-      Rake::Task['controllo_adozioni:rebuild'].reenable
-      Rake::Task['import:new_adozioni'].invoke("true")
-      Rake::Task['import:cambia_religione'].invoke
-      Rake::Task['controllo_adozioni:rebuild'].invoke
+      # Watermark PRIMA dell'invoke: gli esiti regione vanno agganciati solo al
+      # run creato in QUESTO ciclo, mai a un run stale di un giro precedente.
+      last_run_id = Miur::ImportRun.adozioni.maximum(:id)
+
+      begin
+        # Nessun force: il tripwire anti-rollover di miur:importa_adozioni deve
+        # restare attivo nel percorso automatico.
+        Rake::Task['miur:importa_adozioni'].reenable
+        Rake::Task['miur:cambia_religione'].reenable
+        Rake::Task['controllo_adozioni:rebuild'].reenable
+        Rake::Task['miur:importa_adozioni'].invoke
+        Rake::Task['miur:cambia_religione'].invoke
+        Rake::Task['controllo_adozioni:rebuild'].invoke
+      rescue Miur::ImportError => e
+        Rails.logger.error("[MIUR] import fallito: #{e.message}")
+        @import_error = e.message
+      end
+
+      attach_esiti_to_run(last_run_id)
+    end
+
+    def attach_esiti_to_run(last_run_id)
+      run = Miur::ImportRun.adozioni.where("id > ?", last_run_id || 0).order(:completed_at).last
+      run&.update!(
+        regioni_aggiornate: @regioni_aggiornate,
+        regioni_stale: @regioni_stale,
+        regioni_fallite: @regioni_fallite
+      )
     end
 
     def notify
-      ScrapingNotificationJob.perform_async(@regioni_aggiornate, @regioni_saltate, @regioni_nuove, @regioni_fallite, @regioni_stale)
+      fallite = @regioni_fallite.dup
+      fallite << "IMPORT FALLITO: #{@import_error}" if @import_error
+      ScrapingNotificationJob.perform_async(@regioni_aggiornate, @regioni_saltate, @regioni_nuove, fallite, @regioni_stale)
     end
   end
 end

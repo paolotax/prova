@@ -540,13 +540,7 @@ namespace :import do
       conn.execute("ANALYZE #{STG_TABLE}")
       puts "Indici + PK + ANALYZE su staging completati"
 
-      # Le matview di mercato (migrazione 20260704080000) dipendono direttamente
-      # dalla tabella new_adozioni: il DROP TABLE dello swap fallisce se non le
-      # togliamo prima. Le ricreiamo subito dopo (stessa definizione della
-      # migrazione) — se cambia la vista, aggiorna anche qui.
-      conn.execute("DROP MATERIALIZED VIEW IF EXISTS mercato_nazionale_libri")
-      conn.execute("DROP MATERIALIZED VIEW IF EXISTS mercato_nazionale_mercati")
-      conn.execute("DROP MATERIALIZED VIEW IF EXISTS mercato_scuola_mercati")
+      # matview di mercato: vivono su miur_adozioni (migrazione 20260706110000), niente piu' drop/recreate qui.
 
       # 4. Swap atomico: la live viene sostituita in una sola transazione (lock
       #    ACCESS EXCLUSIVE di millisecondi). La sequence viene preservata staccandola
@@ -569,79 +563,7 @@ namespace :import do
       puts "Swap completato: new_adozioni ora ha #{NewAdozione.count} righe"
       Rails.logger.info "Importazione nuove adozioni completata (swap ok)"
 
-      # Ricrea le matview droppate prima dello swap (stessa definizione della
-      # migrazione 20260704080000): la CREATE le popola già con i dati freschi.
-      conn.execute(<<~SQL)
-        CREATE MATERIALIZED VIEW mercato_nazionale_libri AS
-        SELECT anno_scolastico, tipo_grado_scuola, disciplina, anno_corso, codice_isbn,
-               COUNT(DISTINCT sezione_key) AS sezioni
-        FROM (
-          SELECT anno_scolastico,
-                 "TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-                 "DISCIPLINA"      AS disciplina,
-                 "ANNOCORSO"       AS anno_corso,
-                 "CODICEISBN"      AS codice_isbn,
-                 "CODICESCUOLA" || '_' || "ANNOCORSO" || '_' || "SEZIONEANNO" AS sezione_key
-          FROM import_adozioni
-          WHERE "DAACQUIST" = 'Si' AND anno_scolastico IS NOT NULL
-          UNION ALL
-          SELECT anno_scolastico, tipogradoscuola, disciplina, annocorso, codiceisbn,
-                 codicescuola || '_' || annocorso || '_' || sezioneanno
-          FROM new_adozioni
-          WHERE daacquist = 'Si' AND anno_scolastico IS NOT NULL
-        ) adozioni_annate
-        GROUP BY 1, 2, 3, 4, 5
-      SQL
-      conn.execute("CREATE UNIQUE INDEX idx_mercato_naz_libri_pk ON mercato_nazionale_libri (anno_scolastico, tipo_grado_scuola, disciplina, anno_corso, codice_isbn)")
-
-      conn.execute(<<~SQL)
-        CREATE MATERIALIZED VIEW mercato_nazionale_mercati AS
-        SELECT anno_scolastico, tipo_grado_scuola, disciplina, anno_corso,
-               COUNT(DISTINCT sezione_key) AS sezioni
-        FROM (
-          SELECT anno_scolastico,
-                 "TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-                 "DISCIPLINA"      AS disciplina,
-                 "ANNOCORSO"       AS anno_corso,
-                 "CODICESCUOLA" || '_' || "ANNOCORSO" || '_' || "SEZIONEANNO" AS sezione_key
-          FROM import_adozioni
-          WHERE "DAACQUIST" = 'Si' AND anno_scolastico IS NOT NULL
-          UNION ALL
-          SELECT anno_scolastico, tipogradoscuola, disciplina, annocorso,
-                 codicescuola || '_' || annocorso || '_' || sezioneanno
-          FROM new_adozioni
-          WHERE daacquist = 'Si' AND anno_scolastico IS NOT NULL
-        ) adozioni_annate
-        GROUP BY 1, 2, 3, 4
-      SQL
-      conn.execute("CREATE UNIQUE INDEX idx_mercato_naz_mercati_pk ON mercato_nazionale_mercati (anno_scolastico, tipo_grado_scuola, disciplina, anno_corso)")
-
-      conn.execute(<<~SQL)
-        CREATE MATERIALIZED VIEW mercato_scuola_mercati AS
-        SELECT anno_scolastico, codice_scuola, tipo_grado_scuola, disciplina, anno_corso,
-               COUNT(DISTINCT sezione) AS sezioni
-        FROM (
-          SELECT anno_scolastico,
-                 "CODICESCUOLA"    AS codice_scuola,
-                 "TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-                 "DISCIPLINA"      AS disciplina,
-                 "ANNOCORSO"       AS anno_corso,
-                 "SEZIONEANNO"     AS sezione
-          FROM import_adozioni
-          WHERE "DAACQUIST" = 'Si' AND anno_scolastico IS NOT NULL
-          UNION ALL
-          SELECT anno_scolastico, codicescuola, tipogradoscuola, disciplina, annocorso, sezioneanno
-          FROM new_adozioni
-          WHERE daacquist = 'Si' AND anno_scolastico IS NOT NULL
-        ) adozioni_annate
-        GROUP BY 1, 2, 3, 4, 5
-      SQL
-      conn.execute("CREATE UNIQUE INDEX idx_mercato_scuola_mercati_pk ON mercato_scuola_mercati (anno_scolastico, codice_scuola, tipo_grado_scuola, disciplina, anno_corso)")
-      conn.execute("CREATE INDEX idx_mercato_scuola_mercati_scuola ON mercato_scuola_mercati (codice_scuola)")
-      puts "Matview di mercato ricreate"
-
-      # Le matview sono già fresche (appena ricreate): il refresh async resta
-      # come rete di sicurezza per aggiornamenti successivi fuori da questo task.
+      # Le matview di mercato vivono su miur_adozioni: il refresh async le riallinea.
       RefreshMercatoNazionaleRollupJob.perform_later
 
       # Le anomalie derivano da new_adozioni: ricostruzione completa sul nuovo snapshot.
