@@ -7,7 +7,7 @@ class AggiornaCambiCodiceJob < ApplicationJob
   # passaggio anno. Fan-out: una ScuolaPromuoviClassiJob per scuola, così i fallimenti
   # sono isolati e le righe si aggiornano man mano.
   def perform(account, provincia: nil)
-    anno = NewScuola.maximum(:anno_scolastico)
+    anno = Miur.anno_corrente
     return if anno.blank?
 
     scuole = provincia ? account.scuole.where(provincia: provincia) : nil

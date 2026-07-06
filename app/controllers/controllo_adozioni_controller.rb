@@ -96,9 +96,10 @@ class ControlloAdozioniController < ApplicationController
   # Tutti i libri da acquistare (EE) della scuola, raggruppati per classe come @per_classe.
   # Serve a dettagliare i libri+prezzi sotto le classi con anomalie. Alternativa alla
   # religione e parascolastica restano visibili ma escluse dal totale spesa
-  # (vedi NewAdozione#escluso_dal_tetto?).
+  # (vedi Miur::Adozione#escluso_dal_tetto?).
   def libri_per_classe
-    NewAdozione
+    Miur::Adozione
+      .per_anno(Miur.anno_corrente)
       .where(codicescuola: @codicescuola, tipogradoscuola: "EE")
       .where("coalesce(daacquist, '') ILIKE 'S%'")
       .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)

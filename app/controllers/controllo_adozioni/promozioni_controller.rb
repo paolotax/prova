@@ -8,8 +8,9 @@ class ControlloAdozioni::PromozioniController < ApplicationController
     # Codice target esplicito (dal flusso cambi-codice di controllo_adozioni) o auto-suggerito.
     @codice_suggerito = params[:codice_nuovo].presence || codice_nuovo_suggerito
     @quinte_uscenti = @scuola.classi.attive.where(anno_corso: "5").includes(persona_classi: :persona)
-    @sezioni_prime = NewAdozione.where(codicescuola: @codice_suggerito.presence || @scuola.codice_ministeriale,
-                                       annocorso: "1", tipogradoscuola: "EE").distinct.pluck(:sezioneanno).compact.sort
+    @sezioni_prime = Miur::Adozione.per_anno(@anno_target)
+                                   .where(codicescuola: @codice_suggerito.presence || @scuola.codice_ministeriale,
+                                          annocorso: "1", tipogradoscuola: "EE").distinct.pluck(:sezioneanno).compact.sort
   end
 
   def create
@@ -54,7 +55,7 @@ class ControlloAdozioni::PromozioniController < ApplicationController
   end
 
   def anno_target
-    NewScuola.maximum(:anno_scolastico).presence || NewAdozione.maximum(:anno_scolastico).presence || "202627"
+    Miur.anno_corrente.presence || Miur::Adozione.maximum(:anno_scolastico).presence || "202627"
   end
 
   def precedente(anno) # "202627" -> "202526"
@@ -63,15 +64,15 @@ class ControlloAdozioni::PromozioniController < ApplicationController
     "#{y1}#{(y1 + 1).to_s[-2..]}"
   end
 
-  # "certo" = un solo plesso non tracciato in new_scuole, stesso comune e grado EE, con adozioni in new_adozioni.
+  # "certo" = un solo plesso non tracciato in miur_scuole, stesso comune e grado EE, con adozioni in miur_adozioni.
   def codice_nuovo_suggerito
     sql = <<~SQL
       SELECT DISTINCT ns.codice_scuola
-      FROM new_scuole ns
+      FROM miur_scuole ns
       WHERE ns.comune = $1
         AND ns.anno_scolastico = $2
         AND ns.codice_scuola <> $3
-        AND EXISTS (SELECT 1 FROM new_adozioni na WHERE na.codicescuola = ns.codice_scuola AND na.tipogradoscuola = 'EE')
+        AND EXISTS (SELECT 1 FROM miur_adozioni na WHERE na.codicescuola = ns.codice_scuola AND na.anno_scolastico = $2 AND na.tipogradoscuola = 'EE')
         AND NOT EXISTS (SELECT 1 FROM scuole s WHERE s.account_id = $4 AND s.codice_ministeriale = ns.codice_scuola)
     SQL
     rows = ActiveRecord::Base.connection.exec_query(

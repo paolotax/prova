@@ -85,7 +85,10 @@ class ScuolaTest < ActiveSupport::TestCase
 end
 
 class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
-  fixtures :accounts, :scuole, :classi, :adozioni, :new_adozioni, :persone, :persona_classi
+  # :new_scuole popola l'anagrafe miur_scuole così Miur.anno_corrente = "202627"
+  # (roster_miur legge Miur::Adozione.per_anno(Miur.anno_corrente): senza anagrafe
+  # sarebbe nil e il roster vuoto renderebbe promuovi_primaria! un no-op).
+  fixtures :accounts, :scuole, :classi, :adozioni, :new_scuole, :new_adozioni, :persone, :persona_classi
 
   setup do
     Current.account = accounts(:fizzy)

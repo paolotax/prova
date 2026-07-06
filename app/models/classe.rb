@@ -141,23 +141,23 @@ class Classe < ApplicationRecord
     ) || create_from_view(view_classe, scuola: scuola, account: account)
   end
 
-  # Helper per recuperare le ImportAdozioni originali
+  # Helper per recuperare le adozioni MIUR originali (set ministeriale stabile
+  # dell'anno scorso, ex vista ponte import_adozioni = partizione 202526 di miur_adozioni).
   def import_adozioni
-    return ImportAdozione.none unless codice_ministeriale_origine.present?
+    return Miur::Adozione.none unless codice_ministeriale_origine.present?
 
-    ImportAdozione.where(
-      CODICESCUOLA: codice_ministeriale_origine,
-      ANNOCORSO: classe_origine,
-      SEZIONEANNO: sezione_origine
+    Miur::Adozione.per_anno("202526").where(
+      codicescuola: codice_ministeriale_origine,
+      annocorso: classe_origine,
+      sezioneanno: sezione_origine
     )
   end
 
-  # Righe new_adozioni (sorgente MIUR anno corrente) per questa classe.
-  # NB: non si filtra per anno_scolastico (NULL in produzione), solo per origine.
+  # Righe miur_adozioni (sorgente MIUR anno corrente) per questa classe.
   def new_adozioni
-    return NewAdozione.none unless codice_ministeriale_origine.present?
+    return Miur::Adozione.none unless codice_ministeriale_origine.present?
 
-    NewAdozione.where(
+    Miur::Adozione.per_anno(Miur.anno_corrente).where(
       codicescuola: codice_ministeriale_origine,
       annocorso: classe_origine,
       sezioneanno: sezione_origine,
@@ -165,7 +165,7 @@ class Classe < ApplicationRecord
     )
   end
 
-  # Costruisce gli snapshot Adozione per l'anno indicato a partire da new_adozioni.
+  # Costruisce gli snapshot Adozione per l'anno indicato a partire da miur_adozioni.
   # Idempotente: l'indice unico (classe_id, codice_isbn, anno_scolastico) evita duplicati.
   def costruisci_adozioni!(anno_scolastico:)
     sorgenti = new_adozioni.to_a

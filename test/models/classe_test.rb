@@ -36,7 +36,10 @@
 require "test_helper"
 
 class ClasseTest < ActiveSupport::TestCase
-  fixtures :classi, :scuole, :accounts, :new_adozioni, :libri, :editori, :categorie, :users
+  # :new_scuole popola l'anagrafe miur_scuole così Miur.anno_corrente = "202627"
+  # (senza, e' nil e Miur::Adozione.per_anno(nil) torna vuoto: il vecchio ponte
+  # new_adozioni aveva un COALESCE su max(miur_adozioni), ora rimosso by design).
+  fixtures :classi, :scuole, :accounts, :new_scuole, :new_adozioni, :libri, :editori, :categorie, :users
 
   test "tappa_target delegates to scuola" do
     classe = classi(:prima_a_fizzy)

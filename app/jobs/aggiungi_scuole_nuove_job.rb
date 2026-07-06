@@ -2,12 +2,12 @@ class AggiungiScuoleNuoveJob < ApplicationJob
   queue_as :bulk
 
   # Aggiunge in blocco all'anagrafe account le "nuove scuole" del controllo adozioni
-  # (codici in new_scuole+new_adozioni senza predecessore ne' candidati), opzionalmente
-  # di una sola provincia. Anagrafe da new_scuole (direzioni comprese), poi classi e
+  # (codici in miur_scuole+miur_adozioni senza predecessore ne' candidati), opzionalmente
+  # di una sola provincia. Anagrafe da miur_scuole (direzioni comprese), poi classi e
   # adozioni via Adozione::Reconciler per provincia (idempotente, ricalcola i contatori).
   def perform(account, provincia: nil)
     Current.account = account
-    anno = NewScuola.maximum(:anno_scolastico)
+    anno = Miur.anno_corrente
     return if anno.blank?
 
     scuole = provincia ? account.scuole.where(provincia: provincia) : nil
@@ -30,14 +30,14 @@ class AggiungiScuoleNuoveJob < ApplicationJob
     gradi = TipoScuola.pluck(:tipo, :grado).to_h
     sigle = account.scuole.where.not(sigla_provincia: [nil, ""])
                    .distinct.pluck(:provincia, :sigla_provincia).to_h
-    nuove = NewScuola.where(anno_scolastico: anno, codice_scuola: codici).to_a
+    nuove = Miur::Scuola.where(anno_scolastico: anno, codice_scuola: codici).to_a
 
     dir_codici = nuove.filter_map { |n|
       c = n.codice_istituto_riferimento
       c if c.present? && c != n.codice_scuola
     }.uniq
     dir_mancanti = dir_codici - account.scuole.where(codice_ministeriale: dir_codici).pluck(:codice_ministeriale)
-    direzioni = NewScuola.where(anno_scolastico: anno, codice_scuola: dir_mancanti).to_a
+    direzioni = Miur::Scuola.where(anno_scolastico: anno, codice_scuola: dir_mancanti).to_a
     if direzioni.any?
       Scuola.insert_all(direzioni.map { |n| scuola_attributes(n, account, gradi, sigle, nil) },
                         unique_by: %i[account_id codice_ministeriale])

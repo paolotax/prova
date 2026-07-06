@@ -197,12 +197,12 @@ class Scuola < ApplicationRecord
 
   # Promuovibile all'anno successivo (passaggio anno EE) quando l'anagrafe MIUR
   # del nuovo anno è disponibile e la scuola non è ancora stata fatta scorrere.
-  def promuovibile?(anno_target = NewScuola.maximum(:anno_scolastico))
+  def promuovibile?(anno_target = Miur.anno_corrente)
     return false if anno_target.blank?
     return false if classi.attive.maximum(:anno_scolastico).to_s >= anno_target
-    return false unless NewScuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno_target).exists?
-    # Serve anche il roster (new_adozioni): senza, promuovere è un no-op → non offrirlo.
-    NewAdozione.where(codicescuola: codice_ministeriale, tipogradoscuola: "EE").exists?
+    return false unless Miur::Scuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno_target).exists?
+    # Serve anche il roster (miur_adozioni): senza, promuovere è un no-op → non offrirlo.
+    Miur::Adozione.where(codicescuola: codice_ministeriale, anno_scolastico: anno_target, tipogradoscuola: "EE").exists?
   end
 
   def geocoded?
@@ -263,15 +263,15 @@ class Scuola < ApplicationRecord
   def promuovi_primaria!(da:, a:, spostamenti_insegnanti: {})
     transaction do
       unless classi.attive.per_anno(a).exists?
-        # La verità sul roster dell'anno target è new_adozioni. roster = terne che
+        # La verità sul roster dell'anno target è miur_adozioni. roster = terne che
         # DOVREBBERO esistere; gradi_coperti = rete di sicurezza per-grado (un grado
-        # assente da new_adozioni = dato mancante, non grado svuotato → niente archive).
+        # assente da miur_adozioni = dato mancante, non grado svuotato → niente archive).
         # roster: { [annocorso, sezione] => combinazione }. L'identità di continuità è
         # (anno_corso, sezione): la combinazione NON fa parte della chiave perché cambia
         # spesso d'anno in anno nei dati MIUR (es. "27 ORE" → "27 ORE … CON ADOZIONE
         # ALTERNATIVA") e usarla nel match farebbe archiviare+ricreare ogni classe,
         # orfanando i documenti collegati.
-        roster        = roster_new_adozioni
+        roster        = roster_miur
         gradi_coperti = roster.keys.map(&:first).to_set
 
         # Roster totalmente assente = nessun source-of-truth MIUR per questa scuola
@@ -358,13 +358,13 @@ class Scuola < ApplicationRecord
 
   private
 
-  # Roster MIUR (new_adozioni) della scuola come { [annocorso, sezione] => combinazione },
+  # Roster MIUR (miur_adozioni, anno corrente) della scuola come { [annocorso, sezione] => combinazione },
   # indipendente dall'anno target. La chiave è (annocorso, sezione): la combinazione è un
   # attributo (variabile d'anno in anno), non parte dell'identità. Se la stessa sezione
   # compare con più combinazioni, l'ultima vince (caso raro in EE).
-  def roster_new_adozioni
-    NewAdozione
-      .where(codicescuola: codice_ministeriale, tipogradoscuola: "EE")
+  def roster_miur
+    Miur::Adozione
+      .where(codicescuola: codice_ministeriale, anno_scolastico: Miur.anno_corrente, tipogradoscuola: "EE")
       .distinct
       .pluck(:annocorso, :sezioneanno, :combinazione)
       .each_with_object({}) do |(annocorso, sezione, combinazione), h|

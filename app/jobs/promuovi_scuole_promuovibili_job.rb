@@ -6,7 +6,7 @@ class PromuoviScuolePromuovibiliJob < ApplicationJob
   # una ScuolaPromuoviClassiJob per scuola (promuove + broadcast della riga in
   # controllo_adozioni), così i fallimenti sono isolati e le righe si aggiornano man mano.
   def perform(account, provincia: nil)
-    anno = NewScuola.maximum(:anno_scolastico)
+    anno = Miur.anno_corrente
     return if anno.blank?
 
     scope = account.scuole
@@ -17,8 +17,8 @@ class PromuoviScuolePromuovibiliJob < ApplicationJob
 
     max_anno = scope.joins(:classi).where(classi: { stato: "attiva" })
                     .group("scuole.codice_ministeriale").maximum("classi.anno_scolastico")
-    ns = NewScuola.where(codice_scuola: codici, anno_scolastico: anno).pluck(:codice_scuola).to_set
-    na = NewAdozione.where(codicescuola: codici, tipogradoscuola: "EE").distinct.pluck(:codicescuola).to_set
+    ns = Miur::Scuola.where(codice_scuola: codici, anno_scolastico: anno).pluck(:codice_scuola).to_set
+    na = Miur::Adozione.where(codicescuola: codici, anno_scolastico: anno, tipogradoscuola: "EE").distinct.pluck(:codicescuola).to_set
 
     scope.where(codice_ministeriale: codici).find_each do |scuola|
       c = scuola.codice_ministeriale
