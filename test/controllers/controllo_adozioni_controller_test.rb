@@ -7,6 +7,14 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     @account = accounts(:fizzy)
     @user = users(:one)
     sign_in_as(@user, @account)
+    # I contatori del passaggio anno leggono new_scuole/new_adozioni/controllo_anomalie,
+    # tabelle NON dichiarate qui: le fixture caricate da altre classi di test (es. ScuolaTest,
+    # che dichiara :new_scuole e :new_adozioni con righe per BOEE000001, scuola fizzy)
+    # restano nel DB e con certi seed rendono positivi step inattesi. Puliamo e ripartiamo
+    # dai soli dati creati dal test (il delete e' dentro la transazione, quindi rollbackato).
+    NewScuola.delete_all
+    NewAdozione.delete_all
+    ControlloAnomalia.delete_all
     # La panoramica include solo scuole "con adozioni": rendilo vero per la fixture MI
     # senza dipendere da new_adozioni (tabella fuori dalle fixture dichiarate).
     scuole(:scuola_fizzy).update_columns(adozioni_count: 1)

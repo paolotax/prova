@@ -1,7 +1,9 @@
 require "test_helper"
 
 class AdozioniAnalyticsTest < ActiveSupport::TestCase
-  fixtures :accounts, :scuole, :classi
+  # prezzi_ministeriali alimenta Stats::Calcolo144 (peso 0.5 dei fascicoli AMBITO):
+  # senza fixture dichiarata la tabella dipende dall'ordine delle classi di test.
+  fixtures :accounts, :scuole, :classi, :prezzi_ministeriali
 
   MercatoRow = Struct.new(:grado, :disciplina, :anno_corso, :codice_isbn, keyword_init: true)
 
@@ -60,12 +62,14 @@ class AdozioniAnalyticsTest < ActiveSupport::TestCase
   end
 
   test "national_market_totals filters by anno and weighs fascicoli" do
-    NewAdozione.create!(
+    # Le matview mercato_* leggono miur_adozioni (partizionata per anno):
+    # inserire SEMPRE tramite il modello (tabella padre), mai nelle partizioni.
+    Miur::Adozione.create!(
       anno_scolastico: "202627", codicescuola: "TESTXX001", tipogradoscuola: "EE",
       disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)", annocorso: "4",
       sezioneanno: "A", combinazione: "SCUOLA PRIMARIA", codiceisbn: "9785555555555", daacquist: "Si"
     )
-    NewAdozione.create!(
+    Miur::Adozione.create!(
       anno_scolastico: "202526", codicescuola: "TESTXX001", tipogradoscuola: "EE",
       disciplina: "SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)", annocorso: "4",
       sezioneanno: "A", combinazione: "SCUOLA PRIMARIA", codiceisbn: "9785555555555", daacquist: "Si"
