@@ -1617,30 +1617,31 @@ CREATE TABLE public.memberships (
 
 
 --
--- Name: new_adozioni; Type: TABLE; Schema: public; Owner: -
+-- Name: miur_adozioni; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.new_adozioni (
+CREATE TABLE public.miur_adozioni (
     id bigint NOT NULL,
-    codicescuola character varying,
+    anno_scolastico character varying NOT NULL,
     annocorso character varying,
-    sezioneanno character varying,
-    tipogradoscuola character varying,
-    combinazione character varying,
-    disciplina character varying,
-    codiceisbn character varying,
     autori character varying,
-    titolo character varying,
-    sottotitolo character varying,
-    volume character varying,
-    editore character varying,
-    prezzo character varying,
-    nuovaadoz character varying,
-    daacquist character varying,
+    codiceisbn character varying,
+    codicescuola character varying,
+    combinazione character varying,
     consigliato character varying,
-    anno_scolastico character varying,
+    daacquist character varying,
+    disciplina character varying,
+    editore character varying,
+    nuovaadoz character varying,
+    prezzo character varying,
+    sezioneanno character varying,
+    sottotitolo character varying,
+    tipogradoscuola character varying,
+    titolo character varying,
+    volume character varying,
     import_scuola_id bigint
-);
+)
+PARTITION BY LIST (anno_scolastico);
 
 
 --
@@ -1654,23 +1655,14 @@ CREATE MATERIALIZED VIEW public.mercato_nazionale_libri AS
     adozioni_annate.anno_corso,
     adozioni_annate.codice_isbn,
     count(DISTINCT adozioni_annate.sezione_key) AS sezioni
-   FROM ( SELECT import_adozioni.anno_scolastico,
-            import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-            import_adozioni."DISCIPLINA" AS disciplina,
-            import_adozioni."ANNOCORSO" AS anno_corso,
-            import_adozioni."CODICEISBN" AS codice_isbn,
-            (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text) AS sezione_key
-           FROM public.import_adozioni
-          WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
-        UNION ALL
-         SELECT new_adozioni.anno_scolastico,
-            new_adozioni.tipogradoscuola,
-            new_adozioni.disciplina,
-            new_adozioni.annocorso,
-            new_adozioni.codiceisbn,
-            (((((new_adozioni.codicescuola)::text || '_'::text) || (new_adozioni.annocorso)::text) || '_'::text) || (new_adozioni.sezioneanno)::text)
-           FROM public.new_adozioni
-          WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+   FROM ( SELECT miur_adozioni.anno_scolastico,
+            miur_adozioni.tipogradoscuola AS tipo_grado_scuola,
+            miur_adozioni.disciplina,
+            miur_adozioni.annocorso AS anno_corso,
+            miur_adozioni.codiceisbn AS codice_isbn,
+            (((((miur_adozioni.codicescuola)::text || '_'::text) || (miur_adozioni.annocorso)::text) || '_'::text) || (miur_adozioni.sezioneanno)::text) AS sezione_key
+           FROM public.miur_adozioni
+          WHERE ((miur_adozioni.daacquist)::text = 'Si'::text)) adozioni_annate
   GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso, adozioni_annate.codice_isbn
   WITH NO DATA;
 
@@ -1685,21 +1677,13 @@ CREATE MATERIALIZED VIEW public.mercato_nazionale_mercati AS
     adozioni_annate.disciplina,
     adozioni_annate.anno_corso,
     count(DISTINCT adozioni_annate.sezione_key) AS sezioni
-   FROM ( SELECT import_adozioni.anno_scolastico,
-            import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-            import_adozioni."DISCIPLINA" AS disciplina,
-            import_adozioni."ANNOCORSO" AS anno_corso,
-            (((((import_adozioni."CODICESCUOLA")::text || '_'::text) || (import_adozioni."ANNOCORSO")::text) || '_'::text) || (import_adozioni."SEZIONEANNO")::text) AS sezione_key
-           FROM public.import_adozioni
-          WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
-        UNION ALL
-         SELECT new_adozioni.anno_scolastico,
-            new_adozioni.tipogradoscuola,
-            new_adozioni.disciplina,
-            new_adozioni.annocorso,
-            (((((new_adozioni.codicescuola)::text || '_'::text) || (new_adozioni.annocorso)::text) || '_'::text) || (new_adozioni.sezioneanno)::text)
-           FROM public.new_adozioni
-          WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+   FROM ( SELECT miur_adozioni.anno_scolastico,
+            miur_adozioni.tipogradoscuola AS tipo_grado_scuola,
+            miur_adozioni.disciplina,
+            miur_adozioni.annocorso AS anno_corso,
+            (((((miur_adozioni.codicescuola)::text || '_'::text) || (miur_adozioni.annocorso)::text) || '_'::text) || (miur_adozioni.sezioneanno)::text) AS sezione_key
+           FROM public.miur_adozioni
+          WHERE ((miur_adozioni.daacquist)::text = 'Si'::text)) adozioni_annate
   GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso
   WITH NO DATA;
 
@@ -1715,23 +1699,14 @@ CREATE MATERIALIZED VIEW public.mercato_scuola_mercati AS
     adozioni_annate.disciplina,
     adozioni_annate.anno_corso,
     count(DISTINCT adozioni_annate.sezione) AS sezioni
-   FROM ( SELECT import_adozioni.anno_scolastico,
-            import_adozioni."CODICESCUOLA" AS codice_scuola,
-            import_adozioni."TIPOGRADOSCUOLA" AS tipo_grado_scuola,
-            import_adozioni."DISCIPLINA" AS disciplina,
-            import_adozioni."ANNOCORSO" AS anno_corso,
-            import_adozioni."SEZIONEANNO" AS sezione
-           FROM public.import_adozioni
-          WHERE (((import_adozioni."DAACQUIST")::text = 'Si'::text) AND (import_adozioni.anno_scolastico IS NOT NULL))
-        UNION ALL
-         SELECT new_adozioni.anno_scolastico,
-            new_adozioni.codicescuola,
-            new_adozioni.tipogradoscuola,
-            new_adozioni.disciplina,
-            new_adozioni.annocorso,
-            new_adozioni.sezioneanno
-           FROM public.new_adozioni
-          WHERE (((new_adozioni.daacquist)::text = 'Si'::text) AND (new_adozioni.anno_scolastico IS NOT NULL))) adozioni_annate
+   FROM ( SELECT miur_adozioni.anno_scolastico,
+            miur_adozioni.codicescuola AS codice_scuola,
+            miur_adozioni.tipogradoscuola AS tipo_grado_scuola,
+            miur_adozioni.disciplina,
+            miur_adozioni.annocorso AS anno_corso,
+            miur_adozioni.sezioneanno AS sezione
+           FROM public.miur_adozioni
+          WHERE ((miur_adozioni.daacquist)::text = 'Si'::text)) adozioni_annate
   GROUP BY adozioni_annate.anno_scolastico, adozioni_annate.codice_scuola, adozioni_annate.tipo_grado_scuola, adozioni_annate.disciplina, adozioni_annate.anno_corso
   WITH NO DATA;
 
@@ -1772,34 +1747,6 @@ CREATE SEQUENCE public.messages_id_seq
 --
 
 ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
-
-
---
--- Name: miur_adozioni; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.miur_adozioni (
-    id bigint NOT NULL,
-    anno_scolastico character varying NOT NULL,
-    annocorso character varying,
-    autori character varying,
-    codiceisbn character varying,
-    codicescuola character varying,
-    combinazione character varying,
-    consigliato character varying,
-    daacquist character varying,
-    disciplina character varying,
-    editore character varying,
-    nuovaadoz character varying,
-    prezzo character varying,
-    sezioneanno character varying,
-    sottotitolo character varying,
-    tipogradoscuola character varying,
-    titolo character varying,
-    volume character varying,
-    import_scuola_id bigint
-)
-PARTITION BY LIST (anno_scolastico);
 
 
 --
@@ -2608,6 +2555,33 @@ CREATE SEQUENCE public.motor_tags_id_seq
 --
 
 ALTER SEQUENCE public.motor_tags_id_seq OWNED BY public.motor_tags.id;
+
+
+--
+-- Name: new_adozioni; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.new_adozioni (
+    id bigint NOT NULL,
+    codicescuola character varying,
+    annocorso character varying,
+    sezioneanno character varying,
+    tipogradoscuola character varying,
+    combinazione character varying,
+    disciplina character varying,
+    codiceisbn character varying,
+    autori character varying,
+    titolo character varying,
+    sottotitolo character varying,
+    volume character varying,
+    editore character varying,
+    prezzo character varying,
+    nuovaadoz character varying,
+    daacquist character varying,
+    consigliato character varying,
+    anno_scolastico character varying,
+    import_scuola_id bigint
+);
 
 
 --
@@ -8187,6 +8161,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260706110000'),
 ('20260706104439'),
 ('20260706103351'),
 ('20260704080000'),
