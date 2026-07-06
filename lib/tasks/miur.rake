@@ -152,7 +152,7 @@ namespace :miur do
       #     di righe sullo stesso anno è il segnale: blocca lo swap.
       totale = conn.select_value("SELECT count(*) FROM #{MIUR_ADOZIONI_STG}").to_i
       prev = Miur::ImportRun.adozioni.where(anno_scolastico: anno).order(:completed_at).last
-      if prev&.righe_totali && totale < prev.righe_totali * 0.7 && args[:force] != "true"
+      if prev&.righe_totali && totale < prev.righe_totali * 0.7 && args[:force].blank?
         msg = "ABORT miur:importa_adozioni — staging con #{totale} righe vs #{prev.righe_totali} " \
               "dell'ultimo run per l'anno #{anno}: calo >30% per lo stesso anno, possibile rollover " \
               "con anagrafe scuole non aggiornata. Esegui prima miur:importa_scuole, " \
