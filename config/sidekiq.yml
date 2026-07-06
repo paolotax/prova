@@ -20,7 +20,7 @@
       class: ScuoleScraperJob
       queue: default
       unique: true
-      description: 'Scarica i 4 CSV anagrafica scuole MIUR e fa import:new_scuole (blue-green)'
+      description: 'Scarica i 4 CSV anagrafica scuole MIUR e fa miur:importa_scuole (swap di partizione)'
 
     clean_orphaned_righe:
       cron: '0 3 1 * *'  # Esegue il 1° di ogni mese alle 3:00 AM

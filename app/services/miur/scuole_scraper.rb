@@ -221,6 +221,12 @@ module Miur
       rescue Miur::ImportError => e
         Rails.logger.error("[MIUR scuole] import fallito: #{e.message}")
         return
+      rescue => e
+        # Simmetrico ad AdozioniScraper: logga anche i failure imprevisti
+        # invece di lasciarli inghiottire dal rescue generico di call.
+        Rails.logger.error("[MIUR scuole] import fallito (errore imprevisto): #{e.class}: #{e.message}")
+        Rails.logger.error(e.backtrace.join("\n"))
+        return
       end
 
       attach_esiti_to_run(last_run_id)

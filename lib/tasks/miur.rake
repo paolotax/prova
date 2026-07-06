@@ -18,8 +18,8 @@ namespace :miur do
   # PRIMA di miur:importa_adozioni — l'anno timbrato sulle adozioni viene
   # dall'anagrafe scuole (Miur.anno_corrente); con anagrafe vecchia i CSV della
   # campagna nuova finirebbero nella partizione dell'anno passato. Il tripwire
-  # anti-rollover (calo >30% di righe sullo stesso anno) blocca lo swap; per
-  # forzare consapevolmente: miur:importa_adozioni[force].
+  # anti-rollover (calo oltre MIUR_ROLLOVER_DROP_RATIO di righe sullo stesso
+  # anno) blocca lo swap; per forzare consapevolmente: miur:importa_adozioni[force].
   # Le condizioni non risolvibili (soglia CSV, lock, tripwire, anni misti)
   # sollevano Miur::ImportError, non abort/SystemExit: così i rescue degli
   # scraper le catturano e Sidekiq non ritenta a vuoto.
@@ -29,6 +29,9 @@ namespace :miur do
   # anche contro i task legacy finché coesistono.
   MIUR_ADOZIONI_LOCK_KEY = 198_706_14
   MIUR_SCUOLE_LOCK_KEY = 198_706_15
+  # Tripwire anti-rollover: sotto questa frazione delle righe dell'ultimo run
+  # per lo stesso anno lo swap si blocca (0.7 = calo >30%).
+  MIUR_ROLLOVER_DROP_RATIO = 0.7
 
   desc "Importa ADOZIONI MIUR nella partizione dell'anno corrente (swap di partizione)"
   task :importa_adozioni, [:force] => :environment do |t, args|
@@ -148,13 +151,14 @@ namespace :miur do
       # 2c. Tripwire anti-rollover: se al cambio campagna l'anagrafe scuole non
       #     è ancora aggiornata, l'anno timbrato è quello VECCHIO e lo swap
       #     sovrascriverebbe la partizione dell'anno passato con i CSV nuovi
-      #     (tipicamente molti meno all'inizio della campagna). Un calo >30%
-      #     di righe sullo stesso anno è il segnale: blocca lo swap.
+      #     (tipicamente molti meno all'inizio della campagna). Un calo oltre
+      #     MIUR_ROLLOVER_DROP_RATIO sullo stesso anno è il segnale: blocca lo swap.
       totale = conn.select_value("SELECT count(*) FROM #{MIUR_ADOZIONI_STG}").to_i
       prev = Miur::ImportRun.adozioni.where(anno_scolastico: anno).order(:completed_at).last
-      if prev&.righe_totali && totale < prev.righe_totali * 0.7 && args[:force].blank?
+      if prev&.righe_totali && totale < prev.righe_totali * MIUR_ROLLOVER_DROP_RATIO && args[:force].blank?
+        drop_pct = ((1 - MIUR_ROLLOVER_DROP_RATIO) * 100).round
         msg = "ABORT miur:importa_adozioni — staging con #{totale} righe vs #{prev.righe_totali} " \
-              "dell'ultimo run per l'anno #{anno}: calo >30% per lo stesso anno, possibile rollover " \
+              "dell'ultimo run per l'anno #{anno}: calo >#{drop_pct}% per lo stesso anno, possibile rollover " \
               "con anagrafe scuole non aggiornata. Esegui prima miur:importa_scuole, " \
               "o rilancia con miur:importa_adozioni[force] se il calo è atteso. " \
               "Staging #{MIUR_ADOZIONI_STG} lasciata in place per ispezione."

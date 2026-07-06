@@ -217,6 +217,13 @@ module Miur
       rescue Miur::ImportError => e
         Rails.logger.error("[MIUR] import fallito: #{e.message}")
         @import_error = e.message
+      rescue => e
+        # Anche i failure imprevisti (PG, encoding, disco pieno) devono finire
+        # nella mail: senza questo rescue verrebbero inghiottiti dal rescue
+        # generico di call, senza notifica.
+        Rails.logger.error("[MIUR] import fallito (errore imprevisto): #{e.class}: #{e.message}")
+        Rails.logger.error(e.backtrace.join("\n"))
+        @import_error = "#{e.class}: #{e.message}"
       end
 
       attach_esiti_to_run(last_run_id)
