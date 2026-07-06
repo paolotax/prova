@@ -36,6 +36,10 @@ module Prova
     # Set the default locale to something other than :en
     config.i18n.default_locale = :it
 
+    # Use SQL schema format: schema.rb cannot represent declarative partitioning
+    # (PARTITION BY) used by the miur_* tables.
+    config.active_record.schema_format = :sql
+
     config.beginning_of_week = :monday
 
     # Add tools directory to autoload and eager load paths
