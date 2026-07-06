@@ -88,7 +88,7 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
   # :new_scuole popola l'anagrafe miur_scuole così Miur.anno_corrente = "202627"
   # (roster_miur legge Miur::Adozione.per_anno(Miur.anno_corrente): senza anagrafe
   # sarebbe nil e il roster vuoto renderebbe promuovi_primaria! un no-op).
-  fixtures :accounts, :scuole, :classi, :adozioni, :new_scuole, :new_adozioni, :persone, :persona_classi
+  fixtures :accounts, :scuole, :classi, :adozioni, "miur/scuole", "miur/adozioni", :persone, :persona_classi
 
   setup do
     Current.account = accounts(:fizzy)
@@ -148,7 +148,7 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
 end
 
 class ScuolaPromuovibileTest < ActiveSupport::TestCase
-  fixtures :accounts, :scuole, :classi, :new_scuole, :new_adozioni
+  fixtures :accounts, :scuole, :classi, "miur/scuole", "miur/adozioni"
 
   test "promuovibile? quando new_scuole ha il nuovo anno e la scuola non è ancora scorsa" do
     scuola = scuole(:primaria_attiva) # classi attive 202526, presente in new_scuole 202627
@@ -168,7 +168,7 @@ class ScuolaPromuovibileTest < ActiveSupport::TestCase
 
   test "non promuovibile? se la scuola non è in new_scuole per il nuovo anno" do
     scuola = scuole(:primaria_attiva)
-    NewScuola.where(codice_scuola: scuola.codice_ministeriale).delete_all
+    Miur::Scuola.where(codice_scuola: scuola.codice_ministeriale).delete_all
     assert_not scuola.promuovibile?
   end
 end

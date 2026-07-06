@@ -112,7 +112,7 @@ fascicolo_tre:
   classe: 1
   disciplina: "Storia"
 
-# ISBN allineato a new_adozioni(:prima_a_matematica) per testare il link libro_id in costruisci_adozioni!
+# ISBN allineato a miur_adozioni(:prima_a_matematica) per testare il link libro_id in costruisci_adozioni!
 matematica_facile_1:
   account: fizzy
   user: one

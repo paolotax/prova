@@ -61,11 +61,11 @@ namespace :cache do
     
     puts "\nRicalcolo in corso..."
     
-    # Poi ricalcola forzando l'esecuzione
-    totale_scuole = ImportAdozione.distinct.count(:CODICESCUOLA)
-    old_totale_scuole = OldAdozione.distinct.count(:codicescuola)
-    totale_adozioni = ImportAdozione.count
-    old_totale_adozioni = OldAdozione.count
+    # Poi ricalcola forzando l'esecuzione (partizioni miur_adozioni per anno)
+    totale_scuole = Miur::Adozione.per_anno("202526").distinct.count(:codicescuola)
+    old_totale_scuole = Miur::Adozione.per_anno("202425").distinct.count(:codicescuola)
+    totale_adozioni = Miur::Adozione.per_anno("202526").count
+    old_totale_adozioni = Miur::Adozione.per_anno("202425").count
     
     # Salva in cache
     Rails.cache.write("stats/totale_scuole", totale_scuole, expires_in: 1.month)

@@ -11,10 +11,10 @@ module ControlloAdozioni
       @scuola = @account.scuole.create!(codice_ministeriale: "XXEE00001A",
         provincia: "XX", comune: "TESTVILLE", denominazione: "Primaria Dashboard",
         tipo_scuola: "SCUOLA PRIMARIA", grado: "E", adozioni_count: 3)
-      NewScuola.create!(codice_scuola: "XXEE00001A", anno_scolastico: @anno,
+      Miur::Scuola.create!(codice_scuola: "XXEE00001A", anno_scolastico: @anno,
         provincia: "XX", comune: "TESTVILLE", denominazione: "PRIMARIA DASHBOARD",
         tipo_scuola: "SCUOLA PRIMARIA")
-      NewAdozione.create!(codicescuola: "XXEE00001A", tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: "XXEE00001A", anno_scolastico: @anno, tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "9880000000011", daacquist: "Si")
     end
@@ -49,8 +49,8 @@ module ControlloAdozioni
     end
 
     test "scuola con adozioni assente dal MIUR conta come mancante" do
-      NewAdozione.where(codicescuola: "XXEE00001A").delete_all
-      NewScuola.where(codice_scuola: "XXEE00001A").delete_all
+      Miur::Adozione.where(codicescuola: "XXEE00001A").delete_all
+      Miur::Scuola.where(codice_scuola: "XXEE00001A").delete_all
 
       xx = riga_xx
       assert_equal 1, xx.mancanti_miur
@@ -59,7 +59,7 @@ module ControlloAdozioni
 
     test "scuola senza adozioni e fuori MIUR non entra nel conteggio" do
       @scuola.update_columns(adozioni_count: 0)
-      NewAdozione.where(codicescuola: "XXEE00001A").delete_all
+      Miur::Adozione.where(codicescuola: "XXEE00001A").delete_all
 
       assert_nil riga_xx
     end
@@ -80,9 +80,9 @@ module ControlloAdozioni
     test "codici_nuovi conta i codici MIUR con adozioni non in anagrafe" do
       crea_tipo_primaria
       @account.zone.create!(provincia: "XX", grado: "E", regione: "TESTLANDIA", stato: "attiva")
-      NewScuola.create!(codice_scuola: "XXEE00099B", anno_scolastico: @anno, provincia: "XX",
+      Miur::Scuola.create!(codice_scuola: "XXEE00099B", anno_scolastico: @anno, provincia: "XX",
         comune: "TESTVILLE", denominazione: "PRIMARIA NUOVA", tipo_scuola: "SCUOLA PRIMARIA")
-      NewAdozione.create!(codicescuola: "XXEE00099B", tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: "XXEE00099B", anno_scolastico: @anno, tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "9880000000029", daacquist: "Si")
 
@@ -94,7 +94,7 @@ module ControlloAdozioni
     test "codici_nuovi ignora i codici MIUR senza adozioni" do
       crea_tipo_primaria
       @account.zone.create!(provincia: "XX", grado: "E", regione: "TESTLANDIA", stato: "attiva")
-      NewScuola.create!(codice_scuola: "XXEE00099C", anno_scolastico: @anno, provincia: "XX",
+      Miur::Scuola.create!(codice_scuola: "XXEE00099C", anno_scolastico: @anno, provincia: "XX",
         comune: "TESTVILLE", denominazione: "PRIMARIA VUOTA", tipo_scuola: "SCUOLA PRIMARIA")
 
       assert_equal 0, riga_xx.codici_nuovi

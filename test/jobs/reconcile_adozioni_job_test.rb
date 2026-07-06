@@ -11,7 +11,7 @@ class ReconcileAdozioniJobTest < ActiveJob::TestCase
     account = accounts(:fizzy)
     scuola = account.scuole.create!(codice_ministeriale: "XXEE00002B",
       provincia: "XX", denominazione: "Plesso Job", tipo_scuola: "SCUOLA PRIMARIA", grado: "E")
-    NewAdozione.create!(tipogradoscuola: "EE", codicescuola: "XXEE00002B",
+    Miur::Adozione.create!(anno_scolastico: "202627", tipogradoscuola: "EE", codicescuola: "XXEE00002B",
       annocorso: "1", sezioneanno: "A", combinazione: "TN", codiceisbn: "111", daacquist: "Si")
 
     ReconcileAdozioniJob.perform_now(account, provincia: "XX", anno: "202627")

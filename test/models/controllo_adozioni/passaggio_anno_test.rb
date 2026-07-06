@@ -30,9 +30,9 @@ module ControlloAdozioni
 
     # Codice nuovo MIUR: in new_scuole (anno target) con adozioni EE, assente dall'account.
     def crea_nuovo_codice(codice:, denominazione:, comune: "TESTVILLE", isbn:)
-      NewScuola.create!(codice_scuola: codice, anno_scolastico: @anno, provincia: "XX",
+      Miur::Scuola.create!(codice_scuola: codice, anno_scolastico: @anno, provincia: "XX",
         comune: comune, denominazione: denominazione, tipo_scuola: "SCUOLA PRIMARIA")
-      NewAdozione.create!(codicescuola: codice, tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: codice, anno_scolastico: @anno, tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: isbn, daacquist: "Si")
     end
@@ -121,9 +121,9 @@ module ControlloAdozioni
 
     test "promuovibili_count allineato a Dashboard da_promuovere" do
       crea_orfana(codice: "XXEE0000P1", denominazione: "Primaria Promuovibile")
-      NewScuola.create!(codice_scuola: "XXEE0000P1", anno_scolastico: @anno, provincia: "XX",
+      Miur::Scuola.create!(codice_scuola: "XXEE0000P1", anno_scolastico: @anno, provincia: "XX",
         comune: "TESTVILLE", denominazione: "PRIMARIA PROMUOVIBILE", tipo_scuola: "SCUOLA PRIMARIA")
-      NewAdozione.create!(codicescuola: "XXEE0000P1", tipogradoscuola: "EE",
+      Miur::Adozione.create!(codicescuola: "XXEE0000P1", anno_scolastico: @anno, tipogradoscuola: "EE",
         annocorso: "1", sezioneanno: "A", combinazione: "TN",
         codiceisbn: "9880000000045", daacquist: "Si")
 
@@ -133,7 +133,7 @@ module ControlloAdozioni
     end
 
     test "senza snapshot MIUR la sequenza non e' disponibile" do
-      NewScuola.delete_all
+      Miur::Scuola.delete_all
       p = passaggio
       refute p.disponibile?
       assert_equal({ match: 0, suggerimento: 0, nuova: 0 }, p.conteggi_codici_nuovi)

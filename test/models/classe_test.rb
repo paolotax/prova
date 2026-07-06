@@ -36,10 +36,10 @@
 require "test_helper"
 
 class ClasseTest < ActiveSupport::TestCase
-  # :new_scuole popola l'anagrafe miur_scuole così Miur.anno_corrente = "202627"
+  # miur/scuole popola l'anagrafe miur_scuole così Miur.anno_corrente = "202627"
   # (senza, e' nil e Miur::Adozione.per_anno(nil) torna vuoto: il vecchio ponte
   # new_adozioni aveva un COALESCE su max(miur_adozioni), ora rimosso by design).
-  fixtures :classi, :scuole, :accounts, :new_scuole, :new_adozioni, :libri, :editori, :categorie, :users
+  fixtures :classi, :scuole, :accounts, "miur/scuole", "miur/adozioni", :libri, :editori, :categorie, :users
 
   test "tappa_target delegates to scuola" do
     classe = classi(:prima_a_fizzy)
@@ -62,7 +62,7 @@ class ClasseTest < ActiveSupport::TestCase
   test "new_adozioni trova le righe per origine" do
     classe = classi(:prima_a)
     isbn = classe.new_adozioni.pluck(:codiceisbn)
-    assert_includes isbn, new_adozioni(:prima_a_matematica).codiceisbn
+    assert_includes isbn, miur_adozioni(:prima_a_matematica).codiceisbn
   end
 
   test "costruisci_adozioni! crea snapshot taggati per anno" do
@@ -72,7 +72,7 @@ class ClasseTest < ActiveSupport::TestCase
     end
     ad = classe.adozioni.find_by(anno_scolastico: "202627")
     assert_equal classe.codice_ministeriale_origine, ad.codicescuola
-    assert_equal new_adozioni(:prima_a_matematica).codiceisbn, ad.codice_isbn
+    assert_equal miur_adozioni(:prima_a_matematica).codiceisbn, ad.codice_isbn
     assert_equal 1250, ad.prezzo_cents                    # fixture prezzo "12,50"
     assert ad.da_acquistare                               # fixture daacquist "Si"
     assert_not ad.nuova_adozione                          # fixture nuovaadoz "No"

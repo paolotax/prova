@@ -72,7 +72,7 @@ namespace :editore do
 
     # ── FASE 1: crea zone mancanti ─────────────────────────────────────────────
     esistenti = account.zone.distinct.pluck(:provincia)
-    mancanti = NewScuola.distinct.pluck(:provincia).compact - esistenti - sarde_fantasma
+    mancanti = Miur::Scuola.per_anno(Miur.anno_corrente).distinct.pluck(:provincia).compact - esistenti - sarde_fantasma
     senza_regione = []
     da_creare = mancanti.sort.filter_map do |prov|
       z = Zona.find_by(provincia: prov)

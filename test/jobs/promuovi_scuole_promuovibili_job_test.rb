@@ -37,10 +37,10 @@ class PromuoviScuolePromuovibiliJobTest < ActiveJob::TestCase
     scuola = @account.scuole.create!(codice_ministeriale: codice,
       provincia: provincia, comune: "TESTVILLE #{provincia}",
       denominazione: "Primaria #{provincia}", tipo_scuola: "SCUOLA PRIMARIA", grado: "E")
-    NewScuola.create!(codice_scuola: codice, anno_scolastico: @anno,
+    Miur::Scuola.create!(codice_scuola: codice, anno_scolastico: @anno,
       provincia: provincia, comune: "TESTVILLE #{provincia}",
       denominazione: "PRIMARIA #{provincia}", tipo_scuola: "SCUOLA PRIMARIA")
-    NewAdozione.create!(codicescuola: codice, tipogradoscuola: "EE",
+    Miur::Adozione.create!(codicescuola: codice, anno_scolastico: @anno, tipogradoscuola: "EE",
       annocorso: "1", sezioneanno: "A", combinazione: "TN",
       codiceisbn: "988000000#{provincia.sum}", daacquist: "Si")
     scuola

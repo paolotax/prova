@@ -12,12 +12,12 @@ class AggiungiScuoleNuoveJobTest < ActiveJob::TestCase
       TipoScuola.new(tipo: "SCUOLA PRIMARIA", grado: "E").tap { |t| t.save!(validate: false) }
     @account.zone.create!(provincia: "XX", grado: "E", regione: "TESTLANDIA", stato: "attiva")
 
-    NewScuola.create!(codice_scuola: "XXEE00099B", anno_scolastico: ANNO, provincia: "XX",
+    Miur::Scuola.create!(codice_scuola: "XXEE00099B", anno_scolastico: ANNO, provincia: "XX",
       comune: "TESTVILLE", denominazione: "PRIMARIA NUOVA", tipo_scuola: "SCUOLA PRIMARIA",
       codice_istituto_riferimento: "XXIC00100X")
-    NewScuola.create!(codice_scuola: "XXIC00100X", anno_scolastico: ANNO, provincia: "XX",
+    Miur::Scuola.create!(codice_scuola: "XXIC00100X", anno_scolastico: ANNO, provincia: "XX",
       comune: "TESTVILLE", denominazione: "IC TESTVILLE", tipo_scuola: "ISTITUTO COMPRENSIVO")
-    NewAdozione.create!(codicescuola: "XXEE00099B", tipogradoscuola: "EE",
+    Miur::Adozione.create!(codicescuola: "XXEE00099B", anno_scolastico: ANNO, tipogradoscuola: "EE",
       annocorso: "1", sezioneanno: "A", combinazione: "TN",
       codiceisbn: "9880000000029", daacquist: "Si", prezzo: "12,50")
   end

@@ -9,7 +9,7 @@ class PassaggioAnnoEeTest < ActionDispatch::IntegrationTest
   include ActiveJob::TestHelper
 
   fixtures :accounts, :users, :memberships, :scuole, :classi, :adozioni,
-           :new_adozioni, :new_scuole, :persone, :persona_classi
+           "miur/adozioni", "miur/scuole", :persone, :persona_classi
 
   setup do
     @account = accounts(:fizzy)

@@ -54,3 +54,14 @@ primaria_attiva_nuovo_anno:
   provincia: "BO"
   regione: "Emilia-Romagna"
   tipo_scuola: "SCUOLA PRIMARIA"
+
+# Anagrafe nuovo anno per primaria_no_roster: presente in miur/scuole MA senza
+# roster miur/adozioni -> NON promuovibile (manca il source-of-truth del roster).
+primaria_no_roster_nuovo_anno:
+  anno_scolastico: "202627"
+  codice_scuola: "BOEE000004"
+  denominazione: "Scuola Primaria Senza Roster"
+  comune: "Bologna"
+  provincia: "BO"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "SCUOLA PRIMARIA"

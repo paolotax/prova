@@ -4,8 +4,8 @@ class ControlloAdozioni::RebuildTest < ActiveSupport::TestCase
   setup do
     # Il rebuild e' transazionale (DML): le transazioni di test bastano.
     # Partiamo da tabelle sorgente pulite (fixtures :all e' disabilitato in questo progetto).
-    NewAdozione.delete_all
-    NewScuola.delete_all
+    Miur::Adozione.delete_all
+    Miur::Scuola.delete_all
     PrezzoMinisteriale.delete_all
     ControlloAnomalia.delete_all
   end
@@ -173,7 +173,7 @@ class ControlloAdozioni::RebuildTest < ActiveSupport::TestCase
   private
 
   def scuola(codice, **attrs)
-    NewScuola.create!({
+    Miur::Scuola.create!({
       anno_scolastico: "202526", codice_scuola: codice, denominazione: "Scuola #{codice}",
       comune: "Milano", provincia: "MI", regione: "LOMBARDIA", tipo_scuola: "SCUOLA PRIMARIA"
     }.merge(attrs))
@@ -182,7 +182,8 @@ class ControlloAdozioni::RebuildTest < ActiveSupport::TestCase
   def adoz(codicescuola:, codiceisbn:, disciplina:, annocorso: "1", sezioneanno: "1A",
            combinazione: "X", titolo: "Titolo", editore: "ED", prezzo: "10,00",
            daacquist: "Sì", volume: "1")
-    NewAdozione.create!(
+    Miur::Adozione.create!(
+      anno_scolastico: "202526",
       codicescuola: codicescuola, annocorso: annocorso, sezioneanno: sezioneanno,
       combinazione: combinazione, codiceisbn: codiceisbn, disciplina: disciplina,
       titolo: titolo, editore: editore, prezzo: prezzo, daacquist: daacquist,

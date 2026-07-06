@@ -51,6 +51,6 @@
       </p>
     <% end %>
 
-    <p>Totale adozioni nel database: <%= NewAdozione.count %></p>
+    <p>Totale adozioni nel database: <%= Miur::Adozione.correnti.count %></p>
   </body>
 </html>
