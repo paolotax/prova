@@ -4,6 +4,23 @@
 
 @layer components {
 
+  /* Pagina controllo adozioni (index + show): container a larghezza FISSA.
+     A differenza di .stats-container (fit-content, la larghezza segue il contenuto e
+     "salta" tra le pagine), qui la larghezza è stabile e centrata. Ritoccabile via
+     --ca-page-width. */
+  .ca-page {
+    --ca-page-width: 62rem;
+
+    inline-size: min(var(--ca-page-width), 100%);
+    margin-inline: auto;
+    padding-inline: var(--block-space);
+    text-align: start;
+
+    @media (min-width: 640px) {
+      padding-inline: var(--block-space-double);
+    }
+  }
+
   /* Summary Cards
   /* ------------------------------------------------------------------------ */
 

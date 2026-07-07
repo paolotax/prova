@@ -9,7 +9,7 @@
 <%= turbo_stream_from Current.account, "controllo_adozioni" %>
 <%= turbo_stream_from Current.account, "controllo_adozioni_riepilogo", (@provincia.presence || "_all") %>
 
-<div class="stats-container">
+<div class="ca-page">
   <%= render "controllo_adozioni/freshness" %>
 
   <% if Current.admin? && @provincia.present? %>
