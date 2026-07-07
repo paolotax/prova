@@ -72,6 +72,10 @@ class Documento < ApplicationRecord
   after_destroy_commit :ricalcola_saldo_clientable
   before_destroy :riapri_documenti_figli, prepend: true
 
+  before_destroy :memorizza_libri_per_giacenza, prepend: true
+  after_destroy :ricalcola_giacenze_libri_memorizzati
+  after_update :ricalcola_giacenze_libri, if: -> { saved_change_to_causale_id? || saved_change_to_documento_padre_id? }
+
   # Rimosso: la chiusura del documento origine viene gestita nel controller
   # after_create :close_if_has_padre
 
@@ -289,6 +293,11 @@ class Documento < ApplicationRecord
     close if pagato? && consegnato? && !closed?
   end
 
+  # Ricalcola la giacenza di tutti i libri toccati da questo documento
+  def ricalcola_giacenze_libri
+    Libro.where(id: righe.select(:libro_id)).find_each(&:ricalcola_giacenza!)
+  end
+
   # Chiamato da Pagabile quando il documento risulta interamente pagato:
   # i figli vengono saldati col tipo dell'ultimo acconto
   def pagamento_saturato
@@ -443,6 +452,14 @@ class Documento < ApplicationRecord
 
     ensure_entry!
     close unless closed?
+  end
+
+  def memorizza_libri_per_giacenza
+    @libri_da_ricalcolare = righe.pluck(:libro_id).uniq
+  end
+
+  def ricalcola_giacenze_libri_memorizzati
+    Libro.where(id: @libri_da_ricalcolare.to_a).find_each(&:ricalcola_giacenza!)
   end
 
   # Riapre i documenti figli quando il padre viene eliminato

@@ -86,6 +86,7 @@ module Consegnabile
     consegne.reset
     @residui_per_documento_riga = nil
     ricalcola_saldo_clientable
+    ricalcola_giacenze_libri if respond_to?(:ricalcola_giacenze_libri)
     auto_close_se_completo if respond_to?(:auto_close_se_completo)
   end
 

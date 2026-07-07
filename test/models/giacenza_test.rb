@@ -137,6 +137,48 @@ class GiacenzaTest < ActiveSupport::TestCase
     assert_equal per_libro, bulk
   end
 
+  test "creare e distruggere una documento_riga ricalcola la giacenza" do
+    doc = crea_documento(causali(:carico_fornitore), quantita: 10)
+    assert_equal 10, Giacenza.find_by!(libro_id: @libro.id).disponibile
+
+    doc.documento_righe.reload.first.destroy
+    assert_equal 0, Giacenza.find_by!(libro_id: @libro.id).disponibile
+  end
+
+  test "aggiornare la quantita di una riga ricalcola la giacenza" do
+    doc = crea_documento(causali(:carico_fornitore), quantita: 10)
+    doc.righe.reload.first.update!(quantita: 25)
+
+    assert_equal 25, Giacenza.find_by!(libro_id: @libro.id).disponibile
+  end
+
+  test "la consegna ricalcola la giacenza dei libri del documento" do
+    crea_documento(causali(:carico_fornitore), quantita: 10)
+    vendita = crea_documento(causali(:fattura), quantita: 4)
+    vendita.mark_consegnato
+
+    giacenza = Giacenza.find_by!(libro_id: @libro.id)
+    assert_equal 6, giacenza.disponibile
+    assert_equal 4, giacenza.venduto_copie
+  end
+
+  test "distruggere un documento ricalcola la giacenza" do
+    doc = crea_documento(causali(:carico_fornitore), quantita: 10)
+    doc.destroy!
+
+    assert_equal 0, Giacenza.find_by!(libro_id: @libro.id).disponibile
+  end
+
+  test "sospendi_ricalcolo salta i trigger per-riga" do
+    Giacenza.sospendi_ricalcolo do
+      crea_documento(causali(:carico_fornitore), quantita: 10)
+    end
+    assert_nil Giacenza.find_by(libro_id: @libro.id)
+
+    Giacenza.ricalcola_tutte!(@account)
+    assert_equal 10, Giacenza.find_by!(account_id: @account.id, libro_id: @libro.id).disponibile
+  end
+
   private
 
   def crea_documento(causale, quantita:, sconto: 0.0, clientable: @cliente)

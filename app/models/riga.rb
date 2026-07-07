@@ -30,6 +30,7 @@ class Riga < ApplicationRecord
   before_validation :set_default_value
   after_save :aggiorna_totali_documenti
   after_destroy :aggiorna_totali_documenti
+  after_update :ricalcola_giacenze_libri
 
   def prezzo
     prezzo_cents / 100.0
@@ -71,6 +72,16 @@ class Riga < ApplicationRecord
     def aggiorna_totali_documenti
       # Aggiorna i totali di tutti i documenti che contengono questa riga
       documenti.each(&:ricalcola_totali!)
+    end
+
+    def ricalcola_giacenze_libri
+      return unless saved_change_to_quantita? || saved_change_to_prezzo_cents? ||
+                    saved_change_to_sconto? || saved_change_to_libro_id?
+
+      libro.ricalcola_giacenza!
+      if (vecchio_libro_id = saved_change_to_libro_id&.first)
+        Libro.find_by(id: vecchio_libro_id)&.ricalcola_giacenza!
+      end
     end
 
 end

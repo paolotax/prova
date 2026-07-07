@@ -26,23 +26,63 @@ class Saldo < ApplicationRecord
 
   belongs_to :saldabile, polymorphic: true
 
+  # Residui reali: consegne per riga (valorizzate al prezzo scontato),
+  # pagamenti per importo. Segno monetario = -segno fisico:
+  # uscita = il cliente deve (+), entrata = credito (-). Solo documenti padre.
   def ricalcola!
-    # Solo documenti "top-level" (senza padre) — i figli sono coperti dal padre
-    documenti = Documento.where(clientable: saldabile, documento_padre_id: nil)
+    update!(residui_consegne.merge(residui_pagamenti))
+  end
 
-    da_consegnare = documenti.left_joins(:consegne).where(consegne: { id: nil })
-    da_pagare = documenti.left_joins(:pagamenti).where(pagamenti: { id: nil })
+  private
 
-    # Calcola importo e copie con segno basato sul movimento della causale
-    # uscita (1) = cliente deve (+), entrata (0) = cliente riceve credito (-)
-    signed_importo = Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_cents ELSE -documenti.totale_cents END")
-    signed_copie = Arel.sql("CASE WHEN causali.movimento = 1 THEN documenti.totale_copie ELSE -documenti.totale_copie END")
+  def residui_consegne
+    sql = ActiveRecord::Base.sanitize_sql_array([<<~SQL, bind_params])
+      SELECT
+        COALESCE(SUM(-(#{Causale::SEGNO_SQL}) * (righe.quantita - COALESCE(cons.consegnate, 0))), 0)::integer AS copie_da_consegnare,
+        COALESCE(ROUND(SUM(-(#{Causale::SEGNO_SQL}) * (righe.quantita - COALESCE(cons.consegnate, 0)) *
+          (righe.prezzo_cents - righe.prezzo_cents * righe.sconto / :divisore))), 0)::bigint AS importo_da_consegnare_cents
+      FROM documenti
+      JOIN causali ON causali.id = documenti.causale_id
+      JOIN documento_righe ON documento_righe.documento_id = documenti.id
+      JOIN righe ON righe.id = documento_righe.riga_id
+      LEFT JOIN LATERAL (
+        SELECT SUM(cr.quantita) AS consegnate
+        FROM consegna_righe cr
+        WHERE cr.documento_riga_id = documento_righe.id
+      ) cons ON true
+      WHERE documenti.clientable_type = :saldabile_type
+        AND documenti.clientable_id = :saldabile_id
+        AND documenti.account_id = :account_id
+        AND documenti.documento_padre_id IS NULL
+    SQL
+    self.class.connection.select_one(sql)
+  end
 
-    update!(
-      copie_da_consegnare: da_consegnare.joins(:causale).sum(signed_copie),
-      importo_da_consegnare_cents: da_consegnare.joins(:causale).sum(signed_importo),
-      copie_da_pagare: da_pagare.joins(:causale).sum(signed_copie),
-      importo_da_pagare_cents: da_pagare.joins(:causale).sum(signed_importo)
-    )
+  def residui_pagamenti
+    sql = ActiveRecord::Base.sanitize_sql_array([<<~SQL, bind_params])
+      SELECT
+        COALESCE(SUM(CASE WHEN COALESCE(pag.importo_pagato, 0) < COALESCE(documenti.totale_cents, 0)
+                          THEN -(#{Causale::SEGNO_SQL}) * COALESCE(documenti.totale_copie, 0)
+                          ELSE 0 END), 0)::integer AS copie_da_pagare,
+        COALESCE(SUM(-(#{Causale::SEGNO_SQL}) *
+          (COALESCE(documenti.totale_cents, 0) - COALESCE(pag.importo_pagato, 0))), 0)::bigint AS importo_da_pagare_cents
+      FROM documenti
+      JOIN causali ON causali.id = documenti.causale_id
+      LEFT JOIN LATERAL (
+        SELECT SUM(p.importo_cents) AS importo_pagato
+        FROM pagamenti p
+        WHERE p.pagabile_type = 'Documento' AND p.pagabile_id = documenti.id
+      ) pag ON true
+      WHERE documenti.clientable_type = :saldabile_type
+        AND documenti.clientable_id = :saldabile_id
+        AND documenti.account_id = :account_id
+        AND documenti.documento_padre_id IS NULL
+    SQL
+    self.class.connection.select_one(sql)
+  end
+
+  def bind_params
+    { saldabile_type: saldabile_type, saldabile_id: saldabile_id, account_id: account_id,
+      divisore: Giacenza.divisore_sconto(account) }
   end
 end

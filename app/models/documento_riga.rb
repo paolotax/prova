@@ -30,8 +30,16 @@ class DocumentoRiga < ApplicationRecord
   after_save :aggiorna_totali_documento
   after_destroy :aggiorna_totali_documento
   after_destroy_commit :rientra_bolla_visione_riga
+  # Non-commit: il ricalcolo dev'essere atomico col cambio dati e visibile subito
+  # nei test transazionali (gli after_*_commit lì flushano solo alla tx successiva)
+  after_create :ricalcola_giacenza_libro
+  after_destroy :ricalcola_giacenza_libro
 
   private
+
+  def ricalcola_giacenza_libro
+    riga&.libro&.ricalcola_giacenza!
+  end
 
   def aggiorna_totali_documento
     return unless documento

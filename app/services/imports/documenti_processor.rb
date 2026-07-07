@@ -7,14 +7,17 @@ module Imports
     protected
 
     def process_file
-      case detected_format
-      when "xml"
-        process_xml
-      when "pdf"
-        process_ndc_pdf
-      else
-        process_excel
+      Giacenza.sospendi_ricalcolo do
+        case detected_format
+        when "xml"
+          process_xml
+        when "pdf"
+          process_ndc_pdf
+        else
+          process_excel
+        end
       end
+      Giacenza.ricalcola_tutte!(@account)
     end
 
     private

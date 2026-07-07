@@ -22,7 +22,8 @@
 require "test_helper"
 
 class SaldoTest < ActiveSupport::TestCase
-  fixtures :accounts, :users, :memberships, :clienti, :causali, :documenti
+  fixtures :accounts, :users, :memberships, :clienti, :causali, :documenti,
+           :libri, :categorie, :editori, :righe, :documento_righe
 
   setup do
     @account = accounts(:fizzy)
@@ -210,5 +211,31 @@ class SaldoTest < ActiveSupport::TestCase
     assert_equal 0, saldo.importo_da_pagare_cents
     assert_equal 0, saldo.copie_da_consegnare
     assert_equal 0, saldo.importo_da_consegnare_cents
+  end
+
+  # --- Residui parziali ---
+
+  test "un acconto riduce importo_da_pagare del suo importo" do
+    @cliente.ricalcola_saldo!
+    prima = @cliente.saldo.reload.importo_da_pagare_cents
+
+    documenti(:fattura_uno).registra_acconto!(importo_cents: 50000)
+
+    saldo = @cliente.saldo.reload
+    assert_equal prima - 50000, saldo.importo_da_pagare_cents
+    # copie: il documento non è saturo, le sue copie restano da pagare
+    assert_equal 42, saldo.copie_da_pagare
+  end
+
+  test "una consegna parziale riduce i residui da consegnare per riga" do
+    @cliente.ricalcola_saldo!
+    prima_copie = @cliente.saldo.reload.copie_da_consegnare
+
+    doc = documenti(:fattura_uno)
+    doc.consegna_parziale!({ documento_righe(:dr_fattura_uno).id => 12 })
+
+    saldo = @cliente.saldo.reload
+    assert_equal prima_copie - 12, saldo.copie_da_consegnare
+    assert_equal 420000 - 120000, saldo.importo_da_consegnare_cents
   end
 end
