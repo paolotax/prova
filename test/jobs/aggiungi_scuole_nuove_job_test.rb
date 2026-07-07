@@ -48,6 +48,20 @@ class AggiungiScuoleNuoveJobTest < ActiveJob::TestCase
     end
   end
 
+  test "codici: aggiunge solo la scuola richiesta (aggiunta singola dalla riga)" do
+    # Una seconda nuova in altro comune (nessun candidato → nuova).
+    Miur::Scuola.create!(codice_scuola: "XXEE00077A", anno_scolastico: ANNO, provincia: "XX",
+      comune: "ALTROPAESE", denominazione: "PRIMARIA DUE", tipo_scuola: "SCUOLA PRIMARIA")
+    Miur::Adozione.create!(codicescuola: "XXEE00077A", anno_scolastico: ANNO, tipogradoscuola: "EE",
+      annocorso: "1", sezioneanno: "A", combinazione: "TN",
+      codiceisbn: "9880000000060", daacquist: "Si")
+
+    AggiungiScuoleNuoveJob.perform_now(@account, provincia: "XX", codici: ["XXEE00099B"])
+
+    assert @account.scuole.find_by(codice_ministeriale: "XXEE00099B"), "aggiunge la scuola richiesta"
+    assert_nil @account.scuole.find_by(codice_ministeriale: "XXEE00077A"), "non tocca le altre nuove"
+  end
+
   test "non tocca i codici con candidati predecessore" do
     # Orfana nello stesso comune e natura: XXEE00099B diventa un suggerimento, non una nuova.
     @account.scuole.create!(codice_ministeriale: "XXEE00001Z", provincia: "XX",

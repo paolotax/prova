@@ -41,15 +41,17 @@
         <%= link_to "Promuovi",
               new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: scuola.account_id),
               class: "btn btn--small btn--accent", data: { turbo_frame: :modal } %>
-      <% when :vedi %>
-        <%= link_to "Vedi",
-              controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id),
-              class: "btn btn--small", data: { turbo_frame: "_top" } %>
       <% when :anteprima %>
         <%= link_to "Anteprima",
               controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_corrente, account_id: scuola.account_id),
               class: "btn btn--small", data: { turbo_frame: "_top" } %>
       <% end %>
     </span>
+
+    <%= link_to controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id),
+          class: "btn btn--circle btn--small", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Vedi la scheda" } do %>
+      <%= icon_tag "eye" %>
+      <span class="for-screen-reader">Vedi la scheda</span>
+    <% end %>
   </div>
 <% end %>

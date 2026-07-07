@@ -376,15 +376,19 @@ Rails.application.routes.draw do
     resource :adozioni_analytics, only: [:show], controller: 'adozioni_analytics'
     # Nomi route espliciti (non dipendono dall'inflector: evita l'initializer uncountable)
     get 'controllo_adozioni', to: 'controllo_adozioni#index', as: :controllo_adozioni_index
-    post 'controllo_adozioni/promuovi_tutte', to: 'controllo_adozioni#promuovi_tutte', as: :controllo_adozioni_promuovi_tutte
-    post 'controllo_adozioni/aggiorna_cambi_codice', to: 'controllo_adozioni#aggiorna_cambi_codice', as: :controllo_adozioni_aggiorna_cambi_codice
-    post 'controllo_adozioni/aggiungi_scuole_nuove', to: 'controllo_adozioni#aggiungi_scuole_nuove', as: :controllo_adozioni_aggiungi_scuole_nuove
-    post 'controllo_adozioni/ricalcola_anomalie', to: 'controllo_adozioni#ricalcola_anomalie', as: :controllo_adozioni_ricalcola_anomalie
     get 'controllo_adozioni/:codicescuola/anteprima', to: 'controllo_adozioni#anteprima', as: :controllo_adozioni_anteprima
     get 'controllo_adozioni/:codicescuola', to: 'controllo_adozioni#show', as: :controllo_adozioni
     scope module: "controllo_adozioni" do
       resource :promozione, only: %i[new create], controller: "promozioni",
                path: "controllo_adozioni/:codicescuola/promozione", as: :controllo_adozioni_promozione
+      resource :promozioni_massive, only: :create, controller: "promozioni_massive",
+               path: "controllo_adozioni/promozioni_massive", as: :controllo_adozioni_promozioni_massive
+      resource :cambi_codice, only: :create, controller: "cambi_codice",
+               path: "controllo_adozioni/cambi_codice", as: :controllo_adozioni_cambi_codice
+      resource :scuole_nuove, only: :create, controller: "scuole_nuove",
+               path: "controllo_adozioni/scuole_nuove", as: :controllo_adozioni_scuole_nuove
+      resource :anomalie, only: :create, controller: "anomalie",
+               path: "controllo_adozioni/anomalie", as: :controllo_adozioni_anomalie
     end
 
     resources :profiles

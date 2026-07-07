@@ -108,15 +108,33 @@ module ControlloAdozioni
                         comune: "COMUNE NUOVO", isbn: "9880000000037")
 
       steps = passaggio.steps
-      assert_equal %i[cambi_codice promuovibili scuole_nuove rifinitura], steps.map(&:key)
+      assert_equal %i[promuovibili cambi_codice scuole_nuove anomalie], steps.map(&:key)
 
       cambi = steps.find { |s| s.key == :cambi_codice }
       nuove = steps.find { |s| s.key == :scuole_nuove }
       assert cambi.done?
       refute cambi.azionabile?
       assert_equal 1, nuove.count
+      assert_equal 1, nuove.bulk
+      assert_equal 0, nuove.verifica
       assert nuove.azionabile?
-      refute steps.find { |s| s.key == :rifinitura }.azionabile?, "step 4 non ha job"
+      refute steps.find { |s| s.key == :anomalie }.azionabile?, "step 4 non ha job"
+    end
+
+    test "lo step codici nuovi somma nuova e suggerimento, con split bulk/verifica" do
+      # SUGGERIMENTO: due orfane simili nello stesso comune → candidato non univoco.
+      crea_orfana(codice: "XXEE0000S1", denominazione: "Rodari", comune: "ALTROVE")
+      crea_orfana(codice: "XXEE0000S2", denominazione: "Gianni Rodari", comune: "ALTROVE")
+      crea_nuovo_codice(codice: "XXEE0000S9", denominazione: "RODARI", comune: "ALTROVE",
+                        isbn: "9880000000029")
+      # NUOVA: nessuna orfana nel comune.
+      crea_nuovo_codice(codice: "XXEE0000N9", denominazione: "PRIMARIA INEDITA",
+                        comune: "COMUNE NUOVO", isbn: "9880000000037")
+
+      nuove = passaggio.steps.find { |s| s.key == :scuole_nuove }
+      assert_equal 2, nuove.count    # 1 nuova + 1 suggerimento
+      assert_equal 1, nuove.bulk     # il bulk tocca solo la nuova
+      assert_equal 1, nuove.verifica # il suggerimento resta manuale
     end
 
     test "promuovibili_count allineato a Dashboard da_promuovere" do

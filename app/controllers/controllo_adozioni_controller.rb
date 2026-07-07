@@ -51,48 +51,6 @@ class ControlloAdozioniController < ApplicationController
     end
   end
 
-  # Promuove in blocco le scuole promuovibili dell'account, opzionalmente di una sola
-  # provincia (drill-down admin). Fan-out per scuola.
-  def promuovi_tutte
-    return head(:forbidden) unless Current.admin?
-
-    provincia = params[:provincia].presence
-    PromuoviScuolePromuovibiliJob.perform_later(Current.account, provincia: provincia)
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
-                notice: "Promozione delle scuole promuovibili avviata."
-  end
-
-  # Applica in blocco i cambi codice con predecessore suggerito, opzionalmente di una
-  # sola provincia (drill-down admin). Fan-out per scuola.
-  def aggiorna_cambi_codice
-    return head(:forbidden) unless Current.admin?
-
-    provincia = params[:provincia].presence
-    AggiornaCambiCodiceJob.perform_later(Current.account, provincia: provincia)
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
-                notice: "Aggiornamento dei cambi codice con predecessore avviato."
-  end
-
-  # Aggiunge in blocco all'anagrafe le "nuove scuole" (codici nuovi senza candidati),
-  # opzionalmente di una sola provincia (drill-down admin).
-  def aggiungi_scuole_nuove
-    return head(:forbidden) unless Current.admin?
-
-    provincia = params[:provincia].presence
-    AggiungiScuoleNuoveJob.perform_later(Current.account, provincia: provincia)
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id], provincia: provincia),
-                notice: "Aggiunta delle nuove scuole avviata."
-  end
-
-  # Ricostruisce da zero controllo_anomalie (tabella globale) dallo snapshot MIUR corrente.
-  def ricalcola_anomalie
-    return head(:forbidden) unless Current.admin?
-
-    RicalcolaAnomalieJob.perform_later
-    redirect_to controllo_adozioni_index_path(account_id: params[:account_id]),
-                notice: "Ricalcolo delle anomalie avviato."
-  end
-
   # Anteprima delle adozioni MIUR per classe, nel formato del PDF ufficiale
   # "Elenco dei libri di testo adottati o consigliati". Parametrizzata per anno
   # scolastico (?anno=202627); default all'anno corrente pubblicato dal MIUR.
@@ -102,28 +60,7 @@ class ControlloAdozioniController < ApplicationController
   end
 
   def show
-    @codicescuola = params[:codicescuola]
-    @anomalie = ControlloAnomalia.per_scuola(@codicescuola)
-    @per_tipo = @anomalie.group(:tipo).count
-    @per_classe = @anomalie.where.not(annocorso: nil)
-                           .group_by { |a| [a.annocorso, a.sezioneanno, a.combinazione] }
-    @scuola_mancante = @anomalie.per_tipo("scuola_mancante").exists?
-    @denominazione = @anomalie.where.not(denominazione: nil).first&.denominazione
-    @libri_per_classe = libri_per_classe
-  end
-
-  private
-
-  # Tutti i libri da acquistare (EE) della scuola, raggruppati per classe come @per_classe.
-  # Serve a dettagliare i libri+prezzi sotto le classi con anomalie. Alternativa alla
-  # religione e parascolastica restano visibili ma escluse dal totale spesa
-  # (vedi Miur::Adozione#escluso_dal_tetto?).
-  def libri_per_classe
-    Miur::Adozione
-      .per_anno(Miur.anno_corrente)
-      .where(codicescuola: @codicescuola, tipogradoscuola: "EE")
-      .where("coalesce(daacquist, '') ILIKE 'S%'")
-      .order(:annocorso, :sezioneanno, :combinazione, :disciplina, :titolo)
-      .group_by { |na| [na.annocorso, na.sezioneanno, na.combinazione] }
+    @scheda = ControlloAdozioni::Scheda.new(account: Current.account,
+                                            codicescuola: params[:codicescuola])
   end
 end

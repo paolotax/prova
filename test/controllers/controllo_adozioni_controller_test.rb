@@ -38,7 +38,7 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".passaggio-anno"
     assert_select ".ca-step", 1
-    assert_match "Rifinitura manuale", @response.body
+    assert_select ".ca-step__title", text: "Anomalie"
     assert_no_match "Aggiungi le scuole nuove", @response.body
   end
 
@@ -62,7 +62,7 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_select ".passaggio-anno"
     assert_select ".ca-step", 1
     # I job del passaggio sono scoped per provincia; il ricalcolo anomalie e' globale.
-    css_select(".ca-step form").reject { |f| f["action"].include?("ricalcola_anomalie") }.each do |form|
+    css_select(".ca-step form").reject { |f| f["action"].include?("controllo_adozioni/anomalie") }.each do |form|
       assert_includes form["action"], "provincia=MI"
     end
   end
@@ -112,21 +112,6 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Per provincia", @response.body
   end
 
-  test "ricalcola_anomalie accoda il job per l'admin" do
-    assert_enqueued_with(job: RicalcolaAnomalieJob) do
-      post controllo_adozioni_ricalcola_anomalie_path(account_id: @account.id)
-    end
-    assert_redirected_to controllo_adozioni_index_path(account_id: @account.id)
-  end
-
-  test "ricalcola_anomalie vietato ai member" do
-    sign_in_as(users(:two), @account)
-    assert_no_enqueued_jobs only: RicalcolaAnomalieJob do
-      post controllo_adozioni_ricalcola_anomalie_path(account_id: @account.id)
-    end
-    assert_response :forbidden
-  end
-
   test "index admin con provincia mostra la panoramica di quella provincia" do
     get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
     assert_response :success
@@ -168,6 +153,21 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     get controllo_adozioni_path("MIEE12345", account_id: @account.id)
     assert_response :success
     assert_match "doppione", @response.body
+  end
+
+  test "show mostra il confronto per anno se la scuola e' in anagrafe" do
+    get controllo_adozioni_path(scuole(:scuola_fizzy).codice_ministeriale, account_id: @account.id)
+    assert_response :success
+    assert_select "h2", text: /In anagrafe/
+  end
+
+  test "show mostra i link anteprima per anno corrente e precedente" do
+    Miur::Scuola.create!(codice_scuola: "MIEE99999X", anno_scolastico: "202627",
+      provincia: "MI", comune: "Milano", denominazione: "PRIMARIA TEST",
+      tipo_scuola: "SCUOLA PRIMARIA")
+    get controllo_adozioni_path("MIEE12345", account_id: @account.id)
+    assert_select "a", text: /Anteprima 2026\/27/
+    assert_select "a", text: /Anteprima 2025\/26/
   end
 
   private

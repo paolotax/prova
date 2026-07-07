@@ -26,22 +26,31 @@
           <div class="ca-step__title"><%= step.titolo %></div>
           <div class="ca-step__desc"><%= step.descrizione %></div>
           <div class="ca-step__actions" data-action="click->controllo-adozioni-filter#stop">
-            <% if step.azionabile? %>
-              <%= button_to send("controllo_adozioni_#{step.job}_path", account_id: account_id, provincia: provincia),
-                    class: "btn btn--small btn--accent",
-                    data: { turbo_confirm: "#{step.titolo} (#{step.count})#{" — #{provincia}" if provincia}: avviare?" } do %>
-                Avvia
-              <% end %>
-            <% elsif step.key == :rifinitura %>
+            <% if step.key == :anomalie %>
               <% if step.count.positive? %>
                 <%= link_to "Vedi anomalie",
                       controllo_adozioni_index_path(account_id: account_id, provincia: provincia, filtro: "anomalie"),
                       class: "btn btn--small" %>
               <% end %>
               <%= button_to "Ricalcola",
-                    controllo_adozioni_ricalcola_anomalie_path(account_id: account_id),
+                    controllo_adozioni_anomalie_path(account_id: account_id),
                     class: "btn btn--small",
                     data: { turbo_confirm: "Ricostruire tutte le anomalie dallo snapshot MIUR corrente? Il ricalcolo è globale, non solo per questo account." } %>
+            <% else %>
+              <% label = step.key == :scuole_nuove ? "Aggiungi le scuole nuove" : "Avvia" %>
+              <% if step.azionabile? %>
+                <%= button_to passaggio_step_path(step, account_id: account_id, provincia: provincia),
+                      class: "btn btn--small btn--accent",
+                      data: { turbo_confirm: "#{label} (#{step.bulk})#{" — #{provincia}" if provincia}: avviare?" } do %>
+                  <%= label %>
+                <% end %>
+              <% end %>
+              <% if step.key == :scuole_nuove && step.verifica.positive? %>
+                <button type="button" class="btn btn--small"
+                        data-action="click->controllo-adozioni-filter#selectChip" data-filter="verifica">
+                  Da verificare (<%= step.verifica %>)
+                </button>
+              <% end %>
             <% end %>
           </div>
         </div>

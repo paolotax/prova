@@ -54,7 +54,18 @@
           </select>
           <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
         </div>
+      <% when :aggiungi %>
+        <%= button_to "Aggiungi",
+              controllo_adozioni_scuole_nuove_path(account_id: account_id, codice: m.codice, provincia: m.provincia),
+              class: "btn btn--small btn--accent",
+              data: { turbo_confirm: "Aggiungere #{m.denominazione} (#{m.codice}) all'anagrafe?" } %>
       <% end %>
     </span>
+
+    <%= link_to controllo_adozioni_path(m.codice, account_id: account_id),
+          class: "btn btn--circle btn--small", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Vedi la scheda" } do %>
+      <%= icon_tag "eye" %>
+      <span class="for-screen-reader">Vedi la scheda</span>
+    <% end %>
   </div>
 <% end %>

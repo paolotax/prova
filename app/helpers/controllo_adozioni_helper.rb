@@ -44,10 +44,11 @@ module ControlloAdozioniHelper
   end
 
   # Chiave di stato (data-state / data-step-key) usata dal filtro client-side, derivata
-  # dalla key dello Step del PassaggioAnno. rifinitura filtra verifica + anomalie.
+  # dalla key dello Step del PassaggioAnno. "nuove" e' un composito (nuova + verifica),
+  # gestito nel controllo-adozioni-filter; "anomalie" fa match esatto sullo stato riga.
   STEP_FILTER_KEY = {
-    cambi_codice: "cambio", promuovibili: "promuovi",
-    scuole_nuove: "nuova",  rifinitura: "rifinitura"
+    promuovibili: "promuovi", cambi_codice: "cambio",
+    scuole_nuove: "nuove",    anomalie: "anomalie"
   }.freeze
 
   def step_filter_key(step) = STEP_FILTER_KEY.fetch(step.key, step.key.to_s)
@@ -69,5 +70,18 @@ module ControlloAdozioniHelper
   # Provincia estesa (nome affidabile per l'editore) di una scuola/riga, per data-prov.
   def sigla_o_provincia(scuola)
     scuola.sigla_provincia.presence || scuola.provincia
+  end
+
+  # Path della risorsa CRUD di ogni step azionabile del passaggio anno.
+  # Mappa esplicita (niente send su nomi costruiti): i simboli job del PORO
+  # PassaggioAnno restano stabili, le route possono evolvere.
+  PASSAGGIO_STEP_PATHS = {
+    aggiorna_cambi_codice: :controllo_adozioni_cambi_codice_path,
+    promuovi_tutte:        :controllo_adozioni_promozioni_massive_path,
+    aggiungi_scuole_nuove: :controllo_adozioni_scuole_nuove_path
+  }.freeze
+
+  def passaggio_step_path(step, account_id:, provincia:)
+    public_send(PASSAGGIO_STEP_PATHS.fetch(step.job), account_id: account_id, provincia: provincia)
   end
 end

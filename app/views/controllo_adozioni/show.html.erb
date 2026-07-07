@@ -1,8 +1,8 @@
-<% @page_title = @denominazione.presence || @codicescuola %>
+<% @page_title = @scheda.denominazione.presence || @scheda.codicescuola %>
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis"><%= @denominazione.presence || @codicescuola %></span>
+    <span class="overflow-ellipsis"><%= @scheda.denominazione.presence || @scheda.codicescuola %></span>
   </h1>
 <% end %>
 
@@ -10,26 +10,62 @@
   <p class="txt-subtle flex align-center gap-half justify-between">
     <span>
       <%= link_to "← Tutte le scuole", controllo_adozioni_index_path(account_id: params[:account_id]) %>
-      &middot; <%= @codicescuola %>
+      &middot; <%= @scheda.codicescuola %>
     </span>
     <%= link_to "Passaggio anno",
-        new_controllo_adozioni_promozione_path(codicescuola: @codicescuola, account_id: params[:account_id]),
+        new_controllo_adozioni_promozione_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
         class: "btn btn--small", data: { turbo_frame: :modal } %>
   </p>
 
-  <% if @scuola_mancante %>
+  <p class="flex gap-half">
+    <% @scheda.anni_anteprima.each do |anno| %>
+      <%= link_to "Anteprima #{anno_scolastico_label(anno)}",
+            controllo_adozioni_anteprima_path(@scheda.codicescuola, anno: anno, account_id: params[:account_id]),
+            class: "btn btn--small" %>
+    <% end %>
+  </p>
+
+  <% if @scheda.scuola_mancante? %>
     <p class="notice notice--warning">
-      Scuola assente da new_scuole (adozioni orfane)
+      Scuola assente dall'anagrafe MIUR corrente (adozioni orfane)
     </p>
   <% end %>
 
   <div class="badges">
-    <% @per_tipo.each do |tipo, count| %>
+    <% @scheda.per_tipo.each do |tipo, count| %>
       <span class="badge"><%= tipo %>: <%= count %></span>
     <% end %>
   </div>
 
-  <% @per_classe.each do |(annocorso, sezioneanno, combinazione), anomalie| %>
+  <% if @scheda.scuola %>
+    <section class="margin-block-end">
+      <h2 class="txt-medium">In anagrafe: <%= link_to @scheda.scuola.denominazione, scuola_path(@scheda.scuola, account_id: params[:account_id]) %></h2>
+      <table class="libri-table txt-small">
+        <thead>
+          <tr>
+            <th class="pad-inline">Anno</th>
+            <th class="pad-inline txt-align-end">Classi attive</th>
+            <th class="pad-inline txt-align-end">Archiviate</th>
+            <th class="pad-inline txt-align-end">Adozioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @scheda.confronto_anni.each do |riga| %>
+            <tr>
+              <td class="pad-inline"><%= anno_scolastico_label(riga.anno) %></td>
+              <td class="pad-inline txt-align-end"><%= riga.classi_attive %></td>
+              <td class="pad-inline txt-align-end"><%= riga.classi_archiviate %></td>
+              <td class="pad-inline txt-align-end"><%= riga.adozioni %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </section>
+  <% else %>
+    <p class="txt-subtle">Scuola non ancora in anagrafe.</p>
+  <% end %>
+
+  <% @scheda.per_classe.each do |(annocorso, sezioneanno, combinazione), anomalie| %>
     <section class="classe-block">
       <h2 class="classe-block__title">Classe <%= annocorso %><%= sezioneanno %></h2>
       <ul class="anomalie-list list-style-none">
@@ -39,7 +75,7 @@
       </ul>
 
       <% if anomalie.any? { |a| %w[tetto_superato disciplina_mancante].include?(a.tipo) } %>
-        <% libri = @libri_per_classe[[annocorso, sezioneanno, combinazione]] || [] %>
+        <% libri = @scheda.libri_per_classe[[annocorso, sezioneanno, combinazione]] || [] %>
         <% if libri.any? %>
           <table class="libri-table txt-small">
             <thead>
@@ -81,7 +117,7 @@
     </section>
   <% end %>
 
-  <% if @anomalie.empty? %>
+  <% if @scheda.anomalie.empty? %>
     <p class="txt-subtle">Nessuna anomalia per questa scuola.</p>
   <% end %>
 </div>

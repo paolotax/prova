@@ -1,11 +1,12 @@
 class AggiungiScuoleNuoveJob < ApplicationJob
   queue_as :bulk
 
-  # Aggiunge in blocco all'anagrafe account le "nuove scuole" del controllo adozioni
-  # (codici in miur_scuole+miur_adozioni senza predecessore ne' candidati), opzionalmente
-  # di una sola provincia. Anagrafe da miur_scuole (direzioni comprese), poi classi e
-  # adozioni via Adozione::Reconciler per provincia (idempotente, ricalcola i contatori).
-  def perform(account, provincia: nil)
+  # Aggiunge all'anagrafe account le "nuove scuole" del controllo adozioni (codici in
+  # miur_scuole+miur_adozioni senza predecessore ne' candidati), opzionalmente di una
+  # sola provincia. Con `codici:` aggiunge solo quei codici (aggiunta singola dalla riga),
+  # comunque validati come :nuova dalla Panoramica. Anagrafe da miur_scuole (direzioni
+  # comprese), poi classi e adozioni via Adozione::Reconciler per provincia (idempotente).
+  def perform(account, provincia: nil, codici: nil)
     Current.account = account
     anno = Miur.anno_corrente
     return if anno.blank?
@@ -14,6 +15,7 @@ class AggiungiScuoleNuoveJob < ApplicationJob
     panoramica = ControlloAdozioni::Panoramica.new(account: account, scuole: scuole,
                                                    provincia: provincia)
     nuove = panoramica.cambi_codice.select { |m| m.tipo == :nuova }
+    nuove = nuove.select { |m| codici.include?(m.codice) } if codici
     return if nuove.empty?
 
     province = inserisci_scuole(account, nuove.map(&:codice), anno)

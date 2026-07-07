@@ -43,6 +43,7 @@
   .icon--book { --svg: url("book.svg"); }
   .icon--truck { --svg: url("truck.svg"); }
   .icon--document { --svg: url("document.svg"); }
+  .icon--eye { --svg: url("eye.svg"); }
   .icon--users { --svg: url("users.svg"); }
   .icon--user { --svg: url("user.svg"); }
   .icon--logout { --svg: url("logout.svg"); }

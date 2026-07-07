@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Filtro client-side della lista unificata di controllo adozioni.
 // Combina: stato (chip o step) AND provincia AND grado AND ricerca testo.
 // I contatori di chip e step si ricalcolano dalle righe che passano provincia/grado/ricerca
-// (non lo stato). Lo step "rifinitura" copre le righe verifica + anomalie.
+// (non lo stato). Alcuni step sono compositi: lo step "nuove" copre nuova + verifica.
 export default class extends Controller {
   static targets = [
     "row", "step", "chip", "group",
@@ -11,7 +11,8 @@ export default class extends Controller {
     "prov", "grado", "search"
   ]
 
-  static RIF = ["verifica", "anomalie"]
+  // Chiavi di stato che coprono più stati-riga (data-step-key composite).
+  static COMPOSITES = { nuove: ["nuova", "verifica"] }
 
   connect() {
     this.filters = { stato: "all", prov: "all", grado: "all", q: "" }
@@ -46,7 +47,8 @@ export default class extends Controller {
   matchStato(row) {
     const s = this.filters.stato
     if (s === "all") return true
-    if (s === "rifinitura") return this.constructor.RIF.includes(row.dataset.state)
+    const composite = this.constructor.COMPOSITES[s]
+    if (composite) return composite.includes(row.dataset.state)
     return row.dataset.state === s
   }
 
@@ -72,7 +74,8 @@ export default class extends Controller {
     const base = this.rowTargets.filter(r => this.passRefine(r))
     const count = (key) => {
       if (key === "all") return base.length
-      if (key === "rifinitura") return base.filter(r => this.constructor.RIF.includes(r.dataset.state)).length
+      const composite = this.constructor.COMPOSITES[key]
+      if (composite) return base.filter(r => composite.includes(r.dataset.state)).length
       return base.filter(r => r.dataset.state === key).length
     }
 

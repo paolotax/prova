@@ -458,10 +458,10 @@
     text-align: start;
   }
 
-  .ca-step[data-step-key="cambio"]    { --ca-sc: oklch(var(--lch-blue-dark)); }
   .ca-step[data-step-key="promuovi"]  { --ca-sc: oklch(var(--lch-green-dark)); }
-  .ca-step[data-step-key="nuova"]     { --ca-sc: oklch(var(--lch-aqua-dark)); }
-  .ca-step[data-step-key="rifinitura"]{ --ca-sc: oklch(var(--lch-yellow-dark)); }
+  .ca-step[data-step-key="cambio"]    { --ca-sc: oklch(var(--lch-blue-dark)); }
+  .ca-step[data-step-key="nuove"]     { --ca-sc: oklch(var(--lch-aqua-dark)); }
+  .ca-step[data-step-key="anomalie"]  { --ca-sc: oklch(var(--lch-red-dark)); }
 
   .ca-step:hover {
     background: var(--color-ink-lightest);
