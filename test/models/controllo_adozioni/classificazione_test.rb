@@ -1,0 +1,95 @@
+require "test_helper"
+
+module ControlloAdozioni
+  # Test di equivalenza: i predicati SQL canonici di Classificazione DEVONO
+  # produrre gli stessi conteggi della vecchia via (Dashboard) sullo stesso
+  # dataset. Blocca la regressione durante il consolidamento della logica.
+  class ClassificazioneTest < ActiveSupport::TestCase
+    fixtures :accounts, :users, :memberships, :scuole
+
+    setup do
+      @account = accounts(:fizzy)
+      @anno = "202627"
+      # Ripristina lo snapshot MIUR: fixture di altre classi possono restare nel DB.
+      Miur::Scuola.delete_all
+      Miur::Adozione.delete_all
+      ControlloAnomalia.delete_all
+      # Neutralizza le scuole fixture: fuori scope Dashboard (no adozioni, no MIUR).
+      @account.scuole.update_all(adozioni_count: 0)
+
+      # PROMUOVIBILE: in miur_scuole + miur_adozioni EE, senza classi attive dell'anno.
+      crea_scuola("XXEE0000P1", "Primaria Promuovibile", adozioni: 2)
+      in_miur("XXEE0000P1", "PRIMARIA PROMUOVIBILE")
+      adozione_ee("XXEE0000P1", "9880000000011")
+
+      # PROMOSSA: in miur + classi attive dell'anno (>= anno) → non piu' promuovibile.
+      @promossa = crea_scuola("XXEE0000Q1", "Primaria Promossa", adozioni: 2)
+      in_miur("XXEE0000Q1", "PRIMARIA PROMOSSA")
+      adozione_ee("XXEE0000Q1", "9880000000029")
+      @account.classi.create!(scuola: @promossa, anno_scolastico: @anno, anno_corso: "1",
+        sezione: "A", stato: "attiva", codice_ministeriale_origine: "XXEE0000Q1",
+        classe_origine: "1", sezione_origine: "A")
+
+      # MANCANTE: ha adozioni ma non e' nel MIUR (assente da miur_adozioni).
+      crea_scuola("XXEE0000R1", "Primaria Mancante", adozioni: 3)
+
+      # ANOMALIA su una scuola in scope.
+      ControlloAnomalia.create!(codicescuola: "XXEE0000R1", tipo: "doppione")
+    end
+
+    test "i predicati SQL producono gli stessi conteggi di Dashboard" do
+      cl = Classificazione.new(anno: @anno)
+      dash = Dashboard.new(account: @account).totali
+
+      # promuovibile e' globalmente allineato: promuovibile ⟹ in miur ⟹ in scope Dashboard.
+      assert_equal dash[:da_promuovere], cl.conta(@account.scuole, :promuovibile)
+      assert_operator dash[:da_promuovere], :>, 0, "il dataset deve avere una scuola da promuovere"
+
+      # promossa: le uniche promosse del dataset sono in scope (in miur).
+      assert_equal dash[:promosse], cl.conta(@account.scuole, :promossa)
+
+      # scope Dashboard: codice presente e (adozioni o nel MIUR).
+      assert_equal dash[:scuole], eligibili.count
+
+      # mancanti = scuole in scope che NON sono nel MIUR.
+      assert_equal dash[:mancanti_miur], eligibili.count - cl.conta(eligibili, :nel_miur)
+
+      # anomalie: contate sullo stesso scope di Dashboard.
+      assert_equal dash[:anomalie], cl.conta(eligibili, :con_anomalie)
+    end
+
+    test "conta con anno blank azzera promuovibile e promossa" do
+      cl = Classificazione.new(anno: "")
+      assert_equal 0, cl.conta(@account.scuole, :promuovibile)
+      assert_equal 0, cl.conta(@account.scuole, :promossa)
+    end
+
+    private
+
+    # Scope equivalente alla WHERE interna di Dashboard#sql_righe.
+    def eligibili
+      nel_miur_sql = ActiveRecord::Base.sanitize_sql(
+        [Classificazione.new(anno: @anno).nel_miur("scuole"), anno: @anno]
+      )
+      @account.scuole.where.not(codice_ministeriale: [nil, ""])
+              .where("scuole.adozioni_count > 0 OR (#{nel_miur_sql})")
+    end
+
+    def crea_scuola(codice, denominazione, adozioni:)
+      @account.scuole.create!(codice_ministeriale: codice, provincia: "XX",
+        comune: "TESTVILLE", denominazione: denominazione,
+        tipo_scuola: "SCUOLA PRIMARIA", grado: "E", adozioni_count: adozioni)
+    end
+
+    def in_miur(codice, denominazione)
+      Miur::Scuola.create!(codice_scuola: codice, anno_scolastico: @anno, provincia: "XX",
+        comune: "TESTVILLE", denominazione: denominazione, tipo_scuola: "SCUOLA PRIMARIA")
+    end
+
+    def adozione_ee(codice, isbn)
+      Miur::Adozione.create!(codicescuola: codice, anno_scolastico: @anno, tipogradoscuola: "EE",
+        annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: isbn, daacquist: "Si")
+    end
+  end
+end

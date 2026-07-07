@@ -94,18 +94,7 @@ module ControlloAdozioni
 
     # promosse/da_promuovere hanno senso solo con uno snapshot MIUR presente.
     def sql_righe
-      promossa = anno.present? ? <<~SQL.strip : "FALSE"
-        EXISTS (SELECT 1 FROM classi c WHERE c.scuola_id = sc.id
-                AND c.stato = 'attiva' AND c.anno_scolastico >= :anno)
-      SQL
-      promuovibile = anno.present? ? <<~SQL.strip : "FALSE"
-        EXISTS (SELECT 1 FROM miur_scuole ns WHERE ns.codice_scuola = sc.codice_ministeriale
-                AND ns.anno_scolastico = :anno)
-        AND EXISTS (SELECT 1 FROM miur_adozioni nae WHERE nae.codicescuola = sc.codice_ministeriale
-                    AND nae.anno_scolastico = :anno AND nae.tipogradoscuola = 'EE')
-        AND NOT EXISTS (SELECT 1 FROM classi c2 WHERE c2.scuola_id = sc.id
-                        AND c2.stato = 'attiva' AND c2.anno_scolastico >= :anno)
-      SQL
+      cl = Classificazione.new(anno: anno)
 
       <<~SQL
         SELECT provincia,
@@ -116,13 +105,10 @@ module ControlloAdozioni
                COUNT(*) FILTER (WHERE con_anomalie)  AS anomalie
         FROM (
           SELECT sc.provincia,
-                 EXISTS (SELECT 1 FROM miur_adozioni na
-                         WHERE na.codicescuola = sc.codice_ministeriale
-                           AND na.anno_scolastico = :anno)                        AS nel_miur,
-                 EXISTS (SELECT 1 FROM controllo_anomalie ca
-                         WHERE ca.codicescuola = sc.codice_ministeriale)          AS con_anomalie,
-                 #{promossa}     AS promossa,
-                 #{promuovibile} AS promuovibile
+                 #{cl.nel_miur}      AS nel_miur,
+                 #{cl.con_anomalie}  AS con_anomalie,
+                 #{cl.promossa}      AS promossa,
+                 #{cl.promuovibile}  AS promuovibile
           FROM scuole sc
           WHERE sc.account_id = :account_id
             AND COALESCE(sc.codice_ministeriale, '') <> ''

@@ -68,27 +68,19 @@ module ControlloAdozioni
       @promuovibili_count ||= if anno.blank?
         0
       else
-        scuole_scope
-          .where(Miur::Scuola.where("miur_scuole.codice_scuola = scuole.codice_ministeriale")
-                             .where(anno_scolastico: anno).arel.exists)
-          .where(Miur::Adozione.where("miur_adozioni.codicescuola = scuole.codice_ministeriale")
-                               .where(tipogradoscuola: "EE", anno_scolastico: anno).arel.exists)
-          .where.not(
-            Classe.where("classi.scuola_id = scuole.id")
-                  .where(stato: "attiva").where("classi.anno_scolastico >= ?", anno).arel.exists
-          ).count
+        classificazione.conta(scuole_scope, :promuovibile)
       end
     end
 
     def suggerimenti_count = conteggi_codici_nuovi[:suggerimento]
 
     def anomalie_count
-      @anomalie_count ||= scuole_scope.where(
-        ControlloAnomalia.where("controllo_anomalie.codicescuola = scuole.codice_ministeriale").arel.exists
-      ).count
+      @anomalie_count ||= classificazione.conta(scuole_scope, :con_anomalie)
     end
 
     private
+
+    def classificazione = @classificazione ||= Classificazione.new(anno: anno)
 
     def scuole_scope
       scope = account.scuole.where.not(codice_ministeriale: [nil, ""])
