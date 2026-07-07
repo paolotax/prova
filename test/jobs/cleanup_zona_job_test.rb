@@ -31,7 +31,8 @@ class CleanupZonaJobTest < ActiveJob::TestCase
   end
 
   test "cascades to classi and adozioni" do
-    assert_difference("Classe.count", -5) do
+    # 7 classi: scuola_fizzy 5 (comprese prima_a/quinta_a del passaggio anno), nord 1, sud 1
+    assert_difference("Classe.count", -7) do
       assert_difference("Adozione.count", -7) do
         CleanupZonaJobSilent.perform_now(@zona)
       end
