@@ -561,55 +561,7 @@
     block-size: 0.95rem;
   }
 
-  /* State chips + refine row */
-  .ca-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--inline-space-half);
-    margin-block: var(--block-space) var(--block-space-half);
-  }
-
-  .ca-chip {
-    align-items: center;
-    background: var(--color-canvas);
-    border: var(--border);
-    border-radius: 99rem;
-    color: var(--color-ink-dark);
-    cursor: pointer;
-    display: inline-flex;
-    font: inherit;
-    font-size: var(--text-small);
-    gap: 0.375rem;
-    padding: 0.3rem var(--inline-space-half);
-  }
-
-  .ca-chip:hover {
-    background: var(--color-ink-lightest);
-  }
-
-  .ca-chip__n {
-    color: var(--color-ink-medium);
-    font-size: var(--text-x-small);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ca-chip[aria-pressed="true"] {
-    background: oklch(var(--lch-blue-lighter));
-    border-color: var(--color-link);
-    color: var(--color-ink);
-    font-weight: 600;
-  }
-
-  .ca-chip[aria-pressed="true"] .ca-chip__n {
-    color: var(--color-link);
-  }
-
-  .ca-chip__swatch {
-    block-size: 0.5rem;
-    border-radius: 2px;
-    inline-size: 0.5rem;
-  }
-
+  /* Refine row (ricerca testo) */
   .ca-refine {
     align-items: center;
     display: flex;

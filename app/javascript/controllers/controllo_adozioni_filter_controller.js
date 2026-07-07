@@ -1,24 +1,25 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Filtro client-side della lista unificata di controllo adozioni.
-// Combina: stato (chip o step) AND provincia AND grado AND ricerca testo.
-// I contatori di chip e step si ricalcolano dalle righe che passano provincia/grado/ricerca
-// (non lo stato). Alcuni step sono compositi: lo step "nuove" copre nuova + verifica.
+// Combina: stato (step-card) AND ricerca testo. I contatori degli step si
+// ricalcolano dalle righe che passano la ricerca (non lo stato). Alcuni step sono
+// compositi: lo step "nuove" copre nuova + verifica.
 export default class extends Controller {
   static targets = [
-    "row", "step", "chip", "group",
-    "scopeCount", "guideDone", "empty",
-    "prov", "grado", "search"
+    "row", "step", "group",
+    "scopeCount", "guideDone", "empty", "search"
   ]
 
   // Chiavi di stato che coprono più stati-riga (data-step-key composite).
   static COMPOSITES = { nuove: ["nuova", "verifica"] }
 
   connect() {
-    this.filters = { stato: "all", prov: "all", grado: "all", q: "" }
+    this.filters = { stato: "all", q: "" }
     this.apply()
   }
 
+  // Impostazione esplicita dello stato (usata dal pulsante "Da verificare" e,
+  // via toggleStep, dalle step-card).
   selectChip(event) {
     this.setStato(event.currentTarget.dataset.filter)
   }
@@ -33,13 +34,10 @@ export default class extends Controller {
     event.stopPropagation()
   }
 
-  changeProv(event)  { this.filters.prov = event.target.value; this.apply() }
-  changeGrado(event) { this.filters.grado = event.target.value; this.apply() }
   changeSearch(event) { this.filters.q = event.target.value.trim().toLowerCase(); this.apply() }
 
   setStato(stato) {
     this.filters.stato = stato
-    this.chipTargets.forEach(c => c.setAttribute("aria-pressed", String(c.dataset.filter === stato)))
     this.stepTargets.forEach(s => s.setAttribute("aria-current", String(s.dataset.stepKey === stato)))
     this.apply()
   }
@@ -53,10 +51,8 @@ export default class extends Controller {
   }
 
   passRefine(row) {
-    const f = this.filters
-    return (f.prov === "all" || row.dataset.prov === f.prov)
-      && (f.grado === "all" || row.dataset.grado === f.grado)
-      && (!f.q || (row.dataset.txt || "").includes(f.q))
+    const q = this.filters.q
+    return !q || (row.dataset.txt || "").includes(q)
   }
 
   apply() {
@@ -70,7 +66,7 @@ export default class extends Controller {
     if (this.hasScopeCountTarget) this.scopeCountTarget.textContent = visible.length
     if (this.hasEmptyTarget) this.emptyTarget.style.display = visible.length ? "none" : "block"
 
-    // Contatori: ricalcolati dalle righe che passano i refine (ignorando lo stato).
+    // Contatori degli step: ricalcolati dalle righe che passano la ricerca (non lo stato).
     const base = this.rowTargets.filter(r => this.passRefine(r))
     const count = (key) => {
       if (key === "all") return base.length
@@ -84,11 +80,6 @@ export default class extends Controller {
       const el = s.querySelector("[data-count]")
       if (el) el.textContent = n
       s.hidden = (n === 0)
-    })
-
-    this.chipTargets.forEach(c => {
-      const el = c.querySelector("[data-count]")
-      if (el) el.textContent = count(c.dataset.filter)
     })
 
     if (this.hasGuideDoneTarget) {
