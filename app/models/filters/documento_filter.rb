@@ -44,7 +44,7 @@ module Filters
       {
         "attivi"        => base.attivi.count,
         "da_consegnare" => base.attivi.where.missing(:consegne).count,
-        "da_pagare"     => base.attivi.where.missing(:pagamento).count,
+        "da_pagare"     => base.attivi.where.missing(:pagamenti).count,
         "completati"    => base.completati.count,
         "tutti"         => base.count
       }
@@ -62,7 +62,7 @@ module Filters
         .joins("left outer join classi on documenti.clientable_type = 'Classe' and documenti.clientable_id = classi.id")
         .joins("left outer join persone on documenti.clientable_type = 'Persona' and documenti.clientable_id = persone.id")
         .joins("left outer join scuole scuole_clientable on scuole_clientable.id = coalesce(classi.scuola_id, persone.scuola_id)")
-        .includes(:causale, :clientable, :consegne, :pagamento, :righe,
+        .includes(:causale, :clientable, :consegne, :pagamenti, :righe,
                   entry: [:column, :goldness, :closure, :not_now],
                   documento_righe: [riga: :libro],
                   documenti_derivati: :causale)
@@ -76,11 +76,11 @@ module Filters
       result = apply_terms(result)
 
       result = result.where(causale_id: causali) if causali.present?
-      result = result.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipi_pagamento }) if tipi_pagamento.present?
+      result = result.joins(:pagamenti).where(pagamenti: { tipo_pagamento: tipi_pagamento }).distinct if tipi_pagamento.present?
       result = result.where(clientable_type: clientable_type) if clientable_type.present?
       result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
       result = result.joins(:consegne) if consegnati.present?
-      result = result.joins(:pagamento) if pagati.present?
+      result = result.joins(:pagamenti).distinct if pagati.present?
 
       result
     end
@@ -115,7 +115,7 @@ module Filters
     def apply_stato_documento(scope)
       case stato_documento
       when "da_consegnare" then scope.attivi.where.missing(:consegne)
-      when "da_pagare"     then scope.attivi.where.missing(:pagamento)
+      when "da_pagare"     then scope.attivi.where.missing(:pagamenti)
       when "completati"    then scope.completati
       when "tutti"         then scope
       else                      scope.attivi # "attivi" e default

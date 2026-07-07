@@ -7,22 +7,28 @@ module Documenti
     before_action :set_documento
 
     # POST /documenti/:documento_id/pagamento
+    # params[:importo] opzionale (euro): registra un acconto invece di saldare
     def create
-      @documento.mark_pagato(
-        pagato_il: parsed_date(:pagato_il),
-        tipo_pagamento: params[:tipo_pagamento]
-      )
+      if params[:importo].present?
+        @documento.registra_acconto!(
+          importo_cents: (BigDecimal(params[:importo].to_s) * 100).to_i,
+          tipo_pagamento: params[:tipo_pagamento],
+          pagato_il: parsed_date(:pagato_il)
+        )
+      else
+        @documento.mark_pagato(pagato_il: parsed_date(:pagato_il), tipo_pagamento: params[:tipo_pagamento])
+      end
 
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
-        format.json { render json: { ok: true, pagato: true, pagato_il: @documento.pagato_il, tipo_pagamento: @documento.tipo_pagamento } }
+        format.json { render json: { ok: true, pagato: @documento.pagato?, pagato_il: @documento.pagato_il, tipo_pagamento: @documento.tipo_pagamento, residuo_cents: @documento.residuo_da_pagare_cents } }
       end
     end
 
     # PATCH /documenti/:documento_id/pagamento
     def update
-      @documento.pagamento&.update!(
+      @documento.pagamenti.order(:pagato_il).last&.update!(
         pagato_il: parsed_date(:pagato_il),
         tipo_pagamento: params[:tipo_pagamento]
       )
@@ -30,7 +36,7 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
-        format.json { render json: { ok: true, pagato: true, pagato_il: @documento.pagamento&.pagato_il, tipo_pagamento: @documento.pagamento&.tipo_pagamento } }
+        format.json { render json: { ok: true, pagato: @documento.pagato?, pagato_il: @documento.pagato_il, tipo_pagamento: @documento.tipo_pagamento } }
       end
     end
 

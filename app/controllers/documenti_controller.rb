@@ -36,7 +36,7 @@ class DocumentiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:causale, :clientable, :consegne, :pagamento, entry: [:goldness, :closure, :not_now], righe: { libro: [:editore, :categoria] }) }
+      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:causale, :clientable, :consegne, :pagamenti, entry: [:goldness, :closure, :not_now], righe: { libro: [:editore, :categoria] }) }
     end
   end
 
@@ -174,7 +174,7 @@ class DocumentiController < ApplicationController
     end
 
     def documento_params
-      params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :clientable_value, :referente, :note, :numero_documento, :user_id, :data_documento, :causale_id, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento,
+      params.require(:documento).permit(:cliente_id, :clientable_id, :clientable_type, :clientable_value, :referente, :note, :numero_documento, :user_id, :data_documento, :causale_id, :status, :iva_cents, :totale_cents, :spese_cents, :totale_copie, :tipo_documento, :tipo_pagamento_previsto,
         documento_righe_attributes: [:id, :posizione, :_destroy,
           { riga_attributes: [:id, :libro_id, :quantita, :prezzo, :prezzo_cents, :prezzo_copertina_cents, :sconto, :iva_cents, :status, :_destroy] }
         ])

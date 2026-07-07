@@ -7,7 +7,7 @@ module Documenti
     def create
       @causale = Causale.find(params[:causale_id])
       @documenti = bulk_documenti
-        .includes(:causale, :consegne, :pagamento, :clientable, :righe, documento_righe: :riga)
+        .includes(:causale, :consegne, :pagamenti, :clientable, :righe, documento_righe: :riga)
 
       # Filtra solo i documenti la cui causale prevede la causale scelta come successiva
       documenti_validi = @documenti.select { |d| d.puo_generare_da_causale?(@causale) }

@@ -31,7 +31,7 @@ class Saldo < ApplicationRecord
     documenti = Documento.where(clientable: saldabile, documento_padre_id: nil)
 
     da_consegnare = documenti.left_joins(:consegne).where(consegne: { id: nil })
-    da_pagare = documenti.left_joins(:pagamento).where(pagamenti: { id: nil })
+    da_pagare = documenti.left_joins(:pagamenti).where(pagamenti: { id: nil })
 
     # Calcola importo e copie con segno basato sul movimento della causale
     # uscita (1) = cliente deve (+), entrata (0) = cliente riceve credito (-)

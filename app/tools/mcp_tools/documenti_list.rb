@@ -37,7 +37,7 @@ module MCPTools
         scope = scope.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
         scope = scope.where("data_documento >= ?", data_inizio) if data_inizio.present?
         scope = scope.where("data_documento <= ?", data_fine) if data_fine.present?
-        scope = scope.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipo_pagamento }) if tipo_pagamento.present?
+        scope = scope.joins(:pagamenti).where(pagamenti: { tipo_pagamento: tipo_pagamento }).distinct if tipo_pagamento.present?
 
         # Filtri per libro (subquery per evitare conflitto con eager loading :clientable)
         if libro_id.present?
@@ -54,14 +54,14 @@ module MCPTools
         when "attivi"        then scope = scope.attivi
         when "completati"    then scope = scope.completati
         when "da_consegnare" then scope = scope.attivi.where.missing(:consegne)
-        when "da_pagare"     then scope = scope.attivi.where.missing(:pagamento)
+        when "da_pagare"     then scope = scope.attivi.where.missing(:pagamenti)
         when "tutti"         then nil
         else scope = scope.attivi
         end
 
         # Subquery per DISTINCT (evita duplicati da join righe/libri)
         ids = scope.reorder(nil).select("documenti.id").distinct
-        eager = [:causale, :consegne, :pagamento, entry: [:goldness, :closure]]
+        eager = [:causale, :consegne, :pagamenti, entry: [:goldness, :closure]]
         eager << { documento_righe: { riga: :libro } } if include_righe
         # preload (NON includes) per :clientable: polymorphic non supporta eager_load JOIN
         result = Current.account.documenti.where(id: ids).includes(*eager).preload(:clientable)

@@ -74,6 +74,14 @@
           <%= form.label :data_documento, "Data", class: "form-label" %>
           <%= date_input(form, :data_documento) %>
         </div>
+
+        <div class="form-field" style="flex: 1 1 25%;">
+          <%= form.label :tipo_pagamento_previsto, "Pagamento previsto", class: "form-label" %>
+          <%= form.select :tipo_pagamento_previsto,
+              options_for_select(Pagamento::TIPI_PAGAMENTO.map { |k, v| [v, k] }, documento.tipo_pagamento_previsto),
+              { include_blank: "nessuno" },
+              class: "input input--select" %>
+        </div>
       </div>
 
       <div class="divider" style="margin-block: 2ch; --divider-color: var(--card-color);"></div>

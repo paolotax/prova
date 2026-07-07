@@ -4,7 +4,7 @@ module Documenti
 
     def show
       @documenti = bulk_documenti
-        .includes(:causale, :consegne, :pagamento, :clientable, :righe)
+        .includes(:causale, :consegne, :pagamenti, :clientable, :righe)
         .order(:clientable_type, :clientable_id, :data_documento)
 
       @documenti_per_cliente = @documenti.group_by(&:clientable)

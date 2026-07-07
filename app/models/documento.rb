@@ -72,8 +72,6 @@ class Documento < ApplicationRecord
   after_destroy_commit :ricalcola_saldo_clientable
   before_destroy :riapri_documenti_figli, prepend: true
 
-  # Callback per concern: propaga pagamento ai figli
-  after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
   # Rimosso: la chiusura del documento origine viene gestita nel controller
   # after_create :close_if_has_padre
 
@@ -169,7 +167,7 @@ class Documento < ApplicationRecord
 
   def self.form_steps
     {
-      tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id],
+      tipo_documento: %i[causale_id numero_documento data_documento clientable_type clientable_id tipo_pagamento_previsto],
       cliente: %i[clientable_type clientable_id referente note],
       dettaglio: [documento_righe_attributes:
                     [:id, :posizione,
@@ -289,6 +287,15 @@ class Documento < ApplicationRecord
   # Chiamato da Consegnabile/Pagabile a ogni variazione di consegne/pagamenti
   def auto_close_se_completo
     close if pagato? && consegnato? && !closed?
+  end
+
+  # Chiamato da Pagabile quando il documento risulta interamente pagato:
+  # i figli vengono saldati col tipo dell'ultimo acconto
+  def pagamento_saturato
+    ultimo = pagamenti.order(:pagato_il).last
+    tutti_i_discendenti.each do |figlio|
+      figlio.mark_pagato(user: ultimo&.user || Current.user, tipo_pagamento: ultimo&.tipo_pagamento)
+    end
   end
 
   def catena_documenti
@@ -430,29 +437,12 @@ class Documento < ApplicationRecord
     self.totale_copie = totale_copie_calcolato
   end
 
-  # Propaga il pagamento a tutti i documenti figli
-  def propaga_pagamento_ai_figli
-    return unless pagamento.present?
-
-    tutti_i_discendenti.each do |figlio|
-      figlio.mark_pagato(
-        user: pagamento.user,
-        tipo_pagamento: pagamento.tipo_pagamento
-      )
-    end
-  end
-
   # Chiude automaticamente documenti figli (es. DDT derivato da TD01)
   def close_if_has_padre
     return unless documento_padre_id.present?
 
     ensure_entry!
     close unless closed?
-  end
-
-  # Verifica se il documento è appena stato marcato come pagato
-  def just_marked_pagato?
-    pagamento.present? && pagamento.previously_new_record?
   end
 
   # Riapre i documenti figli quando il padre viene eliminato

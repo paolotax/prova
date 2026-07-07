@@ -43,7 +43,7 @@ class VenditeController < ApplicationController
     when "attivi"        then scope.attivi
     when "completati"    then scope.completati
     when "da_consegnare" then scope.attivi.where.missing(:consegne)
-    when "da_pagare"     then scope.attivi.where.missing(:pagamento)
+    when "da_pagare"     then scope.attivi.where.missing(:pagamenti)
     when "tutti"         then scope
     else scope.attivi
     end

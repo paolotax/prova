@@ -41,7 +41,7 @@ class Pagamento < ApplicationRecord
   belongs_to :pagabile, polymorphic: true, touch: true
   belongs_to :user, optional: true, default: -> { Current.user }
 
-  validates :pagabile_id, uniqueness: { scope: :pagabile_type }
   validates :tipo_pagamento, length: { maximum: 50 }, allow_blank: true
+  validates :importo_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
 end

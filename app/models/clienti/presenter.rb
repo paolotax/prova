@@ -11,7 +11,7 @@ class Clienti::Presenter
   # Values in cents. Uscita (movimento=1) = cliente deve (+), Entrata (movimento=0) = credito (-)
   def riepilogo_per_anno
     docs = cliente.documenti.where(documento_padre_id: nil)
-      .includes(:causale, :pagamento)
+      .includes(:causale, :pagamenti)
 
     result = Hash.new { |h, k| h[k] = { pagato: 0, da_pagare: 0, count: 0 } }
 

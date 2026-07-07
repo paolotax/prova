@@ -4,7 +4,7 @@ module Documenti
 
     def create
       @documenti = bulk_documenti
-        .includes(:causale, :consegne, :pagamento, :clientable, :righe, :entry)
+        .includes(:causale, :consegne, :pagamenti, :clientable, :righe, :entry)
 
       case params[:azione]
       when "completa"

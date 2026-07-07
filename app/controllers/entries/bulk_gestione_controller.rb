@@ -6,7 +6,7 @@ module Entries
 
       @documenti = Current.account.documenti
         .where(id: documento_ids)
-        .includes(:causale, :consegne, :pagamento, :clientable, :righe)
+        .includes(:causale, :consegne, :pagamenti, :clientable, :righe)
         .order(:clientable_type, :clientable_id, :data_documento)
 
       @documenti_per_cliente = @documenti.group_by(&:clientable)
