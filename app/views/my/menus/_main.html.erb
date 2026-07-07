@@ -9,9 +9,9 @@
 <% end %>
 
 <%= collapsible_nav_section "Adozioni" do %>
-    <%= filter_place_menu_item adozioni_analytics_path, "Adozioni 2025", "cash" %>
+    <%= filter_place_menu_item adozioni_analytics_path, "Adozioni", "cash" %>
+    <%= filter_place_menu_item controllo_adozioni_index_path(Current.account), "Controllo adozioni e passaggio A.S.", "alert-triangle" %>
     <%= filter_place_menu_item stats_path(Current.account), "Stats (exit poll 2026)", "chart" %>
-    <%= filter_place_menu_item controllo_adozioni_index_path(Current.account), "Controllo anomalie adozioni", "alert-triangle" %>
 <% end %>
 
 <%= collapsible_nav_section "Magazzino" do %>
