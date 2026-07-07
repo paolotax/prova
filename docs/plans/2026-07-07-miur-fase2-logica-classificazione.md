@@ -355,6 +355,15 @@ git commit -m "refactor(controllo-adozioni): classificazione cambi-codice in un'
 
 ## Task 4: `promuovi_primaria!` delega le adozioni al Reconciler
 
+> **RESPINTO (2026-07-07, decisione Paolo — NON eseguire).** `promuovi_primaria!` non si
+> tocca. Il Reconciler opera per (account, provincia, anno) **intera**: le sue fasi
+> `archivia_anni_precedenti` / `upsert_classi` / `archivia_classi_orfane` toccano tutte le
+> scuole della provincia. Delegare da una promozione per-scuola significherebbe: bottone
+> "Promuovi" su una scuola → reconcile dell'intera provincia, con advisory lock in contesa
+> nel fan-out della promozione massiva. I due motori restano a ruoli separati come da design
+> (`promuovi_primaria!` = identità classi + adozioni della singola scuola via
+> `costruisci_adozioni!`; Reconciler = allineamento set-based di massa).
+
 **Files:**
 - Modify: `app/models/scuola.rb:263-...` (`promuovi_primaria!`)
 - Modify: `app/jobs/scuola_promuovi_classi_job.rb:7`
