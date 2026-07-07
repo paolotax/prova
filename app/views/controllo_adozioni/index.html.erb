@@ -42,56 +42,61 @@
       <% if @panoramica.gruppi.empty? %>
         <p class="txt-subtle">Nessuna scuola con adozioni.</p>
       <% else %>
-        <%# ===== Chip di stato + rifinitura (provincia / grado / ricerca) ===== %>
-        <% province_opzioni = (@panoramica.gruppi.flat_map { |g| g[:scuole] }.map(&:provincia) +
-             (Current.admin? ? @panoramica.cambi_codice.map(&:provincia) : [])).compact.uniq.sort %>
+        <%# ===== Chip di stato + rifinitura (provincia / grado / ricerca) =====
+            NASCOSTI TEMPORANEAMENTE (2026-07-07): i contatori data-count non si
+            aggiornano dopo i job massivi/singoli. Da rivedere: forse la funzione
+            filtri/ricerca non serve. Riattivare togliendo l'`if false`. %>
+        <% if false %>
+          <% province_opzioni = (@panoramica.gruppi.flat_map { |g| g[:scuole] }.map(&:provincia) +
+               (Current.admin? ? @panoramica.cambi_codice.map(&:provincia) : [])).compact.uniq.sort %>
 
-        <div class="ca-chips" role="group" aria-label="Filtra per stato">
-          <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="all" aria-pressed="true"
-                  data-action="click->controllo-adozioni-filter#selectChip">
-            Tutte <span class="ca-chip__n" data-count></span>
-          </button>
-          <% [
-               ["cambio",   "Cambi codice",  "oklch(var(--lch-blue-dark))"],
-               ["verifica", "Da verificare", "oklch(var(--lch-yellow-dark))"],
-               ["nuova",    "Nuove",         "oklch(var(--lch-aqua-dark))"],
-               ["promuovi", "Da promuovere", "oklch(var(--lch-green-dark))"],
-               ["anomalie", "Anomalie",      "oklch(var(--lch-red-dark))"],
-               ["disall",   "Disallineate",  "var(--color-ink-light)"],
-               ["ok",       "A posto",       "var(--color-positive)"]
-             ].each do |key, label, swatch| %>
-            <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="<%= key %>"
+          <div class="ca-chips" role="group" aria-label="Filtra per stato">
+            <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="all" aria-pressed="true"
                     data-action="click->controllo-adozioni-filter#selectChip">
-              <span class="ca-chip__swatch" style="background: <%= swatch %>"></span>
-              <%= label %> <span class="ca-chip__n" data-count></span>
+              Tutte <span class="ca-chip__n" data-count></span>
             </button>
-          <% end %>
-        </div>
+            <% [
+                 ["cambio",   "Cambi codice",  "oklch(var(--lch-blue-dark))"],
+                 ["verifica", "Da verificare", "oklch(var(--lch-yellow-dark))"],
+                 ["nuova",    "Nuove",         "oklch(var(--lch-aqua-dark))"],
+                 ["promuovi", "Da promuovere", "oklch(var(--lch-green-dark))"],
+                 ["anomalie", "Anomalie",      "oklch(var(--lch-red-dark))"],
+                 ["disall",   "Disallineate",  "var(--color-ink-light)"],
+                 ["ok",       "A posto",       "var(--color-positive)"]
+               ].each do |key, label, swatch| %>
+              <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="<%= key %>"
+                      data-action="click->controllo-adozioni-filter#selectChip">
+                <span class="ca-chip__swatch" style="background: <%= swatch %>"></span>
+                <%= label %> <span class="ca-chip__n" data-count></span>
+              </button>
+            <% end %>
+          </div>
 
-        <div class="ca-refine">
-          <% if @provincia.blank? && province_opzioni.size > 1 %>
-            <select class="input input--select" aria-label="Provincia"
-                    data-controllo-adozioni-filter-target="prov"
-                    data-action="change->controllo-adozioni-filter#changeProv">
-              <option value="all">Tutte le province</option>
-              <% province_opzioni.each do |prov| %>
-                <option value="<%= prov %>"><%= prov.to_s.titleize %></option>
-              <% end %>
+          <div class="ca-refine">
+            <% if @provincia.blank? && province_opzioni.size > 1 %>
+              <select class="input input--select" aria-label="Provincia"
+                      data-controllo-adozioni-filter-target="prov"
+                      data-action="change->controllo-adozioni-filter#changeProv">
+                <option value="all">Tutte le province</option>
+                <% province_opzioni.each do |prov| %>
+                  <option value="<%= prov %>"><%= prov.to_s.titleize %></option>
+                <% end %>
+              </select>
+            <% end %>
+            <select class="input input--select" aria-label="Grado"
+                    data-controllo-adozioni-filter-target="grado"
+                    data-action="change->controllo-adozioni-filter#changeGrado">
+              <option value="all">Tutti i gradi</option>
+              <option value="E">Primaria</option>
+              <option value="M">Media</option>
+              <option value="N">Superiore</option>
+              <option value="A">Infanzia</option>
             </select>
-          <% end %>
-          <select class="input input--select" aria-label="Grado"
-                  data-controllo-adozioni-filter-target="grado"
-                  data-action="change->controllo-adozioni-filter#changeGrado">
-            <option value="all">Tutti i gradi</option>
-            <option value="E">Primaria</option>
-            <option value="M">Media</option>
-            <option value="N">Superiore</option>
-            <option value="A">Infanzia</option>
-          </select>
-          <input class="input ca-refine__search" type="search" placeholder="Cerca scuola o codice…" aria-label="Cerca"
-                 data-controllo-adozioni-filter-target="search"
-                 data-action="input->controllo-adozioni-filter#changeSearch">
-        </div>
+            <input class="input ca-refine__search" type="search" placeholder="Cerca scuola o codice…" aria-label="Cerca"
+                   data-controllo-adozioni-filter-target="search"
+                   data-action="input->controllo-adozioni-filter#changeSearch">
+          </div>
+        <% end %>
 
         <p class="ca-scope">
           <b data-controllo-adozioni-filter-target="scopeCount">0</b> scuole in lista ·
