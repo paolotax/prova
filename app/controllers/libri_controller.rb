@@ -9,10 +9,10 @@ class LibriController < ApplicationController
   before_action :set_libro, only: %i[ show edit update destroy get_prezzo_e_sconto ]
 
 
-  def crosstab
-    @libri = Current.account.libri.crosstab
+  def situazione
+    @situazione = Libro::Situazione.new(Current.account)
     respond_to do |format|
-      format.xlsx 
+      format.xlsx
     end
   end
 

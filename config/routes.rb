@@ -310,7 +310,7 @@ Rails.application.routes.draw do
 
     resources :libri do
       collection do
-        get 'crosstab'
+        get 'situazione'
         get 'scarico_fascicoli'
       end
       member do

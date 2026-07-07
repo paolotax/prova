@@ -1,0 +1,11 @@
+wb = xlsx_package.workbook
+
+righe = @situazione.righe
+
+wb.add_worksheet(name: "Situazione") do |sheet|
+  sheet.add_row(righe.first&.keys || [])
+
+  righe.each do |riga|
+    sheet.add_row riga.values, types: [:string]
+  end
+end

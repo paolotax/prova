@@ -243,48 +243,6 @@ class Libro < ApplicationRecord
   end
 
 
-  # DA RIVEDERE
-
-  def self.crosstab
-    
-    # Costruisci la lista delle causali
-    causali = Causale.order(:magazzino, :movimento, :tipo_movimento).all.map(&:causale)
-
-    # Costruisci la query dinamica
-    crosstab_query = <<-SQL
-      WITH situazio AS (
-        SELECT *
-        FROM crosstab(
-          $$
-          SELECT libri.id, causali.causale, sum(righe.quantita) as quantita
-          FROM libri
-                  JOIN righe ON righe.libro_id = libri.id
-                  JOIN documento_righe on righe.id = documento_righe.riga_id
-                  JOIN documenti on documento_righe.documento_id = documenti.id
-                  JOIN causali on documenti.causale_id = causali.id
-                  JOIN users on documenti.user_id = users.id 
-          WHERE users.id = #{Current.user.id}
-          GROUP BY 1, 2
-          ORDER BY 1
-          $$, $$
-          SELECT causali.causale
-          FROM causali ORDER BY causali.magazzino, causali.movimento, causali.tipo_movimento
-          $$
-        ) AS ct (id bigint, #{causali.map { |c| "#{c.gsub(' ', '_')} bigint" }.join(', ')})
-      )
-      SELECT
-        libri.codice_isbn, libri.titolo, libri.prezzo_in_cents, situazio.*,
-        editori.gruppo, editori.editore, libri.adozioni_count, categorie.nome_categoria as categoria, libri.classe, libri.disciplina, libri.id
-      FROM libri
-      INNER JOIN situazio ON libri.id = situazio.id
-      INNER JOIN editori ON editori.id =  libri.editore_id
-      LEFT JOIN categorie ON categorie.id = libri.categoria_id
-    SQL
-
-    result = ActiveRecord::Base.connection.execute(crosstab_query)
-    result
-  end
-
   def self.scarico_fascicoli
     
     sql = <<-SQL
