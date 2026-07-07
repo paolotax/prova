@@ -397,7 +397,7 @@ namespace :miur do
       x.report("agg. RELIGIONE") {
         count = Miur::Adozione.correnti
           .where(tipogradoscuola: "EE")
-          .where(annocorso: ["2", "3", "5"], disciplina: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 "])
+          .where(annocorso: ["2", "3", "5"], disciplina: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 ", "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA", "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA "])
           .update_all(daacquist: "No")
       }
     end
