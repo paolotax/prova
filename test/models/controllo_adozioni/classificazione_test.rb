@@ -64,7 +64,33 @@ module ControlloAdozioni
       assert_equal 0, cl.conta(@account.scuole, :promossa)
     end
 
+    # INVARIANTE: la normalizzazione Ruby (Classificazione.denom_norm) e quella
+    # SQL (NORM, usata dai conteggi cambi-codice) DEVONO coincidere input per
+    # input. Se divergono, i conteggi (SQL) e la UI (Ruby) si disallineano.
+    test "denom_norm Ruby coincide con NORM SQL" do
+      [
+        "I.C. Calamandrei",
+        "PIERO  CALAMANDREI",
+        "istituto comprensivo",
+        "Città di Forlì",
+        "Sant'Agata & C.",
+        "  spazi   multipli  ",
+        "12° Circolo - Bologna",
+        "",
+        nil
+      ].each do |input|
+        assert_equal norm_sql(input), Classificazione.denom_norm(input),
+          "divergenza su #{input.inspect}"
+      end
+    end
+
     private
+
+    # Esegue la NORM SQL sul literal dato, come fa SQL_CLASSIFICA sulle colonne.
+    def norm_sql(str)
+      quoted = ActiveRecord::Base.connection.quote(str)
+      ActiveRecord::Base.connection.select_value("SELECT #{Classificazione::NORM % quoted}")
+    end
 
     # Scope equivalente alla WHERE interna di Dashboard#sql_righe.
     def eligibili

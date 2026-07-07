@@ -227,16 +227,11 @@ module ControlloAdozioni
 
     def paritaria?(tipo) = tipo.to_s.upcase.include?("NON STATALE")
 
-    def denom_norm(s) = s.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").squeeze(" ").strip
+    # Normalizzazione e similarità denominazione: sorgente unica in Classificazione,
+    # gemella della NORM in SQL (vedi invariante documentato lì e testato).
+    def denom_norm(s) = Classificazione.denom_norm(s)
 
-    # Denominazioni "simili": uguali dopo normalizzazione o una contenuta nell'altra
-    # (es. "CALAMANDREI" ⊂ "PIERO CALAMANDREI").
-    def denom_simili?(a, b)
-      na = denom_norm(a)
-      nb = denom_norm(b)
-      return false if na.blank? || nb.blank?
-      na == nb || na.include?(nb) || nb.include?(na)
-    end
+    def denom_simili?(a, b) = Classificazione.denom_simili?(a, b)
 
     # Codici in miur_scuole+miur_adozioni (zona account) assenti da account.scuole.
     def build_cambi_codice
