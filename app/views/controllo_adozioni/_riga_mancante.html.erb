@@ -1,0 +1,60 @@
+<%# Riga unificata per una Panoramica::Mancante (cambi codice / nuove scuole nel MIUR
+    non ancora in anagrafe). Stesso markup .ca-row della _riga, stato da #stato_mancante. %>
+<% m = riga_mancante %>
+<% s = stato_mancante(m) %>
+<% p = m.predecessore %>
+<%= tag.article id: "cambio_codice_#{m.codice}",
+      class: "ca-row",
+      data: {
+        controllo_adozioni_filter_target: "row",
+        state: s[:stato],
+        prov: m.provincia,
+        grado: grado_riga(m.codice),
+        txt: "#{m.denominazione} #{m.codice} #{p&.codice_ministeriale}".downcase
+      } do %>
+  <div class="ca-stripe"></div>
+
+  <div class="ca-row__main">
+    <div class="ca-row__name"><%= m.denominazione.presence || "—" %></div>
+    <div class="ca-row__meta">
+      <%= m.comune %> (<%= m.provincia %>) ·
+      <span class="ca-row__code"><%= m.codice %></span>
+      <% if p %>
+        <span class="ca-row__arrow">←</span> era <span class="ca-row__code"><%= p.codice_ministeriale %></span>
+      <% elsif m.candidati.present? %>
+        · <%= pluralize(m.candidati.size, "candidato", plural: "candidati") %>
+      <% else %>
+        · <%= m.classi.to_i %> classi, <%= m.adozioni.to_i %> adozioni
+      <% end %>
+    </div>
+  </div>
+
+  <div class="ca-row__right">
+    <span class="badge <%= s[:badge_class] %>">
+      <span class="badge__dot"></span><%= s[:badge_label] %>
+    </span>
+
+    <span class="ca-row__action">
+      <% case s[:azione] %>
+      <% when :applica %>
+        <%= link_to "Applica",
+              new_controllo_adozioni_promozione_path(codicescuola: p.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id),
+              class: "btn btn--small btn--accent", data: { turbo_frame: :modal } %>
+      <% when :scegli %>
+        <div class="flex align-center gap-half" data-controller="frame-src">
+          <select class="input input--select txt-small" data-frame-src-target="select" aria-label="Scegli scuola predecessore">
+            <option value="">Scegli…</option>
+            <% m.candidati.each do |cand| %>
+              <% n_classi, sezioni = panoramica.classi_sezioni(cand) %>
+              <option value="<%= new_controllo_adozioni_promozione_path(codicescuola: cand.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id) %>">
+                <%= cand.denominazione %> — <%= cand.comune %> (<%= cand.codice_ministeriale %>)
+                · <%= n_classi %> <%= n_classi == 1 ? "classe" : "classi" %><%= " · sez. #{sezioni}" if sezioni %>
+              </option>
+            <% end %>
+          </select>
+          <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
+        </div>
+      <% end %>
+    </span>
+  </div>
+<% end %>

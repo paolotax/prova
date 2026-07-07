@@ -10,62 +10,139 @@
 <%= turbo_stream_from Current.account, "controllo_adozioni_riepilogo", (@provincia.presence || "_all") %>
 
 <div class="stats-container">
+  <%= render "controllo_adozioni/freshness" %>
+
   <% if Current.admin? && @provincia.present? %>
     <p class="margin-block-end-half">
       <%= link_to controllo_adozioni_index_path(account_id: params[:account_id]), class: "btn btn--small" do %>
         ← Tutte le province
       <% end %>
-      <span class="txt-medium margin-inline-start-half"><%= @provincia %></span>
-    </p>
-
-    <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
-          account_id: params[:account_id], provincia: @provincia %>
-  <% end %>
-
-  <% if Current.admin? %>
-    <%= render "controllo_adozioni/cambi_codice", panoramica: @panoramica, account_id: params[:account_id], provincia: @provincia %>
-  <% end %>
-
-  <%# ===== Panoramica scuole per direzione ===== %>
-  <% if @panoramica.gruppi.empty? %>
-    <p class="txt-subtle">Nessuna scuola con adozioni.</p>
-  <% elsif @filtro.present? && ControlloAdozioni::Panoramica::FILTRI.include?(@filtro) %>
-    <p class="margin-block-end-half">
-      <span class="txt-medium">Filtro: <%= @filtro.humanize %></span>
-      <%= link_to "mostra tutte", controllo_adozioni_index_path(account_id: params[:account_id], provincia: @provincia, filtro: (@provincia ? nil : "tutte")),
-            class: "btn btn--small margin-inline-start-half" %>
+      <span class="txt-medium margin-inline-start-half"><%= @provincia.to_s.titleize %></span>
     </p>
   <% end %>
 
-  <% if Current.admin? %>
-    <%= render "controllo_adozioni/promuovi_tutte", panoramica: @panoramica, account_id: params[:account_id], provincia: @provincia %>
+  <%# ===== Riepilogo (card KPI) ===== %>
+  <% if Current.admin? && @dashboard %>
+    <%= render "controllo_adozioni/riepilogo", dashboard: @dashboard, provincia: @provincia,
+          province_count: @province_count, account_id: params[:account_id] %>
   <% end %>
 
-  <% if @page.used? %>
-    <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @total_count %> <%= @total_count == 1 ? "scuola" : "scuole" %>
-    </p>
-
-    <%= with_automatic_pagination :controllo_adozioni, @page do %>
-      <% @page.records.each do |leader| %>
-        <% gruppo = @gruppi_per_leader[leader.id] %>
-        <section class="margin-block-end">
-          <% if (dir = gruppo[:direzione]) %>
-            <h3 class="txt-small txt-subtle">
-              <%= dir.denominazione %> · <%= dir.comune %> (<%= dir.provincia %>)
-            </h3>
-          <% elsif gruppo[:private] %>
-            <h3 class="txt-small txt-subtle">Scuole private</h3>
-          <% end %>
-
-          <div class="flex flex-column gap-quarter">
-            <%= render partial: "controllo_adozioni/riga",
-                  collection: gruppo[:scuole].map { |s| @panoramica.riga(s) }, as: :riga %>
-          </div>
-        </section>
+  <% if @lista_visibile %>
+    <%# ===== Vista operativa: step interattivi + tabella + lista filtrabile ===== %>
+    <div data-controller="controllo-adozioni-filter">
+      <% if Current.admin? && @passaggio %>
+        <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
+              account_id: params[:account_id], provincia: @provincia, interattivo: true %>
       <% end %>
+
+      <% if Current.admin? && @province_count.to_i >= 2 && @provincia.blank? %>
+        <%= render "controllo_adozioni/province", dashboard: @dashboard, account_id: params[:account_id] %>
+      <% end %>
+
+      <% if @panoramica.gruppi.empty? %>
+        <p class="txt-subtle">Nessuna scuola con adozioni.</p>
+      <% else %>
+        <%# ===== Chip di stato + rifinitura (provincia / grado / ricerca) ===== %>
+        <% province_opzioni = (@panoramica.gruppi.flat_map { |g| g[:scuole] }.map(&:provincia) +
+             (Current.admin? ? @panoramica.cambi_codice.map(&:provincia) : [])).compact.uniq.sort %>
+
+        <div class="ca-chips" role="group" aria-label="Filtra per stato">
+          <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="all" aria-pressed="true"
+                  data-action="click->controllo-adozioni-filter#selectChip">
+            Tutte <span class="ca-chip__n" data-count></span>
+          </button>
+          <% [
+               ["cambio",   "Cambi codice",  "oklch(var(--lch-blue-dark))"],
+               ["verifica", "Da verificare", "oklch(var(--lch-yellow-dark))"],
+               ["nuova",    "Nuove",         "oklch(var(--lch-aqua-dark))"],
+               ["promuovi", "Da promuovere", "oklch(var(--lch-green-dark))"],
+               ["anomalie", "Anomalie",      "oklch(var(--lch-red-dark))"],
+               ["disall",   "Disallineate",  "var(--color-ink-light)"],
+               ["ok",       "A posto",       "var(--color-positive)"]
+             ].each do |key, label, swatch| %>
+            <button class="ca-chip" type="button" data-controllo-adozioni-filter-target="chip" data-filter="<%= key %>"
+                    data-action="click->controllo-adozioni-filter#selectChip">
+              <span class="ca-chip__swatch" style="background: <%= swatch %>"></span>
+              <%= label %> <span class="ca-chip__n" data-count></span>
+            </button>
+          <% end %>
+        </div>
+
+        <div class="ca-refine">
+          <% if @provincia.blank? && province_opzioni.size > 1 %>
+            <select class="input input--select" aria-label="Provincia"
+                    data-controllo-adozioni-filter-target="prov"
+                    data-action="change->controllo-adozioni-filter#changeProv">
+              <option value="all">Tutte le province</option>
+              <% province_opzioni.each do |prov| %>
+                <option value="<%= prov %>"><%= prov.to_s.titleize %></option>
+              <% end %>
+            </select>
+          <% end %>
+          <select class="input input--select" aria-label="Grado"
+                  data-controllo-adozioni-filter-target="grado"
+                  data-action="change->controllo-adozioni-filter#changeGrado">
+            <option value="all">Tutti i gradi</option>
+            <option value="E">Primaria</option>
+            <option value="M">Media</option>
+            <option value="N">Superiore</option>
+            <option value="A">Infanzia</option>
+          </select>
+          <input class="input ca-refine__search" type="search" placeholder="Cerca scuola o codice…" aria-label="Cerca"
+                 data-controllo-adozioni-filter-target="search"
+                 data-action="input->controllo-adozioni-filter#changeSearch">
+        </div>
+
+        <p class="ca-scope">
+          <b data-controllo-adozioni-filter-target="scopeCount">0</b> scuole in lista ·
+          gli Avvia agiscono su tutta la zona
+        </p>
+
+        <%# ===== Lista unificata: gruppi scuole (_gruppo) + codici nuovi (_riga_mancante) ===== %>
+        <% if @paginata %>
+          <%= with_automatic_pagination :controllo_adozioni, @page do %>
+            <% @page.records.each do |leader| %>
+              <%= render "controllo_adozioni/gruppo", leader: leader,
+                    gruppi_per_leader: @gruppi_per_leader, panoramica: @panoramica %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <% @leaders.each do |leader| %>
+            <%= render "controllo_adozioni/gruppo", leader: leader,
+                  gruppi_per_leader: @gruppi_per_leader, panoramica: @panoramica %>
+          <% end %>
+        <% end %>
+
+        <% if Current.admin? && (mancanti = @panoramica.cambi_codice).any? %>
+          <section class="ca-group margin-block-end" data-controllo-adozioni-filter-target="group">
+            <div class="group-hd">
+              <h3 class="txt-small txt-subtle">Nel MIUR, non ancora tue (<%= mancanti.size %>)</h3>
+            </div>
+            <div class="flex flex-column gap-quarter">
+              <%= render partial: "controllo_adozioni/riga_mancante", collection: mancanti, as: :riga_mancante,
+                    locals: { account_id: params[:account_id], panoramica: @panoramica } %>
+            </div>
+          </section>
+        <% end %>
+
+        <div class="ca-empty" data-controllo-adozioni-filter-target="empty">
+          Nessuna scuola con questi filtri.
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <%# ===== Overview account grande: step informativi + tabella navigatore ===== %>
+    <% if Current.admin? && @passaggio %>
+      <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
+            account_id: params[:account_id], provincia: nil, interattivo: false %>
     <% end %>
-  <% elsif @filtro.present? && @panoramica.gruppi.any? %>
-    <p class="txt-subtle">Nessuna scuola per questo filtro.</p>
+
+    <% if Current.admin? && @province_count.to_i >= 2 %>
+      <%= render "controllo_adozioni/province", dashboard: @dashboard, account_id: params[:account_id] %>
+    <% end %>
+
+    <p class="txt-subtle margin-block-start">
+      Scegli una provincia dalla tabella per vederne le scuole e le operazioni.
+    </p>
   <% end %>
 </div>

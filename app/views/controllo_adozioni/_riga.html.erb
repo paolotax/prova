@@ -1,50 +1,55 @@
+<%# Riga unificata "stato-centrica": un badge di stato + una azione contestuale.
+    Guidata da ControlloAdozioniHelper#stato_riga (priorita' promuovi > anomalie > disall > fuori > ok). %>
 <% scuola = riga.scuola %>
+<% s = stato_riga(riga) %>
+<% anno_corrente = Miur.anno_corrente %>
 <%= tag.article id: dom_id(scuola, :controllo),
-      class: "flex align-center gap txt-small",
-      style: "padding: .35rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius);" do %>
-  <div class="flex align-center justify-center" style="inline-size: 1.8rem; flex: 0 0 auto;">
-    <% if riga.promuovibile? %>
-      <%= link_to new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: scuola.account_id),
-            class: "btn btn--small", data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Promuovi" } do %>
-        <%= icon_tag "academic-cap" %>
-      <% end %>
-    <% elsif riga.promossa? %>
-      <span style="color: var(--color-positive);" data-controller="tooltip" data-tooltip-content-value="Già promossa">
-        <%= icon_tag "check" %>
-      </span>
-    <% end %>
-  </div>
+      class: "ca-row",
+      data: {
+        controllo_adozioni_filter_target: "row",
+        state: s[:stato],
+        prov: scuola.provincia,
+        grado: grado_riga(scuola.codice_ministeriale, scuola.grado),
+        txt: "#{scuola.denominazione} #{scuola.codice_ministeriale}".downcase
+      } do %>
+  <div class="ca-stripe"></div>
 
-  <div class="flex-item-grow max-inline-size">
-    <%= link_to scuola_path(scuola, account_id: scuola.account_id), 
-      style: "color: inherit;", 
-      data: { turbo_frame:"_top" } do %>
-      <div class="overflow-ellipsis"><strong><%= scuola.denominazione.presence || "—" %></strong></div>
-    <% end %>
-    <div class="txt-subtle overflow-ellipsis">
-      <%= scuola.comune %> (<%= scuola.sigla_provincia %>) · <%= scuola.codice_ministeriale %>
+  <div class="ca-row__main">
+    <div class="ca-row__name">
+      <%= link_to scuola.denominazione.presence || "—",
+            scuola_path(scuola, account_id: scuola.account_id), data: { turbo_frame: "_top" } %>
     </div>
-    
-    <% if riga.anomalie? %>
-      <% riga.anomalie_tipi.split(",").each do |tipo| %>
-        <%= link_to tipo, controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id), 
-            class: "badge #{anomalia_badge_colore(tipo)}",
-            data: { turbo_frame: "_top" } %>
-      <% end %>
-    <% end %>
+    <div class="ca-row__meta">
+      <%= scuola.comune %> (<%= sigla_o_provincia(scuola) %>) ·
+      <span class="ca-row__code"><%= scuola.codice_ministeriale %></span>
+    </div>
   </div>
 
-  <% anno_corrente = Miur.anno_corrente %>
-  <% anno_precedente = anno_corrente && format("%d%02d", anno_corrente[0, 4].to_i - 1, anno_corrente[0, 4].to_i % 100) %>
-  <div class="txt-align-end" style="flex: 0 0 auto; white-space: nowrap;">
-    <span class="txt-subtle">Scagnozz <%= riga.correnti_classi %>/<%= riga.correnti_adozioni %></span>
-    <%= link_to controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_corrente, account_id: scuola.account_id),
-          style: (riga.disallineata? ? "color: var(--color-negative);" : nil),
-          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (#{anno_scolastico_label(anno_corrente)})" } do %>
-      · <%= anno_scolastico_label(anno_corrente) %> <strong><%= riga.new_classi %>/<%= riga.new_adozioni %></strong>
-    <% end %>
-    <%= link_to anno_scolastico_label(anno_precedente), controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_precedente, account_id: scuola.account_id),
-          class: "txt-x-small txt-subtle", style: "margin-inline-start: .25rem;",
-          data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Anteprima adozioni (#{anno_scolastico_label(anno_precedente)})" } %>
+  <div class="ca-row__right">
+    <span class="badge <%= s[:badge_class] %>">
+      <% if s[:stato] == "ok" %>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg>
+      <% else %>
+        <span class="badge__dot"></span>
+      <% end %>
+      <%= s[:badge_label] %>
+    </span>
+
+    <span class="ca-row__action">
+      <% case s[:azione] %>
+      <% when :promuovi %>
+        <%= link_to "Promuovi",
+              new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: scuola.account_id),
+              class: "btn btn--small btn--accent", data: { turbo_frame: :modal } %>
+      <% when :vedi %>
+        <%= link_to "Vedi",
+              controllo_adozioni_path(scuola.codice_ministeriale, account_id: scuola.account_id),
+              class: "btn btn--small", data: { turbo_frame: "_top" } %>
+      <% when :anteprima %>
+        <%= link_to "Anteprima",
+              controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_corrente, account_id: scuola.account_id),
+              class: "btn btn--small", data: { turbo_frame: "_top" } %>
+      <% end %>
+    </span>
   </div>
 <% end %>

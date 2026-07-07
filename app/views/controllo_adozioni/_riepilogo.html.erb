@@ -1,0 +1,33 @@
+<%# Card KPI sopra gli step. La prima card "province" (solo 2+ province, vista
+    account-wide) fa da accesso alla tabella per provincia (#ca-province). Le altre
+    linkano la lista filtrata. Con una provincia in drill i numeri sono di quella. %>
+<% riga = provincia && dashboard.righe.find { |r| r.provincia == provincia } %>
+<% totali = dashboard.totali %>
+<% scuole   = riga ? riga.scuole        : totali[:scuole] %>
+<% promosse = riga ? riga.promosse      : totali[:promosse] %>
+<% mancanti = riga ? riga.mancanti_miur : totali[:mancanti_miur] %>
+
+<div class="analytics-summary">
+  <% if province_count.to_i >= 2 && provincia.blank? %>
+    <div class="analytics-summary__card">
+      <a href="#ca-province" class="analytics-summary__toggle">
+        <p class="analytics-summary__value"><%= province_count %></p>
+        <p class="analytics-summary__label">province</p>
+      </a>
+    </div>
+  <% end %>
+
+  <% [
+       ["tutte",         scuole,   "scuole con adozioni", nil],
+       ["promosse",      promosse, "promosse",            "txt-positive"],
+       ["mancanti_miur", mancanti, "mancanti MIUR",       "txt-negative"]
+     ].each do |filtro, value, label, value_class| %>
+    <div class="analytics-summary__card">
+      <%= link_to controllo_adozioni_index_path(account_id: account_id, provincia: provincia, filtro: filtro),
+            class: "analytics-summary__toggle" do %>
+        <p class="analytics-summary__value <%= value_class %>"><%= value %></p>
+        <p class="analytics-summary__label"><%= label %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

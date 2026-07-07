@@ -1,0 +1,23 @@
+<%# Barra di freschezza dei dati MIUR: ultimo import adozioni (Miur::ImportRun). %>
+<% run = Miur::ImportRun.adozioni.order(:completed_at).last %>
+<% if run&.completed_at %>
+  <div class="ca-freshness">
+    <span class="ca-freshness__dot"></span>
+    Dati MIUR aggiornati al <strong><%= "#{run.completed_at.day} #{I18n.t("date.abbr_month_names")[run.completed_at.month]}" %></strong>
+    <% if run.righe_totali %>
+      · <strong><%= number_with_delimiter(run.righe_totali) %></strong> adozioni
+    <% end %>
+    <% if run.delta_righe.to_i.positive? %>
+      <span class="ca-freshness__delta">(+<%= number_with_delimiter(run.delta_righe) %> dall'ultimo)</span>
+    <% end %>
+    <% if run.regioni_stale.present? %>
+      · <span class="ca-freshness__stale">
+        <%= Array(run.regioni_stale).join(", ") %>: dati non aggiornati
+      </span>
+    <% end %>
+  </div>
+<% else %>
+  <div class="ca-freshness">
+    <span class="txt-subtle">Nessun import MIUR registrato.</span>
+  </div>
+<% end %>

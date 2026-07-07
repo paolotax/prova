@@ -37,7 +37,7 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
     assert_select ".passaggio-anno"
-    assert_select ".passaggio-anno__step", 1
+    assert_select ".ca-step", 1
     assert_match "Rifinitura manuale", @response.body
     assert_no_match "Aggiungi le scuole nuove", @response.body
   end
@@ -47,7 +47,7 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
     assert_select ".passaggio-anno"
-    assert_select ".passaggio-anno__step", 0
+    assert_select ".ca-step", 0
   end
 
   test "drill-down provincia mostra la sequenza scoped" do
@@ -60,9 +60,9 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
     assert_response :success
     assert_select ".passaggio-anno"
-    assert_select ".passaggio-anno__step", 1
+    assert_select ".ca-step", 1
     # I job del passaggio sono scoped per provincia; il ricalcolo anomalie e' globale.
-    css_select(".passaggio-anno form").reject { |f| f["action"].include?("ricalcola_anomalie") }.each do |form|
+    css_select(".ca-step form").reject { |f| f["action"].include?("ricalcola_anomalie") }.each do |form|
       assert_includes form["action"], "provincia=MI"
     end
   end
@@ -75,27 +75,41 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_select ".passaggio-anno", count: 0
   end
 
-  test "index admin senza provincia mostra la dashboard aggregata" do
+  test "admin con una sola provincia vede subito la lista, non la tabella per provincia" do
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
-    assert_match "Per provincia", @response.body
-    assert_no_match "controllo_adozioni-pagination-list", @response.body
+    # Pagina unica: card riepilogo + lista operativa (filtro client-side), niente
+    # tabella per provincia (l'account ha una sola provincia).
+    assert_select ".analytics-summary__card"
+    assert_select "[data-controller='controllo-adozioni-filter']"
+    assert_no_match "Per provincia", @response.body
   end
 
-  test "dashboard: le card linkano la lista scuole account-wide filtrata" do
+  test "le card riepilogo linkano la lista filtrata" do
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
-    assert_select ".analytics-summary__card", 3
     assert_select ".analytics-summary a[href*='filtro=tutte']"
     assert_select ".analytics-summary a[href*='filtro=promosse']"
     assert_select ".analytics-summary a[href*='filtro=mancanti_miur']"
   end
 
-  test "admin con filtro e senza provincia vede la lista scuole, non la dashboard" do
+  test "admin con 2+ province vede la tabella per provincia e la card province" do
+    scuole(:scuola_fizzy) # MI
+    Scuola.create!(account: @account, denominazione: "I.C. Bologna", codice_ministeriale: "BOIC111111",
+                   comune: "Bologna", provincia: "BO", grado: "E", stato: "attiva", adozioni_count: 1)
+    get controllo_adozioni_index_path(account_id: @account.id)
+    assert_response :success
+    assert_match "Per provincia", @response.body
+    assert_select "#ca-province"
+    # Card "province" con accesso alla tabella.
+    assert_select ".analytics-summary a[href='#ca-province']"
+  end
+
+  test "admin con filtro e senza provincia vede la lista scuole" do
     get controllo_adozioni_index_path(account_id: @account.id, filtro: "tutte")
     assert_response :success
+    assert_select "[data-controller='controllo-adozioni-filter']"
     assert_no_match "Per provincia", @response.body
-    assert_match "controllo_adozioni-pagination-list", @response.body
   end
 
   test "ricalcola_anomalie accoda il job per l'admin" do
@@ -113,11 +127,11 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "index admin con provincia mostra la panoramica paginata di quella provincia" do
+  test "index admin con provincia mostra la panoramica di quella provincia" do
     get controllo_adozioni_index_path(account_id: @account.id, provincia: "MI")
     assert_response :success
     assert_match "I.C. Leonardo da Vinci", @response.body
-    assert_match "controllo_adozioni-pagination-list", @response.body
+    assert_select "[data-controller='controllo-adozioni-filter']"
   end
 
   test "index member mostra la vista operativa, non la dashboard" do

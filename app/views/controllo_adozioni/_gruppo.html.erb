@@ -1,0 +1,18 @@
+<%# Un gruppo direzione della lista: header + righe stato-centriche (_riga).
+    Locals: leader (Scuola capogruppo), gruppi_per_leader, panoramica. %>
+<% gruppo = gruppi_per_leader[leader.id] %>
+<section class="ca-group margin-block-end" data-controllo-adozioni-filter-target="group">
+  <div class="group-hd">
+    <% if (dir = gruppo[:direzione]) %>
+      <h3 class="txt-small txt-subtle">
+        <%= dir.denominazione %> · <%= dir.comune %> (<%= dir.provincia %>)
+      </h3>
+    <% elsif gruppo[:private] %>
+      <h3 class="txt-small txt-subtle">Scuole private</h3>
+    <% end %>
+  </div>
+  <div class="flex flex-column gap-quarter">
+    <%= render partial: "controllo_adozioni/riga",
+          collection: gruppo[:scuole].map { |s| panoramica.riga(s) }, as: :riga %>
+  </div>
+</section>

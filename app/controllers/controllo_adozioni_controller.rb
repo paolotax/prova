@@ -1,34 +1,54 @@
 class ControlloAdozioniController < ApplicationController
   before_action :authenticate_user!
 
-  # Admin senza provincia: dashboard di soli aggregati (niente lista scuole).
-  # Member, o admin in drill-down su una provincia: vista operativa (Panoramica).
+  # Oltre questo numero di scuole nello scope la lista completa non si carica in
+  # landing: la tabella per provincia fa da navigatore e la lista appare sul drill
+  # di provincia. Sotto soglia carico tutte le righe, cosi' i filtri client-side
+  # (stato/provincia/grado/ricerca) agiscono sull'intero insieme, non su una pagina.
+  SOGLIA_LISTA = 1500
+
+  # Pagina unica: riepilogo (card) + passaggio anno + [2+ province] tabella per
+  # provincia + lista scuole. Gli aggregati (Dashboard) sono SQL leggeri e si
+  # calcolano sempre per l'admin; la Panoramica (pesante) solo quando la lista e'
+  # visibile. Adattivo: scope piccolo => lista intera; scope grande => solo drill.
   def index
     @filtro = params[:filtro].presence
     @provincia = params[:provincia].presence
 
-    # Admin con un filtro attivo (link dalle card) e senza provincia: lista scuole
-    # account-wide, non la dashboard.
-    if Current.admin? && @provincia.blank? && @filtro.blank?
+    if Current.admin?
       @dashboard = ControlloAdozioni::Dashboard.new(account: Current.account)
-      @passaggio = ControlloAdozioni::PassaggioAnno.new(account: Current.account)
-      return render :dashboard
+      @passaggio = ControlloAdozioni::PassaggioAnno.new(account: Current.account, provincia: @provincia)
+      @province_count = @dashboard.righe.size
     end
-
-    @passaggio = ControlloAdozioni::PassaggioAnno.new(account: Current.account, provincia: @provincia) if Current.admin?
 
     scuole = Current.scuole
     scuole = scuole.where(provincia: @provincia) if @provincia
+    @scope_count = scuole.count
+
+    # La lista compare per i member (scope = sue scuole), sui drill espliciti
+    # (provincia/filtro) o quando lo scope e' abbastanza piccolo da caricarla tutta.
+    @lista_visibile = !Current.admin? || @provincia.present? || @filtro.present? ||
+                      @scope_count <= SOGLIA_LISTA
+    return unless @lista_visibile
+
     @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: scuole,
                                                     provincia: @provincia)
 
-    # Pagina i capogruppo (come scuole#index): ogni record e' un gruppo direzione.
+    # Un record per capogruppo (gruppo direzione), ordinati come scuole#index.
     gruppi = @panoramica.gruppi_filtrati(@filtro)
-    @total_count = gruppi.sum { |g| g[:scuole].size }
     @gruppi_per_leader = gruppi.index_by { |g| (g[:direzione] || g[:scuole].first).id }
-
     leader_ids = @gruppi_per_leader.keys
-    set_page_and_extract_portion_from Current.scuole.where(id: leader_ids).in_order_of(:id, leader_ids)
+    ordered = Current.scuole.where(id: leader_ids).in_order_of(:id, leader_ids)
+
+    # Paginazione solo come rete di sicurezza sugli scope grandi (drill di una
+    # provincia molto popolosa, o filtro account-wide di un editore): sotto soglia
+    # rendo tutte le righe cosi' i filtri client-side sono completi.
+    @paginata = @scope_count > SOGLIA_LISTA
+    if @paginata
+      set_page_and_extract_portion_from ordered
+    else
+      @leaders = ordered.to_a
+    end
   end
 
   # Promuove in blocco le scuole promuovibili dell'account, opzionalmente di una sola

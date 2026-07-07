@@ -1,0 +1,57 @@
+<%# Tabella per provincia (solo account con 2+ province): riepilogo dei conteggi e
+    navigatore. Ogni provincia linka la lista in drill (?provincia=). Ancora
+    #ca-province per la card "province". %>
+<% totali = dashboard.totali %>
+<section id="ca-province" class="margin-block-end">
+  <div class="analytics-group__header">
+    <h2 class="txt-medium">Per provincia <span class="txt-subtle">(<%= dashboard.righe.size %>)</span></h2>
+  </div>
+
+  <table class="txt-small full-width">
+    <thead>
+      <tr class="txt-subtle txt-x-small txt-uppercase">
+        <th class="txt-start">Provincia</th>
+        <th class="txt-end">Scuole</th>
+        <th class="txt-end">Promosse</th>
+        <th class="txt-end">Da promuovere</th>
+        <th class="txt-end">Codici nuovi</th>
+        <th class="txt-end">Mancanti MIUR</th>
+        <th class="txt-end">Anomalie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% dashboard.righe.each do |r| %>
+        <tr>
+          <td class="txt-start">
+            <%= link_to r.provincia.to_s.titleize,
+                  controllo_adozioni_index_path(provincia: r.provincia, account_id: account_id) %>
+          </td>
+          <td class="txt-end"><%= r.scuole %></td>
+          <td class="txt-end"><%= r.promosse.positive? ? r.promosse : "–" %></td>
+          <td class="txt-end"><%= r.da_promuovere.positive? ? r.da_promuovere : "–" %></td>
+          <td class="txt-end"><%= r.codici_nuovi.positive? ? r.codici_nuovi : "–" %></td>
+          <td class="txt-end"><%= r.mancanti_miur.positive? ? r.mancanti_miur : "–" %></td>
+          <td class="txt-end"><%= r.anomalie.positive? ? r.anomalie : "–" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr class="txt-medium">
+        <td class="txt-start">Totale</td>
+        <td class="txt-end"><%= totali[:scuole] %></td>
+        <td class="txt-end"><%= totali[:promosse] %></td>
+        <td class="txt-end"><%= totali[:da_promuovere] %></td>
+        <td class="txt-end"><%= totali[:codici_nuovi] %></td>
+        <td class="txt-end"><%= totali[:mancanti_miur] %></td>
+        <td class="txt-end"><%= totali[:anomalie] %></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <% if dashboard.agenti.any? %>
+    <p class="txt-subtle txt-small margin-block-start-half">
+      <% dashboard.agenti.each_with_index do |a, i| %><%= ", " if i.positive? %><%= a.membership.user.name %>: <%= a.scuole_count %><% end %>
+      · <%= dashboard.non_assegnate_count %> non assegnate
+    </p>
+  <% end %>
+</section>
