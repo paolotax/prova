@@ -39,10 +39,13 @@ class ScuoleControllerTest < ActionDispatch::IntegrationTest
     assert_no_match other_scuola.denominazione, response.body
   end
 
-  test "should get new" do
-    get new_scuola_path(account_id: @account.id)
+  test "new creates a scuola and redirects to show in edit mode" do
+    assert_difference("Scuola.count") do
+      get new_scuola_path(account_id: @account.id)
+    end
 
-    assert_response :success
+    scuola = Scuola.find_by(denominazione: "Nuova scuola")
+    assert_redirected_to scuola_path(scuola, edit: true)
   end
 
   test "should create scuola" do
@@ -61,10 +64,10 @@ class ScuoleControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to scuola_path(scuola)
   end
 
-  test "should get edit" do
+  test "edit html redirects to show" do
     get edit_scuola_path(@scuola, account_id: @account.id)
 
-    assert_response :success
+    assert_redirected_to scuola_path(@scuola)
   end
 
   test "should update scuola" do

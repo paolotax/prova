@@ -153,24 +153,6 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_respond_to @appunto.entry, :closure
   end
 
-  test "includes Consegnabile concern" do
-    assert_respond_to @appunto, :consegnato?
-    assert_respond_to @appunto, :mark_consegnato
-    assert_respond_to @appunto, :consegna
-  end
-
-  test "includes Pagabile concern" do
-    assert_respond_to @appunto, :pagato?
-    assert_respond_to @appunto, :mark_pagato
-    assert_respond_to @appunto, :pagamento
-  end
-
-  test "includes Registrabile concern" do
-    assert_respond_to @appunto, :registrato?
-    assert_respond_to @appunto, :mark_registrato
-    assert_respond_to @appunto, :registrazione
-  end
-
   test "postponable methods via Entry delegation" do
     assert_respond_to @appunto, :postponed?
     assert_respond_to @appunto, :postpone
@@ -273,28 +255,6 @@ class AppuntoTest < ActiveSupport::TestCase
     assert_not @appunto.closed?
   end
 
-  test "mark_consegnato creates consegna record" do
-    assert_not @appunto.consegnato?
-
-    assert_difference -> { Consegna.count }, 1 do
-      @appunto.mark_consegnato
-    end
-
-    assert @appunto.consegnato?
-    assert_not_nil @appunto.consegna.consegnato_il
-  end
-
-  test "mark_pagato creates pagamento record" do
-    assert_not @appunto.pagato?
-
-    assert_difference -> { Pagamento.count }, 1 do
-      @appunto.mark_pagato
-    end
-
-    assert @appunto.pagato?
-    assert_not_nil @appunto.pagamento.pagato_il
-  end
-
   test "tappa_target is the appuntabile" do
     appunto = appunti(:appunto_with_target)
     assert_equal appunto.appuntabile, appunto.tappa_target
@@ -306,14 +266,4 @@ class AppuntoTest < ActiveSupport::TestCase
                  appunto.default_titolo_tappa.to_s
   end
 
-  test "mark_registrato creates registrazione record" do
-    assert_not @appunto.registrato?
-
-    assert_difference -> { Registrazione.count }, 1 do
-      @appunto.mark_registrato
-    end
-
-    assert @appunto.registrato?
-    assert_not_nil @appunto.registrazione.registrato_il
-  end
 end

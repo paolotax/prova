@@ -1,4 +1,4 @@
-json.extract! appunto, :id, :nome, :status, :totale_cents, :totale_copie, :telefono, :email, :numero, :created_at, :updated_at
+json.extract! appunto, :id, :nome, :status, :telefono, :email, :numero, :created_at, :updated_at
 json.appuntabile_type appunto.appuntabile_type
 json.appuntabile_id appunto.appuntabile_id
 json.appuntabile_display appunto.appuntabile&.to_s

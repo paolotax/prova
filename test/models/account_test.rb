@@ -59,7 +59,8 @@ class AccountTest < ActiveSupport::TestCase
 
   test "has many libri" do
     assert_respond_to @account, :libri
-    assert_equal 1, @account.libri.count
+    # libro_fizzy + confezione_fizzy + 3 fascicoli + matematica_facile_1
+    assert_equal 6, @account.libri.count
   end
 
   test "member? returns true for account member" do

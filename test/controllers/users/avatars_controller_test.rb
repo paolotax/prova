@@ -48,7 +48,7 @@ class Users::AvatarsControllerTest < ActionDispatch::IntegrationTest
 
   test "delete self" do
     delete user_avatar_path(@user)
-    assert_redirected_to @user
+    assert_redirected_to user_personal_info_path(@user)
   end
 
   test "unable to delete other" do

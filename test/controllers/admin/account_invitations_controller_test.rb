@@ -40,7 +40,8 @@ class Admin::AccountInvitationsControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { User.count }, 1 do
       assert_difference -> { Account.count }, 1 do
         assert_difference -> { Accounts::Membership.count }, 1 do
-          assert_enqueued_emails 1 do
+          # Il controller usa deliver_now: si conta la consegna, non l'enqueue
+          assert_emails 1 do
             post admin_account_invitations_path, params: { email: "newuser@example.com" }
           end
         end

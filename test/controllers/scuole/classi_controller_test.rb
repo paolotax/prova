@@ -22,7 +22,7 @@ class Scuole::ClassiControllerTest < ActionDispatch::IntegrationTest
     get scuola_classe_path(@scuola, @classe, account_id: @account.id)
 
     assert_response :success
-    assert_select "h1", /Classe #{@classe.nome_breve}/
+    assert_select "div.card__title", /#{@classe.nome_breve}/
   end
 
   test "show displays adozioni count" do
@@ -30,7 +30,7 @@ class Scuole::ClassiControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     # La classe prima_a_fizzy ha 3 adozioni (italiano, matematica, inglese)
-    assert_match(/3 adozioni/i, response.body)
+    assert_match(%r{<strong>3</strong>\s*adozioni}i, response.body)
   end
 
   test "show displays adozioni table" do
@@ -47,7 +47,7 @@ class Scuole::ClassiControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     # Ci sono 2 adozioni da acquistare (italiano e matematica)
-    assert_match(/2 da acquistare/i, response.body)
+    assert_match(%r{<strong>2</strong>\s*da acquistare}i, response.body)
   end
 
   test "should destroy classe" do

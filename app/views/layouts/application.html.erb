@@ -31,7 +31,8 @@
 		<footer id="footer" class="hide-on-native">
 			<%= yield :footer %>
 			
-			<% if Current.user && !@hide_footer_frames %>
+			<%# I tray usano path account-scoped: fuori dal contesto account (es. personal_info) niente footer frames %>
+			<% if Current.user && Current.account && params[:account_id].present? && !@hide_footer_frames %>
 				<div id="footer_frames" data-turbo-permanent="true">
 					<%= render "layouts/bar" %>
 					<%= render "layouts/bozze_tray" %>

@@ -35,12 +35,17 @@ class AccountScopingTest < ActionDispatch::IntegrationTest
   end
 
   test "auth routes work without account context" do
-    # Logout should work
     get new_magic_link_path
     assert_response :success
 
-    # Sent page works
+    # Senza pending authentication la sent page rimanda alla richiesta email
     get sent_magic_links_path
+    assert_redirected_to new_magic_link_path
+
+    # Dopo aver richiesto il magic link, la sent page è accessibile
+    post magic_links_path, params: { email: @alice.email }
+    assert_redirected_to sent_magic_links_path
+    follow_redirect!
     assert_response :success
   end
 

@@ -3,6 +3,12 @@ require_relative "../config/environment"
 require "rails/test_help"
 require "mocha/minitest"
 
+# Geocoding stubbato: mai chiamate HTTP reali (Mapbox) dai callback after_validation
+Geocoder.configure(lookup: :test, ip_lookup: :test)
+Geocoder::Lookup::Test.set_default_stub(
+  [{ "coordinates" => [41.9, 12.5], "address" => "Roma, IT" }]
+)
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers

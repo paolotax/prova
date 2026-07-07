@@ -23,7 +23,9 @@ class BolleVisione::DocumentiControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { Documento.count } => 1 do
       post bolla_visione_documenti_path(@bolla, account_id: @account.id), params: payload
     end
-    documento = Documento.last
+    # PK uuid: Documento.last non è "l'ultimo creato", va cercato per attributi
+    documento = Documento.order(:created_at).where(clientable: @persona).last
+    assert_not_nil documento
     assert_equal @persona, documento.clientable
     assert_equal 2, documento.documento_righe.count
     assert documento.consegnato?, "Scarico saggi deve essere marcato consegnato"
@@ -58,7 +60,8 @@ class BolleVisione::DocumentiControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { Documento.count } => 3 do
       post bolla_visione_documenti_path(@bolla, account_id: @account.id), params: payload
     end
-    docs = Documento.last(3)
+    # PK uuid: Documento.last(3) non è "gli ultimi creati", va cercato per attributi
+    docs = Documento.where(clientable_type: "Classe")
     assert_equal [classe, classe_b, classe_c].map(&:id).sort, docs.map { |d| d.clientable_id }.sort
     doc_a = docs.find { |d| d.clientable_id == classe.id }
     assert_equal 2, doc_a.documento_righe.count

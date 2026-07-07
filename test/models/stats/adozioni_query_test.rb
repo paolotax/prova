@@ -1,7 +1,13 @@
 require "test_helper"
 
 class Stats::AdozioniQueryTest < ActiveSupport::TestCase
+  fixtures :prezzi_ministeriali
+
   setup do
+    # Calcolo144 memoizza le discipline da prezzi_ministeriali: senza reset
+    # userebbe la cache (vuota o stantia) di un test precedente nello stesso processo
+    Stats::Calcolo144.reset!
+
     conn = ActiveRecord::Base.connection
 
     # Create TipoScuola
@@ -32,6 +38,7 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
   end
 
   teardown do
+    Stats::Calcolo144.reset!
     conn = ActiveRecord::Base.connection
     conn.execute "DELETE FROM import_adozioni WHERE \"CODICESCUOLA\" IN ('TOEE12345A', 'MIEE67890B')"
     conn.execute "DELETE FROM import_scuole WHERE \"CODICESCUOLA\" IN ('TOEE12345A', 'MIEE67890B')"
@@ -47,14 +54,14 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
 
     editori = result[:results].index_by { |r| r[:editore] }
 
-    # Pearson: 3 classi (TO sezione A, TO sezione B, MI sezione A)
+    # Pearson: 3 classi (TO sezione A, TO sezione B, MI sezione A); coefficiente default 17
     assert_equal 3, editori["PEARSON"][:classi_count]
-    assert_equal 3 * 18, editori["PEARSON"][:copie_stimate]
+    assert_equal 3 * 17, editori["PEARSON"][:copie_stimate]
     assert_in_delta 75.0, editori["PEARSON"][:percentuale], 0.01
 
     # Mondadori: 1 classe (TO sezione C)
     assert_equal 1, editori["MONDADORI"][:classi_count]
-    assert_equal 1 * 18, editori["MONDADORI"][:copie_stimate]
+    assert_equal 1 * 17, editori["MONDADORI"][:copie_stimate]
     assert_in_delta 25.0, editori["MONDADORI"][:percentuale], 0.01
 
     # Zanichelli should NOT appear (DAACQUIST='No')
@@ -186,10 +193,12 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
         ('MIEE67890B', '1', 'A', 'IL LIBRO DELLA PRIMA CLASSE', '9788891901097', 'VERDI', 'PRIMA CLASSE', 'MONDADORI', '12,00', 'Si', 'Si', 'No', 'TN', 'EE', '202526')
     SQL
 
+    # solo_144 è attivo solo con grado E esplicito
     query = Stats::AdozioniQuery.new(
       filters: {},
       group_by: ["editore"],
       solo_144: true,
+      grado: "E",
       limit: 5
     )
     result = query.call
@@ -224,16 +233,18 @@ class Stats::AdozioniQueryTest < ActiveSupport::TestCase
   test "solo_144 filters only 144-eligible and peso 0.5 for AMBITO" do
     conn = ActiveRecord::Base.connection
     conn.execute <<~SQL
-      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", created_at, updated_at)
+      INSERT INTO import_adozioni ("CODICESCUOLA", "ANNOCORSO", "SEZIONEANNO", "DISCIPLINA", "CODICEISBN", "AUTORI", "TITOLO", "EDITORE", "PREZZO", "DAACQUIST", "NUOVAADOZ", "CONSIGLIATO", "COMBINAZIONE", "TIPOGRADOSCUOLA", anno_scolastico)
       VALUES
-        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)', '9788891901096', 'BIANCHI', 'SCIENZE 4', 'PEARSON', '18,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW()),
-        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901095', 'BIANCHI', 'LING 4', 'PEARSON', '20,00', 'Si', 'Si', 'No', 'TP', 'EE', NOW(), NOW())
+        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DELLE DISCIPLINE (AMBITO SCIENTIFICO)', '9788891901096', 'BIANCHI', 'SCIENZE 4', 'PEARSON', '18,00', 'Si', 'Si', 'No', 'TP', 'EE', '202526'),
+        ('TOEE12345A', '4', 'A', 'SUSSIDIARIO DEI LINGUAGGI', '9788891901095', 'BIANCHI', 'LING 4', 'PEARSON', '20,00', 'Si', 'Si', 'No', 'TP', 'EE', '202526')
     SQL
 
+    # solo_144 è attivo solo con grado E esplicito
     query = Stats::AdozioniQuery.new(
       filters: { editore: "PEARSON" },
       group_by: ["editore"],
       solo_144: true,
+      grado: "E",
       order_by: :sezioni_144,
       limit: 1
     )

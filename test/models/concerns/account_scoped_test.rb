@@ -122,7 +122,7 @@ class AccountScopedTest < ActiveSupport::TestCase
     assert_equal 1, @fizzy.clienti.count
     assert_equal 1, @acme.clienti.count
 
-    assert_equal 1, @fizzy.libri.count
+    assert_equal 6, @fizzy.libri.count
     assert_equal 1, @acme.libri.count
 
     # Ensure they are different records
