@@ -3,6 +3,7 @@
 # Table name: pagamenti
 #
 #  id             :uuid             not null, primary key
+#  importo_cents  :bigint           default(0), not null
 #  pagabile_type  :string           not null
 #  pagato_il      :datetime
 #  tipo_pagamento :string
@@ -14,10 +15,9 @@
 #
 # Indexes
 #
-#  index_pagamenti_on_account_id                     (account_id)
-#  index_pagamenti_on_pagabile                       (pagabile_type,pagabile_id)
-#  index_pagamenti_on_pagabile_type_and_pagabile_id  (pagabile_type,pagabile_id) UNIQUE
-#  index_pagamenti_on_user_id                        (user_id)
+#  index_pagamenti_on_account_id  (account_id)
+#  index_pagamenti_on_pagabile    (pagabile_type,pagabile_id)
+#  index_pagamenti_on_user_id     (user_id)
 #
 # Foreign Keys
 #

@@ -972,6 +972,20 @@ ALTER SEQUENCE public.confezione_righe_id_seq OWNED BY public.confezione_righe.i
 
 
 --
+-- Name: consegna_righe; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.consegna_righe (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    consegna_id uuid NOT NULL,
+    documento_riga_id bigint NOT NULL,
+    quantita integer NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: consegne; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1082,7 +1096,8 @@ CREATE TABLE public.documenti (
     account_id uuid NOT NULL,
     clientable_id uuid,
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    documento_padre_id uuid
+    documento_padre_id uuid,
+    tipo_pagamento_previsto character varying
 );
 
 
@@ -1264,6 +1279,24 @@ CREATE SEQUENCE public.friendly_id_slugs_id_seq
 --
 
 ALTER SEQUENCE public.friendly_id_slugs_id_seq OWNED BY public.friendly_id_slugs.id;
+
+
+--
+-- Name: giacenze; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.giacenze (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    account_id uuid NOT NULL,
+    libro_id bigint NOT NULL,
+    disponibile integer DEFAULT 0 NOT NULL,
+    campionario integer DEFAULT 0 NOT NULL,
+    impegnato integer DEFAULT 0 NOT NULL,
+    venduto_copie integer DEFAULT 0 NOT NULL,
+    venduto_cents bigint DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
 
 
 --
@@ -2688,7 +2721,8 @@ CREATE TABLE public.pagamenti (
     pagato_il timestamp(6) without time zone,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    tipo_pagamento character varying
+    tipo_pagamento character varying,
+    importo_cents bigint DEFAULT 0 NOT NULL
 );
 
 
@@ -4117,6 +4151,14 @@ ALTER TABLE ONLY public.confezione_righe
 
 
 --
+-- Name: consegna_righe consegna_righe_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.consegna_righe
+    ADD CONSTRAINT consegna_righe_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: consegne consegne_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4210,6 +4252,14 @@ ALTER TABLE ONLY public.filters
 
 ALTER TABLE ONLY public.friendly_id_slugs
     ADD CONSTRAINT friendly_id_slugs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: giacenze giacenze_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.giacenze
+    ADD CONSTRAINT giacenze_pkey PRIMARY KEY (id);
 
 
 --
@@ -5524,6 +5574,20 @@ CREATE INDEX index_columns_on_account_id_and_position ON public.columns USING bt
 
 
 --
+-- Name: index_consegna_righe_on_consegna_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_consegna_righe_on_consegna_id ON public.consegna_righe USING btree (consegna_id);
+
+
+--
+-- Name: index_consegna_righe_on_documento_riga_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_consegna_righe_on_documento_riga_id ON public.consegna_righe USING btree (documento_riga_id);
+
+
+--
 -- Name: index_consegne_on_account_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5535,13 +5599,6 @@ CREATE INDEX index_consegne_on_account_id ON public.consegne USING btree (accoun
 --
 
 CREATE INDEX index_consegne_on_consegnabile ON public.consegne USING btree (consegnabile_type, consegnabile_id);
-
-
---
--- Name: index_consegne_on_consegnabile_type_and_consegnabile_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_consegne_on_consegnabile_type_and_consegnabile_id ON public.consegne USING btree (consegnabile_type, consegnabile_id);
 
 
 --
@@ -5843,6 +5900,27 @@ CREATE UNIQUE INDEX index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope
 --
 
 CREATE INDEX index_friendly_id_slugs_on_sluggable_type_and_sluggable_id ON public.friendly_id_slugs USING btree (sluggable_type, sluggable_id);
+
+
+--
+-- Name: index_giacenze_on_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_giacenze_on_account_id ON public.giacenze USING btree (account_id);
+
+
+--
+-- Name: index_giacenze_on_account_id_and_libro_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_giacenze_on_account_id_and_libro_id ON public.giacenze USING btree (account_id, libro_id);
+
+
+--
+-- Name: index_giacenze_on_libro_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_giacenze_on_libro_id ON public.giacenze USING btree (libro_id);
 
 
 --
@@ -6382,13 +6460,6 @@ CREATE INDEX index_pagamenti_on_account_id ON public.pagamenti USING btree (acco
 --
 
 CREATE INDEX index_pagamenti_on_pagabile ON public.pagamenti USING btree (pagabile_type, pagabile_id);
-
-
---
--- Name: index_pagamenti_on_pagabile_type_and_pagabile_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_pagamenti_on_pagabile_type_and_pagabile_id ON public.pagamenti USING btree (pagabile_type, pagabile_id);
 
 
 --
@@ -7960,6 +8031,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260707205004'),
 ('20260706130000'),
 ('20260706120000'),
 ('20260706110000'),

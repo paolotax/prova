@@ -13,10 +13,9 @@
 #
 # Indexes
 #
-#  index_consegne_on_account_id                             (account_id)
-#  index_consegne_on_consegnabile                           (consegnabile_type,consegnabile_id)
-#  index_consegne_on_consegnabile_type_and_consegnabile_id  (consegnabile_type,consegnabile_id) UNIQUE
-#  index_consegne_on_user_id                                (user_id)
+#  index_consegne_on_account_id    (account_id)
+#  index_consegne_on_consegnabile  (consegnabile_type,consegnabile_id)
+#  index_consegne_on_user_id       (user_id)
 #
 # Foreign Keys
 #

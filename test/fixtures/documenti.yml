@@ -3,29 +3,30 @@
 #
 # Table name: documenti
 #
-#  id                     :uuid             not null, primary key
-#  clientable_type        :string
-#  consegnato_il          :date
-#  data_documento         :date
-#  iva_cents              :bigint
-#  note                   :text
-#  numero_documento       :integer
-#  pagato_il              :datetime
-#  referente              :text
-#  spese_cents            :bigint
-#  status                 :integer
-#  tipo_documento         :integer
-#  tipo_pagamento         :integer
-#  totale_cents           :bigint
-#  totale_copie           :integer
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  account_id             :uuid             not null
-#  causale_id             :bigint
-#  clientable_id          :uuid
-#  derivato_da_causale_id :integer
-#  documento_padre_id     :uuid
-#  user_id                :bigint           not null
+#  id                      :uuid             not null, primary key
+#  clientable_type         :string
+#  consegnato_il           :date
+#  data_documento          :date
+#  iva_cents               :bigint
+#  note                    :text
+#  numero_documento        :integer
+#  pagato_il               :datetime
+#  referente               :text
+#  spese_cents             :bigint
+#  status                  :integer
+#  tipo_documento          :integer
+#  tipo_pagamento          :integer
+#  tipo_pagamento_previsto :string
+#  totale_cents            :bigint
+#  totale_copie            :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  account_id              :uuid             not null
+#  causale_id              :bigint
+#  clientable_id           :uuid
+#  derivato_da_causale_id  :integer
+#  documento_padre_id      :uuid
+#  user_id                 :bigint           not null
 #
 # Indexes
 #
