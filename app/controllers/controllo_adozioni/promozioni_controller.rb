@@ -55,7 +55,7 @@ class ControlloAdozioni::PromozioniController < ApplicationController
   end
 
   def anno_target
-    Miur.anno_corrente.presence || Miur::Adozione.maximum(:anno_scolastico).presence || "202627"
+    (AnnoScolastico.corrente&.to_s).presence || Miur::Adozione.maximum(:anno_scolastico).presence || "202627"
   end
 
   def precedente(anno) # "202627" -> "202526"
