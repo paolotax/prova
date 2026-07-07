@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: giacenze
+#
+#  id            :uuid             not null, primary key
+#  campionario   :integer          default(0), not null
+#  disponibile   :integer          default(0), not null
+#  impegnato     :integer          default(0), not null
+#  venduto_cents :bigint           default(0), not null
+#  venduto_copie :integer          default(0), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  account_id    :uuid             not null
+#  libro_id      :bigint           not null
+#
+# Indexes
+#
+#  index_giacenze_on_account_id               (account_id)
+#  index_giacenze_on_account_id_and_libro_id  (account_id,libro_id) UNIQUE
+#  index_giacenze_on_libro_id                 (libro_id)
+#
 require "test_helper"
 
 class GiacenzaTest < ActiveSupport::TestCase

@@ -1078,9 +1078,6 @@ CREATE TABLE public.documenti (
     user_id bigint NOT NULL,
     data_documento date,
     causale_id bigint,
-    tipo_pagamento integer,
-    consegnato_il date,
-    status integer,
     iva_cents bigint,
     totale_cents bigint,
     spese_cents bigint,
@@ -1091,7 +1088,6 @@ CREATE TABLE public.documenti (
     tipo_documento integer,
     note text,
     referente text,
-    pagato_il timestamp(6) without time zone,
     derivato_da_causale_id integer,
     account_id uuid NOT NULL,
     clientable_id uuid,
@@ -3346,28 +3342,6 @@ CREATE MATERIALIZED VIEW public.view_classi AS
   GROUP BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", miur_adozioni.annocorso, miur_adozioni.sezioneanno, miur_adozioni.combinazione, import_scuole."ANNOSCOLASTICO"
   ORDER BY import_scuole."AREAGEOGRAFICA", import_scuole."REGIONE", import_scuole."PROVINCIA", import_scuole."CODICESCUOLA", miur_adozioni.annocorso, miur_adozioni.sezioneanno, miur_adozioni.combinazione
   WITH NO DATA;
-
-
---
--- Name: view_giacenze; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.view_giacenze AS
- SELECT users.id AS user_id,
-    libri.id AS libro_id,
-    libri.titolo,
-    libri.codice_isbn,
-    (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (documenti.status = 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (documenti.status = 0))), (0)::bigint)) AS ordini,
-    (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento <> 2) AND (documenti.status <> 0))), (0)::bigint)) AS vendite,
-    (COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 0) AND (causali.tipo_movimento = 2))), (0)::bigint) - COALESCE(sum(righe.quantita) FILTER (WHERE ((causali.movimento = 1) AND (causali.tipo_movimento = 2))), (0)::bigint)) AS carichi
-   FROM (((((public.righe
-     JOIN public.libri ON ((righe.libro_id = libri.id)))
-     JOIN public.documento_righe ON ((righe.id = documento_righe.riga_id)))
-     JOIN public.documenti ON ((documento_righe.documento_id = documenti.id)))
-     JOIN public.causali ON ((documenti.causale_id = causali.id)))
-     JOIN public.users ON ((users.id = documenti.user_id)))
-  GROUP BY users.id, libri.id, libri.titolo, libri.codice_isbn
-  ORDER BY libri.titolo;
 
 
 --
@@ -8031,6 +8005,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260707212659'),
 ('20260707205004'),
 ('20260706130000'),
 ('20260706120000'),

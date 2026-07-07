@@ -4,17 +4,13 @@
 #
 #  id                      :uuid             not null, primary key
 #  clientable_type         :string
-#  consegnato_il           :date
 #  data_documento          :date
 #  iva_cents               :bigint
 #  note                    :text
 #  numero_documento        :integer
-#  pagato_il               :datetime
 #  referente               :text
 #  spese_cents             :bigint
-#  status                  :integer
 #  tipo_documento          :integer
-#  tipo_pagamento          :integer
 #  tipo_pagamento_previsto :string
 #  totale_cents            :bigint
 #  totale_copie            :integer
