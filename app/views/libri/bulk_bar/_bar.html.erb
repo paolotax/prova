@@ -127,7 +127,7 @@
           data: { bulk_actions_target: "form", action: "turbo:submit-end->bulk-actions#hideAfterSubmit" } do |f| %>
       <div class="bulk-bar__form-row">
         <%= f.collection_select :documento_id,
-            current_user.documenti.where(status: "bozza").order(data_documento: :desc).limit(10),
+            current_user.documenti.attivi.order(data_documento: :desc).limit(10),
             :id,
             ->(d) { "##{d.numero_documento} - #{d.clientable&.denominazione || 'Senza cliente'}" },
             { prompt: "Seleziona documento..." },

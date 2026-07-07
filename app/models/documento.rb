@@ -76,8 +76,8 @@ class Documento < ApplicationRecord
   # after_create :close_if_has_padre
 
   # tipo_pagamento ora è sul modello Pagamento (concern Pagabile)
-  # status, consegnato_il, pagato_il: colonne legacy mantenute nel DB
-  # La gestione stati è nei concern Consegnabile/Pagabile
+  # status, consegnato_il, pagato_il, tipo_pagamento: colonne legacy rimosse (drop_legacy_magazzino)
+  # La gestione stati è nei concern Consegnabile/Pagabile e negli scope attivi/completati
 
   delegate :tipo_movimento, :movimento, to: :causale, allow_nil: true
 

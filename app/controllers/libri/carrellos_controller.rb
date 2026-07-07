@@ -6,8 +6,7 @@ class Libri::CarrellosController < ApplicationController
     @libri = current_account.libri.where(id: params[:libro_ids])
 
     @documento = current_user.documenti.build(
-      data_documento: Date.today,
-      status: "bozza"
+      data_documento: Date.today
     )
 
     if @documento.save

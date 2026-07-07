@@ -241,7 +241,6 @@ Rails.application.routes.draw do
       scope module: :documenti do
         resources :righe, only: [:create]
         resource :export, only: [:show]
-        resource :status, only: %i[edit update]
         resource :consegna, only: %i[create update destroy], controller: 'consegna'
         resource :pagamento, only: %i[create update destroy], controller: 'pagamento'
         resource :derivazione, only: %i[create destroy], controller: 'derivazione'
@@ -254,7 +253,6 @@ Rails.application.routes.draw do
       member do
         # Legacy routes for compatibility
         get :esporta_xml, to: 'documenti/exports#show'
-        get :edit_status, to: 'documenti/statuses#edit'
         patch :update_righe, to: 'documenti/righe#create'
       end
     end

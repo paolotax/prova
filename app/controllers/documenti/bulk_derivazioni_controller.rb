@@ -45,8 +45,7 @@ module Documenti
         user: current_user,
         account: current_account,
         numero_documento: numero,
-        data_documento: Date.today,
-        status: @causale.stato_iniziale || "bozza"
+        data_documento: Date.today
       )
 
       # Condividi le righe da tutti i documenti origine (stesse righe, nuovo DocumentoRiga)
