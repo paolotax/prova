@@ -4,7 +4,7 @@
 
   <% if @provincia.present? %>
     <div class="header__actions header__actions--start">
-      <%= back_link_to "...", controllo_adozioni_index_path(account_id: params[:account_id]) %>
+      <%= back_link_to "Province", controllo_adozioni_index_path(account_id: params[:account_id]) %>
     </div>
   <% end %>
 
@@ -20,7 +20,7 @@
   <%= render "controllo_adozioni/freshness" %>
 
   <% if Current.admin? && @provincia.present? %>
-      <span class="divider divider-fade txt-medium margin-inline-start-half"><%= @provincia.to_s.titleize %></span>
+      <h2 class="divider divider--fade margin-block"><%= @provincia.to_s.titleize %></h2>
   <% end %>
 
   <%# ===== Riepilogo (card KPI) ===== %>
