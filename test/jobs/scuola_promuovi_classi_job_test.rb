@@ -1,7 +1,22 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class ScuolaPromuoviClassiJobTest < ActiveJob::TestCase
+  include Turbo::Broadcastable::TestHelper
+
   fixtures :accounts, :scuole, :classi, :adozioni, "miur/adozioni", :persone, :persona_classi, "miur/scuole"
+
+  test "rinfresca gli aggregati del controllo adozioni dopo la promozione" do
+    scuola = scuole(:primaria_attiva)
+    account = scuola.account
+    # Gli aggregati (step, card riepilogo, tabella province) sono server-rendered:
+    # si aggiornano solo con un morph-refresh sul canale a cui la pagina si iscrive.
+    streams = capture_turbo_stream_broadcasts([account, "controllo_adozioni_riepilogo", "_all"]) do
+      ScuolaPromuoviClassiJob.perform_now(scuola, da: "202526", a: "202627")
+    end
+    assert streams.any? { |s| s["action"] == "refresh" },
+      "attesa una turbo-stream refresh sul canale riepilogo _all per rinfrescare gli aggregati"
+  end
 
   test "promuove la scuola all'anno target" do
     scuola = scuole(:primaria_attiva)

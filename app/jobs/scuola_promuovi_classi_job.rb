@@ -14,9 +14,11 @@ class ScuolaPromuoviClassiJob < ApplicationJob
   # promozione (conteggi live: i counter cache sono aggiornati async). Il target
   # dom_id(scuola, :controllo) è la riga stato-centrica di _riga.
   #
-  # NB: gli aggregati (card riepilogo, step, tabella province) NON si aggiornano
-  # per-scuola: nel fan-out di massa sarebbe O(scuole) ricostruzioni pesanti. Si
-  # rinfrescano al reload della pagina (scelta coerente con il merge dashboard/index).
+  # Poi rinfresca gli aggregati (step, card riepilogo, tabella province): sono
+  # server-rendered e si aggiornano solo con un morph-refresh sul canale a cui la
+  # pagina si iscrive. Nel fan-out di massa arrivano N refresh, ma sono messaggi
+  # minuscoli (nessuna Panoramica ricostruita qui) e Turbo lato client li coalizza
+  # in pochi reload — a differenza del vecchio broadcast_riepiloghi, O(scuole) pesante.
   def broadcast_riga_controllo(scuola)
     account = scuola.account
 
@@ -27,5 +29,12 @@ class ScuolaPromuoviClassiJob < ApplicationJob
       partial: "controllo_adozioni/riga",
       locals: { riga: scoped.riga(scuola.reload, live: true) }
     )
+
+    # Scoped per vista: il drill su una provincia riceve solo la sua, la vista "tutte"
+    # (membri / admin senza filtro) riceve "_all". La provincia scuola combacia col
+    # param di drill (scuole.where(provincia:) nel fan-out) — vedi _province#link.
+    [scuola.provincia.presence, "_all"].compact.uniq.each do |scope|
+      Turbo::StreamsChannel.broadcast_refresh_to(account, "controllo_adozioni_riepilogo", scope)
+    end
   end
 end
