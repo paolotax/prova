@@ -2,7 +2,6 @@
     Guidata da ControlloAdozioniHelper#stato_riga (priorita' promuovi > anomalie > disall > fuori > ok). %>
 <% scuola = riga.scuola %>
 <% s = stato_riga(riga) %>
-<% anno_corrente = Miur.anno_corrente %>
 <%= tag.article id: dom_id(scuola, :controllo),
       class: "ca-row",
       data: {
@@ -10,10 +9,8 @@
         state: s[:stato],
         prov: scuola.provincia,
         grado: grado_riga(scuola.codice_ministeriale, scuola.grado),
-        txt: "#{scuola.denominazione} #{scuola.codice_ministeriale}".downcase
+        txt: "#{scuola.denominazione} #{scuola.codice_ministeriale} #{scuola.comune}".downcase
       } do %>
-  <div class="ca-stripe"></div>
-
   <div class="ca-row__main">
     <div class="ca-row__name">
       <%= link_to scuola.denominazione.presence || "—",
@@ -36,15 +33,10 @@
     </span>
 
     <span class="ca-row__action">
-      <% case s[:azione] %>
-      <% when :promuovi %>
+      <% if s[:azione] == :promuovi %>
         <%= link_to "Promuovi",
               new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale, account_id: scuola.account_id),
               class: "btn btn--small btn--accent", data: { turbo_frame: :modal } %>
-      <% when :anteprima %>
-        <%= link_to "Anteprima",
-              controllo_adozioni_anteprima_path(scuola.codice_ministeriale, anno: anno_corrente, account_id: scuola.account_id),
-              class: "btn btn--small", data: { turbo_frame: "_top" } %>
       <% end %>
     </span>
 

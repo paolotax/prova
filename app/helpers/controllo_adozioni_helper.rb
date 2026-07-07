@@ -23,7 +23,7 @@ module ControlloAdozioniHelper
       n = riga.anomalie_count.to_i
       { stato: "anomalie", badge_class: "badge--mancante", badge_label: "#{n} #{n == 1 ? 'anomalia' : 'anomalie'}", azione: :vedi }
     elsif riga.disallineata?
-      { stato: "disall",   badge_class: "badge--grey",     badge_label: "Disallineata",   azione: :anteprima }
+      { stato: "disall",   badge_class: "badge--grey",     badge_label: "Mancante",       azione: :none }
     elsif riga.mancante_miur?
       { stato: "fuori",    badge_class: "badge--grey",     badge_label: "Non nel MIUR",   azione: :none }
     else

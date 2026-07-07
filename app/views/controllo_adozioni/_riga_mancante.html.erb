@@ -10,10 +10,8 @@
         state: s[:stato],
         prov: m.provincia,
         grado: grado_riga(m.codice),
-        txt: "#{m.denominazione} #{m.codice} #{p&.codice_ministeriale}".downcase
+        txt: "#{m.denominazione} #{m.codice} #{p&.codice_ministeriale} #{m.comune}".downcase
       } do %>
-  <div class="ca-stripe"></div>
-
   <div class="ca-row__main">
     <div class="ca-row__name"><%= m.denominazione.presence || "—" %></div>
     <div class="ca-row__meta">
@@ -40,20 +38,6 @@
         <%= link_to "Applica",
               new_controllo_adozioni_promozione_path(codicescuola: p.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id),
               class: "btn btn--small btn--accent", data: { turbo_frame: :modal } %>
-      <% when :scegli %>
-        <div class="flex align-center gap-half" data-controller="frame-src">
-          <select class="input input--select txt-small" data-frame-src-target="select" aria-label="Scegli scuola predecessore">
-            <option value="">Scegli…</option>
-            <% m.candidati.each do |cand| %>
-              <% n_classi, sezioni = panoramica.classi_sezioni(cand) %>
-              <option value="<%= new_controllo_adozioni_promozione_path(codicescuola: cand.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id) %>">
-                <%= cand.denominazione %> — <%= cand.comune %> (<%= cand.codice_ministeriale %>)
-                · <%= n_classi %> <%= n_classi == 1 ? "classe" : "classi" %><%= " · sez. #{sezioni}" if sezioni %>
-              </option>
-            <% end %>
-          </select>
-          <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
-        </div>
       <% when :aggiungi %>
         <%= button_to "Aggiungi",
               controllo_adozioni_scuole_nuove_path(account_id: account_id, codice: m.codice, provincia: m.provincia),
@@ -68,4 +52,22 @@
       <span class="for-screen-reader">Vedi la scheda</span>
     <% end %>
   </div>
+
+  <% if s[:azione] == :scegli %>
+    <%# Picker dei candidati su riga propria a tutta larghezza: come select inline
+        nella riga coprirebbe il nome scuola. %>
+    <div class="ca-row__choose" data-controller="frame-src">
+      <select class="input input--select txt-small" data-frame-src-target="select" aria-label="Scegli scuola predecessore">
+        <option value="">Scegli…</option>
+        <% m.candidati.each do |cand| %>
+          <% n_classi, sezioni = panoramica.classi_sezioni(cand) %>
+          <option value="<%= new_controllo_adozioni_promozione_path(codicescuola: cand.codice_ministeriale, codice_nuovo: m.codice, account_id: account_id) %>">
+            <%= cand.denominazione %> — <%= cand.comune %> (<%= cand.codice_ministeriale %>)
+            · <%= n_classi %> <%= n_classi == 1 ? "classe" : "classi" %><%= " · sez. #{sezioni}" if sezioni %>
+          </option>
+        <% end %>
+      </select>
+      <button type="button" class="btn btn--small" data-action="frame-src#open">Aggiorna</button>
+    </div>
+  <% end %>
 <% end %>

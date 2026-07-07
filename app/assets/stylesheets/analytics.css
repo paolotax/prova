@@ -602,9 +602,10 @@
     border-radius: var(--radius);
     display: grid;
     gap: var(--inline-space);
-    grid-template-columns: 3px 1fr auto;
+    grid-template-columns: 1fr auto;
     overflow: hidden;
-    padding-inline-end: var(--inline-space);
+    padding-inline: var(--inline-space);
+    position: relative;
   }
 
   .ca-row[hidden] {
@@ -615,20 +616,25 @@
     background: var(--color-ink-lightest);
   }
 
-  .ca-stripe {
-    align-self: stretch;
+  /* Barra verticale di stato: pseudo-elemento a tutta altezza (copre anche la riga
+     del picker candidati). Come colonna della grid coprirebbe solo la prima riga. */
+  .ca-row::before {
     background: var(--color-ink-light);
+    content: "";
     inline-size: 3px;
+    inset-block: 0;
+    inset-inline-start: 0;
+    position: absolute;
   }
 
-  .ca-row[data-state="cambio"]   .ca-stripe { background: oklch(var(--lch-blue-dark)); }
-  .ca-row[data-state="verifica"] .ca-stripe { background: oklch(var(--lch-yellow-dark)); }
-  .ca-row[data-state="nuova"]    .ca-stripe { background: oklch(var(--lch-aqua-dark)); }
-  .ca-row[data-state="promuovi"] .ca-stripe { background: oklch(var(--lch-green-dark)); }
-  .ca-row[data-state="anomalie"] .ca-stripe { background: oklch(var(--lch-red-dark)); }
-  .ca-row[data-state="disall"]   .ca-stripe { background: var(--color-ink-light); }
-  .ca-row[data-state="fuori"]    .ca-stripe { background: var(--color-ink-light); }
-  .ca-row[data-state="ok"]       .ca-stripe { background: var(--color-positive); }
+  .ca-row[data-state="cambio"]::before   { background: oklch(var(--lch-blue-dark)); }
+  .ca-row[data-state="verifica"]::before { background: oklch(var(--lch-yellow-dark)); }
+  .ca-row[data-state="nuova"]::before    { background: oklch(var(--lch-aqua-dark)); }
+  .ca-row[data-state="promuovi"]::before { background: oklch(var(--lch-green-dark)); }
+  .ca-row[data-state="anomalie"]::before { background: oklch(var(--lch-red-dark)); }
+  .ca-row[data-state="disall"]::before   { background: var(--color-ink-light); }
+  .ca-row[data-state="fuori"]::before    { background: var(--color-ink-light); }
+  .ca-row[data-state="ok"]::before       { background: var(--color-positive); }
 
   .ca-row__main {
     min-inline-size: 0;
@@ -684,6 +690,21 @@
     margin: 0;
   }
 
+  /* Picker dei candidati (suggerimenti): riga propria sotto il nome, a tutta
+     larghezza. Come select inline nella riga coprirebbe il nome scuola. */
+  .ca-row__choose {
+    align-items: center;
+    display: flex;
+    gap: var(--inline-space-half);
+    grid-column: 1 / -1;
+    padding-block-end: var(--block-space-half);
+  }
+
+  .ca-row__choose select {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
   .ca-empty {
     background: var(--color-canvas);
     border: 1px dashed var(--color-ink-light);
@@ -697,11 +718,11 @@
 
   @media (max-width: 560px) {
     .ca-row {
-      grid-template-columns: 3px 1fr;
+      grid-template-columns: 1fr;
     }
 
     .ca-row__right {
-      grid-column: 2;
+      grid-column: 1;
       padding-block-end: var(--block-space-half);
     }
   }
