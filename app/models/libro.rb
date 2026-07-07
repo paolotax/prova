@@ -93,6 +93,12 @@ class Libro < ApplicationRecord
   has_many :documenti, through: :righe
   has_many :documento_righe, through: :righe
 
+  # Crea-o-ricalcola la giacenza per questo libro (pattern saldo!)
+  def ricalcola_giacenza!
+    return if Giacenza.ricalcolo_sospeso
+    Giacenza.find_or_create_by!(account_id: account_id, libro_id: id).ricalcola!
+  end
+
   validates :titolo, presence: true
   #validates :editore, presence: true
   
