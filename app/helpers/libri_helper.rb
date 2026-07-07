@@ -28,7 +28,7 @@ module LibriHelper
 
   def libro_badge_class(libro)
     return "badge--positive" if libro.adozioni_count.positive?
-    return "badge--warning" if libro.giacenza&.ordini.to_i.positive?
+    return "badge--warning" if libro.giacenza&.impegnato.to_i.positive?
     ""
   end
 

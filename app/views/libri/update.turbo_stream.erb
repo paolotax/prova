@@ -1,5 +1,5 @@
 <%= turbo_stream.replace dom_id(@libro, :container), method: :morph do %>
-  <%= render "libri/container/container", libro: @libro, giacenza: @libro.giacenza %>
+  <%= render "libri/container/container", libro: @libro %>
 <% end %>
 
 <%= turbo_stream.update "libro-header-actions" do %>

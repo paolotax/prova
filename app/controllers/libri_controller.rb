@@ -31,11 +31,11 @@ class LibriController < ApplicationController
 
     # Combobox search con parametro q
     if params[:q].present?
-      libri = Current.account.libri.search_all_word(params[:q])
+      libri = Current.account.libri.search_all_word(params[:q]).includes(:giacenza)
       set_page_and_extract_portion_from libri
     else
       @total_count = @filter.libri.count
-      set_page_and_extract_portion_from @filter.libri
+      set_page_and_extract_portion_from @filter.libri.includes(:giacenza)
     end
 
     respond_to do |format|
@@ -46,7 +46,6 @@ class LibriController < ApplicationController
   end
 
   def show
-    @giacenza  = @libro.giacenza
     @movimenti = Libro::Movimenti.new(@libro)
     @suggeriti_fascicoli = current_account.libri.potenziali_fascicoli_di(@libro).order(:titolo).limit(20)
 

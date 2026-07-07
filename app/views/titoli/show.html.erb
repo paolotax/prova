@@ -143,16 +143,16 @@
       </div>
       <div class="flex gap flex-wrap">
         <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
-          <span class="txt-x-large font-weight-black txt-accent"><%= @libro.giacenza.carichi.to_i %></span>
-          <span class="txt-xx-small txt-subtle">Carichi</span>
+          <span class="txt-x-large font-weight-black txt-accent"><%= @libro.giacenza.disponibile %></span>
+          <span class="txt-xx-small txt-subtle">Disponibile</span>
         </div>
         <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
-          <span class="txt-x-large font-weight-black txt-negative"><%= @libro.giacenza.ordini.to_i %></span>
-          <span class="txt-xx-small txt-subtle">Ordini</span>
+          <span class="txt-x-large font-weight-black txt-negative"><%= @libro.giacenza.impegnato %></span>
+          <span class="txt-xx-small txt-subtle">Impegnato</span>
         </div>
         <div class="flex flex-column align-center pad fill-shade border-radius" style="min-width: 80px;">
-          <span class="txt-x-large font-weight-black txt-link"><%= @libro.giacenza.vendite.to_i %></span>
-          <span class="txt-xx-small txt-subtle">Vendite</span>
+          <span class="txt-x-large font-weight-black txt-link"><%= @libro.giacenza.venduto_copie %></span>
+          <span class="txt-xx-small txt-subtle">Venduto</span>
         </div>
       </div>
     </article>

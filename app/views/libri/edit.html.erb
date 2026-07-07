@@ -15,7 +15,6 @@
 <%= tag.meta name: "back-refresh-url", content: libro_path(@libro, card: true) %>
 
 <%
-  @giacenza = @libro.giacenza
   @movimenti = Libro::Movimenti.new(@libro)
 %>
 

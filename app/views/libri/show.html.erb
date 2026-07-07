@@ -19,7 +19,7 @@
 <%= tag.meta name: "back-refresh-url", content: libro_path(@libro, card: true) %>
 
 <div class="full-width card-grid pad group show-navigator">
-  <%= render "libri/container/container", libro: @libro, giacenza: @giacenza, suggeriti: @suggeriti_fascicoli %>
+  <%= render "libri/container/container", libro: @libro, suggeriti: @suggeriti_fascicoli %>
 </div>
 
 <div class="scuola-show" style="--card-color: <%= libro_sconto_color(@libro) %>;">

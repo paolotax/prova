@@ -77,7 +77,7 @@ class Libro < ApplicationRecord
   belongs_to :editore, optional: true
   belongs_to :categoria
   
-  has_one :giacenza, class_name: "Views::Giacenza", primary_key: "id", foreign_key: "libro_id"
+  has_one :giacenza, dependent: :destroy
   
   has_many :confezione_righe, foreign_key: :confezione_id, class_name: "ConfezioneRiga",
            dependent: :destroy, inverse_of: :confezione
