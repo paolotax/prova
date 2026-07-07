@@ -25,7 +25,8 @@ builder:
   arch:
     - amd64
 
-deploy_timeout: 120
+# 600: il boot fa db:prepare e le migrazioni MIUR+magazzino richiedono ~150s su dati prod
+deploy_timeout: 600
 
 proxy:
   ssl: true
