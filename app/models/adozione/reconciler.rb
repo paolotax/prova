@@ -197,10 +197,12 @@ class Adozione::Reconciler
     exec_sql(sql)
   end
   # DELETE raw: bypassa dependent: :destroy — per questo le orfane con dati
-  # utente (consegne_saggio, numero_copie, note) NON si toccano. Il match
-  # sorgente passa dalla classe (sezione/combinazione comprese), non dal solo
-  # codicescuola+annocorso: un ISBN rimosso dalla 1B ma presente in 1A deve
-  # sparire dalla 1B.
+  # utente (consegne_saggio, numero_copie, note) o dell'editore (mia) NON si
+  # toccano. mia è derivato dai mandati (Ricalcolo): se il mandato regge, la
+  # riga resta protetta a ogni run; un mia spurio decade col ricalcolo e la
+  # riga cade al run successivo. Il match sorgente passa dalla classe
+  # (sezione/combinazione comprese), non dal solo codicescuola+annocorso: un
+  # ISBN rimosso dalla 1B ma presente in 1A deve sparire dalla 1B.
   def cancella_adozioni_orfane
     orfana = <<~SQL
       a.classe_id = cl.id AND cl.scuola_id = sc.id
@@ -219,7 +221,8 @@ class Adozione::Reconciler
     protetta = <<~SQL
       (EXISTS (SELECT 1 FROM consegne_saggio cs WHERE cs.adozione_id = a.id)
         OR COALESCE(a.numero_copie, 0) <> 0
-        OR a.note IS NOT NULL)
+        OR a.note IS NOT NULL
+        OR a.mia)
     SQL
 
     protette = exec_sql(<<~SQL).first["cnt"]

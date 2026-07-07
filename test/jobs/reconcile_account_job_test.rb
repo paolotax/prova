@@ -1,7 +1,9 @@
 require "test_helper"
 
 class ReconcileAccountJobTest < ActiveJob::TestCase
-  fixtures :accounts
+  # miur/scuole fissa Miur.anno_corrente: senza dichiararla il contenuto della
+  # tabella dipende dalla classe di test precedente nel worker (flake, cfr 31d69f09).
+  fixtures :accounts, "miur/scuole"
 
   setup do
     @account = accounts(:fizzy)

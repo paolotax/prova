@@ -133,6 +133,23 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     assert Adozione.exists?(id: con_copie.id)
   end
 
+  test "call NON rimuove orfane mia (adozione dell'editore)" do
+    seed_miur([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", prezzo: "10,00" }
+    ])
+    reconciler.call
+    classe = @scuola.classi.find_by(anno_corso: "1", sezione: "A")
+    # NB: ricalcola (post-transazione) rideriva mia dai mandati: la protezione regge
+    # nel run in cui mia e' true; un mia spurio (senza mandato) decade col ricalcolo
+    # e la riga viene cancellata al run successivo — comportamento voluto.
+    mia = @account.adozioni.create!(classe: classe, codice_isbn: "666",
+      anno_scolastico: "202627", codicescuola: "XXEE00001A", anno_corso: "1", mia: true)
+
+    reconciler.call
+    assert Adozione.exists?(id: mia.id)
+  end
+
   test "call end-to-end aggiorna i counter della scuola" do
     seed_miur([
       { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
