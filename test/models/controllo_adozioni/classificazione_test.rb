@@ -37,7 +37,13 @@ module ControlloAdozioni
       ControlloAnomalia.create!(codicescuola: "XXEE0000R1", tipo: "doppione")
     end
 
-    test "i predicati SQL producono gli stessi conteggi di Dashboard" do
+    # CONSISTENZA TRA CONSUMATORI SQL (non equivalenza vecchio/nuovo): confronta
+    # due consumatori della STESSA sorgente di predicati (Classificazione) — la
+    # forma aggregata GROUP BY…FILTER usata da Dashboard#totali e la forma
+    # WHERE…COUNT di Classificazione#conta sullo stesso scope. Cattura le rotture
+    # di alias/interpolazione fra le due forme (es. `sc` vs `scuole`), non una
+    # regressione della logica rispetto a una vecchia implementazione.
+    test "Dashboard aggregato e conta su scope danno gli stessi conteggi" do
       cl = Classificazione.new(anno: @anno)
       dash = Dashboard.new(account: @account).totali
 
@@ -82,6 +88,30 @@ module ControlloAdozioni
         assert_equal norm_sql(input), Classificazione.denom_norm(input),
           "divergenza su #{input.inspect}"
       end
+    end
+
+    # EQUIVALENZA Panoramica (Ruby, per-scuola) ↔ Dashboard (SQL, aggregato).
+    # Panoramica reimplementa in Ruby le regole promuovibile/promossa che Dashboard
+    # calcola via Classificazione (SQL): questo test le tiene allineate e blocca la
+    # deriva futura della terza implementazione, che finora non era cross-testata.
+    test "Panoramica per-scuola concorda con Dashboard su promuovibili e promosse" do
+      dash = Dashboard.new(account: @account).totali
+      # Scope account-wide: lo stesso insieme che Dashboard considera (tutte le province).
+      pan = Panoramica.new(account: @account)
+
+      # Il dataset deve essere significativo: conteggi attesi > 0 (non un banale 0 == 0).
+      assert_operator dash[:da_promuovere], :>, 0, "il dataset deve avere una scuola da promuovere"
+      assert_operator dash[:promosse], :>, 0, "il dataset deve avere una scuola promossa"
+
+      # promuovibile ⟹ in miur_adozioni ⟹ in scope Dashboard: lo scope account-wide
+      # di Panoramica#promuovibili_codici produce lo stesso conteggio della FILTER SQL.
+      assert_equal dash[:da_promuovere], pan.promuovibili_count
+
+      # Promosse contate dalle righe materializzate da Panoramica. Il suo scope "con
+      # adozioni" (adozioni_count > 0 OR presente in miur_adozioni) coincide con la
+      # WHERE di Dashboard#sql_righe, quindi anche questo conteggio combacia.
+      promosse_panoramica = pan.gruppi.flat_map { |g| g[:scuole] }.count { |s| pan.riga(s).promossa? }
+      assert_equal dash[:promosse], promosse_panoramica
     end
 
     private
