@@ -10,15 +10,13 @@ class ScuolaPromuoviClassiJob < ApplicationJob
 
   private
 
-  RIEPILOGHI = {
-    "controllo_adozioni_promuovi_tutte" => "controllo_adozioni/promuovi_tutte",
-    "controllo_adozioni_cambi"          => "controllo_adozioni/cambi_codice"
-  }.freeze
-
-  # Aggiorna controllo_adozioni via stream dopo la promozione:
-  #  - la riga della scuola (conteggi live: i counter cache sono aggiornati async);
-  #  - i riepiloghi (bottone "Promuovi tutte", filtri, cambi codice), così i contatori
-  #    calano/salgono e la card cambio-codice sparisce quando risolta.
+  # Aggiorna via stream la riga della scuola nella lista di controllo_adozioni dopo la
+  # promozione (conteggi live: i counter cache sono aggiornati async). Il target
+  # dom_id(scuola, :controllo) è la riga stato-centrica di _riga.
+  #
+  # NB: gli aggregati (card riepilogo, step, tabella province) NON si aggiornano
+  # per-scuola: nel fan-out di massa sarebbe O(scuole) ricostruzioni pesanti. Si
+  # rinfrescano al reload della pagina (scelta coerente con il merge dashboard/index).
   def broadcast_riga_controllo(scuola)
     account = scuola.account
 
@@ -29,28 +27,5 @@ class ScuolaPromuoviClassiJob < ApplicationJob
       partial: "controllo_adozioni/riga",
       locals: { riga: scoped.riga(scuola.reload, live: true) }
     )
-
-    # I riepiloghi sono scoped per vista: il drill-down su una provincia mostra solo quella
-    # provincia, la vista "tutte" (membri / admin senza filtro) tutto l'account. Vanno su
-    # stream separati per scope, altrimenti la vista provincia verrebbe clobberata con dati
-    # account-wide (bug: la lista cambi codice si ripopolava con tutte le province).
-    broadcast_riepiloghi(account, provincia: scuola.provincia.presence)
-    broadcast_riepiloghi(account, provincia: nil)
-
-    # La dashboard admin (aggregati per provincia) non ha target puntuali: refresh
-    # completo via morph. Turbo lato client scarta i refresh mentre uno e' in volo.
-    Turbo::StreamsChannel.broadcast_refresh_to(account, "controllo_adozioni_dashboard")
-  end
-
-  def broadcast_riepiloghi(account, provincia:)
-    scuole = provincia ? account.scuole.where(provincia: provincia) : nil
-    panoramica = ControlloAdozioni::Panoramica.new(account: account, scuole: scuole, provincia: provincia)
-    stream = [account, "controllo_adozioni_riepilogo", provincia || "_all"]
-    RIEPILOGHI.each do |target, partial|
-      Turbo::StreamsChannel.broadcast_replace_to(
-        stream, target: target, partial: partial,
-        locals: { panoramica: panoramica, account_id: account.id, provincia: provincia }
-      )
-    end
   end
 end

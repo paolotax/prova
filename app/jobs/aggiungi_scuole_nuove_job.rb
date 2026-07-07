@@ -82,10 +82,12 @@ class AggiungiScuoleNuoveJob < ApplicationJob
     }
   end
 
-  # Refresh completo (morph) delle viste interessate: dashboard admin, panoramica
-  # delle province coinvolte e vista "tutte", elenco scuole.
+  # Refresh completo (morph) delle viste interessate: la pagina controllo_adozioni
+  # (per provincia coinvolta e vista "tutte") e l'elenco scuole. Il refresh sullo
+  # stream controllo_adozioni_riepilogo/<scope> è raccolto dalla pagina merge, che vi
+  # si iscrive; niente più stream controllo_adozioni_dashboard (la dashboard separata
+  # non esiste più dopo il merge).
   def broadcast(account, province)
-    Turbo::StreamsChannel.broadcast_refresh_to(account, "controllo_adozioni_dashboard")
     (province + ["_all"]).each do |scope|
       Turbo::StreamsChannel.broadcast_refresh_to(account, "controllo_adozioni_riepilogo", scope)
     end
