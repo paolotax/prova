@@ -36,7 +36,7 @@ class DocumentiController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream
-      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:causale, :clientable, :consegna, :pagamento, entry: [:goldness, :closure, :not_now], righe: { libro: [:editore, :categoria] }) }
+      format.xlsx { @tutti_documenti = @tutti_documenti.includes(:causale, :clientable, :consegne, :pagamento, entry: [:goldness, :closure, :not_now], righe: { libro: [:editore, :categoria] }) }
     end
   end
 

@@ -1,0 +1,35 @@
+riga_documento_fizzy:
+  libro: libro_fizzy
+  quantita: 10
+  prezzo_cents: 10000
+  sconto: 0.0
+
+riga_fattura_uno:
+  libro: libro_fizzy
+  quantita: 20
+  prezzo_cents: 10000
+  sconto: 0.0
+
+riga_fattura_due:
+  libro: libro_fizzy
+  quantita: 15
+  prezzo_cents: 10000
+  sconto: 0.0
+
+riga_ordine_figlio:
+  libro: libro_fizzy
+  quantita: 8
+  prezzo_cents: 10000
+  sconto: 0.0
+
+riga_nota_credito:
+  libro: libro_fizzy
+  quantita: 3
+  prezzo_cents: 10000
+  sconto: 0.0
+
+riga_documento_acme:
+  libro: libro_acme
+  quantita: 5
+  prezzo_cents: 10000
+  sconto: 0.0

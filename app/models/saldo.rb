@@ -30,7 +30,7 @@ class Saldo < ApplicationRecord
     # Solo documenti "top-level" (senza padre) — i figli sono coperti dal padre
     documenti = Documento.where(clientable: saldabile, documento_padre_id: nil)
 
-    da_consegnare = documenti.left_joins(:consegna).where(consegne: { id: nil })
+    da_consegnare = documenti.left_joins(:consegne).where(consegne: { id: nil })
     da_pagare = documenti.left_joins(:pagamento).where(pagamenti: { id: nil })
 
     # Calcola importo e copie con segno basato sul movimento della causale

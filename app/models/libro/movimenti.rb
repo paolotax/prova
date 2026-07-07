@@ -9,7 +9,7 @@ class Libro::Movimenti
   # Righe da documenti attivi, senza consegna, solo padri o senza padre
   def da_consegnare
     righe_base.merge(Documento.attivi)
-              .merge(Documento.where.missing(:consegna))
+              .merge(Documento.where.missing(:consegne))
   end
 
   # Righe da documenti chiusi (con closure), solo padri o senza padre
@@ -39,7 +39,7 @@ class Libro::Movimenti
   def righe_base
     DocumentoRiga
       .joins(:riga, documento: :causale)
-      .includes(:riga, documento: [:causale, :consegna])
+      .includes(:riga, documento: [:causale, :consegne])
       .where(riga: { libro_id: libro.id })
       .where(documenti: { documento_padre_id: nil })
       .order("documenti.data_documento DESC")

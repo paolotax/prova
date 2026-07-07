@@ -72,9 +72,8 @@ class Documento < ApplicationRecord
   after_destroy_commit :ricalcola_saldo_clientable
   before_destroy :riapri_documenti_figli, prepend: true
 
-  # Callback per concern: propaga pagamento ai figli e auto-close
+  # Callback per concern: propaga pagamento ai figli
   after_save :propaga_pagamento_ai_figli, if: :just_marked_pagato?
-  after_save :auto_close_se_completo
   # Rimosso: la chiusura del documento origine viene gestita nel controller
   # after_create :close_if_has_padre
 
@@ -287,6 +286,11 @@ class Documento < ApplicationRecord
     end
   end
 
+  # Chiamato da Consegnabile/Pagabile a ogni variazione di consegne/pagamenti
+  def auto_close_se_completo
+    close if pagato? && consegnato? && !closed?
+  end
+
   def catena_documenti
     documenti = []
     documento_corrente = self
@@ -436,17 +440,6 @@ class Documento < ApplicationRecord
         tipo_pagamento: pagamento.tipo_pagamento
       )
     end
-  end
-
-  # Auto-close quando il documento diventa sia pagato che consegnato.
-  # Solo quando consegna o pagamento sono appena stati creati in questo save:
-  # modificare una riga di un documento già consegnato+pagato (es. riaperto)
-  # NON deve richiuderlo.
-  def auto_close_se_completo
-    return unless pagato? && consegnato? && !closed?
-    return unless consegna&.previously_new_record? || pagamento&.previously_new_record?
-
-    close
   end
 
   # Chiude automaticamente documenti figli (es. DDT derivato da TD01)

@@ -205,7 +205,7 @@ class AgendaController < ApplicationController
     all_clientable_ids = scuole_ids + clienti_ids
     if all_clientable_ids.any?
       documenti_counts = current_user.documenti
-        .left_joins(:consegna, :pagamento)
+        .left_joins(:consegne, :pagamento)
         .where(
           "(clientable_type = 'Scuola' AND clientable_id IN (?)) OR (clientable_type = 'Cliente' AND clientable_id IN (?))",
           scuole_ids, clienti_ids
@@ -296,7 +296,7 @@ class AgendaController < ApplicationController
         
         # Documenti pendenti per questa scuola (non consegnati O non pagati)
         documenti_scuola = current_user.documenti
-          .left_joins(:consegna, :pagamento)
+          .left_joins(:consegne, :pagamento)
           .where(clientable_type: 'Scuola', clientable_id: tappa.tappable_id)
           .where("consegne.id IS NULL OR pagamenti.id IS NULL")
           .includes(:clientable, :causale)
@@ -313,7 +313,7 @@ class AgendaController < ApplicationController
       elsif tappa.tappable_type == 'Cliente'
         # Documenti pendenti per questo cliente (non consegnati O non pagati)
         documenti_cliente = current_user.documenti
-          .left_joins(:consegna, :pagamento)
+          .left_joins(:consegne, :pagamento)
           .where(clientable_type: 'Cliente', clientable_id: tappa.tappable_id)
           .where("consegne.id IS NULL OR pagamenti.id IS NULL")
           .includes(:clientable, :causale)

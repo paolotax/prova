@@ -1,0 +1,29 @@
+dr_documento_fizzy:
+  documento: documento_fizzy
+  riga: riga_documento_fizzy
+  posizione: 1
+
+dr_fattura_uno:
+  documento: fattura_uno
+  riga: riga_fattura_uno
+  posizione: 1
+
+dr_fattura_due:
+  documento: fattura_due
+  riga: riga_fattura_due
+  posizione: 1
+
+dr_ordine_figlio:
+  documento: ordine_figlio
+  riga: riga_ordine_figlio
+  posizione: 1
+
+dr_nota_credito:
+  documento: nota_credito_fizzy
+  riga: riga_nota_credito
+  posizione: 1
+
+dr_documento_acme:
+  documento: documento_acme
+  riga: riga_documento_acme
+  posizione: 1

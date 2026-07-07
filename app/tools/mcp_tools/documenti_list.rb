@@ -53,7 +53,7 @@ module MCPTools
         case stato.to_s
         when "attivi"        then scope = scope.attivi
         when "completati"    then scope = scope.completati
-        when "da_consegnare" then scope = scope.attivi.where.missing(:consegna)
+        when "da_consegnare" then scope = scope.attivi.where.missing(:consegne)
         when "da_pagare"     then scope = scope.attivi.where.missing(:pagamento)
         when "tutti"         then nil
         else scope = scope.attivi
@@ -61,7 +61,7 @@ module MCPTools
 
         # Subquery per DISTINCT (evita duplicati da join righe/libri)
         ids = scope.reorder(nil).select("documenti.id").distinct
-        eager = [:causale, :consegna, :pagamento, entry: [:goldness, :closure]]
+        eager = [:causale, :consegne, :pagamento, entry: [:goldness, :closure]]
         eager << { documento_righe: { riga: :libro } } if include_righe
         # preload (NON includes) per :clientable: polymorphic non supporta eager_load JOIN
         result = Current.account.documenti.where(id: ids).includes(*eager).preload(:clientable)

@@ -36,13 +36,13 @@ module Documenti
 
     def load_documenti
       @documenti = bulk_documenti
-        .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
+        .includes(:causale, :consegne, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
 
     def reload_documenti
       @documenti = bulk_documenti
-        .includes(:causale, :consegna, :pagamento, :clientable, :righe, :entry)
+        .includes(:causale, :consegne, :pagamento, :clientable, :righe, :entry)
       @documenti_per_cliente = @documenti.group_by(&:clientable)
     end
   end

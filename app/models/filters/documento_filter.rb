@@ -43,7 +43,7 @@ module Filters
       base = filtered_scope
       {
         "attivi"        => base.attivi.count,
-        "da_consegnare" => base.attivi.where.missing(:consegna).count,
+        "da_consegnare" => base.attivi.where.missing(:consegne).count,
         "da_pagare"     => base.attivi.where.missing(:pagamento).count,
         "completati"    => base.completati.count,
         "tutti"         => base.count
@@ -62,7 +62,7 @@ module Filters
         .joins("left outer join classi on documenti.clientable_type = 'Classe' and documenti.clientable_id = classi.id")
         .joins("left outer join persone on documenti.clientable_type = 'Persona' and documenti.clientable_id = persone.id")
         .joins("left outer join scuole scuole_clientable on scuole_clientable.id = coalesce(classi.scuola_id, persone.scuola_id)")
-        .includes(:causale, :clientable, :consegna, :pagamento, :righe,
+        .includes(:causale, :clientable, :consegne, :pagamento, :righe,
                   entry: [:column, :goldness, :closure, :not_now],
                   documento_righe: [riga: :libro],
                   documenti_derivati: :causale)
@@ -79,7 +79,7 @@ module Filters
       result = result.joins(:pagamento).where(pagamenti: { tipo_pagamento: tipi_pagamento }) if tipi_pagamento.present?
       result = result.where(clientable_type: clientable_type) if clientable_type.present?
       result = result.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
-      result = result.joins(:consegna) if consegnati.present?
+      result = result.joins(:consegne) if consegnati.present?
       result = result.joins(:pagamento) if pagati.present?
 
       result
@@ -114,7 +114,7 @@ module Filters
 
     def apply_stato_documento(scope)
       case stato_documento
-      when "da_consegnare" then scope.attivi.where.missing(:consegna)
+      when "da_consegnare" then scope.attivi.where.missing(:consegne)
       when "da_pagare"     then scope.attivi.where.missing(:pagamento)
       when "completati"    then scope.completati
       when "tutti"         then scope

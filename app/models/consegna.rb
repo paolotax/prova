@@ -27,6 +27,9 @@ class Consegna < ApplicationRecord
   belongs_to :consegnabile, polymorphic: true, touch: true
   belongs_to :user, optional: true, default: -> { Current.user }
 
-  validates :consegnabile_id, uniqueness: { scope: :consegnabile_type }
+  has_many :consegna_righe, dependent: :destroy
 
+  def copie
+    consegna_righe.sum(:quantita)
+  end
 end
