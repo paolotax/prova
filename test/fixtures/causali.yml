@@ -23,14 +23,20 @@
 #
 vendita:
   causale: "Vendita"
-  magazzino: "uscita"
+  magazzino: "vendita"
   tipo_movimento: 1
   movimento: 1
 
 ordine:
   causale: "Ordine"
-  magazzino: "entrata"
+  magazzino: "vendita"
   tipo_movimento: 0
+  movimento: 0
+
+carico_fornitore:
+  causale: "DDT Fornitore"
+  magazzino: "vendita"
+  tipo_movimento: 2
   movimento: 0
 
 fattura:

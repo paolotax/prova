@@ -27,6 +27,16 @@ class Causale < ApplicationRecord
 
   enum :movimento, { entrata: 0, uscita: 1 }
 
+  enum :magazzino, { vendita: "vendita", campionario: "campionario" }, prefix: :magazzino
+
+  # Effetto fisico sul magazzino: entrata carica (+1), uscita scarica (-1).
+  # Unica fonte del segno: Giacenza, Saldo e Movimenti derivano da qui.
+  SEGNO_SQL = "CASE causali.movimento WHEN 0 THEN 1 ELSE -1 END".freeze
+
+  def segno
+    entrata? ? 1 : -1
+  end
+
   validates :causale, presence: true
   validates :tipo_movimento, presence: true
   validates :movimento, presence: true
