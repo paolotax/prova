@@ -67,6 +67,27 @@
     outline-color: var(--color-ink);
   }
 
+  /* Controllo adozioni: le card KPI filtrano la lista scuole client-side (role=button).
+     Feedback blu come gli step (.ca-step): cursore, hover, focus e card attiva con
+     outline var(--color-link). */
+  .ca-page .analytics-summary__card[role="button"] {
+    cursor: pointer;
+  }
+
+  .ca-page .analytics-summary__card[role="button"]:hover {
+    background-color: var(--color-ink-lighter);
+    outline-color: color-mix(in oklch, var(--color-link) 45%, transparent);
+  }
+
+  .ca-page .analytics-summary__card[role="button"]:focus-visible {
+    outline-color: var(--color-link);
+  }
+
+  .ca-page .analytics-summary__card--active {
+    background-color: color-mix(in oklch, var(--color-link) 8%, transparent);
+    outline-color: var(--color-link);
+  }
+
   .analytics-summary__value {
     font-size: var(--text-x-large);
     font-weight: 900;
@@ -98,6 +119,12 @@
     display: flex;
     justify-content: space-between;
     margin-block-end: var(--block-space-half);
+  }
+
+  /* Titolo del passaggio anno centrato (l'header ha solo l'h2, niente badge a destra). */
+  .passaggio-anno .analytics-group__header {
+    justify-content: center;
+    text-align: center;
   }
 
   .analytics-group__badge {
@@ -424,6 +451,11 @@
     gap: var(--inline-space-half) var(--inline-space);
     margin-block-end: var(--block-space);
     padding: var(--block-space-half) var(--inline-space);
+    /* Larghezza al contenuto e centrata (non a tutta riga). */
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    margin-inline: auto;
+    justify-content: center;
   }
 
   .ca-freshness strong {
@@ -496,10 +528,10 @@
     text-align: start;
   }
 
-  .ca-step[data-step-key="promuovi"]  { --ca-sc: oklch(var(--lch-green-dark)); }
-  .ca-step[data-step-key="cambio"]    { --ca-sc: oklch(var(--lch-blue-dark)); }
-  .ca-step[data-step-key="nuove"]     { --ca-sc: oklch(var(--lch-aqua-dark)); }
-  .ca-step[data-step-key="anomalie"]  { --ca-sc: oklch(var(--lch-red-dark)); }
+  .ca-step[data-filter="promuovi"]  { --ca-sc: oklch(var(--lch-green-dark)); }
+  .ca-step[data-filter="cambio"]    { --ca-sc: oklch(var(--lch-blue-dark)); }
+  .ca-step[data-filter="nuove"]     { --ca-sc: oklch(var(--lch-aqua-dark)); }
+  .ca-step[data-filter="anomalie"]  { --ca-sc: oklch(var(--lch-red-dark)); }
 
   .ca-step:hover {
     background: var(--color-ink-lightest);

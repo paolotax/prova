@@ -69,30 +69,7 @@ module ControlloAdozioni
 
     def promuovibili_count = promuovibili_codici.size
 
-    FILTRI = %w[promosse da_promuovere mancanti_miur anomalie].freeze
-
-    # Gruppi con le sole righe che matchano il filtro (nil = tutte). Scarta i gruppi vuoti.
-    def gruppi_filtrati(filtro)
-      return gruppi if filtro.blank? || !FILTRI.include?(filtro)
-
-      gruppi.filter_map do |g|
-        scuole = g[:scuole].select { |s| match_filtro?(riga(s), filtro) }
-        next if scuole.empty?
-        g.merge(scuole: scuole)
-      end
-    end
-
     private
-
-    def match_filtro?(r, filtro)
-      case filtro
-      when "promosse"      then r.promossa?
-      when "da_promuovere" then r.promuovibile?
-      when "mancanti_miur" then r.mancante_miur?
-      when "anomalie"      then r.anomalie?
-      else true
-      end
-    end
 
     attr_reader :account, :scuole_scope
 

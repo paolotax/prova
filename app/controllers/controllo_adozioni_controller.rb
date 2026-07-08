@@ -12,7 +12,6 @@ class ControlloAdozioniController < ApplicationController
   # calcolano sempre per l'admin; la Panoramica (pesante) solo quando la lista e'
   # visibile. Adattivo: scope piccolo => lista intera; scope grande => solo drill.
   def index
-    @filtro = params[:filtro].presence
     @provincia = params[:provincia].presence
 
     if Current.admin?
@@ -25,17 +24,17 @@ class ControlloAdozioniController < ApplicationController
     scuole = scuole.where(provincia: @provincia) if @provincia
     @scope_count = scuole.count
 
-    # La lista compare per i member (scope = sue scuole), sui drill espliciti
-    # (provincia/filtro) o quando lo scope e' abbastanza piccolo da caricarla tutta.
-    @lista_visibile = !Current.admin? || @provincia.present? || @filtro.present? ||
-                      @scope_count <= SOGLIA_LISTA
+    # La lista compare per i member (scope = sue scuole), sul drill di provincia o quando
+    # lo scope e' abbastanza piccolo da caricarla tutta. Il filtro card/step e' client-side:
+    # la lista si carica intera (province-scoped) e le card/step la filtrano nel browser.
+    @lista_visibile = !Current.admin? || @provincia.present? || @scope_count <= SOGLIA_LISTA
     return unless @lista_visibile
 
     @panoramica = ControlloAdozioni::Panoramica.new(account: Current.account, scuole: scuole,
                                                     provincia: @provincia)
 
     # Un record per capogruppo (gruppo direzione), ordinati come scuole#index.
-    gruppi = @panoramica.gruppi_filtrati(@filtro)
+    gruppi = @panoramica.gruppi
     @gruppi_per_leader = gruppi.index_by { |g| (g[:direzione] || g[:scuole].first).id }
     leader_ids = @gruppi_per_leader.keys
     ordered = Current.scuole.where(id: leader_ids).in_order_of(:id, leader_ids)

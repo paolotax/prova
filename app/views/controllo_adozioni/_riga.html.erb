@@ -2,11 +2,19 @@
     Guidata da ControlloAdozioniHelper#stato_riga (priorita' promuovi > anomalie > disall > fuori > ok). %>
 <% scuola = riga.scuola %>
 <% s = stato_riga(riga) %>
+<%# data-filters: chiavi filtro (card + step) che questa riga soddisfa, dai predicati grezzi
+    (non dallo stato a priorita'). Il controller mostra la riga se il filtro attivo e' tra queste. %>
+<% filtri = [] %>
+<% filtri << "promuovi"      if riga.promuovibile? %>
+<% filtri << "anomalie"      if riga.anomalie? %>
+<% filtri << "promosse"      if riga.promossa? %>
+<% filtri << "mancanti_miur" if riga.mancante_miur? %>
 <%= tag.article id: dom_id(scuola, :controllo),
       class: "ca-row",
       data: {
         controllo_adozioni_filter_target: "row",
         state: s[:stato],
+        filters: filtri.join(" "),
         prov: scuola.provincia,
         grado: grado_riga(scuola.codice_ministeriale, scuola.grado),
         txt: "#{scuola.denominazione} #{scuola.codice_ministeriale} #{scuola.comune}".downcase

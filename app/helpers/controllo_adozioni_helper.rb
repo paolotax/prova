@@ -43,9 +43,9 @@ module ControlloAdozioniHelper
     end
   end
 
-  # Chiave di stato (data-state / data-step-key) usata dal filtro client-side, derivata
-  # dalla key dello Step del PassaggioAnno. "nuove" e' un composito (nuova + verifica),
-  # gestito nel controllo-adozioni-filter; "anomalie" fa match esatto sullo stato riga.
+  # Chiave filtro (data-filter dello step / presente in data-filters delle righe) usata dal
+  # filtro client-side, derivata dalla key dello Step del PassaggioAnno. "nuove" e' un
+  # composito (nuova + verifica), gestito nel controllo-adozioni-filter.
   STEP_FILTER_KEY = {
     promuovibili: "promuovi", cambi_codice: "cambio",
     scuole_nuove: "nuove",    anomalie: "anomalie"

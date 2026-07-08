@@ -1,8 +1,8 @@
-<%# Sequenza guidata del passaggio anno: 4 step-card (.ca-step) con stato derivato dai
-    contatori (ControlloAdozioni::PassaggioAnno). Con provincia i job partono scoped.
-    interattivo (default true): le card filtrano la lista (data-step-key => stato filtro).
-    Quando la lista non e' in pagina (scope grande) le card restano informative: senza
-    filter-target, cosi' apply() non le nasconde e i contatori server restano visibili. %>
+<%# Sequenza guidata del passaggio anno: 4 step-card (.ca-step). I contatori sono calcolati
+    lato server (ControlloAdozioni::PassaggioAnno) e restano FISSI. Con provincia i job partono
+    scoped. interattivo (default true): cliccare lo step filtra la lista client-side
+    (data-filter => controllo-adozioni-filter#select), senza ricaricare ne' ricalcolare.
+    In overview (interattivo false) restano informativi. %>
 <% interattivo = local_assigns.fetch(:interattivo, true) %>
 <% if passaggio.disponibile? %>
   <section class="ca-guide passaggio-anno">
@@ -16,9 +16,9 @@
       <% passaggio.steps.reject(&:done?).each do |step| %>
         <% key = step_filter_key(step) %>
         <div class="ca-step"<%= " role=button tabindex=0 aria-current=false".html_safe if interattivo %>
-             data-step-key="<%= key %>"
+             data-filter="<%= key %>"
              <%= "data-controllo-adozioni-filter-target=step".html_safe if interattivo %>
-             <%= 'data-action="click->controllo-adozioni-filter#toggleStep keydown.enter->controllo-adozioni-filter#toggleStep"'.html_safe if interattivo %>>
+             <%= 'data-action="click->controllo-adozioni-filter#select keydown.enter->controllo-adozioni-filter#select"'.html_safe if interattivo %>>
           <div class="ca-step__top">
             <span class="ca-step__num"><%= step.numero %></span>
             <span class="ca-step__count" data-count><%= step.count %></span>
@@ -27,15 +27,8 @@
           <div class="ca-step__desc"><%= step.descrizione %></div>
           <div class="ca-step__actions" data-action="click->controllo-adozioni-filter#stop">
             <% if step.key == :anomalie %>
-              <% if step.count.positive? %>
-                <%= link_to "Vedi anomalie",
-                      controllo_adozioni_index_path(account_id: account_id, provincia: provincia, filtro: "anomalie"),
-                      class: "btn btn--small" %>
-              <% end %>
-              <%= button_to "Ricalcola",
-                    controllo_adozioni_anomalie_path(account_id: account_id),
-                    class: "btn btn--small",
-                    data: { turbo_confirm: "Ricostruire tutte le anomalie dallo snapshot MIUR corrente? Il ricalcolo è globale, non solo per questo account." } %>
+              <%# Nessuna azione: cliccare lo step filtra la lista. Il ricalcolo anomalie
+                  gira su tutto il DB MIUR, non serve da qui. %>
             <% else %>
               <% label = step.key == :scuole_nuove ? "Aggiungi le scuole nuove" : "Avvia" %>
               <% if step.azionabile? %>
@@ -47,7 +40,7 @@
               <% end %>
               <% if step.key == :scuole_nuove && step.verifica.positive? %>
                 <button type="button" class="btn btn--small"
-                        data-action="click->controllo-adozioni-filter#selectChip" data-filter="verifica">
+                        data-action="click->controllo-adozioni-filter#select" data-filter="verifica">
                   Da verificare (<%= step.verifica %>)
                 </button>
               <% end %>
@@ -55,11 +48,6 @@
           </div>
         </div>
       <% end %>
-    </div>
-
-    <div class="ca-guide__done" data-controllo-adozioni-filter-target="guideDone" hidden>
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg>
-      Passaggio anno completato per il filtro corrente.
     </div>
   </section>
 <% end %>

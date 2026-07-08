@@ -385,8 +385,6 @@ Rails.application.routes.draw do
                path: "controllo_adozioni/cambi_codice", as: :controllo_adozioni_cambi_codice
       resource :scuole_nuove, only: :create, controller: "scuole_nuove",
                path: "controllo_adozioni/scuole_nuove", as: :controllo_adozioni_scuole_nuove
-      resource :anomalie, only: :create, controller: "anomalie",
-               path: "controllo_adozioni/anomalie", as: :controllo_adozioni_anomalie
     end
 
     namespace :miur do

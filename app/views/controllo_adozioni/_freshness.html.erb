@@ -1,7 +1,7 @@
 <%# Barra di freschezza dei dati MIUR: ultimo import adozioni (Miur::ImportRun). %>
 <% run = Miur::ImportRun.adozioni.order(:completed_at).last %>
 <% if run&.completed_at %>
-  <div class="ca-freshness">
+  <div class="ca-freshness center">
     <span class="ca-freshness__dot"></span>
     <% data = "#{run.completed_at.day} #{I18n.t("date.abbr_month_names")[run.completed_at.month]}" %>
     Dati MIUR aggiornati al

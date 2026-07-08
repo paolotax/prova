@@ -1,6 +1,9 @@
-<%# Card KPI sopra gli step. La prima card "province" (solo 2+ province, vista
-    account-wide) fa da accesso alla tabella per provincia (#ca-province). Le altre
-    linkano la lista filtrata. Con una provincia in drill i numeri sono di quella. %>
+<%# Card KPI sopra gli step. La prima card "province" (solo 2+ province, vista account-wide)
+    linka la tabella per provincia (#ca-province). Le altre, in modalita' interactive, sono
+    FILTRI client-side della lista (data-filter => controllo-adozioni-filter#select): cliccarle
+    mostra solo quelle righe, senza ricaricare la pagina. I valori sono calcolati lato server
+    (scope = provincia) e restano fissi. Con una provincia in drill i numeri sono di quella. %>
+<% interactive = local_assigns.fetch(:interactive, false) %>
 <% riga = provincia && dashboard.righe.find { |r| r.provincia == provincia } %>
 <% totali = dashboard.totali %>
 <% scuole   = riga ? riga.scuole        : totali[:scuole] %>
@@ -18,16 +21,22 @@
   <% end %>
 
   <% [
-       ["tutte",         scuole,   "scuole con adozioni", nil],
+       ["all",           scuole,   "scuole con adozioni", nil],
        ["promosse",      promosse, "promosse",            "txt-positive"],
        ["mancanti_miur", mancanti, "mancanti MIUR",       "txt-negative"]
-     ].each do |filtro, value, label, value_class| %>
-    <div class="analytics-summary__card">
-      <%= link_to controllo_adozioni_index_path(account_id: account_id, provincia: provincia, filtro: filtro),
-            class: "analytics-summary__toggle" do %>
+     ].each do |key, value, label, value_class| %>
+    <% if interactive %>
+      <div class="analytics-summary__card" role="button" tabindex="0"
+           data-controllo-adozioni-filter-target="card" data-filter="<%= key %>"
+           data-action="click->controllo-adozioni-filter#select keydown.enter->controllo-adozioni-filter#select">
         <p class="analytics-summary__value <%= value_class %>"><%= value %></p>
         <p class="analytics-summary__label"><%= label %></p>
-      <% end %>
-    </div>
+      </div>
+    <% else %>
+      <div class="analytics-summary__card">
+        <p class="analytics-summary__value <%= value_class %>"><%= value %></p>
+        <p class="analytics-summary__label"><%= label %></p>
+      </div>
+    <% end %>
   <% end %>
 </div>

@@ -61,8 +61,8 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".passaggio-anno"
     assert_select ".ca-step", 1
-    # I job del passaggio sono scoped per provincia; il ricalcolo anomalie e' globale.
-    css_select(".ca-step form").reject { |f| f["action"].include?("controllo_adozioni/anomalie") }.each do |form|
+    # I job del passaggio sono scoped per provincia.
+    css_select(".ca-step form").each do |form|
       assert_includes form["action"], "provincia=MI"
     end
   end
@@ -85,12 +85,12 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Per provincia", @response.body
   end
 
-  test "le card riepilogo linkano la lista filtrata" do
+  test "le card riepilogo sono filtri client-side" do
     get controllo_adozioni_index_path(account_id: @account.id)
     assert_response :success
-    assert_select ".analytics-summary a[href*='filtro=tutte']"
-    assert_select ".analytics-summary a[href*='filtro=promosse']"
-    assert_select ".analytics-summary a[href*='filtro=mancanti_miur']"
+    assert_select ".analytics-summary__card[role='button'][data-filter='all']"
+    assert_select ".analytics-summary__card[role='button'][data-filter='promosse']"
+    assert_select ".analytics-summary__card[role='button'][data-filter='mancanti_miur']"
   end
 
   test "admin con 2+ province vede la tabella per provincia e la card province" do
@@ -105,11 +105,12 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_select ".analytics-summary a[href='#ca-province']"
   end
 
-  test "admin con filtro e senza provincia vede la lista scuole" do
-    get controllo_adozioni_index_path(account_id: @account.id, filtro: "tutte")
+  test "il filtro card/step e' client-side: il param filtro legacy non scapa la lista lato server" do
+    get controllo_adozioni_index_path(account_id: @account.id, filtro: "promosse")
     assert_response :success
+    # La lista si carica intera (province-scoped); card e step la filtrano nel browser.
     assert_select "[data-controller='controllo-adozioni-filter']"
-    assert_no_match "Per provincia", @response.body
+    assert_select ".analytics-summary__card[role='button'][data-filter='promosse']"
   end
 
   test "index admin con provincia mostra la panoramica di quella provincia" do

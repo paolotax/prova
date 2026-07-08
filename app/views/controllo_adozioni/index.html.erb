@@ -23,15 +23,17 @@
       <h2 class="divider divider--fade margin-block"><%= @provincia.to_s.titleize %></h2>
   <% end %>
 
-  <%# ===== Riepilogo (card KPI) ===== %>
-  <% if Current.admin? && @dashboard %>
-    <%= render "controllo_adozioni/riepilogo", dashboard: @dashboard, provincia: @provincia,
-          province_count: @province_count, account_id: params[:account_id] %>
-  <% end %>
-
   <% if @lista_visibile %>
-    <%# ===== Vista operativa: step interattivi + tabella + lista filtrabile ===== %>
+    <%# ===== Vista operativa: card KPI + step + tabella + lista, tutto client-side.
+        Card e step sono calcolati lato server (scope = provincia) e restano FISSI:
+        contatori e visibilita' non cambiano. Cliccarli aggiorna solo le righe visibili,
+        nessuna query e nessun ricalcolo. ===== %>
     <div data-controller="controllo-adozioni-filter">
+      <% if Current.admin? && @dashboard %>
+        <%= render "controllo_adozioni/riepilogo", dashboard: @dashboard, provincia: @provincia,
+              province_count: @province_count, account_id: params[:account_id], interactive: true %>
+      <% end %>
+
       <% if Current.admin? && @passaggio %>
         <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
               account_id: params[:account_id], provincia: @provincia, interattivo: true %>
@@ -53,8 +55,7 @@
         </div>
 
         <p class="ca-scope">
-          <b data-controllo-adozioni-filter-target="scopeCount">0</b> scuole in lista ·
-          gli Avvia agiscono su tutta la zona
+          <b data-controllo-adozioni-filter-target="scopeCount">0</b> scuole in lista
         </p>
 
         <%# ===== Lista unificata: gruppi scuole (_gruppo) + codici nuovi (_riga_mancante) ===== %>
@@ -90,7 +91,14 @@
       <% end %>
     </div>
   <% else %>
-    <%# ===== Overview account grande: step informativi + tabella navigatore ===== %>
+    <%# ===== Overview account grande: card + step informativi + tabella navigatore.
+        Nessuna lista da filtrare: card KPI non interattive (la card province linka la
+        tabella), si sceglie una provincia per operare. ===== %>
+    <% if Current.admin? && @dashboard %>
+      <%= render "controllo_adozioni/riepilogo", dashboard: @dashboard, provincia: @provincia,
+            province_count: @province_count, account_id: params[:account_id], interactive: false %>
+    <% end %>
+
     <% if Current.admin? && @passaggio %>
       <%= render "controllo_adozioni/passaggio_anno", passaggio: @passaggio,
             account_id: params[:account_id], provincia: nil, interattivo: false %>
