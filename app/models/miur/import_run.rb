@@ -21,4 +21,11 @@
 class Miur::ImportRun < ApplicationRecord
   scope :adozioni, -> { where(dataset: "adozioni") }
   scope :scuole,   -> { where(dataset: "scuole") }
+
+  has_many :diff_scuole, class_name: "Miur::ImportDiffScuola",
+           foreign_key: :import_run_id, dependent: :delete_all
+  has_many :diff_righe, class_name: "Miur::ImportDiffRiga",
+           foreign_key: :import_run_id, dependent: :delete_all
+
+  def diff? = diff_scuole.exists?
 end
