@@ -67,6 +67,23 @@ non devi fare nulla.
 Costo trascurabile: gli ISBN di una scuola (già scoped) sono pochi, la classificazione è un
 `group_by` in Ruby sul dettaglio della scuola.
 
+## Blocco 2b — Scuole già promosse = "da rettificare"
+
+Tra le tue scuole toccate dal diff, la distinzione operativa chiave è lo **stato di
+promozione** (regola canonica, riusata senza duplicare: `ControlloAdozioni::Classificazione#promossa`
+= classi attive con `anno_scolastico >= anno`):
+
+- **Già promossa** → le sue `classi`/`adozioni` materializzate ora **divergono** dal nuovo
+  snapshot MIUR: badge **"da rettificare"** (warning) sulla riga, e l'azione adeguata è il
+  **reconcile** (bottone fan-out, vedi Blocco 3). Vale anche per i soli spostamenti: il
+  re-keying delle sezioni cambia le classi materializzate.
+- **Non promossa** → nessun allarme: alla promozione prenderà direttamente i dati nuovi.
+  Riga informativa, nessun badge.
+
+Il bottone "Applica le rettifiche" fa fan-out **solo sulle province delle scuole promosse
+toccate** (sulle non promosse il reconcile non ha nulla da riallineare: la promozione resta
+compito di `promuovi_primaria!`, mai del Reconciler — decisione già chiusa nel design MIUR sync).
+
 ## Blocco 3 — Layout e azioni
 
 Stile `ca-*`/Fizzy.
@@ -78,8 +95,11 @@ Stile `ca-*`/Fizzy.
 
 1. **Card di sintesi:** "Rettifiche alle tue scuole · 8 lug" → N scuole, **veri cambi +X/−Y**,
    chip grigio "Z spostamenti" (segnale, non allarme).
-2. **Lista tue scuole**, ordinata per *veri cambi* desc (in cima ciò che conta):
-   > **I.C. Leonardo da Vinci** · MODENA · Primaria — **+2 / −1** · ~~4 spostamenti~~
+2. **Lista tue scuole**, ordinata per **promosse prima** (sono le "da rettificare"), poi
+   *veri cambi* desc:
+   > **I.C. Leonardo da Vinci** · MODENA · Primaria · `da rettificare` — **+2 / −1** · ~~4 spostamenti~~
+   >
+   > **I.C. Bologna Centro** · BOLOGNA · Primaria — **+1 / −0** · *(non promossa: si allineerà alla promozione)*
 3. **Drill scuola in linea** (`<details>/<summary>` nativi, niente Stimulus; dati pochi,
    pre-renderizzati collassati):
    - **Aggiunti** (verde) — classe · disciplina · titolo
@@ -89,18 +109,21 @@ Stile `ca-*`/Fizzy.
 **Azioni operative** (entrambe manuali):
 - Per scuola: **"Apri scheda"** (`controllo_adozioni/:codicescuola`, già esiste).
 - **"Applica le rettifiche"**: **bottone unico con fan-out**. Il reconciler è per
-  `(account, provincia, anno)`; il bottone calcola le province delle tue scuole toccate e
-  accoda un `ReconcileAdozioniJob` per ciascuna. Empty → notice "niente da applicare".
+  `(account, provincia, anno)`; il bottone calcola le province delle tue scuole **promosse**
+  toccate e accoda un `ReconcileAdozioniJob` per ciascuna. Nessuna promossa toccata →
+  notice "niente da applicare".
 
 ## Blocco 4 — Implementazione e test
 
 **Controller** `Miur::ImportRunsController`, helper memoizzato `account_codici` riusato ovunque:
 - **index:** filtra i run ai soli con `diff_scuole` fra i tuoi codici; conteggi scoped dal rollup.
 - **show:** scope `diff_scuole`/`diff_righe` ai tuoi codici; classificazione righe per scuola in
-  Ruby (ISBN in `+` e `−` = spostato); lookup `{codice => Scuola}` per denominazione/provincia/grado/link.
+  Ruby (ISBN in `+` e `−` = spostato); lookup `{codice => Scuola}` per denominazione/provincia/grado/link;
+  stato promossa via `Classificazione#promossa` in un'unica query sulle scuole toccate
+  (`scope.where(sanitize_sql([cl.promossa("scuole"), anno:]))`), MAI una query per scuola.
 
-**Reconcile fan-out:** `create` non prende più `provincia`; calcola le province delle tue scuole
-toccate dal run e accoda un job per ciascuna.
+**Reconcile fan-out:** `create` non prende più `provincia`; ricalcola server-side (mai fidarsi
+di parametri) le province delle tue scuole **promosse** toccate dal run e accoda un job per ciascuna.
 
 **Drill in linea:** `<details>/<summary>` nativi.
 
@@ -111,7 +134,9 @@ toccate dal run e accoda un job per ciascuna.
 - index **nasconde** i run che non toccano tue scuole;
 - show **scopa** alle tue scuole (scuola di altro account non compare);
 - **classificazione**: ISBN in `+`/`−` → spostato; solo `+` → aggiunto;
-- reconcile **fan-out**: un job per ciascuna provincia toccata.
+- **promossa** (con classe attiva dell'anno) → badge "da rettificare"; non promossa → no badge;
+- reconcile **fan-out**: un job per ciascuna provincia con scuole **promosse** toccate
+  (provincia con sole non-promosse esclusa).
 
 ## Decisioni chiuse (validate con l'utente)
 
@@ -120,6 +145,8 @@ toccate dal run e accoda un job per ciascuna.
 3. Spostamenti (re-keying): **nascosti di default, segnalati con conteggio, espandibili**. [Blocco 2/3]
 4. Drill scuola **in linea**, non pagina dedicata. [Blocco 3]
 5. Reconcile: **bottone unico con fan-out** sulle province, non uno per provincia. [Blocco 3]
+6. Scuole **già promosse** toccate dal diff: badge **"da rettificare"** + azione reconcile;
+   il fan-out copre solo le loro province. Le non promosse restano informative. [Blocco 2b]
 
 ## Fuori scope (YAGNI)
 
