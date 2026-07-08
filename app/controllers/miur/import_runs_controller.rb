@@ -1,50 +1,31 @@
-# Storia degli import MIUR con drill-down del diff (pagina standalone, design
-# 2026-07-08-miur-import-diff-design.md). Dati MIUR-globali (nessuno scope
-# account sui dati), ma la pagina vive nel contesto account: solo admin.
+# Storia degli import MIUR letta nel contesto dell'account: solo le scuole
+# dell'account, veri cambi vs spostamenti, promosse marcate "da rettificare"
+# (design 2026-07-08-miur-import-runs-review-design.md). Admin-only.
 class Miur::ImportRunsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_admin
 
   def index
-    @runs = Miur::ImportRun.adozioni.order(completed_at: :desc).limit(50)
-    # Conteggi diff per run in un colpo solo (evita N+1 sulla lista).
-    @conteggi = Miur::ImportDiffScuola
-      .where(import_run_id: @runs.map(&:id))
-      .group(:import_run_id, :categoria).count
+    @runs = Miur::ImportRun.adozioni
+      .where(id: Miur::RettificheAccount.run_ids(Current.account))
+      .order(completed_at: :desc).limit(50)
+
+    codici = Current.account.scuole.where.not(codice_ministeriale: [nil, ""])
+                    .distinct.pluck(:codice_ministeriale)
+    scoped = Miur::ImportDiffScuola.where(import_run_id: @runs.map(&:id), codicescuola: codici)
+    @scuole_per_run  = scoped.group(:import_run_id).count
+    @aggiunte_per_run = scoped.group(:import_run_id).sum(:righe_aggiunte)
+    @rimosse_per_run  = scoped.group(:import_run_id).sum(:righe_rimosse)
   end
 
   def show
     @run = Miur::ImportRun.adozioni.find(params[:id])
-    @provincia = params[:provincia].presence
-
-    scuole = @run.diff_scuole.per_provincia(@provincia)
-    @riepilogo_province = @run.diff_scuole
-      .group(:provincia, :categoria)
-      .pluck(:provincia, :categoria, Arel.sql("COUNT(*)"),
-             Arel.sql("SUM(righe_aggiunte)"), Arel.sql("SUM(righe_rimosse)"))
-    @esistenti = scuole.esistenti.order(Arel.sql("righe_aggiunte + righe_rimosse DESC"))
-    @nuove_count = scuole.nuove.count
-    @sparite = scuole.sparite.order(:provincia, :codicescuola)
-
-    # Dettaglio righe della scuola selezionata (drill)
-    if params[:codicescuola].present?
-      @scuola_focus = params[:codicescuola]
-      @righe = @run.diff_righe.where(codicescuola: @scuola_focus)
-                   .order(:annocorso, :sezioneanno, :disciplina, :segno)
-      @sostituzioni = sostituzioni(@righe)
-    end
+    @rettifiche = Miur::RettificheAccount.new(run: @run, account: Current.account)
   end
 
   private
 
   def require_admin
     redirect_to root_path, alert: "Solo per amministratori" unless Current.admin?
-  end
-
-  # "Sostituzione da verificare": stessa classe+disciplina con sia '+' che '-'
-  # (il MIUR ha cambiato libro). Derivata a lettura, non persistita.
-  def sostituzioni(righe)
-    righe.group_by { |r| [r.annocorso, r.sezioneanno, r.combinazione, r.disciplina] }
-         .select { |_, rr| rr.map(&:segno).uniq.sort == ["+", "-"] }
   end
 end

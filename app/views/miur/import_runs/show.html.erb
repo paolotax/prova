@@ -2,151 +2,123 @@
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Import <%= anno_scolastico_label(@run.anno_scolastico) %></span>
+    <span class="overflow-ellipsis">
+      Rettifiche del <%= l(@run.completed_at, format: :short) if @run.completed_at %>
+    </span>
   </h1>
 <% end %>
 
+<% r = @rettifiche %>
 <div class="ca-page">
   <p class="txt-subtle">
     <%= link_to "← Tutti gli import", miur_import_runs_path(account_id: params[:account_id]) %>
-    <% if @run.completed_at %>&middot; <%= l(@run.completed_at, format: :short) %><% end %>
-    <% if @provincia %>&middot; provincia: <strong><%= @provincia %></strong>
-      (<%= link_to "tutte", miur_import_run_path(@run, account_id: params[:account_id]) %>)<% end %>
+    · <%= anno_scolastico_label(@run.anno_scolastico) %>
   </p>
 
-  <div class="badges">
-    <span class="badge"><%= @esistenti.count %> esistenti (rettifiche)</span>
-    <span class="badge"><%= @nuove_count %> nuove</span>
-    <span class="badge"><%= @sparite.count %> sparite</span>
-  </div>
-
-  <% unless @run.diff? %>
-    <p class="notice">Nessun diff per questo import (primo import dell'anno o nessuna differenza).</p>
-  <% end %>
-
-  <% if @riepilogo_province.any? %>
-    <section class="margin-block-end">
-      <h2 class="txt-medium">Riepilogo per provincia</h2>
-      <table class="libri-table txt-small">
-        <thead>
-          <tr>
-            <th class="pad-inline">Provincia</th>
-            <th class="pad-inline">Categoria</th>
-            <th class="pad-inline txt-align-end">Scuole</th>
-            <th class="pad-inline txt-align-end">+ righe</th>
-            <th class="pad-inline txt-align-end">− righe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @riepilogo_province.sort_by { |prov, cat, *| [prov.to_s, cat] }.each do |prov, cat, n, agg, rim| %>
-            <tr>
-              <td class="pad-inline">
-                <%= link_to prov.presence || "—",
-                      miur_import_run_path(@run, account_id: params[:account_id], provincia: prov) %>
-              </td>
-              <td class="pad-inline"><%= cat %></td>
-              <td class="pad-inline txt-align-end"><%= n %></td>
-              <td class="pad-inline txt-align-end"><%= agg.to_i %></td>
-              <td class="pad-inline txt-align-end"><%= rim.to_i %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </section>
-  <% end %>
-
-  <% if @esistenti.any? %>
-    <section class="margin-block-end">
-      <h2 class="txt-medium">Scuole con rettifiche</h2>
-      <% if @provincia %>
-        <%= button_to "Ri-reconcilia #{@provincia}",
-              miur_import_run_reconcile_path(@run, account_id: params[:account_id], provincia: @provincia),
-              method: :post, class: "btn btn--small" %>
+  <% if r.scuole_toccate.empty? %>
+    <p class="notice">Questo import non tocca nessuna delle tue scuole.</p>
+  <% else %>
+    <%# Card sintesi %>
+    <div class="badges">
+      <span class="badge"><%= r.esistenti.size %> scuole con rettifiche</span>
+      <span class="badge">+<%= r.totale_aggiunte %> / −<%= r.totale_rimosse %> veri cambi</span>
+      <% if r.totale_spostamenti.positive? %>
+        <span class="badge txt-subtle"><%= r.totale_spostamenti %> spostamenti</span>
       <% end %>
-      <table class="libri-table txt-small">
-        <thead>
-          <tr>
-            <th class="pad-inline">Codice scuola</th>
-            <th class="pad-inline">Provincia</th>
-            <th class="pad-inline">Grado</th>
-            <th class="pad-inline txt-align-end">+ righe</th>
-            <th class="pad-inline txt-align-end">− righe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @esistenti.each do |s| %>
-            <tr>
-              <td class="pad-inline">
-                <%= link_to s.codicescuola,
-                      miur_import_run_path(@run, account_id: params[:account_id],
-                                           provincia: @provincia, codicescuola: s.codicescuola) %>
-              </td>
-              <td class="pad-inline"><%= s.provincia %></td>
-              <td class="pad-inline"><%= s.tipogradoscuola %></td>
-              <td class="pad-inline txt-align-end"><%= s.righe_aggiunte %></td>
-              <td class="pad-inline txt-align-end"><%= s.righe_rimosse %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </section>
-  <% end %>
+      <% if r.nuove.any? %><span class="badge"><%= r.nuove.size %> nuove</span><% end %>
+      <% if r.sparite.any? %><span class="badge"><%= r.sparite.size %> sparite</span><% end %>
+    </div>
 
-  <% if @nuove_count.positive? %>
-    <section class="margin-block-end">
-      <h2 class="txt-medium">Scuole nuove</h2>
-      <p class="txt-subtle">
-        <%= @nuove_count %> scuole comparse ora nel MIUR.
-        <%= link_to "Promuovile dal Controllo adozioni →",
-              controllo_adozioni_index_path(account_id: params[:account_id]) %>
+    <% if r.province_promosse.any? %>
+      <p>
+        <%= button_to "Applica le rettifiche (#{r.province_promosse.join(', ')})",
+              miur_import_run_reconcile_path(@run, account_id: params[:account_id]),
+              method: :post, class: "btn" %>
       </p>
-    </section>
-  <% end %>
+    <% end %>
 
-  <% if @sparite.any? %>
-    <section class="margin-block-end">
-      <h2 class="txt-medium">Scuole sparite (possibili cambi codice)</h2>
-      <div class="badges">
-        <% @sparite.each do |s| %>
-          <span class="badge"><%= s.codicescuola %><%= " · #{s.provincia}" if s.provincia %></span>
-        <% end %>
-      </div>
-    </section>
-  <% end %>
-
-  <% if @scuola_focus.present? %>
-    <section class="margin-block-end">
-      <h2 class="txt-medium">Dettaglio righe: <%= @scuola_focus %></h2>
-
-      <% if @sostituzioni.present? && @sostituzioni.any? %>
-        <p class="notice notice--warning">
-          <%= @sostituzioni.size %> sostituzioni da verificare
-          (stessa classe: un ISBN tolto e uno aggiunto).
-        </p>
-      <% end %>
-
-      <table class="libri-table txt-small">
-        <thead>
-          <tr>
-            <th class="pad-inline"></th>
-            <th class="pad-inline">Classe</th>
-            <th class="pad-inline">Disciplina</th>
-            <th class="pad-inline">ISBN</th>
-            <th class="pad-inline">Titolo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @righe.each do |r| %>
-            <tr>
-              <td class="pad-inline"><strong><%= r.segno %></strong></td>
-              <td class="pad-inline"><%= "#{r.annocorso}#{r.sezioneanno}" %></td>
-              <td class="pad-inline"><%= r.disciplina %></td>
-              <td class="pad-inline"><%= r.codiceisbn %></td>
-              <td class="pad-inline"><%= r.titolo %></td>
-            </tr>
+    <%# Lista scuole: promosse prima (da rettificare), poi veri cambi desc %>
+    <% r.esistenti.each do |s| %>
+      <% scuola = r.scuole_account[s.codicescuola] %>
+      <% c = r.classificate[s.codicescuola] %>
+      <details class="margin-block-end">
+        <summary>
+          <strong><%= scuola&.denominazione || s.codicescuola %></strong>
+          · <%= scuola&.provincia || s.provincia %>
+          <% if r.promossa?(s.codicescuola) %>
+            <span class="badge badge--rettifica">da rettificare</span>
           <% end %>
-        </tbody>
-      </table>
-    </section>
+          — +<%= c ? c[:aggiunte].size : 0 %> / −<%= c ? c[:rimosse].size : 0 %>
+          <% if r.spostamenti(s.codicescuola).positive? %>
+            <span class="txt-subtle">· <%= r.spostamenti(s.codicescuola) %> spostamenti</span>
+          <% end %>
+          <% unless r.promossa?(s.codicescuola) %>
+            <span class="txt-subtle">(non promossa: si allineerà alla promozione)</span>
+          <% end %>
+        </summary>
+
+        <% if scuola %>
+          <p><%= link_to "Apri scheda", controllo_adozioni_path(s.codicescuola, account_id: params[:account_id]),
+                   class: "btn btn--small" %></p>
+        <% end %>
+
+        <% if c %>
+          <% if c[:aggiunte].any? %>
+            <h3 class="txt-medium">Aggiunti</h3>
+            <ul>
+              <% c[:aggiunte].each do |riga| %>
+                <li>+ <%= riga.annocorso %><%= riga.sezioneanno %> · <%= riga.disciplina %>
+                    · <%= riga.codiceisbn %> · <%= riga.titolo %></li>
+              <% end %>
+            </ul>
+          <% end %>
+          <% if c[:rimosse].any? %>
+            <h3 class="txt-medium">Rimossi</h3>
+            <ul>
+              <% c[:rimosse].each do |riga| %>
+                <li>− <%= riga.annocorso %><%= riga.sezioneanno %> · <%= riga.disciplina %>
+                    · <%= riga.codiceisbn %> · <%= riga.titolo %></li>
+              <% end %>
+            </ul>
+          <% end %>
+          <% if c[:spostate].any? %>
+            <details>
+              <summary class="txt-subtle">
+                <%= c[:spostate].size %> spostamenti (stesso libro, altra classe/sezione)
+              </summary>
+              <ul class="txt-subtle">
+                <% c[:spostate].each do |riga| %>
+                  <li><%= riga.segno %> <%= riga.annocorso %><%= riga.sezioneanno %>
+                      · <%= riga.disciplina %> · <%= riga.codiceisbn %> · <%= riga.titolo %></li>
+                <% end %>
+              </ul>
+            </details>
+          <% end %>
+        <% end %>
+      </details>
+    <% end %>
+
+    <% if r.nuove.any? %>
+      <section class="margin-block-end">
+        <h2 class="txt-medium">Tue scuole nuove nel MIUR</h2>
+        <p class="txt-subtle">
+          <%= r.nuove.size %> scuole comparse ora.
+          <%= link_to "Promuovile dal Controllo adozioni →",
+                controllo_adozioni_index_path(account_id: params[:account_id]) %>
+        </p>
+      </section>
+    <% end %>
+
+    <% if r.sparite.any? %>
+      <section class="margin-block-end">
+        <h2 class="txt-medium">Tue scuole sparite dal MIUR (possibili cambi codice)</h2>
+        <div class="badges">
+          <% r.sparite.each do |s| %>
+            <% scuola = r.scuole_account[s.codicescuola] %>
+            <span class="badge"><%= scuola&.denominazione || s.codicescuola %></span>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
   <% end %>
 </div>

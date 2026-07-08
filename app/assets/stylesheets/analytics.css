@@ -464,6 +464,11 @@
     filter: brightness(1.1);
   }
 
+  .badge--rettifica {
+    background: oklch(var(--lch-yellow-dark));
+    color: var(--color-canvas);
+  }
+
   /* Guided steps */
   .ca-guide {
     margin-block-end: var(--block-space);

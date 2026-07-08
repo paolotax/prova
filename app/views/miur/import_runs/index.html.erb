@@ -2,41 +2,37 @@
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Storia import MIUR</span>
+    <span class="overflow-ellipsis">Rettifiche import MIUR</span>
   </h1>
 <% end %>
 
 <div class="ca-page">
-  <p class="txt-subtle">Diff di ogni importazione adozioni (rettifiche MIUR-vs-MIUR).</p>
+  <p class="txt-subtle">Import che toccano le tue scuole (diff MIUR-vs-MIUR per import).</p>
 
   <% if @runs.empty? %>
-    <p class="notice">Nessun import registrato.</p>
+    <p class="notice">Nessun import ha toccato le tue scuole.</p>
   <% else %>
     <table class="libri-table txt-small">
       <thead>
         <tr>
-          <th class="pad-inline">Anno</th>
           <th class="pad-inline">Data</th>
-          <th class="pad-inline txt-align-end">Righe totali</th>
-          <th class="pad-inline txt-align-end">Delta</th>
-          <th class="pad-inline txt-align-end">Esistenti</th>
-          <th class="pad-inline txt-align-end">Nuove</th>
-          <th class="pad-inline txt-align-end">Sparite</th>
+          <th class="pad-inline">Anno</th>
+          <th class="pad-inline txt-align-end">Tue scuole</th>
+          <th class="pad-inline txt-align-end">+ righe</th>
+          <th class="pad-inline txt-align-end">− righe</th>
         </tr>
       </thead>
       <tbody>
         <% @runs.each do |run| %>
           <tr>
             <td class="pad-inline">
-              <%= link_to anno_scolastico_label(run.anno_scolastico),
+              <%= link_to l(run.completed_at, format: :short),
                     miur_import_run_path(run, account_id: params[:account_id]) %>
             </td>
-            <td class="pad-inline"><%= l(run.completed_at, format: :short) if run.completed_at %></td>
-            <td class="pad-inline txt-align-end"><%= number_with_delimiter(run.righe_totali) %></td>
-            <td class="pad-inline txt-align-end"><%= "%+d" % run.delta_righe if run.delta_righe %></td>
-            <td class="pad-inline txt-align-end"><%= @conteggi[[run.id, "esistente"]] || 0 %></td>
-            <td class="pad-inline txt-align-end"><%= @conteggi[[run.id, "nuova"]] || 0 %></td>
-            <td class="pad-inline txt-align-end"><%= @conteggi[[run.id, "sparita"]] || 0 %></td>
+            <td class="pad-inline"><%= anno_scolastico_label(run.anno_scolastico) %></td>
+            <td class="pad-inline txt-align-end"><%= @scuole_per_run[run.id].to_i %></td>
+            <td class="pad-inline txt-align-end"><%= @aggiunte_per_run[run.id].to_i %></td>
+            <td class="pad-inline txt-align-end"><%= @rimosse_per_run[run.id].to_i %></td>
           </tr>
         <% end %>
       </tbody>
