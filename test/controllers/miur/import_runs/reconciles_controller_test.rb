@@ -1,40 +1,42 @@
 require "test_helper"
 
 class Miur::ImportRuns::ReconcilesControllerTest < ActionDispatch::IntegrationTest
-  fixtures :accounts, :users, :memberships
+  include ActiveJob::TestHelper
+  fixtures :accounts, :users, :memberships, :scuole
 
   setup do
     @account = accounts(:fizzy)
-    @admin = users(:one)      # owner della fizzy
-    @member = users(:two)     # member
+    sign_in_as(users(:one), @account)
+
     @run = Miur::ImportRun.create!(dataset: "adozioni", anno_scolastico: "202627",
-                                   righe_totali: 100, completed_at: Time.current)
+                                   completed_at: Time.current)
+    @run.diff_scuole.create!(codicescuola: "MIIC123456", categoria: "esistente",
+                             provincia: "MILANO", righe_aggiunte: 1, righe_rimosse: 0)
   end
 
-  test "admin accoda il reconcile per la provincia" do
-    sign_in_as(@admin, @account)
+  test "accoda un job per provincia (formato account) delle promosse toccate" do
+    Classe.create!(account: @account, scuola: scuole(:scuola_fizzy),
+                   anno_scolastico: "202627", stato: "attiva", anno_corso: "1", sezione: "A")
 
-    assert_enqueued_with(job: ReconcileAdozioniJob) do
-      post miur_import_run_reconcile_path(@run, account_id: @account.id),
-           params: { provincia: "MODENA" }
-    end
-    assert_redirected_to miur_import_run_path(@run, account_id: @account.id, provincia: "MODENA")
-  end
-
-  test "member non admin riceve 403 anche senza provincia (guardia PRIMA di find/require)" do
-    sign_in_as(@member, @account)
-
-    assert_no_enqueued_jobs do
+    assert_enqueued_with(job: ReconcileAdozioniJob,
+                         args: [@account, { provincia: "MI", anno: "202627" }]) do
       post miur_import_run_reconcile_path(@run, account_id: @account.id)
     end
-    assert_response :forbidden
+    assert_redirected_to miur_import_run_path(@run, account_id: @account.id)
   end
 
-  test "member non admin riceve 403 anche su run inesistente (nessun existence oracle)" do
-    sign_in_as(@member, @account)
+  test "senza promosse toccate non accoda nulla" do
+    assert_no_enqueued_jobs only: ReconcileAdozioniJob do
+      post miur_import_run_reconcile_path(@run, account_id: @account.id)
+    end
+    assert_redirected_to miur_import_run_path(@run, account_id: @account.id)
+  end
 
-    post miur_import_run_reconcile_path(999_999, account_id: @account.id),
-         params: { provincia: "MODENA" }
+  test "member non admin respinto senza accodare" do
+    sign_in_as(users(:two), @account)
+    assert_no_enqueued_jobs only: ReconcileAdozioniJob do
+      post miur_import_run_reconcile_path(@run, account_id: @account.id)
+    end
     assert_response :forbidden
   end
 

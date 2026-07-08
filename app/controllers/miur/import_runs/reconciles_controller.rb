@@ -1,20 +1,23 @@
-# Bottone "Ri-reconcilia questa provincia": convenienza manuale (MAI automatico).
-# Accoda il reconcile per l'account corrente; le protezioni sul lavoro utente
-# sono nel Reconciler stesso (ON CONFLICT DO NOTHING + orfane protette).
+# Bottone "Applica le rettifiche": convenienza manuale (MAI automatico).
+# Fan-out di ReconcileAdozioniJob sulle sole province (formato scuole account)
+# delle scuole PROMOSSE toccate dal run — ricalcolate server-side, mai da params.
+# Le protezioni sul lavoro utente sono nel Reconciler (DO NOTHING + orfane protette).
 class Miur::ImportRuns::ReconcilesController < ApplicationController
   before_action :authenticate_user!
-  # Prima di qualunque find/params.require: un member non deve poter sondare
-  # l'esistenza dei run (404 vs 400) né ricevere errori diversi da 403.
+  # Prima di qualunque find: un member non deve poter sondare l'esistenza dei run.
   before_action :require_admin
 
   def create
     run = Miur::ImportRun.adozioni.find(params[:import_run_id])
-    provincia = params.require(:provincia)
+    province = Miur::RettificheAccount.new(run: run, account: Current.account).province_promosse
 
-    ReconcileAdozioniJob.perform_later(Current.account, provincia: provincia,
-                                       anno: run.anno_scolastico)
-    redirect_to miur_import_run_path(run, provincia: provincia),
-                notice: "Reconcile accodato per #{provincia}"
+    province.each do |provincia|
+      ReconcileAdozioniJob.perform_later(Current.account, provincia: provincia,
+                                         anno: run.anno_scolastico)
+    end
+    notice = province.any? ? "Reconcile accodato per: #{province.join(', ')}"
+                           : "Nessuna scuola promossa da rettificare"
+    redirect_to miur_import_run_path(run), notice: notice
   end
 
   private
