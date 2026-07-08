@@ -51,6 +51,21 @@
       </p>
     <% end %>
 
+    <% if @ultimo_run&.diff? %>
+      <% s = @ultimo_run.diff_scuole %>
+      <h3>Rettifiche di questo import</h3>
+      <p>
+        +<%= s.sum(:righe_aggiunte) %> / -<%= s.sum(:righe_rimosse) %> righe
+        su <%= s.esistenti.count %> scuole esistenti ·
+        <%= s.nuove.count %> nuove da promuovere ·
+        <%= s.sparite.count %> sparite.<br>
+        Province più toccate:
+        <%= s.esistenti.group(:provincia).order(Arel.sql("SUM(righe_aggiunte + righe_rimosse) DESC"))
+             .limit(3).sum(Arel.sql("righe_aggiunte + righe_rimosse")).keys.compact.join(", ") %><br>
+        Dettaglio: apri <em>/miur/import_runs</em> nell'app.
+      </p>
+    <% end %>
+
     <p>Totale adozioni nel database: <%= Miur::Adozione.correnti.count %></p>
   </body>
 </html>

@@ -5,6 +5,7 @@ class ScrapingMailer < ApplicationMailer
     @regioni_nuove = regioni_nuove
     @regioni_fallite = regioni_fallite
     @regioni_stale = regioni_stale
+    @ultimo_run = Miur::ImportRun.adozioni.order(:completed_at).last
 
     mail(
       to: Rails.application.credentials.dig(:email, :admin) || 'paolo.tassinari@hey.com',
