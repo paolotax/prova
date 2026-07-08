@@ -165,7 +165,7 @@ GEM
     combine_pdf (1.0.29)
       matrix
       ruby-rc4 (>= 0.1.5)
-    concurrent-ruby (1.3.6)
+    concurrent-ruby (1.3.7)
     connection_pool (2.5.5)
     counter_culture (3.8.2)
       activerecord (>= 4.2)
@@ -210,7 +210,7 @@ GEM
     event_stream_parser (1.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    faraday (2.14.2)
+    faraday (2.14.3)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -383,13 +383,13 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.5)
-    nokogiri (1.19.3-aarch64-linux-gnu)
+    nokogiri (1.19.4-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.3-arm64-darwin)
+    nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.3-x86_64-darwin)
+    nokogiri (1.19.4-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.3-x86_64-linux-gnu)
+    nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     oga (3.4)
       ast
