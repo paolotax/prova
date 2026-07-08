@@ -7,8 +7,13 @@
       <header class="header" id="header">
         <a href="#main" class="header__skip-navigation btn" data-turbo="false">Vai al contenuto</a>
         <nav>
-          <%= link_to root_path, class: "header__logo center flex-inline align-center" do %>
-            <span class="txt-x-large font-weight-black">Scagnozz</span>
+          <%= link_to root_path, class: "center flex-inline align-center",
+                style: "gap: 0.5rem; color: var(--color-ink); text-decoration: none;" do %>
+            <span class="nav__logo" style="height: 2.5em; width: 2.5em;">
+              <%= image_tag "scagnozz.png", alt: "", class: "nav__logo-light" %>
+              <%= image_tag "scagnozz-white.png", alt: "", class: "nav__logo-dark" %>
+            </span>
+            <svg style="height: 2em;" viewBox="0 0 170 44" xmlns="http://www.w3.org/2000/svg"><text x="0" y="34" font-family="system-ui, sans-serif" font-size="34" font-weight="900" fill="currentColor">ScagnoZZ</text></svg>
           <% end %>
         </nav>
 
