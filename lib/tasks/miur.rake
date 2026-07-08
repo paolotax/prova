@@ -181,6 +181,17 @@ namespace :miur do
       conn.execute("ANALYZE #{MIUR_ADOZIONI_STG}")
       puts "Indici + PK + CHECK + ANALYZE su staging completati"
 
+      # Diff MIUR-vs-MIUR pre-swap (design 2026-07-08-miur-import-diff-design.md):
+      # partizione vecchia e staging convivono solo qui. Non-fatale: il diff è
+      # osservabilità, lo swap è il lavoro critico.
+      diff = Miur::ImportDiff.new(anno: anno, staging: MIUR_ADOZIONI_STG)
+      begin
+        diff.calcola
+      rescue => e
+        diff = nil
+        Rails.logger.error("[Miur::ImportDiff] calcolo fallito (import prosegue): #{e.class}: #{e.message}")
+      end
+
       # 4. Swap di partizione in una sola transazione. Il rename finale degli
       #    indici libera i nomi *_stg per il prossimo run (i nomi indice sono
       #    globali nello schema e sopravvivrebbero all'ATTACH).
@@ -203,11 +214,18 @@ namespace :miur do
       puts "Swap completato: #{part} ha #{totale} righe"
       Rails.logger.info "miur:importa_adozioni completato (swap ok, #{totale} righe)"
 
-      Miur::ImportRun.create!(
+      run = Miur::ImportRun.create!(
         dataset: "adozioni", anno_scolastico: anno,
         righe_totali: totale, delta_righe: prev&.righe_totali ? totale - prev.righe_totali : nil,
         completed_at: Time.current
       )
+
+      begin
+        diff&.persisti(run)
+        puts "Diff import: #{run.diff_scuole.count} scuole toccate" if diff
+      rescue => e
+        Rails.logger.error("[Miur::ImportDiff] persistenza fallita (import ok): #{e.class}: #{e.message}")
+      end
 
       # Le matview di mercato leggono miur_adozioni: il refresh async le
       # allinea al nuovo snapshot. Le anomalie vengono ricostruite da zero.
