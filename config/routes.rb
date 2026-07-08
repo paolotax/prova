@@ -389,6 +389,12 @@ Rails.application.routes.draw do
                path: "controllo_adozioni/anomalie", as: :controllo_adozioni_anomalie
     end
 
+    namespace :miur do
+      resources :import_runs, only: %i[index show] do
+        resource :reconcile, only: :create, module: :import_runs
+      end
+    end
+
     resources :profiles
 
     resources :stats do
