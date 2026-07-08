@@ -92,6 +92,17 @@
     </section>
   <% end %>
 
+  <% if @nuove_count.positive? %>
+    <section class="margin-block-end">
+      <h2 class="txt-medium">Scuole nuove</h2>
+      <p class="txt-subtle">
+        <%= @nuove_count %> scuole comparse ora nel MIUR.
+        <%= link_to "Promuovile dal Controllo adozioni →",
+              controllo_adozioni_index_path(account_id: params[:account_id]) %>
+      </p>
+    </section>
+  <% end %>
+
   <% if @sparite.any? %>
     <section class="margin-block-end">
       <h2 class="txt-medium">Scuole sparite (possibili cambi codice)</h2>

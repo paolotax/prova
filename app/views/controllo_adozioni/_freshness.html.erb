@@ -3,7 +3,13 @@
 <% if run&.completed_at %>
   <div class="ca-freshness">
     <span class="ca-freshness__dot"></span>
-    Dati MIUR aggiornati al <strong><%= "#{run.completed_at.day} #{I18n.t("date.abbr_month_names")[run.completed_at.month]}" %></strong>
+    <% data = "#{run.completed_at.day} #{I18n.t("date.abbr_month_names")[run.completed_at.month]}" %>
+    Dati MIUR aggiornati al
+    <% if Current.admin? %>
+      <%= link_to miur_import_run_path(run, account_id: params[:account_id]) do %><strong><%= data %></strong><% end %>
+    <% else %>
+      <strong><%= data %></strong>
+    <% end %>
     <% if run.righe_totali %>
       · <strong><%= number_with_delimiter(run.righe_totali) %></strong> adozioni
     <% end %>
