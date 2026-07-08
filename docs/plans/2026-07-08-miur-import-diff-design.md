@@ -136,7 +136,7 @@ Non è automatizzabile senza rischiare di buttare il suo lavoro.
 
 ## Flusso complessivo
 
-```
+```text
 miur:importa_adozioni
   └─ (pre-swap) calcola diff staging vs vecchia partizione (class-key EXCEPT)
        ├─ classifica codicescuola: esistente / nuova / sparita
@@ -169,4 +169,3 @@ ScrapingNotificationJob → email con sintesi diff + link
 - `app/jobs/reconcile_adozioni_job.rb` — job per-provincia da scatenare a mano
 - `app/models/controllo_adozioni/passaggio_anno.rb` — flusso promozioni (destinazione "scuole nuove")
 - `app/services/miur/adozioni_scraper.rb` — `ScrapingNotificationJob` per il segnale email
-```
