@@ -1,7 +1,7 @@
 # MIUR Import Runs — revisione pagina (account-scoped) — design
 
 **Data:** 2026-07-08
-**Stato:** design validato, implementazione da fare
+**Stato:** IMPLEMENTATO (2026-07-08) — commit `0298ae9e`; `Miur::RettificheAccount` + `import_runs_controller` account-scoped con badge da-rettificare e drill in linea.
 **Contesto:** segue e affina `2026-07-08-miur-import-diff-design.md` (feature già implementata e
 collaudata in dev, run #8: +1329, 734 scuole esistenti). Qui si rivede **solo la pagina**
 `miur/import_runs`, non il motore di diff.

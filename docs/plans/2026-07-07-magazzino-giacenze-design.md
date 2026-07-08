@@ -1,7 +1,7 @@
 # Magazzino: giacenze, consegne parziali, acconti — Design
 
 **Data:** 2026-07-07
-**Stato:** validato, da implementare
+**Stato:** IMPLEMENTATO (2026-07-08) — tabella `giacenze` denormalizzata + `consegna_righe`, segno unificato in `Causale`; vecchia `view_giacenze` droppata (commit `11964384`). Commit: `f8573e38`, `f5f387ff`, `986c063d`, `e120ab1e`, `bb536784`, `11964384`.
 
 ## Problema
 
