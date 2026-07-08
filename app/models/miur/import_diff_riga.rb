@@ -27,4 +27,17 @@ class Miur::ImportDiffRiga < ApplicationRecord
 
   scope :aggiunte, -> { where(segno: "+") }
   scope :rimosse,  -> { where(segno: "-") }
+
+  # Classifica le righe diff di UNA scuola: un ISBN presente sia tra i '+' sia
+  # tra i '-' è uno "spostamento" (re-keying MIUR di sezione/classe, il libro
+  # non cambia); il resto sono vere aggiunte/rimozioni. Derivata a lettura.
+  def self.classifica(righe)
+    aggiunti, rimossi = righe.partition { |r| r.segno == "+" }
+    comuni = aggiunti.map(&:codiceisbn).to_set & rimossi.map(&:codiceisbn).to_set
+    {
+      aggiunte: aggiunti.reject { |r| comuni.include?(r.codiceisbn) },
+      rimosse:  rimossi.reject { |r| comuni.include?(r.codiceisbn) },
+      spostate: righe.select { |r| comuni.include?(r.codiceisbn) }
+    }
+  end
 end
