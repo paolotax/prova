@@ -6,6 +6,12 @@ class Miur::ImportDiffTest < ActiveSupport::TestCase
 
   setup do
     @conn = ActiveRecord::Base.connection
+    # Le fixture di altre classi di test lasciano righe in miur_adozioni/miur_scuole
+    # (partizione dell'anno): il diff le vedrebbe come "sparite". Ripartiamo pulito
+    # (delete dentro la transazione del test → rollbackato). Idioma del progetto,
+    # vedi ControlloAdozioniControllerTest#setup.
+    Miur::Adozione.delete_all
+    Miur::Scuola.delete_all
     @conn.execute("DROP TABLE IF EXISTS #{STG}")
     @conn.execute("CREATE TABLE #{STG} (LIKE miur_adozioni INCLUDING DEFAULTS)")
     @conn.execute("ALTER TABLE #{STG} ALTER COLUMN id SET DEFAULT nextval('miur_adozioni_id_seq')")
