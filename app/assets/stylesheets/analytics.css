@@ -448,6 +448,22 @@
     color: oklch(var(--lch-yellow-dark));
   }
 
+  .ca-freshness__badge {
+    background: var(--color-accent, var(--color-ink));
+    border-radius: 99rem;
+    color: var(--color-canvas);
+    font-size: var(--text-x-small, var(--text-small));
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.2rem 0.5rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .ca-freshness__badge:hover {
+    filter: brightness(1.1);
+  }
+
   /* Guided steps */
   .ca-guide {
     margin-block-end: var(--block-space);

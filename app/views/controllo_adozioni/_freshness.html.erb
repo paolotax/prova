@@ -16,6 +16,14 @@
     <% if run.delta_righe.to_i.positive? %>
       <span class="ca-freshness__delta">(+<%= number_with_delimiter(run.delta_righe) %> dall'ultimo)</span>
     <% end %>
+    <% if Current.admin? && run.diff? %>
+      <% cats = run.diff_scuole.group(:categoria).count %>
+      <%= link_to miur_import_run_path(run, account_id: params[:account_id]), class: "ca-freshness__badge" do %>
+        <%= number_with_delimiter(cats["esistente"].to_i) %> rettifiche
+        <% if cats["nuova"].to_i.positive? %> · <%= cats["nuova"] %> nuove<% end %>
+        <% if cats["sparita"].to_i.positive? %> · <%= cats["sparita"] %> sparite<% end %>
+      <% end %>
+    <% end %>
     <% if run.regioni_stale.present? %>
       · <span class="ca-freshness__stale">
         <%= Array(run.regioni_stale).join(", ") %>: dati non aggiornati
