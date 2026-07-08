@@ -52,6 +52,11 @@ class Miur::ImportDiffTest < ActiveSupport::TestCase
     assert_equal %w[MOEE000001], run.diff_righe.distinct.pluck(:codicescuola)
     assert_equal ["9784444444444"], run.diff_righe.aggiunte.pluck(:codiceisbn)
     assert_equal ["9782222222222"], run.diff_righe.rimosse.pluck(:codiceisbn)
+
+    # titolo arricchito dal lato giusto: '+' dalla staging, '-' dalla partizione
+    # vecchia (che dopo lo swap non esiste più: qui è l'unica copia)
+    assert_equal ["TITOLO 9784444444444"], run.diff_righe.aggiunte.pluck(:titolo)
+    assert_equal ["TITOLO 9782222222222"], run.diff_righe.rimosse.pluck(:titolo)
   end
 
   test "senza partizione vecchia (primo import anno) il diff si salta" do
