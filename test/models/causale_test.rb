@@ -5,7 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  causale            :string
 #  causali_successive :json
-#  clientable_type    :string
+#  clientable_types   :json             not null
 #  magazzino          :string
 #  movimento          :integer
 #  priorita           :integer          default(0)

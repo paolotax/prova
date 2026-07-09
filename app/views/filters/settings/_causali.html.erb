@@ -18,14 +18,19 @@
     <strong class="popup__title">Filtra per causale...</strong>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
-      <% user_filtering.causali_disponibili.each do |id, nome| %>
-        <%= content_tag(:li, class: "popup__item", data: {
-              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: id, multi_selection_combobox_label: nome },
-              role: "checkbox", aria: { checked: filter.causali.include?(id.to_s) }) do %>
-          <button type="button" class="btn popup__btn" data-action="multi-selection-combobox#change">
-            <span class="overflow-ellipsis flex-item-grow"><%= nome %></span>
-            <%= icon_tag "check", class: "checked flex-item-justify-end" %>
-          </button>
+      <% user_filtering.causali_per_contesto.each do |contesto, causali| %>
+        <li class="popup__item" role="presentation">
+          <span class="popup__btn font-weight-bold"><%= contesto %></span>
+        </li>
+        <% causali.each do |causale| %>
+          <%= content_tag(:li, class: "popup__item", data: {
+                filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: causale.id, multi_selection_combobox_label: causale.causale },
+                role: "checkbox", aria: { checked: filter.causali.include?(causale.id.to_s) }) do %>
+            <button type="button" class="btn popup__btn" data-action="multi-selection-combobox#change">
+              <span class="overflow-ellipsis flex-item-grow pad-inline-start txt-small"><%= causale.causale %></span>
+              <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+            </button>
+          <% end %>
         <% end %>
       <% end %>
     </ul>

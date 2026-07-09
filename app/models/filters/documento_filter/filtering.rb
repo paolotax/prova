@@ -16,6 +16,10 @@ module Filters
       @causali_disponibili ||= Causale.all.order(:causale).pluck(:id, :causale)
     end
 
+    def causali_per_contesto
+      @causali_per_contesto ||= Causale.per_contesto
+    end
+
     def show_causali?
       filter.causali.any?
     end

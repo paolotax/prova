@@ -1,0 +1,48 @@
+/* Tabella dati generica — grafica uniforme per le index CRUD
+ * (causali, sconti, ...). Per la tabella documenti vedi documento-table.css
+ * ========================================================================== */
+
+@layer components {
+  .table {
+    --table-spacer-block: 1ch;
+    --table-spacer-inline: 1ch;
+    --table-border-color: var(--color-ink-lightest);
+
+    border-collapse: collapse;
+    font-size: var(--text-small);
+    inline-size: 100%;
+
+    th {
+      border-block-end: 1px solid var(--color-ink-light);
+      color: var(--color-ink-medium);
+      font-size: var(--text-x-small);
+      font-weight: 700;
+      padding: var(--table-spacer-block) var(--table-spacer-inline);
+      text-align: start;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      border-block-end: 1px solid var(--table-border-color);
+      padding: var(--table-spacer-block) var(--table-spacer-inline);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+      border-block-end: none;
+    }
+
+    @media (any-hover: hover) {
+      tbody tr:hover {
+        background-color: color-mix(in srgb, var(--color-ink) 4%, transparent);
+      }
+    }
+  }
+
+  /* Scroll orizzontale su schermi stretti senza far scrollare la pagina */
+  .table-wrapper {
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+}

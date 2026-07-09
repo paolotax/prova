@@ -5,7 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  causale            :string
 #  causali_successive :json
-#  clientable_type    :string
+#  clientable_types   :json             not null
 #  magazzino          :string
 #  movimento          :integer
 #  priorita           :integer          default(0)
@@ -33,8 +33,32 @@ class Causale < ApplicationRecord
   # Unica fonte del segno: Giacenza, Saldo e Movimenti derivano da qui.
   SEGNO_SQL = "CASE causali.movimento WHEN 0 THEN 1 ELSE -1 END".freeze
 
+  CONTESTI = [ "Vendite", "Fornitori", "Campionario" ].freeze
+
+  # Tipi di destinatario per cui una causale può essere pertinente ([] = tutti)
+  CLIENTABLE_TYPES = [ "Cliente", "Scuola", "Classe", "Persona" ].freeze
+
+  def self.per_contesto(in_testa: nil)
+    order(:causale).group_by(&:contesto)
+      .sort_by { |contesto, _| [ contesto == in_testa ? 0 : 1, CONTESTI.index(contesto) ] }
+  end
+
+  # I form inviano gli array json con un hidden vuoto per permettere lo svuotamento
+  normalizes :clientable_types, :stati_successivi, :causali_successive,
+    with: ->(value) { Array(value).compact_blank }
+
   def segno
     entrata? ? 1 : -1
+  end
+
+  def contesto
+    if magazzino_campionario?
+      "Campionario"
+    elsif carico?
+      "Fornitori"
+    else
+      "Vendite"
+    end
   end
 
   validates :causale, presence: true

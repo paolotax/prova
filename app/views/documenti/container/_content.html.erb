@@ -22,7 +22,10 @@
       </div>
     <% end %>
 
-    <div class="documento-edit-form">
+    <div class="documento-edit-form"
+         data-controller="causale-clientable"
+         data-causale-clientable-tipo-value="<%= documento.clientable_value.to_s.split(":").first %>"
+         data-action="hw-combobox:selection->causale-clientable#update">
       <%# Cliente/Scuola combobox %>
       <div class="documento-edit-form__cliente">
         <div class="form-field cb-tax" data-controller="toggle-class" data-toggle-class-toggle-class="editing">
@@ -58,10 +61,12 @@
         <div class="form-field" style="flex: 1 1 50%;">
           <%= form.label :causale_id, "Causale documento", class: "form-label" %>
           <%= form.select :causale_id,
-              options_from_collection_for_select(Causale.all, :id, :causale, documento.causale_id),
+              grouped_options_for_select(Causale.per_contesto(in_testa: documento.causale&.contesto).map { |contesto, causali|
+                [contesto, causali.map { |c| [c.causale, c.id, { data: { clientable_types: c.clientable_types.join(" ") } }] }]
+              }, documento.causale_id),
               { include_blank: "seleziona..." },
               class: "input input--select",
-              data: { action: "change->documento-causale#change" } %>
+              data: { causale_clientable_target: "select", action: "change->documento-causale#change" } %>
         </div>
 
         <div class="form-field" style="flex: 1 1 25%;">

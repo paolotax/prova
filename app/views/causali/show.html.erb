@@ -43,8 +43,8 @@
       </div>
     </div>
     <div class="flex-item-grow" style="flex-basis: 150px;">
-      <span class="txt-x-small txt-subtle txt-uppercase">Cliente</span>
-      <div class="font-weight-bold"><%= @causale.clientable_type || "-" %></div>
+      <span class="txt-x-small txt-subtle txt-uppercase">Destinatari</span>
+      <div class="font-weight-bold"><%= @causale.clientable_types.presence&.join(", ") || "Tutti" %></div>
     </div>
     <div class="flex-item-grow" style="flex-basis: 100px;">
       <span class="txt-x-small txt-subtle txt-uppercase">Priorità</span>

@@ -2,27 +2,28 @@
   <td class="font-weight-bold">
     <%= link_to causale.causale, causale_path(causale), class: "txt-link" %>
   </td>
-  <td><%= causale.magazzino %></td>
+  <td><span class="badge fill-shade"><%= causale.contesto %></span></td>
+  <td class="txt-subtle"><%= causale.magazzino %></td>
+  <td><%= causale.tipo_movimento&.humanize %></td>
   <td>
-    <span class="badge <%= causale.ordine? ? 'txt-negative' : causale.vendita? ? 'txt-positive' : 'txt-accent' %>">
-      <%= causale.tipo_movimento %>
-    </span>
-  </td>
-  <td>
-    <span class="<%= causale.uscita? ? 'txt-negative' : 'txt-positive' %>">
+    <span class="font-weight-bold <%= causale.uscita? ? 'txt-negative' : 'txt-positive' %>">
       <%= causale.movimento %>
     </span>
   </td>
+  <td class="txt-subtle txt-x-small">
+    <%= causale.clientable_types.presence&.join(", ") || "Tutti" %>
+  </td>
   <td class="txt-end"><%= causale.priorita %></td>
-  <td class="txt-subtle">
+  <td class="txt-subtle txt-x-small">
     <%= causale.causali_successive_records.map(&:causale).first(3).join(", ") %>
     <% if causale.causali_successive_records.count > 3 %>
       <span class="txt-xx-small">+<%= causale.causali_successive_records.count - 3 %></span>
     <% end %>
   </td>
   <td class="txt-end">
-    <%= link_to edit_causale_path(causale), class: "txt-link txt-small" do %>
+    <%= link_to edit_causale_path(causale), class: "btn btn--circle btn--small borderless" do %>
       <%= icon_tag "pencil", size: "small" %>
+      <span class="for-screen-reader">Modifica</span>
     <% end %>
   </td>
 </tr>

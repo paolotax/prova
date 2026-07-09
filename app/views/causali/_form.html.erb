@@ -1,93 +1,109 @@
+<%# locals: (causale:) -%>
+
+<% stati_documento = [ [ "Ordine", "ordine" ], [ "In consegna", "in_consegna" ], [ "Da pagare", "da_pagare" ],
+                       [ "Da registrare", "da_registrare" ], [ "Corrispettivi", "corrispettivi" ],
+                       [ "Fattura", "fattura" ], [ "Bozza", "bozza" ] ] %>
+
 <%= form_with(model: causale) do |form| %>
+  <div class="flex flex-column gap">
+    <% if causale.errors.any? %>
+      <div class="flash flash--error txt-small">
+        <% causale.errors.full_messages.each do |message| %>
+          <p><%= message %></p>
+        <% end %>
+      </div>
+    <% end %>
 
-  <% if causale.errors.any? %>
-    <div class="fill-shade border-radius pad margin-block-end-half txt-negative txt-small">
-      <% causale.errors.full_messages.each do |message| %>
-        <p><%= message %></p>
-      <% end %>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Informazioni base</h3>
+
+    <div class="flex gap flex-wrap">
+      <div class="form-field" style="flex: 2; min-width: 200px;">
+        <%= form.label :causale, class: "form-label" %>
+        <%= form.text_field :causale, class: "input", placeholder: "es. ORD, DDT, TD01...", required: true %>
+      </div>
+      <div class="form-field" style="flex: 0 0 100px;">
+        <%= form.label :priorita, "Priorità", class: "form-label" %>
+        <%= form.number_field :priorita, min: 0, max: 100, class: "input" %>
+      </div>
     </div>
-  <% end %>
 
-  <h3 class="divider divider--fade txt-medium font-weight-black">Informazioni Base</h3>
+    <div class="flex gap flex-wrap">
+      <div class="form-field" style="flex: 1; min-width: 150px;">
+        <%= form.label :tipo_movimento, "Tipo movimento", class: "form-label" %>
+        <%= form.select :tipo_movimento,
+            options_for_select(Causale.tipo_movimenti.keys.map { |k| [ k.humanize, k ] }, causale.tipo_movimento),
+            { prompt: "Seleziona..." }, class: "input input--select full-width" %>
+      </div>
+      <div class="form-field" style="flex: 1; min-width: 150px;">
+        <%= form.label :movimento, "Direzione", class: "form-label" %>
+        <%= form.select :movimento,
+            options_for_select(Causale.movimenti.keys.map { |k| [ k.humanize, k ] }, causale.movimento),
+            { prompt: "Seleziona..." }, class: "input input--select full-width" %>
+      </div>
+      <div class="form-field" style="flex: 1; min-width: 150px;">
+        <%= form.label :magazzino, class: "form-label" %>
+        <%= form.select :magazzino,
+            options_for_select(Causale.magazzini.keys.map { |k| [ k.humanize, k ] }, causale.magazzino),
+            { prompt: "Seleziona..." }, class: "input input--select full-width" %>
+      </div>
+    </div>
 
-  <div class="flex flex-wrap gap full-width margin-block-end-half">
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
-      <%= form.label :causale, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.text_field :causale, placeholder: "es. ORD, DDT, TD01...", class: "input full-width" %>
-    </fieldset>
+    <div class="form-field">
+      <span class="form-label">Tipi di destinatario</span>
+      <div class="flex flex-wrap gap-half">
+        <%= hidden_field_tag "causale[clientable_types][]", "", id: nil %>
+        <% Causale::CLIENTABLE_TYPES.each do |tipo| %>
+          <label class="btn txt-small">
+            <span><%= tipo %></span>
+            <%= icon_tag "check", class: "checked" %>
+            <%= check_box_tag "causale[clientable_types][]", tipo, causale.clientable_types.include?(tipo), id: nil, tabindex: -1 %>
+          </label>
+        <% end %>
+      </div>
+      <p class="txt-xx-small txt-subtle margin-block-start-quarter">Nessuna selezione = valida per tutti i tipi di destinatario</p>
+    </div>
 
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
-      <%= form.label :magazzino, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.text_field :magazzino, placeholder: "es. Principale", class: "input full-width" %>
-    </fieldset>
+    <h3 class="divider divider--fade txt-medium font-weight-black">Workflow</h3>
 
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
-      <%= form.label :tipo_movimento, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.select :tipo_movimento,
-          options_for_select(Causale.tipo_movimenti.keys.map { |k| [k, k] }, causale.tipo_movimento),
-          { prompt: "Seleziona..." }, class: "input full-width" %>
-    </fieldset>
-
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
-      <%= form.label :movimento, "Direzione", class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.select :movimento,
-          options_for_select(Causale.movimenti.keys.map { |k| [k, k] }, causale.movimento),
-          { prompt: "Seleziona..." }, class: "input full-width" %>
-    </fieldset>
-
-    <fieldset class="flex-item-grow" style="flex-basis: 200px;">
-      <%= form.label :clientable_type, "Tipo Cliente", class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.select :clientable_type,
-          options_for_select([["Scuola", "Scuola"], ["Cliente", "Cliente"]], causale.clientable_type),
-          { include_blank: "Nessuno" }, class: "input full-width" %>
-    </fieldset>
-
-    <fieldset class="flex-item-grow" style="flex-basis: 100px;">
-      <%= form.label :priorita, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.number_field :priorita, min: 0, max: 100, class: "input full-width" %>
-    </fieldset>
-  </div>
-
-  <h3 class="divider divider--fade txt-medium font-weight-black">Workflow</h3>
-
-  <div class="flex flex-wrap gap full-width margin-block-end-half">
-    <fieldset class="flex-item-grow" style="flex-basis: 250px;">
-      <%= form.label :stato_iniziale, class: "txt-x-small txt-subtle txt-uppercase" %>
+    <div class="form-field" style="max-width: 250px;">
+      <%= form.label :stato_iniziale, "Stato iniziale", class: "form-label" %>
       <%= form.select :stato_iniziale,
-          options_for_select(
-            [["Ordine", "ordine"], ["In consegna", "in_consegna"], ["Da pagare", "da_pagare"],
-             ["Da registrare", "da_registrare"], ["Corrispettivi", "corrispettivi"],
-             ["Fattura", "fattura"], ["Bozza", "bozza"]],
-            causale.stato_iniziale
-          ),
-          { include_blank: "Nessuno" }, class: "input full-width" %>
-    </fieldset>
+          options_for_select(stati_documento, causale.stato_iniziale),
+          { include_blank: "Nessuno" }, class: "input input--select full-width" %>
+    </div>
 
-    <fieldset class="flex-item-grow" style="flex-basis: 250px;">
-      <%= form.label :stati_successivi, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.select :stati_successivi,
-          options_for_select(
-            [["Ordine", "ordine"], ["In consegna", "in_consegna"], ["Da pagare", "da_pagare"],
-             ["Da registrare", "da_registrare"], ["Corrispettivi", "corrispettivi"],
-             ["Fattura", "fattura"], ["Bozza", "bozza"]],
-            causale.stati_successivi
-          ),
-          {}, { multiple: true, size: 5, class: "input full-width" } %>
-    </fieldset>
+    <div class="form-field">
+      <span class="form-label">Stati successivi</span>
+      <div class="flex flex-wrap gap-half">
+        <%= hidden_field_tag "causale[stati_successivi][]", "", id: nil %>
+        <% stati_documento.each do |label, value| %>
+          <label class="btn txt-small">
+            <span><%= label %></span>
+            <%= icon_tag "check", class: "checked" %>
+            <%= check_box_tag "causale[stati_successivi][]", value, causale.stati_successivi&.include?(value), id: nil, tabindex: -1 %>
+          </label>
+        <% end %>
+      </div>
+    </div>
 
-    <fieldset class="full-width">
-      <%= form.label :causali_successive, class: "txt-x-small txt-subtle txt-uppercase" %>
-      <%= form.select :causali_successive,
-          options_for_select(@causali_options || [], causale.causali_successive),
-          {}, { multiple: true, size: 5, class: "input full-width" } %>
-      <p class="txt-xx-small txt-subtle margin-block-start-quarter">
-        Causali generabili da questa. Es: Ordine → DDT → Fattura
-      </p>
-    </fieldset>
-  </div>
+    <div class="form-field">
+      <span class="form-label">Causali successive</span>
+      <div class="flex flex-wrap gap-half">
+        <%= hidden_field_tag "causale[causali_successive][]", "", id: nil %>
+        <% (@causali_options || []).each do |nome, causale_id| %>
+          <label class="btn txt-small">
+            <span><%= nome %></span>
+            <%= icon_tag "check", class: "checked" %>
+            <%= check_box_tag "causale[causali_successive][]", causale_id, causale.causali_successive&.map(&:to_s)&.include?(causale_id.to_s), id: nil, tabindex: -1 %>
+          </label>
+        <% end %>
+      </div>
+      <p class="txt-xx-small txt-subtle margin-block-start-quarter">Causali generabili da questa. Es: Ordine → DDT → Fattura</p>
+    </div>
 
-  <div class="flex gap-half">
-    <%= form.submit "Salva", class: "btn btn--primary" %>
-    <%= link_to "Annulla", causale.persisted? ? causale_path(causale) : causali_path, class: "btn btn--ghost" %>
+    <div class="flex gap-half margin-block-start-half">
+      <%= form.submit "Salva", class: "btn btn--primary" %>
+      <%= link_to "Annulla", causale.persisted? ? causale_path(causale) : causali_path, class: "btn btn--ghost" %>
+    </div>
   </div>
 <% end %>

@@ -15,24 +15,28 @@
 
 <section class="panel panel--wide shadow center">
   <% if @causali.any? %>
-    <table class="txt-small full-width">
-      <thead>
-        <tr class="txt-subtle txt-x-small txt-uppercase">
-          <th class="txt-start">Causale</th>
-          <th class="txt-start">Magazzino</th>
-          <th class="txt-start">Tipo</th>
-          <th class="txt-start">Direzione</th>
-          <th class="txt-end">Priorità</th>
-          <th class="txt-start">Successive</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @causali.each do |causale| %>
-          <%= render causale %>
-        <% end %>
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Causale</th>
+            <th>Contesto</th>
+            <th>Magazzino</th>
+            <th>Tipo</th>
+            <th>Direzione</th>
+            <th>Destinatari</th>
+            <th class="txt-end">Priorità</th>
+            <th>Successive</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @causali.each do |causale| %>
+            <%= render causale %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   <% else %>
     <p class="txt-subtle txt-small pad">Nessuna causale configurata.</p>
   <% end %>

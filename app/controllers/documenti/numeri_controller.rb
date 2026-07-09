@@ -4,7 +4,7 @@ class Documenti::NumeriController < ApplicationController
   # GET /documenti/numero?causale_id=X
   def show
     causale = Causale.find(params[:causale])
-    clientable_type = causale.clientable_type&.camelize || "Cliente"
+    clientable_type = causale.clientable_types.first || "Cliente"
 
     anno_corrente = Date.current.year
     ultimo_documento = current_account.documenti
