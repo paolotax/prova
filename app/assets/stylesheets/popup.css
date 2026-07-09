@@ -45,6 +45,17 @@
     text-transform: initial;
   }
 
+  /* Pinned footer: the list scrolls on its own, keeping title, search and footer in view */
+  .popup:has(.popup__footer--pinned) .popup__list {
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  /* Match the panel's bottom padding so the button sits centered below the divider */
+  .popup__footer--pinned {
+    padding-block-start: var(--block-space);
+  }
+
   .popup__title {
     font-weight: 800;
     white-space: nowrap;

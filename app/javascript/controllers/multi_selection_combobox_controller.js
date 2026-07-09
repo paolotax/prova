@@ -12,6 +12,7 @@ export default class extends Controller {
 
   connect() {
     this.refresh()
+    this.#takeSnapshot()
   }
 
   change(event) {
@@ -19,6 +20,20 @@ export default class extends Controller {
     if (item) {
       this.#toggleSelection(item)
     }
+  }
+
+  apply() {
+    this.refresh()
+    this.#takeSnapshot()
+  }
+
+  restore() {
+    if (!this.appliedState) return
+
+    this.itemTargets.forEach(item => {
+      item.setAttribute(this.selectPropertyNameValue, this.appliedState.has(item))
+    })
+    this.refresh()
   }
 
   refresh() {
@@ -29,9 +44,7 @@ export default class extends Controller {
 
   clear(event) {
     this.#deselectAll()
-    this.#updateHiddenFields()
-    this.labelTarget.textContent = this.#selectedLabel
-    this.#updateFilterShow()
+    this.refresh()
   }
 
   get #selectedLabel() {
@@ -42,8 +55,8 @@ export default class extends Controller {
 
     const labels = this.#selectedItems.map(item => item.dataset.multiSelectionComboboxLabel)
     const sentence = toSentence(labels, {
-      two_words_connector: " or ",
-      last_word_connector: ", or "
+      two_words_connector: " o ",
+      last_word_connector: " o "
     })
 
     return this.hasLabelPrefixValue ? `${this.labelPrefixValue} ${sentence}` : sentence
@@ -63,7 +76,6 @@ export default class extends Controller {
     }
 
     this.#updateHiddenFields()
-    this.labelTarget.textContent = this.#selectedLabel
   }
 
   isAnExclusiveSelectionItemInvolved(item) {
@@ -77,7 +89,6 @@ export default class extends Controller {
   #updateHiddenFields() {
     this.#clearHiddenFields()
     this.#addHiddenFields()
-    this.#updateFilterShow()
   }
 
   #deselectAll() {
@@ -121,5 +132,9 @@ export default class extends Controller {
   #updateFilterShow() {
     const hasSelection = this.#selectedValues().length > 0
     this.element.setAttribute("data-filter-show", hasSelection)
+  }
+
+  #takeSnapshot() {
+    this.appliedState = new Set(this.#selectedItems)
   }
 }

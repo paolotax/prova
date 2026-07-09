@@ -29,7 +29,7 @@ module FiltersHelper
     end
   end
 
-  def filter_dialog(label, &block)
+  def filter_dialog(label, apply_button: false, &block)
     tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small", data: {
       action: "turbo:before-cache@document->dialog#close keydown->navigable-list#navigate filter:changed->navigable-list#reset toggle->filter#filter",
       aria: { label: label, aria_description: label },
@@ -37,7 +37,17 @@ module FiltersHelper
       dialog_target: "dialog",
       navigable_list_focus_on_selection_value: false,
       navigable_list_actionable_items_value: true
-    }, &block
+    } do
+      concat capture(&block)
+      concat filter_apply_button if apply_button
+    end
+  end
+
+  def filter_apply_button
+    tag.footer class: "popup__footer popup__footer--pinned full-width" do
+      tag.button "Applica", type: "button", class: "btn txt-small",
+        data: { action: "multi-selection-combobox#apply dialog#close filter-settings#change form#submit" }
+    end
   end
 
   def collapsible_nav_section(title, **properties, &block)
