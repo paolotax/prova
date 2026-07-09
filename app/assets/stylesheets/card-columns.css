@@ -703,7 +703,8 @@
     }
 
     .card__board {
-      /* Uses --card-color from cards.css */
+      background-color: transparent;
+      color: var(--card-content-color);
     }
 
     .card__header {

@@ -1,11 +1,11 @@
 <%= collapsible_nav_section "Utilities" do %>
     <% if Current.user.admin? %>
         <%= filter_place_menu_item "/motor", "Motor Admin", "shield", new_window: true, turbo: false %>
-        <%= filter_place_menu_item "/sidekiq", "Sidekiq", "server" %>
-        <%= filter_place_menu_item "/blazer", "Blazer", "chart" %>
-        <%= filter_place_menu_item "/rails/performance", "Performance", "speedometer" %>
+        <%= filter_place_menu_item "/sidekiq", "Sidekiq", "server", new_window: true %>
+        <%= filter_place_menu_item "/blazer", "Blazer", "chart", new_window: true %>
+        <%= filter_place_menu_item "/rails/performance", "Performance", "speedometer", new_window: true %>
     <% end %>
     <% if Current.user.email == "paolo.tassinari@hey.com" %>
-        <%= filter_place_menu_item "/admin", "Admin", "shield" %>
+        <%= filter_place_menu_item "/admin", "Admin", "shield", new_window: true %>
     <% end %>
 <% end %>
