@@ -1,0 +1,23 @@
+/* Pezzi comuni dei form CRUD (grafica uniforme)
+ * ========================================================================== */
+
+@layer components {
+  /* Riquadro errori di validazione in testa al form */
+  .form-errors {
+    background-color: color-mix(in srgb, var(--color-negative) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-negative) 30%, transparent);
+    border-radius: 0.5em;
+    color: var(--color-negative);
+    padding: var(--inline-space);
+  }
+
+  /* Etichetta di campo (usata con .form-field in tutti i form) */
+  .form-label {
+    color: var(--color-ink-medium);
+    display: block;
+    font-size: var(--text-x-small);
+    font-weight: 600;
+    margin-block-end: 0.25ch;
+    text-transform: uppercase;
+  }
+}

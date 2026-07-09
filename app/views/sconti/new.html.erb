@@ -1,23 +1,27 @@
-<div class="max-w-2xl mx-auto py-8 px-4">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">
-      Nuovo sconto
-      <% if @scontabile %>
-        per <%= @scontabile.class.model_name.human %>: <%= @scontabile %>
-      <% end %>
-    </h1>
-    <p class="mt-2 text-sm text-gray-600">
-      <% if @scontabile.is_a?(Cliente) %>
-        Crea uno sconto di vendita per questo cliente
-      <% elsif @scontabile.is_a?(Editore) %>
-        Crea uno sconto di acquisto per questo editore
-      <% else %>
-        Crea uno sconto globale
-      <% end %>
-    </p>
+<% @page_title = @scontabile ? "Nuovo sconto per #{@scontabile.respond_to?(:denominazione) ? @scontabile.denominazione : @scontabile}" : "Nuovo sconto" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "Sconti", @scontabile ? polymorphic_path([ @scontabile, :sconti ]) : sconti_path %>
   </div>
 
-  <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg p-6">
-    <%= render "form", sconto: @sconto %>
-  </div>
-</div>
+  <h1 class="header__title"><%= @page_title %></h1>
+
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<section class="panel shadow center">
+  <p class="txt-subtle txt-small margin-block-end">
+    <% if @scontabile.is_a?(Cliente) %>
+      Crea uno sconto di vendita per questo cliente
+    <% elsif @scontabile.is_a?(Editore) %>
+      Crea uno sconto di acquisto per questo editore
+    <% elsif @scontabile.is_a?(Scuola) %>
+      Crea uno sconto di vendita per questa scuola
+    <% else %>
+      Crea uno sconto globale, per tipologia o per una singola entità
+    <% end %>
+  </p>
+
+  <%= render "form", sconto: @sconto %>
+</section>

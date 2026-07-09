@@ -91,6 +91,19 @@
     --focus-ring-color: var(--color-link);
   }
 
+  /* Azione principale (submit, "Nuovo"): pieno scuro, come le chip selezionate */
+  .btn--primary {
+    --btn-background: var(--color-ink);
+    --btn-border-color: var(--color-ink);
+    --btn-color: var(--color-ink-inverted);
+    --focus-ring-color: var(--color-ink);
+  }
+
+  /* Azione secondaria (Annulla): trasparente con bordo standard */
+  .btn--ghost {
+    --btn-background: transparent;
+  }
+
   .btn--circle,
   .btn[aria-label]:where(:has(.icon)),
   .btn:where(:has(.for-screen-reader):has(.icon)) {

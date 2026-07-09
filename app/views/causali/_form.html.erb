@@ -7,7 +7,7 @@
 <%= form_with(model: causale) do |form| %>
   <div class="flex flex-column gap">
     <% if causale.errors.any? %>
-      <div class="flash flash--error txt-small">
+      <div class="form-errors txt-small">
         <% causale.errors.full_messages.each do |message| %>
           <p><%= message %></p>
         <% end %>
