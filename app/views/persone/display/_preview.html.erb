@@ -1,0 +1,38 @@
+<%# locals: (persona:) -%>
+
+<%= tag.article id: dom_id(persona),
+    class: "card",
+    style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}",
+    tabindex: 0,
+    data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
+
+  <div class="flex flex-column flex-item-grow max-inline-size">
+    <%= link_to persona_path(persona), class: "card__link", data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= persona.nome_completo %></span>
+    <% end %>
+
+    <header class="card__header">
+      <%= render "persone/display/preview/board", persona: persona %>
+    </header>
+
+    <div class="card__body">
+      <div class="card__content">
+        <h3 class="card__title overflow-line-clamp" style="--lines: 2;">
+          <%= persona.nome_completo %>
+        </h3>
+        <div class="margin-block-start-half txt-xx-small txt-subtle flex flex-column gap-quarter">
+          <% if persona.cellulare.present? %>
+            <span class="margin-inline-start"><%= icon_tag "phone", class: "icon--small" %> <%= persona.cellulare %></span>
+          <% end %>
+          <% if persona.email.present? %>
+            <span class="margin-inline-start"><%= icon_tag "envelope", class: "icon--small" %> <%= persona.email %></span>
+          <% end %>
+          <% if persona.classi.attive.any? %>
+            <span class="margin-inline-start"><%= icon_tag "academic-cap", class: "icon--small" %> <%= persona.classi.attive.size %> classi</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end %>

@@ -3,7 +3,7 @@
 class Libri::BulkUpdatesController < ApplicationController
   # PATCH /libri/bulk_updates - aggiorna campi multipli sui libri selezionati
   def update
-    @libri = current_account.libri.where(id: params[:libro_ids])
+    @libri = current_account.libri.where(id: params[:ids])
 
     update_params = libro_params.to_h.compact_blank
 

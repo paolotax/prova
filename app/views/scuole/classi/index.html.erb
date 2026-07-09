@@ -45,7 +45,7 @@
   <% if @classi.any? %>
     <div class="pad flex flex-column gap-half">
       <% @classi.each do |classe| %>
-        <%= render "scuole/classi/classe_card", classe: classe, scuola: @scuola %>
+        <%= render "scuole/classi/classe_row", classe: classe, scuola: @scuola %>
       <% end %>
     </div>
   <% else %>

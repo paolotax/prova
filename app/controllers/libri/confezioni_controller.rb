@@ -3,7 +3,7 @@
 class Libri::ConfezioniController < ApplicationController
   # POST /libri/confezioni - crea nuova confezione con libri selezionati come fascicoli
   def create
-    @fascicoli = current_account.libri.where(id: params[:libro_ids])
+    @fascicoli = current_account.libri.where(id: params[:ids])
 
     if @fascicoli.empty?
       redirect_to libri_path, alert: "Seleziona almeno un libro"

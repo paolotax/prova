@@ -1,10 +1,10 @@
 <%# locals: (documento:, entry: nil, draggable: false) -%>
 
-<% entry ||= documento.entry rescue nil %>
+<% entry ||= documento.entry %>
 
 <% card_data = {
   navigable_list_target: "item",
-  action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
+  action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
 } %>
 
 <% if entry && draggable %>
@@ -14,7 +14,7 @@
 <% end %>
 
 <%= tag.article id: (entry ? dom_id(entry) : dom_id(documento)),
-    class: class_names("card", documento_causale_modifier(documento), documento_golden_class(documento), "card--selected": @documento == documento),
+    class: class_names("card", documento_causale_modifier(documento), documento_golden_class(documento)),
     style: "--card-color: #{documento_color(documento)};",
     tabindex: 0,
     draggable: (draggable && entry.present?),

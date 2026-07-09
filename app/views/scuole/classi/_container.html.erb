@@ -1,7 +1,7 @@
 <%# locals: (classe:, scuola:, adozioni:) -%>
 
 <% classe_card_color = tipo_scuola_color(classe.tipo_scuola) %>
-<section class="card-perma" style="--card-color: <%= classe_card_color %>;">
+<section id="<%= dom_id(classe, :container) %>" class="card-perma" style="--card-color: <%= classe_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <% if @prev_classe_id %>
       <%= link_to scuola_classe_path(scuola, @prev_classe_id), class: "btn",
@@ -22,7 +22,7 @@
       <div class="card__body">
         <div class="card__content">
           <%= turbo_frame_tag classe, :edit do %>
-            <%= render "scuole/classi/content_display", classe: classe, scuola: scuola %>
+            <%= render "scuole/classi/container/content_display", classe: classe, scuola: scuola %>
           <% end %>
         </div>
       </div>
@@ -43,7 +43,7 @@
 
   <div class="card-perma__notch card-perma__notch--bottom">
     <%= turbo_frame_tag classe, :footer do %>
-      <%= render "scuole/classi/footer", classe: classe, scuola: scuola %>
+      <%= render "scuole/classi/container/footer", classe: classe, scuola: scuola %>
     <% end %>
   </div>
 </section>

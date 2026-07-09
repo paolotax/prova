@@ -2,7 +2,7 @@
 
 class Libri::DeletionsController < ApplicationController
   def create
-    @ids = params[:libro_ids]
+    @ids = params[:ids]
     @libri = current_account.libri.where(id: @ids)
 
     # Elimina righe orfane (senza documento_righe) per non bloccare la cancellazione

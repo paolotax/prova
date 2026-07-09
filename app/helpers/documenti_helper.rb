@@ -93,4 +93,39 @@ module DocumentiHelper
       tag.span(label, class: "doc-badge", style: "--badge-color: #{color};")
     end
 
+    # JSON per lo Stimulus controller documento-editor
+    def documento_editor_json(documento)
+      {
+        id: documento.id,
+        causale_id: documento.causale_id,
+        clientable_id: documento.clientable_id,
+        clientable_type: documento.clientable_type,
+        numero_documento: documento.numero_documento,
+        data_documento: documento.data_documento,
+        referente: documento.referente,
+        note: documento.note
+      }.to_json
+    end
+
+    def documento_editor_righe_json(documento)
+      documento.documento_righe.includes(riga: :libro).map { |doc_riga|
+        riga = doc_riga.riga
+        {
+          documento_riga_id: doc_riga.id,
+          riga_id: riga.id,
+          libro_id: riga.libro_id,
+          libro: {
+            id: riga.libro&.id,
+            titolo: riga.libro&.titolo,
+            codice_isbn: riga.libro&.codice_isbn
+          },
+          titolo: riga.libro&.titolo,
+          codice_isbn: riga.libro&.codice_isbn,
+          quantita: riga.quantita,
+          prezzo_cents: riga.prezzo_cents,
+          sconto: riga.sconto
+        }
+      }.to_json
+    end
+
 end

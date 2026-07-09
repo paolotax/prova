@@ -1,0 +1,5 @@
+<%# locals: (libro:) -%>
+
+<%= render "shared/cards/display/preview/board",
+    id: libro.categoria&.nome_categoria&.upcase.presence || "LIBRO",
+    name: libro.editore&.editore %>

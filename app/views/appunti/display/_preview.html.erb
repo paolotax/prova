@@ -1,6 +1,6 @@
 <%# locals: (appunto:, entry: nil, draggable: false) -%>
 
-<% entry ||= appunto.entry rescue nil %>
+<% entry ||= appunto.entry %>
 <% draggable = draggable && appunto.published? %>
 
 <% card_data = {

@@ -4,7 +4,7 @@
 	<div class="card-perma__actions card-perma__actions--left">
 		<%= render "tappe/pianifica", source: scuola %>		
 
-		<%= link_to mappe_path("scuola-#{@scuola.id}"),
+		<%= link_to mappe_path("scuola-#{scuola.id}"),
 				class: "btn", data: { controller: "tooltip" } do %>
 			<%= icon_tag "mappa" %>
 			<span class="for-screen-reader">Posizione nella mappa</span>
@@ -20,20 +20,20 @@
 			
 			<div class="card__body">
 				<div class="card__content">
-					<%= turbo_frame_tag @scuola, :edit do %>
+					<%= turbo_frame_tag scuola, :edit do %>
 						<% if @edit_mode %>
-							<%= render "scuole/container/edit_form", scuola: @scuola %>
+							<%= render "scuole/container/edit_form", scuola: scuola %>
 						<% else %>
-							<%= render "scuole/container/content_display", scuola: @scuola %>
+							<%= render "scuole/container/content_display", scuola: scuola %>
 						<% end %>
 					<% end %>
 				</div>
 			</div>
 
-			<%= render "scuole/container/classi", scuola: @scuola %>
+			<%= render "scuole/container/classi", scuola: scuola %>
 		
-			<footer>
-				<%= render "scuole/display/perma/meta", scuola: @scuola %>
+			<footer class="card__footer full-width">
+				<%= render "scuole/display/perma/meta", scuola: scuola %>
 			</footer>
 		</article>
 	</div>
@@ -58,10 +58,7 @@
 			<span class="for-screen-reader">Sovrapacchi PDF</span>
 		<% end %>
 
-		<% bolle_aperte_count = scuola.bolle_visione
-				.joins(:bolla_visione_righe)
-				.where(bolla_visione_righe: { esito: nil })
-				.distinct.count %>
+		<% bolle_aperte_count = scuola.bolle_visione_aperte_count %>
 		<% if bolle_aperte_count.positive? %>
 			<%= link_to scuola_ritiro_path(scuola), class: "btn btn--negative",
 					data: { controller: "tooltip" } do %>
@@ -72,11 +69,11 @@
 	</div>
 
 	<div class="card-perma__notch card-perma__notch--bottom">
-		<%= turbo_frame_tag @scuola, :footer do %>
+		<%= turbo_frame_tag scuola, :footer do %>
 			<% if @edit_mode %>
-				<%= render "scuole/container/edit_footer", scuola: @scuola %>
+				<%= render "scuole/container/edit_footer", scuola: scuola %>
 			<% else %>
-				<%= render "scuole/container/footer", scuola: @scuola %>
+				<%= render "scuole/container/footer", scuola: scuola %>
 			<% end %>
 		<% end %>
 	</div>
@@ -100,23 +97,23 @@
 		</div>
 	<% end %>
 
-	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(@scuola) do %>
+	<%= turbo_frame_tag "scuola_entries", src: scuola_entries_path(scuola) do %>
 		<div class="group-header">
 			<h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Aperti</h3>
 		</div>
 		<p class="txt-small txt-subtle margin-none">Caricamento...</p>
 	<% end %>
 
-	<%= render "scuole/container/insegnanti", scuola: @scuola %>
+	<%= render "scuole/container/insegnanti", scuola: scuola %>
 
-	<%= render "scuole/container/prossime_visite", scuola: @scuola %>
+	<%= render "scuole/container/prossime_visite", scuola: scuola %>
 
-	<%= render "scuole/container/disponibilita", scuola: @scuola %>
+	<%= render "scuole/container/disponibilita", scuola: scuola %>
 
-	<%= render "scuole/container/adozioni", scuola: @scuola %>
+	<%= render "scuole/container/adozioni", scuola: scuola %>
 
-	<%#= render "scuole/container/saggi", scuola: @scuola %>
+	<%#= render "scuole/container/saggi", scuola: scuola %>
 
-	<%= turbo_frame_tag "scuola_closed_entries", src: scuola_closed_entries_path(@scuola), loading: :lazy, style: "display: block; min-height: 1px;" do %>
+	<%= turbo_frame_tag "scuola_closed_entries", src: scuola_closed_entries_path(scuola), loading: :lazy, style: "display: block; min-height: 1px;" do %>
 	<% end %>
 </div>

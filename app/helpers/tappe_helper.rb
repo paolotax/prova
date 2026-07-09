@@ -37,6 +37,18 @@ module TappeHelper
     "tappa--#{type_slug}"
   end
 
+  # Ids della tappa precedente e successiva dell'utente nella stessa giornata,
+  # per la navigazione prev/next nella show
+  def tappa_adjacent_ids(tappa)
+    return [nil, nil] unless tappa.persisted?
+
+    ids = current_user.tappe.where(data_tappa: tappa.data_tappa).order(:position, :id).pluck(:id)
+    idx = ids.index(tappa.id)
+    return [nil, nil] unless idx
+
+    [idx > 0 ? ids[idx - 1] : nil, ids[idx + 1]]
+  end
+
   def dates_of_week(date)
     # Ensure the date is a Date object
     date = Date.parse(date.to_s) unless date.is_a?(Date)

@@ -1,41 +1,11 @@
 <%# locals: (documento:, editing: false, is_new: false, documento_json: nil, righe_json: nil) -%>
 
-<%
-  # Prepara JSON per il controller (sempre necessario)
-  doc_json = documento_json || {
-    id: documento.id,
-    causale_id: documento.causale_id,
-    clientable_id: documento.clientable_id,
-    clientable_type: documento.clientable_type,
-    numero_documento: documento.numero_documento,
-    data_documento: documento.data_documento,
-    referente: documento.referente,
-    note: documento.note
-  }.to_json
-
-  righe_json_data = righe_json || documento.documento_righe.includes(riga: :libro).map { |doc_riga|
-    riga = doc_riga.riga
-    {
-      documento_riga_id: doc_riga.id,
-      riga_id: riga.id,
-      libro_id: riga.libro_id,
-      libro: {
-        id: riga.libro&.id,
-        titolo: riga.libro&.titolo,
-        codice_isbn: riga.libro&.codice_isbn
-      },
-      titolo: riga.libro&.titolo,
-      codice_isbn: riga.libro&.codice_isbn,
-      quantita: riga.quantita,
-      prezzo_cents: riga.prezzo_cents,
-      sconto: riga.sconto
-    }
-  }.to_json
-%>
+<% doc_json = documento_json || documento_editor_json(documento) %>
+<% righe_json_data = righe_json || documento_editor_righe_json(documento) %>
 
 <section id="<%= dom_id(documento, :container) %>"
          class="card-perma"
-         style="--card-color: <%= documento_color(documento) %>;"
+         style="--card-color: <%= documento_color(documento) %>; outline: none;"
          data-controller="documento-editor"
          data-documento-editor-documento-value="<%= doc_json %>"
          data-documento-editor-righe-value="<%= righe_json_data %>"
@@ -46,8 +16,7 @@
          data-documento-editor-documenti-path-value="<%= documenti_path %>"
          data-documento-editor-sconto-defiscalizzato-value="<%= Current.account&.azienda&.sconto_defiscalizzato? %>"
          data-action="keydown->documento-editor#navigate"
-         tabindex="0"
-         style="outline: none;">
+         tabindex="0">
   <div class="card-perma__actions card-perma__actions--left">
     <%= render "documenti/container/gild", documento: documento if documento.entry.present? && !documento.closed? %>
     

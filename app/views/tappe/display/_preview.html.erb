@@ -1,11 +1,11 @@
 <%# locals: (tappa:, entry: nil, draggable: false) -%>
 
 <% if tappa.present? && tappa.persisted? %>
-  <% entry ||= tappa.entry rescue nil %>
+  <% entry ||= tappa.entry %>
 
   <% card_data = {
     navigable_list_target: "item",
-    action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect"
+    action: "mouseenter->navigable-list#hoverSelect"
   } %>
 
   <% if draggable %>
@@ -60,9 +60,8 @@
       </div>
     </div>
 
-    <%= render "tappe/display/preview/meta", tappa: tappa %>
-
     <footer class="card__footer flex gap-half">
+      <%= render "tappe/display/preview/meta", tappa: tappa %>
     </footer>
   <% end %>
 <% end %>

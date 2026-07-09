@@ -1,11 +1,11 @@
 <%= turbo_stream.replace [@persona, :edit] do %>
   <%= turbo_frame_tag @persona, :edit do %>
-    <%= render "persone/content_display", persona: @persona %>
+    <%= render "persone/container/content_display", persona: @persona %>
   <% end %>
 <% end %>
 
 <%= turbo_stream.replace [@persona, :footer] do %>
   <%= turbo_frame_tag @persona, :footer do %>
-    <%= render "persone/footer", persona: @persona %>
+    <%= render "persone/container/footer", persona: @persona %>
   <% end %>
 <% end %>

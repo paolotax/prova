@@ -2,8 +2,7 @@
 
 <div class="card__meta" id="<%= dom_id(appunto, :meta) %>">
   <div class="card__meta-avatars card__meta-avatars--author">
-    <%= avatar_tag(Current.user) %>
-  
+    <%= avatar_tag(appunto.user) %>
   </div>
 
   <span class="card__meta-text card__meta-text--added">

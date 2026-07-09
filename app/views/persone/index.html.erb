@@ -27,7 +27,7 @@
               navigable_list_actionable_items_value: true,
               navigable_list_prevent_handled_keys_value: true,
               action: "keydown->navigable-list#navigate" } do %>
-        <%= render @page.records %>
+        <%= render "persone/display/previews", persone: @page.records %>
       <% end %>
     </div>
   <% else %>

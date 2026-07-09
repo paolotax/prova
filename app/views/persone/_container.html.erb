@@ -22,7 +22,7 @@
       <div class="card__body">
         <div class="card__content">
           <%= turbo_frame_tag persona, :edit do %>
-            <%= render "persone/content_display", persona: persona %>
+            <%= render "persone/container/content_display", persona: persona %>
           <% end %>
         </div>
       </div>
@@ -41,7 +41,7 @@
 
   <div class="card-perma__notch card-perma__notch--bottom">
     <%= turbo_frame_tag persona, :footer do %>
-      <%= render "persone/footer", persona: persona %>
+      <%= render "persone/container/footer", persona: persona %>
     <% end %>
   </div>
 </section>

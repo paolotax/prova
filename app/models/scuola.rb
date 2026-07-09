@@ -183,6 +183,14 @@ class Scuola < ApplicationRecord
     plessi.any?
   end
 
+  # Bolle in visione con almeno una riga senza esito (da ritirare)
+  def bolle_visione_aperte_count
+    bolle_visione
+      .joins(:bolla_visione_righe)
+      .where(bolla_visione_righe: { esito: nil })
+      .distinct.count
+  end
+
   def deletable?
     !classi.exists? &&
       !persone.exists? &&

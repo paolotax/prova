@@ -61,7 +61,7 @@
               navigable_list_actionable_items_value: true,
               navigable_list_prevent_handled_keys_value: true,
               action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
-        <%= render @page.records %>
+        <%= render "libri/display/previews", libri: @page.records %>
       <% end %>
       <%= render "libri/bulk_bar/bar" %>
     </div>

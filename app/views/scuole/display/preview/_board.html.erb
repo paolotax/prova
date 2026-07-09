@@ -1,0 +1,5 @@
+<%# locals: (scuola:) -%>
+
+<%= render "shared/cards/display/preview/board",
+    id: scuola.codice_ministeriale,
+    name: scuola.tipo_scuola&.upcase.presence || "SCUOLA" %>

@@ -3,7 +3,7 @@
 class Libri::CarrellosController < ApplicationController
   # POST /libri/carrello - crea nuovo documento con libri selezionati
   def create
-    @libri = current_account.libri.where(id: params[:libro_ids])
+    @libri = current_account.libri.where(id: params[:ids])
 
     @documento = current_user.documenti.build(
       data_documento: Date.today
@@ -32,7 +32,7 @@ class Libri::CarrellosController < ApplicationController
 
   # PATCH /libri/carrello - aggiunge libri a documento esistente
   def update
-    @libri = current_account.libri.where(id: params[:libro_ids])
+    @libri = current_account.libri.where(id: params[:ids])
 
     @documento = if params[:documento_id].present?
       current_user.documenti.find(params[:documento_id])
