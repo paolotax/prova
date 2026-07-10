@@ -54,6 +54,7 @@ class Saldo < ApplicationRecord
         AND documenti.clientable_id = :saldabile_id
         AND documenti.account_id = :account_id
         AND documenti.documento_padre_id IS NULL
+        AND causali.gestione_consegna
     SQL
     self.class.connection.select_one(sql)
   end
@@ -77,6 +78,7 @@ class Saldo < ApplicationRecord
         AND documenti.clientable_id = :saldabile_id
         AND documenti.account_id = :account_id
         AND documenti.documento_padre_id IS NULL
+        AND causali.gestione_pagamento
     SQL
     self.class.connection.select_one(sql)
   end

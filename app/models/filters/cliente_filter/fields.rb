@@ -7,6 +7,7 @@ module Filters
 
       PERMITTED_PARAMS = [
         :sorted_by,
+        :fornitori,
         comuni: [],
         tipi: [],
         terms: []
@@ -19,7 +20,7 @@ module Filters
       end
 
       included do
-        store_accessor :fields, :sorted_by, :terms, :comuni, :tipi
+        store_accessor :fields, :sorted_by, :terms, :comuni, :tipi, :fornitori
 
         def sorted_by
           (super || default_sorted_by).inquiry
@@ -48,6 +49,10 @@ module Filters
         def tipi=(value)
           super(Array(value).filter(&:present?))
         end
+
+        def fornitori
+          super.presence
+        end
       end
 
       def default_sorted_by
@@ -64,6 +69,7 @@ module Filters
           params[:terms] = terms
           params[:comuni] = comuni
           params[:tipi] = tipi
+          params[:fornitori] = fornitori
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
       end
     end

@@ -56,3 +56,11 @@ riga_documento_acme:
   quantita: 5
   prezzo_cents: 10000
   sconto: 0.0
+
+# Riga per ddt_fornitore_fizzy (causale gestione_consegna: false), per verificare
+# che Saldo#residui_consegne escluda il documento nonostante abbia righe reali.
+riga_ddt_fornitore:
+  libro: libro_fizzy
+  quantita: 5
+  prezzo_cents: 10000
+  sconto: 0.0

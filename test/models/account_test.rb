@@ -49,12 +49,12 @@ class AccountTest < ActiveSupport::TestCase
 
   test "has many documenti" do
     assert_respond_to @account, :documenti
-    assert_equal 5, @account.documenti.count
+    assert_equal 7, @account.documenti.count
   end
 
   test "has many clienti" do
     assert_respond_to @account, :clienti
-    assert_equal 1, @account.clienti.count
+    assert_equal 2, @account.clienti.count
   end
 
   test "has many libri" do

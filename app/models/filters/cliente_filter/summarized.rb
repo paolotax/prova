@@ -4,7 +4,7 @@ module Filters
       extend ActiveSupport::Concern
 
       def summary
-        parts = [terms_summary, comuni_summary, tipi_summary, sort_summary].compact
+        parts = [terms_summary, comuni_summary, tipi_summary, fornitori_summary, sort_summary].compact
         parts.any? ? parts.to_sentence : "Tutti i clienti"
       end
 
@@ -26,6 +26,10 @@ module Filters
         if tipi.any?
           tipi.count == 1 ? tipi.first : "#{tipi.count} tipi"
         end
+      end
+
+      def fornitori_summary
+        "solo fornitori" if fornitori.present?
       end
 
       def sort_summary

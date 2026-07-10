@@ -31,11 +31,12 @@ module Filters
     def filters_active?
       filter.terms.present? ||
       filter.comuni.present? ||
-      filter.tipi.present?
+      filter.tipi.present? ||
+      filter.fornitori.present?
     end
 
     def controls
-      %w[comuni tipi]
+      %w[comuni tipi fornitori]
     end
 
     def cache_key

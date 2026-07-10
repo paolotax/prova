@@ -1,5 +1,6 @@
 <%# locals: (documenti:) -%>
 
+<% if documenti.any?(&:pagamento_applicabile?) %>
 <section class="padding-block margin-block-end" data-controller="inline-edit">
   <h2 class="divider gap txt-medium txt-subtle">Pagamento</h2>
 
@@ -97,3 +98,4 @@
     </div>
   <% end %>
 </section>
+<% end %>

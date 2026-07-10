@@ -227,6 +227,35 @@ class SaldoTest < ActiveSupport::TestCase
     assert_equal 42, saldo.copie_da_pagare
   end
 
+  # --- Causali senza gestione_pagamento ---
+
+  test "un documento con causale non pagabile non contribuisce a importo/copie da pagare" do
+    fornitore = clienti(:cliente_fornitore_fizzy)
+    doc = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore, gestione_pagamento: false
+    assert_equal fornitore, doc.clientable
+
+    fornitore.ricalcola_saldo!
+    saldo = fornitore.saldo.reload
+
+    assert_equal 0, saldo.importo_da_pagare_cents
+    assert_equal 0, saldo.copie_da_pagare
+  end
+
+  # --- Causali senza gestione_consegna ---
+
+  test "un documento con causale non consegnabile non contribuisce a copie/importo da consegnare" do
+    fornitore = clienti(:cliente_fornitore_fizzy)
+    doc = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore, gestione_consegna: false, ha una riga reale
+    assert_equal fornitore, doc.clientable
+    assert doc.righe.any?, "il documento deve avere righe reali per validare il filtro SQL"
+
+    fornitore.ricalcola_saldo!
+    saldo = fornitore.saldo.reload
+
+    assert_equal 0, saldo.copie_da_consegnare
+    assert_equal 0, saldo.importo_da_consegnare_cents
+  end
+
   test "una consegna parziale riduce i residui da consegnare per riga" do
     @cliente.ricalcola_saldo!
     prima_copie = @cliente.saldo.reload.copie_da_consegnare

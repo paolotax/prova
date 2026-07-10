@@ -115,4 +115,34 @@ class PagabileTest < ActiveSupport::TestCase
 
     assert @documento.reload.closed?
   end
+
+  test "registra_acconto! solleva ArgumentError su documento non pagabile" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore (gestione_pagamento: false)
+
+    assert_raises(ArgumentError) do
+      documento.registra_acconto!(importo_cents: 1000)
+    end
+    assert_equal 0, documento.pagamenti.count
+  end
+
+  test "auto_close_se_completo chiude un documento non pagabile appena consegnato" do
+    documento = documenti(:scarico_saggi_fizzy) # causale: scarico_saggi (gestione_consegna true, gestione_pagamento false)
+    documento.ensure_entry!
+
+    documento.mark_consegnato
+
+    assert documento.consegnato?
+    assert documento.reload.closed?
+  end
+
+  test "auto_close_se_completo: con entrambe le gestioni spente mark_consegnato solleva ArgumentError e il documento non si chiude" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore (gestione_consegna false, gestione_pagamento false)
+    documento.ensure_entry!
+
+    assert_raises(ArgumentError) do
+      documento.mark_consegnato
+    end
+    assert_not documento.consegnato?
+    assert_not documento.reload.closed?
+  end
 end

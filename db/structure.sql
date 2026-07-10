@@ -755,7 +755,10 @@ CREATE TABLE public.causali (
     stati_successivi json DEFAULT '[]'::json,
     priorita integer DEFAULT 0,
     causali_successive json DEFAULT '[]'::json,
-    clientable_types json DEFAULT '[]'::json NOT NULL
+    clientable_types json DEFAULT '[]'::json NOT NULL,
+    gestione_pagamento boolean DEFAULT true NOT NULL,
+    gestione_consegna boolean DEFAULT true NOT NULL,
+    mostra_importo boolean DEFAULT true NOT NULL
 );
 
 
@@ -872,7 +875,8 @@ CREATE TABLE public.clienti (
     longitude double precision,
     geocoded boolean,
     account_id uuid NOT NULL,
-    id uuid DEFAULT gen_random_uuid() NOT NULL
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    fornitore boolean DEFAULT false NOT NULL
 );
 
 
@@ -8130,6 +8134,9 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260710090500'),
+('20260710083852'),
+('20260710083851'),
 ('20260709155730'),
 ('20260708075736'),
 ('20260707212659'),

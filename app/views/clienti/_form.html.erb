@@ -46,6 +46,14 @@
         </div>
       </div>
 
+      <div class="form-field">
+        <label class="btn txt-small">
+          <span>Fornitore</span>
+          <%= icon_tag "check", class: "checked" %>
+          <%= f.check_box :fornitore %>
+        </label>
+      </div>
+
       <div class="form-grid flex gap">
         <div class="form-field">
           <%= f.label :nome, class: "form-label" %>

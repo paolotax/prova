@@ -31,8 +31,10 @@ class DestinatariController < ApplicationController
         results << Destinatario.new(record, "Scuola")
       end
 
-    # Clienti
-    Current.account.clienti
+    # Clienti (fornitori=1 limita ai soli fornitori: usato dalla combobox
+    # destinatari nelle causali di contesto Fornitori/Campionario)
+    clienti_scope = params[:fornitori].present? ? Current.account.clienti.fornitori : Current.account.clienti
+    clienti_scope
       .search_all_word(query)
       .limit(limit)
       .each do |record|

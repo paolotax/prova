@@ -63,6 +63,35 @@
       <p class="txt-xx-small txt-subtle margin-block-start-quarter">Nessuna selezione = valida per tutti i tipi di destinatario</p>
     </div>
 
+    <div class="flex gap flex-wrap">
+      <div class="form-field">
+        <label class="btn txt-small">
+          <span>Gestione pagamento</span>
+          <%= icon_tag "check", class: "checked" %>
+          <%= form.check_box :gestione_pagamento %>
+        </label>
+        <p class="txt-xx-small txt-subtle margin-block-start-quarter">Se disattivato, il pagamento non compare per i documenti con questa causale (es. carichi fornitore, campionario)</p>
+      </div>
+
+      <div class="form-field">
+        <label class="btn txt-small">
+          <span>Gestione consegna</span>
+          <%= icon_tag "check", class: "checked" %>
+          <%= form.check_box :gestione_consegna %>
+        </label>
+        <p class="txt-xx-small txt-subtle margin-block-start-quarter">Se disattivato, la consegna non compare per i documenti con questa causale (es. carichi fornitore, campionario)</p>
+      </div>
+
+      <div class="form-field">
+        <label class="btn txt-small">
+          <span>Mostra importo</span>
+          <%= icon_tag "check", class: "checked" %>
+          <%= form.check_box :mostra_importo %>
+        </label>
+        <p class="txt-xx-small txt-subtle margin-block-start-quarter">Se disattivato, l'importo non compare per i documenti con questa causale (es. Scarico saggi, sempre a €0,00)</p>
+      </div>
+    </div>
+
     <h3 class="divider divider--fade txt-medium font-weight-black">Workflow</h3>
 
     <div class="form-field" style="max-width: 250px;">

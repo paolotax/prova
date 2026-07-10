@@ -67,4 +67,58 @@ class DocumentoTest < ActiveSupport::TestCase
     assert_instance_of Domain::NessunCliente, documento.clientable
     assert_nil documento.tappa_target
   end
+
+  test "pagamento_applicabile? is true for a causale with gestione_pagamento" do
+    documento = documenti(:documento_fizzy) # causale: vendita
+    assert documento.causale.gestione_pagamento?
+    assert documento.pagamento_applicabile?
+  end
+
+  test "pagamento_applicabile? is false for a causale without gestione_pagamento" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore
+    assert_not documento.causale.gestione_pagamento?
+    assert_not documento.pagamento_applicabile?
+  end
+
+  test "pagamento_applicabile? is true for a documento without causale (bozza)" do
+    documento = documenti(:documento_fizzy)
+    documento.causale = nil
+    assert documento.pagamento_applicabile?
+  end
+
+  test "consegna_applicabile? is true for a causale with gestione_consegna" do
+    documento = documenti(:documento_fizzy) # causale: vendita
+    assert documento.causale.gestione_consegna?
+    assert documento.consegna_applicabile?
+  end
+
+  test "consegna_applicabile? is false for a causale without gestione_consegna" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore
+    assert_not documento.causale.gestione_consegna?
+    assert_not documento.consegna_applicabile?
+  end
+
+  test "consegna_applicabile? is true for a documento without causale (bozza)" do
+    documento = documenti(:documento_fizzy)
+    documento.causale = nil
+    assert documento.consegna_applicabile?
+  end
+
+  test "mostra_importo? is true for a causale with mostra_importo" do
+    documento = documenti(:documento_fizzy) # causale: vendita
+    assert documento.causale.mostra_importo?
+    assert documento.mostra_importo?
+  end
+
+  test "mostra_importo? is false for a causale without mostra_importo" do
+    documento = documenti(:scarico_saggi_fizzy) # causale: scarico_saggi
+    assert_not documento.causale.mostra_importo?
+    assert_not documento.mostra_importo?
+  end
+
+  test "mostra_importo? is true for a documento without causale (bozza)" do
+    documento = documenti(:documento_fizzy)
+    documento.causale = nil
+    assert documento.mostra_importo?
+  end
 end

@@ -81,15 +81,27 @@
     <%# Mobile: riga valori sotto il cliente %>
     <div class="doc-row__values">
       <span class="doc-row__value"><strong><%= documento.totale_copie %></strong> cp</span>
-      <span class="doc-row__value"><strong><%= number_to_currency documento.totale_importo, locale: :it %></strong></span>
+      <span class="doc-row__value">
+        <% if documento.mostra_importo? %>
+          <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+        <% else %>
+          <span class="doc-row__muted">—</span>
+        <% end %>
+      </span>
     </div>
     <div class="doc-row__values">
       <span class="doc-row__value">
-        <%= icon_tag "truck" %>
-        <%= documento.consegnato? ? documento.consegnato_il&.strftime("%d/%m") : "—" %>
+        <% if !documento.consegna_applicabile? %>
+          <span class="doc-row__muted">—</span>
+        <% else %>
+          <%= icon_tag "truck" %>
+          <%= documento.consegnato? ? documento.consegnato_il&.strftime("%d/%m") : "—" %>
+        <% end %>
       </span>
       <span class="doc-row__value">
-        <% if documento.pagato? %>
+        <% if !documento.pagamento_applicabile? %>
+          <span class="doc-row__muted">—</span>
+        <% elsif documento.pagato? %>
           <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %> <%= documento.tipo_pagamento&.humanize %>
         <% else %>
           <span class="doc-row__da-pagare">DA PAGARE</span>
@@ -105,12 +117,18 @@
 
   <%# 8 — importo %>
   <div class="doc-row__cell doc-row__cell--num doc-row__cell--hide-mobile">
-    <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+    <% if documento.mostra_importo? %>
+      <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+    <% else %>
+      <span class="doc-row__muted">—</span>
+    <% end %>
   </div>
 
   <%# 9 — consegna %>
   <div class="doc-row__cell doc-row__cell--consegna doc-row__cell--hide-mobile">
-    <% if documento.consegnato? %>
+    <% if !documento.consegna_applicabile? %>
+      <span class="doc-row__muted">—</span>
+    <% elsif documento.consegnato? %>
       <%= icon_tag "truck" %> <%= documento.consegnato_il&.strftime("%d/%m") %>
     <% else %>
       <span class="doc-row__muted">—</span>
@@ -119,7 +137,9 @@
 
   <%# 10 — pagamento %>
   <div class="doc-row__cell doc-row__cell--pagamento doc-row__cell--hide-mobile">
-    <% if documento.pagato? %>
+    <% if !documento.pagamento_applicabile? %>
+      <span class="doc-row__muted">—</span>
+    <% elsif documento.pagato? %>
       <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %>
       <% if documento.tipo_pagamento.present? %>
         <span class="doc-row__tipo-pag"><%= documento.tipo_pagamento.humanize %></span>

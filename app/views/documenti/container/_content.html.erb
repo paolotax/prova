@@ -22,6 +22,19 @@
       </div>
     <% end %>
 
+    <%# Contesto Fornitori/Campionario con Cliente tra i destinatari ammessi:
+        la combobox destinatari resta filtrata su Cliente.fornitori. Solo al
+        render iniziale del form: la causale-clientable non ricalcola l'url
+        della combobox al volo se l'utente cambia causale dopo l'apertura
+        (vedi report finale). %>
+    <% destinatari_url = if documento.causale.present? &&
+                            %w[Fornitori Campionario].include?(documento.causale.contesto) &&
+                            (documento.causale.clientable_types.blank? || documento.causale.clientable_types.include?("Cliente"))
+         destinatari_index_path(fornitori: 1)
+       else
+         destinatari_index_path
+       end %>
+
     <div class="documento-edit-form"
          data-controller="causale-clientable"
          data-causale-clientable-tipo-value="<%= documento.clientable_value.to_s.split(":").first %>"
@@ -39,13 +52,13 @@
             </div>
             <div class="show-when-editing">
               <%= combobox_tag "documento[clientable_value]",
-                  destinatari_index_path,
+                  destinatari_url,
                   id: "documento_clientable_value_edit",
                   placeholder: "cerca scuola, cliente, classe...",
                   mobile_at: "0px" %>
             </div>
           <% else %>
-            <%= form.combobox :clientable_value, destinatari_index_path,
+            <%= form.combobox :clientable_value, destinatari_url,
                 placeholder: "cerca scuola, cliente, classe...",
                 mobile_at: "0px" %>
           <% end %>
@@ -62,11 +75,11 @@
           <%= form.label :causale_id, "Causale documento", class: "form-label" %>
           <%= form.select :causale_id,
               grouped_options_for_select(Causale.per_contesto(in_testa: documento.causale&.contesto).map { |contesto, causali|
-                [contesto, causali.map { |c| [c.causale, c.id, { data: { clientable_types: c.clientable_types.join(" ") } }] }]
+                [contesto, causali.map { |c| [c.causale, c.id, { data: { clientable_types: c.clientable_types.join(" "), gestione_pagamento: c.gestione_pagamento, contesto: c.contesto } }] }]
               }, documento.causale_id),
               { include_blank: "seleziona..." },
               class: "input input--select",
-              data: { causale_clientable_target: "select", action: "change->documento-causale#change" } %>
+              data: { causale_clientable_target: "select", action: "change->documento-causale#change change->causale-clientable#changeCausale" } %>
         </div>
 
         <div class="form-field" style="flex: 1 1 25%;">
@@ -80,7 +93,7 @@
           <%= date_input(form, :data_documento) %>
         </div>
 
-        <div class="form-field" style="flex: 1 1 25%;">
+        <div class="form-field" style="flex: 1 1 25%;" data-causale-clientable-target="pagamentoField" <%= "hidden" unless documento.pagamento_applicabile? %>>
           <%= form.label :tipo_pagamento_previsto, "Pagamento previsto", class: "form-label" %>
           <%= form.select :tipo_pagamento_previsto,
               options_for_select(Pagamento::TIPI_PAGAMENTO.map { |k, v| [v, k] }, documento.tipo_pagamento_previsto),

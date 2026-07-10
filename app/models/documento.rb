@@ -203,6 +203,20 @@ class Documento < ApplicationRecord
     tipo_movimento == 'vendita'
   end
 
+  # Bozza senza causale: il pagamento resta applicabile finché non si sa la causale
+  def pagamento_applicabile?
+    causale.nil? || causale.gestione_pagamento?
+  end
+
+  # Bozza senza causale: la consegna resta applicabile finché non si sa la causale
+  def consegna_applicabile?
+    causale.nil? || causale.gestione_consegna?
+  end
+
+  def mostra_importo?
+    causale.nil? || causale.mostra_importo?
+  end
+
   def registrato?
     %w[TD01 TD04 TD24].include?(causale.causale)
   end
@@ -271,12 +285,13 @@ class Documento < ApplicationRecord
   end
 
   # Eredita consegna e pagamento dai documenti origine (se tutti hanno lo stesso stato)
+  # Salta i documenti non applicabili invece di esplodere sulla guardia.
   def eredita_stato_da_origini(documenti_origine)
-    if documenti_origine.all?(&:consegnato?)
+    if consegna_applicabile? && documenti_origine.all?(&:consegnato?)
       mark_consegnato(consegnato_il: documenti_origine.map(&:consegnato_il).compact.max)
     end
 
-    if documenti_origine.all?(&:pagato?)
+    if pagamento_applicabile? && documenti_origine.all?(&:pagato?)
       mark_pagato(
         pagato_il: documenti_origine.map(&:pagato_il).compact.max,
         tipo_pagamento: documenti_origine.first.tipo_pagamento
@@ -286,7 +301,7 @@ class Documento < ApplicationRecord
 
   # Chiamato da Consegnabile/Pagabile a ogni variazione di consegne/pagamenti
   def auto_close_se_completo
-    close if pagato? && consegnato? && !closed?
+    close if (consegnato? || !consegna_applicabile?) && (pagato? || !pagamento_applicabile?) && !closed?
   end
 
   # Ricalcola la giacenza di tutti i libri toccati da questo documento

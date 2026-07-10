@@ -6,7 +6,10 @@
 #  causale            :string
 #  causali_successive :json
 #  clientable_types   :json             not null
+#  gestione_consegna  :boolean          default(TRUE), not null
+#  gestione_pagamento :boolean          default(TRUE), not null
 #  magazzino          :string
+#  mostra_importo     :boolean          default(TRUE), not null
 #  movimento          :integer
 #  priorita           :integer          default(0)
 #  stati_successivi   :json

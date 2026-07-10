@@ -481,7 +481,7 @@ Rails.application.routes.draw do
     end
 
     get 'fornitori',      to: 'fornitori#index'
-    get 'fornitori/id',   to: 'fornitori#show', as: 'fornitore'
+    get 'fornitori/:id',  to: 'fornitori#show', as: 'fornitore'
 
     get 'duplicates', to: 'articoli#duplicates'
     get 'duplicates/:codice_articolo', to: 'articoli#update_descrizione', as: 'update_descrizione'

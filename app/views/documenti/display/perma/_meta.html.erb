@@ -16,18 +16,20 @@
 
   <span class="card__meta-text card__meta-text--author">
     <span>
-      <% if documento.consegnato_il.present? %>
+      <% if documento.consegna_applicabile? && documento.consegnato_il.present? %>
         <%= icon_tag "truck" %>
         <%= documento.consegnato_il.strftime("%d/%m") %>
       <% end %>
-      <% if documento.pagato_il.present? %>
-        <%= icon_tag "cash" %>
-        <strong><%= documento.pagato_il.strftime("%d/%m") %></strong>
-        <% if documento.tipo_pagamento.present? %>
-          <%= documento.tipo_pagamento.humanize %>
+      <% if documento.pagamento_applicabile? %>
+        <% if documento.pagato_il.present? %>
+          <%= icon_tag "cash" %>
+          <strong><%= documento.pagato_il.strftime("%d/%m") %></strong>
+          <% if documento.tipo_pagamento.present? %>
+            <%= documento.tipo_pagamento.humanize %>
+          <% end %>
+        <% else %>
+          Da pagare
         <% end %>
-      <% else %>
-        Da pagare
       <% end %>
     </span>
   </span>
@@ -48,7 +50,9 @@
       Copie <strong data-documento-editor-target="totaleCopie"><%= documento.totale_copie %></strong>
   </span>
 
-  <span class="card__meta-text card__meta-text--importo txt-align-end">
-      Importo <strong data-documento-editor-target="totaleImporto"><%= number_to_currency documento.totale_importo, locale: :it %></strong>
-  </span>
+  <% if documento.mostra_importo? %>
+    <span class="card__meta-text card__meta-text--importo txt-align-end">
+        Importo <strong data-documento-editor-target="totaleImporto"><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+    </span>
+  <% end %>
 </div>

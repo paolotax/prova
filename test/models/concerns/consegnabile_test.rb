@@ -101,4 +101,22 @@ class ConsegnabileTest < ActiveSupport::TestCase
     doc.mark_consegnato
     assert doc.consegnato?
   end
+
+  test "mark_consegnato solleva ArgumentError su documento non consegnabile" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore (gestione_consegna: false)
+
+    assert_raises(ArgumentError) do
+      documento.mark_consegnato
+    end
+    assert_equal 0, documento.consegne.count
+  end
+
+  test "consegna_parziale! solleva ArgumentError su documento non consegnabile" do
+    documento = documenti(:ddt_fornitore_fizzy) # causale: carico_fornitore (gestione_consegna: false)
+
+    assert_raises(ArgumentError) do
+      documento.consegna_parziale!({ documento_righe(:dr_fattura_uno).id => 1 })
+    end
+    assert_equal 0, documento.consegne.count
+  end
 end

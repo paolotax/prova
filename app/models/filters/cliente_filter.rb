@@ -38,6 +38,7 @@ module Filters
 
       result = result.where(comune: comuni) if comuni.present?
       result = result.where(tipo_cliente: tipi) if tipi.present?
+      result = result.fornitori if fornitori.present?
       result = result.order(sorted_by.to_s)
       result.distinct
     end

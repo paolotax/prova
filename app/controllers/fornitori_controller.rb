@@ -1,25 +1,23 @@
 class FornitoriController < ApplicationController
-  
+
   before_action :authenticate_user!
   before_action :set_fornitore, only: %i[ show ]
   before_action :remember_page, only: [:index, :show]
-  
+
   def index
-    if params[:search].present?
-      @fornitori = Views::Fornitore.search_any_word(params[:search]).order(:fornitore)
-    else
-      @fornitori = Views::Fornitore.order(:fornitore).all
-    end
+    scope = Current.account.clienti.fornitori
+    @fornitori = params[:search].present? ? scope.search_all_word(params[:search]) : scope
+    @fornitori = @fornitori.order(:denominazione)
   end
 
   def show
-    @righe = @fornitore.righe
+    @documenti = @fornitore.documenti.solo_padri.order(data_documento: :desc)
   end
 
   private
-      
-    def set_fornitore    
-      @fornitore = Views::Fornitore.find(params[:id])
+
+    def set_fornitore
+      @fornitore = Current.account.clienti.fornitori.find(params[:id])
     end
 
 end

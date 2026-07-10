@@ -13,6 +13,22 @@
   <td class="txt-subtle txt-x-small">
     <%= causale.clientable_types.presence&.join(", ") || "Tutti" %>
   </td>
+  <td class="txt-x-small">
+    <div class="flex gap-quarter flex-wrap">
+      <% if causale.gestione_pagamento? %>
+        <span class="badge fill-shade" title="Gestione pagamento">Pag</span>
+      <% end %>
+      <% if causale.gestione_consegna? %>
+        <span class="badge fill-shade" title="Gestione consegna">Cons</span>
+      <% end %>
+      <% if causale.mostra_importo? %>
+        <span class="badge fill-shade" title="Mostra importo">€</span>
+      <% end %>
+      <% unless causale.gestione_pagamento? || causale.gestione_consegna? || causale.mostra_importo? %>
+        <span class="txt-subtle">—</span>
+      <% end %>
+    </div>
+  </td>
   <td class="txt-end"><%= causale.priorita %></td>
   <td class="txt-subtle txt-x-small">
     <%= causale.causali_successive_records.map(&:causale).first(3).join(", ") %>

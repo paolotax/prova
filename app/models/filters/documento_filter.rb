@@ -43,8 +43,8 @@ module Filters
       base = filtered_scope
       {
         "attivi"        => base.attivi.count,
-        "da_consegnare" => base.attivi.where.missing(:consegne).count,
-        "da_pagare"     => base.attivi.where.missing(:pagamenti).count,
+        "da_consegnare" => base.attivi.where.missing(:consegne).where(causale_id: Causale.where(gestione_consegna: true)).count,
+        "da_pagare"     => base.attivi.where.missing(:pagamenti).where(causale_id: Causale.where(gestione_pagamento: true)).count,
         "completati"    => base.completati.count,
         "tutti"         => base.count
       }
@@ -114,8 +114,8 @@ module Filters
 
     def apply_stato_documento(scope)
       case stato_documento
-      when "da_consegnare" then scope.attivi.where.missing(:consegne)
-      when "da_pagare"     then scope.attivi.where.missing(:pagamenti)
+      when "da_consegnare" then scope.attivi.where.missing(:consegne).where(causale_id: Causale.where(gestione_consegna: true))
+      when "da_pagare"     then scope.attivi.where.missing(:pagamenti).where(causale_id: Causale.where(gestione_pagamento: true))
       when "completati"    then scope.completati
       when "tutti"         then scope
       else                      scope.attivi # "attivi" e default

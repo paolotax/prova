@@ -1,7 +1,7 @@
 class ClientiController < ApplicationController
   include FilterScoped
 
-  FILTER_PARAMS = [:sorted_by, comuni: [], tipi: [], terms: []].freeze
+  FILTER_PARAMS = [:sorted_by, :fornitori, comuni: [], tipi: [], terms: []].freeze
 
   skip_before_action :set_user_filtering, if: -> { request.format.json? }
 
@@ -117,7 +117,7 @@ class ClientiController < ApplicationController
               :id_paese, :partita_iva, :codice_fiscale, :denominazione,
               :nome, :cognome, :codice_eori,
               :nazione, :cap, :provincia, :comune, :indirizzo, :numero_civico, :beneficiario,
-              :condizioni_di_pagamento, :metodo_di_pagamento, :banca)
+              :condizioni_di_pagamento, :metodo_di_pagamento, :banca, :fornitore)
     end
 
     def cliente_import_params

@@ -7,7 +7,10 @@
 #  causale            :string
 #  causali_successive :json
 #  clientable_types   :json             not null
+#  gestione_consegna  :boolean          default(TRUE), not null
+#  gestione_pagamento :boolean          default(TRUE), not null
 #  magazzino          :string
+#  mostra_importo     :boolean          default(TRUE), not null
 #  movimento          :integer
 #  priorita           :integer          default(0)
 #  stati_successivi   :json
@@ -38,6 +41,8 @@ carico_fornitore:
   magazzino: "vendita"
   tipo_movimento: 2
   movimento: 0
+  gestione_pagamento: false
+  gestione_consegna: false
 
 fattura:
   causale: "TD01"
@@ -67,6 +72,8 @@ scarico_saggi:
   movimento: 1
   clientable_types: ["Scuola"]
   priorita: 40
+  gestione_pagamento: false
+  mostra_importo: false
 
 ordine_scuola:
   causale: "Ordine Scuola"

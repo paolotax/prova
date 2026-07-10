@@ -8,6 +8,7 @@ module Consegnabile
   # Fast path: un click consegna tutti i residui
   def mark_consegnato(user: Current.user, consegnato_il: nil)
     return if consegnato?
+    guard_consegna_applicabile!
 
     transaction do
       consegna = consegne.create!(user: user, consegnato_il: consegnato_il || Time.current)
@@ -20,6 +21,8 @@ module Consegnabile
 
   # Consegna solo le quantità indicate: { documento_riga_id => quantita }
   def consegna_parziale!(quantita_per_documento_riga, user: Current.user, consegnato_il: nil)
+    guard_consegna_applicabile!
+
     da_consegnare = quantita_per_documento_riga.to_h { |k, v| [k.to_s, v.to_i] }
                                                .select { |_, quantita| quantita.positive? }
     raise ArgumentError, "nessuna quantità da consegnare" if da_consegnare.empty?
@@ -81,6 +84,12 @@ module Consegnabile
   end
 
   private
+
+  def guard_consegna_applicabile!
+    if respond_to?(:consegna_applicabile?) && !consegna_applicabile?
+      raise ArgumentError, "consegna non applicabile per questa causale"
+    end
+  end
 
   def dopo_variazione_consegne
     consegne.reset

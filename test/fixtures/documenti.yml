@@ -102,3 +102,30 @@ nota_credito_fizzy:
   clientable: cliente_fizzy (Cliente)
   totale_cents: 30000
   totale_copie: 3
+
+# Documento con causale gestione_pagamento: false E gestione_consegna: false,
+# per i test su pagamento_applicabile?/consegna_applicabile?, guardie
+# registra_acconto!/mark_consegnato, auto_close, Saldo.
+# Cliente dedicato (cliente_fornitore_fizzy) per non alterare i totali attesi
+# nei test di SaldoTest basati su cliente_fizzy.
+ddt_fornitore_fizzy:
+  account: fizzy
+  user: one
+  causale: carico_fornitore
+  numero_documento: 300
+  data_documento: <%= Date.today %>
+  clientable: cliente_fornitore_fizzy (Cliente)
+  totale_cents: 50000
+  totale_copie: 5
+
+# Documento con causale gestione_consegna: true / gestione_pagamento: false
+# (Scarico saggi), per i test su auto-close "consegna sì, pagamento no".
+scarico_saggi_fizzy:
+  account: fizzy
+  user: one
+  causale: scarico_saggi
+  numero_documento: 400
+  data_documento: <%= Date.today %>
+  clientable: scuola_saggi_fizzy (Scuola)
+  totale_cents: 0
+  totale_copie: 10

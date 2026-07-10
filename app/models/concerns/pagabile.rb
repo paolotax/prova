@@ -14,6 +14,10 @@ module Pagabile
 
   # Acconto libero per importo; il tipo previsto sul documento fa da default
   def registra_acconto!(importo_cents:, tipo_pagamento: nil, pagato_il: nil, user: Current.user)
+    if respond_to?(:pagamento_applicabile?) && !pagamento_applicabile?
+      raise ArgumentError, "pagamento non applicabile per questa causale"
+    end
+
     importo_cents = importo_cents.to_i
     residuo = residuo_da_pagare_cents
     raise ArgumentError, "importo #{importo_cents} negativo" if importo_cents.negative?

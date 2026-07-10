@@ -14,6 +14,7 @@
 #  condizioni_di_pagamento :string
 #  denominazione           :string
 #  email                   :string
+#  fornitore               :boolean          default(FALSE), not null
 #  geocoded                :boolean
 #  id_paese                :string
 #  indirizzo               :string
@@ -70,6 +71,8 @@ class Cliente < ApplicationRecord
   
   include Searchable
   search_on :denominazione, :partita_iva, :indirizzo, :comune, :codice_fiscale, :cognome, :nome
+
+  scope :fornitori, -> { where(fornitore: true) }
 
   include PgSearch::Model
 

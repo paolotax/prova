@@ -1,4 +1,3 @@
-# test/fixtures/clienti.yml
 # == Schema Information
 #
 # Table name: clienti
@@ -44,30 +43,22 @@
 #  index_clienti_on_slug                       (slug) UNIQUE
 #  index_clienti_on_user_id                    (user_id)
 #
-cliente_fizzy:
-  account: fizzy
-  user: one
-  denominazione: "Cliente Fizzy Srl"
-  codice_cliente: "CLI001"
-  tipo_cliente: "azienda"
-  partita_iva: "12345678901"
-  email: "cliente@fizzy.it"
+require "test_helper"
 
-cliente_acme:
-  account: acme
-  user: multi_account
-  denominazione: "Cliente Acme Srl"
-  codice_cliente: "CLI002"
-  tipo_cliente: "azienda"
-  partita_iva: "98765432101"
-  email: "cliente@acme.it"
+class ClienteTest < ActiveSupport::TestCase
+  fixtures :accounts, :users, :memberships, :clienti
 
-cliente_fornitore_fizzy:
-  account: fizzy
-  user: one
-  denominazione: "Editore Fornitore Srl"
-  codice_cliente: "CLI003"
-  tipo_cliente: "editore"
-  partita_iva: "11122233344"
-  email: "fornitore@fizzy.it"
-  fornitore: true
+  setup do
+    Current.account = accounts(:fizzy)
+    Current.user = users(:one)
+  end
+
+  teardown do
+    Current.reset
+  end
+
+  test "fornitori scope returns only clienti flagged as fornitore" do
+    assert_includes Cliente.fornitori, clienti(:cliente_fornitore_fizzy)
+    assert_not_includes Cliente.fornitori, clienti(:cliente_fizzy)
+  end
+end

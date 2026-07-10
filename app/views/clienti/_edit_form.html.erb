@@ -81,5 +81,13 @@
         <%= f.text_field :tipo_cliente, class: "input", placeholder: "Libreria, Cartolibreria..." %>
       </div>
     </div>
+
+    <div class="form-field">
+      <label class="btn txt-small">
+        <span>Fornitore</span>
+        <%= icon_tag "check", class: "checked" %>
+        <%= f.check_box :fornitore %>
+      </label>
+    </div>
   </div>
 <% end %>

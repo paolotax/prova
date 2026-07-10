@@ -10,6 +10,7 @@
   </header>
 
   <%# === SEZIONE CONSEGNA === %>
+  <% if documento.consegna_applicabile? %>
   <section class="padding-block border-block-end" data-controller="inline-edit">
     <h2 class="divider gap txt-medium txt-subtle">Consegna</h2>
 
@@ -70,8 +71,10 @@
       <% end %>
     <% end %>
   </section>
+  <% end %>
 
   <%# === SEZIONE PAGAMENTO === %>
+  <% if documento.pagamento_applicabile? %>
   <section class="padding-block border-block-end" data-controller="inline-edit">
     <h4 class="divider txt-medium txt-subtle">Pagamento</h4>
 
@@ -147,6 +150,7 @@
       <% end %>
     <% end %>
   </section>
+  <% end %>
 
   <%# === SEZIONE REGISTRAZIONE === %>
   <% causali_successive = documento.causale&.causali_successive_records %>

@@ -44,3 +44,8 @@ dr_documento_acme:
   documento: documento_acme
   riga: riga_documento_acme
   posizione: 1
+
+dr_ddt_fornitore:
+  documento: ddt_fornitore_fizzy
+  riga: riga_ddt_fornitore
+  posizione: 1

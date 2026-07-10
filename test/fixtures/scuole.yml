@@ -169,3 +169,18 @@ primaria_combinazione:
   tipo_scuola: "EE"
   grado: "E"
   stato: "attiva"
+
+# Scuola dedicata al documento scarico_saggi_fizzy: avere documenti diretti
+# la rende protetta da ProtectedFromDestroy, quindi NON riusare le scuole
+# coinvolte nei test di destroy/cleanup zone (MI/BO). Provincia FE fuori
+# dalle zone fixture.
+scuola_saggi_fizzy:
+  account: fizzy
+  denominazione: "Scuola Primaria Saggi"
+  codice_ministeriale: "FEEE000001"
+  comune: "Ferrara"
+  provincia: "FE"
+  regione: "Emilia-Romagna"
+  tipo_scuola: "EE"
+  grado: "E"
+  stato: "attiva"

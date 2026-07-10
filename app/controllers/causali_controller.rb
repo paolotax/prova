@@ -84,6 +84,9 @@ class CausaliController < ApplicationController
         :movimento,
         :stato_iniziale,
         :priorita,
+        :gestione_pagamento,
+        :gestione_consegna,
+        :mostra_importo,
         clientable_types: [],
         stati_successivi: [],
         causali_successive: []

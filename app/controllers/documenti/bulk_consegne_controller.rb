@@ -8,7 +8,7 @@ module Documenti
       consegnato_il = Date.parse(params[:consegnato_il]) rescue Date.today
 
       @documenti.each do |documento|
-        next if documento.consegnato?
+        next if documento.consegnato? || !documento.consegna_applicabile?
         documento.mark_consegnato(consegnato_il: consegnato_il)
       end
 

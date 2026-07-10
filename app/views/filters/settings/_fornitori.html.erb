@@ -1,0 +1,8 @@
+<% filter = user_filtering.filter %>
+
+<label class="btn txt-small <%= 'btn--reversed' if filter.fornitori.present? %>">
+  <span>Solo fornitori</span>
+  <%= icon_tag "check", class: "checked" %>
+  <%= check_box_tag :fornitori, "1", filter.fornitori.present?,
+        data: { filter_settings_target: "field", action: "change->filter-settings#change change->form#submit" } %>
+</label>
