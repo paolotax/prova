@@ -56,10 +56,10 @@ module DateInputHelper
           value: iso,
           class: "date-input__picker",
           tabindex: -1,
-          "aria-hidden": true,
+          "aria-label": "Apri calendario",
           data: {
             date_input_target: "picker",
-            action: "change->date-input#pickerChanged"
+            action: "change->date-input#pickerChanged click->date-input#openPicker"
           }
         ),
         tag.input(
@@ -74,7 +74,7 @@ module DateInputHelper
           type: "button",
           class: "date-input__trigger",
           tabindex: -1,
-          "aria-label": "Apri calendario",
+          "aria-hidden": true,
           data: { action: "date-input#openPicker" }
         ) { icon_tag("calendar", class: "w-5 h-5") }
       ])

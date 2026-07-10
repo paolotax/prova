@@ -13,8 +13,12 @@ export default class extends Controller {
   }
 
   openPicker() {
-    if (this.hasPickerTarget) {
+    if (!this.hasPickerTarget) return
+    try {
       this.pickerTarget.showPicker()
+    } catch {
+      // iOS Safari: showPicker() non supportato (WebKit #261703).
+      // Il tap arriva comunque sull'input date nativo, che apre il picker da solo.
     }
   }
 

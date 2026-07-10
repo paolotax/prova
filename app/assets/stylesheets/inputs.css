@@ -186,6 +186,9 @@
     inline-size: 2.5em;
     block-size: 100%;
     cursor: pointer;
+    /* Sopra al bottone: su iOS showPicker() non funziona, il tap deve
+       arrivare direttamente all'input nativo che apre il picker col focus */
+    z-index: 1;
   }
 
   .date-input__trigger {
