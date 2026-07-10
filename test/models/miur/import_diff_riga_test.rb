@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: miur_import_diff_righe
+#
+#  id            :bigint           not null, primary key
+#  annocorso     :string
+#  codiceisbn    :string
+#  codicescuola  :string           not null
+#  combinazione  :string
+#  disciplina    :string
+#  segno         :string(1)        not null
+#  sezioneanno   :string
+#  titolo        :string
+#  created_at    :datetime         not null
+#  import_run_id :bigint           not null
+#
+# Indexes
+#
+#  index_miur_import_diff_righe_on_import_run_id_and_codicescuola  (import_run_id,codicescuola)
+#
 require "test_helper"
 
 class Miur::ImportDiffRigaTest < ActiveSupport::TestCase
