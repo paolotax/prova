@@ -81,6 +81,7 @@ Rails.application.configure do
     "prova.localhost",
     "localhost",
     "127.0.0.1",
-    /.*\.nip\.io/  # for mobile/tablet testing
+    /.*\.nip\.io/,  # for mobile/tablet testing
+    IPAddr.new("192.168.1.0/24")  # LAN access from phone/tablet
   ]
 end
