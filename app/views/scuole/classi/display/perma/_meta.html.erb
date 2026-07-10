@@ -1,10 +1,6 @@
-<%# locals: (adozioni:) -%>
+<%# locals: (classe:, adozioni:) -%>
 
-<footer class="card__footer full-width">
-  <div class="card__meta">
-    <%# <div class="card__meta-avatars card__meta-avatars--author">
-    </div> %>
-
+<div class="card__meta" id="<%= dom_id(classe, :meta) %>">
     <span class="card__meta-text card__meta-text--added">
       <strong><%= adozioni.count %></strong> <%= adozioni.count == 1 ? "adozione" : "adozioni" %>
     </span>
@@ -43,5 +39,4 @@
     <span class="card__meta-text card__meta-text--importo txt-align-end">
       lista libri <strong><%= number_to_currency(adozioni.select { |a| a.da_acquistare? && !a.consigliato? }.sum(&:prezzo_cents) / 100.0, unit: "\u20AC", format: "%n %u") %></strong>
     </span>
-  </div>
-</footer>
+</div>

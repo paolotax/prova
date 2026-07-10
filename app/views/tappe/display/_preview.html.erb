@@ -5,7 +5,7 @@
 
   <% card_data = {
     navigable_list_target: "item",
-    action: "mouseenter->navigable-list#hoverSelect"
+    action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
   } %>
 
   <% if draggable %>
@@ -22,6 +22,10 @@
       tabindex: 0,
       draggable: draggable,
       data: card_data do %>
+    <label class="card__checkbox">
+      <%# i bulk controller delle tappe leggono id di tappa, non di entry %>
+      <%= check_box_tag "ids[]", tappa.id, false, data: { action: "change->bulk-actions#count" } %>
+    </label>
     <div class="flex flex-column flex-item-grow max-inline-size">
       <%= link_to tappa_path(tappa), draggable: false, class: "card__link", data: { turbo_frame: "_top" } do %>
         <span class="for-screen-reader"><%= tappa.tappable.denominazione %></span>

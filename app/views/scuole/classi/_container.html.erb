@@ -1,10 +1,10 @@
-<%# locals: (classe:, scuola:, adozioni:) -%>
+<%# locals: (classe:, scuola:, adozioni:, prev_classe_id: nil, next_classe_id: nil) -%>
 
 <% classe_card_color = tipo_scuola_color(classe.tipo_scuola) %>
 <section id="<%= dom_id(classe, :container) %>" class="card-perma" style="--card-color: <%= classe_card_color %>;">
   <div class="card-perma__actions card-perma__actions--left">
-    <% if @prev_classe_id %>
-      <%= link_to scuola_classe_path(scuola, @prev_classe_id), class: "btn",
+    <% if prev_classe_id %>
+      <%= link_to scuola_classe_path(scuola, prev_classe_id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.left@document->hotkey#click" } do %>
         <%= icon_tag "arrow-left" %>
         <span class="for-screen-reader">Precedente (&#8592;)</span>
@@ -27,13 +27,15 @@
         </div>
       </div>
 
-      <%= render "scuole/classi/container/meta", adozioni: adozioni %>
+      <footer class="card__footer full-width">
+        <%= render "scuole/classi/display/perma/meta", classe: classe, adozioni: adozioni %>
+      </footer>
     </article>
   </div>
 
   <div class="card-perma__actions card-perma__actions--right">
-    <% if @next_classe_id %>
-      <%= link_to scuola_classe_path(scuola, @next_classe_id), class: "btn",
+    <% if next_classe_id %>
+      <%= link_to scuola_classe_path(scuola, next_classe_id), class: "btn",
           data: { controller: "tooltip hotkey", action: "keydown.right@document->hotkey#click" } do %>
         <%= icon_tag "arrow-right" %>
         <span class="for-screen-reader">Successivo (&#8594;)</span>

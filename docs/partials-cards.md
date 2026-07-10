@@ -21,7 +21,7 @@ Anatomia della card preview:
 ```
 article.card                      ← id: dom_id(entry) se Entryable, altrimenti dom_id(record)
 ├── label.card__checkbox          ← solo risorse con bulk action
-├── div.flex.flex-column…         ← wrapper (documenti: assente, TODO)
+├── div.flex.flex-column…         ← wrapper (.flex.flex-column.flex-item-grow.max-inline-size)
 │   ├── a.card__link              ← link overlay + for-screen-reader
 │   ├── header.card__header
 │   │   └── display/preview/_board  → shared/cards/display/preview/board (id + name)
@@ -63,7 +63,7 @@ Le card usano `dom_id(entry)` quando l'entry esiste (allineamento broadcast), su
 | perma board/meta/tags | `display/perma/_*` | `display/perma/_*` | `display/perma/_*` |
 | container/ | actions, content, content_display, gild, stages, footer/, righe_table, gestione_dialog… | actions, content, content_display, gild, stages, footer/ | actions, content, gild, stages, footer, bolle_visione |
 | varianti | `table/_row` (vista tabella) | `_bozza` (tray bozze), `display/common/_board` | `_tappa_compact` (+ ghost), `_pianifica` |
-| bulk | `bulk_bar/`, `bulk_gestione/`, checkbox `ids[]` (entry id) | `bulk_bar/`, checkbox `ids[]` (entry id) | `bulk_bar/`, senza checkbox |
+| bulk | `bulk_bar/`, `bulk_gestione/`, checkbox `ids[]` (entry id) | `bulk_bar/`, checkbox `ids[]` (entry id) | `bulk_bar/`, checkbox `ids[]` (**id tappa**: i controller bulk scopano `current_user.tappe`) |
 
 ### Anagrafiche (scuole, persone, libri)
 
@@ -91,9 +91,8 @@ dentro le card di documenti/appunti quando è `clientable`/`appuntabile` (`card_
 
 - lista: `scuole/classi/_classe_row` — panel/list-item cliccabile (NON una `.card`)
 - tabella riassuntiva nella show scuola: `scuole/container/_classi` (griglia anni × combinazioni)
-- perma: `scuole/classi/_container` (pattern card-perma, prev/next via ivar)
-- perma board: `classi/display/perma/_board` → shared perma/board
-- meta: `classi/container/_meta` (posizione anomala: gli altri usano `display/perma/_meta`)
+- perma: `scuole/classi/_container` (pattern card-perma, prev/next via locals)
+- perma board/meta: `classi/display/perma/_board` e `_meta` → shared perma/board
 - `container/`: content_display, edit_form, edit_footer, footer, docenti, adozioni, entries
 
 ### Shared (`app/views/shared/cards/display/`)
@@ -120,23 +119,26 @@ rimossi il 2026-07-09.
 - **Logica fuori dalle view**: prev/next tappe in `TappeHelper#tappa_adjacent_ids`,
   JSON editor in `DocumentiHelper#documento_editor_json`/`documento_editor_righe_json`,
   bolle aperte in `Scuola#bolle_visione_aperte_count`.
+- **Prev/next come locals**: i container di persone e classi ricevono
+  `prev_/next_*_id` come locals dalla show (il controller li calcola in `load_prev_next`).
+- **Niente cache sulle collection anagrafiche** (deciso 2026-07-09): le associazioni che
+  alimentano le card non hanno `touch` sul padre (persona_classi, contatori libro — un
+  `touch` lì martellerebbe i re-import MIUR) e la card scuola contiene contenuto per-utente
+  (navigator, assegnatari). Rivalutare solo se le liste diventano lente; servirebbe
+  `cached: ->(record) { [record, ...] }` con chiave composta e audit dei touch.
 
 ## Incoerenze residue / TODO
 
-1. **Cache anagrafiche** — attivabile solo dopo audit `touch` (persona_classi, contatori
-   libro) e dopo aver tolto il contenuto per-utente dalla card scuola.
-2. **Wrapper mancante** — il preview documenti non ha il div wrapper
-   `.flex.flex-column.flex-item-grow.max-inline-size` che hanno tutti gli altri:
-   aggiungerlo richiede verifica visiva.
-3. **Ivar prev/next** — i container di persone e classi ricevono `@prev_/@next_` come ivar
-   dal controller (tappe usa l'helper): valutare locals.
-4. **Meta classi** — `classi/container/_meta` andrebbe in `display/perma/_meta` con
-   locals `(classe:, adozioni:)` per allinearsi agli altri.
-5. **Tappe senza checkbox** — ha `bulk_bar/` ma le card non hanno `card__checkbox`.
+Nessuna nota al 2026-07-09. Il preview documenti ha il wrapper flex e le card tappa hanno
+checkbox bulk — entrambe modifiche verificate con render reale ma da ricontrollare a occhio
+in index documenti e agenda.
 
 Storico 2026-07-09: bug fix (avatar autore su card appunto, meta nel footer su card tappa,
 doppio style su container documento, `@scuola`→`scuola`, refuso `card__id-small`→`card__id`);
 migrazione anagrafiche al pattern preview; ritocchi classi; interazioni canoniche;
 rimozione `card--selected` (nessuna regola CSS/JS la usava); shared `_meta` eliminati;
 spostamenti in `container/` (persone, classi) e rename `_classe_card`→`_classe_row`;
-`libro_ids[]`→`ids[]`. Smoke test di resa: `test/integration/cards_render_smoke_test.rb`.
+`libro_ids[]`→`ids[]`; secondo giro: checkbox bulk sulle card tappa (la selezione in agenda
+era rotta: bulk bar senza checkbox), wrapper flex nel preview documenti, meta classi in
+`display/perma`, prev/next via locals. Smoke test di resa:
+`test/integration/cards_render_smoke_test.rb`.

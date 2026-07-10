@@ -13,5 +13,6 @@
 <% end %>
 
 <div class="full-width pad group">
-  <%= render "persone/container", persona: @persona, appunti: @appunti %>
+  <%= render "persone/container", persona: @persona, appunti: @appunti,
+      prev_persona_id: @prev_persona_id, next_persona_id: @next_persona_id, scuola_scope: @scuola_scope %>
 </div>

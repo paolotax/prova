@@ -23,6 +23,7 @@
     <%= check_box_tag "ids[]", (entry&.id || documento.id), false, data: { action: "change->bulk-actions#count" } %>
   </label>
 
+  <div class="flex flex-column flex-item-grow max-inline-size">
   <header class="card__header">
     <%= render "documenti/display/preview/board", documento: documento %>
 
@@ -83,6 +84,7 @@
 
     <%# questo è display: none in index %>
     <%= render "documenti/display/preview/columns", documento: documento %>
+  </div>
   </div>
 
   <footer class="card__footer flex gap-half">
