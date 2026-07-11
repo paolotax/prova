@@ -47,13 +47,12 @@ docker exec -it prova-app-1 bundle exec annotaterb models      # Annotate models
 - **Editore** - Publishers
 - **Account/Membership** - Multi-tenancy
 
-### Database Views (Scenic) - Deprecated. Don't use. Should remove but not now.
+### Database Views (Scenic)
 
-Read-only models in `app/models/views/` wrapping PostgreSQL views:
-- `Views::Giacenza` - Deprecated, ex Inventory (carichi, ordini, vendite per book)
-- `Views::Classe` - Deprecated, ex ImportScuola classes
-- `Views::Documento`, `Views::Riga`, `Views::Articolo` - Deprecated, document analysis
-- `Views::Cliente`, `Views::Fornitore` - Deprecated, customer/supplier views
+Cleaned up 2026-07: dead models and orphan sql files removed. Only
+`Views::Classe` (view_classi) survives — still used by classe_chips,
+libro_chips and scuole classi import. Deprecated: don't add new views;
+migrate Views::Classe consumers away when touching them.
 
 ### Key Patterns
 
