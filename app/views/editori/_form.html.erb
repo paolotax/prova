@@ -1,27 +1,28 @@
-<%= form_with(model: editore, class: "contents") do |form| %>
-  <% if editore.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(editore.errors.count, "error") %> prohibited this editore from being saved:</h2>
+<%# locals: (editore:) -%>
 
-      <ul>
-        <% editore.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+<%= form_with(model: editore) do |form| %>
+  <div class="flex flex-column gap">
+    <% if editore.errors.any? %>
+      <div class="form-errors txt-small">
+        <% editore.errors.full_messages.each do |message| %>
+          <p><%= message %></p>
         <% end %>
-      </ul>
+      </div>
+    <% end %>
+
+    <div class="form-field">
+      <%= form.label :editore, class: "form-label" %>
+      <%= form.text_field :editore, class: "input full-width", required: true %>
     </div>
-  <% end %>
 
-  <div class="my-5">
-    <%= form.label :editore %>
-    <%= form.text_field :editore, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+    <div class="form-field">
+      <%= form.label :gruppo, class: "form-label" %>
+      <%= form.text_field :gruppo, class: "input full-width" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :gruppo %>
-    <%= form.text_field :gruppo, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <div class="flex gap-half justify-center margin-block-start-half">
+      <%= form.submit "Salva", class: "btn btn--primary" %>
+      <%= link_to "Annulla", editore.persisted? ? editore_path(editore) : editori_path, class: "btn btn--ghost" %>
+    </div>
   </div>
 <% end %>

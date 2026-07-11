@@ -20,12 +20,19 @@
     <%= filter_place_menu_item clienti_path(Current.account), "Clienti", "users" %>
     <%= filter_place_menu_item libri_path(Current.account), "i miei Librini", "book" %>
     <%= filter_place_menu_item new_import_path(Current.account), "Importazioni", "arrow-down-tray" %>
-    <%#= filter_place_menu_item sconti_path(Current.account), "Sconti" %>
-    <%#= filter_place_menu_item categorie_path(Current.account), "Categorie" %>
 <% end %>
     
 <%= collapsible_nav_section "Giri" do %>
     <%= filter_place_menu_item giri_path(Current.account), "Giri", "truck" %>
     <%= filter_place_menu_item propaganda_index_path(Current.account), "Propaganda", "table" %>
     <%= filter_place_menu_item collane_path(Current.account), "Collane", "book" %>
+<% end %>
+
+<% if Current.user.admin? %>
+  <%= collapsible_nav_section "Tabelle" do %>
+      <%= filter_place_menu_item causali_path(Current.account), "Causali", "receipt" %>
+      <%= filter_place_menu_item sconti_path(Current.account), "Sconti", "cash" %>
+      <%= filter_place_menu_item categorie_path(Current.account), "Categorie", "tag" %>
+      <%= filter_place_menu_item editori_path(Current.account), "Editori", "building-library" %>
+  <% end %>
 <% end %>

@@ -9,72 +9,59 @@
 
   <div class="header__actions header__actions--end">
     <%= link_to new_categoria_path,
-        class: "btn btn--primary",
-        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+        class: "btn btn--primary" do %>
       <%= icon_tag "add", size: "small" %>
       <span class="for-screen-reader">Nuova Categoria</span>
     <% end %>
   </div>
 <% end %>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Nome Categoria
-          </th>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Descrizione
-          </th>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Libri
-          </th>
-          <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Azioni
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <% @categorie.each do |categoria| %>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">
-                <%= link_to categoria.nome_categoria, categoria_path(categoria), class: "text-blue-600 hover:text-blue-900" %>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-500">
-                <%= categoria.descrizione %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">
-                <%= categoria.libri.count %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <%= link_to "Modifica", edit_categoria_path(categoria),
-                class: "text-indigo-600 hover:text-indigo-900 mr-4",
-                data: { turbo_frame: :modal, action: "click->dialog#open" } %>
-              <%= button_to "Elimina", categoria_path(categoria),
-                method: :delete,
-                class: "text-red-600 hover:text-red-900",
-                data: { turbo_confirm: "Sei sicuro di voler eliminare questa categoria?" } %>
-            </td>
+<section class="panel panel--wide shadow center">
+  <% if @categorie.any? %>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome Categoria</th>
+            <th>Descrizione</th>
+            <th class="txt-align-end">Libri</th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <% if @categorie.empty? %>
-      <div class="text-center py-12">
-        <p class="text-gray-500">Nessuna categoria trovata.</p>
-        <%= link_to "Crea la prima categoria", new_categoria_path,
-          class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700",
-          data: { turbo_frame: :modal, action: "click->dialog#open" } %>
-      </div>
-    <% end %>
-  </div>
-</div>
+        </thead>
+        <tbody>
+          <% @categorie.each do |categoria| %>
+            <tr id="<%= dom_id(categoria) %>">
+              <td class="font-weight-bold">
+                <%= link_to categoria.nome_categoria, categoria_path(categoria), class: "txt-link" %>
+              </td>
+              <td class="txt-subtle"><%= categoria.descrizione %></td>
+              <td class="txt-align-end"><%= categoria.libri.count %></td>
+              <td>
+                <div class="table__actions">
+                  <%= link_to edit_categoria_path(categoria),
+                      class: "btn btn--circle btn--small borderless" do %>
+                    <%= icon_tag "pencil", size: "small" %>
+                    <span class="for-screen-reader">Modifica</span>
+                  <% end %>
+                  <%= button_to categoria_path(categoria),
+                      method: :delete,
+                      class: "btn btn--circle btn--small borderless txt-negative",
+                      data: { turbo_confirm: "Sei sicuro di voler eliminare questa categoria?" } do %>
+                    <%= icon_tag "trash", size: "small" %>
+                    <span class="for-screen-reader">Elimina</span>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="flex flex-column align-center gap pad">
+      <p class="txt-subtle txt-small">Nessuna categoria trovata.</p>
+      <%= link_to "Crea la prima categoria", new_categoria_path,
+          class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</section>

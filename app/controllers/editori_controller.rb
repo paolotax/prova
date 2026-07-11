@@ -8,7 +8,7 @@ class EditoriController < ApplicationController
   end
 
   def index
-    @editori = policy_scope(Editore).all
+    @editori = policy_scope(Editore).order(:editore)
     # authorize @editori
   end
 

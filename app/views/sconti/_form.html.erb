@@ -89,7 +89,7 @@
       </div>
     <% end %>
 
-    <div class="flex gap-half margin-block-start-half">
+    <div class="flex gap-half justify-center margin-block-start-half">
       <%= form.submit "Salva sconto", class: "btn btn--primary" %>
       <%= link_to "Annulla",
           @scontabile ? polymorphic_path([ @scontabile, :sconti ]) : sconti_path,

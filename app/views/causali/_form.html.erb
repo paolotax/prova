@@ -130,7 +130,7 @@
       <p class="txt-xx-small txt-subtle margin-block-start-quarter">Causali generabili da questa. Es: Ordine → DDT → Fattura</p>
     </div>
 
-    <div class="flex gap-half margin-block-start-half">
+    <div class="flex gap-half justify-center margin-block-start-half">
       <%= form.submit "Salva", class: "btn btn--primary" %>
       <%= link_to "Annulla", causale.persisted? ? causale_path(causale) : causali_path, class: "btn btn--ghost" %>
     </div>

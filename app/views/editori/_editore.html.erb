@@ -1,17 +1,24 @@
-<div id="<%= dom_id editore %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Editore:</strong>
-    <%= editore.editore %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Gruppo:</strong>
-    <%= editore.gruppo %>
-  </p>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show this editore", editore, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Edit this editore", edit_editore_path(editore), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
-</div>
+<tr id="<%= dom_id editore %>">
+  <td class="font-weight-bold">
+    <%= link_to editore.editore, editore_path(editore), class: "txt-link" %>
+  </td>
+  <td class="txt-subtle"><%= editore.gruppo %></td>
+  <td>
+    <div class="table__actions">
+      <%= link_to editore_sconti_path(editore), class: "btn btn--circle btn--small borderless" do %>
+        <%= icon_tag "tag", size: "small" %>
+        <span class="for-screen-reader">Sconti di <%= editore.editore %></span>
+      <% end %>
+      <%= link_to edit_editore_path(editore), class: "btn btn--circle btn--small borderless" do %>
+        <%= icon_tag "pencil", size: "small" %>
+        <span class="for-screen-reader">Modifica</span>
+      <% end %>
+      <%= button_to editore_path(editore), method: :delete,
+          class: "btn btn--circle btn--small borderless txt-negative",
+          data: { turbo_confirm: "Sei sicuro di voler eliminare questo editore?" } do %>
+        <%= icon_tag "trash", size: "small" %>
+        <span class="for-screen-reader">Elimina</span>
+      <% end %>
+    </div>
+  </td>
+</tr>

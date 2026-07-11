@@ -14,8 +14,7 @@
 
   <div class="header__actions header__actions--end">
     <%= link_to edit_categoria_path(@categoria),
-        class: "btn",
-        data: { turbo_frame: :modal, action: "click->dialog#open" } do %>
+        class: "btn" do %>
       <%= icon_tag "pencil", size: "small" %>
       <span class="for-screen-reader">Modifica</span>
     <% end %>
@@ -29,75 +28,53 @@
   </div>
 <% end %>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">
-        Dettagli Categoria
-      </h3>
-    </div>
+<section class="panel panel--wide shadow center">
+  <dl class="dl-grid pad">
+    <dt>Nome Categoria</dt>
+    <dd><%= @categoria.nome_categoria %></dd>
 
-    <div class="px-6 py-5 space-y-6">
-      <div>
-        <dt class="text-sm font-medium text-gray-500">Nome Categoria</dt>
-        <dd class="mt-1 text-sm text-gray-900"><%= @categoria.nome_categoria %></dd>
-      </div>
-
-      <% if @categoria.descrizione.present? %>
-        <div>
-          <dt class="text-sm font-medium text-gray-500">Descrizione</dt>
-          <dd class="mt-1 text-sm text-gray-900"><%= @categoria.descrizione %></dd>
-        </div>
-      <% end %>
-
-      <div>
-        <dt class="text-sm font-medium text-gray-500">Numero di libri</dt>
-        <dd class="mt-1 text-sm text-gray-900"><%= @categoria.libri.count %></dd>
-      </div>
-    </div>
-
-    <% if @page.used? %>
-      <div class="px-6 py-5 border-t border-gray-200">
-        <div class="flex justify-between items-center mb-4">
-          <h4 class="text-md leading-6 font-medium text-gray-900">
-            Libri in questa categoria
-          </h4>
-          <div class="text-sm text-gray-500">
-            <%= @total_count %> libri
-          </div>
-        </div>
-
-        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Titolo</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ISBN</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Editore</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Prezzo</th>
-              </tr>
-            </thead>
-            <%= with_automatic_pagination :categoria_libri, @page, tag_element: :tbody, class: "divide-y divide-gray-200 bg-white" do %>
-              <% @page.records.each do |libro| %>
-                <tr class="hover:bg-gray-50">
-                  <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                    <%= link_to libro.titolo, libro_path(libro), class: "text-blue-600 hover:text-blue-900" %>
-                  </td>
-                  <td class="px-3 py-4 text-sm text-gray-500"><%= libro.codice_isbn %></td>
-                  <td class="px-3 py-4 text-sm text-gray-500"><%= libro.editore&.editore %></td>
-                  <td class="px-3 py-4 text-sm text-gray-500"><%= number_to_currency(libro.prezzo, unit: "€ ") %></td>
-                </tr>
-              <% end %>
-            <% end %>
-          </table>
-        </div>
-      </div>
-    <% else %>
-      <div class="px-6 py-5 border-t border-gray-200">
-        <p class="text-sm text-gray-500 text-center py-4">
-          Nessun libro associato a questa categoria.
-        </p>
-      </div>
+    <% if @categoria.descrizione.present? %>
+      <dt>Descrizione</dt>
+      <dd><%= @categoria.descrizione %></dd>
     <% end %>
-  </div>
-</div>
+
+    <dt>Numero di libri</dt>
+    <dd><%= @categoria.libri.count %></dd>
+  </dl>
+
+  <% if @page.used? %>
+    <div class="flex justify-space-between align-center pad-inline">
+      <h2 class="txt-medium">Libri in questa categoria</h2>
+      <span class="txt-subtle txt-small"><%= @total_count %> libri</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Titolo</th>
+            <th>ISBN</th>
+            <th>Editore</th>
+            <th class="txt-align-end">Prezzo</th>
+          </tr>
+        </thead>
+        <%= with_automatic_pagination :categoria_libri, @page, tag_element: :tbody do %>
+          <% @page.records.each do |libro| %>
+            <tr id="<%= dom_id(libro) %>">
+              <td class="font-weight-bold">
+                <%= link_to libro.titolo, libro_path(libro), class: "txt-link" %>
+              </td>
+              <td class="txt-subtle"><%= libro.codice_isbn %></td>
+              <td class="txt-subtle"><%= libro.editore&.editore %></td>
+              <td class="txt-align-end"><%= number_to_currency(libro.prezzo, unit: "€ ") %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+  <% else %>
+    <p class="txt-subtle txt-small pad txt-align-center">
+      Nessun libro associato a questa categoria.
+    </p>
+  <% end %>
+</section>
