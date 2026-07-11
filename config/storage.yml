@@ -13,7 +13,9 @@ amazon:
   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
   region: eu-central-1
   bucket: tax-prova-bucket
-  public: true
+  # Uploaded files can contain customer and personal data. Active Storage will
+  # issue short-lived signed URLs instead of permanent anonymous S3 URLs.
+  public: false
 
 # Remember not to checkin your GCS keyfile to a repository
 # google:
