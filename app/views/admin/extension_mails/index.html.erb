@@ -4,26 +4,26 @@
 </p>
 
 <%= form_with url: admin_extension_mails_path, method: :post do |f| %>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+  <table class="table margin-block-end">
     <thead>
-      <tr style="border-bottom: 2px solid var(--color-ink-lighter); text-align: left;">
-        <th style="padding: 0.5rem;">
+      <tr>
+        <th>
           <input type="checkbox" id="select-all" onchange="document.querySelectorAll('input[name=\\'user_ids[]\\']').forEach(cb => cb.checked = this.checked)">
         </th>
-        <th style="padding: 0.5rem;">Nome</th>
-        <th style="padding: 0.5rem;">Email</th>
-        <th style="padding: 0.5rem;">Ruolo</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Ruolo</th>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |user| %>
-        <tr style="border-bottom: 1px solid var(--color-ink-lighter);">
-          <td style="padding: 0.5rem;">
+        <tr>
+          <td>
             <%= check_box_tag "user_ids[]", user.id, false, id: "user_#{user.id}" %>
           </td>
-          <td style="padding: 0.5rem;"><%= user.name %></td>
-          <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= user.email %></td>
-          <td style="padding: 0.5rem;"><%= user.role %></td>
+          <td><%= user.name %></td>
+          <td class="txt-subtle"><%= user.email %></td>
+          <td><%= user.role %></td>
         </tr>
       <% end %>
     </tbody>

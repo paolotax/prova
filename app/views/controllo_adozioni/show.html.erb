@@ -40,22 +40,22 @@
   <% if @scheda.scuola %>
     <section class="margin-block-end">
       <h2 class="txt-medium">In anagrafe: <%= link_to @scheda.scuola.denominazione, scuola_path(@scheda.scuola, account_id: params[:account_id]) %></h2>
-      <table class="libri-table txt-small">
+      <table class="table">
         <thead>
           <tr>
-            <th class="pad-inline">Anno</th>
-            <th class="pad-inline txt-align-end">Classi attive</th>
-            <th class="pad-inline txt-align-end">Archiviate</th>
-            <th class="pad-inline txt-align-end">Adozioni</th>
+            <th>Anno</th>
+            <th class="txt-align-end">Classi attive</th>
+            <th class="txt-align-end">Archiviate</th>
+            <th class="txt-align-end">Adozioni</th>
           </tr>
         </thead>
         <tbody>
           <% @scheda.confronto_anni.each do |riga| %>
             <tr>
-              <td class="pad-inline"><%= anno_scolastico_label(riga.anno) %></td>
-              <td class="pad-inline txt-align-end"><%= riga.classi_attive %></td>
-              <td class="pad-inline txt-align-end"><%= riga.classi_archiviate %></td>
-              <td class="pad-inline txt-align-end"><%= riga.adozioni %></td>
+              <td><%= anno_scolastico_label(riga.anno) %></td>
+              <td class="txt-align-end"><%= riga.classi_attive %></td>
+              <td class="txt-align-end"><%= riga.classi_archiviate %></td>
+              <td class="txt-align-end"><%= riga.adozioni %></td>
             </tr>
           <% end %>
         </tbody>
@@ -77,27 +77,27 @@
       <% if anomalie.any? { |a| %w[tetto_superato disciplina_mancante].include?(a.tipo) } %>
         <% libri = @scheda.libri_per_classe[[annocorso, sezioneanno, combinazione]] || [] %>
         <% if libri.any? %>
-          <table class="libri-table txt-small">
+          <table class="table">
             <thead>
               <tr>
-                <th class="pad-inline">Disciplina</th>
-                <th class="pad-inline">Titolo</th>
-                <th class="pad-inline">Editore</th>
-                <th class="pad-inline txt-align-end">Prezzo</th>
+                <th>Disciplina</th>
+                <th>Titolo</th>
+                <th>Editore</th>
+                <th class="txt-align-end">Prezzo</th>
               </tr>
             </thead>
             <tbody>
               <% libri.each do |libro| %>
                 <tr class="<%= "txt-subtle" if libro.escluso_dal_tetto? %>">
-                  <td class="pad-inline"><%= libro.disciplina %></td>
-                  <td class="pad-inline">
+                  <td><%= libro.disciplina %></td>
+                  <td>
                     <%= libro.titolo %><%= " #{libro.volume}" if libro.volume.present? %>
                     <% if libro.escluso_dal_tetto? %>
                       <span class="txt-small">(esclusa dal totale)</span>
                     <% end %>
                   </td>
-                  <td class="pad-inline"><%= libro.editore %></td>
-                  <td class="pad-inline txt-align-end">
+                  <td><%= libro.editore %></td>
+                  <td class="txt-align-end">
                     <%= libro.prezzo_euro ? number_to_currency(libro.prezzo_euro) : "—" %>
                   </td>
                 </tr>
@@ -105,8 +105,8 @@
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="3" class="pad-inline txt-align-end">Totale spesa classe</th>
-                <th class="pad-inline txt-align-end">
+                <th colspan="3" class="txt-align-end">Totale spesa classe</th>
+                <th class="txt-align-end">
                   <%= number_to_currency(libri.reject(&:escluso_dal_tetto?).sum { |l| l.prezzo_euro || 0 }) %>
                 </th>
               </tr>

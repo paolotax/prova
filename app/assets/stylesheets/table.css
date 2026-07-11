@@ -11,6 +11,8 @@
     border-collapse: collapse;
     font-size: var(--text-small);
     inline-size: 100%;
+    /* #main centra il testo: le tabelle tornano allineate all'inizio */
+    text-align: start;
 
     th {
       border-block-end: 1px solid var(--color-ink-light);
@@ -33,10 +35,53 @@
       border-block-end: none;
     }
 
+    tfoot td, tfoot th {
+      border-block-end: none;
+      border-block-start: 2px solid var(--color-ink-light);
+      color: inherit;
+      font-size: inherit;
+      font-weight: 700;
+      padding: var(--table-spacer-block) var(--table-spacer-inline);
+      text-transform: none;
+      white-space: normal;
+    }
+
     @media (any-hover: hover) {
       tbody tr:hover {
         background-color: color-mix(in srgb, var(--color-ink) 4%, transparent);
       }
+    }
+  }
+
+  .table--compact {
+    --table-spacer-block: 0.3em;
+    --table-spacer-inline: 0.6em;
+  }
+
+  .table--borderless {
+    --table-border-color: transparent;
+
+    th {
+      border-block-end-color: transparent;
+    }
+  }
+
+  .table--zebra {
+    tbody tr:nth-of-type(even) {
+      background-color: var(--color-ink-lightest);
+    }
+  }
+
+  /* Cella azioni: bottoni sempre orizzontali, allineati a destra.
+     I form di button_to non generano box (display: contents). */
+  .table__actions {
+    align-items: center;
+    display: flex;
+    gap: 0.25em;
+    justify-content: flex-end;
+
+    form {
+      display: contents;
     }
   }
 

@@ -135,14 +135,12 @@
   /* Data Table
   /* ------------------------------------------------------------------------ */
 
+  /* Usa .table come base (class="table analytics-table"): qui restano solo
+     layout fisso, larghezze colonna e numeri tabulari. */
   .analytics-table {
     --table-spacer-block: 0.5ch;
     --table-spacer-inline: 0.75ch;
-    --table-border: 1px solid var(--color-ink-lighter);
 
-    border-collapse: collapse;
-    font-size: var(--text-small);
-    inline-size: 100%;
     table-layout: fixed;
   }
 
@@ -171,32 +169,8 @@
     white-space: nowrap;
   }
 
-  .analytics-table th {
-    border-block-end: var(--table-border);
-    font-size: var(--text-x-small);
-    font-weight: 600;
-    padding: var(--table-spacer-block) var(--table-spacer-inline);
-    text-align: start;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    color: var(--color-ink-dark);
-  }
-
-  .analytics-table td {
-    border-block-end: var(--table-border);
-    padding: var(--table-spacer-block) var(--table-spacer-inline);
-    vertical-align: middle;
-  }
-
-  .analytics-table tr:last-child td {
-    border-block-end: none;
-  }
-
-  .analytics-table tr:hover td {
-    background-color: var(--color-ink-lightest);
-  }
-
-  .analytics-table__right {
+  /* Scoped sotto .analytics-table: deve battere .table th (text-align: start) */
+  .analytics-table .analytics-table__right {
     font-variant-numeric: tabular-nums;
     text-align: end;
   }

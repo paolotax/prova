@@ -13,22 +13,22 @@
 <% end %>
 
 <h3>Account creati</h3>
-<table style="width: 100%; border-collapse: collapse;">
+<table class="table">
   <thead>
-    <tr style="border-bottom: 2px solid var(--color-ink-lighter); text-align: left;">
-      <th style="padding: 0.5rem;">Nome</th>
-      <th style="padding: 0.5rem;">Email</th>
-      <th style="padding: 0.5rem;">Account</th>
-      <th style="padding: 0.5rem;">Creato</th>
+    <tr>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Account</th>
+      <th>Creato</th>
     </tr>
   </thead>
   <tbody>
     <% @invitations.each do |user| %>
-      <tr style="border-bottom: 1px solid var(--color-ink-lighter);">
-        <td style="padding: 0.5rem;"><%= user.name %></td>
-        <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= user.email %></td>
-        <td style="padding: 0.5rem;"><%= user.accounts.map(&:name).join(", ") %></td>
-        <td style="padding: 0.5rem; color: var(--color-ink-dark);"><%= l(user.created_at, format: :short) %></td>
+      <tr>
+        <td><%= user.name %></td>
+        <td class="txt-subtle"><%= user.email %></td>
+        <td><%= user.accounts.map(&:name).join(", ") %></td>
+        <td class="txt-subtle"><%= l(user.created_at, format: :short) %></td>
       </tr>
     <% end %>
   </tbody>

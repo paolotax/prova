@@ -685,53 +685,11 @@
     .btn--circle { --btn-size: 1.8em; }
   }
 
-  /* Column summary — tables (Volumi, Adozioni). Fizzy-style: borderless
-     outside, divider per row, uppercase thin headers. */
+  /* Column summary — tables (Volumi, Adozioni): usano .table (+ --zebra o
+     --compact); qui resta solo il vincolo di larghezza della tabella Volumi. */
   .column-summary__table {
-    border-collapse: collapse;
-    inline-size: 100%;
     margin-inline: auto;
     max-inline-size: var(--main-width);
-
-    th, td {
-      border-block-end: 1px solid var(--color-ink-light);
-      padding: 0.5em 0.75em;
-      text-align: start;
-    }
-
-    th {
-      color: var(--color-ink-dark);
-      font-size: var(--text-x-small);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    tbody tr:nth-of-type(even) {
-      background-color: var(--color-ink-lightest);
-    }
-
-    tbody tr:hover {
-      background-color: color-mix(in srgb, var(--color-link) 6%, transparent);
-    }
-
-    tfoot td {
-      border-block-end: 0;
-      border-block-start: 2px solid var(--color-ink-light);
-      font-weight: 700;
-    }
-  }
-
-  /* Compact variant — used inline inside .column-summary__row cells.
-     No outer max-inline-size, smaller padding, smaller font, no zebra. */
-  .column-summary__table--compact {
-    font-size: var(--text-small);
-    max-inline-size: none;
-
-    th, td { padding: 0.3em 0.6em; }
-
-    tr:nth-of-type(even) { background-color: transparent; }
-
-    tr:last-child td { border-block-end: 0; }
   }
 
   /* Override .cards--grid defaults inside a row: tighter gap, more columns

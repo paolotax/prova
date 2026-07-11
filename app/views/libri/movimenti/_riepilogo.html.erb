@@ -2,24 +2,24 @@
 
 <% if riepilogo.any? %>
   <h3 class="divider divider--fade txt-medium font-weight-black">Riepilogo</h3>
-  <table class="txt-small full-width">
+  <table class="table">
     <thead>
-      <tr class="txt-subtle txt-x-small txt-uppercase">
-        <th class="txt-start">Anno</th>
-        <th class="txt-end">Carichi</th>
-        <th class="txt-end">Vendite Clienti</th>
-        <th class="txt-end">Vendite Scuole</th>
-        <th class="txt-end">Importo</th>
+      <tr>
+        <th>Anno</th>
+        <th class="txt-align-end">Carichi</th>
+        <th class="txt-align-end">Vendite Clienti</th>
+        <th class="txt-align-end">Vendite Scuole</th>
+        <th class="txt-align-end">Importo</th>
       </tr>
     </thead>
     <tbody>
       <% riepilogo.each do |anno, dati| %>
         <tr>
           <td class="font-weight-bold"><%= anno %></td>
-          <td class="txt-end"><%= dati[:carichi].nonzero? || "-" %></td>
-          <td class="txt-end"><%= dati[:vendite_clienti].nonzero? || "-" %></td>
-          <td class="txt-end"><%= dati[:vendite_scuole].nonzero? || "-" %></td>
-          <td class="txt-end font-weight-bold"><%= number_to_currency(dati[:importo] / 100.0) %></td>
+          <td class="txt-align-end"><%= dati[:carichi].nonzero? || "-" %></td>
+          <td class="txt-align-end"><%= dati[:vendite_clienti].nonzero? || "-" %></td>
+          <td class="txt-align-end"><%= dati[:vendite_scuole].nonzero? || "-" %></td>
+          <td class="txt-align-end font-weight-bold"><%= number_to_currency(dati[:importo] / 100.0) %></td>
         </tr>
       <% end %>
     </tbody>

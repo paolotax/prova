@@ -16,8 +16,8 @@
       <th>Causale</th>
       <th>Numero</th>
       <th>Data</th>
-      <th class="txt-end">Copie</th>
-      <th class="txt-end">Importo</th>
+      <th class="txt-align-end">Copie</th>
+      <th class="txt-align-end">Importo</th>
     </tr>
   </thead>
   <tbody>
@@ -26,8 +26,8 @@
         <td><%= link_to documento.causale&.causale, documento_path(documento) %></td>
         <td><%= documento.numero_documento %></td>
         <td><%= documento.data_documento&.strftime("%d/%m/%Y") %></td>
-        <td class="txt-end"><%= documento.totale_copie %></td>
-        <td class="txt-end"><%= number_to_currency documento.totale_importo, locale: :it %></td>
+        <td class="txt-align-end"><%= documento.totale_copie %></td>
+        <td class="txt-align-end"><%= number_to_currency documento.totale_importo, locale: :it %></td>
       </tr>
     <% end %>
   </tbody>

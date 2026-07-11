@@ -67,52 +67,24 @@
   /* Stats Table
   /* ------------------------------------------------------------------------ */
 
+  /* Wrapper bordato: la tabella dentro usa .table; qui restano il contorno,
+     il drag&drop, il flash e le varianti cella. */
   .stats-table {
     --table-spacer-block: 0.75ch;
-    --table-spacer-inline: 1ch;
-    --table-border: 1px solid var(--color-ink-lighter);
-    --table-header-bg: var(--color-ink);
-    --table-header-color: var(--color-canvas);
 
-    border: var(--table-border);
+    border: 1px solid var(--color-ink-lighter);
     border-radius: 0.5rem;
     inline-size: 100%;
     overflow-x: auto;
-  }
 
-  .stats-table__table {
-    border-collapse: collapse;
-    inline-size: 100%;
-  }
-
-  .stats-table__header {
-    background-color: var(--table-header-bg);
-    color: var(--table-header-color);
-  }
-
-  .stats-table__th {
-    font-size: var(--text-small);
-    font-weight: 600;
-    padding: var(--table-spacer-block) var(--table-spacer-inline);
-    text-align: start;
-
-    &:empty {
+    th:empty {
       inline-size: 3rem;
     }
   }
 
-  .stats-table__row {
-    background-color: var(--color-canvas);
-    border-block-end: var(--table-border);
+  /* Scoped sotto .stats-table per vincere su .table tbody tr:hover */
+  .stats-table .stats-table__row {
     scroll-margin-block-start: 5rem;
-
-    &:last-child {
-      border-block-end: none;
-    }
-
-    &:hover {
-      background-color: var(--color-canvas-tinted);
-    }
 
     &:target,
     &.is-flashing {
@@ -140,24 +112,18 @@
     }
   }
 
-  .stats-table__td {
-    font-size: var(--text-small);
-    padding: var(--table-spacer-block) var(--table-spacer-inline);
-    vertical-align: middle;
-  }
-
-  .stats-table__td--actions {
+  .stats-table__cell--actions {
     text-align: center;
     white-space: nowrap;
   }
 
-  .stats-table__td--hidden-mobile {
+  .stats-table__cell--hidden-mobile {
     @media (max-width: 767px) {
       display: none;
     }
   }
 
-  .stats-table__td--stato {
+  .stats-table__cell--stato {
     white-space: nowrap;
   }
 
@@ -211,29 +177,33 @@
     background-color: var(--color-ink-lightest);
   }
 
-  .stats-result__group-name {
+  /* Scoped sotto __table: th grande e bold, deve battere .table th
+     (uppercase, x-small, nowrap) */
+  .stats-result__table .stats-result__group-name {
     border-block-end: var(--result-border);
     color: var(--color-ink);
     font-size: var(--text-base);
     font-weight: 700;
     padding: 0.75rem 1rem;
     text-align: start;
+    text-transform: none;
+    white-space: normal;
   }
 
+  /* La tabella usa .table come base (class="table stats-result__table") */
   .stats-result__table {
-    border-collapse: collapse;
-    inline-size: 100%;
+    --table-spacer-block: 0.5rem;
+    --table-spacer-inline: 1rem;
   }
 
-  .stats-result__th {
+  /* Le righe titolo/header/totale (dentro tbody) non devono avere l'hover di .table */
+  .stats-result__table tbody tr:not(.stats-result__row):hover {
+    background-color: transparent;
+  }
+
+  /* Scoped sotto __table: deve battere .table th (che mette nowrap) */
+  .stats-result__table .stats-result__th {
     background-color: var(--color-ink-lightest);
-    border-block-end: var(--result-border);
-    color: var(--color-ink);
-    font-size: var(--text-x-small);
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    text-align: start;
-    text-transform: uppercase;
     letter-spacing: 0.025em;
 
     /* Titoli colonna lunghi: vanno a capo (solo tra parole) invece di allargare la colonna */
@@ -243,9 +213,8 @@
     white-space: normal;
   }
 
-  .stats-result__row {
-    background-color: var(--color-canvas);
-
+  /* Scoped sotto __table per vincere su .table tbody tr:hover */
+  .stats-result__table .stats-result__row {
     &:nth-child(even) {
       background-color: var(--color-ink-lightest);
     }
@@ -260,10 +229,7 @@
   }
 
   .stats-result__td {
-    border-block-end: var(--result-border);
-    font-size: var(--text-small);
     font-variant-numeric: tabular-nums;
-    padding: 0.5rem 1rem;
   }
 
   .stats-result__footer {
@@ -275,6 +241,7 @@
     .stats-result__th {
       background-color: transparent;
       border-block-end: none;
+      color: inherit;
       font-size: var(--text-small);
       text-transform: none;
 

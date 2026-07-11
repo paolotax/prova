@@ -12,27 +12,27 @@
   <% if @runs.empty? %>
     <p class="notice">Nessun import ha toccato le tue scuole.</p>
   <% else %>
-    <table class="libri-table txt-small">
+    <table class="table">
       <thead>
         <tr>
-          <th class="pad-inline">Data</th>
-          <th class="pad-inline">Anno</th>
-          <th class="pad-inline txt-align-end">Tue scuole</th>
-          <th class="pad-inline txt-align-end">+ righe</th>
-          <th class="pad-inline txt-align-end">− righe</th>
+          <th>Data</th>
+          <th>Anno</th>
+          <th class="txt-align-end">Tue scuole</th>
+          <th class="txt-align-end">+ righe</th>
+          <th class="txt-align-end">− righe</th>
         </tr>
       </thead>
       <tbody>
         <% @runs.each do |run| %>
           <tr>
-            <td class="pad-inline">
+            <td>
               <%= link_to l(run.completed_at, format: :short),
                     miur_import_run_path(run, account_id: params[:account_id]) %>
             </td>
-            <td class="pad-inline"><%= anno_scolastico_label(run.anno_scolastico) %></td>
-            <td class="pad-inline txt-align-end"><%= @scuole_per_run[run.id].to_i %></td>
-            <td class="pad-inline txt-align-end"><%= @aggiunte_per_run[run.id].to_i %></td>
-            <td class="pad-inline txt-align-end"><%= @rimosse_per_run[run.id].to_i %></td>
+            <td><%= anno_scolastico_label(run.anno_scolastico) %></td>
+            <td class="txt-align-end"><%= @scuole_per_run[run.id].to_i %></td>
+            <td class="txt-align-end"><%= @aggiunte_per_run[run.id].to_i %></td>
+            <td class="txt-align-end"><%= @rimosse_per_run[run.id].to_i %></td>
           </tr>
         <% end %>
       </tbody>

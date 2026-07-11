@@ -73,7 +73,7 @@
       Volumi da consegnare
     </h2>
 
-    <table class="column-summary__table">
+    <table class="table table--zebra column-summary__table">
       <thead>
         <tr>
           <th>Titolo</th>
@@ -132,7 +132,7 @@
             </div>
           </header>
 
-          <table class="column-summary__table column-summary__table--compact">
+          <table class="table table--compact">
             <%# Raggruppa per anno_corso + disciplina + codice_isbn, aggrega sezioni %>
             <% adozioni.group_by { |a| [a.classe.anno_corso, a.disciplina, a.codice_isbn] }.each do |(anno, disciplina, _isbn), gruppo| %>
               <% sezioni = gruppo.map { |a| a.classe.sezione }.compact.sort.join("") %>

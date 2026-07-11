@@ -7,16 +7,16 @@
     <h2 class="txt-medium">Per provincia <span class="txt-subtle">(<%= dashboard.righe.size %>)</span></h2>
   </div>
 
-  <table class="txt-small full-width">
+  <table class="table">
     <thead>
-      <tr class="txt-subtle txt-x-small txt-uppercase">
-        <th class="txt-start">Provincia</th>
-        <th class="txt-end">Scuole</th>
-        <th class="txt-end">Promosse</th>
-        <th class="txt-end">Da promuovere</th>
-        <th class="txt-end">Codici nuovi</th>
-        <th class="txt-end">Mancanti MIUR</th>
-        <th class="txt-end">Anomalie</th>
+      <tr>
+        <th>Provincia</th>
+        <th class="txt-align-end">Scuole</th>
+        <th class="txt-align-end">Promosse</th>
+        <th class="txt-align-end">Da promuovere</th>
+        <th class="txt-align-end">Codici nuovi</th>
+        <th class="txt-align-end">Mancanti MIUR</th>
+        <th class="txt-align-end">Anomalie</th>
       </tr>
     </thead>
     <tbody>
@@ -26,24 +26,24 @@
             <%= link_to r.provincia.to_s.titleize,
                   controllo_adozioni_index_path(provincia: r.provincia, account_id: account_id) %>
           </td>
-          <td class="txt-end"><%= r.scuole %></td>
-          <td class="txt-end"><%= r.promosse.positive? ? r.promosse : "–" %></td>
-          <td class="txt-end"><%= r.da_promuovere.positive? ? r.da_promuovere : "–" %></td>
-          <td class="txt-end"><%= r.codici_nuovi.positive? ? r.codici_nuovi : "–" %></td>
-          <td class="txt-end"><%= r.mancanti_miur.positive? ? r.mancanti_miur : "–" %></td>
-          <td class="txt-end"><%= r.anomalie.positive? ? r.anomalie : "–" %></td>
+          <td class="txt-align-end"><%= r.scuole %></td>
+          <td class="txt-align-end"><%= r.promosse.positive? ? r.promosse : "–" %></td>
+          <td class="txt-align-end"><%= r.da_promuovere.positive? ? r.da_promuovere : "–" %></td>
+          <td class="txt-align-end"><%= r.codici_nuovi.positive? ? r.codici_nuovi : "–" %></td>
+          <td class="txt-align-end"><%= r.mancanti_miur.positive? ? r.mancanti_miur : "–" %></td>
+          <td class="txt-align-end"><%= r.anomalie.positive? ? r.anomalie : "–" %></td>
         </tr>
       <% end %>
     </tbody>
     <tfoot>
       <tr class="txt-medium">
         <td class="txt-start">Totale</td>
-        <td class="txt-end"><%= totali[:scuole] %></td>
-        <td class="txt-end"><%= totali[:promosse] %></td>
-        <td class="txt-end"><%= totali[:da_promuovere] %></td>
-        <td class="txt-end"><%= totali[:codici_nuovi] %></td>
-        <td class="txt-end"><%= totali[:mancanti_miur] %></td>
-        <td class="txt-end"><%= totali[:anomalie] %></td>
+        <td class="txt-align-end"><%= totali[:scuole] %></td>
+        <td class="txt-align-end"><%= totali[:promosse] %></td>
+        <td class="txt-align-end"><%= totali[:da_promuovere] %></td>
+        <td class="txt-align-end"><%= totali[:codici_nuovi] %></td>
+        <td class="txt-align-end"><%= totali[:mancanti_miur] %></td>
+        <td class="txt-align-end"><%= totali[:anomalie] %></td>
       </tr>
     </tfoot>
   </table>

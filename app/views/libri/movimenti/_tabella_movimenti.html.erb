@@ -1,13 +1,13 @@
 <%# locals: (documento_righe:) -%>
 
-<table class="txt-small full-width">
+<table class="table">
   <thead>
-    <tr class="txt-subtle txt-x-small txt-uppercase">
-      <th class="txt-start">Causale</th>
-      <th class="txt-start">Cliente</th>
-      <th class="txt-start">Documento</th>
-      <th class="txt-end">Copie</th>
-      <th class="txt-end">Importo</th>
+    <tr>
+      <th>Causale</th>
+      <th>Cliente</th>
+      <th>Documento</th>
+      <th class="txt-align-end">Copie</th>
+      <th class="txt-align-end">Importo</th>
     </tr>
   </thead>
   <tbody>
@@ -31,8 +31,8 @@
         <% else %>
           <% segno = causale&.uscita? ? "-" : "+" %>
         <% end %>
-        <td class="txt-end font-weight-bold <%= segno == '+' ? 'txt-positive' : 'txt-negative' %>"><%= segno %><%= dr.riga.quantita %></td>
-        <td class="txt-end <%= segno == '+' ? 'txt-positive' : 'txt-negative' %>"><%= segno %><%= number_to_currency(dr.riga.importo) %></td>
+        <td class="txt-align-end font-weight-bold <%= segno == '+' ? 'txt-positive' : 'txt-negative' %>"><%= segno %><%= dr.riga.quantita %></td>
+        <td class="txt-align-end <%= segno == '+' ? 'txt-positive' : 'txt-negative' %>"><%= segno %><%= number_to_currency(dr.riga.importo) %></td>
       </tr>
     <% end %>
   </tbody>

@@ -29,7 +29,7 @@
           <tr>
             <th>Applicato a</th>
             <th>Categoria</th>
-            <th class="txt-end">Sconto</th>
+            <th class="txt-align-end">Sconto</th>
             <th>Tipo</th>
             <th>Inizio</th>
             <th>Fine</th>
@@ -57,7 +57,7 @@
               <td class="txt-subtle">
                 <%= sconto.categoria&.nome_categoria || "Tutte" %>
               </td>
-              <td class="txt-end font-weight-bold">
+              <td class="txt-align-end font-weight-bold">
                 <%= number_to_percentage(sconto.percentuale_sconto, precision: 2) %>
               </td>
               <td><%= sconto.tipo_sconto&.humanize %></td>
@@ -72,19 +72,21 @@
                   <span class="badge fill-shade txt-subtle">Non attivo</span>
                 <% end %>
               </td>
-              <td class="txt-end" style="white-space: nowrap;">
-                <%= link_to sconto.scontabile ? edit_polymorphic_path([ sconto.scontabile, sconto ]) : edit_sconto_path(sconto),
-                    class: "btn btn--circle btn--small borderless" do %>
-                  <%= icon_tag "pencil", size: "small" %>
-                  <span class="for-screen-reader">Modifica</span>
-                <% end %>
-                <%= button_to sconto.scontabile ? polymorphic_path([ sconto.scontabile, sconto ]) : sconto_path(sconto),
-                    method: :delete, form_class: "flex-inline",
-                    data: { turbo_confirm: "Sei sicuro di voler eliminare questo sconto?" },
-                    class: "btn btn--circle btn--small borderless txt-negative" do %>
-                  <%= icon_tag "trash", size: "small" %>
-                  <span class="for-screen-reader">Elimina</span>
-                <% end %>
+              <td>
+                <div class="table__actions">
+                  <%= link_to sconto.scontabile ? edit_polymorphic_path([ sconto.scontabile, sconto ]) : edit_sconto_path(sconto),
+                      class: "btn btn--circle btn--small borderless" do %>
+                    <%= icon_tag "pencil", size: "small" %>
+                    <span class="for-screen-reader">Modifica</span>
+                  <% end %>
+                  <%= button_to sconto.scontabile ? polymorphic_path([ sconto.scontabile, sconto ]) : sconto_path(sconto),
+                      method: :delete,
+                      data: { turbo_confirm: "Sei sicuro di voler eliminare questo sconto?" },
+                      class: "btn btn--circle btn--small borderless txt-negative" do %>
+                    <%= icon_tag "trash", size: "small" %>
+                    <span class="for-screen-reader">Elimina</span>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>

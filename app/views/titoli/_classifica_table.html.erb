@@ -11,7 +11,7 @@
       <% end %>
       <br><span class="txt-xx-small txt-subtle"><%= row.editore %></span>
     </dt>
-    <dd class="txt-end font-weight-bold <%= 'txt-positive' if current %>">
+    <dd class="txt-align-end font-weight-bold <%= 'txt-positive' if current %>">
       <%= row.sezioni_count %>
       <% if row.nuove_count.to_i > 0 %>
         <span class="txt-negative">(<%= row.nuove_count %>)</span>

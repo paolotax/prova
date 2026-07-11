@@ -8,24 +8,24 @@
     data-tax-sortable-update-url="<%= stat_position_path(stat) %>">
 
   <% if policy(stat).update? %>
-    <td class="stats-table__td stats-table__td--actions">
+    <td class="stats-table__cell--actions">
       <div class="handle" style="cursor: move;">
         <%= icon_tag "drag-handle", class: "icon--small txt-subtle" %>
       </div>
     </td>
   <% end %>
 
-  <td class="stats-table__td stats-table__td--actions">
+  <td class="stats-table__cell--actions">
     <%= link_to stat_path(stat), class: "stats-table__execute", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Esegui" } do %>
       <%= icon_tag "bolt", class: "icon--small" %>
     <% end %>
   </td>
 
-  <td class="stats-table__td">
+  <td>
     <span class="txt-small font-weight-bold"><%= stat.categoria&.capitalize %></span>
   </td>
 
-  <td class="stats-table__td">
+  <td>
     <div class="flex flex-column gap-quarter">
       <span class="font-weight-bold"><%= stat.titolo %></span>
       <% if stat.descrizione.present? %>
@@ -35,7 +35,7 @@
   </td>
 
   <% if policy(stat).update? %>
-    <td class="stats-table__td stats-table__td--hidden-mobile stats-table__td--stato">
+    <td class="stats-table__cell--hidden-mobile stats-table__cell--stato">
       <div class="stats-stato-actions">
         <span class="chip chip--stato-<%= stat.stato %>"><%= stat.stato.capitalize %></span>
         <% (Stat::STATI - [stat.stato]).each do |s| %>
@@ -49,7 +49,7 @@
       </div>
     </td>
 
-    <td class="stats-table__td stats-table__td--hidden-mobile">
+    <td class="stats-table__cell--hidden-mobile">
       <% usa_new = stat.testo.to_s.match?(/\bnew_adozioni\b/i) %>
       <% usa_import = stat.testo.to_s.match?(/\bimport_adozioni\b/i) %>
       <% sorgente_label, sorgente_icon =
@@ -63,7 +63,7 @@
       </span>
     </td>
 
-    <td class="stats-table__td stats-table__td--hidden-mobile">
+    <td class="stats-table__cell--hidden-mobile">
       <% if stat.ultima_verifica %>
         <span class="txt-small <%= 'txt-danger' if stat.ultimo_errore.present? %>"
               title="<%= l(stat.ultima_verifica, format: :long) %><%= " — #{stat.ultimo_errore.to_s.truncate(200)}" if stat.ultimo_errore.present? %>">
@@ -75,7 +75,7 @@
       <% end %>
     </td>
 
-    <td class="stats-table__td stats-table__td--actions">
+    <td class="stats-table__cell--actions">
       <%= link_to edit_stat_path(stat), class: "btn btn--small", data: { turbo_frame: "_top", controller: "tooltip", tooltip_content_value: "Modifica SQL" } do %>
         <%= icon_tag "pencil", class: "icon--small" %>
       <% end %>

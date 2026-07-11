@@ -59,22 +59,22 @@
 <%= turbo_frame_tag "search_results" do %>
   <% if @stats.any? %>
     <div class="stats-table">
-      <table class="stats-table__table">
-        <thead class="stats-table__header">
+      <table class="table">
+        <thead>
           <tr>
             <% if current_user.admin? %>
-              <th class="stats-table__th"></th>
+              <th></th>
             <% end %>
-            <th class="stats-table__th"></th>
-            <th class="stats-table__th">Categoria</th>
-            <th class="stats-table__th">Descrizione</th>
+            <th></th>
+            <th>Categoria</th>
+            <th>Descrizione</th>
 
 
             <% if current_user.admin? %>
-              <th class="stats-table__th stats-table__td--hidden-mobile">Stato</th>
-              <th class="stats-table__th stats-table__td--hidden-mobile">Sorgente</th>
-              <th class="stats-table__th stats-table__td--hidden-mobile">Verifica</th>
-              <th class="stats-table__th"></th>
+              <th class="stats-table__cell--hidden-mobile">Stato</th>
+              <th class="stats-table__cell--hidden-mobile">Sorgente</th>
+              <th class="stats-table__cell--hidden-mobile">Verifica</th>
+              <th></th>
             <% end %>
           </tr>
         </thead>
