@@ -17,6 +17,17 @@ amazon:
   # issue short-lived signed URLs instead of permanent anonymous S3 URLs.
   public: false
 
+# Public, shared catalogue assets only. It intentionally uses the same bucket:
+# ACLs and Active Storage's service_name distinguish these objects from private
+# customer uploads.
+amazon_public:
+  service: S3
+  access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+  secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+  region: eu-central-1
+  bucket: tax-prova-bucket
+  public: true
+
 # Remember not to checkin your GCS keyfile to a repository
 # google:
 #   service: GCS

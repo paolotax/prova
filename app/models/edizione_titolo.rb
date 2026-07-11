@@ -16,7 +16,8 @@
 class EdizioneTitolo < ApplicationRecord
   has_many :libri, primary_key: :codice_isbn, foreign_key: :codice_isbn
 
-  has_one_attached :copertina
+  has_one_attached :copertina,
+                   service: ->(_edizione) { Rails.env.production? ? :amazon_public : Rails.configuration.active_storage.service }
 
   validates :codice_isbn, presence: true, uniqueness: true
 

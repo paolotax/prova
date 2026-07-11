@@ -260,7 +260,8 @@ class Libro < ApplicationRecord
     result
   end
 
-  has_one_attached :copertina
+  has_one_attached :copertina,
+                   service: ->(_libro) { Rails.env.production? ? :amazon_public : Rails.configuration.active_storage.service }
 
   # Callback: dopo il commit, sincronizza la copertina con EdizioneTitolo
   after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
