@@ -180,7 +180,7 @@
   <%= render Email::Heading.new(text: "Metodo 2: Installare il CLI sul computer", size: "20px", margin: "0 auto 12px auto") %>
 
   <%= render Email::Text.new do %>
-    Se usi <b>Claude Desktop</b>, <b>Claude Code</b>, <b>Cursor</b> o <b>OpenCode</b> sul computer,
+    Se usi <b>Claude Desktop</b>, <b>Claude Code</b>, <b>Codex</b>, <b>Cursor</b> o <b>OpenCode</b> sul computer,
     puoi installare Scagnozz CLI per un'integrazione più profonda. Il CLI si collega
     direttamente al tuo programma AI e permette anche di importare file dal disco.
   <% end %>
@@ -282,7 +282,7 @@
       scagnozz mcp install
     <% end %>
     <%= render Email::Text.new(size: "14px", font: "monospace", margin: "4px auto") do %>
-      scagnozz skill install
+      scagnozz skill
     <% end %>
   <% end %>
 

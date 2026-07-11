@@ -8,7 +8,7 @@ class Users::SetupMailsController < ApplicationController
       notice = "Istruzioni estensione WhatsApp inviate a #{Current.user.email}"
     when "cli"
       CliMailer.send_instructions(Current.user).deliver_now
-      notice = "Istruzioni Claude Desktop inviate a #{Current.user.email}"
+      notice = "Istruzioni integrazioni AI inviate a #{Current.user.email}"
     else
       redirect_to user_personal_info_path(Current.user), alert: "Tipo non valido"
       return
