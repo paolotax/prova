@@ -1,8 +1,8 @@
 <%# locals: (documenti:) -%>
 
 <% if documenti.any?(&:pagamento_applicabile?) %>
-<section class="padding-block margin-block-end" data-controller="inline-edit">
-  <h2 class="divider gap txt-medium txt-subtle">Pagamento</h2>
+<section class="pad-block margin-block-end" data-controller="inline-edit">
+  <h2 class="divider gap txt-medium txt-subtle margin-block-end">Pagamento</h2>
 
   <% pagati_count = documenti.count(&:pagato?) %>
   <% non_pagati_count = documenti.size - pagati_count %>
@@ -58,7 +58,7 @@
       </div>
     </div>
   <% else %>
-    <div class="flex flex-column align-center gap-half">
+    <div class="flex flex-column align-center gap">
       <span class="flex align-center gap-half txt-small txt-subtle">
         <%= icon_tag "cash" %>
         <%= pagati_count %> pagati, <%= non_pagati_count %> da pagare
@@ -76,7 +76,7 @@
         </select>
       </div>
 
-      <div class="flex gap-half align-center justify-center">
+      <div class="flex flex-wrap gap-half align-center justify-center">
         <%= form_with url: documenti_bulk_pagamenti_path,
               method: :post,
               id: "bulk_pagamenti_form",
@@ -85,6 +85,9 @@
             <%= hidden_field_tag "ids[]", doc.id %>
           <% end %>
           <%= f.submit "Segna pagati", class: "btn btn--positive txt-small" %>
+          <%= f.button "In data documento", name: "usa_data_documento", value: "1",
+                class: "btn txt-small",
+                title: "Ogni documento viene pagato nella propria data documento" %>
         <% end %>
         <% if pagati_count > 0 %>
           <%= link_to documenti_bulk_pagamenti_path(ids: documenti.map(&:id)),

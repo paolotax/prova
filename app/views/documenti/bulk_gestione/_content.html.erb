@@ -15,7 +15,7 @@
 </div>
 
 <% totale_generale = documenti.sum { |d| d.causale&.entrata? ? -(d.totale_cents || 0) : (d.totale_cents || 0) } / 100.0 %>
-<footer class="margin-block-start padding-block-start border-block-start flex justify-space-between align-center">
+<footer class="margin-block-start pad-block-start border-block-start flex justify-space-between align-center">
   <span class="txt-subtle">
     <%= pluralize(documenti.size, "documento", "documenti") %> selezionati
   </span>

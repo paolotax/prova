@@ -4,7 +4,7 @@
 <% if causali_successive_ids.any? %>
   <% causali_successive = Causale.where(id: causali_successive_ids).or(Causale.where(causale: causali_successive_ids)) %>
   <% if causali_successive.any? %>
-    <section class="padding-block-start">
+    <section class="pad-block-start">
       <h4 class="divider gap txt-medium txt-subtle margin-block-end-half">Registra come</h4>
       <div class="flex flex-wrap gap-half justify-center">
         <% causali_successive.each do |causale| %>

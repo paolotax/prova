@@ -1,8 +1,8 @@
 <%# locals: (documenti:) -%>
 
 <% if documenti.any?(&:consegna_applicabile?) %>
-<section class="padding-block margin-block-end" data-controller="inline-edit">
-  <h2 class="divider gap txt-medium txt-subtle">Consegna</h2>
+<section class="pad-block margin-block-end" data-controller="inline-edit">
+  <h2 class="divider gap txt-medium txt-subtle margin-block-end">Consegna</h2>
 
   <% consegnati_count = documenti.count(&:consegnato?) %>
   <% non_consegnati_count = documenti.size - consegnati_count %>
@@ -52,7 +52,7 @@
       </div>
     </div>
   <% else %>
-    <div class="flex flex-column align-center gap-half">
+    <div class="flex flex-column align-center gap">
       <span class="flex align-center gap-half txt-small txt-subtle">
         <%= icon_tag "truck" %>
         <%= consegnati_count %> consegnati, <%= non_consegnati_count %> da consegnare
@@ -63,7 +63,7 @@
         <%= date_input_tag :consegnato_il, Date.today, name: "consegnato_il", form: "bulk_consegne_form", style: "max-width: 16ch;" %>
       </div>
 
-      <div class="flex gap-half align-center justify-center">
+      <div class="flex flex-wrap gap-half align-center justify-center">
         <%= form_with url: documenti_bulk_consegne_path,
               method: :post,
               id: "bulk_consegne_form",
@@ -72,6 +72,9 @@
             <%= hidden_field_tag "ids[]", doc.id %>
           <% end %>
           <%= f.submit "Segna consegnati", class: "btn btn--positive txt-small " %>
+          <%= f.button "In data documento", name: "usa_data_documento", value: "1",
+                class: "btn txt-small",
+                title: "Ogni documento viene consegnato nella propria data documento" %>
         <% end %>
         <% if consegnati_count > 0 %>
           <%= link_to documenti_bulk_consegne_path(ids: documenti.map(&:id)),

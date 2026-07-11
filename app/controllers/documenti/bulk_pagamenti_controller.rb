@@ -4,13 +4,17 @@ module Documenti
 
     before_action :load_documenti
 
+    # params[:usa_data_documento] opzionale: ogni documento viene pagato
+    # nella propria data documento invece che nella data unica indicata
     def create
+      usa_data_documento = params[:usa_data_documento].present?
       pagato_il = Date.parse(params[:pagato_il]) rescue Date.today
       tipo_pagamento = params[:tipo_pagamento].presence
 
       @documenti.each do |documento|
         next if documento.pagato? || !documento.pagamento_applicabile?
-        documento.mark_pagato(pagato_il: pagato_il, tipo_pagamento: tipo_pagamento)
+        documento.mark_pagato(pagato_il: usa_data_documento ? documento.data_documento : pagato_il,
+                              tipo_pagamento: tipo_pagamento)
       end
 
       reload_documenti

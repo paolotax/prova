@@ -4,12 +4,15 @@ module Documenti
 
     before_action :load_documenti
 
+    # params[:usa_data_documento] opzionale: ogni documento viene consegnato
+    # nella propria data documento invece che nella data unica indicata
     def create
+      usa_data_documento = params[:usa_data_documento].present?
       consegnato_il = Date.parse(params[:consegnato_il]) rescue Date.today
 
       @documenti.each do |documento|
         next if documento.consegnato? || !documento.consegna_applicabile?
-        documento.mark_consegnato(consegnato_il: consegnato_il)
+        documento.mark_consegnato(consegnato_il: usa_data_documento ? documento.data_documento : consegnato_il)
       end
 
       reload_documenti

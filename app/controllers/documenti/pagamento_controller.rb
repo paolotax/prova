@@ -8,15 +8,18 @@ module Documenti
 
     # POST /documenti/:documento_id/pagamento
     # params[:importo] opzionale (euro): registra un acconto invece di saldare
+    # params[:usa_data_documento] opzionale: pagamento in data documento
     def create
+      pagato_il = params[:usa_data_documento].present? ? @documento.data_documento : parsed_date(:pagato_il)
+
       if params[:importo].present?
         @documento.registra_acconto!(
           importo_cents: (BigDecimal(params[:importo].to_s) * 100).to_i,
           tipo_pagamento: params[:tipo_pagamento],
-          pagato_il: parsed_date(:pagato_il)
+          pagato_il: pagato_il
         )
       else
-        @documento.mark_pagato(pagato_il: parsed_date(:pagato_il), tipo_pagamento: params[:tipo_pagamento])
+        @documento.mark_pagato(pagato_il: pagato_il, tipo_pagamento: params[:tipo_pagamento])
       end
 
       respond_to do |format|

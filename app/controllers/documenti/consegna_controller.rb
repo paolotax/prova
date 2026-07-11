@@ -8,11 +8,14 @@ module Documenti
 
     # POST /documenti/:documento_id/consegna
     # params[:righe] opzionale: { documento_riga_id => quantita } per consegna parziale
+    # params[:usa_data_documento] opzionale: consegna in data documento
     def create
+      consegnato_il = params[:usa_data_documento].present? ? @documento.data_documento : parsed_date(:consegnato_il)
+
       if params[:righe].present?
-        @documento.consegna_parziale!(params[:righe].to_unsafe_h, consegnato_il: parsed_date(:consegnato_il))
+        @documento.consegna_parziale!(params[:righe].to_unsafe_h, consegnato_il: consegnato_il)
       else
-        @documento.mark_consegnato(consegnato_il: parsed_date(:consegnato_il))
+        @documento.mark_consegnato(consegnato_il: consegnato_il)
       end
 
       respond_to do |format|

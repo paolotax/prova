@@ -46,7 +46,7 @@
   </div>
 
   <% totale_cliente = docs.sum { |d| d.causale&.entrata? ? -(d.totale_cents || 0) : (d.totale_cents || 0) } / 100.0 %>
-  <footer class="flex justify-end margin-block-start-half padding-block-start-half border-block-start">
+  <footer class="flex justify-end margin-block-start-half pad-block-start-half border-block-start">
     <span class="txt-small font-weight-bold <%= 'txt-negative' if totale_cliente < 0 %>">
       Totale: <%= number_to_currency(totale_cliente, unit: "€", format: "%n %u") %>
     </span>
