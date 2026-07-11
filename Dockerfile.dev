@@ -1,5 +1,5 @@
 
-FROM ruby:3.2.2-slim
+FROM ruby:3.4.10-slim
 
 WORKDIR /rails
 
@@ -8,6 +8,8 @@ RUN apt-get update -qq && \
   build-essential \
   git \
   libpq-dev \
+  libyaml-dev \
+  pkg-config \
   curl \
   libjemalloc2 \
   libvips \
@@ -17,7 +19,7 @@ RUN apt-get update -qq && \
   poppler-utils \
   tesseract-ocr \
   tesseract-ocr-ita && \
-  apt-get install watchman libncurses5-dev libncursesw5-dev -y && \
+  apt-get install libncurses5-dev libncursesw5-dev -y && \
   rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 

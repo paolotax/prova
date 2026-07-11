@@ -3,7 +3,7 @@ def next?
 end
 source "https://rubygems.org"
 
-ruby "3.2.2"
+ruby "3.4.10"
 
 gem "rails", "~> 8.1.2"
 gem "propshaft"
@@ -91,7 +91,7 @@ group :development do
 end
 
 gem "scenic", "~> 1.7"
-gem "highline", "~> 2.0.3"
+gem "highline", "~> 3.1"
 
 gem "money-rails", "~> 1.15"
 
