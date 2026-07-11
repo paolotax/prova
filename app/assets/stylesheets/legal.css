@@ -1,0 +1,50 @@
+@layer modules {
+  .legal-document {
+    inline-size: min(100%, 74ch);
+    margin: clamp(2rem, 6vw, 5rem) auto;
+    text-align: start;
+
+    h1 {
+      font-size: var(--text-xx-large);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-block: 0.4em 0.6em;
+    }
+
+    h2 {
+      font-size: var(--text-large);
+      margin-block: 1.8em 0.5em;
+    }
+
+    p, li, address {
+      line-height: 1.65;
+    }
+
+    address {
+      font-style: normal;
+    }
+
+    li + li {
+      margin-block-start: 0.45em;
+    }
+
+    blockquote {
+      border-inline-start: 0.25rem solid var(--color-ink-light);
+      margin-inline: 0;
+      padding-inline-start: var(--inline-space-double);
+    }
+  }
+
+  .legal-document__header {
+    border-block-end: var(--border);
+    padding-block-end: var(--block-space-double);
+  }
+
+  .legal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--inline-space-double);
+    justify-content: center;
+    padding: var(--block-space);
+  }
+}

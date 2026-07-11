@@ -7,6 +7,9 @@
             <%= filter_place_menu_item accounts_configurazione_path(Current.account), "Zone, Mandati, Colleghi", "settings" %>
         <% end %>
     <% end %>
+
+    <%= filter_place_menu_item "/privacy", "Privacy", "shield" %>
+    <%= filter_place_menu_item "/fonti-e-licenze", "Fonti e licenze", "globe" %>
     
     <%= tag.li class: "popup__item", data: { filter_target: "item", navigable_list_target: "item" } do %>
         <%= icon_tag "logout", class: "popup__icon" %>

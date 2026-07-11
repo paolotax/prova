@@ -29,6 +29,10 @@
 
     <footer id="footer">
       <%= yield :footer %>
+      <nav class="legal-footer" aria-label="Informazioni legali">
+        <%= link_to "Privacy", privacy_path, class: "txt-small" %>
+        <%= link_to "Fonti e licenze", data_sources_path, class: "txt-small" %>
+      </nav>
     </footer>
   </body>
 </html>

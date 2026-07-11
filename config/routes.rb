@@ -73,6 +73,10 @@ Rails.application.routes.draw do
   # Download estensione Chrome (link pubblico per email)
   get 'download/extension', to: 'downloads#extension', as: :download_extension
 
+  # Informazioni legali pubbliche
+  get "privacy", to: "legal#privacy", as: :privacy
+  get "fonti-e-licenze", to: "legal#data_sources", as: :data_sources
+
   # =========================================
   # MOBILE (sessione, senza account scope in URL)
   # =========================================

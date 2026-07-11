@@ -1,4 +1,5 @@
 require_relative "boot"
+require_relative "../lib/query_token_redactor"
 
 require "rails/all"
 
@@ -48,6 +49,11 @@ module Prova
 
     # ViewComponent 4.x: restore auto-include of helpers
     config.view_component.include_all_helpers = true
+
+    # Preserve legacy MCP query-token connections while keeping secrets out of
+    # Rails request logs. The middleware promotes api_key to a Bearer header
+    # before Rails::Rack::Logger sees the request.
+    config.middleware.insert_before Rails::Rack::Logger, QueryTokenRedactor
 
   end
 end
