@@ -266,13 +266,6 @@ Rails.application.routes.draw do
 
     resources :causali
 
-    resources :campionario, only: [:show] do
-      member do
-        post :genera_saggi
-        post :genera_saggi_50
-      end
-    end
-
     resources :documento_righe, only: %i[new show edit update destroy] do
       member do
         patch 'update_posizione'
@@ -469,16 +462,6 @@ Rails.application.routes.draw do
       resource :bulk_tappe, only: [:create]
     end
 
-    resources :adozioni_comunicate do
-      collection do
-        get :import
-        post :import
-        get :confronto
-        post :aggiorna_corrispondenze
-        get :export_excel
-      end
-    end
-
     resources :configurations, only: [] do
       get :ios_v1, on: :collection
       get :android_v1, on: :collection
@@ -486,12 +469,6 @@ Rails.application.routes.draw do
 
     get 'fornitori',      to: 'fornitori#index'
     get 'fornitori/:id',  to: 'fornitori#show', as: 'fornitore'
-
-    get 'duplicates', to: 'articoli#duplicates'
-    get 'duplicates/:codice_articolo', to: 'articoli#update_descrizione', as: 'update_descrizione'
-
-    get 'articoli', to: 'articoli#index'
-    get 'articoli/:codice_articolo', to: 'articoli#show', as: 'articolo'
 
     resources :persone, only: %i[index show edit update create destroy] do
       resources :persona_classi, only: [:destroy], module: :persone
