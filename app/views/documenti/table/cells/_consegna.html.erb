@@ -1,0 +1,11 @@
+<%# locals: (documento:) -%>
+
+<div class="data-row__cell data-row__cell--tabular data-row__cell--hide-mobile">
+  <% if !documento.consegna_applicabile? %>
+    <span class="data-row__muted">—</span>
+  <% elsif documento.consegnato? %>
+    <%= icon_tag "truck" %> <%= documento.consegnato_il&.strftime("%d/%m") %>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

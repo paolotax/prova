@@ -79,18 +79,7 @@ module DocumentiHelper
     # Badge di stato per la index a tabella: mostra la colonna triage,
     # "Da gestire", "Rimandato" o "Completato".
     def documento_stato_badge(documento)
-      label, color =
-        if documento.closed?
-          ["Completato", "var(--color-ink-light)"]
-        elsif documento.postponed?
-          ["Rimandato", "var(--color-card-2)"]
-        elsif documento.triaged?
-          [documento.column.name, documento.column.color]
-        else
-          ["Da gestire", "var(--color-link)"]
-        end
-
-      tag.span(label, class: "doc-badge", style: "--badge-color: #{color};")
+      stato_badge_for(documento)
     end
 
     # JSON per lo Stimulus controller documento-editor

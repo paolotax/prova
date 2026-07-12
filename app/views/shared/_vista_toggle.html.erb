@@ -1,0 +1,9 @@
+<%# locals: (url:, vista:) -%>
+
+<% vista_alt = vista == "tabella" ? "card" : "tabella" %>
+<%= link_to "#{url}?#{request.query_parameters.merge(vista: vista_alt).to_query}",
+    class: "btn",
+    data: { turbo_action: "advance", controller: "tooltip vista-toggle", vista_toggle_to_value: vista_alt } do %>
+  <%= icon_tag(vista == "tabella" ? "grid" : "table") %>
+  <span class="for-screen-reader"><%= vista_alt == "card" ? "Vista a card" : "Vista a tabella" %></span>
+<% end %>

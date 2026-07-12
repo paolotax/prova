@@ -1,0 +1,8 @@
+<%# locals: (appunto:) -%>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__title"><%= appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %></span>
+  <% if appunto.content.present? %>
+    <span class="data-row__subtitle"><%= truncate(appunto.content.to_plain_text, length: 90) %></span>
+  <% end %>
+</div>

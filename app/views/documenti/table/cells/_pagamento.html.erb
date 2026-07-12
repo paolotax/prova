@@ -1,0 +1,14 @@
+<%# locals: (documento:) -%>
+
+<div class="data-row__cell data-row__cell--tabular data-row__cell--hide-mobile">
+  <% if !documento.pagamento_applicabile? %>
+    <span class="data-row__muted">—</span>
+  <% elsif documento.pagato? %>
+    <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %>
+    <% if documento.tipo_pagamento.present? %>
+      <span class="data-row__tipo-pag"><%= documento.tipo_pagamento.humanize %></span>
+    <% end %>
+  <% else %>
+    <span class="data-row__da-pagare">DA PAGARE</span>
+  <% end %>
+</div>

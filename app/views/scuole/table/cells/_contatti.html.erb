@@ -1,0 +1,13 @@
+<%# locals: (scuola:) -%>
+
+<div class="data-row__cell data-row__cell--stacked data-row__cell--hide-mobile">
+  <% if scuola.telefono.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "phone", class: "icon--small" %> <%= scuola.telefono %></span>
+  <% end %>
+  <% if scuola.email.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "envelope", class: "icon--small" %> <%= scuola.email %></span>
+  <% end %>
+  <% if scuola.telefono.blank? && scuola.email.blank? %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

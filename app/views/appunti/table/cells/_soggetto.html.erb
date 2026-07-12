@@ -1,0 +1,22 @@
+<%# locals: (appunto:) -%>
+
+<% appuntabile = appunto.appuntabile %>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <% if appuntabile.present? %>
+    <span class="data-row__title">
+      <%= appuntabile.denominazione %><% if appuntabile.is_a?(Classe) && appuntabile.anno_corso.present? %> · <%= appuntabile.anno_corso %><%= appuntabile.sezione %><% end %>
+    </span>
+    <% sottotitolo =
+         if appuntabile.is_a?(Persona)
+           appuntabile.scuola&.denominazione
+         elsif appuntabile.respond_to?(:comune)
+           appuntabile.comune&.upcase
+         end %>
+    <% if sottotitolo.present? %>
+      <span class="data-row__subtitle"><%= sottotitolo %></span>
+    <% end %>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

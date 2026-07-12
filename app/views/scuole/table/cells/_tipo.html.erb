@@ -1,0 +1,9 @@
+<%# locals: (scuola:) -%>
+
+<div class="data-row__cell data-row__cell--badge data-row__cell--hide-mobile">
+  <% if scuola.tipo_scuola.present? %>
+    <span class="doc-badge" style="--badge-color: <%= tipo_scuola_color(scuola.tipo_scuola) %>;"><%= scuola.tipo_scuola %></span>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

@@ -16,7 +16,7 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", /Documenti/i
-    assert_select ".doc-table"
+    assert_select ".data-table"
     assert_select ".doc-stato-tabs"
   end
 
@@ -31,7 +31,7 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
     get documenti_path(account_id: @account.id, stato_documento: "tutti")
 
     assert_response :success
-    assert_select ".doc-row"
+    assert_select ".data-row"
     assert_match @documento.causale.causale.upcase, response.body
   end
 
@@ -46,7 +46,7 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
     get documenti_path(account_id: @account.id, stato_documento: "tutti", terms: [@documento.numero_documento.to_s])
 
     assert_response :success
-    assert_select ".doc-row"
+    assert_select ".data-row"
   end
 
   test "vista card renders cards grid instead of table" do
@@ -54,14 +54,14 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".cards--grid"
-    assert_select ".doc-table", false
+    assert_select ".data-table", false
   end
 
   test "default vista is tabella" do
     get documenti_path(account_id: @account.id, stato_documento: "tutti")
 
     assert_response :success
-    assert_select ".doc-table"
+    assert_select ".data-table"
     assert_select ".cards--grid", false
   end
 
@@ -71,8 +71,25 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
       as: :turbo_stream
 
     assert_response :success
-    assert_match "doc-row", response.body
+    assert_match "data-row", response.body
     assert_no_match %r{<article[^>]*class="[^"]*\bcard\b}, response.body
+  end
+
+  test "multi-sort param renders both indicators with position" do
+    get documenti_path(account_id: @account.id, stato_documento: "tutti", sort: "copie.asc,importo.desc")
+
+    assert_response :success
+    assert_select "[aria-sort=ascending]"
+    assert_select "[aria-sort=descending]"
+    assert_select ".data-table__sort-indicator sup", text: "1"
+    assert_select ".data-table__sort-indicator sup", text: "2"
+  end
+
+  test "vista card ignores sort branch" do
+    get documenti_path(account_id: @account.id, stato_documento: "tutti", vista: "card", sort: "copie.asc")
+
+    assert_response :success
+    assert_select ".cards--grid"
   end
 
   def sign_in_as(user, account)

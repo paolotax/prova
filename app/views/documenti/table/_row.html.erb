@@ -1,25 +1,14 @@
-<%# locals: (documento:, entry: nil) -%>
+<%# locals: (documento:, entry: nil, columns: nil) -%>
 
 <% entry ||= (documento.entry rescue nil) %>
-<% clientable = documento.clientable %>
-
-<%# Titolo + sottotitolo cliente/scuola/classe %>
-<% if clientable.is_a?(Classe) %>
-  <% titolo = clientable.denominazione %>
-  <% sottotitolo = [("#{clientable.anno_corso}#{clientable.sezione}" if clientable.anno_corso.present?), clientable.comune&.upcase].compact.join(" · ") %>
-<% elsif clientable.present? %>
-  <% titolo = clientable.denominazione %>
-  <% sottotitolo = (clientable.comune.upcase if clientable.respond_to?(:comune) && clientable.comune.present?) %>
-<% else %>
-  <% titolo = "#{documento.causale&.causale} nr. #{documento.numero_documento}" %>
-  <% sottotitolo = nil %>
-<% end %>
+<%# I turbo_stream dei bulk rendono la riga senza columns: risolvile dal cookie %>
+<% columns ||= Documento::Columns.visible(cookies[:documenti_colonne].to_s.split(",")) %>
 
 <%= tag.div id: (entry ? dom_id(entry) : dom_id(documento)),
-      class: class_names("doc-row", documento_causale_modifier(documento), documento_golden_class(documento),
-                         "doc-row--closed": documento.closed?,
-                         "doc-row--selected": @documento == documento),
-      style: "--card-color: #{documento_color(documento)};",
+      class: class_names("data-row", documento_causale_modifier(documento), documento_golden_class(documento),
+                         "data-row--closed": documento.closed?,
+                         "data-row--selected": @documento == documento),
+      style: "--card-color: #{documento_color(documento)}; --cols: #{Documento::Columns.grid_template(columns)};",
       role: "row",
       tabindex: 0,
       data: {
@@ -28,124 +17,18 @@
       } do %>
 
   <%# Link overlay: apre il dettaglio %>
-  <%= link_to documento_path(documento), class: "doc-row__link", tabindex: -1,
+  <%= link_to documento_path(documento), class: "data-row__link", tabindex: -1,
         data: { turbo_frame: "_top" } do %>
     <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
   <% end %>
 
-  <%# 1 — checkbox %>
-  <div class="doc-row__cell doc-row__cell--check">
-    <label class="doc-row__checkbox">
+  <div class="data-row__cell data-row__cell--check">
+    <label>
       <%= check_box_tag "ids[]", (entry&.id || documento.id), false, data: { action: "change->bulk-actions#count" } %>
     </label>
   </div>
 
-  <%# 2 — stato (badge colonna triage) %>
-  <div class="doc-row__cell doc-row__cell--stato">
-    <%= documento_stato_badge(documento) %>
-  </div>
-
-  <%# 3 — documento (causale sopra, numero + data sotto) %>
-  <div class="doc-row__cell doc-row__cell--documento">
-    <span class="doc-row__causale"><%= documento.causale&.causale&.upcase || "BOZZA" %></span>
-    <span class="doc-row__doc-meta">
-      <span class="doc-row__numero">#<%= documento.numero_documento %></span>
-      <%= documento.data_documento&.strftime("%d/%m/%Y") %>
-    </span>
-  </div>
-
-  <%# 4 — collegati (derivati) %>
-  <div class="doc-row__cell doc-row__cell--collegati doc-row__cell--hide-mobile">
-    <% derivati = documento.documenti_derivati %>
-    <% if derivati.any? %>
-      <% derivati.first(2).each do |d| %>
-        <%= link_to documento_path(d), class: "doc-row__chip", data: { turbo_frame: "_top" } do %>
-          → <%= d.causale&.causale %> <%= d.numero_documento %>
-        <% end %>
-      <% end %>
-      <% if derivati.size > 2 %>
-        <span class="doc-row__chip doc-row__chip--more">+<%= derivati.size - 2 %></span>
-      <% end %>
-    <% else %>
-      <span class="doc-row__muted">—</span>
-    <% end %>
-  </div>
-
-  <%# 5 — cliente / scuola (elastica) %>
-  <div class="doc-row__cell doc-row__cell--cliente">
-    <span class="doc-row__title"><%= titolo %></span>
-    <% if sottotitolo.present? %>
-      <span class="doc-row__subtitle"><%= sottotitolo %></span>
-    <% end %>
-
-    <%# Mobile: riga valori sotto il cliente %>
-    <div class="doc-row__values">
-      <span class="doc-row__value"><strong><%= documento.totale_copie %></strong> cp</span>
-      <span class="doc-row__value">
-        <% if documento.mostra_importo? %>
-          <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
-        <% else %>
-          <span class="doc-row__muted">—</span>
-        <% end %>
-      </span>
-    </div>
-    <div class="doc-row__values">
-      <span class="doc-row__value">
-        <% if !documento.consegna_applicabile? %>
-          <span class="doc-row__muted">—</span>
-        <% else %>
-          <%= icon_tag "truck" %>
-          <%= documento.consegnato? ? documento.consegnato_il&.strftime("%d/%m") : "—" %>
-        <% end %>
-      </span>
-      <span class="doc-row__value">
-        <% if !documento.pagamento_applicabile? %>
-          <span class="doc-row__muted">—</span>
-        <% elsif documento.pagato? %>
-          <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %> <%= documento.tipo_pagamento&.humanize %>
-        <% else %>
-          <span class="doc-row__da-pagare">DA PAGARE</span>
-        <% end %>
-      </span>
-    </div>
-  </div>
-
-  <%# 6 — copie %>
-  <div class="doc-row__cell doc-row__cell--num doc-row__cell--hide-mobile">
-    <%= documento.totale_copie %>
-  </div>
-
-  <%# 8 — importo %>
-  <div class="doc-row__cell doc-row__cell--num doc-row__cell--hide-mobile">
-    <% if documento.mostra_importo? %>
-      <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
-    <% else %>
-      <span class="doc-row__muted">—</span>
-    <% end %>
-  </div>
-
-  <%# 9 — consegna %>
-  <div class="doc-row__cell doc-row__cell--consegna doc-row__cell--hide-mobile">
-    <% if !documento.consegna_applicabile? %>
-      <span class="doc-row__muted">—</span>
-    <% elsif documento.consegnato? %>
-      <%= icon_tag "truck" %> <%= documento.consegnato_il&.strftime("%d/%m") %>
-    <% else %>
-      <span class="doc-row__muted">—</span>
-    <% end %>
-  </div>
-
-  <%# 10 — pagamento %>
-  <div class="doc-row__cell doc-row__cell--pagamento doc-row__cell--hide-mobile">
-    <% if !documento.pagamento_applicabile? %>
-      <span class="doc-row__muted">—</span>
-    <% elsif documento.pagato? %>
-      <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %>
-      <% if documento.tipo_pagamento.present? %>
-        <span class="doc-row__tipo-pag"><%= documento.tipo_pagamento.humanize %></span>
-      <% end %>
-    <% else %>
-      <span class="doc-row__da-pagare">DA PAGARE</span>
-    <% end %>
-  </div>
+  <% columns.each do |column| %>
+    <%= render column.partial, documento: documento %>
+  <% end %>
 <% end %>

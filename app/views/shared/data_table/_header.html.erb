@@ -1,0 +1,22 @@
+<%# locals: (columns:, sort:, registry:, url:) -%>
+
+<div class="data-table__head" role="row" data-controller="column-sort">
+  <span class="data-table__th"></span>
+
+  <% columns.each do |column| %>
+    <% direction = sort.direction_for(column.key) %>
+    <%= tag.span role: "columnheader",
+        class: class_names("data-table__th",
+                           "data-table__th--end": column.align == :end,
+                           "data-table__th--sortable": column.sortable?,
+                           "data-table__th--sorted": direction.present?),
+        aria: { sort: direction && (direction == "asc" ? "ascending" : "descending") },
+        data: (column.sortable? ? { action: "click->column-sort#toggle", column_sort_key_param: column.key } : {}) do %>
+      <%= column.label %><% if direction %><span class="data-table__sort-indicator"><%= direction == "asc" ? "↑" : "↓" %><% if sort.multi? %><sup><%= sort.position_for(column.key) %></sup><% end %></span><% end %>
+    <% end %>
+  <% end %>
+
+  <span class="data-table__th data-table__th--gear">
+    <%= render "shared/data_table/picker", registry: registry, columns: columns, url: url %>
+  </span>
+</div>

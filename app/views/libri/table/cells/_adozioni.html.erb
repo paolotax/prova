@@ -1,0 +1,9 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <% if libro.adozioni_count.positive? %>
+    <strong><%= libro.adozioni_count %></strong>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

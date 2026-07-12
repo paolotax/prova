@@ -1,0 +1,31 @@
+<%# locals: (appunto:, entry: nil, columns: nil) -%>
+
+<% entry ||= appunto.entry %>
+<% columns ||= Appunto::Columns.visible(cookies[:appunti_colonne].to_s.split(",")) %>
+
+<%= tag.div id: (entry ? dom_id(entry) : dom_id(appunto)),
+      class: class_names("data-row", appunto_stato_modifier(appunto), appunto_golden_class(appunto),
+                         "data-row--closed": appunto.closed?),
+      style: "--card-color: #{appunto_color(appunto)}; --cols: #{Appunto::Columns.grid_template(columns)};",
+      role: "row",
+      tabindex: 0,
+      data: {
+        navigable_list_target: "item",
+        action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
+      } do %>
+
+  <%= link_to appunto_path(appunto), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %></span>
+  <% end %>
+
+  <div class="data-row__cell data-row__cell--check">
+    <label>
+      <%= check_box_tag "ids[]", (entry&.id || appunto.id), false, data: { action: "change->bulk-actions#count" } %>
+    </label>
+  </div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, appunto: appunto %>
+  <% end %>
+<% end %>

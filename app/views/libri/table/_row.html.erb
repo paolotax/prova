@@ -1,0 +1,29 @@
+<%# locals: (libro:, columns: nil) -%>
+
+<% columns ||= Libro::Columns.visible(cookies[:libri_colonne].to_s.split(",")) %>
+
+<%= tag.div id: dom_id(libro),
+      class: "data-row",
+      style: "--card-color: #{libro_color(libro)}; --cols: #{Libro::Columns.grid_template(columns)};",
+      role: "row",
+      tabindex: 0,
+      data: {
+        navigable_list_target: "item",
+        action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
+      } do %>
+
+  <%= link_to libro_path(libro), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= libro.titolo %></span>
+  <% end %>
+
+  <div class="data-row__cell data-row__cell--check">
+    <label>
+      <%= check_box_tag "ids[]", libro.id, false, data: { action: "change->bulk-actions#count" } %>
+    </label>
+  </div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, libro: libro %>
+  <% end %>
+<% end %>

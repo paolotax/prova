@@ -1,0 +1,46 @@
+<%# locals: (registry:, columns:, url:) -%>
+
+<%# Scelta colonne: GET all'index con colonne[]; il controller persiste in
+    cookie (HasVista#resolve_colonne). "Ripristina" manda colonne=default. %>
+<%= tag.div class: "flex-inline", data: {
+      controller: "dialog",
+      action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside" } do %>
+  <button type="button" class="btn" data-action="click->dialog#toggle:stop"
+          data-controller="tooltip" data-tooltip-content-value="Scegli colonne">
+    <%= icon_tag "gear", class: "icon--small" %>
+    <span class="for-screen-reader">Scegli colonne</span>
+  </button>
+
+  <%= tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small",
+      data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close" } do %>
+    <strong class="popup__title">Colonne</strong>
+
+    <%= form_with url: url, method: :get, class: "display-contents",
+        data: { turbo_frame: "search_results", turbo_action: "advance" } do %>
+      <% request.query_parameters.except("colonne", "page").to_query.split("&").compact_blank.each do |pair| %>
+        <% name, value = pair.split("=", 2).map { |part| CGI.unescape(part.to_s) } %>
+        <%= tag.input type: "hidden", name: name, value: value %>
+      <% end %>
+      <%= tag.input type: "hidden", name: "colonne[]", value: "" %>
+
+      <ul class="popup__list" role="listbox">
+        <% registry.columns.each do |column| %>
+          <li class="popup__item">
+            <label class="btn popup__btn flex align-center gap-half full-width">
+              <%= tag.input type: "checkbox", name: "colonne[]", value: column.key,
+                  checked: columns.include?(column) %>
+              <span class="overflow-ellipsis flex-item-grow txt-small"><%= column.label %></span>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+
+      <footer class="popup__footer popup__footer--pinned full-width flex align-center justify-space-between gap-half">
+        <%= link_to "Ripristina", "#{url}?#{request.query_parameters.except("colonne", "page").merge(colonne: [ "default" ]).to_query}",
+            class: "btn txt-small",
+            data: { turbo_frame: "search_results", turbo_action: "advance", action: "dialog#close" } %>
+        <button class="btn txt-small" data-action="dialog#close">Applica</button>
+      </footer>
+    <% end %>
+  <% end %>
+<% end %>

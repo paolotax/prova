@@ -1,0 +1,5 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <%= libro.classe.presence || tag.span("—", class: "data-row__muted") %>
+</div>

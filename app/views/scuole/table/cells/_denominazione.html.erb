@@ -1,0 +1,8 @@
+<%# locals: (scuola:) -%>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__title"><%= scuola.denominazione %></span>
+  <% if scuola.indirizzo.present? %>
+    <span class="data-row__subtitle"><%= [scuola.cap, scuola.indirizzo].compact_blank.join(" - ") %></span>
+  <% end %>
+</div>

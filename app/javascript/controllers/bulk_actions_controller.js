@@ -4,6 +4,22 @@ export default class BulkActionsController extends CheckboxesController {
   static targets = ["container", "form", "counter", "formContainer", "menuButton", "listCounter"];
   static values = { open: Boolean };
 
+  connect() {
+    // Range select con shift: anchor = ultima checkbox toccata senza shift.
+    // Listener registrati qui (non via data-action) così valgono per tutte
+    // le liste che usano bulk-actions senza toccare le view.
+    this.lastCheckbox = null;
+    this.boundShiftSelect = this.#shiftSelect.bind(this);
+    this.boundPreventShiftTextSelection = this.#preventShiftTextSelection.bind(this);
+    this.element.addEventListener("click", this.boundShiftSelect);
+    this.element.addEventListener("mousedown", this.boundPreventShiftTextSelection);
+  }
+
+  disconnect() {
+    this.element.removeEventListener("click", this.boundShiftSelect);
+    this.element.removeEventListener("mousedown", this.boundPreventShiftTextSelection);
+  }
+
   toggle(event) {
     super.toggle(event);
 
@@ -22,6 +38,7 @@ export default class BulkActionsController extends CheckboxesController {
   }
 
   toggleCard(event) {
+    if (event.shiftKey) return // gestito dal range select in #shiftSelect
     if (!this.element.hasAttribute("data-has-selection")) return
 
     // Let native checkbox clicks through, then count
@@ -53,6 +70,60 @@ export default class BulkActionsController extends CheckboxesController {
 
 
   // private
+
+  // Shift+click: seleziona/deseleziona l'intervallo tra l'anchor e il target
+  // (stile Gmail). Funziona sia sulla checkbox che sull'intera card/riga.
+  #shiftSelect(event) {
+    const checkbox = event.target.closest?.("input[type=checkbox]");
+
+    if (checkbox && this.checkboxes.includes(checkbox)) {
+      if (event.shiftKey && this.lastCheckbox && this.lastCheckbox !== checkbox) {
+        this.#applyRange(this.lastCheckbox, checkbox, checkbox.checked);
+      }
+      this.lastCheckbox = checkbox;
+      return;
+    }
+
+    if (!event.shiftKey) return;
+
+    const item = event.target.closest(".card, .data-row");
+    if (!item || !this.element.contains(item)) return;
+
+    const itemCheckbox = item.querySelector("input[type=checkbox]");
+    if (!itemCheckbox || itemCheckbox.disabled) return;
+
+    // Niente navigazione dal link overlay: shift+click = selezione
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.lastCheckbox && this.lastCheckbox !== itemCheckbox) {
+      this.#applyRange(this.lastCheckbox, itemCheckbox, this.lastCheckbox.checked);
+    } else {
+      itemCheckbox.checked = !itemCheckbox.checked;
+      this.count();
+    }
+    this.lastCheckbox = itemCheckbox;
+  }
+
+  #applyRange(from, to, state) {
+    const boxes = this.checkboxes;
+    let start = boxes.indexOf(from);
+    let end = boxes.indexOf(to);
+    if (start === -1 || end === -1) return;
+    if (start > end) [start, end] = [end, start];
+
+    for (let i = start; i <= end; i++) {
+      if (!boxes[i].disabled) boxes[i].checked = state;
+    }
+    this.count();
+  }
+
+  // Evita la selezione del testo quando si fa shift+click sulle liste
+  #preventShiftTextSelection(event) {
+    if (event.shiftKey && event.target.closest(".card, .data-row")) {
+      event.preventDefault();
+    }
+  }
 
   checkboxesCheckedCountValueChanged() {
     this.counterTargets.forEach(counter => counter.textContent = this.checkboxesCheckedCount);

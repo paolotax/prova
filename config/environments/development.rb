@@ -82,6 +82,7 @@ Rails.application.configure do
     "localhost",
     "127.0.0.1",
     /.*\.nip\.io/,  # for mobile/tablet testing
-    IPAddr.new("192.168.1.0/24")  # LAN access from phone/tablet
+    IPAddr.new("192.168.1.0/24"),  # LAN access from phone/tablet
+    IPAddr.new("172.16.0.0/12")  # docker bridge (server di prova dai worktree)
   ]
 end

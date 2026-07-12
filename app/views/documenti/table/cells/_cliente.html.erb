@@ -1,0 +1,51 @@
+<%# locals: (documento:) -%>
+
+<% clientable = documento.clientable %>
+<% if clientable.is_a?(Classe) %>
+  <% titolo = clientable.denominazione %>
+  <% sottotitolo = [("#{clientable.anno_corso}#{clientable.sezione}" if clientable.anno_corso.present?), clientable.comune&.upcase].compact.join(" · ") %>
+<% elsif clientable.present? %>
+  <% titolo = clientable.denominazione %>
+  <% sottotitolo = (clientable.comune.upcase if clientable.respond_to?(:comune) && clientable.comune.present?) %>
+<% else %>
+  <% titolo = "#{documento.causale&.causale} nr. #{documento.numero_documento}" %>
+  <% sottotitolo = nil %>
+<% end %>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__title"><%= titolo %></span>
+  <% if sottotitolo.present? %>
+    <span class="data-row__subtitle"><%= sottotitolo %></span>
+  <% end %>
+
+  <%# Mobile: righe valori sotto il cliente %>
+  <div class="data-row__values">
+    <span class="data-row__value"><strong><%= documento.totale_copie %></strong> cp</span>
+    <span class="data-row__value">
+      <% if documento.mostra_importo? %>
+        <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+      <% else %>
+        <span class="data-row__muted">—</span>
+      <% end %>
+    </span>
+  </div>
+  <div class="data-row__values">
+    <span class="data-row__value">
+      <% if !documento.consegna_applicabile? %>
+        <span class="data-row__muted">—</span>
+      <% else %>
+        <%= icon_tag "truck" %>
+        <%= documento.consegnato? ? documento.consegnato_il&.strftime("%d/%m") : "—" %>
+      <% end %>
+    </span>
+    <span class="data-row__value">
+      <% if !documento.pagamento_applicabile? %>
+        <span class="data-row__muted">—</span>
+      <% elsif documento.pagato? %>
+        <%= icon_tag "cash" %> <%= documento.pagato_il&.strftime("%d/%m") %> <%= documento.tipo_pagamento&.humanize %>
+      <% else %>
+        <span class="data-row__da-pagare">DA PAGARE</span>
+      <% end %>
+    </span>
+  </div>
+</div>

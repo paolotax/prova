@@ -1,6 +1,7 @@
 class AppuntiController < ApplicationController
   
   include FilterScoped
+  include HasVista
 
   FILTER_PARAMS = [:anno, :state, :appuntabile_type, terms: []].freeze
 
@@ -23,6 +24,13 @@ class AppuntiController < ApplicationController
                       .order(created_at: :desc)
 
     @total_count = @appunti.count
+
+    @vista = resolve_vista
+    if @vista == "tabella"
+      @columns = resolve_colonne(Appunto::Columns)
+      @sort = resolve_sort(@columns)
+      @appunti = apply_sort(Appunto::Columns.apply_scopes(@appunti, @columns), @sort)
+    end
 
     set_page_and_extract_portion_from @appunti
 

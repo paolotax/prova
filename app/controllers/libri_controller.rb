@@ -1,5 +1,6 @@
 class LibriController < ApplicationController
   include FilterScoped
+  include HasVista
 
   FILTER_PARAMS = [:sorted_by, editori: [], categorie: [], discipline: [], classi: [], terms: []].freeze
 
@@ -31,11 +32,21 @@ class LibriController < ApplicationController
 
     # Combobox search con parametro q
     if params[:q].present?
+      @vista = "card"
       libri = Current.account.libri.search_all_word(params[:q]).includes(:giacenza)
       set_page_and_extract_portion_from libri
     else
       @total_count = @filter.libri.count
-      set_page_and_extract_portion_from @filter.libri.includes(:giacenza)
+
+      scope = @filter.libri.includes(:giacenza)
+      @vista = resolve_vista
+      if @vista == "tabella"
+        @columns = resolve_colonne(Libro::Columns)
+        @sort = resolve_sort(@columns)
+        scope = apply_sort(Libro::Columns.apply_scopes(scope, @columns), @sort)
+      end
+
+      set_page_and_extract_portion_from scope
     end
 
     respond_to do |format|

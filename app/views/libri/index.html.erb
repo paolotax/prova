@@ -23,6 +23,7 @@
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis">Libri</span>
+    <%= render "shared/vista_toggle", url: libri_path, vista: @vista %>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -52,19 +53,41 @@
       <%= @total_count %> <%= @total_count == 1 ? "libro trovato" : "libri trovati" %>
     </p>
 
-    <div class="cards cards--grid" data-controller="bulk-actions">
-      <%= with_automatic_pagination :libri, @page,
-          id: "libri-lista",
-          class: "cards__list",
-          data: { controller: "navigable-list",
-              navigable_list_auto_select_value: false,
-              navigable_list_actionable_items_value: true,
-              navigable_list_prevent_handled_keys_value: true,
-              action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
-        <%= render "libri/display/previews", libri: @page.records %>
+    <% if @vista == "tabella" %>
+      <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+        <%= render "libri/bulk_bar/bar" %>
+
+        <%= tag.div class: "data-table", style: "--cols: #{Libro::Columns.grid_template(@columns)};" do %>
+          <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Libro::Columns, url: libri_path %>
+
+          <%= with_automatic_pagination :libri, @page,
+              id: "libri-lista",
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate" } do %>
+            <% @page.records.each do |libro| %>
+              <%= render "libri/table/row", libro: libro, columns: @columns %>
+            <% end %>
+          <% end %>
+        <% end %>
       <% end %>
-      <%= render "libri/bulk_bar/bar" %>
-    </div>
+    <% else %>
+      <div class="cards cards--grid" data-controller="bulk-actions">
+        <%= with_automatic_pagination :libri, @page,
+            id: "libri-lista",
+            class: "cards__list",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
+          <%= render "libri/display/previews", libri: @page.records %>
+        <% end %>
+        <%= render "libri/bulk_bar/bar" %>
+      </div>
+    <% end %>
   <% else %>
     <%= blank_slate_for(:libri, filtering: @user_filtering) %>
   <% end %>

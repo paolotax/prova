@@ -8,6 +8,23 @@ module ApplicationHelper
     tag.span class: class_names("icon icon--#{name}", options.delete(:class)), "aria-hidden": true, **options
   end
 
+  # Badge di stato triage per un record entryable (Documento, Appunto):
+  # colonna triage, "Da gestire", "Rimandato" o "Completato".
+  def stato_badge_for(record)
+    label, color =
+      if record.closed?
+        ["Completato", "var(--color-ink-light)"]
+      elsif record.postponed?
+        ["Rimandato", "var(--color-card-2)"]
+      elsif record.triaged?
+        [record.column.name, record.column.color]
+      else
+        ["Da gestire", "var(--color-link)"]
+      end
+
+    tag.span(label, class: "doc-badge", style: "--badge-color: #{color};")
+  end
+
   def back_link_to(label, url, **options)
     action = "keydown.esc@document->hotkey#click click->turbo-navigation#backIfSamePath"
     link_to url, class: "btn btn--back", data: { controller: "hotkey", action: action }, **options do

@@ -21,14 +21,7 @@
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis"><%= @page_title %></span>
-    <%# Toggle vista card/tabella %>
-    <% vista_alt = @vista == "tabella" ? "card" : "tabella" %>
-    <%= link_to documenti_path(request.query_parameters.merge(vista: vista_alt)),
-        class: "btn",
-        data: { turbo_action: "advance", controller: "tooltip vista-toggle", vista_toggle_to_value: vista_alt } do %>
-      <%= icon_tag(@vista == "tabella" ? "grid" : "table") %>
-      <span class="for-screen-reader"><%= vista_alt == "card" ? "Vista a card" : "Vista a tabella" %></span>
-    <% end %>
+    <%= render "shared/vista_toggle", url: documenti_path, vista: @vista %>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -98,22 +91,11 @@
           <% end %>
         </div>
       <% else %>
-        <div class="doc-table">
-          <div class="doc-table__head" role="row">
-            <span class="doc-table__th doc-table__th--check"></span>
-            <span class="doc-table__th">Stato</span>
-            <span class="doc-table__th">Documento</span>
-            <span class="doc-table__th doc-table__th--hide-mobile">Collegati</span>
-            <span class="doc-table__th">Cliente / Scuola</span>
-            <span class="doc-table__th doc-table__th--right doc-table__th--hide-mobile">Copie</span>
-            <span class="doc-table__th doc-table__th--right doc-table__th--hide-mobile">Importo</span>
-            <span class="doc-table__th doc-table__th--hide-mobile">Consegna</span>
-            <span class="doc-table__th doc-table__th--hide-mobile">Pagamento</span>
-          </div>
+        <%= tag.div class: "data-table", style: "--cols: #{Documento::Columns.grid_template(@columns)};" do %>
+          <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Documento::Columns, url: documenti_path %>
 
           <%= with_automatic_pagination :documenti, @page,
               id: "documenti-lista",
-              class: "doc-table__body",
               data: { controller: "navigable-list",
                   navigable_list_auto_select_value: false,
                   navigable_list_actionable_items_value: true,
@@ -121,10 +103,10 @@
                   action: "keydown->navigable-list#navigate"
                 } do %>
             <% @page.records.each do |documento| %>
-              <%= render "documenti/table/row", documento: documento %>
+              <%= render "documenti/table/row", documento: documento, columns: @columns %>
             <% end %>
           <% end %>
-        </div>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>

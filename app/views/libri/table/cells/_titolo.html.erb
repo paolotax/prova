@@ -1,0 +1,8 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__title"><%= libro.titolo %></span>
+  <% if libro.codice_isbn.present? %>
+    <span class="data-row__subtitle"><%= libro.codice_isbn %></span>
+  <% end %>
+</div>

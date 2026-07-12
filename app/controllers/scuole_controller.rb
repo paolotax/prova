@@ -2,6 +2,7 @@
 # Scoped attraverso Current.account
 class ScuoleController < ApplicationController
   include FilterScoped
+  include HasVista
 
   FILTER_PARAMS = [:sorted_by, :appunti_filter, :adozioni_filter, province: [], aree: [], comuni: [], tipi_scuola: [], terms: []].freeze
 
@@ -15,7 +16,10 @@ class ScuoleController < ApplicationController
       return respond_to { |format| format.json }
     end
 
-    @per_direzione = @filter.sorted_by.per_direzione?
+    # La vista tabella appiattisce sempre i plessi: il raggruppamento per
+    # direzione vale solo per le card.
+    @vista = resolve_vista
+    @per_direzione = @filter.sorted_by.per_direzione? && @vista != "tabella"
 
     if @per_direzione
       filtered_ids = @filter.filtered_ids
@@ -53,7 +57,15 @@ class ScuoleController < ApplicationController
       @gruppi_direzione = build_gruppi_direzione(page_scuole)
     else
       @total_count = @filter.scuole.count
-      set_page_and_extract_portion_from @filter.scuole
+
+      scope = @filter.scuole
+      if @vista == "tabella"
+        @columns = resolve_colonne(Scuola::Columns)
+        @sort = resolve_sort(@columns)
+        scope = apply_sort(Scuola::Columns.apply_scopes(scope, @columns), @sort)
+      end
+
+      set_page_and_extract_portion_from scope
     end
 
     respond_to do |format|

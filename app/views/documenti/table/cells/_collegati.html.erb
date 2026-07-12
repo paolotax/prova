@@ -1,0 +1,17 @@
+<%# locals: (documento:) -%>
+
+<div class="data-row__cell data-row__cell--interactive data-row__cell--hide-mobile">
+  <% derivati = documento.documenti_derivati %>
+  <% if derivati.any? %>
+    <% derivati.first(2).each do |derivato| %>
+      <%= link_to documento_path(derivato), class: "data-row__chip", data: { turbo_frame: "_top" } do %>
+        → <%= derivato.causale&.causale %> <%= derivato.numero_documento %>
+      <% end %>
+    <% end %>
+    <% if derivati.size > 2 %>
+      <span class="data-row__chip data-row__chip--more">+<%= derivati.size - 2 %></span>
+    <% end %>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

@@ -1,0 +1,302 @@
+/* ==========================================================================
+ * Data table — vista tabella generica delle index (documenti, appunti,
+ * scuole, libri). Layout indipendente per riga (ogni riga è una propria CSS
+ * grid con lo stesso template) così funziona dentro i turbo-frame della
+ * paginazione infinita. Le colonne attive arrivano dal registro
+ * DataTable::Columns via custom property --cols (inline sul container).
+ * ========================================================================== */
+
+@layer components {
+
+  /* Container + header
+  /* ------------------------------------------------------------------------ */
+
+  .data-table {
+    inline-size: 100%;
+  }
+
+  .data-table__head {
+    display: grid;
+    grid-template-columns: var(--cols);
+    align-items: center;
+    gap: 0 1ch;
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 5;
+    background-color: var(--color-canvas);
+    border-block-end: 1px solid var(--color-ink-lightest);
+
+    @media (max-width: 639px) {
+      display: none;
+    }
+  }
+
+  .data-table__th {
+    padding: 0.5ch var(--table-spacer-inline, 1ch);
+    font-size: var(--text-x-small);
+    font-weight: 700;
+    text-align: start;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--end { text-align: end; }
+  }
+
+  .data-table__th--sortable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover { color: var(--color-ink); }
+  }
+
+  .data-table__th--sorted {
+    color: var(--color-link);
+  }
+
+  .data-table__sort-indicator {
+    margin-inline-start: 0.3ch;
+    font-size: 0.95em;
+
+    sup {
+      font-size: 0.75em;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .data-table__th--gear {
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+
+    dialog { inset-inline-end: 0; inset-inline-start: auto; }
+  }
+
+  /* Riga
+  /* ------------------------------------------------------------------------ */
+
+  .data-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--cols);
+    align-items: center;
+    gap: 0 1ch;
+    border-block-end: 1px solid var(--color-ink-lightest);
+    font-size: var(--text-small);
+
+    &:hover {
+      background-color: var(--color-canvas-inset);
+    }
+
+    @media (max-width: 639px) {
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      gap: 0.25ch 1ch;
+      padding-block: 0.5ch;
+    }
+  }
+
+  .data-row--selected,
+  .data-row[aria-selected="true"] {
+    background-color: color-mix(in srgb, var(--color-link) 15%, transparent);
+    outline: 2px solid var(--color-link);
+    outline-offset: -2px;
+  }
+
+  .data-row:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: -2px;
+  }
+
+  .data-row--closed {
+    opacity: 0.55;
+  }
+
+  /* Link overlay che copre la riga (apre il dettaglio) */
+  .data-row__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .data-row__cell {
+    padding: 0.35ch var(--table-spacer-inline, 1ch);
+    line-height: 1.25;
+    min-width: 0;
+    text-align: start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Celle con contenuto interattivo: sopra il link overlay */
+  .data-row__cell--interactive {
+    position: relative;
+    z-index: 2;
+  }
+
+  .data-row__cell--end {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-row__cell--tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-row__cell--check {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .data-row__cell--badge {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Celle a due righe (titolo + sottotitolo) */
+  .data-row__cell--stacked {
+    white-space: normal;
+  }
+
+  .data-row__title {
+    display: block;
+    font-weight: 500;
+    color: var(--color-ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .data-row__subtitle {
+    display: block;
+    font-size: var(--text-x-small);
+    color: var(--color-ink-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .data-row__primary {
+    display: block;
+    font-weight: 600;
+    color: var(--card-color, var(--color-ink));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .data-row__meta {
+    display: block;
+    font-size: var(--text-x-small);
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Chip (es. documenti collegati) */
+  .data-row__chip {
+    display: inline-block;
+    padding: 0.05em 0.5em;
+    margin-inline-end: 0.4ch;
+    border-radius: 0.25em;
+    background-color: var(--color-canvas-inset);
+    font-size: var(--text-x-small);
+    color: var(--color-ink-medium);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover { text-decoration: underline; }
+
+    &--more {
+      background: transparent;
+      color: var(--color-ink-muted);
+    }
+  }
+
+  .data-row__muted { color: var(--color-ink-lighter); }
+
+  .data-row__thumb {
+    display: block;
+    inline-size: 2rem;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: calc(var(--border-radius) / 2);
+  }
+
+  /* Badge di stato (usato da documento_stato_badge e dalle celle badge) */
+  .doc-badge {
+    display: inline-block;
+    max-inline-size: 100%;
+    padding: 0.15em 0.55em;
+    border-radius: 0.35em;
+    font-size: var(--text-xx-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--badge-color, var(--color-ink));
+    background-color: color-mix(in srgb, var(--badge-color, var(--color-ink)) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--badge-color, var(--color-ink)) 35%, transparent);
+  }
+
+  /* Riga valori (solo mobile, dentro la cella principale)
+  /* ------------------------------------------------------------------------ */
+
+  .data-row__values {
+    display: none;
+  }
+
+  @media (max-width: 639px) {
+    .data-row__cell--hide-mobile { display: none; }
+
+    .data-row__cell--check {
+      grid-column: 1;
+      grid-row: 1;
+      align-items: flex-start;
+      padding-block-start: 0.6ch;
+    }
+
+    .data-row__cell:not(.data-row__cell--check):not(.data-row__cell--hide-mobile) {
+      grid-column: 2;
+    }
+
+    .data-row__values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25ch 1.5ch;
+      margin-block-start: 0.4ch;
+      font-size: var(--text-x-small);
+      color: var(--color-ink-muted);
+    }
+
+    .data-row__value {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4ch;
+
+      strong { color: var(--color-ink); }
+    }
+  }
+
+  /* Documenti: dettagli specifici
+  /* ------------------------------------------------------------------------ */
+
+  .data-row__da-pagare {
+    color: var(--color-negative);
+    font-size: var(--text-x-small);
+    font-weight: 600;
+  }
+
+  .data-row__tipo-pag {
+    color: var(--color-ink-muted);
+    font-size: var(--text-x-small);
+  }
+}

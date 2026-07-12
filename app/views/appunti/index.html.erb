@@ -11,6 +11,7 @@
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis">Appunti</span>
+    <%= render "shared/vista_toggle", url: appunti_path, vista: @vista %>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -50,29 +51,47 @@
     <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
       <%= render "appunti/bulk_bar/bar" %>
 
-      <div class="cards cards--grid">
-        <%= with_automatic_pagination :appunti, @page,
-            class: "cards__list",
-            data: { controller: "navigable-list list-observer",
-                navigable_list_auto_select_value: false,
-                navigable_list_actionable_items_value: true,
-                navigable_list_prevent_handled_keys_value: true,
-                action: "keydown->navigable-list#navigate",
-                list_observer_counter_id_value: "collection_counter",
-                list_observer_item_selector_value: ".item",
-                list_observer_target: "list"
-              } do %>
-          <% mese_corrente = nil %>
-          <% @page.records.each do |appunto| %>
-            <% chiave = I18n.l(appunto.created_at, format: "%B %Y").capitalize %>
-            <% if chiave != mese_corrente %>
-              <% mese_corrente = chiave %>
-              <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+      <% if @vista == "tabella" %>
+        <%= tag.div class: "data-table", style: "--cols: #{Appunto::Columns.grid_template(@columns)};" do %>
+          <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Appunto::Columns, url: appunti_path %>
+
+          <%= with_automatic_pagination :appunti, @page,
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate"
+                } do %>
+            <% @page.records.each do |appunto| %>
+              <%= render "appunti/table/row", appunto: appunto, columns: @columns %>
             <% end %>
-            <%= render appunto %>
           <% end %>
         <% end %>
-      </div>
+      <% else %>
+        <div class="cards cards--grid">
+          <%= with_automatic_pagination :appunti, @page,
+              class: "cards__list",
+              data: { controller: "navigable-list list-observer",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate",
+                  list_observer_counter_id_value: "collection_counter",
+                  list_observer_item_selector_value: ".item",
+                  list_observer_target: "list"
+                } do %>
+            <% mese_corrente = nil %>
+            <% @page.records.each do |appunto| %>
+              <% chiave = I18n.l(appunto.created_at, format: "%B %Y").capitalize %>
+              <% if chiave != mese_corrente %>
+                <% mese_corrente = chiave %>
+                <h2 class="divider divider--fade txt-large full-width margin-block-start"><%= chiave %></h2>
+              <% end %>
+              <%= render appunto %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   <% else %>
     <%= blank_slate_for(:appunti, filtering: @user_filtering) %>

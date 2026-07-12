@@ -1,0 +1,29 @@
+<%# locals: (scuola:, columns: nil) -%>
+
+<% columns ||= Scuola::Columns.visible(cookies[:scuole_colonne].to_s.split(",")) %>
+
+<%= tag.div id: dom_id(scuola),
+      class: "data-row",
+      style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}; --cols: #{Scuola::Columns.grid_template(columns)};",
+      role: "row",
+      tabindex: 0,
+      data: {
+        navigable_list_target: "item",
+        action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
+      } do %>
+
+  <%= link_to scuola_path(scuola), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= scuola.denominazione %></span>
+  <% end %>
+
+  <div class="data-row__cell data-row__cell--check">
+    <label>
+      <%= check_box_tag "ids[]", scuola.id, false, data: { action: "change->bulk-actions#count" } %>
+    </label>
+  </div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, scuola: scuola %>
+  <% end %>
+<% end %>

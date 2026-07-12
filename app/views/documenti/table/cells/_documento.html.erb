@@ -1,0 +1,9 @@
+<%# locals: (documento:) -%>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__primary"><%= documento.causale&.causale&.upcase || "BOZZA" %></span>
+  <span class="data-row__meta">
+    <span class="margin-inline-end-quarter">#<%= documento.numero_documento %></span>
+    <%= documento.data_documento&.strftime("%d/%m/%Y") %>
+  </span>
+</div>

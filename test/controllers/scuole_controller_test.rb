@@ -98,6 +98,64 @@ class ScuoleControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "default vista is card" do
+    get scuole_path(account_id: @account.id)
+
+    assert_response :success
+    assert_select ".cards--grid"
+    assert_select ".data-table", false
+  end
+
+  test "vista tabella renders data table and persists cookie" do
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole", vista: "tabella")
+
+    assert_response :success
+    assert_select ".data-table"
+    assert_select ".data-row"
+    assert_select ".cards--grid", false
+    assert_equal "tabella", cookies[:scuole_vista]
+
+    # La vista resta tabella alla richiesta successiva (cookie)
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole")
+    assert_select ".data-table"
+  end
+
+  test "vista tabella appiattisce anche con sorted_by per_direzione" do
+    get scuole_path(account_id: @account.id, vista: "tabella") # default: per_direzione
+
+    assert_response :success
+    assert_select ".data-table"
+    assert_select ".data-row"
+  end
+
+  test "sort param reorders and renders indicator" do
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole", vista: "tabella", sort: "comune.asc")
+
+    assert_response :success
+    assert_select "[aria-sort=ascending]"
+  end
+
+  test "invalid sort param is ignored" do
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole", vista: "tabella", sort: "boh.asc,comune.up,denominazione.desc;drop")
+
+    assert_response :success
+    assert_select "[aria-sort]", false
+  end
+
+  test "colonne param selects columns and persists cookie" do
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole", vista: "tabella", colonne: ["", "denominazione", "comune"])
+
+    assert_response :success
+    assert_equal "denominazione,comune", cookies[:scuole_colonne]
+    assert_select ".data-table__th", text: "Scuola"
+    assert_select ".data-table__th", text: "Contatti", count: 0
+
+    # colonne=default azzera il cookie e ripristina i default
+    get scuole_path(account_id: @account.id, sorted_by: "solo_scuole", vista: "tabella", colonne: ["default"])
+    assert_response :success
+    assert_select ".data-table__th", text: "Contatti"
+  end
+
   private
 
   def sign_in_as(user, account)

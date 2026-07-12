@@ -1,5 +1,6 @@
 class DocumentiController < ApplicationController
   include FilterScoped
+  include HasVista
 
   FILTER_PARAMS = [:anno, :sorted_by, :consegnati, :pagati, :clientable_type, :stato_documento, terms: [], causali: [], tipi_pagamento: []].freeze
 
@@ -27,10 +28,17 @@ class DocumentiController < ApplicationController
       return respond_to { |format| format.json }
     end
 
-    @vista = resolve_vista
+    @vista = resolve_vista(default: "tabella")
     @tutti_documenti = @filter.documenti
     @total_count = @tutti_documenti.count
     @stato_counts = @filter.stato_counts
+
+    if @vista == "tabella"
+      @columns = resolve_colonne(Documento::Columns)
+      @sort = resolve_sort(@columns)
+      @tutti_documenti = apply_sort(Documento::Columns.apply_scopes(@tutti_documenti, @columns), @sort)
+    end
+
     set_page_and_extract_portion_from @tutti_documenti
 
     respond_to do |format|
@@ -154,21 +162,6 @@ class DocumentiController < ApplicationController
   end
 
   private
-    # Vista index: "tabella" (default) o "card". Scelta persistita in cookie.
-    # Il cookie viene sempre riscritto col valore risolto così che il JS di
-    # back-navigation possa leggerlo e chiedere la variante giusta (row/card).
-    def resolve_vista
-      vista =
-        if %w[tabella card].include?(params[:vista])
-          params[:vista]
-        else
-          cookies[:documenti_vista].presence_in(%w[tabella card]) || "tabella"
-        end
-
-      cookies[:documenti_vista] = { value: vista, expires: 1.year }
-      vista
-    end
-
     def set_documento
       @documento = Current.account.documenti.find(params[:id])
     end
