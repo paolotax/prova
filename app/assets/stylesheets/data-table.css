@@ -153,6 +153,39 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    label {
+      cursor: pointer;
+      display: flex;
+    }
+
+    /* Stessa grafica dei checkbox nelle card (.card__checkbox) */
+    input[type="checkbox"] {
+      accent-color: oklch(65% 0.25 250);
+      appearance: none;
+      background: var(--color-canvas);
+      block-size: 1.5em;
+      border: 2px solid var(--color-ink-light);
+      border-radius: 50%;
+      cursor: pointer;
+      inline-size: 1.5em;
+      transition: all 150ms ease;
+
+      &:checked {
+        background: oklch(65% 0.25 250);
+        border-color: oklch(65% 0.25 250);
+      }
+
+      &:checked::after {
+        color: white;
+        content: "✓";
+        display: block;
+        font-size: 1em;
+        font-weight: bold;
+        line-height: 1.3;
+        text-align: center;
+      }
+    }
   }
 
   .data-row__cell--badge {
