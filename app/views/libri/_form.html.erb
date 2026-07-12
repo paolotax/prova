@@ -36,7 +36,7 @@
         <div class="form-field">
           <%= f.label :categoria_id, "Categoria", class: "form-label" %>
           <%= f.collection_select :categoria_id,
-              current_user.categorie.order(:nome_categoria),
+              Current.account.categorie.order(:nome_categoria),
               :id,
               :nome_categoria,
               { prompt: "Seleziona categoria..." },

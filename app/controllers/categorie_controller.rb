@@ -3,7 +3,7 @@ class CategorieController < ApplicationController
   before_action :set_categoria, only: [:show, :edit, :update, :destroy]
 
   def index
-    @categorie = Current.user.categorie.order(:nome_categoria)
+    @categorie = Current.account.categorie.order(:nome_categoria)
   end
 
   def show
@@ -12,11 +12,11 @@ class CategorieController < ApplicationController
   end
 
   def new
-    @categoria = Current.user.categorie.build
+    @categoria = Current.account.categorie.build
   end
 
   def create
-    @categoria = Current.user.categorie.build(categoria_params)
+    @categoria = Current.account.categorie.build(categoria_params)
 
     if @categoria.save
       redirect_to @categoria, notice: "Categoria creata con successo."
@@ -47,7 +47,7 @@ class CategorieController < ApplicationController
   private
 
   def set_categoria
-    @categoria = Current.user.categorie.find(params[:id])
+    @categoria = Current.account.categorie.find(params[:id])
   end
 
   def categoria_params

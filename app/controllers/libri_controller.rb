@@ -62,7 +62,7 @@ class LibriController < ApplicationController
       titolo: "Nuovo libro",
       codice_isbn: "DRAFT-#{SecureRandom.hex(6)}",
       prezzo_in_cents: 0,
-      categoria: Current.user.categorie.first
+      categoria: Current.account.categorie.first
     )
     redirect_to edit_libro_path(@libro)
   end

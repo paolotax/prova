@@ -700,7 +700,6 @@ CREATE TABLE public.categorie (
     descrizione text,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    user_id bigint,
     account_id uuid NOT NULL
 );
 
@@ -5439,17 +5438,10 @@ CREATE INDEX index_categorie_on_account_id ON public.categorie USING btree (acco
 
 
 --
--- Name: index_categorie_on_user_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_categorie_on_account_id_and_nome_categoria; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_categorie_on_user_id ON public.categorie USING btree (user_id);
-
-
---
--- Name: index_categorie_on_user_id_and_nome_categoria; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_categorie_on_user_id_and_nome_categoria ON public.categorie USING btree (user_id, lower(TRIM(BOTH FROM nome_categoria)));
+CREATE UNIQUE INDEX index_categorie_on_account_id_and_nome_categoria ON public.categorie USING btree (account_id, lower(TRIM(BOTH FROM nome_categoria)));
 
 
 --
@@ -7608,14 +7600,6 @@ ALTER TABLE ONLY public.mandati
 
 
 --
--- Name: categorie fk_rails_273146033d; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.categorie
-    ADD CONSTRAINT fk_rails_273146033d FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: goldnesses fk_rails_2981cd56d1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8134,6 +8118,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260712070000'),
 ('20260710090500'),
 ('20260710083852'),
 ('20260710083851'),

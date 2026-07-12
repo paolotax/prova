@@ -101,7 +101,7 @@ class Libri::Importer
   end
 
   def resolve_categoria
-    Categoria.resolve(@categoria_name, user: Current.user, account: Current.account)
+    Categoria.resolve(@categoria_name, account: Current.account)
   end
 
   def find_or_create_libro

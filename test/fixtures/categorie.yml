@@ -9,33 +9,27 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  account_id     :uuid             not null
-#  user_id        :bigint
 #
 # Indexes
 #
-#  index_categorie_on_account_id                  (account_id)
-#  index_categorie_on_user_id                     (user_id)
-#  index_categorie_on_user_id_and_nome_categoria  (user_id, lower(TRIM(BOTH FROM nome_categoria))) UNIQUE
+#  index_categorie_on_account_id                     (account_id)
+#  index_categorie_on_account_id_and_nome_categoria  (account_id, lower(TRIM(BOTH FROM nome_categoria))) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (account_id => accounts.id)
-#  fk_rails_...  (user_id => users.id)
 #
 ministeriali:
   nome_categoria: "ministeriali"
   descrizione: "Libri scolastici ministeriali"
-  user: one
   account: fizzy
 
 parascolastico:
   nome_categoria: "parascolastico"
   descrizione: "Libri parascolastici"
-  user: one
   account: fizzy
 
 non_classificato:
   nome_categoria: "non classificato"
   descrizione: "Categoria default"
-  user: one
   account: fizzy

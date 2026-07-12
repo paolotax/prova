@@ -239,7 +239,7 @@ module Imports
         libro_creato = false
 
         unless libro
-          categoria = Categoria.resolve(nil, user: @user, account: @account)
+          categoria = Categoria.resolve(nil, account: @account)
           libro = @user.libri.create(
             account: @account,
             codice_isbn: ean,
@@ -289,7 +289,7 @@ module Imports
       return libro if libro
 
       titolo = row[:titolo] || row[:descrizione] || "Libro #{codice}"
-      categoria = Categoria.resolve(nil, user: @user, account: @account)
+      categoria = Categoria.resolve(nil, account: @account)
 
       libro = @user.libri.create(
         account: @account,

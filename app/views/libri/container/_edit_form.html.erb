@@ -36,7 +36,7 @@
     <div class="form-field">
       <%= f.label :categoria_id, "Categoria", class: "label txt-small" %>
       <%= f.collection_select :categoria_id,
-          libro.user.categorie.order(:nome_categoria),
+          libro.account.categorie.order(:nome_categoria),
           :id,
           :nome_categoria,
           { prompt: "Seleziona categoria..." },

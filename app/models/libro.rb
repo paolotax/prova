@@ -192,7 +192,7 @@ class Libro < ApplicationRecord
 
   def categoria=(value)
     if value.is_a?(String)
-      super(Categoria.resolve(value, user: user || Current.user, account: account || Current.account))
+      super(Categoria.resolve(value, account: account || Current.account))
     else
       super
     end
@@ -284,7 +284,7 @@ class Libro < ApplicationRecord
       end
     else
       iniziali = titolo.split.map(&:first).join[0..1].upcase
-      "https://ui-avatars.com/api/?name=#{iniziali}&color=FFFFFF&background=6B7280"
+      InitialsAvatar.data_uri(iniziali, color: "FFFFFF", background: "6B7280")
     end
   end
 

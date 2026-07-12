@@ -54,10 +54,10 @@ module Imports
       # Handle categoria
       # Non sovrascrivere la categoria di libri esistenti che ne hanno già una
       if row[:categoria].present?
-        categoria = Categoria.resolve(row[:categoria], user: @user, account: @account)
+        categoria = Categoria.resolve(row[:categoria], account: @account)
         libro.categoria = categoria if libro.new_record? || libro.categoria.nil?
       elsif libro.new_record? && libro.categoria.nil?
-        libro.categoria = Categoria.resolve(nil, user: @user, account: @account)
+        libro.categoria = Categoria.resolve(nil, account: @account)
       end
 
       libro

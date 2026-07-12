@@ -31,6 +31,7 @@ class Account < ApplicationRecord
   has_many :documenti, dependent: :destroy
   has_many :clienti, dependent: :destroy
   has_many :libri, dependent: :destroy
+  has_many :categorie, dependent: :destroy
   has_many :scuole, dependent: :destroy
   has_many :classi, dependent: :destroy
   has_many :adozioni, dependent: :destroy

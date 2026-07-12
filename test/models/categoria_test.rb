@@ -10,18 +10,15 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  account_id     :uuid             not null
-#  user_id        :bigint
 #
 # Indexes
 #
-#  index_categorie_on_account_id                  (account_id)
-#  index_categorie_on_user_id                     (user_id)
-#  index_categorie_on_user_id_and_nome_categoria  (user_id, lower(TRIM(BOTH FROM nome_categoria))) UNIQUE
+#  index_categorie_on_account_id                     (account_id)
+#  index_categorie_on_account_id_and_nome_categoria  (account_id, lower(TRIM(BOTH FROM nome_categoria))) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (account_id => accounts.id)
-#  fk_rails_...  (user_id => users.id)
 #
 require "test_helper"
 
@@ -36,20 +33,20 @@ class CategoriaTest < ActiveSupport::TestCase
   # --- Normalization ---
 
   test "normalizes nome_categoria to lowercase on save" do
-    cat = Categoria.create!(nome_categoria: "VACANZE", user: @user, account_id: @account.id)
+    cat = Categoria.create!(nome_categoria: "VACANZE", account_id: @account.id)
     assert_equal "vacanze", cat.nome_categoria
   end
 
   test "strips whitespace from nome_categoria on save" do
-    cat = Categoria.create!(nome_categoria: "  guide  ", user: @user, account_id: @account.id)
+    cat = Categoria.create!(nome_categoria: "  guide  ", account_id: @account.id)
     assert_equal "guide", cat.nome_categoria
   end
 
   # --- Uniqueness (case-insensitive) ---
 
   test "prevents duplicate category names case-insensitively" do
-    Categoria.create!(nome_categoria: "vacanze", user: @user, account_id: @account.id)
-    dup = Categoria.new(nome_categoria: "VACANZE", user: @user, account_id: @account.id)
+    Categoria.create!(nome_categoria: "vacanze", account_id: @account.id)
+    dup = Categoria.new(nome_categoria: "VACANZE", account_id: @account.id)
     assert_not dup.valid?
     assert_includes dup.errors[:nome_categoria], "è già presente"
   end
@@ -58,39 +55,38 @@ class CategoriaTest < ActiveSupport::TestCase
 
   test "resolve finds existing category case-insensitively" do
     existing = categorie(:ministeriali)
-    found = Categoria.resolve("MINISTERIALI", user: @user, account: @account)
+    found = Categoria.resolve("MINISTERIALI", account: @account)
     assert_equal existing.id, found.id
   end
 
   test "resolve creates new category if not found" do
     assert_difference "Categoria.count", 1 do
-      cat = Categoria.resolve("nuova categoria", user: @user, account: @account)
+      cat = Categoria.resolve("nuova categoria", account: @account)
       assert_equal "nuova categoria", cat.nome_categoria
-      assert_equal @user.id, cat.user_id
       assert_equal @account.id, cat.account_id
     end
   end
 
   test "resolve returns default category when nome is nil" do
-    cat = Categoria.resolve(nil, user: @user, account: @account)
+    cat = Categoria.resolve(nil, account: @account)
     assert_equal "non classificato", cat.nome_categoria
   end
 
   test "resolve returns default category when nome is blank" do
-    cat = Categoria.resolve("", user: @user, account: @account)
+    cat = Categoria.resolve("", account: @account)
     assert_equal "non classificato", cat.nome_categoria
   end
 
   test "resolve strips and downcases before matching" do
     existing = categorie(:parascolastico)
-    found = Categoria.resolve("  PARASCOLASTICO  ", user: @user, account: @account)
+    found = Categoria.resolve("  PARASCOLASTICO  ", account: @account)
     assert_equal existing.id, found.id
   end
 
   test "resolve is idempotent" do
-    first = Categoria.resolve("test_idem", user: @user, account: @account)
+    first = Categoria.resolve("test_idem", account: @account)
     assert_no_difference "Categoria.count" do
-      second = Categoria.resolve("TEST_IDEM", user: @user, account: @account)
+      second = Categoria.resolve("TEST_IDEM", account: @account)
       assert_equal first.id, second.id
     end
   end

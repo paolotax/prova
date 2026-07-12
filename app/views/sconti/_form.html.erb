@@ -12,7 +12,7 @@
       <div class="form-field" style="flex: 2; min-width: 200px;">
         <%= form.label :categoria_id, "Categoria", class: "form-label" %>
         <%= form.collection_select :categoria_id,
-            Current.user.categorie.order(:nome_categoria), :id, :nome_categoria,
+            Current.account.categorie.order(:nome_categoria), :id, :nome_categoria,
             { include_blank: "Tutte le categorie" },
             class: "input input--select full-width" %>
       </div>
