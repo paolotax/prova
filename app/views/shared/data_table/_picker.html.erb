@@ -1,37 +1,49 @@
 <%# locals: (registry:, columns:, url:) -%>
 
-<%# Scelta colonne: GET all'index con colonne[]; il controller persiste in
-    cookie (HasVista#resolve_colonne). "Ripristina" manda colonne=default. %>
-<%= tag.div class: "flex-inline", data: {
-      controller: "dialog",
-      action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside" } do %>
-  <button type="button" class="btn" data-action="click->dialog#toggle:stop"
-          data-controller="tooltip" data-tooltip-content-value="Scegli colonne">
-    <%= icon_tag "gear", class: "icon--small" %>
-    <span class="for-screen-reader">Scegli colonne</span>
-  </button>
+<%# Scelta colonne: stesso pattern delle multiple-select dei filtri
+    (filters/settings/_causali): dialog + multi-selection-combobox sullo
+    stesso wrapper, template fuori dal dialog, item role=checkbox con icona
+    check. Applica fa GET all'index con colonne[]; HasVista#resolve_colonne
+    persiste in cookie. "Ripristina" manda colonne=default. %>
+<%= form_with url: url, method: :get, class: "display-contents",
+    data: { turbo_frame: "search_results", turbo_action: "advance" } do %>
+  <% request.query_parameters.except("colonne", "page").to_query.split("&").compact_blank.each do |pair| %>
+    <% name, value = pair.split("=", 2).map { |part| CGI.unescape(part.to_s) } %>
+    <%= tag.input type: "hidden", name: name, value: value %>
+  <% end %>
+  <%= tag.input type: "hidden", name: "colonne[]", value: "" %>
 
-  <%= tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small",
-      data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close" } do %>
-    <strong class="popup__title">Colonne</strong>
+  <%= tag.div class: "flex-inline", data: {
+        controller: "dialog multi-selection-combobox",
+        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close->multi-selection-combobox#restore",
+        multi_selection_combobox_no_selection_label_value: "Colonne di default" } do %>
+    <button type="button" class="btn" data-action="click->dialog#toggle:stop"
+            data-controller="tooltip" data-tooltip-content-value="Scegli colonne">
+      <%= icon_tag "gear", class: "icon--small" %>
+      <span class="for-screen-reader" data-multi-selection-combobox-target="label"></span>
+    </button>
 
-    <%= form_with url: url, method: :get, class: "display-contents",
-        data: { turbo_frame: "search_results", turbo_action: "advance" } do %>
-      <% request.query_parameters.except("colonne", "page").to_query.split("&").compact_blank.each do |pair| %>
-        <% name, value = pair.split("=", 2).map { |part| CGI.unescape(part.to_s) } %>
-        <%= tag.input type: "hidden", name: name, value: value %>
-      <% end %>
-      <%= tag.input type: "hidden", name: "colonne[]", value: "" %>
+    <template data-multi-selection-combobox-target="hiddenFieldTemplate">
+      <%= hidden_field_tag "colonne[]", nil %>
+    </template>
+
+    <%= tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small",
+        data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close" },
+        aria: { label: "Colonne" } do %>
+      <strong class="popup__title">Colonne</strong>
 
       <ul class="popup__list" role="listbox">
         <% registry.columns.each do |column| %>
-          <li class="popup__item">
-            <label class="btn popup__btn flex align-center gap-half full-width">
-              <%= tag.input type: "checkbox", name: "colonne[]", value: column.key,
-                  checked: columns.include?(column) %>
-              <span class="overflow-ellipsis flex-item-grow txt-small"><%= column.label %></span>
-            </label>
-          </li>
+          <%= content_tag(:li, class: "popup__item", data: {
+                multi_selection_combobox_target: "item",
+                multi_selection_combobox_value: column.key,
+                multi_selection_combobox_label: column.label },
+                role: "checkbox", aria: { checked: columns.include?(column) }) do %>
+            <button type="button" class="btn popup__btn" data-action="multi-selection-combobox#change">
+              <span class="overflow-ellipsis flex-item-grow pad-inline-start txt-small"><%= column.label %></span>
+              <%= icon_tag "check", class: "checked flex-item-justify-end" %>
+            </button>
+          <% end %>
         <% end %>
       </ul>
 
@@ -39,7 +51,7 @@
         <%= link_to "Ripristina", "#{url}?#{request.query_parameters.except("colonne", "page").merge(colonne: [ "default" ]).to_query}",
             class: "btn txt-small",
             data: { turbo_frame: "search_results", turbo_action: "advance", action: "dialog#close" } %>
-        <button class="btn txt-small" data-action="dialog#close">Applica</button>
+        <button type="submit" class="btn txt-small" data-action="multi-selection-combobox#apply dialog#close">Applica</button>
       </footer>
     <% end %>
   <% end %>
