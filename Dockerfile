@@ -13,6 +13,15 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
+# Repo PGDG: il server è PostgreSQL 15, il client di trixie è 17 e il suo
+# pg_dump emette SET incompatibili in structure.sql — pinniamo il client 15
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl ca-certificates && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL -o /etc/apt/keyrings/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -27,7 +36,7 @@ RUN apt-get update -qq && \
     libpq-dev \
     libyaml-dev \
     pkg-config \
-    postgresql-client
+    postgresql-client-15
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -57,7 +66,7 @@ RUN apt-get update -qq && apt-get install --no-install-recommends -y \
     libpq5 \
     libvips \
     poppler-utils \
-    postgresql-client \
+    postgresql-client-15 \
     tesseract-ocr \
     tesseract-ocr-ita \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
