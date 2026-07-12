@@ -1,9 +1,5 @@
 <%# locals: (causale:) -%>
 
-<% stati_documento = [ [ "Ordine", "ordine" ], [ "In consegna", "in_consegna" ], [ "Da pagare", "da_pagare" ],
-                       [ "Da registrare", "da_registrare" ], [ "Corrispettivi", "corrispettivi" ],
-                       [ "Fattura", "fattura" ], [ "Bozza", "bozza" ] ] %>
-
 <%= form_with(model: causale) do |form| %>
   <div class="flex flex-column gap">
     <% if causale.errors.any? %>
@@ -93,27 +89,6 @@
     </div>
 
     <h3 class="divider divider--fade txt-medium font-weight-black">Workflow</h3>
-
-    <div class="form-field" style="max-width: 250px;">
-      <%= form.label :stato_iniziale, "Stato iniziale", class: "form-label" %>
-      <%= form.select :stato_iniziale,
-          options_for_select(stati_documento, causale.stato_iniziale),
-          { include_blank: "Nessuno" }, class: "input input--select full-width" %>
-    </div>
-
-    <div class="form-field">
-      <span class="form-label">Stati successivi</span>
-      <div class="flex flex-wrap gap-half">
-        <%= hidden_field_tag "causale[stati_successivi][]", "", id: nil %>
-        <% stati_documento.each do |label, value| %>
-          <label class="btn txt-small">
-            <span><%= label %></span>
-            <%= icon_tag "check", class: "checked" %>
-            <%= check_box_tag "causale[stati_successivi][]", value, causale.stati_successivi&.include?(value), id: nil, tabindex: -1 %>
-          </label>
-        <% end %>
-      </div>
-    </div>
 
     <div class="form-field">
       <span class="form-label">Causali successive</span>

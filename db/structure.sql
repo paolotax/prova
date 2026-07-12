@@ -750,8 +750,6 @@ CREATE TABLE public.causali (
     movimento integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    stato_iniziale character varying,
-    stati_successivi json DEFAULT '[]'::json,
     priorita integer DEFAULT 0,
     causali_successive json DEFAULT '[]'::json,
     clientable_types json DEFAULT '[]'::json NOT NULL,
@@ -5459,13 +5457,6 @@ CREATE INDEX index_causali_on_priorita ON public.causali USING btree (priorita);
 
 
 --
--- Name: index_causali_on_stato_iniziale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_causali_on_stato_iniziale ON public.causali USING btree (stato_iniziale);
-
-
---
 -- Name: index_chats_on_account_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8118,6 +8109,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260712080000'),
 ('20260712070000'),
 ('20260710090500'),
 ('20260710083852'),

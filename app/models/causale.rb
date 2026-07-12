@@ -12,16 +12,13 @@
 #  mostra_importo     :boolean          default(TRUE), not null
 #  movimento          :integer
 #  priorita           :integer          default(0)
-#  stati_successivi   :json
-#  stato_iniziale     :string
 #  tipo_movimento     :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
 # Indexes
 #
-#  index_causali_on_priorita        (priorita)
-#  index_causali_on_stato_iniziale  (stato_iniziale)
+#  index_causali_on_priorita  (priorita)
 #
 
 class Causale < ApplicationRecord
@@ -47,7 +44,7 @@ class Causale < ApplicationRecord
   end
 
   # I form inviano gli array json con un hidden vuoto per permettere lo svuotamento
-  normalizes :clientable_types, :stati_successivi, :causali_successive,
+  normalizes :clientable_types, :causali_successive,
     with: ->(value) { Array(value).compact_blank }
 
   def segno
@@ -68,10 +65,6 @@ class Causale < ApplicationRecord
   validates :tipo_movimento, presence: true
   validates :movimento, presence: true
   validates :magazzino, presence: true
-
-  # PostgreSQL supporta nativamente JSON, non serve serialize
-  # serialize :stati_successivi, type: Array, coder: JSON
-  # serialize :causali_successive, type: Array, coder: JSON
 
   def to_s
     causale

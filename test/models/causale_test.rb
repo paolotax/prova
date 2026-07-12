@@ -12,16 +12,13 @@
 #  mostra_importo     :boolean          default(TRUE), not null
 #  movimento          :integer
 #  priorita           :integer          default(0)
-#  stati_successivi   :json
-#  stato_iniziale     :string
 #  tipo_movimento     :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
 # Indexes
 #
-#  index_causali_on_priorita        (priorita)
-#  index_causali_on_stato_iniziale  (stato_iniziale)
+#  index_causali_on_priorita  (priorita)
 #
 require "test_helper"
 
