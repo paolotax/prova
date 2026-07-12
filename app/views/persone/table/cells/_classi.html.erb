@@ -1,0 +1,11 @@
+<%# locals: (persona:) -%>
+
+<%# Le classi arrivano precaricate dal filtro: conta in memoria, niente query %>
+<% attive = persona.classi.select { |classe| classe.stato == "attiva" }.size %>
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <% if attive.positive? %>
+    <strong><%= attive %></strong>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

@@ -1,0 +1,26 @@
+<%# locals: (persona:, columns: nil) -%>
+
+<% columns ||= Persona::Columns.visible(cookies[:persone_colonne].to_s.split(",")) %>
+
+<%= tag.div id: dom_id(persona),
+      class: "data-row",
+      style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}; --cols: #{Persona::Columns.grid_template(columns)};",
+      role: "row",
+      tabindex: 0,
+      data: {
+        navigable_list_target: "item",
+        action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect"
+      } do %>
+
+  <%= link_to persona_path(persona), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= persona.nome_completo %></span>
+  <% end %>
+
+  <%# Niente bulk actions sui contatti: cella vuota per tenere la griglia %>
+  <div class="data-row__cell data-row__cell--check"></div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, persona: persona %>
+  <% end %>
+<% end %>

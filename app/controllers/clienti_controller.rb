@@ -1,5 +1,6 @@
 class ClientiController < ApplicationController
   include FilterScoped
+  include HasVista
 
   FILTER_PARAMS = [:sorted_by, :fornitori, comuni: [], tipi: [], terms: []].freeze
 
@@ -12,8 +13,16 @@ class ClientiController < ApplicationController
     if request.format.json?
       @clienti = paginate_json(@filter.clienti)
     else
+      @vista = resolve_vista
       @clienti = @filter.clienti.includes(:saldo)
       @total_count = @clienti.count
+
+      if @vista == "tabella"
+        @columns = resolve_colonne(Cliente::Columns)
+        @sort = resolve_sort(@columns)
+        @clienti = apply_sort(Cliente::Columns.apply_scopes(@clienti, @columns), @sort)
+      end
+
       set_page_and_extract_portion_from @clienti
     end
 

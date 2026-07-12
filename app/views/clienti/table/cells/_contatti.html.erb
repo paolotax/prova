@@ -1,0 +1,13 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--stacked data-row__cell--hide-mobile">
+  <% if cliente.telefono.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "phone", class: "icon--small" %> <%= cliente.telefono %></span>
+  <% end %>
+  <% if cliente.email.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "envelope", class: "icon--small" %> <%= cliente.email %></span>
+  <% end %>
+  <% if cliente.telefono.blank? && cliente.email.blank? %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

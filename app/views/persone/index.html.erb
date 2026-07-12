@@ -1,9 +1,10 @@
-<% @page_title = "Persone" %>
+<% @page_title = "Contatti" %>
 <% @body_class = "contained-scrolling" %>
 
 <% content_for :header do %>
   <h1 class="header__title divider divider--fade full-width">
-    <span class="overflow-ellipsis">Persone</span>
+    <span class="overflow-ellipsis">Contatti</span>
+    <%= render "shared/vista_toggle", url: persone_path, vista: @vista %>
   </h1>
 <% end %>
 
@@ -16,20 +17,37 @@
 <%= turbo_frame_tag :search_results do %>
   <% if @page.used? %>
     <p class="txt-small txt-subtle margin-block-end-half">
-      <%= @total_count %> <%= @total_count == 1 ? "persona trovata" : "persone trovate" %>
+      <%= @total_count %> <%= @total_count == 1 ? "contatto trovato" : "contatti trovati" %>
     </p>
 
-    <div class="cards cards--grid">
-      <%= with_automatic_pagination :persone, @page,
-          class: "cards__list",
-          data: { controller: "navigable-list",
-              navigable_list_auto_select_value: false,
-              navigable_list_actionable_items_value: true,
-              navigable_list_prevent_handled_keys_value: true,
-              action: "keydown->navigable-list#navigate" } do %>
-        <%= render "persone/display/previews", persone: @page.records %>
+    <% if @vista == "tabella" %>
+      <%= tag.div class: "data-table", style: "--cols: #{Persona::Columns.grid_template(@columns)};" do %>
+        <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Persona::Columns, url: persone_path %>
+
+        <%= with_automatic_pagination :persone, @page,
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate" } do %>
+          <% @page.records.each do |persona| %>
+            <%= render "persone/table/row", persona: persona, columns: @columns %>
+          <% end %>
+        <% end %>
       <% end %>
-    </div>
+    <% else %>
+      <div class="cards cards--grid">
+        <%= with_automatic_pagination :persone, @page,
+            class: "cards__list",
+            data: { controller: "navigable-list",
+                navigable_list_auto_select_value: false,
+                navigable_list_actionable_items_value: true,
+                navigable_list_prevent_handled_keys_value: true,
+                action: "keydown->navigable-list#navigate" } do %>
+          <%= render "persone/display/previews", persone: @page.records %>
+        <% end %>
+      </div>
+    <% end %>
   <% else %>
     <%= blank_slate_for(:persone, filtering: @user_filtering) %>
   <% end %>

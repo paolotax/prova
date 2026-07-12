@@ -1,0 +1,8 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--stacked">
+  <span class="data-row__title"><%= cliente.denominazione %></span>
+  <% if cliente.indirizzo.present? || cliente.cap.present? %>
+    <span class="data-row__subtitle"><%= [cliente.cap, cliente.indirizzo].compact_blank.join(" - ") %></span>
+  <% end %>
+</div>

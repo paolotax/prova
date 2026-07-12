@@ -1,5 +1,6 @@
 class PersoneController < ApplicationController
   include FilterScoped
+  include HasVista
 
   before_action :set_persona, except: [:index, :create]
 
@@ -11,8 +12,17 @@ class PersoneController < ApplicationController
     if request.format.json?
       @persone = paginate_json(@filter.persone)
     else
-      @total_count = @filter.persone.count
-      set_page_and_extract_portion_from @filter.persone
+      @vista = resolve_vista
+      scope = @filter.persone
+      @total_count = scope.count
+
+      if @vista == "tabella"
+        @columns = resolve_colonne(Persona::Columns)
+        @sort = resolve_sort(@columns)
+        scope = apply_sort(Persona::Columns.apply_scopes(scope, @columns), @sort)
+      end
+
+      set_page_and_extract_portion_from scope
     end
 
     respond_to do |format|

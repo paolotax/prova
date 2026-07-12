@@ -1,0 +1,13 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--badge data-row__cell--hide-mobile">
+  <% if cliente.tipo_cliente.present? %>
+    <span class="doc-badge" style="--badge-color: <%= cliente_color(cliente) %>;"><%= cliente.tipo_cliente %></span>
+  <% end %>
+  <% if cliente.fornitore? %>
+    <span class="doc-badge" style="--badge-color: oklch(0.55 0.15 45);">Fornitore</span>
+  <% end %>
+  <% if cliente.tipo_cliente.blank? && !cliente.fornitore? %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

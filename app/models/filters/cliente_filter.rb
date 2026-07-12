@@ -39,8 +39,9 @@ module Filters
       result = result.where(comune: comuni) if comuni.present?
       result = result.where(tipo_cliente: tipi) if tipi.present?
       result = result.fornitori if fornitori.present?
-      result = result.order(sorted_by.to_s)
-      result.distinct
+      # Niente distinct: nessun join qui, e romperebbe l'ORDER BY sulle
+      # colonne calcolate della vista tabella (DISTINCT + espressione)
+      result.order(sorted_by.to_s)
     end
 
     alias_method :results, :clienti

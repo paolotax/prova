@@ -1,0 +1,13 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--stacked data-row__cell--hide-mobile">
+  <% if cliente.partita_iva.present? %>
+    <span class="data-row__subtitle mono">P.IVA <%= cliente.partita_iva %></span>
+  <% end %>
+  <% if cliente.codice_fiscale.present? %>
+    <span class="data-row__subtitle mono">CF <%= cliente.codice_fiscale %></span>
+  <% end %>
+  <% if cliente.partita_iva.blank? && cliente.codice_fiscale.blank? %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

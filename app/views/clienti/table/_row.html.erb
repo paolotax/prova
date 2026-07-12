@@ -1,0 +1,29 @@
+<%# locals: (cliente:, columns: nil) -%>
+
+<% columns ||= Cliente::Columns.visible(cookies[:clienti_colonne].to_s.split(",")) %>
+
+<%= tag.div id: dom_id(cliente),
+      class: "data-row",
+      style: "--card-color: #{cliente_color(cliente)}; --cols: #{Cliente::Columns.grid_template(columns)};",
+      role: "row",
+      tabindex: 0,
+      data: {
+        navigable_list_target: "item",
+        action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
+      } do %>
+
+  <%= link_to cliente_path(cliente), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= cliente.denominazione %></span>
+  <% end %>
+
+  <div class="data-row__cell data-row__cell--check">
+    <label>
+      <%= check_box_tag "cliente_ids[]", cliente.id, false, data: { action: "change->bulk-actions#count" } %>
+    </label>
+  </div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, cliente: cliente %>
+  <% end %>
+<% end %>

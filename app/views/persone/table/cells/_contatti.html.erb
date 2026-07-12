@@ -1,0 +1,14 @@
+<%# locals: (persona:) -%>
+
+<% telefono = persona.cellulare.presence || persona.telefono %>
+<div class="data-row__cell data-row__cell--stacked data-row__cell--hide-mobile">
+  <% if telefono.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "phone", class: "icon--small" %> <%= telefono %></span>
+  <% end %>
+  <% if persona.email.present? %>
+    <span class="data-row__subtitle"><%= icon_tag "envelope", class: "icon--small" %> <%= persona.email %></span>
+  <% end %>
+  <% if telefono.blank? && persona.email.blank? %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

@@ -1,0 +1,9 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <% if cliente.saldo&.copie_da_consegnare&.positive? %>
+    <strong><%= cliente.saldo.copie_da_consegnare %></strong>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

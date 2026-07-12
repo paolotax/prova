@@ -1,0 +1,9 @@
+<%# locals: (persona:) -%>
+
+<div class="data-row__cell data-row__cell--stacked data-row__cell--hide-mobile">
+  <% if persona.scuola %>
+    <span class="data-row__subtitle"><%= persona.scuola.denominazione %></span>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

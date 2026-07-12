@@ -19,6 +19,7 @@
 
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis">Clienti</span>
+    <%= render "shared/vista_toggle", url: clienti_path, vista: @vista %>
   </h1>
 
   <div class="header__actions header__actions--end">
@@ -41,18 +42,37 @@
       <%= @total_count %> <%= @total_count == 1 ? "cliente trovato" : "clienti trovati" %>
     </p>
 
-    <div class="cards cards--grid" data-controller="bulk-actions">
-      <%= with_automatic_pagination :clienti, @page,
-          class: "cards__list",
-          data: { controller: "navigable-list",
-              navigable_list_auto_select_value: false,
-              navigable_list_actionable_items_value: true,
-              navigable_list_prevent_handled_keys_value: true,
-              action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
-        <%= render @page.records %>
+    <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
+      <% if @vista == "tabella" %>
+        <%= tag.div class: "data-table", style: "--cols: #{Cliente::Columns.grid_template(@columns)};" do %>
+          <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Cliente::Columns, url: clienti_path %>
+
+          <%= with_automatic_pagination :clienti, @page,
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate" } do %>
+            <% @page.records.each do |cliente| %>
+              <%= render "clienti/table/row", cliente: cliente, columns: @columns %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="cards cards--grid">
+          <%= with_automatic_pagination :clienti, @page,
+              class: "cards__list",
+              data: { controller: "navigable-list",
+                  navigable_list_auto_select_value: false,
+                  navigable_list_actionable_items_value: true,
+                  navigable_list_prevent_handled_keys_value: true,
+                  action: "keydown->navigable-list#navigate keydown.space->navigable-list#toggleCurrentItem:prevent" } do %>
+            <%= render @page.records %>
+          <% end %>
+        </div>
       <% end %>
       <%= render "clienti/bulk_bar/bar" %>
-    </div>
+    <% end %>
   <% else %>
     <%= blank_slate_for(:clienti, filtering: @user_filtering) %>
   <% end %>

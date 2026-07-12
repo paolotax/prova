@@ -1,0 +1,9 @@
+<%# locals: (persona:) -%>
+
+<div class="data-row__cell data-row__cell--badge data-row__cell--hide-mobile">
+  <% if persona.ruolo.present? %>
+    <span class="doc-badge"><%= persona.ruolo %></span>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

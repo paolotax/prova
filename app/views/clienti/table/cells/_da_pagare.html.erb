@@ -1,0 +1,9 @@
+<%# locals: (cliente:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <% if cliente.saldo&.importo_da_pagare_cents&.positive? %>
+    <span class="data-row__da-pagare"><%= number_to_currency cliente.saldo.importo_da_pagare_cents / 100.0, locale: :it %></span>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>
