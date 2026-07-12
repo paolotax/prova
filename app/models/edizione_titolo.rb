@@ -26,7 +26,7 @@ class EdizioneTitolo < ApplicationRecord
       copertina
     else
       iniziali = (titolo_originale || "XX").split.map(&:first).join[0..1].upcase
-      "https://ui-avatars.com/api/?name=#{iniziali}&color=7F9CF5&background=EBF4FF"
+      InitialsAvatar.data_uri(iniziali, color: "7F9CF5", background: "EBF4FF")
     end
   end
 end

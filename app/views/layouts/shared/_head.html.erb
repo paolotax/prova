@@ -31,10 +31,8 @@
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 
     <!-- CodeMirror -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/sql/sql.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+    <%= javascript_include_tag "codemirror.min", "codemirror-sql.min", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "codemirror.min", "codemirror-monokai.min", "data-turbo-track": "reload" %>
 
     <%= yield :head %>
 
