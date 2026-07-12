@@ -56,6 +56,13 @@
   <section>
     <strong class="divider txt-small">Query SQL</strong>
 
+    <% codemirror_height = "38.5em" %>
+    <style>
+      .codemirror-editor .CodeMirror {
+        height: <%= codemirror_height %> !important;
+      }
+    </style>
+
     <div class="flex flex-column gap margin-block-start-half">
       <p class="txt-x-small txt-subtle margin-block-none">
         <strong>Placeholder disponibili:</strong>
@@ -63,9 +70,13 @@
         <code>:account_id</code> (ID account corrente)
       </p>
 
-      <div data-controller="codemirror">
+      <div class="codemirror-editor"
+           data-controller="codemirror"
+           data-codemirror-main-script-url-value="<%= asset_path('codemirror.min.js') %>"
+           data-codemirror-sql-script-url-value="<%= asset_path('codemirror-sql.min.js') %>"
+           data-codemirror-stylesheet-url-value="<%= asset_path('codemirror.min.css') %>"
+           data-codemirror-theme-url-value="<%= asset_path('codemirror-monokai.min.css') %>">
         <%= form.text_area :testo,
-            rows: 12,
             class: "input mono txt-small",
             required: true,
             placeholder: "SELECT ... FROM ... WHERE user_id = :user_id",

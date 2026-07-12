@@ -1,26 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-
-const MAPBOX_JS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"
-const MAPBOX_CSS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css"
-
-function loadMapbox() {
-  if (window.mapboxgl) return Promise.resolve()
-
-  if (!document.querySelector(`link[href="${MAPBOX_CSS}"]`)) {
-    const link = document.createElement("link")
-    link.rel = "stylesheet"
-    link.href = MAPBOX_CSS
-    document.head.appendChild(link)
-  }
-
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script")
-    script.src = MAPBOX_JS
-    script.onload = resolve
-    script.onerror = reject
-    document.head.appendChild(script)
-  })
-}
+import { loadMapbox } from "helpers/mapbox_loader"
 
 export default class extends Controller {
 
@@ -32,11 +11,21 @@ export default class extends Controller {
   };
 
   async connect() {
-    await loadMapbox()
+    this.connected = true
+
+    try {
+      await loadMapbox()
+    } catch (error) {
+      console.error("Unable to load Mapbox", error)
+      return
+    }
+    if (!this.connected) return
+
     this.initMap();
   }
 
   disconnect() {
+    this.connected = false
     if (this.map) {
       this.map.remove()
       this.map = null
@@ -50,10 +39,10 @@ export default class extends Controller {
       this.map.remove();
     }
 
-    mapboxgl.accessToken = this.mapboxTokenValue;
+    window.mapboxgl.accessToken = this.mapboxTokenValue;
     const coordinates = JSON.parse(this.data.get("coordinates"))
 
-    this.map = new mapboxgl.Map({
+    this.map = new window.mapboxgl.Map({
       container: this.mapTarget,
       style: "mapbox://styles/mapbox/streets-v12",
       center: [coordinates[0].lng, coordinates[0].lat],
@@ -61,26 +50,25 @@ export default class extends Controller {
       language: 'it-IT'
     })
 
-    this.map.addControl(new mapboxgl.NavigationControl(), 'top-right')
+    this.map.addControl(new window.mapboxgl.NavigationControl(), 'top-right')
 
     this.map.on('load', () => {
-      const bounds = new mapboxgl.LngLatBounds();
+      const bounds = new window.mapboxgl.LngLatBounds();
       coordinates.forEach(coord => {
         bounds.extend(coord);
         this.addMarker(coord);
       });
 
       this.map.fitBounds(bounds, { padding: 100 });
+      this.fetchAndDrawRoute();
     });
-
-    this.fetchAndDrawRoute();
   }
 
   addMarker(coord) {
-    new mapboxgl.Marker()
+    new window.mapboxgl.Marker()
       .setLngLat([coord.lng, coord.lat])
       .setPopup(
-        new mapboxgl.Popup({ offset: 25 }).setHTML(
+        new window.mapboxgl.Popup({ offset: 25 }).setHTML(
           `<h3>${coord.name || "Tappa"}</h3>
            <p>${coord.description || ""}</p>`
         )
@@ -90,7 +78,7 @@ export default class extends Controller {
 
   fetchAndDrawRoute() {
     const waypoints = this.waypointsValue.map(coord => coord.join(',')).join(';');
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?geometries=geojson&access_token=${window.mapboxgl.accessToken}`;
 
     fetch(url)
       .then((response) => response.json())
@@ -121,7 +109,7 @@ export default class extends Controller {
           }
         });
 
-        const bounds = new mapboxgl.LngLatBounds();
+        const bounds = new window.mapboxgl.LngLatBounds();
         route.coordinates.forEach((coord) => bounds.extend(coord));
         this.map.fitBounds(bounds, { padding: 50 });
 

@@ -1,28 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-
-const MAPBOX_JS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"
-const MAPBOX_CSS = "https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css"
-
-function loadMapbox() {
-  if (window.mapboxgl) return Promise.resolve()
-
-  // CSS
-  if (!document.querySelector(`link[href="${MAPBOX_CSS}"]`)) {
-    const link = document.createElement("link")
-    link.rel = "stylesheet"
-    link.href = MAPBOX_CSS
-    document.head.appendChild(link)
-  }
-
-  // JS
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script")
-    script.src = MAPBOX_JS
-    script.onload = resolve
-    script.onerror = reject
-    document.head.appendChild(script)
-  })
-}
+import { loadMapbox } from "helpers/mapbox_loader"
 
 // Connects to data-controller="mappa-posizione"
 export default class extends Controller {
@@ -31,11 +8,19 @@ export default class extends Controller {
   static values = { updateUrl: String, denominazione: String, indirizzo: String }
 
   async connect() {
-    await loadMapbox()
+    this.connected = true
 
-    mapboxgl.accessToken = this.data.get("mapboxAccessToken")
+    try {
+      await loadMapbox()
+    } catch (error) {
+      console.error("Unable to load Mapbox", error)
+      return
+    }
+    if (!this.connected) return
 
-    this.map = new mapboxgl.Map({
+    window.mapboxgl.accessToken = this.data.get("mapboxAccessToken")
+
+    this.map = new window.mapboxgl.Map({
       container: this.mapTarget,
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [this.data.get("longitude"), this.data.get("latitude")],
@@ -44,7 +29,7 @@ export default class extends Controller {
       zoomEnabled: true
     })
 
-    this.map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right')
+    this.map.addControl(new window.mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right')
 
     this.map.on('load', () => {
       this.addMarkers()
@@ -52,6 +37,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.connected = false
     if (this.map) {
       this.map.remove()
       this.map = null
@@ -62,10 +48,10 @@ export default class extends Controller {
     const lng = this.data.get("longitude")
     const lat = this.data.get("latitude")
 
-    this.popup = new mapboxgl.Popup({ offset: 25, closeButton: false, closeOnClick: false })
+    this.popup = new window.mapboxgl.Popup({ offset: 25, closeButton: false, closeOnClick: false })
       .setHTML(this.#coordsHtml(lat, lng))
 
-    const marker = new mapboxgl.Marker({ draggable: true })
+    const marker = new window.mapboxgl.Marker({ draggable: true })
       .setLngLat([lng, lat])
       .setPopup(this.popup)
       .addTo(this.map)
