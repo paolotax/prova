@@ -1,0 +1,37 @@
+<%# I job di eliminazione trasmettono qui la remove delle righe completate %>
+<%= turbo_stream_from :admin_destroys %>
+
+<header class="flex align-center justify-space-between margin-block-end">
+  <h2 class="margin-none">Account</h2>
+  <span class="txt-small txt-subtle"><%= @accounts.size %> account</span>
+</header>
+
+<%= turbo_frame_tag :search_results do %>
+  <%= tag.div class: "data-table data-table--scroll-x",
+        style: "--cols: #{Account::Columns.grid_template(@columns)}; --min-inline-size: #{Account::Columns.min_inline_size(@columns)};" do %>
+    <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Account::Columns, url: admin_accounts_path %>
+
+    <% @accounts.each do |account| %>
+      <%= render "admin/accounts/table/row", account: account, columns: @columns %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @utenti_senza_account.any? %>
+  <h3 class="margin-block-start-double">Utenti registrati senza account</h3>
+  <table class="table table--compact admin-table--narrow">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th class="hide-on-mobile">Registrato il</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @utenti_senza_account.each do |user| %>
+        <%= render "admin/accounts/utente_senza_account", user: user %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

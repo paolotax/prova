@@ -31,7 +31,7 @@ class User < ApplicationRecord
 
   has_rich_text :card
 
-  has_one :profile
+  has_one :profile, dependent: :destroy
   has_one :personal_info, dependent: :destroy
 
   # Multi-tenancy

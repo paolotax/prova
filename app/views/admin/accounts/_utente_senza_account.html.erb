@@ -1,0 +1,27 @@
+<%# locals: (user:) -%>
+
+<% destroying = DestroyUserJob.destroying?(user.id) %>
+
+<tr id="<%= dom_id(user) %>" class="<%= "translucent" if destroying %>">
+  <td><%= link_to user.name, admin_user_path(user) %></td>
+  <td><%= user.email %></td>
+  <td class="hide-on-mobile"><%= user.created_at.strftime("%d/%m/%Y") %></td>
+  <td>
+    <div class="table__actions">
+      <% if destroying %>
+        <span class="btn non-clickable" title="Eliminazione in corso…">
+          <%= icon_tag "refresh", class: "icon--small admin-spin" %>
+          <span class="for-screen-reader">Eliminazione di <%= user.email %> in corso</span>
+        </span>
+      <% else %>
+        <%= button_to admin_user_path(user, da_lista: true), method: :delete,
+              class: "btn",
+              title: "Elimina utente",
+              form: { data: { turbo_confirm: "Eliminare #{user.email}?" } } do %>
+          <%= icon_tag "trash", class: "icon--small" %>
+          <span class="for-screen-reader">Elimina <%= user.email %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </td>
+</tr>

@@ -50,5 +50,14 @@ class DataTable::Columns
     def grid_template(visible_columns)
       ([ "2.25rem" ] + visible_columns.map(&:width) + [ "2.5rem" ]).join(" ")
     end
+
+    # Larghezza minima della tabella per lo scroll orizzontale
+    # (.data-table-scroller): somma dei minimi delle colonne (primo
+    # argomento dei minmax) più checkbox, ingranaggio e gap.
+    def min_inline_size(visible_columns)
+      tracks = [ "2.25rem" ] + visible_columns.map(&:width) + [ "2.5rem" ]
+      rems = tracks.sum { |track| (track[/minmax\(\s*([\d.]+)rem/, 1] || track[/([\d.]+)rem/, 1]).to_f }
+      "calc(#{rems}rem + #{tracks.size - 1}ch)"
+    end
   end
 end

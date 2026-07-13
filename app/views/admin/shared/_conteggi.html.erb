@@ -1,0 +1,10 @@
+<%# locals: (conteggi:) -%>
+
+<div class="admin-cards">
+  <% conteggi.each do |label, count| %>
+    <div class="admin-card">
+      <div class="admin-card__value"><%= number_with_delimiter(count) %></div>
+      <div class="admin-card__label"><%= label %></div>
+    </div>
+  <% end %>
+</div>

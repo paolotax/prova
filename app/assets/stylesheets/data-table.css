@@ -15,6 +15,22 @@
     inline-size: 100%;
   }
 
+  /* Variante per i contesti dove la pagina scorre in orizzontale (es. admin,
+     che nel layout riabilita l'overflow clippato da reset.css): header e
+     righe mantengono la larghezza minima delle colonne (--min-inline-size,
+     da DataTable::Columns.min_inline_size) così sfondi e bordi coprono tutta
+     l'area scrollata. Niente overflow qui: un contenitore che scrolla
+     clipperebbe il dialog del picker colonne. Sotto il breakpoint mobile le
+     righe si impilano e non serve. */
+  @media (min-width: 640px) {
+    .data-table--scroll-x {
+      .data-table__head,
+      .data-row {
+        min-inline-size: var(--min-inline-size, auto);
+      }
+    }
+  }
+
   .data-table__head {
     display: grid;
     grid-template-columns: var(--cols);

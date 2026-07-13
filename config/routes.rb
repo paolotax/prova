@@ -64,6 +64,8 @@ Rails.application.routes.draw do
 
     namespace :admin do
       root 'dashboard#index'
+      resources :users, only: %i[show destroy]
+      resources :accounts, only: %i[index show destroy]
       resources :extension_mails, only: %i[index create]
       resources :cli_mails, only: %i[index create]
       resources :account_invitations, only: %i[index create]

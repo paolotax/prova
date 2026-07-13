@@ -1,0 +1,53 @@
+<header class="flex align-center justify-space-between margin-block-end">
+  <h2 class="margin-none"><%= @account.name %></h2>
+  <%= link_to "← Account", admin_accounts_path, class: "txt-small txt-link" %>
+</header>
+
+<h3>Info</h3>
+<table class="table table--compact admin-table--narrow margin-block-end-double">
+  <tbody>
+    <tr>
+      <th>Id</th>
+      <td>
+        <span class="admin-clip txt-x-small" style="font-family: var(--font-mono);" title="<%= @account.id %>"><%= @account.id %></span>
+      </td>
+    </tr>
+    <tr><th>Creato il</th><td><%= @account.created_at.strftime("%d/%m/%Y") %></td></tr>
+    <% if @province.any? %>
+      <tr><th>Province (<%= @province.size %>)</th><td><%= @province.map(&:capitalize).join(", ") %></td></tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Membri</h3>
+<table class="table table--compact admin-table--narrow margin-block-end-double">
+  <thead>
+    <tr>
+      <th>Utente</th>
+      <th>Email</th>
+      <th>Ruolo</th>
+      <th>Dal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @memberships.each do |membership| %>
+      <tr>
+        <td><%= link_to membership.user.name, admin_user_path(membership.user) %></td>
+        <td><%= membership.user.email %></td>
+        <td><%= membership.role %></td>
+        <td><%= membership.created_at.strftime("%d/%m/%Y") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Conteggi</h3>
+<%= render "admin/shared/conteggi", conteggi: @conteggi %>
+
+<% unless @account.users.exists?(current_user.id) %>
+  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+    <%= render "shared/container/delete", record: @account, path: admin_account_path(@account),
+          label: "l'account #{@account.name} (con scuole, documenti e appunti)" %>
+  </footer>
+<% end %>

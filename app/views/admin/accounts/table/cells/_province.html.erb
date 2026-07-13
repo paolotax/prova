@@ -1,0 +1,10 @@
+<%# locals: (account:) -%>
+
+<div class="data-row__cell data-row__cell--hide-mobile" title="<%= account[:province_nomi] %>">
+  <% if account[:province_nomi].present? %>
+    <strong><%= account[:province_count] %></strong>
+    <span class="txt-subtle"><%= account[:province_nomi] %></span>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>

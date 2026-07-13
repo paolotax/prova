@@ -1,0 +1,93 @@
+<header class="flex align-center justify-space-between margin-block-end">
+  <h2 class="margin-none"><%= @user.name %></h2>
+  <%= link_to "← Account", admin_accounts_path, class: "txt-small txt-link" %>
+</header>
+
+<h3>Anagrafica</h3>
+<table class="table table--compact admin-table--narrow margin-block-end-double">
+  <tbody>
+    <tr><th>Email</th><td><%= @user.email %></td></tr>
+    <tr><th>Ruolo</th><td><%= @user.role %></td></tr>
+    <tr><th>Slug</th><td><%= @user.slug %></td></tr>
+    <% if @user.effective_navigator.present? %>
+      <tr><th>Navigator</th><td><%= @user.effective_navigator %></td></tr>
+    <% end %>
+    <tr><th>Creato il</th><td><%= @user.created_at.strftime("%d/%m/%Y") %></td></tr>
+    <tr>
+      <th>Ultimo accesso</th>
+      <td>
+        <% if @ultimo_accesso %>
+          <%= @ultimo_accesso.strftime("%d/%m/%Y %H:%M") %>
+        <% else %>
+          <span class="txt-subtle">mai</span>
+        <% end %>
+      </td>
+    </tr>
+    <tr><th>Visite (Ahoy)</th><td><%= number_with_delimiter(@visite.count) %></td></tr>
+    <tr><th>Sessioni attive</th><td><%= @user.sessions.count %></td></tr>
+  </tbody>
+</table>
+
+<% if @user.personal_info %>
+  <h3>Info personali</h3>
+  <table class="table table--compact admin-table--narrow margin-block-end-double">
+    <tbody>
+      <tr><th>Nome</th><td><%= @user.personal_info_nome_completo %></td></tr>
+      <tr><th>Cellulare</th><td><%= @user.personal_info_cellulare %></td></tr>
+      <tr><th>Email personale</th><td><%= @user.personal_info_email_personale %></td></tr>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @user.profile %>
+  <h3>Profilo aziendale</h3>
+  <table class="table table--compact admin-table--narrow margin-block-end-double">
+    <tbody>
+      <tr><th>Ragione sociale</th><td><%= @user.profile_ragione_sociale %></td></tr>
+      <tr><th>Indirizzo</th><td><%= [ @user.profile_indirizzo, @user.profile_cap, @user.profile_citta ].compact_blank.join(", ") %></td></tr>
+      <tr><th>Cellulare</th><td><%= @user.profile_cellulare %></td></tr>
+      <tr><th>Email</th><td><%= @user.profile_email %></td></tr>
+      <tr><th>IBAN</th><td><%= @user.profile_iban %></td></tr>
+      <tr><th>Banca</th><td><%= @user.profile_nome_banca %></td></tr>
+    </tbody>
+  </table>
+<% end %>
+
+<h3>Account</h3>
+<% if @accounts.any? %>
+  <table class="table table--compact admin-table--narrow margin-block-end-double">
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Ruolo</th>
+        <th>Membri</th>
+        <th>Scuole</th>
+        <th>Creato il</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accounts.each do |account| %>
+        <tr>
+          <td><%= link_to account.name, admin_account_path(account) %></td>
+          <td><%= @user.role_in(account) %></td>
+          <td><%= account.memberships.count %></td>
+          <td><%= number_with_delimiter(account.scuole.count) %></td>
+          <td><%= account.created_at.strftime("%d/%m/%Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="txt-subtle margin-block-end-double">Nessun account</p>
+<% end %>
+
+<h3>Conteggi</h3>
+<%= render "admin/shared/conteggi", conteggi: @conteggi %>
+
+<% unless @user == current_user %>
+  <footer class="txt-align-center full-width flex flex-column margin-block-start-double">
+    <hr class="separator--horizontal full-width margin-block" style="--border-color: var(--color-ink-lighter)">
+    <%= render "shared/container/delete", record: @user, path: admin_user_path(@user),
+          label: "l'utente #{@user.email} (con i suoi account senza altri membri)" %>
+  </footer>
+<% end %>

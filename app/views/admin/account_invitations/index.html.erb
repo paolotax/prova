@@ -1,19 +1,28 @@
-<h2>Invita nuovo account</h2>
+<h2 class="txt-align-center">Invita nuovo account</h2>
 
-<%= form_with url: admin_account_invitations_path, method: :post, style: "margin-bottom: 2rem; display: flex; gap: 0.5rem; align-items: end;" do |f| %>
-  <div>
-    <label for="email" style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-ink-dark);">Email</label>
-    <%= f.email_field :email, placeholder: "nome@esempio.it", required: true, class: "input", style: "width: 320px;" %>
-  </div>
-  <div>
-    <label for="account_name" style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-ink-dark);">Nome account <span style="color: var(--color-ink-light);">(opzionale)</span></label>
-    <%= f.text_field :account_name, placeholder: "es. Giunti - Bacherini", class: "input", style: "width: 320px;" %>
-  </div>
-  <%= f.submit "Crea account e invia invito", class: "btn btn--primary" %>
-<% end %>
+<div class="flex justify-center margin-block-end-double">
+  <%= form_with url: admin_account_invitations_path, method: :post,
+        class: "panel panel--small fill-white shadow flex flex-column gap" do |f| %>
+    <div class="flex flex-column gap-quarter">
+      <%= f.label :email, "Email", class: "txt-small txt-subtle" %>
+      <%= f.email_field :email, placeholder: "nome@esempio.it", required: true, class: "input full-width" %>
+    </div>
+
+    <div class="flex flex-column gap-quarter">
+      <%= f.label :account_name, class: "txt-small txt-subtle" do %>
+        Nome account <span class="txt-subtle">(opzionale)</span>
+      <% end %>
+      <%= f.text_field :account_name, placeholder: "es. Giunti - Bacherini", class: "input full-width" %>
+    </div>
+
+    <div class="flex justify-center margin-block-start-double">
+      <%= f.submit "Crea account e invia invito", class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</div>
 
 <h3>Account creati</h3>
-<table class="table">
+<table class="table table--compact admin-table--narrow">
   <thead>
     <tr>
       <th>Nome</th>

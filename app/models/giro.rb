@@ -38,8 +38,16 @@ class Giro < ApplicationRecord
   belongs_to :collana, optional: true
   belongs_to :propaganda, optional: true
 
-  has_many :tappa_giri
+  has_many :tappa_giri, dependent: :destroy
   has_many :tappe, through: :tappa_giri
+
+  # tappe.giro_id è legacy (rimpiazzato dal join tappa_giri) ma il FK in DB
+  # esiste ancora: nullify per poter distruggere il giro
+  has_many :tappe_legacy, class_name: "Tappa", foreign_key: :giro_id, dependent: :nullify
+
+  # Le entry del kanban referenziano il giro con un FK: senza nullify la
+  # destroy del giro viola il vincolo (entries.giro_id)
+  has_many :entries, dependent: :nullify
 
   TIPI_GIRO = %w[kit_adozioni collane ritiro_collane consegne visite].freeze
 

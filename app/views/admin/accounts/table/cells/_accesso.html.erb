@@ -1,0 +1,12 @@
+<%# locals: (account:) -%>
+
+<% ultimo_accesso = account[:ultimo_accesso] %>
+<% ultimo_accesso = Time.zone.parse(ultimo_accesso) if ultimo_accesso.is_a?(String) %>
+
+<div class="data-row__cell" title="<%= ultimo_accesso&.strftime("%d/%m/%Y %H:%M") %>">
+  <% if ultimo_accesso %>
+    <%= ultimo_accesso.strftime("%d/%m/%Y") %>
+  <% else %>
+    <span class="data-row__muted">mai</span>
+  <% end %>
+</div>

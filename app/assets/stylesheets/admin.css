@@ -1,0 +1,106 @@
+/* ==========================================================================
+ * Area admin (layouts/admin.html.erb). Classi specifiche del pannello:
+ * per il resto le view admin usano le utilities e i componenti Fizzy.
+ * ========================================================================== */
+
+@layer components {
+  /* Da desktop larghezza fissa e uguale per tutte le pagine admin; sotto
+     i 1024px la pagina riempie lo schermo e solo le tabelle larghe fanno
+     scorrere in orizzontale (override overflow nel layout) */
+  .admin-container {
+    margin-inline: auto;
+    padding: var(--block-space);
+
+    @media (min-width: 1024px) {
+      inline-size: 960px;
+    }
+  }
+
+  .admin-header {
+    align-items: center;
+    border-block-end: 2px solid var(--color-ink-lighter);
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: var(--block-space-double);
+    padding-block-end: var(--block-space);
+
+    /* Mobile: titolo sopra, voci sotto centrate */
+    @media (max-width: 639px) {
+      flex-direction: column;
+      gap: var(--block-space-half);
+    }
+  }
+
+  .admin-header__nav {
+    display: flex;
+    gap: var(--inline-space);
+
+    @media (max-width: 639px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  /* Card statistiche: dashboard e griglia conteggi delle show.
+     Larghezza fissa (niente 1fr): stessa card su tutte le pagine */
+  .admin-cards {
+    display: grid;
+    gap: var(--block-space);
+    /* Mobile e tablet: colonne elastiche che riempiono lo schermo */
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    margin-block: var(--block-space) var(--block-space-double);
+
+    /* Da desktop misura fissa, come la pagina */
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(auto-fill, 11rem);
+    }
+  }
+
+  .admin-card {
+    background-color: var(--color-ink-lightest);
+    border: 1px solid var(--color-ink-lighter);
+    border-radius: 0.75rem;
+    padding: var(--block-space);
+  }
+
+  .admin-card__value {
+    font-size: var(--text-large);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .admin-card__label {
+    color: var(--color-ink-dark);
+    font-size: var(--text-small);
+  }
+
+  /* Tabelle di dettaglio: non su tutta la pagina, e mai più larghe di
+     essa — i valori lunghi senza spazi (email, slug) vanno a capo */
+  .admin-table--narrow {
+    inline-size: 100%;
+    max-inline-size: 50rem;
+
+    :is(th, td) {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* Token lunghi (uuid): troncati con ellipsis, valore pieno nel title */
+  .admin-clip {
+    display: inline-block;
+    max-inline-size: 24ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+
+  /* Icona rotante per le operazioni in corso (es. eliminazione utente) */
+  .admin-spin {
+    animation: admin-spin 1s linear infinite;
+  }
+
+  @keyframes admin-spin {
+    to { transform: rotate(360deg); }
+  }
+}

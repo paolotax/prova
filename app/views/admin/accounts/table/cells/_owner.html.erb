@@ -1,0 +1,11 @@
+<%# locals: (account:) -%>
+
+<div class="data-row__cell data-row__cell--stacked data-row__cell--interactive">
+  <% if account[:owner_nome] %>
+    <%= link_to account[:owner_nome], admin_user_path(account[:owner_slug]),
+          style: "color: var(--color-link);", data: { turbo_frame: "_top" } %>
+    <span class="data-row__subtitle"><%= account[:owner_email] %></span>
+  <% else %>
+    <span class="data-row__muted">nessun owner</span>
+  <% end %>
+</div>

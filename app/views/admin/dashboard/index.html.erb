@@ -1,26 +1,22 @@
 <h2>Admin Dashboard</h2>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-  <div style="padding: 1.5rem; border-radius: 0.75rem; background: var(--color-ink-lightest); border: 1px solid var(--color-ink-lighter);">
-    <div style="font-size: 2rem; font-weight: 700;"><%= @users_count %></div>
-    <div style="font-size: 0.875rem; color: var(--color-ink-dark);">Utenti</div>
-  </div>
-  <div style="padding: 1.5rem; border-radius: 0.75rem; background: var(--color-ink-lightest); border: 1px solid var(--color-ink-lighter);">
-    <div style="font-size: 2rem; font-weight: 700;"><%= @accounts_count %></div>
-    <div style="font-size: 0.875rem; color: var(--color-ink-dark);">Account</div>
-  </div>
+<div class="admin-cards">
+  <%= link_to admin_accounts_path, class: "txt-ink" do %>
+    <div class="admin-card">
+      <div class="admin-card__value"><%= @accounts_count %></div>
+      <div class="admin-card__label">Account</div>
+    </div>
+  <% end %>
+  <%= link_to admin_accounts_path, class: "txt-ink" do %>
+    <div class="admin-card">
+      <div class="admin-card__value"><%= @users_count %></div>
+      <div class="admin-card__label">Utenti</div>
+    </div>
+  <% end %>
 </div>
 
 <h3>Strumenti</h3>
-<ul style="list-style: none; padding: 0;">
-  <li style="margin-bottom: 0.5rem;">
-    <%= link_to admin_extension_mails_path, style: "color: var(--color-link); font-size: 1rem;" do %>
-      Invia estensione WhatsApp Web
-    <% end %>
-  </li>
-  <li style="margin-bottom: 0.5rem;">
-    <%= link_to admin_account_invitations_path, style: "color: var(--color-link); font-size: 1rem;" do %>
-      Invita nuovo account
-    <% end %>
-  </li>
-</ul>
+<div class="flex flex-column gap-half align-start">
+  <%= link_to "Invia estensione WhatsApp Web", admin_extension_mails_path, class: "txt-link" %>
+  <%= link_to "Invita nuovo account", admin_account_invitations_path, class: "txt-link" %>
+</div>

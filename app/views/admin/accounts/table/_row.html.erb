@@ -1,0 +1,31 @@
+<%# locals: (account:, columns:) -%>
+
+<% destroying = DestroyAccountJob.destroying?(account.id) %>
+
+<%= tag.div id: dom_id(account),
+      class: class_names("data-row", "data-row--closed": destroying),
+      style: "--cols: #{Account::Columns.grid_template(columns)};",
+      role: "row" do %>
+
+  <%# Link overlay: apre il dettaglio account %>
+  <%= link_to admin_account_path(account), class: "data-row__link", tabindex: -1,
+        data: { turbo_frame: "_top" } do %>
+    <span class="for-screen-reader"><%= account.name %></span>
+  <% end %>
+
+  <%# Niente bulk actions: cella vuota per tenere la griglia %>
+  <div class="data-row__cell data-row__cell--check"></div>
+
+  <% columns.each do |column| %>
+    <%= render column.partial, account: account %>
+  <% end %>
+
+  <% if destroying %>
+    <div class="data-row__cell txt-align-end" style="overflow: visible;">
+      <span title="Eliminazione in corso…">
+        <%= icon_tag "refresh", class: "icon--small admin-spin" %>
+        <span class="for-screen-reader">Eliminazione di <%= account.name %> in corso</span>
+      </span>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,9 @@
+<%# locals: (account:) -%>
+
+<div class="data-row__cell data-row__cell--end">
+  <% if account[:scuole_count].to_i.positive? %>
+    <%= number_with_delimiter(account[:scuole_count]) %>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>
