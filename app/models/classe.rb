@@ -107,7 +107,7 @@ class Classe < ApplicationRecord
   end
 
   delegate :denominazione, to: :scuola, prefix: true
-  delegate :comune, :provincia, to: :scuola
+  delegate :cap, :comune, :provincia, :sigla_provincia, :indirizzo, to: :scuola
 
   # Per clientable_label_tag: "1A Ada Negri"
   def denominazione

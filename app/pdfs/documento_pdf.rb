@@ -108,7 +108,7 @@ class DocumentoPdf < Prawn::Document
         move_down 5
         text cliente.try(:denominazione) || cliente.to_s, :size => 14, :style => :bold, :spacing => 4
         text cliente.try(:indirizzo) || ""
-        text [cliente.try(:cap), cliente.try(:comune), cliente.try(:provincia)].compact.join(" ")
+        text [cliente.try(:cap), cliente.try(:comune), cliente.try(:sigla_provincia)].compact.join(" ")
 
       end
     end
