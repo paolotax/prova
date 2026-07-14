@@ -53,8 +53,8 @@ module MCPTools
         case stato.to_s
         when "attivi"        then scope = scope.attivi
         when "completati"    then scope = scope.completati
-        when "da_consegnare" then scope = scope.attivi.where.missing(:consegne)
-        when "da_pagare"     then scope = scope.attivi.where.missing(:pagamenti)
+        when "da_consegnare" then scope = scope.attivi.da_consegnare
+        when "da_pagare"     then scope = scope.attivi.da_pagare
         when "tutti"         then nil
         else scope = scope.attivi
         end

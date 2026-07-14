@@ -50,6 +50,10 @@ module Pagabile
     (try(:totale_cents) || 0) - pagamenti.sum(:importo_cents)
   end
 
+  def pagato_cents
+    pagamenti.sum(:importo_cents)
+  end
+
   def pagato_il
     pagamenti.maximum(:pagato_il)
   end

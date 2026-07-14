@@ -8,6 +8,9 @@
     <% if documento.tipo_pagamento.present? %>
       <span class="data-row__tipo-pag"><%= documento.tipo_pagamento.humanize %></span>
     <% end %>
+  <% elsif documento.parzialmente_pagato? %>
+    <%= icon_tag "cash" %> <%= number_to_currency documento.pagato_cents / 100.0, locale: :it %>
+    <span class="data-row__tipo-pag">acconto</span>
   <% else %>
     <span class="data-row__da-pagare">DA PAGARE</span>
   <% end %>

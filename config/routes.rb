@@ -247,7 +247,7 @@ Rails.application.routes.draw do
       scope module: :documenti do
         resources :righe, only: [:create]
         resource :export, only: [:show]
-        resource :consegna, only: %i[create update destroy], controller: 'consegna'
+        resource :consegna, only: %i[show create update destroy], controller: 'consegna'
         resource :pagamento, only: %i[create update destroy], controller: 'pagamento'
         resource :derivazione, only: %i[create destroy], controller: 'derivazione'
         resource :collegamento, only: [:create], controller: 'collegamento'

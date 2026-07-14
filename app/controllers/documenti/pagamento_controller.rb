@@ -44,8 +44,10 @@ module Documenti
     end
 
     # DELETE /documenti/:documento_id/pagamento
+    # params[:pagamento_id] opzionale: annulla quel pagamento, non l'ultimo
     def destroy
-      @documento.unmark_pagato
+      pagamento = @documento.pagamenti.find(params[:pagamento_id]) if params[:pagamento_id].present?
+      @documento.unmark_pagato(pagamento)
       @documento.reload
 
       respond_to do |format|
@@ -78,6 +80,11 @@ module Documenti
         turbo_stream.replace(
           dom_id(@documento, :gestione_dialog),
           partial: "documenti/container/gestione_dialog_content",
+          locals: { documento: @documento }
+        ),
+        turbo_stream.replace(
+          dom_id(@documento, :riepiloghi),
+          partial: "documenti/container/riepiloghi",
           locals: { documento: @documento }
         )
       ]

@@ -67,6 +67,12 @@ module Consegnabile
     residui_per_documento_riga.values.sum
   end
 
+  def copie_consegnate
+    ConsegnaRiga.joins(:consegna)
+      .where(consegne: { consegnabile_type: self.class.base_class.name, consegnabile_id: id })
+      .sum(:quantita)
+  end
+
   # { documento_riga_id => residuo }, solo righe con residuo positivo
   def residui_per_documento_riga
     @residui_per_documento_riga ||= begin

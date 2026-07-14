@@ -14,7 +14,9 @@
   <section class="pad-block border-block-end" data-controller="inline-edit">
     <h2 class="divider gap txt-medium txt-subtle margin-block-end">Consegna</h2>
 
-    <% if documento.consegnato? %>
+    <% consegne = documento.consegne.order(:consegnato_il).to_a %>
+
+    <% if documento.consegnato? && consegne.size == 1 %>
       <%# View mode %>
       <div data-inline-edit-target="view" class="flex flex-column align-center gap-half">
         <span class="flex align-center gap-half">
@@ -58,18 +60,86 @@
         <% end %>
       </div>
     <% else %>
-      <%= form_with url: documento_consegna_path(documento),
-            method: :post,
-            class: "flex flex-column align-center gap" do |f| %>
-        <div class="flex flex-column align-center">
-          <%= label_tag :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
-          <%= date_input_tag(:consegnato_il, Date.today, style: "max-width: 16ch;") %>
+      <%# Storico consegne (parziali o multiple), annullabili una a una %>
+      <% if consegne.any? %>
+        <div class="flex flex-column align-center gap-quarter margin-block-end">
+          <% consegne.each do |consegna| %>
+            <span class="flex align-center gap-half txt-small">
+              <%= icon_tag "truck", class: "icon--small" %>
+              <%= consegna.consegnato_il&.strftime("%d/%m/%Y") %>
+              <strong><%= consegna.copie %> cp</strong>
+              <%= button_to documento_consegna_path(documento, consegna_id: consegna.id),
+                    method: :delete,
+                    class: "btn btn--circle txt-x-small btn--reversed txt-negative",
+                    data: { controller: "tooltip" } do %>
+                <%= icon_tag "trash", class: "icon--small" %>
+                <span class="for-screen-reader">Annulla consegna</span>
+              <% end %>
+            </span>
+          <% end %>
+          <% if documento.consegnato? %>
+            <span class="txt-small txt-subtle">
+              Consegnate tutte le <strong><%= documento.copie_consegnate %></strong> copie
+            </span>
+          <% else %>
+            <span class="txt-small txt-subtle">
+              Consegnate <strong><%= documento.copie_consegnate %></strong> di <strong><%= documento.totale_copie %></strong> copie
+            </span>
+          <% end %>
         </div>
-        <div class="flex flex-wrap gap-half justify-center">
-          <%= f.submit "Segna consegnato", class: "btn txt-small" %>
-          <% if documento.data_documento.present? %>
-            <%= f.button "In data doc. (#{documento.data_documento.strftime('%d/%m')})",
-                  name: "usa_data_documento", value: "1", class: "btn txt-small" %>
+      <% end %>
+
+      <% unless documento.consegnato? %>
+        <% righe_consegnabili = documento.documento_righe_consegnabili %>
+        <div data-controller="consegna-parziale">
+          <%= form_with url: documento_consegna_path(documento),
+                method: :post,
+                class: "flex flex-column align-center gap" do |f| %>
+            <div class="flex flex-column align-center">
+              <%= label_tag :consegnato_il, "Data consegna", class: "txt-small txt-subtle" %>
+              <%= date_input_tag(:consegnato_il, Date.today, style: "max-width: 16ch;") %>
+            </div>
+
+            <%# Pannello quantità per riga (aperto da "Parziale…") %>
+            <% if righe_consegnabili.any? %>
+              <div data-consegna-parziale-target="panel" hidden
+                   style="inline-size: 100%; max-block-size: 16rem; overflow-y: auto;">
+                <table style="inline-size: 100%; border-collapse: collapse;">
+                  <% righe_consegnabili.each do |documento_riga| %>
+                    <% residuo = documento.residui_per_documento_riga[documento_riga.id] %>
+                    <tr>
+                      <td class="txt-small overflow-ellipsis" style="max-inline-size: 24ch;" title="<%= documento_riga.riga.libro&.titolo %>">
+                        <%= documento_riga.riga.libro&.titolo %>
+                      </td>
+                      <td class="txt-small txt-subtle txt-align-end txt-nowrap">su <%= residuo %></td>
+                      <td class="txt-align-end" style="inline-size: 10ch;">
+                        <input type="number" inputmode="numeric"
+                               name="righe[<%= documento_riga.id %>]"
+                               value="<%= residuo %>" min="0" max="<%= residuo %>" disabled
+                               class="input txt-align-end txt-small"
+                               data-consegna-parziale-target="input"
+                               data-action="input->consegna-parziale#ricalcola">
+                      </td>
+                    </tr>
+                  <% end %>
+                </table>
+              </div>
+            <% end %>
+
+            <div class="flex flex-wrap gap-half justify-center">
+              <button type="submit" class="btn txt-small" data-consegna-parziale-target="submit">
+                Consegna <span data-consegna-parziale-target="totale"><%= documento.copie_residue_da_consegnare %></span> copie
+              </button>
+              <% if righe_consegnabili.any? %>
+                <button type="button" class="btn txt-small btn--reversed"
+                        data-consegna-parziale-target="toggle"
+                        data-action="consegna-parziale#toggle">Parziale…</button>
+              <% end %>
+              <% if documento.data_documento.present? %>
+                <%= f.button "In data doc. (#{documento.data_documento.strftime('%d/%m')})",
+                      name: "usa_data_documento", value: "1", class: "btn txt-small" %>
+              <% end %>
+            </div>
           <% end %>
         </div>
       <% end %>
@@ -82,7 +152,9 @@
   <section class="pad-block border-block-end" data-controller="inline-edit">
     <h4 class="divider txt-medium txt-subtle margin-block-end">Pagamento</h4>
 
-    <% if documento.pagato? %>
+    <% pagamenti = documento.pagamenti.order(:pagato_il).to_a %>
+
+    <% if documento.pagato? && pagamenti.size == 1 %>
       <%# View mode %>
       <div data-inline-edit-target="view" class="flex flex-column align-center gap-half">
         <span class="flex align-center gap-half txt-nowrap">
@@ -135,26 +207,68 @@
         <% end %>
       </div>
     <% else %>
-      <%= form_with url: documento_pagamento_path(documento),
-            method: :post,
-            class: "flex flex-column align-center gap" do |f| %>
-        <div class="flex flex-column align-center">
-          <%= label_tag :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
-          <%= date_input_tag(:pagato_il, Date.today, style: "max-width: 16ch;") %>
-        </div>
-        <div class="flex flex-column align-center">
-          <%= label_tag :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
-          <%= select_tag :tipo_pagamento,
-                options_for_select(tipi_pagamento_options, "contanti"),
-                class: "input input--select" %>
-        </div>
-        <div class="flex flex-wrap gap-half justify-center">
-          <%= f.submit "Segna pagato", class: "btn txt-small" %>
-          <% if documento.data_documento.present? %>
-            <%= f.button "In data doc. (#{documento.data_documento.strftime('%d/%m')})",
-                  name: "usa_data_documento", value: "1", class: "btn txt-small" %>
+      <%# Storico pagamenti (acconti o pagamenti multipli), annullabili uno a uno %>
+      <% if pagamenti.any? %>
+        <div class="flex flex-column align-center gap-quarter margin-block-end">
+          <% pagamenti.each do |pagamento| %>
+            <span class="flex align-center gap-half txt-small">
+              <%= icon_tag "cash", class: "icon--small" %>
+              <%= pagamento.pagato_il&.strftime("%d/%m/%Y") %>
+              <strong><%= number_to_currency pagamento.importo_cents / 100.0, locale: :it %></strong>
+              <% if pagamento.tipo_pagamento.present? %>
+                <span class="txt-subtle"><%= pagamento.tipo_pagamento.humanize %></span>
+              <% end %>
+              <%= button_to documento_pagamento_path(documento, pagamento_id: pagamento.id),
+                    method: :delete,
+                    class: "btn btn--circle txt-x-small btn--reversed txt-negative",
+                    data: { controller: "tooltip" } do %>
+                <%= icon_tag "trash", class: "icon--small" %>
+                <span class="for-screen-reader">Annulla pagamento</span>
+              <% end %>
+            </span>
+          <% end %>
+          <% if documento.pagato? %>
+            <span class="txt-small txt-subtle">
+              Saldato: <strong><%= number_to_currency documento.pagato_cents / 100.0, locale: :it %></strong>
+            </span>
+          <% else %>
+            <span class="txt-small txt-subtle">
+              Pagati <strong><%= number_to_currency documento.pagato_cents / 100.0, locale: :it %></strong>
+              di <strong><%= number_to_currency documento.totale_importo, locale: :it %></strong>
+            </span>
           <% end %>
         </div>
+      <% end %>
+
+      <% unless documento.pagato? %>
+        <%= form_with url: documento_pagamento_path(documento),
+              method: :post,
+              class: "flex flex-column align-center gap" do |f| %>
+          <div class="flex flex-column align-center">
+            <%= label_tag :pagato_il, "Data pagamento", class: "txt-small txt-subtle" %>
+            <%= date_input_tag(:pagato_il, Date.today, style: "max-width: 16ch;") %>
+          </div>
+          <div class="flex flex-column align-center">
+            <%= label_tag :tipo_pagamento, "Tipo", class: "txt-small txt-subtle" %>
+            <%= select_tag :tipo_pagamento,
+                  options_for_select(tipi_pagamento_options, documento.try(:tipo_pagamento_previsto) || "contanti"),
+                  class: "input input--select" %>
+          </div>
+          <div class="flex flex-column align-center">
+            <%= label_tag :importo, "Acconto (vuoto = salda tutto)", class: "txt-small txt-subtle" %>
+            <%= number_field_tag :importo, nil, step: 0.01, min: 0,
+                  max: documento.residuo_da_pagare_cents / 100.0,
+                  placeholder: number_to_currency(documento.residuo_da_pagare_cents / 100.0, locale: :it),
+                  class: "input txt-align-end", style: "max-width: 16ch;" %>
+          </div>
+          <div class="flex flex-wrap gap-half justify-center">
+            <%= f.submit "Registra pagamento", class: "btn txt-small" %>
+            <% if documento.data_documento.present? %>
+              <%= f.button "In data doc. (#{documento.data_documento.strftime('%d/%m')})",
+                    name: "usa_data_documento", value: "1", class: "btn txt-small" %>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
     <% end %>
   </section>

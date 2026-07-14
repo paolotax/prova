@@ -42,8 +42,8 @@ class VenditeController < ApplicationController
     case params[:stato].to_s
     when "attivi"        then scope.attivi
     when "completati"    then scope.completati
-    when "da_consegnare" then scope.attivi.where.missing(:consegne).joins(:causale).where(causali: { gestione_consegna: true })
-    when "da_pagare"     then scope.attivi.where.missing(:pagamenti).joins(:causale).where(causali: { gestione_pagamento: true })
+    when "da_consegnare" then scope.attivi.da_consegnare
+    when "da_pagare"     then scope.attivi.da_pagare
     when "tutti"         then scope
     else scope.attivi
     end

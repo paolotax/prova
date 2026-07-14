@@ -43,7 +43,8 @@
 require "test_helper"
 
 class DocumentoTest < ActiveSupport::TestCase
-  fixtures :accounts, :users, :memberships, :documenti, :clienti, :causali
+  fixtures :accounts, :users, :memberships, :documenti, :clienti, :causali,
+           :libri, :categorie, :editori, :righe, :documento_righe
 
   setup do
     @fizzy = accounts(:fizzy)
@@ -54,6 +55,29 @@ class DocumentoTest < ActiveSupport::TestCase
 
   teardown do
     Current.reset
+  end
+
+  test "scope da_pagare include i parzialmente pagati ed esclude i saldati" do
+    documento = documenti(:fattura_uno)
+    assert_includes Documento.da_pagare, documento
+
+    documento.registra_acconto!(importo_cents: 1000)
+    assert_includes Documento.da_pagare, documento
+
+    documento.mark_pagato
+    assert_not_includes Documento.da_pagare, documento
+  end
+
+  test "scope da_consegnare include i parzialmente consegnati ed esclude i saturati" do
+    documento = documenti(:fattura_uno)
+    documento_riga = documento_righe(:dr_fattura_uno)
+    assert_includes Documento.da_consegnare, documento
+
+    documento.consegna_parziale!({ documento_riga.id => 12 })
+    assert_includes Documento.da_consegnare, documento
+
+    documento.consegna_parziale!({ documento_riga.id => 8 })
+    assert_not_includes Documento.da_consegnare, documento
   end
 
   test "tappa_target is clientable when real" do

@@ -16,17 +16,26 @@
 
   <span class="card__meta-text card__meta-text--author">
     <span>
-      <% if documento.consegna_applicabile? && documento.consegnato_il.present? %>
-        <%= icon_tag "truck" %>
-        <%= documento.consegnato_il.strftime("%d/%m") %>
+      <% if documento.consegna_applicabile? %>
+        <% if documento.consegnato? %>
+          <%= icon_tag "truck" %>
+          <%= documento.consegnato_il.strftime("%d/%m") %>
+        <% elsif documento.parzialmente_consegnato? %>
+          <%= icon_tag "truck" %>
+          <%= documento.copie_consegnate %>/<%= documento.totale_copie %> cp
+        <% end %>
       <% end %>
       <% if documento.pagamento_applicabile? %>
-        <% if documento.pagato_il.present? %>
+        <% if documento.pagato? %>
           <%= icon_tag "cash" %>
           <strong><%= documento.pagato_il.strftime("%d/%m") %></strong>
           <% if documento.tipo_pagamento.present? %>
             <%= documento.tipo_pagamento.humanize %>
           <% end %>
+        <% elsif documento.parzialmente_pagato? %>
+          <%= icon_tag "cash" %>
+          <%= number_to_currency documento.pagato_cents / 100.0, locale: :it %>
+          / <%= number_to_currency documento.totale_importo, locale: :it %>
         <% else %>
           Da pagare
         <% end %>

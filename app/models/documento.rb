@@ -122,6 +122,35 @@ class Documento < ApplicationRecord
 
   scope :solo_padri, -> { where(documento_padre_id: nil) }
 
+  # Residuo positivo: includono anche consegne/pagamenti parziali
+  # (where.missing escluderebbe un documento al primo acconto o tranche)
+  scope :da_consegnare, -> {
+    where(causale_id: Causale.where(gestione_consegna: true))
+      .where(<<~SQL.squish)
+        (SELECT COALESCE(SUM(righe.quantita), 0)
+           FROM documento_righe
+           JOIN righe ON righe.id = documento_righe.riga_id
+          WHERE documento_righe.documento_id = documenti.id)
+        >
+        (SELECT COALESCE(SUM(consegna_righe.quantita), 0)
+           FROM consegne
+           JOIN consegna_righe ON consegna_righe.consegna_id = consegne.id
+          WHERE consegne.consegnabile_type = 'Documento'
+            AND consegne.consegnabile_id = documenti.id)
+      SQL
+  }
+  scope :da_pagare, -> {
+    where(causale_id: Causale.where(gestione_pagamento: true))
+      .where(<<~SQL.squish)
+        COALESCE(documenti.totale_cents, 0)
+        >
+        (SELECT COALESCE(SUM(pagamenti.importo_cents), 0)
+           FROM pagamenti
+          WHERE pagamenti.pagabile_type = 'Documento'
+            AND pagamenti.pagabile_id = documenti.id)
+      SQL
+  }
+
   # LEFT JOIN per ricerca su polymorphic clientable (Scuola, Cliente) + causale
   scope :left_joins_clientable, -> {
     joins(<<~SQL)
@@ -346,6 +375,16 @@ class Documento < ApplicationRecord
   # Restituisce tutti i discendenti (figli, nipoti, pronipoti, ecc.) in un array piatto
   def tutti_i_discendenti
     documenti_derivati.flat_map { |figlio| [figlio] + figlio.tutti_i_discendenti }
+  end
+
+  # Righe consegnabili direttamente da questo documento: residuo positivo e
+  # riga non condivisa con un documento derivato (quella si consegna dal derivato)
+  def documento_righe_consegnabili
+    righe_derivati_ids = tutti_i_discendenti.flat_map { |figlio| figlio.righe.ids }
+    documento_righe.includes(riga: :libro).select do |documento_riga|
+      residui_per_documento_riga[documento_riga.id].to_i.positive? &&
+        !righe_derivati_ids.include?(documento_riga.riga_id)
+    end
   end
 
   # Restituisce la struttura ad albero dei discendenti

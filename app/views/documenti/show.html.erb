@@ -30,6 +30,8 @@
              righe_json: @righe_json %>
 </div>
 
+<%= render "documenti/container/riepiloghi", documento: @documento %>
+
 <%= render "documenti/container/documenti_collegabili", documento: @documento %>
 
 <% if @documento.persisted? && @documento.numero_documento.present? %>

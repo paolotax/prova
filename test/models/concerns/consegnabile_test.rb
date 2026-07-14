@@ -81,6 +81,32 @@ class ConsegnabileTest < ActiveSupport::TestCase
     assert_equal 0, @documento.consegne.count
   end
 
+  test "copie_consegnate somma tutte le consegne" do
+    assert_equal 0, @documento.copie_consegnate
+
+    @documento.consegna_parziale!({ @documento_riga.id => 12 })
+    @documento.consegna_parziale!({ @documento_riga.id => 3 })
+
+    assert_equal 15, @documento.copie_consegnate
+  end
+
+  test "documento_righe_consegnabili elenca le righe con residuo" do
+    assert_equal [ @documento_riga ], @documento.documento_righe_consegnabili
+
+    @documento.mark_consegnato
+    assert_empty Documento.find(@documento.id).documento_righe_consegnabili
+  end
+
+  test "documento_righe_consegnabili esclude le righe condivise con documenti derivati" do
+    figlio = Documento.create!(account: accounts(:fizzy), user: users(:one),
+                               causale: causali(:fattura), clientable: clienti(:cliente_fizzy),
+                               documento_padre: @documento,
+                               numero_documento: 998, data_documento: Date.today)
+    figlio.documento_righe.create!(riga: @documento_riga.riga, posizione: 1)
+
+    assert_empty @documento.documento_righe_consegnabili
+  end
+
   test "consegnato_il è la data dell'ultima consegna" do
     @documento.consegna_parziale!({ @documento_riga.id => 12 }, consegnato_il: 3.days.ago)
     @documento.consegna_parziale!({ @documento_riga.id => 8 }, consegnato_il: 1.day.ago)

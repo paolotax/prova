@@ -1,0 +1,64 @@
+<%# locals: (documento:) -%>
+
+<%
+  righe_residue = documento.documento_righe_consegnabili
+  residui = documento.residui_per_documento_riga
+  consegne = documento.consegne.order(:consegnato_il).includes(consegna_righe: { documento_riga: { riga: :libro } })
+%>
+
+<% distinta_button = capture do %>
+  <%= link_to documento_consegna_path(documento, format: :pdf), target: "_blank", rel: "noopener",
+        class: "btn btn--circle", data: { turbo: false, controller: "tooltip", tooltip_content_value: "Stampa distinta" } do %>
+    <%= icon_tag "printer" %>
+    <span class="for-screen-reader">Stampa distinta</span>
+  <% end %>
+<% end %>
+
+<%# Da consegnare %>
+<% if righe_residue.any? %>
+  <div class="group-header">
+    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+      Da consegnare (<%= documento.copie_residue_da_consegnare %> cp)
+    </h3>
+    <div class="group-header__actions group-header__actions--end">
+      <%= distinta_button %>
+    </div>
+  </div>
+
+  <table class="table table--compact margin-block-end-double" style="max-inline-size: 60ch; margin-inline: auto;">
+    <% righe_residue.each do |documento_riga| %>
+      <tr>
+        <td><%= documento_riga.riga.libro&.titolo %></td>
+        <td class="txt-align-end txt-nowrap"><strong><%= residui[documento_riga.id] %></strong> cp</td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%# Consegnate %>
+<% if consegne.any? %>
+  <div class="group-header">
+    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+      Consegnate (<%= documento.copie_consegnate %> cp)
+    </h3>
+    <div class="group-header__actions group-header__actions--end">
+      <%= distinta_button if righe_residue.empty? %>
+    </div>
+  </div>
+
+  <% consegne.each do |consegna| %>
+    <p class="flex align-center gap-half txt-small txt-subtle margin-block-end-quarter" style="max-inline-size: 60ch; margin-inline: auto;">
+      <%= icon_tag "truck", class: "icon--small" %>
+      <%= consegna.consegnato_il&.strftime("%d/%m/%Y") %>
+      <strong><%= consegna.copie %> cp</strong>
+    </p>
+    <table class="table table--compact margin-block-end" style="max-inline-size: 60ch; margin-inline: auto;">
+      <% consegna.consegna_righe.each do |consegna_riga| %>
+        <tr>
+          <td><%= consegna_riga.documento_riga.riga.libro&.titolo %></td>
+          <td class="txt-align-end txt-nowrap"><strong><%= consegna_riga.quantita %></strong> cp</td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+<% end %>

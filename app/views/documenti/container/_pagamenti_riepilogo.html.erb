@@ -1,0 +1,26 @@
+<%# locals: (documento:) -%>
+
+<% pagamenti = documento.pagamenti.order(:pagato_il) %>
+
+<div class="group-header">
+  <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+    Acconti (<%= number_to_currency documento.pagato_cents / 100.0, locale: :it %>
+    di <%= number_to_currency documento.totale_importo, locale: :it %>)
+  </h3>
+</div>
+
+<table class="table table--compact margin-block-end-double" style="max-inline-size: 60ch; margin-inline: auto;">
+  <% pagamenti.each do |pagamento| %>
+    <tr>
+      <td class="txt-nowrap"><%= pagamento.pagato_il&.strftime("%d/%m/%Y") %></td>
+      <td class="txt-subtle"><%= pagamento.tipo_pagamento&.humanize %></td>
+      <td class="txt-align-end txt-nowrap"><strong><%= number_to_currency pagamento.importo_cents / 100.0, locale: :it %></strong></td>
+    </tr>
+  <% end %>
+  <% unless documento.pagato? %>
+    <tr>
+      <td colspan="2">Residuo da pagare</td>
+      <td class="txt-align-end txt-nowrap"><strong><%= number_to_currency documento.residuo_da_pagare_cents / 100.0, locale: :it %></strong></td>
+    </tr>
+  <% end %>
+</table>

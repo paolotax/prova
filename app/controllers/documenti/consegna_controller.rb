@@ -6,6 +6,18 @@ module Documenti
 
     before_action :set_documento
 
+    # GET /documenti/:documento_id/consegna.pdf — distinta consegnato/residuo
+    def show
+      respond_to do |format|
+        format.pdf do
+          pdf = DistintaConsegnePdf.new(@documento, view_context)
+          send_data pdf.render, filename: "distinta_consegne_#{@documento.id}.pdf",
+                                type: "application/pdf",
+                                disposition: "inline"
+        end
+      end
+    end
+
     # POST /documenti/:documento_id/consegna
     # params[:righe] opzionale: { documento_riga_id => quantita } per consegna parziale
     # params[:usa_data_documento] opzionale: consegna in data documento
@@ -37,8 +49,10 @@ module Documenti
     end
 
     # DELETE /documenti/:documento_id/consegna
+    # params[:consegna_id] opzionale: annulla quella consegna, non l'ultima
     def destroy
-      @documento.unmark_consegnato
+      consegna = @documento.consegne.find(params[:consegna_id]) if params[:consegna_id].present?
+      @documento.unmark_consegnato(consegna)
       @documento.reload
 
       respond_to do |format|
@@ -71,6 +85,11 @@ module Documenti
         turbo_stream.replace(
           dom_id(@documento, :gestione_dialog),
           partial: "documenti/container/gestione_dialog_content",
+          locals: { documento: @documento }
+        ),
+        turbo_stream.replace(
+          dom_id(@documento, :riepiloghi),
+          partial: "documenti/container/riepiloghi",
           locals: { documento: @documento }
         )
       ]

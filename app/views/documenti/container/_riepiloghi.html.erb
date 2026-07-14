@@ -1,0 +1,19 @@
+<%# locals: (documento:) -%>
+
+<%
+  # Riepiloghi sotto la card: nascosti solo se consegnato/saldato in
+  # un'unica soluzione, altrimenti lo storico resta visibile anche a chiusura
+  mostra_consegne = documento.persisted? && documento.consegna_applicabile? &&
+                    documento.consegne.any? && !(documento.consegnato? && documento.consegne.size == 1)
+  mostra_pagamenti = documento.persisted? && documento.pagamento_applicabile? &&
+                     documento.pagamenti.any? && !(documento.pagato? && documento.pagamenti.size == 1)
+%>
+
+<div id="<%= dom_id(documento, :riepiloghi) %>" class="full-width">
+  <% if mostra_consegne || mostra_pagamenti %>
+    <div class="pad group" style="max-inline-size: 1120px; margin-inline: auto; --card-color: <%= documento_color(documento) %>;">
+      <%= render "documenti/container/consegne_riepilogo", documento: documento if mostra_consegne %>
+      <%= render "documenti/container/pagamenti_riepilogo", documento: documento if mostra_pagamenti %>
+    </div>
+  <% end %>
+</div>

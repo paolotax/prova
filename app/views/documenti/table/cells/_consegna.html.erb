@@ -5,6 +5,8 @@
     <span class="data-row__muted">—</span>
   <% elsif documento.consegnato? %>
     <%= icon_tag "truck" %> <%= documento.consegnato_il&.strftime("%d/%m") %>
+  <% elsif documento.parzialmente_consegnato? %>
+    <%= icon_tag "truck" %> <%= documento.copie_consegnate %>/<%= documento.totale_copie %>
   <% else %>
     <span class="data-row__muted">—</span>
   <% end %>
