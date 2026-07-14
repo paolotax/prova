@@ -102,6 +102,9 @@ module ControlloAdozioni
 
     test "agenti con conteggio scuole assegnate e non assegnate" do
       bob = memberships(:bob_fizzy)
+      # Le fixture membership_scuole (bob_fizzy_scuola) restano nel DB se una
+      # classe precedente del run le ha caricate: si parte puliti
+      bob.membership_scuole.destroy_all
       bob.membership_scuole.create!(scuola: @scuola)
 
       d = Dashboard.new(account: @account)
