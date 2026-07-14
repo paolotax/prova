@@ -20,12 +20,15 @@ module Documenti
 
     # POST /documenti/:documento_id/consegna
     # params[:righe] opzionale: { documento_riga_id => quantita } per consegna parziale
+    # params[:righe_libro] opzionale: { isbn o libro_id => quantita } (CLI/API)
     # params[:usa_data_documento] opzionale: consegna in data documento
     def create
       consegnato_il = params[:usa_data_documento].present? ? @documento.data_documento : parsed_date(:consegnato_il)
 
       if params[:righe].present?
         @documento.consegna_parziale!(params[:righe].to_unsafe_h, consegnato_il: consegnato_il)
+      elsif params[:righe_libro].present?
+        @documento.consegna_parziale_per_libro!(params[:righe_libro].to_unsafe_h, consegnato_il: consegnato_il)
       else
         @documento.mark_consegnato(consegnato_il: consegnato_il)
       end
@@ -33,7 +36,10 @@ module Documenti
       respond_to do |format|
         format.turbo_stream { render_container_replacement }
         format.html { redirect_back fallback_location: documento_path(@documento) }
-        format.json { render json: { ok: true, consegnato: @documento.consegnato?, consegnato_il: @documento.consegnato_il } }
+        format.json do
+          render json: { ok: true, consegnato: @documento.consegnato?, consegnato_il: @documento.consegnato_il,
+                         copie_consegnate: @documento.copie_consegnate, copie_residue: @documento.copie_residue_da_consegnare }
+        end
       end
     end
 

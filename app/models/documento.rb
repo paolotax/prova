@@ -377,6 +377,19 @@ class Documento < ApplicationRecord
     documenti_derivati.flat_map { |figlio| [figlio] + figlio.tutti_i_discendenti }
   end
 
+  # Consegna parziale con chiavi ISBN o libro_id, per CLI e MCP che non
+  # conoscono i documento_riga id
+  def consegna_parziale_per_libro!(quantita_per_libro, **opzioni)
+    mappa = quantita_per_libro.to_h.each_with_object({}) do |(chiave, quantita), accumulatore|
+      chiave = chiave.to_s.delete("- ")
+      documento_riga = documento_righe.joins(riga: :libro).find_by(libri: { codice_isbn: chiave }) ||
+                       documento_righe.joins(:riga).find_by(righe: { libro_id: chiave })
+      raise ArgumentError, "nessuna riga del documento con libro #{chiave}" unless documento_riga
+      accumulatore[documento_riga.id] = quantita.to_i
+    end
+    consegna_parziale!(mappa, **opzioni)
+  end
+
   # Righe consegnabili direttamente da questo documento: residuo positivo e
   # riga non condivisa con un documento derivato (quella si consegna dal derivato)
   def documento_righe_consegnabili

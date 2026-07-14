@@ -33,6 +33,16 @@ module Documenti
       assert_equal 8, documento.copie_residue_da_consegnare
     end
 
+    test "create con righe_libro risolve isbn in documento_riga (CLI)" do
+      post documento_consegna_path(account_id: @account.id, documento_id: @documento.id, format: :json),
+        params: { righe_libro: { "9788800000001" => "12" } }
+
+      assert_response :success
+      documento = Documento.find(@documento.id)
+      assert documento.parzialmente_consegnato?
+      assert_equal 8, documento.copie_residue_da_consegnare
+    end
+
     test "create via turbo stream aggiorna meta, dialog e riepiloghi" do
       post documento_consegna_path(account_id: @account.id, documento_id: @documento.id),
         params: { consegnato_il: "2026-07-14", righe: { @documento_riga.id.to_s => "12" } },
