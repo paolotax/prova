@@ -29,9 +29,13 @@ module MCPTools
 
     def self.call(search: nil, numero_documento: nil, causale: nil, clientable_type: nil, stato: nil, anno: nil, data_inizio: nil, data_fine: nil, tipo_pagamento: nil, libro_id: nil, libro_isbn: nil, libro_categoria: nil, include_righe: nil, sorted_by: nil, offset: nil, limit: nil, server_context:, **_params)
       with_current(server_context) do
-        scope = Current.account.documenti.solo_padri.includes(:causale, :clientable, entry: [:goldness, :closure])
+        # Niente includes qui: questo scope raccoglie solo gli id (sotto).
+        # Un includes con where su una tabella inclusa (es. causali) forza
+        # l'eager_load JOIN di tutto, e il polimorfico :clientable esplode.
+        scope = Current.account.documenti.solo_padri
         scope = scope.search_docs(search) if search.present?
-        scope = scope.where("documenti.numero_documento ILIKE ?", "%#{numero_documento}%") if numero_documento.present?
+        # numero_documento è integer: si confrontano le cifre finali ("2026/001" -> 1)
+        scope = scope.where(numero_documento: numero_documento.to_s[/\d+\z/].to_i) if numero_documento.present?
         scope = scope.joins(:causale).where(causali: { causale: causale }) if causale.present?
         scope = scope.where(clientable_type: clientable_type) if clientable_type.present?
         scope = scope.where("EXTRACT(YEAR FROM data_documento) = ?", anno) if anno.present?
