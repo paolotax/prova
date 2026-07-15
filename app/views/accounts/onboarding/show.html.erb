@@ -20,9 +20,9 @@
       <div class="margin-block-start-double">
         <%= render "accounts/zone/zone_list", account_zone: @account_zone %>
       </div>
-      <% if @account_zone.any? %>
-        <%= link_to "Continua", accounts_onboarding_path, class: "btn btn--primary center fit-content margin-block-start-double" %>
-      <% end %>
+      <%# Sempre visibile: la zona aggiunta arriva via turbo_stream e questa
+          pagina non si ri-renderizza; il server ri-deriva comunque lo step. %>
+      <%= link_to "Continua", accounts_onboarding_path, class: "btn btn--primary center fit-content margin-block-start-double" %>
     </div>
   <% when :importazione %>
     <div class="panel shadow center">
